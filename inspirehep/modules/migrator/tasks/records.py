@@ -149,36 +149,15 @@ def migrate(source, wait_for_results=False):
 @shared_task(ignore_result=True)
 def continuous_migration():
     """Task to continuously migrate what is pushed up by Legacy."""
-    indexer = RecordIndexer()
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
 
     try:
         while r.llen('legacy_records'):
-            raw_record = r.lpop('legacy_records')
+            raw_record = r.lrange('legacy_records', 0, 0)
             if raw_record:
-                # FIXME use migrate_and_insert_record(raw_record)
-                # The record might be None, in case a parallel
-                # continuous_migration task has already consumed the queue.
-                raw_record = zlib.decompress(raw_record)
-                record = marc_create_record(raw_record, keep_singletons=False)
-                recid = int(record['001'][0])
-                prod_record = InspireProdRecords(recid=recid)
-                prod_record.marcxml = raw_record
-                json_record = create_record(record)
-                with db.session.begin_nested():
-                    try:
-                        record = record_upsert(json_record)
-                    except ValidationError as e:
-                        # Invalid record, will not get indexed
-                        errors = "ValidationError: Record {0}: {1}".format(
-                            recid, e
-                        )
-                        prod_record.valid = False
-                        prod_record.errors = errors
-                        db.session.merge(prod_record)
-                        continue
-                indexer.index_by_id(record.id)
+                migrate_and_insert_record(zlib.decompress(raw_record[0]))
+            r.lpop('legacy_records')
     finally:
         db.session.commit()
         db.session.close()

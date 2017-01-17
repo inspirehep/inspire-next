@@ -1,0 +1,50 @@
+<record>
+  <controlfield tag="001">1502655</controlfield>
+  <controlfield tag="005">20161212091856.0</controlfield>
+  <datafield tag="880" ind1=" " ind2=" ">
+    <subfield code="a">王飞格</subfield>
+  </datafield>
+  <datafield tag="909" ind1="C" ind2="O">
+    <subfield code="o">oai:inspirehep.net:1502655</subfield>
+    <subfield code="p">INSPIRE:HepNames</subfield>
+  </datafield>
+  <datafield tag="961" ind1=" " ind2=" ">
+    <subfield code="c">2016-12-12</subfield>
+    <subfield code="x">2016-12-12</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">HEPNAMES</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">USEFUL</subfield>
+  </datafield>
+  <datafield tag="650" ind1="1" ind2="7">
+    <subfield code="a">ASTRO-PH</subfield>
+  </datafield>
+  <datafield tag="400" ind1=" " ind2=" ">
+    <subfield code="a">Wang, Feige</subfield>
+  </datafield>
+  <datafield tag="371" ind1=" " ind2=" ">
+    <subfield code="m">wangfeige2009@163.com</subfield>
+  </datafield>
+  <datafield tag="371" ind1=" " ind2=" ">
+    <subfield code="a">Peking U.</subfield>
+    <subfield code="r">PHD</subfield>
+    <subfield code="s">2012</subfield>
+    <subfield code="z">current</subfield>
+    <subfield code="z">903603</subfield>
+  </datafield>
+  <datafield tag="100" ind1=" " ind2=" ">
+    <subfield code="a">Wang, Feige</subfield>
+    <subfield code="g">active</subfield>
+    <subfield code="q">Feige Wang</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="9">INSPIRE</subfield>
+    <subfield code="a">INSPIRE-00635104</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="9">BAI</subfield>
+    <subfield code="a">Fei.Ge.Wang.1</subfield>
+  </datafield>
+</record>
