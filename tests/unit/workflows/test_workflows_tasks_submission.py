@@ -36,8 +36,19 @@ class DummyEng(object):
 
 
 def test_add_note_entry_does_not_add_value_that_is_already_present():
-    obj = StubObj({'public_notes': [{'value': '*Temporary entry*'}]}, {'core': 'something'})
+    data = {
+        'public_notes': [
+            {'value': '*Temporary entry*'},
+        ],
+    }
+    extra_data = {'core': 'something'}
+
+    obj = StubObj(data, extra_data)
     eng = DummyEng()
 
     assert add_note_entry(obj, eng) is None
-    assert {'public_notes': [{'value': '*Temporary entry*'}]} == obj.data
+    assert obj.data == {
+        'public_notes': [
+            {'value': '*Temporary entry*'},
+        ],
+    }
