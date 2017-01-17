@@ -35,7 +35,7 @@ from retrying import retry
 from invenio_accounts.models import User
 
 from ....utils.tickets import get_instance, retry_if_connection_problems
-from .actions import in_production_mode
+from .actions import in_production_mode, is_arxiv_paper
 
 
 LOGGER = logging.getLogger(__name__)
@@ -370,29 +370,39 @@ def user_pdf_get(obj, eng):
 
 def prepare_files(obj, eng):
     """Adds to the fft field (files) the extracted pdfs if any"""
-    if not obj.files:
-        return
-
     def _get_fft(url, name):
+        def _get_filename(obj, filename):
+            if is_arxiv_paper(obj):
+                return 'arxiv:' + filename
+
+            return filename
+
+        filename, filetype = os.path.splitext(name)
+
         return {
             'url': os.path.realpath(url),
             'docfile_type': 'INSPIRE-PUBLIC',
-            'filename': name,
+            'filename': _get_filename(obj, filename),
+            'filetype': filetype,
         }
 
-    pdf_file_objs = [
-        (key, obj.files[key])
-        for key in obj.files.keys
-        if key.endswith('.pdf')
-    ]
-    pdf_paths = [
-        _get_fft(pdf_file_obj.obj.file.uri, name)
-        for name, pdf_file_obj in pdf_file_objs
-    ]
+    if not obj.files:
+        return
 
-    obj.data['fft'] = obj.data.get('fft', []) + pdf_paths
-    obj.log.info("Non-user PDF files added to FFT.")
-    obj.log.debug("Added PDF files: {}".format(pdf_paths))
+    pdf_file_objs = []
+    for key in obj.files.keys:
+        if key.endswith('.pdf'):
+            pdf_file_objs.append((key, obj.files[key]))
+
+    result = []
+    for filename, pdf_file_obj in pdf_file_objs:
+        if pdf_file_obj:
+            result.append(_get_fft(pdf_file_obj.obj.file.uri, filename))
+
+    if result:
+        obj.data['fft'] = obj.data.get('fft', []) + result
+        obj.log.info('Non-user PDF files added to FFT.')
+        obj.log.debug('Added PDF files: {}'.format(result))
 
 
 def remove_references(obj, eng):
