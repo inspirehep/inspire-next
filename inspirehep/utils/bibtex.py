@@ -96,7 +96,6 @@ class Bibtex(Export):
 
     def _format_thesis(self):
         """Format thesis entry type"""
-        thesis = ''
         name = 'phdthesis'
 
         if 'thesis' in self.record and 'degree_type' in self.record['thesis']:

@@ -68,8 +68,6 @@ def get_dotted_keys(d, key, dots):
 @lru_cache(maxsize=1000)
 def generate_valid_keywords():
     """Parses all sources that contain valid search keywords to a list."""
-    valid_keywords = []
-
     keyword_mapping = current_app.config['SEARCH_ELASTIC_KEYWORD_MAPPING']
 
     # Get keywords from configuration file
