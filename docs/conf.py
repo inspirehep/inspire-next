@@ -32,14 +32,7 @@ def _warn_node(self, msg, *args, **kwargs):
 sphinx.environment.BuildEnvironment.warn_node = _warn_node
 
 
-from mock import Mock as MagicMock
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return Mock()
-
-MOCK_MODULES = [
+autodoc_mock_imports = [
     'scikit-learn',
     'scipy',
     'numpy',
@@ -49,7 +42,6 @@ MOCK_MODULES = [
     'backports',
     'backports.lzma',
 ]
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
