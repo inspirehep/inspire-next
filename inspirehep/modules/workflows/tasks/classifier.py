@@ -27,8 +27,10 @@ from __future__ import absolute_import, division, print_function
 from functools import wraps
 
 from ..proxies import antihep_keywords
+from ..utils import with_debug_logging
 
 
+@with_debug_logging
 def filter_core_keywords(obj, eng):
     """Filter core keywords."""
     try:
@@ -49,6 +51,7 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
                    extract_acronyms=False, only_core_tags=False,
                    fast_mode=False):
     """Extract keywords from a pdf file or metadata in a OAI harvest."""
+    @with_debug_logging
     @wraps(classify_paper)
     def _classify_paper(obj, eng):
         from invenio_classifier.errors import ClassifierException
@@ -106,6 +109,7 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
     return _classify_paper
 
 
+@with_debug_logging
 def clean_instances_from_data(output):
     """Check if specific keys are of InstanceType and replace them with their id."""
     from invenio_classifier.reader import KeywordToken

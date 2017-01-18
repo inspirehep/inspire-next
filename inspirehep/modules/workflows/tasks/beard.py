@@ -30,7 +30,10 @@ from flask import current_app
 from inspirehep.modules.workflows.utils import json_api_request
 from inspirehep.utils.record import get_value
 
+from ..utils import with_debug_logging
 
+
+@with_debug_logging
 def get_beard_url():
     """Return the BEARD URL endpoint, if any."""
     base_url = current_app.config.get('BEARD_API_URL')
@@ -40,6 +43,7 @@ def get_beard_url():
     return '{base_url}/predictor/coreness'.format(base_url=base_url)
 
 
+@with_debug_logging
 def prepare_payload(record):
     """Prepare payload to send to Beard API."""
     payload = dict(title="", abstract="", categories=[])
@@ -59,6 +63,7 @@ def prepare_payload(record):
     return payload
 
 
+@with_debug_logging
 def guess_coreness(obj, eng):
     """Workflow task to ask Beard API for a coreness assessment."""
     predictor_url = get_beard_url()

@@ -32,9 +32,12 @@ from inspirehep.modules.workflows.utils import log_workflows_action
 
 from inspirehep.utils.record import get_arxiv_id, get_value
 
+from ..utils import with_debug_logging
+
 
 def mark(key, value):
     """Mark a record by putting a value in a key in extra_data."""
+    @with_debug_logging
     @wraps(mark)
     def _mark(obj, eng):
         obj.extra_data[key] = value
@@ -43,17 +46,20 @@ def mark(key, value):
 
 def is_marked(key):
     """Mark a record by putting a value in a key in extra_data."""
+    @with_debug_logging
     @wraps(mark)
     def _mark(obj, eng):
         return key in obj.extra_data and obj.extra_data[key]
     return _mark
 
 
+@with_debug_logging
 def is_record_accepted(obj, *args, **kwargs):
     """Check if the record was approved."""
     return obj.extra_data.get("approved", False)
 
 
+@with_debug_logging
 def shall_halt_workflow(obj, *args, **kwargs):
     """Check if the workflow shall be halted."""
     return obj.extra_data.get("halt_workflow", False)
@@ -66,6 +72,7 @@ def in_production_mode(*args, **kwargs):
     )
 
 
+@with_debug_logging
 def add_core(obj, eng):
     """Mark a record as CORE if it was approved as CORE."""
     if 'core' in obj.extra_data:
@@ -74,6 +81,7 @@ def add_core(obj, eng):
 
 def halt_record(action=None, message=None):
     """Halt the workflow for approval with optional action."""
+    @with_debug_logging
     @wraps(halt_record)
     def _halt_record(obj, eng):
         eng.halt(action=obj.extra_data.get("halt_action") or action,
@@ -81,6 +89,7 @@ def halt_record(action=None, message=None):
     return _halt_record
 
 
+@with_debug_logging
 def update_note(metadata):
     """Check if the record was approved as CORE."""
     new_notes = []
@@ -95,6 +104,7 @@ def update_note(metadata):
 
 def reject_record(message):
     """Reject record with message."""
+    @with_debug_logging
     @wraps(reject_record)
     def _reject_record(obj, *args, **kwargs):
         relevance_prediction = obj.extra_data.get("relevance_prediction")
@@ -130,6 +140,7 @@ def _is_auto_rejected(workflow_obj):
     )
 
 
+@with_debug_logging
 def is_record_relevant(obj, eng):
     """Shall we halt this workflow for potential acceptance or just reject?"""
 
@@ -143,6 +154,7 @@ def is_record_relevant(obj, eng):
     return True
 
 
+@with_debug_logging
 def is_experimental_paper(obj, eng):
     """Check if the record is an experimental paper."""
     categories = list(
@@ -162,6 +174,7 @@ def is_experimental_paper(obj, eng):
     return False
 
 
+@with_debug_logging
 def is_arxiv_paper(obj, *args, **kwargs):
     """Check if the record is from arXiv."""
     arxiv_id = get_arxiv_id(obj.data)
@@ -172,6 +185,7 @@ def is_arxiv_paper(obj, *args, **kwargs):
     return False
 
 
+@with_debug_logging
 def is_submission(obj, eng):
     """Is this a submission?"""
     source = obj.data.get('acquisition_source')
@@ -181,6 +195,7 @@ def is_submission(obj, eng):
 
 
 def prepare_update_payload(extra_data_key="update_payload"):
+    @with_debug_logging
     @wraps(prepare_update_payload)
     def _prepare_update_payload(obj, eng):
         # TODO: Perform auto-merge if possible and update only necessary data
