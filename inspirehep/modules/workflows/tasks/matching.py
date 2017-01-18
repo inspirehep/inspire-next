@@ -38,7 +38,10 @@ from inspirehep.utils.arxiv import get_clean_arXiv_id
 from inspirehep.utils.datefilter import date_older_than
 from inspirehep.utils.record import get_value
 
+from ..utils import with_debug_logging
 
+
+@with_debug_logging
 def search(query):
     """Perform a search and returns the matching ids."""
     params = dict(p=query, of='id')
@@ -64,6 +67,7 @@ def search(query):
         raise
 
 
+@with_debug_logging
 def match_by_arxiv_id(record):
     """Match by arXiv identifier."""
     arxiv_id = get_clean_arXiv_id(record)
@@ -75,6 +79,7 @@ def match_by_arxiv_id(record):
     return list()
 
 
+@with_debug_logging
 def match_by_doi(record):
     """Match by DOIs."""
     dois = get_value(record, 'dois.value', [])
@@ -87,6 +92,7 @@ def match_by_doi(record):
     return list(result)
 
 
+@with_debug_logging
 def match_legacy_inspire(obj, eng):
     """Return True if the record already exists in INSPIRE.
 
@@ -109,6 +115,7 @@ def match_legacy_inspire(obj, eng):
 
 def match_with_invenio_matcher(queries=None, index="records-hep", doc_type="hep"):
     """Match record using Invenio Matcher."""
+    @with_debug_logging
     @wraps(match_with_invenio_matcher)
     def _match_with_invenio_matcher(obj, eng):
         from invenio_matcher.api import match as _match
@@ -155,6 +162,7 @@ def match_with_invenio_matcher(queries=None, index="records-hep", doc_type="hep"
     return _match_with_invenio_matcher
 
 
+@with_debug_logging
 def was_already_harvested(record):
     """Return True if the record was already harvested.
 
@@ -167,6 +175,7 @@ def was_already_harvested(record):
             return True
 
 
+@with_debug_logging
 def is_too_old(record, days_ago=5):
     """Return True if the record is more than days_ago days old.
 
@@ -185,6 +194,7 @@ def is_too_old(record, days_ago=5):
     return True
 
 
+@with_debug_logging
 def article_exists(obj, eng):
     """Check if an article exist in the system."""
     # For efficiency check special mark key.
@@ -203,6 +213,7 @@ def article_exists(obj, eng):
     return False
 
 
+@with_debug_logging
 def already_harvested(obj, eng):
     """Check if record is already harvested."""
     if current_app.config.get('PRODUCTION_MODE'):
@@ -214,6 +225,7 @@ def already_harvested(obj, eng):
 
 def previously_rejected(days_ago=None):
     """Check if record exist on INSPIRE or already rejected."""
+    @with_debug_logging
     @wraps(previously_rejected)
     def _previously_rejected(obj, eng):
         if current_app.config.get('PRODUCTION_MODE'):
@@ -230,6 +242,7 @@ def previously_rejected(days_ago=None):
     return _previously_rejected
 
 
+@with_debug_logging
 def pending_in_holding_pen(obj, eng):
     """Check if a record exists in HP by looking in given KB."""
     from elasticsearch_dsl import Q
@@ -279,6 +292,7 @@ def pending_in_holding_pen(obj, eng):
     return False
 
 
+@with_debug_logging
 def delete_self_and_stop_processing(obj, eng):
     """Delete both versions of itself and stops the workflow."""
     from invenio_db import db
@@ -286,11 +300,13 @@ def delete_self_and_stop_processing(obj, eng):
     eng.skip_token()
 
 
+@with_debug_logging
 def stop_processing(obj, eng):
     """Stop processing for object and return as completed."""
     eng.stopProcessing()
 
 
+@with_debug_logging
 def update_existing_workflow_object(obj, eng):
     """Update the data of the old object with the new data."""
     from invenio_workflows import workflow_object_class

@@ -43,6 +43,8 @@ from plotextractor.api import process_tarball
 from plotextractor.converter import untar
 from plotextractor.errors import InvalidTarball, NoTexFilesFound
 
+from ..utils import with_debug_logging
+
 
 REGEXP_AUTHLIST = re.compile(
     "<collaborationauthorlist.*?>.*?</collaborationauthorlist>", re.DOTALL)
@@ -51,6 +53,7 @@ REGEXP_REFS = re.compile(
     re.DOTALL)
 
 
+@with_debug_logging
 def arxiv_fulltext_download(obj, eng):
     """Perform the fulltext download step for arXiv records.
 
@@ -70,6 +73,7 @@ def arxiv_fulltext_download(obj, eng):
         pdf['doctype'] = "arXiv"
 
 
+@with_debug_logging
 def arxiv_plot_extract(obj, eng):
     """Extract plots from an arXiv archive.
 
@@ -112,6 +116,7 @@ def arxiv_plot_extract(obj, eng):
     obj.log.info("Added {0} plots.".format(len(plots)))
 
 
+@with_debug_logging
 def arxiv_refextract(obj, eng):
     """Extract references from arXiv PDF.
 
@@ -149,6 +154,7 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     :param obj: Workflow Object to process
     :param eng: Workflow Engine processing the object
     """
+    @with_debug_logging
     @wraps(arxiv_author_list)
     def _author_list(obj, eng):
         from inspirehep.modules.converter import convert
