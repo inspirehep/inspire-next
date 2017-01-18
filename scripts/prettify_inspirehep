@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# This file is part of INSPIRE.
+# Copyright (C) 2014 - 2017 CERN.
+#
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
+
+echo "Updating copyrights to every python file in inspire next repository..."
+FS=$'\n'
+for f in $(find . -name '*.py')
+do
+    sed -i '1,21{/^#/d;}' $f
+    sed -i '1i# -*- coding: utf-8 -*-\n#\n# This file is part of INSPIRE.\n# Copyright (C) 2014 - 2017 CERN.\n#\n# INSPIRE is free software: you can redistribute it and/or modify\n# it under the terms of the GNU General Public License as published by\n# the Free Software Foundation, either version 3 of the License, or\n# (at your option) any later version.\n#\n# INSPIRE is distributed in the hope that it will be useful,\n# but WITHOUT ANY WARRANTY; without even the implied warranty of\n# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n# GNU General Public License for more details.\n#\n# You should have received a copy of the GNU General Public License\n# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.\n#\n# In applying this licence, CERN does not waive the privileges and immunities\n# granted to it by virtue of its status as an Intergovernmental Organization\n# or submit itself to any jurisdiction.' $f
+	echo "$f -> copyrights updated."
+done
+echo "Done"
