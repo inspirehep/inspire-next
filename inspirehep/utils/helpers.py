@@ -43,7 +43,18 @@ def download_file(url, output_file=None, chunk_size=1024):
 
 
 def download_file_to_workflow(workflow, name, url):
-    """Download a file to specified workflow."""
+    """Download a file to specified workflow.
+
+    Here are some tips for debugging (might be old when reading this, but it's
+    a good hint).
+    The workflow.files property it's actually a method that returns a
+    WorkflowFilesIterator, that inherits the custom __setitem__ method from
+    it's parent FilesIterator. That method will end up calling `save` on a
+    `invenio_files_rest.storage.pyfs.PyFSFileStorage` instance (through
+    ObjectVersion and FileObject) that consumes the stream passed to it and
+    saves on it's place a FileObject with the details of the downloaded file.
+    Even if this looks simple and incorrect, it's quite complex and correct :/
+    """
     with closing(requests.get(url=url, stream=True)) as req:
         if req.status_code == 200:
             workflow.files[name] = req.raw
