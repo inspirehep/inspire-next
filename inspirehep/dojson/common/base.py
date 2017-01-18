@@ -80,6 +80,7 @@ def self_url(index):
         return get_record_ref(value, index)
     return _self_url
 
+
 institutions.over('self', '^001')(self_url('institutions'))
 hep.over('self', '^001')(self_url('literature'))
 conferences.over('self', '^001')(self_url('conferences'))

@@ -234,6 +234,7 @@ def hidden_notes2marc(self, key, value):
         'o': value if key == 'private_old_emails' else None,
     }
 
+
 setattr(hidden_notes2marc, '__extend__', True)
 
 

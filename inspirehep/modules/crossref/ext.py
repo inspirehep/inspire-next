@@ -143,4 +143,5 @@ class CrossRef(object):
         resp.status_code = response_code.get(result['status'], 200)
         return resp
 
+
 __all__ = ("CrossRef", )
