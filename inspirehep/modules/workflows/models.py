@@ -35,8 +35,16 @@ class WorkflowsAudit(db.Model):
     # Date that the action was taken
     created = db.Column(db.DateTime, default=datetime.now, nullable=False)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("accounts_user.id"), nullable=True)
-    object_id = db.Column(db.Integer, db.ForeignKey("workflows_object.id"), nullable=False)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("accounts_user.id"),
+        nullable=True,
+    )
+    object_id = db.Column(
+        db.Integer,
+        db.ForeignKey("workflows_object.id"),
+        nullable=False,
+    )
 
     # Score from model, action taken, recommendation from the model
     score = db.Column(db.Float, default=0, nullable=False)
@@ -50,3 +58,16 @@ class WorkflowsAudit(db.Model):
         """Save object to persistent storage."""
         with db.session.begin_nested():
             db.session.add(self)
+
+
+class WorkflowsPendingRecord(db.Model):
+
+    __tablename__ = "workflows_pending_record"
+
+    workflow_id = db.Column(
+        db.Integer,
+        db.ForeignKey("workflows_object.id", ondelete='CASCADE'),
+        primary_key=True,
+        nullable=False,
+    )
+    record_id = db.Column(db.Integer, nullable=False)

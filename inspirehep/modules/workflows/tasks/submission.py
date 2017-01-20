@@ -228,14 +228,16 @@ def close_ticket(ticket_id_key="ticket_id"):
     return _close_ticket
 
 
-def send_robotupload(url=None,
-                     marcxml_processor=None,
-                     callback_url="callback/workflows/continue",
-                     mode="insert",
-                     extra_data_key=None):
+def send_and_wait_robotupload(
+    url=None,
+    marcxml_processor=None,
+    callback_url="callback/workflows/robotupload",
+    mode="insert",
+    extra_data_key=None
+):
     """Get the MARCXML from the model and ship it."""
 
-    @wraps(send_robotupload)
+    @wraps(send_and_wait_robotupload)
     def _send_robotupload(obj, eng):
         from inspirehep.dojson.utils import legacy_export_as_marc
         from inspirehep.utils.robotupload import make_robotupload_marcxml
@@ -303,6 +305,14 @@ def send_robotupload(url=None,
         obj.log.info("end of upload")
 
     return _send_robotupload
+
+
+def wait_webcoll(obj, eng):
+    if not in_production_mode():
+        obj.log.debug("Would have wait for webcoll callback.")
+        return
+
+    eng.halt("Waiting for webcoll.")
 
 
 def add_note_entry(obj, eng):
