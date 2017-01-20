@@ -31,7 +31,7 @@ import pytest
 
 from inspirehep.utils.helpers import (
     download_file,
-    download_file_to_record,
+    download_file_to_workflow,
     get_json_for_plots,
     force_force_list,
 )
@@ -43,7 +43,7 @@ def foo_bar_baz():
         __name__, os.path.join('fixtures', 'foo-bar-baz'))
 
 
-class StubRecord(object):
+class StubWorkflow(object):
     def __init__(self, files):
         self.files = files
 
@@ -93,19 +93,23 @@ def test_download_file_raises_if_called_without_output_file():
         download_file('http://example.com/foo-bar-baz')
 
 
-@pytest.mark.xfail(reason='socket descriptor is passed already closed')
 @pytest.mark.httpretty
-def test_download_file_to_record(foo_bar_baz):
+def test_download_file_to_workflow(foo_bar_baz):
+    """The actual method relies in a lot of magic underneath implemented by
+    external modules (__setitem__ methods override and similar), so this test
+    does not seem to make much sense as all that logic is completely bypassed.
+    """
     httpretty.register_uri(
         httpretty.GET, 'http://example.com/foo-bar-baz', body=foo_bar_baz)
 
-    record = StubRecord({})
+    workflow = StubWorkflow({})
 
-    result = download_file_to_record(
-        record, 'foo-bar-baz', 'http://example.com/foo-bar-baz')
+    result = download_file_to_workflow(
+      workflow, 'foo-bar-baz', 'http://example.com/foo-bar-baz')
 
-    assert 'foo-bar-baz' in record.files
-    assert not record.files['foo-bar-baz'].closed
+    assert 'foo-bar-baz' in workflow.files
+    assert result
+    assert workflow.files['foo-bar-baz'] == result
 
 
 def test_get_json_for_plots():
