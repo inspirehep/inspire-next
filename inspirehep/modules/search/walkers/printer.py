@@ -33,7 +33,7 @@ from ..ast import SpiresOp
 
 
 class TreePrinter(printer.TreePrinter):
-    visitor = make_visitor(repr_printer.TreePrinter.visitor)
+    visitor = make_visitor(repr_printer.TreePrinter.visitor)  # noqa: F821
 
     @visitor(SpiresOp)
     def visit(self, node, left, right):

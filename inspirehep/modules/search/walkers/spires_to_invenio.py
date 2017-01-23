@@ -37,75 +37,75 @@ class SpiresToInvenio(object):
 
     # pylint: disable=W0613,E0102
 
-    @visitor(ast.AndOp)
+    @visitor(ast.AndOp)  # noqa: F811
     def visit(self, node, left, right):
         return type(node)(left, right)
 
-    @visitor(ast.OrOp)
+    @visitor(ast.OrOp)  # noqa: F811
     def visit(self, node, left, right):
         return type(node)(left, right)
 
-    @visitor(ast.KeywordOp)
+    @visitor(ast.KeywordOp)  # noqa: F811
     def visit(self, node, left, right):
         return type(node)(left, right)
 
-    @visitor(ast.RangeOp)
+    @visitor(ast.RangeOp)  # noqa: F811
     def visit(self, node, left, right):
         return type(node)(left, right)
 
-    @visitor(ast.NotOp)
+    @visitor(ast.NotOp)  # noqa: F811
     def visit(self, node, op):
         return type(node)(op)
 
-    @visitor(ast.GreaterOp)
+    @visitor(ast.GreaterOp)  # noqa: F811
     def visit(self, node, op):
         return type(node)(op)
 
-    @visitor(ast.LowerOp)
+    @visitor(ast.LowerOp)  # noqa: F811
     def visit(self, node, op):
         return type(node)(op)
 
-    @visitor(ast.GreaterEqualOp)
+    @visitor(ast.GreaterEqualOp)  # noqa: F811
     def visit(self, node, op):
         return type(node)(op)
 
-    @visitor(ast.LowerEqualOp)
+    @visitor(ast.LowerEqualOp)  # noqa: F811
     def visit(self, node, op):
         return type(node)(op)
 
-    @visitor(ast.Keyword)
+    @visitor(ast.Keyword)  # noqa: F811
     def visit(self, node):
         return type(node)(node.value)
 
-    @visitor(ast.Value)
+    @visitor(ast.Value)  # noqa: F811
     def visit(self, node):
         return type(node)(node.value)
 
-    @visitor(ast.WildcardQuery)
+    @visitor(ast.WildcardQuery)  # noqa: F811
     def visit(self, node):
         return type(node)(node.value)
 
-    @visitor(ast.ValueQuery)
+    @visitor(ast.ValueQuery)  # noqa: F811
     def visit(self, node, op):
         return type(node)(op)
 
-    @visitor(ast.SingleQuotedValue)
+    @visitor(ast.SingleQuotedValue)  # noqa: F811
     def visit(self, node):
         return type(node)(node.value)
 
-    @visitor(ast.DoubleQuotedValue)
+    @visitor(ast.DoubleQuotedValue)  # noqa: F811
     def visit(self, node):
         return type(node)(node.value)
 
-    @visitor(ast.RegexValue)
+    @visitor(ast.RegexValue)  # noqa: F811
     def visit(self, node):
         return type(node)(node.value)
 
-    @visitor(ast.EmptyQuery)
+    @visitor(ast.EmptyQuery)  # noqa: F811
     def visit(self, node):
         return type(node)(node.value)
 
-    @visitor(SpiresOp)
+    @visitor(SpiresOp)  # noqa: F811
     def visit(self, node, left, right):
         left.value = SPIRES_KEYWORDS[left.value.lower()]
         if (left.value is 'author') and (type(right) is not ast.WildcardQuery):

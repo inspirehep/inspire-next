@@ -411,7 +411,7 @@ class TagListWidget(DynamicListWidget):
         defaults = dict(
             html_tag='ul',
             class_='list-unstyled',
-            item_widget=TagItemWidget(
+            item_widget=TagItemWidget(  # noqa: F821
                 template=self.template
             )
         )

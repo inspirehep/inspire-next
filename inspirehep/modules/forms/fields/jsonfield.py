@@ -34,7 +34,7 @@ from ..field_base import INSPIREField
 
 from ..json_utils import blob2json, json2blob
 
-__all__ = ('JSONField', 'JsonWidget', 'validate_schema')
+__all__ = ('JSONField', 'JsonWidget', 'validate_schema')  # noqa: F822
 
 
 def validate_schema(_form, field):

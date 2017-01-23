@@ -61,37 +61,37 @@ class ElasticSearchDSL(object):
 
     # pylint: disable=W0613,E0102
 
-    @visitor(FilterOp)
+    @visitor(FilterOp)  # noqa: F811
     def visit(self, node, left, right):
         return Q({'filtered': {'query': [left], "filter": [right]}})
 
-    @visitor(AndOp)
+    @visitor(AndOp)  # noqa: F811
     def visit(self, node, left, right):
         return left & right
 
-    @visitor(OrOp)
+    @visitor(OrOp)  # noqa: F811
     def visit(self, node, left, right):
         return left | right
 
-    @visitor(NotOp)
+    @visitor(NotOp)  # noqa: F811
     def visit(self, node, op):
         return ~op
 
-    @visitor(KeywordOp)
+    @visitor(KeywordOp)  # noqa: F811
     def visit(self, node, left, right):
         if callable(right):
             return right(left)
         raise RuntimeError('Not supported second level operation.')
 
-    @visitor(ValueQuery)
+    @visitor(ValueQuery)  # noqa: F811
     def visit(self, node, op):
         return op(None)
 
-    @visitor(Keyword)
+    @visitor(Keyword)  # noqa: F811
     def visit(self, node):
         return node.value
 
-    @visitor(WildcardQuery)
+    @visitor(WildcardQuery)  # noqa: F811
     def visit(self, node):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='p')
@@ -110,7 +110,7 @@ class ElasticSearchDSL(object):
             return res
         return query
 
-    @visitor(Value)
+    @visitor(Value)  # noqa: F811
     def visit(self, node):
         def query(keyword):
             # FIXME: This is a temporary hack that should be removed when
@@ -138,7 +138,7 @@ class ElasticSearchDSL(object):
             })
         return query
 
-    @visitor(SingleQuotedValue)
+    @visitor(SingleQuotedValue)  # noqa: F811
     def visit(self, node):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='p')
@@ -146,7 +146,7 @@ class ElasticSearchDSL(object):
                      type='phrase')
         return query
 
-    @visitor(DoubleQuotedValue)
+    @visitor(DoubleQuotedValue)  # noqa: F811
     def visit(self, node):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='e')
@@ -170,7 +170,7 @@ class ElasticSearchDSL(object):
                 return Q({'term': {fields[0]: node.value}})
         return query
 
-    @visitor(RegexValue)
+    @visitor(RegexValue)  # noqa: F811
     def visit(self, node):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='r')
@@ -181,7 +181,7 @@ class ElasticSearchDSL(object):
             ])
         return query
 
-    @visitor(EmptyQuery)
+    @visitor(EmptyQuery)  # noqa: F811
     def visit(self, node):
         return Q('match_all')
 
@@ -191,7 +191,7 @@ class ElasticSearchDSL(object):
             return reduce(or_, [Q('range', **{k: condition}) for k in fields])
         return query
 
-    @visitor(RangeOp)
+    @visitor(RangeOp)  # noqa: F811
     def visit(self, node, left, right):
         condition = {}
         if left:
@@ -201,22 +201,22 @@ class ElasticSearchDSL(object):
 
         return self._range_operators(node, condition)
 
-    @visitor(GreaterOp)
+    @visitor(GreaterOp)  # noqa: F811
     def visit(self, node, value_fn):
         condition = {'gt': value_fn(None).to_dict()['multi_match']['query']}
         return self._range_operators(node, condition)
 
-    @visitor(LowerOp)
+    @visitor(LowerOp)  # noqa: F811
     def visit(self, node, value_fn):
         condition = {'lt': value_fn(None).to_dict()['multi_match']['query']}
         return self._range_operators(node, condition)
 
-    @visitor(GreaterEqualOp)
+    @visitor(GreaterEqualOp)  # noqa: F811
     def visit(self, node, value_fn):
         condition = {'gte': value_fn(None).to_dict()['multi_match']['query']}
         return self._range_operators(node, condition)
 
-    @visitor(LowerEqualOp)
+    @visitor(LowerEqualOp)  # noqa: F811
     def visit(self, node, value_fn):
         condition = {'lte': value_fn(None).to_dict()['multi_match']['query']}
         return self._range_operators(node, condition)
