@@ -90,7 +90,7 @@ RE_SPLIT_LANGUAGES = re.compile("\/| or | and |,|=|\s+")
 @hep.over('isbns', '^020..')
 @utils.for_each_value
 def isbns(self, key, value):
-    "ISBN, its medium and an additional comment."""
+    """ISBN, its medium and an additional comment."""
     try:
         isbn = normalize_isbn(force_single_element(value['a']))
     # See https://github.com/nekobcn/isbnid/issues/2 and
