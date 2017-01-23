@@ -49,7 +49,7 @@ python:
 
 before_install:
   - travis_retry pip install coveralls
-  # Add docker-compose at the version specified in ENV.
+  # See: https://docs.travis-ci.com/user/docker/#Using-Docker-Compose
   - sudo rm -f /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
