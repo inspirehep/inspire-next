@@ -41,7 +41,7 @@ def test_empty():
                 'abstract.raw^4',
                 'author^10',
                 'author.raw^15',
-                'reportnumber^10',
+                'parent_report_number^10',
                 'eprint^10',
                 'doi^10'
             ]
@@ -66,7 +66,7 @@ def test_google_style():
                 'abstract.raw^4',
                 'author^10',
                 'author.raw^15',
-                'reportnumber^10',
+                'parent_report_number^10',
                 'eprint^10',
                 'doi^10'
             ]

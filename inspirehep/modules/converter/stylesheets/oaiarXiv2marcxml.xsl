@@ -103,7 +103,7 @@ along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
   </xsl:template>
 
 
-  <!-- FUNCTION  rn-extract : returns a subfield for each reportnumber in a string (comma separted)  -->
+  <!-- FUNCTION  rn-extract : returns a subfield for each parent_report_number in a string (comma separted)  -->
   <xsl:template name="rn-extract">
     <xsl:param name="text"/>
     <xsl:choose>

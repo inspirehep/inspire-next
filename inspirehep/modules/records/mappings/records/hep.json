@@ -375,7 +375,7 @@
                     "properties": {
                         "value": {
                             "copy_to": [
-                                "reportnumber"
+                                "parent_report_number"
                             ],
                             "index": "not_analyzed",
                             "type": "string"
@@ -383,7 +383,7 @@
                     },
                     "type": "object"
                 },
-                "reportnumber": {
+                "parent_report_number": {
                     "index": "not_analyzed",
                     "type": "string"
                 },

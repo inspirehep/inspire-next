@@ -221,7 +221,7 @@ class ReferenceBuilder(object):
             self.obj['reference']['arxiv_eprints'].append(_normalize_arxiv(repno))
         else:
             self._ensure_reference_field('publication_info', {})
-            self.obj['reference']['publication_info']['reportnumber'] = repno
+            self.obj['reference']['publication_info']['parent_report_number'] = repno
 
     def add_uid(self, uid):
         """Add unique identifier in correct field."""

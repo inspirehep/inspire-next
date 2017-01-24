@@ -1936,7 +1936,7 @@ def test_publication_info(marcxml_to_json, json_to_marc):
             json_to_marc['773'][0]['y'])
     assert (marcxml_to_json['publication_info'][0]['conf_acronym'] ==
             json_to_marc['773'][0]['o'])
-    assert (marcxml_to_json['publication_info'][0]['reportnumber'] ==
+    assert (marcxml_to_json['publication_info'][0]['parent_report_number'] ==
             json_to_marc['773'][0]['r'])
     assert (marcxml_to_json['publication_info'][0]['confpaper_info'] ==
             json_to_marc['773'][0]['t'])
@@ -2032,7 +2032,7 @@ def test_references(marcxml_to_json, json_to_marc, marcxml_record):
             assert json_val['reference']['imprint']['publisher'] == marc_val['p']
         if 'r' in marc_init:
             initial_repnos = _force_set(marc_init['r'])
-            json_repnos = _force_set(json_val_pub.get('reportnumber', []))
+            json_repnos = _force_set(json_val_pub.get('parent_report_number', []))
             json_repnos.union(_force_set(json_val['reference'].get('arxiv_eprints', [])))
             roundtrip_repnos = _force_set(marc_val['r'])
             assert roundtrip_repnos  == json_repnos
