@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015, 2016 CERN.
+# Copyright (C) 2014, 2015, 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 from __future__ import absolute_import, division, print_function
 
 from dojson import utils
-from dojson.errors import IgnoreKey
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -38,7 +37,6 @@ from ..jobs.model import jobs
 from ..journals.model import journals
 from ..utils import (
     classify_field,
-    force_force_list,
     force_single_element,
     get_recid_from_ref,
     get_record_ref,
