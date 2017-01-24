@@ -1104,10 +1104,15 @@ def test_preprint_date(marcxml_to_json, json_to_marc):
             json_to_marc['269'][0]['c'])
 
 
-def test_page_nr(marcxml_to_json, json_to_marc):
-    """Test if page_nr is created correctly."""
-    assert (marcxml_to_json['page_nr'][0] ==
-            json_to_marc['300'][0]['a'])
+def test_number_of_pages(marcxml_to_json, json_to_marc):
+    """Test if number_of_pages is created correctly."""
+    expected_json = 9
+    expected_marc = {
+        'a': '9',
+    }
+
+    assert marcxml_to_json['number_of_pages'] == expected_json
+    assert json_to_marc['300'][0] == expected_marc
 
 
 def test_book_series(marcxml_to_json, json_to_marc):

@@ -154,7 +154,7 @@ def formdata_to_model(obj, formdata):
     # ============================
     # Page number
     # ============================
-    if 'page_nr' not in data:
+    if 'number_of_pages' not in data:
         first_publication_info = data.get('publication_info', [{}])[0]
 
         page_start = first_publication_info.get('page_start')
@@ -162,7 +162,7 @@ def formdata_to_model(obj, formdata):
 
         if page_start and page_end:
             try:
-                data['page_nr'] = int(page_end) - int(page_start) + 1
+                data['number_of_pages'] = int(page_end) - int(page_start) + 1
             except (TypeError, ValueError):
                 pass
 
