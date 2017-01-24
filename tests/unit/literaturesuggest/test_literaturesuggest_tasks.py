@@ -363,7 +363,7 @@ def test_formdata_to_model_populates_collections_and_hidden_notes_from_conf_name
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_page_nr_from_page_range_article_id(u, ui):
+def test_formdata_to_model_populates_number_of_pages_from_page_range_article_id(u, ui):
     data = {}
     extra_data = {}
     formdata = {
@@ -379,13 +379,13 @@ def test_formdata_to_model_populates_page_nr_from_page_range_article_id(u, ui):
     expected = 10
     result = formdata_to_model(obj, formdata)
 
-    assert expected == result['page_nr']
+    assert expected == result['number_of_pages']
     assert obj.data == {}
 
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_no_page_nr_when_invalid_page_range_article_id(u, ui):
+def test_formdata_to_model_no_number_of_pages_when_invalid_page_range_article_id(u, ui):
     data = {}
     extra_data = {}
     formdata = {
@@ -400,7 +400,7 @@ def test_formdata_to_model_no_page_nr_when_invalid_page_range_article_id(u, ui):
 
     result = formdata_to_model(obj, formdata)
 
-    assert 'page_nr' not in result
+    assert 'number_of_pages' not in result
     assert obj.data == {}
 
 
