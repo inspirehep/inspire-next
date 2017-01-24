@@ -2011,7 +2011,7 @@ def test_publication_info(marcxml_to_json, json_to_marc):
             json_to_marc['773'][0]['w'])
     assert (marcxml_to_json['publication_info'][0]['pubinfo_freetext'] ==
             json_to_marc['773'][0]['x'])
-    assert (marcxml_to_json['publication_info'][0]['isbn'] ==
+    assert (marcxml_to_json['publication_info'][0]['parent_isbn'] ==
             json_to_marc['773'][0]['z'])
     assert (marcxml_to_json['publication_info'][0]['notes'] ==
             ['note', 'extranote'])
@@ -2090,8 +2090,8 @@ def test_references(marcxml_to_json, json_to_marc, marcxml_record):
             assert 'number' in json_val['reference'] and 'o' in marc_val
             assert json_val['reference']['number'] == marc_val['o']
         if 'i' in marc_init:
-            assert 'isbn' in json_val_pub and 'i' in marc_val
-            assert json_val_pub['isbn'] == marc_val['i']
+            assert 'parent_isbn' in json_val_pub and 'i' in marc_val
+            assert json_val_pub['parent_isbn'] == marc_val['i']
         if 'p' in marc_init:
             assert 'publisher' in json_val['reference'].get('imprint', {})
             assert 'p' in marc_val

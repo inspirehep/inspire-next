@@ -116,7 +116,7 @@ def references2marc(self, key, value):
               if a.get('role') != 'ed.'],
         'm': get_value(reference, 'misc'),
         'o': get_value(reference, 'number'),
-        'i': get_value(reference, 'publication_info.isbn'),
+        'i': get_value(reference, 'publication_info.parent_isbn'),
         'p': get_value(reference, 'imprint.publisher'),
         'r': repnos,
         't': get_value(reference, 'titles[:].title'),
