@@ -20,10 +20,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-[run]
-omit =
-  inspirehep/bat/*.py
-  inspirehep/celery.py
-  inspirehep/cli.py
-  inspirehep/wsgi.py
-  inspirehep/wsgi_with_coverage.py
+from __future__ import absolute_import, division, print_function
+
+from inspirehep.bat.pages import top_navigation_page
+
+
+def test_login(login):
+    assert top_navigation_page.am_i_logged()
