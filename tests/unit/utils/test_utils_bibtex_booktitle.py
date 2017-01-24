@@ -50,40 +50,40 @@ def test_generate_booktitle_publication_info_an_empty_list():
     assert expected == result
 
 
-def test_generate_booktitle_no_reportnumber():
-    no_reportnumber = InspireRecord({
+def test_generate_booktitle_no_parent_report_number():
+    no_parent_report_number = InspireRecord({
         'publication_info': [
             {}
         ]
     })
 
     expected = ''
-    result = generate_booktitle(no_reportnumber)
+    result = generate_booktitle(no_parent_report_number)
 
     assert expected == result
 
 
-def test_generate_booktitle_empty_reportnumber():
-    empty_reportnumber = InspireRecord({
+def test_generate_booktitle_empty_parent_report_number():
+    empty_parent_report_number = InspireRecord({
         'publication_info': [
             {
-                'reportnumber': ''
+                'parent_report_number': ''
             }
         ]
     })
 
     expected = ''
-    result = generate_booktitle(empty_reportnumber)
+    result = generate_booktitle(empty_parent_report_number)
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='KeyError when looking for acronym')
-def test_generate_booktitle_reportnumber_and_conf_acronym():
+def test_generate_booktitle_parent_report_number_and_conf_acronym():
     recordnumber_and_conf_acronym = InspireRecord({
         'publication_info': [
             {
-                'reportnumber': 'CERN-Proceedings-2010-001',
+                'parent_report_number': 'CERN-Proceedings-2010-001',
                 'conf_acronym': 'FOO'  # No value in 773__o.
             }
         ]
@@ -96,11 +96,11 @@ def test_generate_booktitle_reportnumber_and_conf_acronym():
 
 
 @pytest.mark.xfail(reason='KeyError when looking for acronym')
-def test_generate_booktitle_reportnumber_but_no_conf_acronym():
+def test_generate_booktitle_parent_report_number_but_no_conf_acronym():
     no_conf_acronym = InspireRecord({
         'publication_info': [
             {
-                'reportnumber': 'CERN-Proceedings-2014-001'
+                'parent_report_number': 'CERN-Proceedings-2014-001'
             }
         ]
     })

@@ -96,7 +96,7 @@ def test_reference_builder_no_uids():
             "publication_info": {
                 "journal_title": "Nucl.Phys.",
                 "journal_volume": "B360",
-                "reportnumber": "NOT ARXIV",
+                "parent_report_number": "NOT ARXIV",
                 "artid": "362",
                 "year": 1991,
                 "page_start": "362"
