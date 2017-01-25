@@ -97,7 +97,7 @@ def test_doi_but_should_be_hdl_from_0247_a():
 
     expected = [{
         'value': '2027.42/97915',
-        'type': 'HDL',
+        'schema': 'HDL',
     }]
     result = hep.do(create_record(snippet))
 
