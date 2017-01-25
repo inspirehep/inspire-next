@@ -37,27 +37,6 @@ from ..utils import (
 )
 
 
-def add_book_info(record, blob):
-    """Add link to the appropriate book record."""
-    collections = []
-    if 'collections' in record:
-        for c in record.get('collections', ''):
-            if c.get('primary', ''):
-                collections.append(c.get('primary').lower())
-        if 'bookchapter' in collections:
-            pubinfos = force_force_list(blob.get("773__", []))
-            for pubinfo in pubinfos:
-                recid = force_single_element(pubinfo.get('0'))
-                try:
-                    recid = int(recid)
-                    record['book'] = {'record':
-                                      get_record_ref(recid, 'literature')}
-                except (ValueError, TypeError):
-                    pass
-
-    return record
-
-
 def add_inspire_category_from_arxiv_categories(record, blob):
     if not record.get('arxiv_eprints') or record.get('inspire_categories'):
         return record
@@ -74,14 +53,27 @@ def add_inspire_category_from_arxiv_categories(record, blob):
     return record
 
 
+def ensure_document_type(record, blob):
+    if not record.get('document_type'):
+        record['document_type'] = ['article']
+    return record
+
+
+def check_980(record, blob):
+    record.setdefault('980', []).append({'a', 'HEP'})
+    if blob.get('arxiv_eprints'):
+        record['980'].append({'a': 'arXiv'})
+    return record
+
 hep_filters = [
     add_schema('hep.json'),
-    add_book_info,
     add_inspire_category_from_arxiv_categories,
     clean_record,
+    ensure_document_type,
 ]
 
 hep2marc_filters = [
+    check_980,
     clean_record,
 ]
 

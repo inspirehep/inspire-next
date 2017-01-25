@@ -44,6 +44,83 @@ from inspirehep.utils.helpers import force_force_list
 
 RE_VALID_PUBNOTE = re.compile(".*,.*,.*(,.*)?")
 
+@hep.over('document_type', '^980__')
+@utils.for_each_value
+def document_type(self, key, value):
+    values = force_force_list(value.get('a'))
+    ret = []
+    for val in values:
+        val = val.strip().lower()
+        if val == 'citeable':
+            self['citeable'] = True
+        elif val == 'core':
+            self['core'] = True
+        elif val == 'noncore':
+            self['core'] = False
+        elif val == 'arxiv':
+            # Ignored
+            continue
+        elif val == 'published':
+            self['refereed'] = True
+        elif val == 'bookchapter':
+            ret.append('book chapter')
+        elif val == 'conferencepaper':
+            ret.append('conference paper')
+        elif val in ('book', 'note', 'report', 'proceedings', 'thesis'):
+            ret.append(val)
+        elif val == 'withdrawn':
+            self['withdrawn'] = True
+        elif val in ('introductory', 'lectures', 'review'):
+            self['publication_type'] = val
+        elif val.upper() in ('CDF-INTERNAL-NOTE',
+                             'CDF-NOTE',
+                             'CDS',
+                             'D0-INTERNAL-NOTE',
+                             'D0-PRELIMINARY-NOTE',
+                             'H1-INTERNAL-NOTE',
+                             'H1-PRELIMINARY-NOTE',
+                             'HALHIDDEN',
+                             'HEPHIDDEN',
+                             'HERMES-INTERNAL-NOTE',
+                             'LARSOFT-INTERNAL-NOTE',
+                             'LARSOFT-NOTE',
+                             'ZEUS-INTERNAL-NOTE',
+                             'ZEUS-PRELIMINARY-NOTE'):
+            self.setdefault('special_collection', []).append(val.upper())
+    return ret
+
+@hep2marc.over('980__', '^citeable|core|withdrawn|published$')
+@utils.for_each_value
+def citeable(self, key, value):
+    if value:
+        return {'a': key.upper()}
+    elif key == 'core' and not value:
+        return {'a': 'NONCORE'}
+
+
+@hep2marc.over('980__', '^refereed$')
+@utils.for_each_value
+def citeable(self, key, value):
+    if value:
+        return {'a': 'published'}
+
+
+@hep2marc.over('980__', '^special_collection$')
+@utils.for_each_value
+def special_collection(self, key, value):
+    return {'a': value}
+
+
+@hep2marc.over('980__', '^document_type|publication_type$')
+@utils.for_each_value
+def document_type(self, key, value):
+    if value in ('book', 'note', 'report', 'proceedings', 'thesis', 'introductory', 'lectures', 'review'):
+        return {'a': value}
+    elif value == 'book chapter':
+        return {'a': 'bookchapter'}
+    elif value == 'conference paper':
+        return {'a': 'conferencepaper'}
+
 
 @hep.over('references', '^999C5')
 def references(self, key, value):

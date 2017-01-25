@@ -210,7 +210,6 @@ def spires_sysnos2marc(self, key, value):
     return existing_values
 
 
-@hep.over('collections', '^980..')
 @conferences.over('collections', '^980..')
 @institutions.over('collections', '^980..')
 @experiments.over('collections', '^980..')
@@ -240,7 +239,6 @@ def collections(self, key, value):
     return collections
 
 
-@hep2marc.over('980', '^collections$')
 @hepnames2marc.over('980', '^collections$')
 @utils.for_each_value
 def collections2marc(self, key, value):
