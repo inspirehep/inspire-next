@@ -49,7 +49,7 @@ class APIAuthorsCitesummary(object):
                 'control_number',
                 'earliest_date',
                 'facet_inspire_doc_type',
-                'field_categories',
+                'inspire_categories',
                 'titles.title',
             ],
         )

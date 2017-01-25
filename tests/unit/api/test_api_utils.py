@@ -94,7 +94,7 @@ def test_get_id_raises_when_no_control_number():
 
 def test_get_subject():
     record = {
-        'field_categories': [
+        'inspire_categories': [
             {
                 'scheme': 'INSPIRE',
                 'term': 'Phenomenology-HEP',
@@ -110,7 +110,7 @@ def test_get_subject():
 
 def test_get_subject_selects_first():
     record = {
-        'field_categories': [
+        'inspire_categories': [
             {
                 'scheme': 'INSPIRE',
                 'term': 'Experiments-HEP',
@@ -128,9 +128,9 @@ def test_get_subject_selects_first():
     assert expected == result
 
 
-def test_get_subject_discards_non_inspire_field_categories():
+def test_get_subject_discards_non_inspire_inspire_categories():
     record = {
-        'field_categories': [
+        'inspire_categories': [
             {
                 'scheme': 'arXiv',
                 'term': 'cond-mat.str-el',

@@ -350,11 +350,8 @@
                             },
                             "type": "object"
                         },
-                        "field_categories": {
+                        "inspire_categories": {
                             "properties": {
-                                "scheme": {
-                                    "type": "string"
-                                },
                                 "source": {
                                     "type": "string"
                                 },

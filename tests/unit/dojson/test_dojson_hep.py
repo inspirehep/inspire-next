@@ -33,7 +33,7 @@ from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.utils import get_recid_from_ref
-
+from inspirehep.dojson.hep.model import add_inspire_category_from_arxiv_categories
 
 @pytest.fixture
 def marcxml_record():
@@ -1314,13 +1314,11 @@ def test_copyright(marcxml_to_json, json_to_marc):
             json_to_marc['542'][0]['u'])
 
 
-def test_field_categories(marcxml_to_json, json_to_marc):
-    """Test if field_categories is created correctly."""
-    assert (marcxml_to_json['field_categories'][0]['scheme'] ==
-            json_to_marc['65017'][0]['2'])
-    assert (marcxml_to_json['field_categories'][0]['term'] ==
+def test_inspire_categories(marcxml_to_json, json_to_marc):
+    """Test if inspire_categories is created correctly."""
+    assert (marcxml_to_json['inspire_categories'][0]['term'] ==
             json_to_marc['65017'][0]['a'])
-    assert (marcxml_to_json['field_categories'][0]['source'] ==
+    assert (marcxml_to_json['inspire_categories'][0]['source'] ==
             json_to_marc['65017'][0]['9'])
 
 ACCELERATOR_EXPERIMENTS_DATA = [
@@ -2068,3 +2066,69 @@ def test_book_link(marcxml_to_json_book):
     """Test if the link to the book recid is generated correctly."""
     assert (get_recid_from_ref(marcxml_to_json_book['book']['record']) ==
             1409249)
+
+
+def test_add_inspire_category_from_arxiv_categories():
+    snippet = {
+        'arxiv_eprints': {
+            'value': 'arxiv',
+            'categories': ['astro-ph', 'cs.DS'],
+        }
+    }
+
+    expected = {
+        'arxiv_eprints': {
+            'value': 'arxiv',
+            'categories': ['astro-ph', 'cs.DS'],
+        },
+        'inspire_categories': [{
+            'term': 'Astrophysics',
+            'source': 'arxiv',
+        }, {
+            'term': 'Computing',
+            'source': 'arxiv',
+        }]
+
+    }
+
+    result = add_inspire_category_from_arxiv_categories(snippet, None)
+
+    assert result == expected
+
+
+def test_add_inspire_category_without_arxiv_category():
+    snippet = {}
+
+    expected = {}
+
+    output_record = add_inspire_category_from_arxiv_categories(snippet, None)
+
+    assert output_record == expected
+
+
+def test_add_inspire_category_with_inspire_already_present():
+    snippet = {
+        'arxiv_eprints': {
+            'value': 'arxiv',
+            'categories': ['cs.DS'],
+        },
+        'inspire_categories': [{
+            'term': 'Astrophysics',
+            'source': 'arxiv',
+        }]
+    }
+
+    expected = {
+        'arxiv_eprints': {
+            'value': 'arxiv',
+            'categories': ['cs.DS'],
+        },
+        'inspire_categories': [{
+            'term': 'Astrophysics',
+            'source': 'arxiv',
+        }]
+    }
+
+    output_record = add_inspire_category_from_arxiv_categories(snippet, None)
+
+    assert output_record == expected

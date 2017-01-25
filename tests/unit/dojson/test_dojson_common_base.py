@@ -88,7 +88,7 @@ def test_541__a_b_c_e_from_acquisition_source():
     assert expected == result['541']
 
 
-def test_field_from_marcxml_650_with_single_a_and_9():
+def test_field_from_marcxml_650_with_single_source_and_category():
     """Simple case.
 
     One arXiv fieldcode that will be mapped to an INSPIRE category. Source
@@ -99,26 +99,22 @@ def test_field_from_marcxml_650_with_single_a_and_9():
         '  <datafield tag="650" ind1="1" ind2="7">'
         '    <subfield code="2">INSPIRE</subfield>'
         '    <subfield code="a">HEP-PH</subfield>'
-        '    <subfield code="9">automatically added based on DCC, PPF, DK </subfield>'
+        '    <subfield code="9">automatically added based on DCC, PPF, DK</subfield>'
         '  </datafield>'
         '</record>'
     )
 
-    expected = [
-        {
-            'source': 'INSPIRE',
-            '_scheme': 'INSPIRE',
-            'scheme': 'INSPIRE',
-            '_term': 'HEP-PH',
-            'term': 'Phenomenology-HEP',
-        },
-    ]
-    result = hepnames.do(create_record(snippet))
+    expected_inspire = [{
+        'term': 'Phenomenology-HEP',
+        'source': 'curator',
+    }]
 
-    assert expected == result['field_categories']
+    result = hep.do(create_record(snippet))
+
+    assert expected_inspire == result['inspire_categories']
 
 
-def test_field_from_marcxml_650_with_two_a():
+def test_field_from_marcxml_650_with_wrong_category():
     """Two 'a' subfields in one datafield.
 
     The first is an arXiv fieldcode an the second an INSPIRE category.
@@ -127,153 +123,106 @@ def test_field_from_marcxml_650_with_two_a():
         '<record>'
         '  <datafield tag="650" ind1="1" ind2="7">'
         '    <subfield code="2">INSPIRE</subfield>'
-        '    <subfield code="a">hep-ex</subfield>'
-        '    <subfield code="a">Gravitation and Cosmology</subfield>'
+        '    <subfield code="a">Wrong Category</subfield>'
+        '    <subfield code="9">Wrong Source</subfield>'
         '  </datafield>'
         '</record>'
     )
 
-    expected = [
-        {
-            '_scheme': 'INSPIRE',
-            'scheme': 'INSPIRE',
-            '_term': 'hep-ex',
-            'term': 'Experiment-HEP',
-        },
-        {
-            '_scheme': 'INSPIRE',
-            'scheme': 'INSPIRE',
-            '_term': 'Gravitation and Cosmology',
-            'term': 'Gravitation and Cosmology',
-        },
-    ]
-    result = hepnames.do(create_record(snippet))
+    result = hep.do(create_record(snippet))
 
-    assert expected == result['field_categories']
+    assert 'inspire_categories' not in result
 
 
-def test_field_from_marcxml_650_with_two_2():
-    """Two '2' subfields in one datafield.
+def test_field_from_marcxml_650_with_wrong_source():
+    """Two 'a' subfields in one datafield.
 
-    The first will be taken (this time it's correct).
+    The first is an arXiv fieldcode an the second an INSPIRE category.
     """
     snippet = (
         '<record>'
         '  <datafield tag="650" ind1="1" ind2="7">'
-        '    <subfield code="2">arXiv</subfield>'
         '    <subfield code="2">INSPIRE</subfield>'
-        '    <subfield code="a">hep-ex</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    expected = [
-        {
-            '_scheme': 'arXiv',
-            'scheme': 'INSPIRE',
-            '_term': 'hep-ex',
-            'term': 'Experiment-HEP',
-        },
-    ]
-    result = hepnames.do(create_record(snippet))
-
-    assert expected == result['field_categories']
-
-
-def test_field_from_multiple_marcxml_650():
-    """Two datafields.
-
-    Both are arXiv field codes, but the other is incorrectly labeled as INSPIRE.
-    """
-    snippet = (
-        '<record>'
-        '  <datafield tag="650" ind1="1" ind2="7">'
-        '    <subfield code="2">arXiv</subfield>'
         '    <subfield code="a">HEP-PH</subfield>'
-        '  </datafield>'
-        '  <datafield tag="650" ind1="1" ind2="7">'
-        '    <subfield code="2">INSPIRE</subfield>'
-        '    <subfield code="a">astro-ph.IM</subfield>'
+        '    <subfield code="9">Wrong Source</subfield>'
         '  </datafield>'
         '</record>'
     )
 
-    expected = [
-        {
-            '_scheme': 'arXiv',
-            'scheme': 'INSPIRE',
-            '_term': 'HEP-PH',
-            'term': 'Phenomenology-HEP',
-        },
-        {
-            '_scheme': 'INSPIRE',
-            'scheme': 'INSPIRE',
-            '_term': 'astro-ph.IM',
-            'term': 'Instrumentation',
-        },
-    ]
-    result = hepnames.do(create_record(snippet))
+    expected_inspire = [{
+        'term': 'Phenomenology-HEP',
+        'source': 'undefined',
+    }]
 
-    assert expected == result['field_categories']
+    result = hep.do(create_record(snippet))
+
+    assert expected_inspire == result['inspire_categories']
 
 
-def test_field_from_marcxml_650_with_no_a():
-    """No term at all."""
+def test_field_from_marcxml_650_with_duplicate_category():
+    """Two 'a' subfields in one datafield.
+
+    The first is an arXiv fieldcode an the second an INSPIRE category.
+    """
     snippet = (
         '<record>'
         '  <datafield tag="650" ind1="1" ind2="7">'
-        '    <subfield code="2">arXiv</subfield>'
+        '    <subfield code="2">INSPIRE</subfield>'
+        '    <subfield code="a">HEP-PH</subfield>'
+        '    <subfield code="9">automatically added based on DCC, PPF, DK</subfield>'
+        '  </datafield>'
+        '  <datafield tag="650" ind1="1" ind2="7">'
+        '    <subfield code="2">INSPIRE</subfield>'
+        '    <subfield code="a">HEP-PH</subfield>'
+        '    <subfield code="9">automatically added based on DCC, PPF, DK</subfield>'
         '  </datafield>'
         '</record>'
     )
 
-    result = hepnames.do(create_record(snippet))
+    expected_inspire = [{
+        'term': 'Phenomenology-HEP',
+        'source': 'curator',
+    }]
 
-    assert 'field_categories' not in result
+    result = hep.do(create_record(snippet))
+
+    assert expected_inspire == result['inspire_categories']
 
 
-def test_field_categories_from_650__a_2():
+def test_field_from_marcxml_650_with_multiple_category():
+    """Two 'a' subfields in one datafield.
+
+    The first is an arXiv fieldcode an the second an INSPIRE category.
+    """
     snippet = (
-        '<datafield tag="650" ind1="1" ind2="7">'
-        '  <subfield code="2">Inspire</subfield>'
-        '  <subfield code="a">Experiment-HEP</subfield>'
-        '</datafield>'
-    )  # record/1426196
+        '<record>'
+        '  <datafield tag="650" ind1="1" ind2="7">'
+        '    <subfield code="2">INSPIRE</subfield>'
+        '    <subfield code="a">HEP-PH</subfield>'
+        '    <subfield code="a">astro-ph.CO</subfield>'
+        '    <subfield code="9">arxiv</subfield>'
+        '  </datafield>'
+        '  <datafield tag="650" ind1="1" ind2="7">'
+        '    <subfield code="2">INSPIRE</subfield>'
+        '    <subfield code="a">cs.DL</subfield>'
+        '    <subfield code="9">submitter</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+    expected_inspire = [{
+        'term': 'Phenomenology-HEP',
+        'source': 'arxiv',
+    },{
+        'term': 'Astrophysics',
+        'source': 'arxiv',
+    },{
+        'term': 'Computing',
+        'source': 'user',
+    }]
 
-    expected = [
-        {
-            '_scheme': 'Inspire',
-            'scheme': 'INSPIRE',
-            '_term': 'Experiment-HEP',
-            'term': 'Experiment-HEP',
-        },
-    ]
-    result = hepnames.do(create_record(snippet))
+    result = hep.do(create_record(snippet))
 
-    assert expected == result['field_categories']
-
-
-def test_field_categories_from_65017_a_2_9_with_conference():
-    snippet = (
-        '<datafield tag="650" ind1="1" ind2="7">'
-        '  <subfield code="2">INSPIRE</subfield>'
-        '  <subfield code="9">conference</subfield>'
-        '  <subfield code="a">Accelerators</subfield>'
-        '</datafield>'
-    )  # record/1479228
-
-    expected = [
-        {
-            '_scheme': 'INSPIRE',
-            'scheme': 'INSPIRE',
-            'source': 'conference',
-            '_term': 'Accelerators',
-            'term': 'Accelerators',
-        },
-    ]
-    result = hepnames.do(create_record(snippet))
-
-    assert expected == result['field_categories']
+    assert expected_inspire == result['inspire_categories']
 
 
 def test_urls_from_marcxml_856_with_single_u_single_y():

@@ -32,12 +32,12 @@ from ...utils import get_record_ref, get_recid_from_ref
 from inspirehep.utils.helpers import force_force_list
 
 
-@hep2marc.over('65017', 'field_categories')
+@hep2marc.over('65017', 'inspire_categories')
 @utils.for_each_value
-def field_categories2marc(self, key, value):
-    """Field categories."""
+def inspire_categories2marc(self, key, value):
+    """Inspire categories."""
     return {
-        'a': value.get('_term'),
+        'a': value.get('term'),
         '2': value.get('scheme'),
         '9': value.get('source'),
     }
