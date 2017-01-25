@@ -113,7 +113,7 @@ def collaboration(self, key, value):
         if '0' in value:
             try:
                 recid = int(value.get('0'))
-            except:
+            except ValueError:
                 pass
         return {
             'value': value.get('g'),

@@ -42,76 +42,76 @@ class ElasticSearchNoKeywordsDSL(object):
 
     visitor = make_visitor()
 
-    @visitor(KeywordOp)
+    @visitor(KeywordOp)  # noqa: F811
     def visit(self, node, left, right):
         raise QueryHasKeywords()
 
-    @visitor(MalformedQuery)
+    @visitor(MalformedQuery)  # noqa: F811
     def visit(self, op):
         # FIXME: Should send signal to display a message to the user.
         return
 
-    @visitor(AndOp)
+    @visitor(AndOp)  # noqa: F811
     def visit(self, node, left, right):
         return
 
-    @visitor(OrOp)
+    @visitor(OrOp)  # noqa: F811
     def visit(self, node, left, right):
         pass
 
-    @visitor(NotOp)
+    @visitor(NotOp)  # noqa: F811
     def visit(self, node, op):
         pass
 
-    @visitor(ValueQuery)
+    @visitor(ValueQuery)  # noqa: F811
     def visit(self, node, op):
         return
 
-    @visitor(Keyword)
+    @visitor(Keyword)  # noqa: F811
     def visit(self, node):
         pass
 
-    @visitor(Value)
+    @visitor(Value)  # noqa: F811
     def visit(self, node):
         pass
 
-    @visitor(SingleQuotedValue)
+    @visitor(SingleQuotedValue)  # noqa: F811
     def visit(self, node):
         pass
 
-    @visitor(DoubleQuotedValue)
+    @visitor(DoubleQuotedValue)  # noqa: F811
     def visit(self, node):
         pass
 
-    @visitor(RegexValue)
+    @visitor(RegexValue)  # noqa: F811
     def visit(self, node):
         pass
 
-    @visitor(RangeOp)
+    @visitor(RangeOp)  # noqa: F811
     def visit(self, node, left, right):
         pass
 
-    @visitor(EmptyQuery)
+    @visitor(EmptyQuery)  # noqa: F811
     def visit(self, node):
         return
 
-    @visitor(GreaterOp)
+    @visitor(GreaterOp)  # noqa: F811
     def visit(self, node, value_fn):
         pass
 
-    @visitor(WildcardQuery)
+    @visitor(WildcardQuery)  # noqa: F811
     def visit(self, node):
         pass
 
-    @visitor(LowerOp)
+    @visitor(LowerOp)  # noqa: F811
     def visit(self, node, value_fn):
         pass
 
-    @visitor(GreaterEqualOp)
+    @visitor(GreaterEqualOp)  # noqa: F811
     def visit(self, node, value_fn):
         pass
 
-    @visitor(LowerEqualOp)
+    @visitor(LowerEqualOp)  # noqa: F811
     def visit(self, node, value_fn):
         pass
     # pylint: enable=W0612,E0102

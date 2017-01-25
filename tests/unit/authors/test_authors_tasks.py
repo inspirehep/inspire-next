@@ -29,10 +29,10 @@ from mock import patch
 from invenio_accounts.models import User
 
 from inspirehep.modules.authors.tasks import (
+    curation_ticket_context,
     new_ticket_context,
-    update_ticket_context,
     reply_ticket_context,
-    curation_ticket_context
+    update_ticket_context
 )
 
 

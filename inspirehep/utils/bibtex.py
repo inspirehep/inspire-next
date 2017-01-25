@@ -27,9 +27,9 @@ import re
 from inspirehep.utils import bibtex_booktitle
 from inspirehep.utils.helpers import force_force_list
 from inspirehep.utils.record import get_value, is_submitted_but_not_published
-from inspirehep.utils.record_getter import get_es_record
+from inspirehep.utils.record_getter import RecordGetterError, get_es_record
 
-from .export import MissingRequiredFieldError, Export
+from .export import Export, MissingRequiredFieldError
 
 
 class Bibtex(Export):
@@ -96,7 +96,6 @@ class Bibtex(Export):
 
     def _format_thesis(self):
         """Format thesis entry type"""
-        thesis = ''
         name = 'phdthesis'
 
         if 'thesis' in self.record and 'degree_type' in self.record['thesis']:
@@ -652,7 +651,7 @@ class Bibtex(Export):
                         coden = ','.join(
                             [record['coden'][0], volume, pages])
                         return coden
-                except:
+                except (KeyError, RecordGetterError):
                     return ''
         else:
             return ''

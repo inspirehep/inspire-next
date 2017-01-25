@@ -41,7 +41,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     reply_ticket,
     send_robotupload
 )
-from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
+from inspirehep.modules.workflows.tasks.upload import set_schema, store_record
 
 from inspirehep.modules.authors.tasks import (
     curation_ticket_context,

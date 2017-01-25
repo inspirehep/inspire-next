@@ -93,8 +93,6 @@ def get_id(record):
 
 def get_subject(record):
     field_categories = force_force_list(get_value(record, 'field_categories'))
-    inspire_field_categories = [
-        fc for fc in field_categories if fc.get('scheme') == 'INSPIRE']
     terms = [fc['term'] for fc in field_categories if fc.get('term')]
 
     if terms:

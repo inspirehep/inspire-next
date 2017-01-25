@@ -25,15 +25,16 @@
 from __future__ import absolute_import, division, print_function
 
 from .api import (
-    IQ,
-    LiteratureSearch,
     AuthorsSearch,
-    DataSearch,
     ConferencesSearch,
-    JobsSearch,
-    InstitutionsSearch,
+    DataSearch,
     ExperimentsSearch,
-    JournalsSearch
+    IQ,
+    InstitutionsSearch,
+    JobsSearch,
+    JournalsSearch,
+    LiteratureSearch
+
 )
 from .ext import INSPIRESearch
 

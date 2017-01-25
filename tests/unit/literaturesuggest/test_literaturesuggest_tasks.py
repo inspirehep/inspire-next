@@ -26,11 +26,11 @@ import mock
 from elasticsearch_dsl.result import Response
 
 from inspirehep.modules.literaturesuggest.tasks import (
-    formdata_to_model,
-    new_ticket_context,
-    reply_ticket_context,
     curation_ticket_context,
     curation_ticket_needed,
+    formdata_to_model,
+    new_ticket_context,
+    reply_ticket_context
 )
 
 

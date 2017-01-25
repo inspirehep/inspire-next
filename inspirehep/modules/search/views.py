@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 import json
 
 import six
-from flask import Blueprint, current_app, jsonify, request, render_template
+from flask import Blueprint, current_app, jsonify, render_template, request
 
 from inspirehep.modules.search import LiteratureSearch
 

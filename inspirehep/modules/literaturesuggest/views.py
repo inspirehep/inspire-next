@@ -29,13 +29,13 @@ from __future__ import absolute_import, division, print_function
 import copy
 
 from flask import (
-    abort,
     Blueprint,
-    redirect,
-    request,
-    render_template,
-    url_for,
+    abort,
     jsonify,
+    redirect,
+    render_template,
+    request,
+    url_for
 )
 from flask_login import current_user, login_required
 
@@ -44,7 +44,7 @@ from werkzeug.datastructures import MultiDict
 from inspirehep.modules.forms.form import DataExporter
 
 from invenio_db import db
-from invenio_workflows import workflow_object_class, start
+from invenio_workflows import start, workflow_object_class
 
 from .forms import LiteratureForm
 from .tasks import formdata_to_model

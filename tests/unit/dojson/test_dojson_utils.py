@@ -28,13 +28,13 @@ from mock import patch
 from inspirehep.dojson.utils import (
     classify_field,
     classify_rank,
+    dedupe_all_lists,
     force_single_element,
     get_int_value,
     get_recid_from_ref,
     get_record_ref,
     legacy_export_as_marc,
-    dedupe_all_lists,
-    strip_empty_values,
+    strip_empty_values
 )
 
 

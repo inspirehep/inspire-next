@@ -49,7 +49,7 @@ from __future__ import absolute_import, division, print_function
 
 import requests
 
-from flask import current_app, request, jsonify
+from flask import current_app, jsonify, request
 from flask_login import login_required
 from lxml.etree import fromstring
 
@@ -164,5 +164,6 @@ class Arxiv(object):
         resp.status_code = response_code.get(result['status'],
                                              result['status'])
         return resp
+
 
 __all__ = ("Arxiv", )

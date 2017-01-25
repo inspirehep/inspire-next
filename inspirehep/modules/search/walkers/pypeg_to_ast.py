@@ -38,63 +38,63 @@ class PypegConverter(pypeg_to_ast.PypegConverter):
 
     # pylint: disable=W0613,E0102
 
-    @visitor(parser.SpiresKeywordRule)
+    @visitor(parser.SpiresKeywordRule)  # noqa: F811
     def visit(self, node):
         return ast.Keyword(node.value)
 
-    @visitor(parser.SpiresKeywordQuery)
+    @visitor(parser.SpiresKeywordQuery)  # noqa: F811
     def visit(self, node, keyword, value):
         return SpiresOp(keyword, value)
 
-    @visitor(parser.GreaterQuery)
+    @visitor(parser.GreaterQuery)  # noqa: F811
     def visit(self, node, child):
         return ast.GreaterOp(child)
 
-    @visitor(parser.GreaterEqualQuery)
+    @visitor(parser.GreaterEqualQuery)  # noqa: F811
     def visit(self, node, child):
         return ast.GreaterEqualOp(child)
 
-    @visitor(parser.LowerQuery)
+    @visitor(parser.LowerQuery)  # noqa: F811
     def visit(self, node, child):
         return ast.LowerOp(child)
 
-    @visitor(parser.LowerEqualQuery)
+    @visitor(parser.LowerEqualQuery)  # noqa: F811
     def visit(self, node, child):
         return ast.LowerEqualOp(child)
 
-    @visitor(parser.SpiresSimpleValue)
+    @visitor(parser.SpiresSimpleValue)  # noqa: F811
     def visit(self, node):
         return ast.Value(node.value)
 
-    @visitor(parser.SpiresValue)
+    @visitor(parser.SpiresValue)  # noqa: F811
     def visit(self, node, children):
         return ast.Value("".join([c.value for c in children]))
 
-    @visitor(parser.SpiresValueQuery)
+    @visitor(parser.SpiresValueQuery)  # noqa: F811
     def visit(self, node, child):
         return ast.ValueQuery(child)
 
-    @visitor(parser.SpiresSimpleQuery)
+    @visitor(parser.SpiresSimpleQuery)  # noqa: F811
     def visit(self, node, child):
         return child
 
-    @visitor(parser.SpiresParenthesizedQuery)
+    @visitor(parser.SpiresParenthesizedQuery)  # noqa: F811
     def visit(self, node, child):
         return child
 
-    @visitor(parser.SpiresNotQuery)
+    @visitor(parser.SpiresNotQuery)  # noqa: F811
     def visit(self, node, child):
         return ast.AndOp(None, ast.NotOp(child))
 
-    @visitor(parser.SpiresAndQuery)
+    @visitor(parser.SpiresAndQuery)  # noqa: F811
     def visit(self, node, child):
         return ast.AndOp(None, child)
 
-    @visitor(parser.SpiresOrQuery)
+    @visitor(parser.SpiresOrQuery)  # noqa: F811
     def visit(self, node, child):
         return ast.OrOp(None, child)
 
-    @visitor(parser.SpiresQuery)
+    @visitor(parser.SpiresQuery)  # noqa: F811
     def visit(self, node, children):
         # Assign implicit keyword
         # find author x and y --> find author x and author y
@@ -129,11 +129,11 @@ class PypegConverter(pypeg_to_ast.PypegConverter):
             tree = booleanNode
         return tree
 
-    @visitor(parser.FindQuery)
+    @visitor(parser.FindQuery)  # noqa: F811
     def visit(self, node, child):
         return child
 
-    @visitor(parser.Main)
+    @visitor(parser.Main)  # noqa: F811
     def visit(self, node, child):
         return child
 

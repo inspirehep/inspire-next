@@ -28,8 +28,14 @@ from inspirehep.utils.template import render_macro_from_template
 
 from werkzeug import MultiDict
 
-from wtforms.widgets import HiddenInput, HTMLString, Input, RadioInput, \
-    TextInput, html_params
+from wtforms.widgets import (
+    HTMLString,
+    HiddenInput,
+    Input,
+    RadioInput,
+    TextInput,
+    html_params
+)
 
 
 class ButtonWidget(object):
@@ -405,7 +411,7 @@ class TagListWidget(DynamicListWidget):
         defaults = dict(
             html_tag='ul',
             class_='list-unstyled',
-            item_widget=TagItemWidget(
+            item_widget=TagItemWidget(  # noqa: F821
                 template=self.template
             )
         )

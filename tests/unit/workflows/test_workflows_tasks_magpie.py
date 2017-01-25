@@ -27,12 +27,12 @@ import requests
 
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.tasks.magpie import (
-    get_magpie_url,
-    prepare_magpie_payload,
     filter_magpie_response,
-    guess_keywords,
+    get_magpie_url,
     guess_categories,
     guess_experiments,
+    guess_keywords,
+    prepare_magpie_payload
 )
 
 

@@ -25,9 +25,6 @@
 from __future__ import absolute_import, division, print_function
 
 from dojson import utils
-from dojson.errors import IgnoreKey
-
-from inspirehep.utils.helpers import force_force_list
 
 from ..conferences.model import conferences
 from ..experiments.model import experiments
@@ -82,6 +79,7 @@ def self_url(index):
         self['control_number'] = int(value)
         return get_record_ref(value, index)
     return _self_url
+
 
 institutions.over('self', '^001')(self_url('institutions'))
 hep.over('self', '^001')(self_url('literature'))

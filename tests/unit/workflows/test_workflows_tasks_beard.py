@@ -28,8 +28,8 @@ import requests
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.tasks.beard import (
     get_beard_url,
-    prepare_payload,
     guess_coreness,
+    prepare_payload
 )
 
 

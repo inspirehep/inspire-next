@@ -24,7 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import six
 import logging
 import re
 
@@ -33,7 +32,6 @@ from dojson import utils
 from flask import current_app
 
 from inspirehep.utils.record import get_value as utils_get_value
-from inspirehep.utils.helpers import force_force_list
 
 from ..model import hep, hep2marc
 from ...utils import (

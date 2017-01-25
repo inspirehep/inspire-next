@@ -21,9 +21,11 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.date import (create_valid_date,
-                                   create_earliest_date,
-                                   create_datestruct)
+from inspirehep.utils.date import (
+    create_datestruct,
+    create_earliest_date,
+    create_valid_date
+)
 
 
 def test_create_valid_date():

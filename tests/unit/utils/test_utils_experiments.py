@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 from elasticsearch_dsl.result import Response
 
-from inspirehep.utils.experiments import render_people, render_contributions
+from inspirehep.utils.experiments import render_contributions, render_people
 
 
 def test_render_people():

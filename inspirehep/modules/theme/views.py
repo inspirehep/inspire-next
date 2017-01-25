@@ -43,7 +43,6 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_mail.tasks import send_email
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_search import current_search_client
 
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
@@ -382,7 +381,7 @@ def get_institution_people_datatables_rows(recid):
                     name=recid_map[author['key']].preferred_name
                 )
             )
-        except:
+        except (IndexError, AttributeError):
             # No preferred name, use value
             row.append(
                 author_html_link.format(

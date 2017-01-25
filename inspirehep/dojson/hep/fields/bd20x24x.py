@@ -76,7 +76,7 @@ def titles2marc(self, key, value):
     if values:
         # Anything but the first element is the main title
         self['245'] = [get_transformed_title(values[0])]
-    return [get_transformed_title(value) for value in values[1:]]
+    return [get_transformed_title(val) for val in values[1:]]
 
 
 @hep2marc.over('242', r'^title_translations$')
@@ -89,4 +89,4 @@ def title_translations2marc(self, key, value):
         }
 
     values = force_force_list(value)
-    return [get_transformed_title(value) for value in values]
+    return [get_transformed_title(val) for val in values]

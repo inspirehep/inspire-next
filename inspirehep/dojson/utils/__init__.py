@@ -153,11 +153,11 @@ def legacy_export_as_marc(json, tabsize=4):
             tag = key[:3]
             try:
                 ind1 = key[3].replace("_", "")
-            except:
+            except IndexError:
                 ind1 = ""
             try:
                 ind2 = key[4].replace("_", "")
-            except:
+            except IndexError:
                 ind2 = ""
             if isinstance(value, dict):
                 value = [value]

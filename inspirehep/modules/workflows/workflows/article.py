@@ -42,16 +42,16 @@ from inspirehep.modules.workflows.tasks.arxiv import (
 from inspirehep.modules.workflows.tasks.actions import (
     add_core,
     halt_record,
-    is_record_relevant,
     in_production_mode,
-    is_record_accepted,
-    reject_record,
+    is_arxiv_paper,
     is_experimental_paper,
     is_marked,
+    is_record_accepted,
+    is_record_relevant,
     is_submission,
-    is_arxiv_paper,
     mark,
-    prepare_update_payload
+    prepare_update_payload,
+    reject_record
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -60,20 +60,20 @@ from inspirehep.modules.workflows.tasks.classifier import (
 )
 from inspirehep.modules.workflows.tasks.beard import guess_coreness
 from inspirehep.modules.workflows.tasks.magpie import (
-    guess_keywords,
     guess_categories,
     guess_experiments,
+    guess_keywords
 )
-from inspirehep.modules.workflows.tasks.matching import(
-    delete_self_and_stop_processing,
-    stop_processing,
-    pending_in_holding_pen,
-    article_exists,
+from inspirehep.modules.workflows.tasks.matching import (
     already_harvested,
+    article_exists,
+    delete_self_and_stop_processing,
+    pending_in_holding_pen,
     previously_rejected,
-    update_existing_workflow_object,
+    stop_processing,
+    update_existing_workflow_object
 )
-from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
+from inspirehep.modules.workflows.tasks.upload import set_schema, store_record
 from inspirehep.modules.workflows.tasks.submission import (
     add_note_entry,
     close_ticket,
@@ -88,10 +88,10 @@ from inspirehep.modules.workflows.tasks.submission import (
 )
 
 from inspirehep.modules.literaturesuggest.tasks import (
-    curation_ticket_needed,
-    reply_ticket_context,
-    new_ticket_context,
     curation_ticket_context,
+    curation_ticket_needed,
+    new_ticket_context,
+    reply_ticket_context
 )
 
 

@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 import re
 import time
 
-from .export import MissingRequiredFieldError, Export
+from .export import Export, MissingRequiredFieldError
 from inspirehep import config
 
 

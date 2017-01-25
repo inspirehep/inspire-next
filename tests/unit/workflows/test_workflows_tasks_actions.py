@@ -27,20 +27,20 @@ from mock import patch
 from six import StringIO
 
 from inspirehep.modules.workflows.tasks.actions import (
-    mark,
-    is_marked,
-    is_record_accepted,
-    shall_halt_workflow,
-    in_production_mode,
     add_core,
     halt_record,
-    update_note,
-    reject_record,
-    is_record_relevant,
-    is_experimental_paper,
+    in_production_mode,
     is_arxiv_paper,
+    is_experimental_paper,
+    is_marked,
+    is_record_accepted,
+    is_record_relevant,
     is_submission,
+    mark,
     prepare_update_payload,
+    reject_record,
+    shall_halt_workflow,
+    update_note
 )
 
 

@@ -24,8 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
-from inspirehep.utils.record_getter import get_es_record
-from .export import MissingRequiredFieldError, Export
+from inspirehep.utils.record_getter import RecordGetterError, get_es_record
+from .export import Export, MissingRequiredFieldError
 
 
 class Latex(Export):
@@ -290,7 +290,7 @@ class Latex(Export):
                         coden = ','.join(
                             [record['coden'][0], volume, pages])
                         return coden
-                except:
+                except (KeyError, RecordGetterError):
                     return ''
         else:
             return ''
