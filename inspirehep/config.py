@@ -352,7 +352,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
                ],
     "year": ["imprints.date",
              "preprint_date",
-             "thesis.date",
+             "thesis_info.date",
              "publication_info.year"
              ],
     "confnumber": ["publication_info.cnum"],
@@ -1652,7 +1652,7 @@ INSPIRE_REF_UPDATER_WHITELISTS = {
         'publication_info.parent_record',
         'references.record',
         'succeding_entry.record',
-        'thesis.institutions.record',
+        'thesis_info.institutions.record',
         'thesis_supervisors.affiliations.record',
     ],
     'institutions': [

@@ -99,8 +99,8 @@ class Bibtex(Export):
         thesis = ''
         name = 'phdthesis'
 
-        if 'thesis' in self.record and 'degree_type' in self.record['thesis']:
-            thesis_type = self.record['thesis']['degree_type']
+        if 'thesis_info' in self.record and 'degree_type' in self.record['thesis_info']:
+            thesis_type = self.record['thesis_info']['degree_type']
             if thesis_type == 'Master':
                 name = 'mastersthesis'
 
@@ -395,9 +395,9 @@ class Bibtex(Export):
                             year = imprint['date'].split('-')[0]
                 elif 'preprint_date' in self.record:
                     year = self.record['preprint_date'][0].split('-')[0]
-        elif self.original_entry == 'thesis' and 'thesis' in self.record:
-            if 'date' in self.record['thesis']:
-                year = self.record['thesis']['date']
+        elif self.original_entry == 'thesis_info' and 'thesis_info' in self.record:
+            if 'date' in self.record['thesis_info']:
+                year = self.record['thesis_info']['date']
             if not year:
                 if 'preprint_date' in self.record:
                     year = self.record['preprint_date'].split('-')[0]

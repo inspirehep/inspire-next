@@ -1030,7 +1030,7 @@ def test_find_author_and_date():
                           },
                           {
                             "range": {
-                              "thesis.date": {
+                              "thesis_info.date": {
                                 "gt": "2000"
                               }
                             }
