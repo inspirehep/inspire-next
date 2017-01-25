@@ -171,7 +171,7 @@ def persistent_identifiers(self, key, value):
                         type_ = 'HDL'
                     persistent_identifiers.append({
                         'source': source,
-                        'type': type_,
+                        'schema': type_,
                         'value': id_,
                     })
 
@@ -188,7 +188,7 @@ def dois2marc(self, key, value):
         return {
             'a': val.get('value'),
             '9': val.get('source'),
-            '2': val.get('type') or "DOI"
+            '2': val.get('schema') or "DOI"
         }
 
     self['024'] = self.get('024', [])
