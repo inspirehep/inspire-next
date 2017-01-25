@@ -1289,11 +1289,11 @@ def test_hidden_notes_from_595__a_9_and_595__double_a_9():
 
 def test_thesis_roundtrip(marcxml_to_json, json_to_marc):
     """Test if thesis is created correctly."""
-    assert (marcxml_to_json['thesis']['degree_type'] ==
+    assert (marcxml_to_json['thesis_info']['degree_type'] ==
             json_to_marc['502']['b'])
-    assert (marcxml_to_json['thesis']['institutions'][0]['name'] ==
+    assert (marcxml_to_json['thesis_info']['institutions'][0]['name'] ==
             json_to_marc['502']['c'][0])
-    assert (marcxml_to_json['thesis']['date'] ==
+    assert (marcxml_to_json['thesis_info']['date'] ==
             json_to_marc['502']['d'])
 
 
@@ -1315,7 +1315,7 @@ def test_thesis_multiple_institutions():
         {'name': 'Cote d\'Azur Observ., Nice', 'recid': '904125'}
     ]
 
-    result = hep.do(create_record(snippet))['thesis']['institutions']
+    result = hep.do(create_record(snippet))['thesis_info']['institutions']
 
     assert len(result) == 2
     for expected_inst, result_inst in zip(expected, result):
@@ -1348,7 +1348,7 @@ def test_thesis_from_502__a_c_d_z():
     }
     result = hep.do(create_record(snippet))
 
-    assert expected == result['thesis']
+    assert expected == result['thesis_info']
 
 
 def test_abstract(marcxml_to_json, json_to_marc):

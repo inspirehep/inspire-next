@@ -98,8 +98,8 @@ def hidden_note2marc(self, key, value):
     }
 
 
-@hep.over('thesis', '^502..')
-def thesis(self, key, value):
+@hep.over('thesis_info', '^502..')
+def thesis_info(self, key, value):
     """Get Thesis Information."""
     DEGREE_TYPES_MAP = {
         'RAPPORT DE STAGE': 'Internship Report',
@@ -142,8 +142,8 @@ def thesis(self, key, value):
     return res
 
 
-@hep2marc.over('502', '^thesis$')
-def thesis2marc(self, key, value):
+@hep2marc.over('502', '^thesis_info$')
+def thesis_info2marc(self, key, value):
     """Get Thesis Information."""
     return {
         'a': value.get('defense_date'),

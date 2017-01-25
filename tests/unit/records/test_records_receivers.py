@@ -77,7 +77,7 @@ def test_earliest_date_from_preprint_date():
 
 def test_earliest_date_from_thesis_date():
     with_thesis_date = InspireRecord({
-        'thesis': {'date': '2008'}
+        'thesis_info': {'date': '2008'}
     })
     earliest_date(None, with_thesis_date)
 
@@ -89,7 +89,7 @@ def test_earliest_date_from_thesis_date():
 
 def test_earliest_date_from_thesis_defense_date():
     with_thesis_defense_date = InspireRecord({
-        'thesis': {'defense_date': '2012-06-01'}
+        'thesis_info': {'defense_date': '2012-06-01'}
     })
     earliest_date(None, with_thesis_defense_date)
 
