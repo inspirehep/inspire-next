@@ -22,12 +22,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+from flask import current_app
 from mock import patch
 
 from inspirehep.modules.records.tasks import update_links
 
 
-def test_update_links(app):
+def test_update_links():
     config = {
         'INSPIRE_REF_UPDATER_WHITELISTS': {
             'literature': [
@@ -36,26 +37,25 @@ def test_update_links(app):
         },
     }
 
-    with app.app_context():
-        with patch.dict(app.config, config):
-            record = {
-                '$schema': 'http://localhost:5000/schemas/record/hep.json',
-                'record': {
-                    '$ref': 'http://localhost:5000/record/1',
-                },
-            }
+    with patch.dict(current_app.config, config):
+        record = {
+            '$schema': 'http://localhost:5000/schemas/record/hep.json',
+            'record': {
+                '$ref': 'http://localhost:5000/record/1',
+            },
+        }
 
-            update_links(record, 'http://localhost:5000/record/1', 'http://localhost:5000/record/2')
+        update_links(record, 'http://localhost:5000/record/1', 'http://localhost:5000/record/2')
 
-            assert record == {
-                '$schema': 'http://localhost:5000/schemas/record/hep.json',
-                'record': {
-                    '$ref': 'http://localhost:5000/record/2',
-                },
-            }
+        assert record == {
+            '$schema': 'http://localhost:5000/schemas/record/hep.json',
+            'record': {
+                '$ref': 'http://localhost:5000/record/2',
+            },
+        }
 
 
-def test_update_links_handles_nested_paths(app):
+def test_update_links_handles_nested_paths():
     config = {
         'INSPIRE_REF_UPDATER_WHITELISTS': {
             'literature': [
@@ -64,30 +64,29 @@ def test_update_links_handles_nested_paths(app):
         },
     }
 
-    with app.app_context():
-        with patch.dict(app.config, config):
-            record = {
-                '$schema': 'http://localhost:5000/schemas/record/hep.json',
-                'foo': {
-                    'record': {
-                        '$ref': 'http://localhost:5000/record/1',
-                    },
+    with patch.dict(current_app.config, config):
+        record = {
+            '$schema': 'http://localhost:5000/schemas/record/hep.json',
+            'foo': {
+                'record': {
+                    '$ref': 'http://localhost:5000/record/1',
                 },
-            }
+            },
+        }
 
-            update_links(record, 'http://localhost:5000/record/1', 'http://localhost:5000/record/2')
+        update_links(record, 'http://localhost:5000/record/1', 'http://localhost:5000/record/2')
 
-            assert record == {
-                '$schema': 'http://localhost:5000/schemas/record/hep.json',
-                'foo': {
-                    'record': {
-                        '$ref': 'http://localhost:5000/record/2',
-                    },
+        assert record == {
+            '$schema': 'http://localhost:5000/schemas/record/hep.json',
+            'foo': {
+                'record': {
+                    '$ref': 'http://localhost:5000/record/2',
                 },
-            }
+            },
+        }
 
 
-def test_update_links_handles_lists(app):
+def test_update_links_handles_lists():
     config = {
         'INSPIRE_REF_UPDATER_WHITELISTS': {
             'literature': [
@@ -96,28 +95,27 @@ def test_update_links_handles_lists(app):
         },
     }
 
-    with app.app_context():
-        with patch.dict(app.config, config):
-            record = {
-                '$schema': 'http://localhost:5000/schemas/record/hep.json',
-                'foos': [
-                    {'record': {'$ref': 'http://localhost:5000/record/1'}},
-                    {'record': {'$ref': 'http://localhost:5000/record/2'}},
-                ],
-            }
+    with patch.dict(current_app.config, config):
+        record = {
+            '$schema': 'http://localhost:5000/schemas/record/hep.json',
+            'foos': [
+                {'record': {'$ref': 'http://localhost:5000/record/1'}},
+                {'record': {'$ref': 'http://localhost:5000/record/2'}},
+            ],
+        }
 
-            update_links(record, 'http://localhost:5000/record/1', 'http://localhost:5000/record/2')
+        update_links(record, 'http://localhost:5000/record/1', 'http://localhost:5000/record/2')
 
-            assert record == {
-                '$schema': 'http://localhost:5000/schemas/record/hep.json',
-                'foos': [
-                    {'record': {'$ref': 'http://localhost:5000/record/2'}},
-                    {'record': {'$ref': 'http://localhost:5000/record/2'}},
-                ],
-            }
+        assert record == {
+            '$schema': 'http://localhost:5000/schemas/record/hep.json',
+            'foos': [
+                {'record': {'$ref': 'http://localhost:5000/record/2'}},
+                {'record': {'$ref': 'http://localhost:5000/record/2'}},
+            ],
+        }
 
 
-def test_update_links_ignores_non_whitelisted_paths(app):
+def test_update_links_ignores_non_whitelisted_paths():
     config = {
         'INSPIRE_REF_UPDATER_WHITELISTS': {
             'literature': [
@@ -126,26 +124,25 @@ def test_update_links_ignores_non_whitelisted_paths(app):
         },
     }
 
-    with app.app_context():
-        with patch.dict(app.config, config):
-            record = {
-                '$schema': 'http://localhost:5000/schemas/record/hep.json',
-                'foo': {
-                    'record': {'$ref': 'http://localhost:5000/record/1'},
-                },
-                'bar': {
-                    'record': {'$ref': 'http://localhost:5000/record/1'},
-                }
+    with patch.dict(current_app.config, config):
+        record = {
+            '$schema': 'http://localhost:5000/schemas/record/hep.json',
+            'foo': {
+                'record': {'$ref': 'http://localhost:5000/record/1'},
+            },
+            'bar': {
+                'record': {'$ref': 'http://localhost:5000/record/1'},
             }
+        }
 
-            update_links(record, 'http://localhost:5000/record/1', 'http://localhost:5000/record/2')
+        update_links(record, 'http://localhost:5000/record/1', 'http://localhost:5000/record/2')
 
-            assert record == {
-                '$schema': 'http://localhost:5000/schemas/record/hep.json',
-                'foo': {
-                    'record': {'$ref': 'http://localhost:5000/record/2'},
-                },
-                'bar': {
-                    'record': {'$ref': 'http://localhost:5000/record/1'},
-                }
+        assert record == {
+            '$schema': 'http://localhost:5000/schemas/record/hep.json',
+            'foo': {
+                'record': {'$ref': 'http://localhost:5000/record/2'},
+            },
+            'bar': {
+                'record': {'$ref': 'http://localhost:5000/record/1'},
             }
+        }

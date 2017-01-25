@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
+from elasticsearch_dsl.result import Response
 
 from inspirehep.modules.literaturesuggest.tasks import (
     formdata_to_model,
@@ -471,6 +472,47 @@ def test_formdata_to_model_populates_hidden_notes_from_extra_comments(u, ui):
 
     assert expected == result['hidden_notes']
     assert obj.data == {}
+
+
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.JournalsSearch.execute')
+def test_formdata_to_model_normalizes_journal_title(e, ui, u):
+    e.return_value = Response({
+        'hits': {
+            'hits': [
+                {
+                    '_index': 'records-hep',
+                    '_type': 'hep',
+                    '_id': '42',
+                    '_source': {
+                        'short_titles': [
+                            {'title': 'quux'},
+                        ],
+                    },
+                },
+            ],
+        },
+    })
+
+    data = {}
+    extra_data = {}
+    formdata = {
+        'type_of_doc': 'foo',
+        'title': [
+            'bar',
+        ],
+        'journal_title': 'baz',
+    }
+
+    obj = StubObj(data, extra_data)
+
+    expected = [
+        {'journal_title': 'quux'},
+    ]
+    result = formdata_to_model(obj, formdata)
+
+    assert expected == result['publication_info']
 
 
 def test_new_ticket_context():

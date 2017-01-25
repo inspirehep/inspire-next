@@ -22,7 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
-import mock
+from flask import current_app
+from mock import patch
 
 from inspirehep.dojson.utils import (
     classify_field,
@@ -154,58 +155,58 @@ def test_get_int_value_returns_none_when_value_is_a_tuple():
     assert get_int_value({'y': ('2015', '2016')}, 'y') is None
 
 
-@mock.patch('inspirehep.dojson.utils.current_app')
-def test_get_record_ref_with_empty_server_name(current_app):
-    current_app.config = {}
+def test_get_record_ref_with_empty_server_name():
+    config = {}
 
-    expected = 'http://inspirehep.net/api/endpoint/123'
-    result = get_record_ref(123, 'endpoint')
+    with patch.dict(current_app.config, config, clear=True):
+        expected = 'http://inspirehep.net/api/endpoint/123'
+        result = get_record_ref(123, 'endpoint')
 
-    assert expected == result['$ref']
-
-
-@mock.patch('inspirehep.dojson.utils.current_app')
-def test_get_record_ref_with_server_name_localhost(current_app):
-    current_app.config = {'SERVER_NAME': 'localhost:5000'}
-
-    expected = 'http://localhost:5000/api/endpoint/123'
-    result = get_record_ref(123, 'endpoint')
-
-    assert expected == result['$ref']
+        assert expected == result['$ref']
 
 
-@mock.patch('inspirehep.dojson.utils.current_app')
-def test_get_record_ref_with_http_server_name(current_app):
-    current_app.config = {'SERVER_NAME': 'http://example.com'}
+def test_get_record_ref_with_server_name_localhost():
+    config = {'SERVER_NAME': 'localhost:5000'}
 
-    expected = 'http://example.com/api/endpoint/123'
-    result = get_record_ref(123, 'endpoint')
+    with patch.dict(current_app.config, config):
+        expected = 'http://localhost:5000/api/endpoint/123'
+        result = get_record_ref(123, 'endpoint')
 
-    assert expected == result['$ref']
+        assert expected == result['$ref']
 
 
-@mock.patch('inspirehep.dojson.utils.current_app')
-def test_get_record_ref_with_https_server_name(current_app):
-    current_app.config = {'SERVER_NAME': 'https://example.com'}
+def test_get_record_ref_with_http_server_name():
+    config = {'SERVER_NAME': 'http://example.com'}
 
-    expected = 'https://example.com/api/endpoint/123'
-    result = get_record_ref(123, 'endpoint')
+    with patch.dict(current_app.config, config):
+        expected = 'http://example.com/api/endpoint/123'
+        result = get_record_ref(123, 'endpoint')
 
-    assert expected == result['$ref']
+        assert expected == result['$ref']
+
+
+def test_get_record_ref_with_https_server_name():
+    config = {'SERVER_NAME': 'https://example.com'}
+
+    with patch.dict(current_app.config, config):
+        expected = 'https://example.com/api/endpoint/123'
+        result = get_record_ref(123, 'endpoint')
+
+        assert expected == result['$ref']
 
 
 def test_get_record_ref_without_recid_returns_none():
     assert get_record_ref(None, 'endpoint') is None
 
 
-@mock.patch('inspirehep.dojson.utils.current_app')
-def test_get_record_ref_without_endpoint_defaults_to_record(current_app):
-    current_app.config = {}
+def test_get_record_ref_without_endpoint_defaults_to_record():
+    config = {}
 
-    expected = 'http://inspirehep.net/api/record/123'
-    result = get_record_ref(123)
+    with patch.dict(current_app.config, config, clear=True):
+        expected = 'http://inspirehep.net/api/record/123'
+        result = get_record_ref(123)
 
-    assert expected == result['$ref']
+        assert expected == result['$ref']
 
 
 def test_get_recid_from_ref_returns_none_on_none():

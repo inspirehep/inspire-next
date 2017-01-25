@@ -27,7 +27,7 @@ import pytest
 from inspirehep.factory import create_app
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(autouse=True, scope='session')
 def app():
     app = create_app(
         DEBUG=True,
@@ -41,3 +41,15 @@ def app():
 
     with app.app_context():
         yield app
+
+
+@pytest.fixture(scope='function')
+def app_client(app):
+    with app.test_client() as client:
+        yield client
+
+
+@pytest.fixture(scope='function')
+def request_context(app):
+    with app.test_request_context() as request_context:
+        yield request_context
