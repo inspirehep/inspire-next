@@ -1071,7 +1071,7 @@ def test_thesis_multiple_institutions():
         {'name': 'Cote d\'Azur Observ., Nice', 'recid': '904125'}
     ]
 
-    result = hep.do(create_record(snippet))['thesis']['institutions']
+    result = hep.do(create_record(snippet))['thesis_info']['institutions']
 
     assert len(result) == 2
     for expected_inst, result_inst in zip(expected, result):
@@ -1104,7 +1104,7 @@ def test_thesis_from_502__a_c_d_z():
     }
     result = hep.do(create_record(snippet))
 
-    assert expected == result['thesis']
+    assert expected == result['thesis_info']
 
 
 ACCELERATOR_EXPERIMENTS_DATA = [
