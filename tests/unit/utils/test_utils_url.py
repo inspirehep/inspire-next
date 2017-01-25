@@ -19,17 +19,18 @@
 
 from __future__ import absolute_import, division, print_function
 
-import mock
+from flask import current_app
+from mock import patch
 
 from inspirehep.utils.url import make_user_agent_string
 
-@mock.patch('inspirehep.utils.url.current_app')
-@mock.patch('inspirehep.utils.url.__version__', '0.1.0')
-def test_make_user_agent_string(current_app, app):
-    """Test that user agent is created."""
-    current_app.config = {'SERVER_NAME': 'http://inspirehep.net'}
 
-    with app.app_context():
+@patch('inspirehep.utils.url.__version__', '0.1.0')
+def test_make_user_agent_string():
+    """Test that user agent is created."""
+    config = {'SERVER_NAME': 'http://inspirehep.net'}
+
+    with patch.dict(current_app.config, config):
         user_agent = make_user_agent_string()
         assert user_agent == "InspireHEP-0.1.0 (+http://inspirehep.net;)"
 

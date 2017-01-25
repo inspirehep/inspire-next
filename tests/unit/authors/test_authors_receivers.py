@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 import httpretty
 import mock
 import pytest
+from flask import current_app
 
 from inspirehep.modules.authors import receivers
 
@@ -68,84 +69,81 @@ def test_name_variations():
 
 
 @pytest.mark.httpretty
-def test_phonetic_block_generation_ascii(app):
+def test_phonetic_block_generation_ascii():
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
     }
 
-    with app.app_context():
-        with mock.patch.dict(app.config, extra_config):
-            httpretty.register_uri(
-                httpretty.POST,
-                "{base_url}/text/phonetic_blocks".format(
-                    base_url=app.config.get('BEARD_API_URL')),
-                content_type="application/json",
-                body='{"phonetic_blocks": {"John Richard Ellis": "ELj"}}',
-                status=200)
+    with mock.patch.dict(current_app.config, extra_config):
+        httpretty.register_uri(
+            httpretty.POST,
+            "{base_url}/text/phonetic_blocks".format(
+                base_url=current_app.config.get('BEARD_API_URL')),
+            content_type="application/json",
+            body='{"phonetic_blocks": {"John Richard Ellis": "ELj"}}',
+            status=200)
 
-            json_dict = {
-                "authors": [{
-                    "full_name": "John Richard Ellis"
-                }]
-            }
+        json_dict = {
+            "authors": [{
+                "full_name": "John Richard Ellis"
+            }]
+        }
 
-            receivers.assign_phonetic_block(json_dict)
+        receivers.assign_phonetic_block(json_dict)
 
-            assert json_dict['authors'][0]['signature_block'] == "ELj"
+        assert json_dict['authors'][0]['signature_block'] == "ELj"
 
 
 @pytest.mark.httpretty
-def test_phonetic_block_generation_broken(app):
+def test_phonetic_block_generation_broken():
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
     }
 
-    with app.app_context():
-        with mock.patch.dict(app.config, extra_config):
-            httpretty.register_uri(
-                httpretty.POST,
-                "{base_url}/text/phonetic_blocks".format(
-                    base_url=app.config.get('BEARD_API_URL')),
-                content_type="application/json",
-                body='{"phonetic_blocks": {}}',
-                status=200)
+    with mock.patch.dict(current_app.config, extra_config):
+        httpretty.register_uri(
+            httpretty.POST,
+            "{base_url}/text/phonetic_blocks".format(
+                base_url=current_app.config.get('BEARD_API_URL')),
+            content_type="application/json",
+            body='{"phonetic_blocks": {}}',
+            status=200)
 
-            json_dict = {
-                "authors": [{
-                    "full_name": "** NOT VALID **"
-                }]
-            }
+        json_dict = {
+            "authors": [{
+                "full_name": "** NOT VALID **"
+            }]
+        }
 
-            receivers.assign_phonetic_block(json_dict)
+        receivers.assign_phonetic_block(json_dict)
 
-            assert json_dict['authors'][0]['signature_block'] is None
+        assert json_dict['authors'][0]['signature_block'] is None
 
 
 @pytest.mark.httpretty
-def test_phonetic_block_generation_unicode(app):
+def test_phonetic_block_generation_unicode():
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
     }
 
-    with app.app_context():
-        with mock.patch.dict(app.config, extra_config):
-            httpretty.register_uri(
-                httpretty.POST,
-                "{base_url}/text/phonetic_blocks".format(
-                    base_url=app.config.get('BEARD_API_URL')),
-                content_type="application/json",
-                body=u'{"phonetic_blocks": {"Grzegorz Jacenków": "JACANCg"}}',
-                status=200)
+    with mock.patch.dict(current_app.config, extra_config):
+        httpretty.register_uri(
+            httpretty.POST,
+            "{base_url}/text/phonetic_blocks".format(
+                base_url=current_app.config.get('BEARD_API_URL')),
+            content_type="application/json",
+            body=u'{"phonetic_blocks": {"Grzegorz Jacenków": "JACANCg"}}',
+            status=200)
 
-            json_dict = {
-                "authors": [{
-                    "full_name": u"Grzegorz Jacenków"
-                }]
-            }
+        json_dict = {
+            "authors": [{
+                "full_name": u"Grzegorz Jacenków"
+            }]
+        }
 
-            receivers.assign_phonetic_block(json_dict)
+        receivers.assign_phonetic_block(json_dict)
 
-            assert json_dict['authors'][0]['signature_block'] == "JACANCg"
+        assert json_dict['authors'][0]['signature_block'] == "JACANCg"
 
 
 def test_uuid_generation():

@@ -24,6 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import httpretty
 import pytest
+from flask import current_app
 from mock import patch
 
 from inspirehep.utils.robotupload import make_robotupload_marcxml
@@ -42,16 +43,15 @@ def test_make_robotupload_marcxml():
 
 
 @pytest.mark.httpretty
-def test_make_robotupload_marcxml_falls_back_to_config_when_url_is_none(app):
+def test_make_robotupload_marcxml_falls_back_to_config_when_url_is_none():
     httpretty.HTTPretty.allow_net_connect = False
     httpretty.register_uri(
         httpretty.POST, 'http://inspirehep.net/batchuploader/robotupload/insert')
 
     config = {'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net'}
 
-    with app.app_context():
-        with patch.dict(app.config, config):
-            make_robotupload_marcxml(None, '<record></record>', 'insert')
+    with patch.dict(current_app.config, config):
+        make_robotupload_marcxml(None, '<record></record>', 'insert')
 
     httpretty.HTTPretty.allow_net_connect = True
 

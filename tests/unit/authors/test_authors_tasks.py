@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+from flask import current_app
 from mock import patch
 
 from invenio_accounts.models import User
@@ -88,21 +89,20 @@ def test_new_ticket_context(data, extra_data, user):
     assert ctx['user_comment'] == 'Foo bar'
 
 
-def test_update_ticket_context(app, data, extra_data, user):
+def test_update_ticket_context(data, extra_data, user):
     config = {
         'AUTHORS_UPDATE_BASE_URL': 'http://inspirehep.net'
     }
     obj = MockObj(data, extra_data)
-    with app.app_context():
-        with patch.dict(app.config, config):
-            expected = {
-                'url': 'http://inspirehep.net/record/123',
-                'bibedit_url': 'http://inspirehep.net/record/123/edit',
-                'email': 'foo@bar.com',
-                'user_comment': 'Foo bar'
-            }
-            ctx = update_ticket_context(user, obj)
-            assert ctx == expected
+    with patch.dict(current_app.config, config):
+        expected = {
+            'url': 'http://inspirehep.net/record/123',
+            'bibedit_url': 'http://inspirehep.net/record/123/edit',
+            'email': 'foo@bar.com',
+            'user_comment': 'Foo bar'
+        }
+        ctx = update_ticket_context(user, obj)
+        assert ctx == expected
 
 
 def test_reply_ticket_context(data, extra_data, user):

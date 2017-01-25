@@ -275,12 +275,11 @@ def test_email_links_returns_email_link_on_list_of_one_element():
     assert expected == result
 
 
-def test_email_link_returns_email_link_on_element(app):
-    with app.test_request_context('/'):
-        expected = '\n<a href="mailto:foo@example.com">foo@example.com</a>'
-        result = email_link('foo@example.com')
+def test_email_link_returns_email_link_on_element(request_context):
+    expected = '\n<a href="mailto:foo@example.com">foo@example.com</a>'
+    result = email_link('foo@example.com')
 
-        assert expected == result
+    assert expected == result
 
 
 def test_url_links_returns_url_link_on_list_of_one_element():
@@ -1138,25 +1137,23 @@ def test_format_date_when_datestruct_has_one_element(c_d):
 
 
 @mock.patch('inspirehep.modules.theme.jinja2filters.create_datestruct')
-def test_format_date_when_datestruct_has_two_elements(c_d, app):
-    with app.test_request_context():
-        c_d.return_value = (1993, 2)
+def test_format_date_when_datestruct_has_two_elements(c_d, request_context):
+    c_d.return_value = (1993, 2)
 
-        expected = 'Feb 1993'
-        result = format_date('banana')
+    expected = 'Feb 1993'
+    result = format_date('banana')
 
-        assert expected == result
+    assert expected == result
 
 
 @mock.patch('inspirehep.modules.theme.jinja2filters.create_datestruct')
-def test_format_date_when_datestruct_has_three_elements(c_d, app):
-    with app.test_request_context():
-        c_d.return_value = (1993, 2, 2)
+def test_format_date_when_datestruct_has_three_elements(c_d, request_context):
+    c_d.return_value = (1993, 2, 2)
 
-        expected = 'Feb 2, 1993'
-        result = format_date('banana')
+    expected = 'Feb 2, 1993'
+    result = format_date('banana')
 
-        assert expected == result
+    assert expected == result
 
 
 def test_find_collection_from_url_conferences():
