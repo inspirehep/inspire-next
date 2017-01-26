@@ -27,8 +27,13 @@ from dojson.contrib.marc21.utils import create_record
 from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.hepnames import hepnames, hepnames2marc
 
+from inspire_schemas.api import load_schema
+from jsonschema import validate
+
 
 def test_acquisition_source_from__541_a_c():
+    schema = load_schema('elements/acquisition_source')
+
     snippet = (
         '<datafield tag="541" ind1=" " ind2=" ">'
         '  <subfield code="a">IOP</subfield>'
@@ -42,10 +47,13 @@ def test_acquisition_source_from__541_a_c():
     }
     result = hep.do(create_record(snippet))
 
+    assert validate(result, schema) is None
     assert expected == result['acquisition_source']
 
 
 def test_acquisition_source_from__541_double_a_b_c_e():
+    schema = load_schema('elements/acquisition_source')
+
     snippet = (
         '<datafield tag="541" ind1=" " ind2=" ">'
         '  <subfield code="a">inspire:uid:52524</subfield>'
@@ -61,9 +69,11 @@ def test_acquisition_source_from__541_double_a_b_c_e():
         'email': 'oliver.schlotterer@web.de',
         'method': 'submission',
         'submission_number': '504296',
+        'orcid': '0000-0002-1048-661X',
     }
     result = hep.do(create_record(snippet))
 
+    assert validate(result, schema) is None
     assert expected == result['acquisition_source']
 
 
