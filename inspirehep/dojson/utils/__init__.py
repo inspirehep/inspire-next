@@ -34,6 +34,12 @@ except ImportError:  # pragma: no cover
 
 from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
 from inspirehep.utils.helpers import force_force_list
+from inspire_schemas.api import validate as jsonschema_validate
+
+
+def validate(record, blob):
+    jsonschema_validate(record)
+    return record
 
 
 def classify_field(value):
