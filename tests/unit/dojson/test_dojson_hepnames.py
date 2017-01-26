@@ -832,10 +832,21 @@ def test_private_old_emails(marcxml_to_json, json_to_marc):
             json_to_marc['595'][0]['o'])
 
 
-def test_private_notes(marcxml_to_json, json_to_marc):
-    """Test if private_notes is created correctly."""
-    assert (marcxml_to_json['_private_note'][0] ==
-            json_to_marc['595'][2]['a'])
+def test_private_note(marcxml_to_json, json_to_marc):
+    """Test if private_note is created correctly."""
+    snippet = (
+        '<datafield tag="667" ind1=" " ind2=" ">'
+        '  <subfield code="a">References are split out after each chapter.</subfield>'
+        '</datafield>'
+    )  # record/1419874
+
+    expected = 'References are split out after each chapter.'
+
+    result_json = hepnames.do(create_record(snippet))
+    result_marc = hepnames2marc.do(result_json)
+
+    assert expected == result_json['_private_note']
+    assert expected == result_marc['667']['a']
 
 
 def test_prizes(marcxml_to_json, json_to_marc):

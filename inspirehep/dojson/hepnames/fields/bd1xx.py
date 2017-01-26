@@ -220,16 +220,13 @@ def private_current_emails(self, key, value):
     """Hidden information."""
     if 'o' in value:
         self.setdefault('private_old_emails', []).append(value['o'])
-    if 'a' in value:
-        self.setdefault('_private_note', []).append(value['a'])
     return value.get('m')
 
 
-@hepnames2marc.over('595', '^(private_current_emails|_private_note|private_old_emails)$')
+@hepnames2marc.over('595', '^(private_current_emails|private_old_emails)$')
 @utils.for_each_value
 def hidden_notes2marc(self, key, value):
     return {
-        'a': value if key == '_private_note' else None,
         'm': value if key == 'private_current_emails' else None,
         'o': value if key == 'private_old_emails' else None,
     }
@@ -356,17 +353,15 @@ def _public_note2marc(self, key, value):
     }
 
 
-@hepnames.over('_curators_note', '^667..')
-@utils.for_each_value
-def _curators_note(self, key, value):
+@hepnames.over('_private_note', '^667..')
+def _private_note(self, key, value):
     return value.get('a')
 
 
-@hepnames2marc.over('667', '^_curators_note$')
-@utils.for_each_value
-def _curators_note2marc(self, key, value):
+@hepnames2marc.over('667', '^_private_note$')
+def _private_note2marc(self, key, value):
     return {
-        'a': value
+        'a': value if key == '_private_note' else None,
     }
 
 
