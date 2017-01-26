@@ -692,7 +692,6 @@ def test_positions_from_371__a_double_m_z():
     assert expected == result['371']
 
 
-
 def test_positions_from_371__a_m_r_z():
     snippet = (
         '<datafield tag="371" ind1=" " ind2=" ">'
