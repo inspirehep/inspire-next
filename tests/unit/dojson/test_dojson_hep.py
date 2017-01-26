@@ -458,6 +458,8 @@ def test_authors(marcxml_to_json, json_to_marc):
             json_to_marc['100']['x'])
     assert (marcxml_to_json['authors'][0]['curated_relation'] ==
             json_to_marc['100']['y'])
+    assert (marcxml_to_json['authors'][1]['raw_affiliations'][0]['value'] ==
+            json_to_marc['700'][0]['v'][0])
 
 
 def test_authors_from_100__a_i_u_x_y():
@@ -496,18 +498,20 @@ def test_authors_from_100__a_i_u_x_y():
     assert expected == result['authors']
 
 
-def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
+def test_authors_from_100__a_u_v_w_y_and_700_a_u_v_w_x_y():
     snippet = (
         '<record>'
         '  <datafield tag="100" ind1=" " ind2=" ">'
         '    <subfield code="a">Kobayashi, Makoto</subfield>'
         '    <subfield code="u">Kyoto U.</subfield>'
+        '    <subfield code="v">Darmstadt, Germany</subfield>'
         '    <subfield code="w">M.Kobayashi.5</subfield>'
         '    <subfield code="y">0</subfield>'
         '  </datafield>'
         '  <datafield tag="700" ind1=" " ind2=" ">'
         '    <subfield code="a">Maskawa, Toshihide</subfield>'
         '    <subfield code="u">Kyoto U.</subfield>'
+        '    <subfield code="v">Aalto, Finland</subfield>'
         '    <subfield code="w">T.Maskawa.1</subfield>'
         '    <subfield code="x">998493</subfield>'
         '    <subfield code="y">1</subfield>'
@@ -530,6 +534,11 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
                     'value': 'M.Kobayashi.5',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'Darmstadt, Germany',
+                },
+            ],
         },
         {
             'affiliations': [
@@ -543,6 +552,11 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'T.Maskawa.1',
+                },
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'Aalto, Finland',
                 },
             ],
             'record': {
