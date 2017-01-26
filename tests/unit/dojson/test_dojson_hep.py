@@ -146,6 +146,80 @@ def test_dois_from_0247__a_ignores_curator_source():
     assert expected == result['dois']
 
 
+def test_dois_from_0247_a_2():
+    snippet = (
+        '<datafield tag="024" ind1="7" ind2=" ">'
+        '  <subfield code="2">DOI</subfield>'
+        '  <subfield code="a">10.1088/0264-9381/31/24/245004</subfield>'
+        '</datafield>'
+    )  # record/1302395
+
+    expected = [
+        {'value': '10.1088/0264-9381/31/24/245004'},
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert expected == result['dois']
+
+
+def test_dois_from_0247_a_2_9_and_0247_a_2():
+    snippet = (
+        '<record>'
+        '  <datafield tag="024" ind1="7" ind2=" ">'
+        '    <subfield code="2">DOI</subfield>'
+        '    <subfield code="9">bibmatch</subfield>'
+        '    <subfield code="a">10.1088/1475-7516/2015/03/044</subfield>'
+        '  </datafield>'
+        '  <datafield tag="024" ind1="7" ind2=" ">'
+        '    <subfield code="2">DOI</subfield>'
+        '    <subfield code="a">10.1088/1475-7516/2015/03/044</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1286727
+
+    expected = [
+        {
+            'source': 'bibmatch',
+            'value': '10.1088/1475-7516/2015/03/044',
+        },
+        {
+            'value': '10.1088/1475-7516/2015/03/044',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert expected == result['dois']
+
+
+def test_dois_from_0247_a_2_and_0247_a_2_9():
+    snippet = (
+        '<record>'
+        '  <datafield tag="024" ind1="7" ind2=" ">'
+        '    <subfield code="2">DOI</subfield>'
+        '    <subfield code="a">10.1103/PhysRevD.89.072002</subfield>'
+        '  </datafield>'
+        '  <datafield tag="024" ind1="7" ind2=" ">'
+        '    <subfield code="2">DOI</subfield>'
+        '    <subfield code="9">bibmatch</subfield>'
+        '    <subfield code="a">10.1103/PhysRevD.91.019903</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1273665
+
+    expected = [
+        {
+            'value': '10.1103/PhysRevD.89.072002',
+        },
+        {
+            'source': 'bibmatch',
+            'value': '10.1103/PhysRevD.91.019903',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert expected == result['dois']
+
+
 def test_deleted_records(marcxml_to_json, json_to_marc):
     """Test if deleted_recids is created correctly."""
     assert (get_recid_from_ref(marcxml_to_json['deleted_records'][0]) in
