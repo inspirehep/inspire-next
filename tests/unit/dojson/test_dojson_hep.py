@@ -514,7 +514,7 @@ def test_authors_from_100__a_v_m_w_y():
     snippet = (
         '<datafield tag="100" ind1=" " ind2=" ">'
         '  <subfield code="a">Gao, Xu</subfield>'
-        '  <subfield code="v">Chern Institute of Mathematics and LPMC, Nankai University, Tianjin, 300071, China</subfield>'
+        '  <subfield code="v">Chern Institute of Mathematics and LPMC, 00071, China</subfield>'
         '  <subfield code="m">gausyu@gmail.com</subfield>'
         '  <subfield code="w">X.Gao.11</subfield>'
         '  <subfield code="y">0</subfield>'
@@ -530,6 +530,11 @@ def test_authors_from_100__a_v_m_w_y():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'X.Gao.11',
+                },
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'Chern Institute of Mathematics and LPMC, 00071, China',
                 },
             ],
         },
@@ -588,7 +593,7 @@ def test_authors_from_700__a_j_v_m_w_y():
         '<datafield tag="700" ind1=" " ind2=" ">'
         '  <subfield code="a">Liu, Ming</subfield>'
         '  <subfield code="j">ORCID:0000-0002-3413-183X</subfield>'
-        '  <subfield code="v">School of Mathematics, South China University of Technology, Guangdong, Guangzhou, 510640, China</subfield>'
+        '  <subfield code="v">School of Mathematics,, Guangzhou, 510640, China</subfield>'
         '  <subfield code="m">ming.l1984@gmail.com</subfield>'
         '  <subfield code="w">M.Liu.16</subfield>'
         '  <subfield code="y">0</subfield>'
@@ -608,10 +613,16 @@ def test_authors_from_700__a_j_v_m_w_y():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'M.Liu.16',
+                }
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'School of Mathematics,, Guangzhou, 510640, China',
                 },
             ],
         },
     ]
+
     result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
@@ -819,6 +830,11 @@ def test_authors_from_100__a_j_m_u_v_w_y():
                     'value': 'D.Macnair.2',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'SLAC, Menlo Park, California, USA'
+                },
+            ],
         },
     ]
     result = hep.do(create_record(snippet))
@@ -826,11 +842,13 @@ def test_authors_from_100__a_j_m_u_v_w_y():
     assert expected == result['authors']
 
 
-def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
+def test_authors_from_100__a_u_v_x_w_y_z_with_malformed_x():
     snippet = (
         '<datafield tag="100" ind1=" " ind2=" ">'
         '  <subfield code="a">Bakhrushin, Iu.P.</subfield>'
         '  <subfield code="u">NIIEFA, St. Petersburg</subfield>'
+        '  <subfield code="v">SLAC, Menlo Park, California, USA</subfield>'
+        '  <subfield code="v">SLAC, Menlo Park, IT</subfield>'
         '  <subfield code="x">БАХРУШИН, Ю.П.</subfield>'
         '  <subfield code="w">I.P.Bakhrushin.1</subfield>'
         '  <subfield code="y">0</subfield>'
@@ -854,6 +872,14 @@ def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'I.P.Bakhrushin.1',
+                },
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'SLAC, Menlo Park, California, USA'
+                },
+                {
+                    'value': 'SLAC, Menlo Park, IT'
                 },
             ],
         },
