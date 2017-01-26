@@ -216,7 +216,7 @@ def license(self, key, value):
         source = val.lower()
 
         if source not in possible_sources:
-            return 'undefined'
+            return None
         else:
             return source
 
