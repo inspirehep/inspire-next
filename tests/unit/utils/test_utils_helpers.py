@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ import pytest
 
 from inspirehep.utils.helpers import (
     download_file,
-    download_file_to_record,
     get_json_for_plots,
     force_force_list,
 )
@@ -41,11 +40,6 @@ from inspirehep.utils.helpers import (
 def foo_bar_baz():
     return pkg_resources.resource_string(
         __name__, os.path.join('fixtures', 'foo-bar-baz'))
-
-
-class StubRecord(object):
-    def __init__(self, files):
-        self.files = files
 
 
 @pytest.mark.httpretty
@@ -91,21 +85,6 @@ def test_download_file_raises_if_called_without_output_file():
 
     with pytest.raises(IOError):
         download_file('http://example.com/foo-bar-baz')
-
-
-@pytest.mark.xfail(reason='socket descriptor is passed already closed')
-@pytest.mark.httpretty
-def test_download_file_to_record(foo_bar_baz):
-    httpretty.register_uri(
-        httpretty.GET, 'http://example.com/foo-bar-baz', body=foo_bar_baz)
-
-    record = StubRecord({})
-
-    result = download_file_to_record(
-        record, 'foo-bar-baz', 'http://example.com/foo-bar-baz')
-
-    assert 'foo-bar-baz' in record.files
-    assert not record.files['foo-bar-baz'].closed
 
 
 def test_get_json_for_plots():
