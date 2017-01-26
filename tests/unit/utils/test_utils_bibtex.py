@@ -766,11 +766,11 @@ def test_get_year_from_publication_info_a_list_from_preprint_date():
 
 def test_get_year_from_thesis_an_empty_obj():
     record = InspireRecord({
-        'thesis': {}
+        'thesis_info': {}
     })
 
     thesis_an_empty_list = Bibtex(record)
-    thesis_an_empty_list.original_entry = 'thesis'
+    thesis_an_empty_list.original_entry = 'thesis_info'
 
     expected = ''
     result = thesis_an_empty_list._get_year()
@@ -781,11 +781,11 @@ def test_get_year_from_thesis_an_empty_obj():
 def test_get_year_from_thesis_an_empty_obj_but_preprint_date():
     record = InspireRecord({
         'preprint_date': '1998-04-30',
-        'thesis': {}
+        'thesis_info': {}
     })
 
     thesis_an_empty_list_but_preprint_date = Bibtex(record)
-    thesis_an_empty_list_but_preprint_date.original_entry = 'thesis'
+    thesis_an_empty_list_but_preprint_date.original_entry = 'thesis_info'
 
     expected = '1998'
     result = thesis_an_empty_list_but_preprint_date._get_year()
@@ -796,11 +796,11 @@ def test_get_year_from_thesis_an_empty_obj_but_preprint_date():
 def test_get_year_from_thesis_an_empty_obj_but_imprints():
     record = InspireRecord({
         'imprints': [{'date': '2015-12-04'}],
-        'thesis': {}
+        'thesis_info': {}
     })
 
     thesis_an_empty_list_but_imprints = Bibtex(record)
-    thesis_an_empty_list_but_imprints.original_entry = 'thesis'
+    thesis_an_empty_list_but_imprints.original_entry = 'thesis_info'
 
     expected = '2015'
     result = thesis_an_empty_list_but_imprints._get_year()
@@ -810,11 +810,11 @@ def test_get_year_from_thesis_an_empty_obj_but_imprints():
 
 def test_get_year_from_thesis_one_date():
     record = InspireRecord({
-        'thesis': {'date': '2008'}
+        'thesis_info': {'date': '2008'}
     })
 
     thesis_one_date = Bibtex(record)
-    thesis_one_date.original_entry = 'thesis'
+    thesis_one_date.original_entry = 'thesis_info'
 
     expected = '2008'
     result = thesis_one_date._get_year()

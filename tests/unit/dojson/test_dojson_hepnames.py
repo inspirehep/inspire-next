@@ -243,13 +243,13 @@ def test_experiments(mock_get_record_ref, mock_get_recid_from_ref, test_name,
     assert json_experiments == expected_json
 
 
-def test_field_categories(marcxml_to_json, json_to_marc):
-    """Test if field_categories is created correctly."""
-    assert (marcxml_to_json['field_categories'][0]['term'] ==
+def test_inspire_categories(marcxml_to_json, json_to_marc):
+    """Test if inspire_categories is created correctly."""
+    assert (marcxml_to_json['inspire_categories'][0]['term'] ==
             json_to_marc['65017'][0]['a'])
-    assert (marcxml_to_json['field_categories'][1]['term'] ==
+    assert (marcxml_to_json['inspire_categories'][1]['term'] ==
             json_to_marc['65017'][1]['a'])
-    assert (json_to_marc['65017'][1]['2'] == 'INSPIRE')
+    assert (json_to_marc['65017'][1]['2'] == 'undefined')
 
 
 def test_ids(marcxml_to_json, json_to_marc):

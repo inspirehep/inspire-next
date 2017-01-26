@@ -274,11 +274,8 @@
                     "index": "not_analyzed",
                     "type": "string"
                 },
-                "field_categories": {
+                "inspire_categories": {
                     "properties": {
-                        "scheme": {
-                            "type": "string"
-                        },
                         "source": {
                             "type": "string"
                         },
@@ -378,7 +375,7 @@
                     "properties": {
                         "value": {
                             "copy_to": [
-                                "reportnumber"
+                                "parent_report_number"
                             ],
                             "index": "not_analyzed",
                             "type": "string"
@@ -386,7 +383,7 @@
                     },
                     "type": "object"
                 },
-                "reportnumber": {
+                "parent_report_number": {
                     "index": "not_analyzed",
                     "type": "string"
                 },

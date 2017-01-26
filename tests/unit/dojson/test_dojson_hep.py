@@ -33,7 +33,7 @@ from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.utils import get_recid_from_ref
-
+from inspirehep.dojson.hep.model import add_inspire_category_from_arxiv_categories
 
 @pytest.fixture
 def marcxml_record():
@@ -97,7 +97,7 @@ def test_doi_but_should_be_hdl_from_0247_a():
 
     expected = [{
         'value': '2027.42/97915',
-        'type': 'HDL',
+        'schema': 'HDL',
     }]
     result = hep.do(create_record(snippet))
 
@@ -378,10 +378,14 @@ def test_authors(marcxml_to_json, json_to_marc):
             json_to_marc['100']['m'][0])
     assert (marcxml_to_json['authors'][0]['affiliations'][0]['value'] ==
             json_to_marc['100']['u'][0])
+    assert (marcxml_to_json['authors'][0]['raw_affiliations'][0]['value'] ==
+            json_to_marc['100']['v'][0])
     assert (get_recid_from_ref(marcxml_to_json['authors'][0]['record']) ==
             json_to_marc['100']['x'])
     assert (marcxml_to_json['authors'][0]['curated_relation'] ==
             json_to_marc['100']['y'])
+    assert (marcxml_to_json['authors'][1]['raw_affiliations'][0]['value'] ==
+            json_to_marc['700'][0]['v'][0])
 
 
 def test_authors_from_100__a_i_u_x_y():
@@ -420,18 +424,20 @@ def test_authors_from_100__a_i_u_x_y():
     assert expected == result['authors']
 
 
-def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
+def test_authors_from_100__a_u_v_w_y_and_700_a_u_v_w_x_y():
     snippet = (
         '<record>'
         '  <datafield tag="100" ind1=" " ind2=" ">'
         '    <subfield code="a">Kobayashi, Makoto</subfield>'
         '    <subfield code="u">Kyoto U.</subfield>'
+        '    <subfield code="v">Darmstadt, Germany</subfield>'
         '    <subfield code="w">M.Kobayashi.5</subfield>'
         '    <subfield code="y">0</subfield>'
         '  </datafield>'
         '  <datafield tag="700" ind1=" " ind2=" ">'
         '    <subfield code="a">Maskawa, Toshihide</subfield>'
         '    <subfield code="u">Kyoto U.</subfield>'
+        '    <subfield code="v">Aalto, Finland</subfield>'
         '    <subfield code="w">T.Maskawa.1</subfield>'
         '    <subfield code="x">998493</subfield>'
         '    <subfield code="y">1</subfield>'
@@ -454,6 +460,11 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
                     'value': 'M.Kobayashi.5',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'Darmstadt, Germany',
+                },
+            ],
         },
         {
             'affiliations': [
@@ -467,6 +478,11 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'T.Maskawa.1',
+                },
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'Aalto, Finland',
                 },
             ],
             'record': {
@@ -583,7 +599,7 @@ def test_authors_from_100__a_v_m_w_y():
     snippet = (
         '<datafield tag="100" ind1=" " ind2=" ">'
         '  <subfield code="a">Gao, Xu</subfield>'
-        '  <subfield code="v">Chern Institute of Mathematics and LPMC, Nankai University, Tianjin, 300071, China</subfield>'
+        '  <subfield code="v">Chern Institute of Mathematics and LPMC, 00071, China</subfield>'
         '  <subfield code="m">gausyu@gmail.com</subfield>'
         '  <subfield code="w">X.Gao.11</subfield>'
         '  <subfield code="y">0</subfield>'
@@ -599,6 +615,11 @@ def test_authors_from_100__a_v_m_w_y():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'X.Gao.11',
+                },
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'Chern Institute of Mathematics and LPMC, 00071, China',
                 },
             ],
         },
@@ -657,7 +678,7 @@ def test_authors_from_700__a_j_v_m_w_y():
         '<datafield tag="700" ind1=" " ind2=" ">'
         '  <subfield code="a">Liu, Ming</subfield>'
         '  <subfield code="j">ORCID:0000-0002-3413-183X</subfield>'
-        '  <subfield code="v">School of Mathematics, South China University of Technology, Guangdong, Guangzhou, 510640, China</subfield>'
+        '  <subfield code="v">School of Mathematics,, Guangzhou, 510640, China</subfield>'
         '  <subfield code="m">ming.l1984@gmail.com</subfield>'
         '  <subfield code="w">M.Liu.16</subfield>'
         '  <subfield code="y">0</subfield>'
@@ -677,10 +698,16 @@ def test_authors_from_700__a_j_v_m_w_y():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'M.Liu.16',
+                }
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'School of Mathematics,, Guangzhou, 510640, China',
                 },
             ],
         },
     ]
+
     result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
@@ -888,6 +915,11 @@ def test_authors_from_100__a_j_m_u_v_w_y():
                     'value': 'D.Macnair.2',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'SLAC, Menlo Park, California, USA'
+                },
+            ],
         },
     ]
     result = hep.do(create_record(snippet))
@@ -895,11 +927,13 @@ def test_authors_from_100__a_j_m_u_v_w_y():
     assert expected == result['authors']
 
 
-def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
+def test_authors_from_100__a_u_v_x_w_y_z_with_malformed_x():
     snippet = (
         '<datafield tag="100" ind1=" " ind2=" ">'
         '  <subfield code="a">Bakhrushin, Iu.P.</subfield>'
         '  <subfield code="u">NIIEFA, St. Petersburg</subfield>'
+        '  <subfield code="v">SLAC, Menlo Park, California, USA</subfield>'
+        '  <subfield code="v">SLAC, Menlo Park, IT</subfield>'
         '  <subfield code="x">БАХРУШИН, Ю.П.</subfield>'
         '  <subfield code="w">I.P.Bakhrushin.1</subfield>'
         '  <subfield code="y">0</subfield>'
@@ -923,6 +957,14 @@ def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'I.P.Bakhrushin.1',
+                },
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'SLAC, Menlo Park, California, USA'
+                },
+                {
+                    'value': 'SLAC, Menlo Park, IT'
                 },
             ],
         },
@@ -1030,10 +1072,15 @@ def test_preprint_date(marcxml_to_json, json_to_marc):
             json_to_marc['269'][0]['c'])
 
 
-def test_page_nr(marcxml_to_json, json_to_marc):
-    """Test if page_nr is created correctly."""
-    assert (marcxml_to_json['page_nr'][0] ==
-            json_to_marc['300'][0]['a'])
+def test_number_of_pages(marcxml_to_json, json_to_marc):
+    """Test if number_of_pages is created correctly."""
+    expected_json = 9
+    expected_marc = {
+        'a': '9',
+    }
+
+    assert marcxml_to_json['number_of_pages'] == expected_json
+    assert json_to_marc['300'][0] == expected_marc
 
 
 def test_book_series(marcxml_to_json, json_to_marc):
@@ -1210,11 +1257,11 @@ def test_hidden_notes_from_595__a_9_and_595__double_a_9():
 
 def test_thesis_roundtrip(marcxml_to_json, json_to_marc):
     """Test if thesis is created correctly."""
-    assert (marcxml_to_json['thesis']['degree_type'] ==
+    assert (marcxml_to_json['thesis_info']['degree_type'] ==
             json_to_marc['502']['b'])
-    assert (marcxml_to_json['thesis']['institutions'][0]['name'] ==
+    assert (marcxml_to_json['thesis_info']['institutions'][0]['name'] ==
             json_to_marc['502']['c'][0])
-    assert (marcxml_to_json['thesis']['date'] ==
+    assert (marcxml_to_json['thesis_info']['date'] ==
             json_to_marc['502']['d'])
 
 
@@ -1236,7 +1283,7 @@ def test_thesis_multiple_institutions():
         {'name': 'Cote d\'Azur Observ., Nice', 'recid': '904125'}
     ]
 
-    result = hep.do(create_record(snippet))['thesis']['institutions']
+    result = hep.do(create_record(snippet))['thesis_info']['institutions']
 
     assert len(result) == 2
     for expected_inst, result_inst in zip(expected, result):
@@ -1269,7 +1316,7 @@ def test_thesis_from_502__a_c_d_z():
     }
     result = hep.do(create_record(snippet))
 
-    assert expected == result['thesis']
+    assert expected == result['thesis_info']
 
 
 def test_abstract(marcxml_to_json, json_to_marc):
@@ -1314,13 +1361,11 @@ def test_copyright(marcxml_to_json, json_to_marc):
             json_to_marc['542'][0]['u'])
 
 
-def test_field_categories(marcxml_to_json, json_to_marc):
-    """Test if field_categories is created correctly."""
-    assert (marcxml_to_json['field_categories'][0]['scheme'] ==
-            json_to_marc['65017'][0]['2'])
-    assert (marcxml_to_json['field_categories'][0]['term'] ==
+def test_inspire_categories(marcxml_to_json, json_to_marc):
+    """Test if inspire_categories is created correctly."""
+    assert (marcxml_to_json['inspire_categories'][0]['term'] ==
             json_to_marc['65017'][0]['a'])
-    assert (marcxml_to_json['field_categories'][0]['source'] ==
+    assert (marcxml_to_json['inspire_categories'][0]['source'] ==
             json_to_marc['65017'][0]['9'])
 
 ACCELERATOR_EXPERIMENTS_DATA = [
@@ -1933,7 +1978,7 @@ def test_publication_info(marcxml_to_json, json_to_marc):
             json_to_marc['773'][0]['y'])
     assert (marcxml_to_json['publication_info'][0]['conf_acronym'] ==
             json_to_marc['773'][0]['o'])
-    assert (marcxml_to_json['publication_info'][0]['reportnumber'] ==
+    assert (marcxml_to_json['publication_info'][0]['parent_report_number'] ==
             json_to_marc['773'][0]['r'])
     assert (marcxml_to_json['publication_info'][0]['confpaper_info'] ==
             json_to_marc['773'][0]['t'])
@@ -1941,7 +1986,7 @@ def test_publication_info(marcxml_to_json, json_to_marc):
             json_to_marc['773'][0]['w'])
     assert (marcxml_to_json['publication_info'][0]['pubinfo_freetext'] ==
             json_to_marc['773'][0]['x'])
-    assert (marcxml_to_json['publication_info'][0]['isbn'] ==
+    assert (marcxml_to_json['publication_info'][0]['parent_isbn'] ==
             json_to_marc['773'][0]['z'])
     assert (marcxml_to_json['publication_info'][0]['notes'] ==
             ['note', 'extranote'])
@@ -2020,8 +2065,8 @@ def test_references(marcxml_to_json, json_to_marc, marcxml_record):
             assert 'number' in json_val['reference'] and 'o' in marc_val
             assert json_val['reference']['number'] == marc_val['o']
         if 'i' in marc_init:
-            assert 'isbn' in json_val_pub and 'i' in marc_val
-            assert json_val_pub['isbn'] == marc_val['i']
+            assert 'parent_isbn' in json_val_pub and 'i' in marc_val
+            assert json_val_pub['parent_isbn'] == marc_val['i']
         if 'p' in marc_init:
             assert 'publisher' in json_val['reference'].get('imprint', {})
             assert 'p' in marc_val
@@ -2029,7 +2074,7 @@ def test_references(marcxml_to_json, json_to_marc, marcxml_record):
             assert json_val['reference']['imprint']['publisher'] == marc_val['p']
         if 'r' in marc_init:
             initial_repnos = _force_set(marc_init['r'])
-            json_repnos = _force_set(json_val_pub.get('reportnumber', []))
+            json_repnos = _force_set(json_val_pub.get('parent_report_number', []))
             json_repnos.union(_force_set(json_val['reference'].get('arxiv_eprints', [])))
             roundtrip_repnos = _force_set(marc_val['r'])
             assert roundtrip_repnos  == json_repnos
@@ -2068,3 +2113,69 @@ def test_book_link(marcxml_to_json_book):
     """Test if the link to the book recid is generated correctly."""
     assert (get_recid_from_ref(marcxml_to_json_book['book']['record']) ==
             1409249)
+
+
+def test_add_inspire_category_from_arxiv_categories():
+    snippet = {
+        'arxiv_eprints': {
+            'value': 'arxiv',
+            'categories': ['astro-ph', 'cs.DS'],
+        }
+    }
+
+    expected = {
+        'arxiv_eprints': {
+            'value': 'arxiv',
+            'categories': ['astro-ph', 'cs.DS'],
+        },
+        'inspire_categories': [{
+            'term': 'Astrophysics',
+            'source': 'arxiv',
+        }, {
+            'term': 'Computing',
+            'source': 'arxiv',
+        }]
+
+    }
+
+    result = add_inspire_category_from_arxiv_categories(snippet, None)
+
+    assert result == expected
+
+
+def test_add_inspire_category_without_arxiv_category():
+    snippet = {}
+
+    expected = {}
+
+    output_record = add_inspire_category_from_arxiv_categories(snippet, None)
+
+    assert output_record == expected
+
+
+def test_add_inspire_category_with_inspire_already_present():
+    snippet = {
+        'arxiv_eprints': {
+            'value': 'arxiv',
+            'categories': ['cs.DS'],
+        },
+        'inspire_categories': [{
+            'term': 'Astrophysics',
+            'source': 'arxiv',
+        }]
+    }
+
+    expected = {
+        'arxiv_eprints': {
+            'value': 'arxiv',
+            'categories': ['cs.DS'],
+        },
+        'inspire_categories': [{
+            'term': 'Astrophysics',
+            'source': 'arxiv',
+        }]
+    }
+
+    output_record = add_inspire_category_from_arxiv_categories(snippet, None)
+
+    assert output_record == expected

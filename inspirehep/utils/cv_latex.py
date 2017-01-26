@@ -308,8 +308,8 @@ class Cv_latex(Export):
             if datestruct:
                 return self._format_date(datestruct)
 
-        if 'thesis' in self.record and 'date' in self.record['thesis']:
-            date = self.record['thesis']['date']
+        if 'thesis_info' in self.record and 'date' in self.record['thesis_info']:
+            date = self.record['thesis_info']['date']
             if date:
                 datestruct = self.parse_date(str(date))
             if datestruct:

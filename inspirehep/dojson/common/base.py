@@ -29,6 +29,7 @@ from dojson.errors import IgnoreKey
 
 from inspirehep.utils.helpers import force_force_list
 
+from inspire_schemas import api
 from ..conferences.model import conferences
 from ..experiments.model import experiments
 from ..hep.model import hep, hep2marc
@@ -319,41 +320,39 @@ def deleted_records2marc(self, key, value):
     }
 
 
-@conferences.over('field_categories', '^65017')
-@experiments.over('field_categories', '^65017')
-@hep.over('field_categories', '^650[1_][_7]')
-@hepnames.over('field_categories', '^65017')
-@institutions.over('field_categories', '^65017')
-@jobs.over('field_categories', '^65017')
+@conferences.over('inspire_categories', '^65017')
+@experiments.over('inspire_categories', '^65017')
+@hep.over('inspire_categories', '^650[1_][_7]')
+@hepnames.over('inspire_categories', '^65017')
+@institutions.over('inspire_categories', '^65017')
+@jobs.over('inspire_categories', '^65017')
 @utils.for_each_value
-def field_categories(self, key, value):
-    """Field categories."""
-    self.setdefault('field_categories', [])
+def inspire_categories(self, key, value):
+    """Inspire categories."""
+    schema = api.load_schema('elements/inspire_field')
+    possible_sources = schema['properties']['source']['enum']
 
     _terms = force_force_list(value.get('a'))
+    source = value.get('9')
 
+    if source not in possible_sources:
+        if source == 'automatically added based on DCC, PPF, DK':
+            source = 'curator'
+        elif source == 'submitter':
+            source = 'user'
+        else:
+            source = 'undefined'
+
+    self.setdefault('inspire_categories', [])
     if _terms:
         for _term in _terms:
             term = classify_field(_term)
-
-            scheme = 'INSPIRE' if term else None
-
-            _scheme = value.get('2')
-            if isinstance(_scheme, (list, tuple)):
-                _scheme = _scheme[0]
-
-            source = value.get('9')
-            if source:
-                if 'automatically' in source:
-                    source = 'INSPIRE'
-
-            self['field_categories'].append({
-                'source': source,
-                '_scheme': _scheme,
-                'scheme': scheme,
-                '_term': _term,
-                'term': term,
-            })
+            if term:
+                inspire_category = {
+                    'term': term,
+                    'source': source,
+                }
+                self['inspire_categories'].append(inspire_category)
 
 
 @conferences.over('urls', '^8564')

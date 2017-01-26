@@ -66,19 +66,19 @@ def formdata_to_model(obj, formdata):
     data['collections'] = [{'primary': "HEP"}]
     if form_fields['type_of_doc'] == 'thesis':
         data['collections'].append({'primary': "THESIS"})
-    if "field_categories" in data:
+
+    if get_value(form_fields, "arxiv_eprints.categories", None):
         # Check if it was imported from arXiv
-        if any([x["scheme"] == "arXiv" for x in data["field_categories"]]):
-            data['collections'].extend([{'primary': "arXiv"},
-                                        {'primary': "Citeable"}])
-            # Add arXiv as source
-            if data.get("abstracts"):
-                data['abstracts'][0]['source'] = 'arXiv'
-            if form_fields.get("arxiv_id"):
-                data['external_system_numbers'] = [{
-                    'value': 'oai:arXiv.org:' + form_fields['arxiv_id'],
-                    'institute': 'arXiv'
-                }]
+        data['collections'].extend([{'primary': "arXiv"},
+                                    {'primary': "Citeable"}])
+        # Add arXiv as source
+        if data.get("abstracts"):
+            data['abstracts'][0]['source'] = 'arXiv'
+        if form_fields.get("arxiv_id"):
+            data['external_system_numbers'] = [{
+                'value': 'oai:arXiv.org:' + form_fields['arxiv_id'],
+                'institute': 'arXiv'
+            }]
     if "publication_info" in data:
         pub_keys = data['publication_info'][0].keys()
 
@@ -154,7 +154,7 @@ def formdata_to_model(obj, formdata):
     # ============================
     # Page number
     # ============================
-    if 'page_nr' not in data:
+    if 'number_of_pages' not in data:
         first_publication_info = data.get('publication_info', [{}])[0]
 
         page_start = first_publication_info.get('page_start')
@@ -162,7 +162,7 @@ def formdata_to_model(obj, formdata):
 
         if page_start and page_end:
             try:
-                data['page_nr'] = int(page_end) - int(page_start) + 1
+                data['number_of_pages'] = int(page_end) - int(page_start) + 1
             except (TypeError, ValueError):
                 pass
 

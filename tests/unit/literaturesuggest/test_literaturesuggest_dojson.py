@@ -185,27 +185,27 @@ def test_authors_from_authors_full_name_and_affiliation():
     assert expected == result['authors']
 
 
-def test_field_categories_from_categories():
+def test_inspire_categories_from_categories():
     form = GroupableOrderedDict([
         ('categories', 'foo bar'),
     ])
 
     expected = [
         {
-            'scheme': 'arXiv',
+            'source': 'user',
             'term': 'foo',
         },
         {
-            'scheme': 'arXiv',
+            'source': 'user',
             'term': 'bar',
         },
     ]
     result = literature.do(form)
 
-    assert expected == result['field_categories']
+    assert expected == result['inspire_categories']
 
 
-def test_field_categories_from_multiple_categories():
+def test_inspire_categories_from_multiple_categories():
     form = GroupableOrderedDict([
         ('categories', 'foo bar'),
         ('categories', 'baz'),
@@ -213,21 +213,21 @@ def test_field_categories_from_multiple_categories():
 
     expected = [
         {
-            'scheme': 'arXiv',
+            'source': 'user',
             'term': 'foo',
         },
         {
-            'scheme': 'arXiv',
+            'source': 'user',
             'term': 'bar',
         },
         {
-            'scheme': 'arXiv',
+            'source': 'user',
             'term': 'baz',
         },
     ]
     result = literature.do(form)
 
-    assert expected == result['field_categories']
+    assert expected == result['inspire_categories']
 
 
 def test_collaboration_from_collaboration():
@@ -721,7 +721,7 @@ def test_report_numbers_from_report_numbers():
     assert expected == result['report_numbers']
 
 
-def test_field_categories_from_subject_term():
+def test_inspire_categories_from_subject_term():
     form = {
         'subject_term': [
             'foo',
@@ -732,18 +732,16 @@ def test_field_categories_from_subject_term():
     expected = [
         {
             'term': 'foo',
-            'scheme': 'INSPIRE',
-            'source': 'submitter',
+            'source': 'user',
         },
         {
             'term': 'bar',
-            'scheme': 'INSPIRE',
-            'source': 'submitter',
+            'source': 'user',
         },
     ]
     result = literature.do(form)
 
-    assert expected == result['field_categories']
+    assert expected == result['inspire_categories']
 
 
 def test_thesis_supervisors_from_supervisors():

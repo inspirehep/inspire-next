@@ -221,7 +221,7 @@ class ReferenceBuilder(object):
             self.obj['reference']['arxiv_eprints'].append(_normalize_arxiv(repno))
         else:
             self._ensure_reference_field('publication_info', {})
-            self.obj['reference']['publication_info']['reportnumber'] = repno
+            self.obj['reference']['publication_info']['parent_report_number'] = repno
 
     def add_uid(self, uid):
         """Add unique identifier in correct field."""
@@ -249,8 +249,9 @@ class ReferenceBuilder(object):
             # isbn. Better to do it like this.
             try:
                 isbn = idutils.normalize_isbn(uid)
+                isbn_normalized = isbn.replace(' ', '').replace('-', '')
                 self._ensure_reference_field('publication_info', {})
-                self.obj['reference']['publication_info']['isbn'] = isbn
+                self.obj['reference']['publication_info']['parent_isbn'] = isbn_normalized
             # See https://github.com/nekobcn/isbnid/issues/2 and
             # https://github.com/nekobcn/isbnid/issues/3 for understanding the
             # long exception list.

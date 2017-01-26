@@ -97,7 +97,7 @@ def references2marc(self, key, value):
     repnos = value['reference'].get('arxiv_eprints', [])
     reference = value['reference']
     # If not found it will be filtered anyway.
-    repnos.append(get_value(reference, 'publication_info.reportnumber'))
+    repnos.append(get_value(reference, 'publication_info.parent_report_number'))
     journal_title = get_value(reference, 'publication_info.journal_title')
     journal_volume = get_value(reference, 'publication_info.journal_volume')
     journal_pg_start = get_value(reference, 'publication_info.page_start')
@@ -116,7 +116,7 @@ def references2marc(self, key, value):
               if a.get('role') != 'ed.'],
         'm': get_value(reference, 'misc'),
         'o': get_value(reference, 'number'),
-        'i': get_value(reference, 'publication_info.isbn'),
+        'i': get_value(reference, 'publication_info.parent_isbn'),
         'p': get_value(reference, 'imprint.publisher'),
         'r': repnos,
         't': get_value(reference, 'titles[:].title'),

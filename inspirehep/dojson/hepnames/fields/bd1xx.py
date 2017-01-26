@@ -293,9 +293,9 @@ def positions2marc(self, key, value):
     }
 
 
-@hepnames2marc.over('65017', '^field_categories$')
+@hepnames2marc.over('65017', '^inspire_categories')
 @utils.for_each_value
-def field_categories2marc(self, key, value):
+def inspire_categories2marc(self, key, value):
     return {
         'a': value.get('term'),
         '2': value.get('source') or "INSPIRE",

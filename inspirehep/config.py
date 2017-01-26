@@ -287,7 +287,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "doc_type": ["facet_inspire_doc_type"],
     "formulas": ["facet_formulas"],
     "affiliation": ["authors.affiliations.value", "corporate_author"],
-    "reportnumber": ["report_numbers.value", "arxiv_eprints.value"],
+    "parent_report_number": ["report_numbers.value", "arxiv_eprints.value"],
     "refersto": ["references.recid"],
     "experiment": ["accelerator_experiments.experiment"],
     "country": ["address.country", "address.country.raw"],
@@ -312,7 +312,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "037__c": ["arxiv_eprints.categories"],
     "246__a": ["titles.title"],
     "595": ["hidden_notes"],
-    "650__a": ["field_categories.term"],
+    "650__a": ["inspire_categories.term"],
     "695__a": ["keywords.keyword"],
     "695__e": ["energy_ranges"],
     "773__y": ["publication_info.year"],
@@ -329,13 +329,13 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
                 "publication_info.journal_issue",
                 "publication_info.conf_acronym",
                 "publication_info.journal_title",
-                "publication_info.reportnumber",
+                "publication_info.parent_report_number",
                 "publication_info.confpaper_info",
                 "publication_info.journal_volume",
                 "publication_info.cnum",
                 "publication_info.pubinfo_freetext",
                 "publication_info.year_raw",
-                "publication_info.isbn",
+                "publication_info.parent_isbn",
                 "publication_info.note"
                 ],
     "journal_page": ["publication_info.page_start",
@@ -346,13 +346,13 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "reference": ["references.doi", "references.report_number",
                   "references.journal_pubnote"
                   ],
-    "subject": ["field_categories.term"],
+    "subject": ["inspire_categories.term"],
     "texkey": ["external_system_numbers.value",
                "external_system_numbers.obsolete"
                ],
     "year": ["imprints.date",
              "preprint_date",
-             "thesis.date",
+             "thesis_info.date",
              "publication_info.year"
              ],
     "confnumber": ["publication_info.cnum"],
@@ -969,13 +969,13 @@ RECORDS_REST_FACETS = {
     },
     "records-authors": {
         "filters": {
-            "field_categories": terms_filter('field_categories.term'),
+            "inspire_categories": terms_filter('inspire_categories.term'),
             "institution": terms_filter('positions.institution.name')
         },
         "aggs": {
-            "field_categories": {
+            "inspire_categories": {
                 "terms": {
-                    "field": "field_categories.term",
+                    "field": "inspire_categories.term",
                     "size": 20
                 }
             },
@@ -990,7 +990,7 @@ RECORDS_REST_FACETS = {
     "records-conferences": {
         "filters": {
             "series": terms_filter('series'),
-            "field_categories": terms_filter('field_categories.term')
+            "inspire_categories": terms_filter('inspire_categories.term')
         },
         "aggs": {
             "series": {
@@ -999,9 +999,9 @@ RECORDS_REST_FACETS = {
                     "size": 20
                 }
             },
-            "field_categories": {
+            "inspire_categories": {
                 "terms": {
-                    "field": "field_categories.term",
+                    "field": "inspire_categories.term",
                     "size": 20
                 }
             },
@@ -1072,7 +1072,7 @@ RECORDS_REST_FACETS = {
         "filters": {
             "regions": terms_filter('regions'),
             "ranks": terms_filter('ranks'),
-            "field_categories": terms_filter('field_categories.term')
+            "inspire_categories": terms_filter('inspire_categories.term')
         },
         "aggs": {
             "continent": {
@@ -1087,9 +1087,9 @@ RECORDS_REST_FACETS = {
                     "size": 20
                 }
             },
-            "field_categories": {
+            "inspire_categories": {
                 "terms": {
-                    "field": "field_categories.term",
+                    "field": "inspire_categories.term",
                     "size": 20
                 }
             }
@@ -1652,7 +1652,7 @@ INSPIRE_REF_UPDATER_WHITELISTS = {
         'publication_info.parent_record',
         'references.record',
         'succeding_entry.record',
-        'thesis.institutions.record',
+        'thesis_info.institutions.record',
         'thesis_supervisors.affiliations.record',
     ],
     'institutions': [

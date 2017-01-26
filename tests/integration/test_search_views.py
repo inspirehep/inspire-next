@@ -85,7 +85,7 @@ def test_search_logs(current_app_mock, app):
                                 'abstract.raw^4',
                                 'author^10',
                                 'author.raw^15',
-                                'reportnumber^10',
+                                'parent_report_number^10',
                                 'eprint^10',
                                 'doi^10'
                             ],

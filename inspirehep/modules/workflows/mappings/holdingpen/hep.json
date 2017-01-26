@@ -350,11 +350,8 @@
                             },
                             "type": "object"
                         },
-                        "field_categories": {
+                        "inspire_categories": {
                             "properties": {
-                                "scheme": {
-                                    "type": "string"
-                                },
                                 "source": {
                                     "type": "string"
                                 },
@@ -439,7 +436,7 @@
                                 },
                                 "value": {
                                     "copy_to": [
-                                        "reportnumber"
+                                        "parent_report_number"
                                     ],
                                     "index": "not_analyzed",
                                     "type": "string"
@@ -474,7 +471,7 @@
                 "refersto": {
                     "type": "integer"
                 },
-                "reportnumber": {
+                "parent_report_number": {
                     "index": "not_analyzed",
                     "type": "string"
                 },

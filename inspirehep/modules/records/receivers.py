@@ -71,58 +71,6 @@ def enhance_record(sender, json, *args, **kwargs):
     after_record_enhanced.send(json)
 
 
-@before_record_insert.connect
-@before_record_update.connect
-def normalize_field_categories(sender, *args, **kwargs):
-    """Normalize the content of the `field_categories` key.
-
-    We use the heuristic that a field is normalized if its scheme is 'INSPIRE'
-    or if it contains either the `_scheme` key or the `_term` key.
-
-    If the field wasn't normalized we use some mapping defined in the
-    configuration to output a `term` belonging to a known set of values.
-
-    We also use the heuristic that the source is 'INSPIRE' if it contains the
-    word 'automatically', otherwise we preserve it.
-
-    Note that the valid `scheme`s are hardcoded in the schema, so any
-    non-recognized scheme will fail schema validation.
-    """
-    def _is_normalized(field):
-        return (
-            field.get('scheme') == 'INSPIRE'
-            or '_scheme' in field
-            or '_term' in field
-        )
-
-    for i, field in enumerate(sender.get('field_categories', [])):
-        if _is_normalized(field):
-            continue
-
-        original_term = field.get('term')
-        normalized_term = classify_field(original_term)
-        scheme = 'INSPIRE' if normalized_term else None
-
-        original_scheme = field.get('scheme')
-        if isinstance(original_scheme, (list, tuple)):
-            original_scheme = original_scheme[0]
-
-        updated_field = {
-            '_scheme': original_scheme,
-            'scheme': scheme,
-            '_term': original_term,
-            'term': normalized_term,
-        }
-
-        source = field.get('source')
-        if source:
-            if 'automatically' in source:
-                source = 'INSPIRE'
-            updated_field['source'] = source
-
-        sender['field_categories'][i].update(updated_field)
-
-
 def populate_inspire_subjects(sender, json, *args, **kwargs):
     """Populate the INSPIRE subjects before indexing.
 
@@ -130,12 +78,9 @@ def populate_inspire_subjects(sender, json, *args, **kwargs):
     faceting in the search interface. Valid terms on which to facet are
     only those that come from the INSPIRE scheme.
     """
-    def _scheme_is_inspire(field):
-        return field.get('scheme') == 'INSPIRE'
-
     inspire_subjects = [
-        field['term'] for field in json.get('field_categories', [])
-        if _scheme_is_inspire(field) and field.get('term')]
+        field['term'] for field in json.get('inspire_categories', [])
+        if field.get('term')]
 
     json['facet_inspire_subjects'] = inspire_subjects
 
@@ -406,8 +351,8 @@ def earliest_date(sender, json, *args, **kwargs):
     """Find and assign the earliest date to a HEP paper."""
     date_paths = [
         'preprint_date',
-        'thesis.date',
-        'thesis.defense_date',
+        'thesis_info.date',
+        'thesis_info.defense_date',
         'publication_info.year',
         'creation_modification_date.creation_date',
         'imprints.date',

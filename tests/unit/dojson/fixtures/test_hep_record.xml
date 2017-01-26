@@ -49,6 +49,7 @@
     <subfield code="i">Inspire_id</subfield>
     <subfield code="j">External_id</subfield>
     <subfield code="m">mail</subfield>
+    <subfield code="v">Institut für Kernphysik, Technische Universität Darmstadt, D-64289 Darmstadt, Germany</subfield>
     <subfield code="x">123</subfield>
     <subfield code="y">1</subfield>
   </datafield>
@@ -96,7 +97,7 @@
     <subfield code="c">2015</subfield>
   </datafield>
   <datafield tag="300" ind1=" " ind2=" ">
-    <subfield code="a">emulateapj</subfield>
+    <subfield code="a">9</subfield>
   </datafield>
   <datafield tag="490" ind1=" " ind2=" ">
     <subfield code="a">Mathematical Physics Studies</subfield>
@@ -196,6 +197,10 @@
     <subfield code="2">INSPIRE</subfield>
     <subfield code="a">Fantastic thesaurus keyword</subfield>
     <subfield code="9">submitter</subfield>
+  </datafield>
+  <datafield tag="700" ind1="" ind2="">
+    <subfield code="a">Birkhan, J.</subfield>
+    <subfield code="v">Institut für Kernphysik</subfield>
   </datafield>
   <datafield tag="701" ind1=" " ind2=" ">
     <subfield code="a">Weiglein, Georg</subfield>
