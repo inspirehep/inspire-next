@@ -44,6 +44,7 @@ from ..utils import (
     get_recid_from_ref,
     get_record_ref,
 )
+import re
 
 
 @hep.over('acquisition_source', '^541..$')
@@ -56,12 +57,20 @@ def acquisition_source(self, key, value):
 
         return force_single_element(sources_without_inspire_uid)
 
+    def _get_orcid(value):
+        orcids = force_force_list(value.get('a'))
+        orcid = [el[6:] for el in orcids
+                 if re.match('^orcid:\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$', el)]
+
+        return force_single_element(orcid)
+
     return {
         'date': value.get('d'),
         'email': value.get('b'),
         'method': value.get('c'),
         'source': _get_source(value),
         'submission_number': value.get('e'),
+        'orcid': _get_orcid(value),
     }
 
 
