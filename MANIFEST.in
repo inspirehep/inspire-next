@@ -1,0 +1,70 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of INSPIRE.
+# Copyright (C) 2017 CERN.
+#
+# INSPIRE is free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA 02111-1307, USA.
+#
+# In applying this license, CERN does not
+# waive the privileges and immunities granted to it by virtue of its status
+# as an Intergovernmental Organization or submit itself to any jurisdiction.
+
+exclude .gitmodules
+exclude submodules
+recursive-exclude submodules *
+
+# Check manifest will not automatically add these two files:
+include .dockerignore
+include .editorconfig
+include tests/unit/utils/fixtures/foo-bar-baz
+recursive-include scripts *
+
+# added by check_manifest.py
+include *.rst
+include *.txt
+include *.yml
+include .coveragerc
+include Procfile
+include gunicorn.cfg
+include pytest.ini
+recursive-include docs *.jpg
+recursive-include docs *.png
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs Makefile
+recursive-include inspirehep *.gif
+recursive-include inspirehep *.gz
+recursive-include inspirehep *.html
+recursive-include inspirehep *.ico
+recursive-include inspirehep *.js
+recursive-include inspirehep *.json
+recursive-include inspirehep *.kb
+recursive-include inspirehep *.mustache
+recursive-include inspirehep *.png
+recursive-include inspirehep *.py
+recursive-include inspirehep *.rdf
+recursive-include inspirehep *.rst
+recursive-include inspirehep *.scss
+recursive-include inspirehep *.svg
+recursive-include inspirehep *.tpl
+recursive-include inspirehep *.txt
+recursive-include inspirehep *.xml
+recursive-include inspirehep *.xsl
+recursive-include tests *.01097
+recursive-include tests *.7587v1
+recursive-include tests *.pdf
+recursive-include tests *.py
+recursive-include tests *.xml
