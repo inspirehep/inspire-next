@@ -52,10 +52,7 @@ ORCID = re.compile('\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]')
 
 @hep.over('authors', '^[17]00[103_].')
 def authors(self, key, value):
-    """Authors.
-
-    FIXME: currently not handling 100__v.
-    """
+    """Authors."""
     def _get_author(value):
         def _get_affiliations(value):
             result = []
@@ -147,6 +144,15 @@ def authors(self, key, value):
             if x_value and x_value.isdigit():
                 return get_record_ref(x_value, 'authors')
 
+        def _raw_affiliations(val):
+            result = []
+
+            v_values = force_force_list(val.get('v'))
+            for v_value in v_values:
+                result.append({'value': v_value})
+
+            return result
+
         def _get_contributor_role(value):
             values = force_force_list(value)
 
@@ -176,6 +182,7 @@ def authors(self, key, value):
             'emails': force_force_list(value.get('m')),
             'full_name': _get_full_name(value),
             'ids': _get_ids(value),
+            'raw_affiliations': _raw_affiliations(value),
             'record': _get_record(value),
             'contributor_roles': _get_contributor_role(value.get('e')),
         }
@@ -201,6 +208,10 @@ def authors2marc(self, key, value):
         affiliations = [
             aff.get('value') for aff in value.get('affiliations', [])
         ]
+        raw_affiliations = [
+            raw_aff.get('value') for raw_aff in value.get('raw_affiliations', [])
+        ]
+
         return {
             'a': value.get('full_name'),
             'e': utils_get_value(value, 'contributor_roles.value'),
@@ -209,6 +220,7 @@ def authors2marc(self, key, value):
             'j': value.get('orcid'),
             'm': value.get('emails'),
             'u': affiliations,
+            'v': raw_affiliations,
             'x': get_recid_from_ref(value.get('record')),
             'y': value.get('curated_relation')
         }
