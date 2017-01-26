@@ -166,9 +166,9 @@ def public_email(self, key, value):
         self['positions'] = positions
 
 
-@updateform.over('field_categories', '^research_field$')
+@updateform.over('inspire_categories', '^research_field$')
 @utils.for_each_value
-def field_categories(self, key, value):
+def inspire_categories(self, key, value):
     return {
         "term": value,
         "source": "submitter"

@@ -91,12 +91,12 @@ def authors(self, key, value):
 def categories(self, key, value):
     subject_list = [{
         "term": c,
-        "scheme": "arXiv"
+        "source": "user"
     } for c in value.split()]
-    if 'field_categories' in self:
-        self['field_categories'].extend(subject_list)
+    if 'inspire_categories' in self:
+        self['inspire_categories'].extend(subject_list)
     else:
-        self['field_categories'] = subject_list
+        self['inspire_categories'] = subject_list
     if 'arxiv_eprints' in self:
         self['arxiv_eprints'][0]['categories'] = value.split()
     raise IgnoreKey
@@ -271,13 +271,12 @@ def report_numbers(self, key, value):
     raise IgnoreKey
 
 
-@literature.over('field_categories', '^subject_term$')
-def field_categories(self, key, value):
+@literature.over('inspire_categories', '^subject_term$')
+def inspire_categories(self, key, value):
     return [
         {
             "term": t,
-            "scheme": "INSPIRE",
-            "source": "submitter"
+            "source": "user"
         }
         for t in value]
 

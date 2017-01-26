@@ -94,11 +94,8 @@ def test_get_id_raises_when_no_control_number():
 
 def test_get_subject():
     record = {
-        'field_categories': [
-            {
-                'scheme': 'INSPIRE',
-                'term': 'Phenomenology-HEP',
-            },
+        'inspire_categories': [
+            {'term': 'Phenomenology-HEP'},
         ],
     }
 
@@ -110,15 +107,9 @@ def test_get_subject():
 
 def test_get_subject_selects_first():
     record = {
-        'field_categories': [
-            {
-                'scheme': 'INSPIRE',
-                'term': 'Experiments-HEP',
-            },
-            {
-                'scheme': 'INSPIRE',
-                'term': 'Phenomenology-HEP',
-            },
+        'inspire_categories': [
+            {'term': 'Experiments-HEP'},
+            {'term': 'Phenomenology-HEP'},
         ],
     }
 
@@ -126,19 +117,6 @@ def test_get_subject_selects_first():
     result = get_subject(record)
 
     assert expected == result
-
-
-def test_get_subject_discards_non_inspire_field_categories():
-    record = {
-        'field_categories': [
-            {
-                'scheme': 'arXiv',
-                'term': 'cond-mat.str-el',
-            },
-        ],
-    }
-
-    assert get_document_type(record) is None
 
 
 def test_is_collaboration():

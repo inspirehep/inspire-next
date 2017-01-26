@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015, 2016 CERN.
+# Copyright (C) 2014, 2015, 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 from __future__ import absolute_import, division, print_function
 
 from dojson import utils
-from dojson.errors import IgnoreKey
 
+from inspire_schemas.api import load_schema
 from inspirehep.utils.helpers import force_force_list
 
 from ..conferences.model import conferences
@@ -38,7 +38,6 @@ from ..jobs.model import jobs
 from ..journals.model import journals
 from ..utils import (
     classify_field,
-    force_force_list,
     force_single_element,
     get_recid_from_ref,
     get_record_ref,
@@ -319,41 +318,39 @@ def deleted_records2marc(self, key, value):
     }
 
 
-@conferences.over('field_categories', '^65017')
-@experiments.over('field_categories', '^65017')
-@hep.over('field_categories', '^650[1_][_7]')
-@hepnames.over('field_categories', '^65017')
-@institutions.over('field_categories', '^65017')
-@jobs.over('field_categories', '^65017')
+@conferences.over('inspire_categories', '^65017')
+@experiments.over('inspire_categories', '^65017')
+@hep.over('inspire_categories', '^650[1_][_7]')
+@hepnames.over('inspire_categories', '^65017')
+@institutions.over('inspire_categories', '^65017')
+@jobs.over('inspire_categories', '^65017')
 @utils.for_each_value
-def field_categories(self, key, value):
-    """Field categories."""
-    self.setdefault('field_categories', [])
+def inspire_categories(self, key, value):
+    """Inspire categories."""
+    schema = load_schema('elements/inspire_field')
+    possible_sources = schema['properties']['source']['enum']
 
     _terms = force_force_list(value.get('a'))
+    source = value.get('9')
 
+    if source not in possible_sources:
+        if source == 'automatically added based on DCC, PPF, DK':
+            source = 'curator'
+        elif source == 'submitter':
+            source = 'user'
+        else:
+            source = 'undefined'
+
+    self.setdefault('inspire_categories', [])
     if _terms:
         for _term in _terms:
             term = classify_field(_term)
-
-            scheme = 'INSPIRE' if term else None
-
-            _scheme = value.get('2')
-            if isinstance(_scheme, (list, tuple)):
-                _scheme = _scheme[0]
-
-            source = value.get('9')
-            if source:
-                if 'automatically' in source:
-                    source = 'INSPIRE'
-
-            self['field_categories'].append({
-                'source': source,
-                '_scheme': _scheme,
-                'scheme': scheme,
-                '_term': _term,
-                'term': term,
-            })
+            if term:
+                inspire_category = {
+                    'term': term,
+                    'source': source,
+                }
+                self['inspire_categories'].append(inspire_category)
 
 
 @conferences.over('urls', '^8564')

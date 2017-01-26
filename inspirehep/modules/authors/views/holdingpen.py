@@ -103,10 +103,10 @@ def convert_for_form(data):
                 elif url["description"].lower() == "linkedin":
                     data["linkedin_url"] = url["value"]
         del data["urls"]
-    if 'field_categories' in data:
+    if 'inspire_categories' in data:
         data["research_field"] = []
-        for category in data.get('field_categories', []):
-            data["research_field"].append(category.get('_term'))
+        for category in data.get('inspire_categories', []):
+            data["research_field"].append(category.get('term'))
     if "positions" in data:
         data["institution_history"] = []
         data["public_emails"] = []
@@ -342,7 +342,7 @@ def newreview():
     # Converting json to populate form
     convert_for_form(workflow_metadata)
     workflow_metadata['comments'] = workflow_metadata.get('_private_note')
-    research_fields = workflow_metadata.pop('field_categories')
+    research_fields = workflow_metadata.pop('inspire_categories')
     final_research_fields = []
     for field in research_fields:
         try:

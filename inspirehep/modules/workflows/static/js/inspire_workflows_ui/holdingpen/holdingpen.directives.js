@@ -146,8 +146,7 @@
 
           addSubjectArea: function () {
             console.debug($scope.vm.new_subject_area);
-            $scope.vm.record.metadata.field_categories.unshift({
-              'scheme': "INSPIRE",
+            $scope.vm.record.metadata.inspire_categories.unshift({
               'source': 'curator',
               'term': $scope.vm.new_subject_area,
               'accept': true
@@ -173,8 +172,8 @@
           },
 
           deleteSubject: function (index) {
-            if (index < $scope.vm.record.metadata.field_categories.length)
-              $scope.vm.record.metadata.field_categories.splice(index, 1);
+            if (index < $scope.vm.record.metadata.inspire_categories.length)
+              $scope.vm.record.metadata.inspire_categories.splice(index, 1);
             $scope.doUpdate();
           },
 

@@ -1314,15 +1314,6 @@ def test_copyright(marcxml_to_json, json_to_marc):
             json_to_marc['542'][0]['u'])
 
 
-def test_field_categories(marcxml_to_json, json_to_marc):
-    """Test if field_categories is created correctly."""
-    assert (marcxml_to_json['field_categories'][0]['scheme'] ==
-            json_to_marc['65017'][0]['2'])
-    assert (marcxml_to_json['field_categories'][0]['term'] ==
-            json_to_marc['65017'][0]['a'])
-    assert (marcxml_to_json['field_categories'][0]['source'] ==
-            json_to_marc['65017'][0]['9'])
-
 ACCELERATOR_EXPERIMENTS_DATA = [
     (
         'single_noncurated',

@@ -393,7 +393,7 @@ def test_positions_from_public_email_appends():
     assert expected == result['positions']
 
 
-def test_field_categories_from_research_field():
+def test_inspire_categories_from_research_field():
     form = GroupableOrderedDict([
         ('research_field', 'foo'),
     ])
@@ -406,7 +406,7 @@ def test_field_categories_from_research_field():
     ]
     result = updateform.do(form)
 
-    assert expected == result['field_categories']
+    assert expected == result['inspire_categories']
 
 
 def test_positions_from_institutions_history():

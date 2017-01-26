@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
+import pytest
 from elasticsearch_dsl.result import Response
 
 from inspirehep.modules.literaturesuggest.tasks import (
@@ -100,9 +101,10 @@ def test_formdata_to_model_populates_collections_from_type_of_doc_thesis(u, ui):
     assert obj.data == {}
 
 
+@pytest.mark.xfail(reason='missing spec')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_collections_from_field_categories_if_arxiv(u, ui):
+def test_formdata_to_model_populates_collections_from_inspire_categories_if_arxiv(u, ui):
     data = {}
     extra_data = {}
     formdata = {
@@ -132,6 +134,7 @@ def test_formdata_to_model_populates_collections_from_field_categories_if_arxiv(
     assert obj.data == {}
 
 
+@pytest.mark.xfail(reason='missing spec')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
 def test_formdata_to_model_populates_abstracts_from_abstracts_if_arxiv(u, ui):
@@ -160,6 +163,7 @@ def test_formdata_to_model_populates_abstracts_from_abstracts_if_arxiv(u, ui):
     assert obj.data == {}
 
 
+@pytest.mark.xfail(reason='missing spec')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
 def test_formdata_to_model_populates_external_system_numbers_from_arxiv_id(u, ui):
@@ -171,7 +175,7 @@ def test_formdata_to_model_populates_external_system_numbers_from_arxiv_id(u, ui
             'bar',
         ],
         'arxiv_id': 'baz',
-        'categories': 'foo'
+        'categories': 'foo',
     }
 
     obj = StubObj(data, extra_data)

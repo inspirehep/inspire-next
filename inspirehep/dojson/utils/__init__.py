@@ -49,7 +49,7 @@ def classify_field(value):
                 return category
             elif category.upper() == casted_value:
                 return category
-        return 'Other'
+        return None
 
 
 def classify_rank(value):
