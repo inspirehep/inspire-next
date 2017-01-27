@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ from dojson.contrib.marc21.utils import create_record
 from inspirehep.dojson.hep import hep
 from inspirehep.modules.refextract.tasks import extract_references
 from inspirehep.utils.arxiv import get_clean_arXiv_id
-from inspirehep.utils.helpers import download_file_to_record
+from inspirehep.utils.helpers import download_file_to_workflow
 
 from plotextractor.api import process_tarball
 from plotextractor.converter import untar
@@ -60,8 +60,8 @@ def arxiv_fulltext_download(obj, eng):
     arxiv_id = get_clean_arXiv_id(obj.data)
     filename = secure_filename("{0}.pdf".format(arxiv_id))
     if filename not in obj.files:
-        pdf = download_file_to_record(
-            record=obj,
+        pdf = download_file_to_workflow(
+            workflow=obj,
             name=filename,
             url=current_app.config['ARXIV_PDF_URL'].format(
                 arxiv_id=arxiv_id
@@ -81,8 +81,8 @@ def arxiv_plot_extract(obj, eng):
     arxiv_id = get_clean_arXiv_id(obj.data)
     filename = secure_filename("{0}.tar.gz".format(arxiv_id))
     if filename not in obj.files:
-        tarball = download_file_to_record(
-            record=obj,
+        tarball = download_file_to_workflow(
+            workflow=obj,
             name=filename,
             url=current_app.config['ARXIV_TARBALL_URL'].format(
                 arxiv_id=arxiv_id
@@ -121,8 +121,8 @@ def arxiv_refextract(obj, eng):
     arxiv_id = get_clean_arXiv_id(obj.data)
     filename = secure_filename("{0}.pdf".format(arxiv_id))
     if filename not in obj.files:
-        pdf = download_file_to_record(
-            record=obj,
+        pdf = download_file_to_workflow(
+            workflow=obj,
             name=filename,
             url=current_app.config['ARXIV_PDF_URL'].format(
                 arxiv_id=arxiv_id
@@ -156,8 +156,8 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
         arxiv_id = get_clean_arXiv_id(obj.data)
         filename = secure_filename("{0}.tar.gz".format(arxiv_id))
         if filename not in obj.files:
-            tarball = download_file_to_record(
-                record=obj,
+            tarball = download_file_to_workflow(
+                workflow=obj,
                 name=filename,
                 url=current_app.config['ARXIV_TARBALL_URL'].format(
                     arxiv_id=arxiv_id

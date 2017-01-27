@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,12 +42,21 @@ def download_file(url, output_file=None, chunk_size=1024):
     return output_file
 
 
-def download_file_to_record(record, name, url):
-    """Download a file to specified record."""
+def download_file_to_workflow(workflow, name, url):
+    """Download a file to a specified workflow.
+
+    The ``workflow.files`` property is actually a method, which returns a
+    ``WorkflowFilesIterator``. This class inherits a custom ``__setitem__``
+    method from its parent, ``FilesIterator``, which ends up calling ``save``
+    on an ``invenio_files_rest.storage.pyfs.PyFSFileStorage`` instance
+    through ``ObjectVersion`` and ``FileObject``. This method consumes the
+    stream passed to it and saves in its place a ``FileObject`` with the
+    details of the downloaded file.
+    """
     with closing(requests.get(url=url, stream=True)) as req:
         if req.status_code == 200:
-            record.files[name] = req.raw
-            return record.files[name]
+            workflow.files[name] = req.raw
+            return workflow.files[name]
 
 
 def get_json_for_plots(plots):
