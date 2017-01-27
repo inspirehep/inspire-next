@@ -98,6 +98,28 @@ def test_541__a_b_c_e_from_acquisition_source():
     assert expected == result['541']
 
 
+def test_541__a_b_c_e_with_orcid_from_acquisition_source():
+    record = {
+        'acquisition_source': {
+            'source': 'orcid:0000-0002-1048-661X',
+            'email': 'oliver.schlotterer@web.de',
+            'method': 'submission',
+            'submission_number': '504296',
+            'orcid': '0000-0002-1048-661X',
+        },
+    }
+
+    expected = {
+        'a': '0000-0002-1048-661X',
+        'b': 'oliver.schlotterer@web.de',
+        'c': 'submission',
+        'e': '504296',
+    }
+    result = hep2marc.do(record)
+
+    assert expected == result['541']
+
+
 def test_field_from_marcxml_650_with_single_source_and_category():
     """Simple case.
 
