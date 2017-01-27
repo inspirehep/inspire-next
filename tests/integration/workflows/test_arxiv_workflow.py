@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -127,26 +127,26 @@ def arxiv_pdf_accept():
     )
 
 
-def fake_download_file(record, name, url):
-    """Mock download_file func."""
+def fake_download_file(workflow, name, url):
+    """Mock download_file_to_workflow func."""
     if url == 'http://arxiv.org/e-print/1407.7587':
-        record.files[name] = pkg_resources.resource_stream(
+        workflow.files[name] = pkg_resources.resource_stream(
             __name__,
             os.path.join(
                 'fixtures',
                 '1407.7587v1'
             )
         )
-        return record.files[name]
+        return workflow.files[name]
     elif url == 'http://arxiv.org/pdf/1407.7587':
-        record.files[name] = pkg_resources.resource_stream(
+        workflow.files[name] = pkg_resources.resource_stream(
             __name__,
             os.path.join(
                 'fixtures',
                 '1407.7587v1.pdf'
             )
         )
-        return record.files[name]
+        return workflow.files[name]
     raise Exception("Download file not mocked!")
 
 
@@ -243,7 +243,7 @@ def fake_magpie_api_request(url, data):
         }
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.arxiv.download_file_to_record',
+@mock.patch('inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
             side_effect=fake_download_file)
 @mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request',
             side_effect=fake_beard_api_request)
@@ -334,7 +334,7 @@ def test_harvesting_arxiv_workflow_rejected(
         assert obj.status == ObjectStatus.COMPLETED
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.arxiv.download_file_to_record',
+@mock.patch('inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
             side_effect=fake_download_file)
 def test_harvesting_arxiv_workflow_accepted(
     mocked, small_app, record_oai_arxiv_plots):
