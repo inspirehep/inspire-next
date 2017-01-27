@@ -77,8 +77,14 @@ def acquisition_source(self, key, value):
 @hep2marc.over('541', '^acquisition_source$')
 @hepnames2marc.over('541', '^acquisition_source$')
 def acquisition_source2marc(self, key, value):
+    def _get_a(value):
+        # ORCID has the priority over source
+        if value.get('orcid'):
+            return value.get('orcid')
+        return value.get('source')
+
     return {
-        'a': value.get('source'),
+        'a': _get_a(value),
         'b': value.get('email'),
         'c': value.get('method'),
         'd': value.get('date'),
