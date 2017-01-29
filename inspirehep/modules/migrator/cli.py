@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Manage migrator from INSPIRE legacy instance."""
 
 from __future__ import absolute_import, division, print_function
@@ -67,15 +66,12 @@ def process_result(result, **kwargs):
 
 
 @migrator.command()
-@click.option('--file-input', '-f',
-              help='Specific collections to migrate.')
-@click.option('--remigrate', '-m', type=bool,
-              default=False, help='Try to remigrate broken records')
-@click.option('--wait', '-w', type=bool, default=False,
-              help='Wait for migrator to complete.')
-def populate(file_input=None,
-             remigrate=False,
-             wait=False):
+@click.option('--file-input', '-f', help='Specific collections to migrate.')
+@click.option(
+    '--remigrate', '-m', type=bool, default=False, help='Try to remigrate broken records'
+)
+@click.option('--wait', '-w', type=bool, default=False, help='Wait for migrator to complete.')
+def populate(file_input=None, remigrate=False, wait=False):
     """Populates the system with records from migrator files.
 
     Usage: inveniomanage migrator populate -f prodsync20151117173222.xml.gz
@@ -94,10 +90,10 @@ def populate(file_input=None,
 @migrator.command()
 @click.option('--recid', '-r', type=int, help="recid on INSPIRE")
 def one(recid):
-    click.echo(
-        "Migrating record {recid} from INSPIRE legacy".format(recid=recid))
+    click.echo("Migrating record {recid} from INSPIRE legacy".format(recid=recid))
     raw_record = requests.get(
-        "http://inspirehep.net/record/{recid}/export/xme".format(recid=recid)).content
+        "http://inspirehep.net/record/{recid}/export/xme".format(recid=recid)
+    ).content
     migrate_chunk(split_blob(raw_record))
 
 
@@ -133,9 +129,7 @@ def loadworkflows(source):
     click.echo('Sending tasks to queue...')
     with click.progressbar(data) as records:
         for item in records:
-            import_holdingpen_record.delay(
-                item['parent_objs'], item['obj'], item['eng']
-            )
+            import_holdingpen_record.delay(item['parent_objs'], item['obj'], item['eng'])
 
 
 @migrator.command()
@@ -216,39 +210,28 @@ def clean_records():
                 if foreign_key["referred_table"] == "records_metadata":
                     tables_to_truncate.append(table_name)
 
-        if not click.confirm("Going to truncate:\n{0}".format(
-                "\n".join(tables_to_truncate))):
+        if not click.confirm("Going to truncate:\n{0}".format("\n".join(tables_to_truncate))):
             return
 
-        click.secho('Truncating tables...', fg='red', bold=True,
-                    err=True)
+        click.secho('Truncating tables...', fg='red', bold=True, err=True)
         with click.progressbar(tables_to_truncate) as tables:
             for table in tables:
-                db.engine.execute(
-                    "TRUNCATE TABLE {0} RESTART IDENTITY CASCADE".format(table))
+                db.engine.execute("TRUNCATE TABLE {0} RESTART IDENTITY CASCADE".format(table))
                 click.secho("\tTruncated {0}".format(table))
 
         db.session.commit()
 
         current_search.aliases = {
-            k: v for k, v in current_search.aliases.iteritems()
-            if k.startswith('records')
+            k: v
+            for k, v in current_search.aliases.iteritems() if k.startswith('records')
         }
-        click.secho('Destroying indexes...',
-                    fg='red',
-                    bold=True,
-                    err=True)
-        with click.progressbar(
-                current_search.delete(ignore=[400, 404])) as bar:
+        click.secho('Destroying indexes...', fg='red', bold=True, err=True)
+        with click.progressbar(current_search.delete(ignore=[400, 404])) as bar:
             for name, response in bar:
                 click.secho(name)
 
-        click.secho('Creating indexes...',
-                    fg='green',
-                    bold=True,
-                    err=True)
-        with click.progressbar(
-                current_search.create(ignore=[400])) as bar:
+        click.secho('Creating indexes...', fg='green', bold=True, err=True)
+        with click.progressbar(current_search.create(ignore=[400])) as bar:
             for name, response in bar:
                 click.secho(name)
 
@@ -263,10 +246,8 @@ def drop_tables(table_filter):
         "SELECT TABLE_NAME"
         " FROM INFORMATION_SCHEMA.TABLES"
         " WHERE TABLE_NAME LIKE '{0}'"
-        " AND table_schema='{1}'".format(
-            table_filter,
-            current_app.config.get('CFG_DATABASE_NAME')
-        )
+        " AND table_schema='{1}'".
+        format(table_filter, current_app.config.get('CFG_DATABASE_NAME'))
     ).fetchall()
     for table in table_names:
         db.engine.execute("DROP TABLE {0}".format(table[0]))

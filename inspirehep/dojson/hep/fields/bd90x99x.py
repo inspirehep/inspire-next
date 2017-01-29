@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -41,7 +40,6 @@ from inspirehep.utils.pubnote import build_pubnote
 from inspirehep.utils.record import get_value
 from inspirehep.utils.helpers import force_force_list
 
-
 RE_VALID_PUBNOTE = re.compile(".*,.*,.*(,.*)?")
 
 
@@ -54,25 +52,16 @@ def references(self, key, value):
         # Retrieve fields as described here:
         # https://twiki.cern.ch/twiki/bin/view/Inspire/DevelopmentRecordMarkup.
         rb = ReferenceBuilder()
-        mapping = [
-            ('o', rb.set_number),
-            ('m', rb.add_misc),
-            ('x', partial(rb.add_raw_reference, source='dojson')),
-            ('1', rb.set_texkey),
-            ('u', rb.add_url),
-            ('r', rb.add_report_number),
-            ('s', rb.set_pubnote),
-            ('p', rb.set_publisher),
-            ('y', rb.set_year),
-            ('i', rb.add_uid),
-            ('b', rb.add_uid),
-            ('a', rb.add_uid),
-            ('c', rb.add_collaboration),
-            ('q', rb.add_title),
-            ('t', rb.add_title),
-            ('h', rb.add_refextract_authors_str),
-            ('e', partial(rb.add_author, role='ed.'))
-        ]
+        mapping = [('o', rb.set_number), ('m', rb.add_misc),
+                   ('x', partial(
+                       rb.add_raw_reference, source='dojson'
+                   )), ('1', rb.set_texkey), ('u', rb.add_url), ('r', rb.add_report_number),
+                   ('s', rb.set_pubnote), ('p', rb.set_publisher), ('y', rb.set_year),
+                   ('i', rb.add_uid), ('b', rb.add_uid), ('a', rb.add_uid),
+                   ('c', rb.add_collaboration), ('q', rb.add_title), ('t', rb.add_title),
+                   ('h', rb.add_refextract_authors_str), ('e', partial(
+                       rb.add_author, role='ed.'
+                   ))]
 
         for field, method in mapping:
             for element in force_force_list(value.get(field)):
@@ -103,17 +92,16 @@ def references2marc(self, key, value):
     journal_pg_start = get_value(reference, 'publication_info.page_start')
     journal_pg_end = get_value(reference, 'publication_info.page_end')
     journal_artid = get_value(reference, 'publication_info.artid')
-    pubnote = build_pubnote(journal_title, journal_volume, journal_pg_start,
-                            journal_pg_end, journal_artid)
+    pubnote = build_pubnote(
+        journal_title, journal_volume, journal_pg_start, journal_pg_end, journal_artid
+    )
     return {
         '0': get_recid_from_ref(value.get('record')),
         '1': get_value(reference, 'texkey'),
         'a': get_value(reference, 'dois[0]'),
         'c': get_value(reference, 'collaboration'),
-        'e': [a.get('full_name') for a in reference.get('authors', [])
-              if a.get('role') == 'ed.'],
-        'h': [a.get('full_name') for a in reference.get('authors', [])
-              if a.get('role') != 'ed.'],
+        'e': [a.get('full_name') for a in reference.get('authors', []) if a.get('role') == 'ed.'],
+        'h': [a.get('full_name') for a in reference.get('authors', []) if a.get('role') != 'ed.'],
         'm': get_value(reference, 'misc'),
         'o': get_value(reference, 'number'),
         'i': get_value(reference, 'publication_info.isbn'),

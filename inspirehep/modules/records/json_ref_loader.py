@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Resource-aware json reference loaders to be used with jsonref."""
 
 from __future__ import absolute_import, division, print_function
@@ -56,8 +55,7 @@ class AbstractRecordLoader(JsonLoader):
         parsed_server = url_parse(server_name)
 
         if parsed_uri.netloc and parsed_uri.netloc != parsed_server.netloc:
-            return super(AbstractRecordLoader, self).get_remote_json(uri,
-                                                                     **kwargs)
+            return super(AbstractRecordLoader, self).get_remote_json(uri, **kwargs)
         path_parts = parsed_uri.path.strip('/').split('/')
         if len(path_parts) < 2:
             current_app.logger.error('Bad JSONref URI: {0}'.format(uri))
@@ -81,7 +79,6 @@ class ESJsonLoader(AbstractRecordLoader):
 
 
 class DatabaseJsonLoader(AbstractRecordLoader):
-
     def get_record(self, pid_type, recid):
         try:
             return record_getter.get_db_record(pid_type, recid)
@@ -92,9 +89,7 @@ class DatabaseJsonLoader(AbstractRecordLoader):
 es_record_loader = ESJsonLoader()
 db_record_loader = DatabaseJsonLoader()
 SCHEMA_LOADER_CLS = json_loader_factory(
-    jsonresolver.JSONResolver(
-        plugins=['invenio_jsonschemas.jsonresolver']
-    )
+    jsonresolver.JSONResolver(plugins=['invenio_jsonschemas.jsonresolver'])
 )
 """Used in invenio-jsonschemas to resolve relative $ref."""
 
@@ -117,11 +112,7 @@ def replace_refs(obj, source='db'):
         The same obj structure with the '$ref' fields replaced with the object
         available at the given URI.
     """
-    loaders = {
-        'db': db_record_loader,
-        'es': es_record_loader,
-        'http': None
-    }
+    loaders = {'db': db_record_loader, 'es': es_record_loader, 'http': None}
     if source not in loaders:
         raise ValueError('source must be one of {}'.format(loaders.keys()))
 

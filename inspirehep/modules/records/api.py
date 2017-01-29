@@ -19,7 +19,6 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Inspire Records"""
 
 from __future__ import absolute_import, division, print_function
@@ -34,14 +33,10 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.api import Record
 from invenio_db import db
 
-from inspirehep.utils.record_getter import (
-    RecordGetterError,
-    get_es_record_by_uuid
-)
+from inspirehep.utils.record_getter import (RecordGetterError, get_es_record_by_uuid)
 
 
 class InspireRecord(Record):
-
     """Record class that fetches records from DataBase."""
 
     def merge(self, other):
@@ -50,8 +45,12 @@ class InspireRecord(Record):
         :param other: The record that self(record) is going to be redirected.
         :type other: InspireRecord
         """
-        pids_deleted = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == self.id).all()
-        pid_merged = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == other.id).one()
+        pids_deleted = PersistentIdentifier.query.filter(
+            PersistentIdentifier.object_uuid == self.id
+        ).all()
+        pid_merged = PersistentIdentifier.query.filter(
+            PersistentIdentifier.object_uuid == other.id
+        ).one()
         with db.session.begin_nested():
             for pid in pids_deleted:
                 pid.redirect(pid_merged)
@@ -73,7 +72,6 @@ class InspireRecord(Record):
 
 
 class ESRecord(InspireRecord):
-
     """Record class that fetches records from ElasticSearch."""
 
     @classmethod

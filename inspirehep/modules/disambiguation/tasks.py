@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Celery tasks provided by Disambiguation module."""
 
 from __future__ import absolute_import, division, print_function
@@ -35,9 +34,7 @@ from invenio_indexer.signals import before_record_index
 from inspirehep.modules.disambiguation.beard import make_beard_clusters
 from inspirehep.modules.disambiguation.logic import process_clusters
 from inspirehep.modules.disambiguation.models import DisambiguationRecord
-from inspirehep.modules.disambiguation.receivers import (
-    append_updated_record_to_queue,
-)
+from inspirehep.modules.disambiguation.receivers import (append_updated_record_to_queue, )
 from inspirehep.modules.disambiguation.search import (
     create_beard_record,
     create_beard_signatures,
@@ -63,19 +60,20 @@ def disambiguation_daemon():
     phonetic_blocks = set()
 
     # Get the records classified for clustering.
-    records_to_cluster = DisambiguationRecord.query.distinct(
-        "disambiguation_records.record_id").all()
+    records_to_cluster = DisambiguationRecord.query.distinct("disambiguation_records.record_id"
+                                                             ).all()
 
     # For each record get the phonetic blocks.
     for record in records_to_cluster:
-        phonetic_blocks.update(
-            get_blocks_from_record(record.record_id))
+        phonetic_blocks.update(get_blocks_from_record(record.record_id))
 
     # For each phonetic block, run clustering job.
     while phonetic_blocks:
-        current_app.send_task('inspirehep.modules.disambiguation.tasks.'
-                              'disambiguation_clustering',
-                              args=(phonetic_blocks.pop(),))
+        current_app.send_task(
+            'inspirehep.modules.disambiguation.tasks.'
+            'disambiguation_clustering',
+            args=(phonetic_blocks.pop(), )
+        )
 
     # Clear the database table.
     DisambiguationRecord.query.delete()
@@ -104,13 +102,11 @@ def disambiguation_clustering(phonetic_block):
         # Create records and signatures in Beard readable format.
         for record_id in records_ids:
             records.append(create_beard_record(record_id))
-            signatures.extend(create_beard_signatures(
-                record_id, phonetic_block))
+            signatures.extend(create_beard_signatures(record_id, phonetic_block))
 
         # Dispatch clustering job to Beard Celery service.
         try:
-            clusters_matched, clusters_created = make_beard_clusters(
-                records, signatures).get()
+            clusters_matched, clusters_created = make_beard_clusters(records, signatures).get()
         except AttributeError:
             clusters_matched = {}
             clusters_created = {}
@@ -181,5 +177,4 @@ def update_authors_recid(record_id, uuid, profile_recid):
         before_record_index.connect(append_updated_record_to_queue)
 
     # Report.
-    logger.info("Updated signature %s with profile %s",
-                uuid, profile_recid)
+    logger.info("Updated signature %s with profile %s", uuid, profile_recid)

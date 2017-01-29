@@ -50,13 +50,11 @@ class AuthorAPICoauthors(object):
             "match": {
                 "authors.recid": author_pid
             }
-        }).params(
-            _source=[
-                "authors.full_name",
-                "authors.recid",
-                "authors.record",
-            ]
-        )
+        }).params(_source=[
+            "authors.full_name",
+            "authors.recid",
+            "authors.record",
+        ])
 
         for result in search.scan():
             result_source = result.to_dict()['authors']

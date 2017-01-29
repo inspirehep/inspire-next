@@ -46,20 +46,20 @@ def load_submitted_record(input_data):
         return (
             'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record and
             'Submitted by admin@inspirehep.net\non' in record and
-            'Wisconsin U., Madison' in record and
-            'My Title For Test' in record and
-            'Mister Brown' in record and
-            'Mister White' in record and
-            'Accelerators' in record and
-            'Computing' in record and
-            'CERN' in record
+            'Wisconsin U., Madison' in record and 'My Title For Test' in record and
+            'Mister Brown' in record and 'Mister White' in record and 'Accelerators' in record and
+            'Computing' in record and 'CERN' in record
         )
 
     try:
-        record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="ng-scope"])[2]'))).text
+        record = WebDriverWait(
+            Arsenic(), 10
+        ).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="ng-scope"])[2]'))).text
         record += Arsenic().find_element_by_xpath('//p[@class="text-center ng-scope"]').text
-        record += Arsenic().find_element_by_xpath('(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[1]').text
-        record += Arsenic().find_element_by_xpath('(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[2]').text
+        record += Arsenic(
+        ).find_element_by_xpath('(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[1]').text
+        record += Arsenic(
+        ).find_element_by_xpath('(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[2]').text
     except (ElementNotVisibleException, WebDriverException):
         go_to()
         record = load_submitted_record(input_data)
@@ -70,7 +70,10 @@ def load_submitted_record(input_data):
 def accept_record():
     def _accept_record():
         return 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))).text
+            EC.visibility_of_element_located((
+                By.XPATH, '//div[@class="alert ng-scope alert-accept"]'
+            ))
+        ).text
 
     Arsenic().find_element_by_xpath('//button[@class="btn btn-warning"]').click()
     return ArsenicResponse(_accept_record)

@@ -39,24 +39,20 @@ class Citation(object):
         row = []
 
         # Get citations
-        record_citations = LiteratureSearch().query_from_iq(
-            'refersto:' + str(self.record['control_number'])
-        ).params(
-            _source=[
-                'control_number',
-                'citation_count',
-                'titles',
-                'earliest_date'
-            ]
+        record_citations = LiteratureSearch(
+        ).query_from_iq('refersto:' + str(self.record['control_number'])).params(
+            _source=['control_number', 'citation_count', 'titles', 'earliest_date']
         ).execute().hits
 
         for citation in record_citations:
 
             citation_from_es = LiteratureSearch().get_source(citation.meta.id)
 
-            row.append(render_template_to_string(
-                "inspirehep_theme/citations.html",
-                record=citation_from_es))
+            row.append(
+                render_template_to_string(
+                    "inspirehep_theme/citations.html", record=citation_from_es
+                )
+            )
             try:
                 citation_count = citation.citation_count
             except AttributeError:

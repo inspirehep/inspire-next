@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Author update/addition form JSON conversion.
 
 Converts keys in the user form to the keys needed by the HepNames data model
@@ -66,10 +65,7 @@ def display_name(self, key, value):
 def websites(self, key, value):
     urls = []
     for website in value:
-        urls.append({
-            "value": website["webpage"],
-            "description": ""
-        })
+        urls.append({"value": website["webpage"], "description": ""})
     if 'urls' in self:
         self['urls'].extend(urls)
     else:
@@ -78,10 +74,7 @@ def websites(self, key, value):
 
 @updateform.over('_twitter_url', '^twitter_url$')
 def twitter_url(self, key, value):
-    twitter_url = {
-        'value': value,
-        'description': 'TWITTER'
-    }
+    twitter_url = {'value': value, 'description': 'TWITTER'}
     if 'urls' in self:
         self['urls'].append(twitter_url)
     else:
@@ -90,10 +83,7 @@ def twitter_url(self, key, value):
 
 @updateform.over('_blog_url', '^blog_url$')
 def blog_url(self, key, value):
-    blog_url = {
-        'value': value,
-        'description': 'BLOG'
-    }
+    blog_url = {'value': value, 'description': 'BLOG'}
     if 'urls' in self:
         self['urls'].append(blog_url)
     else:
@@ -102,10 +92,7 @@ def blog_url(self, key, value):
 
 @updateform.over('_linkedin_url', '^linkedin_url$')
 def linkedin_url(self, key, value):
-    linkedin_url = {
-        'value': value,
-        'description': 'LINKEDIN'
-    }
+    linkedin_url = {'value': value, 'description': 'LINKEDIN'}
     if 'urls' in self:
         self['urls'].append(linkedin_url)
     else:
@@ -114,10 +101,7 @@ def linkedin_url(self, key, value):
 
 @updateform.over('_orcid', '^orcid$')
 def orcid(self, key, value):
-    orcid = {
-        'value': value,
-        'type': 'ORCID'
-    }
+    orcid = {'value': value, 'type': 'ORCID'}
     if 'ids' in self:
         self['ids'].append(orcid)
     else:
@@ -126,10 +110,7 @@ def orcid(self, key, value):
 
 @updateform.over('_bai', '^bai$')
 def bai(self, key, value):
-    bai = {
-        'value': value,
-        'type': 'BAI'
-    }
+    bai = {'value': value, 'type': 'BAI'}
     if 'ids' in self:
         self['ids'].append(bai)
     else:
@@ -138,10 +119,7 @@ def bai(self, key, value):
 
 @updateform.over('_inspireid', '^inspireid$')
 def inspireid(self, key, value):
-    inspireid = {
-        'value': value,
-        'type': 'INSPIRE'
-    }
+    inspireid = {'value': value, 'type': 'INSPIRE'}
     if 'ids' in self:
         self['ids'].append(inspireid)
     else:
@@ -153,12 +131,10 @@ def public_email(self, key, value):
     positions = []
     for email in value:
         if email['original_email'] != email['email']:
-            positions.append(
-                {
-                    'emails': [email['email']],
-                    'old_emails': [email['original_email']],
-                }
-            )
+            positions.append({
+                'emails': [email['email']],
+                'old_emails': [email['original_email']],
+            })
 
     if 'positions' in self:
         self['positions'].extend(positions)
@@ -169,25 +145,22 @@ def public_email(self, key, value):
 @updateform.over('inspire_categories', '^research_field$')
 @utils.for_each_value
 def inspire_categories(self, key, value):
-    return {
-        "term": value,
-        "source": "submitter"
-    }
+    return {"term": value, "source": "submitter"}
 
 
 @updateform.over('_positions', '^institution_history$')
 def institution_history(self, key, value):
     positions = []
-    value = sorted(value,
-                   key=lambda k: k["start_year"],
-                   reverse=True)
+    value = sorted(value, key=lambda k: k["start_year"], reverse=True)
     for position in value:
         if not position["name"] and not position["start_year"] \
                 and not position["end_year"]:
             # Empty values
             continue
         positions.append({
-            "institution": {'name': position["name"]},
+            "institution": {
+                'name': position["name"]
+            },
             "current": True if position.get("current") else False,
             "start_date": position["start_year"],
             "end_date": position["end_year"],
@@ -208,10 +181,7 @@ def advisors(self, key, value):
     for advisor in value:
         if advisor["degree_type"] == "PhD" and not advisor["full_name"]:
             continue
-        advisors.append({
-            "name": advisor["full_name"],
-            "_degree_type": advisor["degree_type"]
-        })
+        advisors.append({"name": advisor["full_name"], "_degree_type": advisor["degree_type"]})
 
     return advisors
 
@@ -219,9 +189,7 @@ def advisors(self, key, value):
 @updateform.over('experiments', '^experiments$')
 def experiments(self, key, value):
     experiments = []
-    value = sorted(value,
-                   key=lambda k: k["start_year"],
-                   reverse=True)
+    value = sorted(value, key=lambda k: k["start_year"], reverse=True)
     for experiment in value:
         experiment["current"] = True if experiment["status"] else False
         _set_int_or_del(experiment, "start_year", experiment.get("start_year"))

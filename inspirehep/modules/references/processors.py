@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """References Processors."""
 
 from __future__ import absolute_import, division, print_function
@@ -33,13 +32,10 @@ from isbn.hyphen import ISBNRangeError
 
 from inspirehep.utils.pubnote import split_pubnote
 
-
 # Matches any separators for author enumerations.
-RE_SPLIT_AUTH = re.compile(r',?\s+and\s|,?\s*&|,|et al\.?|\(?eds?\.\)?',
-                           re.I | re.U)
+RE_SPLIT_AUTH = re.compile(r',?\s+and\s|,?\s*&|,|et al\.?|\(?eds?\.\)?', re.I | re.U)
 # Matches any stream of initials (A. B C D. -E F).
-RE_INITIALS_ONLY = re.compile(r'^\s*-?[A-Z]((\.|\s)\s*-?[A-Z])*\.?\s*$',
-                              re.U)
+RE_INITIALS_ONLY = re.compile(r'^\s*-?[A-Z]((\.|\s)\s*-?[A-Z])*\.?\s*$', re.U)
 
 
 def _split_refextract_authors_str(authors_str):
@@ -76,11 +72,7 @@ def _split_refextract_authors_str(authors_str):
     #  * ed might sneak in
     #  * many legacy refs look like 'X. and Somebody E.'
     #  * might miss lowercase initials
-    filters = [
-        lambda a: a == 'ed',
-        lambda a: a.startswith(','),
-        lambda a: len(a) == 1
-    ]
+    filters = [lambda a: a == 'ed', lambda a: a.startswith(','), lambda a: len(a) == 1]
     res = [r for r in res if all(not f(r) for f in filters)]
 
     return res
@@ -154,13 +146,13 @@ class ReferenceBuilder(object):
         self._ensure_reference_field('misc', [])
         self.obj['reference']['misc'].append(misc)
 
-    def add_raw_reference(self, raw_reference, source='reference_builder',
-                          ref_format='text'):
+    def add_raw_reference(self, raw_reference, source='reference_builder', ref_format='text'):
         self._ensure_field('raw_refs', [])
         self.obj['raw_refs'].append({
             'value': raw_reference,
             'source': source,
-            'schema': ref_format})
+            'schema': ref_format
+        })
 
     def set_year(self, year):
         try:
@@ -195,12 +187,7 @@ class ReferenceBuilder(object):
         """Parse pubnote and populate correct fields."""
         if self.RE_VALID_PUBNOTE.match(pubnote):
             values = split_pubnote(pubnote)
-            keys = (
-                'journal_title',
-                'journal_volume',
-                'page_start',
-                'page_end',
-                'artid')
+            keys = ('journal_title', 'journal_volume', 'page_start', 'page_end', 'artid')
             self._ensure_reference_field('publication_info', {})
             for idx, key in enumerate(keys):
                 if values[idx]:

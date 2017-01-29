@@ -20,13 +20,11 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIRE migrator load/dump workflow object."""
 
 from __future__ import absolute_import, division, print_function
 
 import json
-
 
 WORKFLOWS_TO_KEEP = [
     'literature',
@@ -138,24 +136,22 @@ def dump(item, from_date, with_json=True, latest_only=False, **kwargs):
                 extra_data['formdata'] = old_data['drafts']['default']['values']
             else:
                 data = old_data
-            parent_objs.append(dict(
-                extra_data=extra_data,
-                data=data,
-                id=parent.id,
-                created=parent.created.isoformat(),
-                modified=parent.modified.isoformat(),
-                status=parent.version,
-                data_type=parent.data_type,
-                id_workflow=parent.id_workflow,
-                id_parent=parent.id_parent,
-                id_user=parent.id_user
-            ))
+            parent_objs.append(
+                dict(
+                    extra_data=extra_data,
+                    data=data,
+                    id=parent.id,
+                    created=parent.created.isoformat(),
+                    modified=parent.modified.isoformat(),
+                    status=parent.version,
+                    data_type=parent.data_type,
+                    id_workflow=parent.id_workflow,
+                    id_parent=parent.id_parent,
+                    id_user=parent.id_user
+                )
+            )
 
             item = parent
     # Very silly, but just for now to clean the data
-    dumps = json.dumps(dict(
-        parent_objs=parent_objs,
-        obj=obj,
-        eng=eng
-    ), cls=ExtraDataEncoder)
+    dumps = json.dumps(dict(parent_objs=parent_objs, obj=obj, eng=eng), cls=ExtraDataEncoder)
     return json.loads(dumps)

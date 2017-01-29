@@ -19,7 +19,6 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Workflow tasks using refextract API."""
 
 from __future__ import absolute_import, division, print_function
@@ -58,20 +57,15 @@ def extract_journal_info(obj, eng):
         )
         if extracted_publication_info:
             if "volume" in extracted_publication_info:
-                pubnote["journal_volume"] = extracted_publication_info.get(
-                    "volume"
-                )
+                pubnote["journal_volume"] = extracted_publication_info.get("volume")
             if "title" in extracted_publication_info:
-                pubnote["journal_title"] = extracted_publication_info.get(
-                    "title"
-                )
+                pubnote["journal_title"] = extracted_publication_info.get("title")
             if "year" in extracted_publication_info:
-                pubnote["year"] = int(extracted_publication_info.get(
-                    "year"
-                ))
+                pubnote["year"] = int(extracted_publication_info.get("year"))
             if "page" in extracted_publication_info:
                 page_start, page_end, artid = split_page_artid(
-                    extracted_publication_info.get("page"))
+                    extracted_publication_info.get("page")
+                )
                 if page_start:
                     pubnote["page_start"] = page_start
                 if page_end:
@@ -93,15 +87,14 @@ def extract_references(filepath):
     if references.get('references'):
         for ref in references.get('references'):
             reference = {
-                'curated_relation': False,
-                'raw_refs': [
-                    {
-                        'position': '',
-                        'schema': '',
-                        'source': '',
-                        'value': json.dumps(ref),
-                    }
-                ],
+                'curated_relation':
+                    False,
+                'raw_refs': [{
+                    'position': '',
+                    'schema': '',
+                    'source': '',
+                    'value': json.dumps(ref),
+                }],
                 'record': {
                     '$ref': ''
                 },
@@ -113,9 +106,7 @@ def extract_references(filepath):
                     'imprint': ref.get('imprint'),
                     'misc': ref.get('misc'),
                     'number': ref.get('linemarker'),
-                    'persistent_identifiers': ref.get(
-                        'persistent_identifiers'
-                    ),
+                    'persistent_identifiers': ref.get('persistent_identifiers'),
                     'publication_info': {
                         'year': ref.get('year'),
                         'journal_title': ref.get('journal_title'),

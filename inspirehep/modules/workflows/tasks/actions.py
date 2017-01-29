@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Tasks related to user actions."""
 
 from __future__ import absolute_import, division, print_function
@@ -36,17 +35,21 @@ from inspirehep.utils.record import get_value
 
 def mark(key, value):
     """Mark a record by putting a value in a key in extra_data."""
+
     @wraps(mark)
     def _mark(obj, eng):
         obj.extra_data[key] = value
+
     return _mark
 
 
 def is_marked(key):
     """Mark a record by putting a value in a key in extra_data."""
+
     @wraps(mark)
     def _mark(obj, eng):
         return key in obj.extra_data and obj.extra_data[key]
+
     return _mark
 
 
@@ -62,9 +65,7 @@ def shall_halt_workflow(obj, *args, **kwargs):
 
 def in_production_mode(*args, **kwargs):
     """Check if we are in production mode"""
-    return current_app.config.get(
-        "PRODUCTION_MODE", False
-    )
+    return current_app.config.get("PRODUCTION_MODE", False)
 
 
 def add_core(obj, eng):
@@ -72,9 +73,7 @@ def add_core(obj, eng):
     if obj.extra_data.get('core'):
         collections = obj.data.get("collections", [])
         # Do not add it again if already there
-        has_core = [v for c in collections
-                    for v in c.values()
-                    if v and v.lower() == "core"]
+        has_core = [v for c in collections for v in c.values() if v and v.lower() == "core"]
         if not has_core:
             collections.append({"primary": "CORE"})
             obj.data["collections"] = collections
@@ -82,10 +81,14 @@ def add_core(obj, eng):
 
 def halt_record(action=None, message=None):
     """Halt the workflow for approval with optional action."""
+
     @wraps(halt_record)
     def _halt_record(obj, eng):
-        eng.halt(action=obj.extra_data.get("halt_action") or action,
-                 msg=obj.extra_data.get("halt_message") or message)
+        eng.halt(
+            action=obj.extra_data.get("halt_action") or action,
+            msg=obj.extra_data.get("halt_message") or message
+        )
+
     return _halt_record
 
 
@@ -103,6 +106,7 @@ def update_note(metadata):
 
 def reject_record(message):
     """Reject record with message."""
+
     @wraps(reject_record)
     def _reject_record(obj, *args, **kwargs):
         prediction_results = obj.extra_data.get("relevance_prediction")
@@ -117,6 +121,7 @@ def reject_record(message):
         obj.extra_data["approved"] = False
         obj.extra_data["reason"] = message
         obj.log.info(message)
+
     return _reject_record
 
 
@@ -145,10 +150,9 @@ def is_experimental_paper(obj, eng):
     categories = list(get_value(obj.data, "arxiv_eprints.categories", [[]])[0]) + \
         list(get_value(obj.data, "inspire_categories.term", []))
     categories_to_check = [
-        "hep-ex", "nucl-ex", "astro-ph", "astro-ph.IM", "astro-ph.CO",
-        "astro-ph.EP", "astro-ph.GA", "astro-ph.HE", "astro-ph.SR",
-        "physics.ins-det",
-        "Experiment-HEP", "Experiment-Nucl", "Astrophysics", "Instrumentation"
+        "hep-ex", "nucl-ex", "astro-ph", "astro-ph.IM", "astro-ph.CO", "astro-ph.EP",
+        "astro-ph.GA", "astro-ph.HE", "astro-ph.SR", "physics.ins-det", "Experiment-HEP",
+        "Experiment-Nucl", "Astrophysics", "Instrumentation"
     ]
     for experimental_category in categories_to_check:
         if experimental_category in categories:
@@ -178,4 +182,5 @@ def prepare_update_payload(extra_data_key="update_payload"):
 
         # FIXME: Just update entire record for now
         obj.extra_data[extra_data_key] = obj.data
+
     return _prepare_update_payload

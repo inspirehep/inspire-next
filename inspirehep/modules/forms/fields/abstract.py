@@ -31,9 +31,7 @@ class AbstractField(INSPIREField, TextAreaField):
         import warnings
         warnings.warn("Field has been deprecated", PendingDeprecationWarning)
         defaults = dict(
-            icon='pencil',
-            export_key='abstract.summary',
-            widget_classes='form-control'
+            icon='pencil', export_key='abstract.summary', widget_classes='form-control'
         )
         defaults.update(kwargs)
         super(AbstractField, self).__init__(**defaults)

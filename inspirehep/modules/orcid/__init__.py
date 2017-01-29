@@ -26,4 +26,4 @@ from .ext import INSPIREOrcid
 
 from .receivers import *
 
-__all__ = ('INSPIREOrcid',)
+__all__ = ('INSPIREOrcid', )

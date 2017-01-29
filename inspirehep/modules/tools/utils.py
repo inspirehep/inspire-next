@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Utility functions for various tools."""
 
 from __future__ import absolute_import, division, print_function
@@ -86,11 +85,7 @@ def format_name(author):
     if len(mname) == 1 and '.' not in mname:
         mname += '.'
 
-    return u'{}{}{}'.format(
-        lname,
-        ', ' + fname if fname else '',
-        ' ' + mname if mname else ''
-    )
+    return u'{}{}{}'.format(lname, ', ' + fname if fname else '', ' ' + mname if mname else '')
 
 
 def authorlist_without_affiliations(text):
@@ -106,12 +101,11 @@ def authorlist_without_affiliations(text):
 
 def authorlist_with_affiliations(text):
     """Return a MARC format string of authors with affiliations."""
+
     def parse_author_string(author):
         """Get fullname and affiliation ids."""
         try:
-            name, affs = re.search(
-                r'(.+?)(\d+[\,\d]*)', author, flags=re.UNICODE
-            ).groups()
+            name, affs = re.search(r'(.+?)(\d+[\,\d]*)', author, flags=re.UNICODE).groups()
         except AttributeError:
             raise
         fullname = format_name(name)
@@ -129,16 +123,13 @@ def authorlist_with_affiliations(text):
                 'might not have an affiliation at all', author
             )
         try:
-            affstring = ' '.join(
-                [u'$$v{}'.format(affiliations[aff_id]) for aff_id in aff_ids]
-            )
+            affstring = ' '.join([u'$$v{}'.format(affiliations[aff_id]) for aff_id in aff_ids])
         except KeyError:
             raise KeyError(
                 'There might be multiple affiliations per line or '
                 'affiliation IDs might not be separated with commas or '
                 'the affiliation is missing. '
-                'Problematic author and affiliations: ', author, aff_ids,
-                affiliations
+                'Problematic author and affiliations: ', author, aff_ids, affiliations
             )
 
         if first_author:
@@ -183,11 +174,7 @@ def authorlist_with_affiliations(text):
     try:
         first_author = authors.pop(0)
         marc = ''
-        marc = create_new_marcline(
-            first_author,
-            affiliations,
-            first_author=True
-        )
+        marc = create_new_marcline(first_author, affiliations, first_author=True)
         for author in authors:
             marc += create_new_marcline(author, affiliations)
     except (AttributeError, KeyError):

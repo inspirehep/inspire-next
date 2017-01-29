@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 """Extra models for workflows."""
 
 from __future__ import absolute_import, division, print_function
@@ -35,8 +34,7 @@ except ImportError:
 def load_antikeywords():
     """Loads list of antihep keywords with cached gotcha."""
     antihep_keywords_list = []
-    with open(pkg_resources.resource_filename(
-            'inspirehep', 'kbs/corepar.kb'), 'r') as kb_file:
+    with open(pkg_resources.resource_filename('inspirehep', 'kbs/corepar.kb'), 'r') as kb_file:
         for line in kb_file:
             key = line.split('---')[0]
             if key and key not in antihep_keywords_list:
@@ -46,4 +44,4 @@ def load_antikeywords():
 
 antihep_keywords = LocalProxy(lambda: load_antikeywords())
 
-__all__ = ('antihep_keywords',)
+__all__ = ('antihep_keywords', )

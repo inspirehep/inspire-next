@@ -50,8 +50,7 @@ class LiteratureRecord(ESRecord):
             parent_rec = {}
             conference_rec = {}
             if 'conference_record' in pub_info:
-                conference_rec = replace_refs(pub_info['conference_record'],
-                                              'es')
+                conference_rec = replace_refs(pub_info['conference_record'], 'es')
                 if conference_rec and conference_rec.get('control_number'):
                     conference_recid = conference_rec['control_number']
                 else:
@@ -62,20 +61,15 @@ class LiteratureRecord(ESRecord):
                     parent_recid = parent_rec['control_number']
                 else:
                     parent_rec = {}
-            conf_info.append(
-                {
-                    "conference_recid": conference_recid,
-                    "conference_title": get_title(conference_rec),
-                    "parent_recid": parent_recid,
-                    "parent_title":
-                        get_title(parent_rec).replace(
-                            "Proceedings, ", "", 1
-                    ),
-                    "page_start": pub_info.get('page_start'),
-                    "page_end": pub_info.get('page_end'),
-                    "artid": pub_info.get('artid'),
-                }
-            )
+            conf_info.append({
+                "conference_recid": conference_recid,
+                "conference_title": get_title(conference_rec),
+                "parent_recid": parent_recid,
+                "parent_title": get_title(parent_rec).replace("Proceedings, ", "", 1),
+                "page_start": pub_info.get('page_start'),
+                "page_end": pub_info.get('page_end'),
+                "artid": pub_info.get('artid'),
+            })
 
         return conf_info
 
@@ -135,11 +129,9 @@ class JobsRecord(ESRecord):
             result = JobsSearch()
             return result.query({
                 'more_like_this': {
-                    'docs': [
-                        {
-                            '_id': id_,
-                        },
-                    ],
+                    'docs': [{
+                        '_id': id_,
+                    }, ],
                     'min_term_freq': 0,
                     'min_doc_freq': 0,
                 }

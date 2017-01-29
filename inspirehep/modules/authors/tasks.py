@@ -41,9 +41,7 @@ def formdata_to_model(obj, formdata):
     form_fields = copy.deepcopy(formdata)
 
     filter_empty_elements(
-        form_fields,
-        ['institution_history', 'advisors',
-         'websites', 'experiments']
+        form_fields, ['institution_history', 'advisors', 'websites', 'experiments']
     )
     data = updateform.do(form_fields)
 
@@ -55,8 +53,7 @@ def formdata_to_model(obj, formdata):
 
     if '$schema' in data and not data['$schema'].startswith('http'):
         data['$schema'] = url_for(
-            'invenio_jsonschemas.get_schema',
-            schema_path="records/{0}".format(data['$schema'])
+            'invenio_jsonschemas.get_schema', schema_path="records/{0}".format(data['$schema'])
         )
 
     author_name = ''
@@ -79,9 +76,7 @@ def formdata_to_model(obj, formdata):
         data["public_email"] = form_fields["public_email"]
 
     # Add HEPNAMES collection
-    data["collections"] = [{
-        "primary": "HEPNAMES"
-    }]
+    data["collections"] = [{"primary": "HEPNAMES"}]
 
     # ==========
     # Owner Info
@@ -135,8 +130,10 @@ def update_ticket_context(user, obj):
     subject = "Your update to author {0} on INSPIRE".format(
         obj.data.get("name").get("preferred_name")
     )
-    record_url = os.path.join(current_app.config["AUTHORS_UPDATE_BASE_URL"], "record",
-                              str(obj.data.get("control_number", "")))
+    record_url = os.path.join(
+        current_app.config["AUTHORS_UPDATE_BASE_URL"], "record",
+        str(obj.data.get("control_number", ""))
+    )
     return dict(
         email=user.email,
         url=record_url,
@@ -164,8 +161,7 @@ def curation_ticket_context(user, obj):
     if obj.data.get("bai"):
         bai = "[{}]".format(obj.data.get("bai"))
     subject = "Curation needed for author {0} {1}".format(
-        obj.data.get("name").get("preferred_name"),
-        bai
+        obj.data.get("name").get("preferred_name"), bai
     )
     return dict(
         email=user.email,

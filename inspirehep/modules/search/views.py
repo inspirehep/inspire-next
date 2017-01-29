@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Search blueprint in order for template and static files to be loaded."""
 
 from __future__ import absolute_import, division, print_function
@@ -30,7 +29,6 @@ import six
 from flask import Blueprint, current_app, jsonify, request, render_template
 
 from inspirehep.modules.search import LiteratureSearch
-
 
 blueprint = Blueprint(
     'inspirehep_search',
@@ -69,8 +67,7 @@ def search():
         return render_template('search/search_jobs.html', **ctx)
 
     ctx['search_api'] = current_app.config['SEARCH_UI_SEARCH_API']
-    return render_template(current_app.config['SEARCH_UI_SEARCH_TEMPLATE'],
-                           **ctx)
+    return render_template(current_app.config['SEARCH_UI_SEARCH_TEMPLATE'], **ctx)
 
 
 @blueprint.route('/search/suggest', methods=['GET'])
@@ -80,9 +77,7 @@ def suggest():
     query = request.values.get('query')
 
     search = LiteratureSearch()
-    search = search.suggest(
-        'suggestions', query, completion={"field": field}
-    )
+    search = search.suggest('suggestions', query, completion={"field": field})
     suggestions = search.execute_suggest()
 
     if field == "authors.name_suggest":
@@ -90,31 +85,20 @@ def suggest():
         for suggestion in suggestions['suggestions'][0]['options']:
             bai = suggestion['payload']['bai']
             if bai in bai_name_map:
-                bai_name_map[bai].append(
-                    suggestion['text']
-                )
+                bai_name_map[bai].append(suggestion['text'])
             else:
                 bai_name_map[bai] = [suggestion['text']]
 
         result = []
         for key, value in six.iteritems(bai_name_map):
-            result.append(
-                {
-                    'name': max(value, key=len),
-                    'value': key,
-                    'template': 'author'
-                }
-            )
+            result.append({'name': max(value, key=len), 'value': key, 'template': 'author'})
 
-        return jsonify({
-            'results': result
-        })
+        return jsonify({'results': result})
 
     return jsonify({
-        'results': [
-            {'value': s['text']}
-            for s in suggestions['suggestions'][0]['options']
-        ]
+        'results': [{
+            'value': s['text']
+        } for s in suggestions['suggestions'][0]['options']]
     })
 
 
@@ -123,20 +107,17 @@ def sorted_options(sort_options):
     return [
         dict(
             title=v['title'],
-            value=('-{0}'.format(k)
-                   if v.get('default_order', 'asc') == 'desc' else k),
+            value=('-{0}'.format(k) if v.get('default_order', 'asc') == 'desc' else k),
+        ) for k, v in sorted(
+            sort_options.items(), key=lambda x: x[1].get('order', 0)
         )
-        for k, v in
-        sorted(sort_options.items(), key=lambda x: x[1].get('order', 0))
     ]
 
 
 @blueprint.app_template_filter('format_sortoptions')
 def format_sortoptions(sort_options):
     """Create sort options JSON dump for Invenio-Search-JS."""
-    return json.dumps(dict(
-        options=sorted_options(sort_options)
-    ), sort_keys=True)
+    return json.dumps(dict(options=sorted_options(sort_options)), sort_keys=True)
 
 
 @blueprint.app_template_filter('default_sortoption')

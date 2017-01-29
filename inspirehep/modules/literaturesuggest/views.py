@@ -21,7 +21,6 @@
 # In applying this license, CERN does not
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
-
 """INSPIRE Literature suggestion blueprint."""
 
 from __future__ import absolute_import, division, print_function
@@ -49,12 +48,13 @@ from invenio_workflows import workflow_object_class, start
 from .forms import LiteratureForm
 from .tasks import formdata_to_model
 
-
-blueprint = Blueprint('inspirehep_literature_suggest',
-                      __name__,
-                      url_prefix='/literature',
-                      template_folder='templates',
-                      static_folder='static')
+blueprint = Blueprint(
+    'inspirehep_literature_suggest',
+    __name__,
+    url_prefix='/literature',
+    template_folder='templates',
+    static_folder='static'
+)
 
 
 @blueprint.route('/new', methods=['GET'])
@@ -68,11 +68,7 @@ def create():
         "id": "submitForm",
     }
 
-    return render_template(
-        'literaturesuggest/forms/suggest.html',
-        form=form,
-        **ctx
-    )
+    return render_template('literaturesuggest/forms/suggest.html', form=form, **ctx)
 
 
 @blueprint.route('/new/submit', methods=['POST'])
@@ -83,9 +79,7 @@ def submit():
     visitor.visit(form)
 
     workflow_object = workflow_object_class.create(
-        data={},
-        id_user=current_user.get_id(),
-        data_type="hep"
+        data={}, id_user=current_user.get_id(), data_type="hep"
     )
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
@@ -120,10 +114,8 @@ def validate():
     form.validate()
 
     result = {}
-    changed_msgs = dict(
-        (name, messages) for name, messages in form.messages.items()
-        if name in formdata.keys()
-    )
+    changed_msgs = dict((name, messages) for name, messages in form.messages.items()
+                        if name in formdata.keys())
     result['messages'] = changed_msgs
 
     return jsonify(result)

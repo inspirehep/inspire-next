@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Set of methods to create and update records."""
 
 from __future__ import absolute_import, division, print_function
@@ -34,9 +33,7 @@ from invenio_records.signals import after_record_insert
 from inspirehep.dojson import utils as inspire_dojson_utils
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.records.api import InspireRecord
-from inspirehep.modules.disambiguation.receivers import (
-    append_new_record_to_queue,
-)
+from inspirehep.modules.disambiguation.receivers import (append_new_record_to_queue, )
 
 logger = get_task_logger(__name__)
 
@@ -46,9 +43,7 @@ def _get_author_schema():
     # FIXME: Use a dedicated method when #1355 will be resolved.
     return url_for(
         "invenio_jsonschemas.get_schema",
-        schema_path=current_app.config.get(
-            'DISAMBIGUATION_AUTHORS_SCHEMA_PATH'
-        )
+        schema_path=current_app.config.get('DISAMBIGUATION_AUTHORS_SCHEMA_PATH')
     )
 
 
@@ -85,9 +80,15 @@ def create_author(profile):
     name = profile.get('full_name')
 
     # Template of an initial record.
-    record = {'collections': [{'primary': 'HEPNAMES'}],
-              'name': {'value': name},
-              '$schema': _get_author_schema()}
+    record = {
+        'collections': [{
+            'primary': 'HEPNAMES'
+        }],
+        'name': {
+            'value': name
+        },
+        '$schema': _get_author_schema()
+    }
 
     # The author's email address.
     # Unfortunately the method will not correlate a given e-mail address
@@ -110,11 +111,9 @@ def create_author(profile):
             recid = affiliation.get('recid', None)
 
             if recid:
-                record['positions'].append(
-                    {'institution': {'name': name, 'recid': recid}})
+                record['positions'].append({'institution': {'name': name, 'recid': recid}})
             else:
-                record['positions'].append(
-                    {'institution': {'name': name}})
+                record['positions'].append({'institution': {'name': name}})
 
     # FIXME: The method should also collect the useful data
     #        from the publication, like category field, subject,
@@ -131,8 +130,7 @@ def create_author(profile):
 
     # Extend the new record with Inspire recid and self key.
     record['control_number'] = record_pid.pid_value
-    record['self'] = inspire_dojson_utils.get_record_ref(
-        record_pid.pid_value, 'authors')
+    record['self'] = inspire_dojson_utils.get_record_ref(record_pid.pid_value, 'authors')
 
     # Apply the changes.
     record.commit()

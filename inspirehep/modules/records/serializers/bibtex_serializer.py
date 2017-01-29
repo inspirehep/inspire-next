@@ -21,7 +21,6 @@
 # In applying this license, CERN does not
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
-
 """BibTex serializer for records."""
 
 from __future__ import absolute_import, division, print_function
@@ -41,8 +40,7 @@ class BIBTEXSerializer(object):
         """
         return Bibtex(record).format()
 
-    def serialize_search(self, pid_fetcher, search_result, links=None,
-                         item_links_factory=None):
+    def serialize_search(self, pid_fetcher, search_result, links=None, item_links_factory=None):
         """Serialize a search result.
         :param pid_fetcher: Persistent identifier fetcher.
         :param search_result: Elasticsearch search result.

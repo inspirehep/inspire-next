@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 """KeywordsField."""
 
 from __future__ import absolute_import, division, print_function
@@ -29,16 +28,12 @@ __all__ = ['KeywordsField']
 
 
 class KeywordsField(INSPIREField, StringField):
-
     """Deprecated."""
 
     def __init__(self, **kwargs):
         """Deprecated."""
         import warnings
         warnings.warn("Field has been deprecated", PendingDeprecationWarning)
-        defaults = dict(
-            icon='tags',
-            widget_classes="form-control"
-        )
+        defaults = dict(icon='tags', widget_classes="form-control")
         defaults.update(kwargs)
         super(KeywordsField, self).__init__(**defaults)

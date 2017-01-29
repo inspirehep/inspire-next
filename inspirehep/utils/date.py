@@ -19,7 +19,6 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Helpers for handling dates before 1900."""
 
 from __future__ import absolute_import, division, print_function
@@ -40,30 +39,43 @@ _illegal_formatting = re.compile(r"((^|[^%])(%%)*%[sy])")
 
 DATE_FORMATS_YEAR = ["%Y", "%y"]
 DATE_FORMATS_MONTH = [
-    "%Y-%m", "%Y %b", "%b %Y", "%Y %B", "%B %Y",
-    "%y-%m", "%y %b", "%b %y", "%y %B", "%B %y",
+    "%Y-%m",
+    "%Y %b",
+    "%b %Y",
+    "%Y %B",
+    "%B %Y",
+    "%y-%m",
+    "%y %b",
+    "%b %y",
+    "%y %B",
+    "%B %y",
 ]
 DATE_FORMATS_FULL = [
-    "%Y-%m-%d", "%d %m %Y", "%x", "%d %b %Y",
-    "%d %B %Y", "%d %b %y", "%d %B %y",
+    "%Y-%m-%d",
+    "%d %m %Y",
+    "%x",
+    "%d %b %Y",
+    "%d %B %Y",
+    "%d %b %y",
+    "%d %B %y",
 ]
 
 
 class date(real_date):
-
     def strftime(self, fmt):
         return strftime(fmt, self)
 
 
 class datetime(real_datetime):
-
     def strftime(self, fmt):
         return strftime(fmt, self)
 
     @classmethod
     def combine(self, date, time):
-        return self(date.year, date.month, date.day, time.hour, time.minute,
-                    time.second, time.microsecond, time.tzinfo)
+        return self(
+            date.year, date.month, date.day, time.hour, time.minute, time.second, time.microsecond,
+            time.tzinfo
+        )
 
     def __add__(self, other):
         d = real_datetime.combine(self, self.timetz())
@@ -93,14 +105,14 @@ def _findall(text, substr):
 
 def strftime(fmt, dt):
     if not isinstance(dt, real_date):
-        dt = datetime(dt.tm_year, dt.tm_mon, dt.tm_mday, dt.tm_hour, dt.tm_min,
-                      dt.tm_sec)
+        dt = datetime(dt.tm_year, dt.tm_mon, dt.tm_mday, dt.tm_hour, dt.tm_min, dt.tm_sec)
     if dt.year >= 1900:
         return time.strftime(fmt, dt.timetuple())
     illegal_formatting = _illegal_formatting.search(fmt)
     if illegal_formatting:
-        raise TypeError("strftime of dates before 1900 does not handle %s" %
-                        illegal_formatting.group(0))
+        raise TypeError(
+            "strftime of dates before 1900 does not handle %s" % illegal_formatting.group(0)
+        )
 
     year = dt.year
     # For every non-leap year century, advance by
@@ -112,10 +124,10 @@ def strftime(fmt, dt):
     # Move to around the year 2000
     year = year + ((2000 - year) // 28) * 28
     timetuple = dt.timetuple()
-    s1 = time.strftime(fmt, (year,) + timetuple[1:])
+    s1 = time.strftime(fmt, (year, ) + timetuple[1:])
     sites1 = _findall(s1, str(year))
 
-    s2 = time.strftime(fmt, (year + 28,) + timetuple[1:])
+    s2 = time.strftime(fmt, (year + 28, ) + timetuple[1:])
     sites2 = _findall(s2, str(year + 28))
 
     sites = []
@@ -124,7 +136,7 @@ def strftime(fmt, dt):
             sites.append(site)
 
     s = s1
-    syear = "%04d" % (dt.year,)
+    syear = "%04d" % (dt.year, )
     for site in sites:
         s = s[:site] + syear + s[site + 4:]
     return s
@@ -144,9 +156,9 @@ def create_earliest_date(dates):
     for date in dates:
         # Add 99 to the end of partial date to make sure we get the REAL
         # earliest date
-        valid_date = create_valid_date(date,
-                                       date_format_month="%Y-%m-99",
-                                       date_format_year="%Y-99-99")
+        valid_date = create_valid_date(
+            date, date_format_month="%Y-%m-99", date_format_year="%Y-99-99"
+        )
         if valid_date:
             valid_dates.append(valid_date)
     if valid_dates:
@@ -154,8 +166,9 @@ def create_earliest_date(dates):
         return date.replace('-99', '')
 
 
-def create_valid_date(date, date_format_full="%Y-%m-%d",
-                      date_format_month="%Y-%m", date_format_year="%Y"):
+def create_valid_date(
+    date, date_format_full="%Y-%m-%d", date_format_month="%Y-%m", date_format_year="%Y"
+):
     """Iterate over possible formats and return a valid date if found."""
     valid_date = None
     date = six.text_type(date)

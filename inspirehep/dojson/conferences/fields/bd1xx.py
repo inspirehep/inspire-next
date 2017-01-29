@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -100,11 +99,10 @@ def contact_details(self, key, value):
 @conferences.over('keywords', '^6531')
 def keywords(self, key, value):
     """Field code."""
+
     def get_value(value):
-        return {
-            'value': value.get('a'),
-            'source': value.get('9')
-        }
+        return {'value': value.get('a'), 'source': value.get('9')}
+
     value = force_force_list(value)
     keywords = self.get('keywords', [])
     for val in value:
@@ -122,6 +120,7 @@ def note(self, key, value):
 @conferences.over('series', '^411')
 def series(self, key, value):
     """Conference series."""
+
     def _get_name(value):
         return force_single_element(value.get('a'))
 
@@ -155,7 +154,4 @@ def series(self, key, value):
 @utils.for_each_value
 def short_description(self, key, value):
     """Conference short_description."""
-    return {
-        'value': value.get('a'),
-        'source': value.get('9')
-    }
+    return {'value': value.get('a'), 'source': value.get('9')}

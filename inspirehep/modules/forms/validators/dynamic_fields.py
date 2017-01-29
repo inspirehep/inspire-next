@@ -36,8 +36,7 @@ class AuthorsValidation(object):
     field_flags = ('required', )
 
     def __init__(self, form, field):
-        empty_aff = filter(lambda x: x['name'] == '' and x['affiliation'] != '',
-                           field.data)
+        empty_aff = filter(lambda x: x['name'] == '' and x['affiliation'] != '', field.data)
 
         author_names = filter(lambda x: x['name'] != '', field.data)
 

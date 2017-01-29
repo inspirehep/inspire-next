@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """ Configuration of authors module."""
 
 from __future__ import absolute_import, division, print_function
@@ -36,5 +35,6 @@ AUTHORS_NAME_NUMERATIONS = "^Jr\.|Sr\.|I{1,3}|IV|VI{0,3}$"
 AUTHORS_NAME_STATUSES = ['active', 'deceased', 'departed', 'retired']
 AUTHORS_NAME_TITLES = ['Sir']
 
-AUTHORS_AFFILIATION_RANKS = ['senior', 'junior', 'staff', 'visitor', 'postdoc',
-                             'phd', 'masters', 'undergrad']
+AUTHORS_AFFILIATION_RANKS = [
+    'senior', 'junior', 'staff', 'visitor', 'postdoc', 'phd', 'masters', 'undergrad'
+]

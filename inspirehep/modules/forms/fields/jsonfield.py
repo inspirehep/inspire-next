@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 """Special fields for JSON-schema based deposits."""
 
 from __future__ import absolute_import, division, print_function
@@ -42,15 +41,9 @@ def validate_schema(_form, field):
     try:
         # trust the schema stored in the field instead the one stored in the
         # json itself (`json['$schema']`)
-        validate_json(
-            json=field.data,
-            schema=field.schema,
-            additional_properties=False
-        )
+        validate_json(json=field.data, schema=field.schema, additional_properties=False)
     except jsonschema.SchemaError as e:
-        raise wtforms.validators.ValidationError(
-            "SchemaError: {}".format(e.message)
-        )
+        raise wtforms.validators.ValidationError("SchemaError: {}".format(e.message))
     except jsonschema.ValidationError as e:
         raise wtforms.validators.ValidationError(
             "ValidationError: {}\nData: {}".format(e.message, field.data)
@@ -58,7 +51,6 @@ def validate_schema(_form, field):
 
 
 class JSONWidget(object):
-
     """Widget for auto-generated schema-based forms.
 
     Should be used with a field that provides a `schema` attribute, which is
@@ -71,16 +63,12 @@ class JSONWidget(object):
 
         return HTMLString(
             render_template_to_string(
-                template,
-                field=field,
-                field_id=field_id,
-                **kwargs
+                template, field=field, field_id=field_id, **kwargs
             )
         )
 
 
 class JSONField(INSPIREField):
-
     """Field that provides an auto-generated form based on a schema."""
 
     def __init__(self, **kwargs):
@@ -91,9 +79,7 @@ class JSONField(INSPIREField):
         self.schema = kwargs.pop('schema')
 
         defaults = dict(
-            validators=[validate_schema],
-            widget_classes='form-control',
-            widget=JSONWidget()
+            validators=[validate_schema], widget_classes='form-control', widget=JSONWidget()
         )
         defaults.update(kwargs)
 

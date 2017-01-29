@@ -19,27 +19,17 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIRE search."""
 
 from __future__ import absolute_import, division, print_function
 
 from .api import (
-    IQ,
-    LiteratureSearch,
-    AuthorsSearch,
-    DataSearch,
-    ConferencesSearch,
-    JobsSearch,
-    InstitutionsSearch,
-    ExperimentsSearch,
-    JournalsSearch
+    IQ, LiteratureSearch, AuthorsSearch, DataSearch, ConferencesSearch, JobsSearch,
+    InstitutionsSearch, ExperimentsSearch, JournalsSearch
 )
 from .ext import INSPIRESearch
 
-
 __all__ = (
-    'IQ', 'INSPIRESearch', 'LiteratureSearch', 'AuthorsSearch', 'DataSearch',
-    'ConferencesSearch', 'JobsSearch', 'InstitutionsSearch',
-    'ExperimentsSearch', 'JournalsSearch'
+    'IQ', 'INSPIRESearch', 'LiteratureSearch', 'AuthorsSearch', 'DataSearch', 'ConferencesSearch',
+    'JobsSearch', 'InstitutionsSearch', 'ExperimentsSearch', 'JournalsSearch'
 )

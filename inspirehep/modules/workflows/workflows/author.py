@@ -19,7 +19,6 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Workflow for processing single arXiv records harvested."""
 
 from __future__ import absolute_import, division, print_function
@@ -36,10 +35,7 @@ from inspirehep.modules.workflows.tasks.actions import (
 )
 
 from inspirehep.modules.workflows.tasks.submission import (
-    close_ticket,
-    create_ticket,
-    reply_ticket,
-    send_robotupload
+    close_ticket, create_ticket, reply_ticket, send_robotupload
 )
 from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
 
@@ -51,44 +47,33 @@ from inspirehep.modules.authors.tasks import (
     update_ticket_context,
 )
 
-
-SEND_TO_LEGACY = [
-    send_robotupload(
-        marcxml_processor=hepnames2marc,
-        mode="insert"
-    ),
-]
-
+SEND_TO_LEGACY = [send_robotupload(marcxml_processor=hepnames2marc, mode="insert"), ]
 
 NOTIFY_ACCEPTED = [
     reply_ticket(
-        template="authors/tickets/user_accepted.html",
-        context_factory=reply_ticket_context),
+        template="authors/tickets/user_accepted.html", context_factory=reply_ticket_context
+    ),
     close_ticket(ticket_id_key="ticket_id"),
 ]
-
 
 CLOSE_TICKET_IF_NEEDED = [
-    IF(curation_ticket_needed, [
-        create_ticket(
-            template="authors/tickets/curation_needed.html",
-            queue="AUTHORS_curation",
-            context_factory=curation_ticket_context,
-            ticket_id_key="curation_ticket_id"
-        ),
-    ]),
+    IF(
+        curation_ticket_needed, [
+            create_ticket(
+                template="authors/tickets/curation_needed.html",
+                queue="AUTHORS_curation",
+                context_factory=curation_ticket_context,
+                ticket_id_key="curation_ticket_id"
+            ),
+        ]
+    ),
 ]
 
-
-NOTIFY_NOT_ACCEPTED = [
-    close_ticket(ticket_id_key="ticket_id"),
-]
-
+NOTIFY_NOT_ACCEPTED = [close_ticket(ticket_id_key="ticket_id"), ]
 
 SEND_UPDATE_NOTIFICATION = [
     send_robotupload(
-        marcxml_processor=hepnames2marc,
-        mode="holdingpen"
+        marcxml_processor=hepnames2marc, mode="holdingpen"
     ),
     create_ticket(
         template="authors/tickets/curator_update.html",
@@ -96,7 +81,6 @@ SEND_UPDATE_NOTIFICATION = [
         context_factory=update_ticket_context,
     ),
 ]
-
 
 ASK_FOR_REVIEW = [
     create_ticket(
@@ -127,20 +111,16 @@ class Author(object):
         IF_ELSE(
             is_marked('is-update'),
             SEND_UPDATE_NOTIFICATION,
-            ASK_FOR_REVIEW
-            + [
+            ASK_FOR_REVIEW + [
                 IF_ELSE(
                     is_record_accepted,
                     (
-                        SEND_TO_LEGACY
-                        + NOTIFY_ACCEPTED
-                        + [
+                        SEND_TO_LEGACY + NOTIFY_ACCEPTED + [
                             # TODO: once legacy is out, this should become
                             # unconditional, and remove the SEND_TO_LEGACY
                             # steps
                             IF_NOT(in_production_mode, [store_record]),
-                        ]
-                        + CLOSE_TICKET_IF_NEEDED
+                        ] + CLOSE_TICKET_IF_NEEDED
                     ),
                     NOTIFY_NOT_ACCEPTED
                 ),

@@ -20,7 +20,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Search factory for INSPIRE workflows UI.
 
 We specify in this custom search factory which fields elasticsearch should
@@ -39,11 +38,10 @@ def holdingpen_search_factory(self, search, **kwargs):
     """Override search factory."""
     search, urlkwargs = default_search_factory(self, search, **kwargs)
     includes = [
-        'metadata.titles', 'metadata.abstracts', 'metadata.inspire_categories',
-        'metadata.authors', 'metadata.name', 'metadata.positions', 'metadata.acquisition_source',
+        'metadata.titles', 'metadata.abstracts', 'metadata.inspire_categories', 'metadata.authors',
+        'metadata.name', 'metadata.positions', 'metadata.acquisition_source',
         'metadata.inspire_categories', '_workflow', '_extra_data.relevance_prediction',
-        '_extra_data.user_action',
-        '_extra_data.classifier_results.complete_output'
+        '_extra_data.user_action', '_extra_data.classifier_results.complete_output'
     ]
     search = search.extra(_source={"include": includes})
     return search, urlkwargs

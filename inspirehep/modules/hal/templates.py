@@ -26,9 +26,10 @@ from jinja2 import Environment, PackageLoader
 
 from .config import HAL_EXPORT_TEMPLATE
 
-
 env = Environment(
     loader=PackageLoader('inspirehep.modules.hal', 'templates'),
-    trim_blocks=True, lstrip_blocks=True)
+    trim_blocks=True,
+    lstrip_blocks=True
+)
 
 template = env.get_template(HAL_EXPORT_TEMPLATE)

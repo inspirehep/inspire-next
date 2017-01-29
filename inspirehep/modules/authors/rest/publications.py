@@ -81,8 +81,7 @@ class AuthorAPIPublications(object):
 
             # Get publication type.
             try:
-                publication['type'] = result_source.get(
-                    'facet_inspire_doc_type', [])[0]
+                publication['type'] = result_source.get('facet_inspire_doc_type', [])[0]
             except IndexError:
                 pass
 
@@ -95,15 +94,15 @@ class AuthorAPIPublications(object):
             # Get journal.
             try:
                 publication['journal'] = {}
-                publication['journal']['title'] = result_source.get(
-                    'publication_info', [])[0]['journal_title']
+                publication['journal']['title'] = result_source.get('publication_info',
+                                                                    [])[0]['journal_title']
 
                 # Get journal id and $self.
                 try:
-                    publication['journal']['id'] = result_source.get(
-                        'publication_info', [])[0]['journal_recid']
-                    publication['journal']['record'] = result_source.get(
-                        'publication_info', [])[0]['journal_record']
+                    publication['journal']['id'] = result_source.get('publication_info',
+                                                                     [])[0]['journal_recid']
+                    publication['journal']['record'] = result_source.get('publication_info',
+                                                                         [])[0]['journal_record']
                 except KeyError:
                     pass
             except (IndexError, KeyError):

@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Set of workflow tasks for beard API."""
 
 from __future__ import absolute_import, division, print_function
@@ -46,8 +45,7 @@ def prepare_payload(record):
     titles = filter(None, get_value(record, "titles.title", []))
     # FIXME May have to normalize categories in the future
     arxiv_categories = map(
-        lambda x: x[0],
-        filter(None, get_value(record, "arxiv_eprints.categories", []))
+        lambda x: x[0], filter(None, get_value(record, "arxiv_eprints.categories", []))
     )
     if titles:
         payload['title'] = titles[0]
@@ -97,11 +95,8 @@ def guess_coreness(obj, eng):
             relevance_score = (max_score * -1) - 10
         # FIXME: Add top_words info when available from the API
         obj.extra_data["relevance_prediction"] = dict(
-            max_score=max_score,
-            decision=decision,
-            scores=scores,
-            relevance_score=relevance_score
+            max_score=max_score, decision=decision, scores=scores, relevance_score=relevance_score
         )
-        current_app.logger.info("Prediction results: {0}".format(
-            obj.extra_data["relevance_prediction"])
+        current_app.logger.info(
+            "Prediction results: {0}".format(obj.extra_data["relevance_prediction"])
         )

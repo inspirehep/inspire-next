@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Implement AST convertor to Elastic Search DSL."""
 
 from __future__ import absolute_import, division, print_function
@@ -29,19 +28,17 @@ from operator import or_
 from elasticsearch_dsl import Q
 from flask import current_app
 
-from invenio_query_parser.ast import (AndOp, DoubleQuotedValue, EmptyQuery,
-                                      GreaterEqualOp, GreaterOp, Keyword,
-                                      KeywordOp, LowerEqualOp, LowerOp, NotOp,
-                                      OrOp, RangeOp, RegexValue,
-                                      SingleQuotedValue, Value,
-                                      ValueQuery, WildcardQuery)
+from invenio_query_parser.ast import (
+    AndOp, DoubleQuotedValue, EmptyQuery, GreaterEqualOp, GreaterOp, Keyword, KeywordOp,
+    LowerEqualOp, LowerOp, NotOp, OrOp, RangeOp, RegexValue, SingleQuotedValue, Value, ValueQuery,
+    WildcardQuery
+)
 from invenio_query_parser.visitor import make_visitor
 
 from ..ast import FilterOp
 
 
 class ElasticSearchDSL(object):
-
     """Implement visitor to create Elastic Search DSL."""
 
     visitor = make_visitor()
@@ -97,17 +94,19 @@ class ElasticSearchDSL(object):
             fields = self.get_fields_for_keyword(keyword, mode='p')
             value = str(node.value).replace('#', '*')
             if len(fields) > 1:
-                res = Q('bool', should=[
-                        Q('query_string',
-                          query=value,
-                          default_field=k,
-                          analyze_wildcard=True) for k in fields])
+                res = Q(
+                    'bool',
+                    should=[
+                        Q('query_string', query=value, default_field=k, analyze_wildcard=True)
+                        for k in fields
+                    ]
+                )
             else:
-                res = Q('query_string',
-                        query=value,
-                        default_field=fields[0],
-                        analyze_wildcard=True)
+                res = Q(
+                    'query_string', query=value, default_field=fields[0], analyze_wildcard=True
+                )
             return res
+
         return query
 
     @visitor(Value)
@@ -122,28 +121,25 @@ class ElasticSearchDSL(object):
             if fields == current_app.config['SEARCH_ELASTIC_KEYWORD_MAPPING']['author']:
                 return Q(
                     'bool',
-                    must=Q('bool', should=[
-                        Q("match", authors__name_variations=str(node.value)),
-                        Q("term", authors__ids__value=str(node.value))
-                    ]),
-                    should=[
-                        Q("match", authors__full_name=str(node.value))
-                    ]
+                    must=Q(
+                        'bool',
+                        should=[
+                            Q("match", authors__name_variations=str(node.value)),
+                            Q("term", authors__ids__value=str(node.value))
+                        ]
+                    ),
+                    should=[Q("match", authors__full_name=str(node.value))]
                 )
-            return Q({
-                'multi_match': {
-                    'query': node.value,
-                    'fields': fields
-                }
-            })
+            return Q({'multi_match': {'query': node.value, 'fields': fields}})
+
         return query
 
     @visitor(SingleQuotedValue)
     def visit(self, node):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='p')
-            return Q('multi_match', query=node.value, fields=fields,
-                     type='phrase')
+            return Q('multi_match', query=node.value, fields=fields, type='phrase')
+
         return query
 
     @visitor(DoubleQuotedValue)
@@ -153,21 +149,21 @@ class ElasticSearchDSL(object):
             if fields == current_app.config['SEARCH_ELASTIC_KEYWORD_MAPPING']['author']:
                 return Q(
                     'bool',
-                    must=Q('bool', should=[
-                        Q("match", authors__name_variations=str(node.value)),
-                        Q("term", authors__ids__value=str(node.value))
-                    ]),
-                    should=[
-                        Q("match", authors__full_name=str(node.value))
-                    ]
+                    must=Q(
+                        'bool',
+                        should=[
+                            Q("match", authors__name_variations=str(node.value)),
+                            Q("term", authors__ids__value=str(node.value))
+                        ]
+                    ),
+                    should=[Q("match", authors__full_name=str(node.value))]
                 )
 
             if (len(fields) > 1):
-                return Q({"bool":
-                          {"should": [{"term": {k: str(node.value)}}
-                                      for k in fields]}})
+                return Q({"bool": {"should": [{"term": {k: str(node.value)}} for k in fields]}})
             else:
                 return Q({'term': {fields[0]: node.value}})
+
         return query
 
     @visitor(RegexValue)
@@ -176,9 +172,8 @@ class ElasticSearchDSL(object):
             fields = self.get_fields_for_keyword(keyword, mode='r')
             if keyword is None or fields is None:
                 raise RuntimeError('Not supported regex search for all fields')
-            return reduce(or_, [
-                Q('regexp', **{k: node.value}) for k in fields
-            ])
+            return reduce(or_, [Q('regexp', **{k: node.value}) for k in fields])
+
         return query
 
     @visitor(EmptyQuery)
@@ -189,6 +184,7 @@ class ElasticSearchDSL(object):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='r')
             return reduce(or_, [Q('range', **{k: condition}) for k in fields])
+
         return query
 
     @visitor(RangeOp)

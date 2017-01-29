@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Contains INSPIRE specific submission tasks."""
 
 from __future__ import absolute_import, division, print_function
@@ -37,14 +36,11 @@ from invenio_accounts.models import User
 from ....utils.tickets import get_instance, retry_if_connection_problems
 from .actions import in_production_mode, is_arxiv_paper
 
-
 LOGGER = logging.getLogger(__name__)
 
 
 @retry(
-    stop_max_attempt_number=5,
-    wait_fixed=10000,
-    retry_on_exception=retry_if_connection_problems
+    stop_max_attempt_number=5, wait_fixed=10000, retry_on_exception=retry_if_connection_problems
 )
 def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     """Submit ticket to RT with the given parameters."""
@@ -54,10 +50,7 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
         obj.log.info(
             "Was going to submit: {subject}\n\n{body}\n\n"
             "To: {requestors} Queue: {queue}".format(
-                queue=queue,
-                subject=subject,
-                requestors=requestors,
-                body=body
+                queue=queue, subject=subject, requestors=requestors, body=body
             )
         )
         return
@@ -83,17 +76,11 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     ticket_id = rt_instance.create_ticket(**payload)
 
     obj.extra_data[ticket_id_key] = ticket_id
-    obj.log.info("Ticket {0} created:\n{1}".format(
-        ticket_id,
-        body.encode("utf-8", "ignore")
-    ))
+    obj.log.info("Ticket {0} created:\n{1}".format(ticket_id, body.encode("utf-8", "ignore")))
     return True
 
 
-def create_ticket(template,
-                  context_factory=None,
-                  queue="Test",
-                  ticket_id_key="ticket_id"):
+def create_ticket(template, context_factory=None, queue="Test", ticket_id_key="ticket_id"):
     """Create a ticket for the submission.
 
     Creates the ticket in the given queue and stores the ticket ID
@@ -104,31 +91,19 @@ def create_ticket(template,
     def _create_ticket(obj, eng):
         user = User.query.get(obj.id_user)
         if not user:
-            obj.log.error(
-                "No user found for object {0}, skipping ticket creation".format(
-                    obj.id))
+            obj.log.error("No user found for object {0}, skipping ticket creation".format(obj.id))
             return
         context = {}
         if context_factory:
             context = context_factory(user, obj)
-        body = render_template(
-            template,
-            **context
-        ).strip()
+        body = render_template(template, **context).strip()
 
-        submit_rt_ticket(obj,
-                         queue,
-                         context.get('subject'),
-                         body,
-                         user.email,
-                         ticket_id_key)
+        submit_rt_ticket(obj, queue, context.get('subject'), body, user.email, ticket_id_key)
 
     return _create_ticket
 
 
-def reply_ticket(template=None,
-                 context_factory=None,
-                 keep_new=False):
+def reply_ticket(template=None, context_factory=None, keep_new=False):
     """Reply to a ticket for the submission."""
 
     @wraps(reply_ticket)
@@ -142,19 +117,14 @@ def reply_ticket(template=None,
 
         user = User.query.get(obj.id_user)
         if not user:
-            obj.log.error(
-                "No user found for object {0}, skipping ticket creation".format(
-                    obj.id))
+            obj.log.error("No user found for object {0}, skipping ticket creation".format(obj.id))
             return
 
         if template:
             context = {}
             if context_factory:
                 context = context_factory(user, obj)
-            body = render_template(
-                template,
-                **context
-            )
+            body = render_template(template, **context)
         else:
             # Body already rendered in reason.
             body = obj.extra_data.get("reason").strip()
@@ -183,10 +153,7 @@ def reply_ticket(template=None,
 
         if keep_new:
             # We keep the state as new
-            rt.edit_ticket(
-                ticket_id=ticket_id,
-                Status="new"
-            )
+            rt.edit_ticket(ticket_id=ticket_id, Status="new")
 
     return _reply_ticket
 
@@ -206,18 +173,11 @@ def close_ticket(ticket_id_key="ticket_id"):
         rt = get_instance()
         if not rt:
             obj.log.error("No RT instance available. Skipping!")
-            obj.log.info(
-                "Was going to close ticket {ticket_id}".format(
-                    ticket_id=ticket_id,
-                )
-            )
+            obj.log.info("Was going to close ticket {ticket_id}".format(ticket_id=ticket_id, ))
             return
 
         try:
-            rt.edit_ticket(
-                ticket_id=ticket_id,
-                Status="resolved"
-            )
+            rt.edit_ticket(ticket_id=ticket_id, Status="resolved")
         except IndexError:
             # Probably already resolved, lets check
             ticket = rt.get_ticket(ticket_id)
@@ -228,11 +188,13 @@ def close_ticket(ticket_id_key="ticket_id"):
     return _close_ticket
 
 
-def send_robotupload(url=None,
-                     marcxml_processor=None,
-                     callback_url="callback/workflows/continue",
-                     mode="insert",
-                     extra_data_key=None):
+def send_robotupload(
+    url=None,
+    marcxml_processor=None,
+    callback_url="callback/workflows/continue",
+    mode="insert",
+    extra_data_key=None
+):
     """Get the MARCXML from the model and ship it."""
 
     @wraps(send_robotupload)
@@ -240,14 +202,9 @@ def send_robotupload(url=None,
         from inspirehep.dojson.utils import legacy_export_as_marc
         from inspirehep.utils.robotupload import make_robotupload_marcxml
 
-        combined_callback_url = os.path.join(
-            current_app.config["SERVER_NAME"],
-            callback_url
-        )
+        combined_callback_url = os.path.join(current_app.config["SERVER_NAME"], callback_url)
         if not combined_callback_url.startswith('http'):
-            combined_callback_url = "https://{0}".format(
-                combined_callback_url
-            )
+            combined_callback_url = "https://{0}".format(combined_callback_url)
 
         if extra_data_key is not None:
             data = obj.extra_data.get(extra_data_key) or {}
@@ -272,10 +229,7 @@ def send_robotupload(url=None,
                 url,
                 marcxml,
             )
-            obj.log.debug(
-                "Base object data:\n%s",
-                pformat(data)
-            )
+            obj.log.debug("Base object data:\n%s", pformat(data))
             return
 
         result = make_robotupload_marcxml(
@@ -289,9 +243,11 @@ def send_robotupload(url=None,
         if "[INFO]" not in result.text:
             if "cannot use the service" in result.text:
                 # IP not in the list
-                obj.log.error("Your IP is not in "
-                              "app.config_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
-                              "on host")
+                obj.log.error(
+                    "Your IP is not in "
+                    "app.config_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
+                    "on host"
+                )
                 obj.log.error(result.text)
             txt = "Error while submitting robotupload: {0}".format(result.text)
             raise Exception(txt)
@@ -307,6 +263,7 @@ def send_robotupload(url=None,
 
 def add_note_entry(obj, eng):
     """Add note entry to metadata on approval."""
+
     def _has_note(reference_note, notes):
         return any(reference_note == note for note in notes)
 
@@ -343,13 +300,11 @@ def prepare_keywords(obj, eng):
     keywords = obj.data.get('keywords', [])
     for keyword in prediction.get('keywords', []):
         # TODO: differentiate between curated and gueesed keywords
-        keywords.append(
-            {
-                'classification_scheme': '',
-                'keyword': keyword['label'],
-                'source': 'curator' if keyword.get('curated') else 'magpie',
-            }
-        )
+        keywords.append({
+            'classification_scheme': '',
+            'keyword': keyword['label'],
+            'source': 'curator' if keyword.get('curated') else 'magpie',
+        })
 
     obj.data['keywords'] = keywords
 
@@ -359,8 +314,10 @@ def prepare_keywords(obj, eng):
 def user_pdf_get(obj, eng):
     """Upload user PDF file, if requested."""
     if obj.extra_data.get('pdf_upload', False):
-        fft = {'url': obj.extra_data.get('submission_data').get('pdf'),
-               'docfile_type': 'INSPIRE-PUBLIC'}
+        fft = {
+            'url': obj.extra_data.get('submission_data').get('pdf'),
+            'docfile_type': 'INSPIRE-PUBLIC'
+        }
         if obj.data.get('fft'):
             obj.data['fft'].append(fft)
         else:
@@ -370,6 +327,7 @@ def user_pdf_get(obj, eng):
 
 def prepare_files(obj, eng):
     """Adds to the fft field (files) the extracted pdfs if any"""
+
     def _get_fft(url, name):
         def _get_filename(obj, filename):
             if is_arxiv_paper(obj):

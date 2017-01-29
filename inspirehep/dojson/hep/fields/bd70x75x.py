@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -38,15 +37,14 @@ def thesis_supervisors(self, key, value):
     """Thesis supervisors.
 
     FIXME: handle identifiers from 701__i and 701__j."""
+
     def _get_thesis_supervisor(a_value, value):
         return {
             'affiliations': _get_affiliations(value),
-            'contributor_roles': [
-                {
-                    'schema': 'CRediT',
-                    'value': 'Supervision',
-                },
-            ],
+            'contributor_roles': [{
+                'schema': 'CRediT',
+                'value': 'Supervision',
+            }, ],
             'full_name': a_value,
         }
 
@@ -115,10 +113,8 @@ def collaboration(self, key, value):
                 recid = int(value.get('0'))
             except:
                 pass
-        return {
-            'value': value.get('g'),
-            'record': get_record_ref(recid, 'experiments')
-        }
+        return {'value': value.get('g'), 'record': get_record_ref(recid, 'experiments')}
+
     collaboration = self.get('collaboration', [])
 
     filtered_value = value
@@ -132,6 +128,4 @@ def collaboration(self, key, value):
 @utils.for_each_value
 def collaboration2marc(self, key, value):
     """Added Entry-Corporate Name."""
-    return {
-        'g': value,
-    }
+    return {'g': value, }

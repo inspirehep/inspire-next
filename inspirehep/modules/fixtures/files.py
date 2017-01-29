@@ -19,7 +19,6 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Functions for searching ES and returning the results."""
 
 from __future__ import absolute_import, division, print_function
@@ -39,11 +38,7 @@ def init_default_storage_path():
         uri = current_app.config['BASE_FILES_LOCATION']
         if uri.startswith('/') and not os.path.exists(uri):
             os.makedirs(uri)
-        loc = Location(
-            name="default",
-            uri=uri,
-            default=True
-        )
+        loc = Location(name="default", uri=uri, default=True)
         db.session.add(loc)
         db.session.commit()
         return loc

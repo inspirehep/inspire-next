@@ -16,13 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 331, Boston, MA 02111-1307, USA.
-
 """View blueprints for Holding Pen."""
 
 from __future__ import absolute_import, division, print_function
 
 from .callback import blueprint as holdingpen_blueprint
 
-blueprints = [
-    holdingpen_blueprint,
-]
+blueprints = [holdingpen_blueprint, ]

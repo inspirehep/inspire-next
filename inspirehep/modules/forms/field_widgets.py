@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Implement custom field widgets."""
 
 from __future__ import absolute_import, division, print_function
@@ -33,7 +32,6 @@ from wtforms.widgets import HiddenInput, HTMLString, Input, RadioInput, \
 
 
 class ButtonWidget(object):
-
     """Implement Bootstrap HTML5 button."""
 
     def __init__(self, label="", tooltip=None, icon=None, **kwargs):
@@ -68,20 +66,27 @@ class ButtonWidget(object):
 
         state = ""
         if field._value():
-            state = ('<span class="text-success"> '
-                     '<i class="glyphicon glyphicon-ok"></i></span>')
+            state = (
+                '<span class="text-success"> '
+                '<i class="glyphicon glyphicon-ok"></i></span>'
+            )
 
-        return HTMLString(u'<button %s>%s%s</button><span %s>%s</span>' % (
-            html_params(name=field.name, **params),
-            icon,
-            self.label,
-            html_params(id=field.name + '-loader', class_='loader'),
-            state,
-        ))
+        return HTMLString(
+            u'<button %s>%s%s</button><span %s>%s</span>' % (
+                html_params(
+                    name=field.name, **params
+                ),
+                icon,
+                self.label,
+                html_params(
+                    id=field.name + '-loader', class_='loader'
+                ),
+                state,
+            )
+        )
 
 
 class TagInput(Input):
-
     """Implement tag input widget."""
 
     input_type = 'hidden'
@@ -99,7 +104,6 @@ class TagInput(Input):
 
 
 class WrappedInput(Input):
-
     """Widget to wrap text input in further markup."""
 
     wrapper = '<div>%(field)s</div>'
@@ -114,23 +118,25 @@ class WrappedInput(Input):
 
     def __call__(self, field, **kwargs):
         """Render wrapped input."""
-        return HTMLString(self.wrapper % dict(
-            field=self.wrapped_widget(field, **kwargs),
-            **self.wrapper_args
-        ))
+        return HTMLString(
+            self.wrapper % dict(
+                field=self.wrapped_widget(field, **kwargs), **self.wrapper_args
+            )
+        )
 
 
 class ColumnInput(WrappedInput):
-
     """Specialized column wrapped input."""
 
     @property
     def wrapper(self):
         """Wrapper template with description support."""
         if 'description' in self.wrapper_args:
-            return ('<div class="%(class_)s">%(field)s'
-                    '<p class="text-muted field-desc">'
-                    '<small>%(description)s</small></p></div>')
+            return (
+                '<div class="%(class_)s">%(field)s'
+                '<p class="text-muted field-desc">'
+                '<small>%(description)s</small></p></div>'
+            )
         return '<div class="%(class_)s">%(field)s</div>'
 
 
@@ -138,7 +144,6 @@ class ColumnInput(WrappedInput):
 # Item widgets
 #
 class ItemWidget(object):
-
     """Render each subfield without additional markup around the subfield."""
 
     def __call__(self, subfield, **kwargs):
@@ -147,7 +152,6 @@ class ItemWidget(object):
 
 
 class ListItemWidget(ItemWidget):
-
     """Render each subfield in a ExtendedListWidget as a list element.
 
     If `with_label` is set, the fields label will be rendered. If
@@ -155,8 +159,7 @@ class ListItemWidget(ItemWidget):
     suffixed.
     """
 
-    def __init__(self, html_tag='li', with_label=True, prefix_label=True,
-                 class_=None):
+    def __init__(self, html_tag='li', with_label=True, prefix_label=True, class_=None):
         """Initialize list item with html tag.
 
         :param html_tag: name of html tag can be 'li', 'div', or 'span'.
@@ -181,8 +184,7 @@ class ListItemWidget(ItemWidget):
         """Return open tag."""
         if self.html_tag:
             return '<%s %s>' % (
-                self.html_tag,
-                html_params(class_=self.class_ or kwargs.get('class_', ''))
+                self.html_tag, html_params(class_=self.class_ or kwargs.get('class_', ''))
             )
         return ''
 
@@ -201,7 +203,6 @@ class ListItemWidget(ItemWidget):
 
 
 class DynamicItemWidget(ListItemWidget):
-
     """Render each subfield in a ExtendedListWidget enclosed in a div.
 
     It adds also tag with buttons for sorting and removing the item.
@@ -225,14 +226,18 @@ class DynamicItemWidget(ListItemWidget):
         super(DynamicItemWidget, self).__init__(**defaults)
 
     def _sort_button(self):
-        return ("""<a class="sort-element text-muted sortlink iconlink" """
-                """rel="tooltip" title="Drag to reorder"><i class="%s">"""
-                """</i></a>""" % self.icon_reorder)
+        return (
+            """<a class="sort-element text-muted sortlink iconlink" """
+            """rel="tooltip" title="Drag to reorder"><i class="%s">"""
+            """</i></a>""" % self.icon_reorder
+        )
 
     def _remove_button(self):
-        return ("""<a class="remove-element text-muted iconlink" """
-                """rel="tooltip" title="Click to remove"><i class="%s">"""
-                """</i></a>""" % self.icon_remove)
+        return (
+            """<a class="remove-element text-muted iconlink" """
+            """rel="tooltip" title="Click to remove"><i class="%s">"""
+            """</i></a>""" % self.icon_remove
+        )
 
     def render_subfield(self, subfield, **kwargs):
         """Render subfield."""
@@ -242,10 +247,10 @@ class DynamicItemWidget(ListItemWidget):
         # Field
         html.append(subfield())
         # Buttons
-        html.append("<div %s>%s</div>" % (
-            html_params(class_='col-xs-2'),
-            self._sort_button() + self._remove_button()
-        ))
+        html.append(
+            "<div %s>%s</div>" %
+            (html_params(class_='col-xs-2'), self._sort_button() + self._remove_button())
+        )
         html.append("</div>")
         return ''.join(html)
 
@@ -268,7 +273,6 @@ class DynamicItemWidget(ListItemWidget):
 # List widgets
 #
 class ExtendedListWidget(object):
-
     """Render a list of fields as a `ul`, `ol` or `div` list.
 
     This is used for fields which encapsulate a list of other fields as
@@ -284,8 +288,7 @@ class ExtendedListWidget(object):
 
     item_widget = ListItemWidget()
 
-    def __init__(self, html_tag='ul', item_widget=None,
-                 class_=None):
+    def __init__(self, html_tag='ul', item_widget=None, class_=None):
         """Initialize extended list widget."""
         assert html_tag in ('ol', 'ul', 'div', None)
         self.html_tag = html_tag
@@ -321,10 +324,7 @@ class ExtendedListWidget(object):
                     self.item_widget is None:
                 hidden.append(subfield)
             else:
-                html.append(
-                    self.item_widget(subfield, **self.item_kwargs(field,
-                                                                  subfield))
-                )
+                html.append(self.item_widget(subfield, **self.item_kwargs(field, subfield)))
         html.append(self.close_tag(field, **kwargs))
         # Add hidden fields in the end.
         for h in hidden:
@@ -333,7 +333,6 @@ class ExtendedListWidget(object):
 
 
 class DynamicListWidget(ExtendedListWidget):
-
     """Render a list of fields as a list of divs.
 
     Additionally adds:
@@ -362,13 +361,8 @@ class DynamicListWidget(ExtendedListWidget):
         """Render add button."""
         label = getattr(field, 'add_label', None) or \
             "Add %s" % field.label.text
-        ctx = {
-            "label": label,
-            "icon_add_class": self.icon_add
-        }
-        return render_macro_from_template(name="add_button",
-                                          template="forms/macros.html",
-                                          ctx=ctx)
+        ctx = {"label": label, "icon_add_class": self.icon_add}
+        return render_macro_from_template(name="add_button", template="forms/macros.html", ctx=ctx)
 
     def item_kwargs(self, field, subfield):
         """Return keyword arguments for a field."""
@@ -393,7 +387,6 @@ class DynamicListWidget(ExtendedListWidget):
 
 
 class TagListWidget(DynamicListWidget):
-
     """Render subfields in an ul-list with each li-element as tags.
 
     Most useful if subfields are rendered with the TagInput widget.
@@ -405,9 +398,7 @@ class TagListWidget(DynamicListWidget):
         defaults = dict(
             html_tag='ul',
             class_='list-unstyled',
-            item_widget=TagItemWidget(
-                template=self.template
-            )
+            item_widget=TagItemWidget(template=self.template)
         )
         defaults.update(kwargs)
         super(TagListWidget, self).__init__(**defaults)
@@ -437,7 +428,6 @@ class TagListWidget(DynamicListWidget):
 # Radio input widgets
 #
 class BigIconRadioInput(RadioInput):
-
     """Render a single radio button with icon.
 
     This widget is most commonly used in conjunction with InlineListWidget or
@@ -459,7 +449,5 @@ class BigIconRadioInput(RadioInput):
         html = super(BigIconRadioInput, self).__call__(field, **kwargs)
         icon = self.choices_icons.get(field._value(), '')
         if icon:
-            html = """<i class="%s"></i><br />%s</br>%s""" % (
-                icon, field.label.text, html
-            )
+            html = """<i class="%s"></i><br />%s</br>%s""" % (icon, field.label.text, html)
         return html

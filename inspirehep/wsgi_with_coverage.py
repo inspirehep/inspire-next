@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIREHEP WSGI app instantiation with support for coverage.py.
 
 Uses the trick in http://stackoverflow.com/a/20689873/1407497 to instantiate
@@ -39,7 +38,6 @@ from flask import jsonify, request
 from inspirehep.modules.literaturesuggest.views import validate as literature_validate
 from inspirehep.modules.authors.views.holdingpen import validate as author_validate
 
-
 cov = coverage.Coverage()
 cov.start()
 
@@ -50,13 +48,17 @@ def save_coverage():
     cov.stop()
     cov.save()
 
-atexit.register(save_coverage)
 
+atexit.register(save_coverage)
 
 app = getattr(application, 'app', application)
 
-app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_literature_suggest.validate'][0])
-app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_authors_holdingpen.validate'][0])
+app.url_map._rules.remove(
+    app.url_map._rules_by_endpoint['inspirehep_literature_suggest.validate'][0]
+)
+app.url_map._rules.remove(
+    app.url_map._rules_by_endpoint['inspirehep_authors_holdingpen.validate'][0]
+)
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['_arxiv.search'][0])
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['_doi.search'][0])
 
@@ -73,15 +75,15 @@ del app.view_functions['_doi.search']
 app.url_map.update()
 
 
-@app.route('/submit/literature/validate', endpoint='inspirehep_literature_suggest.validate', methods=['POST'])
+@app.route(
+    '/submit/literature/validate',
+    endpoint='inspirehep_literature_suggest.validate',
+    methods=['POST']
+)
 def mock_literature_validate():
     if 'url' in request.json:
         if request.json['url'] == 'pdf_url_correct':
-            return jsonify({
-                'messages': {
-                    'url': {},
-                },
-            })
+            return jsonify({'messages': {'url': {}, }, })
         if request.json['url'] == 'pdf_url_wrong':
             return jsonify({
                 'messages': {
@@ -89,18 +91,15 @@ def mock_literature_validate():
                         'messages': [
                             'Please, provide an accessible direct link to a PDF document.',
                         ],
-                        'state': 'error',
+                        'state':
+                            'error',
                     },
                 },
             })
 
     if 'arxiv_id' in request.json:
         if request.json['arxiv_id'] in ('1001.4538', 'hep-th/9711200'):
-            return jsonify({
-                'messages': {
-                    'arxiv_id': {},
-                },
-            })
+            return jsonify({'messages': {'arxiv_id': {}, }, })
         if request.json['arxiv_id'] == 'hep-th.9711200':
             return jsonify({
                 'messages': {
@@ -109,18 +108,15 @@ def mock_literature_validate():
                             'The provided ArXiv ID is invalid - it should look similar to '
                             '\'hep-th/9711200\' or \'1207.7235\'.',
                         ],
-                        'state': 'error',
+                        'state':
+                            'error',
                     },
                 },
             })
 
     if 'doi' in request.json:
         if request.json['doi'] in ('10.1086/305772', 'doi:10.1086/305772'):
-            return jsonify({
-                'messages': {
-                    'doi': {},
-                },
-            })
+            return jsonify({'messages': {'doi': {}, }, })
         if request.json['doi'] == 'dummy:10.1086/305772':
             return jsonify({
                 'messages': {
@@ -129,7 +125,8 @@ def mock_literature_validate():
                             'The provided DOI is invalid - it should look similar to '
                             '\'10.1086/305772\'.',
                         ],
-                        'state': 'error',
+                        'state':
+                            'error',
                     },
                 },
             })
@@ -137,25 +134,21 @@ def mock_literature_validate():
     return literature_validate()
 
 
-@app.route('/submit/author/validate', endpoint='inspirehep_authors_holdingpen.validate', methods=['POST'])
+@app.route(
+    '/submit/author/validate', endpoint='inspirehep_authors_holdingpen.validate', methods=['POST']
+)
 def mock_literature_validate():
     if request.json.get('orcid') == 'wrong.ORCID':
         return jsonify({
             'messages': {
                 'orcid': {
-                    'messages': [
-                        'A valid ORCID iD consists of 16 digits separated by dashes.',
-                    ],
+                    'messages': ['A valid ORCID iD consists of 16 digits separated by dashes.', ],
                     'state': 'error',
                 },
             },
         })
     elif request.json.get('orcid') == '1111-1111-1111-1111':
-        return jsonify({
-            'messages': {
-                'orcid': {},
-            },
-        })
+        return jsonify({'messages': {'orcid': {}, }, })
 
     return author_validate()
 
@@ -166,62 +159,44 @@ def mock_search_articles_by_doi():
         return jsonify({
             'query': {
                 'DOI': '10.1023/a:1026654312961',
-                'ISSN': [
-                    '0020-7748',
-                ],
+                'ISSN': ['0020-7748', ],
                 'URL': 'http://dx.doi.org/10.1023/a:1026654312961',
-                'alternative-id': [
-                    '297194',
-                ],
-                'author': [
-                    {
-                        'affiliation': [],
-                        'family': 'Maldacena',
-                        'given': 'Juan',
-                    },
-                ],
-                'container-title': [
-                    'International Journal of Theoretical Physics',
-                ],
+                'alternative-id': ['297194', ],
+                'author': [{
+                    'affiliation': [],
+                    'family': 'Maldacena',
+                    'given': 'Juan',
+                }, ],
+                'container-title': ['International Journal of Theoretical Physics', ],
                 'content-domain': {
                     'crossmark-restriction': 'F',
                     'domain': [],
                 },
                 'created': {
-                    'date-parts': [
-                        [2003, 11, 6],
-                    ],
+                    'date-parts': [[2003, 11, 6], ],
                     'date-time': '2003-11-06T17:29:30Z',
                     'timestamp': 1068139770000,
                 },
                 'deposited': {
-                    'date-parts': [
-                        [2012, 12, 28],
-                    ],
+                    'date-parts': [[2012, 12, 28], ],
                     'date-time': '2012-12-28T21:39:46Z',
                     'timestamp': 1356730786000,
                 },
                 'indexed': {
-                    'date-parts': [
-                        [2016, 9, 26],
-                    ],
+                    'date-parts': [[2016, 9, 26], ],
                     'date-time': '2016-09-26T13:21:10Z',
                     'timestamp': 1474896070130,
                 },
                 'issue': '4',
                 'issued': {
-                    'date-parts': [
-                        [1999],
-                    ],
+                    'date-parts': [[1999], ],
                 },
                 'member': 'http://id.crossref.org/member/297',
                 'original-title': [],
                 'page': '1113-1133',
                 'prefix': 'http://id.crossref.org/prefix/10.1007',
                 'published-print': {
-                    'date-parts': [
-                        [1999],
-                    ]
+                    'date-parts': [[1999], ]
                 },
                 'publisher': 'Springer Nature',
                 'reference-count': 0,
@@ -244,83 +219,73 @@ def mock_search_articles_by_doi():
     elif request.args.get('doi') == '10.1086/305772':
         return jsonify({
             'query': {
-                'DOI': '10.1086/305772',
+                'DOI':
+                    '10.1086/305772',
                 'ISSN': [
                     '0004-637X',
                     '1538-4357',
                 ],
-                'URL': 'http://dx.doi.org/10.1086/305772',
-                'alternative-id': [
-                    '10.1086/305772',
-                ],
-                'author': [
-                    {
-                        'affiliation': [],
-                        'family': 'Schlegel',
-                        'given': 'David J.',
-                    },
-                    {
-                        'affiliation': [],
-                        'family': 'Finkbeiner',
-                        'given': 'Douglas P.',
-                    },
-                    {
-                        'affiliation': [],
-                        'family': 'Davis',
-                        'given': 'Marc',
-                    }
-                ],
-                'container-title': [
-                    'The Astrophysical Journal',
-                ],
+                'URL':
+                    'http://dx.doi.org/10.1086/305772',
+                'alternative-id': ['10.1086/305772', ],
+                'author': [{
+                    'affiliation': [],
+                    'family': 'Schlegel',
+                    'given': 'David J.',
+                }, {
+                    'affiliation': [],
+                    'family': 'Finkbeiner',
+                    'given': 'Douglas P.',
+                }, {
+                    'affiliation': [],
+                    'family': 'Davis',
+                    'given': 'Marc',
+                }],
+                'container-title': ['The Astrophysical Journal', ],
                 'content-domain': {
                     'crossmark-restriction': False,
                     'domain': [],
                 },
                 'created': {
-                    'date-parts': [
-                        [2002, 7, 26],
-                    ],
+                    'date-parts': [[2002, 7, 26], ],
                     'date-time': '2002-07-26T18:50:42Z',
                     'timestamp': 1027709442000,
                 },
                 'deposited': {
-                    'date-parts': [
-                        [2011, 8, 23],
-                    ],
+                    'date-parts': [[2011, 8, 23], ],
                     'date-time': '2011-08-23T14:08:25Z',
                     'timestamp': 1314108505000,
                 },
                 'indexed': {
-                    'date-parts': [
-                        [2016, 9, 26],
-                    ],
+                    'date-parts': [[2016, 9, 26], ],
                     'date-time': '2016-09-26T15:34:12Z',
                     'timestamp': 1474904052331,
                 },
-                'issue': '2',
+                'issue':
+                    '2',
                 'issued': {
-                    'date-parts': [
-                        [1998, 6, 20],
-                    ],
+                    'date-parts': [[1998, 6, 20], ],
                 },
-                'member': 'http://id.crossref.org/member/266',
+                'member':
+                    'http://id.crossref.org/member/266',
                 'original-title': [],
-                'page': '525-553',
-                'prefix': 'http://id.crossref.org/prefix/10.1088',
+                'page':
+                    '525-553',
+                'prefix':
+                    'http://id.crossref.org/prefix/10.1088',
                 'published-print': {
-                    'date-parts': [
-                        [1998, 6, 20],
-                    ]
+                    'date-parts': [[1998, 6, 20], ]
                 },
-                'publisher': 'IOP Publishing',
-                'reference-count': 83,
-                'score': 1.0,
-                'short-container-title': [
-                    'ApJ',
-                ],
+                'publisher':
+                    'IOP Publishing',
+                'reference-count':
+                    83,
+                'score':
+                    1.0,
+                'short-container-title': ['ApJ', ],
                 'short-title': [],
-                'source': 'CrossRef',
+                'source':
+                    'CrossRef',
                 'subject': [
                     'Space and Planetary Science',
                     'Astronomy and Astrophysics',
@@ -330,11 +295,15 @@ def mock_search_articles_by_doi():
                     'Maps of Dust Infrared Emission for Use in Estimation of Reddening '
                     'and Cosmic Microwave Background Radiation Foregrounds',
                 ],
-                'type': 'journal-article',
-                'volume': '500',
+                'type':
+                    'journal-article',
+                'volume':
+                    '500',
             },
-            'source': 'crossref',
-            'status': 'success',
+            'source':
+                'crossref',
+            'status':
+                'success',
         })
     else:
         return ''
@@ -345,32 +314,47 @@ def mock_search_articles_by_arxiv():
     if request.args.get('arxiv') == 'hep-th/9711200':
         return jsonify({
             'query': {
-                'abstract': (
-                    'We show that the large $N$ limit of certain conformal field theories'),
-                'authors': [
-                    {
-                        'author': [
-                            {'keyname': 'Maldacena'},
-                            {'forenames': 'Juan M.'},
-                        ],
-                    },
-                ],
-                'categories': 'hep-th',
+                'abstract':
+                    ('We show that the large $N$ limit of certain conformal field theories'),
+                'authors': [{
+                    'author': [
+                        {
+                            'keyname': 'Maldacena'
+                        },
+                        {
+                            'forenames': 'Juan M.'
+                        },
+                    ],
+                }, ],
+                'categories':
+                    'hep-th',
                 'comments': (
                     '20 pages, harvmac, v2: section on AdS_2 corrected, references added,\n '
-                    'v3: More references and a sign in eqns 2.8 and 2.9 corrected'),
-                'created': '1997-11-27',
-                'doi': '10.1023/A:1026654312961',
-                'id': 'hep-th/9711200',
-                'journal-ref': 'Adv.Theor.Math.Phys.2:231-252,1998',
-                'report-no': 'HUTP-98/A097',
-                'request': 'http://export.arxiv.org/oai2',
-                'responseDate': '2016-10-17T15:05:15Z',
-                'title': 'The Large N Limit of Superconformal Field Theories and Supergravity',
-                'updated': '1998-01-22',
+                    'v3: More references and a sign in eqns 2.8 and 2.9 corrected'
+                ),
+                'created':
+                    '1997-11-27',
+                'doi':
+                    '10.1023/A:1026654312961',
+                'id':
+                    'hep-th/9711200',
+                'journal-ref':
+                    'Adv.Theor.Math.Phys.2:231-252,1998',
+                'report-no':
+                    'HUTP-98/A097',
+                'request':
+                    'http://export.arxiv.org/oai2',
+                'responseDate':
+                    '2016-10-17T15:05:15Z',
+                'title':
+                    'The Large N Limit of Superconformal Field Theories and Supergravity',
+                'updated':
+                    '1998-01-22',
             },
-            'source': 'arxiv',
-            'status': 'success',
+            'source':
+                'arxiv',
+            'status':
+                'success',
         })
     elif request.args.get('arxiv') == '1207.7235':
         return jsonify({
@@ -389,31 +373,44 @@ def mock_search_articles_by_arxiv():
                     'two decay modes with the best mass resolution, gamma gamma and ZZ; a fit to '
                     'these signals gives a mass of 125.3 +/- 0.4 (stat.) +/- 0.5 (syst.) GeV. '
                     'The decay to two photons indicates that the new particle is a boson with '
-                    'spin different from one. '),
-                'authors': [
-                    {
-                        'author': [
-                            {'keyname': 'The CMS Collaboration'},
-                        ],
-                    },
-                ],
-                'categories': 'hep-ex',
-                'comments': 'Submitted to Phys. Lett. B',
-                'created': '2012-07-31',
-                'doi': '10.1016/j.physletb.2012.08.021',
-                'id': '1207.7235',
-                'journal-ref': 'Phys. Lett. B 716 (2012) 30',
-                'license': 'http://arxiv.org/licenses/nonexclusive-distrib/1.0/',
-                'report-no': 'CMS-HIG-12-028; CERN-PH-EP-2012-220',
-                'request': 'http://export.arxiv.org/oai2',
-                'responseDate': '2016-10-17T15:22:25Z',
+                    'spin different from one. '
+                ),
+                'authors': [{
+                    'author': [{
+                        'keyname': 'The CMS Collaboration'
+                    }, ],
+                }, ],
+                'categories':
+                    'hep-ex',
+                'comments':
+                    'Submitted to Phys. Lett. B',
+                'created':
+                    '2012-07-31',
+                'doi':
+                    '10.1016/j.physletb.2012.08.021',
+                'id':
+                    '1207.7235',
+                'journal-ref':
+                    'Phys. Lett. B 716 (2012) 30',
+                'license':
+                    'http://arxiv.org/licenses/nonexclusive-distrib/1.0/',
+                'report-no':
+                    'CMS-HIG-12-028; CERN-PH-EP-2012-220',
+                'request':
+                    'http://export.arxiv.org/oai2',
+                'responseDate':
+                    '2016-10-17T15:22:25Z',
                 'title': (
                     'Observation of a new boson at a mass of 125 GeV with the CMS experiment\n '
-                    'at the LHC'),
-                'updated': '2013-01-28',
+                    'at the LHC'
+                ),
+                'updated':
+                    '2013-01-28',
             },
-            'source': 'arxiv',
-            'status': 'success',
+            'source':
+                'arxiv',
+            'status':
+                'success',
         })
     else:
         return ''

@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 """Implementation of validators, post-processors and auto-complete functions.
 
 Validators
@@ -107,7 +106,6 @@ __all__ = ('INSPIREField', )
 
 
 class INSPIREField(Field):
-
     """Base field that all webdeposit fields must inherit from."""
 
     def __init__(self, *args, **kwargs):
@@ -177,9 +175,10 @@ class INSPIREField(Field):
                 setattr(self.flags, flag, True)
 
         if callable(self.autocomplete):
-            warnings.warn("Autocomplete functions use now "
-                          "'autocomplete_fn' attribute",
-                          DeprecationWarning)
+            warnings.warn(
+                "Autocomplete functions use now "
+                "'autocomplete_fn' attribute", DeprecationWarning
+            )
             self.autocomplete_fn = self.autocomplete
             self.autocomplete = None
 
@@ -212,8 +211,7 @@ class INSPIREField(Field):
         if self.name not in exclude:
             self.data = self.object_data
 
-    def post_process(self, form=None, formfields=[], extra_processors=[],
-                     submit=False):
+    def post_process(self, form=None, formfields=[], extra_processors=[], submit=False):
         """Post process form before saving.
 
         Usually you can do some of the following tasks in the post
@@ -279,12 +277,10 @@ class INSPIREField(Field):
     def messages(self):
         """Retrieve field messages."""
         if self.errors:
-            return {self.name: dict(
-                state='error',
-                messages=self.errors
-            )}
+            return {self.name: dict(state='error', messages=self.errors)}
         else:
-            return {self.name: dict(
-                state=getattr(self, '_message_state', ''),
-                messages=self._messages
-            )}
+            return {
+                self.name: dict(
+                    state=getattr(self, '_message_state', ''), messages=self._messages
+                )
+            }

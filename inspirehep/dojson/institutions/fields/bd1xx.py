@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -36,6 +35,7 @@ from inspirehep.utils.helpers import force_force_list
 @institutions.over('location', '^034..')
 def location(self, key, value):
     """GPS location info."""
+
     def _get_float(value, c):
         try:
             return float(value[c])
@@ -73,6 +73,7 @@ def timezone(self, key, value):
 @utils.for_each_value
 def name(self, key, value):
     """List of names."""
+
     def set_value(key, val):
         val = force_force_list(val)
         if val:
@@ -92,7 +93,9 @@ def name(self, key, value):
             related_institutes.append({
                 'curated_relation': True,
                 'name': icn,
-                'record': get_record_ref(recid, endpoint='institutions'),
+                'record': get_record_ref(
+                    recid, endpoint='institutions'
+                ),
                 'relation_type': 'superseded',
             })
     else:
@@ -148,11 +151,7 @@ def field_activity(self, key, value):
 @institutions.over('name_variants', '^410..')
 def name_variants(self, key, value):
     """Variants of the name."""
-    valid_sources = [
-        "DESY_AFF",
-        "ADS",
-        "INSPIRE"
-    ]
+    valid_sources = ["DESY_AFF", "ADS", "INSPIRE"]
     if value.get('9') and value.get('9') not in valid_sources:
         return self.get('name_variants', [])
 
@@ -211,6 +210,7 @@ def historical_data(self, key, value):
 @utils.for_each_value
 def related_institutes(self, key, value):
     """Related institutes."""
+
     def _classify_relation_type(c):
         if c == 'a':
             return 'predecessor'
@@ -227,5 +227,7 @@ def related_institutes(self, key, value):
         'curated_relation': bool(value.get('0')),
         'name': value.get('a'),
         'relation_type': _classify_relation_type(value.get('w')),
-        'record': get_record_ref(value.get('0'), endpoint='institutions'),
+        'record': get_record_ref(
+            value.get('0'), endpoint='institutions'
+        ),
     }

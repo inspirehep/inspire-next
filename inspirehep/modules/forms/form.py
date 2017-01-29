@@ -24,7 +24,6 @@ from __future__ import absolute_import, division, print_function
 
 from wtforms import Field, FieldList, Form, FormField
 
-
 CFG_GROUPS_META = {
     'classes': None,
     'indication': None,
@@ -32,7 +31,6 @@ CFG_GROUPS_META = {
     'icon': None,
 }
 """Default group metadata."""
-
 
 CFG_FIELD_FLAGS = [
     'hidden',
@@ -43,7 +41,6 @@ CFG_FIELD_FLAGS = [
 
 
 class INSPIREForm(Form):
-
     """Generic WebDeposit Form class."""
 
     def __init__(self, *args, **kwargs):
@@ -128,14 +125,12 @@ class INSPIREForm(Form):
             form = self
 
         for name, field, in self._fields.items():
-            inline = getattr(
-                self, 'post_process_%s' % name, None)
+            inline = getattr(self, 'post_process_%s' % name, None)
             if inline is not None:
                 extra = [inline]
             else:
                 extra = []
-            field.post_process(form, formfields=formfields,
-                               extra_processors=extra, submit=submit)
+            field.post_process(form, formfields=formfields, extra_processors=extra, submit=submit)
 
     # def autocomplete(self, name, term, limit=50, _form=None):
     #     """
@@ -207,10 +202,8 @@ class INSPIREForm(Form):
         calling Field.json_data() on each field if it exists, otherwise is uses
         the value of Field.data.
         """
-        return dict(
-            (name, f.json_data if getattr(f, 'json_data', None) else f.data)
-            for name, f in self._fields.items()
-        )
+        return dict((name, f.json_data if getattr(f, 'json_data', None) else f.data)
+                    for name, f in self._fields.items())
 
     @property
     def messages(self):
@@ -220,19 +213,13 @@ class INSPIREForm(Form):
         for f in self._fields.values():
             _messages.update(f.messages)
 
-        return dict([
-            (
-                fname,
-                msgs if msgs.get('state', '') or msgs.get('messages', '')
-                else {}
-            ) for fname, msgs in _messages.items()
-        ])
+        return dict([(fname, msgs if msgs.get('state', '') or msgs.get('messages', '') else {})
+                     for fname, msgs in _messages.items()])
 
         return _messages
 
 
 class FormVisitor(object):
-
     """
     Generic form visitor to iterate over all fields in a form. See DataExporter
     for example how to export all data.
@@ -264,7 +251,6 @@ class FormVisitor(object):
 
 
 class DataExporter(FormVisitor):
-
     """
     Visitor to export form data into dictionary supporting filtering and key
     renaming.

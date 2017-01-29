@@ -27,6 +27,7 @@ from .views import blueprint
 
 class INSPIRETools(object):
     """INSPIRE tools extension."""
+
     def __init__(self, app=None, **kwargs):
         """Extension initialization."""
         self.app = app

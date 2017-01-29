@@ -29,7 +29,6 @@ from .export import MissingRequiredFieldError, Export
 
 
 class Latex(Export):
-
     """Class used to output LaTex format."""
 
     def __init__(self, record, latex_format):
@@ -38,9 +37,7 @@ class Latex(Export):
 
     def format(self):
         """Return LaTex export for single record."""
-        formats = {
-            'record': self._format_record,
-        }
+        formats = {'record': self._format_record, }
         return formats['record']()
 
     def _format_record(self):
@@ -105,15 +102,13 @@ class Latex(Export):
                 else:
                     out += u' {\it et al.},\n'
             else:
-                out += u'  {} and {},\n'.format(', '.join(value[:-1]),
-                                                value[-1])
+                out += u'  {} and {},\n'.format(', '.join(value[:-1]), value[-1])
         elif field == 'title':
-            out += u'  %``{},''\n'.format(value)
+            out += u'  %``{},' '\n'.format(value)
         elif field == 'publi_info':
             if isinstance(value, list):
                 if len(value) > 1:
-                    out += u'  {}\n    {}\n'.format('\n'.join(
-                        value[:-1]), value[-1])
+                    out += u'  {}\n    {}\n'.format('\n'.join(value[:-1]), value[-1])
                 else:
                     out += u'  {}\n'.format(value[0])
             else:
@@ -139,52 +134,47 @@ class Latex(Export):
             r'^(?P<last>[^,]+)\s*,\s*(?P<first_names>[^\,]*)(?P<extension>\,?.*)$'
         )
         re_initials = re.compile(r'(?P<initial>\w)([\w`\']+)?.?\s*')
-        re_tildehyph = re.compile(
-            ur'(?<=\.)~(?P<hyphen>[\u002D\u00AD\u2010-\u2014-])(?=\w)'
-        )
+        re_tildehyph = re.compile(ur'(?<=\.)~(?P<hyphen>[\u002D\u00AD\u2010-\u2014-])(?=\w)')
         result = []
         if 'authors' in self.record:
             for author in self.record['authors']:
                 if 'full_name' in author and author['full_name']:
                     if isinstance(author['full_name'], list):
-                        author_full_name = ' '.join(full_name for full_name
-                                                    in author['full_name'])
-                        first_last_match = re_last_first.search(
-                            author_full_name)
+                        author_full_name = ' '.join(full_name for full_name in author['full_name'])
+                        first_last_match = re_last_first.search(author_full_name)
                         if first_last_match:
                             first = re_initials.sub(
-                                r'\g<initial>.~',
-                                first_last_match.group('first_names')
+                                r'\g<initial>.~', first_last_match.group('first_names')
                             )
                             first = re_tildehyph.sub(r'\g<hyphen>', first)
-                            result.append(first +
-                                          first_last_match.group('last') +
-                                          first_last_match.group('extension'))
+                            result.append(
+                                first + first_last_match.group('last') +
+                                first_last_match.group('extension')
+                            )
                     else:
-                        first_last_match = re_last_first.search(
-                            author['full_name'])
+                        first_last_match = re_last_first.search(author['full_name'])
                         if first_last_match:
                             first = re_initials.sub(
-                                r'\g<initial>.~',
-                                first_last_match.group('first_names')
+                                r'\g<initial>.~', first_last_match.group('first_names')
                             )
                             first = re_tildehyph.sub(r'\g<hyphen>', first)
-                            result.append(first +
-                                          first_last_match.group('last') +
-                                          first_last_match.group('extension'))
+                            result.append(
+                                first + first_last_match.group('last') +
+                                first_last_match.group('extension')
+                            )
         elif 'corporate_author' in self.record:
             for corp_author in self.record['corporate_author']:
                 if corp_author:
                     first_last_match = re_last_first.search(corp_author)
                     if first_last_match:
                         first = re_initials.sub(
-                            r'\g<initial>.~',
-                            first_last_match.group('first_names')
+                            r'\g<initial>.~', first_last_match.group('first_names')
                         )
                         first = re_tildehyph.sub(r'\g<hyphen>', first)
-                        result.append(first +
-                                      first_last_match.group('last') +
-                                      first_last_match.group('extension'))
+                        result.append(
+                            first + first_last_match.group('last') +
+                            first_last_match.group('extension')
+                        )
         return result
 
     def _get_title(self):
@@ -287,8 +277,7 @@ class Latex(Export):
                     if journal and (volume != '' or pages != ''):
                         recid = self.record['control_number']
                         record = get_es_record('jou', recid)
-                        coden = ','.join(
-                            [record['coden'][0], volume, pages])
+                        coden = ','.join([record['coden'][0], volume, pages])
                         return coden
                 except:
                     return ''

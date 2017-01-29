@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Tasks used in OAI harvesting for arXiv record manipulation."""
 
 from __future__ import absolute_import, division, print_function
@@ -43,12 +42,12 @@ from plotextractor.api import process_tarball
 from plotextractor.converter import untar
 from plotextractor.errors import InvalidTarball, NoTexFilesFound
 
-
 REGEXP_AUTHLIST = re.compile(
-    "<collaborationauthorlist.*?>.*?</collaborationauthorlist>", re.DOTALL)
+    "<collaborationauthorlist.*?>.*?</collaborationauthorlist>", re.DOTALL
+)
 REGEXP_REFS = re.compile(
-    "<record.*?>.*?<controlfield .*?>.*?</controlfield>(.*?)</record>",
-    re.DOTALL)
+    "<record.*?>.*?<controlfield .*?>.*?</controlfield>(.*?)</record>", re.DOTALL
+)
 
 
 def arxiv_fulltext_download(obj, eng):
@@ -63,9 +62,7 @@ def arxiv_fulltext_download(obj, eng):
         pdf = download_file_to_workflow(
             workflow=obj,
             name=filename,
-            url=current_app.config['ARXIV_PDF_URL'].format(
-                arxiv_id=arxiv_id
-            )
+            url=current_app.config['ARXIV_PDF_URL'].format(arxiv_id=arxiv_id)
         )
         pdf['doctype'] = "arXiv"
 
@@ -84,9 +81,7 @@ def arxiv_plot_extract(obj, eng):
         tarball = download_file_to_workflow(
             workflow=obj,
             name=filename,
-            url=current_app.config['ARXIV_TARBALL_URL'].format(
-                arxiv_id=arxiv_id
-            )
+            url=current_app.config['ARXIV_TARBALL_URL'].format(arxiv_id=arxiv_id)
         )
     else:
         tarball = obj.files[filename]
@@ -94,9 +89,7 @@ def arxiv_plot_extract(obj, eng):
     try:
         plots = process_tarball(tarball.file.uri)
     except (InvalidTarball, NoTexFilesFound):
-        obj.log.error(
-            'Invalid tarball {0}'.format(tarball.file.uri)
-        )
+        obj.log.error('Invalid tarball {0}'.format(tarball.file.uri))
         return
     except DelegateError as err:
         obj.log.error("Error extracting plots. Report and skip.")
@@ -124,9 +117,7 @@ def arxiv_refextract(obj, eng):
         pdf = download_file_to_workflow(
             workflow=obj,
             name=filename,
-            url=current_app.config['ARXIV_PDF_URL'].format(
-                arxiv_id=arxiv_id
-            )
+            url=current_app.config['ARXIV_PDF_URL'].format(arxiv_id=arxiv_id)
         )
     else:
         pdf = obj.files[filename]
@@ -134,9 +125,7 @@ def arxiv_refextract(obj, eng):
         mapped_references = extract_references(pdf.file.uri)
         if mapped_references:
             obj.data["references"] = mapped_references
-            obj.log.info("Extracted {0} references".format(
-                len(mapped_references)
-            ))
+            obj.log.info("Extracted {0} references".format(len(mapped_references)))
         else:
             obj.log.info("No references extracted")
     else:
@@ -149,6 +138,7 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     :param obj: Workflow Object to process
     :param eng: Workflow Engine processing the object
     """
+
     @wraps(arxiv_author_list)
     def _author_list(obj, eng):
         from inspirehep.modules.converter import convert
@@ -159,9 +149,7 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
             tarball = download_file_to_workflow(
                 workflow=obj,
                 name=filename,
-                url=current_app.config['ARXIV_TARBALL_URL'].format(
-                    arxiv_id=arxiv_id
-                )
+                url=current_app.config['ARXIV_TARBALL_URL'].format(arxiv_id=arxiv_id)
             )
         else:
             tarball = obj.files[filename]
@@ -174,8 +162,7 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
             return
         obj.log.info("Extracted tarball to: {0}".format(sub_dir))
 
-        xml_files_list = [path for path in file_list
-                          if path.endswith(".xml")]
+        xml_files_list = [path for path in file_list if path.endswith(".xml")]
         obj.log.info("Found xmlfiles: {0}".format(xml_files_list))
 
         for xml_file in xml_files_list:
@@ -191,4 +178,5 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
                 authorlist_record = hep.do(authors_rec)
                 obj.data.update(authorlist_record)
                 break
+
     return _author_list

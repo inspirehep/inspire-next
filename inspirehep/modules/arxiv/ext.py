@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 """Arxiv extension.
 
 Arxiv extension is initialized like this:
@@ -55,15 +54,16 @@ from lxml.etree import fromstring
 
 from invenio_utils.xmlhelpers import etree_to_dict
 
-response_code = {'success': 200,
-                 'notfound': 404,
-                 'unsupported_versioning': 415,
-                 'malformed': 422,
-                 'multiplefound': 300}
+response_code = {
+    'success': 200,
+    'notfound': 404,
+    'unsupported_versioning': 415,
+    'malformed': 422,
+    'multiplefound': 300
+}
 
 
 class Arxiv(object):
-
     """Arxiv extension implementation.
 
     Initialization of the extension:
@@ -88,8 +88,7 @@ class Arxiv(object):
 
     def init_app(self, app):
         """Initialize a Flask application."""
-        app.config.setdefault("ARXIV_API_URL",
-                              "http://export.arxiv.org/oai2")
+        app.config.setdefault("ARXIV_API_URL", "http://export.arxiv.org/oai2")
         app.config.setdefault("ARXIV_ENDPOINT", "_arxiv.search")
         app.config.setdefault("ARXIV_URL_RULE", "/arxiv/search")
 
@@ -101,9 +100,10 @@ class Arxiv(object):
         app.extensions["arxiv"] = self
 
         if app.config["ARXIV_ENDPOINT"]:
-            app.add_url_rule(app.config["ARXIV_URL_RULE"],
-                             app.config["ARXIV_ENDPOINT"],
-                             login_required(self.search))
+            app.add_url_rule(
+                app.config["ARXIV_URL_RULE"], app.config["ARXIV_ENDPOINT"],
+                login_required(self.search)
+            )
 
     def get_response(self, arxiv_id):
         """Get ArXiv response from the ``ARXIV_API_URL`` page."""
@@ -112,8 +112,7 @@ class Arxiv(object):
             params=dict(
                 verb="GetRecord",
                 metadataPrefix="arXiv",
-                identifier="oai:arXiv.org:{term}".format(
-                    term=arxiv_id.strip()),
+                identifier="oai:arXiv.org:{term}".format(term=arxiv_id.strip()),
             ),
         )
         return response
@@ -142,8 +141,7 @@ class Arxiv(object):
                 query = {}
                 data["status"] = "notfound"
         else:
-            for d in query['GetRecord'][0][
-                    'record'][1]['metadata'][0]['arXiv']:
+            for d in query['GetRecord'][0]['record'][1]['metadata'][0]['arXiv']:
                 query.update(dict(d.items()))
             del query['GetRecord']
             data["status"] = "success"
@@ -161,8 +159,8 @@ class Arxiv(object):
         result = self.get_json(arxiv)
 
         resp = jsonify(result)
-        resp.status_code = response_code.get(result['status'],
-                                             result['status'])
+        resp.status_code = response_code.get(result['status'], result['status'])
         return resp
+
 
 __all__ = ("Arxiv", )

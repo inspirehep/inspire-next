@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Records tasks."""
 
 from __future__ import absolute_import, division, print_function
@@ -38,7 +37,6 @@ from inspirehep.modules.pidstore.utils import (
     get_index_from_endpoint,
 )
 from inspirehep.modules.records.api import InspireRecord
-
 
 logger = get_task_logger(__name__)
 
@@ -100,15 +98,13 @@ def get_records_to_update(old_ref):
             body = {
                 'query': {
                     'bool': {
-                        'should': [
-                            {
-                                'term': {
-                                    field: {
-                                        'value': _ref_to_recid(old_ref),
-                                    },
+                        'should': [{
+                            'term': {
+                                field: {
+                                    'value': _ref_to_recid(old_ref),
                                 },
-                            } for field in fields
-                        ],
+                            },
+                        } for field in fields],
                     },
                 },
             }

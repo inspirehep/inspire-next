@@ -33,7 +33,6 @@ from .export import MissingRequiredFieldError, Export
 
 
 class Bibtex(Export):
-
     """Docstring for Bibtex"""
 
     def __init__(self, record):
@@ -56,11 +55,13 @@ class Bibtex(Export):
     def _format_article(self):
         """Format article entry type"""
         name = "article"
-        required_fields = ['key', 'author', 'editor', 'title', 'collaboration',
-                           'booktitle', 'journal', 'volume']
-        optional_fields = ['year', 'number', 'pages', 'doi', 'note',
-                           'eprint', 'archivePrefix', 'primaryClass',
-                           'reportNumber', 'SLACcitation']
+        required_fields = [
+            'key', 'author', 'editor', 'title', 'collaboration', 'booktitle', 'journal', 'volume'
+        ]
+        optional_fields = [
+            'year', 'number', 'pages', 'doi', 'note', 'eprint', 'archivePrefix', 'primaryClass',
+            'reportNumber', 'SLACcitation'
+        ]
         try:
             return self._format_entry(name, required_fields, optional_fields)
         except MissingRequiredFieldError as e:
@@ -69,12 +70,14 @@ class Bibtex(Export):
     def _format_inproceeding(self):
         """Format inproceedings entry type"""
         name = "inproceedings"
-        required_fields = ['key', 'author', 'editor', 'title', 'organization',
-                           'publisher', 'address', 'booktitle',
-                           'url', 'journal', 'volume']
-        optional_fields = ['year', 'number', 'pages', 'doi', 'note',
-                           'eprint', 'archivePrefix', 'primaryClass',
-                           'reportNumber', 'SLACcitation']
+        required_fields = [
+            'key', 'author', 'editor', 'title', 'organization', 'publisher', 'address',
+            'booktitle', 'url', 'journal', 'volume'
+        ]
+        optional_fields = [
+            'year', 'number', 'pages', 'doi', 'note', 'eprint', 'archivePrefix', 'primaryClass',
+            'reportNumber', 'SLACcitation'
+        ]
         try:
             return self._format_entry(name, required_fields, optional_fields)
         except MissingRequiredFieldError as e:
@@ -83,12 +86,14 @@ class Bibtex(Export):
     def _format_proceeding(self):
         """Format proceedings entry type"""
         name = "proceedings"
-        required_fields = ['key', 'author', 'editor', 'title', 'organization',
-                           'publisher', 'address', 'booktitle',
-                           'url', 'journal', 'volume']
-        optional_fields = ['year', 'number', 'pages', 'doi', 'note',
-                           'eprint', 'archivePrefix', 'primaryClass',
-                           'reportNumber', 'series', 'ISBN', 'SLACcitation']
+        required_fields = [
+            'key', 'author', 'editor', 'title', 'organization', 'publisher', 'address',
+            'booktitle', 'url', 'journal', 'volume'
+        ]
+        optional_fields = [
+            'year', 'number', 'pages', 'doi', 'note', 'eprint', 'archivePrefix', 'primaryClass',
+            'reportNumber', 'series', 'ISBN', 'SLACcitation'
+        ]
         try:
             return self._format_entry(name, required_fields, optional_fields)
         except MissingRequiredFieldError as e:
@@ -104,11 +109,11 @@ class Bibtex(Export):
             if thesis_type == 'Master':
                 name = 'mastersthesis'
 
-        required_fields = ['key', 'author', 'title', 'address',
-                           'school', 'journal', 'volume']
-        optional_fields = ['year', 'url', 'number', 'pages', 'doi', 'note',
-                           'eprint', 'archivePrefix', 'primaryClass',
-                           'reportNumber', 'SLACcitation']
+        required_fields = ['key', 'author', 'title', 'address', 'school', 'journal', 'volume']
+        optional_fields = [
+            'year', 'url', 'number', 'pages', 'doi', 'note', 'eprint', 'archivePrefix',
+            'primaryClass', 'reportNumber', 'SLACcitation'
+        ]
         try:
             return self._format_entry(name, required_fields, optional_fields)
         except MissingRequiredFieldError as e:
@@ -117,11 +122,14 @@ class Bibtex(Export):
     def _format_book(self):
         """Format book entry type"""
         name = "book"
-        required_fields = ['key', 'author', 'editor', 'title', 'publisher',
-                           'address', 'booktitle', 'url', 'volume']
-        optional_fields = ['year', 'number', 'doi', 'note',
-                           'eprint', 'archivePrefix', 'primaryClass',
-                           'reportNumber', 'series', 'ISBN', 'SLACcitation']
+        required_fields = [
+            'key', 'author', 'editor', 'title', 'publisher', 'address', 'booktitle', 'url',
+            'volume'
+        ]
+        optional_fields = [
+            'year', 'number', 'doi', 'note', 'eprint', 'archivePrefix', 'primaryClass',
+            'reportNumber', 'series', 'ISBN', 'SLACcitation'
+        ]
         try:
             return self._format_entry(name, required_fields, optional_fields)
         except MissingRequiredFieldError as e:
@@ -130,11 +138,14 @@ class Bibtex(Export):
     def _format_inbook(self):
         """Format inbook entry type"""
         name = "inbook"
-        required_fields = ['key', 'author', 'editor', 'title', 'publisher',
-                           'address', 'booktitle', 'url', 'volume']
-        optional_fields = ['year', 'number', 'pages', 'doi', 'note',
-                           'eprint', 'archivePrefix', 'primaryClass',
-                           'reportNumber', 'series', 'SLACcitation']
+        required_fields = [
+            'key', 'author', 'editor', 'title', 'publisher', 'address', 'booktitle', 'url',
+            'volume'
+        ]
+        optional_fields = [
+            'year', 'number', 'pages', 'doi', 'note', 'eprint', 'archivePrefix', 'primaryClass',
+            'reportNumber', 'series', 'SLACcitation'
+        ]
         try:
             return self._format_entry(name, required_fields, optional_fields)
         except MissingRequiredFieldError as e:
@@ -144,9 +155,10 @@ class Bibtex(Export):
         """Returns the type of record"""
         entry_type = 'article'
         if 'collections' in self.record:
-            collections = [collections["primary"].lower()
-                           for collections in self.record['collections']
-                           if 'primary' in collections]
+            collections = [
+                collections["primary"].lower() for collections in self.record['collections']
+                if 'primary' in collections
+            ]
             if 'conferencepaper' in collections:
                 entry_type = 'inproceedings'
             elif 'thesis' in collections:
@@ -157,7 +169,7 @@ class Bibtex(Export):
                 entry_type = 'book'
             elif 'bookchapter' in collections:
                 entry_type = 'inbook'
-            elif 'arxiv' in collections or 'published'in collections:
+            elif 'arxiv' in collections or 'published' in collections:
                 entry_type = 'article'
         original_entry = entry_type
         if 'publication_info' in self.record:
@@ -264,9 +276,9 @@ class Bibtex(Export):
 
     def _get_author(self):
         """Return list of name(s) of the author(s)."""
+
         def _is_supervisor(author):
-            contributor_roles = force_force_list(
-                get_value(author, 'contributor_roles.value'))
+            contributor_roles = force_force_list(get_value(author, 'contributor_roles.value'))
             return 'Supervision' in contributor_roles
 
         result = []
@@ -274,12 +286,12 @@ class Bibtex(Export):
 
         authors = force_force_list(get_value(self.record, 'authors'))
         non_supervisors = [el for el in authors if not _is_supervisor(el)]
-        result.extend(
-            [spacinginitials.sub(r'\1 \2', el['full_name'])
-                for el in non_supervisors if 'full_name' in el])
+        result.extend([
+            spacinginitials.sub(r'\1 \2', el['full_name']) for el in non_supervisors
+            if 'full_name' in el
+        ])
 
-        corporate_authors = force_force_list(
-            get_value(self.record, 'corporate_author'))
+        corporate_authors = force_force_list(get_value(self.record, 'corporate_author'))
         result.extend(corporate_authors)
 
         return result
@@ -290,9 +302,9 @@ class Bibtex(Export):
         spacinginitials = re.compile(r'([A-Z][a-z]{0,1}[}]?\.)(\b|[-\{])')
         if 'authors' in self.record:
             if self.record['authors'][0].get('role') == 'ed.':
-                result.append(spacinginitials.sub(
-                    r'\1 \2', self.record['authors'][0]['full_name']
-                ))
+                result.append(
+                    spacinginitials.sub(r'\1 \2', self.record['authors'][0]['full_name'])
+                )
             if result:
                 return ''.join(editor for editor in result)
 
@@ -366,8 +378,9 @@ class Bibtex(Export):
                     if len(author['affiliations']) > 1:
                         school = author['affiliations'][0]['value']
                     else:
-                        school = ''.join(affilation.get('value') for affilation in
-                                         author['affiliations'])
+                        school = ''.join(
+                            affilation.get('value') for affilation in author['affiliations']
+                        )
         return school
 
     def _get_booktitle(self):
@@ -427,8 +440,7 @@ class Bibtex(Export):
                     if isinstance(journal['journal_title'], list):
                         journal_title = journal['journal_title'][-1]
                     else:
-                        journal_title = re.sub(r'\.([A-Z])', r'. \1',
-                                               journal['journal_title'])
+                        journal_title = re.sub(r'\.([A-Z])', r'. \1', journal['journal_title'])
             except IndexError:
                 pass
         return journal_title
@@ -443,10 +455,7 @@ class Bibtex(Export):
                 if 'journal_volume' in journal:
                     if 'journal_title' in journal and \
                             journal['journal_title'] == 'JHEP':
-                        volume = re.sub(
-                            r'\d\d(\d\d)', r'\1',
-                            journal['journal_volume']
-                        )
+                        volume = re.sub(r'\d\d(\d\d)', r'\1', journal['journal_volume'])
                     else:
                         volume = journal['journal_volume']
             except IndexError:
@@ -515,12 +524,12 @@ class Bibtex(Export):
                                             re.sub(r'\.([A-Z])', r'. \1',
                                                    val['journal_title'])
                                 else:
-                                    note += re.sub(r'\.([A-Z])', r'. \1',
-                                                   val['journal_title'])
+                                    note += re.sub(r'\.([A-Z])', r'. \1', val['journal_title'])
                                     if 'journal_volume' in val:
                                         if note.find("JHEP") > -1:
-                                            note += re.sub(r'\d\d(\d\d)', r'\1',
-                                                           val['journal_volume'])
+                                            note += re.sub(
+                                                r'\d\d(\d\d)', r'\1', val['journal_volume']
+                                            )
                                         else:
                                             note += val['journal_volume']
                                     if 'journal_issue' in val:
@@ -537,12 +546,10 @@ class Bibtex(Export):
                             (val['note'] in ('Erratum', 'Addendum',
                                              'Corrigendum', 'Reprint')):
                             if 'journal_title' in val:
-                                note += re.sub(r'\.([A-Z])', r'. \1',
-                                               val['journal_title'])
+                                note += re.sub(r'\.([A-Z])', r'. \1', val['journal_title'])
                             if 'journal_volume' in val:
                                 if note.find("JHEP") > -1:
-                                    note += re.sub(r'\d\d(\d\d)', r'\1',
-                                                   val['journal_volume'])
+                                    note += re.sub(r'\d\d(\d\d)', r'\1', val['journal_volume'])
                                 else:
                                     note += val['journal_volume']
                             if 'journal_issue' in val:
@@ -563,8 +570,7 @@ class Bibtex(Export):
         if 'urls' in self.record:
             for url in self.record['urls']:
                 if 'value' in url:
-                    if url['value'].lower().endswith(
-                            ('.png', '.jpg', '.jpeg', '.gif', '.eps')):
+                    if url['value'].lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.eps')):
                         continue
                     else:
                         result = url['value']
@@ -649,8 +655,7 @@ class Bibtex(Export):
                     if journal and (volume != '' or pages != ''):
                         recid = self.record['control_number', '']
                         record = get_es_record('jou', recid)
-                        coden = ','.join(
-                            [record['coden'][0], volume, pages])
+                        coden = ','.join([record['coden'][0], volume, pages])
                         return coden
                 except:
                     return ''

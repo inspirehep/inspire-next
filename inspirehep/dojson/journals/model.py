@@ -19,13 +19,11 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """DoJSON model definition for journals."""
 
 from __future__ import absolute_import, division, print_function
 
 from ..model import FilterOverdo, add_schema, clean_record
-
 
 filters = [
     add_schema('journals.json'),

@@ -21,8 +21,6 @@
 # In applying this license, CERN does not
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
-
-
 """Serialization response factories.
 
 Responsible for creating a HTTP response given the output of a serializer.
@@ -42,12 +40,16 @@ def record_responsify_nocache(serializer, mimetype):
     :param serializer: Serializer instance.
     :param mimetype: MIME type of response.
     """
+
     def view(pid, record, code=200, headers=None, links_factory=None):
         response = current_app.response_class(
-            serializer.serialize(pid, record, links_factory=links_factory),
-            mimetype=mimetype)
+            serializer.serialize(
+                pid, record, links_factory=links_factory
+            ), mimetype=mimetype
+        )
         response.status_code = code
         if headers is not None:
             response.headers.extend(headers)
         return response
+
     return view

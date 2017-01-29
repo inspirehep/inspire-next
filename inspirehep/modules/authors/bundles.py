@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Bundles for author forms."""
 
 from __future__ import absolute_import, division, print_function
@@ -38,9 +37,7 @@ js = NpmBundle(
     'js/authors/app.js',
     filters='requirejs',
     depends=(
-        'js/authors/author.js',
-        'js/authors/profile.js',
-        'js/authors/publications.js',
+        'js/authors/author.js', 'js/authors/profile.js', 'js/authors/publications.js',
         'js/authors/statistics.js'
     ),
     output="gen/authors.%(version)s.js"

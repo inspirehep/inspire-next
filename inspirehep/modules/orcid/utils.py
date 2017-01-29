@@ -34,10 +34,10 @@ def convert_to_orcid(record):
     orcid_json = orcid_overdo.do(record)
 
     orcid_json['external-identifiers'] = {
-        'work-external-identifier': orcid_json['work_external_identifier']}
+        'work-external-identifier': orcid_json['work_external_identifier']
+    }
     orcid_json.pop('work_external_identifier')
-    orcid_json['citation'] = {'citation': Bibtex(
-        record).format(), 'citation-type': 'BIBTEX'}
+    orcid_json['citation'] = {'citation': Bibtex(record).format(), 'citation-type': 'BIBTEX'}
 
     return orcid_json
 

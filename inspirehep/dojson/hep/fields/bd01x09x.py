@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -41,7 +40,6 @@ from ..model import hep, hep2marc
 from ...utils import force_single_element
 
 from inspirehep.utils.helpers import force_force_list
-
 
 LANGUAGE_MAPPING = {
     "bulgarian": "bg",
@@ -139,6 +137,7 @@ def isbns2marc(self, key, value):
 @hep.over('persistent_identifiers', '^024..')
 def persistent_identifiers(self, key, value):
     """Persistent Standard Identifiers."""
+
     def _first_non_curator_source(sources):
         sources = force_force_list(sources)
         without_curator = filter(lambda el: el.upper() != 'CURATOR', sources)
@@ -185,11 +184,7 @@ def dois2marc(self, key, value):
     value = force_force_list(value)
 
     def get_value(val):
-        return {
-            'a': val.get('value'),
-            '9': val.get('source'),
-            '2': val.get('type') or "DOI"
-        }
+        return {'a': val.get('value'), '9': val.get('source'), '2': val.get('type') or "DOI"}
 
     self['024'] = self.get('024', [])
     for val in value:
@@ -230,6 +225,7 @@ def external_system_numbers2marc(self, key, value):
 @hep.over('report_numbers', '^037..')
 def report_numbers(self, key, value):
     """Report numbers and arXiv numbers from 037."""
+
     def get_value(value):
         return {
             'source': value.get('9'),
@@ -283,6 +279,7 @@ def report_numbers2marc(self, key, value):
 @hep.over('languages', '^041[10_].')
 def languages(self, key, value):
     """Language Code."""
+
     def split_languages(value):
         values = RE_SPLIT_LANGUAGES.split(value)
         return [v.strip().lower() for v in values if v.strip()]
@@ -301,9 +298,7 @@ def languages(self, key, value):
 @utils.for_each_value
 def languages2marc(self, key, value):
     """Language Code."""
-    return {
-        'a': REVERSE_LANGUAGE_MAPPING.get(value),
-    }
+    return {'a': REVERSE_LANGUAGE_MAPPING.get(value), }
 
 
 @hep.over('classification_number', '^084..')

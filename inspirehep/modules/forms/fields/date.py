@@ -32,11 +32,7 @@ __all__ = ['Date']
 
 class Date(INSPIREField, DateField):
     def __init__(self, **kwargs):
-        defaults = dict(
-            icon='calendar',
-            validators=[optional()],
-            widget_classes="form-control"
-        )
+        defaults = dict(icon='calendar', validators=[optional()], widget_classes="form-control")
         defaults.update(kwargs)
         super(Date, self).__init__(**defaults)
 

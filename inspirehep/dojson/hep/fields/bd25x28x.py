@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -33,18 +32,14 @@ from ..model import hep, hep2marc
 @utils.for_each_value
 def edition(self, key, value):
     """Edition Statement."""
-    return {
-        'edition': value.get('a')
-    }
+    return {'edition': value.get('a')}
 
 
 @hep2marc.over('250', 'edition')
 @utils.for_each_value
 def edition2marc(self, key, value):
     """Edition Statement."""
-    return {
-        'a': value.get('edition'),
-    }
+    return {'a': value.get('edition'), }
 
 
 @hep.over('imprints', '^260[_23].')
@@ -81,6 +76,4 @@ def preprint_date(self, key, value):
 @utils.for_each_value
 def preprint_date2marc(self, key, value):
     """Preprint info."""
-    return {
-        'c': value,
-    }
+    return {'c': value, }

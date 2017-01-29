@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Cache proxies."""
 
 from __future__ import absolute_import, division, print_function
@@ -27,8 +26,5 @@ from __future__ import absolute_import, division, print_function
 from flask import current_app
 from werkzeug.local import LocalProxy
 
-
-current_cache = LocalProxy(
-    lambda: current_app.extensions['inspire-cache'].cache
-)
+current_cache = LocalProxy(lambda: current_app.extensions['inspire-cache'].cache)
 """Helper proxy to access the state object."""

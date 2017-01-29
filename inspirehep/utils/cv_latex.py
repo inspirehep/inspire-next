@@ -30,7 +30,6 @@ from inspirehep import config
 
 
 class Cv_latex(Export):
-
     """Class used to output CV LaTex format."""
 
     def __init__(self, record):
@@ -38,9 +37,7 @@ class Cv_latex(Export):
 
     def format(self):
         """Return CV LaTex export for single record."""
-        formats = {
-            'record': self._format_record,
-        }
+        formats = {'record': self._format_record, }
         return formats['record']()
 
     def _format_record(self):
@@ -104,16 +101,13 @@ class Cv_latex(Export):
                 else:
                     out += u' {\it et al.}.\n'
             else:
-                out += u'  \\\\{{}}{} and {}.\n'.format(
-                    ', '.join(value[:-1]), value[-1]
-                )
+                out += u'  \\\\{{}}{} and {}.\n'.format(', '.join(value[:-1]), value[-1])
         elif field == 'title':
             out += u'{}\n'.format(value)
         elif field == 'publi_info':
             if isinstance(value, list):
                 if len(value) > 1:
-                    out += u'  \\\\{{}}{},  {}'.format(''.join(
-                        value[:-1]), value[-1])
+                    out += u'  \\\\{{}}{},  {}'.format(''.join(value[:-1]), value[-1])
                 else:
                     out += u'  \\\\{{}}{}.'.format(value[0])
             else:
@@ -136,52 +130,47 @@ class Cv_latex(Export):
             r'^(?P<last>[^,]+)\s*,\s*(?P<first_names>[^\,]*)(?P<extension>\,?.*)$'
         )
         re_initials = re.compile(r'(?P<initial>\w)([\w`\']+)?.?\s*')
-        re_tildehyph = re.compile(
-            ur'(?<=\.)~(?P<hyphen>[\u002D\u00AD\u2010-\u2014-])(?=\w)'
-        )
+        re_tildehyph = re.compile(ur'(?<=\.)~(?P<hyphen>[\u002D\u00AD\u2010-\u2014-])(?=\w)')
         result = []
         if 'authors' in self.record:
             for author in self.record['authors']:
                 if 'full_name' in author and author['full_name']:
                     if isinstance(author['full_name'], list):
-                        author_full_name = ' '.join(full_name for full_name
-                                                    in author['full_name'])
-                        first_last_match = re_last_first.search(
-                            author_full_name)
+                        author_full_name = ' '.join(full_name for full_name in author['full_name'])
+                        first_last_match = re_last_first.search(author_full_name)
                         if first_last_match:
                             first = re_initials.sub(
-                                r'\g<initial>.~',
-                                first_last_match.group('first_names')
+                                r'\g<initial>.~', first_last_match.group('first_names')
                             )
                             first = re_tildehyph.sub(r'\g<hyphen>', first)
-                            result.append(first +
-                                          first_last_match.group('last') +
-                                          first_last_match.group('extension'))
+                            result.append(
+                                first + first_last_match.group('last') +
+                                first_last_match.group('extension')
+                            )
                     else:
-                        first_last_match = re_last_first.search(
-                            author['full_name'])
+                        first_last_match = re_last_first.search(author['full_name'])
                         if first_last_match:
                             first = re_initials.sub(
-                                r'\g<initial>.~',
-                                first_last_match.group('first_names')
+                                r'\g<initial>.~', first_last_match.group('first_names')
                             )
                             first = re_tildehyph.sub(r'\g<hyphen>', first)
-                            result.append(first +
-                                          first_last_match.group('last') +
-                                          first_last_match.group('extension'))
+                            result.append(
+                                first + first_last_match.group('last') +
+                                first_last_match.group('extension')
+                            )
         elif 'corporate_author' in self.record:
             for corp_author in self.record['corporate_author']:
                 if corp_author:
                     first_last_match = re_last_first.search(corp_author)
                     if first_last_match:
                         first = re_initials.sub(
-                            r'\g<initial>.~',
-                            first_last_match.group('first_names')
+                            r'\g<initial>.~', first_last_match.group('first_names')
                         )
                         first = re_tildehyph.sub(r'\g<hyphen>', first)
-                        result.append(first +
-                                      first_last_match.group('last') +
-                                      first_last_match.group('extension'))
+                        result.append(
+                            first + first_last_match.group('last') +
+                            first_last_match.group('extension')
+                        )
         return result
 
     def _get_title(self):
@@ -195,9 +184,7 @@ class Cv_latex(Export):
                         break
             else:
                 record_title = self.record['titles']['title'].strip()
-            return r"{\bf ``" + re.sub(
-                r'(?<!\\)([#&%])', r'\\\1', record_title
-            ) + "''}"
+            return r"{\bf ``" + re.sub(r'(?<!\\)([#&%])', r'\\\1', record_title) + "''}"
         else:
             return record_title
 
@@ -210,11 +197,9 @@ class Cv_latex(Export):
                 out = ''
                 if 'journal_title' in field:
                     if isinstance(field['journal_title'], list):
-                        journal_title = field[
-                            'journal_title'][-1].replace(".", '.\\ ')
+                        journal_title = field['journal_title'][-1].replace(".", '.\\ ')
                     else:
-                        journal_title = field[
-                            'journal_title'].replace(".", '.\\ ')
+                        journal_title = field['journal_title'].replace(".", '.\\ ')
                     if 'journal_volume' in field and not \
                             field['journal_title'] == 'Conf.Proc.':
                         journal_letter = ''
@@ -266,8 +251,7 @@ class Cv_latex(Export):
                 return self._format_date(datestruct)  # FIX ME ADD 0 IN THE DAY
 
         if self.arxiv_field:
-            date = re.search('(\d+)',
-                             self.arxiv_field['value']).groups()[0]
+            date = re.search('(\d+)', self.arxiv_field['value']).groups()[0]
             if len(date) >= 4:
                 year = date[0:2]
                 if year > '90':
@@ -324,7 +308,7 @@ class Cv_latex(Export):
             datestruct = tuple(datestruct[0:3]) + dummy_time
             return time.strftime("%b %-d, %Y", datestruct)
         elif len(datestruct) == 2:
-            datestruct = tuple(datestruct[0:2]) + (1,) + dummy_time
+            datestruct = tuple(datestruct[0:2]) + (1, ) + dummy_time
             return time.strftime("%b %Y", datestruct)
         elif len(datestruct) == 1:
             return datestruct[0]

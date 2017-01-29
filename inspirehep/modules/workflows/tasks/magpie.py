@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Set of workflow tasks for MagPie API."""
 
 from __future__ import absolute_import, division, print_function
@@ -37,9 +36,7 @@ def get_magpie_url():
     base_url = current_app.config.get("MAGPIE_API_URL")
     if not base_url:
         return
-    return "{base_url}/predict".format(
-        base_url=base_url
-    )
+    return "{base_url}/predict".format(base_url=base_url)
 
 
 def prepare_magpie_payload(record, corpus):
@@ -47,17 +44,13 @@ def prepare_magpie_payload(record, corpus):
     payload = dict(text="", corpus=corpus)
     titles = filter(None, get_value(record, "titles.title", []))
     abstracts = filter(None, get_value(record, "abstracts.value", []))
-    payload["text"] = ". ".join(
-        [part.encode('utf-8') for part in titles + abstracts])
+    payload["text"] = ". ".join([part.encode('utf-8') for part in titles + abstracts])
     return payload
 
 
 def filter_magpie_response(labels, limit):
     """Filter response from Magpie API, keeping most relevant labels."""
-    filtered_labels = [
-        (word, score) for word, score in labels
-        if score >= limit
-    ]
+    filtered_labels = [(word, score) for word, score in labels if score >= limit]
 
     # In the event that there are no labels with a high enough score,
     # we take only the top one
@@ -82,15 +75,12 @@ def guess_keywords(obj, eng):
         labels = results.get('labels', [])
         keywords = labels[:10]
 
-        keywords = [{'label': k[0], 'score': k[1], 'accept': k[1] >= 0.09} for
-                    k in
-                    keywords]
-        obj.extra_data["keywords_prediction"] = dict(
-            keywords=keywords
+        keywords = [{'label': k[0], 'score': k[1], 'accept': k[1] >= 0.09} for k in keywords]
+        obj.extra_data["keywords_prediction"] = dict(keywords=keywords)
+        current_app.logger.info(
+            "Keyword prediction (top 10): {0}".
+            format(obj.extra_data["keywords_prediction"]["keywords"])
         )
-        current_app.logger.info("Keyword prediction (top 10): {0}".format(
-            obj.extra_data["keywords_prediction"]["keywords"]
-        ))
 
 
 def guess_categories(obj, eng):
@@ -105,15 +95,13 @@ def guess_categories(obj, eng):
         labels = results.get('labels', [])
         categories = filter_magpie_response(labels, limit=0.22)
 
-        categories = [{'label': c[0], 'score': c[1],
-                       'accept': c[1] >= 0.25} for c in categories]
+        categories = [{'label': c[0], 'score': c[1], 'accept': c[1] >= 0.25} for c in categories]
 
-        obj.extra_data["categories_prediction"] = dict(
-            categories=categories
+        obj.extra_data["categories_prediction"] = dict(categories=categories)
+        current_app.logger.info(
+            "Category prediction: {0}".
+            format(obj.extra_data["categories_prediction"]["categories"])
         )
-        current_app.logger.info("Category prediction: {0}".format(
-            obj.extra_data["categories_prediction"]["categories"]
-        ))
 
 
 def guess_experiments(obj, eng):
@@ -128,10 +116,8 @@ def guess_experiments(obj, eng):
     if results:
         labels = results.get('labels', [])
         experiments = filter_magpie_response(labels, limit=0.5)
-        obj.extra_data["experiments_prediction"] = dict(
-            labels=labels,
-            experiments=experiments
+        obj.extra_data["experiments_prediction"] = dict(labels=labels, experiments=experiments)
+        current_app.logger.info(
+            "Experiment prediction: {0}".
+            format(obj.extra_data["experiments_prediction"]["experiments"])
         )
-        current_app.logger.info("Experiment prediction: {0}".format(
-            obj.extra_data["experiments_prediction"]["experiments"]
-        ))

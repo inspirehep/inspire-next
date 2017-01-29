@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Dictionary used when normalizing experiment names.
 
 FIXME: this is currently a static Python dictionary, but it should be replaced
@@ -27,7 +26,6 @@ by a query on the dynamic state of the Experiments collection.
 """
 
 from __future__ import absolute_import, division, print_function
-
 
 EXPERIMENTS_MAP = {
     '2dfgrs': '2dFGRS',

@@ -28,7 +28,6 @@ from inspirehep.utils.record_getter import get_es_record
 
 
 class MissingRequiredFieldError(LookupError):
-
     """Base class for exceptions in this module.
     The exception should be raised when the specific,
     required field doesn't exist in the record.
@@ -124,8 +123,7 @@ class Export(object):
                     cite_element = field['value'].upper()
                     cite_line = '%%CITATION = ' + cite_element + ';%%'
             if not cite_element and self.record['report_numbers']:
-                cite_element = self.record[
-                    'report_numbers'][0]['value'].upper()
+                cite_element = self.record['report_numbers'][0]['value'].upper()
                 cite_line = '%%CITATION = ' + cite_element + ';%%'
         else:
             cite_element = str(self.record['control_number'])

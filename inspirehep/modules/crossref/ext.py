@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 """CrossRef extension.
 
 CrossRef extension is initialized like this:
@@ -54,14 +53,10 @@ from urlparse import urljoin
 from flask import current_app, request, jsonify
 from flask_login import login_required
 
-response_code = {'success': 200,
-                 'notfound': 404,
-                 'malformed': 422,
-                 'multiplefound': 300}
+response_code = {'success': 200, 'notfound': 404, 'malformed': 422, 'multiplefound': 300}
 
 
 class CrossRef(object):
-
     """CrossRef extension implementation.
 
     Initialization of the extension:
@@ -86,8 +81,7 @@ class CrossRef(object):
 
     def init_app(self, app):
         """Initialize a Flask application."""
-        app.config.setdefault("CROSSREF_API_URL",
-                              "http://api.crossref.org/works/")
+        app.config.setdefault("CROSSREF_API_URL", "http://api.crossref.org/works/")
         app.config.setdefault("CROSSREF_ENDPOINT", "_doi.search")
         app.config.setdefault("CROSSREF_URL_RULE", "/doi/search")
 
@@ -99,9 +93,10 @@ class CrossRef(object):
         app.extensions["crossref"] = self
 
         if app.config["CROSSREF_ENDPOINT"]:
-            app.add_url_rule(app.config["CROSSREF_URL_RULE"],
-                             app.config["CROSSREF_ENDPOINT"],
-                             login_required(self.search))
+            app.add_url_rule(
+                app.config["CROSSREF_URL_RULE"], app.config["CROSSREF_ENDPOINT"],
+                login_required(self.search)
+            )
 
     def get_response(self, crossref_doi):
         """Get CrossRef response from the ``CROSSREF_API_URL`` page."""
@@ -142,5 +137,6 @@ class CrossRef(object):
         resp = jsonify(result)
         resp.status_code = response_code.get(result['status'], 200)
         return resp
+
 
 __all__ = ("CrossRef", )

@@ -19,13 +19,11 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Helpers for handling records."""
 
 from __future__ import absolute_import, division, print_function
 
 import re
-
 
 SPLIT_KEY_PATTERN = re.compile('\.|\[')
 
@@ -70,6 +68,7 @@ def get_value(record, key, default=None):
             >>> %timeit x = dd['a'][0]['b']
             1000000 loops, best of 3: 598 ns per loop
     """
+
     def getitem(k, v, default):
         if isinstance(v, dict):
             return v[k]
@@ -81,10 +80,9 @@ def get_value(record, key, default=None):
             except IndexError:
                 return default
             except ValueError:
-                return v[slice(*map(
-                    lambda x: int(x.strip()) if x.strip() else None,
-                    k.split(':')
-                ))]
+                return v[slice(
+                    *map(lambda x: int(x.strip()) if x.strip() else None, k.split(':'))
+                )]
         else:
             tmp = []
             for inner_v in v:
@@ -116,12 +114,13 @@ def is_submitted_but_not_published(record):
     Returns True if and only an article is submitted to a journal but has not
     yet been published (as far as we know).
     """
+
     def is_complete(publication_info):
-        return (('journal_issue' in publication_info or
-                 'journal_volume' in publication_info or
-                 'year' in publication_info) and
-                ('page_start' in publication_info or
-                 'artid' in publication_info))
+        return ((
+            'journal_issue' in publication_info or 'journal_volume' in publication_info or
+            'year' in publication_info
+        ) and ('page_start' in publication_info or 'artid' in publication_info))
+
     if 'dois' in record:
         # DOIs exist, hence it's already published
         return False

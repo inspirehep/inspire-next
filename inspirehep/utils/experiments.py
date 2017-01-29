@@ -1,4 +1,3 @@
-
 #
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
@@ -35,9 +34,7 @@ def render_experiment_contributions(experiment_name):
         A row consists of
         [conference_name, conference_location, contributions, date]
     """
-    return render_contributions(
-        experiment_contributions_from_es(experiment_name)
-    )
+    return render_contributions(experiment_contributions_from_es(experiment_name))
 
 
 def render_experiment_people(experiment_name):
@@ -47,26 +44,17 @@ def render_experiment_people(experiment_name):
         A row consists of
         [conference_name, conference_location, contributions, date]
     """
-    return render_people(
-        experiment_people_from_es(experiment_name)
-    )
+    return render_people(experiment_people_from_es(experiment_name))
 
 
 def experiment_contributions_from_es(experiment_name):
     """Query ES for conferences in the same series."""
     query = 'accelerator_experiments.experiment:"{}"'.format(experiment_name)
-    return LiteratureSearch().query_from_iq(
-        query
-    ).params(
+    return LiteratureSearch().query_from_iq(query).params(
         size=100,
         _source=[
-            'control_number',
-            'earliest_date',
-            'titles',
-            'authors',
-            'publication_info',
-            'citation_count',
-            'collaboration'
+            'control_number', 'earliest_date', 'titles', 'authors', 'publication_info',
+            'citation_count', 'collaboration'
         ]
     ).sort('-citation_count').execute().hits
 
@@ -74,9 +62,7 @@ def experiment_contributions_from_es(experiment_name):
 def experiment_people_from_es(experiment_name):
     """Query ES for conferences in the same series."""
     query = 'experiments.name:"{}"'.format(experiment_name)
-    return AuthorsSearch().query_from_iq(
-        query
-    ).execute().hits
+    return AuthorsSearch().query_from_iq(query).execute().hits
 
 
 def render_people(hits):
@@ -90,8 +76,7 @@ def render_people(hits):
         row = []
         row.append(
             author_html_link.format(
-                recid=hit.control_number,
-                name=hit.name.preferred_name if hit.name else u''
+                recid=hit.control_number, name=hit.name.preferred_name if hit.name else u''
             )
         )
 
@@ -111,8 +96,7 @@ def render_contributions(hits):
         row = []
         row.append(
             title_html.format(
-                id=hit.control_number,
-                name=get_title(hit.to_dict()).encode('utf8')
+                id=hit.control_number, name=get_title(hit.to_dict()).encode('utf8')
             )
         )
         ctx = {
@@ -122,11 +106,12 @@ def render_contributions(hits):
             'show_affiliations': 'false',
             'collaboration_only': 'true'
         }
-        row.append(render_macro_from_template(
-            name="render_record_authors",
-            template="inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl",
-            ctx=ctx
-        )
+        row.append(
+            render_macro_from_template(
+                name="render_record_authors",
+                template="inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl",
+                ctx=ctx
+            )
         )
         try:
             row.append(hit.publication_info[0].journal_title)

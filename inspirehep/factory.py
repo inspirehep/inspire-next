@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIREHEP app factories."""
 
 from __future__ import absolute_import, division, print_function
@@ -32,7 +31,6 @@ from invenio_base.wsgi import create_wsgi_factory
 from invenio_config import create_conf_loader
 
 from . import config
-
 
 env_prefix = 'APP'
 
@@ -69,7 +67,9 @@ create_app = create_app_factory(
     blueprint_entry_points=['invenio_base.blueprints'],
     extension_entry_points=['invenio_base.apps'],
     converter_entry_points=['invenio_base.converters'],
-    wsgi_factory=create_wsgi_factory({'/api': create_api}),
+    wsgi_factory=create_wsgi_factory({
+        '/api': create_api
+    }),
     instance_path=instance_path,
     static_folder=static_folder,
 )

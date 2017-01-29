@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Logic of Disambiguation module."""
 
 from __future__ import absolute_import, division, print_function
@@ -66,8 +65,7 @@ def _check_if_claimed(signature):
         Example:
             (False, '1337489')
     """
-    return (bool(signature.get('author_claimed', False)),
-            str(signature.get('author_recid', None)))
+    return (bool(signature.get('author_claimed', False)), str(signature.get('author_recid', None)))
 
 
 def _create_distance_signature(signatures_map, uuid):
@@ -91,8 +89,7 @@ def _create_distance_signature(signatures_map, uuid):
              u'uuid': u'd63537a8-1df4-4436-b5ed-224da5b5028c'}
 
     """
-    record = create_beard_record(
-        signatures_map[uuid].get('publication_id'))
+    record = create_beard_record(signatures_map[uuid].get('publication_id'))
 
     beard_signature = signatures_map[uuid].copy()
     beard_signature['publication'] = record
@@ -203,37 +200,33 @@ def _select_profile_base(signatures_map, uuids):
         if current_signature['author_claimed']:
             return uuid
 
-        signatures_as_sets.append(
-            _create_set_from_signature(current_signature))
+        signatures_as_sets.append(_create_set_from_signature(current_signature))
 
     # Since the matrix is symmetric, the method calculates only
     # the values on the right hand side of the diagonal.
     for row in range(len(signatures_as_sets)):
         for column in range(row + 1, len(signatures_as_sets)):
-            matrix[row][column] = len(set.intersection(
-                signatures_as_sets[row], signatures_as_sets[column]))
+            matrix[row][column] = len(
+                set.intersection(signatures_as_sets[row], signatures_as_sets[column])
+            )
 
     # Make a copy of the values on the right to the left hand side.
-    symmetric_matrix = [map(add, i, j) for i, j in zip(
-        matrix, map(list, zip(*matrix)))]
+    symmetric_matrix = [map(add, i, j) for i, j in zip(matrix, map(list, zip(*matrix)))]
     common_elements = [sum(i) for i in symmetric_matrix]
 
     # If there is only one signature with the highest score, return it.
     if common_elements.count(max(common_elements)) == 1:
-        return uuids[common_elements.index(
-            max(common_elements))]
+        return uuids[common_elements.index(max(common_elements))]
     else:
         for result in range(len(common_elements)):
             if common_elements[result] == max(common_elements):
-                best_results[uuids[result]] = len(
-                    signatures_as_sets[result])
+                best_results[uuids[result]] = len(signatures_as_sets[result])
 
     # Return the signature with the biggest amount of information.
     return max(best_results, key=best_results.get)
 
 
-def _solve_claims_conflict(signatures_map, not_claimed_uuids,
-                           claimed_uuids):
+def _solve_claims_conflict(signatures_map, not_claimed_uuids, claimed_uuids):
     """Create distance signatures and dispatch task to conflict resolver.
 
     In case of a conflict, where at least to signatures belonging to two
@@ -278,18 +271,20 @@ def _solve_claims_conflict(signatures_map, not_claimed_uuids,
 
     for not_claimed_uuid in not_claimed_uuids:
         not_claimed_distance_signatures.append(
-            _create_distance_signature(signatures_map, not_claimed_uuid))
+            _create_distance_signature(signatures_map, not_claimed_uuid)
+        )
 
     for claimed_uuid in claimed_uuids:
         claimed_distance_signatures.append(
-            _create_distance_signature(signatures_map, claimed_uuid))
+            _create_distance_signature(signatures_map, claimed_uuid)
+        )
 
     if not_claimed_distance_signatures and claimed_distance_signatures:
         resolved_conflicts = celery.current_app.send_task(
             'beard_server.tasks.solve_conflicts',
-            (claimed_distance_signatures,
-             not_claimed_distance_signatures),
-            queue=current_app.config.get('DISAMBIGUATION_QUEUE'))
+            (claimed_distance_signatures, not_claimed_distance_signatures),
+            queue=current_app.config.get('DISAMBIGUATION_QUEUE')
+        )
 
         return resolved_conflicts
 
@@ -366,8 +361,7 @@ def process_clusters(uuids, signatures, recid_key=None):
     # If there are no claimed signatures and no match with an 'old' cluster.
     if len(claims) == 0 and not recid_key:
         # Select the most rich-in-information signature.
-        base_profile = get_signature(_select_profile_base(signatures_map,
-                                                          uuids))
+        base_profile = get_signature(_select_profile_base(signatures_map, uuids))
         # Create a new profile.
         recid = create_author(base_profile)
 
@@ -414,9 +408,8 @@ def process_clusters(uuids, signatures, recid_key=None):
         # Dispatch a resolving conflict job.
         try:
             matched_signatures = _solve_claims_conflict(
-                signatures_map,
-                not_claimed_signatures,
-                claimed_signatures).get()
+                signatures_map, not_claimed_signatures, claimed_signatures
+            ).get()
         except AttributeError:
             matched_signatures = {}
 

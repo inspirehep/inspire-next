@@ -59,16 +59,12 @@ def does_exist_in_inspirehep(query, collection=None):
     import requests
     from json import loads
 
-    params = {
-        'p': query,
-        'of': 'id'
-    }
+    params = {'p': query, 'of': 'id'}
 
     if collection:
         params['cc'] = collection
 
-    json_reply = requests.get(
-        "http://inspirehep.net/search?", params=params).text
+    json_reply = requests.get("http://inspirehep.net/search?", params=params).text
 
     reply = loads(json_reply)
     # not an array -> invalid answer
@@ -93,8 +89,7 @@ def inspirehep_duplicated_validator(inspire_query, property_name, collection=Non
             url += '&' + urlencode({'cc': collection})
         raise ValidationError(
             'There exists already an item with the same %s. '
-            '<a target="_blank" href="%s">See the record.</a>'
-            % (property_name, url)
+            '<a target="_blank" href="%s">See the record.</a>' % (property_name, url)
         )
 
 
@@ -125,8 +120,7 @@ def duplicated_arxiv_id_validator(form, field):
     if not arxiv_id:
         return
     if current_app.config.get('PRODUCTION_MODE'):
-        inspirehep_duplicated_validator(
-            '035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID')
+        inspirehep_duplicated_validator('035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID')
 
 
 def pdf_validator(form, field):
@@ -136,10 +130,7 @@ def pdf_validator(form, field):
     def get_content_type(url):
         session = requests.Session()
         try:
-            response = session.head(
-                url,
-                allow_redirects=True
-            )
+            response = session.head(url, allow_redirects=True)
         except:
             return
         return response.headers['content-type']
@@ -151,8 +142,7 @@ def pdf_validator(form, field):
 
 
 def date_validator(form, field):
-    message = ("Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM"
-               " or YYYY.")
+    message = ("Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM" " or YYYY.")
     if field.data:
         for date_format in ["%Y-%m-%d", "%Y-%m", "%Y"]:
             try:

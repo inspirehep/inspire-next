@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Communication handler with Beard Celery service."""
 
 from __future__ import absolute_import, division, print_function
@@ -95,8 +94,8 @@ def make_beard_clusters(records, signatures):
     """
     if records and signatures:
         clusters = celery.current_app.send_task(
-            'beard_server.tasks.make_clusters',
-            (records, signatures),
-            queue=current_app.config.get('DISAMBIGUATION_QUEUE'))
+            'beard_server.tasks.make_clusters', (records, signatures),
+            queue=current_app.config.get('DISAMBIGUATION_QUEUE')
+        )
 
         return clusters

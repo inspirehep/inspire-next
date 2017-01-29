@@ -30,13 +30,9 @@ from elasticsearch_dsl.query import Q
 from invenio_search.api import DefaultFilter, RecordsSearch
 from invenio_search import current_search_client
 
-from inspirehep.modules.records.permissions import (
-    all_restricted_collections,
-    user_collections
-)
+from inspirehep.modules.records.permissions import (all_restricted_collections, user_collections)
 
 from .query_factory import inspire_query_factory
-
 
 IQ = inspire_query_factory()
 
@@ -65,10 +61,7 @@ class SearchMixin(object):
         :returns: dict
         """
         return current_search_client.get_source(
-            index=self.Meta.index,
-            doc_type=self.Meta.doc_types,
-            id=uuid,
-            **kwargs
+            index=self.Meta.index, doc_type=self.Meta.doc_types, id=uuid, **kwargs
         )
 
     def mget(self, uuids, **kwargs):
@@ -79,10 +72,7 @@ class SearchMixin(object):
         :returns: list of JSON documents
         """
         documents = current_search_client.mget(
-            index=self.Meta.index,
-            doc_type=self.Meta.doc_types,
-            body={'ids': uuids},
-            **kwargs
+            index=self.Meta.index, doc_type=self.Meta.doc_types, body={'ids': uuids}, **kwargs
         )
 
         return [document['_source'] for document in documents['docs']]
@@ -118,15 +108,8 @@ class LiteratureSearch(RecordsSearch, SearchMixin):
     def default_fields(self):
         """What fields to use when no keyword is specified."""
         return [
-            "title^3",
-            "title.raw^10",
-            "abstract^2",
-            "abstract.raw^4",
-            "author^10",
-            "author.raw^15",
-            "reportnumber^10",
-            "eprint^10",
-            "doi^10"
+            "title^3", "title.raw^10", "abstract^2", "abstract.raw^4", "author^10",
+            "author.raw^15", "reportnumber^10", "eprint^10", "doi^10"
         ]
 
 

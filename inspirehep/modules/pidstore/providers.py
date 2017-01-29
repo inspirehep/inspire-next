@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIRE Record Id provider."""
 
 from __future__ import absolute_import, division, print_function
@@ -39,9 +38,7 @@ def _get_next_pid_from_legacy():
     Sends a request to a legacy instance to reserve the next available
     identifier, and returns it to the caller.
     """
-    headers = {
-        'User-Agent': 'invenio_webupload'
-    }
+    headers = {'User-Agent': 'invenio_webupload'}
 
     url = current_app.config.get('LEGACY_PID_PROVIDER')
     next_pid = requests.get(url, headers=headers).json()
@@ -77,4 +74,5 @@ class InspireRecordIdProvider(BaseProvider):
         if object_type and object_uuid:
             kwargs['status'] = PIDStatus.REGISTERED
         return super(InspireRecordIdProvider, cls).create(
-            object_type=object_type, object_uuid=object_uuid, **kwargs)
+            object_type=object_type, object_uuid=object_uuid, **kwargs
+        )

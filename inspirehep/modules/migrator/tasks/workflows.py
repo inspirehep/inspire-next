@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
-
 """Manage migration from INSPIRE legacy instance."""
 
 from __future__ import absolute_import, division, print_function
@@ -29,18 +27,9 @@ from sqlalchemy.exc import IntegrityError
 
 from inspirehep.modules.authors.tasks import formdata_to_model
 
+DATA_TYPE_MAP = {"Author New": "authors", "Author Update": "authors", "submission": "hep"}
 
-DATA_TYPE_MAP = {
-    "Author New": "authors",
-    "Author Update": "authors",
-    "submission": "hep"
-}
-
-WORKFLOW_NAME_MAP = {
-    "authornew": "author",
-    "authorupdate": "author",
-    "literature": "article"
-}
+WORKFLOW_NAME_MAP = {"authornew": "author", "authorupdate": "author", "literature": "article"}
 
 
 def fix_object_model(eng, obj):
@@ -60,10 +49,7 @@ def fix_object_model(eng, obj):
         obj.data['inspire_categories'] = obj.data.pop('subject_terms', [])
 
         # change urls.url to urls.value
-        obj.data['urls'] = [
-            dict(value=u.pop('url', None), **u)
-            for u in obj.data.get('urls', [])
-        ]
+        obj.data['urls'] = [dict(value=u.pop('url', None), **u) for u in obj.data.get('urls', [])]
 
     # Extra data adjustments
     # ======================
@@ -98,9 +84,7 @@ def import_holdingpen_record(parent_objs, obj, eng):
     """Import an hp record."""
     from invenio_db import db
     from workflow.engine_db import WorkflowStatus
-    from invenio_workflows import (
-        Workflow, WorkflowObject, ObjectStatus
-    )
+    from invenio_workflows import (Workflow, WorkflowObject, ObjectStatus)
     engine_model = Workflow(
         name=WORKFLOW_NAME_MAP.get(eng['name'], eng['name']),
         created=iso8601.parse_date(eng['created']),

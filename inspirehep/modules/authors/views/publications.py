@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIRE authors publications views."""
 
 from __future__ import absolute_import, division, print_function
@@ -32,7 +31,6 @@ from flask import (
 
 from inspirehep.modules.search import LiteratureSearch
 from inspirehep.utils.record import get_title
-
 
 blueprint = Blueprint(
     'inspirehep_authors_blueprints',
@@ -51,17 +49,14 @@ def get_publications():
     collaborations = set()
     keywords = set()
 
-    search = LiteratureSearch().query(
-        {"match": {"authors.recid": recid}}
-    ).params(
+    search = LiteratureSearch().query({
+        "match": {
+            "authors.recid": recid
+        }
+    }).params(
         _source=[
-            'accelerator_experiments',
-            'control_number',
-            'earliest_date',
-            'facet_inspire_doc_type',
-            'publication_info',
-            'titles',
-            'keywords'
+            'accelerator_experiments', 'control_number', 'earliest_date', 'facet_inspire_doc_type',
+            'publication_info', 'titles', 'keywords'
         ]
     )
     for result in search.scan():
@@ -79,20 +74,19 @@ def get_publications():
 
         # Get publication type.
         try:
-            publication['type'] = result_source.get(
-                'facet_inspire_doc_type', [])[0]
+            publication['type'] = result_source.get('facet_inspire_doc_type', [])[0]
         except IndexError:
             publication['type'] = "Not defined"
 
         # Get journal title.
         try:
-            publication['journal_title'] = result_source.get(
-                'publication_info', [])[0]['journal_title']
+            publication['journal_title'] = result_source.get('publication_info',
+                                                             [])[0]['journal_title']
 
             # Get journal recid.
             try:
-                publication['journal_recid'] = result_source.get(
-                    'publication_info', [])[0]['journal_recid']
+                publication['journal_recid'] = result_source.get('publication_info',
+                                                                 [])[0]['journal_recid']
             except KeyError:
                 pass
         except (IndexError, KeyError):
@@ -100,8 +94,7 @@ def get_publications():
 
         # Get publication year.
         try:
-            publication['year'] = result_source.get(
-                'publication_info', [])[0]['year']
+            publication['year'] = result_source.get('publication_info', [])[0]['year']
         except (IndexError, KeyError):
             pass
 
@@ -112,8 +105,7 @@ def get_publications():
                 keywords.add(keyword.get('keyword'))
 
         # Get collaborations.
-        for experiment in result_source.get(
-                'accelerator_experiments', []):
+        for experiment in result_source.get('accelerator_experiments', []):
             collaborations.add(experiment.get('experiment'))
 
         # Append to the list.
