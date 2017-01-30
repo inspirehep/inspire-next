@@ -28,6 +28,7 @@ import re
 
 from dojson import utils
 
+from inspire_schemas import api
 from ..model import hepnames, hepnames2marc
 from ...utils import (
     classify_rank,
@@ -444,6 +445,9 @@ def advisors(self, key, value):
 
     FIXME: handle identifiers in 701__i and 701__w.
     """
+    schema = api.load_schema('elements/degree_type')
+    possible_sources = schema['enum']
+
     DEGREE_TYPES_MAP = {
         'Bachelor': 'Bachelor',
         'UG': 'Bachelor',
