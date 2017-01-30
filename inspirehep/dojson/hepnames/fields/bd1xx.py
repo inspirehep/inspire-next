@@ -445,17 +445,17 @@ def advisors(self, key, value):
     FIXME: handle identifiers in 701__i and 701__w.
     """
     DEGREE_TYPES_MAP = {
-        'Bachelor': 'Bachelor',
-        'UG': 'Bachelor',
-        'MAS': 'Master',
-        'master': 'Master',
-        'Master': 'Master',
-        'PhD': 'PhD',
-        'PHD': 'PhD',
+        'phd': 'phd',
+        'mas': 'master',
+        'bachelor': 'bachelor',
+        'ug': 'Master',
+        'habilitation': 'habilitation',
+        'diploma': 'diploma',
+        'laurea': 'laurea',
     }
 
     _degree_type = force_single_element(value.get('g'))
-    degree_type = DEGREE_TYPES_MAP.get(_degree_type, 'Other')
+    degree_type = DEGREE_TYPES_MAP.get(_degree_type.lower(), 'Other')
 
     recid = force_single_element(value.get('x'))
     record = get_record_ref(recid, 'authors')
@@ -475,7 +475,7 @@ def advisors2marc(self, key, value):
     """The advisors for all types of degrees."""
     return {
         'a': value.get('name'),
-        'g': value.get('_degree_type'),
+        'g': value.get('degree_type'),
         'x': get_recid_from_ref(value.get('record')),
         'y': '1' if value.get('curated_relation') else '0',
     }
