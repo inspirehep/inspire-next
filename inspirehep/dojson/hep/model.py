@@ -78,10 +78,10 @@ def add_inspire_category(record, blob):
 
 hep_filters = [
     add_schema('hep.json'),
-    validate,
     add_book_info,
     add_inspire_category,
     clean_record,
+    validate,
 ]
 
 hep2marc_filters = [
