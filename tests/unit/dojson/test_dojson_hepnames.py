@@ -30,6 +30,11 @@ import pytest
 
 from dojson.contrib.marc21.utils import create_record
 
+from jsonschema import validate as jsonschema_validate
+
+from inspire_schemas.api import load_schema
+from inspire_schemas.utils import LocalRefResolver
+
 from inspirehep.dojson.hepnames import hepnames2marc, hepnames
 from inspirehep.dojson.utils import get_recid_from_ref
 
@@ -623,13 +628,39 @@ def test_other_names_from_400__triple_a():
 
 
 def test_advisors(marcxml_to_json, json_to_marc):
-    assert (marcxml_to_json['advisors'][0]['name'] ==
-            json_to_marc['701'][0]['a'])
-    assert (marcxml_to_json['advisors'][0]['_degree_type'] ==
-            json_to_marc['701'][0]['g'])
+    snippet = {
+        'advisors':[
+            {
+                'name': 'Rivelles, Victor O.',
+                'degree_type': 'phd',
+                '_degree_type': 'PhD',
+                'record': {
+                    '$ref': 'http://localhost:5000/api/authors/991627',
+                },
+                'curated_relation': True
+            }
+        ]
+    }
+    expected = {
+        '701': [
+            {
+                'a': 'Rivelles, Victor O.',
+                'g': 'phd',
+                'x': 991627,
+                'y': '1'
+            }
+        ]
+    }
+
+    result = hepnames2marc.do(snippet)
+
+    assert expected == result
 
 
 def test_advisors_from_701__a_g_i():
+    schema = load_schema('authors')
+    subschema = schema['properties']['advisors']
+
     snippet = (
         '<datafield tag="701" ind1=" " ind2=" ">'
         '  <subfield code="a">Rivelles, Victor O.</subfield>'
@@ -643,7 +674,7 @@ def test_advisors_from_701__a_g_i():
     expected = [
         {
             'name': 'Rivelles, Victor O.',
-            'degree_type': 'PhD',
+            'degree_type': 'phd',
             '_degree_type': 'PhD',
             'record': {
                 '$ref': 'http://localhost:5000/api/authors/991627',
@@ -653,6 +684,8 @@ def test_advisors_from_701__a_g_i():
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert jsonschema_validate(result['advisors'], subschema,
+                               resolver=LocalRefResolver('', {})) is None
     assert expected == result['advisors']
 
 
@@ -779,7 +812,6 @@ def test_positions_from_371__a_double_m_z():
     result = hepnames2marc.do(result)
 
     assert expected == result['371']
-
 
 
 def test_positions_from_371__a_m_r_z():
