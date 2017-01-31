@@ -22,13 +22,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-from jsonschema import validate
-
 from dojson.contrib.marc21.utils import create_record
 
 from inspire_schemas.api import load_schema
 from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.hepnames import hepnames, hepnames2marc
+from inspirehep.dojson.utils import validate
 
 
 def test_acquisition_source_from__541_a_c():

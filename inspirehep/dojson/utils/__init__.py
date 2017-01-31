@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2015, 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,6 +32,9 @@ try:
 except ImportError:  # pragma: no cover
     current_app = None
 
+from jsonschema import validate as jsonschema_validate
+
+from inspire_schemas.utils import LocalRefResolver
 from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
 from inspirehep.utils.helpers import force_force_list
 
@@ -224,3 +227,8 @@ def dedupe_all_lists(obj):
         return type(obj)(new_obj)
     else:
         return obj
+
+
+def validate(instance, schema):
+    return jsonschema_validate(
+        instance, schema, resolver=LocalRefResolver('', {}))

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 from flask import current_app
 from mock import patch
 
+from inspire_schemas.utils import load_schema
 from inspirehep.dojson.utils import (
     classify_field,
     classify_rank,
@@ -35,6 +36,7 @@ from inspirehep.dojson.utils import (
     legacy_export_as_marc,
     dedupe_all_lists,
     strip_empty_values,
+    validate,
 )
 
 
@@ -304,3 +306,14 @@ def test_strip_empty_values():
 
 def test_strip_empty_values_returns_none_on_none():
     assert strip_empty_values(None) is None
+
+
+def test_validate():
+    schema = load_schema('hep')
+    instance = {
+        'titles': [
+            {'title': 'foo'},
+        ],
+    }
+
+    assert validate(instance, schema) is None
