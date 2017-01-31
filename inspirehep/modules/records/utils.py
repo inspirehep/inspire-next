@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,38 +20,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+""" Record related utils."""
+
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
-    get_pid_type_from_endpoint,
-    get_pid_type_from_schema,
+    get_pid_type_from_schema
 )
 
 
-def test_get_endpoint_from_pid_type():
-    expected = 'literature'
-    result = get_endpoint_from_pid_type('lit')
+def get_endpoint_from_record(record):
+    """Return the endpoint corresponding to a record."""
+    pid_type = get_pid_type_from_schema(record['$schema'])
+    endpoint = get_endpoint_from_pid_type(pid_type)
 
-    assert expected == result
-
-
-def test_get_pid_type_from_endpoint():
-    expected = 'lit'
-    result = get_pid_type_from_endpoint('literature')
-
-    assert expected == result
-
-
-def test_get_pid_type_from_schema():
-    expected = 'lit'
-    result = get_pid_type_from_schema('http://localhost:5000/schemas/record/hep.json')
-
-    assert expected == result
-
-
-def test_get_pid_from_schema_supports_relative_urls():
-    expected = 'aut'
-    result = get_pid_type_from_schema('schemas/record/authors.json')
-
-    assert expected == result
+    return endpoint

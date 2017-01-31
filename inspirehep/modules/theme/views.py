@@ -43,7 +43,6 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_mail.tasks import send_email
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_search import current_search_client
 
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,

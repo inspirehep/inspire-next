@@ -269,6 +269,15 @@ SEARCH_UI_BASE_TEMPLATE = BASE_TEMPLATE
 SEARCH_UI_SEARCH_TEMPLATE = 'search/search.html'
 SEARCH_UI_SEARCH_API = '/api/literature/'
 SEARCH_UI_SEARCH_INDEX = 'records-hep'
+INSPIRE_ENDPOINT_TO_INDEX = {
+    'authors': 'records-authors',
+    'conferences': 'records-conferences',
+    'experiments': 'records-experiments',
+    'institutions': 'records-institutions',
+    'jobs': 'records-jobs',
+    'journals': 'records-journals',
+    'literature': 'records-hep',
+}
 
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
