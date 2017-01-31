@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2015, 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,69 +22,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
-import pkg_resources
-
 import mock
 import pytest
 
-from dojson import utils
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep, hep2marc
-from inspirehep.dojson.utils import get_recid_from_ref
-
-
-@pytest.fixture
-def marcxml_record():
-    # To enforce consistent results in langdetect
-    from langdetect import DetectorFactory
-    DetectorFactory.seed = 0
-
-    marcxml = pkg_resources.resource_string(__name__,
-                                            os.path.join(
-                                                'fixtures',
-                                                'test_hep_record.xml')
-                                            )
-    return create_record(marcxml)
-
-
-@pytest.fixture
-def marcxml_to_json(marcxml_record):
-    return hep.do(marcxml_record)
-
-
-@pytest.fixture
-def marcxml_to_json_book():
-    marcxml = pkg_resources.resource_string(__name__,
-                                            os.path.join(
-                                                'fixtures',
-                                                'test_hep_book.xml')
-                                            )
-    record = create_record(marcxml)
-    return hep.do(record)
-
-
-@pytest.fixture
-def json_to_marc(marcxml_to_json):
-    return hep2marc.do(marcxml_to_json)
-
-
-def test_schema_present(marcxml_to_json):
-    """Test if $schema is created correctly."""
-    assert marcxml_to_json['$schema']
-
-
-def test_control_number(marcxml_to_json_book):
-    """"Test if control number and self present."""
-    assert marcxml_to_json_book['control_number']
-    assert marcxml_to_json_book['self']
-
-
-def test_isbns(marcxml_to_json, json_to_marc):
-    """Test if isbns is created correctly."""
-    assert marcxml_to_json['isbns'][0]['value'] == json_to_marc['020'][0]['a']
-    assert marcxml_to_json['isbns'][0]['medium'] == json_to_marc['020'][0]['b']
 
 
 def test_doi_but_should_be_hdl_from_0247_a():
@@ -117,12 +60,6 @@ def test_invalid_doi_but_should_be_hdl_from_0247_a():
     result = hep.do(create_record(snippet))
 
     assert result.get('dois', []) == expected
-
-
-def test_dois(marcxml_to_json, json_to_marc):
-    """Test if dois is created correctly."""
-    assert (marcxml_to_json['dois'][0]['value'] in
-            [p.get('a') for p in json_to_marc['024'] if 'a' in p])
 
 
 def test_dois_from_0247__a_ignores_curator_source():
@@ -218,34 +155,6 @@ def test_dois_from_0247_a_2_and_0247_a_2_9():
     result = hep.do(create_record(snippet))
 
     assert expected == result['dois']
-
-
-def test_deleted_records(marcxml_to_json, json_to_marc):
-    """Test if deleted_recids is created correctly."""
-    assert (get_recid_from_ref(marcxml_to_json['deleted_records'][0]) in
-            [p.get('a') for p in json_to_marc['981'] if 'a' in p])
-
-
-def test_new_record(marcxml_to_json, json_to_marc):
-    """Test if new_record is created correctly."""
-    assert (get_recid_from_ref(marcxml_to_json['new_record']) in
-            [p.get('d') for p in json_to_marc['970'] if 'd' in p])
-
-
-def test_persistent_identifiers(marcxml_to_json, json_to_marc):
-    """Test if persistent_identifiers is created correctly."""
-    assert (marcxml_to_json['persistent_identifiers'][0]['value'] in
-            [p.get('a') for p in json_to_marc['024'] if 'a' in p])
-
-
-def test_external_system_numbers(marcxml_to_json, json_to_marc):
-    """Test if system control number is created correctly."""
-    assert (marcxml_to_json['external_system_numbers'][0]['institute'] ==
-            json_to_marc['035'][0]['9'])
-    assert (marcxml_to_json['external_system_numbers'][0]['value'] ==
-            json_to_marc['035'][0]['a'])
-    assert (marcxml_to_json['external_system_numbers'][0]['obsolete'] ==
-            json_to_marc['035'][0]['z'])
 
 
 def test_external_system_numbers_from_970__double_a():
@@ -404,58 +313,6 @@ def test_external_system_numbers_from_035__a_d_h_m_9():
     result = hep.do(create_record(snippet))
 
     assert expected == result['external_system_numbers']
-
-
-def test_report_numbers(marcxml_to_json, json_to_marc):
-    """Test if report number is created correctly."""
-    assert (marcxml_to_json['report_numbers'][0]['source'] in
-            [a.get('9') for a in json_to_marc['037'] if '9' in a])
-    assert (marcxml_to_json['report_numbers'][0]['value'] in
-            [a.get('a') for a in json_to_marc['037'] if 'a' in a])
-
-
-def test_arxiv_eprints(marcxml_to_json, json_to_marc):
-    """Test if arxiv eprints is created correctly."""
-    assert (marcxml_to_json['arxiv_eprints'][0]['categories'][0] in
-            [c.get('c')[0] for c in json_to_marc['037'] if 'c' in c])
-    assert (marcxml_to_json['arxiv_eprints'][0]['value'] in
-            [a.get('a') for a in json_to_marc['037'] if 'a' in a])
-
-
-def test_languages(marcxml_to_json, json_to_marc):
-    """Test if languages is created correctly."""
-    assert marcxml_to_json['languages'][0] == "es"
-    assert json_to_marc['041'][0]['a'] == "spanish"
-
-
-def test_classification_number(marcxml_to_json, json_to_marc):
-    """Test if classification_number is created correctly."""
-    for index, val in enumerate(
-            marcxml_to_json['classification_number']):
-        assert (val['classification_number'] ==
-                json_to_marc['084'][index]['a'])
-        assert (val['source'] ==
-                json_to_marc['084'][index]['9'])
-        assert (val['standard'] ==
-                json_to_marc['084'][index]['2'])
-
-
-def test_authors(marcxml_to_json, json_to_marc):
-    """Test if authors are created correctly."""
-    assert (marcxml_to_json['authors'][0]['full_name'] ==
-            json_to_marc['100']['a'])
-    assert (marcxml_to_json['authors'][0]['contributor_roles'][0]['value'] ==
-            json_to_marc['100']['e'][0])
-    assert (marcxml_to_json['authors'][0]['alternative_names'][0] ==
-            json_to_marc['100']['q'][0])
-    assert (marcxml_to_json['authors'][0]['emails'][0] ==
-            json_to_marc['100']['m'][0])
-    assert (marcxml_to_json['authors'][0]['affiliations'][0]['value'] ==
-            json_to_marc['100']['u'][0])
-    assert (get_recid_from_ref(marcxml_to_json['authors'][0]['record']) ==
-            json_to_marc['100']['x'])
-    assert (marcxml_to_json['authors'][0]['curated_relation'] ==
-            json_to_marc['100']['y'])
 
 
 def test_authors_from_100__a_i_u_x_y():
@@ -1049,83 +906,6 @@ def test_authors_from_100__a_double_m_double_u_w_y_z():
     assert expected == result['authors']
 
 
-def test_corporate_author(marcxml_to_json, json_to_marc):
-    """Test if corporate_author is created correctly."""
-    assert (marcxml_to_json['corporate_author'][0] ==
-            json_to_marc['110'][0]['a'])
-
-
-def test_titles(marcxml_to_json, json_to_marc):
-    """Test if titles is created correctly."""
-    assert (marcxml_to_json['titles'][0]['title'] ==
-            'S-Duality Constraints on 1D Patterns Associated with Fractional '
-            'Quantum Hall States')
-    assert (marcxml_to_json['titles'][0]['title'] ==
-            json_to_marc['245'][0]['a'])
-
-
-def test_title_translations(marcxml_to_json, json_to_marc):
-    """Test if title_translations is created correctly."""
-    assert (marcxml_to_json['title_translations'][0]['title'] ==
-            json_to_marc['242'][0]['a'])
-    assert (marcxml_to_json['title_translations'][0]['subtitle'] ==
-            json_to_marc['242'][0]['b'])
-    assert (marcxml_to_json['title_translations'][0]['language'] == 'en')
-
-
-def test_title_variations(marcxml_to_json, json_to_marc):
-    """Test if title arxiv is created correctly."""
-    def build_candidate(candidate, key, value):
-        if value:
-            candidate[key] = value
-
-    title_variations = marcxml_to_json['titles'][1:]
-    for variation in json_to_marc['246']:
-        candidate = {}
-        build_candidate(candidate, 'source', variation.get('9'))
-        build_candidate(candidate, 'title', variation.get('a'))
-        build_candidate(candidate, 'subtitle', variation.get('b'))
-        assert candidate in title_variations
-
-
-def test_imprints(marcxml_to_json, json_to_marc):
-    """Test if imprints is created correctly."""
-    assert (marcxml_to_json['imprints'][0]['place'] ==
-            json_to_marc['260'][0]['a'])
-    assert (marcxml_to_json['imprints'][0]['publisher'] ==
-            json_to_marc['260'][0]['b'])
-    assert (marcxml_to_json['imprints'][0]['date'] ==
-            json_to_marc['260'][0]['c'])
-
-
-def test_preprint_date(marcxml_to_json, json_to_marc):
-    """Test if preprint_date is created correctly."""
-    assert (marcxml_to_json['preprint_date'] ==
-            json_to_marc['269'][0]['c'])
-
-
-def test_page_nr(marcxml_to_json, json_to_marc):
-    """Test if page_nr is created correctly."""
-    assert (marcxml_to_json['page_nr'][0] ==
-            json_to_marc['300'][0]['a'])
-
-
-def test_book_series(marcxml_to_json, json_to_marc):
-    """Test if book_series is created correctly."""
-    assert (marcxml_to_json['book_series'][0]['value'] ==
-            json_to_marc['490'][0]['a'])
-    assert (marcxml_to_json['book_series'][0]['volume'] ==
-            json_to_marc['490'][0]['v'])
-
-
-def test_public_notes(marcxml_to_json, json_to_marc):
-    """Test if public_notes is created correctly."""
-    assert (marcxml_to_json['public_notes'][0]['value'] ==
-            json_to_marc['500'][0]['a'])
-    assert (marcxml_to_json['public_notes'][0]['source'] ==
-            json_to_marc['500'][0]['9'])
-
-
 def test_public_notes_from_500__a_9():
     snippet = (
         '<datafield tag="500" ind1=" " ind2=" ">'
@@ -1194,15 +974,6 @@ def test_public_notes_from_500__a_and_500__a_9():
     result = hep.do(create_record(snippet))
 
     assert expected == result['public_notes']
-
-
-def test_hidden_notes(marcxml_to_json, json_to_marc):
-    """Test if hidden_notes is created correctly."""
-    assert marcxml_to_json['hidden_notes'][0]['source'] == "CDS"
-    assert (marcxml_to_json['hidden_notes'][0]['value'] ==
-            json_to_marc['595'][0]['a'])
-    assert (marcxml_to_json['hidden_notes'][0]['source'] ==
-            json_to_marc['595'][0]['9'])
 
 
 def test_hidden_notes_from_595__a_9():
@@ -1282,16 +1053,6 @@ def test_hidden_notes_from_595__a_9_and_595__double_a_9():
     assert expected == result['hidden_notes']
 
 
-def test_thesis_roundtrip(marcxml_to_json, json_to_marc):
-    """Test if thesis is created correctly."""
-    assert (marcxml_to_json['thesis']['degree_type'] ==
-            json_to_marc['502']['b'])
-    assert (marcxml_to_json['thesis']['institutions'][0]['name'] ==
-            json_to_marc['502']['c'][0])
-    assert (marcxml_to_json['thesis']['date'] ==
-            json_to_marc['502']['d'])
-
-
 def test_thesis_multiple_institutions():
     snippet = (
         '<record>'
@@ -1344,48 +1105,6 @@ def test_thesis_from_502__a_c_d_z():
     result = hep.do(create_record(snippet))
 
     assert expected == result['thesis']
-
-
-def test_abstract(marcxml_to_json, json_to_marc):
-    """Test if abstract is created correctly."""
-    assert (marcxml_to_json['abstracts'][0]['value'] ==
-            json_to_marc['520'][0]['a'])
-    assert (marcxml_to_json['abstracts'][0]['source'] ==
-            json_to_marc['520'][0]['9'])
-
-
-def test_funding_info(marcxml_to_json, json_to_marc):
-    """Test if funding_info is created correctly."""
-    assert (marcxml_to_json['funding_info'][0]['agency'] ==
-            json_to_marc['536'][0]['a'])
-    assert (marcxml_to_json['funding_info'][0]['grant_number'] ==
-            json_to_marc['536'][0]['c'])
-    assert (marcxml_to_json['funding_info'][0]['project_number'] ==
-            json_to_marc['536'][0]['f'])
-
-
-def test_licence(marcxml_to_json, json_to_marc):
-    """Test if license is created correctly."""
-    assert (marcxml_to_json['license'][0]['license'] ==
-            json_to_marc['540'][0]['a'])
-    assert (marcxml_to_json['license'][0]['imposing'] ==
-            json_to_marc['540'][0]['b'])
-    assert (marcxml_to_json['license'][0]['url'] ==
-            json_to_marc['540'][0]['u'])
-    assert (marcxml_to_json['license'][0]['material'] ==
-            json_to_marc['540'][0]['3'])
-
-
-def test_copyright(marcxml_to_json, json_to_marc):
-    """Test if copyright is created correctly."""
-    assert (marcxml_to_json['copyright'][0]['material'] ==
-            json_to_marc['542'][0]['3'])
-    assert (marcxml_to_json['copyright'][0]['holder'] ==
-            json_to_marc['542'][0]['d'])
-    assert (marcxml_to_json['copyright'][0]['statement'] ==
-            json_to_marc['542'][0]['f'])
-    assert (marcxml_to_json['copyright'][0]['url'] ==
-            json_to_marc['542'][0]['u'])
 
 
 ACCELERATOR_EXPERIMENTS_DATA = [
@@ -1590,64 +1309,6 @@ def test_accelerator_experiments(mock_get_record_ref, mock_get_recid_from_ref,
 
     assert marc_experiments == expected_marc
     assert json_experiments == expected_json
-
-
-def test_keywords_thesaurus(marcxml_to_json, json_to_marc):
-    """Test if keywords from a thesaurus are created correctly."""
-    expected_keywords = {
-        'Fantastic thesaurus keyword': ['INSPIRE', 'submitter'],
-        'Monte Carlo': ['INSPIRE', None],
-    }
-    marc_keywords = {
-        keyword['a']: [keyword.get('2', None), keyword.get('9', None)]
-        for keyword in json_to_marc['695']
-        if 'a' in keyword
-    }
-    json_keywords = {
-        keyword['keyword']: [
-            keyword.get('classification_scheme'),
-            keyword.get('source', None),
-        ]
-        for keyword in marcxml_to_json['keywords']
-        if keyword.get('classification_scheme', None)
-    }
-
-    assert marc_keywords == json_keywords
-    assert marc_keywords == expected_keywords
-
-
-def test_keywords_manually_introduced(marcxml_to_json, json_to_marc):
-    """Test if keywords manually introduced are created correctly."""
-    marc_keywords = {
-        keyword['a']: keyword.get('9', '')
-        for keyword in json_to_marc['653']
-        if 'a' in keyword and '2' not in keyword
-    }
-    json_keywords = {
-        keyword['keyword']: keyword.get('source', '')
-        for keyword in marcxml_to_json['keywords']
-        if not keyword.get('classification_scheme', None)
-    }
-    expected_keywords = {
-        'Fancyvalue3': '',
-        'dummyvalue': 'dummysource',
-        'fancyValue2': '',
-        'fancyvalue': 'author',
-    }
-
-    assert expected_keywords == marc_keywords
-    assert expected_keywords == json_keywords
-
-
-def test_energy_ranges(marcxml_to_json, json_to_marc):
-    """Test that the energy ranges are parsed correctly."""
-    marc_ranges = [
-        range_value['e'] for range_value in json_to_marc['695']
-        if 'e' in range_value
-    ]
-    marc_ranges.sort()
-
-    assert marc_ranges == marcxml_to_json['energy_ranges']
 
 
 def test_authors_supervisors_from_701__a_u():
@@ -1970,166 +1631,3 @@ def test_mashed_publication_info_from_773():
     result = hep.do(create_record(snippet))
 
     assert expected == result['publication_info'][0]
-
-
-def test_collaboration(marcxml_to_json, json_to_marc):
-    """Test if collaboration is created correctly."""
-    assert (marcxml_to_json['collaboration'][0] ==
-            json_to_marc['710'][0]['g'])
-
-
-def test_publication_info(marcxml_to_json, json_to_marc):
-    """Test if publication info is created correctly."""
-    assert marcxml_to_json['publication_info'][0]['artid'] == '026802'
-    assert marcxml_to_json['publication_info'][0]['page_start'] == '123'
-    assert marcxml_to_json['publication_info'][0]['page_end'] == '456'
-    assert '026802' in json_to_marc['773'][0]['c']
-    assert '123-456' in json_to_marc['773'][0]['c']
-    assert (marcxml_to_json['publication_info'][0]['journal_issue'] ==
-            json_to_marc['773'][0]['n'])
-    assert (marcxml_to_json['publication_info'][0]['journal_title'] ==
-            json_to_marc['773'][0]['p'])
-    assert (marcxml_to_json['publication_info'][0]['journal_volume'] ==
-            json_to_marc['773'][0]['v'])
-    assert (get_recid_from_ref(marcxml_to_json['publication_info']
-            [0]['parent_record']) ==
-            json_to_marc['773'][0]['0'])
-    assert (marcxml_to_json['publication_info'][0]['year'] ==
-            json_to_marc['773'][0]['y'])
-    assert (marcxml_to_json['publication_info'][0]['conf_acronym'] ==
-            json_to_marc['773'][0]['o'])
-    assert (marcxml_to_json['publication_info'][0]['reportnumber'] ==
-            json_to_marc['773'][0]['r'])
-    assert (marcxml_to_json['publication_info'][0]['confpaper_info'] ==
-            json_to_marc['773'][0]['t'])
-    assert (marcxml_to_json['publication_info'][0]['cnum'] ==
-            json_to_marc['773'][0]['w'])
-    assert (marcxml_to_json['publication_info'][0]['pubinfo_freetext'] ==
-            json_to_marc['773'][0]['x'])
-    assert (marcxml_to_json['publication_info'][0]['isbn'] ==
-            json_to_marc['773'][0]['z'])
-    assert (marcxml_to_json['publication_info'][0]['notes'] ==
-            ['note', 'extranote'])
-    assert (marcxml_to_json['publication_info'][0]['notes'] ==
-            json_to_marc['773'][0]['m'])
-
-
-@pytest.mark.xfail(reason='w key is not always present')
-def test_succeeding_entry(marcxml_to_json, json_to_marc):
-    """Test if succeeding_entry is created correctly."""
-    assert (marcxml_to_json['succeeding_entry']
-            ['relationship_code'] ==
-            json_to_marc['785']['r'])
-    assert (get_recid_from_ref(
-            marcxml_to_json['succeeding_entry']['record']) ==
-            json_to_marc['785']['w'])
-    assert (marcxml_to_json['succeeding_entry']['isbn'] ==
-            json_to_marc['785']['z'])
-
-
-def test_url(marcxml_to_json, json_to_marc):
-    """Test if url is created correctly."""
-    assert (marcxml_to_json['urls'][0]['value'] ==
-            json_to_marc['8564'][0]['u'])
-    assert (marcxml_to_json['urls'][0]['description'] ==
-            json_to_marc['8564'][0]['y'])
-
-
-def test_collections(marcxml_to_json, json_to_marc):
-    """Test if collections is created correctly."""
-    for index, val in enumerate(marcxml_to_json['collections']):
-        if 'primary' in val:
-            assert (val['primary'] ==
-                    json_to_marc['980'][index]['a'])
-
-
-def test_references(marcxml_to_json, json_to_marc, marcxml_record):
-    """Test if references are created correctly."""
-    def _force_set(obj):
-        return set(utils.force_list(obj) or [])
-
-    assert len(marcxml_record['999C5']) == len(marcxml_to_json['references'])
-    assert len(json_to_marc['999C5']) == len(marcxml_to_json['references'])
-
-    for index, json_val in enumerate(marcxml_to_json['references']):
-        marc_val = json_to_marc['999C5'][index]
-        marc_init = marcxml_record['999C5'][index]
-        json_val_pub = json_val['reference'].get('publication_info', {})
-        if '0' in marc_init:
-            assert 'record' in json_val and '0' in marc_val
-            assert get_recid_from_ref(json_val['record']) == marc_val['0']
-        if '1' in marc_init:
-            assert 'texkey' in json_val['reference'] and '1' in marc_val
-            assert json_val['reference']['texkey'] == marc_val['1']
-        if 'a' in marc_init:
-            assert 'dois' in json_val['reference'] and 'a' in marc_val
-            assert json_val['reference']['dois'][0] == marc_val['a']
-        if 'c' in marc_init:
-            assert 'collaboration' in json_val['reference'] and 'c' in marc_val
-            assert json_val['reference']['collaboration'] == marc_val['c']
-        if 'e' in marc_init:
-            assert _force_set(marc_val['e']) == _force_set(marc_init['e'])
-        if 'h' in marc_init:
-            assert 'authors' in json_val['reference'] and 'h' in marc_val
-            json_names = _force_set([a['full_name']
-                                     for a in json_val['reference']['authors']])
-            roundtrip_names = _force_set(marc_val['h'])
-            roundtrip_editors = _force_set(marc_val.get('e', []))
-            assert json_names and roundtrip_names
-            assert json_names.difference(roundtrip_editors) == roundtrip_names
-        if 'm' in marc_init:
-            assert 'misc' in json_val['reference'] and 'm' in marc_val
-            assert _force_set(json_val['reference']['misc']) == _force_set(marc_val['m'])
-            assert _force_set(json_val['reference']['misc']) == _force_set(marc_init['m'])
-        if 'o' in marc_init:
-            assert 'number' in json_val['reference'] and 'o' in marc_val
-            assert json_val['reference']['number'] == marc_val['o']
-        if 'i' in marc_init:
-            assert 'isbn' in json_val_pub and 'i' in marc_val
-            assert json_val_pub['isbn'] == marc_val['i']
-        if 'p' in marc_init:
-            assert 'publisher' in json_val['reference'].get('imprint', {})
-            assert 'p' in marc_val
-            assert marc_init['p'] == marc_val['p']
-            assert json_val['reference']['imprint']['publisher'] == marc_val['p']
-        if 'r' in marc_init:
-            initial_repnos = _force_set(marc_init['r'])
-            json_repnos = _force_set(json_val_pub.get('reportnumber', []))
-            json_repnos.union(_force_set(json_val['reference'].get('arxiv_eprints', [])))
-            roundtrip_repnos = _force_set(marc_val['r'])
-            assert roundtrip_repnos  == json_repnos
-            # We should have at least one in the end.
-            assert roundtrip_repnos
-            # But we can not be sure that we ported all of them.
-            assert json_repnos.issubset(initial_repnos)
-        if 't' in marc_init:
-            initial_titles = _force_set(marc_init['t'])
-            json_titles = _force_set([t['title'] for t in json_val['reference']['titles']])
-            roundtrip_titles = _force_set(marc_val['t'])
-            assert initial_titles == json_titles
-            assert initial_titles == roundtrip_titles
-        if 'u' in marc_init:
-            initial_urls = _force_set(marc_init['u'])
-            json_urls = _force_set([u['value'] for u in json_val['reference']['urls']])
-            roundtrip_urls = _force_set(marc_val['u'])
-            assert initial_urls == json_urls
-            assert initial_urls == roundtrip_urls
-        if 's' in marc_init:
-            assert marc_init['s'] == marc_val['s']
-        if 'x' in marc_init:
-            initial_raw = _force_set(marc_init['x'])
-            json_raw = _force_set([r['value']
-                                   for r in json_val['raw_refs']])
-            roundtrip_raw = _force_set(marc_val['x'])
-            assert initial_raw == json_raw
-            assert initial_raw == roundtrip_raw
-        if 'y' in marc_init:
-            assert 'year' in json_val_pub and 'y' in marc_val
-            assert str(json_val_pub['year']) == str(marc_init['y'])
-            assert str(marc_val['y']) == str(marc_init['y'])
-
-
-def test_book_link(marcxml_to_json_book):
-    """Test if the link to the book recid is generated correctly."""
-    assert (get_recid_from_ref(marcxml_to_json_book['book']['record']) ==
-            1409249)
