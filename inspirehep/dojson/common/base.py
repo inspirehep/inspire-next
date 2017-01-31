@@ -211,6 +211,16 @@ def deleted_records(self, key, value):
     return get_record_ref(value.get('a'))
 
 
+@hep2marc.over('981', 'deleted_records')
+@hepnames2marc.over('981', 'deleted_records')
+@utils.for_each_value
+def deleted_records2marc(self, key, value):
+    """Deleted recids."""
+    return {
+        'a': get_recid_from_ref(value)
+    }
+
+
 @hep.over('fft', '^FFT..')
 @conferences.over('fft', '^FFT..')
 @institutions.over('fft', '^FFT..')
@@ -240,16 +250,6 @@ def fft2marc(self, key, value):
         'd': value.get('description'),
         'n': value.get('filename'),
         'f': value.get('filetype'),
-    }
-
-
-@hep2marc.over('981', 'deleted_records')
-@hepnames2marc.over('981', 'deleted_records')
-@utils.for_each_value
-def deleted_records2marc(self, key, value):
-    """Deleted recids."""
-    return {
-        'a': get_recid_from_ref(value)
     }
 
 
