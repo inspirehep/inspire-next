@@ -98,71 +98,6 @@ def control_number2marc(self, key, value):
     return value
 
 
-@institutions.over('agency_code', '^003')
-@hep.over('agency_code', '^003')
-@conferences.over('agency_code', '^003')
-@experiments.over('agency_code', '^003')
-@journals.over('agency_code', '^003')
-@hepnames.over('agency_code', '^003')
-@jobs.over('agency_code', '^003')
-def agency_code(self, key, value):
-    """Control Number Identifier."""
-    return value
-
-
-@hep2marc.over('003', 'agency_code')
-@hepnames2marc.over('003', 'agency_code')
-def agency_code2marc(self, key, value):
-    """Control Number Identifier."""
-    return value
-
-
-@institutions.over('date_and_time_of_latest_transaction', '^005')
-@hep.over('date_and_time_of_latest_transaction', '^005')
-@conferences.over('date_and_time_of_latest_transaction', '^005')
-@experiments.over('date_and_time_of_latest_transaction', '^005')
-@journals.over('date_and_time_of_latest_transaction', '^005')
-@hepnames.over('date_and_time_of_latest_transaction', '^005')
-@jobs.over('date_and_time_of_latest_transaction', '^005')
-def date_and_time_of_latest_transaction(self, key, value):
-    """Date and Time of Latest Transaction."""
-    return value
-
-
-@hep2marc.over('005', 'date_and_time_of_latest_transaction')
-@hepnames2marc.over('005', 'date_and_time_of_latest_transaction')
-def date_and_time_of_latest_transaction2marc(self, key, value):
-    """Date and Time of Latest Transaction."""
-    return value
-
-
-@hep.over('creation_modification_date', '^961..')
-@conferences.over('creation_modification_date', '^961..')
-@institutions.over('creation_modification_date', '^961..')
-@experiments.over('creation_modification_date', '^961..')
-@journals.over('creation_modification_date', '^961..')
-@hepnames.over('creation_modification_date', '^961..')
-@jobs.over('creation_modification_date', '^961..')
-@utils.for_each_value
-def creation_modification_date(self, key, value):
-    """Original creation and modification date."""
-    return {
-        'modification_date': value.get('c'),
-        'creation_date': value.get('x'),
-    }
-
-
-@hep2marc.over('961', 'creation_modification_date')
-@hepnames2marc.over('961', 'creation_modification_date')
-@utils.for_each_value
-def creation_modification_date2marc(self, key, value):
-    """Original creation and modification date."""
-    return {
-        'c': value.get('modification_date'),
-        'x': value.get('creation_date')
-    }
-
-
 @hep.over('spires_sysnos', '^970..')
 @conferences.over('spires_sysnos', '^970..')
 @institutions.over('spires_sysnos', '^970..')
@@ -276,6 +211,16 @@ def deleted_records(self, key, value):
     return get_record_ref(value.get('a'))
 
 
+@hep2marc.over('981', 'deleted_records')
+@hepnames2marc.over('981', 'deleted_records')
+@utils.for_each_value
+def deleted_records2marc(self, key, value):
+    """Deleted recids."""
+    return {
+        'a': get_recid_from_ref(value)
+    }
+
+
 @hep.over('fft', '^FFT..')
 @conferences.over('fft', '^FFT..')
 @institutions.over('fft', '^FFT..')
@@ -305,16 +250,6 @@ def fft2marc(self, key, value):
         'd': value.get('description'),
         'n': value.get('filename'),
         'f': value.get('filetype'),
-    }
-
-
-@hep2marc.over('981', 'deleted_records')
-@hepnames2marc.over('981', 'deleted_records')
-@utils.for_each_value
-def deleted_records2marc(self, key, value):
-    """Deleted recids."""
-    return {
-        'a': get_recid_from_ref(value)
     }
 
 
