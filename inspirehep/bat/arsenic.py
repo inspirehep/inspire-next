@@ -45,19 +45,23 @@ class Arsenic(object):
         self._instance.hide_title_bar()
         field = self._instance.find_element_by_id(field_id)
         field.send_keys(field_value)
-        WebDriverWait(self._instance, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "tt-suggestions")))
+        WebDriverWait(self._instance, 10
+                      ).until(EC.presence_of_element_located((By.CLASS_NAME, "tt-suggestions")))
         field.send_keys(Keys.DOWN)
         field.send_keys(Keys.ENTER)
         self._instance.show_title_bar()
         return field.get_attribute('value')
 
     def hide_title_bar(self):
-        self._instance.execute_script('document.getElementById("collections-section").style.display = "none"')
+        self._instance.execute_script(
+            'document.getElementById("collections-section").style.display = "none"'
+        )
         self._instance.execute_script('document.getElementById("topnav").style.display = "none"')
 
     def show_title_bar(self):
-        self._instance.execute_script('document.getElementById("collections-section").style.display = ""')
+        self._instance.execute_script(
+            'document.getElementById("collections-section").style.display = ""'
+        )
         self._instance.execute_script('document.getElementById("topnav").style.display = ""')
 
     def click_with_coordinates(self, element_id, x, y):

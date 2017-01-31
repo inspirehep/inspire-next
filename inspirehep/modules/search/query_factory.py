@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIRE Query class to wrap the Q object from elasticsearch-dsl."""
 
 from __future__ import absolute_import, division, print_function
@@ -36,7 +35,6 @@ from .walkers.elasticsearch_no_keywords import ElasticSearchNoKeywordsDSL
 from .walkers.elasticsearch_no_keywords import QueryHasKeywords
 from .walkers.pypeg_to_ast import PypegConverter
 from .walkers.spires_to_invenio import SpiresToInvenio
-
 
 walkers = [PypegConverter(), SpiresToInvenio()]
 
@@ -58,16 +56,16 @@ def inspire_query_factory():
         try:
             search_walker = ElasticSearchNoKeywordsDSL()
             query.accept(search_walker)
-            query = Q('multi_match',
-                      query=pattern,
-                      fields=search.default_fields(),
-                      zero_terms_query="all")
+            query = Q(
+                'multi_match',
+                query=pattern,
+                fields=search.default_fields(),
+                zero_terms_query="all"
+            )
         except QueryHasKeywords:
-            query = query.accept(ElasticSearchDSL(
-                current_app.config.get(
-                    "SEARCH_ELASTIC_KEYWORD_MAPPING", {}
-                )
-            ))
+            query = query.accept(
+                ElasticSearchDSL(current_app.config.get("SEARCH_ELASTIC_KEYWORD_MAPPING", {}))
+            )
         finally:
             return query
 

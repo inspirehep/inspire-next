@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Receivers to catch new publications and record updates."""
 
 from __future__ import absolute_import, division, print_function
@@ -70,12 +69,10 @@ def _needs_beard_reprocessing(authors_before, authors_after):
     if len(authors_before) == len(authors_after):
         for index, author_before in enumerate(authors_before):
             # Not every author has an affiliation.
-            before_affiliations = author_before.get(
-                'affiliations', [])
+            before_affiliations = author_before.get('affiliations', [])
 
             # We don't iterate over authors_after, we take the index.
-            after_affiliations = authors_after[index].get(
-                'affiliations', [])
+            after_affiliations = authors_after[index].get('affiliations', [])
 
             before = (author_before['full_name'], before_affiliations)
             after = (authors_after[index]['full_name'], after_affiliations)
@@ -116,8 +113,7 @@ def append_updated_record_to_queue(sender, json, record, index, doc_type):
         from elasticsearch.exceptions import NotFoundError
 
         try:
-            before_json = es.get_source(
-                index=index, id=record.id, doc_type=doc_type)
+            before_json = es.get_source(index=index, id=record.id, doc_type=doc_type)
         except (ValueError, NotFoundError):
             # The record in not available in the Elasticsearch instance.
             # This will be caught by append_new_record_to_queue method.

@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -94,15 +93,11 @@ def titles(self, key, value):
 @utils.for_each_value
 def short_titles(self, key, value):
     """Short titles."""
-    return {
-        'title': value.get('a'),
-    }
+    return {'title': value.get('a'), }
 
 
 @journals.over('title_variants', '^730..')
 @utils.for_each_value
 def title_variants(self, key, value):
     """Title variants."""
-    return {
-        'title': value.get('a'),
-    }
+    return {'title': value.get('a'), }

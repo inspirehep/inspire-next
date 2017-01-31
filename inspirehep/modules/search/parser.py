@@ -20,7 +20,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """SPIRES parser implementation."""
 
 from __future__ import absolute_import, division, print_function
@@ -32,12 +31,12 @@ from .config import SPIRES_KEYWORDS
 
 
 class SpiresKeywordRule(LeafRule):
-    grammar = attr('value', re.compile(r"(%s)\b" % "|".join(
-        SPIRES_KEYWORDS.keys()), re.IGNORECASE))
+    grammar = attr(
+        'value', re.compile(r"(%s)\b" % "|".join(SPIRES_KEYWORDS.keys()), re.IGNORECASE)
+    )
 
 
 class SpiresSimpleValue(LeafRule):
-
     def __init__(self, values):
         super(SpiresSimpleValue, self).__init__()
         self.value = "".join(v.value for v in values)
@@ -61,7 +60,6 @@ SpiresSimpleValue.grammar = some(SpiresSimpleValueUnit)
 
 
 class SpiresSmartValue(UnaryRule):
-
     @classmethod
     def parse(cls, parser, text, pos):  # pylint: disable=W0613
         """Match simple values excluding some Keywords like 'and' and 'or'"""
@@ -92,13 +90,7 @@ class SpiresValue(ast.ListOp):
 
 
 class GreaterQuery(UnaryRule):
-    grammar = (
-        omit([
-            Literal('>'),
-            re.compile('after', re.I)
-        ], _),
-        attr('op', SpiresValue)
-    )
+    grammar = (omit([Literal('>'), re.compile('after', re.I)], _), attr('op', SpiresValue))
 
 
 class GreaterEqualQuery(UnaryRule):
@@ -109,13 +101,7 @@ class GreaterEqualQuery(UnaryRule):
 
 
 class LowerQuery(UnaryRule):
-    grammar = (
-        omit([
-            Literal('<'),
-            re.compile('before', re.I)
-        ], _),
-        attr('op', SpiresValue)
-    )
+    grammar = (omit([Literal('<'), re.compile('before', re.I)], _), attr('op', SpiresValue))
 
 
 class LowerEqualQuery(UnaryRule):
@@ -169,8 +155,7 @@ class SpiresNotQuery(UnaryRule):
 
 class SpiresAndQuery(UnaryRule):
     grammar = (
-        omit(re.compile(r"and", re.I)),
-        [
+        omit(re.compile(r"and", re.I)), [
             (omit(Whitespace), attr('op', SpiresSimpleQuery)),
             (omit(_), attr('op', SpiresParenthesizedQuery)),
             (omit(Whitespace), attr('op', SpiresValueQuery)),
@@ -181,8 +166,7 @@ class SpiresAndQuery(UnaryRule):
 
 class SpiresOrQuery(UnaryRule):
     grammar = (
-        omit(re.compile(r"or", re.I)),
-        [
+        omit(re.compile(r"or", re.I)), [
             (omit(Whitespace), attr('op', SpiresSimpleQuery)),
             (omit(_), attr('op', SpiresParenthesizedQuery)),
             (omit(Whitespace), attr('op', SpiresValueQuery)),
@@ -191,63 +175,40 @@ class SpiresOrQuery(UnaryRule):
     )
 
 
-SpiresQuery.grammar = attr('children', (
-    [
-        SpiresParenthesizedQuery,
-        SpiresSimpleQuery,
-    ],
-    maybe_some((
-        omit(_),
+SpiresQuery.grammar = attr(
+    'children', (
         [
+            SpiresParenthesizedQuery,
+            SpiresSimpleQuery,
+        ],
+        maybe_some((omit(_), [
             SpiresNotQuery,
             SpiresAndQuery,
             SpiresOrQuery,
-        ]
-    )),
-))
-
+        ])),
+    )
+)
 
 SpiresKeywordQuery.grammar = [
     (
         attr('left', NestableKeyword),
         omit(_, Literal(':'), _),
-        attr('right', [
-            SpiresParenthesizedQuery,
-            SpiresSimpleQuery,
-            ValueQuery
-        ]),
+        attr('right', [SpiresParenthesizedQuery, SpiresSimpleQuery, ValueQuery]),
     ),
     (
         attr('left', NestableKeyword),
         omit(Whitespace),
-        attr('right', [
-            SpiresParenthesizedQuery,
-            SpiresSimpleQuery,
-            SpiresValueQuery
-        ]),
+        attr('right', [SpiresParenthesizedQuery, SpiresSimpleQuery, SpiresValueQuery]),
     ),
+    (attr('left', KeywordRule), omit(_, Literal(':'), _), attr('right', Value)),
+    (attr('left', SpiresKeywordRule), omit(_, Literal(':'), _), attr('right', Value)),
     (
-        attr('left', KeywordRule),
-        omit(_, Literal(':'), _),
-        attr('right', Value)
-    ),
-    (
-        attr('left', SpiresKeywordRule),
-        omit(_, Literal(':'), _),
-        attr('right', Value)
-    ),
-    (
-        attr('left', SpiresKeywordRule),
-        omit(Whitespace),
-        attr('right', [
-            GreaterEqualQuery,
-            GreaterQuery,
-            LowerEqualQuery,
-            LowerQuery,
-            RangeOp,
-            WildcardQuery,
-            SpiresValue
-        ])
+        attr('left', SpiresKeywordRule), omit(Whitespace), attr(
+            'right', [
+                GreaterEqualQuery, GreaterQuery, LowerEqualQuery, LowerQuery, RangeOp,
+                WildcardQuery, SpiresValue
+            ]
+        )
     ),
 ]
 
@@ -265,9 +226,7 @@ class Main(UnaryRule):
             from invenio_query_parser.utils import build_valid_keywords_grammar
             from flask import current_app
 
-            build_valid_keywords_grammar(
-                current_app.config.get('SEARCH_ALLOWED_KEYWORDS', [])
-            )
+            build_valid_keywords_grammar(current_app.config.get('SEARCH_ALLOWED_KEYWORDS', []))
             Main.initialized = True
 
     grammar = [

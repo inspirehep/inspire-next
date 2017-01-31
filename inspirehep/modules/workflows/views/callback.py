@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Callback blueprint for interaction with legacy."""
 
 from __future__ import absolute_import, division, print_function
@@ -34,7 +33,6 @@ from invenio_workflows import workflow_object_class
 
 from inspirehep.modules.cache import current_cache
 
-
 blueprint = Blueprint(
     'inspire_workflows',
     __name__,
@@ -46,9 +44,7 @@ blueprint = Blueprint(
 
 def _get_base_url():
     """Return base URL for generated URLs for remote reference."""
-    base_url = current_app.config.get(
-        "LEGACY_ROBOTUPLOAD_URL", "SERVER_NAME"
-    )
+    base_url = current_app.config.get("LEGACY_ROBOTUPLOAD_URL", "SERVER_NAME")
     if not re.match('^https?://', base_url):
         base_url = 'http://{}'.format(base_url)
     return base_url
@@ -74,19 +70,12 @@ def continue_workflow_callback():
                 if status:
                     recid = result.get('recid')
                     base_url = _get_base_url()
-                    workflow_object.extra_data['url'] = join(
-                        base_url,
-                        'record',
-                        str(recid)
-                    )
+                    workflow_object.extra_data['url'] = join(base_url, 'record', str(recid))
                     workflow_object.extra_data['recid'] = recid
             # Will add the results to the engine extra_data column.
             workflow_object.save()
             db.session.commit()
-            workflow_object.continue_workflow(
-                delayed=True,
-                callback_results=callback_results
-            )
+            workflow_object.continue_workflow(delayed=True, callback_results=callback_results)
             return jsonify({"result": "success"})
     return jsonify({"result": "failed"})
 
@@ -105,9 +94,7 @@ def webcoll_callback():
             objectid = pending_records[rid]
             workflow_object = workflow_object_class.get(objectid)
             base_url = _get_base_url()
-            workflow_object.extra_data['url'] = join(
-                base_url, 'record', str(rid)
-            )
+            workflow_object.extra_data['url'] = join(base_url, 'record', str(rid))
             workflow_object.extra_data['recid'] = rid
             workflow_object.save()
             db.session.commit()
@@ -149,14 +136,18 @@ def robotupload_callback():
         else:
             from invenio_mail.tasks import send_email
 
-            body = ("There was an error when uploading the "
-                    "submission with id: %s.\n" % id_object)
+            body = (
+                "There was an error when uploading the "
+                "submission with id: %s.\n" % id_object
+            )
             body += "Error message:\n"
             body += result.get('error_message', '')
-            send_email.delay(dict(
-                sender=current_app.config["CFG_SITE_SUPPORT_EMAIL"],
-                receipient=current_app.config["CFG_SITE_ADMIN_EMAIL"],
-                subject='BATCHUPLOAD ERROR',
-                body=body
-            ))
+            send_email.delay(
+                dict(
+                    sender=current_app.config["CFG_SITE_SUPPORT_EMAIL"],
+                    receipient=current_app.config["CFG_SITE_ADMIN_EMAIL"],
+                    subject='BATCHUPLOAD ERROR',
+                    body=body
+                )
+            )
     return jsonify({"result": status})

@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -39,13 +38,13 @@ from ...utils import (
     get_record_ref,
 )
 
-
 COMMA_OR_SLASH = re.compile('\s*[/,]\s*')
 
 
 @jobs.over('date_closed', '^046..')
 def date_closed(self, key, value):
     """Date the job was closed."""
+
     def _contains_email(val):
         return '@' in val
 
@@ -127,11 +126,7 @@ def experiments(self, key, value):
     recid = value.get('0')
     record = get_record_ref(recid, 'experiments')
 
-    experiments.append({
-        'curated_relation': record is not None,
-        'name': name,
-        'record': record
-    })
+    experiments.append({'curated_relation': record is not None, 'name': name, 'record': record})
 
     return experiments
 

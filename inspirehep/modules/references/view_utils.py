@@ -44,46 +44,32 @@ class Reference(object):
         out = []
         references = self.record.get('references')
         if references:
-            reference_recids = [
-                str(ref['recid']) for ref in references if ref.get('recid')
-            ]
+            reference_recids = [str(ref['recid']) for ref in references if ref.get('recid')]
 
             resolved_references = get_es_records(
                 'lit',
                 reference_recids,
                 _source=[
-                    'control_number',
-                    'citation_count',
-                    'titles',
-                    'earliest_date',
-                    'authors',
-                    'collaboration',
-                    'corporate_author',
-                    'publication_info'
+                    'control_number', 'citation_count', 'titles', 'earliest_date', 'authors',
+                    'collaboration', 'corporate_author', 'publication_info'
                 ]
             )
 
             # Create mapping to keep reference order
-            recid_to_reference = {
-                ref['control_number']: ref for ref in resolved_references
-            }
+            recid_to_reference = {ref['control_number']: ref for ref in resolved_references}
             for reference in references:
                 row = []
-                ref_record = recid_to_reference.get(
-                    reference.get('recid'), {}
-                )
+                ref_record = recid_to_reference.get(reference.get('recid'), {})
                 if 'reference' in reference:
                     reference.update(reference['reference'])
                     del reference['reference']
                 if 'publication_info' in reference:
-                    reference['publication_info'] = force_force_list(
-                        reference['publication_info']
+                    reference['publication_info'] = force_force_list(reference['publication_info'])
+                row.append(
+                    render_template_to_string(
+                        "inspirehep_theme/references.html", record=ref_record, reference=reference
                     )
-                row.append(render_template_to_string(
-                    "inspirehep_theme/references.html",
-                    record=ref_record,
-                    reference=reference
-                ))
+                )
                 row.append(ref_record.get('citation_count', ''))
                 out.append(row)
 

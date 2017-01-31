@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -63,18 +62,14 @@ def experiment_names(self, key, value):
 @utils.for_each_value
 def titles(self, key, value):
     """Titles."""
-    return {
-        'title': value.get('a'),
-    }
+    return {'title': value.get('a'), }
 
 
 @experiments.over('title_variants', '^419..')
 @utils.for_each_value
 def title_variants(self, key, value):
     """Title variants."""
-    return {
-        'title': value.get('a')
-    }
+    return {'title': value.get('a')}
 
 
 @experiments.over('contact_details', '^270..')
@@ -100,15 +95,14 @@ def description(self, key, value):
 @utils.for_each_value
 def spokespersons(self, key, value):
     """Spokespersons of the experiment."""
+
     def _get_inspire_id(i_values):
         i_value = force_single_element(i_values)
         if i_value:
-            return [
-                {
-                    'type': 'INSPIRE ID',
-                    'value': i_value,
-                },
-            ]
+            return [{
+                'type': 'INSPIRE ID',
+                'value': i_value,
+            }, ]
 
     def _is_current(z_values):
         z_value = force_single_element(z_values)
@@ -149,6 +143,7 @@ def collaboration(self, key, value):
 @utils.for_each_value
 def related_experiments(self, key, value):
     """Related experiments."""
+
     def _get_record(zero_values):
         zero_value = force_single_element(zero_values)
         try:

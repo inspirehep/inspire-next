@@ -22,16 +22,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_access.permissions import (
-    DynamicPermission,
-    ParameterizedActionNeed
-)
-
+from invenio_access.permissions import (DynamicPermission, ParameterizedActionNeed)
 
 action_admin_holdingpen_authors = ParameterizedActionNeed(
     'admin-holdingpen-authors', argument=None
 )
 
-holdingpen_author_permission = DynamicPermission(
-    action_admin_holdingpen_authors
-)
+holdingpen_author_permission = DynamicPermission(action_admin_holdingpen_authors)

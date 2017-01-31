@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 """Collection of fields that can be used to render Jinja templates."""
 
 from __future__ import absolute_import, division, print_function
@@ -28,7 +27,6 @@ __all__ = ['JinjaField']
 
 
 class JinjaField(INSPIREField):
-
     """Generic field that renders a given template."""
 
     def __init__(self, **kwargs):
@@ -37,10 +35,7 @@ class JinjaField(INSPIREField):
         :param template: path to template that should be used for rendering.
         :type template: str
         """
-        defaults = dict(
-            widget_classes='form-control',
-            widget=field_widgets.JinjaWidget()
-        )
+        defaults = dict(widget_classes='form-control', widget=field_widgets.JinjaWidget())
         defaults.update(kwargs)
         self.template = defaults.pop('template')
         super(JinjaField, self).__init__(**defaults)

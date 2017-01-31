@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIRE module to manage authors."""
 
 from __future__ import absolute_import, division, print_function
@@ -50,5 +49,4 @@ class INSPIREAuthors(object):
                 app.config.setdefault(k, getattr(config, k))
 
         # URL used to prefill author update form
-        app.config.setdefault("AUTHORS_UPDATE_BASE_URL",
-                              app.config["SERVER_NAME"])
+        app.config.setdefault("AUTHORS_UPDATE_BASE_URL", app.config["SERVER_NAME"])

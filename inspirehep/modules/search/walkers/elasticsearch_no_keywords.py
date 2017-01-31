@@ -16,18 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 """Implement AST convertor to Elastic Search DSL."""
 
 from __future__ import absolute_import, division, print_function
 
 from invenio_query_parser.ast import (
-    AndOp, DoubleQuotedValue, EmptyQuery,
-    GreaterEqualOp, GreaterOp, Keyword,
-    KeywordOp, LowerEqualOp, LowerOp,
-    MalformedQuery, NotOp, OrOp, RangeOp, RegexValue,
-    SingleQuotedValue, Value, ValueQuery, WildcardQuery
-
+    AndOp, DoubleQuotedValue, EmptyQuery, GreaterEqualOp, GreaterOp, Keyword, KeywordOp,
+    LowerEqualOp, LowerOp, MalformedQuery, NotOp, OrOp, RangeOp, RegexValue, SingleQuotedValue,
+    Value, ValueQuery, WildcardQuery
 )
 from invenio_query_parser.visitor import make_visitor
 
@@ -37,7 +33,6 @@ class QueryHasKeywords(Exception):
 
 
 class ElasticSearchNoKeywordsDSL(object):
-
     """Implement visitor to create Elastic Search DSL for queries that don't include keywords."""
 
     visitor = make_visitor()
@@ -114,4 +109,5 @@ class ElasticSearchNoKeywordsDSL(object):
     @visitor(LowerEqualOp)
     def visit(self, node, value_fn):
         pass
+
     # pylint: enable=W0612,E0102

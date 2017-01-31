@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Manage migration from INSPIRE legacy instance."""
 
 from __future__ import absolute_import, division, print_function
@@ -60,7 +59,6 @@ from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_db_record
 
 from ..models import InspireProdRecords
-
 
 logger = get_task_logger(__name__)
 
@@ -109,9 +107,12 @@ def migrate_broken_records():
     Directly migrates the records declared as broken, e.g. if the dojson
     conversion script have been corrected.
     """
-    for i, chunk in enumerate(chunker(
-            record.marcxml for record in
-            db.session.query(InspireProdRecords).filter_by(valid=False))):
+    for i, chunk in enumerate(
+        chunker(
+            record.marcxml for record in db.session.query(InspireProdRecords)
+            .filter_by(valid=False)
+        )
+    ):
         logger.info("Processed {} records".format(i * CHUNK_SIZE))
         migrate_chunk.delay(chunk)
 
@@ -203,8 +204,8 @@ def migrate_chunk(chunk):
 @shared_task()
 def add_citation_counts(chunk_size=500, request_timeout=120):
     def _build_recid_to_uuid_map(citations_lookup):
-        pids = PersistentIdentifier.query.filter(
-            PersistentIdentifier.object_type == 'rec').yield_per(1000)
+        pids = PersistentIdentifier.query.filter(PersistentIdentifier.object_type == 'rec'
+                                                 ).yield_per(1000)
 
         with click.progressbar(pids) as bar:
             return {
@@ -220,14 +221,17 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
                     '_index': index,
                     '_type': doc_type,
                     '_id': str(uuid),
-                    'doc': {'citation_count': citation_count}
+                    'doc': {
+                        'citation_count': citation_count
+                    }
                 }
 
     index, doc_type = schema_to_index('records/hep.json')
     citations_lookup = Counter()
 
     click.echo('Extracting all citations...')
-    with click.progressbar(es_scan(
+    with click.progressbar(
+        es_scan(
             current_search_client,
             query={
                 '_source': 'references.recid',
@@ -240,10 +244,17 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
             },
             scroll=u'2m',
             index=index,
-            doc_type=doc_type)) as records:
+            doc_type=doc_type
+        )
+    ) as records:
         for record in records:
-            unique_refs_ids = dedupe_list(list(chain.from_iterable(map(
-                force_force_list, get_value(record, '_source.references.recid')))))
+            unique_refs_ids = dedupe_list(
+                list(
+                    chain.from_iterable(
+                        map(force_force_list, get_value(record, '_source.references.recid'))
+                    )
+                )
+            )
 
             for unique_refs_id in unique_refs_ids:
                 citations_lookup[unique_refs_id] += 1
@@ -263,8 +274,7 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
         request_timeout=request_timeout,
         stats_only=True,
     )
-    click.echo('... DONE: {} records updated with success. {} failures.'.format(
-        success, failed))
+    click.echo('... DONE: {} records updated with success. {} failures.'.format(success, failed))
 
 
 def create_record(record):
@@ -273,8 +283,7 @@ def create_record(record):
 
     if '$schema' in json:
         json['$schema'] = url_for(
-            'invenio_jsonschemas.get_schema',
-            schema_path="records/{0}".format(json['$schema'])
+            'invenio_jsonschemas.get_schema', schema_path="records/{0}".format(json['$schema'])
         )
 
     return json
@@ -331,9 +340,7 @@ def migrate_and_insert_record(raw_record):
     except ValidationError as e:
         # Aggregate logs by part of schema being validated.
         pattern = u'Migrator Validation Error: {} on {}: Value: %r, Record: %r'
-        logger.error(pattern.format('.'.join(e.schema_path),
-                                    e.validator_value),
-                     e.instance, recid)
+        logger.error(pattern.format('.'.join(e.schema_path), e.validator_value), e.instance, recid)
         error = e
     except Exception as e:
         # Receivers can always cause exceptions and we could dump the entire

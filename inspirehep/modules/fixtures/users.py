@@ -19,7 +19,6 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Fixtures for users, roles and actions."""
 
 from __future__ import absolute_import, division, print_function
@@ -35,13 +34,9 @@ from invenio_db import db
 def init_users_and_permissions():
     ds = current_app.extensions['invenio-accounts'].datastore
     with db.session.begin_nested():
-        superuser_role = ds.create_role(
-            name='superuser',
-            description='admin with no restrictions'
-        )
+        superuser_role = ds.create_role(name='superuser', description='admin with no restrictions')
         cataloger_role = ds.create_role(
-            name='cataloger',
-            description='users with editing capabilities'
+            name='cataloger', description='users with editing capabilities'
         )
         ds.create_user(
             email='admin@inspirehep.net',
@@ -55,21 +50,9 @@ def init_users_and_permissions():
             active=True,
             roles=[cataloger_role]
         )
-        db.session.add(ActionRoles(
-            action='superuser-access',
-            role=superuser_role
-        ))
-        db.session.add(ActionRoles(
-            action='admin-access',
-            role=superuser_role)
-        )
-        db.session.add(ActionRoles(
-            action='workflows-ui-admin-access',
-            role=cataloger_role)
-        )
-        db.session.add(ActionRoles(
-            action='admin-holdingpen-authors',
-            role=cataloger_role)
-        )
+        db.session.add(ActionRoles(action='superuser-access', role=superuser_role))
+        db.session.add(ActionRoles(action='admin-access', role=superuser_role))
+        db.session.add(ActionRoles(action='workflows-ui-admin-access', role=cataloger_role))
+        db.session.add(ActionRoles(action='admin-holdingpen-authors', role=cataloger_role))
 
     db.session.commit()

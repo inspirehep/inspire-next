@@ -21,7 +21,6 @@
 # In applying this license, CERN does not
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
-
 """Invenio standard theme."""
 
 from __future__ import absolute_import, division, print_function
@@ -90,13 +89,14 @@ class INSPIRETheme(object):
     def setup_app(self, app):
         """Initialize Gravatar extension."""
         from flask_gravatar import Gravatar
-        gravatar = Gravatar(app,
-                            size=app.config.get('GRAVATAR_SIZE', 100),
-                            rating=app.config.get('GRAVATAR_RATING', 'g'),
-                            default=app.config.get(
-                                'GRAVATAR_DEFAULT', 'retro'),
-                            force_default=False,
-                            force_lower=False)
+        gravatar = Gravatar(
+            app,
+            size=app.config.get('GRAVATAR_SIZE', 100),
+            rating=app.config.get('GRAVATAR_RATING', 'g'),
+            default=app.config.get('GRAVATAR_DEFAULT', 'retro'),
+            force_default=False,
+            force_lower=False
+        )
         del gravatar
         return app
 

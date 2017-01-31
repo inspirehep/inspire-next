@@ -20,7 +20,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Receivers for INSPIRE workflows."""
 
 from __future__ import absolute_import, division, print_function
@@ -56,9 +55,7 @@ def spawn_arXiv_workflow_from_oai_harvest(request, records, name, **kwargs):
 
     if workflow not in workflows:
         current_app.logger.warning(
-            "{0} not in available workflows. Skipping workflow {1}.".format(
-                workflow, name
-            )
+            "{0} not in available workflows. Skipping workflow {1}.".format(workflow, name)
         )
         return
 

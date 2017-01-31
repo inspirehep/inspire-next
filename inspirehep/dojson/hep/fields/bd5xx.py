@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -32,7 +31,6 @@ from ..model import hep, hep2marc
 from ...utils import force_single_element, get_record_ref
 
 from inspirehep.utils.helpers import force_force_list
-
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +65,7 @@ def public_notes2marc(self, key, value):
 @hep.over('hidden_notes', '^595..')
 def hidden_notes(self, key, value):
     """Hidden notes."""
+
     def _hidden_notes(value):
         def _hidden_note(value, a=None):
             source = value.get('9')
@@ -133,10 +132,11 @@ def thesis(self, key, value):
     if len(inst_names) != len(inst_recids):
         institutions = [{'name': name} for name in inst_names]
     else:
-        institutions = [{'name': name,
-                         'record': get_record_ref(recid, 'institutions'),
-                         'curated_relation': True}
-                        for name, recid in zip(inst_names, inst_recids)]
+        institutions = [{
+            'name': name,
+            'record': get_record_ref(recid, 'institutions'),
+            'curated_relation': True
+        } for name, recid in zip(inst_names, inst_recids)]
     if institutions:
         res['institutions'] = institutions
     return res
@@ -158,10 +158,7 @@ def thesis2marc(self, key, value):
 def abstracts(self, key, value):
     """Summary, Etc.."""
     if isinstance(value.get('a'), (list, tuple)):
-        logger.warning(
-            'Record with double abstract. '
-            'Taking first abstract: %s', value.get('a')
-        )
+        logger.warning('Record with double abstract. ' 'Taking first abstract: %s', value.get('a'))
         abstract = value.get('a')[0]
     else:
         abstract = value.get('a')

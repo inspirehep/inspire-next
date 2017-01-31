@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIRE search factory used in invenio-records-rest."""
 
 from __future__ import absolute_import, division, print_function
@@ -49,15 +48,12 @@ def inspire_search_factory(self, search):
         search = search.query(IQ(query_string, search))
     except SyntaxError:
         current_app.logger.debug(
-            "Failed parsing query: {0}".format(
-                request.values.get('q', '')),
-            exc_info=True)
+            "Failed parsing query: {0}".format(request.values.get('q', '')), exc_info=True
+        )
         raise InvalidQueryRESTError()
     finally:
         if current_app.debug:
-                current_app.logger.debug(
-                    json.dumps(search.to_dict(), indent=4)
-                )
+            current_app.logger.debug(json.dumps(search.to_dict(), indent=4))
 
     search_index = search._index[0]
     search, urlkwargs = default_facets_factory(search, search_index)

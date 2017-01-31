@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """API utils."""
 
 from __future__ import absolute_import, division, print_function
@@ -70,8 +69,7 @@ def build_citesummary(search):
                 'date': get_date(literature_result),
                 'document_type': get_document_type(literature_result),
                 'id': get_id(literature_result),
-                'selfcite': is_selfcite(
-                    result, literature_result),
+                'selfcite': is_selfcite(result, literature_result),
                 'subject': get_subject(literature_result),
                 'title': get_title(literature_result),
             })
@@ -104,8 +102,7 @@ def is_collaboration(record):
 
 
 def is_core(record):
-    return 'CORE' in force_force_list(
-        get_value(record, 'collections.primary'))
+    return 'CORE' in force_force_list(get_value(record, 'collections.primary'))
 
 
 def is_selfcite(citee, citer):

@@ -21,7 +21,6 @@
 # In applying this license, CERN does not
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
-
 """Record serialization."""
 
 from __future__ import absolute_import, division, print_function
@@ -40,14 +39,10 @@ from .schemas.json import RecordSchemaJSONBRIEFV1
 
 from .response import record_responsify_nocache
 
-json_literature_brief_v1 = LiteratureJSONBriefSerializer(
-    RecordSchemaJSONBRIEFV1
-)
+json_literature_brief_v1 = LiteratureJSONBriefSerializer(RecordSchemaJSONBRIEFV1)
 json_literature_brief_v1_search = search_responsify(
-    json_literature_brief_v1,
-    'application/vnd+inspire.brief+json'
+    json_literature_brief_v1, 'application/vnd+inspire.brief+json'
 )
-
 
 bibtex_v1 = BIBTEXSerializer()
 latexeu_v1 = LATEXEUSerializer()
@@ -56,28 +51,22 @@ cvformatlatex_v1 = CVFORMATLATEXSerializer()
 cvformathtml_v1 = CVFORMATHTMLSerializer()
 cvformattext_v1 = CVFORMATTEXTSerializer()
 
-bibtex_v1_response = record_responsify_nocache(
-    bibtex_v1, 'application/x-bibtex')
-latexeu_v1_response = record_responsify_nocache(
-    latexeu_v1, 'application/x-latexeu')
-latexus_v1_response = record_responsify_nocache(
-    latexus_v1, 'application/x-latexus')
-cvformatlatex_v1_response = record_responsify_nocache(cvformatlatex_v1,
-                                                      'application/x-cvformatlatex')
-cvformathtml_v1_response = record_responsify_nocache(cvformathtml_v1,
-                                                     'application/x-cvformathtml')
-cvformattext_v1_response = record_responsify_nocache(cvformattext_v1,
-                                                     'application/x-cvformattext')
+bibtex_v1_response = record_responsify_nocache(bibtex_v1, 'application/x-bibtex')
+latexeu_v1_response = record_responsify_nocache(latexeu_v1, 'application/x-latexeu')
+latexus_v1_response = record_responsify_nocache(latexus_v1, 'application/x-latexus')
+cvformatlatex_v1_response = record_responsify_nocache(
+    cvformatlatex_v1, 'application/x-cvformatlatex'
+)
+cvformathtml_v1_response = record_responsify_nocache(cvformathtml_v1, 'application/x-cvformathtml')
+cvformattext_v1_response = record_responsify_nocache(cvformattext_v1, 'application/x-cvformattext')
 
 bibtex_v1_search = search_responsify(bibtex_v1, 'application/x-bibtex')
 latexeu_v1_search = search_responsify(latexeu_v1, 'application/x-latexeu')
 latexus_v1_search = search_responsify(latexus_v1, 'application/x-latexus')
-cvformatlatex_v1_search = search_responsify(cvformatlatex_v1,
-                                            'application/x-cvformatlatex')
-cvformathtml_v1_search = search_responsify(cvformathtml_v1,
-                                           'application/x-cvformathtml')
-cvformattext_v1_search = search_responsify(cvformattext_v1,
-                                           'application/x-cvformattext')
+cvformatlatex_v1_search = search_responsify(cvformatlatex_v1, 'application/x-cvformatlatex')
+cvformathtml_v1_search = search_responsify(cvformathtml_v1, 'application/x-cvformathtml')
+cvformattext_v1_search = search_responsify(cvformattext_v1, 'application/x-cvformattext')
 impactgraph_v1 = ImpactGraphSerializer()
-impactgraph_v1_response = record_responsify_nocache(impactgraph_v1,
-                                                    'application/x-impact.graph+json')
+impactgraph_v1_response = record_responsify_nocache(
+    impactgraph_v1, 'application/x-impact.graph+json'
+)

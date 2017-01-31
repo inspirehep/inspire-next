@@ -31,7 +31,6 @@ from inspirehep.utils.record import is_submitted_but_not_published
 
 
 class Cv_latex_html_text(Export):
-
     """Class used to output CV format(html) and CV format(text)."""
 
     def __init__(self, record, format_type, separator):
@@ -42,9 +41,7 @@ class Cv_latex_html_text(Export):
 
     def format(self):
         """Return CV format export for single record."""
-        formats = {
-            'record': self._format_record,
-        }
+        formats = {'record': self._format_record, }
         return formats['record']()
 
     def _format_record(self):
@@ -87,9 +84,10 @@ class Cv_latex_html_text(Export):
         out = ''
         if field == 'title':
             if self.format_type == 'cv_latex_html':
-                out += unicode('<a href="' + config.SERVER_NAME + '/record/' +
-                               str(self.record['control_number']) + '">' +
-                               value + '.</a>' + self.separator)
+                out += unicode(
+                    '<a href="' + config.SERVER_NAME + '/record/' +
+                    str(self.record['control_number']) + '">' + value + '.</a>' + self.separator
+                )
             else:
                 out += u'{0}{1}'.format(value, self.separator)
         elif field == 'author':
@@ -98,22 +96,21 @@ class Cv_latex_html_text(Export):
             elif len(value) > 8:
                 if 'collaboration' in self.record:
                     try:
-                        collaboration = self.record[
-                            'collaboration'][0]['value']
+                        collaboration = self.record['collaboration'][0]['value']
                         if 'Collaboration' in collaboration:
-                            out += unicode('By ' + collaboration +
-                                           '(' + value[0] + ' et al.).' +
-                                           self.separator)
+                            out += unicode(
+                                'By ' + collaboration + '(' + value[0] + ' et al.).' +
+                                self.separator
+                            )
                         else:
-                            out += unicode('By ' + collaboration +
-                                           ' Collaboration (' +
-                                           value[0] + ' et al.).' +
-                                           self.separator)
+                            out += unicode(
+                                'By ' + collaboration + ' Collaboration (' + value[0] + ' et al.).'
+                                + self.separator
+                            )
                     except IndexError:
                         pass
                 else:
-                    out += u'By  {0} et al..{1}'.format(value[0],
-                                                        self.separator)
+                    out += u'By  {0} et al..{1}'.format(value[0], self.separator)
             else:
                 out += u'By {0}.{1}'.format(', '.join(value), self.separator)
         elif field == 'arxiv':
@@ -126,11 +123,9 @@ class Cv_latex_html_text(Export):
             for k, v in enumerate(dois_splitted):
                 v = '<a href="http://dx.doi.org/' + v + '">' + v + '</a>'
                 dois_splitted[k] = v
-            out += u'{0}.{1}'.format(', '.join(out for out in dois_splitted),
-                                     self.separator)
+            out += u'{0}.{1}'.format(', '.join(out for out in dois_splitted), self.separator)
         elif field == 'publi_info':
-            out += u'{0}.{1}'.format(', '.join(out for out in value),
-                                     self.separator)
+            out += u'{0}.{1}'.format(', '.join(out for out in value), self.separator)
         return out
 
     def _get_author(self):
@@ -143,27 +138,19 @@ class Cv_latex_html_text(Export):
             for author in self.record['authors']:
                 if 'full_name' in author and author['full_name']:
                     if isinstance(author['full_name'], list):
-                        author_full_name = ''.join(full_name for full_name
-                                                   in author['full_name'])
-                        first_last_match = re_last_first.search(
-                            author_full_name)
+                        author_full_name = ''.join(full_name for full_name in author['full_name'])
+                        first_last_match = re_last_first.search(author_full_name)
                         if first_last_match:
                             result.append(
-                                first_last_match.group('first_names') +
-                                ' ' + first_last_match.
-                                group('last') +
-                                first_last_match.
-                                group('extension')
+                                first_last_match.group('first_names') + ' ' + first_last_match.
+                                group('last') + first_last_match.group('extension')
                             )
                     else:
-                        first_last_match = re_last_first.search(
-                            author['full_name'])
+                        first_last_match = re_last_first.search(author['full_name'])
                         if first_last_match:
                             result.append(
-                                first_last_match.group('first_names') +
-                                ' ' + first_last_match.
-                                group('last') +
-                                first_last_match.group('extension')
+                                first_last_match.group('first_names') + ' ' + first_last_match.
+                                group('last') + first_last_match.group('extension')
                             )
         elif 'corporate_author' in self.record:
             for corp_author in self.record['corporate_author']:
@@ -193,8 +180,7 @@ class Cv_latex_html_text(Export):
                     record_title += ' : ' + self.record['titles']['subtitle']
             if record_title.upper() == record_title or \
                record_title.find('THE') >= 0:
-                record_title = ' '.join([word.capitalize() for word
-                                         in record_title.split(' ')])
+                record_title = ' '.join([word.capitalize() for word in record_title.split(' ')])
         return record_title
 
     def _get_publi_info(self):

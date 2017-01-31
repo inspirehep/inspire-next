@@ -20,7 +20,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIRE migrator dump user roles."""
 
 from __future__ import absolute_import, division, print_function
@@ -43,7 +42,4 @@ def dump(item, from_date, with_json=True, latest_only=False, **kwargs):
     :returns: User roles serialized to dictionary.
     :rtype: dict
     """
-    return {
-        "user_id": item.id_user,
-        "role_id": item.id_accROLE
-    }
+    return {"user_id": item.id_user, "role_id": item.id_accROLE}

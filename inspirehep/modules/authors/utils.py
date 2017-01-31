@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Helper functions for authors."""
 
 from __future__ import absolute_import, division, print_function
@@ -71,8 +70,7 @@ _bai_names_separator = re.compile("[,;.=\-\s]+", re.UNICODE)
 _bai_special_char_mapping = {'ß': 'ss', 'ä': 'ae', 'ö': 'oe', 'ü': 'ue'}
 _bai_nonletters = re.compile(r"[^\w\s]|\d", re.UNICODE)
 _bai_spaces = re.compile(r"\s+", re.UNICODE)
-_bai_particles = ["da", "de", "del", "den", "der",
-                  "du", "van", "von", "het", "y"]
+_bai_particles = ["da", "de", "del", "den", "der", "du", "van", "von", "het", "y"]
 split_on_re = re.compile('[\.\s-]')
 single_initial_re = re.compile('^\w\.$')
 
@@ -100,8 +98,7 @@ def bai(name):
 
     elif len(names) == 2:
         last_name = names[0]
-        initials = [w[0].upper()
-                    for w in _bai_names_separator.split(names[1]) if w]
+        initials = [w[0].upper() for w in _bai_names_separator.split(names[1]) if w]
 
     else:
         last_name = names[0]
@@ -159,36 +156,31 @@ def scan_author_string_for_phrases(s):
     """
 
     retval = {
-        'TOKEN_TAG_LIST': [
-            'lastnames',
-            'nonlastnames',
-            'titles',
-            'raw'],
+        'TOKEN_TAG_LIST': ['lastnames', 'nonlastnames', 'titles', 'raw'],
         'lastnames': [],
         'nonlastnames': [],
         'titles': [],
-        'raw': s}
+        'raw': s
+    }
     l = s.split(',')
     if len(l) < 2:
         # No commas means a simple name
         new = s.strip()
         new = s.split(' ')
         if len(new) == 1:
-            retval['lastnames'] = new        # rare single-name case
+            retval['lastnames'] = new  # rare single-name case
         else:
             retval['lastnames'] = new[-1:]
             retval['nonlastnames'] = new[:-1]
             for tag in ['lastnames', 'nonlastnames']:
                 retval[tag] = [x.strip() for x in retval[tag]]
-                retval[tag] = [re.split(split_on_re, x)
-                               for x in retval[tag]]
+                retval[tag] = [re.split(split_on_re, x) for x in retval[tag]]
                 # flatten sublists
-                retval[tag] = [item for sublist in retval[tag]
-                               for item in sublist]
+                retval[tag] = [item for sublist in retval[tag] for item in sublist]
                 retval[tag] = [x for x in retval[tag] if x != '']
     else:
         # Handle lastname-first multiple-names case
-        retval['titles'] = l[2:]             # no titles? no problem
+        retval['titles'] = l[2:]  # no titles? no problem
         retval['nonlastnames'] = l[1]
         retval['lastnames'] = l[0]
         for tag in ['lastnames', 'nonlastnames']:
@@ -219,6 +211,7 @@ def parse_scanned_author_for_phrases(scanned):
     :returns: combinatorically expanded list of strings for indexing
     :rtype: list of string
     """
+
     def _fully_expanded_last_name(first, lastlist, title=None):
         """Return a list of all of the first / last / title combinations.
 
@@ -251,7 +244,7 @@ def parse_scanned_author_for_phrases(scanned):
     first_parts = scanned['nonlastnames']
     titles = scanned['titles']
 
-    if len(first_parts) == 0:                       # rare single-name case
+    if len(first_parts) == 0:  # rare single-name case
         return scanned['lastnames']
 
     expanded = []
@@ -268,8 +261,7 @@ def parse_scanned_author_for_phrases(scanned):
                 continue
             # XXX: remember to document that titles can only be applied to
             # complete last names
-            expanded.extend(_fully_expanded_last_name(
-                exp, [' '.join(last_parts)], title))
+            expanded.extend(_fully_expanded_last_name(exp, [' '.join(last_parts)], title))
 
     return sorted(list(set(expanded)))
 
@@ -354,5 +346,4 @@ def expand_nonlastnames(namelist):
 
 def author_tokenize(phrase):
     """Return all possible variatons of a name"""
-    return parse_scanned_author_for_phrases(
-        scan_author_string_for_phrases(phrase))
+    return parse_scanned_author_for_phrases(scan_author_string_for_phrases(phrase))

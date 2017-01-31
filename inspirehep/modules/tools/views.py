@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Tools views."""
 
 from __future__ import absolute_import, division, print_function
@@ -30,7 +29,6 @@ from wtforms import TextAreaField
 from inspirehep.modules.forms.form import INSPIREForm
 
 from .utils import authorlist
-
 
 blueprint = Blueprint(
     'inspire_tools',
@@ -43,9 +41,7 @@ blueprint = Blueprint(
 
 class InputTextForm(INSPIREForm):
     """Input form class."""
-    author_string = TextAreaField(
-        'Author string', render_kw={'rows': 10, 'cols': 50}
-    )
+    author_string = TextAreaField('Author string', render_kw={'rows': 10, 'cols': 50})
 
 
 @blueprint.route('/authorlist', methods=['GET', 'POST'])

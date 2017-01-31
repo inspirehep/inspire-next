@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 """DOI field."""
 
 from __future__ import absolute_import, division, print_function
@@ -42,16 +41,13 @@ def missing_doi_warning(dummy_form, field, submit=False, fields=None):
 
 
 class DOIField(INSPIREField, StringField):
-
     """DOIField."""
 
     def __init__(self, **kwargs):
         """Init."""
         defaults = dict(
             icon='barcode',
-            validators=[
-                DOISyntaxValidator(),
-            ],
+            validators=[DOISyntaxValidator(), ],
             filters=[
                 strip_string,
                 strip_prefixes("doi:", "http://dx.doi.org/"),

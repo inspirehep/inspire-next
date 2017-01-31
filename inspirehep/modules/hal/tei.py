@@ -72,25 +72,32 @@ def _get_domains(record):
 
 
 def _get_typology(record):
-    collections = [entry['primary'].lower()
-                   for entry in record.get('collections', [])]
+    collections = [entry['primary'].lower() for entry in record.get('collections', [])]
     inspire_to_hal = {
-        'conferencepaper': "COMM",
+        'conferencepaper':
+            "COMM",
         # Communication dans un congrès / Conference communication
-        'thesis': "THESE",
+        'thesis':
+            "THESE",
         # Thèse / Thesis
-        'proceedings': "DOUV",
+        'proceedings':
+            "DOUV",
         # Direction d'ouvrage, Proceedings / Directions of work, Proceedings
-        'book': "OUV",
+        'book':
+            "OUV",
         # Ouvrage (y compris édition critique et traduction) /
         # Book (includes scholarly edition and translation)
-        'bookchapter': "COUV",
+        'bookchapter':
+            "COUV",
         # Chapitre d'ouvrage / Book chapter
-        'review': "NOTE",
+        'review':
+            "NOTE",
         # Note de lecture / Book review
-        'published': "ART",
+        'published':
+            "ART",
         # Article dans une revue / Journal article
-        'lectures': "LECTURE",
+        'lectures':
+            "LECTURE",
         # Cours / Course
     }
 
@@ -112,12 +119,8 @@ def _parse_structures(record):
     for author in record.get('authors', []):
         for affiliation in author.get('affiliations', []):
             try:
-                recids.append(
-                    str(get_recid_from_ref(affiliation['record']))
-                )
-                affiliation['recid'] = get_recid_from_ref(
-                    affiliation['record']
-                )
+                recids.append(str(get_recid_from_ref(affiliation['record'])))
+                affiliation['recid'] = get_recid_from_ref(affiliation['record'])
             except KeyError:
                 continue
 
@@ -127,9 +130,7 @@ def _parse_structures(record):
         records = []
 
     for record in records:
-        structures.append(
-            _structure_data(record)
-        )
+        structures.append(_structure_data(record))
     return dedupe_list(structures)
 
 
@@ -166,17 +167,21 @@ def _conference_data(conf):
 
     # FIXME: Add conference city, country, and country code fields
     if ref:
-        return {'type': "conference",
-                'name': get_value(ref, "titles[0].title", ""),
-                'acronym': get_value(ref, "acronym[0]", ""),
-                'opening_date': get_value(ref, "opening_date", ""),
-                'closing_date': get_value(ref, "closing_date", "")}
+        return {
+            'type': "conference",
+            'name': get_value(ref, "titles[0].title", ""),
+            'acronym': get_value(ref, "acronym[0]", ""),
+            'opening_date': get_value(ref, "opening_date", ""),
+            'closing_date': get_value(ref, "closing_date", "")
+        }
     else:
-        return {'type': "conference",
-                'name': "",
-                'acronym': "",
-                'opening_date': "",
-                'closing_date': ""}
+        return {
+            'type': "conference",
+            'name': "",
+            'acronym': "",
+            'opening_date': "",
+            'closing_date': ""
+        }
 
 
 def _journal_data(pub_info):
@@ -201,13 +206,18 @@ def _journal_data(pub_info):
 
 def _structure_data(struct):
     return {
-        'type': get_value(struct, "collections[1].primary", "").lower(),
+        'type':
+            get_value(struct, "collections[1].primary", "").lower(),
         # ^^ FIXME: This may not be one of the HAL accepted values:
         # institution, department, laboratory or researchteam
-        'name': get_value(struct, "institution[0]", ""),
-        'address': get_value(struct, "address[0].original_address", []),
-        'country': get_value(struct, "address[0].country_code", ""),
-        'recid': get_recid_from_ref(struct['self']),
+        'name':
+            get_value(struct, "institution[0]", ""),
+        'address':
+            get_value(struct, "address[0].original_address", []),
+        'country':
+            get_value(struct, "address[0].country_code", ""),
+        'recid':
+            get_recid_from_ref(struct['self']),
     }
 
 

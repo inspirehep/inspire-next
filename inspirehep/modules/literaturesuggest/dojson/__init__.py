@@ -24,4 +24,4 @@ from __future__ import absolute_import, division, print_function
 
 from .fields import literature
 
-__all__ = ('literature',)
+__all__ = ('literature', )

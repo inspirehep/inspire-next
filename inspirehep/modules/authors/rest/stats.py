@@ -88,8 +88,7 @@ class AuthorAPIStats(object):
 
             # Count how many times certain type of publication was published.
             try:
-                publication_type = result_source.get(
-                    'facet_inspire_doc_type', [])[0]
+                publication_type = result_source.get('facet_inspire_doc_type', [])[0]
             except IndexError:
                 pass
 
@@ -105,9 +104,9 @@ class AuthorAPIStats(object):
 
             # Get keywords.
             keywords.extend([
-                k for k in force_force_list(
-                    get_value(result_source, 'keywords.keyword'))
-                if k != '* Automatic Keywords *'])
+                k for k in force_force_list(get_value(result_source, 'keywords.keyword'))
+                if k != '* Automatic Keywords *'
+            ])
 
         # Calculate h-index together with i10-index.
         statistics['hindex'] = calculate_h_index(statistics_citations)

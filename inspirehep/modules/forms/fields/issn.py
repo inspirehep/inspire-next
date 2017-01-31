@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 """ISSN field."""
 
 from __future__ import absolute_import, division, print_function
@@ -29,7 +28,6 @@ __all__ = ['ISSNField']
 
 
 class ISSNField(INSPIREField, StringField):
-
     """ISSN Field."""
 
     def __init__(self, **kwargs):

@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -46,14 +45,12 @@ def inspire_categories2marc(self, key, value):
 @hep.over('accelerator_experiments', '^693..')
 def accelerator_experiments(self, key, acc_exps_data):
     """The accelerator/experiment related to this record."""
+
     def _get_acc_exp_json(acc_exp_data):
         recids = []
         if '0' in acc_exp_data:
             try:
-                recids = [
-                    int(recid) for recid
-                    in force_force_list(acc_exp_data.get('0'))
-                ]
+                recids = [int(recid) for recid in force_force_list(acc_exp_data.get('0'))]
             except (TypeError, ValueError, AttributeError):
                 pass
 
@@ -111,6 +108,7 @@ def keywords(self, key, value):
     extract the 'energy_ranges' too that is represented in marc as special
     value of some keywords.
     """
+
     def _is_thesaurus(key):
         return key.startswith('695')
 

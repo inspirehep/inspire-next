@@ -45,19 +45,16 @@ def _query_beard_api(full_names):
     This method allows for computation of phonetic blocks
     from a given list of strings.
     """
-    headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
+    headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
     text_endpoint = "{base_url}/text/phonetic_blocks".format(
         base_url=current_app.config.get('BEARD_API_URL')
     )
 
     response = requests.post(
-        url=text_endpoint,
-        headers=headers,
-        data=json.dumps({'full_names': full_names})
+        url=text_endpoint, headers=headers, data=json.dumps({
+            'full_names': full_names
+        })
     )
 
     return response.json()['phonetic_blocks']
@@ -86,14 +83,11 @@ def assign_phonetic_block(sender, *args, **kwargs):
 
         # Add signature block to an author.
         for full_name, signature_block in signatures_blocks.iteritems():
-            authors[authors_map[full_name]].update(
-                {"signature_block": signature_block})
+            authors[authors_map[full_name]].update({"signature_block": signature_block})
 
         # # For missing phonetic blocks (not valid full names) add None.
-        for full_name in list(
-                set(authors_map.keys()) - set(signatures_blocks.keys())):
-            authors[authors_map[full_name]].update(
-                {"signature_block": None})
+        for full_name in list(set(authors_map.keys()) - set(signatures_blocks.keys())):
+            authors[authors_map[full_name]].update({"signature_block": None})
 
 
 @before_record_insert.connect
@@ -131,8 +125,12 @@ def generate_name_variations(recid, json, *args, **kwargs):
                     item['value'] for item in author.get('ids', [])
                     if item['type'] == 'INSPIRE BAI'
                 ]
-                author.update({"name_suggest": {
-                    "input": name_variations,
-                    "output": name,
-                    "payload": {"bai": bai[0] if bai else None}
-                }})
+                author.update({
+                    "name_suggest": {
+                        "input": name_variations,
+                        "output": name,
+                        "payload": {
+                            "bai": bai[0] if bai else None
+                        }
+                    }
+                })

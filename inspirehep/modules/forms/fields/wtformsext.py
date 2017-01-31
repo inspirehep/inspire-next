@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
-
 """This module makes all WTForms fields available in WebDeposit.
 
 This module makes all WTForms fields available in WebDeposit, and ensure that
@@ -57,11 +55,7 @@ for attr_name in dir(wtforms):
             #
             # For further information please see Python reference documentation
             # for globals() and type() functions.
-            globals()[attr_name] = type(
-                str(attr_name),
-                (INSPIREField, attr),
-                {}
-            )
+            globals()[attr_name] = type(str(attr_name), (INSPIREField, attr), {})
             __all__.append(attr_name)
     except TypeError:
         pass
@@ -93,20 +87,25 @@ class FlagProxy(object):
 # Special needs for field enclosures
 #
 class FormField(INSPIREField, wtforms.FormField):
-
     """Deposition form field."""
 
     def __init__(self, *args, **kwargs):
         """Init."""
         if 'autocomplete' in kwargs:
-            raise TypeError('FormField cannot take autocomplete argument. '
-                            'Instead, define it on the enclosed fields.')
+            raise TypeError(
+                'FormField cannot take autocomplete argument. '
+                'Instead, define it on the enclosed fields.'
+            )
         if 'placeholder' in kwargs:
-            raise TypeError('FormField cannot take placeholder argument. '
-                            'Instead, define it on the enclosed fields.')
+            raise TypeError(
+                'FormField cannot take placeholder argument. '
+                'Instead, define it on the enclosed fields.'
+            )
         if 'processors' in kwargs:
-            raise TypeError('FormField cannot take processors. '
-                            'Instead, define them on the enclosed fields.')
+            raise TypeError(
+                'FormField cannot take processors. '
+                'Instead, define them on the enclosed fields.'
+            )
         self._flags = Flags()
         self._populate = kwargs.pop('populate', ['required'])
         super(FormField, self).__init__(*args, **kwargs)
@@ -128,15 +127,13 @@ class FormField(INSPIREField, wtforms.FormField):
                 raise ValueError("Got unexpected value type")
 
             formdata = formdata[self.name]
-            formdata = MultiDict(dict([
-                ("%s%s%s" % (self.name, self.separator, k), v)
-                for k, v in formdata.items()
-            ]))
+            formdata = MultiDict(
+                dict([("%s%s%s" % (self.name, self.separator, k), v) for k, v in formdata.items()])
+            )
 
         super(FormField, self).process(formdata, data=data)
 
-    def post_process(self, form=None, formfields=[], extra_processors=[],
-                     submit=False):
+    def post_process(self, form=None, formfields=[], extra_processors=[], submit=False):
         """Run post process on each subfield.
 
         Run post process on each subfield as well as extra processors defined
@@ -144,8 +141,7 @@ class FormField(INSPIREField, wtforms.FormField):
         """
         # Ignore extra_processors on purpose (as they are not allowed for
         # field enclosures)
-        self.form.post_process(form=self.form, formfields=formfields,
-                               submit=submit)
+        self.form.post_process(form=self.form, formfields=formfields, submit=submit)
 
     def perform_autocomplete(self, form, name, term, limit=50):
         """Run auto-complete method for field.
@@ -198,20 +194,25 @@ class FormField(INSPIREField, wtforms.FormField):
 
 
 class FieldList(INSPIREField, wtforms.FieldList):
-
     """Deposition field list."""
 
     def __init__(self, *args, **kwargs):
         """Init."""
         if 'autocomplete' in kwargs:
-            raise TypeError('FieldList does not accept autocomplete argument.'
-                            'Instead, define it on the enclosed field.')
+            raise TypeError(
+                'FieldList does not accept autocomplete argument.'
+                'Instead, define it on the enclosed field.'
+            )
         if 'placeholder' in kwargs:
-            raise TypeError('FieldList does not accept placeholder argument. '
-                            'Instead, define it on the enclosed field.')
+            raise TypeError(
+                'FieldList does not accept placeholder argument. '
+                'Instead, define it on the enclosed field.'
+            )
         if 'processors' in kwargs:
-            raise TypeError('FieldList does not accept processors. '
-                            'Instead, define them on the enclosed field.')
+            raise TypeError(
+                'FieldList does not accept processors. '
+                'Instead, define them on the enclosed field.'
+            )
         super(FieldList, self).__init__(*args, **kwargs)
 
     def get_entries(self):
@@ -274,8 +275,7 @@ class FieldList(INSPIREField, wtforms.FieldList):
         self.process_errors = []
         return super(FieldList, self).process(*args, **kwargs)
 
-    def post_process(self, form=None, formfields=[], extra_processors=[],
-                     submit=False):
+    def post_process(self, form=None, formfields=[], extra_processors=[], submit=False):
         """Run post process on each subfield.
 
         Run post process on each subfield as well as extra processors defined
@@ -285,8 +285,7 @@ class FieldList(INSPIREField, wtforms.FieldList):
             # Ignore extra_processors on purpose (as they are not allowed for
             # field enclosures)
             subfield.post_process(
-                form=form, formfields=formfields, extra_processors=[],
-                submit=submit
+                form=form, formfields=formfields, extra_processors=[], submit=submit
             )
 
     def perform_autocomplete(self, form, name, term, limit=50):
@@ -304,8 +303,7 @@ class FieldList(INSPIREField, wtforms.FieldList):
             idx = name[offset:].split(separator, 1)[0]
             field = self.bound_field(idx)
             if field:
-                return field.perform_autocomplete(form, name, term,
-                                                  limit=limit)
+                return field.perform_autocomplete(form, name, term, limit=limit)
         return None
 
     def bound_field(self, idx):
@@ -341,8 +339,7 @@ class FieldList(INSPIREField, wtforms.FieldList):
     def json_data(self):
         """JSON data property."""
         return [
-            f.json_data if getattr(f, 'json_data', None) else f.data
-            for f in self.get_entries()
+            f.json_data if getattr(f, 'json_data', None) else f.data for f in self.get_entries()
         ]
 
     @property
@@ -363,7 +360,6 @@ class FieldList(INSPIREField, wtforms.FieldList):
 
 
 class DynamicFieldList(FieldList):
-
     """Encapsulate an ordered list of multiple instances of the same field type.
 
     Encapsulate an ordered list of multiple instances of the same field type,
@@ -399,11 +395,8 @@ class DynamicFieldList(FieldList):
 
         if formdata:
             if self.name not in formdata:
-                max_index = max(
-                    [len(data) - 1] + list(
-                        set(self._extract_indices(self.name, formdata))
-                    )
-                )
+                max_index = max([len(data) - 1] +
+                                list(set(self._extract_indices(self.name, formdata))))
                 indices = range(0, max_index + 1)
 
                 if self.max_entries:
@@ -420,9 +413,7 @@ class DynamicFieldList(FieldList):
                 # Update keys in formdata, to allow proper form processing
                 self.raw_data = formdata.getlist(self.name)
                 for index, raw_entry in enumerate(self.raw_data):
-                    entry_formdata = MultiDict({
-                        "%s-%s" % (self.name, index): raw_entry
-                    })
+                    entry_formdata = MultiDict({"%s-%s" % (self.name, index): raw_entry})
                     self._add_entry(entry_formdata, index=index)
         else:
             for obj_data in data:
@@ -449,10 +440,7 @@ class DynamicFieldList(FieldList):
 
     def get_entries(self):
         """Filter out empty index entry."""
-        return filter(
-            lambda e: not e.name.endswith(self.empty_index),
-            self.entries
-        )
+        return filter(lambda e: not e.name.endswith(self.empty_index), self.entries)
 
     def bound_field(self, idx, force=False):
         """Create a bound subfield for this list."""

@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 """Inspire bundles."""
 
 from __future__ import absolute_import, division, print_function
@@ -29,11 +28,9 @@ almondjs = NpmBundle(
     "js/settings.js",
     filters="uglifyjs",
     output="gen/almond.%(version)s.js",
-    npm={
-        "almond": "~0.3.1",
-        "hogan.js": "~3.0.2",
-        "requirejs-hogan-plugin": "~0.3.1"
-    }
+    npm={"almond": "~0.3.1",
+         "hogan.js": "~3.0.2",
+         "requirejs-hogan-plugin": "~0.3.1"}
 )
 
 # require.js is only used when:
@@ -45,28 +42,33 @@ requirejs = NpmBundle(
     "js/settings.js",
     output="gen/require.%(version)s.js",
     filters="uglifyjs",
-    npm={
-        "requirejs": "~2.1.22",
-    }
+    npm={"requirejs": "~2.1.22", }
 )
 
 js = NpmBundle(
     "js/inspire_base_init.js",
     filters="requirejs",
-    depends=(
-        "js/**/*.js"
-    ),
+    depends=("js/**/*.js"),
     output="gen/inspirehep.%(version)s.js",
     npm={
-        "jquery": "~1.9.1",
-        "jquery-ui": "~1.10.5",
-        "toastr": "~2.1.2",
-        "clipboard": "~1.5.8",
-        "flightjs": "~1.5.0",
-        "angular": "~1.4.8",
-        "readmore-js": "~2.1.0",
-        "impact-graphs": "git+https://git@github.com/inspirehep/impact-graphs.git",
-        "inspirehep-typeahead-search-js": "git+https://github.com/inspirehep/inspirehep-typeahead-search-js.git",
+        "jquery":
+            "~1.9.1",
+        "jquery-ui":
+            "~1.10.5",
+        "toastr":
+            "~2.1.2",
+        "clipboard":
+            "~1.5.8",
+        "flightjs":
+            "~1.5.0",
+        "angular":
+            "~1.4.8",
+        "readmore-js":
+            "~2.1.0",
+        "impact-graphs":
+            "git+https://git@github.com/inspirehep/impact-graphs.git",
+        "inspirehep-typeahead-search-js":
+            "git+https://github.com/inspirehep/inspirehep-typeahead-search-js.git",
     }
 )
 

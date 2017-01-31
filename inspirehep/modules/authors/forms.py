@@ -50,18 +50,18 @@ from inspirehep.modules.forms.validation_utils import ORCIDValidator, \
 def currentCheckboxWidget(field, **kwargs):
     """Current institution checkbox widget."""
     field_id = kwargs.pop('id', field.id)
-    html = [u'<div class="col-md-10 col-margin-top pull-left">\
+    html = [
+        u'<div class="col-md-10 col-margin-top pull-left">\
             <input %s %s type="checkbox">\
-            <label for=%s>Current</label></div>'
-            % (html_params(id=field_id,
-                           name=field_id),
-               field.data and "checked" or "",
-               field_id)]
+            <label for=%s>Current</label></div>' %
+        (html_params(
+            id=field_id, name=field_id
+        ), field.data and "checked" or "", field_id)
+    ]
     return HTMLString(u''.join(html))
 
 
 class WrappedSelect(Select):
-
     """Widget to wrap select input in further markup."""
 
     wrapper = '<div>%(field)s</div>'
@@ -76,28 +76,29 @@ class WrappedSelect(Select):
 
     def __call__(self, field, **kwargs):
         """Render wrapped input."""
-        return HTMLString(self.wrapper % dict(
-            field=self.wrapped_widget(field, **kwargs),
-            **self.wrapper_args
-        ))
+        return HTMLString(
+            self.wrapper % dict(
+                field=self.wrapped_widget(field, **kwargs), **self.wrapper_args
+            )
+        )
 
 
 class ColumnSelect(WrappedSelect):
-
     """Specialized column wrapped input."""
 
     @property
     def wrapper(self):
         """Wrapper template with description support."""
         if 'description' in self.wrapper_args:
-            return ('<div class="%(class_)s">%(field)s'
-                    '<p class="text-muted field-desc">'
-                    '<small>%(description)s</small></p></div>')
+            return (
+                '<div class="%(class_)s">%(field)s'
+                '<p class="text-muted field-desc">'
+                '<small>%(description)s</small></p></div>'
+            )
         return '<div class="%(class_)s">%(field)s</div>'
 
 
 class InstitutionInlineForm(INSPIREForm):
-
     """Institution inline form."""
 
     rank_options = [
@@ -135,10 +136,11 @@ class InstitutionInlineForm(INSPIREForm):
             wrapped_widget=TextInput(),
             wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
         ),
-        validators=[RegexpStopValidator(
-            "^(\d{4})?$",
-            message="{} is not a valid year. Please use <i>yyyy</i> format."
-        )],
+        validators=[
+            RegexpStopValidator(
+                "^(\d{4})?$", message="{} is not a valid year. Please use <i>yyyy</i> format."
+            )
+        ],
         widget_classes="datepicker form-control"
     )
 
@@ -149,30 +151,22 @@ class InstitutionInlineForm(INSPIREForm):
             wrapped_widget=TextInput(),
             wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
         ),
-        validators=[RegexpStopValidator(
-            "^(\d{4})?$",
-            message="{} is not a valid year. Please use <i>yyyy</i> format."
-        )],
+        validators=[
+            RegexpStopValidator(
+                "^(\d{4})?$", message="{} is not a valid year. Please use <i>yyyy</i> format."
+            )
+        ],
         widget_classes="datepicker form-control"
     )
 
-    current = fields.BooleanField(
-        widget=currentCheckboxWidget
-    )
+    current = fields.BooleanField(widget=currentCheckboxWidget)
 
-    emails = fields.FieldList(
-        fields.HiddenField(label=''),
-        widget_classes='hidden-list'
-    )
+    emails = fields.FieldList(fields.HiddenField(label=''), widget_classes='hidden-list')
 
-    old_emails = fields.FieldList(
-        fields.HiddenField(label=''),
-        widget_classes='hidden-list'
-    )
+    old_emails = fields.FieldList(fields.HiddenField(label=''), widget_classes='hidden-list')
 
 
 class EmailInlineForm(INSPIREForm):
-
     """Public emails inline form."""
 
     email = fields.StringField(
@@ -184,7 +178,6 @@ class EmailInlineForm(INSPIREForm):
 
 
 class ExperimentsInlineForm(INSPIREForm):
-
     """Experiments inline form."""
 
     name = fields.StringField(
@@ -198,13 +191,14 @@ class ExperimentsInlineForm(INSPIREForm):
     start_year = fields.StringField(
         placeholder=_('Start Year'),
         description=u'Format: YYYY.',
-        widget=WrappedInput(wrapped_widget=TextInput(),
-                            wrapper='<div class="col-md-6">%(field)s</div>'
-                            ),
-        validators=[RegexpStopValidator(
-            "^(\d{4})?$",
-            message="{} is not a valid year. Please use <i>yyyy</i> format."
-        )],
+        widget=WrappedInput(
+            wrapped_widget=TextInput(), wrapper='<div class="col-md-6">%(field)s</div>'
+        ),
+        validators=[
+            RegexpStopValidator(
+                "^(\d{4})?$", message="{} is not a valid year. Please use <i>yyyy</i> format."
+            )
+        ],
         widget_classes="datepicker form-control"
     )
 
@@ -215,20 +209,18 @@ class ExperimentsInlineForm(INSPIREForm):
             wrapped_widget=TextInput(),
             wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
         ),
-        validators=[RegexpStopValidator(
-            "^(\d{4})?$",
-            message="{} is not a valid year. Please use <i>yyyy</i> format."
-        )],
+        validators=[
+            RegexpStopValidator(
+                "^(\d{4})?$", message="{} is not a valid year. Please use <i>yyyy</i> format."
+            )
+        ],
         widget_classes="datepicker form-control"
     )
 
-    status = fields.BooleanField(
-        widget=currentCheckboxWidget
-    )
+    status = fields.BooleanField(widget=currentCheckboxWidget)
 
 
 class AdvisorsInlineForm(INSPIREForm):
-
     """Advisors inline form."""
 
     name = fields.TextField(
@@ -236,7 +228,8 @@ class AdvisorsInlineForm(INSPIREForm):
         placeholder="Name. Type for suggestions",
         autocomplete='author',
         widget=ColumnInput(
-            class_="col-xs-5", description=u"Family name, First name"),
+            class_="col-xs-5", description=u"Family name, First name"
+        ),
         export_key='full_name',
     )
 
@@ -244,7 +237,9 @@ class AdvisorsInlineForm(INSPIREForm):
         label=_('Degree Type'),
         widget_classes="form-control",
         default="PHD",
-        widget=ColumnSelect(class_="col-xs-5", description=u"Degree Type"),
+        widget=ColumnSelect(
+            class_="col-xs-5", description=u"Degree Type"
+        ),
     )
 
     def __init__(self, *args, **kwargs):
@@ -259,7 +254,6 @@ class AdvisorsInlineForm(INSPIREForm):
 
 
 class WebpageInlineForm(INSPIREForm):
-
     """URL inline form."""
 
     webpage = fields.StringField(
@@ -271,13 +265,11 @@ class WebpageInlineForm(INSPIREForm):
 
 
 class DynamicUnsortedItemWidget(DynamicItemWidget):
-
     def _sort_button(self):
         return ""
 
 
 class DynamicUnsortedWidget(DynamicListWidget):
-
     def __init__(self, **kwargs):
         """Initialize dynamic list widget."""
         self.item_widget = DynamicUnsortedItemWidget()
@@ -285,7 +277,6 @@ class DynamicUnsortedWidget(DynamicListWidget):
 
 
 class DynamicUnsortedNonRemoveItemWidget(DynamicItemWidget):
-
     def _sort_button(self):
         return ""
 
@@ -294,7 +285,6 @@ class DynamicUnsortedNonRemoveItemWidget(DynamicItemWidget):
 
 
 class DynamicUnsortedNonRemoveWidget(DynamicListWidget):
-
     def __init__(self, **kwargs):
         """Initialize dynamic list widget."""
         self.item_widget = DynamicUnsortedNonRemoveItemWidget()
@@ -302,7 +292,6 @@ class DynamicUnsortedNonRemoveWidget(DynamicListWidget):
 
 
 class AuthorUpdateForm(INSPIREForm):
-
     """Author update form."""
 
     bai = fields.StringField(
@@ -310,11 +299,12 @@ class AuthorUpdateForm(INSPIREForm):
         description=u'e.g. M.Santos.1',
         widget=HiddenInput(),
         widget_classes="form-control",
-        validators=[validators.Optional(),
-                    RegexpStopValidator(
-                        "(\\w+\\.)+\\d+",
-                        message="A valid Bai is in the form of 'M.Santos.1'.",
-        )]
+        validators=[
+            validators.Optional(), RegexpStopValidator(
+                "(\\w+\\.)+\\d+",
+                message="A valid Bai is in the form of 'M.Santos.1'.",
+            )
+        ]
     )
 
     inspireid = fields.StringField(
@@ -322,11 +312,12 @@ class AuthorUpdateForm(INSPIREForm):
         description=u'e.g. INSPIRE-0000000',
         widget=HiddenInput(),
         widget_classes="form-control",
-        validators=[validators.Optional(),
-                    RegexpStopValidator(
-                        "INSPIRE-\\d{8}",
-                        message="A valid Inspireid is in the form of 'INSPIRE-0000000'.",
-        )]
+        validators=[
+            validators.Optional(), RegexpStopValidator(
+                "INSPIRE-\\d{8}",
+                message="A valid Inspireid is in the form of 'INSPIRE-0000000'.",
+            )
+        ]
     )
 
     # Hidden field to hold record id information
@@ -343,9 +334,7 @@ class AuthorUpdateForm(INSPIREForm):
     )
 
     family_name = fields.StringField(
-        label=_('Family Name'),
-        description=u'e.g. Martínez Santos',
-        widget_classes="form-control"
+        label=_('Family Name'), description=u'e.g. Martínez Santos', widget_classes="form-control"
     )
 
     display_name = fields.StringField(
@@ -382,26 +371,25 @@ class AuthorUpdateForm(INSPIREForm):
         label='ORCID <img src="/static/images/orcid_icon_24.png" style="height:20px">',
         widget_classes="form-control",
         description=u"""ORCID provides a persistent digital identifier that distinguishes you from other researchers. Learn more at <a href="http://orcid.org" tabIndex="-1" target="_blank">orcid.org</a>""",
-        widget=WrappedInput(wrapper="""
+        widget=WrappedInput(
+            wrapper="""
         <div class="input-group">
         <span class="input-group-addon" id="sizing-addon2">orcid.org/</span>
         %(field)s
         </div>
-        """),
-        placeholder="0000-0000-0000-0000",
-        validators=[validators.Optional(),
-                    RegexpStopValidator(
-                        "\d{4}-\d{4}-\d{4}-\d{3}[\dX]",
-                        message="A valid ORCID iD consists of 16 digits separated by dashes.",
+        """
         ),
-            ORCIDValidator,
-            duplicated_orcid_validator]
+        placeholder="0000-0000-0000-0000",
+        validators=[
+            validators.Optional(), RegexpStopValidator(
+                "\d{4}-\d{4}-\d{4}-\d{3}[\dX]",
+                message="A valid ORCID iD consists of 16 digits separated by dashes.",
+            ), ORCIDValidator, duplicated_orcid_validator
+        ]
     )
 
-    status_options = [("active", _("Active")),
-                      ("retired", _("Retired")),
-                      ("departed", _("Departed")),
-                      ("deceased", _("Deceased"))]
+    status_options = [("active", _("Active")), ("retired", _("Retired")),
+                      ("departed", _("Departed")), ("deceased", _("Deceased"))]
 
     status = fields.SelectField(
         label='Status',
@@ -447,32 +435,19 @@ class AuthorUpdateForm(INSPIREForm):
         widget=DynamicUnsortedWidget()
     )
 
-    research_field_options = [("ACC-PHYS", _("acc-phys")),
-                              ("ASTRO-PH", _("astro-ph")),
-                              ("ATOM-PH", _("atom-ph")),
-                              ("CHAO-DYN", _("chao-dyn")),
-                              ("CLIMATE", _("climate")),
-                              ("COMP", _("comp")),
-                              ("COND-MAT", _("cond-mat")),
-                              ("GENL-TH", _("genl-th")),
-                              ("GR-QC", _("gr-qc")),
-                              ("HEP-EX", _("hep-ex")),
-                              ("HEP-LAT", _("hep-lat")),
-                              ("HEP-PH", _("hep-ph")),
-                              ("HEP-TH", _("hep-th")),
-                              ("INSTR", _("instr")),
-                              ("LIBRARIAN", _("librarian")),
-                              ("MATH", _("math")),
-                              ("MATH-PH", _("math-ph")),
-                              ("MED-PHYS", _("med-phys")),
-                              ("NLIN", _("nlin")),
-                              ("NUCL-EX", _("nucl-ex")),
-                              ("NUCL-TH", _("nucl-th")),
-                              ("PHYSICS", _("physics")),
-                              ("PLASMA-PHYS", _("plasma-phys")),
-                              ("Q-BIO", _("q-bio")),
-                              ("QUANT-PH", _("quant-ph")),
-                              ("SSRL", _("ssrl")),
+    research_field_options = [("ACC-PHYS", _("acc-phys")), ("ASTRO-PH", _("astro-ph")),
+                              ("ATOM-PH", _("atom-ph")), ("CHAO-DYN", _("chao-dyn")),
+                              ("CLIMATE", _("climate")), ("COMP", _("comp")),
+                              ("COND-MAT", _("cond-mat")), ("GENL-TH", _("genl-th")),
+                              ("GR-QC", _("gr-qc")), ("HEP-EX", _("hep-ex")),
+                              ("HEP-LAT", _("hep-lat")), ("HEP-PH", _("hep-ph")),
+                              ("HEP-TH", _("hep-th")), ("INSTR", _("instr")),
+                              ("LIBRARIAN", _("librarian")), ("MATH", _("math")),
+                              ("MATH-PH", _("math-ph")), ("MED-PHYS", _("med-phys")),
+                              ("NLIN", _("nlin")), ("NUCL-EX", _("nucl-ex")),
+                              ("NUCL-TH", _("nucl-th")), ("PHYSICS", _("physics")),
+                              ("PLASMA-PHYS", _("plasma-phys")), ("Q-BIO", _("q-bio")),
+                              ("QUANT-PH", _("quant-ph")), ("SSRL", _("ssrl")),
                               ("OTHER", _("other"))]
 
     research_field = fields.SelectMultipleField(
@@ -543,28 +518,26 @@ class AuthorUpdateForm(INSPIREForm):
 
     # Group fields in categories
 
-    groups = [
-        ('Personal Information',
-            ['given_names', 'family_name', 'display_name', 'native_name', 'email',
-             'public_emails', 'status', 'orcid', 'bai', 'inspireid'],
-            {"icon": "fa fa-user"}
-         ),
-        ('Personal Websites',
-            ['websites', 'linkedin_url', 'blog_url',
-                'twitter_url', "twitter_hidden"],
-            {"icon": "fa fa-globe"}
-
-         ),
-        ('Career Information',
-            ['research_field', 'institution_history',
-                'experiments', 'advisors'],
-            {"icon": "fa fa-university"}
-         ),
-        ('Comments',
-            ['extra_comments'],
-            {"icon": "fa fa-comments"}
-         )
-    ]
+    groups = [(
+        'Personal Information', [
+            'given_names', 'family_name', 'display_name', 'native_name', 'email', 'public_emails',
+            'status', 'orcid', 'bai', 'inspireid'
+        ], {
+            "icon": "fa fa-user"
+        }
+    ), (
+        'Personal Websites',
+        ['websites', 'linkedin_url', 'blog_url', 'twitter_url', "twitter_hidden"], {
+            "icon": "fa fa-globe"
+        }
+    ), (
+        'Career Information', ['research_field', 'institution_history', 'experiments', 'advisors'],
+        {
+            "icon": "fa fa-university"
+        }
+    ), ('Comments', ['extra_comments'], {
+        "icon": "fa fa-comments"
+    })]
 
     def __init__(self, is_review=False, *args, **kwargs):
         """Constructor."""

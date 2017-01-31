@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -40,6 +39,4 @@ def page_nr(self, key, value):
 @utils.for_each_value
 def page_nr2marc(self, key, value):
     """Page number."""
-    return {
-        'a': value,
-    }
+    return {'a': value, }

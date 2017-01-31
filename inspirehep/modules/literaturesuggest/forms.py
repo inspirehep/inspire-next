@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Contains forms related to INSPIRE Literature suggestion."""
 
 from __future__ import absolute_import, division, print_function
@@ -51,7 +50,6 @@ from inspirehep.modules.forms.validators.simple_fields import duplicated_doi_val
 from inspirehep.modules.forms.validators.dynamic_fields import AuthorsValidation
 
 from inspirehep.modules.literaturesuggest.fields.arxiv_id import ArXivField
-
 
 #
 # Field class names
@@ -128,17 +126,18 @@ def radiochoice_buttons(field, **dummy_kwargs):
 def defensedate_widget(field, **kwargs):
     """Date widget fot thesis."""
     field_id = kwargs.pop('id', field.id)
-    html = [u'<div class="row %s"><div class="col-xs-12">\
+    html = [
+        u'<div class="row %s"><div class="col-xs-12">\
             <input class="datepicker form-control" %s type="text">\
-            </div></div>'
-            % (THESIS_CLASS, html_params(id=field_id,
-                                         name=field_id,
-                                         value=field.data or ''))]
+            </div></div>' %
+        (THESIS_CLASS, html_params(
+            id=field_id, name=field_id, value=field.data or ''
+        ))
+    ]
     return HTMLString(u''.join(html))
 
 
 class CheckboxButton(object):
-
     """Checkbox button."""
 
     def __init__(self, msg=""):
@@ -160,21 +159,17 @@ class CheckboxButton(object):
 
 def journal_title_kb_mapper(val):
     """Return object ready to autocomplete journal titles."""
-    return {
-        'value': "%s" % val,
-        'fields': {
-            "journal_title": val,
-        }
-    }
+    return {'value': "%s" % val, 'fields': {"journal_title": val, }}
 
 
 class AuthorInlineForm(INSPIREForm):
-
     """Author inline form."""
 
     name = fields.TextField(
         widget_classes='form-control',
-        widget=ColumnInput(class_="col-xs-6", description="Family name, First name"),
+        widget=ColumnInput(
+            class_="col-xs-6", description="Family name, First name"
+        ),
         # validators=[
         #     validators.Required(),
         # ],
@@ -185,13 +180,14 @@ class AuthorInlineForm(INSPIREForm):
         placeholder='Start typing for suggestions',
         autocomplete_limit=5,
         widget_classes='form-control',
-        widget=ColumnInput(class_="col-xs-4 col-pad-0", description="Affiliation"),
+        widget=ColumnInput(
+            class_="col-xs-4 col-pad-0", description="Affiliation"
+        ),
         export_key='affiliation',
     )
 
 
 class UrlInlineForm(INSPIREForm):
-
     """Url inline form."""
 
     url = fields.TextField(
@@ -203,7 +199,6 @@ class UrlInlineForm(INSPIREForm):
 
 
 class ReportNumberInlineForm(INSPIREForm):
-
     """Repor number inline form."""
 
     report_number = fields.TextField(
@@ -225,7 +220,6 @@ class UnorderedDynamicItemWidget(DynamicItemWidget):
 
 
 class LiteratureForm(INSPIREForm):
-
     """Literature form fields."""
 
     doi = fields.DOIField(
@@ -234,8 +228,11 @@ class LiteratureForm(INSPIREForm):
         export_key='doi',
         description='e.g. 10.1086/305772 or doi:10.1086/305772',
         placeholder='',
-        validators=[DOISyntaxValidator("The provided DOI is invalid - it should look similar to '10.1086/305772'."),
-                    duplicated_doi_validator],
+        validators=[
+            DOISyntaxValidator(
+                "The provided DOI is invalid - it should look similar to '10.1086/305772'."
+            ), duplicated_doi_validator
+        ],
     )
 
     arxiv_id = ArXivField(
@@ -244,22 +241,16 @@ class LiteratureForm(INSPIREForm):
         validators=[arxiv_syntax_validation, duplicated_arxiv_id_validator],
     )
 
-    categories = fields.TextField(
-        widget=HiddenInput(),
-    )
+    categories = fields.TextField(widget=HiddenInput(), )
 
     # isbn = ISBNField(
     #     label=_('ISBN'),
     #     widget_classes='form-control',
     # )
 
-    import_buttons = fields.SubmitField(
-        label=_(' '),
-        widget=import_buttons_widget
-    )
+    import_buttons = fields.SubmitField(label=_(' '), widget=import_buttons_widget)
 
-    types_of_doc = [("article", _("Article/Conference paper")),
-                    ("thesis", _("Thesis"))]
+    types_of_doc = [("article", _("Article/Conference paper")), ("thesis", _("Thesis"))]
 
     # ("chapter", _("Book Chapter")),
     # ("book", _("Book")),
@@ -343,21 +334,11 @@ class LiteratureForm(INSPIREForm):
         export_key='abstract',
     )
 
-    languages = [("en", _("English")),
-                 ("rus", _("Russian")),
-                 ("ger", _("German")),
-                 ("fre", _("French")),
-                 ("ita", _("Italian")),
-                 ("spa", _("Spanish")),
-                 ("chi", _("Chinese")),
-                 ("por", _("Portuguese")),
-                 ("oth", _("Other"))]
+    languages = [("en", _("English")), ("rus", _("Russian")), ("ger", _("German")),
+                 ("fre", _("French")), ("ita", _("Italian")), ("spa", _("Spanish")),
+                 ("chi", _("Chinese")), ("por", _("Portuguese")), ("oth", _("Other"))]
 
-    language = fields.LanguageField(
-        label=_("Language"),
-        export_key="language",
-        choices=languages
-    )
+    language = fields.LanguageField(label=_("Language"), export_key="language", choices=languages)
 
     other_language = fields.TextField(
         label=_("Other Language"),
@@ -464,20 +445,11 @@ class LiteratureForm(INSPIREForm):
         widget_classes="form-control" + ARTICLE_CLASS
     )
 
-    volume = fields.TextField(
-        label=_('Volume'),
-        widget_classes="form-control" + ARTICLE_CLASS
-    )
+    volume = fields.TextField(label=_('Volume'), widget_classes="form-control" + ARTICLE_CLASS)
 
-    year = fields.TextField(
-        label=_('Year'),
-        widget_classes="form-control" + ARTICLE_CLASS
-    )
+    year = fields.TextField(label=_('Year'), widget_classes="form-control" + ARTICLE_CLASS)
 
-    issue = fields.TextField(
-        label=_('Issue'),
-        widget_classes="form-control" + ARTICLE_CLASS
-    )
+    issue = fields.TextField(label=_('Issue'), widget_classes="form-control" + ARTICLE_CLASS)
 
     nonpublic_note = fields.TextAreaField(
         label=_('Proceedings'),
@@ -579,35 +551,44 @@ class LiteratureForm(INSPIREForm):
     # Group fields in categories
 
     groups = [
-        ('Import information',
-            ['arxiv_id', 'doi', 'import_buttons']),
-        ('Document Type',
-            ['type_of_doc', ]),
-        ('Links',
-            ['url', 'additional_url']),
-        ('Basic Information',
-            ['title', 'title_arXiv', 'categories', 'language',
-             'other_language', 'title_translation', 'subject', 'authors',
-             'collaboration', 'experiment', 'abstract',
-             'report_numbers']),
-        ('Thesis Information',
-            ['supervisors', 'thesis_date', 'defense_date', 'degree_type',
-             'institution', 'license_url']),
+        ('Import information', ['arxiv_id', 'doi', 'import_buttons']),
+        ('Document Type', ['type_of_doc', ]),
+        ('Links', ['url', 'additional_url']),
+        (
+            'Basic Information', [
+                'title', 'title_arXiv', 'categories', 'language', 'other_language',
+                'title_translation', 'subject', 'authors', 'collaboration', 'experiment',
+                'abstract', 'report_numbers'
+            ]
+        ),
+        (
+            'Thesis Information', [
+                'supervisors', 'thesis_date', 'defense_date', 'degree_type', 'institution',
+                'license_url'
+            ]
+        ),
         # ('Licenses and copyright',
         #     ['license', 'license_url'], {'classes': 'collapse'}),
-        ('Journal Information',
-            ['journal_title', 'volume', 'issue', 'year',
-             'page_range_article_id']),
-        ('Conference Information',
-            ['conf_name', 'conference_id'], {'classes': 'collapse'}),
-        ('Proceedings Information (if not published in a journal)',
-            ['nonpublic_note'], {'classes': 'collapse'}),
-        ('References',
-            ['references'], {'classes': 'collapse'}),
+        (
+            'Journal Information',
+            ['journal_title', 'volume', 'issue', 'year', 'page_range_article_id']
+        ),
+        ('Conference Information', ['conf_name', 'conference_id'], {
+            'classes': 'collapse'
+        }),
+        (
+            'Proceedings Information (if not published in a journal)', ['nonpublic_note'], {
+                'classes': 'collapse'
+            }
+        ),
+        ('References', ['references'], {
+            'classes': 'collapse'
+        }),
         # ('Upload files',
         #     ['file_field', 'ok_to_upload']),
-        ('Additional comments',
-            ['extra_comments'], {'classes': 'collapse'}),
+        ('Additional comments', ['extra_comments'], {
+            'classes': 'collapse'
+        }),
     ]
 
     field_sizes = {
@@ -622,11 +603,6 @@ class LiteratureForm(INSPIREForm):
         """Constructor."""
         super(LiteratureForm, self).__init__(*args, **kwargs)
 
-        self.subject.choices = [
-            (val, val)
-            for val in current_app.config['INSPIRE_CATEGORIES']
-        ]
-        self.degree_type.choices = [
-            (val, val)
-            for val in current_app.config['INSPIRE_DEGREE_TYPES']
-        ]
+        self.subject.choices = [(val, val) for val in current_app.config['INSPIRE_CATEGORIES']]
+        self.degree_type.choices = [(val, val)
+                                    for val in current_app.config['INSPIRE_DEGREE_TYPES']]

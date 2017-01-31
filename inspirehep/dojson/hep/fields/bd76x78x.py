@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -42,6 +41,7 @@ from ...utils import (
 @utils.for_each_value
 def publication_info(self, key, value):
     """Publication info about record."""
+
     def get_int_value(val):
         if val:
             out = force_force_list(val)[0]
@@ -95,8 +95,7 @@ def publication_info2marc(self, key, value):
     if value.get('artid'):
         page_artid.append('{artid}'.format(**value))
     return {
-        '0': get_recid_from_ref(
-            value.get('parent_record')),
+        '0': get_recid_from_ref(value.get('parent_record')),
         'c': page_artid,
         'n': value.get('journal_issue'),
         'o': value.get('conf_acronym'),

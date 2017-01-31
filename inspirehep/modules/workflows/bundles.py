@@ -20,7 +20,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Bundles for forms used across INSPIRE."""
 
 from __future__ import absolute_import, division, print_function
@@ -29,7 +28,6 @@ from invenio_assets import NpmBundle
 from invenio_assets.filters import RequireJSFilter
 
 from inspirehep.modules.theme.bundles import js as _js
-
 
 details_js = NpmBundle(
     "js/inspire_workflows_ui/holdingpen/app.js",

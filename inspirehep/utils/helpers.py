@@ -19,7 +19,6 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Various helpers for the overlay."""
 
 from __future__ import absolute_import, division, print_function
@@ -31,10 +30,7 @@ import requests
 
 def download_file(url, output_file=None, chunk_size=1024):
     """Download a file to specified location."""
-    r = requests.get(
-        url=url,
-        stream=True
-    )
+    r = requests.get(url=url, stream=True)
     if r.status_code == 200:
         with open(output_file, 'wb') as f:
             for chunk in r.iter_content(chunk_size):
@@ -64,12 +60,14 @@ def get_json_for_plots(plots):
     output_records = []
     index = 0
     for plot in plots:
-        output_records.append(dict(
-            url=plot.get('url'),
-            docfile_type='Plot',
-            description="{0:05d} {1}".format(index, "".join(plot.get('captions', []))),
-            filename=plot.get('name'),
-        ))
+        output_records.append(
+            dict(
+                url=plot.get('url'),
+                docfile_type='Plot',
+                description="{0:05d} {1}".format(index, "".join(plot.get('captions', []))),
+                filename=plot.get('name'),
+            )
+        )
         index += 1
     return dict(fft=output_records)
 

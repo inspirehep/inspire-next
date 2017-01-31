@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Theme views."""
 
 from __future__ import absolute_import, division, print_function
@@ -49,18 +48,11 @@ from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
     get_pid_type_from_endpoint,
 )
-from inspirehep.modules.records.conference_series import (
-    CONFERENCE_CATEGORIES_TO_SERIES,
-)
+from inspirehep.modules.records.conference_series import (CONFERENCE_CATEGORIES_TO_SERIES, )
 from inspirehep.modules.references.view_utils import Reference
 from inspirehep.modules.search import (
-    AuthorsSearch,
-    ConferencesSearch,
-    DataSearch,
-    ExperimentsSearch,
-    InstitutionsSearch,
-    JournalsSearch,
-    LiteratureSearch
+    AuthorsSearch, ConferencesSearch, DataSearch, ExperimentsSearch, InstitutionsSearch,
+    JournalsSearch, LiteratureSearch
 )
 from inspirehep.utils.citations import Citation
 from inspirehep.utils.conferences import (
@@ -74,7 +66,6 @@ from inspirehep.utils.experiments import (
 from inspirehep.utils.record import get_title
 from inspirehep.utils.template import render_macro_from_template
 
-
 blueprint = Blueprint(
     'inspirehep_theme',
     __name__,
@@ -83,10 +74,10 @@ blueprint = Blueprint(
     static_folder='static',
 )
 
-
 #
 # Collections
 #
+
 
 @blueprint.route('/literature', methods=['GET', ])
 @blueprint.route('/collection/literature', methods=['GET', ])
@@ -193,6 +184,7 @@ def data():
 # Error handlers
 #
 
+
 def unauthorized(e):
     """Error handler to show a 401.html page in case of a 401 error."""
     return render_template(current_app.config['THEME_401_TEMPLATE']), 401
@@ -217,6 +209,7 @@ def internal_error(e):
 # Ping
 #
 
+
 @blueprint.route('/ping')
 def ping():
     return 'OK'
@@ -225,6 +218,7 @@ def ping():
 #
 # Handlers for AJAX requests regarding references and citations
 #
+
 
 @blueprint.route('/ajax/references', methods=['GET'])
 def ajax_references():
@@ -238,11 +232,7 @@ def ajax_references():
 
     record = LiteratureSearch().get_source(pid.object_uuid)
 
-    return jsonify(
-        {
-            "data": Reference(record).references()
-        }
-    )
+    return jsonify({"data": Reference(record).references()})
 
 
 @blueprint.route('/ajax/citations', methods=['GET'])
@@ -257,16 +247,13 @@ def ajax_citations():
 
     record = LiteratureSearch().get_source(pid.object_uuid)
 
-    return jsonify(
-        {
-            "data": Citation(record).citations()
-        }
-    )
+    return jsonify({"data": Citation(record).citations()})
 
 
 #
 # Handlers for AJAX requests regarding institution detailed view
 #
+
 
 def get_institution_experiments_from_es(icn):
     """
@@ -277,9 +264,7 @@ def get_institution_experiments_from_es(icn):
     :param icn: Institution canonical name.
     :type icn: string
     """
-    query = {
-        "term": {"affiliation": icn}
-    }
+    query = {"term": {"affiliation": icn}}
     search = ExperimentsSearch().query(query)[:100]
     search = search.sort('-earliest_date')
 
@@ -293,20 +278,12 @@ def get_institution_papers_from_es(recid):
     :param recid: id of the institution.
     :type recid: string
     """
-    return LiteratureSearch().query_from_iq(
-        'authors.affiliations.recid:{}'.format(recid)
-    ).sort(
-        '-earliest_date'
-    ).params(
+    return LiteratureSearch(
+    ).query_from_iq('authors.affiliations.recid:{}'.format(recid)).sort('-earliest_date').params(
         size=100,
         _source=[
-            'control_number',
-            'earliest_date',
-            'titles',
-            'authors',
-            'publication_info',
-            'citation_count',
-            'collaboration'
+            'control_number', 'earliest_date', 'titles', 'authors', 'publication_info',
+            'citation_count', 'collaboration'
         ]
     ).execute().hits
 
@@ -318,9 +295,7 @@ def get_experiment_publications(experiment_name):
     :param experiment_name: canonical name of the experiment.
     :type experiment_name: string
     """
-    query = {
-        "term": {"accelerator_experiments.experiment": experiment_name}
-    }
+    query = {"term": {"accelerator_experiments.experiment": experiment_name}}
     search = LiteratureSearch().query(query)
     search = search.params(search_type="count")
     return search.execute().hits.total
@@ -333,10 +308,7 @@ def get_institution_people_datatables_rows(recid):
     :param recid: id of the institution.
     :type recid: string
     """
-    query = LiteratureSearch().query(
-        "term",
-        authors__affiliations__recid=recid
-    )
+    query = LiteratureSearch().query("term", authors__affiliations__recid=recid)
     query = query.params(search_type="count")
 
     query.aggs.bucket("authors", "nested", path="authors")\
@@ -348,9 +320,8 @@ def get_institution_people_datatables_rows(recid):
     records_from_es = query.execute().to_dict()
 
     # Extract all the record ids from the aggregation
-    papers_per_author = records_from_es[
-        'aggregations'
-    ]['authors']['affiliated']['byrecid']['buckets']
+    papers_per_author = records_from_es['aggregations']['authors']['affiliated']['byrecid'
+                                                                                 ]['buckets']
     recids = [int(paper['key']) for paper in papers_per_author]
 
     # Generate query to retrieve records from author index
@@ -360,16 +331,11 @@ def get_institution_people_datatables_rows(recid):
         if i != len(recids) - 1:
             query += " OR "
 
-    results = AuthorsSearch().query_from_iq(
-        query
-    ).params(
-        size=9999,
-        _source=['control_number', 'name']
+    results = AuthorsSearch().query_from_iq(query).params(
+        size=9999, _source=['control_number', 'name']
     ).execute()
 
-    recid_map = dict(
-        [(result.control_number, result.name) for result in results]
-    )
+    recid_map = dict([(result.control_number, result.name) for result in results])
 
     result = []
     author_html_link = u"<a href='/authors/{recid}'>{name}</a>"
@@ -378,16 +344,14 @@ def get_institution_people_datatables_rows(recid):
         try:
             row.append(
                 author_html_link.format(
-                    recid=author['key'],
-                    name=recid_map[author['key']].preferred_name
+                    recid=author['key'], name=recid_map[author['key']].preferred_name
                 )
             )
         except:
             # No preferred name, use value
             row.append(
                 author_html_link.format(
-                    recid=author['key'],
-                    name=recid_map[author['key']].value
+                    recid=author['key'], name=recid_map[author['key']].value
                 )
             )
         row.append(author['doc_count'])
@@ -405,16 +369,10 @@ def get_institution_experiments_datatables_rows(hits):
     for hit in hits:
         row = []
         try:
-            row.append(
-                name_html.format(
-                    id=hit.control_number,
-                    name=hit.experiment_names[0].title
-                )
-            )
+            row.append(name_html.format(id=hit.control_number, name=hit.experiment_names[0].title))
         except ValueError:
             row.append(hit.collaboration)
-        row.append(get_experiment_publications(
-            hit.experiment_names[0].title))
+        row.append(get_experiment_publications(hit.experiment_names[0].title))
         result.append(row)
     return result
 
@@ -429,8 +387,7 @@ def get_institution_papers_datatables_rows(hits):
         row = []
         row.append(
             title_html.format(
-                id=hit.control_number,
-                name=get_title(hit.to_dict()).encode('utf8')
+                id=hit.control_number, name=get_title(hit.to_dict()).encode('utf8')
             )
         )
         ctx = {
@@ -440,11 +397,12 @@ def get_institution_papers_datatables_rows(hits):
             'show_affiliations': 'false',
             'collaboration_only': 'true'
         }
-        row.append(render_macro_from_template(
-            name="render_record_authors",
-            template="inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl",
-            ctx=ctx
-        )
+        row.append(
+            render_macro_from_template(
+                name="render_record_authors",
+                template="inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl",
+                ctx=ctx
+            )
         )
         try:
             row.append(hit.publication_info[0].journal_title)
@@ -468,11 +426,7 @@ def ajax_institutions_people():
     """Datatable handler to get people working in an institution."""
     institution_recid = request.args.get('recid', '')
 
-    return jsonify(
-        {
-            "data": get_institution_people_datatables_rows(institution_recid)
-        }
-    )
+    return jsonify({"data": get_institution_people_datatables_rows(institution_recid)})
 
 
 @blueprint.route('/ajax/institutions/experiments', methods=['GET'])
@@ -489,12 +443,10 @@ def ajax_institutions_experiments():
         icn = ''
 
     hits = get_institution_experiments_from_es(icn)
-    return jsonify(
-        {
-            "data": get_institution_experiments_datatables_rows(hits),
-            "total": hits.total
-        }
-    )
+    return jsonify({
+        "data": get_institution_experiments_datatables_rows(hits),
+        "total": hits.total
+    })
 
 
 @blueprint.route('/ajax/institutions/papers', methods=['GET'])
@@ -503,17 +455,13 @@ def ajax_institutions_papers():
     recid = request.args.get('recid', '')
 
     hits = get_institution_papers_from_es(recid)
-    return jsonify(
-        {
-            "data": get_institution_papers_datatables_rows(hits),
-            "total": hits.total
-        }
-    )
+    return jsonify({"data": get_institution_papers_datatables_rows(hits), "total": hits.total})
 
 
 #
 # Feedback handler
 #
+
 
 @blueprint.route('/postfeedback', methods=['POST', ])
 def postfeedback():
@@ -552,6 +500,7 @@ def postfeedback():
 # Menu fixup
 #
 
+
 @blueprint.before_app_first_request
 def register_menu_items():
     """Hack to remove children of Settings menu"""
@@ -570,22 +519,25 @@ def register_menu_items():
 # Redirect /record/N
 #
 
+
 @blueprint.route('/record/<control_number>')
 def record(control_number):
     try:
-        pid = PersistentIdentifier.query.filter_by(
-            pid_value=control_number).one()
+        pid = PersistentIdentifier.query.filter_by(pid_value=control_number).one()
     except NoResultFound:
         abort(404)
 
-    return redirect('/{endpoint}/{control_number}'.format(
-        endpoint=get_endpoint_from_pid_type(pid.pid_type),
-        control_number=control_number)), 301
+    return redirect(
+        '/{endpoint}/{control_number}'.format(
+            endpoint=get_endpoint_from_pid_type(pid.pid_type), control_number=control_number
+        )
+    ), 301
 
 
 #
 # Handlers for AJAX requests regarding conferences detailed views
 #
+
 
 @blueprint.route('/ajax/conferences/series', methods=['GET'])
 def ajax_other_conferences():
@@ -594,12 +546,7 @@ def ajax_other_conferences():
     seriesname = request.args.get('seriesname', '')
 
     html, total = render_conferences_in_the_same_series(recid, seriesname)
-    return jsonify(
-        {
-            "data": html,
-            "total": total
-        }
-    )
+    return jsonify({"data": html, "total": total})
 
 
 @blueprint.route('/ajax/conferences/contributions', methods=['GET'])
@@ -609,12 +556,7 @@ def ajax_conference_contributions():
 
     html, total = render_conferences_contributions(cnum)
 
-    return jsonify(
-        {
-            "data": html,
-            "total": total
-        }
-    )
+    return jsonify({"data": html, "total": total})
 
 
 @blueprint.route('/ajax/experiments/contributions', methods=['GET'])
@@ -624,12 +566,7 @@ def ajax_experiment_contributions():
 
     html, total = render_experiment_contributions(experiment_name)
 
-    return jsonify(
-        {
-            "data": html,
-            "total": total
-        }
-    )
+    return jsonify({"data": html, "total": total})
 
 
 @blueprint.route('/ajax/experiments/people', methods=['GET'])
@@ -639,17 +576,13 @@ def ajax_experiments_people():
 
     html, total = render_experiment_people(experiment_name)
 
-    return jsonify(
-        {
-            "data": html,
-            "total": total
-        }
-    )
+    return jsonify({"data": html, "total": total})
 
 
 #
 # Redirect on login with ORCID
 #
+
 
 @blueprint.route('/account/settings/linkedaccounts/', methods=['GET'])
 def linkedaccounts():
@@ -661,10 +594,9 @@ def linkedaccounts():
 # Helpers
 #
 
+
 def _get_some_institutions():
-    some_institutions = InstitutionsSearch().query_from_iq(
-        ''
-    )[:250].execute()
+    some_institutions = InstitutionsSearch().query_from_iq('')[:250].execute()
 
     return [hit['_source'] for hit in some_institutions.to_dict()['hits']['hits']]
 
@@ -673,10 +605,9 @@ def _get_upcoming_conferences():
     today = date.today()
     in_six_months = today + relativedelta(months=+6)
 
-    upcoming_conferences = ConferencesSearch().query_from_iq(
-        'opening_date:{0}->{1}'.format(str(today), str(in_six_months))
-    ).sort(
-        {'opening_date': 'asc'}
-    )[1:100].execute()
+    upcoming_conferences = ConferencesSearch(
+    ).query_from_iq('opening_date:{0}->{1}'.format(str(today), str(in_six_months))).sort({
+        'opening_date': 'asc'
+    })[1:100].execute()
 
     return [hit['_source'] for hit in upcoming_conferences.to_dict()['hits']['hits']]

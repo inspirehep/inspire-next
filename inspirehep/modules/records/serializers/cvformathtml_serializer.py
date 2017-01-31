@@ -21,7 +21,6 @@
 # In applying this license, CERN does not
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
-
 """CV_format_html serializer for records."""
 
 from __future__ import absolute_import, division, print_function
@@ -41,8 +40,7 @@ class CVFORMATHTMLSerializer(object):
         """
         return Cv_latex_html_text(record, 'cv_latex_html', '<br/>').format()
 
-    def serialize_search(self, pid_fetcher, search_result, links=None,
-                         item_links_factory=None):
+    def serialize_search(self, pid_fetcher, search_result, links=None, item_links_factory=None):
         """Serialize a search result.
         :param pid_fetcher: Persistent identifier fetcher.
         :param search_result: Elasticsearch search result.
@@ -50,8 +48,6 @@ class CVFORMATHTMLSerializer(object):
         """
         records = []
         for hit in search_result['hits']['hits']:
-            records.append(Cv_latex_html_text(hit['_source'],
-                                              'cv_latex_html',
-                                              '<br/>').format())
+            records.append(Cv_latex_html_text(hit['_source'], 'cv_latex_html', '<br/>').format())
 
         return "\n".join(records)

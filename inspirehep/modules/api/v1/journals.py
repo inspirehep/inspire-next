@@ -19,36 +19,29 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction
-
 """API of Journal records."""
 
 from __future__ import absolute_import, division, print_function
 
 import json
 
-from inspirehep.modules.records.serializers.response import (
-    record_responsify_nocache,
-)
+from inspirehep.modules.records.serializers.response import (record_responsify_nocache, )
 from inspirehep.modules.search import LiteratureSearch
 
 from ..utils import build_citesummary, get_id
 
 
 class APIJournalsCitesummary(object):
-
     """Implementation of citesummary for Journal records."""
 
     def serialize(self, pid, record, links_factory=None):
         search_by_journal = LiteratureSearch().query(
             'match', publication_info__journal_recid=get_id(record)
         ).params(
-            _source=[
-                'control_number',
-            ],
+            _source=['control_number', ],
         )
 
-        literature_recids = [
-            get_id(el.to_dict()) for el in search_by_journal.scan()]
+        literature_recids = [get_id(el.to_dict()) for el in search_by_journal.scan()]
 
         search_by_recids = LiteratureSearch().filter(
             'terms', control_number=literature_recids
@@ -69,5 +62,4 @@ class APIJournalsCitesummary(object):
 
 
 citesummary = APIJournalsCitesummary()
-citesummary_response = record_responsify_nocache(
-    citesummary, 'application/json')
+citesummary_response = record_responsify_nocache(citesummary, 'application/json')

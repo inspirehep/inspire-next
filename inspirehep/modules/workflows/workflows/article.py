@@ -19,7 +19,6 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Workflow for processing single arXiv records harvested."""
 
 from __future__ import absolute_import, division, print_function
@@ -40,17 +39,8 @@ from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_refextract,
 )
 from inspirehep.modules.workflows.tasks.actions import (
-    add_core,
-    halt_record,
-    is_record_relevant,
-    in_production_mode,
-    is_record_accepted,
-    reject_record,
-    is_experimental_paper,
-    is_marked,
-    is_submission,
-    is_arxiv_paper,
-    mark,
+    add_core, halt_record, is_record_relevant, in_production_mode, is_record_accepted,
+    reject_record, is_experimental_paper, is_marked, is_submission, is_arxiv_paper, mark,
     prepare_update_payload
 )
 
@@ -64,7 +54,7 @@ from inspirehep.modules.workflows.tasks.magpie import (
     guess_categories,
     guess_experiments,
 )
-from inspirehep.modules.workflows.tasks.matching import(
+from inspirehep.modules.workflows.tasks.matching import (
     delete_self_and_stop_processing,
     stop_processing,
     pending_in_holding_pen,
@@ -94,7 +84,6 @@ from inspirehep.modules.literaturesuggest.tasks import (
     curation_ticket_context,
 )
 
-
 NOTIFY_SUBMISSION = [
     # Special RT integration for submissions
     # ======================================
@@ -111,7 +100,6 @@ NOTIFY_SUBMISSION = [
     ),
 ]
 
-
 ADD_INGESTION_MARKS = [
     # Article matching for non-submissions
     # ====================================
@@ -121,37 +109,27 @@ ADD_INGESTION_MARKS = [
     #     If the same article has been harvested before and the
     #     ingestion has been completed, process is continued
     #     to allow for updates.
-    IF(
-        pending_in_holding_pen,
-        [mark('delete', True)]
-    ),
+    IF(pending_in_holding_pen, [mark('delete', True)]),
     IF(
         is_arxiv_paper,
         [
             # FIXME: This filtering step should be removed when this
             #        workflow includes arXiv CORE harvesting
-            IF(
-                already_harvested,
-                [
-                    mark('already-ingested', True),
-                    mark('stop', True),
-                ]
-            ),
+            IF(already_harvested, [
+                mark('already-ingested', True),
+                mark('stop', True),
+            ]),
             # FIXME: This filtering step should be removed when:
             #        old previously rejected records are treated
             #        differently e.g. good auto-reject heuristics or better
             #        time based filtering (5 days is quite random now).
-            IF(
-                previously_rejected(),
-                [
-                    mark('already-ingested', True),
-                    mark('stop', True),
-                ]
-            ),
+            IF(previously_rejected(), [
+                mark('already-ingested', True),
+                mark('stop', True),
+            ]),
         ]
     ),
 ]
-
 
 DELETE_AND_STOP_IF_NEEDED = [
     IF(
@@ -164,19 +142,14 @@ DELETE_AND_STOP_IF_NEEDED = [
             delete_self_and_stop_processing
         ]
     ),
-    IF(
-        is_marked('stop'),
-        [stop_processing]
-    ),
+    IF(is_marked('stop'), [stop_processing]),
 ]
-
 
 ENHANCE_RECORD = [
     # Article Processing
     # ==================
     IF(
-        is_arxiv_paper,
-        [
+        is_arxiv_paper, [
             arxiv_fulltext_download,
             arxiv_plot_extract,
             arxiv_refextract,
@@ -192,10 +165,7 @@ ENHANCE_RECORD = [
     ),
     filter_core_keywords,
     guess_categories,
-    IF(
-        is_experimental_paper,
-        [guess_experiments]
-    ),
+    IF(is_experimental_paper, [guess_experiments]),
     guess_keywords,
     # Predict action for a generic HEP paper based only on title
     # and abstract.
@@ -204,66 +174,45 @@ ENHANCE_RECORD = [
     # =====================================
 ]
 
-
 CHECK_IF_SUBMISSION_AND_ASK_FOR_APPROVAL = [
     IF_ELSE(
-        is_record_relevant,
-        [halt_record(action="hep_approval")],
-        [
-            reject_record("Article automatically rejected"),
-            stop_processing
-        ]
+        is_record_relevant, [halt_record(action="hep_approval")],
+        [reject_record("Article automatically rejected"), stop_processing]
     ),
 ]
 
-
-NOTIFY_NOT_ACCEPTED = [
-    IF(
-        is_submission,
-        [reply_ticket(context_factory=reply_ticket_context)]
-    )
-]
-
+NOTIFY_NOT_ACCEPTED = [IF(is_submission, [reply_ticket(context_factory=reply_ticket_context)])]
 
 NOTIFY_ALREADY_EXISTING = [
     reject_record('Article was already found on INSPIRE'),
     stop_processing,
     reply_ticket(
-        template=(
-            "literaturesuggest/tickets/"
-            "user_rejected_exists.html"
-        ),
+        template=("literaturesuggest/tickets/"
+                  "user_rejected_exists.html"),
         context_factory=reply_ticket_context
     ),
     close_ticket(ticket_id_key="ticket_id"),
 ]
 
-
 NOTIFY_ACCEPTED = [
     IF(
-        is_submission,
-        [
+        is_submission, [
             IF(
-                curation_ticket_needed,
-                [
+                curation_ticket_needed, [
                     create_ticket(
-                        template=(
-                            "literaturesuggest/tickets/curation_core.html"
-                        ),
+                        template=("literaturesuggest/tickets/curation_core.html"),
                         queue="HEP_curation",
                         context_factory=curation_ticket_context,
                         ticket_id_key="curation_ticket_id"
                     )
                 ]
-            ),
-            reply_ticket(
+            ), reply_ticket(
                 template="literaturesuggest/tickets/user_accepted.html",
                 context_factory=reply_ticket_context
             )
         ]
     )
 ]
-
 
 POSTENHANCE_RECORD = [
     add_core,
@@ -275,23 +224,16 @@ POSTENHANCE_RECORD = [
     prepare_files,
 ]
 
-
 SEND_TO_LEGACY = [
     IF_ELSE(
-        article_exists,
-        [
+        article_exists, [
             prepare_update_payload(extra_data_key="update_payload"),
             send_robotupload(
-                marcxml_processor=hep2marc,
-                mode="correct",
-                extra_data_key="update_payload"
+                marcxml_processor=hep2marc, mode="correct", extra_data_key="update_payload"
             ),
-        ], [
-            send_robotupload(
-                marcxml_processor=hep2marc,
-                mode="insert"
-            ),
-        ]
+        ], [send_robotupload(
+            marcxml_processor=hep2marc, mode="insert"
+        ), ]
     )
 ]
 
@@ -311,25 +253,15 @@ CHECK_IF_MERGE_AND_STOP_IF_SO = [
     )
 ]
 
-
 ADD_MARKS = [
     # Query locally or via legacy search API to see if article
     # is already ingested and this is an update
-    IF(
-        article_exists,
-        [mark('match-found', True)]
-    ),
+    IF(article_exists, [mark('match-found', True)]),
     IF(
         pending_in_holding_pen,
         [mark('already-in-holding-pen', True)],
     ),
-    IF_ELSE(
-        is_submission,
-        NOTIFY_SUBMISSION,
-        (
-            ADD_INGESTION_MARKS
-        )
-    ),
+    IF_ELSE(is_submission, NOTIFY_SUBMISSION, (ADD_INGESTION_MARKS)),
 ]
 
 
@@ -342,22 +274,14 @@ class Article(object):
         [
             # Make sure schema is set for proper indexing in Holding Pen
             set_schema,
-        ]
-        + ADD_MARKS
-        + DELETE_AND_STOP_IF_NEEDED
-        + ENHANCE_RECORD
+        ] + ADD_MARKS + DELETE_AND_STOP_IF_NEEDED + ENHANCE_RECORD
         # TODO: Once we have a way to resolve merges, we should
         # use that instead of stopping
-        + CHECK_IF_MERGE_AND_STOP_IF_SO
-        + CHECK_IF_SUBMISSION_AND_ASK_FOR_APPROVAL
-        + [
+        + CHECK_IF_MERGE_AND_STOP_IF_SO + CHECK_IF_SUBMISSION_AND_ASK_FOR_APPROVAL + [
             IF_ELSE(
                 is_record_accepted,
                 (
-                    POSTENHANCE_RECORD
-                    + SEND_TO_LEGACY
-                    + NOTIFY_ACCEPTED
-                    + [
+                    POSTENHANCE_RECORD + SEND_TO_LEGACY + NOTIFY_ACCEPTED + [
                         # TODO: once legacy is out, this should become
                         # unconditional, and remove the SEND_TO_LEGACY steps
                         IF_NOT(in_production_mode, [store_record]),

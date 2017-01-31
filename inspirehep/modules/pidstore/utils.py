@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """PIDStore utils."""
 
 from __future__ import absolute_import, division, print_function
@@ -70,8 +69,7 @@ def get_index_from_endpoint(endpoint):
 
 def get_pid_type_from_endpoint(endpoint):
     """Return the ``pid_type`` corresponding to an endpoint."""
-    ENDPOINT_TO_PID_TYPE = {
-        v: k for k, v in iteritems(_get_pid_type_endpoint_map())}
+    ENDPOINT_TO_PID_TYPE = {v: k for k, v in iteritems(_get_pid_type_endpoint_map())}
 
     return ENDPOINT_TO_PID_TYPE[endpoint]
 
@@ -83,6 +81,7 @@ def get_pid_type_from_schema(schema):
     Literature records. This implementation exploits this by falling back to
     ``get_pid_type_from_endpoint``.
     """
+
     def _get_schema_name_from_schema(schema):
         return urlsplit(schema).path.split('/')[-1].split('.')[0]
 

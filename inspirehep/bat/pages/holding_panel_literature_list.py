@@ -36,26 +36,30 @@ from ..arsenic import Arsenic, ArsenicResponse
 
 
 def go_to():
-    Arsenic().get(os.environ['SERVER_NAME'] + '/holdingpen/list/?page=1&size=10&source=submission&workflow_name=HEP&status=HALTED')
+    Arsenic().get(
+        os.environ['SERVER_NAME'] +
+        '/holdingpen/list/?page=1&size=10&source=submission&workflow_name=HEP&status=HALTED'
+    )
 
 
 def click_first_record():
     WebDriverWait(Arsenic(), 10).until(
-        EC.visibility_of_element_located(
-            (By.XPATH, '//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler'))).click()
+        EC.visibility_of_element_located((
+            By.XPATH,
+            '//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler'
+        ))
+    ).click()
 
-    WebDriverWait(Arsenic(), 10).until(
-        EC.visibility_of_element_located(
-            (By.XPATH, '(//div[@class="ng-scope"])[2]')))
+    WebDriverWait(
+        Arsenic(), 10
+    ).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="ng-scope"])[2]')))
 
 
 def load_submission_record(input_data):
     def _load_submission_record():
         return (
-            'Computing' in record and
-            'Accelerators' in record and
-            'My Title For Test' in record and
-            'admin@inspirehep.net' in record and
+            'Computing' in record and 'Accelerators' in record and
+            'My Title For Test' in record and 'admin@inspirehep.net' in record and
             'Mister White; Mister Brown' in record and
             'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record
         )
@@ -67,10 +71,14 @@ def load_submission_record(input_data):
 def _force_load_record(input_data):
     try:
         WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located(
-                (By.XPATH, '//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler/div[3]/a'))).click()
+            EC.visibility_of_element_located((
+                By.XPATH,
+                '//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler/div[3]/a'
+            ))
+        ).click()
         record = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@class="row hp-item ng-scope"][1]'))).text
+            EC.visibility_of_element_located((By.XPATH, '//div[@class="row hp-item ng-scope"][1]'))
+        ).text
     except (ElementNotVisibleException, WebDriverException):
         go_to()
         record = _force_load_record(input_data)

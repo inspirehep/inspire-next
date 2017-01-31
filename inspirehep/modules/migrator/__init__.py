@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 """INSPIRE migrator extension."""
 
 from __future__ import absolute_import, division, print_function
@@ -41,10 +40,7 @@ class INSPIREMigrator(object):
 
     def init_config(self, config):
         """Initialize configuration."""
-        config.setdefault(
-            'CFG_INSPIRE_LEGACY_BASEURL',
-            'http://inspireheptest.cern.ch'
-        )
+        config.setdefault('CFG_INSPIRE_LEGACY_BASEURL', 'http://inspireheptest.cern.ch')
 
 
-__all__ = ('INSPIREMigrator',)
+__all__ = ('INSPIREMigrator', )

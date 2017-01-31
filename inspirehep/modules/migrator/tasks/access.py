@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
@@ -17,10 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
-
 """Manage migration from INSPIRE legacy instance."""
-
 
 from __future__ import absolute_import, division, print_function
 
@@ -37,7 +33,5 @@ def import_userrole(obj):
     if Role.query.get(obj.get('role_id')):
         # Need to use engine directly since userrole is not a model
         db.engine.execute(
-            userrole.insert(),
-            user_id=obj.get('user_id'),
-            role_id=obj.get('role_id')
+            userrole.insert(), user_id=obj.get('user_id'), role_id=obj.get('role_id')
         )

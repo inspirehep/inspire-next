@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIRE authors holdingpen views."""
 
 from __future__ import absolute_import, division, print_function
@@ -55,7 +54,6 @@ from ..forms import AuthorUpdateForm
 from ..permissions import holdingpen_author_permission
 from ..tasks import formdata_to_model
 
-
 blueprint = Blueprint(
     'inspirehep_authors_holdingpen',
     __name__,
@@ -81,8 +79,7 @@ def convert_for_form(data):
     if "name" in data:
         data["full_name"] = data["name"].get("value")
         try:
-            data["given_names"] = data["name"].get(
-                "value").split(",")[1].strip()
+            data["given_names"] = data["name"].get("value").split(",")[1].strip()
         except IndexError:
             data["given_names"] = ""
         data["family_name"] = data["name"].get("value").split(",")[0].strip()
@@ -111,20 +108,12 @@ def convert_for_form(data):
         data["institution_history"] = []
         data["public_emails"] = []
         for position in data["positions"]:
-            if not any(
-                [
-                    key in position for key in ('institution', '_rank',
-                                                'start_year', 'end_year')
-                ]
-            ):
+            if not any([
+                key in position for key in ('institution', '_rank', 'start_year', 'end_year')
+            ]):
                 if 'emails' in position:
                     for email in position['emails']:
-                        data["public_emails"].append(
-                            {
-                                'email': email,
-                                'original_email': email
-                            }
-                        )
+                        data["public_emails"].append({'email': email, 'original_email': email})
                 continue
             pos = {}
             pos["name"] = position.get("institution", {}).get("name")
@@ -138,12 +127,7 @@ def convert_for_form(data):
             if position.get("emails"):
                 pos["emails"] = position['emails']
                 for email in position['emails']:
-                    data["public_emails"].append(
-                        {
-                            'email': email,
-                            'original_email': email
-                        }
-                    )
+                    data["public_emails"].append({'email': email, 'original_email': email})
             data["institution_history"].append(pos)
         data["institution_history"].reverse()
     if 'advisors' in data:
@@ -197,10 +181,8 @@ def validate():
     form.validate()
 
     result = {}
-    changed_msgs = dict(
-        (name, messages) for name, messages in form.messages.items()
-        if name in formdata.keys()
-    )
+    changed_msgs = dict((name, messages) for name, messages in form.messages.items()
+                        if name in formdata.keys())
     result['messages'] = changed_msgs
 
     return jsonify(result)
@@ -241,11 +223,10 @@ def update(recid):
     if recid:
         try:
             url = os.path.join(
-                current_app.config["AUTHORS_UPDATE_BASE_URL"],
-                "record", str(recid), "export", "xm")
+                current_app.config["AUTHORS_UPDATE_BASE_URL"], "record", str(recid), "export", "xm"
+            )
             xml = requests.get(url)
-            record_regex = re.compile(
-                r"\<record\>.*\<\/record\>", re.MULTILINE + re.DOTALL)
+            record_regex = re.compile(r"\<record\>.*\<\/record\>", re.MULTILINE + re.DOTALL)
             xml_content = record_regex.search(xml.content).group()
             data = hepnames.do(create_record(xml_content))  # .encode("utf-8")
             convert_for_form(data)
@@ -273,9 +254,7 @@ def submitupdate():
     visitor.visit(form)
 
     workflow_object = workflow_object_class.create(
-        data={},
-        id_user=current_user.get_id(),
-        data_type="authors"
+        data={}, id_user=current_user.get_id(), data_type="authors"
     )
 
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
@@ -287,9 +266,7 @@ def submitupdate():
     # Start workflow. delay will execute the workflow in the background
     start.delay("author", object_id=workflow_object.id)
 
-    ctx = {
-        "inspire_url": get_inspire_url(visitor.data)
-    }
+    ctx = {"inspire_url": get_inspire_url(visitor.data)}
 
     return render_template('authors/forms/update_success.html', **ctx)
 
@@ -303,9 +280,7 @@ def submitnew():
     visitor.visit(form)
 
     workflow_object = workflow_object_class.create(
-        data={},
-        id_user=current_user.get_id(),
-        data_type="authors"
+        data={}, id_user=current_user.get_id(), data_type="authors"
     )
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
     workflow_object.extra_data['is-update'] = False
@@ -317,9 +292,7 @@ def submitnew():
     # background using, for example, Celery.
     start.delay("author", object_id=workflow_object.id)
 
-    ctx = {
-        "inspire_url": get_inspire_url(visitor.data)
-    }
+    ctx = {"inspire_url": get_inspire_url(visitor.data)}
 
     return render_template('authors/forms/new_success.html', **ctx)
 
@@ -351,10 +324,11 @@ def newreview():
             pass
     workflow_metadata['research_field'] = final_research_fields
 
-    form = AuthorUpdateForm(
-        data=workflow_metadata, is_review=True)
+    form = AuthorUpdateForm(data=workflow_metadata, is_review=True)
     ctx = {
-        "action": url_for('.reviewhandler', objectid=objectid),
+        "action": url_for(
+            '.reviewhandler', objectid=objectid
+        ),
         "name": "authorUpdateForm",
         "id": "authorUpdateForm",
         "objectid": objectid
@@ -386,8 +360,7 @@ def reviewhandler():
 
     resume.delay(workflow_object.id)
 
-    return render_template('authors/forms/new_review_accepted.html',
-                           approved=True)
+    return render_template('authors/forms/new_review_accepted.html', approved=True)
 
 
 @blueprint.route('/holdingpenreview', methods=['GET', 'POST'])
@@ -409,5 +382,4 @@ def holdingpenreview():
 
     resume.delay(workflow_object.id)
 
-    return render_template('authors/forms/new_review_accepted.html',
-                           approved=approved)
+    return render_template('authors/forms/new_review_accepted.html', approved=approved)

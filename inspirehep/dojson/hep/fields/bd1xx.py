@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -44,7 +43,6 @@ from ...utils import (
 
 from inspirehep.utils.helpers import force_force_list
 
-
 logger = logging.getLogger(__name__)
 
 ORCID = re.compile('\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]')
@@ -56,6 +54,7 @@ def authors(self, key, value):
 
     FIXME: currently not handling 100__v.
     """
+
     def _get_author(value):
         def _get_affiliations(value):
             result = []
@@ -154,19 +153,15 @@ def authors(self, key, value):
             for value in values:
                 value = value.lower()
                 if value in current_app.config['INSPIRE_LEGACY_ROLES']['editing']:
-                    contributor_roles.append(
-                        {
-                            'schema': 'CRediT',
-                            'value': 'Writing - review & editing'
-                        }
-                    )
+                    contributor_roles.append({
+                        'schema': 'CRediT',
+                        'value': 'Writing - review & editing'
+                    })
                 if value in current_app.config['INSPIRE_LEGACY_ROLES']['administration']:
-                    contributor_roles.append(
-                        {
-                            'schema': 'CRediT',
-                            'value': 'Project administration'
-                        }
-                    )
+                    contributor_roles.append({
+                        'schema': 'CRediT',
+                        'value': 'Project administration'
+                    })
             return contributor_roles
 
         return {
@@ -198,9 +193,7 @@ def authors2marc(self, key, value):
     value = force_force_list(value)
 
     def get_value(value):
-        affiliations = [
-            aff.get('value') for aff in value.get('affiliations', [])
-        ]
+        affiliations = [aff.get('value') for aff in value.get('affiliations', [])]
         return {
             'a': value.get('full_name'),
             'e': utils_get_value(value, 'contributor_roles.value'),
@@ -231,6 +224,4 @@ def corporate_author(self, key, value):
 @utils.for_each_value
 def corporate_author2marc(self, key, value):
     """Main Entry-Corporate Name."""
-    return {
-        'a': value,
-    }
+    return {'a': value, }

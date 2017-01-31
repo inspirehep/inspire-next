@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Bundles for author forms."""
 
 from __future__ import absolute_import, division, print_function
@@ -29,12 +28,9 @@ from invenio_assets.filters import RequireJSFilter
 
 from inspirehep.modules.theme.bundles import js as _js
 
-
 js = NpmBundle(
     "js/literaturesuggest/inspire_init.js",
     output="gen/inspire-literature-suggest.%(version)s.js",
     filters=RequireJSFilter(exclude=[_js]),
-    npm={
-        'buckets-js': '~1.98.0',
-    }
+    npm={'buckets-js': '~1.98.0', }
 )

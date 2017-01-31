@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Record serialization."""
 
 from __future__ import absolute_import, division, print_function
@@ -28,22 +27,16 @@ from inspirehep.modules.authors.rest.citations import AuthorAPICitations
 from inspirehep.modules.authors.rest.coauthors import AuthorAPICoauthors
 from inspirehep.modules.authors.rest.publications import AuthorAPIPublications
 from inspirehep.modules.authors.rest.stats import AuthorAPIStats
-from inspirehep.modules.records.serializers.response import (
-    record_responsify_nocache,
-)
+from inspirehep.modules.records.serializers.response import (record_responsify_nocache, )
 
 citations_v1 = AuthorAPICitations()
-citations_v1_response = record_responsify_nocache(citations_v1,
-                                                  'application/json')
+citations_v1_response = record_responsify_nocache(citations_v1, 'application/json')
 
 coauthors_v1 = AuthorAPICoauthors()
-coauthors_v1_response = record_responsify_nocache(coauthors_v1,
-                                                  'application/json')
+coauthors_v1_response = record_responsify_nocache(coauthors_v1, 'application/json')
 
 publications_v1 = AuthorAPIPublications()
-publications_v1_response = record_responsify_nocache(publications_v1,
-                                                     'application/json')
+publications_v1_response = record_responsify_nocache(publications_v1, 'application/json')
 
 stats_v1 = AuthorAPIStats()
-stats_v1_response = record_responsify_nocache(stats_v1,
-                                              'application/json')
+stats_v1_response = record_responsify_nocache(stats_v1, 'application/json')

@@ -35,10 +35,7 @@ def render_conferences_in_the_same_series(recid, seriesname):
         A row consists of
         [conference_name, conference_location, contributions, date]
     """
-    return render_conferences(
-        recid,
-        conferences_in_the_same_series_from_es(seriesname)
-    )
+    return render_conferences(recid, conferences_in_the_same_series_from_es(seriesname))
 
 
 def render_conferences_contributions(cnum):
@@ -54,34 +51,19 @@ def render_conferences_contributions(cnum):
 def conferences_in_the_same_series_from_es(seriesname):
     """Query ES for conferences in the same series."""
     query = 'series:"{}"'.format(seriesname)
-    return ConferencesSearch().query_from_iq(
-        query
-    ).params(
-        _source=[
-            'control_number',
-            'titles',
-            'address',
-            'opening_date',
-            'closing_date'
-        ]
+    return ConferencesSearch().query_from_iq(query).params(
+        _source=['control_number', 'titles', 'address', 'opening_date', 'closing_date']
     ).sort("-opening_date").execute().hits
 
 
 def conferences_contributions_from_es(cnum):
     """Query ES for conferences in the same series."""
     query = 'cnum:"{}"'.format(cnum)
-    return LiteratureSearch().query_from_iq(
-        query
-    ).params(
+    return LiteratureSearch().query_from_iq(query).params(
         size=100,
         _source=[
-            'control_number',
-            'earliest_date',
-            'titles',
-            'authors',
-            'publication_info',
-            'citation_count',
-            'collaboration'
+            'control_number', 'earliest_date', 'titles', 'authors', 'publication_info',
+            'citation_count', 'collaboration'
         ]
     ).sort('-citation_count').execute().hits
 
@@ -99,15 +81,16 @@ def render_conferences(recid, conferences):
 
         row = []
         conference_html = u'<a href="/conferences/{recid}">{title}</a>'.format(
-            recid=conference.control_number,
-            title=conference.titles[0].title
+            recid=conference.control_number, title=conference.titles[0].title
         )
         row.append(conference_html)
         row.append(conference['address'][0]['original_address'])
         row.append('')
-        row.append((render_template_to_string(
-                    "inspirehep_theme/conferences_in_series_date.html",
-                    record=conference.to_dict())))
+        row.append((
+            render_template_to_string(
+                "inspirehep_theme/conferences_in_series_date.html", record=conference.to_dict()
+            )
+        ))
         out.append(row)
 
     return out, conferences.total
@@ -122,12 +105,7 @@ def render_contributions(hits):
 
     for hit in hits:
         row = []
-        row.append(
-            title_html.format(
-                id=hit.control_number,
-                name=get_title(hit.to_dict())
-            )
-        )
+        row.append(title_html.format(id=hit.control_number, name=get_title(hit.to_dict())))
         ctx = {
             'record': hit.to_dict(),
             'is_brief': 'true',
@@ -135,11 +113,12 @@ def render_contributions(hits):
             'show_affiliations': 'false',
             'collaboration_only': 'true'
         }
-        row.append(render_macro_from_template(
-            name="render_record_authors",
-            template="inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl",
-            ctx=ctx
-        )
+        row.append(
+            render_macro_from_template(
+                name="render_record_authors",
+                template="inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl",
+                ctx=ctx
+            )
         )
         try:
             row.append(hit.publication_info[0].journal_title)

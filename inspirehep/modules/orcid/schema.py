@@ -32,12 +32,10 @@ from inspirehep.utils.helpers import force_force_list
 
 from inspirehep.utils.record import get_abstract, get_subtitle, get_title
 
-
 orcid_overdo = dojson.Overdo()
 
 
 class MLStripper(HTMLParser):
-
     def __init__(self):
         self.reset()
         self.fed = []
@@ -65,8 +63,7 @@ def title_rule(self, key, value):
     if title == '':
         raise KeyError
     subtitle = get_subtitle({"titles": value})
-    return {"title": title,
-            "subtitle": subtitle}
+    return {"title": title, "subtitle": subtitle}
 
 
 @orcid_overdo.over('journal-title', 'publication_info')
@@ -94,10 +91,11 @@ def date_rule(self, key, value):
             final_date[1] = date[1]
         if date[2]:
             final_date[2] = date[2]
-        publication_date = {'year': int(final_date[0]),
-                            'month': int(final_date[1]),
-                            'day': int(final_date[2])
-                            }
+        publication_date = {
+            'year': int(final_date[0]),
+            'month': int(final_date[1]),
+            'day': int(final_date[2])
+        }
         return publication_date
     except (TypeError, IndexError, AttributeError):
         pass
@@ -107,15 +105,9 @@ def date_rule(self, key, value):
 @dojson.utils.for_each_value
 def external_id_rule(self, key, value):
     if key == 'dois':
-        return{
-            'external-identifier-type': 'DOI',
-            'external-identifier-id': value.get('value')
-        }
+        return {'external-identifier-type': 'DOI', 'external-identifier-id': value.get('value')}
     if key == 'arxiv_eprints':
-        return {
-            'external-identifier-type': 'ARXIV',
-            'external-identifier-id': value.get('value')
-        }
+        return {'external-identifier-type': 'ARXIV', 'external-identifier-id': value.get('value')}
 
 
 @orcid_overdo.over('contributors', 'authors')

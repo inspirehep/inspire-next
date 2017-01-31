@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition for HepNames records."""
 
 from __future__ import absolute_import, division, print_function
@@ -29,15 +28,9 @@ import re
 from dojson import utils
 
 from ..model import hepnames, hepnames2marc
-from ...utils import (
-    classify_rank,
-    force_single_element,
-    get_record_ref,
-    get_recid_from_ref
-)
+from ...utils import (classify_rank, force_single_element, get_record_ref, get_recid_from_ref)
 
 from inspirehep.utils.helpers import force_force_list
-
 
 INSPIRE_BAI = re.compile('(\w+\.)+\d+')
 LOOKS_LIKE_CERN = re.compile('^\d+$|^CER[MN]?-|^CNER-|^CVERN-', re.I)
@@ -112,6 +105,7 @@ def name2marc(self, key, value):
 @utils.for_each_value
 def ids(self, key, value):
     """All identifiers, both internal and external."""
+
     def _get_type(value):
         IDS_MAP = {
             'ARXIV': 'ARXIV',
@@ -194,9 +188,7 @@ def other_names2marc(self, key, value):
 
     Usually a different form of writing the primary name.
     """
-    return {
-        'a': value
-    }
+    return {'a': value}
 
 
 @hepnames.over('native_name', '^880..')
@@ -209,9 +201,7 @@ def native_name(self, key, value):
 @hepnames2marc.over('880', '^native_name$')
 def native_name2marc(self, key, value):
     """Name in native form."""
-    return {
-        'a': value
-    }
+    return {'a': value}
 
 
 @hepnames.over('private_current_emails', '^595..')
@@ -233,6 +223,7 @@ def hidden_notes2marc(self, key, value):
         'm': value if key == 'private_current_emails' else None,
         'o': value if key == 'private_old_emails' else None,
     }
+
 
 setattr(hidden_notes2marc, '__extend__', True)
 
@@ -309,6 +300,7 @@ def source(self, key, value):
             'name': value.get('a'),
             'date_verified': value.get('d'),
         }
+
     source = self.get('source', [])
 
     value = force_force_list(value)
@@ -337,9 +329,7 @@ def prizes(self, key, value):
 @hepnames2marc.over('678', '^prizes$')
 @utils.for_each_value
 def prizes2marc(self, key, value):
-    return {
-        'a': value
-    }
+    return {'a': value}
 
 
 @hepnames.over('_public_note', '^680..')
@@ -351,9 +341,7 @@ def _public_note(self, key, value):
 @hepnames2marc.over('680', '^_public_note$')
 @utils.for_each_value
 def _public_note2marc(self, key, value):
-    return {
-        'i': value
-    }
+    return {'i': value}
 
 
 @hepnames.over('_curators_note', '^667..')
@@ -365,9 +353,7 @@ def _curators_note(self, key, value):
 @hepnames2marc.over('667', '^_curators_note$')
 @utils.for_each_value
 def _curators_note2marc(self, key, value):
-    return {
-        'a': value
-    }
+    return {'a': value}
 
 
 @hepnames.over('experiments', '^693..')
@@ -376,6 +362,7 @@ def experiments(self, key, values):
 
     FIXME: use the flatten decorator once DoJSON 1.3.0 is released.
     """
+
     def _int_or_none(maybe_int):
         try:
             return int(maybe_int)
@@ -394,10 +381,7 @@ def experiments(self, key, values):
             record = get_record_ref(recid, 'experiments')
             yield {
                 'curated_relation': record is not None,
-                'current': (
-                    True if marc_dict.get('z', '').lower() == 'current'
-                    else False
-                ),
+                'current': (True if marc_dict.get('z', '').lower() == 'current' else False),
                 'end_year': end_year,
                 'name': name,
                 'record': record,
@@ -419,6 +403,7 @@ def experiments2marc(self, key, values):
 
     FIXME: use the flatten decorator once DoJSON 1.3.0 is released.
     """
+
     def _get_marc_experiment(json_dict):
         marc = {
             'e': json_dict.get('name'),

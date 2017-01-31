@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """MARC 21 model definition."""
 
 from __future__ import absolute_import, division, print_function
@@ -49,8 +48,7 @@ from ..utils import (
 def acquisition_source(self, key, value):
     def _get_source(value):
         sources = force_force_list(value.get('a'))
-        sources_without_inspire_uid = [
-            el for el in sources if not el.startswith('inspire:uid:')]
+        sources_without_inspire_uid = [el for el in sources if not el.startswith('inspire:uid:')]
 
         return force_single_element(sources_without_inspire_uid)
 
@@ -80,7 +78,9 @@ def self_url(index):
         """Url of the record itself."""
         self['control_number'] = int(value)
         return get_record_ref(value, index)
+
     return _self_url
+
 
 institutions.over('self', '^001')(self_url('institutions'))
 hep.over('self', '^001')(self_url('literature'))
@@ -157,10 +157,7 @@ def creation_modification_date(self, key, value):
 @utils.for_each_value
 def creation_modification_date2marc(self, key, value):
     """Original creation and modification date."""
-    return {
-        'c': value.get('modification_date'),
-        'x': value.get('creation_date')
-    }
+    return {'c': value.get('modification_date'), 'x': value.get('creation_date')}
 
 
 @hep.over('spires_sysnos', '^970..')
@@ -179,13 +176,11 @@ def spires_sysnos(self, key, value):
     for val in value:
         for sysno in force_force_list(val.get('a')):
             if sysno:
-                external_system_numbers.append(
-                    {
-                        "institute": "SPIRES",
-                        "value": sysno,
-                        "obsolete": True
-                    }
-                )
+                external_system_numbers.append({
+                    "institute": "SPIRES",
+                    "value": sysno,
+                    "obsolete": True
+                })
         if 'd' in val:
             new_recid = val.get('d')
     if new_recid is not None:
@@ -202,9 +197,7 @@ def spires_sysnos2marc(self, key, value):
     existing_values = self.get('970', [])
 
     val_recids = [get_recid_from_ref(val) for val in value]
-    existing_values.extend(
-        [{'d': val} for val in val_recids if val]
-    )
+    existing_values.extend([{'d': val} for val in val_recids if val])
     return existing_values
 
 
@@ -217,6 +210,7 @@ def spires_sysnos2marc(self, key, value):
 @jobs.over('collections', '^980..')
 def collections(self, key, value):
     """Collection this record belongs to."""
+
     def _get_collection(value):
         return {
             'primary': force_single_element(value.get('a')),
@@ -255,9 +249,7 @@ def collections2marc(self, key, value):
 def deleted2marc(self, key, value):
     """Set Deleted value to marc xml."""
     if value:
-        return {
-            'c': 'DELETED',
-        }
+        return {'c': 'DELETED', }
 
 
 @hep.over('deleted_records', '^981..')
@@ -313,9 +305,7 @@ def fft2marc(self, key, value):
 @utils.for_each_value
 def deleted_records2marc(self, key, value):
     """Deleted recids."""
-    return {
-        'a': get_recid_from_ref(value)
-    }
+    return {'a': get_recid_from_ref(value)}
 
 
 @conferences.over('inspire_categories', '^65017')

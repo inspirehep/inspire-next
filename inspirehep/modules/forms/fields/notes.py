@@ -30,9 +30,6 @@ class NotesField(INSPIREField, TextAreaField):
     def __init__(self, **kwargs):
         import warnings
         warnings.warn("Field has been deprecated", PendingDeprecationWarning)
-        defaults = dict(
-            icon='list',
-            widget_classes="form-control"
-        )
+        defaults = dict(icon='list', widget_classes="form-control")
         defaults.update(kwargs)
         super(NotesField, self).__init__(**defaults)

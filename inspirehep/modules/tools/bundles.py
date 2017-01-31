@@ -19,13 +19,11 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Tools bundles."""
 
 from __future__ import absolute_import, division, print_function
 
 from invenio_assets import NpmBundle
-
 
 js = NpmBundle(
     "js/tools/authorlist_init.js",

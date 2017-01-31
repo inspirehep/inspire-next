@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """DoJSON model definition for HEPNames."""
 
 from __future__ import absolute_import, division, print_function
@@ -28,15 +27,12 @@ from dojson import Overdo
 
 from ..model import FilterOverdo, add_schema, clean_record
 
-
 hepnames_filters = [
     add_schema('authors.json'),
     clean_record,
 ]
 
-hepnames2marc_filters = [
-    clean_record,
-]
+hepnames2marc_filters = [clean_record, ]
 
 hepnames = FilterOverdo(filters=hepnames_filters)
 hepnames2marc = FilterOverdo(filters=hepnames2marc_filters)

@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Literature suggestion form JSON conversion.
 
 Converts keys in the user form to the keys needed by the HEP data model
@@ -41,9 +40,7 @@ from ..model import literature
 
 @literature.over('abstracts', '^abstract$')
 def abstracts(self, key, value):
-    return [{
-        'value': value.strip(),
-    }]
+    return [{'value': value.strip(), }]
 
 
 @literature.over('_arxiv_id', '^arxiv_id$')
@@ -63,9 +60,7 @@ def arxiv_id(self, key, value):
 
 @literature.over('dois', '^doi$')
 def dois(self, key, value):
-    return [{
-        'value': value,
-    }]
+    return [{'value': value, }]
 
 
 @literature.over('authors', '^authors$')
@@ -89,10 +84,7 @@ def authors(self, key, value):
 
 @literature.over('_categories', '^categories$')
 def categories(self, key, value):
-    subject_list = [{
-        "term": c,
-        "source": "user"
-    } for c in value.split()]
+    subject_list = [{"term": c, "source": "user"} for c in value.split()]
     if 'inspire_categories' in self:
         self['inspire_categories'].extend(subject_list)
     else:
@@ -104,16 +96,12 @@ def categories(self, key, value):
 
 @literature.over('collaboration', '^collaboration$')
 def collaboration(self, key, value):
-    return [
-        {'value': value}
-    ]
+    return [{'value': value}]
 
 
 @literature.over('hidden_notes', '^hidden_note$')
 def hidden_notes(self, key, value):
-    return [{
-        "value": value
-    }]
+    return [{"value": value}]
 
 
 @literature.over('_conference_id', '^conference_id$')
@@ -218,23 +206,17 @@ def year(self, key, value):
 @literature.over('_page_range_article_id', '^page_range_article_id$')
 def page_range_article_id(self, key, value):
     page_start, page_end, artid = split_page_artid(value)
-    self.setdefault('publication_info', [{}])[0].update(dict(
-        page_start=page_start,
-        page_end=page_end,
-        artid=artid))
+    self.setdefault('publication_info', [{}]
+                    )[0].update(dict(
+                        page_start=page_start, page_end=page_end, artid=artid
+                    ))
     raise IgnoreKey
 
 
 @literature.over('languages', '^language$')
 def languages(self, key, value):
-    languages = [("en", "English"),
-                 ("rus", "Russian"),
-                 ("ger", "German"),
-                 ("fre", "French"),
-                 ("ita", "Italian"),
-                 ("spa", "Spanish"),
-                 ("chi", "Chinese"),
-                 ("por", "Portuguese"),
+    languages = [("en", "English"), ("rus", "Russian"), ("ger", "German"), ("fre", "French"),
+                 ("ita", "Italian"), ("spa", "Spanish"), ("chi", "Chinese"), ("por", "Portuguese"),
                  ("oth", "Other")]
 
     if value not in ('en', 'oth'):
@@ -273,12 +255,7 @@ def report_numbers(self, key, value):
 
 @literature.over('inspire_categories', '^subject_term$')
 def inspire_categories(self, key, value):
-    return [
-        {
-            "term": t,
-            "source": "user"
-        }
-        for t in value]
+    return [{"term": t, "source": "user"} for t in value]
 
 
 @literature.over('thesis_supervisors', '^supervisors$')
@@ -295,9 +272,7 @@ def titles(self, key, value):
             values = value
         out = []
         for val in values:
-            out.append({
-                'title': val,
-            })
+            out.append({'title': val, })
         return existing + out
 
     if 'titles' in self:
@@ -308,17 +283,13 @@ def titles(self, key, value):
 
 @literature.over('title_translations', '^title_translation$')
 def title_translation(self, key, value):
-    return [{
-        "title": value
-    }]
+    return [{"title": value}]
 
 
 @literature.over('_url', '^url$')
 def urls(self, key, value):
     self['pdf'] = value  # will be removed later
-    field = {
-        "value": value
-    }
+    field = {"value": value}
     if 'urls' in self:
         self['urls'].append(field)
     else:
@@ -328,9 +299,7 @@ def urls(self, key, value):
 
 @literature.over('additional_url', '^additional_url$')
 def additional_url(self, key, value):
-    field = {
-        "value": value
-    }
+    field = {"value": value}
     if 'urls' in self:
         self['urls'].append(field)
     else:

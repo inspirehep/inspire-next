@@ -43,9 +43,7 @@ from .dojson.model import literature
 def formdata_to_model(obj, formdata):
     """Manipulate form data to match literature data model."""
     form_fields = copy.deepcopy(formdata)
-    filter_empty_elements(
-        form_fields, ['authors', 'supervisors', 'report_numbers']
-    )
+    filter_empty_elements(form_fields, ['authors', 'supervisors', 'report_numbers'])
 
     data = literature.do(form_fields)
 
@@ -57,8 +55,7 @@ def formdata_to_model(obj, formdata):
     # ======
     if '$schema' in data and not data['$schema'].startswith('http'):
         jsonschemas_ext = current_app.extensions.get('invenio-jsonschemas')
-        data['$schema'] = jsonschemas_ext.path_to_url(
-            "records/{0}".format(data['$schema']))
+        data['$schema'] = jsonschemas_ext.path_to_url("records/{0}".format(data['$schema']))
 
     # ============================
     # Collection
@@ -69,8 +66,7 @@ def formdata_to_model(obj, formdata):
 
     if get_value(form_fields, "arxiv_eprints.categories", None):
         # Check if it was imported from arXiv
-        data['collections'].extend([{'primary': "arXiv"},
-                                    {'primary': "Citeable"}])
+        data['collections'].extend([{'primary': "arXiv"}, {'primary': "Citeable"}])
         # Add arXiv as source
         if data.get("abstracts"):
             data['abstracts'][0]['source'] = 'arXiv'
@@ -83,10 +79,9 @@ def formdata_to_model(obj, formdata):
         pub_keys = data['publication_info'][0].keys()
 
         has_pub_info = all([
-            key in pub_keys for key in (
-                'year', 'journal_issue', 'journal_volume')])
-        has_page_or_artid = any([
-            key in pub_keys for key in ('page_start', 'page_end', 'artid')])
+            key in pub_keys for key in ('year', 'journal_issue', 'journal_volume')
+        ])
+        has_page_or_artid = any([key in pub_keys for key in ('page_start', 'page_end', 'artid')])
 
         if has_pub_info and has_page_or_artid:
             # NOTE: Only peer reviewed journals should have this collection
@@ -102,9 +97,7 @@ def formdata_to_model(obj, formdata):
     # ============================
     try:
         # Clean up all extra spaces in title
-        data['titles'][0]['title'] = " ".join(
-            data['titles'][0]['title'].split()
-        )
+        data['titles'][0]['title'] = " ".join(data['titles'][0]['title'].split())
         title = data['titles'][0]['title']
     except (KeyError, IndexError):
         title = ""
@@ -113,21 +106,13 @@ def formdata_to_model(obj, formdata):
         if title == title_arxiv:
             data['titles'][0]["source"] = "arXiv"
         else:
-            data['titles'].append({
-                'title': title_arxiv,
-                'source': "arXiv"
-            })
+            data['titles'].append({'title': title_arxiv, 'source': "arXiv"})
     if form_fields.get('title_crossref'):
-        title_crossref = " ".join(
-            form_fields.get('title_crossref').split()
-        )
+        title_crossref = " ".join(form_fields.get('title_crossref').split())
         if title == title_crossref:
             data['titles'][0]["source"] = "CrossRef"
         else:
-            data['titles'].append({
-                'title': title_crossref,
-                'source': "CrossRef"
-            })
+            data['titles'].append({'title': title_crossref, 'source': "CrossRef"})
     try:
         data['titles'][0]['source']
     except KeyError:
@@ -139,16 +124,10 @@ def formdata_to_model(obj, formdata):
     # ============================
     if 'conf_name' in form_fields:
         if 'nonpublic_note' in form_fields:
-            data.setdefault("hidden_notes", []).append({
-                "value": form_fields['conf_name']
-            })
-            data['hidden_notes'].append({
-                'value': form_fields['nonpublic_note']
-            })
+            data.setdefault("hidden_notes", []).append({"value": form_fields['conf_name']})
+            data['hidden_notes'].append({'value': form_fields['nonpublic_note']})
         else:
-            data.setdefault("hidden_notes", []).append({
-                "value": form_fields['conf_name']
-            })
+            data.setdefault("hidden_notes", []).append({"value": form_fields['conf_name']})
         data['collections'].extend([{'primary': "ConferencePaper"}])
 
     # ============================
@@ -200,19 +179,18 @@ def formdata_to_model(obj, formdata):
     # Extra comments
     # ==============
     if form_fields.get('extra_comments'):
-        data.setdefault('hidden_notes', []).append(
-            {
-                'value': form_fields['extra_comments'],
-                'source': 'submitter'
-            }
-        )
+        data.setdefault('hidden_notes', []).append({
+            'value': form_fields['extra_comments'],
+            'source': 'submitter'
+        })
     # ==========================
     # Journal name normalization
     # ==========================
     journal_title = get_value(data, 'publication_info[0].journal_title')
     if journal_title:
         hits = JournalsSearch().query(
-            'match', title_variants__title__lowercased=journal_title).execute()
+            'match', title_variants__title__lowercased=journal_title
+        ).execute()
 
         if hits:
             try:
@@ -263,16 +241,14 @@ def curation_ticket_context(user, obj):
             arxiv_ids[index] = 'arXiv:{0}'.format(arxiv_id)
 
     report_numbers = get_value(obj.data, 'report_numbers.value') or []
-    dois = [
-        "doi:{0}".format(doi)
-        for doi in get_value(obj.data, 'dois.value') or []
-    ]
+    dois = ["doi:{0}".format(doi) for doi in get_value(obj.data, 'dois.value') or []]
     link_to_pdf = obj.extra_data.get('formdata', {}).get('url')
 
-    subject = ' '.join(filter(
-        lambda x: x is not None,
-        arxiv_ids + dois + report_numbers + ['(#{0})'.format(recid)]
-    ))
+    subject = ' '.join(
+        filter(
+            lambda x: x is not None, arxiv_ids + dois + report_numbers + ['(#{0})'.format(recid)]
+        )
+    )
 
     references = obj.extra_data.get('formdata').get('references')
     user_comment = obj.extra_data.get('formdata', {}).get('extra_comments', '')

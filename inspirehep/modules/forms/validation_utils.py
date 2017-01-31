@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Validation functions."""
 
 from __future__ import absolute_import, division, print_function
@@ -37,7 +36,6 @@ from wtforms.validators import StopValidation
 
 
 class DOISyntaxValidator(object):
-
     """DOI syntax validator."""
 
     pattern = "(^$|(doi:)?10\.\d+(.\d+)*/.*)"
@@ -50,7 +48,8 @@ class DOISyntaxValidator(object):
         self.regexp = re.compile(self.pattern, re.I)
         self.message = message if message else (
             "The provided DOI is invalid - it should look similar to "
-            "'10.1234/foo.bar'.")
+            "'10.1234/foo.bar'."
+        )
 
     def __call__(self, form, field):
         """Validate.
@@ -69,8 +68,10 @@ def ORCIDValidator(form, field):
     msg = u"The ORCID iD was not found in <a href='http://orcid.org' target='_blank'>orcid.org</a>. Please, make sure it is valid."
     orcid_id = field.data
     if current_app.config.get("ORCID_APP_CREDENTIALS"):
-        api = orcid.MemberAPI(current_app.config["ORCID_APP_CREDENTIALS"]["consumer_key"],
-                              current_app.config["ORCID_APP_CREDENTIALS"]["consumer_secret"])
+        api = orcid.MemberAPI(
+            current_app.config["ORCID_APP_CREDENTIALS"]["consumer_key"],
+            current_app.config["ORCID_APP_CREDENTIALS"]["consumer_secret"]
+        )
         try:
             result = api.search_member("orcid:" + orcid_id)
             if result['orcid-search-results']["num-found"] == 0:
@@ -80,7 +81,6 @@ def ORCIDValidator(form, field):
 
 
 class RegexpStopValidator(object):
-
     """
     Validates the field against a user provided regexp.
     :param regex:

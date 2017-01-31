@@ -37,27 +37,33 @@ from ..arsenic import Arsenic, ArsenicResponse
 
 
 def go_to():
-    Arsenic().get(os.environ['SERVER_NAME'] + '/holdingpen/list/?workflow_name=Author&is-update=false&size=10&status=HALTED')
+    Arsenic().get(
+        os.environ['SERVER_NAME'] +
+        '/holdingpen/list/?workflow_name=Author&is-update=false&size=10&status=HALTED'
+    )
 
 
 def click_first_record():
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//a[@class="title ng-binding ng-scope"]'))).click()
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="detail-panel"])[1]')))
+    WebDriverWait(Arsenic(), 10).until(
+        EC.visibility_of_element_located((By.XPATH, '//a[@class="title ng-binding ng-scope"]'))
+    ).click()
+    WebDriverWait(
+        Arsenic(), 10
+    ).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="detail-panel"])[1]')))
 
 
 def load_submission_record(input_data):
     def _load_submission_record():
         return (
-            'CERN' in record and
-            'ACC-PHYS' in record and
-            'ASTRO-PH' in record and
-            'Twain, Mark' in record and
-            'inspire:uid:1' in record and
+            'CERN' in record and 'ACC-PHYS' in record and 'ASTRO-PH' in record and
+            'Twain, Mark' in record and 'inspire:uid:1' in record and
             'admin@inspirehep.net' in record
         )
 
     try:
-        record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="row hp-item ng-scope"][1]'))).text
+        record = WebDriverWait(Arsenic(), 10).until(
+            EC.visibility_of_element_located((By.XPATH, '//div[@class="row hp-item ng-scope"][1]'))
+        ).text
     except (ElementNotVisibleException, WebDriverException):
         go_to()
         record = load_submission_record(input_data)

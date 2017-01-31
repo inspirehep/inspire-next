@@ -19,11 +19,9 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """HAL module configuration."""
 
 from __future__ import absolute_import, division, print_function
-
 
 HAL_EXPORT_TEMPLATE = 'hal_tei.xml'
 """Filename of the base TEI template in the template environment."""

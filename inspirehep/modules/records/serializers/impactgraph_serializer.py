@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Impact Graph serializer for records."""
 
 from __future__ import absolute_import, division, print_function
@@ -32,7 +31,6 @@ from inspirehep.modules.search import LiteratureSearch
 
 
 class ImpactGraphSerializer(object):
-
     """Impact Graph serializer for records."""
 
     def serialize(self, pid, record, links_factory=None):
@@ -54,16 +52,9 @@ class ImpactGraphSerializer(object):
         # Get citations
         citations = []
 
-        record_citations = LiteratureSearch().query_from_iq(
-            'refersto:' + str(record['control_number'])
-        ).params(
-            size=9999,
-            _source=[
-                'control_number',
-                'citation_count',
-                'titles',
-                'earliest_date'
-            ]
+        record_citations = LiteratureSearch(
+        ).query_from_iq('refersto:' + str(record['control_number'])).params(
+            size=9999, _source=['control_number', 'citation_count', 'titles', 'earliest_date']
         ).execute().hits
 
         for citation in record_citations:
@@ -84,20 +75,13 @@ class ImpactGraphSerializer(object):
         record_references = record.get('references', [])
         references = []
 
-        reference_recids = [
-            ref['recid'] for ref in record_references if ref.get('recid')
-        ]
+        reference_recids = [ref['recid'] for ref in record_references if ref.get('recid')]
 
         if reference_recids:
             record_references = get_es_records(
                 'lit',
                 reference_recids,
-                _source=[
-                    'control_number',
-                    'citation_count',
-                    'titles',
-                    'earliest_date'
-                ]
+                _source=['control_number', 'citation_count', 'titles', 'earliest_date']
             )
 
             for reference in record_references:

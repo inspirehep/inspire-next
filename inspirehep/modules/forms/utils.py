@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
-
 """Forms utilities."""
 
 from __future__ import absolute_import, division, print_function
@@ -24,6 +23,7 @@ from __future__ import absolute_import, division, print_function
 
 def filter_empty_helper(keys=None):
     """Remove empty elements from a list."""
+
     def _inner(elem):
         if isinstance(elem, dict):
             for k, v in elem.items():
@@ -32,15 +32,14 @@ def filter_empty_helper(keys=None):
             return False
         else:
             return bool(elem)
+
     return _inner
 
 
 def filter_empty_elements(recjson, list_fields):
     """Filter empty fields."""
     for key in list_fields:
-        recjson[key] = filter(
-            filter_empty_helper(), recjson.get(key, [])
-        )
+        recjson[key] = filter(filter_empty_helper(), recjson.get(key, []))
 
     for k in recjson.keys():
         if not recjson[k]:

@@ -26,7 +26,6 @@ import six
 
 from inspirehep.utils.helpers import force_force_list
 
-
 country_to_iso_code = {
     'AFGHANISTAN': 'AF',
     'ÅLAND ISLANDS': 'AX',
@@ -309,13 +308,12 @@ countries_alternative_spellings = {
     'CN': ['PR CHINA'],
     'CS': ['CZECHSOLVAKIA'],
     'CZ': ['PRAGUE'],
-    'DE': ['DEUTSCHLAND', 'WEST GERMANY', 'EAST GERMANY', 'BAVARIA',
-           'GERMANY (DESY)'],
+    'DE': ['DEUTSCHLAND', 'WEST GERMANY', 'EAST GERMANY', 'BAVARIA', 'GERMANY (DESY)'],
     'ES': ['CANARY ISLANDS', 'MADRID'],
     'FR': ['CORSICA'],
     'GR': ['CRETE'],
-    'GB': ['UK', 'ENGLAND', 'ENG', 'SCOTLAND', 'WALES', 'SCOTLAND/UK',
-           'NORTHERN IRELAND', 'LONDON'],
+    'GB':
+        ['UK', 'ENGLAND', 'ENG', 'SCOTLAND', 'WALES', 'SCOTLAND/UK', 'NORTHERN IRELAND', 'LONDON'],
     'ID': ['BALI'],
     'IL': ['JERUSALEM'],
     'IR': ['IRAN'],
@@ -333,7 +331,6 @@ countries_alternative_spellings = {
     'US': ['UNITED STATES OF AMERICA', 'UNITED STATES', 'US', 'USA'],
     'ZA': ['SAFRICA']
 }
-
 
 us_state_to_iso_code = {
     'ALABAMA': 'US-AL',
@@ -443,10 +440,10 @@ us_states_alternative_spellings = {
     'US-WY': ['WY'],
 }
 
-south_korean_cities = ['SEOUL', 'DAEJON', 'DAEJEON', 'MT SORAK', 'POHANG',
-                       'JEJU ISLAND', 'CHEJU ISLAND', 'GYEONGJU', 'BUSAN',
-                       'DAEGU', 'GYEONGIU', 'PUSAN', 'YONGPYONG',
-                       'PHOENIX PARK', 'CHEJU ISLAND']
+south_korean_cities = [
+    'SEOUL', 'DAEJON', 'DAEJEON', 'MT SORAK', 'POHANG', 'JEJU ISLAND', 'CHEJU ISLAND', 'GYEONGJU',
+    'BUSAN', 'DAEGU', 'GYEONGIU', 'PUSAN', 'YONGPYONG', 'PHOENIX PARK', 'CHEJU ISLAND'
+]
 
 
 def match_country_code(original_code):
@@ -519,8 +516,7 @@ def parse_conference_address(address_string):
     country_code = match_country_name_to_its_code(country_name, city)
 
     if country_code == 'US' and len(geo_elements) > 1:
-        us_state = match_us_state(geo_elements[-2].upper().strip()
-                                  .replace('.', ''))
+        us_state = match_us_state(geo_elements[-2].upper().strip().replace('.', ''))
 
     if not country_code:
         # Sometimes the country name stores info about U.S. state
@@ -541,8 +537,7 @@ def parse_conference_address(address_string):
     }
 
 
-def parse_institution_address(address, city, state_province,
-                              country, postal_code, country_code):
+def parse_institution_address(address, city, state_province, country, postal_code, country_code):
     """Parse an institution address."""
     address_string = force_force_list(address)
     state_province = match_us_state(state_province) or state_province

@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIREHEP CLI app instantiation."""
 
 from __future__ import absolute_import, division, print_function
@@ -27,6 +26,5 @@ from __future__ import absolute_import, division, print_function
 from invenio_base.app import create_cli
 
 from .factory import create_app
-
 
 cli = create_cli(create_app=create_app)

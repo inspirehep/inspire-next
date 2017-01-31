@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Jinja utilities for INSPIRE."""
 
 from __future__ import absolute_import, division, print_function
@@ -74,9 +73,7 @@ def apply_template_on_array(array, template_path, **common_context):
 
     for content in array:
         if content:
-            rendered.append(
-                template.render(content=content, **common_context)
-            )
+            rendered.append(template.render(content=content, **common_context))
 
     return rendered
 
@@ -101,29 +98,31 @@ def new_line_after(text):
 def email_links(value):
     """Return array of rendered links to emails."""
     return apply_template_on_array(
-        value, 'inspirehep_theme/format/record/field_templates/email.tpl')
+        value, 'inspirehep_theme/format/record/field_templates/email.tpl'
+    )
 
 
 @blueprint.app_template_filter()
 def email_link(value):
     """Return single email rendered (mailto)."""
-    return render_template_to_string('inspirehep_theme/format/record/field_templates/email.tpl', content=value)
+    return render_template_to_string(
+        'inspirehep_theme/format/record/field_templates/email.tpl', content=value
+    )
 
 
 @blueprint.app_template_filter()
 def url_links(record):
     """Return array of rendered links."""
-    return apply_template_on_array(
-        [url["value"] for url in record.get('urls', [])],
-        'inspirehep_theme/format/record/field_templates/link.tpl')
+    return apply_template_on_array([url["value"] for url in record.get('urls', [])],
+                                   'inspirehep_theme/format/record/field_templates/link.tpl')
 
 
 @blueprint.app_template_filter()
 def institutes_links(record):
     """Return array of rendered links to institutes."""
     return apply_template_on_array(
-        record.get('institute', []),
-        'inspirehep_theme/format/record/field_templates/institute.tpl')
+        record.get('institute', []), 'inspirehep_theme/format/record/field_templates/institute.tpl'
+    )
 
 
 @blueprint.app_template_filter()
@@ -131,7 +130,8 @@ def author_profile(record):
     """Return array of rendered links to authors."""
     return apply_template_on_array(
         record.get('profile', []),
-        'inspirehep_theme/format/record/field_templates/author_profile.tpl')
+        'inspirehep_theme/format/record/field_templates/author_profile.tpl'
+    )
 
 
 @blueprint.app_template_filter()
@@ -165,10 +165,8 @@ def conference_date(record):
     opening_date = record.get('opening_date', '')
     closing_date = record.get('closing_date', '')
     if opening_date and closing_date:
-        converted_opening_date = datetime.strptime(
-            opening_date, "%Y-%m-%d")
-        converted_closing_date = datetime.strptime(
-            closing_date, "%Y-%m-%d")
+        converted_opening_date = datetime.strptime(opening_date, "%Y-%m-%d")
+        converted_closing_date = datetime.strptime(closing_date, "%Y-%m-%d")
         if opening_date.split('-')[0] == closing_date.split('-')[0]:
             if opening_date.split('-')[1] == closing_date.split('-')[1]:
                 out += opening_date.split('-')[2] + '-' + \
@@ -194,8 +192,8 @@ def conference_date(record):
 @blueprint.app_template_filter()
 def search_for_experiments(value):
     result = ', '.join([
-        '<a href="/search?p=experiment_name:%s&cc=Experiments">%s</a>'
-        % (i, i) for i in value])
+        '<a href="/search?p=experiment_name:%s&cc=Experiments">%s</a>' % (i, i) for i in value
+    ])
     return result
 
 
@@ -224,9 +222,7 @@ def proceedings_link(record):
     if not cnum:
         return out
 
-    records = LiteratureSearch().query_from_iq(
-        'cnum:%s and 980__a:proceedings' % cnum
-    ).execute()
+    records = LiteratureSearch().query_from_iq('cnum:%s and 980__a:proceedings' % cnum).execute()
 
     if len(records):
         if len(records) > 1:
@@ -238,20 +234,24 @@ def proceedings_link(record):
                     proceedings.append(
                         '<a href="/record/{recid}">#{i}</a> (DOI: <a '
                         'href="http://dx.doi.org/{doi}">{doi}</a>'.format(
-                            recid=record['control_number'],
-                            doi=dois[0]['value'], i=i))
+                            recid=record['control_number'], doi=dois[0]['value'], i=i
+                        )
+                    )
                 except KeyError:
                     # Guards both against records not having a "dois" field
                     # and doi values not having a "value" field.
                     proceedings.append(
                         '<a href="/record/{recid}">#{i}</a>'.format(
-                            recid=record['control_number'], i=i))
+                            recid=record['control_number'], i=i
+                        )
+                    )
 
             out = 'Proceedings: '
             out += ', '.join(proceedings)
         else:
             out += '<a href="/record/{recid}">Proceedings</a>'.format(
-                recid=records[0]['control_number'])
+                recid=records[0]['control_number']
+            )
 
     return out
 
@@ -267,8 +267,9 @@ def experiment_link(record):
     if related_experiments:
         for element in related_experiments:
             result.append(
-                '<a href=/search?cc=Experiments&p=experiment_name:' +
-                element['name'] + '>' + element['name'] + '</a>')
+                '<a href=/search?cc=Experiments&p=experiment_name:' + element['name'] + '>' +
+                element['name'] + '</a>'
+            )
 
     return result
 
@@ -315,9 +316,7 @@ def link_to_hep_affiliation(record):
     except KeyError:
         return ''
 
-    records = InstitutionsSearch().query_from_iq(
-        'affiliation:%s' % icn
-    ).execute()
+    records = InstitutionsSearch().query_from_iq('affiliation:%s' % icn).execute()
     results = records.hits.total
 
     if results:
@@ -383,8 +382,7 @@ def epoch_to_year_format(date):
 
 @blueprint.app_template_filter()
 def construct_date_format(date):
-    starting_date = time.strftime(
-        '%Y-%m-%d', time.gmtime(int(date) / 1000.))
+    starting_date = time.strftime('%Y-%m-%d', time.gmtime(int(date) / 1000.))
     ending_date = time.strftime('%Y-12-31', time.gmtime(int(date) / 1000.))
     return starting_date + '->' + ending_date
 
@@ -465,10 +463,9 @@ def strip_leading_number_plot_caption(text):
 
 @blueprint.app_template_filter()
 def count_plots(record):
-    return len(
-        [url for url in record.get('urls', []) if
-            url.get("value").endswith(('.png', '.jpg'))]
-    )
+    return len([
+        url for url in record.get('urls', []) if url.get("value").endswith(('.png', '.jpg'))
+    ])
 
 
 @blueprint.app_template_filter()
@@ -560,15 +557,11 @@ def format_date(datetext):
         dummy_time = (0, 0, 44, 2, 320, 0)
         if len(datestruct) == 3:
             datestruct = datestruct + dummy_time
-            date = convert_datestruct_to_dategui(
-                datestruct, output_format="MMM d, Y"
-            )
+            date = convert_datestruct_to_dategui(datestruct, output_format="MMM d, Y")
             return date
         elif len(datestruct) == 2:
-            datestruct = datestruct + (1,) + dummy_time
-            date = convert_datestruct_to_dategui(
-                datestruct, output_format="MMM Y"
-            )
+            datestruct = datestruct + (1, ) + dummy_time
+            date = convert_datestruct_to_dategui(datestruct, output_format="MMM Y")
             return date
         elif len(datestruct) == 1:
             # XXX(jacquerie): returns int instead of string.
@@ -604,22 +597,19 @@ def show_citations_number(citation_count):
 @blueprint.app_template_filter()
 def is_external_link(url):
     """Checks if given url is an external link."""
-    return (url.startswith('http') and not url.endswith(
-            ('.pdf', '.png', '.jpg', '.jpeg')))
+    return (url.startswith('http') and not url.endswith(('.pdf', '.png', '.jpg', '.jpeg')))
 
 
 @blueprint.app_template_filter()
 def is_institute(institute):
     """Checks if given string is an institute."""
-    return institute.lower() in ['kekscan', 'ads', 'cds', 'hal', 'msnet',
-                                 'msnet']
+    return institute.lower() in ['kekscan', 'ads', 'cds', 'hal', 'msnet', 'msnet']
 
 
 @blueprint.app_template_filter()
 def weblinks(description):
     """Renames external links based on the description given."""
-    value = current_app.extensions.get('inspire-theme').weblinks.get(
-        description)
+    value = current_app.extensions.get('inspire-theme').weblinks.get(description)
     if value:
         return value.rstrip()
     if description:
@@ -635,9 +625,7 @@ def back_to_search_link(referer, collection):
     text = "Back to {} search results".format(collection.capitalize())
     url = url_for('inspirehep_search.search', cc=collection)
     if referer and url_map.get('q'):
-        url = url_for(
-            'inspirehep_search.search', cc=collection, q=url_map['q']
-        )
+        url = url_for('inspirehep_search.search', cc=collection, q=url_map['q'])
         text = "Back to search results for \"{}\"".format(url_map['q'])
     url_html = '<a href="{}">{}</a>'.format(url, text)
     return url_html

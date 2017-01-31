@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """DoJSON related utilities."""
 
 from __future__ import absolute_import, division, print_function
@@ -44,7 +43,9 @@ def classify_field(value):
         return None
     else:
         casted_value = value.upper()
-        for name, category in six.iteritems(current_app.config['ARXIV_TO_INSPIRE_CATEGORY_MAPPING']):
+        for name, category in six.iteritems(
+            current_app.config['ARXIV_TO_INSPIRE_CATEGORY_MAPPING']
+        ):
             if name.upper() == casted_value:
                 return category
             elif category.upper() == casted_value:
@@ -146,9 +147,10 @@ def legacy_export_as_marc(json, tabsize=4):
             # Controlfield
             if isinstance(value, (tuple, list)):
                 value = value[0]
-            export += ['\t<controlfield tag="%s">%s'
-                       '</controlfield>\n'.expandtabs(tabsize)
-                       % (key, encode_for_marcxml(value))]
+            export += [
+                '\t<controlfield tag="%s">%s'
+                '</controlfield>\n'.expandtabs(tabsize) % (key, encode_for_marcxml(value))
+            ]
         else:
             tag = key[:3]
             try:
@@ -162,22 +164,26 @@ def legacy_export_as_marc(json, tabsize=4):
             if isinstance(value, dict):
                 value = [value]
             for field in value:
-                export += ['\t<datafield tag="%s" ind1="%s" '
-                           'ind2="%s">\n'.expandtabs(tabsize)
-                           % (tag, ind1, ind2)]
+                export += [
+                    '\t<datafield tag="%s" ind1="%s" '
+                    'ind2="%s">\n'.expandtabs(tabsize) % (tag, ind1, ind2)
+                ]
                 if field:
                     for code, subfieldvalue in six.iteritems(field):
                         if subfieldvalue:
                             if isinstance(subfieldvalue, (list, tuple)):
                                 for val in subfieldvalue:
-                                    export += ['\t\t<subfield code="%s">%s'
-                                               '</subfield>\n'.expandtabs(tabsize)
-                                               % (code, encode_for_marcxml(val))]
+                                    export += [
+                                        '\t\t<subfield code="%s">%s'
+                                        '</subfield>\n'.expandtabs(tabsize) %
+                                        (code, encode_for_marcxml(val))
+                                    ]
                             else:
-                                export += ['\t\t<subfield code="%s">%s'
-                                           '</subfield>\n'.expandtabs(tabsize)
-                                           % (code,
-                                              encode_for_marcxml(subfieldvalue))]
+                                export += [
+                                    '\t\t<subfield code="%s">%s'
+                                    '</subfield>\n'.expandtabs(tabsize) %
+                                    (code, encode_for_marcxml(subfieldvalue))
+                                ]
                 export += ['\t</datafield>\n'.expandtabs(tabsize)]
     export += ['</record>\n']
     return "".join(export)

@@ -20,7 +20,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Our workflows."""
 
 from __future__ import absolute_import, division, print_function
@@ -28,6 +27,5 @@ from __future__ import absolute_import, division, print_function
 from .hep_approval import HEPApproval
 from .merge_approval import MergeApproval
 from .author_approval import AuthorApproval
-
 
 __all__ = ('HEPApproval', 'MergeApproval', 'AuthorApproval')

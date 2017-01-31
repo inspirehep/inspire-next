@@ -31,9 +31,11 @@ class LanguageField(INSPIREField, SelectField):
     def __init__(self, **kwargs):
         import warnings
         warnings.warn("Field has been deprecated", PendingDeprecationWarning)
-        defaults = dict(icon='flag',
-                        export_key='language',
-                        validators=[optional()],
-                        widget_classes="form-control")
+        defaults = dict(
+            icon='flag',
+            export_key='language',
+            validators=[optional()],
+            widget_classes="form-control"
+        )
         defaults.update(kwargs)
         super(LanguageField, self).__init__(**defaults)

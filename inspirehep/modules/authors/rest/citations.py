@@ -50,13 +50,11 @@ class AuthorAPICitations(object):
             "match": {
                 "authors.recid": author_pid
             }
-        }).params(
-            _source=[
-                "authors.recid",
-                "control_number",
-                "self",
-            ]
-        )
+        }).params(_source=[
+            "authors.recid",
+            "control_number",
+            "self",
+        ])
 
         # For each publication co-authored by a given author...
         for result in search.scan():
@@ -93,9 +91,7 @@ class AuthorAPICitations(object):
 
                 # Not every signature has a recid (at least for demo records).
                 try:
-                    nested_authors = set(
-                        [i['recid'] for i in nested_result_source['authors']]
-                    )
+                    nested_authors = set([i['recid'] for i in nested_result_source['authors']])
                 except KeyError:
                     nested_authors = set()
 
@@ -119,8 +115,8 @@ class AuthorAPICitations(object):
                 #        for this type of information.
                 try:
                     citation['published_paper'] = "Published" in [
-                        i['primary'] for i in nested_result_source[
-                            'collections']]
+                        i['primary'] for i in nested_result_source['collections']
+                    ]
                 except KeyError:
                     citation['published_paper'] = False
 

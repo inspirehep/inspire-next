@@ -21,7 +21,6 @@
 # In applying this license, CERN does not
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
-
 """Invenio standard theme."""
 
 from __future__ import absolute_import, division, print_function
@@ -48,7 +47,4 @@ class INSPIRESearch(object):
 
     def init_config(self, config):
         """Initialize configuration."""
-        config.setdefault(
-            'SEARCH_ALLOWED_KEYWORDS',
-            LocalProxy(generate_valid_keywords)
-        )
+        config.setdefault('SEARCH_ALLOWED_KEYWORDS', LocalProxy(generate_valid_keywords))

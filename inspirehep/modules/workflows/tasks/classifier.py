@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Set of tasks for classification."""
 
 from __future__ import absolute_import, division, print_function
@@ -43,12 +42,20 @@ def filter_core_keywords(obj, eng):
     obj.extra_data['classifier_results']["complete_output"] = result
 
 
-def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
-                   output_limit=20, spires=False,
-                   match_mode='full', with_author_keywords=False,
-                   extract_acronyms=False, only_core_tags=False,
-                   fast_mode=False):
+def classify_paper(
+    taxonomy,
+    rebuild_cache=False,
+    no_cache=False,
+    output_limit=20,
+    spires=False,
+    match_mode='full',
+    with_author_keywords=False,
+    extract_acronyms=False,
+    only_core_tags=False,
+    fast_mode=False
+):
     """Extract keywords from a pdf file or metadata in a OAI harvest."""
+
     @wraps(classify_paper)
     def _classify_paper(obj, eng):
         from invenio_classifier.errors import ClassifierException
@@ -74,9 +81,7 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
         try:
             # FIXME: May need to find another canonical way of getting PDF
             if "pdf" in obj.extra_data:
-                result = get_keywords_from_local_file(
-                    obj.extra_data["pdf"], **params
-                )
+                result = get_keywords_from_local_file(obj.extra_data["pdf"], **params)
             else:
                 data = []
                 titles = obj.data.get('titles')
@@ -94,9 +99,7 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
             obj.log.exception(e)
             return
 
-        result['complete_output'] = clean_instances_from_data(
-            result.get("complete_output", {})
-        )
+        result['complete_output'] = clean_instances_from_data(result.get("complete_output", {}))
         result["fast_mode"] = fast_mode
 
         # Check if it is not empty output before adding

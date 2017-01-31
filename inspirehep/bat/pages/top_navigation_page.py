@@ -45,4 +45,8 @@ def log_out():
 
 
 def am_i_logged():
-    return (WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'user-info'))).text == 'My account')
+    return (
+        WebDriverWait(
+            Arsenic(), 10
+        ).until(EC.visibility_of_element_located((By.ID, 'user-info'))).text == 'My account'
+    )

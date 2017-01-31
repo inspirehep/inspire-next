@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Tasks to check if the incoming record already exist."""
 
 from __future__ import absolute_import, division, print_function
@@ -45,21 +44,16 @@ def search(query):
 
     try:
         return requests.get(
-            current_app.config["WORKFLOWS_MATCH_REMOTE_SERVER_URL"],
-            params=params
+            current_app.config["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], params=params
         ).json()
     except requests.ConnectionError:
         current_app.logger.error(
-            "Error connecting to remote server:\n {0}".format(
-                traceback.format_exc()
-            )
+            "Error connecting to remote server:\n {0}".format(traceback.format_exc())
         )
         raise
     except ValueError:
         current_app.logger.error(
-            "Error decoding results from remote server:\n {0}".format(
-                traceback.format_exc()
-            )
+            "Error decoding results from remote server:\n {0}".format(traceback.format_exc())
         )
         raise
 
@@ -92,9 +86,7 @@ def match_legacy_inspire(obj, eng):
 
     Searches by arXiv identifier and DOI, updates extra_data with results.
     """
-    response = list(
-        set(match_by_arxiv_id(obj.data)) | set(match_by_doi(obj.data))
-    )
+    response = list(set(match_by_arxiv_id(obj.data)) | set(match_by_doi(obj.data)))
 
     base_url = current_app.config["LEGACY_ROBOTUPLOAD_URL"]
     if not re.match('^https?://', base_url):
@@ -109,38 +101,32 @@ def match_legacy_inspire(obj, eng):
 
 def match_with_invenio_matcher(queries=None, index="records-hep", doc_type="hep"):
     """Match record using Invenio Matcher."""
+
     @wraps(match_with_invenio_matcher)
     def _match_with_invenio_matcher(obj, eng):
         from invenio_matcher.api import match as _match
 
         if queries is None:
-            queries_ = [
-                {'type': 'exact', 'match': 'dois.value'},
-                {'type': 'exact', 'match': 'arxiv_eprints.value'}
-            ]
+            queries_ = [{
+                'type': 'exact',
+                'match': 'dois.value'
+            }, {
+                'type': 'exact',
+                'match': 'arxiv_eprints.value'
+            }]
         else:
             queries_ = queries
 
         record_matches = {
             "recids": [],
             "records": [],
-            "base_url": os.path.join(
-                current_app.config["SERVER_NAME"],
-                'record'
-            )
+            "base_url": os.path.join(current_app.config["SERVER_NAME"], 'record')
         }
 
         record = {}
         record['dois.value'] = get_value(obj.data, 'dois.value')
-        record['arxiv_eprints.value'] = get_value(
-            obj.data, 'arxiv_eprints.value'
-        )
-        for matched_record in _match(
-            record,
-            queries=queries_,
-            index=index,
-            doc_type=doc_type
-        ):
+        record['arxiv_eprints.value'] = get_value(obj.data, 'arxiv_eprints.value')
+        for matched_record in _match(record, queries=queries_, index=index, doc_type=doc_type):
             matched_recid = matched_record.record.get('id')
             record_matches['recids'].append(matched_recid)
             record_matches['records'].append({
@@ -152,6 +138,7 @@ def match_with_invenio_matcher(queries=None, index="records-hep", doc_type="hep"
             obj.extra_data["record_matches"] = record_matches
             return True
         return False
+
     return _match_with_invenio_matcher
 
 
@@ -178,9 +165,7 @@ def is_too_old(record, days_ago=5):
         earliest_date = record.get('preprint_date', '')
     if earliest_date:
         parsed_date = datetime.datetime.strptime(earliest_date, "%Y-%m-%d")
-        if not date_older_than(parsed_date,
-                               datetime.datetime.now(),
-                               days=days_ago):
+        if not date_older_than(parsed_date, datetime.datetime.now(), days=days_ago):
             return False
     return True
 
@@ -214,6 +199,7 @@ def already_harvested(obj, eng):
 
 def previously_rejected(days_ago=None):
     """Check if record exist on INSPIRE or already rejected."""
+
     @wraps(previously_rejected)
     def _previously_rejected(obj, eng):
         if current_app.config.get('PRODUCTION_MODE'):
@@ -240,29 +226,25 @@ def pending_in_holding_pen(obj, eng):
     config = current_app.config['WORKFLOWS_UI_REST_ENDPOINT']
     index = config.get('search_index')
     doc_type = config.get('search_type')
-    searcher = RecordsSearch(
-        index=index, doc_type=doc_type
-    ).params(version=True)
+    searcher = RecordsSearch(index=index, doc_type=doc_type).params(version=True)
 
     identifiers = []
-    for field, lookup in six.iteritems(
-            current_app.config.get("HOLDING_PEN_MATCH_MAPPING", {})):
+    for field, lookup in six.iteritems(current_app.config.get("HOLDING_PEN_MATCH_MAPPING", {})):
         # Add quotes around to make the search exact
-        identifiers += ['{0}:"{1}"'.format(field, i)
-                        for i in get_value(obj.data, lookup, [])]
+        identifiers += ['{0}:"{1}"'.format(field, i) for i in get_value(obj.data, lookup, [])]
     # Search for any existing record in Holding Pen, exclude self
     if identifiers:
-        search = searcher.query(Q('query_string',
-                                query=" OR ".join(identifiers),
-                                allow_leading_wildcard=False))
+        search = searcher.query(
+            Q('query_string', query=" OR ".join(identifiers), allow_leading_wildcard=False)
+        )
         search_result = search.execute()
         id_list = [int(hit.id) for hit in search_result.hits]
         matches_excluding_self = set(id_list) - set([obj.id])
         if matches_excluding_self:
             obj.extra_data["holdingpen_ids"] = list(matches_excluding_self)
-            pending_records = db.session.query(
-                WorkflowObjectModel
-            ).with_entities(WorkflowObjectModel.id).filter(
+            pending_records = db.session.query(WorkflowObjectModel).with_entities(
+                WorkflowObjectModel.id
+            ).filter(
                 WorkflowObjectModel.status != ObjectStatus.COMPLETED,
                 WorkflowObjectModel.id.in_(matches_excluding_self)
             ).all()
@@ -270,10 +252,7 @@ def pending_in_holding_pen(obj, eng):
                 pending_ids = [o[0] for o in pending_records]
                 obj.extra_data['pending_holdingpen_ids'] = pending_ids
                 obj.log.info(
-                    "Pending records already found in Holding Pen ({0})"
-                    .format(
-                        pending_ids
-                    )
+                    "Pending records already found in Holding Pen ({0})".format(pending_ids)
                 )
                 return True
     return False
@@ -298,10 +277,7 @@ def update_existing_workflow_object(obj, eng):
     holdingpen_ids = obj.extra_data.get("holdingpen_ids", [])
     for matched_id in holdingpen_ids:
         existing_obj = workflow_object_class.get(matched_id)
-        if (
-                obj.data.get('acquisition_source') and
-                existing_obj.data.get('acquisition_source')
-        ):
+        if (obj.data.get('acquisition_source') and existing_obj.data.get('acquisition_source')):
             if (
                     obj.data['acquisition_source'].get('method') ==
                     existing_obj.data['acquisition_source'].get('method')
@@ -311,8 +287,6 @@ def update_existing_workflow_object(obj, eng):
                 existing_obj.save()
                 break
     else:
-        msg = "Cannot update old object, non valid ids: {0}".format(
-            holdingpen_ids
-        )
+        msg = "Cannot update old object, non valid ids: {0}".format(holdingpen_ids)
         obj.log.error(msg)
         raise Exception(msg)

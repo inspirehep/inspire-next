@@ -45,11 +45,13 @@ def generate_booktitle(record):
                 if rn:
                     acronym = field['acronym']
                     if acronym:
-                        booktitle = "%s: %s" % (rn, acronym, )
+                        booktitle = "%s: %s" % (
+                            rn,
+                            acronym,
+                        )
                     else:
-                        records = LiteratureSearch().query_from_iq(
-                            "reportnumber:%s" % (rn,)
-                        ).execute()
+                        records = LiteratureSearch().query_from_iq("reportnumber:%s" %
+                                                                   (rn, )).execute()
                         if records:
                             rec = records.hits[0]
                             for title in rec['titles']:

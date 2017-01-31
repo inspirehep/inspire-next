@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """DoJSON model definition for HEP."""
 
 from __future__ import absolute_import, division, print_function
@@ -50,8 +49,7 @@ def add_book_info(record, blob):
                 recid = force_single_element(pubinfo.get('0'))
                 try:
                     recid = int(recid)
-                    record['book'] = {'record':
-                                      get_record_ref(recid, 'literature')}
+                    record['book'] = {'record': get_record_ref(recid, 'literature')}
                 except (ValueError, TypeError):
                     pass
 
@@ -81,9 +79,7 @@ hep_filters = [
     clean_record,
 ]
 
-hep2marc_filters = [
-    clean_record,
-]
+hep2marc_filters = [clean_record, ]
 
 hep = FilterOverdo(filters=hep_filters)
 hep2marc = FilterOverdo(filters=hep2marc_filters)

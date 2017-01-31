@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Tasks related to record uploading."""
 
 from __future__ import absolute_import, division, print_function
@@ -75,9 +74,7 @@ def set_schema(obj, eng):
             'invenio_jsonschemas.get_schema',
             schema_path="records/{0}".format(obj.data['$schema'])
         )
-        obj.log.debug(
-            'Schema changed to %s from %s', obj.data['$schema'], old_schema
-        )
+        obj.log.debug('Schema changed to %s from %s', obj.data['$schema'], old_schema)
     else:
         obj.log.debug('Schema already is url')
 

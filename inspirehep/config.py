@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """INSPIREHEP app configuration."""
 
 from __future__ import absolute_import, division, print_function
@@ -115,15 +114,8 @@ SECURITY_LOGIN_SALT = "CHANGE_ME"
 SECURITY_PASSWORD_SALT = "CHANGE_ME"
 SECURITY_REMEMBER_SALT = "CHANGE_ME"
 SECURITY_RESET_SALT = "CHANGE_ME"
-SECURITY_PASSWORD_SCHEMES = [
-    'pbkdf2_sha512',
-    'sha512_crypt',
-    'invenio_aes_encrypted_email'
-]
-SECURITY_DEPRECATED_PASSWORD_SCHEMES = [
-    'sha512_crypt',
-    'invenio_aes_encrypted_email'
-]
+SECURITY_PASSWORD_SCHEMES = ['pbkdf2_sha512', 'sha512_crypt', 'invenio_aes_encrypted_email']
+SECURITY_DEPRECATED_PASSWORD_SCHEMES = ['sha512_crypt', 'invenio_aes_encrypted_email']
 
 REMEMBER_COOKIE_HTTPONLY = True
 """
@@ -145,9 +137,7 @@ COLLECTIONS_DELETED_RECORDS = '{dbquery} AND NOT deleted:True'
 COLLECTIONS_QUERY_PARSER = 'inspirehep.modules.search.parser:Main'
 """User search query lexical parser."""
 
-COLLECTIONS_QUERY_WALKERS = [
-    'inspirehep.modules.search.walkers.pypeg_to_ast:PypegConverter',
-]
+COLLECTIONS_QUERY_WALKERS = ['inspirehep.modules.search.walkers.pypeg_to_ast:PypegConverter', ]
 """Modules to create the query AST."""
 
 COLLECTIONS_USE_PERCOLATOR = False
@@ -161,92 +151,70 @@ when creating records.
 
 RECORD_EDITOR_INDEX_TEMPLATE = 'inspirehep_theme/invenio_record_editor/index.html'
 
-INSPIRE_COLLECTIONS_DEFINITION = [
-    {
-        "query": "collections.primary:HEP",
-        "name": "Literature"
-    },
-    {
-        "query": "collections.primary:H1-INTERNAL-NOTE",
-        "name": "H1 Internal Notes"
-    },
-    {
-        "query": "collections.primary:INSTITUTION",
-        "name": "Institutions"
-    },
-    {
-        "query": "collections.primary:HERMES-INTERNAL-NOTE",
-        "name": "HERMES Internal Notes"
-    },
-    {
-        "query": "collections.primary:ZEUS-INTERNAL-NOTE",
-        "name": "ZEUS Internal Notes"
-    },
-    {
-        "query": "collections.primary:JOB",
-        "name": "Jobs"
-    },
-    {
-        "query": "collections.primary:JOBHIDDEN",
-        "name": "Jobs Hidden"
-    },
-    {
-        "query": "collections.primary:CONFERENCES",
-        "name": "Conferences"
-    },
-    {
-        "query": "collections.primary:D0-INTERNAL-NOTE",
-        "name": "D0 Internal Notes"
-    },
-    {
-        "query": "collections.primary:EXPERIMENT",
-        "name": "Experiments"
-    },
-    {
-        "query": "collections.primary:DATA",
-        "name": "Data"
-    },
-    {
-        "query": "collections.primary:ZEUS-PRELIMINARY-NOTE",
-        "name": "ZEUS Preliminary Notes"
-    },
-    {
-        "query": "collections.primary:JOURNALS",
-        "name": "Journals"
-    },
-    {
-        "query": "collections.primary:H1-PRELIMINARY-NOTE",
-        "name": "H1 Preliminary Notes"
-    },
-    {
-        "query": "collections.primary:D0-PRELIMINARY-NOTE",
-        "name": "D0 Preliminary Notes"
-    },
-    {
-        "query": "595__c:CDS collections.primary:HEP",
-        "name": "For CDS"
-    },
-    {
-        "query": "collections.primary:CDF-INTERNAL-NOTE",
-        "name": "CDF Internal Notes"
-    },
-    {
-        "query": "collections.primary:HIDDEN",
-        "name": "HIDDEN"
-    },
-    {
-        "query": "collections.primary:CDF-NOTE",
-        "name": "CDF Notes"
-    },
-    {
-        "query": "collections.primary:HEPNAMES",
-        "name": "Authors"
-    },
-    {
-        "query": "collections.primary:HALhidden",
-        "name": "HAL Hidden"
-    }
-]
+INSPIRE_COLLECTIONS_DEFINITION = [{
+    "query": "collections.primary:HEP",
+    "name": "Literature"
+}, {
+    "query": "collections.primary:H1-INTERNAL-NOTE",
+    "name": "H1 Internal Notes"
+}, {
+    "query": "collections.primary:INSTITUTION",
+    "name": "Institutions"
+}, {
+    "query": "collections.primary:HERMES-INTERNAL-NOTE",
+    "name": "HERMES Internal Notes"
+}, {
+    "query": "collections.primary:ZEUS-INTERNAL-NOTE",
+    "name": "ZEUS Internal Notes"
+}, {
+    "query": "collections.primary:JOB",
+    "name": "Jobs"
+}, {
+    "query": "collections.primary:JOBHIDDEN",
+    "name": "Jobs Hidden"
+}, {
+    "query": "collections.primary:CONFERENCES",
+    "name": "Conferences"
+}, {
+    "query": "collections.primary:D0-INTERNAL-NOTE",
+    "name": "D0 Internal Notes"
+}, {
+    "query": "collections.primary:EXPERIMENT",
+    "name": "Experiments"
+}, {
+    "query": "collections.primary:DATA",
+    "name": "Data"
+}, {
+    "query": "collections.primary:ZEUS-PRELIMINARY-NOTE",
+    "name": "ZEUS Preliminary Notes"
+}, {
+    "query": "collections.primary:JOURNALS",
+    "name": "Journals"
+}, {
+    "query": "collections.primary:H1-PRELIMINARY-NOTE",
+    "name": "H1 Preliminary Notes"
+}, {
+    "query": "collections.primary:D0-PRELIMINARY-NOTE",
+    "name": "D0 Preliminary Notes"
+}, {
+    "query": "595__c:CDS collections.primary:HEP",
+    "name": "For CDS"
+}, {
+    "query": "collections.primary:CDF-INTERNAL-NOTE",
+    "name": "CDF Internal Notes"
+}, {
+    "query": "collections.primary:HIDDEN",
+    "name": "HIDDEN"
+}, {
+    "query": "collections.primary:CDF-NOTE",
+    "name": "CDF Notes"
+}, {
+    "query": "collections.primary:HEPNAMES",
+    "name": "Authors"
+}, {
+    "query": "collections.primary:HALhidden",
+    "name": "HAL Hidden"
+}]
 
 # Search
 # ======
@@ -255,12 +223,8 @@ INSPIRE_COLLECTIONS_DEFINITION = [
 
 SEARCH_TYPEAHEAD_INVENIO_KEYWORDS = ['author', 'title']
 SEARCH_TYPEAHEAD_SPIRES_KEYWORDS = ['a', 't', 'eprint', 'j']
-SEARCH_TYPEAHEAD_INVENIO_KEYWORD_TO_HINT = {
-    'author': 'authors.name_suggest'
-}
-SEARCH_TYPEAHEAD_SPIRES_KEYWORD_TO_HINT = {
-    'a': 'authors.name_suggest'
-}
+SEARCH_TYPEAHEAD_INVENIO_KEYWORD_TO_HINT = {'author': 'authors.name_suggest'}
+SEARCH_TYPEAHEAD_SPIRES_KEYWORD_TO_HINT = {'a': 'authors.name_suggest'}
 SEARCH_TYPEAHEAD_HINT_URL = '/search/suggest?field=%TYPE&query=%QUERY'
 SEARCH_TYPEAHEAD_DEFAULT_SET = 'invenio'
 
@@ -276,9 +240,8 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     None: ['global_fulltext'],
     "control_number": ["control_number"],
     "author": ["authors.full_name", "authors.alternative_names"],
-    "exactauthor": ["exactauthor.raw", "authors.full_name",
-                    "authors.alternative_names", "authors.ids.value"
-                    ],
+    "exactauthor":
+        ["exactauthor.raw", "authors.full_name", "authors.alternative_names", "authors.ids.value"],
     "abstract": ["abstracts.value"],
     "collaboration": ["collaboration.value", "collaboration.raw^2"],
     "tc": ["collection"],
@@ -296,9 +259,10 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "fc": ["field_code"],
     "subject": ["field_code.value"],
     "advisors": ["advisors.name"],
-    "title": ["titles.title", "titles.title.raw^2",
-              "title_translation.title", "title_variation",
-              "title_translation.subtitle", "titles.subtitle"],
+    "title": [
+        "titles.title", "titles.title.raw^2", "title_translation.title", "title_variation",
+        "title_translation.subtitle", "titles.subtitle"
+    ],
     "cnum": ["publication_info.cnum"],
     "980": [
         "collections.primary",
@@ -322,39 +286,24 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "country": ["authors.affiliations.value"],
     "firstauthor": ["authors.full_name", "authors.alternative_names"],
     "fulltext": ["urls.value"],
-    "journal": ["publication_info.recid",
-                "publication_info.page_start",
-                "publication_info.artid",
-                "publication_info.page_range",
-                "publication_info.journal_issue",
-                "publication_info.conf_acronym",
-                "publication_info.journal_title",
-                "publication_info.reportnumber",
-                "publication_info.confpaper_info",
-                "publication_info.journal_volume",
-                "publication_info.cnum",
-                "publication_info.pubinfo_freetext",
-                "publication_info.year_raw",
-                "publication_info.isbn",
-                "publication_info.note"
-                ],
-    "journal_page": ["publication_info.page_start",
-                     "publication_info.page_range"
-                     "publication_info.artid"],
+    "journal": [
+        "publication_info.recid", "publication_info.page_start", "publication_info.artid",
+        "publication_info.page_range", "publication_info.journal_issue",
+        "publication_info.conf_acronym", "publication_info.journal_title",
+        "publication_info.reportnumber", "publication_info.confpaper_info",
+        "publication_info.journal_volume", "publication_info.cnum",
+        "publication_info.pubinfo_freetext", "publication_info.year_raw", "publication_info.isbn",
+        "publication_info.note"
+    ],
+    "journal_page":
+        ["publication_info.page_start", "publication_info.page_range"
+         "publication_info.artid"],
     "keyword": ["keywords.keyword"],
     "note": ["public_notes.value"],
-    "reference": ["references.doi", "references.report_number",
-                  "references.journal_pubnote"
-                  ],
+    "reference": ["references.doi", "references.report_number", "references.journal_pubnote"],
     "subject": ["inspire_categories.term"],
-    "texkey": ["external_system_numbers.value",
-               "external_system_numbers.obsolete"
-               ],
-    "year": ["imprints.date",
-             "preprint_date",
-             "thesis.date",
-             "publication_info.year"
-             ],
+    "texkey": ["external_system_numbers.value", "external_system_numbers.obsolete"],
+    "year": ["imprints.date", "preprint_date", "thesis.date", "publication_info.year"],
     "confnumber": ["publication_info.cnum"],
     "earliest_date": ["earliest_date"],
     "address": ["corporate_author"],
@@ -377,62 +326,64 @@ RECORDS_REST_ENDPOINTS = dict(
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
-            'application/x-bibtex': ('inspirehep.modules.records.serializers'
-                                     ':bibtex_v1_response'),
+            'application/x-bibtex':
+                ('inspirehep.modules.records.serializers'
+                 ':bibtex_v1_response'),
             'application/x-orcid': ('invenio_orcid.serializers'
                                     ':orcid_response'),
-            'application/x-latexeu': ('inspirehep.modules.records.serializers'
-                                      ':latexeu_v1_response'),
-            'application/x-latexus': ('inspirehep.modules.records.serializers'
-                                      ':latexus_v1_response'),
-            'application/x-cvformatlatex': (
-                'inspirehep.modules.records.serializers'
-                ':cvformatlatex_v1_response'),
-            'application/x-cvformathtml': (
-                'inspirehep.modules.records.serializers'
-                ':cvformathtml_v1_response'),
-            'application/x-cvformattext': (
-                'inspirehep.modules.records.serializers'
-                ':cvformattext_v1_response'),
-            'application/x-impact.graph+json': (
-                'inspirehep.modules.records.serializers'
-                ':impactgraph_v1_response'
-            ),
+            'application/x-latexeu':
+                ('inspirehep.modules.records.serializers'
+                 ':latexeu_v1_response'),
+            'application/x-latexus':
+                ('inspirehep.modules.records.serializers'
+                 ':latexus_v1_response'),
+            'application/x-cvformatlatex':
+                ('inspirehep.modules.records.serializers'
+                 ':cvformatlatex_v1_response'),
+            'application/x-cvformathtml':
+                ('inspirehep.modules.records.serializers'
+                 ':cvformathtml_v1_response'),
+            'application/x-cvformattext':
+                ('inspirehep.modules.records.serializers'
+                 ':cvformattext_v1_response'),
+            'application/x-impact.graph+json':
+                ('inspirehep.modules.records.serializers'
+                 ':impactgraph_v1_response'),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'inspirehep.modules.records.serializers'
-                ':json_literature_brief_v1_search'
-            ),
+            'application/vnd+inspire.brief+json':
+                ('inspirehep.modules.records.serializers'
+                 ':json_literature_brief_v1_search'),
             'application/x-bibtex': ('inspirehep.modules.records.serializers'
                                      ':bibtex_v1_search'),
             'application/x-orcid': ('invenio_orcid.serializers'
                                     ':orcid_search'),
-            'application/x-latexeu': ('inspirehep.modules.records.serializers'
-                                      ':latexeu_v1_search'),
-            'application/x-latexus': ('inspirehep.modules.records.serializers'
-                                      ':latexus_v1_search'),
-            'application/x-cvformatlatex': (
-                'inspirehep.modules.records.serializers'
-                ':cvformatlatex_v1_search'),
-            'application/x-cvformathtml': (
-                'inspirehep.modules.records.serializers'
-                ':cvformathtml_v1_search'),
-            'application/x-cvformattext': (
-                'inspirehep.modules.records.serializers'
-                ':cvformattext_v1_search'),
+            'application/x-latexeu':
+                ('inspirehep.modules.records.serializers'
+                 ':latexeu_v1_search'),
+            'application/x-latexus':
+                ('inspirehep.modules.records.serializers'
+                 ':latexus_v1_search'),
+            'application/x-cvformatlatex':
+                ('inspirehep.modules.records.serializers'
+                 ':cvformatlatex_v1_search'),
+            'application/x-cvformathtml':
+                ('inspirehep.modules.records.serializers'
+                 ':cvformathtml_v1_search'),
+            'application/x-cvformattext':
+                ('inspirehep.modules.records.serializers'
+                 ':cvformattext_v1_search'),
         },
         suggesters=dict(
-            abstract_source=dict(completion=dict(
-                field='abstracts.abstract_source_suggest'
-            ))
+            abstract_source=dict(completion=dict(field='abstracts.abstract_source_suggest'))
         ),
         list_route='/literature/',
         item_route=(
             '/literature'
-            '/<pid(lit,record_class="inspirehep.modules.records.api:ESRecord"):pid_value>'),
+            '/<pid(lit,record_class="inspirehep.modules.records.api:ESRecord"):pid_value>'
+        ),
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
@@ -444,23 +395,21 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route=(
             '/literature'
             '/<pid(lit,record_class="inspirehep.modules.records.api:ESRecord"):pid_value>'
-            '/citesummary'),
+            '/citesummary'
+        ),
         list_route='/literature/',
         max_result_window=10000,
         pid_fetcher='inspire_recid_fetcher',
         pid_minter='inspire_recid_minter',
         pid_type='lit',
         record_serializers={
-            'application/json': (
-                'inspirehep.modules.api.v1.literature:citesummary_response')
+            'application/json': ('inspirehep.modules.api.v1.literature:citesummary_response')
         },
         record_class='inspirehep.modules.records.api:InspireRecord',
         search_class='inspirehep.modules.search:LiteratureSearch',
-        search_factory_imp=(
-            'inspirehep.modules.search.query:inspire_search_factory'),
+        search_factory_imp=('inspirehep.modules.search.query:inspire_search_factory'),
         search_serializers={
-            'application/json': (
-                'invenio_records_rest.serializers:json_v1_response')
+            'application/json': ('invenio_records_rest.serializers:json_v1_response')
         },
     ),
     literature_db=dict(
@@ -495,10 +444,9 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
-            ),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers'
+                 ':json_v1_search'),
         },
         list_route='/authors/',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
@@ -519,10 +467,9 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
-            ),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers'
+                 ':json_v1_search'),
         },
         list_route='/authors/',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citations',
@@ -540,18 +487,15 @@ RECORDS_REST_ENDPOINTS = dict(
         pid_minter='inspire_recid_minter',
         pid_type='aut',
         record_serializers={
-            'application/json': (
-                'inspirehep.modules.api.v1.authors:citesummary_response'),
+            'application/json': ('inspirehep.modules.api.v1.authors:citesummary_response'),
         },
         record_class='inspirehep.modules.records.api:InspireRecord',
         search_class='inspirehep.modules.search:AuthorsSearch',
-        search_factory_imp=(
-            'inspirehep.modules.search.query:inspire_search_factory'),
+        search_factory_imp=('inspirehep.modules.search.query:inspire_search_factory'),
         search_serializers={
-            'application/json': (
-                'invenio_records_rest.serializers:json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers:json_v1_search'),
+            'application/json': ('invenio_records_rest.serializers:json_v1_search'),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers:json_v1_search'),
         },
     ),
     authors_coauthors=dict(
@@ -567,10 +511,9 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
-            ),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers'
+                 ':json_v1_search'),
         },
         list_route='/authors/',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/coauthors',
@@ -592,10 +535,9 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
-            ),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers'
+                 ':json_v1_search'),
         },
         list_route='/authors/',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/publications',
@@ -617,10 +559,9 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
-            ),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers'
+                 ':json_v1_search'),
         },
         list_route='/authors/',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/stats',
@@ -643,10 +584,9 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
-            ),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers'
+                 ':json_v1_search'),
         },
         list_route='/data/',
         item_route='/data/<pid(dat,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
@@ -668,10 +608,9 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
-            ),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers'
+                 ':json_v1_search'),
         },
         list_route='/conferences/',
         item_route='/conferences/<pid(con,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
@@ -693,10 +632,9 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
-            ),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers'
+                 ':json_v1_search'),
         },
         list_route='/jobs/',
         item_route='/jobs/<pid(job,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
@@ -718,10 +656,9 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
-            ),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers'
+                 ':json_v1_search'),
         },
         list_route='/institutions/',
         item_route='/institutions/<pid(ins,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
@@ -732,24 +669,23 @@ RECORDS_REST_ENDPOINTS = dict(
     institutions_citesummary=dict(
         default_media_type='application/json',
         item_route=(
-            '/institutions/<pid(ins,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary'),
+            '/institutions/<pid(ins,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary'
+        ),
         list_route='/institutions/',
         max_result_window=10000,
         pid_fetcher='inspire_recid_fetcher',
         pid_minter='inspire_recid_minter',
         pid_type='ins',
         record_serializers={
-            'application/json': (
-                'inspirehep.modules.api.v1.institutions:citesummary_response'),
+            'application/json': ('inspirehep.modules.api.v1.institutions:citesummary_response'),
         },
         record_class='inspirehep.modules.records.api:InspireRecord',
         search_class='inspirehep.modules.search:InstitutionsSearch',
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
         search_serializers={
-            'application/json': (
-                'invenio_records_rest.serializers:json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers:json_v1_search'),
+            'application/json': ('invenio_records_rest.serializers:json_v1_search'),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers:json_v1_search'),
         },
     ),
     experiments=dict(
@@ -766,16 +702,11 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
-            ),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers'
+                 ':json_v1_search'),
         },
-        suggesters=dict(
-            experiment=dict(completion=dict(
-                field='experiment_suggest'
-            ))
-        ),
+        suggesters=dict(experiment=dict(completion=dict(field='experiment_suggest'))),
         list_route='/experiments/',
         item_route='/experiments/<pid(exp,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',
@@ -785,24 +716,23 @@ RECORDS_REST_ENDPOINTS = dict(
     experiments_citesummary=dict(
         default_media_type='application/json',
         item_route=(
-            '/experiments/<pid(exp,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary'),
+            '/experiments/<pid(exp,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary'
+        ),
         list_route='/experiments/',
         max_result_window=10000,
         pid_fetcher='inspire_recid_fetcher',
         pid_minter='inspire_recid_minter',
         pid_type='exp',
         record_serializers={
-            'application/json': (
-                'inspirehep.modules.api.v1.experiments:citesummary_response'),
+            'application/json': ('inspirehep.modules.api.v1.experiments:citesummary_response'),
         },
         record_class='inspirehep.modules.records.api:InspireRecord',
         search_class='inspirehep.modules.search:ExperimentsSearch',
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
         search_serializers={
-            'application/json': (
-                'invenio_records_rest.serializers:json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers:json_v1_search'),
+            'application/json': ('invenio_records_rest.serializers:json_v1_search'),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers:json_v1_search'),
         },
     ),
     journals=dict(
@@ -819,10 +749,9 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
-            ),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers'
+                 ':json_v1_search'),
         },
         list_route='/journals/',
         item_route='/journals/<pid(jou,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
@@ -833,24 +762,23 @@ RECORDS_REST_ENDPOINTS = dict(
     journals_citesummary=dict(
         default_media_type='application/json',
         item_route=(
-            '/journals/<pid(jou,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary'),
+            '/journals/<pid(jou,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary'
+        ),
         list_route='/journals/',
         max_result_window=10000,
         pid_fetcher='inspire_recid_fetcher',
         pid_minter='inspire_recid_minter',
         pid_type='jou',
         record_serializers={
-            'application/json': (
-                'inspirehep.modules.api.v1.journals:citesummary_response'),
+            'application/json': ('inspirehep.modules.api.v1.journals:citesummary_response'),
         },
         record_class='inspirehep.modules.records.api:InspireRecord',
         search_class='inspirehep.modules.search:JournalsSearch',
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
         search_serializers={
-            'application/json': (
-                'invenio_records_rest.serializers:json_v1_search'),
-            'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers:json_v1_search'),
+            'application/json': ('invenio_records_rest.serializers:json_v1_search'),
+            'application/vnd+inspire.brief+json':
+                ('invenio_records_rest.serializers:json_v1_search'),
         },
     ),
 )
@@ -864,14 +792,14 @@ RECORDS_UI_ENDPOINTS = dict(
         pid_type='lit',
         route='/literature/<pid_value>',
         template='inspirehep_theme/format/record/'
-                 'Inspire_Default_HTML_detailed.tpl',
+        'Inspire_Default_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:LiteratureRecord',
     ),
     authors=dict(
         pid_type='aut',
         route='/authors/<pid_value>',
         template='inspirehep_theme/format/record/'
-                 'authors/Author_HTML_detailed.html',
+        'authors/Author_HTML_detailed.html',
         record_class='inspirehep.modules.records.wrappers:AuthorsRecord',
     ),
     data=dict(
@@ -918,12 +846,10 @@ RECORDS_REST_FACETS = {
             "subject": terms_filter('facet_inspire_subjects'),
             "doc_type": terms_filter('facet_inspire_doc_type'),
             "formulas": terms_filter('facet_formulas'),
-            "experiment": terms_filter(
-                'accelerator_experiments.facet_experiment'),
+            "experiment": terms_filter('accelerator_experiments.facet_experiment'),
             "earliest_date": range_filter(
-                'earliest_date',
-                format='yyyy',
-                end_date_math='/y')
+                'earliest_date', format='yyyy', end_date_math='/y'
+            )
         },
         "aggs": {
             "subject": {
@@ -962,7 +888,9 @@ RECORDS_REST_FACETS = {
                     "interval": "year",
                     "format": "yyyy",
                     "min_doc_count": 1,
-                    "order": {"_count": "desc"}
+                    "order": {
+                        "_count": "desc"
+                    }
                 }
             }
         }
@@ -1010,7 +938,9 @@ RECORDS_REST_FACETS = {
                     "field": "opening_date",
                     "interval": "year",
                     "min_doc_count": 1,
-                    "order": {"_count": "desc"}
+                    "order": {
+                        "_count": "desc"
+                    }
                 }
             }
         }
@@ -1118,24 +1048,38 @@ RECORDS_REST_SORT_OPTIONS = {
             "order": 3,
         },
     },
-
     "record-data": {
-        'latest': {'fields': 'latest', 'default_order': 'asc',
-                   'order': 1, 'title': 'Recent'},
-
-        'relevance': {'fields': 'relevance', 'default_order': 'asc',
-                      'order': 2, 'title': 'Relevance'},
-
-        'title': {'fields': 'title', 'default_order': 'asc',
-                  'order': 3, 'title': 'Title'},
-
-        'collaborations': {'fields': 'collaborations', 'default_order': 'asc',
-                           'order': 4, 'title': 'Collaboration'},
-
-        'date': {'fields': 'date', 'default_order': 'asc',
-                 'order': 5, 'title': 'Publication Date'}
+        'latest': {
+            'fields': 'latest',
+            'default_order': 'asc',
+            'order': 1,
+            'title': 'Recent'
+        },
+        'relevance': {
+            'fields': 'relevance',
+            'default_order': 'asc',
+            'order': 2,
+            'title': 'Relevance'
+        },
+        'title': {
+            'fields': 'title',
+            'default_order': 'asc',
+            'order': 3,
+            'title': 'Title'
+        },
+        'collaborations': {
+            'fields': 'collaborations',
+            'default_order': 'asc',
+            'order': 4,
+            'title': 'Collaboration'
+        },
+        'date': {
+            'fields': 'date',
+            'default_order': 'asc',
+            'order': 5,
+            'title': 'Publication Date'
+        }
     },
-
     "records-jobs": {
         "bestmatch": {
             "title": 'Best match',
@@ -1157,12 +1101,10 @@ RECORDS_REST_DEFAULT_SORT = {
         "query": "-bestmatch",
         "noquery": "-mostrecent"
     },
-
     "records-data": {
         "query": "relevance",
         "noquery": "latest"
     },
-
     "records-jobs": {
         "query": "bestmatch",
         "noquery": "-mostrecent"
@@ -1171,9 +1113,7 @@ RECORDS_REST_DEFAULT_SORT = {
 
 RECORDS_REST_DEFAULT_READ_PERMISSION_FACTORY = None
 
-RECORDS_VALIDATION_TYPES = {
-    'array': (list, tuple),
-}
+RECORDS_VALIDATION_TYPES = {'array': (list, tuple), }
 
 JSONSCHEMAS_HOST = "localhost:5000"
 JSONSCHEMAS_REPLACE_REFS = True
@@ -1186,10 +1126,10 @@ INDEXER_BULK_REQUEST_TIMEOUT = float(120)
 
 # OAuthclient
 # ===========
-orcid.REMOTE_APP['params']['request_token_params'] = {'scope': '/orcid-profile/read-limited /activities/update /orcid-bio/update'}
-OAUTHCLIENT_REMOTE_APPS = dict(
-    orcid=orcid.REMOTE_APP,
-)
+orcid.REMOTE_APP['params']['request_token_params'] = {
+    'scope': '/orcid-profile/read-limited /activities/update /orcid-bio/update'
+}
+OAUTHCLIENT_REMOTE_APPS = dict(orcid=orcid.REMOTE_APP, )
 OAUTHCLIENT_ORCID_CREDENTIALS = dict(
     consumer_key="CHANGE_ME",
     consumer_secret="CHANGE_ME",
@@ -1331,12 +1271,7 @@ WORKFLOWS_UI_REST_SORT_OPTIONS = {
     },
 }
 
-WORKFLOWS_UI_REST_DEFAULT_SORT = {
-    "holdingpen": {
-        "query": "-bestmatch",
-        "noquery": "-mostrecent"
-    }
-}
+WORKFLOWS_UI_REST_DEFAULT_SORT = {"holdingpen": {"query": "-bestmatch", "noquery": "-mostrecent"}}
 
 AUTHORS_UPDATE_BASE_URL = "http://inspirehep.net"
 
@@ -1376,65 +1311,27 @@ ORCID_WORK_TYPES = {
     "report": "REPORT"
 }
 
-
 # Inspire mappings
 # ================
 
 INSPIRE_LEGACY_ROLES = {
-    'editing': [
-        'ed.',
-        'eds.',
-        'ed,,',
-        'eds',
-        'ed,',
-        'ed. et al.'
-    ],
+    'editing': ['ed.', 'eds.', 'ed,,', 'eds', 'ed,', 'ed. et al.'],
     'administration': [
-        'task force leader',
-        'resource manager',
-        'scientific coordinator',
-        'chairman',
-        'chair',
+        'task force leader', 'resource manager', 'scientific coordinator', 'chairman', 'chair',
         'workshop chair'
     ]
 }
 
 INSPIRE_CATEGORIES = [
-    'Accelerators',
-    'Astrophysics',
-    'Computing',
-    'Data Analysis and Statistics',
-    'Experiment-HEP',
-    'Experiment-Nucl',
-    'General Physics',
-    'Gravitation and Cosmology',
-    'Instrumentation',
-    'Lattice',
-    'Math and Math Physics',
-    'Other',
-    'Phenomenology-HEP',
-    'Theory-HEP',
-    'Theory-Nucl'
+    'Accelerators', 'Astrophysics', 'Computing', 'Data Analysis and Statistics', 'Experiment-HEP',
+    'Experiment-Nucl', 'General Physics', 'Gravitation and Cosmology', 'Instrumentation',
+    'Lattice', 'Math and Math Physics', 'Other', 'Phenomenology-HEP', 'Theory-HEP', 'Theory-Nucl'
 ]
 
-INSPIRE_DEGREE_TYPES = [
-    'Bachelor',
-    'Diploma',
-    'Habilitation',
-    'Laurea',
-    'Master',
-    'PhD',
-    'Thesis'
-]
+INSPIRE_DEGREE_TYPES = ['Bachelor', 'Diploma', 'Habilitation', 'Laurea', 'Master', 'PhD', 'Thesis']
 
 INSPIRE_LICENSE_TYPES = [
-    'CC-BY',
-    'CC-BY-NC',
-    'CC-BY-NC-ND',
-    'CC-BY-NC-SA',
-    'CC-BY-ND',
-    'CC-BY-SA',
-    'Other'
+    'CC-BY', 'CC-BY-NC', 'CC-BY-NC-ND', 'CC-BY-NC-SA', 'CC-BY-ND', 'CC-BY-SA', 'Other'
 ]
 
 INSPIRE_RANK_TYPES = {
@@ -1626,7 +1523,6 @@ ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
     "stat.TH": "Other"
 }
 
-
 # Configuration for the $ref updater
 # ==================================
 INSPIRE_REF_UPDATER_WHITELISTS = {
@@ -1655,15 +1551,11 @@ INSPIRE_REF_UPDATER_WHITELISTS = {
         'thesis.institutions.record',
         'thesis_supervisors.affiliations.record',
     ],
-    'institutions': [
-        'related_institutes.record',
-    ],
+    'institutions': ['related_institutes.record', ],
     'jobs': [
         'experiments.record',
         'institutions.record',
     ],
-    'journals': [
-        'relation.record',
-    ],
+    'journals': ['relation.record', ],
 }
 """Controls which fields are updated when the referred record is updated."""

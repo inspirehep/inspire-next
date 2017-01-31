@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
-
 """WTForm filters implementation.
 
 Filters can be applied to incoming form data, after process_formdata() has run.
@@ -32,6 +31,7 @@ import six
 
 def strip_prefixes(*prefixes):
     """Return a filter function that removes leading prefixes from a string."""
+
     def _inner(value):
         """Remove a leading prefix from string."""
         if isinstance(value, six.string_types):
@@ -39,6 +39,7 @@ def strip_prefixes(*prefixes):
                 if value.lower().startswith(prefix):
                     return value[len(prefix):]
         return value
+
     return _inner
 
 

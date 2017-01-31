@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Set of methods to query Elasticsearch instance."""
 
 from __future__ import absolute_import, division, print_function
@@ -51,10 +50,8 @@ def _get_record(record_id, source):
     elasticsearch_type = current_app.config.get('DISAMBIGUATION_RECORD_DOCTYPE')
 
     return es.get_source(
-        index=elasticsearch_index,
-        id=str(record_id),
-        doc_type=elasticsearch_type,
-        _source=source)
+        index=elasticsearch_index, id=str(record_id), doc_type=elasticsearch_type, _source=source
+    )
 
 
 def _search(query):
@@ -75,9 +72,7 @@ def _search(query):
     """
     elasticsearch_index = current_app.config.get('DISAMBIGUATION_RECORD_INDEX')
 
-    return es.search(
-        index=elasticsearch_index,
-        body=query)['hits']['hits']
+    return es.search(index=elasticsearch_index, body=query)['hits']['hits']
 
 
 def _scroll_search(query):
@@ -101,10 +96,7 @@ def _scroll_search(query):
 
     result = []
 
-    for response in scan(
-            es, query=query,
-            index=elasticsearch_index,
-            doc_type=elasticsearch_type):
+    for response in scan(es, query=query, index=elasticsearch_index, doc_type=elasticsearch_type):
         result.append(response)
 
     return result
@@ -132,10 +124,7 @@ def create_beard_record(record_id):
              'publication_id': u'13c3cca8-b0bf-42f5-90d4-e3dfcced0511',
              'year': u'2015'}
     """
-    _source = [
-        "authors.full_name",
-        "earliest_date"
-    ]
+    _source = ["authors.full_name", "earliest_date"]
 
     response = _get_record(record_id, _source)
 
@@ -194,12 +183,8 @@ def create_beard_signatures(record_id, signature_block):
               'author_claimed: False}]
     """
     _source = [
-        "authors.affiliations",
-        "authors.curated_relation",
-        "authors.full_name",
-        "authors.recid",
-        "authors.signature_block",
-        "authors.uuid"
+        "authors.affiliations", "authors.curated_relation", "authors.full_name", "authors.recid",
+        "authors.signature_block", "authors.uuid"
     ]
 
     response = _get_record(record_id, _source)
@@ -251,16 +236,7 @@ def get_blocks_from_record(record_id):
         Example:
             [u'CACATRANv', u'SARANANa', u'TANASANa', u'ADANw', ...]
     """
-    query = {
-        "fields": [
-            "authors.signature_block"
-        ],
-        "query": {
-            "ids": {
-                "values": [str(record_id)]
-            }
-        }
-    }
+    query = {"fields": ["authors.signature_block"], "query": {"ids": {"values": [str(record_id)]}}}
 
     response = _search(query)
 
@@ -292,14 +268,7 @@ def get_records_from_block(signature_block):
             [u'545be179-5d53-4e3d-a605-82628d0dbbc9',
              u'5d56f5e7-a3fd-45cc-8818-5c0b5b7c4352', ...]
     """
-    query = {
-        "fields": [],
-        "query": {
-            "match": {
-                "authors.signature_block": str(signature_block)
-            }
-        }
-    }
+    query = {"fields": [], "query": {"match": {"authors.signature_block": str(signature_block)}}}
 
     return [record["_id"] for record in _scroll_search(query)]
 
@@ -336,17 +305,9 @@ def get_signature(uuid):
     """
     query = {
         "_source": [
-            "authors.affiliations",
-            "authors.alternative_name",
-            "authors.curated_relation",
-            "authors.email",
-            "authors.full_name",
-            "authors.inspire_id",
-            "authors.orcid",
-            "authors.profile",
-            "authors.recid",
-            "authors.contributor_roles.value",
-            "authors.uuid"
+            "authors.affiliations", "authors.alternative_name", "authors.curated_relation",
+            "authors.email", "authors.full_name", "authors.inspire_id", "authors.orcid",
+            "authors.profile", "authors.recid", "authors.contributor_roles.value", "authors.uuid"
         ],
         "query": {
             "match": {

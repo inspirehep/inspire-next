@@ -19,7 +19,6 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
 """Filter-aware subclass of DoJSON's Overdo.
 
 Allows for a list of filters to be passed during instantiation,
@@ -34,7 +33,6 @@ from .utils import dedupe_all_lists, strip_empty_values
 
 
 class FilterOverdo(Overdo):
-
     def __init__(self, filters=None, *args, **kwargs):
         super(FilterOverdo, self).__init__(*args, **kwargs)
         self.filters = filters or []
