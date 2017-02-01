@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from flask import current_app
+
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
     get_pid_type_from_schema
@@ -36,3 +38,9 @@ def get_endpoint_from_record(record):
     endpoint = get_endpoint_from_pid_type(pid_type)
 
     return endpoint
+
+
+def get_detailed_template_from_record(record):
+    """Return the detailed template corresponding to the given record."""
+    endpoint = get_endpoint_from_record(record)
+    return current_app.config['RECORDS_UI_ENDPOINTS'][endpoint]['template']
