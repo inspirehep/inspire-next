@@ -160,6 +160,44 @@ def test_external_system_numbers_from_970__a():
     assert expected == result['970']
 
 
+@pytest.mark.xfail(reason='missing roundtrip')
+def test_external_system_numbers_from_970__double_a():
+    schema = load_schema('hep')
+    subschema = schema['properties']['external_system_numbers']
+
+    snippet = (
+        '<datafield tag="970" ind1=" " ind2=" ">'
+        '  <subfield code="a">SPIRES-9663061</subfield>'
+        '  <subfield code="a">SPIRES-9949933</subfield>'
+        '</datafield>'
+    )  # record/1217763
+
+    expected = [
+        {
+            'institute': 'SPIRES',
+            'obsolete': True,
+            'value': 'SPIRES-9663061',
+        },
+        {
+            'institute': 'SPIRES',
+            'obsolete': True,
+            'value': 'SPIRES-9949933',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['external_system_numbers'], subschema) is None
+    assert expected == result['external_system_numbers']
+
+    expected = [
+        {'a': 'SPIRES-9663061'},
+        {'a': 'SPIRES-9949933'},
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['970']
+
+
 @pytest.mark.xfail(reason='wrong roundtrip')
 def test_new_record_from_970__d():
     schema = load_schema('hep')
