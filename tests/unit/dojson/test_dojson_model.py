@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,13 +22,22 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.dojson.model import FilterOverdo
+from inspirehep.dojson.model import FilterOverdo, add_schema
 
 
 def test_filteroverdo_works_without_filters():
     model = FilterOverdo()
 
     expected = {}
+    result = model.do({})
+
+    assert expected == result
+
+
+def test_add_schema():
+    model = FilterOverdo(filters=[add_schema('hep.json')])
+
+    expected = {'$schema': 'hep.json'}
     result = model.do({})
 
     assert expected == result
