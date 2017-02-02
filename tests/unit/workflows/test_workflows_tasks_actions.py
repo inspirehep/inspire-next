@@ -406,6 +406,12 @@ def test_is_arxiv_paper():
     assert is_arxiv_paper(obj)
 
 
+def test_is_arxiv_paper_returns_false_when_arxiv_eprints_is_empty():
+    obj = StubObj({'arxiv_eprints': []}, {})
+
+    assert not is_arxiv_paper(obj)
+
+
 def test_is_submission():
     obj = StubObj({'acquisition_source': {'method': 'submission'}}, {})
     eng = DummyEng()

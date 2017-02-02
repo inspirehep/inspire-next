@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015, 2016 CERN.
+# Copyright (C) 2014, 2015, 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -158,8 +158,12 @@ def is_experimental_paper(obj, eng):
 
 def is_arxiv_paper(obj, *args, **kwargs):
     """Check if the record is from arXiv."""
-    return bool(get_value(obj.data, "arxiv_eprints.categories", [[]])[0]) or \
-        get_clean_arXiv_id(obj.data)
+    arxiv_id = get_clean_arXiv_id(obj.data)
+    categories = get_value(obj.data, 'arxiv_eprints.categories')
+
+    if arxiv_id or categories:
+        return True
+    return False
 
 
 def is_submission(obj, eng):
