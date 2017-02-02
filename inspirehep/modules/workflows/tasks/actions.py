@@ -158,8 +158,10 @@ def is_experimental_paper(obj, eng):
 
 def is_arxiv_paper(obj, *args, **kwargs):
     """Check if the record is from arXiv."""
-    return bool(get_value(obj.data, "arxiv_eprints.categories", [[]])[0]) or \
-        get_clean_arXiv_id(obj.data)
+    categories = get_value(obj.data, "arxiv_eprints.categories", [[]])
+    if categories:
+        return bool(categories[0]) or get_clean_arXiv_id(obj.data)
+    return False
 
 
 def is_submission(obj, eng):
