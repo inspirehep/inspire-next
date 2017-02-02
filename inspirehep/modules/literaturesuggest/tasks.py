@@ -24,205 +24,196 @@ from __future__ import absolute_import, division, print_function
 
 import copy
 
-from datetime import date
-
-from flask import current_app
-
 from sqlalchemy.orm.exc import NoResultFound
-
-from idutils import is_arxiv_post_2007
 from invenio_accounts.models import User
 from invenio_oauthclient.models import UserIdentity
+
+from idutils import is_arxiv_post_2007
 from inspirehep.modules.forms.utils import filter_empty_elements
-from inspirehep.modules.search.api import JournalsSearch
 from inspirehep.utils.record import get_title, get_value
 
-from .dojson.model import literature
+from inspire_schemas.api import LiteratureBuilder
+
+from inspirehep.utils.pubnote import split_page_artid
+
+from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.normalizers import normalize_journal_title
 
 
 def formdata_to_model(obj, formdata):
     """Manipulate form data to match literature data model."""
+    def _retreive_orcid(id_user):
+        try:
+            orcid = UserIdentity.query.filter_by(
+                id_user=id_user,
+                method='orcid'
+            ).one().id
+        except NoResultFound:
+            orcid = None
+
+        return orcid
+
     form_fields = copy.deepcopy(formdata)
     filter_empty_elements(
         form_fields, ['authors', 'supervisors', 'report_numbers']
     )
 
-    data = literature.do(form_fields)
+    builder = LiteratureBuilder(source='submitter')
 
-    # Add extra fields that need to be computed or depend on other
-    # fields.
-    #
-    # ======
-    # Schema
-    # ======
-    if '$schema' in data and not data['$schema'].startswith('http'):
-        jsonschemas_ext = current_app.extensions.get('invenio-jsonschemas')
-        data['$schema'] = jsonschemas_ext.path_to_url(
-            "records/{0}".format(data['$schema']))
+    for author in form_fields.get('authors', []):
+        builder.add_author(builder.make_author(
+            author['full_name'],
+            affiliations=force_force_list(author['affiliation'])
+            if author['affiliation'] else None,
+            roles=['author']
+        ))
 
-    # ============================
-    # Collection
-    # ============================
-    data['collections'] = [{'primary': "HEP"}]
-    if form_fields['type_of_doc'] == 'thesis':
-        data['collections'].append({'primary': "THESIS"})
-
-    if get_value(form_fields, "arxiv_eprints.categories", None):
-        # Check if it was imported from arXiv
-        data['collections'].extend([{'primary': "arXiv"},
-                                    {'primary': "Citeable"}])
-        # Add arXiv as source
-        if data.get("abstracts"):
-            data['abstracts'][0]['source'] = 'arXiv'
-        if form_fields.get("arxiv_id"):
-            data['external_system_numbers'] = [{
-                'value': 'oai:arXiv.org:' + form_fields['arxiv_id'],
-                'institute': 'arXiv'
-            }]
-    if "publication_info" in data:
-        pub_keys = data['publication_info'][0].keys()
-
-        has_pub_info = all([
-            key in pub_keys for key in (
-                'year', 'journal_issue', 'journal_volume')])
-        has_page_or_artid = any([
-            key in pub_keys for key in ('page_start', 'page_end', 'artid')])
-
-        if has_pub_info and has_page_or_artid:
-            # NOTE: Only peer reviewed journals should have this collection
-            # we are adding it here but ideally should be manually added
-            # by a curator.
-            data['collections'].append({'primary': "Published"})
-            # Add Citeable collection if not present
-            collections = [x['primary'] for x in data['collections']]
-            if "Citeable" not in collections:
-                data['collections'].append({'primary': "Citeable"})
-    # ============================
-    # Title source and cleanup
-    # ============================
-    try:
-        # Clean up all extra spaces in title
-        data['titles'][0]['title'] = " ".join(
-            data['titles'][0]['title'].split()
+    for supervisor in form_fields.get('supervisors', []):
+        builder.add_author(
+            builder.make_author(
+                supervisor['full_name'],
+                affiliations=force_force_list(supervisor['affiliation'])
+                if author['affiliation'] else None,
+                roles=['supervisor']
+            )
         )
-        title = data['titles'][0]['title']
-    except (KeyError, IndexError):
-        title = ""
-    if form_fields.get('title_arXiv'):
-        title_arxiv = " ".join(form_fields.get('title_arXiv').split())
-        if title == title_arxiv:
-            data['titles'][0]["source"] = "arXiv"
-        else:
-            data['titles'].append({
-                'title': title_arxiv,
-                'source': "arXiv"
-            })
-    if form_fields.get('title_crossref'):
-        title_crossref = " ".join(
-            form_fields.get('title_crossref').split()
-        )
-        if title == title_crossref:
-            data['titles'][0]["source"] = "CrossRef"
-        else:
-            data['titles'].append({
-                'title': title_crossref,
-                'source': "CrossRef"
-            })
-    try:
-        data['titles'][0]['source']
-    except KeyError:
-        # Title has no source, so should be the submitter
-        data['titles'][0]['source'] = "submitter"
 
-    # ============================
-    # Conference name
-    # ============================
-    if 'conf_name' in form_fields:
-        if 'nonpublic_note' in form_fields:
-            data.setdefault("hidden_notes", []).append({
-                "value": form_fields['conf_name']
-            })
-            data['hidden_notes'].append({
-                'value': form_fields['nonpublic_note']
-            })
-        else:
-            data.setdefault("hidden_notes", []).append({
-                "value": form_fields['conf_name']
-            })
-        data['collections'].extend([{'primary': "ConferencePaper"}])
+    builder.add_title(title=form_fields.get('title'))
 
-    # ============================
-    # Page number
-    # ============================
-    if 'page_nr' not in data:
-        first_publication_info = data.get('publication_info', [{}])[0]
+    document_type = 'conference paper' if form_fields.get('conf_name') \
+        else form_fields.get('type_of_doc', [])
 
-        page_start = first_publication_info.get('page_start')
-        page_end = first_publication_info.get('page_end')
-
-        if page_start and page_end:
-            try:
-                data['page_nr'] = int(page_end) - int(page_start) + 1
-            except (TypeError, ValueError):
-                pass
-
-    # ============================
-    # Language
-    # ============================
-    if form_fields.get('language') == 'oth':
-        if form_fields.get("other_language"):
-            data["languages"] = [form_fields["other_language"]]
-
-    # ==========
-    # Owner Info
-    # ==========
-    # TODO Make sure we are getting the email correctly
-    userid = obj.id_user
-    try:
-        email = User.query.get(userid).email
-    except AttributeError:
-        email = ''
-    try:
-        # TODO Make sure we are getting the ORCID id correctly
-        source = UserIdentity.query.filter_by(id_user=userid, method='orcid').one()
-    except NoResultFound:
-        source = ''
-    if source:
-        source = source.method + ':' + source.id
-    data['acquisition_source'] = dict(
-        source=source,
-        email=email,
-        date=date.today().isoformat(),
-        method="submission",
-        submission_number=str(obj.id),
+    builder.add_document_type(
+        document_type=document_type
     )
-    # ==============
-    # Extra comments
-    # ==============
-    if form_fields.get('extra_comments'):
-        data.setdefault('hidden_notes', []).append(
-            {
-                'value': form_fields['extra_comments'],
-                'source': 'submitter'
-            }
+
+    builder.add_abstract(
+        abstract=form_fields.get('abstract'),
+        source='arXiv' if form_fields.get('categories') else None
+    )
+
+    if form_fields.get('arxiv_id') and form_fields.get('categories'):
+        builder.add_arxiv_eprint(
+            arxiv_id=form_fields.get('arxiv_id'),
+            arxiv_categories=form_fields.get('categories').split()
         )
-    # ==========================
-    # Journal name normalization
-    # ==========================
-    journal_title = get_value(data, 'publication_info[0].journal_title')
-    if journal_title:
-        hits = JournalsSearch().query(
-            'match', title_variants__title__lowercased=journal_title).execute()
 
-        if hits:
-            try:
-                short_title = hits[0].short_titles[0].title
-                data['publication_info'][0]['journal_title'] = short_title
-            except (AttributeError, IndexError):
-                pass
+    builder.add_doi(doi=form_fields.get('doi'))
 
-    # Finally, return the converted data
-    return data
+    builder.add_inspire_categories(
+        subject_terms=form_fields.get('subject_term'),
+        source='user'
+    )
+
+    for key in ('extra_comments', 'nonpublic_note',
+                'hidden_notes', 'conf_name', 'references'):
+        builder.add_private_note(
+            private_notes=form_fields.get(key)
+        )
+
+    year = form_fields.get('year')
+    try:
+        year = int(year)
+    except (TypeError, ValueError):
+        year = None
+
+    if form_fields.get('journal_title'):
+        form_fields['journal_title'] = normalize_journal_title(
+            form_fields['journal_title']
+        )
+
+    page_range = form_fields.get('page_range_article_id')
+
+    artid = None
+    page_end = None
+    page_start = None
+    if page_range:
+        page_start, page_end, artid = split_page_artid(page_range)
+
+    builder.add_publication_info(
+        year=year,
+        cnum=form_fields.get('conference_id'),
+        journal_issue=form_fields.get('issue'),
+        journal_title=form_fields.get('journal_title'),
+        journal_volume=form_fields.get('volume'),
+        page_start=page_start,
+        page_end=page_end,
+        artid=artid
+    )
+
+    builder.add_preprint_date(
+        preprint_date=form_fields.get('preprint_created')
+    )
+
+    if form_fields.get('type_of_doc') == 'thesis':
+        builder.add_thesis(
+            defense_date=form_fields.get('defense_date'),
+            degree_type=form_fields.get('degree_type'),
+            institution=form_fields.get('institution'),
+            date=form_fields.get('thesis_date')
+        )
+
+    builder.add_accelerator_experiments_legacy_name(
+        legacy_name=form_fields.get('experiment')
+    )
+
+    language = form_fields.get('other_language') \
+        if form_fields.get('language') == 'oth' \
+        else form_fields.get('language')
+    builder.add_language(language=language)
+
+    builder.add_title_translation(title=form_fields.get('title_translation'))
+
+    builder.add_title(
+        title=form_fields.get('title_arXiv'),
+        source='arXiv'
+    )
+
+    builder.add_title(
+        title=form_fields.get('title_crossref'),
+        source='crossref'
+    )
+
+    builder.add_license(url=form_fields.get('license_url'))
+
+    builder.add_public_note(public_note=form_fields.get('public_notes'))
+
+    builder.add_public_note(
+        public_note=form_fields.get('note'),
+        source='arXiv' if form_fields.get('categories') else 'CrossRef'
+    )
+
+    note = 'Presented on {0}'.format(form_fields.get('defense_date')) if \
+        form_fields.get('defense_date') else None
+    builder.add_public_note(public_note=note)
+
+    builder.add_url(url=form_fields.get('url'))
+
+    builder.add_url(url=form_fields.get('additional_url'))
+
+    for report_number in form_fields.get('report_numbers', []):
+        builder.add_report_number(
+            report_number=report_number.get('report_number')
+        )
+
+    builder.add_collaboration(collaboration=form_fields.get('collaboration'))
+
+    try:
+        email = User.query.get(obj.id_user).email
+    except AttributeError:
+        email = None
+
+    orcid = _retreive_orcid(obj.id_user)
+
+    builder.add_acquisition_source(
+        submission_number=obj.id,
+        email=email,
+        orcid=orcid,
+        method='submitter'
+    )
+    builder.validate_record()
+
+    return builder.record
 
 
 def new_ticket_context(user, obj):
