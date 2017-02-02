@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -244,8 +244,9 @@ class LiteratureForm(INSPIREForm):
         validators=[arxiv_syntax_validation, duplicated_arxiv_id_validator],
     )
 
-    categories = fields.TextField(
+    categories_arXiv = fields.TextField(
         widget=HiddenInput(),
+        export_key='categories',
     )
 
     # isbn = ISBNField(
@@ -586,7 +587,7 @@ class LiteratureForm(INSPIREForm):
         ('Links',
             ['url', 'additional_url']),
         ('Basic Information',
-            ['title', 'title_arXiv', 'categories', 'language',
+            ['title', 'title_arXiv', 'categories_arXiv', 'language',
              'other_language', 'title_translation', 'subject', 'authors',
              'collaboration', 'experiment', 'abstract',
              'report_numbers']),
