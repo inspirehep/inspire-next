@@ -131,3 +131,68 @@ def test_titles_from_245__a_b():
     result = hep2marc.do(result)
 
     assert expected == result['245']
+
+
+def test_title_translations_from_242__a():
+    schema = load_schema('hep')
+    subschema = schema['properties']['title_translations']
+
+    snippet = (
+        '<datafield tag="242" ind1=" " ind2=" ">'
+        '  <subfield code="a">The redshift of extragalactic nebulae</subfield>'
+        '</datafield>'
+    )  # record/8352
+
+    expected = [
+        {
+            'language': 'en',
+            'title': 'The redshift of extragalactic nebulae',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['title_translations'], subschema) is None
+    assert expected == result['title_translations']
+
+    expected = [
+        {
+            'a': 'The redshift of extragalactic nebulae',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['242']
+
+
+def test_title_translations_from_242__a_b():
+    schema = load_schema('hep')
+    subschema = schema['properties']['title_translations']
+
+    snippet = (
+        '<datafield tag="242" ind1=" " ind2=" ">'
+        '  <subfield code="a">Generalized Hamilton-Jacobi Formalism</subfield>'
+        '  <subfield code="b">Field Theories with Upper-Order Derivatives</subfield>'
+        '</datafield>'
+        )  # record/1501064
+
+    expected = [
+        {
+            'language': 'en',
+            'title': 'Generalized Hamilton-Jacobi Formalism',
+            'subtitle': 'Field Theories with Upper-Order Derivatives',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['title_translations'], subschema) is None
+    assert expected == result['title_translations']
+
+    expected = [
+        {
+            'a': 'Generalized Hamilton-Jacobi Formalism',
+            'b': 'Field Theories with Upper-Order Derivatives',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['242']
