@@ -550,7 +550,7 @@ def test_get_date_from_imprints_uses_first_date_found():
 
 def test_get_date_from_thesis_returns_none_when_no_date():
     thesis_without_a_date = InspireRecord({
-        'thesis': {}
+        'thesis_info': {}
     })
 
     assert Cv_latex(thesis_without_a_date)._get_date() is None
@@ -558,7 +558,7 @@ def test_get_date_from_thesis_returns_none_when_no_date():
 
 def test_get_date_from_thesis_uses_first_date_found():
     thesis = InspireRecord({
-        'thesis': {'date': '1966'}
+        'thesis_info': {'date': '1966'}
     })
 
     expected = 1966

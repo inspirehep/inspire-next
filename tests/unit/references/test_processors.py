@@ -96,7 +96,7 @@ def test_reference_builder_no_uids():
             "publication_info": {
                 "journal_title": "Nucl.Phys.",
                 "journal_volume": "B360",
-                "reportnumber": "NOT ARXIV",
+                "parent_report_number": "NOT ARXIV",
                 "artid": "362",
                 "year": 1991,
                 "page_start": "362"
@@ -153,7 +153,7 @@ def test_reference_builder_add_uid():
         'reference': {
             'arxiv_eprints': ['arXiv:hep-th/0603001', 'arXiv:0705.0017'],
             'publication_info': {
-                'isbn': '978-1-4493-4485-6',
+                'parent_isbn': '9781449344856',
                 'cnum': 'C87-11-11',
             },
             'dois': ['10.3972/water973.0145.db'],

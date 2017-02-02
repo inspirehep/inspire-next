@@ -40,7 +40,7 @@ def test_doi_but_should_be_hdl_from_0247_a():
 
     expected = [{
         'value': '2027.42/97915',
-        'type': 'HDL',
+        'schema': 'HDL',
     }]
     result = hep.do(create_record(snippet))
 
@@ -351,18 +351,20 @@ def test_authors_from_100__a_i_u_x_y():
     assert expected == result['authors']
 
 
-def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
+def test_authors_from_100__a_u_v_w_y_and_700_a_u_v_w_x_y():
     snippet = (
         '<record>'
         '  <datafield tag="100" ind1=" " ind2=" ">'
         '    <subfield code="a">Kobayashi, Makoto</subfield>'
         '    <subfield code="u">Kyoto U.</subfield>'
+        '    <subfield code="v">Darmstadt, Germany</subfield>'
         '    <subfield code="w">M.Kobayashi.5</subfield>'
         '    <subfield code="y">0</subfield>'
         '  </datafield>'
         '  <datafield tag="700" ind1=" " ind2=" ">'
         '    <subfield code="a">Maskawa, Toshihide</subfield>'
         '    <subfield code="u">Kyoto U.</subfield>'
+        '    <subfield code="v">Aalto, Finland</subfield>'
         '    <subfield code="w">T.Maskawa.1</subfield>'
         '    <subfield code="x">998493</subfield>'
         '    <subfield code="y">1</subfield>'
@@ -385,6 +387,11 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
                     'value': 'M.Kobayashi.5',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'Darmstadt, Germany',
+                },
+            ],
         },
         {
             'affiliations': [
@@ -398,6 +405,11 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'T.Maskawa.1',
+                },
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'Aalto, Finland',
                 },
             ],
             'record': {
@@ -514,7 +526,7 @@ def test_authors_from_100__a_v_m_w_y():
     snippet = (
         '<datafield tag="100" ind1=" " ind2=" ">'
         '  <subfield code="a">Gao, Xu</subfield>'
-        '  <subfield code="v">Chern Institute of Mathematics and LPMC, Nankai University, Tianjin, 300071, China</subfield>'
+        '  <subfield code="v">Chern Institute of Mathematics and LPMC, 00071, China</subfield>'
         '  <subfield code="m">gausyu@gmail.com</subfield>'
         '  <subfield code="w">X.Gao.11</subfield>'
         '  <subfield code="y">0</subfield>'
@@ -530,6 +542,11 @@ def test_authors_from_100__a_v_m_w_y():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'X.Gao.11',
+                },
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'Chern Institute of Mathematics and LPMC, 00071, China',
                 },
             ],
         },
@@ -588,7 +605,7 @@ def test_authors_from_700__a_j_v_m_w_y():
         '<datafield tag="700" ind1=" " ind2=" ">'
         '  <subfield code="a">Liu, Ming</subfield>'
         '  <subfield code="j">ORCID:0000-0002-3413-183X</subfield>'
-        '  <subfield code="v">School of Mathematics, South China University of Technology, Guangdong, Guangzhou, 510640, China</subfield>'
+        '  <subfield code="v">School of Mathematics,, Guangzhou, 510640, China</subfield>'
         '  <subfield code="m">ming.l1984@gmail.com</subfield>'
         '  <subfield code="w">M.Liu.16</subfield>'
         '  <subfield code="y">0</subfield>'
@@ -608,10 +625,16 @@ def test_authors_from_700__a_j_v_m_w_y():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'M.Liu.16',
+                }
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'School of Mathematics,, Guangzhou, 510640, China',
                 },
             ],
         },
     ]
+
     result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
@@ -819,6 +842,11 @@ def test_authors_from_100__a_j_m_u_v_w_y():
                     'value': 'D.Macnair.2',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'SLAC, Menlo Park, California, USA'
+                },
+            ],
         },
     ]
     result = hep.do(create_record(snippet))
@@ -826,11 +854,13 @@ def test_authors_from_100__a_j_m_u_v_w_y():
     assert expected == result['authors']
 
 
-def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
+def test_authors_from_100__a_u_v_x_w_y_z_with_malformed_x():
     snippet = (
         '<datafield tag="100" ind1=" " ind2=" ">'
         '  <subfield code="a">Bakhrushin, Iu.P.</subfield>'
         '  <subfield code="u">NIIEFA, St. Petersburg</subfield>'
+        '  <subfield code="v">SLAC, Menlo Park, California, USA</subfield>'
+        '  <subfield code="v">SLAC, Menlo Park, IT</subfield>'
         '  <subfield code="x">БАХРУШИН, Ю.П.</subfield>'
         '  <subfield code="w">I.P.Bakhrushin.1</subfield>'
         '  <subfield code="y">0</subfield>'
@@ -854,6 +884,14 @@ def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'I.P.Bakhrushin.1',
+                },
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'SLAC, Menlo Park, California, USA'
+                },
+                {
+                    'value': 'SLAC, Menlo Park, IT'
                 },
             ],
         },
@@ -1071,7 +1109,7 @@ def test_thesis_multiple_institutions():
         {'name': 'Cote d\'Azur Observ., Nice', 'recid': '904125'}
     ]
 
-    result = hep.do(create_record(snippet))['thesis']['institutions']
+    result = hep.do(create_record(snippet))['thesis_info']['institutions']
 
     assert len(result) == 2
     for expected_inst, result_inst in zip(expected, result):
@@ -1104,7 +1142,7 @@ def test_thesis_from_502__a_c_d_z():
     }
     result = hep.do(create_record(snippet))
 
-    assert expected == result['thesis']
+    assert expected == result['thesis_info']
 
 
 ACCELERATOR_EXPERIMENTS_DATA = [

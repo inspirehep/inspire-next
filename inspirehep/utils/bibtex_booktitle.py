@@ -40,8 +40,8 @@ def generate_booktitle(record):
     if 'publication_info' in record:
         pubinfo = record['publication_info']
         for field in pubinfo:
-            if 'reportnumber' in field:
-                rn = field['reportnumber']
+            if 'parent_report_number' in field:
+                rn = field['parent_report_number']
                 if rn:
                     acronym = field['acronym']
                     if acronym:

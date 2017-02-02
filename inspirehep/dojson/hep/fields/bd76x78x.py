@@ -70,13 +70,13 @@ def publication_info(self, key, value):
         'journal_issue': force_single_element(value.get('n')),
         'conf_acronym': force_single_element(value.get('o')),
         'journal_title': force_single_element(value.get('p')),
-        'reportnumber': force_single_element(value.get('r')),
+        'parent_report_number': force_single_element(value.get('r')),
         'confpaper_info': force_single_element(value.get('t')),
         'journal_volume': force_single_element(value.get('v')),
         'cnum': force_single_element(value.get('w')),
         'pubinfo_freetext': force_single_element(value.get('x')),
         'year': year,
-        'isbn': force_single_element(value.get('z')),
+        'parent_isbn': force_single_element(value.get('z')),
         'notes': dedupe_list(force_force_list(value.get('m'))),
     }
 
@@ -101,13 +101,13 @@ def publication_info2marc(self, key, value):
         'n': value.get('journal_issue'),
         'o': value.get('conf_acronym'),
         'p': value.get('journal_title'),
-        'r': value.get('reportnumber'),
+        'r': value.get('parent_report_number'),
         't': value.get('confpaper_info'),
         'v': value.get('journal_volume'),
         'w': value.get('cnum'),
         'x': value.get('pubinfo_freetext'),
         'y': value.get('year'),
-        'z': value.get('isbn'),
+        'z': value.get('parent_isbn'),
         'm': value.get('notes')
     }
 

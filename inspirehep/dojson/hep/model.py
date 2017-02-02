@@ -34,6 +34,8 @@ from ..utils import (
     classify_field,
     force_single_element,
     get_record_ref,
+    classify_field,
+    validate,
 )
 
 
@@ -79,6 +81,7 @@ hep_filters = [
     add_book_info,
     add_inspire_category,
     clean_record,
+    validate,
 ]
 
 hep2marc_filters = [

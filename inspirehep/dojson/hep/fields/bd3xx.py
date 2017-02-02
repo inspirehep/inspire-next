@@ -29,17 +29,23 @@ from dojson import utils
 from ..model import hep, hep2marc
 
 
-@hep.over('page_nr', '^300..')
-@utils.for_each_value
-def page_nr(self, key, value):
+@hep.over('number_of_pages', '^300..')
+def number_of_pages(self, key, value):
     """Page number."""
-    return value.get('a')
+    try:
+        result = value.get('a')
+        if isinstance(result, list):
+            return int(result[0])
+        else:
+            return int(result)
+    except (TypeError, IndexError):
+        return None
 
 
-@hep2marc.over('300', 'page_nr')
+@hep2marc.over('300', 'number_of_pages')
 @utils.for_each_value
-def page_nr2marc(self, key, value):
+def number_of_pages2marc(self, key, value):
     """Page number."""
     return {
-        'a': value,
+        'a': str(value),
     }

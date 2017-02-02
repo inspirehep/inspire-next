@@ -28,6 +28,8 @@ import logging
 
 from dojson import utils
 
+from inspire_schemas.api import load_schema
+
 from ..model import hep, hep2marc
 from ...utils import force_single_element, get_record_ref
 
@@ -98,8 +100,8 @@ def hidden_note2marc(self, key, value):
     }
 
 
-@hep.over('thesis', '^502..')
-def thesis(self, key, value):
+@hep.over('thesis_info', '^502..')
+def thesis_info(self, key, value):
     """Get Thesis Information."""
     DEGREE_TYPES_MAP = {
         'RAPPORT DE STAGE': 'Internship Report',
@@ -142,8 +144,8 @@ def thesis(self, key, value):
     return res
 
 
-@hep2marc.over('502', '^thesis$')
-def thesis2marc(self, key, value):
+@hep2marc.over('502', '^thesis_info$')
+def thesis_info2marc(self, key, value):
     """Get Thesis Information."""
     return {
         'a': value.get('defense_date'),
@@ -208,6 +210,16 @@ def funding_info2marc(self, key, value):
 @utils.for_each_value
 def license(self, key, value):
     """Add Terms Governing Use and Reproduction Note."""
+    def _get_material(val):
+        schema = load_schema('elements/material')
+        possible_sources = schema['enum']
+        source = val.lower()
+
+        if source not in possible_sources:
+            return None
+        else:
+            return source
+
     license_value = force_force_list(value.get('a'))
     # We strip away redundant 'Open Access' string
     license_value = [val for val in license_value if license_value != 'Open Access']
@@ -216,7 +228,7 @@ def license(self, key, value):
         'license': license_value,
         'imposing': value.get('b'),
         'url': value.get('u'),
-        'material': value.get('3')
+        'material': _get_material(value.get('3'))
     }
 
 
