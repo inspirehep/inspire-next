@@ -258,7 +258,8 @@ def test_deleted_records_from_981__a():
 
 
 def test_inspire_categories_from_65017a_2():
-    schema = load_schema('elements/inspire_field')
+    schema = load_schema('hep')
+    subschema = schema['properties']['inspire_categories']
 
     snippet = (
         '<datafield tag="650" ind1="1" ind2="7">'
@@ -275,7 +276,7 @@ def test_inspire_categories_from_65017a_2():
     ]
     result = hep.do(create_record(snippet))  # no roundtrip
 
-    assert validate(result, schema) is None
+    assert validate(result['inspire_categories'], subschema) is None
     assert expected == result['inspire_categories']
 
     expected = [
@@ -290,7 +291,8 @@ def test_inspire_categories_from_65017a_2():
 
 
 def test_inspire_categories_from_65017a_2_9_discards_conference():
-    schema = load_schema('elements/inspire_field')
+    schema = load_schema('hep')
+    subschema = schema['properties']['inspire_categories']
 
     snippet = (
         '<datafield tag="650" ind1="1" ind2="7">'
@@ -308,7 +310,7 @@ def test_inspire_categories_from_65017a_2_9_discards_conference():
     ]
     result = hep.do(create_record(snippet))  # no roundtrip
 
-    assert validate(result, schema) is None
+    assert validate(result['inspire_categories'], subschema) is None
     assert expected == result['inspire_categories']
 
     expected = [
@@ -323,7 +325,8 @@ def test_inspire_categories_from_65017a_2_9_discards_conference():
 
 
 def test_inspire_categories_from_65017a_2_9_converts_automatically_added():
-    schema = load_schema('elements/inspire_field')
+    schema = load_schema('hep')
+    subschema = schema['properties']['inspire_categories']
 
     snippet = (
         '<datafield tag="650" ind1="1" ind2="7">'
@@ -341,7 +344,7 @@ def test_inspire_categories_from_65017a_2_9_converts_automatically_added():
     ]
     result = hep.do(create_record(snippet))  # no roundtrip
 
-    assert validate(result, schema) is None
+    assert validate(result['inspire_categories'], subschema) is None
     assert expected == result['inspire_categories']
 
     expected = [
@@ -356,7 +359,8 @@ def test_inspire_categories_from_65017a_2_9_converts_automatically_added():
 
 
 def test_inspire_categories_from_65017a_2_9_converts_submitter():
-    schema = load_schema('elements/inspire_field')
+    schema = load_schema('hep')
+    subschema = schema['properties']['inspire_categories']
 
     snippet = (
         '<datafield tag="650" ind1="1" ind2="7">'
@@ -374,7 +378,7 @@ def test_inspire_categories_from_65017a_2_9_converts_submitter():
     ]
     result = hep.do(create_record(snippet))  # no roundtrip
 
-    assert validate(result, schema) is None
+    assert validate(result['inspire_categories'], subschema) is None
     assert expected == result['inspire_categories']
 
     expected = [
