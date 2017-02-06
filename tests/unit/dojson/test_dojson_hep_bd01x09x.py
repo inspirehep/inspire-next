@@ -490,6 +490,62 @@ def test_external_system_numbers_from_035__a_9():
     assert expected == result['035']
 
 
+@pytest.mark.xfail(reason='Schema 13')
+def test_texkeys_from_multiple_035__a_z_9():
+    '''035__9:INSPIRETeX or SPIRESTeX go to texkeys'''
+    schema = load_schema('hep')
+    subschema = schema['properties']['texkeys']
+
+    snippet = '''
+        <record>
+          <datafield tag="035" ind1=" " ind2=" ">
+            <subfield code="9">SPIRESTeX</subfield>
+            <subfield code="z">N.Cartiglia:2015cn</subfield>
+          </datafield>
+          <datafield tag="035" ind1=" " ind2=" ">
+            <subfield code="9">INSPIRETeX</subfield>
+            <subfield code="a">Akiba:2016ofq</subfield>
+          </datafield>
+        </record>
+    ''' # record/1498308
+
+    # the first is the one containing the a, the rest is from the z
+    expected_head = ['Akiba:2016ofq', 'N.Cartiglia:2015cn']
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['texkeys'], subschema) is None
+    assert expected == result['texkeys']
+    assert [{}] == result['external_system_identifiers']
+
+    expected = [
+        {'9': 'INSPIRETeX', 'a': 'Akiba:2016ofq'},
+        {'9': 'INSPIRETeX', 'z': 'N.Cartiglia:2015cn'}
+    ]
+    result = hep2marc.do(result)
+
+    assert sorted(expected) == sorted(result['035'])
+
+
+@pytest.mark.xfail(reason='Schema 13')
+def test_discard_035__9_arXiv():
+    '''035__9:arXiv is redundant with 037__9:arXiv, throw it away'''
+    schema = load_schema('hep')
+
+    snippet = '''
+        <datafield tag="035" ind1=" " ind2=" ">
+          <subfield code="9">arXiv</subfield>
+          <subfield code="a">oai:arXiv.org:1611.05079</subfield>
+        </datafield>
+    ''' # record/1498308
+
+    expected = [{}]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result, schema) is None
+    assert expected == result['external_system_identifiers']
+    assert expected == result['arxiv_eprints']
+
+
 @pytest.mark.xfail(reason='wrong roundtrip')
 def test_external_system_numbers_from_035__a_d_h_m_9():
     schema = load_schema('hep')
@@ -632,6 +688,104 @@ def test_report_numbers_from_two_037__a():
     result = hep2marc.do(result)
 
     assert expected == result['037']
+
+
+@pytest.mark.xfail(reason='Schema 13')
+def test_report_numbers_hidden_from_037__z():
+    schema = load_schema('hep')
+    subschema = schema['properties']['report_numbers']
+
+    snippet = '''
+        <datafield tag="037" ind1=" " ind2=" ">
+          <subfield code="z">FERMILAB-PUB-17-011-CMS</subfield>
+        </datafield>
+    ''' # record/1508174
+
+    expected = [
+        {'hidden': True, 'value': 'FERMILAB-PUB-17-011-CMS'}
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['report_numbers'], subschema) is None
+    assert expected == result['report_numbers']
+
+    expected = [
+        {'z': 'FERMILAB-PUB-17-011-CMS'}
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['037']
+
+
+@pytest.mark.xfail(reason='Schema 13')
+def test_report_numbers_source_from_037__z_9():
+    schema = load_schema('hep')
+    subschema = schema['properties']['report_numbers']
+
+    snippet = '''
+        <datafield tag="037" ind1=" " ind2=" ">
+          <subfield code="9">SLAC</subfield>
+          <subfield code="a">SLAC-PUB-16140</subfield>
+        </datafield>
+    ''' # record/1326454
+
+    expected = [
+        {'source': 'SLAC', 'value': 'SLAC-PUB-16140'}
+    ]
+    result = hep2marc.do(result)
+
+    assert validate(result['arxiv_eprints'], subschema)
+
+
+@pytest.mark.xfail(reason='Schema 13')
+def test_arxiv_eprints_from_037__a_c_9_and_multiple_65017_a_2():
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    snippet = '''
+        <record>
+          <datafield tag="037" ind1=" " ind2=" ">
+            <subfield code="9">arXiv</subfield>
+            <subfield code="a">arXiv:1702.00702</subfield>
+            <subfield code="c">math-ph</subfield>
+          </datafield>
+          <datafield tag="650" ind1="1" ind2="7">
+            <subfield code="a">math-ph</subfield>
+            <subfield code="2">arXiv</subfield>
+          </datafield><datafield tag="650" ind1="1" ind2="7">
+            <subfield code="a">gr-qc</subfield>
+            <subfield code="2">arXiv</subfield></datafield>
+        </record>
+    ''' # record/1511862
+
+    expected = [
+        {
+            # the first element is the one in 037__c
+            'categories': ['math-ph', 'gr-qc'],
+            'value': '1702.00702'
+        }
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['arxiv_eprints'], subschema) is None
+    assert expected == result['arxiv_eprints']
+
+    expected = {
+        # 035 is discarded in hep.do, so it needs to be derived here
+        '035': [
+            {'9': 'arXiv', 'a': 'oai:arXiv.org:1702.00702'}
+        ],
+        '037': [
+            {'9': 'arXiv', 'a': 'arXiv:1702.00702', 'c': 'math-ph'}
+        ],
+        '65017': [
+            {'2': 'arXiv', 'a': 'math-ph'},
+            {'2': 'arXiv', 'a': 'gr-qc'}
+        ]
+    }
+    result = hep2marc.do(result)
+
+    assert expected == result
 
 
 def test_languages_from_041__a():
