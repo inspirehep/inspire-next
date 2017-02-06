@@ -33,11 +33,8 @@ from six import iteritems
 from invenio_db import db
 from invenio_search import current_search_client as es
 
-from inspirehep.modules.pidstore.utils import (
-    get_endpoint_from_schema,
-    get_index_from_endpoint,
-)
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.records.utils import get_endpoint_from_record
 
 
 logger = get_task_logger(__name__)
@@ -77,7 +74,7 @@ def update_links(record, old_ref, new_ref):
         if record['$ref'] == old_ref:
             record['$ref'] = new_ref
 
-    endpoint = get_endpoint_from_schema(record['$schema'])
+    endpoint = get_endpoint_from_record(record)
     whitelist = current_app.config['INSPIRE_REF_UPDATER_WHITELISTS'][endpoint]
 
     for path in whitelist:
@@ -113,7 +110,7 @@ def get_records_to_update(old_ref):
                 },
             }
 
-            index = get_index_from_endpoint(endpoint)
+            index = current_app.config['INSPIRE_ENDPOINT_TO_INDEX'][endpoint]
             query = scan(es, query=body, index=index)
 
             result.extend(el['_id'] for el in list(query))
