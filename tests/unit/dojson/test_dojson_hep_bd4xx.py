@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016, 2017 CERN.
+# Copyright (C) 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,22 +22,37 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.dojson.model import FilterOverdo, add_schema
+import pytest
+
+from dojson.contrib.marc21.utils import create_record
+
+from inspire_schemas.utils import load_schema
+from inspirehep.dojson.hep import hep, hep2marc
+from inspirehep.dojson.utils import validate
 
 
-def test_filteroverdo_works_without_filters():
-    model = FilterOverdo()
+@pytest.mark.xfail(reason='wrong conversion')
+def test_book_series_from_490__a():
+    schema = load_schema('hep')
+    subschema = schema['properties']['book_series']
 
-    expected = {}
-    result = model.do({})
+    snippet = (
+        '<datafield tag="490" ind1=" " ind2=" ">'
+        '  <subfield code="a">Graduate Texts in Physics</subfield>'
+        '</datafield>'
+    )  # record/1508903
 
-    assert expected == result
+    expected = [
+        {'title': 'Graduate Texts in Physics'},
+    ]
+    result = hep.do(create_record(snippet))
 
+    assert validate(result['book_series'], subschema) is None
+    assert expected == result['book_series']
 
-def test_add_schema():
-    model = FilterOverdo(filters=[add_schema('hep.json')])
+    expected = [
+        {'a': 'Graduate Texts in Physics'},
+    ]
+    result = hep2marc.do(result)
 
-    expected = {'$schema': 'hep.json'}
-    result = model.do({})
-
-    assert expected == result
+    assert expected == result['490']

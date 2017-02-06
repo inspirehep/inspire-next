@@ -160,6 +160,44 @@ def test_external_system_numbers_from_970__a():
     assert expected == result['970']
 
 
+@pytest.mark.xfail(reason='missing roundtrip')
+def test_external_system_numbers_from_970__double_a():
+    schema = load_schema('hep')
+    subschema = schema['properties']['external_system_numbers']
+
+    snippet = (
+        '<datafield tag="970" ind1=" " ind2=" ">'
+        '  <subfield code="a">SPIRES-9663061</subfield>'
+        '  <subfield code="a">SPIRES-9949933</subfield>'
+        '</datafield>'
+    )  # record/1217763
+
+    expected = [
+        {
+            'institute': 'SPIRES',
+            'obsolete': True,
+            'value': 'SPIRES-9663061',
+        },
+        {
+            'institute': 'SPIRES',
+            'obsolete': True,
+            'value': 'SPIRES-9949933',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['external_system_numbers'], subschema) is None
+    assert expected == result['external_system_numbers']
+
+    expected = [
+        {'a': 'SPIRES-9663061'},
+        {'a': 'SPIRES-9949933'},
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['970']
+
+
 @pytest.mark.xfail(reason='wrong roundtrip')
 def test_new_record_from_970__d():
     schema = load_schema('hep')
@@ -258,7 +296,8 @@ def test_deleted_records_from_981__a():
 
 
 def test_inspire_categories_from_65017a_2():
-    schema = load_schema('elements/inspire_field')
+    schema = load_schema('hep')
+    subschema = schema['properties']['inspire_categories']
 
     snippet = (
         '<datafield tag="650" ind1="1" ind2="7">'
@@ -275,7 +314,7 @@ def test_inspire_categories_from_65017a_2():
     ]
     result = hep.do(create_record(snippet))  # no roundtrip
 
-    assert validate(result, schema) is None
+    assert validate(result['inspire_categories'], subschema) is None
     assert expected == result['inspire_categories']
 
     expected = [
@@ -290,7 +329,8 @@ def test_inspire_categories_from_65017a_2():
 
 
 def test_inspire_categories_from_65017a_2_9_discards_conference():
-    schema = load_schema('elements/inspire_field')
+    schema = load_schema('hep')
+    subschema = schema['properties']['inspire_categories']
 
     snippet = (
         '<datafield tag="650" ind1="1" ind2="7">'
@@ -308,7 +348,7 @@ def test_inspire_categories_from_65017a_2_9_discards_conference():
     ]
     result = hep.do(create_record(snippet))  # no roundtrip
 
-    assert validate(result, schema) is None
+    assert validate(result['inspire_categories'], subschema) is None
     assert expected == result['inspire_categories']
 
     expected = [
@@ -323,7 +363,8 @@ def test_inspire_categories_from_65017a_2_9_discards_conference():
 
 
 def test_inspire_categories_from_65017a_2_9_converts_automatically_added():
-    schema = load_schema('elements/inspire_field')
+    schema = load_schema('hep')
+    subschema = schema['properties']['inspire_categories']
 
     snippet = (
         '<datafield tag="650" ind1="1" ind2="7">'
@@ -341,7 +382,7 @@ def test_inspire_categories_from_65017a_2_9_converts_automatically_added():
     ]
     result = hep.do(create_record(snippet))  # no roundtrip
 
-    assert validate(result, schema) is None
+    assert validate(result['inspire_categories'], subschema) is None
     assert expected == result['inspire_categories']
 
     expected = [
@@ -356,7 +397,8 @@ def test_inspire_categories_from_65017a_2_9_converts_automatically_added():
 
 
 def test_inspire_categories_from_65017a_2_9_converts_submitter():
-    schema = load_schema('elements/inspire_field')
+    schema = load_schema('hep')
+    subschema = schema['properties']['inspire_categories']
 
     snippet = (
         '<datafield tag="650" ind1="1" ind2="7">'
@@ -374,7 +416,7 @@ def test_inspire_categories_from_65017a_2_9_converts_submitter():
     ]
     result = hep.do(create_record(snippet))  # no roundtrip
 
-    assert validate(result, schema) is None
+    assert validate(result['inspire_categories'], subschema) is None
     assert expected == result['inspire_categories']
 
     expected = [
