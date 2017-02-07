@@ -36,6 +36,7 @@ from wtforms.widgets import (
     HTMLString,
 )
 
+from inspire_schemas.utils import load_schema
 from inspirehep.modules.forms.field_widgets import (
     ColumnInput,
     ExtendedListWidget,
@@ -637,11 +638,13 @@ class LiteratureForm(INSPIREForm):
         """Constructor."""
         super(LiteratureForm, self).__init__(*args, **kwargs)
 
-        self.subject.choices = [
-            (val, val)
-            for val in current_app.config['INSPIRE_CATEGORIES']
+        inspire_categories_schema = load_schema('elements/inspire_field.json')
+        categories = inspire_categories_schema['properties']['term']['enum']
+        self.subject.choices = [(val, val) for val in categories]
+
+        degree_type_schema = load_schema('elements/degree_type.json')
+        degree_choices = [
+            (val, val.capitalize()) for val in degree_type_schema['enum']
         ]
-        self.degree_type.choices = [
-            (val, val)
-            for val in current_app.config['INSPIRE_DEGREE_TYPES']
-        ]
+        degree_choices.sort(key=lambda x: x[1])
+        self.degree_type.choices = degree_choices

@@ -1,0 +1,68 @@
+{
+   "thesis_date":"",
+   "extra_comments":"This paper is very important for the astrophysics field",
+   "title_crossref":"",
+   "additional_url":"https://arxiv.org/abs/1001.4538",
+   "journal_title":"",
+   "conf_name":"Workshop on Multi-Higgs Models, 2016-09-06, Lisbon, Portugal",
+   "title_arXiv":"",
+   "import_buttons":false,
+   "degree_type":"Bachelor",
+   "collaboration":"Rome U., La Sapienza, Dip. di Astron.",
+   "subject_term":[
+      "Accelerators",
+      "Astrophysics",
+      "General Physics"
+   ],
+   "supervisors":[
+      {
+         "affiliation":"",
+         "full_name":""
+      }
+   ],
+   "doi":"10.1088/0067-0049/192/2/18",
+   "references":"",
+   "year":"",
+   "defense_date":"",
+   "institution":"",
+   "categories":"",
+   "nonpublic_note":"V. Valtchanov and J. A. Brown, \" Evolving dungeon crawler levels with relative placement, \" in Proceedings of the Fifth International C* Conference on Computer Science and Software Engineering, ser. C3S2E ' 12. New York, NY, USA:ACM, 2012, pp. 27-35.",
+   "volume":"",
+   "report_numbers":[
+      {
+         "report_number":"7892201"
+      },
+      {
+         "report_number":"9907833"
+      }
+   ],
+   "language":"it",
+   "title":"7 ANNI MICROONDE WILKINSON",
+   "url":"https://arxiv.org/pdf/1001.4538.pdf",
+   "type_of_doc":"article",
+   "page_range_article_id":"",
+   "arxiv_id":"1001.4538",
+   "title_translation":"SEVEN-YEAR WILKINSON MICROWAVE ANISOTROPY PROBE ( WMAP ) OBSERVATIONS: COSMOLOGICAL INTERPRETATION ",
+   "note":"",
+   "authors":[
+      {
+         "affiliation":"Independent Sci. Res. Inst., Oxford",
+         "full_name":"Komatsu, E."
+      },
+      {
+         "affiliation":"",
+         "full_name":"Smith, K. M."
+      },
+      {
+         "affiliation":"Santander U., Bucaramanga",
+         "full_name":"Larson, D."
+      }
+   ],
+   "experiment":"CERN-LHC-ALICE",
+   "license_url":"",
+   "preprint_created":"",
+   "conference_id":"",
+   "other_language":"",
+   "issue":"",
+   "abstract":"  (Abridged) The 7-year WMAP data and improved astrophysical data rigorously\\r\\ntest the standard cosmological model and its extensions. By combining WMAP with\\r\\nthe latest distance measurements from BAO and H0 measurement, we determine the\\r\\nparameters of the simplest LCDM model. The power-law index of the primordial\\r\\npower spectrum is n_s=0.968+-0.012, a measurement that excludes the\\r\\nscale-invariant spectrum by 99.5%CL. The other parameters are also improved\\r\\nfrom the 5-year results. Notable examples of improved parameters are the total\\r\\nmass of neutrinos, sum(m_nu)<0.58eV, and the effective number of neutrino\\r\\nspecies, N_eff=4.34+0.86-0.88. We detect the effect of primordial helium on the\\r\\ntemperature power spectrum and provide a new test of big bang nucleosynthesis.\\r\\nWe detect, and show on the map for the first time, the tangential and radial\\r\\npolarization patterns around hot and cold spots of temperature fluctuations, an\\r\\nimportant test of physical processes at z=1090 and the dominance of adiabatic\\r\\nscalar fluctuations. With the 7-year TB power spectrum, the limit on a rotation\\r\\nof the polarization plane due to potential parity-violating effects has\\r\\nimproved to Delta(alpha)=-1.1+-1.4(stat)+-1.5(syst) degrees. We report\\r\\nsignificant detections of the SZ effect at the locations of known clusters of\\r\\ngalaxies. The measured SZ signal agrees well with the expected signal from the\\r\\nX-ray data. However, it is a factor of 0.5 to 0.7 times the predictions from\\r\\n\"   universal profile\" of Arnaud et al., analytical models, and hydrodynamical\\r\\nsimulations. We find, for the first time in the SZ effect, a significant\\r\\ndifference between the cooling-flow and non-cooling-flow clusters (or relaxed\\r\\nand non-relaxed clusters), which can explain some of the discrepancy. This\\r\\nlower amplitude is consistent with the lower-than-theoretically-expected SZ\\r\\npower spectrum recently measured by the South Pole Telescope collaboration.\\r\\n"
+}

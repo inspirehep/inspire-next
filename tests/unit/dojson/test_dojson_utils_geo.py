@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -120,9 +120,8 @@ def test_parse_institution_address_adds_country_code():
 
     expected = {
         'city': 'Beijing',
-        'country': 'China',
         'country_code': 'CN',
-        'original_address': [],
+        'original_address': '',
         'postal_code': '123-CFG',
         'state': None,
     }
@@ -135,19 +134,16 @@ def test_parse_institution_address_preserves_the_original_address():
     address = {
         'address': 'Tuscaloosa, AL 35487-0324',
         'city': 'Tuscaloosa',
-        'state_province': 'AL',
         'country': '',
+        'state_province': 'AL',
         'postal_code': 'PO Box 870324',
         'country_code': None,
     }
 
     expected = {
         'city': 'Tuscaloosa',
-        'country': '',
         'country_code': 'US',
-        'original_address': [
-            'Tuscaloosa, AL 35487-0324',
-        ],
+        'original_address': 'Tuscaloosa, AL 35487-0324',
         'postal_code': 'PO Box 870324',
         'state': 'US-AL',
     }
@@ -168,9 +164,8 @@ def test_parse_institution_address_handles_state_province_none():
 
     expected = {
         'city': 'Beijing',
-        'country': '',
         'country_code': None,
-        'original_address': [],
+        'original_address': '',
         'postal_code': '123-CFG',
         'state': None,
     }

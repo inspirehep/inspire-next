@@ -83,27 +83,10 @@
 
         <div class="col-md-3 decision">
 
-          <!--Authors  Decision-->
-          <div
-            ng-if="record._source._workflow.data_type === 'authors' && !record._source._extra_data.user_action && record._source._workflow.status === 'HALTED'">
-            <button class="btn btn-info"
-                    ng-click="redirect('/authors/new/review?objectid=' + record._id)">Review Submission
-            </button>
-            <button class="btn btn-danger"
-                    ng-click="setDecision(record._id,'reject')">Reject
-            </button>
-            <button class="btn btn-warning"
-                    ng-click="setDecision(record._id,'accept_curate')">Curation
-            </button>
-            <button class="btn btn-success"
-                    ng-click="setDecision(record._id,'accept')">Accept
-            </button>
-          </div>
-
           <!--HEP Decision-->
           <div
-            ng-if="record._source._extra_data && record._source._workflow.data_type === 'hep' && !record._source._extra_data.user_action">
-            <div class="automatic-decision">
+            ng-if="record._source._workflow.data_type === 'hep' && !record._source._extra_data.user_action">
+            <div ng-if="record._source._extra_data.relevance_prediction.decision" class="automatic-decision">
               <p class="small-text">Automatic Decision:
                 <span ng-class="{'accept_core': record._source._extra_data.relevance_prediction.decision == 'CORE',
                   'accept': record._source._extra_data.relevance_prediction.decision == 'Non-CORE',
@@ -130,8 +113,8 @@
             </div>
 
             <br/>
-            <p>Filtered keywords include:</p>
-            <div class="small-text">
+            <div ng-if="record._source._extra_data.classifier_results.complete_output" class="small-text">
+              <p>Filtered keywords include:</p>
               {{record._extra_data.classifier_results}}
               <span
                 ng-repeat="(key,value) in record._source._extra_data.classifier_results.complete_output['Filtered Core keywords']"

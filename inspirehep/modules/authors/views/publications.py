@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -107,9 +107,9 @@ def get_publications():
 
         # Get keywords.
         for keyword in result_source.get('keywords', []):
-            if keyword.get('keyword') is not "* Automatic Keywords *" \
-                    and keyword.get('keyword'):
-                keywords.add(keyword.get('keyword'))
+            if keyword.get('value') is not "* Automatic Keywords *" \
+                    and keyword.get('value'):
+                keywords.add(keyword.get('value'))
 
         # Get collaborations.
         for experiment in result_source.get(

@@ -337,7 +337,7 @@ def test_is_record_relevant():
 
 
 def test_is_record_relevant_returns_true_if_it_is_a_submission():
-    obj = StubObj({'acquisition_source': {'method': 'submission'}}, {})
+    obj = StubObj({'acquisition_source': {'method': 'submitter'}}, {})
     eng = DummyEng()
 
     assert is_record_relevant(obj, eng)
@@ -413,7 +413,7 @@ def test_is_arxiv_paper_returns_false_when_arxiv_eprints_is_empty():
 
 
 def test_is_submission():
-    obj = StubObj({'acquisition_source': {'method': 'submission'}}, {})
+    obj = StubObj({'acquisition_source': {'method': 'submitter'}}, {})
     eng = DummyEng()
 
     assert is_submission(obj, eng)

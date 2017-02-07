@@ -488,7 +488,6 @@ $hp_table_bg: #fff;
       .record-authors {
         list-style: none;
         -webkit-padding-start: 0;
-        color: white;
 
         li {
           display: inline-block;
@@ -606,7 +605,6 @@ $hp_table_bg: #fff;
   &.no-results {
     padding: 50px !important;
     font-size: 1.7em;
-    background-color: $dark-blue !important;
     border-left: none !important;
     text-align: center;
   }

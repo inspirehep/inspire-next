@@ -113,16 +113,14 @@ def test_earliest_date_from_publication_info_year():
     assert expected == result
 
 
-def test_earliest_date_from_creation_modification_date_creation_date():
-    with_creation_modification_date_creation_date = InspireRecord({
-        'creation_modification_date': [
-            {'creation_date': '2015-11-04'}
-        ]
+def test_earliest_date_from_legacy_creation_date():
+    with_legacy_creation_date = InspireRecord({
+        'legacy_creation_date': '2015-11-04'
     })
-    earliest_date(None, with_creation_modification_date_creation_date)
+    earliest_date(None, with_legacy_creation_date)
 
     expected = '2015-11-04'
-    result = with_creation_modification_date_creation_date['earliest_date']
+    result = with_legacy_creation_date['earliest_date']
 
     assert expected == result
 
@@ -270,294 +268,135 @@ def test_match_valid_experiments_does_nothing_on_missing_key():
 
 
 def test_match_valid_experiments_does_nothing_on_empty_list():
-    json_dict = {
-        'accelerator_experiments': [],
-    }
+    json_dict = {'accelerator_experiments': []}
 
     match_valid_experiments(None, json_dict)
 
     assert json_dict['accelerator_experiments'] == []
 
 
-def test_populate_inspire_document_type_no_doc_type_when_no_collections():
-    json_dict = {}
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == []
-
-
-def test_populate_inspire_document_type_no_doc_type_when_collections_empty():
+def test_populate_inspire_document_type_doc_type_from_refereed():
     json_dict = {
-        'collections': [],
-    }
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == ['preprint']
-
-
-def test_populate_inspire_document_type_no_doc_type_when_no_primary():
-    json_dict = {
-        'collections': [
-            {'not-primary': 'foo'},
+        'document_type': [
+            'article',
         ],
+        'refereed': True,
     }
 
     populate_inspire_document_type(None, json_dict)
 
-    assert json_dict['facet_inspire_doc_type'] == ['preprint']
+    assert json_dict['facet_inspire_doc_type'] == [
+        'article',
+        'peer reviewed',
+    ]
 
 
-def test_populate_inspire_document_type_doc_type_from_primary_published():
-    json_dict = {
-        'collections': [
-            {'primary': 'published'},
-        ],
-    }
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == ['peer reviewed']
-
-
-def test_populate_inspire_document_type_doc_type_from_primary_thesis():
-    json_dict = {
-        'collections': [
-            {'primary': 'thesis'},
-        ],
-    }
+def test_populate_inspire_document_type_doc_type_from_document_type_thesis():
+    json_dict = {'document_type': ['thesis']}
 
     populate_inspire_document_type(None, json_dict)
 
     assert json_dict['facet_inspire_doc_type'] == ['thesis']
 
 
-def test_populate_inspire_document_type_doc_type_from_primary_book():
-    json_dict = {
-        'collections': [
-            {'primary': 'book'},
-        ],
-    }
+def test_populate_inspire_document_type_doc_type_from_document_type_book():
+    json_dict = {'document_type': ['book']}
 
     populate_inspire_document_type(None, json_dict)
 
     assert json_dict['facet_inspire_doc_type'] == ['book']
 
 
-def test_populate_inspire_document_type_doc_type_from_primary_bookchapter():
-    json_dict = {
-        'collections': [
-            {'primary': 'bookchapter'},
-        ],
-    }
+def test_populate_inspire_document_type_doc_type_from_document_type_book_chapter():
+    json_dict = {'document_type': ['book chapter']}
 
     populate_inspire_document_type(None, json_dict)
 
     assert json_dict['facet_inspire_doc_type'] == ['book chapter']
 
 
-def test_populate_inspire_document_type_doc_type_from_primary_proceedings():
-    json_dict = {
-        'collections': [
-            {'primary': 'proceedings'},
-        ],
-    }
+def test_populate_inspire_document_type_doc_type_from_document_type_proceedings():
+    json_dict = {'document_type': ['proceedings']}
 
     populate_inspire_document_type(None, json_dict)
 
     assert json_dict['facet_inspire_doc_type'] == ['proceedings']
 
 
-def test_populate_inspire_document_type_doc_type_from_primary_conferencepaper():
-    json_dict = {
-        'collections': [
-            {'primary': 'conferencepaper'},
-        ],
-    }
+def test_populate_inspire_document_type_doc_type_from_document_type_conference_paper():
+    json_dict = {'document_type': ['conference paper']}
 
     populate_inspire_document_type(None, json_dict)
 
     assert json_dict['facet_inspire_doc_type'] == ['conference paper']
 
 
-def test_populate_inspire_document_type_doc_type_from_primary_note():
-    json_dict = {
-        'collections': [
-            {'primary': 'note'},
-        ],
-    }
+def test_populate_inspire_document_type_doc_type_from_document_type_note():
+    json_dict = {'document_type': ['note']}
 
     populate_inspire_document_type(None, json_dict)
 
     assert json_dict['facet_inspire_doc_type'] == ['note']
 
 
-def test_populate_inspire_document_type_doc_type_from_primary_report():
-    json_dict = {
-        'collections': [
-            {'primary': 'report'},
-        ],
-    }
+def test_populate_inspire_document_type_doc_type_from_document_type_report():
+    json_dict = {'document_type': ['report']}
 
     populate_inspire_document_type(None, json_dict)
 
     assert json_dict['facet_inspire_doc_type'] == ['report']
 
 
-def test_populate_inspire_document_type_doc_type_from_primary_activityreport():
+def test_populate_inspire_document_type_doc_type_from_publication_type_introductory():
     json_dict = {
-        'collections': [
-            {'primary': 'activityreport'},
+        'document_type': [
+            'article',
         ],
-    }
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == ['activity report']
-
-
-def test_populate_inspire_document_type_without_page_start_and_artid():
-    json_dict = {
-        'collections': [],
-        'publication_info': [
-            {
-                'not-page_start': 'foo',
-                'not-artid': 'bar',
-            },
-        ],
-    }
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == ['preprint']
-
-
-def test_populate_inspire_document_type_with_page_start_without_artid():
-    json_dict = {
-        'collections': [],
-        'publication_info': [
-            {
-                'page_start': 'foo',
-                'not-artid': 'bar',
-            },
-        ],
-    }
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == []
-
-
-def test_populate_inspire_document_type_without_page_start_with_artid():
-    json_dict = {
-        'collections': [],
-        'publication_info': [
-            {
-                'not-page_start': 'foo',
-                'artid': 'bar',
-            },
-        ],
-    }
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == []
-
-
-def test_populate_inspire_document_type_with_page_start_and_artid():
-    json_dict = {
-        'collections': [],
-        'publication_info': [
-            {
-                'page_start': 'foo',
-                'artid': 'bar',
-            },
-        ],
-    }
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == []
-
-
-def test_populate_inspire_document_type_no_preprint_if_valid_primary():
-    json_dict = {
-        'collections': [
-            {'primary': 'published'},
-        ],
-        'publication_info': [
-            {
-                'not-page_start': 'foo',
-                'not-artid': 'bar',
-            },
-        ],
-    }
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == ['peer reviewed']
-
-
-def test_populate_inspire_document_type_doc_type_from_primary_review():
-    json_dict = {
-        'collections': [
-            {'primary': 'review'},
+        'publication_type': [
+            'introductory',
         ],
     }
 
     populate_inspire_document_type(None, json_dict)
 
     assert json_dict['facet_inspire_doc_type'] == [
-        'preprint',
+        'article',
+        'introductory',
+    ]
+
+
+def test_populate_inspire_document_type_doc_type_from_publication_type_review():
+    json_dict = {
+        'document_type': [
+            'article',
+        ],
+        'publication_type': [
+            'review',
+        ],
+    }
+
+    populate_inspire_document_type(None, json_dict)
+
+    assert json_dict['facet_inspire_doc_type'] == [
+        'article',
         'review',
     ]
 
 
-def test_populate_inspire_document_type_doc_type_from_primary_lectures():
+def test_populate_inspire_document_type_doc_type_from_publication_type_lectures():
     json_dict = {
-        'collections': [
-            {'primary': 'lectures'},
+        'document_type': [
+            'article',
+        ],
+        'publication_type': [
+            'lectures'
         ],
     }
 
     populate_inspire_document_type(None, json_dict)
 
     assert json_dict['facet_inspire_doc_type'] == [
-        'preprint',
-        'lectures',
-    ]
-
-
-def test_populate_inspire_document_type_doc_type_from_primary_lectures_and_review():
-    json_dict = {
-        'collections': [
-            {'primary': 'review'},
-            {'primary': 'lectures'},
-        ],
-    }
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == [
-        'preprint',
-        'review',
-        'lectures',
-    ]
-
-
-def test_populate_inspire_document_type_doc_type_from_valid_primary_and_lectures():
-    json_dict = {
-        'collections': [
-            {'primary': 'published'},
-            {'primary': 'lectures'},
-        ],
-    }
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == [
-        'peer reviewed',
+        'article',
         'lectures',
     ]
 

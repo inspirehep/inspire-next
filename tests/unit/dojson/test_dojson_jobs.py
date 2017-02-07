@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,14 +22,17 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
 from dojson.contrib.marc21.utils import create_record
 
+from inspire_schemas.utils import load_schema
 from inspirehep.dojson.jobs import jobs
+from inspirehep.dojson.utils import validate
 
 
-def test_date_closed_from_046__i():
+def test_deadline_date_from_046__i():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['deadline_date']
+
     snippet = (
         '<datafield tag="046" ind1=" " ind2=" ">'
         '  <subfield code="i">2015-12-15</subfield>'
@@ -39,10 +42,14 @@ def test_date_closed_from_046__i():
     expected = '2015-12-15'
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['deadline_date'], subschema) is None
     assert expected == result['deadline_date']
 
 
-def test_date_closed_from_046__l():
+def test_closed_date_from_046__l():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['closed_date']
+
     snippet = (
         '<datafield tag="046" ind1=" " ind2=" ">'
         '  <subfield code="l">2008-02-11</subfield>'
@@ -52,10 +59,15 @@ def test_date_closed_from_046__l():
     expected = '2008-02-11'
     result = jobs.do(create_record(snippet))
 
-    assert expected == result['date_closed']
+    assert validate(result['closed_date'], subschema) is None
+    assert expected == result['closed_date']
 
 
-def test_date_closed_from_046__i_l_an_url():
+def test_date_closed_from_046__i_and_046__l_an_url():
+    schema = load_schema('jobs')
+    subschema_deadline_date = schema['properties']['deadline_date']
+    subschema_urls = schema['properties']['urls']
+
     snippet = (
         '<record>'
         '  <datafield tag="046" ind1=" " ind2=" ">'
@@ -67,17 +79,24 @@ def test_date_closed_from_046__i_l_an_url():
         '</record>'
     )  # record/963314
 
+    expected_deadline_date = '2012-06-01'
+    expected_urls = [
+        {'value': 'http://www.pma.caltech.edu/physics-search'},
+    ]
     result = jobs.do(create_record(snippet))
 
-    assert result['deadline_date'] == '2012-06-01'
-    assert result['urls'] == [
-        {
-            'value': 'http://www.pma.caltech.edu/physics-search',
-        },
-    ]
+    assert validate(result['deadline_date'], subschema_deadline_date) is None
+    assert expected_deadline_date == result['deadline_date']
+
+    assert validate(result['urls'], subschema_urls) is None
+    assert expected_urls == result['urls']
 
 
-def test_date_closed_from_046_i_l_an_email():
+def test_date_closed_from_046__i_and_046__l_an_email():
+    schema = load_schema('jobs')
+    subschema_deadline_date = schema['properties']['deadline_date']
+    subschema_reference_email = schema['properties']['reference_email']
+
     snippet = (
         '<record>'
         '  <datafield tag="046" ind1=" " ind2=" ">'
@@ -89,22 +108,26 @@ def test_date_closed_from_046_i_l_an_email():
         '</record>'
     )  # record/1089529
 
+    expected_deadline_date = '8888'
+    expected_reference_email = ['yejb@smu.edu']
     result = jobs.do(create_record(snippet))
 
-    assert result['deadline_date'] == '8888'
-    assert result['reference_email'] == [
-        'yejb@smu.edu',
-    ]
+    assert validate(result['deadline_date'], subschema_deadline_date) is None
+    assert expected_deadline_date == result['deadline_date']
+
+    assert validate(result['reference_email'], subschema_reference_email) is None
+    assert expected_reference_email == result['reference_email']
 
 
 def test_contact_details_from_marcxml_270_single_p_single_m():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['contact_details']
+
     snippet = (
-        '<record> '
-        '  <datafield tag="270" ind1=" " ind2=" ">'
-        '    <subfield code="m">lindner@mpi-hd.mpg.de</subfield>'
-        '    <subfield code="p">Manfred Lindner</subfield>'
-        '  </datafield>'
-        '</record>'
+        '<datafield tag="270" ind1=" " ind2=" ">'
+        '  <subfield code="m">lindner@mpi-hd.mpg.de</subfield>'
+        '  <subfield code="p">Manfred Lindner</subfield>'
+        '</datafield>'
     )
 
     expected = [
@@ -115,54 +138,56 @@ def test_contact_details_from_marcxml_270_single_p_single_m():
     ]
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['contact_details'], subschema) is None
     assert expected == result['contact_details']
 
 
 def test_contact_details_from_marcxml_270_double_p_single_m():
-    """Two people having same e-mail address. We do not support it."""
+    schema = load_schema('jobs')
+    subschema = schema['properties']['contact_details']
+
     snippet = (
-        '<record> '
-        '  <datafield tag="270" ind1=" " ind2=" ">'
-        '    <subfield code="m">lindner@mpi-hd.mpg.de</subfield>'
-        '    <subfield code="p">Manfred Lindner</subfield>'
-        '    <subfield code="p">Boogeyman</subfield>'
-        '  </datafield>'
-        '</record>'
+        '<datafield tag="270" ind1=" " ind2=" ">'
+        '  <subfield code="m">lindner@mpi-hd.mpg.de</subfield>'
+        '  <subfield code="p">Manfred Lindner</subfield>'
+        '  <subfield code="p">Boogeyman</subfield>'
+        '</datafield>'
     )
 
     expected = [
-        {
-            'email': 'lindner@mpi-hd.mpg.de',
-        },
+        {'email': 'lindner@mpi-hd.mpg.de'},
     ]
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['contact_details'], subschema) is None
     assert expected == result['contact_details']
 
 
 def test_contact_details_from_marcxml_270_single_p_double_m():
-    """One person having two e-mail addresses. We do not support it."""
+    schema = load_schema('jobs')
+    subschema = schema['properties']['contact_details']
+
     snippet = (
-        '<record> '
-        '  <datafield tag="270" ind1=" " ind2=" ">'
-        '    <subfield code="m">lindner@mpi-hd.mpg.de</subfield>'
-        '    <subfield code="m">lindner@ecmrecords.com</subfield>'
-        '    <subfield code="p">Manfred Lindner</subfield>'
-        '  </datafield>'
-        '</record>'
+        '<datafield tag="270" ind1=" " ind2=" ">'
+        '  <subfield code="m">lindner@mpi-hd.mpg.de</subfield>'
+        '  <subfield code="m">lindner@ecmrecords.com</subfield>'
+        '  <subfield code="p">Manfred Lindner</subfield>'
+        '</datafield>'
     )
 
     expected = [
-        {
-            'name': 'Manfred Lindner'
-        },
+        {'name': 'Manfred Lindner'},
     ]
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['contact_details'], subschema) is None
     assert expected == result['contact_details']
 
 
 def test_contact_details_from_multiple_marcxml_270():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['contact_details']
+
     snippet = (
         '<record> '
         '  <datafield tag="270" ind1=" " ind2=" ">'
@@ -186,10 +211,14 @@ def test_contact_details_from_multiple_marcxml_270():
     ]
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['contact_details'], subschema) is None
     assert expected == result['contact_details']
 
 
 def test_regions_from_043__a():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['regions']
+
     snippet = (
         '<datafield tag="043" ind1=" " ind2=" ">'
         '  <subfield code="a">Asia</subfield>'
@@ -199,10 +228,14 @@ def test_regions_from_043__a():
     expected = ['Asia']
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['regions'], subschema) is None
     assert expected == result['regions']
 
 
 def test_regions_from_043__a_corrects_misspellings():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['regions']
+
     snippet = (
         '<datafield tag="043" ind1=" " ind2=" ">'
         '  <subfield code="a">United States</subfield>'
@@ -212,10 +245,14 @@ def test_regions_from_043__a_corrects_misspellings():
     expected = ['North America']
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['regions'], subschema) is None
     assert expected == result['regions']
 
 
 def test_regions_from_043__a_splits_on_commas():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['regions']
+
     snippet = (
         '<datafield tag="043" ind1=" " ind2=" ">'
         '  <subfield code="a">Asia, North America</subfield>'
@@ -225,16 +262,18 @@ def test_regions_from_043__a_splits_on_commas():
     expected = ['Asia', 'North America']
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['regions'], subschema) is None
     assert expected == result['regions']
 
 
 def test_experiments_from_693__e():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['experiments']
+
     snippet = (
-        '<record>'
-        '  <datafield tag="693" ind1=" " ind2=" ">'
-        '    <subfield code="e">ALIGO</subfield>'
-        '  </datafield>'
-        '</record>'
+        '<datafield tag="693" ind1=" " ind2=" ">'
+        '  <subfield code="e">ALIGO</subfield>'
+        '</datafield>'
     )  # record/1375852
 
     expected = [
@@ -245,17 +284,19 @@ def test_experiments_from_693__e():
     ]
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['experiments'], subschema) is None
     assert expected == result['experiments']
 
 
 def test_experiments_from_693__e__0():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['experiments']
+
     snippet = (
-        '<record>'
-        '  <datafield tag="693" ind1=" " ind2=" ">'
-        '    <subfield code="e">CERN-LHC-ATLAS</subfield>'
-        '    <subfield code="0">1108541</subfield>'
-        '  </datafield>'
-        '</record>'
+        '<datafield tag="693" ind1=" " ind2=" ">'
+        '  <subfield code="e">CERN-LHC-ATLAS</subfield>'
+        '  <subfield code="0">1108541</subfield>'
+        '</datafield>'
     )  # record/1332138
 
     expected = [
@@ -269,10 +310,14 @@ def test_experiments_from_693__e__0():
     ]
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['experiments'], subschema) is None
     assert expected == result['experiments']
 
 
 def test_experiments_from_693__e__0_and_e():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['experiments']
+
     snippet = (
         '<record>'
         '  <datafield tag="693" ind1=" " ind2=" ">'
@@ -283,7 +328,7 @@ def test_experiments_from_693__e__0_and_e():
         '    <subfield code="e">IHEP-CEPC</subfield>'
         '  </datafield>'
         '</record>'
-    )  # record/1393583 /export/xme
+    )  # record/1393583/export/xme
 
     expected = [
         {
@@ -300,10 +345,14 @@ def test_experiments_from_693__e__0_and_e():
     ]
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['experiments'], subschema) is None
     assert expected == result['experiments']
 
 
 def test_experiments_from_triple_693__e__0():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['experiments']
+
     snippet = (
         '<record>'
         '  <datafield tag="693" ind1=" " ind2=" ">'
@@ -346,10 +395,14 @@ def test_experiments_from_triple_693__e__0():
     ]
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['experiments'], subschema) is None
     assert expected == result['experiments']
 
 
 def test_institutions_from_110__a():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['institutions']
+
     snippet = (
         '<datafield tag="110" ind1=" " ind2=" ">'
         '  <subfield code="a">Coll. William and Mary</subfield>'
@@ -364,10 +417,14 @@ def test_institutions_from_110__a():
     ]
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['institutions'], subschema) is None
     assert expected == result['institutions']
 
 
 def test_institutions_from_double_110__a():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['institutions']
+
     snippet = (
         '<record>'
         '  <datafield tag="110" ind1=" " ind2=" ">'
@@ -391,10 +448,14 @@ def test_institutions_from_double_110__a():
     ]
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['institutions'], subschema) is None
     assert expected == result['institutions']
 
 
 def test_institutions_from_110__double_a_z():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['institutions']
+
     snippet = (
         '<datafield tag="110" ind1=" " ind2=" ">'
         '  <subfield code="a">Indiana U.</subfield>'
@@ -422,10 +483,14 @@ def test_institutions_from_110__double_a_z():
     ]
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['institutions'], subschema) is None
     assert expected == result['institutions']
 
 
 def test_description_from_520__a():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['description']
+
     snippet = (
         '<datafield tag="520" ind1=" " ind2=" ">'
         '  <subfield code="a">(1) Conduct independent research in string theory related theoretical sciences;&lt;br /> &lt;br /> (2) Advising graduate students in their research;&lt;br /> &lt;br /> (3) A very small amount of teaching of undergraduate courses.&amp;nbsp;</subfield>'
@@ -435,10 +500,14 @@ def test_description_from_520__a():
     expected = '(1) Conduct independent research in string theory related theoretical sciences;<br /> <br /> (2) Advising graduate students in their research;<br /> <br /> (3) A very small amount of teaching of undergraduate courses.&nbsp;'
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['description'], subschema) is None
     assert expected == result['description']
 
 
 def test_position_from_245__a():
+    schema = load_schema('jobs')
+    subschema = schema['properties']['position']
+
     snippet = (
         '<datafield tag="245" ind1=" " ind2=" ">'
         '  <subfield code="a">Neutrino Physics</subfield>'
@@ -448,44 +517,51 @@ def test_position_from_245__a():
     expected = 'Neutrino Physics'
     result = jobs.do(create_record(snippet))
 
+    assert validate(result['position'], subschema) is None
     assert expected == result['position']
 
 
 def test_ranks_from_marcxml_656_with_single_a():
-    """Two ranks inside one record."""
+    schema = load_schema('jobs')
+    subschema = schema['properties']['ranks']
+
     snippet = (
-        '<record>'
-        '  <datafield tag="656" ind1=" " ind2=" ">'
-        '    <subfield code="a">Senior</subfield>'
-        '  </datafield>'
-        '</record>'
+        '<datafield tag="656" ind1=" " ind2=" ">'
+        '  <subfield code="a">Senior</subfield>'
+        '</datafield>'
     )
 
     result = jobs.do(create_record(snippet))
 
-    assert result['_ranks'] == ['Senior']
+    assert validate(result['ranks'], subschema) is None
     assert result['ranks'] == ['SENIOR']
 
 
 def test_ranks_from_marcxml_656_with_double_a():
-    """Two ranks inside one record."""
+    schema = load_schema('jobs')
+    subschema = schema['properties']['ranks']
+
     snippet = (
-        '<record>'
-        '  <datafield tag="656" ind1=" " ind2=" ">'
-        '    <subfield code="a">Senior</subfield>'
-        '    <subfield code="a">Junior</subfield>'
-        '  </datafield>'
-        '</record>'
+        '<datafield tag="656" ind1=" " ind2=" ">'
+        '  <subfield code="a">Senior</subfield>'
+        '  <subfield code="a">Junior</subfield>'
+        '</datafield>'
     )
 
+    expected = [
+        'SENIOR',
+        'JUNIOR',
+    ]
     result = jobs.do(create_record(snippet))
 
-    assert result['_ranks'] == ['Senior', 'Junior']
-    assert result['ranks'] == ['SENIOR', 'JUNIOR']
+    assert validate(result['ranks'], subschema) is None
+    assert expected == result['ranks']
 
 
 def test_ranks_from_marcxml_double_656():
-    """Two ranks inside one record."""
+    schema = load_schema('jobs')
+    subschema = schema['properties']['ranks']
+
     snippet = (
         '<record>'
         '  <datafield tag="656" ind1=" " ind2=" ">'
@@ -497,7 +573,11 @@ def test_ranks_from_marcxml_double_656():
         '</record>'
     )
 
+    expected = [
+        'SENIOR',
+        'JUNIOR',
+    ]
     result = jobs.do(create_record(snippet))
 
-    assert result['_ranks'] == ['Senior', 'Junior']
-    assert result["ranks"] == ['SENIOR', 'JUNIOR']
+    assert validate(result['ranks'], subschema) is None
+    assert expected == result['ranks']
