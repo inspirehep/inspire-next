@@ -98,31 +98,30 @@ def hidden_note2marc(self, key, value):
     }
 
 
-@hep.over('thesis', '^502..')
+@hep.over('thesis_info', '^502..')
 def thesis(self, key, value):
     """Get Thesis Information."""
     DEGREE_TYPES_MAP = {
-        'RAPPORT DE STAGE': 'Internship Report',
-        'INTERNSHIP REPORT': 'Internship Report',
-        'DIPLOMA': 'Diploma',
-        'BACHELOR': 'Bachelor',
-        'LAUREA': 'Laurea',
-        'MASTER': 'Master',
-        'THESIS': 'Thesis',
-        'PHD': 'PhD',
-        'PDF': 'PhD',
-        'PH.D. THESIS': 'PhD',
-        'HABILITATION': 'Habilitation',
+        'RAPPORT DE STAGE': 'other',
+        'INTERNSHIP REPORT': 'other',
+        'DIPLOMA': 'diploma',
+        'BACHELOR': 'bachelor',
+        'LAUREA': 'laurea',
+        'MASTER': 'master',
+        'THESIS': 'other',
+        'PHD': 'phd',
+        'PDF': 'phd',
+        'PH.D. THESIS': 'phd',
+        'HABILITATION': 'habilitation',
     }
 
     _degree_type = force_single_element(value.get('b'))
     if _degree_type:
-        degree_type = DEGREE_TYPES_MAP.get(_degree_type.upper(), 'Other')
+        degree_type = DEGREE_TYPES_MAP.get(_degree_type.upper(), 'other')
     else:
         degree_type = None
 
     res = {
-        '_degree_type': _degree_type,
         'defense_date': value.get('a'),
         'degree_type': degree_type,
         'date': value.get('d'),
@@ -142,12 +141,12 @@ def thesis(self, key, value):
     return res
 
 
-@hep2marc.over('502', '^thesis$')
+@hep2marc.over('502', '^thesis_info$')
 def thesis2marc(self, key, value):
     """Get Thesis Information."""
     return {
         'a': value.get('defense_date'),
-        'b': value.get('_degree_type'),
+        'b': value.get('degree_type'),
         'c': [inst['name'] for inst in value.get('institutions', [])],
         'd': value.get('date'),
     }
