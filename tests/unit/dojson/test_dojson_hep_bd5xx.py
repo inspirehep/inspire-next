@@ -338,7 +338,7 @@ def test_copyright_from_542__d_e_g():
 
 def test_hidden_notes_from_595__a_9():
     schema = load_schema('hep')
-    subschema = schema['properties']['hidden_notes']
+    subschema = schema['properties']['_private_notes']
 
     snippet = (
         '<datafield tag="595" ind1=" " ind2=" ">'
@@ -355,8 +355,8 @@ def test_hidden_notes_from_595__a_9():
     ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['hidden_notes'], subschema) is None
-    assert expected == result['hidden_notes']
+    assert validate(result['_private_notes'], subschema) is None
+    assert expected == result['_private_notes']
 
     expected = [
         {
@@ -371,7 +371,7 @@ def test_hidden_notes_from_595__a_9():
 
 def test_hidden_notes_from_595__double_a_9():
     schema = load_schema('hep')
-    subschema = schema['properties']['hidden_notes']
+    subschema = schema['properties']['_private_notes']
 
     snippet = (
         '<datafield tag="595" ind1=" " ind2=" ">'
@@ -393,8 +393,8 @@ def test_hidden_notes_from_595__double_a_9():
     ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['hidden_notes'], subschema) is None
-    assert expected == result['hidden_notes']
+    assert validate(result['_private_notes'], subschema) is None
+    assert expected == result['_private_notes']
 
     expected = [
         {
@@ -413,7 +413,7 @@ def test_hidden_notes_from_595__double_a_9():
 
 def test_hidden_notes_from_595__a_9_and_595__double_a_9():
     schema = load_schema('hep')
-    subschema = schema['properties']['hidden_notes']
+    subschema = schema['properties']['_private_notes']
 
     snippet = (
         '<record>'
@@ -445,8 +445,8 @@ def test_hidden_notes_from_595__a_9_and_595__double_a_9():
     ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['hidden_notes'], subschema) is None
-    assert expected == result['hidden_notes']
+    assert validate(result['_private_notes'], subschema) is None
+    assert expected == result['_private_notes']
 
     expected = [
         {

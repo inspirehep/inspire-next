@@ -64,11 +64,11 @@ def public_notes2marc(self, key, value):
     }
 
 
-@hep.over('hidden_notes', '^595..')
-def hidden_notes(self, key, value):
-    """Hidden notes."""
-    def _hidden_notes(value):
-        def _hidden_note(value, a=None):
+@hep.over('_private_notes', '^595..')
+def private_notes(self, key, value):
+    """Private notes."""
+    def _private_notes(value):
+        def _private_note(value, a=None):
             source = value.get('9')
             if value.get('c'):
                 source = "CDS"
@@ -78,19 +78,19 @@ def hidden_notes(self, key, value):
             }
 
         if value.get('a'):
-            return [_hidden_note(value, a) for a in force_force_list(value['a'])]
+            return [_private_note(value, a) for a in force_force_list(value['a'])]
         else:
-            return [_hidden_note(value)]
+            return [_private_note(value)]
 
-    hidden_notes = self.get('hidden_notes', [])
-    hidden_notes.extend(_hidden_notes(value))
+    private_notes = self.get('_private_notes', [])
+    private_notes.extend(_private_notes(value))
 
-    return hidden_notes
+    return private_notes
 
 
-@hep2marc.over('595', 'hidden_notes')
+@hep2marc.over('595', '_private_notes')
 @utils.for_each_value
-def hidden_note2marc(self, key, value):
+def private_notes2marc(self, key, value):
     """Hidden note."""
     return {
         'a': value.get('value'),
