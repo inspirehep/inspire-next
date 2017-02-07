@@ -74,8 +74,8 @@ install_requires = [
     'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
     'invenio>=3.0.0a1,<3.1.0',
     'inspire-crawler~=0.2.7',
-    'inspire-schemas~=4.0',
-    'dojson==1.2.1',
+    'inspire-schemas~=25.0',
+    'dojson>=1.3.0',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
     'Flask-Caching>=1.0.1',
@@ -97,6 +97,7 @@ install_requires = [
     'invenio-workflows-files~=0.0.4',
     'invenio-workflows-ui~=1.0.27',
     'elasticsearch-dsl<2.2.0',
+    'pycountry>=17.1.8',
 ]
 
 tests_require = [

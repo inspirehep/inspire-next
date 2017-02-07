@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2015, 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -54,6 +54,14 @@ def add_schema(schema):
         return record
 
     return _add_schema
+
+
+def add_collection(name):
+    def _add_collection(record, blob):
+        record['_collections'] = [name]
+        return record
+
+    return _add_collection
 
 
 def clean_record(record, blob):

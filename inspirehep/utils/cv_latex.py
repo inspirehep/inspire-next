@@ -289,12 +289,8 @@ class Cv_latex(Export):
             if datestruct:
                 return self._format_date(datestruct)
 
-        if 'creation_modification_date' in self.record:
-            for field in self.record['creation_modification_date']:
-                date = field['creation_date']
-                if date:
-                    datestruct = self.parse_date(str(date))
-                break
+        if 'legacy_creation_date' in self.record:
+            datestruct = self.parse_date(str(self.record['legacy_creation_date']))
             if datestruct:
                 return self._format_date(datestruct)
 
