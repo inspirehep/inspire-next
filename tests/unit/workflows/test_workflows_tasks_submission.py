@@ -155,7 +155,7 @@ def test_prepare_files_annotates_files_from_arxiv():
         'fft': [
             {
                 'url': '/data/foo.pdf',
-                'docfile_type': 'INSPIRE-PUBLIC',
+                'docfile_type': 'arXiv',
                 'filename': 'arxiv:foo',
                 'filetype': '.pdf',
             },

@@ -381,7 +381,7 @@ def prepare_files(obj, eng):
 
         return {
             'url': os.path.realpath(url),
-            'docfile_type': 'INSPIRE-PUBLIC',
+            'docfile_type': is_arxiv_paper(obj) and 'arXiv' or 'INSPIRE-PUBLIC',
             'filename': _get_filename(obj, filename),
             'filetype': filetype,
         }
