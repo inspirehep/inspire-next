@@ -37,6 +37,7 @@ class HEPApproval(object):
 
         value = kwargs.get("request_data", {}).get("value", "")
         reason = kwargs.get("request_data", {}).get("reason", "")
+        upload_pdf = kwargs.get("request_data", {}).get("pdf_upload", False)
 
         # Audit logging
         prediction_results = obj.extra_data.get("relevance_prediction", {})
@@ -49,7 +50,6 @@ class HEPApproval(object):
             user_action=value,
         )
 
-        upload_pdf = kwargs.get("pdf_submission", False)
         approved = value in ('accept', 'accept_core')
 
         obj.extra_data["approved"] = approved
@@ -58,7 +58,7 @@ class HEPApproval(object):
         obj.extra_data["user_action"] = value
         obj.extra_data["core"] = value == "accept_core"
         obj.extra_data["reason"] = reason
-        obj.extra_data["pdf_upload"] = True if upload_pdf == "true" else False
+        obj.extra_data["pdf_upload"] = upload_pdf
         obj.status = ObjectStatus.WAITING
         obj.save()
 

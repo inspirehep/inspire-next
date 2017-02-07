@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -342,7 +342,7 @@ def newreview():
     # Converting json to populate form
     convert_for_form(workflow_metadata)
     workflow_metadata['comments'] = workflow_metadata.get('_private_note')
-    research_fields = workflow_metadata.pop('inspire_categories')
+    research_fields = workflow_metadata.pop('arxiv_categories')
     final_research_fields = []
     for field in research_fields:
         try:

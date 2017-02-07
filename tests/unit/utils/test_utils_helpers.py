@@ -109,22 +109,22 @@ def test_get_json_for_plots():
     ]
 
     expected = {
-        'fft': [
+        '_fft': [
             {
-                'url': 'http://example.com/foo-url',
-                'docfile_type': 'Plot',
+                'path': 'http://example.com/foo-url',
+                'type': 'Plot',
                 'description': '00000 foo-caption-1foo-caption-2',
                 'filename': 'foo-name',
             },
             {
-                'url': 'http://example.com/bar-url',
-                'docfile_type': 'Plot',
+                'path': 'http://example.com/bar-url',
+                'type': 'Plot',
                 'description': '00001 bar-caption-1',
                 'filename': 'bar-name',
             },
             {
-                'url': None,
-                'docfile_type': 'Plot',
+                'path': None,
+                'type': 'Plot',
                 'description': '00002 ',
                 'filename': None,
             },

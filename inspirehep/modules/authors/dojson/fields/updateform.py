@@ -29,6 +29,7 @@ in order to produce MARCXML.
 from __future__ import absolute_import, division, print_function
 
 from dojson import utils
+from dojson.errors import IgnoreKey
 
 from ..model import updateform
 
@@ -41,12 +42,9 @@ def _set_int_or_del(mydict, key, myint):
             del mydict[key]
 
 
-@updateform.over('_status', '^status$')
+@updateform.over('status', '^status$')
 def status(self, key, value):
-    if 'name' in self:
-        self['name']['status'] = value
-    else:
-        self['name'] = dict(status=value)
+    return value
 
 
 @updateform.over('native_name', '^native_name$')
@@ -60,6 +58,7 @@ def display_name(self, key, value):
         self['name']['preferred_name'] = value
     else:
         self['name'] = dict(preferred_name=value)
+    raise IgnoreKey
 
 
 @updateform.over('_websites', '^websites$')
@@ -74,6 +73,7 @@ def websites(self, key, value):
         self['urls'].extend(urls)
     else:
         self['urls'] = urls
+    raise IgnoreKey
 
 
 @updateform.over('_twitter_url', '^twitter_url$')
@@ -86,6 +86,7 @@ def twitter_url(self, key, value):
         self['urls'].append(twitter_url)
     else:
         self['urls'] = [twitter_url]
+    raise IgnoreKey
 
 
 @updateform.over('_blog_url', '^blog_url$')
@@ -98,6 +99,7 @@ def blog_url(self, key, value):
         self['urls'].append(blog_url)
     else:
         self['urls'] = [blog_url]
+    raise IgnoreKey
 
 
 @updateform.over('_linkedin_url', '^linkedin_url$')
@@ -110,6 +112,7 @@ def linkedin_url(self, key, value):
         self['urls'].append(linkedin_url)
     else:
         self['urls'] = [linkedin_url]
+    raise IgnoreKey
 
 
 @updateform.over('_orcid', '^orcid$')
@@ -122,6 +125,7 @@ def orcid(self, key, value):
         self['ids'].append(orcid)
     else:
         self['ids'] = [orcid]
+    raise IgnoreKey
 
 
 @updateform.over('_bai', '^bai$')
@@ -134,6 +138,7 @@ def bai(self, key, value):
         self['ids'].append(bai)
     else:
         self['ids'] = [bai]
+    raise IgnoreKey
 
 
 @updateform.over('_inspireid', '^inspireid$')
@@ -146,6 +151,7 @@ def inspireid(self, key, value):
         self['ids'].append(inspireid)
     else:
         self['ids'] = [inspireid]
+    raise IgnoreKey
 
 
 @updateform.over('_public_email', '^public_emails$')
@@ -164,14 +170,15 @@ def public_email(self, key, value):
         self['positions'].extend(positions)
     else:
         self['positions'] = positions
+    raise IgnoreKey
 
 
-@updateform.over('inspire_categories', '^research_field$')
+@updateform.over('arxiv_categories', '^research_field$')
 @utils.for_each_value
 def inspire_categories(self, key, value):
     return {
         "term": value,
-        "source": "submitter"
+        "source": "user"
     }
 
 
@@ -200,17 +207,22 @@ def institution_history(self, key, value):
         self['positions'].extend(positions)
     else:
         self['positions'] = positions
+    raise IgnoreKey
 
 
 @updateform.over('advisors', '^advisors$')
 def advisors(self, key, value):
     advisors = []
     for advisor in value:
-        if advisor["degree_type"] == "PhD" and not advisor["full_name"]:
+        if (
+            advisor["degree_type"].lower() == "phd" and
+            not advisor["full_name"]
+        ):
             continue
+
         advisors.append({
             "name": advisor["full_name"],
-            "_degree_type": advisor["degree_type"]
+            "degree_type": advisor["degree_type"].lower(),
         })
 
     return advisors

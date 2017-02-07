@@ -27,7 +27,9 @@ import pytest
 
 from dojson.contrib.marc21.utils import create_record
 
+from inspire_schemas.utils import load_schema
 from inspirehep.dojson.hepnames import hepnames2marc, hepnames
+from inspirehep.dojson.utils import validate
 
 
 EXPERIMENTS_DATA = [
@@ -197,8 +199,8 @@ EXPERIMENTS_DATA = [
     EXPERIMENTS_DATA,
     ids=[test_data[0] for test_data in EXPERIMENTS_DATA],
 )
-@mock.patch('inspirehep.dojson.hepnames.fields.bd1xx.get_recid_from_ref')
-@mock.patch('inspirehep.dojson.hepnames.fields.bd1xx.get_record_ref')
+@mock.patch('inspirehep.dojson.hepnames.rules.get_recid_from_ref')
+@mock.patch('inspirehep.dojson.hepnames.rules.get_record_ref')
 def test_experiments(mock_get_record_ref, mock_get_recid_from_ref, test_name,
                      xml_snippet, expected_json, expected_marc):
     mock_get_record_ref.side_effect = \
@@ -218,6 +220,9 @@ def test_experiments(mock_get_record_ref, mock_get_recid_from_ref, test_name,
 
 
 def test_ids_from_double_035__a_9():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<record>'
         '  <datafield tag="035" ind1=" " ind2=" ">'
@@ -229,24 +234,42 @@ def test_ids_from_double_035__a_9():
         '    <subfield code="9">BAI</subfield>'
         '  </datafield>'
         '</record>'
-    )
+    )  # record/984519
 
     expected = [
         {
-            'type': 'INSPIRE ID',
+            'schema': 'INSPIRE ID',
             'value': 'INSPIRE-00134135',
         },
         {
-            'type': 'INSPIRE BAI',
+            'schema': 'INSPIRE BAI',
             'value': 'H.Vogel.1',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            'a': 'INSPIRE-00134135',
+            '9': 'INSPIRE'
+        },
+        {
+            'a': 'H.Vogel.1',
+            '9': 'BAI'
+        }
+    ]
+    result = hepnames2marc.do(result)
+
+    assert sorted(expected) == sorted(result['035'])
 
 
 def test_ids_from_035__a_9_with_orcid():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
         '  <subfield code="9">ORCID</subfield>'
@@ -256,16 +279,30 @@ def test_ids_from_035__a_9_with_orcid():
 
     expected = [
         {
-            'type': 'ORCID',
+            'schema': 'ORCID',
             'value': '0000-0001-6771-2174',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            '9': 'ORCID',
+            'a': '0000-0001-6771-2174',
+        }
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['035']
 
 
 def test_ids_from_035__a_9_with_cern():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
         '  <subfield code="9">CERN</subfield>'
@@ -275,16 +312,30 @@ def test_ids_from_035__a_9_with_cern():
 
     expected = [
         {
-            'type': 'CERN',
+            'schema': 'CERN',
             'value': 'CERN-622961',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            '9': 'CERN',
+            'a': 'CERN-622961'
+        }
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['035']
 
 
 def test_ids_from_035__a_9_with_cern_malformed():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<record>'
         '  <datafield tag="035" ind1=" " ind2=" ">'
@@ -312,32 +363,62 @@ def test_ids_from_035__a_9_with_cern_malformed():
 
     expected = [
         {
-            'type': 'CERN',
+            'schema': 'CERN',
             'value': 'CERN-645257',
         },
         {
-            'type': 'CERN',
+            'schema': 'CERN',
             'value': 'CERN-783683',
         },
         {
-            'type': 'CERN',
+            'schema': 'CERN',
             'value': 'CERN-724319',
         },
         {
-            'type': 'CERN',
+            'schema': 'CERN',
             'value': 'CERN-727986',
         },
         {
-            'type': 'CERN',
+            'schema': 'CERN',
             'value': 'CERN-765559',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            '9': 'CERN',
+            'a': 'CERN-645257',
+        },
+        {
+            '9': 'CERN',
+            'a': 'CERN-783683',
+        },
+        {
+            '9': 'CERN',
+            'a': 'CERN-724319',
+        },
+        {
+            '9': 'CERN',
+            'a': 'CERN-727986',
+        },
+        {
+            '9': 'CERN',
+            'a': 'CERN-765559',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['035']
 
 
 def test_ids_from_035__a_9_with_desy():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
         '  <subfield code="a">DESY-1001805</subfield>'
@@ -347,16 +428,30 @@ def test_ids_from_035__a_9_with_desy():
 
     expected = [
         {
-            'type': 'DESY',
+            'schema': 'DESY',
             'value': 'DESY-1001805',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            '9': 'DESY',
+            'a': 'DESY-1001805',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['035']
 
 
 def test_ids_from_035__a_9_with_wikipedia():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
         '  <subfield code="9">Wikipedia</subfield>'
@@ -366,16 +461,30 @@ def test_ids_from_035__a_9_with_wikipedia():
 
     expected = [
         {
-            'type': 'WIKIPEDIA',
+            'schema': 'WIKIPEDIA',
             'value': 'Guido_Tonelli',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            '9': 'WIKIPEDIA',
+            'a': 'Guido_Tonelli',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['035']
 
 
 def test_ids_from_035__a_9_with_slac():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
         '  <subfield code="9">SLAC</subfield>'
@@ -385,16 +494,30 @@ def test_ids_from_035__a_9_with_slac():
 
     expected = [
         {
-            'type': 'SLAC',
+            'schema': 'SLAC',
             'value': 'SLAC-218626',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            '9': 'SLAC',
+            'a': 'SLAC-218626',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['035']
 
 
 def test_ids_from_035__a_with_bai():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
         '  <subfield code="a">Jian.Long.Han.1</subfield>'
@@ -403,16 +526,30 @@ def test_ids_from_035__a_with_bai():
 
     expected = [
         {
-            'type': 'INSPIRE BAI',
+            'schema': 'INSPIRE BAI',
             'value': 'Jian.Long.Han.1',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            '9': 'BAI',
+            'a': 'Jian.Long.Han.1',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['035']
 
 
 def test_ids_from_double_035__a_9_with_kaken():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<record>'
         '  <datafield tag="035" ind1=" " ind2=" ">'
@@ -428,20 +565,38 @@ def test_ids_from_double_035__a_9_with_kaken():
 
     expected = [
         {
-            'type': 'INSPIRE BAI',
+            'schema': 'INSPIRE BAI',
             'value': 'Toshio.Suzuki.2',
         },
         {
-            'type': 'KAKEN',
+            'schema': 'KAKEN',
             'value': 'KAKEN-70139070',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            '9': 'BAI',
+            'a': 'Toshio.Suzuki.2',
+        },
+        {
+            '9': 'KAKEN',
+            'a': 'KAKEN-70139070',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['035']
 
 
 def test_ids_from_035__a_9_with_googlescholar():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
         '  <subfield code="9">GoogleScholar</subfield>'
@@ -451,16 +606,30 @@ def test_ids_from_035__a_9_with_googlescholar():
 
     expected = [
         {
-            'type': 'GOOGLESCHOLAR',
+            'schema': 'GOOGLESCHOLAR',
             'value': 'Tnl-9KoAAAAJ',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            '9': 'GOOGLESCHOLAR',
+            'a': 'Tnl-9KoAAAAJ',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['035']
 
 
 def test_ids_from_035__a_9_with_viaf():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
         '  <subfield code="9">VIAF</subfield>'
@@ -470,16 +639,30 @@ def test_ids_from_035__a_9_with_viaf():
 
     expected = [
         {
-            'type': 'VIAF',
+            'schema': 'VIAF',
             'value': '34517183',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            '9': 'VIAF',
+            'a': '34517183',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['035']
 
 
 def test_ids_from_035__a_9_with_researcherid():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
         '  <subfield code="9">RESEARCHERID</subfield>'
@@ -489,16 +672,30 @@ def test_ids_from_035__a_9_with_researcherid():
 
     expected = [
         {
-            'type': 'RESEARCHERID',
+            'schema': 'RESEARCHERID',
             'value': 'B-4717-2008',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            '9': 'RESEARCHERID',
+            'a': 'B-4717-2008',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['035']
 
 
 def test_ids_from_035__a_9_with_scopus():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
         '  <subfield code="9">SCOPUS</subfield>'
@@ -508,13 +705,24 @@ def test_ids_from_035__a_9_with_scopus():
 
     expected = [
         {
-            'type': 'SCOPUS',
+            'schema': 'SCOPUS',
             'value': '7103280792',
         },
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['ids'], subschema) is None
     assert expected == result['ids']
+
+    expected = [
+        {
+            '9': 'SCOPUS',
+            'a': '7103280792',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['035']
 
 
 def test_ids_from_035__9():
@@ -538,6 +746,9 @@ def test_ids_from_035__9():
 
 
 def test_other_names_from_400__triple_a():
+    schema = load_schema('authors')
+    subschema = schema['properties']['other_names']
+
     snippet = (
         '<datafield tag="400" ind1=" " ind2=" ">'
         '  <subfield code="a">Yosef Cohen, Hadar</subfield>'
@@ -553,10 +764,24 @@ def test_other_names_from_400__triple_a():
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['other_names'], subschema) is None
     assert expected == result['other_names']
 
+    expected = [
+        {'a': 'Yosef Cohen, Hadar'},
+        {'a': 'Josef Cohen, Hadar'},
+        {'a': 'Cohen, Hadar Josef'},
+    ]
+    result = hepnames2marc.do(result)
 
+    assert expected == result['400']
+
+
+@pytest.mark.xfail(reason='identifiers in i and w are not handled')
 def test_advisors_from_701__a_g_i():
+    schema = load_schema('authors')
+    subschema = schema['properties']['advisors']
+
     snippet = (
         '<datafield tag="701" ind1=" " ind2=" ">'
         '  <subfield code="a">Rivelles, Victor O.</subfield>'
@@ -565,13 +790,18 @@ def test_advisors_from_701__a_g_i():
         '  <subfield code="x">991627</subfield>'
         '  <subfield code="y">1</subfield>'
         '</datafield>'
-    )  # record/1474091
+    )  # record/1474091/export/xme
 
     expected = [
         {
             'name': 'Rivelles, Victor O.',
             'degree_type': 'PhD',
-            '_degree_type': 'PhD',
+            'ids': [
+                {
+                    'schema': 'INSPIRE ID',
+                    'value': 'INSPIRE-00120420'
+                }
+            ],
             'record': {
                 '$ref': 'http://localhost:5000/api/authors/991627',
             },
@@ -580,10 +810,25 @@ def test_advisors_from_701__a_g_i():
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['advisors'], subschema) is None
     assert expected == result['advisors']
+
+    expected = [
+        {
+            'a': 'Rivelles, Victor O.',
+            'g': 'PhD',
+            'i': 'INSPIRE-00120420',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['701']
 
 
 def test_old_single_email_from_371__a():
+    schema = load_schema('authors')
+    subschema = schema['properties']['positions']
+
     snippet = (
         '<datafield tag="371" ind1=" " ind2=" ">'
         '   <subfield code="a">IMSc, Chennai</subfield>'
@@ -596,42 +841,45 @@ def test_old_single_email_from_371__a():
 
     expected = [
         {
-          "current": False,
-          "old_emails": [
-            "test@imsc.res.in"
-          ],
-          "end_date": "2013",
-          "rank": "POSTDOC",
-          "institution": {
-            "name": "IMSc, Chennai",
-            "curated_relation": False
-          },
-          "_rank": "PD",
-          "start_date": "2012"
+            "current": False,
+            "old_emails": [
+                "test@imsc.res.in"
+            ],
+            "end_date": "2013",
+            "rank": "POSTDOC",
+            "institution": {
+                "name": "IMSc, Chennai",
+                "curated_relation": False
+            },
+            "_rank": "PD",
+            "start_date": "2012"
         }
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['positions'], subschema) is None
     assert expected == result['positions']
 
     expected = [
         {
-          "a": "IMSc, Chennai",
-          "o": [
-            "test@imsc.res.in"
-          ],
-          "s": "2012",
-          "r": "PD",
-          "t": "2013"
+            "a": "IMSc, Chennai",
+            "o": [
+                "test@imsc.res.in"
+            ],
+            "s": "2012",
+            "r": "PD",
+            "t": "2013"
         }
     ]
+    result = hepnames2marc.do(result)
 
-    marc = hepnames2marc.do(result)
-
-    assert expected == marc['371']
+    assert expected == result['371']
 
 
 def test_positions_from_371__a():
+    schema = load_schema('authors')
+    subschema = schema['properties']['positions']
+
     snippet = (
         '<datafield tag="371" ind1=" " ind2=" ">'
         '  <subfield code="a">Aachen, Tech. Hochsch.</subfield>'
@@ -649,10 +897,21 @@ def test_positions_from_371__a():
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['positions'], subschema) is None
     assert expected == result['positions']
+
+    expected = [
+        {'a': 'Aachen, Tech. Hochsch.'}
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['371']
 
 
 def test_positions_from_371__a_double_m_z():
+    schema = load_schema('authors')
+    subschema = schema['properties']['positions']
+
     snippet = (
         '<datafield tag="371" ind1=" " ind2=" ">'
         '  <subfield code="a">Argonne</subfield>'
@@ -677,6 +936,7 @@ def test_positions_from_371__a_double_m_z():
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['positions'], subschema) is None
     assert expected == result['positions']
 
     expected = [
@@ -692,8 +952,10 @@ def test_positions_from_371__a_double_m_z():
     assert expected == result['371']
 
 
-
 def test_positions_from_371__a_m_r_z():
+    schema = load_schema('authors')
+    subschema = schema['properties']['positions']
+
     snippet = (
         '<datafield tag="371" ind1=" " ind2=" ">'
         '  <subfield code="a">Antwerp U.</subfield>'
@@ -719,4 +981,240 @@ def test_positions_from_371__a_m_r_z():
     ]
     result = hepnames.do(create_record(snippet))
 
+    assert validate(result['positions'], subschema) is None
     assert expected == result['positions']
+
+    expected = [
+        {
+            'a': 'Antwerp U.',
+            'm': ['pierre.vanmechelen@ua.ac.be'],
+            'r': 'SENIOR',
+            'z': 'Current'
+        }
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['371']
+
+
+def test_arxiv_categories_from_65017a_2():
+    schema = load_schema('authors')
+    subschema = schema['properties']['arxiv_categories']
+
+    snippet = (
+        '<datafield tag="650" ind1="1" ind2="7">'
+        '  <subfield code="2">INSPIRE</subfield>'
+        '  <subfield code="a">HEP-TH</subfield>'
+        '</datafield>'
+    )  # record/1010819
+
+    expected = [
+        'hep-th',
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['arxiv_categories'], subschema) is None
+    assert expected == result['arxiv_categories']
+
+    expected = [
+        {
+            '2': 'arXiv',
+            'a': 'hep-th',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['65017']
+
+
+def test_inspire_categories_from_65017a_2():
+    schema = load_schema('authors')
+    subschema = schema['properties']['inspire_categories']
+
+    snippet = (
+        '<datafield tag="650" ind1="1" ind2="7">'
+        '  <subfield code="2">INSPIRE</subfield>'
+        '  <subfield code="a">Computing</subfield>'
+        '</datafield>'
+    )  # record/1271076
+
+    expected = [
+        {'term': 'Computing'},
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['inspire_categories'], subschema) is None
+    assert expected == result['inspire_categories']
+
+    expected = [
+        {
+            '2': 'INSPIRE',
+            'a': 'Computing',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['65017']
+
+
+def test_inspire_categories_from_65017a_2_E():
+    schema = load_schema('authors')
+    subschema = schema['properties']['inspire_categories']
+
+    snippet = (
+        '<datafield tag="650" ind1="1" ind2="7">'
+        '  <subfield code="2">INSPIRE</subfield>'
+        '  <subfield code="a">E</subfield>'
+        '</datafield>'
+    )  # record/1019112
+
+    expected = [
+        {'term': 'Experiment-HEP'},
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['inspire_categories'], subschema) is None
+    assert expected == result['inspire_categories']
+
+    expected = [
+        {
+            '2': 'INSPIRE',
+            'a': 'Experiment-HEP',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['65017']
+
+
+def test_public_notes_from_667__a():
+    schema = load_schema('authors')
+    subschema = schema['properties']['public_notes']
+
+    snippet = (
+        '<datafield tag="667" ind1=" " ind2=" ">'
+        '  <subfield code="a">Do not confuse with Acharya, Bannanje Sripath</subfield>'
+        '</datafield>'
+    )  # record/1018999
+
+    expected = [
+        {'value': 'Do not confuse with Acharya, Bannanje Sripath'}
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['public_notes'], subschema) is None
+    assert expected == result['public_notes']
+
+    expected = [
+        {'a': 'Do not confuse with Acharya, Bannanje Sripath'},
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['667']
+
+
+def test_private_notes_from_595__a_9():
+    schema = load_schema('authors')
+    subschema = schema['properties']['_private_notes']
+
+    snippet = (
+        '<datafield tag="595" ind1=" " ind2=" ">'
+        '  <subfield code="a">Author prefers Alexandrov, A.S.</subfield>'
+        '  <subfield code="9">SPIRES-HIDDEN</subfield>'
+        '</datafield>'
+    )  # record/1050484
+
+    expected = [
+        {
+            'source': 'SPIRES-HIDDEN',
+            'value': 'Author prefers Alexandrov, A.S.',
+        }
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['_private_notes'], subschema) is None
+    assert expected == result['_private_notes']
+
+    expected = [
+        {
+            '9': 'SPIRES-HIDDEN',
+            'a': 'Author prefers Alexandrov, A.S.',
+        }
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['595']
+
+
+def test_stub_from_980__a_useful():
+    schema = load_schema('authors')
+    subschema = schema['properties']['stub']
+
+    snippet = (
+        '<datafield tag="980" ind1=" " ind2=" ">'
+        '  <subfield code="a">USEFUL</subfield>'
+        '</datafield>'
+    )  # record/1222902
+
+    expected = False
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['stub'], subschema) is None
+    assert expected == result['stub']
+
+    expected = [
+        {'a': 'USEFUL'},
+        {'a': 'HEPNAMES'},
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['980']
+
+
+def test_stub_from_980__a_not_useful():
+    schema = load_schema('authors')
+    subschema = schema['properties']['stub']
+
+    snippet = (
+        '<datafield tag="980" ind1=" " ind2=" ">'
+        '  <subfield code="a">HEPNAMES</subfield>'
+        '</datafield>'
+    )  # record/1019103
+
+    expected = True
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['stub'], subschema) is None
+    assert expected == result['stub']
+
+    expected = [
+        {'a': 'HEPNAMES'},
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['980']
+
+
+def test_deleted_from_980__c():
+    schema = load_schema('authors')
+    subschema = schema['properties']['deleted']
+
+    snippet = (
+        '<datafield tag="980" ind1=" " ind2=" ">'
+        '  <subfield code="c">DELETED</subfield>'
+        '</datafield>'
+    )  # record/1511071
+
+    expected = True
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['deleted'], subschema) is None
+    assert expected == result['deleted']
+
+    expected = [
+        {'c': 'DELETED'},
+        {'a': 'HEPNAMES'},
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['980']

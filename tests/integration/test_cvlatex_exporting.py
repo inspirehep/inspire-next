@@ -24,10 +24,10 @@ from __future__ import absolute_import, division, print_function
 
 from datetime import date
 
+import pytest
+
 from inspirehep.utils.cv_latex import Cv_latex
 from inspirehep.utils.record_getter import get_db_record
-
-import pytest
 
 
 @pytest.mark.xfail(reason='wrong output')

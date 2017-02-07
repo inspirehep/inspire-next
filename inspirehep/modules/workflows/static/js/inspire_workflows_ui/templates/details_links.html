@@ -5,11 +5,20 @@
        ng-repeat="url in vm.record.metadata.urls">
     <div class="col-md-1 col-sm-1">
       <i class="fa"
-         ng-class="{'fa-twitter': url.description === 'TWITTER', 'fa-linkedin-square': url.description === 'LINKEDIN', 'fa-link': url.description === ''}"></i>
+         ng-class="{'fa-twitter': url.description === 'TWITTER', 'fa-linkedin-square': url.description === 'LINKEDIN', 'fa-link': ['', 'BLOG'].indexOf(url.description) !== -1 || !url.description}"></i>
     </div>
     <div class="col-md-11 col-sm-11">
       <a ng-bind="url.value" ng-href="{{url.value}}" editable-text="url.value"
       e-ng-change="Utils.registerUpdateEvent()"></a>
+    </div>
+  </div>
+  <div ng-if="vm.record._extra_data.submission_pdf" class="row">
+    <div class="col-md-1 col-sm-1">
+      <i class="fa fa-file-pdf-o"></i>
+    </div>
+    <div class="col-md-11 col-sm-11">
+      <a ng-bind="vm.record._extra_data.submission_pdf" ng-href="{{vm.record._extra_data.submission_pdf}}" editable-text="vm.record._extra_data.submission_pdf"
+      e-ng-change="Utils.registerUpdateEvent()"></a><span>&nbsp;&nbsp;<input type="checkbox" id="attach-pdf" ng-model="vm.pdf_upload">&nbsp;&nbsp;<label for="attach-pdf">Attach PDF</label></span>
     </div>
   </div>
 </div>

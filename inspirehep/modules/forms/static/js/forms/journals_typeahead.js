@@ -75,14 +75,14 @@ define([
         }.bind(this));
       }.bind(this),
       displayKey: function(data) {
-        return data.metadata.titles[0].title;
+        return data.metadata.journal_titles[0].title;
       },
       templates: {
         empty: function(data) {
           return 'Cannot find this journal in our database.';
         },
         suggestion: function(data) {
-          data.metadata.title = data.metadata.titles[0].title;
+          data.metadata.title = data.metadata.journal_titles[0].title;
           data.metadata.short_title = data.metadata.short_titles[0].title;
           return suggestionTemplate.render.call(suggestionTemplate, data.metadata);
         }.bind(this)

@@ -129,7 +129,7 @@ def generate_name_variations(recid, json, *args, **kwargs):
                 author.update({"name_variations": name_variations})
                 bai = [
                     item['value'] for item in author.get('ids', [])
-                    if item['type'] == 'INSPIRE BAI'
+                    if item['schema'] == 'INSPIRE BAI'
                 ]
                 author.update({"name_suggest": {
                     "input": name_variations,

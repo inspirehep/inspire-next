@@ -82,99 +82,15 @@ def populate_inspire_subjects(sender, json, *args, **kwargs):
 def populate_inspire_document_type(sender, json, *args, **kwargs):
     """Populate the INSPIRE doc type before indexing.
 
-    Adds the `facet_inspire_doc_type` key to the record, to be used for
-    faceting in the search interface. Valid document types on which to
-    facet are derived from the following algorithm:
-
-    - If the record has no `collections` key, return `[]`.
-    - Otherwise:
-      - If the record has as a primary collection a key in the following
-        table then add the corresponding value to the document types.
-        Only the first value found is added.
-
-          + --------------- + ---------------- +
-          | key             | value            |
-          + --------------- + ---------------- +
-          | published       | peer reviewed    |
-          | thesis          | thesis           |
-          | book            | book             |
-          | bookchapter     | bookchapter      |
-          | proceedings     | proceedings      |
-          | conferencepaper | conference paper |
-          | note            | note             |
-          | report          | report           |
-          | activityreport  | activity report  |
-          + --------------- + ---------------- +
-
-      - Otherwise:
-        - If the record has no `start_page` and `artid` key in any of
-          its `publication_info`s then add 'preprint' to the document types.
-      - If the record has as a primary collection a key in the following
-        table then add the corresponding value to the document types.
-        All values found are added.
-
-          + -------- + -------- +
-          | key      | value    |
-          + -------- + -------- +
-          | lectures | lectures |
-          | review   | review   |
-          + -------- + -------- +
-
+    Adds the ``facet_inspire_doc_type`` key to the record, to be used for
+    faceting in the search interface.
     """
-    def _was_not_published(json):
-        def _not_published(publication_info):
-            return (
-                'page_start' not in publication_info
-                and 'artid' not in publication_info
-            )
-
-        publication_infos = force_force_list(
-            get_value(json, 'publication_info')
-        )
-        not_published = map(_not_published, publication_infos)
-
-        return all(not_published)
-
-    EXCLUSIVE_DOC_TYPE_MAP = {
-        'published': 'peer reviewed',
-        'thesis': 'thesis',
-        'book': 'book',
-        'bookchapter': 'book chapter',
-        'proceedings': 'proceedings',
-        'conferencepaper': 'conference paper',
-        'note': 'note',
-        'report': 'report',
-        'activityreport': 'activity report',
-    }
-
-    INCLUSIVE_DOC_TYPE_MAP = {
-        'lectures': 'lectures',
-        'review': 'review',
-    }
-
-    if 'collections' not in json:
-        json['facet_inspire_doc_type'] = []
-        return
-
     result = []
 
-    primary_collections = force_force_list(
-        get_value(json, 'collections.primary')
-    )
-    normalized_collections = map(lambda el: el.lower(), primary_collections)
-
-    for collection in normalized_collections:
-        if collection in EXCLUSIVE_DOC_TYPE_MAP:
-            result.append(EXCLUSIVE_DOC_TYPE_MAP[collection])
-            break
-
-    if not result:
-        if _was_not_published(json):
-            result.append('preprint')
-
-    for collection in normalized_collections:
-        if collection in INCLUSIVE_DOC_TYPE_MAP:
-            result.append(INCLUSIVE_DOC_TYPE_MAP[collection])
+    result.extend(json.get('document_type', []))
+    result.extend(json.get('publication_type', []))
+    if 'refereed' in json and json['refereed']:
+        result.append('peer reviewed')
 
     json['facet_inspire_doc_type'] = result
 
@@ -348,7 +264,7 @@ def earliest_date(sender, json, *args, **kwargs):
         'thesis.date',
         'thesis.defense_date',
         'publication_info.year',
-        'creation_modification_date.creation_date',
+        'legacy_creation_date',
         'imprints.date',
     ]
 

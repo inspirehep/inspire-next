@@ -51,8 +51,7 @@ def build_citesummary(search):
         ).params(
             _source=[
                 'authors.recid',
-                'collaboration.value',
-                'collections.primary',
+                'collaborations.value',
                 'control_number',
                 'earliest_date',
                 'facet_inspire_doc_type',
@@ -100,12 +99,11 @@ def get_subject(record):
 
 
 def is_collaboration(record):
-    return force_force_list(get_value(record, 'collaboration.value')) != []
+    return force_force_list(get_value(record, 'collaborations.value')) != []
 
 
 def is_core(record):
-    return 'CORE' in force_force_list(
-        get_value(record, 'collections.primary'))
+    return 'core' in record and record['core']
 
 
 def is_selfcite(citee, citer):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -121,22 +121,12 @@ def test_get_subject_selects_first():
 
 def test_is_collaboration():
     record = {
-        'collaboration': [
-            {
-                'value': 'CMS',
-            },
+        'collaborations': [
+            {'value': 'CMS'},
         ],
     }
 
     assert is_collaboration(record)
-
-
-def test_is_collaboration_returns_false_when_collaboration_is_empty():
-    record = {
-        'collaboration': [],
-    }
-
-    assert not is_collaboration(record)
 
 
 def test_is_collaboration_returns_false_when_no_collaboration():
@@ -146,27 +136,19 @@ def test_is_collaboration_returns_false_when_no_collaboration():
 
 
 def test_is_core():
-    record = {
-        'collections': [
-            {
-                'primary': 'CORE',
-            },
-        ],
-    }
+    record = {'core': True}
 
     assert is_core(record)
 
 
-def test_is_core_returns_false_when_collections_is_empty():
-    record = {
-        'collections': [],
-    }
+def test_is_core_returns_false_when_no_core():
+    record = {}
 
     assert not is_core(record)
 
 
-def test_is_core_returns_false_when_no_collection():
-    record = {}
+def test_is_core_returns_false_when_core_is_false():
+    record = {'core': False}
 
     assert not is_core(record)
 
@@ -174,19 +156,13 @@ def test_is_core_returns_false_when_no_collection():
 def test_is_selfcite_returns_true_when_at_least_one_author_recid_is_in_common():
     citee = {
         'authors': [
-            {
-                'recid': '2',
-            },
-            {
-                'recid': '1',
-            },
+            {'recid': '2'},
+            {'recid': '1'},
         ],
     }
     citer = {
         'authors': [
-            {
-                'recid': '1',
-            },
+            {'recid': '1'},
         ],
     }
 
@@ -196,16 +172,12 @@ def test_is_selfcite_returns_true_when_at_least_one_author_recid_is_in_common():
 def test_is_selfcite_returns_false_when_no_authors_recids_are_in_common():
     citee = {
         'authors': [
-            {
-                'recid': '1',
-            },
+            {'recid': '1'},
         ],
     }
     citer = {
         'authors': [
-            {
-                'recid': '2',
-            },
+            {'recid': '2'},
         ],
     }
 
