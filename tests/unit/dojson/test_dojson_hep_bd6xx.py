@@ -299,8 +299,8 @@ def test_keywords_from_695__a_2():
 
     expected = [
         {
-            'keyword': 'REVIEW',
-            'classification_scheme': 'INSPIRE',
+            'value': 'REVIEW',
+            'schema': 'INSPIRE',
         },
     ]
     result = hep.do(create_record(snippet))
@@ -366,12 +366,12 @@ def test_keywords_from_multiple_695__a_2():
 
     expected = [
         {
-            'classification_scheme': 'INSPIRE',
-            'keyword': 'programming: Monte Carlo',
+            'schema': 'INSPIRE',
+            'value': 'programming: Monte Carlo',
         },
         {
-            'classification_scheme': 'INSPIRE',
-            'keyword': 'electron positron: annihilation',
+            'schema': 'INSPIRE',
+            'value': 'electron positron: annihilation',
         },
     ]
 
@@ -409,7 +409,7 @@ def test_keywords_from_653__a_9():
     expected = [
         {
             'source': 'author',
-            'keyword': 'Data',
+            'value': 'Data',
         },
     ]
     result = hep.do(create_record(snippet))

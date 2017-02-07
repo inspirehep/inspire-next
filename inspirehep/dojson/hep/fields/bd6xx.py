@@ -29,6 +29,7 @@ from dojson import utils
 from ..model import hep, hep2marc
 from ...utils import get_record_ref, get_recid_from_ref
 
+from inspire_schemas.utils import load_schema
 from inspirehep.utils.helpers import force_force_list
 
 
@@ -133,8 +134,7 @@ def keywords(self, key, value):
 
     def _freekey_get_dict(elem):
         keyword = {
-            'keyword': elem.get('a'),
-            'classification_scheme': '',
+            'value': elem.get('a'),
         }
 
         source = _freekey_get_source(elem.get('9'))
@@ -145,10 +145,15 @@ def keywords(self, key, value):
 
     def _get_keyword_dict(key, elem):
         if _is_thesaurus(key) and elem.get('a'):
+            _schema = load_schema('hep')
+            valid_keywords = _schema['properties']['keywords']['items']['properties']['schema']['enum']
+            schema_in_marc = elem.get('2').upper()
+            schema = schema_in_marc if schema_in_marc in valid_keywords else ''
+            
             return {
-                'keyword': elem.get('a'),
-                'classification_scheme': elem.get('2', 'INSPIRE'),
+                'schema': schema,
                 'source': elem.get('9', ''),
+                'value': elem.get('a'),
             }
         elif _is_energy(elem):
             return {}
@@ -172,12 +177,12 @@ def keywords2marc(self, key, values):
     values = force_force_list(values)
 
     def _is_thesaurus(elem):
-        return elem.get('classification_scheme', '') is not ''
+        return elem.get('schema', '') is not ''
 
     def _thesaurus_to_marc_dict(elem):
         result = {
-            'a': elem.get('keyword'),
-            '2': elem.get('classification_scheme'),
+            'a': elem.get('value'),
+            '2': elem.get('schema'),
         }
         source = elem.get('source', None)
         if source:
@@ -187,7 +192,7 @@ def keywords2marc(self, key, values):
 
     def _freekey_to_marc_dict(elem):
         return {
-            'a': elem.get('keyword'),
+            'a': elem.get('value'),
             '9': elem.get('source', ''),
         }
 
