@@ -490,38 +490,13 @@ def test_get_date_from_publication_info_uses_first_year_found():
     assert expected == result
 
 
-def test_get_date_from_creation_modification_date():
-    creation_modification_date = InspireRecord({
-        'creation_modification_date': [
-            {'creation_date': '2012'}
-        ]
+def test_get_date_from_legacy_creation_date():
+    legacy_creation_date = InspireRecord({
+        'legacy_creation_date': '2012'
     })
 
     expected = 2012
-    result = Cv_latex(creation_modification_date)._get_date()
-
-    assert expected == result
-
-
-def test_get_date_from_creation_modification_date_returns_none_when_no_creation_date():
-    creation_modification_date_without_a_creation_date = InspireRecord({
-        'creation_modification_date': []
-    })
-
-    assert Cv_latex(creation_modification_date_without_a_creation_date)._get_date() is None
-
-
-@pytest.mark.xfail(reason='creation_date might not be there')
-def test_get_date_from_creation_modification_date_uses_first_creation_date_found():
-    creation_modification_date = InspireRecord({
-        'creation_modification_date': [
-            {},
-            {'creation_date': '2014-03-07'}
-        ]
-    })
-
-    expected = 'March 07, 2014'
-    result = Cv_latex(creation_modification_date)._get_date()
+    result = Cv_latex(legacy_creation_date)._get_date()
 
     assert expected == result
 

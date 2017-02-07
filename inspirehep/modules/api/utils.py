@@ -100,12 +100,11 @@ def get_subject(record):
 
 
 def is_collaboration(record):
-    return force_force_list(get_value(record, 'collaboration.value')) != []
+    return get_value(record, 'collaborations.value')
 
 
 def is_core(record):
-    return 'CORE' in force_force_list(
-        get_value(record, 'collections.primary'))
+    return 'core' in record and record['core']
 
 
 def is_selfcite(citee, citer):

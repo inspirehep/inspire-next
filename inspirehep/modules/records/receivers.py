@@ -348,7 +348,7 @@ def earliest_date(sender, json, *args, **kwargs):
         'thesis.date',
         'thesis.defense_date',
         'publication_info.year',
-        'creation_modification_date.creation_date',
+        'legacy_creation_date',
         'imprints.date',
     ]
 
