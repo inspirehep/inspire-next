@@ -593,6 +593,47 @@ def test_report_numbers_from_037__a():
     assert expected == result['037']
 
 
+def test_report_numbers_from_two_037__a():
+    schema = load_schema('hep')
+    subschema = schema['properties']['report_numbers']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="037" ind1=" " ind2=" ">'
+        '    <subfield code="a">UTPT-89-27</subfield>'
+        '  </datafield>'
+        '  <datafield tag="037" ind1=" " ind2=" ">'
+        '    <subfield code="a">CALT-68-1585</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/26564
+
+    expected = [
+        {
+            'value': 'UTPT-89-27',
+        },
+        {
+            'value': 'CALT-68-1585',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['report_numbers'], subschema) is None
+    assert expected == result['report_numbers']
+
+    expected = [
+        {
+            'a': 'UTPT-89-27',
+        },
+        {
+            'a': 'CALT-68-1585',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['037']
+
+
 def test_languages_from_041__a():
     schema = load_schema('hep')
     subschema = schema['properties']['languages']

@@ -27,7 +27,9 @@ import pytest
 
 from dojson.contrib.marc21.utils import create_record
 
+from inspire_schemas.utils import load_schema
 from inspirehep.dojson.hep import hep, hep2marc
+from inspirehep.dojson.utils import validate
 
 
 ACCELERATOR_EXPERIMENTS_DATA = [
@@ -282,3 +284,145 @@ def test_accelerator_experiments(mock_get_record_ref, mock_get_recid_from_ref,
 
     assert marc_experiments == expected_marc
     assert json_experiments == expected_json
+
+
+def test_keywords_from_695__a_2():
+    schema = load_schema('hep')
+    subschema = schema['properties']['keywords']
+
+    snippet = (
+        '<datafield tag="695" ind1=" " ind2=" ">'
+        '  <subfield code="a">REVIEW</subfield>'
+        '  <subfield code="2">INSPIRE</subfield>'
+        '</datafield>'
+    )  # record/200123
+
+    expected = [
+        {
+            'keyword': 'REVIEW',
+            'classification_scheme': 'INSPIRE',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['keywords'], subschema) is None
+    assert expected == result['keywords']
+
+    expected = [
+        {
+            'a': 'REVIEW',
+            '2': 'INSPIRE',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['695']
+
+
+def test_energy_ranges_from_695__2_e():
+    schema = load_schema('hep')
+    subschema = schema['properties']['energy_ranges']
+
+    snippet = (
+        '<datafield tag="695" ind1=" " ind2=" ">'
+        '  <subfield code="2">INSPIRE</subfield>'
+        '  <subfield code="e">7</subfield>'
+        '</datafield>'
+    )  # record/1124337
+
+    expected = [7]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['energy_ranges'], subschema) is None
+    assert expected == result['energy_ranges']
+
+    expected = [
+        {
+            '2': 'INSPIRE',
+            'e': 7,
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['695']
+
+
+def test_keywords_from_multiple_695__a_2():
+    schema = load_schema('hep')
+    subschema = schema['properties']['keywords']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="695" ind1=" " ind2=" ">'
+        '    <subfield code="a">programming: Monte Carlo</subfield>'
+        '    <subfield code="2">INSPIRE</subfield>'
+        '  </datafield>'
+        '  <datafield tag="695" ind1=" " ind2=" ">'
+        '    <subfield code="a">electron positron: annihilation</subfield>'
+        '    <subfield code="2">INSPIRE</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/363605
+
+    expected = [
+        {
+            'classification_scheme': 'INSPIRE',
+            'keyword': 'programming: Monte Carlo',
+        },
+        {
+            'classification_scheme': 'INSPIRE',
+            'keyword': 'electron positron: annihilation',
+        },
+    ]
+
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['keywords'], subschema) is None
+    assert expected == result['keywords']
+
+    expected = [
+        {
+            'a': 'programming: Monte Carlo',
+            '2': 'INSPIRE',
+        },
+        {
+            'a': 'electron positron: annihilation',
+            '2': 'INSPIRE',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['695']
+
+
+def test_keywords_from_653__a_9():
+    schema = load_schema('hep')
+    subschema = schema['properties']['keywords']
+
+    snippet = (
+        '<datafield tag="653" ind1=" " ind2=" ">'
+        '  <subfield code="9">author</subfield>'
+        '  <subfield code="a">Data</subfield>'
+        '</datafield>'
+    )  # record/1260876
+
+    expected = [
+        {
+            'source': 'author',
+            'keyword': 'Data',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['keywords'], subschema) is None
+    assert expected == result['keywords']
+
+    expected = [
+        {
+            '9': 'author',
+            'a': 'Data',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['653']
