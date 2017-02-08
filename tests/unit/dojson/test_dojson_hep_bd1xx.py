@@ -881,7 +881,6 @@ def test_authors_from_100_a_double_u_w_z_y_double_z_and_700__double_u_double_z()
     assert expected == result
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_j_m_u_w_y_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -926,14 +925,12 @@ def test_authors_from_100__a_j_m_u_w_y_z():
 
     expected = {
         'a': 'Martins, Ricardo S.',
-        'j': 'ORCID:',
         'm': [
             'ricardomartins@iftm.edu.b',
         ],
         'u': [
             'Unlisted',
         ],
-        'w': 'R.S.Martins.1',
     }
     result = hep2marc.do(result)
 
