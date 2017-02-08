@@ -422,7 +422,9 @@ def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
     expected = {
         '100': {
             'a': 'Sjostrand, Torbjorn',
-            'i': 'INSPIRE-00126851',
+            'i': [
+                'INSPIRE-00126851'
+            ],
             'u': [
                 'Lund U., Dept. Theor. Phys.',
             ],
@@ -433,14 +435,12 @@ def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
                 'u': [
                     'Fermilab',
                 ],
-                'w': 'S.Mrenna.1',
             },
             {
                 'a': 'Skands, Peter Z.',
                 'u': [
                     'Fermilab',
                 ],
-                'w': 'P.Z.Skands.1',
             },
         ],
     }
