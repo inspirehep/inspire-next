@@ -1059,7 +1059,6 @@ def test_authors_from_100__a_j_m_u_v_w_y():
     assert expected == result['100']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -1095,7 +1094,7 @@ def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
             ],
         },
     ]
-    result = hep.do(create_record(snippet))  # no roundtrip
+    result = hep.do(create_record(snippet))
 
     assert validate(result['authors'], subschema) is None
     assert expected == result['authors']
@@ -1105,7 +1104,6 @@ def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
         'u': [
             'NIIEFA, St. Petersburg',
         ],
-        'w': 'I.P.Bakhrushin.1',
     }
     result = hep2marc.do(result)
 
