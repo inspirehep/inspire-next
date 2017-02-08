@@ -32,7 +32,6 @@ from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.utils import validate
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_i_u_x_y():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -72,17 +71,15 @@ def test_authors_from_100__a_i_u_x_y():
     assert validate(result['authors'], subschema) is None
     assert expected == result['authors']
 
-    expected = [
-        {
-            'a': 'Glashow, S.L.',
-            'i': [
-                'INSPIRE-00085173',
-            ],
-            'u': [
-                'Copenhagen U.',
-            ],
-        },
-    ]
+    expected = {
+        'a': 'Glashow, S.L.',
+        'i': [
+            'INSPIRE-00085173',
+        ],
+        'u': [
+            'Copenhagen U.',
+        ],
+    }
     result = hep2marc.do(result)
 
     assert expected == result['100']

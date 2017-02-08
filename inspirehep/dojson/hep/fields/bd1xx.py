@@ -201,16 +201,27 @@ def authors2marc(self, key, value):
         affiliations = [
             aff.get('value') for aff in value.get('affiliations', [])
         ]
+
+        ids_i = []
+        ids_j = []
+        for _id in value.get('ids'):
+            if _id.get('type') == 'INSPIRE ID':
+                ids_i.append(_id.get('value'))
+            elif _id.get('type') == 'ORCID':
+                ids_j.append('ORCID:' + _id.get('value'))
+            elif _id.get('type') == 'JACOW':
+                ids_j.append('JACoW-' + _id.get('value'))
+            elif _id.get('type') == 'CERN':
+                ids_j.append('CCID-' + _id.get('value')[5:])
+
         return {
             'a': value.get('full_name'),
             'e': utils_get_value(value, 'contributor_roles.value'),
             'q': value.get('alternative_names'),
-            'i': value.get('inspire_id'),
-            'j': value.get('orcid'),
+            'i': ids_i,
+            'j': ids_j,
             'm': value.get('emails'),
             'u': affiliations,
-            'x': get_recid_from_ref(value.get('record')),
-            'y': value.get('curated_relation')
         }
 
     if len(value) > 1:
