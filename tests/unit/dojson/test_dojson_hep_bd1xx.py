@@ -662,7 +662,6 @@ def test_authors_from_100__a_m_u_v_w_y_z_and_700__a_j_v_m_w_y():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 @mock.patch('inspirehep.dojson.hep.fields.bd1xx.logger.warning')
 def test_authors_from_100__a_triple_u_w_x_y_triple_z_and_700__double_a_u_w_x_y_z(warning):
     schema = load_schema('hep')
@@ -762,8 +761,11 @@ def test_authors_from_100__a_triple_u_w_x_y_triple_z_and_700__double_a_u_w_x_y_z
     expected = {
         '100': {
             'a': 'Abe, K.',
-            'w': 'Koya.Abe.2',
-            'u': [],
+            'u': [
+                'Tokyo U., ICRR',
+                'Tokyo U.',
+                'Tokyo U., IPMU'
+            ],
         },
         '700': [
             {
@@ -771,7 +773,6 @@ def test_authors_from_100__a_triple_u_w_x_y_triple_z_and_700__double_a_u_w_x_y_z
                 'u': [
                     'Warwick U.',
                 ],
-                'w': 'D.R.Hadley.2',
             },
         ],
     }
