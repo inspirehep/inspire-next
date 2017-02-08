@@ -26,19 +26,17 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
-from isbn import ISBNError
-from isbn.hyphen import ISBNRangeError
-
 from dojson import utils
 from idutils import (
     is_doi,
     is_handle,
     normalize_doi,
-    normalize_isbn,
 )
 
 from ..model import hep, hep2marc
 from ...utils import force_single_element
+
+from inspire_schemas.utils import load_schema
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -91,38 +89,24 @@ RE_SPLIT_LANGUAGES = re.compile("\/| or | and |,|=|\s+")
 @utils.for_each_value
 def isbns(self, key, value):
     """ISBN, its medium and an additional comment."""
-    try:
-        isbn = normalize_isbn(force_single_element(value['a']))
-    # See https://github.com/nekobcn/isbnid/issues/2 and
-    # https://github.com/nekobcn/isbnid/issues/3 for understanding the long
-    # exception list.
-    except (KeyError, ISBNError, ISBNRangeError, UnicodeEncodeError):
-        return {}
+    isbn = force_single_element(value['a']).replace(' ', '').replace('-', '')
 
-    b = value.get('b', '').lower()
-    if 'online' == b:
+    _schema = load_schema('hep')
+    valid_keywords = _schema['properties']['isbns']['items']['properties']['medium']['enum']
+    b_in_marc = value.get('b', '').lower()
+
+    if b_in_marc in valid_keywords:
+        medium = b_in_marc
+    elif 'ebook' == b_in_marc:
         medium = 'online'
-        comment = ''
-    elif 'print' == b:
-        medium = 'print'
-        comment = ''
-    elif 'electronic' in b:
-        medium = 'online'
-        comment = 'electronic'
-    elif 'ebook' in b:
-        medium = 'online'
-        comment = 'ebook'
-    elif 'hardcover' in b:
-        medium = 'print'
-        comment = 'hardcover'
+    elif 'paperback' in b_in_marc:
+        medium = 'softcover'
     else:
         medium = ''
-        comment = b
 
     return {
         'medium': medium,
         'value': isbn,
-        'comment': comment,
     }
 
 
