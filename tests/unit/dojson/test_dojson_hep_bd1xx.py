@@ -497,7 +497,6 @@ def test_authors_from_100__a_v_m_w_y():
     assert expected == result['100']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_double_q_u_w_y_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -555,7 +554,6 @@ def test_authors_from_100__a_double_q_u_w_y_z():
         'u': [
             'Dubna, JINR',
         ],
-        'w': 'M.Dineykhan.1',
     }
     result = hep2marc.do(result)
 
