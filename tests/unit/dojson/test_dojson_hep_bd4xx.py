@@ -31,7 +31,6 @@ from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.utils import validate
 
 
-@pytest.mark.xfail(reason='wrong conversion')
 def test_book_series_from_490__a():
     schema = load_schema('hep')
     subschema = schema['properties']['book_series']
