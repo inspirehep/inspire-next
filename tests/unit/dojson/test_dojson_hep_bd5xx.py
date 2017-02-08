@@ -64,7 +64,6 @@ def test_public_notes_from_500__a_9():
     assert expected == result['500']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_public_notes_from_500__double_a_9():
     schema = load_schema('hep')
     subschema = schema['properties']['public_notes']
@@ -95,10 +94,11 @@ def test_public_notes_from_500__double_a_9():
     expected = [
         {
             '9': 'arXiv',
-            'a': [
-                '11 pages, 8 figures. Submitted to MNRAS',
-                'preliminary entry',
-            ],
+            'a': '11 pages, 8 figures. Submitted to MNRAS',
+        },
+        {
+            '9': 'arXiv',
+            'a': 'preliminary entry',
         },
     ]
     result = hep2marc.do(result)
