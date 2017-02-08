@@ -155,7 +155,7 @@ def persistent_identifiers(self, key, value):
                         type_ = 'HDL'
                     persistent_identifiers.append({
                         'source': source,
-                        'type': type_,
+                        'schema': type_,
                         'value': id_,
                     })
 
@@ -163,7 +163,7 @@ def persistent_identifiers(self, key, value):
     return persistent_identifiers
 
 
-@hep2marc.over('024', '^(dois|persistent_identifiers)$')
+@hep2marc.over('024', '^persistent_identifiers$')
 def dois2marc(self, key, value):
     """Other Standard Identifier."""
     value = force_force_list(value)
@@ -172,7 +172,25 @@ def dois2marc(self, key, value):
         return {
             'a': val.get('value'),
             '9': val.get('source'),
-            '2': val.get('type') or "DOI"
+            '2': val.get('schema'),
+        }
+
+    self['024'] = self.get('024', [])
+    for val in value:
+        self['024'].append(get_value(val))
+    return self['024']
+
+
+@hep2marc.over('024', '^dois$')
+def dois2marc(self, key, value):
+    """Other Standard Identifier."""
+    value = force_force_list(value)
+
+    def get_value(val):
+        return {
+            'a': val.get('value'),
+            '9': val.get('source'),
+            '2': "DOI",
         }
 
     self['024'] = self.get('024', [])
