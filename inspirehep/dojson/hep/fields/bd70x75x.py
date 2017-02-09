@@ -41,12 +41,7 @@ def thesis_supervisors(self, key, value):
     def _get_thesis_supervisor(a_value, value):
         return {
             'affiliations': _get_affiliations(value),
-            'contributor_roles': [
-                {
-                    'schema': 'CRediT',
-                    'value': 'Supervision',
-                },
-            ],
+            'inspire_roles': ['supervisor'],
             'full_name': a_value,
         }
 
@@ -86,21 +81,6 @@ def thesis_supervisors(self, key, value):
         authors.append(_get_thesis_supervisor(a_value, value))
 
     return authors
-
-
-@hep2marc.over('701', 'authors')
-@utils.for_each_value
-def thesis_supervisors2marc(self, key, value):
-    """Thesis supervisors.
-
-    FIXME: handle recids to 701__z."""
-    _is_supervisor = 'Supervision' in value.get('contributor_roles', [])
-
-    if _is_supervisor:
-        return {
-            'a': value.get('full_name'),
-            'u': get_value(value, 'affiliations.value'),
-        }
 
 
 @hep.over('collaboration', '^710[10_2][_2]')

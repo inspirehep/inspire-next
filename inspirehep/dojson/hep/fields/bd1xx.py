@@ -147,27 +147,17 @@ def authors(self, key, value):
             if x_value and x_value.isdigit():
                 return get_record_ref(x_value, 'authors')
 
-        def _get_contributor_role(value):
+        def _get_credit_role(value):
             values = force_force_list(value)
 
-            contributor_roles = []
+            credit_roles = []
             for value in values:
                 value = value.lower()
                 if value in current_app.config['INSPIRE_LEGACY_ROLES']['editing']:
-                    contributor_roles.append(
-                        {
-                            'schema': 'CRediT',
-                            'value': 'Writing - review & editing'
-                        }
-                    )
+                    credit_roles.append('Writing - review & editing')
                 if value in current_app.config['INSPIRE_LEGACY_ROLES']['administration']:
-                    contributor_roles.append(
-                        {
-                            'schema': 'CRediT',
-                            'value': 'Project administration'
-                        }
-                    )
-            return contributor_roles
+                    credit_roles.append('Project administration')
+            return credit_roles
 
         return {
             'affiliations': _get_affiliations(value),
@@ -177,7 +167,8 @@ def authors(self, key, value):
             'full_name': _get_full_name(value),
             'ids': _get_ids(value),
             'record': _get_record(value),
-            'contributor_roles': _get_contributor_role(value.get('e')),
+            'credit_roles': _get_credit_role(value.get('e')),
+            'inspire_roles': 'editor' if value.get('e') == 'ed.' else ''
         }
 
     authors = self.get('authors', [])
@@ -197,38 +188,62 @@ def authors2marc(self, key, value):
     """Main Entry-Personal Name."""
     value = force_force_list(value)
 
-    def get_value(value):
-        affiliations = [
+    def _get_ids(value):
+        ids = {
+            'i': [],
+            'j': [],
+        }
+        if value.get('ids'):
+            for _id in value.get('ids'):
+                if _id.get('type') == 'INSPIRE ID':
+                    ids['i'].append(_id.get('value'))
+                elif _id.get('type') == 'ORCID':
+                    ids['j'].append(_id.get('value'))
+                elif _id.get('type') == 'JACOW':
+                    ids['j'].append(_id.get('value'))
+                elif _id.get('type') == 'CERN':
+                    ids['j'].append(_id.get('value'))
+        return ids
+
+    def _get_affiliations(value):
+        return [
             aff.get('value') for aff in value.get('affiliations', [])
         ]
 
-        ids_i = []
-        ids_j = []
-        for _id in value.get('ids'):
-            if _id.get('type') == 'INSPIRE ID':
-                ids_i.append(_id.get('value'))
-            elif _id.get('type') == 'ORCID':
-                ids_j.append('ORCID:' + _id.get('value'))
-            elif _id.get('type') == 'JACOW':
-                ids_j.append('JACoW-' + _id.get('value'))
-            elif _id.get('type') == 'CERN':
-                ids_j.append('CCID-' + _id.get('value')[5:])
-
+    def get_value_100_700(value):
+        ids = _get_ids(value)
         return {
             'a': value.get('full_name'),
-            'e': utils_get_value(value, 'contributor_roles.value'),
+            'e': value.get('credit_roles'),
             'q': value.get('alternative_names'),
-            'i': ids_i,
-            'j': ids_j,
+            'i': ids.get('i'),
+            'j': ids.get('j'),
             'm': value.get('emails'),
-            'u': affiliations,
+            'u': _get_affiliations(value),
+        }
+
+    def get_value_701(value):
+        ids = _get_ids(value)
+        return {
+            'a': value.get('full_name'),
+            'e': value.get('inspire_roles'),
+            'q': value.get('alternative_names'),
+            'i': ids.get('i'),
+            'j': ids.get('j'),
+            'u': _get_affiliations(value),
         }
 
     if len(value) > 1:
         self["700"] = []
+        self["701"] = []
+
     for author in value[1:]:
-        self["700"].append(get_value(author))
-    return get_value(value[0])
+        is_supervisor = 'supervisor' in author.get('inspire_roles', [])
+        if is_supervisor:
+            self["701"].append(get_value_701(author))
+        else:
+            self["700"].append(get_value_100_700(author))
+    return get_value_100_700(value[0])
 
 
 @hep.over('corporate_author', '^110[10_2].')
