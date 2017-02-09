@@ -27,7 +27,6 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from inspirehep.utils.helpers import force_force_list
-from inspirehep.utils.record import get_value
 
 from ..model import hep, hep2marc
 from ...utils import get_record_ref
