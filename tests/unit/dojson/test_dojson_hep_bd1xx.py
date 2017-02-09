@@ -1424,3 +1424,115 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
     result = hep2marc.do(result)
 
     assert expected == result
+
+
+def test_authors_supervisors_from_100_a_j_u_w_y_z_and_701__a_i_j_u_x_y_z():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="100" ind1=" " ind2=" ">'
+        '    <subfield code="a">Teroerde, Marius</subfield>'
+        '    <subfield code="j">CCID-759515</subfield>'
+        '    <subfield code="u">Aachen, Tech. Hochsch.</subfield>'
+        '    <subfield code="w">M.Teroerde.1</subfield>'
+        '    <subfield code="y">0</subfield>'
+        '    <subfield code="z">902624</subfield>'
+        '  </datafield>'
+        '  <datafield tag="701" ind1=" " ind2=" ">'
+        '    <subfield code="a">Feld, Lutz Werner</subfield>'
+        '    <subfield code="i">INSPIRE-00315477</subfield>'
+        '    <subfield code="j">CCID-456299</subfield>'
+        '    <subfield code="u">Aachen, Tech. Hochsch.</subfield>'
+        '    <subfield code="x">1060887</subfield>'
+        '    <subfield code="y">1</subfield>'
+        '    <subfield code="z">902624</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1504133/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/902624',
+                    },
+                    'value': 'Aachen, Tech. Hochsch.',
+                },
+            ],
+            'curated_relation': False,
+            'full_name': 'Teroerde, Marius',
+            'ids': [
+                {
+                    'type': 'CERN',
+                    'value': 'CERN-759515',
+                },
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'M.Teroerde.1',
+                },
+            ],
+        },
+        {
+            'affiliations': [
+                {
+                    'curated_relation': True,
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/902624',
+                    },
+                    'value': 'Aachen, Tech. Hochsch.',
+                },
+            ],
+            'full_name': 'Feld, Lutz Werner',
+            'ids': [
+                {
+                    'type': 'INSPIRE ID',
+                    'value': 'INSPIRE-00315477',
+                },
+                {
+                    'type': 'CERN',
+                    'value': 'CERN-456299',
+                },
+            ],
+            'inspire_roles': [
+                'supervisor'
+            ],
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['authors'], subschema) is None
+    assert expected == result['authors']
+
+    expected = {
+        '100': {
+            'a': 'Teroerde, Marius',
+            'j': [
+                'CCID-759515',
+            ],
+            'u': [
+                'Aachen, Tech. Hochsch.',
+            ],
+        },
+        '701': [
+            {
+                'a': 'Feld, Lutz Werner',
+                'i': [
+                    'INSPIRE-00315477',
+                ],
+                'j': [
+                    'CCID-456299',
+                ],
+                'u': [
+                    'Aachen, Tech. Hochsch.',
+                ],
+                'e': ['supervisor'],
+            },
+        ],
+    }
+    result = hep2marc.do(result)
+
+    assert expected == result
+
