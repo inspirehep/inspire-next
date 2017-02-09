@@ -174,6 +174,73 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
     assert expected == result
 
 
+@pytest.mark.xfail(reason='Schema 15')
+def test_authors_from_100__a_e_w_y_and_700_a_e_w_y():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    snippet = '''
+        <record>
+          <datafield tag="100" ind1=" " ind2=" ">
+            <subfield code="a">Vinokurov, Nikolay A.</subfield>
+            <subfield code="e">ed.</subfield>
+            <subfield code="w">N.A.Vinokurov.2</subfield>
+            <subfield code="y">0</subfield>
+          </datafield>
+          <datafield tag="700" ind1=" " ind2=" ">
+            <subfield code="a">Knyazev, Boris A.</subfield>
+            <subfield code="e">ed.</subfield>
+            <subfield code="w">B.A.Knyazev.2</subfield>
+            <subfield code="y">0</subfield>
+          </datafield>
+        </record>
+    ''' # 1505338/export/xme
+
+    expected = [
+        {
+            'full_name': 'Vinokurov, Nikolay A.',
+            'inspire_roles': ['editor'],
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'N.A.Vinokurov.2',
+                },
+            ],
+            'curated_relation': False
+        },
+        {
+            'full_name': 'Knyazev, Boris A.',
+            'inspire_roles': ['editor'],
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'B.A.Knyazev.2',
+                },
+            ],
+            'curated_relation': False
+        }
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['authors'], subschema) is None
+    assert expected == result['authors']
+
+    expected_100 = {
+        'a': 'Vinokurov, Nikolay A.',
+        'e': 'ed.',
+    }
+    expected_700 = [
+        {
+            'a': 'Knyazev, Boris A.',
+            'e': 'ed.'
+        }
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert expected_100 == result['100']
+    assert expected_700 == result['700']
+
+
 @pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
     schema = load_schema('hep')
@@ -1036,7 +1103,7 @@ def test_authors_from_100__a_double_m_double_u_w_y_z():
     result = hep2marc.do(result)
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
+@pytest.mark.xfail(reason='Schema 15')
 def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -1102,62 +1169,43 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
         {
             'affiliations': [
                 {
-                    'curated_relation': True,
                     'record': {
                         '$ref': 'http://localhost:5000/api/institutions/924289',
                     },
                     'value': 'U. Hamburg (main)',
                 },
             ],
-            'contributor_roles': [
-                {
-                    'schema': 'CRediT',
-                    'value': 'Supervision',
-                },
-            ],
+            'inspire_roles': ['supervisor'],
             'full_name': 'Garutti, Erika',
         },
         {
             'affiliations': [
                 {
-                    'curated_relation': True,
                     'record': {
                         '$ref': 'http://localhost:5000/api/institutions/902770',
                     },
                     'value': 'DESY',
                 },
                 {
-                    'curated_relation': True,
                     'record': {
                         '$ref': 'http://localhost:5000/api/institutions/924289',
                     },
                     'value': 'U. Hamburg (main)',
                 },
             ],
-            'contributor_roles': [
-                {
-                    'schema': 'CRediT',
-                    'value': 'Supervision',
-                },
-            ],
+            'inspire_roles': ['supervisor'],
             'full_name': 'Mnich, Joachim',
         },
         {
             'affiliations': [
                 {
-                    'curated_relation': True,
                     'record': {
                         '$ref': 'http://localhost:5000/api/institutions/913279',
                     },
                     'value': 'U. Geneva (main)',
                 },
             ],
-            'contributor_roles': [
-                {
-                    'schema': 'CRediT',
-                    'value': 'Supervision',
-                },
-            ],
+            'inspire_roles': ['supervisor'],
             'full_name': 'Pohl, Martin',
         },
     ]
@@ -1205,7 +1253,7 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
+@pytest.mark.xfail(reason='Schema 15')
 def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -1250,37 +1298,25 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
         {
             'affiliations': [
                 {
-                    'curated_relation': True,
                     'record': {
                         '$ref': 'http://localhost:5000/api/institutions/903010',
                     },
                     'value': 'Minnesota U.',
                 },
             ],
-            'contributor_roles': [
-                {
-                    'schema': 'CRediT',
-                    'value': 'Supervision',
-                },
-            ],
+            'inspire_roles': ['supervisor'],
             'full_name': 'Poling, Ron',
         },
         {
             'affiliations': [
                 {
-                    'curated_relation': True,
                     'record': {
                         '$ref': 'http://localhost:5000/api/institutions/903010',
                     },
                     'value': 'Minnesota U.',
                 },
             ],
-            'contributor_roles': [
-                {
-                    'schema': 'CRediT',
-                    'value': 'Supervision',
-                },
-            ],
+            'inspire_roles': ['supervisor'],
             'full_name': 'Kubota, Yuichi',
         }
     ]
