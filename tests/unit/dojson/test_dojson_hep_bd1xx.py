@@ -1321,7 +1321,7 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='Schema 15')
+@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -1372,8 +1372,10 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
                     'value': 'Minnesota U.',
                 },
             ],
-            'inspire_roles': ['supervisor'],
             'full_name': 'Poling, Ron',
+            'inspire_roles': [
+                'supervisor',
+            ],
         },
         {
             'affiliations': [
@@ -1384,8 +1386,10 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
                     'value': 'Minnesota U.',
                 },
             ],
-            'inspire_roles': ['supervisor'],
             'full_name': 'Kubota, Yuichi',
+            'inspire_roles': [
+                'supervisor',
+            ],
         }
     ]
     result = hep.do(create_record(snippet))
@@ -1399,17 +1403,18 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
             'u': [
                 'Minnesota U.',
             ],
-            'w': 'B.W.Lang.1',
         },
         '701': [
             {
                 'a': 'Poling, Ron',
+                'e': ['supervisor'],
                 'u': [
                     'Minnesota U.',
                 ],
             },
             {
                 'a': 'Kubota, Yuichi',
+                'e': ['supervisor'],
                 'u': [
                     'Minnesota U.',
                 ],
