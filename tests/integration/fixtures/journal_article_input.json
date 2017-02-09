@@ -1,0 +1,139 @@
+{
+   "thesis_date":"",
+   "extra_comments":"This paper has been cited from several books. it should be in Inspire",
+   "title_crossref":" SEVEN-YEAR WILKINSON MICROWAVE ANISOTROPY PROBE ( WMAP ) OBSERVATIONS:COSMOLOGICAL INTERPRETATION ",
+   "additional_url":"https://inspirehep.net/record/843543/citations?ln=it",
+   "journal_title":"The Astrophysical Journal Supplement Series",
+   "conf_name":"",
+   "title_arXiv":"Seven-Year Wilkinson Microwave Anisotropy Probe (WMAP) Observations:\\r\\n  Cosmological Interpretation",
+   "import_buttons":false,
+   "degree_type":"Bachelor",
+   "collaboration":"Tokai U., Sapporo",
+   "subject_term":[
+      "Astrophysics"
+   ],
+   "supervisors":[
+      {
+         "affiliation":"",
+         "full_name":""
+      }
+   ],
+   "doi":"10.1088/0067-0049/192/2/18",
+   "references":"",
+   "year":"2011",
+   "defense_date":"",
+   "institution":"",
+   "categories":"astro-ph.CO",
+   "nonpublic_note":"",
+   "volume":"192",
+   "report_numbers":[
+      {
+         "report_number":"78944"
+      }
+   ],
+   "language":"en",
+   "title":" SEVEN-YEAR WILKINSON MICROWAVE ANISOTROPY PROBE ( WMAP ) OBSERVATIONS:COSMOLOGICAL INTERPRETATION ",
+   "url":"https://arxiv.org/pdf/1001.4538.pdf",
+   "type_of_doc":"article",
+   "page_range_article_id":"18",
+   "arxiv_id":"1001.4538",
+   "title_translation":"",
+   "note":"57 pages,20 figures. Accepted for publication in ApJS. (v2)\\r\\n  References added. The SZ section expanded with more analysis. The discrepancy\\r\\n  between the KS and X-ray derived profiles has been resolved. (v3) New\\r\\n  analysis of the SZ effect on individual clusters added (Section 7.3). The\\r\\n  LCDM parameters have been updated using the latest recombination history code\\r\\n  (RECFAST version 1.5)",
+   "authors":[
+      {
+         "affiliation":"INFN, Milan Bicocca",
+         "full_name":"Komatsu, E."
+      },
+      {
+         "affiliation":"U. Oxford (main)",
+         "full_name":"Smith, K. M."
+      },
+      {
+         "affiliation":"Winston-Salem State U.",
+         "full_name":"Dunkley, J."
+      },
+      {
+         "affiliation":"INFN, Milan Bicocca",
+         "full_name":"Bennett, C. L."
+      },
+      {
+         "affiliation":"Winston-Salem State U.",
+         "full_name":"Gold, B."
+      },
+      {
+         "affiliation":"Winston-Salem State U.",
+         "full_name":"Hinshaw, G."
+      },
+      {
+         "affiliation":"U. Oxford (main)",
+         "full_name":"Jarosik, N."
+      },
+      {
+         "affiliation":"U. Oxford (main)",
+         "full_name":"Larson, D."
+      },
+      {
+         "affiliation":"",
+         "full_name":"Nolta, M. R."
+      },
+      {
+         "affiliation":"U. Oxford (main)",
+         "full_name":"Page, L."
+      },
+      {
+         "affiliation":"INFN, Milan Bicocca",
+         "full_name":"Spergel, D. N."
+      },
+      {
+         "affiliation":"",
+         "full_name":"Halpern, M."
+      },
+      {
+         "affiliation":"",
+         "full_name":"Hill, R. S."
+      },
+      {
+         "affiliation":"INFN, Milan Bicocca",
+         "full_name":"Kogut, A."
+      },
+      {
+         "affiliation":"INFN, Milan Bicocca",
+         "full_name":"Limon, M."
+      },
+      {
+         "affiliation":"Winston-Salem State U.",
+         "full_name":"Meyer, S. S."
+      },
+      {
+         "affiliation":"U. Oxford (main)",
+         "full_name":"Odegard, N."
+      },
+      {
+         "affiliation":"U. Oxford (main)",
+         "full_name":"Tucker, G. S."
+      },
+      {
+         "affiliation":"U. Oxford (main)",
+         "full_name":"Weiland, J. L."
+      },
+      {
+         "affiliation":"U. Oxford (main)",
+         "full_name":"Wollack, E."
+      },
+      {
+         "affiliation":"INFN, Milan Bicocca",
+         "full_name":"Wright, E. L."
+      },
+      {
+         "affiliation":"",
+         "full_name":""
+      }
+   ],
+   "experiment":"ARGO-YBJ",
+   "license_url":"http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+   "preprint_created":"2010-01-25",
+   "conference_id":"",
+   "other_language":"",
+   "issue":"2",
+   "abstract":"(Abridged) The 7-year WMAP data and improved astrophysical data rigorously\\r\\ntest the standard cosmological model and its extensions. By combining WMAP with\\r\\nthe latest distance measurements from BAO and H0 measurement, we determine the\\r\\nparameters of the simplest LCDM model. The power-law index of the primordial\\r\\npower spectrum is n_s=0.968+-0.012, a measurement that excludes the\\r\\nscale-invariant spectrum by 99.5%CL. The other parameters are also improved\\r\\nfrom the 5-year results. Notable examples of improved parameters are the total\\r\\nmass of neutrinos, sum(m_nu)<0.58eV, and the effective number of neutrino\\r\\nspecies, N_eff=4.34+0.86-0.88. We detect the effect of primordial helium on the\\r\\ntemperature power spectrum and provide a new test of big bang nucleosynthesis.\\r\\nWe detect, and show on the map for the first time, the tangential and radial\\r\\npolarization patterns around hot and cold spots of temperature fluctuations, an\\r\\nimportant test of physical processes at z=1090 and the dominance of adiabatic\\r\\nscalar fluctuations. With the 7-year TB power spectrum, the limit on a rotation\\r\\nof the polarization plane due to potential parity-violating effects has\\r\\nimproved to Delta(alpha)=-1.1+-1.4(stat)+-1.5(syst) degrees. We report\\r\\nsignificant detections of the SZ effect at the locations of known clusters of\\r\\ngalaxies. The measured SZ signal agrees well with the expected signal from the\\r\\nX-ray data. However, it is a factor of 0.5 to 0.7 times the predictions from\\r\\n \" universal profile \" of Arnaud et al., analytical models, and hydrodynamical\\r\\nsimulations. We find, for the first time in the SZ effect, a significant\\r\\ndifference between the cooling-flow and non-cooling-flow clusters (or relaxed\\r\\nand non-relaxed clusters), which can explain some of the discrepancy. This\\r\\nlower amplitude is consistent with the lower-than-theoretically-expected SZ\\r\\npower spectrum recently measured by the South Pole Telescope collaboration.\\r\\n"
+}

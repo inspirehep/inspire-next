@@ -1,0 +1,327 @@
+{
+   "arxiv_eprints":[
+      {
+         "value":"1001.4538",
+         "categories":[
+            "astro-ph.CO"
+         ]
+      }
+   ],
+   "report_numbers":[
+      {
+         "value":"78944",
+         "source":"submitter"
+      }
+   ],
+   "citeable":true,
+   "license":[
+      {
+         "url":"http://arxiv.org/licenses/nonexclusive-distrib/1.0/"
+      }
+   ],
+   "collaborations":[
+      {
+         "value":"Tokai U., Sapporo"
+      }
+   ],
+   "public_notes":[
+      {
+         "source":"arXiv",
+         "value":"57 pages,20 figures. Accepted for publication in ApJS. (v2)\\r\\n  References added. The SZ section expanded with more analysis. The discrepancy\\r\\n  between the KS and X-ray derived profiles has been resolved. (v3) New\\r\\n  analysis of the SZ effect on individual clusters added (Section 7.3). The\\r\\n  LCDM parameters have been updated using the latest recombination history code\\r\\n  (RECFAST version 1.5)"
+      }
+   ],
+   "authors":[
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"INFN, Milan Bicocca"
+            }
+         ],
+         "full_name":"Komatsu, E."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"U. Oxford (main)"
+            }
+         ],
+         "full_name":"Smith, K.M."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"Winston-Salem State U."
+            }
+         ],
+         "full_name":"Dunkley, J."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"INFN, Milan Bicocca"
+            }
+         ],
+         "full_name":"Bennett, C.L."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"Winston-Salem State U."
+            }
+         ],
+         "full_name":"Gold, B."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"Winston-Salem State U."
+            }
+         ],
+         "full_name":"Hinshaw, G."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"U. Oxford (main)"
+            }
+         ],
+         "full_name":"Jarosik, N."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"U. Oxford (main)"
+            }
+         ],
+         "full_name":"Larson, D."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "full_name":"Nolta, M.R."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"U. Oxford (main)"
+            }
+         ],
+         "full_name":"Page, L."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"INFN, Milan Bicocca"
+            }
+         ],
+         "full_name":"Spergel, D.N."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "full_name":"Halpern, M."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "full_name":"Hill, R.S."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"INFN, Milan Bicocca"
+            }
+         ],
+         "full_name":"Kogut, A."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"INFN, Milan Bicocca"
+            }
+         ],
+         "full_name":"Limon, M."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"Winston-Salem State U."
+            }
+         ],
+         "full_name":"Meyer, S.S."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"U. Oxford (main)"
+            }
+         ],
+         "full_name":"Odegard, N."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"U. Oxford (main)"
+            }
+         ],
+         "full_name":"Tucker, G.S."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"U. Oxford (main)"
+            }
+         ],
+         "full_name":"Weiland, J.L."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"U. Oxford (main)"
+            }
+         ],
+         "full_name":"Wollack, E."
+      },
+      {
+         "inspire_roles":[
+            "author"
+         ],
+         "affiliations":[
+            {
+               "value":"INFN, Milan Bicocca"
+            }
+         ],
+         "full_name":"Wright, E.L."
+      }
+   ],
+   "inspire_categories":[
+      {
+         "source":"user",
+         "term":"Astrophysics"
+      }
+   ],
+   "languages":[
+      "en"
+   ],
+   "titles":[
+      {
+         "source":"submitter",
+         "title":" SEVEN-YEAR WILKINSON MICROWAVE ANISOTROPY PROBE ( WMAP ) OBSERVATIONS:COSMOLOGICAL INTERPRETATION "
+      },
+      {
+         "source":"arXiv",
+         "title":"Seven-Year Wilkinson Microwave Anisotropy Probe (WMAP) Observations:\\r\\n  Cosmological Interpretation"
+      },
+      {
+         "source":"crossref",
+         "title":" SEVEN-YEAR WILKINSON MICROWAVE ANISOTROPY PROBE ( WMAP ) OBSERVATIONS:COSMOLOGICAL INTERPRETATION "
+      }
+   ],
+   "_private_notes":[
+      {
+         "value":"This paper has been cited from several books. it should be in Inspire",
+         "source":"submitter"
+      }
+   ],
+   "urls":[
+      {
+         "value":"https://arxiv.org/pdf/1001.4538.pdf"
+      },
+      {
+         "value":"https://inspirehep.net/record/843543/citations?ln=it"
+      }
+   ],
+   "accelerator_experiments":[
+      {
+         "legacy_name":"ARGO-YBJ"
+      }
+   ],
+   "publication_info":[
+      {
+         "journal_title":"The Astrophysical Journal Supplement Series",
+         "journal_volume":"192",
+         "artid":"18",
+         "year":2011,
+         "page_start":"18",
+         "journal_issue":"2"
+      }
+   ],
+   "dois":[
+      {
+        "value":"10.1088/0067-0049/192/2/18",
+        "source": "submitter"
+      }
+   ],
+   "document_type":[
+      "article"
+   ],
+   "abstracts":[
+      {
+         "source":"arXiv",
+         "value":"(Abridged) The 7-year WMAP data and improved astrophysical data rigorously\\r\\ntest the standard cosmological model and its extensions. By combining WMAP with\\r\\nthe latest distance measurements from BAO and H0 measurement, we determine the\\r\\nparameters of the simplest LCDM model. The power-law index of the primordial\\r\\npower spectrum is n_s=0.968+-0.012, a measurement that excludes the\\r\\nscale-invariant spectrum by 99.5%CL. The other parameters are also improved\\r\\nfrom the 5-year results. Notable examples of improved parameters are the total\\r\\nmass of neutrinos, sum(m_nu)<0.58eV, and the effective number of neutrino\\r\\nspecies, N_eff=4.34+0.86-0.88. We detect the effect of primordial helium on the\\r\\ntemperature power spectrum and provide a new test of big bang nucleosynthesis.\\r\\nWe detect, and show on the map for the first time, the tangential and radial\\r\\npolarization patterns around hot and cold spots of temperature fluctuations, an\\r\\nimportant test of physical processes at z=1090 and the dominance of adiabatic\\r\\nscalar fluctuations. With the 7-year TB power spectrum, the limit on a rotation\\r\\nof the polarization plane due to potential parity-violating effects has\\r\\nimproved to Delta(alpha)=-1.1+-1.4(stat)+-1.5(syst) degrees. We report\\r\\nsignificant detections of the SZ effect at the locations of known clusters of\\r\\ngalaxies. The measured SZ signal agrees well with the expected signal from the\\r\\nX-ray data. However, it is a factor of 0.5 to 0.7 times the predictions from\\r\\n \" universal profile \" of Arnaud et al., analytical models, and hydrodynamical\\r\\nsimulations. We find, for the first time in the SZ effect, a significant\\r\\ndifference between the cooling-flow and non-cooling-flow clusters (or relaxed\\r\\nand non-relaxed clusters), which can explain some of the discrepancy. This\\r\\nlower amplitude is consistent with the lower-than-theoretically-expected SZ\\r\\npower spectrum recently measured by the South Pole Telescope collaboration.\\r\\n"
+      }
+   ],
+   "acquisition_source":{
+      "source":"submitter",
+      "method":"submitter",
+      "submission_number":"1",
+      "orcid":"0000-0001-9412-8627",
+      "email":"test_orcid_user@inspirehep.net"
+   },
+   "preprint_date": "2010-01-25T00:00:00",
+    "languages": ["en"]
+}
