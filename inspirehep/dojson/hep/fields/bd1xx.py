@@ -193,11 +193,11 @@ def authors2marc(self, key, value):
                 if _id.get('type') == 'INSPIRE ID':
                     ids['i'].append(_id.get('value'))
                 elif _id.get('type') == 'ORCID':
-                    ids['j'].append(_id.get('value'))
+                    ids['j'].append('ORCID:' + _id.get('value'))
                 elif _id.get('type') == 'JACOW':
                     ids['j'].append(_id.get('value'))
                 elif _id.get('type') == 'CERN':
-                    ids['j'].append(_id.get('value'))
+                    ids['j'].append('CCID-' + _id.get('value')[5:])
         return ids
 
     def _get_affiliations(value):

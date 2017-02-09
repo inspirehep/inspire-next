@@ -25,23 +25,25 @@
 from __future__ import absolute_import, division, print_function
 
 from dojson import utils
+import re
 
 from inspirehep.utils.helpers import force_force_list
 
 from ..model import hep, hep2marc
 from ...utils import get_record_ref
 
+ORCID = re.compile('\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]')
+
 
 @hep.over('authors', '^701..')
 def thesis_supervisors(self, key, value):
-    """Thesis supervisors.
-
-    FIXME: handle identifiers from 701__i and 701__j."""
+    """Thesis supervisors."""
     def _get_thesis_supervisor(a_value, value):
         return {
             'affiliations': _get_affiliations(value),
             'inspire_roles': ['supervisor'],
             'full_name': a_value,
+            'ids': _get_ids(value),
         }
 
     def _get_affiliations(value):
@@ -69,6 +71,53 @@ def thesis_supervisors(self, key, value):
                 result.append({
                     'curated_relation': False,
                     'value': value,
+                })
+
+        return result
+
+    def _get_ids(value):
+        def _is_jacow(j_value):
+            return j_value.upper().startswith('JACOW-')
+
+        def _is_orcid(j_value):
+            return j_value.upper().startswith('ORCID:') and len(j_value) > 6
+
+        def _is_naked_orcid(j_value):
+            return ORCID.match(j_value)
+
+        def _is_cern(j_value):
+            return j_value.startswith('CCID-')
+
+        result = []
+
+        i_values = force_force_list(value.get('i'))
+        for i_value in i_values:
+            result.append({
+                'type': 'INSPIRE ID',
+                'value': i_value,
+            })
+
+        j_values = force_force_list(value.get('j'))
+        for j_value in j_values:
+            if _is_jacow(j_value):
+                result.append({
+                    'type': 'JACOW',
+                    'value': 'JACoW-' + j_value[6:],
+                })
+            elif _is_orcid(j_value):
+                result.append({
+                    'type': 'ORCID',
+                    'value': j_value[6:],
+                })
+            elif _is_naked_orcid(j_value):
+                result.append({
+                    'type': 'ORCID',
+                    'value': j_value,
+                })
+            elif _is_cern(j_value):
+                result.append({
+                    'type': 'CERN',
+                    'value': 'CERN-' + j_value[5:],
                 })
 
         return result
