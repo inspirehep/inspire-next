@@ -1445,3 +1445,114 @@ def test_authors_supervisors_from_100_a_j_u_w_y_z_and_701__a_i_j_u_x_y_z():
 
     assert expected == result
 
+
+def test_authors_from_100_a_double_u_w_z_y_double_z_and_700__a_double_u_w_y_double_z():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="100" ind1=" " ind2=" ">'
+        '    <subfield code="a">Billo, M.</subfield>'
+        '    <subfield code="u">INFN, Turin</subfield>'
+        '    <subfield code="u">Turin U.</subfield>'
+        '    <subfield code="w">Marco.Billo.1</subfield>'
+        '    <subfield code="x">1016336</subfield>'
+        '    <subfield code="y">0</subfield>'
+        '    <subfield code="z">902889</subfield>'
+        '    <subfield code="z">903297</subfield>'
+        '  </datafield>'
+        '  <datafield tag="700" ind1=" " ind2=" ">'
+        '    <subfield code="a">Gliozzi, F.</subfield>'
+        '    <subfield code="u">INFN, Turin</subfield>'
+        '    <subfield code="u">Turin U.</subfield>'
+        '    <subfield code="w">F.Gliozzi.1</subfield>'
+        '    <subfield code="x">1008206</subfield>'
+        '    <subfield code="y">0</subfield>'
+        '    <subfield code="z">902889</subfield>'
+        '    <subfield code="z">903297</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1088610/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/902889',
+                    },
+                    'value': 'INFN, Turin',
+                },
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/903297',
+                    },
+                    'value': 'Turin U.',
+                },
+            ],
+            'curated_relation': False,
+            'full_name': 'Billo, M.',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'Marco.Billo.1',
+                },
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/1016336',
+            },
+        },
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/902889',
+                    },
+                    'value': 'INFN, Turin',
+                },
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/903297',
+                    },
+                    'value': 'Turin U.',
+                },
+            ],
+            'full_name': 'Gliozzi, F.',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'F.Gliozzi.1',
+                },
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/1008206',
+            },
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['authors'], subschema) is None
+    assert expected == result['authors']
+
+    expected = {
+        '100': {
+            'a': 'Billo, M.',
+            'u': [
+                'INFN, Turin',
+                'Turin U.',
+            ]
+        },
+        '700': [
+            {
+                'a': 'Gliozzi, F.',
+                'u': [
+                    'INFN, Turin',
+                    'Turin U.',
+                ],
+            },
+        ],
+    }
+    result = hep2marc.do(result)
+
+    assert expected == result
