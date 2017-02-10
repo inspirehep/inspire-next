@@ -367,7 +367,6 @@ def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_v_m_w_y():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -393,6 +392,12 @@ def test_authors_from_100__a_v_m_w_y():
                     'value': 'X.Gao.11',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'Chern Institute of Mathematics and LPMC, Nankai University,'
+                             ' Tianjin, 300071, China',
+                }
+            ]
         },
     ]
     result = hep.do(create_record(snippet))
@@ -408,7 +413,6 @@ def test_authors_from_100__a_v_m_w_y():
         'm': [
             'gausyu@gmail.com',
         ],
-        'w': 'X.Gao.11',
     }
     result = hep2marc.do(result)
 
@@ -478,7 +482,6 @@ def test_authors_from_100__a_double_q_u_w_y_z():
     assert expected == result['100']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_m_u_v_w_y_z_and_700__a_j_v_m_w_y():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -526,9 +529,14 @@ def test_authors_from_100__a_m_u_v_w_y_z_and_700__a_j_v_m_w_y():
                     'value': 'X.Gao.11',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'Chern Institute of Mathematics and LPMC, Nankai University,'
+                             ' Tianjin, 300071, China',
+                }
+            ]
         },
         {
-            'curated_relation': False,
             'emails': [
                 'ming.l1984@gmail.com',
             ],
@@ -543,6 +551,12 @@ def test_authors_from_100__a_m_u_v_w_y_z_and_700__a_j_v_m_w_y():
                     'value': 'M.Liu.16',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'School of Mathematics, South China University of Technology,'
+                             ' Guangdong, Guangzhou, 510640, China',
+                }
+            ]
         },
     ]
     result = hep.do(create_record(snippet))
@@ -559,19 +573,24 @@ def test_authors_from_100__a_m_u_v_w_y_z_and_700__a_j_v_m_w_y():
             'u': [
                 'Nankai U.',
             ],
-            'w': 'X.Gao.11',
+            'v': [
+                'Chern Institute of Mathematics and LPMC, Nankai University,'
+                ' Tianjin, 300071, China',
+            ]
         },
         '700': [
             {
                 'a': 'Liu, Ming',
-                'j': 'ORCID:0000-0002-3413-183X',
+                'j': [
+                    'ORCID:0000-0002-3413-183X',
+                ],
                 'v': [
-                    'School of Mathematics, South China University of Technology, Guangdong, Guangzhou, 510640, China',
+                    'School of Mathematics, South China University of '
+                    'Technology, Guangdong, Guangzhou, 510640, China',
                 ],
                 'm': [
                     'ming.l1984@gmail.com',
                 ],
-                'w': 'ming.l1984@gmail.com',
             },
         ],
     }
@@ -811,6 +830,21 @@ def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
     )
 
     expected = [
+        {  # First that record due to the calling order of the dojson rule (both are 100 field)
+            'curated_relation': False,
+            'full_name': 'Hattori, T.',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'T.Hattori.1',
+                },
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'Tokyo Institute of Technology, Tokyo, Japan',
+                }
+            ],
+        },
         {
             'curated_relation': False,
             'full_name': 'Tojyo, E.',
@@ -820,19 +854,14 @@ def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
                     'value': 'Eiki.Tojyo.1',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'University of Tokyo, Tokyo, Japan',
+                }
+            ],
             'record': {
                 '$ref': 'http://localhost:5000/api/authors/1477256',
             },
-        },
-        {
-            'curated_relation': False,
-            'full_name': 'Hattori, T.',
-            'ids': [
-                {
-                    'type': 'INSPIRE BAI',
-                    'value': 'T.Hattori.1',
-                },
-            ],
         },
     ]
     result = hep.do(create_record(snippet))
@@ -840,13 +869,27 @@ def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
     assert validate(result['authors'], subschema) is None
     assert expected == result['authors']
 
-    expected = {}
+    expected = {
+        '100': {
+            'a': 'Hattori, T.',
+            'v': [
+                'Tokyo Institute of Technology, Tokyo, Japan',
+            ],
+        },
+        '100': [
+            {
+                'a': 'Tojyo, E.',
+                'v': [
+                    'University of Tokyo, Tokyo, Japan',
+                ],
+            },
+        ],
+    }
     result = hep2marc.do(result)
 
     assert expected == result['100']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_j_m_u_v_w_y():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -883,6 +926,11 @@ def test_authors_from_100__a_j_m_u_v_w_y():
                     'value': 'D.Macnair.2',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'SLAC, Menlo Park, California, USA',
+                }
+            ],
         },
     ]
     result = hep.do(create_record(snippet))
@@ -892,7 +940,9 @@ def test_authors_from_100__a_j_m_u_v_w_y():
 
     expected = {
         'a': 'MacNair, David',
-        'j': 'JACoW-00009522',
+        'j': [
+            'JACoW-00009522',
+        ],
         'm': [
             'macnair@slac.stanford.edu',
         ],
@@ -900,9 +950,8 @@ def test_authors_from_100__a_j_m_u_v_w_y():
             'SLAC',
         ],
         'v': [
-            'SLAC',
+            'SLAC, Menlo Park, California, USA',
         ],
-        'w': 'D.Macnair.2',
     }
     result = hep2marc.do(result)
 
@@ -1022,7 +1071,6 @@ def test_authors_from_100__a_double_m_double_u_w_y_z():
     assert expected == result['100']
 
 
-@pytest.mark.xfail(reason='Schema 15')
 def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -1084,6 +1132,11 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
             'record': {
                 '$ref': 'http://localhost:5000/api/authors/1268225',
             },
+            'raw_affiliations': [
+                {
+                    'value': 'Deutsches Elektronen-Synchrotron',
+                }
+            ],
         },
         {
             'affiliations': [
@@ -1094,7 +1147,9 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
                     'value': 'U. Hamburg (main)',
                 },
             ],
-            'inspire_roles': ['supervisor'],
+            'inspire_roles': [
+                'supervisor',
+            ],
             'full_name': 'Garutti, Erika',
         },
         {
@@ -1112,7 +1167,9 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
                     'value': 'U. Hamburg (main)',
                 },
             ],
-            'inspire_roles': ['supervisor'],
+            'inspire_roles': [
+                'supervisor',
+            ],
             'full_name': 'Mnich, Joachim',
         },
         {
@@ -1124,7 +1181,9 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
                     'value': 'U. Geneva (main)',
                 },
             ],
-            'inspire_roles': ['supervisor'],
+            'inspire_roles': [
+                'supervisor',
+            ],
             'full_name': 'Pohl, Martin',
         },
     ]
@@ -1136,8 +1195,12 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
     expected = {
         '100': {
             'a': 'Spannagel, Simon',
-            'i': 'INSPIRE-00392783',
-            'j': 'ORCID:0000-0003-4708-3774',
+            'i': [
+                'INSPIRE-00392783',
+            ],
+            'j': [
+                'ORCID:0000-0003-4708-3774',
+            ],
             'u': [
                 'U. Hamburg, Dept. Phys.',
             ],
@@ -1149,7 +1212,7 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
             {
                 'a': 'Garutti, Erika',
                 'u': [
-                    'U. Hamburg',
+                    'U. Hamburg (main)',
                 ],
             },
             {
