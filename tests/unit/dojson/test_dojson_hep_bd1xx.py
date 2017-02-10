@@ -1242,7 +1242,6 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -1287,11 +1286,12 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
         {
             'affiliations': [
                 {
-                    'record': {
-                        '$ref': 'http://localhost:5000/api/institutions/903010',
-                    },
+                    'curated_relation': True,
                     'value': 'Minnesota U.',
-                },
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/903010'
+                    }
+                }
             ],
             'full_name': 'Poling, Ron',
             'inspire_roles': [
@@ -1301,10 +1301,11 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
         {
             'affiliations': [
                 {
+                    'curated_relation': True,
+                    'value': 'Minnesota U.',
                     'record': {
                         '$ref': 'http://localhost:5000/api/institutions/903010',
                     },
-                    'value': 'Minnesota U.',
                 },
             ],
             'full_name': 'Kubota, Yuichi',
@@ -1328,14 +1329,12 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
         '701': [
             {
                 'a': 'Poling, Ron',
-                'e': ['supervisor'],
                 'u': [
                     'Minnesota U.',
                 ],
             },
             {
                 'a': 'Kubota, Yuichi',
-                'e': ['supervisor'],
                 'u': [
                     'Minnesota U.',
                 ],
