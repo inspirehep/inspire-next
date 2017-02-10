@@ -45,10 +45,7 @@ ORCID = re.compile('\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]')
 
 @hep.over('authors', '^[17]00[103_].')
 def authors(self, key, value):
-    """Authors.
-
-    FIXME: currently not handling 100__v.
-    """
+    """Authors."""
     def _get_author(value):
         def _get_affiliations(value):
             result = []
@@ -69,6 +66,17 @@ def authors(self, key, value):
                     result.append({'value': u_value})
 
             return result
+
+        def _get_raw_affiliations(value):
+            values = force_force_list(value.get('v'))
+            raw_affiliations = []
+            for item in values:
+                raw_affiliations.append(
+                    {
+                        'value': item,
+                    }
+                )
+            return raw_affiliations
 
         def _get_full_name(value):
             a_values = force_force_list(value.get('a'))
@@ -154,7 +162,8 @@ def authors(self, key, value):
             'full_name': _get_full_name(value),
             'ids': _get_ids(value),
             'record': _get_record(value),
-            'inspire_roles': ['editor', ] if value.get('e') == 'ed.' else ''
+            'inspire_roles': ['editor', ] if value.get('e') == 'ed.' else '',
+            'raw_affiliations': _get_raw_affiliations(value),
         }
 
     authors = self.get('authors', [])
@@ -200,6 +209,11 @@ def authors2marc(self, key, value):
         values = force_force_list(value.get('inspire_roles'))
         return ['ed.' for role in values if role == 'editor']
 
+    def _get_raw_affiliations(value):
+        return [
+            aff.get('value') for aff in value.get('raw_affiliations', [])
+        ]
+
     def get_value_100_700(value):
         ids = _get_ids(value)
         return {
@@ -210,6 +224,7 @@ def authors2marc(self, key, value):
             'j': ids.get('j'),
             'm': value.get('emails'),
             'u': _get_affiliations(value),
+            'v': _get_raw_affiliations(value),
         }
 
     def get_value_701(value):
@@ -220,6 +235,7 @@ def authors2marc(self, key, value):
             'i': ids.get('i'),
             'j': ids.get('j'),
             'u': _get_affiliations(value),
+            'v': _get_raw_affiliations(value),
         }
 
     if len(value) > 1:
