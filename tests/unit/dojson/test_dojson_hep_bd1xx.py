@@ -23,7 +23,6 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
-import pytest
 
 from jsonschema.exceptions import ValidationError
 
@@ -806,7 +805,6 @@ def test_authors_from_100__a_j_m_u_w_y_z():
     assert expected == result['100']
 
 
-@pytest.mark.xfail(reason='wrong conversion')
 def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -876,7 +874,7 @@ def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
                 'Tokyo Institute of Technology, Tokyo, Japan',
             ],
         },
-        '100': [
+        '700': [
             {
                 'a': 'Tojyo, E.',
                 'v': [
@@ -887,7 +885,7 @@ def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
     }
     result = hep2marc.do(result)
 
-    assert expected == result['100']
+    assert expected == result
 
 
 def test_authors_from_100__a_j_m_u_v_w_y():
