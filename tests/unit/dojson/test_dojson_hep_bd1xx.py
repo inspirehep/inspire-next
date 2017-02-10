@@ -131,7 +131,6 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
                     'value': 'Kyoto U.',
                 },
             ],
-            'curated_relation': True,
             'full_name': 'Maskawa, Toshihide',
             'ids': [
                 {
@@ -213,7 +212,6 @@ def test_authors_from_100__a_e_w_y_and_700_a_e_w_y():
                     'value': 'B.A.Knyazev.2',
                 },
             ],
-            'curated_relation': False
         }
     ]
     result = hep.do(create_record(snippet))
@@ -302,7 +300,6 @@ def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
                     'value': 'Fermilab',
                 },
             ],
-            'curated_relation': True,
             'full_name': 'Mrenna, Stephen',
             'ids': [
                 {
@@ -323,7 +320,6 @@ def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
                     'value': 'Fermilab',
                 },
             ],
-            'curated_relation': True,
             'full_name': 'Skands, Peter Z.',
             'ids': [
                 {
@@ -658,7 +654,6 @@ def test_authors_from_100__a_triple_u_w_x_y_triple_z_and_700__double_a_u_w_x_y_z
                     'value': 'Warwick U.',
                 },
             ],
-            'curated_relation': False,
             'full_name': 'Gumplinger, P.',  # XXX: wrong, but the best we can do.
             'ids': [
                 {
@@ -1221,7 +1216,6 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
         {
             'affiliations': [
                 {
-                    'curated_relation': True,
                     'value': 'Minnesota U.',
                     'record': {
                         '$ref': 'http://localhost:5000/api/institutions/903010'
@@ -1236,7 +1230,6 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
         {
             'affiliations': [
                 {
-                    'curated_relation': True,
                     'value': 'Minnesota U.',
                     'record': {
                         '$ref': 'http://localhost:5000/api/institutions/903010',
@@ -1333,7 +1326,6 @@ def test_authors_supervisors_from_100_a_j_u_w_y_z_and_701__a_i_j_u_x_y_z():
         {
             'affiliations': [
                 {
-                    'curated_relation': True,
                     'record': {
                         '$ref': 'http://localhost:5000/api/institutions/902624',
                     },
