@@ -29,8 +29,6 @@ import re
 
 from dojson import utils
 
-from flask import current_app
-
 from ..model import hep, hep2marc
 from ...utils import (
     force_single_element,
@@ -142,18 +140,6 @@ def authors(self, key, value):
             if x_value and x_value.isdigit():
                 return get_record_ref(x_value, 'authors')
 
-        def _get_credit_role(value):
-            values = force_force_list(value)
-
-            credit_roles = []
-            for value in values:
-                value = value.lower()
-                if value in current_app.config['INSPIRE_LEGACY_ROLES']['editing']:
-                    credit_roles.append('Writing - review & editing')
-                if value in current_app.config['INSPIRE_LEGACY_ROLES']['administration']:
-                    credit_roles.append('Project administration')
-            return credit_roles
-
         return {
             'affiliations': _get_affiliations(value),
             'alternative_names': force_force_list(value.get('q')),
@@ -162,8 +148,7 @@ def authors(self, key, value):
             'full_name': _get_full_name(value),
             'ids': _get_ids(value),
             'record': _get_record(value),
-            'credit_roles': _get_credit_role(value.get('e')),
-            'inspire_roles': 'editor' if value.get('e') == 'ed.' else ''
+            'inspire_roles': ['editor', ] if value.get('e') == 'ed.' else ''
         }
 
     authors = self.get('authors', [])
@@ -205,11 +190,15 @@ def authors2marc(self, key, value):
             aff.get('value') for aff in value.get('affiliations', [])
         ]
 
+    def _get_inspire_roles(value):
+        values = force_force_list(value.get('inspire_roles'))
+        return ['ed.' for role in values if role == 'editor']
+
     def get_value_100_700(value):
         ids = _get_ids(value)
         return {
             'a': value.get('full_name'),
-            'e': value.get('credit_roles'),
+            'e': _get_inspire_roles(value),
             'q': value.get('alternative_names'),
             'i': ids.get('i'),
             'j': ids.get('j'),
@@ -221,7 +210,6 @@ def authors2marc(self, key, value):
         ids = _get_ids(value)
         return {
             'a': value.get('full_name'),
-            'e': value.get('inspire_roles'),
             'q': value.get('alternative_names'),
             'i': ids.get('i'),
             'j': ids.get('j'),
