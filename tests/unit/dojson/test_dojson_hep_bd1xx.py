@@ -235,7 +235,86 @@ def test_authors_from_100__a_e_w_y_and_700_a_e_w_y():
             'e': 'ed.'
         }
     ]
+    result = hep2marc.do(result)
+
+    assert expected_100 == result['100']
+    assert expected_700 == result['700']
+
+
+@pytest.mark.xfail(reason='Schema 15')
+def test_authors_from_100__a_v_w_x_y_and_700__a_v_w_x_y():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    snippet = '''
+        <record>
+          <datafield tag="100" ind1=" " ind2=" ">
+            <subfield code="a">Balbinot, Eduardo</subfield>
+            <subfield code="v">University of Surrey</subfield>
+            <subfield code="w">E.Balbinot.1</subfield>
+            <subfield code="x">1074657</subfield>
+            <subfield code="y">0</subfield>
+          </datafield>
+          <datafield tag="700" ind1=" " ind2=" ">
+            <subfield code="a">Gieles, Mark</subfield>
+            <subfield code="v">University of Surrey</subfield>
+            <subfield code="w">M.Gieles.1</subfield>
+            <subfield code="x">1030594</subfield>
+            <subfield code="y">0</subfield>
+          </datafield>
+        </record>
+    ''' # 1512580/export/xme
+
+    expected = [
+        {
+            'full_name': 'Balbinot, Eduardo',
+            'raw_affiliations': {
+                'value': 'University of Surrey'
+            },
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'E.Balbinot.1',
+                }
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/1074657'
+            },
+            'curated_relation': False
+        },
+        {
+            'full_name': 'Gieles, Mark',
+            'raw_affiliations': {
+                'value': 'University of Surrey'
+            },
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'M.Gieles.1',
+                }
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/1030594'
+            },
+            'curated_relation': False
+        }
+    ]
     result = hep.do(create_record(snippet))
+
+    assert validate(result['authors'], subschema) is None
+    assert expected == result['authors']
+
+    expected_100 = {
+        'a': 'Balbinot, Eduardo',
+        'v': 'University of Surrey'
+    }
+    expected_700 = [
+        {
+            'a': 'Gieles, Mark',
+            'v': 'University of Surrey'
+        }
+    ]
+    result = hep2marc.do(result)
 
     assert expected_100 == result['100']
     assert expected_700 == result['700']
