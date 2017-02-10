@@ -140,10 +140,16 @@ def authors(self, key, value):
             if x_value and x_value.isdigit():
                 return get_record_ref(x_value, 'authors')
 
+        def _get_curated_relation(value):
+            if key.startswith('100'):
+                return value.get('y') == '1'
+            else:
+                return ''
+
         return {
             'affiliations': _get_affiliations(value),
             'alternative_names': force_force_list(value.get('q')),
-            'curated_relation': value.get('y') == '1',
+            'curated_relation': _get_curated_relation(value),
             'emails': force_force_list(value.get('m')),
             'full_name': _get_full_name(value),
             'ids': _get_ids(value),

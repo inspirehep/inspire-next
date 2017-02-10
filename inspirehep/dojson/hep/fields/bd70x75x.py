@@ -62,14 +62,12 @@ def thesis_supervisors(self, key, value):
                     record = None
 
                 result.append({
-                    'curated_relation': record is not None,
                     'record': record,
                     'value': value,
                 })
         else:
             for value in institutions:
                 result.append({
-                    'curated_relation': False,
                     'value': value,
                 })
 
