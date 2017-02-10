@@ -74,8 +74,8 @@ def test_isbns_from_020__a_b_normalizes_online():
 
     expected = [
         {
-            'value': '978-94-024-0999-4',
-            'material': 'online',
+            'value': '9789402409994',
+            'medium': 'online',
         },
     ]
     result = hep.do(create_record(snippet))
@@ -108,7 +108,7 @@ def test_isbns_from_020__a_b_normalizes_print():
     expected = [
         {
             'value': '9781786341105',
-            'material': 'print',
+            'medium': 'print',
         },
     ]
     result = hep.do(create_record(snippet))
@@ -141,8 +141,6 @@ def test_isbns_from_020__a_b_normalizes_electronic():
     expected = [
         {
             'value': '9783319006260',
-            'material': 'online',
-            'comment': 'electronic',
         },
     ]
     result = hep.do(create_record(snippet))
@@ -153,7 +151,6 @@ def test_isbns_from_020__a_b_normalizes_electronic():
     expected = [
         {
             'a': '9783319006260',
-            'b': 'online',
         },
     ]
     result = hep2marc.do(result)
@@ -175,8 +172,7 @@ def test_isbns_from_020__a_b_normalizes_ebook():
     expected = [
         {
             'value': '9783319259017',
-            'material': 'online',
-            'comment': 'ebook',
+            'medium': 'online',
         },
     ]
     result = hep.do(create_record(snippet))
@@ -209,8 +205,7 @@ def test_isbns_from_020__a_b_normalizes_hardcover():
     expected = [
         {
             'value': '9789814571661',
-            'material': 'print',
-            'comment': 'hardcover',
+            'medium': 'hardcover',
         },
     ]
     result = hep.do(create_record(snippet))
@@ -221,7 +216,7 @@ def test_isbns_from_020__a_b_normalizes_hardcover():
     expected = [
         {
             'a': '9789814571661',
-            'b': 'print',
+            'b': 'hardcover',
         },
     ]
     result = hep2marc.do(result)
