@@ -142,17 +142,20 @@ def is_record_relevant(obj, eng):
 
 def is_experimental_paper(obj, eng):
     """Check if the record is an experimental paper."""
-    categories = list(get_value(obj.data, "arxiv_eprints.categories", [[]])[0]) + \
-        list(get_value(obj.data, "inspire_categories.term", []))
+    categories = list(
+        get_value(obj.data, "arxiv_eprints.categories", [[]])[0]
+    ) + list(get_value(obj.data, "inspire_categories.term", []))
+
     categories_to_check = [
         "hep-ex", "nucl-ex", "astro-ph", "astro-ph.IM", "astro-ph.CO",
         "astro-ph.EP", "astro-ph.GA", "astro-ph.HE", "astro-ph.SR",
-        "physics.ins-det",
-        "Experiment-HEP", "Experiment-Nucl", "Astrophysics", "Instrumentation"
+        "physics.ins-det", "Experiment-HEP", "Experiment-Nucl",
+        "Astrophysics", "Instrumentation"
     ]
     for experimental_category in categories_to_check:
         if experimental_category in categories:
             return True
+
     return False
 
 
