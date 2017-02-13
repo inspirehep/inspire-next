@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 import pytest
 
 from dojson.contrib.marc21.utils import create_record
+from jsonschema.exceptions import ValidationError
 
 from inspire_schemas.utils import load_schema
 from inspirehep.dojson.hep import hep, hep2marc
@@ -420,10 +421,9 @@ def test_dois_from_0247_a_2_and_0247_a_2_9():
     assert expected == result['024']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
-def test_external_system_numbers_from_035__a():
+def test_external_system_identifiers_from_035__a():
     schema = load_schema('hep')
-    subschema = schema['properties']['external_system_numbers']
+    subschema = schema['properties']['external_system_identifiers']
 
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
@@ -434,26 +434,26 @@ def test_external_system_numbers_from_035__a():
     expected = [
         {
             'value': '0248362CERCER',
-            'obsolete': False,
         },
     ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['external_system_numbers'], subschema) is None
-    assert expected == result['external_system_numbers']
+    assert validate(result['external_system_identifiers'], subschema) is None
+    assert expected == result['external_system_identifiers']
 
     expected = [
-        {'a': '0248362CERCER'},
+        {
+            'a': '0248362CERCER'
+        },
     ]
     result = hep2marc.do(result)
 
     assert expected == result['035']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
-def test_external_system_numbers_from_035__a_9():
+def test_texkeys_from_035__a_9():
     schema = load_schema('hep')
-    subschema = schema['properties']['external_system_numbers']
+    subschema = schema['properties']['texkeys']
 
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
@@ -463,16 +463,12 @@ def test_external_system_numbers_from_035__a_9():
     )  # record/1403324
 
     expected = [
-        {
-            'value': 'Hagedorn:1963hdh',
-            'institute': 'INSPIRETeX',
-            'obsolete': False,
-        },
+        'Hagedorn:1963hdh',
     ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['external_system_numbers'], subschema) is None
-    assert expected == result['external_system_numbers']
+    assert validate(result['texkeys'], subschema) is None
+    assert expected == result['texkeys']
 
     expected = [
         {
@@ -485,7 +481,6 @@ def test_external_system_numbers_from_035__a_9():
     assert expected == result['035']
 
 
-@pytest.mark.xfail(reason='Schema 13')
 def test_texkeys_from_multiple_035__a_z_9():
     '''035__9:INSPIRETeX or SPIRESTeX go to texkeys'''
     schema = load_schema('hep')
@@ -502,49 +497,55 @@ def test_texkeys_from_multiple_035__a_z_9():
             <subfield code="a">Akiba:2016ofq</subfield>
           </datafield>
         </record>
-    ''' # record/1498308
+    '''  # record/1498308
 
     # the first is the one containing the a, the rest is from the z
-    expected_head = ['Akiba:2016ofq', 'N.Cartiglia:2015cn']
+    expected = [
+        'Akiba:2016ofq',
+        'N.Cartiglia:2015cn',
+    ]
     result = hep.do(create_record(snippet))
 
     assert validate(result['texkeys'], subschema) is None
     assert expected == result['texkeys']
-    assert [{}] == result['external_system_identifiers']
 
     expected = [
-        {'9': 'INSPIRETeX', 'a': 'Akiba:2016ofq'},
-        {'9': 'INSPIRETeX', 'z': 'N.Cartiglia:2015cn'}
+        {
+            '9': 'INSPIRETeX',
+            'a': 'Akiba:2016ofq',
+        },
+        {
+            '9': 'INSPIRETeX',
+            'z': 'N.Cartiglia:2015cn',
+        }
     ]
     result = hep2marc.do(result)
 
-    assert sorted(expected) == sorted(result['035'])
+    assert expected == result['035']
 
 
-@pytest.mark.xfail(reason='Schema 13')
 def test_discard_035__9_arXiv():
-    '''035__9:arXiv is redundant with 037__9:arXiv, throw it away'''
-    schema = load_schema('hep')
+    """Ensure that fields:
+    'external_system_identifiers' and 'arxiv_eprints' are NOT touched
+    by inserting '035__9_arXiv' data.
+    """
 
-    snippet = '''
-        <datafield tag="035" ind1=" " ind2=" ">
-          <subfield code="9">arXiv</subfield>
-          <subfield code="a">oai:arXiv.org:1611.05079</subfield>
-        </datafield>
-    ''' # record/1498308
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">arXiv</subfield>'
+        '  <subfield code="a">oai:arXiv.org:1611.05079</subfield>'
+        '</datafield>'
+    )  # record/1498308
 
-    expected = [{}]
     result = hep.do(create_record(snippet))
 
-    assert validate(result, schema) is None
-    assert expected == result['external_system_identifiers']
-    assert expected == result['arxiv_eprints']
+    assert result.get('external_system_identifiers') is None
+    assert result.get('arxiv_eprints') is None
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_external_system_numbers_from_035__a_d_h_m_9():
     schema = load_schema('hep')
-    subschema = schema['properties']['external_system_numbers']
+    subschema = schema['properties']['external_system_identifiers']
 
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'
@@ -559,14 +560,13 @@ def test_external_system_numbers_from_035__a_d_h_m_9():
     expected = [
         {
             'value': 'oai:cds.cern.ch:325030',
-            'institute': 'http://cds.cern.ch/oai2d',
-            'obsolete': False,
+            'schema': 'http://cds.cern.ch/oai2d',
         }
     ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['external_system_numbers'], subschema) is None
-    assert expected == result['external_system_numbers']
+    assert validate(result['external_system_identifiers'], subschema) is None
+    assert expected == result['external_system_identifiers']
 
     expected = [
         {
