@@ -199,34 +199,73 @@ def dois2marc(self, key, value):
     return self['024']
 
 
-@hep.over('external_system_numbers', '^035..')
-def external_system_numbers(self, key, value):
-    """System Control Number."""
+@hep.over('external_system_identifiers', '^035..')
+def external_system_identifiers(self, key, value):
+    """System Control Identifier."""
+    texkeys_whitelist = [
+        'SPIRESTeX',
+        'INSPIRETeX',
+    ]
     value = force_force_list(value)
 
-    def get_value(value):
+    def get_external_system_identifier(value):
         return {
             'value': value.get('a'),
-            'institute': value.get('9'),
-            'obsolete': bool(value.get('z')),
+            'schema': value.get('9'),
         }
 
-    external_system_numbers = self.get('external_system_numbers', [])
+    def get_texkey(value, field='9'):
+        return value.get(field)
 
+    def _is_texkey_a(value):
+        return value.get('a')
+
+    def _is_not_arxiv(value):
+        return value.get('9') != 'arXiv'
+
+    external_system_identifiers = self.get('external_system_identifiers', [])
+    texkeys = self.get('texkeys', [])
     for val in value:
-        external_system_numbers.append(get_value(val))
-    return external_system_numbers
+        if get_texkey(val) in texkeys_whitelist:
+            if _is_texkey_a(val):
+                texkeys.insert(0, get_texkey(val, field='a'))
+            else:
+                texkeys.append(get_texkey(val, field='z'))
+        elif _is_not_arxiv(val):
+            external_system_identifiers.append(get_external_system_identifier(val))
+
+    self['texkeys'] = texkeys
+    return external_system_identifiers
 
 
-@hep2marc.over('035', 'external_system_numbers')
+@hep2marc.over('035', 'external_system_identifiers')
 @utils.for_each_value
-def external_system_numbers2marc(self, key, value):
+def external_system_identifiers2marc(self, key, value):
     """System Control Number."""
     return {
         'a': value.get('value'),
-        '9': value.get('institute'),
-        'z': value.get('obsolete'),
+        '9': value.get('schema'),
     }
+
+
+@hep2marc.over('035', 'texkeys')
+def external_system_identifiers2marc(self, key, value):
+    """System Control Number."""
+    texkeys = []
+    first_item = {
+        '9': 'INSPIRETeX',
+        'a': value[0],
+    }
+    texkeys.insert(0, first_item)
+    for val in value[1:]:
+        texkeys.append(
+            {
+                '9': 'INSPIRETeX',
+                'z': val,
+            }
+        )
+
+    return texkeys
 
 
 @hep.over('report_numbers', '^037..')
