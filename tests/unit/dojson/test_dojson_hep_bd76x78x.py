@@ -31,7 +31,6 @@ from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.utils import validate
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_publication_info_from_773_c_p_w_double_v_double_y_0_1_2():
     schema = load_schema('hep')
     subschema = schema['properties']['publication_info']
@@ -77,6 +76,7 @@ def test_publication_info_from_773_c_p_w_double_v_double_y_0_1_2():
 
     expected = [
         {
+            '0': 1408366,
             'c': [
                 '45',
             ],
