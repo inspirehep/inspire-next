@@ -129,7 +129,7 @@ def thesis_supervisors(self, key, value):
     return authors
 
 
-@hep.over('collaboration', '^710[10_2][_2]')
+@hep.over('collaborations', '^710[10_2][_2]')
 def collaboration(self, key, value):
     """Added Entry-Corporate Name."""
     value = force_force_list(value)
@@ -145,7 +145,7 @@ def collaboration(self, key, value):
             'value': value.get('g'),
             'record': get_record_ref(recid, 'experiments')
         }
-    collaboration = self.get('collaboration', [])
+    collaboration = self.get('collaborations', [])
 
     filtered_value = value
     for element in filtered_value:
@@ -154,10 +154,10 @@ def collaboration(self, key, value):
     return collaboration
 
 
-@hep2marc.over('710', 'collaboration')
+@hep2marc.over('710', 'collaborations')
 @utils.for_each_value
-def collaboration2marc(self, key, value):
+def collaborations2marc(self, key, value):
     """Added Entry-Corporate Name."""
     return {
-        'g': value,
+        'g': value.get('value'),
     }
