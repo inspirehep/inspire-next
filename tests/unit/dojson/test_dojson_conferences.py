@@ -503,6 +503,9 @@ def test_alternative_titles_marcxml_711_with_b():
 
 
 def test_note_from__500_a():
+    schema = load_schema('conferences')
+    subschema = schema['properties']['public_notes']
+
     snippet = (
         '<datafield tag="500" ind1=" " ind2=" ">'
         '  <subfield code="a">Same conf. as Kyoto 1975: none in intervening years</subfield>'
@@ -510,14 +513,20 @@ def test_note_from__500_a():
     )  # record/963579
 
     expected = [
-        'Same conf. as Kyoto 1975: none in intervening years',
+        {
+            'value': 'Same conf. as Kyoto 1975: none in intervening years',
+        },
     ]
     result = conferences.do(create_record(snippet))
 
-    assert expected == result['note']
+    assert validate(result['public_notes'], subschema) is None
+    assert expected == result['public_notes']
 
 
 def test_note_from__double_500_a():
+    schema = load_schema('conferences')
+    subschema = schema['properties']['public_notes']
+
     snippet = (
         '<record>'
         '  <datafield tag="500" ind1=" " ind2=" ">'
@@ -530,12 +539,19 @@ def test_note_from__double_500_a():
     )  # record/1445071
 
     expected = [
-        'Marion White, PhD (Argonne) Conference Chair Vladimir Shiltsev, PhD (FNAL) Scientific Program Chair Maria Power (Argonne) Conference Editor/Scientific Secretariat',
-        'Will be published in: JACoW',
+        {
+            'value': 'Marion White, PhD (Argonne) Conference Chair Vladimir Shiltsev, PhD (FNAL)'
+                     ' Scientific Program Chair Maria Power (Argonne) Conference Editor/Scientific'
+                     ' Secretariat',
+        },
+        {
+            'value': 'Will be published in: JACoW',
+        },
     ]
     result = conferences.do(create_record(snippet))
 
-    assert expected == result['note']
+    assert validate(result['public_notes'], subschema) is None
+    assert expected == result['public_notes']
 
 
 def test_note_from_500__multiple_a():
