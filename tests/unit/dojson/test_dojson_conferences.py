@@ -52,7 +52,6 @@ def test_acronym_from_111__e():
     assert expected == result['acronym']
 
 
-@pytest.mark.xfail(reason='tuple produced instead')
 def test_acronym_from_111__e_e():
     snippet = (
         '<datafield tag="111" ind1=" " ind2=" ">'
