@@ -164,7 +164,7 @@ def persistent_identifiers(self, key, value):
 
 
 @hep2marc.over('024', '^persistent_identifiers$')
-def dois2marc(self, key, value):
+def persistent_identifiers2marc(self, key, value):
     """Other Standard Identifier."""
     value = force_force_list(value)
 
