@@ -312,7 +312,6 @@ def test_address_from_marcxml_371__a_double_b_c_d_e_g():
     assert expected == result['address']
 
 
-@pytest.mark.xfail(reason='country_code not populated')
 def test_address_from_marcxml_371__a_b_c_double_d_e_g():
     snippet = (
         '<datafield tag="371" ind1=" " ind2=" ">'
@@ -332,7 +331,9 @@ def test_address_from_marcxml_371__a_b_c_double_d_e_g():
             'country': 'Deutschland, Germany',
             'country_code': 'DE',
             'state': 'Baden-Wuerttemberg',
-            'original_address': ('Philosophenweg 16',),
+            'original_address': [
+                'Philosophenweg 16',
+            ],
             'postal_code': '69120',
         },
     ]
