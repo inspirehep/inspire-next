@@ -112,11 +112,29 @@ def keywords(self, key, value):
     return keywords
 
 
-@conferences.over('note', '^500')
-@utils.for_each_value
+@conferences.over('public_notes', '^500')
 def note(self, key, value):
-    """Public note."""
-    return value.get('a')
+    """Public notes."""
+    public_notes = self.get('public_notes', [])
+
+    values_a = value.get('a')
+    if isinstance(values_a, tuple or list):
+        values = [item for item in values_a]
+        for val in values:
+            public_notes.append(
+                {
+                    'value': val,
+                }
+            )
+    else:
+        public_notes.append(
+            {
+                'value': values_a,
+            }
+        )
+
+    self['public_notes'] = public_notes
+    return public_notes
 
 
 @conferences.over('series', '^411')
