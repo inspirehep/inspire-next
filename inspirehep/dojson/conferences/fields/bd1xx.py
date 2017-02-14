@@ -36,9 +36,25 @@ from inspirehep.utils.helpers import force_force_list
 
 
 @conferences.over('acronym', '^111')
-@utils.for_each_value
 def acronym(self, key, value):
     """Conference acronym."""
+    def get_acronym(value):
+        acronyms = self.get('acronym', [])
+        values_e = value.get('e')
+
+        if values_e is None:
+            return
+
+        if isinstance(values_e, tuple or list):
+            values = [item for item in values_e]
+            for val in values:
+                acronyms.append(val)
+        else:
+            acronyms.append(values_e)
+        self['acronyms'] = acronyms
+
+        return acronyms
+
     self['date'] = value.get('d')
     self['opening_date'] = value.get('x')
     self['closing_date'] = value.get('y')
@@ -63,7 +79,7 @@ def acronym(self, key, value):
             address = parse_conference_address(raw_address)
             self['address'].append(address)
 
-    return value.get('e')
+    return get_acronym(value)
 
 
 @conferences.over('alternative_titles', '^711')
