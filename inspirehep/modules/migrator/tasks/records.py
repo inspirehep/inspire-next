@@ -293,6 +293,7 @@ def record_upsert(json):
         except PIDDoesNotExistError:
             record = InspireRecord.create(json, id_=None)
             # Create persistent identifier.
+           # import pytest;pytest.set_trace()
             inspire_recid_minter(str(record.id), json)
 
         if json.get('deleted'):
