@@ -518,6 +518,24 @@ RECORDS_REST_ENDPOINTS = dict(
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
+    authors_db=dict(
+        pid_type='aut',
+        search_class='inspirehep.modules.search:AuthorsSearch',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_response')
+        },
+        record_class='inspirehep.modules.records.api:InspireRecord',
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_search')
+        },
+        list_route='/authors/db',
+        item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/db',
+        default_media_type='application/json',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        update_permission_factory_imp="inspirehep.modules.records.permissions:record_update_permission_factory",
+    ),
     authors_citations=dict(
         pid_type='aut',
         pid_minter='inspire_recid_minter',
@@ -666,6 +684,24 @@ RECORDS_REST_ENDPOINTS = dict(
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
+    data_db=dict(
+        pid_type='dat',
+        search_class='inspirehep.modules.search:DataSearch',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_response')
+        },
+        record_class='inspirehep.modules.records.api:InspireRecord',
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_search')
+        },
+        list_route='/data/db',
+        item_route='/data/<pid(dat,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/db',
+        default_media_type='application/json',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        update_permission_factory_imp="inspirehep.modules.records.permissions:record_update_permission_factory",
+    ),
     conferences=dict(
         default_endpoint_prefix=True,
         pid_type='con',
@@ -690,6 +726,24 @@ RECORDS_REST_ENDPOINTS = dict(
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+    ),
+    conferences_db=dict(
+        pid_type='con',
+        search_class='inspirehep.modules.search:ConferencesSearch',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_response')
+        },
+        record_class='inspirehep.modules.records.api:InspireRecord',
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_search')
+        },
+        list_route='/conferences/db',
+        item_route='/conferences/<pid(con,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/db',
+        default_media_type='application/json',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        update_permission_factory_imp="inspirehep.modules.records.permissions:record_update_permission_factory",
     ),
     jobs=dict(
         default_endpoint_prefix=True,
@@ -716,6 +770,24 @@ RECORDS_REST_ENDPOINTS = dict(
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
+    jobs_db=dict(
+        pid_type='job',
+        search_class='inspirehep.modules.search:JobsSearch',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_response')
+        },
+        record_class='inspirehep.modules.records.api:InspireRecord',
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_search')
+        },
+        list_route='/jobs/db',
+        item_route='/jobs/<pid(job,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/db',
+        default_media_type='application/json',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        update_permission_factory_imp="inspirehep.modules.records.permissions:record_update_permission_factory",
+    ),
     institutions=dict(
         default_endpoint_prefix=True,
         pid_type='ins',
@@ -740,6 +812,24 @@ RECORDS_REST_ENDPOINTS = dict(
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+    ),
+    institutions_db=dict(
+        pid_type='ins',
+        search_class='inspirehep.modules.search:InstitutionsSearch',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_response')
+        },
+        record_class='inspirehep.modules.records.api:InspireRecord',
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_search')
+        },
+        list_route='/institutions/db',
+        item_route='/institutions/<pid(ins,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/db',
+        default_media_type='application/json',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        update_permission_factory_imp="inspirehep.modules.records.permissions:record_update_permission_factory",
     ),
     institutions_citesummary=dict(
         default_media_type='application/json',
@@ -794,6 +884,24 @@ RECORDS_REST_ENDPOINTS = dict(
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
+    experiments_db=dict(
+        pid_type='exp',
+        search_class='inspirehep.modules.search:ExperimentsSearch',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_response')
+        },
+        record_class='inspirehep.modules.records.api:InspireRecord',
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_search')
+        },
+        list_route='/experiments/db',
+        item_route='/experiments/<pid(exp,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/db',
+        default_media_type='application/json',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        update_permission_factory_imp="inspirehep.modules.records.permissions:record_update_permission_factory",
+    ),
     experiments_citesummary=dict(
         default_media_type='application/json',
         item_route=(
@@ -841,6 +949,24 @@ RECORDS_REST_ENDPOINTS = dict(
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+    ),
+    journals_db=dict(
+        pid_type='jou',
+        search_class='inspirehep.modules.search:JournalsSearch',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_response')
+        },
+        record_class='inspirehep.modules.records.api:InspireRecord',
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_search')
+        },
+        list_route='/journals/db',
+        item_route='/journals/<pid(jou,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/db',
+        default_media_type='application/json',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        update_permission_factory_imp="inspirehep.modules.records.permissions:record_update_permission_factory",
     ),
     journals_citesummary=dict(
         default_media_type='application/json',
