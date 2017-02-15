@@ -83,7 +83,9 @@ def deleted_record(app):
     with app.app_context():
         record = hep.do(create_record(snippet))
         record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
-
+        record['authors'] = [{
+            'full_name': 'Dummy name'
+        }]
         with db.session.begin_nested():
             record_upsert(record)
         db.session.commit()
@@ -99,6 +101,9 @@ def not_yet_deleted_record(app):
     record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 111,
+        'authors': [{
+            'full_name': 'Dummy name'
+        }],
         'document_type': [
             'article',
         ],
@@ -214,6 +219,9 @@ def not_yet_merged_records(app):
 def records_to_be_merged(app):
     merged_record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'authors': [{
+            'full_name': 'Dummy name'
+        }],
         'control_number': 111,
         'document_type': [
             'article',
@@ -229,6 +237,9 @@ def records_to_be_merged(app):
     deleted_record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 222,
+        'authors': [{
+            'full_name': 'Dummy name'
+        }],
         'document_type': [
             'article',
         ],
@@ -242,6 +253,9 @@ def records_to_be_merged(app):
 
     pointing_record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'authors': [{
+            'full_name': 'Dummy name'
+        }],
         'accelerator_experiments': [
             {
                 'record': {

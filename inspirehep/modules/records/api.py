@@ -39,6 +39,9 @@ from inspirehep.utils.record_getter import (
     get_es_record_by_uuid
 )
 
+from inspirehep.modules.records.validators.validator import InspireValidator, InspireResolver
+from jsonschema import validate
+
 
 class InspireRecord(Record):
 
@@ -70,6 +73,14 @@ class InspireRecord(Record):
 
     def _delete(self, *args, **kwargs):
         super(InspireRecord, self).delete(*args, **kwargs)
+
+    def commit(self, **kwargs):
+        """Override commit() to run custom validation before calling the parent class"""
+        validator = kwargs.pop('validator', InspireValidator)
+        if '$schema' in self and self['$schema'] is not None and validator is not None:
+            _schema = {"$ref": self['$schema']}
+            validate(self, _schema, cls=validator, resolver=InspireResolver.from_schema(_schema))
+        super(InspireRecord, self).commit()
 
 
 class ESRecord(InspireRecord):
