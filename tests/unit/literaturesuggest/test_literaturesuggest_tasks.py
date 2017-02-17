@@ -437,13 +437,13 @@ def test_formdata_to_model_populates_languages_from_other_languages(u, ui):
             'bar',
         ],
         'language': 'oth',
-        'other_language': 'baz',
+        'other_language': 'ba',
     }
 
     obj = StubObj(data, extra_data)
 
     expected = [
-        'baz',
+        'ba',
     ]
     result = formdata_to_model(obj, formdata)
 
