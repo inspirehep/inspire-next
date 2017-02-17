@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from babel import Locale
+
 from flask import current_app
 from flask_babelex import gettext as _
 
@@ -61,6 +63,8 @@ THESIS_CLASS = " thesis-related"
 CHAPTER_CLASS = " chapter-related"
 BOOK_CLASS = " book-related"
 PROCEEDINGS_CLASS = " proceedings-related"
+
+FORM_LANGUAGES = ['en', 'ru', 'de', 'fr', 'it', 'es', 'zh', 'pt', 'ja']
 
 
 #
@@ -344,26 +348,36 @@ class LiteratureForm(INSPIREForm):
         export_key='abstract',
     )
 
-    languages = [("en", _("English")),
-                 ("rus", _("Russian")),
-                 ("ger", _("German")),
-                 ("fre", _("French")),
-                 ("ita", _("Italian")),
-                 ("spa", _("Spanish")),
-                 ("chi", _("Chinese")),
-                 ("por", _("Portuguese")),
-                 ("oth", _("Other"))]
+    language_choices = [
+        (language, Locale('en').languages.get(language))
+        for language in FORM_LANGUAGES
+    ]
+    language_choices.sort(key=lambda x: x[1])
+    language_choices.append(
+        ('oth', 'Other')
+    )
 
     language = fields.LanguageField(
         label=_("Language"),
         export_key="language",
-        choices=languages
+        default="en",
+        choices=language_choices
     )
 
-    other_language = fields.TextField(
+    def _is_other_language(language):
+        return language[0] not in FORM_LANGUAGES and len(language[0]) == 2
+
+    other_language_choices = filter(
+        _is_other_language,
+        Locale('en').languages.items()
+    )
+    other_language_choices.sort(key=lambda x: x[1])
+
+    other_language = fields.LanguageField(
         label=_("Other Language"),
         export_key="other_language",
         widget_classes="form-control",
+        choices=other_language_choices,
         description="What is the language of the publication?"
     )
 
