@@ -1,10 +1,6 @@
 @import "../base/variables";
 
-html, body {
-  background-color: $dark-blue !important;
-}
-
-$hp_table_bg: #233345;
+$hp_table_bg: #fff;
 
 @mixin facet-colors($color) {
   color: $color !important;
@@ -16,12 +12,6 @@ $hp_table_bg: #233345;
 
 #collections-section {
   display: none;
-}
-
-.dark-input-bg {
-  background-color: $dark-blue;
-  border: none;
-  color: white;
 }
 
 .holding-pen {
@@ -110,6 +100,10 @@ $hp_table_bg: #233345;
     border-radius: 3px;
     margin-bottom: 10px;
 
+    a {
+          color: white;
+    }
+
     .summary {
       background-color: $concrete;
       height: 130px;
@@ -138,30 +132,27 @@ $hp_table_bg: #233345;
 
       &.new-authors {
         background-color: $pete-river;
+      }
 
-        a {
-          color: white;
-        }
+      &.new-authors {
+        background-color: $pete-river;
       }
 
       &.new-authors-updates {
         background-color: $belize-hole;
-
-        a {
-          color: white;
-        }
       }
 
       &.arxiv-harvests {
         background-color: white;
         color: $midnight-blue !important;
+
+        a {
+          color: $link-color;
+        }
       }
 
       &.new-literature-submissions {
         background-color: $carrot;
-        a {
-          color: white;
-        }
       }
     }
 
@@ -192,7 +183,6 @@ $hp_table_bg: #233345;
 
   .hp-filters {
     h4 {
-      color: $clouds;
       font-size: 1.1em;
       font-weight: normal;
       padding-top: 10px;
@@ -204,9 +194,6 @@ $hp_table_bg: #233345;
     }
 
     select {
-      background-color: $midnight-blue;
-      border: none;
-      color: $blue-haze;
       margin-bottom: 10px;
     }
 
@@ -224,6 +211,7 @@ $hp_table_bg: #233345;
   }
 
   .facet-container {
+    background-color: #fff;
 
     ul li {
       cursor: pointer;
@@ -232,11 +220,11 @@ $hp_table_bg: #233345;
     }
 
     h4 {
-      color: $blue-haze;
+      color: #000;
     }
 
     .facet-label {
-      color: $midnight-blue;
+      background-color: #edf3f3;
     }
 
     .arxiv-harvests {
@@ -324,15 +312,6 @@ $hp_table_bg: #233345;
         display: inline;
       }
 
-      .btn-danger, .btn-success, .btn-warning, .btn-info{
-        background-color: $midnight-blue;
-        color: $blue-haze;
-        border-color: $midnight-blue;
-      }
-
-      &:hover {
-        background-color: $dark-blue;
-
         .btn-danger {
           background-color: $alizarin;
           color: white;
@@ -352,7 +331,6 @@ $hp_table_bg: #233345;
           background-color: $belize-hole;
           color: white;
         }
-      }
 
       .workflow-type {
         font-size: 1em;
@@ -448,7 +426,7 @@ $hp_table_bg: #233345;
     background-color: $hp_table_bg;
     border: none;
     font-weight: bolder;
-    color: white;
+    color: $blue-haze;
     padding: 15px;
     height: 63px;
 
@@ -460,6 +438,7 @@ $hp_table_bg: #233345;
 
     &:hover {
       background-color: $alizarin;
+      color: white;
     }
 
     p {
@@ -490,18 +469,15 @@ $hp_table_bg: #233345;
       margin: 5px;
       border-radius: 3px;
       padding: 15px;
-      color: white;
       background-color: $hp_table_bg;
 
       h4 {
         margin: 0;
         margin-bottom: 10px;
-        color: $blue-haze;
         font-size: 1.3em;
       }
 
       .record-title {
-        color: white;
         font-size: 1.7em;
       }
       .record-abstract {
@@ -531,7 +507,7 @@ $hp_table_bg: #233345;
         border-radius: 3px;
 
         .scheme {
-          background-color: $dark-blue;
+          background-color: $clouds;
           padding: 3px 5px;
           font-size: .8em;
         }
@@ -573,14 +549,16 @@ $hp_table_bg: #233345;
         overflow-y: scroll;
 
         pre {
-          background-color: $hp_table_bg;
-          color: white;
           border: none
         }
       }
 
       .table-block {
         color: $blue-haze;
+
+        h4 {
+          color: black;
+        }
 
         .table-header {
           padding: 10px;
@@ -603,7 +581,6 @@ $hp_table_bg: #233345;
           .table-row {
 
             padding: 10px;
-            color: white;
             border-bottom: 1px solid $midnight-blue;
           }
         }
@@ -641,7 +618,7 @@ $hp_table_bg: #233345;
 
   .accept_core {
     background-color: $green-sea;
-    color: $dark-blue;
+    color: white;
   }
 
   .accept, .accept_curate {
@@ -652,7 +629,7 @@ $hp_table_bg: #233345;
 }
 
 .action-info {
-  background-color: $dark-blue;
+  background-color: $clouds;
   display: inline-block;
   padding: 2px 4px;
   border-radius: 3px;
@@ -720,7 +697,7 @@ $hp_table_bg: #233345;
   -webkit-padding-start: 0;
 
   li {
-    background-color: $midnight-blue;
+    background-color: $clouds;
     border-radius: 3px;
     margin: 2px;
     font-size: .9em;
