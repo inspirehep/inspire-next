@@ -73,11 +73,6 @@ def formdata_to_model(obj, formdata):
     if 'extra_comments' in form_fields and form_fields['extra_comments']:
         data['_private_note'] = form_fields['extra_comments']
 
-    # Add email to extra data
-    if "public_email" in form_fields and form_fields["public_email"]:
-        obj.extra_data["public_email"] = form_fields["public_email"]
-        data["public_email"] = form_fields["public_email"]
-
     # Add HEPNAMES collection
     data["collections"] = [{
         "primary": "HEPNAMES"
