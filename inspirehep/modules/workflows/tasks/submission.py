@@ -34,6 +34,7 @@ from retrying import retry
 
 from invenio_accounts.models import User
 
+from ..utils import with_debug_logging
 from ....utils.tickets import get_instance, retry_if_connection_problems
 from .actions import in_production_mode, is_arxiv_paper
 
@@ -41,6 +42,7 @@ from .actions import in_production_mode, is_arxiv_paper
 LOGGER = logging.getLogger(__name__)
 
 
+@with_debug_logging
 @retry(
     stop_max_attempt_number=5,
     wait_fixed=10000,
@@ -99,7 +101,7 @@ def create_ticket(template,
     Creates the ticket in the given queue and stores the ticket ID
     in the extra_data key specified in ticket_id_key.
     """
-
+    @with_debug_logging
     @wraps(create_ticket)
     def _create_ticket(obj, eng):
         user = User.query.get(obj.id_user)
@@ -130,7 +132,7 @@ def reply_ticket(template=None,
                  context_factory=None,
                  keep_new=False):
     """Reply to a ticket for the submission."""
-
+    @with_debug_logging
     @wraps(reply_ticket)
     def _reply_ticket(obj, eng):
         from inspirehep.utils.tickets import get_instance
@@ -193,7 +195,7 @@ def reply_ticket(template=None,
 
 def close_ticket(ticket_id_key="ticket_id"):
     """Close the ticket associated with this record found in given key."""
-
+    @with_debug_logging
     @wraps(close_ticket)
     def _close_ticket(obj, eng):
         from inspirehep.utils.tickets import get_instance
@@ -234,7 +236,7 @@ def send_robotupload(url=None,
                      mode="insert",
                      extra_data_key=None):
     """Get the MARCXML from the model and ship it."""
-
+    @with_debug_logging
     @wraps(send_robotupload)
     def _send_robotupload(obj, eng):
         from inspirehep.dojson.utils import legacy_export_as_marc
@@ -305,6 +307,7 @@ def send_robotupload(url=None,
     return _send_robotupload
 
 
+@with_debug_logging
 def add_note_entry(obj, eng):
     """Add note entry to metadata on approval."""
     def _has_note(reference_note, notes):
@@ -320,6 +323,7 @@ def add_note_entry(obj, eng):
             obj.data['public_notes'].append(entry)
 
 
+@with_debug_logging
 def filter_keywords(obj, eng):
     """Removes non-accepted keywords from the metadata"""
     prediction = obj.extra_data.get('keywords_prediction', {})
@@ -334,6 +338,7 @@ def filter_keywords(obj, eng):
     obj.log.debug('Got no prediction for keywords')
 
 
+@with_debug_logging
 def prepare_keywords(obj, eng):
     """Prepares the keywords in the correct format to be sent"""
     prediction = obj.extra_data.get('keywords_prediction', {})
@@ -356,6 +361,7 @@ def prepare_keywords(obj, eng):
     obj.log.debug('Finally got keywords: \n%s', pformat(keywords))
 
 
+@with_debug_logging
 def user_pdf_get(obj, eng):
     """Upload user PDF file, if requested."""
     if obj.extra_data.get('pdf_upload', False):
@@ -368,6 +374,7 @@ def user_pdf_get(obj, eng):
         obj.log.info("User PDF file added to FFT.")
 
 
+@with_debug_logging
 def prepare_files(obj, eng):
     """Adds to the fft field (files) the extracted pdfs if any"""
     def _get_fft(url, name):
@@ -405,6 +412,7 @@ def prepare_files(obj, eng):
         obj.log.debug('Added PDF files: {}'.format(result))
 
 
+@with_debug_logging
 def remove_references(obj, eng):
     obj.log.info(obj.data)
     if 'references' in obj.data:
