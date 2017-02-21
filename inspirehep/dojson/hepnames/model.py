@@ -42,6 +42,7 @@ hepnames_filters = [
 hepnames2marc_filters = [
     ensure_hepnames,
     clean_record,
+    ensure_hepnames
 ]
 
 hepnames = FilterOverdo(filters=hepnames_filters)

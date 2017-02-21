@@ -337,17 +337,13 @@ def experiments2marc(self, key, values):
 @utils.for_each_value
 def advisors(self, key, value):
     DEGREE_TYPES_MAP = {
-        'RAPPORT DE STAGE': 'other',
-        'INTERNSHIP REPORT': 'other',
-        'DIPLOMA': 'diploma',
-        'BACHELOR': 'bachelor',
-        'LAUREA': 'laurea',
-        'MASTER': 'master',
-        'THESIS': 'other',
+        'Bachelor': 'bachelor',
+        'UG': 'bachelor',
+        'MAS': 'master',
+        'master': 'master',
+        'Master': 'master',
+        'PhD': 'phd',
         'PHD': 'phd',
-        'PDF': 'phd',
-        'PH.D. THESIS': 'phd',
-        'HABILITATION': 'habilitation',
     }
 
     _degree_type = force_single_element(value.get('g'))
@@ -369,7 +365,7 @@ def advisors(self, key, value):
 def advisors2marc(self, key, value):
     return {
         'a': value.get('name'),
-        'g': value.get('_degree_type'),
+        'g': value.get('degree_type'),
         'x': get_recid_from_ref(value.get('record')),
         'y': '1' if value.get('curated_relation') else '0',
     }
