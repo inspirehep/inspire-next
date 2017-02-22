@@ -296,7 +296,7 @@
           <h4>Submission</h4>
           <p class="text-center" ng-if="vm.record.metadata.acquisition_source">
             <span ng-switch="vm.record.metadata.acquisition_source.method">
-              <span ng-switch-when="submission">
+              <span ng-switch-when="submitter">
                 Submitted by {{vm.record.metadata.acquisition_source.email}}<br/> on {{vm.record.metadata.acquisition_source.date}}
               </span>
               <span ng-switch-default>

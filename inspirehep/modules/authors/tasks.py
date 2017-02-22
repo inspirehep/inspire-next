@@ -98,7 +98,7 @@ def formdata_to_model(obj, formdata):
     data['acquisition_source'] = dict(
         email=user_email,
         date=date.today().isoformat(),
-        method="submission",
+        method="submitter",
         orcid=orcid,
         submission_number=str(obj.id),
         internal_uid=obj.id_user,
