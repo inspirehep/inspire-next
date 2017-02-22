@@ -124,10 +124,20 @@
                     editable-text="vm.record.metadata.native_name"
                     e-ng-change="Utils.registerUpdateEvent()"></span>
               <br ng-if="vm.record.metadata.native_name">
-              <span class="text-muted">Email address:</span>
-              <span ng-bind="vm.record.metadata.public_email"
-                    editable-text="vm.record.metadata.public_email"
-                    e-ng-change="Utils.registerUpdateEvent()"></span>
+
+              <div ng-repeat="position in vm.record.metadata.positions">
+              <span ng-if="position.emails.length" class="text-muted">Email address:</span>
+              <span ng-repeat="email in position.emails">
+              <span ng-bind="email"></span>
+              </span>
+              </div>
+
+              <span class="text-muted">Status:</span>
+              <span ng-bind="vm.record.metadata.status"></span>
+              <br ng-if="vm.record.metadata.status">
+
+              <span class="text-muted">ORCID:</span>
+              <span ng-bind="vm.record.metadata.ids[0].value"></span>
 
               <div ng-repeat="experiment in vm.record.metadata.experiments">
               <span class="text-muted">Experiment:</span>
@@ -309,9 +319,10 @@
 
           <div class="row">
               <div class="col-md-12 text-center">
-                <div
-                  ng-class="{'alert': vm.record.metadata._private_note == '*Temporary entry*'}">
-                  <p ng-bind="vm.record.metadata._private_note"></p>
+                <div ng-repeat="note in vm.record.metadata._private_notes">
+                <span
+                  ng-class="{'alert': note.value == '*Temporary entry*'}">
+                  <p ng-bind="note.value"></p></span>
                 </div>
               </div>
           </div>

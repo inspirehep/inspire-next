@@ -83,23 +83,6 @@
 
         <div class="col-md-3 decision">
 
-          <!--Authors  Decision-->
-          <div
-            ng-if="record._source._workflow.data_type === 'authors' && !record._source._extra_data.user_action && record._source._workflow.status === 'HALTED'">
-            <button class="btn btn-info"
-                    ng-click="redirect('/authors/new/review?objectid=' + record._id)">Review Submission
-            </button>
-            <button class="btn btn-danger"
-                    ng-click="setDecision(record._id,'reject')">Reject
-            </button>
-            <button class="btn btn-warning"
-                    ng-click="setDecision(record._id,'accept_curate')">Curation
-            </button>
-            <button class="btn btn-success"
-                    ng-click="setDecision(record._id,'accept')">Accept
-            </button>
-          </div>
-
           <!--HEP Decision-->
           <div
             ng-if="record._source._extra_data && record._source._workflow.data_type === 'hep' && !record._source._extra_data.user_action">
