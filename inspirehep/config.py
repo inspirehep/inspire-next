@@ -1536,34 +1536,6 @@ INSPIRE_LEGACY_ROLES = {
     ]
 }
 
-INSPIRE_CATEGORIES = [
-    'Accelerators',
-    'Astrophysics',
-    'Computing',
-    'Data Analysis and Statistics',
-    'Experiment-HEP',
-    'Experiment-Nucl',
-    'General Physics',
-    'Gravitation and Cosmology',
-    'Instrumentation',
-    'Lattice',
-    'Math and Math Physics',
-    'Other',
-    'Phenomenology-HEP',
-    'Theory-HEP',
-    'Theory-Nucl'
-]
-
-INSPIRE_DEGREE_TYPES = [
-    'Bachelor',
-    'Diploma',
-    'Habilitation',
-    'Laurea',
-    'Master',
-    'PhD',
-    'Thesis'
-]
-
 INSPIRE_LICENSE_TYPES = [
     'CC-BY',
     'CC-BY-NC',
