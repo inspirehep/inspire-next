@@ -496,3 +496,103 @@ def test_hidden_notes_from_595__a_9_and_595__double_a_9():
     result = hep2marc.do(result)
 
     assert expected == result['595']
+
+
+def test_desy_bookkeeping_from_multiple_595_Da_d_s():
+    schema = load_schema('hep')
+    subschema = schema['properties']['_desy_bookkeeping']
+
+    snippet = '''
+        </record>
+          <datafield tag="595" ind1=" " ind2="D">
+            <subfield code="a">8</subfield>
+            <subfield code="d">2017-02-17</subfield>
+            <subfield code="s">abs</subfield>
+          </datafield><datafield tag="595" ind1=" " ind2="D">
+            <subfield code="a">8</subfield>
+            <subfield code="d">2017-02-19</subfield>
+            <subfield code="s">printed</subfield>
+          </datafield>
+        </record>
+    ''' # record/1513161
+
+    expected = [
+        {
+            'expert': '8',
+            'date': '2017-02-17',
+            'status': 'abs'
+        },
+        {
+            'expert': '8',
+            'date': '2017-02-19',
+            'status': 'printed'
+        }
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['_desy_bookkeeping'], subschema) is None
+    assert expected == result['_desy_bookkeeping']
+
+    expected = [
+        {
+            'a': '8',
+            'd': '2017-02-17',
+            's': 'abs'
+        },
+        {
+            'a': '8',
+            'd': '2017-02-19',
+            's': 'printed'
+        }
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['595_D']
+
+
+def test_export_to_from_595__c_cds():
+    schema = load_schema('hep')
+    subschema = schema['properties']['_export_to']
+
+    snippet = '''
+        <datafield tag="595" ind1=" " ind2=" ">
+          <subfield code="c">CDS</subfield>
+        </datafield>
+    ''' # record/1513006
+
+    expected = {'CDS': True}
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['_export_to'], subschema) is None
+    assert expected == result['_export_to']
+
+    expected = [
+        {'c': 'CDS'}
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['595']
+
+
+def test_export_to_from_595__c_not_hal():
+    schema = load_schema('hep')
+    subschema = schema['properties']['_export_to']
+
+    snippet = '''
+        <datafield tag="595" ind1=" " ind2=" ">
+          <subfield code="c">not HAL</subfield>
+        </datafield>
+    ''' # record/1512891
+
+    expected =  {'HAL': False}
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['_export_to'], subschema) is None
+    assert expected == result['_export_to']
+
+    expected = [
+        {'c': 'not HAL'}
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['595']
