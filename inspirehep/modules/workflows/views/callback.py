@@ -28,11 +28,12 @@ import re
 
 from os.path import join
 from flask import Blueprint, jsonify, request, current_app
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from invenio_db import db
 from invenio_workflows import workflow_object_class
 
-from inspirehep.modules.cache import current_cache
+from inspirehep.modules.workflows.models import WorkflowsPendingRecord
 
 
 blueprint = Blueprint(
@@ -47,48 +48,63 @@ blueprint = Blueprint(
 def _get_base_url():
     """Return base URL for generated URLs for remote reference."""
     base_url = current_app.config.get(
-        "LEGACY_ROBOTUPLOAD_URL", "SERVER_NAME"
+        "LEGACY_ROBOTUPLOAD_URL",
+        current_app.config["SERVER_NAME"],
     )
     if not re.match('^https?://', base_url):
         base_url = 'http://{}'.format(base_url)
     return base_url
 
 
-@blueprint.route('/workflows/continue', methods=['POST'])
-def continue_workflow_callback():
-    """Handle callback to continue a workflow.
+def _continue_workflow(workflow_id, recid, result=None):
+    """Small wrapper to continue a workflow.
 
-    Expects the request data to contain a object ID in the
-    nonce field.
+    Will prepare the needed data from the record id and the result data if
+    passed.
+
+    :return: True if succeeded, False if the specified workflow id does not
+        exist.
     """
-    request_data = request.get_json()
-    id_object = request_data.get("nonce", "")
+    result = result if result is not None else {}
+    base_url = _get_base_url()
+    workflow_object = workflow_object_class.get(workflow_id)
+    if not workflow_object:
+        current_app.logger.error(
+            'No workflow object with the id %s could be found.',
+            workflow_id,
+        )
+        return False
 
-    if id_object:
-        callback_results = request_data.get("results", {})
-        workflow_object = workflow_object_class.get(id_object)
-        if workflow_object:
-            results = request_data.get("results", [])
-            for result in results:
-                status = result.get('success', False)
-                if status:
-                    recid = result.get('recid')
-                    base_url = _get_base_url()
-                    workflow_object.extra_data['url'] = join(
-                        base_url,
-                        'record',
-                        str(recid)
-                    )
-                    workflow_object.extra_data['recid'] = recid
-            # Will add the results to the engine extra_data column.
-            workflow_object.save()
-            db.session.commit()
-            workflow_object.continue_workflow(
-                delayed=True,
-                callback_results=callback_results
-            )
-            return jsonify({"result": "success"})
-    return jsonify({"result": "failed"})
+    workflow_object.extra_data['url'] = join(
+        base_url,
+        'record',
+        str(recid)
+    )
+    workflow_object.extra_data['recid'] = recid
+    workflow_object.extra_data['callback_result'] = result
+    workflow_object.save()
+
+    workflow_object.continue_workflow(delayed=True)
+    return True
+
+
+def _find_and_continue_workflow(workflow_id, recid, result=None):
+    workflow_found = _continue_workflow(
+        workflow_id=workflow_id,
+        recid=recid,
+        result=result,
+    )
+    if not workflow_found:
+        current_app.logger.warning(
+            'The workflow %s was not found.',
+            workflow_id,
+        )
+        return {
+            'status': 'failed',
+            'message': 'workflow with id %s not found.' % workflow_id,
+        }
+
+    return {'status': 'succeeded'}
 
 
 @blueprint.route('/workflows/webcoll', methods=['POST'])
@@ -99,26 +115,48 @@ def webcoll_callback():
     recids field.
     """
     recids = dict(request.form).get('recids', [])
-    pending_records = current_cache.get("pending_records") or dict()
-    for rid in recids:
-        if rid in pending_records:
-            objectid = pending_records[rid]
-            workflow_object = workflow_object_class.get(objectid)
-            base_url = _get_base_url()
-            workflow_object.extra_data['url'] = join(
-                base_url, 'record', str(rid)
+    response = {}
+    for recid in recids:
+        recid = int(recid)
+        if recid in response:
+            current_app.logger.warning('Received duplicated recid: %s', recid)
+            continue
+
+        try:
+            pending_record = WorkflowsPendingRecord.query.filter_by(
+                record_id=recid,
+            ).one()
+        except NoResultFound:
+            current_app.logger.debug(
+                'The record %s was not found on the pending list.',
+                recid,
             )
-            workflow_object.extra_data['recid'] = rid
-            workflow_object.save()
-            db.session.commit()
-            workflow_object.continue_workflow(delayed=True)
-            del pending_records[rid]
-            current_cache.set(
-                "pending_records",
-                pending_records,
-                timeout=current_app.config["PENDING_RECORDS_CACHE_TIMEOUT"]
+            response[recid] = {
+                'status': 'failed',
+                'message': 'Recid not in pending list.',
+            }
+            continue
+        except MultipleResultsFound:
+            current_app.logger.warning(
+                'The record %s is found several times in the pending list.',
+                recid,
             )
-    return jsonify({"result": "success"})
+            response[recid] = {
+                'status': 'failed',
+                'message': 'Duplicated entries in the pending list.',
+            }
+            continue
+
+        response[recid] = _find_and_continue_workflow(
+            workflow_id=pending_record.workflow_id,
+            recid=recid,
+        )
+        db.session.delete(pending_record)
+        db.session.commit()
+        if response[recid].get('status') == 'failed':
+            continue
+
+    return jsonify(response)
 
 
 @blueprint.route('/workflows/robotupload', methods=['POST'])
@@ -130,33 +168,57 @@ def robotupload_callback():
     so the workflow can be resumed when webcoll finish
     processing that record.
     If robotupload encountered an error sends an email
-    to site administrator informing him about the error."""
+    to site administrator informing him about the error.
+    """
     request_data = request.get_json()
-    id_object = request_data.get("nonce", "")
-    results = request_data.get("results", [])
-    status = False
+    workflow_id = request_data.get('nonce', '')
+    results = request_data.get('results', [])
+    response = {}
     for result in results:
-        status = result.get('success', False)
-        if status:
-            recid = result.get('recid')
-            pending_records = current_cache.get("pending_records") or dict()
-            pending_records[str(recid)] = str(id_object)
-            current_cache.set(
-                "pending_records",
-                pending_records,
-                timeout=current_app.config["PENDING_RECORDS_CACHE_TIMEOUT"]
-            )
-        else:
-            from invenio_mail.tasks import send_email
+        recid = int(result.get('recid'))
 
-            body = ("There was an error when uploading the "
-                    "submission with id: %s.\n" % id_object)
-            body += "Error message:\n"
-            body += result.get('error_message', '')
-            send_email.delay(dict(
-                sender=current_app.config["CFG_SITE_SUPPORT_EMAIL"],
-                receipient=current_app.config["CFG_SITE_ADMIN_EMAIL"],
-                subject='BATCHUPLOAD ERROR',
-                body=body
-            ))
-    return jsonify({"result": status})
+        if recid in response:
+            current_app.logger.warning('Received duplicated recid: %s', recid)
+            continue
+
+        already_pending_ones = WorkflowsPendingRecord.query.filter_by(
+            record_id=recid,
+        ).all()
+        if already_pending_ones:
+            current_app.logger.warning(
+                'The record %s was already found on the pending list.',
+                recid
+            )
+            response[recid] = {
+                'status': 'failed',
+                'message': 'Recid %s already in pending list.' % recid,
+            }
+            continue
+
+        pending_entry = WorkflowsPendingRecord(
+            workflow_id=workflow_id,
+            record_id=recid,
+        )
+        db.session.add(pending_entry)
+        db.session.commit()
+        current_app.logger.debug(
+            'Successfully added recid:workflow %s:%s to pending list.',
+            recid,
+            workflow_id,
+        )
+
+        response[recid] = _find_and_continue_workflow(
+            workflow_id=workflow_id,
+            recid=recid,
+            result=result,
+        )
+
+        if response[recid].get('status') == 'failed':
+            continue
+
+        current_app.logger.debug(
+            'Successfully restarted workflow %s',
+            workflow_id,
+        )
+
+    return jsonify(response)

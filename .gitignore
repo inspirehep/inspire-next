@@ -102,3 +102,6 @@ dump.rdb
 # Selenium report
 assets
 selenium-report.html
+
+# Rope project files
+.ropeproject/

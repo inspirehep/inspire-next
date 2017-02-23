@@ -24,9 +24,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
 import os
 import pkg_resources
+import re
+import logging
 
+import requests_mock
 import mock
 import pytest
 
@@ -40,90 +44,179 @@ from invenio_workflows import (
 )
 
 from inspirehep.dojson.hep import hep
+from inspirehep.factory import create_app
 from inspirehep.modules.converter.xslt import convert
+from inspirehep.modules.workflows.models import (
+    WorkflowsAudit,
+    WorkflowsPendingRecord,
+)
+
+
+@pytest.fixture(autouse=True)
+def cleanup_workflows_tables(small_app):
+    with small_app.app_context():
+        obj_types = (
+                WorkflowsAudit.query.all(),
+                WorkflowsPendingRecord.query.all(),
+                workflow_object_class.query(),
+        )
+        for obj_type in obj_types:
+            for obj in obj_type:
+                obj.delete()
+
+        db.session.commit()
 
 
 @pytest.fixture
-def record_oai_arxiv_plots():
+def workflow_app():
+    app = create_app(
+        BEARD_API_URL="http://example.com/beard",
+        DEBUG=True,
+        CELERY_ALWAYS_EAGER=True,
+        CELERY_RESULT_BACKEND='cache',
+        CELERY_CACHE_BACKEND='memory',
+        CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
+        PRODUCTION_MODE=True,
+        LEGACY_ROBOTUPLOAD_URL=(
+            'http://localhost:1234'
+        ),
+        MAGPIE_API_URL="http://example.com/magpie",
+        WTF_CSRF_ENABLED=False,
+    )
+
+    with app.app_context():
+        yield app
+
+
+@pytest.fixture
+def record():
     """Provide record fixture."""
-    return pkg_resources.resource_string(
+    record_oai_arxiv_plots = pkg_resources.resource_string(
         __name__,
         os.path.join(
             'fixtures',
             'oai_arxiv_record_with_plots.xml'
         )
     )
+    # Convert to MARCXML, then dict, then HEP JSON
+    record_oai_arxiv_plots_marcxml = convert(
+        record_oai_arxiv_plots,
+        "oaiarXiv2marcxml.xsl"
+    )
+    record_marc = create_record(record_oai_arxiv_plots_marcxml)
+    json_data = hep.do(record_marc)
+
+    return json_data
 
 
 @pytest.fixture
-def record_oai_arxiv_accept():
+def to_accept_record():
     """Provide record fixture."""
-    return pkg_resources.resource_string(
+    record_oai_arxiv_plots = pkg_resources.resource_string(
         __name__,
         os.path.join(
             'fixtures',
             'oai_arxiv_record_to_accept.xml'
         )
     )
+    # Convert to MARCXML, then dict, then HEP JSON
+    record_oai_arxiv_plots_marcxml = convert(
+        record_oai_arxiv_plots,
+        "oaiarXiv2marcxml.xsl"
+    )
+    record_marc = create_record(record_oai_arxiv_plots_marcxml)
+    json_data = hep.do(record_marc)
+
+    return json_data
 
 
-@pytest.fixture
-def some_record():
-    """Provide record fixture."""
-    return pkg_resources.resource_string(
-        __name__,
-        os.path.join(
-            'fixtures',
-            'some_record.xml'
-        )
+
+def _do_resolve_workflow(app, workflow_id, action='accept_core'):
+    """Calls to the workflow resolve endpoint.
+
+    :param app: flask app to use
+    :param workflow_id: id of the workflow to accept.
+    :param action: action taken (normally on of 'reject', accept_core',
+    'accept')
+    """
+    client = app.test_client()
+    data = {
+        'value': action,
+        'id': workflow_id,
+    }
+
+    return client.post(
+        '/api/holdingpen/%s/action/resolve' % workflow_id,
+        data=json.dumps(data),
+        content_type='application/json',
     )
 
 
-@pytest.fixture
-def arxiv_tarball():
-    """Provide file fixture."""
-    return pkg_resources.resource_filename(
-        __name__,
-        os.path.join(
-            'fixtures',
-            '1407.7587v1'
-        )
+def _do_accept_core(app, workflow_id):
+    """Accepts the given workflow as core.
+
+    :param app: flask app to use
+    :param workflow_id: id of the workflow to accept.
+    """
+    response = _do_resolve_workflow(
+        app=app,
+        workflow_id=workflow_id,
+        action='accept_core',
+    )
+    assert response.status_code == 200
+    response_data = json.loads(response.data)
+    assert response_data == {
+        'acknowledged': True,
+        'action': 'resolve',
+        'result': True,
+    }
+
+
+def _do_robotupload_callback(
+    app, workflow_id, recids, server_name='http://fake.na.me',
+):
+    """Calls to the robotupload callback with the given recids.
+
+    :param app: flask app to use
+    :param workflow_id: id of the associated workflow.
+    :param recids: list of recids to generete the fake callback data.
+    :param server_name: name of the server used for the record url.
+    """
+    client = app.test_client()
+    data = {
+        "nonce": workflow_id,
+        "results": [
+                {
+                    "recid": int(recid),
+                    "error_message": "",
+                    "success": True,
+                    "marcxml": "fake marcxml (not really used yet anywhere)",
+                    "url": "%s/record/%s" % (server_name, recid),
+                } for recid in recids
+            ]
+    }
+
+    return client.post(
+        '/callback/workflows/robotupload',
+        data=json.dumps(data),
+        content_type='application/json',
     )
 
 
-@pytest.fixture
-def arxiv_pdf():
-    """Provide file fixture."""
-    return pkg_resources.resource_filename(
-        __name__,
-        os.path.join(
-            'fixtures',
-            '1407.7587v1.pdf'
-        )
-    )
+def _do_webcoll_callback(app, recids, server_name='http://fake.na.me'):
+    """Calls to the webcoll callback with the given recids.
 
+    :param app: flask app to use
+    :param recids: list of recids to generete the fake callback data.
+    :param server_name: name of the server used for the record url.
+    """
+    client = app.test_client()
+    data = {"recids": recids}
 
-@pytest.fixture
-def arxiv_tarball_accept():
-    """Provide file fixture."""
-    return pkg_resources.resource_stream(
-        __name__,
-        os.path.join(
-            'fixtures',
-            '1511.01097'
-        )
-    )
-
-
-@pytest.fixture
-def arxiv_pdf_accept():
-    """Provide file fixture."""
-    return pkg_resources.resource_stream(
-        __name__,
-        os.path.join(
-            'fixtures',
-            '1511.01097v1.pdf'
-        )
+    return client.post(
+        '/callback/workflows/webcoll',
+        data=data,
+        content_type='application/x-www-form-urlencoded',
     )
 
 
@@ -143,14 +236,14 @@ def fake_download_file(workflow, name, url):
             __name__,
             os.path.join(
                 'fixtures',
-                '1407.7587v1.pdf'
+                '1407.7587v1.pdf',
             )
         )
         return workflow.files[name]
     raise Exception("Download file not mocked!")
 
 
-def fake_beard_api_block_request(dummy):
+def fake_beard_api_block_request(*args, **kwargs):
     """Mock json_api_request func."""
     return {}
 
@@ -170,100 +263,125 @@ def fake_magpie_api_request(url, data):
     if data.get('corpus') == "experiments":
         return {
             "labels": [
-                [
-                    "CMS",
-                    0.75495152473449707
-                ],
-                [
-                    "GEMS",
-                    0.45495152473449707
-                ],
-                [
-                    "ALMA",
-                    0.39597576856613159
-                ],
-                [
-                    "XMM",
-                    0.28373843431472778
-                ],
+                ["CMS", 0.75495152473449707],
+                ["GEMS", 0.45495152473449707],
+                ["ALMA", 0.39597576856613159],
+                ["XMM", 0.28373843431472778],
             ],
             "status_code": 200
         }
     elif data.get('corpus') == "categories":
         return {
             "labels": [
-                [
-                    "Astrophysics",
-                    0.9941025972366333
-                ],
-                [
-                    "Phenomenology-HEP",
-                    0.0034253709018230438
-                ],
-                [
-                    "Instrumentation",
-                    0.0025460966862738132
-                ],
-                [
-                    "Gravitation and Cosmology",
-                    0.0017545684240758419
-                ],
+                ["Astrophysics", 0.9941025972366333],
+                ["Phenomenology-HEP", 0.0034253709018230438],
+                ["Instrumentation", 0.0025460966862738132],
+                ["Gravitation and Cosmology", 0.0017545684240758419],
             ],
             "status_code": 200
         }
     elif data.get('corpus') == "keywords":
         return {
             "labels": [
-                [
-                    "galaxy",
-                    0.29424679279327393
-                ],
-                [
-                    "numerical calculations",
-                    0.22625420987606049
-                ],
+                ["galaxy", 0.29424679279327393],
+                ["numerical calculations", 0.22625420987606049],
                 [
                     "numerical calculations: interpretation of experiments",
                     0.031719371676445007
                 ],
-                [
-                    "luminosity",
-                    0.028066780418157578
-                ],
-                [
-                    "experimental results",
-                    0.027784878388047218
-                ],
-                [
-                    "talk",
-                    0.023392116650938988
-                ],
+                ["luminosity", 0.028066780418157578],
+                ["experimental results", 0.027784878388047218],
+                ["talk", 0.023392116650938988],
             ],
             "status_code": 200
         }
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
-            side_effect=fake_download_file)
-@mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request',
-            side_effect=fake_beard_api_request)
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request',
-            side_effect=fake_magpie_api_request)
-@mock.patch('inspirehep.modules.authors.receivers._query_beard_api',
-            side_effect=fake_beard_api_block_request)
-def test_harvesting_arxiv_workflow_rejected(
-    mocked_api_request_beard_block, mocked_api_request_magpie,
-    mocked_api_request_beard, mocked_download,
-    small_app, record_oai_arxiv_plots):
-    """Test a full harvesting workflow."""
+def fake_refextract_extract_references_from_file(*args, **kwargs):
+    """Mock refextract extract_references_from_file func."""
+    return {'references': []}
 
-    # Convert to MARCXML, then dict, then HEP JSON
-    record_oai_arxiv_plots_marcxml = convert(
-        record_oai_arxiv_plots,
-        "oaiarXiv2marcxml.xsl"
-    )
-    record_marc = create_record(record_oai_arxiv_plots_marcxml)
-    record_json = hep.do(record_marc)
+
+def get_halted_workflow(app, record, extra_config=None):
+    extra_config = extra_config or {}
+    with mock.patch.dict(app.config, extra_config):
+        workflow_uuid = start('article', [record])
+
+    eng = WorkflowEngine.from_uuid(workflow_uuid)
+    obj = eng.processed_objects[0]
+
+    assert obj.status == ObjectStatus.HALTED
+    assert obj.data_type == "hep"
+
+    # Files should have been attached (tarball + pdf, and plots)
+    assert obj.files["1407.7587.pdf"]
+    assert obj.files["1407.7587.tar.gz"]
+
+    assert len(obj.files) > 2
+
+    # A publication note should have been extracted
+    pub_info = obj.data.get('publication_info')
+    assert pub_info
+    assert pub_info[0]
+    assert pub_info[0].get('year') == 2014
+    assert pub_info[0].get('journal_title') == "J. Math. Phys."
+
+    # A prediction should have been made
+    prediction = obj.extra_data.get("relevance_prediction")
+    assert prediction
+    assert prediction['decision'] == 'Rejected'
+    assert prediction['scores']['Rejected'] == 0.8358207729691823
+
+    experiments_prediction = obj.extra_data.get("experiments_prediction")
+    assert experiments_prediction
+    assert experiments_prediction['experiments'] == [
+        ['CMS', 0.7549515247344971]
+    ]
+
+    keywords_prediction = obj.extra_data.get("keywords_prediction")
+    assert keywords_prediction
+    assert {
+        "label": "galaxy",
+        "score": 0.29424679279327393,
+        "accept": True
+    } in keywords_prediction['keywords']
+
+    # This record should not have been touched yet
+    assert "approved" not in obj.extra_data
+
+    return workflow_uuid, eng, obj
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.authors.receivers._query_beard_api',
+    side_effect=fake_beard_api_block_request,
+)
+@mock.patch(
+    'inspirehep.modules.refextract.tasks.extract_references_from_file',
+    side_effect=fake_refextract_extract_references_from_file,
+)
+def test_harvesting_arxiv_workflow_rejected(
+    mocked_refextract_extract_refs,
+    mocked_api_request_beard_block,
+    mocked_api_request_magpie,
+    mocked_api_request_beard,
+    mocked_download,
+    small_app,
+    record,
+):
+    """Test a full harvesting workflow."""
 
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
@@ -272,47 +390,11 @@ def test_harvesting_arxiv_workflow_rejected(
 
     workflow_uuid = None
     with small_app.app_context():
-        with mock.patch.dict(small_app.config, extra_config):
-            workflow_uuid = start('article', [record_json])
-
-        eng = WorkflowEngine.from_uuid(workflow_uuid)
-        obj = eng.processed_objects[0]
-
-        assert obj.status == ObjectStatus.HALTED
-        assert obj.data_type == "hep"
-
-        # Files should have been attached (tarball + pdf, and plots)
-        assert obj.files["1407.7587.pdf"]
-        assert obj.files["1407.7587.tar.gz"]
-
-        assert len(obj.files) > 2
-
-        # A publication note should have been extracted
-        pub_info = obj.data.get('publication_info')
-        assert pub_info
-        assert pub_info[0]
-        assert pub_info[0].get('year') == 2014
-        assert pub_info[0].get('journal_title') == "J. Math. Phys."
-
-        # A prediction should have been made
-        prediction = obj.extra_data.get("relevance_prediction")
-        assert prediction
-        assert prediction['decision'] == "Rejected"
-        assert prediction['scores']['Rejected'] == 0.8358207729691823
-
-        experiments_prediction = obj.extra_data.get("experiments_prediction")
-        assert experiments_prediction
-        assert experiments_prediction['experiments'] == [
-            ['CMS', 0.7549515247344971]
-        ]
-
-        keywords_prediction = obj.extra_data.get("keywords_prediction")
-        assert keywords_prediction
-        assert {"label": "galaxy", "score": 0.29424679279327393,
-                "accept": True} in keywords_prediction['keywords']
-
-        # This record should not have been touched yet
-        assert "approved" not in obj.extra_data
+        workflow_uuid, eng, obj = get_halted_workflow(
+            app=small_app,
+            extra_config=extra_config,
+            record=record,
+        )
 
         # Now let's resolve it as accepted and continue
         # FIXME Should be accept, but record validation prevents us.
@@ -323,7 +405,6 @@ def test_harvesting_arxiv_workflow_rejected(
 
         db.session.commit()
 
-    with small_app.app_context():
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
         obj_id = obj.id
@@ -334,58 +415,86 @@ def test_harvesting_arxiv_workflow_rejected(
         assert obj.status == ObjectStatus.COMPLETED
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
-            side_effect=fake_download_file)
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.authors.receivers._query_beard_api',
+    side_effect=fake_beard_api_block_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.matching.search',
+    return_value=[],
+)
+@mock.patch(
+    'inspirehep.modules.refextract.tasks.extract_references_from_file',
+    side_effect=fake_refextract_extract_references_from_file,
+)
 def test_harvesting_arxiv_workflow_accepted(
-    mocked, small_app, record_oai_arxiv_plots):
+    mocked_refextract_extract_refs,
+    mocked_matching_search,
+    mocked_api_request_beard_block,
+    mocked_api_request_magpie,
+    mocked_api_request_beard,
+    mocked_download,
+    workflow_app,
+    record,
+):
     """Test a full harvesting workflow."""
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            requests_mock.ANY,
+            re.compile('.*(indexer|localhost).*'),
+            real_http=True,
+        )
+        requests_mocker.register_uri(
+            'POST',
+            re.compile(
+                'https?://localhost:1234.*',
+            ),
+            text=u'[INFO]',
+            status_code=200,
+        )
 
-    # Convert to MARCXML, then dict, then HEP JSON
-    record_oai_arxiv_plots_marcxml = convert(
-        record_oai_arxiv_plots,
-        "oaiarXiv2marcxml.xsl"
-    )
-    record_marc = create_record(record_oai_arxiv_plots_marcxml)
-    record_json = hep.do(record_marc)
-    workflow_uuid = None
-    with small_app.app_context():
-        workflow_uuid = start('article', [record_json])
+        workflow_uuid, eng, obj = get_halted_workflow(
+            app=workflow_app,
+            extra_config={'PRODUCTION_MODE': False},
+            record=record,
+        )
+
+        _do_accept_core(
+            app=workflow_app,
+            workflow_id=obj.id,
+        )
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
+        assert obj.status == ObjectStatus.WAITING
 
-        assert obj.status == ObjectStatus.HALTED
-        assert obj.data_type == "hep"
+        response = _do_robotupload_callback(
+            app=workflow_app,
+            workflow_id=obj.id,
+            recids=[12345],
+        )
+        assert response.status_code == 200
 
-        # Files should have been attached (tarball + pdf)
-        assert obj.files["1407.7587.pdf"]
-        assert obj.files["1407.7587.tar.gz"]
+        obj = workflow_object_class.get(obj.id)
+        assert obj.status == ObjectStatus.WAITING
 
-        # A publication note should have been extracted
-        pub_info = obj.data.get('publication_info')
-        assert pub_info
-        assert pub_info[0]
-        assert pub_info[0].get('year') == 2014
-        assert pub_info[0].get('journal_title') == "J. Math. Phys."
+        response = _do_webcoll_callback(app=workflow_app, recids=[12345])
+        assert response.status_code == 200
 
-        # This record should not have been touched yet
-        assert "approved" not in obj.extra_data
-
-        # Now let's resolve it as accepted and continue
-        # FIXME Should be accept, but record validation prevents us.
-        obj.remove_action()
-        obj.extra_data["approved"] = True
-        obj.extra_data["core"] = True
-        obj.save()
-
-        db.session.commit()
-
-    with small_app.app_context():
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
-        obj_id = obj.id
-        obj.continue_workflow()
-
-        obj = workflow_object_class.get(obj_id)
         # It was accepted
         assert obj.status == ObjectStatus.COMPLETED

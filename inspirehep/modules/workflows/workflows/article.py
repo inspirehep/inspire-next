@@ -83,8 +83,9 @@ from inspirehep.modules.workflows.tasks.submission import (
     prepare_keywords,
     remove_references,
     reply_ticket,
-    send_robotupload,
+    send_and_wait_robotupload,
     user_pdf_get,
+    wait_webcoll,
 )
 
 from inspirehep.modules.literaturesuggest.tasks import (
@@ -208,7 +209,10 @@ ENHANCE_RECORD = [
 CHECK_IF_SUBMISSION_AND_ASK_FOR_APPROVAL = [
     IF_ELSE(
         is_record_relevant,
-        [halt_record(action="hep_approval")],
+        [halt_record(
+            action="hep_approval",
+            message="Submission halted for curator approval.",
+        )],
         [
             reject_record("Article automatically rejected"),
             stop_processing
@@ -276,23 +280,24 @@ POSTENHANCE_RECORD = [
 ]
 
 
-SEND_TO_LEGACY = [
+SEND_TO_LEGACY_AND_WAIT = [
     IF_ELSE(
         article_exists,
         [
             prepare_update_payload(extra_data_key="update_payload"),
-            send_robotupload(
+            send_and_wait_robotupload(
                 marcxml_processor=hep2marc,
                 mode="correct",
                 extra_data_key="update_payload"
             ),
         ], [
-            send_robotupload(
+            send_and_wait_robotupload(
                 marcxml_processor=hep2marc,
                 mode="insert"
             ),
+            wait_webcoll,
         ]
-    )
+    ),
 ]
 
 CHECK_IF_MERGE_AND_STOP_IF_SO = [
@@ -355,11 +360,12 @@ class Article(object):
                 is_record_accepted,
                 (
                     POSTENHANCE_RECORD
-                    + SEND_TO_LEGACY
+                    + SEND_TO_LEGACY_AND_WAIT
                     + NOTIFY_ACCEPTED
                     + [
                         # TODO: once legacy is out, this should become
-                        # unconditional, and remove the SEND_TO_LEGACY steps
+                        # unconditional, and remove the SEND_TO_LEGACY_AND_WAIT
+                        # steps
                         IF_NOT(in_production_mode, [store_record]),
                     ]
                 ),
