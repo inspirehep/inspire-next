@@ -56,7 +56,6 @@ def test_contact_details_from_marcxml_270_double_p_single_m():
     schema = load_schema('experiments')
     subschema = schema['properties']['contact_details']
 
-    """Two people having same e-mail address. We do not support it."""
     snippet = (
         '<record> '
         '  <datafield tag="270" ind1=" " ind2=" ">'
@@ -82,7 +81,6 @@ def test_contact_details_from_marcxml_270_single_p_double_m():
     schema = load_schema('experiments')
     subschema = schema['properties']['contact_details']
 
-    """One person having two e-mail addresses. We do not support it."""
     snippet = (
         '<record> '
         '  <datafield tag="270" ind1=" " ind2=" ">'
@@ -578,7 +576,8 @@ def test_date_started_from_046__q_and_046__r_and_046__x():
 
 def test_date_started_and_date_completed_from_046():
     schema = load_schema('experiments')
-    subschema = schema['properties']['date_started']
+    subschema_date_started = schema['properties']['date_started']
+    subschema_date_completed = schema['properties']['date_started']
 
     snippet = (
         '<record>'
@@ -596,7 +595,8 @@ def test_date_started_and_date_completed_from_046():
 
     result = experiments.do(create_record(snippet))
 
-    assert validate(result['date_started'], subschema) is None
+    assert validate(result['date_started'], subschema_date_started) is None
+    assert validate(result['date_completed'], subschema_date_completed) is None
     assert result['date_started'] == '1996'
     assert result['date_completed'] == '2002'
 

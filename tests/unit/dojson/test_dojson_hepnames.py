@@ -841,18 +841,18 @@ def test_old_single_email_from_371__a():
 
     expected = [
         {
-          "current": False,
-          "old_emails": [
-            "test@imsc.res.in"
-          ],
-          "end_date": "2013",
-          "rank": "POSTDOC",
-          "institution": {
-            "name": "IMSc, Chennai",
-            "curated_relation": False
-          },
-          "_rank": "PD",
-          "start_date": "2012"
+            "current": False,
+            "old_emails": [
+                "test@imsc.res.in"
+            ],
+            "end_date": "2013",
+            "rank": "POSTDOC",
+            "institution": {
+                "name": "IMSc, Chennai",
+                "curated_relation": False
+            },
+            "_rank": "PD",
+            "start_date": "2012"
         }
     ]
     result = hepnames.do(create_record(snippet))
@@ -862,13 +862,13 @@ def test_old_single_email_from_371__a():
 
     expected = [
         {
-          "a": "IMSc, Chennai",
-          "o": [
-            "test@imsc.res.in"
-          ],
-          "s": "2012",
-          "r": "PD",
-          "t": "2013"
+            "a": "IMSc, Chennai",
+            "o": [
+                "test@imsc.res.in"
+            ],
+            "s": "2012",
+            "r": "PD",
+            "t": "2013"
         }
     ]
     result = hepnames2marc.do(result)
@@ -950,7 +950,6 @@ def test_positions_from_371__a_double_m_z():
     result = hepnames2marc.do(result)
 
     assert expected == result['371']
-
 
 
 def test_positions_from_371__a_m_r_z():
