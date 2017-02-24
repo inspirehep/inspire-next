@@ -113,16 +113,14 @@ def test_earliest_date_from_publication_info_year():
     assert expected == result
 
 
-def test_earliest_date_from_creation_modification_date_creation_date():
-    with_creation_modification_date_creation_date = InspireRecord({
-        'creation_modification_date': [
-            {'creation_date': '2015-11-04'}
-        ]
+def test_earliest_date_from_legacy_creation_date():
+    with_legacy_creation_date = InspireRecord({
+        'legacy_creation_date': '2015-11-04'
     })
-    earliest_date(None, with_creation_modification_date_creation_date)
+    earliest_date(None, with_legacy_creation_date)
 
     expected = '2015-11-04'
-    result = with_creation_modification_date_creation_date['earliest_date']
+    result = with_legacy_creation_date['earliest_date']
 
     assert expected == result
 

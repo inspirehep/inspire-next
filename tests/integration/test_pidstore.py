@@ -39,15 +39,16 @@ def test_getting_next_recid_from_legacy(app):
         with mock.patch.dict(app.config, extra_config):
             httpretty.register_uri(
                 httpretty.GET,
-                "http://server/batchuploader/allocaterecord",
-                content_type="application/json",
-                body=u'3141592',
-                status=200)
+                'http://server/batchuploader/allocaterecord',
+                content_type='application/json',
+                body='3141592',
+                status=200,
+            )
 
             args = dict(
-                object_type="rec",
-                object_uuid="7753a30b-4c4b-469c-8d8d-d5020069b3ab",
-                pid_type="lit"
+                object_type='rec',
+                object_uuid='7753a30b-4c4b-469c-8d8d-d5020069b3ab',
+                pid_type='lit'
             )
             provider = InspireRecordIdProvider.create(**args)
 

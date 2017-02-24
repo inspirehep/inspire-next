@@ -24,17 +24,23 @@
 
 from __future__ import absolute_import, division, print_function
 
-from dojson import Overdo
+from ..model import FilterOverdo, add_schema, add_collection, clean_record
 
-from ..model import FilterOverdo, add_schema, clean_record
+
+def ensure_hepnames(record, blob):
+    record.setdefault('980', []).append({'a': 'HEPNAMES'})
+
+    return record
 
 
 hepnames_filters = [
     add_schema('authors.json'),
+    add_collection('Authors'),
     clean_record,
 ]
 
 hepnames2marc_filters = [
+    ensure_hepnames,
     clean_record,
 ]
 

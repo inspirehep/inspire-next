@@ -128,14 +128,14 @@ def test_continuous_migration_handles_multiple_records(app, record_1502655_and_1
 
     assert r.lrange('legacy_records', 0, 0) == []
 
-    get_db_record('lit', 1502656)  # Does not raise.
+    get_db_record('aut', 1502655)  # Does not raise.
 
     expected = record_1502655_and_1502656[0]
     result = InspireProdRecords.query.get(1502655).marcxml
 
     assert expected == result
 
-    get_db_record('aut', 1502655)  # Does not raise.
+    get_db_record('lit', 1502656)  # Does not raise.
 
     expected = record_1502655_and_1502656[1]
     result = InspireProdRecords.query.get(1502656).marcxml
