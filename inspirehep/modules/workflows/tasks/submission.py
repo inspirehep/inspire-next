@@ -345,8 +345,7 @@ def prepare_keywords(obj, eng):
         # TODO: differentiate between curated and gueesed keywords
         keywords.append(
             {
-                'classification_scheme': '',
-                'keyword': keyword['label'],
+                'value': keyword['label'],
                 'source': 'curator' if keyword.get('curated') else 'magpie',
             }
         )
