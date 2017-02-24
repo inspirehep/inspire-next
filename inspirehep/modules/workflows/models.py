@@ -33,7 +33,7 @@ class WorkflowsAudit(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # Date that the action was taken
-    created = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     user_id = db.Column(
         db.Integer,

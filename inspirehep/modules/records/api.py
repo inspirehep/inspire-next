@@ -95,4 +95,4 @@ class ESRecord(InspireRecord):
         if self.get('_updated'):
             return arrow.get(self['_updated']).naive
         else:
-            return datetime.now()
+            return datetime.utcnow()
