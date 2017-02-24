@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,17 +20,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Pytest configuration for integration tests."""
-
 from __future__ import absolute_import, division, print_function
 
 from time import sleep
 
-import httpretty
 import pytest
 
 from invenio_db import db
 from invenio_search import current_search_client as es
+from invenio_accounts.models import User
+from invenio_oauthclient.models import RemoteAccount, RemoteToken, UserIdentity
 
 from inspirehep.factory import create_app
 
@@ -125,3 +124,58 @@ def api_client(api):
     """Flask test client for API app."""
     with api.test_client() as client:
         yield client
+
+
+class OrcidApiMock(object):
+
+    def __init__(self, put_code):
+        self.put_code = put_code
+
+    def add_record(self, author_orcid, token, category, orcid_json):
+        return self.put_code
+
+    def update_record(self, author_orcid, token, category, orcid_json, put_code):
+        pass
+
+    def remove_record(self, author_orcid, token, category, put_code):
+        pass
+
+
+@pytest.fixture(scope='module')
+def mock_user(app, request):
+    user = User(
+        email='test_orcid_user@inspirehep.net',
+    )
+    db.session.add(user)
+    db.session.commit()
+
+    token = RemoteToken(
+        id_remote_account=1,
+        access_token='123'
+    )
+    user_identity = UserIdentity(
+        id='0000-0001-9412-8627',
+        id_user=str(user.id),
+        method='orcid'
+    )
+    remote_account = RemoteAccount(
+        id=1,
+        user_id=user.id,
+        extra_data={},
+        client_id=1,
+        user=user
+    )
+
+    db.session.add(user_identity)
+    db.session.add(remote_account)
+    db.session.add(token)
+    db.session.commit()
+
+    yield user
+
+    remote_account = RemoteAccount.query.filter_by(user_id=user.id).first()
+    db.session.delete(token)
+    db.session.delete(user_identity)
+    db.session.delete(remote_account)
+    db.session.delete(user)
+    db.session.commit()

@@ -166,89 +166,89 @@ RECORD_EDITOR_PREVIEW_TEMPLATE_FUNCTION = get_detailed_template_from_record
 
 INSPIRE_COLLECTIONS_DEFINITION = [
     {
-        "query": "collections.primary:HEP",
-        "name": "Literature"
+        'query': '_collections:Literature',
+        'name': 'Literature',
     },
     {
-        "query": "collections.primary:H1-INTERNAL-NOTE",
-        "name": "H1 Internal Notes"
+        'query': '_collections:Authors',
+        'name': 'Authors',
     },
     {
-        "query": "collections.primary:INSTITUTION",
-        "name": "Institutions"
+        'query': '_collections:Data',
+        'name': 'Data',
     },
     {
-        "query": "collections.primary:HERMES-INTERNAL-NOTE",
-        "name": "HERMES Internal Notes"
+        'query': '_collections:Conferences',
+        'name': 'Conferences',
     },
     {
-        "query": "collections.primary:ZEUS-INTERNAL-NOTE",
-        "name": "ZEUS Internal Notes"
+        'query': '_collections:Jobs',
+        'name': 'Jobs',
     },
     {
-        "query": "collections.primary:JOB",
-        "name": "Jobs"
+        'query': '_collections:Institutions',
+        'name': 'Institutions',
     },
     {
-        "query": "collections.primary:JOBHIDDEN",
-        "name": "Jobs Hidden"
+        'query': '_collections:Experiments',
+        'name': 'Experiments',
     },
     {
-        "query": "collections.primary:CONFERENCES",
-        "name": "Conferences"
+        'query': '_collections:Journals',
+        'name': 'Journals',
     },
     {
-        "query": "collections.primary:D0-INTERNAL-NOTE",
-        "name": "D0 Internal Notes"
+        'query': 'special_collections:CDF-INTERNAL-NOTE',
+        'name': 'CDF Internal Notes',
     },
     {
-        "query": "collections.primary:EXPERIMENT",
-        "name": "Experiments"
+        'query': 'special_collections:CDF-NOTE',
+        'name': 'CDF Notes',
     },
     {
-        "query": "collections.primary:DATA",
-        "name": "Data"
+        'query': 'special_collections:D0-INTERNAL-NOTE',
+        'name': 'D0 Internal Notes',
     },
     {
-        "query": "collections.primary:ZEUS-PRELIMINARY-NOTE",
-        "name": "ZEUS Preliminary Notes"
+        'query': 'special_collections:D0-PRELIMINARY-NOTE',
+        'name': 'D0 Preliminary Notes',
     },
     {
-        "query": "collections.primary:JOURNALS",
-        "name": "Journals"
+        'query': 'special_collections:H1-INTERNAL-NOTE',
+        'name': 'H1 Internal Notes',
     },
     {
-        "query": "collections.primary:H1-PRELIMINARY-NOTE",
-        "name": "H1 Preliminary Notes"
+        'query': 'special_collections:H1-PRELIMINARY-NOTE',
+        'name': 'H1 Preliminary Notes',
     },
     {
-        "query": "collections.primary:D0-PRELIMINARY-NOTE",
-        "name": "D0 Preliminary Notes"
+        'query': 'special_collections:HALHIDDEN',
+        'name': 'HAL Hidden',
     },
     {
-        "query": "595__c:CDS collections.primary:HEP",
-        "name": "For CDS"
+        'query': 'special_collections:HEPHIDDEN',
+        'name': 'HEP Hidden',
     },
     {
-        "query": "collections.primary:CDF-INTERNAL-NOTE",
-        "name": "CDF Internal Notes"
+        'query': 'special_collections:HERMES-INTERNAL-NOTE',
+        'name': 'HERMES Internal Notes',
     },
     {
-        "query": "collections.primary:HIDDEN",
-        "name": "HIDDEN"
+        'query': 'special_collections:LARSOFT-INTERNAL-NOTE',
+        'name': 'LARSOFT Internal Notes',
     },
     {
-        "query": "collections.primary:CDF-NOTE",
-        "name": "CDF Notes"
+        'query': 'special_collections:LARSOFT-NOTE',
+        'name': 'LARSOFT Notes',
     },
     {
-        "query": "collections.primary:HEPNAMES",
-        "name": "Authors"
+        'query': 'special_collections:ZEUS-INTERNAL-NOTE',
+        'name': 'ZEUS Internal Notes',
     },
     {
-        "query": "collections.primary:HALhidden",
-        "name": "HAL Hidden"
-    }
+        'query': 'special_collections:ZEUS-PRELIMINARY-NOTE',
+        'name': 'ZEUS Preliminary Notes',
+    },
 ]
 
 # Search
@@ -370,8 +370,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "confnumber": ["publication_info.cnum"],
     "earliest_date": ["earliest_date"],
     "address": ["corporate_author"],
-    "datecreated": ["creation_modification_date.creation_date"],
-    "datemodified": ["creation_modification_date.modification_date"],
+    'datecreated': ['legacy_creation_date'],
     "recid": ["control_number"],
     "cited": ["citation_count"],
     "topcite": ["citation_count"]
@@ -1536,34 +1535,6 @@ INSPIRE_LEGACY_ROLES = {
         'workshop chair'
     ]
 }
-
-INSPIRE_CATEGORIES = [
-    'Accelerators',
-    'Astrophysics',
-    'Computing',
-    'Data Analysis and Statistics',
-    'Experiment-HEP',
-    'Experiment-Nucl',
-    'General Physics',
-    'Gravitation and Cosmology',
-    'Instrumentation',
-    'Lattice',
-    'Math and Math Physics',
-    'Other',
-    'Phenomenology-HEP',
-    'Theory-HEP',
-    'Theory-Nucl'
-]
-
-INSPIRE_DEGREE_TYPES = [
-    'Bachelor',
-    'Diploma',
-    'Habilitation',
-    'Laurea',
-    'Master',
-    'PhD',
-    'Thesis'
-]
 
 INSPIRE_LICENSE_TYPES = [
     'CC-BY',

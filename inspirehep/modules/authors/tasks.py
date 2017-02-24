@@ -29,9 +29,12 @@ from datetime import date
 
 from flask import current_app, url_for
 
+from sqlalchemy.orm.exc import NoResultFound
+
 from inspirehep.modules.forms.utils import filter_empty_elements
 
 from invenio_accounts.models import User
+from invenio_oauthclient.models import UserIdentity
 
 from .dojson.model import updateform
 
@@ -71,29 +74,36 @@ def formdata_to_model(obj, formdata):
 
     # Add comments to extra data
     if 'extra_comments' in form_fields and form_fields['extra_comments']:
-        data['_private_note'] = form_fields['extra_comments']
+        data.setdefault('_private_notes', []).append({
+            'source': 'submitter',
+            'value': form_fields['extra_comments']
+        })
 
-    # Add HEPNAMES collection
-    data["collections"] = [{
-        "primary": "HEPNAMES"
-    }]
+    data['stub'] = False
 
     # ==========
-    # Owner Info
+    # Submitter Info
     # ==========
     try:
         user_email = User.query.get(obj.id_user).email
     except AttributeError:
         user_email = ''
-    source = "{0}{1}".format('inspire:uid:', obj.id_user)
+    try:
+        orcid = UserIdentity.query.filter_by(
+            id_user=obj.id_user,
+            method='orcid'
+        ).one()
+    except NoResultFound:
+        orcid = ''
     data['acquisition_source'] = dict(
-        source=source,
         email=user_email,
         date=date.today().isoformat(),
-        method="submission",
+        method="submitter",
+        orcid=orcid,
         submission_number=str(obj.id),
+        internal_uid=obj.id_user,
     )
-    # Finally, set data
+
     return data
 
 

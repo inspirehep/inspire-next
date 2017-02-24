@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,17 +24,20 @@ from __future__ import absolute_import, division, print_function
 
 from dojson.contrib.marc21.utils import create_record
 
+from inspire_schemas.utils import load_schema
 from inspirehep.dojson.experiments import experiments
+from inspirehep.dojson.utils import validate
 
 
 def test_contact_details_from_marcxml_270_single_p_single_m():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['contact_details']
+
     snippet = (
-        '<record> '
-        '  <datafield tag="270" ind1=" " ind2=" ">'
-        '    <subfield code="m">lindner@mpi-hd.mpg.de</subfield>'
-        '    <subfield code="p">Manfred Lindner</subfield>'
-        '  </datafield>'
-        '</record>'
+        '<datafield tag="270" ind1=" " ind2=" ">'
+        '  <subfield code="m">lindner@mpi-hd.mpg.de</subfield>'
+        '  <subfield code="p">Manfred Lindner</subfield>'
+        '</datafield>'
     )
 
     expected = [
@@ -45,11 +48,14 @@ def test_contact_details_from_marcxml_270_single_p_single_m():
     ]
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['contact_details'], subschema) is None
     assert expected == result['contact_details']
 
 
 def test_contact_details_from_marcxml_270_double_p_single_m():
-    """Two people having same e-mail address. We do not support it."""
+    schema = load_schema('experiments')
+    subschema = schema['properties']['contact_details']
+
     snippet = (
         '<record> '
         '  <datafield tag="270" ind1=" " ind2=" ">'
@@ -67,11 +73,14 @@ def test_contact_details_from_marcxml_270_double_p_single_m():
     ]
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['contact_details'], subschema) is None
     assert expected == result['contact_details']
 
 
 def test_contact_details_from_marcxml_270_single_p_double_m():
-    """One person having two e-mail addresses. We do not support it."""
+    schema = load_schema('experiments')
+    subschema = schema['properties']['contact_details']
+
     snippet = (
         '<record> '
         '  <datafield tag="270" ind1=" " ind2=" ">'
@@ -89,10 +98,14 @@ def test_contact_details_from_marcxml_270_single_p_double_m():
     ]
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['contact_details'], subschema) is None
     assert expected == result['contact_details']
 
 
 def test_contact_details_from_multiple_marcxml_270():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['contact_details']
+
     snippet = (
         '<record> '
         '  <datafield tag="270" ind1=" " ind2=" ">'
@@ -116,10 +129,14 @@ def test_contact_details_from_multiple_marcxml_270():
     ]
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['contact_details'], subschema) is None
     assert expected == result['contact_details']
 
 
 def test_experiment_names_from_marcxml_119():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['experiment_names']
+
     snippet = (
         '<record>'
         '  <datafield tag="119" ind1=" " ind2=" ">'
@@ -135,10 +152,14 @@ def test_experiment_names_from_marcxml_119():
     ]
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['experiment_names'], subschema) is None
     assert expected == result['experiment_names']
 
 
 def test_experiment_names_and_affiliations_from_marcxml_119():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['experiment_names']
+
     snippet = (
         '<record>'
         '  <datafield tag="119" ind1=" " ind2=" ">'
@@ -151,6 +172,7 @@ def test_experiment_names_and_affiliations_from_marcxml_119():
 
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['experiment_names'], subschema) is None
     assert result['experiment_names'] == [{'title': 'CERN-ALPHA'}]
     assert result['affiliations'] == [
         {
@@ -164,6 +186,9 @@ def test_experiment_names_and_affiliations_from_marcxml_119():
 
 
 def test_experiment_names_and_affiliations_from_marcxml_multiple_119():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['experiment_names']
+
     snippet = (
         '<record>'
         '  <datafield tag="119" ind1=" " ind2=" ">'
@@ -184,6 +209,7 @@ def test_experiment_names_and_affiliations_from_marcxml_multiple_119():
 
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['experiment_names'], subschema) is None
     assert result['experiment_names'] == [{'title': 'LATTICE-UKQCD'}]
     assert result['affiliations'] == [
         {
@@ -205,6 +231,9 @@ def test_experiment_names_and_affiliations_from_marcxml_multiple_119():
 
 
 def test_titles_from_marcxml_245():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['titles']
+
     snippet = (
         '<record>'
         '  <datafield tag="245" ind1=" " ind2=" ">'
@@ -220,54 +249,58 @@ def test_titles_from_marcxml_245():
     ]
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['titles'], subschema) is None
     assert expected == result['titles']
 
 
-def test_title_variants_from_marcxml_419():
+def test_titles_from_419__a():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['titles']
+
     snippet = (
-        '<record>'
-        '  <datafield tag="419" ind1=" " ind2=" ">'
-        '    <subfield code="a">ALPHA</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
+        '<datafield tag="419" ind1=" " ind2=" ">'
+        '  <subfield code="a">ALPHA</subfield>'
+        '</datafield>'
+    )  # record/1108206
 
     expected = [
-        {
-            'title': 'ALPHA',
-        },
+        {'title': 'ALPHA'},
     ]
     result = experiments.do(create_record(snippet))
 
-    assert expected == result['title_variants']
+    assert validate(result['titles'], subschema) is None
+    assert expected == result['titles']
 
 
-def test_multiple_title_variants_from_marcxml_419():
+def test_titles_from_245__a_and_419__a():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['titles']
+
     snippet = (
         '<record>'
+        '  <datafield tag="245" ind1=" " ind2=" ">'
+        r'    <subfield code="a">Proposal to measure the very rare kaon decay $K^+ \to \pi^+ \nu \bar{\nu}$</subfield>'
+        '  </datafield>'
         '  <datafield tag="419" ind1=" " ind2=" ">'
         '    <subfield code="a">P-326</subfield>'
         '  </datafield>'
-        '  <datafield tag="419" ind1=" " ind2=" ">'
-        '    <subfield code="a">CERN-NA-048-3</subfield>'
-        '  </datafield>'
         '</record>'
-    )
+    )  # record/1275752
 
     expected = [
-        {
-            'title': 'P-326',
-        },
-        {
-            'title': 'CERN-NA-048-3',
-        },
+        {'title': r'Proposal to measure the very rare kaon decay $K^+ \to \pi^+ \nu \bar{\nu}$'},
+        {'title': 'P-326'},
     ]
     result = experiments.do(create_record(snippet))
 
-    assert expected == result['title_variants']
+    assert validate(result['titles'], subschema) is None
+    assert expected == result['titles']
 
 
 def test_description_from_520__a():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['description']
+
     snippet = (
         '<datafield tag="520" ind1=" " ind2=" ">'
         '  <subfield code="a">The Muon Accelerator Program (MAP) was created in 2010 to unify the DOE supported R&amp;D in the U.S. aimed at developing the concepts and technologies required for Muon Colliders and Neutrino Factories. These muon based facilities have the potential to discover and explore new exciting fundamental physics, but will require the development of demanding technologies and innovative concepts. The MAP aspires to prove the feasibility of a Muon Collider within a few years, and to make significant contributions to the international effort devoted to developing Neutrino Factories. MAP was formally approved on March 18, 2011.</subfield>'
@@ -279,10 +312,14 @@ def test_description_from_520__a():
     ]
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['description'], subschema) is None
     assert expected == result['description']
 
 
 def test_description_from_multiple_520__a():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['description']
+
     snippet = (
         '<record>'
         '  <datafield tag="520" ind1=" " ind2=" ">'
@@ -308,10 +345,14 @@ def test_description_from_multiple_520__a():
     ]
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['description'], subschema) is None
     assert expected == result['description']
 
 
 def test_spokespersons_from_702__a_i_z():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['spokespersons']
+
     snippet = (
         '<datafield tag="702" ind1=" " ind2=" ">'
         '  <subfield code="a">Hogan, Craig J.</subfield>'
@@ -324,7 +365,7 @@ def test_spokespersons_from_702__a_i_z():
         {
             'ids': [
                 {
-                    'type': 'INSPIRE ID',
+                    'schema': 'INSPIRE ID',
                     'value': 'INSPIRE-00090662',
                 },
             ],
@@ -335,10 +376,14 @@ def test_spokespersons_from_702__a_i_z():
     ]
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['spokespersons'], subschema) is None
     assert expected == result['spokespersons']
 
 
 def test_spokespersons_from_double_702__a_i():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['spokespersons']
+
     snippet = (
         '<record>'
         '  <datafield tag="702" ind1=" " ind2=" ">'
@@ -357,7 +402,7 @@ def test_spokespersons_from_double_702__a_i():
         {
             'ids': [
                 {
-                    'type': 'INSPIRE ID',
+                    'schema': 'INSPIRE ID',
                     'value': 'INSPIRE-00080677',
                 },
             ],
@@ -368,7 +413,7 @@ def test_spokespersons_from_double_702__a_i():
         {
             'ids': [
                 {
-                    'type': 'INSPIRE ID',
+                    'schema': 'INSPIRE ID',
                     'value': 'INSPIRE-00107105',
                 },
             ],
@@ -378,10 +423,14 @@ def test_spokespersons_from_double_702__a_i():
     ]
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['spokespersons'], subschema) is None
     assert expected == result['spokespersons']
 
 
 def test_collaboration_from_710__g():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['collaboration']
+
     snippet = (
         '<datafield tag="710" ind1=" " ind2=" ">'
         '  <subfield code="g">DarkSide</subfield>'
@@ -390,11 +439,15 @@ def test_collaboration_from_710__g():
 
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['collaboration'], subschema) is None
     assert result['collaboration'] == 'DarkSide'
     assert 'collaboration_alternative_names' not in result
 
 
 def test_collaboration_from_double_710__g():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['collaboration']
+
     snippet = (
         '<record>'
         '  <datafield tag="710" ind1=" " ind2=" ">'
@@ -408,11 +461,15 @@ def test_collaboration_from_double_710__g():
 
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['collaboration'], subschema) is None
     assert result['collaboration'] == 'BooNE'
     assert result['collaboration_alternative_names'] == ['MiniBooNE']
 
 
 def test_related_experiments_from_510__a_w_0():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['related_experiments']
+
     snippet = (
         '<datafield tag="510" ind1=" " ind2=" ">'
         '  <subfield code="0">1262631</subfield>'
@@ -431,10 +488,14 @@ def test_related_experiments_from_510__a_w_0():
     ]
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['related_experiments'], subschema) is None
     assert expected == result['related_experiments']
 
 
 def test_related_experiments_from_double_510__a_w_0():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['related_experiments']
+
     snippet = (
         '<record>'
         '  <datafield tag="510" ind1=" " ind2=" ">'
@@ -466,10 +527,14 @@ def test_related_experiments_from_double_510__a_w_0():
     ]
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['related_experiments'], subschema) is None
     assert expected == result['related_experiments']
 
 
 def test_date_started_from_046__q_s_and_046__r():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['date_started']
+
     snippet = (
         '<record>'
         '  <datafield tag="046" ind1=" " ind2=" ">'
@@ -485,6 +550,7 @@ def test_date_started_from_046__q_s_and_046__r():
     expected = '2009-11-30'
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['date_started'], subschema) is None
     assert expected == result['date_started']
 
 
@@ -509,6 +575,10 @@ def test_date_started_from_046__q_and_046__r_and_046__x():
 
 
 def test_date_started_and_date_completed_from_046():
+    schema = load_schema('experiments')
+    subschema_date_started = schema['properties']['date_started']
+    subschema_date_completed = schema['properties']['date_started']
+
     snippet = (
         '<record>'
         '  <datafield tag="046" ind1=" " ind2=" ">'
@@ -525,11 +595,16 @@ def test_date_started_and_date_completed_from_046():
 
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['date_started'], subschema_date_started) is None
+    assert validate(result['date_completed'], subschema_date_completed) is None
     assert result['date_started'] == '1996'
     assert result['date_completed'] == '2002'
 
 
 def test_accelerator_from_693__a():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['accelerator']
+
     snippet = (
         '<datafield tag="693" ind1=" " ind2=" ">'
         '  <subfield code="a">AD</subfield>'
@@ -539,4 +614,5 @@ def test_accelerator_from_693__a():
     expected = 'AD'
     result = experiments.do(create_record(snippet))
 
+    assert validate(result['accelerator'], subschema) is None
     assert expected == result['accelerator']

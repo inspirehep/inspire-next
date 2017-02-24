@@ -1,0 +1,57 @@
+{
+   "thesis_date":"2017-02-09",
+   "extra_comments":"This theis is quite important for this field because is discussing several tricky aspects about this topic ",
+   "title_crossref":"",
+   "additional_url":"https://arxiv.org/abs/1001.4538",
+   "journal_title":"",
+   "conf_name":"",
+   "title_arXiv":"",
+   "import_buttons":false,
+   "degree_type":"Master",
+   "collaboration":"",
+   "subject_term":[
+      "Astrophysics",
+      "Computing",
+      "Gravitation and Cosmology"
+   ],
+   "supervisors":[
+      {
+         "affiliation":"Nat. Semiconduct. Corp., Richardson",
+         "full_name":"Odegard, N."
+      }
+   ],
+   "doi":"",
+   "references":"",
+   "year":"",
+   "defense_date":"2017-02-11",
+   "institution":"Harwell, AERE",
+   "categories":"",
+   "nonpublic_note":"",
+   "volume":"",
+   "report_numbers":[
+      {
+         "report_number":"89001"
+      }
+   ],
+   "language":"en",
+   "title":" SEVEN-YEAR WILKINSON MICROWAVE ANISOTROPY PROBE ( WMAP ) OBSERVATIONS: COSMOLOGICAL INTERPRETATION ",
+   "url":"https://arxiv.org/pdf/1001.4538.pdf",
+   "type_of_doc":"thesis",
+   "page_range_article_id":"",
+   "arxiv_id":"",
+   "title_translation":"",
+   "note":"",
+   "authors":[
+      {
+         "affiliation":"Harwell, AERE",
+         "full_name":"Komatsu, E."
+      }
+   ],
+   "experiment":"ATCA",
+   "license_url":"",
+   "preprint_created":"",
+   "conference_id":"",
+   "other_language":"",
+   "issue":"",
+   "abstract":"  (Abridged) The 7-year WMAP data and improved astrophysical data rigorously\\r\\ntest the standard cosmological model and its extensions. By combining WMAP with\\r\\nthe latest distance measurements from BAO and H0 measurement, we determine the\\r\\nparameters of the simplest LCDM model. The power-law index of the primordial\\r\\npower spectrum is n_s=0.968+-0.012, a measurement that excludes the\\r\\nscale-invariant spectrum by 99.5%CL. The other parameters are also improved\\r\\nfrom the 5-year results. Notable examples of improved parameters are the total\\r\\nmass of neutrinos, sum(m_nu)<0.58eV, and the effective number of neutrino\\r\\nspecies, N_eff=4.34+0.86-0.88. We detect the effect of primordial helium on the\\r\\ntemperature power spectrum and provide a new test of big bang nucleosynthesis.\\r\\nWe detect, and show on the map for the first time, the tangential and radial\\r\\npolarization patterns around hot and cold spots of temperature fluctuations, an\\r\\nimportant test of physical processes at z=1090 and the dominance of adiabatic\\r\\nscalar fluctuations. With the 7-year TB power spectrum, the limit on a rotation\\r\\nof the polarization plane due to potential parity-violating effects has\\r\\nimproved to Delta(alpha)=-1.1+-1.4(stat)+-1.5(syst) degrees. We report\\r\\nsignificant detections of the SZ effect at the locations of known clusters of\\r\\ngalaxies. The measured SZ signal agrees well with the expected signal from the\\r\\nX-ray data. However, it is a factor of 0.5 to 0.7 times the predictions from\\r\\n\"   universal profile\" of Arnaud et al., analytical models, and hydrodynamical\\r\\nsimulations. We find, for the first time in the SZ effect, a significant\\r\\ndifference between the cooling-flow and non-cooling-flow clusters (or relaxed\\r\\nand non-relaxed clusters), which can explain some of the discrepancy. This\\r\\nlower amplitude is consistent with the lower-than-theoretically-expected SZ\\r\\npower spectrum recently measured by the South Pole Telescope collaboration.\\r\\n"
+}
