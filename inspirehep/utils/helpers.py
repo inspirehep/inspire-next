@@ -65,13 +65,13 @@ def get_json_for_plots(plots):
     index = 0
     for plot in plots:
         output_records.append(dict(
-            url=plot.get('url'),
-            docfile_type='Plot',
+            path=plot.get('url'),
+            type='Plot',
             description="{0:05d} {1}".format(index, "".join(plot.get('captions', []))),
             filename=plot.get('name'),
         ))
         index += 1
-    return dict(fft=output_records)
+    return dict(_fft=output_records)
 
 
 def force_force_list(data):

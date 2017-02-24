@@ -114,12 +114,12 @@ def test_prepare_files():
 
     assert prepare_files(obj, eng) is None
     assert obj.data == {
-        'fft': [
+        '_fft': [
             {
-                'url': '/data/foo.pdf',
-                'docfile_type': 'INSPIRE-PUBLIC',
+                'path': '/data/foo.pdf',
+                'type': 'INSPIRE-PUBLIC',
                 'filename': 'foo',
-                'filetype': '.pdf',
+                'format': '.pdf',
             },
         ],
     }
