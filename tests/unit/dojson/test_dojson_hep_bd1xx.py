@@ -23,7 +23,8 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
-import pytest
+
+from jsonschema.exceptions import ValidationError
 
 from dojson.contrib.marc21.utils import create_record
 
@@ -32,7 +33,6 @@ from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.utils import validate
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_i_u_x_y():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -72,23 +72,20 @@ def test_authors_from_100__a_i_u_x_y():
     assert validate(result['authors'], subschema) is None
     assert expected == result['authors']
 
-    expected = [
-        {
-            'a': 'Glashow, S.L.',
-            'i': [
-                'INSPIRE-00085173',
-            ],
-            'u': [
-                'Copenhagen U.',
-            ],
-        },
-    ]
+    expected = {
+        'a': 'Glashow, S.L.',
+        'i': [
+            'INSPIRE-00085173',
+        ],
+        'u': [
+            'Copenhagen U.',
+        ],
+    }
     result = hep2marc.do(result)
 
     assert expected == result['100']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -133,7 +130,6 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
                     'value': 'Kyoto U.',
                 },
             ],
-            'curated_relation': True,
             'full_name': 'Maskawa, Toshihide',
             'ids': [
                 {
@@ -157,7 +153,7 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
             'u': [
                 'Kyoto U.',
             ],
-            'w': 'M.Kobayashi.5',
+
         },
         '700': [
             {
@@ -165,7 +161,6 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
                 'u': [
                     'Kyoto U.',
                 ],
-                'w': 'T.Maskawa.1',
             },
         ],
     }
@@ -174,7 +169,6 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='Schema 15')
 def test_authors_from_100__a_e_w_y_and_700_a_e_w_y():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -194,7 +188,7 @@ def test_authors_from_100__a_e_w_y_and_700_a_e_w_y():
             <subfield code="y">0</subfield>
           </datafield>
         </record>
-    ''' # 1505338/export/xme
+    '''  # 1505338/export/xme
 
     expected = [
         {
@@ -217,7 +211,6 @@ def test_authors_from_100__a_e_w_y_and_700_a_e_w_y():
                     'value': 'B.A.Knyazev.2',
                 },
             ],
-            'curated_relation': False
         }
     ]
     result = hep.do(create_record(snippet))
@@ -225,102 +218,23 @@ def test_authors_from_100__a_e_w_y_and_700_a_e_w_y():
     assert validate(result['authors'], subschema) is None
     assert expected == result['authors']
 
-    expected_100 = {
-        'a': 'Vinokurov, Nikolay A.',
-        'e': 'ed.',
-    }
-    expected_700 = [
-        {
-            'a': 'Knyazev, Boris A.',
-            'e': 'ed.'
-        }
-    ]
-    result = hep2marc.do(result)
-
-    assert expected_100 == result['100']
-    assert expected_700 == result['700']
-
-
-@pytest.mark.xfail(reason='Schema 15')
-def test_authors_from_100__a_v_w_x_y_and_700__a_v_w_x_y():
-    schema = load_schema('hep')
-    subschema = schema['properties']['authors']
-
-    snippet = '''
-        <record>
-          <datafield tag="100" ind1=" " ind2=" ">
-            <subfield code="a">Balbinot, Eduardo</subfield>
-            <subfield code="v">University of Surrey</subfield>
-            <subfield code="w">E.Balbinot.1</subfield>
-            <subfield code="x">1074657</subfield>
-            <subfield code="y">0</subfield>
-          </datafield>
-          <datafield tag="700" ind1=" " ind2=" ">
-            <subfield code="a">Gieles, Mark</subfield>
-            <subfield code="v">University of Surrey</subfield>
-            <subfield code="w">M.Gieles.1</subfield>
-            <subfield code="x">1030594</subfield>
-            <subfield code="y">0</subfield>
-          </datafield>
-        </record>
-    ''' # 1512580/export/xme
-
-    expected = [
-        {
-            'full_name': 'Balbinot, Eduardo',
-            'raw_affiliations': {
-                'value': 'University of Surrey'
-            },
-            'ids': [
-                {
-                    'type': 'INSPIRE BAI',
-                    'value': 'E.Balbinot.1',
-                }
-            ],
-            'record': {
-                '$ref': 'http://localhost:5000/api/authors/1074657'
-            },
-            'curated_relation': False
+    expected = {
+        '100': {
+            'a': 'Vinokurov, Nikolay A.',
+            'e': ['ed.'],
         },
-        {
-            'full_name': 'Gieles, Mark',
-            'raw_affiliations': {
-                'value': 'University of Surrey'
+        '700': [
+            {
+                'a': 'Knyazev, Boris A.',
+                'e': ['ed.'],
             },
-            'ids': [
-                {
-                    'type': 'INSPIRE BAI',
-                    'value': 'M.Gieles.1',
-                }
-            ],
-            'record': {
-                '$ref': 'http://localhost:5000/api/authors/1030594'
-            },
-            'curated_relation': False
-        }
-    ]
-    result = hep.do(create_record(snippet))
-
-    assert validate(result['authors'], subschema) is None
-    assert expected == result['authors']
-
-    expected_100 = {
-        'a': 'Balbinot, Eduardo',
-        'v': 'University of Surrey'
+        ],
     }
-    expected_700 = [
-        {
-            'a': 'Gieles, Mark',
-            'v': 'University of Surrey'
-        }
-    ]
     result = hep2marc.do(result)
 
-    assert expected_100 == result['100']
-    assert expected_700 == result['700']
+    assert expected == result
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -385,7 +299,6 @@ def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
                     'value': 'Fermilab',
                 },
             ],
-            'curated_relation': True,
             'full_name': 'Mrenna, Stephen',
             'ids': [
                 {
@@ -406,7 +319,6 @@ def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
                     'value': 'Fermilab',
                 },
             ],
-            'curated_relation': True,
             'full_name': 'Skands, Peter Z.',
             'ids': [
                 {
@@ -427,7 +339,9 @@ def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
     expected = {
         '100': {
             'a': 'Sjostrand, Torbjorn',
-            'i': 'INSPIRE-00126851',
+            'i': [
+                'INSPIRE-00126851'
+            ],
             'u': [
                 'Lund U., Dept. Theor. Phys.',
             ],
@@ -438,14 +352,12 @@ def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
                 'u': [
                     'Fermilab',
                 ],
-                'w': 'S.Mrenna.1',
             },
             {
                 'a': 'Skands, Peter Z.',
                 'u': [
                     'Fermilab',
                 ],
-                'w': 'P.Z.Skands.1',
             },
         ],
     }
@@ -454,7 +366,6 @@ def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_v_m_w_y():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -480,6 +391,12 @@ def test_authors_from_100__a_v_m_w_y():
                     'value': 'X.Gao.11',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'Chern Institute of Mathematics and LPMC, Nankai University,'
+                             ' Tianjin, 300071, China',
+                }
+            ]
         },
     ]
     result = hep.do(create_record(snippet))
@@ -495,14 +412,12 @@ def test_authors_from_100__a_v_m_w_y():
         'm': [
             'gausyu@gmail.com',
         ],
-        'w': 'X.Gao.11',
     }
     result = hep2marc.do(result)
 
     assert expected == result['100']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_double_q_u_w_y_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -560,14 +475,12 @@ def test_authors_from_100__a_double_q_u_w_y_z():
         'u': [
             'Dubna, JINR',
         ],
-        'w': 'M.Dineykhan.1',
     }
     result = hep2marc.do(result)
 
     assert expected == result['100']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_m_u_v_w_y_z_and_700__a_j_v_m_w_y():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -615,9 +528,14 @@ def test_authors_from_100__a_m_u_v_w_y_z_and_700__a_j_v_m_w_y():
                     'value': 'X.Gao.11',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'Chern Institute of Mathematics and LPMC, Nankai University,'
+                             ' Tianjin, 300071, China',
+                }
+            ]
         },
         {
-            'curated_relation': False,
             'emails': [
                 'ming.l1984@gmail.com',
             ],
@@ -632,6 +550,12 @@ def test_authors_from_100__a_m_u_v_w_y_z_and_700__a_j_v_m_w_y():
                     'value': 'M.Liu.16',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'School of Mathematics, South China University of Technology,'
+                             ' Guangdong, Guangzhou, 510640, China',
+                }
+            ]
         },
     ]
     result = hep.do(create_record(snippet))
@@ -648,19 +572,24 @@ def test_authors_from_100__a_m_u_v_w_y_z_and_700__a_j_v_m_w_y():
             'u': [
                 'Nankai U.',
             ],
-            'w': 'X.Gao.11',
+            'v': [
+                'Chern Institute of Mathematics and LPMC, Nankai University,'
+                ' Tianjin, 300071, China',
+            ]
         },
         '700': [
             {
                 'a': 'Liu, Ming',
-                'j': 'ORCID:0000-0002-3413-183X',
+                'j': [
+                    'ORCID:0000-0002-3413-183X',
+                ],
                 'v': [
-                    'School of Mathematics, South China University of Technology, Guangdong, Guangzhou, 510640, China',
+                    'School of Mathematics, South China University of '
+                    'Technology, Guangdong, Guangzhou, 510640, China',
                 ],
                 'm': [
                     'ming.l1984@gmail.com',
                 ],
-                'w': 'ming.l1984@gmail.com',
             },
         ],
     }
@@ -669,7 +598,6 @@ def test_authors_from_100__a_m_u_v_w_y_z_and_700__a_j_v_m_w_y():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 @mock.patch('inspirehep.dojson.hep.fields.bd1xx.logger.warning')
 def test_authors_from_100__a_triple_u_w_x_y_triple_z_and_700__double_a_u_w_x_y_z(warning):
     schema = load_schema('hep')
@@ -744,7 +672,6 @@ def test_authors_from_100__a_triple_u_w_x_y_triple_z_and_700__double_a_u_w_x_y_z
                     'value': 'Warwick U.',
                 },
             ],
-            'curated_relation': False,
             'full_name': 'Gumplinger, P.',  # XXX: wrong, but the best we can do.
             'ids': [
                 {
@@ -769,8 +696,11 @@ def test_authors_from_100__a_triple_u_w_x_y_triple_z_and_700__double_a_u_w_x_y_z
     expected = {
         '100': {
             'a': 'Abe, K.',
-            'w': 'Koya.Abe.2',
-            'u': [],
+            'u': [
+                'Tokyo U., ICRR',
+                'Tokyo U.',
+                'Tokyo U., IPMU'
+            ],
         },
         '700': [
             {
@@ -778,7 +708,6 @@ def test_authors_from_100__a_triple_u_w_x_y_triple_z_and_700__double_a_u_w_x_y_z
                 'u': [
                     'Warwick U.',
                 ],
-                'w': 'D.R.Hadley.2',
             },
         ],
     }
@@ -787,8 +716,7 @@ def test_authors_from_100__a_triple_u_w_x_y_triple_z_and_700__double_a_u_w_x_y_z
     assert expected == result
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
-def test_authors_from_100_a_double_u_w_z_y_double_z_and_700__double_u_double_z():
+def test_authors_from_100_a_double_u_w_z_y_double_z_and_invalid_700__double_u_double_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
 
@@ -813,81 +741,14 @@ def test_authors_from_100_a_double_u_w_z_y_double_z_and_700__double_u_double_z()
         '</record>'
     )  # record/1407917/export/xme
 
-    expected = [
-        {
-            'affiliations': [
-                {
-                    'record': {
-                        '$ref': 'http://localhost:5000/api/institutions/904738',
-                    },
-                    'value': 'Jamia Millia Islamia',
-                },
-                {
-                    'record': {
-                        '$ref': 'http://localhost:5000/api/institutions/905919',
-                    },
-                    'value': 'IUCAA, Pune',
-                },
-            ],
-            'curated_relation': False,
-            'full_name': 'Dadhich, Naresh',
-            'ids': [
-                {
-                    'type': 'INSPIRE BAI',
-                    'value': 'N.Dadhich.1',
-                },
-            ],
-            'record': {
-                '$ref': 'http://localhost:5000/api/authors/1012576',
-            },
-        },
-        {
-            'affiliations': [
-                {
-                    'record': {
-                        '$ref': 'http://localhost:5000/api/institutions/904738',
-                    },
-                    'value': 'Jamia Millia Islamia',
-                },
-                {
-                    'record': {
-                        '$ref': 'http://localhost:5000/api/institutions/905919',
-                    },
-                    'value': 'IUCAA, Pune',
-                },
-            ],
-            'curated_relation': False,
-        }
-    ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['authors'], subschema) is None
-    assert expected == result['authors']
-
-    expected = {
-        '100': {
-            'a': 'Dadhich, Naresh',
-            'u': [
-                'Jamia Millia Islamia',
-                'IUCAA, Pune',
-            ],
-            'w': 'N.Dadhich.1',
-        },
-        '700': [
-            {
-                'u': [
-                    'Jamia Millia Islamia',
-                    'IUCAA, Pune',
-                ],
-            },
-        ],
-    }
-    result = hep2marc.do(result)
-
-    assert expected == result
+    try:
+        validate(result['authors'], subschema)
+    except ValidationError:
+        assert True
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_j_m_u_w_y_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -932,21 +793,18 @@ def test_authors_from_100__a_j_m_u_w_y_z():
 
     expected = {
         'a': 'Martins, Ricardo S.',
-        'j': 'ORCID:',
         'm': [
             'ricardomartins@iftm.edu.b',
         ],
         'u': [
             'Unlisted',
         ],
-        'w': 'R.S.Martins.1',
     }
     result = hep2marc.do(result)
 
     assert expected == result['100']
 
 
-@pytest.mark.xfail(reason='wrong conversion')
 def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -970,6 +828,21 @@ def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
     )
 
     expected = [
+        {  # First that record due to the calling order of the dojson rule (both are 100 field)
+            'curated_relation': False,
+            'full_name': 'Hattori, T.',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'T.Hattori.1',
+                },
+            ],
+            'raw_affiliations': [
+                {
+                    'value': 'Tokyo Institute of Technology, Tokyo, Japan',
+                }
+            ],
+        },
         {
             'curated_relation': False,
             'full_name': 'Tojyo, E.',
@@ -979,19 +852,14 @@ def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
                     'value': 'Eiki.Tojyo.1',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'University of Tokyo, Tokyo, Japan',
+                }
+            ],
             'record': {
                 '$ref': 'http://localhost:5000/api/authors/1477256',
             },
-        },
-        {
-            'curated_relation': False,
-            'full_name': 'Hattori, T.',
-            'ids': [
-                {
-                    'type': 'INSPIRE BAI',
-                    'value': 'T.Hattori.1',
-                },
-            ],
         },
     ]
     result = hep.do(create_record(snippet))
@@ -999,13 +867,27 @@ def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
     assert validate(result['authors'], subschema) is None
     assert expected == result['authors']
 
-    expected = {}
+    expected = {
+        '100': {
+            'a': 'Hattori, T.',
+            'v': [
+                'Tokyo Institute of Technology, Tokyo, Japan',
+            ],
+        },
+        '700': [
+            {
+                'a': 'Tojyo, E.',
+                'v': [
+                    'University of Tokyo, Tokyo, Japan',
+                ],
+            },
+        ],
+    }
     result = hep2marc.do(result)
 
-    assert expected == result['100']
+    assert expected == result
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_j_m_u_v_w_y():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -1042,6 +924,11 @@ def test_authors_from_100__a_j_m_u_v_w_y():
                     'value': 'D.Macnair.2',
                 },
             ],
+            'raw_affiliations': [
+                {
+                    'value': 'SLAC, Menlo Park, California, USA',
+                }
+            ],
         },
     ]
     result = hep.do(create_record(snippet))
@@ -1051,7 +938,9 @@ def test_authors_from_100__a_j_m_u_v_w_y():
 
     expected = {
         'a': 'MacNair, David',
-        'j': 'JACoW-00009522',
+        'j': [
+            'JACoW-00009522',
+        ],
         'm': [
             'macnair@slac.stanford.edu',
         ],
@@ -1059,16 +948,14 @@ def test_authors_from_100__a_j_m_u_v_w_y():
             'SLAC',
         ],
         'v': [
-            'SLAC',
+            'SLAC, Menlo Park, California, USA',
         ],
-        'w': 'D.Macnair.2',
     }
     result = hep2marc.do(result)
 
     assert expected == result['100']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -1104,7 +991,7 @@ def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
             ],
         },
     ]
-    result = hep.do(create_record(snippet))  # no roundtrip
+    result = hep.do(create_record(snippet))
 
     assert validate(result['authors'], subschema) is None
     assert expected == result['authors']
@@ -1114,7 +1001,6 @@ def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
         'u': [
             'NIIEFA, St. Petersburg',
         ],
-        'w': 'I.P.Bakhrushin.1',
     }
     result = hep2marc.do(result)
 
@@ -1177,12 +1063,12 @@ def test_authors_from_100__a_double_m_double_u_w_y_z():
             'SISSA, Trieste',
             'Meudon Observ.',
         ],
-        'w': 'D.Puy.2',
     }
     result = hep2marc.do(result)
 
+    assert expected == result['100']
 
-@pytest.mark.xfail(reason='Schema 15')
+
 def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -1244,6 +1130,11 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
             'record': {
                 '$ref': 'http://localhost:5000/api/authors/1268225',
             },
+            'raw_affiliations': [
+                {
+                    'value': 'Deutsches Elektronen-Synchrotron',
+                }
+            ],
         },
         {
             'affiliations': [
@@ -1254,7 +1145,9 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
                     'value': 'U. Hamburg (main)',
                 },
             ],
-            'inspire_roles': ['supervisor'],
+            'inspire_roles': [
+                'supervisor',
+            ],
             'full_name': 'Garutti, Erika',
         },
         {
@@ -1272,7 +1165,9 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
                     'value': 'U. Hamburg (main)',
                 },
             ],
-            'inspire_roles': ['supervisor'],
+            'inspire_roles': [
+                'supervisor',
+            ],
             'full_name': 'Mnich, Joachim',
         },
         {
@@ -1284,7 +1179,9 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
                     'value': 'U. Geneva (main)',
                 },
             ],
-            'inspire_roles': ['supervisor'],
+            'inspire_roles': [
+                'supervisor',
+            ],
             'full_name': 'Pohl, Martin',
         },
     ]
@@ -1296,8 +1193,12 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
     expected = {
         '100': {
             'a': 'Spannagel, Simon',
-            'i': 'INSPIRE-00392783',
-            'j': 'ORCID:0000-0003-4708-3774',
+            'i': [
+                'INSPIRE-00392783',
+            ],
+            'j': [
+                'ORCID:0000-0003-4708-3774',
+            ],
             'u': [
                 'U. Hamburg, Dept. Phys.',
             ],
@@ -1309,7 +1210,7 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
             {
                 'a': 'Garutti, Erika',
                 'u': [
-                    'U. Hamburg',
+                    'U. Hamburg (main)',
                 ],
             },
             {
@@ -1332,7 +1233,6 @@ def test_authors_supervisors_from_100__a_i_j_u_v_x_y_z_and_multiple_701__u_z():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='Schema 15')
 def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -1377,26 +1277,30 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
         {
             'affiliations': [
                 {
-                    'record': {
-                        '$ref': 'http://localhost:5000/api/institutions/903010',
-                    },
                     'value': 'Minnesota U.',
-                },
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/903010'
+                    }
+                }
             ],
-            'inspire_roles': ['supervisor'],
             'full_name': 'Poling, Ron',
+            'inspire_roles': [
+                'supervisor',
+            ],
         },
         {
             'affiliations': [
                 {
+                    'value': 'Minnesota U.',
                     'record': {
                         '$ref': 'http://localhost:5000/api/institutions/903010',
                     },
-                    'value': 'Minnesota U.',
                 },
             ],
-            'inspire_roles': ['supervisor'],
             'full_name': 'Kubota, Yuichi',
+            'inspire_roles': [
+                'supervisor',
+            ],
         }
     ]
     result = hep.do(create_record(snippet))
@@ -1410,7 +1314,6 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
             'u': [
                 'Minnesota U.',
             ],
-            'w': 'B.W.Lang.1',
         },
         '701': [
             {
@@ -1423,6 +1326,227 @@ def test_authors_supervisors_from_100_a_u_w_y_z_and_701__double_a_u_z():
                 'a': 'Kubota, Yuichi',
                 'u': [
                     'Minnesota U.',
+                ],
+            },
+        ],
+    }
+    result = hep2marc.do(result)
+
+    assert expected == result
+
+
+def test_authors_supervisors_from_100_a_j_u_w_y_z_and_701__a_i_j_u_x_y_z():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="100" ind1=" " ind2=" ">'
+        '    <subfield code="a">Teroerde, Marius</subfield>'
+        '    <subfield code="j">CCID-759515</subfield>'
+        '    <subfield code="u">Aachen, Tech. Hochsch.</subfield>'
+        '    <subfield code="w">M.Teroerde.1</subfield>'
+        '    <subfield code="y">0</subfield>'
+        '    <subfield code="z">902624</subfield>'
+        '  </datafield>'
+        '  <datafield tag="701" ind1=" " ind2=" ">'
+        '    <subfield code="a">Feld, Lutz Werner</subfield>'
+        '    <subfield code="i">INSPIRE-00315477</subfield>'
+        '    <subfield code="j">CCID-456299</subfield>'
+        '    <subfield code="u">Aachen, Tech. Hochsch.</subfield>'
+        '    <subfield code="x">1060887</subfield>'
+        '    <subfield code="y">1</subfield>'
+        '    <subfield code="z">902624</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1504133/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/902624',
+                    },
+                    'value': 'Aachen, Tech. Hochsch.',
+                },
+            ],
+            'curated_relation': False,
+            'full_name': 'Teroerde, Marius',
+            'ids': [
+                {
+                    'type': 'CERN',
+                    'value': 'CERN-759515',
+                },
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'M.Teroerde.1',
+                },
+            ],
+        },
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/902624',
+                    },
+                    'value': 'Aachen, Tech. Hochsch.',
+                },
+            ],
+            'full_name': 'Feld, Lutz Werner',
+            'ids': [
+                {
+                    'type': 'INSPIRE ID',
+                    'value': 'INSPIRE-00315477',
+                },
+                {
+                    'type': 'CERN',
+                    'value': 'CERN-456299',
+                },
+            ],
+            'inspire_roles': [
+                'supervisor'
+            ],
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['authors'], subschema) is None
+    assert expected == result['authors']
+
+    expected = {
+        '100': {
+            'a': 'Teroerde, Marius',
+            'j': [
+                'CCID-759515',
+            ],
+            'u': [
+                'Aachen, Tech. Hochsch.',
+            ],
+        },
+        '701': [
+            {
+                'a': 'Feld, Lutz Werner',
+                'i': [
+                    'INSPIRE-00315477',
+                ],
+                'j': [
+                    'CCID-456299',
+                ],
+                'u': [
+                    'Aachen, Tech. Hochsch.',
+                ],
+            },
+        ],
+    }
+    result = hep2marc.do(result)
+
+    assert expected == result
+
+
+def test_authors_from_100_a_double_u_w_z_y_double_z_and_700__a_double_u_w_y_double_z():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="100" ind1=" " ind2=" ">'
+        '    <subfield code="a">Billo, M.</subfield>'
+        '    <subfield code="u">INFN, Turin</subfield>'
+        '    <subfield code="u">Turin U.</subfield>'
+        '    <subfield code="w">Marco.Billo.1</subfield>'
+        '    <subfield code="x">1016336</subfield>'
+        '    <subfield code="y">0</subfield>'
+        '    <subfield code="z">902889</subfield>'
+        '    <subfield code="z">903297</subfield>'
+        '  </datafield>'
+        '  <datafield tag="700" ind1=" " ind2=" ">'
+        '    <subfield code="a">Gliozzi, F.</subfield>'
+        '    <subfield code="u">INFN, Turin</subfield>'
+        '    <subfield code="u">Turin U.</subfield>'
+        '    <subfield code="w">F.Gliozzi.1</subfield>'
+        '    <subfield code="x">1008206</subfield>'
+        '    <subfield code="y">0</subfield>'
+        '    <subfield code="z">902889</subfield>'
+        '    <subfield code="z">903297</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1088610/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/902889',
+                    },
+                    'value': 'INFN, Turin',
+                },
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/903297',
+                    },
+                    'value': 'Turin U.',
+                },
+            ],
+            'curated_relation': False,
+            'full_name': 'Billo, M.',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'Marco.Billo.1',
+                },
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/1016336',
+            },
+        },
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/902889',
+                    },
+                    'value': 'INFN, Turin',
+                },
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/903297',
+                    },
+                    'value': 'Turin U.',
+                },
+            ],
+            'full_name': 'Gliozzi, F.',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'F.Gliozzi.1',
+                },
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/1008206',
+            },
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['authors'], subschema) is None
+    assert expected == result['authors']
+
+    expected = {
+        '100': {
+            'a': 'Billo, M.',
+            'u': [
+                'INFN, Turin',
+                'Turin U.',
+            ]
+        },
+        '700': [
+            {
+                'a': 'Gliozzi, F.',
+                'u': [
+                    'INFN, Turin',
+                    'Turin U.',
                 ],
             },
         ],

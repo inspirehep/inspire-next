@@ -34,7 +34,7 @@ from ..model import hep, hep2marc
 def book_series(self, key, value):
     """Book Series."""
     return {
-        'value': value.get('a'),
+        'title': value.get('a'),
         'volume': value.get('v'),
     }
 
@@ -44,6 +44,6 @@ def book_series(self, key, value):
 def book_series2marc(self, key, value):
     """Book Series."""
     return {
-        'a': value.get('value'),
+        'a': value.get('title'),
         'v': value.get('volume'),
     }

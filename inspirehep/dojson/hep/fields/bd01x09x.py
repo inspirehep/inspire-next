@@ -26,19 +26,17 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
-from isbn import ISBNError
-from isbn.hyphen import ISBNRangeError
-
 from dojson import utils
 from idutils import (
     is_doi,
     is_handle,
     normalize_doi,
-    normalize_isbn,
 )
 
 from ..model import hep, hep2marc
 from ...utils import force_single_element
+
+from inspire_schemas.utils import load_schema
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -91,38 +89,24 @@ RE_SPLIT_LANGUAGES = re.compile("\/| or | and |,|=|\s+")
 @utils.for_each_value
 def isbns(self, key, value):
     """ISBN, its medium and an additional comment."""
-    try:
-        isbn = normalize_isbn(force_single_element(value['a']))
-    # See https://github.com/nekobcn/isbnid/issues/2 and
-    # https://github.com/nekobcn/isbnid/issues/3 for understanding the long
-    # exception list.
-    except (KeyError, ISBNError, ISBNRangeError, UnicodeEncodeError):
-        return {}
+    isbn = force_single_element(value['a']).replace(' ', '').replace('-', '')
 
-    b = value.get('b', '').lower()
-    if 'online' == b:
+    _schema = load_schema('hep')
+    valid_keywords = _schema['properties']['isbns']['items']['properties']['medium']['enum']
+    b_in_marc = value.get('b', '').lower()
+
+    if b_in_marc in valid_keywords:
+        medium = b_in_marc
+    elif 'ebook' == b_in_marc:
         medium = 'online'
-        comment = ''
-    elif 'print' == b:
-        medium = 'print'
-        comment = ''
-    elif 'electronic' in b:
-        medium = 'online'
-        comment = 'electronic'
-    elif 'ebook' in b:
-        medium = 'online'
-        comment = 'ebook'
-    elif 'hardcover' in b:
-        medium = 'print'
-        comment = 'hardcover'
+    elif 'paperback' in b_in_marc:
+        medium = 'softcover'
     else:
         medium = ''
-        comment = b
 
     return {
         'medium': medium,
         'value': isbn,
-        'comment': comment,
     }
 
 
@@ -171,7 +155,7 @@ def persistent_identifiers(self, key, value):
                         type_ = 'HDL'
                     persistent_identifiers.append({
                         'source': source,
-                        'type': type_,
+                        'schema': type_,
                         'value': id_,
                     })
 
@@ -179,8 +163,8 @@ def persistent_identifiers(self, key, value):
     return persistent_identifiers
 
 
-@hep2marc.over('024', '^(dois|persistent_identifiers)$')
-def dois2marc(self, key, value):
+@hep2marc.over('024', '^persistent_identifiers$')
+def persistent_identifiers2marc(self, key, value):
     """Other Standard Identifier."""
     value = force_force_list(value)
 
@@ -188,7 +172,7 @@ def dois2marc(self, key, value):
         return {
             'a': val.get('value'),
             '9': val.get('source'),
-            '2': val.get('type') or "DOI"
+            '2': val.get('schema'),
         }
 
     self['024'] = self.get('024', [])
@@ -197,34 +181,91 @@ def dois2marc(self, key, value):
     return self['024']
 
 
-@hep.over('external_system_numbers', '^035..')
-def external_system_numbers(self, key, value):
-    """System Control Number."""
+@hep2marc.over('024', '^dois$')
+def dois2marc(self, key, value):
+    """Other Standard Identifier."""
     value = force_force_list(value)
 
-    def get_value(value):
+    def get_value(val):
         return {
-            'value': value.get('a'),
-            'institute': value.get('9'),
-            'obsolete': bool(value.get('z')),
+            'a': val.get('value'),
+            '9': val.get('source'),
+            '2': "DOI",
         }
 
-    external_system_numbers = self.get('external_system_numbers', [])
-
+    self['024'] = self.get('024', [])
     for val in value:
-        external_system_numbers.append(get_value(val))
-    return external_system_numbers
+        self['024'].append(get_value(val))
+    return self['024']
 
 
-@hep2marc.over('035', 'external_system_numbers')
+@hep.over('external_system_identifiers', '^035..')
+def external_system_identifiers(self, key, value):
+    """System Control Identifier."""
+    texkeys_whitelist = [
+        'SPIRESTeX',
+        'INSPIRETeX',
+    ]
+    value = force_force_list(value)
+
+    def get_external_system_identifier(value):
+        return {
+            'value': value.get('a'),
+            'schema': value.get('9'),
+        }
+
+    def get_texkey(value, field='9'):
+        return value.get(field)
+
+    def _is_texkey_a(value):
+        return value.get('a')
+
+    def _is_not_arxiv(value):
+        return value.get('9') != 'arXiv'
+
+    external_system_identifiers = self.get('external_system_identifiers', [])
+    texkeys = self.get('texkeys', [])
+    for val in value:
+        if get_texkey(val) in texkeys_whitelist:
+            if _is_texkey_a(val):
+                texkeys.insert(0, get_texkey(val, field='a'))
+            else:
+                texkeys.append(get_texkey(val, field='z'))
+        elif _is_not_arxiv(val):
+            external_system_identifiers.append(get_external_system_identifier(val))
+
+    self['texkeys'] = texkeys
+    return external_system_identifiers
+
+
+@hep2marc.over('035', 'external_system_identifiers')
 @utils.for_each_value
-def external_system_numbers2marc(self, key, value):
+def external_system_identifiers2marc(self, key, value):
     """System Control Number."""
     return {
         'a': value.get('value'),
-        '9': value.get('institute'),
-        'z': value.get('obsolete'),
+        '9': value.get('schema'),
     }
+
+
+@hep2marc.over('035', 'texkeys')
+def external_system_identifiers2marc(self, key, value):
+    """System Control Number."""
+    texkeys = []
+    first_item = {
+        '9': 'INSPIRETeX',
+        'a': value[0],
+    }
+    texkeys.insert(0, first_item)
+    for val in value[1:]:
+        texkeys.append(
+            {
+                '9': 'INSPIRETeX',
+                'z': val,
+            }
+        )
+
+    return texkeys
 
 
 @hep.over('report_numbers', '^037..')

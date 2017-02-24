@@ -64,7 +64,6 @@ def test_public_notes_from_500__a_9():
     assert expected == result['500']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_public_notes_from_500__double_a_9():
     schema = load_schema('hep')
     subschema = schema['properties']['public_notes']
@@ -95,10 +94,11 @@ def test_public_notes_from_500__double_a_9():
     expected = [
         {
             '9': 'arXiv',
-            'a': [
-                '11 pages, 8 figures. Submitted to MNRAS',
-                'preliminary entry',
-            ],
+            'a': '11 pages, 8 figures. Submitted to MNRAS',
+        },
+        {
+            '9': 'arXiv',
+            'a': 'preliminary entry',
         },
     ]
     result = hep2marc.do(result)
@@ -152,7 +152,7 @@ def test_public_notes_from_500__a_and_500__a_9():
 
 def test_thesis_from_502__a_c_d_z():
     schema = load_schema('hep')
-    subschema = schema['properties']['thesis']
+    subschema = schema['properties']['thesis_info']
 
     snippet = (
         '<datafield tag="502" ind1=" " ind2=" ">'
@@ -178,8 +178,8 @@ def test_thesis_from_502__a_c_d_z():
     }
     result = hep.do(create_record(snippet))
 
-    assert validate(result['thesis'], subschema) is None
-    assert expected == result['thesis']
+    assert validate(result['thesis_info'], subschema) is None
+    assert expected == result['thesis_info']
 
     expected = {
         'a': 'PhD',
@@ -195,7 +195,7 @@ def test_thesis_from_502__a_c_d_z():
 
 def test_thesis_from_502_b_double_c_d_double_z():
     schema = load_schema('hep')
-    subschema = schema['properties']['thesis']
+    subschema = schema['properties']['thesis_info']
 
     snippet = (
         '<datafield tag="502" ind1=" " ind2=" ">'
@@ -209,9 +209,8 @@ def test_thesis_from_502_b_double_c_d_double_z():
     )  # record/1385648
 
     expected = {
-        '_degree_type': 'Thesis',
         'date': '2014',
-        'degree_type': 'Thesis',
+        'degree_type': 'other',
         'institutions': [
             {
                 'curated_relation': True,
@@ -231,11 +230,11 @@ def test_thesis_from_502_b_double_c_d_double_z():
     }
     result = hep.do(create_record(snippet))
 
-    assert validate(result['thesis'], subschema) is None
-    assert expected == result['thesis']
+    assert validate(result['thesis_info'], subschema) is None
+    assert expected == result['thesis_info']
 
     expected = {
-        'b': 'Thesis',
+        'b': 'other',
         'c': [
             'Nice U.',
             'Cote d\'Azur Observ., Nice',
@@ -339,7 +338,7 @@ def test_copyright_from_542__d_e_g():
 
 def test_hidden_notes_from_595__a_9():
     schema = load_schema('hep')
-    subschema = schema['properties']['hidden_notes']
+    subschema = schema['properties']['_private_notes']
 
     snippet = (
         '<datafield tag="595" ind1=" " ind2=" ">'
@@ -356,8 +355,8 @@ def test_hidden_notes_from_595__a_9():
     ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['hidden_notes'], subschema) is None
-    assert expected == result['hidden_notes']
+    assert validate(result['_private_notes'], subschema) is None
+    assert expected == result['_private_notes']
 
     expected = [
         {
@@ -372,7 +371,7 @@ def test_hidden_notes_from_595__a_9():
 
 def test_hidden_notes_from_595__double_a_9():
     schema = load_schema('hep')
-    subschema = schema['properties']['hidden_notes']
+    subschema = schema['properties']['_private_notes']
 
     snippet = (
         '<datafield tag="595" ind1=" " ind2=" ">'
@@ -394,8 +393,8 @@ def test_hidden_notes_from_595__double_a_9():
     ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['hidden_notes'], subschema) is None
-    assert expected == result['hidden_notes']
+    assert validate(result['_private_notes'], subschema) is None
+    assert expected == result['_private_notes']
 
     expected = [
         {
@@ -414,7 +413,7 @@ def test_hidden_notes_from_595__double_a_9():
 
 def test_hidden_notes_from_595__a_9_and_595__double_a_9():
     schema = load_schema('hep')
-    subschema = schema['properties']['hidden_notes']
+    subschema = schema['properties']['_private_notes']
 
     snippet = (
         '<record>'
@@ -446,8 +445,8 @@ def test_hidden_notes_from_595__a_9_and_595__double_a_9():
     ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['hidden_notes'], subschema) is None
-    assert expected == result['hidden_notes']
+    assert validate(result['_private_notes'], subschema) is None
+    assert expected == result['_private_notes']
 
     expected = [
         {

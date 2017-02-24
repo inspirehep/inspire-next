@@ -36,9 +36,25 @@ from inspirehep.utils.helpers import force_force_list
 
 
 @conferences.over('acronym', '^111')
-@utils.for_each_value
 def acronym(self, key, value):
     """Conference acronym."""
+    def get_acronym(value):
+        acronyms = self.get('acronym', [])
+        values_e = value.get('e')
+
+        if values_e is None:
+            return
+
+        if isinstance(values_e, tuple or list):
+            values = [item for item in values_e]
+            for val in values:
+                acronyms.append(val)
+        else:
+            acronyms.append(values_e)
+        self['acronyms'] = acronyms
+
+        return acronyms
+
     self['date'] = value.get('d')
     self['opening_date'] = value.get('x')
     self['closing_date'] = value.get('y')
@@ -63,7 +79,7 @@ def acronym(self, key, value):
             address = parse_conference_address(raw_address)
             self['address'].append(address)
 
-    return value.get('e')
+    return get_acronym(value)
 
 
 @conferences.over('alternative_titles', '^711')
@@ -112,11 +128,29 @@ def keywords(self, key, value):
     return keywords
 
 
-@conferences.over('note', '^500')
-@utils.for_each_value
+@conferences.over('public_notes', '^500')
 def note(self, key, value):
-    """Public note."""
-    return value.get('a')
+    """Public notes."""
+    public_notes = self.get('public_notes', [])
+
+    values_a = value.get('a')
+    if isinstance(values_a, tuple or list):
+        values = [item for item in values_a]
+        for val in values:
+            public_notes.append(
+                {
+                    'value': val,
+                }
+            )
+    else:
+        public_notes.append(
+            {
+                'value': values_a,
+            }
+        )
+
+    self['public_notes'] = public_notes
+    return public_notes
 
 
 @conferences.over('series', '^411')

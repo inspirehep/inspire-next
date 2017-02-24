@@ -31,10 +31,9 @@ from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.utils import validate
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_collaboration_from_710__g():
     schema = load_schema('hep')
-    subschema = schema['properties']['collaboration']
+    subschema = schema['properties']['collaborations']
 
     snippet = (
         '<datafield tag="710" ind1=" " ind2=" ">'
@@ -43,25 +42,28 @@ def test_collaboration_from_710__g():
     )  # record/1510404
 
     expected = [
-        {'value': 'Pierre Auger'},
+        {
+            'value': 'Pierre Auger',
+        },
     ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['collaboration'], subschema) is None
-    assert expected == result['collaboration']
+    assert validate(result['collaborations'], subschema) is None
+    assert expected == result['collaborations']
 
     expected = [
-        {'g': 'Pierre Auger'},
+        {
+            'g': 'Pierre Auger'
+        },
     ]
     result = hep2marc.do(result)
 
     assert expected == result['710']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_collaboration_from_710__g_0():
     schema = load_schema('hep')
-    subschema = schema['properties']['collaboration']
+    subschema = schema['properties']['collaborations']
 
     snippet = (
         '<datafield tag="710" ind1=" " ind2=" ">'
@@ -80,21 +82,22 @@ def test_collaboration_from_710__g_0():
     ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['collaboration'], subschema) is None
-    assert expected == result['collaboration']
+    assert validate(result['collaborations'], subschema) is None
+    assert expected == result['collaborations']
 
     expected = [
-        {'g': 'ANTARES'},
+        {
+            'g': 'ANTARES',
+        },
     ]
     result = hep2marc.do(result)
 
     assert expected == result['710']
 
 
-@pytest.mark.xfail(reason='wrong roundtrip')
 def test_collaboration_from_multiple_710__g_0_and_710__g():
     schema = load_schema('hep')
-    subschema = schema['properties']['collaboration']
+    subschema = schema['properties']['collaborations']
 
     snippet = (
         '<record>'
@@ -141,14 +144,22 @@ def test_collaboration_from_multiple_710__g_0_and_710__g():
     ]
     result = hep.do(create_record(snippet))
 
-    assert validate(result['collaboration'], subschema) is None
-    assert expected == result['collaboration']
+    assert validate(result['collaborations'], subschema) is None
+    assert expected == result['collaborations']
 
     expected = [
-        {'g': 'ANTARES'},
-        {'g': 'IceCube'},
-        {'g': 'LIGO Scientific'},
-        {'g': 'Virgo'},
+        {
+            'g': 'ANTARES',
+        },
+        {
+            'g': 'IceCube',
+        },
+        {
+            'g': 'LIGO Scientific',
+        },
+        {
+            'g': 'Virgo',
+        },
     ]
     result = hep2marc.do(result)
 

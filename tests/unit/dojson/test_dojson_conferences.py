@@ -26,7 +26,10 @@ import pytest
 
 from dojson.contrib.marc21.utils import create_record
 
+from inspire_schemas.utils import load_schema
+
 from inspirehep.dojson.conferences import conferences
+from inspirehep.dojson.utils import validate
 
 
 def test_acronym_from_111__e():
@@ -49,7 +52,6 @@ def test_acronym_from_111__e():
     assert expected == result['acronym']
 
 
-@pytest.mark.xfail(reason='tuple produced instead')
 def test_acronym_from_111__e_e():
     snippet = (
         '<datafield tag="111" ind1=" " ind2=" ">'
@@ -500,6 +502,9 @@ def test_alternative_titles_marcxml_711_with_b():
 
 
 def test_note_from__500_a():
+    schema = load_schema('conferences')
+    subschema = schema['properties']['public_notes']
+
     snippet = (
         '<datafield tag="500" ind1=" " ind2=" ">'
         '  <subfield code="a">Same conf. as Kyoto 1975: none in intervening years</subfield>'
@@ -507,14 +512,20 @@ def test_note_from__500_a():
     )  # record/963579
 
     expected = [
-        'Same conf. as Kyoto 1975: none in intervening years',
+        {
+            'value': 'Same conf. as Kyoto 1975: none in intervening years',
+        },
     ]
     result = conferences.do(create_record(snippet))
 
-    assert expected == result['note']
+    assert validate(result['public_notes'], subschema) is None
+    assert expected == result['public_notes']
 
 
 def test_note_from__double_500_a():
+    schema = load_schema('conferences')
+    subschema = schema['properties']['public_notes']
+
     snippet = (
         '<record>'
         '  <datafield tag="500" ind1=" " ind2=" ">'
@@ -527,16 +538,25 @@ def test_note_from__double_500_a():
     )  # record/1445071
 
     expected = [
-        'Marion White, PhD (Argonne) Conference Chair Vladimir Shiltsev, PhD (FNAL) Scientific Program Chair Maria Power (Argonne) Conference Editor/Scientific Secretariat',
-        'Will be published in: JACoW',
+        {
+            'value': 'Marion White, PhD (Argonne) Conference Chair Vladimir Shiltsev, PhD (FNAL)'
+                     ' Scientific Program Chair Maria Power (Argonne) Conference Editor/Scientific'
+                     ' Secretariat',
+        },
+        {
+            'value': 'Will be published in: JACoW',
+        },
     ]
     result = conferences.do(create_record(snippet))
 
-    assert expected == result['note']
+    assert validate(result['public_notes'], subschema) is None
+    assert expected == result['public_notes']
 
 
-@pytest.mark.xfail(reason='tuple is not unpacked')
 def test_note_from_500__multiple_a():
+    schema = load_schema('conferences')
+    subschema = schema['properties']['public_notes']
+
     snippet = (
         '<datafield tag="500" ind1=" " ind2=" ">'
         '  <subfield code="a">(BSS2011) Trends in Modern Physics: 19 - 21 August, 2011</subfield>'
@@ -547,14 +567,25 @@ def test_note_from_500__multiple_a():
     )
 
     expected = [
-        '(BSS2011) Trends in Modern Physics: 19 - 21 August, 2011',
-        '(BS2011) Cosmology and Particle Physics Beyond the Standard Models: 21-17 August, 2011',
-        '(JW2011) Scientific and Human Legacy of Julius Wess: 27-28 August, 2011',
-        '(BW2011) Particle Physcs from TeV to Plank Scale: 28 August - 1 September, 2011',
+        {
+            'value': '(BSS2011) Trends in Modern Physics: 19 - 21 August, 2011',
+        },
+        {
+            'value': '(BS2011) Cosmology and Particle Physics Beyond the Standard '
+                     'Models: 21-17 August, 2011',
+        },
+        {
+            'value': '(JW2011) Scientific and Human Legacy of Julius Wess: 27-28 August, 2011',
+        },
+        {
+            'value': '(BW2011) Particle Physcs from TeV to Plank Scale: 28 August'
+                     ' - 1 September, 2011',
+        },
     ]
     result = conferences.do(create_record(snippet))
 
-    assert expected == result['note']
+    assert validate(result['public_notes'], subschema) is None
+    assert expected == result['public_notes']
 
 
 def test_series_name_from_411__a():

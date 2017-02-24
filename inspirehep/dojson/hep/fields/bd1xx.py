@@ -24,21 +24,14 @@
 
 from __future__ import absolute_import, division, print_function
 
-import six
 import logging
 import re
 
 from dojson import utils
 
-from flask import current_app
-
-from inspirehep.utils.record import get_value as utils_get_value
-from inspirehep.utils.helpers import force_force_list
-
 from ..model import hep, hep2marc
 from ...utils import (
     force_single_element,
-    get_recid_from_ref,
     get_record_ref,
 )
 
@@ -52,10 +45,7 @@ ORCID = re.compile('\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]')
 
 @hep.over('authors', '^[17]00[103_].')
 def authors(self, key, value):
-    """Authors.
-
-    FIXME: currently not handling 100__v.
-    """
+    """Authors."""
     def _get_author(value):
         def _get_affiliations(value):
             result = []
@@ -76,6 +66,17 @@ def authors(self, key, value):
                     result.append({'value': u_value})
 
             return result
+
+        def _get_raw_affiliations(value):
+            values = force_force_list(value.get('v'))
+            raw_affiliations = []
+            for item in values:
+                raw_affiliations.append(
+                    {
+                        'value': item,
+                    }
+                )
+            return raw_affiliations
 
         def _get_full_name(value):
             a_values = force_force_list(value.get('a'))
@@ -147,37 +148,22 @@ def authors(self, key, value):
             if x_value and x_value.isdigit():
                 return get_record_ref(x_value, 'authors')
 
-        def _get_contributor_role(value):
-            values = force_force_list(value)
-
-            contributor_roles = []
-            for value in values:
-                value = value.lower()
-                if value in current_app.config['INSPIRE_LEGACY_ROLES']['editing']:
-                    contributor_roles.append(
-                        {
-                            'schema': 'CRediT',
-                            'value': 'Writing - review & editing'
-                        }
-                    )
-                if value in current_app.config['INSPIRE_LEGACY_ROLES']['administration']:
-                    contributor_roles.append(
-                        {
-                            'schema': 'CRediT',
-                            'value': 'Project administration'
-                        }
-                    )
-            return contributor_roles
+        def _get_curated_relation(value):
+            if key.startswith('100'):
+                return value.get('y') == '1'
+            else:
+                return ''
 
         return {
             'affiliations': _get_affiliations(value),
             'alternative_names': force_force_list(value.get('q')),
-            'curated_relation': value.get('y') == '1',
+            'curated_relation': _get_curated_relation(value),
             'emails': force_force_list(value.get('m')),
             'full_name': _get_full_name(value),
             'ids': _get_ids(value),
             'record': _get_record(value),
-            'contributor_roles': _get_contributor_role(value.get('e')),
+            'inspire_roles': ['editor', ] if value.get('e') == 'ed.' else '',
+            'raw_affiliations': _get_raw_affiliations(value),
         }
 
     authors = self.get('authors', [])
@@ -197,27 +183,72 @@ def authors2marc(self, key, value):
     """Main Entry-Personal Name."""
     value = force_force_list(value)
 
-    def get_value(value):
-        affiliations = [
+    def _get_ids(value):
+        ids = {
+            'i': [],
+            'j': [],
+        }
+        if value.get('ids'):
+            for _id in value.get('ids'):
+                if _id.get('type') == 'INSPIRE ID':
+                    ids['i'].append(_id.get('value'))
+                elif _id.get('type') == 'ORCID':
+                    ids['j'].append('ORCID:' + _id.get('value'))
+                elif _id.get('type') == 'JACOW':
+                    ids['j'].append(_id.get('value'))
+                elif _id.get('type') == 'CERN':
+                    ids['j'].append('CCID-' + _id.get('value')[5:])
+        return ids
+
+    def _get_affiliations(value):
+        return [
             aff.get('value') for aff in value.get('affiliations', [])
         ]
+
+    def _get_inspire_roles(value):
+        values = force_force_list(value.get('inspire_roles'))
+        return ['ed.' for role in values if role == 'editor']
+
+    def _get_raw_affiliations(value):
+        return [
+            aff.get('value') for aff in value.get('raw_affiliations', [])
+        ]
+
+    def get_value_100_700(value):
+        ids = _get_ids(value)
         return {
             'a': value.get('full_name'),
-            'e': utils_get_value(value, 'contributor_roles.value'),
+            'e': _get_inspire_roles(value),
             'q': value.get('alternative_names'),
-            'i': value.get('inspire_id'),
-            'j': value.get('orcid'),
+            'i': ids.get('i'),
+            'j': ids.get('j'),
             'm': value.get('emails'),
-            'u': affiliations,
-            'x': get_recid_from_ref(value.get('record')),
-            'y': value.get('curated_relation')
+            'u': _get_affiliations(value),
+            'v': _get_raw_affiliations(value),
+        }
+
+    def get_value_701(value):
+        ids = _get_ids(value)
+        return {
+            'a': value.get('full_name'),
+            'q': value.get('alternative_names'),
+            'i': ids.get('i'),
+            'j': ids.get('j'),
+            'u': _get_affiliations(value),
+            'v': _get_raw_affiliations(value),
         }
 
     if len(value) > 1:
         self["700"] = []
+        self["701"] = []
+
     for author in value[1:]:
-        self["700"].append(get_value(author))
-    return get_value(value[0])
+        is_supervisor = 'supervisor' in author.get('inspire_roles', [])
+        if is_supervisor:
+            self["701"].append(get_value_701(author))
+        else:
+            self["700"].append(get_value_100_700(author))
+    return get_value_100_700(value[0])
 
 
 @hep.over('corporate_author', '^110[10_2].')

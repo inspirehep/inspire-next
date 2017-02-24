@@ -549,6 +549,8 @@ def parse_institution_address(address, city, state_province,
 
     postal_code = force_force_list(postal_code)
     country = force_force_list(country)
+    if isinstance(country_code, list):
+        country_code = country_code[0]
     country_code = match_country_code(country_code)
 
     if isinstance(postal_code, (tuple, list)):

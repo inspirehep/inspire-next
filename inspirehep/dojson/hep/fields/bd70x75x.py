@@ -25,29 +25,25 @@
 from __future__ import absolute_import, division, print_function
 
 from dojson import utils
+import re
 
 from inspirehep.utils.helpers import force_force_list
-from inspirehep.utils.record import get_value
 
 from ..model import hep, hep2marc
 from ...utils import get_record_ref
 
+ORCID = re.compile('\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]')
+
 
 @hep.over('authors', '^701..')
 def thesis_supervisors(self, key, value):
-    """Thesis supervisors.
-
-    FIXME: handle identifiers from 701__i and 701__j."""
+    """Thesis supervisors."""
     def _get_thesis_supervisor(a_value, value):
         return {
             'affiliations': _get_affiliations(value),
-            'contributor_roles': [
-                {
-                    'schema': 'CRediT',
-                    'value': 'Supervision',
-                },
-            ],
+            'inspire_roles': ['supervisor'],
             'full_name': a_value,
+            'ids': _get_ids(value),
         }
 
     def _get_affiliations(value):
@@ -66,15 +62,60 @@ def thesis_supervisors(self, key, value):
                     record = None
 
                 result.append({
-                    'curated_relation': record is not None,
                     'record': record,
                     'value': value,
                 })
         else:
             for value in institutions:
                 result.append({
-                    'curated_relation': False,
                     'value': value,
+                })
+
+        return result
+
+    def _get_ids(value):
+        def _is_jacow(j_value):
+            return j_value.upper().startswith('JACOW-')
+
+        def _is_orcid(j_value):
+            return j_value.upper().startswith('ORCID:') and len(j_value) > 6
+
+        def _is_naked_orcid(j_value):
+            return ORCID.match(j_value)
+
+        def _is_cern(j_value):
+            return j_value.startswith('CCID-')
+
+        result = []
+
+        i_values = force_force_list(value.get('i'))
+        for i_value in i_values:
+            result.append({
+                'type': 'INSPIRE ID',
+                'value': i_value,
+            })
+
+        j_values = force_force_list(value.get('j'))
+        for j_value in j_values:
+            if _is_jacow(j_value):
+                result.append({
+                    'type': 'JACOW',
+                    'value': 'JACoW-' + j_value[6:],
+                })
+            elif _is_orcid(j_value):
+                result.append({
+                    'type': 'ORCID',
+                    'value': j_value[6:],
+                })
+            elif _is_naked_orcid(j_value):
+                result.append({
+                    'type': 'ORCID',
+                    'value': j_value,
+                })
+            elif _is_cern(j_value):
+                result.append({
+                    'type': 'CERN',
+                    'value': 'CERN-' + j_value[5:],
                 })
 
         return result
@@ -88,22 +129,7 @@ def thesis_supervisors(self, key, value):
     return authors
 
 
-@hep2marc.over('701', 'authors')
-@utils.for_each_value
-def thesis_supervisors2marc(self, key, value):
-    """Thesis supervisors.
-
-    FIXME: handle recids to 701__z."""
-    _is_supervisor = 'Supervision' in value.get('contributor_roles', [])
-
-    if _is_supervisor:
-        return {
-            'a': value.get('full_name'),
-            'u': get_value(value, 'affiliations.value'),
-        }
-
-
-@hep.over('collaboration', '^710[10_2][_2]')
+@hep.over('collaborations', '^710[10_2][_2]')
 def collaboration(self, key, value):
     """Added Entry-Corporate Name."""
     value = force_force_list(value)
@@ -119,7 +145,7 @@ def collaboration(self, key, value):
             'value': value.get('g'),
             'record': get_record_ref(recid, 'experiments')
         }
-    collaboration = self.get('collaboration', [])
+    collaboration = self.get('collaborations', [])
 
     filtered_value = value
     for element in filtered_value:
@@ -128,10 +154,10 @@ def collaboration(self, key, value):
     return collaboration
 
 
-@hep2marc.over('710', 'collaboration')
+@hep2marc.over('710', 'collaborations')
 @utils.for_each_value
-def collaboration2marc(self, key, value):
+def collaborations2marc(self, key, value):
     """Added Entry-Corporate Name."""
     return {
-        'g': value,
+        'g': value.get('value'),
     }
