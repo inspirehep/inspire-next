@@ -179,7 +179,7 @@ def is_too_old(record, days_ago=5):
     if earliest_date:
         parsed_date = datetime.datetime.strptime(earliest_date, "%Y-%m-%d")
         if not date_older_than(parsed_date,
-                               datetime.datetime.now(),
+                               datetime.datetime.utcnow(),
                                days=days_ago):
             return False
     return True

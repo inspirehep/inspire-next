@@ -35,7 +35,7 @@ class DisambiguationRecord(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     record_id = db.Column(db.String(length=36), nullable=False)
-    created = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     def save(self):
         """Create an object, which later will be stored in the database."""
