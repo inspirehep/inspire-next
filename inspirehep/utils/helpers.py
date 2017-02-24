@@ -25,8 +25,11 @@
 from __future__ import absolute_import, division, print_function
 
 from contextlib import closing
+from six.moves.urllib.parse import urlsplit
 
 import requests
+
+from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
 
 
 def download_file(url, output_file=None, chunk_size=1024):
@@ -87,3 +90,27 @@ def force_force_list(data):
     elif isinstance(data, (tuple, set)):
         return list(data)
     return data
+
+
+def get_recid_from_url(reference):
+    """Retrieve recid from record URL.
+
+    If no recid can be parsed, return False.
+    """
+    try:
+        res = int(reference.split('/')[-1])
+    except (ValueError, AttributeError):
+        res = False
+    return res
+
+
+def get_pid_type_from_ref(reference):
+    """Return the ``pid_type`` corresponding to a record URL.
+
+    The reference name corresponds to the ``endpoint`` in all cases.
+    This implementation exploits this by falling back to
+    ``get_pid_type_from_endpoint``.
+    """
+    endpoint = urlsplit(reference).path.split('/')[-2]
+
+    return get_pid_type_from_endpoint(endpoint)

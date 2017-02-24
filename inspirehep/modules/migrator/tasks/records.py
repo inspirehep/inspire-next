@@ -46,7 +46,7 @@ from invenio_db import db
 from invenio_indexer.api import RecordIndexer, current_record_to_index
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_search import current_search_client
+from invenio_search import current_search_client as es
 from invenio_search.utils import schema_to_index
 
 from inspirehep.dojson.processors import overdo_marc_dict
@@ -55,7 +55,10 @@ from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.dedupers import dedupe_list
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import (
+    force_force_list,
+    get_recid_from_url,
+)
 from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_db_record
 
@@ -145,6 +148,8 @@ def migrate(source, wait_for_results=False):
         migrate_chunk.ignore_result = True
         print('All migration tasks have been completed.')
 
+    merge_merged_records.delay()
+
 
 @shared_task(ignore_result=True)
 def continuous_migration():
@@ -193,7 +198,7 @@ def migrate_chunk(chunk):
 
     req_timeout = current_app.config['INDEXER_BULK_REQUEST_TIMEOUT']
     es_bulk(
-        current_search_client,
+        es,
         index_queue,
         stats_only=True,
         request_timeout=req_timeout,
@@ -228,7 +233,7 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
 
     click.echo('Extracting all citations...')
     with click.progressbar(es_scan(
-            current_search_client,
+            es,
             query={
                 '_source': 'references.recid',
                 'filter': {
@@ -255,7 +260,7 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
 
     click.echo('Adding citation numbers...')
     success, failed = es_bulk(
-        current_search_client,
+        es,
         _get_records_to_update_generator(citations_lookup),
         chunk_size=chunk_size,
         raise_on_exception=False,
@@ -297,10 +302,7 @@ def record_upsert(json):
 
         if json.get('deleted'):
             new_recid = get_recid_from_ref(json.get('new_record'))
-            if new_recid:
-                merged_record = get_db_record(pid_type, new_recid)
-                record.merge(merged_record)
-            else:
+            if not new_recid:
                 record.delete()
 
         return record
@@ -352,3 +354,59 @@ def migrate_and_insert_record(raw_record):
         prod_record.valid = True
         db.session.merge(prod_record)
         return record
+
+
+def get_records_to_merge():
+    def _get_uuids_to_merge():
+        body = {
+            'query': {
+                'filtered': {
+                    'filter': {
+                        'bool': {
+                            'must_not': [
+                                {
+                                    'missing': {
+                                        'field': 'new_record'
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        }
+
+        index = 'records-*'
+        query = es_scan(es, query=body, index=index)
+
+        for result in query:
+            yield result['_id']
+
+    def _get_records_to_merge(uuids):
+        return InspireRecord.get_records(uuids)
+
+    uuids = _get_uuids_to_merge()
+    records = _get_records_to_merge(uuids)
+
+    return records
+
+
+@shared_task()
+def merge_merged_records():
+    """Merge all marked merged records.
+
+    The method collects the records from the database that
+    have been marked as merged and merges them.
+    """
+    def _get_other_record(recid):
+        pid = PersistentIdentifier.query.filter_by(pid_value=str(recid)).one()
+        return get_db_record(pid.pid_type, recid)
+
+    records = get_records_to_merge()
+    for record in records:
+        other_ref = record.get('new_record')
+        recid = get_recid_from_url(other_ref.get('$ref'))
+        other = _get_other_record(recid)
+        record.merge(other)
+        record.commit()
+    db.session.commit()

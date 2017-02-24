@@ -32,6 +32,8 @@ import pytest
 from inspirehep.utils.helpers import (
     download_file,
     get_json_for_plots,
+    get_pid_type_from_ref,
+    get_recid_from_url,
     force_force_list,
 )
 
@@ -159,5 +161,28 @@ def test_force_force_list_converts_tuples_to_lists():
 def test_force_force_list_does_not_touch_lists():
     expected = ['foo', 'bar', 'baz']
     result = force_force_list(['foo', 'bar', 'baz'])
+
+    assert expected == result
+
+
+def test_get_recid_from_url_returns_false_on_none():
+    assert get_recid_from_url(None) == False
+
+
+def test_get_recid_from_url_returns_false_on_simple_strings():
+    assert get_recid_from_url('a_string') == False
+
+
+def test_get_recid_from_url_returns_false_on_ref_malformed():
+    assert get_recid_from_url('http://bad_url') == False
+
+
+def test_get_recid_from_url():
+    assert get_recid_from_url('http://localhost:5000/api/literature/111') == 111
+
+
+def test_get_pid_type_from_ref():
+    expected = 'lit'
+    result = get_pid_type_from_ref('http://localhost:5000/api/literature/111')
 
     assert expected == result
