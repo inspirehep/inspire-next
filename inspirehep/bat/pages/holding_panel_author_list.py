@@ -59,16 +59,6 @@ def click_first_record():
 
 
 def load_submission_record(input_data):
-    def _load_submission_record():
-        return (
-            'CERN' in record and
-            'ACC-PHYS' in record and
-            'ASTRO-PH' in record and
-            'Twain, Mark' in record and
-            'inspire:uid:1' in record and
-            'admin@inspirehep.net' in record
-        )
-
     try:
         record = WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located(
@@ -77,6 +67,15 @@ def load_submission_record(input_data):
         ).text
     except (ElementNotVisibleException, WebDriverException):
         go_to()
-        record = load_submission_record(input_data)
+        return load_submission_record(input_data)
 
-    return ArsenicResponse(_load_submission_record)
+    def _get_has_errors_fn(myrecord):
+        return lambda: (
+            'CERN' in myrecord and
+            'ACC-PHYS' in myrecord and
+            'ASTRO-PH' in myrecord and
+            'Twain, Mark' in myrecord and
+            'inspire:uid:1' in myrecord and
+            'admin@inspirehep.net' in myrecord
+        )
+    return ArsenicResponse(_get_has_errors_fn(record))
