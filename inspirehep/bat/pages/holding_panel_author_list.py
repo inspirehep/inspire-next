@@ -29,20 +29,33 @@ from selenium.common.exceptions import (
     WebDriverException,
 )
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select, WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait
 
 from ..arsenic import Arsenic, ArsenicResponse
 
 
 def go_to():
-    Arsenic().get(os.environ['SERVER_NAME'] + '/holdingpen/list/?workflow_name=Author&is-update=false&size=10&status=HALTED')
+    Arsenic().get(
+        os.environ['SERVER_NAME'] +
+        (
+            '/holdingpen/list/?workflow_name=Author&is-update=false&size=10'
+            '&status=HALTED'
+        )
+    )
 
 
 def click_first_record():
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//a[@class="title ng-binding ng-scope"]'))).click()
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="detail-panel"])[1]')))
+    WebDriverWait(Arsenic(), 10).until(
+        EC.visibility_of_element_located(
+            (By.XPATH, '//a[@class="title ng-binding ng-scope"]')
+        )
+    ).click()
+    WebDriverWait(Arsenic(), 10).until(
+        EC.visibility_of_element_located(
+            (By.XPATH, '(//div[@class="detail-panel"])[1]')
+        )
+    )
 
 
 def load_submission_record(input_data):
@@ -57,7 +70,11 @@ def load_submission_record(input_data):
         )
 
     try:
-        record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="row hp-item ng-scope"][1]'))).text
+        record = WebDriverWait(Arsenic(), 10).until(
+            EC.visibility_of_element_located(
+                (By.XPATH, '//div[@class="row hp-item ng-scope"][1]')
+            )
+        ).text
     except (ElementNotVisibleException, WebDriverException):
         go_to()
         record = load_submission_record(input_data)
