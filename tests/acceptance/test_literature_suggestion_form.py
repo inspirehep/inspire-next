@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from functools import partial
+
 from inspirehep.bat.pages import (
     create_literature,
     holding_panel_literature_detail,
@@ -246,33 +248,14 @@ def test_format_input_doi(login):
 
 
 def _test_date_format(field_id, field_err_id):
-    assert not create_literature.write_date_thesis(
+    write_date_thesis = partial(
+        create_literature.write_date_thesis,
         field_id,
         field_err_id,
-        '',
-    ).has_error()
-    assert create_literature.write_date_thesis(
-        field_id,
-        field_err_id,
-        'wrong',
-    ).has_error()
-    assert not create_literature.write_date_thesis(
-        field_id,
-        field_err_id,
-        '2016-01',
-    ).has_error()
-    assert create_literature.write_date_thesis(
-        field_id,
-        field_err_id,
-        '2016-02-30',
-    ).has_error()
-    assert not create_literature.write_date_thesis(
-        field_id,
-        field_err_id,
-        '2016',
-    ).has_error()
-    assert create_literature.write_date_thesis(
-        field_id,
-        field_err_id,
-        '2016-13',
-    ).has_error()
+    )
+    assert not write_date_thesis('').has_error()
+    assert write_date_thesis('wrong').has_error()
+    assert not write_date_thesis('2016-01').has_error()
+    assert write_date_thesis('2016-02-30').has_error()
+    assert not write_date_thesis('2016').has_error()
+    assert write_date_thesis('2016-13').has_error()
