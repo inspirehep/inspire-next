@@ -30,10 +30,15 @@ import pytest
 
 from invenio_db import db
 from invenio_search import current_search_client as es
+from invenio_workflows import workflow_object_class
 
 from inspirehep.bat.arsenic import Arsenic
 from inspirehep.bat.pages import top_navigation_page
 from inspirehep.factory import create_app
+from inspirehep.modules.workflows.models import (
+    WorkflowsAudit,
+    WorkflowsPendingRecord,
+)
 
 
 @pytest.fixture(scope='session')
@@ -77,3 +82,18 @@ def login(arsenic):
     top_navigation_page.log_in('admin@inspirehep.net', '123456')
     yield
     top_navigation_page.log_out()
+
+
+@pytest.fixture(autouse=True, scope='module')
+def cleanup_workflows_tables(app):
+    with app.app_context():
+        obj_types = (
+                WorkflowsAudit.query.all(),
+                WorkflowsPendingRecord.query.all(),
+                workflow_object_class.query(),
+        )
+        for obj_type in obj_types:
+            for obj in obj_type:
+                obj.delete()
+
+        db.session.commit()
