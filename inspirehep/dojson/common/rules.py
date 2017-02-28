@@ -245,7 +245,6 @@ def _private_notes2marc(self, key, value):
 @conferences.over('inspire_categories', '^65017')
 @experiments.over('inspire_categories', '^65017')
 @hep.over('inspire_categories', '^65017')
-@hepnames.over('inspire_categories', '^65017')
 @institutions.over('inspire_categories', '^65017')
 @jobs.over('inspire_categories', '^65017')
 def inspire_categories(self, key, value):
@@ -280,7 +279,6 @@ def inspire_categories(self, key, value):
 
 
 @hep2marc.over('65017', '^inspire_categories$')
-@hepnames2marc.over('65017', '^inspire_categories$')
 @utils.for_each_value
 def inspire_categories2marc(self, key, value):
     return {

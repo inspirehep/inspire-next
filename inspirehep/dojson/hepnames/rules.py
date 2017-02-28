@@ -28,6 +28,7 @@ import re
 
 from dojson import utils
 
+from inspire_schemas.utils import load_schema
 from inspirehep.utils.helpers import force_force_list
 
 from .model import hepnames, hepnames2marc
@@ -200,17 +201,102 @@ def positions2marc(self, key, value):
 
 
 @hepnames.over('other_names', '^400..')
+@utils.flatten
+@utils.for_each_value
 def other_names(self, key, value):
-    other_names = self.get('other_names', [])
-    other_names.extend(force_force_list(value.get('a')))
-
-    return other_names
+    return force_force_list(value.get('a'))
 
 
 @hepnames2marc.over('400', '^other_names$')
 @utils.for_each_value
 def other_names2marc(self, key, value):
     return {'a': value}
+
+
+@hepnames.over('arxiv_categories', '^65017')
+def arxiv_categories(self, key, value):
+    """Populate the ``arxiv_categories`` key.
+
+    Also populates the ``inspire_categories`` key through side effects.
+    """
+    def _is_arxiv(category):
+        schema = load_schema('elements/arxiv_categories')
+        valid_arxiv_categories = schema['enum']
+
+        return category in valid_arxiv_categories
+
+    def _is_inspire(category):
+        schema = load_schema('elements/inspire_field')
+        valid_inspire_categories = schema['properties']['term']['enum']
+
+        return category in valid_inspire_categories
+
+    def _normalize(a_value):
+        schema = load_schema('elements/arxiv_categories')
+        valid_arxiv_categories = schema['enum']
+
+        for category in valid_arxiv_categories:
+            if a_value.lower() == category.lower():
+                return category
+
+        schema = load_schema('elements/inspire_field')
+        valid_inspire_categories = schema['properties']['term']['enum']
+
+        for category in valid_inspire_categories:
+            if a_value.lower() == category.lower():
+                return category
+
+        field_codes_to_inspire_categories = {
+            'a': 'Astrophysics',
+            'b': 'Accelerators',
+            'c': 'Computing',
+            'e': 'Experiment-HEP',
+            'g': 'Gravitation and Cosmology',
+            'i': 'Instrumentation',
+            'l': 'Lattice',
+            'm': 'Math and Math Physics',
+            'n': 'Theory-Nucl',
+            'o': 'Other',
+            'p': 'Phenomenology-HEP',
+            'q': 'General Physics',
+            't': 'Theory-HEP',
+            'x': 'Experiment-Nucl',
+        }
+
+        return field_codes_to_inspire_categories.get(a_value.lower())
+
+    arxiv_categories = self.get('arxiv_categories', [])
+    inspire_categories = self.get('inspire_categories', [])
+
+    for value in force_force_list(value):
+        for a_value in force_force_list(value.get('a')):
+            normalized_a_value = _normalize(a_value)
+
+            if _is_arxiv(normalized_a_value):
+                arxiv_categories.append(normalized_a_value)
+            elif _is_inspire(normalized_a_value):
+                inspire_categories.append({'term': normalized_a_value})
+
+    self['inspire_categories'] = inspire_categories
+    return arxiv_categories
+
+
+@hepnames2marc.over('65017', '^arxiv_categories$')
+@utils.for_each_value
+def arxiv_categories2marc(self, key, value):
+    return {
+        '2': 'arXiv',
+        'a': value,
+    }
+
+
+@hepnames2marc.over('65017', '^inspire_categories$')
+@utils.for_each_value
+def inspire_categories2marc(self, key, value):
+    return {
+        '2': 'INSPIRE',
+        'a': value.get('term'),
+    }
 
 
 @hepnames.over('public_notes', '^667..')

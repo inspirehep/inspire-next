@@ -997,6 +997,96 @@ def test_positions_from_371__a_m_r_z():
     assert expected == result['371']
 
 
+def test_arxiv_categories_from_65017a_2():
+    schema = load_schema('authors')
+    subschema = schema['properties']['arxiv_categories']
+
+    snippet = (
+        '<datafield tag="650" ind1="1" ind2="7">'
+        '  <subfield code="2">INSPIRE</subfield>'
+        '  <subfield code="a">HEP-TH</subfield>'
+        '</datafield>'
+    )  # record/1010819
+
+    expected = [
+        'hep-th',
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['arxiv_categories'], subschema) is None
+    assert expected == result['arxiv_categories']
+
+    expected = [
+        {
+            '2': 'arXiv',
+            'a': 'hep-th',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['65017']
+
+
+def test_inspire_categories_from_65017a_2():
+    schema = load_schema('authors')
+    subschema = schema['properties']['inspire_categories']
+
+    snippet = (
+        '<datafield tag="650" ind1="1" ind2="7">'
+        '  <subfield code="2">INSPIRE</subfield>'
+        '  <subfield code="a">Computing</subfield>'
+        '</datafield>'
+    )  # record/1271076
+
+    expected = [
+        {'term': 'Computing'},
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['inspire_categories'], subschema) is None
+    assert expected == result['inspire_categories']
+
+    expected = [
+        {
+            '2': 'INSPIRE',
+            'a': 'Computing',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['65017']
+
+
+def test_inspire_categories_from_65017a_2_E():
+    schema = load_schema('authors')
+    subschema = schema['properties']['inspire_categories']
+
+    snippet = (
+        '<datafield tag="650" ind1="1" ind2="7">'
+        '  <subfield code="2">INSPIRE</subfield>'
+        '  <subfield code="a">E</subfield>'
+        '</datafield>'
+    )  # record/1019112
+
+    expected = [
+        {'term': 'Experiment-HEP'},
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['inspire_categories'], subschema) is None
+    assert expected == result['inspire_categories']
+
+    expected = [
+        {
+            '2': 'INSPIRE',
+            'a': 'Experiment-HEP',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['65017']
+
+
 def test_public_notes_from_667__a():
     schema = load_schema('authors')
     subschema = schema['properties']['public_notes']
