@@ -75,7 +75,7 @@ def load_submission_record(input_data):
             'ACC-PHYS' in myrecord and
             'ASTRO-PH' in myrecord and
             'Twain, Mark' in myrecord and
-            'inspire:uid:1' in myrecord and
-            'admin@inspirehep.net' in myrecord
+            'admin@inspirehep.net' in myrecord and
+            'Author' in myrecord
         )
     return ArsenicResponse(_get_has_errors_fn(record))
