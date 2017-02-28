@@ -181,7 +181,7 @@ def test_conference_info_autocomplete_title(login):
 
 def test_basic_info_autocomplete_affiliation(login):
     create_literature.go_to()
-    assert create_literature.write_affiliation('oxf', 'Oxford U.').has_error()
+    assert create_literature.write_affiliation('oxf', 'U. Oxford').has_error()
 
 
 def test_import_from_arXiv(login):
