@@ -274,12 +274,6 @@ def write_pdf_link(pdf_link):
 
 
 def write_date_thesis(date_field, error_message_id, date):
-    def _write_date_thesis():
-        return (
-            'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM '
-            'or YYYY.'
-        ) in message_err
-
     try:
         WebDriverWait(Arsenic(), 5).until(
             EC.visibility_of_element_located((By.ID, date_field))
@@ -294,15 +288,21 @@ def write_date_thesis(date_field, error_message_id, date):
     Arsenic().hide_title_bar()
     Arsenic().click_with_coordinates('state-group-supervisors', 5, 5)
     try:
-        message_err = WebDriverWait(Arsenic(), 5).until(
+        error_message = WebDriverWait(Arsenic(), 5).until(
             EC.visibility_of_element_located((By.ID, error_message_id))
         ).text
     except (ElementNotVisibleException, WebDriverException):
-        message_err = ''
+        error_message = ''
     Arsenic().show_title_bar()
     field.clear()
 
-    return ArsenicResponse(_write_date_thesis)
+    def _has_error():
+        return (
+            'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM '
+            'or YYYY.'
+        ) in error_message
+
+    return ArsenicResponse(_has_error)
 
 
 def write_institution_thesis(institution, expected_data):
