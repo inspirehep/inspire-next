@@ -34,6 +34,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
 from ..arsenic import Arsenic, ArsenicResponse
+from ..EC import TryClick
 
 
 def go_to():
@@ -386,7 +387,9 @@ def submit_arxiv_id(arxiv_id, expected_data):
         return expected_data == output_data
 
     Arsenic().find_element_by_id('arxiv_id').send_keys(arxiv_id)
-    Arsenic().find_element_by_id('importData').click()
+    WebDriverWait(Arsenic(), 10).until(
+        EC.visibility_of_element_located((By.ID, 'importData'))
+    ).click()
     WebDriverWait(Arsenic(), 20).until(
         EC.visibility_of_element_located((By.ID, 'acceptData'))
     ).click()
@@ -463,7 +466,9 @@ def submit_doi_id(doi_id, expected_data):
 
 def _skip_import_data():
     Arsenic().hide_title_bar()
-    Arsenic().find_element_by_id('skipImportData').click()
+    WebDriverWait(Arsenic(), 10).until(
+        TryClick((By.ID, 'skipImportData'))
+    ).click()
     WebDriverWait(Arsenic(), 10).until(
         EC.text_to_be_present_in_element(
             (By.ID, 'form_container'),
