@@ -50,7 +50,7 @@ def test_literature_create_thesis_manually(login):
         'supervisor-affiliation': 'CERN',
         'thesis-date': '2001-01-01',
         'thesis-defense': '2001-01-01',
-        'degree-type': 'Bachelor',
+        'degree-type': 'bachelor',
         'institution': 'Wisconsin U., Madison',
         'references': 'references',
         'extra-comments': 'comments about the document'
