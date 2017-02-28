@@ -100,7 +100,7 @@ def test_literature_create_article_journal_with_proceeding_manually(login):
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
-        'subject':'Computing',
+        'subject': 'Computing',
         'author-0': 'Mister White',
         'author-0-affiliation': 'Wisconsin U., Madison',
         'author-1': 'Mister Brown',
