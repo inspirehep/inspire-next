@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -10,7 +10,7 @@
 #
 # INSPIRE is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
@@ -22,6 +22,19 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .fields import literature
+from inspirehep.modules.search.api import JournalsSearch
 
-__all__ = ('literature',)
+
+def normalize_journal_title(journal_title):
+    normalized_journal_title = journal_title
+    hits = JournalsSearch().query(
+        'match',
+        title_variants__title__lowercased=journal_title
+    ).execute()
+
+    if hits:
+        try:
+            normalized_journal_title = hits[0].short_titles[0].title
+        except (AttributeError, IndexError):
+            pass
+    return normalized_journal_title
