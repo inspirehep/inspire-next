@@ -36,7 +36,7 @@ from ..arsenic import Arsenic, ArsenicResponse
 
 
 def go_to():
-    Arsenic().get(os.environ['SERVER_NAME'] + '/holdingpen/list/?page=1&size=10&source=submission&workflow_name=HEP&status=HALTED')
+    Arsenic().get(os.environ['SERVER_NAME'] + '/holdingpen/list/?page=1&size=10&status=HALTED')
 
 
 def click_first_record():
