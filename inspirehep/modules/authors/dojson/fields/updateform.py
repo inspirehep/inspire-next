@@ -177,7 +177,7 @@ def public_email(self, key, value):
 def inspire_categories(self, key, value):
     return {
         "term": value,
-        "source": "submitter"
+        "source": "user"
     }
 
 
