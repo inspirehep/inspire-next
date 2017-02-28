@@ -19,7 +19,7 @@
             ],
             "numeric_detection": false,
             "properties": {
-                "ICN": {
+                "legacy_ICN": {
                     "copy_to": [
                         "affautocomplete"
                     ],
