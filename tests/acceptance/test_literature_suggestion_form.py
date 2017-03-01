@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from functools import partial
+
 from inspirehep.bat.pages import (
     create_literature,
     holding_panel_literature_detail,
@@ -50,7 +52,7 @@ def test_literature_create_thesis_manually(login):
         'supervisor-affiliation': 'CERN',
         'thesis-date': '2001-01-01',
         'thesis-defense': '2001-01-01',
-        'degree-type': 'Bachelor',
+        'degree-type': 'bachelor',
         'institution': 'Wisconsin U., Madison',
         'references': 'references',
         'extra-comments': 'comments about the document'
@@ -68,7 +70,7 @@ def test_literature_create_article_journal_manually(login):
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
-        'subject':'Computing',
+        'subject': 'Computing',
         'author-0': 'Mister White',
         'author-0-affiliation': 'Wisconsin U., Madison',
         'author-1': 'Mister Brown',
@@ -100,7 +102,7 @@ def test_literature_create_article_journal_with_proceeding_manually(login):
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
-        'subject':'Computing',
+        'subject': 'Computing',
         'author-0': 'Mister White',
         'author-0-affiliation': 'Wisconsin U., Madison',
         'author-1': 'Mister Brown',
@@ -122,16 +124,22 @@ def test_literature_create_article_journal_with_proceeding_manually(login):
     }
 
     create_literature.go_to()
-    assert create_literature.submit_journal_article_with_proceeding(input_data).has_error()
+    assert create_literature.submit_journal_article_with_proceeding(
+        input_data
+    ).has_error()
     _check_back_office(input_data)
 
 
 def _check_back_office(input_data):
     holding_panel_literature_list.go_to()
-    assert holding_panel_literature_list.load_submission_record(input_data).has_error()
+    assert holding_panel_literature_list.load_submission_record(
+        input_data
+    ).has_error()
 
     holding_panel_literature_detail.go_to()
-    assert holding_panel_literature_detail.load_submitted_record(input_data).has_error()
+    assert holding_panel_literature_detail.load_submitted_record(
+        input_data
+    ).has_error()
     assert holding_panel_literature_detail.accept_record().has_error()
 
 
@@ -149,22 +157,31 @@ def test_thesis_info_date(login):
 
 def test_thesis_info_autocomplete_supervisor_institution(login):
     create_literature.go_to()
-    assert create_literature.write_institution_thesis('CER', 'CERN').has_error()
+    assert create_literature.write_institution_thesis(
+        'CER',
+        'CERN',
+    ).has_error()
 
 
 def test_journal_info_autocomplete_title(login):
     create_literature.go_to()
-    assert create_literature.write_journal_title('Nuc', 'Nuclear Physics').has_error()
+    assert create_literature.write_journal_title(
+        'Nuc',
+        'Nuclear Physics',
+    ).has_error()
 
 
 def test_conference_info_autocomplete_title(login):
     create_literature.go_to()
-    assert create_literature.write_conference('sos', 'IN2P3 School of Statistics, 2012-05-28, Autrans, France').has_error()
+    assert create_literature.write_conference(
+        'sos',
+        'IN2P3 School of Statistics, 2012-05-28, Autrans, France',
+    ).has_error()
 
 
 def test_basic_info_autocomplete_affiliation(login):
     create_literature.go_to()
-    assert create_literature.write_affiliation('oxf', 'Oxford U.').has_error()
+    assert create_literature.write_affiliation('oxf', 'U. Oxford').has_error()
 
 
 def test_import_from_arXiv(login):
@@ -176,12 +193,21 @@ def test_import_from_arXiv(login):
         'author': 'Maldacena, Juan',
         'doi': '10.1023/A:1026654312961',
         'journal': 'International Journal of Theoretical Physics',
-        'title': 'The Large N Limit of Superconformal Field Theories and Supergravity',
-        'abstract': 'We show that the large $N$ limit of certain conformal field theories'
+        'title': (
+            'The Large N Limit of Superconformal Field Theories and '
+            'Supergravity'
+        ),
+        'abstract': (
+            'We show that the large $N$ limit of certain conformal field '
+            'theories'
+        ),
     }
 
     create_literature.go_to()
-    assert create_literature.submit_arxiv_id('hep-th/9711200', expected_data).has_error()
+    assert create_literature.submit_arxiv_id(
+        'hep-th/9711200',
+        expected_data,
+    ).has_error()
 
 
 def test_import_from_doi(login):
@@ -194,11 +220,17 @@ def test_import_from_doi(login):
         'author-1': 'Finkbeiner, Douglas P.',
         'author-2': 'Davis, Marc',
         'journal': 'The Astrophysical Journal',
-        'title': 'Maps of Dust Infrared Emission for Use in Estimation of Reddening and Cosmic Microwave Background Radiation Foregrounds'
+        'title': (
+            'Maps of Dust Infrared Emission for Use in Estimation of '
+            'Reddening and Cosmic Microwave Background Radiation Foregrounds'
+        ),
     }
 
     create_literature.go_to()
-    assert create_literature.submit_doi_id('10.1086/305772', expected_data).has_error()
+    assert create_literature.submit_doi_id(
+        '10.1086/305772',
+        expected_data,
+    ).has_error()
 
 
 def test_format_input_arXiv(login):
@@ -216,9 +248,14 @@ def test_format_input_doi(login):
 
 
 def _test_date_format(field_id, field_err_id):
-    assert not create_literature.write_date_thesis(field_id, field_err_id, '').has_error()
-    assert create_literature.write_date_thesis(field_id, field_err_id, 'wrong').has_error()
-    assert not create_literature.write_date_thesis(field_id, field_err_id, '2016-01').has_error()
-    assert create_literature.write_date_thesis(field_id, field_err_id, '2016-02-30').has_error()
-    assert not create_literature.write_date_thesis(field_id, field_err_id, '2016').has_error()
-    assert create_literature.write_date_thesis(field_id, field_err_id, '2016-13').has_error()
+    write_date_thesis = partial(
+        create_literature.write_date_thesis,
+        field_id,
+        field_err_id,
+    )
+    assert not write_date_thesis('').has_error()
+    assert write_date_thesis('wrong').has_error()
+    assert not write_date_thesis('2016-01').has_error()
+    assert write_date_thesis('2016-02-30').has_error()
+    assert not write_date_thesis('2016').has_error()
+    assert write_date_thesis('2016-13').has_error()

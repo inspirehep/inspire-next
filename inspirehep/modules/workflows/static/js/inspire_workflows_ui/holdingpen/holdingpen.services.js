@@ -59,7 +59,8 @@
             setDecision: function (vm, workflowId, decision) {
 
               var data = JSON.stringify({
-                'value': decision
+                'value': decision,
+                'pdf_upload': vm.pdf_upload
               });
 
               $http.post('/api/holdingpen/' + workflowId + '/action/resolve', data).then(function (response) {

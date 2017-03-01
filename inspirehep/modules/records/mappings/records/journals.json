@@ -170,12 +170,6 @@
                     },
                     "type": "object"
                 },
-                "short_title": {
-                    "copy_to": [
-                        "journalautocomplete"
-                    ],
-                    "type": "string"
-                },
                 "short_titles": {
                     "properties": {
                         "title": {
@@ -187,11 +181,16 @@
                     },
                     "type": "object"
                 },
-                "title": {
-                    "copy_to": [
-                        "journalautocomplete"
-                    ],
-                    "type": "string"
+                "journal_titles": {
+                    "properties": {
+                        "title": {
+                            "copy_to": [
+                                "journalautocomplete"
+                            ],
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 },
                 "title_variants": {
                     "properties": {

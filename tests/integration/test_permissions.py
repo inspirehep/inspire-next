@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,34 +20,34 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-
 from __future__ import absolute_import, division, print_function
+
+import json
 
 import pytest
 from flask import current_app
-import json
 from flask_security.utils import encrypt_password
 
 from invenio_access.models import ActionUsers
 from invenio_accounts.models import SessionActivity, User
-from invenio_accounts.testutils import login_user_via_session
-from invenio_accounts.testutils import login_user_via_view
+from invenio_accounts.testutils import (
+    login_user_via_session,
+    login_user_via_view,
+)
 from invenio_collections.models import Collection
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
 
+from inspirehep.modules.cache import current_cache
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.search.api import LiteratureSearch
-from inspirehep.modules.cache import current_cache
 
 
 def _create_and_index_record(record):
     record = InspireRecord.create(record)
     inspire_recid_minter(record.id, record)
-    # invenio-collections will populate _collections field in record upon
-    # commit
     db.session.commit()
     es.indices.refresh('records-hep')
 
@@ -57,28 +57,24 @@ def _create_and_index_record(record):
 @pytest.fixture(scope='function')
 def sample_record(app):
     record = {
-        "$schema": "http://localhost:5000/schemas/records/hep.json",
-        "control_number": 123,
-        "titles": [
-            {
-                "title": "Supersymmetric gauge field theory and string theory"
-            }
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': [
+            'Literature',
         ],
-        "collections": [
-            {
-                "primary": "HEP"
-            },
-            {
-                "primary": "THESIS"
-            }
-        ]
+        'control_number': 111,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'sample'}
+        ],
     }
     record = _create_and_index_record(record)
     record_id = record.id
 
     yield record
 
-    pid = PersistentIdentifier.get('lit', '123')
+    pid = PersistentIdentifier.get('lit', '111')
     db.session.delete(pid)
     record = InspireRecord.get_record(record_id)
     record._delete(force=True)
@@ -91,38 +87,30 @@ def sample_record(app):
 def restricted_record(app):
     restricted_collection = Collection(
         name='Restricted Collection',
-        dbquery='collections.primary:"Restricted Collection"',
+        dbquery='_collections:"Restricted Collection"',
     )
     another_restricted_collection = Collection(
         name='Another Restricted Collection',
-        dbquery='collections.primary:"Another Restricted Collection"',
+        dbquery='_collections:"Another Restricted Collection"',
     )
 
     db.session.add_all([restricted_collection, another_restricted_collection])
     db.session.commit()
 
     record = {
-        "$schema": "http://localhost:5000/schemas/records/hep.json",
-        "control_number": 222,
-        "titles": [
-            {
-                "title": "Supersymmetric gauge field theory and string theory"
-            }
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': [
+            'Literature',
+            'Restricted Collection',
+            'Another Restricted Collection',
         ],
-        "collections": [
-            {
-                "primary": "HEP"
-            },
-            {
-                "primary": "THESIS"
-            },
-            {
-                "primary": "Restricted Collection"
-            },
-            {
-                "primary": "Another Restricted Collection"
-            }
-        ]
+        'control_number': 222,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'restricted'}
+        ],
     }
 
     record = _create_and_index_record(record)
@@ -215,7 +203,7 @@ def test_all_collections_are_cached(app, app_client):
     # Remove collection cache key
     current_cache.delete('restricted_collections')
 
-    app_client.get("/literature/123")
+    app_client.get("/literature/111")
 
     # Check that cache key has been correctly filled
     assert current_cache.get('restricted_collections') == \
@@ -239,7 +227,7 @@ def test_record_public_detailed_read(app, app_client, user_info, status):
         # Login as user
         login_user_via_session(app_client, email=user_info['email'])
 
-    assert app_client.get("/literature/123").status_code == status
+    assert app_client.get('/literature/111').status_code == status
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -259,7 +247,7 @@ def test_record_public_api_read(app, app_client, user_info, status):
         # Login as user
         login_user_via_session(app_client, email=user_info['email'])
 
-    assert app_client.get("/literature/123").status_code == status
+    assert app_client.get('/literature/111').status_code == status
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -282,7 +270,7 @@ def test_record_restricted_detailed_read(app, app_client, user_info, status):
         # Login as user
         login_user_via_session(app_client, email=user_info['email'])
 
-    assert app_client.get("/literature/222").status_code == status
+    assert app_client.get('/literature/222').status_code == status
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -303,7 +291,7 @@ def test_record_restricted_api_read(app, api_client, user_info, status):
 
     if user_info:
         login_user_via_session(api_client, email=user_info['email'])
-    assert api_client.get("/literature/222").status_code == status
+    assert api_client.get('/literature/222').status_code == status
 
 
 @pytest.mark.parametrize('user_info,total_count,es_filter', [
@@ -351,7 +339,7 @@ def test_record_api_update(app, api_client, sample_record, user_info, status):
        and cataloger users through the API."""
     if user_info:
         login_user_via_session(api_client, email=user_info['email'])
-    resp = api_client.put("/literature/123/db",
+    resp = api_client.put('/literature/111/db',
                           data=json.dumps(sample_record.dumps()),
                           content_type='application/json')
     assert resp.status_code == status

@@ -243,7 +243,7 @@ class AdvisorsInlineForm(INSPIREForm):
     degree_type = fields.SelectField(
         label=_('Degree Type'),
         widget_classes="form-control",
-        default="PHD",
+        default="phd",
         widget=ColumnSelect(class_="col-xs-5", description=u"Degree Type"),
     )
 
@@ -251,10 +251,10 @@ class AdvisorsInlineForm(INSPIREForm):
         """Constructor."""
         super(AdvisorsInlineForm, self).__init__(*args, **kwargs)
         self.degree_type.choices = [
-            ("BACHELOR", _("Bachelor")),
-            ("MASTER", _("Master")),
-            ("PHD", _("PhD")),
-            ("OTHER", _("Other")),
+            ("bachelor", _("Bachelor")),
+            ("master", _("Master")),
+            ("phd", _("PhD")),
+            ("other", _("Other")),
         ]
 
 

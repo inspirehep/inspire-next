@@ -101,6 +101,7 @@
         $scope.vm.loading = true;
         $scope.vm.new_subject_area = '';
         $scope.vm.new_keyword = '';
+        $scope.vm.pdf_upload = true;
 
         $scope.vm.modal = undefined;
 

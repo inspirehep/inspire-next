@@ -355,8 +355,7 @@ def prepare_keywords(obj, eng):
         # TODO: differentiate between curated and gueesed keywords
         keywords.append(
             {
-                'classification_scheme': '',
-                'keyword': keyword['label'],
+                'value': keyword['label'],
                 'source': 'curator' if keyword.get('curated') else 'magpie',
             }
         )
@@ -369,17 +368,17 @@ def prepare_keywords(obj, eng):
 def user_pdf_get(obj, eng):
     """Upload user PDF file, if requested."""
     if obj.extra_data.get('pdf_upload', False):
-        fft = {'url': obj.extra_data.get('submission_data').get('pdf'),
-               'docfile_type': 'INSPIRE-PUBLIC'}
-        if obj.data.get('fft'):
-            obj.data['fft'].append(fft)
+        fft = {'path': obj.extra_data.get('submission_pdf'),
+               'type': 'INSPIRE-PUBLIC'}
+        if obj.data.get('_fft'):
+            obj.data['_fft'].append(fft)
         else:
-            obj.data['fft'] = [fft]
+            obj.data['_fft'] = [fft]
         obj.log.info("User PDF file added to FFT.")
 
 
 def prepare_files(obj, eng):
-    """Adds to the fft field (files) the extracted pdfs if any"""
+    """Adds to the _fft field (files) the extracted pdfs if any"""
     def _get_fft(url, name):
         def _get_filename(obj, filename):
             if is_arxiv_paper(obj):
@@ -390,10 +389,10 @@ def prepare_files(obj, eng):
         filename, filetype = os.path.splitext(name)
 
         return {
-            'url': os.path.realpath(url),
-            'docfile_type': is_arxiv_paper(obj) and 'arXiv' or 'INSPIRE-PUBLIC',
+            'path': os.path.realpath(url),
+            'type': is_arxiv_paper(obj) and 'arXiv' or 'INSPIRE-PUBLIC',
             'filename': _get_filename(obj, filename),
-            'filetype': filetype,
+            'format': filetype,
         }
 
     if not obj.files:
@@ -410,7 +409,7 @@ def prepare_files(obj, eng):
             result.append(_get_fft(pdf_file_obj.obj.file.uri, filename))
 
     if result:
-        obj.data['fft'] = obj.data.get('fft', []) + result
+        obj.data['_fft'] = obj.data.get('_fft', []) + result
         obj.log.info('Non-user PDF files added to FFT.')
         obj.log.debug('Added PDF files: {}'.format(result))
 

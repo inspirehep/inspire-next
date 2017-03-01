@@ -27,31 +27,31 @@ from dojson.utils import GroupableOrderedDict
 from inspirehep.modules.authors.dojson.model import updateform
 
 
-def test_name_status_from_status():
+def test_status_from_status():
     form = GroupableOrderedDict([
-        ('status', 'foo'),
+        ('status', 'deceased'),
     ])
 
     expected = {
-        'status': 'foo',
+        'status': 'deceased',
     }
     result = updateform.do(form)
 
-    assert expected == result['name']
+    assert expected == result
 
 
-def test_name_status_from_status_updates():
+def test_status_from_status_updates():
     form = GroupableOrderedDict([
-        ('status', 'foo'),
-        ('status', 'bar'),
+        ('status', 'active'),
+        ('status', 'deceased'),
     ])
 
     expected = {
-        'status': 'bar',
+        'status': 'deceased',
     }
     result = updateform.do(form)
 
-    assert expected == result['name']
+    assert expected == result
 
 
 def test_name_preferred_name_from_display_name():
@@ -393,20 +393,20 @@ def test_positions_from_public_email_appends():
     assert expected == result['positions']
 
 
-def test_inspire_categories_from_research_field():
+def test_arxiv_categories_from_research_field():
     form = GroupableOrderedDict([
         ('research_field', 'foo'),
     ])
 
     expected = [
         {
-            'source': 'submitter',
+            'source': 'user',
             'term': 'foo',
         },
     ]
     result = updateform.do(form)
 
-    assert expected == result['inspire_categories']
+    assert expected == result['arxiv_categories']
 
 
 def test_positions_from_institutions_history():
@@ -474,7 +474,7 @@ def test_advisors_from_advisors():
 
     expected = [
         {
-            '_degree_type': 'PhD',
+            'degree_type': 'phd',
             'name': 'foo',
         },
     ]

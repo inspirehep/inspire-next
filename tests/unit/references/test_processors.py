@@ -61,10 +61,10 @@ def test_reference_builder_no_uids():
                 "ALICE"
             ],
             "arxiv_eprints": [
-                "arXiv:hep-th/0603001",
-                "arXiv:hep-th/0603002",
-                "arXiv:0705.0016",
-                "arXiv:0705.0017"
+                "hep-th/0603001",
+                "hep-th/0603002",
+                "0705.0016",
+                "0705.0017"
             ],
             "misc": [
                 "misc 0",
@@ -151,7 +151,7 @@ def test_reference_builder_add_uid():
 
     expected = {
         'reference': {
-            'arxiv_eprints': ['arXiv:hep-th/0603001', 'arXiv:0705.0017'],
+            'arxiv_eprints': ['hep-th/0603001', '0705.0017'],
             'publication_info': {
                 'isbn': '978-1-4493-4485-6',
                 'cnum': 'C87-11-11',

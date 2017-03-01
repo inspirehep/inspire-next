@@ -9,7 +9,7 @@
           Term
         </div>
         <div class="col-md-2 col-sm-2 col-xs-3">
-          Scheme
+          Source
         </div>
         <div class="col-md-1 col-sm-1 col-xs-1">
 
@@ -17,23 +17,22 @@
       </div>
       <div class="clearfix"></div>
 
-      <div class="row subject-area"
-           ng-repeat="subject_term in vm.record.metadata.inspire_categories">
-        <div class="col-md-9 col-sm-9 col-xs-8"
-             ng-bind="subject_term.term"></div>
-        <div class="col-md-2 col-sm-2 col-xs-3">
-        <span class="scheme" ng-if="subject_term._scheme"
-              ng-bind="subject_term._scheme"></span>
-        <span class="scheme" ng-if="!subject_term._scheme"
-              ng-bind="subject_term.scheme"></span>
-        </div>
+      <div ng-init="categories = vm.record.metadata.inspire_categories || vm.record.metadata.arxiv_categories">
+        <div class="row subject-area" ng-repeat="subject_term in categories">
+          <div class="col-md-9 col-sm-9 col-xs-8"
+               ng-bind="subject_term.term"></div>
+          <div class="col-md-2 col-sm-2 col-xs-3">
+          <span class="scheme" ng-if="subject_term.source" ng-bind="subject_term.source">
+          </span>
+          </div>
 
-        <div class="col-md-1 col-sm-1 col-xs-1 text-left">
-          <button ng-click="Utils.deleteSubject($index)"
-                  class="btn btn-link btn-xs btn-delete"><i
-            class="fa fa-times"></i></button>
-        </div>
+          <div class="col-md-1 col-sm-1 col-xs-1 text-left">
+            <button ng-click="Utils.deleteSubject($index)"
+                    class="btn btn-link btn-xs btn-delete"><i
+              class="fa fa-times"></i></button>
+          </div>
 
+        </div>
       </div>
     </div>
   </div>

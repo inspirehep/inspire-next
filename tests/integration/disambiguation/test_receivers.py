@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ def test_append_new_record_to_queue_method(small_app):
     """Test the receiver responsible for queuing new HEP records."""
     sample_hep_record = _IdDict({
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
         'authors': [{
             'affiliations': [{'value': 'Copenhagen U.'}],
             'curated_relation': False,
@@ -59,10 +60,6 @@ def test_append_new_record_to_queue_method(small_app):
             'signature_block': 'GLASs',
             'uuid': '5ece3c81-0a50-481d-8bee-5f78576e9504'
         }],
-        'collections': [
-            {'primary': 'CORE'},
-            {'primary': 'HEP'}
-        ],
         'control_number': 4328,
         'self': {'$ref': 'http://localhost:5000/api/literature/4328'},
         'titles': [{'title': 'Partial Symmetries of Weak Interactions'}]
@@ -71,14 +68,14 @@ def test_append_new_record_to_queue_method(small_app):
     append_new_record_to_queue(sample_hep_record)
 
     assert str(sample_hep_record.id) == \
-        DisambiguationRecord.query.order_by(desc("id")).first().record_id
+        DisambiguationRecord.query.order_by(desc('id')).first().record_id
 
 
 def test_append_new_record_to_queue_method_not_hep_record(small_app):
     """Test if the receiver will skip a new publication, not HEP."""
     sample_author_record = _IdDict({
         '$schema': 'http://localhost:5000/schemas/records/authors.json',
-        'collections': [{'primary': 'HEPNAMES'}],
+        '_collections': ['Authors'],
         'control_number': 314159265,
         'name': {'value': 'Glashow, S.L.'},
         'positions': [{'institution': {'name': 'Copenhagen U.'}}],
@@ -87,7 +84,7 @@ def test_append_new_record_to_queue_method_not_hep_record(small_app):
     append_new_record_to_queue(sample_author_record)
 
     assert str(sample_author_record.id) != \
-        DisambiguationRecord.query.order_by(desc("id")).first().record_id
+        DisambiguationRecord.query.order_by(desc('id')).first().record_id
 
 
 def test_append_updated_record_to_queue(small_app):
@@ -97,13 +94,13 @@ def test_append_updated_record_to_queue(small_app):
     record = InspireRecord.get_record(publication_id)
 
     record_to_update = deepcopy(record)
-    record_to_update['authors'][0]['full_name'] = "John Smith"
+    record_to_update['authors'][0]['full_name'] = 'John Smith'
 
     append_updated_record_to_queue(None, record_to_update, record_to_update,
-                                   "records-hep", "hep")
+                                   'records-hep', 'hep')
 
     assert str(record_to_update.id) == \
-        DisambiguationRecord.query.order_by(desc("id")).first().record_id
+        DisambiguationRecord.query.order_by(desc('id')).first().record_id
 
 
 def test_append_updated_record_to_queue_new_record(small_app):
@@ -114,6 +111,7 @@ def test_append_updated_record_to_queue_new_record(small_app):
     """
     sample_hep_record = _IdDict({
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
         'authors': [{
             'affiliations': [{'value': 'Copenhagen U.'}],
             'curated_relation': False,
@@ -121,40 +119,36 @@ def test_append_updated_record_to_queue_new_record(small_app):
             'signature_block': 'GLASs',
             'uuid': '5ece3c81-0a50-481d-8bee-5f78576e9504'
         }],
-        'collections': [
-            {'primary': 'CORE'},
-            {'primary': 'HEP'}
-        ],
         'control_number': 4328,
         'self': {'$ref': 'http://localhost:5000/api/literature/4328'},
         'titles': [{'title': 'Partial Symmetries of Weak Interactions'}]
     })
 
     result = append_updated_record_to_queue(None, sample_hep_record,
-                                            sample_hep_record, "records-hep",
-                                            "hep")
+                                            sample_hep_record, 'records-hep',
+                                            'hep')
 
     assert result is None
     assert str(sample_hep_record.id) != \
-        DisambiguationRecord.query.order_by(desc("id")).first().record_id
+        DisambiguationRecord.query.order_by(desc('id')).first().record_id
 
 
 def test_append_updated_record_to_queue_not_hep_record(small_app):
     """Test if the receiver will skip an updated publication, not HEP."""
     sample_author_record = _IdDict({
         '$schema': 'http://localhost:5000/schemas/records/authors.json',
-        'collections': [{'primary': 'HEPNAMES'}],
+        '_collections': ['Authors'],
         'control_number': 314159265,
         'name': {'value': 'Glashow, S.L.'},
         'positions': [{'institution': {'name': 'Copenhagen U.'}}],
         'self': {'$ref': 'http://localhost:5000/api/authors/314159265'}})
 
     append_updated_record_to_queue(None, sample_author_record,
-                                   sample_author_record, "records-authors",
-                                   "authors")
+                                   sample_author_record, 'records-authors',
+                                   'authors')
 
     assert str(sample_author_record.id) != \
-        DisambiguationRecord.query.order_by(desc("id")).first().record_id
+        DisambiguationRecord.query.order_by(desc('id')).first().record_id
 
 
 def test_append_updated_record_to_queue_same_data(small_app):
@@ -163,7 +157,7 @@ def test_append_updated_record_to_queue_same_data(small_app):
     publication_id = str(pid.object_uuid)
     record = InspireRecord.get_record(publication_id)
 
-    append_updated_record_to_queue(None, record, record, "records-hep", "hep")
+    append_updated_record_to_queue(None, record, record, 'records-hep', 'hep')
 
     assert str(record.id) != \
-        DisambiguationRecord.query.order_by(desc("id")).first().record_id
+        DisambiguationRecord.query.order_by(desc('id')).first().record_id

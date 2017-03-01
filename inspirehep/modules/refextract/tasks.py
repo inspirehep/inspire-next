@@ -46,39 +46,39 @@ def extract_journal_info(obj, eng):
         if not pubnote:
             continue
         freetext = pubnote.get("pubinfo_freetext")
-        if not freetext:
-            continue
-        if isinstance(freetext, (list, tuple)):
-            freetext = ". ".join(freetext)
-        extracted_publication_info = extract_journal_reference(
-            freetext,
-            # override_kbs_files={
-            #    'journals': get_mappings_from_kbname(['REFEXTRACT_KB_NAME'])
-            # }
-        )
-        if extracted_publication_info:
-            if "volume" in extracted_publication_info:
-                pubnote["journal_volume"] = extracted_publication_info.get(
-                    "volume"
-                )
-            if "title" in extracted_publication_info:
-                pubnote["journal_title"] = extracted_publication_info.get(
-                    "title"
-                )
-            if "year" in extracted_publication_info:
-                pubnote["year"] = int(extracted_publication_info.get(
-                    "year"
-                ))
-            if "page" in extracted_publication_info:
-                page_start, page_end, artid = split_page_artid(
-                    extracted_publication_info.get("page"))
-                if page_start:
-                    pubnote["page_start"] = page_start
-                if page_end:
-                    pubnote["page_end"] = page_end
-                if artid:
-                    pubnote["artid"] = artid
-        new_publication_info.append(pubnote)
+        if freetext:
+            if isinstance(freetext, (list, tuple)):
+                freetext = ". ".join(freetext)
+            extracted_publication_info = extract_journal_reference(
+                freetext,
+                # override_kbs_files={
+                #    'journals': get_mappings_from_kbname(['REFEXTRACT_KB_NAME'])
+                # }
+            )
+            if extracted_publication_info:
+                if "volume" in extracted_publication_info:
+                    pubnote["journal_volume"] = extracted_publication_info.get(
+                        "volume"
+                    )
+                if "title" in extracted_publication_info:
+                    pubnote["journal_title"] = extracted_publication_info.get(
+                        "title"
+                    )
+                if "year" in extracted_publication_info:
+                    pubnote["year"] = int(extracted_publication_info.get(
+                        "year"
+                    ))
+                if "page" in extracted_publication_info:
+                    page_start, page_end, artid = split_page_artid(
+                        extracted_publication_info.get("page"))
+                    if page_start:
+                        pubnote["page_start"] = page_start
+                    if page_end:
+                        pubnote["page_end"] = page_end
+                    if artid:
+                        pubnote["artid"] = artid
+        if any(value for value in pubnote.values()):
+            new_publication_info.append(pubnote)
 
     obj.data["publication_info"] = new_publication_info
 
