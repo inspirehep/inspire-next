@@ -18,7 +18,11 @@
       <div class="clearfix"></div>
 
       <div class="row subject-area"
+           ng-if="vm.record._workflow.data_type == 'hep'"
            ng-repeat="subject_term in vm.record.metadata.inspire_categories">
+      <div class="row subject-area"
+           ng-if="vm.record._workflow.data_type == 'authors'"
+           ng-repeat="subject_term in vm.record.metadata.arxiv_categories">
         <div class="col-md-9 col-sm-9 col-xs-8"
              ng-bind="subject_term.term"></div>
         <div class="col-md-2 col-sm-2 col-xs-3">

@@ -159,7 +159,7 @@ def test_submit_author(login):
     assert create_author.submit_author(INPUT_AUTHOR_DATA).has_error()
 
     holding_panel_author_list.go_to()
-    assert holding_panel_author_list.load_submission_record(
+    holding_panel_author_list.load_submission_record(
         INPUT_AUTHOR_DATA
     ).has_error()
 

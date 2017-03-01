@@ -69,13 +69,14 @@ def load_submission_record(input_data):
         go_to()
         return load_submission_record(input_data)
 
-    def _get_has_errors_fn(myrecord):
-        return lambda: (
-            'CERN' in myrecord and
-            'ACC-PHYS' in myrecord and
-            'ASTRO-PH' in myrecord and
-            'Twain, Mark' in myrecord and
-            'admin@inspirehep.net' in myrecord and
-            'Author' in myrecord
+    def _has_errors_fn():
+        return (
+            'CERN' in record and
+            'ACC-PHYS' in record and
+            'ASTRO-PH' in record and
+            'Twain, Mark' in record and
+            'admin@inspirehep.net' in record and
+            'Author' in record
         )
-    return ArsenicResponse(_get_has_errors_fn(record))
+
+    return ArsenicResponse(_has_errors_fn)
