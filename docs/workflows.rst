@@ -20,8 +20,8 @@
     or submit itself to any jurisdiction.
 
 
-Workflows in Inspire
---------------------
+2.7.1 Workflows in Inspire
+--------------------------
 
 Inspire-next is receiving new records every day from several sources, such as:
     * HEP Crawl

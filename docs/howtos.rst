@@ -20,11 +20,9 @@
     or submit itself to any jurisdiction.
 
 
-HOWTOs
-==========
 
-1. Caching
-----------
+2.8.1 Caching
+-------------
 
 
 For caching we use Flask-Caching_. For example, to set a value in the cache:
@@ -45,12 +43,8 @@ And to retrieve the value from the cache:
 .. _Flask-Caching: https://pythonhosted.org/Flask-Caching/
 
 
-2. Profiling
-------------
-
-
-2.1 Profiling a Celery Task
----------------------------
+2.8.2 Profiling a Celery Task
+-----------------------------
 
 To profile a Celery task we need to make sure that the task is executed by the
 same Python process in which we are collecting the profiling information. That
@@ -94,8 +88,8 @@ To understand it, we refer to the `documentation of snakeviz`_.
 .. _`documentation of snakeviz`: https://jiffyclub.github.io/snakeviz/#interpreting-results
 
 
-2.2 Profiling a Request
------------------------
+2.8.3 Profiling a Request
+-------------------------
 
 To profile a request we need to add the following variable to our configuration:
 

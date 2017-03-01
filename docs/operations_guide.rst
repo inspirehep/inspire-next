@@ -20,7 +20,6 @@
     or submit itself to any jurisdiction.
 
 
-===================
 3. Operations Guide
 ===================
 
@@ -36,6 +35,7 @@
 3.1.2 GROBID
 ------------
 
+.. include:: grobid.rst
 
 
 3.1.3 Magpie
@@ -46,7 +46,7 @@
 3.2 Common Tasks
 ----------------
 
-
+.. include:: operations.rst
 
 -------------------
 3.3 Common Problems

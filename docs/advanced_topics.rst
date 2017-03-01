@@ -21,8 +21,8 @@
 
 
 
-5. Advanced Topics
+6. Advanced Topics
 ==================
 
-5.1 Developing with Docker
+6.1 Developing with Docker
 --------------------------

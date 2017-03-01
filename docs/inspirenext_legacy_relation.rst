@@ -20,8 +20,8 @@
     or submit itself to any jurisdiction.
 
 
-Relation between Inspire-next and Legacy
-----------------------------------------
+2.6.1 Relation between Inspire-next and Legacy
+----------------------------------------------
 
 Inspire-next is the next generation of Inspire. The previous version of Inspire called Legacy.
 

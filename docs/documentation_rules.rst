@@ -20,8 +20,8 @@
     or submit itself to any jurisdiction.
 
 
-2.8.1 Documentation Rules
--------------------------
+2.10.1 Documentation Rules
+--------------------------
 
 **Important**
 

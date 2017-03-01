@@ -1,6 +1,6 @@
 ..
     This file is part of INSPIRE.
-    Copyright (C) 2015, 2016 CERN.
+    Copyright (C) 2017 CERN.
 
     INSPIRE is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,11 +20,8 @@
     or submit itself to any jurisdiction.
 
 
-INSPIRE tools & scripts
-=======================
-
-Available Bash scripts
-----------------------
+2.8.4 Available Bash scripts
+----------------------------
 
 You will find a `scripts` folder in the root folder of this overlay. It is a compilation of useful scripts to setup demo records, rebuild assets etc.
 

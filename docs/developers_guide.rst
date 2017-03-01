@@ -81,21 +81,35 @@
 
 
 
+------------------
+2.6 Inspire Legacy
+------------------
+
+.. include:: inspirenext_legacy_relation.rst
+
+---------------------
+2.7 Inspire Workflows
+---------------------
+
+.. include:: workflows.rst
+
 ----------------
-2.6 Common Tasks
+2.8 Common Tasks
 ----------------
 
+.. include:: howtos.rst
 
+.. include:: tools.rst
 
 -------------------
-2.7 Common Problems
+2.9 Common Problems
 -------------------
 
 
 
-----------------
-2.8 Contributing
-----------------
+-----------------
+2.10 Contributing
+-----------------
 
 .. include:: documentation_rules.rst
 

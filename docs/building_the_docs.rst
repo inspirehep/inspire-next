@@ -20,8 +20,8 @@
     or submit itself to any jurisdiction.
 
 
-Building this docs page
-========================
+7. Building this docs page
+==========================
 
 Sometimes when you modify the docs it's convenient to generate them locally in
 order to check them before sending a pull request, to do so, you'll have to

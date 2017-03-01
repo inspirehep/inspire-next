@@ -33,7 +33,9 @@ Contents
    developers_guide
    operations_guide
    tests
+   harvesting
    advanced_topics
+   building_the_docs
 
 *Happy hacking!*
 
