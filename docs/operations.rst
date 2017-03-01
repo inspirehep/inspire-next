@@ -26,14 +26,16 @@ Operations
 
 INSPIRE operations manual.
 
+==========================
 Harvesting and Holding Pen
 ==========================
 
+-----------------------------
 Handle records in error state
 -----------------------------
 
 Via web interface
-~~~~~~~~~~~~~~~~~
+-----------------
 
 1. Visit Holding Pen list and filter for records in error state.
 
@@ -47,7 +49,7 @@ Via web interface
 
 
 Via shell
-~~~~~~~~~
+---------
 
 1. SSH into any worker machine (usually builder to avoid affecting the machines serving users)
 

@@ -20,24 +20,23 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
+2.8.1 Documentation Rules
+-------------------------
 
+**Important**
 
-Contents
-========
+Writing documentation and unit test should be part of the development.
 
-.. toctree::
-   :maxdepth: 3
+Format: google style docstrings
 
-   getting_started
-   developers_guide
-   operations_guide
-   tests
-   advanced_topics
+We document: parameters, return, exceptions
 
-*Happy hacking!*
+Mandatory for: api, util
 
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+Optional: views
+
+The decision is up to the reviewers and the person who writes the code.
+
+We add informative commit messages to explain why.
+
+We add them in the merge commit, if there’s something meaningful.

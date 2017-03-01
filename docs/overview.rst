@@ -20,24 +20,27 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
+==============================
+1.2.1 Overview of Inspire-next
+==============================
 
+This diagram is a very high level overview of Inspire-next project.
 
-Contents
-========
+|
 
-.. toctree::
-   :maxdepth: 3
+.. image:: images/overview_diagram.png
+    :height: 300
+    :width: 660
 
-   getting_started
-   developers_guide
-   operations_guide
-   tests
-   advanced_topics
+|
 
-*Happy hacking!*
+- Incoming sources (records) to Inspire-next.
+    * Legacy: the old website of Inspire.
+    * Submission Forms: records provided by catalogers and users.
+    * Crawler: collects records from other sources (websites/repositories).
 
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+- Workflows: Process part of Inspire-next.
+
+- Data: there are two storing points of Inspire-next:
+    * DataBase (PostgreSQL)
+    * Search Engine (ElasticSearch)

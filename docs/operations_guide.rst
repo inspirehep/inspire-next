@@ -20,24 +20,37 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
+===================
+3. Operations Guide
+===================
+
+----------------------
+3.1 Auxiliary Services
+----------------------
+
+3.1.1 BEARD
+-----------
 
 
-Contents
-========
 
-.. toctree::
-   :maxdepth: 3
+3.1.2 GROBID
+------------
 
-   getting_started
-   developers_guide
-   operations_guide
-   tests
-   advanced_topics
 
-*Happy hacking!*
 
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+3.1.3 Magpie
+------------
+
+
+----------------
+3.2 Common Tasks
+----------------
+
+
+
+-------------------
+3.3 Common Problems
+-------------------
+
+
+
