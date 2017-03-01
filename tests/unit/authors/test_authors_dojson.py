@@ -474,7 +474,7 @@ def test_advisors_from_advisors():
 
     expected = [
         {
-            '_degree_type': 'PhD',
+            'degree_type': 'phd',
             'name': 'foo',
         },
     ]

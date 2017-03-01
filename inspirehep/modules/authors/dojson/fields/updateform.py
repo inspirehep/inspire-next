@@ -214,11 +214,15 @@ def institution_history(self, key, value):
 def advisors(self, key, value):
     advisors = []
     for advisor in value:
-        if advisor["degree_type"] == "phd" and not advisor["full_name"]:
+        if (
+            advisor["degree_type"].lower() == "phd" and
+            not advisor["full_name"]
+        ):
             continue
+
         advisors.append({
             "name": advisor["full_name"],
-            "degree_type": advisor["degree_type"]
+            "degree_type": advisor["degree_type"].lower(),
         })
 
     return advisors
