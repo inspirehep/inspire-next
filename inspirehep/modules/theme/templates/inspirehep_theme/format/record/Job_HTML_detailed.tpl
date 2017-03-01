@@ -84,12 +84,10 @@
             </div>
           {% endif %}
 
-          {% if record.creation_modification_date %}
-            {% if record.creation_modification_date[0] %}
-              <div class="detailed-record-field">
-                <label>Date added:</label> {{ record.creation_modification_date[0].creation_date | format_date }}
-              </div>
-            {% endif %}
+          {% if record.legacy_creation_date %}
+            <div class="detailed-record-field">
+              <label>Date added:</label> {{ record.legacy_creation_date | format_date }}
+            </div>
           {% endif %}
 
       </div>

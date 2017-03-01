@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ from ..arsenic import Arsenic, ArsenicResponse
 
 
 def go_to():
-    Arsenic().get(os.environ['SERVER_NAME'] + '/holdingpen/list/?page=1&size=10&source=submission&workflow_name=HEP&status=HALTED')
+    Arsenic().get(os.environ['SERVER_NAME'] + '/holdingpen/list/?page=1&size=10&status=HALTED&workflow_name=HEP')
 
 
 def click_first_record():

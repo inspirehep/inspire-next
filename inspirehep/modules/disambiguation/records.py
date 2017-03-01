@@ -85,9 +85,11 @@ def create_author(profile):
     name = profile.get('full_name')
 
     # Template of an initial record.
-    record = {'collections': [{'primary': 'HEPNAMES'}],
-              'name': {'value': name},
-              '$schema': _get_author_schema()}
+    record = {
+        '$schema': _get_author_schema(),
+        '_collections': ['Authors'],
+        'name': {'value': name},
+    }
 
     # The author's email address.
     # Unfortunately the method will not correlate a given e-mail address

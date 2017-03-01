@@ -173,7 +173,7 @@ def is_submission(obj, eng):
     """Is this a submission?"""
     source = obj.data.get('acquisition_source')
     if source:
-        return source.get('method') == "submission"
+        return source.get('method') == "submitter"
     return False
 
 

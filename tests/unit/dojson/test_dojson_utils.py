@@ -311,6 +311,9 @@ def test_strip_empty_values_returns_none_on_none():
 def test_validate():
     schema = load_schema('hep')
     instance = {
+        'document_type': [
+            'article',
+        ],
         'titles': [
             {'title': 'foo'},
         ],

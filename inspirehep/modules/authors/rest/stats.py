@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -106,7 +106,7 @@ class AuthorAPIStats(object):
             # Get keywords.
             keywords.extend([
                 k for k in force_force_list(
-                    get_value(result_source, 'keywords.keyword'))
+                    get_value(result_source, 'keywords.value'))
                 if k != '* Automatic Keywords *'])
 
         # Calculate h-index together with i10-index.

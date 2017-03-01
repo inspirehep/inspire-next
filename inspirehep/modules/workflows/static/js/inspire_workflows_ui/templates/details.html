@@ -64,8 +64,8 @@
                 ng-repeat="author in vm.record.metadata.authors | limitTo : limit">
                 <span ng-if="author.full_name !== 'undefined'"
                       ng-bind="author.full_name"></span>
-                <span ng-if="author.affiliations" class="text-muted affiliation"> {{author.affiliations[0].value}}</span>
-                <span ng-if="!$last">,&nbsp;</span>
+                <span ng-if="author.affiliations">({{author.affiliations[0].value}})</span>
+                <span ng-if="!$last">;&nbsp;</span>
               </li>
               <li ng-if="vm.record.metadata.authors.length > limit">and
                 {{vm.record.metadata.authors.length - limit}} others.
@@ -79,28 +79,72 @@
                e-ng-change="Utils.registerUpdateEvent()">
             </p>
 
-            <div class="row">
-              <div class="col-md-2 col-sm-4">
-                <p class="font-bolder">License</p>
-              </div>
-              <div class="col-md-10 col-sm-8">
-                <span ng-bind="vm.record.metadata.license[0].url"></span> <span
-                class="font-bolder text-muted"
+            <div ng-if="vm.record.metadata.license" class="row">
+              <div class="col-md-12">
+                <span class="font-bolder">License:</span>
+                <span ng-bind="vm.record.metadata.license[0].url"></span>
+                <span class="font-bolder text-muted"
                 ng-if="vm.record.metadata.license[0].imposing"> imposed by
-          <span ng-bind="vm.record.metadata.license[0].imposing"></span></span>
+                  <span ng-bind="vm.record.metadata.license[0].imposing"></span>
+                </span>
               </div>
             </div>
 
-            <div class="row">
-              <div class="col-md-2 col-sm-4">
-                <p class="font-bolder">DOI</p>
-              </div>
-              <div class="col-md-10 col-sm-8">
-                <div class="row" ng-repeat="doi in vm.record.metadata.dois">
-                  <div class="col-md-12"></div>
+            <div ng-if="vm.record.metadata.dois" class="row">
+              <div class="col-md-12">
+                <span class="font-bolder">DOI:</span>
+                <span ng-repeat="doi in vm.record.metadata.dois">
                   <a href="http://dx.doi.org/{{doi.value}}" target="_new"
                      ng-bind="doi.value"></a>
-                </div>
+                </span>
+
+              </div>
+            </div>
+
+            <div ng-if="vm.record.metadata.report_numbers" class="row">
+              <div class="col-md-12">
+                <span class="font-bolder">Report Numbers:</span>
+                <span ng-repeat="report_number in vm.record.metadata.report_numbers">
+                  {{report_number.value}}{{$last ? '' : '; '}}
+                </span>
+
+              </div>
+            </div>
+
+            <div ng-if="vm.record.metadata.languages" class="row">
+              <div class="col-md-12">
+                <span class="font-bolder">Language:</span>
+                <span ng-bind="vm.record.metadata.languages[0]"></span>
+              </div>
+            </div>
+
+            <div ng-if="vm.record.metadata.title_translations" class="row">
+              <div class="col-md-12">
+                <span class="font-bolder">Title translation:</span>
+                <span ng-bind="vm.record.metadata.title_translations[0].title"
+                      editable-text="vm.record.metadata.title_translations[0].title"
+                      e-ng-change="Utils.registerUpdateEvent()"
+                ></span>
+              </div>
+            </div>
+
+            <div ng-if="vm.record.metadata.collaborations" class="row">
+              <div class="col-md-12">
+                <span class="font-bolder">Collaboration:</span>
+                <span ng-bind="vm.record.metadata.collaborations[0].value"
+                      editable-text="vm.record.metadata.collaborations[0].value"
+                      e-ng-change="Utils.registerUpdateEvent()"
+                ></span>
+              </div>
+            </div>
+
+            <div ng-if="vm.record.metadata.accelerator_experiments" class="row">
+              <div class="col-md-12">
+                <span class="font-bolder">Experiment:</span>
+                <span ng-bind="vm.record.metadata.accelerator_experiments[0].legacy_name"
+                      editable-text="vm.record.metadata.accelerator_experiments[0].legacy_name"
+                      e-ng-change="Utils.registerUpdateEvent()"
+                ></span>
               </div>
             </div>
 
@@ -124,10 +168,20 @@
                     editable-text="vm.record.metadata.native_name"
                     e-ng-change="Utils.registerUpdateEvent()"></span>
               <br ng-if="vm.record.metadata.native_name">
-              <span class="text-muted">Email address:</span>
-              <span ng-bind="vm.record.metadata.public_email"
-                    editable-text="vm.record.metadata.public_email"
-                    e-ng-change="Utils.registerUpdateEvent()"></span>
+
+              <div ng-repeat="position in vm.record.metadata.positions">
+              <span ng-if="position.emails.length" class="text-muted">Email address:</span>
+              <span ng-repeat="email in position.emails">
+              <span ng-bind="email"></span>
+              </span>
+              </div>
+
+              <span class="text-muted">Status:</span>
+              <span ng-bind="vm.record.metadata.status"></span>
+              <br ng-if="vm.record.metadata.status">
+
+              <span class="text-muted">ORCID:</span>
+              <span ng-bind="vm.record.metadata.ids[0].value"></span>
 
               <div ng-repeat="experiment in vm.record.metadata.experiments">
               <span class="text-muted">Experiment:</span>
@@ -152,8 +206,7 @@
 
       <div class="clearfix"></div>
 
-      <div class="col-md-12 col-sm-12"
-           ng-if="vm.record._workflow.data_type == 'authors'">
+      <div class="col-md-12">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_links.html">
         </holding-pen-template-handler>
@@ -286,7 +339,7 @@
           <h4>Submission</h4>
           <p class="text-center" ng-if="vm.record.metadata.acquisition_source">
             <span ng-switch="vm.record.metadata.acquisition_source.method">
-              <span ng-switch-when="submission">
+              <span ng-switch-when="submitter">
                 Submitted by {{vm.record.metadata.acquisition_source.email}}<br/> on {{vm.record.metadata.acquisition_source.date}}
               </span>
               <span ng-switch-default>
@@ -309,19 +362,14 @@
 
           <div class="row">
               <div class="col-md-12 text-center">
-                <div
-                  ng-class="{'alert': vm.record.metadata._private_note == '*Temporary entry*'}">
-                  <p ng-bind="vm.record.metadata._private_note"></p>
+                <div ng-repeat="note in vm.record.metadata._private_notes">
+                <span
+                  ng-class="{'alert': note.value == '*Temporary entry*'}">
+                  <p ng-bind="note.value"></p></span>
                 </div>
               </div>
           </div>
         </div>
-      </div>
-
-      <div class="col-md-12" ng-if="vm.record._workflow.data_type == 'hep'">
-        <holding-pen-template-handler
-          template="/static/js/inspire_workflows_ui/templates/details_comments.html">
-        </holding-pen-template-handler>
       </div>
 
       <!--Action Panel-->

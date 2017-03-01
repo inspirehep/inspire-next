@@ -29,37 +29,54 @@ from selenium.common.exceptions import (
     WebDriverException,
 )
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select, WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait
 
 from ..arsenic import Arsenic, ArsenicResponse
 
 
 def go_to():
-    Arsenic().get(os.environ['SERVER_NAME'] + '/holdingpen/list/?workflow_name=Author&is-update=false&size=10&status=HALTED')
+    Arsenic().get(
+        os.environ['SERVER_NAME'] +
+        (
+            '/holdingpen/list/?workflow_name=Author&is-update=false&size=10'
+            '&status=HALTED'
+        )
+    )
 
 
 def click_first_record():
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//a[@class="title ng-binding ng-scope"]'))).click()
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="detail-panel"])[1]')))
+    WebDriverWait(Arsenic(), 10).until(
+        EC.visibility_of_element_located(
+            (By.XPATH, '//a[@class="title ng-binding ng-scope"]')
+        )
+    ).click()
+    WebDriverWait(Arsenic(), 10).until(
+        EC.visibility_of_element_located(
+            (By.XPATH, '(//div[@class="detail-panel"])[1]')
+        )
+    )
 
 
 def load_submission_record(input_data):
-    def _load_submission_record():
+    try:
+        record = WebDriverWait(Arsenic(), 10).until(
+            EC.visibility_of_element_located(
+                (By.XPATH, '//div[@class="row hp-item ng-scope"][1]')
+            )
+        ).text
+    except (ElementNotVisibleException, WebDriverException):
+        go_to()
+        return load_submission_record(input_data)
+
+    def _has_errors_fn():
         return (
             'CERN' in record and
             'ACC-PHYS' in record and
             'ASTRO-PH' in record and
             'Twain, Mark' in record and
-            'inspire:uid:1' in record and
-            'admin@inspirehep.net' in record
+            'admin@inspirehep.net' in record and
+            'Author' in record
         )
 
-    try:
-        record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="row hp-item ng-scope"][1]'))).text
-    except (ElementNotVisibleException, WebDriverException):
-        go_to()
-        record = load_submission_record(input_data)
-
-    return ArsenicResponse(_load_submission_record)
+    return ArsenicResponse(_has_errors_fn)

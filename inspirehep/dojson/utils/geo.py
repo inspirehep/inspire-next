@@ -544,7 +544,7 @@ def parse_conference_address(address_string):
 def parse_institution_address(address, city, state_province,
                               country, postal_code, country_code):
     """Parse an institution address."""
-    address_string = force_force_list(address)
+    address_string = '\n'.join(force_force_list(address))
     state_province = match_us_state(state_province) or state_province
 
     postal_code = force_force_list(postal_code)
@@ -567,10 +567,9 @@ def parse_institution_address(address, city, state_province,
         country_code = 'US'
 
     return {
-        'original_address': force_force_list(address),
+        'original_address': address_string,
         'city': city,
         'state': state_province,
-        'country': country,
         'postal_code': postal_code,
         'country_code': country_code,
     }

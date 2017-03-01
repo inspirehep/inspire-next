@@ -61,19 +61,42 @@ def load_submitted_record(input_data):
             '2001' in record
         )
 
+    record = None
     try:
+        print(record)
+        print()
+        # Retrieve main panel info
         record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="detail-panel"])[1]'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="ng-scope"])[2]'))).text
+        print(record)
+        print()
+        # Retrieve submitted by
         record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="detail-panel"])[4]'))).text
+        print(record)
+        print()
+        # retrieve comments
         record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="detail-panel"])[5]'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[2]'))).text
+        print(record)
+        print()
+        # retrieve links
         record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="detail-panel panel-100"]'))).text
+        print(record)
+        print()
+        # retrieve subject areas
         record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="subject-list"]'))).text
+        print(record)
+        print()
+        # retrieve advisors
         record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="advisors"]'))).text
+        print(record)
+        print()
+        # retrieve institution history
         record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="table-body"]'))).text
+        print(record)
+        print()
     except (ElementNotVisibleException, WebDriverException):
         go_to()
-        record = load_submitted_record(input_data)
+        assert False
+        return load_submitted_record(input_data)
 
     return ArsenicResponse(_load_submitted_record)
 
