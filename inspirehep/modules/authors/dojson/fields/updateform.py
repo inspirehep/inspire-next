@@ -173,7 +173,7 @@ def public_email(self, key, value):
     raise IgnoreKey
 
 
-@updateform.over('inspire_categories', '^research_field$')
+@updateform.over('arxiv_categories', '^research_field$')
 @utils.for_each_value
 def inspire_categories(self, key, value):
     return {
