@@ -36,7 +36,32 @@ from ..arsenic import Arsenic, ArsenicResponse
 
 
 def go_to():
-    Arsenic().get(os.environ['SERVER_NAME'] + '/holdingpen/list/?page=1&size=10&status=HALTED&workflow_name=HEP')
+    Arsenic().get(os.environ['SERVER_NAME'] + '/holdingpen/list/?page=1&size=10&workflow_name=HEP')
+
+
+def force_load_record(xpath):
+    def _refresh_page():
+        go_to()
+        return force_load_record(xpath)
+
+    try:
+        WebDriverWait(Arsenic(), 10).until(
+            EC.visibility_of_element_located(
+                (By.XPATH, xpath)
+            )
+        ).click()
+        record = WebDriverWait(Arsenic(), 10).until(
+            EC.visibility_of_element_located(
+                (By.XPATH, '//div[@class="row hp-item ng-scope"][1]')
+            )
+        ).text
+    except (ElementNotVisibleException, WebDriverException):
+        record = _refresh_page()
+
+    if 'Waiting' in record:
+        return _refresh_page()
+
+    return record
 
 
 def click_first_record():
@@ -49,8 +74,8 @@ def click_first_record():
             (By.XPATH, '(//div[@class="ng-scope"])[2]')))
 
 
-def load_submission_record(input_data):
-    def _load_submission_record():
+def load_submitted_record():
+    def _load_submitted_record():
         return (
             'Computing' in record and
             'Accelerators' in record and
@@ -60,19 +85,13 @@ def load_submission_record(input_data):
             'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record
         )
 
-    record = _force_load_record(input_data)
-    return ArsenicResponse(_load_submission_record)
+    record = force_load_record('//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler/div[3]/a')
+    return ArsenicResponse(_load_submitted_record)
 
 
-def _force_load_record(input_data):
-    try:
-        WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located(
-                (By.XPATH, '//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler/div[3]/a'))).click()
-        record = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@class="row hp-item ng-scope"][1]'))).text
-    except (ElementNotVisibleException, WebDriverException):
-        go_to()
-        record = _force_load_record(input_data)
+def load_completed_record():
+    def _load_completed_record():
+        return 'Completed' in record
 
-    return record
+    record = force_load_record('//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler/div[4]/a')
+    return ArsenicResponse(_load_completed_record)
