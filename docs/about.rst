@@ -1,6 +1,6 @@
 ..
     This file is part of INSPIRE.
-    Copyright (C) 2015, 2016 CERN.
+    Copyright (C) 2017 CERN.
 
     INSPIRE is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,27 +20,18 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
+About
+=====
 
+Inspire is a set of services, the main one being a search engine for high energy physics papers,
+with some side services like authors profiles, conferences, journals, institutions, experiments and
+a small specialized job market. It's main purpose is to provide physicists worldwide with a source
+of information about high energy physics related topics.
 
-Contents
-========
+Currently we have two main websites open to the public:
 
-.. toctree::
-   :maxdepth: 2
+* The `Legacy website
+  <http://inspirehep.net/>`_, with the current production application.
 
-   getting_started
-   operations
-   harvesting
-   grobid
-   tools
-   tests
-   howtos
-   building_the_docs
-
-*Happy hacking!*
-
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+* The `QA website
+  <https://qa.inspirehep.net/>`_, running the latest inspire-next code (for test purposes only).
