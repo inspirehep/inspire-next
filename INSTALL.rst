@@ -1,9 +1,30 @@
-============
-Installation
-============
+..
+    This file is part of INSPIRE.
+    Copyright (C) 2017 CERN.
+
+    INSPIRE is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    INSPIRE is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+
+
+Native Install (CentOS - MacOS)
+===============================
 
 System prerequisites
-=====================
+####################
 
 This guide expects you to have installed in your system the following tools:
 
@@ -18,8 +39,6 @@ This guide expects you to have installed in your system the following tools:
 * redis
 * elasticsearch
 
-CentOS
--------
 .. code-block:: console
 
     $ sudo yum install python-virtualenv python-virtualenvwrapper \
@@ -37,12 +56,8 @@ will need also to add the following workarounds:
     $ newgrp elasticsearch  # or log out and in again
     $ sudo ln -s /etc/elasticsearch /usr/share/elasticsearch/config
 
-.. TODO::
-
-    Add also Ubuntu and MacOS
-
 Create a virtual environment
-============================
+############################
 
 Create a virtual environment and clone the INSPIRE source code using `git`:
 
@@ -74,7 +89,7 @@ Create a virtual environment and clone the INSPIRE source code using `git`:
     following with a ``cd path_you_chose/inspirehep``.
 
 Install requirements
-====================
+####################
 
 Use `pip` to install all requirements, it's recommended to upgrade pip and
 setuptools to latest too:
@@ -91,9 +106,8 @@ And for development:
 
     (inspirehep)$ pip install -e .[development]
 
-
 Custom configuration and debug mode
-====================================
+###################################
 
 If you want to change the database url, or enable the debug mode for
 troubleshooting, you can do so in the `inspirehep.cfg` file under
@@ -122,9 +136,8 @@ file `src/inspirehep/inspirehep/config.py`, for example:
     a key that did not exist.
 
 
-
 Build assets
-============
+############
 
 We build assets using `npm`. Make sure you have installed it system wide.
 
@@ -162,9 +175,8 @@ Then we build the INSPIRE assets:
 
     Alternatively, run `sh scripts/clean_assets` to do the above in one command.
 
-
 Create database
-===============
+###############
 
 We will use `postgreSQL` as database. Make sure you have installed it system wide.
 
@@ -179,12 +191,12 @@ Then create the database and database tables if you haven't already done so:
     (inspirehep)$ inspirehep db init
     (inspirehep)$ inspirehep db create
 
-
 Start all services
-==================
+##################
 
 Rabbitmq
------------
+~~~~~~~~
+
 You must have rabbitmq installed and running (and reachable) somewhere.
 To run it locally on a CentOS:
 
@@ -194,9 +206,8 @@ To run it locally on a CentOS:
     $ sudo service rabbitmq-server start
     $ sudo systemctl enable rabbitmq-server.service  # to start on system boot
 
-
 Everything else: Honcho
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 We use `honcho`_ to manage our services and run the development server. See
 `Procfile`_ for details.
@@ -209,10 +220,8 @@ We use `honcho`_ to manage our services and run the development server. See
 
 And the site is now available on http://localhost:5000.
 
-
 Create ElasticSearch Indices and Aliases
-========================================
-
+########################################
 
 .. note::
 
@@ -243,9 +252,8 @@ changes or existing legacy indices, try:
     (inspirehep)$ inspirehep index destroy --force --yes-i-know
     (inspirehep)$ inspirehep index init
 
-
 Create admin user
-==================
+#################
 
 Now you can create a sample admin user, for that we will use the fixtures:
 
@@ -261,9 +269,8 @@ Now you can create a sample admin user, for that we will use the fixtures:
 
         http://localhost:5000/login/?local=1
 
-
 Add demo records
-=================
+################
 
 .. code-block:: console
 
@@ -281,9 +288,8 @@ Add demo records
 
     Remember to keep `honcho` running in a separate window.
 
-
 Create regular user
-====================
+###################
 
 Now you can create regular users (optional) with the command:
 
@@ -291,9 +297,8 @@ Now you can create regular users (optional) with the command:
 
     (inspirehep)$ inspirehep users create your@email.com -a
 
-
 Adding records from files
-=========================
+#########################
 
 Same way as demo records:
 
@@ -302,9 +307,8 @@ Same way as demo records:
     (inspirehep)$ inspirehep migrator populate -f inspirehep/demosite/data/sample.xml
 
 
-
 Access the records (web/rest)
-=============================
+#############################
 
 While running `honcho` you can access the records at
 
@@ -314,9 +318,8 @@ While running `honcho` you can access the records at
     $ curl -i -H "Accept: application/json" http://localhost:5000/api/records/1
 
 
-
 Generating doJSON output
-========================
+########################
 
 If you want to test the doJSON output for a specific rule, make sure it is added to doJSON
 entry points and then do the following (e.g. for the `hep` rule):
