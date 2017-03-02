@@ -20,22 +20,26 @@
     or submit itself to any jurisdiction.
 
 
-Getting Started
----------------
+Overview of Inspire-next
+========================
 
-About INSPIRE
-*************
+This diagram is a very high level overview of Inspire-next project.
 
-.. include:: about.rst
+|
 
-Overiview of INSPIRE
-********************
+.. image:: images/overview_diagram.png
+    :height: 300
+    :width: 660
 
-.. include:: overview.rst
+|
 
-Installing INSPIRE
-******************
+- Incoming sources (records) to Inspire-next.
+    * Legacy: the old website of Inspire.
+    * Submission Forms: records provided by catalogers and users.
+    * Crawler: collects records from other sources (websites/repositories).
 
-.. include:: docker.rst
+- Workflows: Process part of Inspire-next.
 
-.. include:: ../INSTALL.rst
+- Data: there are two storing points of Inspire-next:
+    * DataBase (PostgreSQL)
+    * Search Engine (ElasticSearch)
