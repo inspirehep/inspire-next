@@ -103,10 +103,8 @@ def convert_for_form(data):
                 elif url["description"].lower() == "linkedin":
                     data["linkedin_url"] = url["value"]
         del data["urls"]
-    if 'inspire_categories' in data:
-        data["research_field"] = []
-        for category in data.get('inspire_categories', []):
-            data["research_field"].append(category.get('term'))
+    if 'arxiv_categories' in data:
+        data['research_field'] = data['arxiv_categories']
     if "positions" in data:
         data["institution_history"] = []
         data["public_emails"] = []

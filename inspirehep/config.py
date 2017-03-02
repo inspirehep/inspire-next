@@ -1106,7 +1106,7 @@ RECORDS_REST_FACETS = {
     },
     "records-authors": {
         "filters": {
-            "inspire_categories": terms_filter('inspire_categories.term'),
+            "arxiv_categories": terms_filter('arxiv_categories'),
             "institution": terms_filter('positions.institution.name')
         },
         "aggs": {

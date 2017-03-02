@@ -28,7 +28,6 @@ in order to produce MARCXML.
 
 from __future__ import absolute_import, division, print_function
 
-from dojson import utils
 from dojson.errors import IgnoreKey
 
 from ..model import updateform
@@ -174,12 +173,8 @@ def public_email(self, key, value):
 
 
 @updateform.over('arxiv_categories', '^research_field$')
-@utils.for_each_value
-def inspire_categories(self, key, value):
-    return {
-        "term": value,
-        "source": "user"
-    }
+def arxiv_categories(self, key, value):
+    return value
 
 
 @updateform.over('_positions', '^institution_history$')

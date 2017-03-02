@@ -1,15 +1,19 @@
 <div ng-if="vm.record._extra_data._action === 'author_approval' && vm.record._workflow.status === 'HALTED'">
 <button class="btn btn-info"
-        ng-click="Utils.redirect('/authors/new/review?objectid='+ vm.record.id)">Review Submission
+        ng-click="Utils.redirect('/authors/new/review?objectid='+ vm.record.id)"
+        id="btn-review-submission">Review Submission
 </button>
 <button class="btn btn-danger"
-        ng-click="Utils.setDecision('reject')">Reject
+        ng-click="Utils.setDecision('reject')"
+        id="btn-reject-submission">Reject
 </button>
 <button class="btn btn-warning"
-        ng-click="Utils.setDecision('accept_curate')">Curation
+        ng-click="Utils.setDecision('accept_curate')"
+        id="btn-accept-curation">Curation
 </button>
 <button class="btn btn-success"
-        ng-click="Utils.setDecision('accept')">Accept
+        ng-click="Utils.setDecision('accept')"
+        id="btn-accept">Accept
 </button>
   </div>
 
