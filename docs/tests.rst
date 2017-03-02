@@ -59,7 +59,7 @@ Via Docker with a graphical instance of Firefox (Linux)
   $ docker-compose -f docker-compose.test.yml run --rm acceptance
 
 
-Via Docker with a graphical instance of Firefox (macOS)
+Via Docker with a graphical instance of Firefox (MacOS)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. Check the first step in the `Via Docker`_ section.
@@ -109,6 +109,57 @@ Via Docker with a graphical instance of Firefox (macOS)
 .. code-block:: bash
 
   $ docker-compose -f docker-compose.test.yml run --rm acceptance
+
+How to Debug the Selenium Tests on Docker
+-----------------------------------------
+In order to debug code in the `web` container with the Docker-Selenium test suite it is necessary to use `remote-pdb`_.
+
+1. First install RemotePdb in the web container. Run the web container with the bash command attached:
+
+.. code-block:: bash
+
+  $ docker-compose run web bash
+
+Secondly install with the pip command the `remotePdb` package:
+
+.. code-block:: bash
+
+  (virtualenv) $ pip install remote-pdb
+
+Finally exit from the virtualenv and from the docker container with `ctrl + d`.
+
+2. Find a spot where you would like tracing to begin, and insert the following code:
+
+.. code-block:: python
+
+  from remote_pdb import RemotePdb
+  RemotePdb('0.0.0.0', 4444).set_trace()
+
+3. Run the acceptance tests with `docker-compose`
+
+.. code-block:: bash
+
+  $ docker-compose -f docker-compose.test.yml run --rm acceptance
+
+4. Write down the IP address of the web container because you will need it later:
+
+.. code-block:: bash
+
+  $ docker inspect inspirenext_web_1
+  {
+    [...]
+    "IPAddress": "123.456.7.890",
+    [...]
+  }
+
+5. At a certain point the tests will be blocked. It means that the remote `RemotePdb.set_trace()` has been executed.
+   In order to use the pdb console run:
+
+.. code-block:: bash
+
+  $ telnet 123.456.7.890 4444
+
+.. _`remote-pdb`: https://pypi.python.org/pypi/remote-pdb
 
 
 How to Write the Selenium Tests
