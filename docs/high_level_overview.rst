@@ -1,6 +1,6 @@
 ..
     This file is part of INSPIRE.
-    Copyright (C) 2015, 2016 CERN.
+    Copyright (C) 2017 CERN.
 
     INSPIRE is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,27 +20,12 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
+This is a very basic framework overview.
 
+|
 
-Contents
-========
+.. image:: images/framework_level_overview.png
+    :height: 280
+    :width: 660
 
-.. toctree::
-   :maxdepth: 2
-
-   getting_started
-   developers_guide
-   operations
-   harvesting
-   grobid
-   tests
-   building_the_docs
-   _api/inspirehep
-
-*Happy hacking!*
-
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+|
