@@ -94,16 +94,17 @@ def title_translations2marc(self, key, value):
     return [get_transformed_title(value) for value in values]
 
 
-@hep.over('edition', '^250..')
+@hep.over('editions', '^250..')
+@utils.flatten
 @utils.for_each_value
-def edition(self, key, value):
-    return {'edition': value.get('a')}
+def editions(self, key, value):
+    return force_force_list(value.get('a'))
 
 
-@hep2marc.over('250', 'edition')
+@hep2marc.over('250', '^editions$')
 @utils.for_each_value
-def edition2marc(self, key, value):
-    return {'a': value.get('edition')}
+def editions2marc(self, key, value):
+    return {'a': value}
 
 
 @hep.over('imprints', '^260[_23].')
