@@ -305,7 +305,7 @@ def write_date_thesis(date_field, error_message_id, date):
 
 def write_institution_thesis(institution, expected_data):
     def _write_institution_thesis():
-        return expected_data in Arsenic().write_in_autocomplete_field(
+        return expected_data == Arsenic().write_in_autocomplete_field(
             'supervisors-0-affiliation', institution)
 
     _skip_import_data()
@@ -336,7 +336,7 @@ def write_journal_title(journal_title, expected_data):
 
 def write_affiliation(affiliation, expected_data):
     def _write_affiliation():
-        return expected_data in Arsenic().write_in_autocomplete_field(
+        return expected_data == Arsenic().write_in_autocomplete_field(
             'authors-0-affiliation', affiliation)
 
     _skip_import_data()

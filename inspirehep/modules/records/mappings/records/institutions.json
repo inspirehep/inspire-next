@@ -112,6 +112,7 @@
                     "type": "string"
                 },
                 "legacy_ICN": {
+                    "copy_to": "affautocomplete",
                     "type": "string"
                 },
                 "legacy_creation_date": {
