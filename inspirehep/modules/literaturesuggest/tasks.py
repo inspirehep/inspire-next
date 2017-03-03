@@ -61,9 +61,6 @@ def formdata_to_model(obj, formdata):
                 arxiv_categories.append(arxiv_id.split('/')[0])
         return arxiv_categories
 
-    def _is_arxiv_url(url):
-        return 'arxiv.org' in url
-
     form_fields = copy.deepcopy(formdata)
     filter_empty_elements(
         form_fields, ['authors', 'supervisors', 'report_numbers']
@@ -201,12 +198,8 @@ def formdata_to_model(obj, formdata):
         form_fields.get('defense_date') else None
     builder.add_public_note(public_note=note)
 
-    if not _is_arxiv_url(form_fields.get('url', '')):
-        builder.add_url(url=form_fields.get('url'))
-        obj.extra_data['submission_pdf'] = form_fields.get('url')
-
-    if not _is_arxiv_url(form_fields.get('url', '')):
-        builder.add_url(url=form_fields.get('additional_url'))
+    builder.add_url(url=form_fields.get('url'))
+    builder.add_url(url=form_fields.get('additional_url'))
 
     [builder.add_report_number(
         report_number=report_number.get('report_number')
