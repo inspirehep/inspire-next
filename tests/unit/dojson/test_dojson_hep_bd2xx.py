@@ -196,3 +196,29 @@ def test_title_translations_from_242__a_b():
     result = hep2marc.do(result)
 
     assert expected == result['242']
+
+
+def test_editions_from_250__a():
+    schema = load_schema('hep')
+    subschema = schema['properties']['editions']
+
+    snippet = (
+        '<datafield tag="250" ind1=" " ind2=" ">'
+        '  <subfield code="a">2nd ed.</subfield>'
+        '</datafield>'
+    )  # record/1383727
+
+    expected = [
+        '2nd ed.',
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['editions'], subschema) is None
+    assert expected == result['editions']
+
+    expected = [
+        {'a': '2nd ed.'},
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['250']
