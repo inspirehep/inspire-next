@@ -68,16 +68,9 @@ def in_production_mode(*args, **kwargs):
 
 
 def add_core(obj, eng):
-    """Add CORE collection tag to collections, if asked for."""
-    if obj.extra_data.get('core'):
-        collections = obj.data.get("collections", [])
-        # Do not add it again if already there
-        has_core = [v for c in collections
-                    for v in c.values()
-                    if v and v.lower() == "core"]
-        if not has_core:
-            collections.append({"primary": "CORE"})
-            obj.data["collections"] = collections
+    """Mark a record as CORE if it was approved as CORE."""
+    if 'core' in obj.extra_data:
+        obj.data['core'] = obj.extra_data['core']
 
 
 def halt_record(action=None, message=None):

@@ -176,26 +176,23 @@ def test_in_production_mode_returns_false_when_variable_is_falsy():
     assert not in_production_mode()
 
 
-def test_add_core():
+def test_add_core_sets_core_to_true_if_extra_data_core_is_true():
     obj = StubObj({}, {'core': True})
     eng = DummyEng()
 
     assert add_core(obj, eng) is None
-    assert obj.data['collections'] == [{'primary': 'CORE'}]
+    assert obj.data == {'core': True}
 
 
-def test_add_core_appends_core_collection_to_existing_collections():
-    obj = StubObj({'collections': [{'primary': 'HEP'}]}, {'core': True})
+def test_add_core_sets_core_to_false_if_extra_data_core_is_false():
+    obj = StubObj({}, {'core': False})
     eng = DummyEng()
 
     assert add_core(obj, eng) is None
-    assert obj.data['collections'] == [
-        {'primary': 'HEP'},
-        {'primary': 'CORE'},
-    ]
+    assert obj.data == {'core': False}
 
 
-def test_add_core_does_nothing_if_obj_was_not_marked_as_core():
+def test_add_core_does_nothing_if_extra_data_has_no_core_key():
     obj = StubObj({}, {})
     eng = DummyEng()
 
@@ -203,20 +200,12 @@ def test_add_core_does_nothing_if_obj_was_not_marked_as_core():
     assert obj.data == {}
 
 
-def test_add_core_does_nothing_if_obj_core_mark_is_falsy():
-    obj = StubObj({}, {'core': False})
+def test_add_core_overrides_core_if_extra_data_has_core_key():
+    obj = StubObj({'core': False}, {'core': True})
     eng = DummyEng()
 
     assert add_core(obj, eng) is None
-    assert obj.data == {}
-
-
-def test_add_core_does_nothing_if_obj_is_already_in_core_collection():
-    obj = StubObj({'collections': [{'primary': 'CORE'}]}, {'core': True})
-    eng = DummyEng()
-
-    assert add_core(obj, eng) is None
-    assert obj.data['collections'] == [{'primary': 'CORE'}]
+    assert obj.data == {'core': True}
 
 
 def test_halt_record():
