@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.dojson.conferences import conferences
+from inspirehep.dojson.data import data
 from inspirehep.dojson.experiments import experiments
 from inspirehep.dojson.hep import hep
 from inspirehep.dojson.hepnames import hepnames
@@ -50,6 +51,8 @@ def overdo_marc_dict(record):
         return jobs.do(record)
     elif _collection_in_record(record, 'conferences'):
         return conferences.do(record)
+    elif _collection_in_record(record, 'data'):
+        return data.do(record)
     else:
         return hep.do(record)
 
