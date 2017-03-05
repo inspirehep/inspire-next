@@ -26,7 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
-from inspirehep.utils.dedupers import dedupe_list
+from inspire_schemas.utils import load_schema
 from inspirehep.utils.helpers import force_force_list
 from inspirehep.utils.pubnote import split_page_artid
 
@@ -79,6 +79,15 @@ def publication_info(self, key, value):
                 return out
         return None
 
+    def _get_material(value):
+        schema = load_schema('elements/material')
+        valid_materials = schema['enum']
+
+        m_value = force_single_element(value.get('m', ''))
+        for material in valid_materials:
+            if m_value.lower() == material:
+                return material
+
     year = get_int_value(value.get('y'))
     parent_recid = get_int_value(value.get('0'))
     journal_recid = get_int_value(value.get('1'))
@@ -106,7 +115,7 @@ def publication_info(self, key, value):
         'pubinfo_freetext': force_single_element(value.get('x')),
         'year': year,
         'isbn': force_single_element(value.get('z')),
-        'notes': dedupe_list(force_force_list(value.get('m'))),
+        'material': _get_material(value),
     }
 
     return res
@@ -136,7 +145,7 @@ def publication_info2marc(self, key, value):
         'x': value.get('pubinfo_freetext'),
         'y': value.get('year'),
         'z': value.get('isbn'),
-        'm': value.get('notes')
+        'm': value.get('material')
     }
 
 

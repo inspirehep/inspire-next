@@ -150,6 +150,55 @@ def test_collaborations_from_multiple_710__g_0_and_710__g():
     assert expected == result['710']
 
 
+def test_publication_info_from_773_c_m_p_v_y_1():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    snippet = (
+        '<datafield tag="773" ind1=" " ind2=" ">'
+        '  <subfield code="m">Erratum</subfield>'
+        '  <subfield code="p">Phys.Rev.Lett.</subfield>'
+        '  <subfield code="v">35</subfield>'
+        '  <subfield code="c">130</subfield>'
+        '  <subfield code="y">1975</subfield>'
+        '  <subfield code="1">1214495</subfield>'
+        '</datafield>'
+    )  # record/1104/export/xme
+
+    expected = [
+        {
+            'artid': '130',
+            'material': 'erratum',
+            'journal_record': {
+                '$ref': 'http://localhost:5000/api/journals/1214495',
+            },
+            'journal_title': 'Phys.Rev.Lett.',
+            'journal_volume': '35',
+            'page_start': '130',
+            'year': 1975,
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['publication_info'], subschema) is None
+    assert expected == result['publication_info']
+
+    expected = [
+        {
+            'c': [
+                '130',
+            ],
+            'm': 'erratum',
+            'p': 'Phys.Rev.Lett.',
+            'v': '35',
+            'y': 1975,
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['773']
+
+
 def test_publication_info_from_773_c_p_w_double_v_double_y_0_1_2():
     schema = load_schema('hep')
     subschema = schema['properties']['publication_info']
