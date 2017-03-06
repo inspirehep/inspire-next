@@ -49,3 +49,13 @@ def test_number_of_pages_from_300__a():
     result = hep2marc.do(result)
 
     assert expected == result['300']
+
+
+def test_number_of_pages_from_300__a_malformed():
+    snippet = (
+        '<datafield tag="300" ind1=" " ind2=" ">'
+        '  <subfield code="a">216+337</subfield>'
+        '</datafield>'
+    )  # record/67556
+
+    assert 'number_of_pages' not in hep.do(create_record(snippet))

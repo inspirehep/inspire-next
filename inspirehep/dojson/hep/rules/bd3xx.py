@@ -25,12 +25,12 @@
 from __future__ import absolute_import, division, print_function
 
 from ..model import hep, hep2marc
-from ...utils import force_single_element
+from ...utils import force_single_element, maybe_int
 
 
 @hep.over('number_of_pages', '^300..')
 def number_of_pages(self, key, value):
-    return int(force_single_element(value.get('a')))
+    return maybe_int(force_single_element(value.get('a', '')))
 
 
 @hep2marc.over('300', '^number_of_pages$')
