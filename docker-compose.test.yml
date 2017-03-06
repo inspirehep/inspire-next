@@ -40,7 +40,7 @@ services:
       service: test-service_base
     volumes_from:
       - test-static
-    command: py.test inspirehep tests/unit
+    command: bash -c "py.test inspirehep tests/unit && make -C docs html"
   disambiguation:
     extends:
       service: test-service_base

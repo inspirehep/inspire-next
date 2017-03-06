@@ -207,7 +207,7 @@ def create_datestruct(datetext):
     :param datetext: date from record
     :type datetext: str
     :returns: tuple of 1 or more integers, up to max (year, month, day).
-        Otherwise None.
+    Otherwise None.
     """
     if isinstance(datetext, int):
         datetext = unicode(datetext)

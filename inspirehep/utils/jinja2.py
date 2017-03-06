@@ -31,10 +31,8 @@ def render_template_to_string(input, _from_string=False, **context):
     Code based on
     `<https://github.com/mitsuhiko/flask/blob/master/flask/templating.py>`_
     :param input: the string template, or name of the template to be
-                  rendered, or an iterable with template names
-                  the first one existing will be rendered
-    :param context: the variables that should be available in the
-                    context of the template.
+    rendered, or an iterable with template names the first one existing will be rendered
+    :param context: the variables that should be available in the context of the template.
     :return: a string
     """
     ctx = _request_ctx_stack.top

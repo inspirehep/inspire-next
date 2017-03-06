@@ -86,9 +86,11 @@ def get_title(record):
 def get_value(record, key, default=None):
     """Return item as `dict.__getitem__` but using 'smart queries'.
     .. note::
+
         Accessing one value in a normal way, meaning d['a'], is almost as
         fast as accessing a regular dictionary. But using the special
         name convention is a bit slower than using the regular access:
+
         .. code-block:: python
             >>> %timeit x = dd['a[0].b']
             100000 loops, best of 3: 3.94 us per loop
