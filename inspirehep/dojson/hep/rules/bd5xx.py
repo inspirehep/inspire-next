@@ -284,7 +284,7 @@ def _export_to2marc(self, key, value):
 def _desy_bookkeeping(self, key, value):
     return {
         'date': value.get('d'),
-        'expert': value.get('a'),
+        'expert': force_single_element(value.get('a')),
         'status': value.get('s'),
     }
 

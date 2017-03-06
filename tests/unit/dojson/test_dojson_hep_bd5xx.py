@@ -580,6 +580,43 @@ def test_desy_bookkeeping_from_multiple_595_Da_d_s():
     assert expected == result['595_D']
 
 
+def test_desy_bookkeeping_from_595_D_double_a_d_s():
+    schema = load_schema('hep')
+    subschema = schema['properties']['_desy_bookkeeping']
+
+    snippet = (
+        '<datafield tag="595" ind1=" " ind2="D">'
+        '  <subfield code="d">2016-07-23</subfield>'
+        '  <subfield code="a">E</subfield>'
+        '  <subfield code="s">final</subfield>'
+        '  <subfield code="a">E</subfield>'
+        '</datafield>'
+    )  # record/558693
+
+    expected = [
+        {
+            'expert': 'E',
+            'date': '2016-07-23',
+            'status': 'final',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['_desy_bookkeeping'], subschema) is None
+    assert expected == result['_desy_bookkeeping']
+
+    expected = [
+        {
+            'a': 'E',
+            'd': '2016-07-23',
+            's': 'final',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['595_D']
+
+
 def test_export_to_from_595__c_cds():
     schema = load_schema('hep')
     subschema = schema['properties']['_export_to']
