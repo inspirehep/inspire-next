@@ -41,6 +41,10 @@ autodoc_mock_imports = [
     'lzma',
     'backports',
     'backports.lzma',
+    'scipy.sparse',
+    'invenio_ext.template',
+    'sklearn.utils.murmurhash',
+    'sklearn.cluster',
 ]
 
 # If extensions (or modules to document with autodoc) are in another directory,

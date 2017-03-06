@@ -6,6 +6,8 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
+SOURCEDIR     = source
+CODEDIR       = ../inspirehep
 
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
@@ -18,6 +20,7 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
+SPHINXAPIDOC    = sphinx-apidoc -f -o $(SOURCEDIR) $(CODEDIR)
 
 .PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest coverage gettext
 
@@ -48,13 +51,25 @@ help:
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 	@echo "  coverage   to run coverage check of the documentation (if enabled)"
 
+
+# function sets exit code for html target
+define report_result_html
+	if [ -s "$(1)" ]; \
+	then \
+		echo Build Failed. Check documentation_errors.log file for details.; \
+		exit 1; \
+	fi
+endef
+
+
 clean:
-	rm -rf $(BUILDDIR)/*
+	rm -rf $(BUILDDIR) $(SOURCEDIR) documentation_errors.log
 
 html:
-	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-	@echo
-	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+	$(SPHINXAPIDOC); \
+	rm -f source/modules.rst; \
+	$(SPHINXBUILD) -w documentation_errors.log -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	@$(call report_result_html,documentation_errors.log)
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
