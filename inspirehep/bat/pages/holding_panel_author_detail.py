@@ -62,15 +62,13 @@ def load_submitted_record(input_data):
         )
 
     try:
-        record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="detail-panel"])[1]'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="ng-scope"])[2]'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="detail-panel"])[4]'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="detail-panel"])[5]'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[2]'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="detail-panel panel-100"]'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="subject-list"]'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="advisors"]'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="table-body"]'))).text
+        record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-detailed-info'))).text
+        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-links'))).text
+        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-notes'))).text
+        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-submission-info'))).text
+        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-subjects'))).text
+        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-positions'))).text
+        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-advisors'))).text
     except (ElementNotVisibleException, WebDriverException):
         go_to()
         record = load_submitted_record(input_data)
