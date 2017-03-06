@@ -497,6 +497,18 @@ def test_fft_from_FFT():
     assert expected == result['FFT']
 
 
+def test_fft_from_FFT_percent_percent():
+    snippet = (
+        '<datafield tag="FFT" ind1="%" ind2="%">'
+        '  <subfield code="a">/opt/cds-invenio/var/tmp-shared/apsharvest_unzip_5dGfY5/articlebag-10-1103-PhysRevD-87-083514-apsxml/data/PhysRevD.87.083514/fulltext.xml</subfield>'
+        '  <subfield code="o">HIDDEN</subfield>'
+        '  <subfield code="t">APS</subfield>'
+        '</datafield>'
+    )  # record/1094156
+
+    assert '_fft' not in hep.do(create_record(snippet))
+
+
 def test_urls_from_8564_u_y():
     schema = load_schema('hep')
     subschema = schema['properties']['urls']
