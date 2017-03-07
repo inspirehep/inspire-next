@@ -105,3 +105,6 @@ selenium-report.html
 
 # Rope project files
 .ropeproject/
+
+# Twisted
+twistd.pid
