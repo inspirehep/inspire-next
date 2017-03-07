@@ -161,7 +161,6 @@ def formdata_to_model(obj, formdata):
 
     if form_fields.get('type_of_doc') == 'thesis':
         builder.add_thesis(
-            defense_date=form_fields.get('defense_date'),
             degree_type=form_fields.get('degree_type'),
             institution=form_fields.get('institution'),
             date=form_fields.get('thesis_date')

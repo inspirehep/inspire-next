@@ -140,9 +140,6 @@ def _thesis_info_population(input_data):
     Arsenic().find_element_by_id('thesis_date').send_keys(
         input_data['thesis-date']
     )
-    Arsenic().find_element_by_id('defense_date').send_keys(
-        input_data['thesis-defense']
-    )
     Select(Arsenic().find_element_by_id('degree_type')).select_by_value(
         input_data['degree-type']
     )
