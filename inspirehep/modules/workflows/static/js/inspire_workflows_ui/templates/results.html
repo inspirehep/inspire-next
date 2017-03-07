@@ -73,14 +73,10 @@
         </div>
 
         <div class="col-md-2 pad-top-10">
-          <ul class="subject-terms">
+          <ul ng-init="categories = record._source.metadata.inspire_categories || record._source.metadata.arxiv_categories" class="subject-terms">
             <li
-              ng-repeat="subject in record._source.metadata.inspire_categories | unique:'term' | limitTo:3"
-              ng-if="record._source.metadata.inspire_categories">{{subject.term}}
-            </li>
-            <li
-              ng-repeat="subject in record._source.metadata.inspire_categories | limitTo:3"
-              ng-if="subject._term">{{subject._term}}
+              ng-repeat="subject in categories | limitTo:3"
+              ng-if="record._source.metadata.inspire_categories || record._source.metadata.arxiv_categories">{{subject.term || subject}}
             </li>
           </ul>
         </div>

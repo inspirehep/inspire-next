@@ -62,9 +62,8 @@ def load_submission_record(input_data):
     def _load_submission_record():
         return (
             'CERN' in record and
-            # FIXME: currently not shown.
-            # 'ACC-PHYS' in myrecord and
-            # 'ASTRO-PH' in myrecord and
+            'cond-mat' in record and
+            'astro-ph' in record and
             'Twain, Mark' in record and
             'admin@inspirehep.net' in record
         )

@@ -145,17 +145,6 @@
             $window.location = url;
           },
 
-          addSubjectArea: function () {
-            console.debug($scope.vm.new_subject_area);
-            $scope.vm.record.metadata.inspire_categories.unshift({
-              'source': 'curator',
-              'term': $scope.vm.new_subject_area,
-              'accept': true
-            });
-            $scope.vm.new_subject_area = '';
-            $scope.doUpdate();
-          },
-
           addKeyword: function () {
             if (!$scope.vm.record._extra_data.keywords_prediction)
               $scope.vm.record._extra_data.keywords_prediction = {};
@@ -173,8 +162,10 @@
           },
 
           deleteSubject: function (index) {
-            if (index < $scope.vm.record.metadata.inspire_categories.length)
-              $scope.vm.record.metadata.inspire_categories.splice(index, 1);
+            var categories = $scope.vm.record.metadata.inspire_categories ||
+              $scope.vm.record.metadata.arxiv_categories;
+            if (index < categories.length)
+              categories.splice(index, 1);
             $scope.doUpdate();
           },
 

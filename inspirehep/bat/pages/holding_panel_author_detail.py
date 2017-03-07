@@ -53,8 +53,8 @@ def load_submitted_record(input_data):
             'http://www.example3.com' in record and
             'http://www.example4.com' in record and
             'http://www.example5.com' in record and
-            'ACC-PHYS' in record and
-            'ASTRO-PH' in record and
+            'cond-mat' in record and
+            'astro-ph' in record and
             'Bob White' in record and
             'CERN' in record and
             '2000' in record and
@@ -83,7 +83,7 @@ def accept_record():
         return 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))).text
 
-    Arsenic().find_element_by_xpath('//button[@class="btn btn-success"]').click()
+    Arsenic().find_element_by_id('btn-accept').click()
     return ArsenicResponse(_accept_record)
 
 
@@ -92,7 +92,7 @@ def reject_record():
         return 'Rejected' in WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-reject"]'))).text
 
-    Arsenic().find_element_by_xpath('//button[@class="btn btn-danger"]').click()
+    Arsenic().find_element_by_id('btn-reject-submission').click()
     return ArsenicResponse(_reject_record)
 
 
@@ -101,7 +101,7 @@ def curation_record():
         return 'Accepted with Curation' in WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located((By.XPATH, '//span[@ng-switch-when="accept_curate"]'))).text
 
-    Arsenic().find_element_by_xpath('//button[@class="btn btn-warning"]').click()
+    Arsenic().find_element_by_id('btn-accept-curation').click()
     return ArsenicResponse(_curation_record)
 
 
@@ -112,5 +112,5 @@ def review_record():
             WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'bai')))
         )
 
-    Arsenic().find_element_by_xpath('(//button[@class="btn btn-info"])[2]').click()
+    Arsenic().find_element_by_id('btn-review-submission').click()
     return ArsenicResponse(_review_record)

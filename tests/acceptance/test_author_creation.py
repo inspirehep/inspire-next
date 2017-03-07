@@ -49,10 +49,10 @@ INPUT_AUTHOR_DATA = {
     'experiments-start_year': '2002',
     'experiments-end_year': '2005',
     'advisors-name': 'Bob White',
-    'advisors-degree_type': 'PhD',
+    'advisors-degree_type': 'phd',
     'extra_comments': 'Some comments about the author',
-    'subject-0': 'ACC-PHYS',
-    'subject-1': 'ASTRO-PH'
+    'subject-0': 'astro-ph',
+    'subject-1': 'cond-mat'
 }
 
 

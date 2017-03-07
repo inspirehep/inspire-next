@@ -398,12 +398,7 @@ def test_arxiv_categories_from_research_field():
         ('research_field', 'foo'),
     ])
 
-    expected = [
-        {
-            'source': 'user',
-            'term': 'foo',
-        },
-    ]
+    expected = 'foo'
     result = updateform.do(form)
 
     assert expected == result['arxiv_categories']
