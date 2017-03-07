@@ -53,14 +53,6 @@ def retrieve_orcid(id_user):
 
 def formdata_to_model(obj, formdata):
     """Manipulate form data to match literature data model."""
-
-    def _filter_arxiv_categories(categories, arxiv_id):
-        arxiv_categories = categories.split()
-        if len(arxiv_id.split('/')) == 2:
-            if arxiv_id.split('/')[0] not in arxiv_categories:
-                arxiv_categories.append(arxiv_id.split('/')[0])
-        return arxiv_categories
-
     def _is_arxiv_url(url):
         return 'arxiv.org' in url
 
@@ -102,14 +94,9 @@ def formdata_to_model(obj, formdata):
     )
 
     if form_fields.get('arxiv_id') and form_fields.get('categories'):
-        arxiv_categories = _filter_arxiv_categories(
-            form_fields.get('categories'),
-            form_fields.get('arxiv_id')
-        )
-
         builder.add_arxiv_eprint(
             arxiv_id=form_fields.get('arxiv_id'),
-            arxiv_categories=arxiv_categories
+            arxiv_categories=form_fields.get('categories').split()
         )
 
     builder.add_doi(doi=form_fields.get('doi'))
