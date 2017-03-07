@@ -46,7 +46,7 @@
 
     <div class="row">
       <div class="col-md-12">
-        <div class="detail-panel">
+        <div class="detail-panel" id="hp-panel-detailed-info">
           <div ng-if="vm.record._workflow.data_type === 'hep'">
 
             <h4 class="record-title"
@@ -89,7 +89,18 @@
                 </span>
               </div>
             </div>
-
+            <div ng-if="vm.record.metadata.arxiv_eprints" class="row">
+              <div class="col-md-12">
+                <span class="font-bolder">e-Print:</span>
+                <span ng-repeat="eprint in vm.record.metadata.arxiv_eprints">
+                  <a href="http://arxiv.org/abs/{{eprint.value}}" target="_new">
+                  arXiv:{{eprint.value}}</a>&nbsp;[{{eprint.categories[0]}}]&nbsp;-&nbsp;
+                  <a href="http://arxiv.org/pdf/{{eprint.value}}" target="_new">
+                    PDF
+                  </a>
+                </span>
+              </div>
+            </div>
             <div ng-if="vm.record.metadata.dois" class="row">
               <div class="col-md-12">
                 <span class="font-bolder">DOI:</span>
@@ -228,7 +239,7 @@
 
       <div class="col-md-6 col-sm-6"
            ng-if="vm.record._workflow.data_type == 'authors'">
-        <div class="detail-panel panel-300">
+        <div class="detail-panel panel-300" id="hp-panel-advisors">
           <h4>Advisors</h4>
 
           <div class="advisors">
@@ -290,7 +301,7 @@
 
       <div id="save-panel" class="col-md-12 text-center"
            ng-if="vm.update_ready || vm.saved">
-        <div class="detail-panel">
+        <div class="detail-panel" id="hp-panel-save-controls">
 
           <div id="hp-save" ng-if="vm.update_ready">
             <button class="btn btn-success btn-lg"
@@ -313,7 +324,7 @@
 
       <!--Osion Panel-->
       <div class="col-md-12">
-        <div class="detail-panel">
+        <div class="detail-panel" id="hp-panel-decision-controls">
           <h4>Decision</h4>
 
           <div class="decision">
@@ -335,7 +346,7 @@
 
       <!--Submission Info-->
       <div class="col-md-12">
-        <div class="detail-panel">
+        <div class="detail-panel" id="hp-panel-submission-info">
           <h4>Submission</h4>
           <p class="text-center" ng-if="vm.record.metadata.acquisition_source">
             <span ng-switch="vm.record.metadata.acquisition_source.method">
@@ -356,8 +367,8 @@
       </div>
 
       <!--Notes-->
-      <div class="col-md-12">
-        <div class="detail-panel">
+      <div ng-if="vm.record.metadata._private_notes" class="col-md-12">
+        <div class="detail-panel" id="hp-panel-notes">
           <h4>Notes</h4>
 
           <div class="row">
@@ -374,7 +385,7 @@
 
       <!--RT Panel-->
       <div class="col-md-12">
-        <div class="detail-panel">
+        <div class="detail-panel" id="hp-panel-rt-info">
           <h4>RT information</h4>
 
           <div class="text-center" ng-if="vm.record._extra_data.ticket_id">
@@ -385,7 +396,7 @@
 
       <!--Action Panel-->
       <div class="col-md-12">
-        <div class="detail-panel">
+        <div class="detail-panel" id="hp-panel-action-controls">
           <h4>Actions</h4>
 
           <div class="text-center" ng-if="vm.record._workflow.status==='COMPLETED'">
