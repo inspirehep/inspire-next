@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+from langdetect import DetectorFactory
 
 from inspirehep.factory import create_app
 
@@ -53,3 +54,13 @@ def app_client(app):
 def request_context(app):
     with app.test_request_context() as request_context:
         yield request_context
+
+
+@pytest.fixture(scope='function')
+def stable_langdetect(app):
+    """Ensure that ``langdetect`` always returns the same thing.
+
+    See: https://github.com/Mimino666/langdetect#basic-usage."""
+    DetectorFactory.seed = 0
+
+    yield

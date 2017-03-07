@@ -133,7 +133,7 @@ def test_titles_from_245__a_b():
     assert expected == result['245']
 
 
-def test_title_translations_from_242__a():
+def test_title_translations_from_242__a(stable_langdetect):
     schema = load_schema('hep')
     subschema = schema['properties']['title_translations']
 
@@ -164,7 +164,7 @@ def test_title_translations_from_242__a():
     assert expected == result['242']
 
 
-def test_title_translations_from_242__a_b():
+def test_title_translations_from_242__a_b(stable_langdetect):
     schema = load_schema('hep')
     subschema = schema['properties']['title_translations']
 
