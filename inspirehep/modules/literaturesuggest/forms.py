@@ -439,15 +439,9 @@ class LiteratureForm(INSPIREForm):
         widget=defensedate_widget,
     )
 
-    defense_date = fields.TextField(
-        label=_('Date of Defense'),
-        description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
-        validators=[date_validator],
-        widget=defensedate_widget,
-    )
-
     degree_type = fields.SelectField(
         label=_('Degree Type'),
+        default='phd',
         widget_classes="form-control" + THESIS_CLASS,
     )
 
@@ -607,8 +601,8 @@ class LiteratureForm(INSPIREForm):
              'collaboration', 'experiment', 'abstract',
              'report_numbers']),
         ('Thesis Information',
-            ['supervisors', 'thesis_date', 'defense_date', 'degree_type',
-             'institution', 'license_url']),
+            ['degree_type', 'thesis_date', 'institution',
+             'supervisors', 'license_url']),
         # ('Licenses and copyright',
         #     ['license', 'license_url'], {'classes': 'collapse'}),
         ('Journal Information',
@@ -629,7 +623,6 @@ class LiteratureForm(INSPIREForm):
     field_sizes = {
         'type_of_doc': 'col-xs-12 col-md-3',
         'wrap_nonpublic_note': 'col-md-9',
-        'defense_date': 'col-xs-12 col-md-4',
         'thesis_date': 'col-xs-12 col-md-4',
         'degree_type': 'col-xs-12 col-md-3',
     }

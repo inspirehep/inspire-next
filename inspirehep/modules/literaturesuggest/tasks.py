@@ -161,7 +161,6 @@ def formdata_to_model(obj, formdata):
 
     if form_fields.get('type_of_doc') == 'thesis':
         builder.add_thesis(
-            defense_date=form_fields.get('defense_date'),
             degree_type=form_fields.get('degree_type'),
             institution=form_fields.get('institution'),
             date=form_fields.get('thesis_date')
@@ -196,10 +195,6 @@ def formdata_to_model(obj, formdata):
         public_note=form_fields.get('note'),
         source='arXiv' if form_fields.get('categories') else 'CrossRef'
     )
-
-    note = 'Presented on {0}'.format(form_fields.get('defense_date')) if \
-        form_fields.get('defense_date') else None
-    builder.add_public_note(public_note=note)
 
     if not _is_arxiv_url(form_fields.get('url', '')):
         builder.add_url(url=form_fields.get('url'))
