@@ -35,6 +35,7 @@ import mock
 import pytest
 
 from dojson.contrib.marc21.utils import create_record
+from invenio_accounts.testutils import login_user_via_session
 from invenio_db import db
 from invenio_workflows import (
     ObjectStatus,
@@ -145,6 +146,7 @@ def _do_resolve_workflow(app, workflow_id, action='accept_core'):
         'id': workflow_id,
     }
 
+    login_user_via_session(client, email='cataloger@inspirehep.net')
     return client.post(
         '/api/holdingpen/%s/action/resolve' % workflow_id,
         data=json.dumps(data),
