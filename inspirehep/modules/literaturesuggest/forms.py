@@ -441,6 +441,7 @@ class LiteratureForm(INSPIREForm):
 
     degree_type = fields.SelectField(
         label=_('Degree Type'),
+        default='phd',
         widget_classes="form-control" + THESIS_CLASS,
     )
 
