@@ -51,7 +51,7 @@ IS_INTERNAL_UID = re.compile('^(inspire:uid:)?\d{5}$')
 IS_ORCID = re.compile('^(orcid:)?\d{4}-\d{4}-\d{4}-\d{3}[0-9X]$')
 
 
-@hep.over('_fft', '^FFT..')
+@hep.over('_fft', '^FFT[^%][^%]')
 @utils.for_each_value
 def _fft(self, key, value):
     def _get_creation_datetime(value):
