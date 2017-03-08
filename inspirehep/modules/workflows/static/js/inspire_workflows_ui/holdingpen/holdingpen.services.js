@@ -60,7 +60,8 @@
 
               var data = JSON.stringify({
                 'value': decision,
-                'pdf_upload': vm.pdf_upload
+                'pdf_upload': vm.pdf_upload,
+                'reason': vm.reason
               });
 
               $http.post('/api/holdingpen/' + workflowId + '/action/resolve', data).then(function (response) {

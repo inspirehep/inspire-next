@@ -75,6 +75,14 @@
             window.location = '/holdingpen/list';
             $scope.vm.batch_message = $scope.vm.selected_records.length + " workflows deleted.";
             $scope.modal.dismiss('cancel');
+          },
+
+          methodItemsChecked: function(method) {
+            var numItemsChecked = $scope.vm.selected_record_methods[method];
+            if (numItemsChecked && numItemsChecked > 0) {
+              return true;
+            }
+            return false;
           }
 
         }
@@ -102,8 +110,10 @@
         $scope.vm.new_subject_area = '';
         $scope.vm.new_keyword = '';
         $scope.vm.pdf_upload = true;
-
-        $scope.vm.modal = undefined;
+        $scope.vm.reason = '';
+        $scope.vm.reason_index = 0;
+        $scope.vm.reasons = [];
+        $scope.modal = undefined;
 
         $scope.vm.names = ["Astrophysics", "Computing", "Experiment-HEP", "Experiment-Nucl",
           "General Physics", "Gravitation and Cosmology", "Math and Math Physics", "Other", "Phenomenology-HEP", "Theory-HEP", "Theory-Nucl"];
@@ -126,11 +136,86 @@
 
         HoldingPenRecordService.getRecord($scope.vm, $scope.workflowId);
 
+        $scope.$watch(
+          'vm.record.metadata', updateRejectReasons, true
+        );
+
+        $scope.$watch(
+          'vm.reason_index', chooseReason
+        );
+
+        function chooseReason(index) {
+          if (index === undefined || !$scope.vm.reasons.length) {
+            return
+          }
+          $scope.vm.reason = $scope.vm.reasons[index].content;
+        }
+
+        /*
+        Runs when vm.record.metadata is updated to always have the reason template
+        dynamically generated.
+         */
+        function updateRejectReasons(record) {
+          if (
+            !record ||
+            ($scope.vm.record._workflow.data_type !== 'hep') ||
+            !(record.acquisition_source.method === 'submitter')
+          ) {
+            return;
+          }
+          $scope.vm.reasons = [{
+            title: "Rejection",
+            content: `Dear ` + record.acquisition_source.email + `,
+
+            Thanks for suggesting "` + record.titles[0].title + `". We regret to inform you that we cannot include it in our database as it is outside the focus of INSPIRE. For details please check our collection policy at: https://inspirehep.net/info/hep/collection-policy.
+
+            Thanks again for collaborating with INSPIRE! We are looking forward to further suggestions you might have.`
+          },
+          {
+            title: "Duplicate",
+            content: `Dear ` + record.acquisition_source.email + `,
+
+            Thanks for suggesting "` + record.titles[0].title + `". We already have it in our database, you can find it here: http://inspirehep.net/record/INSERT_RECID.
+
+            Thanks again for collaborating with INSPIRE! We are looking forward to further suggestions you might have.`
+          },
+          {
+            title: "Will be harvested",
+            content: `Dear ` + record.acquisition_source.email + `,
+
+            Thanks for suggesting "` + record.titles[0].title + `". This article was published in a journal that we harvest automatically as part of our regular workflow. It is still in the queue of papers being processed and should appear in the coming weeks.
+
+            Thanks again for collaborating with INSPIRE! We are looking forward to further suggestions you might have.`
+          }
+        ];
+
+          $scope.vm.reason = $scope.vm.reasons[0].content;
+        }
+
         $scope.Utils = {
           keys: function (obj) {
             if (obj != null)
               return Object.keys(obj);
             return [];
+          },
+
+          setRejectionReason: function() {
+            $scope.modal = $uibModal.open({
+              templateUrl: '/static/js/inspire_workflows_ui/templates/modals/rejection_reason_modal.html',
+              scope: $scope
+            });
+          },
+
+          showRejectionReason: function() {
+            $scope.modal = $uibModal.open({
+              templateUrl: '/static/js/inspire_workflows_ui/templates/modals/generic_info_modal.html',
+              scope: angular.extend($scope,
+                {
+                  modalTitle: 'Reason for rejection',
+                  modalBody: '<pre class="text-wrap">' + $scope.vm.reason + '</pre>'
+                }
+              )
+            });
           },
 
           updateRecord: function () {

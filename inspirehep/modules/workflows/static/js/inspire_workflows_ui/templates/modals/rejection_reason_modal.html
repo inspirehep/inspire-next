@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <h3 class="modal-title">Reason for rejection</h3>
+</div>
+<div class="modal-body">
+  <p>Explain why this was rejected (is sent directly to user):</p>
+  <p><textarea ng-model="vm.reason" id="reject-reason">
+  </textarea></p>
+  <p>
+    Select template:
+    <select ng-model="vm.reason_index"
+            ng-options="vm.reasons.indexOf(item) as item.title for item in vm.reasons">
+    </select>
+  </p>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-danger pull-right" type="button" ng-click="Utils.setDecision('reject'); $close()">Reject
+  </button>
+  <button class="btn btn-default pull-left" type="button" ng-click="$close()">Cancel
+  </button>
+</div>
