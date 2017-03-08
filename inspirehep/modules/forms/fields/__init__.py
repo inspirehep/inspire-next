@@ -26,17 +26,10 @@ from __future__ import absolute_import, division, print_function
 
 from wtforms.utils import unset_value
 
-from .abstract import *
 from .date import *
 from .doi import *
 from .file_upload import *
-from .issn import *
 from .jinja import *
-from .journal import *
-from .keywords import *
 from .language import *
-from .notes import *
-from .pages_number import *
-from .publisher import *
 from .title import *
 from .wtformsext import *
