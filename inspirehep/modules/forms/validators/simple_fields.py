@@ -26,8 +26,13 @@ from datetime import datetime
 from urllib import urlencode
 
 from flask import current_app
+from flask.ext.login import current_user
 from idutils import is_arxiv, is_isbn
 from wtforms.validators import ValidationError, StopValidation
+
+
+def _get_current_user_roles():
+    return [r.name for r in current_user.roles]
 
 
 def arxiv_syntax_validation(form, field):
@@ -115,7 +120,17 @@ def duplicated_doi_validator(form, field):
     if not doi:
         return
     if current_app.config.get('PRODUCTION_MODE'):
+        user_roles = _get_current_user_roles()
+
+        # First check in default collection
         inspirehep_duplicated_validator('doi:' + doi, 'DOI')
+
+        # And in Hal collection
+        try:
+            inspirehep_duplicated_validator('doi:' + doi, 'DOI', 'HAL Hidden')
+        except ValidationError:
+            if 'cataloger' in user_roles:
+                raise
 
 
 def duplicated_arxiv_id_validator(form, field):
@@ -125,8 +140,20 @@ def duplicated_arxiv_id_validator(form, field):
     if not arxiv_id:
         return
     if current_app.config.get('PRODUCTION_MODE'):
+        user_roles = _get_current_user_roles()
+
+        # First check in default collection
         inspirehep_duplicated_validator(
             '035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID')
+
+        # And in Hal collection
+        try:
+            inspirehep_duplicated_validator(
+                '035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID', 'HAL Hidden'
+            )
+        except ValidationError:
+            if 'cataloger' in user_roles:
+                raise
 
 
 def pdf_validator(form, field):
