@@ -115,10 +115,12 @@ class INSPIREForm(Form):
 
     def post_process(self, form=None, formfields=[], submit=False):
         """Run form post-processing.
+
         Run form post-processing by calling `post_process` on each field,
         passing any extra `Form.post_process_<fieldname>` processors to the
         field.
-        If ``formfields'' are specified, only the given fields' processors will
+
+        If `formfields` are specified, only the given fields' processors will
         be run (which may touch all fields of the form).
         The post processing allows the form to alter other fields in the form,
         via e.g. contacting external services (e.g a DOI field could retrieve

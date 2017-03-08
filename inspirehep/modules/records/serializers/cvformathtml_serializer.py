@@ -35,7 +35,7 @@ class CVFORMATHTMLSerializer(object):
         :param pid: Persistent identifier instance.
         :param record: Record instance.
         :param links_factory: Factory function for the link generation,
-                              which are added to the response.
+        which are added to the response.
         """
         return Cv_latex_html_text(record, 'cv_latex_html', '<br/>').format()
 

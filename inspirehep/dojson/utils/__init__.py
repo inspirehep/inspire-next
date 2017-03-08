@@ -114,8 +114,7 @@ def get_record_ref(recid, endpoint='record'):
     """Create record jsonref reference object from recid.
 
     None recids will return a None object.
-    Valid recids will return an object in the form of:
-        {'$ref': url_for_record}
+    Valid recids will return an object in the form of: {'$ref': url_for_record}
     """
     if recid is None:
         return None

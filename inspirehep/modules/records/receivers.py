@@ -82,7 +82,7 @@ def populate_inspire_subjects(sender, json, *args, **kwargs):
 def populate_inspire_document_type(sender, json, *args, **kwargs):
     """Populate the INSPIRE doc type before indexing.
 
-    Adds the ``facet_inspire_doc_type`` key to the record, to be used for
+    Adds the `facet_inspire_doc_type` key to the record, to be used for
     faceting in the search interface.
     """
     result = []
@@ -167,19 +167,30 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
     """Extracts recids from all reference fields and adds them to ES.
 
     For every field that has as a value a reference object to another record,
-    add a sibling after extracting the record id. e.g.
+    add a sibling after extracting the record id.
+
+    Example::
+
         {"record": {"$ref": "http://x/y/2}}
-    is transformed to:
+
+        is transformed to:
+
         {"record": {"$ref": "http://x/y/2},
          "recid": 2}
+
     Siblings are renamed using the following scheme:
         Remove "record" occurrences and append _recid without doubling or
         prepending underscores to the original name.
 
     For every known list of object references add a new list with the
-    corresponding recids. e.g.
+    corresponding recids.
+
+    Example::
+
         {"records": [{"$ref": "http://x/y/1"}, {"$ref": "http://x/y/2"}]}
+
         is transformed to:
+
         {"records": [{"$ref": "http://x/y/1"}, {"$ref": "http://x/y/2"}]
          "recids": [1, 2]}
     """
