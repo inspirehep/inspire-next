@@ -5,130 +5,191 @@
                 "enabled": true
             },
             "date_detection": false,
-            "dynamic_templates": [
-                {
-                    "default": {
-                        "mapping": {
-                            "analyzer": "basic_analyzer",
-                            "copy_to": "global_default",
-                            "type": "string"
-                        },
-                        "match_mapping_type": "string"
-                    }
-                }
-            ],
             "numeric_detection": false,
             "properties": {
-                "_collections": {
-                    "analyzer": "lowercase_analyzer",
+                "$schema": {
                     "type": "string"
                 },
-                "acquisition_source": {
+                "_collections": {
+                    "type": "string"
+                },
+                "_private_notes": {
                     "properties": {
-                        "submission_number": {
-                            "index": "not_analyzed",
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "address": {
+                    "properties": {
+                        "city": {
+                            "type": "string"
+                        },
+                        "country_code": {
+                            "type": "string"
+                        },
+                        "latitude": {
+                            "type": "double"
+                        },
+                        "longitude": {
+                            "type": "double"
+                        },
+                        "original_address": {
+                            "type": "string"
+                        },
+                        "postal_code": {
+                            "type": "string"
+                        },
+                        "state": {
                             "type": "string"
                         }
                     },
                     "type": "object"
                 },
                 "closed_date": {
-                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
-                    "type": "date"
+                    "type": "string"
                 },
-                "collections": {
+                "contact_details": {
                     "properties": {
-                        "primary": {
-                            "index": "not_analyzed",
+                        "email": {
                             "type": "string"
                         },
-                        "secondary": {
-                            "index": "not_analyzed",
-                            "type": "string"
-                        }
-                    }
-                },
-                "date_and_time_of_latest_transaction": {
-                    "format": "yyyyMMddHHmmss||yyyyMMddHHmmss.S",
-                    "type": "date"
-                },
-                "deadline_date": {
-                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
-                    "type": "date"
-                },
-                "experiment": {
-                    "index": "not_analyzed",
-                    "type": "string"
-                },
-                "global_default": {
-                    "analyzer": "basic_analyzer",
-                    "type": "string"
-                },
-                "global_fulltext": {
-                    "analyzer": "natural_text",
-                    "type": "string"
-                },
-                "institution": {
-                    "properties": {
                         "name": {
                             "type": "string"
                         }
                     },
                     "type": "object"
                 },
-                "rank": {
-                    "index": "not_analyzed",
+                "control_number": {
+                    "type": "integer"
+                },
+                "deadline_date": {
+                    "type": "string"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "experiments": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                "external_system_identifiers": {
+                    "properties": {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "inspire_categories": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "term": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "institutions": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                "legacy_creation_date": {
+                    "type": "string"
+                },
+                "new_record": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "position": {
+                    "type": "string"
+                },
+                "public_notes": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "ranks": {
+                    "type": "string"
+                },
+                "reference_email": {
                     "type": "string"
                 },
                 "regions": {
-                    "index": "not_analyzed",
                     "type": "string"
                 },
-                "research_area": {
-                    "index": "not_analyzed",
-                    "type": "string"
+                "self": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "urls": {
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 }
             }
         }
-    },
-    "settings": {
-        "analysis": {
-            "analyzer": {
-                "basic_analyzer": {
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase"
-                    ],
-                    "tokenizer": "standard",
-                    "type": "custom"
-                },
-                "lowercase_analyzer": {
-                    "filter": "lowercase",
-                    "tokenizer": "keyword"
-                },
-                "natural_text": {
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase",
-                        "synonyms_kbr"
-                    ],
-                    "tokenizer": "standard",
-                    "type": "custom"
-                }
-            },
-            "filter": {
-                "asciifold_with_orig": {
-                    "preserve_original": true,
-                    "type": "asciifolding"
-                },
-                "synonyms_kbr": {
-                    "synonyms": [
-                        "production => creation"
-                    ],
-                    "type": "synonym"
-                }
-            }
-        },
-        "index.percolator.map_unmapped_fields_as_string": true
     }
 }

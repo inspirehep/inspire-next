@@ -285,7 +285,7 @@ INSPIRE_ENDPOINT_TO_INDEX = {
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
 SEARCH_ELASTIC_KEYWORD_MAPPING = {
-    None: ['global_fulltext'],
+    None: ['_all'],
     "control_number": ["control_number"],
     "author": ["authors.full_name", "authors.alternative_names"],
     "exactauthor": ["exactauthor.raw", "authors.full_name",

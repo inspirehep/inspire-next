@@ -5,88 +5,199 @@
                 "enabled": true
             },
             "date_detection": false,
-            "dynamic_templates": [
-                {
-                    "default": {
-                        "mapping": {
-                            "analyzer": "basic_analyzer",
-                            "copy_to": "global_default",
-                            "type": "string"
-                        },
-                        "match_mapping_type": "string"
-                    }
-                }
-            ],
             "numeric_detection": false,
             "properties": {
+                "$schema": {
+                    "type": "string"
+                },
                 "ICN": {
-                    "copy_to": [
-                        "affautocomplete"
-                    ],
+                    "copy_to": "affautocomplete",
                     "type": "string"
                 },
                 "_collections": {
-                    "analyzer": "lowercase_analyzer",
                     "type": "string"
+                },
+                "_private_notes": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 },
                 "address": {
                     "properties": {
-                        "country": {
-                            "fields": {
-                                "raw": {
-                                    "index": "not_analyzed",
-                                    "type": "string"
-                                }
-                            },
+                        "city": {
+                            "type": "string"
+                        },
+                        "country_code": {
+                            "type": "string"
+                        },
+                        "latitude": {
+                            "type": "double"
+                        },
+                        "longitude": {
+                            "type": "double"
+                        },
+                        "original_address": {
+                            "type": "string"
+                        },
+                        "postal_code": {
+                            "type": "string"
+                        },
+                        "state": {
                             "type": "string"
                         }
-                    }
+                    },
+                    "type": "object"
                 },
                 "affautocomplete": {
                     "type": "string"
                 },
-                "collections": {
+                "control_number": {
+                    "type": "integer"
+                },
+                "core": {
+                    "type": "boolean"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "department": {
+                    "type": "string"
+                },
+                "department_acronym": {
+                    "type": "string"
+                },
+                "external_system_identifiers": {
                     "properties": {
-                        "primary": {
-                            "index": "not_analyzed",
+                        "schema": {
                             "type": "string"
                         },
-                        "secondary": {
-                            "index": "not_analyzed",
+                        "value": {
                             "type": "string"
                         }
-                    }
+                    },
+                    "type": "object"
                 },
-                "date_and_time_of_latest_transaction": {
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S",
-                    "type": "date"
-                },
-                "global_default": {
-                    "analyzer": "basic_analyzer",
+                "extra_words": {
                     "type": "string"
                 },
-                "global_fulltext": {
-                    "analyzer": "natural_text",
+                "field_activity": {
                     "type": "string"
+                },
+                "historical_data": {
+                    "type": "string"
+                },
+                "inspire_categories": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "term": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 },
                 "institution": {
-                    "copy_to": [
-                        "affautocomplete"
-                    ],
+                    "copy_to": "affautocomplete",
                     "type": "string"
                 },
-                "name": {
-                    "copy_to": [
-                        "affautocomplete"
-                    ],
+                "institution_acronym": {
+                    "copy_to": "affautocomplete",
                     "type": "string"
+                },
+                "legacy_ICN": {
+                    "type": "string"
+                },
+                "legacy_creation_date": {
+                    "type": "string"
+                },
+                "location": {
+                    "properties": {
+                        "latitude": {
+                            "type": "double"
+                        },
+                        "longitude": {
+                            "type": "double"
+                        }
+                    },
+                    "type": "object"
                 },
                 "name_variants": {
                     "properties": {
+                        "source": {
+                            "type": "string"
+                        },
                         "value": {
-                            "copy_to": [
-                                "affautocomplete"
-                            ],
+                            "copy_to": "affautocomplete",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "new_record": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "public_notes": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "related_institutes": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "relation_type": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "self": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "time_zone": {
+                    "type": "string"
+                },
+                "urls": {
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "value": {
                             "type": "string"
                         }
                     },
@@ -94,45 +205,5 @@
                 }
             }
         }
-    },
-    "settings": {
-        "analysis": {
-            "analyzer": {
-                "basic_analyzer": {
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase"
-                    ],
-                    "tokenizer": "standard",
-                    "type": "custom"
-                },
-                "lowercase_analyzer": {
-                    "filter": "lowercase",
-                    "tokenizer": "keyword"
-                },
-                "natural_text": {
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase",
-                        "synonyms_kbr"
-                    ],
-                    "tokenizer": "standard",
-                    "type": "custom"
-                }
-            },
-            "filter": {
-                "asciifold_with_orig": {
-                    "preserve_original": true,
-                    "type": "asciifolding"
-                },
-                "synonyms_kbr": {
-                    "synonyms": [
-                        "production => creation"
-                    ],
-                    "type": "synonym"
-                }
-            }
-        },
-        "index.percolator.map_unmapped_fields_as_string": true
     }
 }

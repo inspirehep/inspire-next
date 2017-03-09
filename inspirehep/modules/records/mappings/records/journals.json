@@ -5,137 +5,64 @@
                 "enabled": true
             },
             "date_detection": false,
-            "dynamic_templates": [
-                {
-                    "default": {
-                        "mapping": {
-                            "analyzer": "basic_analyzer",
-                            "copy_to": "global_default",
-                            "type": "string"
-                        },
-                        "match_mapping_type": "string"
-                    }
-                }
-            ],
             "numeric_detection": false,
             "properties": {
+                "$schema": {
+                    "type": "string"
+                },
                 "_collections": {
-                    "analyzer": "lowercase_analyzer",
                     "type": "string"
                 },
-                "accelerator_experiment": {
+                "_private_notes": {
                     "properties": {
-                        "experiment": {
-                            "index": "not_analyzed",
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
-                "affautocomplete": {
-                    "type": "string"
-                },
-                "authors": {
-                    "properties": {
-                        "affiliation": {
-                            "type": "string"
-                        },
-                        "full_name": {
-                            "analyzer": "natural_text",
-                            "copy_to": [
-                                "exactauthor"
-                            ],
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
-                "collaboration": {
-                    "properties": {
-                        "collaboration": {
-                            "index": "not_analyzed",
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
-                "collections": {
-                    "properties": {
-                        "primary": {
-                            "index": "not_analyzed",
-                            "type": "string"
-                        },
-                        "secondary": {
-                            "index": "not_analyzed",
-                            "type": "string"
-                        }
-                    }
-                },
-                "date": {
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)",
-                    "type": "date"
-                },
-                "date_and_time_of_latest_transaction": {
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S",
-                    "type": "date"
-                },
-                "division": {
-                    "type": "string"
-                },
-                "exactauthor": {
-                    "fields": {
-                        "raw": {
-                            "index": "not_analyzed",
-                            "type": "string"
-                        }
-                    },
-                    "type": "string"
-                },
-                "experiment_name": {
-                    "copy_to": [
-                        "experimentautocomplete"
-                    ],
-                    "type": "string"
-                },
-                "experimentautocomplete": {
-                    "type": "string"
-                },
-                "global_default": {
-                    "analyzer": "basic_analyzer",
-                    "type": "string"
-                },
-                "global_fulltext": {
-                    "analyzer": "natural_text",
-                    "type": "string"
-                },
-                "hidden_note": {
-                    "properties": {
-                        "cds": {
-                            "index": "not_analyzed",
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
-                "institution": {
-                    "properties": {
-                        "affiliation": {
-                            "copy_to": [
-                                "affautocomplete"
-                            ],
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
-                "issn": {
-                    "properties": {
-                        "material": {
-                            "index": "not_analyzed",
+                        "source": {
                             "type": "string"
                         },
                         "value": {
-                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "coden": {
+                    "type": "string"
+                },
+                "control_number": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "history": {
+                    "type": "string"
+                },
+                "issn": {
+                    "properties": {
+                        "comment": {
+                            "type": "string"
+                        },
+                        "medium": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "journal_handling": {
+                    "type": "string"
+                },
+                "journal_titles": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "subtitle": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "copy_to": "journalautocomplete",
                             "type": "string"
                         }
                     },
@@ -144,27 +71,73 @@
                 "journalautocomplete": {
                     "type": "string"
                 },
-                "publication_info": {
+                "legacy_creation_date": {
+                    "type": "string"
+                },
+                "license": {
+                    "type": "string"
+                },
+                "license_urls": {
                     "properties": {
-                        "journal_volume": {
-                            "index": "not_analyzed",
+                        "description": {
                             "type": "string"
                         },
-                        "year": {
-                            "format": "yyyy",
-                            "type": "date"
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "new_record": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "peer_reviewed": {
+                    "type": "boolean"
+                },
+                "public_notes": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
                         }
                     },
                     "type": "object"
                 },
                 "publisher": {
-                    "index": "not_analyzed",
                     "type": "string"
                 },
-                "report_number": {
+                "relation": {
                     "properties": {
-                        "primary": {
-                            "index": "not_analyzed",
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "issn": {
+                            "type": "string"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "relation": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "self": {
+                    "properties": {
+                        "$ref": {
                             "type": "string"
                         }
                     },
@@ -172,21 +145,14 @@
                 },
                 "short_titles": {
                     "properties": {
-                        "title": {
-                            "copy_to": [
-                                "journalautocomplete"
-                            ],
+                        "source": {
                             "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
-                "journal_titles": {
-                    "properties": {
+                        },
+                        "subtitle": {
+                            "type": "string"
+                        },
                         "title": {
-                            "copy_to": [
-                                "journalautocomplete"
-                            ],
+                            "copy_to": "journalautocomplete",
                             "type": "string"
                         }
                     },
@@ -194,58 +160,30 @@
                 },
                 "title_variants": {
                     "properties": {
-                      "title": {
-                        "type": "string",
-                        "fields": {
-                          "lowercased": {
-                            "type": "string",
-                            "analyzer": "lowercase_analyzer"
-                          }
+                        "source": {
+                            "type": "string"
+                        },
+                        "subtitle": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "type": "string"
                         }
-                      }
-                    }
+                    },
+                    "type": "object"
+                },
+                "urls": {
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 }
             }
         }
-    },
-    "settings": {
-        "analysis": {
-            "analyzer": {
-                "basic_analyzer": {
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase"
-                    ],
-                    "tokenizer": "standard",
-                    "type": "custom"
-                },
-                "lowercase_analyzer": {
-                    "filter": "lowercase",
-                    "tokenizer": "keyword"
-                },
-                "natural_text": {
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase",
-                        "synonyms_kbr"
-                    ],
-                    "tokenizer": "standard",
-                    "type": "custom"
-                }
-            },
-            "filter": {
-                "asciifold_with_orig": {
-                    "preserve_original": true,
-                    "type": "asciifolding"
-                },
-                "synonyms_kbr": {
-                    "synonyms": [
-                        "production => creation"
-                    ],
-                    "type": "synonym"
-                }
-            }
-        },
-        "index.percolator.map_unmapped_fields_as_string": true
     }
 }
