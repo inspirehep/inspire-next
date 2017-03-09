@@ -115,8 +115,40 @@
         $scope.vm.reasons = [];
         $scope.modal = undefined;
 
-        $scope.vm.names = ["Astrophysics", "Computing", "Experiment-HEP", "Experiment-Nucl",
-          "General Physics", "Gravitation and Cosmology", "Math and Math Physics", "Other", "Phenomenology-HEP", "Theory-HEP", "Theory-Nucl"];
+        $scope.vm.inspire_categories = [
+          "Accelerators",
+          "Astrophysics",
+          "Computing",
+          "Data Analysis and Statistics",
+          "Experiment-HEP",
+          "Experiment-Nucl",
+          "General Physics",
+          "Gravitation and Cosmology",
+          "Instrumentation",
+          "Lattice",
+          "Math and Math Physics",
+          "Other",
+          "Phenomenology-HEP",
+          "Theory-HEP",
+          "Theory-Nucl"
+        ];
+
+        $scope.vm.code_to_inspire_categories = {
+            'a': 'Astrophysics',
+            'b': 'Accelerators',
+            'c': 'Computing',
+            'e': 'Experiment-HEP',
+            'g': 'Gravitation and Cosmology',
+            'i': 'Instrumentation',
+            'l': 'Lattice',
+            'm': 'Math and Math Physics',
+            'n': 'Theory-Nucl',
+            'o': 'Other',
+            'p': 'Phenomenology-HEP',
+            'q': 'General Physics',
+            't': 'Theory-HEP',
+            'x': 'Experiment-Nucl',
+        };
 
         $scope.degree_types = [
           {value: 'Bachelor', text: 'Bachelor'},
@@ -228,6 +260,33 @@
 
           redirect: function (url) {
             $window.location = url;
+          },
+
+          addSubjectArea: function () {
+            function _subjectAlreadyPresent(subject) {
+              for (var i=0; i<$scope.vm.record.metadata.inspire_categories.length; i++) {
+                if ($scope.vm.record.metadata.inspire_categories[i].term === subject) {
+                  return true;
+                }
+              }
+              return false;
+            }
+
+            if ($scope.vm.new_subject_area in $scope.vm.code_to_inspire_categories) {
+              $scope.vm.new_subject_area = $scope.vm.code_to_inspire_categories[$scope.vm.new_subject_area];
+            }
+
+            if ($scope.vm.inspire_categories.indexOf($scope.vm.new_subject_area) == -1) {
+              return;
+            }
+            if (!_subjectAlreadyPresent($scope.vm.new_subject_area)) {
+              $scope.vm.record.metadata.inspire_categories.unshift({
+                'source': 'curator',
+                'term': $scope.vm.new_subject_area
+              });
+              $scope.vm.new_subject_area = '';
+              $scope.doUpdate();
+            }
           },
 
           addKeyword: function () {

@@ -36,4 +36,19 @@
     </div>
   </div>
 
+  <div ng-if="vm.record.metadata.inspire_categories" class="row add-control">
+    <form ng-submit="$event.preventDefault()">
+      <div class="col-md-9 col-sm-9 col-xs-9">
+        <input autocomplete id="new_subject_area"
+               class="form-control" ui-items="inspire_categories"
+               placeholder="Add a Subject Area" ng-model="vm.new_subject_area">
+      </div>
+      <div class="col-md-3 col-sm-3 col-xs-3">
+        <button class="btn btn-info" ng-click="Utils.addSubjectArea()"><i
+          class="fa fa-plus"></i> Add
+        </button>
+      </div>
+    </form>
+  </div>
+
 </div>
