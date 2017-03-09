@@ -102,21 +102,49 @@ def ids(self, key, value):
 
 
 @hepnames2marc.over('035', '^ids$')
-@utils.for_each_value
 def ids2marc(self, key, value):
-    def _get_9_value(value):
+    """Populate the ``035`` MARC field.
+
+    Also populates the ``970`` MARC field through side effects.
+    """
+    def _is_scheme_inspire_bai(id_, schema):
+        return schema == 'INSPIRE BAI'
+
+    def _is_scheme_inspire_id(id_, schema):
+        return schema == 'INSPIRE ID'
+
+    def _is_scheme_spires(id_, schema):
+        return schema == 'SPIRES'
+
+    result_035 = self.get('035', [])
+    result_970 = self.get('970', [])
+
+    for value in force_force_list(value):
+        id_ = value.get('value')
         schema = value.get('schema')
 
-        if schema == 'INSPIRE ID':
-            return 'INSPIRE'
-        elif schema == 'INSPIRE BAI':
-            return 'BAI'
-        return schema
+        if _is_scheme_spires(id_, schema):
+            result_970.append({
+                'a': id_,
+            })
+        elif _is_scheme_inspire_id(id_, schema):
+            result_035.append({
+                '9': 'INSPIRE',
+                'a': id_,
+            })
+        elif _is_scheme_inspire_bai(id_, schema):
+            result_035.append({
+                '9': 'BAI',
+                'a': id_,
+            })
+        else:
+            result_035.append({
+                '9': schema,
+                'a': id_,
+            })
 
-    return {
-        'a': value.get('value'),
-        '9': _get_9_value(value),
-    }
+    self['970'] = result_970
+    return result_035
 
 
 @hepnames.over('name', '^100..')
@@ -467,6 +495,30 @@ def native_name(self, key, value):
 @utils.for_each_value
 def native_name2marc(self, key, value):
     return {'a': value}
+
+
+@hepnames.over('new_record', '^970..')
+def new_record(self, key, value):
+    """Populate the ``new_record`` key.
+
+    Also populates the ``ids`` key through side effects.
+    """
+    new_record = self.get('new_record', {})
+    ids = self.get('ids', [])
+
+    for value in force_force_list(value):
+        for id_ in force_force_list(value.get('a')):
+            ids.append({
+                'schema': 'SPIRES',
+                'value': id_,
+            })
+
+        new_recid = force_single_element(value.get('d', ''))
+        if new_recid:
+            new_record = get_record_ref(new_recid, 'authors')
+
+    self['ids'] = ids
+    return new_record
 
 
 @hepnames.over('deleted', '^980..')
