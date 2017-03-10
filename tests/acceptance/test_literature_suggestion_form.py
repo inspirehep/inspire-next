@@ -173,7 +173,7 @@ def test_journal_info_autocomplete_title(login):
 def test_conference_info_autocomplete_title(login):
     create_literature.go_to()
     assert create_literature.write_conference(
-        'sos',
+        'autrans',
         'IN2P3 School of Statistics, 2012-05-28, Autrans, France',
     ).has_error()
 

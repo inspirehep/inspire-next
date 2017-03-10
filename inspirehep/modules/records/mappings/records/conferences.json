@@ -43,6 +43,7 @@
                             "type": "double"
                         },
                         "original_address": {
+                            "copy_to": "conferenceautocomplete",
                             "type": "string"
                         },
                         "postal_code": {
