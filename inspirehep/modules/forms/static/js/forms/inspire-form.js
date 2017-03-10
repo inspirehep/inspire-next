@@ -496,8 +496,10 @@ define(function(require, exports, module) {
           }
         }
 
-      }).fail(function() {
-        set_status(tpl_status_error());
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status === 500) {
+          set_status(tpl_status_error());
+        }
       });
     }
 
