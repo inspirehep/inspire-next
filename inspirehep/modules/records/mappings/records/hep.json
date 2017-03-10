@@ -521,9 +521,6 @@
                             },
                             "type": "object"
                         },
-                        "confpaper_info": {
-                            "type": "string"
-                        },
                         "curated_relation": {
                             "type": "boolean"
                         },
