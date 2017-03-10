@@ -34,7 +34,7 @@ from inspirehep.utils.helpers import force_force_list
 from ..model import hep, hep2marc
 
 
-@hep.over('titles', '^(210|24[2567])[10_][0_]')
+@hep.over('titles', '^(210|242|245|246|247)..')
 def titles(self, key, value):
     def is_main_title(key):
         return key.startswith('245')
@@ -81,7 +81,7 @@ def titles2marc(self, key, value):
     return [get_transformed_title(value) for value in values[1:]]
 
 
-@hep2marc.over('242', r'^title_translations$')
+@hep2marc.over('242', '^title_translations$')
 def title_translations2marc(self, key, value):
     def get_transformed_title(val):
         return {
@@ -107,7 +107,7 @@ def editions2marc(self, key, value):
     return {'a': value}
 
 
-@hep.over('imprints', '^260[_23].')
+@hep.over('imprints', '^260..')
 @utils.for_each_value
 def imprints(self, key, value):
     return {
@@ -117,7 +117,7 @@ def imprints(self, key, value):
     }
 
 
-@hep2marc.over('260', 'imprints')
+@hep2marc.over('260', '^imprints$')
 @utils.for_each_value
 def imprints2marc(self, key, value):
     return {
@@ -134,7 +134,7 @@ def preprint_date(self, key, value):
     return value.get('c')
 
 
-@hep2marc.over('269', 'preprint_date')
+@hep2marc.over('269', '^preprint_date$')
 @utils.for_each_value
 def preprint_date2marc(self, key, value):
     return {'c': value}

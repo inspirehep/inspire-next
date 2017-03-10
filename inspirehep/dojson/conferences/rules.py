@@ -35,7 +35,7 @@ from ..utils import force_single_element
 from ..utils.geo import parse_conference_address
 
 
-@conferences.over('acronym', '^111')
+@conferences.over('acronym', '^111..')
 @utils.for_each_value
 def acronym(self, key, value):
     self['opening_date'] = value.get('x')
@@ -64,7 +64,7 @@ def acronym(self, key, value):
     return value.get('e')
 
 
-@conferences.over('contact_details', '^270')
+@conferences.over('contact_details', '^270..')
 @utils.for_each_value
 def contact_details(self, key, value):
     extra_place_info = value.get('b')
@@ -81,7 +81,7 @@ def contact_details(self, key, value):
     }
 
 
-@conferences.over('short_description', '^520')
+@conferences.over('short_description', '^520..')
 @utils.for_each_value
 def short_description(self, key, value):
     return {
@@ -90,7 +90,7 @@ def short_description(self, key, value):
     }
 
 
-@conferences.over('keywords', '^6531')
+@conferences.over('keywords', '^6531.')
 def keywords(self, key, value):
     def get_value(value):
         return {
@@ -104,7 +104,7 @@ def keywords(self, key, value):
     return keywords
 
 
-@conferences.over('series', '^411')
+@conferences.over('series', '^411..')
 def series(self, key, value):
     def _get_name(value):
         return force_single_element(value.get('a'))
@@ -135,7 +135,7 @@ def series(self, key, value):
     return series
 
 
-@conferences.over('alternative_titles', '^711')
+@conferences.over('alternative_titles', '^711..')
 @utils.flatten
 @utils.for_each_value
 def alternative_titles(self, key, value):

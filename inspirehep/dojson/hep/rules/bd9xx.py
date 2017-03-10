@@ -47,7 +47,7 @@ from ...utils import (
 RE_VALID_PUBNOTE = re.compile(".*,.*,.*(,.*)?")
 
 
-@hep.over('document_type', '^980__')
+@hep.over('document_type', '^980..')
 def document_type(self, key, value):
     publication_types = [
         'introductory',
@@ -221,7 +221,7 @@ def references(self, key, value):
     return references
 
 
-@hep2marc.over('999C5', 'references')
+@hep2marc.over('999C5', '^references$')
 @utils.for_each_value
 def references2marc(self, key, value):
     """Produce list of references."""

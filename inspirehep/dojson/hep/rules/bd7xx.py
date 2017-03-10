@@ -38,7 +38,7 @@ from ...utils import (
 )
 
 
-@hep.over('collaborations', '^710[10_2][_2]')
+@hep.over('collaborations', '^710..')
 def collaboration(self, key, value):
     value = force_force_list(value)
 
@@ -62,7 +62,7 @@ def collaboration(self, key, value):
     return collaboration
 
 
-@hep2marc.over('710', 'collaborations')
+@hep2marc.over('710', '^collaborations$')
 @utils.for_each_value
 def collaborations2marc(self, key, value):
     return {'g': value.get('value')}
@@ -120,7 +120,7 @@ def publication_info(self, key, value):
     return res
 
 
-@hep2marc.over('773', 'publication_info')
+@hep2marc.over('773', '^publication_info$')
 @utils.for_each_value
 def publication_info2marc(self, key, value):
     page_artid = []
@@ -160,7 +160,7 @@ def succeeding_entry(self, key, value):
     }
 
 
-@hep2marc.over('785', 'succeeding_entry')
+@hep2marc.over('785', '^succeeding_entry$')
 def succeeding_entry2marc(self, key, value):
     return {
         'r': value.get('relationship_code'),
