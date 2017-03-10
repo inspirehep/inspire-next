@@ -241,22 +241,19 @@ class AdvisorsInlineForm(INSPIREForm):
         export_key='full_name',
     )
 
+    degree_types_schema = load_schema('elements/degree_type.json')
+    degree_type_options = [
+        (val, val.capitalize())
+        for val in degree_types_schema['enum']
+    ]
+    degree_type_options.sort(key=lambda x: x[1])
     degree_type = fields.SelectField(
+        choices=degree_type_options,
         label=_('Degree Type'),
         widget_classes="form-control",
         default="phd",
         widget=ColumnSelect(class_="col-xs-5", description=u"Degree Type"),
     )
-
-    def __init__(self, *args, **kwargs):
-        """Constructor."""
-        super(AdvisorsInlineForm, self).__init__(*args, **kwargs)
-        self.degree_type.choices = [
-            ("bachelor", _("Bachelor")),
-            ("master", _("Master")),
-            ("phd", _("PhD")),
-            ("other", _("Other")),
-        ]
 
 
 class WebpageInlineForm(INSPIREForm):
