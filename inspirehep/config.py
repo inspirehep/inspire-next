@@ -342,7 +342,6 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
                 "publication_info.conf_acronym",
                 "publication_info.journal_title",
                 "publication_info.reportnumber",
-                "publication_info.confpaper_info",
                 "publication_info.journal_volume",
                 "publication_info.cnum",
                 "publication_info.pubinfo_freetext",
