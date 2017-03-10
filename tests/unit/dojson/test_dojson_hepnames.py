@@ -1146,6 +1146,57 @@ def test_private_notes_from_595__a_9():
     assert expected == result['595']
 
 
+def test_ids_from_970__a():
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
+    snippet = (
+        '<datafield tag="970" ind1=" " ind2=" ">'
+        '  <subfield code="a">HEPNAMES-646482</subfield>'
+        '</datafield>'
+    )  # record/1498151
+
+    expected = [
+        {
+            'schema': 'SPIRES',
+            'value': 'HEPNAMES-646482',
+        },
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['ids'], subschema) is None
+    assert expected == result['ids']
+
+    expected = [
+        {'a': 'HEPNAMES-646482'},
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['970']
+
+
+def test_new_record_from_970__d():
+    schema = load_schema('authors')
+    subschema = schema['properties']['new_record']
+
+    snippet = (
+        '<datafield tag="970" ind1=" " ind2=" ">'
+        '  <subfield code="d">1039458</subfield>'
+        '</datafield>'
+    )  # record/1271254
+
+    expected = {'$ref': 'http://localhost:5000/api/authors/1039458'}
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['new_record'], subschema) is None
+    assert expected == result['new_record']
+
+    expected = {'d': 1039458}
+    result = hepnames2marc.do(result)
+
+    assert expected == result['970']
+
+
 def test_stub_from_980__a_useful():
     schema = load_schema('authors')
     subschema = schema['properties']['stub']
