@@ -468,12 +468,14 @@ define(function(require, exports, module) {
 
       set_status(tpl_status_saving());
 
-      $.ajax(
+      var promise = $.ajax(
         json_options({
           url: url,
           data: request_data
         })
-      ).done(function(data) {
+      );
+
+      promise.done(function(data) {
         var errors = handle_response(data);
         if (errors) {
           set_status(tpl_status_saved_with_error());
@@ -496,8 +498,12 @@ define(function(require, exports, module) {
           }
         }
 
-      }).fail(function() {
-        set_status(tpl_status_error());
+      });
+
+      promise.fail(function(jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status === 500) {
+          set_status(tpl_status_error());
+        }
       });
     }
 
