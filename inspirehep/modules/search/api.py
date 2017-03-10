@@ -117,17 +117,7 @@ class LiteratureSearch(RecordsSearch, SearchMixin):
 
     def default_fields(self):
         """What fields to use when no keyword is specified."""
-        return [
-            "title^3",
-            "title.raw^10",
-            "abstract^2",
-            "abstract.raw^4",
-            "author^10",
-            "author.raw^15",
-            "reportnumber^10",
-            "eprint^10",
-            "doi^10"
-        ]
+        return ['_all']
 
 
 class AuthorsSearch(RecordsSearch, SearchMixin):
@@ -151,7 +141,7 @@ class DataSearch(RecordsSearch, SearchMixin):
 
     def default_fields(self):
         """What fields to use when no keyword is specified."""
-        return ['global_fulltext']
+        return ['_all']
 
 
 class ConferencesSearch(RecordsSearch, SearchMixin):

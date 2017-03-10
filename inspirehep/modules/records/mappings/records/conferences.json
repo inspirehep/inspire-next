@@ -5,143 +5,217 @@
                 "enabled": true
             },
             "date_detection": false,
-            "dynamic_templates": [
-                {
-                    "default": {
-                        "mapping": {
-                            "analyzer": "basic_analyzer",
-                            "copy_to": "global_default",
-                            "type": "string"
-                        },
-                        "match_mapping_type": "string"
-                    }
-                }
-            ],
             "numeric_detection": false,
             "properties": {
+                "$schema": {
+                    "type": "string"
+                },
                 "_collections": {
-                    "analyzer": "lowercase_analyzer",
                     "type": "string"
                 },
-                "acronym": {
-                    "copy_to": [
-                        "conferenceautocomplete"
-                    ],
-                    "type": "string"
-                },
-                "cnum": {
-                    "copy_to": [
-                        "conferenceautocomplete"
-                    ],
-                    "index": "not_analyzed",
-                    "type": "string"
-                },
-                "conferenceautocomplete": {
-                    "analyzer": "autocomplete_analyzer",
-                    "type": "string"
-                },
-                "field_code": {
+                "_private_notes": {
                     "properties": {
+                        "source": {
+                            "type": "string"
+                        },
                         "value": {
-                            "index": "not_analyzed",
                             "type": "string"
                         }
                     },
                     "type": "object"
                 },
-                "global_default": {
-                    "analyzer": "basic_analyzer",
+                "acronym": {
+                    "copy_to": "conferenceautocomplete",
                     "type": "string"
                 },
-                "global_fulltext": {
-                    "analyzer": "natural_text",
+                "address": {
+                    "properties": {
+                        "city": {
+                            "type": "string"
+                        },
+                        "country_code": {
+                            "type": "string"
+                        },
+                        "latitude": {
+                            "type": "double"
+                        },
+                        "longitude": {
+                            "type": "double"
+                        },
+                        "original_address": {
+                            "type": "string"
+                        },
+                        "postal_code": {
+                            "type": "string"
+                        },
+                        "state": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "alternative_titles": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "subtitle": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "closing_date": {
                     "type": "string"
+                },
+                "cnum": {
+                    "copy_to": "conferenceautocomplete",
+                    "type": "string"
+                },
+                "conferenceautocomplete": {
+                    "type": "string"
+                },
+                "contact_details": {
+                    "properties": {
+                        "email": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "control_number": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "external_system_identifiers": {
+                    "properties": {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "inspire_categories": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "term": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "keywords": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "legacy_creation_date": {
+                    "type": "string"
+                },
+                "new_record": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 },
                 "opening_date": {
-                    "copy_to": [
-                        "conferenceautocomplete"
-                    ],
+                    "copy_to": "conferenceautocomplete",
                     "format": "yyyy||yyyy-MM||yyyy-MM-dd",
                     "type": "date"
                 },
                 "place": {
-                    "copy_to": [
-                        "conferenceautocomplete"
-                    ],
+                    "copy_to": "conferenceautocomplete",
                     "type": "string"
+                },
+                "public_notes": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "self": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 },
                 "series": {
                     "properties": {
                         "name": {
-                            "index": "not_analyzed",
                             "type": "string"
                         },
                         "number": {
-                            "index": "not_analyzed",
                             "type": "integer"
                         }
                     },
                     "type": "object"
                 },
-                "title": {
-                    "copy_to": [
-                        "conferenceautocomplete"
-                    ],
-                    "type": "string"
+                "short_description": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "titles": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "subtitle": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "copy_to": "conferenceautocomplete",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "urls": {
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 }
             }
         }
-    },
-    "settings": {
-        "analysis": {
-            "analyzer": {
-                "autocomplete_analyzer": {
-                    "filter": [
-                        "lowercase",
-                        "word_delimiter_orig"
-                    ],
-                    "tokenizer": "whitespace",
-                    "type": "custom"
-                },
-                "basic_analyzer": {
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase"
-                    ],
-                    "tokenizer": "standard",
-                    "type": "custom"
-                },
-                "lowercase_analyzer": {
-                    "filter": "lowercase",
-                    "tokenizer": "keyword"
-                },
-                "natural_text": {
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase",
-                        "synonyms_kbr"
-                    ],
-                    "tokenizer": "standard",
-                    "type": "custom"
-                }
-            },
-            "filter": {
-                "asciifold_with_orig": {
-                    "preserve_original": true,
-                    "type": "asciifolding"
-                },
-                "synonyms_kbr": {
-                    "synonyms": [
-                        "production => creation"
-                    ],
-                    "type": "synonym"
-                },
-                "word_delimiter_orig": {
-                    "preserve_original": true,
-                    "type": "word_delimiter"
-                }
-            }
-        },
-        "index.percolator.map_unmapped_fields_as_string": true
     }
 }

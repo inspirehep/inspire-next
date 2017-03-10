@@ -35,15 +35,7 @@ def test_empty():
             'zero_terms_query': 'all',
             'query': '',
             'fields': [
-                'title^3',
-                'title.raw^10',
-                'abstract^2',
-                'abstract.raw^4',
-                'author^10',
-                'author.raw^15',
-                'reportnumber^10',
-                'eprint^10',
-                'doi^10'
+                '_all',
             ]
         }
     }
@@ -60,15 +52,7 @@ def test_google_style():
             'zero_terms_query': 'all',
             'query': 'kudenko',
             'fields': [
-                'title^3',
-                'title.raw^10',
-                'abstract^2',
-                'abstract.raw^4',
-                'author^10',
-                'author.raw^15',
-                'reportnumber^10',
-                'eprint^10',
-                'doi^10'
+                '_all',
             ]
         }
     }
@@ -582,7 +566,7 @@ def test_author_colon_or_author_colon_or_title_colon_or_title_colon():
                                                         'multi_match': {
                                                             'query': 'hep-ph',
                                                             'fields': [
-                                                                'global_fulltext'
+                                                                '_all'
                                                             ]
                                                         }
                                                     }

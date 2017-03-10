@@ -80,15 +80,7 @@ def test_search_logs(current_app_mock, app):
                         'multi_match': {
                             'query': '',
                             'fields': [
-                                'title^3',
-                                'title.raw^10',
-                                'abstract^2',
-                                'abstract.raw^4',
-                                'author^10',
-                                'author.raw^15',
-                                'reportnumber^10',
-                                'eprint^10',
-                                'doi^10'
+                                '_all',
                             ],
                             'zero_terms_query': 'all',
                         }

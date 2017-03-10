@@ -2,88 +2,11 @@
     "mappings": {
         "data": {
             "_all": {
-                "enabled": false
+                "enabled": true
             },
             "date_detection": false,
-            "dynamic_templates": [
-                {
-                    "default": {
-                        "mapping": {
-                            "analyzer": "basic_analyzer",
-                            "copy_to": "global_default",
-                            "type": "string"
-                        },
-                        "match_mapping_type": "string"
-                    }
-                }
-            ],
             "numeric_detection": false,
-            "properties": {
-                "_collections": {
-                    "analyzer": "lowercase_analyzer",
-                    "type": "string"
-                },
-                "global_default": {
-                    "analyzer": "basic_analyzer",
-                    "type": "string"
-                },
-                "global_fulltext": {
-                    "analyzer": "natural_text",
-                    "type": "string"
-                }
-            }
+            "properties": {}
         }
-    },
-    "settings": {
-        "analysis": {
-            "analyzer": {
-                "autocomplete_analyzer": {
-                    "filter": [
-                        "lowercase",
-                        "word_delimiter_orig"
-                    ],
-                    "tokenizer": "whitespace",
-                    "type": "custom"
-                },
-                "basic_analyzer": {
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase"
-                    ],
-                    "tokenizer": "standard",
-                    "type": "custom"
-                },
-                "lowercase_analyzer": {
-                    "filter": "lowercase",
-                    "tokenizer": "keyword"
-                },
-                "natural_text": {
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase",
-                        "synonyms_kbr"
-                    ],
-                    "tokenizer": "standard",
-                    "type": "custom"
-                }
-            },
-            "filter": {
-                "asciifold_with_orig": {
-                    "preserve_original": true,
-                    "type": "asciifolding"
-                },
-                "synonyms_kbr": {
-                    "synonyms": [
-                        "production => creation"
-                    ],
-                    "type": "synonym"
-                },
-                "word_delimiter_orig": {
-                    "preserve_original": true,
-                    "type": "word_delimiter"
-                }
-            }
-        },
-        "index.percolator.map_unmapped_fields_as_string": true
     }
 }
