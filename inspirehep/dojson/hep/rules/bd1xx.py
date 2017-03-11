@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 ORCID = re.compile('\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]')
 
 
-@hep.over('authors', '^[17]0[01]..')
+@hep.over('authors', '^(100|700|701)..')
 def authors(self, key, value):
     def _get_author(value):
         def _get_affiliations(value):
@@ -256,7 +256,7 @@ def authors2marc(self, key, value):
     return get_value_100_700(value[0])
 
 
-@hep.over('corporate_author', '^110[10_2].')
+@hep.over('corporate_author', '^110..')
 @utils.for_each_value
 def corporate_author(self, key, value):
     """Main Entry-Corporate Name."""

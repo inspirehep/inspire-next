@@ -29,7 +29,7 @@ from dojson import utils
 from ..model import hep2marc
 
 
-@hep2marc.over('8564', 'urls')
+@hep2marc.over('8564', '^urls$')
 @utils.for_each_value
 def urls2marc(self, key, value):
     return {

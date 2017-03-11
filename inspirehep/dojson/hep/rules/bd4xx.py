@@ -29,7 +29,7 @@ from dojson import utils
 from ..model import hep, hep2marc
 
 
-@hep.over('book_series', '^490[10_].')
+@hep.over('book_series', '^490..')
 @utils.for_each_value
 def book_series(self, key, value):
     return {
@@ -38,7 +38,7 @@ def book_series(self, key, value):
     }
 
 
-@hep2marc.over('490', 'book_series')
+@hep2marc.over('490', '^book_series$')
 @utils.for_each_value
 def book_series2marc(self, key, value):
     return {

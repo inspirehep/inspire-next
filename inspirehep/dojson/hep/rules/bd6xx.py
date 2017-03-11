@@ -73,7 +73,7 @@ def accelerator_experiments(self, key, acc_exps_data):
     return acc_exps_json
 
 
-@hep2marc.over('693', 'accelerator_experiments')
+@hep2marc.over('693', '^accelerator_experiments$')
 @utils.for_each_value
 def accelerator_experiments2marc(self, key, value):
     res = {
@@ -88,8 +88,7 @@ def accelerator_experiments2marc(self, key, value):
     return res
 
 
-@hep.over('keywords', '^695..')
-@hep.over('keywords', '^653[10_2][_1032546]')
+@hep.over('keywords', '^(653|695)..')
 @utils.for_each_value
 def keywords(self, key, value):
     """Parse keywords.
@@ -157,7 +156,7 @@ def keywords(self, key, value):
     return _get_keyword_dict(key, value)
 
 
-@hep2marc.over('695', 'keywords')
+@hep2marc.over('695', '^keywords$')
 def keywords2marc(self, key, values):
     values = force_force_list(values)
 
@@ -198,7 +197,7 @@ def keywords2marc(self, key, values):
     return thesaurus_terms
 
 
-@hep2marc.over('_energy_ranges', 'energy_ranges')
+@hep2marc.over('_energy_ranges', '^energy_ranges$')
 @utils.ignore_value
 def energy_ranges2marc(self, key, values):
     values = force_force_list(values)
