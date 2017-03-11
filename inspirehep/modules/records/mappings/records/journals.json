@@ -33,6 +33,14 @@
                 "deleted": {
                     "type": "boolean"
                 },
+                "deleted_records": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
                 "history": {
                     "type": "string"
                 },
