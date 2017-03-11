@@ -137,7 +137,8 @@
 
     var hotkey = Hotkeys.createHotkey({
       key: 'ctrl+a',
-      callback: function () {
+      callback: function (e) {
+        e.preventDefault();
         toggleAll();
       }
     });
