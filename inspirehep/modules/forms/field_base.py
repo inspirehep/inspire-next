@@ -106,8 +106,6 @@ from wtforms import Field
 
 from .form import CFG_FIELD_FLAGS
 
-__all__ = ('INSPIREField', )
-
 
 class INSPIREField(Field):
 

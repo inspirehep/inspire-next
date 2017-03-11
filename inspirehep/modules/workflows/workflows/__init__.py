@@ -27,6 +27,3 @@ from __future__ import absolute_import, division, print_function
 
 from .article import Article
 from .author import Author
-
-
-__all__ = ('Article', 'Author')

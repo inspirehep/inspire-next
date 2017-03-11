@@ -48,6 +48,3 @@ class INSPIREMigrator(object):
             'CFG_INSPIRE_LEGACY_BASEURL',
             'http://inspireheptest.cern.ch'
         )
-
-
-__all__ = ('INSPIREMigrator',)

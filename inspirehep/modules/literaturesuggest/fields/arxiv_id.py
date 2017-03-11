@@ -28,8 +28,6 @@ from inspirehep.modules.forms.field_base import INSPIREField
 from inspirehep.modules.forms.filter_utils import strip_prefixes, strip_string
 from inspirehep.modules.forms.validators import arxiv_syntax_validation
 
-__all__ = ['ArXivField']
-
 
 class ArXivField(INSPIREField, TextField):
     def __init__(self, **kwargs):

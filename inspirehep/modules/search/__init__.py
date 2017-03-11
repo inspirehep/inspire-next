@@ -36,10 +36,3 @@ from .api import (
     JournalsSearch
 )
 from .ext import INSPIRESearch
-
-
-__all__ = (
-    'IQ', 'INSPIRESearch', 'LiteratureSearch', 'AuthorsSearch', 'DataSearch',
-    'ConferencesSearch', 'JobsSearch', 'InstitutionsSearch',
-    'ExperimentsSearch', 'JournalsSearch'
-)

@@ -48,5 +48,3 @@ def load_antikeywords():
 
 
 antihep_keywords = LocalProxy(lambda: load_antikeywords())
-
-__all__ = ('antihep_keywords',)

@@ -25,5 +25,3 @@ from __future__ import absolute_import, division, print_function
 from .ext import INSPIREOrcid
 
 from .receivers import *
-
-__all__ = ('INSPIREOrcid',)
