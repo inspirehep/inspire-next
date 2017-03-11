@@ -66,6 +66,14 @@
                 "deleted": {
                     "type": "boolean"
                 },
+                "deleted_records": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
                 "department": {
                     "type": "string"
                 },
