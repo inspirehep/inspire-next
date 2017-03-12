@@ -28,7 +28,7 @@ import dojson
 
 from flask import current_app
 
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 from inspirehep.utils.record import get_abstract, get_subtitle, get_title
 
@@ -120,7 +120,7 @@ def external_id_rule(self, key, value):
 
 @orcid_overdo.over('contributors', 'authors')
 def authors_rule(self, key, value):
-    value = force_force_list(value)
+    value = force_list(value)
     orcid_authors = []
     for index, author in enumerate(value):
         orcid_authors.append({

@@ -30,7 +30,7 @@ import six
 
 from dojson import utils
 
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 from .model import jobs
 from ..utils import (
@@ -109,7 +109,7 @@ def regions(self, key, value):
 
     result = []
 
-    for el in force_force_list(value.get('a')):
+    for el in force_list(value.get('a')):
         for region in COMMA_OR_SLASH.split(el):
             result.append(REGIONS_MAP.get(region))
 
@@ -137,8 +137,8 @@ def experiments(self, key, value):
 def institutions(self, key, value):
     institutions = self.get('institutions', [])
 
-    a_values = force_force_list(value.get('a'))
-    z_values = force_force_list(value.get('z'))
+    a_values = force_list(value.get('a'))
+    z_values = force_list(value.get('z'))
 
     # XXX: we zip only when they have the same length, otherwise
     #      we might match a value with the wrong recid.
@@ -174,8 +174,8 @@ def position(self, key, value):
 def ranks(self, key, value):
     ranks = self.get('ranks', [])
 
-    for value in force_force_list(value):
-        for rank in force_force_list(value.get('a')):
+    for value in force_list(value):
+        for rank in force_list(value.get('a')):
             ranks.append(classify_rank(rank))
 
     return ranks

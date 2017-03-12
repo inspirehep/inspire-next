@@ -30,7 +30,7 @@ from datetime import datetime
 from dojson import utils
 
 from inspire_schemas.api import load_schema
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 from ..conferences.model import conferences
 from ..experiments.model import experiments
@@ -68,7 +68,7 @@ def _fft(self, key, value):
         'creation_datetime': _get_creation_datetime(value),
         'description': value.get('d'),
         'filename': value.get('n'),
-        'flags': force_force_list(value.get('o')),
+        'flags': force_list(value.get('o')),
         'format': value.get('f'),
         'path': value.get('a'),
         'status': value.get('z'),
@@ -125,7 +125,7 @@ def control_number2marc(self, key, value):
 def acquisition_source(self, key, value):
     internal_uid, orcid, source = None, None, None
 
-    a_values = force_force_list(value.get('a'))
+    a_values = force_list(value.get('a'))
     for a_value in a_values:
         if IS_INTERNAL_UID.match(a_value):
             if a_value.startswith('inspire:uid:'):
@@ -198,8 +198,8 @@ def public_notes_500(self, key, value):
     public_notes = self.get('public_notes', [])
 
     source = force_single_element(value.get('9', ''))
-    for value in force_force_list(value):
-        for public_note in force_force_list(value.get('a')):
+    for value in force_list(value):
+        for public_note in force_list(value.get('a')):
             public_notes.append({
                 'source': source,
                 'value': public_note,
@@ -266,7 +266,7 @@ def inspire_categories(self, key, value):
         else:
             source = 'undefined'
 
-    terms = force_force_list(value.get('a'))
+    terms = force_list(value.get('a'))
     for _term in terms:
         term = classify_field(_term)
         if term:
@@ -326,7 +326,7 @@ def urls(self, key, value):
     urls = self.get('urls', [])
 
     description = force_single_element(value.get('y'))
-    for url in force_force_list(value.get('u')):
+    for url in force_list(value.get('u')):
         urls.append({
             'description': description,
             'value': url,
@@ -369,8 +369,8 @@ def external_system_identifiers(self, key, value):
     external_system_identifiers = self.get('external_system_identifiers', [])
     new_record = self.get('new_record', {})
 
-    for value in force_force_list(value):
-        for id_ in force_force_list(value.get('a')):
+    for value in force_list(value):
+        for id_ in force_list(value.get('a')):
             external_system_identifiers.append({
                 'schema': 'SPIRES',
                 'value': id_,

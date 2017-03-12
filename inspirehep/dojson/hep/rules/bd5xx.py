@@ -26,7 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 from ..model import hep, hep2marc
 from ...utils import force_single_element, get_record_ref
@@ -60,8 +60,8 @@ def thesis_info(self, key, value):
         'date': value.get('d'),
     }
 
-    inst_names = force_force_list(value.get('c', []))
-    inst_recids = force_force_list(value.get('z', []))
+    inst_names = force_list(value.get('c', []))
+    inst_recids = force_list(value.get('z', []))
     if len(inst_names) != len(inst_recids):
         institutions = [{'name': name} for name in inst_names]
     else:
@@ -92,13 +92,13 @@ def abstracts(self, key, value):
 
     source = force_single_element(value.get('9'))
 
-    for a_value in force_force_list(value.get('a')):
+    for a_value in force_list(value.get('a')):
         result.append({
             'source': source,
             'value': a_value,
         })
 
-    for h_value in force_force_list(value.get('h')):
+    for h_value in force_list(value.get('h')):
         result.append({
             'source': source,
             'value': h_value,
@@ -147,7 +147,7 @@ def funding_info2marc(self, key, value):
 @hep.over('license', '^540..')
 @utils.for_each_value
 def license(self, key, value):
-    license_value = force_force_list(value.get('a'))
+    license_value = force_list(value.get('a'))
     # We strip away redundant 'Open Access' string
     license_value = [val for val in license_value if license_value != 'Open Access']
     license_value = force_single_element(license_value)
@@ -210,7 +210,7 @@ def _private_notes(self, key, value):
     _private_notes = self.get('_private_notes', [])
     _export_to = self.get('_export_to', {})
 
-    for value in force_force_list(value):
+    for value in force_list(value):
         if _is_for_cds(value):
             _export_to['CDS'] = True
         elif _is_for_hal(value):
@@ -219,7 +219,7 @@ def _private_notes(self, key, value):
             _export_to['HAL'] = False
 
         source = force_single_element(value.get('9'))
-        for _private_note in force_force_list(value.get('a')):
+        for _private_note in force_list(value.get('a')):
             _private_notes.append({
                 'source': source,
                 'value': _private_note,
@@ -241,7 +241,7 @@ def _private_notes2marc(self, key, value):
     result_595 = self.get('595', [])
     result_595_H = self.get('595_H', [])
 
-    for value in force_force_list(value):
+    for value in force_list(value):
         if _is_from_hal(value):
             result_595_H.append({
                 'a': value.get('value'),
@@ -303,8 +303,8 @@ def _desy_bookkeeping2marc(self, key, value):
 def _private_notes_hal(self, key, value):
     _private_notes = self.get('_private_notes', [])
 
-    for value in force_force_list(value):
-        for _private_note in force_force_list(value.get('a')):
+    for value in force_list(value):
+        for _private_note in force_list(value.get('a')):
             _private_notes.append({
                 'source': 'HAL',
                 'value': _private_note,

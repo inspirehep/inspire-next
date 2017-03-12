@@ -29,7 +29,7 @@ import re
 
 from dojson import utils
 
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 from ..model import hep, hep2marc
 from ...utils import (
@@ -49,8 +49,8 @@ def authors(self, key, value):
         def _get_affiliations(value):
             result = []
 
-            u_values = force_force_list(value.get('u'))
-            z_values = force_force_list(value.get('z'))
+            u_values = force_list(value.get('u'))
+            z_values = force_list(value.get('z'))
 
             # XXX: we zip only when they have the same length, otherwise
             #      we might match a value with the wrong recid.
@@ -72,7 +72,7 @@ def authors(self, key, value):
             return  # XXX: we don't return False because it would be preserved.
 
         def _get_full_name(value):
-            a_values = force_force_list(value.get('a'))
+            a_values = force_list(value.get('a'))
             if a_values:
                 if len(a_values) > 1:
                     logger.warning(
@@ -97,14 +97,14 @@ def authors(self, key, value):
 
             result = []
 
-            i_values = force_force_list(value.get('i'))
+            i_values = force_list(value.get('i'))
             for i_value in i_values:
                 result.append({
                     'schema': 'INSPIRE ID',
                     'value': i_value,
                 })
 
-            j_values = force_force_list(value.get('j'))
+            j_values = force_list(value.get('j'))
             for j_value in j_values:
                 if _is_jacow(j_value):
                     result.append({
@@ -127,7 +127,7 @@ def authors(self, key, value):
                         'value': 'CERN-' + j_value[5:],
                     })
 
-            w_values = force_force_list(value.get('w'))
+            w_values = force_list(value.get('w'))
             for w_value in w_values:
                 result.append({
                     'schema': 'INSPIRE BAI',
@@ -150,7 +150,7 @@ def authors(self, key, value):
         def _get_raw_affiliations(value):
             result = []
 
-            values = force_force_list(value.get('v'))
+            values = force_list(value.get('v'))
             for value in values:
                 result.append({
                     'value': value,
@@ -165,9 +165,9 @@ def authors(self, key, value):
 
         return {
             'affiliations': _get_affiliations(value),
-            'alternative_names': force_force_list(value.get('q')),
+            'alternative_names': force_list(value.get('q')),
             'curated_relation': _get_curated_relation(value),
-            'emails': force_force_list(value.get('m')),
+            'emails': force_list(value.get('m')),
             'full_name': _get_full_name(value),
             'ids': _get_ids(value),
             'record': _get_record(value),
@@ -177,7 +177,7 @@ def authors(self, key, value):
 
     authors = self.get('authors', [])
 
-    values = force_force_list(value)
+    values = force_list(value)
     for value in values:
         authors.append(_get_author(value))
 
@@ -186,7 +186,7 @@ def authors(self, key, value):
 
 @hep2marc.over('100', '^authors$')
 def authors2marc(self, key, value):
-    value = force_force_list(value)
+    value = force_list(value)
 
     def _get_ids(value):
         ids = {
@@ -211,7 +211,7 @@ def authors2marc(self, key, value):
         ]
 
     def _get_inspire_roles(value):
-        values = force_force_list(value.get('inspire_roles'))
+        values = force_list(value.get('inspire_roles'))
         return ['ed.' for role in values if role == 'editor']
 
     def _get_raw_affiliations(value):

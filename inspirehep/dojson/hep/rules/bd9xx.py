@@ -31,7 +31,7 @@ from dojson import utils
 from idutils import is_arxiv
 
 from inspirehep.modules.references.processors import ReferenceBuilder
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 from inspirehep.utils.pubnote import build_pubnote
 from inspirehep.utils.record import get_value
 
@@ -83,7 +83,7 @@ def document_type(self, key, value):
     document_type = self.get('document_type', [])
     publication_type = self.get('publication_type', [])
 
-    a_values = force_force_list(value.get('a'))
+    a_values = force_list(value.get('a'))
     for a_value in a_values:
         normalized_a_value = a_value.strip().lower()
 
@@ -179,7 +179,7 @@ def document_type2marc(self, key, value):
 @hep.over('references', '^999C5')
 def references(self, key, value):
     """Produce list of references."""
-    value = force_force_list(value)
+    value = force_list(value)
 
     def get_value(value):
         # Retrieve fields as described here:
@@ -206,7 +206,7 @@ def references(self, key, value):
         ]
 
         for field, method in mapping:
-            for element in force_force_list(value.get(field)):
+            for element in force_list(value.get(field)):
                 if element:
                     method(element)
 

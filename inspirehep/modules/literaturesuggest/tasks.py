@@ -33,7 +33,7 @@ from invenio_oauthclient.models import UserIdentity
 
 from inspire_schemas.api import LiteratureBuilder
 from inspirehep.modules.forms.utils import filter_empty_elements
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 from inspirehep.utils.normalizers import normalize_journal_title
 from inspirehep.utils.pubnote import split_page_artid
 from inspirehep.utils.record import get_title, get_value
@@ -66,7 +66,7 @@ def formdata_to_model(obj, formdata):
     for author in form_fields.get('authors', []):
         builder.add_author(builder.make_author(
             author['full_name'],
-            affiliations=force_force_list(author['affiliation'])
+            affiliations=force_list(author['affiliation'])
             if author['affiliation'] else None,
             roles=['author']
         ))
@@ -74,7 +74,7 @@ def formdata_to_model(obj, formdata):
     for supervisor in form_fields.get('supervisors', []):
         builder.add_author(builder.make_author(
             supervisor['full_name'],
-            affiliations=force_force_list(supervisor['affiliation'])
+            affiliations=force_list(supervisor['affiliation'])
             if author['affiliation'] else None,
             roles=['supervisor']
         ))

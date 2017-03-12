@@ -33,7 +33,7 @@ from inspirehep.dojson.institutions import institutions
 from inspirehep.dojson.jobs import jobs
 from inspirehep.dojson.journals import journals
 
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 
 def overdo_marc_dict(record):
@@ -59,9 +59,9 @@ def overdo_marc_dict(record):
 
 def _collection_in_record(record, collection):
     """Returns True if record is in collection"""
-    colls = force_force_list(record.get("980__", []))
+    colls = force_list(record.get("980__", []))
     for coll in colls:
-        coll = force_force_list(coll.get('a', []))
+        coll = force_list(coll.get('a', []))
         if collection in [c.lower() for c in coll]:
             return True
     return False

@@ -28,7 +28,7 @@ import re
 
 from dojson import utils
 
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 from .model import institutions
 from ..utils import force_single_element, get_record_ref
@@ -86,24 +86,24 @@ def ICN(self, key, value):
 
     related_institutes = self.get('related_institutes', [])
 
-    for value in force_force_list(value):
-        a_values = force_force_list(value.get('a'))
+    for value in force_list(value):
+        a_values = force_list(value.get('a'))
         if a_values and not institution_acronym:
             a_values[0], institution_acronym = _split_acronym(a_values[0])
         institution.extend(a_values)
 
-        b_values = force_force_list(value.get('b'))
+        b_values = force_list(value.get('b'))
         if b_values and not department_acronym:
             b_values[0], department_acronym = _split_acronym(b_values[0])
         department.extend(b_values)
 
-        ICN.extend(force_force_list(value.get('t')))
+        ICN.extend(force_list(value.get('t')))
 
         if not legacy_ICN:
             legacy_ICN = force_single_element(value.get('u'))
 
-        x_values = force_force_list(value.get('x'))
-        z_values = force_force_list(value.get('z'))
+        x_values = force_list(value.get('x'))
+        z_values = force_list(value.get('z'))
         if len(x_values) == len(z_values):
             for icn, recid in zip(x_values, z_values):
                 related_institutes.append({
@@ -141,7 +141,7 @@ def address(self, key, value):
         value.get('c'),
         value.get('d'),
         value.get('e'),
-        force_force_list(value.get('g')),
+        force_list(value.get('g')),
     )
 
 
@@ -178,12 +178,12 @@ def name_variants(self, key, value):
 
     if value.get('g'):
         self.setdefault('extra_words', [])
-        self['extra_words'].extend(force_force_list(value.get('g')))
+        self['extra_words'].extend(force_list(value.get('g')))
 
     name_variants = self.get('name_variants', [])
 
     source = force_single_element(value.get('9'))
-    for name_variant in force_force_list(value.get('a')):
+    for name_variant in force_list(value.get('a')):
         name_variants.append({
             'source': source,
             'value': name_variant,
@@ -218,7 +218,7 @@ def related_institutes(self, key, value):
 @institutions.over('historical_data', '^6781.')
 def historical_data(self, key, value):
     values = self.get('historical_data', [])
-    values.extend(el for el in force_force_list(value.get('a')))
+    values.extend(el for el in force_list(value.get('a')))
 
     return values
 
