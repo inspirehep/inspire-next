@@ -65,6 +65,8 @@ define([
               el.metadata.place = el.metadata.address[0].original_address;
               el.metadata.title = el.metadata.titles[0].title;
               return el.metadata
+            }).sort(function(x, y) {
+              return new Date(y.opening_date) - new Date(x.opening_date);
             });
           }
         },
