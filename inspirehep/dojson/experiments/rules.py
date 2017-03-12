@@ -29,7 +29,7 @@ import six
 from dojson import utils
 from dojson.errors import IgnoreKey
 
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 from .model import experiments
 from ..utils import force_single_element, get_record_ref
@@ -37,7 +37,7 @@ from ..utils import force_single_element, get_record_ref
 
 @experiments.over('_date_started', '^046..')
 def date_started(self, key, value):
-    values = force_force_list(value)
+    values = force_list(value)
 
     for val in values:
         if val.get('q'):
@@ -79,7 +79,7 @@ def experiment_names(self, key, value):
 def titles(self, key, value):
     titles = self.get('titles', [])
 
-    for value in force_force_list(value):
+    for value in force_list(value):
         if key.startswith('245'):
             titles.insert(0, {'title': value.get('a')})
         else:
@@ -172,9 +172,9 @@ def spokespersons(self, key, value):
 
 @experiments.over('collaboration', '^710..')
 def collaboration(self, key, value):
-    values = force_force_list(self.get('collaboration'))
+    values = force_list(self.get('collaboration'))
     values.extend(self.get('collaboration_alternative_names', []))
-    values.extend(el.get('g') for el in force_force_list(value))
+    values.extend(el.get('g') for el in force_list(value))
 
     collaborations = sorted(values, key=len)
     if len(collaborations) > 1:

@@ -36,7 +36,7 @@ from jsonschema import validate as jsonschema_validate
 
 from inspire_schemas.utils import LocalRefResolver
 from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 
 def classify_field(value):
@@ -81,7 +81,7 @@ def classify_rank(value):
 
 def force_single_element(obj):
     """Force an object to a list and return the first element."""
-    lst = force_force_list(obj)
+    lst = force_list(obj)
     if lst:
         return lst[0]
     return None

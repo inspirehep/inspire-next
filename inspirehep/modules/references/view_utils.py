@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 from inspirehep.utils.jinja2 import render_template_to_string
 from inspirehep.utils.record_getter import get_es_records
 
@@ -76,7 +76,7 @@ class Reference(object):
                     reference.update(reference['reference'])
                     del reference['reference']
                 if 'publication_info' in reference:
-                    reference['publication_info'] = force_force_list(
+                    reference['publication_info'] = force_list(
                         reference['publication_info']
                     )
                 row.append(render_template_to_string(

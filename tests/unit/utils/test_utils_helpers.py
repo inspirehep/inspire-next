@@ -32,7 +32,7 @@ import pytest
 from inspirehep.utils.helpers import (
     download_file,
     get_json_for_plots,
-    force_force_list,
+    force_list,
 )
 
 
@@ -135,29 +135,29 @@ def test_get_json_for_plots():
     assert expected == result
 
 
-def test_force_force_list_returns_empty_list_on_none():
+def test_force_list_returns_empty_list_on_none():
     expected = []
-    result = force_force_list(None)
+    result = force_list(None)
 
     assert expected == result
 
 
-def test_force_force_list_wraps_strings_in_a_list():
+def test_force_list_wraps_strings_in_a_list():
     expected = ['foo']
-    result = force_force_list('foo')
+    result = force_list('foo')
 
     assert expected == result
 
 
-def test_force_force_list_converts_tuples_to_lists():
+def test_force_list_converts_tuples_to_lists():
     expected = ['foo', 'bar', 'baz']
-    result = force_force_list(('foo', 'bar', 'baz'))
+    result = force_list(('foo', 'bar', 'baz'))
 
     assert expected == result
 
 
-def test_force_force_list_does_not_touch_lists():
+def test_force_list_does_not_touch_lists():
     expected = ['foo', 'bar', 'baz']
-    result = force_force_list(['foo', 'bar', 'baz'])
+    result = force_list(['foo', 'bar', 'baz'])
 
     assert expected == result

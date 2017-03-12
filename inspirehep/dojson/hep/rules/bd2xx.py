@@ -29,7 +29,7 @@ import langdetect
 from dojson import utils
 
 from inspirehep.dojson.utils import force_single_element
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 from ..model import hep, hep2marc
 
@@ -43,7 +43,7 @@ def titles(self, key, value):
         return key.startswith('242')
 
     titles = self.setdefault('titles', [])
-    values = force_force_list(value)
+    values = force_list(value)
     for val in values:
         title_obj = {
             'title': val.get('a'),
@@ -74,7 +74,7 @@ def titles2marc(self, key, value):
             '9': val.get('source'),
         }
 
-    values = force_force_list(value)
+    values = force_list(value)
     if values:
         # Anything but the first element is the main title
         self['245'] = [get_transformed_title(values[0])]
@@ -90,7 +90,7 @@ def title_translations2marc(self, key, value):
             '9': val.get('source'),
         }
 
-    values = force_force_list(value)
+    values = force_list(value)
     return [get_transformed_title(value) for value in values]
 
 
@@ -98,7 +98,7 @@ def title_translations2marc(self, key, value):
 @utils.flatten
 @utils.for_each_value
 def editions(self, key, value):
-    return force_force_list(value.get('a'))
+    return force_list(value.get('a'))
 
 
 @hep2marc.over('250', '^editions$')

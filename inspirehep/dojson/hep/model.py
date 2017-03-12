@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 from inspirehep.utils.record import get_value
 
 from ..model import FilterOverdo, add_schema, add_collection, clean_record
@@ -35,7 +35,7 @@ def add_arxiv_categories(record, blob):
     if not record.get('arxiv_eprints') or not blob.get('65017'):
         return record
 
-    for category in force_force_list(get_value(blob, '65017')):
+    for category in force_list(get_value(blob, '65017')):
         if category.get('2') == 'arXiv' and category.get('a'):
             record['arxiv_eprints'][0]['categories'].append(category['a'])
 
@@ -46,7 +46,7 @@ def add_inspire_categories(record, blob):
     if not record.get('arxiv_eprints') or record.get('inspire_categories'):
         return record
 
-    for arxiv_category in force_force_list(get_value(record, 'arxiv_eprints.categories')):
+    for arxiv_category in force_list(get_value(record, 'arxiv_eprints.categories')):
         inspire_category = classify_field(arxiv_category)
         if inspire_category:
             record['inspire_category'] = [

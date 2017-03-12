@@ -55,7 +55,7 @@ from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.dedupers import dedupe_list
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_db_record
 
@@ -243,7 +243,7 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
             doc_type=doc_type)) as records:
         for record in records:
             unique_refs_ids = dedupe_list(list(chain.from_iterable(map(
-                force_force_list, get_value(record, '_source.references.recid')))))
+                force_list, get_value(record, '_source.references.recid')))))
 
             for unique_refs_id in unique_refs_ids:
                 citations_lookup[unique_refs_id] += 1

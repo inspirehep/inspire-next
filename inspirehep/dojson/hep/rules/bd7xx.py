@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from inspire_schemas.utils import load_schema
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 from inspirehep.utils.pubnote import split_page_artid
 
 from ..model import hep, hep2marc
@@ -40,7 +40,7 @@ from ...utils import (
 
 @hep.over('collaborations', '^710..')
 def collaboration(self, key, value):
-    value = force_force_list(value)
+    value = force_list(value)
 
     def get_value(value):
         recid = None
@@ -73,7 +73,7 @@ def collaborations2marc(self, key, value):
 def publication_info(self, key, value):
     def get_int_value(val):
         if val:
-            out = force_force_list(val)[0]
+            out = force_list(val)[0]
             if out.isdigit():
                 out = int(out)
                 return out

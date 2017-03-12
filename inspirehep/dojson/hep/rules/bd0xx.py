@@ -32,7 +32,7 @@ from dojson import utils
 from idutils import is_doi, is_handle, normalize_doi
 
 from inspire_schemas.utils import load_schema
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 from ..model import hep, hep2marc
 from ...utils import force_single_element
@@ -107,13 +107,13 @@ def dois(self, key, value):
     dois = self.get('dois', [])
     persistent_identifiers = self.get('persistent_identifiers', [])
 
-    values = force_force_list(value)
+    values = force_list(value)
     for value in values:
         id_ = force_single_element(value.get('a', ''))
         material = force_single_element(value.get('q', ''))
         schema = force_single_element(value.get('2', ''))
 
-        sources = force_force_list(value.get('9'))
+        sources = force_list(value.get('9'))
         source = _get_first_non_curator_source(sources)
 
         if _is_doi(id_, schema):
@@ -178,7 +178,7 @@ def texkeys(self, key, value):
     texkeys = self.get('texkeys', [])
     external_system_identifiers = self.get('external_system_identifiers', [])
 
-    values = force_force_list(value)
+    values = force_list(value)
     for value in values:
         id_ = force_single_element(value.get('a', ''))
         other_id = force_single_element(value.get('z', ''))
@@ -214,7 +214,7 @@ def texkeys(self, key, value):
 def texkeys2marc(self, key, value):
     result = []
 
-    values = force_force_list(value)
+    values = force_list(value)
     if values:
         value = values[0]
         result.append({
@@ -246,7 +246,7 @@ def external_system_identifiers2marc(self, key, value):
     result_035 = self.get('035', [])
     result_970 = self.get('970', [])
 
-    values = force_force_list(value)
+    values = force_list(value)
     for value in values:
         id_ = value.get('value')
         schema = value.get('schema')
@@ -288,11 +288,11 @@ def arxiv_eprints(self, key, value):
     arxiv_eprints = self.get('arxiv_eprints', [])
     report_numbers = self.get('report_numbers', [])
 
-    values = force_force_list(value)
+    values = force_list(value)
     for value in values:
         id_ = force_single_element(value.get('a', ''))
         other_id = force_single_element(value.get('z', ''))
-        categories = force_force_list(value.get('c'))
+        categories = force_list(value.get('c'))
         source = force_single_element(value.get('9', ''))
 
         if _is_arxiv_eprint(id_, source):
@@ -326,7 +326,7 @@ def arxiv_eprints2marc(self, key, value):
     result_035 = self.get('035', [])
     result_65017 = self.get('65017', [])
 
-    values = force_force_list(value)
+    values = force_list(value)
     for value in values:
         result_037.append({
             '9': 'arXiv',
@@ -339,7 +339,7 @@ def arxiv_eprints2marc(self, key, value):
             'a': 'oai:arXiv.org:' + value.get('value'),
         })
 
-        categories = force_force_list(value.get('categories'))
+        categories = force_list(value.get('categories'))
         for category in categories:
             result_65017.append({
                 '2': 'arXiv',
@@ -370,7 +370,7 @@ def report_numbers2marc(self, key, value):
 def languages(self, key, value):
     languages = self.get('languages', [])
 
-    values = force_force_list(value.get('a'))
+    values = force_list(value.get('a'))
     for value in values:
         for language in RE_LANGUAGE.split(value):
             try:

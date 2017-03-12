@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 import re
 
 from inspirehep.utils import bibtex_booktitle
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 from inspirehep.utils.record import get_value, is_submitted_but_not_published
 from inspirehep.utils.record_getter import get_es_record
 
@@ -265,20 +265,20 @@ class Bibtex(Export):
     def _get_author(self):
         """Return list of name(s) of the author(s)."""
         def _is_supervisor(author):
-            contributor_roles = force_force_list(
+            contributor_roles = force_list(
                 get_value(author, 'contributor_roles.value'))
             return 'Supervision' in contributor_roles
 
         result = []
         spacinginitials = re.compile(r'([A-Z][a-z]{0,1}[}]?\.)(\b|[-\{])')
 
-        authors = force_force_list(get_value(self.record, 'authors'))
+        authors = force_list(get_value(self.record, 'authors'))
         non_supervisors = [el for el in authors if not _is_supervisor(el)]
         result.extend(
             [spacinginitials.sub(r'\1 \2', el['full_name'])
                 for el in non_supervisors if 'full_name' in el])
 
-        corporate_authors = force_force_list(
+        corporate_authors = force_list(
             get_value(self.record, 'corporate_author'))
         result.extend(corporate_authors)
 
@@ -300,7 +300,7 @@ class Bibtex(Export):
         """Return record titles"""
         record_title = ''
         if 'titles' in self.record:
-            titles = force_force_list(self.record['titles'])
+            titles = force_list(self.record['titles'])
             for title in titles:
                 if 'title' in title:
                     record_title = title['title']

@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import six
 
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 
 country_to_iso_code = {
@@ -544,11 +544,11 @@ def parse_conference_address(address_string):
 def parse_institution_address(address, city, state_province,
                               country, postal_code, country_code):
     """Parse an institution address."""
-    address_string = '\n'.join(force_force_list(address))
+    address_string = '\n'.join(force_list(address))
     state_province = match_us_state(state_province) or state_province
 
-    postal_code = force_force_list(postal_code)
-    country = force_force_list(country)
+    postal_code = force_list(postal_code)
+    country = force_list(country)
     country_code = match_country_code(country_code)
 
     if isinstance(postal_code, (tuple, list)):

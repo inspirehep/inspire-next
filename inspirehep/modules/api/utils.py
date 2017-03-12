@@ -25,7 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.search import LiteratureSearch
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 from inspirehep.utils.record import get_title, get_value
 
 
@@ -91,7 +91,7 @@ def get_id(record):
 
 
 def get_subject(record):
-    inspire_categories = force_force_list(get_value(record, 'inspire_categories'))
+    inspire_categories = force_list(get_value(record, 'inspire_categories'))
     terms = [ic['term'] for ic in inspire_categories if ic.get('term')]
 
     if terms:
@@ -99,7 +99,7 @@ def get_subject(record):
 
 
 def is_collaboration(record):
-    return force_force_list(get_value(record, 'collaborations.value')) != []
+    return force_list(get_value(record, 'collaborations.value')) != []
 
 
 def is_core(record):
@@ -108,7 +108,7 @@ def is_core(record):
 
 def is_selfcite(citee, citer):
     def _get_authors_recids(record):
-        return set(force_force_list(get_value(record, 'authors.recid')))
+        return set(force_list(get_value(record, 'authors.recid')))
 
     citee_authors_recids = _get_authors_recids(citee)
     citer_authors_recids = _get_authors_recids(citer)

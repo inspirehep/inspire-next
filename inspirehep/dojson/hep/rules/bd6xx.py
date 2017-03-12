@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from inspire_schemas.utils import load_schema
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 from ..model import hep, hep2marc
 from ...utils import get_record_ref, get_recid_from_ref
@@ -41,12 +41,12 @@ def accelerator_experiments(self, key, acc_exps_data):
             try:
                 recids = [
                     int(recid) for recid
-                    in force_force_list(acc_exp_data.get('0'))
+                    in force_list(acc_exp_data.get('0'))
                 ]
             except (TypeError, ValueError, AttributeError):
                 pass
 
-        experiment_names = force_force_list(acc_exp_data.get('e'))
+        experiment_names = force_list(acc_exp_data.get('e'))
 
         # XXX: we zip only when they have the same length, otherwise
         #      we might match a value with the wrong recid.
@@ -67,7 +67,7 @@ def accelerator_experiments(self, key, acc_exps_data):
                 }
 
     acc_exps_json = self.get('accelerator_experiments', [])
-    for acc_exp_data in force_force_list(acc_exps_data):
+    for acc_exp_data in force_list(acc_exps_data):
         acc_exps_json.extend(_get_acc_exp_json(acc_exp_data))
 
     return acc_exps_json
@@ -158,7 +158,7 @@ def keywords(self, key, value):
 
 @hep2marc.over('695', '^keywords$')
 def keywords2marc(self, key, values):
-    values = force_force_list(values)
+    values = force_list(values)
 
     def _is_thesaurus(elem):
         return elem.get('schema', '') is not ''
@@ -200,7 +200,7 @@ def keywords2marc(self, key, values):
 @hep2marc.over('_energy_ranges', '^energy_ranges$')
 @utils.ignore_value
 def energy_ranges2marc(self, key, values):
-    values = force_force_list(values)
+    values = force_list(values)
 
     def _energy_to_marc_dict(energy_range):
         return {

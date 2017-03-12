@@ -29,7 +29,7 @@ import re
 from dojson import utils
 
 from inspire_schemas.utils import load_schema
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 
 from .model import hepnames, hepnames2marc
 from ..utils import (
@@ -119,7 +119,7 @@ def ids2marc(self, key, value):
     result_035 = self.get('035', [])
     result_970 = self.get('970', [])
 
-    for value in force_force_list(value):
+    for value in force_list(value):
         id_ = value.get('value')
         schema = value.get('schema')
 
@@ -181,7 +181,7 @@ def positions(self, key, value):
     current = False
     recid = None
 
-    recid_or_status = force_force_list(value.get('z'))
+    recid_or_status = force_list(value.get('z'))
     for el in recid_or_status:
         if el.lower() == 'current':
             current = True
@@ -196,8 +196,8 @@ def positions(self, key, value):
         'curated_relation': curated,
     }
 
-    emails = [el for el in force_force_list(value.get('m'))]
-    old_emails = [el for el in force_force_list(value.get('o'))]
+    emails = [el for el in force_list(value.get('m'))]
+    old_emails = [el for el in force_list(value.get('o'))]
 
     _rank = value.get('r')
     rank = classify_rank(_rank)
@@ -232,7 +232,7 @@ def positions2marc(self, key, value):
 @utils.flatten
 @utils.for_each_value
 def other_names(self, key, value):
-    return force_force_list(value.get('a'))
+    return force_list(value.get('a'))
 
 
 @hepnames2marc.over('400', '^other_names$')
@@ -296,8 +296,8 @@ def arxiv_categories(self, key, value):
     arxiv_categories = self.get('arxiv_categories', [])
     inspire_categories = self.get('inspire_categories', [])
 
-    for value in force_force_list(value):
-        for a_value in force_force_list(value.get('a')):
+    for value in force_list(value):
+        for a_value in force_list(value.get('a')):
             normalized_a_value = _normalize(a_value)
 
             if _is_arxiv(normalized_a_value):
@@ -355,7 +355,7 @@ def source(self, key, value):
 
     source = self.get('source', [])
 
-    values = force_force_list(value)
+    values = force_list(value)
     for value in values:
         source.append(_get_source(value))
 
@@ -395,8 +395,8 @@ def experiments(self, key, values):
         start_year = _int_or_none(marc_dict.get('s'))
         end_year = _int_or_none(marc_dict.get('d'))
 
-        names = force_force_list(marc_dict.get('e'))
-        recids = force_force_list(marc_dict.get('0'))
+        names = force_list(marc_dict.get('e'))
+        recids = force_list(marc_dict.get('0'))
         name_recs = zip(names, recids or [None] * len(names))
 
         for name, recid in name_recs:
@@ -413,7 +413,7 @@ def experiments(self, key, values):
                 'start_year': start_year,
             }
 
-    values = force_force_list(values)
+    values = force_list(values)
     json_experiments = self.get('experiments', [])
     for experiment in values:
         if experiment:
@@ -439,7 +439,7 @@ def experiments2marc(self, key, values):
         return marc
 
     marc_experiments = self.get('693', [])
-    values = force_force_list(values)
+    values = force_list(values)
     for experiment in values:
         if experiment:
             marc_experiments.append(_get_marc_experiment(experiment))
@@ -506,8 +506,8 @@ def new_record(self, key, value):
     new_record = self.get('new_record', {})
     ids = self.get('ids', [])
 
-    for value in force_force_list(value):
-        for id_ in force_force_list(value.get('a')):
+    for value in force_list(value):
+        for id_ in force_list(value.get('a')):
             ids.append({
                 'schema': 'SPIRES',
                 'value': id_,
@@ -536,7 +536,7 @@ def deleted(self, key, value):
     deleted = self.get('deleted')
     stub = self.get('stub')
 
-    for value in force_force_list(value):
+    for value in force_list(value):
         deleted = not deleted and _is_deleted(value)
         stub = not stub and _is_stub(value)
 

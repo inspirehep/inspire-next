@@ -37,7 +37,7 @@ from invenio_records.models import RecordMetadata
 from inspirehep.dojson.utils import get_recid_from_ref
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.date import create_earliest_date, create_valid_date
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_list
 from inspirehep.utils.record import get_value
 
 from .experiments import EXPERIMENTS_MAP
@@ -114,7 +114,7 @@ def match_valid_experiments(sender, json, *args, **kwargs):
         for accelerator_exp in accelerator_exps:
             facet_experiment = []
             if 'experiment' in accelerator_exp:
-                experiments = force_force_list(accelerator_exp['experiment'])
+                experiments = force_list(accelerator_exp['experiment'])
                 for experiment in experiments:
                     normalized_experiment = _normalize(experiment)
                     facet_experiment.append(normalized_experiment)
@@ -227,7 +227,7 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
     # FIXME: Use a dedicated method when #1355 will be resolved.
     if 'experiments.json' in json.get('$schema'):
         experiment_names = get_value(json, 'experiment_names.title')
-        title_variants = force_force_list(
+        title_variants = force_list(
             get_value(json, 'title_variants.title'))
 
         json.update({
@@ -269,7 +269,7 @@ def earliest_date(sender, json, *args, **kwargs):
     ]
 
     dates = list(chain.from_iterable(
-        [force_force_list(get_value(json, path)) for path in date_paths]))
+        [force_list(get_value(json, path)) for path in date_paths]))
 
     earliest_date = create_earliest_date(dates)
     if earliest_date:

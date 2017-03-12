@@ -74,11 +74,39 @@ def get_json_for_plots(plots):
     return dict(_fft=output_records)
 
 
-def force_force_list(data):
-    """Wrap data in list.
+def force_list(data):
+    """Force ``data`` to become a list.
 
-    We need to define this awkardly named method because DoJSON's method
-    force_list returns tuples or None instead of lists.
+    You should use this method whenever you don't want to deal with the
+    fact that ``NoneType`` can't be iterated over. For example, instead
+    of writing::
+
+        bar = foo.get('bar')
+        if bar is not None:
+            for el in bar:
+                ...
+
+    you can write::
+
+        for el in force_list(foo.get('bar')):
+            ...
+
+    Args:
+        data: any Python object.
+
+    Returns:
+        list: a list representation of ``data``.
+
+    Examples:
+        >>> force_list(None)
+        []
+        >>> force_list('foo')
+        ['foo']
+        >>> force_list(('foo', 'bar'))
+        ['foo', 'bar']
+        >>> force_list(['foo', 'bar', 'baz'])
+        ['foo', 'bar', 'baz']
+
     """
     if data is None:
         return []
