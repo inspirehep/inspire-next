@@ -27,5 +27,3 @@ from __future__ import absolute_import, division, print_function
 from .ext import INSPIREAuthors
 
 from .receivers import *
-
-__all__ = ('INSPIREAuthors', )

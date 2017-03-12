@@ -145,5 +145,3 @@ class CrossRef(object):
         resp = jsonify(result)
         resp.status_code = response_code.get(result['status'], 200)
         return resp
-
-__all__ = ("CrossRef", )

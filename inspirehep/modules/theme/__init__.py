@@ -28,5 +28,3 @@ from .ext import INSPIRETheme
 
 # Needed to register the jinja filters in the Blueprint
 from .jinja2filters import *
-
-__all__ = ('INSPIRETheme')

@@ -41,6 +41,3 @@ class INSPIREFixtures(object):
 
         # Save reference to self on object
         app.extensions['inspire-fixtures'] = self
-
-
-__all__ = ('INSPIREFixtures',)

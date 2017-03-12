@@ -28,6 +28,3 @@ from __future__ import absolute_import, division, print_function
 from .hep_approval import HEPApproval
 from .merge_approval import MergeApproval
 from .author_approval import AuthorApproval
-
-
-__all__ = ('HEPApproval', 'MergeApproval', 'AuthorApproval')

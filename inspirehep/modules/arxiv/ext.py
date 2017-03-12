@@ -167,5 +167,3 @@ class Arxiv(object):
         resp.status_code = response_code.get(result['status'],
                                              result['status'])
         return resp
-
-__all__ = ("Arxiv", )

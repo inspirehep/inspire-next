@@ -26,6 +26,3 @@ from __future__ import absolute_import, division, print_function
 
 from .ext import INSPIRECache
 from .proxies import current_cache
-
-
-__all__ = ('INSPIRECache', 'current_cache')
