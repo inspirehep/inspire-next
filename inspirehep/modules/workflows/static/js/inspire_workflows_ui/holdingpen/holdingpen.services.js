@@ -46,7 +46,7 @@
             },
 
             updateRecord: function (vm, workflowId) {
-              $http.post('/api/holdingpen/' + workflowId + '/action/edit', vm.record).then(function (response) {
+              return $http.post('/api/holdingpen/' + workflowId + '/action/edit', vm.record).then(function (response) {
                 vm.saved = true;
                 vm.update_ready = false;
               }).catch(function (value) {
