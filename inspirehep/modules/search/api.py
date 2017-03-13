@@ -31,7 +31,7 @@ from elasticsearch import RequestError
 from elasticsearch_dsl.query import Q
 
 from invenio_search.api import DefaultFilter, RecordsSearch
-from invenio_search import current_search_client
+from invenio_search import current_search_client as es
 
 from inspirehep.modules.records.permissions import (
     all_restricted_collections,
@@ -67,7 +67,7 @@ class SearchMixin(object):
         :type uuid: UUID
         :returns: dict
         """
-        return current_search_client.get_source(
+        return es.get_source(
             index=self.Meta.index,
             doc_type=self.Meta.doc_types,
             id=uuid,
@@ -84,7 +84,7 @@ class SearchMixin(object):
         results = []
 
         try:
-            documents = current_search_client.mget(
+            documents = es.mget(
                 index=self.Meta.index,
                 doc_type=self.Meta.doc_types,
                 body={'ids': uuids},
