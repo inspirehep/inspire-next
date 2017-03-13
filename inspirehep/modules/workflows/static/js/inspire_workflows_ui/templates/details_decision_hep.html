@@ -7,14 +7,20 @@
 
 <div
   ng-if="vm.record._extra_data._action == 'hep_approval' && !vm.ingestion_complete">
-  <button class="btn btn-danger"
-          ng-click="Utils.setDecision('reject')">Reject
+  <button class="btn btn-success"
+          ng-click="Utils.setDecision('accept_core')">Core
   </button>
   <button class="btn btn-warning"
           ng-click="Utils.setDecision('accept')">Accept
   </button>
-  <button class="btn btn-success"
-          ng-click="Utils.setDecision('accept_core')">Core
+
+  <button ng-if="vm.record.metadata.acquisition_source.method == 'submitter'"
+          class="btn btn-danger"
+          ng-click="Utils.setRejectionReason()">Reject
+  </button>
+  <button ng-if="vm.record.metadata.acquisition_source.method == 'arXiv'"
+          class="btn btn-danger"
+          ng-click="Utils.setDecision('reject')">Reject
   </button>
 </div>
 

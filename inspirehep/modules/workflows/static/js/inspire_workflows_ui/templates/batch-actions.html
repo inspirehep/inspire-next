@@ -30,14 +30,15 @@
             <p class="text-muted">
               {{vm.selected_record_decisions['hep'].length}} article workflows with
               decisions to be made.</p>
-            <button class="btn btn-danger"
-                    ng-click="BatchUtils.showConfirm('hep', 'reject')">Reject
+            <button class="btn btn-success"
+                    ng-click="BatchUtils.showConfirm('hep', 'core')">Core
             </button>
             <button class="btn btn-warning"
                     ng-click="BatchUtils.showConfirm('hep', 'accept')">Accept
             </button>
-            <button class="btn btn-success"
-                    ng-click="BatchUtils.showConfirm('hep', 'core')">Core
+            <button class="btn btn-danger"
+                    ng-disabled="BatchUtils.methodItemsChecked('submitter')"
+                    ng-click="BatchUtils.showConfirm('hep', 'reject')">Reject
             </button>
           </div>
           <div ng-if="!vm.selected_record_decisions['hep'] || vm.selected_record_decisions['hep'].length == 0">

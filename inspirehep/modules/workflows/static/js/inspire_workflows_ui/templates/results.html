@@ -101,14 +101,19 @@
 
             <div
               ng-if="record._source._workflow.data_type === 'hep' && !record._source._extra_data.user_action && record._source._workflow.status === 'HALTED'">
-              <button class="btn btn-danger"
-                      ng-click="setDecision(record._id, 'reject')">Reject
+              <button class="btn btn-success"
+                      ng-click="setDecision(record._id,'accept_core')">Core
               </button>
               <button class="btn btn-warning"
                       ng-click="setDecision(record._id,'accept')">Accept
               </button>
-              <button class="btn btn-success"
-                      ng-click="setDecision(record._id,'accept_core')">Core
+              <button ng-if="record._source.metadata.acquisition_source.method == 'arXiv'"
+                      class="btn btn-danger"
+                      ng-click="setDecision(record._id, 'reject')">Reject
+              </button>
+              <button ng-if="record._source.metadata.acquisition_source.method == 'submitter'"
+                      class="btn btn-danger"
+                      ng-click="redirect('/holdingpen/' + record._id)">Reject
               </button>
             </div>
 

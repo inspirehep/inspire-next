@@ -27,6 +27,7 @@
 
     $scope.vm.selected_records = [];
     $scope.vm.selected_record_decisions = {};
+    $scope.vm.selected_record_methods = {};
 
     $scope.toggleSelection = toggleSelection;
     $scope.toggleAll = toggleAll;
@@ -34,6 +35,21 @@
     $scope.allChecked = allChecked;
     $scope.setDecision = setDecision;
     $scope.redirect = redirect;
+
+    function _add_record_method(record) {
+      method = record._source.metadata.acquisition_source.method;
+      if (method in $scope.vm.selected_record_methods) {
+        $scope.vm.selected_record_methods[method]++;
+      }
+      else {
+        $scope.vm.selected_record_methods[method] = 1;
+      }
+    }
+
+    function _remove_record_method(record) {
+      method = record._source.metadata.acquisition_source.method;
+      $scope.vm.selected_record_methods[method]--;
+    }
 
     function redirect(url) {
       $window.location = url;
@@ -47,6 +63,7 @@
       var _data_type = record._source._workflow.data_type;
 
       if (isChecked(record._id)) {
+        _remove_record_method(record);
         $scope.vm.selected_records.splice(getItemIdx(+record._id), 1);
         if (_data_type in $scope.vm.selected_record_decisions) {
           $scope.vm.selected_record_decisions[_data_type]
@@ -55,6 +72,7 @@
         }
       }
       else {
+        _add_record_method(record);
         $scope.vm.selected_records.push(+record._id);
         if (_data_type) {
           if (!(_data_type in $scope.vm.selected_record_decisions)) {
@@ -76,12 +94,12 @@
 
       var remove_all = allChecked();
       if (remove_all) {
-        $scope.vm.selected_records = [];
-        $scope.vm.selected_record_decisions = {};
+        reset();
       } else {
         angular.forEach($scope.$parent.vm.invenioSearchResults.hits.hits,
           function (record) {
             if (!isChecked(record._id)) {
+              _add_record_method(record);
               $scope.vm.selected_records.push(+record._id);
               if (record._source._workflow.data_type) {
                 if (!(record._source._workflow.data_type
@@ -113,6 +131,8 @@
 
     function reset() {
       $scope.vm.selected_records = [];
+      $scope.vm.selected_record_decisions = {};
+      $scope.vm.selected_record_methods = [];
     }
 
     var hotkey = Hotkeys.createHotkey({
