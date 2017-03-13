@@ -102,7 +102,6 @@ def test_new_ticket_context_handles_unicode(user):
         'user_comment': '',
     }
     result = new_ticket_context(user, obj)
-    print("Resulting object: ", result)
 
     assert expected == result
 
