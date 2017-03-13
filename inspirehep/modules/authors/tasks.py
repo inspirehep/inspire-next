@@ -123,7 +123,7 @@ def recreate_data(obj, eng):
 
 def new_ticket_context(user, obj):
     """Context for authornew new tickets."""
-    subject = "Your suggestion to INSPIRE: author {0}".format(
+    subject = u"Your suggestion to INSPIRE: author {0}".format(
         obj.data.get("name").get("preferred_name")
     )
     return dict(
