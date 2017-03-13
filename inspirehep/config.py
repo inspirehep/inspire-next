@@ -1426,6 +1426,7 @@ WORKFLOWS_UI_REST_FACETS = {
             "source": terms_filter('metadata.acquisition_source.method'),
             "workflow_name": terms_filter('_workflow.workflow_name'),
             "is-update": terms_filter('_extra_data.is-update'),
+            'subject': terms_filter('metadata.inspire_categories.term'),
         },
         "aggs": {
             "status": {
@@ -1445,6 +1446,12 @@ WORKFLOWS_UI_REST_FACETS = {
                     "field": "_workflow.workflow_name",
                     "size": 20
                 }
+            },
+            'subject': {
+                'terms': {
+                    'field': 'metadata.inspire_categories.term',
+                    'size': 20,
+                },
             },
         }
     }

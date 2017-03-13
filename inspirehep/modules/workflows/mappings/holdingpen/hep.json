@@ -40,6 +40,15 @@
                                 }
                             },
                             "type": "object"
+                        },
+                        "inspire_categories": {
+                            "properties": {
+                                "term": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
                         }
                     },
                     "type": "object"
