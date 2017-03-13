@@ -63,6 +63,15 @@ def data():
 
 
 @pytest.fixture()
+def unicode_data():
+    return {
+        'name': {
+            'preferred_name': u'Diego Martínez',
+        },
+    }
+
+
+@pytest.fixture()
 def extra_data():
     return {
         "formdata": {
@@ -86,6 +95,16 @@ def test_new_ticket_context(data, extra_data, user):
     assert isinstance(ctx['object'], MockObj)
     assert ctx['email'] == 'foo@bar.com'
     assert ctx['subject'] == 'Your suggestion to INSPIRE: author John Doe'
+    assert ctx['user_comment'] == 'Foo bar'
+
+
+def test_new_ticket_context_handles_unicode(unicode_data, extra_data, user):
+    obj = MockObj(unicode_data, extra_data)
+    ctx = new_ticket_context(user, obj)
+
+    assert isinstance(ctx['object'], MockObj)
+    assert ctx['email'] == 'foo@bar.com'
+    assert ctx['subject'] == u'Your suggestion to INSPIRE: author Diego Martínez'
     assert ctx['user_comment'] == 'Foo bar'
 
 
