@@ -20,280 +20,243 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Tests for record-related utilities."""
-
 from __future__ import absolute_import, division, print_function
-
-from inspirehep.utils.record import get_abstract, get_subtitle, get_title, get_value
 
 import pytest
 
-from inspirehep.modules.records.api import InspireRecord
+from inspirehep.utils.record import (
+    get_abstract,
+    get_subtitle,
+    get_title,
+    get_value,
+    is_submitted_but_not_published,
+)
 
 
-def test_get_title_returns_empty_string_when_no_titles():
-    no_titles = InspireRecord({})
-
-    expected = ''
-    result = get_title(no_titles)
-
-    assert expected == result
-
-
-def test_get_subtitle_returns_empty_string_when_no_titles():
-    no_titles = InspireRecord({})
+def test_get_abstract_returns_empty_string_when_no_abstracts():
+    record = {}
 
     expected = ''
-    result = get_subtitle(no_titles)
-
-    assert expected == result
-
-
-def test_get_abstract_returns_empty_string_when_no_titles():
-    no_abstracts = InspireRecord({})
-
-    expected = ''
-    result = get_abstract(no_abstracts)
+    result = get_abstract(record)
 
     assert expected == result
 
 
 def test_get_abstract_returns_empty_string_when_abstracts_is_empty():
-    empty_abstracts = InspireRecord({'abstracts': []})
+    record = {'abstracts': []}
 
     expected = ''
-    result = get_abstract(empty_abstracts)
+    result = get_abstract(record)
 
     assert expected == result
 
 
-def test_get_title_returns_the_only_title():
-    single_title = InspireRecord({
+def test_get_abstract_returns_first_abstract_with_source_not_arxiv():
+    record = {
+        'abstracts': [
+            {
+                'source': 'arXiv',
+                'value': 'abstract with source arXiv',
+            },
+            {
+                'source': 'not arXiv',
+                'value': 'abstract with source not arXiv',
+            },
+        ],
+    }
+
+    expected = 'abstract with source not arXiv'
+    result = get_abstract(record)
+
+    assert expected == result
+
+
+def test_get_abstract_returns_last_abstract_without_a_source():
+    record = {
+        'abstracts': [
+            {'value': 'first abstract without a source'},
+            {'value': 'last abstract without a source'},
+        ],
+    }
+
+    expected = 'last abstract without a source'
+    result = get_abstract(record)
+
+    assert expected == result
+
+
+def test_get_abstract_falls_back_to_first_abstract_even_if_from_arxiv():
+    record = {
+        'abstracts': [
+            {
+                'source': 'arXiv',
+                'value': 'abstract with source arXiv',
+            },
+        ],
+    }
+
+    expected = 'abstract with source arXiv'
+    result = get_abstract(record)
+
+    assert expected == result
+
+
+def test_get_subtitle_returns_empty_string_when_no_titles():
+    record = {}
+
+    expected = ''
+    result = get_subtitle(record)
+
+    assert expected == result
+
+
+@pytest.mark.xfail(reason='[] is returned instead')
+def test_get_subtitle_returns_empty_string_when_titles_is_empty():
+    record = {'titles': []}
+
+    expected = ''
+    result = get_subtitle(record)
+
+    assert expected == result
+
+
+def test_get_subtitle_returns_first_subtitle():
+    record = {
         'titles': [
-            {
-                'source': "arXiv",
-                'title': 'The Large Hadron Collider'
-            }
-        ]
-    })
+            {'subtitle': 'first subtitle'},
+            {'subtitle': 'second subtitle'},
+        ],
+    }
 
-    expected = 'The Large Hadron Collider'
-    result = get_title(single_title)
+    expected = 'first subtitle'
+    result = get_subtitle(record)
 
     assert expected == result
 
 
-def test_get_subtitle_returns_the_only_subtitle():
-    single_subtitle = InspireRecord({
+def test_get_title_returns_empty_string_when_no_titles():
+    record = {}
+
+    expected = ''
+    result = get_title(record)
+
+    assert expected == result
+
+
+@pytest.mark.xfail(reason='[] is returned instead')
+def test_get_title_returns_empty_string_when_titles_is_empty():
+    record = {'titles': []}
+
+    expected = ''
+    result = get_title(record)
+
+    assert expected == result
+
+
+def test_get_title_returns_first_title():
+    record = {
         'titles': [
-            {
-                "source": "arXiv",
-                'subtitle': 'Harvest of Run 1'
-            }
-        ]
-    })
-
-    expected = 'Harvest of Run 1'
-    result = get_subtitle(single_subtitle)
-
-    assert expected == result
-
-
-def test_get_abstract_returns_the_only_abstract():
-    single_abstract = InspireRecord({
-        "abstracts": [
-            {
-                "source": "arXiv",
-                "value": "abstract",
-            }
-        ]
-    })
-
-    expected = 'abstract'
-    result = get_abstract(single_abstract)
-
-    assert expected == result
-
-
-def test_get_title_returns_the_non_arxiv_title_with_source():
-    double_title = InspireRecord({
-        "titles": [
-            {
-                "source": "other",
-                "title": "Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia"
-            },
-            {
-                "source": "arXiv",
-                "title": "Monte Carlo tuning in the presence of Matching"
-            }
+            {'title': 'first title'},
+            {'title': 'second title'},
         ],
-    })
+    }
 
-    expected = 'Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia'
-    result = get_title(double_title)
-
-    assert expected == result
-
-
-def test_get_title_returns_the_non_arxiv_title():
-    double_title = InspireRecord({
-        "titles": [
-            {
-                "title": "Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia"
-            },
-            {
-                "source": "arXiv",
-                "title": "Monte Carlo tuning in the presence of Matching"
-            }
-        ],
-    })
-
-    expected = 'Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia'
-    result = get_title(double_title)
+    expected = 'first title'
+    result = get_title(record)
 
     assert expected == result
 
 
-def test_get_subtitle_returns_the_non_arxiv_subtitle_with_source():
-    double_subtitle = InspireRecord({
-        "titles": [
-            {
-                "source": "other",
-                "subtitle": "Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia"
-            },
-            {
-                "source": "arXiv",
-                "subtitle": "Monte Carlo tuning in the presence of Matching"
-            }
-        ],
-    })
-
-    expected = 'Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia'
-    result = get_subtitle(double_subtitle)
-
-    assert expected == result
-
-
-def test_get_subtitle_returns_the_non_arxiv_subtitle():
-    double_subtitle = InspireRecord({
-        "titles": [
-            {
-                "subtitle": "Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia"
-            },
-            {
-                "source": "arXiv",
-                "subtitle": "Monte Carlo tuning in the presence of Matching"
-            }
-        ],
-    })
-
-    expected = 'Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia'
-    result = get_subtitle(double_subtitle)
-
-    assert expected == result
-
-
-def test_get_abstract_returns_the_non_arxiv_abstract():
-    double_abstract = InspireRecord({
-        "abstracts": [
-            {
-                "source": "arXiv",
-                "value": "arXiv abstract"
-            },
-            {
-                "value": "abstract"
-            }
-        ]
-    })
-
-    expected = 'abstract'
-    result = get_abstract(double_abstract)
-
-    assert expected == result
-
-
-def test_get_abstract_with_multiple_sources_returns_the_non_arxiv_abstract():
-    double_abstract = InspireRecord({
-        "abstracts": [
-            {
-                "source": "arXiv",
-                "value": "arXiv abstract"
-            },
-            {
-                "source": "other",
-                "value": "abstract"
-            }
-        ]
-    })
-
-    expected = 'abstract'
-    result = get_abstract(double_abstract)
-
-    assert expected == result
-
-
-def test_get_value_returns_the_two_titles():
-    double_title = InspireRecord({
-        "titles": [
-            {
-                "title": "Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia"
-            },
-            {
-                "title": "Monte Carlo tuning in the presence of Matching"
-            }
-        ],
-    })
-
-    expected = 2
-    result = len(get_value(double_title, "titles.title"))
-
-    assert expected == result
-
-
-def test_get_value_returns_the_selected_title():
-    double_title = InspireRecord({
-        "titles": [
-            {
-                "title": "Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia"
-            },
-            {
-                "title": "Monte Carlo tuning in the presence of Matching"
-            }
-        ],
-    })
-
-    expected = 'Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia'
-    result = get_value(double_title, "titles.title[0]")
-
-    assert expected == result
-
-
-def test_get_value_returns_single_title():
-    empty_titles = InspireRecord({'titles': []})
-
-    expected = []
-    result = get_value(empty_titles, "titles.title")
-
-    assert expected == result
-
-
-@pytest.mark.xfail(reason='Returns None instead of {}.')
-def test_get_value_returns_empty_dic_when_there_are_no_titles():
-    empty_titles = InspireRecord({'titles': []})
-
-    expected = {}
-    result = get_value(empty_titles, "foo")
-
-    assert expected == result
-
-
-def test_get_value_returns_none_on_index_error():
-    single_title = InspireRecord({
+def test_get_value_returns_all_values():
+    record = {
         'titles': [
-            {
-                'title': 'Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia',
-            }
+            {'title': 'first title'},
+            {'title': 'second title'},
         ],
-    })
+    }
 
-    assert get_value(single_title, 'titles.title[1]') is None
+    expected = [
+        'first title',
+        'second title',
+    ]
+    result = get_value(record, 'titles.title')
+
+    assert expected == result
+
+
+def test_get_value_allows_indexes_in_paths():
+    record = {
+        'titles': [
+            {'title': 'first title'},
+            {'title': 'second title'},
+        ],
+    }
+
+    expected = 'second title'
+    result = get_value(record, 'titles.title[1]')
+
+    assert expected == result
+
+
+def test_get_value_allows_slices_in_paths():
+    record = {
+        'titles': [
+            {'title': 'first title'},
+            {'title': 'second title'},
+        ],
+    }
+
+    expected = [
+        'first title',
+        'second title',
+    ]
+    result = get_value(record, 'titles.title[:]')
+
+    assert expected == result
+
+
+def test_is_submitted_but_not_published_returns_false_if_record_has_dois():
+    record = {
+        'dois': [
+            {'value': 'doi'},
+        ],
+    }
+
+    assert not is_submitted_but_not_published(record)
+
+
+def test_is_submitted_but_not_published_returns_true_if_record_has_at_least_one_journal_title():
+    record = {
+        'publication_info': [
+            {'journal_title': 'journal title'},
+        ],
+    }
+
+    assert is_submitted_but_not_published(record)
+
+
+def test_is_submitted_but_not_published_returns_false_if_record_is_from_econf_and_has_journal_volume():
+    record = {
+        'publication_info': [
+            {
+                'journal_title': 'eConf',
+                'journal_volume': 'journal volume',
+            },
+        ],
+    }
+
+    assert not is_submitted_but_not_published(record)
+
+
+def test_is_submitted_but_not_published_returns_false_if_record_has_a_complete_publication_info():
+    record = {
+        'publication_info': [
+            {
+                'journal_title': 'journal title',
+                'journal_volume': 'journal volume',
+                'page_start': 'page start',
+            },
+        ],
+    }
+
+    assert not is_submitted_but_not_published(record)
