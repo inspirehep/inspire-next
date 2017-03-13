@@ -89,6 +89,24 @@ def test_new_ticket_context(data, extra_data, user):
     assert ctx['user_comment'] == 'Foo bar'
 
 
+def test_new_ticket_context_handles_unicode(user):
+    data = {'name': {'preferred_name': u'Diego Martínez'}}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+
+    expected = {
+        'object': obj,
+        'email': 'foo@bar.com',
+        'subject': u'Your suggestion to INSPIRE: author Diego Martínez',
+        'user_comment': '',
+    }
+    result = new_ticket_context(user, obj)
+    print("Resulting object: ", result)
+
+    assert expected == result
+
+
 def test_update_ticket_context(data, extra_data, user):
     config = {
         'AUTHORS_UPDATE_BASE_URL': 'http://inspirehep.net'
