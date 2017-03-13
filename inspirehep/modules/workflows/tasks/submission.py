@@ -228,16 +228,20 @@ def close_ticket(ticket_id_key="ticket_id"):
     return _close_ticket
 
 
-def send_and_wait_robotupload(
+def send_robotupload(
     url=None,
     marcxml_processor=None,
     callback_url="callback/workflows/robotupload",
     mode="insert",
     extra_data_key=None
 ):
-    """Get the MARCXML from the model and ship it."""
+    """Get the MARCXML from the model and ship it.
 
-    @wraps(send_and_wait_robotupload)
+    If callback_url is set the workflow will halt and the callback is
+    responsible for resuming it.
+    """
+
+    @wraps(send_robotupload)
     def _send_robotupload(obj, eng):
         from inspirehep.dojson.utils import legacy_export_as_marc
         from inspirehep.utils.robotupload import make_robotupload_marcxml
@@ -245,6 +249,7 @@ def send_and_wait_robotupload(
         combined_callback_url = os.path.join(
             current_app.config["SERVER_NAME"],
             callback_url
+
         )
         if not combined_callback_url.startswith('http'):
             combined_callback_url = "https://{0}".format(

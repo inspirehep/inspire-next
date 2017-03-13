@@ -39,7 +39,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     close_ticket,
     create_ticket,
     reply_ticket,
-    send_and_wait_robotupload
+    send_robotupload
 )
 from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
 
@@ -53,7 +53,7 @@ from inspirehep.modules.authors.tasks import (
 
 
 SEND_TO_LEGACY = [
-    send_and_wait_robotupload(
+    send_robotupload(
         marcxml_processor=hepnames2marc,
         mode="insert"
     ),
@@ -86,9 +86,10 @@ NOTIFY_NOT_ACCEPTED = [
 
 
 SEND_UPDATE_NOTIFICATION = [
-    send_and_wait_robotupload(
+    send_robotupload(
         marcxml_processor=hepnames2marc,
-        mode="holdingpen"
+        mode="holdingpen",
+        callback_url=None
     ),
     create_ticket(
         template="authors/tickets/curator_update.html",
