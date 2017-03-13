@@ -31,10 +31,13 @@ from flask import current_app
 from six import iteritems
 
 from invenio_db import db
+from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
 
+from inspirehep.dojson.utils import get_recid_from_ref
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.utils import get_endpoint_from_record
+from inspirehep.utils.record_getter import get_db_record
 
 
 logger = get_task_logger(__name__)
@@ -122,5 +125,51 @@ def get_records_to_update(old_ref):
 
     uuids = _get_uuids_to_update(old_ref)
     records = _get_records_to_update(uuids)
+
+    return records
+
+
+@shared_task
+def merge_merged_records():
+    """Merge all records that were marked as merged."""
+    def _get_record(recid):
+        pid = PersistentIdentifier.query.filter_by(pid_value=str(recid)).one()
+        return get_db_record(pid.pid_type, recid)
+
+    records = get_records_to_merge()
+
+    with db.session.begin_nested():
+        for record in records:
+            recid = record['control_number']
+            other_recid = get_recid_from_ref(record['new_record'])
+            other_record = _get_record(other_recid)
+
+            logger.info('Merged records: %d and %d', recid, other_recid)
+            record.merge(other_record)
+            record.commit()
+    db.session.commit()
+
+
+def get_records_to_merge():
+    def _get_uuids_to_merge():
+        body = {
+            'query': {
+                'exists': {
+                    'field': 'new_record',
+                },
+            },
+        }
+
+        index = 'records-*'
+        query = scan(es, query=body, index=index)
+
+        for result in query:
+            yield result['_id']
+
+    def _get_records_to_merge(uuids):
+        return InspireRecord.get_records(uuids)
+
+    uuids = _get_uuids_to_merge()
+    records = _get_records_to_merge(uuids)
 
     return records
