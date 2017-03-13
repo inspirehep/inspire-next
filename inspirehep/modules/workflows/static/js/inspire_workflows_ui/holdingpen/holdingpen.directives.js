@@ -255,7 +255,10 @@
           },
 
           setDecision: function (decision) {
-            HoldingPenRecordService.setDecision($scope.vm, $scope.workflowId, decision)
+            HoldingPenRecordService.updateRecord($scope.vm, $scope.workflowId)
+            .then(function successCallback(response) {
+              HoldingPenRecordService.setDecision($scope.vm, $scope.workflowId, decision)
+            });
           },
 
           redirect: function (url) {
