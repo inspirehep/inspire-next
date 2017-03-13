@@ -60,17 +60,38 @@ def test_convert_for_form_public_emails():
 
     expected = [
         {
-          "email": "michael.abbott@uct.ac.za",
-          "original_email": "michael.abbott@uct.ac.za"
+            "email": "michael.abbott@uct.ac.za",
+            "original_email": "michael.abbott@uct.ac.za"
         },
         {
-          "email": "abbott@theory.tifr.res.in",
-          "original_email": "abbott@theory.tifr.res.in"
+            "email": "abbott@theory.tifr.res.in",
+            "original_email": "abbott@theory.tifr.res.in"
         }
     ]
 
     assert expected == current_and_old_emails['public_emails']
 
+
+def test_convert_for_form_advisors():
+    record = {
+        'advisors': [
+            {
+                'degree_type': 'other',
+                'name': 'Avignone, Frank T.',
+                'curated_relation': False
+            }
+        ]
+    }
+    convert_for_form(record)
+
+    expected = [
+        {
+            'degree_type': 'other',
+            'name': 'Avignone, Frank T.'
+        }
+    ]
+
+    assert expected == record['advisors']
 
 # TODO: test convert_for_form
 
