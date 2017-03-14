@@ -24,6 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 from inspirehep.utils.record import (
     get_abstract,
+    get_arxiv_id,
     get_subtitle,
     get_title,
     get_value,
@@ -95,6 +96,38 @@ def test_get_abstract_falls_back_to_first_abstract_even_if_from_arxiv():
 
     expected = 'abstract with source arXiv'
     result = get_abstract(record)
+
+    assert expected == result
+
+
+def test_get_arxiv_id_returns_empty_string_when_no_arxiv_eprints():
+    record = {}
+
+    expected = ''
+    result = get_arxiv_id(record)
+
+    assert expected == result
+
+
+def test_get_arxiv_id_returns_empty_string_when_arxiv_eprints_is_empty():
+    record = {'arxiv_eprints': []}
+
+    expected = ''
+    result = get_arxiv_id(record)
+
+    assert expected == result
+
+
+def test_get_arxiv_id_returns_first_arxiv_identifier():
+    record = {
+        'arxiv_eprints': [
+            {'value': 'first arXiv identifier'},
+            {'value': 'second arXiv identifier'},
+        ],
+    }
+
+    expected = 'first arXiv identifier'
+    result = get_arxiv_id(record)
 
     assert expected == result
 

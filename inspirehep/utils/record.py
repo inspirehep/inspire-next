@@ -48,6 +48,11 @@ def get_abstract(record):
     return chosen_abstract
 
 
+def get_arxiv_id(record):
+    """Return the first arXiv identifier of a record."""
+    return get_value(record, 'arxiv_eprints.value[0]', default='')
+
+
 def get_subtitle(record):
     """Get preferred subtitle from record."""
     return get_value(record, 'titles.subtitle[0]', default='')

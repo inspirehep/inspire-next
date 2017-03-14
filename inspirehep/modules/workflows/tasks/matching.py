@@ -34,9 +34,8 @@ import requests
 import six
 from flask import current_app
 
-from inspirehep.utils.arxiv import get_clean_arXiv_id
 from inspirehep.utils.datefilter import date_older_than
-from inspirehep.utils.record import get_value
+from inspirehep.utils.record import get_arxiv_id, get_value
 
 
 def search(query):
@@ -66,7 +65,7 @@ def search(query):
 
 def match_by_arxiv_id(record):
     """Match by arXiv identifier."""
-    arxiv_id = get_clean_arXiv_id(record)
+    arxiv_id = get_arxiv_id(record)
 
     if arxiv_id:
         query = '035:"{0}"'.format(arxiv_id)
