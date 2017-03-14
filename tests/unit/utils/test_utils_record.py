@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
 from inspirehep.utils.record import (
     get_abstract,
     get_subtitle,
@@ -110,7 +108,6 @@ def test_get_subtitle_returns_empty_string_when_no_titles():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='[] is returned instead')
 def test_get_subtitle_returns_empty_string_when_titles_is_empty():
     record = {'titles': []}
 
@@ -143,7 +140,6 @@ def test_get_title_returns_empty_string_when_no_titles():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='[] is returned instead')
 def test_get_title_returns_empty_string_when_titles_is_empty():
     record = {'titles': []}
 
