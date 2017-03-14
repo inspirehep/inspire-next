@@ -59,3 +59,13 @@ def test_number_of_pages_from_300__a_malformed():
     )  # record/67556
 
     assert 'number_of_pages' not in hep.do(create_record(snippet))
+
+
+def test_number_of_pages_from_300__a_nonpositive():
+    snippet = (
+        '<datafield tag="300" ind1=" " ind2=" ">'
+        '  <subfield code="a">0</subfield>'
+        '</datafield>'
+    )  # record/1511769
+
+    assert 'number_of_pages' not in hep.do(create_record(snippet))

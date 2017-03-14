@@ -30,7 +30,9 @@ from ...utils import force_single_element, maybe_int
 
 @hep.over('number_of_pages', '^300..')
 def number_of_pages(self, key, value):
-    return maybe_int(force_single_element(value.get('a', '')))
+    result = maybe_int(force_single_element(value.get('a', '')))
+    if result and result > 0:
+        return result
 
 
 @hep2marc.over('300', '^number_of_pages$')
