@@ -167,60 +167,78 @@
           </div>
 
           <div ng-if="vm.record._workflow.data_type === 'authors'">
-
             <h4 class="record-title"
                 ng-bind="vm.record.metadata.name.value"
                 editable-text="vm.record.metadata.name.value"
                 e-ng-change="Utils.registerUpdateEvent()"></h4>
 
-            <p class="advisors" ng-if="vm.record.metadata.name.preferred_name">
-              <span class="text-muted">Preferred name:</span>
-              <span ng-bind="vm.record.metadata.name.preferred_name"
-                    editable-text="vm.record.metadata.name.preferred_name"
-                    e-ng-change="Utils.registerUpdateEvent()"></span>
-              <br>
-              <span class="text-muted" ng-if="vm.record.metadata.native_name">Native name:</span>
-              <span ng-if="vm.record.metadata.native_name" ng-bind="vm.record.metadata.native_name"
-                    editable-text="vm.record.metadata.native_name"
-                    e-ng-change="Utils.registerUpdateEvent()"></span>
-              <br ng-if="vm.record.metadata.native_name">
-
-              <div ng-repeat="position in vm.record.metadata.positions">
-              <span ng-if="position.emails.length" class="text-muted">Email address:</span>
-              <span ng-repeat="email in position.emails">
-              <span ng-bind="email"></span>
-              </span>
+            <div ng-if="vm.record.metadata.name.preferred_name" class="row">
+              <div class="col-md-12">
+                <span class="font-bolder">Preferred name:</span>
+                <span ng-bind="vm.record.metadata.name.preferred_name"
+                      editable-text="vm.record.metadata.name.preferred_name"
+                      e-ng-change="Utils.registerUpdateEvent()"></span>
               </div>
+            </div>
 
-              <span class="text-muted">Status:</span>
-              <span ng-bind="vm.record.metadata.status"></span>
-              <br ng-if="vm.record.metadata.status">
-
-              <span class="text-muted">ORCID:</span>
-              <span ng-bind="vm.record.metadata.ids[0].value"></span>
-
-              <div ng-repeat="experiment in vm.record.metadata.experiments">
-              <span class="text-muted">Experiment:</span>
-              <span ng-bind="experiment.name"
-                    editable-text="experiment.name"
-                    e-ng-change="Utils.registerUpdateEvent()"></span>
-              <span class="text-muted"> - From:</span>
-              <span ng-bind="experiment.start_year"
-                    editable-text="experiment.start_year"
-                    e-ng-change="Utils.registerUpdateEvent()"></span>
-              <span class="text-muted">To:</span>
-              <span ng-bind="experiment.end_year"
-                    editable-text="experiment.end_year"
-                    e-ng-change="Utils.registerUpdateEvent()"></span>
-              <br>
+            <div ng-if="vm.record.metadata.native_name" class="row">
+              <div class="col-md-12">
+                <span class="font-bolder">Native name:</span>
+                <span ng-if="vm.record.metadata.native_name"
+                      ng-bind="vm.record.metadata.native_name"
+                      editable-text="vm.record.metadata.native_name"
+                      e-ng-change="Utils.registerUpdateEvent()">
+                </span>
               </div>
+            </div>
 
-            </p>
+            <div ng-repeat="position in vm.record.metadata.positions" class="row">
+              <div class="col-md-12">
+                <span ng-if="position.emails.length" class="font-bolder">Email address:</span>
+                <span ng-repeat="email in position.emails">
+                  <span ng-bind="email"></span>
+                </span>
+              </div>
+            </div>
+
+            <div ng-if="vm.record.metadata.status" class="row">
+              <div class="col-md-12">
+                <span class="font-bolder">Status:</span>
+                <span ng-bind="vm.record.metadata.status"></span>
+              </div>
+            </div>
+
+            <div ng-repeat="id in vm.record.metadata.ids" class="row">
+              <div ng-switch="id.type" class="col-md-12">
+                <span ng-switch-when="ORCID" class="font-bolder">ORCID:</span>
+                <span ng-switch-when="INSPIRE BAI" class="font-bolder">Author profile:</span>
+                <span ng-switch-when="ORCID" ng-bind="id.value"></span>
+                <span ng-switch-when="INSPIRE BAI">
+                  <a href="https://inspirehep.net/author/profile/{{id.value}}">
+                    {{id.value}}
+                  </a>
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="clearfix"></div>
+
+      <div class="col-md-12"
+           ng-if="vm.record._workflow.data_type == 'authors'">
+        <holding-pen-template-handler
+          template="/static/js/inspire_workflows_ui/templates/details_positions.html">
+        </holding-pen-template-handler>
+      </div>
+
+      <div class="col-md-12"
+           ng-if="vm.record._workflow.data_type == 'authors'">
+        <holding-pen-template-handler
+          template="/static/js/inspire_workflows_ui/templates/details_experiments.html">
+        </holding-pen-template-handler>
+      </div>
 
       <div class="col-md-12">
         <holding-pen-template-handler
@@ -273,13 +291,6 @@
       </div>
 
       <div class="clearfix"></div>
-
-      <div class="col-md-12"
-           ng-if="vm.record._workflow.data_type == 'authors'">
-        <holding-pen-template-handler
-          template="/static/js/inspire_workflows_ui/templates/details_positions.html">
-        </holding-pen-template-handler>
-      </div>
 
       <div class="col-md-12" ng-if="vm.record._workflow.data_type == 'hep'">
         <holding-pen-template-handler

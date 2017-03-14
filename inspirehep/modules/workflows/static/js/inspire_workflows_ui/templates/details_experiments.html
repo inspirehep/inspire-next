@@ -1,0 +1,21 @@
+<div class="detail-panel" id="hp-panel-experiments">
+  <h4>Experiment History</h4>
+  <table class="table table-striped">
+  <thead>
+    <tr>
+      <th class="text-muted">Experiment</th>
+      <th class="text-muted">Start Date</th>
+      <th class="text-muted">End Date</th>
+      <th class="text-muted">Current</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="experiment in vm.record.metadata.experiments">
+      <td><div ng-bind="experiment.name"></div></td>
+      <td><div ng-bind="experiment.start_year"></div></td>
+      <td><div ng-bind="experiment.end_year"></div></td>
+      <td><div ng-bind="experiment.current"></div></td>
+    </tr>
+  </tbody>
+  </table>
+</div>
