@@ -83,7 +83,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     prepare_keywords,
     remove_references,
     reply_ticket,
-    send_and_wait_robotupload,
+    send_robotupload,
     user_pdf_get,
     wait_webcoll,
 )
@@ -285,13 +285,13 @@ SEND_TO_LEGACY_AND_WAIT = [
         article_exists,
         [
             prepare_update_payload(extra_data_key="update_payload"),
-            send_and_wait_robotupload(
+            send_robotupload(
                 marcxml_processor=hep2marc,
                 mode="correct",
                 extra_data_key="update_payload"
             ),
         ], [
-            send_and_wait_robotupload(
+            send_robotupload(
                 marcxml_processor=hep2marc,
                 mode="insert"
             ),
