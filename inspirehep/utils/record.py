@@ -30,16 +30,6 @@ import re
 SPLIT_KEY_PATTERN = re.compile('\.|\[')
 
 
-def get_title(record):
-    """Get preferred title from record."""
-    return get_value(record, 'titles[0].title', default='')
-
-
-def get_subtitle(record):
-    """Get preferred subtitle from record."""
-    return get_value(record, 'titles[0].subtitle', default='')
-
-
 def get_abstract(record):
     """Get preferred abstract from record."""
     chosen_abstract = ""
@@ -56,6 +46,21 @@ def get_abstract(record):
         chosen_abstract = record['abstracts'][0]['value']
 
     return chosen_abstract
+
+
+def get_arxiv_id(record):
+    """Return the first arXiv identifier of a record."""
+    return get_value(record, 'arxiv_eprints.value[0]', default='')
+
+
+def get_subtitle(record):
+    """Get preferred subtitle from record."""
+    return get_value(record, 'titles.subtitle[0]', default='')
+
+
+def get_title(record):
+    """Get preferred title from record."""
+    return get_value(record, 'titles.title[0]', default='')
 
 
 def get_value(record, key, default=None):

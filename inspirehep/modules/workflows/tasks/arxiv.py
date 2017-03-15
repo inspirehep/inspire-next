@@ -36,8 +36,8 @@ from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep
 from inspirehep.modules.refextract.tasks import extract_references
-from inspirehep.utils.arxiv import get_clean_arXiv_id
 from inspirehep.utils.helpers import download_file_to_workflow
+from inspirehep.utils.record import get_arxiv_id
 
 from plotextractor.api import process_tarball
 from plotextractor.converter import untar
@@ -57,7 +57,7 @@ def arxiv_fulltext_download(obj, eng):
     :param obj: Workflow Object to process
     :param eng: Workflow Engine processing the object
     """
-    arxiv_id = get_clean_arXiv_id(obj.data)
+    arxiv_id = get_arxiv_id(obj.data)
     filename = secure_filename("{0}.pdf".format(arxiv_id))
     if filename not in obj.files:
         pdf = download_file_to_workflow(
@@ -78,7 +78,7 @@ def arxiv_plot_extract(obj, eng):
     """
     from wand.exceptions import DelegateError
 
-    arxiv_id = get_clean_arXiv_id(obj.data)
+    arxiv_id = get_arxiv_id(obj.data)
     filename = secure_filename("{0}.tar.gz".format(arxiv_id))
     if filename not in obj.files:
         tarball = download_file_to_workflow(
@@ -118,7 +118,7 @@ def arxiv_refextract(obj, eng):
     :param obj: Workflow Object to process
     :param eng: Workflow Engine processing the object
     """
-    arxiv_id = get_clean_arXiv_id(obj.data)
+    arxiv_id = get_arxiv_id(obj.data)
     filename = secure_filename("{0}.pdf".format(arxiv_id))
     if filename not in obj.files:
         pdf = download_file_to_workflow(
@@ -153,7 +153,7 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     def _author_list(obj, eng):
         from inspirehep.modules.converter import convert
 
-        arxiv_id = get_clean_arXiv_id(obj.data)
+        arxiv_id = get_arxiv_id(obj.data)
         filename = secure_filename("{0}.tar.gz".format(arxiv_id))
         if filename not in obj.files:
             tarball = download_file_to_workflow(

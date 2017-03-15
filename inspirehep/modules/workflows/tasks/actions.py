@@ -30,8 +30,7 @@ from flask import current_app
 
 from inspirehep.modules.workflows.utils import log_workflows_action
 
-from inspirehep.utils.arxiv import get_clean_arXiv_id
-from inspirehep.utils.record import get_value
+from inspirehep.utils.record import get_arxiv_id, get_value
 
 
 def mark(key, value):
@@ -154,7 +153,7 @@ def is_experimental_paper(obj, eng):
 
 def is_arxiv_paper(obj, *args, **kwargs):
     """Check if the record is from arXiv."""
-    arxiv_id = get_clean_arXiv_id(obj.data)
+    arxiv_id = get_arxiv_id(obj.data)
     categories = get_value(obj.data, 'arxiv_eprints.categories')
 
     if arxiv_id or categories:
