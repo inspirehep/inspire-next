@@ -854,3 +854,13 @@ $hp_table_bg: #fff;
     font-size: 0.9em;
     color: $clouds !important;
 }
+
+.decision-btn-wrapper {
+    .row {
+        margin-bottom: 5px;
+    }
+
+    i {
+        margin-right: 5px;
+    }
+}

@@ -46,7 +46,9 @@ def load_submitted_record(input_data):
         return (
             'M. Twain' in record and
             'Twain, Mark' in record and
-            'Experiment: ATLAS - From: 2002 To: 2005' in record and
+            'ATLAS' in record and
+            '2002' in record and
+            '2005' in record and
             'Submitted by admin@inspirehep.net\non' in record and
             'Some comments about the author' in record and
             'http://www.example1.com' in record and
@@ -68,6 +70,7 @@ def load_submitted_record(input_data):
         record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-submission-info'))).text
         record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-subjects'))).text
         record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-positions'))).text
+        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-experiments'))).text
         record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-advisors'))).text
     except (ElementNotVisibleException, WebDriverException):
         go_to()

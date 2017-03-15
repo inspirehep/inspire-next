@@ -1,28 +1,23 @@
 <div class="detail-panel" id="hp-panel-positions">
-  <div class="table-block">
-    <h4>Insitution History</h4>
-
-    <div class="row table-header">
-      <div class="col-md-6 col-sm-4">Institution</div>
-      <div class="col-md-2 col-sm-4">Rank</div>
-      <div class="col-md-2 col-sm-2">Start Date</div>
-      <div class="col-md-2 col-sm-2">End Date</div>
-    </div>
-    <div class="clearfix"></div>
-
-    <div class="table-body">
-      <div class="row table-row"
-           ng-repeat="position in vm.record.metadata.positions">
-        <div class="col-md-6 col-sm-4"
-             ng-bind="position.institution.name"></div>
-        <div class="col-md-2 col-sm-4"
-             ng-bind="position._rank"></div>
-        <div class="col-md-2 col-sm-2"
-             ng-bind="position.start_date"></div>
-        <div class="col-md-2 col-sm-2"
-             ng-bind="position.end_date"></div>
-      </div>
-      <div class="clearfix"></div>
-    </div>
-  </div>
+  <h4>Institution History</h4>
+  <table class="table table-striped">
+  <thead>
+    <tr>
+      <th class="text-muted">Institution</th>
+      <th class="text-muted">Rank</th>
+      <th class="text-muted">Start Date</th>
+      <th class="text-muted">End Date</th>
+      <th class="text-muted">Current</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-if="position.institution" ng-repeat="position in vm.record.metadata.positions">
+      <td><div ng-bind="position.institution.name"></div></td>
+      <td><div ng-bind="position._rank"></div></td>
+      <td><div ng-bind="position.start_date"></div></td>
+      <td><div ng-bind="position.end_date"></div></td>
+      <td><div ng-bind="position.current"></div></td>
+    </tr>
+  </tbody>
+  </table>
 </div>
