@@ -30,29 +30,29 @@ from inspirehep.bat.pages import (
 
 
 INPUT_AUTHOR_DATA = {
-    'given-names': 'Mark',
-    'family-name': 'Twain',
-    'display-name': 'M. Twain',
-    'native-name': 'M. Twain',
-    'public-email': 'mark.twain@history.org',
+    'given_names': 'Mark',
+    'family_name': 'Twain',
+    'display_name': 'M. Twain',
+    'native_name': 'M. Twain',
+    'public_emails-0-email': 'mark.twain@history.org',
+    'status': 'retired',
     'orcid': '1111-1111-1111-1111',
-    'websites-0': 'http://www.example1.com',
-    'websites-1': 'http://www.example2.com',
-    'linkedin-url': 'http://www.example3.com',
-    'twitter-url': 'http://www.example4.com',
-    'blog-url': 'http://www.example5.com',
-    'institution-name': 'CERN',
-    'institution-start_year': '2000',
-    'institution-end_year': '2001',
-    'institution-rank': 'STAFF',
-    'experiments-name': 'ATLAS',
-    'experiments-start_year': '2002',
-    'experiments-end_year': '2005',
-    'advisors-name': 'Bob White',
-    'advisors-degree_type': 'phd',
+    'websites-0-webpage': 'http://www.example1.com',
+    'websites-1-webpage': 'http://www.example2.com',
+    'linkedin_url': 'http://www.example3.com',
+    'twitter_url': 'http://www.example4.com',
+    'blog_url': 'http://www.example5.com',
+    'institution_history-0-name': 'CERN',
+    'institution_history-0-start_year': '2000',
+    'institution_history-0-end_year': '2001',
+    'institution_history-0-rank': 'STAFF',
+    'experiments-0-name': 'ATLAS',
+    'experiments-0-start_year': '2002',
+    'experiments-0-end_year': '2005',
+    'advisors-0-name': 'Bob White',
+    'advisors-0-degree_type': 'habilitation',
     'extra_comments': 'Some comments about the author',
-    'subject-0': 'astro-ph',
-    'subject-1': 'cond-mat'
+    'field-research_field': 'astro-ph, cond-mat'
 }
 
 
@@ -207,4 +207,4 @@ def test_review_submission_author(login):
     holding_panel_author_list.load_submission_record(INPUT_AUTHOR_DATA)
     holding_panel_author_detail.go_to()
     holding_panel_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holding_panel_author_detail.review_record().has_error()
+    assert holding_panel_author_detail.review_record(INPUT_AUTHOR_DATA).has_error()

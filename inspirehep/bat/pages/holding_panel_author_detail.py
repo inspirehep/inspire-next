@@ -46,6 +46,7 @@ def load_submitted_record(input_data):
         return (
             'M. Twain' in record and
             'Twain, Mark' in record and
+            'retired' in record and
             'ATLAS' in record and
             '2002' in record and
             '2005' in record and
@@ -106,11 +107,17 @@ def curation_record():
     return ArsenicResponse(_curation_record)
 
 
-def review_record():
+def review_record(input_data):
     def _review_record():
+        def _text_in_element(element_id, text):
+            try:
+                return text in Arsenic().find_element_by_id(element_id).get_attribute('value')
+            except TypeError:
+                return text in Arsenic().find_element_by_id(element_id).text
         return (
             WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'inspireid'))) and
-            WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'bai')))
+            WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'bai'))) and
+            all([_text_in_element(element_id, text) for element_id, text in input_data.iteritems()])
         )
 
     Arsenic().find_element_by_id('btn-review-submission').click()
