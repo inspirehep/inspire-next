@@ -26,7 +26,7 @@
                 },
                 "acquisition_source": {
                     "properties": {
-                        "date": {
+                        "datetime": {
                             "type": "string"
                         },
                         "email": {

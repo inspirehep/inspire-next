@@ -367,11 +367,11 @@
           <p class="text-center" ng-if="vm.record.metadata.acquisition_source">
             <span ng-switch="vm.record.metadata.acquisition_source.method">
               <span ng-switch-when="submitter">
-                Submitted by <i>{{vm.record.metadata.acquisition_source.email}}</i><br/> on <i>{{vm.record.metadata.acquisition_source.date | date : "dd/MM/yy HH:mm:ss"}}</i>
+                Submitted by <i>{{vm.record.metadata.acquisition_source.email}}</i><br/> on <i>{{vm.record.metadata.acquisition_source.datetime | date : "dd/MM/yy HH:mm:ss"}}</i>
               </span>
               <span ng-switch-default>
                 Harvested on <span class="font-bolder"
-                                   ng-bind="vm.record.metadata.acquisition_source.date"></span> from
+                                   ng-bind="vm.record.metadata.acquisition_source.datetime"></span> from
                 <span class="font-bolder"
                       ng-bind="vm.record.metadata.acquisition_source.source"></span> using
                 <span class="font-bolder"

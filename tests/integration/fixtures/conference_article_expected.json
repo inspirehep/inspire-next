@@ -13,7 +13,7 @@
       }
    ],
    "acquisition_source":{
-      "date":"1993-02-02T06:00:00",
+      "datetime":"1993-02-02T06:00:00",
       "source":"submitter",
       "method":"submitter",
       "submission_number":"1",

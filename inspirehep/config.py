@@ -1467,7 +1467,7 @@ WORKFLOWS_UI_REST_SORT_OPTIONS = {
         },
         "mostrecent": {
             "title": 'Most recent',
-            "fields": ['metadata.acquisition_source.date'],
+            "fields": ['metadata.acquisition_source.datetime'],
             "default_order": 'desc',
             "order": 2,
         },
