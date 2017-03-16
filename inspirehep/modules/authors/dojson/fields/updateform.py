@@ -118,7 +118,7 @@ def linkedin_url(self, key, value):
 def orcid(self, key, value):
     orcid = {
         'value': value,
-        'type': 'ORCID'
+        'schema': 'ORCID'
     }
     if 'ids' in self:
         self['ids'].append(orcid)
@@ -131,7 +131,7 @@ def orcid(self, key, value):
 def bai(self, key, value):
     bai = {
         'value': value,
-        'type': 'BAI'
+        'schema': 'INSPIRE BAI'
     }
     if 'ids' in self:
         self['ids'].append(bai)
@@ -144,7 +144,7 @@ def bai(self, key, value):
 def inspireid(self, key, value):
     inspireid = {
         'value': value,
-        'type': 'INSPIRE'
+        'schema': 'INSPIRE ID'
     }
     if 'ids' in self:
         self['ids'].append(inspireid)
@@ -230,10 +230,8 @@ def experiments(self, key, value):
                    key=lambda k: k["start_year"],
                    reverse=True)
     for experiment in value:
-        experiment["current"] = True if experiment["status"] else False
         _set_int_or_del(experiment, "start_year", experiment.get("start_year"))
         _set_int_or_del(experiment, "end_year", experiment.get("end_year"))
-        del experiment["status"]
         experiments.append(experiment)
 
     return experiments

@@ -219,7 +219,7 @@ def test_ids_from_orcid():
 
     expected = [
         {
-            'type': 'ORCID',
+            'schema': 'ORCID',
             'value': 'foo',
         },
     ]
@@ -236,11 +236,11 @@ def test_ids_from_orcid_appends():
 
     expected = [
         {
-            'type': 'ORCID',
+            'schema': 'ORCID',
             'value': 'foo',
         },
         {
-            'type': 'ORCID',
+            'schema': 'ORCID',
             'value': 'bar',
         },
     ]
@@ -256,7 +256,7 @@ def test_ids_from_bai():
 
     expected = [
         {
-            'type': 'BAI',
+            'schema': 'INSPIRE BAI',
             'value': 'foo',
         },
     ]
@@ -273,11 +273,11 @@ def test_ids_from_bai_appends():
 
     expected = [
         {
-            'type': 'BAI',
+            'schema': 'INSPIRE BAI',
             'value': 'foo',
         },
         {
-            'type': 'BAI',
+            'schema': 'INSPIRE BAI',
             'value': 'bar',
         },
     ]
@@ -293,7 +293,7 @@ def test_ids_from_inspireid():
 
     expected = [
         {
-            'type': 'INSPIRE',
+            'schema': 'INSPIRE ID',
             'value': 'foo',
         },
     ]
@@ -310,11 +310,11 @@ def test_ids_from_inspireid_appends():
 
     expected = [
         {
-            'type': 'INSPIRE',
+            'schema': 'INSPIRE ID',
             'value': 'foo',
         },
         {
-            'type': 'INSPIRE',
+            'schema': 'INSPIRE ID',
             'value': 'bar',
         },
     ]
@@ -483,11 +483,11 @@ def test_experiments_from_experiments():
         'experiments': [
             {
                 'start_year': 2009,
-                'status': 'foo',
+                'current': True,
             },
             {
                 'start_year': 2010,
-                'status': '',
+                'current': False,
             },
         ],
     }
@@ -502,6 +502,7 @@ def test_experiments_from_experiments():
             'current': True,
         },
     ]
+
     result = updateform.do(form)
 
     assert expected == result['experiments']

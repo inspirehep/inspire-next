@@ -30,7 +30,10 @@ from flask import current_app, url_for
 
 from sqlalchemy.orm.exc import NoResultFound
 
+from inspirehep.dojson.utils import strip_empty_values
 from inspirehep.modules.forms.utils import filter_empty_elements
+
+from inspire_schemas.utils import validate
 
 from invenio_accounts.models import User
 from invenio_oauthclient.models import UserIdentity
@@ -100,8 +103,12 @@ def formdata_to_model(obj, formdata):
         method="submitter",
         orcid=orcid,
         submission_number=str(obj.id),
-        internal_uid=obj.id_user,
+        internal_uid=int(obj.id_user),
     )
+
+    strip_empty_values(data)
+
+    validate(data, 'authors')
 
     return data
 

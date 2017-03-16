@@ -50,6 +50,7 @@ from invenio_workflows import workflow_object_class, start, resume
 from invenio_workflows_ui.api import WorkflowUIRecord
 
 from inspirehep.modules.forms.form import DataExporter
+from inspirehep.utils.record import get_value
 
 from ..forms import AuthorUpdateForm
 from ..permissions import holdingpen_author_permission
@@ -87,7 +88,6 @@ def convert_for_form(data):
             data["given_names"] = ""
         data["family_name"] = data["name"].get("value").split(",")[0].strip()
         data["display_name"] = data["name"].get("preferred_name")
-        data["status"] = data["name"].get("status", "").lower()
     if "native_name" in data:
         data["native_name"] = data["native_name"][0]
     if "urls" in data:
@@ -155,11 +155,11 @@ def convert_for_form(data):
     if "ids" in data:
         for id in data["ids"]:
             try:
-                if id["type"] == "ORCID":
+                if id["schema"] == "ORCID":
                     data["orcid"] = id["value"]
-                elif id["type"] == "INSPIRE BAI":
+                elif id["schema"] == "INSPIRE BAI":
                     data["bai"] = id["value"]
-                elif id["type"] == "INSPIRE ID":
+                elif id["schema"] == "INSPIRE ID":
                     data["inspireid"] = id["value"]
             except KeyError:
                 # Protect against cases when there is no value in metadata
@@ -333,21 +333,12 @@ def newreview():
 
     workflow_metadata = WorkflowUIRecord.get_record(objectid)['metadata']
 
-    # Initialise extra_data
-    workflow_metadata['extra_data'] = workflow_metadata.get('extra_data', {})
-    workflow_metadata['extra_data']['is-update'] = True
-
     # Converting json to populate form
+    workflow_metadata['extra_comments'] = get_value(
+        workflow_metadata,
+        '_private_notes[0].value'
+    )
     convert_for_form(workflow_metadata)
-    workflow_metadata['comments'] = workflow_metadata.get('_private_note')
-    research_fields = workflow_metadata.pop('arxiv_categories')
-    final_research_fields = []
-    for field in research_fields:
-        try:
-            final_research_fields.append(field['term'])
-        except TypeError:
-            pass
-    workflow_metadata['research_field'] = final_research_fields
 
     form = AuthorUpdateForm(
         data=workflow_metadata, is_review=True)

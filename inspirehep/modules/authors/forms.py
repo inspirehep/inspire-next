@@ -223,7 +223,7 @@ class ExperimentsInlineForm(INSPIREForm):
         widget_classes="datepicker form-control"
     )
 
-    status = fields.BooleanField(
+    current = fields.BooleanField(
         widget=currentCheckboxWidget
     )
 
@@ -542,10 +542,11 @@ class AuthorUpdateForm(INSPIREForm):
          )
     ]
 
-    def __init__(self, is_review=False, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Constructor."""
         super(AuthorUpdateForm, self).__init__(*args, **kwargs)
         is_update = kwargs.pop('is_update', False)
+        is_review = kwargs.pop('is_review', False)
         if is_update:
             self.orcid.widget = HiddenInput()
             self.orcid.validators = []
