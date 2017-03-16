@@ -566,7 +566,7 @@ def register_menu_items():
 
 
 #
-# Redirect /record/N
+# Legacy redirects
 #
 
 @blueprint.route('/record/<control_number>')
@@ -580,6 +580,28 @@ def record(control_number):
     return redirect('/{endpoint}/{control_number}'.format(
         endpoint=get_endpoint_from_pid_type(pid.pid_type),
         control_number=control_number)), 301
+
+
+@blueprint.route('/author/new')
+def author_new():
+    bai = request.values.get('bai', None, type=str)
+    return redirect(url_for('inspirehep_authors_holdingpen.new', bai=bai)), 301
+
+
+@blueprint.route('/author/update')
+def author_update():
+    recid = request.values.get('recid', None, type=str)
+    if recid:
+        return redirect(
+            url_for('inspirehep_authors_holdingpen.update', recid=recid)
+        ), 301
+    else:
+        return redirect(url_for('inspirehep_authors_holdingpen.new')), 301
+
+
+@blueprint.route('/submit/literature/create')
+def literature_new():
+    return redirect(url_for('inspirehep_literature_suggest.create')), 301
 
 
 #
