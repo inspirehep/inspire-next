@@ -124,7 +124,8 @@
                     "type": "string"
                 },
                 "legacy_creation_date": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "location": {
                     "properties": {

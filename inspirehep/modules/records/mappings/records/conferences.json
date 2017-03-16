@@ -70,7 +70,8 @@
                     "type": "object"
                 },
                 "closing_date": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "cnum": {
                     "copy_to": "conferenceautocomplete",
@@ -138,7 +139,8 @@
                     "type": "object"
                 },
                 "legacy_creation_date": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "new_record": {
                     "properties": {
@@ -150,8 +152,8 @@
                 },
                 "opening_date": {
                     "copy_to": "conferenceautocomplete",
-                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
-                    "type": "date"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "place": {
                     "copy_to": "conferenceautocomplete",

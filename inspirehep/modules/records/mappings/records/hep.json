@@ -16,7 +16,8 @@
                 "_desy_bookkeeping": {
                     "properties": {
                         "date": {
-                            "type": "string"
+                            "type": "date",
+                            "format": "date||yyyy-MM||yyyy"
                         },
                         "expert": {
                             "type": "string"
@@ -44,7 +45,8 @@
                             "type": "string"
                         },
                         "creation_datetime": {
-                            "type": "string"
+                            "type": "date",
+                            "format": "basic_date_time_no_millis"
                         },
                         "description": {
                             "type": "string"
@@ -155,7 +157,8 @@
                 "acquisition_source": {
                     "properties": {
                         "date": {
-                            "type": "string"
+                            "type": "date",
+                            "format": "date||yyyy-MM||yyyy"
                         },
                         "email": {
                             "type": "string"
@@ -353,8 +356,8 @@
                     "type": "object"
                 },
                 "earliest_date": {
-                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
-                    "type": "date"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "editions": {
                     "type": "string"
@@ -390,7 +393,8 @@
                 "imprints": {
                     "properties": {
                         "date": {
-                            "type": "string"
+                            "type": "date",
+                            "format": "date||yyyy-MM||yyyy"
                         },
                         "place": {
                             "type": "string"
@@ -441,7 +445,8 @@
                     "type": "string"
                 },
                 "legacy_creation_date": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "license": {
                     "properties": {
@@ -489,7 +494,8 @@
                     "type": "object"
                 },
                 "preprint_date": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "public_notes": {
                     "properties": {
@@ -645,7 +651,8 @@
                                 "imprint": {
                                     "properties": {
                                         "date": {
-                                            "type": "string"
+                                            "type": "date",
+                                            "format": "date||yyyy-MM||yyyy"
                                         },
                                         "place": {
                                             "type": "string"
@@ -784,10 +791,12 @@
                 "thesis_info": {
                     "properties": {
                         "date": {
-                            "type": "string"
+                            "type": "date",
+                            "format": "date||yyyy-MM||yyyy"
                         },
                         "defense_date": {
-                            "type": "string"
+                            "type": "date",
+                            "format": "date||yyyy-MM||yyyy"
                         },
                         "degree_type": {
                             "type": "string"
