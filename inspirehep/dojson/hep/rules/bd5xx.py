@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 from dojson import utils
 
 from inspirehep.utils.helpers import force_list
@@ -32,56 +34,101 @@ from ..model import hep, hep2marc
 from ...utils import force_single_element, get_record_ref
 
 
+IS_DEFENSE_DATE = re.compile('Presented on (?P<defense_date>\d{4}-\d{2}-\d{2})')
+
+
+@hep.over('public_notes', '^500..')
+def public_notes(self, key, value):
+    """Populate the ``public_notes`` key.
+
+    Also populates the ``thesis_info`` key through side effects.
+    """
+    public_notes = self.get('public_notes', [])
+    thesis_info = self.get('thesis_info', {})
+
+    source = force_single_element(value.get('9', ''))
+    for value in force_list(value):
+        for public_note in force_list(value.get('a')):
+            match = IS_DEFENSE_DATE.match(public_note)
+            if match:
+                thesis_info['defense_date'] = match.group('defense_date')
+            else:
+                public_notes.append({
+                    'source': source,
+                    'value': public_note,
+                })
+
+    self['thesis_info'] = thesis_info
+    return public_notes
+
+
 @hep.over('thesis_info', '^502..')
 def thesis_info(self, key, value):
-    DEGREE_TYPES_MAP = {
-        'RAPPORT DE STAGE': 'other',
-        'INTERNSHIP REPORT': 'other',
-        'DIPLOMA': 'diploma',
-        'BACHELOR': 'bachelor',
-        'LAUREA': 'laurea',
-        'MASTER': 'master',
-        'THESIS': 'other',
-        'PHD': 'phd',
-        'PDF': 'phd',
-        'PH.D. THESIS': 'phd',
-        'HABILITATION': 'habilitation',
-    }
+    def _get_degree_type(value):
+        DEGREE_TYPES_MAP = {
+            'RAPPORT DE STAGE': 'other',
+            'INTERNSHIP REPORT': 'other',
+            'DIPLOMA': 'diploma',
+            'BACHELOR': 'bachelor',
+            'LAUREA': 'laurea',
+            'MASTER': 'master',
+            'THESIS': 'other',
+            'PHD': 'phd',
+            'PDF': 'phd',
+            'PH.D. THESIS': 'phd',
+            'HABILITATION': 'habilitation',
+        }
 
-    _degree_type = force_single_element(value.get('b'))
-    if _degree_type:
-        degree_type = DEGREE_TYPES_MAP.get(_degree_type.upper(), 'other')
-    else:
-        degree_type = None
+        b_value = force_single_element(value.get('b', ''))
+        if b_value:
+            return DEGREE_TYPES_MAP.get(b_value.upper(), 'other')
 
-    res = {
-        'defense_date': value.get('a'),
-        'degree_type': degree_type,
-        'date': value.get('d'),
-    }
+    def _get_institutions(value):
+        c_values = force_list(value.get('c'))
+        z_values = force_list(value.get('z'))
 
-    inst_names = force_list(value.get('c', []))
-    inst_recids = force_list(value.get('z', []))
-    if len(inst_names) != len(inst_recids):
-        institutions = [{'name': name} for name in inst_names]
-    else:
-        institutions = [{'name': name,
-                         'record': get_record_ref(recid, 'institutions'),
-                         'curated_relation': True}
-                        for name, recid in zip(inst_names, inst_recids)]
-    if institutions:
-        res['institutions'] = institutions
-    return res
+        # XXX: we zip only when they have the same length, otherwise
+        #      we might match a value with the wrong recid.
+        if len(c_values) != len(z_values):
+            return [{'name': c_value} for c_value in c_values]
+        else:
+            return [{
+                'curated_relation': True,
+                'name': c_value,
+                'record': get_record_ref(z_value, 'institutions'),
+            } for c_value, z_value in zip(c_values, z_values)]
+
+    thesis_info = self.get('thesis_info', {})
+
+    thesis_info['date'] = force_single_element(value.get('d'))
+    thesis_info['degree_type'] = _get_degree_type(value)
+    thesis_info['institutions'] = _get_institutions(value)
+
+    return thesis_info
 
 
 @hep2marc.over('502', '^thesis_info$')
 def thesis_info2marc(self, key, value):
-    return {
-        'a': value.get('defense_date'),
+    """Populate the ``502`` MARC field.
+
+    Also populates the ``500`` MARC field through side effects.
+    """
+    result_500 = self.get('500', [])
+    result_502 = self.get('502', {})
+
+    if value.get('defense_date'):
+        result_500.append({
+            'a': 'Presented on {}'.format(value.get('defense_date')),
+        })
+
+    result_502 = {
         'b': value.get('degree_type'),
-        'c': [inst['name'] for inst in value.get('institutions', [])],
+        'c': [el['name'] for el in force_list(value.get('institutions'))],
         'd': value.get('date'),
     }
+
+    self['500'] = result_500
+    return result_502
 
 
 @hep.over('abstracts', '^520..')

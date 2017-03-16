@@ -189,7 +189,6 @@ def acquisition_source2marc(self, key, value):
 
 @conferences.over('public_notes', '^500..')
 @experiments.over('public_notes', '^500..')
-@hep.over('public_notes', '^500..')
 @hepnames.over('public_notes', '^500..')
 @institutions.over('public_notes', '^500..')
 @jobs.over('public_notes', '^500..')

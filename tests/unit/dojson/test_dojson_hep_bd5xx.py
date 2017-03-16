@@ -148,13 +148,37 @@ def test_public_notes_from_500__a_and_500__a_9():
     assert expected == result['500']
 
 
-def test_thesis_from_502__a_c_d_z():
+def test_thesis_info_defense_date_from_500__a():
+    schema = load_schema('hep')
+    subschema = schema['properties']['thesis_info']
+
+    snippet = (
+        '<datafield tag="500" ind1=" " ind2=" ">'
+        '  <subfield code="a">Presented on 2016-09-30</subfield>'
+        '</datafield>'
+    )  # record/1517362
+
+    expected = {'defense_date': '2016-09-30'}
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['thesis_info'], subschema) is None
+    assert expected == result['thesis_info']
+
+    expected = [
+        {'a': 'Presented on 2016-09-30'},
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['500']
+
+
+def test_thesis_from_502__b_c_d_z():
     schema = load_schema('hep')
     subschema = schema['properties']['thesis_info']
 
     snippet = (
         '<datafield tag="502" ind1=" " ind2=" ">'
-        '  <subfield code="a">PhD</subfield>'
+        '  <subfield code="b">PhD</subfield>'
         '  <subfield code="c">IIT, Roorkee</subfield>'
         '  <subfield code="d">2011</subfield>'
         '  <subfield code="z">909554</subfield>'
@@ -163,7 +187,7 @@ def test_thesis_from_502__a_c_d_z():
 
     expected = {
         'date': '2011',
-        'defense_date': 'PhD',  # XXX: obviously wrong.
+        'degree_type': 'phd',
         'institutions': [
             {
                 'curated_relation': True,
@@ -180,7 +204,7 @@ def test_thesis_from_502__a_c_d_z():
     assert expected == result['thesis_info']
 
     expected = {
-        'a': 'PhD',
+        'b': 'phd',
         'c': [
             'IIT, Roorkee',
         ],
@@ -242,6 +266,52 @@ def test_thesis_from_502_b_double_c_d_double_z():
     result = hep2marc.do(result)
 
     assert expected == result['502']
+
+
+def test_thesis_info_from_500__a_and_502__b_c_d():
+    schema = load_schema('hep')
+    subschema = schema['properties']['thesis_info']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="500" ind1=" " ind2=" ">'
+        '    <subfield code="a">Presented on 2015-11-27</subfield>'
+        '  </datafield>'
+        '  <datafield tag="502" ind1=" " ind2=" ">'
+        '    <subfield code="b">PhD</subfield>'
+        '    <subfield code="c">Siegen U.</subfield>'
+        '    <subfield code="d">2017</subfield>'
+        '  </datafield>'
+        '<record>'
+    )  # record/1517362
+
+    expected = {
+        'date': '2017',
+        'defense_date': '2015-11-27',
+        'degree_type': 'phd',
+        'institutions': [
+            {'name': 'Siegen U.'},
+        ],
+    }
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['thesis_info'], subschema) is None
+    assert expected == result['thesis_info']
+
+    expected_500 = [
+        {'a': 'Presented on 2015-11-27'},
+    ]
+    expected_502 = {
+        'b': 'phd',
+        'c': [
+            'Siegen U.',
+        ],
+        'd': '2017',
+    }
+    result = hep2marc.do(result)
+
+    assert expected_500 == result['500']
+    assert expected_502 == result['502']
 
 
 def test_abstracts_from_520__a_9():
