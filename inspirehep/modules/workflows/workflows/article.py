@@ -193,10 +193,11 @@ ENHANCE_RECORD = [
     ),
     filter_core_keywords,
     guess_categories,
-    IF(
-        is_experimental_paper,
-        [guess_experiments]
-    ),
+    # See issue #2054
+    # IF(
+    #     is_experimental_paper,
+    #     [guess_experiments]
+    # ),
     guess_keywords,
     # Predict action for a generic HEP paper based only on title
     # and abstract.
