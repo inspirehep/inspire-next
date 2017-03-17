@@ -88,6 +88,9 @@ define([
         },
         suggestion: function(data) {
           function _getICN() {
+            if (!data.metadata.ICN) {
+              return;
+            }
             for (let i=0; i<data.metadata.ICN.length; i++) {
               if (data.metadata.ICN[i] !== data.metadata.legacy_ICN) {
                 return data.metadata.ICN[i];
