@@ -170,6 +170,30 @@ def test_thesis_info_defense_date_from_500__a():
     result = hep2marc.do(result)
 
     assert expected == result['500']
+    
+
+def test_thesis_info_defense_date_from_500__a_incomplete_date():
+    schema = load_schema('hep')
+    subschema = schema['properties']['thesis_info']
+
+    snippet = (
+        '<datafield tag="500" ind1=" " ind2=" ">'
+        '  <subfield code="a">Presented on 2016</subfield>'
+        '</datafield>'
+    )  # record/1509061
+
+    expected = {'defense_date': '2016'}
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['thesis_info'], subschema) is None
+    assert expected == result['thesis_info']
+
+    expected = [
+        {'a': 'Presented on 2016'},
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['500']
 
 
 def test_thesis_from_502__b_c_d_z():
