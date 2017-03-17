@@ -31,10 +31,6 @@ class MockUser(object):
     def __init__(self, email):
         self.email = email
 
-    def get(self, key):
-        if key == 'email':
-            return self.email
-
     @property
     def is_anonymous(self):
         return False

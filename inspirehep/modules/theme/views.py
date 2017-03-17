@@ -526,7 +526,7 @@ def postfeedback():
         if current_user.is_anonymous:
             return jsonify(success=False), 403
         else:
-            replytoaddr = current_user.get('email')
+            replytoaddr = current_user.email
             if replytoaddr == '':
                 return jsonify(success=False), 403
 
