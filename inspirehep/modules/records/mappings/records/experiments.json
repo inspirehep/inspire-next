@@ -70,19 +70,24 @@
                     "type": "boolean"
                 },
                 "date_approved": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "date_cancelled": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "date_completed": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "date_proposed": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "date_started": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "deleted": {
                     "type": "boolean"
@@ -150,7 +155,8 @@
                     "type": "object"
                 },
                 "legacy_creation_date": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "new_record": {
                     "properties": {
@@ -224,7 +230,8 @@
                             "type": "boolean"
                         },
                         "end_date": {
-                            "type": "string"
+                            "type": "date",
+                            "format": "date||yyyy-MM||yyyy"
                         },
                         "ids": {
                             "properties": {
@@ -249,7 +256,8 @@
                             "type": "object"
                         },
                         "start_date": {
-                            "type": "string"
+                            "type": "date",
+                            "format": "date||yyyy-MM||yyyy"
                         }
                     },
                     "type": "object"

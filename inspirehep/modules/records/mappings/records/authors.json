@@ -27,7 +27,8 @@
                 "acquisition_source": {
                     "properties": {
                         "date": {
-                            "type": "string"
+                            "type": "date",
+                            "format": "date||yyyy-MM||yyyy"
                         },
                         "email": {
                             "type": "string"
@@ -90,7 +91,8 @@
                     "type": "string"
                 },
                 "birth_date": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "conferences": {
                     "properties": {
@@ -104,7 +106,8 @@
                     "type": "integer"
                 },
                 "death_date": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "deleted": {
                     "type": "boolean"
@@ -129,7 +132,8 @@
                             "type": "boolean"
                         },
                         "end_year": {
-                            "type": "integer"
+                            "type": "date",
+                            "format": "year"
                         },
                         "name": {
                             "type": "string"
@@ -143,7 +147,8 @@
                             "type": "object"
                         },
                         "start_year": {
-                            "type": "integer"
+                            "type": "date",
+                            "format": "year"
                         }
                     },
                     "type": "object"
@@ -171,7 +176,8 @@
                     "type": "object"
                 },
                 "legacy_creation_date": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM||yyyy"
                 },
                 "name": {
                     "properties": {
@@ -220,7 +226,8 @@
                             "type": "string"
                         },
                         "end_date": {
-                            "type": "string"
+                            "type": "date",
+                            "format": "year"
                         },
                         "institution": {
                             "properties": {
@@ -248,7 +255,8 @@
                             "type": "string"
                         },
                         "start_date": {
-                            "type": "string"
+                            "type": "date",
+                            "format": "year"
                         }
                     },
                     "type": "object"
@@ -282,7 +290,8 @@
                 "source": {
                     "properties": {
                         "date_verified": {
-                            "type": "string"
+                            "type": "date",
+                            "format": "date||yyyy-MM||yyyy"
                         },
                         "name": {
                             "type": "string"

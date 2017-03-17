@@ -51,7 +51,8 @@
                     "type": "object"
                 },
                 "closed_date": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM"
                 },
                 "contact_details": {
                     "properties": {
@@ -68,7 +69,8 @@
                     "type": "integer"
                 },
                 "deadline_date": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM"
                 },
                 "deleted": {
                     "type": "boolean"
@@ -145,7 +147,8 @@
                     "type": "object"
                 },
                 "legacy_creation_date": {
-                    "type": "string"
+                    "type": "date",
+                    "format": "date||yyyy-MM"
                 },
                 "new_record": {
                     "properties": {
