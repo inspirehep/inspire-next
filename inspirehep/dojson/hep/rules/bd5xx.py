@@ -34,7 +34,8 @@ from ..model import hep, hep2marc
 from ...utils import force_single_element, get_record_ref
 
 
-IS_DEFENSE_DATE = re.compile('Presented on (?P<defense_date>\d{4}-\d{2}-\d{2})')
+IS_DEFENSE_DATE = re.compile(
+    'Presented on (?P<defense_date>\d{4}(-\d{2}){,2})', re.IGNORECASE)
 
 
 @hep.over('public_notes', '^500..')
