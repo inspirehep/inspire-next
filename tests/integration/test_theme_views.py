@@ -93,3 +93,43 @@ def test_record_url_redirects_to_authors(app):
 def test_record_url_returns_404_when_there_is_no_corresponding_record(app):
     with app.test_client() as client:
         assert client.get('/record/0').status_code == 404
+
+
+def test_author_new_form_redirects_without_bai(app):
+    with app.test_client() as client:
+        response = client.get('/author/new')
+
+        assert response.status_code == 301
+        assert response.location == 'http://localhost:5000/authors/new'
+
+
+def test_author_new_form_redirects_with_bai(app):
+    with app.test_client() as client:
+        response = client.get('/author/new?bai=foo')
+
+        assert response.status_code == 301
+        assert response.location == 'http://localhost:5000/authors/new?bai=foo'
+
+
+def test_author_update_form_redirects_to_new_without_recid(app):
+    with app.test_client() as client:
+        response = client.get('/author/update')
+
+        assert response.status_code == 301
+        assert response.location == 'http://localhost:5000/authors/new'
+
+
+def test_author_update_form_redirects_with_recid(app):
+    with app.test_client() as client:
+        response = client.get('/author/update?recid=123')
+
+        assert response.status_code == 301
+        assert response.location == 'http://localhost:5000/authors/123/update'
+
+
+def test_literature_new_form_redirects(app):
+    with app.test_client() as client:
+        response = client.get('/submit/literature/create')
+
+        assert response.status_code == 301
+        assert response.location == 'http://localhost:5000/literature/new'
