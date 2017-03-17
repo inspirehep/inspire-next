@@ -151,7 +151,7 @@ def acquisition_source(self, key, value):
         method = normalized_c_value
 
     return {
-        'date': value.get('d'),
+        'datetime': value.get('d'),
         'email': value.get('b'),
         'internal_uid': internal_uid,
         'method': method,
@@ -182,7 +182,7 @@ def acquisition_source2marc(self, key, value):
         'a': a_value,
         'b': value.get('email'),
         'c': c_value,
-        'd': value.get('date'),
+        'd': value.get('datetime'),
         'e': value.get('submission_number'),
     }
 

@@ -62,7 +62,7 @@
         <div class="col-md-2 pad-top-10">
           <p class="workflow-type"
              ng-class="record._source._workflow.workflow_class">
-             {{record._source.metadata.acquisition_source.date| date : "dd/MM/yy HH:mm:ss"}}
+             {{record._source.metadata.acquisition_source.datetime| date : "dd/MM/yy HH:mm:ss"}}
           </p>
           <p class="workflow-type"
              ng-class="record._source._workflow.workflow_class"
