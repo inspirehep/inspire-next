@@ -94,7 +94,7 @@ def formdata_to_model(obj, formdata):
         orcid = UserIdentity.query.filter_by(
             id_user=obj.id_user,
             method='orcid'
-        ).one()
+        ).one().id
     except NoResultFound:
         orcid = ''
     data['acquisition_source'] = dict(
