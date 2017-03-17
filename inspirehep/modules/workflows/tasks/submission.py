@@ -246,15 +246,16 @@ def send_robotupload(
         from inspirehep.dojson.utils import legacy_export_as_marc
         from inspirehep.utils.robotupload import make_robotupload_marcxml
 
-        combined_callback_url = os.path.join(
-            current_app.config["SERVER_NAME"],
-            callback_url
-
-        )
-        if not combined_callback_url.startswith('http'):
-            combined_callback_url = "https://{0}".format(
-                combined_callback_url
+        combined_callback_url = ''
+        if callback_url:
+            combined_callback_url = os.path.join(
+                current_app.config["SERVER_NAME"],
+                callback_url
             )
+            if not combined_callback_url.startswith('http'):
+                combined_callback_url = "https://{0}".format(
+                    combined_callback_url
+                )
 
         if extra_data_key is not None:
             data = obj.extra_data.get(extra_data_key) or {}
@@ -305,7 +306,8 @@ def send_robotupload(
         else:
             obj.log.info("Robotupload sent!")
             obj.log.info(result.text)
-            eng.halt("Waiting for robotupload: {0}".format(result.text))
+            if callback_url:
+                eng.halt("Waiting for robotupload: {0}".format(result.text))
 
         obj.log.info("end of upload")
 
