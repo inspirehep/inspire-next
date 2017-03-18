@@ -40,7 +40,7 @@ services:
       service: service_base
     volumes_from:
       - static
-    command: py.test inspirehep tests/unit
+    command: ./run_tests.sh
   disambiguation:
     extends:
       service: service_base

@@ -35,7 +35,7 @@ class LATEXUSSerializer(object):
         :param pid: Persistent identifier instance.
         :param record: Record instance.
         :param links_factory: Factory function for the link generation,
-                              which are added to the response.
+        which are added to the response.
         """
         return Latex(record, 'latex_us').format()
 
