@@ -262,6 +262,9 @@
                             },
                             "type": "object"
                         },
+                        "signature_block": {
+                            "type": "string"
+                        },
                         "uuid": {
                             "type": "string"
                         }
