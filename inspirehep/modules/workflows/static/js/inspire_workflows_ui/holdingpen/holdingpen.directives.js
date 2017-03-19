@@ -220,8 +220,6 @@
             Thanks again for collaborating with INSPIRE! We are looking forward to further suggestions you might have.`
           }
         ];
-
-          $scope.vm.reason = $scope.vm.reasons[0].content;
         }
 
         $scope.Utils = {
