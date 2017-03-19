@@ -30,19 +30,7 @@ define([
     this.dataEngine = new Bloodhound({
       name: 'authors',
       remote: {
-        url: '/search?cc=HepNames&p=authorautocomplete:/%QUERY.*/&of=recjson&rg=100',
-        replace: function(url, query) {
-          var query_components = query.toLowerCase().split(" ");
-          var pattern = "";
-          $.each(query_components, function(index) {
-            if (index != 0) {
-              pattern = pattern + " AND ";
-            }
-            pattern = pattern + "authorautocomplete:" + "/" + encodeURIComponent(this) + ".*/";
-          })
-
-          return '/api/authors?q=' + pattern
-        },
+        url: '/api/authors?q=authorautocomplete:%QUERY*',
         filter: function(response) {
           return $.map(response.hits.hits, function(el) { return el });
         }

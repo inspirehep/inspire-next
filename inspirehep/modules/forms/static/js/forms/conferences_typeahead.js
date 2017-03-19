@@ -47,19 +47,7 @@ define([
       dataEngine: new Bloodhound({
         name: 'conferences',
         remote: {
-          url: '/search?cc=Conferences&p=conferenceautocomplete:%QUERY*&of=recjson',
-          replace: function(url, query) {
-            var query_components = query.toLowerCase().split(" ");
-            var pattern = "";
-            $.each(query_components, function(index) {
-              if (index != 0) {
-                pattern = pattern + " AND ";
-              }
-              pattern = pattern + "conferenceautocomplete:" + "/" + encodeURIComponent(this) + ".*/";
-            })
-
-             return '/api/conferences?q=' + pattern
-          },
+          url: '/api/conferences?q=conferenceautocomplete:%QUERY*',
           filter: function(response) {
             return $.map(response.hits.hits, function(el) {
               el.metadata.place = el.metadata.address[0].original_address;
