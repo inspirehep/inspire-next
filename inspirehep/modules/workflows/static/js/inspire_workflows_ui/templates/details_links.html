@@ -18,7 +18,7 @@
     </div>
     <div class="col-md-11 col-sm-11">
       <a ng-bind="vm.record._extra_data.submission_pdf" ng-href="{{vm.record._extra_data.submission_pdf}}" editable-text="vm.record._extra_data.submission_pdf"
-      e-ng-change="Utils.registerUpdateEvent()"></a><span>&nbsp;&nbsp;<input type="checkbox" id="attach-pdf" ng-model="vm.pdf_upload">&nbsp;&nbsp;<label for="attach-pdf">Attach PDF</label></span>
+      e-ng-change="Utils.registerUpdateEvent()"></a><span>&nbsp;&nbsp;<input ng-init="vm.pdf_upload=true" type="checkbox" id="attach-pdf" ng-model="vm.pdf_upload">&nbsp;&nbsp;<label for="attach-pdf">Attach PDF</label></span>
     </div>
   </div>
 </div>

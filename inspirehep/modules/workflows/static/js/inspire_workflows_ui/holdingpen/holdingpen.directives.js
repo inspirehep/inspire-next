@@ -109,7 +109,7 @@
         $scope.vm.loading = true;
         $scope.vm.new_subject_area = '';
         $scope.vm.new_keyword = '';
-        $scope.vm.pdf_upload = true;
+        $scope.vm.pdf_upload = false;
         $scope.vm.reason = '';
         $scope.vm.reason_index = 0;
         $scope.vm.reasons = [];
