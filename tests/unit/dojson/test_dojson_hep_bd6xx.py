@@ -22,9 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import mock
-import pytest
-
 from dojson.contrib.marc21.utils import create_record
 
 from inspire_schemas.utils import load_schema
@@ -32,258 +29,37 @@ from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.utils import validate
 
 
-ACCELERATOR_EXPERIMENTS_DATA = [
-    (
-        'single_noncurated',
-        """
-        <datafield tag="693" ind1=" " ind2=" ">
-          <subfield code="e">CERN-LHC-ATLAS</subfield>
-          <subfield code="a">LHC</subfield>
-        </datafield>
-        """,
-        [
-            {
-                'accelerator': 'LHC',
-                'curated_relation': False,
-                'experiment': 'CERN-LHC-ATLAS',
-            }
-        ],
-        [
-            {
-                'a': 'LHC',
-                'e': 'CERN-LHC-ATLAS',
-            },
-        ],
-    ),
-    (
-        'multiple_noncurated',
-        """
-        <datafield tag="693" ind1=" " ind2=" ">
-          <subfield code="e">CERN-LHC-ATLAS</subfield>
-          <subfield code="a">LHC</subfield>
-        </datafield>
-        <datafield tag="693" ind1=" " ind2=" ">
-          <subfield code="e">CERN-LHC-ATLAS2</subfield>
-          <subfield code="a">LHC2</subfield>
-        </datafield>
-        """,
-        [
-            {
-                'accelerator': 'LHC',
-                'curated_relation': False,
-                'experiment': 'CERN-LHC-ATLAS',
-            },
-            {
-                'accelerator': 'LHC2',
-                'curated_relation': False,
-                'experiment': 'CERN-LHC-ATLAS2',
-            },
-        ],
-        [
-            {
-                'a': 'LHC',
-                'e': 'CERN-LHC-ATLAS',
-            },
-            {
-                'a': 'LHC2',
-                'e': 'CERN-LHC-ATLAS2',
-            },
-        ],
-    ),
-    (
-        'multiple_simultaneous_noncurated',
-        """
-        <datafield tag="693" ind1=" " ind2=" ">
-          <subfield code="e">CERN-LHC-ATLAS</subfield>
-          <subfield code="e">CERN-LHC-ATLAS2</subfield>
-          <subfield code="a">LHC</subfield>
-        </datafield>
-        """,
-        [
-            {
-                'accelerator': 'LHC',
-                'curated_relation': False,
-                'experiment': 'CERN-LHC-ATLAS',
-            },
-            {
-                'accelerator': 'LHC',
-                'curated_relation': False,
-                'experiment': 'CERN-LHC-ATLAS2',
-            },
-        ],
-        [
-            {
-                'a': 'LHC',
-                'e': 'CERN-LHC-ATLAS',
-            },
-            {
-                'a': 'LHC',
-                'e': 'CERN-LHC-ATLAS2',
-            },
-        ],
-    ),
-    (
-        'single_curated',
-        """
-        <datafield tag="693" ind1=" " ind2=" ">
-          <subfield code="e">CERN-LHC-ATLAS</subfield>
-          <subfield code="a">LHC</subfield>
-          <subfield code="0">0001</subfield>
-        </datafield>
-        """,
-        [
-            {
-                'record': 'mocked_record_1',
-                'accelerator': 'LHC',
-                'curated_relation': True,
-                'experiment': 'CERN-LHC-ATLAS',
-            },
-        ],
-        [
-            {
-                'a': 'LHC',
-                'e': 'CERN-LHC-ATLAS',
-                '0': 1,
-            },
-        ],
-    ),
-    (
-        'multiple_curated',
-        """
-        <datafield tag="693" ind1=" " ind2=" ">
-          <subfield code="e">CERN-LHC-ATLAS</subfield>
-          <subfield code="a">LHC</subfield>
-          <subfield code="0">0001</subfield>
-        </datafield>
-        <datafield tag="693" ind1=" " ind2=" ">
-          <subfield code="e">CERN-LHC-ATLAS2</subfield>
-          <subfield code="a">LHC2</subfield>
-          <subfield code="0">0002</subfield>
-        </datafield>
-        """,
-        [
-            {
-                'record': 'mocked_record_1',
-                'accelerator': 'LHC',
-                'curated_relation': True,
-                'experiment': 'CERN-LHC-ATLAS',
-            },
-            {
-                'record': 'mocked_record_2',
-                'accelerator': 'LHC2',
-                'curated_relation': True,
-                'experiment': 'CERN-LHC-ATLAS2',
-            },
-        ],
-        [
-            {
-                'a': 'LHC',
-                'e': 'CERN-LHC-ATLAS',
-                '0': 1,
-            },
-            {
-                'a': 'LHC2',
-                'e': 'CERN-LHC-ATLAS2',
-                '0': 2,
-            },
-        ],
-    ),
-    (
-        'multiple_simultaneous_curated',
-        """
-        <datafield tag="693" ind1=" " ind2=" ">
-          <subfield code="e">CERN-LHC-ATLAS</subfield>
-          <subfield code="e">CERN-LHC-ATLAS2</subfield>
-          <subfield code="a">LHC</subfield>
-          <subfield code="0">0001</subfield>
-          <subfield code="0">0002</subfield>
-        </datafield>
-        """,
-        [
-            {
-                'record': 'mocked_record_1',
-                'accelerator': 'LHC',
-                'curated_relation': True,
-                'experiment': 'CERN-LHC-ATLAS',
-            },
-            {
-                'record': 'mocked_record_2',
-                'accelerator': 'LHC',
-                'curated_relation': True,
-                'experiment': 'CERN-LHC-ATLAS2',
-            },
-        ],
-        [
-            {
-                'a': 'LHC',
-                'e': 'CERN-LHC-ATLAS',
-                '0': 1,
-            },
-            {
-                'a': 'LHC',
-                'e': 'CERN-LHC-ATLAS2',
-                '0': 2,
-            },
-        ],
-    ),
-    (
-        'multiple_simultaneous_mixed',
-        """
-        <datafield tag="693" ind1=" " ind2=" ">
-          <subfield code="e">CERN-LHC-ATLAS</subfield>
-          <subfield code="e">CERN-LHC-ATLAS2</subfield>
-          <subfield code="a">LHC</subfield>
-          <subfield code="0">0001</subfield>
-        </datafield>
-        """,
-        [
-            {
-                'accelerator': 'LHC',
-                'curated_relation': False,
-                'experiment': 'CERN-LHC-ATLAS'
-            },
-            {
-                'accelerator': 'LHC',
-                'curated_relation': False,
-                'experiment': 'CERN-LHC-ATLAS2'
-            },
-        ],
-        [
-            {
-                'a': 'LHC',
-                'e': 'CERN-LHC-ATLAS',
-            },
-            {
-                'a': 'LHC',
-                'e': 'CERN-LHC-ATLAS2',
-            },
-        ],
-    ),
-]
+def test_accelerator_experiments_from_693__a_e():
+    schema = load_schema('hep')
+    subschema = schema['properties']['accelerator_experiments']
 
+    snippet = (
+        '<datafield tag="693" ind1=" " ind2=" ">'
+        '  <subfield code="a">CERN LHC</subfield>'
+        '  <subfield code="e">CERN-LHC-CMS</subfield>'
+        '  <subfield code="0">1108642</subfield>'
+        '</datafield>'
+    )  # record/1517829/export/xme
 
-@pytest.mark.parametrize(
-    'test_name,xml_snippet,expected_json,expected_marc',
-    ACCELERATOR_EXPERIMENTS_DATA,
-    ids=[acc_exp[0] for acc_exp in ACCELERATOR_EXPERIMENTS_DATA]
-)
-@mock.patch('inspirehep.dojson.hep.rules.bd6xx.get_recid_from_ref')
-@mock.patch('inspirehep.dojson.hep.rules.bd6xx.get_record_ref')
-def test_accelerator_experiments(mock_get_record_ref, mock_get_recid_from_ref,
-                                 test_name, xml_snippet, expected_json,
-                                 expected_marc):
-    mock_get_record_ref.side_effect = lambda x, *_: x and 'mocked_record_%s' % x
-    mock_get_recid_from_ref.side_effect = lambda x, *_:  x and int(x.rsplit('_')[-1])
+    expected = [
+        {
+            'legacy_name': 'CERN-LHC-CMS',
+            'record': {
+                '$ref': 'http://localhost:5000/api/experiments/1108642',
+            },
+        },
+    ]
+    result = hep.do(create_record(snippet))
 
-    if not xml_snippet.strip().startswith('<record>'):
-        xml_snippet = '<record>%s</record>' % xml_snippet
+    assert validate(result['accelerator_experiments'], subschema) is None
+    assert expected == result['accelerator_experiments']
 
-    json_data = hep.do(create_record(xml_snippet))
-    json_experiments = json_data['accelerator_experiments']
-    marc_experiments = hep2marc.do(json_data)['693']
+    expected = [
+        {'e': 'CERN-LHC-CMS'},
+    ]
+    result = hep2marc.do(result)
 
-    assert marc_experiments == expected_marc
-    assert json_experiments == expected_json
+    assert expected == result['693']
 
 
 def test_keywords_from_695__a_2():
