@@ -745,6 +745,65 @@ def test_ids_from_035__9():
     assert 'ids' not in result
 
 
+def test_name_from_100__a_g_q():
+    schema = load_schema('authors')
+    subschema = schema['properties']['name']
+
+    snippet = (
+        '<datafield tag="100" ind1=" " ind2=" ">'
+        '  <subfield code="a">Abarbanel, Henry D.I.</subfield>'
+        '  <subfield code="q">Henry D.I. Abarbanel</subfield>'
+        '  <subfield code="g">ACTIVE</subfield>'
+        '</datafield>'
+    )  # record/1019100
+
+    expected = {
+        'value': 'Abarbanel, Henry D.I.',
+        'preferred_name': 'Henry D.I. Abarbanel',
+    }
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['name'], subschema) is None
+    assert expected == result['name']
+
+    expected = {
+        'a': 'Abarbanel, Henry D.I.',
+        'q': 'Henry D.I. Abarbanel',
+        'g': 'active',
+    }
+    result = hepnames2marc.do(result)
+
+    assert expected == result['100']
+
+
+def test_status_from_100__a_g_q():
+    schema = load_schema('authors')
+    subschema = schema['properties']['status']
+
+    snippet = (
+        '<datafield tag="100" ind1=" " ind2=" ">'
+        '  <subfield code="a">Abarbanel, Henry D.I.</subfield>'
+        '  <subfield code="q">Henry D.I. Abarbanel</subfield>'
+        '  <subfield code="g">ACTIVE</subfield>'
+        '</datafield>'
+    )  # record/1019100
+
+    expected = 'active'
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['status'], subschema) is None
+    assert expected == result['status']
+
+    expected = {
+        'a': 'Abarbanel, Henry D.I.',
+        'q': 'Henry D.I. Abarbanel',
+        'g': 'active',
+    }
+    result = hepnames2marc.do(result)
+
+    assert expected == result['100']
+
+
 def test_other_names_from_400__triple_a():
     schema = load_schema('authors')
     subschema = schema['properties']['other_names']

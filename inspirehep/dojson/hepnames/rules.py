@@ -161,17 +161,23 @@ def name(self, key, value):
 
 @hepnames2marc.over('100', '^name$')
 def name2marc(self, key, value):
-    return {
-        'a': value.get('value'),
-        'b': value.get('numeration'),
-        'c': value.get('title'),
-        'q': value.get('preferred_name'),
-    }
+    result = self.get('100', {})
+
+    result['a'] = value.get('value')
+    result['b'] = value.get('numeration')
+    result['c'] = value.get('title')
+    result['q'] = value.get('preferred_name')
+
+    return result
 
 
 @hepnames2marc.over('100', '^status$')
 def status2marc(self, key, value):
-    return {'g': value}
+    result = self.get('100', {})
+
+    result['g'] = value
+
+    return result
 
 
 @hepnames.over('positions', '^371..')
