@@ -109,7 +109,7 @@
         $scope.vm.loading = true;
         $scope.vm.new_subject_area = '';
         $scope.vm.new_keyword = '';
-        $scope.vm.pdf_upload = true;
+        $scope.vm.pdf_upload = false;
         $scope.vm.reason = '';
         $scope.vm.reason_index = 0;
         $scope.vm.reasons = [];
@@ -220,8 +220,6 @@
             Thanks again for collaborating with INSPIRE! We are looking forward to further suggestions you might have.`
           }
         ];
-
-          $scope.vm.reason = $scope.vm.reasons[0].content;
         }
 
         $scope.Utils = {

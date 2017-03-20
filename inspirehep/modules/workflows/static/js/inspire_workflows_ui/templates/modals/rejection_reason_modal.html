@@ -3,7 +3,7 @@
 </div>
 <div class="modal-body">
   <p>Explain why this was rejected (is sent directly to user):</p>
-  <p><textarea ng-model="vm.reason" id="reject-reason">
+  <p><textarea ng-init="vm.reason = vm.reasons[vm.reason_index].content" ng-model="vm.reason" id="reject-reason">
   </textarea></p>
   <p>
     Select template:
@@ -15,6 +15,6 @@
 <div class="modal-footer">
   <button class="btn btn-danger pull-right" type="button" ng-click="Utils.setDecision('reject'); $close()">Reject
   </button>
-  <button class="btn btn-default pull-left" type="button" ng-click="$close()">Cancel
+  <button class="btn btn-default pull-left" type="button" ng-click="vm.reason=''; $close()">Cancel
   </button>
 </div>
