@@ -1146,6 +1146,47 @@ def test_private_notes_from_595__a_9():
     assert expected == result['595']
 
 
+def test_urls_from_8564_u_and_8564_g_u_y():
+    schema = load_schema('authors')
+    subschema = schema['properties']['urls']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="856" ind1="4" ind2=" ">'
+        '    <subfield code="u">http://www.haydenplanetarium.org/tyson/</subfield>'
+        '  </datafield>'
+        '  <datafield tag="856" ind1="4" ind2=" ">'
+        '    <subfield code="g">active</subfield>'
+        '    <subfield code="u">https://twitter.com/neiltyson</subfield>'
+        '    <subfield code="y">TWITTER</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1073331
+
+    expected = [
+        {'value': 'http://www.haydenplanetarium.org/tyson/'},
+        {
+            'description': 'TWITTER',
+            'value': 'https://twitter.com/neiltyson',
+        },
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['urls'], subschema) is None
+    assert expected == result['urls']
+
+    expected = [
+        {'u': 'http://www.haydenplanetarium.org/tyson/'},
+        {
+            'u': 'https://twitter.com/neiltyson',
+            'y': 'TWITTER',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['8564']
+
+
 def test_ids_from_970__a():
     schema = load_schema('authors')
     subschema = schema['properties']['ids']

@@ -33,7 +33,6 @@ from .rules import (
     bd5xx,
     bd6xx,
     bd7xx,
-    bd8xx,
     bd9xx,
 )
 from .model import hep, hep2marc

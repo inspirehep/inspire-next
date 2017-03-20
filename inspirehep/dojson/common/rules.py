@@ -334,6 +334,16 @@ def urls(self, key, value):
     return urls
 
 
+@hep2marc.over('8564', '^urls$')
+@hepnames2marc.over('8564', '^urls$')
+@utils.for_each_value
+def urls2marc(self, key, value):
+    return {
+        'u': value.get('value'),
+        'y': value.get('description'),
+    }
+
+
 @conferences.over('legacy_creation_date', '^961..')
 @experiments.over('legacy_creation_date', '^961..')
 @hep.over('legacy_creation_date', '^961..')
