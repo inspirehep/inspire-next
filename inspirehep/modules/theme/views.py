@@ -561,6 +561,7 @@ def register_menu_items():
         current_menu.submenu("settings.workflows").hide()
         current_menu.submenu("settings.applications").hide()
         current_menu.submenu("settings.oauthclient").hide()
+        current_menu.submenu("settings.security").hide()
 
     current_app.before_first_request_funcs.append(menu_fixup)
 
