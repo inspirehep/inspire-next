@@ -60,7 +60,6 @@ def receive_after_model_commit(sender, changes):
 def enhance_record(sender, json, *args, **kwargs):
     """Runs all the record enhancers and fires the after_record_enhanced signals
        to allow receivers work with a fully populated record."""
-    populate_inspire_subjects(sender, json, *args, **kwargs)
     populate_inspire_document_type(sender, json, *args, **kwargs)
     match_valid_experiments(sender, json, *args, **kwargs)
     dates_validator(sender, json, *args, **kwargs)
@@ -68,15 +67,6 @@ def enhance_record(sender, json, *args, **kwargs):
     populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     after_record_enhanced.send(json)
-
-
-def populate_inspire_subjects(sender, json, *args, **kwargs):
-    """Populate the INSPIRE subjects before indexing.
-
-    Adds the `facet_inspire_subjects` key to the record, to be used for
-    faceting in the search interface.
-    """
-    json['facet_inspire_subjects'] = get_value(json, 'inspire_categories.term')
 
 
 def populate_inspire_document_type(sender, json, *args, **kwargs):

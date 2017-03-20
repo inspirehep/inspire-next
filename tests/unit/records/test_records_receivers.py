@@ -30,7 +30,6 @@ from inspirehep.modules.records.receivers import (
     earliest_date,
     match_valid_experiments,
     populate_inspire_document_type,
-    populate_inspire_subjects,
     populate_recid_from_ref,
     references_validator,
     populate_experiment_suggest,
@@ -399,19 +398,6 @@ def test_populate_inspire_document_type_doc_type_from_publication_type_lectures(
         'article',
         'lectures',
     ]
-
-
-def test_populate_inspire_subjects_preserves_terms():
-    json_dict = {
-        'inspire_categories': [
-            {'term': 'foo'},
-            {'not-term': 'bar'},
-        ],
-    }
-
-    populate_inspire_subjects(None, json_dict)
-
-    assert json_dict['facet_inspire_subjects'] == ['foo']
 
 
 def test_populate_recid_from_ref_naming():

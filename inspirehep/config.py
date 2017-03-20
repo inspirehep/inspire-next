@@ -1050,12 +1050,11 @@ RECORDS_UI_ENDPOINTS = dict(
 RECORDS_REST_FACETS = {
     "records-hep": {
         "filters": {
-            "author": terms_filter('exactauthor.raw'),
+            "author": terms_filter('facet_author_name'),
             "subject": terms_filter('facet_inspire_subjects'),
+            "arxiv_categories": terms_filter('facet_arxiv_categories'),
             "doc_type": terms_filter('facet_inspire_doc_type'),
-            "formulas": terms_filter('facet_formulas'),
-            "experiment": terms_filter(
-                'accelerator_experiments.facet_experiment'),
+            "experiment": terms_filter('facet_experiment'),
             "earliest_date": range_filter(
                 'earliest_date',
                 format='yyyy',
@@ -1068,27 +1067,27 @@ RECORDS_REST_FACETS = {
                     "size": 20
                 }
             },
+            "arxiv_categories": {
+                "terms": {
+                    "field": "facet_arxiv_categories",
+                    "size": 20
+                }
+            },
             "doc_type": {
                 "terms": {
                     "field": "facet_inspire_doc_type",
                     "size": 20
                 }
             },
-            "formulas": {
-                "terms": {
-                    "field": "facet_formulas",
-                    "size": 20
-                }
-            },
             "author": {
                 "terms": {
-                    "field": "facet_authors",
+                    "field": "facet_author_name",
                     "size": 20
                 }
             },
             "experiment": {
                 "terms": {
-                    "field": "accelerator_experiments.facet_experiment",
+                    "field": "facet_experiment",
                     "size": 20
                 }
             },
@@ -1105,19 +1104,26 @@ RECORDS_REST_FACETS = {
     },
     "records-authors": {
         "filters": {
-            "arxiv_categories": terms_filter('arxiv_categories'),
-            "institution": terms_filter('positions.institution.name')
+            "arxiv_categories": terms_filter('facet_arxiv_categories'),
+            "inspire_categories": terms_filter('facet_inspire_categories'),
+            "institution": terms_filter('facet_institution_name')
         },
         "aggs": {
+            "arxiv_categories": {
+                "terms": {
+                    "field": "facet_arxiv_categories",
+                    "size": 20
+                }
+            },
             "inspire_categories": {
                 "terms": {
-                    "field": "inspire_categories.term",
+                    "field": "facet_inspire_categories",
                     "size": 20
                 }
             },
             "institution": {
                 "terms": {
-                    "field": "positions.institution.name",
+                    "field": "facet_institution_name",
                     "size": 20
                 }
             }
