@@ -108,7 +108,6 @@
                         },
                         "title": {
                             "copy_to": "experimentautocomplete",
-                            "index": "not_analyzed",
                             "type": "string"
                         }
                     },

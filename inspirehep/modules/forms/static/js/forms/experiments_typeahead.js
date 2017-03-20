@@ -30,22 +30,7 @@ define([
     this.dataEngine = new Bloodhound({
       name: 'experiments',
       remote: {
-        url: '/search?cc=Experiments&p=experimentautocomplete:/.*%QUERY.*/&of=recjson&rg=100',
-        replace: function(url, query) {
-          // Names of Experiments are separated by dashes
-          // Break into components so that we match the indexed values (where
-          // dashes are removed)
-          var query_components = query.toLowerCase().split("-");
-          var pattern = "";
-          $.each(query_components, function(index) {
-            if (index != 0) {
-              pattern = pattern + " AND ";
-            }
-            pattern = pattern + "experimentautocomplete:" + "/" + encodeURIComponent(this) + ".*/";
-          })
-
-          return '/api/experiments?q=' + pattern
-        },
+        url: '/api/experiments?q=experimentautocomplete:%QUERY*',
         filter: function(response) {
           return $.map(response.hits.hits, function(el) { return el });
         }
