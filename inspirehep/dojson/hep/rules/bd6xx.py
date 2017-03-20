@@ -30,62 +30,36 @@ from inspire_schemas.utils import load_schema
 from inspirehep.utils.helpers import force_list
 
 from ..model import hep, hep2marc
-from ...utils import get_record_ref, get_recid_from_ref
+from ...utils import get_record_ref
 
 
 @hep.over('accelerator_experiments', '^693..')
-def accelerator_experiments(self, key, acc_exps_data):
-    def _get_acc_exp_json(acc_exp_data):
-        recids = []
-        if '0' in acc_exp_data:
-            try:
-                recids = [
-                    int(recid) for recid
-                    in force_list(acc_exp_data.get('0'))
-                ]
-            except (TypeError, ValueError, AttributeError):
-                pass
+def accelerator_experiments(self, key, value):
+    result = self.get('accelerator_experiments', [])
 
-        experiment_names = force_list(acc_exp_data.get('e'))
+    for value in force_list(value):
+        e_values = force_list(value.get('e'))
+        zero_values = force_list(value.get('0'))
 
         # XXX: we zip only when they have the same length, otherwise
         #      we might match a value with the wrong recid.
-        if len(recids) == len(experiment_names):
-            for recid, experiment_name in zip(recids, experiment_names):
-                yield {
-                    'record': get_record_ref(recid, 'experiments'),
-                    'accelerator': acc_exp_data.get('a'),
-                    'experiment': experiment_name,
-                    'curated_relation': True
-                }
+        if len(e_values) == len(zero_values):
+            for e_value, zero_value in zip(e_values, zero_values):
+                result.append({
+                    'legacy_name': e_value,
+                    'record': get_record_ref(zero_value, 'experiments'),
+                })
         else:
-            for experiment_name in experiment_names:
-                yield {
-                    'accelerator': acc_exp_data.get('a'),
-                    'experiment': experiment_name,
-                    'curated_relation': False,
-                }
+            for e_value in e_values:
+                result.append({'legacy_name': e_value})
 
-    acc_exps_json = self.get('accelerator_experiments', [])
-    for acc_exp_data in force_list(acc_exps_data):
-        acc_exps_json.extend(_get_acc_exp_json(acc_exp_data))
-
-    return acc_exps_json
+    return result
 
 
 @hep2marc.over('693', '^accelerator_experiments$')
 @utils.for_each_value
 def accelerator_experiments2marc(self, key, value):
-    res = {
-        'a': value.get('accelerator'),
-        'e': value.get('experiment'),
-    }
-    recid = get_recid_from_ref(value.get('record', None))
-
-    if recid:
-        res['0'] = recid
-
-    return res
+    return {'e': value.get('legacy_name')}
 
 
 @hep.over('keywords', '^(653|695)..')
