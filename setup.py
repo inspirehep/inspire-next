@@ -132,7 +132,7 @@ extras_require = {
         'invenio-db[versioning]>=1.0.0b2',
     ],
     'migration': [
-        'invenio-migrator>=1.0.0a6',
+        #'invenio-migrator>=1.0.0a6',
     ],
     'crawler': [
         'hepcrawl>=0.2.42',
