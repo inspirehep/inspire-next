@@ -487,7 +487,6 @@ def advisors2marc(self, key, value):
         'a': value.get('name'),
         'g': value.get('degree_type'),
         'x': get_recid_from_ref(value.get('record')),
-        'y': '1' if value.get('curated_relation') else '0',
     }
 
 
