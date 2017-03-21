@@ -312,6 +312,7 @@
       "source":"submitter",
       "method":"submitter",
       "submission_number":"1",
+      "internal_uid":3,
       "orcid":"0000-0001-9412-8627",
       "email":"test_orcid_user@inspirehep.net"
    },
