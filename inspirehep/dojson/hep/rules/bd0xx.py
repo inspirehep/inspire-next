@@ -110,7 +110,7 @@ def dois(self, key, value):
     values = force_list(value)
     for value in values:
         id_ = force_single_element(value.get('a', ''))
-        material = force_single_element(value.get('q', ''))
+        material = force_single_element(value.get('q', '')).lower()
         schema = force_single_element(value.get('2', ''))
 
         sources = force_list(value.get('9'))
