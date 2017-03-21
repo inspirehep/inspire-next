@@ -24,11 +24,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+import datetime
 import json
 import os
 import pkg_resources
 import re
-import logging
 
 import requests_mock
 import mock
@@ -107,6 +107,9 @@ def record():
     record_marc = create_record(record_oai_arxiv_plots_marcxml)
     json_data = hep.do(record_marc)
 
+    if 'preprint_date' in json_data:
+        json_data['preprint_date'] = datetime.date.today().isoformat()
+
     return json_data
 
 
@@ -129,7 +132,6 @@ def to_accept_record():
     json_data = hep.do(record_marc)
 
     return json_data
-
 
 
 def _do_resolve_workflow(app, workflow_id, action='accept_core'):
@@ -414,7 +416,6 @@ def test_harvesting_arxiv_workflow_rejected(
         obj = workflow_object_class.get(obj_id)
         # It was rejected
         assert obj.status == ObjectStatus.COMPLETED
-
 
 
 @mock.patch(
