@@ -206,6 +206,7 @@ def formdata_to_model(obj, formdata):
     builder.add_acquisition_source(
         datetime=datetime.datetime.utcnow().isoformat(),
         submission_number=obj.id,
+        internal_uid=int(obj.id_user),
         email=email,
         orcid=orcid,
         method='submitter'
