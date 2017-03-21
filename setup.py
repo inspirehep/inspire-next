@@ -74,7 +74,7 @@ install_requires = [
     'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
     'invenio>=3.0.0a1,<3.1.0',
     'inspire-crawler~=0.2.7',
-    'inspire-schemas~=30.0',
+    'inspire-schemas~=30.0,>=30.2.3',
     'dojson>=1.3.0',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
@@ -135,7 +135,7 @@ extras_require = {
         #'invenio-migrator>=1.0.0a6',
     ],
     'crawler': [
-        'hepcrawl>=0.2.42',
+        'hepcrawl>=0.3.4',
     ],
     'tests': tests_require,
     'development': [

@@ -172,14 +172,31 @@ def is_too_old(record, days_ago=5):
     If the record is older then it's probably an update of an earlier
     record, and we don't want those.
     """
+    date_format = "%Y-%m-%d"
     earliest_date = record.get('earliest_date', '')
     if not earliest_date:
         earliest_date = record.get('preprint_date', '')
+
     if earliest_date:
-        parsed_date = datetime.datetime.strptime(earliest_date, "%Y-%m-%d")
-        if not date_older_than(parsed_date,
-                               datetime.datetime.utcnow(),
-                               days=days_ago):
+        try:
+            parsed_date = datetime.datetime.strptime(
+                earliest_date,
+                date_format,
+            )
+
+        except ValueError as err:
+            raise ValueError(
+                (
+                    'Unrecognized earliest_date format "%s", valid formats is '
+                    '%s: %s'
+                ) % (earliest_date, date_format, err)
+            )
+
+        if not date_older_than(
+            parsed_date,
+            datetime.datetime.utcnow(),
+            days=days_ago,
+        ):
             return False
     return True
 
@@ -215,15 +232,15 @@ def previously_rejected(days_ago=None):
     """Check if record exist on INSPIRE or already rejected."""
     @wraps(previously_rejected)
     def _previously_rejected(obj, eng):
-        if current_app.config.get('PRODUCTION_MODE'):
-            if days_ago is None:
-                _days_ago = current_app.config.get('INSPIRE_ACCEPTANCE_TIMEOUT', 5)
-            else:
-                _days_ago = days_ago
+        if days_ago is None:
+            _days_ago = current_app.config.get('INSPIRE_ACCEPTANCE_TIMEOUT', 5)
+        else:
+            _days_ago = days_ago
 
-            if is_too_old(obj.data, days_ago=_days_ago):
-                obj.log.info("Record is likely rejected previously.")
-                return True
+        if is_too_old(obj.data, days_ago=_days_ago):
+            obj.log.info("Record is likely rejected previously.")
+            return True
+
         return False
 
     return _previously_rejected
