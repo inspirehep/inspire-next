@@ -107,7 +107,7 @@
               <button class="btn btn-warning"
                       ng-click="setDecision(record._id,'accept')">Accept
               </button>
-              <button ng-if="record._source.metadata.acquisition_source.method == 'arXiv'"
+              <button ng-if="record._source.metadata.acquisition_source.method == 'hepcrawl'"
                       class="btn btn-danger"
                       ng-click="setDecision(record._id, 'reject')">Reject
               </button>
