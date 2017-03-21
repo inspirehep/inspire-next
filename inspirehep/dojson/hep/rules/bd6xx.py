@@ -127,7 +127,9 @@ def keywords(self, key, value):
         self['energy_ranges'].append(int(value.get('e')))
         self['energy_ranges'].sort()
 
-    return _get_keyword_dict(key, value)
+    result = _get_keyword_dict(key, value)
+    if 'value' in result and result['value']:
+        return result
 
 
 @hep2marc.over('695', '^keywords$')

@@ -29,6 +29,16 @@ from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.utils import validate
 
 
+def test_keywords_from_653__9_ignores_lone_sources():
+    snippet = (
+        '<datafield tag="653" ind1="1" ind2=" ">'
+        '  <subfield code="9">author</subfield>'
+        '</datafield>'
+    )  # record/1382933
+
+    assert 'keywords' not in hep.do(create_record(snippet))
+
+
 def test_accelerator_experiments_from_693__a_e():
     schema = load_schema('hep')
     subschema = schema['properties']['accelerator_experiments']
