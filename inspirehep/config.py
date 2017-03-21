@@ -1442,7 +1442,8 @@ WORKFLOWS_UI_REST_FACETS = {
     "holdingpen": {
         "filters": {
             "status": terms_filter('_workflow.status'),
-            "source": terms_filter('metadata.acquisition_source.method'),
+            "source": terms_filter('metadata.acquisition_source.source'),
+            "method": terms_filter('metadata.acquisition_source.method'),
             "workflow_name": terms_filter('_workflow.workflow_name'),
             "is-update": terms_filter('_extra_data.is-update'),
             'subject': terms_filter('metadata.inspire_categories.term'),
@@ -1456,7 +1457,7 @@ WORKFLOWS_UI_REST_FACETS = {
             },
             "source": {
                 "terms": {
-                    "field": "metadata.acquisition_source.method",
+                    "field": "metadata.acquisition_source.source",
                     "size": 20
                 }
             },
