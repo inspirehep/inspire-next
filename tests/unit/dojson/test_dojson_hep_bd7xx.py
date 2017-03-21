@@ -257,3 +257,54 @@ def test_publication_info_from_773_c_p_w_double_v_double_y_0_1_2():
     result = hep2marc.do(result)
 
     assert expected == result['773']
+
+
+def test_publication_info_from_773__c_w_y_z_0_2():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    snippet = (
+        '<datafield tag="773" ind1=" " ind2=" ">'
+        '  <subfield code="c">95-104</subfield>'
+        '  <subfield code="w">C16-03-17</subfield>'
+        '  <subfield code="y">2016</subfield>'
+        '  <subfield code="z">9783945931080</subfield>'
+        '  <subfield code="2">1407887</subfield>'
+        '  <subfield code="0">1500425</subfield>'
+        '</datafield>'
+    )  # record/1501319/export/xme
+
+    expected = [
+        {
+            'cnum': 'C16-03-17',
+            'conference_record': {
+                '$ref': 'http://localhost:5000/api/conferences/1407887',
+            },
+            'page_end': '104',
+            'page_start': '95',
+            'parent_isbn': '9783945931080',
+            'parent_record': {
+                '$ref': 'http://localhost:5000/api/literature/1500425',
+            },
+            'year': 2016,
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['publication_info'], subschema) is None
+    assert expected == result['publication_info']
+
+    expected = [
+        {
+            '0': 1500425,
+            'c': [
+                '95-104',
+            ],
+            'w': 'C16-03-17',
+            'y': 2016,
+            'z': '9783945931080',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['773']

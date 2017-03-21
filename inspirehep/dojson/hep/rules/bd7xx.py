@@ -113,7 +113,7 @@ def publication_info(self, key, value):
         'cnum': force_single_element(value.get('w')),
         'pubinfo_freetext': force_single_element(value.get('x')),
         'year': year,
-        'isbn': force_single_element(value.get('z')),
+        'parent_isbn': force_single_element(value.get('z')),
         'material': _get_material(value),
     }
 
@@ -142,7 +142,7 @@ def publication_info2marc(self, key, value):
         'w': value.get('cnum'),
         'x': value.get('pubinfo_freetext'),
         'y': value.get('year'),
-        'z': value.get('isbn'),
+        'z': value.get('parent_isbn'),
         'm': value.get('material')
     }
 
