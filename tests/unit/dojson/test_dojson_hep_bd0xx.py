@@ -406,6 +406,44 @@ def test_dois_from_0247_a_2_and_0247_a_2_9():
     assert expected == result['0247']
 
 
+def test_dois_from_0247_a_q_2_9_normalizes_erratum():
+    schema = load_schema('hep')
+    subschema = schema['properties']['dois']
+
+    snippet = (
+        '<datafield tag="024" ind1="7" ind2=" ">'
+        '  <subfield code="2">DOI</subfield>'
+        '  <subfield code="9">bibmatch</subfield>'
+        '  <subfield code="a">10.1103/PhysRevC.93.049901</subfield>'
+        '  <subfield code="q">Erratum</subfield>'
+        '</datafield>'
+    )  # record/898839
+
+    expected = [
+        {
+            'material': 'erratum',
+            'value': '10.1103/PhysRevC.93.049901',
+            'source': 'bibmatch',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['dois'], subschema) is None
+    assert expected == result['dois']
+
+    expected = [
+        {
+            'a': '10.1103/PhysRevC.93.049901',
+            'q': 'erratum',
+            '2': 'DOI',
+            '9': 'bibmatch',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['0247']
+
+
 def test_texkeys_from_035__a_9():
     schema = load_schema('hep')
     subschema = schema['properties']['texkeys']
