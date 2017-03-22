@@ -106,7 +106,7 @@ def arxiv_plot_extract(obj, eng):
     for idx, plot in enumerate(plots):
         obj.files[plot.get('name')] = BytesIO(open(plot.get('url')))
         obj.files[plot.get('name')]["doctype"] = "Plot"
-        obj.files[plot.get('name')]["description"] = "{0:05d} {1}".format(
+        obj.files[plot.get('name')]["description"] = u"{0:05d} {1}".format(
             idx, "".join(plot.get('captions', []))
         )
     obj.log.info("Added {0} plots.".format(len(plots)))
