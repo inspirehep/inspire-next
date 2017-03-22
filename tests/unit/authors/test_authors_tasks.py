@@ -65,6 +65,7 @@ def data():
 @pytest.fixture()
 def unicode_data():
     return {
+        'control_number': 123,
         'name': {
             'preferred_name': u'Diego Martínez',
         },
@@ -119,6 +120,22 @@ def test_update_ticket_context(data, extra_data, user):
             'bibedit_url': 'http://inspirehep.net/record/123/edit',
             'email': 'foo@bar.com',
             'user_comment': 'Foo bar'
+        }
+        ctx = update_ticket_context(user, obj)
+        assert ctx == expected
+
+
+def test_update_ticket_context_handles_unicode(unicode_data, extra_data, user):
+    config = {
+        'AUTHORS_UPDATE_BASE_URL': 'http://inspirehep.net'
+    }
+    obj = MockObj(unicode_data, extra_data)
+    with patch.dict(current_app.config, config):
+        expected = {
+            'url': 'http://inspirehep.net/record/123',
+            'bibedit_url': 'http://inspirehep.net/record/123/edit',
+            'email': 'foo@bar.com',
+            'user_comment': 'Foo bar',
         }
         ctx = update_ticket_context(user, obj)
         assert ctx == expected
