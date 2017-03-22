@@ -301,7 +301,7 @@
 
 
       <div class="col-md-12" id="errors"
-           ng-if="vm.record._extra_data._error_msg">
+         ng-if="vm.record._workflow.status === 'ERROR'">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_errors.html">
         </holding-pen-template-handler>
