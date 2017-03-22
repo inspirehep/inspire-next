@@ -143,7 +143,7 @@ def new_ticket_context(user, obj):
 
 def update_ticket_context(user, obj):
     """Context for authornew new tickets."""
-    subject = "Your update to author {0} on INSPIRE".format(
+    subject = u"Your update to author {0} on INSPIRE".format(
         obj.data.get("name").get("preferred_name")
     )
     record_url = os.path.join(current_app.config["AUTHORS_UPDATE_BASE_URL"], "record",
