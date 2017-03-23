@@ -219,7 +219,7 @@ def formdata_to_model(obj, formdata):
 def new_ticket_context(user, obj):
     """Context for literature new tickets."""
     title = get_title(obj.data)
-    subject = "Your suggestion to INSPIRE: {0}".format(title)
+    subject = u"Your suggestion to INSPIRE: {0}".format(title)
     user_comment = obj.extra_data.get('formdata', {}).get('extra_comments', '')
     identifiers = get_value(obj.data, "external_system_numbers.value") or []
     return dict(

@@ -94,6 +94,41 @@ def test_new_ticket_context():
     assert expected == result
 
 
+def test_new_ticket_context_handles_unicode():
+    data = {
+        'titles': [
+            {
+                'title': (u"Chocs caractéristiques et ondes simples "
+                          u"exceptionnelles pour les systèmes conservatifs à "
+                          u"intégrale d'énergie: forme explicite de la solution"),
+            },
+        ],
+    }
+    extra_data = {
+    }
+
+    obj = StubObj(data, extra_data)
+    user = StubUser('user@example.com')
+
+    expected = {
+        'email': 'user@example.com',
+        'title': (u"Chocs caractéristiques et ondes simples exceptionnelles "
+                  u"pour les systèmes conservatifs à intégrale d'énergie: forme"
+                  u" explicite de la solution"),
+        'identifier': '',
+        'user_comment': '',
+        'references': None,
+        'object': obj,
+        'subject': (u"Your suggestion to INSPIRE: Chocs caractéristiques et "
+                    u"ondes simples exceptionnelles pour les systèmes "
+                    u"conservatifs à intégrale d'énergie: forme explicite de "
+                    u"la solution"),
+    }
+    result = new_ticket_context(user, obj)
+
+    assert expected == result
+
+
 def test_reply_ticket_context():
     data = {
         'titles': [
