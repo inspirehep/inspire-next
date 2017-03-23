@@ -25,6 +25,9 @@ version: '2'
 services:
   base:
     image: inspirehep/python-base
+    environment:
+      - BASE_USER_UID=${BASE_USER_UID}
+      - BASE_USER_GIT=${BASE_USER_GIT}
   indexer:
     image: inspirehep/elasticsearch
     command: elasticsearch -Dcluster.name="inspire" -Ddiscovery.zen.ping.multicast.enabled=false
