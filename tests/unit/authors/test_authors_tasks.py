@@ -119,7 +119,8 @@ def test_update_ticket_context(data, extra_data, user):
             'url': 'http://inspirehep.net/record/123',
             'bibedit_url': 'http://inspirehep.net/record/123/edit',
             'email': 'foo@bar.com',
-            'user_comment': 'Foo bar'
+            'user_comment': 'Foo bar',
+            'subject': 'Your update to author John Doe on INSPIRE',
         }
         ctx = update_ticket_context(user, obj)
         assert ctx == expected
@@ -136,6 +137,7 @@ def test_update_ticket_context_handles_unicode(unicode_data, extra_data, user):
             'bibedit_url': 'http://inspirehep.net/record/123/edit',
             'email': 'foo@bar.com',
             'user_comment': 'Foo bar',
+            'subject': u'Your update to author Diego Martínez on INSPIRE',
         }
         ctx = update_ticket_context(user, obj)
         assert ctx == expected

@@ -152,6 +152,7 @@ def update_ticket_context(user, obj):
         email=user.email,
         url=record_url,
         bibedit_url=record_url + "/edit",
+        subject=subject,
         user_comment=obj.extra_data.get('formdata', {}).get('extra_comments', ''),
     )
 
