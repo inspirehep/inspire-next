@@ -282,6 +282,9 @@
                     },
                     "type": "object"
                 },
+                "citation_count": {
+                    "type": "integer"
+                },
                 "citeable": {
                     "type": "boolean"
                 },
