@@ -151,47 +151,6 @@ def loaduserroles(source):
 
 
 @migrator.command()
-def remove_bibxxx():
-    """Drop all the legacy bibxxx tables."""
-    drop_tables("bib%%x")
-
-
-@migrator.command()
-def remove_idx():
-    """Drop all the legacy BibIndex tables."""
-    drop_tables('idx%%')
-    drop_tables('tmp_idx%%')
-
-
-@migrator.command()
-def remove_others():
-    """Drop misc legacy tables."""
-    drop_tables('aid%%')
-    drop_tables('bsk%%')
-    drop_tables('rnk%%')
-    drop_tables('jrn%%')
-    drop_tables('sbm%%')
-    drop_tables('swr%%')
-    drop_tables('crc%%')
-
-
-@migrator.command()
-def remove_legacy_tables():
-    """Remove all legacy tables."""
-    db.session.begin(subtransactions=True)
-    try:
-        db.engine.execute("SET FOREIGN_KEY_CHECKS=0;")
-        remove_others()
-        remove_bibxxx()
-        remove_idx()
-        db.engine.execute("SET FOREIGN_KEY_CHECKS=1;")
-        db.session.commit()
-    except Exception as err:  # noqa
-        db.session.rollback()
-        current_app.logger.exception(err)
-
-
-@migrator.command()
 @with_appcontext
 def clean_records():
     """Truncate all the records from various tables."""
@@ -255,20 +214,3 @@ def clean_records():
     except Exception as err:  # noqa
         db.session.rollback()
         current_app.logger.exception(err)
-
-
-def drop_tables(table_filter):
-    """Drop tables helper."""
-    table_names = db.engine.execute(
-        "SELECT TABLE_NAME"
-        " FROM INFORMATION_SCHEMA.TABLES"
-        " WHERE TABLE_NAME LIKE '{0}'"
-        " AND table_schema='{1}'".format(
-            table_filter,
-            current_app.config.get('CFG_DATABASE_NAME')
-        )
-    ).fetchall()
-    for table in table_names:
-        db.engine.execute("DROP TABLE {0}".format(table[0]))
-        click.echo(">>> Dropped {0}.".format(table[0]))
-    click.echo(">>> Removed {0} tables.".format(len(table_names)))
