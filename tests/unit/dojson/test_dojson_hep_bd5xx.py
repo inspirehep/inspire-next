@@ -446,15 +446,95 @@ def test_copyright_from_542__d_e_g():
     )  # record/1511489
 
     expected = [
-        {'holder': 'American Physical Society'},
+        {
+            'holder': 'American Physical Society',
+            'material': 'publication',
+            'year': 2017,
+        },
     ]
-    result = hep.do(create_record(snippet))  # no roundtrip
+    result = hep.do(create_record(snippet))
 
     assert validate(result['copyright'], subschema) is None
     assert expected == result['copyright']
 
     expected = [
-        {'d': 'American Physical Society'},
+        {
+            'd': 'American Physical Society',
+            'e': 'Article',
+            'g': 2017,
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['542']
+
+
+def test_copyright_from_542__d_g_3():
+    schema = load_schema('hep')
+    subschema = schema['properties']['copyright']
+
+    snippet = (
+        '<datafield tag="542" ind1=" " ind2=" ">'
+        '  <subfield code="3">Article</subfield>'
+        '  <subfield code="d">American Physical Society</subfield>'
+        '  <subfield code="g">2014</subfield>'
+        '</datafield>'
+    )  # record/1255327
+
+    expected = [
+        {
+            'holder': 'American Physical Society',
+            'material': 'publication',
+            'year': 2014,
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['copyright'], subschema) is None
+    assert expected == result['copyright']
+
+    expected = [
+        {
+            'd': 'American Physical Society',
+            'e': 'Article',
+            'g': 2014,
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['542']
+
+
+def test_copyright_from_542__d_g_3_with_weird_material():
+    schema = load_schema('hep')
+    subschema = schema['properties']['copyright']
+
+    snippet = (
+        '<datafield tag="542" ind1=" " ind2=" ">'
+        '  <subfield code="3">Published thesis as a book</subfield>'
+        '  <subfield code="d">Shaker Verlag</subfield>'
+        '  <subfield code="g">2007</subfield>'
+        '</datafield>'
+    )  # record/773620
+
+    expected = [
+        {
+            'holder': 'Shaker Verlag',
+            'material': 'publication',
+            'year': 2007,
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['copyright'], subschema) is None
+    assert expected == result['copyright']
+
+    expected = [
+        {
+            'd': 'Shaker Verlag',
+            'e': 'Article',
+            'g': 2007,
+        },
     ]
     result = hep2marc.do(result)
 
