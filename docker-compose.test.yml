@@ -30,8 +30,8 @@ services:
       service: base
     environment:
       - APP_SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://inspirehep:dbpass123@test-database:5432/inspirehep
-      - APP_BROKER_URL=amqp://guest:guest@test-rabbitmq:5672//
-      - APP_CELERY_RESULT_BACKEND=amqp://guest:guest@test-rabbitmq:5672//
+      - APP_CELERY_BROKER_URL=pyamqp://guest:guest@test-rabbitmq:5672//
+      - APP_CELERY_RESULT_BACKEND=rpc://guest:guest@test-rabbitmq:5672//
       - APP_CACHE_REDIS_URL=redis://test-redis:6379/0
       - APP_ACCOUNTS_SESSION_REDIS_URL=redis://test-redis:6379/2
       - APP_SEARCH_ELASTIC_HOSTS=test-indexer
@@ -224,7 +224,7 @@ services:
         - "CMD"
         - "bash"
         - "-c"
-        - "/virtualenv/bin/celery --broker=amqp://guest:guest@test-rabbitmq:5672// inspect ping | grep OK"
+        - "/virtualenv/bin/celery --broker=pyamqp://guest:guest@test-rabbitmq:5672// inspect ping | grep OK"
     depends_on:
       test-database:
         condition: service_healthy

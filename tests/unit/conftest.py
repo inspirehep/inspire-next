@@ -48,10 +48,10 @@ def app():
     app = create_app(
         DEBUG=True,
         WTF_CSRF_ENABLED=False,
-        CELERY_ALWAYS_EAGER=True,
+        CELERY_TASK_ALWAYS_EAGER=True,
         CELERY_RESULT_BACKEND='cache',
         CELERY_CACHE_BACKEND='memory',
-        CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
+        CELERY_TASK_EAGER_PROPAGATES=True,
         TESTING=True,
         PRODUCTION_MODE=True,
     )
