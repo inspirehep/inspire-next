@@ -53,7 +53,7 @@ if [ $(pwd) != "/code" ]; then
 		echo "----> Purging all pending messages"
 		celery purge -f -A inspirehep.celery --workdir="${VIRTUAL_ENV}"
 	else
-		celery worker -E -A inspirehep.celery --loglevel=${CELERY_LOGLEVEL} --workdir="${VIRTUAL_ENV}" --autoreload --pidfile="${CELERY_PIDFILE}" --purge &
+		celery worker -E -A inspirehep.celery --loglevel=${CELERY_LOGLEVEL} --workdir="${VIRTUAL_ENV}" --pidfile="${CELERY_PIDFILE}" --purge &
 		CELERY_PID=$!
 		trap 'cleanup' 0 1 2 3 6
 	fi

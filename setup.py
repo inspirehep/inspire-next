@@ -32,8 +32,7 @@ from setuptools import find_packages, setup
 readme = open('README.rst').read()
 
 install_requires = [
-    'amqp>=1.4.9,<2.0',
-    'celery<4.0',
+    'celery>=4.0,<5.0',
     'Flask-Gravatar>=0.4.2',
     'HarvestingKit>=0.6.2',
     'plotextractor>=0.1.2',
@@ -45,7 +44,6 @@ install_requires = [
     'flower',
     'rt',
     'langdetect>=1.0.6',
-    'librabbitmq>=1.6.1',
     'idutils>=0.2.1',
     'invenio-access>=1.0.0a7',
     'invenio-accounts>=1.0.0a12',
