@@ -291,6 +291,9 @@
           },
 
           addKeyword: function () {
+            if (!$scope.vm.new_keyword) {
+              return;
+            };
             if (!$scope.vm.record._extra_data.keywords_prediction)
               $scope.vm.record._extra_data.keywords_prediction = {};
 
