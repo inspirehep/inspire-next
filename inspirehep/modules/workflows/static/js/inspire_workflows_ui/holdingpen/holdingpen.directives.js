@@ -242,7 +242,7 @@
               scope: angular.extend($scope,
                 {
                   modalTitle: 'Reason for rejection',
-                  modalBody: '<pre class="text-wrap">' + $scope.vm.reason + '</pre>'
+                  modalBody: '<pre class="text-wrap">' + $scope.vm.record._extra_data.reason + '</pre>'
                 }
               )
             });
