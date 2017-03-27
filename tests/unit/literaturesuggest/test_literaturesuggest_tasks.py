@@ -22,11 +22,15 @@
 
 from __future__ import absolute_import, division, print_function
 
+import mock
+import pytest
+
 from inspirehep.modules.literaturesuggest.tasks import (
     new_ticket_context,
     reply_ticket_context,
     curation_ticket_context,
     curation_ticket_needed,
+    formdata_to_model,
 )
 
 
@@ -45,6 +49,57 @@ class DummyEng(object):
 class StubUser(object):
     def __init__(self, email):
         self.email = email
+
+
+@pytest.mark.parametrize(
+    'expected_result,formdata',
+    [
+        (
+            True,
+            {
+                'journal_title': 'High Energy Physics Libraries Webzine',
+                'volume': '192',
+                'year': '2011',
+                'page_range_article_id': '2550'
+            }
+        ), (
+            None,
+            {
+                'journal_title': 'High Energy Physics Libraries Webzine',
+                'volume': '192',
+                'year': '2011',
+            }
+        ), (
+            None,
+            {
+                'journal_title': 'High Energy Physics Libraries Webzine',
+                'year': '2011',
+                'page_range_article_id': '2550'
+            }
+        )
+    ]
+)
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.normalize_journal_title')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.LiteratureBuilder.validate_record')
+def test_formdata_to_model_is_not_citeable(
+    mock_validate_record,
+    mock_normalize_journal_title,
+    user_identity,
+    user,
+    expected_result,
+    formdata,
+):
+    mock_validate_record.return_value = None
+    mock_normalize_journal_title.return_value = formdata['journal_title']
+
+    data = {}
+    extra_data = {}
+    obj = StubObj(data, extra_data)
+
+    result = formdata_to_model(obj, formdata)
+    assert result.get('citeable') is expected_result
 
 
 def test_new_ticket_context():
