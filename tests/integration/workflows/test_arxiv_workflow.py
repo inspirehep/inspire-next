@@ -285,40 +285,76 @@ def fake_beard_api_request(url, data):
 
 def fake_magpie_api_request(url, data):
     """Mock json_api_request func."""
-    if data.get('corpus') == "experiments":
+    if data.get('corpus') == 'experiments':
         return {
-            "labels": [
-                ["CMS", 0.75495152473449707],
-                ["GEMS", 0.45495152473449707],
-                ["ALMA", 0.39597576856613159],
-                ["XMM", 0.28373843431472778],
+            'experiments': [
+                {
+                    'label': 'CMS',
+                    'score': 0.75495152473449707,
+                },
+                {
+                    'label': 'GEMS',
+                    'score': 0.45495152473449707,
+                },
+                {
+                    'label': 'ALMA',
+                    'score': 0.39597576856613159,
+                },
+                {
+                    'label': 'XMM',
+                    'score': 0.28373843431472778,
+                },
             ],
-            "status_code": 200
         }
-    elif data.get('corpus') == "categories":
+    elif data.get('corpus') == 'categories':
         return {
-            "labels": [
-                ["Astrophysics", 0.9941025972366333],
-                ["Phenomenology-HEP", 0.0034253709018230438],
-                ["Instrumentation", 0.0025460966862738132],
-                ["Gravitation and Cosmology", 0.0017545684240758419],
+            'categories': [
+                {
+                    'label': 'Astrophysics',
+                    'score': 0.9941025972366333,
+                },
+                {
+                    'label': 'Phenomenology-HEP',
+                    'score': 0.0034253709018230438,
+                },
+                {
+                    'label': 'Instrumentation',
+                    'score': 0.0025460966862738132,
+                },
+                {
+                    'label': 'Gravitation and Cosmology',
+                    'score': 0.0017545684240758419,
+                },
             ],
-            "status_code": 200
         }
-    elif data.get('corpus') == "keywords":
+    elif data.get('corpus') == 'keywords':
         return {
-            "labels": [
-                ["galaxy", 0.29424679279327393],
-                ["numerical calculations", 0.22625420987606049],
-                [
-                    "numerical calculations: interpretation of experiments",
-                    0.031719371676445007
-                ],
-                ["luminosity", 0.028066780418157578],
-                ["experimental results", 0.027784878388047218],
-                ["talk", 0.023392116650938988],
+            'keywords': [
+                {
+                    'label': 'galaxy',
+                    'score': 0.29424679279327393,
+                },
+                {
+                    'label': 'numerical calculations',
+                    'score': 0.22625420987606049,
+                },
+                {
+                    'label': 'numerical calculations: interpretation of experiments',
+                    'score': 0.031719371676445007,
+                },
+                {
+                    'label': 'luminosity',
+                    'score': 0.028066780418157578,
+                },
+                {
+                    'label': 'experimental results',
+                    'score': 0.027784878388047218,
+                },
+                {
+                    'label': 'talk',
+                    'score': 0.023392116650938988,
+                },
             ],
-            "status_code": 200
         }
 
 
@@ -357,10 +393,13 @@ def get_halted_workflow(app, record, extra_config=None):
     assert prediction['decision'] == 'Non-CORE'
     assert prediction['scores']['Non-CORE'] == 0.8358207729691823
 
-    # TODO: add the experiments predictions to the workflow
-    # object (see issue #2054).
+    expected_experiment_prediction = {
+        'experiments': [
+            {'label': 'CMS', 'score': 0.75495152473449707},
+        ]
+    }
     experiments_prediction = obj.extra_data.get("experiments_prediction")
-    assert experiments_prediction is None
+    assert experiments_prediction == expected_experiment_prediction
 
     keywords_prediction = obj.extra_data.get("keywords_prediction")
     assert keywords_prediction
