@@ -97,12 +97,12 @@ def reject_record(message):
     """Reject record with message."""
     @wraps(reject_record)
     def _reject_record(obj, *args, **kwargs):
-        prediction_results = obj.extra_data.get("relevance_prediction")
+        relevance_prediction = obj.extra_data.get("relevance_prediction")
         log_workflows_action(
             action="reject_record",
-            prediction_results=prediction_results,
+            relevance_prediction=relevance_prediction,
             object_id=obj.id,
-            user_id=0,
+            user_id=None,
             source="workflow",
         )
 
@@ -118,12 +118,12 @@ def is_record_relevant(obj, eng):
     if is_submission(obj, eng):
         return True
 
-    prediction_results = obj.extra_data.get("prediction_results")
+    relevance_prediction = obj.extra_data.get("relevance_prediction")
     classification_results = obj.extra_data.get('classifier_results')
 
-    if prediction_results and classification_results:
-        score = prediction_results.get("max_score")
-        decision = prediction_results.get("decision")
+    if relevance_prediction and classification_results:
+        score = relevance_prediction.get("max_score")
+        decision = relevance_prediction.get("decision")
         classification_results = classification_results.get("complete_output")
         core_keywords = classification_results.get("Core keywords")
         if decision.lower() == "rejected" and score > 0 and \

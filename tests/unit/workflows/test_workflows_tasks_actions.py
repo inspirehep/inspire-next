@@ -298,12 +298,12 @@ def test_reject_record(l_w_a):
     assert obj.log._log.getvalue() == 'foo'
     l_w_a.assert_called_once_with(
         action='reject_record',
-        prediction_results={
+        relevance_prediction={
             'decision': 'Rejected',
             'max_score': '0.222113',
         },
         object_id=1,
-        user_id=0,
+        user_id=None,
         source='workflow',
     )
 
@@ -315,7 +315,7 @@ def test_is_record_relevant():
                 'Core keywords': [],
             },
         },
-        'prediction_results': {
+        'relevance_prediction': {
             'max_score': '0.222113',
             'decision': 'Rejected',
         },
@@ -332,7 +332,7 @@ def test_is_record_relevant_returns_true_if_it_is_a_submission():
     assert is_record_relevant(obj, eng)
 
 
-def test_is_record_relevant_returns_true_if_no_prediction_results():
+def test_is_record_relevant_returns_true_if_no_relevance_prediction():
     obj = StubObj({}, {
         'classifier_results': {
             'complete_output': {
@@ -347,7 +347,7 @@ def test_is_record_relevant_returns_true_if_no_prediction_results():
 
 def test_is_record_relevant_returns_true_if_no_classifier_results():
     obj = StubObj({}, {
-        'prediction_results': {
+        'relevance_prediction': {
             'max_score': '0.222113',
             'decision': 'Rejected',
         },

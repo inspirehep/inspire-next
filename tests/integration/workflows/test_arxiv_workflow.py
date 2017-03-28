@@ -255,9 +255,9 @@ def fake_beard_api_block_request(*args, **kwargs):
 def fake_beard_api_request(url, data):
     """Mock json_api_request func."""
     return {
-        'decision': u'Rejected',
+        'decision': u'Non-CORE',
         'scores': [
-            -0.20895982018928272, -1.6722188892559084, 0.8358207729691823
+            -0.20895982018928272, 0.8358207729691823, -1.6722188892559084
         ]
     }
 
@@ -333,8 +333,8 @@ def get_halted_workflow(app, record, extra_config=None):
     # A prediction should have been made
     prediction = obj.extra_data.get("relevance_prediction")
     assert prediction
-    assert prediction['decision'] == 'Rejected'
-    assert prediction['scores']['Rejected'] == 0.8358207729691823
+    assert prediction['decision'] == 'Non-CORE'
+    assert prediction['scores']['Non-CORE'] == 0.8358207729691823
 
     # TODO: add the experiments predictions to the workflow
     # object (see issue #2054).
@@ -375,7 +375,7 @@ def get_halted_workflow(app, record, extra_config=None):
     'inspirehep.modules.refextract.tasks.extract_references_from_file',
     side_effect=fake_refextract_extract_references_from_file,
 )
-def test_harvesting_arxiv_workflow_rejected(
+def test_harvesting_arxiv_workflow_manual_rejected(
     mocked_refextract_extract_refs,
     mocked_api_request_beard_block,
     mocked_api_request_magpie,
@@ -442,7 +442,7 @@ def test_harvesting_arxiv_workflow_rejected(
     'inspirehep.modules.refextract.tasks.extract_references_from_file',
     side_effect=fake_refextract_extract_references_from_file,
 )
-def test_harvesting_arxiv_workflow_accepted(
+def test_harvesting_arxiv_workflow_manual_accepted(
     mocked_refextract_extract_refs,
     mocked_matching_search,
     mocked_api_request_beard_block,
