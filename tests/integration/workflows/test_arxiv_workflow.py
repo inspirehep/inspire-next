@@ -359,9 +359,11 @@ def get_halted_workflow(app, record, extra_config=None):
 
     # TODO: add the experiments predictions to the workflow
     # object (see issue #2054).
-    expected_experiment_prediction = [
-        {'label': 'CMS', 'score': 0.75495152473449707}
-    ]
+    expected_experiment_prediction = {
+        'experiments': [
+            {'label': 'CMS', 'score': 0.75495152473449707}
+        ]
+    }
     experiments_prediction = obj.extra_data.get("experiments_prediction")
     assert experiments_prediction == expected_experiment_prediction
 
