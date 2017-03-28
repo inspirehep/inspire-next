@@ -38,6 +38,7 @@ from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_fulltext_download,
     arxiv_plot_extract,
     arxiv_refextract,
+    arxiv_derive_inspire_categories,
 )
 from inspirehep.modules.workflows.tasks.actions import (
     add_core,
@@ -181,6 +182,7 @@ ENHANCE_RECORD = [
             arxiv_fulltext_download,
             arxiv_plot_extract,
             arxiv_refextract,
+            arxiv_derive_inspire_categories,
             arxiv_author_list("authorlist2marcxml.xsl"),
         ]
     ),
