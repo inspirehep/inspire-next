@@ -30,6 +30,70 @@ from inspirehep.bat.pages import (
     holding_panel_literature_list,
 )
 
+def test_literature_create_chapter_manually(login):
+    input_data = {
+        'pdf-1': 'pdf_url_correct',
+        'pdf-2': 'pdf_another_url_correct',
+        'title': 'My Title For Test',
+        'language': 'ru',
+        'title_translation': 'My Title was in Russian',
+        'subject': 'Computing',
+        'author-0': 'Mister White',
+        'author-0-affiliation': 'Wisconsin U., Madison',
+        'author-1': 'Mister Brown',
+        'author-1-affiliation': 'CERN',
+        'collaboration': 'This is a collaboration',
+        'experiment': 'This is an experiment',
+        'abstract': 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
+        'report-number-0': '100',
+        'report-number-1': '101',
+        'publisher-name': 'Oxford University',
+        'publication-date': '2001-01-01',
+        'publication-place': 'Oxford',
+        'book-edition': 'No 2',
+        'book-title': 'Astrowars',
+        'book-volume': 'Andromeda',
+        'page-start': '512',
+        'page-end': '1024',
+        'references': 'references',
+        'extra-comments': 'comments about the document'
+    }
+
+
+    create_literature.go_to()
+    assert create_literature.submit_chapter(input_data).has_error()
+    _check_back_office(input_data)
+
+def test_literature_create_book_manually(login):
+    input_data = {
+        'pdf-1': 'pdf_url_correct',
+        'pdf-2': 'pdf_another_url_correct',
+        'title': 'My Title For Test',
+        'language': 'ru',
+        'title_translation': 'My Title was in Russian',
+        'subject': 'Computing',
+        'author-0': 'Mister White',
+        'author-0-affiliation': 'Wisconsin U., Madison',
+        'author-1': 'Mister Brown',
+        'author-1-affiliation': 'CERN',
+        'collaboration': 'This is a collaboration',
+        'experiment': 'This is an experiment',
+        'abstract': 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
+        'report-number-0': '100',
+        'report-number-1': '101',
+        'publisher-name': 'Oxford University',
+        'publication-date': '2001-01-01',
+        'publication-place': 'Oxford',
+        'book-edition': 'No 2',
+        'book-title': 'Astrowars',
+        'book-volume': 'Andromeda',
+        'references': 'references',
+        'extra-comments': 'comments about the document'
+    }
+
+    create_literature.go_to()
+    assert create_literature.submit_book(input_data).has_error()
+    _check_back_office(input_data)
 
 def test_literature_create_thesis_manually(login):
     input_data = {
@@ -60,7 +124,6 @@ def test_literature_create_thesis_manually(login):
     create_literature.go_to()
     assert create_literature.submit_thesis(input_data).has_error()
     _check_back_office(input_data)
-
 
 def test_literature_create_article_journal_manually(login):
     input_data = {

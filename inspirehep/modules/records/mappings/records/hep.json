@@ -396,12 +396,14 @@
                 "imprints": {
                     "properties": {
                         "date": {
+                            "copy_to": "bookautocomplete",
                             "type": "string"
                         },
                         "place": {
                             "type": "string"
                         },
                         "publisher": {
+                            "copy_to": "bookautocomplete",
                             "type": "string"
                         }
                     },
@@ -424,10 +426,14 @@
                             "type": "string"
                         },
                         "value": {
+                            "copy_to": "bookautocomplete",
                             "type": "string"
                         }
                     },
                     "type": "object"
+                },
+                "bookautocomplete": {
+                    "type": "string"
                 },
                 "keywords": {
                     "properties": {

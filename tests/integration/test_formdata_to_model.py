@@ -81,6 +81,25 @@ def record_thesis_expected():
     yield load_record_dict('thesis_expected')
 
 
+@pytest.fixture(scope='function')
+def record_book_input():
+    yield load_record_dict('book_input')
+
+
+@pytest.fixture(scope='function')
+def record_book_expected():
+    yield load_record_dict('book_expected')
+
+@pytest.fixture(scope='function')
+def record_chapter_input():
+    yield load_record_dict('chapter_input')
+
+
+@pytest.fixture(scope='function')
+def record_chapter_expected():
+    yield load_record_dict('chapter_expected')
+
+
 @freeze_time('1993-02-02 06:00:00')
 def test_formdata_to_model_journal_article(record_journal_article_input,
                                            record_journal_article_expected,
@@ -120,6 +139,36 @@ def test_formdata_to_model_thesis(record_thesis_input,
     input_data = record_thesis_input
 
     expected_data = record_thesis_expected
+
+    output_data = formdata_to_model(workflow_obj, input_data)
+
+    assert expected_data == output_data
+
+
+@freeze_time('1993-02-02 06:00:00')
+def test_formdata_to_model_book(record_book_input,
+                                  record_book_expected,
+                                  mock_user):
+    workflow_obj = WorkflowMockObj(1, mock_user.id)
+
+    input_data = record_book_input
+
+    expected_data = record_book_expected
+
+    output_data = formdata_to_model(workflow_obj, input_data)
+
+    assert expected_data == output_data
+
+
+@freeze_time('1993-02-02 06:00:00')
+def test_formdata_to_model_chapter(record_chapter_input,
+                                  record_chapter_expected,
+                                  mock_user):
+    workflow_obj = WorkflowMockObj(1, mock_user.id)
+
+    input_data = record_chapter_input
+
+    expected_data = record_chapter_expected
 
     output_data = formdata_to_model(workflow_obj, input_data)
 

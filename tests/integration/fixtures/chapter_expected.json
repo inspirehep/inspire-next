@@ -1,0 +1,115 @@
+{
+  "report_numbers":
+   [
+     {
+       "source": "submitter",
+       "value": "89001"
+       }
+    ],
+  "acquisition_source":
+   {
+     "email": "test_orcid_user@inspirehep.net",
+     "source": "submitter",
+     "submission_number": "1",
+     "datetime": "1993-02-02T06:00:00",
+     "orcid": "0000-0001-9412-8627",
+     "method": "submitter"
+     },
+    "accelerator_experiments":
+     [
+       {
+         "legacy_name": "ATCA"
+         }
+      ],
+      "imprints":
+      [
+      {
+        "date":"2014-12-17",
+        "place":"Harvard",
+        "publisher":"LAP Lambert Academic Publishing"
+      }
+    ],
+     "inspire_categories":
+      [
+        {
+          "source": "user",
+          "term": "Astrophysics"
+          },
+        {
+          "source": "user",
+          "term": "Computing"
+          },
+        {
+          "source": "user",
+          "term": "Gravitation and Cosmology"
+          }
+          ],
+    "languages": ["en"],
+    "titles":
+    [
+      {
+        "source": "submitter",
+        "title": "Cosmological dynamical systems"
+        },
+      {
+        "source": "arXiv",
+        "title": "Cosmological dynamical systems"
+        }
+      ],
+    "_private_notes":
+    [
+      {
+        "source": "submitter",
+        "value": "321 pages, 41 figures. Draft of our book Cosmological Dynamical Systems: And their Applications, LAP LAMBERT Academic Publishing. 416 pp. ISBN:978-3-8473-0233-9. https://www.lap-publishing.com/catalog/details/store/gb/book/978-3-8473-0233-9/cosmological-dynamical-systems. arXiv admin note: text overlap with arXiv:astro-ph/0401547, arXiv:1101.0300, arXiv:hep-ph/0604152, arXiv:0911.1435, arXiv:1004.2474, arXiv:gr-qc/9910074, arXiv:gr-qc/9908067, arXiv:1001.1251, arXiv:1003.5637, arXiv:0707.2089 by other authors"
+        }
+        ],
+    "authors":
+    [
+      {
+        "affiliations":
+          [
+            {
+              "value": "Valparaiso U., Catolica"
+              }
+              ],
+              "full_name": "León Torres, Genly",
+              "inspire_roles":
+              [
+                "author"
+                ]
+              },
+      {
+        "affiliations":
+        [
+          {
+            "value": "Havana, Central de Las Villas U"
+            }
+            ],
+            "full_name": "Fadragas, Carlos R.",
+            "inspire_roles":
+            [
+              "author"
+              ]
+        }
+            ],
+            "book_series": [
+              {
+                "title": "Astrophysics No2"
+              , "volume": "Universe"
+              }
+            ],
+      "document_type": ["book chapter"],
+      "abstracts":[
+        {
+        "source": "submitter",
+        "value":"In this book are studied, from the perspective of the dynamical systems, several Universe models. In chapter 1 we give a bird's eye view on cosmology and cosmological problems. Chapter 2 is devoted to a brief review on some results and useful tools from the qualitative theory of dynamical systems. They provide the theoretical basis for the qualitative study of concrete cosmological models. Chapters 1 and 2 are a review of well-known results. Chapters 3, 4, 5 and 6 are devoted to our main results. In these chapters are extended and settled in a substantially different, more strict mathematical language, several results obtained by one of us in arXiv:0812.1013 [gr-qc]; arXiv:1009.0689 [gr-qc]; arXiv:0904.1577[gr-qc]; and arXiv:0909.3571 [hep-th]. In chapter 6, we provide a different approach to the subject discussed in astro-ph/0503478. Additionally, we perform a Poincare compactification process allowing to construct a global phase space containing all the cosmological information in both finite and infinite regions for all the models."
+    }
+  ],
+  "publication_info":[{
+    "page_start":"150",
+    "page_end":"300"
+  }],
+  "number_of_pages": 151
+
+
+        }
