@@ -70,13 +70,13 @@ def test_audit(small_app):
         assert audit_entry.action == "accept"
         assert audit_entry.score == 0.222113
 
-    prediction_results = dict(
+    relevance_prediction = dict(
         max_score=0.222113, decision="Rejected"
     )
     with small_app.app_context():
         log_workflows_action(
             action="accept_core",
-            prediction_results=prediction_results,
+            relevance_prediction=relevance_prediction,
             object_id=workflow_id,
             user_id=None,
             source="test",

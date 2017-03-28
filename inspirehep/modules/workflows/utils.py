@@ -57,13 +57,13 @@ def json_api_request(url, data, headers=None):
         return response.json()
 
 
-def log_workflows_action(action, prediction_results,
+def log_workflows_action(action, relevance_prediction,
                          object_id, user_id,
                          source, user_action=""):
     """Log the action taken by user compared to a prediction."""
-    if prediction_results:
-        score = prediction_results.get("max_score")  # returns 0.222113
-        decision = prediction_results.get("decision")  # returns "Rejected"
+    if relevance_prediction:
+        score = relevance_prediction.get("max_score")  # returns 0.222113
+        decision = relevance_prediction.get("decision")  # returns "Rejected"
 
         # Map actions to align with the prediction format
         action_map = {

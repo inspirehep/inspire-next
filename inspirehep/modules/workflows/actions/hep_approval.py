@@ -40,10 +40,10 @@ class HEPApproval(object):
         upload_pdf = kwargs.get("request_data", {}).get("pdf_upload", False)
 
         # Audit logging
-        prediction_results = obj.extra_data.get("relevance_prediction", {})
+        relevance_prediction = obj.extra_data.get("relevance_prediction", {})
         log_workflows_action(
             action="resolve",
-            prediction_results=prediction_results,
+            relevance_prediction=relevance_prediction,
             object_id=obj.id,
             user_id=kwargs.get('id_user'),
             source="holdingpen",
