@@ -1361,6 +1361,19 @@ MAGPIE_API_URL = "http://magpie.inspirehep.net/api"
 ARXIV_PDF_URL = "http://arxiv.org/pdf/{arxiv_id}"
 ARXIV_TARBALL_URL = "http://arxiv.org/e-print/{arxiv_id}"
 
+ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY = [
+    "hep-th",
+    "hep-ph",
+    "hep-lat",
+    "hep-ex",
+    "nucl-th",
+    "nucl-ex",
+    "physics.acc-ph",
+    "gr-qc",
+    "physics.ins-det",
+    "astro-ph.co",
+    "astro-ph.he"]
+
 WORKFLOWS_DEFAULT_FILE_LOCATION_NAME = "holdingpen"
 """Name of default workflow Location reference."""
 
