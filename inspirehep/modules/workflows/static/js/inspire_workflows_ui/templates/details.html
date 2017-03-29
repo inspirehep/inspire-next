@@ -301,7 +301,7 @@
 
 
       <div class="col-md-12" id="errors"
-           ng-if="vm.record._extra_data._error_msg">
+         ng-if="vm.record._workflow.status === 'ERROR'">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_errors.html">
         </holding-pen-template-handler>
@@ -421,7 +421,7 @@
           <div class="text-center" ng-if="vm.record._workflow.status!=='COMPLETED'">
             <button class="btn btn-default"
               ng-click="Utils.restartWorkflow()">
-            <i class="fa fa-repeat" aria-hidden="true"></i> Restart
+            <i class="fa fa-repeat" aria-hidden="true"></i> Retry step
             </button>
             <button class="btn btn-info"
                     ng-if="vm.record._workflow.status === 'HALTED'"
@@ -431,7 +431,7 @@
             <button class="btn btn-default"
                     ng-if="vm.record._workflow.status !== 'HALTED'"
                     ng-click="Utils.resumeWorkflow()">
-              <i class="fa fa-play" aria-hidden="true"></i> Resume
+              <i class="fa fa-play" aria-hidden="true"></i> Skip to next step
             </button>
           </div>
         </div>

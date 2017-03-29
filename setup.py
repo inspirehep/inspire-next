@@ -95,7 +95,7 @@ install_requires = [
     'Flask-Login<0.4.0',
     'invenio-workflows~=6.0.2',
     'invenio-workflows-files~=0.0.4',
-    'invenio-workflows-ui~=1.0.27',
+    'invenio-workflows-ui~=1.0.31',
     'elasticsearch-dsl<2.2.0',
     'pycountry>=17.1.8',
     'freezegun>=0.3.8',
