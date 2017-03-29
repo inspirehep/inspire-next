@@ -261,8 +261,8 @@ def earliest_date(sender, json, *args, **kwargs):
     """Find and assign the earliest date to a HEP paper."""
     date_paths = [
         'preprint_date',
-        'thesis.date',
-        'thesis.defense_date',
+        'thesis_info.date',
+        'thesis_info.defense_date',
         'publication_info.year',
         'legacy_creation_date',
         'imprints.date',

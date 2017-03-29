@@ -23,7 +23,6 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
-import pytest
 
 from inspire_schemas.utils import load_schema
 from inspirehep.dojson.utils import validate
@@ -82,7 +81,6 @@ def test_earliest_date_from_preprint_date():
     assert expected == result
 
 
-@pytest.mark.xfail
 def test_earliest_date_from_thesis_info_date():
     schema = load_schema('hep')
     subschema = schema['properties']['thesis_info']
@@ -98,7 +96,6 @@ def test_earliest_date_from_thesis_info_date():
     assert expected == result
 
 
-@pytest.mark.xfail
 def test_earliest_date_from_thesis_info_defense_date():
     schema = load_schema('hep')
     subschema = schema['properties']['thesis_info']
