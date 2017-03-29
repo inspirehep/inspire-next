@@ -134,6 +134,27 @@ def to_accept_record():
     return json_data
 
 
+@pytest.fixture
+def already_harvested_on_legacy_record():
+    """Provide record fixture."""
+    record_oai_arxiv_plots = pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            'fixtures',
+            'oai_arxiv_record_already_on_legacy.xml'
+        )
+    )
+    # Convert to MARCXML, then dict, then HEP JSON
+    record_oai_arxiv_plots_marcxml = convert(
+        record_oai_arxiv_plots,
+        "oaiarXiv2marcxml.xsl"
+    )
+    record_marc = create_record(record_oai_arxiv_plots_marcxml)
+    json_data = hep.do(record_marc)
+
+    return json_data
+
+
 def _do_resolve_workflow(app, workflow_id, action='accept_core'):
     """Calls to the workflow resolve endpoint.
 
@@ -416,6 +437,56 @@ def test_harvesting_arxiv_workflow_manual_rejected(
         obj = workflow_object_class.get(obj_id)
         # It was rejected
         assert obj.status == ObjectStatus.COMPLETED
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.authors.receivers._query_beard_api',
+    side_effect=fake_beard_api_block_request,
+)
+@mock.patch(
+    'inspirehep.modules.refextract.tasks.extract_references_from_file',
+    side_effect=fake_refextract_extract_references_from_file,
+)
+def test_harvesting_arxiv_workflow_already_on_legacy(
+    mocked_refextract_extract_refs,
+    mocked_api_request_beard_block,
+    mocked_api_request_magpie,
+    mocked_api_request_beard,
+    mocked_download,
+    small_app,
+    already_harvested_on_legacy_record,
+):
+    """Test a full harvesting workflow."""
+
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+        "MAGPIE_API_URL": "http://example.com/magpie",
+    }
+
+    workflow_uuid = None
+    with small_app.app_context():
+        with mock.patch.dict(small_app.config, extra_config):
+            workflow_uuid = start('article', [
+                already_harvested_on_legacy_record])
+
+        eng = WorkflowEngine.from_uuid(workflow_uuid)
+        obj = eng.processed_objects[0]
+
+        assert obj.status == ObjectStatus.COMPLETED
+        assert 'already-ingested' in obj.extra_data
+        assert obj.extra_data['already-ingested']
 
 
 @mock.patch(
