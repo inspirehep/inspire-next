@@ -22,11 +22,14 @@
 
 from __future__ import absolute_import, division, print_function
 
+import mock
+
 from inspirehep.modules.literaturesuggest.tasks import (
     new_ticket_context,
     reply_ticket_context,
     curation_ticket_context,
     curation_ticket_needed,
+    formdata_to_model
 )
 
 
@@ -222,3 +225,122 @@ def test_curation_ticket_needed():
     eng = DummyEng()
 
     assert curation_ticket_needed(obj, eng)
+
+
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
+def test_formdata_to_model_ignores_arxiv_pdf(u, r_o):
+    r_o.return_value = '1111-1111-1111-1111'
+    u.query.get.return_value = StubUser('user@example.com')
+
+    data = {}
+    extra_data = {}
+    obj = StubObj(data, extra_data)
+    formdata = {
+        'type_of_doc': 'article',
+        'title': 'Test title',
+        'url': 'https://arxiv.org/pdf/1511.04200.pdf'
+    }
+
+    formdata_to_model(obj, formdata)
+
+    assert 'submission_pdf' not in obj.extra_data
+
+
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
+def test_formdata_to_model_ignores_arxiv_additional_url(u, r_o):
+    r_o.return_value = '1111-1111-1111-1111'
+    u.query.get.return_value = StubUser('user@example.com')
+
+    data = {}
+    extra_data = {}
+    obj = StubObj(data, extra_data)
+    formdata = {
+        'type_of_doc': 'article',
+        'title': 'Test title',
+        'additional_url': 'https://arxiv.org/abs/1511.04200'
+    }
+
+    record = formdata_to_model(obj, formdata)
+
+    assert 'urls' not in record
+
+
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
+def test_formdata_to_model_only_pdf(u, r_o):
+    r_o.return_value = '1111-1111-1111-1111'
+    u.query.get.return_value = StubUser('user@example.com')
+
+    data = {}
+    extra_data = {}
+    obj = StubObj(data, extra_data)
+    formdata = {
+        'type_of_doc': 'article',
+        'title': 'Test title',
+        'url': 'https://ora.ox.ac.uk/content01.pdf'
+    }
+
+    formdata_to_model(obj, formdata)
+
+    expected = {
+        'submission_pdf': 'https://ora.ox.ac.uk/content01.pdf'
+    }
+
+    assert expected == obj.extra_data
+
+
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
+def test_formdata_to_model_only_additional_url(u, r_o):
+    r_o.return_value = '1111-1111-1111-1111'
+    u.query.get.return_value = StubUser('user@example.com')
+
+    data = {}
+    extra_data = {}
+    obj = StubObj(data, extra_data)
+    formdata = {
+        'type_of_doc': 'article',
+        'title': 'Test title',
+        'additional_url': 'https://ora.ox.ac.uk/splash_page.html'
+    }
+
+    record = formdata_to_model(obj, formdata)
+
+    expected_urls = [{
+        'value': 'https://ora.ox.ac.uk/splash_page.html'
+    }]
+
+    assert expected_urls == record['urls']
+    assert 'submission_pdf' not in obj.extra_data
+
+
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
+def test_formdata_to_model_pdf_and_additional_url(u, r_o):
+    r_o.return_value = '1111-1111-1111-1111'
+    u.query.get.return_value = StubUser('user@example.com')
+
+    data = {}
+    extra_data = {}
+    obj = StubObj(data, extra_data)
+    formdata = {
+        'type_of_doc': 'article',
+        'title': 'Test title',
+        'url': 'https://ora.ox.ac.uk/content01.pdf',
+        'additional_url': 'https://ora.ox.ac.uk/splash_page.html'
+    }
+
+    record = formdata_to_model(obj, formdata)
+
+    expected_extra_data = {
+        'submission_pdf': 'https://ora.ox.ac.uk/content01.pdf'
+    }
+
+    expected_urls = [{
+        'value': 'https://ora.ox.ac.uk/splash_page.html'
+    }]
+
+    assert expected_extra_data == obj.extra_data
+    assert expected_urls == record['urls']

@@ -50,7 +50,7 @@ from inspirehep.modules.forms.filter_utils import clean_empty_list
 from inspirehep.modules.forms.validation_utils import DOISyntaxValidator
 from inspirehep.modules.forms.validators.simple_fields import duplicated_doi_validator, \
     duplicated_arxiv_id_validator, arxiv_syntax_validation, \
-    pdf_validator, date_validator
+    pdf_validator, no_pdf_validator, date_validator
 from inspirehep.modules.forms.validators.dynamic_fields import AuthorsValidation
 
 from inspirehep.modules.literaturesuggest.fields.arxiv_id import ArXivField
@@ -557,7 +557,7 @@ class LiteratureForm(INSPIREForm):
         label=_('Link to additional information (e.g. abstract)'),
         description=_('Which page should we link from INSPIRE?'),
         placeholder='http://www.example.com/splash-page.html',
-        # validators=[pdf_validator],
+        validators=[no_pdf_validator],
         widget_classes="form-control",
     )
 
