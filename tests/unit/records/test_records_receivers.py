@@ -24,7 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 import mock
 
-from inspirehep.modules.records.api import InspireRecord
+from inspire_schemas.utils import load_schema
+from inspirehep.dojson.utils import validate
 from inspirehep.modules.records.receivers import (
     dates_validator,
     earliest_date,
@@ -66,75 +67,99 @@ def test_dates_validator_warns_when_date_is_invalid(warning):
 
 
 def test_earliest_date_from_preprint_date():
-    with_preprint_date = InspireRecord({'preprint_date': '2014-05-29'})
-    earliest_date(None, with_preprint_date)
+    schema = load_schema('hep')
+    subschema = schema['properties']['preprint_date']
+
+    record = {'preprint_date': '2014-05-29'}
+    assert validate(record['preprint_date'], subschema) is None
+
+    earliest_date(None, record)
 
     expected = '2014-05-29'
-    result = with_preprint_date['earliest_date']
+    result = record['earliest_date']
 
     assert expected == result
 
 
-def test_earliest_date_from_thesis_date():
-    with_thesis_date = InspireRecord({
-        'thesis': {'date': '2008'}
-    })
-    earliest_date(None, with_thesis_date)
+def test_earliest_date_from_thesis_info_date():
+    schema = load_schema('hep')
+    subschema = schema['properties']['thesis_info']
+
+    record = {'thesis_info': {'date': '2008'}}
+    assert validate(record['thesis_info'], subschema) is None
+
+    earliest_date(None, record)
 
     expected = '2008'
-    result = with_thesis_date['earliest_date']
+    result = record['earliest_date']
 
     assert expected == result
 
 
-def test_earliest_date_from_thesis_defense_date():
-    with_thesis_defense_date = InspireRecord({
-        'thesis': {'defense_date': '2012-06-01'}
-    })
-    earliest_date(None, with_thesis_defense_date)
+def test_earliest_date_from_thesis_info_defense_date():
+    schema = load_schema('hep')
+    subschema = schema['properties']['thesis_info']
+
+    record = {'thesis_info': {'defense_date': '2012-06-01'}}
+    assert validate(record['thesis_info'], subschema) is None
+
+    earliest_date(None, record)
 
     expected = '2012-06-01'
-    result = with_thesis_defense_date['earliest_date']
+    result = record['earliest_date']
 
     assert expected == result
 
 
 def test_earliest_date_from_publication_info_year():
-    with_publication_info_year = InspireRecord({
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    record = {
         'publication_info': [
-            {'year': '2014'}
-        ]
-    })
-    earliest_date(None, with_publication_info_year)
+            {'year': 2014},
+        ],
+    }
+    assert validate(record['publication_info'], subschema) is None
+
+    earliest_date(None, record)
 
     expected = '2014'
-    result = with_publication_info_year['earliest_date']
+    result = record['earliest_date']
 
     assert expected == result
 
 
 def test_earliest_date_from_legacy_creation_date():
-    with_legacy_creation_date = InspireRecord({
-        'legacy_creation_date': '2015-11-04'
-    })
-    earliest_date(None, with_legacy_creation_date)
+    schema = load_schema('hep')
+    subschema = schema['properties']['legacy_creation_date']
+
+    record = {'legacy_creation_date': '2015-11-04'}
+    assert validate(record['legacy_creation_date'], subschema) is None
+
+    earliest_date(None, record)
 
     expected = '2015-11-04'
-    result = with_legacy_creation_date['earliest_date']
+    result = record['earliest_date']
 
     assert expected == result
 
 
 def test_earliest_date_from_imprints_date():
-    with_imprints_date = InspireRecord({
+    schema = load_schema('hep')
+    subschema = schema['properties']['imprints']
+
+    record = {
         'imprints': [
             {'date': '2014-09-26'}
         ]
-    })
-    earliest_date(None, with_imprints_date)
+    }
+    assert validate(record['imprints'], subschema) is None
+
+    earliest_date(None, record)
 
     expected = '2014-09-26'
-    result = with_imprints_date['earliest_date']
+    result = record['earliest_date']
 
     assert expected == result
 
