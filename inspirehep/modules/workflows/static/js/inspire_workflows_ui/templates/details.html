@@ -14,6 +14,12 @@
             Show reason
           </a>
         </span>
+        <span ng-if="vm.record._extra_data.url">
+          -
+          <a class="reason-link" href="{{vm.record._extra_data.url}}" target="_blank">
+            {{vm.record._extra_data.url}}
+          </a>
+        </span>
     </div>
 
     <div ng-if="vm.workflow_flag">
