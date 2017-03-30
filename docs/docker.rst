@@ -61,27 +61,53 @@ Get docker-compose:
 
 By default the virtualenv and everything else will be kept on ``/tmp`` and they will be available only until the next reboot.
 
+- Clone Inspire project
+
+.. code-block:: console
+
+ mkvirtualenv inspirehep
+ workon inspirehep
+ cdvirtualenv
+ mkdir src
+ git clone https://github.com/inspirehep/inspire-next.git src/inspirehep
+
 - Install a host persistent venv and build assets
 
 .. code-block:: console
 
+ cd src/inspirehep
  docker-compose pull
  docker-compose -f docker-compose.deps.yml run --rm pip
- docker-compose -f docker-compose.deps.yml run --rm assets
 
-- Run the service locally
+In case of you run into a connection error:
 
 .. code-block:: console
 
- docker-compose up
+ touch /etc/docker/daemon.json
+ echo "{ dns: ["137.138.17.5", "137.138.16.5"] }" > /etc/docker/daemon.json
+ service docker restart
+ 
+Then, lunch agains the failing command and go on with:
+ 
+.. code-block:: console
 
-Go to ``localhost:5000``
+ docker-compose -f docker-compose.deps.yml run --rm pip
+ docker-compose -f docker-compose.deps.yml run --rm assets
+
 
 - Populate database
 
 .. code-block:: console
 
  docker-compose run --rm web scripts/recreate_records
+ 
+ - Run the service locally
+
+.. code-block:: console
+
+ docker-compose up
+
+Go to ``localhost:5000``
 
 - Run tests in an **isolated** environment:
 
