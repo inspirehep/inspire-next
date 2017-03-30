@@ -485,13 +485,8 @@ class LiteratureForm(INSPIREForm):
     thesis_date = fields.TextField(
         label=_('Date of Submission'),
         description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
+        widget_classes="form-control" + THESIS_CLASS,
         validators=[date_validator],
-    )
-
-    defense_date = fields.TextField(
-        label=_('Date of Submission'),
-        description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
-        validators=[date_validator]
     )
 
     degree_type = fields.SelectField(
@@ -734,7 +729,7 @@ class LiteratureForm(INSPIREForm):
              'collaboration', 'experiment', 'abstract',
              'report_numbers']),
         ('Thesis Information',
-            ['degree_type', 'thesis_date', 'institution',
+            ['degree_type', 'thesis_date', 'defense_date', 'institution',
              'supervisors', 'license_url']),
 
         ('Book Chapter',
