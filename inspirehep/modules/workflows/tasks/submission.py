@@ -105,8 +105,8 @@ def create_ticket(template,
 
         if not in_production_mode():
             obj.log.info(
-                "Was going to submit: {subject}\n\n{body}\n\n"
-                "To: {requestors} Queue: {queue}".format(
+                u"Was going to create ticket: {subject}\n\n{body}\n\n"
+                u"To: {requestors} Queue: {queue}".format(
                     queue=queue,
                     subject=context.get('subject'),
                     requestors=user.email,
