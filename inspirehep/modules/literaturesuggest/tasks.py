@@ -28,27 +28,11 @@ import datetime
 from sqlalchemy.orm.exc import NoResultFound
 
 from idutils import is_arxiv_post_2007
-from invenio_accounts.models import User
-from invenio_oauthclient.models import UserIdentity
 
 from inspire_schemas.api import LiteratureBuilder
 from inspirehep.modules.forms.utils import filter_empty_elements
 from inspirehep.utils.helpers import force_list
-from inspirehep.utils.normalizers import normalize_journal_title
-from inspirehep.utils.pubnote import split_page_artid
 from inspirehep.utils.record import get_title, get_value
-
-
-def retrieve_orcid(id_user):
-        try:
-            orcid = UserIdentity.query.filter_by(
-                id_user=id_user,
-                method='orcid'
-            ).one().id
-        except NoResultFound:
-            orcid = None
-
-        return orcid
 
 
 def formdata_to_model(obj, formdata):
@@ -118,28 +102,15 @@ def formdata_to_model(obj, formdata):
     except (TypeError, ValueError):
         year = None
 
-    if form_fields.get('journal_title'):
-        form_fields['journal_title'] = normalize_journal_title(
-            form_fields['journal_title']
-        )
-
-    page_range = form_fields.get('page_range_article_id')
-
-    artid = None
-    page_end = None
-    page_start = None
-    if page_range:
-        page_start, page_end, artid = split_page_artid(page_range)
-
     builder.add_publication_info(
         year=year,
         cnum=form_fields.get('conference_id'),
         journal_issue=form_fields.get('issue'),
         journal_title=form_fields.get('journal_title'),
         journal_volume=form_fields.get('volume'),
-        page_start=page_start,
-        page_end=page_end,
-        artid=artid
+        page_start=form_fields.get('page_start'),
+        page_end=form_fields.get('page_end'),
+        artid=form_fields.get('artid')
     )
 
     builder.add_preprint_date(
@@ -196,19 +167,12 @@ def formdata_to_model(obj, formdata):
 
     builder.add_collaboration(collaboration=form_fields.get('collaboration'))
 
-    try:
-        email = User.query.get(obj.id_user).email
-    except AttributeError:
-        email = None
-
-    orcid = retrieve_orcid(obj.id_user)
-
     builder.add_acquisition_source(
         datetime=datetime.datetime.utcnow().isoformat(),
         submission_number=obj.id,
         internal_uid=int(obj.id_user),
-        email=email,
-        orcid=orcid,
+        email=form_fields.get('email'),
+        orcid=form_fields.get('orcid'),
         method='submitter'
     )
     builder.validate_record()
