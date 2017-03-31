@@ -83,9 +83,8 @@ def record_thesis_expected():
 
 @freeze_time('1993-02-02 06:00:00')
 def test_formdata_to_model_journal_article(record_journal_article_input,
-                                           record_journal_article_expected,
-                                           mock_user):
-    workflow_obj = WorkflowMockObj(1, mock_user.id)
+                                           record_journal_article_expected):
+    workflow_obj = WorkflowMockObj(1, 3)
 
     input_data = record_journal_article_input
 
@@ -98,9 +97,8 @@ def test_formdata_to_model_journal_article(record_journal_article_input,
 
 @freeze_time('1993-02-02 06:00:00')
 def test_formdata_to_model_conference_article(record_conference_article_input,
-                                              record_conference_article_expected,
-                                              mock_user):
-    workflow_obj = WorkflowMockObj(1, mock_user.id)
+                                              record_conference_article_expected):
+    workflow_obj = WorkflowMockObj(1, 3)
 
     input_data = record_conference_article_input
 
@@ -113,9 +111,8 @@ def test_formdata_to_model_conference_article(record_conference_article_input,
 
 @freeze_time('1993-02-02 06:00:00')
 def test_formdata_to_model_thesis(record_thesis_input,
-                                  record_thesis_expected,
-                                  mock_user):
-    workflow_obj = WorkflowMockObj(1, mock_user.id)
+                                  record_thesis_expected):
+    workflow_obj = WorkflowMockObj(1, 3)
 
     input_data = record_thesis_input
 
