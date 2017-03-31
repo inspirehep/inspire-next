@@ -29,6 +29,7 @@ define(function(require, exports, module) {
   var DataMapper = require("js/literaturesuggest/mapper");
   var TaskManager = require("js/literaturesuggest/task_manager");
   var conferencesTypeahead = require("js/forms/conferences_typeahead");
+  var booksTypeahead = require("js/forms/books_typeahead");
   var AffiliationsTypeahead = require("js/forms/affiliations_typeahead");
   var PreviewModal = require("js/literaturesuggest/modal_preview");
   var SynchronizedField = require("js/literaturesuggest/synchronized_field");
@@ -115,7 +116,11 @@ define(function(require, exports, module) {
     this.$skipButton = $("#skipImportData");
     this.$submissionForm = $('#submitForm');
     this.$conference = $('#conf_name');
+    this.$book = $('#find_book');
+    this.$series_title = $('#series_title')
+    this.$bookValidatorField = $('#state-book_name');
     this.$conferenceId = $('#conference_id');
+    this.$bookId = $('#book_id');
     this.$conferenceValidatorField = $('#state-conf_name');
     this.$previewModal = $('#modalData');
     this.$nonpublic_note = $("#nonpublic_note");
@@ -183,6 +188,14 @@ define(function(require, exports, module) {
 
       conferencesTypeahead(this.$conference);
 
+      booksTypeahead(this.$book);
+      this.$book.bind('typeahead:selected',function(obj, datum, name) {
+        document.getElementById("series_title").value = datum.titles[0].title;
+        document.getElementById("publication_date").value = datum.imprints[0].date;
+        document.getElementById("publication_place").value = datum.imprints[0].place;
+        document.getElementById("publisher_name").value = datum.imprints[0].publisher;
+
+      });
       this.previewModal = new PreviewModal(this.$previewModal, {
         labels: this.getLabels(),
         ignoredFields: this.getHiddenFields()
@@ -206,6 +219,23 @@ define(function(require, exports, module) {
       });
 
       this.addConferenceInfoField();
+
+      this.$bookId.synchronizedField({
+        $frontendField: this.$book,
+        synchronizationEvents: 'typeahead:selected change blur',
+        propagatedEvents: 'typeahead:selected change blur',
+        synchronizationFn: function($originalField, $frontendField) {
+          $originalField.val(
+            $frontendField.data('extended-typeahead').getRawValue());
+          $originalField.trigger('change');
+        },
+        reverseSynchronizationFn: function($originalField, $frontendField) {
+          $frontendField.data('extended-typeahead')
+            .initFromRawValue($originalField.val(), 0);
+        }
+      });
+
+      this.addBookInfoField();
 
       if (!this.isFormBlank()) {
         this.showForm();
@@ -267,6 +297,25 @@ define(function(require, exports, module) {
         }
       }.bind(this));
 
+      // for spinner at conferences typeahead
+      this.$book.on('typeahead:asyncrequest', function() {
+        $(this).addClass('ui-autocomplete-loading');
+      });
+      this.$book.on('typeahead:asynccancel typeahead:asyncreceive',
+        function() {
+          $(this).removeClass('ui-autocomplete-loading');
+        }
+      );
+
+      // reminder about using the typeahead to get the book.
+      this.$book.on('change blur typeahead:selected', function() {
+        if (!this.$bookId.val() && $.trim(this.$book.val())) {
+          this.$bookInfoField.show();
+        } else {
+          this.$bookInfoField.hide();
+        }
+      }.bind(this));
+
       $(document).on('click', '.panel div.clickable', function(e) {
         var $this = $(this);
         var $toggle_element = $this.find('.panel-toggle');
@@ -294,6 +343,18 @@ define(function(require, exports, module) {
           'database.');
       this.$conferenceValidatorField.after($clone);
       this.$conferenceInfoField = $clone;
+    },
+
+    addBookInfoField: function() {
+      var $clone = this.$bookValidatorField.clone();
+      $clone
+        .attr('id', 'books-message')
+        .removeClass('alert-danger')
+        .addClass('alert-warning')
+        .html('Please use suggestions to select a book from our ' +
+          'database.');
+      this.$bookValidatorField.after($clone);
+      this.$bookInfoField = $clone;
     },
 
     /**

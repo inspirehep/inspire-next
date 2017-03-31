@@ -24,12 +24,14 @@ from __future__ import absolute_import, division, print_function
 
 import copy
 import datetime
-
+from sqlalchemy import text
 from sqlalchemy.orm.exc import NoResultFound
 
 from idutils import is_arxiv_post_2007
 from invenio_accounts.models import User
 from invenio_oauthclient.models import UserIdentity
+
+from invenio_db import db
 
 from inspire_schemas.api import LiteratureBuilder
 from inspirehep.modules.forms.utils import filter_empty_elements
@@ -51,6 +53,13 @@ def retrieve_orcid(id_user):
         return orcid
 
 
+def check_book_existance(title):
+    query = text("SELECT DISTINCT  id FROM records_metadata as r, json_array_elements(r.json -> 'references') as elem\
+    WHERE elem ->'reference'-> 'publication_info' ->> 'journal_title'=:j_title").bindparams(j_title=title)
+    result = db.session.execute(query)
+    return result
+
+
 def formdata_to_model(obj, formdata):
     """Manipulate form data to match literature data model."""
     def _is_arxiv_url(url):
@@ -58,7 +67,7 @@ def formdata_to_model(obj, formdata):
 
     form_fields = copy.deepcopy(formdata)
     filter_empty_elements(
-        form_fields, ['authors', 'supervisors', 'report_numbers']
+        form_fields, ['authors', 'supervisors', 'report_numbers', 'isbn']
     )
 
     builder = LiteratureBuilder(source='submitter')
@@ -83,6 +92,8 @@ def formdata_to_model(obj, formdata):
 
     document_type = 'conference paper' if form_fields.get('conf_name') \
         else form_fields.get('type_of_doc', [])
+    if(document_type == 'chapter'):
+        document_type = 'book chapter'
 
     builder.add_document_type(
         document_type=document_type
@@ -123,14 +134,19 @@ def formdata_to_model(obj, formdata):
             form_fields['journal_title']
         )
 
-    page_range = form_fields.get('page_range_article_id')
-
     artid = None
     page_end = None
     page_start = None
+
+    page_range = form_fields.get('page_range_article_id')
+
     if page_range:
         page_start, page_end, artid = split_page_artid(page_range)
-
+    else:
+        page_range = form_fields.get('page_range')
+        if page_range:
+            page_start = page_range['page_start']
+            page_end = page_range['page_end']
     builder.add_publication_info(
         year=year,
         cnum=form_fields.get('conference_id'),
@@ -152,6 +168,37 @@ def formdata_to_model(obj, formdata):
             institution=form_fields.get('institution'),
             date=form_fields.get('thesis_date')
         )
+
+    if form_fields.get('type_of_doc') == 'book chapter':
+        builder.add_book(
+            publisher=form_fields.get('publisher_name'),
+            place=form_fields.get('publication_place'),
+            date=form_fields.get('publication_date'))
+        title = form_fields.get('series_title')
+        result = check_book_existance(title)
+        if(result.rowcount > 0):
+            builder.add_publication_info(journal_title=form_fields.get('series_title'))
+            builder.add_book_series(volume=form_fields.get('series_volume'))
+        else:
+            builder.add_book_series(title=form_fields.get('series_title'),
+                                    volume=form_fields.get('series_volume'))
+
+    if form_fields.get('type_of_doc') == 'book':
+            title = form_fields.get('series_title')
+            result = check_book_existance(title)
+            if(result.rowcount > 0):
+                builder.add_publication_info(journal_title=form_fields.get('series_title'))
+                builder.add_book_series(volume=form_fields.get('series_volume'))
+            else:
+                builder.add_book_series(title=form_fields.get('series_title'),
+                                        volume=form_fields.get('series_volume'))
+            builder.add_book(
+                publisher=form_fields.get('publisher_name'),
+                place=form_fields.get('publication_place'),
+                date=form_fields.get('publication_date'))
+
+            """for isbn in form_fields.get('isbn', []):
+                builder.add_isbns(isbn['code'],isbn['type_of_isbn'])"""
 
     builder.add_accelerator_experiments_legacy_name(
         legacy_name=form_fields.get('experiment')

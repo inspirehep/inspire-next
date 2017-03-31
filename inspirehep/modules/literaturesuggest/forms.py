@@ -50,7 +50,7 @@ from inspirehep.modules.forms.filter_utils import clean_empty_list
 from inspirehep.modules.forms.validation_utils import DOISyntaxValidator
 from inspirehep.modules.forms.validators.simple_fields import duplicated_doi_validator, \
     duplicated_arxiv_id_validator, arxiv_syntax_validation, \
-    pdf_validator, date_validator
+    pdf_validator, date_validator, isbn_syntax_validation
 from inspirehep.modules.forms.validators.dynamic_fields import AuthorsValidation
 
 from inspirehep.modules.literaturesuggest.fields.arxiv_id import ArXivField
@@ -130,15 +130,19 @@ def radiochoice_buttons(field, **dummy_kwargs):
     return HTMLString(u''.join(html))
 
 
-def defensedate_widget(field, **kwargs):
+def date_widget(field, **kwargs):
     """Date widget fot thesis."""
     field_id = kwargs.pop('id', field.id)
+    if(field_id == 'publication_date'):
+        class_type = " book-related"
+    if(field_id == 'thesis_date'):
+        class_type = " thesis-related"
     html = [u'<div class="row %s"><div class="col-xs-12">\
             <input class="datepicker form-control" %s type="text">\
             </div></div>'
-            % (THESIS_CLASS, html_params(id=field_id,
-                                         name=field_id,
-                                         value=field.data or ''))]
+            % (class_type, html_params(id=field_id,
+                                       name=field_id,
+                                       value=field.data or ''))]
     return HTMLString(u''.join(html))
 
 
@@ -173,6 +177,16 @@ def journal_title_kb_mapper(val):
     }
 
 
+def book_title_kb_mapper(val):
+    """Return object ready to autocomplete book titles."""
+    return {
+        'value': "%s" % val,
+        'fields': {
+            "series_title": val,
+        }
+    }
+
+
 class AuthorInlineForm(INSPIREForm):
 
     """Author inline form."""
@@ -192,6 +206,50 @@ class AuthorInlineForm(INSPIREForm):
         widget_classes='form-control',
         widget=ColumnInput(class_="col-xs-4 col-pad-0", description="Affiliation"),
         export_key='affiliation',
+    )
+
+
+class IsbnInlineForm(INSPIREForm):
+
+    isbn_categories_schema = load_schema('hep.json')
+    isbn_choices = [
+        (val, val.capitalize()) for val in isbn_categories_schema['properties']['isbns']['items']['properties']['medium']['enum']
+
+    ]
+    isbn_choices.sort(key=lambda x: x[1])
+    isbn_choices.append(('', ''))
+    code = fields.TextField(
+        widget_classes='form-control',
+        widget=ColumnInput(class_="col-xs-6"),
+        validators=[isbn_syntax_validation],
+        export_key='code',
+    )
+
+    type_of_isbn = fields.SelectField(
+        label='type',
+        description=('type of Isbn'),
+        choices=isbn_choices,
+        default=''
+    )
+
+
+class ChapterInlineForm(INSPIREForm):
+
+    """Chapter inline form."""
+
+    page_start = fields.TextField(
+        widget_classes='form-control',
+        widget=ColumnInput(class_="col-xs-2", description="First page"),
+        # validators=[
+        #     validators.Required(),
+        # ],
+        export_key='page_start',
+    )
+
+    page_end = fields.TextField(
+        widget_classes='form-control',
+        widget=ColumnInput(class_="col-xs-2 col-pad-0", description="Last page"),
+        export_key='page_end',
     )
 
 
@@ -254,22 +312,15 @@ class LiteratureForm(INSPIREForm):
         export_key='categories',
     )
 
-    # isbn = ISBNField(
-    #     label=_('ISBN'),
-    #     widget_classes='form-control',
-    # )
-
     import_buttons = fields.SubmitField(
         label=_(' '),
         widget=import_buttons_widget
     )
 
     types_of_doc = [("article", _("Article/Conference paper")),
-                    ("thesis", _("Thesis"))]
-
-    # ("chapter", _("Book Chapter")),
-    # ("book", _("Book")),
-    # ("proceedings", _("Proceedings"))]
+                    ("thesis", _("Thesis")),
+                    ('book', _('Book')),
+                    ('chapter', _('Book chapter'))]
 
     type_of_doc = fields.SelectField(
         label='Type of Document',
@@ -414,7 +465,6 @@ class LiteratureForm(INSPIREForm):
         widget_classes='',
         widget=UnsortedDynamicListWidget(),
     )
-
     # ==============
     # Thesis related
     # ==============
@@ -435,8 +485,8 @@ class LiteratureForm(INSPIREForm):
     thesis_date = fields.TextField(
         label=_('Date of Submission'),
         description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
+        widget_classes="form-control" + THESIS_CLASS,
         validators=[date_validator],
-        widget=defensedate_widget,
     )
 
     degree_type = fields.SelectField(
@@ -457,6 +507,84 @@ class LiteratureForm(INSPIREForm):
     #     default='',
     #     widget_classes="form-control" + THESIS_CLASS,
     # )
+    # ============
+    # Book Info
+    # ============
+
+    publisher_name = fields.TextField(
+        label=_('Publisher Name'),
+        export_key='publisher_name',
+        widget_classes="form-control" + BOOK_CLASS + CHAPTER_CLASS,
+    )
+
+    publication_place = fields.TextField(
+        label=_('Place of Publication'),
+        export_key='publication_place',
+        widget_classes="form-control" + BOOK_CLASS + CHAPTER_CLASS,
+    )
+
+    series_title = fields.TextField(
+        label=_('Book series title'),
+        export_key='series_title',
+        widget_classes="form-control" + BOOK_CLASS + CHAPTER_CLASS,
+        autocomplete='journal'
+    )
+
+    series_volume = fields.TextField(
+        label=_('Book series volume'),
+        export_key='series_volume',
+        widget_classes="form-control" + BOOK_CLASS + CHAPTER_CLASS,
+    )
+
+    publication_date = fields.TextField(
+        label=_('Publication Date'),
+        description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
+        widget_classes="form-control" + BOOK_CLASS + CHAPTER_CLASS,
+        validators=[date_validator],
+        export_key='publication_date',
+    )
+
+    """isbn = fields.DynamicFieldList(
+        fields.FormField(
+            IsbnInlineForm,
+            widget=ExtendedListWidget(
+                item_widget=ItemWidget(),
+                html_tag='div',
+            ),
+        ),
+        label=_('ISBN'),
+        add_label='Add another ISBN',
+        min_entries=1,
+        widget_classes="" + BOOK_CLASS,
+        export_key='isbn',
+    )"""
+
+    # ============
+    # Book chapter Info
+    # ============
+
+    page_range = fields.FormField(
+        ChapterInlineForm,
+        widget=ExtendedListWidget(
+            item_widget=ItemWidget(),
+            html_tag='div',
+        ),
+        label=_('Page range'),
+        widget_classes="" + CHAPTER_CLASS,
+    )
+
+    find_book = fields.TextField(
+        placeholder=_("Start typing for suggestions"),
+        label=_('Book title'),
+        description=_('Book name, ISBN, Publisher'),
+        widget_classes="form-control" + CHAPTER_CLASS,
+        autocomplete='book'
+    )
+
+    book_id = fields.TextField(
+        export_key='book_id',
+        widget=HiddenInput(),
+    )
 
     # ============
     # Journal Info
@@ -601,13 +729,20 @@ class LiteratureForm(INSPIREForm):
              'collaboration', 'experiment', 'abstract',
              'report_numbers']),
         ('Thesis Information',
-            ['degree_type', 'thesis_date', 'institution',
+            ['degree_type', 'thesis_date', 'defense_date', 'institution',
              'supervisors', 'license_url']),
+
+        ('Book Chapter',
+            ['find_book', 'book_id']),
         # ('Licenses and copyright',
         #     ['license', 'license_url'], {'classes': 'collapse'}),
-        ('Journal Information',
-            ['journal_title', 'volume', 'issue', 'year',
-             'page_range_article_id']),
+        ('Publication Information',
+            ['journal_title', 'volume', 'issue',
+             'year', 'page_range_article_id']),
+        ('Publication Information',
+            ['series_title', 'series_volume', 'publication_date',
+             'publisher_name', 'publication_place',
+             'page_range']),
         ('Conference Information',
             ['conf_name', 'conference_id'], {'classes': 'collapse'}),
         ('Proceedings Information (if not published in a journal)',
@@ -623,6 +758,8 @@ class LiteratureForm(INSPIREForm):
     field_sizes = {
         'type_of_doc': 'col-xs-12 col-md-3',
         'wrap_nonpublic_note': 'col-md-9',
+        'publisher_name': 'col-xs-12 col-md-9',
+        'publication_date': 'col-xs-12 col-md-4',
         'thesis_date': 'col-xs-12 col-md-4',
         'degree_type': 'col-xs-12 col-md-3',
     }
@@ -640,4 +777,11 @@ class LiteratureForm(INSPIREForm):
             (val, val.capitalize()) for val in degree_type_schema['enum']
         ]
         degree_choices.sort(key=lambda x: x[1])
-        self.degree_type.choices = degree_choices
+        degree_choices = list(degree_choices)
+        degree_choices_new = []
+        for choice in degree_choices:
+            if(choice[0] == 'phd'):
+                degree_choices_new.append(('phd', 'PhD'))
+            else:
+                degree_choices_new.append(choice)
+        self.degree_type.choices = degree_choices_new

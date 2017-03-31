@@ -67,7 +67,15 @@ def enhance_record(sender, json, *args, **kwargs):
     add_recids_and_validate(sender, json, *args, **kwargs)
     populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
+    add_book_autocomplete(sender, json, *args, **kwargs)
     after_record_enhanced.send(json)
+
+
+def add_book_autocomplete(sender, json, *args, **kwargs):
+    if 'book' in force_list(json.get('document_type')):
+        result = json.get('bookautocomplete', [])
+        result.extend(force_list(get_value(json, 'titles.title')))
+        json['bookautocomplete'] = result
 
 
 def populate_inspire_subjects(sender, json, *args, **kwargs):
@@ -86,12 +94,10 @@ def populate_inspire_document_type(sender, json, *args, **kwargs):
     faceting in the search interface.
     """
     result = []
-
     result.extend(json.get('document_type', []))
     result.extend(json.get('publication_type', []))
     if 'refereed' in json and json['refereed']:
         result.append('peer reviewed')
-
     json['facet_inspire_doc_type'] = result
 
 
