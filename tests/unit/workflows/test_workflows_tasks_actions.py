@@ -161,7 +161,10 @@ def test_shall_halt_workflow_returns_false_when_value_is_falsy():
     assert not shall_halt_workflow(obj)
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.current_app.config', {'PRODUCTION_MODE': True})
+@patch(
+    'inspirehep.modules.workflows.tasks.actions.current_app.config',
+    {'PRODUCTION_MODE': True},
+)
 def test_in_production_mode():
     assert in_production_mode()
 
@@ -171,7 +174,10 @@ def test_in_production_mode_returns_false_when_variable_does_not_exist():
     assert not in_production_mode()
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.current_app.config', {'PRODUCTION_MODE': False})
+@patch(
+    'inspirehep.modules.workflows.tasks.actions.current_app.config',
+    {'PRODUCTION_MODE': False},
+)
 def test_in_production_mode_returns_false_when_variable_is_falsy():
     assert not in_production_mode()
 
