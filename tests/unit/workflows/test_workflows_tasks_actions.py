@@ -22,27 +22,45 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
 from flask import current_app
 from mock import patch
 
 from inspirehep.modules.workflows.tasks.actions import (
-    mark,
-    is_marked,
-    is_record_accepted,
-    shall_halt_workflow,
-    in_production_mode,
+    _is_auto_rejected,
     add_core,
     halt_record,
-    update_note,
-    reject_record,
-    is_record_relevant,
-    is_experimental_paper,
+    in_production_mode,
     is_arxiv_paper,
+    is_experimental_paper,
+    is_marked,
+    is_record_accepted,
+    is_record_relevant,
     is_submission,
+    mark,
     prepare_update_payload,
+    reject_record,
+    shall_halt_workflow,
+    update_note,
 )
 
 from mocks import MockEng, MockObj
+
+
+def _get_auto_reject_obj(decision, has_core_keywords):
+    obj_params = {
+        'classifier_results': {
+            'complete_output': {
+                'Core keywords': ['something'] if has_core_keywords else [],
+            },
+        },
+        'relevance_prediction': {
+            'max_score': '0.222113',
+            'decision': decision,
+        },
+    }
+
+    return MockObj({}, obj_params)
 
 
 def test_mark():
@@ -281,21 +299,59 @@ def test_reject_record(l_w_a):
     )
 
 
-def test_is_record_relevant():
-    obj = MockObj({}, {
-        'classifier_results': {
-            'complete_output': {
-                'Core keywords': [],
-            },
-        },
-        'relevance_prediction': {
-            'max_score': '0.222113',
-            'decision': 'Rejected',
-        },
-    })
-    eng = MockEng()
+@pytest.mark.parametrize(
+    'expected,obj',
+    [
+        (False, _get_auto_reject_obj('Core', has_core_keywords=False)),
+        (False, _get_auto_reject_obj('Non-Core', has_core_keywords=False)),
+        (True, _get_auto_reject_obj('Rejected', has_core_keywords=False)),
+        (False, _get_auto_reject_obj('Core', has_core_keywords=True)),
+        (False, _get_auto_reject_obj('Non-Core', has_core_keywords=True)),
+        (False, _get_auto_reject_obj('Rejected', has_core_keywords=True)),
+    ],
+    ids=[
+        'Dont reject: No core keywords with core decision',
+        'Dont reject: No core keywords with non-core decision',
+        'Reject: No core keywords with rejected decision',
+        'Dont reject: Core keywords with core decision',
+        'Dont reject: Core keywords with non-core decision',
+        'Dont reject: Core keywords with rejected decision',
+    ]
+)
+def test__is_auto_rejected(expected, obj):
+    assert _is_auto_rejected(obj) is expected
 
-    assert not is_record_relevant(obj, eng)
+
+@pytest.mark.parametrize(
+    'expected,should_submission,should_auto_reject',
+    [
+        (True, True, True),
+        (True, True, False),
+        (False, False, True),
+        (True, False, False),
+    ],
+    ids=[
+        'Relevant: is submission and autorejected',
+        'Relevant: is submission and not autorejected',
+        'Not relevant: is not submission and autorejected',
+        'Relevant: is not submission and not autorejected',
+    ]
+)
+@patch('inspirehep.modules.workflows.tasks.actions.is_submission')
+@patch('inspirehep.modules.workflows.tasks.actions._is_auto_rejected')
+def test_is_record_relevant(
+    _is_auto_rejected_mock,
+    is_submission_mock,
+    expected,
+    should_submission,
+    should_auto_reject,
+):
+    _is_auto_rejected_mock.return_value = should_auto_reject
+    is_submission_mock.return_value = should_submission
+    obj = object()
+    eng = object()
+
+    assert is_record_relevant(obj, eng) is expected
 
 
 def test_is_record_relevant_returns_true_if_it_is_a_submission():
