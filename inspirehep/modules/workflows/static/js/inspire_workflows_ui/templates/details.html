@@ -208,15 +208,15 @@
             </div>
 
             <div ng-repeat="id in vm.record.metadata.ids" class="row">
-              <div ng-switch="id.type" class="col-md-12">
-                <span ng-switch-when="ORCID" class="font-bolder">ORCID:</span>
-                <span ng-switch-when="INSPIRE BAI" class="font-bolder">Author profile:</span>
-                <span ng-switch-when="ORCID" ng-bind="id.value"></span>
-                <span ng-switch-when="INSPIRE BAI">
-                  <a href="https://inspirehep.net/author/profile/{{id.value}}">
-                    {{id.value}}
-                  </a>
-                </span>
+              <div ng-switch="id.schema" class="col-md-12">
+                <div ng-switch-when="INSPIRE BAI">
+                  <span class="font-bolder">Author profile:</span>
+                  <a href="https://inspirehep.net/author/profile/{{id.value}}" target="_blank">{{id.value}}</a>
+                </div>
+                <div ng-switch-when="ORCID">
+                  <span class="font-bolder">ORCID:</span>
+                  <a href="http://orcid.org/{{id.value}}" target="_blank">{{id.value}}</a>
+                </div>
               </div>
             </div>
           </div>
