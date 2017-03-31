@@ -45,6 +45,7 @@ from invenio_db import db
 from invenio_workflows import workflow_object_class, start
 
 from .forms import LiteratureForm
+from .normalizers import normalize_formdata
 from .tasks import formdata_to_model
 
 
@@ -86,6 +87,7 @@ def submit():
         data_type="hep"
     )
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
+    visitor.data = normalize_formdata(workflow_object, visitor.data)
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
     workflow_object.save()
     db.session.commit()

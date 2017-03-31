@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import mock
-
 from inspirehep.modules.literaturesuggest.tasks import (
     new_ticket_context,
     reply_ticket_context,
@@ -227,12 +225,7 @@ def test_curation_ticket_needed():
     assert curation_ticket_needed(obj, eng)
 
 
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
-def test_formdata_to_model_ignores_arxiv_pdf(u, r_o):
-    r_o.return_value = '1111-1111-1111-1111'
-    u.query.get.return_value = StubUser('user@example.com')
-
+def test_formdata_to_model_ignores_arxiv_pdf():
     data = {}
     extra_data = {}
     obj = StubObj(data, extra_data)
@@ -247,12 +240,7 @@ def test_formdata_to_model_ignores_arxiv_pdf(u, r_o):
     assert 'submission_pdf' not in obj.extra_data
 
 
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
-def test_formdata_to_model_ignores_arxiv_additional_url(u, r_o):
-    r_o.return_value = '1111-1111-1111-1111'
-    u.query.get.return_value = StubUser('user@example.com')
-
+def test_formdata_to_model_ignores_arxiv_additional_url():
     data = {}
     extra_data = {}
     obj = StubObj(data, extra_data)
@@ -267,12 +255,7 @@ def test_formdata_to_model_ignores_arxiv_additional_url(u, r_o):
     assert 'urls' not in record
 
 
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
-def test_formdata_to_model_only_pdf(u, r_o):
-    r_o.return_value = '1111-1111-1111-1111'
-    u.query.get.return_value = StubUser('user@example.com')
-
+def test_formdata_to_model_only_pdf():
     data = {}
     extra_data = {}
     obj = StubObj(data, extra_data)
@@ -291,12 +274,7 @@ def test_formdata_to_model_only_pdf(u, r_o):
     assert expected == obj.extra_data
 
 
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
-def test_formdata_to_model_only_additional_url(u, r_o):
-    r_o.return_value = '1111-1111-1111-1111'
-    u.query.get.return_value = StubUser('user@example.com')
-
+def test_formdata_to_model_only_additional_url():
     data = {}
     extra_data = {}
     obj = StubObj(data, extra_data)
@@ -316,12 +294,7 @@ def test_formdata_to_model_only_additional_url(u, r_o):
     assert 'submission_pdf' not in obj.extra_data
 
 
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
-def test_formdata_to_model_pdf_and_additional_url(u, r_o):
-    r_o.return_value = '1111-1111-1111-1111'
-    u.query.get.return_value = StubUser('user@example.com')
-
+def test_formdata_to_model_pdf_and_additional_url():
     data = {}
     extra_data = {}
     obj = StubObj(data, extra_data)
