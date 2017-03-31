@@ -20,7 +20,7 @@
  * waive the privileges and immunities granted to it by virtue of its status
  * as an Intergovernmental Organization or submit itself to any jurisdiction.
  */
-(function(angular) {
+(function (angular) {
 
   function abstractFilter() {
     return function(input) {
@@ -51,6 +51,41 @@
       return abstract.replace(/[&<>]/g, replaceTag);
     };
   }
+
+  function categoriesFilter() {
+    return function (record) {
+      var inspireCategories = record.inspire_categories;
+      var arxivEprints = record.arxiv_eprints;
+      var arxivCategories = record.arxiv_categories;
+      var categories = [];
+
+      if (inspireCategories) {
+        for (var i = 0; i < inspireCategories.length; i++) {
+          categories.push(inspireCategories[i].term);
+        }
+      }
+
+      if (arxivEprints) {
+        for (var i = 0; i < arxivEprints.length; i++) {
+          var eprintCategories = arxivEprints[i].categories;
+            for (var j = 0; j < eprintCategories.length; j++) {
+              categories.push(eprintCategories[j]);
+            }
+        }
+      } else if (arxivCategories) {
+        for (var i = 0; i < arxivCategories.length; i++) {
+          categories.push(arxivCategories[i]);
+        }
+      }
+
+      return categories;
+    }
+  }
+
   angular.module('holdingpen.filters.abstract', ['ngSanitize'])
     .filter('abstract', abstractFilter);
+  
+  angular.module('holdingpen.filters.categories', [])
+    .filter('categories', categoriesFilter);
+
 })(angular);
