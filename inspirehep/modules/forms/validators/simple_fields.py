@@ -177,6 +177,27 @@ def pdf_validator(form, field):
         raise StopValidation(message)
 
 
+def no_pdf_validator(form, field):
+    """Validate that url is not from a PDF."""
+    import requests
+
+    def get_content_type(url):
+        session = requests.Session()
+        try:
+            response = session.head(
+                url,
+                allow_redirects=True
+            )
+        except:
+            return
+        return response.headers['content-type']
+
+    message = "Please, use the field above to link to a PDF."
+
+    if field.data and get_content_type(field.data) == 'application/pdf':
+        raise StopValidation(message)
+
+
 def date_validator(form, field):
     message = ("Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM"
                " or YYYY.")

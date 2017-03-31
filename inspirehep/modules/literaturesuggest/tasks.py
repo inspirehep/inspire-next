@@ -183,12 +183,15 @@ def formdata_to_model(obj, formdata):
         source='arXiv' if form_fields.get('categories') else 'CrossRef'
     )
 
-    if not _is_arxiv_url(form_fields.get('url', '')):
-        builder.add_url(url=form_fields.get('url'))
-        obj.extra_data['submission_pdf'] = form_fields.get('url')
+    form_url = form_fields.get('url')
+    form_additional_url = form_fields.get('additional_url')
+    if form_url and not _is_arxiv_url(form_url):
+        obj.extra_data['submission_pdf'] = form_url
+        if not form_additional_url:
+            builder.add_url(url=form_url)
 
-    if not _is_arxiv_url(form_fields.get('url', '')):
-        builder.add_url(url=form_fields.get('additional_url'))
+    if form_additional_url and not _is_arxiv_url(form_additional_url):
+        builder.add_url(url=form_additional_url)
 
     [builder.add_report_number(
         report_number=report_number.get('report_number')
