@@ -31,21 +31,11 @@ from inspirehep.modules.workflows.tasks.arxiv import (
 )
 
 
-class StubObj(object):
-    def __init__(self, data, extra_data):
-        self.data = data
-        self.extra_data = extra_data
-
-
-class DummyEng(object):
-    pass
-
-
-def test_arxiv_derive_inspire_categories():
+def test_arxiv_derive_inspire_categories(dummy_eng_cls, stub_obj_cls):
     schema = load_schema('hep')
     subschema = schema['properties']['inspire_categories']
 
-    obj = StubObj(
+    obj = stub_obj_cls(
         {
             'arxiv_eprints': [
                 {
@@ -66,7 +56,7 @@ def test_arxiv_derive_inspire_categories():
         },
         {}
     )
-    eng = DummyEng()
+    eng = dummy_eng_cls()
 
     expected_value = [
         {
@@ -86,11 +76,11 @@ def test_arxiv_derive_inspire_categories():
     assert validate(obj.data['inspire_categories'], subschema) is None
 
 
-def test_arxiv_derive_inspire_categories_other():
+def test_arxiv_derive_inspire_categories_other(dummy_eng_cls, stub_obj_cls):
     schema = load_schema('hep')
     subschema = schema['properties']['inspire_categories']
 
-    obj = StubObj(
+    obj = stub_obj_cls(
         {
             'arxiv_eprints': [
                 {
@@ -111,7 +101,7 @@ def test_arxiv_derive_inspire_categories_other():
         },
         {}
     )
-    eng = DummyEng()
+    eng = dummy_eng_cls()
 
     expected_value = [
         {
@@ -131,11 +121,11 @@ def test_arxiv_derive_inspire_categories_other():
     assert validate(obj.data['inspire_categories'], subschema) is None
 
 
-def test_arxiv_derive_inspire_categories_already_present():
+def test_arxiv_derive_inspire_categories_already_present(dummy_eng_cls, stub_obj_cls):
     schema = load_schema('hep')
     subschema = schema['properties']['inspire_categories']
 
-    obj = StubObj(
+    obj = stub_obj_cls(
         {
             'arxiv_eprints': [
                 {
@@ -156,7 +146,7 @@ def test_arxiv_derive_inspire_categories_already_present():
         },
         {}
     )
-    eng = DummyEng()
+    eng = dummy_eng_cls()
 
     expected_value = [
         {
@@ -173,11 +163,11 @@ def test_arxiv_derive_inspire_categories_already_present():
     assert validate(obj.data['inspire_categories'], subschema) is None
 
 
-def test_arxiv_derive_inspire_categories_multiple_eprints():
+def test_arxiv_derive_inspire_categories_multiple_eprints(dummy_eng_cls, stub_obj_cls):
     schema = load_schema('hep')
     subschema = schema['properties']['inspire_categories']
 
-    obj = StubObj(
+    obj = stub_obj_cls(
         {
             'arxiv_eprints': [
                 {
@@ -202,7 +192,7 @@ def test_arxiv_derive_inspire_categories_multiple_eprints():
         },
         {}
     )
-    eng = DummyEng()
+    eng = dummy_eng_cls()
 
     expected_value = [
         {

@@ -22,24 +22,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-from six import StringIO
-
 from inspirehep.modules.workflows.tasks.submission import (
     add_note_entry,
     prepare_files,
 )
-
-
-class MockLog(object):
-    def __init__(self):
-        self._debug = StringIO()
-        self._info = StringIO()
-
-    def debug(self, message):
-        self._debug.write(message)
-
-    def info(self, message):
-        self._info.write(message)
 
 
 class AttrDict(dict):
@@ -63,20 +49,10 @@ class StubFiles(object):
         return self.data.keys()
 
 
-class StubObj(object):
-    def __init__(self, data, extra_data, files):
-        self.data = data
-        self.extra_data = extra_data
-        self.files = files
-
-        self.log = MockLog()
-
-
-class DummyEng(object):
-    pass
-
-
-def test_add_note_entry_does_not_add_value_that_is_already_present():
+def test_add_note_entry_does_not_add_value_that_is_already_present(
+    stub_obj_cls,
+    dummy_eng_cls
+):
     data = {
         'public_notes': [
             {'value': '*Temporary entry*'},
@@ -85,8 +61,8 @@ def test_add_note_entry_does_not_add_value_that_is_already_present():
     extra_data = {'core': 'something'}
     files = StubFiles({})
 
-    obj = StubObj(data, extra_data, files)
-    eng = DummyEng()
+    obj = stub_obj_cls(data, extra_data, files=files)
+    eng = dummy_eng_cls()
 
     assert add_note_entry(obj, eng) is None
     assert obj.data == {
@@ -96,7 +72,10 @@ def test_add_note_entry_does_not_add_value_that_is_already_present():
     }
 
 
-def test_prepare_files():
+def test_prepare_files(
+    stub_obj_cls,
+    dummy_eng_cls
+):
     data = {}
     extra_data = {}
     files = StubFiles({
@@ -109,8 +88,8 @@ def test_prepare_files():
         }),
     })
 
-    obj = StubObj(data, extra_data, files)
-    eng = DummyEng()
+    obj = stub_obj_cls(data, extra_data, files=files)
+    eng = dummy_eng_cls()
 
     assert prepare_files(obj, eng) is None
     assert obj.data == {
@@ -127,7 +106,10 @@ def test_prepare_files():
     assert '/data/foo.pdf' in obj.log._debug.getvalue()
 
 
-def test_prepare_files_annotates_files_from_arxiv():
+def test_prepare_files_annotates_files_from_arxiv(
+    stub_obj_cls,
+    dummy_eng_cls
+):
     data = {
         'arxiv_eprints': [
             {'categories': 'hep-th'},
@@ -144,8 +126,8 @@ def test_prepare_files_annotates_files_from_arxiv():
         }),
     })
 
-    obj = StubObj(data, extra_data, files)
-    eng = DummyEng()
+    obj = stub_obj_cls(data, extra_data, files=files)
+    eng = dummy_eng_cls()
 
     assert prepare_files(obj, eng) is None
     assert obj.data == {
@@ -165,15 +147,18 @@ def test_prepare_files_annotates_files_from_arxiv():
     assert '/data/foo.pdf' in obj.log._debug.getvalue()
 
 
-def test_prepare_files_skips_empty_files():
+def test_prepare_files_skips_empty_files(
+    stub_obj_cls,
+    dummy_eng_cls
+):
     data = {}
     extra_data = {}
     files = StubFiles({
         'foo.pdf': AttrDict({}),
     })
 
-    obj = StubObj(data, extra_data, files)
-    eng = DummyEng()
+    obj = stub_obj_cls(data, extra_data, files=files)
+    eng = dummy_eng_cls()
 
     assert prepare_files(obj, eng) is None
     assert obj.data == {}
@@ -181,13 +166,16 @@ def test_prepare_files_skips_empty_files():
     assert '' == obj.log._debug.getvalue()
 
 
-def test_prepare_files_does_nothing_when_obj_has_no_files():
+def test_prepare_files_does_nothing_when_obj_has_no_files(
+    stub_obj_cls,
+    dummy_eng_cls
+):
     data = {}
     extra_data = {}
     files = StubFiles({})
 
-    obj = StubObj(data, extra_data, files)
-    eng = DummyEng()
+    obj = stub_obj_cls(data, extra_data, files=files)
+    eng = dummy_eng_cls()
 
     assert prepare_files(obj, eng) is None
     assert obj.data == {}
@@ -195,7 +183,10 @@ def test_prepare_files_does_nothing_when_obj_has_no_files():
     assert '' == obj.log._debug.getvalue()
 
 
-def test_prepare_files_ignores_keys_not_ending_with_pdf():
+def test_prepare_files_ignores_keys_not_ending_with_pdf(
+    stub_obj_cls,
+    dummy_eng_cls
+):
     data = {}
     extra_data = {}
     files = StubFiles({
@@ -208,8 +199,8 @@ def test_prepare_files_ignores_keys_not_ending_with_pdf():
         }),
     })
 
-    obj = StubObj(data, extra_data, files)
-    eng = DummyEng()
+    obj = stub_obj_cls(data, extra_data, files=files)
+    eng = dummy_eng_cls()
 
     assert prepare_files(obj, eng) is None
     assert obj.data == {}

@@ -33,24 +33,12 @@ from inspirehep.modules.literaturesuggest.tasks import (
 )
 
 
-class StubObj(object):
-    def __init__(self, data, extra_data, id=1, id_user=1):
-        self.data = data
-        self.extra_data = extra_data
-        self.id = id
-        self.id_user = id_user
-
-
-class DummyEng(object):
-    pass
-
-
 class StubUser(object):
     def __init__(self, email):
         self.email = email
 
 
-def test_new_ticket_context():
+def test_new_ticket_context(stub_obj_cls):
     data = {
         'titles': [
             {
@@ -74,7 +62,7 @@ def test_new_ticket_context():
         },
     }
 
-    obj = StubObj(data, extra_data)
+    obj = stub_obj_cls(data, extra_data)
     user = StubUser('user@example.com')
 
     expected = {
@@ -97,7 +85,7 @@ def test_new_ticket_context():
     assert expected == result
 
 
-def test_new_ticket_context_handles_unicode():
+def test_new_ticket_context_handles_unicode(stub_obj_cls):
     data = {
         'titles': [
             {
@@ -111,7 +99,7 @@ def test_new_ticket_context_handles_unicode():
     }
     extra_data = {}
 
-    obj = StubObj(data, extra_data)
+    obj = stub_obj_cls(data, extra_data)
     user = StubUser('user@example.com')
 
     expected = {
@@ -136,7 +124,7 @@ def test_new_ticket_context_handles_unicode():
     assert expected == result
 
 
-def test_reply_ticket_context():
+def test_reply_ticket_context(stub_obj_cls):
     data = {
         'titles': [
             {
@@ -149,7 +137,7 @@ def test_reply_ticket_context():
         'url': 'baz',
     }
 
-    obj = StubObj(data, extra_data)
+    obj = stub_obj_cls(data, extra_data)
     user = StubUser('user@example.com')
 
     expected = {
@@ -164,7 +152,7 @@ def test_reply_ticket_context():
     assert expected == result
 
 
-def test_curation_ticket_context():
+def test_curation_ticket_context(stub_obj_cls):
     data = {
         'arxiv_eprints': [
             {
@@ -199,7 +187,7 @@ def test_curation_ticket_context():
         }
     }
 
-    obj = StubObj(data, extra_data)
+    obj = stub_obj_cls(data, extra_data)
     user = StubUser('user@example.com')
 
     expected = {
@@ -220,22 +208,22 @@ def test_curation_ticket_context():
     assert expected == result
 
 
-def test_curation_ticket_needed():
-    obj = StubObj({}, {'core': True})
-    eng = DummyEng()
+def test_curation_ticket_needed(dummy_eng_cls, stub_obj_cls):
+    obj = stub_obj_cls({}, {'core': True})
+    eng = dummy_eng_cls()
 
     assert curation_ticket_needed(obj, eng)
 
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
-def test_formdata_to_model_ignores_arxiv_pdf(u, r_o):
+def test_formdata_to_model_ignores_arxiv_pdf(u, r_o, stub_obj_cls):
     r_o.return_value = '1111-1111-1111-1111'
     u.query.get.return_value = StubUser('user@example.com')
 
     data = {}
     extra_data = {}
-    obj = StubObj(data, extra_data)
+    obj = stub_obj_cls(data, extra_data)
     formdata = {
         'type_of_doc': 'article',
         'title': 'Test title',
@@ -249,13 +237,13 @@ def test_formdata_to_model_ignores_arxiv_pdf(u, r_o):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
-def test_formdata_to_model_ignores_arxiv_additional_url(u, r_o):
+def test_formdata_to_model_ignores_arxiv_additional_url(u, r_o, stub_obj_cls):
     r_o.return_value = '1111-1111-1111-1111'
     u.query.get.return_value = StubUser('user@example.com')
 
     data = {}
     extra_data = {}
-    obj = StubObj(data, extra_data)
+    obj = stub_obj_cls(data, extra_data)
     formdata = {
         'type_of_doc': 'article',
         'title': 'Test title',
@@ -269,13 +257,13 @@ def test_formdata_to_model_ignores_arxiv_additional_url(u, r_o):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
-def test_formdata_to_model_only_pdf(u, r_o):
+def test_formdata_to_model_only_pdf(u, r_o, stub_obj_cls):
     r_o.return_value = '1111-1111-1111-1111'
     u.query.get.return_value = StubUser('user@example.com')
 
     data = {}
     extra_data = {}
-    obj = StubObj(data, extra_data)
+    obj = stub_obj_cls(data, extra_data)
     formdata = {
         'type_of_doc': 'article',
         'title': 'Test title',
@@ -293,13 +281,13 @@ def test_formdata_to_model_only_pdf(u, r_o):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
-def test_formdata_to_model_only_additional_url(u, r_o):
+def test_formdata_to_model_only_additional_url(u, r_o, stub_obj_cls):
     r_o.return_value = '1111-1111-1111-1111'
     u.query.get.return_value = StubUser('user@example.com')
 
     data = {}
     extra_data = {}
-    obj = StubObj(data, extra_data)
+    obj = stub_obj_cls(data, extra_data)
     formdata = {
         'type_of_doc': 'article',
         'title': 'Test title',
@@ -318,13 +306,13 @@ def test_formdata_to_model_only_additional_url(u, r_o):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.retrieve_orcid')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
-def test_formdata_to_model_pdf_and_additional_url(u, r_o):
+def test_formdata_to_model_pdf_and_additional_url(u, r_o, stub_obj_cls):
     r_o.return_value = '1111-1111-1111-1111'
     u.query.get.return_value = StubUser('user@example.com')
 
     data = {}
     extra_data = {}
-    obj = StubObj(data, extra_data)
+    obj = stub_obj_cls(data, extra_data)
     formdata = {
         'type_of_doc': 'article',
         'title': 'Test title',

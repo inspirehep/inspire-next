@@ -52,12 +52,6 @@ class MockLog(object):
         self._log.write(message)
 
 
-class StubObj(object):
-    def __init__(self, data, extra_data):
-        self.data = data
-        self.extra_data = extra_data
-
-
 class MockObj(object):
 
     log = MockLog()
@@ -68,19 +62,18 @@ class MockObj(object):
         self.extra_data = extra_data
 
 
-class DummyEng(object):
-    pass
-
-
 class MockEng(object):
     def halt(self, action, msg):
         self.action = action
         self.msg = msg
 
 
-def test_mark():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+def test_mark(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     foobar_mark = mark('foo', 'bar')
 
@@ -88,9 +81,12 @@ def test_mark():
     assert obj.extra_data == {'foo': 'bar'}
 
 
-def test_mark_overwrites():
-    obj = StubObj({}, {'foo': 'bar'})
-    eng = DummyEng()
+def test_mark_overwrites(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {'foo': 'bar'})
+    eng = dummy_eng_cls()
 
     foobaz_mark = mark('foo', 'baz')
 
@@ -98,65 +94,74 @@ def test_mark_overwrites():
     assert obj.extra_data == {'foo': 'baz'}
 
 
-def test_is_marked():
-    obj = StubObj({}, {'foo': 'bar'})
-    eng = DummyEng()
+def test_is_marked(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {'foo': 'bar'})
+    eng = dummy_eng_cls()
 
     is_foo_marked = is_marked('foo')
 
     assert is_foo_marked(obj, eng)
 
 
-def test_is_marked_returns_false_when_key_does_not_exist():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+def test_is_marked_returns_false_when_key_does_not_exist(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     is_foo_marked = is_marked('foo')
 
     assert not is_foo_marked(obj, eng)
 
 
-def test_is_marked_returns_false_when_value_is_falsy():
-    obj = StubObj({}, {'foo': False})
-    eng = DummyEng()
+def test_is_marked_returns_false_when_value_is_falsy(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {'foo': False})
+    eng = dummy_eng_cls()
 
     is_foo_marked = is_marked('foo')
 
     assert not is_foo_marked(obj, eng)
 
 
-def test_is_record_accepted():
-    obj = StubObj({}, {'approved': True})
+def test_is_record_accepted(stub_obj_cls):
+    obj = stub_obj_cls({}, {'approved': True})
 
     assert is_record_accepted(obj)
 
 
-def test_is_record_accepted_returns_false_when_key_does_not_exist():
-    obj = StubObj({}, {})
+def test_is_record_accepted_returns_false_when_key_does_not_exist(stub_obj_cls):
+    obj = stub_obj_cls({}, {})
 
     assert not is_record_accepted(obj)
 
 
-def test_is_record_accepted_returns_false_when_value_is_falsy():
-    obj = StubObj({}, {'approved': False})
+def test_is_record_accepted_returns_false_when_value_is_falsy(stub_obj_cls):
+    obj = stub_obj_cls({}, {'approved': False})
 
     assert not is_record_accepted(obj)
 
 
-def test_shall_halt_workflow():
-    obj = StubObj({}, {'halt_workflow': True})
+def test_shall_halt_workflow(stub_obj_cls):
+    obj = stub_obj_cls({}, {'halt_workflow': True})
 
     assert shall_halt_workflow(obj)
 
 
-def test_shall_halt_workflow_returns_false_when_key_does_not_exist():
-    obj = StubObj({}, {})
+def test_shall_halt_workflow_returns_false_when_key_does_not_exist(stub_obj_cls):
+    obj = stub_obj_cls({}, {})
 
     assert not shall_halt_workflow(obj)
 
 
-def test_shall_halt_workflow_returns_false_when_value_is_falsy():
-    obj = StubObj({}, {'halt_workflow': False})
+def test_shall_halt_workflow_returns_false_when_value_is_falsy(stub_obj_cls):
+    obj = stub_obj_cls({}, {'halt_workflow': False})
 
     assert not shall_halt_workflow(obj)
 
@@ -176,40 +181,55 @@ def test_in_production_mode_returns_false_when_variable_is_falsy():
     assert not in_production_mode()
 
 
-def test_add_core_sets_core_to_true_if_extra_data_core_is_true():
-    obj = StubObj({}, {'core': True})
-    eng = DummyEng()
+def test_add_core_sets_core_to_true_if_extra_data_core_is_true(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {'core': True})
+    eng = dummy_eng_cls()
 
     assert add_core(obj, eng) is None
     assert obj.data == {'core': True}
 
 
-def test_add_core_sets_core_to_false_if_extra_data_core_is_false():
-    obj = StubObj({}, {'core': False})
-    eng = DummyEng()
+def test_add_core_sets_core_to_false_if_extra_data_core_is_false(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {'core': False})
+    eng = dummy_eng_cls()
 
     assert add_core(obj, eng) is None
     assert obj.data == {'core': False}
 
 
-def test_add_core_does_nothing_if_extra_data_has_no_core_key():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+def test_add_core_does_nothing_if_extra_data_has_no_core_key(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert add_core(obj, eng) is None
     assert obj.data == {}
 
 
-def test_add_core_overrides_core_if_extra_data_has_core_key():
-    obj = StubObj({'core': False}, {'core': True})
-    eng = DummyEng()
+def test_add_core_overrides_core_if_extra_data_has_core_key(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({'core': False}, {'core': True})
+    eng = dummy_eng_cls()
 
     assert add_core(obj, eng) is None
     assert obj.data == {'core': True}
 
 
-def test_halt_record():
-    obj = StubObj({}, {'halt_action': 'foo', 'halt_message': 'bar'})
+def test_halt_record(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {'halt_action': 'foo', 'halt_message': 'bar'})
     eng = MockEng()
 
     default_halt_record = halt_record()
@@ -219,8 +239,11 @@ def test_halt_record():
     assert eng.msg == 'bar'
 
 
-def test_halt_record_accepts_custom_action():
-    obj = StubObj({}, {})
+def test_halt_record_accepts_custom_action(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {})
     eng = MockEng()
 
     foo_action_halt_record = halt_record(action='foo')
@@ -229,8 +252,10 @@ def test_halt_record_accepts_custom_action():
     assert eng.action == 'foo'
 
 
-def test_halt_record_accepts_custom_msg():
-    obj = StubObj({}, {})
+def test_halt_record_accepts_custom_msg(
+    stub_obj_cls
+):
+    obj = stub_obj_cls({}, {})
     eng = MockEng()
 
     bar_message_halt_record = halt_record(message='bar')
@@ -308,8 +333,11 @@ def test_reject_record(l_w_a):
     )
 
 
-def test_is_record_relevant():
-    obj = StubObj({}, {
+def test_is_record_relevant(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {
         'classifier_results': {
             'complete_output': {
                 'Core keywords': [],
@@ -320,70 +348,88 @@ def test_is_record_relevant():
             'decision': 'Rejected',
         },
     })
-    eng = DummyEng()
+    eng = dummy_eng_cls()
 
     assert not is_record_relevant(obj, eng)
 
 
-def test_is_record_relevant_returns_true_if_it_is_a_submission():
-    obj = StubObj({'acquisition_source': {'method': 'submitter'}}, {})
-    eng = DummyEng()
+def test_is_record_relevant_returns_true_if_it_is_a_submission(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({'acquisition_source': {'method': 'submitter'}}, {})
+    eng = dummy_eng_cls()
 
     assert is_record_relevant(obj, eng)
 
 
-def test_is_record_relevant_returns_true_if_no_relevance_prediction():
-    obj = StubObj({}, {
+def test_is_record_relevant_returns_true_if_no_relevance_prediction(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {
         'classifier_results': {
             'complete_output': {
                 'Core keywords': [],
             },
         },
     })
-    eng = DummyEng()
+    eng = dummy_eng_cls()
 
     assert is_record_relevant(obj, eng)
 
 
-def test_is_record_relevant_returns_true_if_no_classifier_results():
-    obj = StubObj({}, {
+def test_is_record_relevant_returns_true_if_no_classifier_results(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {
         'relevance_prediction': {
             'max_score': '0.222113',
             'decision': 'Rejected',
         },
     })
-    eng = DummyEng()
+    eng = dummy_eng_cls()
 
     assert is_record_relevant(obj, eng)
 
 
-def test_is_experimental_paper():
-    obj = StubObj({
+def test_is_experimental_paper(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({
         'arxiv_eprints': [
             {'categories': ['hep-ex']},
         ]
     }, {})
-    eng = DummyEng()
+    eng = dummy_eng_cls()
 
     assert is_experimental_paper(obj, eng)
 
 
-def test_is_experimental_paper_returns_true_if_inspire_categories_in_list():
-    obj = StubObj({'inspire_categories': [{'term': 'Experiment-HEP'}]}, {})
-    eng = DummyEng()
+def test_is_experimental_paper_returns_true_if_inspire_categories_in_list(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({'inspire_categories': [{'term': 'Experiment-HEP'}]}, {})
+    eng = dummy_eng_cls()
 
     assert is_experimental_paper(obj, eng)
 
 
-def test_is_experimental_paper_returns_false_otherwise():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+def test_is_experimental_paper_returns_false_otherwise(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert not is_experimental_paper(obj, eng)
 
 
-def test_is_arxiv_paper():
-    obj = StubObj({
+def test_is_arxiv_paper(stub_obj_cls):
+    obj = stub_obj_cls({
         'arxiv_eprints': [
             {
                 'categories': ['hep-th'],
@@ -395,43 +441,58 @@ def test_is_arxiv_paper():
     assert is_arxiv_paper(obj)
 
 
-def test_is_arxiv_paper_returns_false_when_arxiv_eprints_is_empty():
-    obj = StubObj({'arxiv_eprints': []}, {})
+def test_is_arxiv_paper_returns_false_when_arxiv_eprints_is_empty(stub_obj_cls):
+    obj = stub_obj_cls({'arxiv_eprints': []}, {})
 
     assert not is_arxiv_paper(obj)
 
 
-def test_is_submission():
-    obj = StubObj({'acquisition_source': {'method': 'submitter'}}, {})
-    eng = DummyEng()
+def test_is_submission(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({'acquisition_source': {'method': 'submitter'}}, {})
+    eng = dummy_eng_cls()
 
     assert is_submission(obj, eng)
 
 
-def test_is_submission_returns_false_if_method_is_not_submission():
-    obj = StubObj({'acquisition_source': {'method': 'not-submission'}}, {})
-    eng = DummyEng()
+def test_is_submission_returns_false_if_method_is_not_submission(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({'acquisition_source': {'method': 'not-submission'}}, {})
+    eng = dummy_eng_cls()
 
     assert not is_submission(obj, eng)
 
 
-def test_is_submission_returns_false_if_obj_has_no_acquisition_source():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+def test_is_submission_returns_false_if_obj_has_no_acquisition_source(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert not is_submission(obj, eng)
 
 
-def test_is_submission_returns_false_if_obj_has_falsy_acquisition_source():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+def test_is_submission_returns_false_if_obj_has_falsy_acquisition_source(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert not is_submission(obj, eng)
 
 
-def test_prepare_update_payload():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+def test_prepare_update_payload(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     default_prepare_update_payload = prepare_update_payload()
 
@@ -439,9 +500,12 @@ def test_prepare_update_payload():
     assert obj.extra_data['update_payload'] == {}
 
 
-def test_prepare_update_payload_accepts_a_custom_key():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+def test_prepare_update_payload_accepts_a_custom_key(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     custom_key_prepare_update_payload = prepare_update_payload('custom_key')
 
@@ -449,9 +513,12 @@ def test_prepare_update_payload_accepts_a_custom_key():
     assert obj.extra_data['custom_key'] == {}
 
 
-def test_prepare_update_payload_overwrites():
-    obj = StubObj({'bar': 'baz'}, {'foo': 'foo'})
-    eng = DummyEng()
+def test_prepare_update_payload_overwrites(
+    stub_obj_cls,
+    dummy_eng_cls
+):
+    obj = stub_obj_cls({'bar': 'baz'}, {'foo': 'foo'})
+    eng = dummy_eng_cls()
 
     foo_prepare_update_payload = prepare_update_payload('foo')
 
