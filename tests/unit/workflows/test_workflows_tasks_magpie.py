@@ -36,16 +36,6 @@ from inspirehep.modules.workflows.tasks.magpie import (
 )
 
 
-class StubObj(object):
-    def __init__(self, data, extra_data):
-        self.data = data
-        self.extra_data = extra_data
-
-
-class DummyEng(object):
-    pass
-
-
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.current_app.config',
     {'MAGPIE_API_URL': 'https://magpie.inspirehep.net'})
@@ -120,7 +110,7 @@ def test_filter_magpie_response_falls_back_to_first_label():
 
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
-def test_guess_keywords_accepts_over_point_09(j_a_r, g_m_u):
+def test_guess_keywords_accepts_over_point_09(j_a_r, g_m_u, dummy_eng_cls, stub_obj_cls):
     j_a_r.return_value = {
         'labels': [
             ('foo', 0.09),
@@ -128,8 +118,8 @@ def test_guess_keywords_accepts_over_point_09(j_a_r, g_m_u):
     }
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_keywords(obj, eng) is None
     assert obj.extra_data['keywords_prediction'] == {
@@ -145,7 +135,7 @@ def test_guess_keywords_accepts_over_point_09(j_a_r, g_m_u):
 
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
-def test_guess_keywords_considers_only_first_ten(j_a_r, g_m_u):
+def test_guess_keywords_considers_only_first_ten(j_a_r, g_m_u, dummy_eng_cls, stub_obj_cls):
     j_a_r.return_value = {
         'labels': [
             ('k01', 1.00),
@@ -163,8 +153,8 @@ def test_guess_keywords_considers_only_first_ten(j_a_r, g_m_u):
     }
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_keywords(obj, eng) is None
     assert obj.extra_data['keywords_prediction'] == {
@@ -185,23 +175,23 @@ def test_guess_keywords_considers_only_first_ten(j_a_r, g_m_u):
 
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
-def test_guess_keywords_does_not_fail_when_request_fails(j_a_r, g_m_u):
+def test_guess_keywords_does_not_fail_when_request_fails(j_a_r, g_m_u, dummy_eng_cls, stub_obj_cls):
     j_a_r.side_effect = requests.exceptions.RequestException()
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_keywords(obj, eng) is None
     assert obj.extra_data == {}
 
 
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
-def test_guess_keywords_fails_without_a_magpie_url(g_m_u):
+def test_guess_keywords_fails_without_a_magpie_url(g_m_u, dummy_eng_cls, stub_obj_cls):
     g_m_u.return_value = None
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_keywords(obj, eng) is None
     assert obj.extra_data == {}
@@ -209,7 +199,7 @@ def test_guess_keywords_fails_without_a_magpie_url(g_m_u):
 
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
-def test_guess_categories_filters_under_point_22(j_a_r, g_m_u):
+def test_guess_categories_filters_under_point_22(j_a_r, g_m_u, dummy_eng_cls, stub_obj_cls):
     j_a_r.return_value = {
         'labels': [
             ('foo', 0.21),
@@ -218,8 +208,8 @@ def test_guess_categories_filters_under_point_22(j_a_r, g_m_u):
     }
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_categories(obj, eng) is None
     assert obj.extra_data['categories_prediction'] == {
@@ -235,7 +225,7 @@ def test_guess_categories_filters_under_point_22(j_a_r, g_m_u):
 
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
-def test_guess_categories_accepts_over_point_25(j_a_r, g_m_u):
+def test_guess_categories_accepts_over_point_25(j_a_r, g_m_u, dummy_eng_cls, stub_obj_cls):
     j_a_r.return_value = {
         'labels': [
             ('foo', 0.25),
@@ -243,8 +233,8 @@ def test_guess_categories_accepts_over_point_25(j_a_r, g_m_u):
     }
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_categories(obj, eng) is None
     assert obj.extra_data['categories_prediction'] == {
@@ -259,11 +249,11 @@ def test_guess_categories_accepts_over_point_25(j_a_r, g_m_u):
 
 
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
-def test_guess_categories_fails_without_a_magpie_url(g_m_u):
+def test_guess_categories_fails_without_a_magpie_url(g_m_u, dummy_eng_cls, stub_obj_cls):
     g_m_u.return_value = None
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_categories(obj, eng) is None
     assert obj.extra_data == {}
@@ -271,7 +261,7 @@ def test_guess_categories_fails_without_a_magpie_url(g_m_u):
 
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
-def test_guess_experiments_filters_under_point_50(j_a_r, g_m_u):
+def test_guess_experiments_filters_under_point_50(j_a_r, g_m_u, dummy_eng_cls, stub_obj_cls):
     j_a_r.return_value = {
         'labels': [
             ('foo', 0.49),
@@ -280,8 +270,8 @@ def test_guess_experiments_filters_under_point_50(j_a_r, g_m_u):
     }
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_experiments(obj, eng) is None
     assert obj.extra_data['experiments_prediction'] == {
@@ -296,11 +286,11 @@ def test_guess_experiments_filters_under_point_50(j_a_r, g_m_u):
 
 
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
-def test_guess_experiments_fails_without_a_magpie_url(g_m_u):
+def test_guess_experiments_fails_without_a_magpie_url(g_m_u, dummy_eng_cls, stub_obj_cls):
     g_m_u.return_value = None
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_experiments(obj, eng) is None
     assert obj.extra_data == {}

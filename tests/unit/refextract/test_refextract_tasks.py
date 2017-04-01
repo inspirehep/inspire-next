@@ -25,22 +25,16 @@ from __future__ import absolute_import, division, print_function
 from inspirehep.modules.refextract.tasks import extract_journal_info
 
 
-class StubObj(object):
-    def __init__(self, data):
-        self.data = data
-
-
-class DummyEng(object):
-    pass
-
-
-def test_extract_journal_info():
-    obj = StubObj({
-        'publication_info': [
-            {'pubinfo_freetext': 'J. Math. Phys. 55, 082102 (2014)'},
-        ],
-    })
-    eng = DummyEng()
+def test_extract_journal_info(dummy_eng_cls, stub_obj_cls):
+    obj = stub_obj_cls(
+        {
+            'publication_info': [
+                {'pubinfo_freetext': 'J. Math. Phys. 55, 082102 (2014)'},
+            ],
+        },
+        {}
+    )
+    eng = dummy_eng_cls()
 
     assert extract_journal_info(obj, eng) is None
     assert obj.data['publication_info'] == [

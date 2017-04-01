@@ -33,16 +33,6 @@ from inspirehep.modules.workflows.tasks.beard import (
 )
 
 
-class StubObj(object):
-    def __init__(self, data, extra_data):
-        self.data = data
-        self.extra_data = extra_data
-
-
-class DummyEng(object):
-    pass
-
-
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.current_app.config',
     {'BEARD_API_URL': 'https://beard.inspirehep.net'})
@@ -95,11 +85,11 @@ def test_prepare_payload():
 
 
 @mock.patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
-def test_guess_coreness_fails_without_a_beard_url(g_b_u):
+def test_guess_coreness_fails_without_a_beard_url(g_b_u, dummy_eng_cls, stub_obj_cls):
     g_b_u.return_value = ''
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_coreness(obj, eng) is None
     assert 'relevance_prediction' not in obj.extra_data
@@ -107,12 +97,12 @@ def test_guess_coreness_fails_without_a_beard_url(g_b_u):
 
 @mock.patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
 @mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
-def test_guess_coreness_does_not_fail_when_request_fails(j_a_r, g_b_u):
+def test_guess_coreness_does_not_fail_when_request_fails(j_a_r, g_b_u, dummy_eng_cls, stub_obj_cls):
     j_a_r.side_effect = requests.exceptions.RequestException()
     g_b_u.return_value = 'https://beard.inspirehep.net/predictor/coreness'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_coreness(obj, eng) is None
     assert 'relevance_prediction' not in obj.extra_data
@@ -120,7 +110,7 @@ def test_guess_coreness_does_not_fail_when_request_fails(j_a_r, g_b_u):
 
 @mock.patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
 @mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
-def test_guess_coreness_when_core(j_a_r, g_b_u):
+def test_guess_coreness_when_core(j_a_r, g_b_u, dummy_eng_cls, stub_obj_cls):
     j_a_r.return_value = {
         'decision': 'CORE',
         'scores': [
@@ -131,8 +121,8 @@ def test_guess_coreness_when_core(j_a_r, g_b_u):
     }
     g_b_u.return_value = 'https://beard.inspirehep.net/predictor/coreness'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_coreness(obj, eng) is None
     assert obj.extra_data['relevance_prediction'] == {
@@ -149,7 +139,7 @@ def test_guess_coreness_when_core(j_a_r, g_b_u):
 
 @mock.patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
 @mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
-def test_guess_coreness_when_non_core(j_a_r, g_b_u):
+def test_guess_coreness_when_non_core(j_a_r, g_b_u, dummy_eng_cls, stub_obj_cls):
     j_a_r.return_value = {
         'decision': 'Non-CORE',
         'scores': [
@@ -160,8 +150,8 @@ def test_guess_coreness_when_non_core(j_a_r, g_b_u):
     }
     g_b_u.return_value = 'https://beard.inspirehep.net/predictor/coreness'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_coreness(obj, eng) is None
     assert obj.extra_data['relevance_prediction'] == {
@@ -178,7 +168,7 @@ def test_guess_coreness_when_non_core(j_a_r, g_b_u):
 
 @mock.patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
 @mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
-def test_guess_coreness_when_rejected(j_a_r, g_b_u):
+def test_guess_coreness_when_rejected(j_a_r, g_b_u, dummy_eng_cls, stub_obj_cls):
     j_a_r.return_value = {
         'decision': 'Rejected',
         'scores': [
@@ -189,8 +179,8 @@ def test_guess_coreness_when_rejected(j_a_r, g_b_u):
     }
     g_b_u.return_value = 'https://beard.inspirehep.net/predictor/coreness'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = stub_obj_cls({}, {})
+    eng = dummy_eng_cls()
 
     assert guess_coreness(obj, eng) is None
     assert obj.extra_data['relevance_prediction'] == {

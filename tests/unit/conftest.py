@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from six import StringIO
+
 import pytest
 from langdetect import DetectorFactory
 
@@ -64,3 +66,42 @@ def stable_langdetect(app):
     DetectorFactory.seed = 0
 
     yield
+
+
+@pytest.fixture(scope='function')
+def stub_obj_cls():
+
+    yield StubObj
+
+
+@pytest.fixture(scope='function')
+def dummy_eng_cls():
+
+    yield DummyEng
+
+
+class StubObj(object):
+    def __init__(self, data, extra_data, files=None, id=1, id_user=1):
+        self.data = data
+        self.extra_data = extra_data
+        self.files = files
+        self.id = id
+        self.id_user = id_user
+
+        self.log = MockLog()
+
+
+class DummyEng(object):
+    pass
+
+
+class MockLog(object):
+    def __init__(self):
+        self._debug = StringIO()
+        self._info = StringIO()
+
+    def debug(self, message):
+        self._debug.write(message)
+
+    def info(self, message):
+        self._info.write(message)
