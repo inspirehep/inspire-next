@@ -98,7 +98,6 @@ install_requires = [
     'invenio-workflows-ui~=1.0.31',
     'elasticsearch-dsl<2.2.0',
     'pycountry>=17.1.8',
-    'freezegun>=0.3.8',
 ]
 
 tests_require = [
