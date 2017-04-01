@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.literaturesuggest.normalizers import (
+    remove_english_language,
     split_page_range_article_id,
 )
 
@@ -42,5 +43,15 @@ def test_split_page_range_article_id():
         'page_start': '789',
     }
     result = split_page_range_article_id(obj, formdata)
+
+    assert expected == result
+
+
+def test_remove_english_language():
+    obj = DummyObj()
+    formdata = {'language': 'en'}
+
+    expected = {}
+    result = remove_english_language(obj, formdata)
 
     assert expected == result

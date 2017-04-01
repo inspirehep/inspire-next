@@ -38,6 +38,7 @@ def normalize_formdata(obj, formdata):
     formdata = get_user_email(obj, formdata)
     formdata = split_page_range_article_id(obj, formdata)
     formdata = normalize_journal_title(obj, formdata)
+    formdata = remove_english_language(obj, formdata)
 
     return formdata
 
@@ -76,5 +77,12 @@ def split_page_range_article_id(obj, formdata):
 def normalize_journal_title(obj, formdata):
     if formdata.get('journal_title'):
         formdata['journal_title'] = _normalize_journal_title(formdata['journal_title'])
+
+    return formdata
+
+
+def remove_english_language(obj, formdata):
+    if formdata.get('language') == 'en':
+        del formdata['language']
 
     return formdata
