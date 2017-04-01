@@ -22,11 +22,15 @@
 
 from __future__ import absolute_import, division, print_function
 
+from mock import patch
+import pytest
 from six import StringIO
 
 from inspirehep.modules.workflows.tasks.submission import (
     add_note_entry,
+    create_ticket,
     prepare_files,
+    submit_rt_ticket
 )
 
 
@@ -74,6 +78,19 @@ class StubObj(object):
 
 class DummyEng(object):
     pass
+
+
+class DummyUser(object):
+    def __init__(self):
+        self.email = 'foo@bar.com'
+
+
+class DummyRTInstance(object):
+    def __init__(self, mocked_create_ticket):
+        self.create_ticket = mocked_create_ticket
+
+    def create_ticket(*args, **kwargs):
+        pass
 
 
 def test_add_note_entry_does_not_add_value_that_is_already_present():
@@ -215,3 +232,62 @@ def test_prepare_files_ignores_keys_not_ending_with_pdf():
     assert obj.data == {}
     assert '' == obj.log._info.getvalue()
     assert '' == obj.log._debug.getvalue()
+
+
+@pytest.mark.parametrize(
+    ("subject, body"),
+    [
+        (u"φοο", "foo"),
+        ("foo", u"φοο"),
+        (u"φοο", u"φοο"),
+    ],
+    ids=[
+        'test_create_ticket_without_rt_instance_handles_unicode_subject',
+        'test_create_ticket_without_rt_instance_handles_unicode_body',
+        'test_create_ticket_without_rt_instance_handles_unicode_body_and_subject'
+    ]
+)
+@patch('inspirehep.modules.workflows.tasks.submission.render_template')
+@patch('inspirehep.modules.workflows.tasks.submission.User')
+@patch('inspirehep.modules.workflows.tasks.submission.current_app.config',
+       {'PRODUCTION_MODE': False})
+def test_create_ticket_without_rt_instance_handles_unicode(
+        mocked_user, mocked_render_template, subject, body):
+    obj = StubObj(None, None, None)
+    obj.id = 100
+    obj.id_user = 1
+    mocked_user.query.get.return_value = DummyUser()
+    mocked_render_template.return_value = body
+
+    eng = DummyEng()
+
+    create_ticket_method = create_ticket(None)
+    assert create_ticket_method(obj, eng) is None
+
+
+@pytest.mark.parametrize(
+    ("subject, body"),
+    [
+        (u"φοο", "foo"),
+        ("foo", u"φοο"),
+        (u"φοο", u"φοο"),
+    ],
+    ids=[
+        'test_submit_rt_ticket_with_rt_instance_handles_unicode_subject',
+        'test_submit_rt_ticket_with_rt_instance_handles_unicode_body',
+        'test_submit_rt_ticket_with_rt_instance_handles_unicode_body_and_subject'
+    ]
+)
+@patch('inspirehep.modules.workflows.tasks.submission.create_ticket', return_value=1)
+@patch('inspirehep.modules.workflows.tasks.submission.get_instance')
+def test_submit_rt_ticket_with_rt_instance_handles_unicode(
+        mocked_get_instance_method,
+        mocked_create_ticket,
+        subject, body):
+    mocked_RT_instance = DummyRTInstance(mocked_create_ticket)
+    mocked_get_instance_method.return_value = mocked_RT_instance
+
+    extra_data = {'recid': 1}
+    obj = StubObj(None, extra_data, None)
+
+    assert submit_rt_ticket(obj, None, subject, body, None, "ticket_id_key")
