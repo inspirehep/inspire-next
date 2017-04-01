@@ -254,9 +254,6 @@
          "term":"Astrophysics"
       }
    ],
-   "languages":[
-      "en"
-   ],
    "titles":[
       {
          "source":"submitter",
@@ -316,6 +313,5 @@
       "orcid":"0000-0001-9412-8627",
       "email":"test_orcid_user@inspirehep.net"
    },
-   "preprint_date": "2010-01-25",
-    "languages": ["en"]
+   "preprint_date": "2010-01-25"
 }
