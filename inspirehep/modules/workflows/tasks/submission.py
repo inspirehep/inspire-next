@@ -48,20 +48,7 @@ LOGGER = logging.getLogger(__name__)
 )
 def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     """Submit ticket to RT with the given parameters."""
-    rt_instance = get_instance() if in_production_mode() else None
-    if not rt_instance:
-        obj.log.error("No RT instance available. Skipping!")
-        obj.log.info(
-            "Was going to submit: {subject}\n\n{body}\n\n"
-            "To: {requestors} Queue: {queue}".format(
-                queue=queue,
-                subject=subject,
-                requestors=requestors,
-                body=body
-            )
-        )
-        return
-
+    rt_instance = get_instance()
     # Trick to prepare ticket body
     body = "\n ".join([line.strip() for line in body.split("\n")])
     rt_queue = current_app.config.get("BIBCATALOG_QUEUES") or queue
@@ -83,10 +70,7 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     ticket_id = rt_instance.create_ticket(**payload)
 
     obj.extra_data[ticket_id_key] = ticket_id
-    obj.log.info("Ticket {0} created:\n{1}".format(
-        ticket_id,
-        body.encode("utf-8", "ignore")
-    ))
+    obj.log.info(u'Ticket {0} created:\n{1}'.format(ticket_id, body))
     return True
 
 
@@ -115,6 +99,18 @@ def create_ticket(template,
             template,
             **context
         ).strip()
+
+        if not in_production_mode():
+            obj.log.info(
+                u'Was going to create ticket: {subject}\n\n{body}\n\n'
+                u'To: {requestors} Queue: {queue}'.format(
+                    queue=queue,
+                    subject=context.get('subject'),
+                    requestors=user.email,
+                    body=body
+                )
+            )
+            return
 
         submit_rt_ticket(obj,
                          queue,
