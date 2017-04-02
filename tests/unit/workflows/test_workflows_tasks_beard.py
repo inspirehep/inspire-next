@@ -22,8 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-import mock
 import requests
+from flask import current_app
+from mock import patch
 
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.tasks.beard import (
@@ -43,21 +44,21 @@ class DummyEng(object):
     pass
 
 
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.beard.current_app.config',
-    {'BEARD_API_URL': 'https://beard.inspirehep.net'})
 def test_get_beard_url_from_configuration():
-    expected = 'https://beard.inspirehep.net/predictor/coreness'
-    result = get_beard_url()
+    config = {'BEARD_API_URL': 'https://beard.inspirehep.net'}
 
-    assert expected == result
+    with patch.dict(current_app.config, config):
+        expected = 'https://beard.inspirehep.net/predictor/coreness'
+        result = get_beard_url()
+
+        assert expected == result
 
 
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.beard.current_app.config',
-    {'BEARD_API_URL': ''})
 def test_get_beard_url_returns_none_when_not_in_configuration():
-    assert get_beard_url() is None
+    config = {'BEARD_API_URL': ''}
+
+    with patch.dict(current_app.config, config):
+        assert get_beard_url() is None
 
 
 def test_prepare_payload():
@@ -94,7 +95,7 @@ def test_prepare_payload():
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
+@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
 def test_guess_coreness_fails_without_a_beard_url(g_b_u):
     g_b_u.return_value = ''
 
@@ -105,8 +106,8 @@ def test_guess_coreness_fails_without_a_beard_url(g_b_u):
     assert 'relevance_prediction' not in obj.extra_data
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
-@mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
+@patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
 def test_guess_coreness_does_not_fail_when_request_fails(j_a_r, g_b_u):
     j_a_r.side_effect = requests.exceptions.RequestException()
     g_b_u.return_value = 'https://beard.inspirehep.net/predictor/coreness'
@@ -118,8 +119,8 @@ def test_guess_coreness_does_not_fail_when_request_fails(j_a_r, g_b_u):
     assert 'relevance_prediction' not in obj.extra_data
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
-@mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
+@patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
 def test_guess_coreness_when_core(j_a_r, g_b_u):
     j_a_r.return_value = {
         'decision': 'CORE',
@@ -147,8 +148,8 @@ def test_guess_coreness_when_core(j_a_r, g_b_u):
     }
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
-@mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
+@patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
 def test_guess_coreness_when_non_core(j_a_r, g_b_u):
     j_a_r.return_value = {
         'decision': 'Non-CORE',
@@ -176,8 +177,8 @@ def test_guess_coreness_when_non_core(j_a_r, g_b_u):
     }
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
-@mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
+@patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
 def test_guess_coreness_when_rejected(j_a_r, g_b_u):
     j_a_r.return_value = {
         'decision': 'Rejected',
