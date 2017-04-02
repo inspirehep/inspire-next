@@ -112,23 +112,33 @@ def reject_record(message):
     return _reject_record
 
 
+def _is_auto_rejected(workflow_obj):
+    relevance_prediction = workflow_obj.extra_data.get("relevance_prediction")
+    classification_results = workflow_obj.extra_data.get('classifier_results')
+    if not relevance_prediction or not classification_results:
+        return False
+
+    score = relevance_prediction.get("max_score")
+    decision = relevance_prediction.get("decision")
+    all_class_results = classification_results.get("complete_output")
+    core_keywords = all_class_results.get("Core keywords")
+    return (
+        decision.lower() == "rejected" and
+        score > 0 and
+        len(core_keywords) == 0
+    )
+
+
 def is_record_relevant(obj, eng):
     """Shall we halt this workflow for potential acceptance or just reject?"""
+
     # We do not auto-reject any user submissions
     if is_submission(obj, eng):
         return True
 
-    relevance_prediction = obj.extra_data.get("relevance_prediction")
-    classification_results = obj.extra_data.get('classifier_results')
+    if _is_auto_rejected(workflow_obj=obj):
+        return False
 
-    if relevance_prediction and classification_results:
-        score = relevance_prediction.get("max_score")
-        decision = relevance_prediction.get("decision")
-        classification_results = classification_results.get("complete_output")
-        core_keywords = classification_results.get("Core keywords")
-        if decision.lower() == "rejected" and score > 0 and \
-                len(core_keywords) == 0:
-            return False
     return True
 
 
