@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
+from flask import current_app
 from mock import patch
 from six import StringIO
 
@@ -161,19 +161,25 @@ def test_shall_halt_workflow_returns_false_when_value_is_falsy():
     assert not shall_halt_workflow(obj)
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.current_app.config', {'PRODUCTION_MODE': True})
 def test_in_production_mode():
-    assert in_production_mode()
+    config = {'PRODUCTION_MODE': True}
+
+    with patch.dict(current_app.config, config):
+        assert in_production_mode()
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.current_app.config', {})
 def test_in_production_mode_returns_false_when_variable_does_not_exist():
-    assert not in_production_mode()
+    config = {}
+
+    with patch.dict(current_app.config, config, clear=True):
+        assert not in_production_mode()
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.current_app.config', {'PRODUCTION_MODE': False})
 def test_in_production_mode_returns_false_when_variable_is_falsy():
-    assert not in_production_mode()
+    config = {'PRODUCTION_MODE': False}
+
+    with patch.dict(current_app.config, config):
+        assert not in_production_mode()
 
 
 def test_add_core_sets_core_to_true_if_extra_data_core_is_true():

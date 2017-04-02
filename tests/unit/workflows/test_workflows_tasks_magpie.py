@@ -22,8 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-import mock
 import requests
+from flask import current_app
+from mock import patch
 
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.tasks.magpie import (
@@ -46,19 +47,21 @@ class DummyEng(object):
     pass
 
 
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.current_app.config',
-    {'MAGPIE_API_URL': 'https://magpie.inspirehep.net'})
 def test_get_magpie_url_returns_value_from_configuration():
-    expected = 'https://magpie.inspirehep.net/predict'
-    result = get_magpie_url()
+    config = {'MAGPIE_API_URL': 'https://magpie.inspirehep.net'}
 
-    assert expected == result
+    with patch.dict(current_app.config, config):
+        expected = 'https://magpie.inspirehep.net/predict'
+        result = get_magpie_url()
+
+        assert expected == result
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.current_app.config', {})
 def test_get_magpie_url_returns_none_when_not_in_configuration():
-    assert get_magpie_url() is None
+    config = {}
+
+    with patch.dict(current_app.config, config, clear=True):
+        assert get_magpie_url() is None
 
 
 def test_prepare_magpie_payload():
@@ -118,8 +121,8 @@ def test_filter_magpie_response_falls_back_to_first_label():
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
+@patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
 def test_guess_keywords_accepts_over_point_09(j_a_r, g_m_u):
     j_a_r.return_value = {
         'labels': [
@@ -143,8 +146,8 @@ def test_guess_keywords_accepts_over_point_09(j_a_r, g_m_u):
     }
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
+@patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
 def test_guess_keywords_considers_only_first_ten(j_a_r, g_m_u):
     j_a_r.return_value = {
         'labels': [
@@ -183,8 +186,8 @@ def test_guess_keywords_considers_only_first_ten(j_a_r, g_m_u):
     }
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
+@patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
 def test_guess_keywords_does_not_fail_when_request_fails(j_a_r, g_m_u):
     j_a_r.side_effect = requests.exceptions.RequestException()
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
@@ -196,7 +199,7 @@ def test_guess_keywords_does_not_fail_when_request_fails(j_a_r, g_m_u):
     assert obj.extra_data == {}
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
+@patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
 def test_guess_keywords_fails_without_a_magpie_url(g_m_u):
     g_m_u.return_value = None
 
@@ -207,8 +210,8 @@ def test_guess_keywords_fails_without_a_magpie_url(g_m_u):
     assert obj.extra_data == {}
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
+@patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
 def test_guess_categories_filters_under_point_22(j_a_r, g_m_u):
     j_a_r.return_value = {
         'labels': [
@@ -233,8 +236,8 @@ def test_guess_categories_filters_under_point_22(j_a_r, g_m_u):
     }
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
+@patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
 def test_guess_categories_accepts_over_point_25(j_a_r, g_m_u):
     j_a_r.return_value = {
         'labels': [
@@ -258,7 +261,7 @@ def test_guess_categories_accepts_over_point_25(j_a_r, g_m_u):
     }
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
+@patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
 def test_guess_categories_fails_without_a_magpie_url(g_m_u):
     g_m_u.return_value = None
 
@@ -269,8 +272,8 @@ def test_guess_categories_fails_without_a_magpie_url(g_m_u):
     assert obj.extra_data == {}
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
+@patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
 def test_guess_experiments_filters_under_point_50(j_a_r, g_m_u):
     j_a_r.return_value = {
         'labels': [
@@ -295,7 +298,7 @@ def test_guess_experiments_filters_under_point_50(j_a_r, g_m_u):
     }
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
+@patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
 def test_guess_experiments_fails_without_a_magpie_url(g_m_u):
     g_m_u.return_value = None
 
