@@ -70,10 +70,7 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     ticket_id = rt_instance.create_ticket(**payload)
 
     obj.extra_data[ticket_id_key] = ticket_id
-    obj.log.info("Ticket {0} created:\n{1}".format(
-        ticket_id,
-        body.encode("utf-8", "ignore")
-    ))
+    obj.log.info(u'Ticket {0} created:\n{1}'.format(ticket_id, body))
     return True
 
 
@@ -105,8 +102,8 @@ def create_ticket(template,
 
         if not in_production_mode():
             obj.log.info(
-                "Was going to submit: {subject}\n\n{body}\n\n"
-                "To: {requestors} Queue: {queue}".format(
+                u'Was going to create ticket: {subject}\n\n{body}\n\n'
+                u'To: {requestors} Queue: {queue}'.format(
                     queue=queue,
                     subject=context.get('subject'),
                     requestors=user.email,

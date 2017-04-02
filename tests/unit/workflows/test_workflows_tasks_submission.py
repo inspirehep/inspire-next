@@ -22,10 +22,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+from flask import current_app
+from mock import patch
 from six import StringIO
 
 from inspirehep.modules.workflows.tasks.submission import (
     add_note_entry,
+    create_ticket,
     prepare_files,
 )
 
@@ -64,16 +67,80 @@ class StubFiles(object):
 
 
 class StubObj(object):
-    def __init__(self, data, extra_data, files):
+    def __init__(self, data, extra_data, files, id=1, id_user=1):
         self.data = data
         self.extra_data = extra_data
         self.files = files
+        self.id = id
+        self.id_user = id_user
 
         self.log = MockLog()
 
 
 class DummyEng(object):
     pass
+
+
+class StubUser(object):
+    def __init__(self):
+        self.email = 'user@example.com'
+
+
+class StubRTInstance(object):
+    def create_ticket(self, **kwargs):
+        return 1
+
+
+@patch('inspirehep.modules.workflows.tasks.submission.User')
+@patch('inspirehep.modules.workflows.tasks.submission.render_template')
+def test_create_ticket_handles_unicode_when_not_in_production_mode(r_t, user):
+    user.query.get.return_value = StubUser()
+    r_t.return_value = u'φοο'
+
+    config = {'PRODUCTION_MODE': False}
+
+    with patch.dict(current_app.config, config):
+        data = {}
+        extra_data = {}
+        files = StubFiles({})
+
+        obj = StubObj(data, extra_data, files)
+        eng = DummyEng()
+
+        _create_ticket = create_ticket(None)
+
+        expected = (
+            u'Was going to create ticket: None\n\nφοο\n\n'
+            u'To: user@example.com Queue: Test'
+        )
+
+        assert _create_ticket(obj, eng) is None
+        assert expected == obj.log._info.getvalue()
+
+
+@patch('inspirehep.modules.workflows.tasks.submission.User')
+@patch('inspirehep.modules.workflows.tasks.submission.render_template')
+@patch('inspirehep.modules.workflows.tasks.submission.get_instance')
+def test_create_ticket_handles_unicode_when_in_production_mode(g_i, r_t, user):
+    user.query.get.return_value = StubUser()
+    r_t.return_value = u'φοο'
+    g_i.return_value = StubRTInstance()
+
+    config = {'PRODUCTION_MODE': True}
+
+    with patch.dict(current_app.config, config):
+        data = {}
+        extra_data = {}
+        files = StubFiles({})
+
+        obj = StubObj(data, extra_data, files)
+        eng = DummyEng()
+
+        _create_ticket = create_ticket(None)
+
+        assert _create_ticket(obj, eng) is None
+        assert obj.extra_data == {'ticket_id': 1}
+        assert u'Ticket 1 created:\nφοο' in obj.log._info.getvalue()
 
 
 def test_add_note_entry_does_not_add_value_that_is_already_present():
