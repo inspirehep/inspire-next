@@ -154,18 +154,6 @@ def match_with_invenio_matcher(queries=None, index="records-hep", doc_type="hep"
     return _match_with_invenio_matcher
 
 
-def was_already_harvested(record):
-    """Return True if the record was already harvested.
-
-    We use the following heuristic: if the record belongs to one of the
-    CORE categories then it was probably ingested in some other way.
-    """
-    categories = get_value(record, 'inspire_categories.term', [])
-    for category in categories:
-        if category.lower() in current_app.config.get('INSPIRE_ACCEPTED_CATEGORIES', []):
-            return True
-
-
 def is_too_old(record, days_ago=5):
     """Return True if the record is more than days_ago days old.
 
@@ -221,11 +209,27 @@ def article_exists(obj, eng):
 
 def already_harvested(obj, eng):
     """Check if record is already harvested."""
-    if current_app.config.get('PRODUCTION_MODE'):
-        if was_already_harvested(obj.data):
-            obj.log.info('Record is already being harvested on INSPIRE.')
-            return True
+    if is_being_harvested_on_legacy(obj.data):
+        obj.log.info('arXiv record {eprint} is already being harvested on INSPIRE Legacy.'.format(
+            eprint=get_value(obj.data, 'arxiv_eprints.value')))
+        return True
     return False
+
+
+def is_being_harvested_on_legacy(record):
+    """Return True if the record is being harvested on Legacy
+
+    We use the following heuristic: if the record belongs to one of the
+    CORE categories then it is probably ingested on Legacy.
+    """
+    non_flat_categories_in_record = get_value(record, 'arxiv_eprints.categories', [])
+    categories_in_record = [item for sublist in non_flat_categories_in_record
+                            for item in sublist]
+    categories_on_legacy = current_app.config.get(
+        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY', [])
+
+    return any(category for category in categories_in_record
+               if category in categories_on_legacy)
 
 
 def previously_rejected(days_ago=None):
