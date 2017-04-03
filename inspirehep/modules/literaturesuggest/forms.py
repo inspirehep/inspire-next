@@ -637,7 +637,8 @@ class LiteratureForm(INSPIREForm):
 
         degree_type_schema = load_schema('elements/degree_type.json')
         degree_choices = [
-            (val, val.capitalize()) for val in degree_type_schema['enum']
+            (val, val.capitalize()) if val != 'phd' else ('phd', 'PhD')
+            for val in degree_type_schema['enum']
         ]
         degree_choices.sort(key=lambda x: x[1])
         self.degree_type.choices = degree_choices
