@@ -1,0 +1,31 @@
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2015-11-05T16:30:03Z</responseDate>
+<request verb="GetRecord" identifier="oai:arXiv.org:1407.7587" metadataPrefix="arXiv">http://export.arxiv.org/oai2</request>
+<GetRecord>
+<record>
+<header>
+<identifier>oai:arXiv.org:1407.7587</identifier>
+<datestamp>2017-03-28</datestamp>
+<setSpec>physics</setSpec>
+</header>
+<metadata>
+<arXiv xmlns="http://arxiv.org/OAI/arXiv/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://arxiv.org/OAI/arXiv/ http://arxiv.org/OAI/arXiv.xsd">
+<id>1407.7587</id>
+<created>2017-03-27</created>
+<authors><author><keyname>Chatterjee</keyname><forenames>Chandrasekhar</forenames></author><author><keyname>Nitta</keyname><forenames>Muneto</forenames></author></authors>
+<title>BPS Alice strings</title>
+<categories>hep-th</categories>
+<license>http://arxiv.org/licenses/nonexclusive-distrib/1.0/</license>
+<abstract>  When a charged particle encircles around an Alice string, it changes the sign
+of the electric charge. Previously known Alice strings so far are all non-BPS.
+In this paper we find a BPS-saturated Alice string in $U(1)\times SO(3)$ gauge
+theory with charged complex scalar fields belonging to the vector
+representation. After performing BPS completion we solve the BPS equations
+numerically. We further embed the Alice string into an ${\cal N}=1$
+supersymmetric gauge theory to show that it is half BPS.
+</abstract>
+</arXiv>
+</metadata>
+</record>
+</GetRecord>
+</OAI-PMH>

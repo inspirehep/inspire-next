@@ -29,6 +29,7 @@ import os
 import re
 import traceback
 from functools import wraps
+from itertools import chain
 
 import requests
 import six
@@ -154,18 +155,6 @@ def match_with_invenio_matcher(queries=None, index="records-hep", doc_type="hep"
     return _match_with_invenio_matcher
 
 
-def was_already_harvested(record):
-    """Return True if the record was already harvested.
-
-    We use the following heuristic: if the record belongs to one of the
-    CORE categories then it was probably ingested in some other way.
-    """
-    categories = get_value(record, 'inspire_categories.term', [])
-    for category in categories:
-        if category.lower() in current_app.config.get('INSPIRE_ACCEPTED_CATEGORIES', []):
-            return True
-
-
 def is_too_old(record, days_ago=5):
     """Return True if the record is more than days_ago days old.
 
@@ -219,12 +208,29 @@ def article_exists(obj, eng):
     return False
 
 
+def is_being_harvested_on_legacy(record):
+    """Return True if the record is being harvested on Legacy.
+
+    If the record belongs to one of the CORE arXiv categories then it
+    is already being harvested on Legacy.
+    """
+    arxiv_categories = list(chain.from_iterable(
+        get_value(record, 'arxiv_eprints.categories', [])))
+    legacy_categories = current_app.config.get(
+        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY', [])
+
+    return len(set(arxiv_categories) & set(legacy_categories)) > 0
+
+
 def already_harvested(obj, eng):
     """Check if record is already harvested."""
-    if current_app.config.get('PRODUCTION_MODE'):
-        if was_already_harvested(obj.data):
-            obj.log.info('Record is already being harvested on INSPIRE.')
-            return True
+    if is_being_harvested_on_legacy(obj.data):
+        obj.log.info((
+            'Record with arXiv id {arxiv_id} is'
+            ' already being harvested on Legacy.'
+        ).format(arxiv_id=get_arxiv_id(obj.data)))
+        return True
+
     return False
 
 
