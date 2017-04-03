@@ -65,6 +65,7 @@ def data():
 @pytest.fixture()
 def unicode_data():
     return {
+        'bai': 'Diego.Martinez.Santos.1',
         'control_number': 123,
         'name': {
             'preferred_name': u'Diego Martínez',
@@ -160,5 +161,15 @@ def test_curation_ticket_context(data, extra_data, user):
     assert ctx['recid'] == 123
     assert ctx['user_comment'] == 'Foo bar'
     assert ctx['subject'] == 'Curation needed for author John Doe [John.Doe.1]'
+    assert ctx['email'] == 'foo@bar.com'
+    assert ctx['record_url'] == 'http://example.com'
+
+
+def test_curation_ticket_context_handles_unicode(unicode_data, extra_data, user):
+    obj = MockObj(unicode_data, extra_data)
+    ctx = curation_ticket_context(user, obj)
+    assert isinstance(ctx['object'], MockObj)
+    assert ctx['user_comment'] == 'Foo bar'
+    assert ctx['subject'] == u'Curation needed for author Diego Martínez [Diego.Martinez.Santos.1]'
     assert ctx['email'] == 'foo@bar.com'
     assert ctx['record_url'] == 'http://example.com'

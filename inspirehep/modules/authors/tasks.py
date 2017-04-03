@@ -175,7 +175,7 @@ def curation_ticket_context(user, obj):
     bai = ""
     if obj.data.get("bai"):
         bai = "[{}]".format(obj.data.get("bai"))
-    subject = "Curation needed for author {0} {1}".format(
+    subject = u"Curation needed for author {0} {1}".format(
         obj.data.get("name").get("preferred_name"),
         bai
     )
