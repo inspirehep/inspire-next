@@ -49,7 +49,13 @@ def test_split_page_range_article_id():
 
 def test_remove_english_language():
     obj = DummyObj()
-    formdata = {'language': 'en'}
+    formdata = {
+        'language': 'en',
+        'title_translation': (
+            u'Propriété de la diagonale pour les produits'
+            u'symétriques d’une courbe lisse'
+        ),
+    }
 
     expected = {}
     result = remove_english_language(obj, formdata)

@@ -84,5 +84,6 @@ def normalize_journal_title(obj, formdata):
 def remove_english_language(obj, formdata):
     if formdata.get('language') == 'en':
         del formdata['language']
+        del formdata['title_translation']
 
     return formdata
