@@ -242,7 +242,7 @@
               scope: angular.extend($scope,
                 {
                   modalTitle: 'Reason for rejection',
-                  modalBody: '<pre class="text-wrap">' + $scope.vm.reason + '</pre>'
+                  modalBody: '<pre class="text-wrap">' + $scope.vm.record._extra_data.reason + '</pre>'
                 }
               )
             });
@@ -291,6 +291,9 @@
           },
 
           addKeyword: function () {
+            if (!$scope.vm.new_keyword) {
+              return;
+            };
             if (!$scope.vm.record._extra_data.keywords_prediction)
               $scope.vm.record._extra_data.keywords_prediction = {};
 

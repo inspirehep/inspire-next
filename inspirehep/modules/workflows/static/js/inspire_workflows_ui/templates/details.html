@@ -9,9 +9,15 @@
           <span ng-switch-when="accept">Accepted as Non-CORE</span>
           <span ng-switch-when="accept_core">Accepted as CORE</span>
         </span>
-        <span ng-if="vm.reason">
+        <span ng-if="vm.record._extra_data.reason">
           <a class="reason-link" href="#" ng-click="Utils.showRejectionReason()">
             Show reason
+          </a>
+        </span>
+        <span ng-if="vm.record._extra_data.url">
+          -
+          <a class="reason-link" href="{{vm.record._extra_data.url}}" target="_blank">
+            {{vm.record._extra_data.url}}
           </a>
         </span>
     </div>
@@ -319,13 +325,15 @@
         <div class="detail-panel" id="hp-panel-save-controls">
 
           <div id="hp-save" ng-if="vm.update_ready">
-            <button class="btn btn-success btn-lg"
-                    ng-if="vm.record._workflow.status === 'HALTED'"
+            <button id="holdingpen-save-button"
+                    class="btn btn-success btn-lg"
+                    ng-if="vm.record._workflow.status === 'HALTED' && !vm.ingestion_complete"
                     ng-click="Utils.updateRecord()">
               Save changes
             </button>
-            <button class="btn btn-success btn-lg"
-                    ng-if="vm.record._workflow.status !== 'HALTED'"
+            <button id="holdingpen-save-button"
+                    class="btn btn-success btn-lg"
+                    ng-if="vm.record._workflow.status !== 'HALTED' || vm.ingestion_complete""
                     disabled>
               Can't save until state changes, try refreshing.
             </button>
