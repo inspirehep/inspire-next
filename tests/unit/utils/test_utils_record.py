@@ -22,8 +22,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspire_schemas.utils import load_schema
+from inspirehep.dojson.utils import validate
 from inspirehep.utils.record import (
     get_abstract,
+    get_arxiv_categories,
     get_arxiv_id,
     get_subtitle,
     get_title,
@@ -96,6 +99,28 @@ def test_get_abstract_falls_back_to_first_abstract_even_if_from_arxiv():
 
     expected = 'abstract with source arXiv'
     result = get_abstract(record)
+
+    assert expected == result
+
+
+def test_get_arxiv_categories_returns_all_arxiv_categories():
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    record = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'nucl-th',
+                ],
+                'value': '1605.03898'
+            },
+        ],
+    }  # literature/1458300
+    assert validate(record['arxiv_eprints'], subschema) is None
+
+    expected = ['nucl-th']
+    result = get_arxiv_categories(record)
 
     assert expected == result
 
