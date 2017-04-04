@@ -30,6 +30,7 @@
     'holdingpen.directives',
     'holdingpen.controllers',
     'holdingpen.filters.abstract',
+    'holdingpen.filters.categories',
     'angular.filter'
   ]);
 
