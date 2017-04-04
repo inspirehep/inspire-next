@@ -130,18 +130,6 @@ def radiochoice_buttons(field, **dummy_kwargs):
     return HTMLString(u''.join(html))
 
 
-def defensedate_widget(field, **kwargs):
-    """Date widget fot thesis."""
-    field_id = kwargs.pop('id', field.id)
-    html = [u'<div class="row %s"><div class="col-xs-12">\
-            <input class="datepicker form-control" %s type="text">\
-            </div></div>'
-            % (THESIS_CLASS, html_params(id=field_id,
-                                         name=field_id,
-                                         value=field.data or ''))]
-    return HTMLString(u''.join(html))
-
-
 class CheckboxButton(object):
 
     """Checkbox button."""
@@ -435,8 +423,7 @@ class LiteratureForm(INSPIREForm):
     thesis_date = fields.TextField(
         label=_('Date of Submission'),
         description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
-        validators=[date_validator],
-        widget=defensedate_widget,
+        validators=[date_validator]
     )
 
     degree_type = fields.SelectField(
