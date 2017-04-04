@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import re
+from itertools import chain
 
 
 SPLIT_KEY_PATTERN = re.compile('\.|\[')
@@ -46,6 +47,25 @@ def get_abstract(record):
         chosen_abstract = record['abstracts'][0]['value']
 
     return chosen_abstract
+
+
+def get_arxiv_categories(record):
+    """Return all the arXiv categories of a record.
+
+    Args:
+        record: a record.
+
+    Returns:
+        list: all the arXiv categories of the record.
+
+    Examples:
+        >>> record = {'arxiv_eprints': [{'categories': ['hep-ph', 'hep-th']}]}
+        >>> get_arxiv_categories(record)
+        ['hep-ph', 'hep-th']
+
+    """
+    return list(chain.from_iterable(
+        get_value(record, 'arxiv_eprints.categories', default=[])))
 
 
 def get_arxiv_id(record):

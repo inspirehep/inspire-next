@@ -35,9 +35,14 @@ from werkzeug import secure_filename
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep
+from inspirehep.dojson.utils import classify_field
 from inspirehep.modules.refextract.tasks import extract_references
 from inspirehep.utils.helpers import download_file_to_workflow
-from inspirehep.utils.record import get_arxiv_id
+from inspirehep.utils.record import (
+    get_arxiv_categories,
+    get_arxiv_id,
+    get_value,
+)
 
 from plotextractor.api import process_tarball
 from plotextractor.converter import untar
@@ -141,6 +146,34 @@ def arxiv_refextract(obj, eng):
             obj.log.info("No references extracted")
     else:
         obj.log.error("Not able to download and process the PDF")
+
+
+def arxiv_derive_inspire_categories(obj, eng):
+    """Derive ``inspire_categories`` from the arXiv categories.
+
+    Uses side effects to populate the ``inspire_categories`` key
+    in ``obj.data`` by converting its arXiv categories.
+
+    Args:
+        obj (WorkflowObject): a workflow object.
+        eng (WorkflowEngine): a workflow engine.
+
+    Returns:
+        None
+
+    """
+    obj.data.setdefault('inspire_categories', [])
+
+    for arxiv_category in get_arxiv_categories(obj.data):
+        term = classify_field(arxiv_category)
+        if term:
+            inspire_category = {
+                'source': 'arxiv',
+                'term': term,
+            }
+
+            if inspire_category not in obj.data['inspire_categories']:
+                obj.data['inspire_categories'].append(inspire_category)
 
 
 def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):

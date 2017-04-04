@@ -36,7 +36,11 @@ import six
 from flask import current_app
 
 from inspirehep.utils.datefilter import date_older_than
-from inspirehep.utils.record import get_arxiv_id, get_value
+from inspirehep.utils.record import (
+    get_arxiv_categories,
+    get_arxiv_id,
+    get_value,
+)
 
 
 def search(query):
@@ -214,8 +218,7 @@ def is_being_harvested_on_legacy(record):
     If the record belongs to one of the CORE arXiv categories then it
     is already being harvested on Legacy.
     """
-    arxiv_categories = list(chain.from_iterable(
-        get_value(record, 'arxiv_eprints.categories', [])))
+    arxiv_categories = get_arxiv_categories(record)
     legacy_categories = current_app.config.get(
         'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY', [])
 
