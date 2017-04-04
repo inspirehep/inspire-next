@@ -172,8 +172,10 @@ def special_collections2marc(self, key, value):
 @hep2marc.over('980', '^document_type$')
 @utils.for_each_value
 def document_type2marc(self, key, value):
-    if value != 'article':
-        return {'a': value}
+    if value == 'article':
+        return
+
+    return {'a': value.title().replace(' ', '')}
 
 
 @hep.over('references', '^999C5')

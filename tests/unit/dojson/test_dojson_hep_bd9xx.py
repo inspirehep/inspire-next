@@ -223,8 +223,35 @@ def test_document_type_from_980__a():
     assert expected == result['document_type']
 
     expected = [
-        {'a': 'book'},
+        {'a': 'Book'},
         {'a': 'HEP'}
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['980']
+
+
+def test_document_type_from_980__a_handles_conference_paper():
+    schema = load_schema('hep')
+    subschema = schema['properties']['document_type']
+
+    snippet = (
+        '<datafield tag="980" ind1=" " ind2=" ">'
+        '  <subfield code="a">ConferencePaper</subfield>'
+        '</datafield>'
+    )  # record/1589240
+
+    expected = [
+        'conference paper',
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['document_type'], subschema) is None
+    assert expected == result['document_type']
+
+    expected = [
+        {'a': 'ConferencePaper'},
+        {'a': 'HEP'},
     ]
     result = hep2marc.do(result)
 
