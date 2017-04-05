@@ -29,7 +29,7 @@ import re
 from dojson import utils
 
 from inspire_schemas.utils import load_schema
-from inspirehep.utils.helpers import force_list
+from inspirehep.utils.helpers import force_list, maybe_int
 
 from .model import hepnames, hepnames2marc
 from ..utils import (
@@ -391,15 +391,9 @@ def prizes2marc(self, key, value):
 
 @hepnames.over('experiments', '^693..')
 def experiments(self, key, values):
-    def _int_or_none(maybe_int):
-        try:
-            return int(maybe_int)
-        except (TypeError, ValueError):
-            return None
-
     def _get_json_experiments(marc_dict):
-        start_year = _int_or_none(marc_dict.get('s'))
-        end_year = _int_or_none(marc_dict.get('d'))
+        start_year = maybe_int(marc_dict.get('s'))
+        end_year = maybe_int(marc_dict.get('d'))
 
         names = force_list(marc_dict.get('e'))
         recids = force_list(marc_dict.get('0'))

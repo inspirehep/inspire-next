@@ -29,7 +29,7 @@ import tempfile
 import httpretty
 import pytest
 
-from inspirehep.utils.helpers import download_file, force_list
+from inspirehep.utils.helpers import download_file, force_list, maybe_int
 
 
 @pytest.fixture
@@ -109,3 +109,14 @@ def test_force_list_does_not_touch_lists():
     result = force_list(['foo', 'bar', 'baz'])
 
     assert expected == result
+
+
+def test_maybe_int_returns_int_if_possible():
+    expected = 10
+    result = maybe_int('10')
+
+    assert expected == result
+
+
+def test_maybe_int_returns_none_otherwise():
+    assert maybe_int('216+337') is None

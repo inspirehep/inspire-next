@@ -186,14 +186,6 @@ def legacy_export_as_marc(json, tabsize=4):
     return "".join(export)
 
 
-def maybe_int(el):
-    """Return an ``int`` if possible, otherwise ``None``."""
-    try:
-        return int(el)
-    except ValueError:
-        pass
-
-
 def strip_empty_values(obj):
     """Recursively strips empty values."""
     if isinstance(obj, dict):

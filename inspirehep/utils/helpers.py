@@ -100,3 +100,23 @@ def force_list(data):
     elif isinstance(data, (tuple, set)):
         return list(data)
     return data
+
+
+def maybe_int(el):
+    """Return an ``int`` if possible, otherwise ``None``.
+
+    Args:
+        el: any Python object.
+
+    Returns:
+        Union[int, NoneType]: an ``int`` parsed from the object, or ``None``.
+
+    Examples:
+        >>> maybe_int('10')
+        10
+
+    """
+    try:
+        return int(el)
+    except (TypeError, ValueError):
+        pass
