@@ -36,15 +36,7 @@ from inspirehep.modules.workflows.tasks.magpie import (
     guess_experiments,
 )
 
-
-class StubObj(object):
-    def __init__(self, data, extra_data):
-        self.data = data
-        self.extra_data = extra_data
-
-
-class DummyEng(object):
-    pass
+from mocks import MockEng, MockObj
 
 
 def test_get_magpie_url_returns_value_from_configuration():
@@ -131,8 +123,8 @@ def test_guess_keywords_accepts_over_point_09(j_a_r, g_m_u):
     }
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_keywords(obj, eng) is None
     assert obj.extra_data['keywords_prediction'] == {
@@ -166,8 +158,8 @@ def test_guess_keywords_considers_only_first_ten(j_a_r, g_m_u):
     }
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_keywords(obj, eng) is None
     assert obj.extra_data['keywords_prediction'] == {
@@ -192,8 +184,8 @@ def test_guess_keywords_does_not_fail_when_request_fails(j_a_r, g_m_u):
     j_a_r.side_effect = requests.exceptions.RequestException()
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_keywords(obj, eng) is None
     assert obj.extra_data == {}
@@ -203,8 +195,8 @@ def test_guess_keywords_does_not_fail_when_request_fails(j_a_r, g_m_u):
 def test_guess_keywords_fails_without_a_magpie_url(g_m_u):
     g_m_u.return_value = None
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_keywords(obj, eng) is None
     assert obj.extra_data == {}
@@ -221,8 +213,8 @@ def test_guess_categories_filters_under_point_22(j_a_r, g_m_u):
     }
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_categories(obj, eng) is None
     assert obj.extra_data['categories_prediction'] == {
@@ -246,8 +238,8 @@ def test_guess_categories_accepts_over_point_25(j_a_r, g_m_u):
     }
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_categories(obj, eng) is None
     assert obj.extra_data['categories_prediction'] == {
@@ -265,8 +257,8 @@ def test_guess_categories_accepts_over_point_25(j_a_r, g_m_u):
 def test_guess_categories_fails_without_a_magpie_url(g_m_u):
     g_m_u.return_value = None
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_categories(obj, eng) is None
     assert obj.extra_data == {}
@@ -283,8 +275,8 @@ def test_guess_experiments_filters_under_point_50(j_a_r, g_m_u):
     }
     g_m_u.return_value = 'https://magpie.inspirehep.net/predict'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_experiments(obj, eng) is None
     assert obj.extra_data['experiments_prediction'] == {
@@ -302,8 +294,8 @@ def test_guess_experiments_filters_under_point_50(j_a_r, g_m_u):
 def test_guess_experiments_fails_without_a_magpie_url(g_m_u):
     g_m_u.return_value = None
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_experiments(obj, eng) is None
     assert obj.extra_data == {}

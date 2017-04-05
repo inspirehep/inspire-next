@@ -28,15 +28,7 @@ from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_derive_inspire_categories
 )
 
-
-class StubObj(object):
-    def __init__(self, data, extra_data):
-        self.data = data
-        self.extra_data = extra_data
-
-
-class DummyEng(object):
-    pass
+from mocks import MockEng, MockObj
 
 
 def test_arxiv_derive_inspire_categories():
@@ -57,8 +49,8 @@ def test_arxiv_derive_inspire_categories():
     extra_data = {}
     assert validate(data['arxiv_eprints'], arxiv_eprints_schema) is None
 
-    obj = StubObj(data, extra_data)
-    eng = DummyEng()
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
 
     assert arxiv_derive_inspire_categories(obj, eng) is None
 
@@ -99,8 +91,8 @@ def test_arxiv_derive_inspire_categories_appends_categories_with_different_sourc
     assert validate(data['arxiv_eprints'], arxiv_eprints_schema) is None
     assert validate(data['inspire_categories'], inspire_categories_schema) is None
 
-    obj = StubObj(data, extra_data)
-    eng = DummyEng()
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
 
     assert arxiv_derive_inspire_categories(obj, eng) is None
 
@@ -145,8 +137,8 @@ def test_arxiv_derive_inspire_categories_does_nothing_with_existing_categories()
     assert validate(data['arxiv_eprints'], arxiv_eprints_schema) is None
     assert validate(data['inspire_categories'], inspire_categories_schema) is None
 
-    obj = StubObj(data, extra_data)
-    eng = DummyEng()
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
 
     assert arxiv_derive_inspire_categories(obj, eng) is None
 

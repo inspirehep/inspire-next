@@ -24,7 +24,6 @@ from __future__ import absolute_import, division, print_function
 
 from flask import current_app
 from mock import patch
-from six import StringIO
 
 from inspirehep.modules.workflows.tasks.actions import (
     mark,
@@ -43,44 +42,12 @@ from inspirehep.modules.workflows.tasks.actions import (
     prepare_update_payload,
 )
 
-
-class MockLog(object):
-    def __init__(self):
-        self._log = StringIO()
-
-    def info(self, message):
-        self._log.write(message)
-
-
-class StubObj(object):
-    def __init__(self, data, extra_data):
-        self.data = data
-        self.extra_data = extra_data
-
-
-class MockObj(object):
-
-    log = MockLog()
-
-    def __init__(self, id_, data, extra_data):
-        self.id = id_
-        self.data = data
-        self.extra_data = extra_data
-
-
-class DummyEng(object):
-    pass
-
-
-class MockEng(object):
-    def halt(self, action, msg):
-        self.action = action
-        self.msg = msg
+from mocks import MockEng, MockObj
 
 
 def test_mark():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     foobar_mark = mark('foo', 'bar')
 
@@ -89,8 +56,8 @@ def test_mark():
 
 
 def test_mark_overwrites():
-    obj = StubObj({}, {'foo': 'bar'})
-    eng = DummyEng()
+    obj = MockObj({}, {'foo': 'bar'})
+    eng = MockEng()
 
     foobaz_mark = mark('foo', 'baz')
 
@@ -99,8 +66,8 @@ def test_mark_overwrites():
 
 
 def test_is_marked():
-    obj = StubObj({}, {'foo': 'bar'})
-    eng = DummyEng()
+    obj = MockObj({}, {'foo': 'bar'})
+    eng = MockEng()
 
     is_foo_marked = is_marked('foo')
 
@@ -108,8 +75,8 @@ def test_is_marked():
 
 
 def test_is_marked_returns_false_when_key_does_not_exist():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     is_foo_marked = is_marked('foo')
 
@@ -117,8 +84,8 @@ def test_is_marked_returns_false_when_key_does_not_exist():
 
 
 def test_is_marked_returns_false_when_value_is_falsy():
-    obj = StubObj({}, {'foo': False})
-    eng = DummyEng()
+    obj = MockObj({}, {'foo': False})
+    eng = MockEng()
 
     is_foo_marked = is_marked('foo')
 
@@ -126,37 +93,37 @@ def test_is_marked_returns_false_when_value_is_falsy():
 
 
 def test_is_record_accepted():
-    obj = StubObj({}, {'approved': True})
+    obj = MockObj({}, {'approved': True})
 
     assert is_record_accepted(obj)
 
 
 def test_is_record_accepted_returns_false_when_key_does_not_exist():
-    obj = StubObj({}, {})
+    obj = MockObj({}, {})
 
     assert not is_record_accepted(obj)
 
 
 def test_is_record_accepted_returns_false_when_value_is_falsy():
-    obj = StubObj({}, {'approved': False})
+    obj = MockObj({}, {'approved': False})
 
     assert not is_record_accepted(obj)
 
 
 def test_shall_halt_workflow():
-    obj = StubObj({}, {'halt_workflow': True})
+    obj = MockObj({}, {'halt_workflow': True})
 
     assert shall_halt_workflow(obj)
 
 
 def test_shall_halt_workflow_returns_false_when_key_does_not_exist():
-    obj = StubObj({}, {})
+    obj = MockObj({}, {})
 
     assert not shall_halt_workflow(obj)
 
 
 def test_shall_halt_workflow_returns_false_when_value_is_falsy():
-    obj = StubObj({}, {'halt_workflow': False})
+    obj = MockObj({}, {'halt_workflow': False})
 
     assert not shall_halt_workflow(obj)
 
@@ -183,39 +150,39 @@ def test_in_production_mode_returns_false_when_variable_is_falsy():
 
 
 def test_add_core_sets_core_to_true_if_extra_data_core_is_true():
-    obj = StubObj({}, {'core': True})
-    eng = DummyEng()
+    obj = MockObj({}, {'core': True})
+    eng = MockEng()
 
     assert add_core(obj, eng) is None
     assert obj.data == {'core': True}
 
 
 def test_add_core_sets_core_to_false_if_extra_data_core_is_false():
-    obj = StubObj({}, {'core': False})
-    eng = DummyEng()
+    obj = MockObj({}, {'core': False})
+    eng = MockEng()
 
     assert add_core(obj, eng) is None
     assert obj.data == {'core': False}
 
 
 def test_add_core_does_nothing_if_extra_data_has_no_core_key():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert add_core(obj, eng) is None
     assert obj.data == {}
 
 
 def test_add_core_overrides_core_if_extra_data_has_core_key():
-    obj = StubObj({'core': False}, {'core': True})
-    eng = DummyEng()
+    obj = MockObj({'core': False}, {'core': True})
+    eng = MockEng()
 
     assert add_core(obj, eng) is None
     assert obj.data == {'core': True}
 
 
 def test_halt_record():
-    obj = StubObj({}, {'halt_action': 'foo', 'halt_message': 'bar'})
+    obj = MockObj({}, {'halt_action': 'foo', 'halt_message': 'bar'})
     eng = MockEng()
 
     default_halt_record = halt_record()
@@ -226,7 +193,7 @@ def test_halt_record():
 
 
 def test_halt_record_accepts_custom_action():
-    obj = StubObj({}, {})
+    obj = MockObj({}, {})
     eng = MockEng()
 
     foo_action_halt_record = halt_record(action='foo')
@@ -236,7 +203,7 @@ def test_halt_record_accepts_custom_action():
 
 
 def test_halt_record_accepts_custom_msg():
-    obj = StubObj({}, {})
+    obj = MockObj({}, {})
     eng = MockEng()
 
     bar_message_halt_record = halt_record(message='bar')
@@ -283,7 +250,7 @@ def test_update_note_preserves_other_notes():
 
 @patch('inspirehep.modules.workflows.tasks.actions.log_workflows_action')
 def test_reject_record(l_w_a):
-    obj = MockObj(1, {}, {
+    obj = MockObj({}, {
         'relevance_prediction': {
             'max_score': '0.222113',
             'decision': 'Rejected',
@@ -301,7 +268,7 @@ def test_reject_record(l_w_a):
             'max_score': '0.222113',
         },
     }
-    assert obj.log._log.getvalue() == 'foo'
+    assert obj.log._info.getvalue() == 'foo'
     l_w_a.assert_called_once_with(
         action='reject_record',
         relevance_prediction={
@@ -315,7 +282,7 @@ def test_reject_record(l_w_a):
 
 
 def test_is_record_relevant():
-    obj = StubObj({}, {
+    obj = MockObj({}, {
         'classifier_results': {
             'complete_output': {
                 'Core keywords': [],
@@ -326,70 +293,70 @@ def test_is_record_relevant():
             'decision': 'Rejected',
         },
     })
-    eng = DummyEng()
+    eng = MockEng()
 
     assert not is_record_relevant(obj, eng)
 
 
 def test_is_record_relevant_returns_true_if_it_is_a_submission():
-    obj = StubObj({'acquisition_source': {'method': 'submitter'}}, {})
-    eng = DummyEng()
+    obj = MockObj({'acquisition_source': {'method': 'submitter'}}, {})
+    eng = MockEng()
 
     assert is_record_relevant(obj, eng)
 
 
 def test_is_record_relevant_returns_true_if_no_relevance_prediction():
-    obj = StubObj({}, {
+    obj = MockObj({}, {
         'classifier_results': {
             'complete_output': {
                 'Core keywords': [],
             },
         },
     })
-    eng = DummyEng()
+    eng = MockEng()
 
     assert is_record_relevant(obj, eng)
 
 
 def test_is_record_relevant_returns_true_if_no_classifier_results():
-    obj = StubObj({}, {
+    obj = MockObj({}, {
         'relevance_prediction': {
             'max_score': '0.222113',
             'decision': 'Rejected',
         },
     })
-    eng = DummyEng()
+    eng = MockEng()
 
     assert is_record_relevant(obj, eng)
 
 
 def test_is_experimental_paper():
-    obj = StubObj({
+    obj = MockObj({
         'arxiv_eprints': [
             {'categories': ['hep-ex']},
         ]
     }, {})
-    eng = DummyEng()
+    eng = MockEng()
 
     assert is_experimental_paper(obj, eng)
 
 
 def test_is_experimental_paper_returns_true_if_inspire_categories_in_list():
-    obj = StubObj({'inspire_categories': [{'term': 'Experiment-HEP'}]}, {})
-    eng = DummyEng()
+    obj = MockObj({'inspire_categories': [{'term': 'Experiment-HEP'}]}, {})
+    eng = MockEng()
 
     assert is_experimental_paper(obj, eng)
 
 
 def test_is_experimental_paper_returns_false_otherwise():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert not is_experimental_paper(obj, eng)
 
 
 def test_is_arxiv_paper():
-    obj = StubObj({
+    obj = MockObj({
         'arxiv_eprints': [
             {
                 'categories': ['hep-th'],
@@ -402,42 +369,42 @@ def test_is_arxiv_paper():
 
 
 def test_is_arxiv_paper_returns_false_when_arxiv_eprints_is_empty():
-    obj = StubObj({'arxiv_eprints': []}, {})
+    obj = MockObj({'arxiv_eprints': []}, {})
 
     assert not is_arxiv_paper(obj)
 
 
 def test_is_submission():
-    obj = StubObj({'acquisition_source': {'method': 'submitter'}}, {})
-    eng = DummyEng()
+    obj = MockObj({'acquisition_source': {'method': 'submitter'}}, {})
+    eng = MockEng()
 
     assert is_submission(obj, eng)
 
 
 def test_is_submission_returns_false_if_method_is_not_submission():
-    obj = StubObj({'acquisition_source': {'method': 'not-submission'}}, {})
-    eng = DummyEng()
+    obj = MockObj({'acquisition_source': {'method': 'not-submission'}}, {})
+    eng = MockEng()
 
     assert not is_submission(obj, eng)
 
 
 def test_is_submission_returns_false_if_obj_has_no_acquisition_source():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert not is_submission(obj, eng)
 
 
 def test_is_submission_returns_false_if_obj_has_falsy_acquisition_source():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert not is_submission(obj, eng)
 
 
 def test_prepare_update_payload():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     default_prepare_update_payload = prepare_update_payload()
 
@@ -446,8 +413,8 @@ def test_prepare_update_payload():
 
 
 def test_prepare_update_payload_accepts_a_custom_key():
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     custom_key_prepare_update_payload = prepare_update_payload('custom_key')
 
@@ -456,8 +423,8 @@ def test_prepare_update_payload_accepts_a_custom_key():
 
 
 def test_prepare_update_payload_overwrites():
-    obj = StubObj({'bar': 'baz'}, {'foo': 'foo'})
-    eng = DummyEng()
+    obj = MockObj({'bar': 'baz'}, {'foo': 'foo'})
+    eng = MockEng()
 
     foo_prepare_update_payload = prepare_update_payload('foo')
 
