@@ -33,15 +33,8 @@ from inspirehep.modules.workflows.tasks.beard import (
     guess_coreness,
 )
 
+from mocks import MockEng, MockObj
 
-class StubObj(object):
-    def __init__(self, data, extra_data):
-        self.data = data
-        self.extra_data = extra_data
-
-
-class DummyEng(object):
-    pass
 
 
 def test_get_beard_url_from_configuration():
@@ -99,8 +92,8 @@ def test_prepare_payload():
 def test_guess_coreness_fails_without_a_beard_url(g_b_u):
     g_b_u.return_value = ''
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_coreness(obj, eng) is None
     assert 'relevance_prediction' not in obj.extra_data
@@ -112,8 +105,8 @@ def test_guess_coreness_does_not_fail_when_request_fails(j_a_r, g_b_u):
     j_a_r.side_effect = requests.exceptions.RequestException()
     g_b_u.return_value = 'https://beard.inspirehep.net/predictor/coreness'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_coreness(obj, eng) is None
     assert 'relevance_prediction' not in obj.extra_data
@@ -132,8 +125,8 @@ def test_guess_coreness_when_core(j_a_r, g_b_u):
     }
     g_b_u.return_value = 'https://beard.inspirehep.net/predictor/coreness'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_coreness(obj, eng) is None
     assert obj.extra_data['relevance_prediction'] == {
@@ -161,8 +154,8 @@ def test_guess_coreness_when_non_core(j_a_r, g_b_u):
     }
     g_b_u.return_value = 'https://beard.inspirehep.net/predictor/coreness'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_coreness(obj, eng) is None
     assert obj.extra_data['relevance_prediction'] == {
@@ -190,8 +183,8 @@ def test_guess_coreness_when_rejected(j_a_r, g_b_u):
     }
     g_b_u.return_value = 'https://beard.inspirehep.net/predictor/coreness'
 
-    obj = StubObj({}, {})
-    eng = DummyEng()
+    obj = MockObj({}, {})
+    eng = MockEng()
 
     assert guess_coreness(obj, eng) is None
     assert obj.extra_data['relevance_prediction'] == {

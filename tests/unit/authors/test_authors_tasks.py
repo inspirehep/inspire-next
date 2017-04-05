@@ -35,20 +35,7 @@ from inspirehep.modules.authors.tasks import (
     curation_ticket_context
 )
 
-
-class MockObj(object):
-
-    def __init__(self, data={}, extra_data={}):
-        self._data = data
-        self._extra_data = extra_data
-
-    @property
-    def data(self):
-        return self._data
-
-    @property
-    def extra_data(self):
-        return self._extra_data
+from mocks import MockObj
 
 
 @pytest.fixture()

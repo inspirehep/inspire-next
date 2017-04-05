@@ -24,7 +24,6 @@ from __future__ import absolute_import, division, print_function
 
 from flask import current_app
 from mock import patch
-from six import StringIO
 
 from inspirehep.modules.workflows.tasks.submission import (
     add_note_entry,
@@ -32,53 +31,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     prepare_files,
 )
 
-
-class MockLog(object):
-    def __init__(self):
-        self._debug = StringIO()
-        self._info = StringIO()
-
-    def debug(self, message):
-        self._debug.write(message)
-
-    def info(self, message):
-        self._info.write(message)
-
-
-class AttrDict(dict):
-    def __init__(self, *args, **kwargs):
-        super(AttrDict, self).__init__(*args, **kwargs)
-        self.__dict__ = self
-
-
-class StubFiles(object):
-    def __init__(self, data):
-        self.data = data
-
-    def __getitem__(self, key):
-        return self.data[key]
-
-    def __len__(self):
-        return len(self.data)
-
-    @property
-    def keys(self):
-        return self.data.keys()
-
-
-class StubObj(object):
-    def __init__(self, data, extra_data, files, id=1, id_user=1):
-        self.data = data
-        self.extra_data = extra_data
-        self.files = files
-        self.id = id
-        self.id_user = id_user
-
-        self.log = MockLog()
-
-
-class DummyEng(object):
-    pass
+from mocks import AttrDict, MockEng, MockFiles, MockObj
 
 
 class StubUser(object):
@@ -102,10 +55,10 @@ def test_create_ticket_handles_unicode_when_not_in_production_mode(r_t, user):
     with patch.dict(current_app.config, config):
         data = {}
         extra_data = {}
-        files = StubFiles({})
+        files = MockFiles({})
 
-        obj = StubObj(data, extra_data, files)
-        eng = DummyEng()
+        obj = MockObj(data, extra_data, files)
+        eng = MockEng()
 
         _create_ticket = create_ticket(None)
 
@@ -131,10 +84,10 @@ def test_create_ticket_handles_unicode_when_in_production_mode(g_i, r_t, user):
     with patch.dict(current_app.config, config):
         data = {}
         extra_data = {}
-        files = StubFiles({})
+        files = MockFiles({})
 
-        obj = StubObj(data, extra_data, files)
-        eng = DummyEng()
+        obj = MockObj(data, extra_data, files)
+        eng = MockEng()
 
         _create_ticket = create_ticket(None)
 
@@ -150,10 +103,10 @@ def test_add_note_entry_does_not_add_value_that_is_already_present():
         ],
     }
     extra_data = {'core': 'something'}
-    files = StubFiles({})
+    files = MockFiles({})
 
-    obj = StubObj(data, extra_data, files)
-    eng = DummyEng()
+    obj = MockObj(data, extra_data, files)
+    eng = MockEng()
 
     assert add_note_entry(obj, eng) is None
     assert obj.data == {
@@ -166,7 +119,7 @@ def test_add_note_entry_does_not_add_value_that_is_already_present():
 def test_prepare_files():
     data = {}
     extra_data = {}
-    files = StubFiles({
+    files = MockFiles({
         'foo.pdf': AttrDict({
             'obj': AttrDict({
                 'file': AttrDict({
@@ -176,8 +129,8 @@ def test_prepare_files():
         }),
     })
 
-    obj = StubObj(data, extra_data, files)
-    eng = DummyEng()
+    obj = MockObj(data, extra_data, files)
+    eng = MockEng()
 
     assert prepare_files(obj, eng) is None
     assert obj.data == {
@@ -201,7 +154,7 @@ def test_prepare_files_annotates_files_from_arxiv():
         ],
     }
     extra_data = {}
-    files = StubFiles({
+    files = MockFiles({
         'foo.pdf': AttrDict({
             'obj': AttrDict({
                 'file': AttrDict({
@@ -211,8 +164,8 @@ def test_prepare_files_annotates_files_from_arxiv():
         }),
     })
 
-    obj = StubObj(data, extra_data, files)
-    eng = DummyEng()
+    obj = MockObj(data, extra_data, files)
+    eng = MockEng()
 
     assert prepare_files(obj, eng) is None
     assert obj.data == {
@@ -235,12 +188,12 @@ def test_prepare_files_annotates_files_from_arxiv():
 def test_prepare_files_skips_empty_files():
     data = {}
     extra_data = {}
-    files = StubFiles({
+    files = MockFiles({
         'foo.pdf': AttrDict({}),
     })
 
-    obj = StubObj(data, extra_data, files)
-    eng = DummyEng()
+    obj = MockObj(data, extra_data, files)
+    eng = MockEng()
 
     assert prepare_files(obj, eng) is None
     assert obj.data == {}
@@ -251,10 +204,10 @@ def test_prepare_files_skips_empty_files():
 def test_prepare_files_does_nothing_when_obj_has_no_files():
     data = {}
     extra_data = {}
-    files = StubFiles({})
+    files = MockFiles({})
 
-    obj = StubObj(data, extra_data, files)
-    eng = DummyEng()
+    obj = MockObj(data, extra_data, files)
+    eng = MockEng()
 
     assert prepare_files(obj, eng) is None
     assert obj.data == {}
@@ -265,7 +218,7 @@ def test_prepare_files_does_nothing_when_obj_has_no_files():
 def test_prepare_files_ignores_keys_not_ending_with_pdf():
     data = {}
     extra_data = {}
-    files = StubFiles({
+    files = MockFiles({
         'foo.bar': AttrDict({
             'obj': AttrDict({
                 'file': AttrDict({
@@ -275,8 +228,8 @@ def test_prepare_files_ignores_keys_not_ending_with_pdf():
         }),
     })
 
-    obj = StubObj(data, extra_data, files)
-    eng = DummyEng()
+    obj = MockObj(data, extra_data, files)
+    eng = MockEng()
 
     assert prepare_files(obj, eng) is None
     assert obj.data == {}

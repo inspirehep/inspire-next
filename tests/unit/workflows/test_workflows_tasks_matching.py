@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from six import StringIO
-
 from inspire_schemas.utils import load_schema
 from inspirehep.dojson.utils import validate
 from inspirehep.modules.workflows.tasks.matching import (
@@ -31,25 +29,7 @@ from inspirehep.modules.workflows.tasks.matching import (
     is_being_harvested_on_legacy,
 )
 
-
-class MockLog(object):
-    def __init__(self):
-        self._info = StringIO()
-
-    def info(self, message):
-        self._info.write(message)
-
-
-class MockObj(object):
-    def __init__(self, data, extra_data):
-        self.data = data
-        self.extra_data = extra_data
-
-        self.log = MockLog()
-
-
-class DummyEng(object):
-    pass
+from mocks import MockEng, MockObj
 
 
 def test_is_being_harvested_on_legacy_returns_true_when_there_is_one_core_category():
@@ -115,7 +95,7 @@ def test_already_harvested_returns_true_when_there_is_one_core_category():
     assert validate(data['arxiv_eprints'], subschema) is None
 
     obj = MockObj(data, extra_data)
-    eng = DummyEng()
+    eng = MockEng()
 
     assert already_harvested(obj, eng)
 
@@ -149,7 +129,7 @@ def test_already_harvested_returns_false_otherwise():
     assert validate(data['arxiv_eprints'], subschema) is None
 
     obj = MockObj(data, extra_data)
-    eng = DummyEng()
+    eng = MockEng()
 
     assert not already_harvested(obj, eng)
 

@@ -32,14 +32,7 @@ from inspirehep.modules.refextract.tasks import (
     extract_references,
 )
 
-
-class StubObj(object):
-    def __init__(self, data):
-        self.data = data
-
-
-class DummyEng(object):
-    pass
+from mocks import MockEng, MockObj
 
 
 def test_extract_journal_info():
@@ -51,10 +44,11 @@ def test_extract_journal_info():
             {'pubinfo_freetext': 'J. Math. Phys. 55, 082102 (2014)'},
         ],
     }
+    extra_data = {}
     assert validate(data['publication_info'], subschema) is None
 
-    obj = StubObj(data)
-    eng = DummyEng()
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
 
     assert extract_journal_info(obj, eng) is None
     assert validate(obj.data['publication_info'], subschema) is None
@@ -79,10 +73,11 @@ def test_extract_journal_info_handles_year_an_empty_string():
                 'The Astrophysical Journal, 838:134 (16pp), 2017 April 1')},
         ],
     }
+    extra_data = {}
     assert validate(data['publication_info'], subschema) is None
 
-    obj = StubObj(data)
-    eng = DummyEng()
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
 
     assert extract_journal_info(obj, eng) is None
     assert validate(obj.data['publication_info'], subschema) is None
