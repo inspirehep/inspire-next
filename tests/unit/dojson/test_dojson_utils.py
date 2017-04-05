@@ -34,7 +34,6 @@ from inspirehep.dojson.utils import (
     get_recid_from_ref,
     get_record_ref,
     legacy_export_as_marc,
-    maybe_int,
     dedupe_all_lists,
     strip_empty_values,
     validate,
@@ -262,17 +261,6 @@ def test_legacy_export_as_marc_json_with_controlfield():
     result = legacy_export_as_marc(json_with_controlfield)
 
     assert expected == result
-
-
-def test_maybe_int_returns_int_if_possible():
-    expected = 10
-    result = maybe_int('10')
-
-    assert expected == result
-
-
-def test_maybe_int_returns_none_otherwise():
-    assert maybe_int('216+337') is None
 
 
 def test_dedupe_all_lists():
