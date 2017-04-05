@@ -87,7 +87,7 @@ def extract_references(filepath):
     """Extract references from PDF and return in INSPIRE format."""
     references = extract_references_from_file(
         filepath,
-        reference_format="{title},{volume},{page}",
+        reference_format=u"{title},{volume},{page}",
     )
     mapped_references = []
     if references.get('references'):
