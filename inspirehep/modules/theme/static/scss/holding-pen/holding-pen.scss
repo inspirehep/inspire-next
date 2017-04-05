@@ -96,7 +96,7 @@ $hp_table_bg: #fff;
   .overview-item {
 
     background-color: $midnight-blue;
-    height: 285px;
+    min-height: 285px;
     border-radius: 3px;
     margin-bottom: 10px;
 
@@ -159,6 +159,7 @@ $hp_table_bg: #fff;
     .statuses {
       -webkit-padding-start: 0px;
       list-style: none;
+      padding-bottom: 10px;
 
       li {
         margin-top: 10px;
