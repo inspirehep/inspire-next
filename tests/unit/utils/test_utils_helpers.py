@@ -29,11 +29,7 @@ import tempfile
 import httpretty
 import pytest
 
-from inspirehep.utils.helpers import (
-    download_file,
-    get_json_for_plots,
-    force_list,
-)
+from inspirehep.utils.helpers import download_file, force_list
 
 
 @pytest.fixture
@@ -85,54 +81,6 @@ def test_download_file_raises_if_called_without_output_file():
 
     with pytest.raises(IOError):
         download_file('http://example.com/foo-bar-baz')
-
-
-def test_get_json_for_plots():
-    plots = [
-        {
-            'captions': [
-                'foo-caption-1',
-                'foo-caption-2',
-            ],
-            'name': 'foo-name',
-            'url': 'http://example.com/foo-url',
-        },
-        {
-            'captions': [
-                'bar-caption-1',
-            ],
-            'name': 'bar-name',
-            'url': 'http://example.com/bar-url',
-        },
-        {
-        },
-    ]
-
-    expected = {
-        '_fft': [
-            {
-                'path': 'http://example.com/foo-url',
-                'type': 'Plot',
-                'description': '00000 foo-caption-1foo-caption-2',
-                'filename': 'foo-name',
-            },
-            {
-                'path': 'http://example.com/bar-url',
-                'type': 'Plot',
-                'description': '00001 bar-caption-1',
-                'filename': 'bar-name',
-            },
-            {
-                'path': None,
-                'type': 'Plot',
-                'description': '00002 ',
-                'filename': None,
-            },
-        ],
-    }
-    result = get_json_for_plots(plots)
-
-    assert expected == result
 
 
 def test_force_list_returns_empty_list_on_none():

@@ -59,21 +59,6 @@ def download_file_to_workflow(workflow, name, url):
             return workflow.files[name]
 
 
-def get_json_for_plots(plots):
-    """Return proper FFT format from plotextracted plots."""
-    output_records = []
-    index = 0
-    for plot in plots:
-        output_records.append(dict(
-            path=plot.get('url'),
-            type='Plot',
-            description="{0:05d} {1}".format(index, "".join(plot.get('captions', []))),
-            filename=plot.get('name'),
-        ))
-        index += 1
-    return dict(_fft=output_records)
-
-
 def force_list(data):
     """Force ``data`` to become a list.
 
