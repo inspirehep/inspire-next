@@ -22,7 +22,13 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.modules.refextract.tasks import extract_journal_info
+import os
+import pkg_resources
+
+from inspirehep.modules.refextract.tasks import (
+    extract_journal_info,
+    extract_references,
+)
 
 
 class StubObj(object):
@@ -52,3 +58,10 @@ def test_extract_journal_info():
             'year': 2014,
         }
     ]
+
+
+def test_extract_references_handles_unicode():
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1704.00452.pdf'))
+
+    extract_references(filename)
