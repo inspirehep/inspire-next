@@ -100,7 +100,7 @@ services:
   visible_acceptance:
     extends:
       service: test-service_base
-    command: py.test --driver Firefox --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance
+    command: py.test --driver Firefox --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance-bdd
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     volumes_from:
