@@ -113,19 +113,9 @@ def formdata_to_model(obj, formdata):
     return data
 
 
-def update_data_from_form(obj, eng):
-    """Task to update data from formdata."""
-    obj.data = formdata_to_model(obj, obj.extra_data['formdata'])
-
-
 def curation_ticket_needed(obj, eng):
     """Check if the a curation ticket is needed."""
     return obj.extra_data.get("ticket", False)
-
-
-def recreate_data(obj, eng):
-    """Check if data needs to be recreated."""
-    return obj.extra_data.get("recreate_data", False)
 
 
 def new_ticket_context(user, obj):
