@@ -56,6 +56,7 @@
       </div>
       <div class="navbar-collapse navbar-ex1-collapse collapse overflow" id="topnav-right">
         <div class="row" id="mobile-menu">
+          {% if config['INSPIRE_FULL_THEME'] %}
           <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
             <a href="{{ url_for("inspirehep_theme.index") }}" class="mobile-menu-thumbnail">
@@ -112,6 +113,7 @@
               <p>Journals</p>
             </a>
          </div>
+          {% endif %}
         </div>
 
         <ul class="nav navbar-nav" id="header-links">
@@ -144,10 +146,10 @@
           </li>
           {% endif %}
           <li {% if request.blueprint == blueprint|e %} class="active" {% endif %}>
-            <a href="{{ url_for('inspirehep_literature_suggest.create') }}">{{- _('Submit') -}}</a>
+            <a id="submit_menu_fav" href="{{ url_for('inspirehep_literature_suggest.create') }}">{{- _('Submit') -}}</a>
           </li>
           <li>
-            <a href="https://labs.inspirehep.net/help">{{- _('Help') -}}</a>
+            <a id="help_menu_fav" href="https://labs.inspirehep.net/help">{{- _('Help') -}}</a>
           </li>
           <li class="divider-vertical"></li>
           {%- if not current_user.is_authenticated %}
