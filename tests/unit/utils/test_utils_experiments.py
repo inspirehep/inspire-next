@@ -23,8 +23,13 @@
 from __future__ import absolute_import, division, print_function
 
 from elasticsearch_dsl.result import Response
+from mock import ANY, patch
 
-from inspirehep.utils.experiments import render_people, render_contributions
+from inspirehep.utils.experiments import (
+    experiment_contributions_from_es,
+    render_people,
+    render_contributions
+)
 
 
 def test_render_people():
@@ -103,3 +108,11 @@ def test_render_contributions():
     result = render_contributions(hits)
 
     assert expected == result
+
+
+@patch('inspirehep.utils.experiments.LiteratureSearch')
+def test_experiment_contributions_from_es_handles_unicode(mock_liter_search):
+    mock_liter_search().query_from_iq(ANY).params(ANY).sort(ANY).execute()\
+        .hits = None
+    unicode_exper_name = u'γ-ray'
+    assert experiment_contributions_from_es(unicode_exper_name) is None

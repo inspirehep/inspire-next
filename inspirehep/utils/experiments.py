@@ -52,7 +52,7 @@ def render_experiment_people(experiment_name):
 
 def experiment_contributions_from_es(experiment_name):
     """Query ES for conferences in the same series."""
-    query = 'accelerator_experiments.experiment:"{}"'.format(experiment_name)
+    query = u'accelerator_experiments.experiment:"{}"'.format(experiment_name)
     return LiteratureSearch().query_from_iq(
         query
     ).params(
