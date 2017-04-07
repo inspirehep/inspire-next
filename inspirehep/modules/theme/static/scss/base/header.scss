@@ -748,22 +748,21 @@ a.external-link::after {
 
                 #tools-dropdown i,
                 #dropdown-links-stats i,
-                li:nth-child(3) a:before,
-                li:nth-child(4) a:before {
-                    padding: 15px;
+                #header-submit-link:before {
+                    padding: 18px;
                     background-color: $light-blue;
                     border-radius: 50%;
-                    margin-right: 15px;
-
-                }
-
-                li.dropdown + li:nth-child(3) a:before {
-                    content: "\f0ee";
+                    margin-right: 17px;;
                     font-family: FontAwesome;
+                    content: "\f0ee";
                 }
-
-                & > li:nth-child(4) a:before {
+                #header-help-link:before {
+                    padding: 18px;
+                    background-color: $light-blue;
+                    border-radius: 50%;
                     margin-right: 20px;
+                    padding-right: 20px;
+                    padding-left: 20px;
                     font-family: FontAwesome;
                     content: "\f128";
                 }
