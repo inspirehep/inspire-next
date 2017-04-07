@@ -24,6 +24,8 @@
 
 {%- extends config.RECORD_EDITOR_BASE_TEMPLATE -%}
 
+{% set hide_external_link_icons = True %}
+
 {%- block page_body %}
 <div id="re-wrapper">
 	<re-app>
@@ -36,7 +38,16 @@
 
 {%- block page_footer %}
 {%- endblock page_footer %}
- 
+
+{% block css %}
+{{ super() }}
+<style media="screen">
+  body {
+    margin-bottom: 0px;
+  }
+</style>
+{% endblock css %}
+
 {% block javascript %}
 {{ super() }}
 <script type="text/javascript">

@@ -58,6 +58,15 @@
         {%- endblock css %}
     {%- endblock head %}
 </head>
+{% if body_css_classes %}
+  {% if not hide_external_link_icons %}
+    {% do body_css_classes.append("show-external-link-icons") %}
+  {% endif %}
+{% else %}
+  {% if not hide_external_link_icons %}
+    {% set body_css_classes = ["show-external-link-icons"] %}
+  {% endif %}
+{% endif %}
 <body{% if body_css_classes %} class="{{ body_css_classes|join(' ') }}"{% endif %}{% if g.ln %}
                                lang="{{ g.ln.split('_', 1)[0]|safe }}"{% if rtl_direction %} {{ rtl_direction|safe }}
     {% endif %}{% endif %} itemscope itemtype="http://schema.org/WebPage" data-spy="scroll"

@@ -70,15 +70,17 @@ Generic core styles that are included in all INSPIRE pages.
 /* External links styling
 ================================================== */
 
-a[href^="http://"]:after, a[href^="https://"]:after {
-  content: "\f08e";
-  font-size: 80%;
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  display: inline-block;
-  text-decoration: none;
-  padding-left: 3px;
+body.show-external-link-icons {
+    a[href^="http://"]:after, a[href^="https://"]:after {
+      content: "\f08e";
+      font-size: 80%;
+      font-family: FontAwesome;
+      font-weight: normal;
+      font-style: normal;
+      display: inline-block;
+      text-decoration: none;
+      padding-left: 3px;
+    }
 }
 
 a.no-external-icon:after {
