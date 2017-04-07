@@ -119,6 +119,16 @@ def wrap_nonpublic_note(field, **dummy_kwargs):
     return HTMLString(html)
 
 
+def make_degree_choices():
+    degree_type_schema = load_schema('elements/degree_type.json')
+    degree_choices = [
+        (val, val.capitalize()) if val != 'phd' else ('phd', 'PhD')
+        for val in degree_type_schema['enum']
+    ]
+    degree_choices.sort(key=lambda x: x[1])
+    return degree_choices
+
+
 def radiochoice_buttons(field, **dummy_kwargs):
     """Radio choice buttons."""
     html = ''
@@ -630,11 +640,4 @@ class LiteratureForm(INSPIREForm):
         inspire_categories_schema = load_schema('elements/inspire_field.json')
         categories = inspire_categories_schema['properties']['term']['enum']
         self.subject.choices = [(val, val) for val in categories]
-
-        degree_type_schema = load_schema('elements/degree_type.json')
-        degree_choices = [
-            (val, val.capitalize()) if val != 'phd' else ('phd', 'PhD')
-            for val in degree_type_schema['enum']
-        ]
-        degree_choices.sort(key=lambda x: x[1])
-        self.degree_type.choices = degree_choices
+        self.degree_type.choices = make_degree_choices()
