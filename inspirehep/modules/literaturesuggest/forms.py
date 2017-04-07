@@ -142,14 +142,14 @@ class CheckboxButton(object):
 
     def __call__(self, field, **kwargs):
         """Render PLUpload widget."""
-        html = '<div id="field-{0}">' \
-               '<label for="{0}">' \
-               '<input class="checkbox-ok-upload" name="{0}" type="checkbox" value="{2}">' \
-               '<strong><em>{1}</em></strong><small>&nbsp;(temporary text)</small>' \
-               '</label>' \
-               '</div>'.format(field.id,
-                               self.msg,
-                               field.default)
+        html = u'<div id="field-{0}">' \
+               u'<label for="{0}">' \
+               u'<input class="checkbox-ok-upload" name="{0}" type="checkbox" value="{2}">' \
+               u'<strong><em>{1}</em></strong><small>&nbsp;(temporary text)</small>' \
+               u'</label>' \
+               u'</div>'.format(field.id,
+                                self.msg,
+                                field.default)
         return HTMLString(html)
 
 
