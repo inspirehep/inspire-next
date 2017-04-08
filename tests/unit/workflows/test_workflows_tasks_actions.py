@@ -354,38 +354,6 @@ def test_is_record_relevant(
     assert is_record_relevant(obj, eng) is expected
 
 
-def test_is_record_relevant_returns_true_if_it_is_a_submission():
-    obj = MockObj({'acquisition_source': {'method': 'submitter'}}, {})
-    eng = MockEng()
-
-    assert is_record_relevant(obj, eng)
-
-
-def test_is_record_relevant_returns_true_if_no_relevance_prediction():
-    obj = MockObj({}, {
-        'classifier_results': {
-            'complete_output': {
-                'Core keywords': [],
-            },
-        },
-    })
-    eng = MockEng()
-
-    assert is_record_relevant(obj, eng)
-
-
-def test_is_record_relevant_returns_true_if_no_classifier_results():
-    obj = MockObj({}, {
-        'relevance_prediction': {
-            'max_score': '0.222113',
-            'decision': 'Rejected',
-        },
-    })
-    eng = MockEng()
-
-    assert is_record_relevant(obj, eng)
-
-
 def test_is_experimental_paper():
     obj = MockObj({
         'arxiv_eprints': [
