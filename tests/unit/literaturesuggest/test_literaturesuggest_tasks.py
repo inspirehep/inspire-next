@@ -30,12 +30,7 @@ from inspirehep.modules.literaturesuggest.tasks import (
     formdata_to_model
 )
 
-from mocks import MockEng, MockObj
-
-
-class StubUser(object):
-    def __init__(self, email):
-        self.email = email
+from mocks import MockEng, MockObj, MockUser
 
 
 def test_new_ticket_context():
@@ -63,7 +58,7 @@ def test_new_ticket_context():
     }
 
     obj = MockObj(data, extra_data)
-    user = StubUser('user@example.com')
+    user = MockUser('user@example.com')
 
     expected = {
         'email': 'user@example.com',
@@ -100,7 +95,7 @@ def test_new_ticket_context_handles_unicode():
     extra_data = {}
 
     obj = MockObj(data, extra_data)
-    user = StubUser('user@example.com')
+    user = MockUser('user@example.com')
 
     expected = {
         'email': 'user@example.com',
@@ -138,7 +133,7 @@ def test_reply_ticket_context():
     }
 
     obj = MockObj(data, extra_data)
-    user = StubUser('user@example.com')
+    user = MockUser('user@example.com')
 
     expected = {
         'object': obj,
@@ -188,7 +183,7 @@ def test_curation_ticket_context():
     }
 
     obj = MockObj(data, extra_data)
-    user = StubUser('user@example.com')
+    user = MockUser('user@example.com')
 
     expected = {
         'recid': 'baz',

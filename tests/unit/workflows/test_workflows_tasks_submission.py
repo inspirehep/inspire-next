@@ -31,12 +31,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     prepare_files,
 )
 
-from mocks import AttrDict, MockEng, MockFiles, MockObj
-
-
-class StubUser(object):
-    def __init__(self):
-        self.email = 'user@example.com'
+from mocks import AttrDict, MockEng, MockFiles, MockObj, MockUser
 
 
 class StubRTInstance(object):
@@ -47,7 +42,7 @@ class StubRTInstance(object):
 @patch('inspirehep.modules.workflows.tasks.submission.User')
 @patch('inspirehep.modules.workflows.tasks.submission.render_template')
 def test_create_ticket_handles_unicode_when_not_in_production_mode(r_t, user):
-    user.query.get.return_value = StubUser()
+    user.query.get.return_value = MockUser('user@example.com')
     r_t.return_value = u'φοο'
 
     config = {'PRODUCTION_MODE': False}
@@ -75,7 +70,7 @@ def test_create_ticket_handles_unicode_when_not_in_production_mode(r_t, user):
 @patch('inspirehep.modules.workflows.tasks.submission.render_template')
 @patch('inspirehep.modules.workflows.tasks.submission.get_instance')
 def test_create_ticket_handles_unicode_when_in_production_mode(g_i, r_t, user):
-    user.query.get.return_value = StubUser()
+    user.query.get.return_value = MockUser('user@example.com')
     r_t.return_value = u'φοο'
     g_i.return_value = StubRTInstance()
 
