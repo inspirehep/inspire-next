@@ -78,3 +78,18 @@ class MockLog(object):
 
     def info(self, message):
         self._info.write(message)
+
+
+class MockUser(object):
+    def __init__(self, email, roles=[]):
+        self.email = email
+        self.roles = [MockRole(el) for el in roles]
+
+    @property
+    def is_anonymous(self):
+        return False
+
+
+class MockRole(object):
+    def __init__(self, name):
+        self.name = name

@@ -32,6 +32,8 @@ from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.wrappers import LiteratureRecord
 from inspirehep.modules.theme.jinja2filters import *
 
+from mocks import MockUser
+
 
 @pytest.fixture
 def jinja_env():
@@ -1225,26 +1227,15 @@ def test_weblinks_when_description_is_a_falsy_value():
 
 
 def test_is_cataloger():
-    class MockUser(object):
-        def __init__(self, user_roles):
-            self.user_roles = user_roles
+    cataloger = MockUser('cataloger@example.com', roles=['cataloger'])
+    assert is_cataloger(cataloger)
 
-        @property
-        def roles(self):
-            class MockRole():
-                def __init__(self, role_name):
-                    self.role_name = role_name
 
-                @property
-                def name(self):
-                    return self.role_name
+def test_is_cataloger_returns_true_when_user_is_a_superuser():
+    superuser = MockUser('superadmin@example.com', roles=['superuser'])
+    assert is_cataloger(superuser)
 
-            return [MockRole(name) for name in self.user_roles]
 
-    superadmin_user = MockUser(user_roles=['superuser'])
-    cataloger_user = MockUser(user_roles=['cataloger'])
-    no_role_user = MockUser(user_roles=[])
-
-    assert is_cataloger(superadmin_user)
-    assert is_cataloger(cataloger_user)
-    assert not is_cataloger(no_role_user)
+def test_is_cataloger_returns_false_when_user_has_no_roles():
+    user = MockUser('user@example.com')
+    assert not is_cataloger(user)

@@ -26,17 +26,10 @@ import json
 
 import mock
 
-
-class MockUser(object):
-    def __init__(self, email):
-        self.email = email
-
-    @property
-    def is_anonymous(self):
-        return False
+from mocks import MockUser
 
 
-user_with_email = MockUser('foo@bar.com')
+user_with_email = MockUser('user@example.com')
 user_empty_email = MockUser('')
 
 
@@ -93,7 +86,7 @@ def test_postfeedback_send_email_failure(delay, app_client):
     delay.return_value = FailedResult()
 
     response = app_client.post('/postfeedback', data=dict(
-        feedback='foo bar', replytoaddr='foo@bar.com'))
+        feedback='foo bar', replytoaddr='user@example.com'))
 
     assert response.status_code == 500
     assert json.loads(response.data) == {'success': False}
