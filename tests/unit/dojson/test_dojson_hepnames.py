@@ -1056,6 +1056,92 @@ def test_positions_from_371__a_m_r_z():
     assert expected == result['371']
 
 
+def test_positions_from_371__a_r_t_z():
+    schema = load_schema('authors')
+    subschema = schema['properties']['positions']
+
+    snippet = (
+        '<datafield tag="371" ind1=" " ind2=" ">'
+        '  <subfield code="a">San Luis Potosi U.</subfield>'
+        '  <subfield code="r">Master</subfield>'
+        '  <subfield code="t">2007</subfield>'
+        '  <subfield code="z">903830</subfield>'
+        '</datafield>'
+    )  # record/1037568
+
+    expected = [
+        {
+            '_rank': 'Master',
+            'current': False,
+            'end_date': '2007',
+            'institution': {
+                'curated_relation': True,
+                'name': 'San Luis Potosi U.',
+                'record': {
+                    '$ref': 'http://localhost:5000/api/institutions/903830',
+                },
+            },
+            'rank': 'MASTER',
+        },
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['positions'], subschema) is None
+    assert expected == result['positions']
+
+    expected = [
+        {
+            'a': 'San Luis Potosi U.',
+            'r': 'MAS',
+            't': '2007',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['371']
+
+
+def test_positions_from_371__a_r_t():
+    schema = load_schema('authors')
+    subschema = schema['properties']['positions']
+
+    snippet = (
+        '<datafield tag="371" ind1=" " ind2=" ">'
+        '  <subfield code="a">Case Western Reserve U.</subfield>'
+        '  <subfield code="r">UNDERGRADUATE</subfield>'
+        '  <subfield code="t">2011</subfield>'
+        '</datafield>'
+    )  # record/1590188
+
+    expected = [
+        {
+            '_rank': 'UNDERGRADUATE',
+            'current': False,
+            'end_date': '2011',
+            'institution': {
+                'curated_relation': False,
+                'name': 'Case Western Reserve U.',
+            },
+            'rank': 'UNDERGRADUATE',
+        },
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert validate(result['positions'], subschema) is None
+    assert expected == result['positions']
+
+    expected = [
+        {
+            'a': 'Case Western Reserve U.',
+            'r': 'UG',
+            't': '2011',
+        },
+    ]
+    result = hepnames2marc.do(result)
+
+    assert expected == result['371']
+
+
 def test_arxiv_categories_from_65017a_2():
     schema = load_schema('authors')
     subschema = schema['properties']['arxiv_categories']
