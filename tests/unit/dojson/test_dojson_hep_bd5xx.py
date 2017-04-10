@@ -204,7 +204,7 @@ def test_thesis_from_502__b_c_d_z():
     assert expected == result['thesis_info']
 
     expected = {
-        'b': 'phd',
+        'b': 'PhD',
         'c': [
             'IIT, Roorkee',
         ],
@@ -256,7 +256,7 @@ def test_thesis_from_502_b_double_c_d_double_z():
     assert expected == result['thesis_info']
 
     expected = {
-        'b': 'other',
+        'b': 'Thesis',
         'c': [
             'Nice U.',
             'Cote d\'Azur Observ., Nice',
@@ -302,7 +302,7 @@ def test_thesis_info_from_500__a_and_502__b_c_d():
         {'a': 'Presented on 2015-11-27'},
     ]
     expected_502 = {
-        'b': 'phd',
+        'b': 'PhD',
         'c': [
             'Siegen U.',
         ],
