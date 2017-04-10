@@ -130,18 +130,6 @@ def radiochoice_buttons(field, **dummy_kwargs):
     return HTMLString(u''.join(html))
 
 
-def defensedate_widget(field, **kwargs):
-    """Date widget fot thesis."""
-    field_id = kwargs.pop('id', field.id)
-    html = [u'<div class="row %s"><div class="col-xs-12">\
-            <input class="datepicker form-control" %s type="text">\
-            </div></div>'
-            % (THESIS_CLASS, html_params(id=field_id,
-                                         name=field_id,
-                                         value=field.data or ''))]
-    return HTMLString(u''.join(html))
-
-
 class CheckboxButton(object):
 
     """Checkbox button."""
@@ -436,7 +424,14 @@ class LiteratureForm(INSPIREForm):
         label=_('Date of Submission'),
         description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
         validators=[date_validator],
-        widget=defensedate_widget,
+        widget_classes='form-control' + THESIS_CLASS,
+    )
+
+    defense_date = fields.TextField(
+        label=_('Date of Defense'),
+        description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
+        validators=[date_validator],
+        widget_classes='form-control' + THESIS_CLASS,
     )
 
     degree_type = fields.SelectField(
@@ -601,7 +596,7 @@ class LiteratureForm(INSPIREForm):
              'collaboration', 'experiment', 'abstract',
              'report_numbers']),
         ('Thesis Information',
-            ['degree_type', 'thesis_date', 'institution',
+            ['degree_type', 'thesis_date', 'defense_date', 'institution',
              'supervisors', 'license_url']),
         # ('Licenses and copyright',
         #     ['license', 'license_url'], {'classes': 'collapse'}),
@@ -624,6 +619,7 @@ class LiteratureForm(INSPIREForm):
         'type_of_doc': 'col-xs-12 col-md-3',
         'wrap_nonpublic_note': 'col-md-9',
         'thesis_date': 'col-xs-12 col-md-4',
+        'defense_date': 'col-xs-12 col-md-4',
         'degree_type': 'col-xs-12 col-md-3',
     }
 
