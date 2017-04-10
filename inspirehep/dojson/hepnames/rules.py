@@ -223,9 +223,25 @@ def positions(self, key, value):
 @hepnames2marc.over('371', '^positions$')
 @utils.for_each_value
 def positions2marc(self, key, value):
+    def _get_r_value(value):
+        RANK_MAP = {
+            'JUNIOR': 'JUNIOR',
+            'MASTER': 'MAS',
+            'PHD': 'PHD',
+            'POSTDOC': 'PD',
+            'SENIOR': 'SENIOR',
+            'STAFF': 'STAFF',
+            'UNDERGRADUATE': 'UG',
+            'VISITOR': 'VISITOR',
+        }
+
+        rank = value.get('rank')
+        if rank:
+            return RANK_MAP.get(rank)
+
     return {
         'a': value.get('institution', {}).get('name'),
-        'r': value.get('_rank'),
+        'r': _get_r_value(value),
         's': value.get('start_date'),
         't': value.get('end_date'),
         'm': value.get('emails'),

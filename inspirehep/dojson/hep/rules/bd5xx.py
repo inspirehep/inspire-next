@@ -113,6 +113,21 @@ def thesis_info2marc(self, key, value):
 
     Also populates the ``500`` MARC field through side effects.
     """
+    def _get_b_value(value):
+        DEGREE_TYPES_MAP = {
+            'bachelor': 'Bachelor',
+            'diploma': 'Diploma',
+            'habilitation': 'Habilitation',
+            'laurea': 'Laurea',
+            'master': 'Master',
+            'other': 'Thesis',
+            'phd': 'PhD',
+        }
+
+        degree_type = value.get('degree_type')
+        if degree_type:
+            return DEGREE_TYPES_MAP.get(degree_type)
+
     result_500 = self.get('500', [])
     result_502 = self.get('502', {})
 
@@ -122,7 +137,7 @@ def thesis_info2marc(self, key, value):
         })
 
     result_502 = {
-        'b': value.get('degree_type'),
+        'b': _get_b_value(value),
         'c': [el['name'] for el in force_list(value.get('institutions'))],
         'd': value.get('date'),
     }
