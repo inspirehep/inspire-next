@@ -182,7 +182,7 @@
     "jquery",
     ], function ($) {
       $(document).ready(function () {
-        var mathJaxURL = "//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+        var mathJaxURL = "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
         $.getScript(mathJaxURL, function() {
           MathJax.Hub.Config({
             tex2jax: {inlineMath: [['$', '$'], ['\\(', '\\)']],
