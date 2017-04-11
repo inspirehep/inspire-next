@@ -31,7 +31,10 @@ from flask import current_app
 from inspirehep.modules.workflows.utils import json_api_request
 from inspirehep.utils.record import get_value
 
+from ..utils import with_debug_logging
 
+
+@with_debug_logging
 def get_magpie_url():
     """Return the Magpie URL endpoint, if any."""
     base_url = current_app.config.get("MAGPIE_API_URL")
@@ -42,6 +45,7 @@ def get_magpie_url():
     )
 
 
+@with_debug_logging
 def prepare_magpie_payload(record, corpus):
     """Prepare payload to send to Magpie API."""
     payload = dict(text="", corpus=corpus)
@@ -52,6 +56,7 @@ def prepare_magpie_payload(record, corpus):
     return payload
 
 
+@with_debug_logging
 def filter_magpie_response(labels, limit):
     """Filter response from Magpie API, keeping most relevant labels."""
     filtered_labels = [
@@ -66,6 +71,7 @@ def filter_magpie_response(labels, limit):
     return filtered_labels
 
 
+@with_debug_logging
 def guess_keywords(obj, eng):
     """Workflow task to ask Magpie API for a keywords assessment."""
     magpie_url = get_magpie_url()
@@ -93,6 +99,7 @@ def guess_keywords(obj, eng):
         ))
 
 
+@with_debug_logging
 def guess_categories(obj, eng):
     """Workflow task to ask Magpie API for a subject area assessment."""
     magpie_url = get_magpie_url()
@@ -116,6 +123,7 @@ def guess_categories(obj, eng):
         ))
 
 
+@with_debug_logging
 def guess_experiments(obj, eng):
     """Workflow task to ask Magpie API for a subject area assessment."""
     magpie_url = get_magpie_url()

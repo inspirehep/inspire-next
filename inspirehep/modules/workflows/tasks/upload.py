@@ -33,7 +33,10 @@ from invenio_db import db
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.records.api import InspireRecord
 
+from ..utils import with_debug_logging
 
+
+@with_debug_logging
 def store_record(obj, *args, **kwargs):
     """Create and index new record in main record space."""
     obj.log.debug('Storing record: \n%s', pformat(obj.data))
@@ -59,6 +62,7 @@ def store_record(obj, *args, **kwargs):
     db.session.commit()
 
 
+@with_debug_logging
 def set_schema(obj, eng):
     """Make sure schema is set properly and resolve it."""
     if '$schema' not in obj.data:

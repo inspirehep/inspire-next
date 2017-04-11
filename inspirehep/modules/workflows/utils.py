@@ -24,12 +24,18 @@
 
 from __future__ import absolute_import, division, print_function
 
-import requests
 import json
+import logging
+import traceback
+from functools import wraps
 
+import requests
 from flask import current_app
 
 from .models import WorkflowsAudit
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 def json_api_request(url, data, headers=None):
@@ -83,3 +89,55 @@ def log_workflows_action(action, relevance_prediction,
         }
         audit = WorkflowsAudit(**logging_info)
         audit.save()
+
+
+def with_debug_logging(func):
+    """Generate a debug log with info on what's going to run.
+
+    It tries its best to use the logging facilities of the object passed or the
+    application context before falling back to the python logging facility.
+    """
+    @wraps(func)
+    def _decorator(*args, **kwargs):
+        def _get_obj(args, kwargs):
+            if args:
+                obj = args[0]
+            else:
+                obj = kwargs.get('obj', kwargs.get('record'))
+            return obj
+
+        def _get_logfn(args, kwargs):
+            obj = _get_obj(args, kwargs)
+            if hasattr(obj, 'log') and hasattr(obj.log, 'debug'):
+                logfn = obj.log.debug
+            elif hasattr(current_app, 'logger'):
+                logfn = current_app.logger.debug
+            else:
+                logfn = LOGGER.debug
+
+            return logfn
+
+        def _try_to_log(logfn, *args, **kwargs):
+            try:
+                logfn(*args, **kwargs)
+            except Exception:
+                LOGGER.debug(
+                    'Error while trying to log with %s:\n%s',
+                    logfn,
+                    traceback.format_exc()
+                )
+
+        logfn = _get_logfn(args, kwargs)
+
+        _try_to_log(logfn, 'Starting %s', func)
+        res = func(*args, **kwargs)
+        _try_to_log(
+            logfn,
+            "Finished %s with (single quoted) result '%s'",
+            func,
+            res,
+        )
+
+        return res
+
+    return _decorator
