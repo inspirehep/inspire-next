@@ -27,12 +27,10 @@ from __future__ import absolute_import, division, print_function
 import json
 
 from flask import current_app, request
-
+from inspirehep.modules.search import IQ
 from invenio_records_rest.errors import InvalidQueryRESTError
 from invenio_records_rest.facets import default_facets_factory
 from invenio_records_rest.sorter import default_sorter_factory
-
-from inspirehep.modules.search import IQ
 
 
 def inspire_search_factory(self, search):
@@ -47,10 +45,7 @@ def inspire_search_factory(self, search):
     try:
         search = search.query(IQ(query_string, search))
     except SyntaxError:
-        current_app.logger.debug(
-            "Failed parsing query: {0}".format(
-                request.values.get('q', '')),
-            exc_info=True)
+        current_app.logger.debug(u"Failed parsing query: %s", request.values.get('q', ''), exc_info=True)
         raise InvalidQueryRESTError()
     finally:
         if current_app.debug:
