@@ -39,6 +39,19 @@ def test_keywords_from_653__9_ignores_lone_sources():
     assert 'keywords' not in hep.do(create_record(snippet))
 
 
+def test_keywords2marc_does_not_export_magpie_keywords():
+    record = {
+        'keywords': [
+            {
+                'source': 'magpie',
+                'value': 'cosmological model',
+            },
+        ],
+    }
+
+    assert '653' not in hep2marc.do(record)
+
+
 def test_accelerator_experiments_from_693__a_e():
     schema = load_schema('hep')
     subschema = schema['properties']['accelerator_experiments']
