@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 from datetime import datetime
 from urllib import urlencode
 
+import requests
 from flask import current_app
 from flask.ext.login import current_user
 from idutils import is_arxiv, is_isbn
@@ -157,44 +158,18 @@ def duplicated_arxiv_id_validator(form, field):
 
 
 def pdf_validator(form, field):
-    """Validate that url points to PDF."""
-    import requests
+    """Validate that the field contains a link to a PDF."""
+    message = 'Please, provide an accessible direct link to a PDF document.'
 
-    def get_content_type(url):
-        session = requests.Session()
-        try:
-            response = session.head(
-                url,
-                allow_redirects=True
-            )
-        except:
-            return
-        return response.headers['content-type']
-
-    message = "Please, provide an accessible direct link to a PDF document."
-
-    if field.data and get_content_type(field.data) != 'application/pdf':
+    if field.data and not _is_pdf_link(field.data):
         raise StopValidation(message)
 
 
 def no_pdf_validator(form, field):
-    """Validate that url is not from a PDF."""
-    import requests
+    """Validate that the field does not contain a link to a PDF."""
+    message = 'Please, use the field above to link to a PDF.'
 
-    def get_content_type(url):
-        session = requests.Session()
-        try:
-            response = session.head(
-                url,
-                allow_redirects=True
-            )
-        except:
-            return
-        return response.headers['content-type']
-
-    message = "Please, use the field above to link to a PDF."
-
-    if field.data and get_content_type(field.data) == 'application/pdf':
+    if field.data and _is_pdf_link(field.data):
         raise StopValidation(message)
 
 
@@ -211,3 +186,30 @@ def date_validator(form, field):
                 break
         else:
             raise StopValidation(message)
+
+
+def _is_pdf_link(url):
+    """Return ``True`` if ``url`` points to a PDF.
+
+    Returns ``True`` if either the server replies with the correct
+    ``Content-Type`` or the first few bytes of the response are ``%PDF``.
+
+    Args:
+        url (string): a URL.
+
+    Returns:
+        bool: whether the url points to a PDF.
+
+    """
+    try:
+        response = requests.get(url, allow_redirects=True, stream=True)
+    except requests.exceptions.RequestException:
+        return False
+
+    content_type = response.headers.get('Content-Type', '')
+    correct_content_type = content_type.startswith('application/pdf')
+
+    magic_number = next(response.iter_content(4))
+    correct_magic_number = magic_number.startswith('%PDF')
+
+    return correct_content_type or correct_magic_number
