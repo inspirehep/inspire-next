@@ -24,6 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
+from mock import Mock, patch
 import pkg_resources
 import requests
 import requests_mock
@@ -74,3 +75,15 @@ def test_json_api_request_retries_on_connection_error():
         result = json_api_request('http://example.org/api', {})
 
         assert expected == result
+
+
+@patch('inspirehep.modules.workflows.utils.requests')
+def test_json_api_request_handles_unicode_url(requests):
+    mocked_response = Mock()
+    mocked_response.status_code = 200
+    requests.post.return_value = mocked_response
+
+    url = u'φο.com'
+    data = None
+
+    assert json_api_request(url, data)
