@@ -1,6 +1,26 @@
-{# Jinja2 template for use with the HAL TEI exporter. -#}
+{#
+# This file is part of INSPIRE.
+# Copyright (C) 2016 CERN.
+#
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
+#}
 
-{% from "macros.xml" import author_data with context -%}
+{%- from "hal/macros.xml.jinja2" import author_data with context -%}
 
 <?xml version="1.0" encoding="UTF-8"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:hal="http://hal.archives-ouvertes.fr/">
@@ -11,26 +31,23 @@
           {% if titles %}
             <titleStmt>
               {% for title in titles %}
-                {%+ if title.title %}
+                {% if title.title %}
                   <title xml:lang="en">{{ title.title }}</title>
                 {% endif %}
                 {% if title.subtitle %}
                   <title type="sub" xml:lang="en">{{ title.subtitle }}</title>
                 {% endif %}
               {% endfor %}
-
               {% for author in authors %}
                 {{ author_data(author) }}
               {% endfor %}
             </titleStmt>
           {% endif %}
-
           <notesStmt>
             <note type="audience" n="1"/>
             <note type="popular" n="0"/>
             <note type="peer" n="{{ 1 if reviewed else 0 }}"/>
           </notesStmt>
-
           <sourceDesc>
             <biblStruct>
               <analytic>
@@ -42,12 +59,10 @@
                     <title type="sub" xml:lang="en">{{ title.subtitle }}</title>
                   {% endif %}
                 {% endfor %}
-
                 {% for author in authors %}
                   {{ author_data(author) }}
                 {% endfor %}
               </analytic>
-
               {% if publication %}
                 <monogr>
                   {% if publication.type == "journal" %}
@@ -92,7 +107,6 @@
                   {% endif %}
                 </monogr>
               {% endif %}
-
               {% if doi %}
                 <idno type="doi">{{ doi }}</idno>
               {% endif %}
@@ -103,10 +117,7 @@
               <language ident="en"/>
             </langUsage>
             <textClass>
-              <classCode scheme="halDomain" n="phys.phys.phys-gen-ph"/><!-- FIXME -->
-              {#{% for domain in domains %}
-                <classCode scheme="halDomain" n="{{ domain }}"/>
-              {% endfor %}#}
+              <classCode scheme="halDomain" n="phys.phys.phys-gen-ph"/><!-- TODO: implement (see #1590). -->
               <classCode scheme="halTypology" n="{{ typology }}"/>
             </textClass>
           </profileDesc>
@@ -118,7 +129,6 @@
         <listOrg type="structures">
           {% for structure in structures %}
             <org type="{{ structure.type }}" xml:id="localStruct-{{ structure.recid }}">
-
               {% if structure.name %}
                 <orgName>{{ structure.name }}</orgName>
               {% endif %}
@@ -131,7 +141,6 @@
                   </address>
                 </desc>
               {% endif %}
-
             </org>
           {% endfor %}
         </listOrg>

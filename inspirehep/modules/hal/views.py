@@ -20,16 +20,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""HAL module.
-
-This module converts INSPIRE literature records to the XML+TEI format supported
-by Hyper Articles en Ligne (HAL), a French open archive of scholarly documents.
-
-The Jinja2 Python library is used to convert records into a HAL-supported
-format, after which the Python SWORD client posts these records to the HAL
-SWORD API.
-"""
+"""HAL views."""
 
 from __future__ import absolute_import, division, print_function
 
-from .ext import InspireHAL
+from flask import Blueprint
+
+
+blueprint = Blueprint(
+    'inspirehep_hal',
+    __name__,
+    template_folder='templates',
+)

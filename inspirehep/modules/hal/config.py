@@ -20,10 +20,44 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""HAL module configuration."""
+"""HAL Configuration."""
 
 from __future__ import absolute_import, division, print_function
 
 
-HAL_EXPORT_TEMPLATE = 'hal_tei.xml'
-"""Filename of the base TEI template in the template environment."""
+#
+# Configuration used when converting to TEI.
+#
+
+HAL_TEI_TEMPLATE = 'hal/tei.xml.jinja2'
+"""Template to use when converting to TEI."""
+
+HAL_TYPOLOGY_MAPPING = {
+    'article': 'ART',
+    'book': 'OUV',
+    'book chapter': 'COUV',
+    'conference paper': 'COMM',
+    'proceedings': 'DOUV',
+    'thesis': 'THESE',
+    'report': 'REPORT',
+}
+"""Map between INSPIRE document types and HAL typologies."""
+
+HAL_TYPOLOGY_FALLBACK = 'Other'
+"""HAL fallback typology."""
+
+
+#
+# Configuration used when connecting to HAL.
+#
+
+HAL_COL_IRI = 'https://api-preprod.archives-ouvertes.fr/sword/hal'
+HAL_EDIT_IRI = 'https://api-preprod.archives-ouvertes.fr/sword/'
+"""IRIs used by the SWORD protocol when connecting to HAL."""
+
+HAL_USER_NAME = 'hal_user_name'
+HAL_USER_PASS = 'hal_user_pass'
+"""Inspire credentials on HAL."""
+
+HAL_IGNORE_CERTIFICATES = False
+"""Whether to check certificates when connecting to HAL."""
