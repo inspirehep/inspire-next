@@ -167,7 +167,8 @@ def keywords2marc(self, key, values):
             if '653' not in self:
                 self['653'] = []
 
-            self['653'].append(marc_dict)
+            if marc_dict.get('9') != 'magpie':
+                self['653'].append(marc_dict)
             continue
 
     return thesaurus_terms
