@@ -56,7 +56,7 @@ Via Docker with a graphical instance of Firefox (Linux)
 
 .. code-block:: bash
 
-  $ docker-compose -f docker-compose.test.yml run --rm acceptance
+  $ docker-compose -f docker-compose.test.yml run --rm visible_acceptance
 
 
 Via Docker with a graphical instance of Firefox (macOS)
@@ -108,7 +108,7 @@ Via Docker with a graphical instance of Firefox (macOS)
 
 .. code-block:: bash
 
-  $ docker-compose -f docker-compose.test.yml run --rm acceptance
+  $ docker-compose -f docker-compose.test.yml run --rm visible_acceptance
 
 
 How to Write the Selenium Tests
