@@ -351,22 +351,22 @@ class Article(object):
         [
             # Make sure schema is set for proper indexing in Holding Pen
             set_schema,
-        ]
-        + ADD_MARKS
-        + DELETE_AND_STOP_IF_NEEDED
-        + ENHANCE_RECORD
+        ] +
+        ADD_MARKS +
+        DELETE_AND_STOP_IF_NEEDED +
+        ENHANCE_RECORD +
         # TODO: Once we have a way to resolve merges, we should
         # use that instead of stopping
-        + CHECK_IF_MERGE_AND_STOP_IF_SO
-        + CHECK_IF_SUBMISSION_AND_ASK_FOR_APPROVAL
-        + [
+        CHECK_IF_MERGE_AND_STOP_IF_SO +
+        CHECK_IF_SUBMISSION_AND_ASK_FOR_APPROVAL +
+        [
             IF_ELSE(
                 is_record_accepted,
                 (
-                    POSTENHANCE_RECORD
-                    + SEND_TO_LEGACY_AND_WAIT
-                    + NOTIFY_ACCEPTED
-                    + [
+                    POSTENHANCE_RECORD +
+                    SEND_TO_LEGACY_AND_WAIT +
+                    NOTIFY_ACCEPTED +
+                    [
                         # TODO: once legacy is out, this should become
                         # unconditional, and remove the SEND_TO_LEGACY_AND_WAIT
                         # steps

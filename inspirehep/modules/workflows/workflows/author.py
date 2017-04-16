@@ -128,20 +128,20 @@ class Author(object):
         IF_ELSE(
             is_marked('is-update'),
             SEND_UPDATE_NOTIFICATION,
-            ASK_FOR_REVIEW
-            + [
+            ASK_FOR_REVIEW +
+            [
                 IF_ELSE(
                     is_record_accepted,
                     (
-                        SEND_TO_LEGACY
-                        + NOTIFY_ACCEPTED
-                        + [
+                        SEND_TO_LEGACY +
+                        NOTIFY_ACCEPTED +
+                        [
                             # TODO: once legacy is out, this should become
                             # unconditional, and remove the SEND_TO_LEGACY
                             # steps
                             IF_NOT(in_production_mode, [store_record]),
-                        ]
-                        + CLOSE_TICKET_IF_NEEDED
+                        ] +
+                        CLOSE_TICKET_IF_NEEDED
                     ),
                     NOTIFY_NOT_ACCEPTED
                 ),

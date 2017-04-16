@@ -170,7 +170,7 @@ def test_thesis_info_defense_date_from_500__a():
     result = hep2marc.do(result)
 
     assert expected == result['500']
-    
+
 
 def test_thesis_info_defense_date_from_500__a_incomplete_date():
     schema = load_schema('hep')
