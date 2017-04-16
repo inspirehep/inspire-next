@@ -225,10 +225,13 @@ def public_notes2marc(self, key, value):
 @journals.over('_private_notes', '^595..')
 @utils.for_each_value
 def _private_notes_595(self, key, value):
-    return {
-        'source': value.get('9'),
-        'value': value.get('a'),
-    }
+    _private_note = value.get('a')
+
+    if _private_note:
+        return {
+            'source': value.get('9'),
+            'value': _private_note,
+        }
 
 
 @hep2marc.over('595', '^_private_notes$')
