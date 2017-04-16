@@ -36,7 +36,6 @@ from inspirehep.modules.workflows.tasks.beard import (
 from mocks import MockEng, MockObj
 
 
-
 def test_get_beard_url_from_configuration():
     config = {'BEARD_API_URL': 'https://beard.inspirehep.net'}
 

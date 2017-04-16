@@ -447,6 +447,7 @@ def test_experiment_date_returns_started_with_date_started():
 
     assert expected == result
 
+
 def test_experiment_date_returns_proposed_with_date_started():
     with_date_started = InspireRecord({'date_proposed': '1993'})
 
@@ -454,6 +455,7 @@ def test_experiment_date_returns_proposed_with_date_started():
     result = experiment_date(with_date_started)
 
     assert expected == result
+
 
 def test_experiment_date_returns_approved_with_date_started():
     with_date_started = InspireRecord({'date_approved': '1993'})

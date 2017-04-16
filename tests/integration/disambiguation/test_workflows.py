@@ -155,6 +155,7 @@ def test_appoint_profile_from_claimed_signature(small_app):
     assert InspireRecord.get_record(record_id)['authors'][0]['recid'] == \
         "314159265"
 
+
 @pytest.mark.xfail
 def test_solve_claim_conflicts(small_app):
     """Check the module for the case where at least two claimed

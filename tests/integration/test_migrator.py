@@ -118,7 +118,6 @@ def test_continuous_migration_handles_a_single_record(app, record_1502656):
     assert expected == result
 
 
-
 def test_continuous_migration_handles_multiple_records(app, record_1502655_and_1502656):
     r = StrictRedis.from_url(current_app.config.get('CACHE_REDIS_URL'))
 
@@ -141,7 +140,6 @@ def test_continuous_migration_handles_multiple_records(app, record_1502655_and_1
     result = InspireProdRecords.query.get(1502656).marcxml
 
     assert expected == result
-
 
 
 def test_continuous_migration_handles_record_updates(app, record_1502656_and_update):
