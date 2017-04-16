@@ -37,7 +37,7 @@ def test_all_records_were_loaded(app):
 
 
 def test_all_records_are_valid(app):
-    invalid = InspireProdRecords.query.filter(InspireProdRecords.valid == False).values(InspireProdRecords.recid)
+    invalid = InspireProdRecords.query.filter(InspireProdRecords.valid is False).values(InspireProdRecords.recid)
     recids = [el[0] for el in invalid]
 
     assert recids == []
