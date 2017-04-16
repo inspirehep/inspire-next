@@ -27,6 +27,7 @@ from dojson.contrib.marc21.utils import create_record
 from inspire_schemas.utils import load_schema
 from inspirehep.dojson.conferences import conferences
 from inspirehep.dojson.hep import hep, hep2marc
+from inspirehep.dojson.hepnames import hepnames
 from inspirehep.dojson.utils import validate
 
 
@@ -635,3 +636,13 @@ def test_urls_from_8564_u_double_y_selects_the_first_y():
     result = hep2marc.do(result)
 
     assert expected == result['8564']
+
+
+def test_private_notes_from_595__9():
+    snippet = (
+        '<datafield tag="595" ind1=" " ind2=" ">'
+        '  <subfield code="9">SPIRES-HIDDEN</subfield>'
+        '</datafield>'
+    )  # record/1005469
+
+    assert '_private_notes' not in hepnames.do(create_record(snippet))
