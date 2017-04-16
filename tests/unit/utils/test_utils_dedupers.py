@@ -38,7 +38,7 @@ def test_dedupe_list_of_dicts():
     list_of_dicts_with_duplicates = [
         {'a': 123, 'b': 1234},
         {'a': 3222, 'b': 1234},
-        {'a': 123, 'b':1234},
+        {'a': 123, 'b': 1234},
     ]
 
     expected = [{'a': 123, 'b': 1234}, {'a': 3222, 'b': 1234}]

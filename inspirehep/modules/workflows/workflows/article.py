@@ -65,7 +65,7 @@ from inspirehep.modules.workflows.tasks.magpie import (
     guess_categories,
     guess_experiments,
 )
-from inspirehep.modules.workflows.tasks.matching import(
+from inspirehep.modules.workflows.tasks.matching import (
     delete_self_and_stop_processing,
     stop_processing,
     pending_in_holding_pen,
