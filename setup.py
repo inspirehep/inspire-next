@@ -103,6 +103,7 @@ install_requires = [
 tests_require = [
     'check-manifest>=0.25',
     'coverage>=4.0',
+    'flake8-future-import>=0.4.3',
     'isort>=4.2.2',
     'pep257>=0.7.0',
     'pytest-cache>=1.0',
