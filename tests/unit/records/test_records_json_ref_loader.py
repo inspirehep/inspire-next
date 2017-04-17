@@ -61,7 +61,7 @@ def test_replace_refs_correct_sources(get_db_rec, get_es_rec):
 def test_abstract_loader_url_fallbacks(get_record, super_get_r_j, g_p_t_f_e):
     with_super = {'SUPER': 'SUPER'}
     with_actual = {'ACTUAL': 'ACTUAL'}
-    g_p_t_f_e = 'pt'
+    g_p_t_f_e.return_value = 'pt'
     super_get_r_j.return_value = with_super
     get_record.return_value = with_actual
 

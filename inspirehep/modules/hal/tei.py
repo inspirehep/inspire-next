@@ -66,8 +66,6 @@ def tei_response(record):
 
 
 def _get_domains(record):
-    categories = get_value(record, 'arxiv_eprints[0].categories', [])
-
     return []
 
 

@@ -392,47 +392,6 @@ class DynamicListWidget(ExtendedListWidget):
         return html
 
 
-class TagListWidget(DynamicListWidget):
-
-    """Render subfields in an ul-list with each li-element as tags.
-
-    Most useful if subfields are rendered with the TagInput widget.
-    """
-
-    def __init__(self, **kwargs):
-        """Initialize tag list template."""
-        self.template = kwargs.pop('template', '{{value}}')
-        defaults = dict(
-            html_tag='ul',
-            class_='list-unstyled',
-            item_widget=TagItemWidget(
-                template=self.template
-            )
-        )
-        defaults.update(kwargs)
-        super(TagListWidget, self).__init__(**defaults)
-
-    def __call__(self, field, **kwargs):
-        """Render tag list widget."""
-        kwargs.setdefault('data-tag-template', self.template)
-        return super(TagListWidget, self).__call__(field, **kwargs)
-
-    def _add_input_field(self, field):
-        """Add a tag for an input field."""
-        subfield = field.bound_field('__input__', force=True)
-        subfield.process(MultiDict({}))
-        return "<li>%s</li>" % subfield()
-
-    def close_tag(self, field, **kwargs):
-        """Close field tag."""
-        html = []
-        # Calling ExtendedListWidget.close_tag on purpose to avoid adding
-        # the add-button from DynamicListWidget.
-        html.append(self._add_input_field(field))
-        html.append(super(DynamicListWidget, self).close_tag(field, **kwargs))
-        return HTMLString(''.join(html))
-
-
 #
 # Radio input widgets
 #

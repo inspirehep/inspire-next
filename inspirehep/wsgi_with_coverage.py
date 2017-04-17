@@ -139,7 +139,7 @@ def mock_literature_validate():
 
 
 @app.route('/submit/author/validate', endpoint='inspirehep_authors_holdingpen.validate', methods=['POST'])
-def mock_literature_validate():
+def mock_author_validate():
     if request.json.get('orcid') == 'wrong.ORCID':
         return jsonify({
             'messages': {
