@@ -61,7 +61,7 @@ def test_replace_refs_correct_sources(get_db_rec, get_es_rec):
 def test_abstract_loader_url_fallbacks(get_record, super_get_r_j, g_p_t_f_e):
     with_super = {'SUPER': 'SUPER'}
     with_actual = {'ACTUAL': 'ACTUAL'}
-    g_p_t_f_e = 'pt'
+    g_p_t_f_e.return_value = 'pt'
     super_get_r_j.return_value = with_super
     get_record.return_value = with_actual
 
@@ -153,13 +153,13 @@ def test_abstract_loader_return_none(get_record):
     with patch.dict(current_app.config, config):
         expect_none = JsonRef({'$ref': 'http://inspirehep.net'},
                             loader=AbstractRecordLoader())
-        assert expect_none == None
+        assert expect_none == None  # noqa: E711
         expect_none = JsonRef({'$ref': 'http://inspirehep.net/'},
                             loader=AbstractRecordLoader())
-        assert expect_none == None
+        assert expect_none == None  # noqa: E711
         expect_none = JsonRef({'$ref': 'http://inspirehep.net/bad'},
                             loader=AbstractRecordLoader())
-        assert expect_none == None
+        assert expect_none == None  # noqa: E711
         assert get_record.call_count == 0
 
 
@@ -176,9 +176,9 @@ def test_specific_loaders_return_none(get_db_rec, get_es_rec, g_p_t_f_e):
     with patch.dict(current_app.config, config):
         expect_none = JsonRef({'$ref': 'http://inspirehep.net/api/e/1'},
                             loader=DatabaseJsonLoader())
-        assert expect_none == None
+        assert expect_none == None  # noqa: E711
         expect_none = JsonRef({'$ref': 'http://inspirehep.net/api/e/2'},
                             loader=ESJsonLoader())
-        assert expect_none == None
+        assert expect_none == None  # noqa: E711
         assert get_db_rec.call_count == 1
         assert get_es_rec.call_count == 1

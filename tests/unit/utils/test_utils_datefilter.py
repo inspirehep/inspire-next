@@ -36,6 +36,7 @@ def test_older_date():
 
     assert date_older_than(some_date, three_days_later, days=2)
 
+
 def test_newer_date():
     """date_older_than recognizes newer dates."""
     some_date = datetime.strptime("2015-01-01", "%Y-%m-%d")

@@ -337,6 +337,7 @@ def test_get_slac_citation_from_arxiv_eprints_no_value():
 
     assert expected == result
 
+
 def test_get_slac_citation_from_arxiv_eprints_with_value():
 
     from_arxiv_eprints_with_value = InspireRecord({
