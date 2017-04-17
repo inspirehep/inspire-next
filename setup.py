@@ -131,9 +131,6 @@ extras_require = {
     'sqlite': [
         'invenio-db[versioning]>=1.0.0b2',
     ],
-    'migration': [
-        #'invenio-migrator>=1.0.0a6',
-    ],
     'web-node': [
         'gunicorn',
     ],
@@ -279,10 +276,6 @@ setup(
         'invenio_db.models': [
             'inspire_workflows_audit = inspirehep.modules.workflows.models',
             'inspire_disambiguation = inspirehep.modules.disambiguation.models',
-        ],
-        'invenio_migrator.things': [
-            'holdingpen = inspirehep.modules.migrator.legacy.workflows',
-            'user_roles = inspirehep.modules.migrator.legacy.user_roles',
         ],
     },
     tests_require=tests_require,
