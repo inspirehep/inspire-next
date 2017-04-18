@@ -1320,11 +1320,16 @@ INDEXER_BULK_REQUEST_TIMEOUT = float(120)
 
 # OAuthclient
 # ===========
-orcid.REMOTE_APP['params']['request_token_params'] = {
-    'scope': '/orcid-profile/read-limited /activities/update /orcid-bio/update',
-    'show_login': 'true'}
+orcid.REMOTE_MEMBER_APP['params']['request_token_params'] = {
+    'scope': ' '.join([
+        '/orcid-profile/read-limited',
+        '/activities/update',
+        '/orcid-bio/update',
+    ]),
+    'show_login': 'true',
+}
 OAUTHCLIENT_REMOTE_APPS = dict(
-    orcid=orcid.REMOTE_APP,
+    orcid=orcid.REMOTE_MEMBER_APP,
 )
 OAUTHCLIENT_ORCID_CREDENTIALS = dict(
     consumer_key="CHANGE_ME",
