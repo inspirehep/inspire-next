@@ -34,7 +34,4 @@
 -e git+https://github.com/david-caro/workflow.git@minor_fixes_bumped_version#egg=workflow==2.0.1.dev20161019
 -e git+https://github.com/inspirehep/invenio-matcher.git#egg=invenio-matcher
 
-# Invenio-migrator fork
--e git+https://github.com/kaplun/invenio-migrator.git#egg=invenio-migrator==1.0.0a8
-
 -e .[postgresql]

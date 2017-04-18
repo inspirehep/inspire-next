@@ -24,18 +24,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-import json
 import logging
 import os
-import sys
 
 import click
 import requests
-from flask import current_app
-from flask_cli import with_appcontext
 from flask_sqlalchemy import models_committed
-
-from invenio_db import db
 
 from inspirehep.modules.records.receivers import receive_after_model_commit
 
@@ -46,10 +40,6 @@ from .tasks.records import (
     migrate_chunk,
     split_blob,
 )
-from .tasks.access import import_userrole
-from .tasks.workflows import import_holdingpen_record
-
-from .tasks.workflows import import_audit_record
 
 
 @click.group()
@@ -106,111 +96,3 @@ def count_citations():
     """Adds field citation_count to every record in 'HEP' and calculates its proper value."""
     click.echo("Adding citation_count to all records")
     add_citation_counts()
-
-
-@migrator.command()
-@click.argument('source', type=click.File('r'), default=sys.stdin)
-@with_appcontext
-def loadaudits(source):
-    """Load workflow Audit logs for workflows.models.Audit."""
-    click.echo('Loading dump...')
-    data = json.load(source)
-
-    click.echo('Sending tasks to queue...')
-    with click.progressbar(data) as records:
-        for item in records:
-            import_audit_record.delay(item)
-
-
-@migrator.command()
-@click.argument('source', type=click.File('r'), default=sys.stdin)
-@with_appcontext
-def loadworkflows(source):
-    """Load legacy workflow objects into Holding Pen."""
-    click.echo('Loading dump...')
-    data = json.load(source)
-
-    click.echo('Sending tasks to queue...')
-    with click.progressbar(data) as records:
-        for item in records:
-            import_holdingpen_record.delay(
-                item['parent_objs'], item['obj'], item['eng']
-            )
-
-
-@migrator.command()
-@click.argument('source', type=click.File('r'), default=sys.stdin)
-@with_appcontext
-def loaduserroles(source):
-    click.echo('Loading dump...')
-    data = json.load(source)
-    click.echo('Sending tasks to queue...')
-    with click.progressbar(data) as records:
-        for item in records:
-            import_userrole.delay(item)
-
-
-@migrator.command()
-@with_appcontext
-def clean_records():
-    """Truncate all the records from various tables."""
-    from sqlalchemy.engine import reflection
-    from invenio_search import current_search
-
-    click.secho('>>> Truncating all records.')
-
-    tables_to_truncate = [
-        "records_metadata",
-        "records_metadata_version",
-        "inspire_prod_records",
-        "inspire_orcid_records",
-        "pidstore_pid",
-    ]
-    db.session.begin(subtransactions=True)
-    try:
-        # Grab any table with foreign keys to records_metadata for truncating
-        inspector = reflection.Inspector.from_engine(db.engine)
-        for table_name in inspector.get_table_names():
-            for foreign_key in inspector.get_foreign_keys(table_name):
-                if foreign_key["referred_table"] == "records_metadata":
-                    tables_to_truncate.append(table_name)
-
-        if not click.confirm("Going to truncate:\n{0}".format(
-                "\n".join(tables_to_truncate))):
-            return
-
-        click.secho('Truncating tables...', fg='red', bold=True,
-                    err=True)
-        with click.progressbar(tables_to_truncate) as tables:
-            for table in tables:
-                db.engine.execute(
-                    "TRUNCATE TABLE {0} RESTART IDENTITY CASCADE".format(table))
-                click.secho("\tTruncated {0}".format(table))
-
-        db.session.commit()
-
-        current_search.aliases = {
-            k: v for k, v in current_search.aliases.iteritems()
-            if k.startswith('records')
-        }
-        click.secho('Destroying indexes...',
-                    fg='red',
-                    bold=True,
-                    err=True)
-        with click.progressbar(
-                current_search.delete(ignore=[400, 404])) as bar:
-            for name, response in bar:
-                click.secho(name)
-
-        click.secho('Creating indexes...',
-                    fg='green',
-                    bold=True,
-                    err=True)
-        with click.progressbar(
-                current_search.create(ignore=[400])) as bar:
-            for name, response in bar:
-                click.secho(name)
-
-    except Exception as err:  # noqa
-        db.session.rollback()
-        current_app.logger.exception(err)
