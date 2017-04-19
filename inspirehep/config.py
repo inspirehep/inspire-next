@@ -1322,9 +1322,9 @@ INDEXER_BULK_REQUEST_TIMEOUT = float(120)
 # ===========
 orcid.REMOTE_MEMBER_APP['params']['request_token_params'] = {
     'scope': ' '.join([
-        '/orcid-profile/read-limited',
+        '/read-limited',
         '/activities/update',
-        '/orcid-bio/update',
+        '/person/update',
     ]),
     'show_login': 'true',
 }
