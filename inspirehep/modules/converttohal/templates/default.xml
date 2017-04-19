@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:hal="http://hal.archives-ouvertes.fr/">
+    <text>
+        <body>
+            <listBibl>
+                <biblFull>
+                    {% if titles|length > 0 %}
+                    <titleStmt>
+                        {% for title in titles %}
+                        {%+ if title.title is defined %}<title xml:lang="en">{{ title.title }}</title>
+                        {% endif %}
+                        {% if title.subtitle is defined %}<title type="sub" xml:lang="en">{{ title.subtitle }}</title>
+                        {% endif %}
+                        {% endfor %}
+                        {% for author in authors %}
+                        {% if author.role is defined and author.role == "Editor" %}
+                        <author role="edt">
+                        {% else %}
+                        <author role="aut">
+                        {% endif %}
+                            <persName>
+                                {% if author.parsed_name.first != "" %}
+                                <forename type="first">{{ author.parsed_name.first }}</forename>
+                                {% endif %}
+                                {% if author.parsed_name.middle != "" %}
+                                <forename type="middle">{{ author.parsed_name.middle }}</forename>
+                                {% endif %}
+                                {% if author.parsed_name.last != "" and author.parsed_name.suffix != "" %}
+                                <surname>{{ author.parsed_name.last }} {{author.parsed_name.suffix}}</surname>
+                                {% elif author.parsed_name.last != "" %}
+                                <surname>{{ author.parsed_name.last }}</surname>
+                                {% elif author.parsed_name.suffix != "" %}
+                                <surname>{{ author.parsed_name.suffix }}</surname>
+                                {% endif %}
+                            </persName>
+                            <idno type="idhal"></idno>
+                            {% for affiliation in author.affiliations %}
+                            {% if affiliation.recid is defined %}
+                            <affiliation ref="#struct-{{ affiliation.recid }}"/>
+                            {% endif %}
+                            {% endfor %}
+                        </author>
+                        {% endfor %}
+                    </titleStmt>
+                    {% endif %}
+                    <sourceDesc>
+                        <biblStruct>
+                            <analytic>
+                                {% for title in titles %}
+                                {%+ if title.title is defined %}<title xml:lang="en">{{ title.title }}</title>
+                                {% endif %}
+                                {% if title.subtitle is defined %}<title type="sub" xml:lang="en">{{ title.subtitle }}</title>
+                                {% endif %}
+                                {% endfor %}
+                                {% for author in authors %}
+                                {% if author.role is defined and author.role == "Editor" %}
+                                <author role="edt">
+                                {% else %}
+                                <author role="aut">
+                                {% endif %}
+                                    <persName>
+                                        {% if author.parsed_name.first != "" %}
+                                        <forename type="first">{{ author.parsed_name.first }}</forename>
+                                        {% endif %}
+                                        {% if author.parsed_name.middle != "" %}
+                                        <forename type="middle">{{ author.parsed_name.middle }}</forename>
+                                        {% endif %}
+                                        {% if author.parsed_name.last != "" and author.parsed_name.suffix != "" %}
+                                        <surname>{{ author.parsed_name.last }} {{ author.parsed_name.suffix }}</surname>
+                                        {% elif author.parsed_name.last != "" %}
+                                        <surname>{{ author.parsed_name.last }}</surname>
+                                        {% elif author.parsed_name.suffix != "" %}
+                                        <surname>{{ author.parsed_name.suffix }}</surname>
+                                        {% endif %}
+                                    </persName>
+                                    <idno type="idhal"></idno>
+                                    {% if author.affiliations is defined %}
+                                    {% for affiliation in author.affiliations %}
+                                    {% if affiliation.recid is defined %}
+                                    <affiliation ref="#struct-{{ affiliation.recid }}"/>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endif %}
+                                </author>
+                                {% endfor %}
+                            </analytic>
+                            {% if publication is not none %}
+                            <monogr>
+                                {% if publication.type == "journal" %}
+                                {% if publication.name != "" %}
+                                <title level="j">{{ publication.name }}</title>
+                                {% endif %}
+                                <imprint>
+                                    {% if publication.volume != "" %}
+                                    <biblScope unit="volume">{{ publication.volume }}</biblScope>
+                                    {% endif %}
+                                    {% if publication.issue != "" %}
+                                    <biblScope unit="issue">{{ publication.issue }}</biblScope>
+                                    {% endif %}
+                                    {% if publication.pp != "" %}
+                                    <biblScope unit="pp">{{ publication.pp }}></biblScope>
+                                    {% endif %}
+                                </imprint>
+                                {% endif %}
+                                {% if publication.type == "conference" %}
+                                <meeting>
+                                    {% if publication.name != "" or publication.acronym != "" %}
+                                    <title>
+                                        {% if publication.name != "" and publication.acronym != "" %}
+                                        {{ publication.name }} ({{ publication.acronym }})
+                                        {% elif publication.name != "" %}
+                                        {{ publication.name }}
+                                        {% elif publication.acronym != "" %}
+                                        {{ publication.acronym }}
+                                        {% endif %}
+                                    </title>
+                                    {% endif %}
+                                    {% if publication.opening_date != "" %}
+                                    <date type="start">{{ publication.opening_date }}</date>
+                                    {% endif %}
+                                    {% if publication.closing_date != "" %}
+                                    <date type="end">{{ publication.closing_date }}</date>
+                                    {% endif %}
+                                </meeting>
+                                {% endif %}
+                            </monogr>
+                            {% endif %}
+                            {% if doi != "" %}
+                            <idno type="doi">{{ doi }}</idno>
+                            {% endif %}
+                        </biblStruct>
+                    </sourceDesc>
+                </biblFull>
+            </listBibl>
+        </body>
+        {% if structures|length > 0 %}
+        <back>
+            <listOrg type="structures">
+                {% for structure in structures %}
+                <org type="{{ structure.type }}" xml:id="struct-{{ structure.recid }}" status="VALID">
+                    {% if structure.name != "" %}
+                    <orgName>{{ structure.name }}</orgName>
+                    {% endif %}
+                    {% if structure.address|length > 0 %}
+                    <desc>
+                        <address>
+                            {% for addrLine in structure.address %}
+                            <addrLine>{{ addrLine }}</addrLine>
+                            {% endfor %}
+                            {% if structure.country != "" %}
+                            <country key="{{ structure.country }}"/>
+                            {% endif %}
+                        </address>
+                    </desc>
+                    {% endif %}
+                </org>
+                {% endfor %}
+             </listOrg>
+        </back>
+        {% endif %}
+    </text>
+</TEI>
