@@ -87,14 +87,6 @@ def force_single_element(obj):
     return None
 
 
-def get_int_value(d, k):
-    """Get a value in a dict and cast it to int if possible."""
-    try:
-        return int(d.get(k))
-    except (TypeError, ValueError):
-        return None
-
-
 def get_recid_from_ref(ref_obj):
     """Retrieve recid from jsonref reference object.
 

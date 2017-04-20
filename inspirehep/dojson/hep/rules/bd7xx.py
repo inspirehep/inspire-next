@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from inspire_schemas.utils import load_schema
-from inspirehep.utils.helpers import force_list
+from inspirehep.utils.helpers import force_list, maybe_int
 from inspirehep.utils.pubnote import split_page_artid
 
 from ..model import hep, hep2marc
@@ -71,14 +71,6 @@ def collaborations2marc(self, key, value):
 @hep.over('publication_info', '^773..')
 @utils.for_each_value
 def publication_info(self, key, value):
-    def get_int_value(val):
-        if val:
-            out = force_list(val)[0]
-            if out.isdigit():
-                out = int(out)
-                return out
-        return None
-
     def _get_material(value):
         schema = load_schema('elements/material')
         valid_materials = schema['enum']
@@ -88,10 +80,10 @@ def publication_info(self, key, value):
             if m_value.lower() == material:
                 return material
 
-    year = get_int_value(value.get('y'))
-    parent_recid = get_int_value(value.get('0'))
-    journal_recid = get_int_value(value.get('1'))
-    conference_recid = get_int_value(value.get('2'))
+    year = maybe_int(force_single_element(value.get('y')))
+    parent_recid = maybe_int(force_single_element(value.get('0')))
+    journal_recid = maybe_int(force_single_element(value.get('1')))
+    conference_recid = maybe_int(force_single_element(value.get('2')))
     parent_record = get_record_ref(parent_recid, 'literature')
     conference_record = get_record_ref(conference_recid, 'conferences')
     journal_record = get_record_ref(journal_recid, 'journals')
