@@ -30,7 +30,6 @@ from inspirehep.dojson.utils import (
     classify_field,
     classify_rank,
     force_single_element,
-    get_int_value,
     get_recid_from_ref,
     get_record_ref,
     legacy_export_as_marc,
@@ -132,26 +131,6 @@ def test_force_single_element_returns_element_when_not_a_list():
 
 def test_force_single_element_returns_none_on_empty_list():
     assert force_single_element([]) is None
-
-
-def test_get_int_value_returns_int_with_valid_input():
-    assert get_int_value({'0': '1343079'}, '0') == 1343079
-
-
-def test_get_int_value_returns_none_with_empty_string():
-    assert get_int_value({'0': ''}, '0') is None
-
-
-def test_get_int_value_returns_none_with_invalid_input():
-    assert get_int_value({'0': 'p15:*'}, '0') is None
-
-
-def test_get_int_value_returns_none_when_key_is_not_present():
-    assert get_int_value({'y': '2015'}, 'u') is None
-
-
-def test_get_int_value_returns_none_when_value_is_a_tuple():
-    assert get_int_value({'y': ('2015', '2016')}, 'y') is None
 
 
 def test_get_record_ref_with_empty_server_name():
