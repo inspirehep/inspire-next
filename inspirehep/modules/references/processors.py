@@ -61,7 +61,7 @@ def _split_refextract_authors_str(authors_str):
 
         # If we have initials join them with the previous token.
         if RE_INITIALS_ONLY.match(author):
-            current += ', ' + author.strip()
+            current += ', ' + author.strip().replace('. ', '.')
         else:
             if current:
                 res.append(current)
@@ -81,16 +81,26 @@ def _split_refextract_authors_str(authors_str):
         lambda a: a.startswith(','),
         lambda a: len(a) == 1
     ]
-    res = [r for r in res if all(not f(r) for f in filters)]
+    res = [_improve_author(r) for r in res if all(not f(r) for f in filters)]
 
     return res
 
 
-def _is_arxiv(obj):
-    """Small checker for arXiv report numbers."""
-    # Workaround until this issue:
-    # https://github.com/inveniosoftware/idutils/issues/14 is solved.
+def _improve_author(author_names):
+    res = author_names.split(' ')[-1] + ', '
+    for name in author_names.split(' ')[0:-1]:
+        res += name
+    return res
 
+
+def _is_arxiv(obj):
+    """Return ``True`` if ``obj`` contains an arXiv identifier.
+
+    The ``idutils`` library only handles arXiv identifiers, e.g. strings
+    of the form ``arXiv:yymm.xxxxx``, but we sometimes have to deal with
+    arXiv references, which might contain more information separated by
+    a space. Therefore this helper wraps ``idutils`` to support this case.
+    """
     arxiv_test = obj.split()
     if not arxiv_test:
         return False
@@ -130,11 +140,8 @@ class ReferenceBuilder(object):
         if field_name not in self.obj['reference']:
             self.obj['reference'][field_name] = value
 
-    def set_number(self, number):
-        try:
-            self._ensure_reference_field('number', int(number))
-        except (ValueError, TypeError):
-            pass
+    def set_label(self, label):
+        self._ensure_reference_field('label', label)
 
     def set_record(self, record):
         self.obj['record'] = record
@@ -147,20 +154,20 @@ class ReferenceBuilder(object):
         self._ensure_reference_field('texkey', texkey)
 
     def add_title(self, title):
-        self._ensure_reference_field('titles', [])
-        self.obj['reference']['titles'].append({'title': title})
+        self._ensure_reference_field('title', {})
+        self.obj['reference']['title'] = {'title': title}
 
     def add_misc(self, misc):
         self._ensure_reference_field('misc', [])
         self.obj['reference']['misc'].append(misc)
 
-    def add_raw_reference(self, raw_reference, source='reference_builder',
-                          ref_format='text'):
+    def add_raw_reference(self, raw_reference, source='', ref_format='text'):
         self._ensure_field('raw_refs', [])
         self.obj['raw_refs'].append({
-            'value': raw_reference,
+            'schema': ref_format,
             'source': source,
-            'schema': ref_format})
+            'value': raw_reference,
+        })
 
     def set_year(self, year):
         try:
@@ -176,20 +183,23 @@ class ReferenceBuilder(object):
         self.obj['reference']['urls'].append({'value': url})
 
     def add_refextract_authors_str(self, authors_str):
-        """Parses individual authors from refextracted authors string.
-
-        Refextract extracts all authors from a given citation, we cheaply
-        extract individual ones here for improving the quality of the
-        migration.
-        """
+        """Parses individual authors from refextracted authors string."""
         for author in _split_refextract_authors_str(authors_str):
             self.add_author(author)
 
     def add_author(self, full_name, role=None):
         self._ensure_reference_field('authors', [])
-        author = {} if not role else {'role': role}
-        author['full_name'] = full_name
-        self.obj['reference']['authors'].append(author)
+
+        if role is not None:
+            inspire_role = 'editor' if role == 'ed.' else role
+            self.obj['reference']['authors'].append({
+                'full_name': full_name,
+                'inspire_role': inspire_role,
+            })
+        else:
+            self.obj['reference']['authors'].append({
+                'full_name': full_name,
+            })
 
     def set_pubnote(self, pubnote):
         """Parse pubnote and populate correct fields."""
@@ -217,30 +227,32 @@ class ReferenceBuilder(object):
         # splitting the report number.
         repno = repno or ''
         if _is_arxiv(repno):
-            self._ensure_reference_field('arxiv_eprints', [])
-            self.obj['reference']['arxiv_eprints'].append(_normalize_arxiv(repno))
+            self._ensure_reference_field('arxiv_eprint', _normalize_arxiv(repno))
         else:
             self._ensure_reference_field('publication_info', {})
-            self.obj['reference']['publication_info']['reportnumber'] = repno
+            self.obj['reference']['report_number'] = repno
 
     def add_uid(self, uid):
         """Add unique identifier in correct field."""
         # We might add None values from wherever. Kill them here.
         uid = uid or ''
         if _is_arxiv(uid):
-            self._ensure_reference_field('arxiv_eprints', [])
-            self.obj['reference']['arxiv_eprints'].append(_normalize_arxiv(uid))
+            self._ensure_reference_field('arxiv_eprint', _normalize_arxiv(uid))
         elif idutils.is_doi(uid):
             self._ensure_reference_field('dois', [])
             self.obj['reference']['dois'].append(idutils.normalize_doi(uid))
         elif idutils.is_handle(uid):
             self._ensure_reference_field('persistent_identifiers', [])
-            value = idutils.normalize_handle(uid)
-            if not value.startswith('hdl:'):
-                # Prone to the day in which normalize_handle might prepend
-                # 'hdl:'.
-                value = u'hdl:{}'.format(value)
-            self.obj['reference']['persistent_identifiers'].append(value)
+            self.obj['reference']['persistent_identifiers'].append({
+                'schema': 'HDL',
+                'value': idutils.normalize_handle(uid),
+            })
+        elif idutils.is_urn(uid):
+            self._ensure_reference_field('persistent_identifiers', [])
+            self.obj['reference']['persistent_identifiers'].append({
+                'schema': 'URN',
+                'value': uid,
+            })
         elif self.RE_VALID_CNUM.match(uid):
             self._ensure_reference_field('publication_info', {})
             self.obj['reference']['publication_info']['cnum'] = uid
@@ -249,14 +261,14 @@ class ReferenceBuilder(object):
             # isbn. Better to do it like this.
             try:
                 isbn = idutils.normalize_isbn(uid)
-                self._ensure_reference_field('publication_info', {})
-                self.obj['reference']['publication_info']['isbn'] = isbn
+                self._ensure_reference_field('isbn', {})
+                self.obj['reference']['isbn'] = isbn.replace(' ', '').replace('-', '')
             # See https://github.com/nekobcn/isbnid/issues/2 and
             # https://github.com/nekobcn/isbnid/issues/3 for understanding the
             # long exception list.
             except (ISBNError, ISBNRangeError, UnicodeEncodeError):
-                pass
+                self.add_misc(uid)
 
     def add_collaboration(self, collaboration):
-        self._ensure_reference_field('collaboration', [])
-        self.obj['reference']['collaboration'].append(collaboration)
+        self._ensure_reference_field('collaborations', [])
+        self.obj['reference']['collaborations'].append(collaboration)

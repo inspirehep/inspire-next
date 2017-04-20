@@ -28,7 +28,7 @@ import re
 
 from dojson import utils
 
-from inspirehep.utils.helpers import force_list
+from inspirehep.utils.helpers import force_list, maybe_int
 
 from ..model import hep, hep2marc
 from ...utils import force_single_element, get_record_ref
@@ -236,21 +236,36 @@ def license2marc(self, key, value):
 @hep.over('copyright', '^542..')
 @utils.for_each_value
 def copyright(self, key, value):
+    MATERIAL_MAP = {
+        'Article': 'publication',
+        'Published thesis as a book': 'publication',
+    }
+
+    material = value.get('e') or value.get('3')
+
     return {
-        'material': value.get('3'),
         'holder': value.get('d'),
+        'material': MATERIAL_MAP.get(material),
         'statement': value.get('f'),
         'url': value.get('u'),
+        'year': maybe_int(value.get('g')),
     }
 
 
 @hep2marc.over('542', '^copyright$')
 @utils.for_each_value
 def copyright2marc(self, key, value):
+    E_MAP = {
+        'publication': 'Article',
+    }
+
+    e_value = value.get('material')
+
     return {
-        '3': value.get('material'),
         'd': value.get('holder'),
+        'e': E_MAP.get(e_value),
         'f': value.get('statement'),
+        'g': value.get('year'),
         'u': value.get('url'),
     }
 

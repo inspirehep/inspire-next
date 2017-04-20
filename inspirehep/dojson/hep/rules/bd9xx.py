@@ -28,20 +28,14 @@ import re
 from functools import partial
 
 from dojson import utils
-from idutils import is_arxiv
 
 from inspirehep.modules.references.processors import ReferenceBuilder
-from inspirehep.utils.helpers import force_list
+from inspirehep.utils.helpers import force_list, maybe_int
 from inspirehep.utils.pubnote import build_pubnote
 from inspirehep.utils.record import get_value
 
 from ..model import hep, hep2marc
-from ...utils import (
-    force_single_element,
-    get_int_value,
-    get_recid_from_ref,
-    get_record_ref,
-)
+from ...utils import force_single_element, get_recid_from_ref, get_record_ref
 
 
 RE_VALID_PUBNOTE = re.compile(".*,.*,.*(,.*)?")
@@ -103,6 +97,8 @@ def document_type(self, key, value):
             publication_type.append(normalized_a_value)
         elif normalized_a_value in special_collections:
             self.setdefault('special_collections', []).append(normalized_a_value.upper())
+        elif normalized_a_value == 'activityreport':
+            document_type.append('activity report')
         elif normalized_a_value == 'bookchapter':
             document_type.append('book chapter')
         elif normalized_a_value == 'conferencepaper':
@@ -179,82 +175,86 @@ def document_type2marc(self, key, value):
 
 
 @hep.over('references', '^999C5')
+@utils.for_each_value
 def references(self, key, value):
-    """Produce list of references."""
-    value = force_list(value)
+    def _get_reference(value):
+        def _set_record(el):
+            recid = maybe_int(el)
+            record = get_record_ref(recid, 'literature')
+            rb.set_record(record)
 
-    def get_value(value):
-        # Retrieve fields as described here:
-        # https://twiki.cern.ch/twiki/bin/view/Inspire/DevelopmentRecordMarkup.
         rb = ReferenceBuilder()
         mapping = [
-            ('o', rb.set_number),
-            ('m', rb.add_misc),
-            ('x', partial(rb.add_raw_reference, source='dojson')),
+            ('0', _set_record),
             ('1', rb.set_texkey),
-            ('u', rb.add_url),
+            ('a', rb.add_uid),
+            ('b', rb.add_uid),
+            ('c', rb.add_collaboration),
+            ('e', partial(rb.add_author, role='ed.')),
+            ('h', rb.add_refextract_authors_str),
+            ('i', rb.add_uid),
+            ('m', rb.add_misc),
+            ('o', rb.set_label),
+            ('p', rb.set_publisher),
             ('r', rb.add_report_number),
             ('s', rb.set_pubnote),
-            ('p', rb.set_publisher),
-            ('y', rb.set_year),
-            ('i', rb.add_uid),
-            ('b', rb.add_uid),
-            ('a', rb.add_uid),
-            ('c', rb.add_collaboration),
-            ('q', rb.add_title),
             ('t', rb.add_title),
-            ('h', rb.add_refextract_authors_str),
-            ('e', partial(rb.add_author, role='ed.'))
+            ('u', rb.add_url),
+            ('x', rb.add_raw_reference),
+            ('y', rb.set_year),
         ]
 
         for field, method in mapping:
-            for element in force_list(value.get(field)):
-                if element:
-                    method(element)
-
-        if '0' in value:
-            recid = get_int_value(value, '0')
-            rb.set_record(get_record_ref(recid, 'literature'))
+            for el in force_list(value.get(field)):
+                if el:
+                    method(el)
 
         return rb.obj
 
-    references = self.get('references', [])
-    references.extend(get_value(v) for v in value)
-    return references
+    return _get_reference(value)
 
 
 @hep2marc.over('999C5', '^references$')
 @utils.for_each_value
 def references2marc(self, key, value):
-    """Produce list of references."""
-    repnos = value['reference'].get('arxiv_eprints', [])
     reference = value['reference']
-    # If not found it will be filtered anyway.
-    repnos.append(get_value(reference, 'publication_info.reportnumber'))
+
+    pids = force_list(reference.get('persistent_identifiers'))
+    a_values = ['doi:' + el for el in force_list(reference.get('dois'))]
+    a_values.extend(['hdl:' + el['value'] for el in pids if el.get('schema') == 'HDL'])
+    a_values.extend(['urn:' + el['value'] for el in pids if el.get('schema') == 'URN'])
+
+    authors = force_list(reference.get('authors'))
+    e_values = [el['full_name'] for el in authors if el.get('inspire_role') == 'editor']
+    h_values = [el['full_name'] for el in authors if el.get('inspire_role') != 'editor']
+
+    r_values = force_list(reference.get('report_number'))
+    r_values.extend(['arXiv:' + el for el in force_list(reference.get('arxiv_eprint'))])
+
     journal_title = get_value(reference, 'publication_info.journal_title')
     journal_volume = get_value(reference, 'publication_info.journal_volume')
-    journal_pg_start = get_value(reference, 'publication_info.page_start')
-    journal_pg_end = get_value(reference, 'publication_info.page_end')
-    journal_artid = get_value(reference, 'publication_info.artid')
-    pubnote = build_pubnote(journal_title, journal_volume, journal_pg_start,
-                            journal_pg_end, journal_artid)
+    page_start = get_value(reference, 'publication_info.page_start')
+    page_end = get_value(reference, 'publication_info.page_end')
+    artid = get_value(reference, 'publication_info.artid')
+    s_value = build_pubnote(journal_title, journal_volume, page_start, page_end, artid)
+
     return {
         '0': get_recid_from_ref(value.get('record')),
-        '1': get_value(reference, 'texkey'),
-        'a': get_value(reference, 'dois[0]'),
-        'c': get_value(reference, 'collaboration'),
-        'e': [a.get('full_name') for a in reference.get('authors', [])
-              if a.get('role') == 'ed.'],
-        'h': [a.get('full_name') for a in reference.get('authors', [])
-              if a.get('role') != 'ed.'],
-        'm': get_value(reference, 'misc'),
-        'o': get_value(reference, 'number'),
-        'i': get_value(reference, 'publication_info.isbn'),
+        '1': reference.get('texkey'),
+        'a': a_values,
+        'b': get_value(reference, 'publication_info.cnum'),
+        'c': reference.get('collaborations'),
+        'e': e_values,
+        'h': h_values,
+        'i': reference.get('isbn'),
+        'm': reference.get('misc'),
+        'o': reference.get('label'),
         'p': get_value(reference, 'imprint.publisher'),
-        'r': ['arXiv:' + el if el and is_arxiv(el) else el for el in repnos],
-        't': get_value(reference, 'titles[:].title'),
-        'u': get_value(reference, 'urls[:].value'),
-        's': pubnote,
-        'x': get_value(value, 'raw_refs[:].value'),
-        'y': get_value(reference, 'publication_info.year')
+        'q': get_value(reference, 'publication_info.parent_title'),
+        'r': r_values,
+        's': s_value,
+        't': get_value(reference, 'title.title'),
+        'u': get_value(reference, 'urls.value'),
+        'x': get_value(value, 'raw_refs.value'),
+        'y': get_value(reference, 'publication_info.year'),
     }
