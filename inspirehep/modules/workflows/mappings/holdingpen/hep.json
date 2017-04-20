@@ -37,6 +37,10 @@
                                 "method": {
                                     "index": "not_analyzed",
                                     "type": "string"
+                                },
+                                "source": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
                                 }
                             },
                             "type": "object"
