@@ -27,4 +27,4 @@ from __future__ import absolute_import, division, print_function
 from .ext import INSPIRETheme
 
 # Needed to register the jinja filters in the Blueprint
-from .jinja2filters import *
+from .jinja2filters import *  # noqa: F403

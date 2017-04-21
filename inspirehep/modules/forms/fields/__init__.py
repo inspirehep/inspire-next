@@ -26,10 +26,10 @@ from __future__ import absolute_import, division, print_function
 
 from wtforms.utils import unset_value
 
-from .date import *
-from .doi import *
-from .file_upload import *
-from .jinja import *
-from .language import *
-from .title import *
-from .wtformsext import *
+from .date import *  # noqa: F403
+from .doi import *  # noqa: F403
+from .file_upload import *  # noqa: F403
+from .jinja import *  # noqa: F403
+from .language import *  # noqa: F403
+from .title import *  # noqa: F403
+from .wtformsext import *  # noqa: F403
