@@ -40,6 +40,11 @@ env:
     - SUITE=disambiguation
     - SUITE=acceptance
     - SUITE=unit
+    - SUITE=integration_unstable
+
+matrix:
+  allow_failures:
+    - SUITE=integration_unstable
 
 matrix:
   fast_finish: true
@@ -58,11 +63,15 @@ before_install:
 install:
   - travis_retry docker-compose pull
   - travis_retry docker-compose build
-  - travis_retry docker-compose -f docker-compose.deps.yml run --rm pip
+  - if [[ ${SUITE} == *"_unstable"* ]]; then
+        travis_retry docker-compose -f docker-compose.deps.yml run --rm pip_unstable;
+    else
+        travis_retry docker-compose -f docker-compose.deps.yml run --rm pip;
+    fi
   - docker-compose -f docker-compose.deps.yml run --rm assets
 
 script:
-  - docker-compose -f docker-compose.test.yml run --rm ${SUITE}
+  - "docker-compose -f docker-compose.test.yml run --rm ${SUITE/_unstable/}"
 
 after_script:
   # Killing via SIGTERM in order to trigger atexit and dump coverage information in WSGI.
