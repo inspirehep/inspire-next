@@ -43,7 +43,7 @@ install some extra dependencies:
 
 .. code-block:: console
 
-    (inspirehep_docs)$ pip install -e .[docs]
+    (inspirehep_docs)$ pip install -e .[all]
 
 And then, you can generate the html docs pages with:
 

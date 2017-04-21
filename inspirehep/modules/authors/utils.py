@@ -143,14 +143,16 @@ def bai(name):
 def scan_author_string_for_phrases(s):
     """Scan a name string and output an object representing its structure.
 
-       Sample output for the name 'Jingleheimer Schmitt, John Jacob, XVI.' is:
-       {
-        'TOKEN_TAG_LIST' : ['lastnames', 'nonlastnames', 'titles', 'raw'],
-        'lastnames'      : ['Jingleheimer', 'Schmitt'],
-        'nonlastnames'   : ['John', 'Jacob'],
-        'titles'         : ['XVI.'],
-        'raw'            : 'Jingleheimer Schmitt, John Jacob, XVI.'
-        }
+    Example:
+        Sample output for the name 'Jingleheimer Schmitt, John Jacob, XVI.' is::
+
+            {
+                'TOKEN_TAG_LIST' : ['lastnames', 'nonlastnames', 'titles', 'raw'],
+                'lastnames'      : ['Jingleheimer', 'Schmitt'],
+                'nonlastnames'   : ['John', 'Jacob'],
+                'titles'         : ['XVI.'],
+                'raw'            : 'Jingleheimer Schmitt, John Jacob, XVI.'
+            }
 
     :param s: the input to be lexically tagged
     :type s: string
@@ -204,10 +206,12 @@ def scan_author_string_for_phrases(s):
 def parse_scanned_author_for_phrases(scanned):
     """Return all the indexable variations for a tagged token dictionary.
     Does this via the combinatoric expansion of the following rules:
-    - Expands first names as name, first initial with period, first initial
-        without period.
+    - Expands first names as name, first initial with period, first initial without period.
+
     - Expands compound last names as each of their non-stopword subparts.
+
     - Titles are treated literally, but applied serially.
+
     Please note that titles will be applied to complete last names only.
     So for example, if there is a compound last name of the form,
     "Ibanez y Gracia", with the title, "(ed.)", then only the combination
@@ -279,9 +283,9 @@ def expand_nonlastnames(namelist):
 
     Example:
     "Michael Edward" -> "Michael Edward", "Michael E.", "Michael E", "M. Edward", "M Edward",
-                        "M. E.", "M. E", "M E.", "M E", "M.E."
-                ...but never:
-                "ME"
+    "M. E.", "M. E", "M E.", "M E", "M.E."
+
+    ...but never: "ME"
 
     :param namelist: a collection of names
     :type namelist: list of string

@@ -334,8 +334,7 @@ class Cv_latex(Export):
         in a tuple.
         @param datetext: date from record
         @type datetext: str
-        @return: tuple of 1 or more integers, up to max (year, month, day).
-            Otherwise None.
+        @return: tuple of 1 or more integers, up to max (year, month, day). Otherwise None.
         """
         if datetext in [None, ""] or type(datetext) != str:
             return None

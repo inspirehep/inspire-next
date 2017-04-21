@@ -31,9 +31,8 @@ from inspirehep.modules.search import AuthorsSearch, LiteratureSearch
 def render_experiment_contributions(experiment_name):
     """Conference export for single record in datatables format.
     :returns: list
-        List of lists where every item represents a datatables row.
-        A row consists of
-        [conference_name, conference_location, contributions, date]
+    List of lists where every item represents a datatables row.
+    A row consists of [conference_name, conference_location, contributions, date]
     """
     return render_contributions(
         experiment_contributions_from_es(experiment_name)
@@ -43,9 +42,8 @@ def render_experiment_contributions(experiment_name):
 def render_experiment_people(experiment_name):
     """Conference export for single record in datatables format.
     :returns: list
-        List of lists where every item represents a datatables row.
-        A row consists of
-        [conference_name, conference_location, contributions, date]
+    List of lists where every item represents a datatables row.
+    A row consists of [conference_name, conference_location, contributions, date]
     """
     return render_people(
         experiment_people_from_es(experiment_name)

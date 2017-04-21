@@ -83,6 +83,7 @@ class RegexpStopValidator(object):
 
     """
     Validates the field against a user provided regexp.
+
     :param regex:
         The regular expression string to use. Can also be a compiled regular
         expression pattern.

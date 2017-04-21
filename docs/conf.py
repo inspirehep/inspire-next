@@ -32,17 +32,6 @@ def _warn_node(self, msg, *args, **kwargs):
 sphinx.environment.BuildEnvironment.warn_node = _warn_node
 
 
-autodoc_mock_imports = [
-    'scikit-learn',
-    'scipy',
-    'numpy',
-    'numpy.distutils',
-    'numpy.distutils.core',
-    'lzma',
-    'backports',
-    'backports.lzma',
-]
-
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -64,6 +53,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
     'sphinx.ext.todo',
+    'sphinxcontrib.napoleon',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

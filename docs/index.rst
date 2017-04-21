@@ -37,6 +37,7 @@ Contents
    tests
    howtos
    building_the_docs
+   _source/inspirehep
 
 *Happy hacking!*
 

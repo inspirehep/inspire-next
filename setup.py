@@ -122,6 +122,7 @@ extras_require = {
         'six',
         'mock',
         'Sphinx>=1.3',
+        'sphinxcontrib-napoleon>=0.6.1',
     ],
     'postgresql': [
         'invenio-db[postgresql,versioning]>=1.0.0b2',

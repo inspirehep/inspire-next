@@ -37,7 +37,7 @@ class TryClick(object):
     Is very similar to `EC.element_to_be_clickable`, but actually works.
 
     Todo:
-        Better filter out the `WebDriverException`s.
+        Better filter out the `WebDriverException` s .
     """
     def __init__(self, locator):
         self.locator = locator

@@ -31,9 +31,8 @@ from inspirehep.utils.template import render_macro_from_template
 def render_conferences_in_the_same_series(recid, seriesname):
     """Conference export for single record in datatables format.
     :returns: list
-        List of lists where every item represents a datatables row.
-        A row consists of
-        [conference_name, conference_location, contributions, date]
+    List of lists where every item represents a datatables row.
+    A row consists of [conference_name, conference_location, contributions, date]
     """
     return render_conferences(
         recid,
@@ -44,9 +43,8 @@ def render_conferences_in_the_same_series(recid, seriesname):
 def render_conferences_contributions(cnum):
     """Conference export for single record in datatables format.
     :returns: list
-        List of lists where every item represents a datatables row.
-        A row consists of
-        [conference_name, conference_location, contributions, date]
+    List of lists where every item represents a datatables row.
+    A row consists of [conference_name, conference_location, contributions, date]
     """
     return render_contributions(conferences_contributions_from_es(cnum))
 
