@@ -22,13 +22,19 @@
 
 from __future__ import absolute_import, division, print_function
 
+from mock import patch
+from pkg_resources import resource_filename
+from shutil import rmtree
+from tempfile import mkdtemp
+
 from inspire_schemas.utils import load_schema
 from inspirehep.dojson.utils import validate
 from inspirehep.modules.workflows.tasks.arxiv import (
+    arxiv_author_list,
     arxiv_derive_inspire_categories
 )
 
-from mocks import MockEng, MockObj
+from mocks import AttrDict, MockEng, MockFiles, MockObj
 
 
 def test_arxiv_derive_inspire_categories():
@@ -152,3 +158,30 @@ def test_arxiv_derive_inspire_categories_does_nothing_with_existing_categories()
 
     assert validate(result, inspire_categories_schema) is None
     assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.arxiv.os')
+def test_arxiv_author_list_handles_auto_ignore_from_arxiv(mock_os):
+    data = {
+        'arxiv_eprints': {
+            'value': ['1703.09986']
+        }
+    }
+    mock_arxiv_tarball = MockFiles({
+        '1703.09986.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': resource_filename(__name__, 'fixtures/1703.09986.tar.gz')
+            })
+        })
+    })
+    mock_obj = MockObj(data, None, mock_arxiv_tarball)
+    mock_eng = MockEng()
+
+    try:
+        temporary_dir = mkdtemp()
+        mock_os.path.abspath.return_value = mkdtemp()
+
+        author_list_method = arxiv_author_list()
+        author_list_method(mock_obj, mock_eng)
+    finally:
+        rmtree(temporary_dir)
