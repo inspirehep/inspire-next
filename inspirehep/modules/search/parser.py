@@ -25,8 +25,30 @@
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_query_parser.parser import *
-from invenio_query_parser.parser import _
+import re
+
+import pypeg2
+from pypeg2 import Keyword, Literal, attr, maybe_some, omit, some
+
+from invenio_query_parser.parser import (
+    BinaryRule,
+    EmptyQueryRule,
+    KeywordRule,
+    LeafRule,
+    ListRule,
+    NestableKeyword,
+    Number,
+    Query,
+    RangeOp,
+    UnaryRule,
+    Value,
+    ValueQuery,
+    Whitespace,
+    WildcardQuery,
+    _,
+    ast,
+    string_types,
+)
 
 from .config import SPIRES_KEYWORDS
 

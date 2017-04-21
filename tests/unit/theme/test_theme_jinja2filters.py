@@ -30,7 +30,51 @@ from mock import patch
 
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.wrappers import LiteratureRecord
-from inspirehep.modules.theme.jinja2filters import *
+from inspirehep.modules.theme.jinja2filters import (
+    ads_links,
+    apply_template_on_array,
+    author_profile,
+    author_urls,
+    citation_phrase,
+    collection_select_current,
+    conference_date,
+    construct_date_format,
+    email_link,
+    email_links,
+    epoch_to_year_format,
+    experiment_date,
+    experiment_link,
+    find_collection_from_url,
+    format_author_name,
+    format_cnum_with_slash,
+    format_cnum_with_hyphons,
+    format_date,
+    institutes_links,
+    is_cataloger,
+    is_external_link,
+    is_institute,
+    is_list,
+    is_upper,
+    join_array,
+    join_nested_lists,
+    json_dumps,
+    limit_facet_elements,
+    link_to_hep_affiliation,
+    new_line_after,
+    proceedings_link,
+    publication_info,
+    remove_duplicates_from_list,
+    sanitize_arxiv_pdf,
+    sanitize_collection_name,
+    search_for_experiments,
+    show_citations_number,
+    sort_list_by_dict_val,
+    strip_leading_number_plot_caption,
+    url_links,
+    weblinks,
+    words,
+    words_to_end,
+)
 
 from mocks import MockUser
 
