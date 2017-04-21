@@ -22,6 +22,7 @@
 
 # Bleeding edge packages not yet released on Pypi
 -e git+https://github.com/inveniosoftware/invenio-jsonschemas.git@master#egg=invenio-jsonschemas
+-e git+https://github.com/inveniosoftware/flask-celeryext.git@master#egg=flask-celeryext
 
 # FIXME temporary branch for testing
 -e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3-inspire#egg=invenio-query-parser==0.6.0
