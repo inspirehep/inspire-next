@@ -26,11 +26,10 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
-from inspire_schemas.utils import load_schema
-from inspirehep.utils.helpers import force_list
+from inspirehep.utils.helpers import force_list, maybe_int
 
 from ..model import hep, hep2marc
-from ...utils import get_record_ref
+from ...utils import force_single_element, get_record_ref
 
 
 @hep.over('accelerator_experiments', '^693..')
@@ -62,133 +61,87 @@ def accelerator_experiments2marc(self, key, value):
     return {'e': value.get('legacy_name')}
 
 
-@hep.over('keywords', '^(653|695)..')
-@utils.for_each_value
-def keywords(self, key, value):
-    """Parse keywords.
+@hep.over('keywords', '^(084|653|695)..')
+def keywords(self, key, values):
+    """Populate the ``keywords`` key.
 
-    We have 2 types of keywords from marc, the 'thesaurus_terms' and
-    'freekeys', and we want to merge them for json into a big 'keywords' and
-    extract the 'energy_ranges' too that is represented in marc as special
-    value of some keywords.
+    Also populates the ``energy_ranges`` key through side effects.
     """
-    def _is_thesaurus(key):
-        return key.startswith('695')
+    keywords = self.get('keywords', [])
+    energy_ranges = self.get('energy_ranges', [])
 
-    def _is_energy(value):
-        return 'e' in value
+    for value in force_list(values):
+        if value.get('a'):
+            schema = value.get('2', '').upper()
+            sources = force_list(value.get('9'))
+            keyword = value.get('a')
 
-    def _freekey_get_source(source_value):
-        if not isinstance(source_value, (list, tuple, set)):
-            return source_value
+            if 'conference' not in sources:
+                keywords.append({
+                    'schema': schema,
+                    'source': force_single_element(sources),
+                    'value': keyword,
+                })
 
-        source_value = [source.lower() for source in source_value]
-        if 'conference' in source_value:
-            return ''
+        if value.get('e'):
+            energy_ranges.append(maybe_int(value.get('e')))
 
-        for source in source_value:
-            if source in ['author', 'publisher']:
-                return source
+    self['energy_ranges'] = energy_ranges
+    return keywords
 
-        return ''
 
-    def _freekey_get_dict(elem):
-        keyword = {
-            'value': elem.get('a'),
-        }
+@hep2marc.over('695', '^energy_ranges$')
+def energy_ranges2marc(self, key, values):
+    result_695 = self.get('695', [])
 
-        source = _freekey_get_source(elem.get('9'))
-        if source:
-            keyword['source'] = source
+    for value in values:
+        result_695.append({
+            '2': 'INSPIRE',
+            'e': value,
+        })
 
-        return keyword
-
-    def _get_keyword_dict(key, elem):
-        if _is_thesaurus(key) and elem.get('a'):
-            _schema = load_schema('hep')
-            valid_keywords = _schema['properties']['keywords']['items']['properties']['schema']['enum']
-            schema_in_marc = elem.get('2').upper()
-            schema = schema_in_marc if schema_in_marc in valid_keywords else ''
-
-            return {
-                'schema': schema,
-                'source': elem.get('9', ''),
-                'value': elem.get('a'),
-            }
-        elif _is_energy(elem):
-            return {}
-        else:
-            return _freekey_get_dict(elem)
-
-    if _is_energy(value):
-        if 'energy_ranges' not in self:
-            self['energy_ranges'] = list()
-
-        self['energy_ranges'].append(int(value.get('e')))
-        self['energy_ranges'].sort()
-
-    result = _get_keyword_dict(key, value)
-    if 'value' in result and result['value']:
-        return result
+    return result_695
 
 
 @hep2marc.over('695', '^keywords$')
 def keywords2marc(self, key, values):
-    values = force_list(values)
+    """Populate the ``695`` MARC field.
 
-    def _is_thesaurus(elem):
-        return elem.get('schema', '') is not ''
-
-    def _thesaurus_to_marc_dict(elem):
-        result = {
-            'a': elem.get('value'),
-            '2': elem.get('schema'),
-        }
-        source = elem.get('source', None)
-        if source:
-            result['9'] = elem.get('source')
-
-        return result
-
-    def _freekey_to_marc_dict(elem):
-        return {
-            'a': elem.get('value'),
-            '9': elem.get('source', ''),
-        }
-
-    thesaurus_terms = self.get('695', [])
+    Also populates the ``084`` and ``6531`` MARC fields through side effects.
+    """
+    result_695 = self.get('695', [])
+    result_084 = self.get('084', [])
+    result_6531 = self.get('6531', [])
 
     for value in values:
-        if _is_thesaurus(value):
-            marc_dict = _thesaurus_to_marc_dict(value)
-            thesaurus_terms.append(marc_dict)
-        else:
-            marc_dict = _freekey_to_marc_dict(value)
-            if '653' not in self:
-                self['653'] = []
+        schema = value.get('schema')
+        source = value.get('source')
+        keyword = value.get('value')
 
-            if marc_dict.get('9') != 'magpie':
-                self['653'].append(marc_dict)
-            continue
+        if schema == 'PACS' or schema == 'PDG':
+            result_084.append({
+                '2': schema,
+                '9': source,
+                'a': keyword,
+            })
+        elif schema == 'JACOW':
+            result_6531.append({
+                '2': 'JACoW',
+                '9': source,
+                'a': keyword,
+            })
+        elif schema == 'INSPIRE':
+            result_695.append({
+                '2': 'INSPIRE',
+                '9': source,
+                'a': keyword,
+            })
+        elif source != 'magpie':
+            result_6531.append({
+                '9': source,
+                'a': keyword,
+            })
 
-    return thesaurus_terms
-
-
-@hep2marc.over('_energy_ranges', '^energy_ranges$')
-@utils.ignore_value
-def energy_ranges2marc(self, key, values):
-    values = force_list(values)
-
-    def _energy_to_marc_dict(energy_range):
-        return {
-            'e': energy_range,
-            '2': 'INSPIRE',
-        }
-
-    thesaurus_terms = self.get('695', [])
-
-    for value in values:
-        marc_dict = _energy_to_marc_dict(value)
-        thesaurus_terms.append(marc_dict)
-
-    self['695'] = thesaurus_terms
+    self['6531'] = result_6531
+    self['084'] = result_084
+    return result_695

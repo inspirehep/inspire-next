@@ -29,14 +29,179 @@ from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.utils import validate
 
 
-def test_keywords_from_653__9_ignores_lone_sources():
+def test_keywords_from_084__a_2():
+    schema = load_schema('hep')
+    subschema = schema['properties']['keywords']
+
+    snippet = (
+        '<datafield tag="084" ind1=" " ind2=" ">'
+        '  <subfield code="a">02.20.Sv</subfield>'
+        '  <subfield code="2">PACS</subfield>'
+        '</datafield>'
+    )  # record/1590395
+
+    expected = [
+        {
+            'schema': 'PACS',
+            'value': '02.20.Sv',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['keywords'], subschema) is None
+    assert expected == result['keywords']
+    assert 'energy_ranges' not in result
+
+    expected = [
+        {
+            '2': 'PACS',
+            'a': '02.20.Sv',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['084']
+    assert '6531' not in result
+    assert '695' not in result
+
+
+def test_keywords_from_084__a_2_9():
+    schema = load_schema('hep')
+    subschema = schema['properties']['keywords']
+
+    snippet = (
+        '<datafield tag="084" ind1=" " ind2=" ">'
+        '  <subfield code="2">PDG</subfield>'
+        '  <subfield code="9">PDG</subfield>'
+        '  <subfield code="a">G033M</subfield>'
+        '</datafield>'
+    )  # record/1421100
+
+    expected = [
+        {
+            'schema': 'PDG',
+            'source': 'PDG',
+            'value': 'G033M',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['keywords'], subschema) is None
+    assert expected == result['keywords']
+    assert 'energy_ranges' not in result
+
+    expected = [
+        {
+            '2': 'PDG',
+            '9': 'PDG',
+            'a': 'G033M',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['084']
+    assert '6531' not in result
+    assert '695' not in result
+
+
+def test_keywords_from_6531_a_2():
+    schema = load_schema('hep')
+    subschema = schema['properties']['keywords']
+
+    snippet = (
+        '<datafield tag="653" ind1="1" ind2=" ">'
+        '  <subfield code="2">JACoW</subfield>'
+        '  <subfield code="a">experiment</subfield>'
+        '</datafield>'
+    )  # record/1473380
+
+    expected = [
+        {
+            'schema': 'JACOW',
+            'value': 'experiment',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['keywords'], subschema) is None
+    assert expected == result['keywords']
+    assert 'energy_ranges' not in result
+
+    expected = [
+        {
+            '2': 'JACoW',
+            'a': 'experiment',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['6531']
+    assert '084' not in result
+    assert '695' not in result
+
+
+def test_keywords_from_6531_a_9():
+    schema = load_schema('hep')
+    subschema = schema['properties']['keywords']
+
+    snippet = (
+        '<datafield tag="653" ind1="1" ind2=" ">'
+        '  <subfield code="9">author</subfield>'
+        '  <subfield code="a">Data</subfield>'
+        '</datafield>'
+    )  # record/1260876
+
+    expected = [
+        {
+            'source': 'author',
+            'value': 'Data',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['keywords'], subschema) is None
+    assert expected == result['keywords']
+    assert 'energy_ranges' not in result
+
+    expected = [
+        {
+            '9': 'author',
+            'a': 'Data',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['6531']
+    assert '084' not in result
+    assert '695' not in result
+
+
+def test_keywords_from_6531_a_double_9_ignores_values_from_conference():
+    snippet = (
+        '<datafield tag="653" ind1="1" ind2=" ">'
+        '  <subfield code="9">submitter</subfield>'
+        '  <subfield code="9">conference</subfield>'
+        '  <subfield code="a">Track reconstruction</subfield>'
+        '</datafield>'
+    )  # record/1498175
+
+    result = hep.do(create_record(snippet))
+
+    assert 'energy_ranges' not in result
+    assert 'keywords' not in result
+
+
+def test_keywords_from_6531_9_ignores_lone_sources():
     snippet = (
         '<datafield tag="653" ind1="1" ind2=" ">'
         '  <subfield code="9">author</subfield>'
         '</datafield>'
     )  # record/1382933
 
-    assert 'keywords' not in hep.do(create_record(snippet))
+    result = hep.do(create_record(snippet))
+
+    assert 'energy_ranges' not in result
+    assert 'keywords' not in result
 
 
 def test_keywords2marc_does_not_export_magpie_keywords():
@@ -49,7 +214,11 @@ def test_keywords2marc_does_not_export_magpie_keywords():
         ],
     }
 
-    assert '653' not in hep2marc.do(record)
+    result = hep2marc.do(record)
+
+    assert '084' not in result
+    assert '6531' not in result
+    assert '695' not in result
 
 
 def test_accelerator_experiments_from_693__a_e():
@@ -106,19 +275,22 @@ def test_keywords_from_695__a_2():
 
     assert validate(result['keywords'], subschema) is None
     assert expected == result['keywords']
+    assert 'energy_ranges' not in result
 
     expected = [
         {
-            'a': 'REVIEW',
             '2': 'INSPIRE',
+            'a': 'REVIEW',
         },
     ]
     result = hep2marc.do(result)
 
     assert expected == result['695']
+    assert '084' not in result
+    assert '6531' not in result
 
 
-def test_energy_ranges_from_695__2_e():
+def test_energy_ranges_from_695__e_2():
     schema = load_schema('hep')
     subschema = schema['properties']['energy_ranges']
 
@@ -134,6 +306,7 @@ def test_energy_ranges_from_695__2_e():
 
     assert validate(result['energy_ranges'], subschema) is None
     assert expected == result['energy_ranges']
+    assert 'keywords' not in result
 
     expected = [
         {
@@ -144,6 +317,8 @@ def test_energy_ranges_from_695__2_e():
     result = hep2marc.do(result)
 
     assert expected == result['695']
+    assert '084' not in result
+    assert '6531' not in result
 
 
 def test_keywords_from_multiple_695__a_2():
@@ -178,6 +353,7 @@ def test_keywords_from_multiple_695__a_2():
 
     assert validate(result['keywords'], subschema) is None
     assert expected == result['keywords']
+    assert 'energy_ranges' not in result
 
     expected = [
         {
@@ -192,36 +368,5 @@ def test_keywords_from_multiple_695__a_2():
     result = hep2marc.do(result)
 
     assert expected == result['695']
-
-
-def test_keywords_from_653__a_9():
-    schema = load_schema('hep')
-    subschema = schema['properties']['keywords']
-
-    snippet = (
-        '<datafield tag="653" ind1=" " ind2=" ">'
-        '  <subfield code="9">author</subfield>'
-        '  <subfield code="a">Data</subfield>'
-        '</datafield>'
-    )  # record/1260876
-
-    expected = [
-        {
-            'source': 'author',
-            'value': 'Data',
-        },
-    ]
-    result = hep.do(create_record(snippet))
-
-    assert validate(result['keywords'], subschema) is None
-    assert expected == result['keywords']
-
-    expected = [
-        {
-            '9': 'author',
-            'a': 'Data',
-        },
-    ]
-    result = hep2marc.do(result)
-
-    assert expected == result['653']
+    assert '084' not in result
+    assert '6531' not in result
