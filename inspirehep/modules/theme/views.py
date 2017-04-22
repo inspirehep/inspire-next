@@ -46,6 +46,7 @@ from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
+    get_endpoint_from_schema,
     get_pid_type_from_endpoint,
 )
 from inspirehep.modules.records.conference_series import (
@@ -677,6 +678,19 @@ def ajax_experiments_people():
 def linkedaccounts():
     """Redirect to the homepage when logging in with ORCID."""
     return redirect('/')
+
+
+#
+# Record preview
+#
+
+@blueprint.route('/record/preview', methods=['POST'])
+def preview():
+    """Render the detailed view for the record passed in the request."""
+    data = request.get_json()
+    endpoint = get_endpoint_from_schema(data['$schema'])
+    template = current_app.config['RECORDS_UI_ENDPOINTS'][endpoint]['template']
+    return render_template(template, record=data)
 
 
 #
