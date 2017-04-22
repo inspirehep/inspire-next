@@ -196,6 +196,7 @@ def references(self, key, value):
             ('m', rb.add_misc),
             ('o', rb.set_label),
             ('p', rb.set_publisher),
+            ('q', rb.add_parent_title),
             ('r', rb.add_report_number),
             ('s', rb.set_pubnote),
             ('t', rb.add_title),

@@ -961,3 +961,53 @@ def test_references_from_999C5a_h_i_m_o_p_y_9():
     result = hep2marc.do(result)
 
     assert expected == result['999C5']
+
+
+def test_references_from_999C5h_o_q_t_y():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    snippet = (
+        '<datafield tag="999" ind1="C" ind2="5">'
+        '  <subfield code="h">Gromov, M.</subfield>'
+        '  <subfield code="t">Spaces and questions</subfield>'
+        '  <subfield code="y">2000</subfield>'
+        '  <subfield code="q">Geom. Funct. Anal., GAFA 2000</subfield>'
+        '  <subfield code="o">16</subfield>'
+        '</datafield>'
+    )  # record/1592189
+
+    expected = [
+        {
+            'reference': {
+                'authors': [
+                    {'full_name': 'M., Gromov,'},  # XXX: wrong
+                ],
+                'label': '16',
+                'publication_info': {
+                    'parent_title': 'Geom. Funct. Anal., GAFA 2000',
+                    'year': 2000,
+                },
+                'title': {'title': 'Spaces and questions'},
+            },
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['references'], subschema) is None
+    assert expected == result['references']
+
+    expected = [
+        {
+            'h': [
+                'M., Gromov,',  # XXX: wrong
+            ],
+            'o': '16',
+            'q': 'Geom. Funct. Anal., GAFA 2000',
+            't': 'Spaces and questions',
+            'y': 2000,
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['999C5']
