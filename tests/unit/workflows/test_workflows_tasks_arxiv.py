@@ -22,13 +22,21 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+
+import pkg_resources
+from mock import patch
+from shutil import rmtree
+from tempfile import mkdtemp
+
 from inspire_schemas.utils import load_schema
 from inspirehep.dojson.utils import validate
 from inspirehep.modules.workflows.tasks.arxiv import (
+    arxiv_author_list,
     arxiv_derive_inspire_categories
 )
 
-from mocks import MockEng, MockObj
+from mocks import AttrDict, MockEng, MockFiles, MockObj
 
 
 def test_arxiv_derive_inspire_categories():
@@ -152,3 +160,45 @@ def test_arxiv_derive_inspire_categories_does_nothing_with_existing_categories()
 
     assert validate(result, inspire_categories_schema) is None
     assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.arxiv.os')
+def test_arxiv_author_list_handles_auto_ignore_comment(mock_os):
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1703.09986.tar.gz'))
+
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '1703.09986',
+            },
+        ],
+    }  # record/1519995
+    extra_data = {}
+    files = MockFiles({
+        '1703.09986.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data, files)
+    eng = MockEng()
+
+    default_arxiv_author_list = arxiv_author_list()
+
+    try:
+        temporary_dir = mkdtemp()
+        mock_os.path.abspath.return_value = temporary_dir
+
+        assert default_arxiv_author_list(obj, eng) is None
+    finally:
+        rmtree(temporary_dir)
