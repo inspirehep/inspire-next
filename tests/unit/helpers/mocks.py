@@ -59,6 +59,9 @@ class MockFiles(object):
     def __len__(self):
         return len(self.data)
 
+    def __contains__(self, item):
+        return item in self.data
+
     @property
     def keys(self):
         return self.data.keys()

@@ -29,6 +29,7 @@ import re
 from functools import wraps
 
 from flask import current_app
+from lxml.etree import XMLSyntaxError
 from six import BytesIO
 from werkzeug import secure_filename
 
@@ -218,14 +219,20 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
         obj.log.info("Found xmlfiles: {0}".format(xml_files_list))
 
         for xml_file in xml_files_list:
-            xml_file_fd = open(xml_file, "r")
-            xml_content = xml_file_fd.read()
-            xml_file_fd.close()
+            with open(xml_file, "r") as xml_file_fd:
+                xml_content = xml_file_fd.read()
 
             match = REGEXP_AUTHLIST.findall(xml_content)
             if match:
                 obj.log.info("Found a match for author extraction")
-                authors_xml = convert(xml_content, stylesheet)
+                try:
+                    authors_xml = convert(xml_content, stylesheet)
+                except XMLSyntaxError:
+                    # Probably %auto-ignore comment exists, ignoring first line
+                    authors_xml = convert(
+                        xml_content.split('\n', 1)[1],
+                        stylesheet
+                    )
                 authors_rec = create_record(authors_xml)
                 authorlist_record = hep.do(authors_rec)
                 obj.data.update(authorlist_record)
