@@ -185,6 +185,29 @@ def test_add_title():
     assert expected == result
 
 
+def test_add_parent_title():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    builder = ReferenceBuilder()
+
+    builder.add_parent_title('Geom. Funct. Anal., GAFA 2000')
+
+    expected = [
+        {
+            'reference': {
+                'publication_info': {
+                    'parent_title': 'Geom. Funct. Anal., GAFA 2000',
+                },
+            },
+        },
+    ]
+    result = [builder.obj]
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
 def test_add_misc():
     schema = load_schema('hep')
     subschema = schema['properties']['references']

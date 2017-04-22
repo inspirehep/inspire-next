@@ -157,6 +157,10 @@ class ReferenceBuilder(object):
         self._ensure_reference_field('title', {})
         self.obj['reference']['title'] = {'title': title}
 
+    def add_parent_title(self, title):
+        self._ensure_reference_field('publication_info', {})
+        self.obj['reference']['publication_info']['parent_title'] = title
+
     def add_misc(self, misc):
         self._ensure_reference_field('misc', [])
         self.obj['reference']['misc'].append(misc)
