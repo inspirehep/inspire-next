@@ -32,7 +32,7 @@ from workflow.patterns.controlflow import (
 
 from inspirehep.dojson.hep import hep2marc
 
-from inspirehep.modules.refextract.tasks import extract_journal_info
+from inspirehep.modules.workflows.tasks.refextract import extract_journal_info
 from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_author_list,
     arxiv_fulltext_download,
