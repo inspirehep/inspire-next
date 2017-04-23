@@ -27,7 +27,7 @@ import pkg_resources
 
 from inspire_schemas.utils import load_schema
 from inspirehep.dojson.utils import validate
-from inspirehep.modules.refextract.tasks import (
+from inspirehep.modules.workflows.tasks.refextract import (
     extract_journal_info,
     extract_references,
 )

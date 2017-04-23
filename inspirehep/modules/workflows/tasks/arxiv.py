@@ -37,7 +37,6 @@ from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep
 from inspirehep.dojson.utils import classify_field
-from inspirehep.modules.refextract.tasks import extract_references
 from inspirehep.utils.helpers import download_file_to_workflow
 from inspirehep.utils.record import (
     get_arxiv_categories,
@@ -49,6 +48,7 @@ from plotextractor.api import process_tarball
 from plotextractor.converter import untar
 from plotextractor.errors import InvalidTarball, NoTexFilesFound
 
+from .refextract import extract_references
 from ..utils import with_debug_logging
 
 

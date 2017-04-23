@@ -393,7 +393,7 @@ def get_halted_workflow(app, record, extra_config=None):
     side_effect=fake_beard_api_block_request,
 )
 @mock.patch(
-    'inspirehep.modules.refextract.tasks.extract_references_from_file',
+    'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
     side_effect=fake_refextract_extract_references_from_file,
 )
 def test_harvesting_arxiv_workflow_manual_rejected(
@@ -456,7 +456,7 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     side_effect=fake_beard_api_block_request,
 )
 @mock.patch(
-    'inspirehep.modules.refextract.tasks.extract_references_from_file',
+    'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
     side_effect=fake_refextract_extract_references_from_file,
 )
 def test_harvesting_arxiv_workflow_already_on_legacy(
@@ -510,7 +510,7 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
     return_value=[],
 )
 @mock.patch(
-    'inspirehep.modules.refextract.tasks.extract_references_from_file',
+    'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
     side_effect=fake_refextract_extract_references_from_file,
 )
 def test_harvesting_arxiv_workflow_manual_accepted(
