@@ -107,36 +107,52 @@ def publication_info(self, key, value):
         'year': year,
         'parent_isbn': force_single_element(value.get('z')),
         'material': _get_material(value),
+        'hidden': key.startswith('7731') or None,
     }
 
     return res
 
 
 @hep2marc.over('773', '^publication_info$')
-@utils.for_each_value
-def publication_info2marc(self, key, value):
-    page_artid = []
-    if value.get('page_start') and value.get('page_end'):
-        page_artid.append('{page_start}-{page_end}'.format(**value))
-    elif value.get('page_start'):
-        page_artid.append('{page_start}'.format(**value))
-    if value.get('artid'):
-        page_artid.append('{artid}'.format(**value))
-    return {
-        '0': get_recid_from_ref(
-            value.get('parent_record')),
-        'c': page_artid,
-        'n': value.get('journal_issue'),
-        'o': value.get('conf_acronym'),
-        'p': value.get('journal_title'),
-        'r': value.get('parent_report_number'),
-        'v': value.get('journal_volume'),
-        'w': value.get('cnum'),
-        'x': value.get('pubinfo_freetext'),
-        'y': value.get('year'),
-        'z': value.get('parent_isbn'),
-        'm': value.get('material')
-    }
+def publication_info2marc(self, key, values):
+    """Populate the ``773`` MARC field.
+
+    Also populates the ``7731`` MARC field through side effects.
+    """
+    result_773 = self.get('773', [])
+    result_7731 = self.get('7731', [])
+
+    for value in force_list(values):
+        page_artid = []
+        if value.get('page_start') and value.get('page_end'):
+            page_artid.append('{page_start}-{page_end}'.format(**value))
+        elif value.get('page_start'):
+            page_artid.append('{page_start}'.format(**value))
+        if value.get('artid'):
+            page_artid.append('{artid}'.format(**value))
+
+        result = {
+            '0': get_recid_from_ref(value.get('parent_record')),
+            'c': page_artid,
+            'm': value.get('material'),
+            'n': value.get('journal_issue'),
+            'o': value.get('conf_acronym'),
+            'p': value.get('journal_title'),
+            'r': value.get('parent_report_number'),
+            'v': value.get('journal_volume'),
+            'w': value.get('cnum'),
+            'x': value.get('pubinfo_freetext'),
+            'y': value.get('year'),
+            'z': value.get('parent_isbn'),
+        }
+
+        if value.get('hidden'):
+            result_7731.append(result)
+        else:
+            result_773.append(result)
+
+    self['7731'] = result_7731
+    return result_773
 
 
 @hep.over('succeeding_entry', '^785..')
