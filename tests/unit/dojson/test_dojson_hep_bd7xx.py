@@ -358,3 +358,46 @@ def test_publication_info_from_773__c_r_w_triple_0_2():
     result = hep2marc.do(result)
 
     assert expected == result['773']
+
+
+def test_publication_info_from_7731_c_p_v_y():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    snippet = (
+        '<datafield tag="773" ind1="1" ind2=" ">'
+        '  <subfield code="c">948-979</subfield>'
+        '  <subfield code="p">Adv.Theor.Math.Phys.</subfield>'
+        '  <subfield code="v">12</subfield>'
+        '  <subfield code="y">2008</subfield>'
+        '</datafield>'
+    )  # record/697133
+
+    expected = [
+        {
+            'hidden': True,
+            'journal_title': 'Adv.Theor.Math.Phys.',
+            'journal_volume': '12',
+            'page_end': '979',
+            'page_start': '948',
+            'year': 2008,
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['publication_info'], subschema) is None
+    assert expected == result['publication_info']
+
+    expected = [
+        {
+            'c': [
+                '948-979',
+            ],
+            'p': 'Adv.Theor.Math.Phys.',
+            'v': '12',
+            'y': 2008,
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['7731']
