@@ -122,7 +122,7 @@ extras_require = {
     'docs': [
         'six',
         'mock',
-        'Sphinx>=1.3',
+        'Sphinx<1.6',
         'sphinxcontrib-napoleon>=0.6.1',
     ],
     'postgresql': [
