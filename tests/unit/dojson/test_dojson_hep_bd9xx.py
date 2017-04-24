@@ -1011,3 +1011,33 @@ def test_references_from_999C5h_o_q_t_y():
     result = hep2marc.do(result)
 
     assert expected == result['999C5']
+
+
+def test_references_from_999C5k():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    snippet = (
+        '<datafield tag="999" ind1="C" ind2="5">'
+        '  <subfield code="k">Robilotta:2008js</subfield>'
+        '</datafield>'
+    )  # synthetic data
+
+    expected = [
+        {
+            'reference': {
+                'texkey': 'Robilotta:2008js',
+            },
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['references'], subschema) is None
+    assert expected == result['references']
+
+    expected = [
+        {'k': 'Robilotta:2008js'},
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['999C5']

@@ -186,13 +186,13 @@ def references(self, key, value):
         rb = ReferenceBuilder()
         mapping = [
             ('0', _set_record),
-            ('1', rb.set_texkey),
             ('a', rb.add_uid),
             ('b', rb.add_uid),
             ('c', rb.add_collaboration),
             ('e', partial(rb.add_author, role='ed.')),
             ('h', rb.add_refextract_authors_str),
             ('i', rb.add_uid),
+            ('k', rb.set_texkey),
             ('m', rb.add_misc),
             ('o', rb.set_label),
             ('p', rb.set_publisher),
@@ -241,13 +241,13 @@ def references2marc(self, key, value):
 
     return {
         '0': get_recid_from_ref(value.get('record')),
-        '1': reference.get('texkey'),
         'a': a_values,
         'b': get_value(reference, 'publication_info.cnum'),
         'c': reference.get('collaborations'),
         'e': e_values,
         'h': h_values,
         'i': reference.get('isbn'),
+        'k': reference.get('texkey'),
         'm': reference.get('misc'),
         'o': reference.get('label'),
         'p': get_value(reference, 'imprint.publisher'),
