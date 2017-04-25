@@ -27,10 +27,13 @@ from __future__ import absolute_import, division, print_function
 import json
 import logging
 import traceback
-from functools import wraps
-
 import requests
+
+from contextlib import closing
+from functools import wraps
 from flask import current_app
+
+from inspirehep.utils.record import get_arxiv_id
 
 from .models import WorkflowsAudit
 
@@ -141,3 +144,32 @@ def with_debug_logging(func):
         return res
 
     return _decorator
+
+
+@with_debug_logging
+def get_pdf_in_workflow(obj):
+    """Return the fullpath to the PDF attached to a workflow object"""
+
+    for filename in obj.files.keys:
+        if filename.endswith('.pdf'):
+            # There's a PDF already attached
+            return obj.files[filename].file.uri
+
+    obj.log.info("No PDF available")
+
+
+def download_file_to_workflow(workflow, name, url):
+    """Download a file to a specified workflow.
+
+    The ``workflow.files`` property is actually a method, which returns a
+    ``WorkflowFilesIterator``. This class inherits a custom ``__setitem__``
+    method from its parent, ``FilesIterator``, which ends up calling ``save``
+    on an ``invenio_files_rest.storage.pyfs.PyFSFileStorage`` instance
+    through ``ObjectVersion`` and ``FileObject``. This method consumes the
+    stream passed to it and saves in its place a ``FileObject`` with the
+    details of the downloaded file.
+    """
+    with closing(requests.get(url=url, stream=True)) as req:
+        if req.status_code == 200:
+            workflow.files[name] = req.raw
+            return workflow.files[name]

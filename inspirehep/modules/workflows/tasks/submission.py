@@ -374,19 +374,6 @@ def prepare_keywords(obj, eng):
 
 
 @with_debug_logging
-def user_pdf_get(obj, eng):
-    """Upload user PDF file, if requested."""
-    if obj.extra_data.get('pdf_upload', False):
-        fft = {'path': obj.extra_data.get('submission_pdf'),
-               'type': 'INSPIRE-PUBLIC'}
-        if obj.data.get('_fft'):
-            obj.data['_fft'].append(fft)
-        else:
-            obj.data['_fft'] = [fft]
-        obj.log.info("User PDF file added to FFT.")
-
-
-@with_debug_logging
 def prepare_files(obj, eng):
     """Adds to the _fft field (files) the extracted pdfs if any"""
     def _get_fft(url, name):

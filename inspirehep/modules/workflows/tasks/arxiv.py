@@ -37,7 +37,6 @@ from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep
 from inspirehep.dojson.utils import classify_field
-from inspirehep.utils.helpers import download_file_to_workflow
 from inspirehep.utils.record import (
     get_arxiv_categories,
     get_arxiv_id,
@@ -48,8 +47,7 @@ from plotextractor.api import process_tarball
 from plotextractor.converter import untar
 from plotextractor.errors import InvalidTarball, NoTexFilesFound
 
-from .refextract import extract_references
-from ..utils import with_debug_logging
+from ..utils import download_file_to_workflow, get_pdf_in_workflow, with_debug_logging
 
 
 REGEXP_AUTHLIST = re.compile(
@@ -68,15 +66,39 @@ def arxiv_fulltext_download(obj, eng):
     """
     arxiv_id = get_arxiv_id(obj.data)
     filename = secure_filename("{0}.pdf".format(arxiv_id))
-    if filename not in obj.files:
-        pdf = download_file_to_workflow(
-            workflow=obj,
-            name=filename,
-            url=current_app.config['ARXIV_PDF_URL'].format(
-                arxiv_id=arxiv_id
-            )
+    # We fetch if on the fly if needed
+    pdf = download_file_to_workflow(
+        workflow=obj,
+        name=filename,
+        url=current_app.config['ARXIV_PDF_URL'].format(
+            arxiv_id=arxiv_id
         )
-        pdf['doctype'] = "arXiv"
+    )
+    pdf['doctype'] = "arXiv"
+    obj.log.info("PDF retrieved from arXiv for {0}".format(arxiv_id))
+
+
+@with_debug_logging
+def arxiv_package_download(obj, eng):
+    """Perform the fulltext download step for arXiv records.
+
+    :param obj: Workflow Object to process
+    :param eng: Workflow Engine processing the object
+    """
+    arxiv_id = get_arxiv_id(obj.data)
+    filename = secure_filename("{0}.tar.gz".format(arxiv_id))
+    tarball = download_file_to_workflow(
+        workflow=obj,
+        name=filename,
+        url=current_app.config['ARXIV_TARBALL_URL'].format(
+            arxiv_id=arxiv_id
+        )
+    )
+    if tarball:
+        tarball['doctype'] = "package"
+        obj.log.info("Tarball retrieved from arXiv for {0}".format(arxiv_id))
+    else:
+        obj.log.error("Cannot retrieve tarball from arXiv for {0}".format(arxiv_id))
 
 
 @with_debug_logging
@@ -90,68 +112,28 @@ def arxiv_plot_extract(obj, eng):
 
     arxiv_id = get_arxiv_id(obj.data)
     filename = secure_filename("{0}.tar.gz".format(arxiv_id))
-    if filename not in obj.files:
-        tarball = download_file_to_workflow(
-            workflow=obj,
-            name=filename,
-            url=current_app.config['ARXIV_TARBALL_URL'].format(
-                arxiv_id=arxiv_id
+    tarball = obj.files[filename]
+
+    if tarball:
+        try:
+            plots = process_tarball(tarball.file.uri)
+        except (InvalidTarball, NoTexFilesFound):
+            obj.log.error(
+                'Invalid tarball {0}'.format(tarball.file.uri)
             )
-        )
-    else:
-        tarball = obj.files[filename]
+            return
+        except DelegateError as err:
+            obj.log.error("Error extracting plots. Report and skip.")
+            current_app.logger.exception(err)
+            return
 
-    try:
-        plots = process_tarball(tarball.file.uri)
-    except (InvalidTarball, NoTexFilesFound):
-        obj.log.error(
-            'Invalid tarball {0}'.format(tarball.file.uri)
-        )
-        return
-    except DelegateError as err:
-        obj.log.error("Error extracting plots. Report and skip.")
-        current_app.logger.exception(err)
-        return
-
-    for idx, plot in enumerate(plots):
-        obj.files[plot.get('name')] = BytesIO(open(plot.get('url')))
-        obj.files[plot.get('name')]["doctype"] = "Plot"
-        obj.files[plot.get('name')]["description"] = u"{0:05d} {1}".format(
-            idx, "".join(plot.get('captions', []))
-        )
-    obj.log.info("Added {0} plots.".format(len(plots)))
-
-
-@with_debug_logging
-def arxiv_refextract(obj, eng):
-    """Extract references from arXiv PDF.
-
-    :param obj: Workflow Object to process
-    :param eng: Workflow Engine processing the object
-    """
-    arxiv_id = get_arxiv_id(obj.data)
-    filename = secure_filename("{0}.pdf".format(arxiv_id))
-    if filename not in obj.files:
-        pdf = download_file_to_workflow(
-            workflow=obj,
-            name=filename,
-            url=current_app.config['ARXIV_PDF_URL'].format(
-                arxiv_id=arxiv_id
+        for idx, plot in enumerate(plots):
+            obj.files[plot.get('name')] = BytesIO(open(plot.get('url')))
+            obj.files[plot.get('name')]["doctype"] = "Plot"
+            obj.files[plot.get('name')]["description"] = u"{0:05d} {1}".format(
+                idx, "".join(plot.get('captions', []))
             )
-        )
-    else:
-        pdf = obj.files[filename]
-    if pdf:
-        mapped_references = extract_references(pdf.file.uri)
-        if mapped_references:
-            obj.data["references"] = mapped_references
-            obj.log.info("Extracted {0} references".format(
-                len(mapped_references)
-            ))
-        else:
-            obj.log.info("No references extracted")
-    else:
-        obj.log.error("Not able to download and process the PDF")
+        obj.log.info("Added {0} plots.".format(len(plots)))
 
 
 def arxiv_derive_inspire_categories(obj, eng):
@@ -195,47 +177,39 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
 
         arxiv_id = get_arxiv_id(obj.data)
         filename = secure_filename("{0}.tar.gz".format(arxiv_id))
-        if filename not in obj.files:
-            tarball = download_file_to_workflow(
-                workflow=obj,
-                name=filename,
-                url=current_app.config['ARXIV_TARBALL_URL'].format(
-                    arxiv_id=arxiv_id
-                )
-            )
-        else:
-            tarball = obj.files[filename]
+        tarball = obj.files[filename]
 
-        sub_dir = os.path.abspath("{0}_files".format(tarball.file.uri))
-        try:
-            file_list = untar(tarball.file.uri, sub_dir)
-        except InvalidTarball:
-            obj.log.error("Invalid tarball {0}".format(tarball.file.uri))
-            return
-        obj.log.info("Extracted tarball to: {0}".format(sub_dir))
+        if tarball:
+            sub_dir = os.path.abspath("{0}_files".format(tarball.file.uri))
+            try:
+                file_list = untar(tarball.file.uri, sub_dir)
+            except InvalidTarball:
+                obj.log.error("Invalid tarball {0}".format(tarball.file.uri))
+                return
+            obj.log.info("Extracted tarball to: {0}".format(sub_dir))
 
-        xml_files_list = [path for path in file_list
-                          if path.endswith(".xml")]
-        obj.log.info("Found xmlfiles: {0}".format(xml_files_list))
+            xml_files_list = [path for path in file_list
+                            if path.endswith(".xml")]
+            obj.log.info("Found xmlfiles: {0}".format(xml_files_list))
 
-        for xml_file in xml_files_list:
-            with open(xml_file, 'r') as xml_file_fd:
-                xml_content = xml_file_fd.read()
+            for xml_file in xml_files_list:
+                with open(xml_file, 'r') as xml_file_fd:
+                    xml_content = xml_file_fd.read()
 
-            match = REGEXP_AUTHLIST.findall(xml_content)
-            if match:
-                obj.log.info("Found a match for author extraction")
-                try:
-                    authors_xml = convert(xml_content, stylesheet)
-                except XMLSyntaxError:
-                    # Probably the %auto-ignore comment exists, so we skip the
-                    # first line. See: inspirehep/inspire-next/issues/2195
-                    authors_xml = convert(
-                        xml_content.split('\n', 1)[1],
-                        stylesheet,
-                    )
-                authors_rec = create_record(authors_xml)
-                authorlist_record = hep.do(authors_rec)
-                obj.data.update(authorlist_record)
-                break
+                match = REGEXP_AUTHLIST.findall(xml_content)
+                if match:
+                    obj.log.info("Found a match for author extraction")
+                    try:
+                        authors_xml = convert(xml_content, stylesheet)
+                    except XMLSyntaxError:
+                        # Probably the %auto-ignore comment exists, so we skip the
+                        # first line. See: inspirehep/inspire-next/issues/2195
+                        authors_xml = convert(
+                            xml_content.split('\n', 1)[1],
+                            stylesheet,
+                        )
+                    authors_rec = create_record(authors_xml)
+                    authorlist_record = hep.do(authors_rec)
+                    obj.data.update(authorlist_record)
+                    break
     return _author_list
