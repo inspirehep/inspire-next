@@ -39,6 +39,7 @@ from elasticsearch.helpers import scan as es_scan
 from flask import current_app, url_for
 from jsonschema import ValidationError
 from redis import StrictRedis
+from redis_lock import Lock
 from six import text_type
 
 from dojson.contrib.marc21.utils import create_record as marc_create_record
@@ -151,16 +152,22 @@ def continuous_migration():
     """Task to continuously migrate what is pushed up by Legacy."""
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
-
-    try:
-        while r.llen('legacy_records'):
-            raw_record = r.lrange('legacy_records', 0, 0)
-            if raw_record:
-                migrate_and_insert_record(zlib.decompress(raw_record[0]))
-            r.lpop('legacy_records')
-    finally:
-        db.session.commit()
-        db.session.close()
+    lock = Lock(r, 'continuous_migration')
+    if lock.acquire(blocking=False):
+        try:
+            try:
+                while r.llen('legacy_records'):
+                    raw_record = r.lrange('legacy_records', 0, 0)
+                    if raw_record:
+                        migrate_and_insert_record(zlib.decompress(raw_record[0]))
+                    r.lpop('legacy_records')
+            finally:
+                db.session.commit()
+                db.session.close()
+        finally:
+            lock.release()
+    else:
+        logger.info("Continuous_migration already executed. Skipping.")
 
 
 def create_index_op(record):
