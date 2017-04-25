@@ -26,6 +26,75 @@ Operations
 
 INSPIRE operations manual.
 
+Elasticsearch tasks
+===================
+
+Simple index remapping
+----------------------
+This procedure does not take into account the current database, it acts only on
+elasticsearch, so any missing records on elasticsearch will not be added, and
+any modifications made to the db will not be propagated to elasticsearch.
+
+#. Install `es-cli`_:
+
+.. code-block:: shell
+
+    pip install es-cli
+
+#. Run the remap command:
+
+.. code-block:: shell
+
+    es-cli -m path/to/the/new/mapping.json 'https://user:pass@my.es.instan.ce/myindex'
+
+
+Things to have into account:
+
+* There's no nicer way yet to pass the user/pass
+* You can pass more than one '-m\--mapping' option if you are using multiple
+  mappings for the same index.
+* It creates the new indices with the same aliases that the original had.
+* It creates a temporary index in the ES instance, so you will need extra
+  space to allocate it.
+
+
+.. note::
+
+    It's recommended to create a dump/backup of the index prior to the
+    remapping, just in case.
+
+
+Dumping an index
+----------------
+This procedure will create a set of json files in a directory containing
+batches of the index data, including the index metadata (mappings and
+similar).
+
+.. code-block:: shell
+
+    es-cli dump_index -o backup_dir 'https://user:pass@my.es.instan.ce/myindex'
+
+
+This will create a directory called 'backup_dir' that contains two types of
+json files, a 'myingex-metadat.json' with the index metadata, and one or more
+'myindex-N.json' with the batches of data.
+
+
+Loading the dump of an index
+----------------------------
+If you already have dumped an index and you want to load it again, you can run
+this:
+
+.. code-block:: shell
+
+    es-cli load_index_dump 'https://user:pass@my.es.instan.ce/myindex' backup_dir
+
+
+Where 'backup_dir' is the path to the directory where the index dump was
+created.
+
+
+
 Harvesting and Holding Pen
 ==========================
 
@@ -99,3 +168,6 @@ Via shell
     obj.restart_current()  # Restart from current task and continue workflow
     obj.restart_next()  # Skip current task and continue workflow
     obj.restart_previous()  # Redo task before current one and continue workflow
+
+
+.. _es-cli: http://es-cli.readthedocs.io
