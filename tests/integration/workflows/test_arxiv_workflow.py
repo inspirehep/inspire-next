@@ -377,7 +377,7 @@ def get_halted_workflow(app, record, extra_config=None):
 
 
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    'inspirehep.modules.workflows.utils.download_file_to_workflow',
     side_effect=fake_download_file,
 )
 @mock.patch(
@@ -440,7 +440,7 @@ def test_harvesting_arxiv_workflow_manual_rejected(
 
 
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    'inspirehep.modules.workflows.utils.download_file_to_workflow',
     side_effect=fake_download_file,
 )
 @mock.patch(
@@ -494,6 +494,10 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
     side_effect=fake_download_file,
 )
 @mock.patch(
+    'inspirehep.modules.workflows.utils.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
 )
@@ -519,7 +523,8 @@ def test_harvesting_arxiv_workflow_manual_accepted(
     mocked_api_request_beard_block,
     mocked_api_request_magpie,
     mocked_api_request_beard,
-    mocked_download,
+    mocked_download_utils,
+    mocked_download_arxiv,
     workflow_app,
     record,
 ):

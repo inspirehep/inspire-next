@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from functools import wraps
 
 from ..proxies import antihep_keywords
-from ..utils import with_debug_logging
+from ..utils import with_debug_logging, get_pdf_in_workflow
 
 
 @with_debug_logging
@@ -75,11 +75,9 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
 
         fast_mode = False
         try:
-            # FIXME: May need to find another canonical way of getting PDF
-            if "pdf" in obj.extra_data:
-                result = get_keywords_from_local_file(
-                    obj.extra_data["pdf"], **params
-                )
+            uri = get_pdf_in_workflow(obj)
+            if uri:
+                result = get_keywords_from_local_file(uri, **params)
             else:
                 data = []
                 titles = obj.data.get('titles')
