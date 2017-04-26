@@ -25,16 +25,19 @@ from __future__ import absolute_import, division, print_function
 import os
 import pkg_resources
 import zlib
+import time
 
+import mock
 import pytest
+import celery
 from flask import current_app
 from redis import StrictRedis
+from redis_lock import Lock
 
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.modules.migrator.models import InspireProdRecords
-from inspirehep.modules.migrator.tasks.records import continuous_migration
 from inspirehep.utils.record_getter import get_db_record
 
 
@@ -79,6 +82,23 @@ def record_1502656():
 
 
 @pytest.fixture(scope='function')
+def many_times_same_record():
+    """Pushing in the queue many time the same record
+
+    This is useful to give something to do to continuous_migration()
+    and test (non)concurrency.
+    """
+    record = push_to_redis('1502656.xml')
+    for i in range(10):
+        push_to_redis('1502656.xml')
+
+    yield record
+
+    flush_redis()
+    _delete_record('lit', 1502656)
+
+
+@pytest.fixture(scope='function')
 def record_1502655_and_1502656():
     record1 = push_to_redis('1502655.xml')
     record2 = push_to_redis('1502656.xml')
@@ -102,6 +122,7 @@ def record_1502656_and_update():
 
 
 def test_continuous_migration_handles_a_single_record(app, record_1502656):
+    from inspirehep.modules.migrator.tasks.records import continuous_migration
     r = StrictRedis.from_url(current_app.config.get('CACHE_REDIS_URL'))
 
     assert r.lrange('legacy_records', 0, 0) != []
@@ -119,6 +140,7 @@ def test_continuous_migration_handles_a_single_record(app, record_1502656):
 
 
 def test_continuous_migration_handles_multiple_records(app, record_1502655_and_1502656):
+    from inspirehep.modules.migrator.tasks.records import continuous_migration
     r = StrictRedis.from_url(current_app.config.get('CACHE_REDIS_URL'))
 
     assert r.lrange('legacy_records', 0, 0) != []
@@ -142,7 +164,40 @@ def test_continuous_migration_handles_multiple_records(app, record_1502655_and_1
     assert expected == result
 
 
+def test_continuous_migration_avoids_jamming(app, many_times_same_record):
+    with mock.patch.dict(current_app.config, {'CELERY_ALWAYS_EAGER': False}):
+        from inspirehep.modules.migrator.tasks.records import continuous_migration
+        r = StrictRedis.from_url(current_app.config.get('CACHE_REDIS_URL'))
+
+        assert current_app.config['CELERY_ALWAYS_EAGER'] is False
+
+        assert r.lrange('legacy_records', 0, 0) != []
+
+        first_run = continuous_migration.delay()
+
+        time.sleep(0.1)
+
+        second_run = continuous_migration.delay()
+
+        assert first_run.status in (celery.states.PENDING, celery.states.STARTED)
+        second_run_result = second_run.wait()
+        assert second_run_result is False
+
+        first_run_result = first_run.wait()
+        assert first_run_result is True
+
+        assert r.lrange('legacy_records', 0, 0) == []
+
+        get_db_record('lit', 1502656)  # Does not raise.
+
+        expected = record_1502656
+        result = InspireProdRecords.query.get(1502656).marcxml
+
+        assert expected == result
+
+
 def test_continuous_migration_handles_record_updates(app, record_1502656_and_update):
+    from inspirehep.modules.migrator.tasks.records import continuous_migration
     r = StrictRedis.from_url(current_app.config.get('CACHE_REDIS_URL'))
 
     assert r.lrange('legacy_records', 0, 0) != []
