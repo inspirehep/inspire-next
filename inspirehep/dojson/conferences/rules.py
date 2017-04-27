@@ -90,20 +90,6 @@ def short_description(self, key, value):
     }
 
 
-@conferences.over('keywords', '^6531.')
-def keywords(self, key, value):
-    def get_value(value):
-        return {
-            'value': value.get('a'),
-            'source': value.get('9')
-        }
-    value = force_list(value)
-    keywords = self.get('keywords', [])
-    for val in value:
-        keywords.append(get_value(val))
-    return keywords
-
-
 @conferences.over('series', '^411..')
 def series(self, key, value):
     def _get_name(value):
