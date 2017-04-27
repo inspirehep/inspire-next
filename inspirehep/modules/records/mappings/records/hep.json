@@ -320,6 +320,9 @@
                         },
                         "url": {
                             "type": "string"
+                        },
+                        "year": {
+                            "type": "integer"
                         }
                     },
                     "type": "object"
@@ -592,9 +595,6 @@
                         },
                         "raw_refs": {
                             "properties": {
-                                "position": {
-                                    "type": "string"
-                                },
                                 "schema": {
                                     "type": "string"
                                 },
@@ -617,7 +617,7 @@
                         },
                         "reference": {
                             "properties": {
-                                "arxiv_eprints": {
+                                "arxiv_eprint": {
                                     "type": "string"
                                 },
                                 "authors": {
@@ -625,7 +625,7 @@
                                         "full_name": {
                                             "type": "string"
                                         },
-                                        "role": {
+                                        "inspire_role": {
                                             "type": "string"
                                         }
                                     },
@@ -642,7 +642,10 @@
                                     },
                                     "type": "object"
                                 },
-                                "collaboration": {
+                                "collaborations": {
+                                    "type": "string"
+                                },
+                                "document_type": {
                                     "type": "string"
                                 },
                                 "dois": {
@@ -662,14 +665,25 @@
                                     },
                                     "type": "object"
                                 },
+                                "isbn": {
+                                    "type": "string"
+                                },
+                                "label": {
+                                    "type": "string"
+                                },
                                 "misc": {
                                     "type": "string"
                                 },
-                                "number": {
-                                    "type": "integer"
-                                },
                                 "persistent_identifiers": {
-                                    "type": "string"
+                                    "properties": {
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
                                 },
                                 "publication_info": {
                                     "properties": {
@@ -677,9 +691,6 @@
                                             "type": "string"
                                         },
                                         "cnum": {
-                                            "type": "string"
-                                        },
-                                        "isbn": {
                                             "type": "string"
                                         },
                                         "journal_issue": {
@@ -691,13 +702,22 @@
                                         "journal_volume": {
                                             "type": "string"
                                         },
+                                        "material": {
+                                            "type": "string"
+                                        },
                                         "page_end": {
                                             "type": "string"
                                         },
                                         "page_start": {
                                             "type": "string"
                                         },
-                                        "reportnumber": {
+                                        "parent_isbn": {
+                                            "type": "string"
+                                        },
+                                        "parent_report_number": {
+                                            "type": "string"
+                                        },
+                                        "parent_title": {
                                             "type": "string"
                                         },
                                         "year": {
@@ -706,10 +726,13 @@
                                     },
                                     "type": "object"
                                 },
+                                "report_number": {
+                                    "type": "string"
+                                },
                                 "texkey": {
                                     "type": "string"
                                 },
-                                "titles": {
+                                "title": {
                                     "properties": {
                                         "source": {
                                             "type": "string"
