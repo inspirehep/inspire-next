@@ -67,6 +67,7 @@ def enhance_record(sender, json, *args, **kwargs):
     add_recids_and_validate(sender, json, *args, **kwargs)
     populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
+    populate_affiliation_suggest(sender, json, *args, **kwargs)
     after_record_enhanced.send(json)
 
 
@@ -265,6 +266,55 @@ def populate_abstract_source_suggest(sender, json, *args, **kwargs):
                         'output': source,
                     },
                 })
+
+
+def populate_affiliation_suggest(sender, json, *args, **kwargs):
+    """Populate the ``affiliation_suggest`` field of Institution records."""
+
+    # FIXME: Use a dedicated method when #1355 will be resolved.
+    if 'institutions.json' in json.get('$schema'):
+        institution = json.get('institution')
+        institution_acronym = json.get('institution_acronym')
+        ICN = json.get('ICN')
+        legacy_ICN = json.get('legacy_ICN')
+        name_variants = force_list(
+            get_value(json, 'name_variants.value'))
+        postal_codes = force_list(
+            get_value(json, 'address.postal_code'))
+
+        inputs = []
+        if institution:
+            inputs.extend(institution)
+
+        if institution_acronym:
+            inputs.append(institution_acronym)
+
+        if ICN:
+            inputs.extend(ICN)
+
+        if legacy_ICN:
+            inputs.append(legacy_ICN)
+
+        if name_variants:
+            inputs.extend(name_variants)
+
+        if postal_codes:
+            inputs.extend(postal_codes)
+
+        json.update({
+            'affiliation_suggest': {
+                'input': inputs,
+                'output': legacy_ICN,
+                'payload': {
+                    '$ref': get_value(json, 'self.$ref'),
+                    'ICN': ICN,
+                    'department': json.get('department'),
+                    'institution': institution,
+                    'institution_acronym': institution_acronym,
+                    'legacy_ICN': legacy_ICN,
+                },
+            },
+        })
 
 
 @before_record_index.connect
