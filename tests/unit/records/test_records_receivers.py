@@ -36,6 +36,7 @@ from inspirehep.modules.records.receivers import (
     references_validator,
     populate_experiment_suggest,
     populate_abstract_source_suggest,
+    populate_affiliation_suggest,
 )
 
 
@@ -598,3 +599,289 @@ def test_populate_abstract_source_suggest_does_nothing_if_record_is_not_hep():
         {'source': 'foo'},
         {'source': 'bar'},
     ]
+
+
+def test_populate_affiliation_suggest_from_institution():
+    schema = load_schema('institutions')
+    subschema = schema['properties']['institution']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/institutions.json',
+        'institution': [
+            'European Organization for Nuclear Research',
+        ],
+        'legacy_ICN': 'CERN',
+    }
+    assert validate(record['institution'], subschema) is None
+
+    populate_affiliation_suggest(None, record)
+
+    expected = {
+        'input': [
+            'European Organization for Nuclear Research',
+            'CERN',
+        ],
+        'output': 'CERN',
+        'payload': {
+            '$ref': None,
+            'ICN': None,
+            'department': None,
+            'institution': [
+                'European Organization for Nuclear Research',
+            ],
+            'institution_acronym': None,
+            'legacy_ICN': 'CERN',
+        },
+    }
+    result = record['affiliation_suggest']
+
+    assert expected == result
+
+
+def test_populate_affiliation_suggest_from_institution_acronym():
+    schema = load_schema('institutions')
+    subschema = schema['properties']['institution_acronym']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/institutions.json',
+        'institution_acronym': 'CERN',
+        'legacy_ICN': 'CERN',
+    }
+    assert validate(record['institution_acronym'], subschema) is None
+
+    populate_affiliation_suggest(None, record)
+
+    expected = {
+        'input': [
+            'CERN',
+            'CERN',
+        ],
+        'output': 'CERN',
+        'payload': {
+            '$ref': None,
+            'ICN': None,
+            'department': None,
+            'institution': None,
+            'institution_acronym': 'CERN',
+            'legacy_ICN': 'CERN',
+        },
+    }
+    result = record['affiliation_suggest']
+
+    assert expected == result
+
+
+def test_populate_affiliation_suggest_from_icn():
+    schema = load_schema('institutions')
+    subschema = schema['properties']['ICN']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/institutions.json',
+        'ICN': [
+            'CERN, Geneva',
+        ],
+        'legacy_ICN': 'CERN',
+    }
+    assert validate(record['ICN'], subschema) is None
+
+    populate_affiliation_suggest(None, record)
+
+    expected = {
+        'input': [
+            'CERN, Geneva',
+            'CERN',
+        ],
+        'output': 'CERN',
+        'payload': {
+            '$ref': None,
+            'ICN': [
+                'CERN, Geneva',
+            ],
+            'department': None,
+            'institution': None,
+            'institution_acronym': None,
+            'legacy_ICN': 'CERN',
+        },
+    }
+    result = record['affiliation_suggest']
+
+    assert expected == result
+
+
+def test_populate_affiliation_suggest_from_legacy_icn():
+    schema = load_schema('institutions')
+    subschema = schema['properties']['legacy_ICN']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/institutions.json',
+        'legacy_ICN': 'CERN',
+    }
+    assert validate(record['legacy_ICN'], subschema) is None
+
+    populate_affiliation_suggest(None, record)
+
+    expected = {
+        'input': [
+            'CERN',
+        ],
+        'output': 'CERN',
+        'payload': {
+            '$ref': None,
+            'ICN': None,
+            'department': None,
+            'institution': None,
+            'institution_acronym': None,
+            'legacy_ICN': 'CERN',
+        },
+    }
+    result = record['affiliation_suggest']
+
+    assert expected == result
+
+
+def test_populate_affiliation_suggest_from_name_variants():
+    schema = load_schema('institutions')
+    subschema = schema['properties']['name_variants']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/institutions.json',
+        'legacy_ICN': 'CERN',
+        'name_variants': [
+            {'value': u'Centre Européen de Recherches Nucléaires'},
+        ],
+    }
+    assert validate(record['name_variants'], subschema) is None
+
+    populate_affiliation_suggest(None, record)
+
+    expected = {
+        'input': [
+            'CERN',
+            u'Centre Européen de Recherches Nucléaires',
+        ],
+        'output': 'CERN',
+        'payload': {
+            '$ref': None,
+            'ICN': None,
+            'department': None,
+            'institution': None,
+            'institution_acronym': None,
+            'legacy_ICN': 'CERN',
+        },
+    }
+    result = record['affiliation_suggest']
+
+    assert expected == result
+
+
+def test_populate_affiliation_suggest_from_postal_code():
+    schema = load_schema('institutions')
+    subschema = schema['properties']['address']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/institutions.json',
+        'address': [
+            {'postal_code': '1211'},
+        ],
+        'legacy_ICN': 'CERN',
+    }
+    assert validate(record['address'], subschema) is None
+
+    populate_affiliation_suggest(None, record)
+
+    expected = {
+        'input': [
+            'CERN',
+            '1211',
+        ],
+        'output': 'CERN',
+        'payload': {
+            '$ref': None,
+            'ICN': None,
+            'department': None,
+            'institution': None,
+            'institution_acronym': None,
+            'legacy_ICN': 'CERN',
+        },
+    }
+    result = record['affiliation_suggest']
+
+    assert expected == result
+
+
+def test_populate_affiliation_suggest_to_department():
+    schema = load_schema('institutions')
+    subschema = schema['properties']['department']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/institutions.json',
+        'department': [
+            'Service de Physique des Particules',
+        ],
+        'legacy_ICN': 'IRFU, SPP, Saclay',
+    }
+    assert validate(record['department'], subschema) is None
+
+    populate_affiliation_suggest(None, record)
+
+    expected = {
+        'input': [
+            'IRFU, SPP, Saclay',
+        ],
+        'output': 'IRFU, SPP, Saclay',
+        'payload': {
+            '$ref': None,
+            'ICN': None,
+            'department': [
+                'Service de Physique des Particules',
+            ],
+            'institution': None,
+            'institution_acronym': None,
+            'legacy_ICN': 'IRFU, SPP, Saclay',
+        },
+    }
+    result = record['affiliation_suggest']
+
+    assert expected == result
+
+
+def test_populate_affiliation_suggest_to_ref():
+    schema = load_schema('institutions')
+    subschema = schema['properties']['self']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/institutions.json',
+        'legacy_ICN': 'CERN',
+        'self': {
+            '$ref': 'api/institutions/902725',
+        },
+    }
+    assert validate(record['self'], subschema) is None
+
+    populate_affiliation_suggest(None, record)
+
+    expected = {
+        'input': [
+            'CERN',
+        ],
+        'output': 'CERN',
+        'payload': {
+            '$ref': 'api/institutions/902725',
+            'ICN': None,
+            'department': None,
+            'institution': None,
+            'institution_acronym': None,
+            'legacy_ICN': 'CERN',
+        },
+    }
+    result = record['affiliation_suggest']
+
+    assert expected == result
+
+
+def test_populate_affiliation_suggest_does_nothing_if_record_is_not_institution():
+    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
+
+    populate_affiliation_suggest(None, record)
+
+    assert 'affiliation_suggest' not in record
