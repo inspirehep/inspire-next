@@ -449,6 +449,8 @@ class AuthorUpdateForm(INSPIREForm):
     research_field_options = [
         (val, val)
         for val in arxiv_categories_schema['enum']
+        if '.' not in val or
+        val in ('physics.ins-det', 'physics.acc-ph', 'physics.data-an')
     ]
 
     research_field = fields.SelectMultipleField(
