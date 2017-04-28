@@ -36,6 +36,7 @@ from inspirehep.modules.records.receivers import (
     references_validator,
     populate_experiment_suggest,
     populate_abstract_source_suggest,
+    populate_affiliation_suggest,
 )
 
 
@@ -598,3 +599,109 @@ def test_populate_abstract_source_suggest_does_nothing_if_record_is_not_hep():
         {'source': 'foo'},
         {'source': 'bar'},
     ]
+
+
+def test_populate_affiliation_suggest():
+    json_dict = {
+        '$schema': 'http://localhost:5000/schemas/records/institutions.json',
+        'self': {
+            '$ref': 'http://foo/bar',
+        },
+        'institution': [
+            'foo',
+            'bar',
+        ],
+        'institution_acronym': 'foo-bar',
+        'ICN': [
+            'foo-ICN',
+            'bar-ICN'
+        ],
+        'legacy_ICN': 'foo-bar-legacy_ICN',
+        'department': [
+            'foo-department',
+            'bar-department',
+        ],
+        'name_variants': [
+            {'value': 'foo-name_variant'},
+            {'value': 'bar-name_variant'},
+        ],
+        'address': [
+            {'postal_code': 'foo-postal_code'},
+            {'postal_code': 'bar-postal_code'},
+        ],
+    }
+
+    populate_affiliation_suggest(None, json_dict)
+
+    assert json_dict == {
+        '$schema': 'http://localhost:5000/schemas/records/institutions.json',
+        'self': {
+            '$ref': 'http://foo/bar',
+        },
+        'institution': [
+            'foo',
+            'bar',
+        ],
+        'institution_acronym': 'foo-bar',
+        'ICN': [
+            'foo-ICN',
+            'bar-ICN'
+        ],
+        'legacy_ICN': 'foo-bar-legacy_ICN',
+        'department': [
+            'foo-department',
+            'bar-department',
+        ],
+        'name_variants': [
+            {'value': 'foo-name_variant'},
+            {'value': 'bar-name_variant'},
+        ],
+        'address': [
+            {'postal_code': 'foo-postal_code'},
+            {'postal_code': 'bar-postal_code'},
+        ],
+        'affiliation_suggest': {
+            'input': [
+                'foo',
+                'bar',
+                'foo-bar',
+                'foo-ICN',
+                'bar-ICN',
+                'foo-bar-legacy_ICN',
+                'foo-name_variant',
+                'bar-name_variant',
+                'foo-postal_code',
+                'bar-postal_code',
+            ],
+            'output': 'foo-bar-legacy_ICN',
+            'payload': {
+                'institution': [
+                    'foo',
+                    'bar',
+                ],
+                'institution_acronym': 'foo-bar',
+                'ICN': [
+                    'foo-ICN',
+                    'bar-ICN'
+                ],
+                'legacy_ICN': 'foo-bar-legacy_ICN',
+                'department': [
+                    'foo-department',
+                    'bar-department',
+                ],
+                '$ref': 'http://foo/bar',
+            },
+        }
+    }
+
+
+def test_populate_affiliation_suggest_does_nothing_if_record_is_not_institution():
+    json_dict = {
+        '$schema': 'http://localhost:5000/schemas/records/other.json',
+    }
+
+    populate_affiliation_suggest(None, json_dict)
+
+    assert json_dict == {
+        '$schema': 'http://localhost:5000/schemas/records/other.json',
+    }
