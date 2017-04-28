@@ -208,7 +208,6 @@ def submission_fulltext_download(obj, eng):
             url=submission_pdf
         )
         if pdf:
-            pdf['doctype'] = 'main'
             obj.log.info("PDF provided by user from {0}".format(submission_pdf))
             return obj.files[filename].file.uri
         else:

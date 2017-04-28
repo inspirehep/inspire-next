@@ -74,7 +74,6 @@ def arxiv_fulltext_download(obj, eng):
             arxiv_id=arxiv_id
         )
     )
-    pdf['doctype'] = "arXiv"
     obj.log.info("PDF retrieved from arXiv for {0}".format(arxiv_id))
 
 
@@ -95,7 +94,6 @@ def arxiv_package_download(obj, eng):
         )
     )
     if tarball:
-        tarball['doctype'] = "package"
         obj.log.info("Tarball retrieved from arXiv for {0}".format(arxiv_id))
     else:
         obj.log.error("Cannot retrieve tarball from arXiv for {0}".format(arxiv_id))
@@ -129,7 +127,6 @@ def arxiv_plot_extract(obj, eng):
 
         for idx, plot in enumerate(plots):
             obj.files[plot.get('name')] = BytesIO(open(plot.get('url')))
-            obj.files[plot.get('name')]["doctype"] = "Plot"
             obj.files[plot.get('name')]["description"] = u"{0:05d} {1}".format(
                 idx, "".join(plot.get('captions', []))
             )
