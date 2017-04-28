@@ -36,7 +36,7 @@ from inspirehep.modules.records.receivers import (
     references_validator,
     populate_experiment_suggest,
     populate_abstract_source_suggest,
-    populate_affiliation_suggest
+    populate_affiliation_suggest,
 )
 
 
@@ -542,8 +542,7 @@ def test_populate_experiment_suggest_populates_if_record_is_experiment():
     assert json_dict['experiment_suggest']['input'] == \
         ['foo', 'bar', 'foo_var', 'bar_var']
     assert json_dict['experiment_suggest']['output'] == 'foo'
-    assert json_dict['experiment_suggest'][
-        'payload']['$ref'] == 'http://foo/$ref'
+    assert json_dict['experiment_suggest']['payload']['$ref'] == 'http://foo/$ref'
 
 
 def test_populate_experiment_suggest_does_nothing_if_record_is_not_experiment():
@@ -699,12 +698,10 @@ def test_populate_affiliation_suggest():
 def test_populate_affiliation_suggest_does_nothing_if_record_is_not_institution():
     json_dict = {
         '$schema': 'http://localhost:5000/schemas/records/other.json',
-        'other': 'foo'
     }
 
     populate_affiliation_suggest(None, json_dict)
 
     assert json_dict == {
         '$schema': 'http://localhost:5000/schemas/records/other.json',
-        'other': 'foo'
     }

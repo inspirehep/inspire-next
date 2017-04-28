@@ -58,9 +58,7 @@
                     "type": "string"
                 },
                 "affiliation_suggest": {
-                    "analyzer": "simple",
                     "payloads": true,
-                    "search_analyzer": "simple",
                     "type": "completion"
                 },
                 "control_number": {

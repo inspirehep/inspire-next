@@ -311,7 +311,7 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
                     'ICN': ICN,
                     'legacy_ICN': legacy_ICN,
                     'department': json.get('department'),
-                    '$ref': get_value(json, 'self.$ref')
+                    '$ref': get_value(json, 'self.$ref'),
                 },
             },
         })
