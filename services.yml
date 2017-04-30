@@ -25,6 +25,7 @@ version: '2.1'
 services:
   base:
     image: inspirehep/python-base
+    tty: true
     environment:
       - BASE_USER_UID=${BASE_USER_UID:-1000}
       - BASE_USER_GIT=${BASE_USER_GIT:-1000}
