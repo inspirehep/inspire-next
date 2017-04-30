@@ -109,7 +109,7 @@ def _is_arxiv(obj):
 
 def _normalize_arxiv(obj):
     """Normalize arXiv report numbers accepted by _is_arxiv."""
-    return idutils.normalize_arxiv(obj.split()[0]).split(':')[-1]
+    return idutils.normalize_arxiv(obj.split()[0]).split(':')[-1].split('v')[0]
 
 
 class ReferenceBuilder(object):

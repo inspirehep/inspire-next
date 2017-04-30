@@ -73,9 +73,58 @@ def test_is_arxiv_old_identifier():
     assert _is_arxiv('hep-th/0603001')
 
 
-def test_normalize_arxiv():
-    expected = '1501.00001v1'
+def test_normalize_arxiv_handles_new_identifiers_without_prefix_or_version():
+    expected = '1501.00001'
+    result = _normalize_arxiv('1501.00001')
+
+    assert expected == result
+
+
+def test_normalize_arxiv_handles_new_identifiers_with_prefix_and_without_version():
+    expected = '1501.00001'
+    result = _normalize_arxiv('arXiv:1501.00001')
+
+    assert expected == result
+
+
+def test_normalize_arxiv_handles_new_identifiers_without_prefix_and_with_version():
+    expected = '1501.00001'
+    result = _normalize_arxiv('1501.00001v1')
+
+    assert expected == result
+
+
+def test_normalize_arxiv_handles_new_identifiers_with_prefix_and_version():
+    expected = '1501.00001'
     result = _normalize_arxiv('arXiv:1501.00001v1')
+
+    assert expected == result
+
+
+def test_normalize_arxiv_handles_old_identifiers_without_prefix_or_version():
+    expected = 'math/0309136'
+    result = _normalize_arxiv('math.GT/0309136')
+
+    assert expected == result
+
+
+def test_normalize_arxiv_handles_old_identifiers_with_prefix_and_without_version():
+    expected = 'math/0309136'
+    result = _normalize_arxiv('arXiv:math.GT/0309136')
+
+    assert expected == result
+
+
+def test_normalize_arxiv_handles_old_identifiers_without_prefix_and_with_version():
+    expected = 'math/0309136'
+    result = _normalize_arxiv('math.GT/0309136v2')
+
+    assert expected == result
+
+
+def test_normalize_arxiv_handles_old_identifiers_with_prefix_and_version():
+    expected = 'math/0309136'
+    result = _normalize_arxiv('arXiv:math.GT/0309136v2')
 
     assert expected == result
 
