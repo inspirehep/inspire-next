@@ -83,6 +83,7 @@ def submit():
 
     workflow_object = workflow_object_class.create(
         data={},
+        extra_data={},
         id_user=current_user.get_id(),
         data_type="hep"
     )
