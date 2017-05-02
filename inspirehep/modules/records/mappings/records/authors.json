@@ -84,6 +84,7 @@
                     "type": "object"
                 },
                 "arxiv_categories": {
+                    "copy_to": "facet_arxiv_categories",
                     "type": "string"
                 },
                 "authorautocomplete": {
@@ -147,6 +148,14 @@
                         }
                     },
                     "type": "object"
+                },
+                "facet_arxiv_categories": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "facet_institution_name": {
+                    "index": "not_analyzed",
+                    "type": "string"
                 },
                 "ids": {
                     "properties": {
@@ -228,6 +237,7 @@
                                     "type": "boolean"
                                 },
                                 "name": {
+                                    "copy_to": "facet_institution_name",
                                     "type": "string"
                                 },
                                 "record": {
