@@ -22,23 +22,13 @@
 
 from __future__ import absolute_import, division, print_function
 
-from flask import current_app
-
-from inspirehep.modules.search.api import JournalsSearch
+from inspirehep.utils.normalizers import normalize_journal_title
 
 
-def normalize_journal_title(journal_title):
-    normalized_journal_title = journal_title
-    hits = JournalsSearch().query(
-        'match',
-        lowercase_journal_titles=journal_title
-    ).execute()
+def test_normalize_journal_title(app):
+    journal_title = 'Physical Review'
+    abbreviated_journal_title = 'Phys.Rev.'
 
-    if hits:
-        try:
-            normalized_journal_title = hits[0].short_titles[0].title
-        except (AttributeError, IndexError):
-            current_app.logger.debug(
-                "Failed to normalize journal title in: %s", repr(hits[0])
-            )
-    return normalized_journal_title
+    normalized_journal_title = normalize_journal_title(journal_title)
+
+    assert abbreviated_journal_title == normalized_journal_title
