@@ -22,9 +22,12 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+
 from flask import request
 from flask_security import current_user
 
+from elasticsearch import RequestError
 from elasticsearch_dsl.query import Q
 
 from invenio_search.api import DefaultFilter, RecordsSearch
@@ -38,6 +41,7 @@ from inspirehep.modules.records.permissions import (
 from .query_factory import inspire_query_factory
 
 
+logger = logging.getLogger(__name__)
 IQ = inspire_query_factory()
 
 
@@ -77,14 +81,20 @@ class SearchMixin(object):
         :type uuids: list of strings representing uuids
         :returns: list of JSON documents
         """
-        documents = current_search_client.mget(
-            index=self.Meta.index,
-            doc_type=self.Meta.doc_types,
-            body={'ids': uuids},
-            **kwargs
-        )
+        results = []
 
-        return [document['_source'] for document in documents['docs']]
+        try:
+            documents = current_search_client.mget(
+                index=self.Meta.index,
+                doc_type=self.Meta.doc_types,
+                body={'ids': uuids},
+                **kwargs
+            )
+            results = [document['_source'] for document in documents['docs']]
+        except RequestError as e:
+            logger.exception(e)
+
+        return results
 
 
 def inspire_filter():
