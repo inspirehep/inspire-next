@@ -1041,3 +1041,67 @@ def test_references_from_999C5k():
     result = hep2marc.do(result)
 
     assert expected == result['999C5']
+
+
+def test_references_from_999C5d_multiple_h_o_r_0_9():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    snippet = (
+        '<datafield tag="999" ind1="C" ind2="5">'
+        '  <subfield code="0">568216</subfield>'
+        '  <subfield code="9">CURATOR</subfield>'
+        '  <subfield code="d">eprint</subfield>'
+        '  <subfield code="h">Y. Yan</subfield>'
+        '  <subfield code="h">R. Tegen</subfield>'
+        '  <subfield code="h">T. Gutsche</subfield>'
+        '  <subfield code="h">V. E. Lyubovitskij</subfield>'
+        '  <subfield code="h">A. Faessler</subfield>'
+        '  <subfield code="o">20</subfield>'
+        '  <subfield code="r">hep-ph/0112168v2</subfield>'
+        '</datafield>'
+    )  # record/1410105
+
+    expected = [
+        {
+            'curated_relation': False,
+            'record': {
+                '$ref': 'http://localhost:5000/api/literature/568216',
+            },
+            'reference': {
+                'arxiv_eprint': 'hep-ph/0112168',
+                'authors': [
+                    {'full_name': 'Yan, Y.'},
+                    {'full_name': 'Tegen, R.'},
+                    {'full_name': 'Gutsche, T.'},
+                    {'full_name': 'Lyubovitskij, V.E.'},
+                    {'full_name': 'Faessler, A.'},
+                ],
+                'label': '20',
+            },
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['references'], subschema) is None
+    assert expected == result['references']
+
+    expected = [
+        {
+            '0': 568216,
+            'h': [
+                'Yan, Y.',
+                'Tegen, R.',
+                'Gutsche, T.',
+                'Lyubovitskij, V.E.',
+                'Faessler, A.',
+            ],
+            'o': '20',
+            'r': [
+                'arXiv:hep-ph/0112168',
+            ],
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['999C5']

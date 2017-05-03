@@ -36,6 +36,7 @@ from ..utils.geo import parse_conference_address
 
 
 @conferences.over('acronym', '^111..')
+@utils.flatten
 @utils.for_each_value
 def acronym(self, key, value):
     self['opening_date'] = value.get('x')
@@ -61,7 +62,7 @@ def acronym(self, key, value):
             address = parse_conference_address(raw_address)
             self['address'].append(address)
 
-    return value.get('e')
+    return force_list(value.get('e'))
 
 
 @conferences.over('contact_details', '^270..')
