@@ -334,12 +334,6 @@ def test_references_can_be_updated(app, records_to_be_merged):
     assert expected == result
 
 
-def test_get_es_records_raises_on_empty_list(app):
-    with app.app_context():
-        with pytest.raises(RequestError):
-            get_es_records('lit', [])
-
-
 def test_get_es_records_accepts_lists_of_integers(app):
     with app.app_context():
         records = get_es_records('lit', [4328])
