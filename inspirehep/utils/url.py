@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import requests
+
 from flask import current_app
 
 from inspirehep import __version__
@@ -38,3 +40,26 @@ def make_user_agent_string(component=""):
     if component:
         ret += " [{}]".format(component)
     return ret
+
+
+def is_pdf_link(url):
+    """Return ``True`` if ``url`` points to a PDF.
+
+    Returns ``True`` if the first few bytes of the response are ``%PDF``.
+
+    Args:
+        url (string): a URL.
+
+    Returns:
+        bool: whether the url points to a PDF.
+
+    """
+    try:
+        response = requests.get(url, allow_redirects=True, stream=True)
+    except requests.exceptions.RequestException:
+        return False
+
+    magic_number = next(response.iter_content(4))
+    correct_magic_number = magic_number.startswith('%PDF')
+
+    return correct_magic_number

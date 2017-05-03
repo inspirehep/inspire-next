@@ -36,8 +36,8 @@ from inspirehep.modules.workflows.tasks.refextract import extract_journal_info
 from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_author_list,
     arxiv_fulltext_download,
+    arxiv_package_download,
     arxiv_plot_extract,
-    arxiv_refextract,
     arxiv_derive_inspire_categories,
 )
 from inspirehep.modules.workflows.tasks.actions import (
@@ -52,7 +52,9 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_submission,
     is_arxiv_paper,
     mark,
-    prepare_update_payload
+    prepare_update_payload,
+    refextract,
+    submission_fulltext_download,
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -85,7 +87,6 @@ from inspirehep.modules.workflows.tasks.submission import (
     remove_references,
     reply_ticket,
     send_robotupload,
-    user_pdf_get,
     wait_webcoll,
 )
 
@@ -180,10 +181,18 @@ ENHANCE_RECORD = [
         is_arxiv_paper,
         [
             arxiv_fulltext_download,
+            arxiv_package_download,
             arxiv_plot_extract,
-            arxiv_refextract,
+            refextract,
             arxiv_derive_inspire_categories,
             arxiv_author_list("authorlist2marcxml.xsl"),
+        ]
+    ),
+    IF(
+        is_submission,
+        [
+            submission_fulltext_download,
+            refextract,
         ]
     ),
     extract_journal_info,
@@ -278,7 +287,6 @@ POSTENHANCE_RECORD = [
     add_note_entry,
     filter_keywords,
     prepare_keywords,
-    user_pdf_get,
     remove_references,
     prepare_files,
 ]

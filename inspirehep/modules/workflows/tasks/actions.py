@@ -27,12 +27,15 @@ from __future__ import absolute_import, division, print_function
 from functools import wraps
 
 from flask import current_app
+from werkzeug import secure_filename
 
-from inspirehep.modules.workflows.utils import log_workflows_action
+from inspirehep.modules.workflows.utils import log_workflows_action, get_pdf_in_workflow
 
 from inspirehep.utils.record import get_arxiv_id, get_value
+from inspirehep.utils.url import is_pdf_link
 
-from ..utils import with_debug_logging
+from ..utils import download_file_to_workflow, with_debug_logging
+from .refextract import extract_references
 
 
 def mark(key, value):
@@ -194,6 +197,23 @@ def is_submission(obj, eng):
     return False
 
 
+@with_debug_logging
+def submission_fulltext_download(obj, eng):
+    submission_pdf = obj.extra_data.get('submission_pdf')
+    if submission_pdf and is_pdf_link(submission_pdf):
+        filename = secure_filename("fulltext.pdf")
+        pdf = download_file_to_workflow(
+            workflow=obj,
+            name=filename,
+            url=submission_pdf
+        )
+        if pdf:
+            obj.log.info("PDF provided by user from {0}".format(submission_pdf))
+            return obj.files[filename].file.uri
+        else:
+            obj.log.info("Cannot fetch PDF provided by user from {0}".format(submission_pdf))
+
+
 def prepare_update_payload(extra_data_key="update_payload"):
     @with_debug_logging
     @wraps(prepare_update_payload)
@@ -204,3 +224,24 @@ def prepare_update_payload(extra_data_key="update_payload"):
         # FIXME: Just update entire record for now
         obj.extra_data[extra_data_key] = obj.data
     return _prepare_update_payload
+
+
+@with_debug_logging
+def refextract(obj, eng):
+    """Extract references from PDF.
+
+    :param obj: Workflow Object to process
+    :param eng: Workflow Engine processing the object
+    """
+    uri = get_pdf_in_workflow(obj)
+    if uri:
+        mapped_references = extract_references(uri)
+        if mapped_references:
+            obj.data["references"] = mapped_references
+            obj.log.info("Extracted {0} references".format(
+                len(mapped_references)
+            ))
+        else:
+            obj.log.info("No references extracted")
+    else:
+        obj.log.error("Not able to download and process the PDF")
