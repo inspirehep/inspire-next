@@ -55,7 +55,6 @@ def test_acronym_from_111__a_c_e_g_x_y():
     assert expected == result['acronym']
 
 
-@pytest.mark.xfail(reason='tuple produced instead')
 def test_acronym_from_111__a_c_d_double_e_g_x_y():
     schema = load_schema('conferences')
     subschema = schema['properties']['acronym']
@@ -76,6 +75,32 @@ def test_acronym_from_111__a_c_d_double_e_g_x_y():
     expected = [
         'IVC-11',
         'ICSS-7',
+    ]
+    result = conferences.do(create_record(snippet))
+
+    assert validate(result['acronym'], subschema) is None
+    assert expected == result['acronym']
+
+
+def test_acronym_from_111__a_c_double_e_g_x_y():
+    schema = load_schema('conferences')
+    subschema = schema['properties']['acronym']
+
+    snippet = (
+        '<datafield tag="111" ind1=" " ind2=" ">'
+        '  <subfield code="a">2013 IEEE Nuclear Science Symposium and Medical Imaging Conference and Workshop on Room-Temperature Semiconductor Detectors</subfield>'
+        '  <subfield code="c">Seoul, Korea</subfield>'
+        '  <subfield code="e">NSS/MIC 2013</subfield>'
+        '  <subfield code="e">RTSD 2013</subfield>'
+        '  <subfield code="g">C13-10-26</subfield>'
+        '  <subfield code="x">2013-10-26</subfield>'
+        '  <subfield code="y">2013-11-02</subfield>'
+        '</datafield>'
+    )  # record/1218346
+
+    expected = [
+        'NSS/MIC 2013',
+        'RTSD 2013',
     ]
     result = conferences.do(create_record(snippet))
 
