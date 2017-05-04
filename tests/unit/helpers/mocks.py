@@ -62,6 +62,9 @@ class MockFiles(object):
     def __contains__(self, item):
         return item in self.data
 
+    def __setitem__(self, key, value):
+        self.data[key] = {'key': key}
+
     @property
     def keys(self):
         return self.data.keys()
