@@ -40,6 +40,13 @@ env:
     - SUITE=disambiguation
     - SUITE=acceptance
     - SUITE=unit
+    - SUITE=integration_stable
+    - SUITE=workflows_stable
+    - SUITE=disambiguation_stable
+    - SUITE=acceptance_stable
+    - SUITE=pep8_stable
+    - SUITE=unit_stable
+
 
 matrix:
   fast_finish: true
@@ -58,7 +65,12 @@ before_install:
 install:
   - travis_retry docker-compose pull
   - travis_retry docker-compose build
-  - travis_retry docker-compose -f docker-compose.deps.yml run --rm pip
+  - if [[ $string == *"stable"* ]]; then echo should be stable else echo should be unstable fi
+  - if [[ $string == *"stable"* ]]; then
+        travis_retry docker-compose -f docker-compose.deps.yml run --rm pip_stable
+    else
+        travis_retry docker-compose -f docker-compose.deps.yml run --rm pip
+    fi
   - docker-compose -f docker-compose.deps.yml run --rm assets
 
 script:
