@@ -139,7 +139,6 @@ def test_prepare_files():
         ],
     }
     assert 'Non-user PDF files added to FFT.' == obj.log._info.getvalue()
-    assert '/data/foo.pdf' in obj.log._debug.getvalue()
 
 
 def test_prepare_files_annotates_files_from_arxiv():
@@ -177,7 +176,6 @@ def test_prepare_files_annotates_files_from_arxiv():
         ],
     }
     assert 'Non-user PDF files added to FFT.' == obj.log._info.getvalue()
-    assert '/data/foo.pdf' in obj.log._debug.getvalue()
 
 
 def test_prepare_files_skips_empty_files():
@@ -193,7 +191,6 @@ def test_prepare_files_skips_empty_files():
     assert prepare_files(obj, eng) is None
     assert obj.data == {}
     assert '' == obj.log._info.getvalue()
-    assert '' == obj.log._debug.getvalue()
 
 
 def test_prepare_files_does_nothing_when_obj_has_no_files():
@@ -207,7 +204,6 @@ def test_prepare_files_does_nothing_when_obj_has_no_files():
     assert prepare_files(obj, eng) is None
     assert obj.data == {}
     assert '' == obj.log._info.getvalue()
-    assert '' == obj.log._debug.getvalue()
 
 
 def test_prepare_files_ignores_keys_not_ending_with_pdf():
@@ -229,4 +225,3 @@ def test_prepare_files_ignores_keys_not_ending_with_pdf():
     assert prepare_files(obj, eng) is None
     assert obj.data == {}
     assert '' == obj.log._info.getvalue()
-    assert '' == obj.log._debug.getvalue()
