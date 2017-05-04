@@ -62,6 +62,9 @@ class MockFiles(object):
     def __contains__(self, item):
         return item in self.data
 
+    def __setitem__(self, key, value):
+        self.data[key] = {'key': key}
+
     @property
     def keys(self):
         return self.data.keys()
@@ -73,14 +76,14 @@ class MockLog(object):
         self._error = StringIO()
         self._info = StringIO()
 
-    def debug(self, message):
-        self._debug.write(message)
+    def debug(self, msg, *args, **kwargs):
+        self._debug.write(msg % args)
 
-    def error(self, message):
-        self._error.write(message)
+    def error(self, msg, *args, **kwargs):
+        self._error.write(msg % args)
 
-    def info(self, message):
-        self._info.write(message)
+    def info(self, msg, *args, **kwargs):
+        self._info.write(msg % args)
 
 
 class MockUser(object):
