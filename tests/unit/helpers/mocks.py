@@ -29,9 +29,9 @@ class MockEng(object):
     def __init__(self, data_type='hep'):
         self.workflow_definition = AttrDict(data_type=data_type)
 
-    def halt(self, action, msg):
-        self.action = action
+    def halt(self, msg='', action=None):
         self.msg = msg
+        self.action = action
 
 
 class MockObj(object):
