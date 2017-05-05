@@ -36,6 +36,7 @@ from inspirehep.modules.records.receivers import (
     populate_experiment_suggest,
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
+    populate_title_suggest
 )
 
 
@@ -871,3 +872,148 @@ def test_populate_affiliation_suggest_does_nothing_if_record_is_not_institution(
     populate_affiliation_suggest(None, record)
 
     assert 'affiliation_suggest' not in record
+
+
+def test_populate_title_suggest_with_all_inputs():
+    schema = load_schema('journals')
+    subschema_journal_titles = schema['properties']['journal_titles']
+    subschema_short_titles = schema['properties']['short_titles']
+    subschema_title_variants = schema['properties']['title_variants']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/journals.json',
+        'journal_titles': [{'title': 'The Journal of High Energy Physics (JHEP)'}],
+        'short_titles': [{'title': 'JHEP'}],
+        'title_variants': [{'title': 'JOURNAL OF HIGH ENERGY PHYSICS'}],
+    }
+    assert validate(record['journal_titles'], subschema_journal_titles) is None
+    assert validate(record['short_titles'], subschema_short_titles) is None
+    assert validate(record['title_variants'], subschema_title_variants) is None
+
+    populate_title_suggest(None, record)
+
+    expected = {
+        'input': [
+            'The Journal of High Energy Physics (JHEP)',
+            'JHEP',
+            'JOURNAL OF HIGH ENERGY PHYSICS'
+        ],
+        'output': 'JHEP',
+        'payload': {
+            'full_title': 'The Journal of High Energy Physics (JHEP)'
+        }
+    }
+
+    result = record['title_suggest']
+
+    assert expected == result
+
+
+def test_populate_title_suggest_without_short_titles():
+    schema = load_schema('journals')
+    subschema_journal_titles = schema['properties']['journal_titles']
+    subschema_short_titles = schema['properties']['short_titles']
+    subschema_title_variants = schema['properties']['title_variants']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/journals.json',
+        'journal_titles': [{'title': 'The Journal of High Energy Physics (JHEP)'}],
+        'short_titles': [],
+        'title_variants': [{'title': 'JOURNAL OF HIGH ENERGY PHYSICS'}],
+    }
+    assert validate(record['journal_titles'], subschema_journal_titles) is None
+    assert validate(record['short_titles'], subschema_short_titles) is None
+    assert validate(record['title_variants'], subschema_title_variants) is None
+
+    populate_title_suggest(None, record)
+
+    expected = {
+        'input': [
+            'The Journal of High Energy Physics (JHEP)',
+            'JOURNAL OF HIGH ENERGY PHYSICS'
+        ],
+        'output': '',
+        'payload': {
+            'full_title': 'The Journal of High Energy Physics (JHEP)'
+        }
+    }
+
+    result = record['title_suggest']
+
+    assert expected == result
+
+
+def test_populate_title_suggest_without_title_variants():
+    schema = load_schema('journals')
+    subschema_journal_titles = schema['properties']['journal_titles']
+    subschema_short_titles = schema['properties']['short_titles']
+    subschema_title_variants = schema['properties']['title_variants']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/journals.json',
+        'journal_titles': [{'title': 'The Journal of High Energy Physics (JHEP)'}],
+        'short_titles': [{'title': 'JHEP'}],
+        'title_variants': [],
+    }
+    assert validate(record['journal_titles'], subschema_journal_titles) is None
+    assert validate(record['short_titles'], subschema_short_titles) is None
+    assert validate(record['title_variants'], subschema_title_variants) is None
+
+    populate_title_suggest(None, record)
+
+    expected = {
+        'input': [
+            'The Journal of High Energy Physics (JHEP)',
+            'JHEP'
+        ],
+        'output': 'JHEP',
+        'payload': {
+            'full_title': 'The Journal of High Energy Physics (JHEP)'
+        }
+    }
+
+    result = record['title_suggest']
+
+    assert expected == result
+
+
+def test_populate_title_suggest_without_full_title():
+    schema = load_schema('journals')
+    subschema_journal_titles = schema['properties']['journal_titles']
+    subschema_short_titles = schema['properties']['short_titles']
+    subschema_title_variants = schema['properties']['title_variants']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/journals.json',
+        'journal_titles': [],
+        'short_titles': [{'title': 'JHEP'}],
+        'title_variants': [{'title': 'JOURNAL OF HIGH ENERGY PHYSICS'}],
+    }
+    assert validate(record['journal_titles'], subschema_journal_titles) is None
+    assert validate(record['short_titles'], subschema_short_titles) is None
+    assert validate(record['title_variants'], subschema_title_variants) is None
+
+    populate_title_suggest(None, record)
+
+    expected = {
+        'input': [
+            "JHEP",
+            "JOURNAL OF HIGH ENERGY PHYSICS"
+        ],
+        'output': 'JHEP',
+        'payload': {
+            'full_title': ''
+        }
+    }
+
+    result = record['title_suggest']
+
+    assert expected == result
+
+
+def test_populate_title_suggest_does_nothing_if_record_is_not_journal():
+    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
+
+    populate_title_suggest(None, record)
+
+    assert 'title_suggest' not in record

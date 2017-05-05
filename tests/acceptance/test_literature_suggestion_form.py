@@ -167,7 +167,7 @@ def test_journal_info_autocomplete_title(login):
     create_literature.go_to()
     assert create_literature.write_journal_title(
         'Nuc',
-        'Nuclear Physics',
+        'Nucl.Phys.',
     ).has_error()
 
 
