@@ -1372,8 +1372,8 @@ ARXIV_PDF_URL = "http://arxiv.org/pdf/{arxiv_id}"
 ARXIV_TARBALL_URL = "http://arxiv.org/e-print/{arxiv_id}"
 
 ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY = [
-    'astro-ph.co',
-    'astro-ph.he',
+    'astro-ph.CO',
+    'astro-ph.HE',
     'gr-qc',
     'hep-ex',
     'hep-lat',

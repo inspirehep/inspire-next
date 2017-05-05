@@ -53,6 +53,25 @@ def test_is_being_harvested_on_legacy_returns_true_when_there_is_one_core_catego
     assert is_being_harvested_on_legacy(record)
 
 
+def test_is_being_harvested_on_legacy_uses_the_correct_capitalization():
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    record = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'astro-ph.CO',
+                ],
+                'value': '1705.00502',
+            },
+        ],
+    }
+    assert validate(record['arxiv_eprints'], subschema) is None
+
+    assert is_being_harvested_on_legacy(record)
+
+
 def test_is_being_harvested_on_legacy_returns_false_otherwise():
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
@@ -61,12 +80,9 @@ def test_is_being_harvested_on_legacy_returns_false_otherwise():
         'arxiv_eprints': [
             {
                 'categories': [
-                    'astro-ph.IM',
-                    'astro-ph.CO',
-                    'cs.DS',
-                    'stat.ML',
+                    'math.CO',
                 ],
-                'value': '1609.03932',
+                'value': '1705.01122',
             },
         ],
     }
@@ -116,12 +132,9 @@ def test_already_harvested_returns_false_otherwise():
         'arxiv_eprints': [
             {
                 'categories': [
-                    'astro-ph.IM',
-                    'astro-ph.CO',
-                    'cs.DS',
-                    'stat.ML',
+                    'math.CO',
                 ],
-                'value': '1609.03932',
+                'value': '1705.01122',
             },
         ],
     }
