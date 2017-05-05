@@ -110,13 +110,13 @@ class MockLog(object):
         self._info = StringIO()
 
     def debug(self, msg, *args, **kwargs):
-        self._debug.write(msg % args)
+        self._debug.write(msg % args if args else msg)
 
     def error(self, msg, *args, **kwargs):
-        self._error.write(msg % args)
+        self._error.write(msg % args if args else msg)
 
     def info(self, msg, *args, **kwargs):
-        self._info.write(msg % args)
+        self._info.write(msg % args if args else msg)
 
 
 class MockUser(object):
