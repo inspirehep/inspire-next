@@ -67,6 +67,7 @@ def enhance_record(sender, json, *args, **kwargs):
     populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_affiliation_suggest(sender, json, *args, **kwargs)
+    populate_title_suggest(sender, json, *args, **kwargs)
     after_record_enhanced.send(json)
 
 
@@ -304,6 +305,29 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
                     'legacy_ICN': legacy_ICN,
                 },
             },
+        })
+
+
+def populate_title_suggest(sender, json, *args, **kwargs):
+    """Populate title_suggest field of Journals records."""
+    if 'journals.json' in json.get('$schema'):
+        input_values = []
+
+        journal_titles = get_value(json, 'journal_titles.title', [])
+        short_titles = get_value(json, 'short_titles.title', [])
+        title_variants = get_value(json, 'title_variants.title', [])
+        input_values.extend(journal_titles)
+        input_values.extend(short_titles)
+        input_values.extend(title_variants)
+
+        json.update({
+            'title_suggest': {
+                'input': input_values,
+                'output': short_titles[0] if short_titles else '',
+                'payload': {
+                    'full_title': journal_titles[0] if journal_titles else ''
+                }
+            }
         })
 
 
