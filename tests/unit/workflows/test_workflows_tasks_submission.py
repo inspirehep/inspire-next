@@ -31,12 +31,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     prepare_files,
 )
 
-from mocks import AttrDict, MockEng, MockFiles, MockObj, MockUser
-
-
-class StubRTInstance(object):
-    def create_ticket(self, **kwargs):
-        return 1
+from mocks import AttrDict, MockEng, MockFiles, MockObj, MockUser, MockRT
 
 
 @patch('inspirehep.modules.workflows.tasks.submission.User')
@@ -71,7 +66,7 @@ def test_create_ticket_handles_unicode_when_not_in_production_mode(r_t, user):
 def test_create_ticket_handles_unicode_when_in_production_mode(g_i, r_t, user):
     user.query.get.return_value = MockUser('user@example.com')
     r_t.return_value = u'φοο'
-    g_i.return_value = StubRTInstance()
+    g_i.return_value = MockRT()
 
     config = {'PRODUCTION_MODE': True}
 

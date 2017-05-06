@@ -123,6 +123,11 @@ class MockLog(object):
         self._warning.write(msg % args if args else msg)
 
 
+class MockRT(object):
+    def create_ticket(self, **kwargs):
+        return 1
+
+
 class MockUser(object):
     def __init__(self, email, roles=[]):
         self.email = email
