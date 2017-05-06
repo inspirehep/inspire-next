@@ -34,9 +34,12 @@ from retrying import retry
 
 from invenio_accounts.models import User
 
-from ..utils import with_debug_logging
-from ....utils.tickets import get_instance, retry_if_connection_problems
+from inspirehep.dojson.utils import legacy_export_as_marc
+from inspirehep.utils.robotupload import make_robotupload_marcxml
+from inspirehep.utils.tickets import get_instance, retry_if_connection_problems
+
 from .actions import in_production_mode, is_arxiv_paper
+from ..utils import with_debug_logging
 
 
 LOGGER = logging.getLogger(__name__)
@@ -131,8 +134,6 @@ def reply_ticket(template=None,
     @with_debug_logging
     @wraps(reply_ticket)
     def _reply_ticket(obj, eng):
-        from inspirehep.utils.tickets import get_instance
-
         ticket_id = obj.extra_data.get("ticket_id", "")
         if not ticket_id:
             obj.log.error("No ticket ID found!")
@@ -194,8 +195,6 @@ def close_ticket(ticket_id_key="ticket_id"):
     @with_debug_logging
     @wraps(close_ticket)
     def _close_ticket(obj, eng):
-        from inspirehep.utils.tickets import get_instance
-
         ticket_id = obj.extra_data.get(ticket_id_key, "")
         if not ticket_id:
             obj.log.error("No ticket ID found!")
@@ -241,9 +240,6 @@ def send_robotupload(
     @with_debug_logging
     @wraps(send_robotupload)
     def _send_robotupload(obj, eng):
-        from inspirehep.dojson.utils import legacy_export_as_marc
-        from inspirehep.utils.robotupload import make_robotupload_marcxml
-
         combined_callback_url = ''
         if callback_url:
             combined_callback_url = os.path.join(
