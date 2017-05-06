@@ -124,8 +124,32 @@ class MockLog(object):
 
 
 class MockRT(object):
+    def __init__(self):
+        self.last_id = 0
+        self.tickets = {}
+
     def create_ticket(self, **kwargs):
-        return 1
+        self.last_id += 1
+        kwargs.update({'ticket_id': self.last_id})
+        self.tickets[self.last_id] = kwargs
+        return self.last_id
+
+    def edit_ticket(self, ticket_id, **kwargs):
+        try:
+            ticket = self.tickets[ticket_id]
+            if ticket['Status'] == 'resolved':
+                raise KeyError
+        except KeyError:
+            raise IndexError
+
+        ticket.update(kwargs)
+
+    def get_ticket(self, ticket_id):
+        return self.tickets[ticket_id]
+
+    def reply(self, ticket_id, **kwargs):
+        kwargs.update({'Status': 'acknowledged'})
+        self.tickets[ticket_id].update(kwargs)
 
 
 class MockUser(object):
