@@ -26,16 +26,20 @@ from six import StringIO
 
 
 class MockEng(object):
+    def __init__(self, data_type='hep'):
+        self.workflow_definition = AttrDict(data_type=data_type)
+
     def halt(self, action, msg):
         self.action = action
         self.msg = msg
 
 
 class MockObj(object):
-    def __init__(self, data, extra_data, files=None, id=1, id_user=1):
+    def __init__(self, data, extra_data, data_type='hep', files=None, id=1, id_user=1):
         self.data = data
         self.extra_data = extra_data
 
+        self.data_type = data_type
         self.files = files
         self.id = id
         self.id_user = id_user

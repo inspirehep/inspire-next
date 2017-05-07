@@ -50,9 +50,8 @@ def test_create_ticket_handles_unicode_when_not_in_production_mode(r_t, user):
     with patch.dict(current_app.config, config):
         data = {}
         extra_data = {}
-        files = MockFiles({})
 
-        obj = MockObj(data, extra_data, files)
+        obj = MockObj(data, extra_data)
         eng = MockEng()
 
         _create_ticket = create_ticket(None)
@@ -79,9 +78,8 @@ def test_create_ticket_handles_unicode_when_in_production_mode(g_i, r_t, user):
     with patch.dict(current_app.config, config):
         data = {}
         extra_data = {}
-        files = MockFiles({})
 
-        obj = MockObj(data, extra_data, files)
+        obj = MockObj(data, extra_data)
         eng = MockEng()
 
         _create_ticket = create_ticket(None)
@@ -98,9 +96,8 @@ def test_add_note_entry_does_not_add_value_that_is_already_present():
         ],
     }
     extra_data = {'core': 'something'}
-    files = MockFiles({})
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data)
     eng = MockEng()
 
     assert add_note_entry(obj, eng) is None
@@ -124,7 +121,7 @@ def test_prepare_files():
         }),
     })
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     assert prepare_files(obj, eng) is None
@@ -158,7 +155,7 @@ def test_prepare_files_annotates_files_from_arxiv():
         }),
     })
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     assert prepare_files(obj, eng) is None
@@ -185,7 +182,7 @@ def test_prepare_files_skips_empty_files():
         'foo.pdf': AttrDict({}),
     })
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     assert prepare_files(obj, eng) is None
@@ -198,7 +195,7 @@ def test_prepare_files_does_nothing_when_obj_has_no_files():
     extra_data = {}
     files = MockFiles({})
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     assert prepare_files(obj, eng) is None
@@ -219,7 +216,7 @@ def test_prepare_files_ignores_keys_not_ending_with_pdf():
         }),
     })
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     assert prepare_files(obj, eng) is None

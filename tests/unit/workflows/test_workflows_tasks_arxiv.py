@@ -70,7 +70,7 @@ def test_arxiv_fulltext_download_logs_on_success():
     files = MockFiles({})
     assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     assert arxiv_fulltext_download(obj, eng) is None
@@ -103,7 +103,7 @@ def test_arxiv_fulltext_download_logs_on_error():
     files = MockFiles({})
     assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     assert arxiv_fulltext_download(obj, eng) is None
@@ -140,7 +140,7 @@ def test_arxiv_package_download_logs_on_success():
     files = MockFiles({})
     assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     assert arxiv_package_download(obj, eng) is None
@@ -173,7 +173,7 @@ def test_arxiv_package_download_logs_on_error():
     files = MockFiles({})
     assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     assert arxiv_package_download(obj, eng) is None
@@ -212,7 +212,7 @@ def test_arxiv_plot_extract_populates_files_with_plots(mock_os):
     })
     assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     try:
@@ -265,7 +265,7 @@ def test_arxiv_plot_extract_logs_when_tarball_is_invalid(mock_process_tarball):
     })
     assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     assert arxiv_plot_extract(obj, eng) is None
@@ -303,7 +303,7 @@ def test_arxiv_plot_extract_logs_when_images_are_invalid(mock_process_tarball):
     })
     assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     assert arxiv_plot_extract(obj, eng) is None
@@ -465,7 +465,7 @@ def test_arxiv_author_list_handles_auto_ignore_comment(mock_os):
     })
     assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     default_arxiv_author_list = arxiv_author_list()
@@ -507,7 +507,7 @@ def test_arxiv_author_list_logs_on_error(mock_os, mock_untar):
     })
     assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files)
+    obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
     default_arxiv_author_list = arxiv_author_list()
