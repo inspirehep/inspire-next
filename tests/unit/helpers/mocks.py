@@ -108,6 +108,7 @@ class MockLog(object):
         self._debug = StringIO()
         self._error = StringIO()
         self._info = StringIO()
+        self._warning = StringIO()
 
     def debug(self, msg, *args, **kwargs):
         self._debug.write(msg % args if args else msg)
@@ -117,6 +118,9 @@ class MockLog(object):
 
     def info(self, msg, *args, **kwargs):
         self._info.write(msg % args if args else msg)
+
+    def warning(self, msg, *args, **kwargs):
+        self._warning.write(msg % args if args else msg)
 
 
 class MockUser(object):
