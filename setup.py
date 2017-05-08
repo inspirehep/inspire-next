@@ -139,7 +139,7 @@ extras_require = {
         'gunicorn',
     ],
     'crawler': [
-        'hepcrawl>=0.3.4',
+        'hepcrawl>=0.3.4,<0.3.8',
     ],
     'tests': tests_require,
     'development': [
