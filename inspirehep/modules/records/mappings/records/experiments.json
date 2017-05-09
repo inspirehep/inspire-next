@@ -13,6 +13,9 @@
                 "_collections": {
                     "type": "string"
                 },
+                "_full_ingestion": {
+                    "type": "boolean"
+                },
                 "_private_notes": {
                     "properties": {
                         "source": {
@@ -25,15 +28,9 @@
                     "type": "object"
                 },
                 "accelerator": {
-                    "type": "string"
-                },
-                "affiliations": {
                     "properties": {
                         "curated_relation": {
                             "type": "boolean"
-                        },
-                        "name": {
-                            "type": "string"
                         },
                         "recid": {
                             "type": "integer"
@@ -45,22 +42,33 @@
                                 }
                             },
                             "type": "object"
+                        },
+                        "value": {
+                            "type": "string"
                         }
                     },
                     "type": "object"
                 },
                 "collaboration": {
-                    "type": "string"
-                },
-                "collaboration_alternative_names": {
-                    "type": "string"
-                },
-                "contact_details": {
                     "properties": {
-                        "email": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "subgroup_names": {
                             "type": "string"
                         },
-                        "name": {
+                        "value": {
                             "type": "string"
                         }
                     },
@@ -69,7 +77,7 @@
                 "control_number": {
                     "type": "integer"
                 },
-                "curated_relation": {
+                "core": {
                     "type": "boolean"
                 },
                 "date_approved": {
@@ -104,16 +112,16 @@
                 "description": {
                     "type": "string"
                 },
-                "experiment_names": {
+                "experiment": {
                     "properties": {
-                        "source": {
-                            "type": "string"
-                        },
-                        "subtitle": {
-                            "type": "string"
-                        },
-                        "title": {
+                        "legacy_name": {
                             "copy_to": "experimentautocomplete",
+                            "type": "string"
+                        },
+                        "short_name": {
+                            "type": "string"
+                        },
+                        "value": {
                             "type": "string"
                         }
                     },
@@ -137,12 +145,6 @@
                     },
                     "type": "object"
                 },
-                "free_keywords": {
-                    "type": "string"
-                },
-                "hidden_note": {
-                    "type": "string"
-                },
                 "inspire_categories": {
                     "properties": {
                         "source": {
@@ -154,7 +156,38 @@
                     },
                     "type": "object"
                 },
+                "inspire_classification": {
+                    "type": "string"
+                },
+                "institution": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
                 "legacy_creation_date": {
+                    "type": "string"
+                },
+                "long_name": {
+                    "type": "string"
+                },
+                "name_variants": {
                     "type": "string"
                 },
                 "new_recid": {
@@ -168,19 +201,8 @@
                     },
                     "type": "object"
                 },
-                "other_experiment_names": {
-                    "properties": {
-                        "source": {
-                            "type": "string"
-                        },
-                        "subtitle": {
-                            "type": "string"
-                        },
-                        "title": {
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
+                "project_type": {
+                    "type": "string"
                 },
                 "public_notes": {
                     "properties": {
@@ -198,9 +220,6 @@
                         "curated_relation": {
                             "type": "boolean"
                         },
-                        "name": {
-                            "type": "string"
-                        },
                         "recid": {
                             "type": "integer"
                         },
@@ -213,6 +232,9 @@
                             "type": "object"
                         },
                         "relation": {
+                            "type": "string"
+                        },
+                        "value": {
                             "type": "string"
                         }
                     },
@@ -228,62 +250,6 @@
                 },
                 "self_recid": {
                     "type": "integer"
-                },
-                "spokespersons": {
-                    "properties": {
-                        "curated_relation": {
-                            "type": "boolean"
-                        },
-                        "current": {
-                            "type": "boolean"
-                        },
-                        "end_date": {
-                            "type": "string"
-                        },
-                        "ids": {
-                            "properties": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "value": {
-                                    "type": "string"
-                                }
-                            },
-                            "type": "object"
-                        },
-                        "name": {
-                            "type": "string"
-                        },
-                        "recid": {
-                            "type": "integer"
-                        },
-                        "record": {
-                            "properties": {
-                                "$ref": {
-                                    "type": "string"
-                                }
-                            },
-                            "type": "object"
-                        },
-                        "start_date": {
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
-                "titles": {
-                    "properties": {
-                        "source": {
-                            "type": "string"
-                        },
-                        "subtitle": {
-                            "type": "string"
-                        },
-                        "title": {
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
                 },
                 "urls": {
                     "properties": {

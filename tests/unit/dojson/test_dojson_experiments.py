@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
+
 from dojson.contrib.marc21.utils import create_record
 
 from inspire_schemas.utils import load_schema
@@ -29,165 +31,134 @@ from inspirehep.dojson.experiments import experiments
 from inspirehep.dojson.utils import validate
 
 
-def test_contact_details_from_marcxml_270_single_p_single_m():
+def test_dates_from_046__q_s_and_046__r():
     schema = load_schema('experiments')
-    subschema = schema['properties']['contact_details']
+    date_proposed_schema = schema['properties']['date_proposed']
+    date_approved_schema = schema['properties']['date_approved']
+    date_started_schema = schema['properties']['date_started']
 
     snippet = (
-        '<datafield tag="270" ind1=" " ind2=" ">'
-        '  <subfield code="m">lindner@mpi-hd.mpg.de</subfield>'
-        '  <subfield code="p">Manfred Lindner</subfield>'
+        '<record>'
+        '  <datafield tag="046" ind1=" " ind2=" ">'
+        '    <subfield code="q">2009-08-19</subfield>'
+        '    <subfield code="s">2009-11-30</subfield>'
+        '  </datafield>'
+        '  <datafield tag="046" ind1=" " ind2=" ">'
+        '    <subfield code="r">2009-10-08</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1318099
+
+    expected_date_proposed = '2009-08-19'
+    expected_date_approved = '2009-10-08'
+    expected_date_started = '2009-11-30'
+    result = experiments.do(create_record(snippet))
+
+    assert validate(result['date_proposed'], date_proposed_schema) is None
+    assert expected_date_proposed == result['date_proposed']
+
+    assert validate(result['date_approved'], date_approved_schema) is None
+    assert expected_date_approved == result['date_approved']
+
+    assert validate(result['date_started'], date_started_schema) is None
+    assert expected_date_started == result['date_started']
+
+
+def test_dates_from_046__q_and_046__r_and_046__x():
+    schema = load_schema('experiments')
+    date_proposed_schema = schema['properties']['date_proposed']
+    date_approved_schema = schema['properties']['date_approved']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="046" ind1=" " ind2=" ">'
+        '    <subfield code="q">2010</subfield>'
+        '  </datafield>'
+        '  <datafield tag="046" ind1=" " ind2=" ">'
+        '    <subfield code="r">2011-03-18</subfield>'
+        '  </datafield>'
+        '  <datafield tag="046" ind1=" " ind2=" ">'
+        '    <subfield code="x">yes</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1108188
+
+    expected_date_proposed = '2010'
+    expected_date_approved = '2011-03-18'
+    result = experiments.do(create_record(snippet))
+
+    assert validate(result['date_proposed'], date_proposed_schema) is None
+    assert expected_date_proposed == result['date_proposed']
+
+    assert validate(result['date_approved'], date_approved_schema) is None
+    assert expected_date_approved == result['date_approved']
+
+
+def test_dates_from_046__s_and_046__t_and_046__x():
+    schema = load_schema('experiments')
+    date_started_schema = schema['properties']['date_started']
+    date_completed_schema = schema['properties']['date_completed']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="046" ind1=" " ind2=" ">'
+        '    <subfield code="s">1996</subfield>'
+        '  </datafield>'
+        '  <datafield tag="046" ind1=" " ind2=" ">'
+        '    <subfield code="t">2002</subfield>'
+        '  </datafield>'
+        '  <datafield tag="046" ind1=" " ind2=" ">'
+        '    <subfield code="x">yes</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1108324
+
+    expected_date_started = '1996'
+    expected_date_completed = '2002'
+    result = experiments.do(create_record(snippet))
+
+    assert validate(result['date_started'], date_started_schema) is None
+    assert expected_date_started == result['date_started']
+
+    assert validate(result['date_completed'], date_completed_schema) is None
+    assert expected_date_completed == result['date_completed']
+
+
+def test_experiment_and_institution_from_119__a_u_z():
+    schema = load_schema('experiments')
+    experiment_schema = schema['properties']['experiment']
+    institution_schema = schema['properties']['institution']
+
+    snippet = (
+        '<datafield tag="119" ind1=" " ind2=" ">'
+        '  <subfield code="a">CERN-ALPHA</subfield>'
+        '  <subfield code="u">CERN</subfield>'
+        '  <subfield code="z">902725</subfield>'
         '</datafield>'
-    )
-
-    expected = [
-        {
-            'name': 'Manfred Lindner',
-            'email': 'lindner@mpi-hd.mpg.de',
-        },
-    ]
-    result = experiments.do(create_record(snippet))
-
-    assert validate(result['contact_details'], subschema) is None
-    assert expected == result['contact_details']
-
-
-def test_contact_details_from_marcxml_270_double_p_single_m():
-    schema = load_schema('experiments')
-    subschema = schema['properties']['contact_details']
-
-    snippet = (
-        '<record> '
-        '  <datafield tag="270" ind1=" " ind2=" ">'
-        '    <subfield code="m">lindner@mpi-hd.mpg.de</subfield>'
-        '    <subfield code="p">Manfred Lindner</subfield>'
-        '    <subfield code="p">Boogeyman</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    expected = [
-        {
-            'email': 'lindner@mpi-hd.mpg.de',
-        },
-    ]
-    result = experiments.do(create_record(snippet))
-
-    assert validate(result['contact_details'], subschema) is None
-    assert expected == result['contact_details']
-
-
-def test_contact_details_from_marcxml_270_single_p_double_m():
-    schema = load_schema('experiments')
-    subschema = schema['properties']['contact_details']
-
-    snippet = (
-        '<record> '
-        '  <datafield tag="270" ind1=" " ind2=" ">'
-        '    <subfield code="m">lindner@mpi-hd.mpg.de</subfield>'
-        '    <subfield code="m">lindner@ecmrecords.com</subfield>'
-        '    <subfield code="p">Manfred Lindner</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    expected = [
-        {
-            'name': 'Manfred Lindner'
-        },
-    ]
-    result = experiments.do(create_record(snippet))
-
-    assert validate(result['contact_details'], subschema) is None
-    assert expected == result['contact_details']
-
-
-def test_contact_details_from_multiple_marcxml_270():
-    schema = load_schema('experiments')
-    subschema = schema['properties']['contact_details']
-
-    snippet = (
-        '<record> '
-        '  <datafield tag="270" ind1=" " ind2=" ">'
-        '    <subfield code="m">lindner@mpi-hd.mpg.de</subfield>'
-        '    <subfield code="p">Manfred Lindner</subfield>'
-        '  </datafield>'
-        '  <datafield tag="270" ind1=" " ind2=" ">'
-        '    <subfield code="p">Wynton Marsalis</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    expected = [
-        {
-            'name': 'Manfred Lindner',
-            'email': 'lindner@mpi-hd.mpg.de',
-        },
-        {
-            'name': 'Wynton Marsalis',
-        },
-    ]
-    result = experiments.do(create_record(snippet))
-
-    assert validate(result['contact_details'], subschema) is None
-    assert expected == result['contact_details']
-
-
-def test_experiment_names_from_marcxml_119():
-    schema = load_schema('experiments')
-    subschema = schema['properties']['experiment_names']
-
-    snippet = (
-        '<record>'
-        '  <datafield tag="119" ind1=" " ind2=" ">'
-        '    <subfield code="a">CERN-ALPHA</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    expected = [
-        {
-            'title': 'CERN-ALPHA',
-        },
-    ]
-    result = experiments.do(create_record(snippet))
-
-    assert validate(result['experiment_names'], subschema) is None
-    assert expected == result['experiment_names']
-
-
-def test_experiment_names_and_affiliations_from_marcxml_119():
-    schema = load_schema('experiments')
-    subschema = schema['properties']['experiment_names']
-
-    snippet = (
-        '<record>'
-        '  <datafield tag="119" ind1=" " ind2=" ">'
-        '    <subfield code="a">CERN-ALPHA</subfield>'
-        '    <subfield code="u">CERN</subfield>'
-        '    <subfield code="z">902725</subfield>'
-        '  </datafield>'
-        '</record>'
     )  # record/1108206
 
+    expected_experiment = {'legacy_name': 'CERN-ALPHA'}
+    expected_institution = {
+        'curated_relation': True,
+        'record': {
+            '$ref': 'http://localhost:5000/api/institutions/902725',
+        },
+        'value': 'CERN',
+    }
     result = experiments.do(create_record(snippet))
 
-    assert validate(result['experiment_names'], subschema) is None
-    assert result['experiment_names'] == [{'title': 'CERN-ALPHA'}]
-    assert result['affiliations'] == [
-        {
-            'curated_relation': True,
-            'name': 'CERN',
-            'record': {
-                '$ref': 'http://localhost:5000/api/institutions/902725',
-            },
-        },
-    ]
+    assert validate(result['experiment'], experiment_schema) is None
+    assert expected_experiment == result['experiment']
+
+    assert validate(result['institution'], institution_schema) is None
+    assert expected_institution == result['institution']
 
 
-def test_experiment_names_and_affiliations_from_marcxml_multiple_119():
+@pytest.mark.xfail(reason='needs schema 35')
+def test_experiment_and_institution_from_119__a_and_multiple_119__u_z():
     schema = load_schema('experiments')
-    subschema = schema['properties']['experiment_names']
+    experiment_schema = schema['properties']['experiment']
+    institution_schema = schema['properties']['institution']
 
     snippet = (
         '<record>'
@@ -196,66 +167,102 @@ def test_experiment_names_and_affiliations_from_marcxml_multiple_119():
         '  </datafield>'
         '  <datafield tag="119" ind1=" " ind2=" ">'
         '    <subfield code="u">Cambridge U.</subfield>'
+        '    <subfield code="z">902712</subfield>'
         '  </datafield>'
         '  <datafield tag="119" ind1=" " ind2=" ">'
         '    <subfield code="u">Edinburgh U.</subfield>'
         '    <subfield code="z">902787</subfield>'
         '  </datafield>'
         '  <datafield tag="119" ind1=" " ind2=" ">'
+        '    <subfield code="u">Glasgow U.</subfield>'
+        '    <subfield code="z">902823</subfield>'
+        '  </datafield>'
+        '  <datafield tag="119" ind1=" " ind2=" ">'
+        '    <subfield code="u">Liverpool U.</subfield>'
+        '    <subfield code="z">902964</subfield>'
+        '  </datafield>'
+        '  <datafield tag="119" ind1=" " ind2=" ">'
+        '    <subfield code="u">Oxford U.</subfield>'
+        '    <subfield code="z">903112</subfield>'
+        '  </datafield>'
+        '  <datafield tag="119" ind1=" " ind2=" ">'
+        '    <subfield code="u">Plymouth U.</subfield>'
+        '    <subfield code="z">905043</subfield>'
+        '  </datafield>'
+        '  <datafield tag="119" ind1=" " ind2=" ">'
+        '    <subfield code="u">Southampton U.</subfield>'
+        '    <subfield code="z">903212</subfield>'
+        '  </datafield>'
+        '  <datafield tag="119" ind1=" " ind2=" ">'
         '    <subfield code="u">Swansea U.</subfield>'
+        '    <subfield code="z">903240</subfield>'
         '  </datafield>'
         '</record>'
     )  # record/1228417
 
+    expected_experiment = {'legacy_name': 'LATTICE-UKQCD'}
+    expected_institution = {}
     result = experiments.do(create_record(snippet))
 
-    assert validate(result['experiment_names'], subschema) is None
-    assert result['experiment_names'] == [{'title': 'LATTICE-UKQCD'}]
-    assert result['affiliations'] == [
-        {
-            'curated_relation': False,
-            'name': 'Cambridge U.'
-        },
-        {
-            'curated_relation': True,
-            'name': 'Edinburgh U.',
-            'record': {
-                '$ref': 'http://localhost:5000/api/institutions/902787',
-            },
-        },
-        {
-            'curated_relation': False,
-            'name': 'Swansea U.'
-        }
-    ]
+    assert validate(result['experiment'], experiment_schema) is None
+    assert expected_experiment == result['experiment']
+
+    assert validate(result['institution'], institution_schema) is None
+    assert expected_institution == result['institution']
 
 
-def test_titles_from_marcxml_245():
+def test_long_name_from_245__a():
     schema = load_schema('experiments')
-    subschema = schema['properties']['titles']
+    subschema = schema['properties']['long_name']
 
     snippet = (
-        '<record>'
-        '  <datafield tag="245" ind1=" " ind2=" ">'
-        '    <subfield code="a">The ALPHA experiment</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
+        '<datafield tag="245" ind1=" " ind2=" ">'
+        '  <subfield code="a">The ALPHA experiment</subfield>'
+        '</datafield>'
+    )  # record/1108206
+
+    expected = 'The ALPHA experiment'
+    result = experiments.do(create_record(snippet))
+
+    assert validate(result['long_name'], subschema) is None
+    assert expected == result['long_name']
+
+
+def test_inspire_classification_from_372__a_9():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['inspire_classification']
+
+    snippet = (
+        '<datafield tag="372" ind1=" " ind2=" ">'
+        '  <subfield code="9">INSPIRE</subfield>'
+        '  <subfield code="a">5.3</subfield>'
+        '</datafield>'
+    )  # record/1110577
 
     expected = [
-        {
-            'title': 'The ALPHA experiment',
-        },
+        '5.3',
     ]
     result = experiments.do(create_record(snippet))
 
-    assert validate(result['titles'], subschema) is None
-    assert expected == result['titles']
+    assert validate(result['inspire_classification'], subschema) is None
+    assert expected == result['inspire_classification']
 
 
-def test_titles_from_419__a():
+def test_inspire_classification_from_372__a_ignores_non_numerical_values():
+    snippet = (
+        '<datafield tag="372" ind1=" " ind2=" ">'
+        '  <subfield code="a">ATLAS</subfield>'
+        '</datafield>'
+    )  # record/1108515
+
+    result = experiments.do(create_record(snippet))
+
+    assert 'inspire_classification' not in result
+
+
+def test_name_variants_from_419__a():
     schema = load_schema('experiments')
-    subschema = schema['properties']['titles']
+    subschema = schema['properties']['name_variants']
 
     snippet = (
         '<datafield tag="419" ind1=" " ind2=" ">'
@@ -264,17 +271,18 @@ def test_titles_from_419__a():
     )  # record/1108206
 
     expected = [
-        {'title': 'ALPHA'},
+        'ALPHA',
     ]
     result = experiments.do(create_record(snippet))
 
-    assert validate(result['titles'], subschema) is None
-    assert expected == result['titles']
+    assert validate(result['name_variants'], subschema) is None
+    assert expected == result['name_variants']
 
 
-def test_titles_from_245__a_and_419__a():
+def test_long_name_and_name_variants_from_245__a_and_419__a():
     schema = load_schema('experiments')
-    subschema = schema['properties']['titles']
+    long_name_schema = schema['properties']['long_name']
+    name_variants_schema = schema['properties']['name_variants']
 
     snippet = (
         '<record>'
@@ -287,14 +295,17 @@ def test_titles_from_245__a_and_419__a():
         '</record>'
     )  # record/1275752
 
-    expected = [
-        {'title': r'Proposal to measure the very rare kaon decay $K^+ \to \pi^+ \nu \bar{\nu}$'},
-        {'title': 'P-326'},
+    expected_long_name = r'Proposal to measure the very rare kaon decay $K^+ \to \pi^+ \nu \bar{\nu}$'
+    expected_name_variants = [
+        'P-326',
     ]
     result = experiments.do(create_record(snippet))
 
-    assert validate(result['titles'], subschema) is None
-    assert expected == result['titles']
+    assert validate(result['long_name'], long_name_schema) is None
+    assert expected_long_name == result['long_name']
+
+    assert validate(result['name_variants'], name_variants_schema) is None
+    assert expected_name_variants == result['name_variants']
 
 
 def test_description_from_520__a():
@@ -307,9 +318,10 @@ def test_description_from_520__a():
         '</datafield>'
     )  # record/1108188
 
-    expected = [
+    expected = (
         'The Muon Accelerator Program (MAP) was created in 2010 to unify the DOE supported R&D in the U.S. aimed at developing the concepts and technologies required for Muon Colliders and Neutrino Factories. These muon based facilities have the potential to discover and explore new exciting fundamental physics, but will require the development of demanding technologies and innovative concepts. The MAP aspires to prove the feasibility of a Muon Collider within a few years, and to make significant contributions to the international effort devoted to developing Neutrino Factories. MAP was formally approved on March 18, 2011.'
-    ]
+    )
+
     result = experiments.do(create_record(snippet))
 
     assert validate(result['description'], subschema) is None
@@ -337,133 +349,16 @@ def test_description_from_multiple_520__a():
         '</record>'
     )  # record/1110568
 
-    expected = [
-        'DAMA is an observatory for rare processes which develops and uses several low-background set-ups at the Gran Sasso National Laboratory of the I.N.F.N. (LNGS). The main experimental set-ups are: i) DAMA/NaI (about 100 kg of highly radiopure NaI(Tl)), which completed its data taking on July 2002',
-        'ii) DAMA/LXe (about 6.5 kg liquid Kr-free Xenon enriched either in 129Xe or in 136Xe)',
-        'iii) DAMA/R&D, devoted to tests on prototypes and to small scale experiments, mainly on the investigations of double beta decay modes in various isotopes. iv) the second generation DAMA/LIBRA set-up (about 250 kg highly radiopure NaI(Tl)) in operation since March 2003',
-        'v) the low background DAMA/Ge detector mainly devoted to sample measurements: in some measurements on rare processes the low-background Germanium detectors of the LNGS facility are also used. Moreover, a third generation R&D is in progress towards a possible 1 ton set-up, DAMA proposed in 1996. In particular, the DAMA/NaI and the DAMA/LIBRA set-ups have investigated the presence of Dark Matter particles in the galactic halo by exploiting the Dark Matter annual modulation signature.',
-    ]
+    expected = (
+        'DAMA is an observatory for rare processes which develops and uses several low-background set-ups at the Gran Sasso National Laboratory of the I.N.F.N. (LNGS). The main experimental set-ups are: i) DAMA/NaI (about 100 kg of highly radiopure NaI(Tl)), which completed its data taking on July 2002\n'
+        'ii) DAMA/LXe (about 6.5 kg liquid Kr-free Xenon enriched either in 129Xe or in 136Xe)\n'
+        'iii) DAMA/R&D, devoted to tests on prototypes and to small scale experiments, mainly on the investigations of double beta decay modes in various isotopes. iv) the second generation DAMA/LIBRA set-up (about 250 kg highly radiopure NaI(Tl)) in operation since March 2003\n'
+        'v) the low background DAMA/Ge detector mainly devoted to sample measurements: in some measurements on rare processes the low-background Germanium detectors of the LNGS facility are also used. Moreover, a third generation R&D is in progress towards a possible 1 ton set-up, DAMA proposed in 1996. In particular, the DAMA/NaI and the DAMA/LIBRA set-ups have investigated the presence of Dark Matter particles in the galactic halo by exploiting the Dark Matter annual modulation signature.'
+    )
     result = experiments.do(create_record(snippet))
 
     assert validate(result['description'], subschema) is None
     assert expected == result['description']
-
-
-def test_spokespersons_from_702__a_i_z():
-    schema = load_schema('experiments')
-    subschema = schema['properties']['spokespersons']
-
-    snippet = (
-        '<datafield tag="702" ind1=" " ind2=" ">'
-        '  <subfield code="a">Hogan, Craig J.</subfield>'
-        '  <subfield code="i">INSPIRE-00090662</subfield>'
-        '  <subfield code="z">Current</subfield>'
-        '</datafield>'
-    )  # record/1108189
-
-    expected = [
-        {
-            'ids': [
-                {
-                    'schema': 'INSPIRE ID',
-                    'value': 'INSPIRE-00090662',
-                },
-            ],
-            'name': 'Hogan, Craig J.',
-            'current': True,
-            'curated_relation': False,
-        },
-    ]
-    result = experiments.do(create_record(snippet))
-
-    assert validate(result['spokespersons'], subschema) is None
-    assert expected == result['spokespersons']
-
-
-def test_spokespersons_from_double_702__a_i():
-    schema = load_schema('experiments')
-    subschema = schema['properties']['spokespersons']
-
-    snippet = (
-        '<record>'
-        '  <datafield tag="702" ind1=" " ind2=" ">'
-        '    <subfield code="a">Feldman, Gary</subfield>'
-        '    <subfield code="i">INSPIRE-00080677</subfield>'
-        '    <subfield code="x">1010209</subfield>'
-        '  </datafield>'
-        '  <datafield tag="702" ind1=" " ind2=" ">'
-        '    <subfield code="a">Messier, Mark</subfield>'
-        '    <subfield code="i">INSPIRE-00107105</subfield>'
-        '  </datafield>'
-        '</record>'
-    )  # record/1402897
-
-    expected = [
-        {
-            'ids': [
-                {
-                    'schema': 'INSPIRE ID',
-                    'value': 'INSPIRE-00080677',
-                },
-            ],
-            'name': 'Feldman, Gary',
-            'record': {'$ref': 'http://localhost:5000/api/authors/1010209'},
-            'curated_relation': True,
-        },
-        {
-            'ids': [
-                {
-                    'schema': 'INSPIRE ID',
-                    'value': 'INSPIRE-00107105',
-                },
-            ],
-            'name': 'Messier, Mark',
-            'curated_relation': False,
-        },
-    ]
-    result = experiments.do(create_record(snippet))
-
-    assert validate(result['spokespersons'], subschema) is None
-    assert expected == result['spokespersons']
-
-
-def test_collaboration_from_710__g():
-    schema = load_schema('experiments')
-    subschema = schema['properties']['collaboration']
-
-    snippet = (
-        '<datafield tag="710" ind1=" " ind2=" ">'
-        '  <subfield code="g">DarkSide</subfield>'
-        '</datafield>'
-    )  # record/1108199
-
-    result = experiments.do(create_record(snippet))
-
-    assert validate(result['collaboration'], subschema) is None
-    assert result['collaboration'] == 'DarkSide'
-    assert 'collaboration_alternative_names' not in result
-
-
-def test_collaboration_from_double_710__g():
-    schema = load_schema('experiments')
-    subschema = schema['properties']['collaboration']
-
-    snippet = (
-        '<record>'
-        '  <datafield tag="710" ind1=" " ind2=" ">'
-        '    <subfield code="g">MiniBooNE</subfield>'
-        '  </datafield>'
-        '  <datafield tag="710" ind1=" " ind2=" ">'
-        '    <subfield code="g">BooNE</subfield>'
-        '  </datafield>'
-        '</record>'
-    )  # record/1110641
-
-    result = experiments.do(create_record(snippet))
-
-    assert validate(result['collaboration'], subschema) is None
-    assert result['collaboration'] == 'BooNE'
-    assert result['collaboration_alternative_names'] == ['MiniBooNE']
 
 
 def test_related_experiments_from_510__a_w_0():
@@ -480,10 +375,12 @@ def test_related_experiments_from_510__a_w_0():
 
     expected = [
         {
-            'name': 'LZ',
-            'record': {'$ref': 'http://localhost:5000/api/experiments/1262631'},
-            'relation': 'successor',
             'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/experiments/1262631',
+            },
+            'relation': 'successor',
+            'value': 'LZ',
         },
     ]
     result = experiments.do(create_record(snippet))
@@ -513,16 +410,20 @@ def test_related_experiments_from_double_510__a_w_0():
 
     expected = [
         {
-            'name': 'XENON',
-            'record': {'$ref': 'http://localhost:5000/api/experiments/1108293'},
-            'relation': 'predecessor',
             'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/experiments/1108293',
+            },
+            'relation': 'predecessor',
+            'value': 'XENON',
         },
         {
-            'name': 'XENON100',
-            'record': {'$ref': 'http://localhost:5000/api/experiments/1386527'},
-            'relation': 'predecessor',
             'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/experiments/1386527',
+            },
+            'relation': 'predecessor',
+            'value': 'XENON100',
         },
     ]
     result = experiments.do(create_record(snippet))
@@ -531,88 +432,47 @@ def test_related_experiments_from_double_510__a_w_0():
     assert expected == result['related_experiments']
 
 
-def test_date_started_from_046__q_s_and_046__r():
+def test_collaboration_from_710__g_0():
     schema = load_schema('experiments')
-    subschema = schema['properties']['date_started']
+    subschema = schema['properties']['collaboration']
 
     snippet = (
-        '<record>'
-        '  <datafield tag="046" ind1=" " ind2=" ">'
-        '    <subfield code="q">2009-08-19</subfield>'
-        '    <subfield code="s">2009-11-30</subfield>'
-        '  </datafield>'
-        '  <datafield tag="046" ind1=" " ind2=" ">'
-        '    <subfield code="r">2009-10-08</subfield>'
-        '  </datafield>'
-        '</record>'
-    )  # record/1318099
-
-    expected = '2009-11-30'
-    result = experiments.do(create_record(snippet))
-
-    assert validate(result['date_started'], subschema) is None
-    assert expected == result['date_started']
-
-
-def test_date_started_from_046__q_and_046__r_and_046__x():
-    snippet = (
-        '<record>'
-        '  <datafield tag="046" ind1=" " ind2=" ">'
-        '    <subfield code="q">2010</subfield>'
-        '  </datafield>'
-        '  <datafield tag="046" ind1=" " ind2=" ">'
-        '    <subfield code="r">2011-03-18</subfield>'
-        '  </datafield>'
-        '  <datafield tag="046" ind1=" " ind2=" ">'
-        '    <subfield code="x">yes</subfield>'
-        '  </datafield>'
-        '</record>'
-    )  # record/1108188
-
-    result = experiments.do(create_record(snippet))
-
-    assert 'date_started' not in result
-
-
-def test_date_started_and_date_completed_from_046():
-    schema = load_schema('experiments')
-    subschema_date_started = schema['properties']['date_started']
-    subschema_date_completed = schema['properties']['date_started']
-
-    snippet = (
-        '<record>'
-        '  <datafield tag="046" ind1=" " ind2=" ">'
-        '    <subfield code="s">1996</subfield>'
-        '  </datafield>'
-        '  <datafield tag="046" ind1=" " ind2=" ">'
-        '    <subfield code="t">2002</subfield>'
-        '  </datafield>'
-        '  <datafield tag="046" ind1=" " ind2=" ">'
-        '    <subfield code="x">yes</subfield>'
-        '  </datafield>'
-        '</record>'
-    )  # record/1108324
-
-    result = experiments.do(create_record(snippet))
-
-    assert validate(result['date_started'], subschema_date_started) is None
-    assert validate(result['date_completed'], subschema_date_completed) is None
-    assert result['date_started'] == '1996'
-    assert result['date_completed'] == '2002'
-
-
-def test_accelerator_from_693__a():
-    schema = load_schema('experiments')
-    subschema = schema['properties']['accelerator']
-
-    snippet = (
-        '<datafield tag="693" ind1=" " ind2=" ">'
-        '  <subfield code="a">AD</subfield>'
+        '<datafield tag="710" ind1=" " ind2=" ">'
+        '  <subfield code="g">DarkSide</subfield>'
+        '  <subfield code="0">1108199</subfield>'
         '</datafield>'
-    )  # record/1108206
+    )  # record/1108199
 
-    expected = 'AD'
+    expected = {
+        'curated_relation': True,
+        'record': {
+            '$ref': 'http://localhost:5000/api/experiments/1108199',
+        },
+        'value': 'DarkSide',
+    }
     result = experiments.do(create_record(snippet))
 
-    assert validate(result['accelerator'], subschema) is None
-    assert expected == result['accelerator']
+    assert validate(result['collaboration'], subschema) is None
+    assert expected == result['collaboration']
+
+
+def test_core_from_multiple_980__a():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['core']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">CORE</subfield>'
+        '  </datafield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">EXPERIMENT</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1332131
+
+    expected = True
+    result = experiments.do(create_record(snippet))
+
+    assert validate(result['core'], subschema) is None
+    assert expected == result['core']
