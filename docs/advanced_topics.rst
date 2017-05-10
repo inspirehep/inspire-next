@@ -20,27 +20,9 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
 
+6. Advanced Topics
+==================
 
-Contents
-========
-
-.. toctree::
-   :maxdepth: 3
-
-   getting_started
-   developers_guide
-   operations_guide
-   tests
-   harvesting
-   advanced_topics
-   building_the_docs
-   _source/inspirehep
-
-*Happy hacking!*
-
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+6.1 Developing with Docker
+--------------------------

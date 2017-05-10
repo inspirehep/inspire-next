@@ -20,27 +20,21 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
+1. Getting Started
+==================
+
+1.1 About INSPIRE
+-----------------
+
+.. include:: about.rst
 
 
-Contents
-========
+1.2 Overiview of INSPIRE
+------------------------
 
-.. toctree::
-   :maxdepth: 3
+.. include:: overview.rst
 
-   getting_started
-   developers_guide
-   operations_guide
-   tests
-   harvesting
-   advanced_topics
-   building_the_docs
-   _source/inspirehep
+1.3 Installing INSPIRE
+----------------------
 
-*Happy hacking!*
-
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+.. include:: ../INSTALL.rst

@@ -20,17 +20,15 @@
     or submit itself to any jurisdiction.
 
 
-GROBID
-======
-
-1. About
---------
+=============
+3.1.2.1 About
+=============
 
 This document specifies how to train and use GROBID.
 
-
-2. Prerequisites
-----------------
+=====================
+3.1.2.2 Prerequisites
+=====================
 
 GROBID uses Maven as its build system. To install it on Debian/Ubuntu systems
 we just have to type:
@@ -47,8 +45,9 @@ Similar commands apply to other distributions. In particular for OS X we have:
     $ brew install maven
 
 
-3. Quick start
---------------
+===================
+3.1.2.3 Quick start
+===================
 
 To install GROBID we first need to clone its code:
 
@@ -69,8 +68,9 @@ This will run the tests, load the modules and start a service available at
 ``localhost:8080``.
 
 
-4. Training
------------
+================
+3.1.2.4 Training
+================
 
 The models available after cloning are not using the new available training
 data. To generate the new ones we need to go inside of the root folder and

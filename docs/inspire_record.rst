@@ -20,27 +20,30 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
+2.3.1 Inspire Record Class
+--------------------------
 
+The Inpire record is derived by the base class of Invenio record. Inspire record is used mainly for the
+back-end processes and for the outer world is used the inherited classes of Inspire record. According to
+the bellow diagram, Inspire record is the base class and ES record (ElasticSearch) is the derived class.
+The data that are given to the front-end are inherited classes from ES record:
 
-Contents
-========
+    * AuthorsRecord
+    * LiteratureRecord
+    * JobsRecord
+    * ConferencesRecord
+    * InstitutionsRecord
+    * ExperimentsRecord
+    * JournalsRecord
 
-.. toctree::
-   :maxdepth: 3
+|
 
-   getting_started
-   developers_guide
-   operations_guide
-   tests
-   harvesting
-   advanced_topics
-   building_the_docs
-   _source/inspirehep
+.. image:: images/inspire_record.png
+    :height: 300
+    :width: 660
 
-*Happy hacking!*
+|
 
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+TIP: the above classes are written in the following files.
+    * ``inspirehep/modules/records/wrappers.py``
+    * ``inspirehep/modules/records/api.py``

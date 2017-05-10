@@ -20,27 +20,24 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
+2.7.1 Workflows in Inspire
+--------------------------
+
+Inspire-next is receiving new records every day from several sources, such as:
+    * HEP Crawl
+    * Legacy
+    * Literature Suggest
+
+It's very important for the Inpire to import valid and pure records. So, it's mandatory to process
+every record that is coming to us. Workflows does that important procedure.
+
+At the bellow diagram you can have a very basic idea of what is the structure of that procedure.
 
 
-Contents
-========
+|
 
-.. toctree::
-   :maxdepth: 3
+.. image:: images/Workflows.png
+    :height: 390
+    :width: 660
 
-   getting_started
-   developers_guide
-   operations_guide
-   tests
-   harvesting
-   advanced_topics
-   building_the_docs
-   _source/inspirehep
-
-*Happy hacking!*
-
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+|

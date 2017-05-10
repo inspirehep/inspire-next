@@ -19,28 +19,16 @@
     granted to it by virtue of its status as an Intergovernmental Organization
     or submit itself to any jurisdiction.
 
+===================
+High level overview
+===================
 
-.. include:: ../README.rst
+This is a very basic framework overview.
 
+|
 
-Contents
-========
+.. image:: images/framework_level_overview.png
+    :height: 280
+    :width: 660
 
-.. toctree::
-   :maxdepth: 3
-
-   getting_started
-   developers_guide
-   operations_guide
-   tests
-   harvesting
-   advanced_topics
-   building_the_docs
-   _source/inspirehep
-
-*Happy hacking!*
-
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+|

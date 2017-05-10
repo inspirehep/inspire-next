@@ -20,14 +20,14 @@
     or submit itself to any jurisdiction.
 
 
-Inspire Tests
-=============
+4. Inspire Tests
+================
 
-How to Run the Selenium Tests
------------------------------
+4.1 How to Run the Selenium Tests
+---------------------------------
 
-Via Docker
-~~~~~~~~~~
+4.1.1 Via Docker
+~~~~~~~~~~~~~~~~
 
 1. If you have not installed ``docker`` and ``docker-compose``, `install them now`_.
 
@@ -40,8 +40,8 @@ Via Docker
   $ docker-compose -f docker-compose.test.yml run --rm acceptance
 
 
-Via Docker with a graphical instance of Firefox (Linux)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+4.1.2 Via Docker with a graphical instance of Firefox (Linux)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. Check the first step in the `Via Docker`_ section.
 
@@ -59,8 +59,8 @@ Via Docker with a graphical instance of Firefox (Linux)
   $ docker-compose -f docker-compose.test.yml run --rm visible_acceptance
 
 
-Via Docker with a graphical instance of Firefox (macOS)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+4.1.3 Via Docker with a graphical instance of Firefox (macOS)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. Check the first step in the `Via Docker`_ section.
 
@@ -111,11 +111,11 @@ Via Docker with a graphical instance of Firefox (macOS)
   $ docker-compose -f docker-compose.test.yml run --rm visible_acceptance
 
 
-How to Write the Selenium Tests
--------------------------------
+4.2 How to Write the Selenium Tests
+-----------------------------------
 
-Selenium Test Framework
-~~~~~~~~~~~~~~~~~~~~~~~
+4.2.1 Selenium Test Framework
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 INSPIRE's Selenium tests are written using an in-house framework called BAT
 (:file:`inspirehep/bat`). The framework is made of four main components:
@@ -128,8 +128,8 @@ INSPIRE's Selenium tests are written using an in-house framework called BAT
 .. figure:: images/BAT_Framework.png
 
 
-Tests
-~~~~~
+4.2.2 Tests
+~~~~~~~~~~~
 
 Tests don't call directly Selenium methods, but call methods on `Pages`, which
 are eventually translated to Selenium calls.
@@ -149,8 +149,8 @@ mail``, they see an error, while when they visit the same page but write a valid
 email, they don't see it.
 
 
-Pages
-~~~~~
+4.2.3 Pages
+~~~~~~~~~~~
 
 Pages are abstractions of web pages served by INSPIRE. Concretely, a page is a
 collection of methods in a module that implement the various action that a user
@@ -182,15 +182,15 @@ Note that the latter method returns a closure over ``expected_data`` and
 if the action was successful or not.
 
 
-Arsenic
-~~~~~~~
+4.2.4 Arsenic
+~~~~~~~~~~~~~
 
 The ``Arsenic`` class is a proxy to the Selenium object, plus some
 INSPIRE-specific methods added on top.
 
 
-ArsenicResponse
-~~~~~~~~~~~~~~~
+4.2.5 ArsenicResponse
+~~~~~~~~~~~~~~~~~~~~~
 
 As mentioned above, an ``ArsenicResponse`` wraps a closure that is going to be
 used by an ``has_error`` call to determine if the action executed

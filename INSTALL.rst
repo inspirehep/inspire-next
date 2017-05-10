@@ -1,9 +1,28 @@
-============
-Installation
-============
+..
+    This file is part of INSPIRE.
+    Copyright (C) 2017 CERN.
 
-System prerequisites
-=====================
+    INSPIRE is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    INSPIRE is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+
+
+==========================
+1.3.1 System prerequisites
+==========================
 
 This guide expects you to have installed in your system the following tools:
 
@@ -19,8 +38,10 @@ This guide expects you to have installed in your system the following tools:
 * redis
 * elasticsearch
 
-CentOS
--------
+============
+1.3.2 CentOS
+============
+
 .. code-block:: console
 
     $ sudo yum install python-pip python-virtualenv python-virtualenvwrapper \
@@ -42,8 +63,9 @@ will need also add the following workarounds:
 
     Add also Ubuntu and MacOS
 
-Create a virtual environment
-============================
+==================================
+1.3.3 Create a virtual environment
+==================================
 
 Create a virtual environment and clone the INSPIRE source code using `git`:
 
@@ -55,9 +77,9 @@ Create a virtual environment and clone the INSPIRE source code using `git`:
     (inspirehep)$ mkdir src
     (inspirehep)$ git clone https://github.com/inspirehep/inspire-next.git src/inspirehep
 
-
-Install requirements
-====================
+==========================
+1.3.4 Install requirements
+==========================
 
 Use `pip` to install all requirements, it's recommended to upgrade pip and
 setuptools to latest too:
@@ -74,9 +96,9 @@ And for development:
 
     (inspirehep)$ pip install -e .[development]
 
-
-Custom configuration and debug mode
-====================================
+=========================================
+1.3.5 Custom configuration and debug mode
+=========================================
 
 If you want to change the database url, or enable the debug mode for
 troubleshooting, you can do so in the `inspirehep.cfg` file under
@@ -105,9 +127,9 @@ file `src/inspirehep/inspirehep/config.py`, for example:
     a key that did not exist.
 
 
-
-Build assets
-============
+==================
+1.3.6 Build assets
+==================
 
 We build assets using `npm`. Make sure you have installed it system wide.
 
@@ -140,9 +162,9 @@ Then we build the INSPIRE assets:
 
     Alternatively, run `sh scripts/clean_assets` to do the above in one command.
 
-
-Create database
-===============
+=====================
+1.3.7 Create database
+=====================
 
 We will use `postgreSQL` as database. Make sure you have installed it system wide.
 
@@ -157,12 +179,14 @@ Then create the database and database tables if you haven't already done so:
     (inspirehep)$ inspirehep db init
     (inspirehep)$ inspirehep db create
 
+========================
+1.3.8 Start all services
+========================
 
-Start all services
-==================
-
+--------
 Rabbitmq
------------
+--------
+
 You must have rabbitmq installed and running (and reachable) somewhere.
 To run it locally on a CentOS:
 
@@ -172,9 +196,9 @@ To run it locally on a CentOS:
     $ sudo service rabbitmq-server start
     $ sudo systemctl enable rabbitmq-server.service  # to start on system boot
 
-
+-----------------------
 Everything else: Honcho
-------------------------
+-----------------------
 
 We use `honcho`_ to manage our services and run the development server. See
 `Procfile`_ for details.
@@ -187,9 +211,9 @@ We use `honcho`_ to manage our services and run the development server. See
 
 And the site is now available on http://localhost:5000.
 
-
-Create ElasticSearch Indices and Aliases
-========================================
+==============================================
+1.3.9 Create ElasticSearch Indices and Aliases
+==============================================
 
 
 .. note::
@@ -221,9 +245,9 @@ changes or existing legacy indices, try:
     (inspirehep)$ inspirehep index destroy --force --yes-i-know
     (inspirehep)$ inspirehep index init
 
-
-Create admin user
-==================
+========================
+1.3.10 Create admin user
+========================
 
 Now you can create a sample admin user, for that we will use the fixtures:
 
@@ -239,9 +263,9 @@ Now you can create a sample admin user, for that we will use the fixtures:
 
         http://localhost:5000/login/?local=1
 
-
-Add demo records
-=================
+=======================
+1.3.11 Add demo records
+=======================
 
 .. code-block:: console
 
@@ -259,9 +283,9 @@ Add demo records
 
     Remember to keep `honcho` running in a separate window.
 
-
-Create regular user
-====================
+==========================
+1.3.12 Create regular user
+==========================
 
 Now you can create regular users (optional) with the command:
 
@@ -269,9 +293,9 @@ Now you can create regular users (optional) with the command:
 
     (inspirehep)$ inspirehep users create your@email.com -a
 
-
-Adding records from files
-=========================
+================================
+1.3.13 Adding records from files
+================================
 
 Same way as demo records:
 
@@ -280,9 +304,9 @@ Same way as demo records:
     (inspirehep)$ inspirehep migrator populate -f inspirehep/demosite/data/sample.xml
 
 
-
-Access the records (web/rest)
-=============================
+====================================
+1.3.14 Access the records (web/rest)
+====================================
 
 While running `honcho` you can access the records at
 
@@ -292,9 +316,9 @@ While running `honcho` you can access the records at
     $ curl -i -H "Accept: application/json" http://localhost:5000/api/records/1
 
 
-
-Generating doJSON output
-========================
+===============================
+1.3.15 Generating doJSON output
+===============================
 
 If you want to test the doJSON output for a specific rule, make sure it is added to doJSON
 entry points and then do the following (e.g. for the `hep` rule):

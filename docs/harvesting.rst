@@ -20,17 +20,17 @@
     or submit itself to any jurisdiction.
 
 
-Harvesting
-==========
+5. Harvesting
+=============
 
-1. About
---------
+5.1 About
+---------
 
 This document specifies how to harvest records into your system.
 
 
-2. Prerequisites (optional)
----------------------------
+5.2 Prerequisites (optional)
+----------------------------
 
 If you are going to run harvesting workflows which needs prediction models such as the CORE guessing, keyword extraction, and plot extraction you may need to install some extra packages.
 
@@ -51,8 +51,8 @@ For hepcrawl crawling of sources via scrapy, you need to point to a scrapyd web 
 More info at http://pythonhosted.org/hepcrawl/operations.html
 
 
-3. Quick start
---------------
+5.3 Quick start
+---------------
 
 All harvesting of scientific articles (hereafter "records") into INSPIRE consist of two steps:
 
@@ -62,8 +62,8 @@ All harvesting of scientific articles (hereafter "records") into INSPIRE consist
 Many records require human acceptance in order to be uploaded into the system. This is done via the Holding Pen web interface located at http://localhost:5000/holdingpen
 
 
-3.1. Getting records from arXiv.org
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+5.3.1 Getting records from arXiv.org
+~~~-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The simplest way to get records into your system is to harvest from arXiv.org using OAI-PMH.
 
@@ -86,8 +86,8 @@ Range of records like so:
 
 You can now see from your Celery logs that tasks are started and workflows are executed. Visit the Holding Pen interface, at http://localhost:5000/holdingpen to find the records and to approve/reject them. Once approved, they are queued for upload into the system.
 
-3.2. Getting records from other sources (hepcrawl)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+5.3.2 Getting records from other sources (hepcrawl)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For the full INSPIRE harvesting experience (tm), you can use the hepcrawl service to get records into your system.
 

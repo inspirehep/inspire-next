@@ -20,27 +20,17 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
+===========
+1.1.1 About
+===========
 
+INSPIRE is a service designed for physicists. The aim of INSPIRE is to improve the
+communication between physicists around the world and in addition to spread their scientific
+work (papers, thesis, etc.). In addition INSPIRE service provides other features such as
+information about authors, conferences, institutions, experiments, journals and job offers.
 
-Contents
-========
+`Legacy
+<http://inspirehep.net/>`_ website.
 
-.. toctree::
-   :maxdepth: 3
-
-   getting_started
-   developers_guide
-   operations_guide
-   tests
-   harvesting
-   advanced_topics
-   building_the_docs
-   _source/inspirehep
-
-*Happy hacking!*
-
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+`Inspire-next
+<https://qa.inspirehep.net/>`_ website (under construction).
