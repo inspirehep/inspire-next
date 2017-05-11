@@ -131,3 +131,6 @@ selenium-report.html
 
 # Twisted
 twistd.pid
+
+# Application specific
+tests/acceptance/login_cookies.pkl
