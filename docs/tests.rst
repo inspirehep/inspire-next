@@ -195,3 +195,49 @@ ArsenicResponse
 As mentioned above, an ``ArsenicResponse`` wraps a closure that is going to be
 used by an ``has_error`` call to determine if the action executed
 successfully.
+
+
+How to Debug the Selenium Tests
+-------------------------------
+
+Unlike the other test suites, the container that is running the test code of the
+``acceptance`` test suite is different from the one running the application
+code. Therefore, in order to debug a test failure, we must connect remotely to
+this other container. The tool to achieve this is called `remote-pdb`_. This
+section explains how to use it.
+
+1. First we install it in the container:
+
+.. code-block:: bash
+
+   $ docker-compose run --rm web pip install remote-pdb
+
+2. Then we insert the following code where we want to start tracing:
+
+.. code-block:: python
+
+  from remote_pdb import RemotePdb
+  RemotePdb('0.0.0.0', 4444).set_trace()
+
+3. Now we run the ``acceptance`` test suite:
+
+.. code-block:: bash
+
+  $ docker-compose -f docker-compose.test.yml run --rm acceptance
+
+4. At some point the test suite will stop: it means that we have hit the tracing
+   call. We discover the IP of the ``web`` container with:
+
+.. code-block:: bash
+
+  $ docker inspect inspirenext_test-web_1 | grep IPAddress
+  [...]
+  "IPAddress": "172.18.0.6"
+
+5. Finally, we connect to it with:
+
+.. code-block:: bash
+
+  $ telnet 172.18.0.6 4444
+
+.. _`remote-pdb`: https://pypi.python.org/pypi/remote-pdb
