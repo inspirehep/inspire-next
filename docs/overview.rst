@@ -1,6 +1,6 @@
 ..
     This file is part of INSPIRE.
-    Copyright (C) 2015, 2016 CERN.
+    Copyright (C) 2017 CERN.
 
     INSPIRE is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,28 +20,26 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
+Overview of Inspire-next
+========================
 
+This diagram is a very high level overview of Inspire-next project.
 
-Contents
-========
+|
 
-.. toctree::
-   :maxdepth: 2
+.. image:: images/overview_diagram.png
+    :height: 300
+    :width: 660
 
-   getting_started
-   operations
-   harvesting
-   grobid
-   tools
-   tests
-   howtos
-   building_the_docs
-   _source/inspirehep
+|
 
-*Happy hacking!*
+- Incoming sources (records) to Inspire-next.
+    * Legacy: the old website of Inspire.
+    * Submission Forms: records provided by catalogers and users.
+    * Crawler: collects records from other sources (websites/repositories).
 
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+- Workflows: Process part of Inspire-next.
+
+- Data: there are two storing points of Inspire-next:
+    * DataBase (PostgreSQL)
+    * Search Engine (ElasticSearch)
