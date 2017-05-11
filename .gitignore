@@ -67,6 +67,7 @@ nosetests.xml
 coverage.xml
 *,cover
 .hypothesis/
+tests/acceptance/login_cookies.pkl
 
 # Translations
 *.mo
