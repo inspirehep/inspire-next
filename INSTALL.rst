@@ -7,7 +7,6 @@ System prerequisites
 
 This guide expects you to have installed in your system the following tools:
 
-* pip
 * git
 * virtualenv
 * virtualenvwrapper
@@ -23,14 +22,14 @@ CentOS
 -------
 .. code-block:: console
 
-    $ sudo yum install python-pip python-virtualenv python-virtualenvwrapper \
+    $ sudo yum install python-virtualenv python-virtualenvwrapper \
         npm postgresql postgresql-devel libxml2-devel ImageMagick redis git \
         libxslt-devel
     $ sudo npm -g install npm
 
 For elasticsearch you can find the installation instructions on the
 `elasticsearch install page`_, and, to run the development environment, you
-will need also add the following workarounds:
+will need also to add the following workarounds:
 
 .. code-block:: console
 
@@ -49,12 +48,30 @@ Create a virtual environment and clone the INSPIRE source code using `git`:
 
 .. code-block:: console
 
-    $ mkvirtualenv inspirehep
+    $ mkvirtualenv --python=python2.7 inspirehep
     $ workon inspirehep
     (inspirehep)$ cdvirtualenv
     (inspirehep)$ mkdir src
     (inspirehep)$ git clone https://github.com/inspirehep/inspire-next.git src/inspirehep
 
+.. note::
+
+    It is also possible (and more flexible) to do the above the other way
+    around like this and clone the project into a folder of your choice:
+
+    .. code-block:: console
+
+        $ git clone https://github.com/inspirehep/inspire-next.git inspirehep
+        $ cd inspirehep
+        $ mkvirtualenv --python=python2.7 inspirehep
+        $ workon inspirehep
+
+    This approach enables you to switch to a new virtual environment
+    without having to clone the project again. You simply specify on
+    which environment you want to ``workon`` using its name.
+
+    Just be careful to replace all ``cdvirtualenv src/inspirehep`` in the
+    following with a ``cd path_you_chose/inspirehep``.
 
 Install requirements
 ====================
@@ -123,6 +140,11 @@ We build assets using `npm`. Make sure you have installed it system wide.
     still setup a per-user npm modules installation that will allow you to
     install/remove modules as normal user. You can find more info `in the npm
     docs here`_.
+
+    In particular, if you want to install the ``npm`` packages directly in your
+    ``virtualenv``, just add ``NPM_CONFIG_PREFIX=$VIRTUAL_ENV`` in the
+    ``postactivate`` file of your ``virtualenv`` folder and you will be able to
+    run the above command from inside your virtual environment.
 
 
 Then we build the INSPIRE assets:
