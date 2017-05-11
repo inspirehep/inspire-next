@@ -84,7 +84,7 @@ def login(arsenic):
     top_navigation_page.log_out()
 
 
-@pytest.fixture(autouse=True, scope='module')
+@pytest.fixture(autouse=True, scope='function')
 def cleanup_workflows_tables(app):
     with app.app_context():
         obj_types = (
