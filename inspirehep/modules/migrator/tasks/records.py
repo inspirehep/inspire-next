@@ -338,7 +338,7 @@ def migrate_and_insert_record(raw_record):
     except ValidationError as e:
         # Aggregate logs by part of schema being validated.
         pattern = u'Migrator Validator Error: {}, Value: %r, Record: %r'
-        logger.error(pattern.format('.'.join(e.schema_path), e.instance, recid))
+        logger.error(pattern.format('.'.join(e.schema_path)), e.instance, recid)
         error = e
     except Exception as e:
         # Receivers can always cause exceptions and we could dump the entire
