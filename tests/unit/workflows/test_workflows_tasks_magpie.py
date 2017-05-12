@@ -280,12 +280,11 @@ def test_guess_experiments_filters_under_point_50(j_a_r, g_m_u):
 
     assert guess_experiments(obj, eng) is None
     assert obj.extra_data['experiments_prediction'] == {
-        'labels': [
-            ('foo', 0.49),
-            ('bar', 0.50),
-        ],
         'experiments': [
-            ('bar', 0.50),
+            {
+                'label': 'bar',
+                'score': 0.50,
+            }
         ],
     }
 
