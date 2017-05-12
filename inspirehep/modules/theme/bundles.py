@@ -67,6 +67,7 @@ js = NpmBundle(
         "clipboard": "~1.5.8",
         "flightjs": "~1.5.0",
         "angular": "~1.4.8",
+        "ng2-bootstrap": "~1.1.16",
         "readmore-js": "~2.1.0",
         "impact-graphs": "git+https://git@github.com/inspirehep/impact-graphs.git",
         "inspirehep-typeahead-search-js": "git+https://github.com/inspirehep/inspirehep-typeahead-search-js.git",
