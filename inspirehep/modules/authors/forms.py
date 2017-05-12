@@ -21,10 +21,11 @@
 # or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, division, print_function
-
+import re
 from flask_babelex import gettext as _
 
 from wtforms import validators
+from wtforms.validators import DataRequired
 from wtforms.fields import Flags
 from wtforms.widgets import html_params, \
     HiddenInput, \
@@ -43,7 +44,7 @@ from inspirehep.modules.forms.form import INSPIREForm
 from inspirehep.modules.forms import fields
 from inspirehep.modules.forms.filter_utils import clean_empty_list
 from inspirehep.modules.forms.validators.simple_fields import duplicated_orcid_validator
-
+from inspirehep.modules.forms.validators.dynamic_fields import two_date_validator
 from inspirehep.modules.forms.validation_utils import ORCIDValidator, \
     RegexpStopValidator
 
@@ -136,11 +137,12 @@ class InstitutionInlineForm(INSPIREForm):
             wrapped_widget=TextInput(),
             wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
         ),
-        validators=[RegexpStopValidator(
+        validators=[two_date_validator('end_year', message='Start year should be earlier than End year'),
+        RegexpStopValidator(
             "^(\d{4})?$",
             message="{} is not a valid year. Please use <i>yyyy</i> format."
         )],
-        widget_classes="datepicker form-control"
+        widget_classes="form-control"
     )
 
     end_year = fields.StringField(
@@ -154,7 +156,7 @@ class InstitutionInlineForm(INSPIREForm):
             "^(\d{4})?$",
             message="{} is not a valid year. Please use <i>yyyy</i> format."
         )],
-        widget_classes="datepicker form-control"
+        widget_classes="form-control"
     )
 
     current = fields.BooleanField(
@@ -199,14 +201,16 @@ class ExperimentsInlineForm(INSPIREForm):
     start_year = fields.StringField(
         placeholder=_('Start Year'),
         description=u'Format: YYYY.',
-        widget=WrappedInput(wrapped_widget=TextInput(),
-                            wrapper='<div class="col-md-6">%(field)s</div>'
-                            ),
-        validators=[RegexpStopValidator(
+        widget=WrappedInput(
+            wrapped_widget=TextInput(),
+            wrapper='<div class="col-md-6">%(field)s</div>',
+        ),
+        validators=[two_date_validator('end_year', message='Start year should be earlier than End year'),
+        RegexpStopValidator(
             "^(\d{4})?$",
             message="{} is not a valid year. Please use <i>yyyy</i> format."
         )],
-        widget_classes="datepicker form-control"
+        widget_classes="form-control"
     )
 
     end_year = fields.StringField(
@@ -215,12 +219,12 @@ class ExperimentsInlineForm(INSPIREForm):
         widget=WrappedInput(
             wrapped_widget=TextInput(),
             wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
-        ),
+                ),
         validators=[RegexpStopValidator(
             "^(\d{4})?$",
             message="{} is not a valid year. Please use <i>yyyy</i> format."
         )],
-        widget_classes="datepicker form-control"
+        widget_classes="form-control"
     )
 
     current = fields.BooleanField(

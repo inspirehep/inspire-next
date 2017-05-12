@@ -248,6 +248,7 @@ setup(
             'inspirehep_author_update_css = inspirehep.modules.authors.bundles:update_css',
             'inspirehep_forms_css = inspirehep.modules.forms.bundles:css',
             'inspirehep_forms_js = inspirehep.modules.forms.bundles:js',
+            'inspirehep_authors_update_form_js=inspirehep.modules.authors.bundles:updatejs',
             'inspirehep_detailed_js = inspirehep.modules.theme.bundles:detailedjs',
             'inspirehep_literaturesuggest_js = inspirehep.modules.literaturesuggest.bundles:js',
             'invenio_search_ui_search_js = inspirehep.modules.search.bundles:js',
