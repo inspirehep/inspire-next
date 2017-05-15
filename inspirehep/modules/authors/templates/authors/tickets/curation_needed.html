@@ -19,11 +19,11 @@
 Author request by {{ email }}
 
 Curate record here: https://inspirehep.net/record/edit/#state=edit&recid={{ recid }}.
-{%- if record_url %}
-  Record url: {{ record_url|safe }}
+{% if record_url %}
+Record url: {{ record_url|safe }}
 {% endif %}
 
-{%- if user_comment %}
-  User comments:
+{% if user_comment %}
+User comments:
   {{ user_comment|safe }}
 {% endif %}
