@@ -247,7 +247,7 @@ def _do_webcoll_callback(app, recids, server_name='http://fake.na.me'):
 
 def fake_download_file(workflow, name, url):
     """Mock download_file_to_workflow func."""
-    if url == 'http://arxiv.org/e-print/1407.7587':
+    if url == 'http://export.arxiv.org/e-print/1407.7587':
         workflow.files[name] = pkg_resources.resource_stream(
             __name__,
             os.path.join(
@@ -256,7 +256,7 @@ def fake_download_file(workflow, name, url):
             )
         )
         return workflow.files[name]
-    elif url == 'http://arxiv.org/pdf/1407.7587':
+    elif url == 'http://export.arxiv.org/pdf/1407.7587':
         workflow.files[name] = pkg_resources.resource_stream(
             __name__,
             os.path.join(
