@@ -1368,7 +1368,7 @@ MAGPIE_API_URL = "http://magpie.inspirehep.net/api"
 
 # Harvesting and Workflows
 # ========================
-ARXIV_PDF_URL = "http://arxiv.org/pdf/{arxiv_id}"
+ARXIV_PDF_URL = "http://export.arxiv.org/pdf/{arxiv_id}"
 ARXIV_TARBALL_URL = "http://arxiv.org/e-print/{arxiv_id}"
 
 ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY = [
