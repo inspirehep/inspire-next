@@ -108,8 +108,22 @@ def _is_arxiv(obj):
 
 
 def _normalize_arxiv(obj):
-    """Normalize arXiv report numbers accepted by _is_arxiv."""
-    return idutils.normalize_arxiv(obj.split()[0]).split(':')[-1].split('v')[0]
+    """Return a normalized arXiv identfier.
+
+    As in ``_is_arxiv``, we need to handle arXiv references as well
+    as arXiv identifiers. We also need to return a simpler arXiv
+    identifier than what ``idutils`` would output, so we use some
+    of its helpers instead of ``normalize_arxiv``.
+    """
+    obj = obj.split()[0]
+
+    m = idutils.is_arxiv_pre_2007(obj)
+    if m:
+        return ''.join(m.group(2, 4, 5))
+
+    m = idutils.is_arxiv_post_2007(obj)
+    if m:
+        return '.'.join(m.group(2, 3))
 
 
 class ReferenceBuilder(object):
