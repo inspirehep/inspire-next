@@ -49,7 +49,7 @@ from mocks import AttrDict, MockEng, MockFiles, MockObj
 @pytest.mark.httpretty
 def test_arxiv_fulltext_download_logs_on_success():
     httpretty.register_uri(
-        httpretty.GET, 'http://arxiv.org/pdf/1605.03844',
+        httpretty.GET, 'http://export.arxiv.org/pdf/1605.03844',
         body=pkg_resources.resource_string(
             __name__, os.path.join('fixtures', '1605.03844.pdf')))
 
@@ -84,7 +84,7 @@ def test_arxiv_fulltext_download_logs_on_success():
 @pytest.mark.httpretty
 def test_arxiv_fulltext_download_logs_on_error():
     httpretty.register_uri(
-        httpretty.GET, 'http://arxiv.org/pdf/1605.03814', status=500)
+        httpretty.GET, 'http://export.arxiv.org/pdf/1605.03814', status=500)
 
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
@@ -117,7 +117,7 @@ def test_arxiv_fulltext_download_logs_on_error():
 @pytest.mark.httpretty
 def test_arxiv_package_download_logs_on_success():
     httpretty.register_uri(
-        httpretty.GET, 'http://arxiv.org/e-print/1605.03959',
+        httpretty.GET, 'http://export.arxiv.org/e-print/1605.03959',
         body=pkg_resources.resource_string(
             __name__, os.path.join('fixtures', '1605.03959.tar.gz')))
 
