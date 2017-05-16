@@ -339,6 +339,46 @@ def test_withdrawn_from_980__a_withdrawn():
     assert expected == result['980']
 
 
+def test_references_from_999C5r_0():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    snippet = (
+        '<datafield tag="999" ind1="C" ind2="5">'
+        '  <subfield code="r">solv-int/9611008</subfield>'
+        '  <subfield code="0">433620</subfield>'
+        '</datafield>'
+    )  # record/41194
+
+    expected = [
+        {
+            'curated_relation': False,
+            'record': {
+                '$ref': 'http://localhost:5000/api/literature/433620',
+            },
+            'reference': {
+                'arxiv_eprint': 'solv-int/9611008',
+            },
+        }
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['references'], subschema) is None
+    assert expected == result['references']
+
+    expected = [
+        {
+            '0': 433620,
+            'r': [
+                'arXiv:solv-int/9611008',
+            ],
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['999C5']
+
+
 def test_references_from_999C5r_s_0():
     schema = load_schema('hep')
     subschema = schema['properties']['references']

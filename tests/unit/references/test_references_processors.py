@@ -129,6 +129,13 @@ def test_normalize_arxiv_handles_old_identifiers_with_prefix_and_version():
     assert expected == result
 
 
+def test_normalize_arxiv_handles_solv_int():
+    expected = 'solv-int/9611008'
+    result = _normalize_arxiv('solv-int/9611008')
+
+    assert expected == result
+
+
 def test_set_label():
     schema = load_schema('hep')
     subschema = schema['properties']['references']
