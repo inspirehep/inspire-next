@@ -58,7 +58,7 @@ def is_pdf_link(url):
     except requests.exceptions.RequestException:
         return False
 
-    magic_number = next(response.iter_content(4))
+    magic_number = next(response.iter_lines(1))
     correct_magic_number = magic_number.startswith('%PDF')
 
     return correct_magic_number
