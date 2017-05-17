@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+import pickle
 from time import sleep
 
 import pytest
@@ -74,14 +76,33 @@ def app(request):
 
 @pytest.fixture
 def arsenic(selenium, app):
-    Arsenic(selenium)
+    return Arsenic(selenium)
+
+
+@pytest.fixture(scope='session', autouse=True)
+def cleanup_cookies():
+    cookies_path = './tests/acceptance/login_cookies.pkl'
+    if os.path.exists(cookies_path):
+        os.unlink(cookies_path)
 
 
 @pytest.fixture
 def login(arsenic):
-    top_navigation_page.log_in('admin@inspirehep.net', '123456')
-    yield
-    top_navigation_page.log_out()
+    cookies_path = './tests/acceptance/login_cookies.pkl'
+    if not os.path.exists(cookies_path):
+        top_navigation_page.log_in('admin@inspirehep.net', '123456')
+        sleep(1)
+        cookies = arsenic.get_cookies()
+        with open(cookies_path, 'w') as cookies_fd:
+            pickle.dump(cookies, cookies_fd)
+    else:
+        with open(cookies_path) as cookies_fd:
+            cookies = pickle.load(cookies_fd)
+        for cookie in cookies:
+            # selenium driver only allows setting the current domain by
+            # accessing a url from it, we get one that loads fast
+            top_navigation_page.ping()
+            arsenic.add_cookie(cookie)
 
 
 @pytest.fixture(autouse=True, scope='function')
