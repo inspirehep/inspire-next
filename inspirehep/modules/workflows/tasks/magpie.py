@@ -134,11 +134,17 @@ def guess_experiments(obj, eng):
     payload = prepare_magpie_payload(obj.data, corpus="experiments")
     results = json_api_request(magpie_url, payload)
     if results:
-        labels = results.get('labels', [])
-        experiments = filter_magpie_response(labels, limit=0.5)
+        all_predictions = results.get('labels', [])
+        selected_experiments = filter_magpie_response(
+            all_predictions,
+            limit=0.5,
+        )
+        selected_experiments = [
+            {'label': e[0], 'score': e[1]}
+            for e in selected_experiments
+        ]
         obj.extra_data["experiments_prediction"] = dict(
-            labels=labels,
-            experiments=experiments
+            experiments=selected_experiments,
         )
         current_app.logger.info("Experiment prediction: {0}".format(
             obj.extra_data["experiments_prediction"]["experiments"]
