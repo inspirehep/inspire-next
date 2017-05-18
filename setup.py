@@ -100,6 +100,7 @@ install_requires = [
     'pycountry>=17.1.8',
     'Flask_CeleryExt>=0.3.0',
     'python-redis-lock~=3.2',
+    'backoff~=1.4.2',
 ]
 
 tests_require = [
