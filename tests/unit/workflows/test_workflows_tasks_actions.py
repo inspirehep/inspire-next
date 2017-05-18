@@ -51,7 +51,7 @@ def _get_auto_reject_obj(decision, has_core_keywords):
     obj_params = {
         'classifier_results': {
             'complete_output': {
-                'Core keywords': ['something'] if has_core_keywords else [],
+                'core_keywords': ['something'] if has_core_keywords else [],
             },
         },
         'relevance_prediction': {
