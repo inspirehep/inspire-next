@@ -155,7 +155,7 @@ def reply_ticket(template=None,
             )
         else:
             # Body already rendered in reason.
-            body = obj.extra_data.get("reason").strip()
+            body = obj.extra_data.get("reason", "").strip()
         if not body:
             obj.log.error("No body for ticket reply. Skipping reply.")
             return
