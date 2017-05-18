@@ -30,7 +30,9 @@ import traceback
 from contextlib import closing
 from functools import wraps
 
+import backoff
 import requests
+import urllib3
 from flask import current_app
 
 from .models import WorkflowsAudit
@@ -154,6 +156,7 @@ def get_pdf_in_workflow(obj):
     obj.log.info('No PDF available')
 
 
+@backoff.on_exception(backoff.expo, urllib3.exceptions.ProtocolError, max_tries=5)
 def download_file_to_workflow(workflow, name, url):
     """Download a file to a specified workflow.
 
@@ -164,6 +167,10 @@ def download_file_to_workflow(workflow, name, url):
     through ``ObjectVersion`` and ``FileObject``. This method consumes the
     stream passed to it and saves in its place a ``FileObject`` with the
     details of the downloaded file.
+
+    Consuming the stream might raise a ``ProtocolError`` because the server
+    might terminate the connection before sending any data. In this case we
+    retry 5 times with exponential backoff before giving up.
     """
     with closing(requests.get(url=url, stream=True)) as req:
         if req.status_code == 200:
