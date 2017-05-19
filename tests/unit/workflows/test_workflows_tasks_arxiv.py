@@ -41,6 +41,7 @@ from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_package_download,
     arxiv_plot_extract,
 )
+from inspirehep.modules.workflows.errors import DownloadError
 from plotextractor.errors import InvalidTarball
 
 from mocks import AttrDict, MockEng, MockFiles, MockObj
@@ -79,6 +80,37 @@ def test_arxiv_fulltext_download_logs_on_success():
     result = obj.log._info.getvalue()
 
     assert expected == result
+
+
+@pytest.mark.httpretty
+def test_arxiv_fulltext_download_not_ready():
+    httpretty.register_uri(
+        httpretty.GET, 'http://export.arxiv.org/pdf/1605.03844',
+        body=pkg_resources.resource_string(
+            __name__, os.path.join('fixtures', 'notreadyblob.gz')))
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'physics.ins-det',
+                ],
+                'value': '1605.03844',
+            },
+        ],
+    }  # literature/1458302
+    extra_data = {}
+    files = MockFiles({})
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    with pytest.raises(DownloadError):
+        arxiv_fulltext_download(obj, eng)
 
 
 @pytest.mark.httpretty
