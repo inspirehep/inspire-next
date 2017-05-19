@@ -11,6 +11,29 @@
                     "properties": {
                         "is-update": {
                             "type": "boolean"
+                        },
+                        "relevance_prediction": {
+                            "properties": {
+                                "decision": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                },
+                                "scores": {
+                                    "properties": {
+                                        "CORE": {
+                                            "type": "float"
+                                        },
+                                        "Non-CORE": {
+                                            "type": "float"
+                                        },
+                                        "Rejected": {
+                                            "type": "float"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
                         }
                     },
                     "type": "object"

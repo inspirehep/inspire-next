@@ -1457,6 +1457,7 @@ WORKFLOWS_UI_REST_FACETS = {
             "workflow_name": terms_filter('_workflow.workflow_name'),
             "is-update": terms_filter('_extra_data.is-update'),
             'subject': terms_filter('metadata.inspire_categories.term'),
+            'decision': terms_filter('_extra_data.relevance_prediction.decision'),
         },
         "aggs": {
             "status": {
@@ -1483,6 +1484,12 @@ WORKFLOWS_UI_REST_FACETS = {
                     'size': 20,
                 },
             },
+            'decision': {
+                'terms': {
+                    'field': '_extra_data.relevance_prediction.decision',
+                    'size': 20
+                }
+            }
         }
     }
 }
@@ -1501,6 +1508,32 @@ WORKFLOWS_UI_REST_SORT_OPTIONS = {
             "default_order": 'desc',
             "order": 2,
         },
+        'core': {
+            'title': 'Relevance Prediction (Desc)',
+            'fields': [
+                {
+                    '_extra_data.relevance_prediction.relevance_score': {
+                        'missing': '_last',
+                        'order': 'desc',
+                        'unmapped_type': 'float'
+                    }
+                }
+            ],
+            'order': 3,
+        },
+        'rejected': {
+            'title': 'Relevance Prediction (Asc)',
+            'fields': [
+                {
+                    '_extra_data.relevance_prediction.relevance_score': {
+                        'missing': '_last',
+                        'order': 'asc',
+                        'unmapped_type': 'float'
+                    }
+                }
+            ],
+            'order': 4,
+        }
     },
 }
 
