@@ -26,6 +26,9 @@ from __future__ import absolute_import, division, print_function
 
 from flask_assets import Bundle
 from invenio_assets import NpmBundle
+from invenio_assets.filters import RequireJSFilter
+
+from inspirehep.modules.theme.bundles import js as _js
 
 update_css = Bundle(
     "scss/authors/authors-update-form.scss",
@@ -44,4 +47,10 @@ js = NpmBundle(
         'js/authors/statistics.js'
     ),
     output="gen/authors.%(version)s.js"
+)
+
+updatejs = NpmBundle(
+    "js/authors/author_form_init.js",
+    output="gen/authors-submission-form.%(version)s.js",
+    filters=RequireJSFilter(exclude=[_js]),
 )

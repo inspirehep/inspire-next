@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from wtforms.validators import StopValidation
+from wtforms.validators import StopValidation, ValidationError
 
 
 class AuthorsValidation(object):
@@ -46,4 +46,30 @@ class AuthorsValidation(object):
             raise StopValidation(message)
         elif not author_names:
             message = field.gettext('At least one author is required.')
+            raise StopValidation(message)
+
+
+class two_date_validator(object):
+    """
+    Compares the values of two fields.
+    param fieldname: the name of the other field to compare to.
+    param message: error message to raise in case of a validation error. Can be
+    interpolated with `%(other_label)s` and `%(other_name)s` to provide a
+    more helpful error.
+    """
+    def __init__(self, fieldname, message=None):
+        self.fieldname = fieldname
+        self.message = message
+
+    def __call__(self, form, field):
+        try:
+            other = form[self.fieldname]
+        except KeyError:
+            raise ValidationError(field.gettext("Invalid field name '%s'.") % self.fieldname)
+        if other.data == '' or field.data == '':
+            return
+        elif field.data > other.data:
+            message = self.message
+            if message is None:
+                message = field.gettext('Field must be less than %(other_name)s.')
             raise StopValidation(message)

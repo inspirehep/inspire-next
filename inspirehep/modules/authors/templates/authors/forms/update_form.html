@@ -34,16 +34,23 @@
 
 {% block javascript %}
 {{ super() }}
+
+{%- assets "inspirehep_authors_update_form_js" %}
+<script src="{{ ASSET_URL }}"></script>
+{%- endassets %}
+
 <script type="text/javascript">
 require(
   [
     "jquery",
     "js/forms/inspire-form",
+    "js/authors/authors_submission_form"
   ],
 
   function(
     $,
-    InspireForm
+    InspireForm,
+    AuthorUpdateForm
   ) {
 
     $(function() {
@@ -72,8 +79,10 @@ require(
       }
     };
 
+    var form = new AuthorUpdateForm();
     // Initialize form
     InspireForm.attachTo("#authorUpdateForm", config.form);
+
   });
 });
 </script>
