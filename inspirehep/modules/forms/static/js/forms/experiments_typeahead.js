@@ -32,12 +32,17 @@ define([
       remote: {
         url: '/api/experiments?q=experimentautocomplete:%QUERY*',
         filter: function(response) {
-          return $.map(response.hits.hits, function(el) { return el });
-        }
+          return response.hits.hits.sort(function (x, y) {
+            var x_title = x.metadata.experiment_names[0].title,
+                y_title = y.metadata.experiment_names[0].title;
+
+            return x_title.localeCompare(y_title);
+          });
+        },
       },
       datumTokenizer: function() {},
       queryTokenizer: Bloodhound.tokenizers.whitespace,
-      limit: 100,
+      limit: 3,
     });
 
     this.dataEngine.initialize();
