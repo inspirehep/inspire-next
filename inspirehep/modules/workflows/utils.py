@@ -156,7 +156,7 @@ def get_pdf_in_workflow(obj):
     obj.log.info('No PDF available')
 
 
-@backoff.on_exception(backoff.expo, urllib3.exceptions.ProtocolError, max_tries=5)
+@backoff.on_exception(backoff.expo, requests.packages.urllib3.exceptions.ProtocolError, max_tries=5)
 def download_file_to_workflow(workflow, name, url):
     """Download a file to a specified workflow.
 
