@@ -25,8 +25,8 @@ from __future__ import absolute_import, division, print_function
 import os
 
 import pkg_resources
+import requests
 import requests_mock
-import urllib3
 
 from inspirehep.modules.workflows.utils import download_file_to_workflow
 
@@ -40,7 +40,7 @@ def test_download_file_to_workflow_retries_on_protocol_error():
 
         requests_mocker.register_uri(
             'GET', 'http://export.arxiv.org/pdf/1605.03844', [
-                {'exc': urllib3.exceptions.ProtocolError},
+                {'exc': requests.packages.urllib3.exceptions.ProtocolError},
                 {'body': filename, 'status_code': 200},
             ])
 
