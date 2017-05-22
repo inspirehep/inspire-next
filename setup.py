@@ -117,7 +117,6 @@ tests_require = [
     'pytest>=2.8.0',
     'mock>=1.3.0',
     'requests_mock',
-    'selenium<3.4.0',
 ]
 
 extras_require = {
