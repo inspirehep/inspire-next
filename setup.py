@@ -118,6 +118,7 @@ tests_require = [
     'mock>=1.3.0',
     'requests_mock',
     'selenium<3.4.0',
+    'pytest_bdd'
 ]
 
 extras_require = {
