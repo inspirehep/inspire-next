@@ -63,7 +63,6 @@ js = NpmBundle(
     npm={
         "jquery": "~1.9.1",
         "jquery-ui": "~1.10.5",
-        "toastr": "~2.1.2",
         "clipboard": "~1.5.8",
         "flightjs": "~1.5.0",
         "angular": "~1.4.8",

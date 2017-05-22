@@ -73,7 +73,6 @@ require.config({
     'sifter': 'node_modules/sifter/sifter',
     'statistics': 'js/authors/statistics',
     'text': 'node_modules/requirejs-hogan-plugin/text',
-    'toastr': 'node_modules/toastr/toastr',
     'typeahead': 'node_modules/typeahead.js/dist/typeahead.bundle',
   },
   shim: {
