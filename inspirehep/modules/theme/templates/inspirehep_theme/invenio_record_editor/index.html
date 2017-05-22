@@ -58,7 +58,8 @@
     'jquery'
     ],
     function($) {
-		$(document).ready(function(){
+		$(document).ready(function() {
+			$('.btn.feedback-transform.feedback-fixed-left').remove();
 			$('.editor-parent-container').height($(window).height() - $('#topnav').height() - $('#collections-section').height() - $('#editor-toolbar').height() - parseInt($('#re-wrapper').css('margin-top')));
 		});
 		$(window).resize(function() {
