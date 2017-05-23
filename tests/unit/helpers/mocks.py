@@ -67,11 +67,40 @@ class MockFiles(object):
         return item in self.data
 
     def __setitem__(self, key, value):
-        self.data[key] = {'key': key}
+        self.data[key] = MockFileObject(key=key)
+
+    def __delitem__(self, key):
+        del self.data[key]
 
     @property
     def keys(self):
         return self.data.keys()
+
+
+class MockFileObject(object):
+    def __init__(self, key):
+        self.obj = {'key': key}
+
+    def __eq__(self, other):
+        return self.obj['key'] == other.obj['key']
+
+    def __getitem__(self, key):
+        return self.obj[key]
+
+    def __setitem__(self, key, value):
+        self.obj[key] = value
+
+    def delete(self):
+        pass
+
+    def get_version(self):
+        return MockObjectVersion()
+
+
+class MockObjectVersion(object):
+    @property
+    def mimetype(self):
+        return 'application/pdf'
 
 
 class MockLog(object):
