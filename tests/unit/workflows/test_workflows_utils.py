@@ -30,7 +30,7 @@ import requests_mock
 
 from inspirehep.modules.workflows.utils import download_file_to_workflow
 
-from mocks import MockFiles, MockObj
+from mocks import MockFiles, MockFileObject, MockObj
 
 
 def test_download_file_to_workflow_retries_on_protocol_error():
@@ -50,7 +50,7 @@ def test_download_file_to_workflow_retries_on_protocol_error():
 
         obj = MockObj(data, extra_data, files=files)
 
-        expected = {'key': '1605.03844.pdf'}
+        expected = MockFileObject(key='1605.03844.pdf')
         result = download_file_to_workflow(
             obj, '1605.03844.pdf', 'http://export.arxiv.org/pdf/1605.03844')
 

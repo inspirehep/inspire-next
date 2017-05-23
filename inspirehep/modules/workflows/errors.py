@@ -20,8 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIRE fixtures - loading of configs and database content."""
-
 from __future__ import absolute_import, division, print_function
 
-from .ext import INSPIREFixtures
+from invenio_workflows.errors import WorkflowsError
+
+
+class DownloadError(WorkflowsError):
+
+    """Error representing a failed download in a workflow."""

@@ -28,6 +28,7 @@ import os
 import re
 from functools import wraps
 
+import backoff
 from flask import current_app
 from lxml.etree import XMLSyntaxError
 from six import BytesIO
@@ -45,6 +46,7 @@ from plotextractor.api import process_tarball
 from plotextractor.converter import untar
 from plotextractor.errors import InvalidTarball, NoTexFilesFound
 
+from ..errors import DownloadError
 from ..utils import download_file_to_workflow, with_debug_logging
 
 
@@ -56,6 +58,7 @@ REGEXP_REFS = re.compile(
 
 
 @with_debug_logging
+@backoff.on_exception(backoff.expo, DownloadError, base=4, max_tries=5)
 def arxiv_fulltext_download(obj, eng):
     """Perform the fulltext download step for arXiv records.
 
@@ -70,8 +73,14 @@ def arxiv_fulltext_download(obj, eng):
         url=current_app.config['ARXIV_PDF_URL'].format(arxiv_id=arxiv_id),
     )
 
-    if pdf:
+    if pdf and pdf.get_version().mimetype == 'application/pdf':
         obj.log.info('PDF retrieved from arXiv for %s', arxiv_id)
+    elif pdf:
+        # We need to delete the failed download as otherwise it would
+        # create a new version instead of replacing the previous one.
+        del obj.files[filename]
+        pdf.delete()
+        raise DownloadError()
     else:
         obj.log.error('Cannot retrieve PDF from arXiv for %s', arxiv_id)
 
