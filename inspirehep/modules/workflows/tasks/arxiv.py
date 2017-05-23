@@ -31,7 +31,6 @@ from functools import wraps
 import backoff
 from flask import current_app
 from lxml.etree import XMLSyntaxError
-from six import BytesIO
 from wand.exceptions import DelegateError
 from werkzeug import secure_filename
 
@@ -131,7 +130,8 @@ def arxiv_plot_extract(obj, eng):
             return
 
         for idx, plot in enumerate(plots):
-            obj.files[plot.get('name')] = BytesIO(open(plot.get('url')))
+            with open(plot.get('url')) as plot_file:
+                obj.files[plot.get('name')] = plot_file
             obj.files[plot.get('name')]['description'] = u'{0:05d} {1}'.format(
                 idx, ''.join(plot.get('captions', []))
             )
