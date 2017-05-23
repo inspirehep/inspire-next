@@ -28,6 +28,7 @@ import os
 import re
 from functools import wraps
 
+import backoff
 from flask import current_app
 from lxml.etree import XMLSyntaxError
 from six import BytesIO
@@ -45,6 +46,7 @@ from plotextractor.api import process_tarball
 from plotextractor.converter import untar
 from plotextractor.errors import InvalidTarball, NoTexFilesFound
 
+from ..errors import DownloadError
 from ..utils import download_file_to_workflow, with_debug_logging
 
 
@@ -55,6 +57,7 @@ REGEXP_REFS = re.compile(
     re.DOTALL)
 
 
+@backoff.on_exception(backoff.expo, DownloadError, max_tries=5, base=4)
 @with_debug_logging
 def arxiv_fulltext_download(obj, eng):
     """Perform the fulltext download step for arXiv records.
@@ -71,7 +74,18 @@ def arxiv_fulltext_download(obj, eng):
     )
 
     if pdf:
-        obj.log.info('PDF retrieved from arXiv for %s', arxiv_id)
+        if pdf.get_version().mimetype == 'application/pdf':
+            obj.log.info('PDF retrieved from arXiv for %s', arxiv_id)
+        else:
+            # We need to delete the failed PDF (overwriting a file does not
+            # delete it, but would simply create a new version, thus old
+            # versions would simply add up, cluttering disk space, if not
+            # explicitily deleted).
+            del obj.files[filename]
+            pdf.delete()
+            warning_message = "PDF from arXiv for %s isn't yet ready"
+            obj.log.warning(warning_message, arxiv_id)
+            raise DownloadError(warning_message % arxiv_id)
     else:
         obj.log.error('Cannot retrieve PDF from arXiv for %s', arxiv_id)
 

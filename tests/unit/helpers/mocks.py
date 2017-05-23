@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import magic
+
 from six import StringIO
 
 
@@ -67,11 +69,41 @@ class MockFiles(object):
         return item in self.data
 
     def __setitem__(self, key, value):
-        self.data[key] = {'key': key}
+        self.data[key] = MockFileObject(value)
 
     @property
     def keys(self):
         return self.data.keys()
+
+    def __delitem__(self, key):
+        del self.data[key]
+
+
+class MockFileObject(object):
+    def __init__(self, stream):
+        self._version = MockObjectVersion(stream)
+        self._data = {}
+
+    def get_version(self):
+        return self._version
+
+    def delete(self):
+        pass
+
+    def __setitem__(self, key, value):
+        self._data[key] = value
+
+    def __getitem__(self, key):
+        return self._data[key]
+
+    def __contains__(self, key):
+        return key in self._data
+
+
+class MockObjectVersion(object):
+    def __init__(self, stream):
+        self.content = stream.read()
+        self.mimetype = magic.detect_from_content(self.content).mime_type
 
 
 class MockLog(object):
@@ -79,6 +111,7 @@ class MockLog(object):
         self._debug = StringIO()
         self._error = StringIO()
         self._info = StringIO()
+        self._warning = StringIO()
 
     def debug(self, msg, *args, **kwargs):
         self._debug.write(msg % args)
@@ -88,6 +121,9 @@ class MockLog(object):
 
     def info(self, msg, *args, **kwargs):
         self._info.write(msg % args)
+
+    def warning(self, msg, *args, **kwargs):
+        self._warning.write(msg % args)
 
 
 class MockUser(object):
