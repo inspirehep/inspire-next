@@ -48,7 +48,7 @@ python:
   - 2.7
 
 before_install:
-  - travis_retry pip install coveralls
+  - travis_retry pip install codecov
   # See: https://docs.travis-ci.com/user/docker/#Using-Docker-Compose
   - sudo rm -f /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
@@ -68,6 +68,6 @@ after_script:
   # Killing via SIGTERM in order to trigger atexit and dump coverage information in WSGI.
   - docker-compose -f docker-compose.test.yml kill -s SIGTERM
   - docker-compose -f docker-compose.test.yml rm -f
-  # Coverage report contains Docker paths. We replace them, so that we can run Coveralls.
+  # Coverage report contains Docker paths. We replace them, so that we can run codecov.
   - sed -i 's@\"/code/@'"\"$(pwd)/"'@g' .coverage
-  - coveralls
+  - codecov
