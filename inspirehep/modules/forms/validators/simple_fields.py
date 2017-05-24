@@ -23,12 +23,15 @@
 from __future__ import absolute_import, division, print_function
 
 from datetime import datetime
+from json import loads
 from urllib import urlencode
 
+import requests
 from flask import current_app
 from flask.ext.login import current_user
-from idutils import is_arxiv, is_isbn
 from wtforms.validators import ValidationError, StopValidation
+
+from idutils import is_arxiv
 
 from inspirehep.utils.url import is_pdf_link
 
@@ -46,16 +49,6 @@ def arxiv_syntax_validation(form, field):
         raise StopValidation(message)
 
 
-def isbn_syntax_validation(form, field):
-    """Validate ISBN syntax."""
-    message = "The provided ISBN is invalid - it should look \
-                similar to '1413304540', '1-4133-0454-0', '978-1413304541' or \
-                '978-1-4133-0454-1'."
-
-    if field.data and not is_isbn(field.data):
-        raise StopValidation(message)
-
-
 def does_exist_in_inspirehep(query, collections=None):
     """Check if there exist an item in the db which satisfies query.
 
@@ -63,9 +56,6 @@ def does_exist_in_inspirehep(query, collections=None):
     :param collections: collections to search in; by default searches in
         the default collection
     """
-    import requests
-    from json import loads
-
     params = {
         'p': query,
         'of': 'id'

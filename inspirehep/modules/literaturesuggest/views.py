@@ -95,14 +95,22 @@ def submit():
     # Start workflow. delayed=True will execute the workflow in the
     # background using, for example, Celery.
     start.delay("article", object_id=workflow_object.id)
-
-    return redirect(url_for('.success'))
+    if 'chapter' in visitor.data.get('type_of_doc') and not visitor.data.get('parent_book'):
+        return redirect(url_for('.success_book_parent'))
+    else:
+        return redirect(url_for('.success'))
 
 
 @blueprint.route('/new/success', methods=['GET'])
 def success():
     """Render success template for the user."""
     return render_template('literaturesuggest/forms/suggest_success.html')
+
+
+@blueprint.route('/new/success_book', methods=['GET'])
+def success_book_parent():
+    """Render success template for the user."""
+    return render_template('literaturesuggest/forms/suggest_book_parent.html')
 
 
 @blueprint.route('/new/validate', methods=['POST'])

@@ -35,22 +35,27 @@ define(function(require, exports, module) {
       common_mapping: function(data) {
 
         var journal;
-
         if ("container-title" in data) {
           for (var i = 0; i < data['container-title'].length; i++) {
             if (i === data['container-title'].length - 1) {
-              journal = data['container-title'][i];
+              data['processed_title'] = data['container-title'][i];
             } else {
-              journal = data['container-title'][i] + ', ';
+              data['processed_title'] = data['container-title'][i] + ', ';
             }
           }
         }
-
+        if(data.issued){
+            let date = data.issued['date-parts'][0][0]
+            if(data.issued['date-parts'][0][1]){
+              date = date + '-' + data.issued['date-parts'][0][1]
+              if(data.issued['date-parts'][0][2]){
+              date = date + '-' + data.issued['date-parts'][0][2]
+             }
+            }
+            data['processed_date'] = date
+        }
         var doi_obj = {
-          journal_title: journal,
           isbn: data.isbn,
-          page_range_article_id: data.page,
-          year: data.issued['date-parts'][0][0],
           issue: data.issue,
           authors: data.author,
           volume: data.volume,
@@ -70,19 +75,57 @@ define(function(require, exports, module) {
       special_mapping: {
         thesis: function(data) {
           return {
-            title: data.volume_title
+            type_of_doc: 'thesis',
+            journal_title: data.processed_title,
+            page_range_article_id: data.page,
+            title: data.volume_title,
+            defense_date: data.processed_date,
           };
         },
-        article: function(data) {
-          var extra_mapping = {};
+        'journal-article': function(data) {
+          var extra_mapping = {
+            journal_title: data.processed_title,
+            page_range_article_id: data.page,  
+            year: data.issued['date-parts'][0][0],
+            type_of_doc: 'article'
+          };
           if ( data['title'].length > 0 ) {
-            extra_mapping = {
-              title: data.title,
-              title_crossref: data.title
+            extra_mapping['title']= data.title;
+            extra_mapping['title_crossref']= data.title;
             }
+          return extra_mapping;
+        },
+        book: function(data) {
+          var extra_mapping = { 
+            series_title: data.processed_title,
+            publication_date: data.processed_date,
+            series_volume: data.volume,
+            publication_place: data['publisher-location'],
+            publisher_name: data.publisher,
+            type_of_doc: 'book',
+          };
+          if ( data['title'].length > 0 ) {
+            extra_mapping['title']= data.title;
+            extra_mapping['title_crossref']= data.title;
           }
           return extra_mapping;
-        }
+        },
+        'book-chapter': function(data) {
+          if (data.page){
+            split_pages = data.page.split('-')
+          }
+          var extra_mapping = { 
+            book_title: data.processed_title,
+            page_start: split_pages[0],
+            page_end: split_pages[1],
+            type_of_doc: 'chapter',
+          };
+          if ( data['title'].length > 0 ) {
+            extra_mapping['title']= data.title;
+            extra_mapping['title_crossref']= data.title;
+          }
+          return extra_mapping;
+        },
       },
 
       extract_contributor: function(author) {

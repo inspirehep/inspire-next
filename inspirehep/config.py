@@ -463,6 +463,9 @@ RECORDS_REST_ENDPOINTS = dict(
         suggesters=dict(
             abstract_source=dict(completion=dict(
                 field='abstracts.abstract_source_suggest'
+            )),
+            book_title=dict(completion=dict(
+                field='bookautocomplete'
             ))
         ),
         list_route='/literature/',

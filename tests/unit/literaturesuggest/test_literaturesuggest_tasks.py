@@ -22,12 +22,17 @@
 
 from __future__ import absolute_import, division, print_function
 
+from mock import patch
+
+from inspire_dojson.utils import validate
+from inspire_schemas.builders import LiteratureBuilder
+from inspire_schemas.utils import load_schema
 from inspirehep.modules.literaturesuggest.tasks import (
-    new_ticket_context,
-    reply_ticket_context,
     curation_ticket_context,
     curation_ticket_needed,
-    formdata_to_model
+    formdata_to_model,
+    new_ticket_context,
+    reply_ticket_context,
 )
 
 from mocks import MockEng, MockObj, MockUser
@@ -302,3 +307,97 @@ def test_formdata_to_model_pdf_and_additional_url():
 
     assert expected_extra_data == obj.extra_data
     assert expected_urls == record['urls']
+
+
+@patch.object(LiteratureBuilder, 'validate_record')
+def test_formdata_to_model_only_book(mock_validate_record):
+    schema = load_schema('hep')
+    subschema = schema['properties']['book_series']
+
+    data = {}
+    extra_data = {}
+    obj = MockObj(data, extra_data)
+    formdata = {
+        'series_title': 'Astrophysics No2',
+        'series_volume': 'Universe',
+        'type_of_doc': 'book',
+    }
+
+    expected = [
+        {
+            'title': 'Astrophysics No2',
+            'volume': 'Universe',
+        },
+    ]
+    result = formdata_to_model(obj, formdata)
+
+    assert validate(result['book_series'], subschema) is None
+    assert expected == result['book_series']
+
+
+@patch.object(LiteratureBuilder, 'validate_record')
+def test_formdata_to_model_only_thesis(mock_validate_record):
+    schema = load_schema('hep')
+    subschema = schema['properties']['thesis_info']
+
+    data = {}
+    extra_data = {}
+    obj = MockObj(data, extra_data)
+    formdata = {
+        'defense_date': '2010-03-03',
+        'degree_type': 'phd',
+        'institution': 'Harvard',
+        'thesis_date': '2011-05-03',
+        'type_of_doc': 'thesis',
+    }
+
+    expected = {
+        'date': '2011-05-03',
+        'defense_date': '2010-03-03',
+        'degree_type': 'phd',
+        'institutions': [
+            {'name': 'Harvard'},
+        ],
+    }
+    result = formdata_to_model(obj, formdata)
+
+    assert validate(result['thesis_info'], subschema) is None
+    assert expected == result['thesis_info']
+
+
+@patch.object(LiteratureBuilder, 'validate_record')
+def test_formdata_to_model_only_chapter(mock_validate_record):
+    schema = load_schema('hep')
+    book_series_subschema = schema['properties']['book_series']
+    publication_info_subschema = schema['properties']['publication_info']
+
+    data = {}
+    extra_data = {}
+    obj = MockObj(data, extra_data)
+    formdata = {
+        'end_page': '1200',
+        'parent_book': 'http://localhost:5000/api/literature/1373790',
+        'series_title': 'Astrophysics',
+        'start_page': '150',
+        'type_of_doc': 'chapter',
+    }
+
+    expected_book_series = [
+        {'title': 'Astrophysics'},
+    ]
+    expected_publication_info = [
+        {
+            'page_end': '1200',
+            'page_start': '150',
+            'parent_record': {
+                '$ref': 'http://localhost:5000/api/literature/1373790',
+            },
+        },
+    ]
+    result = formdata_to_model(obj, formdata)
+
+    assert validate(result['book_series'], book_series_subschema) is None
+    assert expected_book_series == result['book_series']
+
+    assert validate(result['publication_info'], publication_info_subschema) is None
+    assert expected_publication_info == result['publication_info']

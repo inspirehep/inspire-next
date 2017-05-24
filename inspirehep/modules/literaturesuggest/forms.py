@@ -25,40 +25,38 @@
 from __future__ import absolute_import, division, print_function
 
 from babel import Locale
-
-from flask import current_app
 from flask_babelex import gettext as _
-
 from wtforms import validators
-from wtforms.widgets import (
-    html_params,
-    HiddenInput,
-    HTMLString,
-)
+from wtforms.widgets import HiddenInput, HTMLString, html_params
 
 from inspire_schemas.utils import load_schema
+from inspirehep.modules.forms import fields
 from inspirehep.modules.forms.field_widgets import (
     ColumnInput,
-    ExtendedListWidget,
-    ItemWidget,
     DynamicListWidget,
     DynamicItemWidget,
+    ExtendedListWidget,
+    ItemWidget,
 )
-from inspirehep.modules.forms.form import INSPIREForm
-from inspirehep.modules.forms import fields
 from inspirehep.modules.forms.filter_utils import clean_empty_list
+from inspirehep.modules.forms.form import INSPIREForm
 from inspirehep.modules.forms.validation_utils import DOISyntaxValidator
-from inspirehep.modules.forms.validators.simple_fields import duplicated_doi_validator, \
-    duplicated_arxiv_id_validator, arxiv_syntax_validation, \
-    pdf_validator, no_pdf_validator, date_validator
 from inspirehep.modules.forms.validators.dynamic_fields import AuthorsValidation
-
+from inspirehep.modules.forms.validators.simple_fields import (
+    arxiv_syntax_validation,
+    date_validator,
+    duplicated_arxiv_id_validator,
+    duplicated_doi_validator,
+    no_pdf_validator,
+    pdf_validator,
+)
 from inspirehep.modules.literaturesuggest.fields.arxiv_id import ArXivField
 
 
 #
 # Field class names
 #
+
 ARTICLE_CLASS = " article-related"
 THESIS_CLASS = " thesis-related"
 CHAPTER_CLASS = " chapter-related"
@@ -71,6 +69,7 @@ FORM_LANGUAGES = ['en', 'ru', 'de', 'fr', 'it', 'es', 'zh', 'pt', 'ja']
 #
 # Custom field widgets
 #
+
 def importdata_button(field, **dummy_kwargs):
     """Import data button."""
     html = u'<button %s data-target="%s">%s</button>' % \
@@ -97,6 +96,7 @@ def skip_importdata(field, **dummy_kwargs):
 #
 # Group buttons of import and skip
 #
+
 def import_buttons_widget(field, **dummy_kwargs):
     """Button for import data and skip."""
     html_skip = skip_importdata(field)
@@ -108,6 +108,7 @@ def import_buttons_widget(field, **dummy_kwargs):
 #
 # Tooltips on disabled elements require wrapper elements
 #
+
 def wrap_nonpublic_note(field, **dummy_kwargs):
     """Proceedings box with tooltip."""
     html = u'<div class="tooltip-wrapper" data-toggle="tooltip"' \
@@ -242,22 +243,16 @@ class LiteratureForm(INSPIREForm):
         export_key='categories',
     )
 
-    # isbn = ISBNField(
-    #     label=_('ISBN'),
-    #     widget_classes='form-control',
-    # )
-
     import_buttons = fields.SubmitField(
         label=_(' '),
         widget=import_buttons_widget
     )
 
     types_of_doc = [("article", _("Article/Conference paper")),
-                    ("thesis", _("Thesis"))]
-
-    # ("chapter", _("Book Chapter")),
-    # ("book", _("Book")),
-    # ("proceedings", _("Proceedings"))]
+                    ("thesis", _("Thesis")),
+                    ('book', _('Book')),
+                    ('chapter', _('Book chapter'))]
+    # ("proceedings", _("Proceedings"))
 
     type_of_doc = fields.SelectField(
         label='Type of Document',
@@ -406,6 +401,7 @@ class LiteratureForm(INSPIREForm):
     # ==============
     # Thesis related
     # ==============
+
     supervisors = fields.DynamicFieldList(
         fields.FormField(
             AuthorInlineForm,
@@ -447,15 +443,71 @@ class LiteratureForm(INSPIREForm):
         widget_classes="form-control" + THESIS_CLASS,
     )
 
-    # license = fields.SelectField(
-    #     label=_('License'),
-    #     default='',
-    #     widget_classes="form-control" + THESIS_CLASS,
-    # )
+    # =========
+    # Book Info
+    # =========
+
+    publisher_name = fields.TextField(
+        label=_('Publisher'),
+        widget_classes="form-control" + BOOK_CLASS,
+    )
+
+    publication_place = fields.TextField(
+        label=_('Publication Place'),
+        widget_classes="form-control" + BOOK_CLASS,
+    )
+
+    series_title = fields.TextField(
+        label=_('Series Title'),
+        widget_classes="form-control" + BOOK_CLASS,
+        autocomplete='journal'
+    )
+
+    series_volume = fields.TextField(
+        label=_('Volume'),
+        widget_classes="form-control" + BOOK_CLASS,
+    )
+
+    publication_date = fields.TextField(
+        label=_('Publication Date'),
+        description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
+        widget_classes="form-control" + BOOK_CLASS,
+        validators=[date_validator],
+    )
+
+    # =================
+    # Book Chapter Info
+    # =================
+
+    book_title = fields.TextField(
+        label=_('Book Title'),
+        widget_classes="form-control" + CHAPTER_CLASS,
+    )
+
+    start_page = fields.TextField(
+        placeholder=_('Start page of the chapter'),
+        widget_classes="form-control" + CHAPTER_CLASS,
+    )
+
+    end_page = fields.TextField(
+        placeholder=_('End page of the chapter'),
+        widget_classes="form-control" + CHAPTER_CLASS,
+    )
+
+    find_book = fields.TextField(
+        placeholder=_("Start typing for suggestions"),
+        label=_('Find Book'),
+        description=_('Book name, ISBN, Publisher'),
+        widget_classes="form-control" + CHAPTER_CLASS,
+    )
+    parent_book = fields.TextField(
+        widget=HiddenInput(),
+    )
 
     # ============
     # Journal Info
     # ============
+
     journal_title = fields.TextField(
         placeholder=_("Start typing for suggestions"),
         label=_('Journal Title'),
@@ -496,9 +548,9 @@ class LiteratureForm(INSPIREForm):
         export_key='note',
     )
 
-    # ============
+    # ==========
     # References
-    # ============
+    # ==========
 
     references = fields.TextAreaField(
         label=_('References'),
@@ -509,6 +561,7 @@ class LiteratureForm(INSPIREForm):
     # ====================
     # Preprint Information
     # ====================
+
     preprint_created = fields.TextField(
         widget=HiddenInput(),
         export_key='preprint_created',
@@ -517,28 +570,6 @@ class LiteratureForm(INSPIREForm):
     # ====================
     # Fulltext Information
     # ====================
-    # file_field = fields.FileUploadField(
-    #     label="",
-    #     widget=plupload_widget,
-    #     widget_classes="form-control" + THESIS_CLASS,
-    #     export_key=False
-    # )
-
-    # url = fields.DynamicFieldList(
-    #     fields.FormField(
-    #         UrlInlineForm,
-    #         widget=ExtendedListWidget(
-    #             item_widget=ItemWidget(),
-    #             html_tag='div',
-    #         ),
-    #     ),
-    #     #validators=[validators.URL(), validators.Optional, ],
-    #     label=_('If available, please provide us with an accessible URL for the pdf'),
-    #     add_label=_('Add another url'),
-    #     min_entries=1,
-    #     export_key='url',
-    #     widget_classes='',
-    # )
 
     url = fields.TextField(
         label=_('Link to PDF'),
@@ -556,25 +587,15 @@ class LiteratureForm(INSPIREForm):
         widget_classes="form-control",
     )
 
-    # ====================
+    # ==============
     # Extra comments
-    # ====================
+    # ==============
 
     extra_comments = fields.TextAreaField(
         label=_('Comments'),
         description='Any extra comments related to your submission',
         widget_classes="form-control"
     )
-
-    # ok_to_upload = fields.BooleanField(
-    #     label="",
-    #     default=False,
-    #     widget=CheckboxButton(msg=_('I confirm I have read the License Agreement')),
-    #     validators=[required_if_files('file_field',
-    #                                   message=_("Please, check this box to upload material.")
-    #                                   ),
-    #                 ]
-    #     )
 
     #
     # Form Configuration
@@ -590,6 +611,8 @@ class LiteratureForm(INSPIREForm):
             ['type_of_doc', ]),
         ('Links',
             ['url', 'additional_url']),
+        ('Publication Information',
+            ['find_book', 'parent_book', 'book_title', 'start_page', 'end_page']),
         ('Basic Information',
             ['title', 'title_arXiv', 'categories_arXiv', 'language',
              'other_language', 'title_translation', 'subject', 'authors',
@@ -598,19 +621,18 @@ class LiteratureForm(INSPIREForm):
         ('Thesis Information',
             ['degree_type', 'thesis_date', 'defense_date', 'institution',
              'supervisors', 'license_url']),
-        # ('Licenses and copyright',
-        #     ['license', 'license_url'], {'classes': 'collapse'}),
-        ('Journal Information',
-            ['journal_title', 'volume', 'issue', 'year',
-             'page_range_article_id']),
+        ('Publication Information',
+            ['journal_title', 'volume', 'issue',
+             'year', 'page_range_article_id']),
+        ('Publication Information',
+            ['series_title', 'series_volume', 'publication_date',
+             'publisher_name', 'publication_place']),
         ('Conference Information',
             ['conf_name', 'conference_id'], {'classes': 'collapse'}),
         ('Proceedings Information (if not published in a journal)',
             ['nonpublic_note'], {'classes': 'collapse'}),
         ('References',
             ['references'], {'classes': 'collapse'}),
-        # ('Upload files',
-        #     ['file_field', 'ok_to_upload']),
         ('Additional comments',
             ['extra_comments'], {'classes': 'collapse'}),
     ]
@@ -618,9 +640,13 @@ class LiteratureForm(INSPIREForm):
     field_sizes = {
         'type_of_doc': 'col-xs-12 col-md-3',
         'wrap_nonpublic_note': 'col-md-9',
+        'publisher_name': 'col-xs-12 col-md-9',
+        'publication_date': 'col-xs-12 col-md-4',
         'thesis_date': 'col-xs-12 col-md-4',
         'defense_date': 'col-xs-12 col-md-4',
         'degree_type': 'col-xs-12 col-md-3',
+        'start_page': 'col-xs-12 col-md-3',
+        'end_page': 'col-xs-12 col-md-3',
     }
 
     def __init__(self, *args, **kwargs):
