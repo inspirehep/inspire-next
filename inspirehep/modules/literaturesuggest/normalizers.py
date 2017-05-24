@@ -31,6 +31,22 @@ from inspirehep.utils.normalizers import (
     normalize_journal_title as _normalize_journal_title,
 )
 from inspirehep.utils.pubnote import split_page_artid
+from invenio_db import db
+from sqlalchemy import text
+
+
+def check_journal_existance(title):
+    query = text("SELECT  id FROM records_metadata as r, json_array_elements_text(r.json -> '_collections') as elem,json_array_elements(r.json-> 'journal_titles') as titles\
+    WHERE 'Journals' = elem AND titles->>'title' =:j_title;").bindparams(j_title=title)
+    result = db.session.execute(query)
+    return result
+
+
+def check_book_existence(title):
+    query = text("SELECT  json FROM records_metadata as r, json_array_elements(r.json -> 'titles') as elem, json_array_elements_text(r.json -> 'document_type') as elem2\
+    WHERE elem ->> 'title' =:b_title AND elem2 = 'book'").bindparams(b_title=title)
+    result = db.session.execute(query)
+    return result
 
 
 def normalize_formdata(obj, formdata):
@@ -39,6 +55,7 @@ def normalize_formdata(obj, formdata):
     formdata = split_page_range_article_id(obj, formdata)
     formdata = normalize_journal_title(obj, formdata)
     formdata = remove_english_language(obj, formdata)
+    formdata = find_book_id(obj, formdata)
 
     return formdata
 
@@ -67,17 +84,29 @@ def split_page_range_article_id(obj, formdata):
 
     if page_range_article_id:
         page_start, page_end, artid = split_page_artid(page_range_article_id)
-        formdata['page_start'] = page_start
-        formdata['page_end'] = page_end
+        formdata['start_page'] = page_start
+        formdata['end_page'] = page_end
         formdata['artid'] = artid
 
     return formdata
 
 
 def normalize_journal_title(obj, formdata):
-    if formdata.get('journal_title'):
+    if formdata.get('type_of_doc') == 'book' or formdata.get('type_of_doc') == 'chapter':
+        result = check_journal_existance(formdata.get('series_title'))
+        if result.rowcount > 0:
+            formdata['journal_title'] = _normalize_journal_title(formdata.get('series_title'))
+    else:
         formdata['journal_title'] = _normalize_journal_title(formdata['journal_title'])
+    return formdata
 
+
+def find_book_id(obj, formdata):
+    if formdata.get('type_of_doc') == 'chapter':
+        if not formdata.get('parent_book'):
+            result = list(check_book_existence(formdata.get('book_title')))
+            if len(result) == 1:
+                formdata['parent_book'] = result[0][0]['self']['$ref']
     return formdata
 
 

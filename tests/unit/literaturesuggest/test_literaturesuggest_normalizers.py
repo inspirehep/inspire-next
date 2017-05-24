@@ -38,9 +38,9 @@ def test_split_page_range_article_id():
 
     expected = {
         'artid': None,
-        'page_end': '890',
+        'end_page': '890',
         'page_range_article_id': '789-890',
-        'page_start': '789',
+        'start_page': '789',
     }
     result = split_page_range_article_id(obj, formdata)
 

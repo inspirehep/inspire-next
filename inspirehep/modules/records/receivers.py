@@ -67,6 +67,26 @@ def enhance_record(sender, json, *args, **kwargs):
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
     after_record_enhanced.send(json)
+    add_book_autocomplete(sender, json, *args, **kwargs)
+
+
+def add_book_autocomplete(sender, json, *args, **kwargs):
+    if 'book' in json.get('document_type', []):
+        result = json.get('bookautocomplete', [])
+        titles = force_list(get_value(json, 'titles.title'))
+        authors = (force_list(get_value(json, 'authors.full_name')))
+        result.extend(titles)
+        result.extend(authors)
+        ref = get_value(json, 'self.$ref')
+        json.update({'bookautocomplete': {
+                        'input': result,
+                        'payload': {
+                            'title': titles,
+                            'authors': authors,
+                            'id': ref
+                            }
+                        }
+                     })
 
 
 def populate_inspire_document_type(sender, json, *args, **kwargs):

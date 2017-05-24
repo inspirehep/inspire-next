@@ -29,6 +29,7 @@ define(function(require, exports, module) {
   var DataMapper = require("js/literaturesuggest/mapper");
   var TaskManager = require("js/literaturesuggest/task_manager");
   var conferencesTypeahead = require("js/forms/conferences_typeahead");
+  var books_typeahead = require("js/forms/books_typeahead");
   var AffiliationsTypeahead = require("js/forms/affiliations_typeahead");
   var PreviewModal = require("js/literaturesuggest/modal_preview");
   var SynchronizedField = require("js/literaturesuggest/synchronized_field");
@@ -58,6 +59,15 @@ define(function(require, exports, module) {
         doi: ['arxiv'],
         categories_arXiv: ['arxiv'],
         journal_title: ['doi', 'arxiv'],
+        series_title: ['doi', 'arxiv'],
+        publication_date: ['doi', 'arxiv'],
+        publication_place: ['doi', 'arxiv'],
+        publisher_name: ['doi', 'arxiv'],
+        defense_date: ['doi', 'arxiv'],
+        type_of_doc: ['doi', 'arxiv'],
+        book_title: ['doi', 'arxiv'],
+        start_page: ['doi', 'arxiv'],
+        end_page: ['doi', 'arxiv'],
         isbn: ['doi', 'arxiv'],
         volume: ['doi', 'arxiv'],
         year: ['doi', 'arxiv'],
@@ -113,9 +123,14 @@ define(function(require, exports, module) {
     this.$comments = $("#state-group-extra_comments");
     this.$importButton = $("#importData");
     this.$skipButton = $("#skipImportData");
+    this.$changeBookButton = $('#book_change');
     this.$submissionForm = $('#submitForm');
     this.$conference = $('#conf_name');
+    this.$book = $('#find_book');
+    this.$bookId = $('#parent_book');
+    this.$bookValidatorField = $('#state-find_book'); 
     this.$conferenceId = $('#conference_id');
+    this.$bookTitle = $('#book_title');
     this.$conferenceValidatorField = $('#state-conf_name');
     this.$previewModal = $('#modalData');
     this.$nonpublic_note = $("#nonpublic_note");
@@ -183,6 +198,48 @@ define(function(require, exports, module) {
 
       conferencesTypeahead(this.$conference);
 
+      books_typeahead(this.$book);
+
+      function clear_fields(fields) {
+        for (var i = 0; i < fields.length; i++) {
+          var field = document.getElementById(fields[i]);
+          field.value = '';
+        }
+      }
+
+      function create_bk_button() {
+        $("<change_book_button id='change_book_btn' class='btn btn-default\
+         btn-md book-btn'>Change Book</change_book_button>").appendTo('#books-message_success');
+        $('#change_book_btn').click(function(event) {
+          clear_fields(['find_book', 'parent_book']);
+          var group_id = document.getElementById("state-group-start_page")
+          group_id.removeChild(group_id.firstChild);
+          $('#state-group-find_book').show()
+          $('#state-group-book_title').show()
+        });
+      }
+
+      function addBookInfoField_success(title, authors_list) {
+        $("<div id='books-message_success' class='alert alert-padding\
+         alert-success book-success-message'><p></p></div>").prependTo('#state-group-start_page');
+        $("#books-message_success > p").replaceWith('<p> You have selected <b>' + title + '</b> \
+                            ' + authors_list + ' </p>');
+      };
+
+      function add_book_values(datum) {
+        if (datum.payload.id !== undefined) {
+          document.getElementById("parent_book").value = datum.payload.id;
+        }
+        addBookInfoField_success(datum.text, datum.payload.authors.map(function(a) { return a.replace(',', '') }));
+      }
+
+      this.$book.bind('typeahead:selected', function(obj, datum, name) {
+        add_book_values(datum);
+        create_bk_button();
+        $('#state-group-find_book').hide();
+        $('#state-group-book_title').hide();
+      });
+
       this.previewModal = new PreviewModal(this.$previewModal, {
         labels: this.getLabels(),
         ignoredFields: this.getHiddenFields()
@@ -207,6 +264,14 @@ define(function(require, exports, module) {
 
       this.addConferenceInfoField();
 
+      this.addBookInfoField();
+
+      this.$bookTitle.on('blur', function(){
+        if(document.getElementById('find_book').val == undefined){
+          document.getElementById('books-message').style.display = 'block';
+        }
+    });
+
       if (!this.isFormBlank()) {
         this.showForm();
       }
@@ -221,6 +286,14 @@ define(function(require, exports, module) {
 
       this.$deposition_type.change(function(event) {
         that.onDepositionTypeChanged();
+      });
+      
+      $('#start_page').change(function(event) {
+        that.onPageChange(event);
+      });
+
+      $('#end_page').change(function(event) {
+        that.onPageChange(event);
       });
 
       this.$language.change(function(event) {
@@ -267,6 +340,24 @@ define(function(require, exports, module) {
         }
       }.bind(this));
 
+        this.$book.on('change blur typeahead:selected', function() {
+          if (!this.$bookId.val() && $.trim(this.$book.val())) {
+            this.$bookInfoField.show();
+          } else {
+            this.$bookInfoField.hide();
+          }
+        }.bind(this));
+
+      // for spinner at books typeahead
+      this.$book.on('typeahead:asyncrequest', function() {
+        $(this).addClass('ui-autocomplete-loading');
+      });
+      this.$book.on('typeahead:asynccancel typeahead:asyncreceive',
+        function() {
+          $(this).removeClass('ui-autocomplete-loading');
+        }
+      );
+
       $(document).on('click', '.panel div.clickable', function(e) {
         var $this = $(this);
         var $toggle_element = $this.find('.panel-toggle');
@@ -296,6 +387,46 @@ define(function(require, exports, module) {
       this.$conferenceInfoField = $clone;
     },
 
+    addBookInfoField: function() {
+      var $clone = this.$bookValidatorField.clone();
+      $clone
+        .attr('id', 'books-message')
+        .removeClass('alert-danger')
+        .addClass('alert-warning book-success-message')
+        .html('If your book is not present in our database ' +
+          'please submit it before submitting the chapter'
+        );
+      this.$bookValidatorField.after($clone);
+      this.$bookInfoField = $clone;
+      //button creation
+      $("<book_btn id='new_book_btn' class='btn btn-default btn-md\
+       book-btn'>Submit Book</book_btn>").appendTo('#books-message');
+      $('#new_book_btn').click(function(event) {
+        window.open('/literature/new', '_blank');
+      });
+    },
+
+    onPageChange: function onPageChange(event) {
+      var that = this;
+      var startPage = parseInt($('#start_page').val(), 10);
+      var endPage= parseInt($('#end_page').val(), 10);
+      
+      if ( !startPage || !endPage ){
+        return;
+      }
+
+      if ( endPage < startPage ) {
+        setTimeout(function () {
+          that.$submissionForm.trigger("handleFieldMessage", {
+            name: 'end_page',
+            data: {
+              state: 'error',
+              messages: ['Start page should be less than end page']
+            }
+          });
+        }, 200);
+      }
+    },
     /**
      * Disable form submit on ENTER
      */
@@ -583,6 +714,7 @@ define(function(require, exports, module) {
         that.$inputs.resetColor();
         that.$inputs.clearForm();
         that.fillForm(result.mapping);
+        that.$deposition_type.change()
         that.fieldsGroup.resetState();
         that.showForm();
       });

@@ -73,18 +73,17 @@ define(function(require, exports, module) {
      * @param depositionType {String} type of deposition
      * @returns {*}
      */
-    map: function(data, depositionType) {
+    map: function(data) {
       var common_mapping = this.common_mapping(data);
       var special_mapping = {};
-      if (this.special_mapping[depositionType]) {
-        special_mapping = this.special_mapping[depositionType](data);
+      if (this.special_mapping[data.type]) {
+        special_mapping = this.special_mapping[data.type](data);
       }
 
       var mapping = $.extend({}, common_mapping, special_mapping);
       if (mapping.authors) {
         mapping.authors = $.map(mapping.authors, this.extract_contributor);
       }
-
       return mapping;
     }
   };
