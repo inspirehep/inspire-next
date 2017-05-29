@@ -101,6 +101,7 @@ install_requires = [
     'Flask_CeleryExt>=0.3.0',
     'python-redis-lock~=3.2',
     'backoff~=1.4.2',
+    'requests~=2.15.1',
 ]
 
 tests_require = [
@@ -125,6 +126,7 @@ extras_require = {
         'mock',
         'Sphinx<1.6',
         'sphinxcontrib-napoleon>=0.6.1',
+        'docutils~=0.13.1',
     ],
     'postgresql': [
         'invenio-db[postgresql,versioning]>=1.0.0b2',
