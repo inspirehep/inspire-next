@@ -30,9 +30,9 @@ define([
     this.dataEngine = new Bloodhound({
       name: 'journals',
       remote: {
-        url: '/api/journals?q=journalautocomplete:%QUERY*',
+        url: '/api/journals/_suggest?journal_title=%QUERY',
         filter: function(response) {
-          return $.map(response.hits.hits, function(el) { return el });
+          return $.map(response.journal_title[0].options, function(el) { return el });
         }
       },
       datumTokenizer: function() {},
@@ -63,16 +63,17 @@ define([
         }.bind(this));
       }.bind(this),
       displayKey: function(data) {
-        return data.metadata.journal_titles[0].title;
+        return data.text;
       },
       templates: {
         empty: function(data) {
           return 'Cannot find this journal in our database.';
         },
         suggestion: function(data) {
-          data.metadata.title = data.metadata.journal_titles[0].title;
-          data.metadata.short_title = data.metadata.short_titles[0].title;
-          return suggestionTemplate.render.call(suggestionTemplate, data.metadata);
+          var metadata = {};
+          metadata['title'] = data.payload.full_title;
+          metadata['short_title'] = data.text;
+          return suggestionTemplate.render.call(suggestionTemplate, metadata);
         }.bind(this)
       }
     });
