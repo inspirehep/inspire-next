@@ -70,7 +70,10 @@
                             "type": "string"
                         },
                         "title": {
-                            "copy_to": "journalautocomplete",
+                            "copy_to": [
+                                "journalautocomplete",
+                                "lowercase_titles"
+                            ],
                             "type": "string"
                         }
                     },
@@ -103,6 +106,10 @@
                         }
                     },
                     "type": "object"
+                },
+                "lowercase_journal_titles": {
+                    "analyzer": "lowercase_analyzer",
+                    "type": "string"
                 },
                 "peer_reviewed": {
                     "type": "boolean"
@@ -179,6 +186,7 @@
                             "type": "string"
                         },
                         "title": {
+                            "copy_to": "lowercase_titles",
                             "type": "string"
                         }
                     },
@@ -194,6 +202,17 @@
                         }
                     },
                     "type": "object"
+                }
+            }
+        }
+    },
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "lowercase_analyzer": {
+                    "filter": "lowercase",
+                    "tokenizer": "keyword",
+                    "type": "custom"
                 }
             }
         }

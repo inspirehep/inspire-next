@@ -22,22 +22,14 @@
 
 from __future__ import absolute_import, division, print_function
 
-import logging
-
-from inspirehep.modules.search.api import JournalsSearch
+from inspirehep.utils.normalizers import normalize_journal_title
 
 
-def normalize_journal_title(journal_title):
-    logger = logging.getLogger(__name__)
-    normalized_journal_title = journal_title
-    hits = JournalsSearch().query(
-        'match',
-        lowercase_titles=journal_title.lower()
-    ).execute()
+def test_normalize_journal_title(app):
+    journal_title = 'Physical Review'
+    abbreviated_journal_title = 'Phys.Rev.'
 
-    if hits:
-        try:
-            normalized_journal_title = hits[0].short_titles[0].title
-        except (AttributeError, IndexError) as e:
-            logger.debug("Failed to access normalized journal title: %s", e)
-    return normalized_journal_title
+    with app.test_client():
+        normalized_journal_title = normalize_journal_title(journal_title)
+
+    assert abbreviated_journal_title == normalized_journal_title
