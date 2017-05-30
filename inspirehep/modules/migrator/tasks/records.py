@@ -147,7 +147,7 @@ def migrate(source, wait_for_results=False):
         print('All migration tasks have been completed.')
 
 
-@shared_task(ignore_result=True)
+@shared_task(ignore_result=False)
 def continuous_migration():
     """Task to continuously migrate what is pushed up by Legacy."""
     redis_url = current_app.config.get('CACHE_REDIS_URL')
@@ -166,8 +166,10 @@ def continuous_migration():
                 db.session.close()
         finally:
             lock.release()
+        return True
     else:
         logger.info("Continuous_migration already executed. Skipping.")
+        return False
 
 
 def create_index_op(record):
