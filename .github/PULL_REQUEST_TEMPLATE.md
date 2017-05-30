@@ -16,7 +16,7 @@
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
 - [ ] I have all the information that I need (if not, move to `RFC` and look for it).
 - [ ] I linked the related issue(s) in the corresponding commit logs.
-- [ ] I wrote [good commit log messages](https://github.com/torvalds/subsurface-for-dirk/blob/master/README#L92-L119).
+- [ ] I wrote [good commit log messages](https://github.com/torvalds/subsurface-for-dirk/blob/5f15ad5a86ada3c5e574041a5f9d85235322dabb/README#L92-L119).
 - [ ] My code follows the code style of this project.
 - [ ] I've added any new docs if API/utils methods were added.
 - [ ] I have updated the existing documentation accordingly.
