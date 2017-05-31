@@ -138,9 +138,9 @@
             <h4>INSPIRE keywords</h4>
               {% if record.get('keywords') %}
                 {% for keywords in record.get('keywords') %}
-                  {% if 'keyword' in keywords.keys() %}
+                  {% if 'value' in keywords.keys() %}
                     <span class="chip chip-literature">
-                      <a href='/search?q=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>
+                      <a href='/search?q=keyword:{{ keywords.get('value') }}'>{{ keywords.get('value') }}</a>
                     </span>
                     &nbsp;
                   {% endif %}
