@@ -30,6 +30,7 @@ from dojson import utils
 from dojson.errors import IgnoreKey
 
 from inspirehep.utils.helpers import force_list
+from inspire_schemas.api import LiteratureBuilder
 
 from .model import experiments
 from ..utils import force_single_element, get_record_ref
@@ -38,7 +39,6 @@ from ..utils import force_single_element, get_record_ref
 @experiments.over('_date_started', '^046..')
 def date_started(self, key, value):
     values = force_list(value)
-
     for val in values:
         if val.get('q'):
             self['date_proposed'] = val.get('q')
@@ -48,56 +48,56 @@ def date_started(self, key, value):
             self['date_started'] = val.get('s')
         if val.get('t'):
             self['date_completed'] = val.get('t')
+        if val.get('c'):
+            self['date_cancelled'] = value.get('c')
 
     raise IgnoreKey
 
 
-@experiments.over('experiment_names', '^119..')
-@utils.for_each_value
+@experiments.over('experiment', '^119..')
 def experiment_names(self, key, value):
-    if value.get('u'):
-        self.setdefault('affiliations', [])
+        exp_value = value.get('c')
+        accelerator = self.get('accelerator', {})
+        experiment = self.get('experiment', {})
 
-        name = value.get('u')
-        recid = value.get('z')
-        record = get_record_ref(recid, 'institutions')
+        if value.get('b'):
+            accelerator['value'] = value.get('b')
+            prj_type = self.get('project_type', [])
+            prj_type.append('accelerator')
+            self['project_type'] = prj_type
+            self['accelerator'] = accelerator
 
-        self['affiliations'].append({
-            'curated_relation': record is not None,
-            'name': name,
-            'record': record
-        })
+        if value.get('u'):
+            institution = self.get('institution', {})
+            institution['value'] = value.get('u')
+            self['institution'] = institution
 
-    return {
-        'source': value.get('9'),
-        'subtitle': value.get('b'),
-        'title': value.get('a'),
-    }
+        if value.get('a'):
+            experiment['legacy_name'] = value.get('a')
+            prj_type = self.get('project_type', [])
+            prj_type.append('experiment')
+            self['project_type'] = prj_type
+            if not value.get('c'):
+                name_to_split = value.get('a')
+                exp_value = name_to_split.split('-')[-1]
+            experiment['value'] = exp_value
+
+        if value.get('d'):
+            experiment['short_name'] = value.get('d')
+        return experiment
 
 
-@experiments.over('titles', '^(245|419)..')
+@experiments.over('long_name', '^245..')
+def title(self, key, value):
+    return value.get('a')
+
+
+@experiments.over('name_variants', '^419..')
 def titles(self, key, value):
-    titles = self.get('titles', [])
-
-    for value in force_list(value):
-        if key.startswith('245'):
-            titles.insert(0, {'title': value.get('a')})
-        else:
-            titles.append({'title': value.get('a')})
-
-    return titles
-
-
-@experiments.over('contact_details', '^270..')
-@utils.for_each_value
-def contact_details(self, key, value):
-    name = value.get('p')
-    email = value.get('m')
-
-    return {
-        'name': name if isinstance(name, six.string_types) else None,
-        'email': email if isinstance(email, six.string_types) else None,
-    }
+    title_var = self.get('name_variants', [])
+    for value in force_list(value.get('a')):
+        title_var.append(value)
+    return title_var
 
 
 @experiments.over('related_experiments', '^510..')
@@ -116,68 +116,37 @@ def related_experiments(self, key, value):
         return {'a': 'predecessor', 'b': 'successor'}.get(w_value, '')
 
     record = _get_record(value.get('0'))
-
+    relation = _classify_relation_type(value.get('w'))
+    if not relation:
+        relation = 'successor'
     return {
-        'name': force_single_element(value.get('a')),
+        'value': force_single_element(value.get('a')),
         'record': record,
-        'relation': _classify_relation_type(value.get('w')),
+        'relation': relation,
         'curated_relation': record is not None,
     }
 
 
 @experiments.over('description', '^520..')
-@utils.for_each_value
 def description(self, key, value):
-    return value.get('a')
-
-
-@experiments.over('accelerator', '^693..')
-def accelerator(self, key, value):
-    return value.get('a')
-
-
-@experiments.over('spokespersons', '^702..')
-@utils.for_each_value
-def spokespersons(self, key, value):
-    def _get_inspire_id(i_values):
-        i_value = force_single_element(i_values)
-        if i_value:
-            return [
-                {
-                    'schema': 'INSPIRE ID',
-                    'value': i_value,
-                },
-            ]
-
-    def _is_current(z_values):
-        z_value = force_single_element(z_values)
-        if z_value and isinstance(z_value, six.string_types):
-            return z_value.lower() == 'current'
-
-    def _get_record(x_values):
-        x_value = force_single_element(x_values)
-        if x_value:
-            return get_record_ref(x_value, 'authors')
-
-    record = _get_record(value.get('x'))
-
-    return {
-        'current': _is_current(value.get('z')),
-        'ids': _get_inspire_id(value.get('i')),
-        'name': force_single_element(value.get('a')),
-        'record': record,
-        'curated_relation': record is not None,
-    }
+    description_incl = self.get('description', '')
+    if description_incl and value.get('a'):
+        description_incl = description_incl + ', ' + value.get('a')
+    else:
+        description_incl = value.get('a')
+    return description_incl
 
 
 @experiments.over('collaboration', '^710..')
 def collaboration(self, key, value):
-    values = force_list(self.get('collaboration'))
-    values.extend(self.get('collaboration_alternative_names', []))
-    values.extend(el.get('g') for el in force_list(value))
-
-    collaborations = sorted(values, key=len)
-    if len(collaborations) > 1:
-        self['collaboration_alternative_names'] = collaborations[1:]
-    if collaborations:
-        return collaborations[0]
+    collaboration = self.get('collaboration', {})
+    if value.get('g'):
+        collaboration['value'] = value.get('g')
+        prj_type = self.get('project_type', [])
+        prj_type.append('collaboration')
+        self['project_type'] = prj_type
+    if value.get('q'):
+        subgroups = collaboration.get('subgroup_names', [])
+        subgroups.append(value.get('q'))
+        collaboration['subgroup_names'] = subgroups
+    return collaboration
