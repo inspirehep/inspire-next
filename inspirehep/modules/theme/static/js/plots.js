@@ -34,11 +34,13 @@
       var id = parseInt(id);
       $('#plotsCarousel').carousel(id);
     });
-    
+
     // When the carousel slides, auto update the text
-    $('#plotsCarousel').on('slid.bs.carousel', function (e) {
-      var id = $('.item.active').data('slide-number');
-      $('#carousel-text').html($('#slide-content-'+id).html());
+    $('#plotsCarousel').on('slide.bs.carousel', function (e) {
+      setTimeout(function(){
+        var id = $('.item.active').data('slide-number');
+        $('#carousel-text').html($('#slide-content-' + id).html());
+      },1000)
     });
 
   });
