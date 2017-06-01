@@ -11,6 +11,10 @@
                     "properties": {
                         "is-update": {
                             "type": "boolean"
+                        },
+                        "experiments_prediction": {
+                            "dynamic": "false",
+                            "type": "object"
                         }
                     },
                     "type": "object"
