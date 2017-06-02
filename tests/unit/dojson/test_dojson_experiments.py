@@ -252,6 +252,25 @@ def test_titles_from_marcxml_245__a():
     assert validate(result['long_name'], subschema) is None
     assert expected == result['long_name']
 
+def test_titles_from_marcxml_372__a():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['inspire_classification']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="372" ind1=" " ind2=" ">'
+        '    <subfield code="a">Electron and positron beams</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = ['7.1']
+
+    result = experiments.do(create_record(snippet))
+
+    assert validate(result['inspire_classification'], subschema) is None
+    assert expected == result['inspire_classification']
+
 
 def test_titles_from_419__a():
     schema = load_schema('experiments')
@@ -361,41 +380,38 @@ def test_collaboration_from_710():
     assert result['collaboration'] == expected
 
 
-def test_related_experiments_from_510__a_w_0():
+def test_related_experiments_from_510_i_w_0():
     schema = load_schema('experiments')
-    subschema = schema['properties']['related_experiments']
+    subschema = schema['properties']['related_records']
 
     snippet = (
         '<datafield tag="510" ind1=" " ind2=" ">'
         '  <subfield code="0">1262631</subfield>'
-        '  <subfield code="a">LZ</subfield>'
         '  <subfield code="w">b</subfield>'
         '  <subfield code="i">b</subfield>'
         '</datafield>'
     )  # record/1108192
 
     expected = [{'record': {'$ref': 'http://localhost:5000/api/experiments/1262631'},
-                'relation': 'successor', 'value': 'LZ', 'curated_relation': True}]
+                'relation_freetext': 'b', 'curated_relation': True}]
     result = experiments.do(create_record(snippet))
     print (result)
-    assert validate(result['related_experiments'], subschema) is None
-    assert expected == result['related_experiments']
+    assert validate(result['related_records'], subschema) is None
+    assert expected == result['related_records']
 
 
 def test_related_experiments_from_double_510__a_w_0():
     schema = load_schema('experiments')
-    subschema = schema['properties']['related_experiments']
+    subschema = schema['properties']['related_records']
 
     snippet = (
         '<record>'
         '  <datafield tag="510" ind1=" " ind2=" ">'
         '    <subfield code="0">1108293</subfield>'
-        '    <subfield code="a">XENON</subfield>'
         '    <subfield code="w">a</subfield>'
         '  </datafield>'
         '  <datafield tag="510" ind1=" " ind2=" ">'
         '    <subfield code="0">1386527</subfield>'
-        '    <subfield code="a">XENON100</subfield>'
         '    <subfield code="w">a</subfield>'
         '  </datafield>'
         '</record>'
@@ -403,13 +419,11 @@ def test_related_experiments_from_double_510__a_w_0():
 
     expected = [
         {
-            'value': 'XENON',
             'record': {'$ref': 'http://localhost:5000/api/experiments/1108293'},
             'relation': 'predecessor',
             'curated_relation': True,
         },
         {
-            'value': 'XENON100',
             'record': {'$ref': 'http://localhost:5000/api/experiments/1386527'},
             'relation': 'predecessor',
             'curated_relation': True,
@@ -417,5 +431,5 @@ def test_related_experiments_from_double_510__a_w_0():
     ]
     result = experiments.do(create_record(snippet))
 
-    assert validate(result['related_experiments'], subschema) is None
-    assert expected == result['related_experiments']
+    assert validate(result['related_records'], subschema) is None
+    assert expected == result['related_records']

@@ -92,6 +92,68 @@ def title(self, key, value):
     return value.get('a')
 
 
+@experiments.over('inspire_classification', '^372..')
+@utils.for_each_value
+def title(self, key, value):
+    experiments_list = {
+        'Fixed Target Experiments': '2',
+        'Hadron Spectroscopy': '2.2',
+        'Non-accelerator': '4.1',
+        'Proton decay': '6.1',
+        'Proton beams': '7.3',
+        'Balloon': '5.4',
+        'e+ e-': '1.2',
+        'CMB': '8.1',
+        'Axion search experiments': '4.2',
+        'Lattice': '9.1',
+        'Ground array': '5.1',
+        'Gravitational waves': '8.4',
+        'longer baselines': '3.2.2',
+        'Lepton precision experiments': '2.6',
+        'long-baseline': '3.1.2',
+        'short-baseline': '3.1.1',
+        'Magnetic monopoles': '6.3',
+        'p p': '1.1.2',
+        'Drell-Yan/Dilepton production': '2.4',
+        'Deep inelastic scattering': '2.3',
+        'Electron and positron beams': '7.1',
+        'Neutrino (flavor) experiments': '3',
+        'Dark Forces': '4.3',
+        'Collider Experiments': '1',
+        'High-momentum transfer': '2.1',
+        'Astronomy experiments': '8',
+        'Cerenkov array': '5.2',
+        'Non terrestrial': '3.3',
+        'Solar': '3.3.2',
+        'Fractionally charged particles': '6.4',
+        'Flavor physics': '2.5',
+        'Neutrino mass': '3.5',
+        'Heavy Flavor Factory': '1.4',
+        'Atmospheric': '3.3.1',
+        'Supernovae': '8.3',
+        'Cosmic': '3.3.3',
+        'Satellite': '5.3',
+        'Heavy ion': '1.5',
+        'Cosmic ray experiments': '5',
+        'Other Rare-process/exotic experiments': '6',
+        'Survey': '8.2',
+        'Theory collaborations': '9',
+        'Dark matter search experiments': '4',
+        'Hadrons': '1.1',
+        'e p': '1.3',
+        'p anti-p': '1.1.1',
+        'Reactor': '3.2',
+        'Accelerator': '3.1',
+        'Modified gravity and space-time': '6.2',
+        'Muon beams': '7.2',
+        'Accelerator Test Facility Experiments': '7',
+        'ultra-short-baseline': '3.2.1',
+        'Neutrinoless double beta decay': '3.4'
+        }
+
+    return experiments_list[value.get('a')]
+
+
 @experiments.over('name_variants', '^419..')
 def titles(self, key, value):
     title_var = self.get('name_variants', [])
@@ -100,7 +162,7 @@ def titles(self, key, value):
     return title_var
 
 
-@experiments.over('related_experiments', '^510..')
+@experiments.over('related_records', '^510..')
 @utils.for_each_value
 def related_experiments(self, key, value):
     def _get_record(zero_values):
@@ -113,16 +175,16 @@ def related_experiments(self, key, value):
 
     def _classify_relation_type(w_values):
         w_value = force_single_element(w_values)
-        return {'a': 'predecessor', 'b': 'successor'}.get(w_value, '')
+        return {'a': 'predecessor' }.get(w_value, '')
 
     record = _get_record(value.get('0'))
-    relation = _classify_relation_type(value.get('w'))
-    if not relation:
-        relation = 'successor'
+    #relation = _classify_relation_type(value.get('w'))
+    #if not relation:
+    #    relation = 'successor'
     return {
-        'value': force_single_element(value.get('a')),
+        'relation_freetext': force_single_element(value.get('i')),
         'record': record,
-        'relation': relation,
+        'relation': _classify_relation_type(value.get('w')),
         'curated_relation': record is not None,
     }
 
