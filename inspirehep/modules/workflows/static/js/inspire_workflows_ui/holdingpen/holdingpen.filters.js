@@ -78,7 +78,10 @@
         }
       }
 
-      return categories;
+      var uniqueCategories = categories.filter(function (value, index, self) {
+        return self.indexOf(value) === index;
+      });
+      return uniqueCategories;
     }
   }
 
