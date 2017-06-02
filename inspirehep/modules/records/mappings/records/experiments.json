@@ -35,6 +35,9 @@
                         "name": {
                             "type": "string"
                         },
+                        "recid": {
+                            "type": "integer"
+                        },
                         "record": {
                             "properties": {
                                 "$ref": {
@@ -86,6 +89,9 @@
                 },
                 "deleted": {
                     "type": "boolean"
+                },
+                "deleted_recids": {
+                    "type": "integer"
                 },
                 "deleted_records": {
                     "properties": {
@@ -151,6 +157,9 @@
                 "legacy_creation_date": {
                     "type": "string"
                 },
+                "new_recid": {
+                    "type": "integer"
+                },
                 "new_record": {
                     "properties": {
                         "$ref": {
@@ -192,6 +201,9 @@
                         "name": {
                             "type": "string"
                         },
+                        "recid": {
+                            "type": "integer"
+                        },
                         "record": {
                             "properties": {
                                 "$ref": {
@@ -213,6 +225,9 @@
                         }
                     },
                     "type": "object"
+                },
+                "self_recid": {
+                    "type": "integer"
                 },
                 "spokespersons": {
                     "properties": {
@@ -238,6 +253,9 @@
                         },
                         "name": {
                             "type": "string"
+                        },
+                        "recid": {
+                            "type": "integer"
                         },
                         "record": {
                             "properties": {
