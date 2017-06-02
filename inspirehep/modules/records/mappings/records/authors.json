@@ -72,6 +72,9 @@
                         "name": {
                             "type": "string"
                         },
+                        "recid": {
+                            "type": "integer"
+                        },
                         "record": {
                             "properties": {
                                 "$ref": {
@@ -110,6 +113,9 @@
                 "deleted": {
                     "type": "boolean"
                 },
+                "deleted_recids": {
+                    "type": "integer"
+                },
                 "deleted_records": {
                     "properties": {
                         "$ref": {
@@ -134,6 +140,9 @@
                         },
                         "name": {
                             "type": "string"
+                        },
+                        "recid": {
+                            "type": "integer"
                         },
                         "record": {
                             "properties": {
@@ -203,6 +212,9 @@
                 "native_name": {
                     "type": "string"
                 },
+                "new_recid": {
+                    "type": "integer"
+                },
                 "new_record": {
                     "properties": {
                         "$ref": {
@@ -239,6 +251,9 @@
                                 "name": {
                                     "copy_to": "facet_institution_name",
                                     "type": "string"
+                                },
+                                "recid": {
+                                    "type": "integer"
                                 },
                                 "record": {
                                     "properties": {
@@ -288,6 +303,9 @@
                         }
                     },
                     "type": "object"
+                },
+                "self_recid": {
+                    "type": "integer"
                 },
                 "source": {
                     "properties": {

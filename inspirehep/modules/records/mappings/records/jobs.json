@@ -73,6 +73,9 @@
                 "deleted": {
                     "type": "boolean"
                 },
+                "deleted_recids": {
+                    "type": "integer"
+                },
                 "deleted_records": {
                     "properties": {
                         "$ref": {
@@ -91,6 +94,9 @@
                         },
                         "name": {
                             "type": "string"
+                        },
+                        "recid": {
+                            "type": "integer"
                         },
                         "record": {
                             "properties": {
@@ -133,6 +139,9 @@
                         "name": {
                             "type": "string"
                         },
+                        "recid": {
+                            "type": "integer"
+                        },
                         "record": {
                             "properties": {
                                 "$ref": {
@@ -146,6 +155,9 @@
                 },
                 "legacy_creation_date": {
                     "type": "string"
+                },
+                "new_recid": {
+                    "type": "integer"
                 },
                 "new_record": {
                     "properties": {
@@ -185,6 +197,9 @@
                         }
                     },
                     "type": "object"
+                },
+                "self_recid": {
+                    "type": "integer"
                 },
                 "urls": {
                     "properties": {

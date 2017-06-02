@@ -70,6 +70,9 @@
                 "deleted": {
                     "type": "boolean"
                 },
+                "deleted_recids": {
+                    "type": "integer"
+                },
                 "deleted_records": {
                     "properties": {
                         "$ref": {
@@ -153,6 +156,9 @@
                     },
                     "type": "object"
                 },
+                "new_recid": {
+                    "type": "integer"
+                },
                 "new_record": {
                     "properties": {
                         "$ref": {
@@ -180,6 +186,9 @@
                         "name": {
                             "type": "string"
                         },
+                        "recid": {
+                            "type": "integer"
+                        },
                         "record": {
                             "properties": {
                                 "$ref": {
@@ -201,6 +210,9 @@
                         }
                     },
                     "type": "object"
+                },
+                "self_recid": {
+                    "type": "integer"
                 },
                 "time_zone": {
                     "type": "string"

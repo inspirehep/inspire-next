@@ -142,6 +142,9 @@
                             "copy_to": "facet_experiment",
                             "type": "string"
                         },
+                        "recid": {
+                            "type": "integer"
+                        },
                         "record": {
                             "properties": {
                                 "$ref": {
@@ -204,6 +207,9 @@
                                 "curated_relation": {
                                     "type": "boolean"
                                 },
+                                "recid": {
+                                    "type": "integer"
+                                },
                                 "record": {
                                     "properties": {
                                         "$ref": {
@@ -263,6 +269,9 @@
                             },
                             "type": "object"
                         },
+                        "recid": {
+                            "type": "integer"
+                        },
                         "record": {
                             "properties": {
                                 "$ref": {
@@ -299,6 +308,9 @@
                 },
                 "collaborations": {
                     "properties": {
+                        "recid": {
+                            "type": "integer"
+                        },
                         "record": {
                             "properties": {
                                 "$ref": {
@@ -344,6 +356,9 @@
                 },
                 "deleted": {
                     "type": "boolean"
+                },
+                "deleted_recids": {
+                    "type": "integer"
                 },
                 "deleted_records": {
                     "properties": {
@@ -505,6 +520,9 @@
                     },
                     "type": "object"
                 },
+                "new_recid": {
+                    "type": "integer"
+                },
                 "new_record": {
                     "properties": {
                         "$ref": {
@@ -558,6 +576,9 @@
                         "conf_acronym": {
                             "type": "string"
                         },
+                        "conference_recid": {
+                            "type": "integer"
+                        },
                         "conference_record": {
                             "properties": {
                                 "$ref": {
@@ -571,6 +592,9 @@
                         },
                         "journal_issue": {
                             "type": "string"
+                        },
+                        "journal_recid": {
+                            "type": "integer"
                         },
                         "journal_record": {
                             "properties": {
@@ -597,6 +621,9 @@
                         },
                         "parent_isbn": {
                             "type": "string"
+                        },
+                        "parent_recid": {
+                            "type": "integer"
                         },
                         "parent_record": {
                             "properties": {
@@ -642,6 +669,9 @@
                                 }
                             },
                             "type": "object"
+                        },
+                        "recid": {
+                            "type": "integer"
                         },
                         "record": {
                             "properties": {
@@ -833,6 +863,9 @@
                     },
                     "type": "object"
                 },
+                "self_recid": {
+                    "type": "integer"
+                },
                 "special_collections": {
                     "type": "string"
                 },
@@ -840,6 +873,9 @@
                     "properties": {
                         "isbn": {
                             "type": "string"
+                        },
+                        "recid": {
+                            "type": "integer"
                         },
                         "record": {
                             "properties": {
@@ -876,6 +912,9 @@
                                 },
                                 "name": {
                                     "type": "string"
+                                },
+                                "recid": {
+                                    "type": "integer"
                                 },
                                 "record": {
                                     "properties": {

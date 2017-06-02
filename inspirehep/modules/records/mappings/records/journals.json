@@ -33,6 +33,9 @@
                 "deleted": {
                     "type": "boolean"
                 },
+                "deleted_recids": {
+                    "type": "integer"
+                },
                 "deleted_records": {
                     "properties": {
                         "$ref": {
@@ -99,6 +102,13 @@
                     },
                     "type": "object"
                 },
+                "lowercase_journal_titles": {
+                    "analyzer": "lowercase_analyzer",
+                    "type": "string"
+                },
+                "new_recid": {
+                    "type": "integer"
+                },
                 "new_record": {
                     "properties": {
                         "$ref": {
@@ -106,10 +116,6 @@
                         }
                     },
                     "type": "object"
-                },
-                "lowercase_journal_titles": {
-                    "analyzer": "lowercase_analyzer",
-                    "type": "string"
                 },
                 "peer_reviewed": {
                     "type": "boolean"
@@ -136,6 +142,9 @@
                         "issn": {
                             "type": "string"
                         },
+                        "recid": {
+                            "type": "integer"
+                        },
                         "record": {
                             "properties": {
                                 "$ref": {
@@ -157,6 +166,9 @@
                         }
                     },
                     "type": "object"
+                },
+                "self_recid": {
+                    "type": "integer"
                 },
                 "short_titles": {
                     "properties": {
