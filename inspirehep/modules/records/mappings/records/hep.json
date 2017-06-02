@@ -186,6 +186,12 @@
                             "type": "string"
                         },
                         "value": {
+                            "fields": {
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
                             "type": "string"
                         }
                     },
@@ -359,6 +365,12 @@
                             "type": "string"
                         },
                         "value": {
+                            "fields": {
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
                             "type": "string"
                         }
                     },
@@ -642,6 +654,12 @@
                         "reference": {
                             "properties": {
                                 "arxiv_eprint": {
+                                    "fields": {
+                                        "raw": {
+                                            "index": "not_analyzed",
+                                            "type": "string"
+                                        }
+                                    },
                                     "type": "string"
                                 },
                                 "authors": {
@@ -673,6 +691,12 @@
                                     "type": "string"
                                 },
                                 "dois": {
+                                    "fields": {
+                                        "raw": {
+                                            "index": "not_analyzed",
+                                            "type": "string"
+                                        }
+                                    },
                                     "type": "string"
                                 },
                                 "imprint": {
