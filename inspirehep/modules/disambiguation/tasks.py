@@ -49,7 +49,7 @@ from inspirehep.modules.records.api import InspireRecord
 logger = get_task_logger(__name__)
 
 
-@shared_task(ignore_result=True)
+@shared_task(ignore_result=True, task_acks_late=True)
 def disambiguation_daemon():
     """Run disambiguation daemon as Celery task.
 
@@ -83,7 +83,7 @@ def disambiguation_daemon():
     db.session.close()
 
 
-@shared_task(ignore_result=True)
+@shared_task(ignore_result=True, task_acks_late=True)
 def disambiguation_clustering(phonetic_block):
     """Cluster phonetic blocks in parallel.
 
@@ -130,7 +130,7 @@ def disambiguation_clustering(phonetic_block):
         db.session.close()
 
 
-@shared_task
+@shared_task(ignore_result=True, task_acks_late=True)
 def update_authors_recid(record_id, uuid, profile_recid):
     """Update author profile for a given signature.
 

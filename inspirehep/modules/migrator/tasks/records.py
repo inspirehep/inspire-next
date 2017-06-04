@@ -103,7 +103,7 @@ def split_stream(stream):
             buf.append(row)
 
 
-@shared_task(ignore_result=True)
+@shared_task(ignore_result=True, task_acks_late=True)
 def migrate_broken_records():
     """Migrate records declared as broken.
 
@@ -117,7 +117,7 @@ def migrate_broken_records():
         migrate_chunk.delay(chunk)
 
 
-@shared_task(ignore_result=True)
+@shared_task(ignore_result=True, task_acks_late=True)
 def migrate(source, wait_for_results=False):
     """Main migration function."""
     if source.endswith('.gz'):
@@ -147,7 +147,7 @@ def migrate(source, wait_for_results=False):
         print('All migration tasks have been completed.')
 
 
-@shared_task(ignore_result=True)
+@shared_task(ignore_result=True, task_acks_late=True)
 def continuous_migration():
     """Task to continuously migrate what is pushed up by Legacy."""
     redis_url = current_app.config.get('CACHE_REDIS_URL')
@@ -184,7 +184,7 @@ def create_index_op(record):
     }
 
 
-@shared_task(ignore_result=False, compress='zlib', acks_late=True)
+@shared_task(ignore_result=False, compress='zlib', task_acks_late=True)
 def migrate_chunk(chunk):
     index_queue = []
 
@@ -207,7 +207,7 @@ def migrate_chunk(chunk):
     )
 
 
-@shared_task()
+@shared_task(task_acks_late=True)
 def add_citation_counts(chunk_size=500, request_timeout=120):
     def _build_recid_to_uuid_map(citations_lookup):
         pids = PersistentIdentifier.query.filter(
