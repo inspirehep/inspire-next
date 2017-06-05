@@ -62,7 +62,7 @@ def app(request):
         sleep(10)
         _es = app.extensions['invenio-search']
         list(_es.delete(ignore=[404]))
-        list(_es.create(ignore=[400]))
+        list(_es.create(ignore=[400, 404]))
 
         init_all_storage_paths()
         init_users_and_permissions()
