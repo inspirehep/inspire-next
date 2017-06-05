@@ -31,6 +31,8 @@ from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
 
 from inspirehep.modules.records.utils import get_detailed_template_from_record
+from .modules.records.validators.validator import InspireValidator
+from .modules.records.validators.validator import InspireResolver
 
 
 def _(x):
@@ -163,6 +165,10 @@ when creating records.
 
 RECORD_EDITOR_INDEX_TEMPLATE = 'inspirehep_theme/invenio_record_editor/index.html'
 RECORD_EDITOR_PREVIEW_TEMPLATE_FUNCTION = get_detailed_template_from_record
+RECORD_EDITOR_VALIDATORS = [
+    InspireValidator
+]
+RECORD_EDITOR_SCHEMA_RESOLVER = InspireResolver
 
 INSPIRE_COLLECTIONS_DEFINITION = [
     {
