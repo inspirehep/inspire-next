@@ -48,6 +48,8 @@ python:
   - 2.7
 
 before_install:
+  - sudo sh -c 'echo "deb [arch=amd64] https://apt.dockerproject.org/repo ubuntu-trusty main" >> /etc/apt/sources.list'
+  - sudo apt-get update
   - travis_retry pip install coveralls
   # See: https://docs.travis-ci.com/user/docker/#Using-Docker-Compose
   - sudo rm -f /usr/local/bin/docker-compose
