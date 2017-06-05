@@ -29,9 +29,9 @@ class MockEng(object):
     def __init__(self, data_type='hep'):
         self.workflow_definition = AttrDict(data_type=data_type)
 
-    def halt(self, action, msg):
-        self.action = action
+    def halt(self, msg='', action=None):
         self.msg = msg
+        self.action = action
 
 
 class MockObj(object):
@@ -108,15 +108,48 @@ class MockLog(object):
         self._debug = StringIO()
         self._error = StringIO()
         self._info = StringIO()
+        self._warning = StringIO()
 
     def debug(self, msg, *args, **kwargs):
-        self._debug.write(msg % args)
+        self._debug.write(msg % args if args else msg)
 
     def error(self, msg, *args, **kwargs):
-        self._error.write(msg % args)
+        self._error.write(msg % args if args else msg)
 
     def info(self, msg, *args, **kwargs):
-        self._info.write(msg % args)
+        self._info.write(msg % args if args else msg)
+
+    def warning(self, msg, *args, **kwargs):
+        self._warning.write(msg % args if args else msg)
+
+
+class MockRT(object):
+    def __init__(self):
+        self.last_id = 0
+        self.tickets = {}
+
+    def create_ticket(self, **kwargs):
+        self.last_id += 1
+        kwargs.update({'ticket_id': self.last_id})
+        self.tickets[self.last_id] = kwargs
+        return self.last_id
+
+    def edit_ticket(self, ticket_id, **kwargs):
+        try:
+            ticket = self.tickets[ticket_id]
+            if ticket['Status'] == 'resolved':
+                raise KeyError
+        except KeyError:
+            raise IndexError
+
+        ticket.update(kwargs)
+
+    def get_ticket(self, ticket_id):
+        return self.tickets[ticket_id]
+
+    def reply(self, ticket_id, **kwargs):
+        kwargs.update({'Status': 'acknowledged'})
+        self.tickets[ticket_id].update(kwargs)
 
 
 class MockUser(object):
