@@ -6,6 +6,7 @@
         <th>Journal</th>
         <th>Citations</th>
         <th>Impact Graph</th>
+        <th>Affiliation</th>
         <th>Year</th>
       </tr>
     </thead>
@@ -34,6 +35,14 @@
         <td>
           <impact-graph publication="{{ publication.id }}">
           </impact-graph>
+        </td>
+        <td ng-if="publication.affiliation.id !== undefined">
+          <a href="/institutions/{{ publication.affiliation.id }}">
+            {{ publication.affiliation.name }}
+          </a>
+        </td>
+        <td ng-if="publication.affiliation.id === undefined">
+          {{ publication.affiliation.name }}
         </td>
         <td>{{ publication.date | limitTo:4 }}</td>
       </tr>
