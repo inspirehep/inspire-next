@@ -141,6 +141,9 @@ extras_require = {
     'web-node': [
         'gunicorn',
     ],
+    'web-node': [
+        'gunicorn',
+    ],
     'crawler': [
         'hepcrawl>=0.3.4',
     ],
