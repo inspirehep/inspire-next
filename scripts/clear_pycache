@@ -20,4 +20,4 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-sudo find . \( -name __pycache__ -o -name '*.pyc' \) | xargs rm -rf
+find . \( -name __pycache__ -o -name '*.pyc' \) | xargs rm -rf
