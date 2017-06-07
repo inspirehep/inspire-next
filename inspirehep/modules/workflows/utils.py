@@ -174,5 +174,6 @@ def download_file_to_workflow(workflow, name, url):
     """
     with closing(requests.get(url=url, stream=True)) as req:
         if req.status_code == 200:
+            req.raw.decode_content = True
             workflow.files[name] = req.raw
             return workflow.files[name]
