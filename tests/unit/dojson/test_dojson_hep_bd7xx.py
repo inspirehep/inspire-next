@@ -401,3 +401,36 @@ def test_publication_info_from_7731_c_p_v_y():
     result = hep2marc.do(result)
 
     assert expected == result['7731']
+
+
+def test_publication_info2marc_handles_unicode():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    record = {
+        'publication_info': [
+            {
+                'artid': u'207–214',
+                'journal_issue': '36',
+                'journal_title': 'Electronic Journal of Theoretical Physics',
+                'journal_volume': '13',
+                'year': 2016,
+            },
+        ],
+    }  # holdingpen/650664
+    assert validate(record['publication_info'], subschema) is None
+
+    expected = [
+        {
+            'c': [
+                u'207–214',
+            ],
+            'n': '36',
+            'p': 'Electronic Journal of Theoretical Physics',
+            'v': '13',
+            'y': 2016,
+        },
+    ]
+    result = hep2marc.do(record)
+
+    assert expected == result['773']
