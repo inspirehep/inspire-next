@@ -69,5 +69,7 @@ after_script:
   - docker-compose -f docker-compose.test.yml kill -s SIGTERM
   - docker-compose -f docker-compose.test.yml rm -f
   # Coverage report contains Docker paths. We replace them, so that we can run Coveralls.
+  - cat .coverage
   - sed -i 's@\"/code/@'"\"$(pwd)/"'@g' .coverage
+  - cat .coverage
   - coveralls
