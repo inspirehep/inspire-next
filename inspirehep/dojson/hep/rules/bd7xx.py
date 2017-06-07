@@ -114,7 +114,7 @@ def publication_info2marc(self, key, values):
         elif value.get('page_start'):
             page_artid.append('{page_start}'.format(**value))
         if value.get('artid'):
-            page_artid.append('{artid}'.format(**value))
+            page_artid.append(u'{artid}'.format(**value))
 
         result = {
             '0': get_recid_from_ref(value.get('parent_record')),
