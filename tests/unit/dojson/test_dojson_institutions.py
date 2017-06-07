@@ -124,7 +124,7 @@ def test_external_system_identifiers_from_035__a_9():
     assert validate(result['external_system_identifiers'], subschema) is None
     assert expected == result['external_system_identifiers']
 
-
+# field removed?
 def test_superseded_institutions_from_110__x_z():
     schema = load_schema('institutions')
     subschema = schema['properties']['related_institutes']
@@ -164,7 +164,7 @@ def test_superseded_institutions_from_110__x_z():
     assert validate(result['related_institutes'], subschema) is None
     assert expected == result['related_institutes']
 
-
+# field removed?
 def test_ICN_legacy_ICN_institution_and_institution_acronym_from_110__a_t_u():
     schema = load_schema('institutions')
 
@@ -192,7 +192,7 @@ def test_ICN_legacy_ICN_institution_and_institution_acronym_from_110__a_t_u():
         assert validate(result[key], schema['properties'][key]) is None
         assert result[key] == expected[key]
 
-
+# field removed?
 def test_ICN_legacy_ICN_institution_department_and_department_acryonym_from_110__a_b_t_u():
     schema = load_schema('institutions')
 
@@ -758,7 +758,7 @@ def test_related_institutes_from__510_a_w_0():
     assert expected == result['related_institutes']
 
 
-def test_related_institutes_from__double_510_a_w_0():
+def test_related_institutes_from__double_510_w_0():
     schema = load_schema('institutions')
     subschema = schema['properties']['related_institutes']
 
@@ -801,7 +801,7 @@ def test_related_institutes_from__double_510_a_w_0():
     assert expected == result['related_institutes']
 
 
-def test_related_institutes_from__510_a_w_0_other():
+def test_related_institutes_from__510_i_0():
     schema = load_schema('institutions')
     subschema = schema['properties']['related_institutes']
 
@@ -831,18 +831,16 @@ def test_related_institutes_from__510_a_w_0_other():
 
 def test_related_institutes_from__double_510_a_w_0_predecessor():
     schema = load_schema('institutions')
-    subschema = schema['properties']['related_institutes']
+    subschema = schema['properties']['related_records']
 
     snippet = (
         '<record>'
         '  <datafield tag="510" ind1=" " ind2=" ">'
         '    <subfield code="0">903276</subfield>'
-        '    <subfield code="a">INS, Tokyo</subfield>'
         '    <subfield code="w">a</subfield>'
         '  </datafield>'
         '  <datafield tag="510" ind1=" " ind2=" ">'
         '    <subfield code="0">905439</subfield>'
-        '    <subfield code="a">U. Tokyo, Meson Sci. Lab.</subfield>'
         '    <subfield code="w">a</subfield>'
         '  </datafield>'
         '</record>'
@@ -851,16 +849,14 @@ def test_related_institutes_from__double_510_a_w_0_predecessor():
     expected = [
         {
             'curated_relation': True,
-            'name': 'INS, Tokyo',
-            'relation_type': 'predecessor',
+            'relation': 'predecessor',
             'record': {
                 '$ref': 'http://localhost:5000/api/institutions/903276',
             },
         },
         {
             'curated_relation': True,
-            'name': 'U. Tokyo, Meson Sci. Lab.',
-            'relation_type': 'predecessor',
+            'relation': 'predecessor',
             'record': {
                 '$ref': 'http://localhost:5000/api/institutions/905439',
             },
@@ -868,8 +864,9 @@ def test_related_institutes_from__double_510_a_w_0_predecessor():
     ]
     result = institutions.do(create_record(snippet))
 
-    assert validate(result['related_institutes'], subschema) is None
-    assert expected == result['related_institutes']
+    print(result)
+    assert validate(result['related_records'], subschema) is None
+    assert expected == result['related_records']
 
 
 def test_related_institutes_from__510_a_w_0_successor():

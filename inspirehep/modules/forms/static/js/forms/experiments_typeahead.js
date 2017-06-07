@@ -33,8 +33,8 @@ define([
         url: '/api/experiments?q=experimentautocomplete:%QUERY*',
         filter: function(response) {
           return response.hits.hits.sort(function (x, y) {
-            var x_title = x.metadata.experiment_names[0].title,
-                y_title = y.metadata.experiment_names[0].title;
+            var x_title = x.metadata.experiment.legacy_name,
+                y_title = y.metadata.experiment.legacy_name;
 
             return x_title.localeCompare(y_title);
           });
@@ -67,14 +67,14 @@ define([
         }.bind(this));
       }.bind(this),
       displayKey: function(data) {
-        return data.metadata.experiment_names[0].title;
+        return data.metadata.experiment.legacy_name;
       },
       templates: {
         empty: function(data) {
           return 'Cannot find this experiment in our database.';
         },
         suggestion: function(data) {
-          data.metadata.display_name = data.metadata.experiment_names[0].title;
+          data.metadata.display_name = data.metadata.experiment.legacy_name;
           return suggestionTemplate.render.call(suggestionTemplate, data.metadata);
         }.bind(this)
       }

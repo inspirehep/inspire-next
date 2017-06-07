@@ -65,6 +65,7 @@ def external_system_identifiers(self, key, value):
     }
 
 
+# field removed?
 @institutions.over('ICN', '^110..')
 def ICN(self, key, value):
     def _split_acronym(value):
@@ -192,26 +193,22 @@ def name_variants(self, key, value):
     return name_variants
 
 
-@institutions.over('related_institutes', '^510..')
+@institutions.over('related_records', '^510..')
 @utils.for_each_value
 def related_institutes(self, key, value):
     def _classify_relation_type(c):
         if c == 'a':
             return 'predecessor'
-        elif c == 'b':
-            return 'successor'
         elif c == 't':
             return 'parent'
-        elif c == 'r':
-            return 'other'
         else:
             return ''
 
     return {
         'curated_relation': bool(value.get('0')),
-        'name': value.get('a'),
-        'relation_type': _classify_relation_type(value.get('w')),
-        'record': get_record_ref(value.get('0'), endpoint='institutions'),
+        'relation': _classify_relation_type(value.get('w')),
+        'record': {'ref': get_record_ref(value.get('0'), endpoint='institutions')},
+        'relation_freetext': value.get('i')
     }
 
 

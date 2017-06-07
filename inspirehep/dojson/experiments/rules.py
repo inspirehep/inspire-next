@@ -30,6 +30,7 @@ from dojson import utils
 from dojson.errors import IgnoreKey
 
 from inspirehep.utils.helpers import force_list
+from inspire_schemas.api import LiteratureBuilder
 
 from .model import experiments
 from ..utils import force_single_element, get_record_ref
@@ -38,7 +39,6 @@ from ..utils import force_single_element, get_record_ref
 @experiments.over('_date_started', '^046..')
 def date_started(self, key, value):
     values = force_list(value)
-
     for val in values:
         if val.get('q'):
             self['date_proposed'] = val.get('q')
@@ -48,59 +48,121 @@ def date_started(self, key, value):
             self['date_started'] = val.get('s')
         if val.get('t'):
             self['date_completed'] = val.get('t')
+        if val.get('c'):
+            self['date_cancelled'] = value.get('c')
 
     raise IgnoreKey
 
 
-@experiments.over('experiment_names', '^119..')
-@utils.for_each_value
+@experiments.over('experiment', '^119..')
 def experiment_names(self, key, value):
-    if value.get('u'):
-        self.setdefault('affiliations', [])
+        exp_value = value.get('c')
+        accelerator = self.get('accelerator', {})
+        experiment = self.get('experiment', {})
 
-        name = value.get('u')
-        recid = value.get('z')
-        record = get_record_ref(recid, 'institutions')
+        if value.get('b'):
+            accelerator['value'] = value.get('b')
+            prj_type = self.get('project_type', [])
+            prj_type.append('accelerator')
+            self['project_type'] = prj_type
+            self['accelerator'] = accelerator
 
-        self['affiliations'].append({
-            'curated_relation': record is not None,
-            'name': name,
-            'record': record
-        })
+        if value.get('u'):
+            institution = self.get('institution', {})
+            institution['value'] = value.get('u')
+            self['institution'] = institution
 
-    return {
-        'source': value.get('9'),
-        'subtitle': value.get('b'),
-        'title': value.get('a'),
-    }
+        if value.get('a'):
+            experiment['legacy_name'] = value.get('a')
+            prj_type = self.get('project_type', [])
+            prj_type.append('experiment')
+            self['project_type'] = prj_type
+            if not value.get('c'):
+                name_to_split = value.get('a')
+                exp_value = name_to_split.split('-')[-1]
+            experiment['value'] = exp_value
 
-
-@experiments.over('titles', '^(245|419)..')
-def titles(self, key, value):
-    titles = self.get('titles', [])
-
-    for value in force_list(value):
-        if key.startswith('245'):
-            titles.insert(0, {'title': value.get('a')})
-        else:
-            titles.append({'title': value.get('a')})
-
-    return titles
+        if value.get('d'):
+            experiment['short_name'] = value.get('d')
+        return experiment
 
 
-@experiments.over('contact_details', '^270..')
+@experiments.over('long_name', '^245..')
+def title(self, key, value):
+    return value.get('a')
+
+
+@experiments.over('inspire_classification', '^372..')
 @utils.for_each_value
-def contact_details(self, key, value):
-    name = value.get('p')
-    email = value.get('m')
+def title(self, key, value):
+    experiments_list = {
+        'Fixed Target Experiments': '2',
+        'Hadron Spectroscopy': '2.2',
+        'Non-accelerator': '4.1',
+        'Proton decay': '6.1',
+        'Proton beams': '7.3',
+        'Balloon': '5.4',
+        'e+ e-': '1.2',
+        'CMB': '8.1',
+        'Axion search experiments': '4.2',
+        'Lattice': '9.1',
+        'Ground array': '5.1',
+        'Gravitational waves': '8.4',
+        'longer baselines': '3.2.2',
+        'Lepton precision experiments': '2.6',
+        'long-baseline': '3.1.2',
+        'short-baseline': '3.1.1',
+        'Magnetic monopoles': '6.3',
+        'p p': '1.1.2',
+        'Drell-Yan/Dilepton production': '2.4',
+        'Deep inelastic scattering': '2.3',
+        'Electron and positron beams': '7.1',
+        'Neutrino (flavor) experiments': '3',
+        'Dark Forces': '4.3',
+        'Collider Experiments': '1',
+        'High-momentum transfer': '2.1',
+        'Astronomy experiments': '8',
+        'Cerenkov array': '5.2',
+        'Non terrestrial': '3.3',
+        'Solar': '3.3.2',
+        'Fractionally charged particles': '6.4',
+        'Flavor physics': '2.5',
+        'Neutrino mass': '3.5',
+        'Heavy Flavor Factory': '1.4',
+        'Atmospheric': '3.3.1',
+        'Supernovae': '8.3',
+        'Cosmic': '3.3.3',
+        'Satellite': '5.3',
+        'Heavy ion': '1.5',
+        'Cosmic ray experiments': '5',
+        'Other Rare-process/exotic experiments': '6',
+        'Survey': '8.2',
+        'Theory collaborations': '9',
+        'Dark matter search experiments': '4',
+        'Hadrons': '1.1',
+        'e p': '1.3',
+        'p anti-p': '1.1.1',
+        'Reactor': '3.2',
+        'Accelerator': '3.1',
+        'Modified gravity and space-time': '6.2',
+        'Muon beams': '7.2',
+        'Accelerator Test Facility Experiments': '7',
+        'ultra-short-baseline': '3.2.1',
+        'Neutrinoless double beta decay': '3.4'
+        }
 
-    return {
-        'name': name if isinstance(name, six.string_types) else None,
-        'email': email if isinstance(email, six.string_types) else None,
-    }
+    return experiments_list[value.get('a')]
 
 
-@experiments.over('related_experiments', '^510..')
+@experiments.over('name_variants', '^419..')
+def titles(self, key, value):
+    title_var = self.get('name_variants', [])
+    for value in force_list(value.get('a')):
+        title_var.append(value)
+    return title_var
+
+
+@experiments.over('related_records', '^510..')
 @utils.for_each_value
 def related_experiments(self, key, value):
     def _get_record(zero_values):
@@ -113,12 +175,14 @@ def related_experiments(self, key, value):
 
     def _classify_relation_type(w_values):
         w_value = force_single_element(w_values)
-        return {'a': 'predecessor', 'b': 'successor'}.get(w_value, '')
+        return {'a': 'predecessor' }.get(w_value, '')
 
     record = _get_record(value.get('0'))
-
+    #relation = _classify_relation_type(value.get('w'))
+    #if not relation:
+    #    relation = 'successor'
     return {
-        'name': force_single_element(value.get('a')),
+        'relation_freetext': force_single_element(value.get('i')),
         'record': record,
         'relation': _classify_relation_type(value.get('w')),
         'curated_relation': record is not None,
@@ -126,58 +190,25 @@ def related_experiments(self, key, value):
 
 
 @experiments.over('description', '^520..')
-@utils.for_each_value
 def description(self, key, value):
-    return value.get('a')
-
-
-@experiments.over('accelerator', '^693..')
-def accelerator(self, key, value):
-    return value.get('a')
-
-
-@experiments.over('spokespersons', '^702..')
-@utils.for_each_value
-def spokespersons(self, key, value):
-    def _get_inspire_id(i_values):
-        i_value = force_single_element(i_values)
-        if i_value:
-            return [
-                {
-                    'schema': 'INSPIRE ID',
-                    'value': i_value,
-                },
-            ]
-
-    def _is_current(z_values):
-        z_value = force_single_element(z_values)
-        if z_value and isinstance(z_value, six.string_types):
-            return z_value.lower() == 'current'
-
-    def _get_record(x_values):
-        x_value = force_single_element(x_values)
-        if x_value:
-            return get_record_ref(x_value, 'authors')
-
-    record = _get_record(value.get('x'))
-
-    return {
-        'current': _is_current(value.get('z')),
-        'ids': _get_inspire_id(value.get('i')),
-        'name': force_single_element(value.get('a')),
-        'record': record,
-        'curated_relation': record is not None,
-    }
+    description_incl = self.get('description', '')
+    if description_incl and value.get('a'):
+        description_incl = description_incl + ', ' + value.get('a')
+    else:
+        description_incl = value.get('a')
+    return description_incl
 
 
 @experiments.over('collaboration', '^710..')
 def collaboration(self, key, value):
-    values = force_list(self.get('collaboration'))
-    values.extend(self.get('collaboration_alternative_names', []))
-    values.extend(el.get('g') for el in force_list(value))
-
-    collaborations = sorted(values, key=len)
-    if len(collaborations) > 1:
-        self['collaboration_alternative_names'] = collaborations[1:]
-    if collaborations:
-        return collaborations[0]
+    collaboration = self.get('collaboration', {})
+    if value.get('g'):
+        collaboration['value'] = value.get('g')
+        prj_type = self.get('project_type', [])
+        prj_type.append('collaboration')
+        self['project_type'] = prj_type
+    if value.get('q'):
+        subgroups = collaboration.get('subgroup_names', [])
+        subgroups.append(value.get('q'))
+        collaboration['subgroup_names'] = subgroups
+    return collaboration
