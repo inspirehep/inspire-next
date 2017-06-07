@@ -69,11 +69,11 @@ SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # Celery
 # ======
-BROKER_URL = "amqp://guest:guest@localhost:5672//"
-CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
+CELERY_BROKER_URL = "pyamqp://guest:guest@localhost:5672//"
+CELERY_RESULT_BACKEND = "rpc://guest:guest@localhost:5672//"
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']
 CELERY_TIMEZONE = 'Europe/Amsterdam'
-CELERY_DISABLE_RATE_LIMITS = True
+CELERY_WORKER_DISABLE_RATE_LIMITS = True
 
 # Cache
 # =====
