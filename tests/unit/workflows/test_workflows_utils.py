@@ -28,7 +28,10 @@ import pkg_resources
 import requests
 import requests_mock
 
-from inspirehep.modules.workflows.utils import download_file_to_workflow
+from inspirehep.modules.workflows.utils import (
+    download_file_to_workflow,
+    json_api_request,
+)
 
 from mocks import MockFiles, MockFileObject, MockObj
 
@@ -53,5 +56,21 @@ def test_download_file_to_workflow_retries_on_protocol_error():
         expected = MockFileObject(key='1605.03844.pdf')
         result = download_file_to_workflow(
             obj, '1605.03844.pdf', 'http://export.arxiv.org/pdf/1605.03844')
+
+        assert expected == result
+
+
+def test_json_api_request_retries_on_connection_error():
+    with requests_mock.Mocker() as requests_mocker:
+        body = {'foo': 'bar'}
+
+        requests_mocker.register_uri(
+            'POST', 'http://example.org/api', [
+                {'exc': requests.packages.urllib3.exceptions.ConnectionError},
+                {'json': body},
+            ])
+
+        expected = {'foo': 'bar'}
+        result = json_api_request('http://example.org/api', {})
 
         assert expected == result

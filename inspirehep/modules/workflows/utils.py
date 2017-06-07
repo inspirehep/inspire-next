@@ -41,6 +41,7 @@ from .models import WorkflowsAudit
 LOGGER = logging.getLogger(__name__)
 
 
+@backoff.on_exception(backoff.expo, requests.packages.urllib3.exceptions.ConnectionError, base=4, max_tries=5)
 def json_api_request(url, data, headers=None):
     """Make JSON API request and return JSON response."""
     final_headers = {
@@ -57,7 +58,6 @@ def json_api_request(url, data, headers=None):
             url=url,
             headers=final_headers,
             data=json.dumps(data),
-            timeout=30
         )
     except requests.exceptions.RequestException as err:
         current_app.logger.exception(err)
