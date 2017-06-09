@@ -211,6 +211,22 @@ h1.record-detailed-title, .record-header label, #record-journal,
     text-align: center;
 }
 
+.sorting {
+    background-image: url('../images/sort_both.png');
+    background-repeat: no-repeat;
+    background-position: center right;
+    padding-right: 20px !important;
+}
+
+.sorting_asc {
+    @extend .sorting;
+    background-image: url('../images/sort_asc.png');
+}
+
+.sorting_desc {
+    @extend .sorting;
+    background-image: url('../images/sort_desc.png');
+}
 
 .table-with-ellipsis {
     table-layout: fixed;
