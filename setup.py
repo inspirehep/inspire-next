@@ -57,7 +57,6 @@ install_requires = [
     'invenio-collections>=1.0.0a3',
     'invenio-config>=1.0.0a1',
     'invenio-i18n>=1.0.0a4',
-    'invenio-indexer>=1.0.0a7',
     'invenio-jsonschemas>=1.0.0a4',
     'invenio-logging>=1.0.0a3',
     'invenio-mail>=1.0.0a4',
