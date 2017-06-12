@@ -35,7 +35,7 @@ services:
     environment:
       - ES_HEAP_SIZE=2g
   database:
-    image: postgres
+    image: postgres:9.4.5
     environment:
       - POSTGRES_PASSWORD=dbpass123
       - POSTGRES_USER=inspirehep
