@@ -33,7 +33,7 @@
     <div class="panel">
       <div class="panel-heading">
         <h1 class="record-detailed-title">
-          {{ record['experiment_names'][0].title }}
+          {{ record['experiment']['legacy_name'] }}
             {% if record['affiliations'] %}
               ({{ record['affiliations'][0]['name'] }})
             {% endif %}
@@ -90,7 +90,7 @@
             <hr>
             <div>
               Part of the
-              <strong><a href="/search?p=collaboration:{{ record['collaboration'] }}&cc=Hep">{{ record['collaboration'] }}</a></strong> collaboration - <a href="https://inspirehep.net/search?ln=en&ln=en&p=693__e%3A{{record['experiment_names'][0].title}}&of=hcs">See Citesummary</a>
+              <strong><a href="/search?p=collaboration:{{ record['collaboration'] }}&cc=Hep">{{ record['collaboration'] }}</a></strong> collaboration - <a href="https://inspirehep.net/search?ln=en&ln=en&p=693__e%3A{{record['experiment']['legacy_name']}}&of=hcs">See Citesummary</a>
             </div>
             {% endif %}
           </div>
@@ -112,7 +112,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="panel panel-datatables" id="record-experiment-papers">
-          <div class="panel-heading">Papers associated with {{ record['experiment_names'][0].title }}</div>
+          <div class="panel-heading">Papers associated with {{ record['experiment']['legacy_name'] }}</div>
           <div class="panel-body">
             <div class="datatables-loading">
               <i class="fa fa-spinner fa-spin fa-lg" ></i>
@@ -171,7 +171,7 @@
     ) {
       DataTables.attachTo(document, {
         'recid': "{{ record.control_number }}",
-        'experiment_name': "{{record['experiment_names'][0].title}}",
+        'experiment_name': "{{record['experiment']['legacy_name']}}",
       });
     });
   </script>

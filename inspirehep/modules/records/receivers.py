@@ -229,14 +229,13 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
 
     # FIXME: Use a dedicated method when #1355 will be resolved.
     if 'experiments.json' in json.get('$schema'):
-        experiment_names = get_value(json, 'experiment_names.title')
-        title_variants = force_list(
-            get_value(json, 'title_variants.title'))
+        long_name = force_list(json.get('long_name'))
+        name_variants = force_list(json.get('name_variants'))
 
         json.update({
             'experiment_suggest': {
-                'input': experiment_names + title_variants,
-                'output': experiment_names[0],
+                'input': long_name + name_variants,
+                'output': long_name[0],
                 'payload': {'$ref': get_value(json, 'self.$ref')},
             },
         })

@@ -514,20 +514,16 @@ def test_populate_experiment_suggest_populates_if_record_is_experiment():
     json_dict = {
         '$schema': 'http://foo/experiments.json',
         'self': {'$ref': 'http://foo/$ref'},
-        'experiment_names': [
-            {'title': 'foo'},
-            {'title': 'bar'},
-        ],
-        'title_variants': [
-            {'title': 'foo_var'},
-            {'title': 'bar_var'},
+        'long_name': 'foo',
+        'name_variants': [
+            'bar',
+            'baz',
         ],
     }
 
     populate_experiment_suggest(None, json_dict)
 
-    assert json_dict['experiment_suggest']['input'] == \
-        ['foo', 'bar', 'foo_var', 'bar_var']
+    assert json_dict['experiment_suggest']['input'] == ['foo', 'bar', 'baz']
     assert json_dict['experiment_suggest']['output'] == 'foo'
     assert json_dict['experiment_suggest']['payload']['$ref'] == 'http://foo/$ref'
 

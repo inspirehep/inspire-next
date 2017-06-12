@@ -24,160 +24,134 @@
 
 from __future__ import absolute_import, division, print_function
 
-import six
+import re
 
 from dojson import utils
 from dojson.errors import IgnoreKey
 
-from inspirehep.utils.helpers import force_list
+from inspire_schemas.utils import load_schema
+from inspirehep.utils.helpers import force_list, maybe_int
 
 from .model import experiments
 from ..utils import force_single_element, get_record_ref
 
 
-@experiments.over('_date_started', '^046..')
-def date_started(self, key, value):
-    values = force_list(value)
-
-    for val in values:
-        if val.get('q'):
-            self['date_proposed'] = val.get('q')
-        if val.get('r'):
-            self['date_approved'] = val.get('r')
-        if val.get('s'):
-            self['date_started'] = val.get('s')
-        if val.get('t'):
-            self['date_completed'] = val.get('t')
+@experiments.over('_dates', '^046..')
+def dates(self, key, values):
+    for value in force_list(values):
+        if value.get('q'):
+            self['date_proposed'] = value.get('q')
+        if value.get('r'):
+            self['date_approved'] = value.get('r')
+        if value.get('s'):
+            self['date_started'] = value.get('s')
+        if value.get('c'):
+            self['date_cancelled'] = value.get('c')
+        if value.get('t'):
+            self['date_completed'] = value.get('t')
 
     raise IgnoreKey
 
 
-@experiments.over('experiment_names', '^119..')
+@experiments.over('experiment', '^119..')
+def experiment(self, key, values):
+    """Populate the ``experiment`` key.
+
+    Also populates the ``accelerator`` and the ``insitution`` key
+    through side effects.
+    """
+    experiment = self.get('experiment', {})
+    accelerator = self.get('accelerator', {})
+    institution = self.get('institution', {})
+
+    for value in force_list(values):
+        if value.get('a'):
+            experiment['legacy_name'] = value.get('a')
+        if value.get('c'):
+            experiment['value'] = value.get('c')
+        if value.get('d'):
+            experiment['short_name'] = value.get('d')
+
+        if value.get('b'):
+            accelerator['value'] = value.get('b')
+
+        if value.get('u'):
+            institution['value'] = value.get('u')
+        if value.get('z'):
+            record = get_record_ref(maybe_int(value.get('z')), 'institutions')
+            if record:
+                institution['curated_relation'] = True
+                institution['record'] = record
+
+    self['accelerator'] = accelerator
+    self['institution'] = institution
+    return experiment
+
+
+@experiments.over('long_name', '^245..')
+def long_name(self, key, value):
+    return value.get('a')
+
+
+@experiments.over('inspire_classification', '^372..')
 @utils.for_each_value
-def experiment_names(self, key, value):
-    if value.get('u'):
-        self.setdefault('affiliations', [])
+def inspire_classification(self, key, value):
+    schema = load_schema('experiments')
+    pattern = schema['properties']['inspire_classification']['items']['pattern']
 
-        name = value.get('u')
-        recid = value.get('z')
-        record = get_record_ref(recid, 'institutions')
-
-        self['affiliations'].append({
-            'curated_relation': record is not None,
-            'name': name,
-            'record': record
-        })
-
-    return {
-        'source': value.get('9'),
-        'subtitle': value.get('b'),
-        'title': value.get('a'),
-    }
+    if re.match(pattern, value.get('a')):
+        return value.get('a')
 
 
-@experiments.over('titles', '^(245|419)..')
-def titles(self, key, value):
-    titles = self.get('titles', [])
-
-    for value in force_list(value):
-        if key.startswith('245'):
-            titles.insert(0, {'title': value.get('a')})
-        else:
-            titles.append({'title': value.get('a')})
-
-    return titles
-
-
-@experiments.over('contact_details', '^270..')
+@experiments.over('name_variants', '^419..')
 @utils.for_each_value
-def contact_details(self, key, value):
-    name = value.get('p')
-    email = value.get('m')
-
-    return {
-        'name': name if isinstance(name, six.string_types) else None,
-        'email': email if isinstance(email, six.string_types) else None,
-    }
+def name_variants(self, key, value):
+    return value.get('a')
 
 
 @experiments.over('related_experiments', '^510..')
 @utils.for_each_value
 def related_experiments(self, key, value):
-    def _get_record(zero_values):
-        zero_value = force_single_element(zero_values)
-        try:
-            recid = int(zero_value)
-            return get_record_ref(recid, 'experiments')
-        except (TypeError, ValueError):
-            return None
-
-    def _classify_relation_type(w_values):
+    def _get_relation(w_values):
         w_value = force_single_element(w_values)
         return {'a': 'predecessor', 'b': 'successor'}.get(w_value, '')
 
-    record = _get_record(value.get('0'))
+    record = get_record_ref(maybe_int(value.get('0')), 'experiments')
 
     return {
-        'name': force_single_element(value.get('a')),
-        'record': record,
-        'relation': _classify_relation_type(value.get('w')),
         'curated_relation': record is not None,
+        'record': record,
+        'relation': _get_relation(value.get('w')),
+        'value': force_single_element(value.get('a')),
     }
 
 
 @experiments.over('description', '^520..')
-@utils.for_each_value
 def description(self, key, value):
-    return value.get('a')
+    result = self.get('description', '')
 
+    if result and value.get('a'):
+        result += '\n' + value.get('a')
+    elif value.get('a'):
+        result = value.get('a')
 
-@experiments.over('accelerator', '^693..')
-def accelerator(self, key, value):
-    return value.get('a')
-
-
-@experiments.over('spokespersons', '^702..')
-@utils.for_each_value
-def spokespersons(self, key, value):
-    def _get_inspire_id(i_values):
-        i_value = force_single_element(i_values)
-        if i_value:
-            return [
-                {
-                    'schema': 'INSPIRE ID',
-                    'value': i_value,
-                },
-            ]
-
-    def _is_current(z_values):
-        z_value = force_single_element(z_values)
-        if z_value and isinstance(z_value, six.string_types):
-            return z_value.lower() == 'current'
-
-    def _get_record(x_values):
-        x_value = force_single_element(x_values)
-        if x_value:
-            return get_record_ref(x_value, 'authors')
-
-    record = _get_record(value.get('x'))
-
-    return {
-        'current': _is_current(value.get('z')),
-        'ids': _get_inspire_id(value.get('i')),
-        'name': force_single_element(value.get('a')),
-        'record': record,
-        'curated_relation': record is not None,
-    }
+    return result
 
 
 @experiments.over('collaboration', '^710..')
 def collaboration(self, key, value):
-    values = force_list(self.get('collaboration'))
-    values.extend(self.get('collaboration_alternative_names', []))
-    values.extend(el.get('g') for el in force_list(value))
+    record = get_record_ref(maybe_int(value.get('0')), 'experiments')
 
-    collaborations = sorted(values, key=len)
-    if len(collaborations) > 1:
-        self['collaboration_alternative_names'] = collaborations[1:]
-    if collaborations:
-        return collaborations[0]
+    return {
+        'curated_relation': record is not None,
+        'record': record,
+        'value': force_single_element(value.get('g')),
+    }
+
+
+@experiments.over('core', '^980..')
+def core(self, key, value):
+    if not self.get('core'):
+        return value.get('a', '').upper() == 'CORE'
+
+    return self.get('core')

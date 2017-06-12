@@ -20,23 +20,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""DoJSON model definition for experiments."""
-
 from __future__ import absolute_import, division, print_function
 
-from ..model import FilterOverdo, add_collection, add_schema, clean_record
+from inspirehep.dojson.model import FilterOverdo
+from inspirehep.dojson.experiments.model import add_project_type
 
 
-def add_project_type(record, blob):
-    record['project_type'] = ['experiment']
-    return record
+def test_add_project_type():
+    model = FilterOverdo(filters=[add_project_type])
 
+    expected = {'project_type': ['experiment']}
+    result = model.do({})
 
-filters = [
-    add_schema('experiments.json'),
-    add_collection('Experiments'),
-    add_project_type,
-    clean_record,
-]
-
-experiments = FilterOverdo(filters=filters)
+    assert expected == result
