@@ -20,6 +20,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+
+# FIXME Bleeding edge packages not yet released on pypi
+-e git+git://github.com/inveniosoftware/invenio-indexer.git@ead1eaa923c3289f08f1c84b404fbb3362764fa3#egg=invenio-indexer
+
 # FIXME temporary branch for testing
 -e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3-inspire#egg=invenio-query-parser==0.6.0
 
