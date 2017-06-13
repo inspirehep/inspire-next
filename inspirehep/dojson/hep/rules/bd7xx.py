@@ -140,23 +140,56 @@ def publication_info2marc(self, key, values):
     return result_773
 
 
-@hep.over('succeeding_entry', '^785..')
-def succeeding_entry(self, key, value):
-    if isinstance(value, (tuple, list)):
-        # Too bad: there can only be one succeeding entry.
-        value = value[0]
+@hep.over('related_records', '^78002')
+def related_records_78002(self, key, values):
+    result = self.get('related_records', [])
 
-    return {
-        'relationship_code': value.get('r'),
-        'record': get_record_ref(value.get('w'), 'literature'),
-        'isbn': value.get('z'),
-    }
+    for value in force_list(values):
+        record = get_record_ref(maybe_int(value.get('w')), 'literature')
+
+        if record:
+            result.append({
+                'curated_relation': record is not None,
+                'record': record,
+                'relation': 'predecessor',
+            })
+
+    return result
 
 
-@hep2marc.over('785', '^succeeding_entry$')
-def succeeding_entry2marc(self, key, value):
-    return {
-        'r': value.get('relationship_code'),
-        'w': get_recid_from_ref(value.get('record')),
-        'z': value.get('isbn'),
-    }
+@hep.over('related_records', '^78708')
+def related_records_78708(self, key, values):
+    result = self.get('related_records', [])
+
+    for value in force_list(values):
+        record = get_record_ref(maybe_int(value.get('w')), 'literature')
+
+        if record:
+            result.append({
+                'curated_relation': record is not None,
+                'record': record,
+                'relation_freetext': value.get('i'),
+            })
+
+    return result
+
+
+@hep2marc.over('78002', '^related_records$')
+def related_records2marc(self, key, values):
+    result_78002 = self.get('78002', [])
+    result_78708 = self.get('78708', [])
+
+    for value in force_list(values):
+        if value.get('relation_freetext'):
+            result_78708.append({
+                'i': value.get('relation_freetext'),
+                'w': get_recid_from_ref(value.get('record')),
+            })
+        else:
+            result_78002.append({
+                'i': 'supersedes',
+                'w': get_recid_from_ref(value.get('record')),
+            })
+
+    self['78708'] = result_78708
+    return result_78002

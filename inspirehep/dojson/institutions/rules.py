@@ -28,7 +28,7 @@ import re
 
 from dojson import utils
 
-from inspirehep.utils.helpers import force_list
+from inspirehep.utils.helpers import force_list, maybe_int
 
 from .model import institutions
 from ..utils import force_single_element, get_record_ref
@@ -84,7 +84,7 @@ def ICN(self, key, value):
     institution = self.get('institution', [])
     institution_acronym = self.get('institution_acronym')
 
-    related_institutes = self.get('related_institutes', [])
+    related_records = self.get('related_records', [])
 
     for value in force_list(value):
         a_values = force_list(value.get('a'))
@@ -105,22 +105,14 @@ def ICN(self, key, value):
         x_values = force_list(value.get('x'))
         z_values = force_list(value.get('z'))
         if len(x_values) == len(z_values):
-            for icn, recid in zip(x_values, z_values):
-                related_institutes.append({
+            for _, recid in zip(x_values, z_values):
+                related_records.append({
                     'curated_relation': True,
-                    'name': icn,
                     'record': get_record_ref(recid, 'institutions'),
-                    'relation_type': 'superseded',
-                })
-        else:
-            for icn in x_values:
-                related_institutes.append({
-                    'curated_relation': False,
-                    'name': icn,
-                    'relation_type': 'superseded',
+                    'relation_freetext': 'obsolete',
                 })
 
-    self['related_institutes'] = related_institutes
+    self['related_records'] = related_records
 
     self['institution'] = institution
     self['institution_acronym'] = institution_acronym
@@ -192,27 +184,33 @@ def name_variants(self, key, value):
     return name_variants
 
 
-@institutions.over('related_institutes', '^510..')
+@institutions.over('related_records', '^510..')
 @utils.for_each_value
-def related_institutes(self, key, value):
-    def _classify_relation_type(c):
-        if c == 'a':
-            return 'predecessor'
-        elif c == 'b':
-            return 'successor'
-        elif c == 't':
-            return 'parent'
-        elif c == 'r':
-            return 'other'
-        else:
-            return ''
+def related_records(self, key, value):
+    def _get_relation(value):
+        RELATIONS_MAP = {
+            'a': 'predecessor',
+            'r': 'other',
+            't': 'parent',
+        }
 
-    return {
-        'curated_relation': bool(value.get('0')),
-        'name': value.get('a'),
-        'relation_type': _classify_relation_type(value.get('w')),
-        'record': get_record_ref(value.get('0'), endpoint='institutions'),
-    }
+        return RELATIONS_MAP.get(value.get('w'))
+
+    record = get_record_ref(maybe_int(value.get('0')), 'institutions')
+    relation = _get_relation(value)
+
+    if record and relation == 'other':
+        return {
+            'curated_relation': record is not None,
+            'record': record,
+            'relation_freetext': relation,
+        }
+    elif record and relation:
+        return {
+            'curated_relation': record is not None,
+            'record': record,
+            'relation': relation,
+        }
 
 
 @institutions.over('historical_data', '^6781.')

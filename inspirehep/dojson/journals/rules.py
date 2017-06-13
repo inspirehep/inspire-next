@@ -27,6 +27,9 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 from idutils import normalize_issn
 
+from inspirehep.dojson.utils import get_record_ref
+from inspirehep.utils.helpers import maybe_int
+
 from .model import journals
 
 
@@ -96,3 +99,16 @@ def short_titles(self, key, value):
 @utils.for_each_value
 def title_variants(self, key, value):
     return {'title': value.get('a')}
+
+
+@journals.over('related_records', '^78002')
+@utils.for_each_value
+def related_records(self, key, value):
+    record = get_record_ref(maybe_int(value.get('w')), 'journals')
+
+    if record:
+        return {
+            'curated_relation': record is not None,
+            'record': record,
+            'relation': 'predecessor',
+        }

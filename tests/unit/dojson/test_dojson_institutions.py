@@ -125,9 +125,9 @@ def test_external_system_identifiers_from_035__a_9():
     assert expected == result['external_system_identifiers']
 
 
-def test_superseded_institutions_from_110__x_z():
+def test_related_records_from_110__a_t_u_double_x_double_z():
     schema = load_schema('institutions')
-    subschema = schema['properties']['related_institutes']
+    subschema = schema['properties']['related_records']
 
     snippet = (
         '<datafield tag="110" ind1=" " ind2=" ">'
@@ -144,25 +144,23 @@ def test_superseded_institutions_from_110__x_z():
     expected = [
         {
             'curated_relation': True,
-            'name': 'Pittsburgh U., Dept. Phil.',
             'record': {
                 '$ref': 'http://localhost:5000/api/institutions/908047',
             },
-            'relation_type': 'superseded',
+            'relation_freetext': 'obsolete',
         },
         {
             'curated_relation': True,
-            'name': 'Pittsburgh U., Med. School',
             'record': {
                 '$ref': 'http://localhost:5000/api/institutions/905042',
             },
-            'relation_type': 'superseded',
+            'relation_freetext': 'obsolete',
         },
     ]
     result = institutions.do(create_record(snippet))
 
-    assert validate(result['related_institutes'], subschema) is None
-    assert expected == result['related_institutes']
+    assert validate(result['related_records'], subschema) is None
+    assert expected == result['related_records']
 
 
 def test_ICN_legacy_ICN_institution_and_institution_acronym_from_110__a_t_u():
@@ -730,9 +728,9 @@ def test_historical_data_from_6781_multiple_a():
     assert expected == result['historical_data']
 
 
-def test_related_institutes_from__510_a_w_0():
+def test_related_records_from_510__a_w_0_accepts_parents():
     schema = load_schema('institutions')
-    subschema = schema['properties']['related_institutes']
+    subschema = schema['properties']['related_records']
 
     snippet = (
         '<datafield tag="510" ind1=" " ind2=" ">'
@@ -745,22 +743,21 @@ def test_related_institutes_from__510_a_w_0():
     expected = [
         {
             'curated_relation': True,
-            'name': 'U. Caen (main)',
-            'relation_type': 'parent',
             'record': {
                 '$ref': 'http://localhost:5000/api/institutions/1385404',
             },
+            'relation': 'parent',
         },
     ]
     result = institutions.do(create_record(snippet))
 
-    assert validate(result['related_institutes'], subschema) is None
-    assert expected == result['related_institutes']
+    assert validate(result['related_records'], subschema) is None
+    assert expected == result['related_records']
 
 
-def test_related_institutes_from__double_510_a_w_0():
+def test_related_records_from_double_510__a_w_0_accepts_parents():
     schema = load_schema('institutions')
-    subschema = schema['properties']['related_institutes']
+    subschema = schema['properties']['related_records']
 
     snippet = (
         '<record>'
@@ -780,58 +777,28 @@ def test_related_institutes_from__double_510_a_w_0():
     expected = [
         {
             'curated_relation': True,
-            'name': 'U. Caen (main)',
-            'relation_type': 'parent',
             'record': {
                 '$ref': 'http://localhost:5000/api/institutions/1385404',
             },
+            'relation': 'parent',
         },
         {
             'curated_relation': True,
-            'name': 'CNRS, France',
-            'relation_type': 'parent',
             'record': {
                 '$ref': 'http://localhost:5000/api/institutions/926589',
             },
+            'relation': 'parent',
         },
     ]
     result = institutions.do(create_record(snippet))
 
-    assert validate(result['related_institutes'], subschema) is None
-    assert expected == result['related_institutes']
+    assert validate(result['related_records'], subschema) is None
+    assert expected == result['related_records']
 
 
-def test_related_institutes_from__510_a_w_0_other():
+def test_related_records_from_double_510__a_w_0_accepts_predecessors():
     schema = load_schema('institutions')
-    subschema = schema['properties']['related_institutes']
-
-    snippet = (
-        '<datafield tag="510" ind1=" " ind2=" ">'
-        '  <subfield code="0">945696</subfield>'
-        '  <subfield code="a">UMass Amherst</subfield>'
-        '  <subfield code="w">r</subfield>'
-        '</datafield>'
-    )  # record/902971
-
-    expected = [
-        {
-            'curated_relation': True,
-            'name': 'UMass Amherst',
-            'relation_type': 'other',
-            'record': {
-                '$ref': 'http://localhost:5000/api/institutions/945696',
-            },
-        },
-    ]
-    result = institutions.do(create_record(snippet))
-
-    assert validate(result['related_institutes'], subschema) is None
-    assert expected == result['related_institutes']
-
-
-def test_related_institutes_from__double_510_a_w_0_predecessor():
-    schema = load_schema('institutions')
-    subschema = schema['properties']['related_institutes']
+    subschema = schema['properties']['related_records']
 
     snippet = (
         '<record>'
@@ -851,31 +818,53 @@ def test_related_institutes_from__double_510_a_w_0_predecessor():
     expected = [
         {
             'curated_relation': True,
-            'name': 'INS, Tokyo',
-            'relation_type': 'predecessor',
             'record': {
                 '$ref': 'http://localhost:5000/api/institutions/903276',
             },
+            'relation': 'predecessor',
         },
         {
             'curated_relation': True,
-            'name': 'U. Tokyo, Meson Sci. Lab.',
-            'relation_type': 'predecessor',
             'record': {
                 '$ref': 'http://localhost:5000/api/institutions/905439',
             },
+            'relation': 'predecessor',
         },
     ]
     result = institutions.do(create_record(snippet))
 
-    assert validate(result['related_institutes'], subschema) is None
-    assert expected == result['related_institutes']
+    assert validate(result['related_records'], subschema) is None
+    assert expected == result['related_records']
 
 
-def test_related_institutes_from__510_a_w_0_successor():
+def test_related_records_from_510__a_w_0_accepts_other():
     schema = load_schema('institutions')
-    subschema = schema['properties']['related_institutes']
+    subschema = schema['properties']['related_records']
 
+    snippet = (
+        '<datafield tag="510" ind1=" " ind2=" ">'
+        '  <subfield code="0">945696</subfield>'
+        '  <subfield code="a">UMass Amherst</subfield>'
+        '  <subfield code="w">r</subfield>'
+        '</datafield>'
+    )  # record/902971
+
+    expected = [
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/945696',
+            },
+            'relation_freetext': 'other',
+        },
+    ]
+    result = institutions.do(create_record(snippet))
+
+    assert validate(result['related_records'], subschema) is None
+    assert expected == result['related_records']
+
+
+def test_related_records_from__510__a_w_0_discards_successors():
     snippet = (
         '<datafield tag="510" ind1=" " ind2=" ">'
         '  <subfield code="0">911753</subfield>'
@@ -884,38 +873,18 @@ def test_related_institutes_from__510_a_w_0_successor():
         '</datafield>'
     )  # record/902831
 
-    expected = [
-        {
-            'curated_relation': True,
-            'name': 'HZB, Berlin',
-            'relation_type': 'successor',
-            'record': {
-                '$ref': 'http://localhost:5000/api/institutions/911753',
-            },
-        },
-    ]
     result = institutions.do(create_record(snippet))
 
-    assert validate(result['related_institutes'], subschema) is None
-    assert expected == result['related_institutes']
+    assert 'related_records' not in result
 
 
-def test_related_institutes_from__invalid_510__0():
-    schema = load_schema('institutions')
-    subschema = schema['properties']['related_institutes']
-
+def test_related_records_from_510__w_discards_malformed():
     snippet = (
         '<datafield tag="510" ind1=" " ind2=" ">'
         '  <subfield code="w">foo</subfield>'
         '</datafield>'
     )  # synthetic data
 
-    expected = [
-        {
-            'curated_relation': False,
-        },
-    ]
     result = institutions.do(create_record(snippet))
 
-    assert validate(result['related_institutes'], subschema) is None
-    assert expected == result['related_institutes']
+    assert 'related_records' not in result

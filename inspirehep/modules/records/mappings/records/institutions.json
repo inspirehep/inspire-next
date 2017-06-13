@@ -178,13 +178,10 @@
                     },
                     "type": "object"
                 },
-                "related_institutes": {
+                "related_records": {
                     "properties": {
                         "curated_relation": {
                             "type": "boolean"
-                        },
-                        "name": {
-                            "type": "string"
                         },
                         "recid": {
                             "type": "integer"
@@ -197,7 +194,10 @@
                             },
                             "type": "object"
                         },
-                        "relation_type": {
+                        "relation": {
+                            "type": "string"
+                        },
+                        "relation_freetext": {
                             "type": "string"
                         }
                     },

@@ -109,21 +109,25 @@ def name_variants(self, key, value):
     return value.get('a')
 
 
-@experiments.over('related_experiments', '^510..')
+@experiments.over('related_records', '^510..')
 @utils.for_each_value
-def related_experiments(self, key, value):
-    def _get_relation(w_values):
-        w_value = force_single_element(w_values)
-        return {'a': 'predecessor', 'b': 'successor'}.get(w_value, '')
+def related_records(self, key, value):
+    def _get_relation(value):
+        RELATIONS_MAP = {
+            'a': 'predecessor'
+        }
+
+        return RELATIONS_MAP.get(value.get('w'))
 
     record = get_record_ref(maybe_int(value.get('0')), 'experiments')
+    relation = _get_relation(value)
 
-    return {
-        'curated_relation': record is not None,
-        'record': record,
-        'relation': _get_relation(value.get('w')),
-        'value': force_single_element(value.get('a')),
-    }
+    if record and relation:
+        return {
+            'curated_relation': record is not None,
+            'record': record,
+            'relation': relation,
+        }
 
 
 @experiments.over('description', '^520..')

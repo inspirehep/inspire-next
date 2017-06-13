@@ -318,3 +318,28 @@ def test_title_variants_from_double_730__a():
 
     assert validate(result['title_variants'], subschema) is None
     assert expected == result['title_variants']
+
+
+def test_related_records_from_78002w():
+    schema = load_schema('journals')
+    subschema = schema['properties']['related_records']
+
+    snippet = (
+        '<datafield tag="780" ind1="0" ind2="2">'
+        '  <subfield code="w">1212820</subfield>'
+        '</datafield>'
+    )  # record/1415879
+
+    expected = [
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/journals/1212820',
+            },
+            'relation': 'predecessor',
+        },
+    ]
+    result = journals.do(create_record(snippet))
+
+    assert validate(result['related_records'], subschema) is None
+    assert expected == result['related_records']

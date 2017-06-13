@@ -215,7 +215,7 @@
                     },
                     "type": "object"
                 },
-                "related_experiments": {
+                "related_records": {
                     "properties": {
                         "curated_relation": {
                             "type": "boolean"
@@ -234,7 +234,7 @@
                         "relation": {
                             "type": "string"
                         },
-                        "value": {
+                        "relation_freetext": {
                             "type": "string"
                         }
                     },

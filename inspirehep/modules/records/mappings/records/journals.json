@@ -134,13 +134,10 @@
                 "publisher": {
                     "type": "string"
                 },
-                "relation": {
+                "related_records": {
                     "properties": {
                         "curated_relation": {
                             "type": "boolean"
-                        },
-                        "issn": {
-                            "type": "string"
                         },
                         "recid": {
                             "type": "integer"
@@ -154,6 +151,9 @@
                             "type": "object"
                         },
                         "relation": {
+                            "type": "string"
+                        },
+                        "relation_freetext": {
                             "type": "string"
                         }
                     },
