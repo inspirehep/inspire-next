@@ -841,6 +841,28 @@
                     },
                     "type": "object"
                 },
+                "related_records": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "relation": {
+                            "type": "string"
+                        },
+                        "relation_freetext": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
                 "report_numbers": {
                     "properties": {
                         "hidden": {
@@ -868,28 +890,6 @@
                 },
                 "special_collections": {
                     "type": "string"
-                },
-                "succeeding_entry": {
-                    "properties": {
-                        "isbn": {
-                            "type": "string"
-                        },
-                        "recid": {
-                            "type": "integer"
-                        },
-                        "record": {
-                            "properties": {
-                                "$ref": {
-                                    "type": "string"
-                                }
-                            },
-                            "type": "object"
-                        },
-                        "relationship_code": {
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
                 },
                 "texkeys": {
                     "type": "string"

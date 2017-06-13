@@ -1820,7 +1820,7 @@ INSPIRE_REF_UPDATER_WHITELISTS = {
     'conferences': [],
     'experiments': [
         'affiliation.record',
-        'related_experiments.record',
+        'related_records.record',
         'spokespersons.record',
     ],
     'literature': [
@@ -1832,19 +1832,19 @@ INSPIRE_REF_UPDATER_WHITELISTS = {
         'publication_info.journal_record',
         'publication_info.parent_record',
         'references.record',
-        'succeding_entry.record',
+        'related_records.record',
         'thesis.institutions.record',
         'thesis_supervisors.affiliations.record',
     ],
     'institutions': [
-        'related_institutes.record',
+        'related_records.record',
     ],
     'jobs': [
         'experiments.record',
         'institutions.record',
     ],
     'journals': [
-        'relation.record',
+        'related_records.record',
     ],
 }
 """Controls which fields are updated when the referred record is updated."""

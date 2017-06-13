@@ -361,37 +361,9 @@ def test_description_from_multiple_520__a():
     assert expected == result['description']
 
 
-def test_related_experiments_from_510__a_w_0():
+def test_related_records_from_double_510__a_w_0_accepts_predecessors():
     schema = load_schema('experiments')
-    subschema = schema['properties']['related_experiments']
-
-    snippet = (
-        '<datafield tag="510" ind1=" " ind2=" ">'
-        '  <subfield code="0">1262631</subfield>'
-        '  <subfield code="a">LZ</subfield>'
-        '  <subfield code="w">b</subfield>'
-        '</datafield>'
-    )  # record/1108192
-
-    expected = [
-        {
-            'curated_relation': True,
-            'record': {
-                '$ref': 'http://localhost:5000/api/experiments/1262631',
-            },
-            'relation': 'successor',
-            'value': 'LZ',
-        },
-    ]
-    result = experiments.do(create_record(snippet))
-
-    assert validate(result['related_experiments'], subschema) is None
-    assert expected == result['related_experiments']
-
-
-def test_related_experiments_from_double_510__a_w_0():
-    schema = load_schema('experiments')
-    subschema = schema['properties']['related_experiments']
+    subschema = schema['properties']['related_records']
 
     snippet = (
         '<record>'
@@ -415,7 +387,6 @@ def test_related_experiments_from_double_510__a_w_0():
                 '$ref': 'http://localhost:5000/api/experiments/1108293',
             },
             'relation': 'predecessor',
-            'value': 'XENON',
         },
         {
             'curated_relation': True,
@@ -423,13 +394,26 @@ def test_related_experiments_from_double_510__a_w_0():
                 '$ref': 'http://localhost:5000/api/experiments/1386527',
             },
             'relation': 'predecessor',
-            'value': 'XENON100',
         },
     ]
     result = experiments.do(create_record(snippet))
 
-    assert validate(result['related_experiments'], subschema) is None
-    assert expected == result['related_experiments']
+    assert validate(result['related_records'], subschema) is None
+    assert expected == result['related_records']
+
+
+def test_related_records_from_510__a_w_0_discards_successors():
+    snippet = (
+        '<datafield tag="510" ind1=" " ind2=" ">'
+        '  <subfield code="0">1262631</subfield>'
+        '  <subfield code="a">LZ</subfield>'
+        '  <subfield code="w">b</subfield>'
+        '</datafield>'
+    )  # record/1108192
+
+    result = experiments.do(create_record(snippet))
+
+    assert 'related_records' not in result
 
 
 def test_collaboration_from_710__g_0():

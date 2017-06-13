@@ -434,3 +434,76 @@ def test_publication_info2marc_handles_unicode():
     result = hep2marc.do(record)
 
     assert expected == result['773']
+
+
+def test_related_records_from_78002i_r_w():
+    schema = load_schema('hep')
+    subschema = schema['properties']['related_records']
+
+    snippet = (
+        '<datafield tag="780" ind1="0" ind2="2">'
+        '  <subfield code="i">supersedes</subfield>'
+        '  <subfield code="r">ATLAS-CONF-2016-113</subfield>'
+        '  <subfield code="w">1503270</subfield>'
+        '</datafield>'
+    )  # record/1510564
+
+    expected = [
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/literature/1503270',
+            },
+            'relation': 'predecessor',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['related_records'], subschema) is None
+    assert expected == result['related_records']
+
+    expected = [
+        {
+            'i': 'supersedes',
+            'w': 1503270,
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['78002']
+
+
+def test_related_records_from_78708i_w():
+    schema = load_schema('hep')
+    subschema = schema['properties']['related_records']
+
+    snippet = (
+        '<datafield tag="787" ind1="0" ind2="8">'
+        '  <subfield code="i">Addendum</subfield>'
+        '  <subfield code="w">1474710</subfield>'
+        '</datafield>'
+    )  # record/1415979
+
+    expected = [
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/literature/1474710',
+            },
+            'relation_freetext': 'Addendum',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['related_records'], subschema) is None
+    assert expected == result['related_records']
+
+    expected = [
+        {
+            'i': 'Addendum',
+            'w': 1474710,
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['78708']
