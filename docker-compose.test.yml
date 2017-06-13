@@ -142,7 +142,7 @@ services:
       - test-rabbitmq
       - test-redis
   test-redis:
-    image: redis
+    image: redis:3.2.3
   test-indexer:
     extends:
       file: services.yml
