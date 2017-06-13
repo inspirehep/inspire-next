@@ -20,19 +20,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""Utils proxies."""
 
-# Bleeding edge packages not yet released on Pypi
--e git+https://github.com/CZ-NIC/python-rt.git@64cc54b1aa7514906be60f8bbd7e5ed18b56bba6#egg=rt
+from __future__ import absolute_import, division, print_function
 
-# FIXME temporary branch for testing
--e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3-inspire#egg=invenio-query-parser==0.6.0
+from flask import current_app
+from werkzeug.local import LocalProxy
 
-# JSON editor
--e git+https://github.com/inveniosoftware-contrib/invenio-record-editor.git#egg=invenio-record-editor
 
-# Workflows and Holding Pen related dependencies
--e git+https://github.com/david-caro/workflow.git@minor_fixes_bumped_version#egg=workflow==2.0.1.dev20161019
--e git+https://github.com/inspirehep/invenio-matcher.git#egg=invenio-matcher
--e git+https://github.com/kaplun/invenio-logging.git#egg=invenio-logging==1.0.0b2.dev20170131
-
--e .[postgresql]
+rt_instance = LocalProxy(
+    lambda: current_app.extensions['inspire-utils'].rt_instance
+)
+"""Helper proxy to access the state object."""

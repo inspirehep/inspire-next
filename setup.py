@@ -43,7 +43,6 @@ install_requires = [
     'raven<=5.1.0',
     'retrying',
     'flower',
-    'rt',
     'langdetect>=1.0.6',
     'librabbitmq>=1.6.1',
     'idutils>=0.2.1',
@@ -218,6 +217,7 @@ setup(
         ],
         'invenio_base.api_apps': [
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
+            'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'invenio_collections = invenio_collections:InvenioCollections',
@@ -225,6 +225,7 @@ setup(
         ],
         'invenio_base.apps': [
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
+            'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_fixtures = inspirehep.modules.fixtures:INSPIREFixtures',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
