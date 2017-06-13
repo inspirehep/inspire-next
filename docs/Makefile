@@ -54,7 +54,7 @@ help:
 
 # function sets exit code for html target
 define report_result_html
-	if [ -s "$(1)" ]; \
+	if [ "$(1)" != "0" ]; \
 	then \
 		echo Build Failed. Check documentation_errors.log file for details.; \
 		exit 1; \
@@ -69,7 +69,7 @@ html:
 	$(SPHINXAPIDOC); \
 	rm -f $(SOURCEDIR)/modules.rst; \
 	$(SPHINXBUILD) -w documentation_errors.log -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-	@$(call report_result_html,documentation_errors.log)
+	@$(call report_result_html,$$?)
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
