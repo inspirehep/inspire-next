@@ -50,7 +50,7 @@ define([
           url: '/api/conferences?q=conferenceautocomplete:%QUERY*',
           filter: function(response) {
             return $.map(response.hits.hits, function(el) {
-              el.metadata.place = el.metadata.address[0].original_address;
+              el.metadata.place = el.metadata.address[0].postal_address;
               el.metadata.title = el.metadata.titles[0].title;
               return el.metadata
             }).sort(function(x, y) {

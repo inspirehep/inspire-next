@@ -223,232 +223,32 @@ def test_ICN_legacy_ICN_institution_department_and_department_acryonym_from_110_
         assert result[key] == expected[key]
 
 
-def test_address_from_marcxml_371__a_b_c_d_e_g():
+def test_address_from_371__double_a_b_d_e_g():
     schema = load_schema('institutions')
     subschema = schema['properties']['address']
 
     snippet = (
         '<datafield tag="371" ind1=" " ind2=" ">'
         '  <subfield code="a">Philosophenweg 16</subfield>'
+        '  <subfield code="a">69120 Heidelberg</subfield>'
         '  <subfield code="b">Heidelberg</subfield>'
-        '  <subfield code="c">Baden-Wuerttemberg</subfield>'
         '  <subfield code="d">Germany</subfield>'
         '  <subfield code="e">69120</subfield>'
         '  <subfield code="g">DE</subfield>'
         '</datafield>'
-    )
+    )  # record/1209215
 
     expected = [
         {
-            'city': 'Heidelberg',
+            'cities': [
+                'Heidelberg',
+            ],
             'country_code': 'DE',
-            'state': 'Baden-Wuerttemberg',
-            'original_address': 'Philosophenweg 16',
+            'postal_address': [
+                'Philosophenweg 16',
+                '69120 Heidelberg',
+            ],
             'postal_code': '69120',
-        },
-    ]
-    result = institutions.do(create_record(snippet))
-
-    assert validate(result['address'], subschema) is None
-    assert expected == result['address']
-
-
-def test_address_from_marcxml_371__double_a_b_c_d_e_g():
-    schema = load_schema('institutions')
-    subschema = schema['properties']['address']
-
-    snippet = (
-        '<datafield tag="371" ind1=" " ind2=" ">'
-        '  <subfield code="a">Philosophenweg 16</subfield>'
-        '  <subfield code="a">Heidelberg</subfield>'
-        '  <subfield code="b">Heidelberg</subfield>'
-        '  <subfield code="c">Baden-Wuerttemberg</subfield>'
-        '  <subfield code="d">Germany</subfield>'
-        '  <subfield code="e">69120</subfield>'
-        '  <subfield code="g">DE</subfield>'
-        '</datafield>'
-    )
-
-    expected = [
-        {
-            'city': 'Heidelberg',
-            'country_code': 'DE',
-            'state': 'Baden-Wuerttemberg',
-            'original_address': 'Philosophenweg 16\nHeidelberg',
-            'postal_code': '69120',
-        },
-    ]
-    result = institutions.do(create_record(snippet))
-
-    assert validate(result['address'], subschema) is None
-    assert expected == result['address']
-
-
-def test_address_from_marcxml_371__a_double_b_c_d_e_g():
-    schema = load_schema('institutions')
-    subschema = schema['properties']['address']
-
-    snippet = (
-        '<datafield tag="371" ind1=" " ind2=" ">'
-        '  <subfield code="a">Philosophenweg 16</subfield>'
-        '  <subfield code="b">Altstadt</subfield>'
-        '  <subfield code="b">Heidelberg</subfield>'
-        '  <subfield code="c">Baden-Wuerttemberg</subfield>'
-        '  <subfield code="d">Germany</subfield>'
-        '  <subfield code="e">69120</subfield>'
-        '  <subfield code="g">DE</subfield>'
-        '</datafield>'
-    )
-
-    expected = [
-        {
-            'city': 'Altstadt, Heidelberg',
-            'country_code': 'DE',
-            'state': 'Baden-Wuerttemberg',
-            'original_address': 'Philosophenweg 16',
-            'postal_code': '69120',
-        },
-    ]
-    result = institutions.do(create_record(snippet))
-
-    assert validate(result['address'], subschema) is None
-    assert expected == result['address']
-
-
-@pytest.mark.xfail(reason='country_code not populated')
-def test_address_from_marcxml_371__a_b_c_double_d_e_g():
-    schema = load_schema('institutions')
-    subschema = schema['properties']['address']
-
-    snippet = (
-        '<datafield tag="371" ind1=" " ind2=" ">'
-        '  <subfield code="a">Philosophenweg 16</subfield>'
-        '  <subfield code="b">Heidelberg</subfield>'
-        '  <subfield code="c">Baden-Wuerttemberg</subfield>'
-        '  <subfield code="d">Germany</subfield>'
-        '  <subfield code="d">Deutschland</subfield>'
-        '  <subfield code="e">69120</subfield>'
-        '  <subfield code="g">DE</subfield>'
-        '</datafield>'
-    )
-
-    expected = [
-        {
-            'city': 'Heidelberg',
-            'country_code': 'DE',
-            'state': 'Baden-Wuerttemberg',
-            'original_address': 'Philosophenweg 16',
-            'postal_code': '69120',
-        },
-    ]
-    result = institutions.do(create_record(snippet))
-
-    assert validate(result['address'], subschema) is None
-    assert expected == result['address']
-
-
-def test_address_from_marcxml_371__a_b_c_d_double_e_g():
-    schema = load_schema('institutions')
-    subschema = schema['properties']['address']
-
-    snippet = (
-        '<datafield tag="371" ind1=" " ind2=" ">'
-        '  <subfield code="a">Philosophenweg 16</subfield>'
-        '  <subfield code="b">Heidelberg</subfield>'
-        '  <subfield code="c">Baden-Wuerttemberg</subfield>'
-        '  <subfield code="d">Germany</subfield>'
-        '  <subfield code="e">69120</subfield>'
-        '  <subfield code="e">DE-119</subfield>'
-        '  <subfield code="g">DE</subfield>'
-        '</datafield>'
-    )
-
-    expected = [
-        {
-            'city': 'Heidelberg',
-            'country_code': 'DE',
-            'state': 'Baden-Wuerttemberg',
-            'original_address': 'Philosophenweg 16',
-            'postal_code': '69120, DE-119',
-        }
-    ]
-    result = institutions.do(create_record(snippet))
-
-    assert validate(result['address'], subschema) is None
-    assert expected == result['address']
-
-
-def test_address_from_marcxml_371__a_b_c_d_e_double_g():
-    schema = load_schema('institutions')
-    subschema = schema['properties']['address']
-
-    snippet = (
-        '<datafield tag="371" ind1=" " ind2=" ">'
-        '  <subfield code="a">Philosophenweg 16</subfield>'
-        '  <subfield code="b">Heidelberg</subfield>'
-        '  <subfield code="c">Baden-Wuerttemberg</subfield>'
-        '  <subfield code="d">Germany</subfield>'
-        '  <subfield code="e">69120</subfield>'
-        '  <subfield code="g">DE</subfield>'
-        '  <subfield code="g">DE</subfield>'
-        '</datafield>'
-    )
-
-    expected = [
-        {
-            'city': 'Heidelberg',
-            'country_code': 'DE',
-            'original_address': 'Philosophenweg 16',
-            'postal_code': '69120',
-            'state': 'Baden-Wuerttemberg',
-        },
-    ]
-    result = institutions.do(create_record(snippet))
-
-    assert validate(result['address'], subschema) is None
-    assert expected == result['address']
-
-
-def test_address_from_multiple_marcxml_371__a_b_c_d_e_g():
-    schema = load_schema('institutions')
-    subschema = schema['properties']['address']
-
-    snippet = (
-        '<record> '
-        '  <datafield tag="371" ind1=" " ind2=" ">'
-        '    <subfield code="a">Philosophenweg 16</subfield>'
-        '    <subfield code="b">Heidelberg</subfield>'
-        '    <subfield code="c">Baden-Wuerttemberg</subfield>'
-        '    <subfield code="d">Germany</subfield>'
-        '    <subfield code="e">69120</subfield>'
-        '    <subfield code="g">DE</subfield>'
-        '  </datafield>'
-        '  <datafield tag="371" ind1=" " ind2=" ">'
-        '    <subfield code="e">88003</subfield>'
-        '    <subfield code="a">Physical Science Lab</subfield>'
-        '    <subfield code="a">Las Cruces, NM 88003</subfield>'
-        '    <subfield code="b">Las Cruces</subfield>'
-        '    <subfield code="c">New Mexico</subfield>'
-        '    <subfield code="d">USA</subfield>'
-        '    <subfield code="g">US</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    expected = [
-        {
-            'city': 'Heidelberg',
-            'country_code': 'DE',
-            'state': 'Baden-Wuerttemberg',
-            'original_address': 'Philosophenweg 16',
-            'postal_code': '69120'
-        },
-        {
-            'city': 'Las Cruces',
-            'country_code': 'US',
-            'state': 'US-NM',
-            'original_address': 'Physical Science Lab\nLas Cruces, NM 88003',
-            'postal_code': '88003'
         },
     ]
     result = institutions.do(create_record(snippet))

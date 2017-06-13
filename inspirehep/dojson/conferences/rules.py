@@ -24,8 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import six
-
 from dojson import utils
 
 from inspirehep.utils.helpers import force_list
@@ -35,10 +33,10 @@ from ..utils import force_single_element
 from ..utils.geo import parse_conference_address
 
 
-@conferences.over('acronym', '^111..')
+@conferences.over('acronyms', '^111..')
 @utils.flatten
 @utils.for_each_value
-def acronym(self, key, value):
+def acronyms(self, key, value):
     self['opening_date'] = value.get('x')
     self['closing_date'] = value.get('y')
 
@@ -68,26 +66,13 @@ def acronym(self, key, value):
 @conferences.over('contact_details', '^270..')
 @utils.for_each_value
 def contact_details(self, key, value):
-    extra_place_info = value.get('b')
-    if extra_place_info:
-        address = parse_conference_address(extra_place_info)
-        self.setdefault('address', []).append(address)
-
-    name = value.get('p')
-    email = value.get('m')
+    if value.get('b'):
+        self.setdefault('address', [])
+        self['address'].append({'place_name': value.get('b')})
 
     return {
-        'name': name if isinstance(name, six.string_types) else None,
-        'email': email if isinstance(email, six.string_types) else None,
-    }
-
-
-@conferences.over('short_description', '^520..')
-@utils.for_each_value
-def short_description(self, key, value):
-    return {
-        'value': value.get('a'),
-        'source': value.get('9')
+        'name': value.get('p'),
+        'email': value.get('m'),
     }
 
 
@@ -120,6 +105,18 @@ def series(self, key, value):
         })
 
     return series
+
+
+@conferences.over('short_description', '^520..')
+def short_description(self, key, value):
+    result = self.get('short_description', {})
+
+    if result and value.get('a'):
+        result['value'] += '\n' + value.get('a')
+    elif value.get('a'):
+        result['value'] = value.get('a')
+
+    return result
 
 
 @conferences.over('alternative_titles', '^711..')
