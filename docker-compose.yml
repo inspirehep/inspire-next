@@ -71,7 +71,7 @@ services:
 
   # Services needed for inspirehep to run.
   redis:
-    image: redis
+    image: redis:3.2.3
   indexer:
     extends:
       file: services.yml
