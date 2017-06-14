@@ -56,11 +56,11 @@ def isbn_syntax_validation(form, field):
         raise StopValidation(message)
 
 
-def does_exist_in_inspirehep(query, collection=None):
+def does_exist_in_inspirehep(query, collections=None):
     """Check if there exist an item in the db which satisfies query.
 
     :param query: http query to check
-    :param collection: collection to search in; by default searches in
+    :param collections: collections to search in; by default searches in
         the default collection
     """
     import requests
@@ -71,8 +71,11 @@ def does_exist_in_inspirehep(query, collection=None):
         'of': 'id'
     }
 
-    if collection:
-        params['cc'] = collection
+    if collections:
+        if len(collections) == 1:
+            params['cc'] = collections[0]
+        else:
+            params['c'] = collections
 
     json_reply = requests.get(
         "http://inspirehep.net/search?", params=params).text
@@ -89,15 +92,20 @@ def does_exist_in_inspirehep(query, collection=None):
     return False
 
 
-def inspirehep_duplicated_validator(inspire_query, property_name, collection=None):
+def inspirehep_duplicated_validator(inspire_query, property_name, collections=None):
     """Check if a record with the same doi already exists.
 
     Needs to be wrapped in a function with proper validator signature.
     """
-    if does_exist_in_inspirehep(inspire_query, collection):
+    if does_exist_in_inspirehep(inspire_query, collections):
         url = "http://inspirehep.net/search?" + urlencode({'p': inspire_query})
-        if collection:
-            url += '&' + urlencode({'cc': collection})
+        if collections:
+            if len(collections) == 1:
+                url += '&' + urlencode({'cc': collections[0]})
+            else:
+                for collection in collections:
+                    url += '&' + urlencode({'c': collection})
+
         raise ValidationError(
             'There exists already an item with the same %s. '
             '<a target="_blank" href="%s">See the record.</a>'
@@ -112,7 +120,7 @@ def duplicated_orcid_validator(form, field):
     if not orcid:
         return
     if current_app.config.get('PRODUCTION_MODE'):
-        inspirehep_duplicated_validator('035__a:' + orcid, 'ORCID', 'HepNames')
+        inspirehep_duplicated_validator('035__a:' + orcid, 'ORCID', collections=['HepNames'])
 
 
 def duplicated_doi_validator(form, field):
@@ -127,9 +135,9 @@ def duplicated_doi_validator(form, field):
         # First check in default collection
         inspirehep_duplicated_validator('doi:' + doi, 'DOI')
 
-        # And in Hal collection
+        # And in Hal, CDS collection
         try:
-            inspirehep_duplicated_validator('doi:' + doi, 'DOI', 'HAL Hidden')
+            inspirehep_duplicated_validator('doi:' + doi, 'DOI', collections=['HAL Hidden', 'CDS Hidden'])
         except ValidationError:
             if 'cataloger' in user_roles:
                 raise
@@ -148,11 +156,11 @@ def duplicated_arxiv_id_validator(form, field):
         inspirehep_duplicated_validator(
             '035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID')
 
-        # And in Hal collection
+        # And in Hal, CDS collection
         try:
             inspirehep_duplicated_validator(
-                '035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID', 'HAL Hidden'
-            )
+                '035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID',
+                collections=['HAL Hidden', 'CDS Hidden'])
         except ValidationError:
             if 'cataloger' in user_roles:
                 raise
