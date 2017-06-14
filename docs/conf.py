@@ -16,10 +16,14 @@ from __future__ import absolute_import, division, print_function
 
 from datetime import datetime
 import os
+import subprocess
 import sys
-import shlex
+import shutil
 
 import sphinx.environment
+
+
+SOURCEDIR = os.path.abspath('../inspirehep')
 
 _warn_node_old = sphinx.environment.BuildEnvironment.warn_node
 
@@ -29,14 +33,41 @@ def _warn_node(self, msg, *args, **kwargs):
     if not msg.startswith('nonlocal image URI found:'):
         _warn_node_old(self, msg, *args, **kwargs)
 
+
 sphinx.environment.BuildEnvironment.warn_node = _warn_node
 
+
+def _generate_api_rsts(outdir='_api', sourcedir=SOURCEDIR):
+    """Generate the api-related rst files."""
+    if os.path.exists(outdir):
+        shutil.rmtree(outdir)
+
+    try:
+        subprocess.check_output(
+            ['sphinx-apidoc', '-f', '-o', outdir, sourcedir],
+            stderr=subprocess.STDOUT,
+        )
+    except subprocess.CalledProcessError as call_err:
+        raise RuntimeError(
+            (
+                'Failed to generate the api rst files.\n'
+                'Return code: %d\n'
+                'Output:\n%s'
+            ) % (call_err.returncode, call_err.output)
+        )
+
+    # We don't use the generated modules.rst, and if not included, it throws a
+    # warning, so to avoid noise we remove it.
+    os.remove(os.path.join(outdir, 'modules.rst'))
+
+
+_generate_api_rsts()
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
-sys.path.append(os.path.abspath('../inspirehep'))
+sys.path.append(SOURCEDIR)
 
 # -- General configuration ------------------------------------------------
 
