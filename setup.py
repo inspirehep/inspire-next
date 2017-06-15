@@ -103,6 +103,7 @@ install_requires = [
     'python-redis-lock~=3.2',
     'backoff~=1.0,>=1.4.2',
     'requests~=2.0,>=2.15.1',
+    'timeout-decorator~=0.0,>=0.3.3',
 ]
 
 tests_require = [

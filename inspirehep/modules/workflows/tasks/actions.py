@@ -28,6 +28,7 @@ from functools import wraps
 
 from flask import current_app
 from werkzeug import secure_filename
+from timeout_decorator import TimeoutError
 
 from inspirehep.modules.workflows.utils import (
     get_pdf_in_workflow,
@@ -233,11 +234,14 @@ def prepare_update_payload(extra_data_key="update_payload"):
 def refextract(obj, eng):
     uri = get_pdf_in_workflow(obj)
     if uri:
-        mapped_references = extract_references(uri)
-        if mapped_references:
-            obj.data['references'] = mapped_references
-            obj.log.info('Extracted %d references', len(mapped_references))
-        else:
-            obj.log.info('No references extracted')
+        try:
+            mapped_references = extract_references(uri)
+            if mapped_references:
+                obj.data['references'] = mapped_references
+                obj.log.info('Extracted %d references', len(mapped_references))
+            else:
+                obj.log.info('No references extracted')
+        except TimeoutError:
+            obj.log.error('Timeout when extracting references from the PDF')
     else:
         obj.log.error('Not able to download and process the PDF')
