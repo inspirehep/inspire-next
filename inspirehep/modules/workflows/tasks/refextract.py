@@ -26,6 +26,8 @@ from __future__ import absolute_import, division, print_function
 
 import json
 
+from timeout_decorator import timeout
+
 from refextract import extract_journal_reference, extract_references_from_file
 
 from inspirehep.utils.helpers import maybe_int
@@ -84,6 +86,7 @@ def extract_journal_info(obj, eng):
     obj.data["publication_info"] = new_publication_info
 
 
+@timeout(5 * 60)
 def extract_references(filepath):
     """Extract references from PDF and return in INSPIRE format."""
     references = extract_references_from_file(
