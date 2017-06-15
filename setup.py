@@ -74,7 +74,7 @@ install_requires = [
     'invenio-oaiharvester==1.0.0a2',
     'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
     'invenio>=3.0.0a1,<3.1.0',
-    'inspire-crawler~=0.2.7',
+    'inspire-crawler~=0.0,>=0.2.7',
     'inspire-schemas~=33.0,>=33.0.2',
     'dojson>=1.3.0',
     'Flask>=0.11.1',
@@ -95,14 +95,14 @@ install_requires = [
     'elasticsearch<3.0.0',
     'Flask-Login<0.4.0',
     'invenio-workflows~=6.0,>=6.0.5',
-    'invenio-workflows-files~=0.0.4',
-    'invenio-workflows-ui~=1.0.31',
+    'invenio-workflows-files~=0.0,>=0.0.4',
+    'invenio-workflows-ui~=1.0,>=1.0.31',
     'elasticsearch-dsl<2.2.0',
     'pycountry>=17.1.8',
     'Flask_CeleryExt>=0.3.0',
     'python-redis-lock~=3.2',
-    'backoff~=1.4.2',
-    'requests~=2.15.1',
+    'backoff~=1.0,>=1.4.2',
+    'requests~=2.0,>=2.15.1',
 ]
 
 tests_require = [
@@ -127,7 +127,7 @@ extras_require = {
         'mock',
         'Sphinx<1.6',
         'sphinxcontrib-napoleon>=0.6.1',
-        'docutils~=0.13.1',
+        'docutils~=0.13.0,>=0.13.1',
     ],
     'postgresql': [
         'invenio-db[postgresql,versioning]>=1.0.0b2',
@@ -142,7 +142,7 @@ extras_require = {
         'gunicorn',
     ],
     'crawler': [
-        'hepcrawl>=0.3.4',
+        'hepcrawl~=0.0,>=0.3.4',
     ],
     'tests': tests_require,
     'development': [
