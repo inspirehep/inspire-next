@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from os.path import join
+from urlparse import urljoin
 
 from flask import current_app, render_template
 
@@ -44,6 +44,7 @@ def retry_if_connection_problems(exception):
 def create_ticket(queue,
                   requestors,
                   body,
+                  subject=None,
                   recid=None,
                   **kwargs):
     """Creates new RT ticket and returns new ticket id.
@@ -182,8 +183,8 @@ def _get_all_of(query_type):
 
     :rtype: dict - with ``name (string)``, ``id (integer)`` properties
     """
-    query_suffix = query_type + "?query="
-    url = join(rt_instance.url, "search", query_suffix)
+    search_query = "search/" + query_type + "?query="
+    url = urljoin(rt_instance.url, search_query)
     response = rt_instance.session.get(url)
     raw_result = response.content.decode(response.encoding.lower())
     # parse raw result
@@ -201,8 +202,8 @@ def _query_result_item_id_name_mapper(raw_item):
     Takes a string like ``'17: CoolUser'`` and
     returns ``{'id': '17', 'name': 'CoolUser'}``
     """
-    parts = raw_item.split(": ")
-    return dict(id=parts[0], name=parts[1])
+    id_, name = raw_item.split(": ")
+    return {'id': id_, 'name': name}
 
 
 def _strip_lines(multiline_string):

@@ -20,8 +20,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Unit test for Tickets utils."""
-
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.utils.tickets import _strip_lines
