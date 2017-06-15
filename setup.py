@@ -152,7 +152,11 @@ extras_require = {
         'kwalitee',
         'honcho',
         'gunicorn',
-    ]
+    ],
+    'xrootd': [
+        'invenio-xrootd>=1.0.0a4',
+        'xrootdpyfs>=0.1.3',
+    ],
 }
 
 extras_require['all'] = []
@@ -224,6 +228,7 @@ setup(
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'invenio_collections = invenio_collections:InvenioCollections',
+            'inspire_xrootd = inspirehep.modules.xrootd:INSPIREXRootD',
         ],
         'invenio_base.apps': [
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
@@ -240,6 +245,7 @@ setup(
             'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
             'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
             'inspire_tools = inspirehep.modules.tools:INSPIRETools',
+            'inspire_xrootd = inspirehep.modules.xrootd:INSPIREXRootD',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
