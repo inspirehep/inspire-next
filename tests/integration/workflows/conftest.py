@@ -24,7 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
 import pytest
+import sys
 
 from invenio_db import db
 from invenio_workflows import (
@@ -36,6 +38,11 @@ from inspirehep.modules.workflows.models import (
     WorkflowsAudit,
     WorkflowsPendingRecord,
 )
+
+
+# Use the helpers folder to store test helpers.
+# See: http://stackoverflow.com/a/33515264/374865
+sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
 
 
 @pytest.fixture(autouse=True)
