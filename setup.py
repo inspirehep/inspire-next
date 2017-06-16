@@ -162,7 +162,7 @@ extras_require = {
 
 extras_require['all'] = []
 for name, reqs in extras_require.items():
-    if name in ('postgresql', 'mysql', 'sqlite'):
+    if name in ('postgresql', 'mysql', 'sqlite', 'xrootd'):
         continue
     extras_require['all'].extend(reqs)
 
