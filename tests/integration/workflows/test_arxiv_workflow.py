@@ -44,49 +44,8 @@ from invenio_workflows import (
     workflow_object_class,
 )
 
-from inspire_dojson.hep import hep
-from inspirehep.factory import create_app
+from inspirehep.dojson.hep import hep
 from inspirehep.modules.converter.xslt import convert
-from inspirehep.modules.workflows.models import (
-    WorkflowsAudit,
-    WorkflowsPendingRecord,
-)
-
-
-@pytest.fixture(autouse=True)
-def cleanup_workflows_tables(small_app):
-    with small_app.app_context():
-        obj_types = (
-                WorkflowsAudit.query.all(),
-                WorkflowsPendingRecord.query.all(),
-                workflow_object_class.query(),
-        )
-        for obj_type in obj_types:
-            for obj in obj_type:
-                obj.delete()
-
-        db.session.commit()
-
-
-@pytest.fixture
-def workflow_app():
-    app = create_app(
-        BEARD_API_URL="http://example.com/beard",
-        DEBUG=True,
-        CELERY_ALWAYS_EAGER=True,
-        CELERY_RESULT_BACKEND='cache',
-        CELERY_CACHE_BACKEND='memory',
-        CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
-        PRODUCTION_MODE=True,
-        LEGACY_ROBOTUPLOAD_URL=(
-            'http://localhost:1234'
-        ),
-        MAGPIE_API_URL="http://example.com/magpie",
-        WTF_CSRF_ENABLED=False,
-    )
-
-    with app.app_context():
-        yield app
 
 
 @pytest.fixture
