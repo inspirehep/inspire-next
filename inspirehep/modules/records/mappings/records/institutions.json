@@ -30,19 +30,16 @@
                 },
                 "address": {
                     "properties": {
-                        "city": {
+                        "cities": {
                             "type": "string"
                         },
                         "country_code": {
                             "type": "string"
                         },
-                        "latitude": {
-                            "type": "double"
+                        "place_name": {
+                            "type": "string"
                         },
-                        "longitude": {
-                            "type": "double"
-                        },
-                        "original_address": {
+                        "postal_address": {
                             "type": "string"
                         },
                         "postal_code": {

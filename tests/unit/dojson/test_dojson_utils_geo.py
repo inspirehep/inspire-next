@@ -69,12 +69,15 @@ def test_match_country_name_doesnt_crash_when_disambiguating_koreas():
 
 def test_parse_conference_address_recognizes_state_and_country_of_us_city():
     expected = {
-        'city': None,
+        'cities': [
+            'Waltham',
+        ],
         'country_code': 'US',
-        'latitude': None,
-        'longitude': None,
-        'original_address': 'Waltham, Mass.',
-        'state': 'US-MA',
+        'postal_address': [
+            'Waltham, Mass.',
+        ],
+        'postal_code': None,
+        'state': 'MA',
     }
     result = parse_conference_address('Waltham, Mass.')
 
@@ -83,11 +86,14 @@ def test_parse_conference_address_recognizes_state_and_country_of_us_city():
 
 def test_parse_conference_address_recognizes_country_of_non_us_city():
     expected = {
-        'city': None,
+        'cities': [
+            'Dubna',
+        ],
         'country_code': 'SU',
-        'latitude': None,
-        'longitude': None,
-        'original_address': 'Dubna, USSR',
+        'postal_address': [
+            'Dubna, USSR',
+        ],
+        'postal_code': None,
         'state': None,
     }
     result = parse_conference_address('Dubna, USSR')
@@ -97,11 +103,14 @@ def test_parse_conference_address_recognizes_country_of_non_us_city():
 
 def test_parse_conference_address_handles_empty_string():
     expected = {
-        'city': None,
+        'cities': [
+            '',
+        ],
         'country_code': None,
-        'latitude': None,
-        'longitude': None,
-        'original_address': '',
+        'postal_address': [
+            '',
+        ],
+        'postal_code': None,
         'state': None,
     }
     result = parse_conference_address('')
@@ -120,9 +129,11 @@ def test_parse_institution_address_adds_country_code():
     }
 
     expected = {
-        'city': 'Beijing',
+        'cities': [
+            'Beijing',
+        ],
         'country_code': 'CN',
-        'original_address': '',
+        'postal_address': [],
         'postal_code': '123-CFG',
         'state': None,
     }
@@ -142,33 +153,15 @@ def test_parse_institution_address_preserves_the_original_address():
     }
 
     expected = {
-        'city': 'Tuscaloosa',
+        'cities': [
+            'Tuscaloosa',
+        ],
         'country_code': 'US',
-        'original_address': 'Tuscaloosa, AL 35487-0324',
+        'postal_address': [
+            'Tuscaloosa, AL 35487-0324',
+        ],
         'postal_code': 'PO Box 870324',
-        'state': 'US-AL',
-    }
-    result = parse_institution_address(**address)
-
-    assert expected == result
-
-
-def test_parse_institution_address_handles_state_province_none():
-    address = {
-        'address': None,
-        'city': 'Beijing',
-        'state_province': None,
-        'country': None,
-        'postal_code': '123-CFG',
-        'country_code': None,
-    }
-
-    expected = {
-        'city': 'Beijing',
-        'country_code': None,
-        'original_address': '',
-        'postal_code': '123-CFG',
-        'state': None,
+        'state': 'AL',
     }
     result = parse_institution_address(**address)
 

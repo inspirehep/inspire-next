@@ -24,25 +24,22 @@
                     },
                     "type": "object"
                 },
-                "acronym": {
+                "acronyms": {
                     "copy_to": "conferenceautocomplete",
                     "type": "string"
                 },
                 "address": {
                     "properties": {
-                        "city": {
+                        "cities": {
                             "type": "string"
                         },
                         "country_code": {
                             "type": "string"
                         },
-                        "latitude": {
-                            "type": "double"
+                        "place_name": {
+                            "type": "string"
                         },
-                        "longitude": {
-                            "type": "double"
-                        },
-                        "original_address": {
+                        "postal_address": {
                             "copy_to": "conferenceautocomplete",
                             "type": "string"
                         },
@@ -129,17 +126,6 @@
                     },
                     "type": "object"
                 },
-                "keywords": {
-                    "properties": {
-                        "source": {
-                            "type": "string"
-                        },
-                        "value": {
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
                 "legacy_creation_date": {
                     "type": "string"
                 },
@@ -158,10 +144,6 @@
                     "copy_to": "conferenceautocomplete",
                     "format": "yyyy||yyyy-MM||yyyy-MM-dd",
                     "type": "date"
-                },
-                "place": {
-                    "copy_to": "conferenceautocomplete",
-                    "type": "string"
                 },
                 "public_notes": {
                     "properties": {
