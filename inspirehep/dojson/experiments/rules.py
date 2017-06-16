@@ -57,12 +57,12 @@ def dates(self, key, values):
 def experiment(self, key, values):
     """Populate the ``experiment`` key.
 
-    Also populates the ``accelerator`` and the ``insitution`` key
+    Also populates the ``accelerator`` and the ``institutions`` key
     through side effects.
     """
     experiment = self.get('experiment', {})
     accelerator = self.get('accelerator', {})
-    institution = self.get('institution', {})
+    institutions = self.get('institutions', [])
 
     for value in force_list(values):
         if value.get('a'):
@@ -75,6 +75,7 @@ def experiment(self, key, values):
         if value.get('b'):
             accelerator['value'] = value.get('b')
 
+        institution = {}
         if value.get('u'):
             institution['value'] = value.get('u')
         if value.get('z'):
@@ -82,9 +83,10 @@ def experiment(self, key, values):
             if record:
                 institution['curated_relation'] = True
                 institution['record'] = record
+        institutions.append(institution)
 
     self['accelerator'] = accelerator
-    self['institution'] = institution
+    self['institutions'] = institutions
     return experiment
 
 
