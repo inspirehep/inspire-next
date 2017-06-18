@@ -159,7 +159,7 @@
                 "inspire_classification": {
                     "type": "string"
                 },
-                "institution": {
+                "institutions": {
                     "properties": {
                         "curated_relation": {
                             "type": "boolean"
