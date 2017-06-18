@@ -399,7 +399,7 @@
                     "type": "string"
                 },
                 "energy_ranges": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "external_system_identifiers": {
                     "properties": {

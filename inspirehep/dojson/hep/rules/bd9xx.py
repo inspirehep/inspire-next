@@ -50,9 +50,11 @@ def document_type(self, key, value):
     ]
 
     special_collections = [
+        # XXX: BABAR-AnalysisDocument is treated as a special case below.
+        'babar-internal-note',
         'cdf-internal-note',
         'cdf-note',
-        'cds',
+        'cdshidden',
         'd0-internal-note',
         'd0-preliminary-note',
         'h1-internal-note',
@@ -95,6 +97,8 @@ def document_type(self, key, value):
             self['withdrawn'] = True
         elif normalized_a_value in publication_types:
             publication_type.append(normalized_a_value)
+        elif normalized_a_value == 'babar-analysisdocument':
+            self.setdefault('special_collections', []).append('BABAR-ANALYSIS-DOCUMENT')
         elif normalized_a_value in special_collections:
             self.setdefault('special_collections', []).append(normalized_a_value.upper())
         elif normalized_a_value == 'activityreport':
@@ -162,6 +166,9 @@ def publication_type2marc(self, key, value):
 @hep2marc.over('980', '^special_collections$')
 @utils.for_each_value
 def special_collections2marc(self, key, value):
+    if value == 'BABAR-ANALYSIS-DOCUMENT':
+        return {'a': 'BABAR-AnalysisDocument'}
+
     return {'a': value}
 
 
