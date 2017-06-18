@@ -126,7 +126,7 @@ extras_require = {
     'docs': [
         'six',
         'mock',
-        'Sphinx<1.6',
+        'Sphinx~=1.0,>=1.6.2',
         'sphinxcontrib-napoleon>=0.6.1',
         'docutils~=0.13.0,>=0.13.1',
     ],
