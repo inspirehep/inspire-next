@@ -198,12 +198,24 @@ INSPIRE_COLLECTIONS_DEFINITION = [
         'name': 'Journals',
     },
     {
+        'query': 'special_collections:BABAR-ANALYSIS-DOCUMENT',
+        'name': 'BABAR Analysis Documents',
+    },
+    {
+        'query': 'special_collections:BABAR-INTERNAL-NOTE',
+        'name': 'BABAR Internal Notes',
+    },
+    {
         'query': 'special_collections:CDF-INTERNAL-NOTE',
         'name': 'CDF Internal Notes',
     },
     {
         'query': 'special_collections:CDF-NOTE',
         'name': 'CDF Notes',
+    },
+    {
+        'query': 'special_collections:CDSHIDDEN',
+        'name': 'CDS Hidden',
     },
     {
         'query': 'special_collections:D0-INTERNAL-NOTE',

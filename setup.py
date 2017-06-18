@@ -75,7 +75,7 @@ install_requires = [
     'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
     'invenio>=3.0.0a1,<3.1.0',
     'inspire-crawler~=0.0,>=0.2.7',
-    'inspire-schemas~=35.0,>=35.0.1',
+    'inspire-schemas~=36.0,>=36.0.1',
     'dojson>=1.3.0',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',

@@ -290,6 +290,42 @@ def test_keywords_from_695__a_2():
     assert '6531' not in result
 
 
+def test_keywords_from_695__a_2_inis():
+    schema = load_schema('hep')
+    subschema = schema['properties']['keywords']
+
+    snippet = (
+        '<datafield tag="695" ind1=" " ind2=" ">'
+        '  <subfield code="a">Accelerators</subfield>'
+        '  <subfield code="2">INIS</subfield>'
+        '</datafield>'
+    )  # record/1493738
+
+    expected = [
+        {
+            'schema': 'INIS',
+            'value': 'Accelerators',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['keywords'], subschema) is None
+    assert expected == result['keywords']
+    assert 'energy_ranges' not in result
+
+    expected = [
+        {
+            'a': 'Accelerators',
+            '2': 'INIS',
+        },
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['695']
+    assert '084' not in result
+    assert '6531' not in result
+
+
 def test_energy_ranges_from_695__e_2():
     schema = load_schema('hep')
     subschema = schema['properties']['energy_ranges']
@@ -301,7 +337,9 @@ def test_energy_ranges_from_695__e_2():
         '</datafield>'
     )  # record/1124337
 
-    expected = [7]
+    expected = [
+        '1-10 TeV',
+    ]
     result = hep.do(create_record(snippet))
 
     assert validate(result['energy_ranges'], subschema) is None
@@ -311,7 +349,7 @@ def test_energy_ranges_from_695__e_2():
     expected = [
         {
             '2': 'INSPIRE',
-            'e': 7,
+            'e': '7',
         },
     ]
     result = hep2marc.do(result)

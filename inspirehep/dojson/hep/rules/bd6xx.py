@@ -24,12 +24,28 @@
 
 from __future__ import absolute_import, division, print_function
 
+import six
+
 from dojson import utils
 
-from inspirehep.utils.helpers import force_list, maybe_int
+from inspirehep.utils.helpers import force_list
 
 from ..model import hep, hep2marc
 from ...utils import force_single_element, get_record_ref
+
+
+ENERGY_RANGES_MAP = {
+    '1': '0-3 GeV',
+    '2': '3-10 GeV',
+    '3': '10-30 GeV',
+    '4': '30-100 GeV',
+    '5': '100-300 GeV',
+    '6': '300-1000 GeV',
+    '7': '1-10 TeV',
+    '8': '> 10 TeV',
+}
+
+REVERSE_ENERGY_RANGES_MAP = {v: k for k, v in six.iteritems(ENERGY_RANGES_MAP)}
 
 
 @hep.over('accelerator_experiments', '^693..')
@@ -84,7 +100,7 @@ def keywords(self, key, values):
                 })
 
         if value.get('e'):
-            energy_ranges.append(maybe_int(value.get('e')))
+            energy_ranges.append(ENERGY_RANGES_MAP.get(value.get('e')))
 
     self['energy_ranges'] = energy_ranges
     return keywords
@@ -95,10 +111,11 @@ def energy_ranges2marc(self, key, values):
     result_695 = self.get('695', [])
 
     for value in values:
-        result_695.append({
-            '2': 'INSPIRE',
-            'e': value,
-        })
+        if value in REVERSE_ENERGY_RANGES_MAP:
+            result_695.append({
+                '2': 'INSPIRE',
+                'e': REVERSE_ENERGY_RANGES_MAP.get(value),
+            })
 
     return result_695
 
@@ -133,6 +150,12 @@ def keywords2marc(self, key, values):
         elif schema == 'INSPIRE':
             result_695.append({
                 '2': 'INSPIRE',
+                '9': source,
+                'a': keyword,
+            })
+        elif schema == 'INIS':
+            result_695.append({
+                '2': 'INIS',
                 '9': source,
                 'a': keyword,
             })

@@ -157,6 +157,32 @@ def test_special_collections_from_980__a():
     assert expected == result['980']
 
 
+def test_special_collections_from_980__a_babar_analysis_document():
+    schema = load_schema('hep')
+    subschema = schema['properties']['special_collections']
+
+    snippet = (
+        '<datafield tag="980" ind1=" " ind2=" ">'
+        '  <subfield code="a">BABAR-AnalysisDocument</subfield>'
+        '</datafield>'
+    )  # record/1598316
+
+    expected = [
+        'BABAR-ANALYSIS-DOCUMENT',
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['special_collections'], subschema) is None
+    assert expected == result['special_collections']
+
+    expected = [
+        {'a': 'BABAR-AnalysisDocument'},
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['980']
+
+
 def test_refereed_from_980__a_published():
     schema = load_schema('hep')
     subschema = schema['properties']['refereed']
