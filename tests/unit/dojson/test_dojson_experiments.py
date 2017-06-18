@@ -124,10 +124,10 @@ def test_dates_from_046__s_and_046__t_and_046__x():
     assert expected_date_completed == result['date_completed']
 
 
-def test_experiment_and_institution_from_119__a_u_z():
+def test_experiment_and_institutions_from_119__a_u_z():
     schema = load_schema('experiments')
     experiment_schema = schema['properties']['experiment']
-    institution_schema = schema['properties']['institution']
+    institutions_schema = schema['properties']['institutions']
 
     snippet = (
         '<datafield tag="119" ind1=" " ind2=" ">'
@@ -138,27 +138,28 @@ def test_experiment_and_institution_from_119__a_u_z():
     )  # record/1108206
 
     expected_experiment = {'legacy_name': 'CERN-ALPHA'}
-    expected_institution = {
-        'curated_relation': True,
-        'record': {
-            '$ref': 'http://localhost:5000/api/institutions/902725',
+    expected_institutions = [
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/902725',
+            },
+            'value': 'CERN',
         },
-        'value': 'CERN',
-    }
+    ]
     result = experiments.do(create_record(snippet))
 
     assert validate(result['experiment'], experiment_schema) is None
     assert expected_experiment == result['experiment']
 
-    assert validate(result['institution'], institution_schema) is None
-    assert expected_institution == result['institution']
+    assert validate(result['institutions'], institutions_schema) is None
+    assert expected_institutions == result['institutions']
 
 
-@pytest.mark.xfail(reason='needs schema 35')
-def test_experiment_and_institution_from_119__a_and_multiple_119__u_z():
+def test_experiment_and_institutions_from_119__a_and_multiple_119__u_z():
     schema = load_schema('experiments')
     experiment_schema = schema['properties']['experiment']
-    institution_schema = schema['properties']['institution']
+    institutions_schema = schema['properties']['institutions']
 
     snippet = (
         '<record>'
@@ -201,14 +202,71 @@ def test_experiment_and_institution_from_119__a_and_multiple_119__u_z():
     )  # record/1228417
 
     expected_experiment = {'legacy_name': 'LATTICE-UKQCD'}
-    expected_institution = {}
+    expected_institutions = [
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/902712',
+            },
+            'value': 'Cambridge U.',
+        },
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/902787',
+            },
+            'value': 'Edinburgh U.',
+        },
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/902823',
+            },
+            'value': 'Glasgow U.',
+        },
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/902964',
+            },
+            'value': 'Liverpool U.',
+        },
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/903112',
+            },
+            'value': 'Oxford U.',
+        },
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/905043',
+            },
+            'value': 'Plymouth U.',
+        },
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/903212',
+            },
+            'value': 'Southampton U.',
+        },
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/903240',
+            },
+            'value': 'Swansea U.',
+        },
+    ]
     result = experiments.do(create_record(snippet))
 
     assert validate(result['experiment'], experiment_schema) is None
     assert expected_experiment == result['experiment']
 
-    assert validate(result['institution'], institution_schema) is None
-    assert expected_institution == result['institution']
+    assert validate(result['institutions'], institutions_schema) is None
+    assert expected_institutions == result['institutions']
 
 
 def test_long_name_from_245__a():
