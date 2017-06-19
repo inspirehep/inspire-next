@@ -34,8 +34,9 @@ import backoff
 import requests
 import urllib3
 from flask import current_app
+from invenio_db import db
 
-from .models import WorkflowsAudit
+from .models import WorkflowsAudit, WorkflowsRecordSources
 
 
 LOGGER = logging.getLogger(__name__)
@@ -177,3 +178,40 @@ def download_file_to_workflow(workflow, name, url):
             req.raw.decode_content = True
             workflow.files[name] = req.raw
             return workflow.files[name]
+
+
+def store_root_json(record_uuid, source, json):
+    """Store the root json for a given source.
+
+    Given the ``record_uuid``, the ``source`` information (e.g. `arXiv` or
+    `Elsevier`) and the actual record in ``data`` store this information so
+    that it can be retrieved later.
+    """
+    with db.session.begin_nested():
+        record_source = WorkflowsRecordSources.query.filter(
+            WorkflowsRecordSources.record_id == record_uuid,
+            WorkflowsRecordSources.source == source
+        ).one_or_none()
+        if record_source is None:
+            record_source = WorkflowsRecordSources(
+                source=source,
+                json=json,
+                record_id=record_uuid
+            )
+        else:
+            record_source.json = json
+        db.session.add(record_source)
+
+
+def retrieve_root_json(record_uuid, source):
+    """Retrieve the root json for a given source.
+
+    Given a previously matched ``record_uuid``, the ``source`` information
+    (e.g. `arXiv` or `Elsevier`) returns the original record if existing or
+    empty json object otherwise.
+    """
+    entry = WorkflowsRecordSources.query.filter(
+        WorkflowsRecordSources.record_id == record_uuid,
+        WorkflowsRecordSources.source == source
+    ).one_or_none()
+    return entry.json if entry else {}
