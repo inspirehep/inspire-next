@@ -40,13 +40,15 @@ class WorkflowsAudit(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey("accounts_user.id"),
+        db.ForeignKey("accounts_user.id", ondelete='CASCADE'),
         nullable=True,
+        index=True,
     )
     object_id = db.Column(
         db.Integer,
-        db.ForeignKey("workflows_object.id"),
+        db.ForeignKey("workflows_object.id", ondelete='CASCADE'),
         nullable=False,
+        index=True,
     )
 
     # Score from model, action taken, recommendation from the model
