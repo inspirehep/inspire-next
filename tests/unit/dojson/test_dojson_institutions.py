@@ -281,14 +281,14 @@ def test_name_variants_from_410__a_9():
     snippet = (
         '<datafield tag="410" ind1=" " ind2=" ">'
         '  <subfield code="9">INSPIRE</subfield>'
-        '  <subfield code="a">Aachen Tech. Hochsch.</subfield>'
+        '  <subfield code="a">University of Chile</subfield>'
         '</datafield>'
-    )  # record/902624
+    )  # record/1496423
 
     expected = [
         {
             'source': 'INSPIRE',
-            'value': 'Aachen Tech. Hochsch.',
+            'value': 'University of Chile',
         },
     ]
     result = institutions.do(create_record(snippet))
@@ -297,7 +297,33 @@ def test_name_variants_from_410__a_9():
     assert expected == result['name_variants']
 
 
-def test_name_variants_from_410__9_with_invalid_source():
+def test_name_variants_from_410__a_9_discards_desy_source():
+    snippet = (
+        '<datafield tag="410" ind1=" " ind2=" ">'
+        '  <subfield code="9">DESY</subfield>'
+        '  <subfield code="a">Aachen Tech. Hochsch.</subfield>'
+        '</datafield>'
+    )  # record/902624
+
+    result = institutions.do(create_record(snippet))
+
+    assert 'name_variants' not in result
+
+
+def test_name_variants_from_410__a_9_discards_desy_aff_source():
+    snippet = (
+        '<datafield tag="410" ind1=" " ind2=" ">'
+        '  <subfield code="9">DESY_AFF</subfield>'
+        '  <subfield code="a">AARHUS UNIV</subfield>'
+        '</datafield>'
+    )  # record/902626
+
+    result = institutions.do(create_record(snippet))
+
+    assert 'name_variants' not in result
+
+
+def test_name_variants_from_410__9_discards_other_sources():
     snippet = (
         '<datafield tag="410" ind1=" " ind2=" ">'
         '  <subfield code="9">Tech</subfield>'
@@ -306,10 +332,9 @@ def test_name_variants_from_410__9_with_invalid_source():
         '</datafield>'
     )  # record/1338296
 
-    expected = {}
     result = institutions.do(create_record(snippet))
 
-    assert expected == result.get('name_variants', {})
+    assert 'name_variants' not in result
 
 
 def test_name_variants_from_410__double_a():
