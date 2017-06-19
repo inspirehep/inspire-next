@@ -160,7 +160,6 @@ def field_activity(self, key, value):
 @institutions.over('name_variants', '^410..')
 def name_variants(self, key, value):
     valid_sources = [
-        'DESY_AFF',
         'ADS',
         'INSPIRE'
     ]
