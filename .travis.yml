@@ -38,6 +38,8 @@ env:
   global:
     - DOCKER_DATA="$HOME/docker_data"
     - DOCKER_COMPOSE_VERSION=1.13.0
+    - BASE_USER_UID=2000
+    - BASE_USER_GID=2000
   matrix:
     - SUITE=workflows
     - SUITE=integration
