@@ -25,6 +25,10 @@ notifications:
 
 sudo: required
 
+# Temporary for new travis images tests, see:
+#   https://blog.travis-ci.com/2017-06-19-trusty-updates-2017-Q2
+group: edge
+
 language: python
 
 services:
