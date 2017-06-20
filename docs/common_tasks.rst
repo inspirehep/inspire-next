@@ -20,11 +20,11 @@
     or submit itself to any jurisdiction.
 
 
-HOWTOs
-==========
+Common Tasks
+************
 
-1. Caching
-----------
+Caching
+=======
 
 
 For caching we use Flask-Caching_. For example, to set a value in the cache:
@@ -42,15 +42,9 @@ And to retrieve the value from the cache:
     current_cache.get('test')
 
 
-.. _Flask-Caching: https://pythonhosted.org/Flask-Caching/
 
-
-2. Profiling
-------------
-
-
-2.1 Profiling a Celery Task
----------------------------
+Profiling a Celery Task
+=======================
 
 To profile a Celery task we need to make sure that the task is executed by the
 same Python process in which we are collecting the profiling information. That
@@ -88,14 +82,14 @@ it we can use snakeviz_, which will create a graph such as
   :alt: An example of a snakeviz graph.
   :scale: 35%
 
-To understand it, we refer to the `documentation of snakeviz`_.
+Essentially each layer of the graph is a level of the call stack, and the size
+of the slice is the total time of the function call. For a complete explanation
+visit the `documentation of snakeviz`_.
 
-.. _snakeviz: https://github.com/jiffyclub/snakeviz
-.. _`documentation of snakeviz`: https://jiffyclub.github.io/snakeviz/#interpreting-results
 
 
-2.2 Profiling a Request
------------------------
+Profiling a Request
+===================
 
 To profile a request we need to add the following variable to our configuration:
 
@@ -116,4 +110,44 @@ Now, after we restart the application, a profile report will be created in the
 ``prof`` folder for each request that we make. These binary files can be
 visualized as above with snakeviz_.
 
+
+
+Rebuild the assets (js/css bundles)
+===================================
+From the root of the code repository, you can run the helper script:
+
+.. code-block:: bash
+
+    $ workon inspire
+    (inspire)$ ./scripts/clean_assets
+
+This will:
+
+1. Remove all your static assets
+2. Gather all the npm dependencies and write them in the file `package.json`
+   in the instance static folder
+3. Execute `npm install`
+4. Execute `inspirehep collect` and `inspirehep assets build`
+
+You should then find all your updated assets in the static folder of your
+inspire installation, if you are using virtualenv:
+
+.. code-block:: bash
+
+    cdvirtualenv var/inspirehep-instance/static/
+
+
+Rebuild the database, the elasticsearch indexes, and reupload the demo records
+==============================================================================
+Same as the assets, from the root of the code repository, run the script:
+
+.. code-block:: bash
+
+    $ workon inspire
+    (inspire)$ ./scripts/recreate_records
+
+
 .. _`WSGI application profiler`: http://werkzeug.pocoo.org/docs/0.11/contrib/profiler/
+.. _snakeviz: https://github.com/jiffyclub/snakeviz
+.. _`documentation of snakeviz`: https://jiffyclub.github.io/snakeviz/#interpreting-results
+.. _Flask-Caching: https://pythonhosted.org/Flask-Caching/

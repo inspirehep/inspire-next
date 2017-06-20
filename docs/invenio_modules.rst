@@ -1,6 +1,6 @@
 ..
     This file is part of INSPIRE.
-    Copyright (C) 2015, 2016 CERN.
+    Copyright (C) 2017, 2016 CERN.
 
     INSPIRE is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,26 +19,25 @@
     granted to it by virtue of its status as an Intergovernmental Organization
     or submit itself to any jurisdiction.
 
+Invenio modules
+***************
 
-INSPIRE tools & scripts
-=======================
+Invenio-PIDStore
+================
 
-Available Bash scripts
-----------------------
+.. include:: pidstore.rst
 
-You will find a `scripts` folder in the root folder of this overlay. It is a compilation of useful scripts to setup demo records, rebuild assets etc.
+Invenio-Records
+===============
 
-A useful one that you can use as a shortcut to completely recreate your assets is:
+.. include:: inspire_record.rst
 
-.. code-block:: bash
+Invenio-Query-Parser
+====================
 
-     (inspire)$ ./scripts/clean_assets
+(under construction)
 
-This will:
+Invenio-Search
+==============
 
-1. Remove all your static assets
-2. Gather all the npm dependencies and write them in the file `package.json` in the instance static folder
-3. Execute `npm install`
-4. Execute `inspirehep collect` and `inspirehep assets build`
-
-You should then find all your updated assets in `$ cdvirtualenv var/inspirehep-instance/static/`
+(under construction)
