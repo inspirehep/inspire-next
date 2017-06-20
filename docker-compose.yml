@@ -49,29 +49,48 @@ services:
       - static
     ports:
       - "5000:5000"
-    links:
-      - database
-      - indexer
-      - rabbitmq
-      - redis
+    depends_on:
+      database:
+        condition: service_healthy
+      indexer:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       - APP_DEBUG=True
       - APP_ASSETS_DEBUG=True
+
   worker:
     extends:
       service: service_base
     command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge
     volumes_from:
       - static
-    links:
-      - database
-      - indexer
-      - rabbitmq
-      - redis
+    depends_on:
+      database:
+        condition: service_healthy
+      indexer:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   # Services needed for inspirehep to run.
   redis:
     image: redis:3.2.3
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD"
+        - "bash"
+        - "-c"
+        - "exec 3<> /dev/tcp/127.0.0.1/6379 && echo PING >&3 && head -1 <&3 | grep PONG"
+
   indexer:
     extends:
       file: services.yml
@@ -81,14 +100,38 @@ services:
     volumes:
       - "${DOCKER_DATA}/tmp/inspirehep_elastic/data:/usr/share/elasticsearch/data"
       - "${DOCKER_DATA}/tmp/inspirehep_elastic/log:/usr/share/elasticsearch/log"
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD-SHELL"
+        - "curl http://localhost:9200/_cluster/health | grep '.status.:.green'"
+
   rabbitmq:
     image: rabbitmq
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD"
+        - "rabbitmqctl"
+        - "status"
+
   database:
     extends:
       file: services.yml
       service: database
     volumes:
       - "${DOCKER_DATA}/tmp/inspirehep_db/data:/var/lib/postgresql/data/pgdata"
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD-SHELL"
+        - "export PGPASSWORD=dbpass123 && psql --quiet --no-align --tuples-only --host 127.0.0.1 --username inspirehep --dbname inspirehep -c 'SELECT 1'"
 
   scrapyd:
     extends:
@@ -106,11 +149,15 @@ services:
     command: flower -A inspirehep.celery --broker=amqp://guest:guest@rabbitmq:5672//
     volumes_from:
       - static
-    links:
-      - database
-      - indexer
-      - rabbitmq
-      - redis
+    depends_on:
+      database:
+        condition: service_healthy
+      indexer:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   # Static volume config for service_base.
   static:

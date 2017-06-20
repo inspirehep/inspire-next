@@ -59,7 +59,6 @@ def app(request):
         db.drop_all()
         db.create_all()
 
-        sleep(10)
         _es = app.extensions['invenio-search']
         list(_es.delete(ignore=[404]))
         list(_es.create(ignore=[400]))
