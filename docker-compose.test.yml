@@ -35,68 +35,92 @@ services:
       - APP_CACHE_REDIS_URL=redis://test-redis:6379/0
       - APP_ACCOUNTS_SESSION_REDIS_URL=redis://test-redis:6379/2
       - APP_SEARCH_ELASTIC_HOSTS=test-indexer
+
   unit:
     extends:
       service: test-service_base
     volumes_from:
       - test-static
     command: bash -c "py.test inspirehep tests/unit && make -C docs html"
+
   disambiguation:
     extends:
       service: test-service_base
     command: py.test tests/integration/disambiguation
     volumes_from:
       - test-static
-    links:
-      - test-database
-      - test-indexer
-      - test-rabbitmq
-      - test-redis
     depends_on:
-      - test-worker
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+      test-worker:
+        condition: service_started
+
   workflows:
     extends:
       service: test-service_base
     command: py.test tests/integration/workflows
     volumes_from:
       - test-static
-    links:
-      - test-database
-      - test-indexer
-      - test-rabbitmq
-      - test-redis
     depends_on:
-      - test-worker
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+      test-worker:
+        condition: service_started
+
   integration:
     extends:
       service: test-service_base
     command: py.test tests/integration --ignore tests/integration/disambiguation --ignore tests/integration/workflows
     volumes_from:
       - test-static
-    links:
-      - test-database
-      - test-indexer
-      - test-rabbitmq
-      - test-redis
     depends_on:
-      - test-worker
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+      test-worker:
+        condition: service_started
+
   acceptance:
     extends:
       service: test-service_base
     command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance
     volumes_from:
       - test-static
-    links:
-      - test-database
-      - test-indexer
-      - test-rabbitmq
-      - test-redis
-      - selenium
     depends_on:
-      - test-web
-      - test-worker
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+      test-worker:
+        condition: service_started
+      selenium:
+        condition: service_started
+      test-web:
+        condition: service_started
     environment:
       - SERVER_NAME=test-web:5000
+
   visible_acceptance:
     extends:
       service: test-service_base
@@ -105,56 +129,109 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
     volumes_from:
       - test-static
-    links:
-      - test-database
-      - test-indexer
-      - test-rabbitmq
-      - test-redis
-      - selenium
     depends_on:
-      - test-web
-      - test-worker
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+      test-worker:
+        condition: service_started
+      selenium:
+        condition: service_started
+      test-web:
+        condition: service_started
     environment:
       - SERVER_NAME=test-web:5000
       - DISPLAY=$DISPLAY
+
   test-web:
     extends:
       service: test-service_base
     command: gunicorn -b 0.0.0.0:5000 -t 3600 -w 1 --access-logfile "-" inspirehep.wsgi_with_coverage:application
     volumes_from:
       - test-static
-    links:
-      - test-database
-      - test-indexer
-      - test-rabbitmq
-      - test-redis
+    depends_on:
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
     environment:
       - APP_SERVER_NAME=test-web:5000
+
   test-worker:
     extends:
       service: test-service_base
     command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge
     volumes_from:
       - test-static
-    links:
-      - test-database
-      - test-indexer
-      - test-rabbitmq
-      - test-redis
+    depends_on:
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+
   test-redis:
     image: redis:3.2.3
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD"
+        - "bash"
+        - "-c"
+        - "exec 3<> /dev/tcp/127.0.0.1/6379 && echo PING >&3 && head -1 <&3 | grep PONG"
+
   test-indexer:
     extends:
       file: services.yml
       service: indexer
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD-SHELL"
+        - "curl http://localhost:9200/_cluster/health | grep '.status.:.green'"
+
   test-rabbitmq:
     image: rabbitmq
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD"
+        - "rabbitmqctl"
+        - "status"
+
   test-database:
     extends:
       file: services.yml
       service: database
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD-SHELL"
+        - "export PGPASSWORD=dbpass123 && psql --quiet --no-align --tuples-only --host 127.0.0.1 --username inspirehep --dbname inspirehep -c 'SELECT 1'"
+
   selenium:
     image: selenium/standalone-firefox:2.53.1-beryllium
+
   test-static:
     extends:
       file: services.yml
