@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from time import sleep
-
 import pytest
 
 from invenio_db import db
@@ -57,7 +55,6 @@ def app():
         db.drop_all()
         db.create_all()
 
-        sleep(10)  # Makes sure that ES is up.
         _es = app.extensions['invenio-search']
         list(_es.delete(ignore=[404]))
         list(_es.create(ignore=[400]))
@@ -91,7 +88,6 @@ def small_app():
         db.drop_all()
         db.create_all()
 
-        sleep(10)
         _es = app.extensions['invenio-search']
         list(_es.delete(ignore=[404]))
         list(_es.create(ignore=[400]))
