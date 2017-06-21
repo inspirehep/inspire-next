@@ -23,6 +23,9 @@
                                 }
                             },
                             "type": "object"
+                        },
+                        "classifier_results": {
+                            "enabled": false
                         }
                     },
                     "type": "object"
