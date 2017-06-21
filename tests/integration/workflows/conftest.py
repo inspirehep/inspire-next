@@ -55,7 +55,10 @@ def cleanup_workflows_tables(small_app):
         )
         for obj_type in obj_types:
             for obj in obj_type:
-                obj.delete()
+                if isinstance(obj, WorkflowsAudit):
+                    db.session.delete(obj)
+                else:
+                    obj.delete()
 
         db.session.commit()
 
