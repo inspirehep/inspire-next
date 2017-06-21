@@ -66,13 +66,22 @@ from inspirehep.modules.workflows.tasks.magpie import (
     guess_categories,
     guess_experiments,
 )
+from inspirehep.modules.workflows.tasks.merging import (
+    merge_articles,
+    store_temporary_root,
+    store_root,
+)
+from inspirehep.modules.workflows.tasks.merging import (
+    is_an_update,
+    is_not_an_update,
+    is_an_update_with_conflicts,
+)
 from inspirehep.modules.workflows.tasks.matching import (
     delete_self_and_stop_processing,
     stop_processing,
     pending_in_holding_pen,
     article_exists,
     already_harvested,
-    previously_rejected,
     update_existing_workflow_object,
 )
 from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
@@ -134,17 +143,6 @@ ADD_INGESTION_MARKS = [
             #        workflow includes arXiv CORE harvesting
             IF(
                 already_harvested,
-                [
-                    mark('already-ingested', True),
-                    mark('stop', True),
-                ]
-            ),
-            # FIXME: This filtering step should be removed when:
-            #        old previously rejected records are treated
-            #        differently e.g. good auto-reject heuristics or better
-            #        time based filtering (5 days is quite random now).
-            IF(
-                previously_rejected(),
                 [
                     mark('already-ingested', True),
                     mark('stop', True),
@@ -216,13 +214,29 @@ ENHANCE_RECORD = [
 ]
 
 
-CHECK_IF_SUBMISSION_AND_ASK_FOR_APPROVAL = [
+STOP_FOR_APPROVAL_OR_SOLVING_CONFLICTS = [
     IF_ELSE(
         is_record_relevant,
-        [halt_record(
-            action="hep_approval",
-            message="Submission halted for curator approval.",
-        )],
+        [
+            IF(
+                # new records will be halted to be approved on coreness
+                is_not_an_update,
+                halt_record(
+                    action="hep_approval",
+                    message="Submission halted for curator approval.",
+                )
+            ),
+            IF(
+                # updates with conflicts will halt for solve conflicts
+                is_an_update_with_conflicts,
+                halt_record(
+                    action="hep_approval",
+                    message="Submission halted for resolving conflicts.",
+                )
+            ),
+            # if it's an update without conflicts the workflow shouldn't stop
+            mark('no-need-approval', True)
+        ],
         [
             reject_record("Article automatically rejected"),
             stop_processing
@@ -289,7 +303,7 @@ POSTENHANCE_RECORD = [
 
 SEND_TO_LEGACY_AND_WAIT = [
     IF_ELSE(
-        article_exists,
+        is_an_update,
         [
             prepare_update_payload(extra_data_key="update_payload"),
             send_robotupload(
@@ -307,20 +321,22 @@ SEND_TO_LEGACY_AND_WAIT = [
     ),
 ]
 
-CHECK_IF_MERGE_AND_STOP_IF_SO = [
+CHECK_IF_MERGE = [
+    store_temporary_root,
     IF(
-        article_exists,
+        is_an_update,
         [
             IF_ELSE(
                 is_submission,
                 NOTIFY_ALREADY_EXISTING,
                 [
-                    # halt_record(action="merge_approval"),
-                    delete_self_and_stop_processing,
+                    merge_articles,
+                    mark('merged', True)
+                    # TODO: save record with new non-conflicting merged fields
                 ]
             ),
-        ]
-    )
+        ],
+    ),
 ]
 
 
@@ -329,7 +345,10 @@ ADD_MARKS = [
     # is already ingested and this is an update
     IF(
         article_exists,
-        [mark('match-found', True)]
+        [
+            mark('match-found', True),
+            mark('is-update', True)
+        ]
     ),
     IF(
         pending_in_holding_pen,
@@ -358,10 +377,8 @@ class Article(object):
         ADD_MARKS +
         DELETE_AND_STOP_IF_NEEDED +
         ENHANCE_RECORD +
-        # TODO: Once we have a way to resolve merges, we should
-        # use that instead of stopping
-        CHECK_IF_MERGE_AND_STOP_IF_SO +
-        CHECK_IF_SUBMISSION_AND_ASK_FOR_APPROVAL +
+        CHECK_IF_MERGE +
+        STOP_FOR_APPROVAL_OR_SOLVING_CONFLICTS +
         [
             IF_ELSE(
                 is_record_accepted,
@@ -373,7 +390,8 @@ class Article(object):
                         # TODO: once legacy is out, this should become
                         # unconditional, and remove the SEND_TO_LEGACY_AND_WAIT
                         # steps
-                        IF_NOT(in_production_mode, [store_record]),
+                        store_record,
+                        store_root,
                     ]
                 ),
                 NOTIFY_NOT_ACCEPTED,

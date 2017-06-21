@@ -48,6 +48,24 @@ def fake_download_file(workflow, name, url):
             )
         )
         return workflow.files[name]
+    elif url == 'http://export.arxiv.org/e-print/1407.7587' or 'eprint' in url:
+        workflow.files[name] = pkg_resources.resource_stream(
+            __name__,
+            os.path.join(
+                '../fixtures',
+                '1407.7587v1'
+            )
+        )
+        return workflow.files[name]
+    elif url == 'http://export.arxiv.org/pdf/1407.7587' or True:
+        workflow.files[name] = pkg_resources.resource_stream(
+            __name__,
+            os.path.join(
+                '../fixtures',
+                '1407.7587v1.pdf',
+            )
+        )
+        return workflow.files[name]
     raise Exception("Download file not mocked!")
 
 

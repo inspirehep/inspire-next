@@ -76,6 +76,7 @@ install_requires = [
     'inspire-dojson~=45.0,>=45.0.1',
     'inspire-schemas~=45.0,>=45.0.2',
     'inspire-utils~=0.0,>=0.0.5',
+    'inspire-json-merger>=1.0.11',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
     'flask-shell-ipython>=0.2.2',
@@ -243,6 +244,7 @@ setup(
         'invenio_workflows.workflows': [
             'author = inspirehep.modules.workflows.workflows:Author',
             'article = inspirehep.modules.workflows.workflows:Article',
+            'manual_merge = inspirehep.modules.workflows.workflows:ManualMerge',
         ],
         'invenio_pidstore.fetchers': [
             'inspire_recid_fetcher = inspirehep.modules.pidstore.fetchers:inspire_recid_fetcher',
