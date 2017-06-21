@@ -227,7 +227,7 @@ services:
       retries: 5
       test:
         - "CMD-SHELL"
-        - "export PGPASSWORD=dbpass123 && psql --quiet --no-align --tuples-only --host 127.0.0.1 --username inspirehep --dbname inspirehep -c 'SELECT 1'"
+        - "pg_isready --dbname=inspirehep --host=localhost --username=inspirehep"
 
   selenium:
     image: selenium/standalone-firefox:2.53.1-beryllium
