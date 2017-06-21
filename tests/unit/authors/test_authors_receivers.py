@@ -27,6 +27,8 @@ import mock
 import pytest
 from flask import current_app
 
+from inspire_schemas.utils import load_schema
+from inspirehep.dojson.utils import validate
 from inspirehep.modules.authors import receivers
 
 
@@ -96,6 +98,9 @@ def test_phonetic_block_generation_ascii():
 
 @pytest.mark.httpretty
 def test_phonetic_block_generation_broken():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
     }
@@ -117,7 +122,8 @@ def test_phonetic_block_generation_broken():
 
         receivers.assign_phonetic_block(json_dict)
 
-        assert json_dict['authors'][0]['signature_block'] is None
+        assert validate(json_dict['authors'], subschema) is None
+        assert json_dict['authors'][0].get('signature_block') is None
 
 
 @pytest.mark.httpretty

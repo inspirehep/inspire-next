@@ -87,12 +87,6 @@ def assign_phonetic_block(sender, *args, **kwargs):
             authors[authors_map[full_name]].update(
                 {"signature_block": signature_block})
 
-        # # For missing phonetic blocks (not valid full names) add None.
-        for full_name in list(
-                set(authors_map.keys()) - set(signatures_blocks.keys())):
-            authors[authors_map[full_name]].update(
-                {"signature_block": None})
-
 
 @before_record_insert.connect
 @before_record_update.connect
