@@ -38,7 +38,7 @@ def filter_core_keywords(obj, eng):
     except KeyError:
         return
     filtered_core_keywords = {}
-    for core_keyword, times_counted in result.get("core_keywords").items():
+    for core_keyword, times_counted in result.get("core_keywords"):
         if core_keyword not in antihep_keywords:
             filtered_core_keywords[core_keyword] = times_counted
     result["filtered_core_keywords"] = filtered_core_keywords
