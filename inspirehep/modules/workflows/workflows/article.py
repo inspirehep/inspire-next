@@ -66,6 +66,11 @@ from inspirehep.modules.workflows.tasks.magpie import (
     guess_categories,
     guess_experiments,
 )
+from inspirehep.modules.workflows.tasks.merging import (
+    merge_articles,
+    store_temporary_root,
+    store_root,
+)
 from inspirehep.modules.workflows.tasks.matching import (
     delete_self_and_stop_processing,
     stop_processing,
@@ -147,6 +152,7 @@ ADD_INGESTION_MARKS = [
                 previously_rejected(),
                 [
                     mark('already-ingested', True),
+                    mark('previously-rejected', True),
                     mark('stop', True),
                 ]
             ),
@@ -309,7 +315,7 @@ SEND_TO_LEGACY_AND_WAIT = [
     ),
 ]
 
-CHECK_IF_MERGE_AND_STOP_IF_SO = [
+CHECK_IF_MERGE = [
     IF(
         article_exists,
         [
@@ -317,12 +323,12 @@ CHECK_IF_MERGE_AND_STOP_IF_SO = [
                 is_submission,
                 NOTIFY_ALREADY_EXISTING,
                 [
-                    # halt_record(action="merge_approval"),
-                    delete_self_and_stop_processing,
+                    merge_articles
                 ]
             ),
-        ]
-    )
+        ],
+    ),
+    store_temporary_root
 ]
 
 
@@ -360,9 +366,7 @@ class Article(object):
         ADD_MARKS +
         DELETE_AND_STOP_IF_NEEDED +
         ENHANCE_RECORD +
-        # TODO: Once we have a way to resolve merges, we should
-        # use that instead of stopping
-        CHECK_IF_MERGE_AND_STOP_IF_SO +
+        CHECK_IF_MERGE +
         CHECK_IF_SUBMISSION_AND_ASK_FOR_APPROVAL +
         [
             IF_ELSE(
@@ -375,7 +379,8 @@ class Article(object):
                         # TODO: once legacy is out, this should become
                         # unconditional, and remove the SEND_TO_LEGACY_AND_WAIT
                         # steps
-                        IF_NOT(in_production_mode, [store_record]),
+                        store_record,
+                        store_root,
                     ]
                 ),
                 NOTIFY_NOT_ACCEPTED,
