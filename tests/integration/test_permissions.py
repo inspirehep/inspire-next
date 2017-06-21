@@ -58,6 +58,9 @@ def _create_and_index_record(record):
 def sample_record(app):
     record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'authors': [{
+            'full_name': 'Dummy name'
+        }],
         '_collections': [
             'Literature',
         ],
@@ -99,6 +102,9 @@ def restricted_record(app):
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'authors': [{
+            'full_name': 'Dummy name'
+        }],
         '_collections': [
             'Literature',
             'Restricted Collection',
