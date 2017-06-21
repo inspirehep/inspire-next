@@ -24,18 +24,14 @@
 
 from __future__ import absolute_import, division, print_function
 
-import json
-
 from timeout_decorator import timeout
 
 from refextract import extract_journal_reference, extract_references_from_file
 
-from inspirehep.utils.helpers import maybe_int
-from inspirehep.utils.record import get_value
+from inspirehep.modules.references.processors import ReferenceBuilder
+from inspirehep.utils.helpers import force_list, maybe_int
 from inspirehep.utils.pubnote import split_page_artid
-
-# FIXME get journal mappings for refextract
-# from inspirehep.utils.knowledge import get_mappings_from_kbname
+from inspirehep.utils.record import get_value
 
 
 def extract_journal_info(obj, eng):
@@ -90,48 +86,34 @@ def extract_journal_info(obj, eng):
 def extract_references(filepath):
     """Extract references from PDF and return in INSPIRE format."""
     references = extract_references_from_file(
-        filepath,
-        reference_format=u"{title},{volume},{page}",
-    )
-    mapped_references = []
-    if references.get('references'):
-        for ref in references.get('references'):
-            reference = {
-                'curated_relation': False,
-                'raw_refs': [
-                    {
-                        'position': '',
-                        'schema': '',
-                        'source': '',
-                        'value': json.dumps(ref),
-                    }
-                ],
-                'record': {
-                    '$ref': ''
-                },
-                'reference': {
-                    'authors': ref.get('author'),
-                    'book_series': ref.get('book_series'),
-                    'collaboration': ref.get('collaboration'),
-                    'dois': ref.get('dois'),
-                    'imprint': ref.get('imprint'),
-                    'misc': ref.get('misc'),
-                    'number': ref.get('linemarker'),
-                    'persistent_identifiers': ref.get(
-                        'persistent_identifiers'
-                    ),
-                    'publication_info': {
-                        'year': ref.get('year'),
-                        'journal_title': ref.get('journal_title'),
-                        'journal_volume': ref.get('journal_volume'),
-                        'page_start': ref.get('journal_page'),
-                        'artid': ref.get('journal_reference'),
-                    },
-                    'texkey': ref.get('texkey'),
-                    'titles': ref.get('titles'),
-                    'urls': ref.get('urls'),
-                },
-            }
-            mapped_references.append(reference)
+        filepath, reference_format=u'{title},{volume},{page}')
 
-    return mapped_references
+    result = []
+
+    for reference in force_list(references.get('references')):
+        rb = ReferenceBuilder()
+        mapping = [
+            ('author', rb.add_refextract_authors_str),
+            ('collaboration', rb.add_collaboration),
+            ('doi', rb.add_uid),
+            ('hdl', rb.add_uid),
+            ('isbn', rb.add_uid),
+            ('journal_reference', rb.set_pubnote),
+            ('linemarker', rb.set_label),
+            ('misc', rb.add_misc),
+            ('publisher', rb.set_publisher),
+            ('reportnumber', rb.add_report_number),
+            ('texkey', rb.set_texkey),
+            ('title', rb.add_title),
+            ('url', rb.add_url),
+            ('year', rb.set_year),
+        ]
+
+        for field, method in mapping:
+            for el in force_list(reference.get(field)):
+                if el:
+                    method(el)
+
+        result.append(rb.obj)
+
+    return result

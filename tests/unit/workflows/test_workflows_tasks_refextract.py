@@ -94,7 +94,12 @@ def test_extract_journal_info_handles_year_an_empty_string():
 
 
 def test_extract_references_handles_unicode():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
     filename = pkg_resources.resource_filename(
         __name__, os.path.join('fixtures', '1704.00452.pdf'))
 
-    extract_references(filename)
+    result = extract_references(filename)
+
+    assert validate(result, subschema) is None
