@@ -27,7 +27,7 @@ services:
     extends:
       file: services.yml
       service: base
-    command: pip install --find-links /pip-cache -r requirements.txt --pre -e .[crawler,docs,tests] gunicorn --exists-action i
+    command: bash -c "sed -i -e 's/egg_cache_dir = .*/egg_cache_dir = os.path.realpath\(os.path.join\(os.curdir, \".eggs\"\)\)/' /virtualenv/lib/python2.7/site-packages/setuptools/dist.py && id && pwd && ls -la && ls -la /code && pip install --find-links /pip-cache -r requirements.txt --pre -e .[crawler,docs,tests] gunicorn --exists-action i"
     volumes_from:
       - static
 
