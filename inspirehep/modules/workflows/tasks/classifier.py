@@ -37,10 +37,10 @@ def filter_core_keywords(obj, eng):
         result = obj.extra_data['classifier_results']["complete_output"]
     except KeyError:
         return
-    filtered_core_keywords = {}
-    for core_keyword, times_counted in result.get("core_keywords"):
-        if core_keyword not in antihep_keywords:
-            filtered_core_keywords[core_keyword] = times_counted
+    filtered_core_keywords = [
+        keyword for keyword in result.get('core_keywords')
+        if keyword['keyword'] not in antihep_keywords
+    ]
     result["filtered_core_keywords"] = filtered_core_keywords
     obj.extra_data['classifier_results']["complete_output"] = result
 

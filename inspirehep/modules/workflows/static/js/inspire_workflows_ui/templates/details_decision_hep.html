@@ -43,12 +43,12 @@
 
   <div class="list">
     <div class="row"
-         ng-repeat="(key,value) in vm.record._extra_data.classifier_results.complete_output['filtered_core_keywords']">
+         ng-repeat="keyword in vm.record._extra_data.classifier_results.complete_output['filtered_core_keywords']">
       <div class="col-md-9 col-sm-9 text-left"
-           ng-bind="key"></div>
+           ng-bind="keyword['keyword']"></div>
       <div class="col-md-3 col-sm-3 text-right"><span
         class="label label-success"
-        ng-bind="value"></span>
+        ng-bind="keyword['number']"></span>
       </div>
     </div>
   </div>
