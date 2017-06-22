@@ -31,6 +31,86 @@ from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.utils import validate
 
 
+def test_record_affiliations_from_902__a_z():
+    schema = load_schema('hep')
+    subschema = schema['properties']['record_affiliations']
+
+    snippet = (
+        '<datafield tag="902" ind1=" " ind2=" ">'
+        '  <subfield code="a">Iowa State U.</subfield>'
+        '  <subfield code="z">902893</subfield>'
+        '</datafield>'
+    )  # record/1216295
+
+    expected = [
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/902893',
+            },
+            'value': 'Iowa State U.',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['record_affiliations'], subschema) is None
+    assert expected == result['record_affiliations']
+
+    expected = [
+        {'a': 'Iowa State U.'},
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['902']
+
+
+def test_record_affiliations_from_double_902__a_z():
+    schema = load_schema('hep')
+    subschema = schema['properties']['record_affiliations']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="902" ind1=" " ind2=" ">'
+        '    <subfield code="a">Iowa State U.</subfield>'
+        '    <subfield code="z">902893</subfield>'
+        '  </datafield>'
+        '  <datafield tag="902" ind1=" " ind2=" ">'
+        '    <subfield code="a">Antwerp U.</subfield>'
+        '    <subfield code="z">902642</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1216295
+
+    expected = [
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/902893',
+            },
+            'value': 'Iowa State U.',
+        },
+        {
+            'curated_relation': True,
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/902642',
+            },
+            'value': 'Antwerp U.',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert validate(result['record_affiliations'], subschema) is None
+    assert expected == result['record_affiliations']
+
+    expected = [
+        {'a': 'Iowa State U.'},
+        {'a': 'Antwerp U.'},
+    ]
+    result = hep2marc.do(result)
+
+    assert expected == result['902']
+
+
 def test_citeable_from_980__a_citeable():
     schema = load_schema('hep')
     subschema = schema['properties']['citeable']
