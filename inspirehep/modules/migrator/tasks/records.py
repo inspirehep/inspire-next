@@ -47,7 +47,7 @@ from invenio_db import db
 from invenio_indexer.api import RecordIndexer, current_record_to_index
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_search import current_search_client
+from invenio_search import current_search_client as es
 from invenio_search.utils import schema_to_index
 
 from inspirehep.dojson.processors import overdo_marc_dict
@@ -200,7 +200,7 @@ def migrate_chunk(chunk):
 
     req_timeout = current_app.config['INDEXER_BULK_REQUEST_TIMEOUT']
     es_bulk(
-        current_search_client,
+        es,
         index_queue,
         stats_only=True,
         request_timeout=req_timeout,
@@ -235,7 +235,7 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
 
     click.echo('Extracting all citations...')
     with click.progressbar(es_scan(
-            current_search_client,
+            es,
             query={
                 '_source': 'references.recid',
                 'filter': {
@@ -262,7 +262,7 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
 
     click.echo('Adding citation numbers...')
     success, failed = es_bulk(
-        current_search_client,
+        es,
         _get_records_to_update_generator(citations_lookup),
         chunk_size=chunk_size,
         raise_on_exception=False,
@@ -304,10 +304,7 @@ def record_upsert(json):
 
         if json.get('deleted'):
             new_recid = get_recid_from_ref(json.get('new_record'))
-            if new_recid:
-                merged_record = get_db_record(pid_type, new_recid)
-                record.merge(merged_record)
-            else:
+            if not new_recid:
                 record.delete()
 
         return record
