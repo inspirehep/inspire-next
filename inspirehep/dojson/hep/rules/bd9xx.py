@@ -41,6 +41,24 @@ from ...utils import force_single_element, get_recid_from_ref, get_record_ref
 RE_VALID_PUBNOTE = re.compile(".*,.*,.*(,.*)?")
 
 
+@hep.over('record_affiliations', '^902..')
+@utils.for_each_value
+def record_affiliations(self, key, value):
+    record = get_record_ref(value.get('z'), 'institutions')
+
+    return {
+        'curated_relation': record is not None,
+        'record': record,
+        'value': value.get('a'),
+    }
+
+
+@hep2marc.over('902', '^record_affiliations$')
+@utils.for_each_value
+def record_affiliations2marc(self, key, value):
+    return {'a': value.get('value')}
+
+
 @hep.over('document_type', '^980..')
 def document_type(self, key, value):
     publication_types = [
