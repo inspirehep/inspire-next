@@ -287,14 +287,15 @@ def create_record(record):
     return json
 
 
-def record_upsert(json):
-    """Insert or update a record."""
+def record_insert_or_replace(json):
+    """Insert or replace a record."""
     control_number = json.get('control_number', json.get('recid'))
     if control_number:
         pid_type = get_pid_type_from_schema(json['$schema'])
         try:
             pid = PersistentIdentifier.get(pid_type, control_number)
             record = InspireRecord.get_record(pid.object_uuid)
+            record.clear()
             record.update(json)
             record.commit()
         except PIDDoesNotExistError:
@@ -331,7 +332,7 @@ def migrate_and_insert_record(raw_record):
 
     try:
         if not error:
-            record = record_upsert(json_record)
+            record = record_insert_or_replace(json_record)
     except ValidationError as e:
         # Aggregate logs by part of schema being validated.
         pattern = u'Migrator Validator Error: {}, Value: %r, Record: %r'
