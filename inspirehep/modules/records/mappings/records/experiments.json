@@ -127,10 +127,6 @@
                     },
                     "type": "object"
                 },
-                "experiment_suggest": {
-                    "payloads": true,
-                    "type": "completion"
-                },
                 "experimentautocomplete": {
                     "type": "string"
                 },
