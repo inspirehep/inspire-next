@@ -32,7 +32,7 @@ from invenio_search import current_search_client as es
 from inspirehep.dojson.hep import hep
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.tasks import merge_merged_records, update_refs
-from inspirehep.modules.migrator.tasks.records import record_upsert
+from inspirehep.modules.migrator.tasks.records import record_insert_or_replace
 from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_db_record, get_es_records
 
@@ -84,7 +84,7 @@ def deleted_record(app):
         record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
         with db.session.begin_nested():
-            record_upsert(record)
+            record_insert_or_replace(record)
         db.session.commit()
 
     yield
@@ -111,7 +111,7 @@ def not_yet_deleted_record(app):
 
     with app.app_context():
         with db.session.begin_nested():
-            record_upsert(record)
+            record_insert_or_replace(record)
         db.session.commit()
 
     yield
@@ -157,8 +157,8 @@ def merged_records(app):
         deleted_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
         with db.session.begin_nested():
-            merged_uuid = record_upsert(merged_record).id
-            deleted_uuid = record_upsert(deleted_record).id
+            merged_uuid = record_insert_or_replace(merged_record).id
+            deleted_uuid = record_insert_or_replace(deleted_record).id
         db.session.commit()
     es.indices.refresh('records-hep')
 
@@ -200,8 +200,8 @@ def not_yet_merged_records(app):
 
     with app.app_context():
         with db.session.begin_nested():
-            merged_uuid = record_upsert(merged_record).id
-            deleted_uuid = record_upsert(deleted_record).id
+            merged_uuid = record_insert_or_replace(merged_record).id
+            deleted_uuid = record_insert_or_replace(deleted_record).id
         db.session.commit()
 
     yield
@@ -263,9 +263,9 @@ def records_to_be_merged(app):
 
     with app.app_context():
         with db.session.begin_nested():
-            merged_uuid = record_upsert(merged_record).id
-            deleted_uuid = record_upsert(deleted_record).id
-            record_upsert(pointing_record)
+            merged_uuid = record_insert_or_replace(merged_record).id
+            deleted_uuid = record_insert_or_replace(deleted_record).id
+            record_insert_or_replace(pointing_record)
         db.session.commit()
     es.indices.refresh('records-hep')
 
