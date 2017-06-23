@@ -648,6 +648,24 @@
                 "publication_type": {
                     "type": "string"
                 },
+                "record_affiliations": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
                 "refereed": {
                     "type": "boolean"
                 },
