@@ -33,7 +33,6 @@ from inspirehep.modules.records.receivers import (
     populate_inspire_document_type,
     populate_recid_from_ref,
     references_validator,
-    populate_experiment_suggest,
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
     populate_title_suggest
@@ -508,34 +507,6 @@ def test_references_validator_removes_and_warns_on_non_numerical_recids(warning)
         {},
         {'recid': 456},
     ]
-
-
-def test_populate_experiment_suggest_populates_if_record_is_experiment():
-    json_dict = {
-        '$schema': 'http://foo/experiments.json',
-        'self': {'$ref': 'http://foo/$ref'},
-        'long_name': 'foo',
-        'name_variants': [
-            'bar',
-            'baz',
-        ],
-    }
-
-    populate_experiment_suggest(None, json_dict)
-
-    assert json_dict['experiment_suggest']['input'] == ['foo', 'bar', 'baz']
-    assert json_dict['experiment_suggest']['output'] == 'foo'
-    assert json_dict['experiment_suggest']['payload']['$ref'] == 'http://foo/$ref'
-
-
-def test_populate_experiment_suggest_does_nothing_if_record_is_not_experiment():
-    json_dict = {
-        '$schema': 'http://foo/bar.json',
-    }
-
-    populate_experiment_suggest(None, json_dict)
-
-    assert 'experiment_suggest' not in json_dict
 
 
 def test_populate_abstract_source_suggest():
