@@ -106,7 +106,7 @@ services:
       retries: 5
       test:
         - "CMD-SHELL"
-        - "curl http://localhost:9200/_cluster/health | grep '.status.:.green'"
+        - "curl http://localhost:9200/_cluster/health | grep '.status.:.\\(green\\|yellow\\)'"
 
   rabbitmq:
     image: rabbitmq
