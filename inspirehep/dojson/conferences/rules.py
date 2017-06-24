@@ -64,16 +64,29 @@ def acronyms(self, key, value):
 
 
 @conferences.over('contact_details', '^270..')
-@utils.for_each_value
 def contact_details(self, key, value):
     if value.get('b'):
         self.setdefault('address', [])
         self['address'].append({'place_name': value.get('b')})
 
-    return {
-        'name': value.get('p'),
-        'email': value.get('m'),
-    }
+    result = []
+
+    m_values = force_list(value.get('m'))
+    p_values = force_list(value.get('p'))
+
+    # XXX: we zip only when they have the same length, otherwise
+    #      we might match an email with the wrong name.
+    if len(m_values) == len(p_values):
+        for m_value, p_value in zip(m_values, p_values):
+            result.append({
+                'email': m_value,
+                'name': p_value,
+            })
+    else:
+        for m_value in m_values:
+            result.append({'email': m_value})
+
+    return result
 
 
 @conferences.over('series', '^411..')
@@ -123,7 +136,12 @@ def short_description(self, key, value):
 @utils.flatten
 @utils.for_each_value
 def alternative_titles(self, key, value):
-    return [
-        {'title': value.get('a')},
-        {'title': value.get('b')},
-    ]
+    result = []
+
+    for a_value in force_list(value.get('a')):
+        result.append({'title': a_value})
+
+    for b_value in force_list(value.get('b')):
+        result.append({'title': b_value})
+
+    return result
