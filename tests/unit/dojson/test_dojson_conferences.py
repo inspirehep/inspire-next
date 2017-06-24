@@ -778,3 +778,24 @@ def test_alternative_titles_from_711__a_b():
 
     assert validate(result['alternative_titles'], subschema) is None
     assert expected == result['alternative_titles']
+
+
+def test_alternative_titles_from_711__double_b():
+    schema = load_schema('conferences')
+    subschema = schema['properties']['alternative_titles']
+
+    snippet = (
+        '<datafield tag="711" ind1=" " ind2=" ">'
+        '  <subfield code="b">high energy</subfield>'
+        '  <subfield code="b">ACAT</subfield>'
+        '</datafield>'
+    )  # record/967859
+
+    expected = [
+        {'title': 'high energy'},
+        {'title': 'ACAT'},
+    ]
+    result = conferences.do(create_record(snippet))
+
+    assert validate(result['alternative_titles'], subschema) is None
+    assert expected == result['alternative_titles']

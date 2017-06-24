@@ -123,7 +123,12 @@ def short_description(self, key, value):
 @utils.flatten
 @utils.for_each_value
 def alternative_titles(self, key, value):
-    return [
-        {'title': value.get('a')},
-        {'title': value.get('b')},
-    ]
+    result = []
+
+    for a_value in force_list(value.get('a')):
+        result.append({'title': a_value})
+
+    for b_value in force_list(value.get('b')):
+        result.append({'title': b_value})
+
+    return result
