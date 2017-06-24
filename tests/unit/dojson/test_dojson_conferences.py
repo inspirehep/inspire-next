@@ -360,6 +360,29 @@ def test_contact_details_from_270__m_p():
     assert expected == result['contact_details']
 
 
+def test_contact_details_from_270__triple_m():
+    schema = load_schema('conferences')
+    subschema = schema['properties']['contact_details']
+
+    snippet = (
+        '<datafield tag="270" ind1=" " ind2=" ">'
+        '  <subfield code="m">mborn37@ift.uni.wroc.pl</subfield>'
+        '  <subfield code="m">mb37_wg3@ift.uni.wroc.pl</subfield>'
+        '  <subfield code="m">andrzej.borowiec@ift.uni.wroc.pl</subfield>'
+        '</datafield>'
+    )  # record/1436421
+
+    expected = [
+        {'email': 'mborn37@ift.uni.wroc.pl'},
+        {'email': 'mb37_wg3@ift.uni.wroc.pl'},
+        {'email': 'andrzej.borowiec@ift.uni.wroc.pl'},
+    ]
+    result = conferences.do(create_record(snippet))
+
+    assert validate(result['contact_details'], subschema) is None
+    assert expected == result['contact_details']
+
+
 def test_series_from_411__a():
     schema = load_schema('conferences')
     subschema = schema['properties']['series']
