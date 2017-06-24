@@ -61,7 +61,7 @@ install:
   - travis_retry docker-compose pull
   - travis_retry docker-compose build
   - travis_retry docker-compose -f docker-compose.deps.yml run --rm pip
-  - docker-compose -f docker-compose.deps.yml run --rm assets
+  - travis_retry docker-compose -f docker-compose.deps.yml run --rm assets
 
 script:
   - docker-compose -f docker-compose.test.yml run --rm ${SUITE}
