@@ -69,6 +69,7 @@ def document_type(self, key, value):
 
     special_collections = [
         # XXX: BABAR-AnalysisDocument is treated as a special case below.
+        'babar-internal-bais',
         'babar-internal-note',
         'cdf-internal-note',
         'cdf-note',

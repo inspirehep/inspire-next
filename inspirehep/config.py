@@ -202,6 +202,10 @@ INSPIRE_COLLECTIONS_DEFINITION = [
         'name': 'BABAR Analysis Documents',
     },
     {
+        'query': 'special_collections:BABAR-INTERNAL-BAIS',
+        'name': 'BABAR Internal BAIS',
+    },
+    {
         'query': 'special_collections:BABAR-INTERNAL-NOTE',
         'name': 'BABAR Internal Notes',
     },
@@ -815,11 +819,6 @@ RECORDS_REST_ENDPOINTS = dict(
                 ':json_v1_search'
             ),
         },
-        suggesters=dict(
-            affiliation=dict(completion=dict(
-                field='affiliation_suggest'
-            ))
-        ),
         list_route='/institutions/',
         item_route='/institutions/<pid(ins,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',

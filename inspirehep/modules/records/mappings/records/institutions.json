@@ -28,13 +28,19 @@
                     },
                     "type": "object"
                 },
-                "address": {
+                "addresses": {
                     "properties": {
                         "cities": {
                             "type": "string"
                         },
                         "country_code": {
                             "type": "string"
+                        },
+                        "latitude": {
+                            "type": "double"
+                        },
+                        "longitude": {
+                            "type": "double"
                         },
                         "place_name": {
                             "type": "string"
@@ -53,10 +59,6 @@
                 },
                 "affautocomplete": {
                     "type": "string"
-                },
-                "affiliation_suggest": {
-                    "payloads": true,
-                    "type": "completion"
                 },
                 "control_number": {
                     "type": "integer"
@@ -78,12 +80,6 @@
                     },
                     "type": "object"
                 },
-                "department": {
-                    "type": "string"
-                },
-                "department_acronym": {
-                    "type": "string"
-                },
                 "external_system_identifiers": {
                     "properties": {
                         "schema": {
@@ -98,11 +94,11 @@
                 "extra_words": {
                     "type": "string"
                 },
-                "field_activity": {
-                    "type": "string"
-                },
                 "historical_data": {
                     "type": "string"
+                },
+                "inactive": {
+                    "type": "boolean"
                 },
                 "inspire_categories": {
                     "properties": {
@@ -115,12 +111,20 @@
                     },
                     "type": "object"
                 },
-                "institution": {
-                    "copy_to": "affautocomplete",
-                    "type": "string"
+                "institution_hierarchy": {
+                    "properties": {
+                        "acronym": {
+                            "copy_to": "affautocomplete",
+                            "type": "string"
+                        },
+                        "name": {
+                            "copy_to": "affautocomplete",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 },
-                "institution_acronym": {
-                    "copy_to": "affautocomplete",
+                "institution_type": {
                     "type": "string"
                 },
                 "legacy_ICN": {
@@ -129,17 +133,6 @@
                 },
                 "legacy_creation_date": {
                     "type": "string"
-                },
-                "location": {
-                    "properties": {
-                        "latitude": {
-                            "type": "double"
-                        },
-                        "longitude": {
-                            "type": "double"
-                        }
-                    },
-                    "type": "object"
                 },
                 "name_variants": {
                     "properties": {
@@ -210,9 +203,6 @@
                 },
                 "self_recid": {
                     "type": "integer"
-                },
-                "time_zone": {
-                    "type": "string"
                 },
                 "urls": {
                     "properties": {
