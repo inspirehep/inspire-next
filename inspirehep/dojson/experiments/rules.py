@@ -157,7 +157,20 @@ def collaboration(self, key, value):
 
 @experiments.over('core', '^980..')
 def core(self, key, value):
-    if not self.get('core'):
-        return value.get('a', '').upper() == 'CORE'
+    """Populate the ``core`` key.
 
-    return self.get('core')
+    Also populates the ``deleted`` key through side effects.
+    """
+    core = self.get('core')
+    deleted = self.get('deleted')
+
+    if not core:
+        normalized_a_values = [el.upper() for el in force_list(value.get('a'))]
+        core = 'CORE' in normalized_a_values
+
+    if not deleted:
+        normalized_c_values = [el.upper() for el in force_list(value.get('c'))]
+        deleted = 'DELETED' in normalized_c_values
+
+    self['deleted'] = deleted
+    return core
