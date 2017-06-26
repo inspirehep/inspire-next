@@ -258,7 +258,7 @@ Documentation will be required though for some parts of the code meant to be
 reused several times, like apis, utility functions, etc.
 
 The format of the docstrings that we use is the Google style one defined in the
-`napoleon Sphinx plugin page`_.
+`Napoleon Sphinx extension page`_.
 
 
 More details
@@ -279,4 +279,4 @@ Some useful links are listed bellow:
 .. _github settings page for keys: https://github.com/settings/keys
 .. _the hub tool git repo: https://github.com/github/hub
 .. _Invenio commit guideline: http://invenio.readthedocs.io/en/latest/technology/git.html#r2-remarks-on-commit-log-messages
-.. _napoleon Sphinx plugin page: http://sphinxcontrib-napoleon.readthedocs.io/en/latest/index.html
+.. _Napoleon Sphinx extension page: http://www.sphinx-doc.org/en/stable/ext/napoleon.html
