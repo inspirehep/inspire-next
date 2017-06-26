@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
 from dojson.contrib.marc21.utils import create_record
 
 from inspire_schemas.utils import load_schema
@@ -498,7 +496,7 @@ def test_collaboration_from_710__g_0():
     assert expected == result['collaboration']
 
 
-def test_core_from_multiple_980__a():
+def test_core_from_double_980__a():
     schema = load_schema('experiments')
     subschema = schema['properties']['core']
 
@@ -518,3 +516,33 @@ def test_core_from_multiple_980__a():
 
     assert validate(result['core'], subschema) is None
     assert expected == result['core']
+
+
+def test_core_and_deleted_from_multiple_980__a():
+    schema = load_schema('experiments')
+    core_schema = schema['properties']['core']
+    deleted_schema = schema['properties']['deleted']
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">CORE</subfield>'
+        '  </datafield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">EXPERIMENT</subfield>'
+        '  </datafield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="c">DELETED</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1400948
+
+    expected_core = True
+    expected_deleted = True
+    result = experiments.do(create_record(snippet))
+
+    assert validate(result['core'], core_schema) is None
+    assert expected_core == result['core']
+
+    assert validate(result['deleted'], deleted_schema) is None
+    assert expected_deleted == result['deleted']

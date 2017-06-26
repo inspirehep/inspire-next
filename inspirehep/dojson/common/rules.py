@@ -404,7 +404,6 @@ def new_record2marc(self, key, value):
 
 @conferences.over('deleted', '^980..')
 @institutions.over('deleted', '^980..')
-@experiments.over('deleted', '^980..')
 @jobs.over('deleted', '^980..')
 @journals.over('deleted', '^980..')
 def deleted(self, key, value):
