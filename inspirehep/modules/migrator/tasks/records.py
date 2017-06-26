@@ -152,7 +152,7 @@ def continuous_migration():
     """Task to continuously migrate what is pushed up by Legacy."""
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
-    lock = Lock(r, 'continuous_migration')
+    lock = Lock(r, 'continuous_migration', expire=120, auto_renewal=True)
     if lock.acquire(blocking=False):
         try:
             try:
