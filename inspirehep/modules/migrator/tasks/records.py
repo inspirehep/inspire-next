@@ -155,15 +155,12 @@ def continuous_migration():
     lock = Lock(r, 'continuous_migration', expire=120, auto_renewal=True)
     if lock.acquire(blocking=False):
         try:
-            try:
-                while r.llen('legacy_records'):
-                    raw_record = r.lrange('legacy_records', 0, 0)
-                    if raw_record:
-                        migrate_and_insert_record(zlib.decompress(raw_record[0]))
-                    r.lpop('legacy_records')
-            finally:
-                db.session.commit()
-                db.session.close()
+            while r.llen('legacy_records'):
+                raw_record = r.lrange('legacy_records', 0, 0)
+                if raw_record:
+                    migrate_and_insert_record(zlib.decompress(raw_record[0]))
+                    db.session.commit()
+                r.lpop('legacy_records')
         finally:
             lock.release()
     else:
