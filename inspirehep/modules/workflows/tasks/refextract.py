@@ -90,7 +90,7 @@ def extract_references(filepath):
 
     result = []
 
-    for reference in force_list(references.get('references')):
+    for reference in references:
         rb = ReferenceBuilder()
         mapping = [
             ('author', rb.add_refextract_authors_str),
