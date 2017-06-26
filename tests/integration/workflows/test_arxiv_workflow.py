@@ -324,7 +324,7 @@ def fake_magpie_api_request(url, data):
 
 def fake_refextract_extract_references_from_file(*args, **kwargs):
     """Mock refextract extract_references_from_file func."""
-    return {'references': []}
+    return []
 
 
 def get_halted_workflow(app, record, extra_config=None):

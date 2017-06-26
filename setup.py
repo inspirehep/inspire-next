@@ -37,7 +37,7 @@ install_requires = [
     'Flask-Gravatar>=0.4.2',
     'HarvestingKit>=0.6.2',
     'plotextractor>=0.1.2',
-    'refextract>=0.1.0',
+    'refextract>=0.2.0',
     'Sickle>=0.5.0',
     'orcid',
     'raven<=5.1.0',
