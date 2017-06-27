@@ -17,8 +17,9 @@
              ng-repeat="reference in vm.record.metadata.references">
           <div class="col-md-1 col-sm-1"
                ng-bind="reference.reference.number"></div>
-          <div class="col-md-4 col-sm-4"
-               ng-bind="reference.reference.authors"></div>
+          <div class="col-md-4 col-sm-4">
+               <span ng-repeat="author in reference.reference.authors">{{author.full_name}}<span ng-if="!$last">; </span></span>
+          </div>
           <div class="col-md-2 col-sm-3"
                ng-bind="reference.reference.publication_info.artid"></div>
           <div class="col-md-1 col-sm-1"
