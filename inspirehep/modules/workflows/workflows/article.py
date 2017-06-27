@@ -77,7 +77,6 @@ from inspirehep.modules.workflows.tasks.matching import (
     pending_in_holding_pen,
     article_exists,
     already_harvested,
-    previously_rejected,
     update_existing_workflow_object,
 )
 from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
@@ -141,18 +140,6 @@ ADD_INGESTION_MARKS = [
                 already_harvested,
                 [
                     mark('already-ingested', True),
-                    mark('stop', True),
-                ]
-            ),
-            # FIXME: This filtering step should be removed when:
-            #        old previously rejected records are treated
-            #        differently e.g. good auto-reject heuristics or better
-            #        time based filtering (5 days is quite random now).
-            IF(
-                previously_rejected(),
-                [
-                    mark('already-ingested', True),
-                    mark('previously-rejected', True),
                     mark('stop', True),
                 ]
             ),

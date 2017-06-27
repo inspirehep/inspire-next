@@ -502,7 +502,6 @@ def test_merge_with_already_existing_article_in_the_db(
         workflow_uuid, eng, obj = get_halted_workflow_merge(
             app=workflow_app,
             extra_config={
-                'INSPIRE_ACCEPTANCE_TIMEOUT': 365 * 100,
                 'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [],
                 # This feature is only available on latest non-legacy code
                 'PRODUCTION_MODE': False,
