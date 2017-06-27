@@ -27,6 +27,8 @@ from __future__ import absolute_import, division, print_function
 import os
 import sys
 
+from celery.schedules import crontab
+
 from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
 
@@ -74,7 +76,12 @@ CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']
 CELERY_TIMEZONE = 'Europe/Amsterdam'
 CELERY_DISABLE_RATE_LIMITS = True
-
+CELERYBEAT_SCHEDULE = {
+    'journal_kb_builder': {
+        'task': 'inspirehep.modules.refextract.tasks.create_journal_kb_file',
+        'schedule': crontab(minute='0', hour='*/1'),
+    }
+}
 # Cache
 # =====
 CACHE_KEY_PREFIX = "cache::"
@@ -163,6 +170,9 @@ when creating records.
 
 RECORD_EDITOR_INDEX_TEMPLATE = 'inspirehep_theme/invenio_record_editor/index.html'
 RECORD_EDITOR_PREVIEW_TEMPLATE_FUNCTION = get_detailed_template_from_record
+
+# Path to where journal kb file is stored from `inspirehep.modules.refextract.tasks.create_journal_kb_file`
+REFEXTRACT_JOURNAL_KB_PATH = '/tmp/journal-titles.kb'
 
 INSPIRE_COLLECTIONS_DEFINITION = [
     {
