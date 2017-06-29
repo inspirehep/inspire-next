@@ -39,7 +39,7 @@ from ..utils import with_debug_logging
 @with_debug_logging
 def store_record(obj, *args, **kwargs):
     """Create and index new record in main record space."""
-    if not obj.extra_data.get('merged', False):
+    if not obj.extra_data.get('merged_record', False):
         obj.log.debug('Storing record: \n%s', pformat(obj.data))
 
         assert "$schema" in obj.data, "No $schema attribute found!"

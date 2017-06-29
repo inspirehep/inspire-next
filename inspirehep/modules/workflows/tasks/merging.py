@@ -99,6 +99,8 @@ def merge_articles(obj, eng):
         obj.extra_data['new_root']
     )
 
+    obj.extra_data['merged_record'] = True
+
 
 def store_temporary_root(obj, eng):
     """Savet the root in extra_data to get it later to store it in the database."""
@@ -129,3 +131,18 @@ def store_root(obj, eng):
         get_source(new_root),
         new_root
     )
+
+
+def is_record_merged(obj, eng):
+    """Returns if the current record has been merged"""
+    return obj.extra_data.get('merged_record')
+
+
+def is_there_any_conflict(obj, eng):
+    """Returns if the current record has conflicts"""
+    return obj.extra_data.get('conflicts')
+
+
+def submit_to_the_curator(obj, eng):
+    # @TODO has to be implemented
+    obj.extra_data['approved'] = True

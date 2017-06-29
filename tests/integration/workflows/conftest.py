@@ -26,7 +26,10 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import pytest
+import re
+import requests_mock
 import sys
+
 
 from invenio_db import db
 from invenio_workflows import (
@@ -45,24 +48,6 @@ from inspirehep.modules.workflows.models import (
 sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
 
 
-@pytest.fixture(autouse=True)
-def cleanup_workflows_tables(small_app):
-    with small_app.app_context():
-        obj_types = (
-                WorkflowsAudit.query.all(),
-                WorkflowsPendingRecord.query.all(),
-                workflow_object_class.query(),
-        )
-        for obj_type in obj_types:
-            for obj in obj_type:
-                if isinstance(obj, WorkflowsAudit):
-                    db.session.delete(obj)
-                else:
-                    obj.delete()
-
-        db.session.commit()
-
-
 @pytest.fixture
 def workflow_app():
     app = create_app(
@@ -77,8 +62,75 @@ def workflow_app():
             'http://localhost:1234'
         ),
         MAGPIE_API_URL="http://example.com/magpie",
+        WORKFLOWS_MATCH_REMOTE_SERVER_URL="http://legacy_search.endpoint/",
         WTF_CSRF_ENABLED=False,
     )
 
     with app.app_context():
         yield app
+
+
+def drop_all(app):
+    db.drop_all()
+    _es = app.extensions['invenio-search']
+    list(_es.delete(ignore=[404]))
+
+
+def create_all(app):
+    from inspirehep.modules.fixtures.collections import init_collections
+    from inspirehep.modules.fixtures.files import init_all_storage_paths
+    from inspirehep.modules.fixtures.users import init_users_and_permissions
+
+    db.create_all()
+    _es = app.extensions['invenio-search']
+    list(_es.create(ignore=[400]))
+
+    init_all_storage_paths()
+    init_users_and_permissions()
+    init_collections()
+
+
+@pytest.fixture(autouse=True)
+def cleanup_workflows(workflow_app):
+    db.session.close_all()
+    drop_all(app=workflow_app)
+    create_all(app=workflow_app)
+
+
+@pytest.fixture
+def mocked_external_services(workflow_app):
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            requests_mock.ANY,
+            re.compile('.*(indexer|localhost).*'),
+            real_http=True,
+        )
+        requests_mocker.register_uri(
+            'POST',
+            re.compile(
+                'https?://localhost:1234.*',
+            ),
+            text=u'[INFO]',
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            requests_mock.ANY,
+            re.compile(
+                '.*' +
+                workflow_app.config['WORKFLOWS_MATCH_REMOTE_SERVER_URL'] +
+                '.*'
+            ),
+            status_code=200,
+            json=[],
+        )
+        requests_mocker.register_uri(
+            requests_mock.ANY,
+            re.compile(
+                '.*' +
+                workflow_app.config['BEARD_API_URL'] +
+                '/text/phonetic_blocks.*'
+            ),
+            status_code=200,
+            json={'phonetic_blocks': {}},
+        )
+        yield

@@ -246,6 +246,7 @@ setup(
         'invenio_workflows.workflows': [
             'author = inspirehep.modules.workflows.workflows:Author',
             'article = inspirehep.modules.workflows.workflows:Article',
+            'manual_merge = inspirehep.modules.workflows.workflows:ManualMerge',
         ],
         'invenio_pidstore.fetchers': [
             'inspire_recid_fetcher = inspirehep.modules.pidstore.fetchers:inspire_recid_fetcher',

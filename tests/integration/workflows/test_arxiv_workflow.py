@@ -66,6 +66,7 @@ from inspirehep.modules.workflows.utils import (
     retrieve_root_json,
 )
 from inspirehep.utils.record import get_source
+from utils import get_halted_workflow
 
 
 def read_file(test_dir, file_name):
@@ -74,77 +75,11 @@ def read_file(test_dir, file_name):
         return json.loads(f.read())
 
 
-@pytest.fixture
-def mocked_external_services(workflow_app):
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            requests_mock.ANY,
-            re.compile('.*(indexer|localhost).*'),
-            real_http=True,
-        )
-        requests_mocker.register_uri(
-            'POST',
-            re.compile(
-                'https?://localhost:1234.*',
-            ),
-            text=u'[INFO]',
-            status_code=200,
-        )
-        requests_mocker.register_uri(
-            requests_mock.ANY,
-            re.compile(
-                '.*' +
-                workflow_app.config['WORKFLOWS_MATCH_REMOTE_SERVER_URL'] +
-                '.*'
-            ),
-            status_code=200,
-            json=[],
-        )
-        requests_mocker.register_uri(
-            requests_mock.ANY,
-            re.compile(
-                '.*' +
-                workflow_app.config['BEARD_API_URL'] +
-                '/text/phonetic_blocks.*'
-            ),
-            status_code=200,
-            json={'phonetic_blocks': {}},
-        )
-        yield
-
-
 def create_head_record():
     head = read_file('fixtures', 'merger_head.json')
     record = InspireRecord.create(head)
     inspire_recid_minter(str(record.id), record)
     return record.id
-
-
-@pytest.fixture(autouse=True)
-def cleanup_workflows(workflow_app):
-    db.session.close_all()
-    drop_all(app=workflow_app)
-    create_all(app=workflow_app)
-
-
-def drop_all(app):
-    db.drop_all()
-    _es = app.extensions['invenio-search']
-    list(_es.delete(ignore=[404]))
-
-
-def create_all(app):
-    from inspirehep.modules.fixtures.collections import init_collections
-    from inspirehep.modules.fixtures.files import init_all_storage_paths
-    from inspirehep.modules.fixtures.users import init_users_and_permissions
-
-    db.create_all()
-    _es = app.extensions['invenio-search']
-    list(_es.create(ignore=[400]))
-
-    init_all_storage_paths()
-    init_users_and_permissions()
-    init_collections()
 
 
 @pytest.fixture
@@ -220,11 +155,12 @@ def get_halted_workflow_merge(cls, app, record, extra_config=None):
     return workflow_uuid, eng, obj
 
 
-from utils import get_halted_workflow
-
-
 @mock.patch(
     'inspirehep.modules.workflows.utils.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
 )
 @mock.patch(
@@ -244,9 +180,12 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     mocked_api_request_magpie,
     mocked_api_request_beard,
     mocked_download,
-    small_app,
+    mocked_arxiv_download,
+    workflow_app,
+    mocked_external_services,
 ):
     """Test a full harvesting workflow."""
+
     record = generate_record()
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
@@ -254,34 +193,34 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     }
 
     workflow_uuid = None
-    with small_app.app_context():
-        workflow_uuid, eng, obj = get_halted_workflow(
-            app=small_app,
-            extra_config=extra_config,
-            record=record,
-        )
+    workflow_uuid, eng, obj = get_halted_workflow(
+        app=workflow_app,
+        extra_config=extra_config,
+        record=record,
+    )
 
-        # Now let's resolve it as accepted and continue
-        # FIXME Should be accept, but record validation prevents us.
-        obj.remove_action()
-        obj.extra_data["approved"] = False
-        # obj.extra_data["core"] = True
-        obj.save()
+    obj.remove_action()
+    obj.extra_data["approved"] = False
+    obj.save()
 
-        db.session.commit()
+    db.session.commit()
 
-        eng = WorkflowEngine.from_uuid(workflow_uuid)
-        obj = eng.processed_objects[0]
-        obj_id = obj.id
-        obj.continue_workflow()
+    eng = WorkflowEngine.from_uuid(workflow_uuid)
+    obj = eng.processed_objects[0]
+    obj_id = obj.id
+    obj.continue_workflow()
 
-        obj = workflow_object_class.get(obj_id)
-        # It was rejected
-        assert obj.status == ObjectStatus.COMPLETED
+    obj = workflow_object_class.get(obj_id)
+    # It was rejected
+    assert obj.status == ObjectStatus.COMPLETED
 
 
 @mock.patch(
     'inspirehep.modules.workflows.utils.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
 )
 @mock.patch(
@@ -301,7 +240,8 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
     mocked_api_request_magpie,
     mocked_api_request_beard,
     mocked_download,
-    small_app
+    workflow_app,
+    mocked_external_services,
 ):
     """Test a full harvesting workflow."""
     extra_config = {
@@ -309,14 +249,13 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
         "MAGPIE_API_URL": "http://example.com/magpie",
     }
 
-    with small_app.app_context():
-        with mock.patch.dict(small_app.config, extra_config):
-            workflow_uuid = start(
-                'article',
-                [
-                    already_harvested_on_legacy_record()
-                ]
-            )
+    with mock.patch.dict(workflow_app.config, extra_config):
+        workflow_uuid = start(
+            'article',
+            [
+                already_harvested_on_legacy_record()
+            ]
+        )
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
@@ -358,56 +297,43 @@ def test_harvesting_arxiv_workflow_manual_accepted(
     mocked_download_utils,
     mocked_download_arxiv,
     workflow_app,
+    mocked_external_services,
 ):
     record = generate_record()
     """Test a full harvesting workflow."""
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            requests_mock.ANY,
-            re.compile('.*(indexer|localhost).*'),
-            real_http=True,
-        )
-        requests_mocker.register_uri(
-            'POST',
-            re.compile(
-                'https?://localhost:1234.*',
-            ),
-            text=u'[INFO]',
-            status_code=200,
-        )
 
-        workflow_uuid, eng, obj = get_halted_workflow(
-            app=workflow_app,
-            extra_config={'PRODUCTION_MODE': False},
-            record=record,
-        )
+    workflow_uuid, eng, obj = get_halted_workflow(
+        app=workflow_app,
+        extra_config={'PRODUCTION_MODE': False},
+        record=record,
+    )
 
-        do_accept_core(
-            app=workflow_app,
-            workflow_id=obj.id,
-        )
+    do_accept_core(
+        app=workflow_app,
+        workflow_id=obj.id,
+    )
 
-        eng = WorkflowEngine.from_uuid(workflow_uuid)
-        obj = eng.processed_objects[0]
-        assert obj.status == ObjectStatus.WAITING
+    eng = WorkflowEngine.from_uuid(workflow_uuid)
+    obj = eng.processed_objects[0]
+    assert obj.status == ObjectStatus.WAITING
 
-        response = do_robotupload_callback(
-            app=workflow_app,
-            workflow_id=obj.id,
-            recids=[12345],
-        )
-        assert response.status_code == 200
+    response = do_robotupload_callback(
+        app=workflow_app,
+        workflow_id=obj.id,
+        recids=[12345],
+    )
+    assert response.status_code == 200
 
-        obj = workflow_object_class.get(obj.id)
-        assert obj.status == ObjectStatus.WAITING
+    obj = workflow_object_class.get(obj.id)
+    assert obj.status == ObjectStatus.WAITING
 
-        response = do_webcoll_callback(app=workflow_app, recids=[12345])
-        assert response.status_code == 200
+    response = do_webcoll_callback(app=workflow_app, recids=[12345])
+    assert response.status_code == 200
 
-        eng = WorkflowEngine.from_uuid(workflow_uuid)
-        obj = eng.processed_objects[0]
-        # It was accepted
-        assert obj.status == ObjectStatus.COMPLETED
+    eng = WorkflowEngine.from_uuid(workflow_uuid)
+    obj = eng.processed_objects[0]
+    # It was accepted
+    assert obj.status == ObjectStatus.COMPLETED
 
 
 @mock.patch(
@@ -442,6 +368,7 @@ def test_merge_with_already_existing_article_in_the_db(
     mocked_download_utils,
     mocked_download_arxiv,
     workflow_app,
+    mocked_external_services,
 ):
     """Test a full merging for an article."""
     def _setup_root_record(head_record_id):
@@ -475,70 +402,55 @@ def test_merge_with_already_existing_article_in_the_db(
             fft['path'] = u'generic/url/for/a/path'
         return record
 
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            requests_mock.ANY,
-            re.compile('.*(indexer|localhost).*'),
-            real_http=True,
-        )
-        requests_mocker.register_uri(
-            'POST',
-            re.compile(
-                'https?://localhost:1234.*',
-            ),
-            text=u'[INFO]',
-            status_code=200,
-        )
+    # With the functions: `_remove_uuid_authors` and `_remove_buckets_version_id_files`
+    # authors.uuid, _files.version_id and _files.bucket are removed because are
+    # manipulated during the workflow and are not relevant for the current test
+    record_uuid = create_head_record()
+    _setup_root_record(head_record_id=record_uuid)
 
-        # With the functions: `_remove_uuid_authors` and `_remove_buckets_version_id_files`
-        # authors.uuid, _files.version_id and _files.bucket are removed because are
-        # manipulated during the workflow and are not relevant for the current test
-        record_uuid = create_head_record()
-        _setup_root_record(head_record_id=record_uuid)
+    expected_new_root = read_file('fixtures', 'merger_update.json')
 
-        expected_new_root = read_file('fixtures', 'merger_update.json')
+    # this function starts the workflow
+    workflow_uuid, eng, obj = get_halted_workflow_merge(
+        app=workflow_app,
+        extra_config={
+            'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [],
+            # This feature is only available on latest non-legacy code
+            'PRODUCTION_MODE': False,
+        },
+        record=expected_new_root,
+    )
 
-        # this function starts the workflow
-        workflow_uuid, eng, obj = get_halted_workflow_merge(
-            app=workflow_app,
-            extra_config={
-                'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [],
-                # This feature is only available on latest non-legacy code
-                'PRODUCTION_MODE': False,
-            },
-            record=expected_new_root,
-        )
+    do_accept_core(
+        app=workflow_app,
+        workflow_id=obj.id,
+    )
 
-        do_accept_core(
-            app=workflow_app,
-            workflow_id=obj.id,
-        )
+    eng = WorkflowEngine.from_uuid(workflow_uuid)
+    obj = eng.processed_objects[0]
 
-        eng = WorkflowEngine.from_uuid(workflow_uuid)
-        obj = eng.processed_objects[0]
+    head = RecordMetadata.query.filter(RecordMetadata.id == record_uuid).one()
+    new_root = retrieve_root_json(str(record_uuid), get_source(head.json))
+    new_root = _remove_uuid_authors(new_root)
+    new_root = _remove_buckets_version_id_files(new_root)
 
-        head = RecordMetadata.query.filter(RecordMetadata.id == record_uuid).one()
-        new_root = retrieve_root_json(str(record_uuid), get_source(head.json))
-        new_root = _remove_uuid_authors(new_root)
-        new_root = _remove_buckets_version_id_files(new_root)
+    expected_new_root = _remove_buckets_version_id_files(expected_new_root)
 
-        expected_new_root = _remove_buckets_version_id_files(expected_new_root)
+    assert new_root == expected_new_root
 
-        assert new_root == expected_new_root
+    expected_merged = read_file('fixtures', 'merger_merged.json')
+    expected_merged = _remove_uuid_authors(expected_merged)
+    expected_merged = _remove_buckets_version_id_files(expected_merged)
+    expected_merged = _replace_path_fft(expected_merged)
 
-        expected_merged = read_file('fixtures', 'merger_merged.json')
-        expected_merged = _remove_uuid_authors(expected_merged)
-        expected_merged = _remove_buckets_version_id_files(expected_merged)
-        expected_merged = _replace_path_fft(expected_merged)
+    workflow_record = _remove_uuid_authors(obj.data)
+    workflow_record = _remove_buckets_version_id_files(workflow_record)
+    workflow_record = _replace_path_fft(workflow_record)
 
-        workflow_record = _remove_uuid_authors(obj.data)
-        workflow_record = _remove_buckets_version_id_files(workflow_record)
-        workflow_record = _replace_path_fft(workflow_record)
+    response = do_webcoll_callback(app=workflow_app, recids=[12345])
+    assert response.status_code == 200
 
-        response = do_webcoll_callback(app=workflow_app, recids=[12345])
-        assert response.status_code == 200
+    assert expected_merged == workflow_record
 
-        assert expected_merged == workflow_record
-
-        expected_conflicts = read_file('fixtures', 'merger_conflicts.json')
-        assert obj.extra_data['conflicts'] == expected_conflicts
+    expected_conflicts = read_file('fixtures', 'merger_conflicts.json')
+    assert obj.extra_data['conflicts'] == expected_conflicts

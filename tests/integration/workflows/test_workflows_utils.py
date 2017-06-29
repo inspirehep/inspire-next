@@ -34,7 +34,7 @@ from inspirehep.modules.workflows.utils import (
 
 
 @pytest.fixture()
-def dummy_record(small_app):
+def dummy_record(workflow_app):
     record = InspireRecord.create({
         "$schema": "http://localhost:5000/schemas/records/hep.json",
         "titles": [{

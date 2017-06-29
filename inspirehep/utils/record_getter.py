@@ -102,6 +102,10 @@ def get_es_record_by_uuid(uuid):
 
 @raise_record_getter_error_and_log
 def get_db_record(pid_type, recid):
-    from inspirehep.modules.records.api import InspireRecord
-    pid = PersistentIdentifier.get(pid_type, recid)
-    return InspireRecord.get_record(pid.object_uuid)
+    try:
+        from inspirehep.modules.records.api import InspireRecord
+        pid = PersistentIdentifier.get(pid_type, recid)
+        return InspireRecord.get_record(pid.object_uuid)
+    except:
+        print('\n****** ERROR FOR pid_type: ' + pid_type + ' - recid: {}\n\n'.format(recid))
+        raise
