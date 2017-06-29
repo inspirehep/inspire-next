@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.record import get_title, get_value
+from inspirehep.utils.record import get_title
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.records.api import ESRecord
 from inspirehep.modules.search import JobsSearch
@@ -168,7 +168,7 @@ class ExperimentsRecord(ESRecord):
     @property
     def title(self):
         """Get preferred title."""
-        return get_value(self, 'experiment.legacy_name')
+        return self.get('legacy_name')
 
 
 class JournalsRecord(ESRecord):
