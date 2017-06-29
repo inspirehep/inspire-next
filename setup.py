@@ -72,7 +72,6 @@ install_requires = [
     'invenio-records-files>=1.0.0a5',
     'invenio-userprofiles>=1.0.0a7',
     'invenio-oaiharvester==1.0.0a2',
-    'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
     'invenio>=3.0.0a1,<3.1.0',
     'inspire-crawler~=0.0,>=0.2.7',
     'inspire-dojson~=40.0,>=40.0.1',
