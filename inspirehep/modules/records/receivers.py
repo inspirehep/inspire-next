@@ -34,7 +34,7 @@ from invenio_indexer.api import RecordIndexer
 from invenio_indexer.signals import before_record_index
 from invenio_records.models import RecordMetadata
 
-from inspirehep.dojson.utils import get_recid_from_ref
+from inspire_dojson.utils import get_recid_from_ref
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.date import create_earliest_date, create_valid_date
 from inspirehep.utils.helpers import force_list

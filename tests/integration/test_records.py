@@ -29,7 +29,7 @@ from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier, Redirect
 from invenio_search import current_search_client as es
 
-from inspirehep.dojson.hep import hep
+from inspire_dojson.hep import hep
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.tasks import merge_merged_records, update_refs
 from inspirehep.modules.migrator.tasks.records import record_insert_or_replace

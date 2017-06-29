@@ -22,8 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspire_dojson.utils import get_record_ref, validate
 from inspire_schemas.utils import load_schema
-from inspirehep.dojson.utils import get_record_ref, validate
 from inspirehep.modules.references.processors import (
     ReferenceBuilder,
     _is_arxiv,

@@ -1589,60 +1589,6 @@ ORCID_WORK_TYPES = {
 }
 
 
-# Inspire mappings
-# ================
-
-INSPIRE_LEGACY_ROLES = {
-    'editing': [
-        'ed.',
-        'eds.',
-        'ed,,',
-        'eds',
-        'ed,',
-        'ed. et al.'
-    ],
-    'administration': [
-        'task force leader',
-        'resource manager',
-        'scientific coordinator',
-        'chairman',
-        'chair',
-        'workshop chair'
-    ]
-}
-
-INSPIRE_LICENSE_TYPES = [
-    'CC-BY',
-    'CC-BY-NC',
-    'CC-BY-NC-ND',
-    'CC-BY-NC-SA',
-    'CC-BY-ND',
-    'CC-BY-SA',
-    'Other'
-]
-
-INSPIRE_RANK_TYPES = {
-    'STAFF': {},
-    'SENIOR': {},
-    'JUNIOR': {},
-    'VISITOR': {
-        'alternative_names': ['VISITING SCIENTIST'],
-    },
-    'POSTDOC': {
-        'abbreviations': ['PD']
-    },
-    'PHD': {
-        'alternative_names': ['STUDENT']
-    },
-    'MASTER': {
-        'abbreviations': ['MAS', 'MS', 'MSC']
-    },
-    'UNDERGRADUATE': {
-        'alternative_names': ['BACHELOR'],
-        'abbreviations': ['UG', 'BS', 'BA', 'BSC']
-    }
-}
-
 # Legacy PID provider
 # ===================
 LEGACY_PID_PROVIDER = None  # e.g. "http://example.org/batchuploader/allocaterecord"

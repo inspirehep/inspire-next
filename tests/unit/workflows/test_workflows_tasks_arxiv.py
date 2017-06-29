@@ -32,8 +32,8 @@ from shutil import rmtree
 from tempfile import mkdtemp
 from wand.exceptions import DelegateError
 
+from inspire_dojson.utils import validate
 from inspire_schemas.utils import load_schema
-from inspirehep.dojson.utils import validate
 from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_author_list,
     arxiv_derive_inspire_categories,

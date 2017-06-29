@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 from elasticsearch import RequestError
 from nameparser import HumanName
 
-from inspirehep.dojson.utils import get_recid_from_ref
+from inspire_dojson.utils import get_recid_from_ref
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.utils.dedupers import dedupe_list
 from inspirehep.utils.record import get_value

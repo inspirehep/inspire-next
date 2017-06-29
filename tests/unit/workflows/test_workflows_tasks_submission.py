@@ -27,10 +27,10 @@ import pytest
 from flask import current_app
 from mock import patch
 
+from inspire_dojson.hep import hep2marc
+from inspire_dojson.hepnames import hepnames2marc
+from inspire_dojson.utils import validate
 from inspire_schemas.utils import load_schema
-from inspirehep.dojson.hep import hep2marc
-from inspirehep.dojson.hepnames import hepnames2marc
-from inspirehep.dojson.utils import validate
 from inspirehep.modules.literaturesuggest.tasks import (
     reply_ticket_context as literaturesuggest_reply_ticket_context,
 )
