@@ -26,8 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 from workflow.patterns.controlflow import IF, IF_ELSE, IF_NOT
 
-from inspirehep.dojson.hepnames import hepnames2marc
-
+from inspire_dojson.hepnames import hepnames2marc
 from inspirehep.modules.workflows.tasks.actions import (
     halt_record,
     in_production_mode,

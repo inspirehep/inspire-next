@@ -36,8 +36,8 @@ from werkzeug import secure_filename
 
 from dojson.contrib.marc21.utils import create_record
 
-from inspirehep.dojson.hep import hep
-from inspirehep.dojson.utils import classify_field
+from inspire_dojson.hep import hep
+from inspire_dojson.utils.arxiv import classify_field
 from inspirehep.modules.converter import convert
 from inspirehep.utils.record import get_arxiv_categories, get_arxiv_id
 

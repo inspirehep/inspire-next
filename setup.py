@@ -75,8 +75,8 @@ install_requires = [
     'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
     'invenio>=3.0.0a1,<3.1.0',
     'inspire-crawler~=0.0,>=0.2.7',
+    'inspire-dojson~=40.0,>=40.0.1',
     'inspire-schemas~=40.0,>=40.0.3',
-    'dojson>=1.3.0',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
     'Flask-Caching>=1.0.1',
@@ -209,12 +209,6 @@ setup(
     entry_points={
         'console_scripts': [
             'inspirehep = inspirehep.cli:cli',
-        ],
-        'dojson.cli.rule': [
-            'hep = inspirehep.dojson.hep:hep',
-            'hep2marc = inspirehep.dojson.hep:hep2marc',
-            'hepnames = inspirehep.dojson.hepnames:hepnames',
-            'hepnames2marc = inspirehep.dojson.hepnames2marc:hepnames2marc',
         ],
         'invenio_access.actions': [
             'view_restricted_collection'

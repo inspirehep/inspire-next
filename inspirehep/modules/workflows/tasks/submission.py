@@ -34,7 +34,7 @@ from retrying import retry
 
 from invenio_accounts.models import User
 
-from inspirehep.dojson.utils import legacy_export_as_marc
+from inspire_dojson.utils import legacy_export_as_marc
 from inspirehep.utils.robotupload import make_robotupload_marcxml
 from inspirehep.utils.tickets import get_instance, retry_if_connection_problems
 

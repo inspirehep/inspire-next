@@ -31,7 +31,7 @@ from invenio_db import db
 
 from invenio_records.signals import after_record_insert
 
-from inspirehep.dojson import utils as inspire_dojson_utils
+from inspire_dojson import utils as inspire_dojson_utils
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.disambiguation.receivers import (

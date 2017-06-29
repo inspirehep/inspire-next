@@ -34,7 +34,7 @@ from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
 
-from inspirehep.dojson.utils import get_recid_from_ref
+from inspire_dojson.utils import get_recid_from_ref
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.utils import get_endpoint_from_record
 from inspirehep.utils.record_getter import get_db_record

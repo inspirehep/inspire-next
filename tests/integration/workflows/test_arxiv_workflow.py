@@ -44,7 +44,7 @@ from invenio_workflows import (
     workflow_object_class,
 )
 
-from inspirehep.dojson.hep import hep
+from inspire_dojson.hep import hep
 from inspirehep.factory import create_app
 from inspirehep.modules.converter.xslt import convert
 from inspirehep.modules.workflows.models import (

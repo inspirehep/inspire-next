@@ -24,8 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 import mock
 
+from inspire_dojson.utils import validate
 from inspire_schemas.utils import load_schema
-from inspirehep.dojson.utils import validate
 from inspirehep.modules.records.receivers import (
     dates_validator,
     earliest_date,

@@ -22,8 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspire_dojson.utils import validate
 from inspire_schemas.utils import load_schema
-from inspirehep.dojson.utils import validate
 from inspirehep.modules.workflows.tasks.upload import set_schema
 
 from mocks import MockObj, MockEng
