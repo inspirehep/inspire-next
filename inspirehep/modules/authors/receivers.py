@@ -25,8 +25,11 @@ from __future__ import absolute_import, division, print_function
 import json
 import uuid
 
-from flask import current_app
+import backoff
 import requests
+import simplejson
+
+from flask import current_app
 
 from invenio_indexer.signals import before_record_index
 from invenio_records.signals import (
@@ -37,6 +40,7 @@ from invenio_records.signals import (
 from .utils import author_tokenize
 
 
+@backoff.on_exception(backoff.expo, simplejson.JSONDecodeError, max_tries=5)
 def _query_beard_api(full_names):
     """Query Beard API.
 
