@@ -29,11 +29,11 @@ require([
   'angular-ui-bootstrap',
   'angular-xeditable',
   'angular-hotkeys',
-  'holding-pen-module'
+  'inspirehep-holdingpen'
   ], function() {
     // When the DOM is ready bootstrap the AngularJS modules
     angular.element(document).ready(function() {
       angular.bootstrap(
-        document.getElementById("holding-pen"), ['angular-loading-bar', 'invenioHoldingPen', 'invenioSearch'])
+        document.getElementById("holding-pen"), ['angular-loading-bar', 'inspirehepHoldingpen', 'invenioSearch'])
     });
 });

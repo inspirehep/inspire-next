@@ -46,11 +46,7 @@ require.config({
     'flight': 'node_modules/flightjs/build/flight',
     'hgn': 'node_modules/requirejs-hogan-plugin/hgn',
     'hogan': 'node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd',
-    'holding-pen-controllers': 'js/inspire_workflows_ui/holdingpen/holdingpen.controllers',
-    'holding-pen-directives': 'js/inspire_workflows_ui/holdingpen/holdingpen.directives',
-    'holding-pen-filters': 'js/inspire_workflows_ui/holdingpen/holdingpen.filters',
-    'holding-pen-module': 'js/inspire_workflows_ui/holdingpen/holdingpen.module',
-    'holding-pen-services': 'js/inspire_workflows_ui/holdingpen/holdingpen.services',
+    'inspirehep-holdingpen': 'node_modules/inspirehep-holdingpen-js/dist/inspirehep-holdingpen',
     'impact-graphs': 'node_modules/impact-graphs/impact-graph',
     'inspirehep-clipboard': 'js/inspire_clipboard',
     'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
@@ -130,39 +126,14 @@ require.config({
       ],
       exports: '$.fn.multiselect',
     },
-    'holding-pen-controllers': {
-      deps: [
-        'angular',
-     ],
-    },
-    'holding-pen-directives': {
-      deps: [
-        'angular',
-        'holding-pen-services',
-        'jquery',
-        'jquery.ui',
-      ],
-    },
-    'holding-pen-filters': {
-      deps: [
-        'angular',
-      ],
-    },
-    'holding-pen-module': {
+    'inspirehep-holdingpen': {
       deps: [
         'angular',
         'angular-filter',
         'angular-sanitize',
         'angular-ui-bootstrap',
-        'holding-pen-controllers',
-        'holding-pen-directives',
-        'holding-pen-filters',
-      ],
-    },
-    'holding-pen-services': {
-      deps: [
-        'angular',
-        'holding-pen-controllers',
+        'jquery',
+        'jquery.ui',
       ],
     },
     'impact-graphs': {

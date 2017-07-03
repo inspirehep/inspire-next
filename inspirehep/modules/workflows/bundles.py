@@ -37,6 +37,7 @@ details_js = NpmBundle(
     npm={
         "angular-filter": "~0.5.8",
         "angular-xeditable": "~0.1.12",
-        "angular-hotkeys-light": "~1.1.0"
+        "angular-hotkeys-light": "~1.1.0",
+        "inspirehep-holdingpen": "/home/admin-lib/.virtualenvs/inspirehep/src/inspirehep-holdingpen-js"
     }
 )
