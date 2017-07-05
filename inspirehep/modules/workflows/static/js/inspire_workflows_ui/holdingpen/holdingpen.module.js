@@ -31,6 +31,7 @@
     'holdingpen.controllers',
     'holdingpen.filters.abstract',
     'holdingpen.filters.categories',
+    'holdingpen.filters.unifyKeywords',
     'angular.filter'
   ]);
 

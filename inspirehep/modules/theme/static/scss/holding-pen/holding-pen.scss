@@ -602,7 +602,7 @@ $hp_table_bg: #fff;
 }
 
 .accept_core {
-  color: $green-sea
+  color: $green-sea;
 }
 
 .accept {
@@ -631,6 +631,14 @@ $hp_table_bg: #fff;
   .accept, .accept_curate {
     background-color: $orange;
     color: $dark-blue;
+  }
+
+  .accept_core_keyword {
+    color: $green-sea;
+  }
+
+  .accept_keyword {
+    color: $orange;
   }
 
 }

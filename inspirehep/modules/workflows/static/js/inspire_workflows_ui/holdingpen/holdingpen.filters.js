@@ -85,10 +85,27 @@
     }
   }
 
+  function unifyKeywordsFilter() {
+    return function (classifier_results) {
+      var filteredCoreKeywords = classifier_results['filtered_core_keywords'] || [];
+      var coreKeywords = classifier_results['core_keywords'] || [];
+      var keywords = filteredCoreKeywords.concat(coreKeywords)
+        .map(function(keyword) {
+          return keyword['keyword']
+        });
+
+      return Array.from(new Set(keywords));
+    }
+  }
+
   angular.module('holdingpen.filters.abstract', ['ngSanitize'])
     .filter('abstract', abstractFilter);
   
   angular.module('holdingpen.filters.categories', [])
     .filter('categories', categoriesFilter);
+
+  angular.module('holdingpen.filters.unifyKeywords', [])
+    .filter('unifyKeywords', unifyKeywordsFilter);
+
 
 })(angular);

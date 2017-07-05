@@ -117,14 +117,24 @@
             </div>
 
             <br/>
-            <div ng-if="record._source._extra_data.classifier_results.complete_output" class="small-text">
-              <p>Filtered keywords include:</p>
-              {{record._extra_data.classifier_results}}
+            <div
+              ng-init="filteredKeywords = record._source._extra_data.classifier_results.complete_output['filtered_core_keywords'];
+                allKeywords = (record._source._extra_data.classifier_results.complete_output | unifyKeywords)"
+              ng-if="record._source._extra_data.classifier_results.complete_output" class="small-text">
+              <p ng-class="{'accept_core_keyword': filteredKeywords.length > 1,
+                'accept_keyword': filteredKeywords.length < 1}">
+                {{filteredKeywords.length}} Filtered core keywords
+              </p>
               <span
-                ng-repeat="keyword in record._source._extra_data.classifier_results.complete_output['filtered_core_keywords']"
-                ng-if="$index < 4">
-                <span ng-bind="keyword['keyword']"></span><span ng-if="!$last">,</span>
+                ng-repeat="keyword in allKeywords">
+                <span ng-if="$index < 4" ng-bind="keyword"><span ng-if="!$last">,</span></span>
+                <span ng-if="$index > 3" ng-show="showKeywords" ng-bind="keyword"><span ng-if="!$last">,</span></span>
               </span>
+              <div>
+                <a ng-show="allKeywords.length > 4" href="" ng-click='showKeywords=!showKeywords'>
+                {{ showKeywords ? 'Hide keywords' : 'Show all keywords'}}
+                </a>
+              </div>
             </div>
 
           </div>
