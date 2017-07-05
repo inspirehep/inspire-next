@@ -283,6 +283,12 @@ setup(
             'inspire_workflows_audit = inspirehep.modules.workflows.models',
             'inspire_disambiguation = inspirehep.modules.disambiguation.models',
         ],
+        'invenio_celery.tasks': [
+            'inspire_refextract = inspirehep.modules.refextract.tasks',
+            'inspire_authors = inspirehep.modules.authors.tasks',
+            'inspire_disambiguation = inspirehep.modules.disambiguation.tasks',
+            'inspire_records = inspirehep.modules.records.tasks',
+        ],
     },
     tests_require=tests_require,
 )
