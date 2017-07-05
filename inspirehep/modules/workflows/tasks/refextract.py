@@ -83,10 +83,13 @@ def extract_journal_info(obj, eng):
 
 
 @timeout(5 * 60)
-def extract_references(filepath):
+def extract_references(filepath, custom_kbs_file=None):
     """Extract references from PDF and return in INSPIRE format."""
     references = extract_references_from_file(
-        filepath, reference_format=u'{title},{volume},{page}')
+        filepath,
+        override_kbs_files=custom_kbs_file,
+        reference_format=u'{title},{volume},{page}'
+    )
 
     result = []
 
