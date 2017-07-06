@@ -49,8 +49,8 @@ def go_to():
 
 
 def load_submitted_record(input_data):
-    def _load_submitted_record():
-        return (
+    def _assert_has_no_errors():
+        assert (
             input_data.get('abstract', '') in record and
             'Submitted by admin@inspirehep.net\non' in record and
             input_data.get('title', '') in record and
@@ -79,17 +79,18 @@ def load_submitted_record(input_data):
         go_to()
         record = load_submitted_record(input_data)
 
-    return ArsenicResponse(_load_submitted_record)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def accept_record():
-    def _accept_record():
-        return 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
+    def _assert_has_no_errors():
+        message = WebDriverWait(Arsenic(), 10).until(
             GetText((By.XPATH, ACCEPTED_MESSAGE))
         )
+        assert 'Accepted as Non-CORE' in message
 
     WebDriverWait(Arsenic(), 10).until(
         TryClick((By.XPATH, ACCEPT_NON_CORE_BUTTON))
     )
 
-    return ArsenicResponse(_accept_record)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)

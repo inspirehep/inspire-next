@@ -58,17 +58,20 @@ INPUT_AUTHOR_DATA = {
 
 def test_institutions_typeahead(login):
     author_submission_form.go_to()
-    assert author_submission_form.write_institution('cer', 'CERN').has_error()
+
+    author_submission_form.write_institution('cer', 'CERN').assert_has_no_errors()
 
 
 def test_experiments_typehead(login):
     author_submission_form.go_to()
-    assert author_submission_form.write_experiment('atl', 'ATLAS').has_error()
+
+    author_submission_form.write_experiment('atl', 'ATLAS').assert_has_no_errors()
 
 
 def test_advisors_typehead(login):
     author_submission_form.go_to()
-    assert author_submission_form.write_advisor('alexe', 'Vorobyev, Alexey').has_error()
+
+    author_submission_form.write_advisor('alexe', 'Vorobyev, Alexey').assert_has_no_errors()
 
 
 def test_mandatory_fields(login):
@@ -79,22 +82,27 @@ def test_mandatory_fields(login):
     }
 
     author_submission_form.go_to()
-    assert author_submission_form.submit_empty_form(expected_data).has_error()
+
+    author_submission_form.submit_empty_form(expected_data).assert_has_no_errors()
 
 
 def test_submit_author(login):
     author_submission_form.go_to()
-    assert author_submission_form.submit_author(INPUT_AUTHOR_DATA).has_error()
+
+    author_submission_form.submit_author(INPUT_AUTHOR_DATA).assert_has_no_errors()
 
     holdingpen_author_list.go_to()
-    assert holdingpen_author_list.load_submission_record(
+
+    holdingpen_author_list.load_submission_record(
         INPUT_AUTHOR_DATA
-    ).has_error()
+    ).assert_has_no_errors()
 
     holdingpen_author_detail.go_to()
-    assert holdingpen_author_detail.load_submitted_record(
+
+    holdingpen_author_detail.load_submitted_record(
         INPUT_AUTHOR_DATA
-    ).has_error()
+    ).assert_has_no_errors()
+
     holdingpen_author_detail.reject_record()
 
 
@@ -105,7 +113,8 @@ def test_accept_author(login):
     holdingpen_author_list.load_submission_record(INPUT_AUTHOR_DATA)
     holdingpen_author_detail.go_to()
     holdingpen_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holdingpen_author_detail.accept_record().has_error()
+
+    holdingpen_author_detail.accept_record().assert_has_no_errors()
 
 
 def test_reject_author(login):
@@ -115,7 +124,8 @@ def test_reject_author(login):
     holdingpen_author_list.load_submission_record(INPUT_AUTHOR_DATA)
     holdingpen_author_detail.go_to()
     holdingpen_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holdingpen_author_detail.reject_record().has_error()
+
+    holdingpen_author_detail.reject_record().assert_has_no_errors()
 
 
 def test_curation_author(login):
@@ -125,7 +135,8 @@ def test_curation_author(login):
     holdingpen_author_list.load_submission_record(INPUT_AUTHOR_DATA)
     holdingpen_author_detail.go_to()
     holdingpen_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holdingpen_author_detail.curation_record().has_error()
+
+    holdingpen_author_detail.curation_record().assert_has_no_errors()
 
 
 def test_review_submission_author(login):
@@ -135,4 +146,5 @@ def test_review_submission_author(login):
     holdingpen_author_list.load_submission_record(INPUT_AUTHOR_DATA)
     holdingpen_author_detail.go_to()
     holdingpen_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holdingpen_author_detail.review_record(INPUT_AUTHOR_DATA).has_error()
+
+    holdingpen_author_detail.review_record(INPUT_AUTHOR_DATA).assert_has_no_errors()

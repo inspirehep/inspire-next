@@ -83,13 +83,12 @@ EXPAND_ADDITIONAL_COMMENTS = """
 """
 
 
-
 def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/literature/new')
 
 
 def submit_article(input_data):
-    def _assert_successful_article_submission():
+    def _assert_has_no_errors():
         result = (
             'The INSPIRE staff will review it and your changes will be added '
             'to INSPIRE.'
@@ -99,7 +98,6 @@ def submit_article(input_data):
             )
         ).text
         assert result
-        return result
 
     _skip_import_data()
     Arsenic().hide_title_bar()
@@ -111,19 +109,20 @@ def submit_article(input_data):
     Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
     Arsenic().show_title_bar()
 
-    return ArsenicResponse(_assert_successful_article_submission)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def submit_thesis(input_data):
-    def _submit_thesis():
-        return (
-            'The INSPIRE staff will review it and your changes will be added '
-            'to INSPIRE.'
-        ) in WebDriverWait(Arsenic(), 10).until(
+    def _assert_has_no_errors():
+        message = WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located(
                 (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
             )
         ).text
+        assert (
+            'The INSPIRE staff will review it and your changes will be added '
+            'to INSPIRE.'
+        ) in message
 
     _skip_import_data()
     Arsenic().hide_title_bar()
@@ -135,19 +134,21 @@ def submit_thesis(input_data):
     Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
     Arsenic().show_title_bar()
 
-    return ArsenicResponse(_submit_thesis)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def submit_book(input_data):
-    def _submit_book():
-        return (
-            'The INSPIRE staff will review it and your changes will be added '
-            'to INSPIRE.'
-        ) in WebDriverWait(Arsenic(), 10).until(
+    def _assert_has_no_errors():
+        message = WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located(
                 (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
             )
         ).text
+
+        assert (
+            'The INSPIRE staff will review it and your changes will be added '
+            'to INSPIRE.'
+        ) in message
 
     _skip_import_data()
     Arsenic().hide_title_bar()
@@ -159,19 +160,21 @@ def submit_book(input_data):
     Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
     Arsenic().show_title_bar()
 
-    return ArsenicResponse(_submit_book)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def submit_chapter(input_data):
-    def _submit_chapter():
-        return (
-            'The INSPIRE staff will review it and your changes will be added '
-            'to INSPIRE.'
-        ) in WebDriverWait(Arsenic(), 10).until(
+    def _assert_has_no_errors():
+        message = WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located(
                 (By.XPATH, SUBMIT_RESULT_ALERT_CHAPTER_SUCCESS)
             )
         ).text
+
+        assert (
+            'The INSPIRE staff will review it and your changes will be added '
+            'to INSPIRE.'
+        ) in message
 
     _skip_import_data()
     Arsenic().hide_title_bar()
@@ -183,19 +186,21 @@ def submit_chapter(input_data):
     Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
     Arsenic().show_title_bar()
 
-    return ArsenicResponse(_submit_chapter)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def submit_journal_article_with_proceeding(input_data):
-    def _submit_journal_article_with_proceeding():
-        return (
-            'The INSPIRE staff will review it and your changes will be added '
-            'to INSPIRE.'
-        ) in WebDriverWait(Arsenic(), 10).until(
+    def _assert_has_no_errors():
+        message = WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located(
                 (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
             )
         ).text
+
+        assert (
+            'The INSPIRE staff will review it and your changes will be added '
+            'to INSPIRE.'
+        ) in message
 
     _skip_import_data()
     Arsenic().hide_title_bar()
@@ -207,19 +212,20 @@ def submit_journal_article_with_proceeding(input_data):
     Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
     Arsenic().show_title_bar()
 
-    return ArsenicResponse(_submit_journal_article_with_proceeding)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def submit_journal_article(input_data):
-    def _submit_journal_article():
-        return (
-            'The INSPIRE staff will review it and your changes will be added '
-            'to INSPIRE.'
-        ) in WebDriverWait(Arsenic(), 10).until(
+    def _assert_has_no_errors():
+        message = WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located(
                 (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
             )
         ).text
+        assert (
+            'The INSPIRE staff will review it and your changes will be added '
+            'to INSPIRE.'
+        ) in message
 
     _skip_import_data()
     Arsenic().hide_title_bar()
@@ -230,7 +236,7 @@ def submit_journal_article(input_data):
     Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
     Arsenic().show_title_bar()
 
-    return ArsenicResponse(_submit_journal_article)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def _populate_thesis_info(input_data):
@@ -312,7 +318,6 @@ def _populate_basic_info(input_data):
             input_data['title_translation']
         )
 
-
     _populate_subjects(input_data.get('subjects', []))
     _populate_authors(input_data.get('authors', []))
 
@@ -389,7 +394,6 @@ def _deprecated_populate_basic_info(input_data):
     )
 
 
-
 def _populate_journal_conference(input_data):
     Arsenic().find_element_by_id('journal_title').send_keys(
         input_data['journal_title']
@@ -426,50 +430,143 @@ def _populate_references_comment(input_data):
     ).send_keys(input_data['extra-comments'])
 
 
+def write_pdf_link(pdf_link):
+    try:
+        WebDriverWait(Arsenic(), 5).until(
+            EC.visibility_of_element_located((By.ID, 'url'))
+        )
+    except (ElementNotVisibleException, WebDriverException):
+        _skip_import_data()
+    field = WebDriverWait(Arsenic(), 5).until(
+        EC.visibility_of_element_located((By.ID, 'url'))
+    )
+    field.send_keys(pdf_link)
+    Arsenic().hide_title_bar()
+    Arsenic().click_with_coordinates('state-group-url', 5, 5)
+    try:
+        message_err = WebDriverWait(Arsenic(), 10).until(
+            EC.visibility_of_element_located((By.ID, 'state-url'))
+        ).text
+    except (ElementNotVisibleException, WebDriverException):
+        message_err = ''
+    Arsenic().show_title_bar()
+    field.clear()
+
+    def _assert_has_errors():
+        assert (
+            'Please, provide an accessible direct link to a PDF document.'
+        ) in message_err
+
+    def _assert_has_no_errors():
+        assert (
+            'Please, provide an accessible direct link to a PDF document.'
+        ) not in message_err
+
+    return ArsenicResponse(
+        assert_has_errors_func=_assert_has_errors,
+        assert_has_no_errors_func=_assert_has_no_errors,
+    )
+
+
+def write_date_thesis(date_field, error_message_id, date):
+    try:
+        WebDriverWait(Arsenic(), 5).until(
+            EC.visibility_of_element_located((By.ID, date_field))
+        )
+    except (ElementNotVisibleException, WebDriverException):
+        _skip_import_data()
+        _populate_document_type('thesis')
+
+    field = WebDriverWait(Arsenic(), 5).until(
+        EC.visibility_of_element_located((By.ID, date_field))
+    )
+    field.send_keys(date)
+    Arsenic().hide_title_bar()
+    Arsenic().click_with_coordinates('state-group-supervisors', 5, 5)
+    try:
+        error_message = WebDriverWait(Arsenic(), 5).until(
+            EC.visibility_of_element_located((By.ID, error_message_id))
+        ).text
+    except (ElementNotVisibleException, WebDriverException):
+        error_message = ''
+    Arsenic().show_title_bar()
+    field.clear()
+
+    def _assert_has_errors():
+        return (
+            'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM '
+            'or YYYY.'
+        ) in error_message
+
+    def _assert_has_no_errors():
+        return (
+            'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM '
+            'or YYYY.'
+        ) not in error_message
+
+    return ArsenicResponse(
+        assert_has_errors_func=_assert_has_errors,
+        assert_has_no_errors_func=_assert_has_no_errors,
+    )
+
+
 def write_institution_thesis(institution, expected_data):
-    def _write_institution_thesis():
-        return expected_data == Arsenic().write_in_autocomplete_field(
-            'supervisors-0-affiliation', institution)
+    def _assert_has_no_errors():
+        assert (
+            expected_data == Arsenic().write_in_autocomplete_field(
+                'supervisors-0-affiliation',
+                institution,
+            )
+        )
 
     _skip_import_data()
     _populate_document_type('thesis')
     WebDriverWait(Arsenic(), 5).until(
         EC.visibility_of_element_located((By.ID, 'supervisors-0-affiliation'))
     )
-    return ArsenicResponse(_write_institution_thesis)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def write_conference(conference_title, expected_data):
-    def _write_conference():
-        return expected_data in Arsenic().write_in_autocomplete_field(
-            'conf_name', conference_title)
+    def _assert_has_no_errors():
+        assert (
+            expected_data in Arsenic().write_in_autocomplete_field(
+                'conf_name',
+                conference_title,
+            )
+        )
 
     _skip_import_data()
-    return ArsenicResponse(_write_conference)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def write_journal_title(journal_title, expected_data):
-    def _write_journal_title():
-        return expected_data in Arsenic().write_in_autocomplete_field(
-            'journal_title', journal_title)
+    def _assert_has_no_errors():
+        assert (
+            expected_data in Arsenic().write_in_autocomplete_field(
+                'journal_title',
+                journal_title,
+            )
+        )
 
     _skip_import_data()
-    return ArsenicResponse(_write_journal_title)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def write_affiliation(affiliation, expected_data):
-    def _write_affiliation():
-        return expected_data == Arsenic().write_in_autocomplete_field(
-            'authors-0-affiliation', affiliation)
+    def _assert_has_no_errors():
+        assert (
+            expected_data == Arsenic().write_in_autocomplete_field(
+                'authors-0-affiliation',
+                affiliation,
+            )
+        )
 
     _skip_import_data()
-    return ArsenicResponse(_write_affiliation)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def submit_arxiv_id(arxiv_id, expected_data):
-    def _submit_arxiv_id():
-        return expected_data == output_data
-
     Arsenic().find_element_by_id('arxiv_id').send_keys(arxiv_id)
     WebDriverWait(Arsenic(), 10).until(
         EC.visibility_of_element_located((By.ID, 'importData'))
@@ -504,13 +601,13 @@ def submit_arxiv_id(arxiv_id, expected_data):
         ).get_attribute('value')
     }
 
-    return ArsenicResponse(_submit_arxiv_id)
+    def _assert_has_no_errors():
+        return expected_data == output_data
+
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def submit_doi_id(doi_id, expected_data):
-    def _submit_doi_id():
-        return expected_data == output_data
-
     Arsenic().find_element_by_id('doi').send_keys(doi_id)
     Arsenic().find_element_by_id('importData').click()
     WebDriverWait(Arsenic(), 20).until(
@@ -545,7 +642,10 @@ def submit_doi_id(doi_id, expected_data):
         ).get_attribute('value')
     }
 
-    return ArsenicResponse(_submit_doi_id)
+    def _assert_has_no_errors():
+        assert expected_data == output_data
+
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def _skip_import_data():
