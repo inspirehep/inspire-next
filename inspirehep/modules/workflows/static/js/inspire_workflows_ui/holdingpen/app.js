@@ -26,6 +26,7 @@ require([
   'angular-filter',
   'angular-loading-bar',
   'invenio-search',
+  'inspirehep-search',
   'angular-ui-bootstrap',
   'angular-xeditable',
   'angular-hotkeys',
@@ -34,6 +35,6 @@ require([
     // When the DOM is ready bootstrap the AngularJS modules
     angular.element(document).ready(function() {
       angular.bootstrap(
-        document.getElementById("holding-pen"), ['angular-loading-bar', 'invenioHoldingPen', 'invenioSearch'])
+        document.getElementById("holding-pen"), ['angular-loading-bar', 'invenioHoldingPen', 'invenioSearch', 'inspirehepSearch'])
     });
 });
