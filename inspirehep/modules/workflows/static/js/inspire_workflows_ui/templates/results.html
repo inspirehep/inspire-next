@@ -122,7 +122,7 @@
                 allKeywords = (record._source._extra_data.classifier_results.complete_output | unifyKeywords)"
               ng-if="record._source._extra_data.classifier_results.complete_output" class="small-text">
               <p ng-class="{'accept_core_keyword': filteredKeywords.length > 1,
-                'accept_keyword': filteredKeywords.length < 1}">
+                'accept_keyword': filteredKeywords.length < 2}">
                 {{filteredKeywords.length}} Filtered core keywords
               </p>
               <span
