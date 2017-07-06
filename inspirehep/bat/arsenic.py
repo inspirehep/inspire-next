@@ -72,7 +72,24 @@ class Arsenic(object):
 
 
 class ArsenicResponse(object):
-    has_error = None
+    statement = None
+    negative_statement = None
 
-    def __init__(self, has_error):
-        self.has_error = has_error
+    def __init__(self, statement, negative_statement=None):
+        """Init method.
+
+        :param statement: sets the function that will
+        be called to verify that a given event occured
+        :type source: function
+        :param negative_statement: sets the function that will
+        be called to verify that a given event did not occur
+        :type record: function
+        """
+        self.statement = statement
+        self.negative_statement = negative_statement
+
+    def assert_no_errors(self):
+        self.statement()
+
+    def assert_errors(self):
+        self.negative_statement()

@@ -45,7 +45,7 @@ def go_to():
 
 def load_submitted_record(input_data):
     def _load_submitted_record():
-        res = (
+        assert (
             'M. Twain' in record and
             'Twain, Mark' in record and
             'retired' in record and
@@ -65,8 +65,6 @@ def load_submitted_record(input_data):
             '2000' in record and
             '2001' in record
         )
-        assert res
-        return res
 
     try:
         record = WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-detailed-info')))
@@ -86,7 +84,7 @@ def load_submitted_record(input_data):
 
 def accept_record():
     def _accept_record():
-        return 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
+        assert 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
             GetText((By.XPATH, '//div[@class="alert ng-scope alert-accept"]')))
 
     Arsenic().find_element_by_id('btn-accept').click()
@@ -95,7 +93,7 @@ def accept_record():
 
 def reject_record():
     def _reject_record():
-        return 'Rejected' in WebDriverWait(Arsenic(), 10).until(
+        assert 'Rejected' in WebDriverWait(Arsenic(), 10).until(
             GetText((By.XPATH, '//div[@class="alert ng-scope alert-reject"]')))
 
     Arsenic().find_element_by_id('btn-reject-submission').click()
@@ -104,7 +102,7 @@ def reject_record():
 
 def curation_record():
     def _curation_record():
-        return 'Accepted with Curation' in WebDriverWait(Arsenic(), 10).until(
+        assert 'Accepted with Curation' in WebDriverWait(Arsenic(), 10).until(
             GetText((By.XPATH, '//span[@ng-switch-when="accept_curate"]')))
 
     Arsenic().find_element_by_id('btn-accept-curation').click()
@@ -115,9 +113,9 @@ def review_record(input_data):
     def _review_record():
         def _text_in_element(element_id, text):
             try:
-                return text in Arsenic().find_element_by_id(element_id).get_attribute('value')
+                assert text in Arsenic().find_element_by_id(element_id).get_attribute('value')
             except TypeError:
-                return text in Arsenic().find_element_by_id(element_id).text
+                assert text in Arsenic().find_element_by_id(element_id).text
         return (
             WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'inspireid'))) and
             WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'bai'))) and

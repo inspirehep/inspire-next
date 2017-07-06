@@ -77,7 +77,7 @@ def click_first_record():
 
 def load_submitted_record():
     def _load_submitted_record():
-        return (
+        assert (
             'Computing' in record and
             'Accelerators' in record and
             'My Title For Test' in record and
@@ -92,7 +92,7 @@ def load_submitted_record():
 
 def load_completed_record():
     def _load_completed_record():
-        return 'Completed' in record
+        assert 'Completed' in record
 
     record = force_load_record('//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler/div[4]/a')
     return ArsenicResponse(_load_completed_record)

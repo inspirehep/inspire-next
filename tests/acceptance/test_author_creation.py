@@ -58,29 +58,29 @@ INPUT_AUTHOR_DATA = {
 
 def test_institutions_typeahead(login):
     create_author.go_to()
-    assert create_author.write_institution('cer', 'CERN').has_error()
+    create_author.write_institution('cer', 'CERN').assert_no_errors()
 
 
 def test_experiments_typehead(login):
     create_author.go_to()
-    assert create_author.write_experiment('atl', 'ATLAS').has_error()
+    create_author.write_experiment('atl', 'ATLAS').assert_no_errors()
 
 
 def test_advisors_typehead(login):
     create_author.go_to()
-    assert create_author.write_advisor('alexe', 'Vorobyev, Alexey').has_error()
+    create_author.write_advisor('alexe', 'Vorobyev, Alexey').assert_no_errors()
 
 
 def test_mail_format(login):
     create_author.go_to()
-    assert create_author.write_mail('wrong.mail').has_error()
-    assert not create_author.write_mail('me@me.com').has_error()
+    create_author.write_mail('wrong.mail').assert_no_errors()
+    create_author.write_mail('me@me.com').assert_errors()
 
 
 def test_ORCID_format(login):
     create_author.go_to()
-    assert create_author.write_orcid('wrong.ORCID').has_error()
-    assert not create_author.write_orcid('1111-1111-1111-1111').has_error()
+    create_author.write_orcid('wrong.ORCID').assert_no_errors()
+    create_author.write_orcid('1111-1111-1111-1111').assert_errors()
 
 
 def test_institutions_years(login):
@@ -88,29 +88,29 @@ def test_institutions_years(login):
 
     input_id = 'institution_history-0-start_year'
     error_mess_id = 'state-institution_history-0-start_year'
-    assert create_author.write_year(
+    create_author.write_year(
         input_id,
         error_mess_id,
         'wrongyear',
-    ).has_error()
-    assert not create_author.write_year(
+    ).assert_no_errors()
+    create_author.write_year(
         input_id,
         error_mess_id,
         '2016',
-    ).has_error()
+    ).assert_errors()
 
     input_id = 'institution_history-0-end_year'
     error_mess_id = 'state-institution_history-0-end_year'
-    assert create_author.write_year(
+    create_author.write_year(
         input_id,
         error_mess_id,
         'wrongyear',
-    ).has_error()
-    assert not create_author.write_year(
+    ).assert_no_errors()
+    create_author.write_year(
         input_id,
         error_mess_id,
         '2016',
-    ).has_error()
+    ).assert_errors()
 
 
 def test_experiments_years(login):
@@ -118,29 +118,29 @@ def test_experiments_years(login):
 
     input_id = 'experiments-0-start_year'
     error_mess_id = 'state-experiments-0-start_year'
-    assert create_author.write_year(
+    create_author.write_year(
         input_id,
         error_mess_id,
         'wrongyear',
-    ).has_error()
-    assert not create_author.write_year(
+    ).assert_no_errors()
+    create_author.write_year(
         input_id,
         error_mess_id,
         '2016',
-    ).has_error()
+    ).assert_errors()
 
     input_id = 'experiments-0-end_year'
     error_mess_id = 'state-experiments-0-end_year'
-    assert create_author.write_year(
+    create_author.write_year(
         input_id,
         error_mess_id,
         'wrongyear',
-    ).has_error()
-    assert not create_author.write_year(
+    ).assert_no_errors()
+    create_author.write_year(
         input_id,
         error_mess_id,
         '2016',
-    ).has_error()
+    ).assert_errors()
 
 
 def test_mandatory_fields(login):
@@ -151,22 +151,22 @@ def test_mandatory_fields(login):
     }
 
     create_author.go_to()
-    assert create_author.submit_empty_form(expected_data).has_error()
+    create_author.submit_empty_form(expected_data).assert_no_errors()
 
 
 def test_submit_author(login):
     create_author.go_to()
-    assert create_author.submit_author(INPUT_AUTHOR_DATA).has_error()
+    create_author.submit_author(INPUT_AUTHOR_DATA).assert_no_errors()
 
     holding_panel_author_list.go_to()
-    assert holding_panel_author_list.load_submission_record(
+    holding_panel_author_list.load_submission_record(
         INPUT_AUTHOR_DATA
-    ).has_error()
+    ).assert_no_errors()
 
     holding_panel_author_detail.go_to()
-    assert holding_panel_author_detail.load_submitted_record(
+    holding_panel_author_detail.load_submitted_record(
         INPUT_AUTHOR_DATA
-    ).has_error()
+    ).assert_no_errors()
     holding_panel_author_detail.reject_record()
 
 
@@ -177,7 +177,7 @@ def test_accept_author(login):
     holding_panel_author_list.load_submission_record(INPUT_AUTHOR_DATA)
     holding_panel_author_detail.go_to()
     holding_panel_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holding_panel_author_detail.accept_record().has_error()
+    holding_panel_author_detail.accept_record().assert_no_errors()
 
 
 def test_reject_author(login):
@@ -187,7 +187,7 @@ def test_reject_author(login):
     holding_panel_author_list.load_submission_record(INPUT_AUTHOR_DATA)
     holding_panel_author_detail.go_to()
     holding_panel_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holding_panel_author_detail.reject_record().has_error()
+    holding_panel_author_detail.reject_record().assert_no_errors()
 
 
 def test_curation_author(login):
@@ -197,7 +197,7 @@ def test_curation_author(login):
     holding_panel_author_list.load_submission_record(INPUT_AUTHOR_DATA)
     holding_panel_author_detail.go_to()
     holding_panel_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holding_panel_author_detail.curation_record().has_error()
+    holding_panel_author_detail.curation_record().assert_no_errors()
 
 
 def test_review_submission_author(login):
@@ -207,4 +207,4 @@ def test_review_submission_author(login):
     holding_panel_author_list.load_submission_record(INPUT_AUTHOR_DATA)
     holding_panel_author_detail.go_to()
     holding_panel_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holding_panel_author_detail.review_record(INPUT_AUTHOR_DATA).has_error()
+    holding_panel_author_detail.review_record(INPUT_AUTHOR_DATA).assert_no_errors()

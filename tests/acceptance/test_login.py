@@ -26,4 +26,4 @@ from inspirehep.bat.pages import top_navigation_page
 
 
 def test_login(login):
-    assert top_navigation_page.am_i_logged()
+    top_navigation_page.log_in_user().assert_no_errors()

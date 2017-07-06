@@ -43,7 +43,7 @@ def go_to():
 
 def submit_thesis(input_data):
     def _submit_thesis():
-        return (
+        assert (
             'The INSPIRE staff will review it and your changes will be added '
             'to INSPIRE.'
         ) in WebDriverWait(Arsenic(), 10).until(
@@ -72,7 +72,7 @@ def submit_thesis(input_data):
 
 def submit_journal_article_with_proceeding(input_data):
     def _submit_journal_article_with_proceeding():
-        return (
+        assert (
             'The INSPIRE staff will review it and your changes will be added '
             'to INSPIRE.'
         ) in WebDriverWait(Arsenic(), 10).until(
@@ -101,7 +101,7 @@ def submit_journal_article_with_proceeding(input_data):
 
 def submit_journal_article(input_data):
     def _submit_journal_article():
-        return (
+        assert (
             'The INSPIRE staff will review it and your changes will be added '
             'to INSPIRE.'
         ) in WebDriverWait(Arsenic(), 10).until(
@@ -245,8 +245,13 @@ def _references_comment_population(input_data):
 
 
 def write_pdf_link(pdf_link):
+    def _negative_write_pdf_link():
+        assert (
+            'Please, provide an accessible direct link to a PDF document.'
+        ) not in message_err
+
     def _write_pdf_link():
-        return (
+        assert (
             'Please, provide an accessible direct link to a PDF document.'
         ) in message_err
 
@@ -271,7 +276,7 @@ def write_pdf_link(pdf_link):
     Arsenic().show_title_bar()
     field.clear()
 
-    return ArsenicResponse(_write_pdf_link)
+    return ArsenicResponse(_write_pdf_link, negative_statement=_negative_write_pdf_link)
 
 
 def write_date_thesis(date_field, error_message_id, date):
@@ -297,18 +302,24 @@ def write_date_thesis(date_field, error_message_id, date):
     Arsenic().show_title_bar()
     field.clear()
 
-    def _has_error():
-        return (
+    def _negative_has_error_message():
+        assert (
             'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM '
             'or YYYY.'
         ) in error_message
 
-    return ArsenicResponse(_has_error)
+    def _has_error_message():
+        assert (
+            'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM '
+            'or YYYY.'
+        ) not in error_message
+
+    return ArsenicResponse(_has_error_message, negative_statement=_negative_has_error_message)
 
 
 def write_institution_thesis(institution, expected_data):
     def _write_institution_thesis():
-        return expected_data == Arsenic().write_in_autocomplete_field(
+        assert expected_data == Arsenic().write_in_autocomplete_field(
             'supervisors-0-affiliation', institution)
 
     _skip_import_data()
@@ -321,7 +332,7 @@ def write_institution_thesis(institution, expected_data):
 
 def write_conference(conference_title, expected_data):
     def _write_conference():
-        return expected_data in Arsenic().write_in_autocomplete_field(
+        assert expected_data in Arsenic().write_in_autocomplete_field(
             'conf_name', conference_title)
 
     _skip_import_data()
@@ -330,7 +341,7 @@ def write_conference(conference_title, expected_data):
 
 def write_journal_title(journal_title, expected_data):
     def _write_journal_title():
-        return expected_data in Arsenic().write_in_autocomplete_field(
+        assert expected_data in Arsenic().write_in_autocomplete_field(
             'journal_title', journal_title)
 
     _skip_import_data()
@@ -339,7 +350,7 @@ def write_journal_title(journal_title, expected_data):
 
 def write_affiliation(affiliation, expected_data):
     def _write_affiliation():
-        return expected_data == Arsenic().write_in_autocomplete_field(
+        assert expected_data == Arsenic().write_in_autocomplete_field(
             'authors-0-affiliation', affiliation)
 
     _skip_import_data()
@@ -347,8 +358,13 @@ def write_affiliation(affiliation, expected_data):
 
 
 def write_arxiv_id(arxiv_id):
+    def _negative_write_arxiv_id():
+        assert (
+            'The provided ArXiv ID is invalid - it should look'
+        ) not in message_err
+
     def _write_arxiv_id():
-        return (
+        assert (
             'The provided ArXiv ID is invalid - it should look'
         ) in message_err
 
@@ -362,12 +378,15 @@ def write_arxiv_id(arxiv_id):
     except (ElementNotVisibleException, WebDriverException):
         message_err = ''
 
-    return ArsenicResponse(_write_arxiv_id)
+    return ArsenicResponse(_write_arxiv_id, negative_statement=_negative_write_arxiv_id)
 
 
 def write_doi_id(doi):
+    def _negative_write_doi_id():
+        assert 'The provided DOI is invalid - it should look' not in message_err
+
     def _write_doi_id():
-        return 'The provided DOI is invalid - it should look' in message_err
+        assert 'The provided DOI is invalid - it should look' in message_err
 
     Arsenic().find_element_by_id('doi').clear()
     Arsenic().find_element_by_id('doi').send_keys(doi)
@@ -379,12 +398,15 @@ def write_doi_id(doi):
     except (ElementNotVisibleException, WebDriverException):
         message_err = ''
 
-    return ArsenicResponse(_write_doi_id)
+    return ArsenicResponse(_write_doi_id, negative_statement=_negative_write_doi_id)
 
 
 def submit_arxiv_id(arxiv_id, expected_data):
+    def _negative_submit_arxiv_id():
+        assert expected_data != output_data
+
     def _submit_arxiv_id():
-        return expected_data == output_data
+        assert expected_data == output_data
 
     Arsenic().find_element_by_id('arxiv_id').send_keys(arxiv_id)
     WebDriverWait(Arsenic(), 10).until(
@@ -420,12 +442,12 @@ def submit_arxiv_id(arxiv_id, expected_data):
         ).get_attribute('value')
     }
 
-    return ArsenicResponse(_submit_arxiv_id)
+    return ArsenicResponse(_submit_arxiv_id, negative_statement=_submit_arxiv_id)
 
 
 def submit_doi_id(doi_id, expected_data):
     def _submit_doi_id():
-        return expected_data == output_data
+        assert expected_data == output_data
 
     Arsenic().find_element_by_id('doi').send_keys(doi_id)
     Arsenic().find_element_by_id('importData').click()
