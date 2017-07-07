@@ -33,7 +33,8 @@ of a Docker container, you can follow `this tutorial
 Inspire and Docker
 ##################
 
-Get the latest Docker setup.
+Get the latest Docker appropriate to your operationg system, by visiting `Docker's official web site <https://www.docker.com/>`_ and accessing the
+*Get Docker* section.
 
 .. note:: If you are using Mac, please build a simple box with ``docker-engine`` above ``1.10`` and
          ``docker-compose`` above ``1.6.0``.
@@ -48,19 +49,19 @@ Make sure you can run docker without ``sudo``.
 
 - ``sudo usermod -a -G docker $USER``
 
-Get `docker-compose
+Get the latest `docker-compose
 <https://docs.docker.com/compose/>`_:
 
 .. code-block:: console
 
- sudo pip install docker-compose
+   $ sudo pip install docker-compose
 
 - Add ``DOCKER_DATA`` env variable in your ``.bashrc`` or ``.zshrc``. In this directory you will have all the persistent data between Docker runs.
 
 .. code-block:: console
 
- shell mkdir -p "$DOCKER_DATA"
- export DOCKER_DATA=~/inspirehep_docker_data/
+   $ export DOCKER_DATA=~/inspirehep_docker_data/
+   $ mkdir -p "$DOCKER_DATA"
 
 By default the virtualenv and everything else will be kept on ``/tmp`` and they will be available only until the next reboot.
 
@@ -70,15 +71,16 @@ By default the virtualenv and everything else will be kept on ``/tmp`` and they 
 
  From now on all the docker-compose commands must be run at the root of the
  inspire-next repository, you can get a local copy with:
- .. code-block:: console
-
-  git clone git://github.com/inspirehep/inspire-next
-  cd inspire-next
 
 .. code-block:: console
 
- docker-compose pull
- docker-compose -f docker-compose.deps.yml run --rm pip
+   $ git clone git://github.com/inspirehep/inspire-next
+   $ cd inspire-next
+
+.. code-block:: console
+
+   $ docker-compose pull
+   $ docker-compose -f docker-compose.deps.yml run --rm pip
 
 .. note:: If you have trouble with internet connection inside docker probably you are facing known
           DNS issue. Please follow `this solution
@@ -87,19 +89,19 @@ By default the virtualenv and everything else will be kept on ``/tmp`` and they 
 
 .. code-block:: console
 
- docker-compose -f docker-compose.deps.yml run --rm assets
+   $ docker-compose -f docker-compose.deps.yml run --rm assets
 
 - Run the service locally
 
 .. code-block:: console
 
- docker-compose up
+   $ docker-compose up
 
 - Populate database
 
 .. code-block:: console
 
- docker-compose run --rm web scripts/recreate_records
+   $ docker-compose run --rm web scripts/recreate_records
 
 
 Once you have the database populated with the tables and demo records, you can
@@ -126,8 +128,8 @@ You can choose one of the following tests types:
 
 .. code-block:: console
 
- docker-compose -f docker-compose.test.yml run --rm <tests type>
- docker-compose -f docker-compose.test.yml down
+   $ docker-compose -f docker-compose.test.yml run --rm <tests type>
+   $ docker-compose -f docker-compose.test.yml down
 
 .. tip:: - cleanup all the containers:
 
@@ -148,7 +150,7 @@ Extra useful tips
 
 .. code-block:: console
 
- docker-compose run --rm web inspirehep shell
+   $ docker-compose run --rm web inspirehep shell
 
 - Run *virtualenv* bash shell for running scripts manually (e.g. recreating records or `building documentation`_)
 
@@ -156,30 +158,30 @@ Extra useful tips
 
 .. code-block:: console
 
- docker-compose run --rm web bash
+   $ docker-compose run --rm web bash
 
 - Reload code in a worker
 
 .. code-block:: console
 
- docker-compose restart worker
+   $ docker-compose restart worker
 
 - Quick and safe reindex
 
 .. code-block:: console
 
- docker-compose restart worker && docker-compose run --rm web scripts/recreate_records
+   $ docker-compose restart worker && docker-compose run --rm web scripts/recreate_records
 
 - Recreate all static assets. Will download all dependencies from npm and copy all static
   files to ``${DOCKER_DATA}/tmp/virtualenv/var/inspirehep-instance/static``.
 
 .. code-block:: console
 
- docker-compose -f docker-compose.deps.yml run --rm assets
+   $ docker-compose -f docker-compose.deps.yml run --rm assets
 
 - Monitor the output from all the services (elasticsearch, web, celery workers, database, flower, rabbitmq, scrapyd, redis)
   via the following command:
 
 .. code-block:: console
 
- docker-compose up
+   $ docker-compose up
