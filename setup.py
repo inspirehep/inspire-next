@@ -59,7 +59,8 @@ install_requires = [
     'invenio-i18n>=1.0.0a4',
     'invenio-indexer>=1.0.0a10',
     'invenio-jsonschemas>=1.0.0a4',
-    'invenio-logging>=1.0.0a3',
+    # FIXME: using custom fork until inveniosoftware/invenio-logging#30 is merged
+    # 'invenio-logging>=1.0.0a3',
     'invenio-mail>=1.0.0a4',
     'invenio-oauthclient>=1.0.0a8',
     'invenio-orcid>=1.0.0a1',
