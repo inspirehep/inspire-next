@@ -44,7 +44,13 @@ from flask_login import login_required, current_user
 from werkzeug.datastructures import MultiDict
 
 from invenio_db import db
-from invenio_workflows import workflow_object_class, start, resume
+
+from invenio_workflows import (
+    workflow_object_class,
+    start,
+    resume,
+    WorkflowEngine,
+)
 from invenio_workflows_ui.api import WorkflowUIRecord
 
 from inspire_dojson import marcxml2record
@@ -275,11 +281,20 @@ def submitupdate():
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
     workflow_object.extra_data['is-update'] = True
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
+
+    engine = WorkflowEngine.with_name('author')
+    workflow_object.id_workflow = str(engine.uuid)
+
     workflow_object.save()
+    engine.save()
     db.session.commit()
 
     # Start workflow. delay will execute the workflow in the background
-    start.delay("author", object_id=workflow_object.id)
+    start.delay(
+        "author",
+        object_id=workflow_object.id,
+        engine_uuid_hex=engine.uuid.get_hex(),
+    )
 
     ctx = {
         "inspire_url": get_inspire_url(visitor.data)
@@ -304,12 +319,21 @@ def submitnew():
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
     workflow_object.extra_data['is-update'] = False
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
+
+    engine = WorkflowEngine.with_name('author')
+    workflow_object.id_workflow = str(engine.uuid)
+
     workflow_object.save()
+    engine.save()
     db.session.commit()
 
     # Start workflow. delayed=True will execute the workflow in the
     # background using, for example, Celery.
-    start.delay("author", object_id=workflow_object.id)
+    start.delay(
+        "author",
+        object_id=workflow_object.id,
+        engine_uuid_hex=engine.uuid.get_hex(),
+    )
 
     ctx = {
         "inspire_url": get_inspire_url(visitor.data)
