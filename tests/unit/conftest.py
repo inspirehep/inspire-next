@@ -46,6 +46,7 @@ def app():
         CELERY_CACHE_BACKEND='memory',
         CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
         TESTING=True,
+        PRODUCTION_MODE=True,
     )
 
     with app.app_context():

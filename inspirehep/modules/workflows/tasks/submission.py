@@ -29,14 +29,15 @@ import logging
 from functools import wraps
 from pprint import pformat
 
-from flask import current_app, render_template
+from flask import current_app
 from retrying import retry
 
 from invenio_accounts.models import User
 
 from inspire_dojson.utils import legacy_export_as_marc
 from inspirehep.utils.robotupload import make_robotupload_marcxml
-from inspirehep.utils.tickets import get_instance, retry_if_connection_problems
+from inspirehep.utils import tickets
+from inspirehep.utils.proxies import rt_instance
 
 from .actions import in_production_mode, is_arxiv_paper
 from ..utils import with_debug_logging
@@ -49,33 +50,24 @@ LOGGER = logging.getLogger(__name__)
 @retry(
     stop_max_attempt_number=5,
     wait_fixed=10000,
-    retry_on_exception=retry_if_connection_problems
+    retry_on_exception=tickets.retry_if_connection_problems
 )
-def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
+def submit_rt_ticket(obj,
+                     queue,
+                     template,
+                     context,
+                     requestors,
+                     recid,
+                     ticket_id_key):
     """Submit ticket to RT with the given parameters."""
-    rt_instance = get_instance()
-    # Trick to prepare ticket body
-    body = "\n ".join([line.strip() for line in body.split("\n")])
-    rt_queue = current_app.config.get("BIBCATALOG_QUEUES") or queue
-
-    payload = dict(
-        Queue=rt_queue,
-        Subject=subject,
-        Text=body,
-    )
-    recid = obj.extra_data.get("recid") or obj.data.get("control_number") \
-        or obj.data.get("recid")
-    if recid:
-        payload['CF_RecordID'] = recid
-
-    # Check if requests is set and also ignore admin due to RT mail loop
-    if requestors and "admin@inspirehep.net" not in requestors:
-        payload['requestors'] = requestors
-
-    ticket_id = rt_instance.create_ticket(**payload)
-
-    obj.extra_data[ticket_id_key] = ticket_id
-    obj.log.info(u'Ticket {0} created:\n{1}'.format(ticket_id, body))
+    new_ticket_id = tickets.create_ticket_with_template(queue,
+                                                        requestors,
+                                                        template,
+                                                        context,
+                                                        context.get("subject"),
+                                                        recid)
+    obj.extra_data[ticket_id_key] = new_ticket_id
+    obj.log.info(u'Ticket {0} created'.format(new_ticket_id))
     return True
 
 
@@ -100,28 +92,26 @@ def create_ticket(template,
         context = {}
         if context_factory:
             context = context_factory(user, obj)
-        body = render_template(
-            template,
-            **context
-        ).strip()
 
         if not in_production_mode():
             obj.log.info(
-                u'Was going to create ticket: {subject}\n\n{body}\n\n'
+                u'Was going to create ticket: {subject}\n'
                 u'To: {requestors} Queue: {queue}'.format(
                     queue=queue,
                     subject=context.get('subject'),
                     requestors=user.email,
-                    body=body
                 )
             )
             return
 
+        recid = obj.extra_data.get("recid") or obj.data.get("control_number")
+
         submit_rt_ticket(obj,
                          queue,
-                         context.get('subject'),
-                         body,
+                         template,
+                         context,
                          user.email,
+                         recid,
                          ticket_id_key)
 
     return _create_ticket
@@ -135,6 +125,16 @@ def reply_ticket(template=None,
     @wraps(reply_ticket)
     def _reply_ticket(obj, eng):
         ticket_id = obj.extra_data.get("ticket_id", "")
+
+        if not rt_instance:
+            obj.log.error("No RT instance available. Skipping!")
+            obj.log.info(
+                "Was going to reply to {ticket_id}\n".format(
+                    ticket_id=ticket_id,
+                )
+            )
+            return
+
         if not ticket_id:
             obj.log.error("No ticket ID found!")
             return
@@ -150,42 +150,18 @@ def reply_ticket(template=None,
             context = {}
             if context_factory:
                 context = context_factory(user, obj)
-            body = render_template(
-                template,
-                **context
-            )
+            tickets.reply_ticket_with_template(ticket_id,
+                                               template,
+                                               context,
+                                               keep_new)
         else:
             # Body already rendered in reason.
-            body = obj.extra_data.get("reason", "").strip()
-        if not body:
-            obj.log.error("No body for ticket reply. Skipping reply.")
-            return
-
-        # Trick to prepare ticket body
-        body = "\n ".join([line.strip() for line in body.strip().split("\n")])
-
-        rt = get_instance()
-        if not rt:
-            obj.log.error("No RT instance available. Skipping!")
-            obj.log.info(
-                "Was going to reply to {ticket_id}\n\n{body}\n\n".format(
-                    ticket_id=ticket_id,
-                    body=body,
-                )
-            )
-            return
-
-        rt.reply(
-            ticket_id=ticket_id,
-            text=body,
-        )
-
-        if keep_new:
-            # We keep the state as new
-            rt.edit_ticket(
-                ticket_id=ticket_id,
-                Status="new"
-            )
+            body = obj.extra_data.get("reason", "")
+            if body:
+                tickets.reply_ticket(ticket_id, body, keep_new)
+            else:
+                obj.log.error("No body for ticket reply. Skipping reply.")
+                return
 
     return _reply_ticket
 
@@ -200,8 +176,7 @@ def close_ticket(ticket_id_key="ticket_id"):
             obj.log.error("No ticket ID found!")
             return
 
-        rt = get_instance()
-        if not rt:
+        if not rt_instance:
             obj.log.error("No RT instance available. Skipping!")
             obj.log.info(
                 "Was going to close ticket {ticket_id}".format(
@@ -210,17 +185,7 @@ def close_ticket(ticket_id_key="ticket_id"):
             )
             return
 
-        try:
-            rt.edit_ticket(
-                ticket_id=ticket_id,
-                Status="resolved"
-            )
-        except IndexError:
-            # Probably already resolved, lets check
-            ticket = rt.get_ticket(ticket_id)
-            if ticket["Status"] != "resolved":
-                raise
-            obj.log.warning("Ticket is already resolved.")
+        tickets.resolve_ticket(ticket_id)
 
     return _close_ticket
 
