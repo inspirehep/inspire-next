@@ -41,6 +41,7 @@ from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_package_download,
     arxiv_plot_extract,
 )
+from inspirehep.modules.workflows.errors import DownloadError
 from plotextractor.errors import InvalidTarball
 
 from mocks import AttrDict, MockEng, MockFiles, MockObj
@@ -106,10 +107,11 @@ def test_arxiv_fulltext_download_logs_on_error():
     obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
-    assert arxiv_fulltext_download(obj, eng) is None
+    with pytest.raises(DownloadError) as excinfo:
+        arxiv_fulltext_download(obj, eng)
 
-    expected = 'Cannot retrieve PDF from arXiv for 1605.03814'
-    result = obj.log._error.getvalue()
+    expected = 'http://export.arxiv.org/pdf/1605.03814 is not serving a PDF file.'
+    result = str(excinfo.value)
 
     assert expected == result
 
