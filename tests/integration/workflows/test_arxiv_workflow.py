@@ -322,12 +322,22 @@ def fake_magpie_api_request(url, data):
         }
 
 
+def fake_is_pdf_link(url):
+    """Mock is_pdf_link func"""
+    return True
+
+
 def fake_refextract_extract_references_from_file(*args, **kwargs):
     """Mock refextract extract_references_from_file func."""
     return []
 
 
-def get_halted_workflow(app, record, extra_config=None):
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link'
+)
+def get_halted_workflow(mocked_is_pdf_link, app, record, extra_config=None):
+    mocked_is_pdf_link.return_value = True
+
     extra_config = extra_config or {}
     with mock.patch.dict(app.config, extra_config):
         workflow_uuid = start('article', [record])
