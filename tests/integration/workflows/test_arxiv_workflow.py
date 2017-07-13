@@ -268,11 +268,6 @@ def fake_download_file(workflow, name, url):
     raise Exception("Download file not mocked!")
 
 
-def fake_beard_api_block_request(*args, **kwargs):
-    """Mock json_api_request func."""
-    return {}
-
-
 def fake_beard_api_request(url, data):
     """Mock json_api_request func."""
     return {
@@ -402,16 +397,11 @@ def get_halted_workflow(mocked_is_pdf_link, app, record, extra_config=None):
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.authors.receivers._query_beard_api',
-    side_effect=fake_beard_api_block_request,
-)
-@mock.patch(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
     side_effect=fake_refextract_extract_references_from_file,
 )
 def test_harvesting_arxiv_workflow_manual_rejected(
     mocked_refextract_extract_refs,
-    mocked_api_request_beard_block,
     mocked_api_request_magpie,
     mocked_api_request_beard,
     mocked_download,
@@ -465,16 +455,11 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.authors.receivers._query_beard_api',
-    side_effect=fake_beard_api_block_request,
-)
-@mock.patch(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
     side_effect=fake_refextract_extract_references_from_file,
 )
 def test_harvesting_arxiv_workflow_already_on_legacy(
     mocked_refextract_extract_refs,
-    mocked_api_request_beard_block,
     mocked_api_request_magpie,
     mocked_api_request_beard,
     mocked_download,
@@ -519,10 +504,6 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.authors.receivers._query_beard_api',
-    side_effect=fake_beard_api_block_request,
-)
-@mock.patch(
     'inspirehep.modules.workflows.tasks.matching.search',
     return_value=[],
 )
@@ -533,7 +514,6 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
 def test_harvesting_arxiv_workflow_manual_accepted(
     mocked_refextract_extract_refs,
     mocked_matching_search,
-    mocked_api_request_beard_block,
     mocked_api_request_magpie,
     mocked_api_request_beard,
     mocked_download_utils,

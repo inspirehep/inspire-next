@@ -22,12 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-import json
 import uuid
-
-import backoff
-import requests
-import simplejson
 
 from flask import current_app
 
@@ -37,32 +32,7 @@ from invenio_records.signals import (
     before_record_update,
 )
 
-from .utils import author_tokenize
-
-
-@backoff.on_exception(backoff.expo, simplejson.JSONDecodeError, max_tries=5)
-def _query_beard_api(full_names):
-    """Query Beard API.
-
-    This method allows for computation of phonetic blocks
-    from a given list of strings.
-    """
-    headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
-
-    text_endpoint = "{base_url}/text/phonetic_blocks".format(
-        base_url=current_app.config.get('BEARD_API_URL')
-    )
-
-    response = requests.post(
-        url=text_endpoint,
-        headers=headers,
-        data=json.dumps({'full_names': full_names})
-    )
-
-    return response.json()['phonetic_blocks']
+from .utils import author_tokenize, phonetic_blocks
 
 
 @before_record_insert.connect
@@ -75,21 +45,24 @@ def assign_phonetic_block(sender, *args, **kwargs):
     nysiis algorithm. The phonetic block is assigned before
     the signature is indexed by an Elasticsearch instance.
     """
-    if current_app.config.get('BEARD_API_URL'):
-        authors = sender.get('authors', [])
-        authors_map = {}
+    authors = sender.get('authors', [])
+    authors_map = {}
 
-        for index, author in enumerate(authors):
-            if 'full_name' in author:
-                authors_map[author['full_name']] = index
+    for index, author in enumerate(authors):
+        if 'full_name' in author:
+            authors_map[author['full_name']] = index
 
-        # Call Beard API to generate phonetic blocks.
-        signatures_blocks = _query_beard_api(authors_map.keys())
+    # Use beard to generate phonetic blocks.
+    try:
+        signatures_blocks = phonetic_blocks(authors_map.keys())
+    except Exception as err:
+        current_app.logger.error("Cannot extract phonetic blocks for record {0}: {1}", sender.get('control_number'), err)
+        return
 
-        # Add signature block to an author.
-        for full_name, signature_block in signatures_blocks.iteritems():
-            authors[authors_map[full_name]].update(
-                {"signature_block": signature_block})
+    # Add signature block to an author.
+    for full_name, signature_block in signatures_blocks.iteritems():
+        authors[authors_map[full_name]].update(
+            {"signature_block": signature_block})
 
 
 @before_record_insert.connect
