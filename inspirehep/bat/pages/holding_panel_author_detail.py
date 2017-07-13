@@ -32,6 +32,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from inspirehep.bat.EC import GetText
+
 from . import holding_panel_author_list
 from ..arsenic import Arsenic, ArsenicResponse
 
@@ -43,7 +45,7 @@ def go_to():
 
 def load_submitted_record(input_data):
     def _load_submitted_record():
-        return (
+        res = (
             'M. Twain' in record and
             'Twain, Mark' in record and
             'retired' in record and
@@ -63,16 +65,18 @@ def load_submitted_record(input_data):
             '2000' in record and
             '2001' in record
         )
+        assert res
+        return res
 
     try:
-        record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-detailed-info'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-links'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-notes'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-submission-info'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-subjects'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-positions'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-experiments'))).text
-        record += WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'hp-panel-advisors'))).text
+        record = WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-detailed-info')))
+        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-links')))
+        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-notes')))
+        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-submission-info')))
+        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-subjects')))
+        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-positions')))
+        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-experiments')))
+        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-advisors')))
     except (ElementNotVisibleException, WebDriverException):
         go_to()
         record = load_submitted_record(input_data)
@@ -83,7 +87,7 @@ def load_submitted_record(input_data):
 def accept_record():
     def _accept_record():
         return 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))).text
+            GetText((By.XPATH, '//div[@class="alert ng-scope alert-accept"]')))
 
     Arsenic().find_element_by_id('btn-accept').click()
     return ArsenicResponse(_accept_record)
@@ -92,7 +96,7 @@ def accept_record():
 def reject_record():
     def _reject_record():
         return 'Rejected' in WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-reject"]'))).text
+            GetText((By.XPATH, '//div[@class="alert ng-scope alert-reject"]')))
 
     Arsenic().find_element_by_id('btn-reject-submission').click()
     return ArsenicResponse(_reject_record)
@@ -101,7 +105,7 @@ def reject_record():
 def curation_record():
     def _curation_record():
         return 'Accepted with Curation' in WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.XPATH, '//span[@ng-switch-when="accept_curate"]'))).text
+            GetText((By.XPATH, '//span[@ng-switch-when="accept_curate"]')))
 
     Arsenic().find_element_by_id('btn-accept-curation').click()
     return ArsenicResponse(_curation_record)

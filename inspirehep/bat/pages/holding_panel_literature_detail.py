@@ -29,11 +29,11 @@ from selenium.common.exceptions import (
     WebDriverException,
 )
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from . import holding_panel_literature_list
 from ..arsenic import Arsenic, ArsenicResponse
+from inspirehep.bat.EC import GetText
 
 
 def go_to():
@@ -56,7 +56,7 @@ def load_submitted_record(input_data):
         )
 
     try:
-        record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="ng-scope"])[2]'))).text
+        record = WebDriverWait(Arsenic(), 10).until(GetText((By.XPATH, '(//div[@class="ng-scope"])[2]')))
         record += Arsenic().find_element_by_xpath('//p[@class="text-center ng-scope"]').text
         record += Arsenic().find_element_by_xpath('(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[1]').text
         record += Arsenic().find_element_by_xpath('(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[2]').text
@@ -70,7 +70,7 @@ def load_submitted_record(input_data):
 def accept_record():
     def _accept_record():
         return 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))).text
+            GetText((By.XPATH, '//div[@class="alert ng-scope alert-accept"]')))
 
     Arsenic().find_element_by_xpath('//button[@class="btn btn-warning"]').click()
     return ArsenicResponse(_accept_record)

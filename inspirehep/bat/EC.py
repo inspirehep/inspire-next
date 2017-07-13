@@ -53,3 +53,21 @@ class TryClick(object):
             return False
 
         return element
+
+
+class GetText(object):
+    """ An Expectation that waits until an element has text.
+
+    Todo: Better filter out the `WebDriverException` s .
+    """
+    def __init__(self, locator):
+        self.locator = locator
+
+    def __call__(self, driver):
+        element_text = EC.visibility_of_element_located(
+            self.locator
+        )(driver)
+        if not element_text:
+            return False
+
+        return element_text.text
