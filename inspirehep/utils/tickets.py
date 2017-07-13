@@ -24,11 +24,12 @@
 
 from __future__ import absolute_import, division, print_function
 
+from functools import wraps
 from urlparse import urljoin
 
 from flask import current_app, render_template
 
-from rt import ALL_QUEUES, ConnectionError
+from rt import ALL_QUEUES, ConnectionError, AuthorizationError
 from .proxies import rt_instance
 
 
@@ -36,11 +37,35 @@ class EditTicketException(Exception):
     pass
 
 
+def relogin_if_needed(f):
+    """Repeat RT call after explicit login, if needed.
+
+    In case a call to RT fails, due session expired, this decorator will
+    explicitly call .login() on RT, in order to refresh the session, and
+    will replay the call.
+
+    This decorator should be used to wrap any function calling into RT.
+
+    FIXME: The real solution would be to enable auth/digest authentication
+    on RT side. Then this trick would no longer be needed, as long as the
+    extension is properly initialized in ext.py.
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except AuthorizationError:
+            rt_instance.login()
+            return f(*args, **kwargs)
+    return decorated_function
+
+
 def retry_if_connection_problems(exception):
     """Return True if exception is an ConnectionError in Rt."""
     return isinstance(exception, ConnectionError)
 
 
+@relogin_if_needed
 def create_ticket(queue,
                   requestors,
                   body,
@@ -142,6 +167,7 @@ def create_ticket_with_template(queue,
     return create_ticket(queue, requestors, body, subject, recid, **kwargs)
 
 
+@relogin_if_needed
 def resolve_ticket(ticket_id):
     """Resolves the given ticket
 
@@ -175,6 +201,7 @@ def get_users():
     return _get_all_of("user")
 
 
+@relogin_if_needed
 def _get_all_of(query_type):
     """Utility function to share the code for performing custom get all requests
      and parsing the result
@@ -214,6 +241,7 @@ def _strip_lines(multiline_string):
     )
 
 
+@relogin_if_needed
 def get_tickets_by_recid(recid):
     """Returns all tickets that are associated with the given recid
 
@@ -222,6 +250,7 @@ def get_tickets_by_recid(recid):
     return rt_instance.search(Queue=ALL_QUEUES, CF_RecordID=str(recid))
 
 
+@relogin_if_needed
 def reply_ticket(ticket_id, body, keep_new=False):
     """Replies the given ticket with the message body
 
