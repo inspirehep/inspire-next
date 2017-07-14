@@ -83,6 +83,41 @@ def test_arxiv_fulltext_download_logs_on_success():
 
 
 @pytest.mark.httpretty
+def test_arxiv_fulltext_download_logs_on_pdf_not_existing():
+    httpretty.register_uri(
+        httpretty.GET, 'http://export.arxiv.org/pdf/1707.02785',
+        body=pkg_resources.resource_string(
+            __name__, os.path.join('fixtures', '1707.02785.html')))
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'cs.CV',
+                ],
+                'value': '1707.02785',
+            },
+        ],
+    }  # literature/1458302
+    extra_data = {}
+    files = MockFiles({})
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    assert arxiv_fulltext_download(obj, eng) is None
+
+    expected = 'No PDF is available for 1707.02785'
+    result = obj.log._info.getvalue()
+
+    assert expected == result
+
+
+@pytest.mark.httpretty
 def test_arxiv_fulltext_download_logs_on_error():
     httpretty.register_uri(
         httpretty.GET, 'http://export.arxiv.org/pdf/1605.03814', status=500)
