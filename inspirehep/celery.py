@@ -24,9 +24,14 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+
 from flask_celeryext import create_celery_app
 
 from .factory import create_app
 
 
 celery = create_celery_app(create_app())
+
+# We don't want to log to Sentry backoff errors
+logging.getLogger('backoff').propagate = 0
