@@ -24,9 +24,14 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+
 from invenio_base.app import create_cli
 
 from .factory import create_app
 
 
 cli = create_cli(create_app=create_app)
+
+# We don't want to log to Sentry backoff errors
+logging.getLogger('backoff').propagate = 0

@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+
 from inspirehep.factory import create_app
 
 
@@ -31,3 +33,6 @@ application = create_app()
 if application.debug:
     from werkzeug.debug import DebuggedApplication
     application = DebuggedApplication(application, evalex=True)
+
+# We don't want to log to Sentry backoff errors
+logging.getLogger('backoff').propagate = 0
