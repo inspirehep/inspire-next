@@ -28,6 +28,7 @@ import os
 import re
 from functools import wraps
 
+import requests
 import backoff
 from flask import current_app
 from lxml.etree import XMLSyntaxError
@@ -55,6 +56,7 @@ REGEXP_AUTHLIST = re.compile(
 REGEXP_REFS = re.compile(
     "<record.*?>.*?<controlfield .*?>.*?</controlfield>(.*?)</record>",
     re.DOTALL)
+NO_PDF_ON_ARXIV = 'The author has provided no source to generate PDF, and no PDF.'
 
 
 @with_debug_logging
@@ -70,6 +72,9 @@ def arxiv_fulltext_download(obj, eng):
     url = current_app.config['ARXIV_PDF_URL'].format(arxiv_id=arxiv_id)
 
     if not is_pdf_link(url):
+        if NO_PDF_ON_ARXIV in requests.get(url).content:
+            obj.log.info('No PDF is available for %s', arxiv_id)
+            return
         raise DownloadError("{url} is not serving a PDF file.".format(url=url))
 
     pdf = download_file_to_workflow(
