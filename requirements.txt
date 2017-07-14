@@ -27,6 +27,9 @@
 # FIXME temporary branch for testing
 -e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3-inspire#egg=invenio-query-parser==0.6.0
 
+# FIXME explicit commit until it is officially released
+-e git+https://github.com/inveniosoftware/invenio-oauthclient.git@1753ecb8186213d7e24ecbca7899b85ff4c53037#egg=invenio-oauthclient
+
 # JSON editor
 -e git+https://github.com/inveniosoftware-contrib/invenio-record-editor.git#egg=invenio-record-editor
 
