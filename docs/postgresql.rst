@@ -26,13 +26,15 @@ How to Connect to the PostgreSQL Database
 1. About
 --------
 
-This document specifies how to connect and query the inspire PostgreSQL database
+In inspire-next stores all the data in a postgresql database. 
+This document specifies how to connect and query the inspire's PostgreSQL database.
+We access it thorught the docker-containers.
 
 
 2. Run the web container
 ------------------------
 
-The first step is run the web container
+The first step is run the web container, in order to start our database.
 
 .. code-block:: bash
 
