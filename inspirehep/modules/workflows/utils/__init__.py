@@ -31,6 +31,9 @@ import traceback
 from contextlib import closing
 from functools import wraps
 
+from invenio_db import db
+from invenio_workflows import WorkflowEngine, start
+
 import backoff
 import lxml.etree as ET
 import requests
@@ -248,3 +251,46 @@ def insert_wf_record_source(json, record_uuid, source):
     else:
         record_source.json = json
     db.session.commit()
+
+
+def start_workflow(workflow, data=None, workflow_object=None):
+    """Start a workflow creating any needed models.
+
+    Due to the task `invenio_workflows.start` being a celery task itself, it
+    delays to its own execution the creation of the
+    `invenio_workflows.Workflow` db entry, rendering the task unretriable if
+    for any reason it gets stuck before that step (for example, if rabbitmq
+    flushes the queue, or if a worker acks the task without actually doing
+    anything).
+
+    Args:
+        workflow(str): name of te workflo to start, usually one of 'article'
+            or 'author'.
+
+        data(list): list of objects to run the worklfow onto. It will create
+            the `invenio_workflows.workflow_object_class` instance with it.
+            It will be ignored if workflow_object is passed.
+
+        workflow_object(invenio_workflows.workflow_object_class): wokrflow
+            object to use.
+
+    Return:
+        celery.result.AsyncResult: result class for the started task.
+    """
+    engine = WorkflowEngine.with_name(workflow)
+    args = [workflow]
+    kwargs = {
+        'engine_uuid_hex': engine.uuid.get_hex(),
+    }
+
+    if workflow_object:
+        workflow_object.id_workflow = str(engine.uuid)
+        workflow_object.save()
+        kwargs['object_id'] = workflow_object.id
+    else:
+        kwargs['data'] = data
+
+    engine.save()
+    db.session.commit()
+
+    return start.apply_async(args=args, kwargs=kwargs)

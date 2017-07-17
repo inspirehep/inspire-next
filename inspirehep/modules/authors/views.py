@@ -47,9 +47,7 @@ from invenio_db import db
 
 from invenio_workflows import (
     workflow_object_class,
-    start,
     resume,
-    WorkflowEngine,
 )
 from invenio_workflows_ui.api import WorkflowUIRecord
 
@@ -60,6 +58,7 @@ from inspirehep.modules.forms.form import DataExporter
 from .forms import AuthorUpdateForm
 from .permissions import holdingpen_author_permission
 from .tasks import formdata_to_model
+from ..workflows.utils import start_workflow
 
 
 blueprint = Blueprint(
@@ -282,18 +281,12 @@ def submitupdate():
     workflow_object.extra_data['is-update'] = True
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
 
-    engine = WorkflowEngine.with_name('author')
-    workflow_object.id_workflow = str(engine.uuid)
-
     workflow_object.save()
-    engine.save()
     db.session.commit()
 
-    # Start workflow. delay will execute the workflow in the background
-    start.delay(
-        "author",
-        object_id=workflow_object.id,
-        engine_uuid_hex=engine.uuid.get_hex(),
+    start_workflow(
+        workflow="author",
+        workflow_object=workflow_object,
     )
 
     ctx = {
@@ -320,19 +313,12 @@ def submitnew():
     workflow_object.extra_data['is-update'] = False
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
 
-    engine = WorkflowEngine.with_name('author')
-    workflow_object.id_workflow = str(engine.uuid)
-
     workflow_object.save()
-    engine.save()
     db.session.commit()
 
-    # Start workflow. delayed=True will execute the workflow in the
-    # background using, for example, Celery.
-    start.delay(
-        "author",
-        object_id=workflow_object.id,
-        engine_uuid_hex=engine.uuid.get_hex(),
+    start_workflow(
+        workflow="author",
+        workflow_object=workflow_object,
     )
 
     ctx = {
