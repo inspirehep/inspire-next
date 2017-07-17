@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# *- coding: utf-8*-
 #
 # This file is part of INSPIRE.
 # Copyright (C) 2014-2017 CERN.
@@ -24,18 +24,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-import datetime
-import json
-import os
-import pkg_resources
-import re
-
-import requests_mock
 import mock
-import pytest
+import re
+import requests_mock
 
-from dojson.contrib.marc21.utils import create_record
-from invenio_accounts.testutils import login_user_via_session
 from invenio_db import db
 from invenio_workflows import (
     ObjectStatus,
@@ -44,344 +36,19 @@ from invenio_workflows import (
     workflow_object_class,
 )
 
-from inspire_dojson.hep import hep
-from inspirehep.factory import create_app
-from inspirehep.modules.converter.xslt import convert
-from inspirehep.modules.workflows.models import (
-    WorkflowsAudit,
-    WorkflowsPendingRecord,
+from calls import (
+    already_harvested_on_legacy_record,
+    do_accept_core,
+    do_webcoll_callback,
+    do_robotupload_callback,
+    generate_record
 )
-
-
-@pytest.fixture(autouse=True)
-def cleanup_workflows_tables(small_app):
-    with small_app.app_context():
-        obj_types = (
-                WorkflowsAudit.query.all(),
-                WorkflowsPendingRecord.query.all(),
-                workflow_object_class.query(),
-        )
-        for obj_type in obj_types:
-            for obj in obj_type:
-                obj.delete()
-
-        db.session.commit()
-
-
-@pytest.fixture
-def workflow_app():
-    app = create_app(
-        BEARD_API_URL="http://example.com/beard",
-        DEBUG=True,
-        CELERY_ALWAYS_EAGER=True,
-        CELERY_RESULT_BACKEND='cache',
-        CELERY_CACHE_BACKEND='memory',
-        CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
-        PRODUCTION_MODE=True,
-        LEGACY_ROBOTUPLOAD_URL=(
-            'http://localhost:1234'
-        ),
-        MAGPIE_API_URL="http://example.com/magpie",
-        WTF_CSRF_ENABLED=False,
-    )
-
-    with app.app_context():
-        yield app
-
-
-@pytest.fixture
-def record():
-    """Provide record fixture."""
-    record_oai_arxiv_plots = pkg_resources.resource_string(
-        __name__,
-        os.path.join(
-            'fixtures',
-            'oai_arxiv_record_with_plots.xml'
-        )
-    )
-    # Convert to MARCXML, then dict, then HEP JSON
-    record_oai_arxiv_plots_marcxml = convert(
-        record_oai_arxiv_plots,
-        "oaiarXiv2marcxml.xsl"
-    )
-    record_marc = create_record(record_oai_arxiv_plots_marcxml)
-    json_data = hep.do(record_marc)
-
-    if 'preprint_date' in json_data:
-        json_data['preprint_date'] = datetime.date.today().isoformat()
-
-    return json_data
-
-
-@pytest.fixture
-def to_accept_record():
-    """Provide record fixture."""
-    record_oai_arxiv_plots = pkg_resources.resource_string(
-        __name__,
-        os.path.join(
-            'fixtures',
-            'oai_arxiv_record_to_accept.xml'
-        )
-    )
-    # Convert to MARCXML, then dict, then HEP JSON
-    record_oai_arxiv_plots_marcxml = convert(
-        record_oai_arxiv_plots,
-        "oaiarXiv2marcxml.xsl"
-    )
-    record_marc = create_record(record_oai_arxiv_plots_marcxml)
-    json_data = hep.do(record_marc)
-
-    return json_data
-
-
-@pytest.fixture
-def already_harvested_on_legacy_record():
-    """Provide record fixture."""
-    record_oai_arxiv_plots = pkg_resources.resource_string(
-        __name__,
-        os.path.join(
-            'fixtures',
-            'oai_arxiv_record_already_on_legacy.xml'
-        )
-    )
-    # Convert to MARCXML, then dict, then HEP JSON
-    record_oai_arxiv_plots_marcxml = convert(
-        record_oai_arxiv_plots,
-        "oaiarXiv2marcxml.xsl"
-    )
-    record_marc = create_record(record_oai_arxiv_plots_marcxml)
-    json_data = hep.do(record_marc)
-
-    return json_data
-
-
-def _do_resolve_workflow(app, workflow_id, action='accept_core'):
-    """Calls to the workflow resolve endpoint.
-
-    :param app: flask app to use
-    :param workflow_id: id of the workflow to accept.
-    :param action: action taken (normally on of 'reject', accept_core',
-    'accept')
-    """
-    client = app.test_client()
-    data = {
-        'value': action,
-        'id': workflow_id,
-    }
-
-    login_user_via_session(client, email='cataloger@inspirehep.net')
-    return client.post(
-        '/api/holdingpen/%s/action/resolve' % workflow_id,
-        data=json.dumps(data),
-        content_type='application/json',
-    )
-
-
-def _do_accept_core(app, workflow_id):
-    """Accepts the given workflow as core.
-
-    :param app: flask app to use
-    :param workflow_id: id of the workflow to accept.
-    """
-    response = _do_resolve_workflow(
-        app=app,
-        workflow_id=workflow_id,
-        action='accept_core',
-    )
-    assert response.status_code == 200
-    response_data = json.loads(response.data)
-    assert response_data == {
-        'acknowledged': True,
-        'action': 'resolve',
-        'result': True,
-    }
-
-
-def _do_robotupload_callback(
-    app, workflow_id, recids, server_name='http://fake.na.me',
-):
-    """Calls to the robotupload callback with the given recids.
-
-    :param app: flask app to use
-    :param workflow_id: id of the associated workflow.
-    :param recids: list of recids to generete the fake callback data.
-    :param server_name: name of the server used for the record url.
-    """
-    client = app.test_client()
-    data = {
-        "nonce": workflow_id,
-        "results": [
-                {
-                    "recid": int(recid),
-                    "error_message": "",
-                    "success": True,
-                    "marcxml": "fake marcxml (not really used yet anywhere)",
-                    "url": "%s/record/%s" % (server_name, recid),
-                } for recid in recids
-            ]
-    }
-
-    return client.post(
-        '/callback/workflows/robotupload',
-        data=json.dumps(data),
-        content_type='application/json',
-    )
-
-
-def _do_webcoll_callback(app, recids, server_name='http://fake.na.me'):
-    """Calls to the webcoll callback with the given recids.
-
-    :param app: flask app to use
-    :param recids: list of recids to generete the fake callback data.
-    :param server_name: name of the server used for the record url.
-    """
-    client = app.test_client()
-    data = {"recids": recids}
-
-    return client.post(
-        '/callback/workflows/webcoll',
-        data=data,
-        content_type='application/x-www-form-urlencoded',
-    )
-
-
-def fake_download_file(workflow, name, url):
-    """Mock download_file_to_workflow func."""
-    if url == 'http://export.arxiv.org/e-print/1407.7587':
-        workflow.files[name] = pkg_resources.resource_stream(
-            __name__,
-            os.path.join(
-                'fixtures',
-                '1407.7587v1'
-            )
-        )
-        return workflow.files[name]
-    elif url == 'http://export.arxiv.org/pdf/1407.7587':
-        workflow.files[name] = pkg_resources.resource_stream(
-            __name__,
-            os.path.join(
-                'fixtures',
-                '1407.7587v1.pdf',
-            )
-        )
-        return workflow.files[name]
-    raise Exception("Download file not mocked!")
-
-
-def fake_beard_api_request(url, data):
-    """Mock json_api_request func."""
-    return {
-        'decision': u'Non-CORE',
-        'scores': [
-            -0.20895982018928272, 0.8358207729691823, -1.6722188892559084
-        ]
-    }
-
-
-def fake_magpie_api_request(url, data):
-    """Mock json_api_request func."""
-    if data.get('corpus') == "experiments":
-        return {
-            "labels": [
-                ["CMS", 0.75495152473449707],
-                ["GEMS", 0.45495152473449707],
-                ["ALMA", 0.39597576856613159],
-                ["XMM", 0.28373843431472778],
-            ],
-            "status_code": 200
-        }
-    elif data.get('corpus') == "categories":
-        return {
-            "labels": [
-                ["Astrophysics", 0.9941025972366333],
-                ["Phenomenology-HEP", 0.0034253709018230438],
-                ["Instrumentation", 0.0025460966862738132],
-                ["Gravitation and Cosmology", 0.0017545684240758419],
-            ],
-            "status_code": 200
-        }
-    elif data.get('corpus') == "keywords":
-        return {
-            "labels": [
-                ["galaxy", 0.29424679279327393],
-                ["numerical calculations", 0.22625420987606049],
-                [
-                    "numerical calculations: interpretation of experiments",
-                    0.031719371676445007
-                ],
-                ["luminosity", 0.028066780418157578],
-                ["experimental results", 0.027784878388047218],
-                ["talk", 0.023392116650938988],
-            ],
-            "status_code": 200
-        }
-
-
-def fake_is_pdf_link(url):
-    """Mock is_pdf_link func"""
-    return True
-
-
-def fake_refextract_extract_references_from_file(*args, **kwargs):
-    """Mock refextract extract_references_from_file func."""
-    return []
-
-
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link'
+from mocks import (
+    fake_download_file,
+    fake_beard_api_request,
+    fake_magpie_api_request,
 )
-def get_halted_workflow(mocked_is_pdf_link, app, record, extra_config=None):
-    mocked_is_pdf_link.return_value = True
-
-    extra_config = extra_config or {}
-    with mock.patch.dict(app.config, extra_config):
-        workflow_uuid = start('article', [record])
-
-    eng = WorkflowEngine.from_uuid(workflow_uuid)
-    obj = eng.processed_objects[0]
-
-    assert obj.status == ObjectStatus.HALTED
-    assert obj.data_type == "hep"
-
-    # Files should have been attached (tarball + pdf, and plots)
-    assert obj.files["1407.7587.pdf"]
-    assert obj.files["1407.7587.tar.gz"]
-
-    assert len(obj.files) > 2
-
-    # A publication note should have been extracted
-    pub_info = obj.data.get('publication_info')
-    assert pub_info
-    assert pub_info[0]
-    assert pub_info[0].get('year') == 2014
-    assert pub_info[0].get('journal_title') == "J. Math. Phys."
-
-    # A prediction should have been made
-    prediction = obj.extra_data.get("relevance_prediction")
-    assert prediction
-    assert prediction['decision'] == 'Non-CORE'
-    assert prediction['scores']['Non-CORE'] == 0.8358207729691823
-
-    expected_experiment_prediction = {
-        'experiments': [
-            {'label': 'CMS', 'score': 0.75495152473449707}
-        ]
-    }
-    experiments_prediction = obj.extra_data.get("experiments_prediction")
-    assert experiments_prediction == expected_experiment_prediction
-
-    keywords_prediction = obj.extra_data.get("keywords_prediction")
-    assert keywords_prediction
-    assert {
-        "label": "galaxy",
-        "score": 0.29424679279327393,
-        "accept": True
-    } in keywords_prediction['keywords']
-
-    # This record should not have been touched yet
-    assert "approved" not in obj.extra_data
-
-    return workflow_uuid, eng, obj
+from utils import get_halted_workflow
 
 
 @mock.patch(
@@ -398,7 +65,7 @@ def get_halted_workflow(mocked_is_pdf_link, app, record, extra_config=None):
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
-    side_effect=fake_refextract_extract_references_from_file,
+    return_value=[],
 )
 def test_harvesting_arxiv_workflow_manual_rejected(
     mocked_refextract_extract_refs,
@@ -406,10 +73,9 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     mocked_api_request_beard,
     mocked_download,
     small_app,
-    record,
 ):
     """Test a full harvesting workflow."""
-
+    record = generate_record()
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
         "MAGPIE_API_URL": "http://example.com/magpie",
@@ -456,28 +122,29 @@ def test_harvesting_arxiv_workflow_manual_rejected(
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
-    side_effect=fake_refextract_extract_references_from_file,
+    return_value=[],
 )
 def test_harvesting_arxiv_workflow_already_on_legacy(
     mocked_refextract_extract_refs,
     mocked_api_request_magpie,
     mocked_api_request_beard,
     mocked_download,
-    small_app,
-    already_harvested_on_legacy_record,
+    small_app
 ):
     """Test a full harvesting workflow."""
-
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
         "MAGPIE_API_URL": "http://example.com/magpie",
     }
 
-    workflow_uuid = None
     with small_app.app_context():
         with mock.patch.dict(small_app.config, extra_config):
-            workflow_uuid = start('article', [
-                already_harvested_on_legacy_record])
+            workflow_uuid = start(
+                'article',
+                [
+                    already_harvested_on_legacy_record()
+                ]
+            )
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
@@ -509,7 +176,7 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
-    side_effect=fake_refextract_extract_references_from_file,
+    return_value=[],
 )
 def test_harvesting_arxiv_workflow_manual_accepted(
     mocked_refextract_extract_refs,
@@ -519,8 +186,8 @@ def test_harvesting_arxiv_workflow_manual_accepted(
     mocked_download_utils,
     mocked_download_arxiv,
     workflow_app,
-    record,
 ):
+    record = generate_record()
     """Test a full harvesting workflow."""
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
@@ -543,7 +210,7 @@ def test_harvesting_arxiv_workflow_manual_accepted(
             record=record,
         )
 
-        _do_accept_core(
+        do_accept_core(
             app=workflow_app,
             workflow_id=obj.id,
         )
@@ -552,7 +219,7 @@ def test_harvesting_arxiv_workflow_manual_accepted(
         obj = eng.processed_objects[0]
         assert obj.status == ObjectStatus.WAITING
 
-        response = _do_robotupload_callback(
+        response = do_robotupload_callback(
             app=workflow_app,
             workflow_id=obj.id,
             recids=[12345],
@@ -562,7 +229,7 @@ def test_harvesting_arxiv_workflow_manual_accepted(
         obj = workflow_object_class.get(obj.id)
         assert obj.status == ObjectStatus.WAITING
 
-        response = _do_webcoll_callback(app=workflow_app, recids=[12345])
+        response = do_webcoll_callback(app=workflow_app, recids=[12345])
         assert response.status_code == 200
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
