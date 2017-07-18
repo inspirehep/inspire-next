@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import sys
+import pkg_resources
 
 from celery.schedules import crontab
 
@@ -172,7 +173,8 @@ RECORD_EDITOR_INDEX_TEMPLATE = 'inspirehep_theme/invenio_record_editor/index.htm
 RECORD_EDITOR_PREVIEW_TEMPLATE_FUNCTION = get_detailed_template_from_record
 
 # Path to where journal kb file is stored from `inspirehep.modules.refextract.tasks.create_journal_kb_file`
-REFEXTRACT_JOURNAL_KB_PATH = '/tmp/journal-titles.kb'
+# On production, if you enable celery beat change this path to point to a shared space.
+REFEXTRACT_JOURNAL_KB_PATH = pkg_resources.resource_filename('refextract', 'references/kbs/journal-titles.kb')
 
 INSPIRE_COLLECTIONS_DEFINITION = [
     {
