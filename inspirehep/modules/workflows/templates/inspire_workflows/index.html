@@ -80,27 +80,18 @@
       </holding-pen-dashboard-item>
 
     </div>
+  </div>
+
+  <div class="row overview-container">
 
     <div class="col-md-3 col-sm-6">
 
-      <holding-pen-dashboard-item
-        template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"
-        filter_string="source=Alpha experiment"
-        secondary_filter="status"
-        section_title="Alpha experiment">
-      </holding-pen-dashboard-item>
-
-    </div>
-
-    <div class="col-md-3 col-sm-6">
-
-      <holding-pen-dashboard-item
-        template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"
-        filter_string=""
-        secondary_filter="status"
-        section_title="all harvests">
-      </holding-pen-dashboard-item>
-
+        <holding-pen-dashboard-item
+          template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"
+          filter_string=""
+          secondary_filter="status"
+          section_title="all harvests">
+        </holding-pen-dashboard-item>
     </div>
   </div>
 </div>
