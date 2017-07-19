@@ -86,8 +86,7 @@ def create_ticket(template,
         user = User.query.get(obj.id_user)
         if not user:
             obj.log.error(
-                "No user found for object {0}, skipping ticket creation".format(
-                    obj.id))
+                "No user found for object %s, skipping ticket creation", obj.id)
             return
         context = {}
         if context_factory:
@@ -142,8 +141,7 @@ def reply_ticket(template=None,
         user = User.query.get(obj.id_user)
         if not user:
             obj.log.error(
-                "No user found for object {0}, skipping ticket creation".format(
-                    obj.id))
+                "No user found for object %s, skipping ticket creation", obj.id)
             return
 
         if template:
@@ -258,8 +256,7 @@ def send_robotupload(
                 # IP not in the list
                 obj.log.error("Your IP is not in "
                               "app.config_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
-                              "on host")
-                obj.log.error(result.text)
+                              "on host: %s", result.text)
             txt = "Error while submitting robotupload: {0}".format(result.text)
             raise Exception(txt)
         else:

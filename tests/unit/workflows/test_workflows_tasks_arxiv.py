@@ -307,7 +307,7 @@ def test_arxiv_plot_extract_logs_when_tarball_is_invalid(mock_process_tarball):
 
     assert arxiv_plot_extract(obj, eng) is None
 
-    expected = 'Invalid tarball http://export.arxiv.org/e-print/1612.00626'
+    expected = 'Invalid tarball http://export.arxiv.org/e-print/1612.00626 for arxiv_id 1612.00626'
     result = obj.log._error.getvalue()
 
     assert expected == result
@@ -345,7 +345,7 @@ def test_arxiv_plot_extract_logs_when_images_are_invalid(mock_process_tarball):
 
     assert arxiv_plot_extract(obj, eng) is None
 
-    expected = 'Error extracting plots. Report and skip.'
+    expected = 'Error extracting plots for 1612.00624. Report and skip.'
     result = obj.log._error.getvalue()
 
     assert expected == result
@@ -555,7 +555,7 @@ def test_arxiv_author_list_logs_on_error(mock_os, mock_untar):
 
         assert default_arxiv_author_list(obj, eng) is None
 
-        expected = 'Invalid tarball http://export.arxiv.org/e-print/1605.07707'
+        expected = 'Invalid tarball http://export.arxiv.org/e-print/1605.07707 for arxiv_id 1605.07707'
         result = obj.log._error.getvalue()
 
         assert expected == result

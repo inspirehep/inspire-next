@@ -355,8 +355,6 @@ def update_existing_workflow_object(obj, eng):
                 existing_obj.save()
                 break
     else:
-        msg = "Cannot update old object, non valid ids: {0}".format(
-            holdingpen_ids
-        )
-        obj.log.error(msg)
-        raise Exception(msg)
+        msg = "Cannot update old object, non valid ids: %s"
+        obj.log.error(msg, holdingpen_ids)
+        raise Exception(msg % holdingpen_ids)
