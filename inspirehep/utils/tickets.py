@@ -25,7 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 from functools import wraps
-from urlparse import urljoin
+from urlparse import urljoin, urlparse
 
 from flask import current_app, render_template
 
@@ -242,12 +242,58 @@ def _strip_lines(multiline_string):
 
 
 @relogin_if_needed
-def get_tickets_by_recid(recid):
+def get_tickets_by_recid(recid,
+                         exclude_resolved=True,
+                         with_text_and_link=True):
     """Returns all tickets that are associated with the given recid
 
     :type recid: integer
     """
-    return rt_instance.search(Queue=ALL_QUEUES, CF_RecordID=str(recid))
+    search_params = dict(
+        Queue=ALL_QUEUES,
+        CF_RecordID=str(recid)
+    )
+    if exclude_resolved:
+        search_params['Status__notexact'] = 'resolved'
+    tickets_for_recid = rt_instance.search(**search_params)
+    if with_text_and_link:
+        return map(_set_extra_attributes, tickets_for_recid)
+    else:
+        return tickets_for_recid
+
+
+def _set_extra_attributes(ticket):
+    """Sets better ticket id, Text and Link for given ticket"""
+    # `ticket['id']` has format of `'ticket/<ticket_id>'`
+    ticket_id = ticket['id'].split('/')[1]
+    ticket['Id'] = ticket_id
+    ticket['Text'] = _get_ticket_text(ticket_id)
+    ticket['Link'] = _get_rt_link_for_ticket(ticket_id)
+    return ticket
+
+
+def _get_ticket_text(ticket_id):
+    """Returns the first plain text attachment or empty string for given ticket
+    """
+    attachments_ids = rt_instance.get_attachments_ids(ticket_id)
+    for attachment_id in attachments_ids:
+        attachment = rt_instance.get_attachment(ticket_id, attachment_id)
+        if attachment['ContentType'] == 'text/plain':
+            return attachment['Content']
+    return ''
+
+
+def _get_rt_link_for_ticket(ticket_id):
+    """ Returns rt system display link to given ticket
+
+    :type ticket_id: integer
+
+    :rtype: string
+    """
+    parsed_url = urlparse(rt_instance.url)
+    return '{}://{}/Ticket/Display.html?id={}'.format(parsed_url.scheme,
+                                                      parsed_url.netloc,
+                                                      ticket_id)
 
 
 @relogin_if_needed
