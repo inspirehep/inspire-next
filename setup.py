@@ -263,6 +263,9 @@ setup(
             'inspirehep_holding_js = inspirehep.modules.workflows.bundles:details_js',
             'inspirehep_tools_authorlist_js = inspirehep.modules.tools.bundles:js'
         ],
+        'invenio_base.api_blueprints': [
+            'inspirehep_editor = inspirehep.modules.editor:blueprint'
+        ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspire_schemas',
         ],
