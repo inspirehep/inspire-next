@@ -406,7 +406,7 @@ def test_send_robotupload_logs_on_error_response():
         assert expected == result
 
         expected = (
-            'Your IP is not in app.config_BATCHUPLOADER_WEB_ROBOT_RIGHTS on host'
+            'Your IP is not in app.config_BATCHUPLOADER_WEB_ROBOT_RIGHTS on host: '
             '[ERROR] cannot use the service'
         )
         result = obj.log._error.getvalue()
