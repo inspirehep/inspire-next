@@ -33,6 +33,7 @@ readme = open('README.rst').read()
 
 install_requires = [
     'amqp>=1.4.9,<2.0',
+    'beard>=0.2.0,~=0.2',
     'celery<4.0',
     'Flask-Gravatar>=0.4.2',
     'HarvestingKit>=0.6.2',
@@ -43,7 +44,6 @@ install_requires = [
     'raven<=5.1.0',
     'retrying',
     'flower',
-    'rt',
     'langdetect>=1.0.6',
     'librabbitmq>=1.6.1',
     'idutils>=0.2.1',
@@ -59,9 +59,11 @@ install_requires = [
     'invenio-i18n>=1.0.0a4',
     'invenio-indexer>=1.0.0a10',
     'invenio-jsonschemas>=1.0.0a4',
-    'invenio-logging>=1.0.0a3',
+    # FIXME: using custom fork until inveniosoftware/invenio-logging#30 is merged
+    # 'invenio-logging>=1.0.0a3',
     'invenio-mail>=1.0.0a4',
-    'invenio-oauthclient>=1.0.0a8',
+    # FIXME: using custom fork until inveniosoftware/invenio-oauthclient is released
+    #'invenio-oauthclient>=1.0.0a8',
     'invenio-orcid>=1.0.0a1',
     'invenio-records>=1.0.0a16',  # Add [versioning] in the future
     'invenio-rest[cors]>=1.0.0a7',
@@ -72,11 +74,10 @@ install_requires = [
     'invenio-records-files>=1.0.0a5',
     'invenio-userprofiles>=1.0.0a7',
     'invenio-oaiharvester==1.0.0a2',
-    'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
     'invenio>=3.0.0a1,<3.1.0',
     'inspire-crawler~=0.0,>=0.2.7',
-    'inspire-schemas~=40.0,>=40.0.3',
-    'dojson>=1.3.0',
+    'inspire-dojson~=42.0,>=42.0.0',
+    'inspire-schemas~=42.0,>=42.0.0',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
     'Flask-Caching>=1.0.1',
@@ -210,12 +211,6 @@ setup(
         'console_scripts': [
             'inspirehep = inspirehep.cli:cli',
         ],
-        'dojson.cli.rule': [
-            'hep = inspirehep.dojson.hep:hep',
-            'hep2marc = inspirehep.dojson.hep:hep2marc',
-            'hepnames = inspirehep.dojson.hepnames:hepnames',
-            'hepnames2marc = inspirehep.dojson.hepnames2marc:hepnames2marc',
-        ],
         'invenio_access.actions': [
             'view_restricted_collection'
             ' = inspirehep.modules.records.permissions:'
@@ -224,6 +219,7 @@ setup(
         ],
         'invenio_base.api_apps': [
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
+            'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'invenio_collections = invenio_collections:InvenioCollections',
@@ -231,6 +227,7 @@ setup(
         ],
         'invenio_base.apps': [
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
+            'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_fixtures = inspirehep.modules.fixtures:INSPIREFixtures',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
@@ -289,6 +286,12 @@ setup(
         'invenio_db.models': [
             'inspire_workflows_audit = inspirehep.modules.workflows.models',
             'inspire_disambiguation = inspirehep.modules.disambiguation.models',
+        ],
+        'invenio_celery.tasks': [
+            'inspire_refextract = inspirehep.modules.refextract.tasks',
+            'inspire_authors = inspirehep.modules.authors.tasks',
+            'inspire_disambiguation = inspirehep.modules.disambiguation.tasks',
+            'inspire_records = inspirehep.modules.records.tasks',
         ],
     },
     tests_require=tests_require,

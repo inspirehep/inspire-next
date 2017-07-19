@@ -32,8 +32,8 @@ from shutil import rmtree
 from tempfile import mkdtemp
 from wand.exceptions import DelegateError
 
+from inspire_dojson.utils import validate
 from inspire_schemas.utils import load_schema
-from inspirehep.dojson.utils import validate
 from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_author_list,
     arxiv_derive_inspire_categories,
@@ -41,6 +41,7 @@ from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_package_download,
     arxiv_plot_extract,
 )
+from inspirehep.modules.workflows.errors import DownloadError
 from plotextractor.errors import InvalidTarball
 
 from mocks import AttrDict, MockEng, MockFiles, MockObj
@@ -82,6 +83,41 @@ def test_arxiv_fulltext_download_logs_on_success():
 
 
 @pytest.mark.httpretty
+def test_arxiv_fulltext_download_logs_on_pdf_not_existing():
+    httpretty.register_uri(
+        httpretty.GET, 'http://export.arxiv.org/pdf/1707.02785',
+        body=pkg_resources.resource_string(
+            __name__, os.path.join('fixtures', '1707.02785.html')))
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'cs.CV',
+                ],
+                'value': '1707.02785',
+            },
+        ],
+    }  # literature/1458302
+    extra_data = {}
+    files = MockFiles({})
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    assert arxiv_fulltext_download(obj, eng) is None
+
+    expected = 'No PDF is available for 1707.02785'
+    result = obj.log._info.getvalue()
+
+    assert expected == result
+
+
+@pytest.mark.httpretty
 def test_arxiv_fulltext_download_logs_on_error():
     httpretty.register_uri(
         httpretty.GET, 'http://export.arxiv.org/pdf/1605.03814', status=500)
@@ -106,10 +142,11 @@ def test_arxiv_fulltext_download_logs_on_error():
     obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
-    assert arxiv_fulltext_download(obj, eng) is None
+    with pytest.raises(DownloadError) as excinfo:
+        arxiv_fulltext_download(obj, eng)
 
-    expected = 'Cannot retrieve PDF from arXiv for 1605.03814'
-    result = obj.log._error.getvalue()
+    expected = 'http://export.arxiv.org/pdf/1605.03814 is not serving a PDF file.'
+    result = str(excinfo.value)
 
     assert expected == result
 

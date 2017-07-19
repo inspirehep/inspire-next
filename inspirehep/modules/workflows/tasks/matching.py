@@ -28,12 +28,14 @@ import datetime
 import os
 import re
 import traceback
+import backoff
 from functools import wraps
 from itertools import chain
 
 import requests
 import six
 from flask import current_app
+from simplejson import JSONDecodeError
 
 from inspirehep.utils.datefilter import date_older_than
 from inspirehep.utils.record import (
@@ -46,6 +48,7 @@ from ..utils import with_debug_logging
 
 
 @with_debug_logging
+@backoff.on_exception(backoff.expo, Exception, max_tries=7)
 def search(query):
     """Perform a search and returns the matching ids."""
     params = dict(p=query, of='id')
@@ -62,7 +65,7 @@ def search(query):
             )
         )
         raise
-    except ValueError:
+    except (ValueError, JSONDecodeError):
         current_app.logger.error(
             "Error decoding results from remote server:\n {0}".format(
                 traceback.format_exc()

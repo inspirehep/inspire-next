@@ -50,8 +50,8 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
 from invenio_search.utils import schema_to_index
 
-from inspirehep.dojson.processors import overdo_marc_dict
-from inspirehep.dojson.utils import get_recid_from_ref
+from inspire_dojson.processors import overdo_marc_dict
+from inspire_dojson.utils import get_recid_from_ref
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord

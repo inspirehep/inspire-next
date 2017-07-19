@@ -27,8 +27,8 @@ import mock
 import pytest
 from flask import current_app
 
+from inspire_dojson.utils import validate
 from inspire_schemas.utils import load_schema
-from inspirehep.dojson.utils import validate
 from inspirehep.modules.authors import receivers
 
 
@@ -70,30 +70,16 @@ def test_name_variations():
             'Richard Ellis'])
 
 
-@pytest.mark.httpretty
 def test_phonetic_block_generation_ascii():
-    extra_config = {
-        "BEARD_API_URL": "http://example.com/beard",
+    json_dict = {
+        "authors": [{
+            "full_name": "John Richard Ellis"
+        }]
     }
 
-    with mock.patch.dict(current_app.config, extra_config):
-        httpretty.register_uri(
-            httpretty.POST,
-            "{base_url}/text/phonetic_blocks".format(
-                base_url=current_app.config.get('BEARD_API_URL')),
-            content_type="application/json",
-            body='{"phonetic_blocks": {"John Richard Ellis": "ELj"}}',
-            status=200)
+    receivers.assign_phonetic_block(json_dict)
 
-        json_dict = {
-            "authors": [{
-                "full_name": "John Richard Ellis"
-            }]
-        }
-
-        receivers.assign_phonetic_block(json_dict)
-
-        assert json_dict['authors'][0]['signature_block'] == "ELj"
+    assert json_dict['authors'][0]['signature_block'] == "ELj"
 
 
 @pytest.mark.httpretty

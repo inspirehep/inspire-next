@@ -235,7 +235,11 @@ def refextract(obj, eng):
     uri = get_pdf_in_workflow(obj)
     if uri:
         try:
-            mapped_references = extract_references(uri)
+            journal_kb_path = current_app.config.get('REFEXTRACT_JOURNAL_KB_PATH', None)
+            if journal_kb_path:
+                mapped_references = extract_references(uri, {'journals': journal_kb_path})
+            else:
+                mapped_references = extract_references(uri)
             if mapped_references:
                 obj.data['references'] = mapped_references
                 obj.log.info('Extracted %d references', len(mapped_references))

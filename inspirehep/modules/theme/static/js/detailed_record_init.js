@@ -21,17 +21,15 @@
  */
 
 require([
-  "js/plots",
-  "js/datatables",
-  "impact-graphs",
-  'angular-loading-bar',
-  'invenio-search',
+  'js/plots',
+  'js/datatables',
+  'impact-graphs',
   'inspirehep-search'
 ], function(Plots) {
   angular.element(document).ready(function() {
     angular.bootstrap(
-      document.getElementById("record_content"), ['angular-loading-bar',
-                                                  'inspirehepSearch']
+      document.getElementById('record_content'), ['angular-loading-bar',
+                                                  'inspirehep']
     );
   });
 	console.log('js/detailed_record_init is loaded')

@@ -34,6 +34,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
 from ..arsenic import Arsenic, ArsenicResponse
+from inspirehep.bat.EC import GetText
 
 
 def go_to():
@@ -73,7 +74,7 @@ def write_mail(mail):
     try:
         mail_field.send_keys(Keys.TAB)
         message_err = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.ID, 'state-public_emails-0-email'))).text
+            GetText((By.ID, 'state-public_emails-0-email')))
     except (ElementNotVisibleException, WebDriverException):
         message_err = ''
     mail_field.clear()
@@ -90,7 +91,7 @@ def write_orcid(orcid):
     try:
         ORCID_field.send_keys(Keys.TAB)
         message_err = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.ID, 'state-orcid'))).text
+            GetText((By.ID, 'state-orcid')))
     except (ElementNotVisibleException, WebDriverException):
         message_err = ''
     ORCID_field.clear()
@@ -107,7 +108,7 @@ def write_year(input_id, error_message_id, year):
     try:
         year_field.send_keys(Keys.TAB)
         message_err = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.ID, error_message_id))).text
+            GetText((By.ID, error_message_id)))
     except (ElementNotVisibleException, WebDriverException):
         message_err = ''
     year_field.clear()
@@ -138,7 +139,7 @@ def submit_empty_form(expected_data):
 def submit_author(input_data):
     def _submit_author():
         return 'Thank you for adding new profile information!' in WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text
+            GetText((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])')))
 
     Arsenic().hide_title_bar()
     WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'given_names'))).send_keys(input_data['given_names'])

@@ -49,6 +49,7 @@ from invenio_db import db
 from invenio_workflows import workflow_object_class, start, resume
 from invenio_workflows_ui.api import WorkflowUIRecord
 
+from inspire_dojson.hepnames import hepnames
 from inspirehep.modules.forms.form import DataExporter
 from inspirehep.utils.record import get_value
 
@@ -233,7 +234,6 @@ def new():
 def update(recid):
     """View for INSPIRE author update form."""
     from dojson.contrib.marc21.utils import create_record
-    from inspirehep.dojson.hepnames import hepnames
 
     data = {}
     if recid:

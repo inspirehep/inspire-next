@@ -26,6 +26,7 @@ from six import StringIO
 
 
 class MockEng(object):
+
     def __init__(self, data_type='hep'):
         self.workflow_definition = AttrDict(data_type=data_type)
 
@@ -35,6 +36,7 @@ class MockEng(object):
 
 
 class MockObj(object):
+
     def __init__(self, data, extra_data, data_type='hep', files=None, id=1, id_user=1):
         self.data = data
         self.extra_data = extra_data
@@ -48,12 +50,14 @@ class MockObj(object):
 
 
 class AttrDict(dict):
+
     def __init__(self, *args, **kwargs):
         super(AttrDict, self).__init__(*args, **kwargs)
         self.__dict__ = self
 
 
 class MockFiles(object):
+
     def __init__(self, data):
         self.data = data
 
@@ -78,6 +82,7 @@ class MockFiles(object):
 
 
 class MockFileObject(object):
+
     def __init__(self, key):
         self.obj = {'key': key}
 
@@ -98,12 +103,14 @@ class MockFileObject(object):
 
 
 class MockObjectVersion(object):
+
     @property
     def mimetype(self):
         return 'application/pdf'
 
 
 class MockLog(object):
+
     def __init__(self):
         self._debug = StringIO()
         self._error = StringIO()
@@ -123,36 +130,8 @@ class MockLog(object):
         self._warning.write(msg % args if args else msg)
 
 
-class MockRT(object):
-    def __init__(self):
-        self.last_id = 0
-        self.tickets = {}
-
-    def create_ticket(self, **kwargs):
-        self.last_id += 1
-        kwargs.update({'ticket_id': self.last_id})
-        self.tickets[self.last_id] = kwargs
-        return self.last_id
-
-    def edit_ticket(self, ticket_id, **kwargs):
-        try:
-            ticket = self.tickets[ticket_id]
-            if ticket['Status'] == 'resolved':
-                raise KeyError
-        except KeyError:
-            raise IndexError
-
-        ticket.update(kwargs)
-
-    def get_ticket(self, ticket_id):
-        return self.tickets[ticket_id]
-
-    def reply(self, ticket_id, **kwargs):
-        kwargs.update({'Status': 'acknowledged'})
-        self.tickets[ticket_id].update(kwargs)
-
-
 class MockUser(object):
+
     def __init__(self, email, roles=[]):
         self.email = email
         self.roles = [MockRole(el) for el in roles]
@@ -163,5 +142,6 @@ class MockUser(object):
 
 
 class MockRole(object):
+
     def __init__(self, name):
         self.name = name

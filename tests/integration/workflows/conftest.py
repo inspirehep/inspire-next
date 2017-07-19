@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,15 +20,24 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""Common fixtures for workflows"""
+
 from __future__ import absolute_import, division, print_function
 
 import os
+import pytest
 import sys
 
-import pytest
-from langdetect import DetectorFactory
+from invenio_db import db
+from invenio_workflows import (
+    workflow_object_class,
+)
 
 from inspirehep.factory import create_app
+from inspirehep.modules.workflows.models import (
+    WorkflowsAudit,
+    WorkflowsPendingRecord,
+)
 
 
 # Use the helpers folder to store test helpers.
@@ -36,40 +45,37 @@ from inspirehep.factory import create_app
 sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
 
 
-@pytest.fixture(autouse=True, scope='session')
-def app():
+@pytest.fixture(autouse=True)
+def cleanup_workflows_tables(small_app):
+    with small_app.app_context():
+        obj_types = (
+                WorkflowsAudit.query.all(),
+                WorkflowsPendingRecord.query.all(),
+                workflow_object_class.query(),
+        )
+        for obj_type in obj_types:
+            for obj in obj_type:
+                obj.delete()
+
+        db.session.commit()
+
+
+@pytest.fixture
+def workflow_app():
     app = create_app(
+        BEARD_API_URL="http://example.com/beard",
         DEBUG=True,
-        WTF_CSRF_ENABLED=False,
         CELERY_ALWAYS_EAGER=True,
         CELERY_RESULT_BACKEND='cache',
         CELERY_CACHE_BACKEND='memory',
         CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
-        TESTING=True,
         PRODUCTION_MODE=True,
+        LEGACY_ROBOTUPLOAD_URL=(
+            'http://localhost:1234'
+        ),
+        MAGPIE_API_URL="http://example.com/magpie",
+        WTF_CSRF_ENABLED=False,
     )
 
     with app.app_context():
         yield app
-
-
-@pytest.fixture(scope='function')
-def app_client(app):
-    with app.test_client() as client:
-        yield client
-
-
-@pytest.fixture(scope='function')
-def request_context(app):
-    with app.test_request_context() as request_context:
-        yield request_context
-
-
-@pytest.fixture(scope='function')
-def stable_langdetect(app):
-    """Ensure that ``langdetect`` always returns the same thing.
-
-    See: https://github.com/Mimino666/langdetect#basic-usage."""
-    DetectorFactory.seed = 0
-
-    yield

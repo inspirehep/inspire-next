@@ -28,6 +28,7 @@ import os
 import re
 from functools import wraps
 
+import requests
 import backoff
 from flask import current_app
 from lxml.etree import XMLSyntaxError
@@ -36,10 +37,11 @@ from werkzeug import secure_filename
 
 from dojson.contrib.marc21.utils import create_record
 
-from inspirehep.dojson.hep import hep
-from inspirehep.dojson.utils import classify_field
+from inspire_dojson.hep import hep
+from inspire_dojson.utils.arxiv import classify_field
 from inspirehep.modules.converter import convert
 from inspirehep.utils.record import get_arxiv_categories, get_arxiv_id
+from inspirehep.utils.url import is_pdf_link
 
 from plotextractor.api import process_tarball
 from plotextractor.converter import untar
@@ -54,6 +56,7 @@ REGEXP_AUTHLIST = re.compile(
 REGEXP_REFS = re.compile(
     "<record.*?>.*?<controlfield .*?>.*?</controlfield>(.*?)</record>",
     re.DOTALL)
+NO_PDF_ON_ARXIV = 'The author has provided no source to generate PDF, and no PDF.'
 
 
 @with_debug_logging
@@ -66,20 +69,22 @@ def arxiv_fulltext_download(obj, eng):
     """
     arxiv_id = get_arxiv_id(obj.data)
     filename = secure_filename('{0}.pdf'.format(arxiv_id))
+    url = current_app.config['ARXIV_PDF_URL'].format(arxiv_id=arxiv_id)
+
+    if not is_pdf_link(url):
+        if NO_PDF_ON_ARXIV in requests.get(url).content:
+            obj.log.info('No PDF is available for %s', arxiv_id)
+            return
+        raise DownloadError("{url} is not serving a PDF file.".format(url=url))
+
     pdf = download_file_to_workflow(
         workflow=obj,
         name=filename,
-        url=current_app.config['ARXIV_PDF_URL'].format(arxiv_id=arxiv_id),
+        url=url,
     )
 
-    if pdf and pdf.get_version().mimetype == 'application/pdf':
+    if pdf:
         obj.log.info('PDF retrieved from arXiv for %s', arxiv_id)
-    elif pdf:
-        # We need to delete the failed download as otherwise it would
-        # create a new version instead of replacing the previous one.
-        del obj.files[filename]
-        pdf.delete()
-        raise DownloadError()
     else:
         obj.log.error('Cannot retrieve PDF from arXiv for %s', arxiv_id)
 

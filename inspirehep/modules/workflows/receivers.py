@@ -29,7 +29,7 @@ import six
 from dojson.contrib.marc21.utils import create_record
 from invenio_oaiharvester.signals import oaiharvest_finished
 
-from inspirehep.dojson.hep import hep
+from inspire_dojson.hep import hep
 from inspirehep.modules.converter.xslt import convert
 
 ARXIV_URLS = ("http://export.arxiv.org/oai2", "http://arxiv.org/oai2")

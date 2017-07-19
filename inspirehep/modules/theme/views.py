@@ -407,12 +407,12 @@ def get_institution_experiments_datatables_rows(hits):
             row.append(
                 name_html.format(
                     id=hit.control_number,
-                    name=hit.experiment.legacy_name,
+                    name=hit.legacy_name,
                 )
             )
         except ValueError:
             row.append(hit.collaboration)
-        row.append(get_experiment_publications(hit.experiment.legacy_name))
+        row.append(get_experiment_publications(hit.legacy_name))
         result.append(row)
     return result
 

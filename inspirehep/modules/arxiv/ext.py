@@ -56,7 +56,7 @@ from flask import current_app, request, jsonify
 from flask_login import login_required
 from lxml.etree import fromstring
 
-from invenio_utils.xmlhelpers import etree_to_dict
+from .utils.xmlhelpers import etree_to_dict
 
 response_code = {'success': 200,
                  'notfound': 404,

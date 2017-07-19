@@ -33,6 +33,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from ..arsenic import Arsenic, ArsenicResponse
+from inspirehep.bat.EC import GetText
 
 
 def go_to():
@@ -51,10 +52,10 @@ def force_load_record(xpath):
             )
         ).click()
         record = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located(
+            GetText(
                 (By.XPATH, '//div[@class="row hp-item ng-scope"][1]')
             )
-        ).text
+        )
     except (ElementNotVisibleException, WebDriverException):
         record = _refresh_page()
 

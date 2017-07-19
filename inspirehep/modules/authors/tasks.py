@@ -30,7 +30,7 @@ from flask import current_app, url_for
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from inspirehep.dojson.utils import strip_empty_values
+from inspire_dojson.utils import strip_empty_values
 from inspirehep.modules.forms.utils import filter_empty_elements
 
 from inspire_schemas.utils import validate

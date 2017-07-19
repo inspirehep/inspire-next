@@ -20,10 +20,17 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-web: gunicorn inspirehep.wsgi -c gunicorn.cfg
-cache: redis-server
-worker: celery worker -E -A inspirehep.celery --loglevel=INFO --workdir="${VIRTUAL_ENV}" --autoreload --pidfile="${VIRTUAL_ENV}/worker.pid" --purge
-workermon: celery flower -A inspirehep.celery
-# beat: celery beat -A inspirehep.celery --loglevel=INFO --workdir="${VIRTUAL_ENV}" --pidfile="${VIRTUAL_ENV}/worker_beat.pid"
-# mathoid: node_modules/mathoid/server.js -c mathoid.config.yaml
-indexer: elasticsearch -Dcluster.name="inspire" -Ddiscovery.zen.ping.multicast.enabled=false -Dpath.data="$VIRTUAL_ENV/var/data/elasticsearch"  -Dpath.logs="$VIRTUAL_ENV/var/log/elasticsearch"
+from __future__ import absolute_import, division, print_function
+
+
+def etree_to_dict(tree):
+    """Translate etree into dictionary.
+
+    :param tree: etree dictionary object
+    :type tree: <http://lxml.de/api/lxml.etree-module.html>
+    """
+    d = {tree.tag.split('}')[1]: map(
+        etree_to_dict, tree.iterchildren()
+    ) or tree.text}
+
+    return d

@@ -21,8 +21,14 @@
 # or submit itself to any jurisdiction.
 
 
+# Bleeding edge packages not yet released on Pypi
+-e git+https://github.com/CZ-NIC/python-rt.git@64cc54b1aa7514906be60f8bbd7e5ed18b56bba6#egg=rt
+
 # FIXME temporary branch for testing
 -e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3-inspire#egg=invenio-query-parser==0.6.0
+
+# FIXME explicit commit until it is officially released
+-e git+https://github.com/inveniosoftware/invenio-oauthclient.git@1753ecb8186213d7e24ecbca7899b85ff4c53037#egg=invenio-oauthclient
 
 # JSON editor
 -e git+https://github.com/inveniosoftware-contrib/invenio-record-editor.git#egg=invenio-record-editor
@@ -30,5 +36,6 @@
 # Workflows and Holding Pen related dependencies
 -e git+https://github.com/david-caro/workflow.git@minor_fixes_bumped_version#egg=workflow==2.0.1.dev20161019
 -e git+https://github.com/inspirehep/invenio-matcher.git#egg=invenio-matcher
+-e git+https://github.com/kaplun/invenio-logging.git@real-sentry#egg=invenio-logging==1.0.0b2.dev20170131
 
 -e .[postgresql]

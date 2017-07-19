@@ -26,42 +26,10 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
-try:
-    from beard.utils.strings import asciify
-except ImportError:
-    import sys
-    import unicodedata
-    from functools import wraps
 
-    from unidecode import unidecode
-
-    IS_PYTHON_3 = sys.version_info[0] == 3
-
-    def memoize(func):
-        """Memoization function."""
-        cache = {}
-
-        @wraps(func)
-        def wrap(*args, **kwargs):
-
-            frozen = frozenset(kwargs.items())
-            if (args, frozen) not in cache:
-                cache[(args, frozen)] = func(*args, **kwargs)
-            return cache[(args, frozen)]
-
-        return wrap
-
-    @memoize
-    def asciify(string):
-        """Transliterate a string to ASCII."""
-        if not IS_PYTHON_3 and not isinstance(string, unicode):
-            string = unicode(string, "utf8", errors="ignore")
-
-        string = unidecode(unicodedata.normalize("NFKD", string))
-        string = string.encode("ascii", "ignore")
-        string = string.decode("utf8")
-
-        return string
+import numpy as np
+from beard.utils.strings import asciify
+from beard.clustering import block_phonetic
 
 
 _bai_parentheses_cleaner = \
@@ -360,3 +328,23 @@ def author_tokenize(phrase):
     """Return all possible variatons of a name"""
     return parse_scanned_author_for_phrases(
         scan_author_string_for_phrases(phrase))
+
+
+def phonetic_blocks(full_names, phonetic_algorithm='nysiis'):
+    """Create a dictionary of phonetic blocks for a given list of names."""
+
+    # The method requires a list of dictionaries with full_name as keys.
+    full_names_formatted = [
+        {"author_name": i} for i in full_names]
+
+    # Create a list of phonetic blocks.
+    phonetic_blocks = list(
+        block_phonetic(np.array(
+            full_names_formatted,
+            dtype=np.object).reshape(-1, 1),
+            threshold=0,
+            phonetic_algorithm=phonetic_algorithm
+        )
+    )
+
+    return dict(zip(full_names, phonetic_blocks))

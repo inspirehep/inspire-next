@@ -22,18 +22,20 @@
 
 from __future__ import absolute_import, division, print_function
 
-import httpretty
-import pytest
 from flask import current_app
-from mock import patch
+
+import httpretty
+
+from inspire_dojson.hep import hep2marc
+from inspire_dojson.hepnames import hepnames2marc
+from inspire_dojson.utils import validate
 
 from inspire_schemas.utils import load_schema
-from inspirehep.dojson.hep import hep2marc
-from inspirehep.dojson.hepnames import hepnames2marc
-from inspirehep.dojson.utils import validate
+
 from inspirehep.modules.literaturesuggest.tasks import (
     reply_ticket_context as literaturesuggest_reply_ticket_context,
 )
+
 from inspirehep.modules.workflows.tasks.submission import (
     add_note_entry,
     close_ticket,
@@ -47,416 +49,103 @@ from inspirehep.modules.workflows.tasks.submission import (
     wait_webcoll,
 )
 
-from mocks import AttrDict, MockEng, MockFiles, MockObj, MockUser, MockRT
+from mock import patch
+
+from mocks import AttrDict, MockEng, MockFiles, MockObj, MockUser
+
+import pytest
 
 
 @patch('inspirehep.modules.workflows.tasks.submission.User')
-@patch('inspirehep.modules.workflows.tasks.submission.render_template')
-def test_create_ticket_handles_unicode_when_not_in_production_mode(mock_render_template, mock_user):
+@patch('inspirehep.modules.workflows.tasks.submission.tickets.reply_ticket_with_template')
+@patch('inspirehep.modules.workflows.tasks.submission.rt_instance', lambda: True)
+def test_reply_ticket_calls_tickets_reply_with_template_when_template_is_set(mock_reply_ticket_with_template, mock_user):
     mock_user.query.get.return_value = MockUser('user@example.com')
-    mock_render_template.return_value = u'φοο'
-
-    config = {'PRODUCTION_MODE': False}
-
-    with patch.dict(current_app.config, config):
-        data = {}
-        extra_data = {}
-
-        obj = MockObj(data, extra_data)
-        eng = MockEng()
-
-        _create_ticket = create_ticket(None)
-
-        assert _create_ticket(obj, eng) is None
-
-        expected = (
-            u'Was going to create ticket: None\n\nφοο\n\n'
-            u'To: user@example.com Queue: Test'
-        )
-        result = obj.log._info.getvalue()
-
-        assert expected == result
-
-
-@patch('inspirehep.modules.workflows.tasks.submission.User')
-@patch('inspirehep.modules.workflows.tasks.submission.render_template')
-@patch('inspirehep.modules.workflows.tasks.submission.get_instance')
-def test_create_ticket_handles_unicode_when_in_production_mode(mock_get_instance, mock_render_template, mock_user):
-    mock_user.query.get.return_value = MockUser('user@example.com')
-    mock_render_template.return_value = u'φοο'
-    mock_get_instance.return_value = MockRT()
-
-    config = {'PRODUCTION_MODE': True}
-
-    with patch.dict(current_app.config, config):
-        data = {}
-        extra_data = {}
-
-        obj = MockObj(data, extra_data)
-        eng = MockEng()
-
-        _create_ticket = create_ticket(None)
-
-        assert _create_ticket(obj, eng) is None
-
-        expected = {'ticket_id': 1}
-        result = obj.extra_data
-
-        assert expected == result
-
-        expected = u'Ticket 1 created:\nφοο'
-        result = obj.log._info.getvalue()
-
-        assert expected == result
-
-
-@patch('inspirehep.modules.workflows.tasks.submission.User')
-@patch('inspirehep.modules.workflows.tasks.submission.get_instance')
-def test_reply_ticket_thanks_the_user_when_their_literature_submission_is_received(mock_get_instance, mock_user):
-    mock_rt = MockRT()
-    mock_rt.create_ticket(Queue='Test', Status='new')
-    mock_get_instance.return_value = mock_rt
-    mock_user.query.get.return_value = MockUser('user@example.com')
-
-    schema = load_schema('hep')
-    subschema = schema['properties']['titles']
-
     data = {
         'titles': [
             {'title': 'Partial Symmetries of Weak Interactions'},
         ],
     }
     extra_data = {'ticket_id': 1}
-    assert validate(data['titles'], subschema) is None
-
+    template = 'template_path'
     obj = MockObj(data, extra_data)
     eng = MockEng()
-
-    _reply_ticket = reply_ticket(
-        template='literaturesuggest/tickets/user_submitted.html',
-        context_factory=literaturesuggest_reply_ticket_context,
-        keep_new=True,
+    _reply_ticket = reply_ticket(template=template)
+    _reply_ticket(obj, eng)
+    mock_reply_ticket_with_template.assert_called_with(
+        extra_data['ticket_id'],
+        template,
+        {},
+        False
     )
-
-    assert _reply_ticket(obj, eng) is None
-
-    expected = (
-        'Dear user@example.com,\n '
-        '\n '
-        'Thank you very much for suggesting "Partial Symmetries of Weak Interactions" '
-        'to INSPIRE. It has been received and will be reviewed by our staff as '
-        'soon as possible. You will hear back from us shortly.\n '
-        '\n '
-        'Thank you for sharing with INSPIRE!'
-    )
-    result = mock_rt.get_ticket(1)
-
-    assert expected == result['text']
-
-    expected = 'new'
-    result = mock_rt.get_ticket(1)
-
-    assert expected == result['Status']
 
 
 @patch('inspirehep.modules.workflows.tasks.submission.User')
-@patch('inspirehep.modules.workflows.tasks.submission.get_instance')
-def test_reply_ticket_thanks_user_when_their_literature_submission_is_accepted(mock_get_instance, mock_user):
-    mock_rt = MockRT()
-    mock_rt.create_ticket(Queue='Test', Status='new')
-    mock_get_instance.return_value = mock_rt
+@patch('inspirehep.modules.workflows.tasks.submission.tickets.reply_ticket')
+@patch('inspirehep.modules.workflows.tasks.submission.rt_instance', lambda: True)
+def test_reply_ticket_calls_tickets_reply_when_template_is_not_set(mock_reply_ticket, mock_user):
     mock_user.query.get.return_value = MockUser('user@example.com')
+    data = {
+        'titles': [
+            {'title': 'Partial Symmetries of Weak Interactions'},
+        ],
+    }
+    extra_data = {'ticket_id': 1, 'reason': 'reply reason'}
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+    _reply_ticket = reply_ticket()
+    _reply_ticket(obj, eng)
+    mock_reply_ticket.assert_called_with(
+        extra_data['ticket_id'],
+        extra_data['reason'],
+        False
+    )
 
-    schema = load_schema('hep')
-    subschema = schema['properties']['titles']
 
+@patch('inspirehep.modules.workflows.tasks.submission.User')
+@patch('inspirehep.modules.workflows.tasks.submission.tickets.resolve_ticket')
+@patch('inspirehep.modules.workflows.tasks.submission.rt_instance', lambda: True)
+def test_close_ticket_calls_tickets_resolve(mock_resolve_ticket, mock_user):
+    mock_user.query.get.return_value = MockUser('user@example.com')
     data = {
         'titles': [
             {'title': 'Partial Symmetries of Weak Interactions'},
         ],
     }
     extra_data = {'ticket_id': 1}
-    assert validate(data['titles'], subschema) is None
-
     obj = MockObj(data, extra_data)
     eng = MockEng()
-
-    _reply_ticket = reply_ticket(
-        template='literaturesuggest/tickets/user_accepted.html',
-        context_factory=literaturesuggest_reply_ticket_context,
+    _close_ticket = close_ticket()
+    _close_ticket(obj, eng)
+    mock_resolve_ticket.assert_called_with(
+        extra_data['ticket_id']
     )
 
-    assert _reply_ticket(obj, eng) is None
 
-    expected = (
-        'Dear user@example.com,\n '
-        '\n '
-        'Thank you very much again for your suggestion "Partial Symmetries of Weak Interactions". '
-        'It has been reviewed by our curators and is now in INSPIRE.\n '
-        '\n '
-        "If you have any further questions, don't hesitate to contact us.\n "
-        '\n '
-        'Thanks again for your submission!'
+@patch('inspirehep.modules.workflows.tasks.submission.User')
+@patch('inspirehep.modules.workflows.tasks.submission.tickets.create_ticket_with_template')
+@patch('inspirehep.modules.workflows.tasks.submission.rt_instance', lambda: True)
+def test_create_ticket_calls_tickets_create_with_template(mock_create_ticket_with_template, mock_user):
+    mock_user.query.get.return_value = MockUser('user@example.com')
+    data = {
+        'titles': [
+            {'title': 'Partial Symmetries of Weak Interactions'},
+        ],
+    }
+    template = 'template_path'
+    extra_data = {'recid': '1'}
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+    _create_ticket = create_ticket(template=template)
+    _create_ticket(obj, eng)
+    mock_create_ticket_with_template.assert_called_with(
+        'Test',
+        'user@example.com',
+        template,
+        {},
+        None,
+        extra_data['recid']
     )
-    result = mock_rt.get_ticket(1)
-
-    assert expected == result['text']
-
-    expected = 'acknowledged'
-    result = mock_rt.get_ticket(1)
-
-    assert expected == result['Status']
-
-
-def test_reply_ticket_logs_an_error_when_there_is_no_ticket_id():
-    data = {}
-    extra_data = {}
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    _reply_ticket = reply_ticket()
-
-    assert _reply_ticket(obj, eng) is None
-
-    expected = 'No ticket ID found!'
-    result = obj.log._error.getvalue()
-
-    assert expected == result
-
-
-@patch('inspirehep.modules.workflows.tasks.submission.User')
-def test_reply_ticket_logs_an_error_when_there_is_no_user(mock_user):
-    mock_user.query.get.return_value = None
-
-    data = {}
-    extra_data = {'ticket_id': 1}
-
-    obj = MockObj(data, extra_data, id=1, id_user=1)
-    eng = MockEng()
-
-    _reply_ticket = reply_ticket()
-
-    assert _reply_ticket(obj, eng) is None
-
-    expected = 'No user found for object 1, skipping ticket creation'
-    result = obj.log._error.getvalue()
-
-    assert expected == result
-
-
-@patch('inspirehep.modules.workflows.tasks.submission.User')
-def test_reply_ticket_falls_back_to_reason_when_there_is_no_template(mock_user):
-    mock_user.query.get.return_value = MockUser('user@example.com')
-
-    data = {}
-    extra_data = {
-        'reason': 'reason',
-        'ticket_id': 1,
-    }
-
-    obj = MockObj(data, extra_data, id=1, id_user=1)
-    eng = MockEng()
-
-    _reply_ticket = reply_ticket()
-
-    assert _reply_ticket(obj, eng) is None
-
-
-@patch('inspirehep.modules.workflows.tasks.submission.User')
-def test_reply_ticket_logs_an_error_when_the_fallback_is_an_empty_string(mock_user):
-    mock_user.query.get.return_value = MockUser('user@example.com')
-
-    data = {}
-    extra_data = {
-        'reason': '',
-        'ticket_id': 1,
-    }
-
-    obj = MockObj(data, extra_data, id=1, id_user=1)
-    eng = MockEng()
-
-    _reply_ticket = reply_ticket()
-
-    assert _reply_ticket(obj, eng) is None
-
-    expected = 'No body for ticket reply. Skipping reply.'
-    result = obj.log._error.getvalue()
-
-    assert expected == result
-
-
-@patch('inspirehep.modules.workflows.tasks.submission.User')
-@patch('inspirehep.modules.workflows.tasks.submission.render_template')
-@patch('inspirehep.modules.workflows.tasks.submission.get_instance')
-def test_reply_ticket_logs_when_there_is_no_rt_instance(mock_get_instance, mock_render_template, mock_user):
-    mock_get_instance.return_value = None
-    mock_render_template.return_value = 'foo'
-    mock_user.query.get.return_value = MockUser('user@example.com')
-
-    data = {}
-    extra_data = {'ticket_id': 1}
-
-    obj = MockObj(data, extra_data, id=1, id_user=1)
-    eng = MockEng()
-
-    _reply_ticket = reply_ticket(template='foo')
-
-    assert _reply_ticket(obj, eng) is None
-
-    expected = 'No RT instance available. Skipping!'
-    result = obj.log._error.getvalue()
-
-    assert expected == result
-
-    expected = 'Was going to reply to 1\n\nfoo\n\n'
-    result = obj.log._info.getvalue()
-
-    assert expected == result
-
-
-@pytest.mark.xfail
-@patch('inspirehep.modules.workflows.tasks.submission.User')
-@patch('inspirehep.modules.workflows.tasks.submission.render_template')
-@patch('inspirehep.modules.workflows.tasks.submission.get_instance')
-def test_reply_ticket_handles_unicode_when_there_is_no_rt_instance(mock_get_instance, mock_render_template, mock_user):
-    mock_get_instance.return_value = None
-    mock_render_template.return_value = u'φοο'
-    mock_user.query.get.return_value = MockUser('user@example.com')
-
-    data = {}
-    extra_data = {'ticket_id': 1}
-
-    obj = MockObj(data, extra_data, id=1, id_user=1)
-    eng = MockEng()
-
-    _reply_ticket = reply_ticket(template='foo')
-
-    assert _reply_ticket(obj, eng) is None
-
-    expected = 'No RT instance available. Skipping!'
-    result = obj.log._error.getvalue()
-
-    assert expected == result
-
-    expected = u'Was going to reply to 1\n\nφοο\n\n'
-    result = obj.log._info.getvalue()
-
-    assert expected == result
-
-
-@patch('inspirehep.modules.workflows.tasks.submission.User')
-@patch('inspirehep.modules.workflows.tasks.submission.render_template')
-@patch('inspirehep.modules.workflows.tasks.submission.get_instance')
-def test_reply_ticket_keeps_new_status_when_requested(mock_get_instance, mock_render_template, mock_user):
-    mock_rt = MockRT()
-    mock_rt.create_ticket(Queue='Test', Status='new')
-    mock_get_instance.return_value = mock_rt
-    mock_render_template.return_value = 'foo'
-    mock_user.query.get.return_value = MockUser('user@example.com')
-
-    data = {}
-    extra_data = {'ticket_id': 1}
-
-    obj = MockObj(data, extra_data, id=1, id_user=1)
-    eng = MockEng()
-
-    _reply_ticket = reply_ticket(keep_new=True, template='foo')
-
-    assert _reply_ticket(obj, eng) is None
-
-    expected = 'foo'
-    result = mock_rt.get_ticket(1)
-
-    assert expected == result['text']
-
-    expected = 'new'
-    result = mock_rt.get_ticket(1)
-
-    assert expected == result['Status']
-
-
-@patch('inspirehep.modules.workflows.tasks.submission.get_instance')
-def test_close_ticket_marks_a_ticket_as_resolved(mock_get_instance):
-    mock_rt = MockRT()
-    mock_rt.create_ticket(Queue='Test', Status='new')
-    mock_get_instance.return_value = mock_rt
-
-    data = {}
-    extra_data = {'ticket_id': 1}
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    _close_ticket = close_ticket()
-
-    assert _close_ticket(obj, eng) is None
-
-    expected = 'resolved'
-    result = mock_rt.get_ticket(1)
-
-    assert expected == result['Status']
-
-
-def test_close_ticket_logs_an_error_when_there_is_no_ticket_id():
-    data = {}
-    extra_data = {}
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    _close_ticket = close_ticket()
-
-    assert _close_ticket(obj, eng) is None
-
-    expected = 'No ticket ID found!'
-    result = obj.log._error.getvalue()
-
-    assert expected == result
-
-
-def test_close_ticket_logs_when_there_is_no_rt_instance():
-    data = {}
-    extra_data = {'ticket_id': 1}
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    _close_ticket = close_ticket()
-
-    assert _close_ticket(obj, eng) is None
-
-    expected = 'No RT instance available. Skipping!'
-    result = obj.log._error.getvalue()
-
-    assert expected == result
-
-    expected = 'Was going to close ticket 1'
-    result = obj.log._info.getvalue()
-
-    assert expected == result
-
-
-@patch('inspirehep.modules.workflows.tasks.submission.get_instance')
-def test_close_ticket_logs_a_warning_if_the_ticket_is_already_resolved(mock_get_instance):
-    mock_rt = MockRT()
-    mock_rt.create_ticket(Queue='Test', Status='resolved')
-    mock_get_instance.return_value = mock_rt
-
-    data = {}
-    extra_data = {'ticket_id': 1}
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    _close_ticket = close_ticket()
-
-    assert _close_ticket(obj, eng) is None
-
-    expected = 'Ticket is already resolved.'
-    result = obj.log._warning.getvalue()
-
-    assert expected == result
 
 
 @pytest.mark.httpretty
