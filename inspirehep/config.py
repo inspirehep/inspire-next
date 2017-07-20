@@ -1388,6 +1388,7 @@ LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 # =====================
 BEARD_API_URL = None  # e.g. "http://beard.inspirehep.net/api"
 MAGPIE_API_URL = "http://magpie.inspirehep.net/api"
+LEGACY_BASE_URL = "http://inspirehep.net"
 
 # Harvesting and Workflows
 # ========================
@@ -1562,7 +1563,7 @@ WORKFLOWS_UI_REST_DEFAULT_SORT = {
     }
 }
 
-AUTHORS_UPDATE_BASE_URL = "http://inspirehep.net"
+AUTHORS_UPDATE_BASE_URL = LEGACY_BASE_URL
 
 # Crawling
 # ========
