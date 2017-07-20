@@ -104,16 +104,28 @@ def login(arsenic):
             arsenic.add_cookie(cookie)
 
 
-@pytest.fixture(autouse=True, scope='function')
-def cleanup_workflows_tables(app):
-    with app.app_context():
-        obj_types = (
-                WorkflowsAudit.query.all(),
-                WorkflowsPendingRecord.query.all(),
-                workflow_object_class.query(),
-        )
-        for obj_type in obj_types:
-            for obj in obj_type:
-                obj.delete()
+def drop_all(app):
+    db.drop_all()
+    _es = app.extensions['invenio-search']
+    list(_es.delete(ignore=[404]))
 
-        db.session.commit()
+
+def create_all(app):
+    from inspirehep.modules.fixtures.collections import init_collections
+    from inspirehep.modules.fixtures.files import init_all_storage_paths
+    from inspirehep.modules.fixtures.users import init_users_and_permissions
+
+    db.create_all()
+    _es = app.extensions['invenio-search']
+    list(_es.create(ignore=[400]))
+
+    init_all_storage_paths()
+    init_users_and_permissions()
+    init_collections()
+
+
+@pytest.fixture(autouse=True)
+def cleanup_workflows(workflow_app):
+    db.session.close_all()
+    drop_all(app=workflow_app)
+    create_all(app=workflow_app)
