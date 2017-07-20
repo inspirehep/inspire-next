@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
-
 from selenium.common.exceptions import (
     ElementNotVisibleException,
     WebDriverException,
@@ -33,7 +31,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from . import holding_panel_literature_list
 from ..arsenic import Arsenic, ArsenicResponse
-from inspirehep.bat.EC import GetText
+from inspirehep.bat.EC import GetText, TryClick
 
 
 def go_to():
@@ -56,10 +54,18 @@ def load_submitted_record(input_data):
         )
 
     try:
-        record = WebDriverWait(Arsenic(), 10).until(GetText((By.XPATH, '(//div[@class="ng-scope"])[2]')))
-        record += Arsenic().find_element_by_xpath('//p[@class="text-center ng-scope"]').text
-        record += Arsenic().find_element_by_xpath('(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[1]').text
-        record += Arsenic().find_element_by_xpath('(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[2]').text
+        record = WebDriverWait(Arsenic(), 10).until(
+            GetText((By.XPATH, '(//div[@class="ng-scope"])[2]'))
+        )
+        record += Arsenic().find_element_by_xpath(
+            '//p[@class="text-center ng-scope"]'
+        ).text
+        record += Arsenic().find_element_by_xpath(
+            '(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[1]'
+        ).text
+        record += Arsenic().find_element_by_xpath(
+            '(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[2]'
+        ).text
     except (ElementNotVisibleException, WebDriverException):
         go_to()
         record = load_submitted_record(input_data)
@@ -70,7 +76,11 @@ def load_submitted_record(input_data):
 def accept_record():
     def _accept_record():
         return 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
-            GetText((By.XPATH, '//div[@class="alert ng-scope alert-accept"]')))
+            GetText((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))
+        )
 
-    Arsenic().find_element_by_xpath('//button[@class="btn btn-warning"]').click()
+    WebDriverWait(Arsenic(), 10).until(
+        TryClick((By.XPATH, '//button[@class="btn btn-warning"]'))
+    )
+
     return ArsenicResponse(_accept_record)
