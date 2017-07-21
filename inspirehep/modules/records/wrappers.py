@@ -22,13 +22,25 @@
 
 from __future__ import absolute_import, division, print_function
 
+from flask_login import current_user
+
 from inspirehep.utils.record import get_title
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.records.api import ESRecord
+from inspirehep.modules.records.permissions import has_update_permission
 from inspirehep.modules.search import JobsSearch
 
 
-class LiteratureRecord(ESRecord):
+class AdminToolsMixin(object):
+    @property
+    def admin_tools(self):
+        tools = []
+        if has_update_permission(current_user, self):
+            tools.append('editor')
+        return tools
+
+
+class LiteratureRecord(ESRecord, AdminToolsMixin):
     """Record class specialized for literature records."""
 
     @property
@@ -103,7 +115,7 @@ class LiteratureRecord(ESRecord):
         return pub_info_list
 
 
-class AuthorsRecord(ESRecord):
+class AuthorsRecord(ESRecord, AdminToolsMixin):
     """Record class specialized for author records."""
 
     @property
@@ -112,7 +124,7 @@ class AuthorsRecord(ESRecord):
         return self.get('name', {}).get('preferred_name')
 
 
-class ConferencesRecord(ESRecord):
+class ConferencesRecord(ESRecord, AdminToolsMixin):
     """Record class specialized for conference records."""
 
     @property
@@ -121,7 +133,7 @@ class ConferencesRecord(ESRecord):
         return get_title(self)
 
 
-class JobsRecord(ESRecord):
+class JobsRecord(ESRecord, AdminToolsMixin):
     """Record class specialized for job records."""
 
     @property
@@ -151,7 +163,7 @@ class JobsRecord(ESRecord):
         return result
 
 
-class InstitutionsRecord(ESRecord):
+class InstitutionsRecord(ESRecord, AdminToolsMixin):
     """Record class specialized for institution records."""
 
     @property
@@ -162,7 +174,7 @@ class InstitutionsRecord(ESRecord):
             return institution[0]
 
 
-class ExperimentsRecord(ESRecord):
+class ExperimentsRecord(ESRecord, AdminToolsMixin):
     """Record class specialized for experiment records."""
 
     @property
@@ -171,7 +183,7 @@ class ExperimentsRecord(ESRecord):
         return self.get('legacy_name')
 
 
-class JournalsRecord(ESRecord):
+class JournalsRecord(ESRecord, AdminToolsMixin):
     """Record class specialized for journal records."""
 
     @property

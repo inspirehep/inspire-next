@@ -66,6 +66,15 @@
         <div class="col-md-12 detailed-action-bar" id="cite-pdf-buttons">
           <div class="btn-group">{{ record_buttons(record) }}</div>
         </div>
+        {% if record.admin_tools %}
+        <div class="col-md-12" id="admin-tools">
+          {% for tool in record.admin_tools %}
+            {% if tool == 'editor' %}
+              <a href="/editor/literature/{{record.control_number}}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
       </div>
     </div>
 

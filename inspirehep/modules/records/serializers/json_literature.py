@@ -62,6 +62,7 @@ def get_display_fields(record):
         display['conference_info'] = record.conference_information
     if 'authors' in record:
         display['number_of_authors'] = len(record['authors'])
+    display['admin_tools'] = record.admin_tools
 
     return display
 

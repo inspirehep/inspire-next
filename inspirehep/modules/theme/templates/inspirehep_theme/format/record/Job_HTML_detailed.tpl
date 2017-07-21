@@ -96,6 +96,15 @@
       <div class="detailed-action-bar btn-group">
       <a class="btn custom-btn btn-warning pdf-btn no-external-icon" href="mailto:jobs@inspirehep.net?subject=Remove-listing-{% if record['acquisition_source'] %}{{ record['acquisition_source'][0]['submission_number']}} {% endif %}&body=Please remove listing {% if record['acquisition_source'] %}{{ record['acquisition_source'][0]['submission_number']}} {% endif %} https://inspirehep.net/jobs/{{ record['control_number'] }}/edit" role="button" title="Remove this listing">Remove this listing</a>
       </div>
+      {% if record.admin_tools %}
+        <div class="col-md-12" id="admin-tools">
+          {% for tool in record.admin_tools %}
+            {% if tool == 'editor' %}
+              <a href="/editor/jobs/{{record.control_number}}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
 
       </div>
 
