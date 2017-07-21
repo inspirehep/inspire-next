@@ -192,6 +192,7 @@ def _check_back_office(input_data):
     assert holding_panel_literature_detail.load_submitted_record(
         input_data
     ).has_error()
+    holding_panel_literature_detail.go_to()
     assert holding_panel_literature_detail.accept_record().has_error()
 
     holding_panel_literature_list.go_to()
