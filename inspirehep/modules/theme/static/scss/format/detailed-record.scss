@@ -529,3 +529,14 @@ h1.record-detailed-title, .record-header label, #record-journal,
         color: $link-color;
     }
 }
+
+#admin-tools {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #e6e6e6;
+    border-top: 1px solid white;
+
+    a {
+        cursor: pointer;
+    }
+}

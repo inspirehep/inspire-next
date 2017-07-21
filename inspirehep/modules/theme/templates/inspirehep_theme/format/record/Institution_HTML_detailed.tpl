@@ -79,6 +79,15 @@
               </div>
             {% endif %}
           </div>
+          {% if record.admin_tools %}
+            <div class="col-md-12" id="admin-tools">
+              {% for tool in record.admin_tools %}
+                {% if tool == 'editor' %}
+                  <a href="/editor/institutions/{{record.control_number}}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
 
         <div class="col-md-4 hidden-xs hidden-sm" id="record-detailed-institution-map">

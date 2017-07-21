@@ -515,6 +515,7 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route='/literature/<pid(lit,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/db',
         default_media_type='application/json',
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        read_permission_factory_imp="inspirehep.modules.records.permissions:record_read_permission_factory",
         update_permission_factory_imp="inspirehep.modules.records.permissions:record_update_permission_factory",
     ),
     authors=dict(
@@ -532,8 +533,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
+                'inspirehep.modules.records.serializers'
+                ':json_literature_brief_v1_search'
             ),
         },
         list_route='/authors/',
@@ -578,7 +579,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 ':json_v1_search'
             ),
         },
-        list_route='/authors/',
+        list_route='/authors/citations',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citations',
         default_media_type='application/json',
         max_result_window=10000,
@@ -588,7 +589,7 @@ RECORDS_REST_ENDPOINTS = dict(
     authors_citesummary=dict(
         default_media_type='application/json',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary',
-        list_route='/authors/',
+        list_route='/authors/citesummary',
         max_result_window=10000,
         pid_fetcher='inspire_recid_fetcher',
         pid_minter='inspire_recid_minter',
@@ -626,7 +627,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 ':json_v1_search'
             ),
         },
-        list_route='/authors/',
+        list_route='/authors/coauthors',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/coauthors',
         default_media_type='application/json',
         max_result_window=10000,
@@ -651,7 +652,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 ':json_v1_search'
             ),
         },
-        list_route='/authors/',
+        list_route='/authors/publications',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/publications',
         default_media_type='application/json',
         max_result_window=10000,
@@ -676,7 +677,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 ':json_v1_search'
             ),
         },
-        list_route='/authors/',
+        list_route='/authors/stats',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/stats',
         default_media_type='application/json',
         max_result_window=10000,
@@ -698,8 +699,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
+                'inspirehep.modules.records.serializers'
+                ':json_literature_brief_v1_search'
             ),
         },
         list_route='/data/',
@@ -741,8 +742,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
+                'inspirehep.modules.records.serializers'
+                ':json_literature_brief_v1_search'
             ),
         },
         list_route='/conferences/',
@@ -784,8 +785,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
+                'inspirehep.modules.records.serializers'
+                ':json_literature_brief_v1_search'
             ),
         },
         list_route='/jobs/',
@@ -827,10 +828,15 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
+                'inspirehep.modules.records.serializers'
+                ':json_literature_brief_v1_search'
             ),
         },
+        suggesters=dict(
+            affiliation=dict(completion=dict(
+                field='affiliation_suggest'
+            ))
+        ),
         list_route='/institutions/',
         item_route='/institutions/<pid(ins,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',
@@ -859,7 +865,7 @@ RECORDS_REST_ENDPOINTS = dict(
         default_media_type='application/json',
         item_route=(
             '/institutions/<pid(ins,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary'),
-        list_route='/institutions/',
+        list_route='/institutions/citesummary',
         max_result_window=10000,
         pid_fetcher='inspire_recid_fetcher',
         pid_minter='inspire_recid_minter',
@@ -893,10 +899,15 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
+                'inspirehep.modules.records.serializers'
+                ':json_literature_brief_v1_search'
             ),
         },
+        suggesters=dict(
+            experiment=dict(completion=dict(
+                field='experiment_suggest'
+            ))
+        ),
         list_route='/experiments/',
         item_route='/experiments/<pid(exp,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',
@@ -959,8 +970,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'invenio_records_rest.serializers'
-                ':json_v1_search'
+                'inspirehep.modules.records.serializers'
+                ':json_literature_brief_v1_search'
             ),
         },
         suggesters=dict(
@@ -996,7 +1007,7 @@ RECORDS_REST_ENDPOINTS = dict(
         default_media_type='application/json',
         item_route=(
             '/journals/<pid(jou,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary'),
-        list_route='/journals/',
+        list_route='/journals/citesummary',
         max_result_window=10000,
         pid_fetcher='inspire_recid_fetcher',
         pid_minter='inspire_recid_minter',
@@ -1016,7 +1027,6 @@ RECORDS_REST_ENDPOINTS = dict(
         },
     ),
 )
-
 
 RECORDS_UI_DEFAULT_PERMISSION_FACTORY = \
     "inspirehep.modules.records.permissions:record_read_permission_factory"
@@ -1356,6 +1366,7 @@ orcid.REMOTE_MEMBER_APP['params']['request_token_params'] = {
     ]),
     'show_login': 'true',
 }
+orcid.REMOTE_MEMBER_APP['remember'] = True
 OAUTHCLIENT_REMOTE_APPS = dict(
     orcid=orcid.REMOTE_MEMBER_APP,
 )
