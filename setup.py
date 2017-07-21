@@ -216,7 +216,8 @@ setup(
             'view_restricted_collection'
             ' = inspirehep.modules.records.permissions:'
             'action_view_restricted_collection',
-            'admin_holdingpen_authors = inspirehep.modules.authors.permissions:action_admin_holdingpen_authors'
+            'admin_holdingpen_authors = inspirehep.modules.authors.permissions:action_admin_holdingpen_authors',
+            'editor_manage_tickets = inspirehep.modules.editor.permissions:action_editor_manage_tickets'
         ],
         'invenio_base.api_apps': [
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',

@@ -34,6 +34,8 @@ from flask_login import current_user, login_required
 
 from ...utils import tickets
 
+from .permissions import editor_manage_tickets_permission
+
 
 blueprint = Blueprint('inspirehep_editor',
                       __name__,
@@ -41,7 +43,7 @@ blueprint = Blueprint('inspirehep_editor',
 
 
 @blueprint.route('/rt/tickets/create', methods=['POST'])
-# TODO: @login_required
+@editor_manage_tickets_permission.require(http_exception=403)
 def create_rt_ticket():
     """View to create an rt ticket"""
     json = request.json
@@ -63,7 +65,7 @@ def create_rt_ticket():
 
 
 @blueprint.route('/rt/tickets/<ticket_id>/resolve', methods=['GET'])
-# TODO: @login_required
+@editor_manage_tickets_permission.require(http_exception=403)
 def resolve_rt_ticket(ticket_id):
     """View to resolve an rt ticket"""
     tickets.resolve_ticket(ticket_id)
@@ -71,7 +73,7 @@ def resolve_rt_ticket(ticket_id):
 
 
 @blueprint.route('/rt/tickets/<recid>', methods=['GET'])
-# TODO: @login_required
+@editor_manage_tickets_permission.require(http_exception=403)
 def get_tickets_for_record(recid):
     """View to get rt ticket belongs to given record"""
     tickets_for_record = tickets.get_tickets_by_recid(recid)
@@ -80,7 +82,7 @@ def get_tickets_for_record(recid):
 
 
 @blueprint.route('/rt/users', methods=['GET'])
-# TODO: @login_required
+@editor_manage_tickets_permission.require(http_exception=403)
 def get_rt_users():
     """View to get all rt users"""
 
@@ -88,7 +90,7 @@ def get_rt_users():
 
 
 @blueprint.route('/rt/queues', methods=['GET'])
-# TODO: @login_required
+@editor_manage_tickets_permission.require(http_exception=403)
 def get_rt_queues():
     """View to get all rt queues"""
 
