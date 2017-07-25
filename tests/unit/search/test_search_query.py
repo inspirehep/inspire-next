@@ -647,7 +647,7 @@ def test_citedby_colon_recid_colon():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_eprint_colon_with_arxiv():
-    query = IQ('eprint:arxiv:TODO', LiteratureSearch())
+    query = IQ('eprint:arxiv:1706.04080', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -657,7 +657,7 @@ def test_eprint_colon_with_arxiv():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_eprint_colon_without_arxiv():
-    query = IQ('eprint:TODO', LiteratureSearch())
+    query = IQ('eprint:1706.04080', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -735,7 +735,7 @@ def test_or_of_exactauthor_colon_queries():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_fulltext_colon():
-    query = IQ('fulltext:TODO', LiteratureSearch())
+    query = IQ('fulltext:Higgs', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -745,7 +745,7 @@ def test_fulltext_colon():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_journal_colon():
-    query = IQ('journal:TODO', LiteratureSearch())
+    query = IQ('journal:JHEP', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()

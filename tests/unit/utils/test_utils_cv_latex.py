@@ -29,9 +29,6 @@ from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.cv_latex import Cv_latex
 
 
-# TODO: test _format_output_row
-
-
 def test_get_author_from_authors_a_list_with_one_element():
     authors_a_list_with_one_element = InspireRecord({
         'authors': [
@@ -444,15 +441,6 @@ def test_get_date_from_preprint_date_adds_zero_to_day():
     result = Cv_latex(preprint_date)._get_date()
 
     assert expected == result
-
-
-# TODO: test_get_date_from_arxiv_field
-
-
-# TODO: test_get_date_from_arxiv_field_returns_none_when_date_is_short
-
-
-# TODO: test_get_date_from_arxiv_field_doesnt_add_double_zero_as_a_day
 
 
 def test_get_date_from_publication_info():
