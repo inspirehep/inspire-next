@@ -25,12 +25,39 @@
 from __future__ import absolute_import, division, print_function
 
 from functools import wraps
-from urlparse import urljoin
+from urlparse import urljoin, urlparse
 
 from flask import current_app, render_template
 
-from rt import ALL_QUEUES, ConnectionError, AuthorizationError
+from rt import ALL_QUEUES, ConnectionError, AuthorizationError, Rt
 from .proxies import rt_instance
+
+
+class InspireRt(Rt):
+
+    def get_attachments(self, ticket_id):
+        """Get attachment list for a given ticket.
+
+        Copy-pased from rt library, only change is starting form 3rd line of
+        response for attachments to look for attachments.
+
+        :param ticket_id: ID of ticket
+        :returns: List of tuples for attachments belonging to given ticket.
+                Tuple format: (id, name, content_type, size)
+                Returns None if ticket does not exist.
+        """
+        msg = self._Rt__request('ticket/%s/attachments' % (str(ticket_id),))
+        lines = msg.split('\n')
+        if (len(lines) > 2) and \
+           self.RE_PATTERNS['does_not_exist_pattern'].match(lines[2]):
+            return None
+        attachment_infos = []
+        if (self._Rt__get_status_code(lines[0]) == 200) and (len(lines) >= 3):
+            for line in lines[3:]:
+                info = self.RE_PATTERNS['attachments_list_pattern'].match(line)
+                if info:
+                    attachment_infos.append(info.groups())
+        return attachment_infos
 
 
 class EditTicketException(Exception):
@@ -242,12 +269,58 @@ def _strip_lines(multiline_string):
 
 
 @relogin_if_needed
-def get_tickets_by_recid(recid):
+def get_tickets_by_recid(recid,
+                         exclude_resolved=True,
+                         with_extra_attributes=True):
     """Returns all tickets that are associated with the given recid
 
     :type recid: integer
     """
-    return rt_instance.search(Queue=ALL_QUEUES, CF_RecordID=str(recid))
+    search_params = dict(
+        Queue=ALL_QUEUES,
+        CF_RecordID=str(recid)
+    )
+    if exclude_resolved:
+        search_params['Status__notexact'] = 'resolved'
+    tickets_for_recid = rt_instance.search(**search_params)
+    if with_extra_attributes:
+        return map(_set_extra_attributes, tickets_for_recid)
+    else:
+        return tickets_for_recid
+
+
+def _set_extra_attributes(ticket):
+    """Sets better ticket id, Text and Link for given ticket"""
+    # `ticket['id']` has format of `'ticket/<ticket_id>'`
+    ticket_id = ticket['id'].split('/')[1]
+    ticket['Id'] = ticket_id
+    ticket['Text'] = _get_ticket_text(ticket_id)
+    ticket['Link'] = get_rt_link_for_ticket(ticket_id)
+    return ticket
+
+
+def _get_ticket_text(ticket_id):
+    """Returns the first plain text attachment or empty string for given ticket
+    """
+    attachments_ids = rt_instance.get_attachments_ids(ticket_id)
+    for attachment_id in attachments_ids:
+        attachment = rt_instance.get_attachment(ticket_id, attachment_id)
+        if attachment['ContentType'] == 'text/plain':
+            return attachment['Content']
+    return ''
+
+
+def get_rt_link_for_ticket(ticket_id):
+    """ Returns rt system display link to given ticket
+
+    :type ticket_id: integer
+
+    :rtype: string
+    """
+    parsed_url = urlparse(rt_instance.url)
+    return '{}://{}/Ticket/Display.html?id={}'.format(parsed_url.scheme,
+                                                      parsed_url.netloc,
+                                                      ticket_id)
 
 
 @relogin_if_needed

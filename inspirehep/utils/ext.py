@@ -25,7 +25,8 @@
 
 from __future__ import absolute_import, division, print_function
 
-from rt import Rt, AuthorizationError
+from rt import AuthorizationError
+from .tickets import InspireRt
 
 
 class INSPIREUtils(object):
@@ -49,7 +50,7 @@ class INSPIREUtils(object):
         password = app.config.get(
             "CFG_BIBCATALOG_SYSTEM_RT_DEFAULT_PWD", "")
         if url:
-            tracker = Rt(
+            tracker = InspireRt(
                 url=url,
                 default_login=login,
                 default_password=password,
