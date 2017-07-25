@@ -84,14 +84,8 @@
                         "key": {
                             "type": "string"
                         },
-                        "previewer": {
-                            "type": "string"
-                        },
                         "size": {
                             "type": "integer"
-                        },
-                        "type": {
-                            "type": "string"
                         },
                         "version_id": {
                             "type": "string"
@@ -371,6 +365,35 @@
                 "document_type": {
                     "type": "string"
                 },
+                "documents": {
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "fulltext": {
+                            "type": "boolean"
+                        },
+                        "hidden": {
+                            "type": "boolean"
+                        },
+                        "key": {
+                            "type": "string"
+                        },
+                        "material": {
+                            "type": "string"
+                        },
+                        "original_url": {
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "url": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
                 "dois": {
                     "properties": {
                         "material": {
@@ -431,6 +454,29 @@
                 "facet_inspire_subjects": {
                     "index": "not_analyzed",
                     "type": "string"
+                },
+                "figures": {
+                    "properties": {
+                        "caption": {
+                            "type": "string"
+                        },
+                        "key": {
+                            "type": "string"
+                        },
+                        "label": {
+                            "type": "string"
+                        },
+                        "material": {
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "url": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 },
                 "funding_info": {
                     "properties": {
