@@ -57,7 +57,8 @@ def create_rt_ticket():
         return jsonify(
             success=True,
             data={
-                'ticket_id': str(ticket_id)
+                'id': str(ticket_id),
+                'link': tickets.get_rt_link_for_ticket(ticket_id)
             }
         )
     else:

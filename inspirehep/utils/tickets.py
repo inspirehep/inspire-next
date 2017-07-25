@@ -295,7 +295,7 @@ def _set_extra_attributes(ticket):
     ticket_id = ticket['id'].split('/')[1]
     ticket['Id'] = ticket_id
     ticket['Text'] = _get_ticket_text(ticket_id)
-    ticket['Link'] = _get_rt_link_for_ticket(ticket_id)
+    ticket['Link'] = get_rt_link_for_ticket(ticket_id)
     return ticket
 
 
@@ -310,7 +310,7 @@ def _get_ticket_text(ticket_id):
     return ''
 
 
-def _get_rt_link_for_ticket(ticket_id):
+def get_rt_link_for_ticket(ticket_id):
     """ Returns rt system display link to given ticket
 
     :type ticket_id: integer
