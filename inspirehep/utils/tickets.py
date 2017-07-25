@@ -29,8 +29,35 @@ from urlparse import urljoin, urlparse
 
 from flask import current_app, render_template
 
-from rt import ALL_QUEUES, ConnectionError, AuthorizationError
+from rt import ALL_QUEUES, ConnectionError, AuthorizationError, Rt
 from .proxies import rt_instance
+
+
+class InspireRt(Rt):
+
+    def get_attachments(self, ticket_id):
+        """Get attachment list for a given ticket.
+
+        Copy-pased from rt library, only change is starting form 3rd line of
+        response for attachments to look for attachments.
+
+        :param ticket_id: ID of ticket
+        :returns: List of tuples for attachments belonging to given ticket.
+                Tuple format: (id, name, content_type, size)
+                Returns None if ticket does not exist.
+        """
+        msg = self._Rt__request('ticket/%s/attachments' % (str(ticket_id),))
+        lines = msg.split('\n')
+        if (len(lines) > 2) and \
+           self.RE_PATTERNS['does_not_exist_pattern'].match(lines[2]):
+            return None
+        attachment_infos = []
+        if (self._Rt__get_status_code(lines[0]) == 200) and (len(lines) >= 3):
+            for line in lines[3:]:
+                info = self.RE_PATTERNS['attachments_list_pattern'].match(line)
+                if info:
+                    attachment_infos.append(info.groups())
+        return attachment_infos
 
 
 class EditTicketException(Exception):
@@ -244,7 +271,7 @@ def _strip_lines(multiline_string):
 @relogin_if_needed
 def get_tickets_by_recid(recid,
                          exclude_resolved=True,
-                         with_text_and_link=True):
+                         with_extra_attributes=True):
     """Returns all tickets that are associated with the given recid
 
     :type recid: integer
@@ -256,7 +283,7 @@ def get_tickets_by_recid(recid,
     if exclude_resolved:
         search_params['Status__notexact'] = 'resolved'
     tickets_for_recid = rt_instance.search(**search_params)
-    if with_text_and_link:
+    if with_extra_attributes:
         return map(_set_extra_attributes, tickets_for_recid)
     else:
         return tickets_for_recid
