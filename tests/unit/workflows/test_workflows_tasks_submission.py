@@ -43,7 +43,6 @@ from inspirehep.modules.workflows.tasks.submission import (
     filter_keywords,
     prepare_files,
     prepare_keywords,
-    remove_references,
     reply_ticket,
     send_robotupload,
     wait_webcoll,
@@ -901,52 +900,5 @@ def test_prepare_files_ignores_keys_not_ending_with_pdf():
 
     expected = ''
     result = obj.log._info.getvalue()
-
-    assert expected == result
-
-
-def test_remove_references():
-    schema = load_schema('hep')
-    subschema = schema['properties']['references']
-
-    data = {
-        'references': [
-            {
-                'reference': {
-                    'arxiv_eprint': 'hep-th/9710014',
-                    'authors': [
-                        {'full_name': 'Maldacena, J.'},
-                        {'full_name': 'Strominger, A.'},
-                    ],
-                    'label': '1',
-                },
-            },
-        ],
-    }
-    extra_data = {}
-    assert validate(data['references'], subschema) is None
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    assert remove_references(obj, eng) is None
-
-    expected = {}
-    result = obj.data
-
-    assert expected == result
-
-
-def test_remove_references_does_nothing_when_there_are_no_references():
-    data = {}
-    extra_data = {}
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    assert remove_references(obj, eng) is None
-
-    expected = {}
-    result = obj.data
 
     assert expected == result
