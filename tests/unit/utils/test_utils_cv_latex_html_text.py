@@ -22,13 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
-
-
-# TODO: test _get_format_output_row
 
 
 def test_get_author_from_authors_a_list_with_one_element():

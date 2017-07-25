@@ -107,12 +107,6 @@ def test_format_thesis(app):
     assert expected == result
 
 
-# TODO: _format_thesis, mastersthesis case.
-
-
-# TODO: _format_thesis, else case.
-
-
 @pytest.mark.xfail
 def test_format_book(app):
     book = get_db_record('lit', 736770)

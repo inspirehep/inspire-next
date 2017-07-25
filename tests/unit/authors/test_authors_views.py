@@ -93,22 +93,20 @@ def test_convert_for_form_advisors():
 
     assert expected == record['advisors']
 
-# TODO: test convert_for_form
-
 
 def test_get_inspire_url_with_bai():
-    with_bai = InspireRecord({'bai': 'TODO'})
+    with_bai = InspireRecord({'bai': 'J.R.Ellis.1'})
 
-    expected = 'http://inspirehep.net/author/profile/TODO'
+    expected = 'http://inspirehep.net/author/profile/J.R.Ellis.1'
     result = get_inspire_url(with_bai)
 
     assert expected == result
 
 
 def test_get_inspire_url_with_control_number():
-    with_recid = InspireRecord({'control_number': 'TODO'})
+    with_recid = InspireRecord({'control_number': 1010819})
 
-    expected = 'http://inspirehep.net/record/TODO'
+    expected = 'http://inspirehep.net/record/1010819'
     result = get_inspire_url(with_recid)
 
     assert expected == result
