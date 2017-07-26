@@ -39,6 +39,6 @@ inspirehep index init
 inspirehep fixtures init
 
 if [[ "$1" != "--no-populate" ]]; then
-    inspirehep migrator populate -f inspirehep/demosite/data/demo-records.xml.gz --wait=true
-    inspirehep migrator count_citations
+  inspirehep migrator populate -f inspirehep/demosite/data/demo-records.xml.gz --wait=true
+  inspirehep migrator count_citations
 fi
