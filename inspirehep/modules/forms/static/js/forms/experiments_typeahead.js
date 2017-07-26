@@ -42,7 +42,7 @@ define([
       },
       datumTokenizer: function() {},
       queryTokenizer: Bloodhound.tokenizers.whitespace,
-      limit: 3,
+      limit: 20,
     });
 
     this.dataEngine.initialize();
