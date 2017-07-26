@@ -170,6 +170,7 @@ def submit_author(input_data):
     Arsenic().find_element_by_xpath('//input[@value="' + categories[0] + '"]').click()
     Arsenic().find_element_by_xpath('//input[@value="' + categories[1].strip() + '"]').click()
     Arsenic().find_element_by_xpath('//button[@class="btn btn-success form-submit"]').click()
+    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="alert alert-success alert-form-success"]')))
     Arsenic().show_title_bar()
 
     return ArsenicResponse(_submit_author)
