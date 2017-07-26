@@ -170,4 +170,43 @@ Via shell
     obj.restart_previous()  # Redo task before current one and continue workflow
 
 
+Debug harvested workflows
+-------------------------
+
+.. note::
+
+    Added in inspire-crawler => 0.4.0
+
+Sometimes you want to track down the origin of one of the harvest workflows, to
+do so you can now use the cli tool to get the log of the crawl, and the bare
+result that the crawler outputted:
+
+.. code-block:: shell
+
+    $ # To get the crawl logs of the workflow 1234
+    $ inspirehep crawler workflow get_job_logs 1234
+
+    $ # To get the crawl result of the workflow 1234
+    $ inspirehep crawler workflow get_job_result 1234
+
+
+You can also list the crawl jobs, and workflows they started with the commands:
+
+.. code-block:: shell
+
+    $ inspirehep crawler workflow list --tail 50
+
+    $ inspirehep crawler job list --tail 50
+
+
+There are also a few more options/commands, you can explore them passing the
+help flag:
+
+.. code-block:: shell
+
+    $ inspirehep crawler workflow --help
+
+    $ inspirehep crawler job --help
+
+
 .. _es-cli: http://es-cli.readthedocs.io
