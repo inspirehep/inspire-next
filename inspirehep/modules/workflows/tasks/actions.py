@@ -134,16 +134,11 @@ def _is_auto_rejected(workflow_obj):
     if not relevance_prediction or not classification_results:
         return False
 
-    score = relevance_prediction.get('max_score')
     decision = relevance_prediction.get('decision')
     all_class_results = classification_results.get('complete_output')
     core_keywords = all_class_results.get('core_keywords')
 
-    return (
-        decision.lower() == 'rejected' and
-        score > 0 and
-        len(core_keywords) == 0
-    )
+    return decision.lower() == 'rejected' and len(core_keywords) == 0
 
 
 @with_debug_logging
