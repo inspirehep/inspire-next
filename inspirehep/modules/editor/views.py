@@ -25,12 +25,11 @@
 from __future__ import absolute_import, division, print_function
 
 from flask import (
-    abort,
     Blueprint,
     jsonify,
     request,
 )
-from flask_login import current_user, login_required
+from flask_login import current_user
 
 from ...utils import tickets
 
@@ -49,10 +48,10 @@ def create_rt_ticket():
     json = request.json
     ticket_id = tickets.create_ticket(json['queue'],
                                       current_user.email,
-                                      json['description'],
-                                      json['subject'],
+                                      json.get('description'),
+                                      json.get('subject'),
                                       int(json['recid']),
-                                      Owner=json['owner'])
+                                      Owner=json.get('owner'))
     if ticket_id != -1:
         return jsonify(
             success=True,
