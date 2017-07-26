@@ -24,17 +24,11 @@
 
 from __future__ import absolute_import, division, print_function
 
-from flask import (
-    abort,
-    Blueprint,
-    jsonify,
-    request,
-)
-from flask_login import current_user, login_required
-
-from ...utils import tickets
+from flask import Blueprint, jsonify, request
+from flask_login import current_user
 
 from .permissions import editor_manage_tickets_permission
+from ...utils import tickets
 
 
 blueprint = Blueprint('inspirehep_editor',
