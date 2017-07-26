@@ -49,10 +49,10 @@ def create_rt_ticket():
     json = request.json
     ticket_id = tickets.create_ticket(json['queue'],
                                       current_user.email,
-                                      json['description'],
-                                      json['subject'],
+                                      json.get('description'),
+                                      json.get('subject'),
                                       int(json['recid']),
-                                      Owner=json['owner'])
+                                      Owner=json.get('owner'))
     if ticket_id != -1:
         return jsonify(
             success=True,

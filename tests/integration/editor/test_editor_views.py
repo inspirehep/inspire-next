@@ -108,6 +108,22 @@ def test_create_rt_ticket(mock_tickets, log_in_as_curator, api_client):
 
 
 @patch('inspirehep.modules.editor.views.tickets')
+def test_create_rt_ticket_only_needs_queue_and_recid(mock_tickets, log_in_as_curator, api_client):
+    mock_tickets.create_ticket.return_value = 1
+
+    response = api_client.post(
+        '/editor/rt/tickets/create',
+        content_type='application/json',
+        data=json.dumps({
+            'queue': 'queue',
+            'recid': '4328',
+        }),
+    )
+
+    assert response.status_code == 200
+
+
+@patch('inspirehep.modules.editor.views.tickets')
 def test_create_rt_ticket_returns_500_on_error(mock_tickets, log_in_as_curator, api_client):
     mock_tickets.create_ticket.return_value = -1
 
