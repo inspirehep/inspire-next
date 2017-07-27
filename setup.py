@@ -156,7 +156,7 @@ extras_require = {
     ],
     'xrootd': [
         'invenio-xrootd~=1.0,>=1.0.0a5',
-        'xrootdpyfs>=0.1.3',
+        'xrootdpyfs~=0.0,>=0.1.5',
     ],
 }
 
