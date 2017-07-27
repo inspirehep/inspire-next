@@ -89,7 +89,7 @@ define(function(require, exports, module) {
         }
 
         // Map form elements with query result
-        var mapping = that.mapper.map(data.query, depositionType);
+        var mapping = that.mapper.map(data.query);
 
         return {
           label: that.id,

@@ -23,41 +23,46 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.literaturesuggest.normalizers import (
-    remove_english_language,
-    split_page_range_article_id,
+    find_book_id,
+    normalize_journal_title,
 )
 
 
-class DummyObj(object):
+class MockObj(object):
     pass
 
 
-def test_split_page_range_article_id():
-    obj = DummyObj()
-    formdata = {'page_range_article_id': '789-890'}
+def test_find_book_id(app):
+    obj = MockObj()
+    formdata = {
+        'book_title': 'The Large Hadron Collider',
+        'parent_book': '',
+        'type_of_doc': 'chapter',
+    }
 
     expected = {
-        'artid': None,
-        'end_page': '890',
-        'page_range_article_id': '789-890',
-        'start_page': '789',
+        'book_title': 'The Large Hadron Collider',
+        'parent_book': 'http://localhost:5000/api/literature/1373790',
+        'type_of_doc': 'chapter',
     }
-    result = split_page_range_article_id(obj, formdata)
+    result = find_book_id(obj, formdata)
 
     assert expected == result
 
 
-def test_remove_english_language():
-    obj = DummyObj()
+def test_normalize_to_journal_title_converts_from_series_title(app):
+    obj = MockObj()
     formdata = {
-        'language': 'en',
-        'title_translation': (
-            u'Propriété de la diagonale pour les produits'
-            u'symétriques d’une courbe lisse'
-        ),
+        'journal_title': '',
+        'series_title': 'Physical Review',
+        'type_of_doc': 'book',
     }
 
-    expected = {}
-    result = remove_english_language(obj, formdata)
+    expected = {
+        'journal_title': 'Phys.Rev.',
+        'series_title': 'Physical Review',
+        'type_of_doc': 'book',
+    }
+    result = normalize_journal_title(obj, formdata)
 
     assert expected == result
