@@ -34,6 +34,7 @@ from wtforms.widgets import (
     html_params,
     HiddenInput,
     HTMLString,
+    TextInput
 )
 
 from inspire_schemas.utils import load_schema
@@ -43,6 +44,7 @@ from inspirehep.modules.forms.field_widgets import (
     ItemWidget,
     DynamicListWidget,
     DynamicItemWidget,
+    WrappedInput,
 )
 from inspirehep.modules.forms.form import INSPIREForm
 from inspirehep.modules.forms import fields
@@ -50,7 +52,8 @@ from inspirehep.modules.forms.filter_utils import clean_empty_list
 from inspirehep.modules.forms.validation_utils import DOISyntaxValidator
 from inspirehep.modules.forms.validators.simple_fields import duplicated_doi_validator, \
     duplicated_arxiv_id_validator, arxiv_syntax_validation, \
-    pdf_validator, no_pdf_validator, date_validator
+    pdf_validator, no_pdf_validator, isbn_syntax_validator, date_validator
+
 from inspirehep.modules.forms.validators.dynamic_fields import AuthorsValidation
 
 from inspirehep.modules.literaturesuggest.fields.arxiv_id import ArXivField
@@ -93,10 +96,11 @@ def skip_importdata(field, **dummy_kwargs):
             _('Skip, and fill the form manually'))
     return HTMLString(html)
 
-
 #
 # Group buttons of import and skip
 #
+
+
 def import_buttons_widget(field, **dummy_kwargs):
     """Button for import data and skip."""
     html_skip = skip_importdata(field)
@@ -242,22 +246,16 @@ class LiteratureForm(INSPIREForm):
         export_key='categories',
     )
 
-    # isbn = ISBNField(
-    #     label=_('ISBN'),
-    #     widget_classes='form-control',
-    # )
-
     import_buttons = fields.SubmitField(
         label=_(' '),
         widget=import_buttons_widget
     )
 
     types_of_doc = [("article", _("Article/Conference paper")),
-                    ("thesis", _("Thesis"))]
-
-    # ("chapter", _("Book Chapter")),
-    # ("book", _("Book")),
-    # ("proceedings", _("Proceedings"))]
+                    ("thesis", _("Thesis")),
+                    ('book', _('Book')),
+                    ('chapter', _('Book chapter'))]
+    # ("proceedings", _("Proceedings"))
 
     type_of_doc = fields.SelectField(
         label='Type of Document',
@@ -402,7 +400,6 @@ class LiteratureForm(INSPIREForm):
         widget_classes='',
         widget=UnsortedDynamicListWidget(),
     )
-
     # ==============
     # Thesis related
     # ==============
@@ -452,6 +449,66 @@ class LiteratureForm(INSPIREForm):
     #     default='',
     #     widget_classes="form-control" + THESIS_CLASS,
     # )
+    # ============
+    # Book Info
+    # ============
+
+    publisher_name = fields.TextField(
+        label=_('Publisher'),
+        widget_classes="form-control" + BOOK_CLASS,
+    )
+
+    publication_place = fields.TextField(
+        label=_('Publication Place'),
+        widget_classes="form-control" + BOOK_CLASS,
+    )
+
+    series_title = fields.TextField(
+        label=_('Series Title'),
+        widget_classes="form-control" + BOOK_CLASS,
+        autocomplete='journal'
+    )
+
+    series_volume = fields.TextField(
+        label=_('Volume'),
+        widget_classes="form-control" + BOOK_CLASS,
+    )
+
+    publication_date = fields.TextField(
+        label=_('Publication Date'),
+        description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
+        widget_classes="form-control" + BOOK_CLASS,
+        validators=[date_validator],
+    )
+
+    # ============
+    # Book chapter Info
+    # ============
+
+    book_title = fields.TextField(
+        label=_('Book Title'),
+        widget_classes="form-control" + CHAPTER_CLASS,
+    )
+
+    start_page = fields.TextField(
+        placeholder=_('Start page of the chapter'),
+        widget_classes="form-control" + CHAPTER_CLASS,
+    )
+
+    end_page = fields.TextField(
+        placeholder=_('End page of the chapter'),
+        widget_classes="form-control" + CHAPTER_CLASS,
+    )
+
+    find_book = fields.TextField(
+        placeholder=_("Start typing for suggestions"),
+        label=_('Find Book'),
+        description=_('Book name, ISBN, Publisher'),
+        widget_classes="form-control" + CHAPTER_CLASS,
+    )
+    parent_book = fields.TextField(
+        widget=HiddenInput(),
+    )
 
     # ============
     # Journal Info
@@ -590,6 +647,8 @@ class LiteratureForm(INSPIREForm):
             ['type_of_doc', ]),
         ('Links',
             ['url', 'additional_url']),
+        ('Publication Information',
+            ['find_book', 'parent_book', 'book_title', 'start_page', 'end_page']),
         ('Basic Information',
             ['title', 'title_arXiv', 'categories_arXiv', 'language',
              'other_language', 'title_translation', 'subject', 'authors',
@@ -598,11 +657,16 @@ class LiteratureForm(INSPIREForm):
         ('Thesis Information',
             ['degree_type', 'thesis_date', 'defense_date', 'institution',
              'supervisors', 'license_url']),
+
+
         # ('Licenses and copyright',
         #     ['license', 'license_url'], {'classes': 'collapse'}),
-        ('Journal Information',
-            ['journal_title', 'volume', 'issue', 'year',
-             'page_range_article_id']),
+        ('Publication Information',
+            ['journal_title', 'volume', 'issue',
+             'year', 'page_range_article_id']),
+        ('Publication Information',
+            ['series_title', 'series_volume', 'publication_date',
+             'publisher_name', 'publication_place']),
         ('Conference Information',
             ['conf_name', 'conference_id'], {'classes': 'collapse'}),
         ('Proceedings Information (if not published in a journal)',
@@ -618,9 +682,13 @@ class LiteratureForm(INSPIREForm):
     field_sizes = {
         'type_of_doc': 'col-xs-12 col-md-3',
         'wrap_nonpublic_note': 'col-md-9',
+        'publisher_name': 'col-xs-12 col-md-9',
+        'publication_date': 'col-xs-12 col-md-4',
         'thesis_date': 'col-xs-12 col-md-4',
         'defense_date': 'col-xs-12 col-md-4',
         'degree_type': 'col-xs-12 col-md-3',
+        'start_page': 'col-xs-12 col-md-3',
+        'end_page': 'col-xs-12 col-md-3',
     }
 
     def __init__(self, *args, **kwargs):

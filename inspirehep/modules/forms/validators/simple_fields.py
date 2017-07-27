@@ -46,7 +46,7 @@ def arxiv_syntax_validation(form, field):
         raise StopValidation(message)
 
 
-def isbn_syntax_validation(form, field):
+def isbn_syntax_validator(form, field):
     """Validate ISBN syntax."""
     message = "The provided ISBN is invalid - it should look \
                 similar to '1413304540', '1-4133-0454-0', '978-1413304541' or \

@@ -25,7 +25,9 @@ from __future__ import absolute_import, division, print_function
 import copy
 import datetime
 
+
 from idutils import is_arxiv_post_2007
+
 
 from inspire_schemas.api import LiteratureBuilder
 from inspirehep.modules.forms.utils import filter_empty_elements
@@ -44,14 +46,13 @@ def formdata_to_model(obj, formdata):
     )
 
     builder = LiteratureBuilder(source='submitter')
-
     for author in form_fields.get('authors', []):
         builder.add_author(builder.make_author(
             author['full_name'],
             affiliations=force_list(author['affiliation'])
             if author['affiliation'] else None,
             roles=['author']
-        ))
+            ))
 
     for supervisor in form_fields.get('supervisors', []):
         builder.add_author(builder.make_author(
@@ -65,6 +66,8 @@ def formdata_to_model(obj, formdata):
 
     document_type = 'conference paper' if form_fields.get('conf_name') \
         else form_fields.get('type_of_doc', [])
+    if document_type == 'chapter':
+        document_type = 'book chapter'
 
     builder.add_document_type(
         document_type=document_type
@@ -100,17 +103,6 @@ def formdata_to_model(obj, formdata):
     except (TypeError, ValueError):
         year = None
 
-    builder.add_publication_info(
-        year=year,
-        cnum=form_fields.get('conference_id'),
-        journal_issue=form_fields.get('issue'),
-        journal_title=form_fields.get('journal_title'),
-        journal_volume=form_fields.get('volume'),
-        page_start=form_fields.get('page_start'),
-        page_end=form_fields.get('page_end'),
-        artid=form_fields.get('artid')
-    )
-
     builder.add_preprint_date(
         preprint_date=form_fields.get('preprint_created')
     )
@@ -122,6 +114,34 @@ def formdata_to_model(obj, formdata):
             institution=form_fields.get('institution'),
             date=form_fields.get('thesis_date')
         )
+
+    if form_fields.get('type_of_doc') == 'chapter':
+        if not form_fields.get('journal_title'):
+            builder.add_book_series(title=form_fields.get('series_title'))
+
+    if form_fields.get('type_of_doc') == 'book':
+            if form_fields.get('journal_title'):
+                form_fields['volume'] = form_fields.get('series_volume')
+            else:
+                builder.add_book_series(title=form_fields.get('series_title'),
+                                        volume=form_fields.get('series_volume')
+                                        )
+            builder.add_book(
+                publisher=form_fields.get('publisher_name'),
+                place=form_fields.get('publication_place'),
+                date=form_fields.get('publication_date'))
+
+    builder.add_publication_info(
+        year=year,
+        cnum=form_fields.get('conference_id'),
+        journal_issue=form_fields.get('issue'),
+        journal_title=form_fields.get('journal_title'),
+        journal_volume=form_fields.get('volume'),
+        page_start=form_fields.get('start_page'),
+        page_end=form_fields.get('end_page'),
+        artid=form_fields.get('artid'),
+        parent_record=form_fields.get('parent_book')
+    )
 
     builder.add_accelerator_experiments_legacy_name(
         legacy_name=form_fields.get('experiment')

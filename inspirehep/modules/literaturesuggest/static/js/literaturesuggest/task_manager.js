@@ -115,8 +115,7 @@ define(function(require, exports, module) {
 
       if (Object.keys(sources).length) {
         mergedMapping = mergeMapper.map(
-          sources, this.$depositionType.val()
-        );
+          sources);
       }
 
       var result = {

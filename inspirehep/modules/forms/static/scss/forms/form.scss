@@ -31,7 +31,7 @@
 }
 
 .ui-autocomplete-loading {
-     background: white url('/static/images/loading.gif') right top no-repeat;
+  background: white url('/static/images/loading.gif') right top no-repeat;
 }
 
 #ui-datepicker-div {
@@ -39,48 +39,58 @@
 }
 
 span.ui-icon.ui-icon-circle-triangle-w {
-  color: transparent; cursor: pointer;
-}
-span.ui-icon.ui-icon-circle-triangle-e {
-  color: transparent; cursor: pointer;
+  color: transparent;
+  cursor: pointer;
 }
 
-.l{
+span.ui-icon.ui-icon-circle-triangle-e {
+  color: transparent;
+  cursor: pointer;
+}
+
+.l {
   size: 10px;
 }
 
 .required:after {
   color: red;
-  content:" *";
+  content: " *";
 }
 
 .empty-element {
   display: none;
 }
+
 .remove-element {
   padding-left: 10px;
 }
+
 .field-list-element {
   margin-bottom: 10px;
 }
+
 .field-list-element ul.list-inline {
   margin: 0;
 }
+
 .tag {
   cursor: move;
 }
+
 .upload-speed {
   margin-right: 10px;
 }
+
 .upload-stop {
-  display:none;
+  display: none;
 }
 
 .hide-on-collapsed {
   display: block;
 }
 
-.panel-toggle.collapsed .hide-on-collapsed, .show-on-collapsed {
+.panel-toggle.collapsed .hide-on-collapsed,
+.show-on-collapsed {
   display: none;
 }
 
@@ -92,12 +102,14 @@ span.ui-icon.ui-icon-circle-triangle-e {
   padding: 0 20px;
 }
 
-.checkbox > ul, .radio > ul {
+.checkbox>ul,
+.radio>ul {
   list-style-type: none;
   padding-left: 40px;
 }
 
-.checkbox > ul label, .radio > ul label {
+.checkbox>ul label,
+.radio>ul label {
   font-weight: inherit;
   padding-left: 0;
 }
@@ -107,10 +119,11 @@ span.ui-icon.ui-icon-circle-triangle-e {
   margin: 7px 0;
 }
 
-.deposit-nav > li > a {
+.deposit-nav>li>a {
   font-size: 85%;
   padding: 7px 10px;
 }
+
 
 /*Uploader*/
 
@@ -132,17 +145,17 @@ span.ui-icon.ui-icon-circle-triangle-e {
 }
 
 #uploader-filelist th {
-    min-width: 60px;
+  min-width: 60px;
 }
 
-@media (min-width:960px){
+@media (min-width:960px) {
   #uploader-filelist th {
     min-width: 120px;
   }
 }
 
-.table-striped > tbody > tr:nth-child(odd) > td {
-background-color: #fff;
+.table-striped>tbody>tr:nth-child(odd)>td {
+  background-color: #fff;
 }
 
 #uploader-filelist .progress {
@@ -153,74 +166,82 @@ background-color: #fff;
   cursor: pointer;
   color: #000;
 }
+
 .rmlink:hover {
   text-decoration: none;
   color: #000;
 }
+
 .sortlink {
   cursor: move;
   color: #000;
   margin-left: 10px;
   text-decoration: none;
 }
+
 .sortlink:hover {
   text-decoration: none;
   cursor: move;
   color: #000;
 }
 
-.add-element, .remove-element {
-    cursor: pointer;
+.add-element,
+.remove-element {
+  cursor: pointer;
 }
 
 #webdeposit_form_accordion textarea {
-    resize: vertical;
+  resize: vertical;
 }
 
 panel.panel-default {
-    -webkit-box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.24);
+  -webkit-box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.24);
 }
 
 .panel-heading .panel-toggle:after {
-    font-family: 'Glyphicons Halflings';
-    content: "\e114"; /* extracted from bootstrap.css */
-    float: right;
-    color: #fff;
+  font-family: 'Glyphicons Halflings';
+  content: "\e114";
+  /* extracted from bootstrap.css */
+  float: right;
+  color: #fff;
 }
 
 .panel-heading .panel-toggle.collapsed:after {
-    content: "\e080"; /* extracted from bootstrap.css */
+  content: "\e080";
+  /* extracted from bootstrap.css */
 }
 
 .vcenter {
-    display: inline-block;
-    vertical-align: middle;
-    float: none;
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
 }
 
 .cell-width {
-    width: 100px;
-    font-weight: bold;
+  width: 100px;
+  font-weight: bold;
 }
 
 .cell-width:after {
-    content: ":";
+  content: ":";
 }
 
+
 /* show scrollbar at long suggestion dropdowns of typeahead */
+
 .twitter-typeahead .tt-dropdown-menu [class^="tt-dataset"] {
-    max-height: 300px;
-    overflow-y: auto;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .clearfix-padding {
-    padding: 5px;
+  padding: 5px;
 }
 
-.clickable
-{
-    cursor: pointer;
+.clickable {
+  cursor: pointer;
 }
+
 
 /* Typeahead CSS Rules */
 
@@ -228,59 +249,80 @@ panel.panel-default {
   border-bottom: 1px solid #eee
 }
 
+
 /* Placeholder CSS Rules */
 
 ::-webkit-input-placeholder {
-    color:    #C2C2C2!important;
-}
-:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-   color:    #C2C2C2!important;
-   opacity:  1;
-}
-::-moz-placeholder { /* Mozilla Firefox 19+ */
-   color:    #C2C2C2!important;
-   opacity:  1;
-}
-:-ms-input-placeholder { /* Internet Explorer 10+ */
-   color:    #C2C2C2!important;
+  color: #C2C2C2!important;
 }
 
+:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  color: #C2C2C2!important;
+  opacity: 1;
+}
+
+::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  color: #C2C2C2!important;
+  opacity: 1;
+}
+
+:-ms-input-placeholder {
+  /* Internet Explorer 10+ */
+  color: #C2C2C2!important;
+}
+
+
 /* Styles for literature suggest form */
+
 #importData {
-    width: 160px;
-    font-weight: bold;
-    float:right;
+  width: 160px;
+  font-weight: bold;
+  float: right;
 }
 
 #skipImportData {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 #abstract {
-    height: 120px;
+  height: 120px;
 }
 
 #references {
-    height: 250px;
+  height: 250px;
 }
 
 #extra_comments {
-    height: 120px;
+  height: 120px;
 }
 
 .box-instructions {
-    padding-left: 10px;
-    padding-top: 10px;
+  padding-left: 10px;
+  padding-top: 10px;
 }
 
-#field-authors .tt-dropdown-menu{
-    width: 165%;
+#field-authors .tt-dropdown-menu {
+  width: 165%;
 }
 
 .clearfix-padding {
-    padding: 5px;
+  padding: 5px;
 }
 
 .alert-padding {
-    margin: 10px 10px 0px 10px;
+  margin: 10px 10px 0px 10px;
+}
+
+.book-btn {
+  line-height: 70%;
+  display: table;
+  margin: 0px auto;
+  padding-top: 5px;
+}
+
+.book-success-message {
+  margin-bottom: 10px;
+  text-align: center;
 }
