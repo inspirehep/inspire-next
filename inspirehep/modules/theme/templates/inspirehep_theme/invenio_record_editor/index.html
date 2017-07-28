@@ -41,9 +41,7 @@
 {%- endblock page_footer %}
 
 {% block css %}
-{% assets "invenio_record_editor_css" %}
-	<link href="{{ ASSET_URL }}" rel="stylesheet"/>
-{% endassets %}
+<link href="/static/node_modules/record-editor/dist/styles.bundle.css" rel="stylesheet"/>
 {% endblock css %}
 
 {% block javascript %}
