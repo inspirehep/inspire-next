@@ -40,6 +40,22 @@ def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/literature/new')
 
 
+def wait_for_thank_you(alert_type='success'):
+    WebDriverWait(
+        Arsenic(),
+        10,
+    ).until(
+        EC.visibility_of_element_located(
+            (
+                By.XPATH,
+                '//div[@class="alert alert-{0} alert-form-{0}"]'.format(
+                    alert_type
+                ),
+            )
+        )
+    )
+
+
 def submit_thesis(input_data):
     def _submit_thesis():
         return (
@@ -64,8 +80,8 @@ def submit_thesis(input_data):
     Arsenic().find_element_by_xpath(
         '//div[@id="webdeposit_form_accordion"]/div[4]/span/button'
     ).click()
+    wait_for_thank_you()
     Arsenic().show_title_bar()
-
     return ArsenicResponse(_submit_thesis)
 
 
@@ -93,6 +109,7 @@ def submit_book(input_data):
     Arsenic().find_element_by_xpath(
         '//div[@id="webdeposit_form_accordion"]/div[4]/span/button'
     ).click()
+    wait_for_thank_you()
     Arsenic().show_title_bar()
 
     return ArsenicResponse(_submit_book)
@@ -122,6 +139,7 @@ def submit_chapter(input_data):
     Arsenic().find_element_by_xpath(
         '//div[@id="webdeposit_form_accordion"]/div[4]/span/button'
     ).click()
+    wait_for_thank_you(alert_type='warning')
     Arsenic().show_title_bar()
 
     return ArsenicResponse(_submit_chapter)
@@ -151,6 +169,7 @@ def submit_journal_article_with_proceeding(input_data):
     Arsenic().find_element_by_xpath(
         '//div[@id="webdeposit_form_accordion"]/div[4]/span/button'
     ).click()
+    wait_for_thank_you()
     Arsenic().show_title_bar()
 
     return ArsenicResponse(_submit_journal_article_with_proceeding)
@@ -179,6 +198,7 @@ def submit_journal_article(input_data):
     Arsenic().find_element_by_xpath(
         '//div[@id="webdeposit_form_accordion"]/div[4]/span/button'
     ).click()
+    wait_for_thank_you()
     Arsenic().show_title_bar()
 
     return ArsenicResponse(_submit_journal_article)
