@@ -41,13 +41,9 @@
 {%- endblock page_footer %}
 
 {% block css %}
-{{ super() }}
-<style media="screen">
-  body {
-    margin-bottom: 0px;
-    padding: 0;
-  }
-</style>
+{% assets "invenio_record_editor_css" %}
+	<link href="{{ ASSET_URL }}" rel="stylesheet"/>
+{% endassets %}
 {% endblock css %}
 
 {% block javascript %}
@@ -58,12 +54,18 @@
     'jquery'
     ],
     function($) {
+		function resizeContainer () {
+			$('.editor-parent-container').height($(window).height() - $('#editor-toolbar').height() - parseInt($('#re-wrapper').css('margin-top')));
+		}
+
 		$(document).ready(function() {
-			$('.btn.feedback-transform.feedback-fixed-left').remove();
-			$('.editor-parent-container').height($(window).height() - $('#topnav').height() - $('#collections-section').height() - $('#editor-toolbar').height() - parseInt($('#re-wrapper').css('margin-top')));
+			setTimeout(function() {
+				$('.btn.feedback-transform.feedback-fixed-left').remove();
+			}, 2000);
+			resizeContainer();
 		});
 		$(window).resize(function() {
-		  	$('.editor-parent-container').height($(window).height() - $('#topnav').height() - $('#collections-section').height() - $('#editor-toolbar').height() - parseInt($('#re-wrapper').css('margin-top')));
+			resizeContainer();
 		});
 	});
 </script>
