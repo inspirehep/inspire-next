@@ -76,7 +76,7 @@ install_requires = [
     'invenio-oaiharvester==1.0.0a2',
     'invenio>=3.0.0a1,<3.1.0',
     'inspire-crawler~=0.0,>=0.2.7',
-    'inspire-dojson~=44.0,>=44.0.0',
+    'inspire-dojson~=44.0,>=44.0.4',
     'inspire-schemas~=44.0,>=44.0.0',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',

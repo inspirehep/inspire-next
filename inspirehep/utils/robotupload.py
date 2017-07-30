@@ -30,7 +30,6 @@ import requests
 from flask import current_app
 
 from .url import make_user_agent_string
-from .text import clean_xml
 
 
 def make_robotupload_marcxml(url, marcxml, mode, **kwargs):
@@ -48,7 +47,7 @@ def make_robotupload_marcxml(url, marcxml, mode, **kwargs):
         url = os.path.join(base_url, "batchuploader/robotupload", mode)
         return requests.post(
             url=url,
-            data=clean_xml(marcxml).encode('utf8'),
+            data=marcxml.encode('utf8'),
             headers=headers,
             params=kwargs,
         )
