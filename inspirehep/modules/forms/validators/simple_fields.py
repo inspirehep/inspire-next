@@ -28,7 +28,7 @@ from urllib import urlencode
 
 import requests
 from flask import current_app
-from flask.ext.login import current_user
+from flask_login import current_user
 from wtforms.validators import ValidationError, StopValidation
 
 from idutils import is_arxiv
