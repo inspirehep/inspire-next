@@ -106,7 +106,7 @@ def formdata_to_model(obj, formdata):
         internal_uid=int(obj.id_user),
     )
 
-    strip_empty_values(data)
+    data = strip_empty_values(data)
 
     validate(data, 'authors')
 
