@@ -24,9 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 from mock import patch
 
-from inspire_dojson.utils import validate
-from inspire_schemas.builders import LiteratureBuilder
-from inspire_schemas.utils import load_schema
+from inspire_schemas.api import LiteratureBuilder, load_schema, validate
 from inspirehep.modules.literaturesuggest.tasks import (
     curation_ticket_context,
     curation_ticket_needed,

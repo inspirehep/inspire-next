@@ -22,20 +22,14 @@
 
 from __future__ import absolute_import, division, print_function
 
-from flask import current_app
-
 import httpretty
+import pytest
+from flask import current_app
+from mock import patch
 
 from inspire_dojson.hep import hep2marc
 from inspire_dojson.hepnames import hepnames2marc
-from inspire_dojson.utils import validate
-
-from inspire_schemas.utils import load_schema
-
-from inspirehep.modules.literaturesuggest.tasks import (
-    reply_ticket_context as literaturesuggest_reply_ticket_context,
-)
-
+from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.submission import (
     add_note_entry,
     close_ticket,
@@ -48,11 +42,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     wait_webcoll,
 )
 
-from mock import patch
-
 from mocks import AttrDict, MockEng, MockFiles, MockObj, MockUser
-
-import pytest
 
 
 @patch('inspirehep.modules.workflows.tasks.submission.User')

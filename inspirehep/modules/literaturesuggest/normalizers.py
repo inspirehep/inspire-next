@@ -29,10 +29,10 @@ from invenio_accounts.models import User
 from invenio_db import db
 from invenio_oauthclient.models import UserIdentity
 
+from inspire_schemas.utils import split_page_artid
 from inspirehep.utils.normalizers import (
     normalize_journal_title as _normalize_journal_title,
 )
-from inspirehep.utils.pubnote import split_page_artid
 
 
 def check_book_existence(title):

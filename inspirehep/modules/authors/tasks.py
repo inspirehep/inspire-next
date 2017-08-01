@@ -27,16 +27,14 @@ import datetime
 import os
 
 from flask import current_app, url_for
-
 from sqlalchemy.orm.exc import NoResultFound
-
-from inspire_dojson.utils import strip_empty_values
-from inspirehep.modules.forms.utils import filter_empty_elements
-
-from inspire_schemas.utils import validate
 
 from invenio_accounts.models import User
 from invenio_oauthclient.models import UserIdentity
+
+from inspire_dojson.utils import strip_empty_values
+from inspire_schemas.api import validate
+from inspirehep.modules.forms.utils import filter_empty_elements
 
 from .dojson.model import updateform
 

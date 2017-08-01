@@ -28,9 +28,9 @@ from timeout_decorator import timeout
 
 from refextract import extract_journal_reference, extract_references_from_file
 
-from inspirehep.modules.references.processors import ReferenceBuilder
+from inspire_schemas.api import ReferenceBuilder
+from inspire_schemas.utils import split_page_artid
 from inspirehep.utils.helpers import force_list, maybe_int
-from inspirehep.utils.pubnote import split_page_artid
 from inspirehep.utils.record import get_value
 
 

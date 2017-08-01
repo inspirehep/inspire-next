@@ -27,8 +27,7 @@ import mock
 import pytest
 from flask import current_app
 
-from inspire_dojson.utils import validate
-from inspire_schemas.utils import load_schema
+from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.authors import receivers
 
 

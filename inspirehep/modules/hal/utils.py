@@ -31,7 +31,7 @@ from flask import current_app
 from nameparser import HumanName
 
 from inspire_dojson.utils import get_recid_from_ref
-from inspire_schemas.builders import is_citeable
+from inspire_schemas.builders.literature import is_citeable
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.utils.helpers import force_list
 from inspirehep.utils.record import get_value
