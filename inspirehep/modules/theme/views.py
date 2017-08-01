@@ -51,7 +51,6 @@ from inspirehep.modules.pidstore.utils import (
 from inspirehep.modules.records.conference_series import (
     CONFERENCE_CATEGORIES_TO_SERIES,
 )
-from inspirehep.modules.references.view_utils import Reference
 from inspirehep.modules.search import (
     AuthorsSearch,
     ConferencesSearch,
@@ -71,6 +70,7 @@ from inspirehep.utils.experiments import (
     render_experiment_people,
 )
 from inspirehep.utils.record import get_title
+from inspirehep.utils.references import Reference
 from inspirehep.utils.template import render_macro_from_template
 
 
