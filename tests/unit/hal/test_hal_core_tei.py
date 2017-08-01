@@ -22,8 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspire_dojson.utils import validate
-from inspire_schemas.utils import load_schema
+from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.hal.core.tei import _is_art, _is_comm
 
 

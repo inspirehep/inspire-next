@@ -25,26 +25,34 @@ from __future__ import absolute_import, division, print_function
 from flask_babelex import gettext as _
 from wtforms import validators
 from wtforms.fields import Flags
-from wtforms.widgets import html_params, \
-    HiddenInput, \
-    HTMLString, \
-    Select, \
-    TextInput
+from wtforms.widgets import (
+    HTMLString,
+    HiddenInput,
+    Select,
+    TextInput,
+    html_params,
+)
 
-from inspire_schemas.utils import load_schema
-from inspirehep.modules.forms.field_widgets import ColumnInput, \
-    ExtendedListWidget, \
-    ItemWidget, \
-    DynamicListWidget, \
-    DynamicItemWidget, \
-    WrappedInput
+from inspire_schemas.api import load_schema
+from inspirehep.modules.forms.field_widgets import (
+    ColumnInput,
+    DynamicItemWidget,
+    DynamicListWidget,
+    ExtendedListWidget,
+    ItemWidget,
+    WrappedInput,
+)
 from inspirehep.modules.forms.form import INSPIREForm
 from inspirehep.modules.forms import fields
 from inspirehep.modules.forms.filter_utils import clean_empty_list
-from inspirehep.modules.forms.validators.simple_fields import duplicated_orcid_validator
+from inspirehep.modules.forms.validators.simple_fields import (
+    duplicated_orcid_validator,
+)
 from inspirehep.modules.forms.validators.dynamic_fields import LessThan
-from inspirehep.modules.forms.validation_utils import ORCIDValidator, \
-    RegexpStopValidator
+from inspirehep.modules.forms.validation_utils import (
+    ORCIDValidator,
+    RegexpStopValidator,
+)
 
 
 def currentCheckboxWidget(field, **kwargs):
