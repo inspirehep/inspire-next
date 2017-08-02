@@ -244,7 +244,6 @@ def already_harvested(obj, eng):
             ' already being harvested on Legacy.'
         ).format(arxiv_id=get_arxiv_id(obj.data)))
         return True
-
     return False
 
 

@@ -34,6 +34,9 @@ import re
 import sys
 import requests_mock
 
+from dojson.contrib.marc21.utils import create_record
+
+from invenio_search import current_search_client as es
 from invenio_db import db
 from invenio_records.models import RecordMetadata
 from invenio_workflows import (
@@ -127,20 +130,6 @@ def to_accept_record():
     return json_data
 
 
-def fake_is_pdf_link(url):
-    """Mock is_pdf_link func"""
-    return True
-
-
-def fake_magpie_api_request_for_merger(url, data):
-    return {}
-
-
-def fake_refextract_extract_references_from_file(*args, **kwargs):
-    """Mock refextract extract_references_from_file func."""
-    return []
-
-
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link'
 )
@@ -176,11 +165,11 @@ def get_halted_workflow_merge(cls, app, record, extra_config=None):
     return_value=[],
 )
 def test_harvesting_arxiv_workflow_manual_rejected(
-    mocked_refextract_extract_refs,
-    mocked_api_request_magpie,
-    mocked_api_request_beard,
     mocked_download,
     mocked_arxiv_download,
+    mocked_api_request_beard,
+    mocked_api_request_magpie,
+    mocked_refextract_extract_refs,
     workflow_app,
     mocked_external_services,
 ):
@@ -220,10 +209,6 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
-    side_effect=fake_download_file,
-)
-@mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
 )
@@ -241,7 +226,7 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
     mocked_api_request_beard,
     mocked_download,
     workflow_app,
-    mocked_external_services,
+    mocked_external_services
 ):
     """Test a full harvesting workflow."""
     extra_config = {
@@ -249,13 +234,14 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
         "MAGPIE_API_URL": "http://example.com/magpie",
     }
 
-    with mock.patch.dict(workflow_app.config, extra_config):
-        workflow_uuid = start(
-            'article',
-            [
-                already_harvested_on_legacy_record()
-            ]
-        )
+    with workflow_app.app_context():
+        with mock.patch.dict(workflow_app.config, extra_config):
+            workflow_uuid = start(
+                'article',
+                [
+                    already_harvested_on_legacy_record()
+                ]
+            )
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
@@ -360,6 +346,10 @@ def test_harvesting_arxiv_workflow_manual_accepted(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
     return_value=[],
 )
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.matching.already_harvested',
+    return_value=False,
+)
 def test_merge_with_already_existing_article_in_the_db(
     mocked_refextract_extract_refs,
     mocked_matching_search,
@@ -367,6 +357,7 @@ def test_merge_with_already_existing_article_in_the_db(
     mocked_api_request_beard,
     mocked_download_utils,
     mocked_download_arxiv,
+    mocked_already_harvested,
     workflow_app,
     mocked_external_services,
 ):
@@ -405,10 +396,13 @@ def test_merge_with_already_existing_article_in_the_db(
     # With the functions: `_remove_uuid_authors` and `_remove_buckets_version_id_files`
     # authors.uuid, _files.version_id and _files.bucket are removed because are
     # manipulated during the workflow and are not relevant for the current test
-    record_uuid = create_head_record()
-    _setup_root_record(head_record_id=record_uuid)
+    head_uuid = create_head_record()
+    _setup_root_record(head_record_id=head_uuid)
 
-    expected_new_root = read_file('fixtures', 'merger_update.json')
+    # refresh hep index in order to make head ready for the workflow
+    es.indices.refresh('records-hep')
+
+    update = read_file('fixtures', 'merger_update.json')
 
     # this function starts the workflow
     workflow_uuid, eng, obj = get_halted_workflow_merge(
@@ -418,7 +412,7 @@ def test_merge_with_already_existing_article_in_the_db(
             # This feature is only available on latest non-legacy code
             'PRODUCTION_MODE': False,
         },
-        record=expected_new_root,
+        record=update,
     )
 
     do_accept_core(
@@ -429,14 +423,14 @@ def test_merge_with_already_existing_article_in_the_db(
     eng = WorkflowEngine.from_uuid(workflow_uuid)
     obj = eng.processed_objects[0]
 
-    head = RecordMetadata.query.filter(RecordMetadata.id == record_uuid).one()
-    new_root = retrieve_root_json(str(record_uuid), get_source(head.json))
+    head = RecordMetadata.query.filter(RecordMetadata.id == head_uuid).one()
+    new_root = retrieve_root_json(str(head_uuid), get_source(head.json))
     new_root = _remove_uuid_authors(new_root)
     new_root = _remove_buckets_version_id_files(new_root)
 
-    expected_new_root = _remove_buckets_version_id_files(expected_new_root)
+    update = _remove_buckets_version_id_files(update)
 
-    assert new_root == expected_new_root
+    assert new_root == update
 
     expected_merged = read_file('fixtures', 'merger_merged.json')
     expected_merged = _remove_uuid_authors(expected_merged)
@@ -450,7 +444,73 @@ def test_merge_with_already_existing_article_in_the_db(
     response = do_webcoll_callback(app=workflow_app, recids=[12345])
     assert response.status_code == 200
 
+    assert obj.extra_data['match-found'] is True
+    assert obj.extra_data['is-update'] is True
+    assert obj.extra_data['merged'] is True
+
     assert expected_merged == workflow_record
 
     expected_conflicts = read_file('fixtures', 'merger_conflicts.json')
-    assert obj.extra_data['conflicts'] == expected_conflicts
+    assert obj.extra_data['conflicts'] == json.dumps(expected_conflicts)
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.utils.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.matching.search',
+    return_value=[],
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
+    return_value=[],
+)
+def test_merge_without_conflicts_does_not_halt(
+    mocked_refextract_extract_refs,
+    mocked_matching_search,
+    mocked_api_request_magpie,
+    mocked_api_request_beard,
+    mocked_download_utils,
+    mocked_download_arxiv,
+    workflow_app,
+    mocked_external_services,
+):
+
+    record_uuid = create_head_record()
+    es.indices.refresh('records-hep')
+
+    head = RecordMetadata.query.filter(RecordMetadata.id == record_uuid).one()
+    update = head.json
+
+    # this function starts the workflow
+    workflow_uuid, eng, obj = get_halted_workflow_merge(
+        app=workflow_app,
+        extra_config={
+            'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [],
+            # This feature is only available on latest non-legacy code
+            'PRODUCTION_MODE': False,
+        },
+        record=update,
+    )
+
+    eng = WorkflowEngine.from_uuid(workflow_uuid)
+    obj = eng.processed_objects[0]
+
+    assert obj.extra_data['match-found'] is True
+    assert obj.extra_data['is-update'] is True
+    assert obj.extra_data['merged'] is True
+    assert obj.extra_data.get('conflicts') is None
+    assert obj.status == ObjectStatus.COMPLETED

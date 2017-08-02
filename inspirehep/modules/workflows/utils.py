@@ -226,6 +226,7 @@ def store_head_json(record_uuid, json):
     store this information so that it can be retrieved later.
     """
     record = InspireRecord.get_record(record_uuid)
+    record.clear()
     record.update(json)
 
 
