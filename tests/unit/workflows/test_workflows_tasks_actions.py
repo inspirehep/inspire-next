@@ -22,10 +22,14 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+import pkg_resources
+
 import pytest
 from flask import current_app
 from mock import patch
 
+from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.actions import (
     _is_auto_rejected,
     add_core,
@@ -40,6 +44,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     mark,
     prepare_update_payload,
     reject_record,
+    refextract,
     shall_halt_workflow,
     update_note,
 )
@@ -454,3 +459,18 @@ def test_prepare_update_payload_overwrites():
 
     assert foo_prepare_update_payload(obj, eng) is None
     assert obj.extra_data['foo'] == {'bar': 'baz'}
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.get_pdf_in_workflow')
+def test_refextract(mock_get_pdf_in_workflow):
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+
+    obj = MockObj({'acquisition_source': {'source': 'arXiv'}}, {})
+    eng = MockEng()
+    mock_get_pdf_in_workflow.return_value = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1704.00452.pdf'))
+
+    assert validate(obj.data['acquisition_source'], subschema) is None
+    assert refextract(obj, eng) is None
+    assert obj.data['references'][0]['raw_refs'][0]['source'] == 'arXiv'

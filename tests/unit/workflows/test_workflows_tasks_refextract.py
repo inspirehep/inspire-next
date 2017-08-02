@@ -102,3 +102,12 @@ def test_extract_references_handles_unicode():
     result = extract_references(filename)
 
     assert validate(result, subschema) is None
+
+
+def test_extract_references_populates_raw_refs_source():
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1704.00452.pdf'))
+
+    result = extract_references(filename, source='arXiv')
+
+    assert result[0]['raw_refs'][0]['source'] == 'arXiv'
