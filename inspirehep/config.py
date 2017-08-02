@@ -89,6 +89,7 @@ CACHE_KEY_PREFIX = "cache::"
 CACHE_REDIS_URL = "redis://localhost:6379/0"
 CACHE_TYPE = "redis"
 ACCOUNTS_SESSION_REDIS_URL = "redis://localhost:6379/2"
+ACCESS_CACHE = 'inspirehep.modules.cache:current_cache'
 
 # Files
 # =====
