@@ -24,12 +24,19 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+import requests
+from contextlib import closing, contextmanager
+from six.moves.urllib.parse import urlparse
 from flask import current_app
 
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
     get_pid_type_from_schema
 )
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 def get_endpoint_from_record(record):
@@ -44,3 +51,19 @@ def get_detailed_template_from_record(record):
     """Return the detailed template corresponding to the given record."""
     endpoint = get_endpoint_from_record(record)
     return current_app.config['RECORDS_UI_ENDPOINTS'][endpoint]['template']
+
+
+@contextmanager
+def file_resolving(fpath):
+    known_schemes = ['http', 'https']
+    if urlparse(fpath).scheme in known_schemes:
+        with closing(requests.get(url=fpath, stream=True)) as req:
+            if req.status_code == 200:
+                req.raw.decode_content = True
+                yield req.raw
+    else:
+        try:
+            with open(fpath, mode='r') as fh:
+                yield fh
+        except (OSError, IOError) as e:
+            LOGGER.error(e)

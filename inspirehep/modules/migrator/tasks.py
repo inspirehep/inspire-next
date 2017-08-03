@@ -59,6 +59,7 @@ from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.receivers import index_after_commit
+from inspirehep.modules.records.utils import file_resolving
 
 from .models import InspireProdRecords
 
@@ -288,9 +289,27 @@ def create_record(record):
     return json
 
 
+def attach_documents_and_figures(record):
+    control_number = record.get('control_number', record.get('recid'))
+    for attachment in chain(record.get('documents', []), record.get('figures', [])):
+        file_url = attachment.get('url')
+        if control_number:
+            filename = '{}_{}'.format(control_number, attachment.get('key'))
+        else:
+            filename = attachment.get('key')
+        with file_resolving(file_url) as fp:
+            record.files[filename] = fp
+            record_file_obj = record.files[filename]
+            attachment['url'] = '/api/files/{bucket}/{key}'.format(
+                bucket=record_file_obj.bucket_id,
+                key=record_file_obj.key
+            )
+
+
 def record_insert_or_replace(json):
     """Insert or replace a record."""
     control_number = json.get('control_number', json.get('recid'))
+
     if control_number:
         pid_type = get_pid_type_from_schema(json['$schema'])
         try:
@@ -303,6 +322,8 @@ def record_insert_or_replace(json):
             record = InspireRecord.create(json, id_=None)
             # Create persistent identifier.
             inspire_recid_minter(str(record.id), json)
+
+        attach_documents_and_figures(record)
 
         if json.get('deleted'):
             new_recid = get_recid_from_ref(json.get('new_record'))
