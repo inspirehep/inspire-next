@@ -22,10 +22,18 @@
 
 from __future__ import absolute_import, division, print_function
 
+import requests_mock
 from flask import current_app
 from mock import patch
 
-from inspirehep.utils.url import make_user_agent_string
+from inspirehep.utils.url import is_pdf_link, make_user_agent_string
+
+
+def test_is_pdf_link_handles_empty_requests():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri('GET', 'http://example.org/empty-pdf', text='')
+
+        assert not is_pdf_link('http://example.org/empty-pdf')
 
 
 @patch('inspirehep.utils.url.__version__', '0.1.0')
