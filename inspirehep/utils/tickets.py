@@ -28,8 +28,8 @@ from functools import wraps
 from urlparse import urljoin, urlparse
 
 from flask import current_app, render_template
+from rt import ALL_QUEUES, AuthorizationError, Rt
 
-from rt import ALL_QUEUES, ConnectionError, AuthorizationError, Rt
 from .proxies import rt_instance
 
 
@@ -85,11 +85,6 @@ def relogin_if_needed(f):
             rt_instance.login()
             return f(*args, **kwargs)
     return decorated_function
-
-
-def retry_if_connection_problems(exception):
-    """Return True if exception is an ConnectionError in Rt."""
-    return isinstance(exception, ConnectionError)
 
 
 @relogin_if_needed
