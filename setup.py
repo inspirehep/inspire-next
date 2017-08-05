@@ -104,7 +104,6 @@ install_requires = [
     'backoff~=1.0,>=1.4.2',
     'requests~=2.0,>=2.15.1',
     'timeout-decorator~=0.0,>=0.3.3',
-    'urllib3<1.22,>=1.21.1',  # TODO: remove once requests change dep version
 ]
 
 tests_require = [
