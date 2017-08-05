@@ -70,6 +70,4 @@ after_script:
   # Killing via SIGTERM in order to trigger atexit and dump coverage information in WSGI.
   - docker-compose -f docker-compose.test.yml kill -s SIGTERM
   - docker-compose -f docker-compose.test.yml rm -f
-  # Coverage report contains Docker paths. We replace them, so that we can run Coveralls.
-  - sed -i 's@\"/code/@'"\"$(pwd)/"'@g' .coverage
   - coveralls
