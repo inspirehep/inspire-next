@@ -42,7 +42,6 @@ install_requires = [
     'Sickle>=0.5.0',
     'orcid',
     'raven<=5.1.0',
-    'retrying',
     'flower',
     'langdetect>=1.0.6',
     'librabbitmq>=1.6.1',

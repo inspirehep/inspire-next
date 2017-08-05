@@ -29,8 +29,9 @@ import logging
 from functools import wraps
 from pprint import pformat
 
+import backoff
+import rt
 from flask import current_app
-from retrying import retry
 
 from invenio_accounts.models import User
 
@@ -47,11 +48,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 @with_debug_logging
-@retry(
-    stop_max_attempt_number=5,
-    wait_fixed=10000,
-    retry_on_exception=tickets.retry_if_connection_problems
-)
+@backoff.on_exception(backoff.expo, rt.ConnectionError, base=4, max_tries=5)
 def submit_rt_ticket(obj,
                      queue,
                      template,
