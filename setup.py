@@ -86,8 +86,7 @@ install_requires = [
     'fs<2.0',  # TODO: remove once invenio-files-rest#130 is fixed
     'jsmin',
     'pytest-runner>=2.7.0',
-    # FIXME: Commented for testing, to use a custom fork
-    #'workflow>=2.0.0',
+    'workflow~=2.0,>=2.0.1',
     'SQLAlchemy>=1.0.14,<1.1',
     'nameparser>=0.4.0',
     'iso8601>=0.1.11',

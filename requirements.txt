@@ -34,7 +34,6 @@
 -e git+https://github.com/inveniosoftware-contrib/invenio-record-editor.git#egg=invenio-record-editor
 
 # Workflows and Holding Pen related dependencies
--e git+https://github.com/david-caro/workflow.git@minor_fixes_bumped_version#egg=workflow==2.0.1.dev20161019
 -e git+https://github.com/inspirehep/invenio-matcher.git#egg=invenio-matcher
 -e git+https://github.com/kaplun/invenio-logging.git@real-sentry#egg=invenio-logging==1.0.0b2.dev20170131
 
