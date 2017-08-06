@@ -24,21 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import requests
-
-
-def download_file(url, output_file=None, chunk_size=1024):
-    """Download a file to specified location."""
-    r = requests.get(
-        url=url,
-        stream=True
-    )
-    if r.status_code == 200:
-        with open(output_file, 'wb') as f:
-            for chunk in r.iter_content(chunk_size):
-                f.write(chunk)
-    return output_file
-
 
 def force_list(data):
     """Force ``data`` to become a list.

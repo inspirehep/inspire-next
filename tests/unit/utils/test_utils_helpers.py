@@ -22,65 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
-import pkg_resources
-import tempfile
-
-import httpretty
-import pytest
-
-from inspirehep.utils.helpers import download_file, force_list, maybe_int
-
-
-@pytest.fixture
-def foo_bar_baz():
-    return pkg_resources.resource_string(
-        __name__, os.path.join('fixtures', 'foo-bar-baz'))
-
-
-@pytest.mark.httpretty
-def test_download_file(foo_bar_baz):
-    httpretty.register_uri(
-        httpretty.GET, 'http://example.com/foo-bar-baz', body=foo_bar_baz)
-
-    filename = next(tempfile._get_candidate_names())
-
-    expected = filename
-    result = download_file(
-        'http://example.com/foo-bar-baz', output_file=filename)
-
-    assert expected == result
-
-    with open(filename, 'rb') as f:
-        assert 'foo\nbar\nbaz\n' == f.read()
-
-    os.remove(filename)
-
-
-@pytest.mark.httpretty
-def test_download_file_does_not_create_a_file_if_the_request_fails():
-    httpretty.register_uri(
-        httpretty.GET, 'http://example.com/500', body='', status=500)
-
-    filename = next(tempfile._get_candidate_names())
-
-    expected = filename
-    result = download_file(
-        'http://example.com/500', output_file=filename)
-
-    assert expected == result
-
-    with pytest.raises(IOError):
-        open(filename, 'rb')
-
-
-@pytest.mark.httpretty
-def test_download_file_raises_if_called_without_output_file():
-    httpretty.register_uri(
-        httpretty.GET, 'http://example.com/foo-bar-baz', body=foo_bar_baz)
-
-    with pytest.raises(IOError):
-        download_file('http://example.com/foo-bar-baz')
+from inspirehep.utils.helpers import force_list, maybe_int
 
 
 def test_force_list_returns_empty_list_on_none():
