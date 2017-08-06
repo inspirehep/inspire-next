@@ -75,6 +75,7 @@ install_requires = [
     'inspire-crawler~=0.0,>=0.2.7',
     'inspire-dojson~=45.0,>=45.0.1',
     'inspire-schemas~=45.0,>=45.0.2',
+    'inspire-utils~=0.0,>=0.0.3',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
     'Flask-Caching>=1.0.1',

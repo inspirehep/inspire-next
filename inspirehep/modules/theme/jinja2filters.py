@@ -36,13 +36,13 @@ from flask import current_app, url_for
 from jinja2.filters import do_join, evalcontextfilter
 from werkzeug.urls import url_decode
 
+from inspire_utils.dedupers import dedupe_list
 from inspirehep.modules.records.wrappers import LiteratureRecord
 from inspirehep.modules.search import InstitutionsSearch, LiteratureSearch
 from inspirehep.utils.date import (
     create_datestruct,
     convert_datestruct_to_dategui,
 )
-from inspirehep.utils.dedupers import dedupe_list
 from inspirehep.utils.jinja2 import render_template_to_string
 from inspirehep.utils.template import render_macro_from_template
 
