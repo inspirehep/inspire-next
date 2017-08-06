@@ -36,10 +36,8 @@ install_requires = [
     'beard>=0.2.0,~=0.2',
     'celery<4.0',
     'Flask-Gravatar>=0.4.2',
-    'HarvestingKit>=0.6.2',
     'plotextractor>=0.1.2',
     'refextract>=0.2.0',
-    'Sickle>=0.5.0',
     'orcid',
     'raven<=5.1.0',
     'flower',
@@ -80,11 +78,7 @@ install_requires = [
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
     'Flask-Caching>=1.0.1',
-    'Flask-Script>=2.0.5',
     'flask-shell-ipython>=0.2.2',
-    'fs<2.0',  # TODO: remove once invenio-files-rest#130 is fixed
-    'jsmin',
-    'pytest-runner>=2.7.0',
     'workflow~=2.0,>=2.0.1',
     'SQLAlchemy>=1.0.14,<1.1',
     'nameparser>=0.4.0',
@@ -103,14 +97,11 @@ install_requires = [
     'backoff~=1.0,>=1.4.2',
     'requests~=2.0,>=2.15.1',
     'timeout-decorator~=0.0,>=0.3.3',
+    'Babel~=2.0,>=2.4.0',
 ]
 
 tests_require = [
-    'check-manifest>=0.25',
-    'coverage>=4.4',
     'flake8-future-import>=0.4.3',
-    'isort>=4.2.2',
-    'pep257>=0.7.0',
     'pytest-cache>=1.0',
     'pytest-cov>=1.8.0',
     'pytest-flake8>=0.8.1',
@@ -123,18 +114,10 @@ tests_require = [
 
 extras_require = {
     'docs': [
-        'six',
-        'mock',
         'Sphinx~=1.0,>=1.6.2',
     ],
     'postgresql': [
         'invenio-db[postgresql,versioning]>=1.0.0b2',
-    ],
-    'mysql': [
-        'invenio-db[mysql,versioning]>=1.0.0b2',
-    ],
-    'sqlite': [
-        'invenio-db[versioning]>=1.0.0b2',
     ],
     'web-node': [
         'gunicorn',
@@ -143,14 +126,6 @@ extras_require = {
         'hepcrawl~=0.0,>=0.3.4',
     ],
     'tests': tests_require,
-    'development': [
-        'Flask-DebugToolbar>=0.9',
-        'ipython',
-        'ipdb',
-        'kwalitee',
-        'honcho',
-        'gunicorn',
-    ],
     'xrootd': [
         'invenio-xrootd~=1.0,>=1.0.0a5',
         'xrootdpyfs~=0.0,>=0.1.5',
@@ -159,13 +134,11 @@ extras_require = {
 
 extras_require['all'] = []
 for name, reqs in extras_require.items():
-    if name in ('postgresql', 'mysql', 'sqlite', 'xrootd'):
+    if name in ('postgresql', 'xrootd'):
         continue
     extras_require['all'].extend(reqs)
 
-setup_requires = [
-    'Babel>=1.3',
-]
+setup_requires = []
 
 packages = find_packages(exclude=['docs'])
 
