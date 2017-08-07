@@ -378,6 +378,9 @@ class Article(object):
                 ),
                 NOTIFY_NOT_ACCEPTED,
             ),
-            close_ticket(ticket_id_key="ticket_id")
+            IF(
+                is_submission,
+                [close_ticket(ticket_id_key="ticket_id")],
+            )
         ]
     )
