@@ -68,6 +68,7 @@ script:
 
 after_script:
   # Killing via SIGTERM in order to trigger atexit and dump coverage information in WSGI.
+  - kill $(ps -o pid --no-headers --ppid $(docker inspect --format '{{.State.Pid}}' inspirenext_test-web_1))
   - docker-compose -f docker-compose.test.yml kill -s SIGTERM
   - docker-compose -f docker-compose.test.yml rm -f
   # Coverage report contains Docker paths. We replace them, so that we can run Coveralls.
