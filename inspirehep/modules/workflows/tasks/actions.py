@@ -42,20 +42,24 @@ from ..utils import download_file_to_workflow, with_debug_logging
 
 
 def mark(key, value):
-    """Mark a record by putting a value in a key in extra_data."""
+    """Mark the workflow object by putting a value in a key in extra_data."""
     @with_debug_logging
     @wraps(mark)
     def _mark(obj, eng):
         obj.extra_data[key] = value
+
+    _mark.__doc__ = 'Mark the workflow object with %s:%s.' % (key, value)
     return _mark
 
 
 def is_marked(key):
-    """Mark a record by putting a value in a key in extra_data."""
+    """Check if the workflow object has a specific mark."""
     @with_debug_logging
     @wraps(mark)
     def _mark(obj, eng):
         return key in obj.extra_data and obj.extra_data[key]
+
+    _mark.__doc__ = 'Check if the workflow object has the mark %s.' % key
     return _mark
 
 
@@ -92,6 +96,9 @@ def halt_record(action=None, message=None):
     def _halt_record(obj, eng):
         eng.halt(action=obj.extra_data.get("halt_action") or action,
                  msg=obj.extra_data.get("halt_message") or message)
+
+    _halt_record.__doc__ = (
+        'Halt the workflow object, action=%s, message=%s' % (action, message))
     return _halt_record
 
 
@@ -125,6 +132,8 @@ def reject_record(message):
         obj.extra_data["approved"] = False
         obj.extra_data["reason"] = message
         obj.log.info(message)
+
+    _reject_record.__doc__ = 'Reject the record, message=%s' % message
     return _reject_record
 
 
@@ -222,6 +231,9 @@ def prepare_update_payload(extra_data_key="update_payload"):
 
         # FIXME: Just update entire record for now
         obj.extra_data[extra_data_key] = obj.data
+
+    _prepare_update_payload.__doc__ = (
+        'Prepare the update payload, extra_data_key=%s.' % extra_data_key)
     return _prepare_update_payload
 
 
