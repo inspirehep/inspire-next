@@ -117,9 +117,17 @@ def test_arxiv_fulltext_download_logs_on_pdf_not_existing():
 
 
 @pytest.mark.httpretty
-def test_arxiv_fulltext_download_logs_on_error():
+def test_arxiv_fulltext_download_retries_on_error():
     httpretty.register_uri(
-        httpretty.GET, 'http://export.arxiv.org/pdf/1605.03814', status=500)
+        httpretty.GET, 'http://export.arxiv.org/pdf/1605.03814',
+        responses=[
+            httpretty.Response(body='', status=500),
+            httpretty.Response(
+                body=pkg_resources.resource_string(
+                    __name__, os.path.join('fixtures', '1605.03814.pdf')),
+                status='200'
+            ),
+        ])
 
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
@@ -141,11 +149,10 @@ def test_arxiv_fulltext_download_logs_on_error():
     obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
-    with pytest.raises(DownloadError) as excinfo:
-        arxiv_fulltext_download(obj, eng)
+    assert arxiv_fulltext_download(obj, eng) is None
 
-    expected = 'http://export.arxiv.org/pdf/1605.03814 is not serving a PDF file.'
-    result = str(excinfo.value)
+    expected = 'PDF retrieved from arXiv for 1605.03814'
+    result = obj.log._info.getvalue()
 
     assert expected == result
 
