@@ -83,17 +83,6 @@ def mock_literature_validate():
                     'url': {},
                 },
             })
-        if request.json['url'] == 'pdf_url_wrong':
-            return jsonify({
-                'messages': {
-                    'url': {
-                        'messages': [
-                            'Please, provide an accessible direct link to a PDF document.',
-                        ],
-                        'state': 'error',
-                    },
-                },
-            })
 
     if 'arxiv_id' in request.json:
         if request.json['arxiv_id'] in ('1001.4538', 'hep-th/9711200'):

@@ -34,7 +34,6 @@ from inspirehep.bat.pages import (
 def test_literature_create_chapter_manually(login):
     input_data = {
         'pdf-1': 'pdf_url_correct',
-        'pdf-2': 'pdf_another_url_correct',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -63,7 +62,6 @@ def test_literature_create_chapter_manually(login):
 def test_literature_create_book_manually(login):
     input_data = {
         'pdf-1': 'pdf_url_correct',
-        'pdf-2': 'pdf_another_url_correct',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -95,7 +93,6 @@ def test_literature_create_book_manually(login):
 def test_literature_create_thesis_manually(login):
     input_data = {
         'pdf-1': 'pdf_url_correct',
-        'pdf-2': 'pdf_another_url_correct',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -127,7 +124,6 @@ def test_literature_create_thesis_manually(login):
 def test_literature_create_article_journal_manually(login):
     input_data = {
         'pdf-1': 'pdf_url_correct',
-        'pdf-2': 'pdf_another_url_correct',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -159,7 +155,6 @@ def test_literature_create_article_journal_manually(login):
 def test_literature_create_article_journal_with_proceeding_manually(login):
     input_data = {
         'pdf-1': 'pdf_url_correct',
-        'pdf-2': 'pdf_another_url_correct',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -203,12 +198,6 @@ def _check_back_office(input_data):
 
     holding_panel_literature_list.go_to()
     assert holding_panel_literature_list.load_completed_record().has_error()
-
-
-def test_pdf_link(login):
-    create_literature.go_to()
-    assert create_literature.write_pdf_link('pdf_url_wrong').has_error()
-    assert not create_literature.write_pdf_link('pdf_url_correct').has_error()
 
 
 def test_thesis_info_date(login):

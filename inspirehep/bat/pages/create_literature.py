@@ -247,9 +247,6 @@ def _chapter_info_population(input_data):
 
 def _links_population(input_data):
     Arsenic().find_element_by_id('url').send_keys(input_data['pdf-1'])
-    Arsenic().find_element_by_id('additional_url').send_keys(
-        input_data['pdf-2']
-    )
 
 
 def _basic_info_population(input_data):
@@ -334,36 +331,6 @@ def _references_comment_population(input_data):
     WebDriverWait(Arsenic(), 10).until(
         EC.visibility_of_element_located((By.ID, 'extra_comments'))
     ).send_keys(input_data['extra-comments'])
-
-
-def write_pdf_link(pdf_link):
-    def _write_pdf_link():
-        return (
-            'Please, provide an accessible direct link to a PDF document.'
-        ) in message_err
-
-    try:
-        WebDriverWait(Arsenic(), 5).until(
-            EC.visibility_of_element_located((By.ID, 'url'))
-        )
-    except (ElementNotVisibleException, WebDriverException):
-        _skip_import_data()
-    field = WebDriverWait(Arsenic(), 5).until(
-        EC.visibility_of_element_located((By.ID, 'url'))
-    )
-    field.send_keys(pdf_link)
-    Arsenic().hide_title_bar()
-    Arsenic().click_with_coordinates('state-group-url', 5, 5)
-    try:
-        message_err = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.ID, 'state-url'))
-        ).text
-    except (ElementNotVisibleException, WebDriverException):
-        message_err = ''
-    Arsenic().show_title_bar()
-    field.clear()
-
-    return ArsenicResponse(_write_pdf_link)
 
 
 def write_date_thesis(date_field, error_message_id, date):
