@@ -89,18 +89,7 @@ def mock_literature_validate():
 
 @app.route('/submit/author/validate', endpoint='inspirehep_authors_holdingpen.validate', methods=['POST'])
 def mock_author_validate():
-    if request.json.get('orcid') == 'wrong.ORCID':
-        return jsonify({
-            'messages': {
-                'orcid': {
-                    'messages': [
-                        'A valid ORCID iD consists of 16 digits separated by dashes.',
-                    ],
-                    'state': 'error',
-                },
-            },
-        })
-    elif request.json.get('orcid') == '1111-1111-1111-1111':
+    if request.json.get('orcid') == '1111-1111-1111-1111':
         return jsonify({
             'messages': {
                 'orcid': {},

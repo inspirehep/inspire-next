@@ -65,23 +65,6 @@ def write_advisor(advisor, expected_data):
     return ArsenicResponse(_write_advisor)
 
 
-def write_orcid(orcid):
-    def _write_orcid():
-        return 'A valid ORCID iD consists of 16 digits separated by dashes.' in message_err
-
-    ORCID_field = Arsenic().find_element_by_id('orcid')
-    ORCID_field.send_keys(orcid)
-    try:
-        ORCID_field.send_keys(Keys.TAB)
-        message_err = WebDriverWait(Arsenic(), 10).until(
-            GetText((By.ID, 'state-orcid')))
-    except (ElementNotVisibleException, WebDriverException):
-        message_err = ''
-    ORCID_field.clear()
-
-    return ArsenicResponse(_write_orcid)
-
-
 def write_year(input_id, error_message_id, year):
     def _write_year():
         return 'is not a valid year' in message_err

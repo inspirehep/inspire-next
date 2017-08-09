@@ -71,12 +71,6 @@ def test_advisors_typehead(login):
     assert create_author.write_advisor('alexe', 'Vorobyev, Alexey').has_error()
 
 
-def test_ORCID_format(login):
-    create_author.go_to()
-    assert create_author.write_orcid('wrong.ORCID').has_error()
-    assert not create_author.write_orcid('1111-1111-1111-1111').has_error()
-
-
 def test_institutions_years(login):
     create_author.go_to()
 
