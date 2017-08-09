@@ -284,13 +284,6 @@ def test_import_from_doi(login):
     ).has_error()
 
 
-def test_format_input_arXiv(login):
-    create_literature.go_to()
-    assert not create_literature.write_arxiv_id('1001.4538').has_error()
-    assert create_literature.write_arxiv_id('hep-th.9711200').has_error()
-    assert not create_literature.write_arxiv_id('hep-th/9711200').has_error()
-
-
 def test_format_input_doi(login):
     create_literature.go_to()
     assert create_literature.write_doi_id('dummy:10.1086/305772').has_error()

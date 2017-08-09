@@ -27,6 +27,7 @@ import pytest
 from wtforms.validators import StopValidation
 
 from inspirehep.modules.forms.validators.simple_fields import (
+    arxiv_syntax_validation,
     no_pdf_validator,
     pdf_validator,
     year_validator,
@@ -36,6 +37,38 @@ from inspirehep.modules.forms.validators.simple_fields import (
 class MockField(object):
     def __init__(self, data):
         self.data = data
+
+
+def test_arxiv_syntax_validation_accepts_valid_new_arxiv_identifiers():
+    field = MockField(u'1207.7235')
+
+    assert arxiv_syntax_validation(None, field) is None
+
+
+def test_arxiv_syntax_validation_accepts_valid_new_arxiv_identifiers_with_arxiv_prefix():
+    field = MockField(u'arXiv:1001.4538')
+
+    assert arxiv_syntax_validation(None, field) is None
+
+
+def test_arxiv_syntax_validation_raises_on_invalid_new_arxiv_identifiers():
+    field = MockField(u'1207/7235')
+
+    with pytest.raises(StopValidation):
+        arxiv_syntax_validation(None, field)
+
+
+def test_arxiv_syntax_validation_accepts_valid_old_arxiv_identifiers():
+    field = MockField(u'hep-th/9711200')
+
+    assert arxiv_syntax_validation(None, field) is None
+
+
+def test_arxiv_syntax_validation_raises_on_invalid_old_arxiv_identifiers():
+    field = MockField(u'hep-th.9711200')
+
+    with pytest.raises(StopValidation):
+        arxiv_syntax_validation(None, field)
 
 
 @pytest.mark.httpretty

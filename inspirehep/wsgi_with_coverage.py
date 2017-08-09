@@ -84,26 +84,6 @@ def mock_literature_validate():
                 },
             })
 
-    if 'arxiv_id' in request.json:
-        if request.json['arxiv_id'] in ('1001.4538', 'hep-th/9711200'):
-            return jsonify({
-                'messages': {
-                    'arxiv_id': {},
-                },
-            })
-        if request.json['arxiv_id'] == 'hep-th.9711200':
-            return jsonify({
-                'messages': {
-                    'arxiv_id': {
-                        'messages': [
-                            'The provided ArXiv ID is invalid - it should look similar to '
-                            '\'hep-th/9711200\' or \'1207.7235\'.',
-                        ],
-                        'state': 'error',
-                    },
-                },
-            })
-
     if 'doi' in request.json:
         if request.json['doi'] in ('10.1086/305772', 'doi:10.1086/305772'):
             return jsonify({
