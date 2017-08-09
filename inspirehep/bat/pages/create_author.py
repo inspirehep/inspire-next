@@ -65,23 +65,6 @@ def write_advisor(advisor, expected_data):
     return ArsenicResponse(_write_advisor)
 
 
-def write_mail(mail):
-    def _write_mail():
-        return 'Invalid email address.' in message_err
-
-    mail_field = Arsenic().find_element_by_id('public_emails-0-email')
-    mail_field.send_keys(mail)
-    try:
-        mail_field.send_keys(Keys.TAB)
-        message_err = WebDriverWait(Arsenic(), 10).until(
-            GetText((By.ID, 'state-public_emails-0-email')))
-    except (ElementNotVisibleException, WebDriverException):
-        message_err = ''
-    mail_field.clear()
-
-    return ArsenicResponse(_write_mail)
-
-
 def write_orcid(orcid):
     def _write_orcid():
         return 'A valid ORCID iD consists of 16 digits separated by dashes.' in message_err
