@@ -38,14 +38,11 @@ def log_in(user_id, password):
     Arsenic().find_element_by_xpath("//button[@type='submit']").click()
 
 
+def log_out():
+    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'user-info')))
+    Arsenic().find_element_by_id('user-info').click()
+    Arsenic().find_element_by_xpath('(//button[@type="button"])[2]').click()
+
+
 def am_i_logged():
-    Arsenic().get(environ['SERVER_NAME'])
-    return (
-        WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.ID, 'user-info'))
-        ).text == 'My account'
-    )
-
-
-def ping():
-    Arsenic().get(environ['SERVER_NAME'] + '/ping')
+    return (WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'user-info'))).text == 'My account')
