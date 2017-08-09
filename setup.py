@@ -59,8 +59,7 @@ install_requires = [
     # FIXME: using custom fork until inveniosoftware/invenio-logging#30 is merged
     # 'invenio-logging>=1.0.0a3',
     'invenio-mail>=1.0.0a4',
-    # FIXME: using custom fork until inveniosoftware/invenio-oauthclient is released
-    #'invenio-oauthclient>=1.0.0a8',
+    'invenio-oauthclient>=1.0.0b1',
     'invenio-orcid>=1.0.0a1',
     'invenio-records>=1.0.0a16',  # Add [versioning] in the future
     'invenio-rest[cors]>=1.0.0a7',
