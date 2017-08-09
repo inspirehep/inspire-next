@@ -51,6 +51,7 @@ from inspirehep.modules.forms.validators.simple_fields import (
     duplicated_doi_validator,
     no_pdf_validator,
     pdf_validator,
+    year_validator,
 )
 from inspirehep.modules.literaturesuggest.fields.arxiv_id import ArXivField
 
@@ -530,7 +531,8 @@ class LiteratureForm(INSPIREForm):
 
     year = fields.TextField(
         label=_('Year'),
-        widget_classes="form-control" + ARTICLE_CLASS
+        widget_classes="form-control" + ARTICLE_CLASS,
+        validators=[year_validator],
     )
 
     issue = fields.TextField(

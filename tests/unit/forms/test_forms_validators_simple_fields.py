@@ -29,6 +29,7 @@ from wtforms.validators import StopValidation
 from inspirehep.modules.forms.validators.simple_fields import (
     no_pdf_validator,
     pdf_validator,
+    year_validator,
 )
 
 
@@ -93,3 +94,23 @@ def test_no_pdf_validator_raises_on_link_to_a_pdf():
 
     with pytest.raises(StopValidation):
         no_pdf_validator(None, field)
+
+
+def test_year_validator_accepts_a_valid_year():
+    field = MockField(u'1993')
+
+    assert year_validator(None, field) is None
+
+
+def test_year_validator_raises_on_year_invalid_because_too_early():
+    field = MockField(u'999')
+
+    with pytest.raises(StopValidation):
+        year_validator(None, field)
+
+
+def test_year_validator_raises_on_year_invalid_because_too_late():
+    field = MockField(u'2051')
+
+    with pytest.raises(StopValidation):
+        year_validator(None, field)

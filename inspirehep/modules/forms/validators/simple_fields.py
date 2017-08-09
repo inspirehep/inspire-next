@@ -33,6 +33,8 @@ from wtforms.validators import ValidationError, StopValidation
 
 from idutils import is_arxiv
 
+from inspire_schemas.utils import load_schema
+from inspirehep.utils.record import get_value
 from inspirehep.utils.url import is_pdf_link
 
 
@@ -185,3 +187,15 @@ def date_validator(form, field):
                 break
         else:
             raise StopValidation(message)
+
+
+def year_validator(form, field):
+    """Validate that the field contains an year in an acceptable range."""
+    hep = load_schema('hep')
+    min_year = get_value(hep, 'properties.publication_info.items.properties.year.minimum')
+    max_year = get_value(hep, 'properties.publication_info.items.properties.year.maximum')
+
+    message = 'Please, provide an year between {} and {}.'.format(min_year, max_year)
+
+    if field.data and not min_year <= int(field.data) <= max_year:
+        raise StopValidation(message)
