@@ -84,26 +84,6 @@ def mock_literature_validate():
                 },
             })
 
-    if 'doi' in request.json:
-        if request.json['doi'] in ('10.1086/305772', 'doi:10.1086/305772'):
-            return jsonify({
-                'messages': {
-                    'doi': {},
-                },
-            })
-        if request.json['doi'] == 'dummy:10.1086/305772':
-            return jsonify({
-                'messages': {
-                    'doi': {
-                        'messages': [
-                            'The provided DOI is invalid - it should look similar to '
-                            '\'10.1086/305772\'.',
-                        ],
-                        'state': 'error',
-                    },
-                },
-            })
-
     return literature_validate()
 
 

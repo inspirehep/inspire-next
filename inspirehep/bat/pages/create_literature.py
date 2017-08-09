@@ -405,23 +405,6 @@ def write_affiliation(affiliation, expected_data):
     return ArsenicResponse(_write_affiliation)
 
 
-def write_doi_id(doi):
-    def _write_doi_id():
-        return 'The provided DOI is invalid - it should look' in message_err
-
-    Arsenic().find_element_by_id('doi').clear()
-    Arsenic().find_element_by_id('doi').send_keys(doi)
-    Arsenic().find_element_by_id('doi').send_keys(Keys.TAB)
-    try:
-        message_err = WebDriverWait(Arsenic(), 5).until(
-            EC.visibility_of_element_located((By.ID, 'state-doi'))
-        ).text
-    except (ElementNotVisibleException, WebDriverException):
-        message_err = ''
-
-    return ArsenicResponse(_write_doi_id)
-
-
 def submit_arxiv_id(arxiv_id, expected_data):
     def _submit_arxiv_id():
         return expected_data == output_data

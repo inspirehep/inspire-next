@@ -284,13 +284,6 @@ def test_import_from_doi(login):
     ).has_error()
 
 
-def test_format_input_doi(login):
-    create_literature.go_to()
-    assert create_literature.write_doi_id('dummy:10.1086/305772').has_error()
-    assert not create_literature.write_doi_id('10.1086/305772').has_error()
-    assert create_literature.write_doi_id('state-doi').has_error()
-
-
 def _test_date_format(field_id, field_err_id):
     write_date_thesis = partial(
         create_literature.write_date_thesis,
