@@ -86,7 +86,7 @@ install_requires = [
     'invenio-trends>=1.0.0a1',
     'invenio-trends-ui>=1.0.0a1',
     'elasticsearch<3.0.0',
-    'Flask-Login<0.4.0',
+    'Flask-Login~=0.0,>=0.4.0',
     'invenio-workflows~=6.0,>=6.0.5',
     'invenio-workflows-files~=0.0,>=0.0.4',
     'invenio-workflows-ui~=1.0,>=1.0.31',
