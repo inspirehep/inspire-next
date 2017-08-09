@@ -7,9 +7,6 @@
         {
             "source": "arXiv",
             "value": "21 pages, 13 figures"
-        },
-        {
-            "value": "*Temporary entry*"
         }
     ],
     "dois": [
@@ -20,11 +17,11 @@
     "titles": [
         {
             "source": "arXiv",
-            "title": "Analyticity of the Ising curation: An interpretation"
+            "title": "Analyticity of the Ising susceptibility: An interpretation"
         },
         {
             "source": "arXiv",
-            "title": "Analyticity of the Ising susceptibility: An interpretation"
+            "title": "Analyticity of the Ising curation: An interpretation"
         }
     ],
     "keywords": [
@@ -60,14 +57,6 @@
             "source": "",
             "value": "whatever\n",
             "schema": "INSPIRE"
-        },
-        {
-            "source": "magpie",
-            "value": "galaxy"
-        },
-        {
-            "source": "magpie",
-            "value": "numerical calculations"
         }
     ],
     "$schema": "http://localhost:5000/schemas/records/hep.json",
@@ -194,12 +183,6 @@
     ],
     "number_of_pages": 21,
     "_fft": [
-        {
-            "path": "generic/url/for/a/path",
-            "filename": "arxiv:1705.02541",
-            "type": "arXiv",
-            "format": ".pdf"
-        },
         {
             "path": "generic/url/for/a/path",
             "filename": "arxiv:1705.02541",

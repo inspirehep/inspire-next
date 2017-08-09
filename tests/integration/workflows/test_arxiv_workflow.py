@@ -64,6 +64,7 @@ from inspirehep.modules.converter.xslt import convert
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.workflows.models import WorkflowsRecordSources
 from inspirehep.modules.workflows.utils import (
     store_root_json,
     retrieve_root_json,
@@ -181,7 +182,6 @@ def test_harvesting_arxiv_workflow_manual_rejected(
         "MAGPIE_API_URL": "http://example.com/magpie",
     }
 
-    workflow_uuid = None
     workflow_uuid, eng, obj = get_halted_workflow(
         app=workflow_app,
         extra_config=extra_config,
@@ -204,9 +204,17 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     assert obj.status == ObjectStatus.COMPLETED
 
 
+def fake_is_pdf_url(url):
+    return True
+
+
 @mock.patch(
-    'inspirehep.modules.workflows.utils.download_file_to_workflow',
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
+    side_effect=fake_is_pdf_url
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
@@ -221,10 +229,11 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     return_value=[],
 )
 def test_harvesting_arxiv_workflow_already_on_legacy(
-    mocked_refextract_extract_refs,
-    mocked_api_request_magpie,
-    mocked_api_request_beard,
     mocked_download,
+    mocked_is_pdf,
+    mocked_api_request_beard,
+    mocked_api_request_magpie,
+    mocked_refextract_extract_refs,
     workflow_app,
     mocked_external_services
 ):
@@ -444,7 +453,6 @@ def test_merge_with_already_existing_article_in_the_db(
     response = do_webcoll_callback(app=workflow_app, recids=[12345])
     assert response.status_code == 200
 
-    assert obj.extra_data['match-found'] is True
     assert obj.extra_data['is-update'] is True
     assert obj.extra_data['merged'] is True
 
@@ -494,6 +502,7 @@ def test_merge_without_conflicts_does_not_halt(
 
     head = RecordMetadata.query.filter(RecordMetadata.id == record_uuid).one()
     update = head.json
+    update['titles'][0]['title'] = 'Foo Bar title'
 
     # this function starts the workflow
     workflow_uuid, eng, obj = get_halted_workflow_merge(
@@ -509,8 +518,32 @@ def test_merge_without_conflicts_does_not_halt(
     eng = WorkflowEngine.from_uuid(workflow_uuid)
     obj = eng.processed_objects[0]
 
-    assert obj.extra_data['match-found'] is True
     assert obj.extra_data['is-update'] is True
     assert obj.extra_data['merged'] is True
     assert obj.extra_data.get('conflicts') is None
     assert obj.status == ObjectStatus.COMPLETED
+
+    # check new_root properties
+    rec_source = head.json['acquisition_source']['source']
+
+    new_root = WorkflowsRecordSources.query.filter(
+        WorkflowsRecordSources.record_id == record_uuid,
+        WorkflowsRecordSources.source == rec_source
+    ).one_or_none()
+
+    assert new_root is not None
+    assert new_root.record_id == record_uuid
+    assert new_root.source == rec_source
+
+    del new_root.json['_fft']
+    del new_root.json['_files']
+    del update['_fft']
+    del update['_files']
+
+    assert update == new_root.json
+
+    # check that the record has been updated
+    updated_record = RecordMetadata.query.filter(
+        RecordMetadata.id == str(record_uuid)
+    ).one()
+    assert obj.data == updated_record.json

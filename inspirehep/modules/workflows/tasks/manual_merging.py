@@ -60,7 +60,7 @@ def _get_head_and_update(obj):
     Arguments:
         obj(WorkflowObject): the current workflow object
 
-    Returns:
+    Returns:q
         tuple(InspireRecord): the two records to merge
 
     Raise:
@@ -156,3 +156,5 @@ def save_records_as_roots(obj, eng):
             get_source(update_rec),
             update_rec.dumps()
         )
+    obj.save()
+    db.session.commit()

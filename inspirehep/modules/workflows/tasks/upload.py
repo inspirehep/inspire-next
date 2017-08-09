@@ -24,45 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-from pprint import pformat
-
 from flask import url_for
 
-from invenio_db import db
-
-from inspirehep.modules.pidstore.minters import inspire_recid_minter
-from inspirehep.modules.records.api import InspireRecord
-
-from ..utils import with_debug_logging
-
-
-@with_debug_logging
-def store_record(obj, *args, **kwargs):
-    """Create and index new record in main record space."""
-    if not obj.extra_data.get('merged', False):
-        obj.log.debug('Storing record: \n%s', pformat(obj.data))
-
-        assert "$schema" in obj.data, "No $schema attribute found!"
-
-        record = InspireRecord.create(obj.data, id_=None)
-
-        # Create persistent identifier.
-        inspire_recid_minter(str(record.id), record)
-
-        # store head_uuid to store the root later
-        obj.extra_data['head_uuid'] = str(record.id)
-
-        # Commit any changes to record
-        record.commit()
-        # Dump any changes to record
-        obj.data = record.dumps()
-
-    # else: # it means that we merged before, so head_uuid
-    # is already stored in extra_data (have look at merging.py)
-
-    obj.save()
-    # Commit to DB before indexing
-    db.session.commit()
+from inspirehep.modules.workflows.utils import with_debug_logging
 
 
 @with_debug_logging

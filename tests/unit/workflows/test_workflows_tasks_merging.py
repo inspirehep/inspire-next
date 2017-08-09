@@ -31,27 +31,6 @@ from inspirehep.modules.workflows.tasks.merging import get_head
 from inspirehep.modules.workflows.errors import MissingHeadUUIDError
 
 
-def fake_retrieve_head_json(head_uuid):
-    return {'foo': 'bar'}
-
-
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.merging.retrieve_head_json',
-    side_effect=fake_retrieve_head_json,
-)
-def test_get_head(mock_retrieve_head_json):
-    workflow_obj = MockObj(
-        {},
-        {
-            'head_uuid': '550e8400-e29b-41d4-a716-446655440000'
-        }
-    )
-
-    head = get_head(workflow_obj)
-
-    assert head == {'foo': 'bar'}
-
-
 def test_get_head_empty_head_uuid():
     workflow_obj = MockObj({}, {'head_uuid': ''})
 

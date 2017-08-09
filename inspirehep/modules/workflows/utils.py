@@ -189,20 +189,20 @@ def store_root_json(record_uuid, source, json):
     `Elsevier`) and the actual record in ``data`` store this information so
     that it can be retrieved later.
     """
-    with db.session.begin_nested():
-        record_source = WorkflowsRecordSources.query.filter(
-            WorkflowsRecordSources.record_id == record_uuid,
-            WorkflowsRecordSources.source == source
-        ).one_or_none()
-        if record_source is None:
-            record_source = WorkflowsRecordSources(
-                source=source,
-                json=json,
-                record_id=record_uuid
-            )
-        else:
-            record_source.json = json
-        db.session.add(record_source)
+
+    record_source = WorkflowsRecordSources.query.filter(
+        WorkflowsRecordSources.record_id == record_uuid,
+        WorkflowsRecordSources.source == source
+    ).one_or_none()
+    if record_source is None:
+        record_source = WorkflowsRecordSources(
+            source=source,
+            json=json,
+            record_id=record_uuid
+        )
+    else:
+        record_source.json = json
+    db.session.add(record_source)
 
 
 def retrieve_root_json(record_uuid, source):
@@ -219,25 +219,9 @@ def retrieve_root_json(record_uuid, source):
     return entry.json if entry else {}
 
 
-def store_head_json(record_uuid, json):
-    """Store the head json for a given record.
-
-    Given the actual record in ``json`` and is key ``record_uuid``
-    store this information so that it can be retrieved later.
-    """
-    record = InspireRecord.get_record(record_uuid)
-    record.clear()
-    record.update(json)
+def is_an_update(obj, eng):
+    return obj.extra_data.get('is-update', False)
 
 
-def retrieve_head_json(record_uuid):
-    """Retrieve the head json for a given uuid.
-
-    Given a ``record_uuid`` (e.g. `8cd1b6e2-54e6-4616-8a51-ccf7380ba1db`)
-    returns the head of the record if it exists or empty json object otherwise.
-    """
-    entry = RecordMetadata.query.filter(
-        RecordMetadata.id == record_uuid
-    ).one_or_none()
-
-    return entry.json if entry else {}
+def has_conflicts(obj, eng):
+    return obj.extra_data.get('conflicts') is not None

@@ -43,7 +43,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     add_core,
     halt_record,
     is_record_relevant,
-    in_production_mode,
     is_record_accepted,
     reject_record,
     is_experimental_paper,
@@ -51,7 +50,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_submission,
     is_arxiv_paper,
     mark,
-    prepare_update_payload,
     refextract,
     submission_fulltext_download,
 )
@@ -68,13 +66,12 @@ from inspirehep.modules.workflows.tasks.magpie import (
 )
 from inspirehep.modules.workflows.tasks.merging import (
     merge_articles,
-    store_temporary_root,
-    store_root,
+    put_root_in_extradata,
+    update_record
 )
-from inspirehep.modules.workflows.tasks.merging import (
+from inspirehep.modules.workflows.utils import (
     is_an_update,
-    is_not_an_update,
-    is_an_update_with_conflicts,
+    has_conflicts,
 )
 from inspirehep.modules.workflows.tasks.matching import (
     delete_self_and_stop_processing,
@@ -84,7 +81,13 @@ from inspirehep.modules.workflows.tasks.matching import (
     already_harvested,
     update_existing_workflow_object,
 )
-from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
+from inspirehep.modules.workflows.tasks.upload import (
+    set_schema
+)
+from inspirehep.modules.workflows.tasks.merging import (
+    store_root,
+    store_record
+)
 from inspirehep.modules.workflows.tasks.submission import (
     add_note_entry,
     close_ticket,
@@ -214,34 +217,34 @@ ENHANCE_RECORD = [
 ]
 
 
-STOP_FOR_APPROVAL_OR_SOLVING_CONFLICTS = [
+HALT_FOR_APPROVAL = [
     IF_ELSE(
         is_record_relevant,
         [
-            IF(
-                # new records will be halted to be approved on coreness
-                is_not_an_update,
+            IF_ELSE(
+                is_an_update,
+                # check update with/out conflicts
+                IF_ELSE(
+                    has_conflicts,
+                    halt_record(
+                        action="merge_approval",
+                        message="Submission halted for resolving conflicts.",
+                    ),
+                    mark('approved', True)  # if no conflicts don't stop
+                ),
+                # new article, stop for approving coreness
                 halt_record(
                     action="hep_approval",
                     message="Submission halted for curator approval.",
                 )
-            ),
-            IF(
-                # updates with conflicts will halt for solve conflicts
-                is_an_update_with_conflicts,
-                halt_record(
-                    action="hep_approval",
-                    message="Submission halted for resolving conflicts.",
-                )
-            ),
-            # if it's an update without conflicts the workflow shouldn't stop
-            mark('no-need-approval', True)
+            )
         ],
+        # record not relevant
         [
             reject_record("Article automatically rejected"),
             stop_processing
         ]
-    ),
+    )
 ]
 
 
@@ -253,7 +256,7 @@ NOTIFY_NOT_ACCEPTED = [
 ]
 
 
-NOTIFY_ALREADY_EXISTING = [
+NOTIFY_ALREADY_EXISTING_AND_STOP = [
     reject_record('Article was already found on INSPIRE'),
     stop_processing,
     reply_ticket(
@@ -264,6 +267,7 @@ NOTIFY_ALREADY_EXISTING = [
         context_factory=reply_ticket_context
     ),
     close_ticket(ticket_id_key="ticket_id"),
+    mark('stop', True)
 ]
 
 
@@ -304,41 +308,38 @@ POSTENHANCE_RECORD = [
 
 
 SEND_TO_LEGACY_AND_WAIT = [
-    IF_ELSE(
+    send_robotupload(
+        marcxml_processor=hep2marc,
+        mode="replace"
+    ),
+    IF_NOT(
         is_an_update,
-        [
-            prepare_update_payload(extra_data_key="update_payload"),
-            send_robotupload(
-                marcxml_processor=hep2marc,
-                mode="correct",
-                extra_data_key="update_payload"
-            ),
-        ], [
-            send_robotupload(
-                marcxml_processor=hep2marc,
-                mode="insert"
-            ),
-            wait_webcoll,
-        ]
+        wait_webcoll  # We still need to wait for webcoll feedback
     ),
 ]
 
-CHECK_IF_MERGE = [
-    store_temporary_root,
+
+MERGE_IF_UPDATE = [
+    put_root_in_extradata,
     IF(
         is_an_update,
         [
-            IF_ELSE(
-                is_submission,
-                NOTIFY_ALREADY_EXISTING,
-                [
-                    merge_articles,
-                    mark('merged', True)
-                    # TODO: save record with new non-conflicting merged fields
-                ]
-            ),
+            merge_articles,
+            mark('merged', True)
+            # TODO: save record with new non-conflicting merged fields
         ],
     ),
+]
+
+
+STOP_IF_EXISTING_SUBMISSION = [
+    IF(
+        is_submission,
+        IF(
+            is_an_update,
+            NOTIFY_ALREADY_EXISTING_AND_STOP
+        )
+    )
 ]
 
 
@@ -347,10 +348,7 @@ ADD_MARKS = [
     # is already ingested and this is an update
     IF(
         article_exists,
-        [
-            mark('match-found', True),
-            mark('is-update', True)
-        ]
+        [mark('is-update', True)]
     ),
     IF(
         pending_in_holding_pen,
@@ -359,10 +357,49 @@ ADD_MARKS = [
     IF_ELSE(
         is_submission,
         NOTIFY_SUBMISSION,
-        (
-            ADD_INGESTION_MARKS
-        )
+        ADD_INGESTION_MARKS
     ),
+]
+
+
+STOP_AND_NOTIFY_IF_NOT_ACCEPTED = [
+    IF_NOT(is_record_accepted, NOTIFY_NOT_ACCEPTED)
+]
+
+
+STORE_RECORD_AND_ROOT = [
+    IF_ELSE(
+        is_an_update,
+        update_record,
+        store_record
+    ),
+    store_root,
+]
+
+
+CLOSE_TICKET = [
+    IF(
+        is_submission,
+        close_ticket(ticket_id_key="ticket_id"),
+    )
+]
+
+
+PRE_PROCESSING = [
+    set_schema
+]
+
+
+ENHANCE_AND_STORE_IF_ACCEPTED = [
+    IF(
+        is_record_accepted,
+        [
+            POSTENHANCE_RECORD +
+            SEND_TO_LEGACY_AND_WAIT +
+            NOTIFY_ACCEPTED +
+            STORE_RECORD_AND_ROOT
+        ]
+    )
 ]
 
 
@@ -372,35 +409,14 @@ class Article(object):
     data_type = "hep"
 
     workflow = (
-        [
-            # Make sure schema is set for proper indexing in Holding Pen
-            set_schema,
-        ] +
+        PRE_PROCESSING +
         ADD_MARKS +
         DELETE_AND_STOP_IF_NEEDED +
         ENHANCE_RECORD +
-        CHECK_IF_MERGE +
-        STOP_FOR_APPROVAL_OR_SOLVING_CONFLICTS +
-        [
-            IF_ELSE(
-                is_record_accepted,
-                (
-                    POSTENHANCE_RECORD +
-                    SEND_TO_LEGACY_AND_WAIT +
-                    NOTIFY_ACCEPTED +
-                    [
-                        # TODO: once legacy is out, this should become
-                        # unconditional, and remove the SEND_TO_LEGACY_AND_WAIT
-                        # steps
-                        store_record,
-                        store_root,
-                    ]
-                ),
-                NOTIFY_NOT_ACCEPTED,
-            ),
-            IF(
-                is_submission,
-                [close_ticket(ticket_id_key="ticket_id")],
-            )
-        ]
+        STOP_IF_EXISTING_SUBMISSION +
+        MERGE_IF_UPDATE +
+        HALT_FOR_APPROVAL +
+        STOP_AND_NOTIFY_IF_NOT_ACCEPTED +
+        ENHANCE_AND_STORE_IF_ACCEPTED +
+        CLOSE_TICKET
     )

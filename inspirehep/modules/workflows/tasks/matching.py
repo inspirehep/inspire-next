@@ -206,7 +206,7 @@ def is_too_old(record, days_ago=5):
 def article_exists(obj, eng):
     """Check if an article exist in the system."""
     # For efficiency check special mark key.
-    if obj.extra_data.get('match-found', False):
+    if obj.extra_data.get('is-update', False):
         return True
     # Use matcher if not on production
     if not current_app.config.get('PRODUCTION_MODE'):
