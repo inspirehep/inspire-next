@@ -200,12 +200,6 @@ def _check_back_office(input_data):
     assert holding_panel_literature_list.load_completed_record().has_error()
 
 
-def test_thesis_info_date(login):
-    create_literature.go_to()
-    _test_date_format('thesis_date', 'state-thesis_date')
-    _test_date_format('thesis_date', 'state-thesis_date')
-
-
 def test_thesis_info_autocomplete_supervisor_institution(login):
     create_literature.go_to()
     assert create_literature.write_institution_thesis(
@@ -282,17 +276,3 @@ def test_import_from_doi(login):
         '10.1086/305772',
         expected_data,
     ).has_error()
-
-
-def _test_date_format(field_id, field_err_id):
-    write_date_thesis = partial(
-        create_literature.write_date_thesis,
-        field_id,
-        field_err_id,
-    )
-    assert not write_date_thesis('').has_error()
-    assert write_date_thesis('wrong').has_error()
-    assert not write_date_thesis('2016-01').has_error()
-    assert write_date_thesis('2016-02-30').has_error()
-    assert not write_date_thesis('2016').has_error()
-    assert write_date_thesis('2016-13').has_error()

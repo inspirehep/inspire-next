@@ -333,38 +333,6 @@ def _references_comment_population(input_data):
     ).send_keys(input_data['extra-comments'])
 
 
-def write_date_thesis(date_field, error_message_id, date):
-    try:
-        WebDriverWait(Arsenic(), 5).until(
-            EC.visibility_of_element_located((By.ID, date_field))
-        )
-    except (ElementNotVisibleException, WebDriverException):
-        _skip_import_data()
-        _select_thesis()
-    field = WebDriverWait(Arsenic(), 5).until(
-        EC.visibility_of_element_located((By.ID, date_field))
-    )
-    field.send_keys(date)
-    Arsenic().hide_title_bar()
-    Arsenic().click_with_coordinates('state-group-supervisors', 5, 5)
-    try:
-        error_message = WebDriverWait(Arsenic(), 5).until(
-            EC.visibility_of_element_located((By.ID, error_message_id))
-        ).text
-    except (ElementNotVisibleException, WebDriverException):
-        error_message = ''
-    Arsenic().show_title_bar()
-    field.clear()
-
-    def _has_error():
-        return (
-            'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM '
-            'or YYYY.'
-        ) in error_message
-
-    return ArsenicResponse(_has_error)
-
-
 def write_institution_thesis(institution, expected_data):
     def _write_institution_thesis():
         return expected_data == Arsenic().write_in_autocomplete_field(

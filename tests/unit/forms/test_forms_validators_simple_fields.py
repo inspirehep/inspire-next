@@ -28,6 +28,7 @@ from wtforms.validators import StopValidation
 
 from inspirehep.modules.forms.validators.simple_fields import (
     arxiv_syntax_validation,
+    date_validator,
     no_pdf_validator,
     pdf_validator,
     year_validator,
@@ -69,6 +70,38 @@ def test_arxiv_syntax_validation_raises_on_invalid_old_arxiv_identifiers():
 
     with pytest.raises(StopValidation):
         arxiv_syntax_validation(None, field)
+
+
+def test_date_validator_accepts_valid_dates():
+    field = MockField(u'2016')
+
+    assert date_validator(None, field) is None
+
+    field = MockField(u'2016-01')
+
+    assert date_validator(None, field) is None
+
+    field = MockField(u'2016-01-01')
+
+    assert date_validator(None, field) is None
+
+
+def test_date_validator_accepts_the_empty_string():
+    field = MockField(u'')
+
+    assert date_validator(None, field) is None
+
+
+def test_date_validator_raises_on_invalid_dates():
+    field = MockField(u'2016-13')
+
+    with pytest.raises(StopValidation):
+        assert date_validator(None, field) is None
+
+    field = MockField(u'2016-02-30')
+
+    with pytest.raises(StopValidation):
+        assert date_validator(None, field) is None
 
 
 @pytest.mark.httpretty
