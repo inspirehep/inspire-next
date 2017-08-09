@@ -41,7 +41,7 @@ def go_to():
 
 def load_submitted_record(input_data):
     def _load_submitted_record():
-        return (
+        assert (
             'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record and
             'Submitted by admin@inspirehep.net\non' in record and
             'Wisconsin U., Madison' in record and
@@ -75,7 +75,7 @@ def load_submitted_record(input_data):
 
 def accept_record():
     def _accept_record():
-        return 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
+        assert 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
             GetText((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))
         )
 

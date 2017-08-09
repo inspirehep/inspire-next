@@ -120,7 +120,7 @@ def test_literature_create_thesis_manually(login):
     }
 
     create_literature.go_to()
-    assert create_literature.submit_thesis(input_data).has_error()
+    create_literature.submit_thesis(input_data).assert_no_errors()
     _check_back_office(input_data)
 
 
@@ -152,7 +152,7 @@ def test_literature_create_article_journal_manually(login):
     }
 
     create_literature.go_to()
-    assert create_literature.submit_journal_article(input_data).has_error()
+    create_literature.submit_journal_article(input_data).assert_no_errors()
     _check_back_office(input_data)
 
 
@@ -185,30 +185,30 @@ def test_literature_create_article_journal_with_proceeding_manually(login):
     }
 
     create_literature.go_to()
-    assert create_literature.submit_journal_article_with_proceeding(
+    create_literature.submit_journal_article_with_proceeding(
         input_data
-    ).has_error()
+    ).assert_no_errors()
     _check_back_office(input_data)
 
 
 def _check_back_office(input_data):
     holding_panel_literature_list.go_to()
-    assert holding_panel_literature_list.load_submitted_record().has_error()
+    holding_panel_literature_list.load_submitted_record().assert_no_errors()
 
     holding_panel_literature_detail.go_to()
-    assert holding_panel_literature_detail.load_submitted_record(
+    holding_panel_literature_detail.load_submitted_record(
         input_data
-    ).has_error()
-    assert holding_panel_literature_detail.accept_record().has_error()
+    ).assert_no_errors()
+    holding_panel_literature_detail.accept_record().assert_no_errors()
 
     holding_panel_literature_list.go_to()
-    assert holding_panel_literature_list.load_completed_record().has_error()
+    holding_panel_literature_list.load_completed_record().assert_no_errors()
 
 
 def test_pdf_link(login):
     create_literature.go_to()
-    assert create_literature.write_pdf_link('pdf_url_wrong').has_error()
-    assert not create_literature.write_pdf_link('pdf_url_correct').has_error()
+    create_literature.write_pdf_link('pdf_url_wrong').assert_no_errors()
+    create_literature.write_pdf_link('pdf_url_correct').assert_errors()
 
 
 def test_thesis_info_date(login):
@@ -219,31 +219,31 @@ def test_thesis_info_date(login):
 
 def test_thesis_info_autocomplete_supervisor_institution(login):
     create_literature.go_to()
-    assert create_literature.write_institution_thesis(
+    create_literature.write_institution_thesis(
         'CER',
         'CERN',
-    ).has_error()
+    ).assert_no_errors()
 
 
 def test_journal_info_autocomplete_title(login):
     create_literature.go_to()
-    assert create_literature.write_journal_title(
+    create_literature.write_journal_title(
         'Nuc',
         'Nucl.Phys.',
-    ).has_error()
+    ).assert_no_errors()
 
 
 def test_conference_info_autocomplete_title(login):
     create_literature.go_to()
-    assert create_literature.write_conference(
+    create_literature.write_conference(
         'autrans',
         'IN2P3 School of Statistics, 2012-05-28, Autrans, France',
-    ).has_error()
+    ).assert_no_errors()
 
 
 def test_basic_info_autocomplete_affiliation(login):
     create_literature.go_to()
-    assert create_literature.write_affiliation('oxf', 'Oxford U.').has_error()
+    create_literature.write_affiliation('oxf', 'Oxford U.').assert_no_errors()
 
 
 def test_import_from_arXiv(login):
@@ -266,10 +266,10 @@ def test_import_from_arXiv(login):
     }
 
     create_literature.go_to()
-    assert create_literature.submit_arxiv_id(
+    create_literature.submit_arxiv_id(
         'hep-th/9711200',
         expected_data,
-    ).has_error()
+    ).assert_no_errors()
 
 
 def test_import_from_doi(login):
@@ -289,24 +289,24 @@ def test_import_from_doi(login):
     }
 
     create_literature.go_to()
-    assert create_literature.submit_doi_id(
+    create_literature.submit_doi_id(
         '10.1086/305772',
         expected_data,
-    ).has_error()
+    ).assert_no_errors()
 
 
 def test_format_input_arXiv(login):
     create_literature.go_to()
-    assert not create_literature.write_arxiv_id('1001.4538').has_error()
-    assert create_literature.write_arxiv_id('hep-th.9711200').has_error()
-    assert not create_literature.write_arxiv_id('hep-th/9711200').has_error()
+    create_literature.write_arxiv_id('1001.4538').assert_errors()
+    create_literature.write_arxiv_id('hep-th.9711200').assert_no_errors()
+    create_literature.write_arxiv_id('hep-th/9711200').assert_errors()
 
 
 def test_format_input_doi(login):
     create_literature.go_to()
-    assert create_literature.write_doi_id('dummy:10.1086/305772').has_error()
-    assert not create_literature.write_doi_id('10.1086/305772').has_error()
-    assert create_literature.write_doi_id('state-doi').has_error()
+    create_literature.write_doi_id('dummy:10.1086/305772').assert_no_errors()
+    create_literature.write_doi_id('10.1086/305772').assert_errors()
+    create_literature.write_doi_id('state-doi').assert_no_errors()
 
 
 def _test_date_format(field_id, field_err_id):
@@ -315,9 +315,9 @@ def _test_date_format(field_id, field_err_id):
         field_id,
         field_err_id,
     )
-    assert not write_date_thesis('').has_error()
-    assert write_date_thesis('wrong').has_error()
-    assert not write_date_thesis('2016-01').has_error()
-    assert write_date_thesis('2016-02-30').has_error()
-    assert not write_date_thesis('2016').has_error()
-    assert write_date_thesis('2016-13').has_error()
+    write_date_thesis('').assert_no_errors()
+    write_date_thesis('wrong').assert_errors()
+    write_date_thesis('2016-01').assert_no_errors()
+    write_date_thesis('2016-02-30').assert_errors()
+    write_date_thesis('2016').assert_no_errors()
+    write_date_thesis('2016-13').assert_errors()

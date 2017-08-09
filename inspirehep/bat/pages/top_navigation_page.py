@@ -28,7 +28,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from ..arsenic import Arsenic
+from ..arsenic import Arsenic, ArsenicResponse
 
 
 def log_in(user_id, password):
@@ -38,13 +38,16 @@ def log_in(user_id, password):
     Arsenic().find_element_by_xpath("//button[@type='submit']").click()
 
 
-def am_i_logged():
+def log_in_user():
+    def _logged_check():
+        assert log_in_info == 'My account'
+
     Arsenic().get(environ['SERVER_NAME'])
-    return (
-        WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.ID, 'user-info'))
-        ).text == 'My account'
-    )
+    log_in_info = WebDriverWait(Arsenic(), 10).until(
+        EC.visibility_of_element_located((By.ID, 'user-info'))
+    ).text
+
+    return ArsenicResponse(_logged_check)
 
 
 def ping():

@@ -43,7 +43,7 @@ def go_to():
 
 def write_institution(institution, expected_data):
     def _write_institution():
-        return expected_data in Arsenic().write_in_autocomplete_field(
+        assert expected_data in Arsenic().write_in_autocomplete_field(
             'institution_history-0-name', institution)
 
     return ArsenicResponse(_write_institution)
@@ -51,7 +51,7 @@ def write_institution(institution, expected_data):
 
 def write_experiment(experiment, expected_data):
     def _write_experiment():
-        return expected_data in Arsenic().write_in_autocomplete_field(
+        assert expected_data in Arsenic().write_in_autocomplete_field(
             'experiments-0-name', experiment)
 
     return ArsenicResponse(_write_experiment)
@@ -59,15 +59,18 @@ def write_experiment(experiment, expected_data):
 
 def write_advisor(advisor, expected_data):
     def _write_advisor():
-        return expected_data in Arsenic().write_in_autocomplete_field(
+        assert expected_data in Arsenic().write_in_autocomplete_field(
             'advisors-0-name', advisor)
 
     return ArsenicResponse(_write_advisor)
 
 
 def write_mail(mail):
+    def _negative_write_mail():
+        assert 'Invalid email address.' not in message_err
+
     def _write_mail():
-        return 'Invalid email address.' in message_err
+        assert 'Invalid email address.' in message_err
 
     mail_field = Arsenic().find_element_by_id('public_emails-0-email')
     mail_field.send_keys(mail)
@@ -79,12 +82,15 @@ def write_mail(mail):
         message_err = ''
     mail_field.clear()
 
-    return ArsenicResponse(_write_mail)
+    return ArsenicResponse(_write_mail, negative_statement=_negative_write_mail)
 
 
 def write_orcid(orcid):
+    def _negative_write_orcid():
+        assert 'A valid ORCID iD consists of 16 digits separated by dashes.' not in message_err
+
     def _write_orcid():
-        return 'A valid ORCID iD consists of 16 digits separated by dashes.' in message_err
+        assert 'A valid ORCID iD consists of 16 digits separated by dashes.' in message_err
 
     ORCID_field = Arsenic().find_element_by_id('orcid')
     ORCID_field.send_keys(orcid)
@@ -96,12 +102,15 @@ def write_orcid(orcid):
         message_err = ''
     ORCID_field.clear()
 
-    return ArsenicResponse(_write_orcid)
+    return ArsenicResponse(_write_orcid, negative_statement=_negative_write_orcid)
 
 
 def write_year(input_id, error_message_id, year):
+    def _negative_write_year():
+        assert 'is not a valid year' not in message_err
+
     def _write_year():
-        return 'is not a valid year' in message_err
+        assert 'is not a valid year' in message_err
 
     year_field = Arsenic().find_element_by_id(input_id)
     year_field.send_keys(year)
@@ -113,12 +122,12 @@ def write_year(input_id, error_message_id, year):
         message_err = ''
     year_field.clear()
 
-    return ArsenicResponse(_write_year)
+    return ArsenicResponse(_write_year, negative_statement=_negative_write_year)
 
 
 def submit_empty_form(expected_data):
     def _submit_empty_form():
-        return expected_data == output_data
+        assert expected_data == output_data
 
     Arsenic().find_element_by_xpath('//button[@class="btn btn-success form-submit"]').click()
     try:
@@ -138,7 +147,7 @@ def submit_empty_form(expected_data):
 
 def submit_author(input_data):
     def _submit_author():
-        return 'Thank you for adding new profile information!' in WebDriverWait(Arsenic(), 10).until(
+        assert 'Thank you for adding new profile information!' in WebDriverWait(Arsenic(), 10).until(
             GetText((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])')))
 
     Arsenic().hide_title_bar()
