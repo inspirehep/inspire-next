@@ -944,6 +944,16 @@
                             "type": "string"
                         },
                         "value": {
+                            "fields": {
+                                "fuzzy": {
+                                    "analyzer": "report_number",
+                                    "type": "string"
+                                },
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
                             "type": "string"
                         }
                     },
@@ -1021,13 +1031,19 @@
                 },
                 "titles": {
                     "properties": {
+                        "full_title": {
+                            "analyzer": "title",
+                            "type": "string"
+                        },
                         "source": {
                             "type": "string"
                         },
                         "subtitle": {
+                            "copy_to": "titles.full_title",
                             "type": "string"
                         },
                         "title": {
+                            "copy_to": "titles.full_title",
                             "type": "string"
                         }
                     },
@@ -1053,10 +1069,64 @@
     "settings": {
         "analysis": {
             "analyzer": {
+                "author": {
+                    "tokenizer": "author_tokenizer",
+                    "type": "custom"
+                },
                 "lowercase_analyzer": {
                     "filter": "lowercase",
                     "tokenizer": "keyword",
                     "type": "custom"
+                },
+                "report_number": {
+                    "char_filter": [
+                        "alphanumeric_normalizer"
+                    ],
+                    "tokenizer": "keyword",
+                    "type": "custom"
+                },
+                "title": {
+                    "char_filter": [
+                        "tex_normalizer"
+                    ],
+                    "filter": [
+                        "lowercase_normalizer",
+                        "ascii_normalizer"
+                    ],
+                    "tokenizer": "icu_tokenizer",
+                    "type": "custom"
+                }
+            },
+            "char_filter": {
+                "alphanumeric_normalizer": {
+                    "pattern": "[^A-Za-z0-9]",
+                    "replacement": "",
+                    "type": "pattern_replace"
+                },
+                "tex_normalizer": {
+                    "pattern": "\\$[^$]+\\$",
+                    "replacement": "",
+                    "type": "pattern_replace"
+                }
+            },
+            "filter": {
+                "ascii_normalizer": {
+                    "preserve_original": true,
+                    "type": "asciifolding"
+                },
+                "lowercase_normalizer": {
+                    "type": "lowercase"
+                }
+            },
+            "tokenizer": {
+                "author_tokenizer": {
+                    "max_ngram": "8",
+                    "min_ngram": "4",
+                    "token_chars": [
+                        "letter",
+                        "punctuation"
+                    ],
+                    "type": "nGram"
                 }
             }
         }
