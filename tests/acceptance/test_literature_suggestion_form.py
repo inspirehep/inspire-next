@@ -34,7 +34,6 @@ from inspirehep.bat.pages import (
 def test_literature_create_chapter_manually(login):
     input_data = {
         'pdf-1': 'pdf_url_correct',
-        'pdf-2': 'pdf_another_url_correct',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -63,7 +62,6 @@ def test_literature_create_chapter_manually(login):
 def test_literature_create_book_manually(login):
     input_data = {
         'pdf-1': 'pdf_url_correct',
-        'pdf-2': 'pdf_another_url_correct',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -95,7 +93,6 @@ def test_literature_create_book_manually(login):
 def test_literature_create_thesis_manually(login):
     input_data = {
         'pdf-1': 'pdf_url_correct',
-        'pdf-2': 'pdf_another_url_correct',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -127,7 +124,6 @@ def test_literature_create_thesis_manually(login):
 def test_literature_create_article_journal_manually(login):
     input_data = {
         'pdf-1': 'pdf_url_correct',
-        'pdf-2': 'pdf_another_url_correct',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -159,7 +155,6 @@ def test_literature_create_article_journal_manually(login):
 def test_literature_create_article_journal_with_proceeding_manually(login):
     input_data = {
         'pdf-1': 'pdf_url_correct',
-        'pdf-2': 'pdf_another_url_correct',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -203,18 +198,6 @@ def _check_back_office(input_data):
 
     holding_panel_literature_list.go_to()
     assert holding_panel_literature_list.load_completed_record().has_error()
-
-
-def test_pdf_link(login):
-    create_literature.go_to()
-    assert create_literature.write_pdf_link('pdf_url_wrong').has_error()
-    assert not create_literature.write_pdf_link('pdf_url_correct').has_error()
-
-
-def test_thesis_info_date(login):
-    create_literature.go_to()
-    _test_date_format('thesis_date', 'state-thesis_date')
-    _test_date_format('thesis_date', 'state-thesis_date')
 
 
 def test_thesis_info_autocomplete_supervisor_institution(login):
@@ -293,31 +276,3 @@ def test_import_from_doi(login):
         '10.1086/305772',
         expected_data,
     ).has_error()
-
-
-def test_format_input_arXiv(login):
-    create_literature.go_to()
-    assert not create_literature.write_arxiv_id('1001.4538').has_error()
-    assert create_literature.write_arxiv_id('hep-th.9711200').has_error()
-    assert not create_literature.write_arxiv_id('hep-th/9711200').has_error()
-
-
-def test_format_input_doi(login):
-    create_literature.go_to()
-    assert create_literature.write_doi_id('dummy:10.1086/305772').has_error()
-    assert not create_literature.write_doi_id('10.1086/305772').has_error()
-    assert create_literature.write_doi_id('state-doi').has_error()
-
-
-def _test_date_format(field_id, field_err_id):
-    write_date_thesis = partial(
-        create_literature.write_date_thesis,
-        field_id,
-        field_err_id,
-    )
-    assert not write_date_thesis('').has_error()
-    assert write_date_thesis('wrong').has_error()
-    assert not write_date_thesis('2016-01').has_error()
-    assert write_date_thesis('2016-02-30').has_error()
-    assert not write_date_thesis('2016').has_error()
-    assert write_date_thesis('2016-13').has_error()

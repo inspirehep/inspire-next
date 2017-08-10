@@ -247,9 +247,6 @@ def _chapter_info_population(input_data):
 
 def _links_population(input_data):
     Arsenic().find_element_by_id('url').send_keys(input_data['pdf-1'])
-    Arsenic().find_element_by_id('additional_url').send_keys(
-        input_data['pdf-2']
-    )
 
 
 def _basic_info_population(input_data):
@@ -336,68 +333,6 @@ def _references_comment_population(input_data):
     ).send_keys(input_data['extra-comments'])
 
 
-def write_pdf_link(pdf_link):
-    def _write_pdf_link():
-        return (
-            'Please, provide an accessible direct link to a PDF document.'
-        ) in message_err
-
-    try:
-        WebDriverWait(Arsenic(), 5).until(
-            EC.visibility_of_element_located((By.ID, 'url'))
-        )
-    except (ElementNotVisibleException, WebDriverException):
-        _skip_import_data()
-    field = WebDriverWait(Arsenic(), 5).until(
-        EC.visibility_of_element_located((By.ID, 'url'))
-    )
-    field.send_keys(pdf_link)
-    Arsenic().hide_title_bar()
-    Arsenic().click_with_coordinates('state-group-url', 5, 5)
-    try:
-        message_err = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.ID, 'state-url'))
-        ).text
-    except (ElementNotVisibleException, WebDriverException):
-        message_err = ''
-    Arsenic().show_title_bar()
-    field.clear()
-
-    return ArsenicResponse(_write_pdf_link)
-
-
-def write_date_thesis(date_field, error_message_id, date):
-    try:
-        WebDriverWait(Arsenic(), 5).until(
-            EC.visibility_of_element_located((By.ID, date_field))
-        )
-    except (ElementNotVisibleException, WebDriverException):
-        _skip_import_data()
-        _select_thesis()
-    field = WebDriverWait(Arsenic(), 5).until(
-        EC.visibility_of_element_located((By.ID, date_field))
-    )
-    field.send_keys(date)
-    Arsenic().hide_title_bar()
-    Arsenic().click_with_coordinates('state-group-supervisors', 5, 5)
-    try:
-        error_message = WebDriverWait(Arsenic(), 5).until(
-            EC.visibility_of_element_located((By.ID, error_message_id))
-        ).text
-    except (ElementNotVisibleException, WebDriverException):
-        error_message = ''
-    Arsenic().show_title_bar()
-    field.clear()
-
-    def _has_error():
-        return (
-            'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM '
-            'or YYYY.'
-        ) in error_message
-
-    return ArsenicResponse(_has_error)
-
-
 def write_institution_thesis(institution, expected_data):
     def _write_institution_thesis():
         return expected_data == Arsenic().write_in_autocomplete_field(
@@ -436,42 +371,6 @@ def write_affiliation(affiliation, expected_data):
 
     _skip_import_data()
     return ArsenicResponse(_write_affiliation)
-
-
-def write_arxiv_id(arxiv_id):
-    def _write_arxiv_id():
-        return (
-            'The provided ArXiv ID is invalid - it should look'
-        ) in message_err
-
-    Arsenic().find_element_by_id('arxiv_id').clear()
-    Arsenic().find_element_by_id('arxiv_id').send_keys(arxiv_id)
-    Arsenic().find_element_by_id('arxiv_id').send_keys(Keys.TAB)
-    try:
-        message_err = WebDriverWait(Arsenic(), 5).until(
-            EC.visibility_of_element_located((By.ID, 'state-arxiv_id'))
-        ).text
-    except (ElementNotVisibleException, WebDriverException):
-        message_err = ''
-
-    return ArsenicResponse(_write_arxiv_id)
-
-
-def write_doi_id(doi):
-    def _write_doi_id():
-        return 'The provided DOI is invalid - it should look' in message_err
-
-    Arsenic().find_element_by_id('doi').clear()
-    Arsenic().find_element_by_id('doi').send_keys(doi)
-    Arsenic().find_element_by_id('doi').send_keys(Keys.TAB)
-    try:
-        message_err = WebDriverWait(Arsenic(), 5).until(
-            EC.visibility_of_element_located((By.ID, 'state-doi'))
-        ).text
-    except (ElementNotVisibleException, WebDriverException):
-        message_err = ''
-
-    return ArsenicResponse(_write_doi_id)
 
 
 def submit_arxiv_id(arxiv_id, expected_data):

@@ -83,75 +83,13 @@ def mock_literature_validate():
                     'url': {},
                 },
             })
-        if request.json['url'] == 'pdf_url_wrong':
-            return jsonify({
-                'messages': {
-                    'url': {
-                        'messages': [
-                            'Please, provide an accessible direct link to a PDF document.',
-                        ],
-                        'state': 'error',
-                    },
-                },
-            })
-
-    if 'arxiv_id' in request.json:
-        if request.json['arxiv_id'] in ('1001.4538', 'hep-th/9711200'):
-            return jsonify({
-                'messages': {
-                    'arxiv_id': {},
-                },
-            })
-        if request.json['arxiv_id'] == 'hep-th.9711200':
-            return jsonify({
-                'messages': {
-                    'arxiv_id': {
-                        'messages': [
-                            'The provided ArXiv ID is invalid - it should look similar to '
-                            '\'hep-th/9711200\' or \'1207.7235\'.',
-                        ],
-                        'state': 'error',
-                    },
-                },
-            })
-
-    if 'doi' in request.json:
-        if request.json['doi'] in ('10.1086/305772', 'doi:10.1086/305772'):
-            return jsonify({
-                'messages': {
-                    'doi': {},
-                },
-            })
-        if request.json['doi'] == 'dummy:10.1086/305772':
-            return jsonify({
-                'messages': {
-                    'doi': {
-                        'messages': [
-                            'The provided DOI is invalid - it should look similar to '
-                            '\'10.1086/305772\'.',
-                        ],
-                        'state': 'error',
-                    },
-                },
-            })
 
     return literature_validate()
 
 
 @app.route('/submit/author/validate', endpoint='inspirehep_authors_holdingpen.validate', methods=['POST'])
 def mock_author_validate():
-    if request.json.get('orcid') == 'wrong.ORCID':
-        return jsonify({
-            'messages': {
-                'orcid': {
-                    'messages': [
-                        'A valid ORCID iD consists of 16 digits separated by dashes.',
-                    ],
-                    'state': 'error',
-                },
-            },
-        })
-    elif request.json.get('orcid') == '1111-1111-1111-1111':
+    if request.json.get('orcid') == '1111-1111-1111-1111':
         return jsonify({
             'messages': {
                 'orcid': {},
