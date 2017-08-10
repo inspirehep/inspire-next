@@ -45,7 +45,7 @@ install_requires = [
     'librabbitmq>=1.6.1',
     'idutils>=0.2.1',
     'invenio-access>=1.0.0a7',
-    'invenio-accounts<1.0.0b7',
+    'invenio-accounts>=1.0.0b7',
     'invenio-admin>=1.0.0a3',
     'invenio-assets>=1.0.0b2',
     'invenio-base>=1.0.0a11',
@@ -59,8 +59,7 @@ install_requires = [
     # FIXME: using custom fork until inveniosoftware/invenio-logging#30 is merged
     # 'invenio-logging>=1.0.0a3',
     'invenio-mail>=1.0.0a4',
-    # FIXME: using custom fork until inveniosoftware/invenio-oauthclient is released
-    #'invenio-oauthclient>=1.0.0a8',
+    'invenio-oauthclient>=1.0.0b1',
     'invenio-orcid>=1.0.0a1',
     'invenio-records>=1.0.0a16',  # Add [versioning] in the future
     'invenio-rest[cors]>=1.0.0a7',
@@ -87,7 +86,7 @@ install_requires = [
     'invenio-trends>=1.0.0a1',
     'invenio-trends-ui>=1.0.0a1',
     'elasticsearch<3.0.0',
-    'Flask-Login<0.4.0',
+    'Flask-Login~=0.0,>=0.4.0',
     'invenio-workflows~=6.0,>=6.0.5',
     'invenio-workflows-files~=0.0,>=0.0.4',
     'invenio-workflows-ui~=1.0,>=1.0.31',
