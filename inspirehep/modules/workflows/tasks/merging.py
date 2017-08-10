@@ -112,7 +112,7 @@ def merge_articles(obj, eng):
         head,
         obj.extra_data['new_root']
     )
-    obj.extra_data['conflicts'] = json.dumps(conflicts) if conflicts else None
+    obj.extra_data['conflicts'] = conflicts if conflicts else None
 
 
 def put_root_in_extradata(obj, eng):

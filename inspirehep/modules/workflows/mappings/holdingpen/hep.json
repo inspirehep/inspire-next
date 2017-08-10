@@ -10,9 +10,9 @@
                 "_extra_data": {
                     "properties": {
                         "conflicts": {
-                            "index": "no",
+                            "type": "object",
                             "include_in_all": false,
-                            "type": "string"
+                            "enabled": false
                         },
                         "is-update": {
                             "type": "boolean"

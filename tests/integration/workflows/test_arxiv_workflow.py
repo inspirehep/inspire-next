@@ -459,7 +459,7 @@ def test_merge_with_already_existing_article_in_the_db(
     assert expected_merged == workflow_record
 
     expected_conflicts = read_file('fixtures', 'merger_conflicts.json')
-    assert obj.extra_data['conflicts'] == json.dumps(expected_conflicts)
+    assert obj.extra_data['conflicts'] == expected_conflicts
 
 
 @mock.patch(
