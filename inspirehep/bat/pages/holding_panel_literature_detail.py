@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+
 from selenium.common.exceptions import (
     ElementNotVisibleException,
     WebDriverException,
@@ -79,8 +81,16 @@ def accept_record():
             GetText((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))
         )
 
-    WebDriverWait(Arsenic(), 10).until(
-        TryClick((By.XPATH, '//button[@class="btn btn-warning"]'))
-    )
+    try:
+        WebDriverWait(Arsenic(), 90).until(
+            TryClick((By.XPATH, '//button[@class="btn btn-warning"]'))
+        )
+    except Exception as exc:
+        Arsenic().get(
+            os.environ['SERVER_NAME'] + '/api/holdingpen'
+        )
+        new_message = exc.message
+        new_message += '\nPage Source:\n' + '#' * 20 + Arsenic().page_source
+        raise exc.__class__(new_message)
 
     return ArsenicResponse(_accept_record)
