@@ -30,11 +30,12 @@ from flask import current_app
 from werkzeug import secure_filename
 from timeout_decorator import TimeoutError
 
+from inspire_utils.record import get_value
 from inspirehep.modules.workflows.utils import (
     get_pdf_in_workflow,
     log_workflows_action,
 )
-from inspirehep.utils.record import get_arxiv_id, get_value
+from inspirehep.utils.record import get_arxiv_id
 from inspirehep.utils.url import is_pdf_link
 
 from .refextract import extract_references

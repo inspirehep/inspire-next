@@ -30,8 +30,8 @@ from refextract import extract_journal_reference, extract_references_from_file
 
 from inspire_schemas.api import ReferenceBuilder
 from inspire_schemas.utils import split_page_artid
+from inspire_utils.record import get_value
 from inspirehep.utils.helpers import force_list, maybe_int
-from inspirehep.utils.record import get_value
 
 
 def extract_journal_info(obj, eng):

@@ -24,9 +24,10 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspire_utils.record import get_value
 from inspirehep.modules.search import LiteratureSearch
 from inspirehep.utils.helpers import force_list
-from inspirehep.utils.record import get_title, get_value
+from inspirehep.utils.record import get_title
 
 
 def build_citesummary(search):
