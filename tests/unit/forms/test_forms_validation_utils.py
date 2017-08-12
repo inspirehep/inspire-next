@@ -25,11 +25,13 @@ from __future__ import absolute_import, division, print_function
 import pytest
 from flask import current_app
 from mock import patch
+from requests.exceptions import RequestException
 from wtforms.validators import StopValidation
 
 from inspirehep.modules.forms.validation_utils import (
     DOISyntaxValidator,
     ORCIDValidator,
+    RegexpStopValidator,
 )
 
 
@@ -37,13 +39,19 @@ class MockField(object):
     def __init__(self, data):
         self.data = data
 
+    def gettext(self, message):
+        return message
+
 
 class MockOrcidAPI(object):
-    def __init__(self, response):
+    def __init__(self, response=None):
         self._response = response
 
     def search_member(self, query):
-        return self._response
+        if self._response:
+            return self._response
+
+        raise RequestException()
 
 
 def test_doi_syntax_validator_accepts_valid_dois():
@@ -116,3 +124,46 @@ def test_orcid_validator_accepts_everything_when_orcid_is_not_configured(mock_me
         field = MockField(u'THIS-ORCID-DOES-NOT-EXIST')
 
         assert ORCIDValidator(None, field) is None
+
+
+@patch('inspirehep.modules.forms.validation_utils.orcid.MemberAPI')
+def test_orcid_validator_accepts_everything_when_orcid_is_down(mock_member_api):
+    mock_orcid_api = MockOrcidAPI()
+    mock_member_api.return_value = mock_orcid_api
+
+    config = {
+        'ORCID_APP_CREDENTIALS': {
+            'consumer_key': 'consumer_key',
+            'consumer_secret': 'consumer_secret',
+        }
+    }
+
+    with patch.dict(current_app.config, config):
+        field = MockField(u'THIS-ORCID-DOES-NOT-EXIST')
+
+        assert ORCIDValidator(None, field) is None
+
+
+def test_regexp_stop_validator_accepts_strings_that_match_the_regexp():
+    field = MockField(u'0000-0003-1032-3957')
+    regexp_stop_validator = RegexpStopValidator(u'\d{4}-\d{4}-\d{4}-\d{3}[\dX]')
+
+    assert regexp_stop_validator(None, field) is not None
+
+
+def test_regexp_stop_validator_raises_on_strings_that_dont_match_the_regexp():
+    field = MockField(u'THIS-ORCID-IS-NOT-VALID')
+    regexp_stop_validator = RegexpStopValidator(u'\d{4}-\d{4}-\d{4}-\d{3}[\dX]')
+
+    with pytest.raises(StopValidation):
+        regexp_stop_validator(None, field)
+
+
+def test_regexp_stop_validator_raises_with_custom_message():
+    field = MockField(u'1993-02-02')
+    regexp_stop_validator = RegexpStopValidator(
+        u'^(\d{4})?$', message=u'{} is not a valid year.')
+
+    with pytest.raises(StopValidation) as excinfo:
+        regexp_stop_validator(None, field)
+    assert u'1993-02-02 is not a valid year' in str(excinfo.value)
