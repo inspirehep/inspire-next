@@ -53,11 +53,11 @@ from invenio_search.utils import schema_to_index
 from inspire_dojson.processors import overdo_marc_dict
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.dedupers import dedupe_list
+from inspire_utils.record import get_value
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.helpers import force_list
-from inspirehep.utils.record import get_value
 
 from ..models import InspireProdRecords
 

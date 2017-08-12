@@ -50,8 +50,8 @@ from invenio_workflows import workflow_object_class, start, resume
 from invenio_workflows_ui.api import WorkflowUIRecord
 
 from inspire_dojson.hepnames import hepnames
+from inspire_utils.record import get_value
 from inspirehep.modules.forms.form import DataExporter
-from inspirehep.utils.record import get_value
 
 from ..forms import AuthorUpdateForm
 from ..permissions import holdingpen_author_permission

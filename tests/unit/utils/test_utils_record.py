@@ -29,7 +29,6 @@ from inspirehep.utils.record import (
     get_arxiv_id,
     get_subtitle,
     get_title,
-    get_value,
     is_submitted_but_not_published,
 )
 
@@ -216,54 +215,6 @@ def test_get_title_returns_first_title():
 
     expected = 'first title'
     result = get_title(record)
-
-    assert expected == result
-
-
-def test_get_value_returns_all_values():
-    record = {
-        'titles': [
-            {'title': 'first title'},
-            {'title': 'second title'},
-        ],
-    }
-
-    expected = [
-        'first title',
-        'second title',
-    ]
-    result = get_value(record, 'titles.title')
-
-    assert expected == result
-
-
-def test_get_value_allows_indexes_in_paths():
-    record = {
-        'titles': [
-            {'title': 'first title'},
-            {'title': 'second title'},
-        ],
-    }
-
-    expected = 'second title'
-    result = get_value(record, 'titles.title[1]')
-
-    assert expected == result
-
-
-def test_get_value_allows_slices_in_paths():
-    record = {
-        'titles': [
-            {'title': 'first title'},
-            {'title': 'second title'},
-        ],
-    }
-
-    expected = [
-        'first title',
-        'second title',
-    ]
-    result = get_value(record, 'titles.title[:]')
 
     assert expected == result
 

@@ -37,12 +37,9 @@ import six
 from flask import current_app
 from simplejson import JSONDecodeError
 
+from inspire_utils.record import get_value
 from inspirehep.utils.datefilter import date_older_than
-from inspirehep.utils.record import (
-    get_arxiv_categories,
-    get_arxiv_id,
-    get_value,
-)
+from inspirehep.utils.record import get_arxiv_categories, get_arxiv_id
 
 from ..utils import with_debug_logging
 

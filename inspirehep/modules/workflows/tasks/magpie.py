@@ -28,8 +28,8 @@ import requests
 
 from flask import current_app
 
+from inspire_utils.record import get_value
 from inspirehep.modules.workflows.utils import json_api_request
-from inspirehep.utils.record import get_value
 
 from ..utils import with_debug_logging
 

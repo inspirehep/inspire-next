@@ -32,9 +32,9 @@ from nameparser import HumanName
 
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_schemas.builders.literature import is_citeable
+from inspire_utils.record import get_value
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.utils.helpers import force_list
-from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_es_records
 
 

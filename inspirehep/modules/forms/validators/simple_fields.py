@@ -34,7 +34,7 @@ from wtforms.validators import ValidationError, StopValidation
 from idutils import is_arxiv
 
 from inspire_schemas.utils import load_schema
-from inspirehep.utils.record import get_value
+from inspire_utils.record import get_value
 from inspirehep.utils.url import is_pdf_link
 
 
