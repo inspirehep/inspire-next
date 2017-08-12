@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 import pytest
 from flask import current_app
 from mock import patch
+from requests.exceptions import RequestException
 from wtforms.validators import StopValidation
 
 from inspirehep.modules.forms.validation_utils import (
@@ -39,11 +40,14 @@ class MockField(object):
 
 
 class MockOrcidAPI(object):
-    def __init__(self, response):
+    def __init__(self, response=None):
         self._response = response
 
     def search_member(self, query):
-        return self._response
+        if self._response:
+            return self._response
+
+        raise RequestException()
 
 
 def test_doi_syntax_validator_accepts_valid_dois():
@@ -113,6 +117,24 @@ def test_orcid_validator_accepts_everything_when_orcid_is_not_configured(mock_me
     config = {}
 
     with patch.dict(current_app.config, config, clear=True):
+        field = MockField(u'THIS-ORCID-DOES-NOT-EXIST')
+
+        assert ORCIDValidator(None, field) is None
+
+
+@patch('inspirehep.modules.forms.validation_utils.orcid.MemberAPI')
+def test_orcid_validator_accepts_everything_when_orcid_is_down(mock_member_api):
+    mock_orcid_api = MockOrcidAPI()
+    mock_member_api.return_value = mock_orcid_api
+
+    config = {
+        'ORCID_APP_CREDENTIALS': {
+            'consumer_key': 'consumer_key',
+            'consumer_secret': 'consumer_secret',
+        }
+    }
+
+    with patch.dict(current_app.config, config):
         field = MockField(u'THIS-ORCID-DOES-NOT-EXIST')
 
         assert ORCIDValidator(None, field) is None
