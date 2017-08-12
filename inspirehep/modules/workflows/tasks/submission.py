@@ -364,3 +364,10 @@ def prepare_files(obj, eng):
         obj.data['_fft'] = obj.data.get('_fft', []) + result
         obj.log.info('Non-user PDF files added to FFT.')
         obj.log.debug('Added PDF files: {}'.format(result))
+
+
+@with_debug_logging
+def remove_references(obj, eng):
+    obj.log.info(obj.data)
+    if 'references' in obj.data:
+        del obj.data['references']
