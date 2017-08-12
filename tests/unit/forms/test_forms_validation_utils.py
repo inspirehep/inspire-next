@@ -31,12 +31,16 @@ from wtforms.validators import StopValidation
 from inspirehep.modules.forms.validation_utils import (
     DOISyntaxValidator,
     ORCIDValidator,
+    RegexpStopValidator,
 )
 
 
 class MockField(object):
     def __init__(self, data):
         self.data = data
+
+    def gettext(self, message):
+        return message
 
 
 class MockOrcidAPI(object):
@@ -138,3 +142,28 @@ def test_orcid_validator_accepts_everything_when_orcid_is_down(mock_member_api):
         field = MockField(u'THIS-ORCID-DOES-NOT-EXIST')
 
         assert ORCIDValidator(None, field) is None
+
+
+def test_regexp_stop_validator_accepts_strings_that_match_the_regexp():
+    field = MockField(u'0000-0003-1032-3957')
+    regexp_stop_validator = RegexpStopValidator(u'\d{4}-\d{4}-\d{4}-\d{3}[\dX]')
+
+    assert regexp_stop_validator(None, field) is not None
+
+
+def test_regexp_stop_validator_raises_on_strings_that_dont_match_the_regexp():
+    field = MockField(u'THIS-ORCID-IS-NOT-VALID')
+    regexp_stop_validator = RegexpStopValidator(u'\d{4}-\d{4}-\d{4}-\d{3}[\dX]')
+
+    with pytest.raises(StopValidation):
+        regexp_stop_validator(None, field)
+
+
+def test_regexp_stop_validator_raises_with_custom_message():
+    field = MockField(u'1993-02-02')
+    regexp_stop_validator = RegexpStopValidator(
+        u'^(\d{4})?$', message=u'{} is not a valid year.')
+
+    with pytest.raises(StopValidation) as excinfo:
+        regexp_stop_validator(None, field)
+    assert u'1993-02-02 is not a valid year' in str(excinfo.value)
