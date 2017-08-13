@@ -35,6 +35,7 @@ from invenio_oauthclient.models import UserIdentity
 from inspire_dojson.utils import strip_empty_values
 from inspire_schemas.api import validate
 from inspirehep.modules.forms.utils import filter_empty_elements
+from inspirehep.modules.workflows.utils import with_debug_logging
 
 from .dojson.model import updateform
 
@@ -111,6 +112,7 @@ def formdata_to_model(obj, formdata):
     return data
 
 
+@with_debug_logging
 def curation_ticket_needed(obj, eng):
     """Check if the a curation ticket is needed."""
     return obj.extra_data.get("ticket", False)

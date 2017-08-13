@@ -30,6 +30,7 @@ from idutils import is_arxiv_post_2007
 from inspire_schemas.api import LiteratureBuilder
 from inspire_utils.record import get_value
 from inspirehep.modules.forms.utils import filter_empty_elements
+from inspirehep.modules.workflows.utils import with_debug_logging
 from inspirehep.utils.helpers import force_list
 from inspirehep.utils.record import get_title
 
@@ -265,6 +266,7 @@ def curation_ticket_context(user, obj):
     )
 
 
+@with_debug_logging
 def curation_ticket_needed(obj, eng):
     """Check if the a curation ticket is needed."""
     return obj.extra_data.get("core", False)
