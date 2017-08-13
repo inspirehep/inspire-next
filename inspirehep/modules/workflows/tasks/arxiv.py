@@ -142,6 +142,7 @@ def arxiv_plot_extract(obj, eng):
         obj.log.info('Added {0} plots.'.format(len(plots)))
 
 
+@with_debug_logging
 def arxiv_derive_inspire_categories(obj, eng):
     """Derive ``inspire_categories`` from the arXiv categories.
 

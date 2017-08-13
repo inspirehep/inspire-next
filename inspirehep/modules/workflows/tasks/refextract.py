@@ -33,7 +33,10 @@ from inspire_schemas.utils import split_page_artid
 from inspire_utils.record import get_value
 from inspirehep.utils.helpers import force_list, maybe_int
 
+from ..utils import with_debug_logging
 
+
+@with_debug_logging
 def extract_journal_info(obj, eng):
     """Extract journal, volume etc. from any freetext publication info."""
     publication_info = get_value(obj.data, "publication_info")

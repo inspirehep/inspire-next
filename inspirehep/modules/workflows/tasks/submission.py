@@ -267,6 +267,7 @@ def send_robotupload(
     return _send_robotupload
 
 
+@with_debug_logging
 def wait_webcoll(obj, eng):
     if not in_production_mode():
         obj.log.debug("Would have wait for webcoll callback.")
