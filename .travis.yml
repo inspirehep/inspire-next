@@ -39,8 +39,8 @@ env:
   matrix:
     - SUITE=workflows
     - SUITE=integration
-    - SUITE=disambiguation
-    - SUITE=acceptance
+    - SUITE=acceptance-authors
+    - SUITE=acceptance-literature
     - SUITE=unit
 
 matrix:

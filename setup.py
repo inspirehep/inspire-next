@@ -210,7 +210,6 @@ setup(
             'arxiv = inspirehep.modules.arxiv:Arxiv',
             'crossref = inspirehep.modules.crossref:CrossRef',
             'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
-            'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
             'inspire_tools = inspirehep.modules.tools:INSPIRETools',
             'inspire_hal = inspirehep.modules.hal:InspireHAL',
         ],
@@ -259,12 +258,10 @@ setup(
         ],
         'invenio_db.models': [
             'inspire_workflows_audit = inspirehep.modules.workflows.models',
-            'inspire_disambiguation = inspirehep.modules.disambiguation.models',
         ],
         'invenio_celery.tasks': [
             'inspire_refextract = inspirehep.modules.refextract.tasks',
             'inspire_authors = inspirehep.modules.authors.tasks',
-            'inspire_disambiguation = inspirehep.modules.disambiguation.tasks',
             'inspire_records = inspirehep.modules.records.tasks',
         ],
     },
