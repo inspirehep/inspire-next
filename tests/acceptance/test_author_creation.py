@@ -71,66 +71,6 @@ def test_advisors_typehead(login):
     assert create_author.write_advisor('alexe', 'Vorobyev, Alexey').has_error()
 
 
-def test_institutions_years(login):
-    create_author.go_to()
-
-    input_id = 'institution_history-0-start_year'
-    error_mess_id = 'state-institution_history-0-start_year'
-    assert create_author.write_year(
-        input_id,
-        error_mess_id,
-        'wrongyear',
-    ).has_error()
-    assert not create_author.write_year(
-        input_id,
-        error_mess_id,
-        '2016',
-    ).has_error()
-
-    input_id = 'institution_history-0-end_year'
-    error_mess_id = 'state-institution_history-0-end_year'
-    assert create_author.write_year(
-        input_id,
-        error_mess_id,
-        'wrongyear',
-    ).has_error()
-    assert not create_author.write_year(
-        input_id,
-        error_mess_id,
-        '2016',
-    ).has_error()
-
-
-def test_experiments_years(login):
-    create_author.go_to()
-
-    input_id = 'experiments-0-start_year'
-    error_mess_id = 'state-experiments-0-start_year'
-    assert create_author.write_year(
-        input_id,
-        error_mess_id,
-        'wrongyear',
-    ).has_error()
-    assert not create_author.write_year(
-        input_id,
-        error_mess_id,
-        '2016',
-    ).has_error()
-
-    input_id = 'experiments-0-end_year'
-    error_mess_id = 'state-experiments-0-end_year'
-    assert create_author.write_year(
-        input_id,
-        error_mess_id,
-        'wrongyear',
-    ).has_error()
-    assert not create_author.write_year(
-        input_id,
-        error_mess_id,
-        '2016',
-    ).has_error()
-
-
 def test_mandatory_fields(login):
     expected_data = {
         'given-name': 'This field is required.',

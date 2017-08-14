@@ -65,23 +65,6 @@ def write_advisor(advisor, expected_data):
     return ArsenicResponse(_write_advisor)
 
 
-def write_year(input_id, error_message_id, year):
-    def _write_year():
-        return 'is not a valid year' in message_err
-
-    year_field = Arsenic().find_element_by_id(input_id)
-    year_field.send_keys(year)
-    try:
-        year_field.send_keys(Keys.TAB)
-        message_err = WebDriverWait(Arsenic(), 10).until(
-            GetText((By.ID, error_message_id)))
-    except (ElementNotVisibleException, WebDriverException):
-        message_err = ''
-    year_field.clear()
-
-    return ArsenicResponse(_write_year)
-
-
 def submit_empty_form(expected_data):
     def _submit_empty_form():
         return expected_data == output_data
