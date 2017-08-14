@@ -24,42 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-from pprint import pformat
-
 from flask import url_for
 
-from invenio_db import db
-
-from inspirehep.modules.pidstore.minters import inspire_recid_minter
-from inspirehep.modules.records.api import InspireRecord
-
-from ..utils import with_debug_logging
-
-
-@with_debug_logging
-def store_record(obj, *args, **kwargs):
-    """Create and index new record in main record space."""
-    obj.log.debug('Storing record: \n%s', pformat(obj.data))
-
-    assert "$schema" in obj.data, "No $schema attribute found!"
-
-    # Create record
-    # FIXME: Do some preprocessing of obj.data before creating a record so that
-    # we're sure that the schema will be validated without touching the full
-    # holdingpen stack.
-    record = InspireRecord.create(obj.data, id_=None)
-
-    # Create persistent identifier.
-    inspire_recid_minter(str(record.id), record)
-
-    # Commit any changes to record
-    record.commit()
-
-    # Dump any changes to record
-    obj.data = record.dumps()
-
-    # Commit to DB before indexing
-    db.session.commit()
+from inspirehep.modules.workflows.utils import with_debug_logging
 
 
 @with_debug_logging

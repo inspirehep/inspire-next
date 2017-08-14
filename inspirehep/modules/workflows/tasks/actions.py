@@ -223,36 +223,19 @@ def submission_fulltext_download(obj, eng):
             obj.log.info('Cannot fetch PDF provided by user from %s', submission_pdf)
 
 
-def prepare_update_payload(extra_data_key="update_payload"):
-    @with_debug_logging
-    @wraps(prepare_update_payload)
-    def _prepare_update_payload(obj, eng):
-        # TODO: Perform auto-merge if possible and update only necessary data
-        # See obj.extra_data["record_matches"] for data on matches
-
-        # FIXME: Just update entire record for now
-        obj.extra_data[extra_data_key] = obj.data
-
-    _prepare_update_payload.__doc__ = (
-        'Prepare the update payload, extra_data_key=%s.' % extra_data_key)
-    return _prepare_update_payload
-
-
 @with_debug_logging
 def refextract(obj, eng):
     uri = get_pdf_in_workflow(obj)
-    source = get_value(obj.data, 'acquisition_source.source')
     if uri:
         try:
             journal_kb_path = current_app.config.get('REFEXTRACT_JOURNAL_KB_PATH', None)
             if journal_kb_path:
-                references = extract_references(uri, source, {'journals': journal_kb_path})
+                mapped_references = extract_references(uri, {'journals': journal_kb_path})
             else:
-                references = extract_references(uri, source)
-
-            if references:
-                obj.data['references'] = references
-                obj.log.info('Extracted %d references', len(references))
+                mapped_references = extract_references(uri)
+            if mapped_references:
+                obj.data['references'] = mapped_references
+                obj.log.info('Extracted %d references', len(mapped_references))
             else:
                 obj.log.info('No references extracted')
         except TimeoutError:

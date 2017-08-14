@@ -9,6 +9,11 @@
             "properties": {
                 "_extra_data": {
                     "properties": {
+                        "conflicts": {
+                            "type": "object",
+                            "include_in_all": false,
+                            "enabled": false
+                        },
                         "is-update": {
                             "type": "boolean"
                         },

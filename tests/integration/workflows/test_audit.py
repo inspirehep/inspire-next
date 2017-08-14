@@ -33,10 +33,10 @@ from inspirehep.modules.workflows.models import WorkflowsAudit
 from inspirehep.modules.workflows.utils import log_workflows_action
 
 
-def test_audit(small_app):
+def test_audit(workflow_app):
     user_id = None
     workflow_id = None
-    with small_app.app_context():
+    with workflow_app.app_context():
         user = User(email="test@example.com", active=True)
         user.password = "test"
         db.session.add(user)
@@ -47,7 +47,7 @@ def test_audit(small_app):
         user_id = user.id
         workflow_id = workflows_object.id
 
-    with small_app.app_context():
+    with workflow_app.app_context():
         logging_info = {
             'object_id': workflow_id,
             'user_id': user_id,
@@ -73,7 +73,7 @@ def test_audit(small_app):
     relevance_prediction = dict(
         max_score=0.222113, decision="Rejected"
     )
-    with small_app.app_context():
+    with workflow_app.app_context():
         log_workflows_action(
             action="accept_core",
             relevance_prediction=relevance_prediction,

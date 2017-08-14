@@ -1,0 +1,22 @@
+[
+    [
+        "ADD_BACK_TO_HEAD",
+        [
+            "authors"
+        ],
+        {
+            "affiliations": [
+                {
+                    "curated_relation": true,
+                    "value": "CERN",
+                    "record": {
+                        "$ref": "http://localhost:5000/api/institutions/902725"
+                    }
+                }
+            ],
+            "uuid": "e3b0a6e6-5950-41c4-ba8a-76cd597cb0d5",
+            "full_name": "Assis, Mathieu",
+            "signature_block": "ASm"
+        }
+    ]
+]
