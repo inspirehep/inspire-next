@@ -28,10 +28,11 @@ from flask_security import current_user
 from werkzeug.local import LocalProxy
 
 from invenio_access.models import ActionUsers
-from invenio_access.permissions import (DynamicPermission,
-                                        ParameterizedActionNeed)
-
-from inspirehep.modules.cache import current_cache
+from invenio_access.permissions import (
+    DynamicPermission,
+    ParameterizedActionNeed,
+)
+from invenio_cache import current_cache
 
 
 action_view_restricted_collection = ParameterizedActionNeed(

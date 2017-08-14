@@ -26,21 +26,19 @@ Common Tasks
 Caching
 =======
 
-
-For caching we use Flask-Caching_. For example, to set a value in the cache:
+For caching we use Invenio-Cache_. For example, to set a value in the cache:
 
 .. code-block:: python
 
-    from inspirehep.modules.cache import current_cache
-    current_cache.set('test', [1, 2, 3], timeout=60)
+    >>> from invenio_cache import current_cache
+    >>> current_cache.set('test', [1, 2, 3], timeout=60)
 
 And to retrieve the value from the cache:
 
 .. code-block:: python
 
-    from inspirehep.modules.cache import current_cache
-    current_cache.get('test')
-
+    >>> from invenio_cache import current_cache
+    >>> current_cache.get('test')
 
 
 Profiling a Celery Task
@@ -150,4 +148,4 @@ Same as the assets, from the root of the code repository, run the script:
 .. _`WSGI application profiler`: http://werkzeug.pocoo.org/docs/0.11/contrib/profiler/
 .. _snakeviz: https://github.com/jiffyclub/snakeviz
 .. _`documentation of snakeviz`: https://jiffyclub.github.io/snakeviz/#interpreting-results
-.. _Flask-Caching: https://pythonhosted.org/Flask-Caching/
+.. _Invenio-Cache: https://invenio-cache.readthedocs.io/en/latest/

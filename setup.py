@@ -49,6 +49,7 @@ install_requires = [
     'invenio-admin>=1.0.0a3',
     'invenio-assets>=1.0.0b2',
     'invenio-base>=1.0.0a11',
+    'invenio-cache>=1.0.0b1',
     'invenio-celery>=1.0.0a4',
     'invenio-classifier>=1.3.0',
     'invenio-collections>=1.0.0a3',
@@ -77,7 +78,6 @@ install_requires = [
     'inspire-utils~=0.0,>=0.0.5',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
-    'Flask-Caching>=1.0.1',
     'flask-shell-ipython>=0.2.2',
     'workflow~=2.0,>=2.0.1',
     'SQLAlchemy>=1.0.14,<1.1',
@@ -190,14 +190,12 @@ setup(
             'editor_manage_tickets = inspirehep.modules.editor.permissions:action_editor_manage_tickets'
         ],
         'invenio_base.api_apps': [
-            'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'invenio_collections = invenio_collections:InvenioCollections',
         ],
         'invenio_base.apps': [
-            'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_fixtures = inspirehep.modules.fixtures:INSPIREFixtures',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
