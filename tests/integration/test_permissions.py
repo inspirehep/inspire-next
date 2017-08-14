@@ -34,12 +34,12 @@ from invenio_accounts.testutils import (
     login_user_via_session,
     login_user_via_view,
 )
+from invenio_cache import current_cache
 from invenio_collections.models import Collection
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
 
-from inspirehep.modules.cache import current_cache
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.search.api import LiteratureSearch
