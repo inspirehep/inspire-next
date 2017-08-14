@@ -123,7 +123,8 @@ You can choose one of the following tests types:
   - unit
   - workflows
   - integration
-  - acceptance
+  - acceptance-authors
+  - acceptance-literature
 
 .. code-block:: console
 
