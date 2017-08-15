@@ -94,6 +94,7 @@ def extract_references(filepath, source=None, custom_kbs_file=None):
         reference_format=u'{title},{volume},{page}'
     )
 
+    # TODO: move it to a utility (duplicate of editor.views)
     result = []
 
     for reference in references:

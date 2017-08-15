@@ -27,6 +27,13 @@ from __future__ import absolute_import, division, print_function
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
 
+from inspire_schemas.api import ReferenceBuilder
+
+from inspirehep.utils.helpers import force_list
+
+from refextract import (extract_references_from_string,
+                        extract_references_from_url)
+
 from .permissions import editor_manage_tickets_permission
 from ...utils import tickets
 
@@ -34,6 +41,56 @@ from ...utils import tickets
 blueprint = Blueprint('inspirehep_editor',
                       __name__,
                       url_prefix='/editor',)
+
+
+@blueprint.route('/refextract/from_text', methods=['POST'])
+def ref_extract_from_text():
+    """View to extract references from text"""
+    json = request.json
+    references = extract_references_from_string(json['text'])
+    return jsonify(_build_references(references))
+
+
+@blueprint.route('/refextract/from_url', methods=['POST'])
+def ref_extract_from_url():
+    """View to extract references from text"""
+    json = request.json
+    references = extract_references_from_url(json['url'])
+    return jsonify(_build_references(references))
+
+
+def _build_references(references):
+    """Converts ref extract output to referece builder output"""
+    # TODO: move it to a utility (duplicate of workflows.tasks.refactract)
+    result = []
+    for reference in references:
+        rb = ReferenceBuilder()
+        mapping = [
+            ('author', rb.add_refextract_authors_str),
+            ('collaboration', rb.add_collaboration),
+            ('doi', rb.add_uid),
+            ('hdl', rb.add_uid),
+            ('isbn', rb.add_uid),
+            ('journal_reference', rb.set_pubnote),
+            ('linemarker', rb.set_label),
+            ('misc', rb.add_misc),
+            ('publisher', rb.set_publisher),
+            ('raw_ref', rb.add_raw_reference),
+            ('reportnumber', rb.add_report_number),
+            ('texkey', rb.set_texkey),
+            ('title', rb.add_title),
+            ('url', rb.add_url),
+            ('year', rb.set_year),
+        ]
+
+        for field, method in mapping:
+            for el in force_list(reference.get(field)):
+                if el:
+                    method(el)
+
+        result.append(rb.obj)
+
+    return result
 
 
 @blueprint.route('/rt/tickets/create', methods=['POST'])
