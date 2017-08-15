@@ -286,6 +286,28 @@ def get_inspire_id(record):
     return record['control_number']
 
 
+def get_journal_issue(record):
+    """Return the issue of the journal a record was published into.
+
+    Args:
+        record: a record.
+
+    Returns:
+        string: the issue of the journal the record was published into.
+
+    Examples:
+        >>> record = {
+        ...    'publication_info': [
+        ...        {'journal_issue': '5'},
+        ...    ],
+        ... }
+        >>> get_journal_issue(record)
+        '5'
+
+    """
+    return get_value(record, 'publication_info.journal_issue[0]', default='')
+
+
 def get_journal_title(record):
     """Return the title of the journal a record was published into.
 
@@ -306,6 +328,28 @@ def get_journal_title(record):
 
     """
     return get_value(record, 'publication_info.journal_title[0]', default='')
+
+
+def get_journal_volume(record):
+    """Return the volume of the journal a record was published into.
+
+    Args:
+        record: a record.
+
+    Returns:
+        string: the volume of the journal the record was published into.
+
+    Examples:
+        >>> record = {
+        ...     'publication_info': [
+        ...         {'journal_volume': 'D94'},
+        ...     ],
+        ... }
+        >>> get_journal_volume(record)
+        'D94'
+
+    """
+    return get_value(record, 'publication_info.journal_volume[0]', default='')
 
 
 def get_language(record):
@@ -330,6 +374,38 @@ def get_language(record):
         return 'en'
 
     return languages[0]
+
+
+def get_page_artid(record):
+    """Return the page range or the article id of a record.
+
+    Args:
+        record: a record
+
+    Returns:
+        string: the page range or the article id of the record.
+
+    Examples:
+        >>> record = {
+        ...     'publication_info': [
+        ...         {'artid': '054021'},
+        ...     ],
+        ... }
+        >>> get_page_artid(record)
+        '054021'
+
+    """
+    publication_info = get_value(record, 'publication_info[0]', default={})
+
+    if 'artid' in publication_info:
+        artid = publication_info['artid']
+        return artid
+    elif 'page_start' in publication_info and 'page_end' in publication_info:
+        page_start = publication_info['page_start']
+        page_end = publication_info['page_end']
+        return '{}-{}'.format(page_start, page_end)
+
+    return ''
 
 
 def get_peer_reviewed(record):

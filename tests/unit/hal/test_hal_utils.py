@@ -36,8 +36,11 @@ from inspirehep.modules.hal.utils import (
     get_document_types,
     get_doi,
     get_domain,
+    get_journal_issue,
     get_journal_title,
+    get_journal_volume,
     get_language,
+    get_page_artid,
     get_peer_reviewed,
     get_publication_date,
     is_published,
@@ -227,6 +230,23 @@ def test_get_domain():
     assert expected == result
 
 
+def test_get_journal_issue():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    record = {
+        'publication_info': [
+            {'journal_issue': '5'},
+        ],
+    }
+    assert validate(record['publication_info'], subschema) is None
+
+    expected = '5'
+    result = get_journal_issue(record)
+
+    assert expected == result
+
+
 def test_get_journal_title():
     schema = load_schema('hep')
     subschema = schema['properties']['publication_info']
@@ -240,6 +260,23 @@ def test_get_journal_title():
 
     expected = 'Phys.Part.Nucl.Lett.'
     result = get_journal_title(record)
+
+    assert expected == result
+
+
+def test_get_journal_volume():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    record = {
+        'publication_info': [
+            {'journal_volume': 'D94'},
+        ],
+    }
+    assert validate(record['publication_info'], subschema) is None
+
+    expected = 'D94'
+    result = get_journal_volume(record)
 
     assert expected == result
 
@@ -266,6 +303,43 @@ def test_get_language_falls_back_to_english():
 
     expected = 'en'
     result = get_language(record)
+
+    assert expected == result
+
+
+def test_get_page_artid_handles_artid():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    record = {
+        'publication_info': [
+            {'artid': '054021'},
+        ],
+    }
+    assert validate(record['publication_info'], subschema) is None
+
+    expected = '054021'
+    result = get_page_artid(record)
+
+    assert expected == result
+
+
+def test_get_page_artid_handles_page_range():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    record = {
+        'publication_info': [
+            {
+                'page_end': '588',
+                'page_start': '579',
+            },
+        ],
+    }
+    assert validate(record['publication_info'], subschema) is None
+
+    expected = '579-588'
+    result = get_page_artid(record)
 
     assert expected == result
 
