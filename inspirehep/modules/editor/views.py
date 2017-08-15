@@ -27,6 +27,12 @@ from __future__ import absolute_import, division, print_function
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
 
+from inspirehep.utils.references import map_refextract_to_schema
+from refextract import (
+    extract_references_from_string,
+    extract_references_from_url,
+)
+
 from .permissions import editor_manage_tickets_permission
 from ...utils import tickets
 
@@ -34,6 +40,24 @@ from ...utils import tickets
 blueprint = Blueprint('inspirehep_editor',
                       __name__,
                       url_prefix='/editor',)
+
+
+@blueprint.route('/refextract/text', methods=['POST'])
+def refextract_text():
+    """Run refextract on a piece of text."""
+    extracted_references = extract_references_from_string(request.json['text'])
+    references = map_refextract_to_schema(extracted_references)
+
+    return jsonify(references)
+
+
+@blueprint.route('/refextract/url', methods=['POST'])
+def refextract_url():
+    """Run refextract on a URL."""
+    extracted_references = extract_references_from_string(request.json['url'])
+    references = map_refextract_to_schema(extracted_references)
+
+    return jsonify(references)
 
 
 @blueprint.route('/rt/tickets/create', methods=['POST'])

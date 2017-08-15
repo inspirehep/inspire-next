@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspire_schemas.api import ReferenceBuilder
 from inspirehep.utils.helpers import force_list
 from inspirehep.utils.jinja2 import render_template_to_string
 from inspirehep.utils.record_getter import get_es_records
@@ -88,3 +89,37 @@ class Reference(object):
                 out.append(row)
 
         return out
+
+
+def map_refextract_to_schema(extracted_references, source=None):
+    """Convert refextract output to the schema using the builder."""
+    result = []
+
+    for reference in extracted_references:
+        rb = ReferenceBuilder()
+        mapping = [
+            ('author', rb.add_refextract_authors_str),
+            ('collaboration', rb.add_collaboration),
+            ('doi', rb.add_uid),
+            ('hdl', rb.add_uid),
+            ('isbn', rb.add_uid),
+            ('journal_reference', rb.set_pubnote),
+            ('linemarker', rb.set_label),
+            ('misc', rb.add_misc),
+            ('publisher', rb.set_publisher),
+            ('raw_ref', lambda raw_ref: rb.add_raw_reference(raw_ref, source=source)),
+            ('reportnumber', rb.add_report_number),
+            ('texkey', rb.set_texkey),
+            ('title', rb.add_title),
+            ('url', rb.add_url),
+            ('year', rb.set_year),
+        ]
+
+        for field, method in mapping:
+            for el in force_list(reference.get(field)):
+                if el:
+                    method(el)
+
+        result.append(rb.obj)
+
+    return result

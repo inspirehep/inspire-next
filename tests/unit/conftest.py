@@ -59,6 +59,19 @@ def app_client(app):
         yield client
 
 
+@pytest.fixture(scope='session')
+def api(app):
+    """Flask API application."""
+    yield app.wsgi_app.mounts['/api']
+
+
+@pytest.fixture(scope='function')
+def api_client(api):
+    """Flask test client for the API application."""
+    with api.test_client() as client:
+        yield client
+
+
 @pytest.fixture(scope='function')
 def request_context(app):
     with app.test_request_context() as request_context:
