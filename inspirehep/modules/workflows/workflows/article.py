@@ -253,29 +253,27 @@ NOTIFY_ALREADY_EXISTING = [
 ]
 
 
-NOTIFY_ACCEPTED = [
+NOTIFY_USER_OR_CURATOR = [
     IF(
         is_submission,
         [
-            IF(
-                curation_ticket_needed,
-                [
-                    create_ticket(
-                        template=(
-                            "literaturesuggest/tickets/curation_core.html"
-                        ),
-                        queue="HEP_curation",
-                        context_factory=curation_ticket_context,
-                        ticket_id_key="curation_ticket_id"
-                    )
-                ]
-            ),
             reply_ticket(
-                template="literaturesuggest/tickets/user_accepted.html",
-                context_factory=reply_ticket_context
-            )
-        ]
-    )
+                template='literaturesuggest/tickets/user_accepted.html',
+                context_factory=reply_ticket_context,
+            ),
+        ],
+    ),
+    IF(
+        curation_ticket_needed,
+        [
+            create_ticket(
+                template='literaturesuggest/tickets/curation_core.html',
+                queue='HEP_curation',
+                context_factory=curation_ticket_context,
+                ticket_id_key='curation_ticket_id',
+            ),
+        ],
+    ),
 ]
 
 
@@ -370,7 +368,7 @@ class Article(object):
                 (
                     POSTENHANCE_RECORD +
                     SEND_TO_LEGACY_AND_WAIT +
-                    NOTIFY_ACCEPTED +
+                    NOTIFY_USER_OR_CURATOR +
                     [
                         # TODO: once legacy is out, this should become
                         # unconditional, and remove the SEND_TO_LEGACY_AND_WAIT
