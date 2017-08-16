@@ -226,16 +226,18 @@ def submission_fulltext_download(obj, eng):
 @with_debug_logging
 def refextract(obj, eng):
     uri = get_pdf_in_workflow(obj)
+    source = get_value(obj.data, 'acquisition_source.source')
     if uri:
         try:
             journal_kb_path = current_app.config.get('REFEXTRACT_JOURNAL_KB_PATH', None)
             if journal_kb_path:
-                mapped_references = extract_references(uri, {'journals': journal_kb_path})
+                references = extract_references(uri, source, {'journals': journal_kb_path})
             else:
-                mapped_references = extract_references(uri)
-            if mapped_references:
-                obj.data['references'] = mapped_references
-                obj.log.info('Extracted %d references', len(mapped_references))
+                references = extract_references(uri, source)
+
+            if references:
+                obj.data['references'] = references
+                obj.log.info('Extracted %d references', len(references))
             else:
                 obj.log.info('No references extracted')
         except TimeoutError:

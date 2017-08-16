@@ -241,3 +241,11 @@ def retrieve_head_json(record_uuid):
     ).one_or_none()
 
     return entry.json if entry else {}
+
+
+def is_an_update(obj, eng):
+    return obj.extra_data.get('is-update', False)
+
+
+def has_conflicts(obj, eng):
+    return obj.extra_data.get('conflicts') is not None

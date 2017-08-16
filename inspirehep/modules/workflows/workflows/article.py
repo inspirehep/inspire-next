@@ -51,7 +51,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_submission,
     is_arxiv_paper,
     mark,
-    prepare_update_payload,
     refextract,
     submission_fulltext_download,
 )
@@ -68,13 +67,8 @@ from inspirehep.modules.workflows.tasks.magpie import (
 )
 from inspirehep.modules.workflows.tasks.merging import (
     merge_articles,
-    store_temporary_root,
+    put_root_in_extradata,
     store_root,
-)
-from inspirehep.modules.workflows.tasks.merging import (
-    is_an_update,
-    is_not_an_update,
-    is_an_update_with_conflicts,
 )
 from inspirehep.modules.workflows.tasks.matching import (
     delete_self_and_stop_processing,
@@ -97,6 +91,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     send_robotupload,
     wait_webcoll,
 )
+from inspirehep.modules.workflows.utils import has_conflicts, is_an_update
 
 from inspirehep.modules.literaturesuggest.tasks import (
     curation_ticket_needed,
@@ -218,29 +213,26 @@ STOP_FOR_APPROVAL_OR_SOLVING_CONFLICTS = [
     IF_ELSE(
         is_record_relevant,
         [
-            IF(
-                # new records will be halted to be approved on coreness
-                is_not_an_update,
+            IF_ELSE(
+                is_an_update,
+                IF_ELSE(
+                    has_conflicts,
+                    halt_record(
+                        action='merge_approval',
+                        message='Submission halted for resolving conflicts.',
+                    ),
+                    mark('approved', True),
+                ),
                 halt_record(
-                    action="hep_approval",
-                    message="Submission halted for curator approval.",
-                )
+                    action='hep_approval',
+                    message='Submission halted for curator approval.',
+                ),
             ),
-            IF(
-                # updates with conflicts will halt for solve conflicts
-                is_an_update_with_conflicts,
-                halt_record(
-                    action="hep_approval",
-                    message="Submission halted for resolving conflicts.",
-                )
-            ),
-            # if it's an update without conflicts the workflow shouldn't stop
-            mark('no-need-approval', True)
         ],
         [
-            reject_record("Article automatically rejected"),
-            stop_processing
-        ]
+            reject_record('Article automatically rejected.'),
+            stop_processing,
+        ],
     ),
 ]
 
@@ -305,11 +297,9 @@ SEND_TO_LEGACY_AND_WAIT = [
     IF_ELSE(
         is_an_update,
         [
-            prepare_update_payload(extra_data_key="update_payload"),
             send_robotupload(
                 marcxml_processor=hep2marc,
                 mode="correct",
-                extra_data_key="update_payload"
             ),
         ], [
             send_robotupload(
@@ -322,7 +312,7 @@ SEND_TO_LEGACY_AND_WAIT = [
 ]
 
 CHECK_IF_MERGE = [
-    store_temporary_root,
+    put_root_in_extradata,
     IF(
         is_an_update,
         [

@@ -34,16 +34,13 @@ from inspire_json_merger.inspire_json_merger import inspire_json_merge
 from inspirehep.modules.records import RecordMetadata
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.records import InspireRecord
-from inspirehep.modules.workflows.utils import (
-    with_debug_logging,
-    store_root_json
-)
 from inspirehep.utils.record import get_source
 
 from ..errors import MissingHeadUUIDError
 from ..utils import (
-    with_debug_logging,
     retrieve_root_json,
+    store_root_json,
+    with_debug_logging,
 )
 
 
@@ -69,10 +66,8 @@ def put_head_uuid_in_extra_data(obj):
     try:
         rec_id = obj.extra_data['record_matches']['records'][0]['source']['control_number']
     except Exception as e:
-        raise ValueError(
-            'Can not get control number from matched record.\n{}'
-                .format(e.message)
-        )
+        raise ValueError('Can not get control number from matched record.\n{}'.format(e.message))
+
     record_uuid = PersistentIdentifier.get('lit', rec_id).object_uuid
     obj.extra_data['head_uuid'] = str(record_uuid)
 
