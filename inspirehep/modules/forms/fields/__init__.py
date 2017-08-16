@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from .arxiv_id import *  # noqa: F403
 from .doi import *  # noqa: F403
 from .language import *  # noqa: F403
 from .title import *  # noqa: F403

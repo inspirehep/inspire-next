@@ -53,7 +53,6 @@ from inspirehep.modules.forms.validators.simple_fields import (
     pdf_validator,
     year_validator,
 )
-from inspirehep.modules.literaturesuggest.fields.arxiv_id import ArXivField
 
 
 #
@@ -235,7 +234,7 @@ class LiteratureForm(INSPIREForm):
                     duplicated_doi_validator],
     )
 
-    arxiv_id = ArXivField(
+    arxiv_id = fields.ArXivField(
         label=_('arXiv ID'),
         export_key="arxiv_id",
         validators=[arxiv_syntax_validation, duplicated_arxiv_id_validator],

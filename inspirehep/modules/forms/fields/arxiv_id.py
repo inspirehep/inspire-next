@@ -21,3 +21,29 @@
 # or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, division, print_function
+
+from wtforms import TextField
+
+from ..field_base import INSPIREField
+from ..filter_utils import strip_prefixes, strip_string
+from ..validators import arxiv_syntax_validation
+
+__all__ = ['ArXivField']
+
+
+class ArXivField(INSPIREField, TextField):
+    def __init__(self, **kwargs):
+        defaults = dict(
+            icon='barcode',
+            validators=[arxiv_syntax_validation],
+            # Should have the same logic as stripSourceTags()
+            # in literature_submission_form.js
+            filters=[
+                strip_string,
+                strip_prefixes("arxiv:", "arXiv:"),
+            ],
+            description="e.g. hep-th/9711200 or 1207.7235 or arXiv:1001.4538",
+            widget_classes="form-control"
+        )
+        defaults.update(kwargs)
+        super(ArXivField, self).__init__(**defaults)
