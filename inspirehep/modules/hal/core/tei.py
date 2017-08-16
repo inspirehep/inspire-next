@@ -32,6 +32,7 @@ from inspirehep.utils.record import get_arxiv_id, get_title
 from ..utils import (
     get_abstract,
     get_authors,
+    get_collaborations,
     get_conference_city,
     get_conference_country,
     get_conference_end_date,
@@ -102,6 +103,7 @@ def _get_comm_context(record):
         'abstract_language': abstract_language,
         'arxiv_id': get_arxiv_id(record),
         'authors': get_authors(record),
+        'collaborations': get_collaborations(record),
         'conference_city': conference_city,
         'conference_country': conference_country,
         'conference_end_date': conference_end_date,
@@ -138,6 +140,7 @@ def _get_art_context(record):
         'abstract_language': abstract_language,
         'arxiv_id': get_arxiv_id(record),
         'authors': get_authors(record),
+        'collaborations': get_collaborations(record),
         'divulgation': get_divulgation(record),
         'doi': get_doi(record),
         'domain': get_domain(record),

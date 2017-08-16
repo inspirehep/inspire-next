@@ -55,5 +55,8 @@
     <classCode scheme="halTypology" n="ART"></classCode>
   </textClass>
   <abstract xml:lang="{{ abstract_language }}">{{ abstract }}</abstract>
+  {% for collaboration in collaborations %}
+  <org type="consortium">{{ collaboration }}</org>
+  {% endfor %}
 </profileDesc>
 {% endblock profileDesc %}

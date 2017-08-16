@@ -91,6 +91,24 @@ def get_authors(record):
     return result
 
 
+def get_collaborations(record):
+    """Return the collaborations associated with a record.
+
+    Args:
+        record: a record.
+
+    Returns:
+        list: the collaborations associated with the record.
+
+    Examples:
+        >>> record = {'collaborations': [{'value': 'CMS'}]}
+        >>> get_collaborations(record)
+        ['CMS']
+
+    """
+    return get_value(record, 'collaborations.value', default=[])
+
+
 def get_conference_city(record):
     """Return the first city of a Conference record.
 

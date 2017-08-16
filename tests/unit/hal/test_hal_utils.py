@@ -27,6 +27,7 @@ from mock import patch
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.hal.utils import (
     get_abstract,
+    get_collaborations,
     get_conference_city,
     get_conference_country,
     get_conference_end_date,
@@ -61,6 +62,23 @@ def test_get_abstract():
 
     expected = 'Probably not.'
     result = get_abstract(record)
+
+    assert expected == result
+
+
+def test_get_collaborations():
+    schema = load_schema('hep')
+    subschema = schema['properties']['collaborations']
+
+    record = {
+        'collaborations': [
+            {'value': 'CMS'},
+        ],
+    }
+    assert validate(record['collaborations'], subschema) is None
+
+    expected = ['CMS']
+    result = get_collaborations(record)
 
     assert expected == result
 
