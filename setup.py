@@ -60,7 +60,6 @@ install_requires = [
     'invenio-logging>=1.0.0b3',
     'invenio-mail>=1.0.0a4',
     'invenio-oauthclient>=1.0.0b1',
-    'invenio-orcid>=1.0.0a1',
     'invenio-records>=1.0.0a16',  # Add [versioning] in the future
     'invenio-rest[cors]>=1.0.0a7',
     'invenio-search>=1.0.0a7',
@@ -207,7 +206,6 @@ setup(
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'inspire_arxiv = inspirehep.modules.arxiv:InspireArXiv',
             'inspire_crossref = inspirehep.modules.crossref:InspireCrossref',
-            'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
             'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
             'inspire_tools = inspirehep.modules.tools:INSPIRETools',
             'inspire_hal = inspirehep.modules.hal:InspireHAL',

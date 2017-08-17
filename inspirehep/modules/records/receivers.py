@@ -39,7 +39,6 @@ from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.date import create_earliest_date
 
 from .experiments import EXPERIMENTS_MAP
-from .signals import after_record_enhanced
 
 
 @models_committed.connect
@@ -56,15 +55,12 @@ def receive_after_model_commit(sender, changes):
 
 @before_record_index.connect
 def enhance_record(sender, json, *args, **kwargs):
-    """Runs all the record enhancers and fires the after_record_enhanced signals
-       to allow receivers work with a fully populated record."""
     populate_inspire_document_type(sender, json, *args, **kwargs)
     match_valid_experiments(sender, json, *args, **kwargs)
     populate_recid_from_ref(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
     populate_affiliation_suggest(sender, json, *args, **kwargs)
-    after_record_enhanced.send(json)
     add_book_autocomplete(sender, json, *args, **kwargs)
 
 
