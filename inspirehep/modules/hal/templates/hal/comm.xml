@@ -67,7 +67,9 @@
     <classCode scheme="halDomain" n="{{ domain }}"></classCode>
     <classCode scheme="halTypology" n="COMM"></classCode>
   </textClass>
+  {% if abstract and abstract_language %}
   <abstract xml:lang="{{ abstract_language }}">{{ abstract }}</abstract>
+  {% endif %}
   {% for collaboration in collaborations %}
   <org type="consortium">{{ collaboration }}</org>
   {% endfor %}
