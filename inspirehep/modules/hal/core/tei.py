@@ -34,8 +34,9 @@ from ..utils import (
     get_authors,
     get_conference_city,
     get_conference_country,
-    get_conference_date,
+    get_conference_end_date,
     get_conference_record,
+    get_conference_start_date,
     get_conference_title,
     get_divulgation,
     get_document_types,
@@ -92,7 +93,8 @@ def _get_comm_context(record):
     conference_record = get_conference_record(record)
     conference_city = get_conference_city(conference_record)
     conference_country = get_conference_country(conference_record)
-    conference_date = get_conference_date(conference_record)
+    conference_end_date = get_conference_end_date(conference_record)
+    conference_start_date = get_conference_start_date(conference_record),
     conference_title = get_conference_title(conference_record)
 
     return {
@@ -102,13 +104,18 @@ def _get_comm_context(record):
         'authors': get_authors(record),
         'conference_city': conference_city,
         'conference_country': conference_country,
-        'conference_date': conference_date,
+        'conference_end_date': conference_end_date,
+        'conference_start_date': conference_start_date,
         'conference_title': conference_title,
         'divulgation': get_divulgation(record),
         'doi': get_doi(record),
         'domain': get_domain(record),
         'inspire_id': get_inspire_id(record),
+        'journal_issue': get_journal_issue(record),
+        'journal_title': get_journal_title(record),
+        'journal_volume': get_journal_volume(record),
         'language': get_language(record),
+        'page_artid': get_page_artid(record),
         'peer_reviewed': get_peer_reviewed(record),
         'publication_date': get_publication_date(record),
         'title': get_title(record),

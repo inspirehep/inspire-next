@@ -127,22 +127,22 @@ def get_conference_country(record):
     return get_value(record, 'address.country_code[0]', default='').lower()
 
 
-def get_conference_date(record):
-    """Return the opening date of a conference record.
+def get_conference_end_date(record):
+    """Return the closing date of a conference record.
 
     Args:
         record: a Conference record.
 
     Returns:
-        string: the opening date of the Conference record.
+        string: the closing date of the Conference record.
 
     Examples:
-        >>> record = {'opening_date': '1999-11-16'}
-        >>> get_conference_date(record)
-        '1999-11-16'
+        >>> record = {'closing_date': '1999-11-19'}
+        >>> get_conference_end_date(record)
+        '1999-11-19'
 
     """
-    return get_value(record, 'opening_date', default='')
+    return record.get('closing_date', '')
 
 
 def get_conference_record(record):
@@ -174,6 +174,24 @@ def get_conference_record(record):
     """
     return replace_refs(get_value(
         record, 'publication_info.conference_record[0]', default=None), 'db')
+
+
+def get_conference_start_date(record):
+    """Return the opening date of a conference record.
+
+    Args:
+        record: a Conference record.
+
+    Returns:
+        string: the opening date of the Conference record.
+
+    Examples:
+        >>> record = {'opening_date': '1999-11-16'}
+        >>> get_conference__start_date(record)
+        '1999-11-16'
+
+    """
+    return record.get('opening_date', '')
 
 
 def get_conference_title(record):

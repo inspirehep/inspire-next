@@ -29,8 +29,9 @@ from inspirehep.modules.hal.utils import (
     get_abstract,
     get_conference_city,
     get_conference_country,
-    get_conference_date,
+    get_conference_end_date,
     get_conference_record,
+    get_conference_start_date,
     get_conference_title,
     get_divulgation,
     get_document_types,
@@ -102,15 +103,15 @@ def test_get_conference_country():
     assert expected == result
 
 
-def test_get_conference_date():
+def test_get_conference_end_date():
     schema = load_schema('conferences')
-    subschema = schema['properties']['opening_date']
+    subschema = schema['properties']['closing_date']
 
-    record = {'opening_date': '1999-11-16'}
-    assert validate(record['opening_date'], subschema) is None
+    record = {'closing_date': '1999-11-19'}
+    assert validate(record['closing_date'], subschema) is None
 
-    expected = '1999-11-16'
-    result = get_conference_date(record)
+    expected = '1999-11-19'
+    result = get_conference_end_date(record)
 
     assert expected == result
 
@@ -141,6 +142,19 @@ def test_get_conference_record(replace_refs):
     result = get_conference_record(record)
 
     assert expected == result['control_number']
+
+
+def test_get_conference_start_date():
+    schema = load_schema('conferences')
+    subschema = schema['properties']['opening_date']
+
+    record = {'opening_date': '1999-11-16'}
+    assert validate(record['opening_date'], subschema) is None
+
+    expected = '1999-11-16'
+    result = get_conference_start_date(record)
+
+    assert expected == result
 
 
 def test_get_conference_title():
