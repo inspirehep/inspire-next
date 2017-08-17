@@ -91,6 +91,24 @@ def get_authors(record):
     return result
 
 
+def get_collaborations(record):
+    """Return the collaborations associated with a record.
+
+    Args:
+        record: a record.
+
+    Returns:
+        list: the collaborations associated with the record.
+
+    Examples:
+        >>> record = {'collaborations': [{'value': 'CMS'}]}
+        >>> get_collaborations(record)
+        ['CMS']
+
+    """
+    return get_value(record, 'collaborations.value', default=[])
+
+
 def get_conference_city(record):
     """Return the first city of a Conference record.
 
@@ -127,22 +145,22 @@ def get_conference_country(record):
     return get_value(record, 'address.country_code[0]', default='').lower()
 
 
-def get_conference_date(record):
-    """Return the opening date of a conference record.
+def get_conference_end_date(record):
+    """Return the closing date of a conference record.
 
     Args:
         record: a Conference record.
 
     Returns:
-        string: the opening date of the Conference record.
+        string: the closing date of the Conference record.
 
     Examples:
-        >>> record = {'opening_date': '1999-11-16'}
-        >>> get_conference_date(record)
-        '1999-11-16'
+        >>> record = {'closing_date': '1999-11-19'}
+        >>> get_conference_end_date(record)
+        '1999-11-19'
 
     """
-    return get_value(record, 'opening_date', default='')
+    return record.get('closing_date', '')
 
 
 def get_conference_record(record):
@@ -174,6 +192,24 @@ def get_conference_record(record):
     """
     return replace_refs(get_value(
         record, 'publication_info.conference_record[0]', default=None), 'db')
+
+
+def get_conference_start_date(record):
+    """Return the opening date of a conference record.
+
+    Args:
+        record: a Conference record.
+
+    Returns:
+        string: the opening date of the Conference record.
+
+    Examples:
+        >>> record = {'opening_date': '1999-11-16'}
+        >>> get_conference__start_date(record)
+        '1999-11-16'
+
+    """
+    return record.get('opening_date', '')
 
 
 def get_conference_title(record):
@@ -286,6 +322,28 @@ def get_inspire_id(record):
     return record['control_number']
 
 
+def get_journal_issue(record):
+    """Return the issue of the journal a record was published into.
+
+    Args:
+        record: a record.
+
+    Returns:
+        string: the issue of the journal the record was published into.
+
+    Examples:
+        >>> record = {
+        ...    'publication_info': [
+        ...        {'journal_issue': '5'},
+        ...    ],
+        ... }
+        >>> get_journal_issue(record)
+        '5'
+
+    """
+    return get_value(record, 'publication_info.journal_issue[0]', default='')
+
+
 def get_journal_title(record):
     """Return the title of the journal a record was published into.
 
@@ -306,6 +364,28 @@ def get_journal_title(record):
 
     """
     return get_value(record, 'publication_info.journal_title[0]', default='')
+
+
+def get_journal_volume(record):
+    """Return the volume of the journal a record was published into.
+
+    Args:
+        record: a record.
+
+    Returns:
+        string: the volume of the journal the record was published into.
+
+    Examples:
+        >>> record = {
+        ...     'publication_info': [
+        ...         {'journal_volume': 'D94'},
+        ...     ],
+        ... }
+        >>> get_journal_volume(record)
+        'D94'
+
+    """
+    return get_value(record, 'publication_info.journal_volume[0]', default='')
 
 
 def get_language(record):
@@ -330,6 +410,38 @@ def get_language(record):
         return 'en'
 
     return languages[0]
+
+
+def get_page_artid(record):
+    """Return the page range or the article id of a record.
+
+    Args:
+        record: a record
+
+    Returns:
+        string: the page range or the article id of the record.
+
+    Examples:
+        >>> record = {
+        ...     'publication_info': [
+        ...         {'artid': '054021'},
+        ...     ],
+        ... }
+        >>> get_page_artid(record)
+        '054021'
+
+    """
+    publication_info = get_value(record, 'publication_info[0]', default={})
+
+    if 'artid' in publication_info:
+        artid = publication_info['artid']
+        return artid
+    elif 'page_start' in publication_info and 'page_end' in publication_info:
+        page_start = publication_info['page_start']
+        page_end = publication_info['page_end']
+        return '{}-{}'.format(page_start, page_end)
+
+    return ''
 
 
 def get_peer_reviewed(record):

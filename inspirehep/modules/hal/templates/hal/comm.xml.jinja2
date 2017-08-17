@@ -28,13 +28,22 @@
       {% endfor %}
     </analytic>
     <monogr>
+      <title level="m">{{ journal_title }}</title>
       <meeting>
         <title>{{ conference_title }}</title>
-        <date type="start">{{ conference_date }}</date>
+        {% if conference_start_date %}
+        <date type="start">{{ conference_start_date }}</date>
+        {% endif %}
+        {% if conference_end_date %}
+        <date type="end">{{ conference_end_date }}</date>
+        {% endif %}
         <settlement>{{ conference_city }}</settlement>
         <country key="{{ conference_country }}"/>
       </meeting>
       <imprint>
+        <biblScope unit="volume">{{ journal_volume }}</biblScope>
+        <biblScope unit="issue">{{ journal_issue }}</biblScope>
+        <biblScope unit="pp">{{ page_artid }}</biblScope>
         <date type="datePub">{{ publication_date }}</date>
       </imprint>
     </monogr>
@@ -59,5 +68,8 @@
     <classCode scheme="halTypology" n="COMM"></classCode>
   </textClass>
   <abstract xml:lang="{{ abstract_language }}">{{ abstract }}</abstract>
+  {% for collaboration in collaborations %}
+  <org type="consortium">{{ collaboration }}</org>
+  {% endfor %}
 </profileDesc>
 {% endblock profileDesc %}

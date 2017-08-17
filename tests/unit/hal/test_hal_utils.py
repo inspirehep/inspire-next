@@ -27,17 +27,22 @@ from mock import patch
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.hal.utils import (
     get_abstract,
+    get_collaborations,
     get_conference_city,
     get_conference_country,
-    get_conference_date,
+    get_conference_end_date,
     get_conference_record,
+    get_conference_start_date,
     get_conference_title,
     get_divulgation,
     get_document_types,
     get_doi,
     get_domain,
+    get_journal_issue,
     get_journal_title,
+    get_journal_volume,
     get_language,
+    get_page_artid,
     get_peer_reviewed,
     get_publication_date,
     is_published,
@@ -57,6 +62,23 @@ def test_get_abstract():
 
     expected = 'Probably not.'
     result = get_abstract(record)
+
+    assert expected == result
+
+
+def test_get_collaborations():
+    schema = load_schema('hep')
+    subschema = schema['properties']['collaborations']
+
+    record = {
+        'collaborations': [
+            {'value': 'CMS'},
+        ],
+    }
+    assert validate(record['collaborations'], subschema) is None
+
+    expected = ['CMS']
+    result = get_collaborations(record)
 
     assert expected == result
 
@@ -99,15 +121,15 @@ def test_get_conference_country():
     assert expected == result
 
 
-def test_get_conference_date():
+def test_get_conference_end_date():
     schema = load_schema('conferences')
-    subschema = schema['properties']['opening_date']
+    subschema = schema['properties']['closing_date']
 
-    record = {'opening_date': '1999-11-16'}
-    assert validate(record['opening_date'], subschema) is None
+    record = {'closing_date': '1999-11-19'}
+    assert validate(record['closing_date'], subschema) is None
 
-    expected = '1999-11-16'
-    result = get_conference_date(record)
+    expected = '1999-11-19'
+    result = get_conference_end_date(record)
 
     assert expected == result
 
@@ -138,6 +160,19 @@ def test_get_conference_record(replace_refs):
     result = get_conference_record(record)
 
     assert expected == result['control_number']
+
+
+def test_get_conference_start_date():
+    schema = load_schema('conferences')
+    subschema = schema['properties']['opening_date']
+
+    record = {'opening_date': '1999-11-16'}
+    assert validate(record['opening_date'], subschema) is None
+
+    expected = '1999-11-16'
+    result = get_conference_start_date(record)
+
+    assert expected == result
 
 
 def test_get_conference_title():
@@ -227,6 +262,23 @@ def test_get_domain():
     assert expected == result
 
 
+def test_get_journal_issue():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    record = {
+        'publication_info': [
+            {'journal_issue': '5'},
+        ],
+    }
+    assert validate(record['publication_info'], subschema) is None
+
+    expected = '5'
+    result = get_journal_issue(record)
+
+    assert expected == result
+
+
 def test_get_journal_title():
     schema = load_schema('hep')
     subschema = schema['properties']['publication_info']
@@ -240,6 +292,23 @@ def test_get_journal_title():
 
     expected = 'Phys.Part.Nucl.Lett.'
     result = get_journal_title(record)
+
+    assert expected == result
+
+
+def test_get_journal_volume():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    record = {
+        'publication_info': [
+            {'journal_volume': 'D94'},
+        ],
+    }
+    assert validate(record['publication_info'], subschema) is None
+
+    expected = 'D94'
+    result = get_journal_volume(record)
 
     assert expected == result
 
@@ -266,6 +335,43 @@ def test_get_language_falls_back_to_english():
 
     expected = 'en'
     result = get_language(record)
+
+    assert expected == result
+
+
+def test_get_page_artid_handles_artid():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    record = {
+        'publication_info': [
+            {'artid': '054021'},
+        ],
+    }
+    assert validate(record['publication_info'], subschema) is None
+
+    expected = '054021'
+    result = get_page_artid(record)
+
+    assert expected == result
+
+
+def test_get_page_artid_handles_page_range():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    record = {
+        'publication_info': [
+            {
+                'page_end': '588',
+                'page_start': '579',
+            },
+        ],
+    }
+    assert validate(record['publication_info'], subschema) is None
+
+    expected = '579-588'
+    result = get_page_artid(record)
 
     assert expected == result
 
