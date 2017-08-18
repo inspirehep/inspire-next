@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 import os
 import pkg_resources
 
-from .views import blueprints
+from .views import blueprint
 
 
 class INSPIREWorkflows(object):
@@ -39,8 +39,7 @@ class INSPIREWorkflows(object):
     def init_app(self, app, assets=None, **kwargs):
         """Initialize application object."""
         self.init_config(app)
-        for blueprint in blueprints:
-            app.register_blueprint(blueprint)
+        app.register_blueprint(blueprint)
         app.extensions['inspire-workflows'] = self
 
     def init_config(self, app):
