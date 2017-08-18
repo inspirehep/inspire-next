@@ -57,9 +57,9 @@ require(
 
     var config = {
       form: {
-        save_url: '{{ url_for("inspirehep_authors_holdingpen.validate", is_update=is_update) }}',
-        save_all_url: '{{ url_for("inspirehep_authors_holdingpen.validate", all='1', is_update=is_update) }}',
-        complete_url: '{{ url_for("inspirehep_authors_holdingpen.validate", submit='1', is_update=is_update) }}',
+        save_url: '{{ url_for("inspirehep_authors.validate", is_update=is_update) }}',
+        save_all_url: '{{ url_for("inspirehep_authors.validate", all='1', is_update=is_update) }}',
+        complete_url: '{{ url_for("inspirehep_authors.validate", submit='1', is_update=is_update) }}',
         datepicker_element: '.datepicker',
         datepicker_options: {
             useCurrent: false,

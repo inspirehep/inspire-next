@@ -585,7 +585,7 @@ def record(control_number):
 @blueprint.route('/author/new')
 def author_new():
     bai = request.values.get('bai', None, type=str)
-    return redirect(url_for('inspirehep_authors_holdingpen.new', bai=bai)), 301
+    return redirect(url_for('inspirehep_authors.new', bai=bai)), 301
 
 
 @blueprint.route('/author/update')
@@ -593,10 +593,10 @@ def author_update():
     recid = request.values.get('recid', None, type=str)
     if recid:
         return redirect(
-            url_for('inspirehep_authors_holdingpen.update', recid=recid)
+            url_for('inspirehep_authors.update', recid=recid)
         ), 301
     else:
-        return redirect(url_for('inspirehep_authors_holdingpen.new')), 301
+        return redirect(url_for('inspirehep_authors.new')), 301
 
 
 @blueprint.route('/submit/literature/create')

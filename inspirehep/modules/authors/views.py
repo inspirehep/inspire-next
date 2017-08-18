@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIRE authors holdingpen views."""
+"""INSPIRE authors views."""
 
 from __future__ import absolute_import, division, print_function
 
@@ -53,17 +53,17 @@ from inspire_dojson.hepnames import hepnames
 from inspire_utils.record import get_value
 from inspirehep.modules.forms.form import DataExporter
 
-from ..forms import AuthorUpdateForm
-from ..permissions import holdingpen_author_permission
-from ..tasks import formdata_to_model
+from .forms import AuthorUpdateForm
+from .permissions import holdingpen_author_permission
+from .tasks import formdata_to_model
 
 
 blueprint = Blueprint(
-    'inspirehep_authors_holdingpen',
+    'inspirehep_authors',
     __name__,
     url_prefix='/authors',
-    template_folder='../templates',
-    static_folder='../static',
+    template_folder='templates',
+    static_folder='static',
 )
 
 
@@ -251,7 +251,7 @@ def update(recid):
             pass
         data["control_number"] = recid
     else:
-        return redirect(url_for("inspirehep_authors_holdingpen.new"))
+        return redirect(url_for("inspirehep_authors.new"))
     form = AuthorUpdateForm(data=data, is_update=True)
     ctx = {
         "action": url_for('.submitupdate'),

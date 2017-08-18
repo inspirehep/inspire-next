@@ -37,7 +37,7 @@ import coverage
 from flask import jsonify, request
 
 from inspirehep.modules.literaturesuggest.views import validate as literature_validate
-from inspirehep.modules.authors.views.holdingpen import validate as author_validate
+from inspirehep.modules.authors.views import validate as author_validate
 
 
 cov = coverage.Coverage()
@@ -57,17 +57,17 @@ atexit.register(save_coverage)
 app = getattr(application, 'app', application)
 
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_literature_suggest.validate'][0])
-app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_authors_holdingpen.validate'][0])
+app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_authors.validate'][0])
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['_arxiv.search'][0])
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['_doi.search'][0])
 
 del app.url_map._rules_by_endpoint['inspirehep_literature_suggest.validate']
-del app.url_map._rules_by_endpoint['inspirehep_authors_holdingpen.validate']
+del app.url_map._rules_by_endpoint['inspirehep_authors.validate']
 del app.url_map._rules_by_endpoint['_arxiv.search']
 del app.url_map._rules_by_endpoint['_doi.search']
 
 del app.view_functions['inspirehep_literature_suggest.validate']
-del app.view_functions['inspirehep_authors_holdingpen.validate']
+del app.view_functions['inspirehep_authors.validate']
 del app.view_functions['_arxiv.search']
 del app.view_functions['_doi.search']
 
@@ -87,7 +87,7 @@ def mock_literature_validate():
     return literature_validate()
 
 
-@app.route('/submit/author/validate', endpoint='inspirehep_authors_holdingpen.validate', methods=['POST'])
+@app.route('/submit/author/validate', endpoint='inspirehep_authors.validate', methods=['POST'])
 def mock_author_validate():
     if request.json.get('orcid') == '1111-1111-1111-1111':
         return jsonify({
