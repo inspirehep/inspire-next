@@ -32,6 +32,7 @@ from inspire_schemas.api import ReferenceBuilder
 from inspire_schemas.utils import split_page_artid
 from inspire_utils.record import get_value
 from inspirehep.utils.helpers import force_list, maybe_int
+from inspirehep.utils.references import map_refextract_to_schema
 
 from ..utils import with_debug_logging
 
@@ -88,39 +89,10 @@ def extract_journal_info(obj, eng):
 @timeout(5 * 60)
 def extract_references(filepath, source=None, custom_kbs_file=None):
     """Extract references from PDF and return in INSPIRE format."""
-    references = extract_references_from_file(
+    extracted_references = extract_references_from_file(
         filepath,
         override_kbs_files=custom_kbs_file,
         reference_format=u'{title},{volume},{page}'
     )
 
-    result = []
-
-    for reference in references:
-        rb = ReferenceBuilder()
-        mapping = [
-            ('author', rb.add_refextract_authors_str),
-            ('collaboration', rb.add_collaboration),
-            ('doi', rb.add_uid),
-            ('hdl', rb.add_uid),
-            ('isbn', rb.add_uid),
-            ('journal_reference', rb.set_pubnote),
-            ('linemarker', rb.set_label),
-            ('misc', rb.add_misc),
-            ('publisher', rb.set_publisher),
-            ('raw_ref', lambda raw_ref: rb.add_raw_reference(raw_ref, source)),
-            ('reportnumber', rb.add_report_number),
-            ('texkey', rb.set_texkey),
-            ('title', rb.add_title),
-            ('url', rb.add_url),
-            ('year', rb.set_year),
-        ]
-
-        for field, method in mapping:
-            for el in force_list(reference.get(field)):
-                if el:
-                    method(el)
-
-        result.append(rb.obj)
-
-    return result
+    return map_refextract_to_schema(extracted_references, source=source)
