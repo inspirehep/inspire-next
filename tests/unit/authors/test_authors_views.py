@@ -22,10 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.modules.authors.views.holdingpen import (
-    convert_for_form,
-    get_inspire_url,
-)
+from inspirehep.modules.authors.views import convert_for_form, get_inspire_url
 from inspirehep.modules.records.api import InspireRecord
 
 

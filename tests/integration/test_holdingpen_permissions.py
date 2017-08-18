@@ -69,45 +69,45 @@ def users(app):
 def test_holdingpen_author_views_access(app, app_client, users):
     """Check permissions of author related views."""
     # An anonymous user is redirected to login page
-    res = app_client.get(url_for('inspirehep_authors_holdingpen.newreview'))
+    res = app_client.get(url_for('inspirehep_authors.newreview'))
     assert res.status_code == 302
     assert 'login' in res.location
 
     res = app_client.post(
-        url_for('inspirehep_authors_holdingpen.reviewhandler'))
+        url_for('inspirehep_authors.reviewhandler'))
     assert res.status_code == 302
     assert 'login' in res.location
 
     res = app_client.get(
-        url_for('inspirehep_authors_holdingpen.holdingpenreview'))
+        url_for('inspirehep_authors.holdingpenreview'))
     assert res.status_code == 302
     assert 'login' in res.location
 
     # Logged-in user with no permission should receive 403
     login_user_via_session(app_client, email='user@inspirehep.net')
 
-    res = app_client.get(url_for('inspirehep_authors_holdingpen.newreview'))
+    res = app_client.get(url_for('inspirehep_authors.newreview'))
     assert res.status_code == 403
 
     res = app_client.post(
-        url_for('inspirehep_authors_holdingpen.reviewhandler'))
+        url_for('inspirehep_authors.reviewhandler'))
     assert res.status_code == 403
 
     res = app_client.get(
-        url_for('inspirehep_authors_holdingpen.holdingpenreview'))
+        url_for('inspirehep_authors.holdingpenreview'))
     assert res.status_code == 403
 
     # User with admin-holdingpen-authors action allowed can access
     # XXX: 400 is returned because no object id is passed to the views
     login_user_via_session(app_client, email='user_allowed@inspirehep.net')
 
-    res = app_client.get(url_for('inspirehep_authors_holdingpen.newreview'))
+    res = app_client.get(url_for('inspirehep_authors.newreview'))
     assert res.status_code == 400
 
     res = app_client.post(
-        url_for('inspirehep_authors_holdingpen.reviewhandler'))
+        url_for('inspirehep_authors.reviewhandler'))
     assert res.status_code == 400
 
     res = app_client.get(
-        url_for('inspirehep_authors_holdingpen.holdingpenreview'))
+        url_for('inspirehep_authors.holdingpenreview'))
     assert res.status_code == 400
