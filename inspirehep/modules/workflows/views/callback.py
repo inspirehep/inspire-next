@@ -242,6 +242,14 @@ def _parse_robotupload_result(result, workflow_id):
     response = {}
     recid = int(result.get('recid'))
 
+    result_has_error, error_message = _robotupload_has_error(result)
+    if result_has_error:
+        response = {
+            'success': False,
+            'message': error_message,
+        }
+        return response
+
     already_pending_ones = WorkflowsPendingRecord.query.filter_by(
         record_id=recid,
     ).all()
@@ -253,14 +261,6 @@ def _parse_robotupload_result(result, workflow_id):
         response = {
             'success': False,
             'message': 'Recid %s already in pending list.' % recid,
-        }
-        return response
-
-    result_has_error, error_message = _robotupload_has_error(result)
-    if result_has_error:
-        response = {
-            'success': False,
-            'message': error_message,
         }
         return response
 
