@@ -71,7 +71,6 @@ from inspirehep.modules.theme.jinja2filters import (
     sort_list_by_dict_val,
     strip_leading_number_plot_caption,
     url_links,
-    weblinks,
     words,
     words_to_end,
 )
@@ -1258,18 +1257,6 @@ def test_is_external_link_when_link_is_to_a_picture():
 
 def test_is_institute_normalizes_to_lowercase():
     assert is_institute('KEKSCAN')
-
-
-def test_weblinks_when_description_is_found_in_the_kb():
-    assert weblinks('CLNS97') == 'Cornell Document Server'
-
-
-def test_weblinks_when_description_is_not_in_the_kb():
-    assert weblinks('foo') == 'Link to foo'
-
-
-def test_weblinks_when_description_is_a_falsy_value():
-    assert weblinks('') == 'Link to fulltext'
 
 
 def test_is_cataloger():
