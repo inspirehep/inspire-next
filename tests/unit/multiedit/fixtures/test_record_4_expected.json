@@ -1,0 +1,167 @@
+{"$schema": "http://localhost:5000/schemas/records/hep.json",
+    "_collections": [
+      "Literature"
+    ],
+    "_created": "2017-07-24T08:53:31.579619+00:00",
+    "_updated": "2017-07-24T08:53:31.579630+00:00",
+    "authors": [
+      {
+        "affiliations": [
+          {
+            "value": "INFN, Rome"
+          },
+          {
+            "value": "Rome"
+          },
+          {
+            "value": "INFN"
+          }
+        ],
+        "full_name": "Benhar, Omar",
+        "ids": [
+          {
+            "schema": "INSPIRE BAI",
+            "value": "O.Benhar.1"
+          },
+          {
+            "value": "Success"
+          }
+        ],
+        "name_suggest": {
+          "input": [
+            "Benhar",
+            "Benhar O",
+            "Benhar Omar",
+            "Benhar, O",
+            "Benhar, Omar",
+            "O Benhar",
+            "Omar Benhar"
+          ],
+          "output": "Benhar, Omar",
+          "payload": {
+            "bai": "O.Benhar.1"
+          }
+        },
+        "name_variations": [
+          "Benhar",
+          "Benhar O",
+          "Benhar Omar",
+          "Benhar, O",
+          "Benhar, Omar",
+          "Not",
+          "Omar Benhar"
+        ],
+        "signature_block": "BANARo",
+        "uuid": "b2ee8539-1403-48a7-91cc-6e5a73fa1851"
+      },
+      {
+        "affiliations": [
+          {
+            "value": "Rome U."
+          },
+          {
+            "value": "Not INF"
+          }
+        ],
+        "full_name": "Maiani, Luciano",
+        "ids": [
+          {
+            "schema": "INSPIRE BAI",
+            "value": "L.Maiani.1"
+          }
+        ],
+        "name_suggest": {
+          "input": [
+            "L Maiani",
+            "Luciano Maiani",
+            "Maiani",
+            "Maiani L",
+            "Maiani Luciano",
+            "Maiani, L",
+            "Maiani, Luciano"
+          ],
+          "output": "Maiani, Luciano",
+          "payload": {
+            "bai": "L.Maiani.1"
+          }
+        },
+        "name_variations": [
+          "L Maiani",
+          "Luciano Maiani",
+          "Benhar",
+          "Maiani L",
+          "Maiani Luciano",
+          "Maiani, L",
+          "Maiani, Luciano"
+        ],
+        "signature_block": "MANl",
+        "uuid": "e5dac418-3ffa-4d2b-844c-2bf45972c0f0"
+      }
+    ],
+    "bookautocomplete": {
+      "input": [
+        "Relativistic Quantum Mechanics",
+        "Benhar, Omar",
+        "Maiani, Luciano"
+      ],
+      "payload": {
+        "authors": [
+          "Benhar, Omar",
+          "Maiani, Luciano"
+        ],
+        "id": "http://localhost:5000/api/literature/1498185",
+        "title": [
+          "Relativistic Quantum Mechanics"
+        ]
+      }
+    },
+    "control_number": 1498185,
+    "core": true,
+    "document_type": [
+      "book"
+    ],
+    "earliest_date": "2016-11-16",
+    "facet_inspire_doc_type": [
+      "book"
+    ],
+    "imprints": [
+      {
+        "date": "2016",
+        "place": "Boca Raton",
+        "publisher": "CRC Press"
+      }
+    ],
+    "inspire_categories": [
+      {
+        "source": "undefined",
+        "term": "Phenomenology-HEP"
+      }
+    ],
+    "isbns": [
+      {
+        "medium": "print",
+        "value": "9781498722308"
+      }
+    ],
+    "legacy_creation_date": "2016-11-16",
+    "number_of_pages": 310,
+    "self": {
+      "$ref": "http://localhost:5000/api/literature/1498185"
+    },
+    "self_recid": 1498185,
+    "texkeys": [
+      "Maiani:2016liy"
+    ],
+    "titles": [
+      {
+        "subtitle": "An Introduction to Relativistic Quantum Fields",
+        "title": "Relativistic Quantum Mechanics"
+      }
+    ],
+    "urls": [
+      {
+        "description": "CRC press",
+        "value": "https://www.crcpress.com/product/isbn/9781498722308"
+      }
+    ]
+  }
