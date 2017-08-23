@@ -46,8 +46,8 @@ def load_submitted_record(input_data):
             'Submitted by admin@inspirehep.net\non' in record and
             'Wisconsin U., Madison' in record and
             'My Title For Test' in record and
-            'Mister Brown' in record and
-            'Mister White' in record and
+            'Brown, James' in record and
+            'White, Barry' in record and
             'Accelerators' in record and
             'Computing' in record and
             'CERN' in record

@@ -82,7 +82,7 @@ def load_submitted_record():
             'Accelerators' in record and
             'My Title For Test' in record and
             'admin@inspirehep.net' in record and
-            'Mister White; Mister Brown' in record and
+            'White, Barry; Brown, James' in record and
             'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record
         )
 
