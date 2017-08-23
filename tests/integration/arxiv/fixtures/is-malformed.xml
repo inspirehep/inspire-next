@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2017-08-24T11:40:26Z</responseDate>
+  <request verb="GetRecord" identifier="oai:arXiv.org:is-malformed" metadataPrefix="arXiv">http://export.arxiv.org/oai2</request>
+  <error code="idDoesNotExist">Malformed identifier `oai:arXiv.org:is-malformed'</error>
+</OAI-PMH>

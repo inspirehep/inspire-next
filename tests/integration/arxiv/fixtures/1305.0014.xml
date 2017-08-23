@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2017-08-24T11:34:20Z</responseDate>
+  <request verb="GetRecord" identifier="oai:arXiv.org:1305.0014" metadataPrefix="arXiv">http://export.arxiv.org/oai2</request>
+  <GetRecord>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:1305.0014</identifier>
+        <datestamp>2013-07-02</datestamp>
+        <setSpec>physics:hep-lat</setSpec>
+        <setSpec>physics:hep-ph</setSpec>
+        <setSpec>physics:nucl-ex</setSpec>
+        <setSpec>physics:nucl-th</setSpec>
+      </header>
+      <metadata>
+        <arXiv xmlns="http://arxiv.org/OAI/arXiv/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://arxiv.org/OAI/arXiv/ http://arxiv.org/OAI/arXiv.xsd">
+          <id>1305.0014</id>
+          <created>2013-04-30</created>
+          <updated>2013-06-28</updated>
+          <authors>
+            <author>
+              <keyname>Gardner</keyname>
+              <forenames>S.</forenames>
+            </author>
+            <author>
+              <keyname>Plaster</keyname>
+              <forenames>B.</forenames>
+            </author>
+          </authors>
+          <title>
+Framework for maximum likelihood analysis of neutron beta decay observables to resolve the limits of the V-A law
+</title>
+          <categories>hep-ph hep-lat nucl-ex nucl-th</categories>
+          <comments>as-published version, 16 pages, 2 figures</comments>
+          <journal-ref>Phys. Rev. C 87, 065504 (2013)</journal-ref>
+          <doi>10.1103/PhysRevC.87.065504</doi>
+          <license>
+http://arxiv.org/licenses/nonexclusive-distrib/1.0/
+</license>
+          <abstract>
+We assess the ability of future neutron beta decay measurements of up to O(10^{-4}) precision to falsify the standard model, particularly the V-A law, and to identify the dynamics beyond it. To do this, we employ a maximum likelihood statistical framework which incorporates both experimental and theoretical uncertainties. Using illustrative combined global fits to Monte Carlo pseudodata, we also quantify the importance of experimental measurements of the energy dependence of the angular correlation coefficients as input to such efforts, and we determine the precision to which ill-known "second-class" hadronic matrix elements must be determined in order to exact such tests.
+</abstract>
+        </arXiv>
+      </metadata>
+    </record>
+  </GetRecord>
+</OAI-PMH>
