@@ -2,7 +2,7 @@
 import json
 import os
 
-from inspirehep.modules.multiedit import actions
+from inspirehep.modules.multieditor import actions
 
 schema_1 = {
   "properties": {

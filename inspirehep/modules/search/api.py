@@ -49,7 +49,7 @@ class SearchMixin(object):
     """Mixin that adds helper functions to ElasticSearch DSL classes."""
 
     def query_from_iq(self, query_string):
-        """Initialize ES DSL object using INSPIRE query parser.
+        self.class_ = """Initialize ES DSL object using INSPIRE query parser.
 
         :param query_string: Query string as a user would input in INSPIRE's search box.
         :type query_string: string

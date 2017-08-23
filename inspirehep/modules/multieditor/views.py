@@ -32,36 +32,40 @@ from sqlalchemy import text
 
 from . import actions
 from ..search.api import LiteratureSearch
+from ..search.query_factory import inspire_query_factory
+IQ = inspire_query_factory()
 
 blueprint = Blueprint(
-    'multiedit',
+    'inspirehep_multieditor',
     __name__,
-    url_prefix='/multiedit',
+    url_prefix='/multieditor',
 )
 
 
-@blueprint.route("/multiedit/update", methods=['POST'])
+@blueprint.route("/update", methods=['POST'])
 def index():
     """Basic view."""
     user_actions = request.json
     return jsonify(actions.run_user_actions(user_actions))
 
 
-@blueprint.route("/multiedit/search")
-def search():
+@blueprint.route("/search/<page_num>/<query_string>")
+def search(page_num, query_string):
     """Basic view."""
     records = []
-    search = LiteratureSearch()
-    results = search.query({'match_all': {}}).scan()
+    json_records = []
+
+    results = LiteratureSearch().query_from_iq(query_string).params(size=10, from_=int(page_num), _source=['control_number']).execute().hits
     for result in results:
-        records.append(result.to_dict['control_number'])
-    return records
+        records.append(result.to_dict()['control_number'])
 
 
-
+    records =tuple(records)
     query = text("""
         select json from records_metadata AS r WHERE CAST(r.json->>'control_number' as INT) IN :record_list
     """).bindparams(record_list=records)
+    db_records = db.session.execute(query)
+    for record in db_records:
+        json_records.append(record[0])
 
-    json_records = db.session.execute(query)
-    return json_records
+    return jsonify(json_records)
