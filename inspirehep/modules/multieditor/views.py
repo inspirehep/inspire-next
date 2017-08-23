@@ -24,7 +24,7 @@
 
 """Module for backend of multi record editor used in http://inspirehep.net."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, division
 
 from flask import Blueprint, request, jsonify
 from invenio_db import db
@@ -32,8 +32,7 @@ from sqlalchemy import text
 
 from . import actions
 from ..search.api import LiteratureSearch
-from ..search.query_factory import inspire_query_factory
-IQ = inspire_query_factory()
+
 
 blueprint = Blueprint(
     'inspirehep_multieditor',
@@ -54,13 +53,15 @@ def search(page_num, query_string):
     """Basic view."""
     records = []
     json_records = []
+    #  find record ids from elastic search
+    query_result = LiteratureSearch().query_from_iq(query_string).params(size=10, from_=int(page_num), _source=['control_number']).execute()
+    total_records = query_result.to_dict()['hits']['total']
+    query_records = query_result.hits
 
-    results = LiteratureSearch().query_from_iq(query_string).params(size=10, from_=int(page_num), _source=['control_number']).execute().hits
-    for result in results:
+    for result in query_records:
         records.append(result.to_dict()['control_number'])
-
-
-    records =tuple(records)
+    #  fetch records from database
+    records = tuple(records)
     query = text("""
         select json from records_metadata AS r WHERE CAST(r.json->>'control_number' as INT) IN :record_list
     """).bindparams(record_list=records)
@@ -68,4 +69,5 @@ def search(page_num, query_string):
     for record in db_records:
         json_records.append(record[0])
 
-    return jsonify(json_records)
+    json_for_view = {'json_records': json_records, 'total_records': total_records}
+    return jsonify(json_for_view)

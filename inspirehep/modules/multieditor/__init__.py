@@ -24,6 +24,6 @@
 
 """Module for backend of multi record editor used in http://inspirehep.net."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, division
 
 from .views import blueprint

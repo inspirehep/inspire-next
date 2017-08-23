@@ -1,5 +1,6 @@
 """This is the code used for applying the curator actions to the records."""
 
+from __future__ import absolute_import, print_function, division
 import json
 import os
 import re
@@ -21,8 +22,8 @@ def run_user_actions(user_actions):
                 values_to_check = action.get('updateValue', '').split(',')
             else:
                 values_to_check = []
-            run_action(schema, record, action.get('mainKey', ''), action.get('selectedAction', '')
-                       , action.get('value', ''), values_to_check, action.get('regex', ''),
+            run_action(schema, record, action.get('mainKey', ''), action.get('selectedAction', ''),
+                       action.get('value', ''), values_to_check, action.get('regex', ''),
                        action.get('whereKey', ''), action.get('whereValue', ''))
     return records
 
@@ -47,7 +48,8 @@ def apply_action(schema, record, keys, action,
     new_keys = keys[:]
     key = new_keys.pop(0)
     new_schema = {}
-    if schema:  # fixme in a more stable version the
+    if schema:  # fixme in a more stable version
+        # the schema should always be present
         if schema['type'] == 'object':
             new_schema = schema['properties'][key]
         elif schema['type'] == 'array':
@@ -81,7 +83,7 @@ def apply_action(schema, record, keys, action,
             apply_action(new_schema, record[key], new_keys, action,
                          values_to_check, regex, value_to_input,
                          new_where_keys, where_value)
-    if action == 'Deletion':  # dont leave empty objects
+    if action == 'Deletion':  # don't leave empty objects
         if not record[key]:
             del (record[key])
 
@@ -174,8 +176,8 @@ def apply_to_object(record, key, regex, action, value, values_to_check):
             record[key] = value
         elif str(record[key]) in values_to_check:
             record[key] = value
-    elif action == 'Addition':
-        record[key] = value
+    elif action == 'Addition' and not record.get(key):
+        record[key] = value  # dont overwrite values
     elif action == 'Deletion':
         if len(values_to_check) == 0 \
                 or record[key] in values_to_check:

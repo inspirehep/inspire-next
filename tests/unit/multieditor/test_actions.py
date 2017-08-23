@@ -1,4 +1,4 @@
-# This is a test for the actions
+from __future__ import absolute_import, print_function, division
 import json
 import os
 
@@ -76,15 +76,15 @@ schema_2 = {
 def test_update_array():
     """should test record edit for nested complex array."""
     record = {
-        'a': [{'bla': ['val5', 'val4']}, {'bla': ['val1', 'val6']},
-              {'bla': ['val2']}, {'bla': ['val3']}], 'b': {'c': {'d': 'pong'}}
+        'key_a': [{'key_c': ['val5', 'val4']}, {'key_c': ['val1', 'val6']},
+                  {'key_c': ['val2']}, {'key_c': ['val3']}], 'key_b': {'key_c': {'key_d': 'pong'}}
     }
     expected_map = {
-        'a': [{'bla': ['val5', 'success']}, {'bla': ['val1', 'val6']},
-              {'bla': ['val2']}, {'bla': ['val3']}], 'b': {'c': {'d': 'pong'}}
+        'key_a': [{'key_c': ['val5', 'success']}, {'key_c': ['val1', 'val6']},
+                  {'key_c': ['val2']}, {'key_c': ['val3']}], 'key_b': {'key_c': {'key_d': 'pong'}}
     }
-    key = 'a/bla'
-    action = 'update'
+    key = 'key_a/key_c'
+    action = 'Update'
     values_to_check = ['val4']
     value = 'success'
     assert actions.run_action({}, record, key, action,
@@ -96,15 +96,15 @@ def test_update_array():
 def test_update_multiple_update_array():
     """should test action for nested complex array and multiple check values"""
     record = {
-      'a': [{'bla': ['val5', 'val4']}, {'bla': ['val1', 'val4']},
-            {'bla': ['val2']}, {'bla': ['val3']}], 'b': {'c': {'d': 'pong'}}
+      'key_a': [{'key_c': ['val5', 'val4']}, {'key_c': ['val1', 'val4']},
+                {'key_c': ['val2']}, {'key_c': ['val3']}], 'key_b': {'key_c': {'key_d': 'pong'}}
     }
     expected_map = {
-      'a': [{'bla': ['success', 'success']}, {'bla': ['val1', 'success']},
-            {'bla': ['val2']}, {'bla': ['val3']}], 'b': {'c': {'d': 'pong'}}
+      'key_a': [{'key_c': ['success', 'success']}, {'key_c': ['val1', 'success']},
+                {'key_c': ['val2']}, {'key_c': ['val3']}], 'key_b': {'key_c': {'key_d': 'pong'}}
     }
-    key = 'a/bla'
-    action = 'update'
+    key = 'key_a/key_c'
+    action = 'Update'
     values_to_check = ['val4', 'val5']
     value = 'success'
     assert actions.run_action({}, record, key, action,
@@ -116,21 +116,21 @@ def test_update_multiple_update_array():
 def test_addition_array():
     """should test record addition for nested array"""
     record = {
-      'a': [{'bla': ['val5', 'val4']},
-            {'bla': ['val1', 'val6']},
-            {'bla': ['val2']},
-            {'bla': ['val3']}],
-      'b': {'c': {'d': 'pong'}}
+      'key_a': [{'key_c': ['val5', 'val4']},
+                {'key_c': ['val1', 'val6']},
+                {'key_c': ['val2']},
+                {'key_c': ['val3']}],
+      'key_b': {'key_c': {'key_d': 'pong'}}
     }
     expected_map = {
-      'a': [{'bla': ['val5', 'val4', 'success']},
-            {'bla': ['val1', 'val6', 'success']},
-            {'bla': ['val2', 'success']},
-            {'bla': ['val3', 'success']}],
-      'b': {'c': {'d': 'pong'}}
+      'key_a': [{'key_c': ['val5', 'val4', 'success']},
+                {'key_c': ['val1', 'val6', 'success']},
+                {'key_c': ['val2', 'success']},
+                {'key_c': ['val3', 'success']}],
+      'key_b': {'key_c': {'key_d': 'pong'}}
     }
-    key = 'a/bla'
-    action = 'add'
+    key = 'key_a/key_c'
+    action = 'Addition'
     values_to_check = []
     value = 'success'
     assert actions.run_action({}, record, key, action,
@@ -142,21 +142,21 @@ def test_addition_array():
 def test_deletion_array():
     """should test record deletion for nested array"""
     record = {
-      'a': [{'bla': ['val5', 'val4']},
-            {'bla': ['val1', 'val6']},
-            {'bla': ['val4', 'val6']},
-            {'bla': ['val3']}],
-      'b': {'c': {'d': 'pong'}}
+      'key_a': [{'key_c': ['val5', 'val4']},
+            {'key_c': ['val1', 'val6']},
+            {'key_c': ['val4', 'val6']},
+            {'key_c': ['val3']}],
+      'key_b': {'key_c': {'key_d': 'pong'}}
     }
     expected_map = {
-      'a': [{'bla': ['val5', 'val4']},
-            {'bla': ['val1']},
-            {'bla': ['val4']},
-            {'bla': ['val3']}],
-      'b': {'c': {'d': 'pong'}}
+      'key_a': [{'key_c': ['val5', 'val4']},
+            {'key_c': ['val1']},
+            {'key_c': ['val4']},
+            {'key_c': ['val3']}],
+      'key_b': {'key_c': {'key_d': 'pong'}}
     }
-    key = 'a/bla'
-    action = 'delete'
+    key = 'key_a/key_c'
+    action = 'Deletion'
     values_to_check = ['val6']
     value = ''
     assert actions.run_action({}, record, key, action,
@@ -174,7 +174,7 @@ def test_deletion_empty_rec():
         }
     }
     key = 'key1/key2/key3'
-    action = 'delete'
+    action = 'Deletion'
     expected_map = {}
     assert actions.run_action({}, record, key, action,
                               '', ['val'], False,
@@ -183,7 +183,7 @@ def test_deletion_empty_rec():
 
 def test_field_not_existing():
     """should test sub_record creation for missing object"""
-    key = ['abstracts', 'source']
+    key = 'abstracts/source'
     record = {'abstracts': [{'not_source': 'success'}]}
     expected_map = {'abstracts': [{'not_source': 'success'}]}
     action = 'Update'
@@ -212,7 +212,7 @@ def test_record_creation_3():
     """should test sub_record creation for missing object"""
     key = 'abstracts/source'
     value = 'success'
-    action = 'add'
+    action = 'Addition'
     target_object = {
         "abstracts": [
           {
@@ -259,17 +259,17 @@ def test_big_record_update():
         "year": 2017
       }
     temp_rec = actions.run_action({}, input_record, 'public_notes/value',
-                                  'update', 'Success',
+                                  'Update', 'Success',
                                   ['*Temporary record*'], False, '', '')
     temp_rec = actions.run_action(schema, temp_rec, 'publication_info',
-                                  'add', publication_info,
+                                  'Addition', publication_info,
                                   [], False, '', '')
     temp_rec = actions.run_action(schema, temp_rec, 'texkeys',
-                                  'add', 'Success',
+                                  'Addition', 'Success',
                                   [], False, '', '')
     assert actions.run_action(schema, temp_rec,
                               'inspire_categories/source',
-                              'delete', {},
+                              'Deletion', {},
                               [], False, 'inspire_categories/term',
                               'Phenomenology-HEP') == expected_record
 
@@ -288,7 +288,7 @@ def test_big_record_where_nested_addition():
             as data_file:
         schema = json.load(data_file)
     assert actions.run_action(schema, input_record, 'authors/ids',
-                              'add', {"value": "Success"},
+                              'Addition', {"value": "Success"},
                               [], False, 'authors/affiliations/value',
                               'INFN, Rome') == expected_record
 
@@ -307,7 +307,7 @@ def test_big_record_update_affiliation():
             as data_file:
         schema = json.load(data_file)
     assert actions.run_action(schema, input_record, 'authors/ids',
-                              'add', {"value": "Success"},
+                              'Addition', {"value": "Success"},
                               [], False, 'authors/affiliations/value',
                               'INFN, Rome') == expected_record
 
@@ -327,6 +327,6 @@ def test_big_record_regex_where():
         schema = json.load(data_file)
     assert actions.run_action(schema, input_record,
                               'authors/affiliations/value',
-                              'update', "Success",
+                              'Update', "Success",
                               ['Rome'], True, 'authors/signature_block',
                               'BANARo') == expected_record
