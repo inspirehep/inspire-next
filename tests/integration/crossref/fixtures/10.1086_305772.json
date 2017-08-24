@@ -1,0 +1,127 @@
+{
+  "status": "ok",
+  "message-type": "work",
+  "message-version": "1.0.0",
+  "message": {
+    "indexed": {
+      "date-parts": [
+        [
+          2017,
+          8,
+          23
+        ]
+      ],
+      "date-time": "2017-08-23T07:54:54Z",
+      "timestamp": 1503474894349
+    },
+    "reference-count": 83,
+    "publisher": "IOP Publishing",
+    "issue": "2",
+    "content-domain": {
+      "domain": [],
+      "crossmark-restriction": false
+    },
+    "short-container-title": [
+      "ApJ"
+    ],
+    "published-print": {
+      "date-parts": [
+        [
+          1998,
+          6,
+          20
+        ]
+      ]
+    },
+    "DOI": "10.1086\\/305772",
+    "type": "journal-article",
+    "created": {
+      "date-parts": [
+        [
+          2002,
+          7,
+          26
+        ]
+      ],
+      "date-time": "2002-07-26T18:50:42Z",
+      "timestamp": 1027709442000
+    },
+    "page": "525-553",
+    "source": "Crossref",
+    "is-referenced-by-count": 8240,
+    "title": [
+      "Maps of Dust Infrared Emission for Use in Estimation of Reddening and Cosmic Microwave Background Radiation Foregrounds"
+    ],
+    "prefix": "10.1088",
+    "volume": "500",
+    "author": [
+      {
+        "given": "David J.",
+        "family": "Schlegel",
+        "affiliation": []
+      },
+      {
+        "given": "Douglas P.",
+        "family": "Finkbeiner",
+        "affiliation": []
+      },
+      {
+        "given": "Marc",
+        "family": "Davis",
+        "affiliation": []
+      }
+    ],
+    "member": "266",
+    "container-title": [
+      "The Astrophysical Journal"
+    ],
+    "original-title": [],
+    "deposited": {
+      "date-parts": [
+        [
+          2017,
+          6,
+          15
+        ]
+      ],
+      "date-time": "2017-06-15T06:59:53Z",
+      "timestamp": 1497509993000
+    },
+    "score": 1,
+    "subtitle": [],
+    "short-title": [],
+    "issued": {
+      "date-parts": [
+        [
+          1998,
+          6,
+          20
+        ]
+      ]
+    },
+    "references-count": 83,
+    "alternative-id": [
+      "10.1086\\/305772"
+    ],
+    "URL": "http:\\/\\/dx.doi.org\\/10.1086\\/305772",
+    "relation": {},
+    "ISSN": [
+      "0004-637X",
+      "1538-4357"
+    ],
+    "issn-type": [
+      {
+        "value": "0004-637X",
+        "type": "print"
+      },
+      {
+        "value": "1538-4357",
+        "type": "electronic"
+      }
+    ],
+    "subject": [
+      "Space and Planetary Science",
+      "Astronomy and Astrophysics"
+    ]
+  }
+}
