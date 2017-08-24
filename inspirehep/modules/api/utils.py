@@ -24,9 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
 from inspirehep.modules.search import LiteratureSearch
-from inspirehep.utils.helpers import force_list
 from inspirehep.utils.record import get_title
 
 

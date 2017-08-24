@@ -30,8 +30,8 @@ from refextract import extract_journal_reference, extract_references_from_file
 
 from inspire_schemas.api import ReferenceBuilder
 from inspire_schemas.utils import split_page_artid
+from inspire_utils.helpers import force_list, maybe_int
 from inspire_utils.record import get_value
-from inspirehep.utils.helpers import force_list, maybe_int
 from inspirehep.utils.references import map_refextract_to_schema
 
 from ..utils import with_debug_logging

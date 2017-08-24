@@ -25,9 +25,9 @@ from __future__ import absolute_import, division, print_function
 import json
 from collections import Counter
 
+from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
 from inspirehep.modules.search import LiteratureSearch
-from inspirehep.utils.helpers import force_list
 from inspirehep.utils.stats import calculate_h_index, calculate_i10_index
 
 

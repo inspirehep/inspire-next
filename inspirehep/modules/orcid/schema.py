@@ -28,8 +28,7 @@ import dojson
 
 from flask import current_app
 
-from inspirehep.utils.helpers import force_list
-
+from inspire_utils.helpers import force_list
 from inspirehep.utils.record import get_abstract, get_subtitle, get_title
 
 
