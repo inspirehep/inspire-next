@@ -39,25 +39,28 @@ from ..utils import with_debug_logging
 @with_debug_logging
 def store_record(obj, *args, **kwargs):
     """Create and index new record in main record space."""
-    obj.log.debug('Storing record: \n%s', pformat(obj.data))
+    if not obj.extra_data.get('merged', False):
+        obj.log.debug('Storing record: \n%s', pformat(obj.data))
 
-    assert "$schema" in obj.data, "No $schema attribute found!"
+        assert "$schema" in obj.data, "No $schema attribute found!"
 
-    # Create record
-    # FIXME: Do some preprocessing of obj.data before creating a record so that
-    # we're sure that the schema will be validated without touching the full
-    # holdingpen stack.
-    record = InspireRecord.create(obj.data, id_=None)
+        record = InspireRecord.create(obj.data, id_=None)
 
-    # Create persistent identifier.
-    inspire_recid_minter(str(record.id), record)
+        # Create persistent identifier.
+        inspire_recid_minter(str(record.id), record)
 
-    # Commit any changes to record
-    record.commit()
+        # store head_uuid to store the root later
+        obj.extra_data['head_uuid'] = str(record.id)
 
-    # Dump any changes to record
-    obj.data = record.dumps()
+        # Commit any changes to record
+        record.commit()
+        # Dump any changes to record
+        obj.data = record.dumps()
 
+    # else: # it means that we merged before, so head_uuid
+    # is already stored in extra_data (have look at merging.py)
+
+    obj.save()
     # Commit to DB before indexing
     db.session.commit()
 

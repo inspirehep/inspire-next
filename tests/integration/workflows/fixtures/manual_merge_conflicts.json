@@ -1,0 +1,151 @@
+[
+    [
+        "SET_FIELD",
+        [
+            "abstracts",
+            0,
+            "value"
+        ],
+        "We discuss the implications of studies of partition function zeros and equimodular curves for the analytic properties of the Ising model on a square lattice in a magnetic field. In particular we consider the dense set of singularities in the susceptibility of the Ising model at $H=0$ found by Nickel and its relation to the analyticity of the field theory computations of Fonseca and Zamolodchikov. Curator change.\n"
+    ],
+    [
+        "SET_FIELD",
+        [
+            "acquisition_source",
+            "source"
+        ],
+        "arXiv"
+    ],
+    [
+        "ADD_BACK_TO_HEAD",
+        [
+            "authors"
+        ],
+        {
+            "affiliations": [
+                {
+                    "curated_relation": true,
+                    "value": "CERN",
+                    "record": {
+                        "$ref": "http://localhost:5000/api/institutions/902725"
+                    }
+                }
+            ],
+            "uuid": "e3b0a6e6-5950-41c4-ba8a-76cd597cb0d5",
+            "full_name": "Assis, Mathieu",
+            "signature_block": "ASm"
+        }
+    ],
+    [
+        "ADD_BACK_TO_HEAD",
+        [
+            "authors",
+            1,
+            "affiliations"
+        ],
+        {
+            "curated_relation": true,
+            "value": "CERN",
+            "record": {
+                "$ref": "http://localhost:5000/api/institutions/902725"
+            }
+        }
+    ],
+    [
+        "SET_FIELD",
+        [
+            "authors",
+            1,
+            "uuid"
+        ],
+        "3f4cc9b7-ade5-4b9c-885c-f20bba88f5e2"
+    ],
+    [
+        "ADD_BACK_TO_HEAD",
+        [
+            "authors",
+            2,
+            "affiliations"
+        ],
+        {
+            "curated_relation": true,
+            "value": "C",
+            "record": {
+                "$ref": "http://localhost:5000/api/institutions/902725"
+            }
+        }
+    ],
+    [
+        "SET_FIELD",
+        [
+            "authors",
+            2,
+            "uuid"
+        ],
+        "7b11df9d-6ac8-44f4-93bd-1003b3dff38e"
+    ],
+    [
+        "ADD_BACK_TO_HEAD",
+        [
+            "authors",
+            3,
+            "affiliations"
+        ],
+        {
+            "curated_relation": true,
+            "value": "CER",
+            "record": {
+                "$ref": "http://localhost:5000/api/institutions/902725"
+            }
+        }
+    ],
+    [
+        "SET_FIELD",
+        [
+            "authors",
+            3,
+            "uuid"
+        ],
+        "1d5ed399-9577-4d53-be4b-1e2279a3a493"
+    ],
+    [
+        "ADD_BACK_TO_HEAD",
+        [
+            "authors",
+            4,
+            "affiliations"
+        ],
+        {
+            "curated_relation": true,
+            "value": "CERN",
+            "record": {
+                "$ref": "http://localhost:5000/api/institutions/902725"
+            }
+        }
+    ],
+    [
+        "SET_FIELD",
+        [
+            "authors",
+            4,
+            "uuid"
+        ],
+        "3a75404c-664c-4369-8ced-3fd9e9050c19"
+    ],
+    [
+        "SET_FIELD",
+        [
+            "control_number"
+        ],
+        2
+    ],
+    [
+        "ADD_BACK_TO_HEAD",
+        [
+            "report_numbers"
+        ],
+        {
+            "value": "CURATOR-001"
+        }
+    ]
+]

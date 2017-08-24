@@ -20,10 +20,25 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Our workflows."""
-
 from __future__ import absolute_import, division, print_function
 
-from .article import Article
-from .author import Author
-from .manual_merge import ManualMerge
+import pytest
+
+from inspirehep.modules.workflows.tasks.merging import get_head
+from inspirehep.modules.workflows.errors import MissingHeadUUIDError
+
+from mocks import MockObj
+
+
+def test_get_head_empty_head_uuid():
+    workflow_obj = MockObj({}, {'head_uuid': ''})
+
+    with pytest.raises(MissingHeadUUIDError):
+        get_head(workflow_obj)
+
+
+def test_get_head_no_head_uuid():
+    workflow_obj = MockObj({}, {})
+
+    with pytest.raises(MissingHeadUUIDError):
+        get_head(workflow_obj)

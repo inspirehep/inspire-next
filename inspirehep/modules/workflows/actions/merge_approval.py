@@ -32,4 +32,4 @@ class MergeApproval(object):
     @staticmethod
     def resolve(obj, *args, **kwargs):
         """Resolve the action taken in the approval action."""
-        pass
+        return True

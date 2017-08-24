@@ -26,6 +26,9 @@ from __future__ import absolute_import, division, print_function
 
 from datetime import datetime
 
+from sqlalchemy.dialects import postgresql
+from sqlalchemy_utils.types import JSONType, UUIDType
+
 from invenio_db import db
 
 
@@ -76,3 +79,25 @@ class WorkflowsPendingRecord(db.Model):
         nullable=False,
     )
     record_id = db.Column(db.Integer, nullable=False)
+
+
+class WorkflowsRecordSources(db.Model):
+
+    __tablename__ = "workflows_record_sources"
+    __table_args__ = (
+        db.PrimaryKeyConstraint('record_id', 'source'),
+    )
+    source = db.Column(db.Text, default="", nullable=False)
+    record_id = db.Column(
+        UUIDType,
+        db.ForeignKey("records_metadata.id", ondelete='CASCADE'),
+        nullable=False,
+    )
+    json = db.Column(
+        JSONType().with_variant(
+            postgresql.JSON(none_as_null=True),
+            'postgresql',
+        ),
+        default=lambda: dict(),
+        nullable=True
+    )

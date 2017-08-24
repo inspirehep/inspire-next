@@ -26,5 +26,11 @@ from invenio_workflows.errors import WorkflowsError
 
 
 class DownloadError(WorkflowsError):
-
     """Error representing a failed download in a workflow."""
+
+
+class MissingHeadUUIDError(WorkflowsError):
+    """Error representing the missing field `head_uuid`
+
+    This error should be triggered when there is no head_uuid property
+    inside the extra_data for a given workflow object."""
