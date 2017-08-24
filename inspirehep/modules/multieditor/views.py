@@ -54,20 +54,22 @@ def search(page_num, query_string):
     records = []
     json_records = []
     #  find record ids from elastic search
-    query_result = LiteratureSearch().query_from_iq(query_string).params(size=10, from_=int(page_num), _source=['control_number']).execute()
+    query_result = LiteratureSearch().query_from_iq(query_string).params(size=10, from_=((int(page_num)-1)*10), _source=['control_number']).execute()
     total_records = query_result.to_dict()['hits']['total']
     query_records = query_result.hits
-
     for result in query_records:
         records.append(result.to_dict()['control_number'])
     #  fetch records from database
-    records = tuple(records)
-    query = text("""
-        select json from records_metadata AS r WHERE CAST(r.json->>'control_number' as INT) IN :record_list
-    """).bindparams(record_list=records)
-    db_records = db.session.execute(query)
-    for record in db_records:
-        json_records.append(record[0])
+
+    if records:
+        records = tuple(records)
+        query = text("""
+            select json from records_metadata AS r WHERE CAST(r.json->>'control_number' as INT) IN :record_list
+        """).bindparams(record_list=records)
+        db_records = db.session.execute(query)
+
+        for record in db_records:
+            json_records.append(record[0])
 
     json_for_view = {'json_records': json_records, 'total_records': total_records}
     return jsonify(json_for_view)

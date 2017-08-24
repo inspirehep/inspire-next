@@ -293,24 +293,6 @@ def test_big_record_where_nested_addition():
                               'INFN, Rome') == expected_record
 
 
-def test_big_record_update_affiliation():
-    curr_path = os.path.dirname(__file__)
-    with open(os.path.join(curr_path,
-                           'fixtures/test_record_4.json')) as data_file:
-        input_record = json.load(data_file)
-    with open(os.path.join(curr_path,
-                           'fixtures/test_record_4_expected.json'))\
-            as data_file:
-        expected_record = json.load(data_file)
-    with open(os.path.join(curr_path,
-                           'fixtures/schema.json'))\
-            as data_file:
-        schema = json.load(data_file)
-    assert actions.run_action(schema, input_record, 'authors/ids',
-                              'Addition', {"value": "Success"},
-                              [], False, 'authors/affiliations/value',
-                              'INFN, Rome') == expected_record
-
 
 def test_big_record_regex_where():
     curr_path = os.path.dirname(__file__)
