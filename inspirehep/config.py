@@ -258,11 +258,11 @@ INSPIRE_COLLECTIONS_DEFINITION = [
     },
     {
         'query': 'special_collections:LARSOFT-INTERNAL-NOTE',
-        'name': 'LARSOFT Internal Notes',
+        'name': 'LArSoft Internal Notes',
     },
     {
         'query': 'special_collections:LARSOFT-NOTE',
-        'name': 'LARSOFT Notes',
+        'name': 'LArSoft Notes',
     },
     {
         'query': 'special_collections:ZEUS-INTERNAL-NOTE',
