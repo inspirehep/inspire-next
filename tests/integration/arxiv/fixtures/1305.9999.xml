@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2017-08-24T11:43:16Z</responseDate>
+  <request verb="GetRecord" identifier="oai:arXiv.org:1305.9999" metadataPrefix="arXiv">http://export.arxiv.org/oai2</request>
+  <error code="idDoesNotExist">
+Identifier 'oai:arXiv.org:1305.9999' has correct form but does not correspond to an item in this repository
+</error>
+</OAI-PMH>
