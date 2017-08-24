@@ -24,9 +24,9 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
+from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
 from inspirehep.utils import bibtex_booktitle
-from inspirehep.utils.helpers import force_list
 from inspirehep.utils.record import is_submitted_but_not_published
 from inspirehep.utils.record_getter import get_es_record
 

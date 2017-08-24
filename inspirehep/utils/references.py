@@ -23,7 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from inspire_schemas.api import ReferenceBuilder
-from inspirehep.utils.helpers import force_list
+from inspire_utils.helpers import force_list
 from inspirehep.utils.jinja2 import render_template_to_string
 from inspirehep.utils.record_getter import get_es_records
 
