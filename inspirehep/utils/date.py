@@ -215,3 +215,8 @@ def create_datestruct(datetext):
         return None
     datetext = datetext.strip()
     return tuple([int(component) for component in datetext.split('-')])
+
+
+def date_older_than(date, other_date, days=2):
+    """Return True if the given datestring is older than given days."""
+    return datetime.timedelta(days=days) < (other_date - date)
