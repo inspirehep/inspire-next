@@ -39,7 +39,6 @@ from flask import (
     url_for,
     redirect,
 )
-from flask_babelex import gettext as _
 from flask_breadcrumbs import register_breadcrumb
 from flask_login import login_required, current_user
 from werkzeug.datastructures import MultiDict
@@ -206,7 +205,7 @@ def validate():
 
 
 @blueprint.route('/new', methods=['GET'])
-@register_breadcrumb(blueprint, '.new', _('New author information'))
+@register_breadcrumb(blueprint, '.new', 'New author information')
 @login_required
 def new():
     """View for INSPIRE author new form."""
@@ -229,7 +228,7 @@ def new():
 
 
 @blueprint.route('/<int:recid>/update', methods=['GET'])
-@register_breadcrumb(blueprint, '.update', _('Update author information'))
+@register_breadcrumb(blueprint, '.update', 'Update author information')
 @login_required
 def update(recid):
     """View for INSPIRE author update form."""

@@ -31,6 +31,7 @@ from collections import Iterable
 from datetime import datetime
 from operator import itemgetter
 
+import babel
 import six
 from flask import current_app, url_for
 from jinja2.filters import do_join, evalcontextfilter
@@ -39,14 +40,17 @@ from werkzeug.urls import url_decode
 from inspire_utils.dedupers import dedupe_list
 from inspirehep.modules.records.wrappers import LiteratureRecord
 from inspirehep.modules.search import InstitutionsSearch, LiteratureSearch
-from inspirehep.utils.date import (
-    create_datestruct,
-    convert_datestruct_to_dategui,
-)
 from inspirehep.utils.jinja2 import render_template_to_string
 from inspirehep.utils.template import render_macro_from_template
 
 from .views import blueprint
+
+
+DATE_FORMATS_MAP = {
+    '%Y-%m-%d': 'MMM d, YYYY',
+    '%Y-%m': 'MMM, YYYY',
+    '%Y': 'YYYY',
+}
 
 
 def apply_template_on_array(array, template_path, **common_context):
@@ -552,27 +556,17 @@ def publication_info(record):
 
 
 @blueprint.app_template_filter()
-def format_date(datetext):
-    """Display date in human readable form from available metadata."""
-    datestruct = create_datestruct(datetext)
+def format_date(date):
+    """Displays a date in a human-friendly format."""
+    if date is None:
+        return
 
-    if datestruct:
-        dummy_time = (0, 0, 44, 2, 320, 0)
-        if len(datestruct) == 3:
-            datestruct = datestruct + dummy_time
-            date = convert_datestruct_to_dategui(
-                datestruct, output_format="MMM d, Y"
-            )
-            return date
-        elif len(datestruct) == 2:
-            datestruct = datestruct + (1,) + dummy_time
-            date = convert_datestruct_to_dategui(
-                datestruct, output_format="MMM Y"
-            )
-            return date
-        elif len(datestruct) == 1:
-            # XXX(jacquerie): returns int instead of string.
-            return datestruct[0]
+    for pattern, format_ in six.iteritems(DATE_FORMATS_MAP):
+        try:
+            parsed_date = datetime.strptime(date, pattern)
+            return babel.dates.format_date(parsed_date, format=format_)
+        except ValueError:
+            pass
 
 
 @blueprint.app_template_filter()

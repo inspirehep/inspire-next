@@ -62,7 +62,6 @@ def enhance_record(sender, json, *args, **kwargs):
        to allow receivers work with a fully populated record."""
     populate_inspire_document_type(sender, json, *args, **kwargs)
     match_valid_experiments(sender, json, *args, **kwargs)
-    dates_validator(sender, json, *args, **kwargs)
     add_recids_and_validate(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
@@ -133,29 +132,6 @@ def match_valid_experiments(sender, json, *args, **kwargs):
                     normalized_experiment = _normalize(experiment)
                     facet_experiment.append(normalized_experiment)
                 accelerator_exp['facet_experiment'] = [facet_experiment]
-
-
-def dates_validator(sender, json, *args, **kwargs):
-    """Validate some dates in a record before indexing.
-
-    Logs a warning if the value of a `date_key` in `DATE_KEYS_TO_CHECK` is
-    invalid, as determined by the `create_valid_date` function. The valid
-    value is substituted for the old value in all cases.
-    """
-    DATE_KEYS_TO_CHECK = [
-        'opening_date',
-        'closing_date',
-        'deadline_date',
-    ]
-
-    for date_key in DATE_KEYS_TO_CHECK:
-        if date_key in json:
-            valid_date = create_valid_date(json[date_key])
-            if valid_date != json[date_key]:
-                current_app.logger.warning(
-                    'MALFORMED: %s value in %s: %s', date_key,
-                    json['control_number'], json[date_key])
-            json[date_key] = valid_date
 
 
 def references_validator(sender, json, *args, **kwargs):

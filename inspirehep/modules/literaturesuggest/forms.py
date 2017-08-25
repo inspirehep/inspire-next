@@ -25,7 +25,6 @@
 from __future__ import absolute_import, division, print_function
 
 from babel import Locale
-from flask_babelex import gettext as _
 from wtforms import validators
 from wtforms.widgets import HiddenInput, HTMLString, html_params
 
@@ -80,7 +79,7 @@ def importdata_button(field, **dummy_kwargs):
                         name="importData",
                         type="button"),
             '#myModal',
-            _('Import'))
+            'Import')
     return HTMLString(html)
 
 
@@ -91,7 +90,7 @@ def skip_importdata(field, **dummy_kwargs):
                         class_="btn btn-link",
                         name="skipImportData",
                         type="button"),
-            _('Skip, and fill the form manually'))
+            'Skip, and fill the form manually')
     return HTMLString(html)
 
 
@@ -115,7 +114,7 @@ def wrap_nonpublic_note(field, **dummy_kwargs):
     """Proceedings box with tooltip."""
     html = u'<div class="tooltip-wrapper" data-toggle="tooltip"' \
         'title="%s"><textarea %s></textarea></div>' % \
-        (_('Journal Information already exists'),
+        ('Journal Information already exists',
          html_params(id="nonpublic_note",
                      class_="form-control nonpublic_note" + ARTICLE_CLASS,
                      name="nonpublic_note"))
@@ -203,7 +202,7 @@ class ReportNumberInlineForm(INSPIREForm):
     """Repor number inline form."""
 
     report_number = fields.TextField(
-        label=_('Report Number'),
+        label='Report Number',
         widget=ColumnInput(class_="col-xs-10"),
         widget_classes="form-control"
     )
@@ -225,7 +224,7 @@ class LiteratureForm(INSPIREForm):
     """Literature form fields."""
 
     doi = fields.DOIField(
-        label=_('DOI'),
+        label='DOI',
         processors=[],
         export_key='doi',
         description='e.g. 10.1086/305772 or doi:10.1086/305772',
@@ -235,7 +234,7 @@ class LiteratureForm(INSPIREForm):
     )
 
     arxiv_id = fields.ArXivField(
-        label=_('arXiv ID'),
+        label='arXiv ID',
         export_key="arxiv_id",
         validators=[arxiv_syntax_validation, duplicated_arxiv_id_validator],
     )
@@ -246,14 +245,14 @@ class LiteratureForm(INSPIREForm):
     )
 
     import_buttons = fields.SubmitField(
-        label=_(' '),
+        label=' ',
         widget=import_buttons_widget
     )
 
-    types_of_doc = [("article", _("Article/Conference paper")),
-                    ("thesis", _("Thesis")),
-                    ('book', _('Book')),
-                    ('chapter', _('Book chapter'))]
+    types_of_doc = [("article", "Article/Conference paper"),
+                    ("thesis", "Thesis"),
+                    ('book', 'Book'),
+                    ('chapter', 'Book chapter')]
     # ("proceedings", _("Proceedings"))
 
     type_of_doc = fields.SelectField(
@@ -266,7 +265,7 @@ class LiteratureForm(INSPIREForm):
     )
 
     title = fields.TitleField(
-        label=_('Title'),
+        label='Title',
         widget_classes="form-control",
         validators=[validators.DataRequired()],
         export_key='title',
@@ -283,7 +282,7 @@ class LiteratureForm(INSPIREForm):
     )
 
     title_translation = fields.TitleField(
-        label=_('Translated Title'),
+        label='Translated Title',
         description='Original title translated to english language.',
         widget_classes="form-control",
         export_key='title_translation',
@@ -306,21 +305,21 @@ class LiteratureForm(INSPIREForm):
     )
 
     collaboration = fields.TextField(
-        label=_('Collaboration'),
+        label='Collaboration',
         export_key="collaboration",
         widget_classes="form-control" + ARTICLE_CLASS
     )
 
     experiment = fields.TextField(
-        placeholder=_("Start typing for suggestions"),
+        placeholder="Start typing for suggestions",
         export_key="experiment",
-        label=_('Experiment'),
+        label='Experiment',
         widget_classes="form-control",
         autocomplete="experiment"
     )
 
     subject = fields.SelectMultipleField(
-        label=_('Subject'),
+        label='Subject',
         widget_classes="form-control",
         export_key='subject_term',
         filters=[clean_empty_list],
@@ -328,7 +327,7 @@ class LiteratureForm(INSPIREForm):
     )
 
     abstract = fields.TextAreaField(
-        label=_('Abstract'),
+        label='Abstract',
         default='',
         widget_classes="form-control",
         export_key='abstract',
@@ -344,7 +343,7 @@ class LiteratureForm(INSPIREForm):
     )
 
     language = fields.LanguageField(
-        label=_("Language"),
+        label="Language",
         export_key="language",
         default="en",
         choices=language_choices
@@ -360,7 +359,7 @@ class LiteratureForm(INSPIREForm):
     other_language_choices.sort(key=lambda x: x[1])
 
     other_language = fields.LanguageField(
-        label=_("Other Language"),
+        label="Other Language",
         export_key="other_language",
         widget_classes="form-control",
         choices=other_language_choices,
@@ -368,9 +367,9 @@ class LiteratureForm(INSPIREForm):
     )
 
     conf_name = fields.TextField(
-        placeholder=_("Start typing for suggestions"),
-        label=_('Conference Information'),
-        description=_('Conference name, acronym, place, date'),
+        placeholder="Start typing for suggestions",
+        label='Conference Information',
+        description='Conference name, acronym, place, date',
         widget_classes="form-control" + ARTICLE_CLASS,
         autocomplete='conference'
     )
@@ -381,7 +380,7 @@ class LiteratureForm(INSPIREForm):
     )
 
     license_url = fields.TextField(
-        label=_('License URL'),
+        label='License URL',
         export_key='license_url',
         widget=HiddenInput(),
     )
@@ -394,7 +393,7 @@ class LiteratureForm(INSPIREForm):
                 html_tag='div',
             ),
         ),
-        add_label=_('Add another report number'),
+        add_label='Add another report number',
         min_entries=1,
         widget_classes='',
         widget=UnsortedDynamicListWidget(),
@@ -412,28 +411,28 @@ class LiteratureForm(INSPIREForm):
                 html_tag='div',
             ),
         ),
-        label=_('Supervisors'),
-        add_label=_('Add another supervisor'),
+        label='Supervisors',
+        add_label='Add another supervisor',
         min_entries=1,
         widget_classes=THESIS_CLASS,
     )
 
     thesis_date = fields.TextField(
-        label=_('Date of Submission'),
+        label='Date of Submission',
         description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
         validators=[date_validator],
         widget_classes='form-control' + THESIS_CLASS,
     )
 
     defense_date = fields.TextField(
-        label=_('Date of Defense'),
+        label='Date of Defense',
         description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
         validators=[date_validator],
         widget_classes='form-control' + THESIS_CLASS,
     )
 
     degree_type = fields.SelectField(
-        label=_('Degree Type'),
+        label='Degree Type',
         default='phd',
         widget_classes="form-control" + THESIS_CLASS,
     )
@@ -441,7 +440,7 @@ class LiteratureForm(INSPIREForm):
     institution = fields.TextField(
         autocomplete='affiliation',
         placeholder='Start typing for suggestions',
-        label=_('Institution'),
+        label='Institution',
         widget_classes="form-control" + THESIS_CLASS,
     )
 
@@ -450,28 +449,28 @@ class LiteratureForm(INSPIREForm):
     # =========
 
     publisher_name = fields.TextField(
-        label=_('Publisher'),
+        label='Publisher',
         widget_classes="form-control" + BOOK_CLASS,
     )
 
     publication_place = fields.TextField(
-        label=_('Publication Place'),
+        label='Publication Place',
         widget_classes="form-control" + BOOK_CLASS,
     )
 
     series_title = fields.TextField(
-        label=_('Series Title'),
+        label='Series Title',
         widget_classes="form-control" + BOOK_CLASS,
         autocomplete='journal'
     )
 
     series_volume = fields.TextField(
-        label=_('Volume'),
+        label='Volume',
         widget_classes="form-control" + BOOK_CLASS,
     )
 
     publication_date = fields.TextField(
-        label=_('Publication Date'),
+        label='Publication Date',
         description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
         widget_classes="form-control" + BOOK_CLASS,
         validators=[date_validator],
@@ -482,24 +481,24 @@ class LiteratureForm(INSPIREForm):
     # =================
 
     book_title = fields.TextField(
-        label=_('Book Title'),
+        label='Book Title',
         widget_classes="form-control" + CHAPTER_CLASS,
     )
 
     start_page = fields.TextField(
-        placeholder=_('Start page of the chapter'),
+        placeholder='Start page of the chapter',
         widget_classes="form-control" + CHAPTER_CLASS,
     )
 
     end_page = fields.TextField(
-        placeholder=_('End page of the chapter'),
+        placeholder='End page of the chapter',
         widget_classes="form-control" + CHAPTER_CLASS,
     )
 
     find_book = fields.TextField(
-        placeholder=_("Start typing for suggestions"),
-        label=_('Find Book'),
-        description=_('Book name, ISBN, Publisher'),
+        placeholder="Start typing for suggestions",
+        label='Find Book',
+        description='Book name, ISBN, Publisher',
         widget_classes="form-control" + CHAPTER_CLASS,
     )
     parent_book = fields.TextField(
@@ -511,36 +510,36 @@ class LiteratureForm(INSPIREForm):
     # ============
 
     journal_title = fields.TextField(
-        placeholder=_("Start typing for suggestions"),
-        label=_('Journal Title'),
+        placeholder="Start typing for suggestions",
+        label='Journal Title',
         widget_classes="form-control" + ARTICLE_CLASS,
         autocomplete='journal'
     )
 
     page_range_article_id = fields.TextField(
-        label=_('Page Range/Article ID'),
-        description=_('e.g. 1-100'),
+        label='Page Range/Article ID',
+        description='e.g. 1-100',
         widget_classes="form-control" + ARTICLE_CLASS
     )
 
     volume = fields.TextField(
-        label=_('Volume'),
+        label='Volume',
         widget_classes="form-control" + ARTICLE_CLASS
     )
 
     year = fields.TextField(
-        label=_('Year'),
+        label='Year',
         widget_classes="form-control" + ARTICLE_CLASS,
         validators=[year_validator],
     )
 
     issue = fields.TextField(
-        label=_('Issue'),
+        label='Issue',
         widget_classes="form-control" + ARTICLE_CLASS
     )
 
     nonpublic_note = fields.TextAreaField(
-        label=_('Proceedings'),
+        label='Proceedings',
         description='Editors, title of proceedings, publisher, year of publication, page range, URL',
         widget=wrap_nonpublic_note,
         widget_classes="form-control" + ARTICLE_CLASS
@@ -556,7 +555,7 @@ class LiteratureForm(INSPIREForm):
     # ==========
 
     references = fields.TextAreaField(
-        label=_('References'),
+        label='References',
         description='Please paste the references in plain text',
         widget_classes="form-control"
     )
@@ -575,16 +574,16 @@ class LiteratureForm(INSPIREForm):
     # ====================
 
     url = fields.TextField(
-        label=_('Link to PDF'),
-        description=_('Where can we find a PDF to check the references?'),
+        label='Link to PDF',
+        description='Where can we find a PDF to check the references?',
         placeholder='http://www.example.com/document.pdf',
         validators=[pdf_validator],
         widget_classes="form-control",
     )
 
     additional_url = fields.TextField(
-        label=_('Link to additional information (e.g. abstract)'),
-        description=_('Which page should we link from INSPIRE?'),
+        label='Link to additional information (e.g. abstract)',
+        description='Which page should we link from INSPIRE?',
         placeholder='http://www.example.com/splash-page.html',
         validators=[no_pdf_validator],
         widget_classes="form-control",
@@ -595,7 +594,7 @@ class LiteratureForm(INSPIREForm):
     # ==============
 
     extra_comments = fields.TextAreaField(
-        label=_('Comments'),
+        label='Comments',
         description='Any extra comments related to your submission',
         widget_classes="form-control"
     )
@@ -603,7 +602,7 @@ class LiteratureForm(INSPIREForm):
     #
     # Form Configuration
     #
-    _title = _("Suggest content")
+    _title = "Suggest content"
 
     # Group fields in categories
 

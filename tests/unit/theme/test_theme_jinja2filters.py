@@ -1166,41 +1166,14 @@ def test_publication_info_from_not_conference_recid_and_parent_recid():
     assert expected == result
 
 
-@patch('inspirehep.modules.theme.jinja2filters.create_datestruct')
-def test_format_date_returns_none_when_datestruct_is_none(c_d):
-    c_d.return_value = None
-
-    assert format_date('banana') is None
-
-
-@patch('inspirehep.modules.theme.jinja2filters.create_datestruct')
-def test_format_date_when_datestruct_has_one_element(c_d):
-    c_d.return_value = (1993,)
-
-    expected = 1993
-    result = format_date('banana')
-
-    assert expected == result
+def test_format_date_handles_iso8601_dates():
+    assert format_date('1993') == '1993'
+    assert format_date('1993-02') == 'Feb, 1993'
+    assert format_date('1993-02-02') == 'Feb 2, 1993'
 
 
-@patch('inspirehep.modules.theme.jinja2filters.create_datestruct')
-def test_format_date_when_datestruct_has_two_elements(c_d, request_context):
-    c_d.return_value = (1993, 2)
-
-    expected = 'Feb 1993'
-    result = format_date('banana')
-
-    assert expected == result
-
-
-@patch('inspirehep.modules.theme.jinja2filters.create_datestruct')
-def test_format_date_when_datestruct_has_three_elements(c_d, request_context):
-    c_d.return_value = (1993, 2, 2)
-
-    expected = 'Feb 2, 1993'
-    result = format_date('banana')
-
-    assert expected == result
+def test_format_date_returns_none_when_date_is_none():
+    assert format_date(None) is None
 
 
 def test_find_collection_from_url_conferences():

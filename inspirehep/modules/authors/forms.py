@@ -22,7 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from flask_babelex import gettext as _
 from wtforms import validators
 from wtforms.fields import Flags
 from wtforms.widgets import (
@@ -109,23 +108,23 @@ class InstitutionInlineForm(INSPIREForm):
     """Institution inline form."""
 
     rank_options = [
-        ("rank", _("Rank")),
-        ("SENIOR", _("Senior (permanent)")),
-        ("JUNIOR", _("Junior (leads to Senior)")),
-        ("STAFF", _("Staff (non-research)")),
-        ("VISITOR", _("Visitor")),
-        ("PD", _("PostDoc")),
-        ("PHD", _("PhD")),
-        ("MASTER", _("Master")),
-        ("UNDERGRADUATE", _("Undergrad")),
-        ("OTHER", _("Other")),
+        ("rank", "Rank"),
+        ("SENIOR", "Senior (permanent)"),
+        ("JUNIOR", "Junior (leads to Senior)"),
+        ("STAFF", "Staff (non-research)"),
+        ("VISITOR", "Visitor"),
+        ("PD", "PostDoc"),
+        ("PHD", "PhD"),
+        ("MASTER", "Master"),
+        ("UNDERGRADUATE", "Undergrad"),
+        ("OTHER", "Other"),
     ]
 
     name = fields.StringField(
         widget_classes='form-control',
         widget=ColumnInput(class_="col-md-6"),
         autocomplete='affiliation',
-        placeholder=_("Institution. Type for suggestions"),
+        placeholder="Institution. Type for suggestions",
     )
 
     rank = fields.SelectField(
@@ -137,7 +136,7 @@ class InstitutionInlineForm(INSPIREForm):
     )
 
     start_year = fields.StringField(
-        placeholder=_('Start Year'),
+        placeholder='Start Year',
         description=u'Format: YYYY.',
         widget=WrappedInput(
             wrapped_widget=TextInput(),
@@ -152,7 +151,7 @@ class InstitutionInlineForm(INSPIREForm):
     )
 
     end_year = fields.StringField(
-        placeholder=_('End Year'),
+        placeholder='End Year',
         description=u'Format: YYYY.',
         widget=WrappedInput(
             wrapped_widget=TextInput(),
@@ -197,15 +196,15 @@ class ExperimentsInlineForm(INSPIREForm):
     """Experiments inline form."""
 
     name = fields.StringField(
-        placeholder=_("Experiment. Type for suggestions"),
-        label=_('Experiment'),
+        placeholder="Experiment. Type for suggestions",
+        label='Experiment',
         widget=ColumnInput(class_="col-md-6"),
         widget_classes="form-control",
         autocomplete="experiment"
     )
 
     start_year = fields.StringField(
-        placeholder=_('Start Year'),
+        placeholder='Start Year',
         description=u'Format: YYYY.',
         widget=WrappedInput(
             wrapped_widget=TextInput(),
@@ -220,7 +219,7 @@ class ExperimentsInlineForm(INSPIREForm):
     )
 
     end_year = fields.StringField(
-        placeholder=_('End Year'),
+        placeholder='End Year',
         description=u'Format: YYYY.',
         widget=WrappedInput(
             wrapped_widget=TextInput(),
@@ -259,7 +258,7 @@ class AdvisorsInlineForm(INSPIREForm):
     degree_type_options.sort(key=lambda x: x[1])
     degree_type = fields.SelectField(
         choices=degree_type_options,
-        label=_('Degree Type'),
+        label='Degree Type',
         widget_classes="form-control",
         default="phd",
         widget=ColumnSelect(class_="col-xs-5", description=u"Degree Type"),
@@ -271,7 +270,7 @@ class WebpageInlineForm(INSPIREForm):
     """URL inline form."""
 
     webpage = fields.StringField(
-        label=_('Your Webpage'),
+        label='Your Webpage',
         placeholder='http://www.example.com',
         widget=ColumnInput(class_="col-xs-10"),
         widget_classes="form-control",
@@ -314,7 +313,7 @@ class AuthorUpdateForm(INSPIREForm):
     """Author update form."""
 
     bai = fields.StringField(
-        label=_('Bai'),
+        label='Bai',
         description=u'e.g. M.Santos.1',
         widget=HiddenInput(),
         widget_classes="form-control",
@@ -326,7 +325,7 @@ class AuthorUpdateForm(INSPIREForm):
     )
 
     inspireid = fields.StringField(
-        label=_('Inspireid'),
+        label='Inspireid',
         description=u'e.g. INSPIRE-0000000',
         widget=HiddenInput(),
         widget_classes="form-control",
@@ -344,27 +343,27 @@ class AuthorUpdateForm(INSPIREForm):
     )
 
     given_names = fields.StringField(
-        label=_('Given Names'),
+        label='Given Names',
         description=u'e.g. Diego',
         validators=[validators.DataRequired()],
         widget_classes="form-control"
     )
 
     family_name = fields.StringField(
-        label=_('Family Name'),
+        label='Family Name',
         description=u'e.g. Martínez Santos',
         widget_classes="form-control"
     )
 
     display_name = fields.StringField(
-        label=_('Display Name'),
+        label='Display Name',
         description=u'How should the author be addressed throughout the site? e.g. Diego Martínez',
         validators=[validators.DataRequired()],
         widget_classes="form-control"
     )
 
     native_name = fields.StringField(
-        label=_('Native Name'),
+        label='Native Name',
         description=u'For non-Latin names e.g. 麦迪娜 or Эдгар Бугаев',
         widget_classes="form-control"
     )
@@ -406,10 +405,10 @@ class AuthorUpdateForm(INSPIREForm):
             duplicated_orcid_validator]
     )
 
-    status_options = [("active", _("Active")),
-                      ("retired", _("Retired")),
-                      ("departed", _("Departed")),
-                      ("deceased", _("Deceased"))]
+    status_options = [("active", "Active"),
+                      ("retired", "Retired"),
+                      ("departed", "Departed"),
+                      ("deceased", "Deceased")]
 
     status = fields.SelectField(
         label='Status',
@@ -420,21 +419,21 @@ class AuthorUpdateForm(INSPIREForm):
     )
 
     blog_url = fields.StringField(
-        label=_('Blog'),
+        label='Blog',
         placeholder='http://www.example.com',
         icon="fa fa-wordpress",
         widget_classes="form-control",
     )
 
     twitter_url = fields.StringField(
-        label=_('Twitter'),
+        label='Twitter',
         placeholder='https://twitter.com/inspirehep',
         icon="fa fa-twitter",
         widget_classes="form-control",
     )
 
     linkedin_url = fields.StringField(
-        label=_('Linkedin'),
+        label='Linkedin',
         placeholder='https://www.linkedin.com/pub/john-francis-lampen/16/750/778',
         icon="fa fa-linkedin-square",
         widget_classes="form-control",
@@ -448,7 +447,7 @@ class AuthorUpdateForm(INSPIREForm):
                 html_tag='div',
             ),
         ),
-        add_label=_('Add another website'),
+        add_label='Add another website',
         min_entries=1,
         widget_classes='ui-disable-sort',
         icon="fa fa-globe",
@@ -464,7 +463,7 @@ class AuthorUpdateForm(INSPIREForm):
     ]
 
     research_field = fields.SelectMultipleField(
-        label=_('Field of Research'),
+        label='Field of Research',
         choices=research_field_options,
         widget_classes="form-control",
         filters=[clean_empty_list],
@@ -519,7 +518,7 @@ class AuthorUpdateForm(INSPIREForm):
     )
 
     extra_comments = fields.TextAreaField(
-        label=_('Comments'),
+        label='Comments',
         description=u'Send us any comments you might have. They will not be visible.',
         widget_classes="form-control"
     )
@@ -527,7 +526,7 @@ class AuthorUpdateForm(INSPIREForm):
     #
     # Form Configuration
     #
-    _title = _("Update author details")
+    _title = "Update author details"
 
     # Group fields in categories
 

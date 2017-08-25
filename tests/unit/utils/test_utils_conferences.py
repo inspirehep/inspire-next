@@ -31,7 +31,7 @@ from inspirehep.utils.conferences import (
 )
 
 
-def test_render_conferences():
+def test_render_conferences(request_context):
     hits = Response({
         'hits': {
             'hits': [
@@ -66,13 +66,12 @@ def test_render_conferences():
             u'  ',
         ],
     ], 1)
-    with current_app.test_request_context():
-        result = render_conferences(2, hits)
+    result = render_conferences(2, hits)
 
     assert expected == result
 
 
-def test_render_conferences_handles_unicode():
+def test_render_conferences_handles_unicode(request_context):
     hits = Response({
         'hits': {
             'hits': [
@@ -101,8 +100,7 @@ def test_render_conferences_handles_unicode():
             u'  ',
         ],
     ], 1)
-    with current_app.test_request_context():
-        result = render_conferences(1, hits)
+    result = render_conferences(1, hits)
 
     assert expected == result
 
