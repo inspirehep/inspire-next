@@ -24,15 +24,13 @@
 
 from __future__ import absolute_import, division, print_function
 
-import six
 import re
 import time
-
 from datetime import date as real_date
 from datetime import datetime as real_datetime
 
+import six
 from flask_babelex import format_datetime as babel_format_datetime
-from flask_babelex import gettext as _
 
 # This library does not support strftime's "%s" or "%y" format strings.
 # Allowed if there's an even number of "%"s because they are escaped.
@@ -198,7 +196,7 @@ def convert_datestruct_to_dategui(datestruct, ln=None, output_format="d MMM Y, H
         else:
             raise ValueError
     except:
-        return _("N/A")
+        return 'N/A'
 
 
 def create_datestruct(datetext):

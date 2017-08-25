@@ -36,11 +36,6 @@ from invenio_records_rest.facets import range_filter, terms_filter
 from inspirehep.modules.records.utils import get_detailed_template_from_record
 
 
-def _(x):
-    """Identity function for string extraction."""
-    return x
-
-
 # Debug
 # =====
 DEBUG_TB_INTERCEPT_REDIRECTS = False
@@ -61,7 +56,7 @@ REQUIREJS_CONFIG = 'js/build.js'
 # =====
 INSPIRE_FULL_THEME = True
 """Allows to switch between labs.inspirehep.net view and full version."""
-THEME_SITENAME = _("inspirehep")
+THEME_SITENAME = "inspirehep"
 BASE_TEMPLATE = "inspirehep_theme/page.html"
 
 # Database
@@ -120,7 +115,7 @@ SECURITY_RESET_PASSWORD_TEMPLATE = \
 
 SECURITY_CONFIRM_SALT = "CHANGE_ME"
 SECURITY_EMAIL_SENDER = "admin@inspirehep.net"
-SECURITY_EMAIL_SUBJECT_REGISTER = _("Welcome to INSPIRE Labs!")
+SECURITY_EMAIL_SUBJECT_REGISTER = "Welcome to INSPIRE Labs!"
 SECURITY_LOGIN_SALT = "CHANGE_ME"
 SECURITY_PASSWORD_SALT = "CHANGE_ME"
 SECURITY_REMEMBER_SALT = "CHANGE_ME"
