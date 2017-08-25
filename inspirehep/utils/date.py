@@ -30,7 +30,6 @@ from datetime import date as real_date
 from datetime import datetime as real_datetime
 
 import six
-from flask_babelex import format_datetime as babel_format_datetime
 
 # This library does not support strftime's "%s" or "%y" format strings.
 # Allowed if there's an even number of "%"s because they are escaped.
@@ -182,34 +181,3 @@ def create_valid_date(date, date_format_full="%Y-%m-%d",
                 except ValueError:
                     pass
     return valid_date
-
-
-def convert_datestruct_to_dategui(datestruct, ln=None, output_format="d MMM Y, H:mm"):
-    """Convert: (2005, 11, 16, 15, 11, 44, 2, 320, 0) => '16 nov 2005, 15:11'
-    Month is internationalized
-    """
-    assert ln is None, 'setting language is not supported'
-    try:
-        if datestruct[0] and datestruct[1] and datestruct[2]:
-            dt = datetime.fromtimestamp(time.mktime(datestruct))
-            return babel_format_datetime(dt, output_format)
-        else:
-            raise ValueError
-    except:
-        return 'N/A'
-
-
-def create_datestruct(datetext):
-    """
-    Create a datestruct out of a date text in format YYYY-MM-dd
-    :param datetext: date from record
-    :type datetext: str
-    :returns: tuple of 1 or more integers, up to max (year, month, day).
-    Otherwise None.
-    """
-    if isinstance(datetext, int):
-        datetext = unicode(datetext)
-    if not datetext or not isinstance(datetext, six.string_types):
-        return None
-    datetext = datetext.strip()
-    return tuple([int(component) for component in datetext.split('-')])
