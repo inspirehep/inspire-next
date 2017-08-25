@@ -95,11 +95,15 @@ def halt_record(action=None, message=None):
     @with_debug_logging
     @wraps(halt_record)
     def _halt_record(obj, eng):
-        eng.halt(action=obj.extra_data.get("halt_action") or action,
-                 msg=obj.extra_data.get("halt_message") or message)
+        eng.halt(
+            action=obj.extra_data.get("halt_action") or action,
+            msg=obj.extra_data.get("halt_message") or message,
+        )
 
     _halt_record.__doc__ = (
-        'Halt the workflow object, action=%s, message=%s' % (action, message))
+        'Halt the workflow object, action=%s, message=%s' % (action, message)
+    )
+    _halt_record.nicename = '%s action' % (action or 'unspecified')
     return _halt_record
 
 
