@@ -1,52 +1,76 @@
-"""This is the code used for applying the curator actions to the records."""
+# -*- coding: utf-8 -*-
+#
+# This file is part of INSPIRE.
+# Copyright (C) 2014-2017 CERN.
+#
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this license, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, print_function, division
 import json
 import os
 import re
+from collections import namedtuple, deque
+from inspire_schemas.api import load_schema
 
 
-def run_user_actions(user_actions):
+Action = namedtuple('Action', 'keys, selected_action, value, values_to_check, regex, where_keys, where_value')
+
+
+def run_user_actions(user_actions,user_query):
     """Executing user commands."""
-    with open(os.path.join(os.path.dirname(__file__),
-                           '../tests/unit/fixtures/schema.json'))\
-            as data_file:
-        schema = json.load(data_file)
-    with open(os.path.join(os.path.dirname(__file__),
+
+    schema = load_schema('hep')
+    with open(os.path.join(os.path.dirname(__file__),  # change to load from db
                            'assets/records.json'))\
             as data_file:
         records = json.load(data_file)
     for record in records:
         for action in user_actions:
-            if action.get('updateValue', ''):
-                values_to_check = action.get('updateValue', '').split(',')
+
+            if action.get('updateValue'):
+                values_to_check = action.get('updateValue').split(',')
             else:
                 values_to_check = []
-            run_action(schema, record, action.get('mainKey', ''), action.get('selectedAction', ''),
-                       action.get('value', ''), values_to_check, action.get('regex', ''),
-                       action.get('whereKey', ''), action.get('whereValue', ''))
+
+            keys = action.get('mainKey').split('/')
+            where_key = action.get('whereKey')
+            if where_key:
+                where_keys = where_key.split('/')
+            else:
+                where_keys = []
+
+            action_tuple = Action(keys, action.get('selectedAction'),
+                                  action.get('value'), values_to_check, action.get('regex'),
+                                  where_keys, action.get('whereValue'))
+            apply_action(schema, record, action_tuple)
     return records
 
 
-def run_action(schema, record, key, action, value,
-               values_to_check, regex, where_key, where_value):
+def run_action(schema, record, action):
     """Initial function to run the recursive one."""
-    keys = key.split('/')
-    if where_key:
-        where_keys = where_key.split('/')
-    else:
-        where_keys = []
-    apply_action(schema, record, keys, action,
-                 values_to_check, regex, value, where_keys, where_value)
+    apply_action(schema, record, action)  # fixme propably delete this function :)
     return record
 
 
-def apply_action(schema, record, keys, action,
-                 values_to_check, regex, value_to_input,
-                 where_keys, where_value):
+def apply_action(schema, record, action):
     """Recursive function to change a record object."""
-    new_keys = keys[:]
-    key = new_keys.pop(0)
+    new_keys = deque(action.keys)
+    key = new_keys.popleft()
     new_schema = {}
     if schema:  # fixme in a more stable version
         # the schema should always be present
@@ -55,37 +79,37 @@ def apply_action(schema, record, keys, action,
         elif schema['type'] == 'array':
             new_schema = schema['items']['properties'][key]
     if not record.get(key):
-        if action == 'Addition':
-            record.update(create_schema_record(schema, keys, value_to_input))
+        if action.selected_action == 'Addition':
+            record.update(create_schema_record(schema, action.keys, action.value))
+        return
+    if action.where_keys and key != action.where_keys[0]:
+        if check_value(record, action.where_keys, action.where_value) == 0:
             return
         else:
-            return
-    if len(where_keys) != 0 and key != where_keys[0]:
-        if check_value(record, where_keys, where_value) == 0:
-            return
-        else:
-            where_keys = []
-    if len(new_keys) == 0:
-        apply_action_to_field(record, key, regex,
-                              action, value_to_input, values_to_check)
+            action._replace(where_keys=[])
+    if not new_keys:
+        apply_action_to_field(record, key, action.regex,
+                              action.selected_action, action.value, action.values_to_check)
     else:
-        if len(where_keys) != 0:
-            new_where_keys = where_keys[:]
-            new_where_keys.pop(0)
+        if len(action.where_keys) != 0:
+            new_where_keys = deque(action.where_keys)
+            new_where_keys.popleft()
         else:
-            new_where_keys = where_keys
+            new_where_keys = action.where_keys
         if isinstance(record[key], list):
             for array_record in record[key]:
-                apply_action(new_schema, array_record, new_keys, action,
-                             values_to_check, regex, value_to_input,
-                             new_where_keys, where_value)
+                action_tuple = Action(new_keys, action.selected_action,
+                                      action.value, action.values_to_check, action.regex,
+                                      new_where_keys, action.where_value)
+                apply_action(new_schema, array_record, action_tuple)
         else:
-            apply_action(new_schema, record[key], new_keys, action,
-                         values_to_check, regex, value_to_input,
-                         new_where_keys, where_value)
-    if action == 'Deletion':  # don't leave empty objects
+            action_tuple = Action(new_keys, action.selected_action,
+                                  action.value, action.values_to_check, action.regex,
+                                  new_where_keys, action.where_value)
+            apply_action(new_schema, record[key], action_tuple)
+    if action.selected_action == 'Deletion':  # don't leave empty objects
         if not record[key]:
-            del (record[key])
+            del record[key]
 
 
 def create_schema_record(schema, path, value):
@@ -115,8 +139,8 @@ def create_schema_record(schema, path, value):
 
 def check_value(record, keys, value_to_check):
     """Where continues to find the value."""
-    new_keys = keys[:]
-    key = new_keys.pop(0)
+    new_keys = deque(keys)
+    key = new_keys.popleft()
     if key not in record:
         return False
     temp_record = record[key]
@@ -168,7 +192,7 @@ def apply_to_array(record, key, regex, action, value, values_to_check):
 
 
 def apply_to_object(record, key, regex, action, value, values_to_check):
-    """Apllying action to Object."""
+    """Aplying action to Object."""
     if action == 'Update':
         if regex and re.search(
                 re.escape(values_to_check[0]),

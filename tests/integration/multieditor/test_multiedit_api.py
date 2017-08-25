@@ -22,9 +22,6 @@ def populate_db(app):
 
 
 def test_multieditor_api(populate_db, api_client):
-    # from remote_pdb import RemotePdb
-    # RemotePdb('0.0.0.0', 4444).set_trace()
-    # with app.test_client() as client:
     response = api_client.get('/multieditor/search/1/foo')
     curr_path = os.path.dirname(__file__)
     with open(os.path.join(curr_path,

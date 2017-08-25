@@ -48,13 +48,17 @@ def index():
     return jsonify(actions.run_user_actions(user_actions))
 
 
-@blueprint.route("/search/<page_num>/<query_string>")
-def search(page_num, query_string):
+@blueprint.route("/search")
+def search():
     """Basic view."""
     records = []
     json_records = []
+    query_string = request.args.get("query_string")
+    page_num = int(request.args.get("page_num"))
     #  find record ids from elastic search
-    query_result = LiteratureSearch().query_from_iq(query_string).params(size=10, from_=((int(page_num)-1)*10), _source=['control_number']).execute()
+    query_result = LiteratureSearch().query_from_iq(query_string).params(size=10,
+                                                                         from_=((page_num-1)*10),
+                                                                         _source=['control_number']).execute()
     total_records = query_result.to_dict()['hits']['total']
     query_records = query_result.hits
     for result in query_records:
