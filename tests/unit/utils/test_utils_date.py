@@ -22,10 +22,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+from datetime import datetime
+
 from inspirehep.utils.date import (
     create_datestruct,
     create_earliest_date,
     create_valid_date,
+    date_older_than,
 )
 
 
@@ -50,3 +53,19 @@ def test_create_datestruct():
     assert create_datestruct('2002-01-05') == (2002, 1, 5)
     assert create_datestruct('1877-02') == (1877, 2)
     assert create_datestruct('1900') == (1900, )
+
+
+def test_older_date():
+    """date_older_than recognizes older dates."""
+    some_date = datetime.strptime("2015-01-01", "%Y-%m-%d")
+    three_days_later = datetime.strptime("2015-01-04", "%Y-%m-%d")
+
+    assert date_older_than(some_date, three_days_later, days=2)
+
+
+def test_newer_date():
+    """date_older_than recognizes newer dates."""
+    some_date = datetime.strptime("2015-01-01", "%Y-%m-%d")
+    three_days_later = datetime.strptime("2015-01-04", "%Y-%m-%d")
+
+    assert not date_older_than(some_date, three_days_later, days=6)
