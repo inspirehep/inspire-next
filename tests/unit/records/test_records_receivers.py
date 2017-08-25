@@ -26,7 +26,6 @@ import mock
 
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.records.receivers import (
-    dates_validator,
     earliest_date,
     match_valid_experiments,
     populate_inspire_document_type,
@@ -35,33 +34,6 @@ from inspirehep.modules.records.receivers import (
     populate_abstract_source_suggest,
     populate_title_suggest
 )
-
-
-def test_dates_validator_does_nothing_when_dates_are_valid():
-    json_dict = {
-        'opening_date': '1993-02-02',
-        'closing_date': '1993-02-02',
-        'deadline_date': '1993-02-02',
-    }
-
-    dates_validator(None, json_dict)
-
-    assert json_dict['opening_date'] == '1993-02-02'
-    assert json_dict['closing_date'] == '1993-02-02'
-    assert json_dict['deadline_date'] == '1993-02-02'
-
-
-@mock.patch('inspirehep.modules.records.receivers.current_app.logger.warning')
-def test_dates_validator_warns_when_date_is_invalid(warning):
-    json_dict = {
-        'control_number': 123,
-        'opening_date': 'bar',
-    }
-
-    dates_validator(None, json_dict)
-
-    warning.assert_called_once_with(
-        'MALFORMED: %s value in %s: %s', 'opening_date', 123, 'bar')
 
 
 def test_earliest_date_from_preprint_date():
