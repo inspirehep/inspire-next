@@ -26,7 +26,7 @@ import json
 
 import pytest
 from flask import current_app
-from flask_security.utils import encrypt_password
+from flask_security.utils import hash_password
 
 from invenio_access.models import ActionUsers
 from invenio_accounts.models import SessionActivity, User
@@ -136,20 +136,20 @@ def restricted_record(app):
 @pytest.fixture(scope='function')
 def users(app):
     # Create test users
-    encrypted_password = encrypt_password('123456')
+    hashed_password = hash_password('123456')
     user = User(
         email='user@inspirehep.net',
-        password=encrypted_password,
+        password=hashed_password,
         active=True
     )
     user_partially_allowed = User(
         email='partially_allowed@inspirehep.net',
-        password=encrypted_password,
+        password=hashed_password,
         active=True,
     )
     user_allowed = User(
         email='allowed@inspirehep.net',
-        password=encrypted_password,
+        password=hashed_password,
         active=True,
     )
 
