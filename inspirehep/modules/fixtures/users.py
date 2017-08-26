@@ -25,7 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 from flask import current_app
-from flask_security.utils import encrypt_password
+from flask_security.utils import hash_password
 
 from invenio_access.models import ActionRoles
 
@@ -45,13 +45,13 @@ def init_users_and_permissions():
         )
         ds.create_user(
             email='admin@inspirehep.net',
-            password=encrypt_password("123456"),
+            password=hash_password("123456"),
             active=True,
             roles=[superuser_role]
         )
         ds.create_user(
             email='cataloger@inspirehep.net',
-            password=encrypt_password("123456"),
+            password=hash_password("123456"),
             active=True,
             roles=[cataloger_role]
         )

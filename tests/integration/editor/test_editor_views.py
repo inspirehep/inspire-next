@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 import json
 
 import pytest
-from flask_security.utils import encrypt_password
+from flask_security.utils import hash_password
 from mock import patch
 
 from invenio_access.models import ActionUsers
@@ -39,12 +39,12 @@ def users():
     """Create users needed in this test module."""
     curator = User(
         email='curator@inspirehep.net',
-        password=encrypt_password('curator'),
+        password=hash_password('curator'),
         active=True,
     )
     scientist = User(
         email='scientist@inspirehep.net',
-        password=encrypt_password('scientist'),
+        password=hash_password('scientist'),
         active=True,
     )
     db.session.add_all([curator, scientist])

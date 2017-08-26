@@ -28,7 +28,7 @@ import os
 import pkg_resources
 import pytest
 import requests_mock
-from flask_security.utils import encrypt_password
+from flask_security.utils import hash_password
 
 from invenio_accounts.models import SessionActivity, User
 from invenio_accounts.testutils import login_user_via_session
@@ -40,7 +40,7 @@ def users(app):
     """Create users needed in this test module."""
     scientist = User(
         email='scientist@inspirehep.net',
-        password=encrypt_password('scientist'),
+        password=hash_password('scientist'),
         active=True,
     )
     db.session.add(scientist)

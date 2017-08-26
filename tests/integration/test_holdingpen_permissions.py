@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 from flask import url_for
-from flask_security.utils import encrypt_password
+from flask_security.utils import hash_password
 
 from invenio_access.models import ActionUsers
 from invenio_accounts.models import User
@@ -35,15 +35,15 @@ from invenio_db import db
 @pytest.fixture(scope='function')
 def users(app):
     """Create user fixtures."""
-    encrypted_password = encrypt_password('123456')
+    hashed_password = hash_password('123456')
     user = User(
         email='user@inspirehep.net',
-        password=encrypted_password,
+        password=hashed_password,
         active=True
     )
     user_allowed = User(
         email='user_allowed@inspirehep.net',
-        password=encrypted_password,
+        password=hashed_password,
         active=True
     )
 
