@@ -22,15 +22,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-import mock
-
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.records.receivers import (
     earliest_date,
     match_valid_experiments,
     populate_inspire_document_type,
     populate_recid_from_ref,
-    references_validator,
     populate_abstract_source_suggest,
     populate_title_suggest
 )
@@ -423,60 +420,6 @@ def test_populate_recid_from_ref_deleted_records():
     populate_recid_from_ref(None, json_dict)
 
     assert json_dict['deleted_recids'] == [1, 2]
-
-
-def test_references_validator_does_nothing_on_missing_key():
-    json_dict = {}
-
-    references_validator(None, json_dict)
-
-    assert 'references' not in json_dict
-
-
-def test_references_validator_does_nothing_on_empty_list():
-    json_dict = {
-        'references': [],
-    }
-
-    references_validator(None, json_dict)
-
-    assert json_dict['references'] == []
-
-
-def test_references_validator_does_nothing_on_numerical_recids():
-    json_dict = {
-        'references': [
-            {'recid': 123},
-            {'recid': 456},
-        ],
-    }
-
-    references_validator(None, json_dict)
-
-    assert json_dict['references'] == [
-        {'recid': 123},
-        {'recid': 456},
-    ]
-
-
-@mock.patch('inspirehep.modules.records.receivers.current_app.logger.warning')
-def test_references_validator_removes_and_warns_on_non_numerical_recids(warning):
-    json_dict = {
-        'control_number': 123,
-        'references': [
-            {'recid': 'foo'},
-            {'recid': 456},
-        ],
-    }
-
-    references_validator(None, json_dict)
-
-    warning.assert_called_once_with(
-        'MALFORMED: recid value found in references of %s: %s', 123, 'foo')
-    assert json_dict['references'] == [
-        {},
-        {'recid': 456},
-    ]
 
 
 def test_populate_abstract_source_suggest():
