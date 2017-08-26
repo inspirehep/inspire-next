@@ -26,8 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from itertools import chain
 
-import six
-from flask import current_app
 from flask_sqlalchemy import models_committed
 
 from invenio_indexer.api import RecordIndexer
@@ -62,7 +60,7 @@ def enhance_record(sender, json, *args, **kwargs):
        to allow receivers work with a fully populated record."""
     populate_inspire_document_type(sender, json, *args, **kwargs)
     match_valid_experiments(sender, json, *args, **kwargs)
-    add_recids_and_validate(sender, json, *args, **kwargs)
+    populate_recid_from_ref(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
     after_record_enhanced.send(json)
@@ -134,25 +132,6 @@ def match_valid_experiments(sender, json, *args, **kwargs):
                 accelerator_exp['facet_experiment'] = [facet_experiment]
 
 
-def references_validator(sender, json, *args, **kwargs):
-    """Validate the recids in references before indexing.
-
-    Logs a warning if the value corresponding to a `recid` key in `references`
-    is not composed uniquely of digits. If it wasn't, it is also removed from
-    its reference.
-    """
-    def _is_not_made_of_digits(recid):
-        return not six.text_type(recid).isdigit()
-
-    for reference in json.get('references', []):
-        recid = reference.get('recid')
-        if recid and _is_not_made_of_digits(recid):
-            current_app.logger.warning(
-                'MALFORMED: recid value found in references of %s: %s',
-                json['control_number'], recid)
-            del reference['recid']
-
-
 def populate_recid_from_ref(sender, json, *args, **kwargs):
     """Extracts recids from all reference fields and adds them to ES.
 
@@ -214,12 +193,6 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
                 _recusive_find_refs(value)
 
     _recusive_find_refs(json)
-
-
-def add_recids_and_validate(sender, json, *args, **kwargs):
-    """Ensure that recids are generated before being validated."""
-    populate_recid_from_ref(sender, json, *args, **kwargs)
-    references_validator(sender, json, *args, **kwargs)
 
 
 def populate_abstract_source_suggest(sender, json, *args, **kwargs):
