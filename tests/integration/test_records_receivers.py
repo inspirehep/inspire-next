@@ -34,6 +34,9 @@ def test_that_db_changes_are_mirrored_in_es(app):
     search = LiteratureSearch()
     json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'authors': [{
+            'full_name': 'Dummy name'
+        }],
         'document_type': [
             'article',
         ],

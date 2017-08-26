@@ -28,12 +28,17 @@ from datetime import datetime
 
 import arrow
 from elasticsearch.exceptions import NotFoundError
+from jsonschema import validate
 
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.api import Record
 from invenio_db import db
 
+from inspirehep.modules.records.validators.validator import (
+    InspireValidator,
+    InspireResolver,
+)
 from inspirehep.utils.record_getter import (
     RecordGetterError,
     get_es_record_by_uuid
@@ -70,6 +75,18 @@ class InspireRecord(Record):
 
     def _delete(self, *args, **kwargs):
         super(InspireRecord, self).delete(*args, **kwargs)
+
+    def commit(self, **kwargs):
+        """Run custom validators."""
+        validator = kwargs.pop('validator', InspireValidator)
+
+        if self.get('$schema') is not None and validator is not None:
+            schema = {'$ref': self['$schema']}
+            resolver = InspireResolver.from_schema(schema)
+
+            validate(self, schema, cls=validator, resolver=resolver)
+
+        super(InspireRecord, self).commit()
 
 
 class ESRecord(InspireRecord):
