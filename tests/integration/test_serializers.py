@@ -39,5 +39,4 @@ def test_impact_graph_serializer_does_not_raise_maximum_recursion_error(app):
         ]
     }
 
-    with app.app_context():
-        serializer.serialize(111, record)
+    serializer.serialize(111, record)

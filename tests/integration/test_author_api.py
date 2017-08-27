@@ -27,18 +27,17 @@ import json
 from jsonschema import validate
 
 
-def test_api_authors_root(app):
-    with app.test_client() as client:
-        response = client.get('/api/authors/983220')
+def test_api_authors_root(api_client):
+    response = api_client.get('/authors/983220')
 
-        assert response.status_code == 200
+    assert response.status_code == 200
 
-        response_json = json.loads(response.data)
+    response_json = json.loads(response.data)
 
-        assert response_json['id'] == 983220
+    assert response_json['id'] == 983220
 
 
-def test_api_authors_citations(app):
+def test_api_authors_citations(api_client):
     schema = {
         'items': {
             'properties': {
@@ -82,18 +81,17 @@ def test_api_authors_citations(app):
         'type': 'array'
     }
 
-    with app.test_client() as client:
-        response = client.get('/api/authors/1061000/citations')
+    response = api_client.get('/authors/1061000/citations')
 
-        assert response.status_code == 200
+    assert response.status_code == 200
 
-        response_json = json.loads(response.data)
+    response_json = json.loads(response.data)
 
-        assert validate(response_json, schema) is None
-        assert len(response_json) == 2
+    assert validate(response_json, schema) is None
+    assert len(response_json) == 2
 
 
-def test_api_authors_coauthors(app):
+def test_api_authors_coauthors(api_client):
     schema = {
         'items': {
             'properties': {
@@ -110,18 +108,17 @@ def test_api_authors_coauthors(app):
         'type': 'array'
     }
 
-    with app.test_client() as client:
-        response = client.get('/api/authors/1061000/coauthors')
+    response = api_client.get('/authors/1061000/coauthors')
 
-        assert response.status_code == 200
+    assert response.status_code == 200
 
-        response_json = json.loads(response.data)
+    response_json = json.loads(response.data)
 
-        assert validate(response_json, schema) is None
-        assert len(response_json) == 10
+    assert validate(response_json, schema) is None
+    assert len(response_json) == 10
 
 
-def test_api_authors_publications(app):
+def test_api_authors_publications(api_client):
     schema = {
         'items': {
             'properties': {
@@ -154,18 +151,17 @@ def test_api_authors_publications(app):
         'type': 'array'
     }
 
-    with app.test_client() as client:
-        response = client.get('/api/authors/1061000/publications')
+    response = api_client.get('/authors/1061000/publications')
 
-        assert response.status_code == 200
+    assert response.status_code == 200
 
-        response_json = json.loads(response.data)
+    response_json = json.loads(response.data)
 
-        assert validate(response_json, schema) is None
-        assert len(response_json) == 2
+    assert validate(response_json, schema) is None
+    assert len(response_json) == 2
 
 
-def test_api_author_stats(app):
+def test_api_author_stats(api_client):
     schema = {
         'properties': {
             'citations': {'type': 'integer'},
@@ -191,12 +187,11 @@ def test_api_author_stats(app):
         'type': 'object'
     }
 
-    with app.test_client() as client:
-        response = client.get('/api/authors/1061000/stats')
+    response = api_client.get('/authors/1061000/stats')
 
-        assert response.status_code == 200
+    assert response.status_code == 200
 
-        response_json = json.loads(response.data)
+    response_json = json.loads(response.data)
 
-        assert validate(response_json, schema) is None
-        assert len(response_json['keywords']) == 12
+    assert validate(response_json, schema) is None
+    assert len(response_json['keywords']) == 12

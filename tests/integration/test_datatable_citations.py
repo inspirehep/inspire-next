@@ -25,8 +25,7 @@ from __future__ import absolute_import, division, print_function
 import json
 
 
-def test_citations(app):
+def test_citations(app_client):
     """Tests if citation datatables work for records."""
-    with app.test_client() as client:
-        response = client.get('/ajax/citations?recid=712925&endpoint=literature')
-        assert response.status_code == 200
+    response = app_client.get('/ajax/citations?recid=712925&endpoint=literature')
+    assert response.status_code == 200

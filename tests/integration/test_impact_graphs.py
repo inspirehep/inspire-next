@@ -27,15 +27,14 @@ from __future__ import absolute_import, division, print_function
 import json
 
 
-def test_impact_graphs_api(app):
+def test_impact_graphs_api(api_client):
     """Test response of impact graph API."""
-    with app.test_client() as client:
-        result = client.get(
-            "/api/literature/712925",
-            headers={"Accept": "application/x-impact.graph+json"}
-        )
+    result = api_client.get(
+        "/literature/712925",
+        headers={"Accept": "application/x-impact.graph+json"}
+    )
 
-        result = json.loads(result.data)
-        assert result['title'] == u'PYTHIA 6.4 Physics and Manual'
-        assert result['year'] == u'2006'
-        assert len(result['citations']) == 2
+    result = json.loads(result.data)
+    assert result['title'] == u'PYTHIA 6.4 Physics and Manual'
+    assert result['year'] == u'2006'
+    assert len(result['citations']) == 2

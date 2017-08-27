@@ -27,7 +27,7 @@ import json
 from jsonschema import validate
 
 
-def test_api_v1_journals_citesummary(app):
+def test_api_v1_journals_citesummary(api_client):
     schema = {
         'items': {
             'additionalProperties': False,
@@ -88,13 +88,12 @@ def test_api_v1_journals_citesummary(app):
         'type': 'array',
     }
 
-    with app.test_client() as client:
-        response = client.get('/api/journals/1213103/citesummary')
+    response = api_client.get('/journals/1213103/citesummary')
 
-        assert response.status_code == 200
+    assert response.status_code == 200
 
-        response_json = json.loads(response.data)
+    response_json = json.loads(response.data)
 
-        assert validate(response_json, schema) is None
+    assert validate(response_json, schema) is None
 
-        assert len(response_json) == 1
+    assert len(response_json) == 1

@@ -23,20 +23,19 @@
 from __future__ import absolute_import, division, print_function
 
 
-def test_other_conferences(app):
+def test_other_conferences(app_client):
     """Tests if citation datatables work for records."""
-    with app.test_client() as client:
-        response = client.get('/ajax/conferences/series?recid=1331207&seriesname=Rencontres%20de%20Moriond')
-        assert response.status_code == 200
+    response = app_client.get('/ajax/conferences/series?recid=1331207&seriesname=Rencontres%20de%20Moriond')
+    assert response.status_code == 200
 
-        response = client.get('/ajax/conferences/series?recid=1346335&seriesname=EDS')
-        assert response.status_code == 200
+    response = app_client.get('/ajax/conferences/series?recid=1346335&seriesname=EDS')
+    assert response.status_code == 200
 
-        response = client.get('/ajax/conferences/series?recid=1320036&seriesname=Quarks')
-        assert response.status_code == 200
+    response = app_client.get('/ajax/conferences/series?recid=1320036&seriesname=Quarks')
+    assert response.status_code == 200
 
-        response = client.get('/ajax/conferences/series?recid=976391&seriesname=LCWS')
-        assert response.status_code == 200
+    response = app_client.get('/ajax/conferences/series?recid=976391&seriesname=LCWS')
+    assert response.status_code == 200
 
-        response = client.get('/ajax/conferences/series?recid=977661&seriesname=NSS')
-        assert response.status_code == 200
+    response = app_client.get('/ajax/conferences/series?recid=977661&seriesname=NSS')
+    assert response.status_code == 200
