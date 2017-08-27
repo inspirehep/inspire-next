@@ -43,18 +43,17 @@ def test_all_records_are_valid(app):
     assert recids == []
 
 
-def test_all_records_are_there(app):
-    with app.test_client() as client:
-        failed = []
+def test_all_records_are_there(app_client):
+    failed = []
 
-        for record in [record.json for record in RecordMetadata.query.all()]:
-            try:
-                absolute_url = record['self']['$ref']
-                relative_url = absolute_url.partition('api')[2]
-                response = client.get(relative_url)
+    for record in [record.json for record in RecordMetadata.query.all()]:
+        try:
+            absolute_url = record['self']['$ref']
+            relative_url = absolute_url.partition('api')[2]
+            response = app_client.get(relative_url)
 
-                assert response.status_code == 200
-            except Exception:
-                failed.append(record['control_number'])
+            assert response.status_code == 200
+        except Exception:
+            failed.append(record['control_number'])
 
-        assert failed == []
+    assert failed == []

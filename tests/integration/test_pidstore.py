@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 import httpretty
 import mock
 import pytest
+from flask import current_app
 
 from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
 
@@ -35,21 +36,20 @@ def test_getting_next_recid_from_legacy(app):
         'LEGACY_PID_PROVIDER': 'http://server/batchuploader/allocaterecord',
     }
 
-    with app.app_context():
-        with mock.patch.dict(app.config, extra_config):
-            httpretty.register_uri(
-                httpretty.GET,
-                'http://server/batchuploader/allocaterecord',
-                content_type='application/json',
-                body='3141592',
-                status=200,
-            )
+    with mock.patch.dict(current_app.config, extra_config):
+        httpretty.register_uri(
+            httpretty.GET,
+            'http://server/batchuploader/allocaterecord',
+            content_type='application/json',
+            body='3141592',
+            status=200,
+        )
 
-            args = dict(
-                object_type='rec',
-                object_uuid='7753a30b-4c4b-469c-8d8d-d5020069b3ab',
-                pid_type='lit'
-            )
-            provider = InspireRecordIdProvider.create(**args)
+        args = dict(
+            object_type='rec',
+            object_uuid='7753a30b-4c4b-469c-8d8d-d5020069b3ab',
+            pid_type='lit'
+        )
+        provider = InspireRecordIdProvider.create(**args)
 
-            assert str(provider.pid.pid_value) == "3141592"
+        assert str(provider.pid.pid_value) == "3141592"

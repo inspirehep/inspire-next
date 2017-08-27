@@ -79,18 +79,16 @@ def deleted_record(app):
         '</record>'
     )
 
-    with app.app_context():
-        record = hep.do(create_record(snippet))
-        record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
+    record = hep.do(create_record(snippet))
+    record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
-        with db.session.begin_nested():
-            record_insert_or_replace(record)
-        db.session.commit()
+    with db.session.begin_nested():
+        record_insert_or_replace(record)
+    db.session.commit()
 
     yield
 
-    with app.app_context():
-        _delete_record('lit', 111)
+    _delete_record('lit', 111)
 
 
 @pytest.fixture(scope='function')
@@ -109,15 +107,13 @@ def not_yet_deleted_record(app):
         }
     }
 
-    with app.app_context():
-        with db.session.begin_nested():
-            record_insert_or_replace(record)
-        db.session.commit()
+    with db.session.begin_nested():
+        record_insert_or_replace(record)
+    db.session.commit()
 
     yield
 
-    with app.app_context():
-        _delete_record('lit', 111)
+    _delete_record('lit', 111)
 
 
 @pytest.fixture(scope='function')
@@ -149,23 +145,22 @@ def merged_records(app):
         '</record>'
     )
 
-    with app.app_context():
-        merged_record = hep.do(create_record(merged_snippet))
-        merged_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
+    merged_record = hep.do(create_record(merged_snippet))
+    merged_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
-        deleted_record = hep.do(create_record(deleted_snippet))
-        deleted_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
+    deleted_record = hep.do(create_record(deleted_snippet))
+    deleted_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
-        with db.session.begin_nested():
-            merged_uuid = record_insert_or_replace(merged_record).id
-            deleted_uuid = record_insert_or_replace(deleted_record).id
-        db.session.commit()
+    with db.session.begin_nested():
+        merged_uuid = record_insert_or_replace(merged_record).id
+        deleted_uuid = record_insert_or_replace(deleted_record).id
+    db.session.commit()
+
     es.indices.refresh('records-hep')
 
     yield
 
-    with app.app_context():
-        _delete_merged_records('lit', 111, 222, merged_uuid, deleted_uuid)
+    _delete_merged_records('lit', 111, 222, merged_uuid, deleted_uuid)
 
 
 @pytest.fixture(scope='function')
@@ -198,16 +193,14 @@ def not_yet_merged_records(app):
         },
     }
 
-    with app.app_context():
-        with db.session.begin_nested():
-            merged_uuid = record_insert_or_replace(merged_record).id
-            deleted_uuid = record_insert_or_replace(deleted_record).id
-        db.session.commit()
+    with db.session.begin_nested():
+        merged_uuid = record_insert_or_replace(merged_record).id
+        deleted_uuid = record_insert_or_replace(deleted_record).id
+    db.session.commit()
 
     yield
 
-    with app.app_context():
-        _delete_merged_records('lit', 111, 222, merged_uuid, deleted_uuid)
+    _delete_merged_records('lit', 111, 222, merged_uuid, deleted_uuid)
 
 
 @pytest.fixture(scope='function')
@@ -261,50 +254,44 @@ def records_to_be_merged(app):
         },
     }
 
-    with app.app_context():
-        with db.session.begin_nested():
-            merged_uuid = record_insert_or_replace(merged_record).id
-            deleted_uuid = record_insert_or_replace(deleted_record).id
-            record_insert_or_replace(pointing_record)
-        db.session.commit()
+    with db.session.begin_nested():
+        merged_uuid = record_insert_or_replace(merged_record).id
+        deleted_uuid = record_insert_or_replace(deleted_record).id
+        record_insert_or_replace(pointing_record)
+    db.session.commit()
+
     es.indices.refresh('records-hep')
 
     yield
 
-    with app.app_context():
-        _delete_merged_records('lit', 111, 222, merged_uuid, deleted_uuid)
-        _delete_record('lit', 333)
+    _delete_merged_records('lit', 111, 222, merged_uuid, deleted_uuid)
+    _delete_record('lit', 333)
 
 
-def test_deleted_record_stays_deleted(app, deleted_record):
-    with app.test_client() as client:
-        assert client.get('/api/literature/111').status_code == 410
+def test_deleted_record_stays_deleted(api_client, deleted_record):
+    assert api_client.get('/literature/111').status_code == 410
 
 
-def test_record_can_be_deleted(app, not_yet_deleted_record):
-    with app.test_client() as client:
-        assert client.get('/api/literature/111').status_code == 200
+def test_record_can_be_deleted(api_client, not_yet_deleted_record):
+    assert api_client.get('/literature/111').status_code == 200
 
     record = get_db_record('lit', 111)
     record.delete()
     db.session.commit()
 
-    with app.test_client() as client:
-        assert client.get('/api/literature/111').status_code == 410
+    assert api_client.get('/literature/111').status_code == 410
 
 
-def test_merged_records_stay_merged(app, merged_records):
+def test_merged_records_stay_merged(api_client, merged_records):
     merge_merged_records.delay()
 
-    with app.test_client() as client:
-        assert client.get('/api/literature/111').status_code == 200
-        assert client.get('/api/literature/222').status_code == 301
+    assert api_client.get('/literature/111').status_code == 200
+    assert api_client.get('/literature/222').status_code == 301
 
 
-def test_records_can_be_merged(app, not_yet_merged_records):
-    with app.test_client() as client:
-        assert client.get('/api/literature/111').status_code == 200
-        assert client.get('/api/literature/222').status_code == 200
+def test_records_can_be_merged(api_client, not_yet_merged_records):
+    assert api_client.get('/literature/111').status_code == 200
+    assert api_client.get('/literature/222').status_code == 200
 
     merged_record = get_db_record('lit', 111)
     deleted_record = get_db_record('lit', 222)
@@ -313,9 +300,8 @@ def test_records_can_be_merged(app, not_yet_merged_records):
     deleted_record.merge(merged_record)
     db.session.commit()
 
-    with app.test_client() as client:
-        assert client.get('/api/literature/111').status_code == 200
-        assert client.get('/api/literature/222').status_code == 301
+    assert api_client.get('/literature/111').status_code == 200
+    assert api_client.get('/literature/222').status_code == 301
 
 
 def test_references_can_be_updated(app, records_to_be_merged):
@@ -341,14 +327,12 @@ def test_get_es_records_handles_empty_lists(app):
 
 
 def test_get_es_records_accepts_lists_of_integers(app):
-    with app.app_context():
-        records = get_es_records('lit', [4328])
+    records = get_es_records('lit', [4328])
 
     assert len(records) == 1
 
 
 def test_get_es_records_accepts_lists_of_strings(app):
-    with app.app_context():
-        records = get_es_records('lit', ['4328'])
+    records = get_es_records('lit', ['4328'])
 
     assert len(records) == 1

@@ -23,8 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 
-def test_references(app):
+def test_references(app_client):
     """Tests if reference datatables work for records."""
-    with app.test_client() as client:
-        response = client.get('/ajax/references?recid=712925&endpoint=literature')
-        assert response.status_code == 200
+    response = app_client.get('/ajax/references?recid=712925&endpoint=literature')
+    assert response.status_code == 200
