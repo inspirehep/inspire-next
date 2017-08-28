@@ -122,19 +122,18 @@ def test_deletion_array():
     """should test record deletion for nested array"""
     record = {
       'key_a': [{'key_c': ['val5', 'val4']},
-            {'key_c': ['val1', 'val6']},
-            {'key_c': ['val4', 'val6']},
-            {'key_c': ['val3']}],
+                {'key_c': ['val1', 'val6']},
+                {'key_c': ['val4', 'val6']},
+                {'key_c': ['val3']}],
       'key_b': {'key_c': {'key_d': 'pong'}}
     }
     expected_map = {
       'key_a': [{'key_c': ['val5', 'val4']},
-            {'key_c': ['val1']},
-            {'key_c': ['val4']},
-            {'key_c': ['val3']}],
+                {'key_c': ['val4']},
+                {'key_c': ['val3']}],
       'key_b': {'key_c': {'key_d': 'pong'}}
     }
-    actions_tuple = Action(values_to_check=["val6"], keys=['key_a', 'key_c'], where_keys=[],
+    actions_tuple = Action(values_to_check=["val6", "val1"], keys=['key_a', 'key_c'], where_keys=[],
                            selected_action="Deletion",
                            where_value="", regex=False, value="")
     assert actions.run_action({}, record, actions_tuple) == expected_map
@@ -194,7 +193,7 @@ def test_record_creation_2():
 
 
 def test_record_creation_3():
-    """should test sub_record creation for missing object"""
+    """should test sub_record handling for missing object"""
     record_1 = {
         "abstracts": [
             {
@@ -209,7 +208,7 @@ def test_record_creation_3():
           },
         ],
     }
-    actions_tuple = Action(values_to_check=[], keys=['abstracts', 'source'], where_keys=[], selected_action="Addition",
+    actions_tuple = Action(values_to_check=[], keys=['abstracts', 'source'], where_keys=[], selected_action="Update",
                            where_value="", regex=False, value="success")
     assert actions.run_action(schema_1, record_1, actions_tuple) == target_object
 

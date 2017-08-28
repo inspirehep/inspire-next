@@ -1,0 +1,34 @@
+[{
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "control_number": 1,
+        "_collections": ["Literature"],
+        "document_type": [
+            "article"
+        ],
+        "titles": [
+            {"title": "foo"}
+        ]
+    },
+  {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "control_number": 2,
+        "_collections": ["Literature"],
+        "document_type": [
+            "article"
+        ],
+        "titles": [
+            {"title": "foo bar"}
+        ]
+    },
+  {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "control_number": 3,
+        "_collections": ["Literature"],
+        "document_type": [
+            "article"
+        ],
+        "titles": [
+            {"title": "foo foo"}
+        ]
+    }
+]

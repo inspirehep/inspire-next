@@ -108,8 +108,19 @@ def apply_action(schema, record, action):
                                   new_where_keys, action.where_value)
             apply_action(new_schema, record[key], action_tuple)
     if action.selected_action == 'Deletion':  # don't leave empty objects
-        if not record[key]:
-            del record[key]
+        clear_from_empty(record, key)
+
+
+def clear_from_empty(record, key):
+    if isinstance(record[key], list):
+        i = 0
+        while i < len(record[key]):
+            if not record[key][i]:
+                record[key].pop(i)
+                i = i - 1
+            i = i + 1
+    if not record[key]:
+        del record[key]
 
 
 def create_schema_record(schema, path, value):
@@ -174,7 +185,8 @@ def apply_action_to_field(record, key, regex,
 
 def apply_to_array(record, key, regex, action, value, values_to_check):
     """Applying action to array."""
-    for i in range(len(record[key])):
+    i = 0
+    while i < len(record[key]):
         if action == 'Update':
             if regex and re.search(
                     re.escape(values_to_check[0]),
@@ -189,7 +201,8 @@ def apply_to_array(record, key, regex, action, value, values_to_check):
             if len(values_to_check) == 0 \
                     or record[key][i] in values_to_check:
                 record[key].pop(i)
-                --i
+                i = i - 1
+        i = i + 1
 
 
 def apply_to_object(record, key, regex, action, value, values_to_check):

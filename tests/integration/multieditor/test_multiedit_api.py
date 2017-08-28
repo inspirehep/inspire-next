@@ -22,11 +22,9 @@ def populate_db(app):
 
 
 def test_multieditor_api(populate_db, api_client):
-    response = api_client.get('/multieditor/search/1/foo')
+    response = api_client.get('/multieditor/search?page_num=1&query_string=foo')
     curr_path = os.path.dirname(__file__)
     with open(os.path.join(curr_path,
                            'assets/test_records.json')) as data_file:
         records = json.load(data_file)
     assert records == json.loads(response.data)['json_records']
-
-
