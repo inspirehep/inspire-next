@@ -60,6 +60,10 @@
                 "affautocomplete": {
                     "type": "string"
                 },
+                "affiliation_suggest": {
+                    "payloads": true,
+                    "type": "completion"
+                },
                 "control_number": {
                     "type": "integer"
                 },

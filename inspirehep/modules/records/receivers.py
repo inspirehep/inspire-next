@@ -63,6 +63,7 @@ def enhance_record(sender, json, *args, **kwargs):
     populate_recid_from_ref(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
+    populate_affiliation_suggest(sender, json, *args, **kwargs)
     after_record_enhanced.send(json)
     add_book_autocomplete(sender, json, *args, **kwargs)
 
@@ -233,6 +234,42 @@ def populate_title_suggest(sender, json, *args, **kwargs):
                     'full_title': journal_title if journal_title else ''
                 }
             }
+        })
+
+
+def populate_affiliation_suggest(sender, json, *args, **kwargs):
+    """Populate the ``affiliation_suggest`` field of Institution records."""
+
+    # FIXME: Use a dedicated method when #1355 will be resolved.
+    if 'institutions.json' in json.get('$schema'):
+        ICN = json.get('ICN', [])
+        institution_acronyms = get_value(json, 'institution_hierarchy.acronym', default=[])
+        institution_names = get_value(json, 'institution_hierarchy.name', default=[])
+        legacy_ICN = json.get('legacy_ICN', '')
+        name_variants = force_list(get_value(json, 'name_variants.value', default=[]))
+        postal_codes = force_list(get_value(json, 'addresses.postal_code', default=[]))
+
+        input_values = []
+        input_values.extend(ICN)
+        input_values.extend(institution_acronyms)
+        input_values.extend(institution_names)
+        input_values.append(legacy_ICN)
+        input_values.extend(name_variants)
+        input_values.extend(postal_codes)
+        input_values = [el for el in input_values if el]
+
+        json.update({
+            'affiliation_suggest': {
+                'input': input_values,
+                'output': legacy_ICN,
+                'payload': {
+                    '$ref': get_value(json, 'self.$ref'),
+                    'ICN': ICN,
+                    'institution_acronyms': institution_acronyms,
+                    'institution_names': institution_names,
+                    'legacy_ICN': legacy_ICN,
+                },
+            },
         })
 
 
