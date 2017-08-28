@@ -31,7 +31,7 @@ from inspire_schemas.api import load_schema
 Action = namedtuple('Action', 'keys, selected_action, value, values_to_check, regex, where_keys, where_value')
 
 
-def run_user_actions(user_actions,user_query):
+def run_user_actions(user_actions, user_query):
     """Executing user commands."""
 
     schema = load_schema('hep')
@@ -174,21 +174,22 @@ def apply_action_to_field(record, key, regex,
 
 def apply_to_array(record, key, regex, action, value, values_to_check):
     """Applying action to array."""
-    for index, array_record in enumerate(record[key]):
+    for i in range(len(record[key])):
         if action == 'Update':
             if regex and re.search(
                     re.escape(values_to_check[0]),
-                    record[key][index]):
-                record[key][index] = value
-            elif array_record in values_to_check:
-                record[key][index] = value
+                    record[key][i]):
+                record[key][i] = value
+            elif record[key][i] in values_to_check:
+                record[key][i] = value
         elif action == 'Addition':
             record[key].append(value)
             return  # In that case we want to stop looping
         elif action == 'Deletion':
             if len(values_to_check) == 0 \
-                    or array_record in values_to_check:
-                record[key].pop(index)
+                    or record[key][i] in values_to_check:
+                record[key].pop(i)
+                --i
 
 
 def apply_to_object(record, key, regex, action, value, values_to_check):

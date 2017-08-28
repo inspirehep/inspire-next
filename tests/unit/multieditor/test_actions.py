@@ -61,39 +61,6 @@ schema_1 = {
       }},
   "type": "object",
 }
-record_1 = {
-    "abstracts": [
-      {
-        "value": "A dataset corresponding to $2.8~\\mathrm{fb}^{-1}$"
-                 " of proton-proton collisions at $\\sqrt{s} = 13~\\"
-                 "mathrm{TeV}$ was recorded by the CMS experiment at"
-                 " the CERN LHC. These data are used to search for new"
-                 " light bosons with a mass in the range $0.25-8.5~\\ma"
-                 "thrm{GeV}/c^2$ decaying into muon pairs. No excess is"
-                 " observed in the data, and a model-independent upper l"
-                 "imit on the product of the cross section, branching fra"
-                 "ction and acceptance is derived. The results are interp"
-                 "reted in the context of two benchmark models, namely, th"
-                 "e next-to-minimal supersymmetric"
-                 " standard model, and dark"
-                 " SUSY models including those predicting a non-negligible"
-                 " light boson lifetime."
-      }
-    ],
-}
-schema_2 = {
-  "properties": {
-      "source": {
-        "$schema": "http://json-schema.org/schema#",
-        "description": "Source of the information in this field. As several\
-                        records can be merged,\nthis information\
-                        allows us to remember where every bit of\
-                        metadata came\nfrom and make decisions based\
-                        on it.\n\n:MARC: Often not present.",
-        "type": "string"
-      }},
-  "type": "object",
-}
 
 Action = namedtuple('Action', 'keys, selected_action, value, values_to_check, regex, where_keys,where_value')
 
@@ -207,6 +174,19 @@ def test_record_creation():
 
 def test_record_creation_2():
     """should test sub_record creation for missing object"""
+    schema_2 = {
+        "properties": {
+            "source": {
+                "$schema": "http://json-schema.org/schema#",
+                "description": "Source of the information in this field. As several\
+                            records can be merged,\nthis information\
+                            allows us to remember where every bit of\
+                            metadata came\nfrom and make decisions based\
+                            on it.\n\n:MARC: Often not present.",
+                "type": "string"
+            }},
+        "type": "object",
+    }
     key = ['source']
     value = 'success'
     target_object = {'source': 'success'}
@@ -215,24 +195,17 @@ def test_record_creation_2():
 
 def test_record_creation_3():
     """should test sub_record creation for missing object"""
+    record_1 = {
+        "abstracts": [
+            {
+                "value": "A dataset corresponding to $2.8~\\mathrm{fb}^{-1}$"
+            }
+        ],
+    }
     target_object = {
         "abstracts": [
           {
             "value": "A dataset corresponding to $2.8~\\mathrm{fb}^{-1}$"
-                     " of proton-proton collisions at $\\sqrt{s} = 13~\\"
-                     "mathrm{TeV}$ was recorded by the CMS experiment at"
-                     " the CERN LHC. These data are used to search for new"
-                     " light bosons with a mass in the range $0.25-8.5~\\ma"
-                     "thrm{GeV}/c^2$ decaying into muon pairs. No excess is"
-                     " observed in the data, and a model-independent upper l"
-                     "imit on the product of the cross section, branching fra"
-                     "ction and acceptance is derived. The results are interp"
-                     "reted in the context of two benchmark models, namely, th"
-                     "e next-to-minimal supersymmetric"
-                     " standard model, and dark"
-                     " SUSY models including those predicting a non-negligible"
-                     " light boson lifetime.",
-            'source': 'success'
           },
         ],
     }
@@ -303,7 +276,7 @@ def test_record_regex_where():
         schema = json.load(data_file)
 
     actions_tuple = Action(values_to_check=['Rome'], keys=['authors', 'affiliations', 'value'],
-                           where_keys=['authors','signature_block'], selected_action="Update",
+                           where_keys=['authors', 'signature_block'], selected_action="Update",
                            where_value='BANARo', regex=True, value="Success")
 
     assert actions.run_action(schema, test_record, actions_tuple) == expected_record

@@ -57,7 +57,7 @@ def search():
     page_num = int(request.args.get("page_num"))
     #  find record ids from elastic search
     query_result = LiteratureSearch().query_from_iq(query_string).params(size=10,
-                                                                         from_=((page_num-1)*10),
+                                                                         from_=((page_num - 1) * 10),
                                                                          _source=['control_number']).execute()
     total_records = query_result.to_dict()['hits']['total']
     query_records = query_result.hits
