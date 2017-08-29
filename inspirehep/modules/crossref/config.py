@@ -20,25 +20,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Crossref extension."""
+"""Crossref configuration."""
 
 from __future__ import absolute_import, division, print_function
 
-from . import config
-from .views import blueprint
 
+CROSSREF_API_URL = 'http://api.crossref.org/works/'
 
-class InspireCrossref(object):
-    def __init__(self, app=None):
-        self.app = app
-        if app is not None:
-            self.init_app(app)
-
-    def init_app(self, app):
-        self.init_config(app)
-        app.register_blueprint(blueprint)
-
-    def init_config(self, app):
-        for k in dir(config):
-            if k.startswith('CROSSREF_'):
-                app.config.setdefault(k, getattr(config, k))
+CROSSREF_RESPONSE_CODES = {
+    'success': 200,
+    'notfound': 404,
+    'malformed': 422,
+    'multiplefound': 300,
+}

@@ -20,25 +20,39 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Crossref extension."""
+"""Crossref core."""
 
 from __future__ import absolute_import, division, print_function
 
-from . import config
-from .views import blueprint
+import requests
+from flask import current_app, jsonify, request
+from six.moves.urllib.parse import urljoin
 
 
-class InspireCrossref(object):
-    def __init__(self, app=None):
-        self.app = app
-        if app is not None:
-            self.init_app(app)
+def get_response(crossref_doi):
+    response = requests.get(
+        urljoin(
+            current_app.config['CROSSREF_API_URL'],
+            '{term}'.format(term=crossref_doi.strip()),
+        ),
+    )
+    return response
 
-    def init_app(self, app):
-        self.init_config(app)
-        app.register_blueprint(blueprint)
 
-    def init_config(self, app):
-        for k in dir(config):
-            if k.startswith('CROSSREF_'):
-                app.config.setdefault(k, getattr(config, k))
+def get_json(doi):
+    response = get_response(doi)
+    data, query = {}, {}
+
+    if response.status_code == 200:
+        if 'message' in response.json():
+            query = response.json().get('message')
+        else:
+            query = response.json()
+        data['status'] = 'success'
+    elif response.status_code == 404:
+        data['status'] = 'notfound'
+
+    data['source'] = 'crossref'
+    data['query'] = query
+
+    return data
