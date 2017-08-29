@@ -155,40 +155,12 @@ def webcoll_callback():
 
     """
     recids = dict(request.form).get('recids', [])
+    pending_records = WorkflowsPendingRecord.query.filter(
+        WorkflowsPendingRecord.record_id.in_(recids)
+    ).all()
     response = {}
-    for recid in recids:
-        recid = int(recid)
-        if recid in response:
-            current_app.logger.warning('Received duplicated recid: %s', recid)
-            continue
-
-        try:
-            pending_record = WorkflowsPendingRecord.query.filter_by(
-                record_id=recid,
-            ).one()
-
-        except NoResultFound:
-            current_app.logger.debug(
-                'The record %s was not found on the pending list.',
-                recid,
-            )
-            response[recid] = {
-                'success': False,
-                'message': 'Recid %s not in pending list.' % recid,
-            }
-            continue
-
-        except MultipleResultsFound:
-            current_app.logger.warning(
-                'The record %s is found several times in the pending list.',
-                recid,
-            )
-            response[recid] = {
-                'success': False,
-                'message': 'Duplicated recid %s in the pending list.' % recid,
-            }
-            continue
-
+    for pending_record in pending_records:
+        recid = int(pending_record.record_id)
         workflow_id = pending_record.workflow_id
         continue_response = _find_and_continue_workflow(
             workflow_id=workflow_id,
