@@ -77,7 +77,7 @@ def match_by_arxiv_id(record):
     arxiv_id = get_arxiv_id(record)
 
     if arxiv_id:
-        query = '035:"{0}"'.format(arxiv_id)
+        query = '035__a:oai:arXiv.org:{0}'.format(arxiv_id)
         return search(query)
 
     return list()
