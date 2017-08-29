@@ -470,18 +470,18 @@ def test_populate_abstract_source_suggest_does_nothing_if_record_is_not_hep():
 
 def test_populate_title_suggest_with_all_inputs():
     schema = load_schema('journals')
-    subschema_journal_titles = schema['properties']['journal_titles']
-    subschema_short_titles = schema['properties']['short_titles']
+    subschema_journal_title = schema['properties']['journal_title']
+    subschema_short_title = schema['properties']['short_title']
     subschema_title_variants = schema['properties']['title_variants']
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/journals.json',
-        'journal_titles': [{'title': 'The Journal of High Energy Physics (JHEP)'}],
-        'short_titles': [{'title': 'JHEP'}],
-        'title_variants': [{'title': 'JOURNAL OF HIGH ENERGY PHYSICS'}],
+        'journal_title': {'title': 'The Journal of High Energy Physics (JHEP)'},
+        'short_title': 'JHEP',
+        'title_variants': ['JOURNAL OF HIGH ENERGY PHYSICS'],
     }
-    assert validate(record['journal_titles'], subschema_journal_titles) is None
-    assert validate(record['short_titles'], subschema_short_titles) is None
+    assert validate(record['journal_title'], subschema_journal_title) is None
+    assert validate(record['short_title'], subschema_short_title) is None
     assert validate(record['title_variants'], subschema_title_variants) is None
 
     populate_title_suggest(None, record)
@@ -503,20 +503,20 @@ def test_populate_title_suggest_with_all_inputs():
     assert expected == result
 
 
-def test_populate_title_suggest_without_short_titles():
+def test_populate_title_suggest_without_short_title():
     schema = load_schema('journals')
-    subschema_journal_titles = schema['properties']['journal_titles']
-    subschema_short_titles = schema['properties']['short_titles']
+    subschema_journal_title = schema['properties']['journal_title']
+    subschema_short_title = schema['properties']['short_title']
     subschema_title_variants = schema['properties']['title_variants']
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/journals.json',
-        'journal_titles': [{'title': 'The Journal of High Energy Physics (JHEP)'}],
-        'short_titles': [],
-        'title_variants': [{'title': 'JOURNAL OF HIGH ENERGY PHYSICS'}],
+        'journal_title': {'title': 'The Journal of High Energy Physics (JHEP)'},
+        'short_title': '',
+        'title_variants': ['JOURNAL OF HIGH ENERGY PHYSICS'],
     }
-    assert validate(record['journal_titles'], subschema_journal_titles) is None
-    assert validate(record['short_titles'], subschema_short_titles) is None
+    assert validate(record['journal_title'], subschema_journal_title) is None
+    assert validate(record['short_title'], subschema_short_title) is None
     assert validate(record['title_variants'], subschema_title_variants) is None
 
     populate_title_suggest(None, record)
@@ -539,18 +539,18 @@ def test_populate_title_suggest_without_short_titles():
 
 def test_populate_title_suggest_without_title_variants():
     schema = load_schema('journals')
-    subschema_journal_titles = schema['properties']['journal_titles']
-    subschema_short_titles = schema['properties']['short_titles']
+    subschema_journal_title = schema['properties']['journal_title']
+    subschema_short_title = schema['properties']['short_title']
     subschema_title_variants = schema['properties']['title_variants']
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/journals.json',
-        'journal_titles': [{'title': 'The Journal of High Energy Physics (JHEP)'}],
-        'short_titles': [{'title': 'JHEP'}],
+        'journal_title': {'title': 'The Journal of High Energy Physics (JHEP)'},
+        'short_title': 'JHEP',
         'title_variants': [],
     }
-    assert validate(record['journal_titles'], subschema_journal_titles) is None
-    assert validate(record['short_titles'], subschema_short_titles) is None
+    assert validate(record['journal_title'], subschema_journal_title) is None
+    assert validate(record['short_title'], subschema_short_title) is None
     assert validate(record['title_variants'], subschema_title_variants) is None
 
     populate_title_suggest(None, record)
@@ -573,18 +573,18 @@ def test_populate_title_suggest_without_title_variants():
 
 def test_populate_title_suggest_without_full_title():
     schema = load_schema('journals')
-    subschema_journal_titles = schema['properties']['journal_titles']
-    subschema_short_titles = schema['properties']['short_titles']
+    subschema_journal_title = schema['properties']['journal_title']
+    subschema_short_title = schema['properties']['short_title']
     subschema_title_variants = schema['properties']['title_variants']
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/journals.json',
-        'journal_titles': [],
-        'short_titles': [{'title': 'JHEP'}],
-        'title_variants': [{'title': 'JOURNAL OF HIGH ENERGY PHYSICS'}],
+        'journal_title': {},
+        'short_title': 'JHEP',
+        'title_variants': ['JOURNAL OF HIGH ENERGY PHYSICS'],
     }
-    assert validate(record['journal_titles'], subschema_journal_titles) is None
-    assert validate(record['short_titles'], subschema_short_titles) is None
+    assert validate(record['journal_title'], subschema_journal_title) is None
+    assert validate(record['short_title'], subschema_short_title) is None
     assert validate(record['title_variants'], subschema_title_variants) is None
 
     populate_title_suggest(None, record)

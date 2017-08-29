@@ -51,14 +51,14 @@ def check_book_existence(title):
 
 def check_journal_existence(title):
     query = text("""
-        SELECT id
+        SELECT r.id
         FROM
-            records_metadata AS r,
-            json_array_elements_text(r.json -> '_collections') AS elem,
-            json_array_elements(r.json-> 'journal_titles') AS titles
+            records_metadata AS r
         WHERE
-            titles->>'title' = :j_title AND elem = 'Journals';
-    """).bindparams(j_title=title)
+            (r.json -> '_collections')::jsonb ? 'Journals'
+        AND
+            (r.json -> 'journal_title' ->> 'title') = :title
+    """).bindparams(title=title)
 
     return db.session.execute(query)
 

@@ -24,38 +24,36 @@
 
 from __future__ import absolute_import, division, print_function
 
+import codecs
 import contextlib
 
 from celery import shared_task
-import codecs
 from flask import current_app
 
 from invenio_db import db
 
 
 @contextlib.contextmanager
-def file_open_for_editing(fpath):
-    fh = codecs.open(fpath, encoding='utf-8', mode='w')
+def file_open_for_editing(path):
+    fd = codecs.open(path, encoding='utf-8', mode='w')
 
-    yield fh
+    yield fd
 
-    fh.close()
+    fd.close()
 
 
 @shared_task()
 def create_journal_kb_file():
-    querystring = "SELECT short_titles, title_variants " \
-                  "FROM records_metadata as r, " \
-                  "json_array_elements(r.json -> 'short_titles') as short_titles, " \
-                  "json_array_elements(r.json -> 'title_variants') as title_variants"
+    result = db.session.execute("""
+        SELECT
+            r.json -> 'short_title' AS short_title,
+            json_array_elements(r.json -> 'title_variants') AS title_variants
+        FROM
+            records_metadata AS r
+        WHERE
+            (r.json -> 'short_title') IS NOT NULL;
+    """)
 
-    results = db.session.execute(querystring)
-
-    if results.rowcount > 1:
-        with file_open_for_editing(current_app.config['REFEXTRACT_JOURNAL_KB_PATH']) as fh:
-
-            for row in results:
-                alt_title = row['title_variants'].get('title')
-                short_title = row['short_titles'].get('title')
-                fh.write(u'{}---{}'.format(alt_title, short_title))
-                fh.write('\n')
+    with file_open_for_editing(current_app.config['REFEXTRACT_JOURNAL_KB_PATH']) as fd:
+        for row in result:
+            fd.write(u'{}---{}\n'.format(row['title_variants'], row['short_title']))

@@ -36,7 +36,7 @@ def normalize_journal_title(journal_title):
 
     if hits:
         try:
-            normalized_journal_title = hits[0].short_titles[0].title
+            normalized_journal_title = hits[0].short_title
         except (AttributeError, IndexError):
             current_app.logger.debug(
                 "Failed to normalize journal title in: %s", repr(hits[0])
