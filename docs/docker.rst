@@ -121,7 +121,6 @@ go to `localhost:5000 <http://localhost:5000>`_
 You can choose one of the following tests types:
 
   - unit
-  - disambiguation
   - workflows
   - integration
   - acceptance

@@ -43,24 +43,6 @@ services:
       - test-static
     command: bash -c "py.test inspirehep tests/unit && make -C docs html"
 
-  disambiguation:
-    extends:
-      service: test-service_base
-    command: py.test tests/integration/disambiguation
-    volumes_from:
-      - test-static
-    depends_on:
-      test-database:
-        condition: service_healthy
-      test-indexer:
-        condition: service_healthy
-      test-rabbitmq:
-        condition: service_healthy
-      test-redis:
-        condition: service_healthy
-      test-worker:
-        condition: service_started
-
   workflows:
     extends:
       service: test-service_base
@@ -82,7 +64,7 @@ services:
   integration:
     extends:
       service: test-service_base
-    command: py.test tests/integration --ignore tests/integration/disambiguation --ignore tests/integration/workflows
+    command: py.test tests/integration --ignore tests/integration/workflows
     volumes_from:
       - test-static
     depends_on:
