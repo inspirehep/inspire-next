@@ -51,7 +51,6 @@ def test_all_records_are_there(app_client):
             absolute_url = record['self']['$ref']
             relative_url = absolute_url.partition('api')[2]
             response = app_client.get(relative_url)
-
             assert response.status_code == 200
         except Exception:
             failed.append(record['control_number'])
