@@ -40,7 +40,7 @@ HAL_DOMAIN_MAPPING = {
     'Gravitation and Cosmology': 'phys.grqc',
     'Instrumentation': 'phys.phys.phys-ins-det',
     'Lattice': 'phys.hlat',
-    'Math and Math Physics': 'math',
+    'Math and Math Physics': 'phys.mphy',
     'Other': 'phys',
     'Phenomenology-HEP': 'phys.hphe',
     'Theory-HEP': 'phys.hthe',
