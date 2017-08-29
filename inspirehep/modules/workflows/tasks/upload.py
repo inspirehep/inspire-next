@@ -34,6 +34,11 @@ from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.records.api import InspireRecord
 
 from ..utils import with_debug_logging
+from inspirehep.modules.records.texkeys import (
+    inspire_texkey_minter,
+    TexkeyMinterAlreadyValid,
+    TexkeyMinterError,
+)
 
 
 @with_debug_logging
@@ -50,7 +55,22 @@ def store_record(obj, *args, **kwargs):
     record = InspireRecord.create(obj.data, id_=None)
 
     # Create persistent identifier.
-    inspire_recid_minter(str(record.id), record)
+    obj_uuid = str(record.id)
+    inspire_recid_minter(obj_uuid, record)
+    try:
+        inspire_texkey_minter(obj_uuid, record)
+    except TexkeyMinterAlreadyValid:
+        obj.log.debug(
+            'The record with uuid {} has already a valid key'.format(
+                str(obj_uuid)
+            )
+        )
+    except TexkeyMinterError:
+        obj.log.error(
+            'Not able to produce texkey for the record with uuid: {}'.format(
+                str(obj_uuid)
+            )
+        )
 
     # Commit any changes to record
     record.commit()
