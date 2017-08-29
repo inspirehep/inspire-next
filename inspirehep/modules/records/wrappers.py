@@ -192,13 +192,6 @@ class JournalsRecord(ESRecord, AdminToolsMixin):
         return get_title(self)
 
     @property
-    def short_title(self):
-        """Get preferred title."""
-        short_titles = self.get('short_titles', [])
-        if short_titles:
-            return short_titles[0].get('title', '')
-
-    @property
     def publisher(self):
         """Get preferred title."""
         publisher = self.get('publisher', [])

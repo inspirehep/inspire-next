@@ -215,21 +215,22 @@ def populate_abstract_source_suggest(sender, json, *args, **kwargs):
 def populate_title_suggest(sender, json, *args, **kwargs):
     """Populate title_suggest field of Journals records."""
     if 'journals.json' in json.get('$schema'):
-        input_values = []
+        journal_title = get_value(json, 'journal_title.title', default='')
+        short_title = json.get('short_title', '')
+        title_variants = json.get('title_variants', [])
 
-        journal_titles = get_value(json, 'journal_titles.title', [])
-        short_titles = get_value(json, 'short_titles.title', [])
-        title_variants = get_value(json, 'title_variants.title', [])
-        input_values.extend(journal_titles)
-        input_values.extend(short_titles)
+        input_values = []
+        input_values.append(journal_title)
+        input_values.append(short_title)
         input_values.extend(title_variants)
+        input_values = [el for el in input_values if el]
 
         json.update({
             'title_suggest': {
                 'input': input_values,
-                'output': short_titles[0] if short_titles else '',
+                'output': short_title if short_title else '',
                 'payload': {
-                    'full_title': journal_titles[0] if journal_titles else ''
+                    'full_title': journal_title if journal_title else ''
                 }
             }
         })
