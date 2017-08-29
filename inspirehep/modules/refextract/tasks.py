@@ -44,10 +44,13 @@ def file_open_for_editing(fpath):
 
 @shared_task()
 def create_journal_kb_file():
-    querystring = "SELECT short_titles, title_variants " \
-                  "FROM records_metadata as r, " \
-                  "json_array_elements(r.json -> 'short_titles') as short_titles, " \
-                  "json_array_elements(r.json -> 'title_variants') as title_variants"
+    querystring = "SELECT short_title, long_title FROM records_metadata as r, " \
+                  "json_array_elements(r.json -> 'short_titles') as short_title, " \
+                  "json_array_elements(r.json -> 'title_variants') as long_title " \
+                  "UNION ALL " \
+                  "SELECT short_title, long_title FROM records_metadata as r, " \
+                  "json_array_elements(r.json -> 'short_titles') as short_title, " \
+                  "json_array_elements(r.json -> 'journal_titles') as long_title "
 
     results = db.session.execute(querystring)
 
@@ -55,7 +58,7 @@ def create_journal_kb_file():
         with file_open_for_editing(current_app.config['REFEXTRACT_JOURNAL_KB_PATH']) as fh:
 
             for row in results:
-                alt_title = row['title_variants'].get('title')
-                short_title = row['short_titles'].get('title')
+                alt_title = row['long_title'].get('title')
+                short_title = row['short_title'].get('title')
                 fh.write(u'{}---{}'.format(alt_title, short_title))
                 fh.write('\n')
