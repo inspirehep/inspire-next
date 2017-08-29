@@ -26,10 +26,15 @@ from __future__ import absolute_import, division, print_function
 
 import re
 import time
+from itertools import chain
+
 from datetime import date as real_date
 from datetime import datetime as real_datetime
 
 import six
+
+from inspire_utils.helpers import force_list
+from inspirehep.utils.record import get_value
 
 # This library does not support strftime's "%s" or "%y" format strings.
 # Allowed if there's an even number of "%"s because they are escaped.
@@ -181,3 +186,30 @@ def create_valid_date(date, date_format_full="%Y-%m-%d",
                 except ValueError:
                     pass
     return valid_date
+
+
+def extract_earliest_date(record):
+    """It extracts earliest date from a record.
+
+    :param record: the record from which the earliest date has to be extracted
+    :type record: dict
+
+    :return: return the earliest date from a record
+    :rtype: string
+    """
+
+    date_paths = [
+        'preprint_date',
+        'thesis_info.date',
+        'thesis_info.defense_date',
+        'publication_info.year',
+        'legacy_creation_date',
+        'imprints.date',
+    ]
+
+    dates = list(chain.from_iterable(
+        [force_list(get_value(record, path)) for path in date_paths]))
+
+    earliest_date = create_earliest_date(dates)
+
+    return earliest_date
