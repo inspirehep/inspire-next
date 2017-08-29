@@ -58,6 +58,12 @@ from inspire_utils.record import get_value
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.records.texkeys import (
+    inspire_texkey_minter,
+    migrate_texkeys_from_legacy,
+    TexkeyMinterAlreadyValid,
+    TexkeyMinterError,
+)
 
 from ..models import InspireProdRecords
 
@@ -285,17 +291,37 @@ def create_record(record):
 
 def record_insert_or_replace(json):
     """Insert or replace a record."""
+    def _store_texkey(uuid, record):
+        try:
+            inspire_texkey_minter(uuid, record)
+        except TexkeyMinterAlreadyValid:
+            logger.debug(
+                'The record with uuid {} has already a valid key'.format(
+                    str(uuid)
+                )
+            )
+        except TexkeyMinterError:
+            logger.error(
+                'Not able to produce texkey for the record with uuid: {}'.format(
+                    str(uuid)
+                )
+            )
+
     control_number = json.get('control_number', json.get('recid'))
     if control_number:
         pid_type = get_pid_type_from_schema(json['$schema'])
         try:
             pid = PersistentIdentifier.get(pid_type, control_number)
             record = InspireRecord.get_record(pid.object_uuid)
+            migrate_texkeys_from_legacy(pid.object_uuid, record)
+            _store_texkey(pid.object_uuid, record)
             record.clear()
             record.update(json)
             record.commit()
         except PIDDoesNotExistError:
             record = InspireRecord.create(json, id_=None)
+            migrate_texkeys_from_legacy(str(record.id), record)
+            _store_texkey(str(record.id), record)
             # Create persistent identifier.
             inspire_recid_minter(str(record.id), json)
 
