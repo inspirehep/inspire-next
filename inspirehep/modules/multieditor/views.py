@@ -27,8 +27,7 @@
 from __future__ import absolute_import, print_function, division
 
 from flask import Blueprint, request, jsonify
-from invenio_db import db
-from sqlalchemy import text
+from invenio_records.api import Record
 
 from . import actions
 from ..search.api import LiteratureSearch
@@ -51,29 +50,16 @@ def index():
 @blueprint.route("/search")
 def search():
     """Basic view."""
-    records = []
-    json_records = []
-    query_string = request.args.get("query_string")
-    page_num = int(request.args.get("page_num"))
-    #  find record ids from elastic search
-    query_result = LiteratureSearch().query_from_iq(query_string).params(size=10,
-                                                                         from_=((page_num - 1) * 10),
-                                                                         _source=['control_number']).execute()
-    total_records = query_result.to_dict()['hits']['total']
-    query_records = query_result.hits
-    for result in query_records:
-        records.append(result.to_dict()['control_number'])
-    #  fetch records from database
-
-    if records:
-        records = tuple(records)
-        query = text("""
-            select json from records_metadata AS r WHERE CAST(r.json->>'control_number' as INT) IN :record_list
-        """).bindparams(record_list=records)
-        db_records = db.session.execute(query)
-
-        for record in db_records:
-            json_records.append(record[0])
-
-    json_for_view = {'json_records': json_records, 'total_records': total_records}
-    return jsonify(json_for_view)
+    query_string = request.args.get('query_string', '')
+    page_num = int(request.args.get('page_num', 1))
+    query_result = LiteratureSearch().query_from_iq(query_string).params(
+        size=10,
+        from_=((page_num - 1) * 10),
+        _source=['control_number']
+    ).execute()
+    ids = [q.meta.id for q in query_result]
+    db_records = Record.get_records(ids)
+    return {
+        'json_records': db_records,
+        'total_records': query_result.hits.total
+    }
