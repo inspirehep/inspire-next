@@ -26,6 +26,7 @@ import os
 from collections import namedtuple
 
 from inspirehep.modules.multieditor import actions
+from inspirehep.modules.multieditor.actions import Addition,Deletion
 
 schema_1 = {
   "properties": {
@@ -62,7 +63,7 @@ schema_1 = {
   "type": "object",
 }
 
-Action = namedtuple('Action', 'keys, selected_action, value, values_to_check, regex, where_keys,where_value')
+Action = namedtuple('Action', 'keys, selected_action, value, values_to_check, update_regex, where_keys,where_value')
 
 
 def test_update_array():
@@ -76,7 +77,7 @@ def test_update_array():
                   {'key_c': ['val2']}, {'key_c': ['val3']}], 'key_b': {'key_c': {'key_d': 'pong'}}
     }
     actions_tuple = Action(values_to_check=["val4"], keys=['key_a', 'key_c'], where_keys=[], selected_action="Update",
-                           where_value="", regex=False, value="success")
+                           where_value="", where_regex=False,update_regex=False, value="success")
 
     assert actions.run_action({}, record, actions_tuple) == expected_map
 
@@ -93,8 +94,27 @@ def test_update_multiple_update_array():
     }
     actions_tuple = Action(values_to_check=["val4", "val5"], keys=['key_a', 'key_c'], where_keys=[],
                            selected_action="Update",
-                           where_value="", regex=False, value="success")
+                           where_value="",where_regex=False, update_regex=False, value="success")
     assert actions.run_action({}, record, actions_tuple) == expected_map
+
+
+def test_addition_object():
+    """should test record addition for object"""
+    record = {
+        'key_a': {
+            'key_c': 'test'
+        }
+    }
+    expected_map = {
+        'key_a': {
+            'key_b': 'success',
+            'key_c': 'test'
+        }
+    }
+    add = Addition(values_to_check=[], keys=['key_a', 'key_b'], where_keys=[], where_regex=False,
+                   where_values=[], update_regex=False, value="success")
+    add.apply_action(record, {})
+    assert record == expected_map
 
 
 def test_addition_array():
@@ -113,9 +133,11 @@ def test_addition_array():
                 {'key_c': ['val3', 'success']}],
       'key_b': {'key_c': {'key_d': 'pong'}}
     }
-    actions_tuple = Action(values_to_check=[], keys=['key_a', 'key_c'], where_keys=[], selected_action="Addition",
-                           where_value="", regex=False, value="success")
-    assert actions.run_action({}, record, actions_tuple) == expected_map
+
+    add = Addition(values_to_check=[], keys=['key_a', 'key_c'], where_keys=[], where_regex=False,
+                   where_values=[], update_regex=False, value="success")
+    add.apply_action(record, {})
+    assert record == expected_map
 
 
 def test_deletion_array():
@@ -133,10 +155,11 @@ def test_deletion_array():
                 {'key_c': ['val3']}],
       'key_b': {'key_c': {'key_d': 'pong'}}
     }
-    actions_tuple = Action(values_to_check=["val6", "val1"], keys=['key_a', 'key_c'], where_keys=[],
-                           selected_action="Deletion",
-                           where_value="", regex=False, value="")
-    assert actions.run_action({}, record, actions_tuple) == expected_map
+
+    delete = Deletion(values_to_check=["val6", "val1"], keys=['key_a', 'key_c'], where_keys=[], where_regex=False,
+                   where_values=[], update_regex=False, value="")
+    delete.apply_action(record, {})
+    assert record == expected_map
 
 
 def test_deletion_empty_rec():
@@ -149,9 +172,12 @@ def test_deletion_empty_rec():
     }
     expected_map = {}
     actions_tuple = Action(values_to_check=[], keys=['key1', 'key2', 'key3'], where_keys=[], selected_action="Deletion",
-                           where_value="", regex=False, value="")
+                           where_value="", update_regex=False, value="")
 
-    assert actions.run_action({}, record, actions_tuple) == expected_map
+    delete = Deletion(values_to_check=[], keys=['key1', 'key2', 'key3'], where_keys=[], where_regex=False,
+                   where_values=[], update_regex=False, value="")
+    delete.apply_action(record, {})
+    assert record == expected_map
 
 
 def test_field_not_existing():
@@ -159,8 +185,8 @@ def test_field_not_existing():
     record = {'abstracts': [{'not_source': 'success'}]}
     expected_map = {'abstracts': [{'not_source': 'success'}]}
     actions_tuple = Action(values_to_check=[], keys=['abstracts', 'source'], where_keys=[], selected_action="Update",
-                           where_value="", regex=False, value="success")
-    assert actions.run_action({}, record, actions_tuple) == expected_map
+                           where_value="", update_regex=False, value="success")
+    assert actions.run_action(record, {}, actions_tuple) == expected_map
 
 
 def test_record_creation():
@@ -209,11 +235,11 @@ def test_record_creation_3():
         ],
     }
     actions_tuple = Action(values_to_check=[], keys=['abstracts', 'source'], where_keys=[], selected_action="Update",
-                           where_value="", regex=False, value="success")
+                           where_value="", update_regex=False, value="success")
     assert actions.run_action(schema_1, record_1, actions_tuple) == target_object
 
 
-def test_record_regex_where():
+def test_record_update_regex_where():
     test_record = {"authors": [
       {
         "affiliations": [
@@ -276,6 +302,6 @@ def test_record_regex_where():
 
     actions_tuple = Action(values_to_check=['Rome'], keys=['authors', 'affiliations', 'value'],
                            where_keys=['authors', 'signature_block'], selected_action="Update",
-                           where_value='BANARo', regex=True, value="Success")
+                           where_value='BANARo', update_regex=True, value="Success")
 
     assert actions.run_action(schema, test_record, actions_tuple) == expected_record
