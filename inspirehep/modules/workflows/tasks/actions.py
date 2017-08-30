@@ -103,7 +103,7 @@ def halt_record(action=None, message=None):
     _halt_record.__doc__ = (
         'Halt the workflow object, action=%s, message=%s' % (action, message)
     )
-    _halt_record.nicename = '%s action' % (action or 'unspecified')
+    _halt_record.description = '"%s"' % (message or 'unspecified')
     return _halt_record
 
 
