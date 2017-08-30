@@ -97,6 +97,7 @@ install_requires = [
     'requests~=2.0,>=2.15.1',
     'timeout-decorator~=0.0,>=0.3.3',
     'Babel~=2.0,>=2.4.0',
+    'setproctitle~=1.0,>=1.1.10',
 ]
 
 tests_require = [
