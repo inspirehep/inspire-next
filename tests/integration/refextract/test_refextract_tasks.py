@@ -39,7 +39,16 @@ def test_create_journal_kb_file(app):
         create_journal_kb_file()
 
     with open(path, 'r') as fd:
-        assert 'JOURNAL OF HIGH ENERGY PHYSICS---JHEP' in fd.read()
+        journal_kb = fd.read().splitlines()
+
+        assert 'JHEP---JHEP' in journal_kb
+        '''short_title -> short_title'''
+
+        assert 'THE JOURNAL OF HIGH ENERGY PHYSICS JHEP---JHEP' in journal_kb
+        '''journal_title.title -> short_title, normalization is applied'''
+
+        assert 'JOURNAL OF HIGH ENERGY PHYSICS---JHEP' in journal_kb
+        '''title_variants -> short_title'''
 
     os.close(temporary_fd)
     os.remove(path)
