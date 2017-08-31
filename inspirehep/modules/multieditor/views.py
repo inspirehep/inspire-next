@@ -26,12 +26,14 @@
 
 from __future__ import absolute_import, print_function, division
 
-from flask import Blueprint, request, jsonify
-from invenio_records.api import Record
+from flask import Blueprint, request, jsonify, session
 
+from . import queries
+from inspire_schemas.api import load_schema
+from inspirehep.modules.multieditor import tasks
+from inspirehep.modules.migrator.tasks import chunker
 from . import actions
-from ..search.api import LiteratureSearch
-
+import requests
 
 blueprint = Blueprint(
     'inspirehep_multieditor',
@@ -41,25 +43,49 @@ blueprint = Blueprint(
 
 
 @blueprint.route("/update", methods=['POST'])
-def index():
+def update():
     """Basic view."""
-    user_actions = request.json
-    return jsonify(actions.run_user_actions(user_actions))
+    user_actions = request.json['userActions']
+    checked_ids = request.json['ids']
+    all_selected = request.json['allSelected']
+    searched_records = session.get('multieditor_searched_records', [])
+    if searched_records:
+        ids = searched_records['ids']
+        index = searched_records['schema']
+    if all_selected:
+        ids = filter(lambda x: x not in checked_ids, ids)
+    else:
+        ids = checked_ids
+    schema = requests.get("http://localhost:5000/schemas/records/" + index + ".json")
+    for i, chunk in enumerate(chunker(ids, 20)):
+        tasks.process_records.delay(records_ids=chunk, user_actions=user_actions, schema=schema)
+
+    return 'success'  # fixme should return logged errors
 
 
-@blueprint.route("/search")
+@blueprint.route("/preview", methods=['POST'])
+def preview():
+    """Basic view."""
+    user_actions = request.json['userActions']
+    query_string = request.json['queryString']
+    page_num = request.json['pageNum']
+    searched_records = session.get('multieditor_searched_records', [])
+    if searched_records:
+        index = searched_records['schema']
+    schema = load_schema(index)
+    records = queries.get_records_from_query(query_string, 10, page_num, index)['json_records']
+    actions.process_records_no_db(user_actions, records, schema)
+    return jsonify(records)  # fixme should return logged errors
+
+
+@blueprint.route("/search", methods=['GET'])
 def search():
     """Basic view."""
     query_string = request.args.get('query_string', '')
     page_num = int(request.args.get('page_num', 1))
-    query_result = LiteratureSearch().query_from_iq(query_string).params(
-        size=10,
-        from_=((page_num - 1) * 10),
-        _source=['control_number']
-    ).execute()
-    ids = [q.meta.id for q in query_result]
-    db_records = Record.get_records(ids)
-    return {
-        'json_records': db_records,
-        'total_records': query_result.hits.total
+    index = request.args.get('index', '')
+    session['multieditor_searched_records'] = {
+        'ids': queries.get_record_ids_from_query(query_string, index),
+        'schema': index
     }
+    return jsonify(queries.get_records_from_query(query_string, 10, page_num, index))  # page size should become dynamic

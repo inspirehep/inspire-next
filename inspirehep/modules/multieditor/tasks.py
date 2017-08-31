@@ -19,9 +19,21 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
+from __future__ import absolute_import, print_function, division
+from celery import shared_task
+from invenio_records.api import Record
+from invenio_db import db
+from inspirehep.modules.multieditor.actions import (
+    get_actions
+)
 
-"""INSPIRE editor."""
 
-from __future__ import absolute_import, division, print_function
-
-from .views import blueprint  # noqa: F401
+@shared_task(ignore_result=True)
+def process_records(records_ids, user_actions, schema):
+    records = Record.get_records(records_ids)
+    class_actions = get_actions(user_actions)
+    for record in records:
+        for class_action in class_actions:
+            class_action.apply_action(record, schema)
+        record.commit()
+    db.session.commit()

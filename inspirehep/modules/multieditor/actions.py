@@ -21,226 +21,190 @@
 # or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, print_function, division
-import json
-import os
 import re
-from collections import namedtuple, deque
-from inspire_schemas.api import load_schema
-
-
-Action = namedtuple('Action', 'keys, selected_action, value,'
-                              ' update_regex, values_to_check, where_regex, where_keys, where_value')
 
 
 class Addition(object):
-    def __init__(self, keys, value, update_regex, values_to_check,
-                 where_regex, where_keys, where_values):
+    def __init__(self, keys, value,
+                 where_regex=False, where_keys=[],
+                 where_values=[]
+                 ):
         self.keys = keys
         self.value = value
-        self.update_regex = update_regex
-        self.values_to_check = values_to_check
         self.where_regex = where_regex
         self.where_keys = where_keys
         self.where_values = where_values
+        self.changed = False
 
-    def apply_action(self, record, schema, position = 0, checked = False):
+    def apply_action(self, record, schema, position=0, checked=False):
         """Recursive function to change a record object."""
         key = self.keys[position]
-        if self.where_keys:
+        where_key = None
+        if len(self.where_keys) > position:
             where_key = self.where_keys[position]
         new_schema = {}
-        if schema: # for testing purposes
+        if schema:  # for testing purposes
             if schema['type'] == 'object':
                 new_schema = schema['properties'][key]
             elif schema['type'] == 'array':
                 new_schema = schema['items']['properties'][key]
 
-        if len(self.where_keys) > 0:
-            if not checked and key != where_key : # fixme possible refactor
-                if check_value(record, self.where_keys, self.where_value, self.where_regex) == 0:
-                        return
+        if where_key:
+            if not checked and key != where_key:
+                if not check_value(record=record, keys=self.where_keys, values_to_check=self.where_values,
+                                   regex=self.where_regex, position=position):
+                    return
                 checked = True
-        if not record.get(key): # adding to object as well
-            record.update(create_schema_record(schema, self.keys, self.value))
+        if not record.get(key):  # adding to object as well
+            if self.where_keys and not checked:  # if the where key is in a deeper level and the subrecord is not there
+                return
+            creation_keys = self.keys[position:]
+            record.update(create_schema_record(schema, creation_keys, self.value))
+            self.changed = True
             return
         if position + 1 == len(self.keys):
             if isinstance(record[key], list):
                 record[key].append(self.value)
+                self.changed = True
         else:
             if isinstance(record[key], list):
                 for array_record in record[key]:
-                    self.apply_action(array_record, new_schema, position+1, checked)
+                    self.apply_action(array_record, new_schema, position + 1, checked)
             else:
-                self.apply_action(record[key], new_schema, position+1, checked)
+                self.apply_action(record[key], new_schema, position + 1, checked)
 
 
 class Deletion(object):
-    def __init__(self, keys, value, update_regex, values_to_check,
-                 where_regex, where_keys, where_values):
+    def __init__(self, keys, value, values_to_check_regex=False, values_to_check=[],
+                 where_regex=False, where_keys=[], where_values=[]):
         self.keys = keys
         self.value = value
-        self.update_regex = update_regex
+        self.values_to_check_regex = values_to_check_regex
         self.values_to_check = values_to_check
         self.where_regex = where_regex
         self.where_keys = where_keys
         self.where_values = where_values
+        self.changed = False
 
-    def apply_action(self, record, schema, position = 0):
+    def apply_action(self, record, schema, position=0, checked=False):
         """Recursive function to change a record object."""
         key = self.keys[position]
-        if self.where_keys:
+        where_key = None
+        if len(self.where_keys) > position:
             where_key = self.where_keys[position]
         new_schema = {}
-        if schema: # for testing purposes
+        if schema:  # for testing purposes
             if schema['type'] == 'object':
                 new_schema = schema['properties'][key]
             elif schema['type'] == 'array':
                 new_schema = schema['items']['properties'][key]
 
-        if len(self.where_keys) > 0:
-            if key != where_key: # fixme possible refactor
-                if check_value(record, self.where_keys, self.where_value, self.where_regex) == 0:
-                        return
+        if where_key:
+            if not checked and key != where_key:
+                if not check_value(record=record, keys=self.where_keys, values_to_check=self.where_values,
+                                   regex=self.where_regex, position=position):
+                    return
+                checked = True
         if not record.get(key):
             return
         if position + 1 == len(self.keys):
             if isinstance(record[key], list):
-                if self.update_regex:
+                if self.values_to_check_regex:
                     for value_to_check in self.values_to_check:
-                        record[key] = list(
-                            filter(lambda x: (re.search(
+                        record[key] = filter(lambda x: (not re.search(
                                 re.escape(value_to_check),
-                                x) or len(self.values_to_check) == 0),
-                                   record[key]))
+                                x)), record[key])
+                        self.changed = True
                 else:
-                    record[key] = list(
-                        filter(lambda x: not (len(self.values_to_check) == 0
-                                              or x in self.values_to_check), record[key]))
+                    record[key] = filter(lambda x: x not in self.values_to_check, record[key])
+                    self.changed = True
             else:
-                if len(self.values_to_check) == 0 \
-                        or record[key] in self.values_to_check:
-                    del record[key]  # Mark for deletion
-                if self.update_regex:
+                if record[key] in self.values_to_check:
+                    del record[key]
+                    self.changed = True
+                elif self.values_to_check_regex:
                     for value_to_check in self.values_to_check:
                         if re.search(
                                 re.escape(value_to_check),
                                 record[key]):
                                 del record[key]
+                                self.changed = True
+                                break
                 return
         else:
             if isinstance(record[key], list):
                 for array_record in record[key]:
-                    self.apply_action(array_record, new_schema, position+1)
+                    self.apply_action(array_record, new_schema, position + 1, checked)
             else:
-                self.apply_action(record[key], new_schema, position+1)
+                self.apply_action(record[key], new_schema, position + 1, checked)
         if isinstance(record[key], list):
-            record[key] = [item for item in record[key] if item]
-        if not record[key]:
+            record[key] = [item for item in record[key] if item not in [{}, '', []]]
+        if record[key] in [{}, '', []]:
             del record[key]
 
 
+class Update(object):
+    def __init__(self, keys, value, values_to_check_regex, values_to_check,
+                 where_regex, where_keys, where_values):
+        self.keys = keys
+        self.value = value
+        self.values_to_check_regex = values_to_check_regex
+        self.values_to_check = values_to_check
+        self.where_regex = where_regex
+        self.where_keys = where_keys
+        self.where_values = where_values
+        self.changed = False
 
-
-
-def run_user_actions(user_actions, user_query):
-    """Executing user commands."""
-
-    schema = load_schema('hep')
-    with open(os.path.join(os.path.dirname(__file__),  # change to load from db
-                           'assets/records.json'))\
-            as data_file:
-        records = json.load(data_file)
-    for record in records:
-        for action in user_actions:
-
-            if action.get('updateValue'):
-                values_to_check = action.get('updateValue').split(',')
-            else:
-                values_to_check = []
-
-            if action.get('updateValue'):
-                where_values = action.get('updateValue').split(',')
-            else:
-                where_values = []
-
-            keys = action.get('mainKey').split('/')
-            where_key = action.get('whereKey')
-            if where_key:
-                where_keys = where_key.split('/')
-            else:
-                where_keys = []
-
-            action_tuple = Action(keys, action.get('selectedAction'),
-                                  action.get('value'), action.get('updateRegex'),
-                                  values_to_check, action.get('whereRegex'),
-                                  where_keys, where_values)
-            apply_action(schema, record, action_tuple)
-    return records
-
-
-def run_action(schema, record, action):
-    """Initial function to run the recursive one."""
-    apply_action(schema, record, action)  # fixme propably delete this function :)
-    return record
-
-
-def apply_action_1(schema, record, action):
-    """Recursive function to change a record object."""
-    new_keys = deque(action.keys)
-    key = new_keys.popleft()
-    new_schema = {}
-    if schema:  # fixme in a more stable version
-        # the schema should always be present
-        if schema['type'] == 'object':
-            new_schema = schema['properties'][key]
-        elif schema['type'] == 'array':
-            new_schema = schema['items']['properties'][key]
-    if not record.get(key):
-        if action.selected_action == 'Addition':
-            record.update(create_schema_record(schema, action.keys, action.value))
-        return
-    if action.where_keys and key != action.where_keys[0]:
-        if check_value(record, action.where_keys, action.where_value) == 0:
+    def apply_action(self, record, schema, position=0, checked=False):
+        """Recursive function to change a record object."""
+        key = self.keys[position]
+        where_key = None
+        if len(self.where_keys) > position:
+            where_key = self.where_keys[position]
+        new_schema = {}
+        if schema:  # for testing purposes
+            if schema['type'] == 'object':
+                new_schema = schema['properties'][key]
+            elif schema['type'] == 'array':
+                new_schema = schema['items']['properties'][key]
+        if where_key:
+            if not checked and key != where_key:
+                if not check_value(record=record, keys=self.where_keys, values_to_check=self.where_values,
+                                   regex=self.where_regex, position=position):
+                    return
+                checked = True
+        if not record.get(key):
             return
+        if position + 1 == len(self.keys):
+            if isinstance(record[key], list):
+                if not self.values_to_check:
+                    record[key] = [self.value if True else x for x in record[key]]
+                if self.values_to_check_regex:
+                    for value_to_check in self.values_to_check:
+                        record[key] = [self.value if re.search(
+                                re.escape(value_to_check),
+                                x) else x for x in record[key]]
+                else:
+                    record[key] = [self.value if x in self.values_to_check else x for x in record[key]]
+                self.changed = True
+            else:
+                if not self.values_to_check\
+                        or record[key] in self.values_to_check:
+                    record[key] = self.value
+                if self.values_to_check_regex:
+                    for value_to_check in self.values_to_check:
+                        if re.search(
+                                re.escape(value_to_check),
+                                record[key]):
+                                record[key] = self.value
+                self.changed = True
+                return
         else:
-            action._replace(where_keys=[])
-    if not new_keys:
-        apply_action_to_field(record, key, action.where_regex,
-                              action.selected_action, action.value, action.values_to_check)
-    else:
-        if len(action.where_keys) != 0:
-            new_where_keys = deque(action.where_keys)
-            new_where_keys.popleft()
-        else:
-            new_where_keys = action.where_keys
-        if isinstance(record[key], list):
-            for array_record in record[key]:
-                action_tuple = Action(new_keys, action.selected_action,
-                                      action.value, action.update_regex,
-                                      action.values_to_check, action.where_regex,
-                                      new_where_keys, action.where_value)
-                apply_action(new_schema, array_record, action_tuple)
-        else:
-            action_tuple = Action(new_keys, action.selected_action,
-                                  action.update_regex,
-                                  action.value, action.values_to_check,
-                                  action.where_regex,
-                                  new_where_keys, action.where_value)
-            apply_action(new_schema, record[key], action_tuple)
-    if action.selected_action == 'Deletion':  # don't leave empty objects
-        clear_from_empty(record, key)
-
-
-def clear_from_empty(record, key):
-    if isinstance(record[key], list):
-        i = 0
-        while i < len(record[key]):
-            if not record[key][i]:
-                record[key].pop(i)
-                i = i - 1
-            i = i + 1
-    if not record[key]:
-        del record[key]
+            if isinstance(record[key], list):
+                for array_record in record[key]:
+                    self.apply_action(array_record, new_schema, position + 1, checked)
+            else:
+                self.apply_action(record[key], new_schema, position + 1, checked)
 
 
 def create_schema_record(schema, path, value):
@@ -255,30 +219,32 @@ def create_schema_record(schema, path, value):
     for key in path:
         new_schema = new_schema[key]
         if new_schema['type'] == 'object':
-            new_schema = schema['properties']
+            new_schema = new_schema['properties']
             temp_record[key] = {}
             temp_record = temp_record[key]
 
         elif new_schema['type'] == 'array':
             if new_schema['items']['type'] == 'object':
                 new_schema = new_schema['items']['properties']
+            if len(path) == 1:
+                temp_record[key] = [value]
+                return record
+            else:
                 temp_record[key] = [{}]
                 temp_record = temp_record[key][0]
     temp_record[path[-1]] = value
     return record
 
 
-def check_value(record, regex, keys, values_to_check):
+def check_value(record, regex, keys, values_to_check, position):
     """Where continues to find the value."""
-    #needs now fixing due to receiving the full array of keys possibly the position
-    new_keys = deque(keys)
-    key = new_keys.popleft()
-    if key not in record:
+    key = keys[position]
+    if not record.get(key):
         return False
     temp_record = record[key]
     if isinstance(temp_record, list):
         for index, array_record in enumerate(temp_record):
-            if len(new_keys) == 0:
+            if position + 1 == len(keys):
                 if array_record in values_to_check:
                     return True
                 if regex:
@@ -288,11 +254,11 @@ def check_value(record, regex, keys, values_to_check):
                                 array_record):
                             return True
             else:
-                if check_value(array_record,
-                               new_keys, values_to_check):
+                if check_value(array_record, regex,
+                               keys, values_to_check, position + 1):
                     return True
     else:
-        if len(new_keys) == 0:
+        if position + 1 == len(keys):
             if temp_record in values_to_check:
                 return True
             if regex:
@@ -302,60 +268,46 @@ def check_value(record, regex, keys, values_to_check):
                             temp_record):
                         return True
         else:
-            return check_value(temp_record,
-                               new_keys, values_to_check)
+            return check_value(temp_record, regex,
+                               keys, values_to_check, position + 1)
     return False
 
 
-def apply_action_to_field(record, key, regex,
-                          action, value, value_to_check):
-    """Function for applying action to object or array."""
-    if isinstance(record[key], list):
-        apply_to_array(record, key, regex, action, value, value_to_check)
-    else:
-        apply_to_object(record, key, regex, action, value, value_to_check)
+def get_actions(user_actions):
+    class_actions = []
+    for user_action in user_actions:
+        keys = user_action.get('mainKey').split('/')
+        if not keys:
+            return
+        if user_action.get('whereKey'):
+            where_keys = user_action.get('whereKey').split('/')
+        else:
+            where_keys = []
+        if user_action.get('selectedAction') == 'Addition':
+            class_actions.append(Addition(keys=keys, value=user_action.get('value'),
+                                          where_regex=user_action.get('whereRegex'),
+                                          where_keys=where_keys,
+                                          where_values=user_action.get('whereValues')))
+        elif user_action.get('selectedAction') == 'Deletion':
+            class_actions.append(Deletion(keys=keys, value=user_action.get('value'),
+                                          values_to_check_regex=user_action.get('updateRegex'),
+                                          values_to_check=user_action.get('updateValues'),
+                                          where_regex=user_action.get('whereRegex'),
+                                          where_keys=where_keys,
+                                          where_values=user_action.get('whereValues')))
+        elif user_action.get('selectedAction') == 'Update':
+            class_actions.append(Update(keys=keys, value=user_action.get('value'),
+                                        values_to_check_regex=user_action.get('updateRegex'),
+                                        values_to_check=user_action.get('updateValues'),
+                                        where_regex=user_action.get('whereRegex'),
+                                        where_keys=where_keys,
+                                        where_values=user_action.get('whereValues')))
+    return class_actions
 
 
-def apply_to_array(record, key, regex, action, value, values_to_check):
-    """Applying action to array."""
-    i = 0
-    while i < len(record[key]):
-        if action == 'Update':
-            if regex:
-                for value_to_check in values_to_check:
-                    if re.search(
-                       re.escape(value_to_check),
-                       record[key][i]):
-                        record[key][i] = value
-
-            elif record[key][i] in values_to_check:
-                record[key][i] = value
-        elif action == 'Addition':
-            record[key].append(value)
-            return  # In that case we want to stop looping
-        elif action == 'Deletion':
-            if len(values_to_check) == 0 \
-                    or record[key][i] in values_to_check:
-                record[key].pop(i)
-                i = i - 1
-        i = i + 1
-
-
-def apply_to_object(record, key, regex, action, value, values_to_check):
-    """Aplying action to Object."""
-    if action == 'Update':
-        if regex:
-            for value_to_check in values_to_check:
-                if re.search(
-                        re.escape(value_to_check),
-                        record[key][i]):
-                    record[key][i] = value
-
-        elif str(record[key]) in values_to_check:
-            record[key] = value
-    elif action == 'Addition' and not record.get(key):
-        record[key] = value  # dont overwrite values
-    elif action == 'Deletion':
-        if len(values_to_check) == 0 \
-                or record[key] in values_to_check:
-            record[key] = ''  # Mark for deletion
+def process_records_no_db(user_actions, records, schema): #  fixme name convention
+    class_acions = get_actions(user_actions)
+    for record in records:
+        for class_action in class_acions:
+            class_action.apply_action(record, schema)
+    return records
