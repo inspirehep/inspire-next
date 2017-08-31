@@ -59,17 +59,17 @@ app = getattr(application, 'app', application)
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_literature_suggest.validate'][0])
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_authors.validate'][0])
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['_arxiv.search'][0])
-app.url_map._rules.remove(app.url_map._rules_by_endpoint['_doi.search'][0])
+app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_crossref.search'][0])
 
 del app.url_map._rules_by_endpoint['inspirehep_literature_suggest.validate']
 del app.url_map._rules_by_endpoint['inspirehep_authors.validate']
 del app.url_map._rules_by_endpoint['_arxiv.search']
-del app.url_map._rules_by_endpoint['_doi.search']
+del app.url_map._rules_by_endpoint['inspirehep_crossref.search']
 
 del app.view_functions['inspirehep_literature_suggest.validate']
 del app.view_functions['inspirehep_authors.validate']
 del app.view_functions['_arxiv.search']
-del app.view_functions['_doi.search']
+del app.view_functions['inspirehep_crossref.search']
 
 app.url_map.update()
 
@@ -99,7 +99,7 @@ def mock_author_validate():
     return author_validate()
 
 
-@app.route('/doi/search', endpoint='_doi.search', methods=['GET'])
+@app.route('/doi/search', endpoint='inspirehep_crossref.search', methods=['GET'])
 def mock_search_articles_by_doi():
     if request.args.get('doi') == '10.1023/a:1026654312961':
         return jsonify({

@@ -206,7 +206,7 @@ setup(
             'inspire_forms = inspirehep.modules.forms:INSPIREForms',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'arxiv = inspirehep.modules.arxiv:Arxiv',
-            'crossref = inspirehep.modules.crossref:CrossRef',
+            'inspire_crossref = inspirehep.modules.crossref:InspireCrossref',
             'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
             'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
             'inspire_tools = inspirehep.modules.tools:INSPIRETools',
