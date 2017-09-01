@@ -54,7 +54,7 @@ def refextract_text():
 @blueprint.route('/refextract/url', methods=['POST'])
 def refextract_url():
     """Run refextract on a URL."""
-    extracted_references = extract_references_from_string(request.json['url'])
+    extracted_references = extract_references_from_url(request.json['url'])
     references = map_refextract_to_schema(extracted_references)
 
     return jsonify(references)
