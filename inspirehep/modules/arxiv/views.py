@@ -20,25 +20,30 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""ArXiv extension."""
+"""ArXiv blueprints."""
 
 from __future__ import absolute_import, division, print_function
 
-from . import config
-from .views import blueprint
+from flask import Blueprint, current_app, jsonify, request
+from flask_login import login_required
+
+from .core import get_json
 
 
-class InspireArXiv(object):
-    def __init__(self, app=None):
-        self.app = app
-        if app is not None:
-            self.init_app(app)
+blueprint = Blueprint(
+    'inspirehep_arxiv',
+    __name__,
+    url_prefix='/arxiv',
+)
 
-    def init_app(self, app):
-        self.init_config(app)
-        app.register_blueprint(blueprint)
 
-    def init_config(self, app):
-        for k in dir(config):
-            if k.startswith('ARXIV_'):
-                app.config.setdefault(k, getattr(config, k))
+@blueprint.route('/search', methods=['GET'])
+@login_required
+def search(arxiv=None):
+    arxiv = arxiv or request.args.get("arxiv")
+
+    result = get_json(arxiv)
+
+    resp = jsonify(result)
+    resp.status_code = current_app.config['ARXIV_RESPONSE_CODES'].get(result['status'], 200)
+    return resp

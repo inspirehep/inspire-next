@@ -20,25 +20,17 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""ArXiv extension."""
+"""ArXiv configuration."""
 
 from __future__ import absolute_import, division, print_function
 
-from . import config
-from .views import blueprint
 
+ARXIV_API_URL = 'http://export.arxiv.org/oai2'
 
-class InspireArXiv(object):
-    def __init__(self, app=None):
-        self.app = app
-        if app is not None:
-            self.init_app(app)
-
-    def init_app(self, app):
-        self.init_config(app)
-        app.register_blueprint(blueprint)
-
-    def init_config(self, app):
-        for k in dir(config):
-            if k.startswith('ARXIV_'):
-                app.config.setdefault(k, getattr(config, k))
+ARXIV_RESPONSE_CODES = {
+    'success': 200,
+    'notfound': 404,
+    'unsupported_versioning': 415,
+    'malformed': 422,
+    'multiplefound': 300,
+}

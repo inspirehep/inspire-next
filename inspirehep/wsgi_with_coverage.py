@@ -58,17 +58,17 @@ app = getattr(application, 'app', application)
 
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_literature_suggest.validate'][0])
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_authors.validate'][0])
-app.url_map._rules.remove(app.url_map._rules_by_endpoint['_arxiv.search'][0])
+app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_arxiv.search'][0])
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_crossref.search'][0])
 
 del app.url_map._rules_by_endpoint['inspirehep_literature_suggest.validate']
 del app.url_map._rules_by_endpoint['inspirehep_authors.validate']
-del app.url_map._rules_by_endpoint['_arxiv.search']
+del app.url_map._rules_by_endpoint['inspirehep_arxiv.search']
 del app.url_map._rules_by_endpoint['inspirehep_crossref.search']
 
 del app.view_functions['inspirehep_literature_suggest.validate']
 del app.view_functions['inspirehep_authors.validate']
-del app.view_functions['_arxiv.search']
+del app.view_functions['inspirehep_arxiv.search']
 del app.view_functions['inspirehep_crossref.search']
 
 app.url_map.update()
@@ -279,7 +279,7 @@ def mock_search_articles_by_doi():
         return ''
 
 
-@app.route('/arxiv/search', endpoint='_arxiv.search', methods=['GET'])
+@app.route('/arxiv/search', endpoint='inspirehep_arxiv.search', methods=['GET'])
 def mock_search_articles_by_arxiv():
     if request.args.get('arxiv') == 'hep-th/9711200':
         return jsonify({
