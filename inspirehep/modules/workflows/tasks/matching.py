@@ -30,7 +30,6 @@ import re
 import traceback
 import backoff
 from functools import wraps
-from itertools import chain
 
 import requests
 import six

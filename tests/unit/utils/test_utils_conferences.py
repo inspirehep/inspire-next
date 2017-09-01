@@ -23,7 +23,6 @@
 from __future__ import absolute_import, division, print_function
 
 from elasticsearch_dsl.result import Response
-from flask import current_app
 
 from inspirehep.utils.conferences import (
     render_conferences,

@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .api import (
+from .api import (              # noqa: F401
     IQ,
     LiteratureSearch,
     AuthorsSearch,
@@ -35,4 +35,4 @@ from .api import (
     ExperimentsSearch,
     JournalsSearch
 )
-from .ext import INSPIRESearch
+from .ext import INSPIRESearch  # noqa: F401

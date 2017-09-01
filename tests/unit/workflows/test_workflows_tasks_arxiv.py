@@ -40,7 +40,6 @@ from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_package_download,
     arxiv_plot_extract,
 )
-from inspirehep.modules.workflows.errors import DownloadError
 from plotextractor.errors import InvalidTarball
 
 from mocks import AttrDict, MockEng, MockFiles, MockObj

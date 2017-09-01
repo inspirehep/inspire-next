@@ -24,4 +24,4 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .ext import Arxiv
+from .ext import Arxiv  # noqa: F401

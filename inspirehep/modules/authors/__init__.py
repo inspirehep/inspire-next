@@ -24,6 +24,5 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .ext import INSPIREAuthors
-
-from .receivers import *  # noqa: F403
+from .ext import INSPIREAuthors  # noqa: F401
+from .receivers import *         # noqa: F401,F403

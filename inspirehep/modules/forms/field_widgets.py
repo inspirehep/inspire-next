@@ -26,8 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from inspirehep.utils.template import render_macro_from_template
 
-from werkzeug import MultiDict
-
 from wtforms.widgets import HiddenInput, HTMLString, Input, RadioInput, \
     TextInput, html_params
 

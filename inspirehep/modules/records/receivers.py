@@ -36,7 +36,7 @@ from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
 from inspirehep.modules.records.api import InspireRecord
-from inspirehep.utils.date import create_earliest_date, create_valid_date
+from inspirehep.utils.date import create_earliest_date
 
 from .experiments import EXPERIMENTS_MAP
 from .signals import after_record_enhanced

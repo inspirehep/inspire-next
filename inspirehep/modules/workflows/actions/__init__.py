@@ -24,6 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .hep_approval import HEPApproval
-from .merge_approval import MergeApproval
-from .author_approval import AuthorApproval
+from .hep_approval import HEPApproval        # noqa: F401
+from .merge_approval import MergeApproval    # noqa: F401
+from .author_approval import AuthorApproval  # noqa: F401

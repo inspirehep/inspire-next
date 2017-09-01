@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import json
-
 
 def test_citations(app_client):
     """Tests if citation datatables work for records."""

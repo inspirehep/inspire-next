@@ -32,7 +32,6 @@ from functools import wraps
 
 import backoff
 import requests
-import urllib3
 from flask import current_app
 
 from .models import WorkflowsAudit
