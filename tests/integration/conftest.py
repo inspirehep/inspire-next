@@ -24,10 +24,17 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 
+import os
+import sys
+
 from invenio_db import db
 from invenio_search import current_search_client as es
 
 from inspirehep.factory import create_app
+
+# Use the helpers folder to store test helpers.
+# See: http://stackoverflow.com/a/33515264/374865
+sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
 
 
 @pytest.fixture(scope='session')

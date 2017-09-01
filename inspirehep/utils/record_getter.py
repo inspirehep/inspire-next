@@ -91,7 +91,7 @@ def get_es_records(pid_type, recids, **kwargs):
 
 @raise_record_getter_error_and_log
 def get_es_record_by_uuid(uuid):
-    pid = PersistentIdentifier.query.filter_by(object_uuid=uuid).one()
+    pid = PersistentIdentifier.query.filter_by(object_uuid=uuid, object_type='rec').one()
 
     endpoint = get_endpoint_from_pid_type(pid.pid_type)
     search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][endpoint]
