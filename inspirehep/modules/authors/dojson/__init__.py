@@ -22,4 +22,4 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .fields import updateform
+from .fields import updateform  # noqa: F401

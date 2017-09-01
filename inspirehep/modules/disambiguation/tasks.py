@@ -26,7 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from celery import current_app, shared_task
 from celery.utils.log import get_task_logger
-from sqlalchemy import distinct
 from sqlalchemy.orm.exc import StaleDataError
 
 from invenio_db import db

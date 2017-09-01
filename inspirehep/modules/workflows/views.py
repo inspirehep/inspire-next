@@ -28,7 +28,6 @@ import re
 
 from os.path import join
 from flask import Blueprint, jsonify, request, current_app
-from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from invenio_db import db
 from invenio_workflows import workflow_object_class, ObjectStatus

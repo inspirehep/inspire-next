@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from functools import partial
-
 from inspirehep.bat.pages import (
     create_literature,
     holding_panel_literature_detail,

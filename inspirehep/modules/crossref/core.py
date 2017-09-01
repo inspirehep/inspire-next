@@ -25,7 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import requests
-from flask import current_app, jsonify, request
+from flask import current_app
 from six.moves.urllib.parse import urljoin
 
 

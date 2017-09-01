@@ -24,4 +24,4 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .ext import INSPIREForms
+from .ext import INSPIREForms  # noqa: F401
