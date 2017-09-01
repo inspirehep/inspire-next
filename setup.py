@@ -114,7 +114,7 @@ tests_require = [
 
 extras_require = {
     'docs': [
-        'Sphinx~=1.0,>=1.6.2',
+        'Sphinx~=1.0,<1.6',
     ],
     'postgresql': [
         'invenio-db[postgresql,versioning]>=1.0.0b2',
