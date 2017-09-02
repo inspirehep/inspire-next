@@ -31,7 +31,7 @@ from lxml import etree
 from invenio_search.api import current_search_client as es
 
 from inspirehep.modules.hal.core.tei import convert_to_tei
-from inspirehep.modules.migrator.tasks.records import record_insert_or_replace
+from inspirehep.modules.migrator.tasks import record_insert_or_replace
 from inspirehep.utils.record_getter import get_db_record
 
 

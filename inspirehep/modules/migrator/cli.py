@@ -33,7 +33,7 @@ from flask_sqlalchemy import models_committed
 
 from inspirehep.modules.records.receivers import receive_after_model_commit
 
-from .tasks.records import (
+from .tasks import (
     add_citation_counts,
     migrate,
     migrate_broken_records,

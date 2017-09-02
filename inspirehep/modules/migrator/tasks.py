@@ -59,7 +59,7 @@ from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 
-from ..models import InspireProdRecords
+from .models import InspireProdRecords
 
 
 logger = get_task_logger(__name__)
