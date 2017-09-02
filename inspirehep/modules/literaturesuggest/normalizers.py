@@ -37,14 +37,17 @@ from inspirehep.utils.normalizers import (
 
 def check_book_existence(title):
     query = text("""
-        SELECT json
+        SELECT r.json -> 'self' ->> '$ref' AS self_jsonref
         FROM
             records_metadata AS r,
-            json_array_elements(r.json->'titles') AS elem,
-            json_array_elements_text(r.json->'document_type') AS elem2
+            json_array_elements(r.json -> 'titles') AS titles
         WHERE
-            elem->>'title' = :b_title AND elem2 = 'book';
-    """).bindparams(b_title=title)
+            (r.json -> '_collections')::jsonb ? 'Literature'
+        AND
+            (r.json -> 'document_type')::jsonb ? 'book'
+        AND
+            titles ->> 'title' = :title
+    """).bindparams(title=title)
 
     return db.session.execute(query)
 
@@ -120,7 +123,7 @@ def find_book_id(obj, formdata):
         if not formdata.get('parent_book'):
             result = list(check_book_existence(formdata.get('book_title')))
             if len(result) == 1:
-                formdata['parent_book'] = result[0][0]['self']['$ref']
+                formdata['parent_book'] = result[0][0]
     return formdata
 
 

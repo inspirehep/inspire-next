@@ -22,14 +22,40 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
+
 from inspirehep.modules.literaturesuggest.normalizers import (
+    check_book_existence,
     find_book_id,
     normalize_journal_title,
 )
+from inspirehep.modules.migrator.tasks import record_insert_or_replace
+from inspirehep.utils.record_getter import get_db_record
 
 
 class MockObj(object):
     pass
+
+
+@pytest.fixture
+def book_with_another_document_type(app):
+    """Temporarily add another document type to a book record."""
+    record = get_db_record('lit', 1373790)
+    record['document_type'] = ['book', 'proceedings']
+    record_insert_or_replace(record)
+
+    yield
+
+    record = get_db_record('lit', 1373790)
+    record['document_type'] = ['book']
+    record_insert_or_replace(record)
+
+
+def test_check_book_existence_handles_multiple_document_types(book_with_another_document_type):
+    expected = 'http://localhost:5000/api/literature/1373790'
+    result = list(check_book_existence('The Large Hadron Collider'))
+
+    assert expected == result[0][0]
 
 
 def test_find_book_id(app):
