@@ -34,7 +34,7 @@ from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.modules.migrator.models import InspireProdRecords
-from inspirehep.modules.migrator.tasks.records import continuous_migration
+from inspirehep.modules.migrator.tasks import continuous_migration
 from inspirehep.utils.record_getter import get_db_record
 
 

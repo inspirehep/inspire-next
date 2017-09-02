@@ -33,7 +33,7 @@ from inspire_dojson.hep import hep
 from inspire_utils.record import get_value
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.tasks import merge_merged_records, update_refs
-from inspirehep.modules.migrator.tasks.records import record_insert_or_replace
+from inspirehep.modules.migrator.tasks import record_insert_or_replace
 from inspirehep.utils.record_getter import get_db_record, get_es_records
 
 

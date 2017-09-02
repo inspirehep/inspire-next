@@ -45,7 +45,7 @@ def app():
 
     with app.app_context():
         # Imports must be local, otherwise tasks default to pickle serializer.
-        from inspirehep.modules.migrator.tasks.records import add_citation_counts, migrate
+        from inspirehep.modules.migrator.tasks import add_citation_counts, migrate
         from inspirehep.modules.fixtures.collections import init_collections
         from inspirehep.modules.fixtures.files import init_all_storage_paths
         from inspirehep.modules.fixtures.users import init_users_and_permissions
@@ -78,7 +78,7 @@ def small_app():
 
     with app.app_context():
         # Imports must be local, otherwise tasks default to pickle serializer.
-        from inspirehep.modules.migrator.tasks.records import migrate
+        from inspirehep.modules.migrator.tasks import migrate
         from inspirehep.modules.fixtures.collections import init_collections
         from inspirehep.modules.fixtures.files import init_all_storage_paths
         from inspirehep.modules.fixtures.users import init_users_and_permissions
@@ -100,20 +100,20 @@ def small_app():
         yield app
 
 
-@pytest.yield_fixture()
+@pytest.fixture()
 def app_client(app):
     """Flask test client for APP app."""
     with app.test_client() as client:
         yield client
 
 
-@pytest.yield_fixture(scope='session')
+@pytest.fixture(scope='session')
 def api(app):
     """Flask application fixture."""
     yield app.wsgi_app.mounts['/api']
 
 
-@pytest.yield_fixture()
+@pytest.fixture()
 def api_client(api):
     """Flask test client for API app."""
     with api.test_client() as client:
