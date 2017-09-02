@@ -28,7 +28,7 @@ import requests
 from flask import current_app
 from lxml.etree import fromstring
 
-from .utils.xmlhelpers import etree_to_dict
+from .utils import etree_to_dict
 
 
 def get_response(arxiv_id):
