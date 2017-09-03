@@ -27,7 +27,6 @@ from __future__ import absolute_import, division, print_function
 import gzip
 import re
 import zlib
-
 from collections import Counter
 from itertools import chain
 
@@ -37,6 +36,7 @@ from celery.utils.log import get_task_logger
 from elasticsearch.helpers import bulk as es_bulk
 from elasticsearch.helpers import scan as es_scan
 from flask import current_app, url_for
+from flask_sqlalchemy import models_committed
 from jsonschema import ValidationError
 from redis import StrictRedis
 from redis_lock import Lock
@@ -58,6 +58,7 @@ from inspire_utils.record import get_value
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.records.receivers import receive_after_model_commit
 
 from .models import InspireProdRecords
 
@@ -182,6 +183,8 @@ def create_index_op(record):
 
 @shared_task(ignore_result=False, compress='zlib', acks_late=True)
 def migrate_chunk(chunk):
+    models_committed.disconnect(receive_after_model_commit)
+
     index_queue = []
 
     try:
@@ -201,6 +204,8 @@ def migrate_chunk(chunk):
         stats_only=True,
         request_timeout=req_timeout,
     )
+
+    models_committed.connect(receive_after_model_commit)
 
 
 @shared_task()
