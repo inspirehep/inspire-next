@@ -24,14 +24,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-import logging
 import os
 
 import click
 import requests
-from flask_sqlalchemy import models_committed
-
-from inspirehep.modules.records.receivers import receive_after_model_commit
 
 from .tasks import (
     add_citation_counts,
@@ -45,15 +41,6 @@ from .tasks import (
 @click.group()
 def migrator():
     """Command related to migrating INSPIRE data."""
-    logging.basicConfig()
-    # Disable auto-indexing receiver in migration tasks
-    models_committed.disconnect(receive_after_model_commit)
-
-
-@migrator.resultcallback()
-def process_result(result, **kwargs):
-    """Callback run after migrator commands."""
-    models_committed.connect(receive_after_model_commit)
 
 
 @migrator.command()
