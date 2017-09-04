@@ -11,6 +11,7 @@
                     "type": "string"
                 },
                 "_collections": {
+                    "index": "not_analyzed",
                     "type": "string"
                 },
                 "_harvesting_info": {

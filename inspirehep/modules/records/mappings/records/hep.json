@@ -11,6 +11,7 @@
                     "type": "string"
                 },
                 "_collections": {
+                    "index": "not_analyzed",
                     "type": "string"
                 },
                 "_desy_bookkeeping": {
@@ -294,6 +295,10 @@
                     },
                     "type": "object"
                 },
+                "bookautocomplete": {
+                    "payloads": true,
+                    "type": "completion"
+                },
                 "citation_count": {
                     "type": "integer"
                 },
@@ -531,10 +536,6 @@
                         }
                     },
                     "type": "object"
-                },
-                "bookautocomplete": {
-                    "payloads": true,
-                    "type": "completion"
                 },
                 "keywords": {
                     "properties": {
