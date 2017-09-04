@@ -20,8 +20,18 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIRE migrator module."""
+"""Migrator extension."""
 
 from __future__ import absolute_import, division, print_function
 
-from .ext import InspireMigrator  # noqa: F401
+from .cli import migrator
+
+
+class InspireMigrator(object):
+    def __init__(self, app=None):
+        if app:
+            self.init_app(app)
+
+    def init_app(self, app):
+        app.cli.add_command(migrator)
+        app.extensions['inspire-migrator'] = self
