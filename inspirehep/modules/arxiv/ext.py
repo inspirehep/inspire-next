@@ -37,6 +37,7 @@ class InspireArXiv(object):
     def init_app(self, app):
         self.init_config(app)
         app.register_blueprint(blueprint)
+        app.extensions['inspire-arxiv'] = self
 
     def init_config(self, app):
         for k in dir(config):
