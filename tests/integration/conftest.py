@@ -40,6 +40,7 @@ def app():
         CELERY_RESULT_BACKEND='cache',
         CELERY_CACHE_BACKEND='memory',
         CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
+        SECRET_KEY='secret!',
         TESTING=True,
     )
 

@@ -11,6 +11,7 @@
                     "type": "string"
                 },
                 "_collections": {
+                    "analyzer": "lowercase_analyzer",
                     "type": "string"
                 },
                 "_harvesting_info": {

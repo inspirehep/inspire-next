@@ -25,11 +25,13 @@ from __future__ import absolute_import, division, print_function
 import json
 
 import pytest
-from flask import current_app
+from flask import current_app, session
+
+from flask_security import current_user
 from flask_security.utils import hash_password
 
-from invenio_access.models import ActionUsers
-from invenio_accounts.models import SessionActivity, User
+from invenio_access.models import ActionRoles, ActionUsers
+from invenio_accounts.models import Role, SessionActivity, User
 from invenio_accounts.testutils import (
     login_user_via_session,
     login_user_via_view,
@@ -42,6 +44,7 @@ from invenio_search import current_search_client as es
 
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.records.permissions import load_user_collections
 from inspirehep.modules.search.api import LiteratureSearch
 
 
@@ -153,8 +156,22 @@ def users(app):
         active=True,
     )
 
+    collection_restricted_role = Role(
+        name='restrictedcollmaintainer'
+    )
+
+    user_allowed_with_role = User(
+        email='allowedrole@inspirehep.net',
+        password=hashed_password,
+        active=True,
+        roles=[collection_restricted_role]
+    )
+
     db.session.add_all(
-        [user, user_partially_allowed, user_allowed]
+        [
+            user, user_partially_allowed, user_allowed,
+            user_allowed_with_role, collection_restricted_role
+        ]
     )
     db.session.commit()
 
@@ -177,22 +194,41 @@ def users(app):
         user_id=user_partially_allowed.id
     )
 
+    # Create actions for the allowed role
+    partial_restricted_collection_role_action = ActionRoles(
+        action='view-restricted-collection',
+        argument='Restricted Collection',
+        role_id=collection_restricted_role.id
+    )
+
+    role_only_collection_action = ActionRoles(
+        action='view-restricted-collection',
+        argument='Role only collection',
+        role_id=collection_restricted_role.id
+    )
+
     db.session.add_all(
         [
             restricted_collection_action,
             another_restricted_collection_action,
-            partial_restricted_collection_action
+            partial_restricted_collection_action,
+            partial_restricted_collection_role_action,
+            role_only_collection_action
         ]
     )
     db.session.commit()
 
     yield
 
+    current_cache.clear()
     SessionActivity.query.delete()
+    ActionRoles.query.filter_by(action='view-restricted-collection').delete()
     ActionUsers.query.filter_by(action='view-restricted-collection').delete()
     User.query.filter_by(email='user@inspirehep.net').delete()
     User.query.filter_by(email='partially_allowed@inspirehep.net').delete()
     User.query.filter_by(email='allowed@inspirehep.net').delete()
+    db.session.delete(Role.query.filter_by(name='restrictedcollmaintainer').one())
+    db.session.delete(User.query.filter_by(email='allowedrole@inspirehep.net').one())
     db.session.commit()
 
 
@@ -207,7 +243,7 @@ def test_all_collections_are_cached(app, app_client):
 
     # Check that cache key has been correctly filled
     assert current_cache.get('restricted_collections') == \
-        set([u'Another Restricted Collection', u'Restricted Collection'])
+        set([u'Another Restricted Collection', u'Restricted Collection', u'Role only collection'])
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -257,6 +293,7 @@ def test_record_public_api_read(app, app_client, user_info, status):
     (dict(email='user@inspirehep.net'), 403),
     # Logged in user not allowed in all collections
     (dict(email='partially_allowed@inspirehep.net'), 403),
+    (dict(email='allowedrole@inspirehep.net'), 403),
     # Logged in user with permissions assigned
     (dict(email='allowed@inspirehep.net'), 200),
     # admin user
@@ -296,13 +333,14 @@ def test_record_restricted_api_read(app, api_client, user_info, status):
 
 @pytest.mark.parametrize('user_info,total_count,es_filter', [
     # anonymous user
-    (None, 23, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}, {'match': {'_collections': u'Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
+    (None, 23, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}, {'match': {'_collections': u'Restricted Collection'}}, {'match': {'_collections': u'Role only collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
     # Logged in user without permissions assigned
-    (dict(email='user@inspirehep.net', password='123456'), 23, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}, {'match': {'_collections': u'Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
+    (dict(email='user@inspirehep.net', password='123456'), 23, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}, {'match': {'_collections': u'Restricted Collection'}}, {'match': {'_collections': u'Role only collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
     # Logged in user not allowed in all collections
-    (dict(email='partially_allowed@inspirehep.net', password='123456'), 23, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
+    (dict(email='partially_allowed@inspirehep.net', password='123456'), 23, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}, {'match': {'_collections': u'Role only collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
+    (dict(email='allowedrole@inspirehep.net', password='123456'), 23, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
     # Logged in user with permissions assigned
-    (dict(email='allowed@inspirehep.net', password='123456'), 24, [{'match': {'_collections': 'Literature'}}]),
+    (dict(email='allowed@inspirehep.net', password='123456'), 24, [{'bool': {'must_not': [{'match': {'_collections': u'Role only collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
     # admin user
     (dict(email='admin@inspirehep.net', password='123456'), 24, [{'match': {'_collections': 'Literature'}}]),
 ])
@@ -343,3 +381,27 @@ def test_record_api_update(app, api_client, sample_record, user_info, status):
                           data=json.dumps(sample_record.dumps()),
                           content_type='application/json')
     assert resp.status_code == status
+
+
+@pytest.mark.parametrize('user_info,collections', [
+    (None, set()),
+    (dict(email='partially_allowed@inspirehep.net'), set([u'Restricted Collection'])),
+    (dict(email='allowed@inspirehep.net'), set([u'Restricted Collection', u'Another Restricted Collection'])),
+    (dict(email='allowedrole@inspirehep.net'), set([u'Restricted Collection', u'Role only collection']))
+])
+@pytest.mark.usefixtures("users")
+def test_load_user_collections(app_client, user_info, collections):
+    if user_info:
+        login_user_via_session(app_client, email=user_info['email'])
+    with app_client.get('/'):
+        load_user_collections(current_app, current_user)
+        assert session['restricted_collections'] == collections
+
+
+def test_load_user_collections_called_upon_login(app_client, users):
+    login_user_via_view(
+        app_client, email='allowed@inspirehep.net',
+        password='123456', login_url='/login/?local=1'
+    )
+    with app_client.get('/'):
+        assert session['restricted_collections']
