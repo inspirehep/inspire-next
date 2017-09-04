@@ -199,7 +199,7 @@ setup(
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_fixtures = inspirehep.modules.fixtures:INSPIREFixtures',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
-            'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
+            'inspire_migrator = inspirehep.modules.migrator:InspireMigrator',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_authors = inspirehep.modules.authors:INSPIREAuthors',
             'inspire_literature_suggest = inspirehep.modules.literaturesuggest:INSPIRELiteratureSuggestion',
