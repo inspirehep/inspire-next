@@ -295,6 +295,10 @@
                     },
                     "type": "object"
                 },
+                "bookautocomplete": {
+                    "payloads": true,
+                    "type": "completion"
+                },
                 "citation_count": {
                     "type": "integer"
                 },
@@ -532,10 +536,6 @@
                         }
                     },
                     "type": "object"
-                },
-                "bookautocomplete": {
-                    "payloads": true,
-                    "type": "completion"
                 },
                 "keywords": {
                     "properties": {
