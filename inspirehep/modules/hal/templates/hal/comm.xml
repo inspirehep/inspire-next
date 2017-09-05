@@ -1,10 +1,12 @@
-{% extends "hal/base.xml.jinja2" %}
+{% extends "hal/base.xml" %}
 
 {% block notesStmt %}
 <notesStmt>
   <note type="audience" n="2"/>
+  <note type="invited" n="0"/>
   <note type="peer" n="{{ peer_reviewed }}"/>
   <note type="popular" n="{{ divulgation }}"/>
+  <note type="proceedings" n="1"/>
 </notesStmt>
 {% endblock notesStmt %}
 
@@ -26,7 +28,18 @@
       {% endfor %}
     </analytic>
     <monogr>
-      <title level="j">{{ journal_title }}</title>
+      <title level="m">{{ journal_title }}</title>
+      <meeting>
+        <title>{{ conference_title }}</title>
+        {% if conference_start_date %}
+        <date type="start">{{ conference_start_date }}</date>
+        {% endif %}
+        {% if conference_end_date %}
+        <date type="end">{{ conference_end_date }}</date>
+        {% endif %}
+        <settlement>{{ conference_city }}</settlement>
+        <country key="{{ conference_country }}"/>
+      </meeting>
       <imprint>
         <biblScope unit="volume">{{ journal_volume }}</biblScope>
         <biblScope unit="issue">{{ journal_issue }}</biblScope>
@@ -52,7 +65,7 @@
   </langUsage>
   <textClass>
     <classCode scheme="halDomain" n="{{ domain }}"></classCode>
-    <classCode scheme="halTypology" n="ART"></classCode>
+    <classCode scheme="halTypology" n="COMM"></classCode>
   </textClass>
   <abstract xml:lang="{{ abstract_language }}">{{ abstract }}</abstract>
   {% for collaboration in collaborations %}

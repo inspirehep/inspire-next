@@ -73,10 +73,10 @@ def convert_to_tei(record):
     """
     if _is_comm(record):
         ctx = _get_comm_context(record)
-        return render_template('hal/comm.xml.jinja2', **ctx)
+        return render_template('hal/comm.xml', **ctx)
     elif _is_art(record):
         ctx = _get_art_context(record)
-        return render_template('hal/art.xml.jinja2', **ctx)
+        return render_template('hal/art.xml', **ctx)
 
     raise NotImplementedError
 
