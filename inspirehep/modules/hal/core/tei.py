@@ -24,8 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-import langdetect
 from flask import render_template
+from langdetect import detect
+from langdetect.lang_detect_exception import LangDetectException
 
 from inspirehep.utils.record import get_arxiv_id, get_title
 
@@ -73,10 +74,10 @@ def convert_to_tei(record):
     """
     if _is_comm(record):
         ctx = _get_comm_context(record)
-        return render_template('hal/comm.xml.jinja2', **ctx)
+        return render_template('hal/comm.xml', **ctx)
     elif _is_art(record):
         ctx = _get_art_context(record)
-        return render_template('hal/art.xml.jinja2', **ctx)
+        return render_template('hal/art.xml', **ctx)
 
     raise NotImplementedError
 
@@ -89,7 +90,10 @@ def _is_comm(record):
 
 def _get_comm_context(record):
     abstract = get_abstract(record)
-    abstract_language = langdetect.detect(abstract)
+    try:
+        abstract_language = detect(abstract)
+    except LangDetectException:
+        abstract_language = ''
 
     conference_record = get_conference_record(record)
     conference_city = get_conference_city(conference_record)
@@ -133,7 +137,10 @@ def _is_art(record):
 
 def _get_art_context(record):
     abstract = get_abstract(record)
-    abstract_language = langdetect.detect(abstract)
+    try:
+        abstract_language = detect(abstract)
+    except LangDetectException:
+        abstract_language = ''
 
     return {
         'abstract': abstract,
