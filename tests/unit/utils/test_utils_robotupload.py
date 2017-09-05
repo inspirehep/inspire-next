@@ -22,67 +22,59 @@
 
 from __future__ import absolute_import, division, print_function
 
-import httpretty
 import pytest
+import requests_mock
 from flask import current_app
 from mock import patch
 
 from inspirehep.utils.robotupload import make_robotupload_marcxml
 
 
-@pytest.mark.httpretty
 def test_make_robotupload_marcxml():
-    httpretty.HTTPretty.allow_net_connect = False
-    httpretty.register_uri(
-        httpretty.POST, 'http://localhost:5000/batchuploader/robotupload/insert')
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://localhost:5000/batchuploader/robotupload/insert'
+        )
 
-    make_robotupload_marcxml(
-        'http://localhost:5000', '<record></record>', 'insert')
-
-    httpretty.HTTPretty.allow_net_connect = True
+        make_robotupload_marcxml(
+            'http://localhost:5000', '<record></record>', 'insert')
 
 
-@pytest.mark.httpretty
 def test_make_robotupload_marcxml_falls_back_to_config_when_url_is_none():
-    httpretty.HTTPretty.allow_net_connect = False
-    httpretty.register_uri(
-        httpretty.POST, 'http://inspirehep.net/batchuploader/robotupload/insert')
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert'
+        )
 
-    config = {'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net'}
+        config = {'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net'}
 
-    with patch.dict(current_app.config, config):
-        make_robotupload_marcxml(None, '<record></record>', 'insert')
-
-    httpretty.HTTPretty.allow_net_connect = True
+        with patch.dict(current_app.config, config):
+            make_robotupload_marcxml(None, '<record></record>', 'insert')
 
 
-@pytest.mark.httpretty
 def test_make_robotupload_marcxml_raises_when_url_is_none_and_config_is_empty():
-    httpretty.HTTPretty.allow_net_connect = False
-    httpretty.register_uri(
-        httpretty.POST, 'http://localhost:5000/batchuploader/robotupload/insert')
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://localhost:5000/batchuploader/robotupload/insert'
+        )
 
-    with pytest.raises(ValueError) as excinfo:
-        make_robotupload_marcxml(None, '<record></record>', 'insert')
-    assert 'LEGACY_ROBOTUPLOAD_URL' in str(excinfo.value)
-
-    httpretty.HTTPretty.allow_net_connect = True
+        with pytest.raises(ValueError) as excinfo:
+            make_robotupload_marcxml(None, '<record></record>', 'insert')
+        assert 'LEGACY_ROBOTUPLOAD_URL' in str(excinfo.value)
 
 
-@pytest.mark.httpretty
 def test_make_robotupload_marcxml_handles_unicode():
-    httpretty.HTTPretty.allow_net_connect = False
-    httpretty.register_uri(
-        httpretty.POST, 'http://localhost:5000/batchuploader/robotupload/insert')
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://localhost:5000/batchuploader/robotupload/insert'
+        )
 
-    snippet = (
-        u'<record>'
-        u'  <datafield tag="700" ind1=" " ind2=" ">'
-        u'    <subfield code="a">André, M.</subfield>'
-        u'  </datafield>'
-        u'</record>'
-    )  # record/1503367
+        snippet = (
+            u'<record>'
+            u'  <datafield tag="700" ind1=" " ind2=" ">'
+            u'    <subfield code="a">André, M.</subfield>'
+            u'  </datafield>'
+            u'</record>'
+        )  # record/1503367
 
-    make_robotupload_marcxml('http://localhost:5000', snippet, 'insert')
-
-    httpretty.HTTPretty.allow_net_connect = True
+        make_robotupload_marcxml('http://localhost:5000', snippet, 'insert')

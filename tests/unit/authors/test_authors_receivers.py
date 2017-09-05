@@ -22,9 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
-import httpretty
 import mock
-import pytest
+import requests_mock
 from flask import current_app
 
 from inspire_schemas.api import load_schema, validate
@@ -81,7 +80,6 @@ def test_phonetic_block_generation_ascii():
     assert json_dict['authors'][0]['signature_block'] == "ELj"
 
 
-@pytest.mark.httpretty
 def test_phonetic_block_generation_broken():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
@@ -91,17 +89,18 @@ def test_phonetic_block_generation_broken():
     }
 
     with mock.patch.dict(current_app.config, extra_config):
-        httpretty.register_uri(
-            httpretty.POST,
-            "{base_url}/text/phonetic_blocks".format(
-                base_url=current_app.config.get('BEARD_API_URL')),
-            content_type="application/json",
-            body='{"phonetic_blocks": {}}',
-            status=200)
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', '{base_url}/text/phonetic_blocks'.format(
+                    base_url=current_app.config.get('BEARD_API_URL')),
+                status_code=200,
+                headers={'content-type': 'application/json'},
+                json={'phonetic_blocks': {}}
+            )
 
         json_dict = {
-            "authors": [{
-                "full_name": "** NOT VALID **"
+            'authors': [{
+                'full_name': '** NOT VALID **'
             }]
         }
 
@@ -111,30 +110,30 @@ def test_phonetic_block_generation_broken():
         assert json_dict['authors'][0].get('signature_block') is None
 
 
-@pytest.mark.httpretty
 def test_phonetic_block_generation_unicode():
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
     }
 
     with mock.patch.dict(current_app.config, extra_config):
-        httpretty.register_uri(
-            httpretty.POST,
-            "{base_url}/text/phonetic_blocks".format(
-                base_url=current_app.config.get('BEARD_API_URL')),
-            content_type="application/json",
-            body=u'{"phonetic_blocks": {"Grzegorz Jacenków": "JACANCg"}}',
-            status=200)
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', '{base_url}/text/phonetic_blocks'.format(
+                    base_url=current_app.config.get('BEARD_API_URL')),
+                status_code=200,
+                headers={'content-type': 'application/json'},
+                text=u'{"phonetic_blocks": {"Grzegorz Jacenków": "JACANCg"}}'
+            )
 
         json_dict = {
-            "authors": [{
-                "full_name": u"Grzegorz Jacenków"
+            'authors': [{
+                'full_name': u'Grzegorz Jacenków'
             }]
         }
 
         receivers.assign_phonetic_block(json_dict)
 
-        assert json_dict['authors'][0]['signature_block'] == "JACANCg"
+        assert json_dict['authors'][0]['signature_block'] == 'JACANCg'
 
 
 def test_uuid_generation():

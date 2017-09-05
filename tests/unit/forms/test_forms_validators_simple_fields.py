@@ -22,8 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
-import httpretty
 import pytest
+import requests_mock
 from wtforms.validators import StopValidation
 
 from inspirehep.modules.forms.validators.simple_fields import (
@@ -104,62 +104,58 @@ def test_date_validator_raises_on_invalid_dates():
         assert date_validator(None, field) is None
 
 
-@pytest.mark.httpretty
 def test_pdf_validator_raises_on_link_to_not_a_pdf():
-    httpretty.register_uri(
-        httpretty.GET,
-        'http://example.com/not-a-pdf',
-        body='<!doctype html>',
-        content_type='text/html; charset=utf-8',
-    )
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://example.com/not-a-pdf',
+            text='<!doctype html>',
+            headers={'content-type': 'text/html; charset=utf-8'},
+        )
 
-    field = MockField('http://example.com/not-a-pdf')
+        field = MockField('http://example.com/not-a-pdf')
 
-    with pytest.raises(StopValidation):
-        pdf_validator(None, field)
+        with pytest.raises(StopValidation):
+            pdf_validator(None, field)
 
 
-@pytest.mark.httpretty
 def test_pdf_validator_accepts_a_link_to_a_pdf():
-    httpretty.register_uri(
-        httpretty.GET,
-        'http://example.com/a-pdf',
-        body='%PDF1.3',
-        content_type='application/pdf',
-    )
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://example.com/a-pdf',
+            text='%PDF1.3',
+            headers={'content-type': 'application/pdf'},
+        )
 
-    field = MockField('http://example.com/a-pdf')
+        field = MockField('http://example.com/a-pdf')
 
-    assert pdf_validator(None, field) is None
+        assert pdf_validator(None, field) is None
 
 
-@pytest.mark.httpretty
 def test_pdf_validator_accepts_a_link_to_a_pdf_on_a_misconfigured_server():
-    httpretty.register_uri(
-        httpretty.GET,
-        'http://example.com/a-pdf',
-        body='%PDF1.3',
-        content_type='image/pdf;charset=ISO-8859-1',
-    )
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://example.com/a-pdf',
+            text='%PDF1.3',
+            headers={'content-type': 'image/pdf;charset=ISO-8859-1'},
+        )
 
-    field = MockField('http://example.com/a-pdf')
+        field = MockField('http://example.com/a-pdf')
 
-    assert pdf_validator(None, field) is None
+        assert pdf_validator(None, field) is None
 
 
-@pytest.mark.httpretty
 def test_no_pdf_validator_raises_on_link_to_a_pdf():
-    httpretty.register_uri(
-        httpretty.GET,
-        'http://example.com/a-pdf',
-        body='%PDF1.3',
-        content_type='application/pdf',
-    )
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://example.com/a-pdf',
+            text='%PDF1.3',
+            headers={'content-type': 'application/pdf'},
+        )
 
-    field = MockField('http://example.com/a-pdf')
+        field = MockField('http://example.com/a-pdf')
 
-    with pytest.raises(StopValidation):
-        no_pdf_validator(None, field)
+        with pytest.raises(StopValidation):
+            no_pdf_validator(None, field)
 
 
 def test_year_validator_accepts_a_valid_year():

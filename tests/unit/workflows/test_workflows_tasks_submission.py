@@ -22,8 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
-import httpretty
 import pytest
+import requests_mock
 from flask import current_app
 from mock import patch
 
@@ -138,22 +138,76 @@ def test_create_ticket_calls_tickets_create_with_template(mock_create_ticket_wit
     )
 
 
-@pytest.mark.httpretty
 def test_send_robotupload_works_with_mode_correct_and_extra_data_key():
-    httpretty.HTTPretty.allow_net_connect = False
-    httpretty.register_uri(
-        httpretty.POST, 'http://inspirehep.net/batchuploader/robotupload/correct',
-        body='[INFO] foo bar baz')
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/correct',
+            text='[INFO] foo bar baz'
+        )
 
-    config = {
-        'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
-        'PRODUCTION_MODE': True,
-    }
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
+        }
 
-    with patch.dict(current_app.config, config):
-        data = {}
-        extra_data = {
-            'update_payload': {
+        with patch.dict(current_app.config, config):
+            data = {}
+            extra_data = {
+                'update_payload': {
+                    'arxiv_eprints': [
+                        {
+                            'categories': [
+                                'hep-th',
+                            ],
+                            'value': 'hep-th/9711200',
+                        },
+                    ],
+                },
+            }
+
+            obj = MockObj(data, extra_data)
+            eng = MockEng()
+
+            _send_robotupload = send_robotupload(
+                marcxml_processor=hep2marc,
+                mode='correct',
+                extra_data_key='update_payload',
+            )
+
+            assert _send_robotupload(obj, eng) is None
+
+            expected = (
+                'Robotupload sent!'
+                '[INFO] foo bar baz'
+                'end of upload'
+            )
+            result = obj.log._info.getvalue()
+
+            assert expected == result
+
+            expected = 'Waiting for robotupload: [INFO] foo bar baz'
+            result = eng.msg
+
+            assert expected == result
+
+
+def test_send_robotupload_works_with_hep2marc_and_mode_insert():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            text='[INFO] foo bar baz'
+        )
+
+        schema = load_schema('hep')
+        subschema = schema['properties']['arxiv_eprints']
+
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
+        }
+
+        with patch.dict(current_app.config, config):
+            data = {
                 'arxiv_eprints': [
                     {
                         'categories': [
@@ -162,287 +216,219 @@ def test_send_robotupload_works_with_mode_correct_and_extra_data_key():
                         'value': 'hep-th/9711200',
                     },
                 ],
-            },
-        }
+            }
+            extra_data = {}
+            assert validate(data['arxiv_eprints'], subschema) is None
 
-        obj = MockObj(data, extra_data)
-        eng = MockEng()
+            obj = MockObj(data, extra_data)
+            eng = MockEng()
 
-        _send_robotupload = send_robotupload(
-            marcxml_processor=hep2marc,
-            mode='correct',
-            extra_data_key='update_payload',
-        )
+            _send_robotupload = send_robotupload(
+                marcxml_processor=hep2marc,
+                mode='insert',
+            )
 
-        assert _send_robotupload(obj, eng) is None
+            assert _send_robotupload(obj, eng) is None
 
-        expected = (
-            'Robotupload sent!'
-            '[INFO] foo bar baz'
-            'end of upload'
-        )
-        result = obj.log._info.getvalue()
+            expected = (
+                'Robotupload sent!'
+                '[INFO] foo bar baz'
+                'end of upload'
+            )
+            result = obj.log._info.getvalue()
 
-        assert expected == result
+            assert expected == result
 
-        expected = 'Waiting for robotupload: [INFO] foo bar baz'
-        result = eng.msg
+            expected = 'Waiting for robotupload: [INFO] foo bar baz'
+            result = eng.msg
 
-        assert expected == result
-
-    httpretty.HTTPretty.allow_net_connect = True
+            assert expected == result
 
 
-@pytest.mark.httpretty
-def test_send_robotupload_works_with_hep2marc_and_mode_insert():
-    httpretty.HTTPretty.allow_net_connect = False
-    httpretty.register_uri(
-        httpretty.POST, 'http://inspirehep.net/batchuploader/robotupload/insert',
-        body='[INFO] foo bar baz')
-
-    schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
-
-    config = {
-        'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
-        'PRODUCTION_MODE': True,
-    }
-
-    with patch.dict(current_app.config, config):
-        data = {
-            'arxiv_eprints': [
-                {
-                    'categories': [
-                        'hep-th',
-                    ],
-                    'value': 'hep-th/9711200',
-                },
-            ],
-        }
-        extra_data = {}
-        assert validate(data['arxiv_eprints'], subschema) is None
-
-        obj = MockObj(data, extra_data)
-        eng = MockEng()
-
-        _send_robotupload = send_robotupload(
-            marcxml_processor=hep2marc,
-            mode='insert',
-        )
-
-        assert _send_robotupload(obj, eng) is None
-
-        expected = (
-            'Robotupload sent!'
-            '[INFO] foo bar baz'
-            'end of upload'
-        )
-        result = obj.log._info.getvalue()
-
-        assert expected == result
-
-        expected = 'Waiting for robotupload: [INFO] foo bar baz'
-        result = eng.msg
-
-        assert expected == result
-
-    httpretty.HTTPretty.allow_net_connect = True
-
-
-@pytest.mark.httpretty
 def test_send_robotupload_works_with_hepnames2marc_and_mode_insert():
-    httpretty.HTTPretty.allow_net_connect = False
-    httpretty.register_uri(
-        httpretty.POST, 'http://inspirehep.net/batchuploader/robotupload/insert',
-        body='[INFO] foo bar baz')
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            text='[INFO] foo bar baz'
+        )
 
-    schema = load_schema('authors')
-    subschema = schema['properties']['arxiv_categories']
+        schema = load_schema('authors')
+        subschema = schema['properties']['arxiv_categories']
 
-    config = {
-        'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
-        'PRODUCTION_MODE': True,
-    }
-
-    with patch.dict(current_app.config, config):
-        data = {
-            'arxiv_categories': [
-                'hep-th',
-            ],
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
         }
-        extra_data = {}
-        assert validate(data['arxiv_categories'], subschema) is None
 
-        obj = MockObj(data, extra_data)
-        eng = MockEng()
+        with patch.dict(current_app.config, config):
+            data = {
+                'arxiv_categories': [
+                    'hep-th',
+                ],
+            }
+            extra_data = {}
+            assert validate(data['arxiv_categories'], subschema) is None
 
-        _send_robotupload = send_robotupload(
-            marcxml_processor=hepnames2marc,
-            mode='insert',
-        )
+            obj = MockObj(data, extra_data)
+            eng = MockEng()
 
-        assert _send_robotupload(obj, eng) is None
+            _send_robotupload = send_robotupload(
+                marcxml_processor=hepnames2marc,
+                mode='insert',
+            )
 
-        expected = (
-            'Robotupload sent!'
-            '[INFO] foo bar baz'
-            'end of upload'
-        )
-        result = obj.log._info.getvalue()
+            assert _send_robotupload(obj, eng) is None
 
-        assert expected == result
+            expected = (
+                'Robotupload sent!'
+                '[INFO] foo bar baz'
+                'end of upload'
+            )
+            result = obj.log._info.getvalue()
 
-        expected = 'Waiting for robotupload: [INFO] foo bar baz'
-        result = eng.msg
+            assert expected == result
 
-        assert expected == result
+            expected = 'Waiting for robotupload: [INFO] foo bar baz'
+            result = eng.msg
 
-    httpretty.HTTPretty.allow_net_connect = True
+            assert expected == result
 
 
-@pytest.mark.httpretty
 def test_send_robotupload_works_with_mode_holdingpen_and_without_callback_url():
-    httpretty.HTTPretty.allow_net_connect = False
-    httpretty.register_uri(
-        httpretty.POST, 'http://inspirehep.net/batchuploader/robotupload/holdingpen',
-        body='[INFO] foo bar baz')
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/holdingpen',
+            text='[INFO] foo bar baz'
+        )
 
-    schema = load_schema('authors')
-    subschema = schema['properties']['arxiv_categories']
+        schema = load_schema('authors')
+        subschema = schema['properties']['arxiv_categories']
 
-    config = {
-        'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
-        'PRODUCTION_MODE': True,
-    }
-
-    with patch.dict(current_app.config, config):
-        data = {
-            'arxiv_categories': [
-                'hep-th',
-            ],
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
         }
-        extra_data = {}
-        assert validate(data['arxiv_categories'], subschema) is None
 
-        obj = MockObj(data, extra_data)
-        eng = MockEng()
+        with patch.dict(current_app.config, config):
+            data = {
+                'arxiv_categories': [
+                    'hep-th',
+                ],
+            }
+            extra_data = {}
+            assert validate(data['arxiv_categories'], subschema) is None
 
-        _send_robotupload = send_robotupload(
-            marcxml_processor=hepnames2marc,
-            mode='holdingpen',
-            callback_url=None,
-        )
+            obj = MockObj(data, extra_data)
+            eng = MockEng()
 
-        assert _send_robotupload(obj, eng) is None
+            _send_robotupload = send_robotupload(
+                marcxml_processor=hepnames2marc,
+                mode='holdingpen',
+                callback_url=None,
+            )
 
-        expected = (
-            'Robotupload sent!'
-            '[INFO] foo bar baz'
-            'end of upload'
-        )
-        result = obj.log._info.getvalue()
+            assert _send_robotupload(obj, eng) is None
 
-        assert expected == result
+            expected = (
+                'Robotupload sent!'
+                '[INFO] foo bar baz'
+                'end of upload'
+            )
+            result = obj.log._info.getvalue()
 
-    httpretty.HTTPretty.allow_net_connect = True
+            assert expected == result
 
 
-@pytest.mark.httpretty
 def test_send_robotupload_logs_on_error_response():
-    httpretty.HTTPretty.allow_net_connect = False
-    httpretty.register_uri(
-        httpretty.POST, 'http://inspirehep.net/batchuploader/robotupload/insert',
-        body='[ERROR] cannot use the service')
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            text='[ERROR] cannot use the service'
+        )
 
-    schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
+        schema = load_schema('hep')
+        subschema = schema['properties']['arxiv_eprints']
 
-    config = {
-        'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
-        'PRODUCTION_MODE': True,
-    }
-
-    with patch.dict(current_app.config, config):
-        data = {
-            'arxiv_eprints': [
-                {
-                    'categories': [
-                        'hep-th',
-                    ],
-                    'value': 'hep-th/9711200',
-                },
-            ],
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
         }
-        extra_data = {}
-        assert validate(data['arxiv_eprints'], subschema) is None
 
-        obj = MockObj(data, extra_data)
-        eng = MockEng()
+        with patch.dict(current_app.config, config):
+            data = {
+                'arxiv_eprints': [
+                    {
+                        'categories': [
+                            'hep-th',
+                        ],
+                        'value': 'hep-th/9711200',
+                    },
+                ],
+            }
+            extra_data = {}
+            assert validate(data['arxiv_eprints'], subschema) is None
 
-        _send_robotupload = send_robotupload(
-            marcxml_processor=hep2marc,
-            mode='insert',
-        )
+            obj = MockObj(data, extra_data)
+            eng = MockEng()
 
-        with pytest.raises(Exception) as excinfo:
-            _send_robotupload(obj, eng)
+            _send_robotupload = send_robotupload(
+                marcxml_processor=hep2marc,
+                mode='insert',
+            )
 
-        expected = (
-            'Error while submitting robotupload: '
-            '[ERROR] cannot use the service'
-        )
-        result = str(excinfo.value)
+            with pytest.raises(Exception) as excinfo:
+                _send_robotupload(obj, eng)
 
-        assert expected == result
+            expected = (
+                'Error while submitting robotupload: '
+                '[ERROR] cannot use the service'
+            )
+            result = str(excinfo.value)
 
-        expected = (
-            'Your IP is not in app.config_BATCHUPLOADER_WEB_ROBOT_RIGHTS on host: '
-            '[ERROR] cannot use the service'
-        )
-        result = obj.log._error.getvalue()
+            assert expected == result
 
-        assert expected == result
+            expected = (
+                'Your IP is not in app.config_BATCHUPLOADER_WEB_ROBOT_RIGHTS on host: '
+                '[ERROR] cannot use the service'
+            )
+            result = obj.log._error.getvalue()
 
-    httpretty.HTTPretty.allow_net_connect = True
+            assert expected == result
 
 
-@pytest.mark.httpretty
 def test_send_robotupload_does_nothing_when_not_in_production_mode():
-    httpretty.HTTPretty.allow_net_connect = False
+    with requests_mock.Mocker():
+        schema = load_schema('hep')
+        subschema = schema['properties']['arxiv_eprints']
 
-    schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
-
-    config = {
-        'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
-        'PRODUCTION_MODE': False,
-    }
-
-    with patch.dict(current_app.config, config):
-        data = {
-            'arxiv_eprints': [
-                {
-                    'categories': [
-                        'hep-th',
-                    ],
-                    'value': 'hep-th/9711200',
-                },
-            ],
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': False,
         }
-        extra_data = {}
-        assert validate(data['arxiv_eprints'], subschema) is None
 
-        obj = MockObj(data, extra_data)
-        eng = MockEng()
+        with patch.dict(current_app.config, config):
+            data = {
+                'arxiv_eprints': [
+                    {
+                        'categories': [
+                            'hep-th',
+                        ],
+                        'value': 'hep-th/9711200',
+                    },
+                ],
+            }
+            extra_data = {}
+            assert validate(data['arxiv_eprints'], subschema) is None
 
-        _send_robotupload = send_robotupload(
-            marcxml_processor=hep2marc,
-            mode='insert',
-        )
+            obj = MockObj(data, extra_data)
+            eng = MockEng()
 
-        assert _send_robotupload(obj, eng) is None
+            _send_robotupload = send_robotupload(
+                marcxml_processor=hep2marc,
+                mode='insert',
+            )
 
-    httpretty.HTTPretty.allow_net_connect = True
+            assert _send_robotupload(obj, eng) is None
 
 
 def test_wait_webcoll_halts_the_workflow_engine_when_in_production_mode():

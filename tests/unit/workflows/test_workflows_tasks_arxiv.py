@@ -24,9 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
-import httpretty
 import pkg_resources
-import pytest
+import requests_mock
 from mock import patch
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -45,185 +44,188 @@ from plotextractor.errors import InvalidTarball
 from mocks import AttrDict, MockEng, MockFiles, MockObj
 
 
-@pytest.mark.httpretty
 def test_arxiv_fulltext_download_logs_on_success():
-    httpretty.register_uri(
-        httpretty.GET, 'http://export.arxiv.org/pdf/1605.03844',
-        body=pkg_resources.resource_string(
-            __name__, os.path.join('fixtures', '1605.03844.pdf')))
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            content=pkg_resources.resource_string(
+             __name__, os.path.join('fixtures', '1605.03844.pdf')),
+        )
 
-    schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
+        schema = load_schema('hep')
+        subschema = schema['properties']['arxiv_eprints']
 
-    data = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'physics.ins-det',
-                ],
-                'value': '1605.03844',
-            },
-        ],
-    }  # literature/1458302
-    extra_data = {}
-    files = MockFiles({})
-    assert validate(data['arxiv_eprints'], subschema) is None
+        data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'physics.ins-det',
+                    ],
+                    'value': '1605.03844',
+                },
+            ],
+        }  # literature/1458302
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
 
-    assert arxiv_fulltext_download(obj, eng) is None
+        assert arxiv_fulltext_download(obj, eng) is None
 
-    expected = 'PDF retrieved from arXiv for 1605.03844'
-    result = obj.log._info.getvalue()
+        expected = 'PDF retrieved from arXiv for 1605.03844'
+        result = obj.log._info.getvalue()
 
-    assert expected == result
+        assert expected == result
 
 
-@pytest.mark.httpretty
 def test_arxiv_fulltext_download_logs_on_pdf_not_existing():
-    httpretty.register_uri(
-        httpretty.GET, 'http://export.arxiv.org/pdf/1707.02785',
-        body=pkg_resources.resource_string(
-            __name__, os.path.join('fixtures', '1707.02785.html')))
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1707.02785',
+            content=pkg_resources.resource_string(
+             __name__, os.path.join('fixtures', '1707.02785.html')),
+        )
 
-    schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
+        schema = load_schema('hep')
+        subschema = schema['properties']['arxiv_eprints']
 
-    data = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'cs.CV',
-                ],
-                'value': '1707.02785',
-            },
-        ],
-    }  # literature/1458302
-    extra_data = {}
-    files = MockFiles({})
-    assert validate(data['arxiv_eprints'], subschema) is None
+        data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'cs.CV',
+                    ],
+                    'value': '1707.02785',
+                },
+            ],
+        }  # literature/1458302
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
 
-    assert arxiv_fulltext_download(obj, eng) is None
+        assert arxiv_fulltext_download(obj, eng) is None
 
-    expected = 'No PDF is available for 1707.02785'
-    result = obj.log._info.getvalue()
+        expected = 'No PDF is available for 1707.02785'
+        result = obj.log._info.getvalue()
 
-    assert expected == result
+        assert expected == result
 
 
-@pytest.mark.httpretty
 def test_arxiv_fulltext_download_retries_on_error():
-    httpretty.register_uri(
-        httpretty.GET, 'http://export.arxiv.org/pdf/1605.03814',
-        responses=[
-            httpretty.Response(body='', status=500),
-            httpretty.Response(
-                body=pkg_resources.resource_string(
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1605.03814',
+            [{'content': '',
+              'status_code': 500},
+             {'content': pkg_resources.resource_string(
                     __name__, os.path.join('fixtures', '1605.03814.pdf')),
-                status='200'
-            ),
-        ])
+             'status_code': 200}]
+        )
 
-    schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
+        schema = load_schema('hep')
+        subschema = schema['properties']['arxiv_eprints']
 
-    data = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'hep-ex',
-                ],
-                'value': '1605.03814',
-            },
-        ],
-    }  # literature/1458270
-    extra_data = {}
-    files = MockFiles({})
-    assert validate(data['arxiv_eprints'], subschema) is None
+        data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'hep-ex',
+                    ],
+                    'value': '1605.03814',
+                },
+            ],
+        }  # literature/1458270
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
 
-    assert arxiv_fulltext_download(obj, eng) is None
+        assert arxiv_fulltext_download(obj, eng) is None
 
-    expected = 'PDF retrieved from arXiv for 1605.03814'
-    result = obj.log._info.getvalue()
+        expected = 'PDF retrieved from arXiv for 1605.03814'
+        result = obj.log._info.getvalue()
 
-    assert expected == result
+        assert expected == result
 
 
-@pytest.mark.httpretty
 def test_arxiv_package_download_logs_on_success():
-    httpretty.register_uri(
-        httpretty.GET, 'http://export.arxiv.org/e-print/1605.03959',
-        body=pkg_resources.resource_string(
-            __name__, os.path.join('fixtures', '1605.03959.tar.gz')))
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/e-print/1605.03959',
+            content=pkg_resources.resource_string(
+             __name__, os.path.join('fixtures', '1605.03959.tar.gz')),
+        )
 
-    schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
+        schema = load_schema('hep')
+        subschema = schema['properties']['arxiv_eprints']
 
-    data = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'hep-th',
-                    'cond-mat.stat-mech',
-                    'cond-mat.str-el',
-                ],
-                'value': '1605.03959',
-            },
-        ],
-    }  # literature/1458968
-    extra_data = {}
-    files = MockFiles({})
-    assert validate(data['arxiv_eprints'], subschema) is None
+        data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'hep-th',
+                        'cond-mat.stat-mech',
+                        'cond-mat.str-el',
+                    ],
+                    'value': '1605.03959',
+                },
+            ],
+        }  # literature/1458968
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
 
-    assert arxiv_package_download(obj, eng) is None
+        assert arxiv_package_download(obj, eng) is None
 
-    expected = 'Tarball retrieved from arXiv for 1605.03959'
-    result = obj.log._info.getvalue()
+        expected = 'Tarball retrieved from arXiv for 1605.03959'
+        result = obj.log._info.getvalue()
 
-    assert expected == result
+        assert expected == result
 
 
-@pytest.mark.httpretty
 def test_arxiv_package_download_logs_on_error():
-    httpretty.register_uri(
-        httpretty.GET, 'http://export.arxiv.org/e-print/1605.03951', status=500)
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/e-print/1605.03951',
+            status_code=500,
+        )
 
-    schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
+        schema = load_schema('hep')
+        subschema = schema['properties']['arxiv_eprints']
 
-    data = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'astro-ph.HE',
-                ],
-                'value': '1605.03951',
-            },
-        ],
-    }  # literature/1458254
-    extra_data = {}
-    files = MockFiles({})
-    assert validate(data['arxiv_eprints'], subschema) is None
+        data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'astro-ph.HE',
+                    ],
+                    'value': '1605.03951',
+                },
+            ],
+        }  # literature/1458254
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['arxiv_eprints'], subschema) is None
 
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
 
-    assert arxiv_package_download(obj, eng) is None
+        assert arxiv_package_download(obj, eng) is None
 
-    expected = 'Cannot retrieve tarball from arXiv for 1605.03951'
-    result = obj.log._error.getvalue()
+        expected = 'Cannot retrieve tarball from arXiv for 1605.03951'
+        result = obj.log._error.getvalue()
 
-    assert expected == result
+        assert expected == result
 
 
 @patch('plotextractor.api.os')
