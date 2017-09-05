@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from invenio_accounts.testutils import login_user_via_session
 from invenio_records.models import RecordMetadata
 
 from inspirehep.modules.migrator.models import InspireProdRecords
@@ -30,7 +31,7 @@ from inspirehep.modules.migrator.models import InspireProdRecords
 def test_all_records_were_loaded(app):
     records = [record.json for record in RecordMetadata.query.all()]
 
-    expected = 42
+    expected = 43
     result = len(records)
 
     assert expected == result
@@ -44,8 +45,10 @@ def test_all_records_are_valid(app):
 
 
 def test_all_records_are_there(app_client):
-    failed = []
+    # Use superadmin user to ensure we can visit all records
+    login_user_via_session(app_client, email='admin@inspirehep.net')
 
+    failed = []
     for record in [record.json for record in RecordMetadata.query.all()]:
         try:
             absolute_url = record['self']['$ref']
