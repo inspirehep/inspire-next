@@ -27,7 +27,7 @@ from flask_principal import ActionNeed
 from flask_security import current_user
 from werkzeug.local import LocalProxy
 
-from invenio_access.models import ActionUsers
+from invenio_access.models import ActionUsers, ActionRoles
 from invenio_access.permissions import (
     DynamicPermission,
     ParameterizedActionNeed,
@@ -59,6 +59,13 @@ def load_user_collections(app, user):
             action='view-restricted-collection',
             user_id=current_user.get_id()).all()]
     )
+    user_roles = user.roles
+    for role in user_roles:
+        user_collections = user_collections | set(
+            [a.argument for a in ActionRoles.query.filter_by(
+                action='view-restricted-collection',
+                role_id=role.id).all()]
+        )
     session['restricted_collections'] = user_collections
 
 
@@ -70,6 +77,12 @@ def load_restricted_collections():
         restricted_collections = set(
             [
                 a.argument for a in ActionUsers.query.filter_by(
+                    action='view-restricted-collection').all()
+            ]
+        )
+        restricted_collections = restricted_collections | set(
+            [
+                a.argument for a in ActionRoles.query.filter_by(
                     action='view-restricted-collection').all()
             ]
         )

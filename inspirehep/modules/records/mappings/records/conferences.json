@@ -11,6 +11,7 @@
                     "type": "string"
                 },
                 "_collections": {
+                    "analyzer": "lowercase_analyzer",
                     "type": "string"
                 },
                 "_private_notes": {
@@ -214,6 +215,17 @@
                         }
                     },
                     "type": "object"
+                }
+            }
+        }
+    },
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "lowercase_analyzer": {
+                    "filter": "lowercase",
+                    "tokenizer": "keyword",
+                    "type": "custom"
                 }
             }
         }

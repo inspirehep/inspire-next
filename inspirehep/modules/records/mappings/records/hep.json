@@ -11,6 +11,7 @@
                     "type": "string"
                 },
                 "_collections": {
+                    "analyzer": "lowercase_analyzer",
                     "type": "string"
                 },
                 "_desy_bookkeeping": {
@@ -294,6 +295,10 @@
                     },
                     "type": "object"
                 },
+                "bookautocomplete": {
+                    "payloads": true,
+                    "type": "completion"
+                },
                 "citation_count": {
                     "type": "integer"
                 },
@@ -531,10 +536,6 @@
                         }
                     },
                     "type": "object"
-                },
-                "bookautocomplete": {
-                    "payloads": true,
-                    "type": "completion"
                 },
                 "keywords": {
                     "properties": {
@@ -1045,6 +1046,17 @@
                 },
                 "withdrawn": {
                     "type": "boolean"
+                }
+            }
+        }
+    },
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "lowercase_analyzer": {
+                    "filter": "lowercase",
+                    "tokenizer": "keyword",
+                    "type": "custom"
                 }
             }
         }
