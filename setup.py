@@ -190,8 +190,10 @@ setup(
             'view_restricted_collection'
             ' = inspirehep.modules.records.permissions:'
             'action_view_restricted_collection',
-            'admin_holdingpen_authors = inspirehep.modules.authors.permissions:action_admin_holdingpen_authors',
-            'editor_manage_tickets = inspirehep.modules.editor.permissions:action_editor_manage_tickets'
+            'update_collection'
+            ' = inspirehep.modules.records.permissions:'
+            'action_update_collection',
+            'admin_holdingpen_authors = inspirehep.modules.authors.permissions:action_admin_holdingpen_authors'
         ],
         'invenio_base.api_apps': [
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',

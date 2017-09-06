@@ -93,6 +93,7 @@ def init_permissions():
     superuser = Role.query.filter_by(name='superuser').one()
     cataloger = Role.query.filter_by(name='cataloger').one()
     hermes_collections = Role.query.filter_by(name='hermescoll').one()
+    hermes_curator = Role.query.filter_by(name='hermescurator').one()
     db.session.add(ActionRoles(
         action='superuser-access',
         role=superuser)
@@ -113,6 +114,15 @@ def init_permissions():
         action='view-restricted-collection',
         argument='HERMES Internal Notes',
         role=hermes_collections)
+    )
+    db.session.add(ActionRoles(
+        action='update-collection',
+        role=cataloger)
+    )
+    db.session.add(ActionRoles(
+        action='update-collection',
+        argument='HERMES Internal Notes',
+        role=hermes_curator)
     )
     db.session.commit()
 

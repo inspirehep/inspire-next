@@ -22,16 +22,36 @@
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_access.permissions import (
-    Permission,
-    ParameterizedActionNeed
-)
+from functools import wraps
+
+from flask import abort, session
+from flask_login import current_user
+
+from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
+from inspirehep.modules.records.permissions import has_update_permission
+from inspirehep.utils.record_getter import get_db_record
 
 
-action_editor_manage_tickets = ParameterizedActionNeed(
-    'editor_manage_tickets', argument=None
-)
+def editor_permission(fn):
 
-editor_manage_tickets_permission = Permission(
-    action_editor_manage_tickets
-)
+    @wraps(fn)
+    def decorator(endpoint, pid_value, **kwargs):
+        cache_key = 'editor-permission-{0}-{1}'.format(
+            endpoint,
+            pid_value
+        )
+        is_allowed = session.get(cache_key)
+        if is_allowed is not None:
+            return is_allowed
+
+        pid_type = get_pid_type_from_endpoint(endpoint)
+        record = get_db_record(pid_type, pid_value)
+
+        is_allowed = has_update_permission(current_user, record)
+        session[cache_key] = is_allowed
+        if is_allowed:
+            return fn(endpoint, pid_type, **kwargs)
+        else:
+            abort(403)
+
+    return decorator
