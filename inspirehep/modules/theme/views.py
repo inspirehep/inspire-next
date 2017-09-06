@@ -70,7 +70,7 @@ from inspirehep.utils.experiments import (
     render_experiment_people,
 )
 from inspirehep.utils.record import get_title
-from inspirehep.utils.references import Reference
+from inspirehep.utils.references import get_and_format_references
 from inspirehep.utils.template import render_macro_from_template
 
 
@@ -228,7 +228,6 @@ def ping():
 @blueprint.route('/ajax/references', methods=['GET'])
 def ajax_references():
     """Handler for datatables references view"""
-
     recid = request.args.get('recid', '')
     endpoint = request.args.get('endpoint', '')
 
@@ -237,11 +236,7 @@ def ajax_references():
 
     record = LiteratureSearch().get_source(pid.object_uuid)
 
-    return jsonify(
-        {
-            "data": Reference(record).references()
-        }
-    )
+    return jsonify({'data': get_and_format_references(record)})
 
 
 @blueprint.route('/ajax/citations', methods=['GET'])
