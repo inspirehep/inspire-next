@@ -23,7 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from invenio_access.permissions import (
-    DynamicPermission,
+    Permission,
     ParameterizedActionNeed
 )
 
@@ -32,6 +32,6 @@ action_editor_manage_tickets = ParameterizedActionNeed(
     'editor_manage_tickets', argument=None
 )
 
-editor_manage_tickets_permission = DynamicPermission(
+editor_manage_tickets_permission = Permission(
     action_editor_manage_tickets
 )

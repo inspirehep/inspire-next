@@ -29,7 +29,7 @@ from werkzeug.local import LocalProxy
 
 from invenio_access.models import ActionUsers, ActionRoles
 from invenio_access.permissions import (
-    DynamicPermission,
+    Permission,
     ParameterizedActionNeed,
 )
 from invenio_cache import current_cache
@@ -141,7 +141,7 @@ class RecordPermission(object):
 def has_read_permission(user, record):
     """Check if user has read access to the record."""
     def _cant_view(collection):
-        return not DynamicPermission(
+        return not Permission(
             ParameterizedActionNeed(
                 'view-restricted-collection',
                 collection)).can()
@@ -174,7 +174,7 @@ def has_update_permission(user, record):
 def has_admin_permission(user, record):
     """Check if user has admin access to record."""
     # Allow administrators
-    if DynamicPermission(ActionNeed('admin-access')):
+    if Permission(ActionNeed('admin-access')):
         return True
 
 
