@@ -24,7 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
 import re
 from functools import wraps
 
@@ -34,6 +33,7 @@ from flask import current_app
 from lxml.etree import XMLSyntaxError
 from wand.exceptions import DelegateError
 from werkzeug import secure_filename
+from backports.tempfile import TemporaryDirectory
 
 from dojson.contrib.marc21.utils import create_record
 
@@ -122,24 +122,25 @@ def arxiv_plot_extract(obj, eng):
     tarball = obj.files[filename]
 
     if tarball:
-        try:
-            plots = process_tarball(tarball.file.uri)
-        except (InvalidTarball, NoTexFilesFound):
-            obj.log.error(
-                'Invalid tarball %s for arxiv_id %s', tarball.file.uri, arxiv_id)
-            return
-        except DelegateError as err:
-            obj.log.error('Error extracting plots for %s. Report and skip.', arxiv_id)
-            current_app.logger.exception(err)
-            return
+        with TemporaryDirectory(prefix='plot_extract') as scratch_space:
+            try:
+                plots = process_tarball(tarball.file.uri, output_directory=scratch_space)
+            except (InvalidTarball, NoTexFilesFound):
+                obj.log.error(
+                    'Invalid tarball %s for arxiv_id %s', tarball.file.uri, arxiv_id)
+                return
+            except DelegateError as err:
+                obj.log.error('Error extracting plots for %s. Report and skip.', arxiv_id)
+                current_app.logger.exception(err)
+                return
 
-        for idx, plot in enumerate(plots):
-            with open(plot.get('url')) as plot_file:
-                obj.files[plot.get('name')] = plot_file
-            obj.files[plot.get('name')]['description'] = u'{0:05d} {1}'.format(
-                idx, ''.join(plot.get('captions', []))
-            )
-        obj.log.info('Added {0} plots.'.format(len(plots)))
+            for idx, plot in enumerate(plots):
+                with open(plot.get('url')) as plot_file:
+                    obj.files[plot.get('name')] = plot_file
+                obj.files[plot.get('name')]['description'] = u'{0:05d} {1}'.format(
+                    idx, ''.join(plot.get('captions', []))
+                )
+            obj.log.info('Added {0} plots.'.format(len(plots)))
 
 
 @with_debug_logging
@@ -185,37 +186,37 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
         tarball = obj.files[filename]
 
         if tarball:
-            sub_dir = os.path.abspath('{0}_files'.format(tarball.file.uri))
-            try:
-                file_list = untar(tarball.file.uri, sub_dir)
-            except InvalidTarball:
-                obj.log.error('Invalid tarball %s for arxiv_id %s', tarball.file.uri, arxiv_id)
-                return
-            obj.log.info('Extracted tarball to: {0}'.format(sub_dir))
+            with TemporaryDirectory(prefix='author_list') as scratch_space:
+                try:
+                    file_list = untar(tarball.file.uri, scratch_space)
+                except InvalidTarball:
+                    obj.log.error('Invalid tarball %s for arxiv_id %s', tarball.file.uri, arxiv_id)
+                    return
+                obj.log.info('Extracted tarball to: {0}'.format(scratch_space))
 
-            xml_files_list = [path for path in file_list
-                              if path.endswith('.xml')]
-            obj.log.info('Found xmlfiles: {0}'.format(xml_files_list))
+                xml_files_list = [path for path in file_list
+                                  if path.endswith('.xml')]
+                obj.log.info('Found xmlfiles: {0}'.format(xml_files_list))
 
-            for xml_file in xml_files_list:
-                with open(xml_file, 'r') as xml_file_fd:
-                    xml_content = xml_file_fd.read()
+                for xml_file in xml_files_list:
+                    with open(xml_file, 'r') as xml_file_fd:
+                        xml_content = xml_file_fd.read()
 
-                match = REGEXP_AUTHLIST.findall(xml_content)
-                if match:
-                    obj.log.info('Found a match for author extraction')
-                    try:
-                        authors_xml = convert(xml_content, stylesheet)
-                    except XMLSyntaxError:
-                        # Probably the %auto-ignore comment exists, so we skip the
-                        # first line. See: inspirehep/inspire-next/issues/2195
-                        authors_xml = convert(
-                            xml_content.split('\n', 1)[1],
-                            stylesheet,
-                        )
-                    authors_rec = create_record(authors_xml)
-                    authorlist_record = hep.do(authors_rec)
-                    obj.data.update(authorlist_record)
-                    break
+                    match = REGEXP_AUTHLIST.findall(xml_content)
+                    if match:
+                        obj.log.info('Found a match for author extraction')
+                        try:
+                            authors_xml = convert(xml_content, stylesheet)
+                        except XMLSyntaxError:
+                            # Probably the %auto-ignore comment exists, so we skip the
+                            # first line. See: inspirehep/inspire-next/issues/2195
+                            authors_xml = convert(
+                                xml_content.split('\n', 1)[1],
+                                stylesheet,
+                            )
+                        authors_rec = create_record(authors_xml)
+                        authorlist_record = hep.do(authors_rec)
+                        obj.data.update(authorlist_record)
+                        break
 
     return _author_list

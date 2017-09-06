@@ -481,8 +481,7 @@ def test_arxiv_derive_inspire_categories_does_nothing_with_existing_categories()
     assert expected == result
 
 
-@patch('inspirehep.modules.workflows.tasks.arxiv.os')
-def test_arxiv_author_list_handles_auto_ignore_comment(mock_os):
+def test_arxiv_author_list_handles_auto_ignore_comment():
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
@@ -514,18 +513,11 @@ def test_arxiv_author_list_handles_auto_ignore_comment(mock_os):
 
     default_arxiv_author_list = arxiv_author_list()
 
-    try:
-        temporary_dir = mkdtemp()
-        mock_os.path.abspath.return_value = temporary_dir
-
-        assert default_arxiv_author_list(obj, eng) is None
-    finally:
-        rmtree(temporary_dir)
+    assert default_arxiv_author_list(obj, eng) is None
 
 
 @patch('inspirehep.modules.workflows.tasks.arxiv.untar')
-@patch('inspirehep.modules.workflows.tasks.arxiv.os')
-def test_arxiv_author_list_logs_on_error(mock_os, mock_untar):
+def test_arxiv_author_list_logs_on_error(mock_untar):
     mock_untar.side_effect = InvalidTarball
 
     schema = load_schema('hep')
@@ -556,15 +548,9 @@ def test_arxiv_author_list_logs_on_error(mock_os, mock_untar):
 
     default_arxiv_author_list = arxiv_author_list()
 
-    try:
-        temporary_dir = mkdtemp()
-        mock_os.path.abspath.return_value = temporary_dir
+    assert default_arxiv_author_list(obj, eng) is None
 
-        assert default_arxiv_author_list(obj, eng) is None
+    expected = 'Invalid tarball http://export.arxiv.org/e-print/1605.07707 for arxiv_id 1605.07707'
+    result = obj.log._error.getvalue()
 
-        expected = 'Invalid tarball http://export.arxiv.org/e-print/1605.07707 for arxiv_id 1605.07707'
-        result = obj.log._error.getvalue()
-
-        assert expected == result
-    finally:
-        rmtree(temporary_dir)
+    assert expected == result
