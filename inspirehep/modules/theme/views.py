@@ -60,7 +60,7 @@ from inspirehep.modules.search import (
     JournalsSearch,
     LiteratureSearch
 )
-from inspirehep.utils.citations import Citation
+from inspirehep.utils.citations import get_and_format_citations
 from inspirehep.utils.conferences import (
     render_conferences_contributions,
     render_conferences_in_the_same_series,
@@ -247,7 +247,6 @@ def ajax_references():
 @blueprint.route('/ajax/citations', methods=['GET'])
 def ajax_citations():
     """Handler for datatables citations view"""
-
     recid = request.args.get('recid', '')
     endpoint = request.args.get('endpoint', '')
 
@@ -256,11 +255,7 @@ def ajax_citations():
 
     record = LiteratureSearch().get_source(pid.object_uuid)
 
-    return jsonify(
-        {
-            "data": Citation(record).citations()
-        }
-    )
+    return jsonify({'data': get_and_format_citations(record)})
 
 
 #

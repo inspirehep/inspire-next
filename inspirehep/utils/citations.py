@@ -26,43 +26,37 @@ from inspirehep.modules.search import LiteratureSearch
 from inspirehep.utils.jinja2 import render_template_to_string
 
 
-class Citation(object):
-    """Class used to output citations format in detailed record"""
+def get_and_format_citations(record):
+    result = []
 
-    def __init__(self, record):
-        self.record = record
+    citations = LiteratureSearch().query_from_iq(
+        'refersto:' + str(record['control_number'])
+    ).params(
+        _source=[
+            'citation_count',
+            'control_number',
+            'earliest_date',
+            'titles',
+        ]
+    ).execute().hits
 
-    def citations(self):
-        """Return citation export for single record."""
-
-        out = []
+    for citation in citations:
+        citation_from_es = LiteratureSearch().get_source(citation.meta.id)
         row = []
 
-        # Get citations
-        record_citations = LiteratureSearch().query_from_iq(
-            'refersto:' + str(self.record['control_number'])
-        ).params(
-            _source=[
-                'control_number',
-                'citation_count',
-                'titles',
-                'earliest_date'
-            ]
-        ).execute().hits
+        row.append(
+            render_template_to_string(
+                'inspirehep_theme/citations.html',
+                record=citation_from_es,
+            )
+        )
 
-        for citation in record_citations:
+        try:
+            citation_count = citation.citation_count
+        except AttributeError:
+            citation_count = 0
+        row.append(citation_count)
 
-            citation_from_es = LiteratureSearch().get_source(citation.meta.id)
+        result.append(row)
 
-            row.append(render_template_to_string(
-                "inspirehep_theme/citations.html",
-                record=citation_from_es))
-            try:
-                citation_count = citation.citation_count
-            except AttributeError:
-                citation_count = 0
-            row.append(citation_count)
-            out.append(row)
-            row = []
-
-        return out
+    return result
