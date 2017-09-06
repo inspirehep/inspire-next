@@ -49,7 +49,7 @@ def app():
         from inspirehep.modules.migrator.tasks import add_citation_counts, migrate
         from inspirehep.modules.fixtures.collections import init_collections
         from inspirehep.modules.fixtures.files import init_all_storage_paths
-        from inspirehep.modules.fixtures.users import init_users_and_permissions
+        from inspirehep.modules.fixtures.users import init_all_users
 
         db.drop_all()
         db.create_all()
@@ -59,7 +59,7 @@ def app():
         list(_es.create(ignore=[400]))
 
         init_all_storage_paths()
-        init_users_and_permissions()
+        init_all_users()
         init_collections()
 
         migrate('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
@@ -82,7 +82,7 @@ def small_app():
         from inspirehep.modules.migrator.tasks import migrate
         from inspirehep.modules.fixtures.collections import init_collections
         from inspirehep.modules.fixtures.files import init_all_storage_paths
-        from inspirehep.modules.fixtures.users import init_users_and_permissions
+        from inspirehep.modules.fixtures.users import init_all_users
 
         db.drop_all()
         db.create_all()
@@ -92,7 +92,7 @@ def small_app():
         list(_es.create(ignore=[400]))
 
         init_all_storage_paths()
-        init_users_and_permissions()
+        init_all_users()
         init_collections()
 
         migrate('./inspirehep/demosite/data/demo-records-small.xml', wait_for_results=True)

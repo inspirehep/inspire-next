@@ -30,7 +30,7 @@ from flask_cli import with_appcontext
 
 from .collections import init_collections
 from .files import init_all_storage_paths
-from .users import init_users_and_permissions
+from .users import init_all_users
 
 
 @click.group()
@@ -43,5 +43,5 @@ def fixtures():
 def init():
     """Init the system with fixtures."""
     init_all_storage_paths()
-    init_users_and_permissions()
+    init_all_users()
     init_collections()
