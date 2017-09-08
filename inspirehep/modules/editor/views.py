@@ -26,8 +26,14 @@ from __future__ import absolute_import, division, print_function
 
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
+from sqlalchemy_continuum import transaction_class, version_class
 
+from invenio_db import db
+from invenio_records.models import RecordMetadata
+
+from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
 from inspirehep.modules.tools import authorlist
+from inspirehep.utils.record_getter import get_db_record
 from inspirehep.utils.references import (
     get_refextract_kbs_path,
     map_refextract_to_schema,
@@ -95,6 +101,63 @@ def refextract_url():
     references = map_refextract_to_schema(extracted_references)
 
     return jsonify(references)
+
+
+@blueprint.route('/<endpoint>/<int:pid_value>/revisions/revert', methods=['PUT'])
+@editor_permission
+def revert_to_revision(endpoint, pid_value):
+    """Revert given record to given revision"""
+    pid_type = get_pid_type_from_endpoint(endpoint)
+    record = get_db_record(pid_type, pid_value)
+    revision_id = request.json['revision_id']
+    record.revert(revision_id)
+    db.session.commit()
+    return jsonify(success=True)
+
+
+@blueprint.route('/<endpoint>/<int:pid_value>/revisions', methods=['GET'])
+@editor_permission
+def get_revisions(endpoint, pid_value):
+    """Get revisions of given record"""
+    Transaction = transaction_class(RecordMetadata)
+    pid_type = get_pid_type_from_endpoint(endpoint)
+    record = get_db_record(pid_type, pid_value)
+
+    revisions = []
+    for revision in reversed(record.revisions):
+        transaction_id = revision.model.transaction_id
+
+        user = Transaction.query.filter(
+            Transaction.id == transaction_id).one().user
+        if user:
+            user_email = user.email
+        else:
+            user_email = 'system'
+
+        revisions.append({
+            'updated': revision.updated,
+            'revision_id': revision.revision_id,
+            'user_email': user_email,
+            'transaction_id': transaction_id,
+            'rec_uuid': record.id
+        })
+    return jsonify(revisions)
+
+
+@blueprint.route('/<endpoint>/<int:pid_value>/revision/<rec_uuid>/<int:transaction_id>', methods=['GET'])
+@editor_permission
+def get_revision(endpoint, pid_value, transaction_id, rec_uuid):
+    """Get the revision of given record (uuid)"""
+    RecordMetadataVersion = version_class(RecordMetadata)
+
+    revision = RecordMetadataVersion.query.with_entities(
+        RecordMetadataVersion.json
+    ).filter(
+        RecordMetadataVersion.transaction_id == transaction_id,
+        RecordMetadataVersion.id == rec_uuid
+    ).one()
+
+    return jsonify(revision.json)
 
 
 @blueprint.route('/<endpoint>/<int:pid_value>/rt/tickets/create', methods=['POST'])
