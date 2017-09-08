@@ -110,9 +110,9 @@
     {% if record.keywords %}
       {% for keywords in record.keywords %}
         {% if (loop.index < 11) %}
-          {% if 'keyword' in keywords.keys() %}
+          {% if 'value' in keywords.keys() %}
             <span class="chip chip-literature">
-              <a href='/search?q=keyword:"{{ keywords.get('keyword') }}"'>{{ keywords.get('keyword') | trim }}</a>
+              <a href='/search?q=keyword:"{{ keywords.get('value') }}"'>{{ keywords.get('value') | trim }}</a>
             </span>
             &nbsp;
           {% endif %}
