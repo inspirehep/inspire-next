@@ -32,7 +32,7 @@ import requests
 from .tasks import (
     add_citation_counts,
     migrate,
-    migrate_broken_records,
+    remigrate_records,
     migrate_chunk,
     split_blob,
 )
@@ -46,20 +46,26 @@ def migrator():
 @migrator.command()
 @click.option('--file-input', '-f',
               help='Specific collections to migrate.')
-@click.option('--remigrate', '-m', type=bool,
+@click.option('--remigrate-broken', '-b', type=bool,
               default=False, help='Try to remigrate broken records')
+@click.option('--remigrate-all', '-a', type=bool,
+              default=False, help='Remigrate all records')
 @click.option('--wait', '-w', type=bool, default=False,
               help='Wait for migrator to complete.')
 def populate(file_input=None,
-             remigrate=False,
+             remigrate_broken=False,
+             remigrate_all=False,
              wait=False):
     """Populates the system with records from migrator files.
 
     Usage: inveniomanage migrator populate -f prodsync20151117173222.xml.gz
     """
-    if remigrate:
+    if remigrate_broken:
         click.echo("Remigrate broken records...")
-        migrate_broken_records.delay()
+        remigrate_records.delay(only_broken=True)
+    elif remigrate_all:
+        click.echo("Remigrate all records...")
+        remigrate_records.delay(only_broken=False)
     elif file_input and not os.path.isfile(file_input):
         click.echo("{0} is not a file!".format(file_input), err=True)
     elif file_input:
