@@ -112,9 +112,10 @@ def remigrate_records(only_broken=True):
     conversion script have been corrected.
     """
     query = db.session.query(InspireProdRecords).filter_by(valid=False) if only_broken else db.session.query(InspireProdRecords)
-    for i, chunk in enumerate(record.marcxml for record in query.yield_per(CHUNK_SIZE)):
+    for i, chunk in enumerate(chunker(query.yield_per(CHUNK_SIZE))):
+        records = [record.marcxml for record in chunk]
         logger.info("Processed {} records".format(i * CHUNK_SIZE))
-        migrate_chunk.delay(chunk)
+        migrate_chunk.delay(records)
 
 
 @shared_task(ignore_result=True)
