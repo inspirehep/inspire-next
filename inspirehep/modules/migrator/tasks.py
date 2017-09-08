@@ -105,15 +105,14 @@ def split_stream(stream):
 
 
 @shared_task(ignore_result=True)
-def migrate_broken_records():
-    """Migrate records declared as broken.
+def remigrate_records(only_broken=True):
+    """Remigrate records.
 
-    Directly migrates the records declared as broken, e.g. if the dojson
+    Directly migrates the records (declared as broken), e.g. if the dojson
     conversion script have been corrected.
     """
-    for i, chunk in enumerate(chunker(
-            record.marcxml for record in
-            db.session.query(InspireProdRecords).filter_by(valid=False))):
+    query = db.session.query(InspireProdRecords).filter_by(valid=False) if only_broken else db.session.query(InspireProdRecords)
+    for i, chunk in enumerate(record.marcxml for record in query.yield_per(CHUNK_SIZE)):
         logger.info("Processed {} records".format(i * CHUNK_SIZE))
         migrate_chunk.delay(chunk)
 
