@@ -99,7 +99,7 @@ def _get_comm_context(record):
     conference_city = get_conference_city(conference_record)
     conference_country = get_conference_country(conference_record)
     conference_end_date = get_conference_end_date(conference_record)
-    conference_start_date = get_conference_start_date(conference_record),
+    conference_start_date = get_conference_start_date(conference_record)
     conference_title = get_conference_title(conference_record)
 
     return {
