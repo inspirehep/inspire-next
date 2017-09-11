@@ -5475,6 +5475,7 @@
 
 <Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#radiation">
   <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.radiationCherenkov"/>
+  <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.radiationHawking"/>
   <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.neutrinoradiation"/>
   <prefLabel xml:lang="en">radiation</prefLabel>
 </Concept>
@@ -6705,6 +6706,7 @@
   <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.flavorviolation"/>
   <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.CPTviolation"/>
   <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.CPviolation"/>
+  <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.equivalenceprincipleviolation"/>
   <prefLabel xml:lang="en">violation</prefLabel>
 </Concept>
 
@@ -16039,4 +16041,49 @@
 <compositeOf rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#quantumchromodynamicsperturbationtheory"/>
 <compositeOf rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#higher-order"/>
 </Concept>
+
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Composite.radiationHawking">
+<prefLabel xml:lang="en">radiation: Hawking</prefLabel>
+   <note xml:lang="en">core</note>
+  <compositeOf rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#radiation"/>
+  <compositeOf rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Hawking"/>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Unruheffect">
+  <prefLabel xml:lang="en">Unruh effect</prefLabel>
+   <note xml:lang="en">core</note>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Composite.equivalenceprinciplevaliditytest">
+<prefLabel xml:lang="en">equivalence principle: validity test</prefLabel>
+   <note xml:lang="en">core</note>
+  <compositeOf rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#equivalenceprinciple"/>
+  <compositeOf rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#validitytest"/>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Composite.equivalenceprincipleviolation">
+<prefLabel xml:lang="en">equivalence principle: violation</prefLabel>
+   <note xml:lang="en">core</note>
+  <compositeOf rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#equivalenceprinciple"/>
+  <compositeOf rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#violation"/>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#equivalenceprinciple">
+  <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.equivalenceprincipleviolation"/>
+  <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.equivalenceprinciplevaliditytest"/>
+  <prefLabel xml:lang="en">equivalence principle</prefLabel>
+  <altLabel xml:lang="en">SEP</altLabel>
+  <altLabel xml:lang="en">WEP</altLabel>
+  <altLabel xml:lang="en">principle of equivalence</altLabel>
+  <definition xml:lang="en">acceleration produces an artificial gravity and, conversely, gravity is indistinguishable from acceleration</definition>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Hawking">
+  <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.radiationHawking"/>
+  <prefLabel xml:lang="en">Hawking</prefLabel>
+  <note xml:lang="en">noautosingle</note>
+  <note xml:lang="en">nostandalone</note>
+</Concept>
+
 </rdf:RDF>
