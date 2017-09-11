@@ -75,12 +75,27 @@ def create_journal_kb_file():
 
     with codecs.open(refextract_journal_kb_path, encoding='utf-8', mode='w') as fd:
         for row in titles_query:
-            fd.write(u'{}---{}\n'.format(_normalize(row['short_title']), row['short_title']))
-            fd.write(u'{}---{}\n'.format(_normalize(row['journal_title']), row['short_title']))
+            normalized_short_title = _normalize(row['short_title'])
+            if normalized_short_title:
+                fd.write(u'{}---{}\n'.format(normalized_short_title, row['short_title']))
+            normalized_journal_title = _normalize(row['journal_title'])
+            if normalized_journal_title:
+                fd.write(u'{}---{}\n'.format(normalized_journal_title, row['short_title']))
 
         for row in title_variants_query:
-            fd.write(u'{}---{}\n'.format(_normalize(row['title_variant']), row['short_title']))
+            normalized_title_variant = _normalize(row['title_variant'])
+            if normalized_title_variant:
+                fd.write(u'{}---{}\n'.format(normalized_title_variant, row['short_title']))
 
 
 def _normalize(s):
-    return ' '.join((RE_ALPHANUMERIC.sub(' ', s)).split()).upper()
+    if not s:
+        return
+
+    result = RE_ALPHANUMERIC.sub(' ', s)
+    result = ' '.join(result.split())
+    result = result.upper()
+
+    if not result:
+        return
+    return result

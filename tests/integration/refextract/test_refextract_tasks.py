@@ -25,10 +25,27 @@ from __future__ import absolute_import, division, print_function
 import os
 from tempfile import mkstemp
 
+import pytest
 from flask import current_app
 from mock import patch
 
+from inspirehep.modules.migrator.tasks import record_insert_or_replace
 from inspirehep.modules.refextract.tasks import create_journal_kb_file
+from inspirehep.utils.record_getter import get_db_record
+
+
+@pytest.fixture
+def jhep_with_malformed_title(app):
+    """Temporarily add a malformed title to the JHEP record."""
+    record = get_db_record('jou', 1213103)
+    record['title_variants'].append('+++++')
+    record_insert_or_replace(record)
+
+    yield
+
+    record = get_db_record('jou', 1213103)
+    record['title_variants'] = record['title_variants'][:-1]
+    record_insert_or_replace(record)
 
 
 def test_create_journal_kb_file(app):
@@ -49,6 +66,22 @@ def test_create_journal_kb_file(app):
 
         assert 'JOURNAL OF HIGH ENERGY PHYSICS---JHEP' in journal_kb
         '''title_variants -> short_title'''
+
+    os.close(temporary_fd)
+    os.remove(path)
+
+
+def test_create_journal_kb_file_handles_malformed_title_variants(jhep_with_malformed_title):
+    temporary_fd, path = mkstemp()
+    config = {'REFEXTRACT_JOURNAL_KB_PATH': path}
+
+    with patch.dict(current_app.config, config):
+        create_journal_kb_file()
+
+    with open(path, 'r') as fd:
+        journal_kb = fd.read().splitlines()
+
+        assert '---JHEP' not in journal_kb
 
     os.close(temporary_fd)
     os.remove(path)
