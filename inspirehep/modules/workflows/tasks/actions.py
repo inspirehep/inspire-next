@@ -248,11 +248,7 @@ def refextract(obj, eng):
     source = get_value(obj.data, 'acquisition_source.source')
     if uri:
         try:
-            journal_kb_path = current_app.config.get('REFEXTRACT_JOURNAL_KB_PATH', None)
-            if journal_kb_path:
-                references = extract_references(uri, source, {'journals': journal_kb_path})
-            else:
-                references = extract_references(uri, source)
+            references = extract_references(uri, source)
 
             if references:
                 obj.data['references'] = references

@@ -29,6 +29,7 @@ import pkg_resources
 import requests_mock
 
 from inspire_schemas.api import load_schema, validate
+from inspire_utils.record import get_value
 
 
 def test_refextract_text(api_client):
@@ -46,9 +47,11 @@ def test_refextract_text(api_client):
             ),
         }),
     )
+    references = json.loads(response.data)
 
     assert response.status_code == 200
-    assert validate(json.loads(response.data), subschema) is None
+    assert validate(references, subschema) is None
+    assert get_value({'references': references}, 'references.reference.publication_info.journal_title')
 
 
 def test_refextract_url(api_client):
@@ -69,6 +72,8 @@ def test_refextract_url(api_client):
                 'url': 'https://arxiv.org/pdf/1612.06414.pdf',
             }),
         )
+        references = json.loads(response.data)
 
     assert response.status_code == 200
-    assert validate(json.loads(response.data), subschema) is None
+    assert validate(references, subschema) is None
+    assert get_value({'references': references}, 'references.reference.publication_info.journal_title')

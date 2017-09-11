@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from flask import current_app
+
 from inspire_schemas.api import ReferenceBuilder
 from inspire_utils.helpers import force_list
 from inspirehep.utils.jinja2 import render_template_to_string
@@ -123,3 +125,9 @@ def map_refextract_to_schema(extracted_references, source=None):
         result.append(rb.obj)
 
     return result
+
+
+def get_refextract_kbs_path():
+    """Get the path to the refextract kbs from the application config."""
+    journal_kb_path = current_app.config.get('REFEXTRACT_JOURNAL_KB_PATH')
+    return {'journals': journal_kb_path} if journal_kb_path else None

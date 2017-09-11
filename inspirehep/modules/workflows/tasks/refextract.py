@@ -31,7 +31,10 @@ from refextract import extract_journal_reference, extract_references_from_file
 from inspire_schemas.utils import split_page_artid
 from inspire_utils.helpers import maybe_int
 from inspire_utils.record import get_value
-from inspirehep.utils.references import map_refextract_to_schema
+from inspirehep.utils.references import (
+    get_refextract_kbs_path,
+    map_refextract_to_schema,
+)
 
 from ..utils import with_debug_logging
 
@@ -53,9 +56,7 @@ def extract_journal_info(obj, eng):
                 freetext = ". ".join(freetext)
             extracted_publication_info = extract_journal_reference(
                 freetext,
-                # override_kbs_files={
-                #    'journals': get_mappings_from_kbname(['REFEXTRACT_KB_NAME'])
-                # }
+                override_kbs_files=get_refextract_kbs_path()
             )
             if extracted_publication_info:
                 if "volume" in extracted_publication_info:
@@ -90,7 +91,7 @@ def extract_references(filepath, source=None, custom_kbs_file=None):
     """Extract references from PDF and return in INSPIRE format."""
     extracted_references = extract_references_from_file(
         filepath,
-        override_kbs_files=custom_kbs_file,
+        override_kbs_files=get_refextract_kbs_path(),
         reference_format=u'{title},{volume},{page}'
     )
 
