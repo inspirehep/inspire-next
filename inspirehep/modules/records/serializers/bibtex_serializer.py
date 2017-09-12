@@ -24,11 +24,20 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.bibtex import Bibtex
+from .schemas.bibtex import BibtexSchema
+from inspirehep.utils.jinja2 import render_template_to_string_for_blueprint
+from ..views import blueprint
 
 
 class BIBTEXSerializer(object):
     """BibTex serializer for records."""
+
+    def serialize_record(self, record):
+        bibtex_schema = BibtexSchema()
+        data, errors = bibtex_schema.load(record)
+        print("DATA: " + str(data))  # TODO: Remove
+        print("ERRO: " + str(errors))
+        return render_template_to_string_for_blueprint(blueprint, 'records/bibtex.bib', **data)
 
     def serialize(self, pid, record, links_factory=None):
         """Serialize a single bibtex from a record.
@@ -37,7 +46,7 @@ class BIBTEXSerializer(object):
         :param links_factory: Factory function for the link generation,
         which are added to the response.
         """
-        return Bibtex(record).format()
+        return self.serialize_record(record)
 
     def serialize_search(self, pid_fetcher, search_result, links=None,
                          item_links_factory=None):
@@ -48,6 +57,6 @@ class BIBTEXSerializer(object):
         """
         records = []
         for hit in search_result['hits']['hits']:
-            records.append(Bibtex(record=hit['_source']).format())
+            records.append(self.serialize_record(hit['_source']))
 
         return "\n".join(records)

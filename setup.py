@@ -215,6 +215,7 @@ setup(
             'inspire_crossref = inspirehep.modules.crossref:InspireCrossref',
             'inspire_tools = inspirehep.modules.tools:InspireTools',
             'inspire_hal = inspirehep.modules.hal:InspireHAL',
+            'inspire_records = inspirehep.modules.records:INSPIRERecords',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
