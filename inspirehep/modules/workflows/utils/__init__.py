@@ -35,9 +35,10 @@ import backoff
 import lxml.etree as ET
 import requests
 from flask import current_app
+from invenio_db import db
 
+from inspirehep.modules.workflows.models import WorkflowsRecordSources
 from ..models import WorkflowsAudit
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -191,3 +192,41 @@ def convert(xml, xslt_filename):
     transform = ET.XSLT(xslt)
     newdom = transform(dom)
     return ET.tostring(newdom, pretty_print=False)
+
+
+def read_wf_record_source(record_uuid, source):
+    """Retrieve a record from the ``WorkflowRecordSource`` table.
+
+    Args:
+        record_uuid(string): the uuid of the record
+        source(string): the acquisition source value of the record
+
+    Return:
+        (dict): the given record, if any or None
+    """
+    entry = WorkflowsRecordSources.query.filter_by(
+        record_id=str(record_uuid),
+        source=source.lower()
+    ).one_or_none()
+    return entry
+
+
+def insert_wf_record_source(json, record_uuid, source):
+    """Stores a record in the WorkflowRecordSource table in the db.
+
+    Args:
+        json(dict): the record's content to store
+        record_uuid(uuid): the record's uuid
+        source(string): the source of the record
+    """
+    record_source = read_wf_record_source(record_uuid=record_uuid, source=source)
+    if record_source is None:
+        record_source = WorkflowsRecordSources(
+            source=source.lower(),
+            json=json,
+            record_id=record_uuid
+        )
+        db.session.add(record_source)
+    else:
+        record_source.json = json
+    db.session.commit()

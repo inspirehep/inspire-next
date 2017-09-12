@@ -71,6 +71,11 @@ def get_arxiv_id(record):
     return get_value(record, 'arxiv_eprints.value[0]', default='')
 
 
+def get_source(record):
+    """Return the ``source`` of ``acquisition_source`` of a record."""
+    return get_value(record, 'acquisition_source.source')
+
+
 def get_subtitle(record):
     """Get preferred subtitle from record."""
     return get_value(record, 'titles.subtitle[0]', default='')
