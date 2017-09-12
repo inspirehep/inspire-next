@@ -1,0 +1,36 @@
+<a href="{{ url }}">{{ title }}.</a><br />
+{%- if author or editor or corporate_author -%}
+By {{ author or editor or corporate_author }}
+{%- if collaboration and corporate_author != collaboration + ' Collaboration' -%}
+    {{- ' [' + collaboration + ' Collaboration]' }}
+{%- endif %}
+{%- if collaboration or not (author or editor or corporate_author)[-1] == '.' -%}.{% endif %}<br />
+{%- endif %}
+{% if eprint and eprint_new_style %}
+[arXiv:{{ eprint }} [{{ primaryClasses }}]].<br />
+{%- elif eprint %}
+[{{ eprint }}].<br />
+{%- endif %}
+{% if doi %}
+<a href="http://dx.doi.org/{{ doi }}">{{ doi }}</a>.<br />
+{%- endif %}
+{% if publication_info_list %}
+    {%- for publication in publication_info_list %}
+        {%- if 'journal' in publication %}
+            {{- publication.journal }}
+
+            {%- if 'volume' in publication %} {{ publication.volume }}{% endif %}
+
+            {%- if 'number' in publication %} no. {{ publication.number }},{% endif %}
+
+            {%- if 'year' in publication %} ({{ publication.year }}){% endif %}
+
+            {%- if 'page_start' in publication and 'page_end' in publication %}
+                {{- ' ' + publication.page_start }}-{{ publication.page_end -}}
+            {% endif %}
+
+            {{- '.' if loop.last else ', ' -}}
+        {% endif %}
+    {% endfor -%}
+    <br />
+{%- endif %}

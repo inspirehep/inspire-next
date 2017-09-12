@@ -24,46 +24,19 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .schemas.pybtex import PybtexSchema
-from inspirehep.utils.jinja2 import render_template_to_string_for_blueprint
-from ..views import blueprint
-
-from pybtex.database import BibliographyData, Entry
-import flask
+from .pybtex_plugins import BibtexWriter
+from .pybtex_serializer_base import PybtexSerializerBase
+from .schemas.bibtex import BibtexSchema
 
 
-class BIBTEXSerializer(object):
+class BIBTEXSerializer(PybtexSerializerBase):
     """BibTex serializer for records."""
 
-    def create_bibliography_entry(self, record):
-        bibtex_schema = PybtexSchema()
-        data, errors = bibtex_schema.load(record)
-        return data
+    def get_writer(self):
+        return BibtexWriter()
 
-        #return render_template_to_string_for_blueprint(blueprint, 'records/bibtex.bib', **data)
+    def get_schema(self):
+        return BibtexSchema()
 
     def create_bibliography(self, record_list):
-        bib_dict = {}
-        for record in record_list:
-            texkey, entries = self.create_bibliography_entry(record)
-            bib_dict[texkey] = entries
-        return BibliographyData(bib_dict).to_string('bibtex')
-
-    def serialize(self, pid, record, links_factory=None):
-        """Serialize a single bibtex from a record.
-        :param pid: Persistent identifier instance.
-        :param record: Record instance.
-        :param links_factory: Factory function for the link generation,
-        which are added to the response.
-        """
-        return self.create_bibliography([record])
-
-    def serialize_search(self, pid_fetcher, search_result, links=None,
-                         item_links_factory=None):
-        """Serialize a search result.
-        :param pid_fetcher: Persistent identifier fetcher.
-        :param search_result: Elasticsearch search result.
-        :param links: Dictionary of links to add to response.
-        """
-        records = [hit['_source'] for hit in search_result['hits']['hits']]
-        return self.create_bibliography(records)
+        return super(BIBTEXSerializer, self).create_bibliography(record_list).replace(r'\%\%', '%%')

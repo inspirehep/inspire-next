@@ -54,5 +54,7 @@ def render_template_to_string_for_blueprint(bp, input, **context):
     """
     ctx = _request_ctx_stack.top
     ctx.app.update_template_context(context)
+    ctx.app.jinja_env.lstrip_blocks = True
+    ctx.app.jinja_env.trim_blocks = True
     template = bp.jinja_loader.load(ctx.app.jinja_env, input, ctx.app.jinja_env.globals)
     return template.render(context)

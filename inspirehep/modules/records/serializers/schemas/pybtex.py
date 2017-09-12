@@ -26,18 +26,16 @@ from __future__ import absolute_import, division, print_function
 
 from marshmallow import Schema, post_load
 from marshmallow.fields import Str, List, Nested, Int
-from pybtex.database import BibliographyData, Entry
+from pybtex.database import Entry, Person
 
-from inspirehep.modules.records.serializers.fields_export import bibtex_type_and_fields, extractor
-from .helper_fields import First, ByRecId, PartialDate
+from inspirehep.modules.records.serializers.fields_export import bibtex_type_and_fields, extractor, get_authors_with_role
+from .helper_fields import First, FromRecordID, PartialDate
+
 
 class AuthorSchema(Schema):
     """Schema for authors in Bibtex references."""
     full_name = Str()
-
-    @post_load
-    def make_author(self, data):
-        return data['full_name']
+    inspire_roles = List(Str())
 
 
 class TitleSchema(Schema):
@@ -49,28 +47,13 @@ class TitleSchema(Schema):
         return data['title']
 
 
-class InstitutionSchema(Schema):
-    """Schema for representing institutions."""
-    name = Str()
-
-    @post_load
-    def make_institution(self, data):
-        return data['name']
-
-
-class ThesisSchema(Schema):
-    """Schema for theses in Bibtex references."""
-    degree_type = Str()
-    institutions = List(Nested(InstitutionSchema))
-    date = Str()  # TODO: Take out the year
-
-
 class ConferenceAddressSchema(Schema):
     postal_address = First(Str())
 
     @post_load
     def make_address(self, data):
         return data['postal_address']
+
 
 class ConferenceSchema(Schema):
     cnum = Str()
@@ -86,7 +69,23 @@ class PublicationInfoSchema(Schema):
     number = Str(load_from='journal_issue')
     page_start = Str()
     page_end = Str()
-    conference = ByRecId(ConferenceSchema, 'con', load_from='conference_recid')
+    conference = FromRecordID(ConferenceSchema, 'con', load_from='conference_recid')
+
+
+class InstitutionSchema(Schema):
+    """Schema for representing institutions."""
+    name = Str()
+
+    @post_load
+    def make_institution(self, data):
+        return data['name']
+
+
+class ThesisSchema(Schema):
+    """Schema for theses in Bibtex references."""
+    degree_type = Str()
+    institutions = List(Nested(InstitutionSchema))
+    date = PartialDate()
 
 
 class ValueListSchema(Schema):
@@ -104,6 +103,13 @@ class ArXivEprintSchema(Schema):
     value = Str()
 
 
+class ImprintsSchema(Schema):
+    """Schema to represent imprints object."""
+    date = PartialDate()
+    place = Str()
+    publisher = Str()
+
+
 class PybtexSchema(Schema):
     """Schema for Bibtex references."""
     key = Int(load_from='self_recid')
@@ -111,25 +117,29 @@ class PybtexSchema(Schema):
     author = List(Nested(AuthorSchema), load_from='authors')
     title = First(Nested(TitleSchema), load_from='titles')
     document_type = List(Str())
-    thesis_info = Nested(ThesisSchema)
     publication_info = First(Nested(PublicationInfoSchema))  # TODO: find the best entry
     doi = First(Nested(ValueListSchema), load_from='dois')
     arxiv_eprints = First(Nested(ArXivEprintSchema))
-    reportNumber = First(Nested(ValueListSchema), load_from='report_numbers')
+    reportNumber = List(Nested(ValueListSchema), load_from='report_numbers')
     preprint_date = PartialDate()
     earliest_date = PartialDate()
     corporate_author = List(Str(), load_from='corporate_authors')
     collaboration = First(Nested(ValueListSchema), load_from='collaborations')
+    url = First(Nested(ValueListSchema), load_from='urls')
+    thesis_info = Nested(ThesisSchema)
 
     @post_load
     def make_bibtex(self, data):
-        print("PREDATA: " + str(data))  # TODO: Remove
-
+        """
+        Serializes the record to an Entity object provided by Pybtex.
+        :param data: Data excteracted by using the schema.
+        :return: Pybtex Entity representing the record.
+        """
         doc_type, fields = bibtex_type_and_fields(data)
-        texkey = data.get('texkey', '')
+        texkey = str(data.get('texkey', ''))
 
         template_data = [
-            ('key', unicode(data.get('key')))
+            ('key', str(data.get('key')))
         ]
 
         for field in fields:
@@ -144,4 +154,8 @@ class PybtexSchema(Schema):
                     (field, unicode(data[field]))
                 )
 
-        return texkey, Entry(doc_type, template_data)
+        # Note: human-authors are put in `persons' dict, corporate author will be passed as a field in template data.
+        return texkey, Entry(doc_type, template_data, persons={
+            'author': [Person(x) for x in get_authors_with_role(data.get('author', []), 'author')],
+            'editor': [Person(x) for x in get_authors_with_role(data.get('author', []), 'editor')]
+        })

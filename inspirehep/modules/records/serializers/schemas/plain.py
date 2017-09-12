@@ -20,26 +20,22 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Invenio standard theme."""
+"""Marshmallow JSON schema for a literature entry."""
 
 from __future__ import absolute_import, division, print_function
 
-from .views import blueprint
+from .pybtex import PybtexSchema, PublicationInfoSchema
+from marshmallow import post_load
+from marshmallow.fields import List, Nested
 
 
-class INSPIRERecords(object):
-    """Invenio search extension."""
+class PlainSchema(PybtexSchema):
+    """Schema for plain text and latex references."""
+    publication_info_list = List(Nested(PublicationInfoSchema), load_from='publication_info')
 
-    def __init__(self, app=None, **kwargs):
-        """Extension initialization."""
-        if app:
-            self.init_app(app, **kwargs)
-
-    def init_app(self, app, assets=None, **kwargs):
-        """Initialize application object."""
-        app.register_blueprint(blueprint)
-        app.extensions['inspire-records'] = self
-        # Configure Jinja2 environment.
-        app.jinja_env.add_extension('jinja2.ext.do')
-        app.jinja_env.lstrip_blocks = True
-        app.jinja_env.trim_blocks = True
+    @post_load
+    def make_bibtex(self, data):
+        texkey, entry = super(PlainSchema, self).make_bibtex(data)
+        entry.fields['publication_info_list'] = data.get('publication_info_list')
+        entry.fields['primaryClasses'] = ','.join(data.get('arxiv_eprints', {}).get('categories', []))
+        return texkey, entry

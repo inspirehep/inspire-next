@@ -40,11 +40,12 @@ install_requires = [
     'refextract>=0.2.0',
     'orcid',
     'raven<=5.1.0',
+    'flower',
     'langdetect>=1.0.6',
     'librabbitmq>=1.6.1',
     'idutils>=0.2.1',
     'invenio-access>=1.0.0a7',
-    'invenio-accounts>=1.0.0b10',
+    'invenio-accounts>=1.0.0b7',
     'invenio-admin>=1.0.0a3',
     'invenio-assets>=1.0.0b7',
     'invenio-base>=1.0.0a11',
@@ -59,6 +60,7 @@ install_requires = [
     'invenio-logging>=1.0.0b3',
     'invenio-mail>=1.0.0a4',
     'invenio-oauthclient>=1.0.0b1',
+    'invenio-orcid>=1.0.0a1',
     'invenio-records>=1.0.0a16',  # Add [versioning] in the future
     'invenio-rest[cors]>=1.0.0a7',
     'invenio-search>=1.0.0a7',
@@ -81,6 +83,8 @@ install_requires = [
     'SQLAlchemy>=1.0.14,<1.1',
     'nameparser>=0.4.0',
     'iso8601>=0.1.11',
+    'invenio-trends>=1.0.0a1',
+    'invenio-trends-ui>=1.0.0a1',
     'elasticsearch<3.0.0',
     'Flask-Login~=0.0,>=0.4.0',
     'invenio-workflows~=6.0,>=6.0.5',
@@ -96,6 +100,7 @@ install_requires = [
     'Babel~=2.0,>=2.4.0',
     'setproctitle~=1.0,>=1.1.10',
     'backports.tempfile>=1.0rc1',
+    'pybtex>=0.21',
 ]
 
 tests_require = [
@@ -116,18 +121,11 @@ extras_require = {
     'postgresql': [
         'invenio-db[postgresql,versioning]>=1.0.0b2',
     ],
-    'build-node': [
-        'ipdb',
-    ],
     'web-node': [
         'gunicorn',
     ],
-    'worker-node': [
-        'superlance',
-        'flower',
-    ],
-    'crawler-node': [
-        'hepcrawl~=2.0,>=2.0.1',
+    'crawler': [
+        'hepcrawl~=0.0,>=0.3.4',
     ],
     'tests': tests_require,
     'xrootd': [
@@ -200,6 +198,7 @@ setup(
             'inspire_search = inspirehep.modules.search:InspireSearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'invenio_collections = invenio_collections:InvenioCollections',
+            'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
         ],
         'invenio_base.apps': [
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',

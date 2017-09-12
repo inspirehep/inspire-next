@@ -20,26 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Invenio standard theme."""
+"""Plugins for pybtex to generate other bibliography styles."""
 
 from __future__ import absolute_import, division, print_function
 
-from .views import blueprint
-
-
-class INSPIRERecords(object):
-    """Invenio search extension."""
-
-    def __init__(self, app=None, **kwargs):
-        """Extension initialization."""
-        if app:
-            self.init_app(app, **kwargs)
-
-    def init_app(self, app, assets=None, **kwargs):
-        """Initialize application object."""
-        app.register_blueprint(blueprint)
-        app.extensions['inspire-records'] = self
-        # Configure Jinja2 environment.
-        app.jinja_env.add_extension('jinja2.ext.do')
-        app.jinja_env.lstrip_blocks = True
-        app.jinja_env.trim_blocks = True
+from .base_plugin import PybtexBaseWriter  # noqa: F401
+from .latex_plugin import LatexWriter  # noqa: F401
+from .bibtex_plugin import BibtexWriter  # noqa: F401
+from .plain_text_plugin import PlainTextWriter  # noqa: F401

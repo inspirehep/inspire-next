@@ -20,26 +20,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Invenio standard theme."""
+"""Creates a decorator with a store for functions, where the decorator argument is the key for function dictionary"""
 
-from __future__ import absolute_import, division, print_function
-
-from .views import blueprint
+from __future__ import division, absolute_import, print_function
 
 
-class INSPIRERecords(object):
-    """Invenio search extension."""
+def make_extractor():
+    """Creates a decorator with a store for post-processing/extracting functions."""
+    store = {}
 
-    def __init__(self, app=None, **kwargs):
-        """Extension initialization."""
-        if app:
-            self.init_app(app, **kwargs)
-
-    def init_app(self, app, assets=None, **kwargs):
-        """Initialize application object."""
-        app.register_blueprint(blueprint)
-        app.extensions['inspire-records'] = self
-        # Configure Jinja2 environment.
-        app.jinja_env.add_extension('jinja2.ext.do')
-        app.jinja_env.lstrip_blocks = True
-        app.jinja_env.trim_blocks = True
+    def extractor(field):
+        def decorator(fun):
+            store[field] = fun
+            return fun
+        return decorator
+    extractor.store = store
+    return extractor

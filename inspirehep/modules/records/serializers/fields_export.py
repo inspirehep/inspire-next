@@ -23,6 +23,7 @@
 """Instructions on where to find relevant bits of data in API."""
 
 from __future__ import absolute_import, division, print_function
+from .extractor import make_extractor
 
 
 MAX_AUTHORS_BEFORE_ET_AL = 10  # According to CSE stylebook
@@ -38,31 +39,41 @@ DOCUMENT_TYPE_MAP = {
     # theses handled separately due to masters/phd distinction
 }
 
+# Fields for a given bibtex entry. Since we're trying to match as many as possible
+# it doesn't matter w/e they're mandatory or optional
 FIELDS_FOR_ENTRY_TYPE = {
     'article': ['author', 'collaboration', 'journal', 'month', 'note', 'number', 'pages', 'title', 'volume', 'year',
-                'doi', 'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation'],
+                'reportNumber', 'doi', 'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation', 'url'],
     'book': ['address', 'author', 'edition', 'editor', 'month', 'note', 'number', 'publisher', 'series', 'title',
-             'volume', 'year', 'doi', 'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation', 'isbn'],
+             'volume', 'year', 'reportNumber', 'doi', 'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation',
+             'isbn', 'url'],
     'inbook': ['address', 'author', 'chapter', 'edition', 'editor', 'month', 'note', 'number', 'pages', 'publisher',
-               'series', 'title', 'type', 'volume', 'year', 'doi', 'archivePrefix', 'eprint', 'primaryClass',
-               'SLACcitation'],
+               'series', 'title', 'type', 'volume', 'year', 'reportNumber', 'doi', 'archivePrefix', 'eprint',
+               'primaryClass', 'SLACcitation', 'url'],
     'inproceedings': ['address', 'author', 'booktitle', 'editor', 'month', 'note', 'number', 'pages', 'organization',
-                   'publisher', 'series', 'title', 'volume', 'year', 'doi', 'archivePrefix', 'eprint', 'primaryClass',
-                   'SLACcitation'],
-    'proceedings': ['address', 'editor', 'month', 'note', 'number', 'organization', 'title', 'year'],
+                   'publisher', 'series', 'title', 'volume', 'year', 'reportNumber', 'doi', 'archivePrefix', 'eprint',
+                   'primaryClass', 'SLACcitation', 'url'],
+    'proceedings': ['address', 'editor', 'month', 'note', 'number', 'organization', 'pages', 'publisher', 'series',
+                    'title', 'volume', 'year', 'reportNumber', 'doi', 'archivePrefix', 'eprint', 'primaryClass',
+                    'SLACcitation', 'url'],
     'techreport': ['address', 'author', 'collaboration', 'institution', 'month', 'note', 'number', 'title', 'type',
-                   'year', 'doi', 'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation'],
+                   'year', 'doi', 'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation', 'url'],
     'phdthesis': ['address', 'author', 'month', 'note', 'school', 'title', 'type', 'year', 'reportNumber', 'doi',
-                  'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation'],
+                  'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation', 'url'],
     'mastersthesis': ['address', 'author', 'month', 'note', 'school', 'title', 'type', 'year', 'reportNumber', 'doi',
-                      'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation'],
-    'misc': ['author', 'howpublished', 'month', 'note', 'title', 'year', 'doi', 'archivePrefix', 'eprint',
-             'primaryClass', 'SLACcitation']
+                      'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation', 'url'],
+    'misc': ['author', 'howpublished', 'month', 'note', 'title', 'year', 'reportNumber', 'doi', 'archivePrefix',
+             'eprint', 'primaryClass', 'SLACcitation', 'url']
 }
 
 
 def bibtex_document_type(doc_type, obj):
-    """Returns a bibtex document type for an entry."""
+    """
+    Returns a bibtex document type for an entry.
+    :param doc_type: INSPIRE document type.
+    :param obj: Object preloaded by schema.
+    :return: Bibtex document type.
+    """
     if doc_type in DOCUMENT_TYPE_MAP:
         return DOCUMENT_TYPE_MAP[doc_type]
     # Theses need special treatment, because bibtex differentiates between their types:
@@ -72,7 +83,7 @@ def bibtex_document_type(doc_type, obj):
         return 'mastersthesis'
     # Other types of theses (other, diploma, bachelor, laurea, habilitation) don't have separate types in bibtex:
     elif doc_type == 'thesis':
-        return 'misc'
+        return 'misc'  # TODO: maybe use mastersthesis with a type specifying the degree?
     # Report numbers imply report type
     # elif doc_type == 'note' and 'report_numbers' in obj:
     #     return 'techreport'
@@ -94,39 +105,52 @@ def bibtex_type_and_fields(data):
     return bibtex_doc_type, FIELDS_FOR_ENTRY_TYPE[bibtex_doc_type]
 
 
-def make_author_list(authors):
-    if len(authors) <= MAX_AUTHORS_BEFORE_ET_AL:
-        return ' and '.join(authors)
-    else:
-        return authors[0] + ' and others'
-
-
-def make_extractor():
-    store = {}
-
-    def extractor(field):
-        def decorator(fun):
-            store[field] = fun
-            return fun
-        return decorator
-    extractor.store = store
-    return extractor
-
-
 extractor = make_extractor()
+
+
+def get_authors_with_role(authors, role):
+    """
+    Extract names of people from an authors field given their roles.
+    :param authors: Authors field of the record.
+    :param role: String specifying the role 'author', 'editor', etc.
+    :return: List of names of people.
+    """
+    filtered = []
+    for author in authors:
+        if 'inspire_roles' in author and role in author['inspire_roles']:
+            filtered.append(author['full_name'])
+        elif 'inspire_roles' not in author and role == 'author':
+            filtered.append(author['full_name'])
+    return filtered
+
+
+def eprint_new_style(eprint):
+    """
+    Given an arXiv eprint sting detect new (1234.5678) vs old style (hep-ph/123456)
+    :param eprint: Eprint string.
+    :return: True if new style, else False.
+    """
+    return '/' not in eprint and ' ' not in eprint
+
+
+def get_publication_info(data):
+    """
+    Get publication_info field from data.
+    :param data: Pre-loaded record.
+    :return: Return publication_info field if exists, else empty dictionary.
+    """
+    return data.get('publication_info', {})
 
 # Functions below describe where the non-obvious data is located
 
 
 @extractor('author')
 def get_author(data, doc_type):
-    authors = make_author_list(data.get('author', []))
-    corporate_authors = make_author_list(data.get('corporate_author', []))
-    return authors or corporate_authors
-
-
-def get_publication_info(data):
-    return data.get('publication_info', {})
+    """
+    Note: Only used to generate author field if corporate_author is the author.
+    """
+    if 'corporate_author' in data:
+        return ', '.join(data['corporate_author'])
 
 
 @extractor('journal')
@@ -141,14 +165,13 @@ def get_volume(data, doc_type):
 
 @extractor('year')
 def get_year(data, doc_type):
-    if get_publication_info(data):
-        return data['publication_info'].get('year')
+    if 'publication_info' in data and 'year' in data['publication_info'] \
+            and not (doc_type.endswith('thesis') and 'thesis_info' in data):
+        return data['publication_info']['year']
     if 'thesis_info' in data and 'date' in data['thesis_info']:
-        return data['thesis_info']['date']
-    if data.get('preprint_date'):
-        return data['preprint_date'][0]
-    if data.get('earliest_date'):
-        return data['earliest_date'][0]
+        return data['thesis_info']['date'][0]
+    if 'imprints' in data and 'date' in data['imprints']:
+        return data['imprints']['date'][0]
 
 
 @extractor('number')
@@ -161,7 +184,7 @@ def get_pages(data, doc_type):
     pub_info = get_publication_info(data)
     page_start, page_end = pub_info.get('page_start'), pub_info.get('page_end')
     if page_start and page_end:
-        return "{} -- {}".format(page_start, page_end)
+        return "{}--{}".format(page_start, page_end)
 
 
 @extractor('primaryClass')
@@ -176,25 +199,62 @@ def get_eprint(data, doc_type):
     return data.get('arxiv_eprints', {}).get('value')
 
 
+@extractor('archivePrefix')
+def get_arxiv_prefix(data, doc_type):
+    if data.get('arxiv_eprints', {}).get('value'):
+        return "arXiv"
+
+
 @extractor('SLACcitation')
 def get_slac_citation(data, doc_type):
+    source = ""
     eprint = data.get('arxiv_eprints', {}).get('value')
-    if not eprint:
-        return data.get('reportNumber')
+    if not eprint and data.get('reportNumber', []):
+        source = data['reportNumber'][0]
+    elif eprint and eprint_new_style(eprint):
+        source = "ARXIV:" + eprint
+    elif eprint:
+        source = eprint
+    elif 'doi' in data:
+        source = 'doi:' + data['doi']
+    # else:
+    #     source = "INSPIRE-" + str(data['key'])
 
-    if '/' in eprint or ' ' in eprint:  # old style, TODO: fix very crude check
-        return eprint
-    else:  # new style
-        return "ARXIV:" + eprint
+    if source:
+        return "%%CITATION = {};%%".format(source).upper()
+
 
 @extractor('school')
 def get_school(data, doc_type):
-    return make_author_list(data.get('thesis_info', {}).get('institutions', []))
+    schools = data.get('thesis_info', {}).get('institutions', [])
+    if schools:
+        return ', '.join(schools)
+
 
 @extractor('address')
 def get_address(data, doc_type):
-    return get_publication_info(data).get('conference', {}).get('address')
+    pubinfo_address = get_publication_info(data).get('conference', {}).get('address')
+    imprint_address = data.get('imprints', {}).get('place')
+    return pubinfo_address or imprint_address
+
 
 @extractor('booktitle')
 def get_booktitle(data, doc_type):
     return get_publication_info(data).get('conference', {}).get('title')
+
+
+@extractor('publisher')
+def get_publisher(data, doc_type):
+    return data.get('imprints', {}).get('publisher')
+
+
+@extractor('reportNumber')
+def get_report_number(data, doc_type):
+    if data.get('reportNumber', []):
+        return ', '.join(data.get('reportNumber', []))
+
+
+@extractor('isbn')
+def get_isbn(data, doc_type):
+    if 'isbn' in data:
+        return ', '.join(data['isbn'])

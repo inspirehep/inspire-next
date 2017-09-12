@@ -20,36 +20,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Cv_format_text serializer for records."""
+"""Plain text serializer for records."""
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
+from .pybtex_plugins import PlainTextWriter
+from .pybtex_serializer_base import PybtexSerializerBase
+from .schemas.plain import PlainSchema
 
 
-class CVFORMATTEXTSerializer(object):
-    """Cv_format_text serializer for records."""
+class CVTextSerializer(PybtexSerializerBase):
+    """Plaintext serializer for records."""
 
-    def serialize(self, pid, record, links_factory=None):
-        """Serialize a single cv_format_text from a record.
-        :param pid: Persistent identifier instance.
-        :param record: Record instance.
-        :param links_factory: Factory function for the link generation,
-        which are added to the response.
-        """
-        return Cv_latex_html_text(record, 'cv_latex_text', '\n').format()
+    def get_writer(self):
+        return PlainTextWriter()
 
-    def serialize_search(self, pid_fetcher, search_result, links=None,
-                         item_links_factory=None):
-        """Serialize a search result.
-        :param pid_fetcher: Persistent identifier fetcher.
-        :param search_result: Elasticsearch search result.
-        :param links: Dictionary of links to add to response.
-        """
-        records = []
-        for hit in search_result['hits']['hits']:
-            records.append(Cv_latex_html_text(hit['_source'],
-                                              'cv_latex_text',
-                                              '\n').format())
-
-        return "\n".join(records)
+    def get_schema(self):
+        return PlainSchema()

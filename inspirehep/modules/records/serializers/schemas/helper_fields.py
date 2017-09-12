@@ -22,30 +22,45 @@
 
 """Custom Marshmallow field types."""
 
+from __future__ import absolute_import, division, print_function
+
 import re
 
 from marshmallow.fields import Nested, List, Str
 
-from inspirehep.utils.record_getter import get_db_record
+from inspirehep.utils.record_getter import get_es_record
+
 
 class First(List):
-    """Deserializes only the first element of a list."""
+    """
+    Deserializes only the first element of a list, skipping None elements or entries defined as hidden.
+    """
     def _deserialize(self, value, attr, data):
         values = super(First, self)._deserialize(value, attr, data)
-        if len(values) > 0:
-            return values[0]
+        if values:
+            for element in values:
+                if element is not None or not (isinstance(element, dict) and 'hidden' in element):
+                    return element
 
-class ByRecId(Nested):
+
+class FromRecordID(Nested):
+    """
+    Uses the INSPIRE record ID to fetch the referenced record, and passes it to a nested schema.
+    Constructor requires additional parameter 'pid_type' that specifies the type of the record.
+    """
     def __init__(self, nested, pid_type, **kwargs):
-        super(ByRecId, self).__init__(nested, **kwargs)
+        super(FromRecordID, self).__init__(nested, **kwargs)
         self.pid_type = pid_type
 
     def _deserialize(self, value, attr, data):
-        record = get_db_record(self.pid_type, value)
-        return super(ByRecId, self)._deserialize(record, attr, data)
+        record = get_es_record(self.pid_type, value)
+        return super(FromRecordID, self)._deserialize(record, attr, data)
+
 
 class PartialDate(Str):
-    """Deserializes partial or full dates, e.g. '2017', '2017-09', '2017-09-12'"""
+    """
+    Deserializes partial or full dates in ISO-8601, e.g. '2017', '2017-09', '2017-09-12'.
+    """
     regex = re.compile(r"^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?.*$")
 
     def _deserialize(self, value, attr, data):

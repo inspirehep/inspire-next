@@ -20,34 +20,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""LatexEU serializer for records."""
+"""LaTeX (EU) serializer for records."""
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.latex import Latex
+from .pybtex_plugins import LatexWriter
+from .pybtex_serializer_base import PybtexSerializerBase
+from .schemas.latex import LatexSchema
 
 
-class LATEXEUSerializer(object):
-    """LatexEU serializer for records."""
+class LatexEUSerializer(PybtexSerializerBase):
+    """Latex (EU) serializer for records."""
 
-    def serialize(self, pid, record, links_factory=None):
-        """Serialize a single latexeu from a record.
-        :param pid: Persistent identifier instance.
-        :param record: Record instance.
-        :param links_factory: Factory function for the link generation,
-        which are added to the response.
-        """
-        return Latex(record, 'latex_eu').format()
+    def get_writer(self):
+        return LatexWriter(style='latex_eu')
 
-    def serialize_search(self, pid_fetcher, search_result, links=None,
-                         item_links_factory=None):
-        """Serialize a search result.
-        :param pid_fetcher: Persistent identifier fetcher.
-        :param search_result: Elasticsearch search result.
-        :param links: Dictionary of links to add to response.
-        """
-        records = []
-        for hit in search_result['hits']['hits']:
-            records.append(Latex(hit['_source'], 'latex_eu').format())
-
-        return "\n".join(records)
+    def get_schema(self):
+        return LatexSchema()

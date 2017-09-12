@@ -9,7 +9,10 @@
       booktitle      = "{{ '{' }}{{ booktitle }}{{ '}' }}",
 {%- endif %}
 
+<<<<<<< HEAD
 {#- TODO: Corporate author needs to be put in braces #}
+=======
+>>>>>>> bibtex serializer: request for feedback
 {%- if author %}
       author         = "{{ author }}",
 {%- endif %}
@@ -91,7 +94,11 @@
 {%- endif %}
 
 {%- if reportNumber %}
+<<<<<<< HEAD
       reportNumber   = "{{ reportNumber }}",
+=======
+      reportNumber   = "{{ reportNumber }}"
+>>>>>>> bibtex serializer: request for feedback
 {%- endif %}
 
 {%- if isbn %}
@@ -112,6 +119,10 @@
 {%- endif %}
 
 {%- if SLACcitation %}
+<<<<<<< HEAD
       SLACcitation   = "%%CITATION = {{ SLACcitation }};%%",
+=======
+      SLACcitation   = "%%CITATION = {{ SLACcitation }};%%"
+>>>>>>> bibtex serializer: request for feedback
 {%- endif  %}
 {{ '}' }}

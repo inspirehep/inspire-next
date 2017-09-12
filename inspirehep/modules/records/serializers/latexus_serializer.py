@@ -20,34 +20,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""LatexUS serializer for records."""
+"""LaTeX (US) serializer for records."""
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.latex import Latex
+from .pybtex_plugins import LatexWriter
+from .pybtex_serializer_base import PybtexSerializerBase
+from .schemas.latex import LatexSchema
 
 
-class LATEXUSSerializer(object):
-    """LatexUS serializer for records."""
+class LatexUSSerializer(PybtexSerializerBase):
+    """Latex (US) serializer for records."""
 
-    def serialize(self, pid, record, links_factory=None):
-        """Serialize a single latexus from a record.
-        :param pid: Persistent identifier instance.
-        :param record: Record instance.
-        :param links_factory: Factory function for the link generation,
-        which are added to the response.
-        """
-        return Latex(record, 'latex_us').format()
+    def get_writer(self):
+        return LatexWriter(style='latex_us')
 
-    def serialize_search(self, pid_fetcher, search_result, links=None,
-                         item_links_factory=None):
-        """Serialize a search result.
-        :param pid_fetcher: Persistent identifier fetcher.
-        :param search_result: Elasticsearch search result.
-        :param links: Dictionary of links to add to response.
-        """
-        records = []
-        for hit in search_result['hits']['hits']:
-            records.append(Latex(hit['_source'], 'latex_us').format())
-
-        return "\n".join(records)
+    def get_schema(self):
+        return LatexSchema()
