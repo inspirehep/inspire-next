@@ -25,7 +25,6 @@
 from __future__ import absolute_import, division, print_function
 
 import datetime
-from functools import wraps
 
 from flask import current_app
 
@@ -129,25 +128,6 @@ def already_harvested(obj, eng):
         return True
 
     return False
-
-
-def previously_rejected(days_ago=None):
-    """Check if record exist on INSPIRE or already rejected."""
-    @with_debug_logging
-    @wraps(previously_rejected)
-    def _previously_rejected(obj, eng):
-        if days_ago is None:
-            _days_ago = current_app.config.get('INSPIRE_ACCEPTANCE_TIMEOUT', 5)
-        else:
-            _days_ago = days_ago
-
-        if is_too_old(obj.data, days_ago=_days_ago):
-            obj.log.info("Record is likely rejected previously.")
-            return True
-
-        return False
-
-    return _previously_rejected
 
 
 @with_debug_logging
