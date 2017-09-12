@@ -51,7 +51,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_submission,
     is_arxiv_paper,
     mark,
-    prepare_update_payload,
     refextract,
     submission_fulltext_download,
 )
@@ -275,11 +274,9 @@ SEND_TO_LEGACY_AND_WAIT = [
     IF_ELSE(
         is_marked('is-update'),
         [
-            prepare_update_payload(extra_data_key="update_payload"),
             send_robotupload(
                 marcxml_processor=hep2marc,
-                mode="correct",
-                extra_data_key="update_payload"
+                mode="replace",
             ),
         ], [
             send_robotupload(

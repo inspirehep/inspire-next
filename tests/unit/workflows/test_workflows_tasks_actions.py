@@ -42,7 +42,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_record_relevant,
     is_submission,
     mark,
-    prepare_update_payload,
     reject_record,
     refextract,
     shall_halt_workflow,
@@ -392,36 +391,6 @@ def test_is_submission_returns_false_if_obj_has_falsy_acquisition_source():
     eng = MockEng()
 
     assert not is_submission(obj, eng)
-
-
-def test_prepare_update_payload():
-    obj = MockObj({}, {})
-    eng = MockEng()
-
-    default_prepare_update_payload = prepare_update_payload()
-
-    assert default_prepare_update_payload(obj, eng) is None
-    assert obj.extra_data['update_payload'] == {}
-
-
-def test_prepare_update_payload_accepts_a_custom_key():
-    obj = MockObj({}, {})
-    eng = MockEng()
-
-    custom_key_prepare_update_payload = prepare_update_payload('custom_key')
-
-    assert custom_key_prepare_update_payload(obj, eng) is None
-    assert obj.extra_data['custom_key'] == {}
-
-
-def test_prepare_update_payload_overwrites():
-    obj = MockObj({'bar': 'baz'}, {'foo': 'foo'})
-    eng = MockEng()
-
-    foo_prepare_update_payload = prepare_update_payload('foo')
-
-    assert foo_prepare_update_payload(obj, eng) is None
-    assert obj.extra_data['foo'] == {'bar': 'baz'}
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.get_pdf_in_workflow')

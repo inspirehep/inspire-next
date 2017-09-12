@@ -226,21 +226,6 @@ def submission_fulltext_download(obj, eng):
             obj.log.info('Cannot fetch PDF provided by user from %s', submission_pdf)
 
 
-def prepare_update_payload(extra_data_key="update_payload"):
-    @with_debug_logging
-    @wraps(prepare_update_payload)
-    def _prepare_update_payload(obj, eng):
-        # TODO: Perform auto-merge if possible and update only necessary data
-        # See obj.extra_data["record_matches"] for data on matches
-
-        # FIXME: Just update entire record for now
-        obj.extra_data[extra_data_key] = obj.data
-
-    _prepare_update_payload.__doc__ = (
-        'Prepare the update payload, extra_data_key=%s.' % extra_data_key)
-    return _prepare_update_payload
-
-
 @with_debug_logging
 def refextract(obj, eng):
     """Extract references from various sources and add them to the workflow.
