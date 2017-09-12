@@ -260,10 +260,10 @@ setup(
             'inspire_disambiguation = inspirehep.modules.disambiguation.models',
         ],
         'invenio_celery.tasks': [
-            'inspire_refextract = inspirehep.modules.refextract.tasks',
-            'inspire_authors = inspirehep.modules.authors.tasks',
             'inspire_disambiguation = inspirehep.modules.disambiguation.tasks',
+            'inspire_migrator = inspirehep.modules.migrator.tasks',
             'inspire_records = inspirehep.modules.records.tasks',
+            'inspire_refextract = inspirehep.modules.refextract.tasks',
         ],
     },
     tests_require=tests_require,
