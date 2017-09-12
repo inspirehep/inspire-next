@@ -108,3 +108,8 @@ def is_submitted_but_not_published(record):
                 if is_complete(publication_info):
                     return False
     return had_at_least_one_journal_title
+
+
+def get_source(record):
+    """Return the ``source`` of ``acquisition_source`` of a record."""
+    return get_value(record, 'acquisition_source.source')

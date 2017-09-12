@@ -63,8 +63,13 @@ def store_record(obj, *args, **kwargs):
     # Create persistent identifier.
     created_pid = inspire_recid_minter(str(record.id), record).pid_value
 
+    # store head_uuid to store the root later
+    obj.extra_data['head_uuid'] = str(record.id)
+
     # Commit any changes to record
     record.commit()
+
+    obj.save()
 
     # Commit to DB before indexing
     db.session.commit()

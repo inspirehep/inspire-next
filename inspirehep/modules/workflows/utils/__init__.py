@@ -38,7 +38,6 @@ from flask import current_app
 
 from ..models import WorkflowsAudit
 
-
 LOGGER = logging.getLogger(__name__)
 
 

@@ -22,13 +22,23 @@
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_workflows.errors import WorkflowsError
+from mocks import MockObj
+import pytest
 
 
-class DownloadError(WorkflowsError):
-    """Error representing a failed download in a workflow."""
+from inspirehep.modules.workflows.tasks.merging import get_head
+from inspirehep.modules.workflows.errors import MergingError
 
 
-class MergingError(WorkflowsError):
-    """Error representing a failure related to the merging process in a
-    workflow"""
+def test_get_head_empty_head_uuid():
+    workflow_obj = MockObj({}, {'head_uuid': ''})
+
+    with pytest.raises(MergingError):
+        get_head(workflow_obj)
+
+
+def test_get_head_no_head_uuid():
+    workflow_obj = MockObj({}, {})
+
+    with pytest.raises(MergingError):
+        get_head(workflow_obj)

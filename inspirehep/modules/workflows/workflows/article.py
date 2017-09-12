@@ -54,7 +54,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     refextract,
     submission_fulltext_download,
 )
-
 from inspirehep.modules.workflows.tasks.classifier import (
     classify_paper,
     filter_core_keywords,
