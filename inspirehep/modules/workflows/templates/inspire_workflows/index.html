@@ -74,7 +74,7 @@
 
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"
-        filter_string="source=arXiv&workflow_name=HEP"
+        filter_string="source=arXiv&workflow_name=HEP&is-update=false"
         secondary_filter="status"
         section_title="arxiv harvests">
       </holding-pen-dashboard-item>
@@ -83,6 +83,16 @@
   </div>
 
   <div class="row overview-container">
+
+    <div class="col-md-3 col-sm-6">
+
+        <holding-pen-dashboard-item
+          template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"
+          filter_string="is-update=true&workflow_name=HEP"
+          secondary_filter="status"
+          section_title="harvests updates">
+        </holding-pen-dashboard-item>
+    </div>
 
     <div class="col-md-3 col-sm-6">
 
