@@ -24,27 +24,29 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 MAX_AUTHORS_BEFORE_ET_AL = 10  # According to CSE stylebook
 
 DOCUMENT_TYPE_MAP = {
     'article': 'article',
     'book': 'book',
     'book chapter': 'inbook',
-    'conference paper': 'conference',
+    'conference paper': 'inproceedings',
     'proceedings': 'proceedings',
     'report': 'techreport',
+    'note': 'article',
     # theses handled separately due to masters/phd distinction
 }
 
 FIELDS_FOR_ENTRY_TYPE = {
-    'article': ['author', 'journal', 'month', 'note', 'number', 'pages', 'title', 'volume', 'year', 'doi',
-                'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation'],
+    'article': ['author', 'collaboration', 'journal', 'month', 'note', 'number', 'pages', 'title', 'volume', 'year',
+                'doi', 'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation'],
     'book': ['address', 'author', 'edition', 'editor', 'month', 'note', 'number', 'publisher', 'series', 'title',
              'volume', 'year', 'doi', 'archivePrefix', 'eprint', 'primaryClass', 'SLACcitation', 'isbn'],
     'inbook': ['address', 'author', 'chapter', 'edition', 'editor', 'month', 'note', 'number', 'pages', 'publisher',
                'series', 'title', 'type', 'volume', 'year', 'doi', 'archivePrefix', 'eprint', 'primaryClass',
                'SLACcitation'],
-    'conference': ['address', 'author', 'booktitle', 'editor', 'month', 'note', 'number', 'pages', 'organization',
+    'inproceedings': ['address', 'author', 'booktitle', 'editor', 'month', 'note', 'number', 'pages', 'organization',
                    'publisher', 'series', 'title', 'volume', 'year', 'doi', 'archivePrefix', 'eprint', 'primaryClass',
                    'SLACcitation'],
     'proceedings': ['address', 'editor', 'month', 'note', 'number', 'organization', 'title', 'year'],
@@ -139,10 +141,14 @@ def get_volume(data, doc_type):
 
 @extractor('year')
 def get_year(data, doc_type):
-    if 'publication_info' in data:
-        return data['get_publication'].get('year')
-    if 'thesis_info' in data:
-        return data['thesis_info'].get('date')
+    if get_publication_info(data):
+        return data['publication_info'].get('year')
+    if 'thesis_info' in data and 'date' in data['thesis_info']:
+        return data['thesis_info']['date']
+    if data.get('preprint_date'):
+        return data['preprint_date'][0]
+    if data.get('earliest_date'):
+        return data['earliest_date'][0]
 
 
 @extractor('number')
@@ -180,3 +186,15 @@ def get_slac_citation(data, doc_type):
         return eprint
     else:  # new style
         return "ARXIV:" + eprint
+
+@extractor('school')
+def get_school(data, doc_type):
+    return make_author_list(data.get('thesis_info', {}).get('institutions', []))
+
+@extractor('address')
+def get_address(data, doc_type):
+    return get_publication_info(data).get('conference', {}).get('address')
+
+@extractor('booktitle')
+def get_booktitle(data, doc_type):
+    return get_publication_info(data).get('conference', {}).get('title')

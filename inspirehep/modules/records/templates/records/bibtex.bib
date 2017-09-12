@@ -9,6 +9,7 @@
       booktitle      = "{{ '{' }}{{ booktitle }}{{ '}' }}",
 {%- endif %}
 
+{#- TODO: Corporate author needs to be put in braces #}
 {%- if author %}
       author         = "{{ author }}",
 {%- endif %}
@@ -90,7 +91,7 @@
 {%- endif %}
 
 {%- if reportNumber %}
-      reportNumber   = "{{ reportNumber }}"
+      reportNumber   = "{{ reportNumber }}",
 {%- endif %}
 
 {%- if isbn %}
@@ -111,6 +112,6 @@
 {%- endif %}
 
 {%- if SLACcitation %}
-      SLACcitation   = "%%CITATION = {{ SLACcitation }};%%"
+      SLACcitation   = "%%CITATION = {{ SLACcitation }};%%",
 {%- endif  %}
 {{ '}' }}

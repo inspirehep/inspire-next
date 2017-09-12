@@ -20,22 +20,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Marshmallow JSON schema."""
+"""Marshmallow JSON schema for a literature entry."""
 
 from __future__ import absolute_import, division, print_function
 
 from marshmallow import Schema, post_load
-from marshmallow.fields import Str, List, Nested, Int, Date
+from marshmallow.fields import Str, List, Nested, Int
+from pybtex.database import BibliographyData, Entry
 
 from inspirehep.modules.records.serializers.fields_export import bibtex_type_and_fields, extractor
-
-
-class First(List):
-    def _deserialize(self, value, attr, data):
-        values = super(First, self)._deserialize(value, attr, data)
-        if len(values) > 0:
-            return values[0]
-
+from .helper_fields import First, ByRecId, PartialDate
 
 class AuthorSchema(Schema):
     """Schema for authors in Bibtex references."""
@@ -71,6 +65,19 @@ class ThesisSchema(Schema):
     date = Str()  # TODO: Take out the year
 
 
+class ConferenceAddressSchema(Schema):
+    postal_address = First(Str())
+
+    @post_load
+    def make_address(self, data):
+        return data['postal_address']
+
+class ConferenceSchema(Schema):
+    cnum = Str()
+    address = First(Nested(ConferenceAddressSchema))
+    title = First(Nested(TitleSchema), load_from='titles')
+
+
 class PublicationInfoSchema(Schema):
     """Schema to represent publication_info."""
     journal = Str(load_from='journal_title')
@@ -79,6 +86,7 @@ class PublicationInfoSchema(Schema):
     number = Str(load_from='journal_issue')
     page_start = Str()
     page_end = Str()
+    conference = ByRecId(ConferenceSchema, 'con', load_from='conference_recid')
 
 
 class ValueListSchema(Schema):
@@ -96,7 +104,7 @@ class ArXivEprintSchema(Schema):
     value = Str()
 
 
-class BibtexSchema(Schema):
+class PybtexSchema(Schema):
     """Schema for Bibtex references."""
     key = Int(load_from='self_recid')
     texkey = First(Str(), load_from='texkeys')
@@ -104,33 +112,36 @@ class BibtexSchema(Schema):
     title = First(Nested(TitleSchema), load_from='titles')
     document_type = List(Str())
     thesis_info = Nested(ThesisSchema)
-    publication_info = First(Nested(PublicationInfoSchema))
+    publication_info = First(Nested(PublicationInfoSchema))  # TODO: find the best entry
     doi = First(Nested(ValueListSchema), load_from='dois')
     arxiv_eprints = First(Nested(ArXivEprintSchema))
     reportNumber = First(Nested(ValueListSchema), load_from='report_numbers')
-    preprint_date = Date()
-    earliest_date = Date()
+    preprint_date = PartialDate()
+    earliest_date = PartialDate()
     corporate_author = List(Str(), load_from='corporate_authors')
     collaboration = First(Nested(ValueListSchema), load_from='collaborations')
 
     @post_load
     def make_bibtex(self, data):
-        print(str(data))  # TODO: Remove
+        print("PREDATA: " + str(data))  # TODO: Remove
 
         doc_type, fields = bibtex_type_and_fields(data)
+        texkey = data.get('texkey', '')
 
-        template_data = {
-            'document_type': doc_type,
-            'texkey': data.get('texkey', ''),
-            'key': data.get('key')
-        }
+        template_data = [
+            ('key', unicode(data.get('key')))
+        ]
 
         for field in fields:
             if field in extractor.store:
-                template_data[field] = extractor.store[field](data, doc_type)
-            elif field in data:
-                template_data[field] = data[field]
-            else:
-                template_data[field] = None
+                field_value = extractor.store[field](data, doc_type)
+                if field_value:
+                    template_data.append(
+                        (field, unicode(field_value))
+                    )
+            elif data.get(field):
+                template_data.append(
+                    (field, unicode(data[field]))
+                )
 
-        return template_data
+        return texkey, Entry(doc_type, template_data)

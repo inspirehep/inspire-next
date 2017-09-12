@@ -24,20 +24,30 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .schemas.bibtex import BibtexSchema
+from .schemas.pybtex import PybtexSchema
 from inspirehep.utils.jinja2 import render_template_to_string_for_blueprint
 from ..views import blueprint
+
+from pybtex.database import BibliographyData, Entry
+import flask
 
 
 class BIBTEXSerializer(object):
     """BibTex serializer for records."""
 
-    def serialize_record(self, record):
-        bibtex_schema = BibtexSchema()
+    def create_bibliography_entry(self, record):
+        bibtex_schema = PybtexSchema()
         data, errors = bibtex_schema.load(record)
-        print("DATA: " + str(data))  # TODO: Remove
-        print("ERRO: " + str(errors))
-        return render_template_to_string_for_blueprint(blueprint, 'records/bibtex.bib', **data)
+        return data
+
+        #return render_template_to_string_for_blueprint(blueprint, 'records/bibtex.bib', **data)
+
+    def create_bibliography(self, record_list):
+        bib_dict = {}
+        for record in record_list:
+            texkey, entries = self.create_bibliography_entry(record)
+            bib_dict[texkey] = entries
+        return BibliographyData(bib_dict).to_string('bibtex')
 
     def serialize(self, pid, record, links_factory=None):
         """Serialize a single bibtex from a record.
@@ -46,7 +56,7 @@ class BIBTEXSerializer(object):
         :param links_factory: Factory function for the link generation,
         which are added to the response.
         """
-        return self.serialize_record(record)
+        return self.create_bibliography([record])
 
     def serialize_search(self, pid_fetcher, search_result, links=None,
                          item_links_factory=None):
@@ -55,8 +65,5 @@ class BIBTEXSerializer(object):
         :param search_result: Elasticsearch search result.
         :param links: Dictionary of links to add to response.
         """
-        records = []
-        for hit in search_result['hits']['hits']:
-            records.append(self.serialize_record(hit['_source']))
-
-        return "\n".join(records)
+        records = [hit['_source'] for hit in search_result['hits']['hits']]
+        return self.create_bibliography(records)
