@@ -60,6 +60,7 @@ install_requires = [
     'inspire-crawler~=0.0,>=0.4.2',
     'inspire-dojson~=51.0,>=51.0.1',
     'inspire-matcher~=0.0,>=0.0.12',
+    'inspire-json-merger~=2.0,>=2.0.0',
     'inspire-query-parser~=1.0,>=1.0.5',
     'inspire-schemas~=51.0,>=51.0.2',
     'inspire-utils~=0.0,>=0.0.8',
