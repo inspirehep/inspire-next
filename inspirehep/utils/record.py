@@ -71,6 +71,24 @@ def get_arxiv_id(record):
     return get_value(record, 'arxiv_eprints.value[0]', default='')
 
 
+def get_source(record):
+    """Return the acquisition source of a record.
+
+    Args:
+        record(InspireRecord): a record.
+
+    Returns:
+        str: the acquisition source of the record.
+
+    Examples:
+        >>> record = {'acquisition_source': {'source': 'arxiv'}}
+        >>> get_source(record)
+        'arxiv'
+
+    """
+    return get_value(record, 'acquisition_source.source')
+
+
 def get_subtitle(record):
     """Get preferred subtitle from record."""
     return get_value(record, 'titles.subtitle[0]', default='')

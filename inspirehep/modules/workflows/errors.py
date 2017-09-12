@@ -28,3 +28,8 @@ from invenio_workflows.errors import WorkflowsError
 class DownloadError(WorkflowsError):
 
     """Error representing a failed download in a workflow."""
+
+
+class MergeError(WorkflowsError):
+
+    """Error representing a failed merge in a workflow."""

@@ -27,6 +27,7 @@ from inspirehep.utils.record import (
     get_abstract,
     get_arxiv_categories,
     get_arxiv_id,
+    get_source,
     get_subtitle,
     get_title,
 )
@@ -106,6 +107,23 @@ def test_get_arxiv_id_returns_first_arxiv_identifier():
 
     expected = 'first arXiv identifier'
     result = get_arxiv_id(record)
+
+    assert expected == result
+
+
+def test_get_source():
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+
+    record = {
+        'acquisition_source': {
+            'source': 'arxiv',
+        },
+    }
+    assert validate(record['acquisition_source'], subschema) is None
+
+    expected = 'arxiv'
+    result = get_source(record)
 
     assert expected == result
 
