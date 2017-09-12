@@ -98,6 +98,7 @@ install_requires = [
     'timeout-decorator~=0.0,>=0.3.3',
     'Babel~=2.0,>=2.4.0',
     'setproctitle~=1.0,>=1.1.10',
+    'backports.tempfile>=1.0rc1',
 ]
 
 tests_require = [
