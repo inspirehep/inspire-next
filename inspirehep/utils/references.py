@@ -30,67 +30,54 @@ from inspirehep.utils.jinja2 import render_template_to_string
 from inspirehep.utils.record_getter import get_es_records
 
 
-class Reference(object):
-    """Class used to output reference format in detailed record"""
+def get_and_format_references(record):
+    out = []
+    references = record.get('references')
+    if references:
+        reference_recids = [
+            str(ref['recid']) for ref in references if ref.get('recid')
+        ]
 
-    def __init__(self, record):
-        self.record = record
-
-    def references(self):
-        """Reference export for single record in datatables format.
-
-        :returns: list
-            List of lists where every item represents a datatables row.
-            A row consists of [reference_number, reference, num_citations]
-        """
-
-        out = []
-        references = self.record.get('references')
-        if references:
-            reference_recids = [
-                str(ref['recid']) for ref in references if ref.get('recid')
+        resolved_references = get_es_records(
+            'lit',
+            reference_recids,
+            _source=[
+                'authors',
+                'citation_count',
+                'collaboration',
+                'control_number',
+                'corporate_author',
+                'earliest_date',
+                'publication_info',
+                'titles',
             ]
+        )
 
-            resolved_references = get_es_records(
-                'lit',
-                reference_recids,
-                _source=[
-                    'control_number',
-                    'citation_count',
-                    'titles',
-                    'earliest_date',
-                    'authors',
-                    'collaboration',
-                    'corporate_author',
-                    'publication_info'
-                ]
+        # Create mapping to keep reference order
+        recid_to_reference = {
+            ref['control_number']: ref for ref in resolved_references
+        }
+        for reference in references:
+            row = []
+            ref_record = recid_to_reference.get(
+                reference.get('recid'), {}
             )
-
-            # Create mapping to keep reference order
-            recid_to_reference = {
-                ref['control_number']: ref for ref in resolved_references
-            }
-            for reference in references:
-                row = []
-                ref_record = recid_to_reference.get(
-                    reference.get('recid'), {}
+            if 'reference' in reference:
+                reference.update(reference['reference'])
+                del reference['reference']
+            if 'publication_info' in reference:
+                reference['publication_info'] = force_list(
+                    reference['publication_info']
                 )
-                if 'reference' in reference:
-                    reference.update(reference['reference'])
-                    del reference['reference']
-                if 'publication_info' in reference:
-                    reference['publication_info'] = force_list(
-                        reference['publication_info']
-                    )
-                row.append(render_template_to_string(
-                    "inspirehep_theme/references.html",
-                    record=ref_record,
-                    reference=reference
-                ))
-                row.append(ref_record.get('citation_count', ''))
-                out.append(row)
+            row.append(render_template_to_string(
+                'inspirehep_theme/references.html',
+                record=ref_record,
+                reference=reference
+            ))
+            row.append(ref_record.get('citation_count', ''))
+            out.append(row)
 
-        return out
+    return out
 
 
 def map_refextract_to_schema(extracted_references, source=None):
