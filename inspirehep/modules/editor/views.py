@@ -27,7 +27,10 @@ from __future__ import absolute_import, division, print_function
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
 
-from inspirehep.utils.references import map_refextract_to_schema
+from inspirehep.utils.references import (
+    get_refextract_kbs_path,
+    map_refextract_to_schema,
+)
 from refextract import (
     extract_references_from_string,
     extract_references_from_url,
@@ -45,7 +48,11 @@ blueprint = Blueprint('inspirehep_editor',
 @blueprint.route('/refextract/text', methods=['POST'])
 def refextract_text():
     """Run refextract on a piece of text."""
-    extracted_references = extract_references_from_string(request.json['text'])
+    extracted_references = extract_references_from_string(
+        request.json['text'],
+        override_kbs_files=get_refextract_kbs_path(),
+        reference_format=u'{title},{volume},{page}'
+    )
     references = map_refextract_to_schema(extracted_references)
 
     return jsonify(references)
@@ -54,7 +61,11 @@ def refextract_text():
 @blueprint.route('/refextract/url', methods=['POST'])
 def refextract_url():
     """Run refextract on a URL."""
-    extracted_references = extract_references_from_url(request.json['url'])
+    extracted_references = extract_references_from_url(
+        request.json['url'],
+        override_kbs_files=get_refextract_kbs_path(),
+        reference_format=u'{title},{volume},{page}'
+    )
     references = map_refextract_to_schema(extracted_references)
 
     return jsonify(references)
