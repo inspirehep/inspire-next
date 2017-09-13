@@ -100,6 +100,7 @@ install_requires = [
     'setproctitle~=1.0,>=1.1.10',
     'backports.tempfile>=1.0rc1',
     'simplekv~=0.0,<0.11',
+    'node-semver~=0.0,<0.2',
 ]
 
 tests_require = [
