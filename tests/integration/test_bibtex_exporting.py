@@ -27,24 +27,28 @@ import pytest
 from inspirehep.utils.bibtex import Bibtex
 from inspirehep.utils.record_getter import get_db_record
 
+from inspirehep.modules.records.serializers.schemas.pybtex import PybtexSchema
+from pybtex.database import Entry
 
-@pytest.mark.xfail
+
 def test_format_article(app):
     article = get_db_record('lit', 4328)
+    expected = ("Glashow:1961tr", Entry('article', [
+        ('key', 'None'),  # FIXME: get_db_record here for some reason doesn't provide self_recid field
+        ('author', u'Glashow, S.L.'),
+        ('journal', u'Nucl.Phys.'),
+        ('pages', u'579--588'),
+        ('title', u'Partial Symmetries of Weak Interactions'),
+        ('volume', u'22'),
+        ('year', u'1961'),
+        ('doi', u'10.1016/0029-5582(61)90469-2'),
+    ]))
 
-    expected = u'''@article{Glashow:1961tr,
-      author         = "Glashow, S. L.",
-      title          = "{Partial Symmetries of Weak Interactions}",
-      journal        = "Nucl. Phys.",
-      volume         = "22",
-      year           = "1961",
-      pages          = "579-588",
-      doi            = "10.1016/0029-5582(61)90469-2",
-      SLACcitation   = "%%CITATION = INSPIRE-4328;%%"
-}'''
-    result = Bibtex(article).format()
+    schema = PybtexSchema()
+    result, errors = schema.load(article)
 
-    assert expected == result
+    assert not errors
+    assert result == expected
 
 
 @pytest.mark.xfail
