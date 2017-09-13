@@ -50,6 +50,7 @@ def app():
     )
 
     with app.app_context():
+        assert app.extensions['mail'].suppress is True
         yield app
 
 
