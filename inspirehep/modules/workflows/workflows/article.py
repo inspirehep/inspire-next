@@ -41,21 +41,22 @@ from inspirehep.modules.workflows.tasks.arxiv import (
 from inspirehep.modules.workflows.tasks.actions import (
     add_core,
     error_workflow,
+    fix_submission_number,
     halt_record,
-    is_record_relevant,
-    populate_journal_coverage,
-    is_record_accepted,
-    reject_record,
+    is_arxiv_paper,
     is_experimental_paper,
     is_marked,
+    is_record_accepted,
+    is_record_relevant,
     is_submission,
-    is_arxiv_paper,
     mark,
     normalize_journal_titles,
+    populate_journal_coverage,
     refextract,
+    reject_record,
+    save_workflow,
     set_refereed_and_fix_document_type,
     submission_fulltext_download,
-    save_workflow,
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -219,6 +220,7 @@ POSTENHANCE_RECORD = [
     prepare_keywords,
     remove_references,
     set_refereed_and_fix_document_type,
+    fix_submission_number,
 ]
 
 
