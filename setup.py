@@ -82,8 +82,6 @@ install_requires = [
     'SQLAlchemy>=1.0.14,<1.1',
     'nameparser>=0.4.0',
     'iso8601>=0.1.11',
-    'invenio-trends>=1.0.0a1',
-    'invenio-trends-ui>=1.0.0a1',
     'elasticsearch<3.0.0',
     'Flask-Login~=0.0,>=0.4.0',
     'invenio-workflows~=6.0,>=6.0.5',
