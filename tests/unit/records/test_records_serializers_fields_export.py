@@ -34,6 +34,7 @@ from inspirehep.modules.records.serializers.fields_export import (
     get_journal,
     get_volume,
     get_slac_citation,
+    get_report_number,
 )
 
 test_record = {
@@ -137,14 +138,21 @@ def test_get_slac_citation_arxiv_new_style():
 
 
 def test_get_slac_citation_only_report():
-    test_data = {"reportNumber": "CERN-SOME-REPORT"}
+    test_data = {"reportNumber": ["CERN-SOME-REPORT", "CERN-SOME-OTHER-REPORT"]}
     expected = "%%CITATION = CERN-SOME-REPORT;%%"
     result = get_slac_citation(test_data, 'article')
     assert expected == result
 
 
 def test_get_slac_citation_none():
-    test_data = {}
+    test_data = {"key": 123456}
     expected = None
     result = get_slac_citation(test_data, 'article')
+    assert expected == result
+
+
+def test_get_report_number():
+    test_data = {"reportNumber": ["CERN-SOME-REPORT", "CERN-SOME-OTHER-REPORT"]}
+    expected = "CERN-SOME-REPORT, CERN-SOME-OTHER-REPORT"
+    result = get_report_number(test_data, 'article')
     assert expected == result

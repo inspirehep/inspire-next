@@ -22,19 +22,16 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
-from inspirehep.utils.bibtex import Bibtex
-from inspirehep.utils.record_getter import get_db_record
+from inspirehep.utils.record_getter import get_es_record
 
 from inspirehep.modules.records.serializers.schemas.pybtex import PybtexSchema
 from pybtex.database import Entry
 
 
 def test_format_article(app):
-    article = get_db_record('lit', 4328)
+    article = get_es_record('lit', 4328)
     expected = ("Glashow:1961tr", Entry('article', [
-        ('key', 'None'),  # FIXME: get_db_record here for some reason doesn't provide self_recid field
+        ('key', '4328'),
         ('author', u'Glashow, S.L.'),
         ('journal', u'Nucl.Phys.'),
         ('pages', u'579--588'),
@@ -51,99 +48,108 @@ def test_format_article(app):
     assert result == expected
 
 
-@pytest.mark.xfail
 def test_format_inproceeding(app):
-    inproceeding = get_db_record('lit', 524480)
+    inproceedings = get_es_record('lit', 524480)
+    expected = ("Hu:2000az", Entry('inproceedings', [
+        ('key', '524480'),
+        ('address', u"Tokyo, Japan"),
+        ('author', u"Hu, Wayne"),
+        ('booktitle', u"4th RESCEU International Symposium on Birth and Evolution of the Universe"),
+        ('title', u"CMB anisotropies: A Decadal survey"),
+        ('archivePrefix', u'arXiv'),
+        ('eprint', u"astro-ph/0002520"),
+        ('primaryClass', u"astro-ph"),
+        ('SLACcitation', u"%%CITATION = ASTRO-PH/0002520;%%"),
+        ('url', u"http://alice.cern.ch/format/showfull?sysnb=2178340"),
+    ]))
 
-    expected = u'''@inproceedings{Hu:2000az,
-      author         = "Hu, Wayne",
-      title          = "{CMB anisotropies: A Decadal survey}",
-      url            = "http://alice.cern.ch/format/showfull?sysnb=2178340",
-      year           = "2",
-      eprint         = "astro-ph/0002520",
-      archivePrefix  = "arXiv",
-      primaryClass   = "astro-ph",
-      SLACcitation   = "%%CITATION = ASTRO-PH/0002520;%%"
-}'''
-    result = Bibtex(inproceeding).format()
+    schema = PybtexSchema()
+    result, errors = schema.load(inproceedings)
 
-    assert expected == result
+    assert not errors
+    assert result == expected
 
 
-@pytest.mark.xfail
 def test_format_proceeding(app):
-    proceeding = get_db_record('lit', 701585)
+    proceedings = get_es_record('lit', 701585)
+    expected = ("Alekhin:2005dx", Entry('proceedings', [
+        ('key', '701585'),
+        ('address', u"Geneva"),
+        ('editor', u"De Roeck, A. and Jung, H."),
+        ('pages', u"pp.1--326"),
+        ('publisher', u"CERN"),
+        ('title', u"HERA and the LHC: A Workshop on the implications of HERA for LHC physics: Proceedings Part A"),
+        ('year', u"2005"),
+        ('reportNumber', u"CERN-2005-014, DESY-PROC-2005-01"),
+        ('archivePrefix', u"arXiv"),
+        ('eprint', u"hep-ph/0601012"),
+        ('primaryClass', u"hep-ph"),
+        ('SLACcitation', u"%%CITATION = HEP-PH/0601012;%%"),
+        ('url', u"http://weblib.cern.ch/abstract?CERN-2005-014"),
+    ]))
 
-    expected = u'''@proceedings{Alekhin:2005dx,
-      author         = "De Roeck, A. and Jung, H.",
-      title          = "{HERA and the LHC: A Workshop on the implications of HERA for LHC physics: Proceedings Part A}",
-      organization   = "CERN",
-      publisher      = "CERN",
-      address        = "Geneva",
-      url            = "http://weblib.cern.ch/abstract?CERN-2005-014",
-      year           = "2005",
-      pages          = "pp.1-326",
-      eprint         = "hep-ph/0601012",
-      archivePrefix  = "arXiv",
-      primaryClass   = "hep-ph",
-      reportNumber   = "CERN-2005-014, DESY-PROC-2005-01",
-      SLACcitation   = "%%CITATION = HEP-PH/0601012;%%"
-}'''
-    result = Bibtex(proceeding).format()
+    schema = PybtexSchema()
+    result, errors = schema.load(proceedings)
 
-    assert expected == result
-
-
-@pytest.mark.xfail
-def test_format_thesis(app):
-    thesis = get_db_record('lit', 1395663)
-
-    expected = u'''@phdthesis{Mankuzhiyil:2010jpa,
-      author         = "Mankuzhiyil, Nijil",
-      title          = "{MAGIC $\\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes}",
-      school         = "Udine U.",
-      year           = "2010",
-      url            = "https://magicold.mpp.mpg.de/publications/theses/NMankuzhiyil.pdf",
-      SLACcitation   = "%%CITATION = INSPIRE-1395663;%%"
-}'''
-    result = Bibtex(thesis).format()
-
-    assert expected == result
+    assert not errors
+    assert result == expected
 
 
-@pytest.mark.xfail
+def test_format_phdthesis(app):
+    phdthesis = get_es_record('lit', 1395663)
+    expected = ("Mankuzhiyil:2010jpa", Entry('phdthesis', [
+        ('key', '1395663'),
+        ('author', u"Mankuzhiyil, Nijil"),
+        ('school', u"Udine U."),
+        ('title', u"MAGIC $\\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes"),
+        ('year', u"2010"),
+        # ('SLACcitation', u"%%CITATION = INSPIRE-1395663;%%"),
+        ('url', u"https://magicold.mpp.mpg.de/publications/theses/NMankuzhiyil.pdf"),
+    ]))
+
+    schema = PybtexSchema()
+    result, errors = schema.load(phdthesis)
+
+    assert not errors
+    assert result == expected
+
+
 def test_format_book(app):
-    book = get_db_record('lit', 736770)
+    book = get_es_record('lit', 736770)
+    expected = ("Fecko:2006zy", Entry('book', [
+        ('key', '736770'),
+        ('author', u"Fecko, M."),
+        ('publisher', u"Cambridge University Press"),
+        ('title', u"Differential geometry and Lie groups for physicists"),
+        ('year', u"2011"),
+        ('isbn', u"9780521187961, 9780521845076, 9780511242960"),
+        # ('SLACcitation', u"%%CITATION = INSPIRE-736770;%%"),
+    ]))
 
-    expected = u'''@book{Fecko:2006zy,
-      author         = "Fecko, M.",
-      title          = "{Differential geometry and Lie groups for physicists}",
-      publisher      = "Cambridge University Press",
-      year           = "2011",
-      ISBN           = "978-0-521-18796-1, 978-0-521-84507-6, 978-0-511-24296-0",
-      SLACcitation   = "%%CITATION = INSPIRE-736770;%%"
-}'''
-    result = Bibtex(book).format()
+    schema = PybtexSchema()
+    result, errors = schema.load(book)
 
-    assert expected == result
+    assert not errors
+    assert result == expected
 
 
-@pytest.mark.xfail
 def test_format_inbook(app):
-    inbook = get_db_record('lit', 1375491)
+    inbook = get_es_record('lit', 1375491)
+    expected = ("Bechtle:2015nta", Entry('inbook', [
+        ('key', '1375491'),
+        ('author', u"Bechtle, Philip and Plehn, Tilman and Sander, Christian"),
+        ('pages', u"421--462"),
+        ('title', u"Supersymmetry"),
+        ('year', u"2015"),
+        ('doi', u"10.1007/978-3-319-15001-7_10"),
+        ('archivePrefix', u"arXiv"),
+        ('eprint', u"1506.03091"),
+        ('primaryClass', u"hep-ex"),
+        ('SLACcitation', u"%%CITATION = ARXIV:1506.03091;%%"),
+    ]))
 
-    expected = u'''@inbook{Bechtle:2015nta,
-      author         = "Bechtle, Philip and Plehn, Tilman and Sander, Christian",
-      title          = "{Supersymmetry}",
-      url            = "http://inspirehep.net/record/1375491/files/arXiv:1506.03091.pdf",
-      year           = "2015",
-      pages          = "421-462",
-      doi            = "10.1007/978-3-319-15001-7_10",
-      eprint         = "1506.03091",
-      archivePrefix  = "arXiv",
-      primaryClass   = "hep-ex",
-      SLACcitation   = "%%CITATION = ARXIV:1506.03091;%%"
-}'''
-    result = Bibtex(inbook).format()
+    schema = PybtexSchema()
+    result, errors = schema.load(inbook)
 
-    assert expected == result
+    assert not errors
+    assert result == expected
