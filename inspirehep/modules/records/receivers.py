@@ -38,8 +38,6 @@ from inspire_utils.record import get_value
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.date import create_earliest_date
 
-from .experiments import EXPERIMENTS_MAP
-
 
 @models_committed.connect
 def receive_after_model_commit(sender, changes):
@@ -56,7 +54,6 @@ def receive_after_model_commit(sender, changes):
 @before_record_index.connect
 def enhance_record(sender, json, *args, **kwargs):
     populate_inspire_document_type(sender, json, *args, **kwargs)
-    match_valid_experiments(sender, json, *args, **kwargs)
     populate_recid_from_ref(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
@@ -101,32 +98,6 @@ def populate_inspire_document_type(sender, json, *args, **kwargs):
         result.append('peer reviewed')
 
     json['facet_inspire_doc_type'] = result
-
-
-def match_valid_experiments(sender, json, *args, **kwargs):
-    """Normalize the experiment names before indexing.
-
-    FIXME: this is currently using a static Python dictionary, while it should
-    use the current dynamic state of the Experiments collection.
-    """
-    def _normalize(experiment):
-        try:
-            result = EXPERIMENTS_MAP[experiment.lower().replace(' ', '')]
-        except KeyError:
-            result = experiment
-
-        return result
-
-    if 'accelerator_experiments' in json:
-        accelerator_exps = json['accelerator_experiments']
-        for accelerator_exp in accelerator_exps:
-            facet_experiment = []
-            if 'experiment' in accelerator_exp:
-                experiments = force_list(accelerator_exp['experiment'])
-                for experiment in experiments:
-                    normalized_experiment = _normalize(experiment)
-                    facet_experiment.append(normalized_experiment)
-                accelerator_exp['facet_experiment'] = [facet_experiment]
 
 
 def populate_recid_from_ref(sender, json, *args, **kwargs):
