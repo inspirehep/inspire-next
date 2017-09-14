@@ -34,7 +34,8 @@ def fake_download_file(workflow, name, url):
         workflow.files[name] = pkg_resources.resource_stream(
             __name__,
             os.path.join(
-                '../fixtures',
+                os.pardir,
+                'fixtures',
                 '1407.7587v1'
             )
         )
@@ -43,8 +44,29 @@ def fake_download_file(workflow, name, url):
         workflow.files[name] = pkg_resources.resource_stream(
             __name__,
             os.path.join(
-                '../fixtures',
+                os.pardir,
+                'fixtures',
                 '1407.7587v1.pdf',
+            )
+        )
+        return workflow.files[name]
+    if url == 'http://export.arxiv.org/e-print/1705.02541':
+        workflow.files[name] = pkg_resources.resource_stream(
+            __name__,
+            os.path.join(
+                os.pardir,
+                'fixtures',
+                '1705.02541'
+            )
+        )
+        return workflow.files[name]
+    elif url == 'http://export.arxiv.org/pdf/1705.02541':
+        workflow.files[name] = pkg_resources.resource_stream(
+            __name__,
+            os.path.join(
+                os.pardir,
+                'fixtures',
+                '1705.02541.pdf',
             )
         )
         return workflow.files[name]

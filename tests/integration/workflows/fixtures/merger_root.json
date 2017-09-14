@@ -1,0 +1,241 @@
+{
+    "$schema": "http://localhost:5000/schemas/records/hep.json",
+    "_collections": ["Literature"],
+    "_files": [
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:52cb0a0ed6e662eb823327a42c5d6e9b",
+            "key": "1705.02541.pdf",
+            "size": 2806666,
+            "version_id": "72f78ea9-84d8-4908-8227-0f500feb609b"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:b225eb2916d88b261cb5f4538e5ced55",
+            "key": "1705.02541.tar.gz",
+            "size": 2213267,
+            "version_id": "b65d63b8-190c-40aa-ac65-5e1c7734b562"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:164fc5e2686d91d096a4c872c2de064c",
+            "description": "00000 Partition function zeros for the $22\\times 22$ lattice with Brascamp-Kunz boundary conditions on the inner loop in the plane $y=u^2x^{1/2}$ for $x=1.0,~0.99,~0.98,~0.95.~0.90,~0.80$",
+            "key": "sq_BK_w22_inner",
+            "size": 143,
+            "version_id": "6a553746-ff9f-4ceb-a04a-cec285b0de27"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:2c84bddce537eca1a70b99a69b60a8c6",
+            "description": "00001 The nearest neighbor density of zeros (\\ref{bkdensity}) of the $22\\times 22$ lattice with Brascamp-Kunz boundary conditions in the plane $y=u^2x^{1/2}$ for $x=0.94,~0.90,~0.80,~0.50,~0.10,~0.01$ versus the the index $j$ .",
+            "key": "sq_BK_w22_inner_dens",
+            "size": 148,
+            "version_id": "3cb965f6-ebce-4651-8130-c53b4fb9e784"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:cc94a7188ea307a28b137df0bea5cf19",
+            "description": "00002 Equimodular curves in the $u$ plane for $x=0.99$ of $T_C(L_h)$ for $L_h=6$ on the left and $L_h=8$ on the right. Red is for singlet-singlet crossings, green is for singlet-doublet and blue is for doublet-doublet",
+            "key": "6bis-no-titles",
+            "size": 142,
+            "version_id": "289bac58-207a-43cc-89a1-03e47c9b283e"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:7c6315f3edaf03e6a6866109e9e3b0d6",
+            "description": "00003 Equimodular curves in the $u$ plane for $x=0.99$ of $T_C(L_h)$ for $L_h=6$ on the left and $L_h=8$ on the right. Red is for singlet-singlet crossings, green is for singlet-doublet and blue is for doublet-doublet",
+            "key": "8bis-no-titles",
+            "size": 142,
+            "version_id": "4f993d5b-1e8b-414a-b1ca-ad74fc98e303"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:b7e4074df17aafdaab321d98b8c22ef5",
+            "description": "00004 The equimodular curves in the $u$ plane for $T_C(L_h)$ for $L_h=8$. On the left all eigenvalues are considered and on the right the restriction to the momentum sector $P=0$ is made. The sectors where $\\lambda_{+}$ is dominant is marked by $+$ and the sector where $\\lambda_{-}$ is dominant is marked by a circle. The multiplicity of the crossings on the curves are indicated by colors. On left panel:red=2, green=3, black=4, blue=8, yellow=16, purple=32, brown=64 On right panel: red=2, green=4, blue=8, brown =3, black=9.",
+            "key": "equmod_L8",
+            "size": 137,
+            "version_id": "0a6b366f-6809-4235-8fef-739113c6a7a4"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:5fc8807d6308fdaf8dd216c0a5074841",
+            "description": "00005 Plots of the scale dependent density $g(\\alpha;a)_N$ for the Brascamp-Kunz zeros as a function of the angle $\\alpha/\\pi$ for the $20\\times 20$ lattice on the left and the $100\\times 100$ lattice on the right. In the first row $a=1,$ in the second row $a=[L^{1/2}]$ and in the third row $a=L=N^{1/2}$. This limiting density (\\ref{lwdensity}) of \\cite{luwu} is shown in red.",
+            "key": "sq_BK_density",
+            "size": 141,
+            "version_id": "03eb4d4e-508c-4c3e-8c32-0b749b224dd9"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:55dc88aeecf9776013791a26cb335bce",
+            "description": "00006 Equimodular curves in the $u$ plane for $x=0.99$ expanded near $u=i$ for $T_c(L_h)$ with $L_h=8$. Red is for singlet-singlet crossings, green is for singlet-doublet and blue is for doublet-doublet",
+            "key": "6bis_zoom",
+            "size": 137,
+            "version_id": "33ef5f17-78d7-4160-b284-e0a74e2cb9f6"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:5abb9a717bec1c9c371f60a26b5698f0",
+            "description": "00007 The density $g(\\alpha)$ of Lu and Wu \\cite{luwu}.",
+            "key": "LuWu_Density",
+            "size": 140,
+            "version_id": "631871ca-faf2-4a22-8115-e24b1d911244"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:a22dd5e86c6829cfd3dfd8e90cbf3eac",
+            "description": "00008 Brascamp-Kunz zeros in the plane $y=u^2x^{1/2}$ on the $22\\times 22$ lattice for values of $x=0.99,~0.90,~0.50,~0.10,~0.01,~0.0001$.",
+            "key": "sq_BK_w22_roots_field",
+            "size": 149,
+            "version_id": "4b824772-161c-479b-8189-19fc5b26e100"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:973cdbd515213bebf0f45041bcceeffd",
+            "description": "00009 The equimodular curves in the $u$ plane for $T_C(L_h)$ for $L_h=8$. On the left all eigenvalues are considered and on the right the restriction to the momentum sector $P=0$ is made. The sectors where $\\lambda_{+}$ is dominant is marked by $+$ and the sector where $\\lambda_{-}$ is dominant is marked by a circle. The multiplicity of the crossings on the curves are indicated by colors. On left panel:red=2, green=3, black=4, blue=8, yellow=16, purple=32, brown=64 On right panel: red=2, green=4, blue=8, brown =3, black=9.",
+            "key": "equmod_P0_L8",
+            "size": 140,
+            "version_id": "c70a0d91-b597-457d-b501-73fe989286ae"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:0ff8ba5245b2266503bd552bb3c2d42e",
+            "description": "00010 The zeros in the plane of $y=ux^{1/4}$ for the $16\\times 17$ lattice with toroidal boundary conditions for $x=1.0,~0.9,~0.5,~0.1,~0.01,~0.001.$",
+            "key": "sq_PB_w16_roots",
+            "size": 143,
+            "version_id": "7d79d73c-5b5d-47c3-86c2-bffba88f937c"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:c93dac1ab364373502ac9f121ac983a6",
+            "description": "00011 Comparison in the complex fugacity plane $z$ of the zeros of the partition function with cylindrical boundary of hard squares on the $40\\times 40$ lattice to hard hexagons on the $39\\times 39$ lattice taken from Figure 2 of ref. \\cite{mccoy1}.",
+            "key": "HS_CF_w40_roots",
+            "size": 143,
+            "version_id": "d676e67b-c0e3-4c21-b6c8-995d3e4b5ff2"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:137bf00011891dca5658507b7e694f2b",
+            "description": "00012 The equimodular curves in the $u$ plane for $T_C(L_h)$ at $P=0$ for $L_h=10$ on the left and 12 on the right. Red indicates a multiplicity of 2, green of 4 and blue of 8. For $L=10$ the sequence of multiplicities on the upper (antiferromagnetic) sequence (increasing towards $u=i$) is 2,4,8,4,18,24 and the lower (ferromagnetic) sequence 2,2,4,4,8,8,18,28. For $L=12$ the upper sequence 2,4,8,2,18,18,52,84 and the lower sequence is 2,2,4,4,8,8,18,26,52,88",
+            "key": "equmod_P0_L12",
+            "size": 141,
+            "version_id": "09da8dd7-ae48-43ac-8b67-3e7adcf715b9"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:9aba2c07af823bf1bd9455c48592206c",
+            "description": "00013 Zeros of the isotropic Ising model partition function at $H=0~(x=1)$ with Brascamp-Kunz boundary conditions for the $20\\times 20$ lattice. The full $s$ plane is plotted on the left. On the right the zeros are plotted in the $u$ plane; the zeros are on the two circles $u=\\pm 1+2^{1/2}e^{i\\theta}$ and only the first quadrant is shown.",
+            "key": "sq_BK_w20_roots",
+            "size": 143,
+            "version_id": "0dd9f7af-02d2-4fd0-b152-a3a195bf3554"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:55425363806822c1fc5ef37416bbeb8b",
+            "description": "00014 The zeros in the $y=ux^{1/4}$ plane for the $20\\times 20$ lattice with cylindrical boundary conditions for $x=1.0,~0.5,~0.1, ~0.01,~0.001,~0.0001,~0.00001,~0.000001.$",
+            "key": "sq_CF_w20_roots",
+            "size": 143,
+            "version_id": "9b61737a-34e2-441f-842f-4178a7176ddf"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:c913ce3bcc62ef43a88e603cef96b7f5",
+            "description": "00015 The equimodular curves in the $u$ plane for $T_C(L_h)$ at $P=0$ for $L_h=10$ on the left and 12 on the right. Red indicates a multiplicity of 2, green of 4 and blue of 8. For $L=10$ the sequence of multiplicities on the upper (antiferromagnetic) sequence (increasing towards $u=i$) is 2,4,8,4,18,24 and the lower (ferromagnetic) sequence 2,2,4,4,8,8,18,28. For $L=12$ the upper sequence 2,4,8,2,18,18,52,84 and the lower sequence is 2,2,4,4,8,8,18,26,52,88",
+            "key": "equmod_P0_L10",
+            "size": 141,
+            "version_id": "e5f2c336-1f55-4318-aea6-069224f3d008"
+        },
+        {
+            "bucket": "81e83c90-8f6d-4db4-9571-4b01bbb8a5f9",
+            "checksum": "md5:32ac6df8ac4e4be53ed79ae6ec72bedc",
+            "description": "00016 Comparison in the complex fugacity plane $z$ of the zeros of the partition function with cylindrical boundary of hard squares on the $40\\times 40$ lattice to hard hexagons on the $39\\times 39$ lattice taken from Figure 2 of ref. \\cite{mccoy1}.",
+            "key": "HH_CF_w39_roots",
+            "size": 143,
+            "version_id": "6f33ab15-29a0-447e-af90-19b0165cf081"
+        }
+    ],
+    "abstracts": [
+        {
+            "source": "arXiv",
+            "value": "We discuss the implications of studies of partition function zeros and equimodular curves for the analytic properties of the Ising model on a square lattice in a magnetic field. In particular we consider the dense set of singularities in the susceptibility of the Ising model at $H=0$ found by Nickel and its relation to the analyticity of the field theory computations of Fonseca and Zamolodchikov."
+        }
+    ],
+    "acquisition_source": {
+        "datetime": "2017-05-11T08:50:25.184741",
+        "method": "hepcrawl",
+        "source": "arXiv",
+        "submission_number": "db9325b2362611e78bfd0242ac12000b"
+    },
+    "arxiv_eprints": [
+        {
+            "categories": [
+                "math-ph",
+                "cond-mat.stat-mech",
+                "math.MP"
+            ],
+            "value": "1705.02541"
+        }
+    ],
+    "authors": [
+        {
+            "affiliations": [],
+            "full_name": "Assis, M."
+        },
+        {
+            "affiliations": [],
+            "full_name": "Jacobsen, J.L."
+        },
+        {
+            "affiliations": [],
+            "full_name": "Jensen, I."
+        },
+        {
+            "affiliations": [],
+            "full_name": "Maillard, J-M."
+        },
+        {
+            "affiliations": [],
+            "full_name": "McCoy, B.M."
+        }
+    ],
+    "citeable": true,
+    "document_type": [
+        "article"
+    ],
+    "inspire_categories": [
+        {
+            "source": "arxiv",
+            "term": "Math and Math Physics"
+        },
+        {
+            "source": "arxiv",
+            "term": "General Physics"
+        }
+    ],
+    "license": [
+        {
+            "license": "arXiv-1.0",
+            "url": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/"
+        }
+    ],
+    "number_of_pages": 20,
+    "preprint_date": "2017-05-06",
+    "public_notes": [
+        {
+            "source": "arXiv",
+            "value": "21 pages, 13 figures"
+        }
+    ],
+    "report_numbers": [
+        {
+            "source": "hepcrawl",
+            "value": "LPTENS/17/12"
+        }
+    ],
+    "titles": [
+        {
+            "source": "arXiv",
+            "title": "Analyticity of the Ising susceptibility: An interpretation"
+        }
+    ],
+    "control_number": 1
+}

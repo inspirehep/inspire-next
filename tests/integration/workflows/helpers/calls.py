@@ -77,6 +77,16 @@ def do_accept_core(app, workflow_id):
     }
 
 
+def do_resolve_conflicts(app, workflow_id):
+    """Solve the the given workflow's conflicts.
+    """
+    response = do_resolve_workflow(
+        app=app,
+        workflow_id=workflow_id
+    )
+    assert response.status_code == 200
+
+
 def do_robotupload_callback(
     app, workflow_id, recids, server_name='http://fake.na.me',
 ):

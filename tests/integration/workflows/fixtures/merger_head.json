@@ -1,0 +1,348 @@
+{
+    "$schema": "http://localhost:5000/schemas/records/hep.json",
+    "_collections": [
+        "Literature"
+    ],
+    "_files": [
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:52cb0a0ed6e662eb823327a42c5d6e9b",
+            "key": "1705.02541.pdf",
+            "size": 2806666,
+            "version_id": "1043bcee-dd8a-4047-b60b-7952de1c1cac"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:b225eb2916d88b261cb5f4538e5ced55",
+            "key": "1705.02541.tar.gz",
+            "size": 2213267,
+            "version_id": "42fd3671-c31f-4543-af99-17d794098526"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:16775d1d276f4afa1743bf39a91fc142",
+            "key": "LuWu_Density",
+            "size": 140,
+            "version_id": "51ad5938-f9f1-4f10-8816-1523c526afbc"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:41ddcc333d7ea991f18619183eb4944b",
+            "key": "sq_BK_density",
+            "size": 141,
+            "version_id": "5841885a-c9be-48fe-8ad3-1b7786ba0a55"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:cd0d7854d644663b84ca7faa46bb4e38",
+            "key": "sq_PB_w16_roots",
+            "size": 143,
+            "version_id": "b8f89ff8-9e69-4eb6-b80a-427f218c9719"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:2aec26e18fb162931f984fad57305cba",
+            "key": "8bis-no-titles",
+            "size": 142,
+            "version_id": "a3c68e57-91a3-4afb-9ada-15ae13352dbf"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:00cc4ef2b90133f075bb0efb4b8c365d",
+            "key": "equmod_L8",
+            "size": 137,
+            "version_id": "2481cdd6-c622-4927-8bc2-0a1e8b1cca76"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:02ac4e4d5ab376b141a6b327ea520730",
+            "key": "sq_BK_w22_inner_dens",
+            "size": 148,
+            "version_id": "9afda232-d1a9-4f85-bc22-6737a544ee34"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:b2dd5c2ed3ce0a02fde2bad06277d2a3",
+            "key": "equmod_P0_L12",
+            "size": 141,
+            "version_id": "6ce586a5-a89f-4360-ad39-417fa5ba19a0"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:5b5f0d8de1ec99a9e54c39fc0fb9ec1f",
+            "key": "sq_BK_w22_inner",
+            "size": 143,
+            "version_id": "e79efbf3-f350-445e-90aa-16485fbbb094"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:e9026732a8d25639f9eeda6854f2ce4c",
+            "key": "sq_BK_w20_roots",
+            "size": 143,
+            "version_id": "2d933753-ca11-4465-b32e-8909cc2f579e"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:f4821dce9b9db66d2c0e083049eeb5d6",
+            "key": "6bis-no-titles",
+            "size": 142,
+            "version_id": "fbe57fd9-ff85-458d-98d5-038d0c38e149"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:d30334cc2af846cc9209169b3829be06",
+            "key": "equmod_P0_L8",
+            "size": 140,
+            "version_id": "444bcc4d-d7c6-442f-a6fe-895f97110a84"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:89834c873f7307d2a66ef0d20bbb1342",
+            "key": "sq_BK_w22_roots_field",
+            "size": 149,
+            "version_id": "df127a9a-2cc4-47c6-a23e-f5b92a6ce81b"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:c4acf2e5f7ad3b05f4f18fca5234ac0d",
+            "key": "sq_CF_w20_roots",
+            "size": 143,
+            "version_id": "c6659840-a149-4403-ae8c-8050c5e0d3b1"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:616677d92283017707f401a76966490c",
+            "key": "equmod_P0_L10",
+            "size": 141,
+            "version_id": "fe2a3a6c-b53d-4e95-ad8e-48eab984926a"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:4f5b38f45a3b1eeec08983f47465b6dd",
+            "key": "HS_CF_w40_roots",
+            "size": 143,
+            "version_id": "05a0a5cf-ca59-480e-9101-26f69f5edeb8"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:fd0ffabb89ae61628f5839cb68ccd268",
+            "key": "6bis_zoom",
+            "size": 137,
+            "version_id": "967579b0-db22-404d-8c2b-dd5c039a9bb7"
+        },
+        {
+            "bucket": "c2658e45-6d9c-41b7-bd6d-b16cddb561d6",
+            "checksum": "md5:b947af7c21c65bf4153cd4f4be1eb571",
+            "key": "HH_CF_w39_roots",
+            "size": 143,
+            "version_id": "ac57f1d6-d962-42cc-bb0f-2c6fb9d2ad3a"
+        }
+    ],
+    "abstracts": [
+        {
+            "source": "arXiv",
+            "value": "We discuss the implications of studies of partition function zeros and equimodular curves for the analytic properties of the Ising model on a square lattice in a magnetic field. In particular we consider the dense set of singularities in the susceptibility of the Ising model at $H=0$ found by Nickel and its relation to the analyticity of the field theory computations of Fonseca and Zamolodchikov. Curator change.\n"
+        }
+    ],
+    "accelerator_experiments": [
+        {
+            "legacy_name": "CERN-LHC-ALICE"
+        }
+    ],
+    "acquisition_source": {
+        "datetime": "2017-05-11T08:50:25.184741",
+        "method": "hepcrawl",
+        "source": "arXiv",
+        "submission_number": "db9325b2362611e78bfd0242ac12000b"
+    },
+    "arxiv_eprints": [
+        {
+            "categories": [
+                "math-ph",
+                "cond-mat.stat-mech",
+                "math.MP"
+            ],
+            "value": "1705.02541"
+        }
+    ],
+    "authors": [
+        {
+            "affiliations": [
+                {
+                    "curated_relation": true,
+                    "record": {
+                        "$ref": "http://localhost:5000/api/institutions/902725"
+                    },
+                    "value": "CERN"
+                }
+            ],
+            "full_name": "Assis, Mathieu",
+            "signature_block": "ASm",
+            "uuid": "e3b0a6e6-5950-41c4-ba8a-76cd597cb0d5"
+        },
+        {
+            "affiliations": [
+                {
+                    "curated_relation": true,
+                    "record": {
+                        "$ref": "http://localhost:5000/api/institutions/902725"
+                    },
+                    "value": "CERN"
+                }
+            ],
+            "full_name": "Jacobsen, J.L.",
+            "signature_block": "JACABSANj",
+            "uuid": "3f4cc9b7-ade5-4b9c-885c-f20bba88f5e2"
+        },
+        {
+            "affiliations": [
+                {
+                    "curated_relation": true,
+                    "record": {
+                        "$ref": "http://localhost:5000/api/institutions/902725"
+                    },
+                    "value": "C"
+                }
+            ],
+            "full_name": "Jensen, I.",
+            "signature_block": "JANSANi",
+            "uuid": "7b11df9d-6ac8-44f4-93bd-1003b3dff38e"
+        },
+        {
+            "affiliations": [
+                {
+                    "curated_relation": true,
+                    "record": {
+                        "$ref": "http://localhost:5000/api/institutions/902725"
+                    },
+                    "value": "CER"
+                }
+            ],
+            "full_name": "Maillard, J-M.",
+            "signature_block": "MALADj",
+            "uuid": "1d5ed399-9577-4d53-be4b-1e2279a3a493"
+        },
+        {
+            "affiliations": [
+                {
+                    "curated_relation": true,
+                    "record": {
+                        "$ref": "http://localhost:5000/api/institutions/902725"
+                    },
+                    "value": "CERN"
+                }
+            ],
+            "full_name": "McCoy, B.M.",
+            "signature_block": "MCYb",
+            "uuid": "3a75404c-664c-4369-8ced-3fd9e9050c19"
+        }
+    ],
+    "citeable": true,
+    "collaborations": [
+        {
+            "value": "ALICE"
+        }
+    ],
+    "control_number": 1,
+    "core": true,
+    "document_type": [
+        "article"
+    ],
+    "dois": [
+        {
+            "value": "10.0001/test_doi"
+        }
+    ],
+    "inspire_categories": [
+        {
+            "source": "arxiv",
+            "term": "Math and Math Physics"
+        },
+        {
+            "source": "arxiv",
+            "term": "General Physics"
+        },
+        {
+            "term": "Instrumentation"
+        }
+    ],
+    "keywords": [
+        {
+            "source": "magpie",
+            "value": "Ising model"
+        },
+        {
+            "source": "magpie",
+            "value": "partition function"
+        },
+        {
+            "source": "magpie",
+            "value": "lattice field theory"
+        },
+        {
+            "source": "magpie",
+            "value": "analytic properties"
+        },
+        {
+            "source": "magpie",
+            "value": "lattice"
+        },
+        {
+            "source": "magpie",
+            "value": "singularity"
+        },
+        {
+            "source": "magpie",
+            "value": "dimension: 2"
+        },
+        {
+            "schema": "INSPIRE",
+            "source": "",
+            "value": "whatever\n"
+        }
+    ],
+    "license": [
+        {
+            "license": "arXiv-1.0",
+            "url": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/"
+        }
+    ],
+    "number_of_pages": 21,
+    "preprint_date": "2017-05-06",
+    "public_notes": [
+        {
+            "source": "arXiv",
+            "value": "21 pages, 13 figures"
+        },
+        {
+            "value": "*Temporary entry*"
+        },
+        {
+            "value": "This is a test public note by the curator\n"
+        }
+    ],
+    "refereed": true,
+    "report_numbers": [
+        {
+            "source": "hepcrawl",
+            "value": "LPTENS/17/12"
+        },
+        {
+            "value": "CURATOR-001"
+        }
+    ],
+    "titles": [
+        {
+            "source": "arXiv",
+            "title": "Analyticity of the Ising curation: An interpretation"
+        }
+    ],
+    "documents": [
+        {
+            "key": "1_1705.02541.pdf",
+            "original_url": "http://export.arxiv.org/pdf/1705.02541",
+            "source": "arxiv",
+            "fulltext": true
+        }
+    ]
+}

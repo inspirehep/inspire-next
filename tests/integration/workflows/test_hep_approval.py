@@ -51,7 +51,7 @@ def workflow():
     db.session.commit()
 
 
-def test_resolve_accept(small_app, workflow):
+def test_resolve_accept(workflow_app, workflow):
     args = {
         'request_data': {
             'value': 'accept',
@@ -70,7 +70,7 @@ def test_resolve_accept(small_app, workflow):
     assert workflow.extra_data == expected
 
 
-def test_resolve_accept_core(small_app, workflow):
+def test_resolve_accept_core(workflow_app, workflow):
     args = {
         'request_data': {
             'value': 'accept_core'
@@ -89,7 +89,7 @@ def test_resolve_accept_core(small_app, workflow):
     assert workflow.extra_data == expected
 
 
-def test_resolve_rejected(small_app, workflow):
+def test_resolve_rejected(workflow_app, workflow):
     args = {
         'request_data': {
             'value': 'rejected',
@@ -109,7 +109,7 @@ def test_resolve_rejected(small_app, workflow):
     assert workflow.extra_data == expected
 
 
-def test_resolve_attach_pdf(small_app, workflow):
+def test_resolve_attach_pdf(workflow_app, workflow):
     args = {
         'request_data': {
             'value': 'accept',
@@ -138,7 +138,7 @@ def test_resolve_attach_pdf(small_app, workflow):
     assert 'fulltext.pdf' in [doc['key'] for doc in workflow.data['documents']]
 
 
-def test_resolve_remove_pdf(small_app, workflow):
+def test_resolve_remove_pdf(workflow_app, workflow):
     args = {
         'request_data': {
             'value': 'accept',

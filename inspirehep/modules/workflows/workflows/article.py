@@ -27,7 +27,6 @@ from __future__ import absolute_import, division, print_function
 from workflow.patterns.controlflow import (
     IF,
     IF_ELSE,
-    IF_NOT,
 )
 
 from inspire_dojson.hep import hep2marc
@@ -43,7 +42,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     add_core,
     halt_record,
     is_record_relevant,
-    in_production_mode,
     is_record_accepted,
     reject_record,
     is_experimental_paper,
@@ -53,6 +51,12 @@ from inspirehep.modules.workflows.tasks.actions import (
     mark,
     refextract,
     submission_fulltext_download,
+)
+from inspirehep.modules.workflows.tasks.merging import (
+    merge_articles,
+    update_record,
+    put_new_root_in_extra_data,
+    store_root,
 )
 from inspirehep.modules.workflows.tasks.classifier import (
     classify_paper,
@@ -197,21 +201,7 @@ ENHANCE_RECORD = [
     guess_coreness,  # ("arxiv_skip_astro_title_abstract.pickle)
     # Check if we shall halt or auto-reject
     # =====================================
-]
-
-
-CHECK_IF_SUBMISSION_AND_ASK_FOR_APPROVAL = [
-    IF_ELSE(
-        is_record_relevant,
-        [halt_record(
-            action="hep_approval",
-            message="Submission halted for curator approval.",
-        )],
-        [
-            reject_record("Article automatically rejected"),
-            stop_processing
-        ]
-    ),
+    put_new_root_in_extra_data,
 ]
 
 
@@ -234,6 +224,7 @@ NOTIFY_ALREADY_EXISTING = [
         context_factory=reply_ticket_context
     ),
     close_ticket(ticket_id_key="ticket_id"),
+    mark('stop', True)
 ]
 
 
@@ -287,22 +278,6 @@ SEND_TO_LEGACY_AND_WAIT = [
     ),
 ]
 
-CHECK_IF_MERGE_AND_STOP_IF_SO = [
-    IF(
-        is_marked('is-update'),
-        [
-            IF_ELSE(
-                is_submission,
-                NOTIFY_ALREADY_EXISTING,
-                [
-                    # halt_record(action="merge_approval"),
-                    delete_self_and_stop_processing,
-                ]
-            ),
-        ]
-    )
-]
-
 
 ADD_MARKS = [
     IF(
@@ -327,6 +302,64 @@ ADD_MARKS = [
 ]
 
 
+MERGE_IF_UPDATE = [
+    IF(
+        is_marked('is-update'),
+        [
+            merge_articles,
+            mark('merged', True)
+            # TODO: save record with new non-conflicting merged fields
+        ],
+    ),
+]
+
+
+STOP_IF_EXISTING_SUBMISSION = [
+    IF(
+        is_submission,
+        IF(
+            is_marked('is-update'),
+            NOTIFY_ALREADY_EXISTING
+        )
+    )
+]
+
+
+HALT_FOR_APPROVAL = [
+    IF_ELSE(
+        is_record_relevant,
+        [
+            IF_ELSE(
+                article_exists,
+                halt_record(
+                    action="merge_approval",
+                    message="Submission halted for curator approval.",
+                ),
+                halt_record(
+                    action="hep_approval",
+                    message="Submission halted for curator approval.",
+                ),
+            )
+        ],
+        # record not relevant
+        [
+            reject_record("Article automatically rejected"),
+            stop_processing
+        ]
+    )
+]
+
+
+STORE_RECORD_AND_ROOT = [
+    IF_ELSE(
+        is_marked('is-update'),
+        update_record,
+        store_record
+    ),
+    store_root,
+]
+
+
 class Article(object):
     """Article ingestion workflow for Literature collection."""
     name = "HEP"
@@ -340,23 +373,17 @@ class Article(object):
         ADD_MARKS +
         DELETE_AND_STOP_IF_NEEDED +
         ENHANCE_RECORD +
-        # TODO: Once we have a way to resolve merges, we should
-        # use that instead of stopping
-        CHECK_IF_MERGE_AND_STOP_IF_SO +
-        CHECK_IF_SUBMISSION_AND_ASK_FOR_APPROVAL +
+        STOP_IF_EXISTING_SUBMISSION +
+        MERGE_IF_UPDATE +
+        HALT_FOR_APPROVAL +
         [
             IF_ELSE(
                 is_record_accepted,
                 (
                     POSTENHANCE_RECORD +
+                    STORE_RECORD_AND_ROOT +
                     SEND_TO_LEGACY_AND_WAIT +
-                    NOTIFY_USER_OR_CURATOR +
-                    [
-                        # TODO: once legacy is out, this should become
-                        # unconditional, and remove the SEND_TO_LEGACY_AND_WAIT
-                        # steps
-                        IF_NOT(in_production_mode, [store_record]),
-                    ]
+                    NOTIFY_USER_OR_CURATOR
                 ),
                 NOTIFY_NOT_ACCEPTED,
             ),
