@@ -30,6 +30,7 @@ import os
 
 from invenio_search import current_search_client as es
 from invenio_db import db
+from invenio_records.models import RecordMetadata
 from invenio_workflows import (
     ObjectStatus,
     WorkflowEngine,
@@ -50,8 +51,6 @@ from mocks import (
     fake_beard_api_request,
     fake_magpie_api_request,
 )
-
-
 from utils import get_halted_workflow
 from inspirehep.modules.workflows.tasks.merging import (
     insert_wf_record_source,
@@ -314,3 +313,47 @@ def test_merge_with_already_existing_article_in_the_db(
     assert obj.status == ObjectStatus.COMPLETED
     assert obj.extra_data['is-update'] is True
     assert obj.extra_data['merged'] is True
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+def test_merge_without_conflicts_does_not_halt(
+    mocked_download_arxiv,
+    mocked_api_request_beard,
+    mocked_api_request_magpie,
+    workflow_app,
+    mocked_external_services,
+):
+    head = record_insert_or_replace(load_json_fixture('fixtures', 'merger_head.json'))
+    es.indices.refresh('records-hep')
+
+    head = RecordMetadata.query.filter(RecordMetadata.id == head.id).one()
+    update = head.json
+    update['titles'][0]['title'] = 'Foo Bar title'
+
+    # this function starts the workflow
+    obj_id = run_workflow(
+        app=workflow_app,
+        extra_config={
+            'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [],
+            'PRODUCTION_MODE': False,
+        },
+        record=update,
+    )
+
+    obj = workflow_object_class.get(obj_id)
+
+    assert obj.extra_data['is-update'] is True
+    assert obj.extra_data['merged'] is True
+    assert obj.extra_data.get('conflicts') == []
+    assert obj.status == ObjectStatus.COMPLETED

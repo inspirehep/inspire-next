@@ -53,6 +53,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     submission_fulltext_download,
 )
 from inspirehep.modules.workflows.tasks.merging import (
+    has_conflicts,
     merge_articles,
     update_record,
     put_new_root_in_extra_data,
@@ -331,9 +332,16 @@ HALT_FOR_APPROVAL = [
         [
             IF_ELSE(
                 article_exists,
-                halt_record(
-                    action="merge_approval",
-                    message="Submission halted for curator approval.",
+                IF_ELSE(
+                    has_conflicts,
+                    halt_record(
+                        action="merge_approval",
+                        message="Submission halted for merging conflicts.",
+                    ),
+                    [
+                        mark('approved', True),
+                        mark('auto-approved', True)
+                    ]
                 ),
                 halt_record(
                     action="hep_approval",
