@@ -128,7 +128,7 @@ extras_require = {
         'flower',
     ],
     'crawler-node': [
-        'hepcrawl~=0.0,>=0.3.4',
+        'hepcrawl~=2.0,>=2.0.1',
     ],
     'tests': tests_require,
     'xrootd': [
