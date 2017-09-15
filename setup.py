@@ -40,7 +40,6 @@ install_requires = [
     'refextract>=0.2.0',
     'orcid',
     'raven<=5.1.0',
-    'flower',
     'langdetect>=1.0.6',
     'librabbitmq>=1.6.1',
     'idutils>=0.2.1',
@@ -118,10 +117,17 @@ extras_require = {
     'postgresql': [
         'invenio-db[postgresql,versioning]>=1.0.0b2',
     ],
+    'build-node': [
+        'ipdb',
+    ],
     'web-node': [
         'gunicorn',
     ],
-    'crawler': [
+    'worker-node': [
+        'superlance',
+        'flower',
+    ],
+    'crawler-node': [
         'hepcrawl~=0.0,>=0.3.4',
     ],
     'tests': tests_require,
