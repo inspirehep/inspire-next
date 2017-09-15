@@ -31,6 +31,7 @@ from marshmallow.fields import Nested, List, Str
 from inspirehep.utils.record_getter import get_es_record
 
 
+
 class First(List):
     """
     Deserializes only the first element of a list, skipping None elements or entries defined as hidden.

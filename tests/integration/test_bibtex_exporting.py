@@ -25,21 +25,23 @@ from __future__ import absolute_import, division, print_function
 from inspirehep.utils.record_getter import get_es_record
 
 from inspirehep.modules.records.serializers.schemas.pybtex import PybtexSchema
-from pybtex.database import Entry
+from pybtex.database import Entry, Person
 
 
 def test_format_article(app):
     article = get_es_record('lit', 4328)
     expected = ("Glashow:1961tr", Entry('article', [
         ('key', '4328'),
-        ('author', u'Glashow, S.L.'),
         ('journal', u'Nucl.Phys.'),
         ('pages', u'579--588'),
         ('title', u'Partial Symmetries of Weak Interactions'),
         ('volume', u'22'),
         ('year', u'1961'),
         ('doi', u'10.1016/0029-5582(61)90469-2'),
-    ]))
+    ], persons={
+        'editor': [],
+        'author': [Person(u"Glashow, S.L.")],
+    }))
 
     schema = PybtexSchema()
     result, errors = schema.load(article)
@@ -53,7 +55,6 @@ def test_format_inproceeding(app):
     expected = ("Hu:2000az", Entry('inproceedings', [
         ('key', '524480'),
         ('address', u"Tokyo, Japan"),
-        ('author', u"Hu, Wayne"),
         ('booktitle', u"4th RESCEU International Symposium on Birth and Evolution of the Universe"),
         ('title', u"CMB anisotropies: A Decadal survey"),
         ('archivePrefix', u'arXiv'),
@@ -61,7 +62,10 @@ def test_format_inproceeding(app):
         ('primaryClass', u"astro-ph"),
         ('SLACcitation', u"%%CITATION = ASTRO-PH/0002520;%%"),
         ('url', u"http://alice.cern.ch/format/showfull?sysnb=2178340"),
-    ]))
+    ], persons={
+        'editor': [],
+        'author': [Person(u"Hu, Wayne")],
+    }))
 
     schema = PybtexSchema()
     result, errors = schema.load(inproceedings)
@@ -75,7 +79,6 @@ def test_format_proceeding(app):
     expected = ("Alekhin:2005dx", Entry('proceedings', [
         ('key', '701585'),
         ('address', u"Geneva"),
-        ('editor', u"De Roeck, A. and Jung, H."),
         ('pages', u"pp.1--326"),
         ('publisher', u"CERN"),
         ('title', u"HERA and the LHC: A Workshop on the implications of HERA for LHC physics: Proceedings Part A"),
@@ -86,7 +89,10 @@ def test_format_proceeding(app):
         ('primaryClass', u"hep-ph"),
         ('SLACcitation', u"%%CITATION = HEP-PH/0601012;%%"),
         ('url', u"http://weblib.cern.ch/abstract?CERN-2005-014"),
-    ]))
+    ], persons={
+        'editor': [Person(u"De Roeck, A."), Person(u"Jung, H.")],
+        'author': [],
+    }))
 
     schema = PybtexSchema()
     result, errors = schema.load(proceedings)
@@ -99,13 +105,15 @@ def test_format_phdthesis(app):
     phdthesis = get_es_record('lit', 1395663)
     expected = ("Mankuzhiyil:2010jpa", Entry('phdthesis', [
         ('key', '1395663'),
-        ('author', u"Mankuzhiyil, Nijil"),
         ('school', u"Udine U."),
         ('title', u"MAGIC $\\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes"),
         ('year', u"2010"),
         # ('SLACcitation', u"%%CITATION = INSPIRE-1395663;%%"),
         ('url', u"https://magicold.mpp.mpg.de/publications/theses/NMankuzhiyil.pdf"),
-    ]))
+    ], persons={
+        'editor': [],
+        'author': [Person(u"Mankuzhiyil, Nijil")],
+    }))
 
     schema = PybtexSchema()
     result, errors = schema.load(phdthesis)
@@ -118,13 +126,15 @@ def test_format_book(app):
     book = get_es_record('lit', 736770)
     expected = ("Fecko:2006zy", Entry('book', [
         ('key', '736770'),
-        ('author', u"Fecko, M."),
         ('publisher', u"Cambridge University Press"),
         ('title', u"Differential geometry and Lie groups for physicists"),
         ('year', u"2011"),
         ('isbn', u"9780521187961, 9780521845076, 9780511242960"),
         # ('SLACcitation', u"%%CITATION = INSPIRE-736770;%%"),
-    ]))
+    ], persons={
+        'editor': [],
+        'author': [Person(u"Fecko, M.")],
+    }))
 
     schema = PybtexSchema()
     result, errors = schema.load(book)
@@ -137,7 +147,6 @@ def test_format_inbook(app):
     inbook = get_es_record('lit', 1375491)
     expected = ("Bechtle:2015nta", Entry('inbook', [
         ('key', '1375491'),
-        ('author', u"Bechtle, Philip and Plehn, Tilman and Sander, Christian"),
         ('pages', u"421--462"),
         ('title', u"Supersymmetry"),
         ('year', u"2015"),
@@ -146,7 +155,10 @@ def test_format_inbook(app):
         ('eprint', u"1506.03091"),
         ('primaryClass', u"hep-ex"),
         ('SLACcitation', u"%%CITATION = ARXIV:1506.03091;%%"),
-    ]))
+    ], persons={
+        'editor': [],
+        'author': [Person(u"Bechtle, Philip"), Person(u"Plehn, Tilman"), Person(u"Sander, Christian")],
+    }))
 
     schema = PybtexSchema()
     result, errors = schema.load(inbook)

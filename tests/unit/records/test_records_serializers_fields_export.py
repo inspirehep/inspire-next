@@ -24,10 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.records.serializers.fields_export import (
     get_authors_with_role,
-    get_author,
     bibtex_document_type,
-    make_author_list,
-    MAX_AUTHORS_BEFORE_ET_AL,
     bibtex_type_and_fields,
     get_year,
     get_publication_info,
@@ -69,26 +66,9 @@ def test_get_editor_by_role():
     assert expected == result
 
 
-def test_get_author():
-    expected = "Nitti, Francesco and Pimenta, Leandro Silva"
-    result = get_author(test_record, 'article')
-    assert expected == result
-
-
 def test_bibtex_document_type():
     expected = "mastersthesis"
     result = bibtex_document_type("thesis", test_record)
-    assert expected == result
-
-
-def test_make_author_list_long():
-    test_data = ["A, B", "C, D", "E, F", "G, H", "I, J", "K, L", "M, N", "O, P", "Q, R", "S, T", "U, V", "W, X", "Y, Z"]
-    if len(test_data) > MAX_AUTHORS_BEFORE_ET_AL:
-        expected = "A, B and others"
-    else:
-        expected = "A, B and C, D and E, F and G, H and I, J and K, L and M, N and O, P and Q, R and S, T " \
-                   "and U, V and W, X and Y, Z"
-    result = make_author_list(test_data)
     assert expected == result
 
 
