@@ -1,0 +1,99 @@
+{
+    "preprint_date": "2017-05-06",
+    "report_numbers": [
+        {
+            "source": "hepcrawl",
+            "value": "LPTENS/17/12"
+        }
+    ],
+    "acquisition_source": {
+        "source": "arXiv",
+        "datetime": "2017-05-11T08:50:25.184741",
+        "method": "hepcrawl",
+        "submission_number": "db9325b2362611e78bfd0242ac12000b"
+    },
+    "license": [
+        {
+            "url": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+            "license": "arXiv-1.0"
+        }
+    ],
+    "control_number": 1,
+    "public_notes": [
+        {
+            "source": "arXiv",
+            "value": "21 pages, 13 figures"
+        }
+    ],
+    "number_of_pages": 23,
+    "inspire_categories": [
+        {
+            "source": "arxiv",
+            "term": "Math and Math Physics"
+        },
+        {
+            "source": "arxiv",
+            "term": "General Physics"
+        }
+    ],
+    "authors": [
+        {
+            "affiliations": [],
+            "full_name": "Assis, M."
+        },
+        {
+            "affiliations": [],
+            "full_name": "Jacobsen, J.L."
+        },
+        {
+            "affiliations": [],
+            "full_name": "Jensen, I."
+        },
+        {
+            "affiliations": [],
+            "full_name": "Maillard, J-M."
+        },
+        {
+            "affiliations": [],
+            "full_name": "McCoy, B.M."
+        }
+    ],
+    "titles": [
+        {
+            "source": "arXiv",
+            "title": "Analyticity of the Ising susceptibility: An interpretation"
+        }
+    ],
+    "arxiv_eprints": [
+        {
+            "categories": [
+                "math-ph",
+                "cond-mat.stat-mech",
+                "math.MP"
+            ],
+            "value": "1705.02541"
+        }
+    ],
+    "$schema": "http://localhost:5000/schemas/records/hep.json",
+    "_collections": ["Literature"],
+    "document_type": [
+        "article"
+    ],
+    "abstracts": [
+        {
+            "source": "arXiv",
+            "value": "We discuss the implications of studies of partition function zeros and equimodular curves for the analytic properties of the Ising model on a square lattice in a magnetic field. In particular we consider the dense set of singularities in the susceptibility of the Ising model at $H=0$ found by Nickel and its relation to the analyticity of the field theory computations of Fonseca and Zamolodchikov."
+        }
+    ],
+    "citeable": true,
+        "arxiv_eprints": [
+        {
+            "categories": [
+                "math-ph",
+                "cond-mat.stat-mech",
+                "math.MP"
+            ],
+            "value": "1705.02541"
+        }
+    ]
+}

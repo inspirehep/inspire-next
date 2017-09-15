@@ -242,6 +242,7 @@ setup(
         'invenio_workflows.workflows': [
             'article = inspirehep.modules.workflows.workflows:Article',
             'author = inspirehep.modules.workflows.workflows:Author',
+            'manual_merge = inspirehep.modules.workflows.workflows:ManualMerge',
         ],
         'invenio_workflows_ui.actions': [
             'author_approval = inspirehep.modules.workflows.actions.author_approval:AuthorApproval',
