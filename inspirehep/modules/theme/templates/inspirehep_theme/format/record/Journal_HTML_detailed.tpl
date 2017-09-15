@@ -36,7 +36,7 @@
       <div class="panel">
       <div class="panel-heading">
         <h1 class="record-detailed-title">
-          {{ record.title }}
+          {{ record.journal_title.title }}
         </h1>
         {% if record.short_title %}
           <h2 class="record-detailed-subtitle record-detailed-subtitle-experiments">{{ record.short_title }}</h2>
