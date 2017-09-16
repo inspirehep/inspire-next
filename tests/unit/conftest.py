@@ -37,6 +37,14 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
 
 @pytest.fixture(autouse=True, scope='session')
 def app():
+    """Flask application.
+
+    Creates a Flask application with a simple testing configuration,
+    then creates an application context and yields, so that all tests
+    have access to one.
+
+    See: http://flask.pocoo.org/docs/0.12/appcontext/.
+    """
     app = create_app(
         DEBUG=True,
         WTF_CSRF_ENABLED=False,
@@ -54,6 +62,10 @@ def app():
 
 @pytest.fixture(scope='function')
 def app_client(app):
+    """Flask test client for the application.
+
+    See: http://flask.pocoo.org/docs/0.12/testing/#keeping-the-context-around.
+    """
     with app.test_client() as client:
         yield client
 
@@ -73,5 +85,9 @@ def api_client(api):
 
 @pytest.fixture(scope='function')
 def request_context(app):
+    """Flask request context.
+
+    See: http://flask.pocoo.org/docs/0.12/reqcontext/.
+    """
     with app.test_request_context() as request_context:
         yield request_context
