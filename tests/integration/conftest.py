@@ -32,7 +32,16 @@ from inspirehep.factory import create_app
 
 @pytest.fixture(scope='session')
 def app():
-    """Flask application fixture."""
+    """Flask application.
+
+    Creates a Flask application with a simple testing configuration,
+    then creates an application context and inside of it recreates
+    all databases and indices from the fixtures. Finally it yields,
+    so that all tests that explicitly use the ``app`` fixture have
+    access to an application context.
+
+    See: http://flask.pocoo.org/docs/0.12/appcontext/.
+    """
     app = create_app(
         DEBUG=True,
         WTF_CSRF_ENABLED=False,
@@ -73,7 +82,11 @@ def app():
 
 @pytest.fixture(scope='module')
 def small_app():
-    """Flask application fixture."""
+    """Flask application with few records and module scope.
+
+    .. deprecated:: 2017-09-18
+       Use ``app`` instead.
+    """
     app = create_app()
     app.config.update({'DEBUG': True})
 
@@ -103,19 +116,22 @@ def small_app():
 
 @pytest.fixture()
 def app_client(app):
-    """Flask test client for APP app."""
+    """Flask test client for the application.
+
+    See: http://flask.pocoo.org/docs/0.12/testing/#keeping-the-context-around.
+    """
     with app.test_client() as client:
         yield client
 
 
 @pytest.fixture(scope='session')
 def api(app):
-    """Flask application fixture."""
+    """Flask API application."""
     yield app.wsgi_app.mounts['/api']
 
 
 @pytest.fixture()
 def api_client(api):
-    """Flask test client for API app."""
+    """Flask test client for the API application."""
     with api.test_client() as client:
         yield client
