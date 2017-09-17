@@ -20,8 +20,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Pytest configuration for web tests."""
-
 from __future__ import absolute_import, division, print_function
 
 import pytest
@@ -41,7 +39,16 @@ from inspirehep.modules.workflows.models import (
 
 @pytest.fixture(scope='session')
 def app(request):
-    """Flask application fixture."""
+    """Flask application fixture.
+
+    Creates a Flask application with a simple testing configuration,
+    then creates an application context and inside of it recreates
+    all databases and indices from the fixtures. Finally it yields,
+    so that all tests that explicitly use the ``app`` fixture have
+    access to an application context.
+
+    See: http://flask.pocoo.org/docs/0.12/appcontext/.
+    """
     app = create_app()
     app.config.update({'DEBUG': True})
 
@@ -71,11 +78,20 @@ def app(request):
 
 @pytest.fixture
 def arsenic(selenium, app):
+    """Instantiate the Arsenic singleton.
+
+    The ``Arsenic`` singleton provides some helpers and proxies the rest of
+    the calls to the wrapped ``selenium`` fixture.
+
+    .. deprecated:: 2017-09-18
+       This is needlessly complicated.
+    """
     Arsenic(selenium)
 
 
 @pytest.fixture
 def login(arsenic):
+    """Log in as the admin user."""
     top_navigation_page.log_in('admin@inspirehep.net', '123456')
     yield
     top_navigation_page.log_out()
@@ -83,6 +99,11 @@ def login(arsenic):
 
 @pytest.fixture(autouse=True, scope='function')
 def cleanup_workflows_tables(app):
+    """Delete the contentes of the workflow tables after each test.
+
+    .. deprecated:: 2017-09-18
+       Tests that need to clean up should do so explicitly.
+    """
     with app.app_context():
         obj_types = (
                 WorkflowsAudit.query.all(),
