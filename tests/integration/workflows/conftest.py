@@ -20,8 +20,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Common fixtures for workflows"""
-
 from __future__ import absolute_import, division, print_function
 
 import os
@@ -47,6 +45,11 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
 
 @pytest.fixture(autouse=True)
 def cleanup_workflows_tables(small_app):
+    """Delete the contents of the workflow tables after each test.
+
+    .. deprecated:: 2017-09-18
+       Tests that need to clean up should do so explicitly.
+    """
     with small_app.app_context():
         obj_types = (
                 WorkflowsAudit.query.all(),
@@ -62,6 +65,11 @@ def cleanup_workflows_tables(small_app):
 
 @pytest.fixture
 def workflow_app():
+    """Flask application with no records and function scope.
+
+    .. deprecated:: 2017-09-18
+       Use ``app`` instead.
+    """
     app = create_app(
         BEARD_API_URL="http://example.com/beard",
         DEBUG=True,
