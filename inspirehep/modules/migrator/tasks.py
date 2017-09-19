@@ -59,7 +59,7 @@ from inspire_utils.record import get_value
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
-from inspirehep.modules.records.receivers import receive_after_model_commit
+from inspirehep.modules.records.receivers import index_after_commit
 
 from .models import InspireProdRecords
 
@@ -184,7 +184,7 @@ def create_index_op(record):
 
 @shared_task(ignore_result=False, compress='zlib', acks_late=True)
 def migrate_chunk(chunk):
-    models_committed.disconnect(receive_after_model_commit)
+    models_committed.disconnect(index_after_commit)
     current_collections.unregister_signals()
 
     index_queue = []
@@ -207,7 +207,7 @@ def migrate_chunk(chunk):
         request_timeout=req_timeout,
     )
 
-    models_committed.connect(receive_after_model_commit)
+    models_committed.connect(index_after_commit)
     current_collections.register_signals()
 
 

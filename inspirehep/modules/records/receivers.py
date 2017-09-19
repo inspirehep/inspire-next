@@ -20,18 +20,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Record receivers."""
+"""Records receivers."""
 
 from __future__ import absolute_import, division, print_function
 
 import uuid
 from itertools import chain
 
+import six
 from flask import current_app
 from flask_sqlalchemy import models_committed
 
 from invenio_indexer.api import RecordIndexer
 from invenio_indexer.signals import before_record_index
+from invenio_records.api import Record
 from invenio_records.models import RecordMetadata
 from invenio_records.signals import (
     before_record_insert,
@@ -42,108 +44,110 @@ from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
 from inspirehep.modules.authors.utils import author_tokenize, phonetic_blocks
-from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.date import create_earliest_date
 
+
+#
+# before_record_insert & before_record_update
+#
 
 @before_record_insert.connect
 @before_record_update.connect
 def assign_phonetic_block(sender, *args, **kwargs):
-    """Assign phonetic block to each signature.
+    """Assign a phonetic block to each signature of a Literature record.
 
-    The method extends the given signature with a phonetic
-    notation of the author's full name, based on
-    nysiis algorithm. The phonetic block is assigned before
-    the signature is indexed by an Elasticsearch instance.
+    Uses the NYSIIS algorithm to compute a phonetic block from each
+    signature's full name, skipping those that are not recognized
+    as real names, but logging an error when that happens.
     """
     authors = sender.get('authors', [])
+
     authors_map = {}
-
-    for index, author in enumerate(authors):
+    for i, author in enumerate(authors):
         if 'full_name' in author:
-            authors_map[author['full_name']] = index
+            authors_map[author['full_name']] = i
 
-    # Use beard to generate phonetic blocks.
     try:
         signatures_blocks = phonetic_blocks(authors_map.keys())
     except Exception as err:
-        current_app.logger.error('Cannot extract phonetic blocks for record {0}: {1}', sender.get('control_number'), err)
+        current_app.logger.error(
+            'Cannot extract phonetic blocks for record %d: %s',
+            sender.get('control_number'), err)
         return
 
-    # Add signature block to an author.
-    for full_name, signature_block in signatures_blocks.iteritems():
-        authors[authors_map[full_name]].update(
-            {'signature_block': signature_block})
+    for full_name, signature_block in six.iteritems(signatures_blocks):
+        authors[authors_map[full_name]].update({
+            'signature_block': signature_block,
+        })
 
 
 @before_record_insert.connect
 @before_record_update.connect
 def assign_uuid(sender, *args, **kwargs):
-    """Assign uuid to each signature.
-
-    The method assigns to each signature a universally unique
-    identifier based on Python's built-in uuid4. The identifier
-    is allocated during the insertion of a new record.
-    """
+    """Assign a UUID to each signature of a Literature record."""
     authors = sender.get('authors', [])
 
     for author in authors:
-        # Skip if the author was already populated with a UUID.
         if 'uuid' not in author:
             author['uuid'] = str(uuid.uuid4())
 
 
+#
+# models_committed
+#
+
 @models_committed.connect
-def receive_after_model_commit(sender, changes):
-    """Perform actions after models committed to database."""
+def index_after_commit(sender, changes):
+    """Index a record in ES after it was committed to the DB.
+
+    This cannot happen in an ``after_record_commit`` receiver from Invenio-Records
+    because, despite the name, at that point we are not yet sure whether the record
+    has been really committed to the DB.
+    """
     indexer = RecordIndexer()
+
     for model_instance, change in changes:
         if isinstance(model_instance, RecordMetadata):
             if change in ('insert', 'update'):
-                indexer.index(InspireRecord(model_instance.json, model_instance))
+                indexer.index(Record(model_instance.json, model_instance))
             else:
-                indexer.delete(InspireRecord(model_instance.json, model_instance))
+                indexer.delete(Record(model_instance.json, model_instance))
+
+
+#
+# before_record_index
+#
+
+@before_record_index.connect
+def add_book_autocomplete(sender, json, *args, **kwargs):
+    """Populate the ```bookautocomplete`` field of Literature records."""
+    if 'book' not in json.get('document_type', []):
+        return
+
+    authors = force_list(get_value(json, 'authors.full_name'))
+    titles = force_list(get_value(json, 'titles.title'))
+
+    result = json.get('bookautocomplete', [])
+    result.extend(authors)
+    result.extend(titles)
+
+    ref = get_value(json, 'self.$ref')
+
+    json.update({
+        'bookautocomplete': {
+            'input': result,
+            'payload': {
+                'authors': authors,
+                'id': ref,
+                'title': titles,
+            },
+        },
+    })
 
 
 @before_record_index.connect
-def enhance_record(sender, json, *args, **kwargs):
-    populate_inspire_document_type(sender, json, *args, **kwargs)
-    populate_recid_from_ref(sender, json, *args, **kwargs)
-    populate_abstract_source_suggest(sender, json, *args, **kwargs)
-    populate_title_suggest(sender, json, *args, **kwargs)
-    populate_affiliation_suggest(sender, json, *args, **kwargs)
-    add_book_autocomplete(sender, json, *args, **kwargs)
-
-
-def add_book_autocomplete(sender, json, *args, **kwargs):
-    if 'book' in json.get('document_type', []):
-        authors = force_list(get_value(json, 'authors.full_name'))
-        titles = force_list(get_value(json, 'titles.title'))
-
-        result = json.get('bookautocomplete', [])
-        result.extend(authors)
-        result.extend(titles)
-
-        ref = get_value(json, 'self.$ref')
-
-        json.update({
-            'bookautocomplete': {
-                'input': result,
-                'payload': {
-                    'authors': authors,
-                    'id': ref,
-                    'title': titles,
-                },
-            },
-        })
-
-
 def populate_inspire_document_type(sender, json, *args, **kwargs):
-    """Populate the INSPIRE doc type before indexing.
-
-    Adds the `facet_inspire_doc_type` key to the record, to be used for
-    faceting in the search interface.
-    """
+    """Populate the ``facet_inspire_doc_type`` field of Literature records."""
     result = []
 
     result.extend(json.get('document_type', []))
@@ -154,42 +158,54 @@ def populate_inspire_document_type(sender, json, *args, **kwargs):
     json['facet_inspire_doc_type'] = result
 
 
+@before_record_index.connect
 def populate_recid_from_ref(sender, json, *args, **kwargs):
-    """Extracts recids from all reference fields and adds them to ES.
+    """Extract recids from all JSON reference fields and add them to ES.
 
-    For every field that has as a value a reference object to another record,
-    add a sibling after extracting the record id.
-
-    Example::
-
-        {"record": {"$ref": "http://x/y/2}}
-
-        is transformed to:
-
-        {"record": {"$ref": "http://x/y/2},
-         "recid": 2}
-
-    Siblings are renamed using the following scheme:
-        Remove "record" occurrences and append _recid without doubling or
-        prepending underscores to the original name.
-
-    For every known list of object references add a new list with the
-    corresponding recids.
+    For every field that has as a value a JSON reference, adds a sibling
+    after extracting the record identifier. Siblings are named by removing
+    ``record`` occurrences and appending ``_recid`` without doubling or
+    prepending underscores to the original name.
 
     Example::
 
-        {"records": [{"$ref": "http://x/y/1"}, {"$ref": "http://x/y/2"}]}
+        {'record': {'$ref': 'http://x/y/2}}
 
-        is transformed to:
+    is transformed to::
 
-        {"records": [{"$ref": "http://x/y/1"}, {"$ref": "http://x/y/2"}]
-         "recids": [1, 2]}
+        {
+            'recid': 2,
+            'record': {'$ref': 'http://x/y/2},
+        }
+
+    For every list of object references adds a new list with the
+    corresponding recids, whose name is similarly computed.
+
+    Example::
+
+        {
+            'records': [
+                {'$ref': 'http://x/y/1'},
+                {'$ref': 'http://x/y/2'},
+            ],
+        }
+
+    is transformed to::
+
+        {
+            'recids': [1, 2],
+            'records': [
+                {'$ref': 'http://x/y/1'},
+                {'$ref': 'http://x/y/2'},
+            ],
+        }
+
     """
     list_ref_fields_translations = {
         'deleted_records': 'deleted_recids'
     }
 
-    def _recusive_find_refs(json_root):
+    def _recursive_find_refs(json_root):
         if isinstance(json_root, list):
             items = enumerate(json_root)
         elif isinstance(json_root, dict):
@@ -212,91 +228,97 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
                 new_key = list_ref_fields_translations[key]
                 json_root[new_key] = new_list
             else:
-                _recusive_find_refs(value)
+                _recursive_find_refs(value)
 
-    _recusive_find_refs(json)
+    _recursive_find_refs(json)
 
 
+@before_record_index.connect
 def populate_abstract_source_suggest(sender, json, *args, **kwargs):
-    """Populate abstract_source_suggest field of HEP records."""
+    """Populate the ``abstract_source_suggest`` field in Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
 
-    # FIXME: Use a dedicated method when #1355 will be resolved.
-    if 'hep.json' in json.get('$schema'):
-        abstracts = json.get('abstracts', [])
-        for abstract in abstracts:
-            source = abstract.get('source')
-            if source:
-                abstract.update({
-                    'abstract_source_suggest': {
-                        'input': source,
-                        'output': source,
-                    },
-                })
+    abstracts = json.get('abstracts', [])
+
+    for abstract in abstracts:
+        source = abstract.get('source')
+        if source:
+            abstract.update({
+               'abstract_source_suggest': {
+                   'input': source,
+                   'output': source,
+               },
+            })
 
 
+@before_record_index.connect
 def populate_title_suggest(sender, json, *args, **kwargs):
-    """Populate title_suggest field of Journals records."""
-    if 'journals.json' in json.get('$schema'):
-        journal_title = get_value(json, 'journal_title.title', default='')
-        short_title = json.get('short_title', '')
-        title_variants = json.get('title_variants', [])
+    """Populate the ``title_suggest`` field of Journals records."""
+    if 'journals.json' not in json.get('$schema'):
+        return
 
-        input_values = []
-        input_values.append(journal_title)
-        input_values.append(short_title)
-        input_values.extend(title_variants)
-        input_values = [el for el in input_values if el]
+    journal_title = get_value(json, 'journal_title.title', default='')
+    short_title = json.get('short_title', '')
+    title_variants = json.get('title_variants', [])
 
-        json.update({
-            'title_suggest': {
-                'input': input_values,
-                'output': short_title if short_title else '',
-                'payload': {
-                    'full_title': journal_title if journal_title else ''
-                }
-            }
-        })
+    input_values = []
+    input_values.append(journal_title)
+    input_values.append(short_title)
+    input_values.extend(title_variants)
+    input_values = [el for el in input_values if el]
+
+    json.update({
+        'title_suggest': {
+            'input': input_values,
+            'output': short_title if short_title else '',
+            'payload': {
+                'full_title': journal_title if journal_title else '',
+            },
+        }
+    })
 
 
+@before_record_index.connect
 def populate_affiliation_suggest(sender, json, *args, **kwargs):
     """Populate the ``affiliation_suggest`` field of Institution records."""
+    if 'institutions.json' not in json.get('$schema'):
+        return
 
-    # FIXME: Use a dedicated method when #1355 will be resolved.
-    if 'institutions.json' in json.get('$schema'):
-        ICN = json.get('ICN', [])
-        institution_acronyms = get_value(json, 'institution_hierarchy.acronym', default=[])
-        institution_names = get_value(json, 'institution_hierarchy.name', default=[])
-        legacy_ICN = json.get('legacy_ICN', '')
-        name_variants = force_list(get_value(json, 'name_variants.value', default=[]))
-        postal_codes = force_list(get_value(json, 'addresses.postal_code', default=[]))
+    ICN = json.get('ICN', [])
+    institution_acronyms = get_value(json, 'institution_hierarchy.acronym', default=[])
+    institution_names = get_value(json, 'institution_hierarchy.name', default=[])
+    legacy_ICN = json.get('legacy_ICN', '')
+    name_variants = force_list(get_value(json, 'name_variants.value', default=[]))
+    postal_codes = force_list(get_value(json, 'addresses.postal_code', default=[]))
 
-        input_values = []
-        input_values.extend(ICN)
-        input_values.extend(institution_acronyms)
-        input_values.extend(institution_names)
-        input_values.append(legacy_ICN)
-        input_values.extend(name_variants)
-        input_values.extend(postal_codes)
-        input_values = [el for el in input_values if el]
+    input_values = []
+    input_values.extend(ICN)
+    input_values.extend(institution_acronyms)
+    input_values.extend(institution_names)
+    input_values.append(legacy_ICN)
+    input_values.extend(name_variants)
+    input_values.extend(postal_codes)
+    input_values = [el for el in input_values if el]
 
-        json.update({
-            'affiliation_suggest': {
-                'input': input_values,
-                'output': legacy_ICN,
-                'payload': {
-                    '$ref': get_value(json, 'self.$ref'),
-                    'ICN': ICN,
-                    'institution_acronyms': institution_acronyms,
-                    'institution_names': institution_names,
-                    'legacy_ICN': legacy_ICN,
-                },
+    json.update({
+        'affiliation_suggest': {
+            'input': input_values,
+            'output': legacy_ICN,
+            'payload': {
+                '$ref': get_value(json, 'self.$ref'),
+                'ICN': ICN,
+                'institution_acronyms': institution_acronyms,
+                'institution_names': institution_names,
+                'legacy_ICN': legacy_ICN,
             },
-        })
+        },
+    })
 
 
 @before_record_index.connect
 def earliest_date(sender, json, *args, **kwargs):
-    """Find and assign the earliest date to a HEP paper."""
+    """Populate the ``earliest_date`` field of Literature records."""
     date_paths = [
         'preprint_date',
         'thesis_info.date',
@@ -315,26 +337,22 @@ def earliest_date(sender, json, *args, **kwargs):
 
 
 @before_record_index.connect
-def generate_name_variations(recid, json, *args, **kwargs):
-    """Adds a field with all the possible variations of an authors name.
+def generate_name_variations(sender, json, *args, **kwargs):
+    """Generate name variations for each signature of a Literature record."""
+    authors = json.get('authors', [])
 
-    :param recid: The id of the record that is going to be indexed.
-    :param json: The json representation of the record that is going to be
-                 indexed.
-    """
-    authors = json.get('authors')
-    if authors:
-        for author in authors:
-            name = author.get('full_name')
-            if name:
-                name_variations = author_tokenize(name)
-                author.update({'name_variations': name_variations})
-                bai = [
-                    item['value'] for item in author.get('ids', [])
-                    if item['schema'] == 'INSPIRE BAI'
-                ]
-                author.update({'name_suggest': {
-                    'input': name_variations,
-                    'output': name,
-                    'payload': {'bai': bai[0] if bai else None}
-                }})
+    for author in authors:
+        full_name = author.get('full_name')
+        if full_name:
+            bais = [
+                el['value'] for el in author.get('ids', [])
+                if el['schema'] == 'INSPIRE BAI'
+            ]
+            name_variations = author_tokenize(full_name)
+
+            author.update({'name_variations': name_variations})
+            author.update({'name_suggest': {
+                'input': name_variations,
+                'output': full_name,
+                'payload': {'bai': bais[0] if bais else None}
+            }})
