@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 from inspirehep.utils.record_getter import get_es_record
 
-from inspirehep.modules.records.serializers.schemas.pybtex import PybtexSchema
+from inspirehep.modules.records.serializers.schemas.bibtex import BibtexSchema
 from pybtex.database import Entry, Person
 
 
@@ -38,12 +38,13 @@ def test_format_article(app):
         ('volume', u'22'),
         ('year', u'1961'),
         ('doi', u'10.1016/0029-5582(61)90469-2'),
+        ('SLACcitation', u"%%CITATION = DOI:10.1016/0029-5582(61)90469-2;%%"),
     ], persons={
         'editor': [],
         'author': [Person(u"Glashow, S.L.")],
     }))
 
-    schema = PybtexSchema()
+    schema = BibtexSchema()
     result, errors = schema.load(article)
 
     assert not errors
@@ -67,7 +68,7 @@ def test_format_inproceeding(app):
         'author': [Person(u"Hu, Wayne")],
     }))
 
-    schema = PybtexSchema()
+    schema = BibtexSchema()
     result, errors = schema.load(inproceedings)
 
     assert not errors
@@ -94,7 +95,7 @@ def test_format_proceeding(app):
         'author': [],
     }))
 
-    schema = PybtexSchema()
+    schema = BibtexSchema()
     result, errors = schema.load(proceedings)
 
     assert not errors
@@ -115,7 +116,7 @@ def test_format_phdthesis(app):
         'author': [Person(u"Mankuzhiyil, Nijil")],
     }))
 
-    schema = PybtexSchema()
+    schema = BibtexSchema()
     result, errors = schema.load(phdthesis)
 
     assert not errors
@@ -136,7 +137,7 @@ def test_format_book(app):
         'author': [Person(u"Fecko, M.")],
     }))
 
-    schema = PybtexSchema()
+    schema = BibtexSchema()
     result, errors = schema.load(book)
 
     assert not errors
@@ -160,7 +161,7 @@ def test_format_inbook(app):
         'author': [Person(u"Bechtle, Philip"), Person(u"Plehn, Tilman"), Person(u"Sander, Christian")],
     }))
 
-    schema = PybtexSchema()
+    schema = BibtexSchema()
     result, errors = schema.load(inbook)
 
     assert not errors

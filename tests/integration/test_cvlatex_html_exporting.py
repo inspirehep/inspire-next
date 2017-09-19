@@ -22,17 +22,38 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
-from inspirehep.utils.record_getter import get_db_record
+from inspirehep import config
+from inspirehep.utils.record_getter import get_es_record
+import pytest
+from inspirehep.modules.records.serializers.cvformathtml_serializer import CVHTMLSerializer
 
 
-def test_format_cv_latex_html(app):
-    record = get_db_record('lit', 4328)
+@pytest.fixture
+def request_context(app):
+    with app.test_request_context() as context:
+        yield context
 
-    expected = (
-        '<a href="localhost:5000/record/4328">Partial Symmetries of Weak Interactions.'
-        '</a>,By S.L. Glashow.,<a href="http://dx.doi.org/10.1016/0029-5582(61)90469-2"'
-        '>10.1016/0029-5582(61)90469-2</a>.,Nucl.Phys. 22 (1961) 579-588.,,')
-    result = Cv_latex_html_text(record, 'cv_latex_html', ',').format()
+
+def test_format_cv_latex_html(request_context):
+    article = get_es_record('lit', 4328)
+    expected = '<a href="http://' + config.SERVER_NAME + '/record/4328">' \
+               'Partial Symmetries of Weak Interactions.</a><br />' \
+               'By S. L. Glashow.<br />' \
+               '<a href="http://dx.doi.org/10.1016/0029-5582(61)90469-2">10.1016/0029-5582(61)90469-2</a>.<br />' \
+               'Nucl.Phys. 22 (1961) 579-588.<br />'
+
+    result = CVHTMLSerializer().create_bibliography([article])
+
+    assert expected == result
+
+
+def test_format_cv_latex_html_collab(request_context):
+    article = get_es_record('lit', 1496635)
+    expected = '<a href="http://' + config.SERVER_NAME + '/record/1496635">' \
+               r'Measurement of the CKM angle $\gamma$ from a combination of LHCb results.</a><br />' \
+               'By R. Aaij et al. [LHCb Collaboration].<br />' \
+               '[arXiv:1611.03076 [hep-ex]].<br />'
+
+    result = CVHTMLSerializer().create_bibliography([article])
 
     assert expected == result

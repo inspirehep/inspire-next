@@ -22,13 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-from datetime import date
-
 from inspirehep.utils.record_getter import get_es_record
-from inspirehep.modules.records.serializers.latexeu_serializer import LatexEUSerializer
-from inspirehep.modules.records.serializers.latexus_serializer import LatexUSSerializer
-
 import pytest
+from inspirehep.modules.records.serializers.cvformattext_serializer import CVTextSerializer
 
 
 @pytest.fixture
@@ -37,37 +33,24 @@ def request_context(app):
         yield context
 
 
-def test_format_latex_eu(request_context):
+def test_format_cv_plaintext(request_context):
     article = get_es_record('lit', 4328)
-    today = date.today().strftime('%-d %b %Y')
+    expected = u"""Partial Symmetries of Weak Interactions.
+By S. L. Glashow.
+10.1016/0029-5582(61)90469-2.
+Nucl.Phys. 22 (1961) 579-588.\n"""
 
-    expected = u'''%\cite{Glashow:1961tr}
-\\bibitem{Glashow:1961tr}
-  S.~L.~Glashow,
-  %``Partial Symmetries of Weak Interactions,''
-  Nucl.\ Phys.\  {\\bf 22} (1961) 579.
-  doi:10.1016/0029-5582(61)90469-2
-  %%CITATION = DOI:10.1016/0029-5582(61)90469-2;%%
-  %0 citations counted in INSPIRE as of ''' + today
-
-    result = LatexEUSerializer().create_bibliography([article])
+    result = CVTextSerializer().create_bibliography([article])
 
     assert expected == result
 
 
-def test_format_latex_us(request_context):
-    article = get_es_record('lit', 4328)
-    today = date.today().strftime('%-d %b %Y')
+def test_format_cv_plaintext_collab(request_context):
+    article = get_es_record('lit', 1496635)
+    expected = u"""Measurement of the CKM angle $\\gamma$ from a combination of LHCb results.
+By R. Aaij et al. [LHCb Collaboration].
+[arXiv:1611.03076 [hep-ex]].\n"""
 
-    expected = u'''%\cite{Glashow:1961tr}
-\\bibitem{Glashow:1961tr}
-  S.~L.~Glashow,
-  %``Partial Symmetries of Weak Interactions,''
-  Nucl.\ Phys.\  {\\bf 22}, 579 (1961).
-  doi:10.1016/0029-5582(61)90469-2
-  %%CITATION = DOI:10.1016/0029-5582(61)90469-2;%%
-  %0 citations counted in INSPIRE as of ''' + today
-
-    result = LatexUSSerializer().create_bibliography([article])
+    result = CVTextSerializer().create_bibliography([article])
 
     assert expected == result
