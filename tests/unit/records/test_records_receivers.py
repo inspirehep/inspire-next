@@ -22,15 +22,109 @@
 
 from __future__ import absolute_import, division, print_function
 
+import mock
+import requests_mock
+from flask import current_app
+
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.records.receivers import (
+    assign_phonetic_block,
+    assign_uuid,
     earliest_date,
+    generate_name_variations,
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
     populate_inspire_document_type,
     populate_recid_from_ref,
     populate_title_suggest,
 )
+
+
+def test_phonetic_block_generation_ascii():
+    json_dict = {
+        'authors': [{
+            'full_name': 'John Richard Ellis'
+        }]
+    }
+
+    assign_phonetic_block(json_dict)
+
+    assert json_dict['authors'][0]['signature_block'] == 'ELj'
+
+
+def test_phonetic_block_generation_broken():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    extra_config = {
+        'BEARD_API_URL': 'http://example.com/beard',
+    }
+
+    with mock.patch.dict(current_app.config, extra_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', '{base_url}/text/phonetic_blocks'.format(
+                    base_url=current_app.config.get('BEARD_API_URL')),
+                status_code=200,
+                headers={'content-type': 'application/json'},
+                json={'phonetic_blocks': {}}
+            )
+
+        json_dict = {
+            'authors': [{
+                'full_name': '** NOT VALID **'
+            }]
+        }
+
+        assign_phonetic_block(json_dict)
+
+        assert validate(json_dict['authors'], subschema) is None
+        assert json_dict['authors'][0].get('signature_block') is None
+
+
+def test_phonetic_block_generation_unicode():
+    extra_config = {
+        'BEARD_API_URL': 'http://example.com/beard',
+    }
+
+    with mock.patch.dict(current_app.config, extra_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', '{base_url}/text/phonetic_blocks'.format(
+                    base_url=current_app.config.get('BEARD_API_URL')),
+                status_code=200,
+                headers={'content-type': 'application/json'},
+                text=u'{"phonetic_blocks": {"Grzegorz Jacenków": "JACANCg"}}'
+            )
+
+        json_dict = {
+            'authors': [{
+                'full_name': u'Grzegorz Jacenków'
+            }]
+        }
+
+        assign_phonetic_block(json_dict)
+
+        assert json_dict['authors'][0]['signature_block'] == 'JACANCg'
+
+
+def test_uuid_generation():
+    json_dict = {
+        'authors': [{
+            'full_name': 'John Doe',
+            'uuid': 'I am unique'
+        }, {
+            'full_name': 'John Richard Ellis'
+        }]
+    }
+
+    assign_uuid(json_dict)
+
+    # Check if the author with existing UUID has still the same UUID.
+    assert(json_dict['authors'][0]['uuid'] == 'I am unique')
+
+    # Check if the author with no UUID got one.
+    assert(json_dict['authors'][1]['uuid'] is not None)
 
 
 def test_earliest_date_from_preprint_date():
@@ -129,6 +223,44 @@ def test_earliest_date_from_imprints_date():
     result = record['earliest_date']
 
     assert expected == result
+
+
+def test_generate_name_variations():
+    json_dict = {
+        "authors": [{
+            "full_name": "John Richard Ellis"
+        }]
+    }
+
+    generate_name_variations(None, json_dict)
+
+    assert(
+        json_dict['authors'][0]['name_variations'] == [
+            'Ellis',
+            'Ellis J',
+            'Ellis J R',
+            'Ellis J Richard',
+            'Ellis John',
+            'Ellis John R',
+            'Ellis John Richard',
+            'Ellis R',
+            'Ellis Richard',
+            'Ellis, J',
+            'Ellis, J R',
+            'Ellis, J Richard',
+            'Ellis, John',
+            'Ellis, John R',
+            'Ellis, John Richard',
+            'Ellis, R',
+            'Ellis, Richard',
+            'J Ellis',
+            'J R Ellis',
+            'J Richard Ellis',
+            'John Ellis',
+            'John R Ellis',
+            'John Richard Ellis',
+            'R Ellis',
+            'Richard Ellis'])
 
 
 def test_populate_inspire_document_type_doc_type_from_refereed():
