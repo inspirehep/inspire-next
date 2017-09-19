@@ -22,12 +22,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+from uuid import UUID
+
 import mock
-import requests_mock
-from flask import current_app
 
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.records.receivers import (
+    add_book_autocomplete,
     assign_phonetic_block,
     assign_uuid,
     earliest_date,
@@ -40,91 +41,266 @@ from inspirehep.modules.records.receivers import (
 )
 
 
-def test_phonetic_block_generation_ascii():
-    json_dict = {
-        'authors': [{
-            'full_name': 'John Richard Ellis'
-        }]
+def test_add_book_autocomplete_from_authors():
+    schema = load_schema('hep')
+    authors_schema = schema['properties']['authors']
+    document_type_schema = schema['properties']['document_type']
+    self_schema = schema['properties']['self']
+
+    record = {
+        'authors': [
+            {'full_name': 'Rafelski, Johann'},
+        ],
+        'document_type': [
+            'book',
+        ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/1519486',
+        },
     }
+    assert validate(record['authors'], authors_schema) is None
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['self'], self_schema) is None
 
-    assign_phonetic_block(json_dict)
+    add_book_autocomplete(None, record)
 
-    assert json_dict['authors'][0]['signature_block'] == 'ELj'
+    expected = {
+        'input': [
+            'Rafelski, Johann',
+        ],
+        'payload': {
+            'authors': [
+                'Rafelski, Johann',
+            ],
+            'id': 'http://localhost:5000/api/literature/1519486',
+            'title': [],
+        },
+    }
+    result = record['bookautocomplete']
+
+    assert expected == result
 
 
-def test_phonetic_block_generation_broken():
+def test_add_book_autocomplete_from_titles():
+    schema = load_schema('hep')
+    document_type_schema = schema['properties']['document_type']
+    self_schema = schema['properties']['self']
+    titles_schema = schema['properties']['titles']
+
+    record = {
+        'document_type': [
+            'book',
+        ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/1519486',
+        },
+        'titles': [
+            {'title': 'Relativity Matters'},
+        ],
+    }
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['self'], self_schema) is None
+    assert validate(record['titles'], titles_schema) is None
+
+    add_book_autocomplete(None, record)
+
+    expected = {
+        'input': [
+            'Relativity Matters',
+        ],
+        'payload': {
+            'authors': [],
+            'id': 'http://localhost:5000/api/literature/1519486',
+            'title': [
+                'Relativity Matters',
+            ],
+        },
+    }
+    result = record['bookautocomplete']
+
+    assert expected == result
+
+
+def test_add_book_autocomplete_does_nothing_if_record_is_not_a_book():
+    schema = load_schema('hep')
+    authors_schema = schema['properties']['authors']
+    document_type_schema = schema['properties']['document_type']
+    self_schema = schema['properties']['self']
+
+    record = {
+        'authors': [
+            {'full_name': 'Mohayai, Tanaz Angelina'},
+        ],
+        'document_type': [
+            'article',
+        ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/1520027',
+        }
+    }
+    assert validate(record['authors'], authors_schema) is None
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['self'], self_schema) is None
+
+    add_book_autocomplete(None, record)
+
+    assert 'bookautocomplete' not in record
+
+
+def test_assign_phonetic_block_handles_ascii_names():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
 
-    extra_config = {
-        'BEARD_API_URL': 'http://example.com/beard',
+    record = {
+        'authors': [
+            {'full_name': 'Ellis, John Richard'},
+        ],
     }
+    assert validate(record['authors'], subschema) is None
 
-    with mock.patch.dict(current_app.config, extra_config):
-        with requests_mock.Mocker() as requests_mocker:
-            requests_mocker.register_uri(
-                'POST', '{base_url}/text/phonetic_blocks'.format(
-                    base_url=current_app.config.get('BEARD_API_URL')),
-                status_code=200,
-                headers={'content-type': 'application/json'},
-                json={'phonetic_blocks': {}}
-            )
+    assign_phonetic_block(record)
 
-        json_dict = {
-            'authors': [{
-                'full_name': '** NOT VALID **'
-            }]
-        }
+    expected = [
+        {
+            'full_name': 'Ellis, John Richard',
+            'signature_block': 'ELj',
+        },
+    ]
+    result = record['authors']
 
-        assign_phonetic_block(json_dict)
-
-        assert validate(json_dict['authors'], subschema) is None
-        assert json_dict['authors'][0].get('signature_block') is None
+    assert validate(result, subschema) is None
+    assert expected == result
 
 
-def test_phonetic_block_generation_unicode():
-    extra_config = {
-        'BEARD_API_URL': 'http://example.com/beard',
+def test_assign_phonetic_block_handles_unicode_names():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    record = {
+        'authors': [
+            {'full_name': u'Páramos, Jorge'},
+        ],
     }
+    assert validate(record['authors'], subschema) is None
 
-    with mock.patch.dict(current_app.config, extra_config):
-        with requests_mock.Mocker() as requests_mocker:
-            requests_mocker.register_uri(
-                'POST', '{base_url}/text/phonetic_blocks'.format(
-                    base_url=current_app.config.get('BEARD_API_URL')),
-                status_code=200,
-                headers={'content-type': 'application/json'},
-                text=u'{"phonetic_blocks": {"Grzegorz Jacenków": "JACANCg"}}'
-            )
+    assign_phonetic_block(record)
 
-        json_dict = {
-            'authors': [{
-                'full_name': u'Grzegorz Jacenków'
-            }]
-        }
+    expected = [
+        {
+            'full_name': u'Páramos, Jorge',
+            'signature_block': 'PARANj',
+        },
+    ]
+    result = record['authors']
 
-        assign_phonetic_block(json_dict)
-
-        assert json_dict['authors'][0]['signature_block'] == 'JACANCg'
+    assert validate(result, subschema) is None
+    assert expected == result
 
 
-def test_uuid_generation():
-    json_dict = {
-        'authors': [{
-            'full_name': 'John Doe',
-            'uuid': 'I am unique'
-        }, {
-            'full_name': 'John Richard Ellis'
-        }]
+def test_assign_phonetic_block_handles_jimmy():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    record = {
+        'authors': [
+            {'full_name': 'Jimmy'},
+        ],
     }
+    assert validate(record['authors'], subschema) is None
 
-    assign_uuid(json_dict)
+    assign_phonetic_block(record)
 
-    # Check if the author with existing UUID has still the same UUID.
-    assert(json_dict['authors'][0]['uuid'] == 'I am unique')
+    expected = [
+        {
+            'full_name': 'Jimmy',
+            'signature_block': 'JANY',
+        },
+    ]
+    result = record['authors']
 
-    # Check if the author with no UUID got one.
-    assert(json_dict['authors'][1]['uuid'] is not None)
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+def test_assign_phonetick_block_ignores_malformed_names():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    record = {
+        'authors': [
+            {'full_name': '** NOT A REAL NAME **'},
+        ],
+    }
+    assert validate(record['authors'], subschema) is None
+
+    assign_phonetic_block(record)
+
+    expected = [
+        {'full_name': '** NOT A REAL NAME **'},
+    ]
+    result = record['authors']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+@mock.patch('inspirehep.modules.records.receivers.uuid.uuid4')
+def test_assign_uuid(mock_uuid4):
+    mock_uuid4.return_value = UUID('727238f3-8ed6-40b6-97d2-dc3cd1429131')
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    record = {
+        'authors': [
+            {'full_name': 'Ellis, John Richard'},
+        ],
+    }
+    assert validate(record['authors'], subschema) is None
+
+    assign_uuid(record)
+
+    expected = [
+        {
+            'full_name': 'Ellis, John Richard',
+            'uuid': '727238f3-8ed6-40b6-97d2-dc3cd1429131',
+        },
+    ]
+    result = record['authors']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+@mock.patch('inspirehep.modules.records.receivers.uuid.uuid4')
+def test_assign_uuid_does_not_touch_existing_uuids(mock_uuid4):
+    mock_uuid4.return_value = UUID('727238f3-8ed6-40b6-97d2-dc3cd1429131')
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    record = {
+        'authors': [
+            {
+                'full_name': 'Ellis, John Richard',
+                'uuid': 'e14955b0-7e57-41a0-90a8-f4c64eb8f4e9',
+            },
+        ],
+    }
+    assert validate(record['authors'], subschema) is None
+
+    assign_uuid(record)
+
+    expected = [
+        {
+            'full_name': 'Ellis, John Richard',
+            'uuid': 'e14955b0-7e57-41a0-90a8-f4c64eb8f4e9',
+        },
+    ]
+    result = record['authors']
+
+    assert validate(result, subschema) is None
+    assert expected == result
 
 
 def test_earliest_date_from_preprint_date():
@@ -226,117 +402,148 @@ def test_earliest_date_from_imprints_date():
 
 
 def test_generate_name_variations():
-    json_dict = {
-        "authors": [{
-            "full_name": "John Richard Ellis"
-        }]
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    record = {
+        'authors': [
+            {
+                'full_name': 'Ellis, John Richard',
+                'ids': [
+                    {
+                        'schema': 'INSPIRE BAI',
+                        'value': 'J.R.Ellis.1',
+                    },
+                ],
+            },
+        ],
     }
+    assert validate(record['authors'], subschema) is None
 
-    generate_name_variations(None, json_dict)
+    generate_name_variations(None, record)
 
-    assert(
-        json_dict['authors'][0]['name_variations'] == [
-            'Ellis',
-            'Ellis J',
-            'Ellis J R',
-            'Ellis J Richard',
-            'Ellis John',
-            'Ellis John R',
-            'Ellis John Richard',
-            'Ellis R',
-            'Ellis Richard',
-            'Ellis, J',
-            'Ellis, J R',
-            'Ellis, J Richard',
-            'Ellis, John',
-            'Ellis, John R',
-            'Ellis, John Richard',
-            'Ellis, R',
-            'Ellis, Richard',
-            'J Ellis',
-            'J R Ellis',
-            'J Richard Ellis',
-            'John Ellis',
-            'John R Ellis',
-            'John Richard Ellis',
-            'R Ellis',
-            'Richard Ellis'])
+    expected = [
+        {
+            'full_name': 'Ellis, John Richard',
+            'ids': [
+                {
+                    'schema': 'INSPIRE BAI',
+                    'value': 'J.R.Ellis.1',
+                },
+            ],
+            'name_suggest': {
+                'input': [
+                    'Ellis',
+                    'Ellis J',
+                    'Ellis J R',
+                    'Ellis J Richard',
+                    'Ellis John',
+                    'Ellis John R',
+                    'Ellis John Richard',
+                    'Ellis R',
+                    'Ellis Richard',
+                    'Ellis, J',
+                    'Ellis, J R',
+                    'Ellis, J Richard',
+                    'Ellis, John',
+                    'Ellis, John R',
+                    'Ellis, John Richard',
+                    'Ellis, R',
+                    'Ellis, Richard',
+                    'J Ellis',
+                    'J R Ellis',
+                    'J Richard Ellis',
+                    'John Ellis',
+                    'John R Ellis',
+                    'John Richard Ellis',
+                    'R Ellis',
+                    'Richard Ellis',
+                ],
+                'output': 'Ellis, John Richard',
+                'payload': {'bai': 'J.R.Ellis.1'},
+            },
+            'name_variations': [
+                'Ellis',
+                'Ellis J',
+                'Ellis J R',
+                'Ellis J Richard',
+                'Ellis John',
+                'Ellis John R',
+                'Ellis John Richard',
+                'Ellis R',
+                'Ellis Richard',
+                'Ellis, J',
+                'Ellis, J R',
+                'Ellis, J Richard',
+                'Ellis, John',
+                'Ellis, John R',
+                'Ellis, John Richard',
+                'Ellis, R',
+                'Ellis, Richard',
+                'J Ellis',
+                'J R Ellis',
+                'J Richard Ellis',
+                'John Ellis',
+                'John R Ellis',
+                'John Richard Ellis',
+                'R Ellis',
+                'Richard Ellis',
+            ],
+        },
+    ]
+    result = record['authors']
+
+    assert expected == result
 
 
-def test_populate_inspire_document_type_doc_type_from_refereed():
-    json_dict = {
+def test_populate_inspire_document_type_from_document_type():
+    schema = load_schema('hep')
+    subschema = schema['properties']['document_type']
+
+    record = {'document_type': ['thesis']}
+    assert validate(record['document_type'], subschema) is None
+
+    populate_inspire_document_type(None, record)
+
+    expected = [
+        'thesis',
+    ]
+    result = record['facet_inspire_doc_type']
+
+    assert expected == result
+
+
+def test_populate_inspire_document_type_from_refereed():
+    schema = load_schema('hep')
+    document_type_schema = schema['properties']['document_type']
+    refereed_schema = schema['properties']['refereed']
+
+    record = {
         'document_type': [
             'article',
         ],
         'refereed': True,
     }
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['refereed'], refereed_schema) is None
 
-    populate_inspire_document_type(None, json_dict)
+    populate_inspire_document_type(None, record)
 
-    assert json_dict['facet_inspire_doc_type'] == [
+    expected = [
         'article',
         'peer reviewed',
     ]
+    result = record['facet_inspire_doc_type']
+
+    assert expected == result
 
 
-def test_populate_inspire_document_type_doc_type_from_document_type_thesis():
-    json_dict = {'document_type': ['thesis']}
+def test_populate_inspire_document_type_from_publication_type():
+    schema = load_schema('hep')
+    document_type_schema = schema['properties']['document_type']
+    publication_type_schema = schema['properties']['publication_type']
 
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == ['thesis']
-
-
-def test_populate_inspire_document_type_doc_type_from_document_type_book():
-    json_dict = {'document_type': ['book']}
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == ['book']
-
-
-def test_populate_inspire_document_type_doc_type_from_document_type_book_chapter():
-    json_dict = {'document_type': ['book chapter']}
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == ['book chapter']
-
-
-def test_populate_inspire_document_type_doc_type_from_document_type_proceedings():
-    json_dict = {'document_type': ['proceedings']}
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == ['proceedings']
-
-
-def test_populate_inspire_document_type_doc_type_from_document_type_conference_paper():
-    json_dict = {'document_type': ['conference paper']}
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == ['conference paper']
-
-
-def test_populate_inspire_document_type_doc_type_from_document_type_note():
-    json_dict = {'document_type': ['note']}
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == ['note']
-
-
-def test_populate_inspire_document_type_doc_type_from_document_type_report():
-    json_dict = {'document_type': ['report']}
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == ['report']
-
-
-def test_populate_inspire_document_type_doc_type_from_publication_type_introductory():
-    json_dict = {
+    record = {
         'document_type': [
             'article',
         ],
@@ -344,52 +551,21 @@ def test_populate_inspire_document_type_doc_type_from_publication_type_introduct
             'introductory',
         ],
     }
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['publication_type'], publication_type_schema) is None
 
-    populate_inspire_document_type(None, json_dict)
+    populate_inspire_document_type(None, record)
 
-    assert json_dict['facet_inspire_doc_type'] == [
+    expected = [
         'article',
         'introductory',
     ]
+    result = record['facet_inspire_doc_type']
+
+    assert expected == result
 
 
-def test_populate_inspire_document_type_doc_type_from_publication_type_review():
-    json_dict = {
-        'document_type': [
-            'article',
-        ],
-        'publication_type': [
-            'review',
-        ],
-    }
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == [
-        'article',
-        'review',
-    ]
-
-
-def test_populate_inspire_document_type_doc_type_from_publication_type_lectures():
-    json_dict = {
-        'document_type': [
-            'article',
-        ],
-        'publication_type': [
-            'lectures'
-        ],
-    }
-
-    populate_inspire_document_type(None, json_dict)
-
-    assert json_dict['facet_inspire_doc_type'] == [
-        'article',
-        'lectures',
-    ]
-
-
-def test_populate_recid_from_ref_naming():
+def test_populate_recid_from_ref():
     json_dict = {
         'simple_key': {'$ref': 'http://x/y/1'},
         'key_with_record': {'$ref': 'http://x/y/2'},
@@ -407,10 +583,12 @@ def test_populate_recid_from_ref_naming():
     assert json_dict['embedded_record']['recid'] == 5
 
 
-def test_populate_recid_from_ref_deleted_records():
+def test_populate_recid_from_ref_handles_deleted_records():
     json_dict = {
-        'deleted_records': [{'$ref': 'http://x/y/1'},
-                            {'$ref': 'http://x/y/2'}]
+        'deleted_records': [
+            {'$ref': 'http://x/y/1'},
+            {'$ref': 'http://x/y/2'},
+        ],
     }
 
     populate_recid_from_ref(None, json_dict)
@@ -419,49 +597,67 @@ def test_populate_recid_from_ref_deleted_records():
 
 
 def test_populate_abstract_source_suggest():
-    json_dict = {
+    schema = load_schema('hep')
+    schema_schema = schema['properties']['$schema']
+    abstracts_schema = schema['properties']['abstracts']
+
+    record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'abstracts': [
-            {'source': 'foo'},
-            {'source': 'bar'},
+            {
+                'source': 'foo',
+                'value': 'bar',
+            },
         ],
     }
+    assert validate(record['$schema'], schema_schema) is None
+    assert validate(record['abstracts'], abstracts_schema) is None
 
-    populate_abstract_source_suggest(None, json_dict)
+    populate_abstract_source_suggest(None, record)
 
-    assert json_dict['abstracts'] == [
+    expected = [
         {
             'abstract_source_suggest': {
                 'input': 'foo',
                 'output': 'foo',
             },
             'source': 'foo',
-        },
-        {
-            'abstract_source_suggest': {
-                'input': 'bar',
-                'output': 'bar',
-            },
-            'source': 'bar',
+            'value': 'bar',
         },
     ]
+    result = record['abstracts']
+
+    assert expected == result
 
 
-def test_populate_abstract_source_suggest_does_nothing_if_record_is_not_hep():
-    json_dict = {
+def test_populate_abstract_source_suggest_does_nothing_if_record_is_not_literature():
+    schema = load_schema('hep')
+    schema_schema = schema['properties']['$schema']
+    abstracts_schema = schema['properties']['abstracts']
+
+    record = {
         '$schema': 'http://localhost:5000/schemas/records/other.json',
         'abstracts': [
-            {'source': 'foo'},
-            {'source': 'bar'},
+            {
+                'source': 'foo',
+                'value': 'bar',
+            },
         ],
     }
+    assert validate(record['$schema'], schema_schema) is None
+    assert validate(record['abstracts'], abstracts_schema) is None
 
-    populate_abstract_source_suggest(None, json_dict)
+    populate_abstract_source_suggest(None, record)
 
-    assert json_dict['abstracts'] == [
-        {'source': 'foo'},
-        {'source': 'bar'},
+    expected = [
+        {
+            'source': 'foo',
+            'value': 'bar',
+        },
     ]
+    result = record['abstracts']
+
+    assert expected == result
 
 
 def test_populate_title_suggest_with_all_inputs():
