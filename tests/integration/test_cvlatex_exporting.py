@@ -63,6 +63,7 @@ def test_format_cv_latex_collab(request_context):
 \item%{Aaij:2016kjh}
 {\bf ``Measurement of the CKM angle $\gamma$ from a combination of LHCb results''}
   \\{}R.~Aaij {\it et al.} [LHCb Collaboration].
+  \\{}[arXiv:1611.03076 [hep-ex]].
  %\href{http://''' + config.SERVER_NAME + u'''/record/1496635}{HEP entry}.
  %1 citation counted in INSPIRE as of ''' + today
 
