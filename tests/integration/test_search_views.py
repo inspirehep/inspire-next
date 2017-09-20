@@ -59,7 +59,7 @@ def test_search_falls_back_to_hep(app_client):
     assert app_client.get('/search').status_code == 200
 
 
-@patch('inspirehep.modules.search.query.current_app')
+@patch('inspirehep.modules.search.search_factory.current_app')
 def test_search_logs(current_app_mock, api_client):
     def _debug(log_output):
         query = {
@@ -69,13 +69,7 @@ def test_search_logs(current_app_mock, api_client):
                         'match': {'_collections': 'Literature'}
                     }],
                     'must': [{
-                        'multi_match': {
-                            'query': '',
-                            'fields': [
-                                '_all',
-                            ],
-                            'zero_terms_query': 'all',
-                        }
+                        'match_all': {}
                     }]
                 }
             },

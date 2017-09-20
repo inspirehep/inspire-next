@@ -20,33 +20,18 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Invenio standard theme."""
+"""Search extension."""
 
 from __future__ import absolute_import, division, print_function
 
-from werkzeug.local import LocalProxy
-
 from .views import blueprint
-from .utils import generate_valid_keywords
 
 
-class INSPIRESearch(object):
-    """Invenio search extension."""
-
-    def __init__(self, app=None, **kwargs):
-        """Extension initialization."""
+class InspireSearch(object):
+    def __init__(self, app=None):
         if app:
-            self.init_app(app, **kwargs)
+            self.init_app(app)
 
-    def init_app(self, app, assets=None, **kwargs):
-        """Initialize application object."""
-        self.init_config(app.config)
+    def init_app(self, app):
         app.register_blueprint(blueprint)
         app.extensions['inspire-search'] = self
-
-    def init_config(self, config):
-        """Initialize configuration."""
-        config.setdefault(
-            'SEARCH_ALLOWED_KEYWORDS',
-            LocalProxy(generate_valid_keywords)
-        )

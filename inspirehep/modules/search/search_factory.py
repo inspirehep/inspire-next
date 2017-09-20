@@ -29,20 +29,19 @@ import json
 from flask import current_app, request
 
 from invenio_records_rest.errors import InvalidQueryRESTError
+from invenio_records_rest.facets import default_facets_factory
+from invenio_records_rest.sorter import default_sorter_factory
 
 from inspirehep.modules.search import IQ
 
 
 def inspire_search_factory(self, search):
-    """Parse query using Invenio-Query-Parser.
+    """Parse query using Inspire-Query-Parser.
 
     :param self: REST view.
     :param search: Elastic search DSL search instance.
     :returns: Tuple with search instance and URL arguments.
     """
-    from invenio_records_rest.facets import default_facets_factory
-    from invenio_records_rest.sorter import default_sorter_factory
-
     query_string = request.values.get('q', '')
 
     try:

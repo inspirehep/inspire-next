@@ -24,51 +24,15 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pypeg2
 from elasticsearch_dsl import Q
-from flask import current_app
 
-from invenio_query_parser.ast import MalformedQuery
-
-from .parser import Main
-from .walkers.elasticsearch import ElasticSearchDSL
-from .walkers.elasticsearch_no_keywords import ElasticSearchNoKeywordsDSL
-from .walkers.elasticsearch_no_keywords import QueryHasKeywords
-from .walkers.pypeg_to_ast import PypegConverter
-from .walkers.spires_to_invenio import SpiresToInvenio
-
-
-walkers = [PypegConverter(), SpiresToInvenio()]
+import inspire_query_parser
 
 
 def inspire_query_factory():
-    """Create a parser returning Elastic Search DSL query instance."""
+    """Create an Elastic Search DSL query instance using the generated Elastic Search query by the parser."""
 
-    def invenio_query(pattern, search):
+    def inspire_query(query_string, search):
+        return Q(inspire_query_parser.parse_query(query_string))
 
-        try:
-            query = pypeg2.parse(pattern, Main, whitespace='')
-
-            for walker in walkers:
-                query = query.accept(walker)
-
-        except SyntaxError:
-            query = MalformedQuery("")
-
-        try:
-            search_walker = ElasticSearchNoKeywordsDSL()
-            query.accept(search_walker)
-            query = Q('multi_match',
-                      query=pattern,
-                      fields=search.default_fields(),
-                      zero_terms_query="all")
-        except QueryHasKeywords:
-            query = query.accept(ElasticSearchDSL(
-                current_app.config.get(
-                    "SEARCH_ELASTIC_KEYWORD_MAPPING", {}
-                )
-            ))
-        finally:
-            return query
-
-    return invenio_query
+    return inspire_query
