@@ -125,6 +125,26 @@ def index_after_commit(sender, changes):
 #
 
 @before_record_index.connect
+def enhance_after_index(sender, json, *args, **kwargs):
+    """Run all the receivers that enhance the record for ES in the right order.
+
+    .. note::
+
+       ``populate_recid_from_ref`` **MUST** come before ``add_book_autocomplete``
+       because the latter puts a JSON reference in a completion payload, which
+       would be expanded to an incorrect ``payload_recid`` by the former.
+
+    """
+    populate_recid_from_ref(sender, json, *args, **kwargs)
+    add_book_autocomplete(sender, json, *args, **kwargs)
+    earliest_date(sender, json, *args, **kwargs)
+    generate_name_variations(sender, json, *args, **kwargs)
+    populate_abstract_source_suggest(sender, json, *args, **kwargs)
+    populate_affiliation_suggest(sender, json, *args, **kwargs)
+    populate_inspire_document_type(sender, json, *args, **kwargs)
+    populate_title_suggest(sender, json, *args, **kwargs)
+
+
 def add_book_autocomplete(sender, json, *args, **kwargs):
     """Populate the ```bookautocomplete`` field of Literature records."""
     if 'hep.json' not in json.get('$schema'):
@@ -154,7 +174,6 @@ def add_book_autocomplete(sender, json, *args, **kwargs):
     })
 
 
-@before_record_index.connect
 def populate_inspire_document_type(sender, json, *args, **kwargs):
     """Populate the ``facet_inspire_doc_type`` field of Literature records."""
     if 'hep.json' not in json.get('$schema'):
@@ -170,7 +189,6 @@ def populate_inspire_document_type(sender, json, *args, **kwargs):
     json['facet_inspire_doc_type'] = result
 
 
-@before_record_index.connect
 def populate_recid_from_ref(sender, json, *args, **kwargs):
     """Extract recids from all JSON reference fields and add them to ES.
 
@@ -245,7 +263,6 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
     _recursive_find_refs(json)
 
 
-@before_record_index.connect
 def populate_abstract_source_suggest(sender, json, *args, **kwargs):
     """Populate the ``abstract_source_suggest`` field in Literature records."""
     if 'hep.json' not in json.get('$schema'):
@@ -264,7 +281,6 @@ def populate_abstract_source_suggest(sender, json, *args, **kwargs):
             })
 
 
-@before_record_index.connect
 def populate_title_suggest(sender, json, *args, **kwargs):
     """Populate the ``title_suggest`` field of Journals records."""
     if 'journals.json' not in json.get('$schema'):
@@ -291,7 +307,6 @@ def populate_title_suggest(sender, json, *args, **kwargs):
     })
 
 
-@before_record_index.connect
 def populate_affiliation_suggest(sender, json, *args, **kwargs):
     """Populate the ``affiliation_suggest`` field of Institution records."""
     if 'institutions.json' not in json.get('$schema'):
@@ -328,7 +343,6 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
     })
 
 
-@before_record_index.connect
 def earliest_date(sender, json, *args, **kwargs):
     """Populate the ``earliest_date`` field of Literature records."""
     if 'hep.json' not in json.get('$schema'):
@@ -351,7 +365,6 @@ def earliest_date(sender, json, *args, **kwargs):
         json['earliest_date'] = earliest_date
 
 
-@before_record_index.connect
 def generate_name_variations(sender, json, *args, **kwargs):
     """Generate name variations for each signature of a Literature record."""
     if 'hep.json' not in json.get('$schema'):
