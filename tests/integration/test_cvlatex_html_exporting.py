@@ -57,3 +57,15 @@ def test_format_cv_latex_html_collab(request_context):
     result = CVHTMLSerializer().create_bibliography([article])
 
     assert expected == result
+
+
+def test_format_cv_html_thesis(request_context):
+    article = get_es_record('lit', 1395663)
+
+    expected = '<a href="http://' + config.SERVER_NAME + '/record/1395663">' \
+               'MAGIC $\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic ' \
+               'background light using FERMI and air Cherenkov telescopes.</a><br />By N. Mankuzhiyil.<br />'
+
+    result = CVHTMLSerializer().create_bibliography([article])
+
+    assert expected == result

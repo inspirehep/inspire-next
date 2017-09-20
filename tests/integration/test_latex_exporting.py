@@ -71,3 +71,33 @@ def test_format_latex_us(request_context):
     result = LatexUSSerializer().create_bibliography([article])
 
     assert expected == result
+
+
+def test_format_latex_eu_thesis(request_context):
+    article = get_es_record('lit', 1395663)
+    today = date.today().strftime('%-d %b %Y')
+
+    expected = ur'''%\cite{Mankuzhiyil:2010jpa}
+\bibitem{Mankuzhiyil:2010jpa}
+  N.~Mankuzhiyil,
+  %``MAGIC $\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes,''
+  %0 citations counted in INSPIRE as of ''' + today
+
+    result = LatexEUSerializer().create_bibliography([article])
+
+    assert expected == result
+
+
+def test_format_latex_us_thesis(request_context):
+    article = get_es_record('lit', 1395663)
+    today = date.today().strftime('%-d %b %Y')
+
+    expected = ur'''%\cite{Mankuzhiyil:2010jpa}
+\bibitem{Mankuzhiyil:2010jpa}
+  N.~Mankuzhiyil,
+  %``MAGIC $\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes,''
+  %0 citations counted in INSPIRE as of ''' + today
+
+    result = LatexUSSerializer().create_bibliography([article])
+
+    assert expected == result

@@ -70,3 +70,19 @@ def test_format_cv_latex_collab(request_context):
     result = CVLatexSerializer().create_bibliography([article])
 
     assert expected == result
+
+
+def test_format_cv_latex_thesis(request_context):
+    article = get_es_record('lit', 1395663)
+    today = date.today().strftime('%-d %b %Y')
+
+    expected = ur'''%\cite{Mankuzhiyil:2010jpa}
+\item%{Mankuzhiyil:2010jpa}
+{\bf ``MAGIC $\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes''}
+  \\{}N.~Mankuzhiyil.
+ %\href{http://''' + config.SERVER_NAME + u'''/record/1395663}{HEP entry}.
+ %0 citations counted in INSPIRE as of ''' + today
+
+    result = CVLatexSerializer().create_bibliography([article])
+
+    assert expected == result
