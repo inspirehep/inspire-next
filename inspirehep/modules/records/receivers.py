@@ -20,79 +20,165 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Record receivers."""
+"""Records receivers."""
 
 from __future__ import absolute_import, division, print_function
 
+import uuid
 from itertools import chain
 
+import six
+from flask import current_app
 from flask_sqlalchemy import models_committed
 
 from invenio_indexer.api import RecordIndexer
 from invenio_indexer.signals import before_record_index
+from invenio_records.api import Record
 from invenio_records.models import RecordMetadata
+from invenio_records.signals import (
+    before_record_insert,
+    before_record_update,
+)
 
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
-from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.authors.utils import author_tokenize, phonetic_blocks
 from inspirehep.utils.date import create_earliest_date
 
-from .experiments import EXPERIMENTS_MAP
 
+#
+# before_record_insert & before_record_update
+#
 
-@models_committed.connect
-def receive_after_model_commit(sender, changes):
-    """Perform actions after models committed to database."""
-    indexer = RecordIndexer()
-    for model_instance, change in changes:
-        if isinstance(model_instance, RecordMetadata):
-            if change in ('insert', 'update'):
-                indexer.index(InspireRecord(model_instance.json, model_instance))
-            else:
-                indexer.delete(InspireRecord(model_instance.json, model_instance))
+@before_record_insert.connect
+@before_record_update.connect
+def assign_phonetic_block(sender, *args, **kwargs):
+    """Assign a phonetic block to each signature of a Literature record.
 
+    Uses the NYSIIS algorithm to compute a phonetic block from each
+    signature's full name, skipping those that are not recognized
+    as real names, but logging an error when that happens.
+    """
+    if 'hep.json' not in sender.get('$schema'):
+        return
 
-@before_record_index.connect
-def enhance_record(sender, json, *args, **kwargs):
-    populate_inspire_document_type(sender, json, *args, **kwargs)
-    match_valid_experiments(sender, json, *args, **kwargs)
-    populate_recid_from_ref(sender, json, *args, **kwargs)
-    populate_abstract_source_suggest(sender, json, *args, **kwargs)
-    populate_title_suggest(sender, json, *args, **kwargs)
-    populate_affiliation_suggest(sender, json, *args, **kwargs)
-    add_book_autocomplete(sender, json, *args, **kwargs)
+    authors = sender.get('authors', [])
 
+    authors_map = {}
+    for i, author in enumerate(authors):
+        if 'full_name' in author:
+            authors_map[author['full_name']] = i
 
-def add_book_autocomplete(sender, json, *args, **kwargs):
-    if 'book' in json.get('document_type', []):
-        authors = force_list(get_value(json, 'authors.full_name'))
-        titles = force_list(get_value(json, 'titles.title'))
+    try:
+        signatures_blocks = phonetic_blocks(authors_map.keys())
+    except Exception as err:
+        current_app.logger.error(
+            'Cannot extract phonetic blocks for record %d: %s',
+            sender.get('control_number'), err)
+        return
 
-        result = json.get('bookautocomplete', [])
-        result.extend(authors)
-        result.extend(titles)
-
-        ref = get_value(json, 'self.$ref')
-
-        json.update({
-            'bookautocomplete': {
-                'input': result,
-                'payload': {
-                    'authors': authors,
-                    'id': ref,
-                    'title': titles,
-                },
-            },
+    for full_name, signature_block in six.iteritems(signatures_blocks):
+        authors[authors_map[full_name]].update({
+            'signature_block': signature_block,
         })
 
 
-def populate_inspire_document_type(sender, json, *args, **kwargs):
-    """Populate the INSPIRE doc type before indexing.
+@before_record_insert.connect
+@before_record_update.connect
+def assign_uuid(sender, *args, **kwargs):
+    """Assign a UUID to each signature of a Literature record."""
+    if 'hep.json' not in sender.get('$schema'):
+        return
 
-    Adds the `facet_inspire_doc_type` key to the record, to be used for
-    faceting in the search interface.
+    authors = sender.get('authors', [])
+
+    for author in authors:
+        if 'uuid' not in author:
+            author['uuid'] = str(uuid.uuid4())
+
+
+#
+# models_committed
+#
+
+@models_committed.connect
+def index_after_commit(sender, changes):
+    """Index a record in ES after it was committed to the DB.
+
+    This cannot happen in an ``after_record_commit`` receiver from Invenio-Records
+    because, despite the name, at that point we are not yet sure whether the record
+    has been really committed to the DB.
     """
+    indexer = RecordIndexer()
+
+    for model_instance, change in changes:
+        if isinstance(model_instance, RecordMetadata):
+            if change in ('insert', 'update'):
+                indexer.index(Record(model_instance.json, model_instance))
+            else:
+                indexer.delete(Record(model_instance.json, model_instance))
+
+
+#
+# before_record_index
+#
+
+@before_record_index.connect
+def enhance_after_index(sender, json, *args, **kwargs):
+    """Run all the receivers that enhance the record for ES in the right order.
+
+    .. note::
+
+       ``populate_recid_from_ref`` **MUST** come before ``add_book_autocomplete``
+       because the latter puts a JSON reference in a completion payload, which
+       would be expanded to an incorrect ``payload_recid`` by the former.
+
+    """
+    populate_recid_from_ref(sender, json, *args, **kwargs)
+    add_book_autocomplete(sender, json, *args, **kwargs)
+    earliest_date(sender, json, *args, **kwargs)
+    generate_name_variations(sender, json, *args, **kwargs)
+    populate_abstract_source_suggest(sender, json, *args, **kwargs)
+    populate_affiliation_suggest(sender, json, *args, **kwargs)
+    populate_inspire_document_type(sender, json, *args, **kwargs)
+    populate_title_suggest(sender, json, *args, **kwargs)
+
+
+def add_book_autocomplete(sender, json, *args, **kwargs):
+    """Populate the ```bookautocomplete`` field of Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
+    if 'book' not in json.get('document_type', []):
+        return
+
+    authors = force_list(get_value(json, 'authors.full_name'))
+    titles = force_list(get_value(json, 'titles.title'))
+
+    result = json.get('bookautocomplete', [])
+    result.extend(authors)
+    result.extend(titles)
+
+    ref = get_value(json, 'self.$ref')
+
+    json.update({
+        'bookautocomplete': {
+            'input': result,
+            'payload': {
+                'authors': authors,
+                'id': ref,
+                'title': titles,
+            },
+        },
+    })
+
+
+def populate_inspire_document_type(sender, json, *args, **kwargs):
+    """Populate the ``facet_inspire_doc_type`` field of Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
     result = []
 
     result.extend(json.get('document_type', []))
@@ -103,68 +189,53 @@ def populate_inspire_document_type(sender, json, *args, **kwargs):
     json['facet_inspire_doc_type'] = result
 
 
-def match_valid_experiments(sender, json, *args, **kwargs):
-    """Normalize the experiment names before indexing.
-
-    FIXME: this is currently using a static Python dictionary, while it should
-    use the current dynamic state of the Experiments collection.
-    """
-    def _normalize(experiment):
-        try:
-            result = EXPERIMENTS_MAP[experiment.lower().replace(' ', '')]
-        except KeyError:
-            result = experiment
-
-        return result
-
-    if 'accelerator_experiments' in json:
-        accelerator_exps = json['accelerator_experiments']
-        for accelerator_exp in accelerator_exps:
-            facet_experiment = []
-            if 'experiment' in accelerator_exp:
-                experiments = force_list(accelerator_exp['experiment'])
-                for experiment in experiments:
-                    normalized_experiment = _normalize(experiment)
-                    facet_experiment.append(normalized_experiment)
-                accelerator_exp['facet_experiment'] = [facet_experiment]
-
-
 def populate_recid_from_ref(sender, json, *args, **kwargs):
-    """Extracts recids from all reference fields and adds them to ES.
+    """Extract recids from all JSON reference fields and add them to ES.
 
-    For every field that has as a value a reference object to another record,
-    add a sibling after extracting the record id.
-
-    Example::
-
-        {"record": {"$ref": "http://x/y/2}}
-
-        is transformed to:
-
-        {"record": {"$ref": "http://x/y/2},
-         "recid": 2}
-
-    Siblings are renamed using the following scheme:
-        Remove "record" occurrences and append _recid without doubling or
-        prepending underscores to the original name.
-
-    For every known list of object references add a new list with the
-    corresponding recids.
+    For every field that has as a value a JSON reference, adds a sibling
+    after extracting the record identifier. Siblings are named by removing
+    ``record`` occurrences and appending ``_recid`` without doubling or
+    prepending underscores to the original name.
 
     Example::
 
-        {"records": [{"$ref": "http://x/y/1"}, {"$ref": "http://x/y/2"}]}
+        {'record': {'$ref': 'http://x/y/2}}
 
-        is transformed to:
+    is transformed to::
 
-        {"records": [{"$ref": "http://x/y/1"}, {"$ref": "http://x/y/2"}]
-         "recids": [1, 2]}
+        {
+            'recid': 2,
+            'record': {'$ref': 'http://x/y/2},
+        }
+
+    For every list of object references adds a new list with the
+    corresponding recids, whose name is similarly computed.
+
+    Example::
+
+        {
+            'records': [
+                {'$ref': 'http://x/y/1'},
+                {'$ref': 'http://x/y/2'},
+            ],
+        }
+
+    is transformed to::
+
+        {
+            'recids': [1, 2],
+            'records': [
+                {'$ref': 'http://x/y/1'},
+                {'$ref': 'http://x/y/2'},
+            ],
+        }
+
     """
     list_ref_fields_translations = {
         'deleted_records': 'deleted_recids'
     }
 
-    def _recusive_find_refs(json_root):
+    def _recursive_find_refs(json_root):
         if isinstance(json_root, list):
             items = enumerate(json_root)
         elif isinstance(json_root, dict):
@@ -187,91 +258,96 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
                 new_key = list_ref_fields_translations[key]
                 json_root[new_key] = new_list
             else:
-                _recusive_find_refs(value)
+                _recursive_find_refs(value)
 
-    _recusive_find_refs(json)
+    _recursive_find_refs(json)
 
 
 def populate_abstract_source_suggest(sender, json, *args, **kwargs):
-    """Populate abstract_source_suggest field of HEP records."""
+    """Populate the ``abstract_source_suggest`` field in Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
 
-    # FIXME: Use a dedicated method when #1355 will be resolved.
-    if 'hep.json' in json.get('$schema'):
-        abstracts = json.get('abstracts', [])
-        for abstract in abstracts:
-            source = abstract.get('source')
-            if source:
-                abstract.update({
-                    'abstract_source_suggest': {
-                        'input': source,
-                        'output': source,
-                    },
-                })
+    abstracts = json.get('abstracts', [])
+
+    for abstract in abstracts:
+        source = abstract.get('source')
+        if source:
+            abstract.update({
+               'abstract_source_suggest': {
+                   'input': source,
+                   'output': source,
+               },
+            })
 
 
 def populate_title_suggest(sender, json, *args, **kwargs):
-    """Populate title_suggest field of Journals records."""
-    if 'journals.json' in json.get('$schema'):
-        journal_title = get_value(json, 'journal_title.title', default='')
-        short_title = json.get('short_title', '')
-        title_variants = json.get('title_variants', [])
+    """Populate the ``title_suggest`` field of Journals records."""
+    if 'journals.json' not in json.get('$schema'):
+        return
 
-        input_values = []
-        input_values.append(journal_title)
-        input_values.append(short_title)
-        input_values.extend(title_variants)
-        input_values = [el for el in input_values if el]
+    journal_title = get_value(json, 'journal_title.title', default='')
+    short_title = json.get('short_title', '')
+    title_variants = json.get('title_variants', [])
 
-        json.update({
-            'title_suggest': {
-                'input': input_values,
-                'output': short_title if short_title else '',
-                'payload': {
-                    'full_title': journal_title if journal_title else ''
-                }
-            }
-        })
+    input_values = []
+    input_values.append(journal_title)
+    input_values.append(short_title)
+    input_values.extend(title_variants)
+    input_values = [el for el in input_values if el]
+
+    json.update({
+        'title_suggest': {
+            'input': input_values,
+            'output': short_title if short_title else '',
+            'payload': {
+                'full_title': journal_title if journal_title else '',
+            },
+        }
+    })
 
 
 def populate_affiliation_suggest(sender, json, *args, **kwargs):
     """Populate the ``affiliation_suggest`` field of Institution records."""
+    if 'institutions.json' not in json.get('$schema'):
+        return
 
-    # FIXME: Use a dedicated method when #1355 will be resolved.
-    if 'institutions.json' in json.get('$schema'):
-        ICN = json.get('ICN', [])
-        institution_acronyms = get_value(json, 'institution_hierarchy.acronym', default=[])
-        institution_names = get_value(json, 'institution_hierarchy.name', default=[])
-        legacy_ICN = json.get('legacy_ICN', '')
-        name_variants = force_list(get_value(json, 'name_variants.value', default=[]))
-        postal_codes = force_list(get_value(json, 'addresses.postal_code', default=[]))
+    ICN = json.get('ICN', [])
+    institution_acronyms = get_value(json, 'institution_hierarchy.acronym', default=[])
+    institution_names = get_value(json, 'institution_hierarchy.name', default=[])
+    legacy_ICN = json.get('legacy_ICN', '')
+    name_variants = force_list(get_value(json, 'name_variants.value', default=[]))
+    postal_codes = force_list(get_value(json, 'addresses.postal_code', default=[]))
 
-        input_values = []
-        input_values.extend(ICN)
-        input_values.extend(institution_acronyms)
-        input_values.extend(institution_names)
-        input_values.append(legacy_ICN)
-        input_values.extend(name_variants)
-        input_values.extend(postal_codes)
-        input_values = [el for el in input_values if el]
+    input_values = []
+    input_values.extend(ICN)
+    input_values.extend(institution_acronyms)
+    input_values.extend(institution_names)
+    input_values.append(legacy_ICN)
+    input_values.extend(name_variants)
+    input_values.extend(postal_codes)
+    input_values = [el for el in input_values if el]
 
-        json.update({
-            'affiliation_suggest': {
-                'input': input_values,
-                'output': legacy_ICN,
-                'payload': {
-                    '$ref': get_value(json, 'self.$ref'),
-                    'ICN': ICN,
-                    'institution_acronyms': institution_acronyms,
-                    'institution_names': institution_names,
-                    'legacy_ICN': legacy_ICN,
-                },
+    json.update({
+        'affiliation_suggest': {
+            'input': input_values,
+            'output': legacy_ICN,
+            'payload': {
+                '$ref': get_value(json, 'self.$ref'),
+                'ICN': ICN,
+                'institution_acronyms': institution_acronyms,
+                'institution_names': institution_names,
+                'legacy_ICN': legacy_ICN,
             },
-        })
+        },
+    })
 
 
-@before_record_index.connect
 def earliest_date(sender, json, *args, **kwargs):
-    """Find and assign the earliest date to a HEP paper."""
+    """Populate the ``earliest_date`` field of Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
     date_paths = [
         'preprint_date',
         'thesis_info.date',
@@ -287,3 +363,27 @@ def earliest_date(sender, json, *args, **kwargs):
     earliest_date = create_earliest_date(dates)
     if earliest_date:
         json['earliest_date'] = earliest_date
+
+
+def generate_name_variations(sender, json, *args, **kwargs):
+    """Generate name variations for each signature of a Literature record."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
+    authors = json.get('authors', [])
+
+    for author in authors:
+        full_name = author.get('full_name')
+        if full_name:
+            bais = [
+                el['value'] for el in author.get('ids', [])
+                if el['schema'] == 'INSPIRE BAI'
+            ]
+            name_variations = author_tokenize(full_name)
+
+            author.update({'name_variations': name_variations})
+            author.update({'name_suggest': {
+                'input': name_variations,
+                'output': full_name,
+                'payload': {'bai': bais[0] if bais else None}
+            }})
