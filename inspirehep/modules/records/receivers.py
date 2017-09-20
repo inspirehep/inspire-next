@@ -60,6 +60,9 @@ def assign_phonetic_block(sender, *args, **kwargs):
     signature's full name, skipping those that are not recognized
     as real names, but logging an error when that happens.
     """
+    if 'hep.json' not in sender.get('$schema'):
+        return
+
     authors = sender.get('authors', [])
 
     authors_map = {}
@@ -85,6 +88,9 @@ def assign_phonetic_block(sender, *args, **kwargs):
 @before_record_update.connect
 def assign_uuid(sender, *args, **kwargs):
     """Assign a UUID to each signature of a Literature record."""
+    if 'hep.json' not in sender.get('$schema'):
+        return
+
     authors = sender.get('authors', [])
 
     for author in authors:
@@ -121,6 +127,9 @@ def index_after_commit(sender, changes):
 @before_record_index.connect
 def add_book_autocomplete(sender, json, *args, **kwargs):
     """Populate the ```bookautocomplete`` field of Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
     if 'book' not in json.get('document_type', []):
         return
 
@@ -148,6 +157,9 @@ def add_book_autocomplete(sender, json, *args, **kwargs):
 @before_record_index.connect
 def populate_inspire_document_type(sender, json, *args, **kwargs):
     """Populate the ``facet_inspire_doc_type`` field of Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
     result = []
 
     result.extend(json.get('document_type', []))
@@ -319,6 +331,9 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
 @before_record_index.connect
 def earliest_date(sender, json, *args, **kwargs):
     """Populate the ``earliest_date`` field of Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
     date_paths = [
         'preprint_date',
         'thesis_info.date',
@@ -339,6 +354,9 @@ def earliest_date(sender, json, *args, **kwargs):
 @before_record_index.connect
 def generate_name_variations(sender, json, *args, **kwargs):
     """Generate name variations for each signature of a Literature record."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
     authors = json.get('authors', [])
 
     for author in authors:
