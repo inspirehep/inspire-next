@@ -43,24 +43,6 @@ services:
       - test-static
     command: bash -c "py.test inspirehep tests/unit && make -C docs html"
 
-  disambiguation:
-    extends:
-      service: test-service_base
-    command: py.test tests/integration/disambiguation
-    volumes_from:
-      - test-static
-    depends_on:
-      test-database:
-        condition: service_healthy
-      test-indexer:
-        condition: service_healthy
-      test-rabbitmq:
-        condition: service_healthy
-      test-redis:
-        condition: service_healthy
-      test-worker:
-        condition: service_started
-
   workflows:
     extends:
       service: test-service_base
@@ -82,7 +64,7 @@ services:
   integration:
     extends:
       service: test-service_base
-    command: py.test tests/integration --ignore tests/integration/disambiguation --ignore tests/integration/workflows
+    command: py.test tests/integration --ignore tests/integration/workflows
     volumes_from:
       - test-static
     depends_on:
@@ -147,6 +129,54 @@ services:
     environment:
       - SERVER_NAME=test-web:5000
       - DISPLAY=$DISPLAY
+
+  acceptance-authors:
+    extends:
+      service: test-service_base
+    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance/authors
+    volumes_from:
+      - test-static
+    depends_on:
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+      test-worker:
+        condition: service_started
+      selenium:
+        condition: service_started
+      test-web:
+        condition: service_started
+    environment:
+      - SERVER_NAME=test-web:5000
+
+  acceptance-literature:
+    extends:
+      service: test-service_base
+    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance/literature
+    volumes_from:
+      - test-static
+    depends_on:
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+      test-worker:
+        condition: service_started
+      selenium:
+        condition: service_started
+      test-web:
+        condition: service_started
+    environment:
+      - SERVER_NAME=test-web:5000
 
   test-web:
     extends:
