@@ -164,6 +164,14 @@ NOTE that ES percolator uses high memory and there might be some problems
 when creating records.
 """
 
+COLLECTIONS_REGISTER_RECORD_SIGNALS = False
+"""Don't register the signals when instantiating the extension.
+
+Since we are instantiating the `invenio-collections` extension two times
+we don't want to register the signals twice, but we want to explicitly
+call `register_signals()` on our own.
+"""
+
 RECORD_EDITOR_INDEX_TEMPLATE = 'inspirehep_theme/invenio_record_editor/index.html'
 RECORD_EDITOR_PREVIEW_TEMPLATE_FUNCTION = get_detailed_template_from_record
 
