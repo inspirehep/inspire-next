@@ -51,7 +51,9 @@
     <language ident="{{ language }}"/>
   </langUsage>
   <textClass>
+    {% for domain in domains %}
     <classCode scheme="halDomain" n="{{ domain }}"></classCode>
+    {% endfor %}
     <classCode scheme="halTypology" n="ART"></classCode>
   </textClass>
   {% if abstract and abstract_language %}
