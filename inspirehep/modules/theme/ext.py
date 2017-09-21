@@ -25,15 +25,21 @@
 from __future__ import absolute_import, division, print_function
 
 from flask_breadcrumbs import Breadcrumbs
+from flask_gravatar import Gravatar
 from flask_login import user_logged_in
 from flask_menu import Menu
-
-from .views import blueprint, unauthorized, insufficient_permissions, \
-    page_not_found, internal_error
-
 from pkg_resources import resource_filename
 
 from inspirehep.modules.records.permissions import load_user_collections
+
+from .bundles import js
+from .views import (
+    blueprint,
+    insufficient_permissions,
+    internal_error,
+    page_not_found,
+    unauthorized,
+)
 
 
 class INSPIRETheme(object):
@@ -79,7 +85,6 @@ class INSPIRETheme(object):
 
     def init_config(self, config):
         """Initialize configuration."""
-        from .bundles import js
         # Set JS bundles to exclude for purpose of avoiding double jQuery etc.
         # when other modules are building their JS bundles.
         config.setdefault("THEME_BASE_BUNDLES_EXCLUDE_JS", [js])
@@ -87,7 +92,6 @@ class INSPIRETheme(object):
 
     def setup_app(self, app):
         """Initialize Gravatar extension."""
-        from flask_gravatar import Gravatar
         gravatar = Gravatar(app,
                             size=app.config.get('GRAVATAR_SIZE', 100),
                             rating=app.config.get('GRAVATAR_RATING', 'g'),

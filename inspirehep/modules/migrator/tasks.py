@@ -43,7 +43,6 @@ from redis_lock import Lock
 from six import text_type
 
 from dojson.contrib.marc21.utils import create_record as marc_create_record
-from invenio_collections import current_collections
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer, current_record_to_index
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -185,7 +184,6 @@ def create_index_op(record):
 @shared_task(ignore_result=False, compress='zlib', acks_late=True)
 def migrate_chunk(chunk):
     models_committed.disconnect(index_after_commit)
-    current_collections.unregister_signals()
 
     index_queue = []
 
@@ -208,7 +206,6 @@ def migrate_chunk(chunk):
     )
 
     models_committed.connect(index_after_commit)
-    current_collections.register_signals()
 
 
 @shared_task()
