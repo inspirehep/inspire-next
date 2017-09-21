@@ -37,7 +37,7 @@ from inspirehep.modules.hal.utils import (
     get_divulgation,
     get_document_types,
     get_doi,
-    get_domain,
+    get_domains,
     get_journal_issue,
     get_journal_title,
     get_journal_volume,
@@ -245,7 +245,7 @@ def test_get_doi():
     assert expected == result
 
 
-def test_get_domain():
+def test_get_domains():
     schema = load_schema('hep')
     subschema = schema['properties']['inspire_categories']
 
@@ -256,8 +256,8 @@ def test_get_domain():
     }
     assert validate(record['inspire_categories'], subschema) is None
 
-    expected = 'phys.hexp'
-    result = get_domain(record)
+    expected = ['phys.hexp']
+    result = get_domains(record)
 
     assert expected == result
 

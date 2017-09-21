@@ -281,28 +281,28 @@ def get_doi(record):
     return get_value(record, 'dois.value[0]', default='')
 
 
-def get_domain(record):
-    """Return the HAL domain of a record.
+def get_domains(record):
+    """Return the HAL domains of a record.
 
-    Uses the mapping in the configuration to convert the first INSPIRE
-    category to the corresponding HAL domain.
+    Uses the mapping in the configuration to convert all INSPIRE categories
+    to the corresponding HAL domains.
 
     Args:
         record: a record.
 
     Returns:
-        string: the HAL domain of the record.
+        list: the HAL domains of the record.
 
     Examples:
         >>> record = {'inspire_categories': [{'term': 'Experiment-HEP'}]}
-        >>> get_domain(record)
-        'phys.hexp'
+        >>> get_domains(record)
+        ['phys.hexp']
 
     """
-    term = get_value(record, 'inspire_categories.term[0]', default='')
+    terms = get_value(record, 'inspire_categories.term', default=[])
     mapping = current_app.config['HAL_DOMAIN_MAPPING']
 
-    return mapping[term]
+    return [mapping[term] for term in terms]
 
 
 def get_inspire_id(record):
