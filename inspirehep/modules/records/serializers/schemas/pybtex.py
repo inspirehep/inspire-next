@@ -110,6 +110,11 @@ class ImprintsSchema(Schema):
     publisher = Str()
 
 
+class BookSeriesSchema(Schema):
+    title = Str()
+    volume = Str()
+
+
 class PybtexSchema(Schema):
     """Schema for Bibtex references."""
     key = Int(load_from='self_recid')
@@ -127,6 +132,7 @@ class PybtexSchema(Schema):
     collaboration = First(Nested(ValueListSchema), load_from='collaborations')
     url = First(Nested(ValueListSchema), load_from='urls')
     thesis_info = Nested(ThesisSchema)
+    book_series = First(Nested(BookSeriesSchema))
 
     @post_load
     def make_bibtex(self, data):

@@ -26,14 +26,16 @@ from pybtex.database.output import BaseWriter
 import re
 from inspirehep.utils.jinja2 import render_template_to_string_for_blueprint
 from ...views import blueprint
-from ..fields_export import eprint_new_style
+from ..fields_export import MAX_AUTHORS_BEFORE_ET_AL
 
 
 class PybtexBaseWriter(BaseWriter):
-    MAX_AUTHORS_BEFORE_ET_AL = 10  # According to CSE stylebook
+    """Shared writer class based on pybtex's BaseWriter for use in Inspire serializers."""
 
+    # Way to separate records in the bibliography (style):
     RECORDS_SEPARATOR = '\n\n'
 
+    # Which fields from the schema need to be passed to jinja2:
     TEMPLATE_FIELDS = ['doi', 'texkey', 'author', 'url', 'primaryClass', 'title', 'number', 'pages',
                        'volume', 'corporate_author', 'eprint', 'editor', 'year', 'publication_info_list',
                        'SLACcitation', 'eprint_new_style', 'journal', 'today', 'collaboration']
@@ -54,7 +56,6 @@ class PybtexBaseWriter(BaseWriter):
             'author': self.format_persons(entry.persons['author']) if 'author' in entry.persons else None,
             'editor': self.format_persons(entry.persons['editor']) if 'editor' in entry.persons else None,
             'corporate_author': fields.get('author'),
-            'eprint_new_style': eprint_new_style(fields.get('eprint', '')),
             'publication_info_list': self.format_publication_list(fields.get('publication_info_list') or []),
         }
 
@@ -66,7 +67,7 @@ class PybtexBaseWriter(BaseWriter):
         """
         template = self.process_entry(texkey, entry)
 
-        for field in self.__class__.TEMPLATE_FIELDS:
+        for field in self.TEMPLATE_FIELDS:
             if field not in template:
                 template[field] = dict(entry.fields).get(field)
 
@@ -106,7 +107,7 @@ class PybtexBaseWriter(BaseWriter):
         Generates a string out of a list of people.
         :param persons: list of objects type Person.
         """
-        if len(persons) > self.__class__.MAX_AUTHORS_BEFORE_ET_AL:
+        if len(persons) > MAX_AUTHORS_BEFORE_ET_AL:
             return self.format_name(persons[0]) + " " + and_others_string
         else:
             return ', '.join(self.format_name(person) for person in persons)
@@ -130,24 +131,27 @@ class PybtexBaseWriter(BaseWriter):
     def to_string(self, bib_data):
         """
         Dump the bibiography to string.
+        [Note: overriden from pybtex.database.output.BaseWriter]
         :param bib_data: BibliographyData.
         :return: String with bibtex formatted bibliography.
         """
         bib_string = self.write_preamble(bib_data)
-        bib_string += self.__class__.RECORDS_SEPARATOR.join(self.render_entry(texkey, entry) for texkey, entry in bib_data.entries.items())
+        bib_string += self.RECORDS_SEPARATOR.join(
+            self.render_entry(texkey, entry) for texkey, entry in bib_data.entries.items()
+        )
         bib_string += self.write_postamble(bib_data)
         return bib_string
 
     def write_stream(self, bib_data, stream):
         """
-        Viz. self.to_string but for outputting to a stream.
-        For compatibility with BaseWriter.
+        See `self.to_string` but for outputting to a stream.
+        [Note: overriden from pybtex.database.output.BaseWriter]
         """
         return print(self.to_string(bib_data), file=stream)
 
     def to_bytes(self, bib_data):
         """
-        Viz. self.to_string but for outputting to bytes.
-        For compatibility with BaseWriter.
+        See `self.to_string` but for outputting to bytes.
+        [Note: overriden from pybtex.database.output.BaseWriter]
         """
         return self.to_string(bib_data).encode('utf-8')

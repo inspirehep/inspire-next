@@ -6,10 +6,8 @@ By {{ author or editor or corporate_author }}
 {%- endif %}
 {%- if collaboration or not (author or editor or corporate_author)[-1] == '.' -%}.{% endif %}<br />
 {%- endif %}
-{% if eprint and eprint_new_style %}
+{% if eprint %}
 [arXiv:{{ eprint }} [{{ primaryClasses }}]].<br />
-{%- elif eprint %}
-[{{ eprint }}].<br />
 {%- endif %}
 {% if doi %}
 <a href="http://dx.doi.org/{{ doi }}">{{ doi }}</a>.<br />

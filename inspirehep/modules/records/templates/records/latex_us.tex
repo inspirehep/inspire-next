@@ -32,10 +32,8 @@
 {% if doi %}
   doi:{{ doi }}
 {% endif %}
-{% if eprint and eprint_new_style %}
+{% if eprint %}
   [arXiv:{{ eprint }} [{{ primaryClasses }}]].
-{% elif eprint %}
-  [{{ eprint }}].
 {% endif %}
 {% if SLACcitation %}
   {{ SLACcitation }}

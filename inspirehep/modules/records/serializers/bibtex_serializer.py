@@ -39,4 +39,8 @@ class BIBTEXSerializer(PybtexSerializerBase):
         return BibtexSchema()
 
     def create_bibliography(self, record_list):
-        return super(BIBTEXSerializer, self).create_bibliography(record_list).replace(r'\%\%', '%%')
+        bibtex_string = super(BIBTEXSerializer, self).create_bibliography(record_list)
+        # Pybtex escapes '%' in Bibtex, however we don't want that to happen in SLACcitations.
+        # The odds of two consecutive '%' in other fields are so low, that it's reasonable to
+        # do a simple replacement on the whole bibtex string here:
+        return bibtex_string.replace(r'\%\%', '%%')

@@ -22,9 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from ...views import blueprint
 import datetime
-from inspirehep.utils.jinja2 import render_template_to_string_for_blueprint
 from inspirehep import config
 from . import PybtexBaseWriter
 
@@ -32,12 +30,12 @@ from . import PybtexBaseWriter
 class LatexWriter(PybtexBaseWriter):
     """Outputs Latex"""
 
-    TEMPLATE_FIELDS = ['citation_count', 'doi', 'texkey', 'author', 'url', 'primaryClass', 'title', 'number', 'pages',
-                       'volume', 'corporate_author', 'eprint', 'editor', 'year', 'publication_info_list',
-                       'SLACcitation', 'eprint_new_style', 'journal', 'today', 'collaboration']
+    ACCEPTED_FORMATS = ['latex_us', 'latex_eu', 'latex_cv']
+
+    TEMPLATE_FIELDS = PybtexBaseWriter.TEMPLATE_FIELDS + ['citation_count']
 
     def __init__(self, style):
-        if style not in ('latex_us', 'latex_eu', 'latex_cv'):
+        if style not in LatexWriter.ACCEPTED_FORMATS:
             raise NotImplementedError('Only latex_us, latex_eu and latex_cv output formats are supported')
         else:
             self.style = style
@@ -64,18 +62,6 @@ class LatexWriter(PybtexBaseWriter):
         }
         template.update(new_template)
         return template
-
-    def render_entry(self, texkey, entry):
-        """
-        Use the preprocessed template values to fill out a jinja2 template
-        """
-        template = self.process_entry(texkey, entry)
-
-        for field in LatexWriter.TEMPLATE_FIELDS:
-            if field not in template:
-                template[field] = dict(entry.fields).get(field)
-
-        return render_template_to_string_for_blueprint(blueprint, self.get_template_src(), **template)
 
     def format_publication_list(self, pub_list):
         """
@@ -110,8 +96,7 @@ class LatexWriter(PybtexBaseWriter):
         """
         if len(bib_data.entries) > 1:
             return r"\begin{thebibliography}{" + str(len(bib_data.entries)) + "}\n\n"
-        else:
-            return ""
+        return ""
 
     def write_postamble(self, bib_data):
         """

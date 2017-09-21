@@ -27,11 +27,11 @@ from inspirehep.modules.records.serializers.fields_export import (
     bibtex_document_type,
     bibtex_type_and_fields,
     get_year,
-    get_publication_info,
     get_journal,
     get_volume,
     get_slac_citation,
     get_report_number,
+    get_type,
 )
 
 test_record = {
@@ -81,13 +81,7 @@ def test_bibtex_document_type_prefers_article():
 
 def test_get_year_from_thesis_when_pubinfo_present():
     expected = "1996"
-    result = get_year(test_record, 'mastersthesis')
-    assert expected == result
-
-
-def test_get_publication_info():
-    expected = test_record["publication_info"]
-    result = get_publication_info(test_record)
+    result = get_year(test_record, 'thesis')
     assert expected == result
 
 
@@ -104,15 +98,15 @@ def test_get_volume():
 
 
 def test_get_slac_citation_arxiv_old_style():
-    test_data = {"arxiv_eprints": {"value": "hep/123456"}}
-    expected = "%%CITATION = HEP/123456;%%"
+    test_data = {"arxiv_eprints": {"value": "astro-ph/0309136"}}
+    expected = "%%CITATION = ASTRO-PH/0309136;%%"
     result = get_slac_citation(test_data, 'article')
     assert expected == result
 
 
 def test_get_slac_citation_arxiv_new_style():
-    test_data = {"arxiv_eprints": {"value": "123.456"}}
-    expected = "%%CITATION = ARXIV:123.456;%%"
+    test_data = {"arxiv_eprints": {"value": "1501.00001"}}
+    expected = "%%CITATION = ARXIV:1501.00001;%%"
     result = get_slac_citation(test_data, 'article')
     assert expected == result
 
@@ -135,4 +129,12 @@ def test_get_report_number():
     test_data = {"reportNumber": ["CERN-SOME-REPORT", "CERN-SOME-OTHER-REPORT"]}
     expected = "CERN-SOME-REPORT, CERN-SOME-OTHER-REPORT"
     result = get_report_number(test_data, 'article')
+    assert expected == result
+
+
+def test_get_type():
+    test_data = dict(test_record)
+    test_data['thesis_info']['degree_type'] = 'bachelor'
+    expected = 'Bachelor thesis'
+    result = get_type(test_data, 'mastersthesis')
     assert expected == result

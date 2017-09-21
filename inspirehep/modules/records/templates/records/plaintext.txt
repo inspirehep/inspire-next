@@ -8,10 +8,8 @@ By {{ author or editor or corporate_author }}
     .
 {% endif %}
 {% endif %}
-{% if eprint and eprint_new_style %}
+{% if eprint %}
 [arXiv:{{ eprint }} [{{ primaryClasses }}]].
-{% elif eprint %}
-[{{ eprint }}].
 {% endif %}
 {% if doi %}
 {{ doi }}.

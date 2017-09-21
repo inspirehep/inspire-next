@@ -28,6 +28,22 @@ from inspirehep.modules.records.serializers.schemas.bibtex import BibtexSchema
 from pybtex.database import Entry, Person
 
 
+def pybtex_entries_equal(a, b):
+    a_texkey, a_entry = a
+    b_texkey, b_entry = b
+
+    assert a_texkey == b_texkey
+    assert a_entry.type == b_entry.type
+    assert set(a_entry.fields.items()) == set(b_entry.fields.items())
+
+    for role in set(a_entry.persons.keys() + b_entry.persons.keys()):
+        a_people_set = set(repr(person) for person in a_entry.persons[role])
+        b_people_set = set(repr(person) for person in b_entry.persons[role])
+        assert a_people_set == b_people_set
+
+    return True
+
+
 def test_format_article(app):
     article = get_es_record('lit', 4328)
     expected = ("Glashow:1961tr", Entry('article', [
@@ -48,7 +64,8 @@ def test_format_article(app):
     result, errors = schema.load(article)
 
     assert not errors
-    assert result == expected
+    assert result is not None
+    assert pybtex_entries_equal(result, expected)
 
 
 def test_format_inproceeding(app):
@@ -72,7 +89,8 @@ def test_format_inproceeding(app):
     result, errors = schema.load(inproceedings)
 
     assert not errors
-    assert result == expected
+    assert result is not None
+    assert pybtex_entries_equal(result, expected)
 
 
 def test_format_proceeding(app):
@@ -99,7 +117,8 @@ def test_format_proceeding(app):
     result, errors = schema.load(proceedings)
 
     assert not errors
-    assert result == expected
+    assert result is not None
+    assert pybtex_entries_equal(result, expected)
 
 
 def test_format_phdthesis(app):
@@ -120,7 +139,8 @@ def test_format_phdthesis(app):
     result, errors = schema.load(phdthesis)
 
     assert not errors
-    assert result == expected
+    assert result is not None
+    assert pybtex_entries_equal(result, expected)
 
 
 def test_format_book(app):
@@ -141,7 +161,8 @@ def test_format_book(app):
     result, errors = schema.load(book)
 
     assert not errors
-    assert result == expected
+    assert result is not None
+    assert pybtex_entries_equal(result, expected)
 
 
 def test_format_inbook(app):
@@ -155,7 +176,7 @@ def test_format_inbook(app):
         ('archivePrefix', u"arXiv"),
         ('eprint', u"1506.03091"),
         ('primaryClass', u"hep-ex"),
-        ('SLACcitation', u"%%CITATION = ARXIV:1506.03091;%%"),
+        ('SLACcitation', u"%%CITATION = DOI:10.1007/978-3-319-15001-7_10;%%"),
     ], persons={
         'editor': [],
         'author': [Person(u"Bechtle, Philip"), Person(u"Plehn, Tilman"), Person(u"Sander, Christian")],
@@ -165,4 +186,5 @@ def test_format_inbook(app):
     result, errors = schema.load(inbook)
 
     assert not errors
-    assert result == expected
+    assert result is not None
+    assert pybtex_entries_equal(result, expected)

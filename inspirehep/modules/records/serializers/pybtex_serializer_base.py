@@ -28,7 +28,7 @@ from pybtex.database import BibliographyData
 
 
 class PybtexSerializerBase(object):
-    """BibTex serializer for records."""
+    """Pybtex serializer for records."""
 
     def create_bibliography_entry(self, record):
         """

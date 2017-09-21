@@ -12,10 +12,8 @@
 {% if doi %}
   \\{{ '{}' }}{{ doi }}
 {% endif %}
-{% if eprint and eprint_new_style %}
+{% if eprint %}
   \\{{ '{}' }}[arXiv:{{ eprint }} [{{ primaryClasses }}]].
-{% elif eprint %}
-  \\{{ '{}' }}[{{ eprint }}].
 {% endif -%}
 
 {%- if publication_info_list %}
