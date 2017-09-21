@@ -63,8 +63,6 @@
 
           {% if record.get('accelerator_experiments') %}
             <div id="record-experiments"> Experiment: {{ record_experiment(record) }}</div>
-            
-          {{ record }}
           {% endif %}
 
         {% if record.urls or record.external_system_numbers %}

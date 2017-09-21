@@ -46,7 +46,10 @@
     {% endif %}
     href="http://inspirehep.net/author/profile/{{author.full_name}}?recid={{record['control_number']}}" class="no-external-icon">
     {{ author.get('full_name', '') | format_author_name() }}
-  </a>
+    {% if author.affiliations|length > 0  and show_affiliation %}
+      ({{ author.get('affiliations')[0]['value'] }})
+    {% endif %}
+    </a>
 {% endmacro %}
 
 {% macro render_record_authors(record, is_brief, number_of_displayed_authors=10, show_affiliations=true, collaboration_only=false) %}
