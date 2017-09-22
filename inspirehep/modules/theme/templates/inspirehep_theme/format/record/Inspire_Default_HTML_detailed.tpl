@@ -50,15 +50,20 @@
           {% if record.get('report_numbers') %}
           <div id="record-report-numbers">{{ record_report_numbers(record) }}</div>
           {% endif %}
-        {% if record.get('dois') or record.get('arxiv_eprints') %}
-          <div id="doi-eprint-experiment">
-            {% if record.get('dois') %}
-              {{ record_doi(record) }}
-            {% endif %}
-            {% if record.get('arxiv_eprints') %}
-              {{ record_arxiv(record) }}
-            {% endif %}
-          </div>
+
+          {% if record.get('number_of_pages') %}
+            <div id="record-no-of-pages"> {{ record.number_of_pages }} pages </div>
+          {% endif %}
+
+          {% if record.get('dois') or record.get('arxiv_eprints') %}
+            <div id="doi-eprint-experiment">
+              {% if record.get('dois') %}
+                {{ record_doi(record) }}
+              {% endif %}
+              {% if record.get('arxiv_eprints') %}
+                {{ record_arxiv(record) }}
+              {% endif %}
+            </div>
           {% endif %}
 
           {% if record.get('accelerator_experiments') %}
