@@ -31,7 +31,7 @@ define([
     this.dataEngine = new Bloodhound({
       name: 'affiliations',
       remote: {
-        url: '/api/institutions?q=affautocomplete:%QUERY*',
+        url: '/api/institutions?q=affiliation_suggest:%QUERY*',
         filter: function(response) {
           return $.map(response.hits.hits, function(el) { return el });
         }

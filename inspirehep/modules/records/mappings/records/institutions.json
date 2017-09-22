@@ -11,7 +11,6 @@
                     "type": "string"
                 },
                 "ICN": {
-                    "copy_to": "affautocomplete",
                     "type": "string"
                 },
                 "_collections": {
@@ -57,9 +56,6 @@
                         }
                     },
                     "type": "object"
-                },
-                "affautocomplete": {
-                    "type": "string"
                 },
                 "affiliation_suggest": {
                     "payloads": true,
@@ -119,11 +115,9 @@
                 "institution_hierarchy": {
                     "properties": {
                         "acronym": {
-                            "copy_to": "affautocomplete",
                             "type": "string"
                         },
                         "name": {
-                            "copy_to": "affautocomplete",
                             "type": "string"
                         }
                     },
@@ -133,7 +127,6 @@
                     "type": "string"
                 },
                 "legacy_ICN": {
-                    "copy_to": "affautocomplete",
                     "type": "string"
                 },
                 "legacy_creation_date": {
@@ -145,7 +138,6 @@
                             "type": "string"
                         },
                         "value": {
-                            "copy_to": "affautocomplete",
                             "type": "string"
                         }
                     },
