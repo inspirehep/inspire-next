@@ -107,19 +107,6 @@ def halt_record(action=None, message=None):
     return _halt_record
 
 
-@with_debug_logging
-def update_note(metadata):
-    """Check if the record was approved as CORE."""
-    new_notes = []
-    for note in metadata.get("public_notes", []):
-        if note.get("value", "") == "*Brief entry*":
-            note = {"value": "*Temporary entry*"}
-        new_notes.append(note)
-    if new_notes:
-        metadata["public_notes"] = new_notes
-    return metadata
-
-
 def reject_record(message):
     """Reject record with message."""
     @with_debug_logging

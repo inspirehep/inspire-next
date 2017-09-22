@@ -46,7 +46,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     reject_record,
     refextract,
     shall_halt_workflow,
-    update_note,
 )
 
 from mocks import MockEng, MockObj
@@ -233,42 +232,6 @@ def test_halt_record_accepts_custom_msg():
 
     assert bar_message_halt_record(obj, eng) is None
     assert eng.msg == 'bar'
-
-
-def test_update_note():
-    metadata = {
-        'public_notes': [
-            {'value': '*Brief entry*'},
-        ],
-    }
-
-    expected = {
-        'public_notes': [
-            {'value': '*Temporary entry*'},
-        ]
-    }
-    result = update_note(metadata)
-
-    assert expected == result
-
-
-def test_update_note_preserves_other_notes():
-    metadata = {
-        'public_notes': [
-            {'value': '*Brief entry*'},
-            {'value': 'Other note'},
-        ],
-    }
-
-    expected = {
-        'public_notes': [
-            {'value': '*Temporary entry*'},
-            {'value': 'Other note'},
-        ]
-    }
-    result = update_note(metadata)
-
-    assert expected == result
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.log_workflows_action')

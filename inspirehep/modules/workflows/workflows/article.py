@@ -77,7 +77,6 @@ from inspirehep.modules.workflows.tasks.matching import (
 )
 from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
 from inspirehep.modules.workflows.tasks.submission import (
-    add_note_entry,
     close_ticket,
     create_ticket,
     filter_keywords,
@@ -279,7 +278,6 @@ NOTIFY_USER_OR_CURATOR = [
 
 POSTENHANCE_RECORD = [
     add_core,
-    add_note_entry,
     filter_keywords,
     prepare_keywords,
     remove_references,
