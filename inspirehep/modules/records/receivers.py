@@ -47,6 +47,27 @@ from inspirehep.modules.authors.utils import author_tokenize, phonetic_blocks
 from inspirehep.utils.date import create_earliest_date
 
 
+SPECIAL_COLLECTIONS_MAP = {
+    'BABAR-ANALYSIS-DOCUMENT': 'BABAR Analysis Documents',
+    'BABAR-INTERNAL-BAIS': 'BABAR Internal BAIS',
+    'BABAR-INTERNAL-NOTE': 'BABAR Internal Notes',
+    'CDF-INTERNAL-NOTE': 'CDF Internal Notes',
+    'CDF-NOTE': 'CDF Notes',
+    'CDSHIDDEN': 'CDS Hidden',
+    'D0-INTERNAL-NOTE': 'D0 Internal Notes',
+    'D0-PRELIMINARY-NOTE': 'D0 Preliminary Notes',
+    'H1-INTERNAL-NOTE': 'H1 Internal Notes',
+    'H1-PRELIMINARY-NOTE': 'H1 Preliminary Notes',
+    'HALHIDDEN': 'HAL Hidden',
+    'HEPHIDDEN': 'HEP Hidden',
+    'HERMES-INTERNAL-NOTE': 'HERMES Internal Notes',
+    'LARSOFT-INTERNAL-NOTE': 'LArSoft Internal Notes',
+    'LARSOFT-NOTE': 'LArSoft Notes',
+    'ZEUS-INTERNAL-NOTE': 'ZEUS Internal Notes',
+    'ZEUS-PRELIMINARY-NOTE': 'ZEUS Preliminary Notes',
+}
+
+
 #
 # before_record_insert & before_record_update
 #
@@ -96,6 +117,20 @@ def assign_uuid(sender, *args, **kwargs):
     for author in authors:
         if 'uuid' not in author:
             author['uuid'] = str(uuid.uuid4())
+
+
+@before_record_insert.connect
+@before_record_update.connect
+def update_collections(sender, *args, **kwargs):
+    """Update the ``_collections`` field if ``special_collections`` was modified."""
+    if 'hep.json' not in sender.get('$schema'):
+        return
+
+    _collections = sender.get('_collections', [])
+    special_collections = sender.get('special_collections', [])
+
+    for special_collection in special_collections:
+        _collections.append(SPECIAL_COLLECTIONS_MAP.get(special_collection))
 
 
 #

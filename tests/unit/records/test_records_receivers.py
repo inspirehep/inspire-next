@@ -28,6 +28,7 @@ import mock
 
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.records.receivers import (
+    SPECIAL_COLLECTIONS_MAP,
     add_book_autocomplete,
     assign_phonetic_block,
     assign_uuid,
@@ -38,7 +39,18 @@ from inspirehep.modules.records.receivers import (
     populate_inspire_document_type,
     populate_recid_from_ref,
     populate_title_suggest,
+    update_collections,
 )
+
+
+def test_special_collections_map_contains_all_valid_special_collections():
+    schema = load_schema('hep')
+    subschema = schema['properties']['special_collections']
+
+    expected = subschema['items']['enum']
+    result = SPECIAL_COLLECTIONS_MAP.keys()
+
+    assert sorted(expected) == sorted(result)
 
 
 def test_add_book_autocomplete_from_authors():
@@ -1145,3 +1157,42 @@ def test_populate_affiliation_suggest_does_nothing_if_record_is_not_institution(
     populate_affiliation_suggest(None, record)
 
     assert 'affiliation_suggest' not in record
+
+
+def test_update_collections():
+    schema = load_schema('hep')
+    schema_schema = schema['properties']['$schema']
+    collections_schema = schema['properties']['_collections']
+    special_collections_schema = schema['properties']['special_collections']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': [
+            'Literature',
+        ],
+        'special_collections': [
+            'HEPHIDDEN',
+        ],
+    }
+    assert validate(record['$schema'], schema_schema) is None
+    assert validate(record['_collections'], collections_schema) is None
+    assert validate(record['special_collections'], special_collections_schema) is None
+
+    update_collections(record)
+
+    expected = [
+        'Literature',
+        'HEP Hidden',
+    ]
+    result = record['_collections']
+
+    assert validate(result, collections_schema) is None
+    assert expected == result
+
+
+def test_update_collections_does_nothing_if_record_is_not_literature():
+    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
+
+    update_collections(record)
+
+    assert '_collections' not in record
