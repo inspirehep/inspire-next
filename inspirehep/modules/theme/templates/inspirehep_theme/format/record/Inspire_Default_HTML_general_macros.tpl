@@ -38,7 +38,7 @@
   {% endif %}
 {% endmacro%}
 
-{% macro render_author_names(record, author, show_affiliation) %}
+{% macro render_author_names(record, author, show_affiliation) %} 
   <a{% if author.affiliations|length > 0  and show_affiliation %}
       data-toggle="tooltip"
       data-placement="bottom"
@@ -54,8 +54,8 @@
 
 {% macro render_record_authors(record, is_brief, number_of_displayed_authors=10, show_affiliations=true, collaboration_only=false) %}
   {% set collaboration_displayed = [] %}
-  {% if record.collaboration and not record.get('corporate_author') %}
-    {% for collaboration in record.collaboration %}
+  {% if record.collaborations and not record.get('corporate_author') %}
+    {% for collaboration in record.collaborations %}
       {% if collaboration['value'] %}
       <a href="/search?p=collaboration:'{{ collaboration['value'] }}'">{{ collaboration['value'] }}</a>
         {% do collaboration_displayed.append(1) %}
@@ -71,6 +71,9 @@
         {% endif %}
       {% endif %}
     {% endfor %}
+    {% if record.authors[0] %}
+      ({{ render_author_names(record, record.authors[0], show_affiliation = True) }} <i>et al.</i>)
+    {% endif %}
   {% endif %}
 
 
