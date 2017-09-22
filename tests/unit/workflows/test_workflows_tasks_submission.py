@@ -31,7 +31,6 @@ from inspire_dojson.hep import hep2marc
 from inspire_dojson.hepnames import hepnames2marc
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.submission import (
-    add_note_entry,
     close_ticket,
     create_ticket,
     filter_keywords,
@@ -460,80 +459,6 @@ def test_wait_webcoll_does_nothing_otherwise():
         eng = MockEng()
 
         assert wait_webcoll(obj, eng) is None
-
-
-def test_add_note_entry():
-    schema = load_schema('hep')
-    subschema = schema['properties']['public_notes']
-
-    data = {
-        'public_notes': [
-            {'value': 'Reprinted in *Duff, M.J. (ed.): The world in eleven dimensions* 492-513'},
-        ],
-    }
-    extra_data = {}
-    assert validate(data['public_notes'], subschema) is None
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    assert add_note_entry(obj, eng) is None
-
-    expected = [
-        {'value': 'Reprinted in *Duff, M.J. (ed.): The world in eleven dimensions* 492-513'},
-        {'value': '*Brief entry*'},
-    ]
-    result = obj.data
-
-    assert validate(result['public_notes'], subschema) is None
-    assert expected == result['public_notes']
-
-
-def test_add_note_entry_creates_public_notes_if_not_present():
-    schema = load_schema('hep')
-    subschema = schema['properties']['public_notes']
-
-    data = {}
-    extra_data = {}
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    assert add_note_entry(obj, eng) is None
-
-    expected = [
-        {'value': '*Brief entry*'},
-    ]
-    result = obj.data
-
-    assert validate(result['public_notes'], subschema) is None
-    assert expected == result['public_notes']
-
-
-def test_add_note_entry_does_not_add_value_that_is_already_present():
-    schema = load_schema('hep')
-    subschema = schema['properties']['public_notes']
-
-    data = {
-        'public_notes': [
-            {'value': '*Temporary entry*'},
-        ],
-    }
-    extra_data = {'core': 'something'}
-    assert validate(data['public_notes'], subschema) is None
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    assert add_note_entry(obj, eng) is None
-
-    expected = [
-        {'value': '*Temporary entry*'},
-    ]
-    result = obj.data
-
-    assert validate(result['public_notes'], subschema) is None
-    assert expected == result['public_notes']
 
 
 def test_filter_keywords():
