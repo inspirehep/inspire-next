@@ -210,7 +210,7 @@ setup(
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'inspire_arxiv = inspirehep.modules.arxiv:InspireArXiv',
             'inspire_crossref = inspirehep.modules.crossref:InspireCrossref',
-            'inspire_tools = inspirehep.modules.tools:INSPIRETools',
+            'inspire_tools = inspirehep.modules.tools:InspireTools',
             'inspire_hal = inspirehep.modules.hal:InspireHAL',
         ],
         'invenio_assets.bundles': [
