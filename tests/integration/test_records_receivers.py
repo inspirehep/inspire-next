@@ -40,6 +40,7 @@ def test_that_db_changes_are_mirrored_in_es(app):
         'titles': [
             {'title': 'foo'},
         ],
+        '_collections': ['Literature']
     }
 
     # When a record is created in the DB, it is also created in ES.
