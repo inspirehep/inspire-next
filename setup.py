@@ -200,7 +200,7 @@ setup(
         ],
         'invenio_base.apps': [
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
-            'inspire_fixtures = inspirehep.modules.fixtures:INSPIREFixtures',
+            'inspire_fixtures = inspirehep.modules.fixtures:InspireFixtures',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_migrator = inspirehep.modules.migrator:InspireMigrator',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
