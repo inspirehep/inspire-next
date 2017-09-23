@@ -205,7 +205,7 @@ setup(
             'inspire_migrator = inspirehep.modules.migrator:InspireMigrator',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_authors = inspirehep.modules.authors:INSPIREAuthors',
-            'inspire_literature_suggest = inspirehep.modules.literaturesuggest:INSPIRELiteratureSuggestion',
+            'inspire_literaturesuggest = inspirehep.modules.literaturesuggest:InspireLiteratureSuggest',
             'inspire_forms = inspirehep.modules.forms:INSPIREForms',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'inspire_arxiv = inspirehep.modules.arxiv:InspireArXiv',
