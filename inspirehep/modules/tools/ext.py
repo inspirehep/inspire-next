@@ -20,20 +20,18 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""Tools extension."""
+
 from __future__ import absolute_import, division, print_function
 
 from .views import blueprint
 
 
-class INSPIRETools(object):
-    """INSPIRE tools extension."""
-    def __init__(self, app=None, **kwargs):
-        """Extension initialization."""
-        self.app = app
+class InspireTools(object):
+    def __init__(self, app=None):
         if app:
-            self.init_app(app, **kwargs)
+            self.init_app(app)
 
-    def init_app(self, app, **kwargs):
-        """Initialize application object."""
+    def init_app(self, app):
         app.register_blueprint(blueprint)
         app.extensions['inspire-tools'] = self

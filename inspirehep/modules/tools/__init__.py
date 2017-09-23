@@ -20,6 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""Tools module."""
+
 from __future__ import absolute_import, division, print_function
 
-from .ext import INSPIRETools  # noqa: F401
+from .ext import InspireTools  # noqa: F401

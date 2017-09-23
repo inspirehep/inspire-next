@@ -20,8 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIRE fixtures - loading of configs and database content."""
+"""Fixtures module"""
 
 from __future__ import absolute_import, division, print_function
 
-from .ext import INSPIREFixtures  # noqa: F401
+from .ext import InspireFixtures  # noqa: F401
