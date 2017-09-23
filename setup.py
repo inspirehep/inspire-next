@@ -46,7 +46,7 @@ install_requires = [
     'invenio-access>=1.0.0a7',
     'invenio-accounts>=1.0.0b10',
     'invenio-admin>=1.0.0a3',
-    'invenio-assets>=1.0.0b2',
+    'invenio-assets>=1.0.0b7',
     'invenio-base>=1.0.0a11',
     'invenio-cache>=1.0.0b1',
     'invenio-celery>=1.0.0a4',
@@ -95,7 +95,6 @@ install_requires = [
     'Babel~=2.0,>=2.4.0',
     'setproctitle~=1.0,>=1.1.10',
     'backports.tempfile>=1.0rc1',
-    'node-semver~=0.0,<0.2',
 ]
 
 tests_require = [
