@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIRE search."""
+"""Search module."""
 
 from __future__ import absolute_import, division, print_function
 
@@ -35,4 +35,4 @@ from .api import (              # noqa: F401
     ExperimentsSearch,
     JournalsSearch
 )
-from .ext import INSPIRESearch  # noqa: F401
+from .ext import InspireSearch  # noqa: F401
