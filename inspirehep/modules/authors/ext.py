@@ -20,34 +20,18 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIRE module to manage authors."""
+"""Authors extension."""
 
 from __future__ import absolute_import, division, print_function
 
-from . import config
 from .views import blueprint
 
 
-class INSPIREAuthors(object):
-    """INSPIRE authors extension."""
-
-    def __init__(self, app=None, **kwargs):
-        """Extension initialization."""
+class InspireAuthors(object):
+    def __init__(self, app=None):
         if app:
-            self.init_app(app, **kwargs)
+            self.init_app(app)
 
-    def init_app(self, app, assets=None, **kwargs):
-        """Initialize application object."""
-        self.init_config(app)
+    def init_app(self, app):
         app.register_blueprint(blueprint)
         app.extensions['inspire-authors'] = self
-
-    def init_config(self, app):
-        """Initialize configuration."""
-        for k in dir(config):
-            if k.startswith('AUTHORS_'):
-                app.config.setdefault(k, getattr(config, k))
-
-        # URL used to prefill author update form
-        app.config.setdefault("AUTHORS_UPDATE_BASE_URL",
-                              app.config["SERVER_NAME"])
