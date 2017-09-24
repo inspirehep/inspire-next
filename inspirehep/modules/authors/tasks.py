@@ -51,6 +51,11 @@ def formdata_to_model(obj, formdata):
     )
     data = updateform.do(form_fields)
 
+    # ===========
+    # Collections
+    # ===========
+    data['_collections'] = ['Authors']
+
     # ======
     # Schema
     # ======

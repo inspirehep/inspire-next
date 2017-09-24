@@ -970,9 +970,6 @@
                 "self_recid": {
                     "type": "integer"
                 },
-                "special_collections": {
-                    "type": "string"
-                },
                 "texkeys": {
                     "type": "string"
                 },

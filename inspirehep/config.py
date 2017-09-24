@@ -213,71 +213,71 @@ INSPIRE_COLLECTIONS_DEFINITION = [
         'name': 'Journals',
     },
     {
-        'query': 'special_collections:BABAR-ANALYSIS-DOCUMENT',
+        'query': '_collections:"BABAR Analysis Documents"',
         'name': 'BABAR Analysis Documents',
     },
     {
-        'query': 'special_collections:BABAR-INTERNAL-BAIS',
+        'query': '_collections:"BABAR Internal BAIS"',
         'name': 'BABAR Internal BAIS',
     },
     {
-        'query': 'special_collections:BABAR-INTERNAL-NOTE',
+        'query': '_collections:"BABAR Internal Notes"',
         'name': 'BABAR Internal Notes',
     },
     {
-        'query': 'special_collections:CDF-INTERNAL-NOTE',
+        'query': '_collections:"CDF Internal Notes"',
         'name': 'CDF Internal Notes',
     },
     {
-        'query': 'special_collections:CDF-NOTE',
+        'query': '_collections:"CDF Notes"',
         'name': 'CDF Notes',
     },
     {
-        'query': 'special_collections:CDSHIDDEN',
+        'query': '_collections:"CDS Hidden"',
         'name': 'CDS Hidden',
     },
     {
-        'query': 'special_collections:D0-INTERNAL-NOTE',
+        'query': '_collections:"D0 Internal Notes"',
         'name': 'D0 Internal Notes',
     },
     {
-        'query': 'special_collections:D0-PRELIMINARY-NOTE',
+        'query': '_collections:"D0 Preliminary Notes"',
         'name': 'D0 Preliminary Notes',
     },
     {
-        'query': 'special_collections:H1-INTERNAL-NOTE',
+        'query': '_collections:"H1 Internal Notes"',
         'name': 'H1 Internal Notes',
     },
     {
-        'query': 'special_collections:H1-PRELIMINARY-NOTE',
+        'query': '_collections:"H1 Preliminary Notes"',
         'name': 'H1 Preliminary Notes',
     },
     {
-        'query': 'special_collections:HALHIDDEN',
+        'query': '_collections:"HAL Hidden"',
         'name': 'HAL Hidden',
     },
     {
-        'query': 'special_collections:HEPHIDDEN',
+        'query': '_collections:"HEP Hidden"',
         'name': 'HEP Hidden',
     },
     {
-        'query': 'special_collections:HERMES-INTERNAL-NOTE',
+        'query': '_collections:"HERMES Internal Notes"',
         'name': 'HERMES Internal Notes',
     },
     {
-        'query': 'special_collections:LARSOFT-INTERNAL-NOTE',
+        'query': '_collections:"LArSoft Internal Notes"',
         'name': 'LArSoft Internal Notes',
     },
     {
-        'query': 'special_collections:LARSOFT-NOTE',
+        'query': '_collections:"LArSoft Notes"',
         'name': 'LArSoft Notes',
     },
     {
-        'query': 'special_collections:ZEUS-INTERNAL-NOTE',
+        'query': '_collections:"ZEUS Internal Notes"',
         'name': 'ZEUS Internal Notes',
     },
     {
-        'query': 'special_collections:ZEUS-PRELIMINARY-NOTE',
+        'query': '_collections:"ZEUS Preliminary Notes"',
         'name': 'ZEUS Preliminary Notes',
     },
 ]
