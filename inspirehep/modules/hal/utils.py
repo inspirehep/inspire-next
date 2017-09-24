@@ -173,7 +173,7 @@ def get_conference_record(record):
         record: a record.
 
     Returns:
-        record: the first Conference record associated with the record.
+        InspireRecord: the first Conference record associated with the record.
 
     Examples:
         >>> record = {
