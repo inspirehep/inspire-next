@@ -31,6 +31,7 @@ Contents
 
    getting_started
    developers_guide
+   postgresql
    operations
    harvesting
    grobid
