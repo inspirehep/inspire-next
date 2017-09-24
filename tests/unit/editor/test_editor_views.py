@@ -32,6 +32,68 @@ from inspire_schemas.api import load_schema, validate
 from inspire_utils.record import get_value
 
 
+def test_authorlist_text(api_client):
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    response = api_client.post(
+        '/editor/authorlist/text',
+        content_type='application/json',
+        data=json.dumps({
+            'text': (
+                'F. Lastname1, F.M. Otherlastname1,2\n'
+                '\n'
+                '1 CERN\n'
+                '2 Otheraffiliation'
+            )
+        })
+    )
+
+    assert response.status_code == 200
+
+    expected = {
+        'authors': [
+            {
+                'full_name': 'Lastname, F.',
+                'raw_affiliations': [
+                    {'value': 'CERN'},
+                ],
+            },
+            {
+                'full_name': 'Otherlastname, F.M.',
+                'raw_affiliations': [
+                    {'value': 'CERN'},
+                    {'value': 'Otheraffiliation'},
+                ],
+            },
+        ],
+    }
+    result = json.loads(response.data)
+
+    assert validate(result['authors'], subschema) is None
+    assert expected == result
+
+
+def test_authorlist_text_exception(api_client):
+    response = api_client.post(
+        '/editor/authorlist/text',
+        content_type='application/json',
+        data=json.dumps({
+            'text': 'A. Einstein, N. Bohr2'
+        })
+    )
+
+    assert response.status_code == 500
+
+    expected = {
+        'message': 'Could not find affiliations',
+        'status': 500
+    }
+    result = json.loads(response.data)
+
+    assert expected == result
+
+
 def test_refextract_text(api_client):
     schema = load_schema('hep')
     subschema = schema['properties']['references']
