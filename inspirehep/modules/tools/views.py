@@ -52,18 +52,18 @@ class InputTextForm(INSPIREForm):
 def authorlist_form():
     """Render the authorlist page for formatting author strings."""
     form = InputTextForm(request.form)
-    marc = ''
+    results = {}
     results_title = ''
     errors = ''
     text = form.author_string.data
     try:
-        marc = authorlist(text)
+        results = authorlist(text)
         results_title = 'Author list string in MARC21'
     except (AttributeError, ValueError, KeyError) as err:
         errors = err.args
     return render_template(
         'authorlist_form.html',
-        results=marc,
+        results=results,
         title='Format author strings to MARC21',
         form=form,
         results_title=results_title,

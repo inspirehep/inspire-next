@@ -20,13 +20,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIRE editor blueprint."""
+"""Editor views."""
 
 from __future__ import absolute_import, division, print_function
 
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
 
+from inspirehep.modules.tools import authorlist
 from inspirehep.utils.references import (
     get_refextract_kbs_path,
     map_refextract_to_schema,
@@ -40,9 +41,21 @@ from .permissions import editor_manage_tickets_permission
 from ...utils import tickets
 
 
-blueprint = Blueprint('inspirehep_editor',
-                      __name__,
-                      url_prefix='/editor',)
+blueprint = Blueprint(
+    'inspirehep_editor',
+    __name__,
+    url_prefix='/editor',
+)
+
+
+@blueprint.route('/authorlist/text', methods=['POST'])
+def authorlist_text():
+    """Run authorlist on a piece of text."""
+    try:
+        parsed_authors = authorlist(request.json['text'])
+        return jsonify(parsed_authors)
+    except Exception as err:
+        return jsonify(status=500, message=u' / '.join(err.args)), 500
 
 
 @blueprint.route('/refextract/text', methods=['POST'])

@@ -25,3 +25,4 @@
 from __future__ import absolute_import, division, print_function
 
 from .ext import InspireTools  # noqa: F401
+from .utils import authorlist  # noqa: F401

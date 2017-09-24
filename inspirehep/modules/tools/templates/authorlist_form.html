@@ -36,7 +36,16 @@
 {% if results %}
 <h4>{{ results_title }}</h4>
 <button class="btn btn-default" id="copy-button" data-clipboard-target="resultarea">Copy to clipboard</button>
-<pre><textarea class="form-control" form="authorlist" id="resultarea" rows="10">{{ results }}</textarea></pre>
+<pre><textarea class="form-control" form="authorlist" id="resultarea" rows="10">
+{% for author in results['authors'] %}
+{% set code = '100' if loop.index == 1 else '700' %}
+{{ code }}__ $$a{{ author['full_name'] }}
+{%- for affiliation in author.get('raw_affiliations', []) %}
+$$v{{ affiliation.get('value') }}
+{%- endfor %}
+
+{% endfor %}
+</textarea></pre>
 
 
 {% else %}
