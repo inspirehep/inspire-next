@@ -204,7 +204,7 @@ setup(
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_migrator = inspirehep.modules.migrator:InspireMigrator',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
-            'inspire_authors = inspirehep.modules.authors:INSPIREAuthors',
+            'inspire_authors = inspirehep.modules.authors:InspireAuthors',
             'inspire_literaturesuggest = inspirehep.modules.literaturesuggest:InspireLiteratureSuggest',
             'inspire_forms = inspirehep.modules.forms:InspireForms',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
