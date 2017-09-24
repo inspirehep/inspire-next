@@ -35,32 +35,33 @@ def test_authorlist_without_affiliations():
         'J. Ringel, K. Sauerberg, P. Schmüser, G. Vogel, B.H. Wiik, G. Wolf'
     )
 
-    expected = (
-        '100__ $$aBerkelman, K.\n'
-        '700__ $$aCords, D.\n'
-        '700__ $$aFelst, R.\n'
-        '700__ $$aGadermann, E.\n'
-        '700__ $$aGrindhammer, G.\n'
-        '700__ $$aHultschig, H.\n'
-        '700__ $$aJoos, P.\n'
-        '700__ $$aKoch, W.\n'
-        '700__ $$aKötz, U.\n'
-        '700__ $$aKrehbiel, H.\n'
-        '700__ $$aKreinick, D.\n'
-        '700__ $$aLudwig, J.\n'
-        '700__ $$aMess, K.-H.\n'
-        '700__ $$aMoffeit, K.C.\n'
-        '700__ $$aPetersen, A.\n'
-        '700__ $$aPoelz, G.\n'
-        '700__ $$aRingel, J.\n'
-        '700__ $$aSauerberg, K.\n'
-        '700__ $$aSchmüser, P.\n'
-        '700__ $$aVogel, G.\n'
-        '700__ $$aWiik, B.H.\n'
-        '700__ $$aWolf, G.'
-    )
+    expected = [
+        {'full_name': u'Berkelman, K.'},
+        {'full_name': u'Cords, D.'},
+        {'full_name': u'Felst, R.'},
+        {'full_name': u'Gadermann, E.'},
+        {'full_name': u'Grindhammer, G.'},
+        {'full_name': u'Hultschig, H.'},
+        {'full_name': u'Joos, P.'},
+        {'full_name': u'Koch, W.'},
+        {'full_name': u'K\xf6tz, U.'},
+        {'full_name': u'Krehbiel, H.'},
+        {'full_name': u'Kreinick, D.'},
+        {'full_name': u'Ludwig, J.'},
+        {'full_name': u'Mess, K.-H.'},
+        {'full_name': u'Moffeit, K.C.'},
+        {'full_name': u'Petersen, A.'},
+        {'full_name': u'Poelz, G.'},
+        {'full_name': u'Ringel, J.'},
+        {'full_name': u'Sauerberg, K.'},
+        {'full_name': u'Schm\xfcser, P.'},
+        {'full_name': u'Vogel, G.'},
+        {'full_name': u'Wiik, B.H.'},
+        {'full_name': u'Wolf, G.'},
+    ]
+    result = authorlist(text)
 
-    assert authorlist(text).encode('utf-8') == expected
+    assert expected == result['authors']
 
 
 def test_authorlist_with_affiliations():
@@ -71,32 +72,58 @@ def test_authorlist_with_affiliations():
         '3 Lund University\n'
         '4 Instituto de Física, Universidade de São Paulo'
     )
-    expected = (
-        '100__ $$aDurães, F.$$vCERN\n'
-        '700__ $$aGiannini, A.V.$$vFermilab\n'
-        '700__ $$aGonçalves, V.P.$$vLund University '
-        '$$vInstituto de Física, Universidade de São Paulo\n'
-        '700__ $$aNavarra, F.S.$$vFermilab'
-    )
 
-    assert authorlist(text).encode('utf-8') == expected
+    expected = [
+        {
+            'full_name': u'Dur\xe3es, F.',
+            'raw_affiliations': [
+                {'value': u'CERN'},
+            ],
+        },
+        {
+            'full_name': u'Giannini, A.V.',
+            'raw_affiliations': [
+                {'value': u'Fermilab'},
+            ],
+        },
+        {
+            'full_name': u'Gon\xe7alves, V.P.',
+            'raw_affiliations': [
+                {'value': u'Lund University'},
+                {'value': u'Instituto de F\xedsica, Universidade de S\xe3o Paulo'},
+            ],
+        },
+        {
+            'full_name': u'Navarra, F.S.',
+            'raw_affiliations': [
+                {'value': u'Fermilab'},
+            ],
+        },
+    ]
+    result = authorlist(text)
+
+    assert expected == result['authors']
 
 
 def test_authorlist_with_no_text():
     text = None
-    expected = ''
 
-    assert authorlist(text) == expected
+    expected = {}
+    result = authorlist(text)
+
+    assert expected == result
 
 
 def test_authorlist_with_no_firstnames():
     text = 'Einstein, Bohr'
-    expected = (
-        '100__ $$aEinstein\n'
-        '700__ $$aBohr'
-    )
 
-    assert authorlist(text).encode('utf-8') == expected
+    expected = [
+        {'full_name': u'Einstein'},
+        {'full_name': u'Bohr'},
+    ]
+    result = authorlist(text)
+
+    assert expected == result['authors']
 
 
 def test_authorlist_with_missing_affid():
@@ -158,13 +185,24 @@ def test_authorlist_ignores_space_between_authors_and_affiliations():
         '2 Otheraffiliation'
     )
 
-    expected = (
-        '100__ $$aLastname, F.$$vCERN\n'
-        '700__ $$aOtherlastname, F.M.$$vCERN $$vOtheraffiliation'
-    )
+    expected = [
+        {
+            'full_name': u'Lastname, F.',
+            'raw_affiliations': [
+                {'value': u'CERN'},
+            ],
+        },
+        {
+            'full_name': u'Otherlastname, F.M.',
+            'raw_affiliations': [
+                {'value': u'CERN'},
+                {'value': u'Otheraffiliation'},
+            ],
+        },
+    ]
     result = authorlist(text)
 
-    assert expected == result
+    assert expected == result['authors']
 
 
 def test_authorlist_bad_author_lines():
@@ -184,15 +222,35 @@ def test_authorlist_bad_author_lines():
         '15 PRINCETON\n'
     )
 
-    expected = (
-        '100__ $$aAduszkiewicz, A.$$vCERN\n'
-        '700__ $$aAli, Y.X.$$vCERN $$vDESY\n'
-        '700__ $$aAndronov, E. I.$$vDESY\n'
-        '700__ $$aEinstein$$vETH ZÜRICH $$vPRINCETON'
-    )
+    expected = [
+        {
+            'full_name': u'Aduszkiewicz, A.',
+            'raw_affiliations': [
+                {'value': u'CERN'},
+            ],
+        },
+        {
+            'full_name': u'Ali, Y.X.',
+            'raw_affiliations': [
+                {'value': u'CERN'},
+                {'value': u'DESY'}
+            ]
+        },
+        {
+            'full_name': u'Andronov, E.I.',
+            'raw_affiliations': [{'value': u'DESY'}]
+        },
+        {
+            'full_name': u'Einstein',
+            'raw_affiliations': [
+                {'value': u'ETH Z\xdcRICH'},
+                {'value': u'PRINCETON'}
+            ]
+        },
+    ]
     result = authorlist(text)
 
-    assert expected == result.encode('utf-8')
+    assert expected == result['authors']
 
 
 def test_authorlist_no_commas_between_authors():
@@ -202,15 +260,30 @@ def test_authorlist_no_commas_between_authors():
         '2 University of Maryland, Department of Physics, College Park, MD 20742-4111, USA'
     )
 
-    expected = (
-        '100__ $$aPatrignani, C.$$vUniversità di Bologna and INFN, Dip. Scienze per la Qualità della Vita, I-47921, Rimini, Italy\n'
-        '700__ $$aAgashe, K.$$vUniversity of Maryland, Department of Physics, College Park, MD 20742-4111, USA\n'
-        '700__ $$aAielli, G.$$vUniversità di Bologna and INFN, Dip. Scienze per la Qualità della Vita, I-47921, Rimini, Italy $$vUniversity of Maryland, Department of Physics, College Park, MD 20742-4111, USA'
-    )
-
+    expected = [
+        {
+            'full_name': u'Patrignani, C.',
+            'raw_affiliations': [
+                {'value': u'Universit\xe0 di Bologna and INFN, Dip. Scienze per la Qualit\xe0 della Vita, I-47921, Rimini, Italy'},
+            ],
+        },
+        {
+            'full_name': u'Agashe, K.',
+            'raw_affiliations': [
+                {'value': u'University of Maryland, Department of Physics, College Park, MD 20742-4111, USA'},
+            ],
+        },
+        {
+            'full_name': u'Aielli, G.',
+            'raw_affiliations': [
+                {'value': u'Universit\xe0 di Bologna and INFN, Dip. Scienze per la Qualit\xe0 della Vita, I-47921, Rimini, Italy'},
+                {'value': u'University of Maryland, Department of Physics, College Park, MD 20742-4111, USA'},
+            ],
+        },
+    ]
     result = authorlist(text)
 
-    assert expected == result.encode('utf-8')
+    assert expected == result['authors']
 
 
 def test_authorlist_newlines_and_no_commas_between_authors():
@@ -228,15 +301,30 @@ def test_authorlist_newlines_and_no_commas_between_authors():
         'University of Maryland, Department of Physics, College Park, MD 20742-4111, USA'
     )
 
-    expected = (
-        '100__ $$aPatrignani, C.$$vUniversità di Bologna and INFN, Dip. Scienze per la Qualità della Vita, I-47921, Rimini, Italy\n'
-        '700__ $$aAgashe, K.$$vUniversity of Maryland, Department of Physics, College Park, MD 20742-4111, USA\n'
-        '700__ $$aAielli, G.$$vUniversità di Bologna and INFN, Dip. Scienze per la Qualità della Vita, I-47921, Rimini, Italy $$vUniversity of Maryland, Department of Physics, College Park, MD 20742-4111, USA'
-    )
-
+    expected = [
+        {
+            'full_name': u'Patrignani, C.',
+            'raw_affiliations': [
+                {'value': u'Universit\xe0 di Bologna and INFN, Dip. Scienze per la Qualit\xe0 della Vita, I-47921, Rimini, Italy'},
+            ],
+        },
+        {
+            'full_name': u'Agashe, K.',
+            'raw_affiliations': [
+                {'value': u'University of Maryland, Department of Physics, College Park, MD 20742-4111, USA'},
+            ],
+        },
+        {
+            'full_name': u'Aielli, G.',
+            'raw_affiliations': [
+                {'value': u'Universit\xe0 di Bologna and INFN, Dip. Scienze per la Qualit\xe0 della Vita, I-47921, Rimini, Italy'},
+                {'value': u'University of Maryland, Department of Physics, College Park, MD 20742-4111, USA'},
+            ],
+        },
+    ]
     result = authorlist(text)
 
-    assert expected == result.encode('utf-8')
+    assert expected == result['authors']
 
 
 def test_authorlist_affids_with_dots():
@@ -254,14 +342,30 @@ def test_authorlist_affids_with_dots():
         'University of Maryland, Department of Physics, College Park, MD 20742-4111, USA'
     )
 
-    expected = (
-        '100__ $$aPatrignani, C.$$vUniversità di Bologna and INFN, Dip. Scienze per la Qualità della Vita, I-47921, Rimini, Italy\n'
-        '700__ $$aAgashe, K.$$vUniversity of Maryland, Department of Physics, College Park, MD 20742-4111, USA\n'
-        '700__ $$aAielli, G.$$vUniversità di Bologna and INFN, Dip. Scienze per la Qualità della Vita, I-47921, Rimini, Italy $$vUniversity of Maryland, Department of Physics, College Park, MD 20742-4111, USA'
-    )
+    expected = [
+        {
+            'full_name': u'Patrignani, C.',
+            'raw_affiliations': [
+                {'value': u'Universit\xe0 di Bologna and INFN, Dip. Scienze per la Qualit\xe0 della Vita, I-47921, Rimini, Italy'},
+            ],
+        },
+        {
+            'full_name': u'Agashe, K.',
+            'raw_affiliations': [
+                {'value': u'University of Maryland, Department of Physics, College Park, MD 20742-4111, USA'},
+            ],
+        },
+        {
+            'full_name': u'Aielli, G.',
+            'raw_affiliations': [
+                {'value': u'Universit\xe0 di Bologna and INFN, Dip. Scienze per la Qualit\xe0 della Vita, I-47921, Rimini, Italy'},
+                {'value': u'University of Maryland, Department of Physics, College Park, MD 20742-4111, USA'},
+            ],
+        },
+    ]
     result = authorlist(text)
 
-    assert expected == result.encode('utf-8')
+    assert expected == result['authors']
 
 
 def test_authorlist_no_commas_between_affids():
@@ -281,8 +385,7 @@ def test_authorlist_no_commas_between_affids():
 
     with pytest.raises(KeyError) as excinfo:
         authorlist(text)
-    assert 'affiliation IDs might not be separated with commas' in str(
-        excinfo.value)
+    assert 'affiliation IDs might not be separated with commas' in str(excinfo.value)
 
 
 def test_authorlist_multiple_affiliations_on_single_line():
@@ -303,8 +406,7 @@ def test_authorlist_multiple_affiliations_on_single_line():
 
     with pytest.raises(KeyError) as excinfo:
         authorlist(text)
-    assert 'There might be multiple affiliations per line' in str(
-        excinfo.value)
+    assert 'There might be multiple affiliations per line' in str(excinfo.value)
 
 
 def test_authorlist_space_between_affids():
@@ -314,13 +416,24 @@ def test_authorlist_space_between_affids():
         '20 DESY'
     )
 
-    expected = (
-        '100__ $$aAli, Y.X.$$vCERN $$vDESY\n'
-        '700__ $$aAndronov, E. I.$$vDESY'
-    )
+    expected = [
+        {
+            'full_name': u'Ali, Y.X.',
+            'raw_affiliations': [
+                {'value': u'CERN'},
+                {'value': u'DESY'},
+            ],
+        },
+        {
+            'full_name': u'Andronov, E.I.',
+            'raw_affiliations': [
+                {'value': u'DESY'},
+            ],
+        },
+    ]
     result = authorlist(text)
 
-    assert expected == result.encode('utf-8')
+    assert expected == result['authors']
 
 
 def test_authorlist_affiliation_with_numbers_and_letters():
@@ -336,13 +449,23 @@ def test_authorlist_affiliation_with_numbers_and_letters():
         'University of Maryland, Department of Physics, College Park, MD 20742-4111, USA\n'
     )
 
-    expected = (
-        '100__ $$aBuchmueller, O.$$vHigh Energy Physics Group, Blackett Laboratory, Imperial College, Prince Consort Road, London SW7 2AZ, UK\n'
-        '700__ $$aAgashe, K.$$vUniversity of Maryland, Department of Physics, College Park, MD 20742-4111, USA'
-    )
+    expected = [
+        {
+            'full_name': u'Buchmueller, O.',
+            'raw_affiliations': [
+                {'value': u'High Energy Physics Group, Blackett Laboratory, Imperial College, Prince Consort Road, London SW7 2AZ, UK'},
+            ],
+        },
+        {
+            'full_name': u'Agashe, K.',
+            'raw_affiliations': [
+                {'value': u'University of Maryland, Department of Physics, College Park, MD 20742-4111, USA'},
+            ],
+        },
+    ]
     result = authorlist(text)
 
-    assert expected == result.encode('utf-8')
+    assert expected == result['authors']
 
 
 def test_authorlist_note_symbols():
@@ -353,13 +476,24 @@ def test_authorlist_note_symbols():
         '20 DESY'
     )
 
-    expected = (
-        '100__ $$aAli, Y.X.$$vCERN $$vDESY\n'
-        '700__ $$aAndronov, E. I.$$vDESY'
-    )
+    expected = [
+        {
+            'full_name': u'Ali, Y.X.',
+            'raw_affiliations': [
+                {'value': u'CERN'},
+                {'value': u'DESY'},
+            ],
+        },
+        {
+            'full_name': u'Andronov, E.I.',
+            'raw_affiliations': [
+                {'value': u'DESY'},
+            ],
+        },
+    ]
     result = authorlist(text)
 
-    assert expected == result.encode('utf-8')
+    assert expected == result['authors']
 
 
 def test_authorlist_comma_wrong_position():
@@ -375,14 +509,25 @@ def test_authorlist_comma_wrong_position():
         '2\n'
         'Laboratoire Kastler–Brossel, CNRS, ENS, Universit ́e Pierre et Marie Curie case 74, Campus Jussieu, F-75252 Paris Cedex 05, France\n'
     )
-    expected = (
-        '100__ $$aBao, Y.$$vDepartment of Physics, University of Florida, Gainesville, Florida 32611\n'
-        '700__ $$aLambrecht, A.$$vDepartment of Physics, University of Florida, Gainesville, Florida 32611 $$vLaboratoire Kastler-Brossel, '
-        'CNRS, ENS, Universit ́e Pierre et Marie Curie case 74, Campus Jussieu, F-75252 Paris Cedex 05, France'
-    )
+
+    expected = [
+        {
+            'full_name': u'Bao, Y.',
+            'raw_affiliations': [
+                {'value': u'Department of Physics, University of Florida, Gainesville, Florida 32611'},
+            ],
+        },
+        {
+            'full_name': u'Lambrecht, A.',
+            'raw_affiliations': [
+                {'value': u'Department of Physics, University of Florida, Gainesville, Florida 32611'},
+                {'value': u'Laboratoire Kastler-Brossel, CNRS, ENS, Universit \u0301e Pierre et Marie Curie case 74, Campus Jussieu, F-75252 Paris Cedex 05, France'},
+            ],
+        },
+    ]
     result = authorlist(text)
 
-    assert expected == result.encode('utf-8')
+    assert expected == result['authors']
 
 
 def test_authorlist_when_aff_line_ends_in_number():
@@ -397,16 +542,26 @@ def test_authorlist_when_aff_line_ends_in_number():
         'Physics Department, Brookhaven National Laboratory, Upton, NY 11973, USA'
     )
 
-    expected = (
-        '100__ $$aLiss, T.M.$$vDivision of Science, City College of New York, 160 Convent Avenue, New York, NY 10031\n'
-        '700__ $$aLittenberg, L.$$vPhysics Department, Brookhaven National Laboratory, Upton, NY 11973, USA'
-    )
+    expected = [
+        {
+            'full_name': u'Liss, T.M.',
+            'raw_affiliations': [
+                {'value': u'Division of Science, City College of New York, 160 Convent Avenue, New York, NY 10031'},
+            ],
+        },
+        {
+            'full_name': u'Littenberg, L.',
+            'raw_affiliations': [
+                {'value': u'Physics Department, Brookhaven National Laboratory, Upton, NY 11973, USA'},
+            ],
+        },
+    ]
     result = authorlist(text)
 
-    assert expected == result.encode('utf-8')
+    assert expected == result['authors']
 
 
-def test_author_with_many_affiliations():
+def test_authorlist_with_many_affiliations():
     text = (
         'F. Durães1,2,3,4\n'
         '1 CERN\n'
@@ -414,8 +569,18 @@ def test_author_with_many_affiliations():
         '3 Lund University\n'
         '4 Instituto de Física, Universidade de São Paulo'
     )
-    expected = (
-        '100__ $$aDurães, F.$$vCERN $$vFermilab $$vLund University $$vInstituto de Física, Universidade de São Paulo'
-    )
 
-    assert authorlist(text).encode('utf-8') == expected
+    expected = [
+        {
+            'full_name': u'Dur\xe3es, F.',
+            'raw_affiliations': [
+                {'value': u'CERN'},
+                {'value': u'Fermilab'},
+                {'value': u'Lund University'},
+                {'value': u'Instituto de F\xedsica, Universidade de S\xe3o Paulo'},
+            ],
+        },
+    ]
+    result = authorlist(text)
+
+    assert expected == result['authors']

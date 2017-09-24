@@ -71,7 +71,7 @@ install_requires = [
     'invenio>=3.0.0a1,<3.1.0',
     'inspire-crawler~=0.0,>=0.2.7',
     'inspire-dojson~=48.0,>=48.0.0',
-    'inspire-schemas~=48.0,>=48.0.0',
+    'inspire-schemas~=48.0,>=48.0.2',
     'inspire-utils~=0.0,>=0.0.6',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',

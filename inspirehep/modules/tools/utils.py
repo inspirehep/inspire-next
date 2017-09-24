@@ -27,7 +27,8 @@ from __future__ import absolute_import, division, print_function
 import re
 
 import six
-from nameparser import HumanName
+
+from inspire_schemas.api import LiteratureBuilder
 
 from refextract.documents.pdf import replace_undesirable_characters
 from refextract.documents.text import wash_line
@@ -53,7 +54,7 @@ def authorlist(text):
     ids in author names should be separated with commas.
     """
     if not text:
-        return ''
+        return {}
     if not isinstance(text, six.text_type):
         text = text.decode('utf-8')
     # Do some pre-cleaning of the input string
@@ -71,56 +72,29 @@ def authorlist(text):
     return authorlist_without_affiliations(text)
 
 
-def format_name(author):
-    """Parse the raw author name and return a formatted string."""
-    name = HumanName(author)
-    # If there is only one part in the name, nameparser thinks it's a
-    # first name. In reality, it is a last name, so we correct that.
-    if name.first and not name.last:
-        lname, mname, fname = name.first, name.middle, name.last
-    else:
-        fname, mname, lname = name.first, name.middle, name.last
-
-    if len(fname) == 1 and '.' not in fname:
-        fname += '.'
-    if len(mname) == 1 and '.' not in mname:
-        mname += '.'
-
-    return u'{}{}{}'.format(
-        lname,
-        ', ' + fname if fname else '',
-        ' ' + mname if mname else ''
-    )
-
-
 def authorlist_without_affiliations(text):
-    """Return a MARC format string of authors without affiliations."""
+    """Return a record containing the authors."""
+    builder = LiteratureBuilder()
     authors = text.replace(' and ', ', ').split(', ')
-    first_author = authors.pop(0)
-    marc = u'100__ $$a{}\n'.format(format_name(first_author))
     for author in authors:
-        marc += u'700__ $$a{}\n'.format(format_name(author))
+        builder.add_author(builder.make_author(author))
 
-    return marc.rstrip()
+    return {'authors': builder.record['authors']}
 
 
 def authorlist_with_affiliations(text):
-    """Return a MARC format string of authors with affiliations."""
+    """Return a record containing the authors, including affiliations."""
     def parse_author_string(author):
         """Get fullname and affiliation ids."""
-        try:
-            name, affs = re.search(
-                r'(.+?)(\d+[\,\d]*)', author, flags=re.UNICODE
-            ).groups()
-        except AttributeError:
-            raise
-        fullname = format_name(name)
+        name, affs = re.search(
+            r'(.+?)(\d+[\,\d]*)', author, flags=re.UNICODE
+        ).groups()
         aff_ids = [aff for aff in affs.split(',') if aff.isdigit()]
 
-        return fullname, aff_ids
+        return name, aff_ids
 
-    def create_new_marcline(author, affiliations, first_author=False):
-        """Get MARC line of the format '100__ $$aDurães, F.$$vCERN'."""
+    def get_author_affiliations(author, affiliations):
+        """Get affiliations belonging to author."""
         try:
             fullname, aff_ids = parse_author_string(author)
         except AttributeError:
@@ -129,24 +103,17 @@ def authorlist_with_affiliations(text):
                 'might not have an affiliation at all', author
             )
         try:
-            affstring = ' '.join(
-                [u'$$v{}'.format(affiliations[aff_id]) for aff_id in aff_ids]
-            )
+            author_affiliations = [affiliations[aff_id] for aff_id in aff_ids]
         except KeyError:
             raise KeyError(
                 'There might be multiple affiliations per line or '
                 'affiliation IDs might not be separated with commas or '
                 'the affiliation is missing. '
-                'Problematic author and affiliations: ', author, aff_ids,
+                'Problematic author and affiliations', author, aff_ids,
                 affiliations
             )
 
-        if first_author:
-            marcfield = '100'
-        else:
-            marcfield = '700'
-
-        return u'{}__ $$a{}{}\n'.format(marcfield, fullname, affstring)
+        return (fullname, author_affiliations)
 
     # Try to work with badly formatted input
     # There should be commas between different affiliation ids in author
@@ -178,19 +145,11 @@ def authorlist_with_affiliations(text):
             aff_id, aff_name = re.search(r'^(\d+)\.?\s?(.*)$', aff).groups()
             affiliations[aff_id] = aff_name
         except (ValueError, AttributeError):
-            raise ValueError('Cannot parse affiliation ', aff)
+            raise ValueError('Cannot parse affiliation', aff)
 
-    try:
-        first_author = authors.pop(0)
-        marc = ''
-        marc = create_new_marcline(
-            first_author,
-            affiliations,
-            first_author=True
-        )
-        for author in authors:
-            marc += create_new_marcline(author, affiliations)
-    except (AttributeError, KeyError):
-        raise
+    builder = LiteratureBuilder()
+    for author in authors:
+        fullname, author_affs = get_author_affiliations(author, affiliations)
+        builder.add_author(builder.make_author(fullname, raw_affiliations=author_affs))
 
-    return marc.rstrip()
+    return {'authors': builder.record['authors']}
