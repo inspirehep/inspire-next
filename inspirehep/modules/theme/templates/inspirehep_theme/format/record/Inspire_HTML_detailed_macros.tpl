@@ -179,8 +179,8 @@
     {% endfor %}
   {% endif %}
 
-  {% if record.get('external_system_numbers') %}
-    {% for system_number in record.get('external_system_numbers') if system_number.get('obsolete') == False and system_number.get('institute', '') | is_institute %}
+  {% if record.get('external_system_identifiers') %}
+    {% for system_number in record.get('external_system_identifiers') %}
       {% if not viewInDisplayed and not isExternalUrl %}
         View in
         {% do viewInDisplayed.append(1) %}
@@ -193,41 +193,47 @@
       {% set kek = 'http://www-lib.kek.jp/cgi-bin/img_index?' %}
       {% set msnet = 'http://www.ams.org/mathscinet-getitem?mr=' %}
       {% set zblatt = 'http://www.zentralblatt-math.org/zmath/en/search/?an=' %}
+      {% set osti = 'https://www.osti.gov/scitech/biblio/' %}
       {% set adsLinked = [] %}
 
-      {% if (system_number.get('institute') | lower) == 'kekscan' %}
+      {% if (system_number.get('schema') | lower) == 'kekscan' %}
         {{ comma() }}
         <a href='{{ kek }}{{system_number.get('value')}}'>
           KEK scanned document
         </a>
-      {% elif (system_number.get('institute') | lower) == 'cds' %}
+      {% elif (system_number.get('schema') | lower) == 'cds' %}
         {{ comma() }}
         <a href='{{ cds }}{{system_number.get('value')}}'>
           CERN Document Server
         </a>
-      {% elif (system_number.get('institute') | lower) == 'ads' %}
+      {% elif (system_number.get('schema') | lower) == 'osti' %}
+ +        {{ comma() }}
+ +        <a href='{{ osti }}{{system_number.get('value')}}'>
+ +          OSTI Information Bridge Server
+ +        </a>
+      {% elif (system_number.get('schema') | lower) == 'ads' %}
         {{ comma() }}
         <a href='{{ ads }}{{system_number.get('value')}}'>
           ADS Abstract Service
         </a>
         {% do adsLinked.append(1) %}
       {# HAL: Show only if user is admin - still valid? #}
-      {% elif (system_number.get('institute') | lower) == 'hal' %}
+      {% elif (system_number.get('schema') | lower) == 'hal' %}
         {{ comma() }}
         <a href='{{ hal }}{{system_number.get('value')}}'>
           HAL Archives Ouvertes
         </a>
-      {% elif (system_number.get('institute') | lower) == 'msnet' %}
+      {% elif (system_number.get('schema') | lower) == 'msnet' %}
         {{ comma() }}
         <a href='{{ msnet }}{{system_number.get('value')}}'>
           AMS MathSciNet
         </a>
-      {% elif (system_number.get('institute') | lower) == 'zblatt' %}
+      {% elif (system_number.get('schema') | lower) == 'zblatt' %}
         {{ comma() }}
         <a href='{{ zblatt }}{{system_number.get('value')}}'>
           zbMATH
         </a>
-      {% elif (system_number.get('institute') | lower) == 'euclid' %}
+      {% elif (system_number.get('schema') | lower) == 'euclid' %}
         {{ comma() }}
         <a href='{{ euclid }}{{system_number.get('value')}}'>
           Project Euclid
