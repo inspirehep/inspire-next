@@ -91,14 +91,14 @@ def do_robotupload_callback(
     data = {
         "nonce": workflow_id,
         "results": [
-                {
-                    "recid": int(recid),
-                    "error_message": "",
-                    "success": True,
-                    "marcxml": "fake marcxml (not really used yet anywhere)",
-                    "url": "%s/record/%s" % (server_name, recid),
-                } for recid in recids
-            ]
+            {
+                "recid": int(recid),
+                "error_message": "",
+                "success": True,
+                "marcxml": "fake marcxml (not really used yet anywhere)",
+                "url": "%s/record/%s" % (server_name, recid),
+            } for recid in recids
+        ],
     }
 
     return client.post(

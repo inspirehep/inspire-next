@@ -49,7 +49,7 @@ def test_arxiv_fulltext_download_logs_on_success():
         requests_mocker.register_uri(
             'GET', 'http://export.arxiv.org/pdf/1605.03844',
             content=pkg_resources.resource_string(
-             __name__, os.path.join('fixtures', '1605.03844.pdf')),
+                __name__, os.path.join('fixtures', '1605.03844.pdf')),
         )
 
         schema = load_schema('hep')
@@ -85,7 +85,7 @@ def test_arxiv_fulltext_download_logs_on_pdf_not_existing():
         requests_mocker.register_uri(
             'GET', 'http://export.arxiv.org/pdf/1707.02785',
             content=pkg_resources.resource_string(
-             __name__, os.path.join('fixtures', '1707.02785.html')),
+                __name__, os.path.join('fixtures', '1707.02785.html')),
         )
 
         schema = load_schema('hep')
@@ -120,11 +120,17 @@ def test_arxiv_fulltext_download_retries_on_error():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
             'GET', 'http://export.arxiv.org/pdf/1605.03814',
-            [{'content': '',
-              'status_code': 500},
-             {'content': pkg_resources.resource_string(
-                    __name__, os.path.join('fixtures', '1605.03814.pdf')),
-             'status_code': 200}]
+            [
+                {
+                    'content': '',
+                    'status_code': 500,
+                },
+                {
+                    'content': pkg_resources.resource_string(
+                        __name__, os.path.join('fixtures', '1605.03814.pdf')),
+                    'status_code': 200,
+                },
+            ],
         )
 
         schema = load_schema('hep')
@@ -160,7 +166,7 @@ def test_arxiv_package_download_logs_on_success():
         requests_mocker.register_uri(
             'GET', 'http://export.arxiv.org/e-print/1605.03959',
             content=pkg_resources.resource_string(
-             __name__, os.path.join('fixtures', '1605.03959.tar.gz')),
+                __name__, os.path.join('fixtures', '1605.03959.tar.gz')),
         )
 
         schema = load_schema('hep')

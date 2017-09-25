@@ -124,7 +124,7 @@ def test_refextract_url(api_client):
         requests_mocker.register_uri(
             'GET', 'https://arxiv.org/pdf/1612.06414.pdf',
             content=pkg_resources.resource_string(
-              __name__, os.path.join('fixtures', '1612.06414.pdf')),
+                __name__, os.path.join('fixtures', '1612.06414.pdf')),
         )
 
         response = api_client.post(

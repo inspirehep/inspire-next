@@ -78,7 +78,7 @@ def test_abstract_loader_url_fallbacks(get_record, super_get_r_j, g_p_t_f_e):
         assert expect_actual == with_actual
 
         expect_super = JsonRef({'$ref': 'http://otherhost.net/api/e/1'},
-                            loader=AbstractRecordLoader())
+                               loader=AbstractRecordLoader())
         assert expect_super == with_super
 
     # Check against dev SERVER_NAME
@@ -94,7 +94,7 @@ def test_abstract_loader_url_fallbacks(get_record, super_get_r_j, g_p_t_f_e):
         assert expect_actual == with_actual
 
         expect_super = JsonRef({'$ref': 'http://inspirehep.net/api/e/1'},
-                            loader=AbstractRecordLoader())
+                               loader=AbstractRecordLoader())
         assert expect_super == with_super
 
     # Check against prod https SERVER_NAME
@@ -115,7 +115,7 @@ def test_abstract_loader_url_fallbacks(get_record, super_get_r_j, g_p_t_f_e):
         assert expect_actual == with_actual
 
         expect_super = JsonRef({'$ref': 'http://otherhost.net/api/e/1'},
-                            loader=AbstractRecordLoader())
+                               loader=AbstractRecordLoader())
         assert expect_super == with_super
 
 
@@ -152,13 +152,13 @@ def test_abstract_loader_return_none(get_record):
 
     with patch.dict(current_app.config, config):
         expect_none = JsonRef({'$ref': 'http://inspirehep.net'},
-                            loader=AbstractRecordLoader())
+                              loader=AbstractRecordLoader())
         assert expect_none == None  # noqa: E711
         expect_none = JsonRef({'$ref': 'http://inspirehep.net/'},
-                            loader=AbstractRecordLoader())
+                              loader=AbstractRecordLoader())
         assert expect_none == None  # noqa: E711
         expect_none = JsonRef({'$ref': 'http://inspirehep.net/bad'},
-                            loader=AbstractRecordLoader())
+                              loader=AbstractRecordLoader())
         assert expect_none == None  # noqa: E711
         assert get_record.call_count == 0
 
@@ -175,10 +175,10 @@ def test_specific_loaders_return_none(get_db_rec, get_es_rec, g_p_t_f_e):
 
     with patch.dict(current_app.config, config):
         expect_none = JsonRef({'$ref': 'http://inspirehep.net/api/e/1'},
-                            loader=DatabaseJsonLoader())
+                              loader=DatabaseJsonLoader())
         assert expect_none == None  # noqa: E711
         expect_none = JsonRef({'$ref': 'http://inspirehep.net/api/e/2'},
-                            loader=ESJsonLoader())
+                              loader=ESJsonLoader())
         assert expect_none == None  # noqa: E711
         assert get_db_rec.call_count == 1
         assert get_es_rec.call_count == 1

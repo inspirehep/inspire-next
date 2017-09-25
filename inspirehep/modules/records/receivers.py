@@ -274,10 +274,10 @@ def populate_abstract_source_suggest(sender, json, *args, **kwargs):
         source = abstract.get('source')
         if source:
             abstract.update({
-               'abstract_source_suggest': {
-                   'input': source,
-                   'output': source,
-               },
+                'abstract_source_suggest': {
+                    'input': source,
+                    'output': source,
+                },
             })
 
 

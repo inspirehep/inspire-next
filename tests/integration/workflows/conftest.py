@@ -52,9 +52,9 @@ def cleanup_workflows_tables(small_app):
     """
     with small_app.app_context():
         obj_types = (
-                WorkflowsAudit.query.all(),
-                WorkflowsPendingRecord.query.all(),
-                workflow_object_class.query(),
+            WorkflowsAudit.query.all(),
+            WorkflowsPendingRecord.query.all(),
+            workflow_object_class.query(),
         )
         for obj_type in obj_types:
             for obj in obj_type:
