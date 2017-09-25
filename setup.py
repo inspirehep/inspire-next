@@ -69,7 +69,7 @@ install_requires = [
     'invenio-userprofiles>=1.0.0a7',
     'invenio-oaiharvester>=1.0.0a3',
     'invenio>=3.0.0a1,<3.1.0',
-    'inspire-crawler~=0.0,>=0.2.7',
+    'inspire-crawler~=0.0,>=0.4.1',
     'inspire-dojson~=48.0,>=48.0.0',
     'inspire-query-parser~=0.0,>=0.2.0',
     'inspire-schemas~=48.0,>=48.0.2',
