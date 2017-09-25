@@ -30,7 +30,7 @@ class PlainTextWriter(PybtexBaseWriter):
     """Outputs bibliography in plain text"""
 
     def get_template_src(self):
-        return 'records/plaintext.txt'
+        return 'inspirehep_theme/records/plaintext.txt'
 
     def process_entry(self, texkey, entry):
         """

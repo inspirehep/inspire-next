@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 from pybtex.database.output import BaseWriter
 import re
-from inspirehep.utils.jinja2 import render_template_to_string_for_blueprint
+from inspirehep.utils.jinja2 import render_template_to_string
 from ...views import blueprint
 from ..fields_export import MAX_AUTHORS_BEFORE_ET_AL
 
@@ -71,7 +71,7 @@ class PybtexBaseWriter(BaseWriter):
             if field not in template:
                 template[field] = dict(entry.fields).get(field)
 
-        return render_template_to_string_for_blueprint(blueprint, self.get_template_src(), **template)
+        return render_template_to_string(self.get_template_src(), **template)
 
     def format_publication_list(self, pub_list):
         """

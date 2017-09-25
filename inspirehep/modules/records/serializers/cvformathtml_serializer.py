@@ -33,7 +33,7 @@ class HTMLWriter(PlainTextWriter):
     RECORDS_SEPARATOR = '<br /><br />'
 
     def get_template_src(self):
-        return 'records/html_cv.html'
+        return 'inspirehep_theme/records/html_cv.html'
 
 
 class CVHTMLSerializer(PybtexSerializerBase):

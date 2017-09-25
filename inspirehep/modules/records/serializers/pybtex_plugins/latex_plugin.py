@@ -44,7 +44,7 @@ class LatexWriter(PybtexBaseWriter):
         """
         :return: Source of the template file relative to records blueprint.
         """
-        return 'records/{}.tex'.format(self.style)
+        return 'inspirehep_theme/records/{}.tex'.format(self.style)
 
     def process_entry(self, texkey, entry):
         """
