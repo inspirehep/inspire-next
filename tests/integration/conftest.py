@@ -28,6 +28,9 @@ from invenio_db import db
 from invenio_search import current_search_client as es
 
 from inspirehep.factory import create_app
+from inspirehep.modules.fixtures.collections import init_collections
+from inspirehep.modules.fixtures.files import init_all_storage_paths
+from inspirehep.modules.fixtures.users import init_users_and_permissions
 
 
 @pytest.fixture(scope='session')
@@ -54,11 +57,9 @@ def app():
     )
 
     with app.app_context():
-        # Imports must be local, otherwise tasks default to pickle serializer.
+        # Celery task imports must be local, otherwise their
+        # configuration would use the default pickle serializer.
         from inspirehep.modules.migrator.tasks import add_citation_counts, migrate
-        from inspirehep.modules.fixtures.collections import init_collections
-        from inspirehep.modules.fixtures.files import init_all_storage_paths
-        from inspirehep.modules.fixtures.users import init_users_and_permissions
 
         db.drop_all()
         db.create_all()
@@ -91,11 +92,9 @@ def small_app():
     app.config.update({'DEBUG': True})
 
     with app.app_context():
-        # Imports must be local, otherwise tasks default to pickle serializer.
+        # Celery task imports must be local, otherwise their
+        # configuration would use the default pickle serializer.
         from inspirehep.modules.migrator.tasks import migrate
-        from inspirehep.modules.fixtures.collections import init_collections
-        from inspirehep.modules.fixtures.files import init_all_storage_paths
-        from inspirehep.modules.fixtures.users import init_users_and_permissions
 
         db.drop_all()
         db.create_all()
