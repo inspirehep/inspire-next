@@ -142,11 +142,13 @@ class InstitutionInlineForm(INSPIREForm):
             wrapped_widget=TextInput(),
             wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
         ),
-        validators=[LessThan('end_year', message='Start year should be earlier than End year'),
-        RegexpStopValidator(
-            "^(\d{4})?$",
-            message="{} is not a valid year. Please use <i>yyyy</i> format."
-        )],
+        validators=[
+            LessThan('end_year', message='Start year should be earlier than End year'),
+            RegexpStopValidator(
+                r'^(\d{4})?$',
+                message='{} is not a valid year. Please use <i>yyyy</i> format.',
+            ),
+        ],
         widget_classes="form-control"
     )
 
@@ -210,11 +212,13 @@ class ExperimentsInlineForm(INSPIREForm):
             wrapped_widget=TextInput(),
             wrapper='<div class="col-md-6">%(field)s</div>',
         ),
-        validators=[LessThan('end_year', message='Start year should be earlier than End year'),
-        RegexpStopValidator(
-            "^(\d{4})?$",
-            message="{} is not a valid year. Please use <i>yyyy</i> format."
-        )],
+        validators=[
+            LessThan('end_year', message='Start year should be earlier than End year'),
+            RegexpStopValidator(
+                r'^(\d{4})?$',
+                message='{} is not a valid year. Please use <i>yyyy</i> format.',
+            ),
+        ],
         widget_classes="form-control"
     )
 
@@ -224,11 +228,13 @@ class ExperimentsInlineForm(INSPIREForm):
         widget=WrappedInput(
             wrapped_widget=TextInput(),
             wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
-                ),
-        validators=[RegexpStopValidator(
-            "^(\d{4})?$",
-            message="{} is not a valid year. Please use <i>yyyy</i> format."
-        )],
+        ),
+        validators=[
+            RegexpStopValidator(
+                r'^(\d{4})?$',
+                message='{} is not a valid year. Please use <i>yyyy</i> format.',
+            ),
+        ],
         widget_classes="form-control"
     )
 
