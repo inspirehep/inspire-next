@@ -74,6 +74,7 @@ def deleted_record(app):
         '    <subfield code="a">deleted</subfield>'
         '  </datafield>'
         '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
         '    <subfield code="c">DELETED</subfield>'
         '  </datafield>'
         '</record>'
@@ -104,7 +105,8 @@ def not_yet_deleted_record(app):
         ],
         'self': {
             '$ref': 'http://localhost:5000/schemas/records/hep.json',
-        }
+        },
+        '_collections': ['Literature']
     }
 
     with db.session.begin_nested():
@@ -127,6 +129,9 @@ def merged_records(app):
         '  <datafield tag="981" ind1=" " ind2=" ">'
         '    <subfield code="a">222</subfield>'
         '  </datafield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
+        '  </datafield>'
         '</record>'
     )
 
@@ -140,6 +145,7 @@ def merged_records(app):
         '    <subfield code="d">111</subfield>'
         '  </datafield>'
         '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
         '    <subfield code="c">DELETED</subfield>'
         '  </datafield>'
         '</record>'
@@ -177,6 +183,7 @@ def not_yet_merged_records(app):
         'self': {
             '$ref': 'http://localhost:5000/api/literature/111',
         },
+        '_collections': ['Literature'],
     }
 
     deleted_record = {
@@ -191,6 +198,7 @@ def not_yet_merged_records(app):
         'self': {
             '$ref': 'http://localhost:5000/api/literature/222',
         },
+        '_collections': ['Literature'],
     }
 
     with db.session.begin_nested():
@@ -217,6 +225,7 @@ def records_to_be_merged(app):
         'self': {
             '$ref': 'http://localhost:5000/api/literature/111',
         },
+        '_collections': ['Literature'],
     }
 
     deleted_record = {
@@ -231,6 +240,7 @@ def records_to_be_merged(app):
         'self': {
             '$ref': 'http://localhost:5000/api/literature/222',
         },
+        '_collections': ['Literature'],
     }
 
     pointing_record = {
@@ -252,6 +262,7 @@ def records_to_be_merged(app):
         'self': {
             '$ref': 'http://localhost:5000/api/literature/333',
         },
+        '_collections': ['Literature'],
     }
 
     with db.session.begin_nested():
