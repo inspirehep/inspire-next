@@ -65,9 +65,26 @@ def test_search_logs(current_app_mock, api_client):
         query = {
             'query': {
                 'bool': {
-                    'filter': [{
-                        'match': {'_collections': 'Literature'}
-                    }],
+                    'filter': [
+                        {
+                            'bool': {
+                                'must_not': [
+                                    {
+                                        'match': {
+                                            '_collections': 'HERMES Internal Notes'
+                                        }
+                                    }
+                                ],
+                                'must': [
+                                    {
+                                        'match': {
+                                            '_collections': 'Literature'
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
                     'must': [{
                         'match_all': {}
                     }]
