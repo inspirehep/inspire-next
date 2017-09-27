@@ -23,6 +23,7 @@
 
 # Bleeding edge packages not yet released on Pypi
 -e git+https://github.com/CZ-NIC/python-rt.git@64cc54b1aa7514906be60f8bbd7e5ed18b56bba6#egg=rt
+-e git+https://github.com/jmartinm/invenio-files-rest.git@avoid-triggering-location-update#egg=invenio-files-rest
 
 # JSON editor
 -e git+https://github.com/inveniosoftware-contrib/invenio-record-editor.git#egg=invenio-record-editor
