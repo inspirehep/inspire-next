@@ -194,7 +194,9 @@ def test_inspire_search_filter_restricted_collection(app, app_client, user_info,
     # admin user
     (dict(email='admin@inspirehep.net'), 200),
     # Logged in user with permissions assigned
-    (dict(email='cataloger@inspirehep.net'), 200)
+    (dict(email='cataloger@inspirehep.net'), 200),
+    # Hermes cataloger only allowed in its collection
+    (dict(email='hermescataloger@inspirehep.net'), 403)
 ])
 def test_record_api_update(app, api_client, user_info, status):
     """Test that a record can be updated only from admin
@@ -205,6 +207,32 @@ def test_record_api_update(app, api_client, user_info, status):
     record = get_db_record('lit', 1497201)
 
     resp = api_client.put('/literature/1497201/db',
+                          data=json.dumps(record),
+                          content_type='application/json')
+    assert resp.status_code == status
+
+
+@pytest.mark.parametrize('user_info,status', [
+    # anonymous user
+    (None, 401),
+    # Logged in user without permissions assigned
+    (dict(email='johndoe@inspirehep.net'), 403),
+    # admin user
+    (dict(email='admin@inspirehep.net'), 200),
+    # Logged in user with permissions assigned
+    (dict(email='cataloger@inspirehep.net'), 200),
+    # Hermes cataloger only allowed in its collection
+    (dict(email='hermescataloger@inspirehep.net'), 200)
+])
+def test_record_api_update_restricted_record(app, api_client, user_info, status):
+    """Test that a restricted record can be updated only by
+       users with the right permission."""
+    if user_info:
+        login_user_via_session(api_client, email=user_info['email'])
+
+    record = get_db_record('lit', 1090628)
+
+    resp = api_client.put('/literature/1090628/db',
                           data=json.dumps(record),
                           content_type='application/json')
     assert resp.status_code == status

@@ -37,7 +37,7 @@ from refextract import (
     extract_references_from_url,
 )
 
-from .permissions import editor_manage_tickets_permission
+from .permissions import editor_permission
 from ...utils import tickets
 
 
@@ -48,8 +48,19 @@ blueprint = Blueprint(
 )
 
 
-@blueprint.route('/authorlist/text', methods=['POST'])
-def authorlist_text():
+@blueprint.route('/<endpoint>/<pid_value>/permission', methods=['GET'])
+@editor_permission
+def check_permission(endpoint, pid_value):
+    """Check if logged in user has permission to open the given record.
+
+    Used by record-editor on startup.
+    """
+    return jsonify(success=True)
+
+
+@blueprint.route('/<endpoint>/<pid_value>/authorlist/text', methods=['POST'])
+@editor_permission
+def authorlist_text(endpoint, pid_value):
     """Run authorlist on a piece of text."""
     try:
         parsed_authors = authorlist(request.json['text'])
@@ -58,8 +69,9 @@ def authorlist_text():
         return jsonify(status=500, message=u' / '.join(err.args)), 500
 
 
-@blueprint.route('/refextract/text', methods=['POST'])
-def refextract_text():
+@blueprint.route('/<endpoint>/<pid_value>/refextract/text', methods=['POST'])
+@editor_permission
+def refextract_text(endpoint, pid_value):
     """Run refextract on a piece of text."""
     extracted_references = extract_references_from_string(
         request.json['text'],
@@ -71,8 +83,9 @@ def refextract_text():
     return jsonify(references)
 
 
-@blueprint.route('/refextract/url', methods=['POST'])
-def refextract_url():
+@blueprint.route('/<endpoint>/<pid_value>/refextract/url', methods=['POST'])
+@editor_permission
+def refextract_url(endpoint, pid_value):
     """Run refextract on a URL."""
     extracted_references = extract_references_from_url(
         request.json['url'],
@@ -84,16 +97,16 @@ def refextract_url():
     return jsonify(references)
 
 
-@blueprint.route('/rt/tickets/create', methods=['POST'])
-@editor_manage_tickets_permission.require(http_exception=403)
-def create_rt_ticket():
+@blueprint.route('/<endpoint>/<int:pid_value>/rt/tickets/create', methods=['POST'])
+@editor_permission
+def create_rt_ticket(endpoint, pid_value):
     """View to create an rt ticket"""
     json = request.json
     ticket_id = tickets.create_ticket(json['queue'],
                                       current_user.email,
                                       json.get('description'),
                                       json.get('subject'),
-                                      int(json['recid']),
+                                      pid_value,
                                       Owner=json.get('owner'))
     if ticket_id != -1:
         return jsonify(
@@ -107,34 +120,34 @@ def create_rt_ticket():
         return jsonify(success=False), 500
 
 
-@blueprint.route('/rt/tickets/<ticket_id>/resolve', methods=['GET'])
-@editor_manage_tickets_permission.require(http_exception=403)
-def resolve_rt_ticket(ticket_id):
+@blueprint.route('/<endpoint>/<pid_value>/rt/tickets/<ticket_id>/resolve', methods=['GET'])
+@editor_permission
+def resolve_rt_ticket(endpoint, pid_value, ticket_id):
     """View to resolve an rt ticket"""
     tickets.resolve_ticket(ticket_id)
     return jsonify(success=True)
 
 
-@blueprint.route('/rt/tickets/<recid>', methods=['GET'])
-@editor_manage_tickets_permission.require(http_exception=403)
-def get_tickets_for_record(recid):
+@blueprint.route('/<endpoint>/<pid_value>/rt/tickets', methods=['GET'])
+@editor_permission
+def get_tickets_for_record(endpoint, pid_value):
     """View to get rt ticket belongs to given record"""
-    tickets_for_record = tickets.get_tickets_by_recid(recid)
+    tickets_for_record = tickets.get_tickets_by_recid(pid_value)
     simplified_tickets = map(_simplify_ticket_response, tickets_for_record)
     return jsonify(simplified_tickets)
 
 
-@blueprint.route('/rt/users', methods=['GET'])
-@editor_manage_tickets_permission.require(http_exception=403)
-def get_rt_users():
+@blueprint.route('/<endpoint>/<pid_value>/rt/users', methods=['GET'])
+@editor_permission
+def get_rt_users(endpoint, pid_value):
     """View to get all rt users"""
 
     return jsonify(tickets.get_users())
 
 
-@blueprint.route('/rt/queues', methods=['GET'])
-@editor_manage_tickets_permission.require(http_exception=403)
-def get_rt_queues():
+@blueprint.route('/<endpoint>/<pid_value>/rt/queues', methods=['GET'])
+@editor_permission
+def get_rt_queues(endpoint, pid_value):
     """View to get all rt queues"""
 
     return jsonify(tickets.get_queues())

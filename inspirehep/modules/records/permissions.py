@@ -38,6 +38,9 @@ from invenio_cache import current_cache
 action_view_restricted_collection = ParameterizedActionNeed(
     'view-restricted-collection', argument=None
 )
+action_update_collection = ParameterizedActionNeed(
+    'update-collection', argument=None
+)
 
 all_restricted_collections = LocalProxy(lambda: load_restricted_collections())
 
@@ -163,12 +166,23 @@ def has_read_permission(user, record):
 
 def has_update_permission(user, record):
     """Check if user has update access to the record."""
-    user_roles = [r.name for r in user.roles]
-    if 'cataloger' in user_roles:
+    def _cant_update(collection):
+        return not Permission(
+            ParameterizedActionNeed(
+                'update-collection',
+                collection)).can()
+
+    user_roles = [r.name for r in current_user.roles]
+    if 'superuser' in user_roles:
         return True
 
-    # Allow administrators
-    return has_admin_permission(user, record)
+    if '_collections' in record:
+        record_collections = set(record['_collections'])
+        if any(map(_cant_update, record_collections)):
+            return False
+        return True
+
+    return False
 
 
 def has_admin_permission(user, record):
