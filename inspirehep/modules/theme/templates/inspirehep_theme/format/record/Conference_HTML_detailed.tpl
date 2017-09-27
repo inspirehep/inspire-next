@@ -36,45 +36,50 @@
           <div class="record-detailed-information">
             <h1 class='record-detailed-title'>
               {{ record['titles'][0]['title'] }}
-              {% if record['acronym'] %}
-              ({{ record['acronym'][0] }})
+              {% if record['acronyms'] %}
+                ({{ record['acronyms'][0] }})
               {% endif %}
             </h1>
 
             <h2 class="record-detailed-subtitle">{{ record | conference_date }}</h2>
             {% if record['urls'] %}
-            <div class="detailed-record-field">
-              {% for url in record['urls'] %}
-              <a href="{{ url['value'] }}">{{ url['value'] }}</a>
-              <br>{% endfor %}</div>
-            <br>
+              <div class="detailed-record-field">
+                <label>Link to the conference website:</label> 
+                {% for url in record['urls'] %}
+                  <a href="{{ url['value'] }}">{{ url['value'] }}</a>
+                  <br>
+                {% endfor %}
+              </div>
             {% endif %}
 
             {% if record['contact_details'] %}
               {% if record['contact_details'][0]['name'] %}
-            <div class="detailed-record-field">
-              <label>Contact person:</label>
-              {{record['contact_details'][0]['name']}}
-              <br></div>
-            {% endif %}
-
+              <div class="detailed-record-field">
+               <label>Contact person:</label>
+                {{record['contact_details'][0]['name']}}
+                <br>
+              </div>
+              {% endif %}
               {% if record['contact_details'][0]['email'] %}
-            <div class="detailed-record-field">
-              <label>Contact email:</label>
-              <a href="mailto:{{ record['contact_details'][0]['email'] }}">{{ record['contact_details'][0]['email'] }}</a>
-              <br></div>
-            {% endif %}
+                <div class="detailed-record-field">
+                  <label>Contact email:</label>
+                  <a href="mailto:{{ record['contact_details'][0]['email'] }}">{{ record['contact_details'][0]['email'] }}</a>
+                  <br>
+                </div>
+              {% endif %}
             {% endif %}
             <hr>
+
             {% if record['series'] %}
             <div>
               Part of the
-              <a href="/search?q=&cc=conferences&series={{ record['series'][0] }}"> <strong>{{ record['series'][0] }}</strong>
+              <a href="/search?q=&cc=conferences&series={{ record['series'][0]['name'] }}"> <strong>{{ record['series'][0]['name'] }}</strong>
               </a>
               series
             </div>
             {% endif %}
           </div>
+
           {% if record.admin_tools %}
             <div class="col-md-12" id="admin-tools">
               {% for tool in record.admin_tools %}
@@ -89,7 +94,7 @@
         <div class="col-md-4 hidden-xs hidden-sm">
           <div class="detailed-map" id="conference-detailed-map"></div>
           <div class='map-address-label map-address-label-conference'> <i class="fa fa-map-marker"></i>
-            {{ record['address'][0]['original_address'] }}
+            {{ record['address'][0]['cities'][0] }}, {{ record['address'][0]['country_code'] }}
           </div>
         </div>
       </div>
@@ -115,12 +120,9 @@
                 {% endif %}
 
                 {% if record['short_description'] %}
-                  {% set comma = joiner() %}
                 <div class="detailed-record-field">
-                  <label>Short description:</label>
-                  {% for description in record['short_description'] -%}
-                      {{ comma() }} {{ description['value']}}
-                    {%- endfor %}
+                  <label class="no-margin-label">Short description:</label>
+                  {{ record['short_description']['value'] }}
                 </div>
                 {% endif %}
 
@@ -132,12 +134,12 @@
                 {% set comma = joiner('&nbsp') %}
                 <div class="detailed-record-field">
                   <label>Fields:</label>
-                  {% for field in record['inspire_categories'] -%}
+                  {% for field in record['inspire_categories'] %}
                       {{ comma() }}
                   <span class="chip chip-conferences">
-                    <a href="/search?q=&cc=conferences&q={{ field['tern'] }}">{{ field['term'] }}</a>
+                    <a href="/search?q=&cc=conferences&q={{ field['term'] }}">{{ field['term'] }}</a>
                   </span>
-                  {%- endfor %}
+                  {% endfor %}
                 </div>
                 {% endif %}
               </div>
