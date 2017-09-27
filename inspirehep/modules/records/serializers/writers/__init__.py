@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .base_plugin import PybtexBaseWriter  # noqa: F401
-from .latex_plugin import LatexWriter  # noqa: F401
-from .bibtex_plugin import BibtexWriter  # noqa: F401
-from .plain_text_plugin import PlainTextWriter  # noqa: F401
+from .base_writer import PybtexBaseWriter  # noqa: F401
+from .latex_writer import LatexWriter  # noqa: F401
+from .bibtex_writer import BibtexWriter  # noqa: F401
+from .plain_text_writer import PlainTextWriter  # noqa: F401

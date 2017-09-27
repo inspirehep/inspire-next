@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .pybtex_plugins import PlainTextWriter
+from .writers import PlainTextWriter
 from .pybtex_serializer_base import PybtexSerializerBase
 from .schemas.plain import PlainSchema
 
@@ -33,7 +33,7 @@ class HTMLWriter(PlainTextWriter):
     RECORDS_SEPARATOR = '<br /><br />'
 
     def get_template_src(self):
-        return 'inspirehep_theme/records/html_cv.html'
+        return 'records/html_cv.html'
 
 
 class CVHTMLSerializer(PybtexSerializerBase):

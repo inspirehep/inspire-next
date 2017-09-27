@@ -40,17 +40,19 @@ test_record = {
          "inspire_roles": ["editor"]},
         {"full_name": "Nitti, Francesco",
          "inspire_roles": ["author"]},
-        {"full_name": "Pimenta, Leandro Silva"}
+        {"full_name": "Pimenta, Leandro Silva"},
     ],
     "document_type": ["thesis"],
     "thesis_info": {
         "degree_type": "master",
-        "date": ("1996", "09", None)
+        "date": "1996-09",
     },
-    "publication_info": {
-        "year": 2018,
-        "journal": "Rhys.Rev."
-    }
+    "publication_info": [
+        {
+            "journal_title": "Rhys.Rev.",
+            "year": 2018,
+        },
+    ],
 }
 
 
@@ -98,21 +100,21 @@ def test_get_volume():
 
 
 def test_get_slac_citation_arxiv_old_style():
-    test_data = {"arxiv_eprints": {"value": "astro-ph/0309136"}}
+    test_data = {"arxiv_eprints": [{"value": "astro-ph/0309136"}]}
     expected = "%%CITATION = ASTRO-PH/0309136;%%"
     result = get_slac_citation(test_data, 'article')
     assert expected == result
 
 
 def test_get_slac_citation_arxiv_new_style():
-    test_data = {"arxiv_eprints": {"value": "1501.00001"}}
+    test_data = {"arxiv_eprints": [{"value": "1501.00001"}]}
     expected = "%%CITATION = ARXIV:1501.00001;%%"
     result = get_slac_citation(test_data, 'article')
     assert expected == result
 
 
 def test_get_slac_citation_only_report():
-    test_data = {"reportNumber": ["CERN-SOME-REPORT", "CERN-SOME-OTHER-REPORT"]}
+    test_data = {"report_numbers": [{"value": "CERN-SOME-REPORT"}, {"value": "CERN-SOME-OTHER-REPORT"}]}
     expected = "%%CITATION = CERN-SOME-REPORT;%%"
     result = get_slac_citation(test_data, 'article')
     assert expected == result
@@ -126,7 +128,7 @@ def test_get_slac_citation_none():
 
 
 def test_get_report_number():
-    test_data = {"reportNumber": ["CERN-SOME-REPORT", "CERN-SOME-OTHER-REPORT"]}
+    test_data = {"report_numbers": [{"value": "CERN-SOME-REPORT"}, {"value": "CERN-SOME-OTHER-REPORT"}]}
     expected = "CERN-SOME-REPORT, CERN-SOME-OTHER-REPORT"
     result = get_report_number(test_data, 'article')
     assert expected == result

@@ -201,7 +201,6 @@ setup(
             'inspire_search = inspirehep.modules.search:InspireSearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'invenio_collections = invenio_collections:InvenioCollections',
-            'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
         ],
         'invenio_base.apps': [
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',

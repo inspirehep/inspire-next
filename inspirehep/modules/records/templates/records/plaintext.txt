@@ -16,18 +16,20 @@ By {{ author or editor or corporate_author }}
 {% endif %}
 {% if publication_info_list %}
     {%- for publication in publication_info_list %}
-        {%- if 'journal' in publication %}
-            {{- publication.journal }}
+        {%- if 'journal_title' in publication %}
+            {{- publication.journal_title }}
 
-            {%- if 'volume' in publication %} {{ publication.volume }}{% endif %}
+            {%- if 'journal_volume' in publication %} {{ publication.journal_volume }}{% endif %}
 
-            {%- if 'number' in publication %} no. {{ publication.number }},{% endif %}
+            {%- if 'journal_issue' in publication %} no. {{ publication.journal_issue }},{% endif %}
 
             {%- if 'year' in publication %} ({{ publication.year }}){% endif %}
 
             {%- if 'page_start' in publication and 'page_end' in publication %}
                 {{- ' ' + publication.page_start }}-{{ publication.page_end -}}
-            {% endif %}
+            {%- elif 'artid' in publication %}
+                {{ publication.artid -}}
+            {%- endif %}
 
             {{- '.' if loop.last else ', ' -}}
         {% endif %}

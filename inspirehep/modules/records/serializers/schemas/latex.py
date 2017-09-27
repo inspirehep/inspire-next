@@ -24,20 +24,16 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .pybtex import PybtexSchema, PublicationInfoSchema
-from marshmallow import post_load
-from marshmallow.fields import Int, List, Nested
+from .base import PybtexSchema
+from inspire_utils.record import get_value
 
 
 class LatexSchema(PybtexSchema):
-    """Schema for Bibtex references."""
-    citation_count = Int()
-    publication_info_list = List(Nested(PublicationInfoSchema), load_from='publication_info')
-
-    @post_load
-    def make_bibtex(self, data):
-        texkey, entry = super(LatexSchema, self).make_bibtex(data)
-        entry.fields['citation_count'] = data.get('citation_count')
-        entry.fields['publication_info_list'] = data.get('publication_info_list')
-        entry.fields['primaryClasses'] = ','.join(data.get('arxiv_eprints', {}).get('categories', []))
-        return texkey, entry
+    """Schema for Latex references."""
+    def load(self, json):
+        texkey, entry = super(LatexSchema, self).load(json)
+        entry.fields['citation_count'] = get_value(json, 'citation_count', [])
+        entry.fields['publication_info_list'] = get_value(json, 'publication_info', [])
+        categories = get_value(json, 'arxiv_eprints[0].categories')
+        entry.fields['primaryClasses'] = ','.join(categories) if categories else None
+        return (texkey, entry)

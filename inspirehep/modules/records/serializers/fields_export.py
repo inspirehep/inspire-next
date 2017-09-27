@@ -26,23 +26,13 @@ from __future__ import absolute_import, division, print_function
 from .extractor import make_extractor
 from idutils import is_arxiv_post_2007
 from inspire_utils.record import get_value
+import re
 
 
 MAX_AUTHORS_BEFORE_ET_AL = 10  # According to CSE stylebook
 
-DOCUMENT_TYPE_MAP = {
-    'article': 'article',
-    'book': 'book',
-    'book chapter': 'inbook',
-    'conference paper': 'inproceedings',
-    'proceedings': 'proceedings',
-    'report': 'techreport',
-    'note': 'article',
-    # theses handled separately due to masters/phd distinction
-}
-
 # Fields shared among all bibtex entries:
-COMMON_FIELDS_FOR_ENTRIES = ['SLACcitation', 'archivePrefix', 'doi', 'eprint', 'month', 'note', 'primaryClass',
+COMMON_FIELDS_FOR_ENTRIES = ['key', 'SLACcitation', 'archivePrefix', 'doi', 'eprint', 'month', 'note', 'primaryClass',
                              'title', 'url', 'year']
 
 # Fields for a given bibtex entry. Since we're trying to match as many as possible
@@ -66,11 +56,23 @@ FIELDS_FOR_ENTRY_TYPE = {
 
 def bibtex_document_type(doc_type, obj):
     """
-    Returns a bibtex document type for an entry.
-    :param doc_type: INSPIRE document type.
-    :param obj: Object preloaded by schema.
-    :return: Bibtex document type.
+    Returns a bibtex document type for an INSPIRE entry.
+    Args:
+        doc_type: INSPIRE document type.
+        obj: Object preloaded by schema.
+    Returns:
+        Bibtex document type.
     """
+    DOCUMENT_TYPE_MAP = {
+        'article': 'article',
+        'book': 'book',
+        'book chapter': 'inbook',
+        'conference paper': 'inproceedings',
+        'proceedings': 'proceedings',
+        'report': 'techreport',
+        'note': 'article',
+        # theses handled separately due to masters/phd distinction
+    }
     if doc_type in DOCUMENT_TYPE_MAP:
         return DOCUMENT_TYPE_MAP[doc_type]
     # Theses need special treatment, because bibtex differentiates between their types:
@@ -84,7 +86,9 @@ def bibtex_document_type(doc_type, obj):
 
 
 def bibtex_type_and_fields(data):
-    """Returns a bibtex document type and fields for an entry."""
+    """
+    Returns a bibtex document type and fields for an INSPIRE entry.
+    """
     bibtex_doc_types = [bibtex_document_type(doc_type, data) for doc_type in data['document_type']] + ['misc']
     # Preference towards article, as it's more prestigious to have sth published:
     chosen_type = 'article' if 'article' in bibtex_doc_types else bibtex_doc_types[0]
@@ -94,11 +98,26 @@ def bibtex_type_and_fields(data):
 def get_authors_with_role(authors, role):
     """
     Extract names of people from an authors field given their roles.
-    :param authors: Authors field of the record.
-    :param role: String specifying the role 'author', 'editor', etc.
-    :return: List of names of people.
+    Args:
+        authors: authors field of the record.
+        role: string specifying the role 'author', 'editor', etc.
+    Returns:
+        list of names of people
     """
     return [author['full_name'] for author in authors if role in author.get('inspire_roles', ['author'])]
+
+
+def parse_partial_date(date_string):
+    """
+    Deserializes partial or full dates in ISO-8601, e.g. '2017', '2017-09', '2017-09-12'.
+    Args:
+        date_string: string representing a date in a partial ISO-8601 format
+    Returns:
+        a tuple (year, month, day), with year, month, day being either text or None
+    """
+    regex = re.compile(r"^(\d{4})?(?:-(\d{2}))?(?:-(\d{2}))?.*$")
+    match = re.search(regex, date_string)
+    return match.groups()
 
 
 # Functions below describe where the non-obvious data is located:
@@ -120,48 +139,52 @@ def get_author(data, doc_type):
 
 @extractor('journal')
 def get_journal(data, doc_type):
-    return get_value(data, 'publication_info.journal')
+    return get_value(data, 'publication_info[0].journal_title')
 
 
 @extractor('volume')
 def get_volume(data, doc_type):
-    if 'publication_info' in data:
-        return data['publication_info'].get('volume')
-    return get_value(data, 'book_series.volume')
+    publication_volume = get_value(data, 'publication_info[0].journal_volume')
+    bookseries_volume = get_value(data, 'book_series[0].volume')
+    return publication_volume or bookseries_volume
 
 
 @extractor('year')
 def get_year(data, doc_type):
-    publication_year = get_value(data, 'publication_info.year')
-    thesis_year = get_value(data, 'thesis_info.date[0]')
-    imprint_year = get_value(data, 'imprints.date[0]')
+    publication_year = unicode(get_value(data, 'publication_info[0].year'))
+    thesis_date = get_value(data, 'thesis_info.date')
+    imprint_date = get_value(data, 'imprints[0].date')
 
     if doc_type.endswith('thesis'):
-        return thesis_year or publication_year or imprint_year
-    return publication_year or thesis_year or imprint_year
+        date_choice = thesis_date or publication_year or imprint_date
+    else:
+        date_choice = publication_year or thesis_date or imprint_date
+
+    if date_choice:
+        return parse_partial_date(date_choice)[0]
 
 
 @extractor('number')
 def get_number(data, doc_type):
-    return get_value(data, 'publication_info.number')
+    return get_value(data, 'publication_info[0].journal_issue')
 
 
 @extractor('pages')
 def get_pages(data, doc_type):
-    page_start = get_value(data, 'publication_info.page_start')
-    page_end = get_value(data, 'publication_info.page_end')
+    page_start = get_value(data, 'publication_info[0].page_start')
+    page_end = get_value(data, 'publication_info[0].page_end')
     return "{}--{}".format(page_start, page_end) if page_start and page_end \
-        else get_value(data, 'publication_info.artid')
+        else get_value(data, 'publication_info[0].artid')
 
 
 @extractor('primaryClass')
 def get_primary_class(data, doc_type):
-    return get_value(data, 'arxiv_eprints.categories[0]')
+    return get_value(data, 'arxiv_eprints[0].categories[0]')
 
 
 @extractor('eprint')
 def get_eprint(data, doc_type):
-    return get_value(data, 'arxiv_eprints.value')
+    return get_value(data, 'arxiv_eprints[0].value')
 
 
 @extractor('archivePrefix')
@@ -172,55 +195,56 @@ def get_arxiv_prefix(data, doc_type):
 
 @extractor('SLACcitation')
 def get_slac_citation(data, doc_type):
-    eprint = get_value(data, 'arxiv_eprints.value')
+    def format_field(citation):
+        return "%%CITATION = {};%%".format(citation).upper()
 
-    def format_field(reference):
-        return "%%CITATION = {};%%".format(reference).upper()
+    doi = get_value(data, 'dois[0].value')
+    eprint = get_value(data, 'arxiv_eprints[0].value')
+    report_number = get_value(data, 'report_numbers[0].value')
 
-    if 'doi' in data:
-        return format_field('doi:' + data['doi'])
+    if doi:
+        return format_field('DOI:' + doi)
     elif eprint:
-        slac_prefix = 'ARXIV:' if is_arxiv_post_2007(eprint) else ''
-        return format_field(slac_prefix + eprint)
-    elif 'reportNumber' in data:
-        return format_field(data['reportNumber'][0])
+        return format_field('ARXIV:' + eprint if is_arxiv_post_2007(eprint) else eprint)
+    elif report_number:
+        return format_field(report_number)
 
 
 @extractor('school')
 def get_school(data, doc_type):
-    schools = get_value(data, 'thesis_info.institutions')
+    schools = [school['name'] for school in get_value(data, 'thesis_info.institutions')]
     if schools:
         return ', '.join(schools)
 
 
 @extractor('address')
 def get_address(data, doc_type):
-    pubinfo_address = get_value(data, 'publication_info.conference.address')
-    imprint_address = get_value(data, 'imprints.place')
+    pubinfo_address = get_value(data, 'publication_info[0].conference_record.address[0].postal_address[0]')
+    imprint_address = get_value(data, 'imprints[0].place')
     return pubinfo_address or imprint_address
 
 
 @extractor('booktitle')
 def get_booktitle(data, doc_type):
-    return get_value(data, 'publication_info.conference.title') \
-        or get_value(data, 'book_series.title')
+    return get_value(data, 'publication_info[0].conference_record.titles[0].title') \
+        or get_value(data, 'book_series[0].title')
 
 
 @extractor('publisher')
 def get_publisher(data, doc_type):
-    return get_value(data, 'imprints.publisher')
+    return get_value(data, 'imprints[0].publisher')
 
 
 @extractor('reportNumber')
 def get_report_number(data, doc_type):
-    if 'reportNumber' in data:
-        return ', '.join(data['reportNumber'])
+    if 'report_numbers' in data:
+        return ', '.join(report['value'] for report in data.get('report_numbers', []))
 
 
 @extractor('isbn')
 def get_isbn(data, doc_type):
-    if 'isbn' in data:
-        return ', '.join(data['isbn'])
+    if 'isbns' in data:
+        return ', '.join(isbn['value'] for isbn in data['isbns'])
 
 
 @extractor('type')
@@ -232,3 +256,28 @@ def get_type(data, doc_type):
 @extractor('edition')
 def get_edition(data, doc_type):
     return get_value(data, 'editions[0]')
+
+
+@extractor('doi')
+def get_doi(data, doc_type):
+    return get_value(data, 'dois[0].value')
+
+
+@extractor('title')
+def get_title(data, doc_type):
+    return get_value(data, 'titles[0].title')
+
+
+@extractor('url')
+def get_url(data, doc_type):
+    return get_value(data, 'urls[0].value')
+
+
+@extractor('key')
+def get_key(data, doc_type):
+    return get_value(data, 'self_recid')
+
+
+@extractor('collaboration')
+def get_collaboration(data, doc_type):
+    return get_value(data, 'collaborations[0].value')

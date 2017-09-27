@@ -42,13 +42,15 @@ class LatexWriter(PybtexBaseWriter):
 
     def get_template_src(self):
         """
-        :return: Source of the template file relative to records blueprint.
+        Returns:
+            Source of the template file relative to records blueprint.
         """
-        return 'inspirehep_theme/records/{}.tex'.format(self.style)
+        return 'records/{}.tex'.format(self.style)
 
     def process_entry(self, texkey, entry):
         """
-        Preprocess values for display in the template.
+        See Also:
+            BaseWriter.process_entry
         """
         fields = dict(entry.fields)
         template = super(LatexWriter, self).process_entry(texkey, entry)
@@ -65,34 +67,37 @@ class LatexWriter(PybtexBaseWriter):
 
     def format_publication_list(self, pub_list):
         """
-        Formats publication list: every element is transformed to latex friendly,
-        and non-journal entries are discarded (if any).
+        See Also:
+            BaseWriter.format_publication_list
         """
         just_journals = []
         for i, pub in enumerate(pub_list):
-            if 'journal' in pub:
-                pub['journal'] = pub['journal'].replace('.', r'.\ ')
+            if 'journal_title' in pub:
+                pub['journal_title'] = pub['journal_title'].replace('.', r'.\ ')
                 just_journals.append(pub)
         return just_journals
 
     def format_name(self, person):
         """
-        Person is transformed into a LaTeX-friendly string like "E.~W.~Dijkstra or J.~von Neumann"
+        Note:
+            Person is transformed into a LaTeX-friendly string like "E.~W.~Dijkstra or J.~von Neumann"
+
+        See Also:
+            BaseWriter.format_name
         """
         return super(LatexWriter, self).format_name(person).replace('. ', '.~')
 
     def format_persons(self, persons):
         """
-        Generates a string out of a list of people.
-        :param persons: list of objects type Person.
+        See Also:
+            BaseWriter.format_persons
         """
         return super(LatexWriter, self).format_persons(persons, "{\it et al.}")
 
     def write_preamble(self, bib_data):
         """
-        Defines the preamble, i.e. what to preceed the entries with.
-        :param bib_data: BibliographyData.
-        :return: String with the preamble.
+        See Also:
+            BaseWriter.write_preamble
         """
         if len(bib_data.entries) > 1:
             return r"\begin{thebibliography}{" + str(len(bib_data.entries)) + "}\n\n"
@@ -100,9 +105,8 @@ class LatexWriter(PybtexBaseWriter):
 
     def write_postamble(self, bib_data):
         """
-        Defines the postable, i.e. what to follow the entries with.
-        :param bib_data: BibliographyData.
-        :return: String with the postamble.
+        See Also:
+            BaseWriter.write_postamble
         """
         if len(bib_data.entries) > 1:
             return "\n\n\\end{thebibliography}"
@@ -111,9 +115,8 @@ class LatexWriter(PybtexBaseWriter):
 
     def to_string(self, bib_data):
         """
-        Dump the bibiography to string.
-        :param bib_data: BibliographyData.
-        :return: String with bibtex formatted bibliography.
+        See Also:
+            BaseWriter.to_string
         """
         bib_string = self.write_preamble(bib_data)
         bib_string += '\n\n'.join(self.render_entry(texkey, entry) for texkey, entry in bib_data.entries.items())

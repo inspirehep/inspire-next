@@ -24,9 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .pybtex_plugins import BibtexWriter
+from .writers import BibtexWriter
 from .pybtex_serializer_base import PybtexSerializerBase
-from .schemas.bibtex import BibtexSchema
+from .schemas.base import PybtexSchema
 
 
 class BIBTEXSerializer(PybtexSerializerBase):
@@ -36,7 +36,7 @@ class BIBTEXSerializer(PybtexSerializerBase):
         return BibtexWriter()
 
     def get_schema(self):
-        return BibtexSchema()
+        return PybtexSchema()
 
     def create_bibliography(self, record_list):
         bibtex_string = super(BIBTEXSerializer, self).create_bibliography(record_list)

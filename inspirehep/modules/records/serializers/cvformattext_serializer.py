@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .pybtex_plugins import PlainTextWriter
+from .writers import PlainTextWriter
 from .pybtex_serializer_base import PybtexSerializerBase
 from .schemas.plain import PlainSchema
 

@@ -18,13 +18,13 @@
 
 {%- if publication_info_list %}
 {%- for publication in publication_info_list %}
-{%- if 'journal' in publication %}
+{%- if 'journal_title' in publication %}
   {{- '[' if not loop.first else '  \\\\{}' }}
-  {{- publication.journal }}
+  {{- publication.journal_title }}
 
-  {%- if 'volume' in publication %} {{ '{' }}\bf {{ publication.volume }}{{ '}' }},{% endif %}
+  {%- if 'journal_volume' in publication %} {{ '{' }}\bf {{ publication.journal_volume }}{{ '}' }},{% endif %}
 
-  {%- if 'number' in publication %} no. {{ publication.number }},{% endif %}
+  {%- if 'journal_issue' in publication %} no. {{ publication.journal_issue }},{% endif %}
 
   {%- if 'page_start' in publication %} {{ publication.page_start }}{% endif %}
 

@@ -20,17 +20,27 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Marshmallow JSON schema for a literature entry."""
-
 from __future__ import absolute_import, division, print_function
 
-from .pybtex import PybtexSchema, ImprintsSchema, ValueListSchema
-
-from marshmallow.fields import List, Nested
-from .helper_fields import First
+from . import PybtexBaseWriter
+from inspirehep import config
 
 
-class BibtexSchema(PybtexSchema):
-    """Schema for Bibtex references."""
-    imprints = First(Nested(ImprintsSchema))
-    isbn = List(Nested(ValueListSchema), load_from='isbns')
+class PlainTextWriter(PybtexBaseWriter):
+    """Outputs bibliography in plain text"""
+
+    def get_template_src(self):
+        return 'records/plaintext.txt'
+
+    def process_entry(self, texkey, entry):
+        """
+        Preprocess values for display in the template.
+        """
+        fields = dict(entry.fields)
+        template = super(PlainTextWriter, self).process_entry(texkey, entry)
+        new_template = {
+            'url': 'http://' + config.SERVER_NAME + '/record/' + fields['key'],
+            'primaryClasses': fields.get('primaryClasses')
+        }
+        template.update(new_template)
+        return template

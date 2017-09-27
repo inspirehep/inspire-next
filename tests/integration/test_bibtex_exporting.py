@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 from inspirehep.utils.record_getter import get_es_record
 
-from inspirehep.modules.records.serializers.schemas.bibtex import BibtexSchema
+from inspirehep.modules.records.serializers.schemas.base import PybtexSchema
 from pybtex.database import Entry, Person
 
 
@@ -60,10 +60,9 @@ def test_format_article(app):
         'author': [Person(u"Glashow, S.L.")],
     }))
 
-    schema = BibtexSchema()
-    result, errors = schema.load(article)
+    schema = PybtexSchema()
+    result = schema.load(article)
 
-    assert not errors
     assert result is not None
     assert pybtex_entries_equal(result, expected)
 
@@ -85,10 +84,9 @@ def test_format_inproceeding(app):
         'author': [Person(u"Hu, Wayne")],
     }))
 
-    schema = BibtexSchema()
-    result, errors = schema.load(inproceedings)
+    schema = PybtexSchema()
+    result = schema.load(inproceedings)
 
-    assert not errors
     assert result is not None
     assert pybtex_entries_equal(result, expected)
 
@@ -113,10 +111,9 @@ def test_format_proceeding(app):
         'author': [],
     }))
 
-    schema = BibtexSchema()
-    result, errors = schema.load(proceedings)
+    schema = PybtexSchema()
+    result = schema.load(proceedings)
 
-    assert not errors
     assert result is not None
     assert pybtex_entries_equal(result, expected)
 
@@ -128,17 +125,15 @@ def test_format_phdthesis(app):
         ('school', u"Udine U."),
         ('title', u"MAGIC $\\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes"),
         ('year', u"2010"),
-        # ('SLACcitation', u"%%CITATION = INSPIRE-1395663;%%"),
         ('url', u"https://magicold.mpp.mpg.de/publications/theses/NMankuzhiyil.pdf"),
     ], persons={
         'editor': [],
         'author': [Person(u"Mankuzhiyil, Nijil")],
     }))
 
-    schema = BibtexSchema()
-    result, errors = schema.load(phdthesis)
+    schema = PybtexSchema()
+    result = schema.load(phdthesis)
 
-    assert not errors
     assert result is not None
     assert pybtex_entries_equal(result, expected)
 
@@ -151,16 +146,14 @@ def test_format_book(app):
         ('title', u"Differential geometry and Lie groups for physicists"),
         ('year', u"2011"),
         ('isbn', u"9780521187961, 9780521845076, 9780511242960"),
-        # ('SLACcitation', u"%%CITATION = INSPIRE-736770;%%"),
     ], persons={
         'editor': [],
         'author': [Person(u"Fecko, M.")],
     }))
 
-    schema = BibtexSchema()
-    result, errors = schema.load(book)
+    schema = PybtexSchema()
+    result = schema.load(book)
 
-    assert not errors
     assert result is not None
     assert pybtex_entries_equal(result, expected)
 
@@ -182,9 +175,8 @@ def test_format_inbook(app):
         'author': [Person(u"Bechtle, Philip"), Person(u"Plehn, Tilman"), Person(u"Sander, Christian")],
     }))
 
-    schema = BibtexSchema()
-    result, errors = schema.load(inbook)
+    schema = PybtexSchema()
+    result = schema.load(inbook)
 
-    assert not errors
     assert result is not None
     assert pybtex_entries_equal(result, expected)

@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .pybtex_plugins import LatexWriter
+from .writers import LatexWriter
 from .pybtex_serializer_base import PybtexSerializerBase
 from .schemas.latex import LatexSchema
 
