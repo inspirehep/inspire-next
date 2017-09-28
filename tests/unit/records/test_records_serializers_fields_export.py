@@ -33,6 +33,7 @@ from inspirehep.modules.records.serializers.fields_export import (
     get_slac_citation,
     get_report_number,
     get_type,
+    get_country_name_by_code,
 )
 
 
@@ -144,3 +145,20 @@ def test_get_type(test_record):
     expected = 'Bachelor thesis'
     result = get_type(test_data, 'mastersthesis')
     assert expected == result
+
+
+def test_get_country_name_by_code_existing():
+    assert 'Germany' == get_country_name_by_code('DE', 'DE')
+
+
+def test_get_country_name_by_code_historic():
+    assert 'Socialist Federal Republic of Yugoslavia' == get_country_name_by_code('YU', 'YU')
+
+
+def test_get_country_name_by_code_overlapping():
+    # Code pointing to both existing and historic country, pick existing:
+    assert 'Slovakia' == get_country_name_by_code('SK', 'SK')
+
+
+def test_get_country_name_by_code_default():
+    assert 'YY' == get_country_name_by_code('XX', 'YY')

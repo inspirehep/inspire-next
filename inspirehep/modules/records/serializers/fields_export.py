@@ -27,6 +27,7 @@ from .extractor import make_extractor
 from idutils import is_arxiv_post_2007
 from inspire_utils.record import get_value
 import re
+import pycountry
 
 
 MAX_AUTHORS_BEFORE_ET_AL = 10  # According to CSE stylebook
@@ -124,6 +125,30 @@ def parse_partial_date(date_string):
     regex = re.compile(r"^(\d{4})?(?:-(\d{2}))?(?:-(\d{2}))?.*$")
     match = re.search(regex, date_string)
     return match.groups()
+
+
+def get_country_name_by_code(code, default=None):
+    """
+    Args:
+        code (str): country code in INSPIRE 2 letter format based on ISO 3166-1 alpha-2
+        default: value to be returned if no country of a given code exists
+
+    Returns:
+        Common, or if ambiguous, unique name of a country
+
+    Note:
+        Countries in pycountry (with only official names, esp. historic_countries) will sometimes
+        be represented in a format like: 'Korea, Republic of'. Thus we reverse the order of segments around
+        the comma to make sound it natural: 'Republic of Korea'.
+
+        In particular, we cannot pick the first segment only due to ambiguities like
+        South/North Korea or East/West Congo
+    """
+    country_name_for_code = {country.alpha_2: ' '.join(reversed(country.name.split(', '))) \
+                             # Order below matters, 'last wins' in dictionary comprehension
+                             # (https://docs.python.org/3/reference/expressions.html#dictionary-displays)
+                             for country in list(pycountry.historic_countries) + list(pycountry.countries)}
+    return country_name_for_code.get(code, default)
 
 
 # Functions below describe where the non-obvious data is located:
@@ -225,9 +250,12 @@ def get_school(data, doc_type):
 
 @extractor('address')
 def get_address(data, doc_type):
-    pubinfo_address = get_value(data, 'publication_info[0].conference_record.address[0].postal_address[0]')
-    imprint_address = get_value(data, 'imprints[0].place')
-    return pubinfo_address or imprint_address
+    pubinfo_city = get_value(data, 'publication_info[0].conference_record.address[0].cities[0]')
+    pubinfo_country_code = get_value(data, 'publication_info[0].conference_record.address[0].country_code')
+
+    if pubinfo_city and pubinfo_country_code:
+        return pubinfo_city + ', ' + get_country_name_by_code(pubinfo_country_code, default=pubinfo_country_code)
+    return get_value(data, 'imprints[0].place')
 
 
 @extractor('booktitle')
