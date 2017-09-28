@@ -218,7 +218,7 @@ def test_conference_info_autocomplete_title(login):
     create_literature.go_to()
     assert create_literature.write_conference(
         'autrans',
-        'IN2P3 School of Statistics, 2012-05-28, Autrans, France',
+        'IN2P3 School of Statistics, 2012-05-28, Autrans, FR',
     ).has_error()
 
 
