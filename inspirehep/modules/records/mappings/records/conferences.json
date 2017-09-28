@@ -32,7 +32,8 @@
                 "address": {
                     "properties": {
                         "cities": {
-                            "type": "string"
+                            "type": "string",
+                            "copy_to": "conferenceautocomplete"
                         },
                         "country_code": {
                             "type": "string"
