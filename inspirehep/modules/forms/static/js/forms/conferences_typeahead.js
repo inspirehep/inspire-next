@@ -29,12 +29,12 @@ define([
       suggestionTemplate: Hogan.compile(
         '<b>{{ title }}</b><br>' +
         '<small>' +
-        '{{ opening_date }}, {{ place }}<br>' +
+        '{{ opening_date }}, {{ city }}, {{ country }}<br>' +
         '{{ cnum }}' +
         '</small>'
       ),
       selectedValueTemplate: Hogan.compile(
-        '{{ title }}, {{ opening_date }}, {{ place }}'
+        '{{ title }}, {{ opening_date }}, {{ city }}, {{ country }}'
       ),
       cannotFindMessage: 'Cannot find this conference in our database.',
       extractRawValue: function(data) {
@@ -50,7 +50,8 @@ define([
           url: '/api/conferences?q=conferenceautocomplete:%QUERY*',
           filter: function(response) {
             return $.map(response.hits.hits, function(el) {
-              el.metadata.place = el.metadata.address[0].postal_address;
+              el.metadata.city = el.metadata.address[0].cities[0];
+              el.metadata.country = el.metadata.address[0].country_code;
               el.metadata.title = el.metadata.titles[0].title;
               return el.metadata
             }).sort(function(x, y) {
