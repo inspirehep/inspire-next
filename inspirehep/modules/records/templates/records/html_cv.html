@@ -26,7 +26,7 @@ By {{ author or editor or corporate_author }}
             {%- if 'page_start' in publication and 'page_end' in publication %}
                 {{- ' ' + publication.page_start }}-{{ publication.page_end -}}
             {%- elif 'artid' in publication %}
-                {{- publication.artid -}}
+                {{- ' ' + publication.artid -}}
             {% endif %}
 
             {{- '.' if loop.last else ', ' -}}

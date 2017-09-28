@@ -23,20 +23,20 @@
 from __future__ import absolute_import, division, print_function
 
 import datetime
-from inspirehep import config
+from flask import current_app
 from . import PybtexBaseWriter
 
 
 class LatexWriter(PybtexBaseWriter):
     """Outputs Latex"""
 
-    ACCEPTED_FORMATS = ['latex_us', 'latex_eu', 'latex_cv']
+    ACCEPTED_FORMATS = ['latex_us', 'latex_eu']
 
     TEMPLATE_FIELDS = PybtexBaseWriter.TEMPLATE_FIELDS + ['citation_count']
 
     def __init__(self, style):
         if style not in LatexWriter.ACCEPTED_FORMATS:
-            raise NotImplementedError('Only latex_us, latex_eu and latex_cv output formats are supported')
+            raise NotImplementedError('Only latex_us, latex_eu output formats are supported')
         else:
             self.style = style
 
@@ -58,7 +58,7 @@ class LatexWriter(PybtexBaseWriter):
             'texkey': texkey,
             'doi': fields.get('doi', '').replace('_', r'\_'),
             'today': datetime.datetime.now().strftime("%-d %b %Y"),
-            'url': 'http://' + config.SERVER_NAME + '/record/' + fields['key'],
+            'url': 'http://' + current_app.config['SERVER_NAME'] + '/record/' + fields['key'],
             'citation_count': fields.get('citation_count') or 0,
             'primaryClasses': fields.get('primaryClasses')
         }

@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 from .base import PybtexSchema
 from inspire_utils.record import get_value
+from inspirehep.utils.record import get_arxiv_categories
 
 
 class LatexSchema(PybtexSchema):
@@ -34,6 +35,6 @@ class LatexSchema(PybtexSchema):
         texkey, entry = super(LatexSchema, self).load(json)
         entry.fields['citation_count'] = get_value(json, 'citation_count', [])
         entry.fields['publication_info_list'] = get_value(json, 'publication_info', [])
-        categories = get_value(json, 'arxiv_eprints[0].categories')
+        categories = get_arxiv_categories(json)
         entry.fields['primaryClasses'] = ','.join(categories) if categories else None
         return (texkey, entry)

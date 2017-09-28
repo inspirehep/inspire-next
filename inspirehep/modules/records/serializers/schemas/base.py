@@ -39,7 +39,7 @@ class PybtexSchema(object):
         Returns:
             Pybtex Entity representing the record
         """
-        json = replace_refs(json, 'db')
+        json = replace_refs(json, 'es')
         doc_type, fields = bibtex_type_and_fields(json)
         texkey = unicode(get_value(json, 'texkeys[0]'))
 

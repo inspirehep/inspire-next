@@ -76,9 +76,9 @@ def bibtex_document_type(doc_type, obj):
     if doc_type in DOCUMENT_TYPE_MAP:
         return DOCUMENT_TYPE_MAP[doc_type]
     # Theses need special treatment, because bibtex differentiates between their types:
-    elif doc_type == 'thesis' and obj['thesis_info']['degree_type'] == 'phd':
+    elif doc_type == 'thesis' and obj['thesis_info']['degree_type'] in ('phd', 'habilitation'):
         return 'phdthesis'
-    # Other types of theses (other, diploma, bachelor, laurea, habilitation) don't have separate types in bibtex:
+    # Other types of theses (other, bachelor, laurea) don't have separate types in bibtex:
     # We will use the type field (see `get_type`) to indicate the type of diploma.
     elif doc_type == 'thesis':
         return 'mastersthesis'
@@ -87,8 +87,13 @@ def bibtex_document_type(doc_type, obj):
 
 def bibtex_type_and_fields(data):
     """
-    Returns a bibtex document type and fields for an INSPIRE entry.
+    Args:
+        inspire record
+
+    Returns:
+         tuple: bibtex document type and fields
     """
+    # TODO: Establish a method with which we choose the bibtex type if there is more that one inspire doc type
     bibtex_doc_types = [bibtex_document_type(doc_type, data) for doc_type in data['document_type']] + ['misc']
     # Preference towards article, as it's more prestigious to have sth published:
     chosen_type = 'article' if 'article' in bibtex_doc_types else bibtex_doc_types[0]
@@ -101,6 +106,7 @@ def get_authors_with_role(authors, role):
     Args:
         authors: authors field of the record.
         role: string specifying the role 'author', 'editor', etc.
+
     Returns:
         list of names of people
     """
@@ -249,7 +255,7 @@ def get_isbn(data, doc_type):
 
 @extractor('type')
 def get_type(data, doc_type):
-    if doc_type == 'mastersthesis' and data['thesis_info']['degree_type'] != 'master':
+    if doc_type == 'mastersthesis' and data['thesis_info']['degree_type'] not in ('master', 'diploma'):
         return "{} thesis".format(data['thesis_info']['degree_type'].title())
 
 

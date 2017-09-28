@@ -21,6 +21,7 @@
 # or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, division, print_function
+import pytest
 
 from inspirehep.modules.records.serializers.fields_export import (
     get_authors_with_role,
@@ -34,107 +35,110 @@ from inspirehep.modules.records.serializers.fields_export import (
     get_type,
 )
 
-test_record = {
-    "author": [
-        {"full_name": "Kiritsis, Elias",
-         "inspire_roles": ["editor"]},
-        {"full_name": "Nitti, Francesco",
-         "inspire_roles": ["author"]},
-        {"full_name": "Pimenta, Leandro Silva"},
-    ],
-    "document_type": ["thesis"],
-    "thesis_info": {
-        "degree_type": "master",
-        "date": "1996-09",
-    },
-    "publication_info": [
-        {
-            "journal_title": "Rhys.Rev.",
-            "year": 2018,
+
+@pytest.fixture
+def test_record():
+    return {
+        "author": [
+            {"full_name": "Kiritsis, Elias",
+             "inspire_roles": ["editor"]},
+            {"full_name": "Nitti, Francesco",
+             "inspire_roles": ["author"]},
+            {"full_name": "Pimenta, Leandro Silva"},
+        ],
+        "document_type": ["thesis"],
+        "thesis_info": {
+            "degree_type": "master",
+            "date": "1996-09",
         },
-    ],
-}
+        "publication_info": [
+            {
+                "journal_title": "Rhys.Rev.",
+                "year": 2018,
+            },
+        ],
+    }
 
 
-def test_get_author_by_role():
+def test_get_author_by_role(test_record):
     expected = ["Nitti, Francesco", "Pimenta, Leandro Silva"]
     result = get_authors_with_role(test_record['author'], 'author')
     assert expected == result
 
 
-def test_get_editor_by_role():
+def test_get_editor_by_role(test_record):
     expected = ["Kiritsis, Elias"]
     result = get_authors_with_role(test_record.get('author'), 'editor')
     assert expected == result
 
 
-def test_bibtex_document_type():
+def test_bibtex_document_type(test_record):
     expected = "mastersthesis"
     result = bibtex_document_type("thesis", test_record)
     assert expected == result
 
 
-def test_bibtex_document_type_prefers_article():
+def test_bibtex_document_type_prefers_article(test_record):
     input = {"thesis_info": {"degree_type": "master"}, "document_type": ["thesis", "article"]}
     expected = "article"
     result, fields = bibtex_type_and_fields(input)
     assert expected == result
 
 
-def test_get_year_from_thesis_when_pubinfo_present():
+def test_get_year_from_thesis_when_pubinfo_present(test_record):
     expected = "1996"
     result = get_year(test_record, 'thesis')
     assert expected == result
 
 
-def test_get_journal():
+def test_get_journal(test_record):
     expected = "Rhys.Rev."
     result = get_journal(test_record, 'article')
     assert expected == result
 
 
-def test_get_volume():
+def test_get_volume(test_record):
     expected = None
     result = get_volume(test_record, 'article')
     assert expected == result
 
 
-def test_get_slac_citation_arxiv_old_style():
+def test_get_slac_citation_arxiv_old_style(test_record):
     test_data = {"arxiv_eprints": [{"value": "astro-ph/0309136"}]}
     expected = "%%CITATION = ASTRO-PH/0309136;%%"
     result = get_slac_citation(test_data, 'article')
     assert expected == result
 
 
-def test_get_slac_citation_arxiv_new_style():
+def test_get_slac_citation_arxiv_new_style(test_record):
     test_data = {"arxiv_eprints": [{"value": "1501.00001"}]}
     expected = "%%CITATION = ARXIV:1501.00001;%%"
     result = get_slac_citation(test_data, 'article')
     assert expected == result
 
 
-def test_get_slac_citation_only_report():
+def test_get_slac_citation_only_report(test_record):
     test_data = {"report_numbers": [{"value": "CERN-SOME-REPORT"}, {"value": "CERN-SOME-OTHER-REPORT"}]}
     expected = "%%CITATION = CERN-SOME-REPORT;%%"
     result = get_slac_citation(test_data, 'article')
     assert expected == result
 
 
-def test_get_slac_citation_none():
+def test_get_slac_citation_none(test_record):
     test_data = {"key": 123456}
     expected = None
     result = get_slac_citation(test_data, 'article')
     assert expected == result
 
 
-def test_get_report_number():
+def test_get_report_number(test_record):
     test_data = {"report_numbers": [{"value": "CERN-SOME-REPORT"}, {"value": "CERN-SOME-OTHER-REPORT"}]}
     expected = "CERN-SOME-REPORT, CERN-SOME-OTHER-REPORT"
     result = get_report_number(test_data, 'article')
     assert expected == result
 
 
-def test_get_type():
+def test_get_type(test_record):
     test_data = dict(test_record)
     test_data['thesis_info']['degree_type'] = 'bachelor'
     expected = 'Bachelor thesis'

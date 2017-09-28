@@ -26,6 +26,7 @@ from inspirehep import config
 from inspirehep.utils.record_getter import get_es_record
 import pytest
 from inspirehep.modules.records.serializers.cvformathtml_serializer import CVHTMLSerializer
+from lxml.html import fromstring, tostring
 
 
 @pytest.fixture
@@ -44,7 +45,7 @@ def test_format_cv_latex_html(request_context):
 
     result = CVHTMLSerializer().create_bibliography([article])
 
-    assert expected == result
+    assert tostring(fromstring(expected)) == tostring(fromstring(result))
 
 
 def test_format_cv_latex_html_collab(request_context):
@@ -56,7 +57,7 @@ def test_format_cv_latex_html_collab(request_context):
 
     result = CVHTMLSerializer().create_bibliography([article])
 
-    assert expected == result
+    assert tostring(fromstring(expected)) == tostring(fromstring(result))
 
 
 def test_format_cv_html_thesis(request_context):
@@ -68,4 +69,4 @@ def test_format_cv_html_thesis(request_context):
 
     result = CVHTMLSerializer().create_bibliography([article])
 
-    assert expected == result
+    assert tostring(fromstring(expected)) == tostring(fromstring(result))

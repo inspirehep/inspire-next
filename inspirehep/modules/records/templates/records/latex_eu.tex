@@ -23,7 +23,8 @@
 
   {%- if 'journal_issue' in publication %} {{ publication.journal_issue }},{% endif %}
 
-  {%- if 'page_start' in publication %} {{ publication.page_start }}{% endif %}
+  {%- if 'page_start' in publication and 'page_end' in publication %} {{ publication.page_start }}--{{ publication.page_end -}}
+  {% elif 'artid' in publication %} {{ publication.artid }}{% endif %}
 
   {%- if not loop.first %}]{% endif %}.
 {% endif %}

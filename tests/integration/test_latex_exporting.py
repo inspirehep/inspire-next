@@ -45,7 +45,7 @@ def test_format_latex_eu(request_context):
 \\bibitem{Glashow:1961tr}
   S.~L.~Glashow,
   %``Partial Symmetries of Weak Interactions,''
-  Nucl.\ Phys.\  {\\bf 22} (1961) 579.
+  Nucl.\ Phys.\  {\\bf 22} (1961) 579--588.
   doi:10.1016/0029-5582(61)90469-2
   %%CITATION = DOI:10.1016/0029-5582(61)90469-2;%%
   %0 citations counted in INSPIRE as of ''' + today
@@ -63,7 +63,7 @@ def test_format_latex_us(request_context):
 \\bibitem{Glashow:1961tr}
   S.~L.~Glashow,
   %``Partial Symmetries of Weak Interactions,''
-  Nucl.\ Phys.\  {\\bf 22}, 579 (1961).
+  Nucl.\ Phys.\  {\\bf 22}, 579--588 (1961).
   doi:10.1016/0029-5582(61)90469-2
   %%CITATION = DOI:10.1016/0029-5582(61)90469-2;%%
   %0 citations counted in INSPIRE as of ''' + today

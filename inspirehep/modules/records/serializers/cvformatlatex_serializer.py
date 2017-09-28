@@ -24,24 +24,13 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .writers import LatexWriter
-from .pybtex_serializer_base import PybtexSerializerBase
 from .schemas.latex import LatexSchema
-
-
-class LatexCVWriter(LatexWriter):
-    def __init__(self):
-        self.style = 'latex_cv'
-
-    def write_postamble(self, bib_data):
-        return ""
-
-    def write_preamble(self, bib_data):
-        return ""
+from .pybtex_serializer_base import PybtexSerializerBase
+from .writers.latex_cv import LatexCVWriter
 
 
 class CVLatexSerializer(PybtexSerializerBase):
-    """Latex (EU) serializer for records."""
+    """Latex (CV) serializer for records."""
 
     def get_writer(self):
         return LatexCVWriter()

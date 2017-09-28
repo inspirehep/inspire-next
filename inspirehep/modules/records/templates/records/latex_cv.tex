@@ -26,7 +26,8 @@
 
   {%- if 'journal_issue' in publication %} no. {{ publication.journal_issue }},{% endif %}
 
-  {%- if 'page_start' in publication %} {{ publication.page_start }}{% endif %}
+  {%- if 'page_start' in publication and 'page_end' in publication %} {{ publication.page_start }}--{{ publication.page_end -}}
+  {% elif 'artid' in publication %} {{ publication.artid }}{% endif %}
 
   {%- if 'year' in publication %} ({{ publication.year }}){% endif %}
 
@@ -35,5 +36,5 @@
 {%- endif %}
 {% endfor %}
 {% endif %}
- %\href{{ '{' }}{{ url }}{{ '}' }}{HEP entry}.
- %{{ citation_count }} citation{{ 's' if citation_count != 1 else '' }} counted in INSPIRE as of {{ today }}
+ \inspireurl{{ '{' }}{{ url }}{{ '}' }}
+ \citations{{ '{' }}{{ citation_count }} citation{{ 's' if citation_count != 1 else '' }} counted in INSPIRE as of {{ today }}{{ '}' }}

@@ -23,7 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from . import PybtexBaseWriter
-from inspirehep import config
+from flask import current_app
 
 
 class PlainTextWriter(PybtexBaseWriter):
@@ -39,7 +39,7 @@ class PlainTextWriter(PybtexBaseWriter):
         fields = dict(entry.fields)
         template = super(PlainTextWriter, self).process_entry(texkey, entry)
         new_template = {
-            'url': 'http://' + config.SERVER_NAME + '/record/' + fields['key'],
+            'url': 'http://' + current_app.config['SERVER_NAME'] + '/record/' + fields['key'],
             'primaryClasses': fields.get('primaryClasses')
         }
         template.update(new_template)

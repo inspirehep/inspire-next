@@ -28,6 +28,7 @@ from inspirehep import config
 import pytest
 
 from inspirehep.modules.records.serializers.cvformatlatex_serializer import CVLatexSerializer
+from inspirehep.modules.records.serializers.writers.latex_cv import LatexCVWriter
 from inspirehep.utils.record_getter import get_es_record
 
 
@@ -35,6 +36,10 @@ from inspirehep.utils.record_getter import get_es_record
 def request_context(app):
     with app.test_request_context() as context:
         yield context
+
+
+def make_document(entry):
+    return LatexCVWriter.PREAMBLE + entry + LatexCVWriter.POSTAMBLE
 
 
 def test_format_cv_latex(request_context):
@@ -46,13 +51,13 @@ def test_format_cv_latex(request_context):
 {\bf ``Partial Symmetries of Weak Interactions''}
   \\{}S.~L.~Glashow.
   \\{}10.1016/0029-5582(61)90469-2
-  \\{}Nucl.\ Phys.\  {\bf 22}, 579 (1961).
- %\href{http://''' + config.SERVER_NAME + u'''/record/4328}{HEP entry}.
- %0 citations counted in INSPIRE as of ''' + today
+  \\{}Nucl.\ Phys.\  {\bf 22}, 579--588 (1961).
+ \inspireurl{http://''' + config.SERVER_NAME + u'''/record/4328}
+ \citations{0 citations counted in INSPIRE as of ''' + today + '}'
 
     result = CVLatexSerializer().create_bibliography([article])
 
-    assert expected == result
+    assert make_document(expected) == result
 
 
 def test_format_cv_latex_collab(request_context):
@@ -64,12 +69,12 @@ def test_format_cv_latex_collab(request_context):
 {\bf ``Measurement of the CKM angle $\gamma$ from a combination of LHCb results''}
   \\{}R.~Aaij {\it et al.} [LHCb Collaboration].
   \\{}[arXiv:1611.03076 [hep-ex]].
- %\href{http://''' + config.SERVER_NAME + u'''/record/1496635}{HEP entry}.
- %1 citation counted in INSPIRE as of ''' + today
+ \inspireurl{http://''' + config.SERVER_NAME + u'''/record/1496635}
+ \citations{1 citation counted in INSPIRE as of ''' + today + '}'
 
     result = CVLatexSerializer().create_bibliography([article])
 
-    assert expected == result
+    assert make_document(expected) == result
 
 
 def test_format_cv_latex_thesis(request_context):
@@ -80,9 +85,9 @@ def test_format_cv_latex_thesis(request_context):
 \item%{Mankuzhiyil:2010jpa}
 {\bf ``MAGIC $\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes''}
   \\{}N.~Mankuzhiyil.
- %\href{http://''' + config.SERVER_NAME + u'''/record/1395663}{HEP entry}.
- %0 citations counted in INSPIRE as of ''' + today
+ \inspireurl{http://''' + config.SERVER_NAME + u'''/record/1395663}
+ \citations{0 citations counted in INSPIRE as of ''' + today + '}'
 
     result = CVLatexSerializer().create_bibliography([article])
 
-    assert expected == result
+    assert make_document(expected) == result
