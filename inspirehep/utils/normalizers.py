@@ -22,9 +22,11 @@
 
 from __future__ import absolute_import, division, print_function
 
-from flask import current_app
+import logging
 
 from inspirehep.modules.search.api import JournalsSearch
+
+LOGGER = logging.getLogger(__name__)
 
 
 def normalize_journal_title(journal_title):
@@ -38,7 +40,5 @@ def normalize_journal_title(journal_title):
         try:
             normalized_journal_title = hits[0].short_title
         except (AttributeError, IndexError):
-            current_app.logger.debug(
-                "Failed to normalize journal title in: %s", repr(hits[0])
-            )
+            LOGGER.debug("Failed to normalize journal title in: %s", repr(hits[0]))
     return normalized_journal_title
