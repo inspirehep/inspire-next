@@ -33,7 +33,7 @@ def get_response(crossref_doi):
     response = requests.get(
         urljoin(
             current_app.config['CROSSREF_API_URL'],
-            '{term}'.format(term=crossref_doi.strip()),
+            '{term}'.format(term=crossref_doi),
         ),
     )
     return response

@@ -32,4 +32,5 @@ CROSSREF_RESPONSE_CODES = {
     'notfound': 404,
     'malformed': 422,
     'multiplefound': 300,
+    'badrequest': 400,
 }

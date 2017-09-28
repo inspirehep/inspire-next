@@ -35,19 +35,18 @@ from requests import RequestException
 
 from wtforms.validators import StopValidation
 
+from idutils import doi_regexp
+
 
 class DOISyntaxValidator(object):
 
     """DOI syntax validator."""
-
-    pattern = "(^$|(doi:)?10\.\d+(.\d+)*/.*)"
 
     def __init__(self, message=None):
         """Constructor.
 
         :param message: message to override the default one.
         """
-        self.regexp = re.compile(self.pattern, re.I)
         self.message = message if message else (
             "The provided DOI is invalid - it should look similar to "
             "'10.1234/foo.bar'.")
@@ -59,7 +58,7 @@ class DOISyntaxValidator(object):
         :param form: validated form.
         """
         doi = field.data
-        if doi and not self.regexp.match(doi):
+        if doi and not doi_regexp.match(doi):
             # no point to further validate DOI which is invalid
             raise StopValidation(self.message)
 

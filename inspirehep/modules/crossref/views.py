@@ -28,6 +28,8 @@ from __future__ import absolute_import, division, print_function
 from flask import Blueprint, current_app, jsonify, request
 from flask_login import login_required
 
+from idutils import normalize_doi
+
 from .core import get_json
 
 
@@ -41,9 +43,16 @@ blueprint = Blueprint(
 @blueprint.route('/search', methods=['GET'])
 @login_required
 def search(doi=None):
-    doi = doi or request.args.get('doi')
-
-    result = get_json(doi)
+    provided_doi = doi or request.args.get('doi')
+    try:
+        normalized_doi = normalize_doi(provided_doi)
+        result = get_json(normalized_doi)
+    except AttributeError:
+        result = {
+            'query': {},
+            'source': 'inspire',
+            'status': 'badrequest',
+        }
 
     resp = jsonify(result)
     resp.status_code = current_app.config['CROSSREF_RESPONSE_CODES'].get(result['status'], 200)
