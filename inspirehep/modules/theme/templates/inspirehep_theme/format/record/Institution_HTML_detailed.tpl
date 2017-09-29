@@ -169,7 +169,7 @@
 
 
 {% block additional_javascript %}
-<script type="text/javascript" src="//maps.googleapis.com/maps/api/js"></script>
+<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=AIzaSyA0JQa0S94TdFfXHsj7JKXjVN9mu0FighU"></script>
 <script>
     google.maps.event.addDomListener(window, 'load', init);
 
