@@ -120,6 +120,10 @@ def init_permissions():
         role=cataloger)
     )
     db.session.add(ActionRoles(
+        action='editor-use-api',
+        role=cataloger)
+    )
+    db.session.add(ActionRoles(
         action='update-collection',
         argument='HERMES Internal Notes',
         role=hermes_curator)
