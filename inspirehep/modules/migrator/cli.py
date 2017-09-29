@@ -25,9 +25,13 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import re
+import csv
 
 import click
 import requests
+
+from flask_cli import with_appcontext
 
 from .tasks import (
     add_citation_counts,
@@ -36,6 +40,10 @@ from .tasks import (
     migrate_chunk,
     split_blob,
 )
+from .models import InspireProdRecords
+
+
+RE_ERROR_STRING = re.compile(".*: Record \d+: (?P<error>.*)", re.U)
 
 
 @click.group()
@@ -46,9 +54,9 @@ def migrator():
 @migrator.command()
 @click.option('--file-input', '-f',
               help='Specific collections to migrate.')
-@click.option('--remigrate-broken', '-b', type=bool,
+@click.option('--remigrate-broken', '-b', is_flag=True,
               default=False, help='Try to remigrate broken records')
-@click.option('--remigrate-all', '-a', type=bool,
+@click.option('--remigrate-all', '-a', is_flag=True,
               default=False, help='Remigrate all records')
 @click.option('--wait', '-w', type=bool, default=False,
               help='Wait for migrator to complete.')
@@ -89,3 +97,23 @@ def count_citations():
     """Adds field citation_count to every record in 'HEP' and calculates its proper value."""
     click.echo("Adding citation_count to all records")
     add_citation_counts()
+
+
+@migrator.command()
+@click.option('--output', '-o', default="/tmp/broken-records.csv",
+              help='Specifiy where to report errors.')
+@with_appcontext
+def report_errors(output):
+    """Reports in a friendly way all failed records and corresponding motivation."""
+    click.echo("Reporting broken records into {0}".format(output))
+    with open(output, "w") as out:
+        csv_writer = csv.writer(out)
+        results = InspireProdRecords.query.filter(InspireProdRecords.valid == False) # noqa: ignore=F712
+        results_length = results.count()
+        with click.progressbar(results.yield_per(100), length=results_length) as bar:
+            for obj in bar:
+                if 'DELETED' not in obj.marcxml:
+                    brief_error = obj.errors.splitlines()[0]
+                    g = RE_ERROR_STRING.match(brief_error)
+                    if g:
+                        csv_writer.writerow((g.group('error'), obj.recid))
