@@ -29,14 +29,19 @@ import sys
 
 from invenio_base.app import create_app_factory
 from invenio_base.wsgi import create_wsgi_factory
-from invenio_config import create_conf_loader
+from invenio_config import create_config_loader
 
 from . import config
 
 
 env_prefix = 'APP'
 
-config_loader = create_conf_loader(config=config, env_prefix=env_prefix)
+config_loader = create_config_loader(config=config, env_prefix=env_prefix)
+
+
+def api_config_loader(app, **kwargs_config):
+    return config_loader(app, RESTFUL_API=True, **kwargs_config)
+
 
 instance_path = os.getenv(env_prefix + '_INSTANCE_PATH') or \
     os.path.join(sys.prefix, 'var', 'inspirehep-instance')
@@ -56,7 +61,7 @@ set ``<sys.prefix>/var/<app_name>-instance/static``.
 
 create_api = create_app_factory(
     'inspirehep',
-    config_loader=config_loader,
+    config_loader=api_config_loader,
     blueprint_entry_points=['invenio_base.api_blueprints'],
     extension_entry_points=['invenio_base.api_apps'],
     converter_entry_points=['invenio_base.api_converters'],

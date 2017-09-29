@@ -192,24 +192,31 @@ def data():
 # Error handlers
 #
 
+def error_render_response(config_template_name, error):
+    if current_app.config.get('RESTFUL_API', False):
+        return jsonify(message=error.name, code=error.code), error.code
+
+    return render_template(current_app.config[config_template_name]), error.code
+
+
 def unauthorized(e):
     """Error handler to show a 401.html page in case of a 401 error."""
-    return render_template(current_app.config['THEME_401_TEMPLATE']), 401
+    return error_render_response('THEME_401_TEMPLATE', e)
 
 
 def insufficient_permissions(e):
     """Error handler to show a 403.html page in case of a 403 error."""
-    return render_template(current_app.config['THEME_403_TEMPLATE']), 403
+    return error_render_response('THEME_403_TEMPLATE', e)
 
 
 def page_not_found(e):
     """Error handler to show a 404.html page in case of a 404 error."""
-    return render_template(current_app.config['THEME_404_TEMPLATE']), 404
+    return error_render_response('THEME_404_TEMPLATE', e)
 
 
 def internal_error(e):
     """Error handler to show a 500.html page in case of a 500 error."""
-    return render_template(current_app.config['THEME_500_TEMPLATE']), 500
+    return error_render_response('THEME_500_TEMPLATE', e)
 
 
 #
