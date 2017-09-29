@@ -50,6 +50,10 @@ class HEPApproval(object):
             user_action=value,
         )
 
+        if not upload_pdf:
+            if 'fulltext.pdf' in obj.files:
+                del obj.files['fulltext.pdf']
+
         approved = value in ('accept', 'accept_core')
 
         obj.extra_data["approved"] = approved
@@ -58,7 +62,6 @@ class HEPApproval(object):
         obj.extra_data["user_action"] = value
         obj.extra_data["core"] = value == "accept_core"
         obj.extra_data["reason"] = reason
-        obj.extra_data["pdf_upload"] = upload_pdf
         obj.status = ObjectStatus.WAITING
         obj.save()
 
