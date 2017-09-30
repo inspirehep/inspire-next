@@ -26,8 +26,8 @@ from __future__ import absolute_import, division, print_function
 
 from invenio_records_rest.serializers.json import JSONSerializer
 
+from inspire_utils.date import format_date
 from inspirehep.modules.records.wrappers import LiteratureRecord
-from inspirehep.modules.theme.jinja2filters import format_date
 
 
 def process_es_hit(record):

@@ -31,12 +31,12 @@ from collections import Iterable
 from datetime import datetime
 from operator import itemgetter
 
-import babel
 import six
 from flask import current_app, url_for
 from jinja2.filters import do_join, evalcontextfilter
 from werkzeug.urls import url_decode
 
+from inspire_utils.date import format_date as _format_date
 from inspire_utils.dedupers import dedupe_list
 from inspirehep.modules.records.wrappers import LiteratureRecord
 from inspirehep.modules.search import InstitutionsSearch, LiteratureSearch
@@ -44,13 +44,6 @@ from inspirehep.utils.jinja2 import render_template_to_string
 from inspirehep.utils.template import render_macro_from_template
 
 from .views import blueprint
-
-
-DATE_FORMATS_MAP = {
-    '%Y-%m-%d': 'MMM d, YYYY',
-    '%Y-%m': 'MMM, YYYY',
-    '%Y': 'YYYY',
-}
 
 
 def apply_template_on_array(array, template_path, **common_context):
@@ -561,12 +554,7 @@ def format_date(date):
     if date is None:
         return
 
-    for pattern, format_ in six.iteritems(DATE_FORMATS_MAP):
-        try:
-            parsed_date = datetime.strptime(date, pattern)
-            return babel.dates.format_date(parsed_date, format=format_)
-        except ValueError:
-            pass
+    return _format_date(date)
 
 
 @blueprint.app_template_filter()

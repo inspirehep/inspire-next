@@ -31,10 +31,10 @@ from inspirehep.modules.records.receivers import (
     add_book_autocomplete,
     assign_phonetic_block,
     assign_uuid,
-    earliest_date,
     generate_name_variations,
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
+    populate_earliest_date,
     populate_inspire_document_type,
     populate_recid_from_ref,
     populate_title_suggest,
@@ -338,7 +338,7 @@ def test_assign_uuid_does_not_touch_existing_uuids(mock_uuid4):
     assert expected == result
 
 
-def test_earliest_date_from_preprint_date():
+def test_populate_earliest_date_from_preprint_date():
     schema = load_schema('hep')
     schema_schema = schema['properties']['$schema']
     preprint_date_schema = schema['properties']['preprint_date']
@@ -350,7 +350,7 @@ def test_earliest_date_from_preprint_date():
     assert validate(record['$schema'], schema_schema) is None
     assert validate(record['preprint_date'], preprint_date_schema) is None
 
-    earliest_date(None, record)
+    populate_earliest_date(None, record)
 
     expected = '2014-05-29'
     result = record['earliest_date']
@@ -358,7 +358,7 @@ def test_earliest_date_from_preprint_date():
     assert expected == result
 
 
-def test_earliest_date_from_thesis_info_date():
+def test_populate_earliest_date_from_thesis_info_date():
     schema = load_schema('hep')
     schema_schema = schema['properties']['$schema']
     thesis_info_schema = schema['properties']['thesis_info']
@@ -372,7 +372,7 @@ def test_earliest_date_from_thesis_info_date():
     assert validate(record['$schema'], schema_schema) is None
     assert validate(record['thesis_info'], thesis_info_schema) is None
 
-    earliest_date(None, record)
+    populate_earliest_date(None, record)
 
     expected = '2008'
     result = record['earliest_date']
@@ -380,7 +380,7 @@ def test_earliest_date_from_thesis_info_date():
     assert expected == result
 
 
-def test_earliest_date_from_thesis_info_defense_date():
+def test_populate_earliest_date_from_thesis_info_defense_date():
     schema = load_schema('hep')
     schema_schema = schema['properties']['$schema']
     thesis_info_schema = schema['properties']['thesis_info']
@@ -394,7 +394,7 @@ def test_earliest_date_from_thesis_info_defense_date():
     assert validate(record['$schema'], schema_schema) is None
     assert validate(record['thesis_info'], thesis_info_schema) is None
 
-    earliest_date(None, record)
+    populate_earliest_date(None, record)
 
     expected = '2012-06-01'
     result = record['earliest_date']
@@ -402,7 +402,7 @@ def test_earliest_date_from_thesis_info_defense_date():
     assert expected == result
 
 
-def test_earliest_date_from_publication_info_year():
+def test_populate_earliest_date_from_publication_info_year():
     schema = load_schema('hep')
     schema_schema = schema['properties']['$schema']
     publication_info_schema = schema['properties']['publication_info']
@@ -416,7 +416,7 @@ def test_earliest_date_from_publication_info_year():
     assert validate(record['$schema'], schema_schema) is None
     assert validate(record['publication_info'], publication_info_schema) is None
 
-    earliest_date(None, record)
+    populate_earliest_date(None, record)
 
     expected = '2014'
     result = record['earliest_date']
@@ -424,7 +424,7 @@ def test_earliest_date_from_publication_info_year():
     assert expected == result
 
 
-def test_earliest_date_from_legacy_creation_date():
+def test_populate_earliest_date_from_legacy_creation_date():
     schema = load_schema('hep')
     schema_schema = schema['properties']['$schema']
     legacy_creation_date_schema = schema['properties']['legacy_creation_date']
@@ -436,7 +436,7 @@ def test_earliest_date_from_legacy_creation_date():
     assert validate(record['$schema'], schema_schema) is None
     assert validate(record['legacy_creation_date'], legacy_creation_date_schema) is None
 
-    earliest_date(None, record)
+    populate_earliest_date(None, record)
 
     expected = '2015-11-04'
     result = record['earliest_date']
@@ -444,7 +444,7 @@ def test_earliest_date_from_legacy_creation_date():
     assert expected == result
 
 
-def test_earliest_date_from_imprints_date():
+def test_populate_earliest_date_from_imprints_date():
     schema = load_schema('hep')
     schema_schema = schema['properties']['$schema']
     imprints_schema = schema['properties']['imprints']
@@ -458,7 +458,7 @@ def test_earliest_date_from_imprints_date():
     assert validate(record['$schema'], schema_schema) is None
     assert validate(record['imprints'], imprints_schema) is None
 
-    earliest_date(None, record)
+    populate_earliest_date(None, record)
 
     expected = '2014-09-26'
     result = record['earliest_date']
@@ -466,10 +466,10 @@ def test_earliest_date_from_imprints_date():
     assert expected == result
 
 
-def test_earliest_date_does_nothing_if_record_is_not_literature():
+def test_populate_earliest_date_does_nothing_if_record_is_not_literature():
     record = {'$schema': 'http://localhost:5000/schemas/records/hep.json'}
 
-    earliest_date(None, record)
+    populate_earliest_date(None, record)
 
     assert 'earliest_date' not in record
 
