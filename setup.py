@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIRE overlay repository for Invenio."""
+"""INSPIRE is the leading information platform for HEP literature."""
 
 from __future__ import absolute_import, division, print_function
 
