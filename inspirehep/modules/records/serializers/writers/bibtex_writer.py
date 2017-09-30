@@ -20,10 +20,17 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Data model package."""
-
 from __future__ import absolute_import, division, print_function
 
-from .receivers import *  # noqa: F401,F403
+from pybtex.database.output.bibtex import Writer
 
-from .ext import INSPIRERecords  # noqa: F401
+MAX_AUTHORS_BEFORE_ET_AL = 10  # According to CSE stylebook
+
+
+class BibtexWriter(Writer):
+    """Formats bibtex, but limits total number of authors displayed."""
+    def _write_persons(self, stream, persons, role):
+        if len(persons) > MAX_AUTHORS_BEFORE_ET_AL:
+            self._write_field(stream, role, self._format_name(stream, persons[0]) + " and others")
+        else:
+            super(BibtexWriter, self)._write_persons(stream, persons, role)

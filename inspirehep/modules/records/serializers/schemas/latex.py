@@ -20,10 +20,21 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Data model package."""
+"""Marshmallow JSON schema for a literature entry."""
 
 from __future__ import absolute_import, division, print_function
 
-from .receivers import *  # noqa: F401,F403
+from .base import PybtexSchema
+from inspire_utils.record import get_value
+from inspirehep.utils.record import get_arxiv_categories
 
-from .ext import INSPIRERecords  # noqa: F401
+
+class LatexSchema(PybtexSchema):
+    """Schema for Latex references."""
+    def load(self, json):
+        texkey, entry = super(LatexSchema, self).load(json)
+        entry.fields['citation_count'] = get_value(json, 'citation_count', [])
+        entry.fields['publication_info_list'] = get_value(json, 'publication_info', [])
+        categories = get_arxiv_categories(json)
+        entry.fields['primaryClasses'] = ','.join(categories) if categories else None
+        return (texkey, entry)

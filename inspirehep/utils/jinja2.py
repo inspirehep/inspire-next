@@ -42,3 +42,19 @@ def render_template_to_string(input, _from_string=False, **context):
     else:
         template = ctx.app.jinja_env.get_or_select_template(input)
     return template.render(context)
+
+
+def render_template_to_string_for_blueprint(bp, input, **context):
+    """Render a template from a given blueprint's template folder with the given context.
+    :param bp: the bluprint for which to look for template
+    :param input: the string template, or name of the template to be
+    rendered, or an iterable with template names the first one existing will be rendered
+    :param context: the variables that should be available in the context of the template.
+    :return: a string
+    """
+    ctx = _request_ctx_stack.top
+    ctx.app.update_template_context(context)
+    ctx.app.jinja_env.lstrip_blocks = True
+    ctx.app.jinja_env.trim_blocks = True
+    template = bp.jinja_loader.load(ctx.app.jinja_env, input, ctx.app.jinja_env.globals)
+    return template.render(context)

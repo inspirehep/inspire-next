@@ -20,10 +20,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Data model package."""
+"""Record module signals."""
 
 from __future__ import absolute_import, division, print_function
 
-from .receivers import *  # noqa: F401,F403
+from blinker import Namespace
 
-from .ext import INSPIRERecords  # noqa: F401
+_signals = Namespace()
+
+after_record_enhanced = _signals.signal('after-record-enhanced')
+"""Signal is sent before a record is indexed and after all the enchancers have
+populated it.
+"""

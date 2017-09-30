@@ -24,30 +24,23 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.bibtex import Bibtex
+from .writers import BibtexWriter
+from .pybtex_serializer_base import PybtexSerializerBase
+from .schemas.base import PybtexSchema
 
 
-class BIBTEXSerializer(object):
+class BIBTEXSerializer(PybtexSerializerBase):
     """BibTex serializer for records."""
 
-    def serialize(self, pid, record, links_factory=None):
-        """Serialize a single bibtex from a record.
-        :param pid: Persistent identifier instance.
-        :param record: Record instance.
-        :param links_factory: Factory function for the link generation,
-        which are added to the response.
-        """
-        return Bibtex(record).format()
+    def get_writer(self):
+        return BibtexWriter()
 
-    def serialize_search(self, pid_fetcher, search_result, links=None,
-                         item_links_factory=None):
-        """Serialize a search result.
-        :param pid_fetcher: Persistent identifier fetcher.
-        :param search_result: Elasticsearch search result.
-        :param links: Dictionary of links to add to response.
-        """
-        records = []
-        for hit in search_result['hits']['hits']:
-            records.append(Bibtex(record=hit['_source']).format())
+    def get_schema(self):
+        return PybtexSchema()
 
-        return "\n".join(records)
+    def create_bibliography(self, record_list):
+        bibtex_string = super(BIBTEXSerializer, self).create_bibliography(record_list)
+        # Pybtex escapes '%' in Bibtex, however we don't want that to happen in SLACcitations.
+        # The odds of two consecutive '%' in other fields are so low, that it's reasonable to
+        # do a simple replacement on the whole bibtex string here:
+        return bibtex_string.replace(r'\%\%', '%%')

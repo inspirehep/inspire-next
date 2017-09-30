@@ -20,10 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Data model package."""
+"""Plugins for pybtex to generate other bibliography styles."""
 
 from __future__ import absolute_import, division, print_function
 
-from .receivers import *  # noqa: F401,F403
-
-from .ext import INSPIRERecords  # noqa: F401
+from .base_writer import PybtexBaseWriter  # noqa: F401
+from .latex_writer import LatexWriter  # noqa: F401
+from .bibtex_writer import BibtexWriter  # noqa: F401
+from .plain_text_writer import PlainTextWriter  # noqa: F401

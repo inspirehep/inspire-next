@@ -29,11 +29,11 @@ from invenio_records_rest.serializers.response import search_responsify
 from .impactgraph_serializer import ImpactGraphSerializer
 from .json_literature import LiteratureJSONBriefSerializer
 from .bibtex_serializer import BIBTEXSerializer
-from .latexeu_serializer import LATEXEUSerializer
-from .latexus_serializer import LATEXUSSerializer
-from .cvformatlatex_serializer import CVFORMATLATEXSerializer
-from .cvformathtml_serializer import CVFORMATHTMLSerializer
-from .cvformattext_serializer import CVFORMATTEXTSerializer
+from .latexeu_serializer import LatexEUSerializer
+from .latexus_serializer import LatexUSSerializer
+from .cvformatlatex_serializer import CVLatexSerializer
+from .cvformathtml_serializer import CVHTMLSerializer
+from .cvformattext_serializer import CVTextSerializer
 from .schemas.json import RecordSchemaJSONBRIEFV1
 
 from .response import record_responsify_nocache
@@ -48,11 +48,11 @@ json_literature_brief_v1_search = search_responsify(
 
 
 bibtex_v1 = BIBTEXSerializer()
-latexeu_v1 = LATEXEUSerializer()
-latexus_v1 = LATEXUSSerializer()
-cvformatlatex_v1 = CVFORMATLATEXSerializer()
-cvformathtml_v1 = CVFORMATHTMLSerializer()
-cvformattext_v1 = CVFORMATTEXTSerializer()
+latexeu_v1 = LatexEUSerializer()
+latexus_v1 = LatexUSSerializer()
+cvformatlatex_v1 = CVLatexSerializer()
+cvformathtml_v1 = CVHTMLSerializer()
+cvformattext_v1 = CVTextSerializer()
 
 bibtex_v1_response = record_responsify_nocache(
     bibtex_v1, 'application/x-bibtex')

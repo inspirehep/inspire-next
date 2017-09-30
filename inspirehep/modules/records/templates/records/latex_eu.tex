@@ -1,0 +1,42 @@
+%\cite{{ '{' }}{{ texkey }}{{ '}' }}
+\bibitem{{ '{' }}{{ texkey }}{{ '}' }}
+{% if author or editor or corporate_author %}
+  {{ author or editor or corporate_author }}
+{%- if collaboration and corporate_author != collaboration + ' Collaboration' -%}
+    {{- ' [' + collaboration + ' Collaboration]' }}
+{%- endif %},
+{% endif %}
+
+{%- if title %}
+  %``{{ title }},''
+{% endif %}
+
+{%- if publication_info_list %}
+{%- for publication in publication_info_list %}
+{%- if 'journal_title' in publication %}
+  {{ ' [' if not loop.first else '' }}
+  {{- publication.journal_title }}
+
+  {%- if 'journal_volume' in publication %} {{ '{' }}\bf {{ publication.journal_volume }}{{ '}' }}{% endif %}
+
+  {%- if 'year' in publication %} ({{ publication.year }}){% endif %}
+
+  {%- if 'journal_issue' in publication %} {{ publication.journal_issue }},{% endif %}
+
+  {%- if 'page_start' in publication and 'page_end' in publication %} {{ publication.page_start }}--{{ publication.page_end -}}
+  {% elif 'artid' in publication %} {{ publication.artid }}{% endif %}
+
+  {%- if not loop.first %}]{% endif %}.
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if doi %}
+  doi:{{ doi }}
+{% endif %}
+{% if eprint %}
+  [arXiv:{{ eprint }} [{{ primaryClasses }}]].
+{% endif %}
+{% if SLACcitation %}
+  {{ SLACcitation }}
+{% endif %}
+  %{{ citation_count }} citation{{ 's' if citation_count != 1 else '' }} counted in INSPIRE as of {{ today }}

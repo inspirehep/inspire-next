@@ -20,10 +20,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Data model package."""
+"""Marshmallow JSON schema for a literature entry."""
 
 from __future__ import absolute_import, division, print_function
 
-from .receivers import *  # noqa: F401,F403
+from .base import PybtexSchema
+from inspire_utils.record import get_value
 
-from .ext import INSPIRERecords  # noqa: F401
+
+class PlainSchema(PybtexSchema):
+    """Schema for plain text and latex references."""
+    def load(self, json):
+        texkey, entry = super(PlainSchema, self).load(json)
+        entry.fields['publication_info_list'] = get_value(json, 'publication_info', [])
+        categories = get_value(json, 'arxiv_eprints[0].categories')
+        entry.fields['primaryClasses'] = ','.join(categories) if categories else None
+        return (texkey, entry)

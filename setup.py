@@ -96,6 +96,8 @@ install_requires = [
     'Babel~=2.0,>=2.4.0',
     'setproctitle~=1.0,>=1.1.10',
     'backports.tempfile>=1.0rc1',
+    'pybtex',
+    'lxml',
 ]
 
 tests_require = [

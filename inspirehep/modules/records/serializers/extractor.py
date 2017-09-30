@@ -20,10 +20,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Data model package."""
+"""Creates a decorator with a store for functions, where the decorator argument is the key for function dictionary"""
 
-from __future__ import absolute_import, division, print_function
+from __future__ import division, absolute_import, print_function
 
-from .receivers import *  # noqa: F401,F403
 
-from .ext import INSPIRERecords  # noqa: F401
+def make_extractor():
+    """Creates a decorator with a store for post-processing/extracting functions."""
+    store = {}
+
+    def extractor(field):
+        def decorator(fun):
+            store[field] = fun
+            return fun
+        return decorator
+    extractor.store = store
+    return extractor

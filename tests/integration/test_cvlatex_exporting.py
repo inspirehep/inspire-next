@@ -23,27 +23,71 @@
 from __future__ import absolute_import, division, print_function
 
 from datetime import date
+from inspirehep import config
 
 import pytest
 
-from inspirehep.utils.cv_latex import Cv_latex
-from inspirehep.utils.record_getter import get_db_record
+from inspirehep.modules.records.serializers.cvformatlatex_serializer import CVLatexSerializer
+from inspirehep.modules.records.serializers.writers.latex_cv import LatexCVWriter
+from inspirehep.utils.record_getter import get_es_record
 
 
-@pytest.mark.xfail(reason='wrong output')
-def test_format_cv_latex(app):
-    article = get_db_record('lit', 4328)
-    today = date.today().strftime('%d %b %Y')
+@pytest.fixture
+def request_context(app):
+    with app.test_request_context() as context:
+        yield context
 
-    expected = u'''%\cite{Glashow:1961tr}
+
+def make_document(entry):
+    return LatexCVWriter.PREAMBLE + entry + LatexCVWriter.POSTAMBLE
+
+
+def test_format_cv_latex(request_context):
+    article = get_es_record('lit', 4328)
+    today = date.today().strftime('%-d %b %Y')
+
+    expected = ur'''%\cite{Glashow:1961tr}
 \item%{Glashow:1961tr}
-{\\bf ``Partial Symmetries of Weak Interactions''}
-  \{}S.~L.~Glashow.
-  \{}10.1016/0029-5582(61)90469-2
-  \{}Nucl.\ Phys.\  {\\bf 22}, 579 (1961).
-%(1961)
-%\href{http://inspirehep.net/record/4328}{HEP entry}
-%11 citations counted in INSPIRE as of ''' + today
-    result = Cv_latex(article).format()
+{\bf ``Partial Symmetries of Weak Interactions''}
+  \\{}S.~L.~Glashow.
+  \\{}10.1016/0029-5582(61)90469-2
+  \\{}Nucl.\ Phys.\  {\bf 22}, 579--588 (1961).
+ \inspireurl{http://''' + config.SERVER_NAME + u'''/record/4328}
+ \citations{0 citations counted in INSPIRE as of ''' + today + '}'
 
-    assert expected == result
+    result = CVLatexSerializer().create_bibliography([article])
+
+    assert make_document(expected) == result
+
+
+def test_format_cv_latex_collab(request_context):
+    article = get_es_record('lit', 1496635)
+    today = date.today().strftime('%-d %b %Y')
+
+    expected = ur'''%\cite{Aaij:2016kjh}
+\item%{Aaij:2016kjh}
+{\bf ``Measurement of the CKM angle $\gamma$ from a combination of LHCb results''}
+  \\{}R.~Aaij {\it et al.} [LHCb Collaboration].
+  \\{}[arXiv:1611.03076 [hep-ex]].
+ \inspireurl{http://''' + config.SERVER_NAME + u'''/record/1496635}
+ \citations{1 citation counted in INSPIRE as of ''' + today + '}'
+
+    result = CVLatexSerializer().create_bibliography([article])
+
+    assert make_document(expected) == result
+
+
+def test_format_cv_latex_thesis(request_context):
+    article = get_es_record('lit', 1395663)
+    today = date.today().strftime('%-d %b %Y')
+
+    expected = ur'''%\cite{Mankuzhiyil:2010jpa}
+\item%{Mankuzhiyil:2010jpa}
+{\bf ``MAGIC $\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes''}
+  \\{}N.~Mankuzhiyil.
+ \inspireurl{http://''' + config.SERVER_NAME + u'''/record/1395663}
+ \citations{0 citations counted in INSPIRE as of ''' + today + '}'
+
+    result = CVLatexSerializer().create_bibliography([article])
+
+    assert make_document(expected) == result

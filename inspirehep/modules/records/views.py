@@ -20,10 +20,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Data model package."""
-
 from __future__ import absolute_import, division, print_function
 
-from .receivers import *  # noqa: F401,F403
+from flask import Blueprint
 
-from .ext import INSPIRERecords  # noqa: F401
+blueprint = Blueprint(
+    'inspirehep_records',
+    __name__,
+    template_folder='templates'
+)

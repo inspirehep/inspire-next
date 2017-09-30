@@ -20,34 +20,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Cv_format_latex serializer for records."""
+"""LaTeX (EU) serializer for records."""
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.cv_latex import Cv_latex
+from .schemas.latex import LatexSchema
+from .pybtex_serializer_base import PybtexSerializerBase
+from .writers.latex_cv import LatexCVWriter
 
 
-class CVFORMATLATEXSerializer(object):
-    """Cv_format_latex serializer for records."""
+class CVLatexSerializer(PybtexSerializerBase):
+    """Latex (CV) serializer for records."""
 
-    def serialize(self, pid, record, links_factory=None):
-        """Serialize a single cv_format_latex from a record.
-        :param pid: Persistent identifier instance.
-        :param record: Record instance.
-        :param links_factory: Factory function for the link generation,
-        which are added to the response.
-        """
-        return Cv_latex(record).format()
+    def get_writer(self):
+        return LatexCVWriter()
 
-    def serialize_search(self, pid_fetcher, search_result, links=None,
-                         item_links_factory=None):
-        """Serialize a search result.
-        :param pid_fetcher: Persistent identifier fetcher.
-        :param search_result: Elasticsearch search result.
-        :param links: Dictionary of links to add to response.
-        """
-        records = []
-        for hit in search_result['hits']['hits']:
-            records.append(Cv_latex(hit['_source']).format())
-
-        return "\n".join(records)
+    def get_schema(self):
+        return LatexSchema()
