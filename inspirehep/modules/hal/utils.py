@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""HAL Utils."""
+"""HAL utils."""
 
 from __future__ import absolute_import, division, print_function
 
@@ -42,7 +42,7 @@ def get_abstract(record):
     """Return the first abstract of a record.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         string: the first abstract of the record.
@@ -57,16 +57,33 @@ def get_abstract(record):
 
 
 def get_authors(record):
-    """TODO.
+    """Return the authors of a record.
+
+    Queries the Institution records linked from the authors affiliations
+    to add, whenever it exists, the HAL identifier of the institution to
+    the affiliation.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
-        TODO
+        list(dict): the authors of the record.
 
     Examples:
-        TODO
+        >>> record = {
+        ...     'authors': [
+        ...         'affiliations': [
+        ...             {
+        ...                 'record': {
+        ...                     '$ref': 'http://localhost:5000/api/institutions/902725',
+        ...                 }
+        ...             },
+        ...         ],
+        ...     ],
+        ... }
+        >>> authors = get_authors(record)
+        >>> authors[0]['hal_id']
+        '300037'
 
     """
     hal_id_map = _get_hal_id_map(record)
@@ -95,10 +112,10 @@ def get_collaborations(record):
     """Return the collaborations associated with a record.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
-        list: the collaborations associated with the record.
+        list(str): the collaborations associated with the record.
 
     Examples:
         >>> record = {'collaborations': [{'value': 'CMS'}]}
@@ -113,7 +130,7 @@ def get_conference_city(record):
     """Return the first city of a Conference record.
 
     Args:
-        record: a Conference record.
+        record(InspireRecord): a Conference record.
 
     Returns:
         string: the first city of the Conference record.
@@ -131,7 +148,7 @@ def get_conference_country(record):
     """Return the first country of a Conference record.
 
     Args:
-        record: a Conference record.
+        record(InspireRecord): a Conference record.
 
     Returns:
         string: the first country of the Conference record.
@@ -149,7 +166,7 @@ def get_conference_end_date(record):
     """Return the closing date of a conference record.
 
     Args:
-        record: a Conference record.
+        record(InspireRecord): a Conference record.
 
     Returns:
         string: the closing date of the Conference record.
@@ -170,7 +187,7 @@ def get_conference_record(record):
     in the ``publication_info`` of the record.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         InspireRecord: the first Conference record associated with the record.
@@ -198,7 +215,7 @@ def get_conference_start_date(record):
     """Return the opening date of a conference record.
 
     Args:
-        record: a Conference record.
+        record(InspireRecord): a Conference record.
 
     Returns:
         string: the opening date of the Conference record.
@@ -216,7 +233,7 @@ def get_conference_title(record):
     """Return the first title of a Conference record.
 
     Args:
-        record: a Conference record.
+        record(InspireRecord): a Conference record.
 
     Returns:
         string: the first title of the Conference record.
@@ -234,7 +251,7 @@ def get_divulgation(record):
     """Return 1 if a record is intended for the general public, 0 otherwise.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         int: 1 if the record is intended for the general public, 0 otherwise.
@@ -251,10 +268,10 @@ def get_document_types(record):
     """Return all document types of a record.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
-        list: all document types of the record.
+        list(str): all document types of the record.
 
     Examples:
         >>> get_document_types({'document_type': ['article']})
@@ -268,7 +285,7 @@ def get_doi(record):
     """Return the first DOI of a record.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         string: the first DOI of the record.
@@ -288,10 +305,10 @@ def get_domains(record):
     to the corresponding HAL domains.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
-        list: the HAL domains of the record.
+        list(str): the HAL domains of the record.
 
     Examples:
         >>> record = {'inspire_categories': [{'term': 'Experiment-HEP'}]}
@@ -309,7 +326,7 @@ def get_inspire_id(record):
     """Return the INSPIRE id of a record.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         int: the INSPIRE id of the record.
@@ -326,7 +343,7 @@ def get_journal_issue(record):
     """Return the issue of the journal a record was published into.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         string: the issue of the journal the record was published into.
@@ -348,7 +365,7 @@ def get_journal_title(record):
     """Return the title of the journal a record was published into.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         string: the title of the journal the record was published into.
@@ -370,7 +387,7 @@ def get_journal_volume(record):
     """Return the volume of the journal a record was published into.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         string: the volume of the journal the record was published into.
@@ -395,7 +412,7 @@ def get_language(record):
     is English, so we return ``'en'``.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         string: the first language of the record.
@@ -416,7 +433,7 @@ def get_page_artid(record):
     """Return the page range or the article id of a record.
 
     Args:
-        record: a record
+        record(InspireRecord): a record
 
     Returns:
         string: the page range or the article id of the record.
@@ -448,7 +465,7 @@ def get_peer_reviewed(record):
     """Return 1 if a record is peer reviewed, 0 otherwise.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         int: 1 if the record is peer reviewed, 0 otherwise.
@@ -465,7 +482,7 @@ def get_publication_date(record):
     """Return the date in which a record was published.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         string: the date in which the record was published.
@@ -486,7 +503,7 @@ def is_published(record):
     DOI and a ``journal_title``, which means it is in press.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         bool: whether the record is published.

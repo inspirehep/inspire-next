@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""HAL Configuration."""
+"""HAL configuration."""
 
 from __future__ import absolute_import, division, print_function
 
@@ -54,12 +54,48 @@ HAL_DOMAIN_MAPPING = {
 #
 
 HAL_COL_IRI = 'https://api-preprod.archives-ouvertes.fr/sword/hal'
+"""IRI used by the SWORD protocol when creating a new record on HAL.
+
+Note:
+
+    Use this to send records to their staging instance. To send records to
+    their production instance use the same IRI without ``-preprod``.
+
+"""
+
 HAL_EDIT_IRI = 'https://api-preprod.archives-ouvertes.fr/sword/'
-"""IRIs used by the SWORD protocol when connecting to HAL."""
+"""IRI used by the SWORD protocol when updating an existing record on HAL.
+
+Note:
+
+    Use this to update records on their staging instance. To update records
+    on their production instance use the same IRI without ``-preprod``.
+
+"""
 
 HAL_USER_NAME = 'hal_user_name'
+"""Name of the INSPIRE user on HAL.
+
+Note:
+
+    Its real value is stored in ``tbag``. In particular ``QA_HAL_USER_NAME``
+    contains the value to use for their staging instance, while
+    ``PROD_HAL_USER_NAME`` contains the value to use for their production
+    instance.
+
+"""
+
 HAL_USER_PASS = 'hal_user_pass'
-"""INSPIRE credentials on HAL."""
+"""Password of the INSPIRE user on HAL.
+
+Note:
+
+    Its real value is stored in ``tbag``. In particular ``QA_HAL_USER_PASS``
+    contains the value to use for their staging instance, while
+    ``PROD_HAL_USER_PASS`` contains the value to use for their production
+    instance.
+
+"""
 
 HAL_IGNORE_CERTIFICATES = False
 """Whether to check certificates when connecting to HAL."""
