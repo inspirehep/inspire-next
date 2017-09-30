@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""HAL Module.
+"""HAL module.
 
 This module converts INSPIRE literature records to the XML+TEI format supported
 by Hyper Articles en Ligne (HAL), a French open archive of scholarly documents.

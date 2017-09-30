@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""HAL TEI Core."""
+"""HAL TEI core."""
 
 from __future__ import absolute_import, division, print_function
 
@@ -60,7 +60,7 @@ def convert_to_tei(record):
     """Return the record formatted in XML+TEI per HAL's specification.
 
     Args:
-        record: a record.
+        record(InspireRecord): a record.
 
     Returns:
         string: the record formatted in XML+TEI.
