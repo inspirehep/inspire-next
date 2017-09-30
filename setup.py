@@ -73,7 +73,7 @@ install_requires = [
     'inspire-dojson~=49.0,>=49.0.0',
     'inspire-query-parser~=0.0,>=0.2.0',
     'inspire-schemas~=49.0,>=49.0.0',
-    'inspire-utils~=0.0,>=0.0.6',
+    'inspire-utils~=0.0,>=0.0.8',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
     'flask-shell-ipython>=0.2.2',

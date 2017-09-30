@@ -41,10 +41,10 @@ from invenio_records.signals import (
 )
 
 from inspire_dojson.utils import get_recid_from_ref
+from inspire_utils.date import earliest_date
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
 from inspirehep.modules.authors.utils import author_tokenize, phonetic_blocks
-from inspirehep.utils.date import create_earliest_date
 
 
 #
@@ -137,10 +137,10 @@ def enhance_after_index(sender, json, *args, **kwargs):
     """
     populate_recid_from_ref(sender, json, *args, **kwargs)
     add_book_autocomplete(sender, json, *args, **kwargs)
-    earliest_date(sender, json, *args, **kwargs)
     generate_name_variations(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_affiliation_suggest(sender, json, *args, **kwargs)
+    populate_earliest_date(sender, json, *args, **kwargs)
     populate_inspire_document_type(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
 
@@ -343,7 +343,7 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
     })
 
 
-def earliest_date(sender, json, *args, **kwargs):
+def populate_earliest_date(sender, json, *args, **kwargs):
     """Populate the ``earliest_date`` field of Literature records."""
     if 'hep.json' not in json.get('$schema'):
         return
@@ -357,12 +357,13 @@ def earliest_date(sender, json, *args, **kwargs):
         'imprints.date',
     ]
 
-    dates = list(chain.from_iterable(
-        [force_list(get_value(json, path)) for path in date_paths]))
+    dates = [str(el) for el in chain.from_iterable(
+        [force_list(get_value(json, path)) for path in date_paths])]
 
-    earliest_date = create_earliest_date(dates)
-    if earliest_date:
-        json['earliest_date'] = earliest_date
+    if dates:
+        result = earliest_date(dates)
+        if result:
+            json['earliest_date'] = result
 
 
 def generate_name_variations(sender, json, *args, **kwargs):
