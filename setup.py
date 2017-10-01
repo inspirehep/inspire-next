@@ -94,6 +94,10 @@ install_requires = [
     'workflow~=2.0,>=2.1.3',
 ]
 
+docs_require = [
+    'Sphinx~=1.0,>=1.5.6,<1.6',
+]
+
 tests_require = [
     'flake8-future-import~=0.0,>=0.4.3',
     'mock~=2.0,>=2.0.0',
@@ -105,32 +109,30 @@ tests_require = [
 ]
 
 extras_require = {
-    'docs': [
-        'Sphinx~=1.0,<1.6',
-    ],
     'build-node': [
-        'ipdb',
-    ],
-    'web-node': [
-        'gunicorn',
-    ],
-    'worker-node': [
-        'superlance',
-        'flower',
+        'ipdb~=0.0,>=0.10.3',
     ],
     'crawler-node': [
-        'hepcrawl~=2.0,>=2.0.1',
+        'hepcrawl~=2.0,>=2.1.0',
     ],
+    'docs': docs_require,
     'tests': tests_require,
+    'web-node': [
+        'gunicorn~=19.0,>=19.7.1',
+    ],
+    'worker-node': [
+        'flower~=0.0,>=0.9.2',
+        'superlance~=1.0,>=1.0.0',
+    ],
     'xrootd': [
-        'invenio-xrootd~=1.0,>=1.0.0a5',
+        'invenio-xrootd>=1.0.0a5',
         'xrootdpyfs~=0.0,>=0.1.5',
     ],
 }
 
 extras_require['all'] = []
 for name, reqs in extras_require.items():
-    if name in ('xrootd',):
+    if name in ['xrootd']:
         continue
     extras_require['all'].extend(reqs)
 
