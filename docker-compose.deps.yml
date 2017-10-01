@@ -27,7 +27,7 @@ services:
     extends:
       file: services.yml
       service: base
-    command: pip install --editable .[all] --find-links /pip-cache --pre --requirement requirements.txt
+    command: pip install --editable .[all] --find-links /pip-cache --pre --requirement requirements.txt --upgrade
     volumes_from:
       - static
 
