@@ -95,14 +95,13 @@ install_requires = [
 ]
 
 tests_require = [
-    'flake8-future-import>=0.4.3',
-    'pytest-cache>=1.0',
-    'pytest-cov>=1.8.0',
-    'pytest-flake8>=0.8.1',
-    'pytest-selenium>=1.3.1',
-    'pytest>=2.8.0',
-    'mock>=1.3.0',
-    'requests_mock',
+    'flake8-future-import~=0.0,>=0.4.3',
+    'mock~=2.0,>=2.0.0',
+    'pytest-cov~=2.0,>=2.5.1',
+    'pytest-flake8~=0.0,>=0.8.1',
+    'pytest-selenium~=1.0,>=1.11.1',
+    'pytest~=3.0,>=3.2.2',
+    'requests_mock~=1.0,>=1.3.0',
 ]
 
 extras_require = {
