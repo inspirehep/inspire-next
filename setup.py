@@ -63,6 +63,7 @@ install_requires = [
     'invenio-classifier~=1.0,>=1.3.1',
     'invenio-collections>=1.0.0a4',
     'invenio-config>=1.0.0b3',
+    'invenio-db[postgresql,versioning]>=1.0.0b8',
     'invenio-files-rest>=1.0.0a20',
     'invenio-indexer>=1.0.0a10',
     'invenio-jsonschemas>=1.0.0a5',
@@ -108,9 +109,6 @@ extras_require = {
     'docs': [
         'Sphinx~=1.0,<1.6',
     ],
-    'postgresql': [
-        'invenio-db[postgresql,versioning]>=1.0.0b2',
-    ],
     'build-node': [
         'ipdb',
     ],
@@ -133,7 +131,7 @@ extras_require = {
 
 extras_require['all'] = []
 for name, reqs in extras_require.items():
-    if name in ('postgresql', 'xrootd'):
+    if name in ('xrootd',):
         continue
     extras_require['all'].extend(reqs)
 
