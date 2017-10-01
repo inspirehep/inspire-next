@@ -27,7 +27,7 @@ services:
     extends:
       file: services.yml
       service: base
-    command: pip install --find-links /pip-cache -r requirements.txt --pre -e .[crawler,docs,tests] gunicorn --exists-action i
+    command: pip install --editable .[all] --find-links /pip-cache --pre --requirement requirements.txt
     volumes_from:
       - static
 
