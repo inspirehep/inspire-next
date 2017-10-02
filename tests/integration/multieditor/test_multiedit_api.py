@@ -32,35 +32,14 @@ from invenio_accounts.testutils import login_user_via_session
 from invenio_records.api import Record
 
 
-@pytest.fixture
-def populate_db(app):
-    db_records = []
-    curr_path = os.path.dirname(__file__)
-    with open(os.path.join(curr_path,
-                           'fixtures/test_records.json')) as data_file:
-        records = json.load(data_file)
-    for record in records:
-        db_records.append(InspireRecord.create(record))
-    db.session.commit()
-    es.indices.refresh('records-hep')
-    yield populate_db
-    for db_record in db_records:
-        db_record._delete(force=True)
-    db.session.commit()
+def test_multieditor_search_api(api_client):
+    response = api_client.get('/multieditor/search?page_num=1&query_string=control_number:736770&index=hep')
+    assert 736770 == json.loads(response.data)['json_records'][0]['control_number']
 
 
-def test_multieditor_search_api(populate_db, api_client):
-    response = api_client.get('/multieditor/search?page_num=1&query_string=foo&index=hep')
-    curr_path = os.path.dirname(__file__)
-    with open(os.path.join(curr_path,
-                           'fixtures/test_records.json')) as data_file:
-        records = json.load(data_file)
-    assert sorted(records) == sorted(json.loads(response.data)['json_records'])
-
-
-def test_multieditor_update_api(populate_db, api_client, app_client):
+def test_multieditor_update_api(api_client, app_client):
     login_user_via_session(app_client, email='cataloger@inspirehep.net')
-    api_client.get('/multieditor/search?page_num=1&query_string=&index=hep')
+    response = api_client.get('/multieditor/search?page_num=1&query_string=control_number:736770&index=hep')
 
     api_client.post(
             '/multieditor/update',
@@ -70,27 +49,25 @@ def test_multieditor_update_api(populate_db, api_client, app_client):
                                   'whereRegex': False, 'whereValues': [],
                                   'mainKey': 'authors',
                                   'whereKey': ''}],
-                'ids': ['8569ad80-7996-43fb-a5b0-7b152a607668',
-                        'f0746746-689f-4e64-b131-e23e37cc1ec7',
-                        '47e8b29b-48e0-4909-8063-97d6405c6e0b'],
-                'allSelected': False
+                'ids': [],
+                'allSelected': True
             }),
         )
-    records = Record.get_records(['8569ad80-7996-43fb-a5b0-7b152a607668',
-                                 'f0746746-689f-4e64-b131-e23e37cc1ec7', '47e8b29b-48e0-4909-8063-97d6405c6e0b'])
-    for record in records:
-        assert 'success' in record.authors[-1].full_name
+
+    records = Record.get_records(json.loads(response.data)['uuids'])
+    assert 'success' in records[0]['authors'][-1]['full_name']
+    uuid_to_delete = records[0]['authors'][-1]['uuid']
 
     api_client.post(
         '/multieditor/update',
         content_type='application/json',
         data=json.dumps({
-            'userActions': [{'selectedAction': 'Deletion', 'updateValues': [],
+            'userActions': [{'selectedAction': 'Deletion', 'updateValues': ['SAC'],
                               'updateRegex': False,
                               'whereRegex': False, 'whereValues': ['success'],
                               'mainKey': 'authors/signature_block',
                               'whereKey': 'authors/full_name'},
-                             {'selectedAction': 'Deletion', 'updateValues': [],
+                             {'selectedAction': 'Deletion', 'updateValues': [uuid_to_delete],
                               'updateRegex': False,
                               'whereRegex': False, 'whereValues': ['success'],
                               'mainKey': 'authors/uuid',
@@ -100,15 +77,10 @@ def test_multieditor_update_api(populate_db, api_client, app_client):
                               'whereRegex': False, 'whereValues': [],
                               'mainKey': 'authors/full_name',
                               'whereKey': ''}],
-            'ids': ['8569ad80-7996-43fb-a5b0-7b152a607668',
-                    'f0746746-689f-4e64-b131-e23e37cc1ec7',
-                    '47e8b29b-48e0-4909-8063-97d6405c6e0b'],
-            'allSelected': False
+            'ids': [],
+            'allSelected': True
         }),
     )
-    records = Record.get_records(['8569ad80-7996-43fb-a5b0-7b152a607668',
-                                 'f0746746-689f-4e64-b131-e23e37cc1ec7', '47e8b29b-48e0-4909-8063-97d6405c6e0b'])
-
-    for record in records:
-        if record.get('authors'):
-            assert 'success' not in record.authors[-1].full_name
+    records = Record.get_records(json.loads(response.data)['uuids'])
+    if records[0].get('authors'):
+        assert 'success' not in records[0]['authors'][-1]['full_name']

@@ -52,11 +52,11 @@ def update():
     if searched_records:
         ids = searched_records['ids']
         index = searched_records['schema']
+        schema = load_schema(index)
     if all_selected:
         ids = filter(lambda x: x not in checked_ids, ids)
     else:
         ids = checked_ids
-    schema = requests.get("http://localhost:5000/schemas/records/" + index + ".json")
     for i, chunk in enumerate(chunker(ids, 20)):
         tasks.process_records.delay(records_ids=chunk, user_actions=user_actions, schema=schema)
 

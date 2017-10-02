@@ -306,8 +306,8 @@ def get_actions(user_actions):
 
 
 def process_records_no_db(user_actions, records, schema): #  fixme name convention
-    class_acions = get_actions(user_actions)
+    class_actions = get_actions(user_actions)
     for record in records:
-        for class_action in class_acions:
+        for class_action in class_actions:
             class_action.apply_action(record, schema)
     return records
