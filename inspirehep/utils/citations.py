@@ -29,8 +29,8 @@ from inspirehep.utils.jinja2 import render_template_to_string
 def get_and_format_citations(record):
     result = []
 
-    citations = LiteratureSearch().query_from_iq(
-        'refersto:' + str(record['control_number'])
+    citations = LiteratureSearch().query(
+        'match', references__recid=record['control_number'],
     ).params(
         _source=[
             'citation_count',
