@@ -27,9 +27,23 @@ from functools import wraps
 from flask import abort, session
 from flask_login import current_user
 
+from invenio_access.permissions import (
+    ParameterizedActionNeed,
+    Permission,
+)
+
 from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
 from inspirehep.modules.records.permissions import has_update_permission
 from inspirehep.utils.record_getter import get_db_record
+
+
+action_editor_use_api = ParameterizedActionNeed(
+    'editor-use-api', argument=None
+)
+
+editor_use_api_permission = Permission(
+    action_editor_use_api
+)
 
 
 def editor_permission(fn):

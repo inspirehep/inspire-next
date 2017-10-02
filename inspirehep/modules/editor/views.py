@@ -37,7 +37,7 @@ from refextract import (
     extract_references_from_url,
 )
 
-from .permissions import editor_permission
+from .permissions import editor_permission, editor_use_api_permission
 from ...utils import tickets
 
 
@@ -58,9 +58,9 @@ def check_permission(endpoint, pid_value):
     return jsonify(success=True)
 
 
-@blueprint.route('/<endpoint>/<pid_value>/authorlist/text', methods=['POST'])
-@editor_permission
-def authorlist_text(endpoint, pid_value):
+@blueprint.route('/authorlist/text', methods=['POST'])
+@editor_use_api_permission.require(http_exception=403)
+def authorlist_text():
     """Run authorlist on a piece of text."""
     try:
         parsed_authors = authorlist(request.json['text'])
@@ -69,9 +69,9 @@ def authorlist_text(endpoint, pid_value):
         return jsonify(status=500, message=u' / '.join(err.args)), 500
 
 
-@blueprint.route('/<endpoint>/<pid_value>/refextract/text', methods=['POST'])
-@editor_permission
-def refextract_text(endpoint, pid_value):
+@blueprint.route('/refextract/text', methods=['POST'])
+@editor_use_api_permission.require(http_exception=403)
+def refextract_text():
     """Run refextract on a piece of text."""
     extracted_references = extract_references_from_string(
         request.json['text'],
@@ -83,9 +83,9 @@ def refextract_text(endpoint, pid_value):
     return jsonify(references)
 
 
-@blueprint.route('/<endpoint>/<pid_value>/refextract/url', methods=['POST'])
-@editor_permission
-def refextract_url(endpoint, pid_value):
+@blueprint.route('/refextract/url', methods=['POST'])
+@editor_use_api_permission.require(http_exception=403)
+def refextract_url():
     """Run refextract on a URL."""
     extracted_references = extract_references_from_url(
         request.json['url'],
@@ -137,17 +137,17 @@ def get_tickets_for_record(endpoint, pid_value):
     return jsonify(simplified_tickets)
 
 
-@blueprint.route('/<endpoint>/<pid_value>/rt/users', methods=['GET'])
-@editor_permission
-def get_rt_users(endpoint, pid_value):
+@blueprint.route('/rt/users', methods=['GET'])
+@editor_use_api_permission.require(http_exception=403)
+def get_rt_users():
     """View to get all rt users"""
 
     return jsonify(tickets.get_users())
 
 
-@blueprint.route('/<endpoint>/<pid_value>/rt/queues', methods=['GET'])
-@editor_permission
-def get_rt_queues(endpoint, pid_value):
+@blueprint.route('/rt/queues', methods=['GET'])
+@editor_use_api_permission.require(http_exception=403)
+def get_rt_queues():
     """View to get all rt queues"""
 
     return jsonify(tickets.get_queues())

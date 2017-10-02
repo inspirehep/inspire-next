@@ -159,26 +159,26 @@ def test_get_tickets_for_record_returns_403_on_authentication_error(api_client):
 
 @patch('inspirehep.modules.editor.views.tickets')
 def test_get_rt_users(mock_tickets, log_in_as_cataloger, api_client):
-    response = api_client.get('/editor/literature/1497201/rt/users')
+    response = api_client.get('/editor/rt/users')
 
     assert response.status_code == 200
 
 
 def test_get_rt_users_returns_403_on_authentication_error(api_client):
-    response = api_client.get('/editor/literature/1497201/rt/users')
+    response = api_client.get('/editor/rt/users')
 
     assert response.status_code == 403
 
 
 @patch('inspirehep.modules.editor.views.tickets')
 def test_get_rt_queues(mock_tickets, log_in_as_cataloger, api_client):
-    response = api_client.get('/editor/literature/1497201/rt/queues')
+    response = api_client.get('/editor/rt/queues')
 
     assert response.status_code == 200
 
 
 def test_get_rt_queues_returns_403_on_authentication_error(log_in_as_scientist, api_client):
-    response = api_client.get('/editor/literature/1497201/rt/queues')
+    response = api_client.get('/editor/rt/queues')
 
     assert response.status_code == 403
 
@@ -211,7 +211,7 @@ def test_authorlist_text(log_in_as_cataloger, api_client):
     subschema = schema['properties']['authors']
 
     response = api_client.post(
-        '/editor/literature/1497201/authorlist/text',
+        '/editor/authorlist/text',
         content_type='application/json',
         data=json.dumps({
             'text': (
@@ -250,7 +250,7 @@ def test_authorlist_text(log_in_as_cataloger, api_client):
 
 def test_authorlist_text_exception(log_in_as_cataloger, api_client):
     response = api_client.post(
-        '/editor/literature/1497201/authorlist/text',
+        '/editor/authorlist/text',
         content_type='application/json',
         data=json.dumps({
             'text': 'A. Einstein, N. Bohr2'
@@ -273,7 +273,7 @@ def test_refextract_text(log_in_as_cataloger, api_client):
     subschema = schema['properties']['references']
 
     response = api_client.post(
-        '/editor/literature/1497201/refextract/text',
+        '/editor/refextract/text',
         content_type='application/json',
         data=json.dumps({
             'text': (
@@ -302,7 +302,7 @@ def test_refextract_url(log_in_as_cataloger, api_client):
         )
 
         response = api_client.post(
-            '/editor/literature/1497201/refextract/url',
+            '/editor/refextract/url',
             content_type='application/json',
             data=json.dumps({
                 'url': 'https://arxiv.org/pdf/1612.06414.pdf',
