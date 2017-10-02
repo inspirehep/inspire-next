@@ -56,7 +56,10 @@ def editor_permission(fn):
         )
         is_allowed = session.get(cache_key)
         if is_allowed is not None:
-            return is_allowed
+            if is_allowed:
+                return fn(endpoint, pid_value, **kwargs)
+            else:
+                abort(403)
 
         pid_type = get_pid_type_from_endpoint(endpoint)
         record = get_db_record(pid_type, pid_value)
@@ -64,7 +67,7 @@ def editor_permission(fn):
         is_allowed = has_update_permission(current_user, record)
         session[cache_key] = is_allowed
         if is_allowed:
-            return fn(endpoint, pid_type, **kwargs)
+            return fn(endpoint, pid_value, **kwargs)
         else:
             abort(403)
 
