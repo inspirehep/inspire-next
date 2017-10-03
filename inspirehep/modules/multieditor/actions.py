@@ -24,23 +24,23 @@ from __future__ import absolute_import, print_function, division
 import re
 
 
-class Addition(object):
-    def __init__(self, keys, value,
-                 where_regex=False, where_keys=[],
-                 where_values=[]
-                 ):
+class Action(object):
+    def __init__(self, keys, value, values_to_check_regex=False, values_to_check=None,
+                 where_regex=False, where_keys=None, where_values=None):
         self.keys = keys
         self.value = value
+        self.values_to_check_regex = values_to_check_regex
+        self.values_to_check = values_to_check
         self.where_regex = where_regex
         self.where_keys = where_keys
         self.where_values = where_values
         self.changed = False
 
-    def apply_action(self, record, schema, position=0, checked=False):
-        """Recursive function to change a record object."""
+    def progress_keys(self, record, schema, position, checked):
         key = self.keys[position]
         where_key = None
-        if len(self.where_keys) > position:
+        where_negative = False
+        if self.where_keys and len(self.where_keys) > position:
             where_key = self.where_keys[position]
         new_schema = {}
         if schema:  # for testing purposes
@@ -53,8 +53,18 @@ class Addition(object):
             if not checked and key != where_key:
                 if not check_value(record=record, keys=self.where_keys, values_to_check=self.where_values,
                                    regex=self.where_regex, position=position):
-                    return
+                    where_negative = True
                 checked = True
+        return new_schema, checked, key, where_key, where_negative
+
+
+class Addition(Action):
+
+    def apply_action(self, record, schema, position=0, checked=False):
+        """Recursive function to change a record object."""
+        new_schema, checked, key, where_key, where_negative = self.progress_keys(record, schema, position, checked)
+        if where_negative:  # if the where check was negative return
+            return
         if not record.get(key):  # adding to object as well
             if self.where_keys and not checked:  # if the where key is in a deeper level and the subrecord is not there
                 return
@@ -74,37 +84,13 @@ class Addition(object):
                 self.apply_action(record[key], new_schema, position + 1, checked)
 
 
-class Deletion(object):
-    def __init__(self, keys, value, values_to_check_regex=False, values_to_check=[],
-                 where_regex=False, where_keys=[], where_values=[]):
-        self.keys = keys
-        self.value = value
-        self.values_to_check_regex = values_to_check_regex
-        self.values_to_check = values_to_check
-        self.where_regex = where_regex
-        self.where_keys = where_keys
-        self.where_values = where_values
-        self.changed = False
+class Deletion(Action):
 
     def apply_action(self, record, schema, position=0, checked=False):
         """Recursive function to change a record object."""
-        key = self.keys[position]
-        where_key = None
-        if len(self.where_keys) > position:
-            where_key = self.where_keys[position]
-        new_schema = {}
-        if schema:  # for testing purposes
-            if schema['type'] == 'object':
-                new_schema = schema['properties'][key]
-            elif schema['type'] == 'array':
-                new_schema = schema['items']['properties'][key]
-
-        if where_key:
-            if not checked and key != where_key:
-                if not check_value(record=record, keys=self.where_keys, values_to_check=self.where_values,
-                                   regex=self.where_regex, position=position):
-                    return
-                checked = True
+        new_schema, checked, key, where_key, where_negative = self.progress_keys(record, schema, position, checked)
+        if where_negative:  # if the where check was negative return
+            return
         if not record.get(key):
             return
         if position + 1 == len(self.keys):
@@ -143,36 +129,13 @@ class Deletion(object):
             del record[key]
 
 
-class Update(object):
-    def __init__(self, keys, value, values_to_check_regex, values_to_check,
-                 where_regex, where_keys, where_values):
-        self.keys = keys
-        self.value = value
-        self.values_to_check_regex = values_to_check_regex
-        self.values_to_check = values_to_check
-        self.where_regex = where_regex
-        self.where_keys = where_keys
-        self.where_values = where_values
-        self.changed = False
+class Update(Action):
 
     def apply_action(self, record, schema, position=0, checked=False):
         """Recursive function to change a record object."""
-        key = self.keys[position]
-        where_key = None
-        if len(self.where_keys) > position:
-            where_key = self.where_keys[position]
-        new_schema = {}
-        if schema:  # for testing purposes
-            if schema['type'] == 'object':
-                new_schema = schema['properties'][key]
-            elif schema['type'] == 'array':
-                new_schema = schema['items']['properties'][key]
-        if where_key:
-            if not checked and key != where_key:
-                if not check_value(record=record, keys=self.where_keys, values_to_check=self.where_values,
-                                   regex=self.where_regex, position=position):
-                    return
-                checked = True
+        new_schema, checked, key, where_key, where_negative = self.progress_keys(record, schema, position, checked)
+        if where_negative:  # if the where check was negative return
+            return
         if not record.get(key):
             return
         if position + 1 == len(self.keys):

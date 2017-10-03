@@ -581,7 +581,7 @@ def test_update_with_missing_keys():
     assert record == expected_map
 
 
-def test_record_values_to_check_regex_where(get_schema):
+def test_record_values_update_check_regex_where(get_schema):
     record = {
         "authors": [
             {
