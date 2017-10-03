@@ -33,7 +33,6 @@ from inspire_schemas.api import load_schema
 from inspirehep.modules.multieditor import tasks
 from inspirehep.modules.migrator.tasks import chunker
 from . import actions
-import requests
 
 blueprint = Blueprint(
     'inspirehep_multieditor',

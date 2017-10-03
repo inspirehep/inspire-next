@@ -112,8 +112,8 @@ class Deletion(object):
                 if self.values_to_check_regex:
                     for value_to_check in self.values_to_check:
                         record[key] = filter(lambda x: (not re.search(
-                                re.escape(value_to_check),
-                                x)), record[key])
+                            re.escape(value_to_check),
+                            x)), record[key])
                         self.changed = True
                 else:
                     record[key] = filter(lambda x: x not in self.values_to_check, record[key])
@@ -182,8 +182,8 @@ class Update(object):
                 if self.values_to_check_regex:
                     for value_to_check in self.values_to_check:
                         record[key] = [self.value if re.search(
-                                re.escape(value_to_check),
-                                x) else x for x in record[key]]
+                            re.escape(value_to_check),
+                            x) else x for x in record[key]]
                 else:
                     record[key] = [self.value if x in self.values_to_check else x for x in record[key]]
                 self.changed = True
@@ -305,7 +305,7 @@ def get_actions(user_actions):
     return class_actions
 
 
-def process_records_no_db(user_actions, records, schema): #  fixme name convention
+def process_records_no_db(user_actions, records, schema):  # fixme name convention
     class_actions = get_actions(user_actions)
     for record in records:
         for class_action in class_actions:

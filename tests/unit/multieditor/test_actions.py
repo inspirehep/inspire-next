@@ -330,9 +330,9 @@ def test_addition_object_where(get_schema):
     }
     add = Addition(keys=['authors', 'affiliations'], where_keys=['authors', 'signature_block'], where_regex=False,
                    where_values=['BANARo'], value={
-                    "curated_relation": True,
-                    "value": "Success"
-                  })
+        "curated_relation": True,
+        "value": "Success"
+    })
     add.apply_action(record, get_schema)
     assert record == expected_map
 
@@ -405,17 +405,17 @@ def test_addition_where_missing_key(get_schema):
 def test_deletion_array():
     """should test record deletion for nested array"""
     record = {
-      'key_a': [{'key_c': ['val5', 'val4']},
-                {'key_c': ['val1', 'val6']},
-                {'key_c': ['val4', 'val6']},
-                {'key_c': ['val3']}],
-      'key_b': {'key_c': {'key_d': 'val'}}
+        'key_a': [{'key_c': ['val5', 'val4']},
+                  {'key_c': ['val1', 'val6']},
+                  {'key_c': ['val4', 'val6']},
+                  {'key_c': ['val3']}],
+        'key_b': {'key_c': {'key_d': 'val'}}
     }
     expected_map = {
-      'key_a': [{'key_c': ['val5', 'val4']},
-                {'key_c': ['val4']},
-                {'key_c': ['val3']}],
-      'key_b': {'key_c': {'key_d': 'val'}}
+        'key_a': [{'key_c': ['val5', 'val4']},
+                  {'key_c': ['val4']},
+                  {'key_c': ['val3']}],
+        'key_b': {'key_c': {'key_d': 'val'}}
     }
 
     delete = Deletion(values_to_check=["val6", "val1"], keys=['key_a', 'key_c'], where_keys=[], where_regex=False,
@@ -427,14 +427,14 @@ def test_deletion_array():
 def test_deletion_array_regex():
     """should test record deletion for nested array"""
     record = {
-      'key_a': [{'key_c': ['val5', 'val4']},
-                {'key_c': ['val1', 'val6']},
-                {'key_c': ['val4', 'val6']},
-                {'key_c': ['val3']}],
-      'key_b': {'key_c': {'key_d': 'val'}}
+        'key_a': [{'key_c': ['val5', 'val4']},
+                  {'key_c': ['val1', 'val6']},
+                  {'key_c': ['val4', 'val6']},
+                  {'key_c': ['val3']}],
+        'key_b': {'key_c': {'key_d': 'val'}}
     }
     expected_map = {
-      'key_b': {'key_c': {'key_d': 'val'}}
+        'key_b': {'key_c': {'key_d': 'val'}}
     }
 
     delete = Deletion(values_to_check=["val"], keys=['key_a', 'key_c'], where_keys=[], where_regex=False,
@@ -496,7 +496,7 @@ def test_update_where_array_regex():
     record = {
         'references': [{'reference': {'collaborations': ['val5', 'tes4'], 'title':{'title': 'test'}}},
                        {'reference': {'collaborations': ['val1', 'tes4'], 'title':{'title': 'not'}}}]
-                  }
+    }
     expected_map = {
         'references': [{'reference': {'collaborations': ['success', 'tes4'], 'title':{'title': 'test'}}},
                        {'reference': {'collaborations': ['val1', 'tes4'], 'title':{'title': 'not'}}}]
@@ -531,7 +531,7 @@ def test_record_creation_root_object(get_schema):
     """should test sub_record creation for missing object"""
     key = ['self', '$ref']
     value = 'success'
-    target_object = {'self': {'$ref':   'success'}}
+    target_object = {'self': {'$ref': 'success'}}
     assert create_schema_record(get_schema, key, value) == target_object
 
 
@@ -606,44 +606,40 @@ def test_record_values_to_check_regex_where(get_schema):
                     "value": "Not INF"
                 }
             ],
-           "signature_block": "MANl",
-           }
+                "signature_block": "MANl",
+            }
         ]
     }
     expected_map = {
         "authors": [
-          {
-            "affiliations": [
-                {
-                 "value": "Success"
-                },
-                {
-                 "value": "Success"
-                },
-                {
-                 "value": "INFN"
-                }
-            ],
-            "signature_block": "BANARo"
-          },
-          {
-            "affiliations": [
-                {
-                    "value": "Rome U."
-                },
-                {
-                    "value": "Not INF"
-                }
+            {
+                "affiliations": [
+                    {
+                        "value": "Success"
+                    },
+                    {
+                        "value": "Success"
+                    },
+                    {
+                        "value": "INFN"
+                    }
                 ],
-            "signature_block": "MANl",
-           }
+                "signature_block": "BANARo"
+            },
+            {
+                "affiliations": [
+                    {
+                        "value": "Rome U."
+                    },
+                    {
+                        "value": "Not INF"
+                    }
+                ],
+                "signature_block": "MANl",
+            }
         ]
     }
     update = Update(values_to_check=['Rome'], keys=['authors', 'affiliations', 'value'], where_keys=['authors', 'signature_block'], where_regex=False,
                     where_values=['BANARo'], values_to_check_regex=True, value="Success")
     update.apply_action(record, get_schema)
     assert record == expected_map
-
-
-
-
