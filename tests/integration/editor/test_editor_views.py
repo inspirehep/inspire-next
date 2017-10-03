@@ -33,10 +33,18 @@ from mock import patch
 
 from invenio_accounts.models import SessionActivity
 from invenio_accounts.testutils import login_user_via_session
+from invenio_cache import current_cache
 from invenio_db import db
 
 from inspire_schemas.api import load_schema, validate
 from inspire_utils.record import get_value
+
+
+@pytest.fixture(autouse=True)
+def clear_cache(app):
+    current_cache.clear()
+    yield
+    current_cache.clear()
 
 
 @pytest.fixture(scope='function')
@@ -191,7 +199,10 @@ def test_check_permission_success(log_in_as_cataloger, api_client):
 
 def test_check_permission_returns_403_on_authentication_error(log_in_as_scientist, api_client):
     response = api_client.get('/editor/literature/1497201/permission')
+    assert response.status_code == 403
 
+    # Once cached, check again the permission
+    response = api_client.get('/editor/literature/1497201/permission')
     assert response.status_code == 403
 
 
@@ -204,6 +215,10 @@ def test_editor_permission_is_cached(log_in_as_cataloger, api_client):
 
     with api_client.session_transaction() as sess:
         assert sess[cache_key] is True
+
+    response = api_client.get('/editor/literature/1497201/permission')
+
+    assert response.status_code == 200
 
 
 def test_authorlist_text(log_in_as_cataloger, api_client):
