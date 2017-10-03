@@ -30,10 +30,16 @@ from inspirehep.modules.multieditor.actions import (
 
 @shared_task(ignore_result=True)
 def process_records(records_ids, user_actions, schema):
+    commit_record = False
     records = Record.get_records(records_ids)
     class_actions = get_actions(user_actions)
     for record in records:
         for class_action in class_actions:
             class_action.apply_action(record, schema)
-        record.commit()
+        if class_action.changed:  # if the record has been touched commit it and reset value
+            commit_record = True
+            class_action.changed = False
+        if commit_record:
+            record.commit()
+            commit_record = False
     db.session.commit()
