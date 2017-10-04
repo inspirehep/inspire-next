@@ -129,8 +129,9 @@
                     },
                     "type": "object"
                 },
-                "experimentautocomplete": {
-                    "type": "string"
+                "experiment_suggest": {
+                    "payloads": true,
+                    "type": "completion"
                 },
                 "external_system_identifiers": {
                     "properties": {
@@ -184,7 +185,6 @@
                     "type": "date"
                 },
                 "legacy_name": {
-                    "copy_to": "experimentautocomplete",
                     "type": "string"
                 },
                 "long_name": {
