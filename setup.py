@@ -54,7 +54,7 @@ install_requires = [
     'backports.tempfile>=1.0rc1',
     'beard~=0.0,>=0.2.0',
     'celery~=3.0,>=3.1.25',
-    'elasticsearch-dsl~=2.0,>=2.1.0,<2.2.0',
+    'elasticsearch-dsl~=2.0,>=2.2.0',
     'elasticsearch~=2.0,>=2.4.1',
     'flask-shell-ipython~=0.0,>=0.3.0',
     'inspire-crawler~=0.0,>=0.4.2',
