@@ -149,6 +149,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_author_count(sender, json, *args, **kwargs)
     populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs)
     populate_earliest_date(sender, json, *args, **kwargs)
+    populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_inspire_document_type(sender, json, *args, **kwargs)
     populate_name_variations(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
@@ -510,7 +511,34 @@ def populate_earliest_date(sender, json, *args, **kwargs):
             json['earliest_date'] = result
 
 
-def populate_name_variations(sender, json, *args, **kwargs):
+def populate_experiment_suggest(sender, json, *args, **kwargs):
+    """Populates experiment_suggest field of experiment records."""
+
+    # FIXME: Use a dedicated method when #1355 will be resolved.
+    if 'experiments.json' not in json.get('$schema'):
+        return
+
+    name_variants = force_list(json.get('name_variants', []))
+    legacy_name = json.get('legacy_name', '')
+
+    input_values = []
+    input_values.append(legacy_name)
+    input_values.extend(name_variants)
+
+    input_values = [el for el in input_values if el]
+
+    json.update({
+        'experiment_suggest': {
+            'input': input_values,
+            'output': legacy_name,
+            'payload': {
+                '$ref': get_value(json, 'self.$ref'),
+            },
+        },
+    })
+
+
+def generate_name_variations(sender, json, *args, **kwargs):
     """Generate name variations for each signature of a Literature record."""
     if 'hep.json' not in json.get('$schema'):
         return

@@ -785,6 +785,34 @@ def test_populate_earliest_date_from_preprint_date():
     assert expected == result
 
 
+def test_populate_experiment_suggest_populates_if_record_is_experiment():
+    json_dict = {
+        '$schema': 'http://foo/experiments.json',
+        'self': {'$ref': 'http://foo/$ref'},
+        'legacy_name': 'foo',
+        'name_variants': [
+            'bar',
+            'baz',
+        ],
+    }
+
+    populate_experiment_suggest(None, json_dict)
+
+    assert json_dict['experiment_suggest']['input'] == ['foo', 'bar', 'baz']
+    assert json_dict['experiment_suggest']['output'] == 'foo'
+    assert json_dict['experiment_suggest']['payload']['$ref'] == 'http://foo/$ref'
+
+
+def test_populate_experiment_suggest_does_nothing_if_record_is_not_experiment():
+    json_dict = {
+        '$schema': 'http://foo/bar.json',
+    }
+
+    populate_experiment_suggest(None, json_dict)
+
+    assert 'experiment_suggest' not in json_dict
+
+
 def test_populate_earliest_date_from_thesis_info_date():
     schema = load_schema('hep')
     subschema = schema['properties']['thesis_info']
