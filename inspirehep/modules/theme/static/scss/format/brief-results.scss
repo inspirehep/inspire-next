@@ -222,7 +222,6 @@ article.search-result {
     border-color: $data-collection;
   }
 }
-
 .checkbox-facets {
   position: relative;
   display: block;
@@ -252,21 +251,27 @@ article.search-result {
 
   .facet-title-truncate {
     width: 65% !important;
+    float:left;
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    padding-top: 4px;
   }
 
   label {
     width: 100%;
   }
+  .checkbox-container{
+  float: left;
+  width: auto;
 
-  .checkbox {
-    padding: 2px 3px;
+    .checkbox {
+      padding: 2px 3px;
 
-    &:hover {
-      background: $clouds;
+      &:hover {
+        background: $clouds;
+      }
     }
   }
 }
