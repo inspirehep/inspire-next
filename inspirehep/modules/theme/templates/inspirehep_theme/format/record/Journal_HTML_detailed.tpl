@@ -49,13 +49,13 @@
             {% if record.publisher %}
               <div class="detailed-record-field">
                 <label>Published by:</label>
-                {{ record.publisher }}
+                  {{ record.publisher }}
                 <br>
             </div>
             {% endif %}
             {% if record.urls %}
             <div class="detailed-record-field">
-              <label>Link to the journal's website: </label>
+              <label>Journal's website: </label>
               {% for url in record.urls %}
                 <a href="{{ url }}">{{ url }}</a><br>
               {% endfor %}
