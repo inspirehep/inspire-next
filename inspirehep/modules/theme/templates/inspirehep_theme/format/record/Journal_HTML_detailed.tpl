@@ -26,17 +26,18 @@
 
 {% block body %}
 <ul class="breadcrumb detailed-record-breadcrumb">
-<li>
-  <span class="fa fa-chevron-left"></span>
-  {{ request.headers.get('referer', '')|back_to_search_link("journals") }}
-</li>
+  <li>
+    <span class="fa fa-chevron-left"></span>
+    {{ request.headers.get('referer', '')|back_to_search_link("journals") }}
+  </li>
 </ul>
+
 <div id="record_content">
   <div class="record-detailed record-detailed-journals">
       <div class="panel">
       <div class="panel-heading">
         <h1 class="record-detailed-title">
-          {{ record.title }}
+          {{ record.journal_title.title }}
         </h1>
         {% if record.short_title %}
           <h2 class="record-detailed-subtitle record-detailed-subtitle-experiments">{{ record.short_title }}</h2>
@@ -47,13 +48,14 @@
           <div class="col-md-12">
             {% if record.publisher %}
               <div class="detailed-record-field">
-              <label>Published by:</label>
-              {{ record.publisher }}
-              <br>
+                <label>Published by:</label>
+                {{ record.publisher }}
+                <br>
             </div>
             {% endif %}
             {% if record.urls %}
             <div class="detailed-record-field">
+              <label>Link to the journal's website: </label>
               {% for url in record.urls %}
                 <a href="{{ url }}">{{ url }}</a><br>
               {% endfor %}
@@ -90,8 +92,8 @@
       </div>
       <div class="modal-body">
         <div style="text-align:left;">
-          {% if record.name_variants %}
-            {% for variant in record.name_variants %}
+          {% if record.title_variants %}
+            {% for variant in record.title_variants %}
               {{ variant }}<br>
             {% endfor %}
           {% endif %}
