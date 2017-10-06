@@ -38,7 +38,7 @@ from backports.tempfile import TemporaryDirectory
 from dojson.contrib.marc21.utils import create_record
 
 from inspire_dojson.hep import hep
-from inspire_dojson.utils.arxiv import classify_field
+from inspire_schemas.utils import classify_field
 from inspirehep.modules.converter import convert
 from inspirehep.utils.record import get_arxiv_categories, get_arxiv_id
 from inspirehep.utils.url import is_pdf_link
