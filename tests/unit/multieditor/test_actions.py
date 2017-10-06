@@ -44,13 +44,12 @@ def test_addition_root_key(get_schema):
     expected_map = {
         "preprint_date": "2016"
     }
-    add = Addition(keys=['preprint_date'], where_keys=[], where_regex=False,
-                   where_values=[], value="2016")
+    add = Addition(keys=['preprint_date'], value="2016")
     add.apply_action(record, get_schema)
     assert record == expected_map
 
 
-def test_addition_root_key_with_where(get_schema):
+def test_addition_root_key_with_deeper_where(get_schema):
     record = {
         "public_notes": [
             {
@@ -60,6 +59,7 @@ def test_addition_root_key_with_where(get_schema):
                 "value": "test"
             }
         ],
+        "core": True,
     }
     expected_map = {
         "public_notes": [
@@ -70,19 +70,29 @@ def test_addition_root_key_with_where(get_schema):
                 "value": "test"
             }
         ],
+        "core": True,
         "preprint_date": "2016"
     }
-    add = Addition(keys=['preprint_date'], where_keys=['public_notes', 'value'], where_regex=False,
-                   where_values=['test'], value="2016")
+    add = Addition(keys=['preprint_date'],
+                   where_actions=[{'key': ['public_notes', 'value'], 'values': ['Preliminary results']
+                                  , 'match_type': False},
+                                  {'key': ['core'], 'values': [True], 'match_type': False}],
+                   value="2016")
     add.apply_action(record, get_schema)
     assert record == expected_map
 
 
-def test_addition_root_key_with_where_negative(get_schema):
+def test_addition_root_key_with_deeper_where_negative(get_schema):
     record = {
         "public_notes": [
             {
                 "value": "Preliminary results"
+            }
+        ],
+        "core": True,
+        "titles": [
+            {
+                "title": "test"
             }
         ],
     }
@@ -91,10 +101,59 @@ def test_addition_root_key_with_where_negative(get_schema):
             {
                 "value": "Preliminary results"
             }
-        ]
+        ],
+        "core": True,
+        "titles": [
+            {
+                "title": "test"
+            }
+        ],
     }
-    add = Addition(keys=['preprint_date'], where_keys=['public_notes', 'value'], where_regex=False,
-                   where_values=['test'], value="2016")
+    add = Addition(keys=['preprint_date'],
+                   where_actions=[{'key': ['public_notes', 'value'], 'values': ['Preliminary results']
+                                  , 'match_type': False},
+                                  {'key': ['core'], 'values': [False], 'match_type': False}],
+                   where_regex=False,
+                   value="2016")
+    add.apply_action(record, get_schema)
+    assert record == expected_map
+
+
+def test_addition_object_with_where(get_schema):
+    record = {
+        "public_notes": [
+            {
+                "value": "Preliminary results"
+            }
+        ],
+        "core": True,
+        "titles": [
+            {
+                "title": "test"
+            }
+        ],
+    }
+    expected_map = {
+        "public_notes": [
+            {
+                "value": "Preliminary results"
+            }
+        ],
+        "core": True,
+        "titles": [
+            {
+                "title": "test",
+            },
+            {
+                "title": "success"
+            }
+        ],
+    }
+    add = Addition(keys=['titles'],
+                   where_actions=[{'key': ['public_notes', 'value'], 'values': ['Preliminary results']
+                                  , 'match_type': False},
+                                  {'key': ['core'], 'values': [True], 'match_type': False}],
+                   value={'title': "success"})
     add.apply_action(record, get_schema)
     assert record == expected_map
 
@@ -132,13 +191,12 @@ def test_addition_object():
         },
         "type": "object",
     }
-    add = Addition(keys=['key_a', 'key_b'], where_keys=[], where_regex=False,
-                   where_values=[], value="success")
+    add = Addition(keys=['key_a', 'key_b'], value="success")
     add.apply_action(record, custom_schema)
     assert record == expected_map
 
 
-def test_addition_object_with_where():
+def test_addition_array_with_where():
     """should test record addition for object using where check"""
     record = {
         'key_a': {
@@ -209,8 +267,7 @@ def test_addition_array(get_schema):
         ],
         "document_type": ["book"]
     }
-    add = Addition(keys=['titles', 'subtitle'], where_keys=[], where_regex=False,
-                   where_values=[], value="success")
+    add = Addition(keys=['titles', 'subtitle'], value="success")
     add.apply_action(record, get_schema)
     assert record == expected_map
 
@@ -418,8 +475,8 @@ def test_deletion_array():
         'key_b': {'key_c': {'key_d': 'val'}}
     }
 
-    delete = Deletion(values_to_check=["val6", "val1"], keys=['key_a', 'key_c'], where_keys=[], where_regex=False,
-                      where_values=[], values_to_check_regex=False, value="")
+    delete = Deletion(values_to_check=["val6", "val1"], keys=['key_a', 'key_c'],
+                      match_type=False)
     delete.apply_action(record, {})
     assert record == expected_map
 
@@ -468,8 +525,8 @@ def test_update_array():
         'key_a': [{'key_c': ['val5', 'success']}, {'key_c': ['val1', 'val6']},
                   {'key_c': ['val2']}, {'key_c': ['val3']}], 'key_b': {'key_c': {'key_d': 'pong'}}
     }
-    update = Update(values_to_check=["val4"], keys=['key_a', 'key_c'], where_keys=[], where_regex=False,
-                    where_values=[], values_to_check_regex=False, value="success")
+    update = Update(values_to_check=["val4"], keys=['key_a', 'key_c'],
+                    match_type=False, value="success")
     update.apply_action(record, {})
     assert record == expected_map
 

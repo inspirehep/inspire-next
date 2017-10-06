@@ -1,0 +1,11 @@
+contructor <    document.cookie = '_pk_id.11.1fff=99911b90596f9e8d.1504879999.2.1505216503.1505216503.; _pk_ses.11.1fff=*';
+    this.options = this.createAuthorizationHeader();>
+
+
+  createAuthorizationHeader(): any {
+    let headers = new Headers();
+    headers.append('Access-Control-Allow-Origin', 'localhost:4200');
+    headers.append('Access-Control-Allow-Credentials', 'true');
+    let options = new RequestOptions({ headers: headers, withCredentials: true });
+    return options;
+  }

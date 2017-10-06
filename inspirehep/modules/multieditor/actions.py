@@ -25,23 +25,19 @@ import re
 
 
 class Action(object):
-    def __init__(self, keys, value, values_to_check_regex=False, values_to_check=None,
-                 where_regex=False, where_keys=None, where_values=None):
+    def __init__(self, keys, value, match_type=None, value_to_check=None,
+                 where_regex=False, where_actions=None):
         self.keys = keys
         self.value = value
-        self.values_to_check_regex = values_to_check_regex
-        self.values_to_check = values_to_check
+        self.match_type = match_type
+        self.value_to_check = value_to_check
         self.where_regex = where_regex
-        self.where_keys = where_keys
-        self.where_values = where_values
+        self.where_actions = where_actions
         self.changed = False
 
     def progress_keys(self, record, schema, position, checked):
         key = self.keys[position]
-        where_key = None
         where_negative = False
-        if self.where_keys and len(self.where_keys) > position:
-            where_key = self.where_keys[position]
         new_schema = {}
         if schema:  # for testing purposes
             if schema['type'] == 'object':
@@ -49,24 +45,28 @@ class Action(object):
             elif schema['type'] == 'array':
                 new_schema = schema['items']['properties'][key]
 
-        if where_key:
-            if not checked and key != where_key:
-                if not check_value(record=record, keys=self.where_keys, values_to_check=self.where_values,
-                                   regex=self.where_regex, position=position):
-                    where_negative = True
-                checked = True
-        return new_schema, checked, key, where_key, where_negative
+        if self.where_actions:
+            for where_action in self.where_actions:
+                if len(where_action['key']) > position and key != where_action['key'][position]\
+                        and (position == 0 or self.keys[position-1] == where_action['key'][position-1]):
+                    if not check_value(record=record, keys=where_action['key'], values_to_check=where_action['values'],
+                                       match_type=where_action['match_type'], position=position):
+                        where_negative = True
+                    elif where_action['match_type']:  # fixme possible refactor for less code
+                        where_negative = True
+                    checked = checked + 1
+        return new_schema, checked, key, where_negative
 
 
 class Addition(Action):
 
-    def apply_action(self, record, schema, position=0, checked=False):
+    def apply_action(self, record, schema, position=0, checked=0):
         """Recursive function to change a record object."""
-        new_schema, checked, key, where_key, where_negative = self.progress_keys(record, schema, position, checked)
+        new_schema, checked, key, where_negative = self.progress_keys(record, schema, position, checked)
         if where_negative:  # if the where check was negative return
             return
         if not record.get(key):  # adding to object as well
-            if self.where_keys and not checked:  # if the where key is in a deeper level and the subrecord is not there
+            if self.where_actions and checked < len(self.where_actions):  # if the where key is in a deeper level and the subrecord is not there
                 return
             creation_keys = self.keys[position:]
             record.update(create_schema_record(schema, creation_keys, self.value))
@@ -86,36 +86,41 @@ class Addition(Action):
 
 class Deletion(Action):
 
-    def apply_action(self, record, schema, position=0, checked=False):
+    def apply_action(self, record, schema, position=0, checked=0):
         """Recursive function to change a record object."""
-        new_schema, checked, key, where_key, where_negative = self.progress_keys(record, schema, position, checked)
+        new_schema, checked, key, where_negative = self.progress_keys(record, schema, position, checked)
         if where_negative:  # if the where check was negative return
             return
         if not record.get(key):
             return
         if position + 1 == len(self.keys):
             if isinstance(record[key], list):
-                if self.values_to_check_regex:
-                    for value_to_check in self.values_to_check:
+                if self.match_type == 'matches regular expression':
                         record[key] = filter(lambda x: (not re.search(
-                            re.escape(value_to_check),
+                            re.escape(self.value_to_check),
                             x)), record[key])
-                        self.changed = True
-                else:
-                    record[key] = filter(lambda x: x not in self.values_to_check, record[key])
-                    self.changed = True
+
+                elif self.match_type == 'is equal to':
+                    record[key] = filter(lambda x: not x == self.value_to_check, record[key])
+
+                elif self.match_type == 'contains':
+                    record[key] = filter(lambda x: self.value_to_check not in x, record[key])
+
             else:
-                if record[key] in self.values_to_check:
+                if self.match_type == 'is equal to' and\
+                                record[key] == self.value_to_check:
                     del record[key]
-                    self.changed = True
-                elif self.values_to_check_regex:
-                    for value_to_check in self.values_to_check:
-                        if re.search(
-                                re.escape(value_to_check),
+
+                elif self.match_type == 'matches regular expression' and\
+                        re.search(
+                                re.escape(self.value_to_check),
                                 record[key]):
                                 del record[key]
-                                self.changed = True
-                                break
+                elif self.match_type == 'contains' and\
+                        self.value_to_check in record[key]:
+                    del record[key]
+
+                self.changed = True
                 return
         else:
             if isinstance(record[key], list):
@@ -131,33 +136,33 @@ class Deletion(Action):
 
 class Update(Action):
 
-    def apply_action(self, record, schema, position=0, checked=False):
+    def apply_action(self, record, schema, position=0, checked=0):
         """Recursive function to change a record object."""
-        new_schema, checked, key, where_key, where_negative = self.progress_keys(record, schema, position, checked)
+        new_schema, checked, key, where_negative = self.progress_keys(record, schema, position, checked)
         if where_negative:  # if the where check was negative return
             return
         if not record.get(key):
             return
         if position + 1 == len(self.keys):
             if isinstance(record[key], list):
-                if not self.values_to_check:
-                    record[key] = [self.value if True else x for x in record[key]]
-                if self.values_to_check_regex:
-                    for value_to_check in self.values_to_check:
-                        record[key] = [self.value if re.search(
-                            re.escape(value_to_check),
-                            x) else x for x in record[key]]
-                else:
-                    record[key] = [self.value if x in self.values_to_check else x for x in record[key]]
+                if self.match_type == 'matches regular expression':
+                    record[key] = [self.value if re.search(
+                        re.escape(self.value_to_check),
+                        x) else x for x in record[key]]
+
+                elif self.match_type == 'is equal to':
+                    record[key] = [self.value if x == self.value_to_check else x for x in record[key]]
+
+                elif self.match_type == 'contains':
+                    record[key] = [self.value if self.value_to_check in x else x for x in record[key]]
                 self.changed = True
             else:
-                if not self.values_to_check\
-                        or record[key] in self.values_to_check:
+                if self.match_type == 'is equal to' and\
+                        record[key] == self.value_to_check:
                     record[key] = self.value
-                if self.values_to_check_regex:
-                    for value_to_check in self.values_to_check:
-                        if re.search(
-                                re.escape(value_to_check),
+                if self.match_type == 'matches regular expression' and\
+                        re.search(
+                                re.escape(self.value_to_check),
                                 record[key]):
                                 record[key] = self.value
                 self.changed = True
@@ -199,7 +204,7 @@ def create_schema_record(schema, path, value):
     return record
 
 
-def check_value(record, regex, keys, values_to_check, position):
+def check_value(record, match_type, keys, value_to_check, position):
     """Where continues to find the value."""
     key = keys[position]
     if not record.get(key):
@@ -208,63 +213,77 @@ def check_value(record, regex, keys, values_to_check, position):
     if isinstance(temp_record, list):
         for index, array_record in enumerate(temp_record):
             if position + 1 == len(keys):
-                if array_record in values_to_check:
+                if match_type == 'is equal to' and\
+                                array_record == value_to_check:
                     return True
-                if regex:
-                    for value_to_check in values_to_check:
-                        if re.search(
+                elif match_type == 'contains' and\
+                        value_to_check in array_record:
+                    return True
+                elif match_type == 'matches regular expression'and\
+                        re.search(
                                 re.escape(value_to_check),
                                 array_record):
                             return True
+                elif match_type == 'does not exist' and\
+                        value_to_check == array_record:
+                    return True
             else:
-                if check_value(array_record, regex,
-                               keys, values_to_check, position + 1):
+                if check_value(array_record, match_type,
+                               keys, value_to_check, position + 1):
                     return True
     else:
         if position + 1 == len(keys):
-            if temp_record in values_to_check:
+            if match_type == 'is equal to' and \
+                        temp_record == value_to_check:
                 return True
-            if regex:
-                for value_to_check in values_to_check:
-                    if re.search(
-                            re.escape(value_to_check),
-                            temp_record):
-                        return True
+            elif match_type == 'contains' and \
+                    value_to_check in temp_record:
+                return True
+            elif match_type == 'matches regular expression' and \
+                    re.search(
+                        re.escape(value_to_check),
+                        temp_record):
+                return True
+            elif match_type == 'does not exist' and \
+                    value_to_check == temp_record:
+                return True
         else:
-            return check_value(temp_record, regex,
-                               keys, values_to_check, position + 1)
+            return check_value(temp_record, match_type,
+                               keys, value_to_check, position + 1)
     return False
 
 
 def get_actions(user_actions):
     class_actions = []
-    for user_action in user_actions:
+    where_actions = []
+    for user_action in user_actions['actions']:
         keys = user_action.get('mainKey').split('/')
         if not keys:
             return
-        if user_action.get('whereKey'):
-            where_keys = user_action.get('whereKey').split('/')
-        else:
-            where_keys = []
+    if user_actions.get('conditions'):
+        for action in user_actions.get('conditions'):
+            where_key = action.split('/')
+            if not where_key:
+                pass
+            where_action = {'values': action['values'],
+                            'key': where_key,
+                            'match_type': action['matchType']}
+            where_actions.append(where_action)
+
         if user_action.get('selectedAction') == 'Addition':
             class_actions.append(Addition(keys=keys, value=user_action.get('value'),
                                           where_regex=user_action.get('whereRegex'),
-                                          where_keys=where_keys,
-                                          where_values=user_action.get('whereValues')))
+                                          where_actions=where_actions))
         elif user_action.get('selectedAction') == 'Deletion':
             class_actions.append(Deletion(keys=keys, value=user_action.get('value'),
-                                          values_to_check_regex=user_action.get('updateRegex'),
-                                          values_to_check=user_action.get('updateValues'),
-                                          where_regex=user_action.get('whereRegex'),
-                                          where_keys=where_keys,
-                                          where_values=user_action.get('whereValues')))
+                                          value_to_check=user_action.get('updateValue'),
+                                          match_type=user_action.get('matchType'),
+                                          where_actions=where_actions))
         elif user_action.get('selectedAction') == 'Update':
             class_actions.append(Update(keys=keys, value=user_action.get('value'),
-                                        values_to_check_regex=user_action.get('updateRegex'),
-                                        values_to_check=user_action.get('updateValues'),
-                                        where_regex=user_action.get('whereRegex'),
-                                        where_keys=where_keys,
-                                        where_values=user_action.get('whereValues')))
+                                        match_type=user_action.get('matchType'),
+                                        value_to_check=user_action.get('updateValue'),
+                                        where_actions=where_actions))
     return class_actions
 
 

@@ -42,10 +42,9 @@ CLS_MAP = {
 }
 
 
-def get_records_from_query(query_string, size, page, index, page_size=10):
-
+def get_records_from_query(query_string, page_size, page, index):
     query_result = CLS_MAP[index]().query_from_iq(query_string).params(
-        size=size,
+        size=page_size,
         from_=((page - 1) * page_size),
         fields=[]
     ).execute()

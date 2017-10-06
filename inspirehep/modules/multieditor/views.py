@@ -59,7 +59,7 @@ def update():
     for i, chunk in enumerate(chunker(ids, 20)):
         tasks.process_records.delay(records_ids=chunk, user_actions=user_actions, schema=schema)
 
-    return 'success'  # fixme should return logged errors
+    return 'success'
 
 
 @blueprint.route("/preview", methods=['POST'])
@@ -67,24 +67,26 @@ def preview():
     """Basic view."""
     user_actions = request.json['userActions']
     query_string = request.json['queryString']
+    page_size = int(request.args.get('pageSize', 1))
     page_num = request.json['pageNum']
     searched_records = session.get('multieditor_searched_records', [])
     if searched_records:
         index = searched_records['schema']
     schema = load_schema(index)
-    records = queries.get_records_from_query(query_string, 10, page_num, index)['json_records']
+    records = queries.get_records_from_query(query_string, page_size, page_num, index)['json_records']
     actions.process_records_no_db(user_actions, records, schema)
-    return jsonify(records)  # fixme should return logged errors
+    return jsonify(records)
 
 
 @blueprint.route("/search", methods=['GET'])
 def search():
     """Basic view."""
-    query_string = request.args.get('query_string', '')
-    page_num = int(request.args.get('page_num', 1))
+    query_string = request.args.get('queryString', '')
+    page_num = int(request.args.get('pageNum', 1))
+    page_size = int(request.args.get('pageSize', 1))
     index = request.args.get('index', '')
     session['multieditor_searched_records'] = {
         'ids': queries.get_record_ids_from_query(query_string, index),
         'schema': index
     }
-    return jsonify(queries.get_records_from_query(query_string, 10, page_num, index))  # page size should become dynamic
+    return jsonify(queries.get_records_from_query(query_string, page_size, page_num, index))
