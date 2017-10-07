@@ -24,24 +24,11 @@
 
 from __future__ import absolute_import, division, print_function
 
-from wtforms import StringField, ValidationError
+from wtforms import StringField
 
 from ..field_base import INSPIREField
 
 __all__ = ['TitleField']
-
-
-def validate_title(form, field):
-    """Deprecated."""
-    import warnings
-    warnings.warn("Validator has been deprecated", PendingDeprecationWarning)
-
-    value = field.data or ''
-    if value == "" or value.isspace():
-        return
-
-    if len(value) <= 4:
-        raise ValidationError("This field must have at least 4 characters")
 
 
 class TitleField(INSPIREField, StringField):
@@ -56,7 +43,6 @@ class TitleField(INSPIREField, StringField):
             icon='book',
             export_key='title.title',
             widget_classes="form-control"
-            # FIXMEvalidators=[validate_title]
         )
         defaults.update(kwargs)
         super(TitleField, self).__init__(**defaults)
