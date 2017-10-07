@@ -123,7 +123,7 @@ ADD_INGESTION_MARKS = [
     #     ingestion has been completed, process is continued
     #     to allow for updates.
     IF(
-        pending_in_holding_pen,
+        is_marked('already-in-holding-pen'),
         [mark('delete', True)]
     ),
     IF(
@@ -287,7 +287,7 @@ POSTENHANCE_RECORD = [
 
 SEND_TO_LEGACY_AND_WAIT = [
     IF_ELSE(
-        article_exists,
+        is_marked('is-update'),
         [
             prepare_update_payload(extra_data_key="update_payload"),
             send_robotupload(
@@ -307,7 +307,7 @@ SEND_TO_LEGACY_AND_WAIT = [
 
 CHECK_IF_MERGE_AND_STOP_IF_SO = [
     IF(
-        article_exists,
+        is_marked('is-update'),
         [
             IF_ELSE(
                 is_submission,
@@ -323,15 +323,17 @@ CHECK_IF_MERGE_AND_STOP_IF_SO = [
 
 
 ADD_MARKS = [
-    # Query locally or via legacy search API to see if article
-    # is already ingested and this is an update
     IF(
         article_exists,
-        [mark('match-found', True)]
+        [
+            mark('is-update', True),
+        ],
     ),
     IF(
         pending_in_holding_pen,
-        [mark('already-in-holding-pen', True)],
+        [
+            mark('already-in-holding-pen', True),
+        ],
     ),
     IF_ELSE(
         is_submission,

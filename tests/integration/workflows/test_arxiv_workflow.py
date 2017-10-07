@@ -171,8 +171,8 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.matching.search',
-    return_value=[],
+    'inspirehep.modules.workflows.tasks.matching.match',
+    return_value=iter([]),
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
@@ -180,7 +180,7 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
 )
 def test_harvesting_arxiv_workflow_manual_accepted(
     mocked_refextract_extract_refs,
-    mocked_matching_search,
+    mocked_matching_match,
     mocked_api_request_magpie,
     mocked_api_request_beard,
     mocked_download_utils,

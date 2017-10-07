@@ -26,8 +26,5 @@
 # JSON editor
 -e git+https://github.com/inveniosoftware-contrib/invenio-record-editor.git#egg=invenio-record-editor
 
-# Workflows and Holding Pen related dependencies
--e git+https://github.com/inspirehep/invenio-matcher.git#egg=invenio-matcher
-
 # SWORD2 client fork
 -e git+https://github.com/inspirehep/python-client-sword2.git#egg=sword2
