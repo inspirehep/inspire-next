@@ -26,6 +26,13 @@ from __future__ import absolute_import, division, print_function
 
 from functools import wraps
 
+from invenio_classifier import (
+    get_keywords_from_local_file,
+    get_keywords_from_text,
+)
+from invenio_classifier.errors import ClassifierException
+from invenio_classifier.reader import KeywordToken
+
 from ..proxies import antihep_keywords
 from ..utils import with_debug_logging, get_pdf_in_workflow
 
@@ -54,12 +61,6 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
     @with_debug_logging
     @wraps(classify_paper)
     def _classify_paper(obj, eng):
-        from invenio_classifier.errors import ClassifierException
-        from invenio_classifier import (
-            get_keywords_from_text,
-            get_keywords_from_local_file,
-        )
-
         params = dict(
             taxonomy_name=taxonomy,
             output_mode='dict',
@@ -110,7 +111,6 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
 @with_debug_logging
 def clean_instances_from_data(output):
     """Check if specific keys are of InstanceType and replace them with their id."""
-    from invenio_classifier.reader import KeywordToken
     new_output = {}
     for output_key in output.keys():
         keywords = output[output_key]

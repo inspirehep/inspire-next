@@ -43,8 +43,8 @@ from flask_breadcrumbs import register_breadcrumb
 from flask_login import login_required, current_user
 from werkzeug.datastructures import MultiDict
 
+from dojson.contrib.marc21.utils import create_record
 from invenio_db import db
-
 from invenio_workflows import workflow_object_class, start, resume
 from invenio_workflows_ui.api import WorkflowUIRecord
 
@@ -232,8 +232,6 @@ def new():
 @login_required
 def update(recid):
     """View for INSPIRE author update form."""
-    from dojson.contrib.marc21.utils import create_record
-
     data = {}
     if recid:
         try:
