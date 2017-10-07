@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import warnings
+
 from wtforms import SelectField
 from wtforms.validators import optional
 
@@ -32,7 +34,6 @@ __all__ = ['LanguageField']
 
 class LanguageField(INSPIREField, SelectField):
     def __init__(self, **kwargs):
-        import warnings
         warnings.warn("Field has been deprecated", PendingDeprecationWarning)
         defaults = dict(icon='flag',
                         export_key='language',
