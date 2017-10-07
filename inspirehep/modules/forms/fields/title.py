@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import warnings
+
 from wtforms import StringField
 
 from ..field_base import INSPIREField
@@ -37,7 +39,6 @@ class TitleField(INSPIREField, StringField):
 
     def __init__(self, **kwargs):
         """Deprecated."""
-        import warnings
         warnings.warn("Field has been deprecated", PendingDeprecationWarning)
         defaults = dict(
             icon='book',
