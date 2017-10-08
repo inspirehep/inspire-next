@@ -23,14 +23,24 @@
 from __future__ import absolute_import, division, print_function
 
 from elasticsearch_dsl.result import Response
+from flask import current_app
+from mock import ANY, patch
 
 from inspirehep.utils.conferences import (
+    conferences_in_the_same_series_from_es,
     render_conferences,
     render_contributions,
 )
 
 
-def test_render_conferences(request_context):
+@patch('inspirehep.utils.conferences.ConferencesSearch')
+def test_conferences_in_the_same_series_from_es_handles_unicode(conf_search):
+    conf_search().query_from_iq(ANY).params(ANY).sort(ANY).execute().hits = None
+    unicode_str = u'φοο_series_name'
+    assert conferences_in_the_same_series_from_es(unicode_str) is None
+
+
+def test_render_conferences():
     hits = Response({
         'hits': {
             'hits': [
@@ -65,12 +75,13 @@ def test_render_conferences(request_context):
             u'  ',
         ],
     ], 1)
-    result = render_conferences(2, hits)
+    with current_app.test_request_context():
+        result = render_conferences(2, hits)
 
     assert expected == result
 
 
-def test_render_conferences_handles_unicode(request_context):
+def test_render_conferences_handles_unicode():
     hits = Response({
         'hits': {
             'hits': [
@@ -99,7 +110,8 @@ def test_render_conferences_handles_unicode(request_context):
             u'  ',
         ],
     ], 1)
-    result = render_conferences(1, hits)
+    with current_app.test_request_context():
+        result = render_conferences(1, hits)
 
     assert expected == result
 

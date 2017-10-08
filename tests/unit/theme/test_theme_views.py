@@ -28,6 +28,12 @@ import mock
 
 from mocks import MockUser
 
+from inspirehep.modules.theme.views import (
+    get_institution_experiments_datatables_rows,
+    get_institution_papers_datatables_rows,
+    postfeedback
+)
+
 
 user_with_email = MockUser('user@example.com')
 user_empty_email = MockUser('')
@@ -90,3 +96,60 @@ def test_postfeedback_send_email_failure(delay, app_client):
 
     assert response.status_code == 500
     assert json.loads(response.data) == {'success': False}
+
+
+@mock.patch('inspirehep.modules.theme.views.get_experiment_publications')
+def test_get_institution_experiments_datatables_rows_handles_unicode_title(
+        mocked_get_experiment_publications
+):
+
+    mocked_hit = mock.Mock()
+    mocked_hit.control_number = 1
+    mocked_hit.legacy_name = u'φοο_name'
+    mocked_hit.collaboration = None
+
+    mocked_get_experiment_publications.return_value = None
+
+    expected_result = [
+        [u"<a href='/experiments/1'>φοο_name</a>", None]
+    ]
+
+    assert get_institution_experiments_datatables_rows([mocked_hit]) == expected_result
+
+
+@mock.patch('inspirehep.modules.theme.views.render_macro_from_template')
+@mock.patch('inspirehep.modules.theme.views.get_title')
+def test_get_institution_papers_datatables_rows_handles_unicode_title(
+        get_title, render_mft):
+
+    mocked_hit = mock.Mock()
+    mocked_hit.control_number = 1
+
+    mocked_publication_info = mock.Mock()
+    mocked_publication_info.journal_title = 'foo'
+    mocked_hit.publication_info = [mocked_publication_info]
+    mocked_hit.citation_count = 1
+    mocked_hit.earliest_date = '2017-04-10'
+
+    get_title.return_value = u'φοο_title'
+    render_mft.return_value = None
+
+    expected_result = [
+        ["<a href='/literature/1'>φοο_title</a>", None, 'foo', 1, '2017']
+    ]
+
+    assert get_institution_papers_datatables_rows([mocked_hit]) \
+        == expected_result
+
+
+@mock.patch('inspirehep.modules.theme.views.jsonify')
+@mock.patch('inspirehep.modules.theme.views.send_email')
+@mock.patch('inspirehep.modules.theme.views.request')
+def test_postfeedback_handles_unicode_feedback(request, send_email,
+                                               jsonify):
+    request.form.get.return_value = u'φοο'
+    sending_mock = mock.Mock()
+    sending_mock.failed.return_value = False
+    send_email.delay.return_value = sending_mock
+
+    assert postfeedback()

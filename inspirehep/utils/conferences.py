@@ -51,7 +51,7 @@ def render_conferences_contributions(cnum):
 
 def conferences_in_the_same_series_from_es(seriesname):
     """Query ES for conferences in the same series."""
-    query = 'series:"{}"'.format(seriesname)
+    query = u'series:"{}"'.format(seriesname)
     return ConferencesSearch().query_from_iq(
         query
     ).params(

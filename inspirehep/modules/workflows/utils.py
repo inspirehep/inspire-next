@@ -49,9 +49,7 @@ def json_api_request(url, data, headers=None):
     }
     if headers:
         final_headers.update(headers)
-    current_app.logger.debug("POST {0} with \n{1}".format(
-        url, json.dumps(data, indent=4)
-    ))
+    current_app.logger.debug(u"POST %s with \n%s", url, json.dumps(data, indent=4))
     try:
         response = requests.post(
             url=url,
