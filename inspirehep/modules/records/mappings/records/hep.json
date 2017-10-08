@@ -17,7 +17,8 @@
                 "_desy_bookkeeping": {
                     "properties": {
                         "date": {
-                            "type": "string"
+                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                            "type": "date"
                         },
                         "expert": {
                             "type": "string"
@@ -501,7 +502,8 @@
                     "properties": {
                         "date": {
                             "copy_to": "bookautocomplete",
-                            "type": "string"
+                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                            "type": "date"
                         },
                         "place": {
                             "type": "string"
@@ -555,7 +557,8 @@
                     "type": "string"
                 },
                 "legacy_creation_date": {
-                    "type": "string"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
                 },
                 "license": {
                     "properties": {
@@ -606,7 +609,8 @@
                     "type": "object"
                 },
                 "preprint_date": {
-                    "type": "string"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
                 },
                 "public_notes": {
                     "properties": {
@@ -804,7 +808,8 @@
                                 "imprint": {
                                     "properties": {
                                         "date": {
-                                            "type": "string"
+                                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                                            "type": "date"
                                         },
                                         "place": {
                                             "type": "string"
@@ -976,10 +981,12 @@
                 "thesis_info": {
                     "properties": {
                         "date": {
-                            "type": "string"
+                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                            "type": "date"
                         },
                         "defense_date": {
-                            "type": "string"
+                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                            "type": "date"
                         },
                         "degree_type": {
                             "type": "string"

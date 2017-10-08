@@ -69,7 +69,8 @@
                     "type": "object"
                 },
                 "closing_date": {
-                    "type": "string"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
                 },
                 "cnum": {
                     "copy_to": "conferenceautocomplete",
@@ -129,7 +130,8 @@
                     "type": "object"
                 },
                 "legacy_creation_date": {
-                    "type": "string"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
                 },
                 "new_recid": {
                     "type": "integer"

@@ -95,7 +95,8 @@
                     "type": "string"
                 },
                 "birth_date": {
-                    "type": "string"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
                 },
                 "conferences": {
                     "properties": {
@@ -109,7 +110,8 @@
                     "type": "integer"
                 },
                 "death_date": {
-                    "type": "string"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
                 },
                 "deleted": {
                     "type": "boolean"
@@ -190,7 +192,8 @@
                     "type": "object"
                 },
                 "legacy_creation_date": {
-                    "type": "string"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
                 },
                 "name": {
                     "properties": {
@@ -242,7 +245,8 @@
                             "type": "string"
                         },
                         "end_date": {
-                            "type": "string"
+                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                            "type": "date"
                         },
                         "institution": {
                             "properties": {
@@ -274,7 +278,8 @@
                             "type": "string"
                         },
                         "start_date": {
-                            "type": "string"
+                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                            "type": "date"
                         }
                     },
                     "type": "object"
@@ -311,7 +316,8 @@
                 "source": {
                     "properties": {
                         "date_verified": {
-                            "type": "string"
+                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                            "type": "date"
                         },
                         "name": {
                             "type": "string"

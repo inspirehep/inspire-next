@@ -137,7 +137,8 @@
                     "type": "string"
                 },
                 "legacy_creation_date": {
-                    "type": "string"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
                 },
                 "name_variants": {
                     "properties": {

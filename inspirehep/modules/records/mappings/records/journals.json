@@ -20,7 +20,8 @@
                             "type": "string"
                         },
                         "date_last_harvest": {
-                            "type": "string"
+                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                            "type": "date"
                         },
                         "last_seen_item": {
                             "type": "string"
@@ -49,10 +50,12 @@
                     "type": "integer"
                 },
                 "date_ended": {
-                    "type": "string"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
                 },
                 "date_started": {
-                    "type": "string"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
                 },
                 "deleted": {
                     "type": "boolean"
@@ -115,7 +118,8 @@
                     "type": "string"
                 },
                 "legacy_creation_date": {
-                    "type": "string"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
                 },
                 "license": {
                     "properties": {
