@@ -25,10 +25,12 @@ from __future__ import absolute_import, division, print_function
 import os
 
 import pkg_resources
+import pytest
 import requests
 import requests_mock
 
 from inspirehep.modules.workflows.utils import (
+    convert,
     download_file_to_workflow,
     json_api_request,
 )
@@ -74,3 +76,31 @@ def test_json_api_request_retries_on_connection_error():
         result = json_api_request('http://example.org/api', {})
 
         assert expected == result
+
+
+@pytest.fixture
+def oai_xml():
+    return pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            'fixtures',
+            'oai_arxiv.xml'
+        )
+    )
+
+
+@pytest.fixture
+def oai_xml_result():
+    return pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            'fixtures',
+            'arxiv_marcxml.xml'
+        )
+    )
+
+
+def test_xslt(oai_xml, oai_xml_result):
+    xml = convert(xml=oai_xml, xslt_filename='oaiarXiv2marcxml.xsl')
+    assert xml
+    assert xml == oai_xml_result
