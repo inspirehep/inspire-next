@@ -187,7 +187,7 @@
                         "value": {
                             "fields": {
                                 "raw": {
-                                    "index": "not_analyzed",
+                                    "analyzer": "lowercase_analyzer",
                                     "type": "string"
                                 }
                             },
@@ -411,7 +411,7 @@
                         "value": {
                             "fields": {
                                 "raw": {
-                                    "index": "not_analyzed",
+                                    "analyzer": "lowercase_analyzer",
                                     "type": "string"
                                 }
                             },
