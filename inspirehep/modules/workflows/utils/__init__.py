@@ -20,21 +20,23 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Workflows Utils."""
+"""Workflows utils."""
 
 from __future__ import absolute_import, division, print_function
 
 import json
 import logging
+import os
 import traceback
 from contextlib import closing
 from functools import wraps
 
 import backoff
+import lxml.etree as ET
 import requests
 from flask import current_app
 
-from .models import WorkflowsAudit
+from ..models import WorkflowsAudit
 
 
 LOGGER = logging.getLogger(__name__)
@@ -176,3 +178,16 @@ def download_file_to_workflow(workflow, name, url):
             req.raw.decode_content = True
             workflow.files[name] = req.raw
             return workflow.files[name]
+
+
+def convert(xml, xslt_filename):
+    """Convert XML using given XSLT stylesheet."""
+    if not os.path.isabs(xslt_filename):
+        prefix_dir = os.path.dirname(os.path.realpath(__file__))
+        xslt_filename = os.path.join(prefix_dir, "stylesheets", xslt_filename)
+
+    dom = ET.fromstring(xml)
+    xslt = ET.parse(xslt_filename)
+    transform = ET.XSLT(xslt)
+    newdom = transform(dom)
+    return ET.tostring(newdom, pretty_print=False)

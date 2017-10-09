@@ -31,7 +31,7 @@ from invenio_accounts.testutils import login_user_via_session
 
 from dojson.contrib.marc21.utils import create_record
 
-from inspirehep.modules.converter import convert
+from inspirehep.modules.workflows.utils import convert
 from inspire_dojson.hep import hep
 
 

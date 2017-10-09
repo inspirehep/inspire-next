@@ -131,3 +131,6 @@ selenium-report.html
 
 # Twisted
 twistd.pid
+
+# Build artifacts
+dbs/
