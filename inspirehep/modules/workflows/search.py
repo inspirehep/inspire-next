@@ -43,7 +43,7 @@ def holdingpen_search_factory(self, search, **kwargs):
         'metadata.acquisition_source', 'metadata.arxiv_eprints',
         'metadata.arxiv_categories', '_workflow',
         '_extra_data.relevance_prediction', '_extra_data.user_action',
-        '_extra_data.classifier_results.complete_output'
+        '_extra_data.classifier_results.complete_output', '_extra_data.conflicts'
     ]
     search = search.extra(_source={"include": includes})
     return search, urlkwargs
