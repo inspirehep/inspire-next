@@ -425,15 +425,41 @@ def test_prepare_update_payload_overwrites():
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.get_pdf_in_workflow')
-def test_refextract(mock_get_pdf_in_workflow):
-    schema = load_schema('hep')
-    subschema = schema['properties']['acquisition_source']
-
-    obj = MockObj({'acquisition_source': {'source': 'arXiv'}}, {})
-    eng = MockEng()
+def test_refextract_from_pdf(mock_get_pdf_in_workflow):
     mock_get_pdf_in_workflow.return_value = pkg_resources.resource_filename(
         __name__, os.path.join('fixtures', '1704.00452.pdf'))
 
-    assert validate(obj.data['acquisition_source'], subschema) is None
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+
+    data = {'acquisition_source': {'source': 'arXiv'}}
+    extra_data = {}
+    assert validate(data['acquisition_source'], subschema) is None
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
     assert refextract(obj, eng) is None
     assert obj.data['references'][0]['raw_refs'][0]['source'] == 'arXiv'
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.get_pdf_in_workflow')
+def test_refextract_from_text(mock_get_pdf_in_workflow):
+    mock_get_pdf_in_workflow.return_value = None
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+
+    data = {'acquisition_source': {'source': 'submitter'}}
+    extra_data = {
+        'formdata': {
+            'references': 'M.R. Douglas, G.W. Moore, D-branes, quivers, and ALE instantons, arXiv:hep-th/9603167',
+        },
+    }
+    assert validate(data['acquisition_source'], subschema) is None
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert refextract(obj, eng) is None
+    assert obj.data['references'][0]['raw_refs'][0]['source'] == 'submitter'

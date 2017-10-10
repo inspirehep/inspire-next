@@ -28,7 +28,8 @@ import pkg_resources
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.refextract import (
     extract_journal_info,
-    extract_references,
+    extract_references_from_pdf,
+    extract_references_from_text,
 )
 
 from mocks import MockEng, MockObj
@@ -92,22 +93,43 @@ def test_extract_journal_info_handles_year_an_empty_string():
     ]
 
 
-def test_extract_references_handles_unicode():
+def test_extract_references_from_pdf_handles_unicode():
     schema = load_schema('hep')
     subschema = schema['properties']['references']
 
     filename = pkg_resources.resource_filename(
         __name__, os.path.join('fixtures', '1704.00452.pdf'))
 
-    result = extract_references(filename)
+    result = extract_references_from_pdf(filename)
 
     assert validate(result, subschema) is None
+    assert len(result) > 0
 
 
-def test_extract_references_populates_raw_refs_source():
+def test_extract_references_from_pdf_populates_raw_refs_source():
     filename = pkg_resources.resource_filename(
         __name__, os.path.join('fixtures', '1704.00452.pdf'))
 
-    result = extract_references(filename, source='arXiv')
+    result = extract_references_from_pdf(filename, source='arXiv')
 
     assert result[0]['raw_refs'][0]['source'] == 'arXiv'
+
+
+def test_extract_references_from_text_handles_unicode():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    text = u'Iskra Ł W et al 2017 Acta Phys. Pol. B 48 581'
+
+    result = extract_references_from_text(text)
+
+    assert validate(result, subschema) is None
+    assert len(result) > 0
+
+
+def test_extract_references_from_text_populates_raw_refs_source():
+    text = u'Iskra Ł W et al 2017 Acta Phys. Pol. B 48 581'
+
+    result = extract_references_from_text(text, source='submitter')
+
+    assert result[0]['raw_refs'][0]['source'] == 'submitter'
