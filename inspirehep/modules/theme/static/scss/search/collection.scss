@@ -170,6 +170,12 @@ img.landing-page-flask {
       button {
         border: 0;
         font-size: 27px;
+        padding-left: 20px;
+        padding-right: 20px;
+
+        .search-glyphicon {
+          vertical-align: middle;
+        }
 
         &.literature-search-button {
           @include collection-background-color($literature-collection);
