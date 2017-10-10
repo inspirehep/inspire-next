@@ -179,7 +179,7 @@
     {% endfor %}
   {% endif %}
 
-  {% if record.external_system_identifiers %}
+  
     {% for system_number in record.external_system_identifiers %}
       {% if not viewInDisplayed and not isExternalUrl %}
         View in
@@ -240,7 +240,7 @@
         </a>
       {% endif %}
     {% endfor %}
-  {% endif %}
+ 
 
   {# Fallback ADS link via arXiv:e-print #}
   {% if not adsLinked %}
