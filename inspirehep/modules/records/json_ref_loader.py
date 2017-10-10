@@ -26,13 +26,14 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
-from flask import current_app
+from flask import current_app, url_for
 from jsonref import JsonLoader, JsonRef
 from werkzeug.urls import url_parse
 
 import jsonresolver
 from jsonresolver.contrib.jsonref import json_loader_factory
 
+from inspire_schemas.utils import load_schema
 from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
 from inspirehep.utils import record_getter
 
@@ -97,6 +98,27 @@ SCHEMA_LOADER_CLS = json_loader_factory(
     )
 )
 """Used in invenio-jsonschemas to resolve relative $ref."""
+
+
+def load_resolved_schema(name):
+    """Load a JSON schema with all references resolved.
+
+    Args:
+        name(str): name of the schema to load.
+
+    Returns:
+        dict: the JSON schema with resolved references.
+
+    Examples:
+        >>> resolved_schema = load_resolved_schema('authors')
+
+    """
+    schema = load_schema(name)
+    return JsonRef.replace_refs(
+        schema,
+        base_uri=url_for('invenio_jsonschemas.get_schema', schema_path='records/{}.json'.format(name)),
+        loader=SCHEMA_LOADER_CLS()
+    )
 
 
 def replace_refs(obj, source='db'):
