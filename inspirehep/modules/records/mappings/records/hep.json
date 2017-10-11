@@ -728,6 +728,7 @@
                     "type": "boolean"
                 },
                 "references": {
+                    "include_in_all": false,
                     "properties": {
                         "curated_relation": {
                             "type": "boolean"
