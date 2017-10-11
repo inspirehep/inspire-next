@@ -26,7 +26,11 @@ from __future__ import absolute_import, division, print_function
 
 from timeout_decorator import timeout
 
-from refextract import extract_journal_reference, extract_references_from_file
+from refextract import (
+    extract_journal_reference,
+    extract_references_from_file,
+    extract_references_from_string,
+)
 
 from inspire_schemas.utils import split_page_artid
 from inspire_utils.helpers import maybe_int
@@ -87,12 +91,24 @@ def extract_journal_info(obj, eng):
 
 
 @timeout(5 * 60)
-def extract_references(filepath, source=None, custom_kbs_file=None):
+def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
     """Extract references from PDF and return in INSPIRE format."""
     extracted_references = extract_references_from_file(
         filepath,
         override_kbs_files=get_refextract_kbs_path(),
-        reference_format=u'{title},{volume},{page}'
+        reference_format=u'{title},{volume},{page}',
+    )
+
+    return map_refextract_to_schema(extracted_references, source=source)
+
+
+@timeout(5 * 60)
+def extract_references_from_text(text, source=None, custom_kbs_file=None):
+    """Extract references from text and return in INSPIRE format."""
+    extracted_references = extract_references_from_string(
+        text,
+        override_kbs_files=get_refextract_kbs_path(),
+        reference_format=u'{title},{volume},{page}',
     )
 
     return map_refextract_to_schema(extracted_references, source=source)

@@ -38,7 +38,10 @@ from inspirehep.modules.workflows.utils import (
 from inspirehep.utils.record import get_arxiv_id
 from inspirehep.utils.url import is_pdf_link
 
-from .refextract import extract_references
+from .refextract import (
+    extract_references_from_pdf,
+    extract_references_from_text,
+)
 from ..utils import download_file_to_workflow, with_debug_logging
 
 
@@ -231,18 +234,45 @@ def prepare_update_payload(extra_data_key="update_payload"):
 
 @with_debug_logging
 def refextract(obj, eng):
-    uri = get_pdf_in_workflow(obj)
-    source = get_value(obj.data, 'acquisition_source.source')
-    if uri:
-        try:
-            references = extract_references(uri, source)
+    """Extract references from various sources and add them to the workflow.
 
-            if references:
-                obj.data['references'] = references
-                obj.log.info('Extracted %d references', len(references))
-            else:
-                obj.log.info('No references extracted')
+    Runs ``refextract`` on both the PDF attached to the workflow and the
+    references provided by the submitter, if any, then chooses the one
+    that generated the most and attaches them to the workflow object.
+
+    Note:
+        We might want to compare the number of *matched* references instead.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        None
+
+    """
+    pdf_references, text_references = [], []
+    source = get_value(obj.data, 'acquisition_source.source')
+
+    pdf = get_pdf_in_workflow(obj)
+    if pdf:
+        try:
+            pdf_references = extract_references_from_pdf(pdf, source)
         except TimeoutError:
-            obj.log.error('Timeout when extracting references from the PDF')
-    else:
-        obj.log.error('Not able to download and process the PDF')
+            obj.log.error('Timeout when extracting references from PDF.')
+
+    text = get_value(obj.extra_data, 'formdata.references')
+    if text:
+        try:
+            text_references = extract_references_from_text(text, source)
+        except TimeoutError:
+            obj.log.error('Timeout when extracting references from text.')
+
+    if len(pdf_references) == len(text_references) == 0:
+        obj.log.info('No references extracted.')
+    elif len(pdf_references) >= len(text_references):
+        obj.log.info('Extracted %d references from PDF.', len(pdf_references))
+        obj.data['references'] = pdf_references
+    elif len(text_references) > len(pdf_references):
+        obj.log.info('Extracted %d references from text.', len(text_references))
+        obj.data['references'] = text_references
