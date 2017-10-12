@@ -71,7 +71,30 @@ def init_workflows_storage_path(default=False):
         raise
 
 
+def init_records_files_storage_path(default=False):
+    """Init records file store location."""
+    try:
+        uri = os.path.join(
+            current_app.config['BASE_FILES_LOCATION'],
+            "records", "files"
+        )
+        if uri.startswith('/') and not os.path.exists(uri):
+            os.makedirs(uri)
+        loc = Location(
+            name=current_app.config["RECORDS_DEFAULT_FILE_LOCATION_NAME"],
+            uri=uri,
+            default=False
+        )
+        db.session.add(loc)
+        db.session.commit()
+        return loc
+    except Exception:
+        db.session.rollback()
+        raise
+
+
 def init_all_storage_paths():
     """Init all storage paths."""
     init_default_storage_path()
     init_workflows_storage_path()
+    init_records_files_storage_path()

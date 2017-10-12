@@ -24,7 +24,10 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+import itertools
 from pprint import pformat
+
 
 from flask import url_for
 
@@ -49,17 +52,24 @@ def store_record(obj, *args, **kwargs):
     # holdingpen stack.
     record = InspireRecord.create(obj.data, id_=None)
 
+    for key in obj.files.keys:
+        with open(os.path.realpath(obj.files[key].file.uri)) as stream:
+            record.files[key] = stream
+            for attachment in itertools.chain(record.get('documents', []), record.get('figures', [])):
+                if key == attachment['key']:
+                    attachment['url'] = '/api/files/{bucket}/{key}'.format(bucket=record.files[key].bucket_id, key=key)
+                    break
+
     # Create persistent identifier.
-    inspire_recid_minter(str(record.id), record)
+    created_pid = inspire_recid_minter(str(record.id), record).pid_value
 
     # Commit any changes to record
     record.commit()
 
-    # Dump any changes to record
-    obj.data = record.dumps()
-
     # Commit to DB before indexing
     db.session.commit()
+
+    obj.data['control_number'] = created_pid
 
 
 @with_debug_logging

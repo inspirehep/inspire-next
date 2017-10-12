@@ -40,7 +40,7 @@ from inspirehep.utils.robotupload import make_robotupload_marcxml
 from inspirehep.utils import tickets
 from inspirehep.utils.proxies import rt_instance
 
-from .actions import in_production_mode, is_arxiv_paper
+from .actions import in_production_mode
 from ..utils import with_debug_logging
 
 
@@ -311,44 +311,6 @@ def prepare_keywords(obj, eng):
     obj.data['keywords'] = keywords
 
     obj.log.debug('Finally got keywords: \n%s', pformat(keywords))
-
-
-@with_debug_logging
-def prepare_files(obj, eng):
-    """Adds to the _fft field (files) the extracted pdfs if any"""
-    def _get_fft(url, name):
-        def _get_filename(obj, filename):
-            if is_arxiv_paper(obj):
-                return 'arxiv:' + filename
-
-            return filename
-
-        filename, filetype = os.path.splitext(name)
-
-        return {
-            'path': os.path.realpath(url),
-            'type': is_arxiv_paper(obj) and 'arXiv' or 'INSPIRE-PUBLIC',
-            'filename': _get_filename(obj, filename),
-            'format': filetype,
-        }
-
-    if not obj.files:
-        return
-
-    pdf_file_objs = []
-    for key in obj.files.keys:
-        if key.endswith('.pdf'):
-            pdf_file_objs.append((key, obj.files[key]))
-
-    result = []
-    for filename, pdf_file_obj in pdf_file_objs:
-        if pdf_file_obj:
-            result.append(_get_fft(pdf_file_obj.obj.file.uri, filename))
-
-    if result:
-        obj.data['_fft'] = obj.data.get('_fft', []) + result
-        obj.log.info('Non-user PDF files added to FFT.')
-        obj.log.debug('Added PDF files: {}'.format(result))
 
 
 @with_debug_logging

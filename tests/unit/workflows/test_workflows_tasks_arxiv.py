@@ -161,6 +161,50 @@ def test_arxiv_fulltext_download_retries_on_error():
         assert expected == result
 
 
+def test_arxiv_fulltext_download_polulates_documents():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '1605.03844.pdf')),
+        )
+
+        schema = load_schema('hep')
+        subschema = schema['properties']['arxiv_eprints']
+
+        data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'physics.ins-det',
+                    ],
+                    'value': '1605.03844',
+                },
+            ],
+        }  # literature/1458302
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['arxiv_eprints'], subschema) is None
+
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
+
+        assert arxiv_fulltext_download(obj, eng) is None
+
+        expected = [{
+            'fulltext': True,
+            'original_url': 'http://export.arxiv.org/pdf/1605.03844',
+            'url': '/api/files/0b9dd5d1-feae-4ba5-809d-3a029b0bc110/1605.03844.pdf',
+            'material': 'preprint',
+            'source': 'arxiv',
+            'key': '1605.03844.pdf',
+            'hidden': True
+        }]
+        result = obj.data['documents']
+
+        assert expected == result
+
+
 def test_arxiv_package_download_logs_on_success():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
@@ -271,12 +315,14 @@ def test_arxiv_plot_extract_populates_files_with_plots(mock_os):
 
         assert arxiv_plot_extract(obj, eng) is None
 
-        expected = obj.files['figure1']['description']
-        result = (
-            '00000 Difference (in MeV) between the theoretical and '
-            'experimental masses for the 2027 selected nuclei as a '
-            'function of the mass number.'
-        )
+        expected = [{
+            'url': '/api/files/0b9dd5d1-feae-4ba5-809d-3a029b0bc110/figure1',
+            'source': 'arxiv',
+            'material': 'preprint',
+            'key': 'figure1',
+            'caption': 'Difference (in MeV) between the theoretical and experimental masses for the 2027 selected nuclei as a function of the mass number.'
+        }]
+        result = obj.data['figures']
 
         assert expected == result
 

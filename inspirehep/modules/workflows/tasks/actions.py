@@ -30,6 +30,7 @@ from flask import current_app
 from werkzeug import secure_filename
 from timeout_decorator import TimeoutError
 
+from inspire_schemas.builders import LiteratureBuilder
 from inspire_utils.record import get_value
 from inspirehep.modules.workflows.utils import (
     get_pdf_in_workflow,
@@ -211,6 +212,14 @@ def submission_fulltext_download(obj, eng):
         )
 
         if pdf:
+            lb = LiteratureBuilder(source=obj.data['acquisition_source']['source'], record=obj.data)
+            lb.add_document(
+                filename,
+                fulltext=True,
+                original_url=submission_pdf,
+                url='/api/files/{bucket}/{key}'.format(bucket=obj.files[filename].bucket_id, key=filename)
+            )
+            obj.data = lb.record
             obj.log.info('PDF provided by user from %s', submission_pdf)
             return obj.files[filename].file.uri
         else:

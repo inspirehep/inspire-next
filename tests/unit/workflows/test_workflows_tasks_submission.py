@@ -34,7 +34,6 @@ from inspirehep.modules.workflows.tasks.submission import (
     close_ticket,
     create_ticket,
     filter_keywords,
-    prepare_files,
     prepare_keywords,
     remove_references,
     reply_ticket,
@@ -42,7 +41,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     wait_webcoll,
 )
 
-from mocks import AttrDict, MockEng, MockFiles, MockObj, MockUser
+from mocks import MockEng, MockObj, MockUser
 
 
 @patch('inspirehep.modules.workflows.tasks.submission.User')
@@ -629,181 +628,6 @@ def test_prepare_keywords_does_nothing_if_no_keywords_were_predicted():
 
     assert validate(result['keywords'], subschema) is None
     assert expected == result['keywords']
-
-
-def test_prepare_files():
-    schema = load_schema('hep')
-    subschema = schema['properties']['_fft']
-
-    data = {}
-    extra_data = {}
-    files = MockFiles({
-        'foo.pdf': AttrDict({
-            'obj': AttrDict({
-                'file': AttrDict({
-                    'uri': '/data/foo.pdf',
-                }),
-            }),
-        }),
-    })
-
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
-
-    assert prepare_files(obj, eng) is None
-
-    expected = [
-        {
-            'path': '/data/foo.pdf',
-            'type': 'INSPIRE-PUBLIC',
-            'filename': 'foo',
-            'format': '.pdf',
-        },
-    ]
-    result = obj.data
-
-    assert validate(result['_fft'], subschema) is None
-    assert expected == result['_fft']
-
-    expected = 'Non-user PDF files added to FFT.'
-    result = obj.log._info.getvalue()
-
-    assert expected == result
-
-
-def test_prepare_files_annotates_files_from_arxiv():
-    schema = load_schema('hep')
-    _fft_schema = schema['properties']['_fft']
-    arxiv_eprints_schema = schema['properties']['arxiv_eprints']
-
-    data = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'hep-th'
-                ],
-                'value': 'hep-th/9711200',
-            },
-        ],
-    }
-    extra_data = {}
-    files = MockFiles({
-        'foo.pdf': AttrDict({
-            'obj': AttrDict({
-                'file': AttrDict({
-                    'uri': '/data/foo.pdf',
-                }),
-            }),
-        }),
-    })
-    assert validate(data['arxiv_eprints'], arxiv_eprints_schema) is None
-
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
-
-    assert prepare_files(obj, eng) is None
-
-    expected_fft = [
-        {
-            'path': '/data/foo.pdf',
-            'type': 'arXiv',
-            'filename': 'arxiv:foo',
-            'format': '.pdf',
-        },
-    ]
-    expected_arxiv_eprints = [
-        {
-            'categories': [
-                'hep-th',
-            ],
-            'value': 'hep-th/9711200',
-        },
-    ]
-    result = obj.data
-
-    assert validate(result['_fft'], _fft_schema) is None
-    assert expected_fft == result['_fft']
-
-    assert validate(result['arxiv_eprints'], arxiv_eprints_schema) is None
-    assert expected_arxiv_eprints == result['arxiv_eprints']
-
-    expected = 'Non-user PDF files added to FFT.'
-    result = obj.log._info.getvalue()
-
-    assert expected == result
-
-
-def test_prepare_files_skips_empty_files():
-    data = {}
-    extra_data = {}
-    files = MockFiles({
-        'foo.pdf': AttrDict({}),
-    })
-
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
-
-    assert prepare_files(obj, eng) is None
-
-    expected = {}
-    result = obj.data
-
-    assert expected == result
-
-    expected = ''
-    result = obj.log._info.getvalue()
-
-    assert expected == result
-
-
-def test_prepare_files_does_nothing_when_obj_has_no_files():
-    data = {}
-    extra_data = {}
-    files = MockFiles({})
-
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
-
-    assert prepare_files(obj, eng) is None
-
-    expected = {}
-    result = obj.data
-
-    assert expected == result
-
-    expected = ''
-    result = obj.log._info.getvalue()
-
-    assert expected == result
-
-
-def test_prepare_files_ignores_keys_not_ending_with_pdf():
-    data = {}
-    extra_data = {}
-    files = MockFiles({
-        'foo.bar': AttrDict({
-            'obj': AttrDict({
-                'file': AttrDict({
-                    'uri': '/data/foo.pdf',
-                }),
-            }),
-        }),
-    })
-
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
-
-    assert prepare_files(obj, eng) is None
-
-    expected = {}
-    result = obj.data
-
-    assert expected == result
-
-    expected = ''
-    result = obj.log._info.getvalue()
-
-    assert expected == result
 
 
 def test_remove_references():

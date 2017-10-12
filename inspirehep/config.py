@@ -1202,6 +1202,11 @@ ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY = [
     'physics.acc-ph',
     'physics.ins-det',
 ]
+RECORDS_DEFAULT_FILE_LOCATION_NAME = "records"
+"""Name of default records Location reference."""
+
+RECORDS_DEFAULT_STORAGE_CLASS = "S"
+"""Default storage class for record files."""
 
 WORKFLOWS_DEFAULT_FILE_LOCATION_NAME = "holdingpen"
 """Name of default workflow Location reference."""
