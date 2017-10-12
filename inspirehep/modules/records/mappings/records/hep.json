@@ -40,41 +40,6 @@
                     },
                     "type": "object"
                 },
-                "_fft": {
-                    "properties": {
-                        "comment": {
-                            "type": "string"
-                        },
-                        "creation_datetime": {
-                            "type": "string"
-                        },
-                        "description": {
-                            "type": "string"
-                        },
-                        "filename": {
-                            "type": "string"
-                        },
-                        "flags": {
-                            "type": "string"
-                        },
-                        "format": {
-                            "type": "string"
-                        },
-                        "path": {
-                            "type": "string"
-                        },
-                        "status": {
-                            "type": "string"
-                        },
-                        "type": {
-                            "type": "string"
-                        },
-                        "version": {
-                            "type": "integer"
-                        }
-                    },
-                    "type": "object"
-                },
                 "_files": {
                     "properties": {
                         "bucket": {
