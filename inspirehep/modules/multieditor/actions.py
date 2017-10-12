@@ -25,7 +25,7 @@ import re
 
 
 class Action(object):
-    def __init__(self, keys, value, match_type=None, value_to_check=None,
+    def __init__(self, keys, value=None, match_type=None, value_to_check=None,
                  where_regex=False, where_actions=None):
         self.keys = keys
         self.value = value
@@ -48,11 +48,12 @@ class Action(object):
         if self.where_actions:
             for where_action in self.where_actions:
                 if len(where_action['key']) > position and key != where_action['key'][position]\
-                        and (position == 0 or self.keys[position-1] == where_action['key'][position-1]):
-                    if not check_value(record=record, keys=where_action['key'], values_to_check=where_action['values'],
+                        and (position == 0 or self.keys[position - 1] == where_action['key'][position - 1]):
+                    if not check_value(record=record, keys=where_action['key'], value_to_check=where_action['value'],
                                        match_type=where_action['match_type'], position=position):
                         where_negative = True
-                    elif where_action['match_type']:  # fixme possible refactor for less code
+
+                    elif where_action['match_type'] == 'does not exist':  # fixme possible refactor for less code
                         where_negative = True
                     checked = checked + 1
         return new_schema, checked, key, where_negative
@@ -108,13 +109,13 @@ class Deletion(Action):
 
             else:
                 if self.match_type == 'is equal to' and\
-                                record[key] == self.value_to_check:
+                        record[key] == self.value_to_check:
                     del record[key]
 
                 elif self.match_type == 'matches regular expression' and\
                         re.search(
-                                re.escape(self.value_to_check),
-                                record[key]):
+                            re.escape(self.value_to_check),
+                            record[key]):
                                 del record[key]
                 elif self.match_type == 'contains' and\
                         self.value_to_check in record[key]:
@@ -162,8 +163,8 @@ class Update(Action):
                     record[key] = self.value
                 if self.match_type == 'matches regular expression' and\
                         re.search(
-                                re.escape(self.value_to_check),
-                                record[key]):
+                            re.escape(self.value_to_check),
+                            record[key]):
                                 record[key] = self.value
                 self.changed = True
                 return
@@ -208,21 +209,24 @@ def check_value(record, match_type, keys, value_to_check, position):
     """Where continues to find the value."""
     key = keys[position]
     if not record.get(key):
-        return False
+        if match_type == 'does not exist':
+            return True
+        else:
+            return False
     temp_record = record[key]
     if isinstance(temp_record, list):
         for index, array_record in enumerate(temp_record):
             if position + 1 == len(keys):
                 if match_type == 'is equal to' and\
-                                array_record == value_to_check:
+                        array_record == value_to_check:
                     return True
                 elif match_type == 'contains' and\
                         value_to_check in array_record:
                     return True
                 elif match_type == 'matches regular expression'and\
                         re.search(
-                                re.escape(value_to_check),
-                                array_record):
+                            re.escape(value_to_check),
+                            array_record):
                             return True
                 elif match_type == 'does not exist' and\
                         value_to_check == array_record:
@@ -234,7 +238,7 @@ def check_value(record, match_type, keys, value_to_check, position):
     else:
         if position + 1 == len(keys):
             if match_type == 'is equal to' and \
-                        temp_record == value_to_check:
+                    temp_record == value_to_check:
                 return True
             elif match_type == 'contains' and \
                     value_to_check in temp_record:

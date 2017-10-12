@@ -74,9 +74,9 @@ def test_addition_root_key_with_deeper_where(get_schema):
         "preprint_date": "2016"
     }
     add = Addition(keys=['preprint_date'],
-                   where_actions=[{'key': ['public_notes', 'value'], 'values': ['Preliminary results']
-                                  , 'match_type': False},
-                                  {'key': ['core'], 'values': [True], 'match_type': False}],
+                   where_actions=[{'key': ['public_notes', 'value'], 'value': 'Preliminary results',
+                                   'match_type': 'is equal to'},
+                                  {'key': ['core'], 'value': True, 'match_type': 'is equal to'}],
                    value="2016")
     add.apply_action(record, get_schema)
     assert record == expected_map
@@ -110,10 +110,10 @@ def test_addition_root_key_with_deeper_where_negative(get_schema):
         ],
     }
     add = Addition(keys=['preprint_date'],
-                   where_actions=[{'key': ['public_notes', 'value'], 'values': ['Preliminary results']
-                                  , 'match_type': False},
-                                  {'key': ['core'], 'values': [False], 'match_type': False}],
-                   where_regex=False,
+                   where_actions=[{'key': ['public_notes', 'value'], 'value': 'Preliminary results',
+                                   'match_type': 'is equal to'},
+                                  {'key': ['core'], 'value': False, 'match_type': 'is equal to'}],
+                   match_type='is equal to',
                    value="2016")
     add.apply_action(record, get_schema)
     assert record == expected_map
@@ -150,9 +150,9 @@ def test_addition_object_with_where(get_schema):
         ],
     }
     add = Addition(keys=['titles'],
-                   where_actions=[{'key': ['public_notes', 'value'], 'values': ['Preliminary results']
-                                  , 'match_type': False},
-                                  {'key': ['core'], 'values': [True], 'match_type': False}],
+                   where_actions=[{'key': ['public_notes', 'value'], 'value': 'Preliminary results',
+                                   'match_type': 'is equal to'},
+                                  {'key': ['core'], 'value': True, 'match_type': 'is equal to'}],
                    value={'title': "success"})
     add.apply_action(record, get_schema)
     assert record == expected_map
@@ -235,8 +235,11 @@ def test_addition_array_with_where():
         },
         "type": "object",
     }
-    add = Addition(keys=['key_a', 'key_b'], where_keys=['key_a', 'key_c'], where_regex=False,
-                   where_values=['test'], value="World")
+    add = Addition(keys=['key_a', 'key_b'],
+                   where_actions=[{'key': ['key_a', 'key_c'],
+                                   'match_type': 'is equal to',
+                                   'value':'test'}],
+                   value="World")
     add.apply_action(record, custom_schema)
     assert record == expected_map
 
@@ -298,9 +301,11 @@ def test_addition_array_with_where_regex(get_schema):
         ],
         "document_type": ["book"]
     }
-    add = Addition(keys=['titles', 'subtitle'], where_keys=['titles', 'title'],
-                   where_regex=True,
-                   where_values=['test'], value="success")
+    add = Addition(keys=['titles', 'subtitle'],
+                   where_actions=[{'key': ['titles', 'title'],
+                                   'match_type': 'contains',
+                                   'value':'test'}],
+                   value="success")
     add.apply_action(record, get_schema)
     assert record == expected_map
 
@@ -334,8 +339,11 @@ def test_addition_array_with_where_missing_record():
         },
         "type": "object",
     }
-    add = Addition(keys=['key_a', 'key_b'], where_keys=['key_a', 'key_c'], where_regex=False,
-                   where_values=['test'], value="World")
+    add = Addition(keys=['key_a', 'key_b'],
+                   where_actions=[{'key': ['key_a', 'key_c'],
+                                   'match_type': 'is equal to',
+                                   'value':'test'}],
+                   value="World")
     add.apply_action(record, custom_schema)
     assert record == expected_map
 
@@ -385,77 +393,13 @@ def test_addition_object_where(get_schema):
             }
         ]
     }
-    add = Addition(keys=['authors', 'affiliations'], where_keys=['authors', 'signature_block'], where_regex=False,
-                   where_values=['BANARo'], value={
-        "curated_relation": True,
-        "value": "Success"
-    })
+    add = Addition(keys=['authors', 'affiliations'],
+                   where_actions=[{'key': ['authors', 'signature_block'],
+                                   'match_type': 'is equal to',
+                                   'value':'BANARo'}],
+                   value={"curated_relation": True,
+                          "value": "Success"})
     add.apply_action(record, get_schema)
-    assert record == expected_map
-
-
-def test_addition_where_missing_key(get_schema):
-    record = {
-        "authors": [
-            {
-                "affiliations": [
-                    {
-                        "value": "Rome"
-                    },
-                    {
-                        "value": "Rome U."
-                    },
-                    {
-                        "value": "INFN"
-                    }
-                ],
-                "signature_block": "BANARo"
-            },
-            {
-                "affiliations": [
-                    {
-                        "value": "Rome U."
-                    },
-                    {
-                        "value": "Not INF"
-                    }
-                ],
-                "signature_block": "MANl",
-            }
-        ]
-    }
-    expected_map = {
-        "authors": [
-            {
-                "affiliations": [
-                    {
-                        "value": "Success"
-                    },
-                    {
-                        "value": "Success"
-                    },
-                    {
-                        "value": "INFN"
-                    }
-                ],
-                "signature_block": "BANARo"
-            },
-            {
-                "affiliations": [
-                    {
-                        "value": "Rome U."
-                    },
-                    {
-                        "value": "Not INF"
-                    }
-                ],
-                "signature_block": "MANl",
-            }
-        ]
-    }
-    update = Update(values_to_check=['Rome'], keys=['authors', 'affiliations', 'value'], where_keys=['authors', 'signature_block'], where_regex=False,
-                    where_values=['BANARo'], values_to_check_regex=True, value="Success")
-    update.apply_action(record, get_schema)
     assert record == expected_map
 
 
@@ -464,19 +408,20 @@ def test_deletion_array():
     record = {
         'key_a': [{'key_c': ['val5', 'val4']},
                   {'key_c': ['val1', 'val6']},
-                  {'key_c': ['val4', 'val6']},
+                  {'key_c': ['val6', 'val6']},
                   {'key_c': ['val3']}],
         'key_b': {'key_c': {'key_d': 'val'}}
     }
     expected_map = {
         'key_a': [{'key_c': ['val5', 'val4']},
-                  {'key_c': ['val4']},
+                  {'key_c': ['val1']},
                   {'key_c': ['val3']}],
         'key_b': {'key_c': {'key_d': 'val'}}
     }
 
-    delete = Deletion(values_to_check=["val6", "val1"], keys=['key_a', 'key_c'],
-                      match_type=False)
+    delete = Deletion(value_to_check='val6',
+                      keys=['key_a', 'key_c'],
+                      match_type='is equal to')
     delete.apply_action(record, {})
     assert record == expected_map
 
@@ -488,14 +433,15 @@ def test_deletion_array_regex():
                   {'key_c': ['val1', 'val6']},
                   {'key_c': ['val4', 'val6']},
                   {'key_c': ['val3']}],
-        'key_b': {'key_c': {'key_d': 'val'}}
+        'key_b': {'key_f': {'key_d': 'val'}}
     }
     expected_map = {
-        'key_b': {'key_c': {'key_d': 'val'}}
+        'key_b': {'key_f': {'key_d': 'val'}}
     }
 
-    delete = Deletion(values_to_check=["val"], keys=['key_a', 'key_c'], where_keys=[], where_regex=False,
-                      where_values=[], values_to_check_regex=True, value="")
+    delete = Deletion(value_to_check='val',
+                      keys=['key_a', 'key_c'],
+                      match_type='contains')
     delete.apply_action(record, {})
     assert record == expected_map
 
@@ -509,8 +455,9 @@ def test_deletion_empty_rec():
         }
     }
     expected_map = {}
-    delete = Deletion(values_to_check=['val'], keys=['key1', 'key2', 'key3'], where_keys=[], where_regex=False,
-                      where_values=[], values_to_check_regex=False, value="")
+    delete = Deletion(value_to_check='val',
+                      keys=['key1', 'key2', 'key3'],
+                      match_type='is equal to')
     delete.apply_action(record, {})
     assert record == expected_map
 
@@ -518,32 +465,23 @@ def test_deletion_empty_rec():
 def test_update_array():
     """should test record edit for nested complex array."""
     record = {
-        'key_a': [{'key_c': ['val5', 'val4']}, {'key_c': ['val1', 'val6']},
-                  {'key_c': ['val2']}, {'key_c': ['val3']}], 'key_b': {'key_c': {'key_d': 'pong'}}
+        'key_a': [{'key_c': ['val5', 'val4']},
+                  {'key_c': ['val1', 'val6']},
+                  {'key_c': ['val2']},
+                  {'key_c': ['val3']}],
+        'key_b': {'key_c': {'key_d': 'pong'}}
     }
     expected_map = {
-        'key_a': [{'key_c': ['val5', 'success']}, {'key_c': ['val1', 'val6']},
-                  {'key_c': ['val2']}, {'key_c': ['val3']}], 'key_b': {'key_c': {'key_d': 'pong'}}
+        'key_a': [{'key_c': ['val5', 'success']},
+                  {'key_c': ['val1', 'val6']},
+                  {'key_c': ['val2']},
+                  {'key_c': ['val3']}],
+        'key_b': {'key_c': {'key_d': 'pong'}}
     }
-    update = Update(values_to_check=["val4"], keys=['key_a', 'key_c'],
-                    match_type=False, value="success")
-    update.apply_action(record, {})
-    assert record == expected_map
-
-
-def test_update_regex_array():
-    """should test action for nested complex array and multiple check values"""
-    record = {
-        'key_a': [{'key_c': ['val5', 'tes4']}, {'key_c': ['val1', 'val6']},
-                  {'key_c': ['tes2']}, {'key_c': ['val3']}], 'key_b': {'key_c': ['not']}
-    }
-    expected_map = {
-        'key_a': [{'key_c': ['success', 'success']}, {'key_c': ['success', 'success']},
-                  {'key_c': ['success']}, {'key_c': ['success']}], 'key_b': {'key_c': ['not']}
-    }
-
-    update = Update(values_to_check=["val", "tes"], keys=['key_a', 'key_c'], where_keys=[], where_regex=False,
-                    where_values=[], values_to_check_regex=True, value="success")
+    update = Update(value_to_check='val4',
+                    keys=['key_a', 'key_c'],
+                    match_type='is equal to',
+                    value="success")
     update.apply_action(record, {})
     assert record == expected_map
 
@@ -559,9 +497,13 @@ def test_update_where_array_regex():
                        {'reference': {'collaborations': ['val1', 'tes4'], 'title':{'title': 'not'}}}]
     }
 
-    update = Update(values_to_check=['val'], keys=['references', 'reference', 'collaborations'],
-                    where_keys=['references', 'reference', 'title', 'title'], where_regex=False,
-                    where_values=['test'], values_to_check_regex=True, value="success")
+    update = Update(value_to_check='val',
+                    keys=['references', 'reference', 'collaborations'],
+                    where_actions=[{'key': ['references', 'reference', 'title', 'title'],
+                                    'match_type': 'matches regular expression',
+                                    'value':'test'}],
+                    match_type='matches regular expression',
+                    value="success")
     update.apply_action(record, {})
     assert record == expected_map
 
@@ -570,8 +512,10 @@ def test_record_creation_field_not_existing():
     """should test sub_record creation for missing object"""
     record = {'abstracts': [{'not_source': 'success'}]}
     expected_map = {'abstracts': [{'not_source': 'success'}]}
-    update = Update(values_to_check=[], keys=['abstracts', 'source'], where_keys=[], where_regex=False,
-                    where_values=[], values_to_check_regex=False, value="success")
+    update = Update(keys=['abstracts', 'source'],
+                    value_to_check='success',
+                    match_type='is equal to',
+                    value="failure")
     update.apply_action(record, {})
     assert record == expected_map
 
@@ -632,8 +576,10 @@ def test_update_with_missing_keys():
         ],
     }
 
-    update = Update(values_to_check=[], keys=['abstracts', 'source'], where_keys=[], where_regex=False,
-                    where_values=[], values_to_check_regex=False, value="success")
+    update = Update(value_to_check='test',
+                    keys=['abstracts', 'source'],
+                    value="success",
+                    match_type='is equal to')
     update.apply_action(record, {})
     assert record == expected_map
 
@@ -696,7 +642,12 @@ def test_record_values_update_check_regex_where(get_schema):
             }
         ]
     }
-    update = Update(values_to_check=['Rome'], keys=['authors', 'affiliations', 'value'], where_keys=['authors', 'signature_block'], where_regex=False,
-                    where_values=['BANARo'], values_to_check_regex=True, value="Success")
+    update = Update(value_to_check='Rome',
+                    keys=['authors', 'affiliations', 'value'],
+                    where_actions=[{'key': ['authors', 'signature_block'],
+                                    'match_type':'is equal to',
+                                    'value':'BANARo'}],
+                    match_type='matches regular expression',
+                    value="Success")
     update.apply_action(record, get_schema)
     assert record == expected_map
