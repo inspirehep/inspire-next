@@ -85,6 +85,7 @@ class MockFileObject(object):
 
     def __init__(self, key):
         self.obj = {'key': key}
+        self.bucket_id = '0b9dd5d1-feae-4ba5-809d-3a029b0bc110'
 
     def __eq__(self, other):
         return self.obj['key'] == other.obj['key']

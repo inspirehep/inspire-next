@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+import StringIO
 
 from dojson.contrib.marc21.utils import create_record
 from invenio_db import db
@@ -347,3 +348,22 @@ def test_get_es_records_accepts_lists_of_strings(app):
     records = get_es_records('lit', ['4328'])
 
     assert len(records) == 1
+
+
+def test_records_files_attached_correctly(app):
+    json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': ['Literature']
+    }
+
+    record = InspireRecord.create(json)
+    record.files['fulltext.pdf'] = StringIO.StringIO()
+    record.commit()
+
+    assert 'fulltext.pdf' in record.files

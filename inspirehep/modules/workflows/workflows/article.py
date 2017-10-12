@@ -80,7 +80,6 @@ from inspirehep.modules.workflows.tasks.submission import (
     close_ticket,
     create_ticket,
     filter_keywords,
-    prepare_files,
     prepare_keywords,
     remove_references,
     reply_ticket,
@@ -281,7 +280,6 @@ POSTENHANCE_RECORD = [
     filter_keywords,
     prepare_keywords,
     remove_references,
-    prepare_files,
 ]
 
 

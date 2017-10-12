@@ -28,10 +28,12 @@ from datetime import datetime
 
 import arrow
 from elasticsearch.exceptions import NotFoundError
+from flask import current_app
 
+from invenio_files_rest.models import Bucket
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_records.api import Record
+from invenio_records_files.api import Record
 from invenio_db import db
 
 from inspirehep.utils.record_getter import (
@@ -70,6 +72,23 @@ class InspireRecord(Record):
 
     def _delete(self, *args, **kwargs):
         super(InspireRecord, self).delete(*args, **kwargs)
+
+    def _create_bucket(self, location=None, storage_class=None):
+        """Create file bucket for workflow object."""
+        if location is None:
+            location = current_app.config[
+                'RECORDS_DEFAULT_FILE_LOCATION_NAME'
+            ]
+        if storage_class is None:
+            storage_class = current_app.config[
+                'RECORDS_DEFAULT_STORAGE_CLASS'
+            ]
+
+        bucket = Bucket.create(
+            location=location,
+            storage_class=storage_class
+        )
+        return bucket
 
 
 class ESRecord(InspireRecord):
