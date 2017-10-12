@@ -22,13 +22,50 @@
 
 from __future__ import absolute_import, division, print_function
 
+from mock import patch
+
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.matching import (
     already_harvested,
+    article_exists,
     is_being_harvested_on_legacy,
+    pending_in_holding_pen,
 )
 
 from mocks import MockEng, MockObj
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_article_exists_returns_true_if_something_matched(mock_match):
+    mock_match.return_value = iter([{'_source': {'control_number': 4328}}])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert article_exists(obj, eng)
+
+    expected = [4328]
+    result = obj.extra_data['record_matches']
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_article_exists_returns_false_if_nothing_matched(mock_match):
+    mock_match.return_value = iter([])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert not article_exists(obj, eng)
+
+    assert 'record_matches' not in obj.extra_data
 
 
 def test_is_being_harvested_on_legacy_returns_true_when_there_is_one_core_category():
@@ -149,3 +186,36 @@ def test_already_harvested_returns_false_otherwise():
     result = obj.log._info.getvalue()
 
     assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_pending_in_holding_pen_returns_true_if_something_matched(mock_match):
+    mock_match.return_value = iter([{'_id': 1}])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data, id=2)
+    eng = MockEng()
+
+    assert pending_in_holding_pen(obj, eng)
+
+    expected = [1]
+    result = obj.extra_data['holdingpen_matches']
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_pending_in_holding_pen_returns_false_if_nothing_matched(mock_match):
+    mock_match.return_value = iter([])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert not pending_in_holding_pen(obj, eng)
+
+    assert 'holdingpen_matches' not in obj.extra_data

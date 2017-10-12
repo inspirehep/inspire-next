@@ -23,13 +23,12 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-import pytest
 import sys
 
+import pytest
+
 from invenio_db import db
-from invenio_workflows import (
-    workflow_object_class,
-)
+from invenio_workflows import workflow_object_class
 
 from inspirehep.factory import create_app
 from inspirehep.modules.workflows.models import (
@@ -61,6 +60,10 @@ def cleanup_workflows_tables(small_app):
                 obj.delete()
 
         db.session.commit()
+
+        _es = small_app.extensions['invenio-search']
+        list(_es.delete(ignore=[404]))
+        list(_es.create(ignore=[404]))
 
 
 @pytest.fixture

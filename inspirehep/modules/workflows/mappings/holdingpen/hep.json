@@ -57,6 +57,43 @@
                             },
                             "type": "object"
                         },
+                        "arxiv_eprints": {
+                            "properties": {
+                                "categories": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "fields": {
+                                        "raw": {
+                                            "analyzer": "lowercase_analyzer",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "dois": {
+                            "properties": {
+                                "material": {
+                                    "type": "string"
+                                },
+                                "source": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "fields": {
+                                        "raw": {
+                                            "analyzer": "lowercase_analyzer",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
                         "inspire_categories": {
                             "properties": {
                                 "term": {
@@ -68,6 +105,17 @@
                         }
                     },
                     "type": "object"
+                }
+            }
+        }
+    },
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "lowercase_analyzer": {
+                    "filter": "lowercase",
+                    "tokenizer": "keyword",
+                    "type": "custom"
                 }
             }
         }

@@ -44,20 +44,8 @@ class INSPIREWorkflows(object):
 
     def init_config(self, app):
         """Initialize configuration."""
-        server_name = app.config["SERVER_NAME"]
-        if not server_name.startswith('http'):
-            server_name = 'http://' + server_name
-
-        app.config.setdefault("WORKFLOWS_MATCH_REMOTE_SERVER_URL",
-                              server_name)
         app.config.setdefault("WORKFLOWS_PENDING_RECORDS_CACHE_TIMEOUT",
                               2629743)
-        app.config.setdefault("HOLDING_PEN_MATCH_MAPPING", dict(
-            doi="dois.value",
-            eprint="arxiv_eprints.value",
-            isbn="isbns.value",
-            external_system_numbers="external_system_numbers.value",
-        ))
         app.config["WORKFLOWS_STORAGEDIR"] = os.path.join(
             app.instance_path, "workflows", "storage"
         )
