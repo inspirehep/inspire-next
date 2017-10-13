@@ -584,7 +584,7 @@ def test_update_with_missing_keys():
     assert record == expected_map
 
 
-def test_record_values_update_check_regex_where(get_schema):
+def test_update_check_regex_where(get_schema):
     record = {
         "authors": [
             {
@@ -647,6 +647,73 @@ def test_record_values_update_check_regex_where(get_schema):
                     where_actions=[{'key': ['authors', 'signature_block'],
                                     'match_type':'is equal to',
                                     'value':'BANARo'}],
+                    match_type='matches regular expression',
+                    value="Success")
+    update.apply_action(record, get_schema)
+    assert record == expected_map
+
+
+def test_update_for_missing_key(get_schema):
+    record = {
+        "authors": [
+            {
+                "affiliations": [
+                    {
+                        "value": "INFN, Rome"
+                    },
+                    {
+                        "value": "Rome"
+                    },
+                    {
+                        "value": "INFN"
+                    }
+                ],
+                "signature_block": "BANARo"
+            },
+            {"affiliations": [
+                {
+                    "value": "Rome U."
+                },
+                {
+                    "value": "Not INF"
+                }
+            ]
+            }
+        ]
+    }
+    expected_map = {
+        "authors": [
+            {
+                "affiliations": [
+                    {
+                        "value": "INFN, Rome"
+                    },
+                    {
+                        "value": "Rome"
+                    },
+                    {
+                        "value": "INFN"
+                    }
+                ],
+                "signature_block": "BANARo"
+            },
+            {
+                "affiliations": [
+                    {
+                        "value": "Success"
+                    },
+                    {
+                        "value": "Not INF"
+                    }
+                ]
+            }
+        ]
+    }
+    update = Update(value_to_check='Rome',
+                    keys=['authors', 'affiliations', 'value'],
+                    where_actions=[{'key': ['authors', 'signature_block'],
+                                    'match_type':'does not exist',
+                                    'value':None}],
                     match_type='matches regular expression',
                     value="Success")
     update.apply_action(record, get_schema)

@@ -28,25 +28,28 @@ from invenio_records.api import Record
 
 
 def test_multieditor_search_api(api_client):
-    response = api_client.get('/multieditor/search?page_num=1&query_string=control_number:736770&index=hep')
+    response = api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
     assert 736770 == json.loads(response.data)['json_records'][0]['control_number']
 
 
 def test_multieditor_update_api(api_client, app_client):
     login_user_via_session(app_client, email='cataloger@inspirehep.net')
-    response = api_client.get('/multieditor/search?page_num=1&query_string=control_number:736770&index=hep')
+    response = api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
 
     api_client.post(
         '/multieditor/update',
         content_type='application/json',
         data=json.dumps({
-            'userActions': [{
-                'selectedAction': 'Addition', 'value': {'full_name': 'success'},
-                'whereRegex': False, 'whereValues': [],
-                'mainKey': 'authors',
-                'whereKey': ''}],
+            'userActions': {
+                'actions': [{
+                    'actionName': 'Addition', 'value': {'full_name': 'success'},
+                    'matchType': 'is equal to',
+                    'mainKey': 'authors'
+                }],
+                'conditions': [],
+            },
             'ids': [],
-            'allSelected': True
+            'allSelected': True,
         }),
     )
 
@@ -58,24 +61,35 @@ def test_multieditor_update_api(api_client, app_client):
         '/multieditor/update',
         content_type='application/json',
         data=json.dumps({
-            'userActions': [{
-                'selectedAction':
-                    'Deletion', 'updateValues': ['SAC'],
-                     'updateRegex': False,
-                     'whereRegex': False, 'whereValues': ['success'],
-                     'mainKey': 'authors/signature_block',
-                     'whereKey': 'authors/full_name'},
-                    {'selectedAction': 'Deletion', 'updateValues': [uuid_to_delete],
-                     'updateRegex': False,
-                     'whereRegex': False, 'whereValues': ['success'],
-                     'mainKey': 'authors/uuid',
-                     'whereKey': 'authors/full_name'},
-                    {'selectedAction': 'Deletion', 'updateValues': ['success'],
-                     'updateRegex': False,
-                     'whereRegex': False, 'whereValues': [],
-                     'mainKey': 'authors/full_name',
-                     'whereKey': ''
-                     }],
+            'userActions': {
+                'actions': [
+                    {
+                        'actionName': 'Deletion',
+                        'updateValue': 'SAC',
+                        'matchType': 'is equal to',
+                        'mainKey': 'authors/signature_block',
+                    },
+                    {
+                        'actionName': 'Deletion',
+                        'updateValue': uuid_to_delete,
+                        'matchType': 'is equal to',
+                        'mainKey': 'authors/uuid',
+                    },
+                    {
+                        'actionName': 'Deletion',
+                        'updateValue': 'success',
+                        'matchType': 'is equal to',
+                        'mainKey': 'authors/full_name',
+                    }
+                ],
+                'conditions': [
+                    {
+                        'key': 'authors/full_name',
+                        'matchType': 'is equal to',
+                        'value': 'success'
+                    }
+                ]
+            },
             'ids': [],
             'allSelected': True
         }),

@@ -27,9 +27,10 @@
 from __future__ import absolute_import, print_function, division
 
 from flask import Blueprint, request, jsonify, session
-
+from jsonschema import ValidationError
 from . import queries
-from inspire_schemas.api import load_schema
+from inspirehep.modules.records.json_ref_loader import load_resolved_schema
+from inspire_schemas.api import validate
 from inspirehep.modules.multieditor import tasks
 from inspirehep.modules.migrator.tasks import chunker
 from . import actions
@@ -51,7 +52,7 @@ def update():
     if searched_records:
         ids = searched_records['ids']
         index = searched_records['schema']
-        schema = load_schema(index)
+        schema = load_resolved_schema(index)
     if all_selected:
         ids = filter(lambda x: x not in checked_ids, ids)
     else:
@@ -65,17 +66,25 @@ def update():
 @blueprint.route("/preview", methods=['POST'])
 def preview():
     """Basic view."""
+    errors = []
     user_actions = request.json['userActions']
     query_string = request.json['queryString']
-    page_size = int(request.args.get('pageSize', 1))
+    page_size = int(request.json['pageSize'])
     page_num = request.json['pageNum']
     searched_records = session.get('multieditor_searched_records', [])
     if searched_records:
         index = searched_records['schema']
-    schema = load_schema(index)
+    schema = load_resolved_schema(index)
     records = queries.get_records_from_query(query_string, page_size, page_num, index)['json_records']
     actions.process_records_no_db(user_actions, records, schema)
-    return jsonify(records)
+    for record in records:
+        try:
+            validate(record, schema)
+        except ValidationError as e:
+            errors.append(e.message)
+        else:
+            errors.append(None)
+    return jsonify({'json_records': records, 'errors': errors})
 
 
 @blueprint.route("/search", methods=['GET'])

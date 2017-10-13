@@ -52,9 +52,6 @@ class Action(object):
                     if not check_value(record=record, keys=where_action['key'], value_to_check=where_action['value'],
                                        match_type=where_action['match_type'], position=position):
                         where_negative = True
-
-                    elif where_action['match_type'] == 'does not exist':  # fixme possible refactor for less code
-                        where_negative = True
                     checked = checked + 1
         return new_schema, checked, key, where_negative
 
@@ -166,6 +163,9 @@ class Update(Action):
                             re.escape(self.value_to_check),
                             record[key]):
                                 record[key] = self.value
+                elif self.match_type == 'contains' and\
+                        self.value_to_check in record[key]:
+                    record[key] = self.value
                 self.changed = True
                 return
         else:
@@ -248,9 +248,6 @@ def check_value(record, match_type, keys, value_to_check, position):
                         re.escape(value_to_check),
                         temp_record):
                 return True
-            elif match_type == 'does not exist' and \
-                    value_to_check == temp_record:
-                return True
         else:
             return check_value(temp_record, match_type,
                                keys, value_to_check, position + 1)
@@ -260,30 +257,33 @@ def check_value(record, match_type, keys, value_to_check, position):
 def get_actions(user_actions):
     class_actions = []
     where_actions = []
+    if not user_actions:
+        return
+
+    if user_actions.get('conditions'):
+        for action in user_actions.get('conditions'):
+            if not action['key']:
+                continue
+            key = action['key'].split('/')
+            where_action = {'value': action['value'],
+                            'key': key,
+                            'match_type': action['matchType']}
+            where_actions.append(where_action)
+
     for user_action in user_actions['actions']:
         keys = user_action.get('mainKey').split('/')
         if not keys:
             return
-    if user_actions.get('conditions'):
-        for action in user_actions.get('conditions'):
-            where_key = action.split('/')
-            if not where_key:
-                pass
-            where_action = {'values': action['values'],
-                            'key': where_key,
-                            'match_type': action['matchType']}
-            where_actions.append(where_action)
-
-        if user_action.get('selectedAction') == 'Addition':
+        if user_action.get('actionName') == 'Addition':
             class_actions.append(Addition(keys=keys, value=user_action.get('value'),
-                                          where_regex=user_action.get('whereRegex'),
+                                          match_type=user_action.get('matchType'),
                                           where_actions=where_actions))
-        elif user_action.get('selectedAction') == 'Deletion':
+        elif user_action.get('actionName') == 'Deletion':
             class_actions.append(Deletion(keys=keys, value=user_action.get('value'),
                                           value_to_check=user_action.get('updateValue'),
                                           match_type=user_action.get('matchType'),
                                           where_actions=where_actions))
-        elif user_action.get('selectedAction') == 'Update':
+        elif user_action.get('actionName') == 'Update':
             class_actions.append(Update(keys=keys, value=user_action.get('value'),
                                         match_type=user_action.get('matchType'),
                                         value_to_check=user_action.get('updateValue'),
