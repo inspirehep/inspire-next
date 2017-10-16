@@ -53,17 +53,17 @@ from inspirehep.modules.authors.utils import author_tokenize, phonetic_blocks
 
 @before_record_insert.connect
 @before_record_update.connect
-def assign_phonetic_block(sender, *args, **kwargs):
+def assign_phonetic_block(sender, record, *args, **kwargs):
     """Assign a phonetic block to each signature of a Literature record.
 
     Uses the NYSIIS algorithm to compute a phonetic block from each
     signature's full name, skipping those that are not recognized
     as real names, but logging an error when that happens.
     """
-    if 'hep.json' not in sender.get('$schema'):
+    if 'hep.json' not in record.get('$schema'):
         return
 
-    authors = sender.get('authors', [])
+    authors = record.get('authors', [])
 
     authors_map = {}
     for i, author in enumerate(authors):
@@ -75,7 +75,7 @@ def assign_phonetic_block(sender, *args, **kwargs):
     except Exception as err:
         current_app.logger.error(
             'Cannot extract phonetic blocks for record %d: %s',
-            sender.get('control_number'), err)
+            record.get('control_number'), err)
         return
 
     for full_name, signature_block in six.iteritems(signatures_blocks):
@@ -86,12 +86,12 @@ def assign_phonetic_block(sender, *args, **kwargs):
 
 @before_record_insert.connect
 @before_record_update.connect
-def assign_uuid(sender, *args, **kwargs):
+def assign_uuid(sender, record, *args, **kwargs):
     """Assign a UUID to each signature of a Literature record."""
-    if 'hep.json' not in sender.get('$schema'):
+    if 'hep.json' not in record.get('$schema'):
         return
 
-    authors = sender.get('authors', [])
+    authors = record.get('authors', [])
 
     for author in authors:
         if 'uuid' not in author:

@@ -66,7 +66,7 @@ def create_journal_kb_file():
     title_variants_query = db.session.execute("""
         SELECT
             r.json -> 'short_title' AS short_title,
-            json_array_elements(r.json -> 'title_variants') AS title_variant
+            jsonb_array_elements((r.json -> 'title_variants')::jsonb) AS title_variant
         FROM
             records_metadata AS r
         WHERE

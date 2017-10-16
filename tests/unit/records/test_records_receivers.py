@@ -178,7 +178,7 @@ def test_assign_phonetic_block_handles_ascii_names():
     assert validate(record['$schema'], schema_schema) is None
     assert validate(record['authors'], authors_schema) is None
 
-    assign_phonetic_block(record)
+    assign_phonetic_block(None, record)
 
     expected = [
         {
@@ -206,7 +206,7 @@ def test_assign_phonetic_block_handles_unicode_names():
     assert validate(record['$schema'], schema_schema) is None
     assert validate(record['authors'], authors_schema) is None
 
-    assign_phonetic_block(record)
+    assign_phonetic_block(None, record)
 
     expected = [
         {
@@ -234,7 +234,7 @@ def test_assign_phonetic_block_handles_jimmy():
     assert validate(record['$schema'], schema_schema) is None
     assert validate(record['authors'], authors_schema) is None
 
-    assign_phonetic_block(record)
+    assign_phonetic_block(None, record)
 
     expected = [
         {
@@ -262,7 +262,7 @@ def test_assign_phonetick_block_ignores_malformed_names():
     assert validate(record['$schema'], schema_schema) is None
     assert validate(record['authors'], authors_schema) is None
 
-    assign_phonetic_block(record)
+    assign_phonetic_block(None, record)
 
     expected = [
         {'full_name': '** NOT A REAL NAME **'},
@@ -290,7 +290,7 @@ def test_assign_uuid(mock_uuid4):
     assert validate(record['$schema'], schema_schema) is None
     assert validate(record['authors'], authors_schema) is None
 
-    assign_uuid(record)
+    assign_uuid(None, record)
 
     expected = [
         {
@@ -324,7 +324,7 @@ def test_assign_uuid_does_not_touch_existing_uuids(mock_uuid4):
     assert validate(record['$schema'], schema_schema) is None
     assert validate(record['authors'], authors_schema) is None
 
-    assign_uuid(record)
+    assign_uuid(None, record)
 
     expected = [
         {
