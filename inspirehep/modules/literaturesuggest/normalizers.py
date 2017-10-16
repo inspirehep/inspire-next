@@ -40,7 +40,7 @@ def check_book_existence(title):
         SELECT r.json -> 'self' ->> '$ref' AS self_jsonref
         FROM
             records_metadata AS r,
-            json_array_elements(r.json -> 'titles') AS titles
+            jsonb_array_elements((r.json -> 'titles')::jsonb) AS titles
         WHERE
             (r.json -> '_collections')::jsonb ? 'Literature'
         AND
