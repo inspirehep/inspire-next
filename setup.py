@@ -85,7 +85,7 @@ install_requires = [
     'invenio-records-ui>=1.0.0b1',
     'invenio-records>=1.0.0b2',
     'invenio-rest[cors]>=1.0.0b1',
-    'invenio-search>=1.0.0a10',
+    'invenio-search>=1.0.0a11',
     'invenio-userprofiles>=1.0.0b1',
     'invenio-workflows-files~=0.0,>=0.0.6',
     'invenio-workflows-ui~=1.0,>=1.1.1',
