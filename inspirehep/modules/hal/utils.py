@@ -28,6 +28,7 @@ from itertools import chain
 
 from elasticsearch import RequestError
 from flask import current_app
+from six import text_type
 
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_schemas.builders.literature import is_citeable
@@ -164,7 +165,7 @@ def get_conference_end_date(record):
     return record.get('closing_date', '')
 
 
-def get_conference_record(record):
+def get_conference_record(record, default=None):
     """Return the first Conference record associated with a record.
 
     Queries the database to fetch the first Conference record referenced
@@ -172,6 +173,7 @@ def get_conference_record(record):
 
     Args:
         record(InspireRecord): a record.
+        default: value to be returned if no conference record present/found
 
     Returns:
         InspireRecord: the first Conference record associated with the record.
@@ -191,8 +193,11 @@ def get_conference_record(record):
         972464
 
     """
-    return replace_refs(get_value(
-        record, 'publication_info.conference_record[0]', default=None), 'db')
+    replaced = replace_refs(get_value(record, 'publication_info.conference_record[0]'), 'db')
+    if replaced:
+        return replaced
+    else:
+        return default
 
 
 def get_conference_start_date(record):
@@ -213,7 +218,7 @@ def get_conference_start_date(record):
     return record.get('opening_date', '')
 
 
-def get_conference_title(record):
+def get_conference_title(record, default=''):
     """Return the first title of a Conference record.
 
     Args:
@@ -228,7 +233,7 @@ def get_conference_title(record):
         'Workshop on Neutrino Physics'
 
     """
-    return get_value(record, 'titles.title[0]', default='')
+    return get_value(record, 'titles.title[0]', default=default)
 
 
 def get_divulgation(record):
@@ -438,11 +443,39 @@ def get_language(record):
     return languages[0]
 
 
-def get_page_artid(record):
+def get_page_artid_for_publication_info(publication_info, separator):
+    """Return the page range or the article id of a publication_info entry.
+
+    Args:
+        publication_info(dict): a publication_info field entry of a record
+        separator(basestring): optional page range symbol, defaults to a single dash
+
+    Returns:
+        string: the page range or the article id of the record.
+
+    Examples:
+        >>> publication_info = {'artid': '054021'}
+        >>> get_page_artid(publication_info)
+        '054021'
+
+    """
+    if 'artid' in publication_info:
+        artid = publication_info['artid']
+        return artid
+    elif 'page_start' in publication_info and 'page_end' in publication_info:
+        page_start = publication_info['page_start']
+        page_end = publication_info['page_end']
+        return text_type('{}{}{}').format(page_start, text_type(separator), page_end)
+
+    return ''
+
+
+def get_page_artid(record, separator='-'):
     """Return the page range or the article id of a record.
 
     Args:
         record(InspireRecord): a record
+        separator(basestring): optional page range symbol, defaults to a single dash
 
     Returns:
         string: the page range or the article id of the record.
@@ -458,16 +491,7 @@ def get_page_artid(record):
 
     """
     publication_info = get_value(record, 'publication_info[0]', default={})
-
-    if 'artid' in publication_info:
-        artid = publication_info['artid']
-        return artid
-    elif 'page_start' in publication_info and 'page_end' in publication_info:
-        page_start = publication_info['page_start']
-        page_end = publication_info['page_end']
-        return '{}-{}'.format(page_start, page_end)
-
-    return ''
+    return get_page_artid_for_publication_info(publication_info, separator)
 
 
 def get_peer_reviewed(record):
