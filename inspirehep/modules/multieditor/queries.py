@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2017 CERN.
+# Copyright (C) 2014-2017 CERN.
 #
 # INSPIRE is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -26,6 +26,7 @@
 """Module for quering in multi record editor used in http://inspirehep.net."""
 
 from __future__ import absolute_import, print_function, division
+
 from ..search import api
 from invenio_records.api import Record
 
