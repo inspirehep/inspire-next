@@ -118,7 +118,7 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
     def external_system_identifiers(self):
         """External system identification information.
 
-        Returns a list that contains information on first of each kind of 
+        Returns a list that contains information on first of each kind of
         external_system_idenitfiers
         """
         ext_sys_id_list = []
