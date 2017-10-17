@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
 import re
 from functools import wraps
 
@@ -147,7 +148,7 @@ def arxiv_plot_extract(obj, eng):
 
             lb = LiteratureBuilder(source='arxiv', record=obj.data)
             for index, plot in enumerate(plots):
-                plot_name = plot.get('name')
+                plot_name = os.path.basename(plot.get('url'))
                 files_keys = obj.files.keys
                 key = plot_name
                 if plot_name in files_keys:

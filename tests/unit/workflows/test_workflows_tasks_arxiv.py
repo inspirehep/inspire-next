@@ -316,10 +316,10 @@ def test_arxiv_plot_extract_populates_files_with_plots(mock_os):
         assert arxiv_plot_extract(obj, eng) is None
 
         expected = [{
-            'url': '/api/files/0b9dd5d1-feae-4ba5-809d-3a029b0bc110/figure1',
+            'url': '/api/files/0b9dd5d1-feae-4ba5-809d-3a029b0bc110/figure1.png',
             'source': 'arxiv',
             'material': 'preprint',
-            'key': 'figure1',
+            'key': 'figure1.png',
             'caption': 'Difference (in MeV) between the theoretical and experimental masses for the 2027 selected nuclei as a function of the mass number.'
         }]
         result = obj.data['figures']
