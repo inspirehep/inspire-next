@@ -61,6 +61,7 @@ def test_resolve_accept(small_app, workflow):
     expected = {
         'core': False,
         'user_action': 'accept',
+        'upload_pdf': False,
         '_action': None,
         '_message': '',
         'reason': '',
@@ -79,6 +80,7 @@ def test_resolve_accept_core(small_app, workflow):
     expected = {
         'core': True,
         'user_action': 'accept_core',
+        'upload_pdf': False,
         '_action': None,
         '_message': '',
         'reason': '',
@@ -98,6 +100,7 @@ def test_resolve_rejected(small_app, workflow):
     expected = {
         'core': False,
         'user_action': 'rejected',
+        'upload_pdf': False,
         '_action': None,
         '_message': '',
         'reason': 'Duplicated article',
@@ -113,11 +116,17 @@ def test_resolve_attach_pdf(small_app, workflow):
             'pdf_upload': True
         }
     }
+    workflow.data = {
+        'documents': [{
+            'key': 'fulltext.pdf'
+        }]
+    }
     workflow.files['fulltext.pdf'] = StringIO.StringIO()
     HEPApproval.resolve(workflow, **args)
     expected = {
         'core': False,
         'user_action': 'accept',
+        'upload_pdf': True,
         '_action': None,
         '_message': '',
         'reason': '',
@@ -126,6 +135,7 @@ def test_resolve_attach_pdf(small_app, workflow):
 
     assert workflow.extra_data == expected
     assert 'fulltext.pdf' in workflow.files
+    assert 'fulltext.pdf' in [doc['key'] for doc in workflow.data['documents']]
 
 
 def test_resolve_remove_pdf(small_app, workflow):
@@ -135,11 +145,17 @@ def test_resolve_remove_pdf(small_app, workflow):
             'pdf_upload': False
         }
     }
+    workflow.data = {
+        'documents': [{
+            'key': 'fulltext.pdf'
+        }]
+    }
     workflow.files['fulltext.pdf'] = StringIO.StringIO()
     HEPApproval.resolve(workflow, **args)
     expected = {
         'core': False,
         'user_action': 'accept',
+        'upload_pdf': False,
         '_action': None,
         '_message': '',
         'reason': '',
@@ -148,3 +164,4 @@ def test_resolve_remove_pdf(small_app, workflow):
 
     assert workflow.extra_data == expected
     assert 'fulltext.pdf' not in workflow.files
+    assert 'fulltext.pdf' not in [doc['key'] for doc in workflow.data['documents']]

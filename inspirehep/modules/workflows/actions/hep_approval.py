@@ -53,6 +53,11 @@ class HEPApproval(object):
         if not upload_pdf:
             if 'fulltext.pdf' in obj.files:
                 del obj.files['fulltext.pdf']
+            documents = obj.data.get('documents', [])
+            for doc in documents:
+                if doc['key'] == 'fulltext.pdf':
+                    documents.remove(doc)
+                    break
 
         approved = value in ('accept', 'accept_core')
 
@@ -60,6 +65,7 @@ class HEPApproval(object):
         obj.remove_action()
 
         obj.extra_data["user_action"] = value
+        obj.extra_data["upload_pdf"] = upload_pdf
         obj.extra_data["core"] = value == "accept_core"
         obj.extra_data["reason"] = reason
         obj.status = ObjectStatus.WAITING
