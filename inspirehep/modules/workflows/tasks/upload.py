@@ -24,11 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
-import itertools
-from pprint import pformat
-
-
 from flask import url_for
 
 from invenio_db import db
@@ -40,36 +35,28 @@ from ..utils import with_debug_logging
 
 
 @with_debug_logging
-def store_record(obj, *args, **kwargs):
-    """Create and index new record in main record space."""
-    obj.log.debug('Storing record: \n%s', pformat(obj.data))
+def store_record(obj, eng):
+    """Insert or replace a record."""
+    is_update = obj.extra_data.get('is-update')
+    if is_update:
+        record = InspireRecord.get_record(obj.extra_data['head_uuid'])
+        record.clear()
+        record.update(obj.data, files_src_record=obj)
 
-    assert "$schema" in obj.data, "No $schema attribute found!"
+    else:
+        record = InspireRecord.create(obj.data, id_=None)
+        # Create persistent identifier.
+        created_pid = inspire_recid_minter(str(record.id), record).pid_value
+        # Now that we have a recid, we can properly download the documents
+        record.download_documents_and_figures(src_record=obj)
 
-    # Create record
-    # FIXME: Do some preprocessing of obj.data before creating a record so that
-    # we're sure that the schema will be validated without touching the full
-    # holdingpen stack.
-    record = InspireRecord.create(obj.data, id_=None)
+        obj.data['control_number'] = created_pid
+        # store head_uuid to store the root later
+        obj.extra_data['head_uuid'] = str(record.id)
 
-    for key in obj.files.keys:
-        with open(os.path.realpath(obj.files[key].file.uri)) as stream:
-            record.files[key] = stream
-            for attachment in itertools.chain(record.get('documents', []), record.get('figures', [])):
-                if key == attachment['key']:
-                    attachment['url'] = '/api/files/{bucket}/{key}'.format(bucket=record.files[key].bucket_id, key=key)
-                    break
-
-    # Create persistent identifier.
-    created_pid = inspire_recid_minter(str(record.id), record).pid_value
-
-    # Commit any changes to record
     record.commit()
-
-    # Commit to DB before indexing
+    obj.save()
     db.session.commit()
-
-    obj.data['control_number'] = created_pid
 
 
 @with_debug_logging
