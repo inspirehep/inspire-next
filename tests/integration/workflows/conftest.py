@@ -60,6 +60,7 @@ def workflow_app():
         ),
         MAGPIE_API_URL="http://example.com/magpie",
         WORKFLOWS_MATCH_REMOTE_SERVER_URL="http://legacy_search.endpoint/",
+        WORKFLOWS_FILE_LOCATION="/",
         WTF_CSRF_ENABLED=False,
     )
 

@@ -26,13 +26,12 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import itertools
-from pprint import pformat
-
 
 from flask import url_for
 
 from invenio_db import db
 
+from inspirehep.utils.record_getter import get_db_record
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.records.api import InspireRecord
 
@@ -40,41 +39,26 @@ from ..utils import with_debug_logging
 
 
 @with_debug_logging
-def store_record(obj, *args, **kwargs):
-    """Create and index new record in main record space."""
-    obj.log.debug('Storing record: \n%s', pformat(obj.data))
+def store_record(obj, eng):
+    """Insert or replace a record."""
+    is_update = obj.extra_data.get('is-update')
+    if is_update:
+        record = InspireRecord.get_record(obj.extra_data['head_uuid'])
+        record.clear()
+        record.update(obj.data)
 
-    assert "$schema" in obj.data, "No $schema attribute found!"
+    else:
+        record = InspireRecord.create(obj.data, id_=None)
+        # Create persistent identifier.
+        created_pid = inspire_recid_minter(str(record.id), record).pid_value
+        obj.data['control_number'] = created_pid
+        # store head_uuid to store the root later
+        obj.extra_data['head_uuid'] = str(record.id)
 
-    # Create record
-    # FIXME: Do some preprocessing of obj.data before creating a record so that
-    # we're sure that the schema will be validated without touching the full
-    # holdingpen stack.
-    record = InspireRecord.create(obj.data, id_=None)
-
-    for key in obj.files.keys:
-        with open(os.path.realpath(obj.files[key].file.uri)) as stream:
-            record.files[key] = stream
-            for attachment in itertools.chain(record.get('documents', []), record.get('figures', [])):
-                if key == attachment['key']:
-                    attachment['url'] = '/api/files/{bucket}/{key}'.format(bucket=record.files[key].bucket_id, key=key)
-                    break
-
-    # Create persistent identifier.
-    created_pid = inspire_recid_minter(str(record.id), record).pid_value
-
-    # store head_uuid to store the root later
-    obj.extra_data['head_uuid'] = str(record.id)
-
-    # Commit any changes to record
+    attach_files_to_record_from_workflow(obj, record)
     record.commit()
-
     obj.save()
-
-    # Commit to DB before indexing
     db.session.commit()
-
-    obj.data['control_number'] = created_pid
 
 
 @with_debug_logging
@@ -101,3 +85,41 @@ def set_schema(obj, eng):
         obj.log.debug('Schema already is url')
 
     obj.log.debug('Final schema %s', obj.data['$schema'])
+
+
+def attach_files_to_record_from_workflow(workflow_obj, record):
+    for file_id in workflow_obj.files.keys:
+        with open(os.path.realpath(workflow_obj.files[file_id].file.uri)) as stream:
+            record.attach_file(file_id, stream)
+
+
+def are_files_consistent(record_id):
+    """Check the consistency between documents and figures in the record
+    metadata and the files attached to the record itself.
+
+    Params:
+        record_id(int): the control_number of the record
+        other_extensions(string): file extension used to make this check
+            aware of other types of files other than `documents` and `figures`.
+
+    Return:
+        bool: True if attached files correspond to the files in `documents`
+            and `figures`, (and eventually other types of files specified in
+            `other_extensions`) otherwise False.
+    """
+    record = get_db_record('lit', record_id)
+
+    docs_and_figs = [
+        doc['key'] for doc in itertools.chain(
+            record.get('documents', []), record.get('figures', [])
+        )]
+
+    for file_name in docs_and_figs:
+        if file_name not in record.files.keys:
+            return False
+
+    for file_name in docs_and_figs:
+        if not file_name.startswith("{}_".format(record_id)):
+            return False
+
+    return True

@@ -56,6 +56,7 @@ from inspirehep.modules.workflows.tasks.merging import (
     insert_wf_record_source,
     _get_match_recid
 )
+from inspirehep.modules.workflows.tasks.upload import are_files_consistent
 from inspirehep.modules.migrator.tasks import record_insert_or_replace
 
 
@@ -313,6 +314,7 @@ def test_merge_with_already_existing_article_in_the_db(
     assert obj.status == ObjectStatus.COMPLETED
     assert obj.extra_data['is-update'] is True
     assert obj.extra_data['merged'] is True
+    assert are_files_consistent(obj.data['control_number'])
 
 
 @mock.patch(
@@ -357,3 +359,4 @@ def test_merge_without_conflicts_does_not_halt(
     assert obj.extra_data['merged'] is True
     assert obj.extra_data.get('conflicts') == []
     assert obj.status == ObjectStatus.COMPLETED
+    assert are_files_consistent(obj.data['control_number'])

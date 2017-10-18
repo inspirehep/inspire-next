@@ -55,7 +55,6 @@ from inspirehep.modules.workflows.tasks.actions import (
 from inspirehep.modules.workflows.tasks.merging import (
     has_conflicts,
     merge_articles,
-    update_record,
     put_new_root_in_extra_data,
     store_root,
 )
@@ -359,11 +358,7 @@ HALT_FOR_APPROVAL = [
 
 
 STORE_RECORD_AND_ROOT = [
-    IF_ELSE(
-        is_marked('is-update'),
-        update_record,
-        store_record
-    ),
+    store_record,
     store_root,
 ]
 

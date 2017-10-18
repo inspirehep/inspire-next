@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 from datetime import datetime
+import itertools
 
 import arrow
 from elasticsearch.exceptions import NotFoundError
@@ -89,6 +90,53 @@ class InspireRecord(Record):
             storage_class=storage_class
         )
         return bucket
+
+    def attach_file(self, file_name, file):
+        """Attach the file ``file`` to the record's files properties,
+        updating the record's metadata..
+
+        The file is attached only if there is a key in ``documents`` or
+        ``figures`` which key match ``file_name``.
+        Then. the name of the file is changed adding the record's
+        ``control_number``as prefix. This change is reflected in
+        the record's metadata too.
+
+        Args:
+            file_name(string): the name of the file to attach. It must be a
+                key of ``documents`` or ``figures``.
+            file(file): the file to attach to the file.
+
+        Return:
+            (string): the new file's key.
+
+        Raise:
+            ValueError in case ``file_name`` is not in record's documents and
+                figures.
+
+        Example:
+            >>with open(my_file) as stream:
+                record.attach_file('NewFile', stream)
+
+        """
+
+        control_number = self.get('control_number')
+        normalized_file_name = u'{}_{}'.format(control_number, file_name)
+
+        for attachment in itertools.chain(
+                self.get('documents', []),
+                self.get('figures', [])
+        ):
+            if attachment['key'] == file_name:
+                #
+                self.files[normalized_file_name] = file
+                attachment['key'] = normalized_file_name
+                attachment['url'] = '/api/files/{bucket}/{key}'.format(
+                    bucket=self.files[normalized_file_name].bucket_id,
+                    key=normalized_file_name
+                )
+                return normalized_file_name
+        # ignore other files
+        return None
 
 
 class ESRecord(InspireRecord):
