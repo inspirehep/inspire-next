@@ -43,6 +43,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     error_workflow,
     halt_record,
     is_record_relevant,
+    in_production_mode,
+    get_journal_coverage,
     is_record_accepted,
     reject_record,
     is_experimental_paper,
@@ -133,6 +135,7 @@ ENHANCE_RECORD = [
     ),
     normalize_journal_titles,
     extract_journal_info,
+    get_journal_coverage,
     classify_paper(
         taxonomy="HEPont.rdf",
         only_core_tags=False,

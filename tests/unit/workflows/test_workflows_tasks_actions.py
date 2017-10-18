@@ -33,6 +33,7 @@ from mock import patch
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.actions import (
     _is_auto_rejected,
+    _get_journal_title,
     add_core,
     halt_record,
     in_production_mode,
@@ -395,6 +396,29 @@ def test_is_submission_returns_false_if_obj_has_falsy_acquisition_source():
     eng = MockEng()
 
     assert not is_submission(obj, eng)
+
+
+def test_get_journal_title_():
+    obj = MockObj({'publication_info': [{'journal_title': 'Phys.Rev.'}]}, {})
+    eng = MockEng()
+
+    assert _get_journal_title(obj, eng) == 'Phys.Rev.'
+
+
+def test_get_journal_title_no_journal_title():
+    obj = MockObj({'publication_info': {}}, {})
+    eng = MockEng()
+
+    assert not _get_journal_title(obj, eng)
+
+
+# def test_get_journal_coverage():
+#     obj = MockObj({'publication_info': {'journal_title': 'Phys.Rev.'}}, {})
+#     eng = MockEng()
+#
+#     get_journal_coverage(obj, eng)
+#
+#     assert obj.extra_data['journal_coverage'] == 'full'
 
 
 def test_prepare_update_payload():

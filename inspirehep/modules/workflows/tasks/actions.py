@@ -31,6 +31,7 @@ from sqlalchemy import (
      cast,
      type_coerce,
  )
+from sqlalchemy import text
 
 from functools import wraps
 import re
@@ -229,6 +230,40 @@ def is_submission(obj, eng):
     if source:
         return source.get('method') == "submitter"
     return False
+
+
+@with_debug_logging
+def _get_journal_title(obj, eng):
+    """Return the journal title of the publication."""
+    publication = obj.data.get('publication_info')
+    if publication:
+        return publication[0].get('journal_title')
+
+
+@with_debug_logging
+def get_journal_coverage(obj, eng):
+    """Is this journal article part of a fully covered journal?"""
+    a_journal_title = _get_journal_title(obj, eng)
+
+    # if a_journal_title == 'Phys.Rev.':
+    #     a_journal_title = 'Physical Review'
+
+    query = text("""
+        SELECT
+            r.json -> '_harvesting_info' -> 'coverage' AS journal_coverage
+        FROM
+            records_metadata AS r
+        WHERE
+            (r.json -> '_collections')::jsonb ? 'Journals'
+        AND
+            (r.json -> 'short_title') ? :a_journal_title
+    """).bindparams(a_journal_title=a_journal_title)
+
+    result = db.session.execute(query)
+    j_c = result.fetchone()
+
+    obj.extra_data['journal_coverage'] = [str(j_c['journal_coverage']) if j_c else '']
+    import pdb; pdb.set_trace()
 
 
 @with_debug_logging

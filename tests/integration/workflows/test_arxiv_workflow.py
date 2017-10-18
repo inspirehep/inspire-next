@@ -31,6 +31,7 @@ from invenio_db import db
 from invenio_workflows import (
     ObjectStatus,
     WorkflowEngine,
+    workflow_object_class,
     start,
     workflow_object_class,
 )
