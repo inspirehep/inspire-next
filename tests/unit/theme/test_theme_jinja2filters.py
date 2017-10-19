@@ -52,7 +52,6 @@ from inspirehep.modules.theme.jinja2filters import (
     institutes_links,
     is_cataloger,
     is_external_link,
-    is_institute,
     is_list,
     is_upper,
     join_array,
@@ -1227,10 +1226,6 @@ def test_is_external_link_when_link_is_external():
 
 def test_is_external_link_when_link_is_to_a_picture():
     assert not is_external_link('http://www.example.com/foo.png')
-
-
-def test_is_institute_normalizes_to_lowercase():
-    assert is_institute('KEKSCAN')
 
 
 def test_weblinks_when_description_is_found_in_the_kb():
