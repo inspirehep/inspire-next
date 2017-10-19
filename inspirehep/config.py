@@ -361,6 +361,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/x-cvformattext': (
                 'inspirehep.modules.records.serializers'
                 ':cvformattext_v1_search'),
+            'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
         },
         suggesters=dict(
             abstract_source=dict(completion=dict(
@@ -417,6 +418,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 'inspirehep.modules.records.serializers'
                 ':json_literature_brief_v1_search'
             ),
+            'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
         },
         list_route='/authors/',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
@@ -599,6 +601,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 'inspirehep.modules.records.serializers'
                 ':json_literature_brief_v1_search'
             ),
+            'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
         },
         list_route='/conferences/',
         item_route='/conferences/<pid(con,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
@@ -642,6 +645,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 'inspirehep.modules.records.serializers'
                 ':json_literature_brief_v1_search'
             ),
+            'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
         },
         list_route='/jobs/',
         item_route='/jobs/<pid(job,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
@@ -685,6 +689,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 'inspirehep.modules.records.serializers'
                 ':json_literature_brief_v1_search'
             ),
+            'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
         },
         suggesters=dict(
             affiliation=dict(completion=dict(
@@ -733,6 +738,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 'inspirehep.modules.records.serializers'
                 ':json_literature_brief_v1_search'
             ),
+            'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
         },
         suggesters=dict(
             experiment=dict(completion=dict(
@@ -781,6 +787,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 'inspirehep.modules.records.serializers'
                 ':json_literature_brief_v1_search'
             ),
+            'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
         },
         suggesters=dict(
             journal_title=dict(completion=dict(
