@@ -65,9 +65,9 @@
           {% if record.get('accelerator_experiments') %}
             <div> Experiment: {{ record_experiment(record) }} </div>
           {% endif %}
-          {% if record.urls or record.external_system_identifiers %}
-            <div id="external_links">{{ record_links(record) }}</div>
-          {% endif %}
+        {% if record.urls or record.external_system_identifiers %}
+          <div id="external_links">{{ record_links(record) }}</div>
+        {% endif %}
         </div>
         <div class="col-md-12 detailed-action-bar" id="cite-pdf-buttons">
           <div class="btn-group">{{ record_buttons(record) }}</div>
