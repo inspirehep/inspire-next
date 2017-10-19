@@ -48,7 +48,7 @@ class OrcidConverter(object):
     INSPIRE_TO_ORCID_ROLES_MAP = {
         'author': 'author',
         'editor': 'editor',
-        'supervisor': 'support-staff'  # TODO: Is this correct?
+        'supervisor': None
     }
 
     # Maps INSPIRE document type to ORCID work types
@@ -59,54 +59,61 @@ class OrcidConverter(object):
         'book chapter': 'book-chapter',
         'conference paper': 'conference-paper',
         'note': 'other',
-        'proceedings': 'conference-abstract',  # TODO: Is this correct?
+        'proceedings': 'edited-book',
         'report': 'report',
         'thesis': 'dissertation',
     }
 
-    def __init__(self, record):
+    def __init__(self, record, put_code=None, visibility=None):
         """Constructor.
 
         Args:
             record (dict): a record.
         """
         self.record = record
+        self.put_code = put_code
+        self.visibility = visibility
 
-    def get_json(self):
-        """Create an ORCID JSON representation of the record.
+    def get_xml(self):
+        """Create an ORCID XML representation of the record.
 
         Returns:
-            dict: ORCID JSON work record
+            lxml.etree._Element: ORCID XML work record
         """
         builder = OrcidBuilder()
 
-        builder.set_visibility('public')
-        builder.set_type(self.orcid_work_type)
+        # Set attributes
+        if self.visibility:
+            builder.set_visibility(self.visibility)
 
+        if self.put_code:
+            builder.set_put_code(self.put_code)
+
+        # Add a title
         if self.title:
-            builder.set_title(self.title, self.subtitle, self.title_translation)
+            builder.add_title(self.title, self.subtitle, self.title_translation)
 
+        # Add a journal title
         containing_publication_title = self.journal_title or self.conference_title or self.book_series_title
         if containing_publication_title:
-            builder.set_journal_title(containing_publication_title)
+            builder.add_journal_title(containing_publication_title)
 
+        # TODO: Add a citation
+
+        # Add a type
+        builder.add_type(self.orcid_work_type)
+
+        # Add a publication date
         if self.publication_date:
-            builder.set_publication_date(self.publication_date, 'print' if self.is_print else None)
+            builder.add_publication_date(self.publication_date)
 
+        # Add external IDs
         if self.doi:
             builder.add_doi(self.doi, 'self')
 
         if self.arxiv_eprint:
             builder.add_arxiv(self.arxiv_eprint, 'self')
 
-        # Add authors/editors/etc. to the ORCID record
-        for author in self.record.get('authors', []):
-            orcid_role = self.orcid_role_for_inspire_author(author)
-            person_orcid = self.orcid_for_inspire_author(author)
-            email = get_value(author, 'emails[0]')
-            builder.add_contributor(author['full_name'], orcid_role, person_orcid, email)
-
-        # Add ISBN numbers to a record
         for isbn in get_value(self.record, 'isbns.value', []):
             builder.add_external_id('isbn', isbn)
 
@@ -114,9 +121,22 @@ class OrcidConverter(object):
         server_name = current_app.config.get('SERVER_NAME')
         if not re.match('^https?://', server_name):
             server_name = 'http://{}'.format(server_name)
-        builder.set_url('{}/record/{}'.format(server_name, self.recid))
+        builder.add_url('{}/record/{}'.format(server_name, self.recid))
 
-        return builder.get_json()
+        # Add authors/editors/etc. to the ORCID record
+        for author in self.record.get('authors', []):
+            orcid_role = self.orcid_role_for_inspire_author(author)
+            if not orcid_role:
+                continue
+            person_orcid = self.orcid_for_inspire_author(author)
+            email = get_value(author, 'emails[0]')
+            builder.add_contributor(author['full_name'], orcid_role, person_orcid, email)
+
+        # Add a country (only available for conferences)
+        if self.conference_country:
+            builder.add_country(self.conference_country)
+
+        return builder.get_xml()
 
     def orcid_role_for_inspire_author(self, author):
         """ORCID role for an INSPIRE author field.
@@ -147,23 +167,28 @@ class OrcidConverter(object):
 
     @property
     def orcid_work_type(self):
+        """Get record's ORCID work type."""
         inspire_doc_type = get_value(self.record, 'document_type[0]')
         return self.INSPIRE_DOCTYPE_TO_ORCID_TYPE[inspire_doc_type]
 
     @property
     def title(self):
+        """Get record title."""
         return get_value(self.record, 'titles[0].title')
 
     @property
     def subtitle(self):
+        """Get record subtitle."""
         return get_value(self.record, 'titles[0].subtitle')
 
     @property
     def journal_title(self):
+        """Get record's journal title."""
         return get_journal_title(self.record)
 
     @property
     def conference_title(self):
+        """Get record's conference title."""
         try:
             conference_record = get_conference_record(self.record)
             return get_conference_title(conference_record)
@@ -172,22 +197,27 @@ class OrcidConverter(object):
 
     @property
     def book_series_title(self):
+        """Get record's book series title."""
         return get_value(self.record, 'book_series[0].title')
 
     @property
     def conference_country(self):
+        """Get conference record country."""
         return get_conference_country(self.record)
 
     @property
     def doi(self):
+        """Get DOI of a record."""
         return get_doi(self.record)
 
     @property
     def arxiv_eprint(self):
+        """Get arXiv ID of a record."""
         return get_value(self.record, 'arxiv_eprints.value[0]')
 
     @property
     def recid(self):
+        """Get INSPIRE record ID."""
         return self.record['self_recid']
 
     @property
@@ -213,12 +243,3 @@ class OrcidConverter(object):
             return PartialDate.loads(get_value(self.record, 'imprints.date[0]') or get_publication_date(self.record))
         except ValueError:
             return None
-
-    @property
-    def is_print(self):
-        """Has the record been printed?
-
-        Returns:
-            bool: is publication printed
-        """
-        return bool(get_value(self.record, 'imprints') or 'print' in get_value(self.record, 'isbns.medium', []))

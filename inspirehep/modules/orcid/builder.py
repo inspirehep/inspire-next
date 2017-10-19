@@ -25,111 +25,109 @@ Builds an ORCID work record.
 """
 
 from __future__ import absolute_import, division, print_function
+from lxml import etree
+from lxml.builder import ElementMaker
+from six import text_type
+
+_NAMESPACES = {
+    'work': 'http://www.orcid.org/ns/work',
+    'common': 'http://www.orcid.org/ns/common'
+}
+
+_WORK = ElementMaker(namespace=_NAMESPACES['work'], nsmap=_NAMESPACES)
+_COMMON = ElementMaker(namespace=_NAMESPACES['common'], nsmap=_NAMESPACES)
+
+_ELEMENT_MAKERS = {
+    'work': _WORK,
+    'common': _COMMON
+}
 
 
 class OrcidBuilder(object):
     """
     Class used to build ORCID-compatible work records in JSON.
     """
-    def __init__(self, source=None):
-        """
-        Args:
-            source (dict): Quoting ORCID v2.0 work schema: "Client application (member organization's system) or user
-                that created the item. The identifier for the source may be either an ORCID iD (representing individuals
-                and legacy client applications) or a Client ID (representing all newer client applications)". See:
-                https://git.io/vdKXt#L114-L118
-        """
-        self.record = dict()
+    def __init__(self):
+        self.record = _WORK.work()
 
-        if source:
-            self.record['source'] = source
+    def get_xml(self):
+        """Get an XML record.
 
-    def get_json(self):
-        """
         Returns:
-            dict: ORCID work record compatible with API v2.0
+            lxml.etree._Element: ORCID work record compatible with API v2.0
         """
         return self.record
 
-    def set_title(self, title, subtitle=None, translated_title=None):
+    def __str__(self):
+        """Get a string-serialized XML respresentation of a record.
+
+        Returns:
+            string: ORCID work record as an XML string
         """
-        Set a title of the work, and optionaly a subtitle.
+        return etree.tostring(self.get_xml())
+
+    def add_title(self, title, subtitle=None, translated_title=None):
+        """Set a title of the work, and optionaly a subtitle.
 
         Args:
             title (string): title of the work
             subtitle (string): subtitle of the work
             translated_title (Tuple[string, string]): tuple consiting of the translated title and its language code
         """
-        title_field = {
-            'title': {'value': title}
-        }
+        title_field = _WORK.title(_COMMON.title(title))
 
         if subtitle:
-            title_field['subtitle'] = {
-                'value': subtitle
-            }
+            title_field.append(_COMMON.subtitle(subtitle))
 
         if translated_title:
-            title_field['translated-title'] = {
-                'value': translated_title[0],
-                'language-code': translated_title[1],
-            }
+            attributes = {'language-code': translated_title[1]}
+            title_field.append(_COMMON('translated-title', translated_title[0], **attributes))
 
-        self.record['title'] = title_field
+        self.record.append(title_field)
 
-    def set_type(self, work_type):
-        """
+    def add_type(self, work_type):
+        """Add a work type.
+
         Args:
             work_type (string): type of work, see: https://git.io/vdKXv#L118-L155
         """
-        self.record['type'] = work_type
+        self.record.append(_WORK.type(work_type))
 
-    def set_url(self, url):
-        """
+    def add_url(self, url):
+        """Add a url.
+
         Args:
             url (string): alternative url of the record
         """
-        self.record['url'] = {
-            'value': url
-        }
+        self.record.append(_WORK.url(url))
 
-    def set_publication_date(self, partial_date, media_type=None):
-        """
-        Set publication date field.
+    def add_publication_date(self, partial_date):
+        """Set publication date field.
 
         Args:
             partial_date (inspire_utils.date.PartialDate): publication date
-            media_type (string): publication medium type, one of ("print", "online", "other"), optional, see:
-                https://git.io/vdKXt#L958-L960
         """
-        publication_date = {
-            'year': {
-                'value': '{:04d}'.format(partial_date.year)
-            }
-        }
+        publication_date = _COMMON('publication-date')
+
+        publication_date.append(_COMMON.year('{:04d}'.format(partial_date.year)))
 
         if partial_date.month:
-            publication_date['month'] = {'value': '{:02d}'.format(partial_date.month)}
+            publication_date.append(_COMMON.month('{:02d}'.format(partial_date.month)))
 
         if partial_date.day:
-            publication_date['day'] = {'value': '{:02d}'.format(partial_date.day)}
+            publication_date.append(_COMMON.day('{:02d}'.format(partial_date.day)))
 
-        if media_type:
-            publication_date['media-type'] = media_type
+        self.record.append(publication_date)
 
-        self.record['publication-date'] = publication_date
-
-    def set_country(self, country_code):
+    def add_country(self, country_code):
         """Set country if the ORCID record.
 
         Args:
             country_code (string): ISO ALPHA-2 country code
         """
-        self.record['country'] = {
-            'value': country_code
-        }
+        self.record.append(_COMMON.country(country_code.upper()))
 
-    def add_contributor(self, credit_name, role='AUTHOR', orcid=None, email=None):
+    def add_contributor(self, credit_name, role='author', orcid=None, email=None):
         """Adds a contributor entry to the record.
 
         Args:
@@ -138,52 +136,55 @@ class OrcidBuilder(object):
             role (string): role, see `OrcidBuilder._make_contributor_field`
             email (string): contributor's email address
         """
-        if 'contributors' not in self.record:
-            self.record['contributors'] = {'contributor': [
-                self._make_contributor_field(credit_name, role, orcid, email, first=True)
-            ]}
-        else:
-            self.record['contributors']['contributor'].append(
-                self._make_contributor_field(credit_name, role, orcid, email, first=False)
-            )
+        contributors = self._get_or_make_field(self.record, 'work:contributors')
+        contributor = self._make_contributor_field(credit_name, role, orcid, email, not len(contributors))
+        contributors.append(contributor)
 
     def add_external_id(self, type, value, url=None, relationship=None):
         """Add external identifier to the record.
 
         Args:
-            type (string): type of external ID (DOI, etc.)
+            type (string): type of external ID (doi, etc.)
             value (string): the identifier itself
             url (string): URL for the resource
             relationship (string): either "part-of" or "self", optional, see `OrcidBuilder._make_external_id_field`
         """
-        if 'external-ids' not in self.record:
-            self.record['external-ids'] = {'external-id': [
-                self._make_external_id_field(type, value, url, relationship)
-            ]}
-        else:
-            self.record['external-ids']['external-id'].append(
-                self._make_external_id_field(type, value, url, relationship)
-            )
+        external_ids_field = self._get_or_make_field(self.record, 'common:external-ids')
+        external_ids_field.append(self._make_external_id_field(type, value, url, relationship))
 
     def add_doi(self, value, relationship=None):
+        """Add DOI to the record.
+
+        Args:
+            value (string): the identifier itself
+            relationship (string): either "part-of" or "self", optional, see `OrcidBuilder._make_external_id_field`
+        """
         self.add_external_id('doi', value, 'http://dx.doi.org/{}'.format(value), relationship)
 
     def add_arxiv(self, value, relationship=None):
+        """Add arXiv identifier to the record.
+
+        Args:
+            value (string): the identifier itself
+            relationship (string): either "part-of" or "self", optional, see `OrcidBuilder._make_external_id_field`
+        """
         self.add_external_id('arxiv', value, 'http://arxiv.org/abs/{}'.format(value), relationship)
 
-    def set_citation(self, type, value):
-        """Adds a citation string.
+    def add_citation(self, type, value):
+        """Add a citation string.
 
         Args:
             type (string): citation type, one of: https://git.io/vdKXv#L313-L321
             value (string): citation string for the provided citation type
         """
-        self.record['citation'] = {
-            'citation-type': type,
-            'citation-value': value,
-        }
+        self.record.append(
+            _WORK.citation(
+                _WORK('citation-type', type),
+                _WORK('citation-value', value)
+            )
+        )
 
-    def set_journal_title(self, journal_title):
+    def add_journal_title(self, journal_title):
         """Set title of the publication containing the record.
 
         Args:
@@ -197,9 +198,7 @@ class OrcidBuilder(object):
                 - If a dictionary entry, use the dictionary title.
                 - If a conference poster, abstract or paper, use the conference name."
         """
-        self.record['journal-title'] = {
-            'value': journal_title
-        }
+        self.record.append(_WORK('journal-title', journal_title))
 
     def set_visibility(self, visibility):
         """Set visibility setting on ORCID.
@@ -209,7 +208,15 @@ class OrcidBuilder(object):
         Args:
             visibility (string): one of (private, limited, registered-only, public), see https://git.io/vdKXt#L904-L937
         """
-        self.record['visibility'] = visibility
+        self.record.attrib['visibility'] = visibility
+
+    def set_put_code(self, put_code):
+        """Set the put-code of an ORCID record, to update existing one.
+
+        Args:
+            put_code (string | integer): a number, being a put code
+        """
+        self.record.attrib['put-code'] = text_type(put_code)
 
     def _make_contributor_field(self, credit_name, role, orcid, email, first):
         """
@@ -221,25 +228,27 @@ class OrcidBuilder(object):
             first (bool): is mentioned first on the list of authors
 
         Returns:
-            dict: contributor field
+            lxml.etree._Element: contributor field
         """
-        contributor = {
-            'credit-name': {
-                'value': credit_name
-            },
-            'contributor-attributes': {
-                'contributor-sequence': 'first' if first else 'additional',
-                'contributor-role': role,
-            }
-        }
+
+        contributor_attributes = _WORK(
+            'contributor-attributes', _WORK('contributor-sequence', 'first' if first else 'additional')
+        )
+
+        if role:
+            contributor_attributes.append(_WORK('contributor-role', role))
+
+        contributor = _WORK(
+            'contributor',
+            _WORK('credit-name', credit_name),
+            contributor_attributes
+        )
 
         if orcid:
-            contributor['contributor-orcid'] = self._make_reference_field(orcid)
+            contributor.append(self._make_contributor_orcid_field(orcid))
 
         if email:
-            contributor['contributor-email'] = {
-                'value': email
-            }
+            contributor.append(_WORK('contributor-email', email))
 
         return contributor
 
@@ -252,26 +261,53 @@ class OrcidBuilder(object):
             relationship (string): either "part-of" or "self", optional, see https://git.io/vdKXt#L1603-L1604
 
         Returns:
-            dict: ORCID-compatible external ID field
+            lxml.etree._Element: ORCID-compatible external ID field
         """
-        external_id = {
-            'external-id-type': type,
-            'external-id-value': value,
-        }
+        external_id_field = _COMMON(
+            'external-id',
+            _COMMON('external-id-type', type),
+            _COMMON('external-id-value', value)
+        )
 
         if url:
-            external_id['external-id-url'] = {
-                'value': url,
-            }
+            external_id_field.append(_COMMON('external-id-url', url))
 
         if relationship:
-            external_id['external-id-relationship'] = relationship
+            external_id_field.append(_COMMON('external-id-relationship', relationship))
 
-        return external_id
+        return external_id_field
 
-    def _make_reference_field(self, reference):
-        return {
-            'uri': 'http://orcid.org/{}'.format(reference),
-            'path': reference,
-            'host': 'orcid.org',
-        }
+    def _make_contributor_orcid_field(self, reference):
+        """Generate a contributor-orcid field.
+
+        Args:
+            reference (string): ORCID identifier
+
+        Returns:
+            lxml.etree._Element: contributor-orcid field
+        """
+        return _COMMON(
+            'contributor-orcid',
+            _COMMON.uri('http://orcid.org/{}'.format(reference)),
+            _COMMON.path(reference),
+            _COMMON.host('orcid.org')
+        )
+
+    def _get_or_make_field(self, root, field_tag):
+        """Return existing ``field_tag`` element in ``root`` or add and return a new one.
+
+        Args:
+            root (lxml.etree._Element): root element to search the tag in
+            field_tag (string): XML tag, including the namespace
+
+        Returns:
+            lxml.etree._Element: new or existing ``field_tag`` element
+        """
+        namespace, relative_tag = tuple(field_tag.split(':'))
+        element_maker = _ELEMENT_MAKERS[namespace]
+        try:
+            field = root.xpath('/*/{}'.format(field_tag), namespaces=_NAMESPACES)[0]
+        except IndexError:
+            field = element_maker(relative_tag)
+            root.append(field)
+        return field
