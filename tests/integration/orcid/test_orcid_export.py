@@ -26,6 +26,15 @@ from inspirehep.utils.record_getter import get_es_record
 from inspirehep.modules.orcid import OrcidConverter
 from flask import current_app
 from lxml import etree
+import pkg_resources
+import os
+
+
+def valid_against_schema(xml):
+    schema_path = pkg_resources.resource_filename(__name__, os.path.join('fixtures', 'record_2.0', 'work-2.0.xsd'))
+    schema = etree.XMLSchema(file=schema_path)
+    schema.assertValid(xml)
+    return True
 
 
 def xml_parse(xml_string):
@@ -74,6 +83,7 @@ def test_format_article(app):
     """)
 
     result = OrcidConverter(article).get_xml()
+    assert valid_against_schema(result)
     assert xml_compare(result, expected)
 
 
@@ -108,6 +118,7 @@ def test_format_conference_paper(app):
     """)
 
     result = OrcidConverter(inproceedings).get_xml()
+    assert valid_against_schema(result)
     assert xml_compare(result, expected)
 
 
@@ -121,7 +132,6 @@ def test_format_proceedings(app):
         <work:type>edited-book</work:type>
         <common:publication-date>
             <common:year>2005</common:year>
-            <common:media-type>print</common:media-type>
         </common:publication-date>
         <common:external-ids>
             <common:external-id>
@@ -152,6 +162,7 @@ def test_format_proceedings(app):
     """)
 
     result = OrcidConverter(proceedings).get_xml()
+    assert valid_against_schema(result)
     assert xml_compare(result, expected)
 
 
@@ -177,6 +188,7 @@ def test_format_thesis(app):
     """)
 
     result = OrcidConverter(phdthesis).get_xml()
+    assert valid_against_schema(result)
     assert xml_compare(result, expected)
 
 
@@ -192,7 +204,6 @@ def test_format_book(app):
             <common:year>2011</common:year>
             <common:month>03</common:month>
             <common:day>03</common:day>
-            <common:media-type>print</common:media-type>
         </common:publication-date>
         <common:external-ids>
             <common:external-id>
@@ -222,6 +233,7 @@ def test_format_book(app):
     """)
 
     result = OrcidConverter(book).get_xml()
+    assert valid_against_schema(result)
     assert xml_compare(result, expected)
 
 
@@ -278,4 +290,5 @@ def test_format_book_chapter(app):
     """.format(current_app.config['SERVER_NAME']))
 
     result = OrcidConverter(inbook).get_xml()
+    assert valid_against_schema(result)
     assert xml_compare(result, expected)
