@@ -23,6 +23,11 @@
                                 }
                             },
                             "type": "object"
+                        },
+                        "record_matches": {
+                            "include_in_all": false,
+                            "enabled": false,
+                            "type": "object"
                         }
                     },
                     "type": "object"
