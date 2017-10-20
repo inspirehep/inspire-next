@@ -123,7 +123,7 @@ extras_require = {
         'ipdb~=0.0,>=0.10.3',
     ],
     'crawler-node': [
-        'hepcrawl~=2.0,>=2.1.0',
+        'hepcrawl~=3.0,>=3.0',
     ],
     'docs': docs_require,
     'tests': tests_require,
