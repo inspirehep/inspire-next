@@ -109,6 +109,7 @@ docs_require = [
 ]
 
 tests_require = [
+    'flake8~=3.0,>=3.4.1,<3.5.0',
     'flake8-future-import~=0.0,>=0.4.3',
     'mock~=2.0,>=2.0.0',
     'pytest-cov~=2.0,>=2.5.1',
