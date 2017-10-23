@@ -422,7 +422,7 @@
                     "index": "not_analyzed",
                     "type": "string"
                 },
-                "facet_inspire_subjects": {
+                "facet_inspire_categories": {
                     "index": "not_analyzed",
                     "type": "string"
                 },
@@ -486,7 +486,7 @@
                             "type": "string"
                         },
                         "term": {
-                            "copy_to": "facet_inspire_subjects",
+                            "copy_to": "facet_inspire_categories",
                             "type": "string"
                         }
                     },
