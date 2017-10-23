@@ -26,12 +26,11 @@ from __future__ import absolute_import, division, print_function
 
 import os
 from sqlalchemy import (
-     JSON,
-     String,
-     cast,
-     type_coerce,
- )
-from sqlalchemy import text
+    JSON,
+    String,
+    cast,
+    type_coerce,
+)
 
 from functools import wraps
 import re
@@ -242,28 +241,20 @@ def _get_journal_title(obj, eng):
 
 @with_debug_logging
 def get_journal_coverage(obj, eng):
-    """Is this journal article part of a fully covered journal?"""
+    """Return the journal coverage that this article belongs to."""
     a_journal_title = _get_journal_title(obj, eng)
 
-    # if a_journal_title == 'Phys.Rev.':
-    #     a_journal_title = 'Physical Review'
+    query = RecordMetadata.query.filter(
+        RecordMetadata.json['_collections'].op('?')('Journals')).filter(
+        cast(RecordMetadata.json['short_title'], String) == type_coerce(a_journal_title, JSON))
 
-    query = text("""
-        SELECT
-            r.json -> '_harvesting_info' -> 'coverage' AS journal_coverage
-        FROM
-            records_metadata AS r
-        WHERE
-            (r.json -> '_collections')::jsonb ? 'Journals'
-        AND
-            (r.json -> 'short_title') ? :a_journal_title
-    """).bindparams(a_journal_title=a_journal_title)
+    result = db.session.execute(query).fetchone()
+    journal_coverage = result.records_metadata_json['_harvesting_info']['coverage']
 
-    result = db.session.execute(query)
-    j_c = result.fetchone()
-
-    obj.extra_data['journal_coverage'] = [str(j_c['journal_coverage']) if j_c else '']
-    import pdb; pdb.set_trace()
+    if journal_coverage:
+        obj.extra_data['journal_coverage'] = journal_coverage
+    else:
+        obj.extra_data['journal_coverage'] = None
 
 
 @with_debug_logging

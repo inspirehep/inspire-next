@@ -406,19 +406,10 @@ def test_get_journal_title_():
 
 
 def test_get_journal_title_no_journal_title():
-    obj = MockObj({'publication_info': {}}, {})
+    obj = MockObj({'publication_info': [{}]}, {})
     eng = MockEng()
 
     assert not _get_journal_title(obj, eng)
-
-
-# def test_get_journal_coverage():
-#     obj = MockObj({'publication_info': {'journal_title': 'Phys.Rev.'}}, {})
-#     eng = MockEng()
-#
-#     get_journal_coverage(obj, eng)
-#
-#     assert obj.extra_data['journal_coverage'] == 'full'
 
 
 def test_prepare_update_payload():
