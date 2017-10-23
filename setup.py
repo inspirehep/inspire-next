@@ -96,7 +96,7 @@ install_requires = [
     'orcid~=0.0,>=0.7.0',
     'plotextractor~=0.0,>=0.1.6',
     'python-redis-lock~=3.0,>=3.2.0',
-    'raven~=5.0,>=5.1.0,<5.1.1',
+    'raven[flask]~=6.0,>=6.2.1',
     'refextract~=0.0,>=0.2.2',
     'requests~=2.0,>=2.18.4',
     'setproctitle~=1.0,>=1.1.10',
@@ -109,6 +109,7 @@ docs_require = [
 ]
 
 tests_require = [
+    'flake8~=3.0,>=3.4.1,<3.5.0',
     'flake8-future-import~=0.0,>=0.4.3',
     'mock~=2.0,>=2.0.0',
     'pytest-cov~=2.0,>=2.5.1',
