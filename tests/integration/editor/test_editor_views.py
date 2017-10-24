@@ -125,8 +125,8 @@ def test_get_revisions(log_in_as_cataloger, record_with_two_revisions, api_clien
 
     result = json.loads(response.data)
 
-    assert result[0]['revision_id'] == 1
-    assert result[1]['revision_id'] == 0
+    assert result[0]['revision_id'] == 2
+    assert result[1]['revision_id'] == 1
 
     assert result[0]['user_email'] == 'system'
     assert result[1]['user_email'] == 'system'
