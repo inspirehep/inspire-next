@@ -620,8 +620,8 @@ def back_to_search_link(referer, collection):
         url = url_for(
             'inspirehep_search.search', cc=collection, q=url_map['q']
         )
-        text = "Back to search results for \"{}\"".format(url_map['q'])
-    url_html = '<a href="{}">{}</a>'.format(url, text)
+        text = u"Back to search results for \"{}\"".format(url_map['q'])
+    url_html = u'<a href="{}">{}</a>'.format(url, text)
     return url_html
 
 

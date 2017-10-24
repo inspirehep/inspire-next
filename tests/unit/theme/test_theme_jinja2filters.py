@@ -26,7 +26,7 @@ import jinja2
 import pytest
 from elasticsearch_dsl import result
 from flask import current_app
-from mock import patch
+from mock import Mock, patch
 
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.wrappers import LiteratureRecord
@@ -35,6 +35,7 @@ from inspirehep.modules.theme.jinja2filters import (
     apply_template_on_array,
     author_profile,
     author_urls,
+    back_to_search_link,
     citation_phrase,
     collection_select_current,
     conference_date,
@@ -1258,3 +1259,15 @@ def test_is_cataloger_returns_true_when_user_is_a_superuser():
 def test_is_cataloger_returns_false_when_user_has_no_roles():
     user = MockUser('user@example.com')
     assert not is_cataloger(user)
+
+
+@patch('inspirehep.modules.theme.jinja2filters.url_decode')
+def test_back_to_search_link_handles_unicode_title(mocked_url_decode):
+    collection = 'HEP'
+    unicode_query = u'Göbel, Carla'
+    url_map = {'q': unicode_query}
+
+    mocked_referrer = Mock()
+    mocked_url_decode.return_value = url_map
+
+    assert back_to_search_link(mocked_referrer, collection)
