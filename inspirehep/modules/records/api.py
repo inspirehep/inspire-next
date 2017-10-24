@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import copy
 from datetime import datetime
 
 import arrow
@@ -31,30 +32,74 @@ from elasticsearch.exceptions import NotFoundError
 from flask import current_app
 
 from inspire_schemas.api import validate
+from inspire_schemas.builders import LiteratureBuilder
 from invenio_files_rest.models import Bucket
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_files.api import Record
 from invenio_db import db
 
+from inspirehep.modules.records.utils import open_url_or_path
 from inspirehep.utils.record_getter import (
     RecordGetterError,
     get_es_record_by_uuid
 )
 
 
+MAX_UNIQUE_KEY_COUNT = 50000
+
+
 class InspireRecord(Record):
 
     """Record class that fetches records from DataBase."""
 
+    @classmethod
+    def create(cls, *args, **kwargs):
+        """
+
+        Args:
+
+            files_src_record(InspireRecord): if passed, it will try to get the
+                files for the documents and figures from this record's files
+                iterator before downloading them, for example to merge existing
+                records.
+        """
+        files_src_record = kwargs.pop('files_src_record', None)
+        new_record = super(InspireRecord, cls).create(*args, **kwargs)
+        new_record.download_documents_and_figures(src_record=files_src_record)
+        new_record.commit()
+        return new_record
+
+    def update(self, *args, **kwargs):
+        """
+        Args:
+
+            files_src_record(InspireRecord): if passed, it will try to get the
+                files for the documents and figures from this record's files
+                iterator before downloading them, for example to merge existing
+                records.
+        """
+        files_src_record = kwargs.pop('files_src_record', None)
+        super(InspireRecord, self).update(*args, **kwargs)
+        self.download_documents_and_figures(
+            only_new=True,
+            src_record=files_src_record,
+        )
+
     def merge(self, other):
         """Redirect pidstore of current record to the other InspireRecord.
 
-        :param other: The record that self(record) is going to be redirected.
-        :type other: InspireRecord
+        Args:
+
+            other(InspireRecord): The record that self(record) is going to be
+                redirected.
         """
-        pids_deleted = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == self.id).all()
-        pid_merged = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == other.id).one()
+        pids_deleted = PersistentIdentifier.query.filter(
+            PersistentIdentifier.object_uuid == self.id
+        ).all()
+        pid_merged = PersistentIdentifier.query.filter(
+            PersistentIdentifier.object_uuid == other.id
+        ).one()
         with db.session.begin_nested():
             for pid in pids_deleted:
                 pid.redirect(pid_merged)
@@ -62,7 +107,9 @@ class InspireRecord(Record):
 
     def delete(self):
         """Mark as deleted all pidstores for a specific record."""
-        pids = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == self.id).all()
+        pids = PersistentIdentifier.query.filter(
+            PersistentIdentifier.object_uuid == self.id
+        ).all()
         with db.session.begin_nested():
             for pid in pids:
                 pid.delete()
@@ -94,6 +141,284 @@ class InspireRecord(Record):
     def validate(self):
         """Validate the record, also ensuring format compliance."""
         validate(self)
+
+    def add_document_or_figure(
+        self,
+        metadata,
+        stream=None,
+        is_document=True,
+        file_name=None,
+        key=None,
+    ):
+        if not key and not file_name:
+            raise TypeError(
+                'No file_name and no key passed, at least one of them is '
+                'needed.'
+            )
+
+        if not key:
+            key = self._get_unique_files_key(base_file_name=file_name)
+
+        if stream is not None:
+            self.files[key] = stream
+
+        builder = LiteratureBuilder(record=self.dumps())
+        metadata['key'] = key
+        metadata['url'] = '/api/files/{bucket}/{key}'.format(
+            bucket=self.files[key].bucket_id,
+            key=key,
+        )
+        if is_document:
+            builder.add_document(**metadata)
+        else:
+            builder.add_figure(**metadata)
+
+        super(InspireRecord, self).update(builder.record)
+        return metadata
+
+    def _resolve_doc_or_fig_url(
+        self,
+        doc_or_fig_obj,
+        src_record=None,
+        only_new=False,
+    ):
+        """Resolves the given document url according to the current record.
+
+        It will fill it up with the local url in case it's found in the given
+        src_record.
+
+
+        Returns:
+
+            dict: with the medatada of the given ``doc_or_fig_obj`` updated as
+                follows:
+                * In the case it has to be downloaded: the url is set to
+                  something that you can use open_url_or_path on.
+                * In the case it does not have to be downloaded: the url is
+                  left intact pointing to the /api/files endpoint.
+
+        Raises:
+            Exception: if the url of the given ``doc_or_fig_obj`` is
+                unresolvable.
+        """
+        doc_or_fig_obj = copy.deepcopy(doc_or_fig_obj)
+        key = doc_or_fig_obj['key']
+
+        def _should_take_from_src_record(self, key, src_record, only_new):
+            return (
+                src_record and
+                key in src_record.files and
+                key not in self.files
+            )
+
+        def _already_there(self, src_record, only_new):
+            return (
+                not src_record and
+                only_new and
+                key in self.files
+            )
+
+        def _get_meaningful_exception(
+            self,
+            key,
+            src_record,
+            only_new,
+            doc_or_fig_obj,
+        ):
+            exception = None
+            if not src_record:
+                if not only_new:
+                    exception = Exception(
+                        "Can't download %s, as no src_record was passed."
+                        % doc_or_fig_obj
+                    )
+                elif key not in self.files:
+                    exception = Exception(
+                        "Bad document %s, refers to an already downloaded "
+                        "url, but none found in this record and no src_record "
+                        "passed, only found %s."
+                        % (doc_or_fig_obj, self.files.keys)
+                    )
+            elif key not in src_record.files and key not in self.files:
+                exception = Exception(
+                    "Bad document %s, refers to an already downloaded "
+                    "url, but none found in this record or the passed "
+                    "src_record, only found %s on this record and %s on "
+                    "src_record." % (
+                        doc_or_fig_obj,
+                        self.files.keys,
+                        src_record.files.keys,
+                    )
+                )
+
+            return exception
+
+        if not doc_or_fig_obj['url'].startswith('/api/files/'):
+            return doc_or_fig_obj
+
+        if _should_take_from_src_record(self, key, src_record, only_new):
+            doc_or_fig_obj['url'] = src_record.files[key].file.uri
+            return doc_or_fig_obj
+
+        if _already_there(self, src_record, only_new):
+            return doc_or_fig_obj
+
+        raise _get_meaningful_exception(
+            self,
+            key,
+            src_record,
+            only_new,
+            doc_or_fig_obj,
+        )
+
+    def _download_to_docs_or_figs(
+        self,
+        document=None,
+        figure=None,
+        src_record=None,
+        only_new=False,
+    ):
+        if not document and not figure:
+            raise TypeError(
+                'No document nor figure passed, at least one is needed.'
+            )
+
+        is_document = bool(document)
+        doc_or_fig_obj = self._resolve_doc_or_fig_url(
+            doc_or_fig_obj=document or figure,
+            src_record=src_record,
+            only_new=only_new,
+        )
+        if doc_or_fig_obj['url'].startswith('/api/files/'):
+            return self.add_document_or_figure(
+                metadata=doc_or_fig_obj,
+                key=doc_or_fig_obj['key'],
+                is_document=is_document,
+            )
+
+        key = doc_or_fig_obj['key']
+        if key not in self.files:
+            key = self._get_unique_files_key(base_file_name=key)
+
+        stream = open_url_or_path(doc_or_fig_obj['url'])
+        return self.add_document_or_figure(
+            metadata=doc_or_fig_obj,
+            key=key,
+            stream=stream,
+            is_document=is_document,
+        )
+
+    def download_documents_and_figures(self, only_new=False, src_record=None):
+        """Gets all the documents and figures of the record, and downloads them
+        to the files property.
+
+        If the record does not have a control number yet, this function will
+        do nothing and it will be left to the caller the task of calling it
+        again once the control number is set.
+
+        When iterating through the documents and figures, the following
+        happens:
+
+        * if `url` field points to the files api:
+            * and there's no `src_record`:
+              * and `only_new` is `False`: it will throw an error, as that
+                would be the case that the record was created from scratch
+                with a document that was already downloaded from another
+                record, but that record was not passed, so we can't get the
+                file.
+
+              * and `only_new` is `True`:
+                  * if `key` exists in the current record files: it will do
+                    nothing, as the file is already there.
+
+                  * if `key` does not exist in the current record files: An
+                    exception will be thrown, as the file can't be retrieved.
+
+            * and there's a `src_record`:
+              * and `only_new` is `False`:
+                  * if `key` exists in the src_record files: it will download
+                    the file from the local path derived from the src_record
+                    files.
+
+                  * if `key` does not exist in the src_record files: An
+                    exception will be thrown, as the file can't be retrieved.
+
+              * and `only_new` is `True`:
+                  * if `key` exists in the current record files: it will do
+                    nothing, as the file is already there.
+
+                  * if `key` does not exist in the current record files:
+                    * if `key` exists in the src_record files: it will download
+                      the file from the local path derived from the src_record
+                      files.
+
+                    * if `key` does not exist in the src_record files: An
+                      exception will be thrown, as the file can't be retrieved.
+
+        * if `url` field does not point to the files api: it will try to
+          download the new file.
+
+        Args:
+            only_new(bool): If True, will not re-download any files if the
+                document['key'] matches an existing downloaded file.
+            src_record(InspireRecord): if passed, it will try to get the files
+                from this record files iterator before downloading them, for
+                example to merge existing records.
+        """
+        if 'control_number' not in self:
+            return
+
+        documents_to_download = self.pop('documents', [])
+        figures_to_download = self.pop('figures', [])
+
+        for document in documents_to_download:
+            self._download_to_docs_or_figs(
+                document=document,
+                src_record=src_record,
+                only_new=only_new,
+            )
+
+        for figure in figures_to_download:
+            self._download_to_docs_or_figs(
+                figure=figure,
+                src_record=src_record,
+                only_new=only_new,
+            )
+
+    def _get_unique_files_key(self, base_file_name):
+        def _strip_old_control_number(base_name):
+            base_name = base_name.split('_', 1)[-1]
+            return base_name
+
+        def _append_current_control_number(control_number, base_name):
+            prefix = '%s_' % control_number
+            if not base_name.startswith(prefix):
+                base_name = _strip_old_control_number(base_name)
+                prepended_key = '%s%s' % (prefix, base_name)
+            else:
+                prepended_key = base_name
+
+            return prepended_key
+
+        prepended_key = _append_current_control_number(
+            self['control_number'],
+            base_file_name,
+        )
+
+        new_key = prepended_key
+        count = 1
+        while new_key in self.files:
+            new_key = '%s_%s' % (prepended_key, count)
+            count += 1
+            # This should never happen, but just in case to abort infinite
+            # loops we add this safeguard.
+            if count > MAX_UNIQUE_KEY_COUNT:
+                raise Exception(
+                    'Unable to find a unique key in the first %s, aborting.'
+                    % MAX_UNIQUE_KEY_COUNT
+                )
+
+        return new_key
 
 
 class ESRecord(InspireRecord):

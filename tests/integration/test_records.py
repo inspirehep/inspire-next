@@ -22,8 +22,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+import copy
 import pytest
 import StringIO
+import requests_mock
+from mock import patch, mock_open
 
 from dojson.contrib.marc21.utils import create_record
 from invenio_db import db
@@ -351,7 +354,7 @@ def test_get_es_records_accepts_lists_of_strings(app):
 
 
 def test_records_files_attached_correctly(app):
-    json = {
+    record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': [
             'article',
@@ -359,11 +362,366 @@ def test_records_files_attached_correctly(app):
         'titles': [
             {'title': 'foo'},
         ],
-        '_collections': ['Literature']
+        '_collections': [
+            'Literature'
+        ]
     }
 
-    record = InspireRecord.create(json)
+    record = InspireRecord.create(record_json)
     record.files['fulltext.pdf'] = StringIO.StringIO()
     record.commit()
 
     assert 'fulltext.pdf' in record.files
+
+
+@patch(
+    'inspirehep.modules.records.utils.open',
+    mock_open(read_data='dummy body'),
+)
+def test_create_handles_documents(app):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],
+        'documents': [{
+            'key': 'arXiv:1710.01187.pdf',
+            'url': '/afs/cern.ch/project/inspire/PROD/var/data/files/g151/3037619/content.pdf;1',
+        }]  # record/1628455/export/xme
+    }
+
+    record = InspireRecord.create(record_json)
+    expected_file_content = 'dummy body'
+    expected_key = '1_arXiv:1710.01187.pdf'
+
+    assert expected_key in record.files.keys
+    assert len(record.files) == 1
+    assert len(record['documents']) == len(record_json['documents'])
+    file_content = open(record.files[expected_key].obj.file.uri).read()
+    assert file_content == expected_file_content
+
+
+def test_update_handles_documents(app):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],  # DESY harvest
+    }
+
+    update_to_record = {
+        'documents': [{
+            'key': 'Fulltext.pdf',
+            'url': 'http://www.mdpi.com/2218-1997/3/1/24/pdf',
+        }],
+    }
+
+    record = InspireRecord.create(record_json)
+    assert not len(record.files)
+
+    with requests_mock.Mocker() as requests_mocker:
+        expected_file_content = 'dummy body'
+        requests_mocker.register_uri(
+            'GET', 'http://www.mdpi.com/2218-1997/3/1/24/pdf',
+            body=StringIO.StringIO(expected_file_content),
+        )
+
+        record.clear()
+        updated_json = record_json
+        updated_json.update(copy.deepcopy(update_to_record))
+        record.update(updated_json)
+
+        expected_key = '1_Fulltext.pdf'
+
+        assert expected_key in record.files.keys
+        assert len(record.files) == len(update_to_record['documents'])
+        assert len(record['documents']) == len(update_to_record['documents'])
+        file_content = open(record.files[expected_key].obj.file.uri).read()
+        assert file_content == expected_file_content
+
+
+@patch(
+    'inspirehep.modules.records.utils.open',
+    mock_open(read_data='dummy body'),
+)
+def test_create_handles_figures(app):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],
+        'figures': [{
+            'key': 'graph.png',
+            'url': '/afs/cern.ch/project/inspire/PROD/var/data/files/g151/3037619/graph.png;1',
+        }]  # record/1628455/export/xme
+    }
+
+    record = InspireRecord.create(record_json)
+    expected_file_content = 'dummy body'
+    expected_key = '1_graph.png'
+
+    assert expected_key in record.files.keys
+    assert len(record.files) == 1
+    assert len(record['figures']) == len(record_json['figures'])
+    file_content = open(record.files[expected_key].obj.file.uri).read()
+    assert file_content == expected_file_content
+
+
+def test_update_handles_figures(app):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],  # DESY harvest
+    }
+
+    update_to_record = {
+        'figures': [{
+            'key': 'graph.png',
+            'url': 'http://www.mdpi.com/2218-1997/3/1/24/png',
+        }],
+    }
+
+    record = InspireRecord.create(record_json)
+    assert not len(record.files)
+
+    with requests_mock.Mocker() as requests_mocker:
+        expected_file_content = 'dummy body'
+        requests_mocker.register_uri(
+            'GET', 'http://www.mdpi.com/2218-1997/3/1/24/png',
+            body=StringIO.StringIO(expected_file_content),
+        )
+
+        record.clear()
+        updated_json = record_json
+        updated_json.update(copy.deepcopy(update_to_record))
+        record.update(updated_json)
+
+        expected_key = '1_graph.png'
+
+    assert expected_key in record.files.keys
+    assert len(record.files) == len(update_to_record['figures'])
+    assert len(record['figures']) == len(update_to_record['figures'])
+    file_content = open(record.files[expected_key].obj.file.uri).read()
+    assert file_content == expected_file_content
+
+
+@patch(
+    'inspirehep.modules.records.utils.open',
+    mock_open(read_data='doc1 body'),
+)
+def test_update_with_only_new(app):
+    doc1_expected_file_content = 'doc1 body'
+    doc1_expected_key = '1_Fulltext.pdf'
+    doc2_expected_file_content = 'doc2 body'
+    doc2_expected_key = '1_Fulltext.pdf_1'
+
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],  # DESY harvest
+        'documents': [{
+            'key': 'Fulltext.pdf',
+            'url': '/some/non/existing/path.pdf',
+        }],
+    }
+
+    update_to_record = {
+        'documents': [
+            {
+                'key': doc1_expected_key,
+                'url': '/api/files/somebucket/somefile',
+            },
+            {
+                'key': 'Fulltext.pdf',
+                'url': 'http://www.mdpi.com/2218-1997/3/1/24/pdf',
+            },
+        ],
+    }
+
+    record = InspireRecord.create(record_json)
+
+    assert doc1_expected_key in record.files.keys
+    assert len(record.files) == len(record_json['documents'])
+    assert len(record['documents']) == len(record_json['documents'])
+    file_content = open(record.files[doc1_expected_key].obj.file.uri).read()
+    assert file_content == doc1_expected_file_content
+
+    doc1_old_api_url = record['documents'][0]['url']
+
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://www.mdpi.com/2218-1997/3/1/24/pdf',
+            body=StringIO.StringIO(doc2_expected_file_content),
+        )
+
+        record.clear()
+        record_json.update(copy.deepcopy(update_to_record))
+        record.update(record_json, only_new=True)
+
+    assert len(record['documents']) == len(update_to_record['documents'])
+    for document in record['documents']:
+        assert document['key'] in [doc1_expected_key, doc2_expected_key]
+        if document['key'] == doc1_expected_key:
+            file_content = open(
+                record.files[doc1_expected_key].obj.file.uri
+            ).read()
+            assert file_content == doc1_expected_file_content
+            assert document['url'] == doc1_old_api_url
+
+        elif document['key'] == doc2_expected_key:
+            file_content = open(
+                record.files[doc2_expected_key].obj.file.uri
+            ).read()
+            assert file_content == doc2_expected_file_content
+
+
+@patch(
+    'inspirehep.modules.records.utils.open',
+    mock_open(read_data='dummy body'),
+)
+def test_create_with_source_record_with_same_control_number(app):
+    expected_file_content = 'dummy body'
+    expected_key = '1_Fulltext.pdf'
+
+    record1_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],  # DESY harvest
+        'documents': [{
+            'key': 'Fulltext.pdf',
+            'url': '/some/non/existing/path.pdf',
+        }],
+    }
+
+    record2_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],  # DESY harvest
+    }
+
+    record1 = InspireRecord.create(record1_json)
+    rec1_file_content = open(record1.files[expected_key].obj.file.uri).read()
+    assert rec1_file_content == expected_file_content
+
+    record2_json['documents'] = copy.deepcopy(record1['documents'])
+
+    record2 = InspireRecord.create(record2_json, files_src_record=record1)
+
+    assert len(record2.files) == len(record2_json['documents'])
+    assert len(record2['documents']) == len(record2_json['documents'])
+    assert record2['documents'][0]['url'] != record1['documents'][0]['url']
+    rec2_file_content = open(record2.files[expected_key].obj.file.uri).read()
+    assert rec2_file_content == expected_file_content
+
+
+@patch(
+    'inspirehep.modules.records.utils.open',
+    mock_open(read_data='dummy body'),
+)
+def test_create_with_source_record_with_different_control_number(app):
+    expected_file_content = 'dummy body'
+    rec1_expected_key = '1_Fulltext.pdf'
+    rec2_expected_key = '2_Fulltext.pdf'
+
+    record1_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],  # DESY harvest
+        'documents': [{
+            'key': 'Fulltext.pdf',
+            'url': '/some/non/existing/path.pdf',
+        }],
+    }
+
+    record2_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 2,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],  # DESY harvest
+    }
+
+    record1 = InspireRecord.create(record1_json)
+    rec1_file_content = open(
+        record1.files[rec1_expected_key].obj.file.uri
+    ).read()
+    assert rec1_file_content == expected_file_content
+
+    record2_json['documents'] = copy.deepcopy(record1['documents'])
+
+    record2 = InspireRecord.create(record2_json, files_src_record=record1)
+
+    assert len(record2.files) == len(record2_json['documents'])
+    assert len(record2['documents']) == len(record2_json['documents'])
+    assert record2['documents'][0]['url'] != record1['documents'][0]['url']
+    rec2_file_content = open(
+        record2.files[rec2_expected_key].obj.file.uri
+    ).read()
+    assert rec2_file_content == expected_file_content
