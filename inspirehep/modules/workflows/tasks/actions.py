@@ -249,7 +249,11 @@ def get_journal_coverage(obj, eng):
         cast(RecordMetadata.json['short_title'], String) == type_coerce(a_journal_title, JSON))
 
     result = db.session.execute(query).fetchone()
-    journal_coverage = result.records_metadata_json['_harvesting_info']['coverage']
+
+    if result:
+        journal_coverage = result.records_metadata_json['_harvesting_info']['coverage']
+    else:
+        journal_coverage = None
 
     if journal_coverage:
         obj.extra_data['journal_coverage'] = journal_coverage
