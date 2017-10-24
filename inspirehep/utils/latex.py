@@ -290,7 +290,7 @@ class Latex(Export):
                         coden = ','.join(
                             [record['coden'][0], volume, pages])
                         return coden
-                except:
+                except Exception:
                     return ''
         else:
             return ''
