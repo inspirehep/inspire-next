@@ -1,3 +1,4 @@
+{#
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
@@ -19,11 +20,26 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
+#}
 
-"""INSPIRE editor."""
+{%- block page_body %}
+<me-multi-app>
+	Loading...
+</me-multi-app>
 
-from __future__ import absolute_import, division, print_function
+{% endblock page_body %}
 
-from .api import blueprint  # noqa: F401
+{% block css %}
+<link href="/static/node_modules/ng2-multi-record-editor/dist/styles.bundle.css" rel="stylesheet"/>
+{% endblock css %}
 
-from .ext import Multieditor
+{%- block page_footer %}
+{%- endblock page_footer %}
+
+{% block javascript %}
+
+{% assets "inspirehep_multi_record_editor_js" %}
+<script src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+{% endblock javascript %}

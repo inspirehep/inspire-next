@@ -50,6 +50,27 @@ def test_addition_root_key(get_schema):
     assert record == expected_map
 
 
+def test_addition_root_object(get_schema):
+    """Should test adding a root primitive key"""
+    record = {
+    }
+    expected_map = {
+        "abstracts": [
+            {
+                "source": "AIP",
+                "value": "Variational principles presented as a logical extension."
+             }
+        ]
+    }
+    object_to_add = {
+                "source": "AIP",
+                "value": "Variational principles presented as a logical extension."
+             }
+    add = Addition(keys=['abstracts'], value=object_to_add)
+    add.apply_action(record, get_schema)
+    assert record == expected_map
+
+
 def test_addition_missing_root_key(get_schema):
     """Should test adding an object with same condition key"""
     record = {

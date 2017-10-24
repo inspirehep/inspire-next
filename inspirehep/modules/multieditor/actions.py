@@ -250,6 +250,12 @@ def check_value(record, match_type, keys, value_to_check, position):
 def get_actions(user_actions):
     class_actions = []
     conditions = []
+    match_type_map = {
+        'contains': 'contains',
+        'is equal to': 'exact',
+        'does not exist': 'missing',
+        'matches regular expression': 'regex'
+    }
     if not user_actions:
         return
 
@@ -259,7 +265,7 @@ def get_actions(user_actions):
         keys = action['keys'].split('/')
         condition = {'value': action['value'],
                      'keys': keys,
-                     'match_type': action['matchType']}
+                     'match_type': match_type_map[action['matchType']]}
         conditions.append(condition)
 
     for user_action in user_actions.get('actions', []):
@@ -270,16 +276,16 @@ def get_actions(user_actions):
             return
         if user_action.get('actionName') == 'Addition':
             class_actions.append(Addition(keys=keys, value=user_action.get('value'),
-                                          match_type=user_action.get('matchType'),
+                                          match_type=match_type_map[user_action.get('matchType')],
                                           conditions=conditions))
         elif user_action.get('actionName') == 'Deletion':
             class_actions.append(Deletion(keys=keys, value=user_action.get('value'),
                                           value_to_check=user_action.get('updateValue'),
-                                          match_type=user_action.get('matchType'),
+                                          match_type=match_type_map[user_action.get('matchType')],
                                           conditions=conditions))
         elif user_action.get('actionName') == 'Update':
             class_actions.append(Update(keys=keys, value=user_action.get('value'),
-                                        match_type=user_action.get('matchType'),
+                                        match_type=match_type_map[user_action.get('matchType')],
                                         value_to_check=user_action.get('updateValue'),
                                         conditions=conditions))
     return class_actions

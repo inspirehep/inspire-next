@@ -20,10 +20,18 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIRE editor."""
+"""Authors extension."""
 
 from __future__ import absolute_import, division, print_function
 
-from .api import blueprint  # noqa: F401
+from .views import blueprint
 
-from .ext import Multieditor
+
+class Multieditor(object):
+    def __init__(self, app=None):
+        if app:
+            self.init_app(app)
+
+    def init_app(self, app):
+        app.register_blueprint(blueprint)
+        app.extensions['inspire-multieditor'] = self

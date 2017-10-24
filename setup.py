@@ -180,6 +180,7 @@ setup(
             'view_restricted_collection = inspirehep.modules.records.permissions:action_view_restricted_collection',
         ],
         'invenio_assets.bundles': [
+            'inspirehep_multi_record_editor_js = inspirehep.modules.multieditor.bundles:js',
             'almondjs = inspirehep.modules.theme.bundles:almondjs',
             'inspirehep_author_profile_js = inspirehep.modules.authors.bundles:js',
             'inspirehep_author_update_css = inspirehep.modules.authors.bundles:update_css',
@@ -210,6 +211,7 @@ setup(
             'inspirehep_multieditor = inspirehep.modules.multieditor:blueprint',
         ],
         'invenio_base.apps': [
+            'inspire_multieditor = inspirehep.modules.multieditor:Multieditor',
             'inspire_arxiv = inspirehep.modules.arxiv:InspireArXiv',
             'inspire_authors = inspirehep.modules.authors:InspireAuthors',
             'inspire_crossref = inspirehep.modules.crossref:InspireCrossref',

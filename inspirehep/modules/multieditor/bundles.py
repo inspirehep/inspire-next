@@ -20,10 +20,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIRE editor."""
+"""UI for Multi Editor."""
 
 from __future__ import absolute_import, division, print_function
 
-from .api import blueprint  # noqa: F401
+from invenio_assets import NpmBundle
 
-from .ext import Multieditor
+js = NpmBundle(
+    "node_modules/ng2-multi-record-editor/dist/inline.bundle.js",
+    "node_modules/ng2-multi-record-editor/dist/vendor.bundle.js",
+    "node_modules/ng2-multi-record-editor/dist/polyfills.bundle.js",
+    "node_modules/ng2-multi-record-editor/dist/main.bundle.js",
+    depends=("ng2-multi-record-editor/dist/*.js"),
+    output="gen/inspirehep-multi-record-editor.%(version)s.js",
+    npm={
+        "ng2-multi-record-editor": "^0.1.2",
+    }
+)
