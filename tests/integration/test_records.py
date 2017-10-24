@@ -374,7 +374,7 @@ def test_records_files_attached_correctly(app):
 
 
 @patch('inspirehep.modules.records.utils.open', mock_open())
-def test_records_files_are_populated_correctly_for_local_paths(app):
+def test_attach_documents_and_figures_handle_local_paths(app):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 1,
@@ -399,7 +399,7 @@ def test_records_files_are_populated_correctly_for_local_paths(app):
     assert '1_arXiv:1710.01187.pdf' in record.files
 
 
-def test_records_files_are_populated_correctly_for_remote_paths(app):
+def test_attach_documents_and_figures_handle_remote_paths(app):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 1,
