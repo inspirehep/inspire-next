@@ -255,10 +255,7 @@ def get_journal_coverage(obj, eng):
     else:
         journal_coverage = None
 
-    if journal_coverage:
-        obj.extra_data['journal_coverage'] = journal_coverage
-    else:
-        obj.extra_data['journal_coverage'] = None
+    obj.extra_data['journal_coverage'] = journal_coverage
 
 
 @with_debug_logging
