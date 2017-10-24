@@ -24,6 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 import StringIO
+import requests_mock
+from mock import patch, mock_open
 
 from dojson.contrib.marc21.utils import create_record
 from invenio_db import db
@@ -34,7 +36,7 @@ from inspire_dojson.hep import hep
 from inspire_utils.record import get_value
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.tasks import merge_merged_records, update_refs
-from inspirehep.modules.migrator.tasks import record_insert_or_replace
+from inspirehep.modules.migrator.tasks import record_insert_or_replace, attach_documents_and_figures
 from inspirehep.utils.record_getter import get_db_record, get_es_records
 
 
@@ -351,7 +353,7 @@ def test_get_es_records_accepts_lists_of_strings(app):
 
 
 def test_records_files_attached_correctly(app):
-    json = {
+    record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': [
             'article',
@@ -359,11 +361,70 @@ def test_records_files_attached_correctly(app):
         'titles': [
             {'title': 'foo'},
         ],
-        '_collections': ['Literature']
+        '_collections': [
+            'Literature'
+        ]
     }
 
-    record = InspireRecord.create(json)
+    record = InspireRecord.create(record_json)
     record.files['fulltext.pdf'] = StringIO.StringIO()
     record.commit()
 
     assert 'fulltext.pdf' in record.files
+
+
+@patch('inspirehep.modules.records.utils.open', mock_open())
+def test_attach_documents_and_figures_handle_local_paths(app):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],
+        'documents': [{
+            'key': 'arXiv:1710.01187.pdf',
+            'url': '/afs/cern.ch/project/inspire/PROD/var/data/files/g151/3037619/content.pdf;1',
+        }]  # record/1628455/export/xme
+    }
+
+    record = InspireRecord.create(record_json)
+    attach_documents_and_figures(record)
+
+    assert '1_arXiv:1710.01187.pdf' in record.files
+
+
+def test_attach_documents_and_figures_handle_remote_paths(app):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],
+        'documents': [{
+            'key': 'Fulltext.pdf',
+            'url': 'http://www.mdpi.com/2218-1997/3/1/24/pdf',
+        }]  # DESY harvest
+    }
+
+    record = InspireRecord.create(record_json)
+
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://www.mdpi.com/2218-1997/3/1/24/pdf',
+            body=StringIO.StringIO(),
+        )
+
+        attach_documents_and_figures(record)
+        assert '1_Fulltext.pdf' in record.files
