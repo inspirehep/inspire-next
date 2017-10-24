@@ -28,15 +28,8 @@ import StringIO
 import pytest
 
 from invenio_db import db
-from invenio_workflows import (
-    workflow_object_class,
-    WorkflowEngine
-)
+from invenio_workflows import workflow_object_class
 from invenio_workflows.models import WorkflowObjectModel
-
-
-from inspirehep.modules.records.api import InspireRecord
-from inspirehep.modules.workflows.tasks.actions import get_journal_coverage
 
 from inspirehep.modules.workflows.actions.hep_approval import HEPApproval
 
@@ -46,8 +39,7 @@ def workflow():
     workflow_object = workflow_object_class.create(
         data={},
         id_user=1,
-        data_type="hep",
-        name="a_name"
+        data_type="hep"
     )
     workflow_object.save()
     db.session.commit()
