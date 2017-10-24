@@ -109,11 +109,10 @@ docs_require = [
 ]
 
 tests_require = [
-    'flake8~=3.0,>=3.4.1,<3.5.0',
     'flake8-future-import~=0.0,>=0.4.3',
     'mock~=2.0,>=2.0.0',
     'pytest-cov~=2.0,>=2.5.1',
-    'pytest-flake8~=0.0,>=0.8.1',
+    'pytest-flake8~=0.0,>=0.9',
     'pytest-selenium~=1.0,>=1.11.1',
     'pytest~=3.0,>=3.2.2',
     'requests_mock~=1.0,>=1.3.0',
