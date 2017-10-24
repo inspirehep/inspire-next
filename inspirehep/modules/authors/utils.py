@@ -138,7 +138,7 @@ def scan_author_string_for_phrases(s):
         'nonlastnames': [],
         'titles': [],
         'raw': s}
-    l = s.split(',')
+    l = s.split(',')  # noqa: E741
     if len(l) < 2:
         # No commas means a simple name
         new = s.strip()
@@ -271,7 +271,7 @@ def expand_nonlastnames(namelist):
         """Lists every combination of head with each and all of tail"""
         if len(tail) == 0:
             return [head]
-        l = []
+        l = []  # noqa: E741
         l.extend([head + ' ' + tail[0]])
         l.extend(_pair_items(head, tail[1:]))
         return l
@@ -286,7 +286,7 @@ def expand_nonlastnames(namelist):
 
         if len(tail) == 0:
             return [head]
-        l = []
+        l = []  # noqa: E741
         l.extend(_pair_items(head, _expand_name(tail[0])))
         l.extend([' '.join(_cons(head, tail)).strip()])
         l.extend(_collect(head, tail[1:]))
