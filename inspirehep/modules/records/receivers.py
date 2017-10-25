@@ -381,7 +381,7 @@ def populate_name_variations(sender, json, *args, **kwargs):
                 el['value'] for el in author.get('ids', [])
                 if el['schema'] == 'INSPIRE BAI'
             ]
-            name_variations = list(generate_name_variations(full_name))
+            name_variations = generate_name_variations(full_name)
 
             author.update({'name_variations': name_variations})
             author.update({'name_suggest': {

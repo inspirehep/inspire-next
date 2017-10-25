@@ -198,7 +198,14 @@
                             "type": "string"
                         },
                         "full_name": {
+                            "analyzer": "author_name_analyzer",
                             "copy_to": "facet_author_name",
+                            "fields": {
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
                             "type": "string"
                         },
                         "ids": {
@@ -218,6 +225,10 @@
                         "name_suggest": {
                             "payloads": true,
                             "type": "completion"
+                        },
+                        "name_variations": {
+                            "index": "not_analyzed",
+                            "type": "string"
                         },
                         "raw_affiliations": {
                             "properties": {
@@ -1039,6 +1050,13 @@
     "settings": {
         "analysis": {
             "analyzer": {
+                "author_name_analyzer": {
+                    "filter": [
+                        "icu_folding"
+                    ],
+                    "tokenizer": "icu_tokenizer",
+                    "type": "custom"
+                },
                 "lowercase_analyzer": {
                     "filter": "lowercase",
                     "tokenizer": "keyword",
