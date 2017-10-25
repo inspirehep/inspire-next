@@ -102,11 +102,10 @@ def populate(file_input=None,
 @migrator.command()
 @click.option('--recid', '-r', type=int, help="recid on INSPIRE")
 def one(recid):
-    click.echo(
-        "Migrating record {recid} from INSPIRE legacy".format(recid=recid))
-    raw_record = requests.get(
-        "http://inspirehep.net/record/{recid}/export/xme".format(recid=recid)).content
-    migrate_chunk(split_blob(raw_record))
+    click.echo('Migrating record {recid} from INSPIRE legacy'.format(recid=recid))
+    response = requests.get('http://inspirehep.net/record/{recid}/export/xme'.format(recid=recid))
+    response.raise_for_status()
+    migrate_chunk(split_blob(response.content))
 
 
 @migrator.command()
