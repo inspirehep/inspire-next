@@ -52,6 +52,8 @@ install_requires = [
     'amqp~=1.0,>=1.4.9',
     'backoff~=1.0,>=1.4.3',
     'backports.tempfile>=1.0rc1',
+    # Required by beard, but we pin to a working version
+    'scipy==1.0.0rc2',
     'beard~=0.0,>=0.2.0',
     'celery~=3.0,>=3.1.25',
     'elasticsearch-dsl~=2.0,>=2.2.0',
