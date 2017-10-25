@@ -634,6 +634,12 @@
                             "type": "object"
                         },
                         "journal_title": {
+                            "fields": {
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
                             "type": "string"
                         },
                         "journal_volume": {
