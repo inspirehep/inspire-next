@@ -58,8 +58,7 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
 
 install:
-  - travis_retry docker-compose pull
-  - travis_retry docker-compose build
+  - travis_retry docker-compose pull --parallel
   - travis_retry docker-compose -f docker-compose.deps.yml run --rm pip
   - travis_retry docker-compose -f docker-compose.deps.yml run --rm assets
 
