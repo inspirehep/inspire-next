@@ -31,6 +31,9 @@ from flask import current_app
 from werkzeug import secure_filename
 from timeout_decorator import TimeoutError
 
+from invenio_db import db
+from invenio_workflows import ObjectStatus
+
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_utils.record import get_value
 from inspirehep.modules.workflows.utils import (
@@ -51,7 +54,20 @@ from inspirehep.modules.workflows.utils import (
 
 
 def mark(key, value):
-    """Mark the workflow object by putting a value in a key in extra_data."""
+    """Mark the workflow object by putting a value in a key in extra_data.
+
+    Note:
+        Important. Committing a change to the database before saving the
+        current workflow object will wipe away any content in ``extra_data``
+        not saved previously.
+
+    Args:
+        key: the key used to mark the workflow
+        value: the value assigned to the key
+
+    Return:
+        func: the decorator to decorate a workflow object
+    """
     @with_debug_logging
     @wraps(mark)
     def _mark(obj, eng):
@@ -266,7 +282,6 @@ def refextract(obj, eng):
 
     Returns:
         None
-
     """
     pdf_references, text_references = [], []
     source = get_value(obj.data, 'acquisition_source.source')
@@ -296,3 +311,43 @@ def refextract(obj, eng):
     elif len(text_references) > len(pdf_references):
         obj.log.info('Extracted %d references from text.', len(text_references))
         obj.data['references'] = text_references
+
+
+@with_debug_logging
+def save_workflow(obj, eng):
+    """Save the current workflow.
+
+    Saves the changes applied to the given workflow object in the database.
+
+    Note:
+        The ``save`` function only indexes the current workflow. For this
+        reason, we need to ``db.session.commit()``.
+
+    TODO:
+        Refactor: move this logic inside ``WorkflowObject.save()``.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        None
+    """
+    obj.save()
+    db.session.commit()
+
+
+def error_workflow(message):
+    """Force an error in the workflow with the given message."""
+    @with_debug_logging
+    @wraps(error_workflow)
+    def _error_workflow(obj, eng):
+        obj.log.error(message)
+        obj.extra_data['_error_message'] = message
+        obj.status = ObjectStatus.ERROR
+
+    _error_workflow.__doc__ = (
+        'Force an error in the workflow object with the message "%s".'
+        % message
+    )
+    return _error_workflow

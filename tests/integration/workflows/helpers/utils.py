@@ -83,6 +83,6 @@ def get_halted_workflow(mocked_is_pdf_link, app, record, extra_config=None):
     } in keywords_prediction['keywords']
 
     # This record should not have been touched yet
-    assert "approved" not in obj.extra_data
+    assert obj.extra_data['approved'] is None
 
     return workflow_uuid, eng, obj

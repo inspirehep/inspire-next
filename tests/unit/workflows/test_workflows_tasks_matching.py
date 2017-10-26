@@ -29,7 +29,7 @@ from inspirehep.modules.workflows.tasks.matching import (
     already_harvested,
     article_exists,
     is_being_harvested_on_legacy,
-    pending_in_holding_pen,
+    _pending_in_holding_pen,
 )
 
 from mocks import MockEng, MockObj
@@ -238,13 +238,7 @@ def test_pending_in_holding_pen_returns_true_if_something_matched(mock_match):
     obj = MockObj(data, extra_data, id=2)
     eng = MockEng()
 
-    assert pending_in_holding_pen(obj, eng)
-    assert 'holdingpen_matches' in obj.extra_data
-
-    expected = [1]
-    result = obj.extra_data['holdingpen_matches']
-
-    assert expected == result
+    assert _pending_in_holding_pen(obj, eng)
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
@@ -257,9 +251,4 @@ def test_pending_in_holding_pen_returns_false_if_nothing_matched(mock_match):
     obj = MockObj(data, extra_data)
     eng = MockEng()
 
-    assert not pending_in_holding_pen(obj, eng)
-    assert 'holdingpen_matches' in obj.extra_data
-    expected = []
-    result = obj.extra_data['holdingpen_matches']
-
-    assert expected == result
+    assert not _pending_in_holding_pen(obj, eng)
