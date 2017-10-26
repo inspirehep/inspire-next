@@ -138,7 +138,7 @@ def arxiv_plot_extract(obj, eng):
             try:
                 plots = process_tarball(tarball.file.uri, output_directory=scratch_space)
             except (InvalidTarball, NoTexFilesFound):
-                obj.log.error(
+                obj.log.info(
                     'Invalid tarball %s for arxiv_id %s', tarball.file.uri, arxiv_id)
                 return
             except DelegateError as err:
@@ -216,7 +216,7 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
                 try:
                     file_list = untar(tarball.file.uri, scratch_space)
                 except InvalidTarball:
-                    obj.log.error('Invalid tarball %s for arxiv_id %s', tarball.file.uri, arxiv_id)
+                    obj.log.info('Invalid tarball %s for arxiv_id %s', tarball.file.uri, arxiv_id)
                     return
                 obj.log.info('Extracted tarball to: {0}'.format(scratch_space))
 
