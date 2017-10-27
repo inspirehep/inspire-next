@@ -25,13 +25,19 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-import re
 import csv
+import traceback
+import sys
 
+from itertools import dropwhile
 import click
 import requests
+import jsonschema
 
 from flask_cli import with_appcontext
+
+from inspire_schemas.api import validate
+from inspire_utils.helpers import force_list
 
 from .tasks import (
     add_citation_counts,
@@ -39,11 +45,22 @@ from .tasks import (
     remigrate_records,
     migrate_chunk,
     split_blob,
+    create_record,
+    marc_create_record,
 )
 from .models import InspireProdRecords
 
-
-RE_ERROR_STRING = re.compile(".*: Record \d+: (?P<error>.*)", re.U)
+REAL_COLLECTIONS = (
+    'INSTITUTION',
+    'EXPERIMENT',
+    'JOURNALS',
+    'JOURNALSNEW',
+    'HEPNAMES',
+    'JOB',
+    'JOBHIDDEN',
+    'CONFERENCES',
+    'DATA',
+)
 
 
 @click.group()
@@ -103,17 +120,78 @@ def count_citations():
 @click.option('--output', '-o', default="/tmp/broken-records.csv",
               help='Specifiy where to report errors.')
 @with_appcontext
-def report_errors(output):
+def reporterrors(output):
     """Reports in a friendly way all failed records and corresponding motivation."""
+    def get_collection(marc_record):
+        collections = set()
+        for field in force_list(marc_record.get('980__')):
+            for v in field.values():
+                for e in force_list(v):
+                    collections.add(e.upper().strip())
+        if 'DELETED' in collections:
+            return 'DELETED'
+        for collection in collections:
+            if collection in REAL_COLLECTIONS:
+                return collection
+        return 'HEP'
+
     click.echo("Reporting broken records into {0}".format(output))
+    errors = {}
+    results = InspireProdRecords.query.filter(InspireProdRecords.valid == False) # noqa: ignore=F712
+    results_length = results.count()
+    with click.progressbar(results.yield_per(100), length=results_length) as bar:
+        for obj in bar:
+            marc_record = marc_create_record(obj.marcxml, keep_singletons=False)
+            collection = get_collection(marc_record)
+            if 'DELETED' in collection:
+                continue
+            recid = int(marc_record['001'])
+            try:
+                json_record = create_record(marc_record)
+            except Exception as err:
+                tb = u''.join(traceback.format_tb(sys.exc_info()[2]))
+                errors.setdefault((collection, 'dojson', tb), []).append(recid)
+                continue
+
+            try:
+                validate(json_record)
+            except jsonschema.exceptions.ValidationError as err:
+                exc = [
+                    row
+                    for row in str(err).splitlines()
+                    if row.startswith('Failed validating')
+                ][0]
+                details = u'\n'.join(
+                    dropwhile(
+                        lambda x: not x.startswith('On instance'),
+                        str(err).splitlines()
+                    )
+                )
+                errors.setdefault(
+                    (collection, 'validation', exc), []
+                ).append((recid, details))
+                continue
+
     with open(output, "w") as out:
         csv_writer = csv.writer(out)
-        results = InspireProdRecords.query.filter(InspireProdRecords.valid == False) # noqa: ignore=F712
-        results_length = results.count()
-        with click.progressbar(results.yield_per(100), length=results_length) as bar:
-            for obj in bar:
-                if 'DELETED' not in obj.marcxml:
-                    brief_error = obj.errors.splitlines()[0]
-                    g = RE_ERROR_STRING.match(brief_error)
-                    if g:
-                        csv_writer.writerow((g.group('error'), obj.recid))
+        for (collection, stage, error), elements in errors.iteritems():
+            if stage == 'dojson':
+                csv_writer.writerow((
+                    collection,
+                    stage,
+                    error,
+                    '\n'.join(
+                        'http://inspirehep.net/record/{}'.format(recid)
+                        for recid in elements
+                    )
+                ))
+            else:
+                for recid, details in elements:
+                    csv_writer.writerow((
+                        collection,
+                        stage,
+                        error,
+                        'http://inspirehep.net/record/{}'.format(recid),
+                        details
+                    ))
+    click.echo("Dumped errors into {}".format(output))
