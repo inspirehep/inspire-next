@@ -87,6 +87,10 @@
                 "description": {
                     "type": "string"
                 },
+                "earliest_date": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
                 "experiments": {
                     "properties": {
                         "curated_relation": {
