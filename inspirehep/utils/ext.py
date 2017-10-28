@@ -46,6 +46,10 @@ class INSPIREUtils(object):
         """Make a RT instance and return it."""
         url = app.config.get("CFG_BIBCATALOG_SYSTEM_RT_URL", "")
         login = app.config.get("CFG_BIBCATALOG_SYSTEM_RT_DEFAULT_USER", "")
+        verify_cert = app.config.get(
+            "CFG_BIBCATALOG_SYSTEM_RT_VERIFY_SSL",
+            True,
+        )
         password = app.config.get(
             "CFG_BIBCATALOG_SYSTEM_RT_DEFAULT_PWD", "")
         if url:
@@ -53,6 +57,7 @@ class INSPIREUtils(object):
                 url=url,
                 default_login=login,
                 default_password=password,
+                verify_cert=verify_cert,
             )
             loggedin = tracker.login()
             if not loggedin:
