@@ -49,6 +49,15 @@
   {% endif %}
 {% endmacro %}
 
+{% macro record_experiment(record) %}
+   {% set experiments = record.get('accelerator_experiments') %}
+   {% set comma = joiner() %}
+   {% for experiment in experiments %}
+     {{ comma() }}
+      <a href="/experiments/{{ experiment.get('recid') }}"> {{ experiment.legacy_name }} </a>
+     {% endfor %}
+ {% endmacro %}
+
 {% macro record_doi(record) %}
   {% set filtered_doi = record.get('dois') | remove_duplicates_from_list %}
   {% set comma = joiner() %}
