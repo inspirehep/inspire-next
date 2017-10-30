@@ -468,7 +468,7 @@ def test_populate_earliest_date_from_imprints_date():
 
 
 def test_populate_earliest_date_does_nothing_if_record_is_not_literature():
-    record = {'$schema': 'http://localhost:5000/schemas/records/hep.json'}
+    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
 
     populate_earliest_date(None, record)
 
