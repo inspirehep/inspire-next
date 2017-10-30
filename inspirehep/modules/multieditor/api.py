@@ -26,10 +26,9 @@
 
 from __future__ import absolute_import, print_function, division
 
-from flask import Blueprint, request, jsonify, session, render_template
+from flask import Blueprint, request, jsonify, session
 from jsonschema import ValidationError
-from inspirehep.modules.records.json_ref_loader import load_resolved_schema
-from inspire_schemas.api import validate
+from inspire_schemas.api import validate, load_schema
 from inspirehep.modules.multieditor import tasks
 from inspirehep.modules.migrator.tasks import chunker
 from . import actions
@@ -52,15 +51,13 @@ def update():
     if searched_records:
         ids = searched_records['ids']
         index = searched_records['schema']
-        schema = load_resolved_schema(index)
+        schema = load_schema(index)
         ids = filter(lambda x: x not in checked_ids, ids)
     else:
         return jsonify({'message': 'Please use the search before you apply actions'}), 400
-    from remote_pdb import RemotePdb
-    RemotePdb('0.0.0.0', 4444).set_trace()
     for i, chunk in enumerate(chunker(ids, 20)):
         tasks.process_records.delay(records_ids=chunk, user_actions=user_actions, schema=schema)
-    return jsonify({'message': 'Records have been updated successfully'})
+    return jsonify({'message': 'Records are being updated'})
 
 
 @blueprint.route("/preview", methods=['POST'])
@@ -76,7 +73,7 @@ def preview():
         index = searched_records['schema']
     else:
         return jsonify({'message': 'Please use the search before you apply actions'}), 400
-    schema = load_resolved_schema(index)
+    schema = load_schema(index)
     records = queries.get_records_from_query(query_string, page_size, page_num, index)['json_records']
     actions.process_records_no_db(user_actions, records, schema)
     for record in records:

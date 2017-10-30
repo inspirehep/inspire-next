@@ -34,6 +34,6 @@ js = NpmBundle(
     depends=("ng2-multi-record-editor/dist/*.js"),
     output="gen/inspirehep-multi-record-editor.%(version)s.js",
     npm={
-        "ng2-multi-record-editor": "^0.1.2",
+        "ng2-multi-record-editor": "^0.1.3-dev",
     }
 )

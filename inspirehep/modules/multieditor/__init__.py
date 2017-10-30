@@ -26,4 +26,4 @@ from __future__ import absolute_import, division, print_function
 
 from .api import blueprint  # noqa: F401
 
-from .ext import Multieditor
+from .ext import Multieditor  # noqa: F401

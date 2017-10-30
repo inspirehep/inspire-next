@@ -44,16 +44,23 @@ CLS_MAP = {
 
 
 def get_records_from_query(query_string, page_size, page, index):
+    sorted_ids = []
     query_result = CLS_MAP[index]().query_from_iq(query_string).params(
         size=page_size,
         from_=((page - 1) * page_size),
-        fields=[]
+        fields=['control_number']
     ).execute()
 
     ids = [q.meta.id for q in query_result]
+    control_numbers = [q.control_number[0] for q in query_result]
     db_records = Record.get_records(ids)
+    for db_record in db_records:
+        for index, control_number in enumerate(control_numbers):
+            if db_record['control_number'] == control_number:
+                sorted_ids.append(ids[index])
+
     return {
-        'uuids': ids,
+        'uuids': sorted_ids,
         'json_records': db_records,
         'total_records': query_result.hits.total
     }
