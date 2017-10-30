@@ -68,7 +68,7 @@ class AuthorAPIStats(object):
                 "citation_count",
                 "control_number",
                 "facet_inspire_doc_type",
-                "facet_inspire_subjects",
+                "facet_inspire_categories",
                 "keywords",
             ]
         )
@@ -100,7 +100,7 @@ class AuthorAPIStats(object):
                     statistics['types'][publication_type] = 1
 
             # Get fields.
-            for field in result_source.get('facet_inspire_subjects', []):
+            for field in result_source.get('facet_inspire_categories', []):
                 fields.add(field)
 
             # Get keywords.

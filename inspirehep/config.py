@@ -879,7 +879,7 @@ RECORDS_REST_FACETS = {
     "records-hep": {
         "filters": {
             "author": terms_filter('facet_author_name'),
-            "subject": terms_filter('facet_inspire_subjects'),
+            "subject": terms_filter('facet_inspire_categories'),
             "arxiv_categories": terms_filter('facet_arxiv_categories'),
             "doc_type": terms_filter('facet_inspire_doc_type'),
             "experiment": terms_filter('facet_experiment'),
@@ -891,7 +891,7 @@ RECORDS_REST_FACETS = {
         "aggs": {
             "subject": {
                 "terms": {
-                    "field": "facet_inspire_subjects",
+                    "field": "facet_inspire_categories",
                     "size": 20
                 }
             },
