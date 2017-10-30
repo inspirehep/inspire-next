@@ -43,6 +43,7 @@ services:
       - LC_MEASUREMENT=en_US.UTF-8
       - LC_IDENTIFICATION=en_US.UTF-8
       - LC_ALL=
+      - APP_CRAWL_ONCE_PATH=/code/scrapy/crawl_once
 
   indexer:
     image: inspirehep/elasticsearch
