@@ -30,6 +30,7 @@ import arrow
 from elasticsearch.exceptions import NotFoundError
 from flask import current_app
 
+from inspire_schemas.api import validate
 from invenio_files_rest.models import Bucket
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
@@ -89,6 +90,10 @@ class InspireRecord(Record):
             storage_class=storage_class
         )
         return bucket
+
+    def validate(self):
+        """Validate the record, also ensuring format compliance."""
+        validate(self)
 
 
 class ESRecord(InspireRecord):
