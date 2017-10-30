@@ -140,6 +140,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
     generate_name_variations(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_affiliation_suggest(sender, json, *args, **kwargs)
+    populate_author_count(sender, json, *args, **kwargs)
     populate_earliest_date(sender, json, *args, **kwargs)
     populate_inspire_document_type(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
@@ -388,3 +389,21 @@ def generate_name_variations(sender, json, *args, **kwargs):
                 'output': full_name,
                 'payload': {'bai': bais[0] if bais else None}
             }})
+
+
+def populate_author_count(sender, json, *args, **kwargs):
+    """Populate the ```author_count``` field of Literature records.
+
+    Filtering must be enforced so that we only count authors with 'inspire_roles' not equal to 'supervisor', i.e. roles
+    that only contain either 'author' or 'editor'.
+    """
+    if 'hep.json' not in json.get('$schema'):
+        return
+
+    authors = json.get('authors', [])
+
+    authors_excluding_supervisors = [
+        author for author in authors
+        if 'supervisor' not in author.get('inspire_roles', [])
+    ]
+    json['author_count'] = len(authors_excluding_supervisors)
