@@ -414,3 +414,21 @@ def test_refextract_url(log_in_as_cataloger, api_client):
     assert response.status_code == 200
     assert validate(references, subschema) is None
     assert get_value({'references': references}, 'references.reference.publication_info.journal_title')
+
+
+@patch('inspirehep.modules.editor.views.start_merger')
+def test_manual_merge(mock_start_merger, log_in_as_cataloger, api_client):
+    mock_start_merger.return_value = 100
+
+    response = api_client.post(
+        '/editor/manual_merge',
+        content_type='application/json',
+        data=json.dumps({
+            'head_recid': 1000,
+            'update_recid': 1001,
+        })
+    )
+    assert response.status_code == 200
+
+    response_json = json.loads(response.data)
+    assert response_json['workflow_object_id'] == 100
