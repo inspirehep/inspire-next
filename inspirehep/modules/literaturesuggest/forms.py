@@ -45,7 +45,9 @@ from inspirehep.modules.forms.validators.dynamic_fields import (
 )
 from inspirehep.modules.forms.validators.simple_fields import (
     arxiv_syntax_validation,
+    arxiv_id_already_pending_in_holdingpen_validator,
     date_validator,
+    doi_already_pending_in_holdingpen_validator,
     duplicated_arxiv_id_validator,
     duplicated_doi_validator,
     no_pdf_validator,
@@ -229,14 +231,24 @@ class LiteratureForm(INSPIREForm):
         export_key='doi',
         description='e.g. 10.1086/305772 or doi:10.1086/305772',
         placeholder='',
-        validators=[DOISyntaxValidator("The provided DOI is invalid - it should look similar to '10.1086/305772'."),
-                    duplicated_doi_validator],
+        validators=[
+            DOISyntaxValidator(
+                "The provided DOI is invalid - it should look similar to "
+                "'10.1086/305772'."
+            ),
+            duplicated_doi_validator,
+            doi_already_pending_in_holdingpen_validator,
+        ],
     )
 
     arxiv_id = fields.ArXivField(
         label='arXiv ID',
         export_key="arxiv_id",
-        validators=[arxiv_syntax_validation, duplicated_arxiv_id_validator],
+        validators=[
+            arxiv_syntax_validation,
+            duplicated_arxiv_id_validator,
+            arxiv_id_already_pending_in_holdingpen_validator,
+        ],
     )
 
     categories_arXiv = fields.TextField(

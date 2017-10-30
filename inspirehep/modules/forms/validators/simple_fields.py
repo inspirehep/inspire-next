@@ -29,12 +29,16 @@ from urllib import urlencode
 import requests
 from flask import current_app
 from flask_login import current_user
+from idutils import is_arxiv
+from invenio_search import current_search_client as es
 from wtforms.validators import ValidationError, StopValidation
 
-from idutils import is_arxiv
 
 from inspire_schemas.utils import load_schema
+from inspire_matcher.api import match
+from inspire_utils.dedupers import dedupe_list
 from inspire_utils.record import get_value
+
 from inspirehep.utils.url import is_pdf_link
 
 
@@ -156,6 +160,94 @@ def duplicated_arxiv_id_validator(form, field):
         except ValidationError:
             if 'cataloger' in user_roles:
                 raise
+
+
+def already_pending_in_holdingpen_validator(property_name, value):
+    """Check if there's a submission in the holdingpen with the same arXiv ID.
+    """
+    if property_name == 'arXiv ID':
+        query_should = {
+            'metadata.arxiv_eprints.value.raw': value,
+        }
+    elif property_name == 'DOI':
+        query_should = {
+            'metadata.dois.value.raw': value,
+        }
+
+    query = {
+        "query": {
+            "bool": {
+                "filter": [
+                    {
+                        "term": {
+                            "metadata.acquisition_source.source": "submitter"
+                        },
+                    },
+                    {
+                        "bool": {
+                            "must_not": {
+                                "term": {
+                                    "_workflow.status": "COMPLETED"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "must": [
+                    {
+                        "term": query_should,
+                    }
+                ]
+            }
+        },
+        "_source": {
+            "includes": [
+                "_id"
+            ]
+        }
+    }
+
+    hits = es.search(
+        index='holdingpen-hep',
+        doc_type='hep',
+        body=query,
+    )['hits']['hits']
+
+    matches = dedupe_list(hits)
+    holdingpen_ids = [int(el['_id']) for el in matches]
+
+    if holdingpen_ids:
+        raise ValidationError(
+            'There exists already a pending suggestion with the same %s '
+            '"%s", it will be attended to shortly.'
+            % (property_name, value)
+        )
+
+
+def doi_already_pending_in_holdingpen_validator(form, field):
+    """Check if there's a submission in the holdingpen with the same DOI.
+    """
+    doi = field.data
+    if not doi:
+        return
+
+    already_pending_in_holdingpen_validator(
+        property_name='DOI',
+        value=doi,
+    )
+
+
+def arxiv_id_already_pending_in_holdingpen_validator(form, field):
+    """Check if there's a submission in the holdingpen with the same arXiv ID.
+    """
+    arxiv_id = field.data
+    if not arxiv_id:
+        return
+
+    already_pending_in_holdingpen_validator(
+        property_name='arXiv ID',
+        value=arxiv_id,
+    )
 
 
 def pdf_validator(form, field):
