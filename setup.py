@@ -176,6 +176,7 @@ setup(
         'invenio_access.actions': [
             'admin_holdingpen_authors = inspirehep.modules.authors.permissions:action_admin_holdingpen_authors',
             'editor_use_api = inspirehep.modules.editor.permissions:action_editor_use_api',
+            'multieditor_use_api = inspirehep.modules.multieditor.permissions:action_multieditor_use_api',
             'update_collection = inspirehep.modules.records.permissions:action_update_collection',
             'view_restricted_collection = inspirehep.modules.records.permissions:action_view_restricted_collection',
         ],

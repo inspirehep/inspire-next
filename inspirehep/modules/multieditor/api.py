@@ -33,6 +33,7 @@ from inspirehep.modules.multieditor import tasks
 from inspirehep.modules.migrator.tasks import chunker
 from . import actions
 from . import queries
+from .permissions import multieditor_use_api_permission
 
 blueprint = Blueprint(
     'inspirehep_multieditor',
@@ -43,10 +44,10 @@ blueprint = Blueprint(
 
 
 @blueprint.route("/update", methods=['POST'])
+@multieditor_use_api_permission.require(http_exception=403)
 def update():
     """Apply the user actions to the database records."""
     user_actions = request.json['userActions']
-    checked_ids = request.json['ids']
     all_selected = request.json['allSelected']
     searched_records = session.get('multieditor_searched_records', [])
     if searched_records:
@@ -54,9 +55,9 @@ def update():
         index = searched_records['schema']
         schema = load_schema(index)
         if all_selected:
-            ids = filter(lambda x: x not in checked_ids, ids)
+            ids = filter(lambda x: x not in request.json['ids'], ids)
         else:
-            ids = checked_ids
+            ids = request.json['ids']
     else:
         return jsonify({'message': 'Please use the search before you apply actions'}), 400
     for i, chunk in enumerate(chunker(ids, 20)):
@@ -65,6 +66,7 @@ def update():
 
 
 @blueprint.route("/preview", methods=['POST'])
+@multieditor_use_api_permission.require(http_exception=403)
 def preview():
     """Preview the user actions in the first (page size) records."""
     errors = []
@@ -91,6 +93,7 @@ def preview():
 
 
 @blueprint.route("/search", methods=['GET'])
+@multieditor_use_api_permission.require(http_exception=403)
 def search():
     """Search for records using the query and store the result's ids"""
     query_string = request.args.get('queryString', '')

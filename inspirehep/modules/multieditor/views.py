@@ -27,6 +27,7 @@
 from __future__ import absolute_import, print_function, division
 
 from flask import Blueprint, render_template
+from flask_login import login_required
 
 blueprint = Blueprint(
     'inspirehep_multieditor',
@@ -37,5 +38,6 @@ blueprint = Blueprint(
 
 
 @blueprint.route("/", methods=['GET'])
+@login_required
 def index():
     return render_template('index.html')

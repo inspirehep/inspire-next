@@ -28,12 +28,38 @@ from invenio_records.api import Record
 
 
 def test_multieditor_search_api(api_client):
+    login_user_via_session(api_client, email='cataloger@inspirehep.net')
     response = api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
     assert 736770 == json.loads(response.data)['json_records'][0]['control_number']
 
 
-def test_multieditor_update_api(api_client, app_client):
-    login_user_via_session(app_client, email='cataloger@inspirehep.net')
+def test_multieditor_preview_api(api_client):
+    login_user_via_session(api_client, email='cataloger@inspirehep.net')
+    api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
+    response = api_client.post(
+        '/multieditor/preview',
+        content_type='application/json',
+        data=json.dumps({
+            'userActions': {
+                'actions': [{
+                    'actionName': 'Addition', 'value': {'full_name': 'success'},
+                    'matchType': 'is equal to',
+                    'mainKey': 'authors'
+                }],
+                'conditions': [],
+            },
+            'queryString': 'control_number:736770',
+            'pageNum': 1,
+            'pageSize': 10,
+            'allSelected': True,
+        }),
+    )
+
+    assert 'success' in [author['full_name'] for author in json.loads(response.data)['json_records'][0]['authors']]
+
+
+def test_multieditor_update_api(api_client):
+    login_user_via_session(api_client, email='cataloger@inspirehep.net')
     response = api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
 
     api_client.post(
@@ -97,3 +123,19 @@ def test_multieditor_update_api(api_client, app_client):
     records = Record.get_records(json.loads(response.data)['uuids'])
     if records[0].get('authors'):
         assert 'success' not in records[0]['authors'][-1]['full_name']
+
+
+def test_api_permision(api_client):
+    login_user_via_session(api_client, email='johndoe@inspirehep.net')
+    response = api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
+    assert response.status_code == 403
+    response = api_client.post(
+        '/multieditor/update',
+        content_type='application/json'
+    )
+    assert response.status_code == 403
+    response = api_client.post(
+        '/multieditor/preview',
+        content_type='application/json'
+    )
+    assert response.status_code == 403

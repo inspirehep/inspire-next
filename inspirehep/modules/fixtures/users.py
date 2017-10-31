@@ -128,6 +128,10 @@ def init_permissions():
         argument='HERMES Internal Notes',
         role=hermes_curator)
     )
+    db.session.add(ActionRoles(
+        action='multieditor-use-api',
+        role=cataloger)
+    )
     db.session.commit()
 
 
