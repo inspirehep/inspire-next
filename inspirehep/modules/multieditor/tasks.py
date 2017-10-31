@@ -29,11 +29,13 @@ from invenio_db import db
 from inspirehep.modules.multieditor.actions import (
     get_actions
 )
+from jsonschema import ValidationError
 
 
 @shared_task(ignore_result=True)
 def process_records(records_ids, user_actions, schema):
     commit_record = False
+    errors = []
     records = Record.get_records(records_ids)
     class_actions = get_actions(user_actions)
     for record in records:
@@ -43,6 +45,9 @@ def process_records(records_ids, user_actions, schema):
                 commit_record = True
                 class_action.changed = False
         if commit_record:
-            record.commit()
+            try:
+                record.commit()
+            except (ValidationError, Exception) as e:
+                errors.append(e.message)
             commit_record = False
     db.session.commit()

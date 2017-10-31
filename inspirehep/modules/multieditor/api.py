@@ -47,12 +47,16 @@ def update():
     """Apply the user actions to the database records."""
     user_actions = request.json['userActions']
     checked_ids = request.json['ids']
+    all_selected = request.json['allSelected']
     searched_records = session.get('multieditor_searched_records', [])
     if searched_records:
         ids = searched_records['ids']
         index = searched_records['schema']
         schema = load_schema(index)
-        ids = filter(lambda x: x not in checked_ids, ids)
+        if all_selected:
+            ids = filter(lambda x: x not in checked_ids, ids)
+        else:
+            ids = checked_ids
     else:
         return jsonify({'message': 'Please use the search before you apply actions'}), 400
     for i, chunk in enumerate(chunker(ids, 20)):
