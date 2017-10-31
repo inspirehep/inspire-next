@@ -68,14 +68,15 @@ def push_to_redis(user_record):
 
 def assert_db_has_n_legacy_records(n, record):
     assert n == User.query.filter_by(email=record['email']).count()
-    assert n == RemoteAccount.query.filter_by(client_id=record['orcid']).count()  # FIXME: Not client ID
+    assert n == RemoteAccount.query.join(User).join(UserIdentity).filter(UserIdentity.id == record['orcid']).count()
     assert n == RemoteToken.query.filter_by(access_token=record['token']).count()
     assert n == UserIdentity.query.filter_by(id=record['orcid']).count()
 
 
 def cleanup_record(record):
     RemoteToken.query.filter_by(access_token=record['token']).delete()
-    RemoteAccount.query.filter_by(client_id=record['orcid']).delete()  # FIXME: Not client ID
+    user_id = db.session.query(UserIdentity.id_user).filter(UserIdentity.id == record['orcid']).subquery()
+    RemoteAccount.query.filter(RemoteAccount.user_id.in_(user_id)).delete(synchronize_session='fetch')
     UserIdentity.query.filter_by(id=record['orcid']).delete()
     User.query.filter_by(email=record['email']).delete()
 
@@ -224,7 +225,8 @@ def test_linked_user_without_token_exists(app_with_config, teardown_sample_user_
 
     # Remove token and remote account
     RemoteToken.query.filter_by(access_token=SAMPLE_USER['token']).delete()
-    RemoteAccount.query.filter_by(client_id=SAMPLE_USER['orcid']).delete()  # FIXME: Not client ID
+    user_id = db.session.query(UserIdentity.id_user).filter(UserIdentity.id == SAMPLE_USER['orcid']).subquery()
+    RemoteAccount.query.filter(RemoteAccount.user_id.in_(user_id)).delete(synchronize_session='fetch')
 
     # Register the same user with another token
     _register_user(**SAMPLE_USER_EDITED)
