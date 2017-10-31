@@ -18,7 +18,7 @@
 #}
 {%- extends "inspirehep_theme/page.html" -%}
 
-{% from "inspirehep_theme/format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations, record_plots, record_doi, impactgraph with context %}
+{% from "inspirehep_theme/format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations, record_plots, record_doi, record_experiment, impactgraph with context %}
 
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_title, render_record_authors, record_arxiv, record_report_numbers with context %}
 
@@ -49,19 +49,25 @@
           {% if record.get('report_numbers') %}
           <div id="record-report-numbers">{{ record_report_numbers(record) }}</div>
           {% endif %}
-        {% if record.get('dois') or record.get('arxiv_eprints') %}
-          <div id="doi-eprint-experiment">
-            {% if record.get('dois') %}
-              {{ record_doi(record) }}
-            {% endif %}
-            {% if record.get('arxiv_eprints') %}
-              {{ record_arxiv(record) }}
-            {% endif %}
-          </div>
+          {% if record.get('number_of_pages') %}
+            <div> Number of pages: {{ record.number_of_pages }} </div>
           {% endif %}
-        {% if record.urls or record.external_system_numbers %}
+          {% if record.get('dois') or record.get('arxiv_eprints') %}
+            <div id="doi-eprint-experiment">
+              {% if record.get('dois') %}
+                {{ record_doi(record) }}
+              {% endif %}
+              {% if record.get('arxiv_eprints') %}
+                {{ record_arxiv(record) }}
+              {% endif %}
+            </div>
+          {% endif %}
+          {% if record.get('accelerator_experiments') %}
+            <div> Experiment: {{ record_experiment(record) }} </div>
+          {% endif %}
+        {% if record.urls or record.external_system_identifiers %}
           <div id="external_links">{{ record_links(record) }}</div>
-          {% endif %}
+        {% endif %}
         </div>
         <div class="col-md-12 detailed-action-bar" id="cite-pdf-buttons">
           <div class="btn-group">{{ record_buttons(record) }}</div>

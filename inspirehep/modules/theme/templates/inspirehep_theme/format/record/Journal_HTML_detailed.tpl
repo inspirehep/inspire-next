@@ -47,13 +47,14 @@
           <div class="col-md-12">
             {% if record.publisher %}
               <div class="detailed-record-field">
-              <label>Published by:</label>
-              {{ record.publisher }}
-              <br>
+                <label>Published by:</label>
+                  {{ record.publisher }}
+                <br>
             </div>
             {% endif %}
             {% if record.urls %}
             <div class="detailed-record-field">
+              <label>Journal's website: </label>
               {% for url in record.urls %}
                 <a href="{{ url }}">{{ url }}</a><br>
               {% endfor %}

@@ -41,6 +41,9 @@
         {% if record['titles'] %}
           <h2 class="record-detailed-subtitle record-detailed-subtitle-experiments">{{ record['titles'][0].title }}</h2>
         {% endif %}
+        {% if record['long_name'] %}
+          <h2 class="record-detailed-subtitle">{{ record['long_name'] }}</h2>
+        {% endif %}
       </div>
       <div class="panel-body">
         <div class="row">
@@ -48,6 +51,7 @@
 
             {% if record['urls'] %}
             <div class="detailed-record-field">
+              <label>Link to the experiment's website:</label>
               {% for url in record['urls'] %}
                 <a href="{{ url['value'] }}">{{ url['value'] }}</a><br>
               {% endfor %}
@@ -90,7 +94,7 @@
             <hr>
             <div>
               Part of the
-              <strong><a href="/search?p=collaboration:{{ record['collaboration'] }}&cc=Hep">{{ record['collaboration'] }}</a></strong> collaboration - <a href="https://inspirehep.net/search?ln=en&ln=en&p=693__e%3A{{record['legacy_name']}}&of=hcs">See Citesummary</a>
+              <strong><a href="/search?p=collaboration:{{ record['collaboration'] }}&cc=Hep">{{ record['collaboration']['value'] }}</a></strong> collaboration - <a href="https://inspirehep.net/search?ln=en&ln=en&p=693__e%3A{{record['legacy_name']}}&of=hcs">See Citesummary</a>
             </div>
             {% endif %}
           </div>
@@ -114,7 +118,7 @@
           <div class="panel-heading">Description</div>
           <div class="panel-body">
             {% if record['description'] %}
-            <div class="detailed-record-field">{{ record['description'][0] }}</div>
+            <div class="detailed-record-field">{{ record['description'] }}</div>
             {% endif %}
           </div>
         </div>
