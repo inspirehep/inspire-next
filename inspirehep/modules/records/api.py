@@ -55,9 +55,16 @@ class InspireRecord(Record):
 
     @classmethod
     def create(cls, *args, **kwargs):
-        """
+        """Override the default ``create``.
 
-        Args:
+        To handle also the docmuments and figures retrieval.
+
+        Note:
+
+            Might create an extra revision in the record if it had to download
+            any documents or figures.
+
+        Keyword Args:
 
             files_src_record(InspireRecord): if passed, it will try to get the
                 files for the documents and figures from this record's files
@@ -71,8 +78,11 @@ class InspireRecord(Record):
         return new_record
 
     def update(self, *args, **kwargs):
-        """
-        Args:
+        """Override the default ``update``.
+
+        To handle also the docmuments and figures retrieval.
+
+        Keyword Args:
 
             files_src_record(InspireRecord): if passed, it will try to get the
                 files for the documents and figures from this record's files
@@ -150,6 +160,32 @@ class InspireRecord(Record):
         file_name=None,
         key=None,
     ):
+        """Add a document or figure to the record.
+
+        Args:
+
+            metadata(dict): metadata of the document or figure, see the schemas
+                for more details, will be validated.
+            stream(file like object): if passed, will extract the file contents
+                from it.
+            is_document(bool): if the given information is for a document,
+                set to ```False``` for a figure.
+            file_name(str): Name of the file, used as a basis of the key for
+                the files store.
+            key(str): if passed, will use this as the key for the files store
+                and ignore ``file_name``, use it to overwrite existing keys.
+
+
+        Returns:
+
+            dict: metadata of the added document or figure.
+
+
+        Raises:
+
+            TypeError: if not ``file_name`` nor ``key`` are passed (one of
+                them is required).
+        """
         if not key and not file_name:
             raise TypeError(
                 'No file_name and no key passed, at least one of them is '
