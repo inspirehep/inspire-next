@@ -28,6 +28,7 @@ from mock import patch
 from wtforms.validators import StopValidation, ValidationError
 
 from inspirehep.modules.forms.validators.simple_fields import (
+    already_pending_in_holdingpen_validator,
     arxiv_syntax_validation,
     date_validator,
     duplicated_validator,
@@ -314,3 +315,57 @@ def test_duplicated_arxiv_id_validator_not_exsting_anywhere_valid(
     field = MockField(u'1207.7235')
 
     duplicated_arxiv_id_validator(None, field)
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.es')
+def test_already_pending_in_holdingpen_validator_arxiv_id_non_existing_valid(
+    es_mock,
+):
+    es_mock.search.return_value = {
+        'hits': {
+            'hits': [],
+        }
+    }
+
+    already_pending_in_holdingpen_validator('arXiv ID', 'dummy_id')
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.es')
+def test_already_pending_in_holdingpen_validator_arxiv_id_existing_invalid(
+    es_mock,
+):
+    es_mock.search.return_value = {
+        'hits': {
+            'hits': [{'_id': '123'}],
+        }
+    }
+
+    with pytest.raises(ValidationError):
+        already_pending_in_holdingpen_validator('arXiv ID', 'dummy_id')
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.es')
+def test_already_pending_in_holdingpen_validator_doi_non_existing_valid(
+    es_mock,
+):
+    es_mock.search.return_value = {
+        'hits': {
+            'hits': [],
+        }
+    }
+
+    already_pending_in_holdingpen_validator('DOI', 'dummy_id')
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.es')
+def test_already_pending_in_holdingpen_validator_doi_existing_invalid(
+    es_mock,
+):
+    es_mock.search.return_value = {
+        'hits': {
+            'hits': [{'_id': '123'}],
+        }
+    }
+
+    with pytest.raises(ValidationError):
+        already_pending_in_holdingpen_validator('DOI', 'dummy_id')
