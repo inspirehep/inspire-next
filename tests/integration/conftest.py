@@ -121,7 +121,7 @@ def small_app():
         yield app
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture()
 def alembic_app():
     """Flask application with no records and module scope."""
     app = create_app(

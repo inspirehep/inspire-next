@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
+
 from sqlalchemy import text
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -39,15 +41,16 @@ def check_book_existence(title):
     query = text("""
         SELECT r.json -> 'self' ->> '$ref' AS self_jsonref
         FROM
-            records_metadata AS r,
-            jsonb_array_elements((r.json -> 'titles')::jsonb) AS titles
+            records_metadata AS r
         WHERE
-            (r.json -> '_collections')::jsonb ? 'Literature'
+            (r.json -> '_collections') ? 'Literature'
         AND
-            (r.json -> 'document_type')::jsonb ? 'book'
+            (r.json -> 'document_type') ? 'book'
         AND
-            titles ->> 'title' = :title
-    """).bindparams(title=title)
+            (r.json -> 'titles') @> :title
+    """).bindparams(title=json.dumps([{
+        "title": title
+    }]))
 
     return db.session.execute(query)
 
@@ -58,10 +61,14 @@ def check_journal_existence(title):
         FROM
             records_metadata AS r
         WHERE
-            (r.json -> '_collections')::jsonb ? 'Journals'
+            (r.json -> '_collections') ? 'Journals'
         AND
-            (r.json -> 'journal_title' ->> 'title') = :title
-    """).bindparams(title=title)
+            (r.json -> 'journal_title' @> :title)
+    """).bindparams(title=json.dumps(
+        {
+            "title": title
+        }
+    ))
 
     return db.session.execute(query)
 
