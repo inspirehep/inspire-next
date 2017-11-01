@@ -1039,10 +1039,6 @@
     "settings": {
         "analysis": {
             "analyzer": {
-                "author": {
-                    "tokenizer": "author_tokenizer",
-                    "type": "custom"
-                },
                 "lowercase_analyzer": {
                     "filter": "lowercase",
                     "tokenizer": "keyword",
@@ -1086,17 +1082,6 @@
                 },
                 "lowercase_normalizer": {
                     "type": "lowercase"
-                }
-            },
-            "tokenizer": {
-                "author_tokenizer": {
-                    "max_ngram": "8",
-                    "min_ngram": "4",
-                    "token_chars": [
-                        "letter",
-                        "punctuation"
-                    ],
-                    "type": "nGram"
                 }
             }
         }
