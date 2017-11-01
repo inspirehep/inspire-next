@@ -24,11 +24,15 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 import requests_mock
-from wtforms.validators import StopValidation
+from mock import patch
+from wtforms.validators import StopValidation, ValidationError
 
 from inspirehep.modules.forms.validators.simple_fields import (
     arxiv_syntax_validation,
     date_validator,
+    duplicated_validator,
+    duplicated_doi_validator,
+    duplicated_arxiv_id_validator,
     no_pdf_validator,
     pdf_validator,
     year_validator,
@@ -176,3 +180,137 @@ def test_year_validator_raises_on_year_invalid_because_too_late():
 
     with pytest.raises(StopValidation):
         year_validator(None, field)
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.match')
+def test_duplicated_validator_existing_arxiv_invalid(match_mock):
+    match_mock.return_value = [{'_source': {'control_number': 123}}]
+
+    with pytest.raises(ValidationError):
+        duplicated_validator('arXiv ID', 'dummy_id')
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.match')
+def test_duplicated_validator_non_existing_arxiv_valid(match_mock):
+    match_mock.return_value = []
+
+    duplicated_validator('arXiv ID', 'dummy_id')
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.match')
+def test_duplicated_validator_existing_doi_invalid(match_mock):
+    match_mock.return_value = [{'_source': {'control_number': 123}}]
+
+    with pytest.raises(ValidationError):
+        duplicated_validator('DOI', 'dummy_id')
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.match')
+def test_duplicated_validator_non_existing_doi_valid(match_mock):
+    match_mock.return_value = []
+
+    duplicated_validator('DOI', 'dummy_id')
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.match')
+def test_duplicated_doi_validator_local_existing_doi_invalid(match_mock):
+    match_mock.return_value = [{'_source': {'control_number': 123}}]
+    field = MockField(u'10.1088/1475-7516/2013/12/014')
+
+    with pytest.raises(ValidationError):
+        duplicated_doi_validator(None, field)
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch(
+    'inspirehep.modules.forms.validators.simple_fields'
+    '.does_exist_in_inspirehep'
+)
+@patch(
+    'inspirehep.modules.forms.validators.simple_fields._get_current_user_roles'
+)
+def test_duplicated_doi_validator_remote_existing_doi_invalid(
+    get_current_user_roles_mock,
+    does_exist_in_inspirehep_mock,
+    match_mock,
+):
+    match_mock.return_value = []
+    does_exist_in_inspirehep_mock.return_value = True
+    get_current_user_roles_mock.return_value = ['cataloger']
+    field = MockField(u'10.1088/1475-7516/2013/12/014')
+
+    with pytest.raises(ValidationError):
+        duplicated_doi_validator(None, field)
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch(
+    'inspirehep.modules.forms.validators.simple_fields'
+    '.does_exist_in_inspirehep'
+)
+@patch(
+    'inspirehep.modules.forms.validators.simple_fields._get_current_user_roles'
+)
+def test_duplicated_doi_validator_not_exsting_anywhere_valid(
+    get_current_user_roles_mock,
+    does_exist_in_inspirehep_mock,
+    match_mock,
+):
+    match_mock.return_value = []
+    does_exist_in_inspirehep_mock.return_value = False
+    get_current_user_roles_mock.return_value = ['cataloger']
+    field = MockField(u'10.1088/1475-7516/2013/12/014')
+
+    duplicated_doi_validator(None, field)
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.match')
+def test_duplicated_arxiv_id_validator_local_existing_doi_invalid(match_mock):
+    match_mock.return_value = [{'_source': {'control_number': 123}}]
+    field = MockField(u'1207.7235')
+
+    with pytest.raises(ValidationError):
+        duplicated_arxiv_id_validator(None, field)
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch(
+    'inspirehep.modules.forms.validators.simple_fields'
+    '.does_exist_in_inspirehep'
+)
+@patch(
+    'inspirehep.modules.forms.validators.simple_fields._get_current_user_roles'
+)
+def test_duplicated_arxiv_id_validator_remote_existing_doi_invalid(
+    get_current_user_roles_mock,
+    does_exist_in_inspirehep_mock,
+    match_mock,
+):
+    match_mock.return_value = []
+    does_exist_in_inspirehep_mock.return_value = True
+    get_current_user_roles_mock.return_value = ['cataloger']
+    field = MockField(u'1207.7235')
+
+    with pytest.raises(ValidationError):
+        duplicated_arxiv_id_validator(None, field)
+
+
+@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch(
+    'inspirehep.modules.forms.validators.simple_fields'
+    '.does_exist_in_inspirehep'
+)
+@patch(
+    'inspirehep.modules.forms.validators.simple_fields._get_current_user_roles'
+)
+def test_duplicated_arxiv_id_validator_not_exsting_anywhere_valid(
+    get_current_user_roles_mock,
+    does_exist_in_inspirehep_mock,
+    match_mock,
+):
+    match_mock.return_value = []
+    does_exist_in_inspirehep_mock.return_value = False
+    get_current_user_roles_mock.return_value = ['cataloger']
+    field = MockField(u'1207.7235')
+
+    duplicated_arxiv_id_validator(None, field)
