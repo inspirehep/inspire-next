@@ -418,11 +418,11 @@
                     "index": "not_analyzed",
                     "type": "string"
                 },
-                "facet_inspire_doc_type": {
+                "facet_inspire_categories": {
                     "index": "not_analyzed",
                     "type": "string"
                 },
-                "facet_inspire_categories": {
+                "facet_inspire_doc_type": {
                     "index": "not_analyzed",
                     "type": "string"
                 },
