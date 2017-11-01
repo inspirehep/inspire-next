@@ -48,6 +48,9 @@ class MockObj(object):
 
         self.log = MockLog()
 
+    def save(self):
+        pass
+
 
 class AttrDict(dict):
 
