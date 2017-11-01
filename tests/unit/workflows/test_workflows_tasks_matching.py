@@ -68,7 +68,7 @@ def test_article_exists_returns_false_if_nothing_matched(mock_match):
     assert 'record_matches' not in obj.extra_data
 
 
-def test_is_being_harvested_on_legacy_returns_true_when_there_is_one_core_category():
+def test_is_being_harvested_on_legacy_returns_true_when_there_is_one_core_category(app):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
@@ -86,10 +86,17 @@ def test_is_being_harvested_on_legacy_returns_true_when_there_is_one_core_catego
     }
     assert validate(record['arxiv_eprints'], subschema) is None
 
-    assert is_being_harvested_on_legacy(record)
+    extra_config = {
+        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [
+            'hep-ph'
+        ]
+    }
+
+    with patch.dict(app.config, extra_config):
+        assert is_being_harvested_on_legacy(record)
 
 
-def test_is_being_harvested_on_legacy_uses_the_correct_capitalization():
+def test_is_being_harvested_on_legacy_uses_the_correct_capitalization(app):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
@@ -105,10 +112,17 @@ def test_is_being_harvested_on_legacy_uses_the_correct_capitalization():
     }
     assert validate(record['arxiv_eprints'], subschema) is None
 
-    assert is_being_harvested_on_legacy(record)
+    extra_config = {
+        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [
+            'astro-ph.CO'
+        ]
+    }
+
+    with patch.dict(app.config, extra_config):
+        assert is_being_harvested_on_legacy(record)
 
 
-def test_is_being_harvested_on_legacy_returns_false_otherwise():
+def test_is_being_harvested_on_legacy_returns_false_otherwise(app):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
@@ -124,10 +138,17 @@ def test_is_being_harvested_on_legacy_returns_false_otherwise():
     }
     assert validate(record['arxiv_eprints'], subschema) is None
 
-    assert not is_being_harvested_on_legacy(record)
+    extra_config = {
+        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [
+            'astro-ph.CO'
+        ]
+    }
+
+    with patch.dict(app.config, extra_config):
+        assert not is_being_harvested_on_legacy(record)
 
 
-def test_already_harvested_returns_true_when_there_is_one_core_category():
+def test_already_harvested_returns_true_when_there_is_one_core_category(app):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
@@ -149,7 +170,14 @@ def test_already_harvested_returns_true_when_there_is_one_core_category():
     obj = MockObj(data, extra_data)
     eng = MockEng()
 
-    assert already_harvested(obj, eng)
+    extra_config = {
+        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [
+            'astro-ph.CO'
+        ]
+    }
+
+    with patch.dict(app.config, extra_config):
+        assert already_harvested(obj, eng)
 
     expected = (
         'Record with arXiv id 1609.03939 is'
@@ -160,7 +188,7 @@ def test_already_harvested_returns_true_when_there_is_one_core_category():
     assert expected == result
 
 
-def test_already_harvested_returns_false_otherwise():
+def test_already_harvested_returns_false_otherwise(app):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
@@ -180,7 +208,14 @@ def test_already_harvested_returns_false_otherwise():
     obj = MockObj(data, extra_data)
     eng = MockEng()
 
-    assert not already_harvested(obj, eng)
+    extra_config = {
+        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [
+            'astro-ph.CO'
+        ]
+    }
+
+    with patch.dict(app.config, extra_config):
+        assert not already_harvested(obj, eng)
 
     expected = ''
     result = obj.log._info.getvalue()

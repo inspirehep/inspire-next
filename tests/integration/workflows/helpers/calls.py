@@ -166,4 +166,10 @@ def already_harvested_on_legacy_record():
     record_marc = create_record(record_oai_arxiv_plots_marcxml)
     json_data = hep.do(record_marc)
 
-    return json_data
+    categories = []
+    for eprint in json_data.get('arxiv_eprints', []):
+        categories.extend(eprint.get('categories', []))
+
+    assert categories
+
+    return json_data, categories

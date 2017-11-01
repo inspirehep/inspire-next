@@ -132,19 +132,16 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
     small_app
 ):
     """Test a full harvesting workflow."""
+    record, categories = already_harvested_on_legacy_record()
+
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
         "MAGPIE_API_URL": "http://example.com/magpie",
+        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': categories,
     }
-
     with small_app.app_context():
         with mock.patch.dict(small_app.config, extra_config):
-            workflow_uuid = start(
-                'article',
-                [
-                    already_harvested_on_legacy_record()
-                ]
-            )
+            workflow_uuid = start('article', [record])
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
