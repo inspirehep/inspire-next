@@ -45,28 +45,6 @@
 {% endblock css %}
 
 {% block javascript %}
-{{ super() }}
-<script type="text/javascript">
-	require(
-    [
-    'jquery'
-    ],
-    function($) {
-		function resizeContainer () {
-			$('.editor-parent-container').height($(window).height() - $('#editor-toolbar').height() - parseInt($('#re-wrapper').css('margin-top')));
-		}
-
-		$(document).ready(function() {
-			setTimeout(function() {
-				$('.btn.feedback-transform.feedback-fixed-left').remove();
-			}, 2000);
-			resizeContainer();
-		});
-		$(window).resize(function() {
-			resizeContainer();
-		});
-	});
-</script>
 {% assets "invenio_record_editor_js" %}
   <script src="{{ ASSET_URL }}"></script>
 {% endassets %}
