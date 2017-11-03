@@ -33,7 +33,7 @@ from inspirehep.modules.multieditor import tasks
 from inspirehep.modules.migrator.tasks import chunker
 from . import actions
 from . import queries
-from .permissions import multieditor_use_api_permission
+from .permissions import multieditor_use_permission
 
 blueprint = Blueprint(
     'inspirehep_multieditor',
@@ -44,7 +44,7 @@ blueprint = Blueprint(
 
 
 @blueprint.route("/update", methods=['POST'])
-@multieditor_use_api_permission.require(http_exception=403)
+@multieditor_use_permission.require(http_exception=403)
 def update():
     """Apply the user actions to the database records."""
     user_actions = request.json['userActions']
@@ -66,7 +66,7 @@ def update():
 
 
 @blueprint.route("/preview", methods=['POST'])
-@multieditor_use_api_permission.require(http_exception=403)
+@multieditor_use_permission.require(http_exception=403)
 def preview():
     """Preview the user actions in the first (page size) records."""
     errors = []
@@ -93,7 +93,7 @@ def preview():
 
 
 @blueprint.route("/search", methods=['GET'])
-@multieditor_use_api_permission.require(http_exception=403)
+@multieditor_use_permission.require(http_exception=403)
 def search():
     """Search for records using the query and store the result's ids"""
     query_string = request.args.get('queryString', '')

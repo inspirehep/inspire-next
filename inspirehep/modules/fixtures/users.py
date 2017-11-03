@@ -129,7 +129,7 @@ def init_permissions():
         role=hermes_curator)
     )
     db.session.add(ActionRoles(
-        action='multieditor-use-api',
+        action='multieditor-use',
         role=cataloger)
     )
     db.session.commit()

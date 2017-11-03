@@ -28,10 +28,10 @@ from invenio_access.permissions import (
 )
 
 
-action_multieditor_use_api = ParameterizedActionNeed(
-    'multieditor-use-api', argument=None
+action_multieditor_use = ParameterizedActionNeed(
+    'multieditor-use', argument=None
 )
 
-multieditor_use_api_permission = Permission(
-    action_multieditor_use_api
+multieditor_use_permission = Permission(
+    action_multieditor_use
 )
