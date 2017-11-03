@@ -43,6 +43,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_record_relevant,
     is_submission,
     mark,
+    normalize_journal_title,
     prepare_update_payload,
     reject_record,
     refextract,
@@ -425,6 +426,35 @@ def test_prepare_update_payload_overwrites():
 
     assert foo_prepare_update_payload(obj, eng) is None
     assert obj.extra_data['foo'] == {'bar': 'baz'}
+
+
+# def test_normalize_journal_title_known_title():
+#     obj = MockObj({'publication_info': [{'journal_title': 'PHYS REVIEW',
+#                                          'journal_record': {'$ref': 'http://localhost:5000/api/journals/1214516'}}]}, {})
+#     eng = MockEng()
+#
+#     normalize_journal_title(obj, eng)
+#
+#     assert obj.data['publication_info'][0]['journal_title'] == 'Phys.Rev.'
+#     assert 'journal_record' in obj.data['publication_info'][0]
+#
+#
+# def test_normalize_journal_title_unknown_title():
+#     obj = MockObj({'publication_info': [{'journal_title': 'unknown title',
+#                                          'journal_record': {'$ref': 'http://localhost:5000/api/journals/1234'}}]}, {})
+#     eng = MockEng()
+#
+#     normalize_journal_title(obj, eng)
+#
+#     assert obj.data['publication_info'][0]['journal_title'] == 'unknown title'
+#     assert 'journal_record' not in obj.data['publication_info'][0]
+#
+#
+# def test_normalize_journal_title_no_publication_info():
+#     obj = MockObj({}, {})
+#     eng = MockEng()
+#
+#     normalize_journal_title(obj, eng)
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.get_pdf_in_workflow')

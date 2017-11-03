@@ -25,7 +25,17 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+from sqlalchemy import (
+     Index,
+     JSON,
+     String,
+     cast,
+     type_coerce,
+ )
+
+import codecs
 from functools import wraps
+import re
 
 from flask import current_app
 from werkzeug import secure_filename
@@ -33,6 +43,7 @@ from timeout_decorator import TimeoutError
 
 from invenio_db import db
 from invenio_workflows import ObjectStatus
+from invenio_records.models import RecordMetadata
 
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_utils.record import get_value
@@ -51,6 +62,9 @@ from inspirehep.modules.workflows.utils import (
     download_file_to_workflow,
     with_debug_logging,
 )
+
+
+RE_ALPHANUMERIC = re.compile('\W+', re.UNICODE)
 
 
 def mark(key, value):
@@ -351,3 +365,50 @@ def error_workflow(message):
         % message
     )
     return _error_workflow
+
+
+def _normalize(s):
+    if not s:
+        return
+
+    result = RE_ALPHANUMERIC.sub(' ', s)
+    result = ' '.join(result.split())
+    result = result.upper()
+
+    if not result:
+        return
+    return result
+
+
+@with_debug_logging
+def normalize_journal_titles(obj, eng):
+    initial_journal_titles = get_value(obj.data, 'publication_info.journal_title')
+
+    # ind = Index('short_title_ind', RecordMetadata.json['short_title'], postgresql_using='gin')
+    # ind.create(db.engine)
+
+    refextract_journal_kb_path = current_app.config['REFEXTRACT_JOURNAL_KB_PATH']
+    with codecs.open(refextract_journal_kb_path, mode='r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+        for index, title in enumerate(initial_journal_titles):
+            journal_title = _normalize(title)
+
+            for line in lines:
+                normalized_title_mapping = line.split('---')
+                variant_title = normalized_title_mapping[0]
+                normalized_title = normalized_title_mapping[1]
+
+                if journal_title == variant_title:
+                    journal_title = normalized_title.strip('\n')
+
+                    obj.data['publication_info'][index]['journal_title'] = journal_title
+
+                    ref_query = RecordMetadata.query.filter(
+                                 RecordMetadata.json['_collections'].op('?')('Journals')).filter(
+                                 cast(RecordMetadata.json['short_title'], String) == type_coerce(journal_title, JSON))
+                    result = db.session.execute(ref_query).fetchone()
+
+                    if result:
+                        obj.data['publication_info'][index]['journal_record'] = result.records_metadata_json['self']
+                    break
