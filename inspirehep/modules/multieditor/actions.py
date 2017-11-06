@@ -262,7 +262,7 @@ def get_actions(user_actions):
     for action in user_actions.get('conditions', []):
         if not action.get('key'):
             continue
-        keys = action['key'].split('/')
+        keys = action['key'].split('.')
         condition = {'value': action['value'],
                      'keys': keys,
                      'match_type': match_type_map[action['matchType']]}
@@ -271,7 +271,7 @@ def get_actions(user_actions):
     for user_action in user_actions.get('actions', []):
         if not user_action.get('mainKey'):
             continue
-        keys = user_action.get('mainKey').split('/')
+        keys = user_action.get('mainKey').split('.')
         if not keys:
             return
         if user_action.get('actionName') == 'Addition':
