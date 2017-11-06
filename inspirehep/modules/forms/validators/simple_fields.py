@@ -27,14 +27,18 @@ from json import loads
 from urllib import urlencode
 
 import requests
-from flask import current_app
+from flask import current_app, url_for
 from flask_login import current_user
+from idutils import is_arxiv
+from invenio_search import current_search_client as es
 from wtforms.validators import ValidationError, StopValidation
 
-from idutils import is_arxiv
 
+from inspire_matcher.api import match
 from inspire_schemas.utils import load_schema
+from inspire_utils.dedupers import dedupe_list
 from inspire_utils.record import get_value
+
 from inspirehep.utils.url import is_pdf_link
 
 
@@ -84,6 +88,51 @@ def does_exist_in_inspirehep(query, collections=None):
     return False
 
 
+def duplicated_validator(property_name, property_value):
+    config = {
+        'algorithm': [
+            {
+                'queries': [
+                    {
+                        'match': 'arxiv_id',
+                        'search': 'arxiv_eprints.value.raw',
+                        'type': 'exact',
+                    },
+                    {
+                        'match': 'doi',
+                        'search': 'dois.value.raw',
+                        'type': 'exact',
+                    },
+                ],
+            },
+        ],
+        'doc_type': 'hep',
+        'index': 'records-hep',
+    }
+
+    if property_name == 'arXiv ID':
+        data = {
+            'arxiv_id': property_value,
+        }
+    if property_name == 'DOI':
+        data = {
+            'doi': property_value,
+        }
+
+    matches = dedupe_list(match(data, config))
+    mached_ids = [int(el['_source']['control_number']) for el in matches]
+    if mached_ids:
+        url = url_for(
+            'invenio_records_ui.literature',
+            pid_value=mached_ids[0],
+        )
+        raise ValidationError(
+            'There exists already an item with the same %s. '
+            '<a target="_blank" href="%s">See the record.</a>'
+            % (property_name, url)
+        )
+
+
 def inspirehep_duplicated_validator(inspire_query, property_name, collections=None):
     """Check if a record with the same doi already exists.
 
@@ -111,25 +160,37 @@ def duplicated_orcid_validator(form, field):
     # TODO: local check for duplicates
     if not orcid:
         return
+
     if current_app.config.get('PRODUCTION_MODE'):
         inspirehep_duplicated_validator('035__a:' + orcid, 'ORCID', collections=['HepNames'])
 
 
 def duplicated_doi_validator(form, field):
     """Check if a record with the same doi already exists."""
+    doi_property_name = 'DOI'
     doi = field.data
-    # TODO: local check for duplicates
     if not doi:
         return
+
+    # local check for duplicates
+    duplicated_validator(
+        property_name=doi_property_name,
+        property_value=doi,
+    )
+
     if current_app.config.get('PRODUCTION_MODE'):
         user_roles = _get_current_user_roles()
 
         # First check in default collection
-        inspirehep_duplicated_validator('doi:' + doi, 'DOI')
+        inspirehep_duplicated_validator('doi:' + doi, doi_property_name)
 
         # And in Hal, CDS collection
         try:
-            inspirehep_duplicated_validator('doi:' + doi, 'DOI', collections=['HAL Hidden', 'CDS Hidden'])
+            inspirehep_duplicated_validator(
+                'doi:' + doi,
+                doi_property_name,
+                collections=['HAL Hidden', 'CDS Hidden'],
+            )
         except ValidationError:
             if 'cataloger' in user_roles:
                 raise
@@ -137,25 +198,120 @@ def duplicated_doi_validator(form, field):
 
 def duplicated_arxiv_id_validator(form, field):
     """Check if a record with the same arXiv ID already exists."""
+    arxiv_property_name = 'arXiv ID'
     arxiv_id = field.data
-    # TODO: local check for duplicates
     if not arxiv_id:
         return
+
+    # local check for duplicates
+    duplicated_validator(
+        property_name=arxiv_property_name,
+        property_value=arxiv_id,
+    )
+
     if current_app.config.get('PRODUCTION_MODE'):
         user_roles = _get_current_user_roles()
 
         # First check in default collection
         inspirehep_duplicated_validator(
-            '035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID')
+            '035__a:oai:arXiv.org:' + arxiv_id, arxiv_property_name)
 
         # And in Hal, CDS collection
         try:
             inspirehep_duplicated_validator(
-                '035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID',
+                '035__a:oai:arXiv.org:' + arxiv_id, arxiv_property_name,
                 collections=['HAL Hidden', 'CDS Hidden'])
         except ValidationError:
             if 'cataloger' in user_roles:
                 raise
+
+
+def already_pending_in_holdingpen_validator(property_name, value):
+    """Check if there's a submission in the holdingpen with the same arXiv ID.
+    """
+    if property_name == 'arXiv ID':
+        query_should = {
+            'metadata.arxiv_eprints.value.raw': value,
+        }
+    elif property_name == 'DOI':
+        query_should = {
+            'metadata.dois.value.raw': value,
+        }
+
+    query = {
+        "query": {
+            "bool": {
+                "filter": [
+                    {
+                        "term": {
+                            "metadata.acquisition_source.source": "submitter"
+                        },
+                    },
+                    {
+                        "bool": {
+                            "must_not": {
+                                "term": {
+                                    "_workflow.status": "COMPLETED"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "must": [
+                    {
+                        "term": query_should,
+                    }
+                ]
+            }
+        },
+        "_source": {
+            "includes": [
+                "_id"
+            ]
+        }
+    }
+
+    hits = es.search(
+        index='holdingpen-hep',
+        doc_type='hep',
+        body=query,
+    )['hits']['hits']
+
+    matches = dedupe_list(hits)
+    holdingpen_ids = [int(el['_id']) for el in matches]
+
+    if holdingpen_ids:
+        raise ValidationError(
+            'There exists already a pending suggestion with the same %s '
+            '"%s", it will be attended to shortly.'
+            % (property_name, value)
+        )
+
+
+def doi_already_pending_in_holdingpen_validator(form, field):
+    """Check if there's a submission in the holdingpen with the same DOI.
+    """
+    doi = field.data
+    if not doi:
+        return
+
+    already_pending_in_holdingpen_validator(
+        property_name='DOI',
+        value=doi,
+    )
+
+
+def arxiv_id_already_pending_in_holdingpen_validator(form, field):
+    """Check if there's a submission in the holdingpen with the same arXiv ID.
+    """
+    arxiv_id = field.data
+    if not arxiv_id:
+        return
+
+    already_pending_in_holdingpen_validator(
+        property_name='arXiv ID',
+        value=arxiv_id,
+    )
 
 
 def pdf_validator(form, field):
