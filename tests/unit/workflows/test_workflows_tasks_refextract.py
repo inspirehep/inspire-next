@@ -51,8 +51,8 @@ def test_extract_journal_info():
     eng = MockEng()
 
     assert extract_journal_info(obj, eng) is None
-    assert validate(obj.data['publication_info'], subschema) is None
-    assert obj.data['publication_info'] == [
+
+    expected = [
         {
             'artid': '082102',
             'journal_title': 'J. Math. Phys.',
@@ -61,6 +61,10 @@ def test_extract_journal_info():
             'year': 2014,
         }
     ]
+    result = obj.data['publication_info']
+
+    assert validate(result, subschema) is None
+    assert expected == result
 
 
 def test_extract_journal_info_handles_year_an_empty_string():
@@ -69,8 +73,7 @@ def test_extract_journal_info_handles_year_an_empty_string():
 
     data = {
         'publication_info': [
-            {'pubinfo_freetext': (
-                'The Astrophysical Journal, 838:134 (16pp), 2017 April 1')},
+            {'pubinfo_freetext': 'The Astrophysical Journal, 838:134 (16pp), 2017 April 1'},
         ],
     }
     extra_data = {}
@@ -80,17 +83,51 @@ def test_extract_journal_info_handles_year_an_empty_string():
     eng = MockEng()
 
     assert extract_journal_info(obj, eng) is None
-    assert validate(obj.data['publication_info'], subschema) is None
-    assert obj.data['publication_info'] == [
+
+    expected = [
         {
             'artid': '134',
             'journal_title': 'Astrophys. J.',
             'journal_volume': '838',
             'page_start': '134',
-            'pubinfo_freetext': (
-                'The Astrophysical Journal, 838:134 (16pp), 2017 April 1'),
+            'pubinfo_freetext': 'The Astrophysical Journal, 838:134 (16pp), 2017 April 1',
         },
     ]
+    result = obj.data['publication_info']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+def test_extract_journal_info_handles_the_journal_split():
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    data = {
+        'publication_info': [
+            {'pubinfo_freetext': 'Phys. Rev. D 96, 076008. 2017'},
+        ],
+    }
+    extra_data = {}
+    assert validate(data['publication_info'], subschema) is None
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert extract_journal_info(obj, eng) is None
+
+    expected = [
+        {
+            'artid': '076008',
+            'journal_title': 'Phys. Rev. D',
+            'journal_volume': '96',
+            'pubinfo_freetext': 'Phys. Rev. D 96, 076008. 2017',
+        },
+    ]
+    result = obj.data['publication_info']
+
+    assert validate(result, subschema) is None
+    assert expected == result
 
 
 def test_extract_references_from_pdf_handles_unicode():
