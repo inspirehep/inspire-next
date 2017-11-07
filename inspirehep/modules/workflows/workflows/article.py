@@ -239,7 +239,6 @@ NOTIFY_NOT_ACCEPTED = [
 
 NOTIFY_ALREADY_EXISTING = [
     reject_record('Article was already found on INSPIRE'),
-    stop_processing,
     reply_ticket(
         template=(
             "literaturesuggest/tickets/"
@@ -248,6 +247,7 @@ NOTIFY_ALREADY_EXISTING = [
         context_factory=reply_ticket_context
     ),
     close_ticket(ticket_id_key="ticket_id"),
+    stop_processing,
 ]
 
 
