@@ -26,7 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 import os
 from sqlalchemy import (
-     Index,
      JSON,
      String,
      cast,
@@ -383,9 +382,6 @@ def _normalize(s):
 @with_debug_logging
 def normalize_journal_titles(obj, eng):
     initial_journal_titles = get_value(obj.data, 'publication_info.journal_title')
-
-    # ind = Index('short_title_ind', RecordMetadata.json['short_title'], postgresql_using='gin')
-    # ind.create(db.engine)
 
     refextract_journal_kb_path = current_app.config['REFEXTRACT_JOURNAL_KB_PATH']
     with codecs.open(refextract_journal_kb_path, mode='r', encoding='utf-8') as f:
