@@ -26,18 +26,19 @@ from __future__ import absolute_import, division, print_function
 
 from timeout_decorator import timeout
 
+from inspire_schemas.utils import (
+    convert_old_publication_info_to_new,
+    split_page_artid,
+)
+from inspire_utils.helpers import maybe_int
+from inspirehep.utils.references import (
+    get_refextract_kbs_path,
+    map_refextract_to_schema,
+)
 from refextract import (
     extract_journal_reference,
     extract_references_from_file,
     extract_references_from_string,
-)
-
-from inspire_schemas.utils import split_page_artid
-from inspire_utils.helpers import maybe_int
-from inspire_utils.record import get_value
-from inspirehep.utils.references import (
-    get_refextract_kbs_path,
-    map_refextract_to_schema,
 )
 
 from ..utils import with_debug_logging
@@ -45,49 +46,56 @@ from ..utils import with_debug_logging
 
 @with_debug_logging
 def extract_journal_info(obj, eng):
-    """Extract journal, volume etc. from any freetext publication info."""
-    publication_info = get_value(obj.data, "publication_info")
-    if not publication_info:
+    """Extract the journal information from ``pubinfo_freetext``.
+
+    Runs ``extract_journal_reference`` on the ``pubinfo_freetext`` key of each
+    ``publication_info``, if it exists, and uses the extracted information to
+    populate the other keys.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        None
+
+    """
+    if not obj.data.get('publication_info'):
         return
 
-    new_publication_info = []
-    for pubnote in publication_info:
-        if not pubnote:
-            continue
-        freetext = pubnote.get("pubinfo_freetext")
-        if freetext:
-            if isinstance(freetext, (list, tuple)):
-                freetext = ". ".join(freetext)
+    for publication_info in obj.data['publication_info']:
+        try:
             extracted_publication_info = extract_journal_reference(
-                freetext,
-                override_kbs_files=get_refextract_kbs_path()
+                publication_info['pubinfo_freetext'],
+                override_kbs_files=get_refextract_kbs_path(),
             )
-            if extracted_publication_info:
-                if "volume" in extracted_publication_info:
-                    pubnote["journal_volume"] = extracted_publication_info.get(
-                        "volume"
-                    )
-                if "title" in extracted_publication_info:
-                    pubnote["journal_title"] = extracted_publication_info.get(
-                        "title"
-                    )
-                if "year" in extracted_publication_info:
-                    year = maybe_int(extracted_publication_info.get('year'))
-                    if year is not None:
-                        pubnote['year'] = year
-                if "page" in extracted_publication_info:
-                    page_start, page_end, artid = split_page_artid(
-                        extracted_publication_info.get("page"))
-                    if page_start:
-                        pubnote["page_start"] = page_start
-                    if page_end:
-                        pubnote["page_end"] = page_end
-                    if artid:
-                        pubnote["artid"] = artid
-        if any(value for value in pubnote.values()):
-            new_publication_info.append(pubnote)
 
-    obj.data["publication_info"] = new_publication_info
+            if not extracted_publication_info:
+                continue
+
+            if extracted_publication_info.get('title'):
+                publication_info['journal_title'] = extracted_publication_info['title']
+
+            if extracted_publication_info.get('volume'):
+                publication_info['journal_volume'] = extracted_publication_info['volume']
+
+            if extracted_publication_info.get('page'):
+                page_start, page_end, artid = split_page_artid(extracted_publication_info['page'])
+                if page_start:
+                    publication_info['page_start'] = page_start
+                if page_end:
+                    publication_info['page_end'] = page_end
+                if artid:
+                    publication_info['artid'] = artid
+
+            if extracted_publication_info.get('year'):
+                year = maybe_int(extracted_publication_info['year'])
+                if year:
+                    publication_info['year'] = year
+        except KeyError:
+            pass
+
+    obj.data['publication_info'] = convert_old_publication_info_to_new(obj.data['publication_info'])
 
 
 @timeout(5 * 60)
