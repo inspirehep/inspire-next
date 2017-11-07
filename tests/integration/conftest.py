@@ -121,6 +121,22 @@ def small_app():
         yield app
 
 
+@pytest.fixture(scope='module')
+def alembic_app():
+    """Flask application with no records and module scope."""
+    app = create_app(
+        SQLALCHEMY_DATABASE_URI='postgresql+psycopg2://inspirehep:dbpass123@localhost:5432/inspirehep_alembic'
+    )
+    app.config.update({
+        'DEBUG': True,
+    })
+
+    with app.app_context():
+        db.create_all()
+        yield app
+        db.drop_all()
+
+
 @pytest.fixture()
 def app_client(app):
     """Flask test client for the application.

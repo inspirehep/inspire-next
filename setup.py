@@ -222,6 +222,9 @@ setup(
             'inspire_records = inspirehep.modules.records.tasks',
             'inspire_refextract = inspirehep.modules.refextract.tasks',
         ],
+        'invenio_db.alembic': [
+            'inspirehep = inspirehep:alembic',
+        ],
         'invenio_db.models': [
             'inspire_workflows_audit = inspirehep.modules.workflows.models',
         ],
