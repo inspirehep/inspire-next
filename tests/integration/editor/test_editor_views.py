@@ -35,25 +35,13 @@ from invenio_accounts.models import SessionActivity
 from invenio_accounts.testutils import login_user_via_session
 from invenio_cache import current_cache
 from invenio_db import db
-from invenio_pidstore.models import PersistentIdentifier
 
 from inspire_schemas.api import load_schema, validate
 from inspire_utils.record import get_value
 from inspirehep.modules.migrator.tasks import record_insert_or_replace
 from inspirehep.utils.record_getter import get_db_record
 
-
-def _delete_record(pid_type, pid_value):
-    get_db_record(pid_type, pid_value)._delete(force=True)
-
-    pid = PersistentIdentifier.get(pid_type, pid_value)
-    PersistentIdentifier.delete(pid)
-
-    object_uuid = pid.object_uuid
-    PersistentIdentifier.query.filter(
-        object_uuid == PersistentIdentifier.object_uuid).delete()
-
-    db.session.commit()
+from utils import _delete_record
 
 
 @pytest.fixture(autouse=True)

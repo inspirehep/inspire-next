@@ -22,6 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+import sys
+import os
+
 import pytest
 
 from invenio_db import db
@@ -31,6 +34,11 @@ from inspirehep.factory import create_app
 from inspirehep.modules.fixtures.collections import init_collections
 from inspirehep.modules.fixtures.files import init_all_storage_paths
 from inspirehep.modules.fixtures.users import init_users_and_permissions
+
+
+# Use the helpers folder to store test helpers.
+# See: http://stackoverflow.com/a/33515264/374865
+sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
 
 
 @pytest.fixture(scope='session')
