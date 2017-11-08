@@ -32,7 +32,7 @@ from inspirehep.factory import create_app
 
 # Use the helpers folder to store test helpers.
 # See: http://stackoverflow.com/a/33515264/374865
-sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
 
 
 @pytest.fixture(autouse=True, scope='session')

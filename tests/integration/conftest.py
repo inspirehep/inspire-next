@@ -38,7 +38,7 @@ from inspirehep.modules.fixtures.users import init_users_and_permissions
 
 # Use the helpers folder to store test helpers.
 # See: http://stackoverflow.com/a/33515264/374865
-sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
 
 
 @pytest.fixture(scope='session')
