@@ -30,7 +30,11 @@ from mock import patch, mock_open
 
 from dojson.contrib.marc21.utils import create_record
 from invenio_db import db
-from invenio_pidstore.models import PersistentIdentifier, Redirect
+from invenio_pidstore.models import (
+    PersistentIdentifier,
+    Redirect,
+    RecordIdentifier,
+)
 from invenio_search import current_search_client as es
 
 from inspire_dojson.hep import hep
@@ -40,18 +44,7 @@ from inspirehep.modules.records.tasks import merge_merged_records, update_refs
 from inspirehep.modules.migrator.tasks import record_insert_or_replace
 from inspirehep.utils.record_getter import get_db_record, get_es_records
 
-
-def _delete_record(pid_type, pid_value):
-    get_db_record(pid_type, pid_value)._delete(force=True)
-
-    pid = PersistentIdentifier.get(pid_type, pid_value)
-    PersistentIdentifier.delete(pid)
-
-    object_uuid = pid.object_uuid
-    PersistentIdentifier.query.filter(
-        object_uuid == PersistentIdentifier.object_uuid).delete()
-
-    db.session.commit()
+from utils import _delete_record
 
 
 def _delete_merged_records(pid_type, merged_pid_value, deleted_pid_value, merged_uuid, deleted_uuid):
@@ -60,11 +53,21 @@ def _delete_merged_records(pid_type, merged_pid_value, deleted_pid_value, merged
 
     merged_pid = PersistentIdentifier.get(pid_type, merged_pid_value)
     deleted_pid = PersistentIdentifier.get(pid_type, deleted_pid_value)
+    merged_recid = RecordIdentifier.query.filter_by(
+        recid=merged_pid_value,
+    ).one_or_none()
+    deleted_recid = RecordIdentifier.query.filter_by(
+        recid=deleted_pid_value,
+    ).one_or_none()
 
     Redirect.query.filter(Redirect.id == deleted_pid.object_uuid).delete()
 
     db.session.delete(merged_pid)
     db.session.delete(deleted_pid)
+    if merged_recid:
+        db.session.delete(merged_recid)
+    if deleted_recid:
+        db.session.delete(deleted_recid)
 
     db.session.commit()
 

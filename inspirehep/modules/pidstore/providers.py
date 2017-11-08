@@ -69,8 +69,12 @@ class InspireRecordIdProvider(BaseProvider):
         if 'pid_value' not in kwargs:
             if current_app.config.get('LEGACY_PID_PROVIDER'):
                 kwargs['pid_value'] = _get_next_pid_from_legacy()
+                RecordIdentifier.insert(kwargs['pid_value'])
             else:
                 kwargs['pid_value'] = RecordIdentifier.next()
+        else:
+            RecordIdentifier.insert(kwargs['pid_value'])
+
         kwargs.setdefault('status', cls.default_status)
         if object_type and object_uuid:
             kwargs['status'] = PIDStatus.REGISTERED

@@ -30,25 +30,11 @@ import pytest
 from flask import current_app
 from redis import StrictRedis
 
-from invenio_db import db
-from invenio_pidstore.models import PersistentIdentifier
-
 from inspirehep.modules.migrator.models import InspireProdRecords
 from inspirehep.modules.migrator.tasks import continuous_migration
 from inspirehep.utils.record_getter import get_db_record
 
-
-def _delete_record(pid_type, pid_value):
-    get_db_record(pid_type, pid_value)._delete(force=True)
-
-    pid = PersistentIdentifier.get(pid_type, pid_value)
-    PersistentIdentifier.delete(pid)
-
-    object_uuid = pid.object_uuid
-    PersistentIdentifier.query.filter(
-        object_uuid == PersistentIdentifier.object_uuid).delete()
-
-    db.session.commit()
+from utils import _delete_record
 
 
 def push_to_redis(record_file):
