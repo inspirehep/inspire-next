@@ -186,6 +186,12 @@ article.search-result {
     font-size: 16px;
   }
 
+  a {
+    font-size: 13px;
+    text-decoration: underline;
+    margin-top: 2px;
+  }
+
   input.include-facet {
     top: 1px;
   }
