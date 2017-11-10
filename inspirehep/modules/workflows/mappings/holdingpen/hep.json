@@ -12,6 +12,11 @@
                         "is-update": {
                             "type": "boolean"
                         },
+                        "record_matches": {
+                            "enabled": false,
+                            "include_in_all": false,
+                            "type": "object"
+                        },
                         "relevance_prediction": {
                             "properties": {
                                 "decision": {
@@ -22,11 +27,6 @@
                                     "type": "float"
                                 }
                             },
-                            "type": "object"
-                        },
-                        "record_matches": {
-                            "include_in_all": false,
-                            "enabled": false,
                             "type": "object"
                         }
                     },
