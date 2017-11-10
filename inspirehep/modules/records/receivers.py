@@ -43,8 +43,9 @@ from invenio_records.signals import (
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.date import earliest_date
 from inspire_utils.helpers import force_list
+from inspire_utils.name import generate_name_variations
 from inspire_utils.record import get_value
-from inspirehep.modules.authors.utils import author_tokenize, phonetic_blocks
+from inspirehep.modules.authors.utils import phonetic_blocks
 
 
 #
@@ -137,11 +138,11 @@ def enhance_after_index(sender, json, *args, **kwargs):
     """
     populate_recid_from_ref(sender, json, *args, **kwargs)
     add_book_autocomplete(sender, json, *args, **kwargs)
-    generate_name_variations(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_affiliation_suggest(sender, json, *args, **kwargs)
     populate_earliest_date(sender, json, *args, **kwargs)
     populate_inspire_document_type(sender, json, *args, **kwargs)
+    populate_name_variations(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
 
 
@@ -366,7 +367,7 @@ def populate_earliest_date(sender, json, *args, **kwargs):
             json['earliest_date'] = result
 
 
-def generate_name_variations(sender, json, *args, **kwargs):
+def populate_name_variations(sender, json, *args, **kwargs):
     """Generate name variations for each signature of a Literature record."""
     if 'hep.json' not in json.get('$schema'):
         return
@@ -380,7 +381,7 @@ def generate_name_variations(sender, json, *args, **kwargs):
                 el['value'] for el in author.get('ids', [])
                 if el['schema'] == 'INSPIRE BAI'
             ]
-            name_variations = author_tokenize(full_name)
+            name_variations = generate_name_variations(full_name)
 
             author.update({'name_variations': name_variations})
             author.update({'name_suggest': {
