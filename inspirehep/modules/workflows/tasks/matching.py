@@ -174,13 +174,13 @@ def pending_in_holding_pen(obj, eng):
             {
                 'queries': [
                     {
-                        'match': 'arxiv_eprints.value',
-                        'search': 'metadata.arxiv_eprints.value.raw',
+                        'path': 'arxiv_eprints.value',
+                        'search_path': 'metadata.arxiv_eprints.value.raw',
                         'type': 'exact',
                     },
                     {
-                        'match': 'dois.value',
-                        'search': 'metadata.dois.value.raw',
+                        'path': 'dois.value',
+                        'search_path': 'metadata.dois.value.raw',
                         'type': 'exact',
                     },
                 ],
