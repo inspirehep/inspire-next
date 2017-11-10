@@ -499,6 +499,12 @@
                         },
                         "value": {
                             "copy_to": "bookautocomplete",
+                            "fields": {
+                                "raw": {
+                                    "analyzer": "lowercase_analyzer",
+                                    "type": "string"
+                                }
+                            },
                             "type": "string"
                         }
                     },
