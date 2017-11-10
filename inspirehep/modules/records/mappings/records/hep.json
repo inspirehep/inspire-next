@@ -882,7 +882,7 @@
                             "type": "object"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "related_records": {
                     "properties": {

@@ -25,9 +25,12 @@ from __future__ import absolute_import, division, print_function
 import pytest
 from elasticsearch import NotFoundError
 
+from invenio_db import db
+
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.search import LiteratureSearch
 from inspirehep.utils.record import get_title
+from inspirehep.utils.record_getter import get_es_record
 
 
 def test_that_db_changes_are_mirrored_in_es(app):
@@ -64,3 +67,70 @@ def test_that_db_changes_are_mirrored_in_es(app):
 
     with pytest.raises(NotFoundError):
         es_record = search.get_source(record.id)
+
+
+def test_match_references_when_reference_matches(app):
+    json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 123,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': ['Literature'],
+        'references': [{
+            'reference': {
+                'dois': ['10.1007/978-3-319-15001-7']
+            }
+        }]
+    }
+
+    record = InspireRecord.create(json)
+    db.session.commit()
+
+    assert record['references'][0]['record']['$ref'] == 'http://localhost:5000/api/literature/1373790'
+
+    referred_record = get_es_record('lit', 1373790)
+    assert referred_record['citation_count'] == 1
+
+    record._delete(force=True)
+    db.session.commit()
+
+
+def test_match_references_when_record_matches_external_reference(app):
+    from inspirehep.modules.migrator.tasks import record_insert_or_replace
+
+    json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 456,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        'dois': [
+            {
+                'value': '10.1016/j.physletb.2012.08.020'
+            }
+        ],
+        '_collections': ['Literature']
+    }
+
+    #FIXME Need to create PID
+    # record = InspireRecord.create(json)
+    import pytest; pytest.set_trace()
+    with db.session.begin_nested():
+        record = record_insert_or_replace(json)
+    db.session.commit()
+
+    import pytest; pytest.set_trace()
+
+    referred_record = get_es_record('lit', 456)
+
+    assert referred_record['citation_count'] == 1
+
+    record._delete(force=True)
+    db.session.commit()
