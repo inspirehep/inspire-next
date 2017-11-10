@@ -31,13 +31,13 @@ from inspirehep.modules.records.receivers import (
     add_book_autocomplete,
     assign_phonetic_block,
     assign_uuid,
-    generate_name_variations,
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
     populate_earliest_date,
     populate_inspire_document_type,
     populate_recid_from_ref,
     populate_title_suggest,
+    populate_author_count,
 )
 
 
@@ -467,109 +467,11 @@ def test_populate_earliest_date_from_imprints_date():
 
 
 def test_populate_earliest_date_does_nothing_if_record_is_not_literature():
-    record = {'$schema': 'http://localhost:5000/schemas/records/hep.json'}
+    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
 
     populate_earliest_date(None, record)
 
     assert 'earliest_date' not in record
-
-
-def test_generate_name_variations():
-    schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    authors_schema = schema['properties']['authors']
-
-    record = {
-        '$schema': 'http://localhost:5000/records/schemas/hep.json',
-        'authors': [
-            {
-                'full_name': 'Ellis, John Richard',
-                'ids': [
-                    {
-                        'schema': 'INSPIRE BAI',
-                        'value': 'J.R.Ellis.1',
-                    },
-                ],
-            },
-        ],
-    }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['authors'], authors_schema) is None
-
-    generate_name_variations(None, record)
-
-    expected = [
-        {
-            'full_name': 'Ellis, John Richard',
-            'ids': [
-                {
-                    'schema': 'INSPIRE BAI',
-                    'value': 'J.R.Ellis.1',
-                },
-            ],
-            'name_suggest': {
-                'input': [
-                    'Ellis',
-                    'Ellis J',
-                    'Ellis J R',
-                    'Ellis J Richard',
-                    'Ellis John',
-                    'Ellis John R',
-                    'Ellis John Richard',
-                    'Ellis R',
-                    'Ellis Richard',
-                    'Ellis, J',
-                    'Ellis, J R',
-                    'Ellis, J Richard',
-                    'Ellis, John',
-                    'Ellis, John R',
-                    'Ellis, John Richard',
-                    'Ellis, R',
-                    'Ellis, Richard',
-                    'J Ellis',
-                    'J R Ellis',
-                    'J Richard Ellis',
-                    'John Ellis',
-                    'John R Ellis',
-                    'John Richard Ellis',
-                    'R Ellis',
-                    'Richard Ellis',
-                ],
-                'output': 'Ellis, John Richard',
-                'payload': {'bai': 'J.R.Ellis.1'},
-            },
-            'name_variations': [
-                'Ellis',
-                'Ellis J',
-                'Ellis J R',
-                'Ellis J Richard',
-                'Ellis John',
-                'Ellis John R',
-                'Ellis John Richard',
-                'Ellis R',
-                'Ellis Richard',
-                'Ellis, J',
-                'Ellis, J R',
-                'Ellis, J Richard',
-                'Ellis, John',
-                'Ellis, John R',
-                'Ellis, John Richard',
-                'Ellis, R',
-                'Ellis, Richard',
-                'J Ellis',
-                'J R Ellis',
-                'J Richard Ellis',
-                'John Ellis',
-                'John R Ellis',
-                'John Richard Ellis',
-                'R Ellis',
-                'Richard Ellis',
-            ],
-        },
-    ]
-    result = record['authors']
-
-    assert expected == result
 
 
 def test_populate_inspire_document_type_from_document_type():
@@ -1145,3 +1047,35 @@ def test_populate_affiliation_suggest_does_nothing_if_record_is_not_institution(
     populate_affiliation_suggest(None, record)
 
     assert 'affiliation_suggest' not in record
+
+
+def test_populate_author_count():
+    record = {
+        '$schema': 'http://localhost:5000/records/schemas/hep.json',
+        'authors': [
+            {
+                'full_name': 'Smith, John',
+                'inspire_roles': ['author'],
+            },
+            {
+                'full_name': 'Rafelski, Johann',
+                'inspire_roles': ['author', 'editor'],
+            },
+            {
+                'full_name': 'Rohan, George',
+                'inspire_roles': ['supervisor', 'author'],
+            },
+        ],
+    }
+
+    populate_author_count(None, record)
+
+    assert record['author_count'] == 2
+
+
+def test_populate_author_count_does_nothing_if_record_is_not_literature():
+    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
+
+    populate_author_count(None, record)
+
+    assert 'author_count' not in record
