@@ -33,7 +33,6 @@ from idutils import is_arxiv
 from invenio_search import current_search_client as es
 from wtforms.validators import ValidationError, StopValidation
 
-
 from inspire_matcher.api import match
 from inspire_schemas.utils import load_schema
 from inspire_utils.dedupers import dedupe_list
@@ -94,13 +93,13 @@ def duplicated_validator(property_name, property_value):
             {
                 'queries': [
                     {
-                        'match': 'arxiv_id',
-                        'search': 'arxiv_eprints.value.raw',
+                        'path': 'arxiv_id',
+                        'search_path': 'arxiv_eprints.value.raw',
                         'type': 'exact',
                     },
                     {
-                        'match': 'doi',
-                        'search': 'dois.value.raw',
+                        'path': 'doi',
+                        'search_path': 'dois.value.raw',
                         'type': 'exact',
                     },
                 ],
