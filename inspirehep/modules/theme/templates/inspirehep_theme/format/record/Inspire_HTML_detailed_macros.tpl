@@ -198,7 +198,7 @@
     {% set cds = 'http://cds.cern.ch/record/' %}
     {% set euclid = 'http://projecteuclid.org/' %}
     {% set hal = 'https://hal.archives-ouvertes.fr/' %}
-    {% set kek = 'http://www-lib.kek.jp/cgi-bin/img_index?' %}
+    {% set kek = 'https://lib-extopc.kek.jp/preprints/PDF/' %}
     {% set msnet = 'http://www.ams.org/mathscinet-getitem?mr=' %}
     {% set zblatt = 'http://www.zentralblatt-math.org/zmath/en/search/?an=' %}
     {% set osti = 'https://www.osti.gov/scitech/biblio/' %}
@@ -206,9 +206,21 @@
 
     {% if (system_number.get('schema') | lower) == 'kekscan' %}
       {{ comma() }}
-      <a href='{{ kek }}{{system_number.get('value')}}'>
-        KEK scanned document
-      </a>
+      {% set extid = system_number.get('value') | replace("-", "") %}
+            {% if extid|length == 7 and not extid.startswith('19') and not extid.startswith('20') %}
+                {% set year = '19' + extid[:2] + '/' %}
+                {% set yymm = extid[:4] + '/' %}
+                <a href='{{kek}}{{year}}{{yymm}}{{extid}}.pdf'>
+                  KEK scanned document
+                </a>
+            {% elif extid|length == 9 %}
+                {% set year = extid[:4] + '/' %}
+                {% set extid = extid[2:] %}
+                {% set yymm = extid[:4] + '/' %}
+                <a href='{{kek}}{{year}}{{yymm}}{{extid}}.pdf'>
+                  KEK scanned document
+                </a>
+            {% endif %}
     {% elif (system_number.get('schema') | lower) == 'cds' %}
       {{ comma() }}
       <a href='{{ cds }}{{system_number.get('value')}}'>
