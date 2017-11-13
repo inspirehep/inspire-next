@@ -29,7 +29,9 @@ import requests_mock
 
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier, RecordIdentifier
+from invenio_search import current_search_client as es
 
+from inspirehep.modules.migrator.tasks import record_insert_or_replace
 from inspirehep.utils.record_getter import get_db_record
 
 
@@ -64,3 +66,13 @@ def mock_addresses(addresses, mocked_local=False):
             requests_mocker.register_uri(**address)
 
         yield
+
+
+def _create_record(record_json):
+    with db.session.begin_nested():
+        record_insert_or_replace(record_json)
+
+    db.session.commit()
+    es.indices.refresh()
+
+    return record_json
