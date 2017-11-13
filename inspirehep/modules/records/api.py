@@ -71,13 +71,23 @@ class InspireRecord(Record):
                 record in the list that has it in it's files iterator before
                 downloading them, for example to merge existing
                 records.
+            skip_files(bool): if ``True`` it will skip the files retrieval
+                described above. Note also that, if not passed, it will fall
+                back to the value of the ``RECORDS_SKIP_FILES`` configuration
+                variable.
+
         """
+        config_skip_files = current_app.config.get('RECORDS_SKIP_FILES')
+
         files_src_records = kwargs.pop('files_src_records', ())
+        skip_files = kwargs.pop('skip_files', config_skip_files)
+
         new_record = super(InspireRecord, cls).create(*args, **kwargs)
-        new_record.download_documents_and_figures(
-            src_records=files_src_records,
-        )
-        new_record.commit()
+
+        if not skip_files:
+            new_record.download_documents_and_figures(src_records=files_src_records)
+            new_record.commit()
+
         return new_record
 
     def update(self, *args, **kwargs):
@@ -91,13 +101,21 @@ class InspireRecord(Record):
                 files for the documents and figures from this record's files
                 iterator before downloading them, for example to merge existing
                 records.
+            skip_files(bool): if ``True`` it will skip the files retrieval
+                described above. Note also that, if not passed, it will fall
+                back to the value of the ``RECORDS_SKIP_FILES`` configuration
+                variable.
+
         """
+        config_skip_files = current_app.config.get('RECORDS_SKIP_FILES')
+
         files_src_records = kwargs.pop('files_src_records', ())
+        skip_files = kwargs.pop('skip_files', config_skip_files)
+
         super(InspireRecord, self).update(*args, **kwargs)
-        self.download_documents_and_figures(
-            only_new=True,
-            src_records=files_src_records,
-        )
+
+        if not skip_files:
+            self.download_documents_and_figures(src_records=files_src_records, only_new=True)
 
     def merge(self, other):
         """Redirect pidstore of current record to the other InspireRecord.
