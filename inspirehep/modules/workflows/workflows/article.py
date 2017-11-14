@@ -54,6 +54,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     normalize_journal_titles,
     prepare_update_payload,
     refextract,
+    set_refereed_and_fix_document_type,
     submission_fulltext_download,
     save_workflow,
 )
@@ -218,6 +219,7 @@ POSTENHANCE_RECORD = [
     filter_keywords,
     prepare_keywords,
     remove_references,
+    set_refereed_and_fix_document_type,
 ]
 
 

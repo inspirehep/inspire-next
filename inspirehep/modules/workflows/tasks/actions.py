@@ -25,19 +25,18 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import re
+from functools import wraps
+
+from flask import current_app
 from sqlalchemy import (
     JSON,
     String,
     cast,
     type_coerce,
 )
-
-from functools import wraps
-import re
-
-from flask import current_app
-from werkzeug import secure_filename
 from timeout_decorator import TimeoutError
+from werkzeug import secure_filename
 
 from invenio_db import db
 from invenio_workflows import ObjectStatus
@@ -427,3 +426,56 @@ def normalize_journal_titles(obj, eng):
 
             if result:
                 obj.data['publication_info'][index]['journal_record'] = result.records_metadata_json['self']
+
+
+@with_debug_logging
+def set_refereed_and_fix_document_type(obj, eng):
+    """Set the ``refereed`` field using the Journals DB.
+
+    Searches in the Journals DB if the current article was published in journals
+    that we know for sure to be peer-reviewed, or that publish both peer-reviewed
+    and non peer-reviewed content but for which we can infer that it belongs to
+    the former category, and sets the ``refereed`` key in ``data`` to ``True`` if
+    that was the case. If instead we know for sure that all journals in which it
+    published are **not** peer-reviewed we set it to ``False``.
+
+    Also replaces the ``article`` document type with ``conference paper`` if the
+    paper was only published in non refereed proceedings.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        None
+
+    """
+    journals = replace_refs(get_value(obj.data, 'publication_info.journal_record'), 'db')
+    if not journals:
+        return
+
+    is_published_in_a_refereed_journal_that_does_not_publish_proceedings = any(
+        journal.get('refereed') and not journal.get('proceedings') for journal in journals)
+    is_published_in_a_refereed_journal_that_also_publishes_proceedings = any(
+        journal.get('refereed') and journal.get('proceedings') for journal in journals)
+    is_not_a_conference_paper = 'conference paper' not in obj.data['document_type']
+
+    is_published_exclusively_in_non_refereed_journals = all(
+        not journal.get('refereed', True) for journal in journals)
+
+    if is_published_in_a_refereed_journal_that_does_not_publish_proceedings:
+        obj.data['refereed'] = True
+    elif is_not_a_conference_paper and is_published_in_a_refereed_journal_that_also_publishes_proceedings:
+        obj.data['refereed'] = True
+    elif is_published_exclusively_in_non_refereed_journals:
+        obj.data['refereed'] = False
+
+    is_published_only_in_proceedings = all(journal.get('proceedings') for journal in journals)
+    is_published_only_in_non_refereed_journals = all(not journal.get('refereed') for journal in journals)
+
+    if is_published_only_in_proceedings and is_published_only_in_non_refereed_journals:
+        try:
+            obj.data['document_type'].remove('article')
+            obj.data['document_type'].append('conference paper')
+        except ValueError:
+            pass
