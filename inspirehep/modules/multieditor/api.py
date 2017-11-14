@@ -53,7 +53,7 @@ def update():
     if searched_records:
         ids = searched_records['ids']
         index = searched_records['schema']
-        schema = load_schema(index)
+        schema = load_schema(index, resolved=True)
         if all_selected:
             ids = filter(lambda x: x not in request.json['ids'], ids)
         else:
@@ -79,7 +79,7 @@ def preview():
         index = searched_records['schema']
     else:
         return jsonify({'message': 'Please use the search before you apply actions'}), 400
-    schema = load_schema(index)
+    schema = load_schema(index, resolved=True)
     records = queries.get_records_from_query(query_string, page_size, page_num, index)['json_records']
     actions.process_records_no_db(user_actions, records, schema)
     for record in records:
