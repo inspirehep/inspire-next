@@ -37,7 +37,7 @@ from invenio_search import current_search_client as es
 from inspire_dojson.utils import get_recid_from_ref
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.utils import get_endpoint_from_record
-from inspirehep.utils.record_getter import get_db_record
+from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 
 
 logger = get_task_logger(__name__)
@@ -132,30 +132,37 @@ def get_records_to_update(old_ref):
 @shared_task
 def merge_merged_records():
     """Merge all records that were marked as merged."""
-    def _get_record(recid):
-        pid = PersistentIdentifier.query.filter_by(pid_value=str(recid)).one()
-        return get_db_record(pid.pid_type, recid)
+    records = get_merged_records()
 
-    records = get_records_to_merge()
+    for record in records:
 
-    with db.session.begin_nested():
-        for record in records:
-            recid = record['control_number']
-            other_recid = get_recid_from_ref(record['new_record'])
-            other_record = _get_record(other_recid)
+        record_pid = PersistentIdentifier.query.filter_by(object_uuid=record.id).one()
+        deleted_ids = [get_recid_from_ref(ref) for ref in record['deleted_records']]
 
-            logger.info('Merged records: %d and %d', recid, other_recid)
-            record.merge(other_record)
-            record.commit()
+        for deleted_id in deleted_ids:
+                deleted_pid = PersistentIdentifier.query.filter_by(
+                    pid_value=str(deleted_id)
+                ).one_or_none()
+
+                if not deleted_pid:
+                    deleted_pid = PersistentIdentifier.create(
+                        pid_type=get_pid_type_from_schema(record['$schema']),
+                        pid_value=deleted_id,
+                        object_type='rec'
+                    )
+                    deleted_pid.register()
+                    db.session.add(deleted_pid)
+
+                deleted_pid.redirect(record_pid)
     db.session.commit()
 
 
-def get_records_to_merge():
+def get_merged_records():
     def _get_uuids_to_merge():
         body = {
             'query': {
                 'exists': {
-                    'field': 'new_record',
+                    'field': 'deleted_records',
                 },
             },
         }
@@ -166,10 +173,7 @@ def get_records_to_merge():
         for result in query:
             yield result['_id']
 
-    def _get_records_to_merge(uuids):
-        return InspireRecord.get_records(uuids)
-
     uuids = _get_uuids_to_merge()
-    records = _get_records_to_merge(uuids)
+    records = InspireRecord.get_records(uuids)
 
     return records
