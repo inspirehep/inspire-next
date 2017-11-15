@@ -230,8 +230,17 @@
                             "type": "completion"
                         },
                         "name_variations": {
-                            "index": "not_analyzed",
-                            "type": "string"
+                            "properties": {
+                                "all": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                },
+                                "specific": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
                         },
                         "raw_affiliations": {
                             "properties": {
