@@ -182,7 +182,7 @@
             {% do viewInDisplayed.append(1) %}
           {% endif %}
           {{ comma() }}
-          <a href='{{ actual_url }}'>{{ url.get('description') | weblinks }}</a>
+          <a href='{{ actual_url }}'>{{ url.get('description', 'Link to fulltext') }}</a>
         {% endif %}
       {% endif %}
     {% endfor %}

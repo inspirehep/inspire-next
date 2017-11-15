@@ -591,18 +591,6 @@ def is_external_link(url):
 
 
 @blueprint.app_template_filter()
-def weblinks(description):
-    """Renames external links based on the description given."""
-    value = current_app.extensions.get('inspire-theme').weblinks.get(
-        description)
-    if value:
-        return value.rstrip()
-    if description:
-        return 'Link to ' + description
-    return 'Link to fulltext'
-
-
-@blueprint.app_template_filter()
 def back_to_search_link(referer, collection):
     """Creates link to go back to search results in detailed pages."""
 
