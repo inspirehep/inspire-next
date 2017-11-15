@@ -66,14 +66,17 @@ class InspireRecord(Record):
 
         Keyword Args:
 
-            files_src_record(InspireRecord): if passed, it will try to get the
-                files for the documents and figures from this record's files
-                iterator before downloading them, for example to merge existing
+            files_src_records(List[InspireRecord]): if passed, it will try to
+                get the files for the documents and figures from the first
+                record in the list that has it in it's files iterator before
+                downloading them, for example to merge existing
                 records.
         """
-        files_src_record = kwargs.pop('files_src_record', None)
+        files_src_records = kwargs.pop('files_src_records', ())
         new_record = super(InspireRecord, cls).create(*args, **kwargs)
-        new_record.download_documents_and_figures(src_record=files_src_record)
+        new_record.download_documents_and_figures(
+            src_records=files_src_records,
+        )
         new_record.commit()
         return new_record
 
@@ -84,16 +87,16 @@ class InspireRecord(Record):
 
         Keyword Args:
 
-            files_src_record(InspireRecord): if passed, it will try to get the
+            files_src_records(InspireRecord): if passed, it will try to get the
                 files for the documents and figures from this record's files
                 iterator before downloading them, for example to merge existing
                 records.
         """
-        files_src_record = kwargs.pop('files_src_record', None)
+        files_src_records = kwargs.pop('files_src_records', ())
         super(InspireRecord, self).update(*args, **kwargs)
         self.download_documents_and_figures(
             only_new=True,
-            src_record=files_src_record,
+            src_records=files_src_records,
         )
 
     def merge(self, other):
@@ -215,13 +218,13 @@ class InspireRecord(Record):
     def _resolve_doc_or_fig_url(
         self,
         doc_or_fig_obj,
-        src_record=None,
+        src_records=(),
         only_new=False,
     ):
         """Resolves the given document url according to the current record.
 
         It will fill it up with the local url in case it's found in the given
-        src_record.
+        src_records.
 
 
         Returns:
@@ -239,70 +242,89 @@ class InspireRecord(Record):
         """
         doc_or_fig_obj = copy.deepcopy(doc_or_fig_obj)
         key = doc_or_fig_obj['key']
+        src_record_file = next(
+            (
+                rec.files[key].file.uri
+                for rec in src_records
+                if key in rec.files
+            ),
+            None,
+        )
 
-        def _should_take_from_src_record(self, key, src_record, only_new):
-            return (
-                src_record and
-                key in src_record.files and
+        def _should_take_from_src_records(
+            self,
+            key,
+            src_record_file,
+            only_new,
+        ):
+            should_take = False
+            if (
+                not only_new and
+                src_record_file
+            ):
+                should_take = True
+
+            elif (
+                only_new and
+                src_record_file and
                 key not in self.files
-            )
+            ):
+                should_take = True
 
-        def _already_there(self, src_record, only_new):
+            return should_take
+
+        def _already_there(self, only_new):
             return (
-                not src_record and
                 only_new and
                 key in self.files
             )
 
+        def _is_internal_document(doc_or_fig_obj):
+            return doc_or_fig_obj['url'].startswith('/api/files/')
+
         def _get_meaningful_exception(
             self,
             key,
-            src_record,
+            src_record_file,
             only_new,
             doc_or_fig_obj,
         ):
             exception = None
-            if not src_record:
-                if not only_new:
-                    exception = Exception(
-                        "Can't download %s, as no src_record was passed."
-                        % doc_or_fig_obj
-                    )
-                elif key not in self.files:
-                    exception = Exception(
-                        "Bad document %s, refers to an already downloaded "
-                        "url, but none found in this record and no src_record "
-                        "passed, only found %s."
-                        % (doc_or_fig_obj, self.files.keys)
-                    )
-            elif key not in src_record.files and key not in self.files:
+            if not src_record_file and key not in self.files:
                 exception = Exception(
                     "Bad document %s, refers to an already downloaded "
-                    "url, but none found in this record or the passed "
-                    "src_record, only found %s on this record and %s on "
-                    "src_record." % (
-                        doc_or_fig_obj,
-                        self.files.keys,
-                        src_record.files.keys,
-                    )
+                    "url, but none found in this record nor in the passed "
+                    "src_records."
+                    % doc_or_fig_obj
+                )
+            elif not only_new and not src_record_file:
+                exception = Exception(
+                    "Can't download %s, as no src_records were passed that "
+                    "contained it, and only_new was set to False."
+                    % doc_or_fig_obj
+                )
+            else:
+                exception = Exception(
+                    "Unexpected document resolution error for document %s"
+                    % doc_or_fig_obj
                 )
 
             return exception
 
-        if not doc_or_fig_obj['url'].startswith('/api/files/'):
+        if not _is_internal_document(doc_or_fig_obj):
             return doc_or_fig_obj
 
-        if _should_take_from_src_record(self, key, src_record, only_new):
-            doc_or_fig_obj['url'] = src_record.files[key].file.uri
+        if _should_take_from_src_records(self, key, src_record_file, only_new):
+            doc_or_fig_obj['url'] = src_record_file
             return doc_or_fig_obj
 
-        if _already_there(self, src_record, only_new):
+        if _already_there(self, only_new):
             return doc_or_fig_obj
 
         raise _get_meaningful_exception(
             self,
             key,
-            src_record,
+            src_record_file,
             only_new,
             doc_or_fig_obj,
         )
@@ -311,7 +333,7 @@ class InspireRecord(Record):
         self,
         document=None,
         figure=None,
-        src_record=None,
+        src_records=(),
         only_new=False,
     ):
         if not document and not figure:
@@ -322,7 +344,7 @@ class InspireRecord(Record):
         is_document = bool(document)
         doc_or_fig_obj = self._resolve_doc_or_fig_url(
             doc_or_fig_obj=document or figure,
-            src_record=src_record,
+            src_records=src_records,
             only_new=only_new,
         )
         if doc_or_fig_obj['url'].startswith('/api/files/'):
@@ -344,7 +366,7 @@ class InspireRecord(Record):
             is_document=is_document,
         )
 
-    def download_documents_and_figures(self, only_new=False, src_record=None):
+    def download_documents_and_figures(self, only_new=False, src_records=()):
         """Gets all the documents and figures of the record, and downloads them
         to the files property.
 
@@ -356,7 +378,7 @@ class InspireRecord(Record):
         happens:
 
         * if `url` field points to the files api:
-            * and there's no `src_record`:
+            * and there's no `src_records`:
               * and `only_new` is `False`: it will throw an error, as that
                 would be the case that the record was created from scratch
                 with a document that was already downloaded from another
@@ -370,13 +392,13 @@ class InspireRecord(Record):
                   * if `key` does not exist in the current record files: An
                     exception will be thrown, as the file can't be retrieved.
 
-            * and there's a `src_record`:
+            * and there's a `src_records`:
               * and `only_new` is `False`:
-                  * if `key` exists in the src_record files: it will download
-                    the file from the local path derived from the src_record
+                  * if `key` exists in the src_records files: it will download
+                    the file from the local path derived from the src_records
                     files.
 
-                  * if `key` does not exist in the src_record files: An
+                  * if `key` does not exist in the src_records files: An
                     exception will be thrown, as the file can't be retrieved.
 
               * and `only_new` is `True`:
@@ -384,11 +406,11 @@ class InspireRecord(Record):
                     nothing, as the file is already there.
 
                   * if `key` does not exist in the current record files:
-                    * if `key` exists in the src_record files: it will download
-                      the file from the local path derived from the src_record
+                    * if `key` exists in the src_records files: it will download
+                      the file from the local path derived from the src_records
                       files.
 
-                    * if `key` does not exist in the src_record files: An
+                    * if `key` does not exist in the src_records files: An
                       exception will be thrown, as the file can't be retrieved.
 
         * if `url` field does not point to the files api: it will try to
@@ -397,9 +419,9 @@ class InspireRecord(Record):
         Args:
             only_new(bool): If True, will not re-download any files if the
                 document['key'] matches an existing downloaded file.
-            src_record(InspireRecord): if passed, it will try to get the files
-                from this record files iterator before downloading them, for
-                example to merge existing records.
+            src_records(List[InspireRecord]): if passed, it will try to get the
+                files from this record files iterator before downloading them,
+                for example to merge existing records.
         """
         if 'control_number' not in self:
             return
@@ -410,14 +432,14 @@ class InspireRecord(Record):
         for document in documents_to_download:
             self._download_to_docs_or_figs(
                 document=document,
-                src_record=src_record,
+                src_records=src_records,
                 only_new=only_new,
             )
 
         for figure in figures_to_download:
             self._download_to_docs_or_figs(
                 figure=figure,
-                src_record=src_record,
+                src_records=src_records,
                 only_new=only_new,
             )
 
