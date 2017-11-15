@@ -90,7 +90,10 @@ class SearchMixin(object):
                 body={'ids': uuids},
                 **kwargs
             )
-            results = [document['_source'] for document in documents['docs']]
+            results = [
+                document['_source'] for document in documents['docs']
+                if document.get('found')
+            ]
         except RequestError as e:
             logger.exception(e)
 
