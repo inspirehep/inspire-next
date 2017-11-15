@@ -1136,6 +1136,11 @@ RECORDS_VALIDATION_TYPES = {
     'array': (list, tuple),
 }
 
+# If set, will disable downloading records files by default (can be overriden
+# by the `skip_files` parameter of `InspireRecord.create` and
+# `InspireRecord.update`)
+RECORDS_SKIP_FILES = False
+
 JSONSCHEMAS_HOST = "localhost:5000"
 JSONSCHEMAS_REPLACE_REFS = True
 JSONSCHEMAS_LOADER_CLS = 'inspirehep.modules.records.json_ref_loader.SCHEMA_LOADER_CLS'

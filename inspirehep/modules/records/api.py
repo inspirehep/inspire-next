@@ -72,9 +72,19 @@ class InspireRecord(Record):
                 records.
         """
         files_src_record = kwargs.pop('files_src_record', None)
+        skip_files = kwargs.pop(
+            'skip_files',
+            current_app.config.get('RECORDS_SKIP_FILES', False),
+        )
+
         new_record = super(InspireRecord, cls).create(*args, **kwargs)
-        new_record.download_documents_and_figures(src_record=files_src_record)
-        new_record.commit()
+
+        if not skip_files:
+            new_record.download_documents_and_figures(
+                src_record=files_src_record,
+            )
+            new_record.commit()
+
         return new_record
 
     def update(self, *args, **kwargs):
@@ -90,11 +100,20 @@ class InspireRecord(Record):
                 records.
         """
         files_src_record = kwargs.pop('files_src_record', None)
-        super(InspireRecord, self).update(*args, **kwargs)
-        self.download_documents_and_figures(
-            only_new=True,
-            src_record=files_src_record,
+        skip_files = kwargs.pop(
+            'skip_files',
+            current_app.config.get('RECORDS_SKIP_FILES', False),
         )
+
+        res = super(InspireRecord, self).update(*args, **kwargs)
+
+        if not skip_files:
+            self.download_documents_and_figures(
+                only_new=True,
+                src_record=files_src_record,
+            )
+
+        return res
 
     def merge(self, other):
         """Redirect pidstore of current record to the other InspireRecord.
