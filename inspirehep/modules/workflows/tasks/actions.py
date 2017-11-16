@@ -32,7 +32,7 @@ from sqlalchemy import (
      type_coerce,
  )
 
-import codecs
+from io import open
 from functools import wraps
 import re
 
@@ -387,7 +387,7 @@ def normalize_journal_titles(obj, eng):
         return None
 
     refextract_journal_kb_path = current_app.config['REFEXTRACT_JOURNAL_KB_PATH']
-    with codecs.open(refextract_journal_kb_path, mode='r', encoding='utf-8') as f:
+    with open(refextract_journal_kb_path, mode='r', encoding='utf-8') as f:
         lines = f.readlines()
 
         for index, publication in enumerate(publications):
