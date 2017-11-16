@@ -187,7 +187,7 @@
   require([
     "jquery",
     ], function ($) {
-      $(document).ready(function () {
+       setTimeout(function () {
         var mathJaxURL = "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
         $.getScript(mathJaxURL, function() {
           MathJax.Hub.Config({
@@ -198,7 +198,7 @@
           });
           MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         });
-      })
+      }, 500)
     }
   );
 </script>
