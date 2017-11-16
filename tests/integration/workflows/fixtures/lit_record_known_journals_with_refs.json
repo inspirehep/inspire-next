@@ -1,0 +1,30 @@
+{
+    "_collections":[
+        "Literature"
+    ],
+    "titles":[
+        "A title"
+    ],
+    "document_type":[
+        "book",
+        "note",
+        "report"
+    ],
+    "publication_info":[
+        {
+            "journal_title":"A Test Journal1",
+            "journal_record":{
+                "$ref":"http://localhost:5000/api/journals/1936475"
+            }
+        },
+        {
+            "cnum":"C01-01-01"
+        },
+        {
+            "journal_title":"Test.Jou.2",
+            "journal_record":{
+                "$ref":"http://localhost:5000/api/journals/1936476"
+            }
+        }
+    ]
+}
