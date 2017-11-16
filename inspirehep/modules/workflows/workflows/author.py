@@ -95,6 +95,11 @@ SEND_UPDATE_NOTIFICATION = [
         queue="Authors_cor_user",
         context_factory=update_ticket_context,
     ),
+    reply_ticket(
+        template="authors/tickets/user_new.html",
+        context_factory=reply_ticket_context,
+        keep_new=True,
+    ),
 ]
 
 
