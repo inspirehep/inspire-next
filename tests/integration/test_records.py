@@ -661,7 +661,7 @@ def test_create_with_source_record_with_same_control_number(app):
 
     record2_json['documents'] = copy.deepcopy(record1['documents'])
 
-    record2 = InspireRecord.create(record2_json, files_src_record=record1)
+    record2 = InspireRecord.create(record2_json, files_src_records=[record1])
 
     assert len(record2.files) == len(record2_json['documents'])
     assert len(record2['documents']) == len(record2_json['documents'])
@@ -719,7 +719,7 @@ def test_create_with_source_record_with_different_control_number(app):
 
     record2_json['documents'] = copy.deepcopy(record1['documents'])
 
-    record2 = InspireRecord.create(record2_json, files_src_record=record1)
+    record2 = InspireRecord.create(record2_json, files_src_records=[record1])
 
     assert len(record2.files) == len(record2_json['documents'])
     assert len(record2['documents']) == len(record2_json['documents'])
@@ -728,3 +728,107 @@ def test_create_with_source_record_with_different_control_number(app):
         record2.files[rec2_expected_key].obj.file.uri
     ).read()
     assert rec2_file_content == expected_file_content
+
+
+@patch(
+    'inspirehep.modules.records.utils.open',
+    mock_open(read_data='dummy body'),
+)
+def test_create_with_multiple_source_records(app):
+    expected_file_content = 'dummy body'
+    rec1_expected_key = '1_Fulltext.pdf'
+    rec2_expected_key = '2_Fulltext.pdf'
+    rec3_expected_keys = [
+        '3_Fulltext.pdf',
+        '3_Fulltext.pdf_1',
+    ]
+
+    record1_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],  # DESY harvest
+        'documents': [{
+            'key': 'Fulltext.pdf',
+            'url': '/some/non/existing/path.pdf',
+            'description': 'record1 document',
+        }],
+    }
+
+    record2_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 2,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],  # DESY harvest
+        'documents': [{
+            'key': 'Fulltext.pdf',
+            'url': '/some/non/existing/path.pdf',
+            'description': 'record2 document',
+        }],
+    }
+
+    record3_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 3,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],  # DESY harvest
+    }
+
+    record1 = InspireRecord.create(record1_json)
+    rec1_file_content = open(
+        record1.files[rec1_expected_key].obj.file.uri
+    ).read()
+    assert rec1_file_content == expected_file_content
+
+    record2 = InspireRecord.create(record2_json)
+    rec2_file_content = open(
+        record2.files[rec2_expected_key].obj.file.uri
+    ).read()
+    assert rec2_file_content == expected_file_content
+
+    record3_json['documents'] = copy.deepcopy(record1['documents'])
+    record3_json['documents'].extend(copy.deepcopy(record2['documents']))
+    record3 = InspireRecord.create(
+        record3_json,
+        files_src_records=[record1, record2],
+    )
+
+    assert len(record3.files) == (
+        len(record1_json['documents']) +
+        len(record2_json['documents'])
+    )
+    assert rec3_expected_keys == record3.files.keys
+    for file_key in record3.files.keys:
+        rec3_file_content = open(
+            record3.files[file_key].obj.file.uri
+        ).read()
+        assert rec3_file_content == expected_file_content
+
+    expected_descs = [
+        orig_doc['description'] for orig_doc in record3_json['documents']
+    ]
+    current_descs = [
+        doc['description'] for doc in record3['documents']
+    ]
+    assert current_descs == expected_descs

@@ -41,14 +41,14 @@ def store_record(obj, eng):
     if is_update:
         record = InspireRecord.get_record(obj.extra_data['head_uuid'])
         record.clear()
-        record.update(obj.data, files_src_record=obj)
+        record.update(obj.data, files_src_records=[obj])
 
     else:
         record = InspireRecord.create(obj.data, id_=None)
         # Create persistent identifier.
         created_pid = inspire_recid_minter(str(record.id), record).pid_value
         # Now that we have a recid, we can properly download the documents
-        record.download_documents_and_figures(src_record=obj)
+        record.download_documents_and_figures(src_records=[obj])
 
         obj.data['control_number'] = created_pid
         # store head_uuid to store the root later
