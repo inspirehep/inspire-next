@@ -217,6 +217,16 @@
                                     "type": "string"
                                 },
                                 "value": {
+                                    "fields": {
+                                        "raw": {
+                                            "index": "not_analyzed",
+                                            "type": "string"
+                                        },
+                                        "search": {
+                                            "analyzer": "lowercase_analyzer",
+                                            "type": "string"
+                                        }
+                                    },
                                     "type": "string"
                                 }
                             },
