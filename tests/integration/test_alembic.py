@@ -56,3 +56,34 @@ def test_alembic_revision_fddb3cfe7a9c(alembic_app):
     assert 'workflows_pending_record' not in inspector.get_table_names()
 
     drop_alembic_version_table()
+
+
+def test_alembic_revision_cb9f81e8251c(alembic_app):
+    def get_indexes(tablename):
+        index_names = db.session.execute("select indexname from pg_indexes where tablename='{}'".format(tablename)).fetchall()
+        return [index[0] for index in index_names]
+
+    ext = alembic_app.extensions['invenio-db']
+
+    if db.engine.name == 'sqlite':
+        raise pytest.skip('Upgrades are not supported on SQLite.')
+
+    ext.alembic.stamp()
+
+    ext.alembic.downgrade(target='fddb3cfe7a9c')
+
+    index_names = get_indexes('records_metadata')
+    assert 'idxgindoctype' not in index_names
+    assert 'idxgintitles' not in index_names
+    assert 'idxginjournaltitle' not in index_names
+    assert 'idxgincollections' not in index_names
+
+    ext.alembic.upgrade(target='cb9f81e8251c')
+
+    index_names = get_indexes('records_metadata')
+    assert 'idxgindoctype' in index_names
+    assert 'idxgintitles' in index_names
+    assert 'idxginjournaltitle' in index_names
+    assert 'idxgincollections' in index_names
+
+    drop_alembic_version_table()
