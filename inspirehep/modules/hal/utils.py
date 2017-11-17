@@ -38,24 +38,6 @@ from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.utils.record_getter import get_es_records
 
 
-def get_abstract(record):
-    """Return the first abstract of a record.
-
-    Args:
-        record(InspireRecord): a record.
-
-    Returns:
-        string: the first abstract of the record.
-
-    Examples:
-        >>> record = {'abstracts': [{'value': 'Probably not.'}]}
-        >>> get_abstract(record)
-        'Probably not.'
-
-    """
-    return get_value(record, 'abstracts.value[0]', default='')
-
-
 def get_authors(record):
     """Return the authors of a record.
 

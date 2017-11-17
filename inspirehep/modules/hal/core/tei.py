@@ -28,10 +28,9 @@ from flask import render_template
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 
-from inspirehep.utils.record import get_arxiv_id, get_title
+from inspirehep.utils.record import get_abstract, get_arxiv_id, get_title
 
 from ..utils import (
-    get_abstract,
     get_authors,
     get_collaborations,
     get_conference_city,
