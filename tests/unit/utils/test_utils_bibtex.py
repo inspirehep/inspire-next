@@ -1224,20 +1224,6 @@ def test_get_note_publication_info_a_list_two_els():
     assert expected == result
 
 
-def test_get_note_publication_info_a_list_not_a_note_with_title():
-    publication_info_a_list_not_a_note_with_title = {
-        'publication_info': [
-            {'journal_title': 'Phys.Rev.'},
-            {'journal_title': 'Phys.Rev.'}
-        ]
-    }
-
-    expected = '[Submitted to: Phys. Rev.]'
-    result = Bibtex(publication_info_a_list_not_a_note_with_title)._get_note()
-
-    assert expected == result
-
-
 def test_get_note_publication_info_a_list_not_a_note_with_volume():
     publication_info_a_list_not_a_note_with_volume = {
         'publication_info': [
@@ -1248,26 +1234,6 @@ def test_get_note_publication_info_a_list_not_a_note_with_volume():
 
     expected = '[]'
     result = Bibtex(publication_info_a_list_not_a_note_with_volume)._get_note()
-
-    assert expected == result
-
-
-def test_get_note_publication_info_a_list_not_a_note_with_volume_JHEP():
-    publication_info_a_list_not_a_note_with_volume_JHEP = {
-        'publication_info': [
-            {
-                'journal_title': 'JHEP',
-                'journal_volume': '9712'
-            },
-            {
-                'journal_title': 'JHEP',
-                'journal_volume': '9712'
-            }
-        ]
-    }
-
-    expected = '[Submitted to: JHEP]'
-    result = Bibtex(publication_info_a_list_not_a_note_with_volume_JHEP)._get_note()
 
     assert expected == result
 
@@ -1312,21 +1278,6 @@ def test_get_note_publication_info_a_list_not_a_note_with_year():
 
     expected = '[(2015)]'
     result = Bibtex(publication_info_a_list_not_a_note_with_year)._get_note()
-
-    assert expected == result
-
-
-def test_get_note_publication_info_a_list_not_a_note_with_preprint():
-    publication_info_a_list_not_a_note_with_preprint = {
-        'preprint_date': '2015-12-04',
-        'publication_info': [
-            {'journal_title': 'Acta Phys.Polon.'},
-            {'journal_title': 'Acta Phys.Polon.'}
-        ]
-    }
-
-    expected = '[Submitted to: Acta Phys. Polon.(2015)]'
-    result = Bibtex(publication_info_a_list_not_a_note_with_preprint)._get_note()
 
     assert expected == result
 

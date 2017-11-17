@@ -323,21 +323,6 @@ def test_get_publi_info_from_publication_info_an_empty_list():
     assert expected == result
 
 
-def test_get_publi_info_from_publication_info_with_journal_title():
-    journal_title = {
-        'publication_info': [
-            {'journal_title': 'Nucl.Phys.'}
-        ]
-    }
-    cv_latex_html_text = Cv_latex_html_text(
-        journal_title, 'cv_latex_html_text', ',')
-
-    expected = ['Submitted to: Nucl.Phys.']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
 def test_get_publi_info_from_publication_info_with_journal_volume():
     journal_volume = {
         'publication_info': [
@@ -351,78 +336,6 @@ def test_get_publi_info_from_publication_info_with_journal_volume():
         journal_volume, 'cv_latex_html_text', ',')
 
     expected = ['eConf C050318']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_journal_volume_with_letter():
-    journal_volume_with_letter = {
-        'publication_info': [
-            {
-                'journal_title': 'Eur.Phys.J.',
-                'journal_volume': 'C73'
-            }
-        ]
-    }
-    cv_latex_html_text = Cv_latex_html_text(
-        journal_volume_with_letter, 'cv_latex_html_text', ',')
-
-    expected = ['Submitted to: Eur.Phys.J.']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_year():
-    year_not_a_list = {
-        'publication_info': [
-            {
-                'journal_title': 'Phys.Lett.',
-                'year': '1999'
-            }
-        ]
-    }
-    cv_latex_html_text = Cv_latex_html_text(
-        year_not_a_list, 'cv_latex_html_text', ',')
-
-    expected = ['Submitted to: Phys.Lett. (1999)']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_journal_issue():
-    journal_issue = {
-        'publication_info': [
-            {
-                'journal_title': 'Class.Quant.Grav.',
-                'journal_issue': '10'
-            }
-        ]
-    }
-    cv_latex_html_text = Cv_latex_html_text(
-        journal_issue, 'cv_latex_html_text', ',')
-
-    expected = ['Submitted to: Class.Quant.Grav.']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_page_start():
-    page_start = {
-        'publication_info': [
-            {
-                'journal_title': 'JHEP',
-                'page_start': '190'
-            }
-        ]
-    }
-    cv_latex_html_text = Cv_latex_html_text(
-        page_start, 'cv_latex_html_text', ',')
-
-    expected = ['Submitted to: JHEP']
     result = cv_latex_html_text._get_publi_info()
 
     assert expected == result
