@@ -31,3 +31,4 @@ Developers Guide
    invenio_modules
    workflows
    common_tasks
+   alembic
