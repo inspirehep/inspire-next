@@ -30,21 +30,21 @@ from inspire_utils.record import get_value
 
 
 def get_abstract(record):
-    """Get preferred abstract from record."""
-    chosen_abstract = ""
+    """Return the first abstract of a record.
 
-    for abstract in record.get('abstracts', []):
-        if 'source' in abstract and abstract.get('source') != 'arXiv':
-            return abstract.get('value')
-        elif 'source' in abstract and abstract.get('source') == 'arXiv':
-            pass
-        else:
-            chosen_abstract = abstract.get('value')
+    Args:
+        record(InspireRecord): a record.
 
-    if not chosen_abstract and len(record.get('abstracts', [])) > 0:
-        chosen_abstract = record['abstracts'][0]['value']
+    Returns:
+        string: the first abstract of the record.
 
-    return chosen_abstract
+    Examples:
+        >>> record = {'abstracts': [{'value': 'Probably not.'}]}
+        >>> get_abstract(record)
+        'Probably not.'
+
+    """
+    return get_value(record, 'abstracts.value[0]', default='')
 
 
 def get_arxiv_categories(record):

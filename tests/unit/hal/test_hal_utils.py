@@ -26,7 +26,6 @@ from mock import patch
 
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.hal.utils import (
-    get_abstract,
     get_collaborations,
     get_conference_city,
     get_conference_country,
@@ -47,23 +46,6 @@ from inspirehep.modules.hal.utils import (
     get_publication_date,
     is_published,
 )
-
-
-def test_get_abstract():
-    schema = load_schema('hep')
-    subschema = schema['properties']['abstracts']
-
-    record = {
-        'abstracts': [
-            {'value': 'Probably not.'},
-        ],
-    }
-    assert validate(record['abstracts'], subschema) is None
-
-    expected = 'Probably not.'
-    result = get_abstract(record)
-
-    assert expected == result
 
 
 def test_get_collaborations():

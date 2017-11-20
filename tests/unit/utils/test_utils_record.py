@@ -33,71 +33,27 @@ from inspirehep.utils.record import (
 )
 
 
-def test_get_abstract_returns_empty_string_when_no_abstracts():
-    record = {}
+def test_get_abstract_returns_first_abstract():
+    schema = load_schema('hep')
+    subschema = schema['properties']['abstracts']
 
-    expected = ''
-    result = get_abstract(record)
-
-    assert expected == result
-
-
-def test_get_abstract_returns_empty_string_when_abstracts_is_empty():
-    record = {'abstracts': []}
-
-    expected = ''
-    result = get_abstract(record)
-
-    assert expected == result
-
-
-def test_get_abstract_returns_first_abstract_with_source_not_arxiv():
     record = {
         'abstracts': [
             {
                 'source': 'arXiv',
-                'value': 'abstract with source arXiv',
+                'value': 'first abstract',
             },
             {
-                'source': 'not arXiv',
-                'value': 'abstract with source not arXiv',
+                'source': 'publisher',
+                'value': 'second abstract',
             },
         ],
     }
 
-    expected = 'abstract with source not arXiv'
+    expected = 'first abstract'
     result = get_abstract(record)
 
-    assert expected == result
-
-
-def test_get_abstract_returns_last_abstract_without_a_source():
-    record = {
-        'abstracts': [
-            {'value': 'first abstract without a source'},
-            {'value': 'last abstract without a source'},
-        ],
-    }
-
-    expected = 'last abstract without a source'
-    result = get_abstract(record)
-
-    assert expected == result
-
-
-def test_get_abstract_falls_back_to_first_abstract_even_if_from_arxiv():
-    record = {
-        'abstracts': [
-            {
-                'source': 'arXiv',
-                'value': 'abstract with source arXiv',
-            },
-        ],
-    }
-
-    expected = 'abstract with source arXiv'
-    result = get_abstract(record)
-
+    assert validate(record['abstracts'], subschema) is None
     assert expected == result
 
 
