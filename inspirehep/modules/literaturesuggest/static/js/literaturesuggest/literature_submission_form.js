@@ -212,6 +212,7 @@ define(function(require, exports, module) {
          btn-md book-btn'>Change Book</change_book_button>").appendTo('#books-message_success');
         $('#change_book_btn').click(function(event) {
           clear_fields(['find_book', 'parent_book']);
+          $('#find_book').typeahead('val', '');                 
           var group_id = document.getElementById("state-group-start_page")
           group_id.removeChild(group_id.firstChild);
           $('#state-group-find_book').show()
@@ -219,18 +220,20 @@ define(function(require, exports, module) {
         });
       }
 
-      function addBookInfoField_success(title, authors_list) {
+      function addBookInfoField_success(title, authors_list, et_al) {
         $("<div id='books-message_success' class='alert alert-padding\
          alert-success book-success-message'><p></p></div>").prependTo('#state-group-start_page');
         $("#books-message_success > p").replaceWith('<p> You have selected <b>' + title + '</b> \
-                            ' + authors_list + ' </p>');
+                            ' + authors_list.join(" ; ") +' '+et_al+' </p>');
       };
 
       function add_book_values(datum) {
         if (datum.payload.id !== undefined) {
           document.getElementById("parent_book").value = datum.payload.id;
         }
-        addBookInfoField_success(datum.text, datum.payload.authors.map(function(a) { return a.replace(',', '') }));
+        addBookInfoField_success(datum.title,
+           datum.payload.authors.map(function(a) { return a.replace(',', '') }),
+          datum.et_al);
       }
 
       this.$book.bind('typeahead:selected', function(obj, datum, name) {
@@ -267,7 +270,7 @@ define(function(require, exports, module) {
       this.addBookInfoField();
 
       this.$bookTitle.on('blur', function(){
-        if(document.getElementById('find_book').val == undefined){
+        if(document.getElementById('find_book').value == ""){
           document.getElementById('books-message').style.display = 'block';
         }
     });
