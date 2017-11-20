@@ -26,8 +26,9 @@ from flask import current_app
 from redis import StrictRedis
 from pytest import fixture
 from mock import patch
+from simplejson import dumps
 
-from inspirehep.modules.orcid.tasks import legacy_orcid_tuples, import_legacy_orcid_tokens, _register_user
+from inspirehep.modules.orcid.tasks import legacy_orcid_arrays, import_legacy_orcid_tokens, _register_user
 from invenio_oauthclient.models import User, RemoteToken, RemoteAccount, UserIdentity
 from invenio_db import db
 
@@ -52,18 +53,18 @@ SAMPLE_USER_EDITED = {
 }
 
 
-def record_dict_to_tuple(user_record):
-    """Convert user record to a tuple, like ones received through redis."""
+def record_dict_to_array(user_record):
+    """Convert user record to an array, like ones received through redis."""
     key_ordering = ['orcid', 'token', 'email', 'name']
-    return tuple(user_record[key] for key in key_ordering)
+    return list(user_record[key] for key in key_ordering)
 
 
 def push_to_redis(user_record):
     """Push a user record to redis."""
-    user_record_tuple = record_dict_to_tuple(user_record)
+    user_record_json = dumps(record_dict_to_array(user_record))
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
-    r.lpush('legacy_orcid_tokens', user_record_tuple)
+    r.lpush('legacy_orcid_tokens', user_record_json)
 
 
 def assert_db_has_n_legacy_records(n, record):
@@ -139,7 +140,7 @@ def app_without_config(app):
         yield app
 
 
-def test_multiple_tuple_generator(app, redis_setup):
+def test_multiple_list_generator(app, redis_setup):
     """Test the generator functionality."""
     push_to_redis(SAMPLE_USER_2)
     push_to_redis(SAMPLE_USER)
@@ -148,10 +149,10 @@ def test_multiple_tuple_generator(app, redis_setup):
     assert redis_setup.llen('legacy_orcid_tokens') == 2
 
     # Take all the records from the queue
-    tuple_list = list(legacy_orcid_tuples())
+    json_list = list(legacy_orcid_arrays())
 
     # Check if results are expected, and that redis is empty
-    assert tuple_list == [record_dict_to_tuple(x) for x in [SAMPLE_USER, SAMPLE_USER_2]]
+    assert json_list == [record_dict_to_array(x) for x in [SAMPLE_USER, SAMPLE_USER_2]]
     assert redis_setup.llen('legacy_orcid_tokens') == 0
 
 

@@ -29,7 +29,7 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 from redis import StrictRedis
 from redis_lock import Lock
-from ast import literal_eval
+from simplejson import loads
 from invenio_oauthclient.utils import oauth_get_user, oauth_link_external_id
 from invenio_oauthclient.models import RemoteToken, User, RemoteAccount, UserIdentity
 from invenio_db import db
@@ -39,11 +39,11 @@ from invenio_oauthclient.errors import AlreadyLinkedError
 logger = get_task_logger(__name__)
 
 
-def legacy_orcid_tuples():
+def legacy_orcid_arrays():
     """Generator to fetch token data from redis.
 
     Yields:
-        tuple: user data in the form of (orcid, token, email, name)
+        list: user data in the form of [orcid, token, email, name]
     """
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
@@ -51,7 +51,7 @@ def legacy_orcid_tuples():
     if lock.acquire(blocking=False):
         try:
             while r.llen('legacy_orcid_tokens'):
-                yield literal_eval(r.lrange('legacy_orcid_tokens', 0, 1)[0])
+                yield loads(r.lrange('legacy_orcid_tokens', 0, 1)[0])
                 r.lpop('legacy_orcid_tokens')
         finally:
             lock.release()
@@ -139,6 +139,6 @@ def import_legacy_orcid_tokens():
     if get_value(current_app.config, 'ORCID_APP_CREDENTIALS.consumer_key') is None:
         return
 
-    for user_data in legacy_orcid_tuples():
+    for user_data in legacy_orcid_arrays():
         orcid, token, email, name = user_data
         _register_user(name, email, orcid, token)
