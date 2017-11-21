@@ -131,13 +131,13 @@ def enhance_after_index(sender, json, *args, **kwargs):
 
     .. note::
 
-       ``populate_recid_from_ref`` **MUST** come before ``add_book_autocomplete``
+       ``populate_recid_from_ref`` **MUST** come before ``populate_bookautocomplete``
        because the latter puts a JSON reference in a completion payload, which
        would be expanded to an incorrect ``payload_recid`` by the former.
 
     """
     populate_recid_from_ref(sender, json, *args, **kwargs)
-    add_book_autocomplete(sender, json, *args, **kwargs)
+    populate_bookautocomplete(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_affiliation_suggest(sender, json, *args, **kwargs)
     populate_author_count(sender, json, *args, **kwargs)
@@ -147,7 +147,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_title_suggest(sender, json, *args, **kwargs)
 
 
-def add_book_autocomplete(sender, json, *args, **kwargs):
+def populate_bookautocomplete(sender, json, *args, **kwargs):
     """Populate the ```bookautocomplete`` field of Literature records."""
     if 'hep.json' not in json.get('$schema'):
         return
@@ -155,18 +155,26 @@ def add_book_autocomplete(sender, json, *args, **kwargs):
     if 'book' not in json.get('document_type', []):
         return
 
-    authors = force_list(get_value(json, 'authors.full_name'))
-    titles = force_list(get_value(json, 'titles.title'))
+    paths = [
+        'imprints.date',
+        'imprints.publisher',
+        'isbns.value',
+    ]
 
-    result = json.get('bookautocomplete', [])
-    result.extend(authors)
-    result.extend(titles)
+    authors = force_list(get_value(json, 'authors.full_name', default=[]))
+    titles = force_list(get_value(json, 'titles.title', default=[]))
+
+    input_values = list(chain.from_iterable(
+        force_list(get_value(json, path, default=[])) for path in paths))
+    input_values.extend(authors)
+    input_values.extend(titles)
+    input_values = [el for el in input_values if el]
 
     ref = get_value(json, 'self.$ref')
 
     json.update({
         'bookautocomplete': {
-            'input': result,
+            'input': input_values,
             'payload': {
                 'authors': authors,
                 'id': ref,

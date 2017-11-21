@@ -490,7 +490,6 @@
                 "imprints": {
                     "properties": {
                         "date": {
-                            "copy_to": "bookautocomplete",
                             "format": "yyyy||yyyy-MM||yyyy-MM-dd",
                             "type": "date"
                         },
@@ -498,7 +497,6 @@
                             "type": "string"
                         },
                         "publisher": {
-                            "copy_to": "bookautocomplete",
                             "type": "string"
                         }
                     },
@@ -522,7 +520,6 @@
                             "type": "string"
                         },
                         "value": {
-                            "copy_to": "bookautocomplete",
                             "fields": {
                                 "raw": {
                                     "analyzer": "lowercase_analyzer",
