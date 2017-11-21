@@ -26,12 +26,11 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 
-from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.bibtex_booktitle import generate_booktitle, traverse
 
 
 def test_generate_booktitle_no_publication_info():
-    no_publication_info = InspireRecord({})
+    no_publication_info = {}
 
     expected = ''
     result = generate_booktitle(no_publication_info)
@@ -40,9 +39,9 @@ def test_generate_booktitle_no_publication_info():
 
 
 def test_generate_booktitle_publication_info_an_empty_list():
-    publication_info_an_empty_list = InspireRecord({
+    publication_info_an_empty_list = {
         'publication_info': []
-    })
+    }
 
     expected = ''
     result = generate_booktitle(publication_info_an_empty_list)
@@ -51,11 +50,11 @@ def test_generate_booktitle_publication_info_an_empty_list():
 
 
 def test_generate_booktitle_no_reportnumber():
-    no_reportnumber = InspireRecord({
+    no_reportnumber = {
         'publication_info': [
             {}
         ]
-    })
+    }
 
     expected = ''
     result = generate_booktitle(no_reportnumber)
@@ -64,13 +63,13 @@ def test_generate_booktitle_no_reportnumber():
 
 
 def test_generate_booktitle_empty_reportnumber():
-    empty_reportnumber = InspireRecord({
+    empty_reportnumber = {
         'publication_info': [
             {
                 'reportnumber': ''
             }
         ]
-    })
+    }
 
     expected = ''
     result = generate_booktitle(empty_reportnumber)
@@ -80,14 +79,14 @@ def test_generate_booktitle_empty_reportnumber():
 
 @pytest.mark.xfail(reason='KeyError when looking for acronym')
 def test_generate_booktitle_reportnumber_and_conf_acronym():
-    recordnumber_and_conf_acronym = InspireRecord({
+    recordnumber_and_conf_acronym = {
         'publication_info': [
             {
                 'reportnumber': 'CERN-Proceedings-2010-001',
                 'conf_acronym': 'FOO'  # No value in 773__o.
             }
         ]
-    })
+    }
 
     expected = 'CERN-Proceedings-2010-0001: FOO'
     result = generate_booktitle(recordnumber_and_conf_acronym)
@@ -97,13 +96,13 @@ def test_generate_booktitle_reportnumber_and_conf_acronym():
 
 @pytest.mark.xfail(reason='KeyError when looking for acronym')
 def test_generate_booktitle_reportnumber_but_no_conf_acronym():
-    no_conf_acronym = InspireRecord({
+    no_conf_acronym = {
         'publication_info': [
             {
                 'reportnumber': 'CERN-Proceedings-2014-001'
             }
         ]
-    })
+    }
 
     expected = ''
     result = generate_booktitle(no_conf_acronym)
@@ -112,13 +111,13 @@ def test_generate_booktitle_reportnumber_but_no_conf_acronym():
 
 
 def test_generate_booktitle_from_one_pubinfo_freetext():
-    one_pubinfo_freetext = InspireRecord({
+    one_pubinfo_freetext = {
         'publication_info': [
             {
                 'pubinfo_freetext': 'Adv. Theor. Math. Phys. 2 (1998) 51-59'
             }
         ]
-    })
+    }
 
     expected = 'Adv. Theor. Math. Phys. 2 (1998) 51-59'
     result = generate_booktitle(one_pubinfo_freetext)
@@ -127,7 +126,7 @@ def test_generate_booktitle_from_one_pubinfo_freetext():
 
 
 def test_generate_booktitle_from_two_pubinfo_freetext():
-    two_pubinfo_freetext = InspireRecord({
+    two_pubinfo_freetext = {
         'publication_info': [
             {
                 'pubinfo_freetext': 'Prog. Theor. Phys. 49 (1973) 652-657'
@@ -138,7 +137,7 @@ def test_generate_booktitle_from_two_pubinfo_freetext():
                                      ', Vol. 1*, 218-223.')
             }
         ]
-    })
+    }
 
     expected = ('Prog. Theor. Phys. 49 (1973) 652-657, Also in *Lichtenberg, D. B. (Ed.)'
                 ', Rosen, S. P. (Ed.): Developments In The Quark Theory Of Hadrons, Vol.'

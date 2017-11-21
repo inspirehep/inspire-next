@@ -23,14 +23,13 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.authors.views import convert_for_form, get_inspire_url
-from inspirehep.modules.records.api import InspireRecord
 
 
 def test_convert_for_form_without_name_urls_fc_positions_advisors_and_ids():
-    without_name_urls_fc_positions_advisors_and_ids = InspireRecord({})
+    without_name_urls_fc_positions_advisors_and_ids = {}
     convert_for_form(without_name_urls_fc_positions_advisors_and_ids)
 
-    assert InspireRecord({}) == without_name_urls_fc_positions_advisors_and_ids
+    assert {} == without_name_urls_fc_positions_advisors_and_ids
 
 
 def test_convert_for_form_public_emails():
@@ -92,7 +91,7 @@ def test_convert_for_form_advisors():
 
 
 def test_get_inspire_url_with_bai():
-    with_bai = InspireRecord({'bai': 'J.R.Ellis.1'})
+    with_bai = {'bai': 'J.R.Ellis.1'}
 
     expected = 'http://inspirehep.net/author/profile/J.R.Ellis.1'
     result = get_inspire_url(with_bai)
@@ -101,7 +100,7 @@ def test_get_inspire_url_with_bai():
 
 
 def test_get_inspire_url_with_control_number():
-    with_recid = InspireRecord({'control_number': 1010819})
+    with_recid = {'control_number': 1010819}
 
     expected = 'http://inspirehep.net/record/1010819'
     result = get_inspire_url(with_recid)
@@ -110,7 +109,7 @@ def test_get_inspire_url_with_control_number():
 
 
 def test_get_inspire_url_without_recid_or_bai():
-    without_recid_or_bai = InspireRecord({})
+    without_recid_or_bai = {}
 
     expected = 'http://inspirehep.net/hepnames'
     result = get_inspire_url(without_recid_or_bai)

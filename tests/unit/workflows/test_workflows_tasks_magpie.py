@@ -26,7 +26,6 @@ import requests
 from flask import current_app
 from mock import patch
 
-from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.tasks.magpie import (
     get_magpie_url,
     prepare_magpie_payload,
@@ -57,7 +56,7 @@ def test_get_magpie_url_returns_none_when_not_in_configuration():
 
 
 def test_prepare_magpie_payload():
-    record = InspireRecord({
+    record = {
         'titles': [
             {
                 'title': 'foo',
@@ -71,7 +70,7 @@ def test_prepare_magpie_payload():
                 'value': 'baz',
             },
         ]
-    })
+    }
 
     expected = {
         'text': 'foo. bar. baz',

@@ -26,7 +26,6 @@ import requests
 from flask import current_app
 from mock import patch
 
-from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.tasks.beard import (
     get_beard_url,
     prepare_payload,
@@ -54,7 +53,7 @@ def test_get_beard_url_returns_none_when_not_in_configuration():
 
 
 def test_prepare_payload():
-    record = InspireRecord({
+    record = {
         'titles': [
             {
                 'title': 'Effects of top compositeness',
@@ -73,7 +72,7 @@ def test_prepare_payload():
                 'value': 'We investigate the effects of (...)',
             },
         ],
-    })
+    }
 
     expected = {
         'title': 'Effects of top compositeness',

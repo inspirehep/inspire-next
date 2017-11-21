@@ -22,16 +22,15 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
 
 
 def test_get_author_from_authors_a_list_with_one_element():
-    authors_a_list_with_one_element = InspireRecord({
+    authors_a_list_with_one_element = {
         'authors': [
             {'full_name': 'Glashow, S.L.'}
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         authors_a_list_with_one_element, 'cv_latex_html', ',')
 
@@ -42,12 +41,12 @@ def test_get_author_from_authors_a_list_with_one_element():
 
 
 def test_get_author_from_authors_a_list_with_two_elements():
-    authors_a_list_with_two_elements = InspireRecord({
+    authors_a_list_with_two_elements = {
         'authors': [
             {'full_name': 'Englert, F.'},
             {'full_name': 'Brout, R.'}
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         authors_a_list_with_two_elements, 'cv_latex_html', ',')
 
@@ -58,11 +57,11 @@ def test_get_author_from_authors_a_list_with_two_elements():
 
 
 def test_get_author_from_authors_one_author_with_an_empty_list_of_full_names():
-    one_author_with_an_empty_list_of_full_names = InspireRecord({
+    one_author_with_an_empty_list_of_full_names = {
         'authors': [
             {'full_name': []}
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         one_author_with_an_empty_list_of_full_names, 'cv_latex_html', ',')
 
@@ -73,11 +72,11 @@ def test_get_author_from_authors_one_author_with_an_empty_list_of_full_names():
 
 
 def test_get_author_from_authors_one_author_with_a_list_of_one_full_name():
-    one_author_with_a_list_of_one_full_name = InspireRecord({
+    one_author_with_a_list_of_one_full_name = {
         'authors': [
             {'full_name': ['Glashow, S.L.']}
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         one_author_with_a_list_of_one_full_name, 'cv_latex_html', ',')
 
@@ -88,7 +87,7 @@ def test_get_author_from_authors_one_author_with_a_list_of_one_full_name():
 
 
 def test_get_author_from_authors_one_author_with_a_list_of_two_full_names():
-    one_author_with_a_list_of_two_full_names = InspireRecord({
+    one_author_with_a_list_of_two_full_names = {
         'authors': [
             {
                 'full_name': [
@@ -97,7 +96,7 @@ def test_get_author_from_authors_one_author_with_a_list_of_two_full_names():
                 ]
             }
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         one_author_with_a_list_of_two_full_names, 'cv_latex_html', ',')
 
@@ -108,7 +107,7 @@ def test_get_author_from_authors_one_author_with_a_list_of_two_full_names():
 
 
 def test_get_author_from_corporate_author_an_empty_list():
-    corporate_author_an_empty_list = InspireRecord({'corporate_author': []})
+    corporate_author_an_empty_list = {'corporate_author': []}
     cv_latex_html_text = Cv_latex_html_text(
         corporate_author_an_empty_list, 'cv_latex_html_text', ',')
 
@@ -119,11 +118,11 @@ def test_get_author_from_corporate_author_an_empty_list():
 
 
 def test_get_author_from_corporate_author_a_list_with_one_element():
-    corporate_author_a_list_of_one_element = InspireRecord({
+    corporate_author_a_list_of_one_element = {
         'corporate_author': [
             'CMS Collaboration'
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         corporate_author_a_list_of_one_element, 'cv_latex_html_text', ',')
 
@@ -134,12 +133,12 @@ def test_get_author_from_corporate_author_a_list_with_one_element():
 
 
 def test_get_author_from_corporate_author_a_list_with_two_elements():
-    corporate_author_a_list_of_two_elements = InspireRecord({
+    corporate_author_a_list_of_two_elements = {
         'corporate_author': [
             'CMS Collaboration',
             'The ATLAS Collaboration'
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         corporate_author_a_list_of_two_elements, 'cv_latex_html_text', ',')
 
@@ -150,7 +149,7 @@ def test_get_author_from_corporate_author_a_list_with_two_elements():
 
 
 def test_get_title_returns_empty_string_when_no_titles():
-    no_titles = InspireRecord({})
+    no_titles = {}
     cv_latex_html_text = Cv_latex_html_text(
         no_titles, 'cv_latex_html_text', ',')
 
@@ -161,9 +160,9 @@ def test_get_title_returns_empty_string_when_no_titles():
 
 
 def test_get_title_returns_empty_string_when_titles_is_an_empty_list():
-    titles_an_empty_list = InspireRecord({
+    titles_an_empty_list = {
         'titles': []
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         titles_an_empty_list, 'cv_latex_html_text', ',')
 
@@ -174,11 +173,11 @@ def test_get_title_returns_empty_string_when_titles_is_an_empty_list():
 
 
 def test_get_title_when_titles_is_a_list_of_one_element_without_subtitles():
-    titles_a_list_of_one_element_without_subtitles = InspireRecord({
+    titles_a_list_of_one_element_without_subtitles = {
         'titles': [
             {'title': 'foo'}
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         titles_a_list_of_one_element_without_subtitles, 'cv_latex_html_text', ',')
 
@@ -189,12 +188,12 @@ def test_get_title_when_titles_is_a_list_of_one_element_without_subtitles():
 
 
 def test_get_titles_when_titles_is_a_list_of_two_elements_without_subtitles():
-    titles_a_list_of_two_elements_without_subtitles = InspireRecord({
+    titles_a_list_of_two_elements_without_subtitles = {
         'titles': [
             {'title': 'foo'},
             {'title': 'bar'}
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         titles_a_list_of_two_elements_without_subtitles, 'cv_latex_html_text', ',')
 
@@ -205,14 +204,14 @@ def test_get_titles_when_titles_is_a_list_of_two_elements_without_subtitles():
 
 
 def test_get_title_when_titles_is_a_list_of_one_element_with_subtitle():
-    titles_a_list_of_one_element_with_subtitle = InspireRecord({
+    titles_a_list_of_one_element_with_subtitle = {
         'titles': [
             {
                 'title': 'foo',
                 'subtitle': 'bar'
             }
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         titles_a_list_of_one_element_with_subtitle, 'cv_latex_html_text', ',')
 
@@ -223,7 +222,7 @@ def test_get_title_when_titles_is_a_list_of_one_element_with_subtitle():
 
 
 def test_get_title_when_titles_is_a_list_of_two_elements_with_subtitles():
-    titles_a_list_of_two_elements_with_subtitles = InspireRecord({
+    titles_a_list_of_two_elements_with_subtitles = {
         'titles': [
             {
                 'title': 'foo',
@@ -234,7 +233,7 @@ def test_get_title_when_titles_is_a_list_of_two_elements_with_subtitles():
                 'subtitle': 'quux'
             }
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         titles_a_list_of_two_elements_with_subtitles, 'cv_latex_html_text', ',')
 
@@ -245,11 +244,11 @@ def test_get_title_when_titles_is_a_list_of_two_elements_with_subtitles():
 
 
 def test_get_title_when_titles_is_not_a_list_without_subtitles():
-    titles_not_a_list_without_subtitles = InspireRecord({
+    titles_not_a_list_without_subtitles = {
         'titles': {
             'title': 'foo'
         }
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         titles_not_a_list_without_subtitles, 'cv_latex_html_text', ',')
 
@@ -260,12 +259,12 @@ def test_get_title_when_titles_is_not_a_list_without_subtitles():
 
 
 def test_get_title_when_titles_is_not_a_list_with_subtitle():
-    titles_not_a_list_with_subtitle = InspireRecord({
+    titles_not_a_list_with_subtitle = {
         'titles': {
             'title': 'foo',
             'subtitle': 'bar'
         }
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         titles_not_a_list_with_subtitle, 'cv_latex_html_text', ',')
 
@@ -276,11 +275,11 @@ def test_get_title_when_titles_is_not_a_list_with_subtitle():
 
 
 def test_get_title_capitalizes_when_title_is_uppercase():
-    title_is_uppercase = InspireRecord({
+    title_is_uppercase = {
         'titles': [
             {'title': 'FOO'}
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         title_is_uppercase, 'cv_latex_html_text', ',')
 
@@ -291,11 +290,11 @@ def test_get_title_capitalizes_when_title_is_uppercase():
 
 
 def test_get_title_capitalizes_when_title_contains_uppercase_the():
-    title_contains_uppercase_the = InspireRecord({
+    title_contains_uppercase_the = {
         'titles': [
             {'title': 'foo THE bar'}
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         title_contains_uppercase_the, 'cv_latex_html_text', ',')
 
@@ -306,7 +305,7 @@ def test_get_title_capitalizes_when_title_contains_uppercase_the():
 
 
 def test_get_publi_info_no_publication_info():
-    no_publication_info = InspireRecord({})
+    no_publication_info = {}
     cv_latex_html_text = Cv_latex_html_text(
         no_publication_info, 'cv_latex_html_text', ',')
 
@@ -314,7 +313,7 @@ def test_get_publi_info_no_publication_info():
 
 
 def test_get_publi_info_from_publication_info_an_empty_list():
-    publication_info_an_empty_list = InspireRecord({'publication_info': []})
+    publication_info_an_empty_list = {'publication_info': []}
     cv_latex_html_text = Cv_latex_html_text(
         publication_info_an_empty_list, 'cv_latex_html_text', ',')
 
@@ -325,11 +324,11 @@ def test_get_publi_info_from_publication_info_an_empty_list():
 
 
 def test_get_publi_info_from_publication_info_with_journal_title():
-    journal_title = InspireRecord({
+    journal_title = {
         'publication_info': [
             {'journal_title': 'Nucl.Phys.'}
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         journal_title, 'cv_latex_html_text', ',')
 
@@ -340,14 +339,14 @@ def test_get_publi_info_from_publication_info_with_journal_title():
 
 
 def test_get_publi_info_from_publication_info_with_journal_volume():
-    journal_volume = InspireRecord({
+    journal_volume = {
         'publication_info': [
             {
                 'journal_title': 'eConf',
                 'journal_volume': 'C050318'
             }
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         journal_volume, 'cv_latex_html_text', ',')
 
@@ -358,14 +357,14 @@ def test_get_publi_info_from_publication_info_with_journal_volume():
 
 
 def test_get_publi_info_from_publication_info_with_journal_volume_with_letter():
-    journal_volume_with_letter = InspireRecord({
+    journal_volume_with_letter = {
         'publication_info': [
             {
                 'journal_title': 'Eur.Phys.J.',
                 'journal_volume': 'C73'
             }
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         journal_volume_with_letter, 'cv_latex_html_text', ',')
 
@@ -376,14 +375,14 @@ def test_get_publi_info_from_publication_info_with_journal_volume_with_letter():
 
 
 def test_get_publi_info_from_publication_info_with_year():
-    year_not_a_list = InspireRecord({
+    year_not_a_list = {
         'publication_info': [
             {
                 'journal_title': 'Phys.Lett.',
                 'year': '1999'
             }
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         year_not_a_list, 'cv_latex_html_text', ',')
 
@@ -394,14 +393,14 @@ def test_get_publi_info_from_publication_info_with_year():
 
 
 def test_get_publi_info_from_publication_info_with_journal_issue():
-    journal_issue = InspireRecord({
+    journal_issue = {
         'publication_info': [
             {
                 'journal_title': 'Class.Quant.Grav.',
                 'journal_issue': '10'
             }
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         journal_issue, 'cv_latex_html_text', ',')
 
@@ -412,14 +411,14 @@ def test_get_publi_info_from_publication_info_with_journal_issue():
 
 
 def test_get_publi_info_from_publication_info_with_page_start():
-    page_start = InspireRecord({
+    page_start = {
         'publication_info': [
             {
                 'journal_title': 'JHEP',
                 'page_start': '190'
             }
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         page_start, 'cv_latex_html_text', ',')
 
@@ -430,11 +429,11 @@ def test_get_publi_info_from_publication_info_with_page_start():
 
 
 def test_get_publi_info_from_pubinfo_freetext():
-    pubinfo_freetext = InspireRecord({
+    pubinfo_freetext = {
         'publication_info': [
             {'pubinfo_freetext': 'Phys. Lett. 12 (1964) 132-133'}
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         pubinfo_freetext, 'cv_latex_html_text', ',')
 
@@ -445,7 +444,7 @@ def test_get_publi_info_from_pubinfo_freetext():
 
 
 def test_get_publi_info_from_publication_info_a_list_of_two_elements():
-    publication_info_a_list_of_two_elements = InspireRecord({
+    publication_info_a_list_of_two_elements = {
         'publication_info': [
             {
                 'journal_title': 'Int.J.Theor.Phys.',
@@ -462,7 +461,7 @@ def test_get_publi_info_from_publication_info_a_list_of_two_elements():
                 'year': 1998
             }
         ]
-    })
+    }
     cv_latex_html_text = Cv_latex_html_text(
         publication_info_a_list_of_two_elements, 'cv_latex_html_text', ',')
 
