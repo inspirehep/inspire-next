@@ -55,6 +55,7 @@ require.config({
     'jquery': 'node_modules/jquery/jquery',
     'jquery-caret': 'node_modules/jquery-plugin/dist/jquery.caret-1.5.0',
     'jquery.ui': 'node_modules/jquery-ui/jquery-ui',
+    'mathjax': 'node_modules/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML',
     'microplugin': 'node_modules/microplugin/src/microplugin',
     'moment': 'node_modules/moment/moment',
     'ngclipboard': 'node_modules/ngclipboard/src/ngclipboard',
@@ -138,6 +139,7 @@ require.config({
         'angular-xeditable',
         'angular-hotkeys',
         'angular-sanitize',
+        'mathjax',
         'ngclipboard'
       ],
     },
