@@ -164,6 +164,7 @@ call `register_signals()` on our own.
 
 RECORD_EDITOR_INDEX_TEMPLATE = 'inspirehep_theme/invenio_record_editor/index.html'
 RECORD_EDITOR_PREVIEW_TEMPLATE_FUNCTION = get_detailed_template_from_record
+RECORD_EDITOR_FILE_UPLOAD_FOLDER = 'inspirehep/modules/editor/temp'
 
 # Path to where journal kb file is stored from `inspirehep.modules.refextract.tasks.create_journal_kb_file`
 # On production, if you enable celery beat change this path to point to a shared space.
