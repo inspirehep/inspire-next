@@ -27,7 +27,6 @@ import re
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
 from inspirehep.utils import bibtex_booktitle
-from inspirehep.utils.record import is_submitted_but_not_published
 from inspirehep.utils.record_getter import get_es_record
 
 from .export import MissingRequiredFieldError, Export
@@ -510,23 +509,18 @@ class Bibtex(Export):
                              'artid' in val or
                              'year' in val):
                             if 'journal_title' in val:
-                                if is_submitted_but_not_published(self.record):
-                                    note += 'Submitted to: ' +\
-                                            re.sub(r'\.([A-Z])', r'. \1',
-                                                   val['journal_title'])
-                                else:
-                                    note += re.sub(r'\.([A-Z])', r'. \1',
-                                                   val['journal_title'])
-                                    if 'journal_volume' in val:
-                                        if note.find("JHEP") > -1:
-                                            note += re.sub(r'\d\d(\d\d)', r'\1',
-                                                           val['journal_volume'])
-                                        else:
-                                            note += val['journal_volume']
-                                    if 'journal_issue' in val:
-                                        note += ',no.' + val['journal_issue']
-                                    if 'page_start' in val or 'artid' in val:
-                                        note += ',' + (val.get('page_start') or val['artid'])
+                                note += re.sub(r'\.([A-Z])', r'. \1',
+                                               val['journal_title'])
+                                if 'journal_volume' in val:
+                                    if note.find("JHEP") > -1:
+                                        note += re.sub(r'\d\d(\d\d)', r'\1',
+                                                       val['journal_volume'])
+                                    else:
+                                        note += val['journal_volume']
+                                if 'journal_issue' in val:
+                                    note += ',no.' + val['journal_issue']
+                                if 'page_start' in val or 'artid' in val:
+                                    note += ',' + (val.get('page_start') or val['artid'])
                             if 'year' in val:
                                 note += "(" + str(val['year']) + ")"
                             elif 'preprint_date' in self.record:

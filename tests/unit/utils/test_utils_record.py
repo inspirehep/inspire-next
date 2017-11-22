@@ -29,7 +29,6 @@ from inspirehep.utils.record import (
     get_arxiv_id,
     get_subtitle,
     get_title,
-    is_submitted_but_not_published,
 )
 
 
@@ -173,50 +172,3 @@ def test_get_title_returns_first_title():
     result = get_title(record)
 
     assert expected == result
-
-
-def test_is_submitted_but_not_published_returns_false_if_record_has_dois():
-    record = {
-        'dois': [
-            {'value': 'doi'},
-        ],
-    }
-
-    assert not is_submitted_but_not_published(record)
-
-
-def test_is_submitted_but_not_published_returns_true_if_record_has_at_least_one_journal_title():
-    record = {
-        'publication_info': [
-            {'journal_title': 'journal title'},
-        ],
-    }
-
-    assert is_submitted_but_not_published(record)
-
-
-def test_is_submitted_but_not_published_returns_false_if_record_is_from_econf_and_has_journal_volume():
-    record = {
-        'publication_info': [
-            {
-                'journal_title': 'eConf',
-                'journal_volume': 'journal volume',
-            },
-        ],
-    }
-
-    assert not is_submitted_but_not_published(record)
-
-
-def test_is_submitted_but_not_published_returns_false_if_record_has_a_complete_publication_info():
-    record = {
-        'publication_info': [
-            {
-                'journal_title': 'journal title',
-                'journal_volume': 'journal volume',
-                'page_start': 'page start',
-            },
-        ],
-    }
-
-    assert not is_submitted_but_not_published(record)
