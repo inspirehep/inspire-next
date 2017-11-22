@@ -71,7 +71,7 @@
         {% endif %}
       {% endif %}
     {% endfor %}
-    {% if record.authors[0] %}
+    {% if record.authors is defined %}
      ({{ render_author_names(record, record.authors[0], show_affiliation = True) }} <i>et al.</i>)
     {% endif %}
   {% endif %}
