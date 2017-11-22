@@ -136,6 +136,16 @@
 
 {% block additional_javascript %}
   {{ mathjax() | safe }}
+  <script type="text/javascript">
+    require([
+      "jquery",
+      ], function ($) {
+        $(document).ready(function () {
+          MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
+        })
+      }
+    );
+  </script>
 <script type="text/javascript">
     require(
       [
