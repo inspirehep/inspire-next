@@ -18,6 +18,54 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
+.modal-header {
+    background-color: $dark-blue;
+    color: white;
+
+    .close {
+        color: white;
+        opacity: 1;
+    }
+}
+
+.modal-dialog {
+    width: 60%;
+    margin: 0px;
+    position: fixed;
+    top: 30%;
+    left: 50%;
+}
+
+.modal.fade .modal-dialog {
+    -webkit-transform: translate(-50%, -100%);
+    -ms-transform: translate(-50%, -100%);
+    -o-transform: translate(-50%, -100%);
+    transform: translate(-50%, -100%);
+    -webkit-transition: -webkit-transform 0.3s ease-out;
+    -moz-transition: -moz-transform 0.3s ease-out;
+    -o-transition: -o-transform 0.3s ease-out;
+    transition: transform 0.3s ease-out;
+}
+
+.modal.in .modal-dialog {
+    -webkit-transform: translate(-50%, -30%);
+    -ms-transform: translate(-50%, -30%);
+    -o-transform: translate(-50%, -30%);
+    transform: translate(-50%, -30%);
+}
+
+.modal-footer {
+    padding: 8px 15px;
+}
+
+.modal-content {
+    overflow: auto;
+}
+
+.modal-footer button {
+    padding-left: 20px;
+    padding-right: 20px;
+}
 
 #feedbackModalError {
     margin-bottom: 8px;
@@ -34,6 +82,7 @@
 
 #feedbackModalForm .control-label {
     font-weight: normal;
+    color: $dark-blue;
 }
 
 #feedbackModalForm .control-label.required:after {
