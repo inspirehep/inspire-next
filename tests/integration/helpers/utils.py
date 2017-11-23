@@ -22,6 +22,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+from contextlib import contextmanager
+
+import requests_mock
+
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier, RecordIdentifier
 
@@ -43,3 +48,19 @@ def _delete_record(pid_type, pid_value):
         object_uuid == PersistentIdentifier.object_uuid).delete()
 
     db.session.commit()
+
+
+@contextmanager
+def mock_addresses(addresses, mocked_local=False):
+    with requests_mock.Mocker() as requests_mocker:
+        if not mocked_local:
+            requests_mocker.register_uri(
+                requests_mock.ANY,
+                re.compile('.*(indexer|localhost).*'),
+                real_http=True,
+            )
+
+        for address in addresses:
+            requests_mocker.register_uri(**address)
+
+        yield

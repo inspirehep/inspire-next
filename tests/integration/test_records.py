@@ -25,7 +25,6 @@ from __future__ import absolute_import, division, print_function
 import copy
 import pytest
 import StringIO
-import requests_mock
 from mock import patch, mock_open
 
 from dojson.contrib.marc21.utils import create_record
@@ -44,7 +43,7 @@ from inspirehep.modules.records.tasks import merge_merged_records, update_refs
 from inspirehep.modules.migrator.tasks import record_insert_or_replace
 from inspirehep.utils.record_getter import get_db_record, get_es_records
 
-from utils import _delete_record
+from utils import _delete_record, mock_addresses
 
 
 def _delete_merged_records(pid_type, merged_pid_value, deleted_pid_value, merged_uuid, deleted_uuid):
@@ -433,28 +432,31 @@ def test_update_handles_documents(app):
         }],
     }
 
+    expected_file_content = 'dummy body'
+    expected_key = '1_Fulltext.pdf'
+
     record = InspireRecord.create(record_json)
     assert not len(record.files)
 
-    with requests_mock.Mocker() as requests_mocker:
-        expected_file_content = 'dummy body'
-        requests_mocker.register_uri(
-            'GET', 'http://www.mdpi.com/2218-1997/3/1/24/pdf',
-            body=StringIO.StringIO(expected_file_content),
-        )
+    record.clear()
+    updated_json = record_json
+    updated_json.update(copy.deepcopy(update_to_record))
 
-        record.clear()
-        updated_json = record_json
-        updated_json.update(copy.deepcopy(update_to_record))
+    mocked_addresses = [
+        {
+            'method': 'GET',
+            'url': 'http://www.mdpi.com/2218-1997/3/1/24/pdf',
+            'body': StringIO.StringIO(expected_file_content),
+        }
+    ]
+    with mock_addresses(mocked_addresses):
         record.update(updated_json)
 
-        expected_key = '1_Fulltext.pdf'
-
-        assert expected_key in record.files.keys
-        assert len(record.files) == len(update_to_record['documents'])
-        assert len(record['documents']) == len(update_to_record['documents'])
-        file_content = open(record.files[expected_key].obj.file.uri).read()
-        assert file_content == expected_file_content
+    assert expected_key in record.files.keys
+    assert len(record.files) == len(update_to_record['documents'])
+    assert len(record['documents']) == len(update_to_record['documents'])
+    file_content = open(record.files[expected_key].obj.file.uri).read()
+    assert file_content == expected_file_content
 
 
 @patch(
@@ -513,22 +515,25 @@ def test_update_handles_figures(app):
         }],
     }
 
+    expected_file_content = 'dummy body'
+    expected_key = '1_graph.png'
+
     record = InspireRecord.create(record_json)
     assert not len(record.files)
 
-    with requests_mock.Mocker() as requests_mocker:
-        expected_file_content = 'dummy body'
-        requests_mocker.register_uri(
-            'GET', 'http://www.mdpi.com/2218-1997/3/1/24/png',
-            body=StringIO.StringIO(expected_file_content),
-        )
+    record.clear()
+    updated_json = record_json
+    updated_json.update(copy.deepcopy(update_to_record))
 
-        record.clear()
-        updated_json = record_json
-        updated_json.update(copy.deepcopy(update_to_record))
+    mocked_addresses = [
+        {
+            'method': 'GET',
+            'url': 'http://www.mdpi.com/2218-1997/3/1/24/png',
+            'body': StringIO.StringIO(expected_file_content),
+        }
+    ]
+    with mock_addresses(mocked_addresses):
         record.update(updated_json)
-
-        expected_key = '1_graph.png'
 
     assert expected_key in record.files.keys
     assert len(record.files) == len(update_to_record['figures'])
@@ -587,15 +592,17 @@ def test_update_with_only_new(app):
     assert file_content == doc1_expected_file_content
 
     doc1_old_api_url = record['documents'][0]['url']
+    record.clear()
+    record_json.update(copy.deepcopy(update_to_record))
 
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            'GET', 'http://www.mdpi.com/2218-1997/3/1/24/pdf',
-            body=StringIO.StringIO(doc2_expected_file_content),
-        )
-
-        record.clear()
-        record_json.update(copy.deepcopy(update_to_record))
+    mocked_addresses = [
+        {
+            'method': 'GET',
+            'url': 'http://www.mdpi.com/2218-1997/3/1/24/pdf',
+            'body': StringIO.StringIO(doc2_expected_file_content),
+        }
+    ]
+    with mock_addresses(mocked_addresses):
         record.update(record_json, only_new=True)
 
     assert len(record['documents']) == len(update_to_record['documents'])
@@ -832,3 +839,125 @@ def test_create_with_multiple_source_records(app):
         doc['description'] for doc in record3['documents']
     ]
     assert current_descs == expected_descs
+
+
+def test_create_with_records_skip_files_conf_does_not_add_documents_or_figures(app):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],
+        'figures': [{
+            'key': 'graph.png',
+            'url': 'http://www.mdpi.com/2218-1997/3/1/24/png',
+        }],
+        'documents': [{
+            'key': 'arXiv:1710.01187.pdf',
+            'url': '/afs/cern.ch/project/inspire/PROD/var/data/files/g151/3037619/content.pdf;1',
+        }]  # record/1628455/export/xme -- with some modification
+    }
+
+    with patch.dict(app.config, {'RECORDS_SKIP_FILES': True}):
+        record = InspireRecord.create(record_json)
+
+    assert len(record.files) == 0
+    assert record['documents'] == record_json['documents']
+    assert record['figures'] == record_json['figures']
+
+
+@patch(
+    'inspirehep.modules.records.utils.open',
+    mock_open(read_data='dummy body'),
+)
+def test_create_with_skip_files_param_overrides_records_skip_files_conf_and_does_add_documents_or_figures(app):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],
+        'figures': [{
+            'key': 'graph.png',
+            'url': 'http://www.mdpi.com/2218-1997/3/1/24/png',
+        }],
+        'documents': [{
+            'key': 'arXiv:1710.01187.pdf',
+            'url': '/afs/cern.ch/project/inspire/PROD/var/data/files/g151/3037619/content.pdf;1',
+        }]  # record/1628455/export/xme -- with some modification
+    }
+    expected_document_file_content = 'dummy body'
+    expected_document_key = '1_graph.png'
+
+    expected_figure_file_content = 'dummy body'
+    expected_figure_key = '1_graph.png'
+
+    mocked_addresses = [
+        {
+            'method': 'GET',
+            'url': 'http://www.mdpi.com/2218-1997/3/1/24/png',
+            'body': StringIO.StringIO(expected_figure_file_content),
+        }
+    ]
+    with patch.dict(app.config, {'RECORDS_SKIP_FILES': True}):
+        with mock_addresses(mocked_addresses):
+            record = InspireRecord.create(record_json, skip_files=False)
+
+    assert len(record.files) == 2
+
+    assert expected_document_key in record.files.keys
+    assert len(record['documents']) == len(record_json['documents'])
+    document_file_content = open(
+        record.files[expected_document_key].obj.file.uri
+    ).read()
+    assert document_file_content == expected_document_file_content
+
+    assert expected_figure_key in record.files.keys
+    assert len(record['figures']) == len(record_json['figures'])
+    figure_file_content = open(
+        record.files[expected_figure_key].obj.file.uri
+    ).read()
+    assert figure_file_content == expected_figure_file_content
+
+
+def test_create_with_skip_files_param_overrides_records_skip_files_conf_and_does_not_add_documents_or_figures(app):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': [
+            'Literature'
+        ],
+        'figures': [{
+            'key': 'graph.png',
+            'url': 'http://www.mdpi.com/2218-1997/3/1/24/png',
+        }],
+        'documents': [{
+            'key': 'arXiv:1710.01187.pdf',
+            'url': '/afs/cern.ch/project/inspire/PROD/var/data/files/g151/3037619/content.pdf;1',
+        }]  # record/1628455/export/xme -- with some modification
+    }
+
+    with patch.dict(app.config, {'RECORDS_SKIP_FILES': False}):
+        record = InspireRecord.create(record_json, skip_files=True)
+
+    assert len(record.files) == 0
+    assert record['documents'] == record_json['documents']
+    assert record['figures'] == record_json['figures']
