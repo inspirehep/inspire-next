@@ -27,13 +27,14 @@
 from __future__ import absolute_import, print_function, division
 
 from flask import Blueprint, request, jsonify, session
-from jsonschema import ValidationError
-from inspire_schemas.api import validate, load_schema
+import copy
+from inspire_schemas.api import load_schema
 from inspirehep.modules.multieditor import tasks
 from inspirehep.modules.migrator.tasks import chunker
 from . import actions
 from . import queries
 from .permissions import multieditor_use_permission
+
 
 blueprint = Blueprint(
     'inspirehep_multieditor',
@@ -57,7 +58,7 @@ def update():
         if all_selected:
             ids = filter(lambda x: x not in request.json['ids'], ids)
         else:
-            ids = request.json['ids']
+            ids = filter(lambda x: x in request.json['ids'], ids)
     else:
         return jsonify({'message': 'Please use the search before you apply actions'}), 400
     for i, chunk in enumerate(chunker(ids, 20)):
@@ -69,7 +70,6 @@ def update():
 @multieditor_use_permission.require(http_exception=403)
 def preview():
     """Preview the user actions in the first (page size) records."""
-    errors = []
     user_actions = request.json['userActions']
     query_string = request.json['queryString']
     page_size = int(request.json['pageSize'])
@@ -81,15 +81,10 @@ def preview():
         return jsonify({'message': 'Please use the search before you apply actions'}), 400
     schema = load_schema(index, resolved=True)
     records = queries.get_records_from_query(query_string, page_size, page_num, index)['json_records']
+    old_records = copy.deepcopy(records)
     actions.process_records_no_db(user_actions, records, schema)
-    for record in records:
-        try:
-            validate(record, schema)
-        except (ValidationError, Exception) as e:
-            errors.append(e.message)
-        else:
-            errors.append(None)
-    return jsonify({'json_records': records, 'errors': errors})
+    records_diff, errors = actions.diff_and_validate_records(old_records, records, schema)
+    return jsonify({'json_records': old_records, 'errors': errors, 'records_diff': records_diff})
 
 
 @blueprint.route("/search", methods=['GET'])

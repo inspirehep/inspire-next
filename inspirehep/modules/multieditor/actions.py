@@ -24,6 +24,10 @@ from __future__ import absolute_import, print_function, division
 
 import re
 
+from dictdiffer import diff
+from jsonschema import ValidationError
+from inspire_schemas.api import validate
+from inspire_utils.helpers import force_list
 
 class Action(object):
     def __init__(self, keys, value=None, match_type=None, value_to_check=None,
@@ -291,9 +295,41 @@ def get_actions(user_actions):
     return class_actions
 
 
-def process_records_no_db(user_actions, records, schema):  # fixme name convention
+def process_records_no_db(user_actions, records, schema):
     class_actions = get_actions(user_actions)
     for record in records:
         for class_action in class_actions:
             class_action.apply_action(record, schema)
     return records
+
+
+def diff_and_validate_records(old_records, new_records, schema):
+    records_diff = []
+    errors = []
+    for index, new_record in enumerate(new_records):
+        record_diff = []
+        for dif in diff(old_records[index], new_record):
+            dif = list(dif)
+            path = force_list(dif[1])  # in case the path is a string and not an array
+            if dif[0] == 'add':
+                if not path[0]:
+                    path = force_list(dif[2][0][0])
+                else:
+                    path.append(dif[2][0][0])
+                record_diff.append({'op': dif[0], 'path': path, 'value': dif[2][0][1]})
+            elif dif[0] == 'remove':
+                if not path[0]:
+                    path = force_list(dif[2][0][0])
+                else:
+                    path.append(dif[2][0][0])
+                record_diff.append({'op': dif[0], 'path': path})
+            elif dif[0] == 'change':
+                record_diff.append({'op': 'replace', 'path': path, 'value': dif[2][1]})
+        records_diff.append(record_diff)
+        try:
+            validate(new_record, schema)
+        except (ValidationError, Exception) as e:
+            errors.append(e.message)
+        else:
+            errors.append(None)
+    return records_diff, errors
