@@ -76,6 +76,11 @@ detailedjs = NpmBundle(
     "js/detailed_record_init.js",
     filters="requirejs",
     output="gen/detailed_record.%(version)s.js",
+    npm={
+        "d3": "~3.5.16",
+        "datatables.net": "~1.10.11",
+        "datatables.net-bs": "~1.10.11",
+    }
 )
 
 css = NpmBundle(
@@ -94,17 +99,6 @@ landing_page_css = NpmBundle(
     filters="node-scss, cleancss",
     output="gen/inspirehep.landing.%(version)s.css",
     depends="scss/landing_page.scss"
-)
-
-detailedjs = NpmBundle(
-    "js/detailed_record_init.js",
-    filters='requirejs',
-    output="gen/detailed_record.%(version)s.js",
-    npm={
-        "d3": "~3.5.16",
-        "datatables.net": "~1.10.11",
-        "datatables.net-bs": "~1.10.11",
-    }
 )
 
 holding_pen_css = NpmBundle(
