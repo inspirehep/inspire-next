@@ -28,11 +28,11 @@ from itertools import chain
 
 from elasticsearch import RequestError
 from flask import current_app
-from nameparser import HumanName
 
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_schemas.builders.literature import is_citeable
 from inspire_utils.helpers import force_list
+from inspire_utils.name import ParsedName
 from inspire_utils.record import get_value
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.utils.record_getter import get_es_records
@@ -74,7 +74,9 @@ def get_authors(record):
 
     for author in record.get('authors', []):
         affiliations = []
-        first_name, last_name = _split_full_name(author['full_name'])
+
+        parsed_name = ParsedName.loads(author['full_name'])
+        first_name, last_name = parsed_name.first, parsed_name.last
 
         for affiliation in author.get('affiliations', []):
             recid = get_recid_from_ref(affiliation.get('record'))
@@ -552,8 +554,3 @@ def _get_hal_id(record):
     for el in record.get('external_system_identifiers', []):
         if el.get('schema') == 'HAL':
             return el['value']
-
-
-def _split_full_name(full_name):
-    name = HumanName(full_name)
-    return name.first, name.last
