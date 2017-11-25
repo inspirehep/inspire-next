@@ -31,7 +31,7 @@ from inspirehep.bat.pages import (
 
 def test_literature_create_chapter_manually(login):
     input_data = {
-        'pdf-1': 'pdf_url_correct',
+        'pdf-1': 'http://example.com/a-pdf',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -59,7 +59,7 @@ def test_literature_create_chapter_manually(login):
 
 def test_literature_create_book_manually(login):
     input_data = {
-        'pdf-1': 'pdf_url_correct',
+        'pdf-1': 'http://example.com/a-pdf',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -90,7 +90,7 @@ def test_literature_create_book_manually(login):
 
 def test_literature_create_thesis_manually(login):
     input_data = {
-        'pdf-1': 'pdf_url_correct',
+        'pdf-1': 'http://example.com/a-pdf',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -121,7 +121,7 @@ def test_literature_create_thesis_manually(login):
 
 def test_literature_create_article_journal_manually(login):
     input_data = {
-        'pdf-1': 'pdf_url_correct',
+        'pdf-1': 'http://example.com/a-pdf',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',
@@ -152,7 +152,7 @@ def test_literature_create_article_journal_manually(login):
 
 def test_literature_create_article_journal_with_proceeding_manually(login):
     input_data = {
-        'pdf-1': 'pdf_url_correct',
+        'pdf-1': 'http://example.com/a-pdf',
         'title': 'My Title For Test',
         'language': 'ru',
         'title_translation': 'My Title was in Russian',

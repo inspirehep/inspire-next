@@ -1016,7 +1016,7 @@ def test_populate_affiliation_suggest_to_ref():
         '$schema': 'http://localhost:5000/schemas/records/institutions.json',
         'legacy_ICN': 'CERN',
         'self': {
-            '$ref': 'api/institutions/902725',
+            '$ref': 'http://localhost:5000/api/institutions/902725',
         },
     }
     assert validate(record['self'], subschema) is None
@@ -1029,7 +1029,7 @@ def test_populate_affiliation_suggest_to_ref():
         ],
         'output': 'CERN',
         'payload': {
-            '$ref': 'api/institutions/902725',
+            '$ref': 'http://localhost:5000/api/institutions/902725',
             'ICN': [],
             'institution_acronyms': [],
             'institution_names': [],

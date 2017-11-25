@@ -77,7 +77,7 @@ app.url_map.update()
 @app.route('/submit/literature/validate', endpoint='inspirehep_literature_suggest.validate', methods=['POST'])
 def mock_literature_validate():
     if 'url' in request.json:
-        if request.json['url'] == 'pdf_url_correct':
+        if request.json['url'] == 'http://example.com/a-pdf':
             return jsonify({
                 'messages': {
                     'url': {},

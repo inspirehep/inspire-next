@@ -130,7 +130,7 @@ def test_get_conference_record(replace_refs):
         'publication_info': [
             {
                 'conference_record': {
-                    '$ref': '/api/conferences/972464',
+                    '$ref': 'http://localhost:5000/api/conferences/972464',
                 },
             },
         ],
