@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 from functools import wraps
+import logging
 
 from flask import current_app
 from werkzeug.utils import import_string
@@ -32,6 +33,8 @@ from werkzeug.utils import import_string
 from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.modules.pidstore.utils import get_endpoint_from_pid_type
+
+LOGGER = logging.getLogger(__name__)
 
 
 class RecordGetterError(Exception):
@@ -56,7 +59,7 @@ def raise_record_getter_error_and_log(f):
         try:
             return f(*args, **kwargs)
         except Exception as e:
-            current_app.logger.exception("Can't load recid %s", args)
+            LOGGER.exception("Can't load recid %s", args)
             raise RecordGetterError(e.message, e)
 
     return wrapper
