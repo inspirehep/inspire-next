@@ -28,11 +28,11 @@ import mock
 
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.records.receivers import (
-    add_book_autocomplete,
     assign_phonetic_block,
     assign_uuid,
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
+    populate_bookautocomplete,
     populate_earliest_date,
     populate_inspire_document_type,
     populate_recid_from_ref,
@@ -41,7 +41,7 @@ from inspirehep.modules.records.receivers import (
 )
 
 
-def test_add_book_autocomplete_from_authors():
+def test_populate_bookautocomplete_from_authors():
     schema = load_schema('hep')
     schema_schema = schema['properties']['$schema']
     authors_schema = schema['properties']['authors']
@@ -65,7 +65,7 @@ def test_add_book_autocomplete_from_authors():
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    add_book_autocomplete(None, record)
+    populate_bookautocomplete(None, record)
 
     expected = {
         'input': [
@@ -84,7 +84,7 @@ def test_add_book_autocomplete_from_authors():
     assert expected == result
 
 
-def test_add_book_autocomplete_from_titles():
+def test_populate_bookautocomplete_from_titles():
     schema = load_schema('hep')
     schema_schema = schema['properties']['$schema']
     document_type_schema = schema['properties']['document_type']
@@ -108,7 +108,7 @@ def test_add_book_autocomplete_from_titles():
     assert validate(record['self'], self_schema) is None
     assert validate(record['titles'], titles_schema) is None
 
-    add_book_autocomplete(None, record)
+    populate_bookautocomplete(None, record)
 
     expected = {
         'input': [
@@ -127,15 +127,141 @@ def test_add_book_autocomplete_from_titles():
     assert expected == result
 
 
-def test_add_book_autocomplete_does_nothing_if_record_is_not_literature():
+def test_populate_bookautocomplete_from_imprints_dates():
+    schema = load_schema('hep')
+    schema_schema = schema['properties']['$schema']
+    document_type_schema = schema['properties']['document_type']
+    self_schema = schema['properties']['self']
+    imprints_schema = schema['properties']['imprints']
+
+    record = {
+        '$schema': 'http://localhost:5000/records/schemas/hep.json',
+        'document_type': [
+            'book',
+        ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/1519486',
+        },
+        'imprints': [
+            {'date': '2010-07-23'},
+        ],
+    }
+
+    assert validate(record['$schema'], schema_schema) is None
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['self'], self_schema) is None
+    assert validate(record['imprints'], imprints_schema) is None
+
+    populate_bookautocomplete(None, record)
+
+    expected = {
+        'input': [
+            '2010-07-23',
+        ],
+        'payload': {
+            'authors': [],
+            'id': 'http://localhost:5000/api/literature/1519486',
+            'title': [],
+        },
+    }
+    result = record['bookautocomplete']
+
+    assert expected == result
+
+
+def test_populate_bookautocomplete_from_imprints_publishers():
+    schema = load_schema('hep')
+    schema_schema = schema['properties']['$schema']
+    document_type_schema = schema['properties']['document_type']
+    self_schema = schema['properties']['self']
+    imprints_schema = schema['properties']['imprints']
+
+    record = {
+        '$schema': 'http://localhost:5000/records/schemas/hep.json',
+        'document_type': [
+            'book',
+        ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/1519486',
+        },
+        'imprints': [
+            {'publisher': 'Springer'},
+        ],
+    }
+
+    assert validate(record['$schema'], schema_schema) is None
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['self'], self_schema) is None
+    assert validate(record['imprints'], imprints_schema) is None
+
+    populate_bookautocomplete(None, record)
+
+    expected = {
+        'input': [
+            'Springer',
+        ],
+        'payload': {
+            'authors': [],
+            'id': 'http://localhost:5000/api/literature/1519486',
+            'title': [],
+        },
+    }
+    result = record['bookautocomplete']
+
+    assert expected == result
+
+
+def test_populate_bookautocomplete_from_isbns_values():
+    schema = load_schema('hep')
+    schema_schema = schema['properties']['$schema']
+    document_type_schema = schema['properties']['document_type']
+    self_schema = schema['properties']['self']
+    isbns_schema = schema['properties']['isbns']
+
+    record = {
+        '$schema': 'http://localhost:5000/records/schemas/hep.json',
+        'document_type': [
+            'book',
+        ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/1519486',
+        },
+        'isbns': [
+            {'value': '0201021153'},
+        ],
+    }
+
+    assert validate(record['$schema'], schema_schema) is None
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['self'], self_schema) is None
+    assert validate(record['isbns'], isbns_schema) is None
+
+    populate_bookautocomplete(None, record)
+
+    expected = {
+        'input': [
+            '0201021153',
+        ],
+        'payload': {
+            'authors': [],
+            'id': 'http://localhost:5000/api/literature/1519486',
+            'title': [],
+        },
+    }
+    result = record['bookautocomplete']
+
+    assert expected == result
+
+
+def test_populate_bookautocomplete_does_nothing_if_record_is_not_literature():
     record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
 
-    add_book_autocomplete(None, record)
+    populate_bookautocomplete(None, record)
 
     assert 'bookautocomplete' not in record
 
 
-def test_add_book_autocomplete_does_nothing_if_record_is_not_a_book():
+def test_populate_bookautocomplete_does_nothing_if_record_is_not_a_book():
     schema = load_schema('hep')
     schema_schema = schema['properties']['$schema']
     authors_schema = schema['properties']['authors']
@@ -159,7 +285,7 @@ def test_add_book_autocomplete_does_nothing_if_record_is_not_a_book():
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    add_book_autocomplete(None, record)
+    populate_bookautocomplete(None, record)
 
     assert 'bookautocomplete' not in record
 
