@@ -28,7 +28,9 @@ from invenio_records_rest.serializers.response import search_responsify
 
 from .impactgraph_serializer import ImpactGraphSerializer
 from .json_literature import LiteratureJSONBriefSerializer
-from .bibtex_serializer import BIBTEXSerializer
+from .pybtex_serializer_base import PybtexSerializerBase
+from .writers import BibtexWriter
+from .schemas.base import PybtexSchema
 from .latexeu_serializer import LATEXEUSerializer
 from .latexus_serializer import LATEXUSSerializer
 from .cvformatlatex_serializer import CVFORMATLATEXSerializer
@@ -47,7 +49,7 @@ json_literature_brief_v1_search = search_responsify(
 )
 
 
-bibtex_v1 = BIBTEXSerializer()
+bibtex_v1 = PybtexSerializerBase(PybtexSchema(), BibtexWriter())
 latexeu_v1 = LATEXEUSerializer()
 latexus_v1 = LATEXUSSerializer()
 cvformatlatex_v1 = CVFORMATLATEXSerializer()
