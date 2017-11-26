@@ -22,6 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
+from jsonschema import ValidationError
+
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.upload import set_schema
 
@@ -72,7 +75,11 @@ def test_set_schema_builds_a_full_url_for_the_schema():
 
     data = {'$schema': 'hep.json'}
     extra_data = {}
-    assert validate(data['$schema'], subschema) is None
+    # XXX: this violates the usual workflow invariant (valid in, valid out),
+    # but we can't really do otherwise, as inspire-dojson does not know the
+    # actual SERVER_NAME.
+    with pytest.raises(ValidationError):
+        validate(data['$schema'], subschema)
 
     obj = MockObj(data, extra_data)
     eng = MockEng()
