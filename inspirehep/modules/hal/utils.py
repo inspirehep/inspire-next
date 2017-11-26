@@ -387,6 +387,31 @@ def get_journal_volume(record):
     return get_value(record, 'publication_info.journal_volume[0]', default='')
 
 
+def get_keywords(record):
+    """Return the keywords assigned to a record.
+
+    Args:
+        record(InspireRecord): a record.
+
+    Returns:
+        list(str): the keywords assigned to the record.
+
+    Examples:
+        >>> record = {
+        ...     'keywords': [
+        ...         {
+        ...             'schema': 'INSPIRE',
+        ...             'value': 'CKM matrix',
+        ...         },
+        ...     ],
+        ... }
+        >>> get_keywords(record)
+        ['CKM matrix']
+
+    """
+    return get_value(record, 'keywords.value', default=[])
+
+
 def get_language(record):
     """Return the first language of a record.
 
