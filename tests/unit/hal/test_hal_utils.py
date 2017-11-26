@@ -40,6 +40,7 @@ from inspirehep.modules.hal.utils import (
     get_journal_issue,
     get_journal_title,
     get_journal_volume,
+    get_keywords,
     get_language,
     get_page_artid,
     get_peer_reviewed,
@@ -291,6 +292,26 @@ def test_get_journal_volume():
 
     expected = 'D94'
     result = get_journal_volume(record)
+
+    assert expected == result
+
+
+def test_get_keywords():
+    schema = load_schema('hep')
+    subschema = schema['properties']['keywords']
+
+    record = {
+        'keywords': [
+            {
+                'schema': 'INSPIRE',
+                'value': 'CKM matrix',
+            },
+        ],
+    }
+    assert validate(record['keywords'], subschema) is None
+
+    expected = ['CKM matrix']
+    result = get_keywords(record)
 
     assert expected == result
 

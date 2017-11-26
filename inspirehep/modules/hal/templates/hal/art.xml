@@ -51,6 +51,13 @@
     <language ident="{{ language }}"/>
   </langUsage>
   <textClass>
+    {% if keywords %}
+    <keywords scheme="author">
+      {% for keyword in keywords %}
+      <term xml:lang="en">{{ keyword }}</term>
+      {% endfor %}
+    </keywords>
+    {% endif %}
     {% for domain in domains %}
     <classCode scheme="halDomain" n="{{ domain }}"></classCode>
     {% endfor %}
