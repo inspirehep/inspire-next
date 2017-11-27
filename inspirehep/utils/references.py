@@ -22,12 +22,17 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+from contextlib import contextmanager
+
 from flask import current_app
 
 from inspire_schemas.api import ReferenceBuilder
 from inspire_utils.helpers import force_list
+
 from inspirehep.utils.jinja2 import render_template_to_string
 from inspirehep.utils.record_getter import get_es_records
+from inspirehep.utils.url import retrieve_uri
 
 
 def get_and_format_references(record):
@@ -114,7 +119,14 @@ def map_refextract_to_schema(extracted_references, source=None):
     return result
 
 
-def get_refextract_kbs_path():
-    """Get the path to the refextract kbs from the application config."""
+@contextmanager
+def local_refextract_kbs_path():
+    """Get the path to the temporary refextract kbs from the application config.
+    """
     journal_kb_path = current_app.config.get('REFEXTRACT_JOURNAL_KB_PATH')
-    return {'journals': journal_kb_path} if journal_kb_path else None
+    temp_journal_kb_path = retrieve_uri(journal_kb_path)
+    try:
+        yield {'journals': temp_journal_kb_path}
+    finally:
+        if os.path.exists(temp_journal_kb_path):
+            os.unlink(temp_journal_kb_path)

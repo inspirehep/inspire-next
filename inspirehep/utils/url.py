@@ -24,8 +24,12 @@
 
 from __future__ import absolute_import, division, print_function
 
+import io
+import tempfile
+
 import requests
 from flask import current_app
+from fs.opener import fsopen
 
 from inspirehep import __version__
 
@@ -65,3 +69,29 @@ def is_pdf_link(url):
     correct_magic_number = magic_number.startswith('%PDF')
 
     return correct_magic_number
+
+
+def copy_file(src_file, dst_file, buffer_size=io.DEFAULT_BUFFER_SIZE):
+    """Dummy buffered copy between open files."""
+    next_chunk = src_file.read(buffer_size)
+    while next_chunk:
+        dst_file.write(next_chunk)
+        next_chunk = src_file.read(buffer_size)
+
+
+def retrieve_uri(uri, outdir=None):
+    """Retrieves the given uri and stores it in a temporary file."""
+    local_file = tempfile.NamedTemporaryFile(
+        prefix='inspire',
+        dir=outdir,
+        delete=False,
+    )
+
+    try:
+        with fsopen(uri, mode='rb') as remote_file:
+            copy_file(remote_file, local_file)
+
+    finally:
+        local_file.close()
+
+    return local_file.name

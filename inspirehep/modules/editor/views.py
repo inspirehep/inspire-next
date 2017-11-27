@@ -38,7 +38,7 @@ from inspirehep.modules.tools import authorlist
 from inspirehep.modules.workflows.workflows.manual_merge import start_merger
 from inspirehep.utils.record_getter import get_db_record
 from inspirehep.utils.references import (
-    get_refextract_kbs_path,
+    local_refextract_kbs_path,
     map_refextract_to_schema,
 )
 from refextract import (
@@ -83,11 +83,12 @@ def authorlist_text():
 @editor_use_api_permission.require(http_exception=403)
 def refextract_text():
     """Run refextract on a piece of text."""
-    extracted_references = extract_references_from_string(
-        request.json['text'],
-        override_kbs_files=get_refextract_kbs_path(),
-        reference_format=u'{title},{volume},{page}'
-    )
+    with local_refextract_kbs_path() as kbs_path:
+        extracted_references = extract_references_from_string(
+            request.json['text'],
+            override_kbs_files=kbs_path,
+            reference_format=u'{title},{volume},{page}'
+        )
     references = map_refextract_to_schema(extracted_references)
 
     return jsonify(references)
@@ -97,11 +98,12 @@ def refextract_text():
 @editor_use_api_permission.require(http_exception=403)
 def refextract_url():
     """Run refextract on a URL."""
-    extracted_references = extract_references_from_url(
-        request.json['url'],
-        override_kbs_files=get_refextract_kbs_path(),
-        reference_format=u'{title},{volume},{page}'
-    )
+    with local_refextract_kbs_path() as kbs_path:
+        extracted_references = extract_references_from_url(
+            request.json['url'],
+            override_kbs_files=kbs_path,
+            reference_format=u'{title},{volume},{page}'
+        )
     references = map_refextract_to_schema(extracted_references)
 
     return jsonify(references)

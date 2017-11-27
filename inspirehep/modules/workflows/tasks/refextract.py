@@ -32,7 +32,7 @@ from inspire_schemas.utils import (
 )
 from inspire_utils.helpers import maybe_int
 from inspirehep.utils.references import (
-    get_refextract_kbs_path,
+    local_refextract_kbs_path,
     map_refextract_to_schema,
 )
 from refextract import (
@@ -65,10 +65,11 @@ def extract_journal_info(obj, eng):
 
     for publication_info in obj.data['publication_info']:
         try:
-            extracted_publication_info = extract_journal_reference(
-                publication_info['pubinfo_freetext'],
-                override_kbs_files=get_refextract_kbs_path(),
-            )
+            with local_refextract_kbs_path() as kbs_path:
+                extracted_publication_info = extract_journal_reference(
+                    publication_info['pubinfo_freetext'],
+                    override_kbs_files=kbs_path,
+                )
 
             if not extracted_publication_info:
                 continue
@@ -101,11 +102,12 @@ def extract_journal_info(obj, eng):
 @timeout(5 * 60)
 def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
     """Extract references from PDF and return in INSPIRE format."""
-    extracted_references = extract_references_from_file(
-        filepath,
-        override_kbs_files=get_refextract_kbs_path(),
-        reference_format=u'{title},{volume},{page}',
-    )
+    with local_refextract_kbs_path() as kbs_path:
+        extracted_references = extract_references_from_file(
+            filepath,
+            override_kbs_files=kbs_path,
+            reference_format=u'{title},{volume},{page}',
+        )
 
     return map_refextract_to_schema(extracted_references, source=source)
 
@@ -113,10 +115,11 @@ def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
 @timeout(5 * 60)
 def extract_references_from_text(text, source=None, custom_kbs_file=None):
     """Extract references from text and return in INSPIRE format."""
-    extracted_references = extract_references_from_string(
-        text,
-        override_kbs_files=get_refextract_kbs_path(),
-        reference_format=u'{title},{volume},{page}',
-    )
+    with local_refextract_kbs_path() as kbs_path:
+        extracted_references = extract_references_from_string(
+            text,
+            override_kbs_files=kbs_path,
+            reference_format=u'{title},{volume},{page}',
+        )
 
     return map_refextract_to_schema(extracted_references, source=source)

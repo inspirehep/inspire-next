@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 import codecs
 import re
+from fs.opener import fsopen
 
 from celery import shared_task
 from flask import current_app
@@ -73,19 +74,40 @@ def create_journal_kb_file():
             (r.json -> '_collections')::jsonb ? 'Journals'
     """)
 
-    with codecs.open(refextract_journal_kb_path, encoding='utf-8', mode='w') as fd:
+    encode = codecs.getencoder(encoding='utf-8')
+
+    with fsopen(refextract_journal_kb_path, mode='wb') as fd:
         for row in titles_query:
             normalized_short_title = _normalize(row['short_title'])
             if normalized_short_title:
-                fd.write(u'{}---{}\n'.format(normalized_short_title, row['short_title']))
+                encoded_short_title, _ = encode(
+                    u'{}---{}\n'.format(
+                        normalized_short_title,
+                        row['short_title'],
+                    )
+                )
+                fd.write(encoded_short_title)
+
             normalized_journal_title = _normalize(row['journal_title'])
             if normalized_journal_title:
-                fd.write(u'{}---{}\n'.format(normalized_journal_title, row['short_title']))
+                encoded_journal_title, _ = encode(
+                        u'{}---{}\n'.format(
+                            normalized_journal_title,
+                            row['short_title'],
+                        )
+                )
+                fd.write(encoded_journal_title)
 
         for row in title_variants_query:
             normalized_title_variant = _normalize(row['title_variant'])
             if normalized_title_variant:
-                fd.write(u'{}---{}\n'.format(normalized_title_variant, row['short_title']))
+                encoded_title_variant, _ = encode(
+                    u'{}---{}\n'.format(
+                        normalized_title_variant,
+                        row['short_title'],
+                    )
+                )
+                fd.write(encoded_title_variant)
 
 
 def _normalize(s):
@@ -98,4 +120,5 @@ def _normalize(s):
 
     if not result:
         return
+
     return result

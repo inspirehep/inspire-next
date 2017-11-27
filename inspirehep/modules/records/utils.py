@@ -24,26 +24,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-import requests
-import sys
-import traceback
 from flask import current_app
-from six.moves.urllib.parse import urlparse
 
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
     get_pid_type_from_schema
 )
-
-
-class FailedToOpenUrlPath(Exception):
-
-    def __init__(self, path, exception=None, msg=None):
-        self.exception = exception
-        exc_info = sys.exc_info()
-        first_line_msg = "Failed to open %s\n" % path
-        msg = msg or ''.join(traceback.format_exception(*exc_info))
-        super(FailedToOpenUrlPath, self).__init__(first_line_msg + msg)
 
 
 def get_endpoint_from_record(record):
@@ -58,23 +44,3 @@ def get_detailed_template_from_record(record):
     """Return the detailed template corresponding to the given record."""
     endpoint = get_endpoint_from_record(record)
     return current_app.config['RECORDS_UI_ENDPOINTS'][endpoint]['template']
-
-
-def open_url_or_path(file_path):
-    known_schemes = ['http', 'https']
-    try:
-        if urlparse(file_path).scheme in known_schemes:
-            resp = requests.get(url=file_path, stream=True)
-            if resp.status_code == 200:
-                resp.raw.decode_content = True
-                return resp.raw
-            else:
-                msg = 'Got response {}:{}'.format(resp.status_code, resp.text)
-                raise FailedToOpenUrlPath(path=file_path, msg=msg)
-        else:
-            file_descriptor = open(file_path, mode='r')
-            return file_descriptor
-    except FailedToOpenUrlPath:
-        raise
-    except Exception as error:
-        raise FailedToOpenUrlPath(path=file_path, exception=error)

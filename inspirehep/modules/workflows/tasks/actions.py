@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
 from functools import wraps
 
 from flask import current_app
@@ -39,11 +40,14 @@ from inspirehep.modules.workflows.utils import (
 from inspirehep.utils.record import get_arxiv_id
 from inspirehep.utils.url import is_pdf_link
 
-from .refextract import (
+from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_pdf,
     extract_references_from_text,
 )
-from ..utils import download_file_to_workflow, with_debug_logging
+from inspirehep.modules.workflows.utils import (
+    download_file_to_workflow,
+    with_debug_logging,
+)
 
 
 def mark(key, value):
@@ -267,12 +271,15 @@ def refextract(obj, eng):
     pdf_references, text_references = [], []
     source = get_value(obj.data, 'acquisition_source.source')
 
-    pdf = get_pdf_in_workflow(obj)
-    if pdf:
+    tmp_pdf = get_pdf_in_workflow(obj)
+    if tmp_pdf:
         try:
-            pdf_references = extract_references_from_pdf(pdf, source)
+            pdf_references = extract_references_from_pdf(tmp_pdf, source)
         except TimeoutError:
             obj.log.error('Timeout when extracting references from PDF.')
+        finally:
+            if os.path.exists(tmp_pdf):
+                os.unlink(tmp_pdf)
 
     text = get_value(obj.extra_data, 'formdata.references')
     if text:

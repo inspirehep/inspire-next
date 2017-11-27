@@ -47,6 +47,7 @@ install_requires = [
     'Flask-Gravatar~=0.0,>=0.4.2',
     'Flask-Login~=0.0,>=0.4.0',
     'Flask~=0.0,>=0.12.2',
+    'fs~=0.0,>=0.5.4',
     'IDUtils~=0.0,>=0.2.4',
     'SQLAlchemy~=1.0,>=1.1.14,<1.2',
     'amqp~=1.0,>=1.4.9',

@@ -38,10 +38,12 @@ from flask import current_app
 
 from invenio_db import db
 
+from inspirehep.utils.url import retrieve_uri
 from inspirehep.modules.workflows.models import (
     WorkflowsAudit,
     WorkflowsRecordSources,
 )
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -156,7 +158,7 @@ def get_pdf_in_workflow(obj):
     """Return the fullpath to the PDF attached to a workflow object"""
     for filename in obj.files.keys:
         if filename.endswith('.pdf'):
-            return obj.files[filename].file.uri
+            return retrieve_uri(obj.files[filename].file.uri)
 
     obj.log.info('No PDF available')
 
