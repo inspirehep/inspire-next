@@ -43,7 +43,6 @@ from inspirehep.modules.records.receivers import (
 
 def test_populate_bookautocomplete_from_authors():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
     authors_schema = schema['properties']['authors']
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
@@ -60,7 +59,6 @@ def test_populate_bookautocomplete_from_authors():
             '$ref': 'http://localhost:5000/api/literature/1519486',
         },
     }
-    assert validate(record['$schema'], schema_schema) is None
     assert validate(record['authors'], authors_schema) is None
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['self'], self_schema) is None
@@ -86,7 +84,6 @@ def test_populate_bookautocomplete_from_authors():
 
 def test_populate_bookautocomplete_from_titles():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
     titles_schema = schema['properties']['titles']
@@ -103,7 +100,6 @@ def test_populate_bookautocomplete_from_titles():
             {'title': 'Relativity Matters'},
         ],
     }
-    assert validate(record['$schema'], schema_schema) is None
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['self'], self_schema) is None
     assert validate(record['titles'], titles_schema) is None
@@ -129,7 +125,6 @@ def test_populate_bookautocomplete_from_titles():
 
 def test_populate_bookautocomplete_from_imprints_dates():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
     imprints_schema = schema['properties']['imprints']
@@ -139,18 +134,16 @@ def test_populate_bookautocomplete_from_imprints_dates():
         'document_type': [
             'book',
         ],
-        'self': {
-            '$ref': 'http://localhost:5000/api/literature/1519486',
-        },
         'imprints': [
             {'date': '2010-07-23'},
         ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/1519486',
+        },
     }
-
-    assert validate(record['$schema'], schema_schema) is None
     assert validate(record['document_type'], document_type_schema) is None
-    assert validate(record['self'], self_schema) is None
     assert validate(record['imprints'], imprints_schema) is None
+    assert validate(record['self'], self_schema) is None
 
     populate_bookautocomplete(None, record)
 
@@ -171,7 +164,6 @@ def test_populate_bookautocomplete_from_imprints_dates():
 
 def test_populate_bookautocomplete_from_imprints_publishers():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
     imprints_schema = schema['properties']['imprints']
@@ -181,18 +173,16 @@ def test_populate_bookautocomplete_from_imprints_publishers():
         'document_type': [
             'book',
         ],
-        'self': {
-            '$ref': 'http://localhost:5000/api/literature/1519486',
-        },
         'imprints': [
             {'publisher': 'Springer'},
         ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/1519486',
+        },
     }
-
-    assert validate(record['$schema'], schema_schema) is None
     assert validate(record['document_type'], document_type_schema) is None
-    assert validate(record['self'], self_schema) is None
     assert validate(record['imprints'], imprints_schema) is None
+    assert validate(record['self'], self_schema) is None
 
     populate_bookautocomplete(None, record)
 
@@ -213,7 +203,6 @@ def test_populate_bookautocomplete_from_imprints_publishers():
 
 def test_populate_bookautocomplete_from_isbns_values():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
     isbns_schema = schema['properties']['isbns']
@@ -223,18 +212,16 @@ def test_populate_bookautocomplete_from_isbns_values():
         'document_type': [
             'book',
         ],
-        'self': {
-            '$ref': 'http://localhost:5000/api/literature/1519486',
-        },
         'isbns': [
             {'value': '0201021153'},
         ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/1519486',
+        },
     }
-
-    assert validate(record['$schema'], schema_schema) is None
     assert validate(record['document_type'], document_type_schema) is None
-    assert validate(record['self'], self_schema) is None
     assert validate(record['isbns'], isbns_schema) is None
+    assert validate(record['self'], self_schema) is None
 
     populate_bookautocomplete(None, record)
 
@@ -263,7 +250,6 @@ def test_populate_bookautocomplete_does_nothing_if_record_is_not_literature():
 
 def test_populate_bookautocomplete_does_nothing_if_record_is_not_a_book():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
     authors_schema = schema['properties']['authors']
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
@@ -280,7 +266,6 @@ def test_populate_bookautocomplete_does_nothing_if_record_is_not_a_book():
             '$ref': 'http://localhost:5000/api/literature/1520027',
         }
     }
-    assert validate(record['$schema'], schema_schema) is None
     assert validate(record['authors'], authors_schema) is None
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['self'], self_schema) is None
@@ -292,8 +277,7 @@ def test_populate_bookautocomplete_does_nothing_if_record_is_not_a_book():
 
 def test_assign_phonetic_block_handles_ascii_names():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    authors_schema = schema['properties']['authors']
+    subschema = schema['properties']['authors']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
@@ -301,8 +285,7 @@ def test_assign_phonetic_block_handles_ascii_names():
             {'full_name': 'Ellis, John Richard'},
         ],
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['authors'], authors_schema) is None
+    assert validate(record['authors'], subschema) is None
 
     assign_phonetic_block(None, record)
 
@@ -314,14 +297,13 @@ def test_assign_phonetic_block_handles_ascii_names():
     ]
     result = record['authors']
 
-    assert validate(result, authors_schema) is None
+    assert validate(result, subschema) is None
     assert expected == result
 
 
 def test_assign_phonetic_block_handles_unicode_names():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    authors_schema = schema['properties']['authors']
+    subschema = schema['properties']['authors']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
@@ -329,8 +311,7 @@ def test_assign_phonetic_block_handles_unicode_names():
             {'full_name': u'Páramos, Jorge'},
         ],
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['authors'], authors_schema) is None
+    assert validate(record['authors'], subschema) is None
 
     assign_phonetic_block(None, record)
 
@@ -342,14 +323,13 @@ def test_assign_phonetic_block_handles_unicode_names():
     ]
     result = record['authors']
 
-    assert validate(result, authors_schema) is None
+    assert validate(result, subschema) is None
     assert expected == result
 
 
 def test_assign_phonetic_block_handles_jimmy():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    authors_schema = schema['properties']['authors']
+    subschema = schema['properties']['authors']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
@@ -357,8 +337,7 @@ def test_assign_phonetic_block_handles_jimmy():
             {'full_name': 'Jimmy'},
         ],
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['authors'], authors_schema) is None
+    assert validate(record['authors'], subschema) is None
 
     assign_phonetic_block(None, record)
 
@@ -370,14 +349,13 @@ def test_assign_phonetic_block_handles_jimmy():
     ]
     result = record['authors']
 
-    assert validate(result, authors_schema) is None
+    assert validate(result, subschema) is None
     assert expected == result
 
 
 def test_assign_phonetick_block_ignores_malformed_names():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    authors_schema = schema['properties']['authors']
+    subschema = schema['properties']['authors']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
@@ -385,8 +363,7 @@ def test_assign_phonetick_block_ignores_malformed_names():
             {'full_name': '** NOT A REAL NAME **'},
         ],
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['authors'], authors_schema) is None
+    assert validate(record['authors'], subschema) is None
 
     assign_phonetic_block(None, record)
 
@@ -395,7 +372,7 @@ def test_assign_phonetick_block_ignores_malformed_names():
     ]
     result = record['authors']
 
-    assert validate(result, authors_schema) is None
+    assert validate(result, subschema) is None
     assert expected == result
 
 
@@ -404,8 +381,7 @@ def test_assign_uuid(mock_uuid4):
     mock_uuid4.return_value = UUID('727238f3-8ed6-40b6-97d2-dc3cd1429131')
 
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    authors_schema = schema['properties']['authors']
+    subschema = schema['properties']['authors']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
@@ -413,8 +389,7 @@ def test_assign_uuid(mock_uuid4):
             {'full_name': 'Ellis, John Richard'},
         ],
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['authors'], authors_schema) is None
+    assert validate(record['authors'], subschema) is None
 
     assign_uuid(None, record)
 
@@ -426,7 +401,7 @@ def test_assign_uuid(mock_uuid4):
     ]
     result = record['authors']
 
-    assert validate(result, authors_schema) is None
+    assert validate(result, subschema) is None
     assert expected == result
 
 
@@ -435,8 +410,7 @@ def test_assign_uuid_does_not_touch_existing_uuids(mock_uuid4):
     mock_uuid4.return_value = UUID('727238f3-8ed6-40b6-97d2-dc3cd1429131')
 
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    authors_schema = schema['properties']['authors']
+    subschema = schema['properties']['authors']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
@@ -447,8 +421,7 @@ def test_assign_uuid_does_not_touch_existing_uuids(mock_uuid4):
             },
         ],
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['authors'], authors_schema) is None
+    assert validate(record['authors'], subschema) is None
 
     assign_uuid(None, record)
 
@@ -460,21 +433,19 @@ def test_assign_uuid_does_not_touch_existing_uuids(mock_uuid4):
     ]
     result = record['authors']
 
-    assert validate(result, authors_schema) is None
+    assert validate(result, subschema) is None
     assert expected == result
 
 
 def test_populate_earliest_date_from_preprint_date():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    preprint_date_schema = schema['properties']['preprint_date']
+    subschema = schema['properties']['preprint_date']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
         'preprint_date': '2014-05-29',
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['preprint_date'], preprint_date_schema) is None
+    assert validate(record['preprint_date'], subschema) is None
 
     populate_earliest_date(None, record)
 
@@ -486,8 +457,7 @@ def test_populate_earliest_date_from_preprint_date():
 
 def test_populate_earliest_date_from_thesis_info_date():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    thesis_info_schema = schema['properties']['thesis_info']
+    subschema = schema['properties']['thesis_info']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
@@ -495,8 +465,7 @@ def test_populate_earliest_date_from_thesis_info_date():
             'date': '2008',
         },
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['thesis_info'], thesis_info_schema) is None
+    assert validate(record['thesis_info'], subschema) is None
 
     populate_earliest_date(None, record)
 
@@ -508,8 +477,7 @@ def test_populate_earliest_date_from_thesis_info_date():
 
 def test_populate_earliest_date_from_thesis_info_defense_date():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    thesis_info_schema = schema['properties']['thesis_info']
+    subschema = schema['properties']['thesis_info']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
@@ -517,8 +485,7 @@ def test_populate_earliest_date_from_thesis_info_defense_date():
             'defense_date': '2012-06-01',
         },
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['thesis_info'], thesis_info_schema) is None
+    assert validate(record['thesis_info'], subschema) is None
 
     populate_earliest_date(None, record)
 
@@ -530,8 +497,7 @@ def test_populate_earliest_date_from_thesis_info_defense_date():
 
 def test_populate_earliest_date_from_publication_info_year():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    publication_info_schema = schema['properties']['publication_info']
+    subschema = schema['properties']['publication_info']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
@@ -539,8 +505,7 @@ def test_populate_earliest_date_from_publication_info_year():
             {'year': 2014},
         ],
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['publication_info'], publication_info_schema) is None
+    assert validate(record['publication_info'], subschema) is None
 
     populate_earliest_date(None, record)
 
@@ -552,15 +517,13 @@ def test_populate_earliest_date_from_publication_info_year():
 
 def test_populate_earliest_date_from_legacy_creation_date():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    legacy_creation_date_schema = schema['properties']['legacy_creation_date']
+    subschema = schema['properties']['legacy_creation_date']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
         'legacy_creation_date': '2015-11-04',
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['legacy_creation_date'], legacy_creation_date_schema) is None
+    assert validate(record['legacy_creation_date'], subschema) is None
 
     populate_earliest_date(None, record)
 
@@ -572,8 +535,7 @@ def test_populate_earliest_date_from_legacy_creation_date():
 
 def test_populate_earliest_date_from_imprints_date():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    imprints_schema = schema['properties']['imprints']
+    subschema = schema['properties']['imprints']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
@@ -581,8 +543,7 @@ def test_populate_earliest_date_from_imprints_date():
             {'date': '2014-09-26'},
         ],
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['imprints'], imprints_schema) is None
+    assert validate(record['imprints'], subschema) is None
 
     populate_earliest_date(None, record)
 
@@ -602,15 +563,13 @@ def test_populate_earliest_date_does_nothing_if_record_is_not_literature():
 
 def test_populate_inspire_document_type_from_document_type():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    document_type_schema = schema['properties']['document_type']
+    subschema = schema['properties']['document_type']
 
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
         'document_type': ['thesis'],
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['document_type'], subschema) is None
 
     populate_inspire_document_type(None, record)
 
@@ -624,7 +583,6 @@ def test_populate_inspire_document_type_from_document_type():
 
 def test_populate_inspire_document_type_from_refereed():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
     document_type_schema = schema['properties']['document_type']
     refereed_schema = schema['properties']['refereed']
 
@@ -635,7 +593,6 @@ def test_populate_inspire_document_type_from_refereed():
         ],
         'refereed': True,
     }
-    assert validate(record['$schema'], schema_schema) is None
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['refereed'], refereed_schema) is None
 
@@ -652,7 +609,6 @@ def test_populate_inspire_document_type_from_refereed():
 
 def test_populate_inspire_document_type_from_publication_type():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
     document_type_schema = schema['properties']['document_type']
     publication_type_schema = schema['properties']['publication_type']
 
@@ -665,7 +621,6 @@ def test_populate_inspire_document_type_from_publication_type():
             'introductory',
         ],
     }
-    assert validate(record['$schema'], schema_schema) is None
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['publication_type'], publication_type_schema) is None
 
@@ -721,8 +676,7 @@ def test_populate_recid_from_ref_handles_deleted_records():
 
 def test_populate_abstract_source_suggest():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    abstracts_schema = schema['properties']['abstracts']
+    subschema = schema['properties']['abstracts']
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -733,8 +687,7 @@ def test_populate_abstract_source_suggest():
             },
         ],
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['abstracts'], abstracts_schema) is None
+    assert validate(record['abstracts'], subschema) is None
 
     populate_abstract_source_suggest(None, record)
 
@@ -755,8 +708,7 @@ def test_populate_abstract_source_suggest():
 
 def test_populate_abstract_source_suggest_does_nothing_if_record_is_not_literature():
     schema = load_schema('hep')
-    schema_schema = schema['properties']['$schema']
-    abstracts_schema = schema['properties']['abstracts']
+    subschema = schema['properties']['abstracts']
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/other.json',
@@ -767,8 +719,7 @@ def test_populate_abstract_source_suggest_does_nothing_if_record_is_not_literatu
             },
         ],
     }
-    assert validate(record['$schema'], schema_schema) is None
-    assert validate(record['abstracts'], abstracts_schema) is None
+    assert validate(record['abstracts'], subschema) is None
 
     populate_abstract_source_suggest(None, record)
 
@@ -785,9 +736,9 @@ def test_populate_abstract_source_suggest_does_nothing_if_record_is_not_literatu
 
 def test_populate_title_suggest_with_all_inputs():
     schema = load_schema('journals')
-    subschema_journal_title = schema['properties']['journal_title']
-    subschema_short_title = schema['properties']['short_title']
-    subschema_title_variants = schema['properties']['title_variants']
+    journal_title_schema = schema['properties']['journal_title']
+    short_title_schema = schema['properties']['short_title']
+    title_variants_schema = schema['properties']['title_variants']
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/journals.json',
@@ -795,9 +746,9 @@ def test_populate_title_suggest_with_all_inputs():
         'short_title': 'JHEP',
         'title_variants': ['JOURNAL OF HIGH ENERGY PHYSICS'],
     }
-    assert validate(record['journal_title'], subschema_journal_title) is None
-    assert validate(record['short_title'], subschema_short_title) is None
-    assert validate(record['title_variants'], subschema_title_variants) is None
+    assert validate(record['journal_title'], journal_title_schema) is None
+    assert validate(record['short_title'], short_title_schema) is None
+    assert validate(record['title_variants'], title_variants_schema) is None
 
     populate_title_suggest(None, record)
 
@@ -820,9 +771,9 @@ def test_populate_title_suggest_with_all_inputs():
 
 def test_populate_title_suggest_without_short_title():
     schema = load_schema('journals')
-    subschema_journal_title = schema['properties']['journal_title']
-    subschema_short_title = schema['properties']['short_title']
-    subschema_title_variants = schema['properties']['title_variants']
+    journal_title_schema = schema['properties']['journal_title']
+    short_title_schema = schema['properties']['short_title']
+    title_variants_schema = schema['properties']['title_variants']
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/journals.json',
@@ -830,9 +781,9 @@ def test_populate_title_suggest_without_short_title():
         'short_title': '',
         'title_variants': ['JOURNAL OF HIGH ENERGY PHYSICS'],
     }
-    assert validate(record['journal_title'], subschema_journal_title) is None
-    assert validate(record['short_title'], subschema_short_title) is None
-    assert validate(record['title_variants'], subschema_title_variants) is None
+    assert validate(record['journal_title'], journal_title_schema) is None
+    assert validate(record['short_title'], short_title_schema) is None
+    assert validate(record['title_variants'], title_variants_schema) is None
 
     populate_title_suggest(None, record)
 
@@ -854,9 +805,9 @@ def test_populate_title_suggest_without_short_title():
 
 def test_populate_title_suggest_without_title_variants():
     schema = load_schema('journals')
-    subschema_journal_title = schema['properties']['journal_title']
-    subschema_short_title = schema['properties']['short_title']
-    subschema_title_variants = schema['properties']['title_variants']
+    journal_title_schema = schema['properties']['journal_title']
+    short_title_schema = schema['properties']['short_title']
+    title_variants_schema = schema['properties']['title_variants']
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/journals.json',
@@ -864,9 +815,9 @@ def test_populate_title_suggest_without_title_variants():
         'short_title': 'JHEP',
         'title_variants': [],
     }
-    assert validate(record['journal_title'], subschema_journal_title) is None
-    assert validate(record['short_title'], subschema_short_title) is None
-    assert validate(record['title_variants'], subschema_title_variants) is None
+    assert validate(record['journal_title'], journal_title_schema) is None
+    assert validate(record['short_title'], short_title_schema) is None
+    assert validate(record['title_variants'], title_variants_schema) is None
 
     populate_title_suggest(None, record)
 
@@ -888,9 +839,9 @@ def test_populate_title_suggest_without_title_variants():
 
 def test_populate_title_suggest_without_full_title():
     schema = load_schema('journals')
-    subschema_journal_title = schema['properties']['journal_title']
-    subschema_short_title = schema['properties']['short_title']
-    subschema_title_variants = schema['properties']['title_variants']
+    journal_title_schema = schema['properties']['journal_title']
+    short_title_schema = schema['properties']['short_title']
+    title_variants_schema = schema['properties']['title_variants']
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/journals.json',
@@ -898,16 +849,16 @@ def test_populate_title_suggest_without_full_title():
         'short_title': 'JHEP',
         'title_variants': ['JOURNAL OF HIGH ENERGY PHYSICS'],
     }
-    assert validate(record['journal_title'], subschema_journal_title) is None
-    assert validate(record['short_title'], subschema_short_title) is None
-    assert validate(record['title_variants'], subschema_title_variants) is None
+    assert validate(record['journal_title'], journal_title_schema) is None
+    assert validate(record['short_title'], short_title_schema) is None
+    assert validate(record['title_variants'], title_variants_schema) is None
 
     populate_title_suggest(None, record)
 
     expected = {
         'input': [
-            "JHEP",
-            "JOURNAL OF HIGH ENERGY PHYSICS"
+            'JHEP',
+            'JOURNAL OF HIGH ENERGY PHYSICS'
         ],
         'output': 'JHEP',
         'payload': {
@@ -1176,23 +1127,35 @@ def test_populate_affiliation_suggest_does_nothing_if_record_is_not_institution(
 
 
 def test_populate_author_count():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
         'authors': [
             {
                 'full_name': 'Smith, John',
-                'inspire_roles': ['author'],
+                'inspire_roles': [
+                    'author',
+                ],
             },
             {
                 'full_name': 'Rafelski, Johann',
-                'inspire_roles': ['author', 'editor'],
+                'inspire_roles': [
+                    'author',
+                    'editor',
+                ],
             },
             {
                 'full_name': 'Rohan, George',
-                'inspire_roles': ['supervisor', 'author'],
+                'inspire_roles': [
+                    'author',
+                    'supervisor',
+                ],
             },
         ],
     }
+    assert validate(record['authors'], subschema) is None
 
     populate_author_count(None, record)
 
