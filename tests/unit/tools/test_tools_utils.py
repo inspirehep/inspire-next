@@ -584,3 +584,61 @@ def test_authorlist_with_many_affiliations():
     result = authorlist(text)
 
     assert expected == result['authors']
+
+
+def test_authorlist_handles_spaces_at_the_end_of_an_author():
+    text = (
+        u'J. Smith1 \n'
+        u'1 University of somewhere'
+    )
+
+    expected = [
+        {
+            'full_name': u'Smith, J.',
+            'raw_affiliations': [
+                {'value': u'University of somewhere'},
+            ],
+        },
+    ]
+    result = authorlist(text)
+
+    assert expected == result['authors']
+
+
+def test_authorlist_handles_spaces_at_the_end_of_an_affiliation():
+    text = (
+        u'A. J. Hawken1, B. R. Granett1, A. Iovino1, L. Guzzo1,2\n'
+        u'1 INAF–Osservatorio Astronomico di Brera, via Brera 28, 20122 Milano, via E. Bianchi 46, 23807 Merate, Italy \n'
+        u'2 Università degli Studi di Milano, via G. Celoria 16, 20130 Milano, Italy'
+    )
+
+    expected = [
+        {
+            'full_name': u'Hawken, A.J.',
+            'raw_affiliations': [
+                {'value': u'INAF-Osservatorio Astronomico di Brera, via Brera 28, 20122 Milano, via E. Bianchi 46, 23807 Merate, Italy'},
+            ],
+        },
+        {
+            'full_name': u'Granett, B.R.',
+            'raw_affiliations': [
+                {'value': u'INAF-Osservatorio Astronomico di Brera, via Brera 28, 20122 Milano, via E. Bianchi 46, 23807 Merate, Italy'},
+            ],
+        },
+        {
+            'full_name': u'Iovino, A.',
+            'raw_affiliations': [
+                {'value': u'INAF-Osservatorio Astronomico di Brera, via Brera 28, 20122 Milano, via E. Bianchi 46, 23807 Merate, Italy'},
+            ],
+        },
+        {
+            'full_name': u'Guzzo, L.',
+            'raw_affiliations': [
+                {'value': u'INAF-Osservatorio Astronomico di Brera, via Brera 28, 20122 Milano, via E. Bianchi 46, 23807 Merate, Italy'},
+                {'value': u'Università degli Studi di Milano, via G. Celoria 16, 20130 Milano, Italy'},
+            ],
+        },
+    ]
+    result = authorlist(text)
+
+    assert expected == result['authors']

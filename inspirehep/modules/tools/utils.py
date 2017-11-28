@@ -61,7 +61,7 @@ def authorlist(text):
     text = text.replace('\r', '')  # Input from the form contains unwanted \r's
     text = text.replace(u'†', '')
     text = text.replace(u'∗', '')
-    text = re.sub(r'(\n+)', r'\n', text)
+    text = re.sub(r'( *\n+ *)', r'\n', text)
     text = replace_undesirable_characters(text)
     text = wash_line(text)
 
