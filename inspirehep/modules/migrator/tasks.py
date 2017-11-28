@@ -393,15 +393,11 @@ def apply_claim(inspire_bai, author_recid, lit_recid, signature, flag):
     if flag == -2:  # FIXME: Handle the flag
         return
 
-    try:
-        lit_record = get_db_record('lit', lit_recid)
-        for author in get_value(lit_record, 'authors', []):
-            if author.get('full_name') == signature:
-                if claim_author_field(author, inspire_bai, author_recid):
-                    lit_record.commit()
-    except PIDDoesNotExistError:
-        # Either author or lit doesn't exist
-        pass
+    lit_record = get_db_record('lit', lit_recid)
+    for author in get_value(lit_record, 'authors', []):
+        if author.get('full_name') == signature:
+            if claim_author_field(author, inspire_bai, author_recid):
+                lit_record.commit()
 
 
 def claim_author_field(author, inspire_bai, author_recid):
