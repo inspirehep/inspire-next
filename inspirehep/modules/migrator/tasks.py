@@ -29,7 +29,7 @@ import re
 import zlib
 from collections import Counter
 from itertools import chain
-from simplejson import loads
+from json import loads
 
 import click
 from celery import group, shared_task
@@ -53,7 +53,7 @@ from invenio_search import current_search_client as es
 from invenio_search.utils import schema_to_index
 
 from inspire_dojson.processors import overdo_marc_dict
-from inspire_dojson.utils import get_recid_from_ref
+from inspire_dojson.utils import get_recid_from_ref, get_record_ref
 from inspire_schemas.builders import SignatureBuilder
 from inspire_utils.dedupers import dedupe_list
 from inspire_utils.helpers import force_list
@@ -62,6 +62,7 @@ from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.receivers import index_after_commit
+from inspirehep.utils.record_getter import get_db_record
 
 from .models import InspireProdRecords
 
@@ -389,12 +390,11 @@ def apply_claim(inspire_bai, author_recid, lit_recid, signature, flag):
         signature (string): name as written on the paper
         flag (string): record can be ignored if flag == -2 (claim reject)
     """
-    if flag == -2:
+    if flag == -2:  # FIXME: Handle the flag
         return
 
     try:
-        lit_pid = PersistentIdentifier.get('lit', lit_recid)
-        lit_record = InspireRecord.get_record(lit_pid.object_uuid)
+        lit_record = get_db_record('lit', lit_recid)
         for author in get_value(lit_record, 'authors', []):
             if author.get('full_name') == signature:
                 if claim_author_field(author, inspire_bai, author_recid):
@@ -419,12 +419,7 @@ def claim_author_field(author, inspire_bai, author_recid):
 
     builder = SignatureBuilder(author)
     builder.set_uid(inspire_bai, schema='INSPIRE BAI')
-
-    server = current_app.config['SERVER_NAME']
-    if not server.startswith('http://'):
-        server = 'http://{}'.format(server)
-    ref_url = '{}/api/authors/{}'.format(server, author_recid)
-    builder.set_record({'$ref': ref_url})
+    builder.set_record(get_record_ref(author_recid, 'authors'))
     builder.curate()
 
     return author_copy != author

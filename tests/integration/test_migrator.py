@@ -31,6 +31,7 @@ from simplejson import dumps
 from flask import current_app
 from redis import StrictRedis
 
+from inspire_dojson.utils import get_record_ref
 from inspirehep.modules.migrator.models import InspireProdRecords
 from inspirehep.modules.migrator.tasks import (
     continuous_migration,
@@ -185,18 +186,11 @@ def test_continuous_migration_handles_record_updates(app, record_1502656_and_upd
 
 def test_legacy_claim_sync_unclaimed(app, record_1472986_unclaimed):
     """Test that the record is correctly claimed."""
-    server = current_app.config['SERVER_NAME']
-    if not server.startswith('http://'):
-        server = 'http://{}'.format(server)
-    ref_url = '{}/api/authors/1073117'.format(server)
-
     expected_ids = [{
         'value': 'M.Kenzie.1',
         'schema': 'INSPIRE BAI'
     }]
-    expected_record = {
-        '$ref': ref_url
-    }
+    expected_record = get_record_ref(1073117, 'authors')
 
     push_claim_to_redis('M.Kenzie.1', 1073117, 1472986, 'Kenzie, Matthew', 2)
 
