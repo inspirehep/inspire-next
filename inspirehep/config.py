@@ -369,9 +369,12 @@ RECORDS_REST_ENDPOINTS = dict(
             book_title=dict(completion=dict(
                 field='bookautocomplete'
             )),
+            book_series=dict(completion=dict(
+                field='book_series.book_series_suggest'
+            )),
             collaboration_name=dict(completion=dict(
-                            field='collaborations.collaboration_suggest'
-                        ))
+                field='collaborations.collaboration_suggest'
+            ))
         ),
         list_route='/literature/',
         item_route=(

@@ -139,6 +139,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
     """
     populate_recid_from_ref(sender, json, *args, **kwargs)
     populate_bookautocomplete(sender, json, *args, **kwargs)
+    populate_book_series_suggest(sender, json, *args, **kwargs)
     populate_collaboration_suggest(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_affiliation_suggest(sender, json, *args, **kwargs)
@@ -151,7 +152,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
 
 
 def populate_bookautocomplete(sender, json, *args, **kwargs):
-    """Populate the ```bookautocomplete`` field of Literature records."""
+    """Populate the ``bookautocomplete`` field of Literature records."""
     if 'hep.json' not in json.get('$schema'):
         return
 
@@ -187,8 +188,30 @@ def populate_bookautocomplete(sender, json, *args, **kwargs):
     })
 
 
+def populate_book_series_suggest(sender, json, *args, **kwargs):
+    """Populate the ``book_series_suggest`` field of Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
+    doc_types = json.get('document_type', [])
+    if all(doc_type not in doc_types for doc_type in ['book', 'thesis', 'proceedings']):
+        return
+
+    book_series = json.get('book_series', [])
+
+    for series in book_series:
+        title = series.get('title')
+        if title:
+            series.update({
+                'book_series_suggest': {
+                    'input': title,
+                    'output': title
+                },
+            })
+
+
 def populate_collaboration_suggest(sender, json, *args, **kwargs):
-    """Populate the ```collaboration_suggest`` field of Literature records."""
+    """Populate the ``collaboration_suggest`` field of Literature records."""
     if 'hep.json' not in json.get('$schema'):
         return
 
