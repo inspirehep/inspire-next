@@ -788,7 +788,8 @@ RECORDS_REST_ENDPOINTS = dict(
         },
         suggesters=dict(
             journal_title=dict(completion=dict(
-                field='title_suggest'
+                field='title_suggest',
+                size=10,
             ))
         ),
         list_route='/journals/',
