@@ -83,8 +83,8 @@ def preview():
     records = queries.get_records_from_query(query_string, page_size, page_num, index)['json_records']
     old_records = copy.deepcopy(records)
     actions.process_records_no_db(user_actions, records, schema)
-    records_diff, errors = actions.diff_and_validate_records(old_records, records, schema)
-    return jsonify({'json_records': old_records, 'errors': errors, 'records_diff': records_diff})
+    json_patches, errors = actions.diff_and_validate_records(old_records, records, schema)
+    return jsonify({'json_records': old_records, 'errors': errors, 'json_patches': json_patches})
 
 
 @blueprint.route("/search", methods=['GET'])

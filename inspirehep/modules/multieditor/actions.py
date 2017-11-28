@@ -304,10 +304,10 @@ def process_records_no_db(user_actions, records, schema):
 
 
 def diff_and_validate_records(old_records, new_records, schema):
-    records_diff = []
+    json_patches = []
     errors = []
     for index, new_record in enumerate(new_records):
-        record_diff = []
+        json_patch = []
         for dif in diff(old_records[index], new_record):
             dif = list(dif)
             path = force_list(dif[1])  # in case the path is a string and not an array
@@ -316,20 +316,20 @@ def diff_and_validate_records(old_records, new_records, schema):
                     path = force_list(dif[2][0][0])
                 else:
                     path.append(dif[2][0][0])
-                record_diff.append({'op': dif[0], 'path': path, 'value': dif[2][0][1]})
+                json_patch.append({'op': dif[0], 'path': path, 'value': dif[2][0][1]})
             elif dif[0] == 'remove':
                 if not path[0]:
                     path = force_list(dif[2][0][0])
                 else:
                     path.append(dif[2][0][0])
-                record_diff.append({'op': dif[0], 'path': path})
+                json_patch.append({'op': dif[0], 'path': path})
             elif dif[0] == 'change':
-                record_diff.append({'op': 'replace', 'path': path, 'value': dif[2][1]})
-        records_diff.append(record_diff)
+                json_patch.append({'op': 'replace', 'path': path, 'value': dif[2][1]})
+        json_patches.append(json_patch)
         try:
             validate(new_record, schema)
         except (ValidationError, Exception) as e:
             errors.append(e.message)
         else:
             errors.append(None)
-    return records_diff, errors
+    return json_patches, errors
