@@ -29,10 +29,12 @@ import re
 import zlib
 from collections import Counter
 from itertools import chain
+from simplejson import loads
 
 import click
 from celery import group, shared_task
 from celery.utils.log import get_task_logger
+from copy import deepcopy
 from elasticsearch.helpers import bulk as es_bulk
 from elasticsearch.helpers import scan as es_scan
 from flask import current_app, url_for
@@ -52,6 +54,7 @@ from invenio_search.utils import schema_to_index
 
 from inspire_dojson.processors import overdo_marc_dict
 from inspire_dojson.utils import get_recid_from_ref
+from inspire_schemas.builders import SignatureBuilder
 from inspire_utils.dedupers import dedupe_list
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
@@ -356,3 +359,72 @@ def migrate_and_insert_record(raw_record):
         prod_record.valid = True
         db.session.merge(prod_record)
         return record
+
+
+@shared_task(ignore_result=True)
+def sync_legacy_claims():
+    """Task to import claims from legacy."""
+    redis_url = current_app.config.get('CACHE_REDIS_URL')
+    r = StrictRedis.from_url(redis_url)
+    lock = Lock(r, 'import_legacy_claims', expire=120, auto_renewal=True)
+    if lock.acquire(blocking=False):
+        try:
+            while r.llen('legacy_claims'):
+                claim = loads(r.lrange('legacy_claims', 0, 1)[0])
+                apply_claim(*claim)
+                r.lpop('legacy_claims')
+        finally:
+            lock.release()
+    else:
+        logger.info('Import_legacy_claims already executed. Skipping.')
+
+
+def apply_claim(inspire_bai, author_recid, lit_recid, signature, flag):
+    """Import claims from legacy and apply them to inspire-next records.
+
+    Args:
+        inspire_bai (string): author profile identifier as BAI
+        author_recid (int): Inspire author record identifier
+        lit_recid (string): Inspire literature record identifier
+        signature (string): name as written on the paper
+        flag (string): record can be ignored if flag == -2 (claim reject)
+    """
+    if flag == -2:
+        return
+
+    try:
+        lit_pid = PersistentIdentifier.get('lit', lit_recid)
+        lit_record = InspireRecord.get_record(lit_pid.object_uuid)
+        for author in get_value(lit_record, 'authors', []):
+            if author.get('full_name') == signature:
+                if claim_author_field(author, inspire_bai, author_recid):
+                    lit_record.commit()
+    except PIDDoesNotExistError:
+        # Either author or lit doesn't exist
+        pass
+
+
+def claim_author_field(author, inspire_bai, author_recid):
+    """Apply changes to author field in the record.
+
+    Args:
+        author (dict): author field in the record to apply claim to
+        inspire_bai (string): author profile identifier as BAI
+        author_recid (int): Inspire author record identifier
+
+    Returns:
+        bool: whether the record was changed by applying the claim
+    """
+    author_copy = deepcopy(author)
+
+    builder = SignatureBuilder(author)
+    builder.set_uid(inspire_bai, schema='INSPIRE BAI')
+
+    server = current_app.config['SERVER_NAME']
+    if not server.startswith('http://'):
+        server = 'http://{}'.format(server)
+    ref_url = '{}/api/authors/{}'.format(server, author_recid)
+    builder.set_record({'$ref': ref_url})
+    builder.curate()
+
+    return author_copy != author
