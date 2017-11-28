@@ -314,6 +314,9 @@
                         },
                         "value": {
                             "type": "string"
+                        },
+                        "collaboration_suggest": {
+                            "type": "completion"
                         }
                     },
                     "type": "object"
