@@ -20,10 +20,31 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Our workflows."""
+"""Tasks related to record merging."""
 
 from __future__ import absolute_import, division, print_function
 
-from .article import Article  # noqa: F401
-from .author import Author    # noqa: F401
-from .manual_merge import ManualMerge   # noqa: F401
+from inspirehep.modules.workflows.models import WorkflowsRecordSources
+
+
+def get_head_source(head_uuid):
+    """Return the right source for the record having uuid=``uuid``.
+
+    Args:
+        head_uuid(string): the uuid of the record to get the source
+
+    Return:
+        (string):
+        * ``publisher`` if there is at least a non arxiv root
+        * ``arxiv`` if there are no publisher roots and an arxiv root
+        * None if there are no root records
+    """
+    roots_sources = set(
+        r.source for r in
+        WorkflowsRecordSources.query.filter_by(record_id=head_uuid).all()
+    )
+
+    if not roots_sources:
+        return None
+
+    return 'arxiv' if 'arxiv' in roots_sources else 'publisher'

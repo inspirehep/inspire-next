@@ -33,6 +33,7 @@ from invenio_records.models import RecordMetadata
 
 from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
 from inspirehep.modules.tools import authorlist
+from inspirehep.modules.workflows.workflows.manual_merge import start_merger
 from inspirehep.utils.record_getter import get_db_record
 from inspirehep.utils.references import (
     get_refextract_kbs_path,
@@ -214,6 +215,17 @@ def get_rt_queues():
     """View to get all rt queues"""
 
     return jsonify(tickets.get_queues())
+
+
+@blueprint.route('/manual_merge', methods=['POST'])
+@editor_use_api_permission.require(http_exception=403)
+def start_manual_merge():
+    """Initiate manual merge on two records."""
+    assert request.json['head_recid']
+    assert request.json['update_recid']
+
+    workflow_id = start_merger(request.json['head_recid'], request.json['update_recid'], current_user.get_id())
+    return jsonify(workflow_object_id=workflow_id)
 
 
 def _simplify_ticket_response(ticket):
