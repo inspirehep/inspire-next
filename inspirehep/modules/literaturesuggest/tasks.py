@@ -153,7 +153,11 @@ def formdata_to_model(obj, formdata):
         else form_fields.get('language')
     builder.add_language(language=language)
 
-    builder.add_title_translation(title=form_fields.get('title_translation'))
+    if form_fields.get('title_translation'):
+        builder.add_title_translation(
+            title=form_fields['title_translation'],
+            language='en',
+        )
 
     builder.add_title(
         title=form_fields.get('title_arXiv'),

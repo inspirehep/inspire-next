@@ -89,7 +89,7 @@ def mock_literature_validate():
 
 @app.route('/submit/author/validate', endpoint='inspirehep_authors.validate', methods=['POST'])
 def mock_author_validate():
-    if request.json.get('orcid') == '1111-1111-1111-1111':
+    if request.json.get('orcid') == '0000-0002-1825-0097':
         return jsonify({
             'messages': {
                 'orcid': {},
