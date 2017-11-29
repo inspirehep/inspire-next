@@ -356,8 +356,7 @@ def populate_abstract_source_suggest(sender, json, *args, **kwargs):
 
 
 def populate_title_suggest(sender, json, *args, **kwargs):
-    """Populate the ``title_suggest`` field of
-    s records."""
+    """Populate the ``title_suggest`` field of Journals records."""
     if 'journals.json' not in json.get('$schema'):
         return
 

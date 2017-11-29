@@ -33,7 +33,10 @@ from inspirehep.modules.records.receivers import (
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
     populate_bookautocomplete,
+    populate_book_series_suggest,
+    populate_collaboration_suggest,
     populate_earliest_date,
+    populate_experiment_suggest,
     populate_inspire_document_type,
     populate_recid_from_ref,
     populate_title_suggest,
@@ -274,6 +277,199 @@ def test_populate_bookautocomplete_does_nothing_if_record_is_not_a_book():
     populate_bookautocomplete(None, record)
 
     assert 'bookautocomplete' not in record
+
+
+def test_populate_book_series_suggest():
+    schema = load_schema('hep')
+    subschema = schema['properties']['book_series']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'book',
+        ],
+        'book_series': [
+            {
+                'title': 'foo',
+            },
+        ],
+    }
+    assert validate(record['book_series'], subschema) is None
+
+    populate_book_series_suggest(None, record)
+
+    expected = [
+        {
+            'book_series_suggest': {
+                'input': 'foo',
+                'output': 'foo',
+            },
+            'title': 'foo',
+        },
+    ]
+    result = record['book_series']
+
+    assert expected == result
+
+
+def test_populate_book_series_suggest_does_nothing_if_record_is_not_literature():
+    schema = load_schema('hep')
+    subschema = schema['properties']['book_series']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/other.json',
+        'document_type': [
+            'book',
+        ],
+        'book_series': [
+            {
+                'title': 'foo',
+            },
+        ],
+    }
+    assert validate(record['book_series'], subschema) is None
+
+    populate_book_series_suggest(None, record)
+
+    expected = [
+        {
+            'title': 'foo',
+        },
+    ]
+    result = record['book_series']
+
+    assert expected == result
+
+
+def test_populate_book_series_suggest_does_nothing_if_wrong_doc_type():
+    schema = load_schema('hep')
+    subschema = schema['properties']['book_series']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'note',
+        ],
+        'book_series': [
+            {
+                'title': 'foo',
+            },
+        ],
+    }
+    assert validate(record['book_series'], subschema) is None
+
+    populate_book_series_suggest(None, record)
+
+    expected = [
+        {
+            'title': 'foo',
+        },
+    ]
+    result = record['book_series']
+
+    assert expected == result
+
+
+def test_populate_collaboration_suggest():
+    schema = load_schema('hep')
+    subschema = schema['properties']['collaborations']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'collaborations': [
+            {
+                'value': 'foo',
+            },
+        ],
+    }
+    assert validate(record['collaborations'], subschema) is None
+
+    populate_collaboration_suggest(None, record)
+
+    expected = [
+        {
+            'collaboration_suggest': {
+                'input': 'foo',
+                'output': 'foo',
+            },
+            'value': 'foo',
+        },
+    ]
+    result = record['collaborations']
+
+    assert expected == result
+
+
+def test_populate_collaboration_suggest_does_nothing_if_record_is_not_literature():
+    schema = load_schema('hep')
+    subschema = schema['properties']['collaborations']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/other.json',
+        'collaborations': [
+            {
+                'value': 'foo',
+            },
+        ],
+    }
+    assert validate(record['collaborations'], subschema) is None
+
+    populate_collaboration_suggest(None, record)
+
+    expected = [
+        {
+            'value': 'foo',
+        },
+    ]
+    result = record['collaborations']
+
+    assert expected == result
+
+
+def test_populate_experiment_suggest():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['legacy_name']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/experiments.json',
+        'legacy_name': 'foo',
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/bar'
+        },
+    }
+    assert validate(record['legacy_name'], subschema) is None
+
+    populate_experiment_suggest(None, record)
+
+    expected = {
+                   'input': 'foo',
+                   'output': 'foo',
+                   'payload': {
+                       '$ref': 'http://localhost:5000/api/literature/bar'
+                   },
+    }
+
+    result = record['experiment_suggest']
+
+    assert expected == result
+
+
+def test_populate_experiment_suggest_does_nothing_if_record_is_not_experiment():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['legacy_name']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/other.json',
+        'legacy_name': 'foo',
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/bar'
+        },
+    }
+    assert validate(record['legacy_name'], subschema) is None
+
+    populate_experiment_suggest(None, record)
+
+    assert 'experiment_suggest' not in record
 
 
 def test_assign_phonetic_block_handles_ascii_names():
