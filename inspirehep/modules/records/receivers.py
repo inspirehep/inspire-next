@@ -141,6 +141,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_bookautocomplete(sender, json, *args, **kwargs)
     populate_book_series_suggest(sender, json, *args, **kwargs)
     populate_collaboration_suggest(sender, json, *args, **kwargs)
+    populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_affiliation_suggest(sender, json, *args, **kwargs)
     populate_author_count(sender, json, *args, **kwargs)
@@ -189,7 +190,7 @@ def populate_bookautocomplete(sender, json, *args, **kwargs):
 
 
 def populate_book_series_suggest(sender, json, *args, **kwargs):
-    """Populate the ``book_series_suggest`` field of Literature records."""
+    """Populate the ``book_series.book_series_suggest`` field of Literature records."""
     if 'hep.json' not in json.get('$schema'):
         return
 
@@ -211,7 +212,7 @@ def populate_book_series_suggest(sender, json, *args, **kwargs):
 
 
 def populate_collaboration_suggest(sender, json, *args, **kwargs):
-    """Populate the ``collaboration_suggest`` field of Literature records."""
+    """Populate the ``collaborations.collaboration_suggest`` field of Literature records."""
     if 'hep.json' not in json.get('$schema'):
         return
 
@@ -226,6 +227,25 @@ def populate_collaboration_suggest(sender, json, *args, **kwargs):
                     'output': name,
                 },
             })
+
+
+def populate_experiment_suggest(sender, json, *args, **kwargs):
+    """Populate the ``experiment_suggest`` field of Experiments records."""
+    if 'experiments.json' not in json.get('$schema'):
+        return
+
+    legacy_name = json.get('legacy_name', '')
+    record = get_value(json, 'self.$ref')
+
+    json.update({
+        'experiment_suggest': {
+            'input': legacy_name,
+            'output': legacy_name,
+            'payload': {
+                '$ref': record,
+            }
+        },
+    })
 
 
 def populate_inspire_document_type(sender, json, *args, **kwargs):
@@ -336,7 +356,8 @@ def populate_abstract_source_suggest(sender, json, *args, **kwargs):
 
 
 def populate_title_suggest(sender, json, *args, **kwargs):
-    """Populate the ``title_suggest`` field of Journals records."""
+    """Populate the ``title_suggest`` field of
+    s records."""
     if 'journals.json' not in json.get('$schema'):
         return
 

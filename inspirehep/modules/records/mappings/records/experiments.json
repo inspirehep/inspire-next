@@ -132,6 +132,10 @@
                 "experimentautocomplete": {
                     "type": "string"
                 },
+                "experiment_suggest": {
+                    "payloads": true,
+                    "type": "completion"
+                },
                 "external_system_identifiers": {
                     "properties": {
                         "schema": {
