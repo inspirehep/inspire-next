@@ -37,9 +37,8 @@
 {%- endblock page_footer %}
 
 {% block javascript %}
-
-{% assets "inspirehep_multi_record_editor_js" %}
-<script src="{{ ASSET_URL }}"></script>
-{% endassets %}
-
+<script type="text/javascript" src="{{ url_for('static', filename='node_modules/ng2-multi-record-editor/dist/inline.bundle.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='node_modules/ng2-multi-record-editor/dist/vendor.bundle.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='node_modules/ng2-multi-record-editor/dist/polyfills.bundle.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='node_modules/ng2-multi-record-editor/dist/main.bundle.js') }}"></script>
 {% endblock javascript %}

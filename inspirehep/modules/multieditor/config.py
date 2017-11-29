@@ -20,36 +20,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Multieditor extension."""
+"""ArXiv configuration."""
 
 from __future__ import absolute_import, division, print_function
 
-from .views import blueprint
-from .api import blueprint as api_blueprint
-from . import config
 
-
-class MultiEditor(object):
-    def __init__(self, app=None):
-        if app:
-            self.init_app(app)
-
-    def init_app(self, app):
-        app.register_blueprint(blueprint)
-        app.extensions['inspire-multieditor'] = self
-
-
-class ApiMultiEditor(object):
-    def __init__(self, app=None):
-        if app:
-            self.init_app(app)
-
-    def init_app(self, app):
-        self.init_config(app)
-        app.register_blueprint(api_blueprint)
-        app.extensions['inspire-multieditor'] = self
-
-    def init_config(self, app):
-        for k in dir(config):
-            if k.startswith('MULTI_'):
-                app.config.setdefault(k, getattr(config, k))
+MULTI_MAX_RECORDS = 10000

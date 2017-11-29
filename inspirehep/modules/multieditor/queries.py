@@ -43,37 +43,46 @@ CLS_MAP = {
 }
 
 
-def get_records_from_query(query_string, page_size, page, index):
-    sorted_ids = []
+def get_total_records(query_string, index):
+    """
+    :param query_string: query string
+    :param index: index of the records to be searched
+    :return: returns the total records that match our query
+    """
     query_result = CLS_MAP[index]().query_from_iq(query_string).params(
-        size=page_size,
-        from_=((page - 1) * page_size),
-        fields=['control_number']
+        size=1,
+        fields=[]
     ).execute()
 
-    ids = [q.meta.id for q in query_result]
-    control_numbers = [q.control_number[0] for q in query_result]
-    db_records = Record.get_records(ids)
-    for db_record in db_records:
-        for index, control_number in enumerate(control_numbers):
-            if db_record['control_number'] == control_number:
-                sorted_ids.append(ids[index])
-
-    return {
-        'uuids': sorted_ids,
-        'json_records': db_records,
-        'total_records': query_result.hits.total
-    }
+    return query_result.hits.total
 
 
 def get_record_ids_from_query(query_string, index):
-    ids = []
+    """
+    :param query_string: query string
+    :param index: index of the records to be searched
+    :return: return the uuids of the records that matched our query
+    """
+    uuids = []
 
     query_result = CLS_MAP[index]().query_from_iq(query_string).params(
-        size=1000,
+        size=2000,
         fields=[]
     ).scan()
 
     for result in query_result:
-        ids.append(result.meta.id)
-    return ids
+        uuids.append(result.meta.id)
+    return uuids
+
+
+def get_paginated_records(page_number, page_size, uuids):
+    """
+    :param page_number: number of frontend page
+    :param page_size:  size of the frontend page
+    :param uuids: uuids that matched our query
+    :return: returns the paginated uuids and db records
+    """
+    paginated_uuids = uuids[(page_number-1)*page_size:(page_number*page_size)]
+    db_records = Record.get_records(paginated_uuids)
+    records_uuids = [str(record.id) for record in db_records]
+    return records_uuids, db_records,

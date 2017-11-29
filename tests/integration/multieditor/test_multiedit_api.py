@@ -55,7 +55,8 @@ def test_multieditor_preview_api(api_client):
         }),
     )
 
-    assert 'success' in [author['full_name'] for author in json.loads(response.data)['json_records'][0]['authors']]
+    expected_patch = [{u'path': [u'authors', 1], u'value': {u'full_name': u'success'}, u'op': u'add'}]
+    assert expected_patch == json.loads(response.data)['json_patches'][0]
 
 
 def test_multieditor_update_api(api_client):

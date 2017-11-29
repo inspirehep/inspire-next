@@ -24,6 +24,9 @@ from __future__ import absolute_import, division, print_function
 
 from itertools import chain
 
+from dictdiffer import diff
+from inspire_utils.helpers import force_list
+
 from inspire_utils.record import get_value
 
 
@@ -180,3 +183,41 @@ def get_title(record):
 
     """
     return get_value(record, 'titles.title[0]', default='')
+
+
+def inspire_diff(old_record, new_record):
+    """:param old_record: initial record
+        :type old_record: object
+
+       :param new_record: touched record
+       :type new_record: object
+
+        Returns a JSON patch object with the only difference
+        of the path keys being an array
+        """
+    json_patch = []
+    for single_diff in diff(old_record, new_record):
+        single_diff = list(single_diff)
+        path = force_list(single_diff[1])  # in case the path is a string and not an array
+        if single_diff[0] == 'add':
+            if not path[0]:
+                path = force_list(single_diff[2][0][0])
+            else:
+                path.append(single_diff[2][0][0])
+            json_patch.append({'op': single_diff[0],
+                               'path': path,
+                               'value': single_diff[2][0][1]})
+        elif single_diff[0] == 'remove':
+            if not path[0]:
+                path = force_list(single_diff[2][0][0])
+            else:
+                path.append(single_diff[2][0][0])
+            json_patch.append({'op': single_diff[0], 'path': path})
+        elif single_diff[0] == 'change':
+            json_patch.append({'op': 'replace',
+                               'path': path,
+                               'value': single_diff[2][1]})
+    if len(json_patch) == 0:
+        return None
+    else:
+        return json_patch

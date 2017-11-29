@@ -26,15 +26,17 @@
 
 from __future__ import absolute_import, print_function, division
 
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, session, current_app
 import copy
+import json
+
 from inspire_schemas.api import load_schema
 from inspirehep.modules.multieditor import tasks
 from inspirehep.modules.migrator.tasks import chunker
-from . import actions
+from .actions import compare_records
 from . import queries
 from .permissions import multieditor_use_permission
-
+from .serializers import get_actions
 
 blueprint = Blueprint(
     'inspirehep_multieditor',
@@ -48,21 +50,20 @@ blueprint = Blueprint(
 @multieditor_use_permission.require(http_exception=403)
 def update():
     """Apply the user actions to the database records."""
-    user_actions = request.json['userActions']
-    all_selected = request.json['allSelected']
-    searched_records = session.get('multieditor_searched_records', [])
-    if searched_records:
-        ids = searched_records['ids']
-        index = searched_records['schema']
-        schema = load_schema(index, resolved=True)
+    form = json.loads(request.data)
+    user_actions = form.get('userActions', {})
+    all_selected = form.get('allSelected', False)
+    multieditor_session = session.get('multieditor_session', {})
+    if multieditor_session:
+        ids = multieditor_session['uuids']
         if all_selected:
-            ids = filter(lambda x: x not in request.json['ids'], ids)
+            ids = set(ids) - set(form['ids'])  # in that case frontend ids are the disselected ones
         else:
-            ids = filter(lambda x: x in request.json['ids'], ids)
+            ids = set(ids) & set(form['ids'])
     else:
         return jsonify({'message': 'Please use the search before you apply actions'}), 400
-    for i, chunk in enumerate(chunker(ids, 20)):
-        tasks.process_records.delay(records_ids=chunk, user_actions=user_actions, schema=schema)
+    for i, chunk in enumerate(chunker(ids, 200)):
+        tasks.process_records.delay(records_ids=chunk, user_actions=user_actions, schema=multieditor_session['schema'])
     return jsonify({'message': 'Records are being updated'})
 
 
@@ -70,21 +71,42 @@ def update():
 @multieditor_use_permission.require(http_exception=403)
 def preview():
     """Preview the user actions in the first (page size) records."""
-    user_actions = request.json['userActions']
-    query_string = request.json['queryString']
-    page_size = int(request.json['pageSize'])
-    page_num = request.json['pageNum']
-    searched_records = session.get('multieditor_searched_records', [])
-    if searched_records:
-        index = searched_records['schema']
-    else:
+    form = json.loads(request.data)
+    user_actions = form.get('userActions', {})
+    page_size = form.get('pageSize', 10)
+    page_number = form.get('pageNum', 1)
+    multieditor_session = session.get('multieditor_session', {})
+
+    if not multieditor_session:
         return jsonify({'message': 'Please use the search before you apply actions'}), 400
-    schema = load_schema(index, resolved=True)
-    records = queries.get_records_from_query(query_string, page_size, page_num, index)['json_records']
+
+    uuids, records = queries.get_paginated_records(page_number=page_number,
+                                                   page_size=page_size,
+                                                   uuids=multieditor_session['uuids'])
+
     old_records = copy.deepcopy(records)
-    actions.process_records_no_db(user_actions, records, schema)
-    json_patches, errors = actions.diff_and_validate_records(old_records, records, schema)
-    return jsonify({'json_records': old_records, 'errors': errors, 'json_patches': json_patches})
+    actions = get_actions(user_actions)
+    for record in records:
+        for action in actions:
+            action.apply(record, multieditor_session['schema'])
+
+    json_patches, errors = compare_records(old_records, records, multieditor_session['schema'])
+
+    return jsonify({'json_records': old_records, 'errors': errors, 'json_patches': json_patches, 'uuids': uuids})
+
+
+@blueprint.route("/paginate", methods=['GET'])
+@multieditor_use_permission.require(http_exception=403)
+def paginate():
+    """Get paginated records from the session"""
+    page_number = int(request.args.get('pageNum', 1))
+    page_size = int(request.args.get('pageSize', 10))
+    multieditor_session = session.get('multieditor_session', {})
+    if not multieditor_session:
+        return jsonify({'message': 'Please refresh your page'}), 400
+    uuids, records = queries.get_paginated_records(page_number=page_number,
+                                                   page_size=page_size, uuids=multieditor_session['uuids'])
+    return jsonify({'uuids': uuids, 'json_records': records})
 
 
 @blueprint.route("/search", methods=['GET'])
@@ -92,14 +114,22 @@ def preview():
 def search():
     """Search for records using the query and store the result's ids"""
     query_string = request.args.get('queryString', '')
-    page_num = int(request.args.get('pageNum', 1))
-    page_size = int(request.args.get('pageSize', 1))
-    index = request.args.get('index', '')
-    paginated_records = queries.get_records_from_query(query_string, page_size, page_num, index)
-    if paginated_records['total_records'] > 10000:
-        return jsonify({'message': 'Please narrow the results using a query'}), 400
-    session['multieditor_searched_records'] = {
-        'ids': queries.get_record_ids_from_query(query_string, index),
-        'schema': index
+    page_number = int(request.args.get('pageNum', 1))
+    page_size = int(request.args.get('pageSize', 10))
+    schema_name = request.args.get('index', '')
+    schema = load_schema(schema_name, resolved=True)
+    total_records = queries.get_total_records(query_string, schema_name)
+    if total_records > current_app.config['MULTI_MAX_RECORDS']:
+        return jsonify({'message': 'Please narrow the results using a query to be less than 10000'}), 400
+    uuids = queries.get_record_ids_from_query(query_string, schema_name)
+    session['multieditor_session'] = {
+        'uuids': uuids,
+        'schema': schema,
+        'schema_name': schema_name
     }
-    return jsonify(paginated_records)
+    records_uuids, records = queries.get_paginated_records(page_number=page_number,
+                                                           page_size=page_size,
+                                                           uuids=uuids)
+    return jsonify({'total_records': total_records,
+                    'uuids': records_uuids,
+                    'json_records': records})

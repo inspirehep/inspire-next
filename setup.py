@@ -207,13 +207,13 @@ setup(
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'invenio_collections = invenio_collections:InvenioCollections',
+            'inspire_multieditor = inspirehep.modules.multieditor:ApiMultiEditor',
         ],
         'invenio_base.api_blueprints': [
             'inspirehep_editor = inspirehep.modules.editor:blueprint',
-            'inspirehep_multieditor = inspirehep.modules.multieditor:blueprint',
         ],
         'invenio_base.apps': [
-            'inspire_multieditor = inspirehep.modules.multieditor:Multieditor',
+            'inspire_multieditor = inspirehep.modules.multieditor:MultiEditor',
             'inspire_arxiv = inspirehep.modules.arxiv:InspireArXiv',
             'inspire_authors = inspirehep.modules.authors:InspireAuthors',
             'inspire_crossref = inspirehep.modules.crossref:InspireCrossref',
