@@ -334,6 +334,63 @@ def test_arxiv_plot_extract_populates_files_with_plots(mock_os):
         rmtree(temporary_dir)
 
 
+@patch('plotextractor.api.os')
+def test_arxiv_plot_extract_is_safe_to_rerun(mock_os):
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '0804.1873.tar.gz'))
+
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'nucl-ex',
+                ],
+                'value': '0804.1873',
+            },
+        ],
+    }  # literature/783246
+    extra_data = {}
+    files = MockFiles({
+        '0804.1873.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            }),
+        }),
+    })
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    try:
+        temporary_dir = mkdtemp()
+        mock_os.path.abspath.return_value = temporary_dir
+
+        for _ in range(2):
+            assert arxiv_plot_extract(obj, eng) is None
+
+            expected_figures = [{
+                'url': '/api/files/0b9dd5d1-feae-4ba5-809d-3a029b0bc110/figure1.png',
+                'source': 'arxiv',
+                'material': 'preprint',
+                'key': 'figure1.png',
+                'caption': 'Difference (in MeV) between the theoretical and experimental masses for the 2027 selected nuclei as a function of the mass number.'
+            }]
+            result = obj.data['figures']
+
+            assert expected_figures == result
+
+            expected_files = ['0804.1873.tar.gz', 'figure1.png']
+
+            assert expected_files == obj.files.keys
+
+    finally:
+        rmtree(temporary_dir)
+
+
 @patch('inspirehep.modules.workflows.tasks.arxiv.process_tarball')
 def test_arxiv_plot_extract_logs_when_tarball_is_invalid(mock_process_tarball):
     mock_process_tarball.side_effect = InvalidTarball
