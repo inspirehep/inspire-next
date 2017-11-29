@@ -59,6 +59,7 @@ install_requires = [
     'flask-shell-ipython~=0.0,>=0.3.0',
     'inspire-crawler~=1.0',
     'inspire-dojson~=55.0,>=55.0.0',
+    'inspire-json-merger~=5.0,>=5.0.1',
     'inspire-matcher~=2.0,>=2.0.0',
     'inspire-query-parser~=2.0,>=2.0.0',
     'inspire-schemas~=55.0,>=55.0.1',
@@ -243,6 +244,7 @@ setup(
         'invenio_workflows.workflows': [
             'article = inspirehep.modules.workflows.workflows:Article',
             'author = inspirehep.modules.workflows.workflows:Author',
+            'manual_merge = inspirehep.modules.workflows.workflows:ManualMerge',
         ],
         'invenio_workflows_ui.actions': [
             'author_approval = inspirehep.modules.workflows.actions.author_approval:AuthorApproval',
