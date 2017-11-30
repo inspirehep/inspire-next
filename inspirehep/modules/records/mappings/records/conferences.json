@@ -79,6 +79,10 @@
                 "conferenceautocomplete": {
                     "type": "string"
                 },
+                "conference_suggest": {
+                    "payloads": true,
+                    "type": "completion"
+                },
                 "contact_details": {
                     "properties": {
                         "email": {

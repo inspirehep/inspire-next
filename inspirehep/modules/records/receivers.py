@@ -141,6 +141,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_bookautocomplete(sender, json, *args, **kwargs)
     populate_book_series_suggest(sender, json, *args, **kwargs)
     populate_collaboration_suggest(sender, json, *args, **kwargs)
+    populate_conference_suggest(sender, json, *args, **kwargs)
     populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_affiliation_suggest(sender, json, *args, **kwargs)
@@ -227,6 +228,25 @@ def populate_collaboration_suggest(sender, json, *args, **kwargs):
                     'output': name,
                 },
             })
+
+
+def populate_conference_suggest(sender, json, *args, **kwargs):
+    """Populate the ``conference_suggest`` field of Conferences records."""
+    if 'conferences.json' not in json.get('$schema'):
+        return
+
+    cnum = json.get('cnum', '')
+    record = get_value(json, 'self.$ref')
+
+    json.update({
+        'conference_suggest': {
+            'input': cnum,
+            'output': cnum,
+            'payload': {
+                '$ref': record,
+            }
+        },
+    })
 
 
 def populate_experiment_suggest(sender, json, *args, **kwargs):

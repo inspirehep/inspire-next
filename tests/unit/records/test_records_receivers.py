@@ -35,6 +35,7 @@ from inspirehep.modules.records.receivers import (
     populate_bookautocomplete,
     populate_book_series_suggest,
     populate_collaboration_suggest,
+    populate_conference_suggest,
     populate_earliest_date,
     populate_experiment_suggest,
     populate_inspire_document_type,
@@ -424,6 +425,52 @@ def test_populate_collaboration_suggest_does_nothing_if_record_is_not_literature
     result = record['collaborations']
 
     assert expected == result
+
+
+def test_populate_conference_suggest():
+    schema = load_schema('conferences')
+    subschema = schema['properties']['cnum']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/conferences.json',
+        'cnum': 'C87-12-25',
+        'self': {
+            '$ref': 'http://localhost:5000/api/conferences/bar'
+        },
+    }
+    assert validate(record['cnum'], subschema) is None
+
+    populate_conference_suggest(None, record)
+
+    expected = {
+                   'input': 'C87-12-25',
+                   'output': 'C87-12-25',
+                   'payload': {
+                       '$ref': 'http://localhost:5000/api/conferences/bar'
+                   },
+    }
+
+    result = record['conference_suggest']
+
+    assert expected == result
+
+
+def test_populate_conference_suggest_does_nothing_if_record_is_not_conference():
+    schema = load_schema('conferences')
+    subschema = schema['properties']['cnum']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/other.json',
+        'cnum': 'C87-12-25',
+        'self': {
+            '$ref': 'http://localhost:5000/api/conferences/bar'
+        },
+    }
+    assert validate(record['cnum'], subschema) is None
+
+    populate_conference_suggest(None, record)
+
+    assert 'conference_suggest' not in record
 
 
 def test_populate_experiment_suggest():

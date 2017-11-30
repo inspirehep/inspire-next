@@ -626,6 +626,11 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search')
         },
+        suggesters=dict(
+            conference=dict(completion=dict(
+                field='conference_suggest'
+            ))
+        ),
         list_route='/conferences/db',
         item_route='/conferences/<pid(con,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/db',
         default_media_type='application/json',
