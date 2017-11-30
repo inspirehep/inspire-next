@@ -27,6 +27,7 @@ import json
 from sqlalchemy import text
 from sqlalchemy.orm.exc import NoResultFound
 
+from idutils import normalize_doi
 from invenio_accounts.models import User
 from invenio_db import db
 from invenio_oauthclient.models import UserIdentity
@@ -74,12 +75,23 @@ def check_journal_existence(title):
 
 
 def normalize_formdata(obj, formdata):
+    formdata = normalize_provided_doi(obj, formdata)
     formdata = get_user_orcid(obj, formdata)
     formdata = get_user_email(obj, formdata)
     formdata = split_page_range_article_id(obj, formdata)
     formdata = normalize_journal_title(obj, formdata)
     formdata = remove_english_language(obj, formdata)
     formdata = find_book_id(obj, formdata)
+
+    return formdata
+
+
+def normalize_provided_doi(obj, formdata):
+    try:
+        doi = formdata.get('doi')
+        formdata['doi'] = normalize_doi(doi)
+    except AttributeError:
+        formdata['doi'] = None
 
     return formdata
 

@@ -82,21 +82,14 @@ def test_crossref_search_handles_the_response_when_the_request_is_valid(log_in_a
         assert result['status'] == 'success'
 
 
-def test_crossref_search_handles_the_response_when_the_request_asks_for_a_non_existing_doi(log_in_as_scientist, app_client):
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            'GET', 'http://api.crossref.org/works/does-not-exist',
-            status_code=404,
-            text=pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', 'does-not-exist')),
-        )
+def test_crossref_search_returns_an_error_when_the_doi_cant_be_normalized(log_in_as_scientist, app_client):
+    with requests_mock.Mocker():
+        response = app_client.get('/doi/search?doi=cant-be-normalized')
 
-        response = app_client.get('/doi/search?doi=does-not-exist')
-
-        assert response.status_code == 404
+        assert response.status_code == 400
 
         result = json.loads(response.data)
 
         assert result['query'] == {}
-        assert result['source'] == 'crossref'
-        assert result['status'] == 'notfound'
+        assert result['source'] == 'inspire'
+        assert result['status'] == 'badrequest'
