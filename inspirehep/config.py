@@ -1189,9 +1189,10 @@ THEME_500_TEMPLATE = "inspirehep_theme/errors/500.html"
 CFG_SITE_SUPPORT_EMAIL = "admin@inspirehep.net"
 INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 
-# Submission
+# Legacy
 # ==========
 LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
+LEGACY_ENDPOINTS_TO_SYNC = [] # Set this to 'literature', 'authors' when ready.
 
 # Web services and APIs
 # =====================

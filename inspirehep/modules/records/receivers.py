@@ -46,6 +46,7 @@ from inspire_utils.helpers import force_list
 from inspire_utils.name import generate_name_variations
 from inspire_utils.record import get_value
 from inspirehep.modules.authors.utils import phonetic_blocks
+from .utils import get_endpoint_from_record
 
 
 #
@@ -104,6 +105,35 @@ def assign_uuid(sender, record, *args, **kwargs):
 #
 
 @models_committed.connect
+def notify_legacy(sender, changes):
+    """Notify Legacy that a given record has been inserted or updated.
+
+    Notifies Legacy that a given record has been inserted or updated, by
+    sharing this information via Redis. Then Legacy will fetch the actual
+    record through subsequent HTTP requests.
+    """
+    redis_connection = None
+
+    def _get_redis_connection():
+        if redis_connection:
+            return redis_connection
+        redis_url = current_app.config.get('CACHE_REDIS_URL')
+        return StrictRedis.from_url(redis_url)
+
+    for model_instance, dummy in changes:
+        if isinstance(model_instance, RecordMetadata):
+            record = model_instance.json
+            recid = record.get('control_number')
+            endpoint = get_endpoint_from_record(record)
+            if recid and endpoint in current_app.config['LEGACY_ENDPOINTS_TO_SYNC']:
+                redis_connection = _get_redis_connection()
+                redis_connection.sadd('records_to_sync_into_legacy',
+                                      '{endpoint}/{recid}'.format(
+                                          endpoint=endpoint,
+                                          recid=recid))
+
+
+@models_committed.connect
 def index_after_commit(sender, changes):
     """Index a record in ES after it was committed to the DB.
 
@@ -126,7 +156,7 @@ def index_after_commit(sender, changes):
 #
 
 @before_record_index.connect
-def enhance_after_index(sender, json, *args, **kwargs):
+def enhance_before_index(sender, json, *args, **kwargs):
     """Run all the receivers that enhance the record for ES in the right order.
 
     .. note::
