@@ -391,6 +391,50 @@ def test_arxiv_plot_extract_is_safe_to_rerun(mock_os):
         rmtree(temporary_dir)
 
 
+@patch('plotextractor.api.os')
+def test_arxiv_plot_extract_handles_duplicate_plot_names(mock_os):
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1711.10662.tar.gz'))
+
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'cs.CV',
+                ],
+                'value': '1711.10662',
+            },
+        ],
+    }  # holdingpen/807096
+    extra_data = {}
+    files = MockFiles({
+        '1711.10662.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            }),
+        }),
+    })
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    try:
+        temporary_dir = mkdtemp()
+        mock_os.path.abspath.return_value = temporary_dir
+
+        assert arxiv_plot_extract(obj, eng) is None
+
+        assert len(obj.data['figures']) == 66
+        assert len(obj.files.keys) == 67
+
+    finally:
+        rmtree(temporary_dir)
+
+
 @patch('inspirehep.modules.workflows.tasks.arxiv.process_tarball')
 def test_arxiv_plot_extract_logs_when_tarball_is_invalid(mock_process_tarball):
     mock_process_tarball.side_effect = InvalidTarball

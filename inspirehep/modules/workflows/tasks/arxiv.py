@@ -147,12 +147,16 @@ def arxiv_plot_extract(obj, eng):
                 return
 
             if 'figures' in obj.data:
+                for figure in obj.data['figures']:
+                    del obj.files[figure['key']]
                 del obj.data['figures']
 
             lb = LiteratureBuilder(source='arxiv', record=obj.data)
-            for plot in plots:
+            for index, plot in enumerate(plots):
                 plot_name = os.path.basename(plot.get('url'))
                 key = plot_name
+                if plot_name in obj.files.keys:
+                    key = '{number}_{name}'.format(number=index, name=plot_name)
                 with open(plot.get('url')) as plot_file:
                     obj.files[key] = plot_file
 
