@@ -473,7 +473,7 @@ def test_populate_conference_suggest_does_nothing_if_record_is_not_conference():
     assert 'conference_suggest' not in record
 
 
-def test_populate_experiment_suggest():
+def test_populate_experiment_suggest_from_legacy_name():
     schema = load_schema('experiments')
     subschema = schema['properties']['legacy_name']
 
@@ -481,7 +481,7 @@ def test_populate_experiment_suggest():
         '$schema': 'http://localhost:5000/schemas/records/experiments.json',
         'legacy_name': 'foo',
         'self': {
-            '$ref': 'http://localhost:5000/api/literature/bar'
+            '$ref': 'http://localhost:5000/api/experiments/bar'
         },
     }
     assert validate(record['legacy_name'], subschema) is None
@@ -489,10 +489,71 @@ def test_populate_experiment_suggest():
     populate_experiment_suggest(None, record)
 
     expected = {
-                   'input': 'foo',
+                   'input': ['foo'],
                    'output': 'foo',
                    'payload': {
-                       '$ref': 'http://localhost:5000/api/literature/bar'
+                       '$ref': 'http://localhost:5000/api/experiments/bar'
+                   },
+    }
+
+    result = record['experiment_suggest']
+
+    assert expected == result
+
+
+def test_populate_experiment_suggest_from_legacy_name_from_long_name():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['long_name']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/experiments.json',
+        'legacy_name': 'foo',
+        'long_name': 'bar',
+        'self': {
+            '$ref': 'http://localhost:5000/api/experiments/bar'
+        },
+    }
+    assert validate(record['long_name'], subschema) is None
+
+    populate_experiment_suggest(None, record)
+
+    expected = {
+                   'input': ['foo', 'bar'],
+                   'output': 'foo',
+                   'payload': {
+                       '$ref': 'http://localhost:5000/api/experiments/bar'
+                   },
+    }
+
+    result = record['experiment_suggest']
+
+    assert expected == result
+
+
+def test_populate_experiment_suggest_from_legacy_name_from_name_variants():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['name_variants']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/experiments.json',
+        'legacy_name': 'foo',
+        'name_variants': [
+            'bar',
+            'baz',
+            ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/experiments/bar'
+        },
+    }
+    assert validate(record['name_variants'], subschema) is None
+
+    populate_experiment_suggest(None, record)
+
+    expected = {
+                   'input': ['foo', 'bar', 'baz'],
+                   'output': 'foo',
+                   'payload': {
+                       '$ref': 'http://localhost:5000/api/experiments/bar'
                    },
     }
 
@@ -509,7 +570,7 @@ def test_populate_experiment_suggest_does_nothing_if_record_is_not_experiment():
         '$schema': 'http://localhost:5000/schemas/records/other.json',
         'legacy_name': 'foo',
         'self': {
-            '$ref': 'http://localhost:5000/api/literature/bar'
+            '$ref': 'http://localhost:5000/api/experiments/bar'
         },
     }
     assert validate(record['legacy_name'], subschema) is None

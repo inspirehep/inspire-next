@@ -255,11 +255,19 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
         return
 
     legacy_name = json.get('legacy_name', '')
+    long_name = json.get('long_name', '')
+    name_variants = json.get('name_variants', '')
     record = get_value(json, 'self.$ref')
+
+    input_values = []
+    input_values.append(legacy_name)
+    input_values.append(long_name)
+    input_values.extend(name_variants)
+    input_values = [el for el in input_values if el]
 
     json.update({
         'experiment_suggest': {
-            'input': legacy_name,
+            'input': input_values,
             'output': legacy_name,
             'payload': {
                 '$ref': record,
