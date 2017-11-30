@@ -1050,6 +1050,9 @@ def test_populate_title_suggest_with_all_inputs():
         'journal_title': {'title': 'The Journal of High Energy Physics (JHEP)'},
         'short_title': 'JHEP',
         'title_variants': ['JOURNAL OF HIGH ENERGY PHYSICS'],
+        'self': {
+            '$ref': 'https://localhost:5000/api/journals/bar',
+        },
     }
     assert validate(record['journal_title'], journal_title_schema) is None
     assert validate(record['short_title'], short_title_schema) is None
@@ -1061,11 +1064,126 @@ def test_populate_title_suggest_with_all_inputs():
         'input': [
             'The Journal of High Energy Physics (JHEP)',
             'JHEP',
+            'JOURNAL OF HIGH ENERGY PHYSICS',
+        ],
+        'output': 'JHEP',
+        'payload': {
+            'full_title': 'The Journal of High Energy Physics (JHEP)',
+            '$ref': 'https://localhost:5000/api/journals/bar',
+        }
+    }
+
+    result = record['title_suggest']
+
+    assert expected == result
+
+
+def test_populate_title_suggest_without_short_title():
+    schema = load_schema('journals')
+    journal_title_schema = schema['properties']['journal_title']
+    short_title_schema = schema['properties']['short_title']
+    title_variants_schema = schema['properties']['title_variants']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/journals.json',
+        'journal_title': {'title': 'The Journal of High Energy Physics (JHEP)'},
+        'short_title': '',
+        'title_variants': ['JOURNAL OF HIGH ENERGY PHYSICS'],
+        'self': {
+            '$ref': 'https://localhost:5000/api/journals/bar',
+        },
+    }
+    assert validate(record['journal_title'], journal_title_schema) is None
+    assert validate(record['short_title'], short_title_schema) is None
+    assert validate(record['title_variants'], title_variants_schema) is None
+
+    populate_title_suggest(None, record)
+
+    expected = {
+        'input': [
+            'The Journal of High Energy Physics (JHEP)',
+            'JOURNAL OF HIGH ENERGY PHYSICS'
+        ],
+        'output': '',
+        'payload': {
+            'full_title': 'The Journal of High Energy Physics (JHEP)',
+            '$ref': 'https://localhost:5000/api/journals/bar',
+        }
+    }
+
+    result = record['title_suggest']
+
+    assert expected == result
+
+
+def test_populate_title_suggest_without_title_variants():
+    schema = load_schema('journals')
+    journal_title_schema = schema['properties']['journal_title']
+    short_title_schema = schema['properties']['short_title']
+    title_variants_schema = schema['properties']['title_variants']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/journals.json',
+        'journal_title': {'title': 'The Journal of High Energy Physics (JHEP)'},
+        'short_title': 'JHEP',
+        'title_variants': [],
+        'self': {
+            '$ref': 'https://localhost:5000/api/journals/bar',
+        },
+    }
+    assert validate(record['journal_title'], journal_title_schema) is None
+    assert validate(record['short_title'], short_title_schema) is None
+    assert validate(record['title_variants'], title_variants_schema) is None
+
+    populate_title_suggest(None, record)
+
+    expected = {
+        'input': [
+            'The Journal of High Energy Physics (JHEP)',
+            'JHEP',
+        ],
+        'output': 'JHEP',
+        'payload': {
+            'full_title': 'The Journal of High Energy Physics (JHEP)',
+            '$ref': 'https://localhost:5000/api/journals/bar',
+        }
+    }
+
+    result = record['title_suggest']
+
+    assert expected == result
+
+
+def test_populate_title_suggest_without_full_title():
+    schema = load_schema('journals')
+    journal_title_schema = schema['properties']['journal_title']
+    short_title_schema = schema['properties']['short_title']
+    title_variants_schema = schema['properties']['title_variants']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/journals.json',
+        'journal_title': {},
+        'short_title': 'JHEP',
+        'title_variants': ['JOURNAL OF HIGH ENERGY PHYSICS'],
+        'self': {
+            '$ref': 'https://localhost:5000/api/journals/bar',
+        },
+    }
+    assert validate(record['journal_title'], journal_title_schema) is None
+    assert validate(record['short_title'], short_title_schema) is None
+    assert validate(record['title_variants'], title_variants_schema) is None
+
+    populate_title_suggest(None, record)
+
+    expected = {
+        'input': [
+            'JHEP',
             'JOURNAL OF HIGH ENERGY PHYSICS'
         ],
         'output': 'JHEP',
         'payload': {
-            'full_title': 'The Journal of High Energy Physics (JHEP)'
+            'full_title': '',
+            '$ref': 'https://localhost:5000/api/journals/bar',
         }
     }
 

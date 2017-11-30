@@ -176,14 +176,14 @@ def populate_bookautocomplete(sender, json, *args, **kwargs):
     input_values.extend(titles)
     input_values = [el for el in input_values if el]
 
-    ref = get_value(json, 'self.$ref')
+    record = get_value(json, 'self.$ref')
 
     json.update({
         'bookautocomplete': {
             'input': input_values,
             'payload': {
                 'authors': authors,
-                'id': ref,
+                'id': record if record else '',
                 'title': titles,
             },
         },
@@ -243,7 +243,7 @@ def populate_conference_suggest(sender, json, *args, **kwargs):
             'input': cnum,
             'output': cnum,
             'payload': {
-                '$ref': record,
+                '$ref': record if record else '',
             }
         },
     })
@@ -270,7 +270,7 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
             'input': input_values,
             'output': legacy_name,
             'payload': {
-                '$ref': record,
+                '$ref': record if record else '',
             }
         },
     })
@@ -398,14 +398,17 @@ def populate_title_suggest(sender, json, *args, **kwargs):
     input_values.extend(title_variants)
     input_values = [el for el in input_values if el]
 
+    record = get_value(json, 'self.$ref')
+
     json.update({
         'title_suggest': {
             'input': input_values,
             'output': short_title if short_title else '',
             'payload': {
                 'full_title': journal_title if journal_title else '',
+                '$ref': record if record else '',
             },
-        }
+        },
     })
 
 
