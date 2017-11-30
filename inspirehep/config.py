@@ -374,7 +374,10 @@ RECORDS_REST_ENDPOINTS = dict(
             )),
             collaboration_name=dict(completion=dict(
                 field='collaborations.collaboration_suggest'
-            ))
+            )),
+            report_number=dict(completion=dict(
+                field='report_number_suggest'
+            )),
         ),
         list_route='/literature/',
         item_route=(

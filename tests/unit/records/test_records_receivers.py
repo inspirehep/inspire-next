@@ -40,6 +40,7 @@ from inspirehep.modules.records.receivers import (
     populate_experiment_suggest,
     populate_inspire_document_type,
     populate_recid_from_ref,
+    populate_report_number_suggest,
     populate_title_suggest,
     populate_author_count,
     populate_authors_full_name_unicode_normalized,
@@ -489,11 +490,11 @@ def test_populate_experiment_suggest_from_legacy_name():
     populate_experiment_suggest(None, record)
 
     expected = {
-                   'input': ['foo'],
-                   'output': 'foo',
-                   'payload': {
-                       '$ref': 'http://localhost:5000/api/experiments/bar'
-                   },
+        'input': ['foo'],
+        'output': 'foo',
+        'payload': {
+            '$ref': 'http://localhost:5000/api/experiments/bar'
+        },
     }
 
     result = record['experiment_suggest']
@@ -518,11 +519,11 @@ def test_populate_experiment_suggest_from_legacy_name_from_long_name():
     populate_experiment_suggest(None, record)
 
     expected = {
-                   'input': ['foo', 'bar'],
-                   'output': 'foo',
-                   'payload': {
-                       '$ref': 'http://localhost:5000/api/experiments/bar'
-                   },
+        'input': ['foo', 'bar'],
+        'output': 'foo',
+        'payload': {
+            '$ref': 'http://localhost:5000/api/experiments/bar'
+        },
     }
 
     result = record['experiment_suggest']
@@ -550,11 +551,11 @@ def test_populate_experiment_suggest_from_legacy_name_from_name_variants():
     populate_experiment_suggest(None, record)
 
     expected = {
-                   'input': ['foo', 'bar', 'baz'],
-                   'output': 'foo',
-                   'payload': {
-                       '$ref': 'http://localhost:5000/api/experiments/bar'
-                   },
+        'input': ['foo', 'bar', 'baz'],
+        'output': 'foo',
+        'payload': {
+            '$ref': 'http://localhost:5000/api/experiments/bar'
+        },
     }
 
     result = record['experiment_suggest']
@@ -977,6 +978,71 @@ def test_populate_recid_from_ref_handles_deleted_records():
     populate_recid_from_ref(None, json_dict)
 
     assert json_dict['deleted_recids'] == [1, 2]
+
+
+def test_populate_report_number_suggest():
+    schema = load_schema('hep')
+    subschema = schema['properties']['report_numbers']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'report_numbers': [
+            {
+                'value': 'foo',
+            },
+            {
+                'value': 'bar',
+            },
+            {
+                'value': 'baz',
+            },
+        ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/bar',
+        },
+    }
+    assert validate(record['report_numbers'], subschema) is None
+
+    populate_report_number_suggest(None, record)
+
+    expected = {
+        'input': ['foo', 'bar', 'baz'],
+        'output': 'foo',
+        'payload': {
+           '$ref': 'http://localhost:5000/api/literature/bar'
+        },
+    }
+    result = record['report_number_suggest']
+
+    assert expected == result
+
+
+def test_populate_report_number_suggest_does_nothing_if_record_is_not_literature():
+    schema = load_schema('hep')
+    subschema = schema['properties']['report_numbers']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/other.json',
+        'report_numbers': [
+            {
+                'value': 'foo',
+            },
+            {
+                'value': 'bar',
+            },
+            {
+                'value': 'baz',
+            },
+        ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/bar',
+        },
+    }
+    assert validate(record['report_numbers'], subschema) is None
+
+    populate_report_number_suggest(None, record)
+
+    assert 'report_number_suggest' not in record
 
 
 def test_populate_abstract_source_suggest():

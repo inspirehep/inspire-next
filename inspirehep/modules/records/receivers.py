@@ -143,6 +143,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_collaboration_suggest(sender, json, *args, **kwargs)
     populate_conference_suggest(sender, json, *args, **kwargs)
     populate_experiment_suggest(sender, json, *args, **kwargs)
+    populate_report_number_suggest(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_affiliation_suggest(sender, json, *args, **kwargs)
     populate_author_count(sender, json, *args, **kwargs)
@@ -176,14 +177,14 @@ def populate_bookautocomplete(sender, json, *args, **kwargs):
     input_values.extend(titles)
     input_values = [el for el in input_values if el]
 
-    record = get_value(json, 'self.$ref')
+    record = get_value(json, 'self.$ref', '')
 
     json.update({
         'bookautocomplete': {
             'input': input_values,
             'payload': {
                 'authors': authors,
-                'id': record if record else '',
+                'id': record,
                 'title': titles,
             },
         },
@@ -236,14 +237,14 @@ def populate_conference_suggest(sender, json, *args, **kwargs):
         return
 
     cnum = json.get('cnum', '')
-    record = get_value(json, 'self.$ref')
+    record = get_value(json, 'self.$ref', '')
 
     json.update({
         'conference_suggest': {
             'input': cnum,
             'output': cnum,
             'payload': {
-                '$ref': record if record else '',
+                '$ref': record,
             }
         },
     })
@@ -257,7 +258,7 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
     legacy_name = json.get('legacy_name', '')
     long_name = json.get('long_name', '')
     name_variants = json.get('name_variants', '')
-    record = get_value(json, 'self.$ref')
+    record = get_value(json, 'self.$ref', '')
 
     input_values = []
     input_values.append(legacy_name)
@@ -270,7 +271,7 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
             'input': input_values,
             'output': legacy_name,
             'payload': {
-                '$ref': record if record else '',
+                '$ref': record,
             }
         },
     })
@@ -365,6 +366,26 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
     _recursive_find_refs(json)
 
 
+def populate_report_number_suggest(sender, json, *args, **kwargs):
+    """Populate the ``report_number_suggest`` field of Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
+    report_numbers = get_value(json, 'report_numbers.value', [])
+
+    record = get_value(json, 'self.$ref', '')
+
+    json.update({
+        'report_number_suggest': {
+            'input': report_numbers,
+            'output': report_numbers[0] if report_numbers else '',
+            'payload': {
+                '$ref': record,
+            }
+        },
+    })
+
+
 def populate_abstract_source_suggest(sender, json, *args, **kwargs):
     """Populate the ``abstract_source_suggest`` field in Literature records."""
     if 'hep.json' not in json.get('$schema'):
@@ -388,7 +409,7 @@ def populate_title_suggest(sender, json, *args, **kwargs):
     if 'journals.json' not in json.get('$schema'):
         return
 
-    journal_title = get_value(json, 'journal_title.title', default='')
+    journal_title = get_value(json, 'journal_title.title', '')
     short_title = json.get('short_title', '')
     title_variants = json.get('title_variants', [])
 
@@ -398,15 +419,15 @@ def populate_title_suggest(sender, json, *args, **kwargs):
     input_values.extend(title_variants)
     input_values = [el for el in input_values if el]
 
-    record = get_value(json, 'self.$ref')
+    record = get_value(json, 'self.$ref', '')
 
     json.update({
         'title_suggest': {
             'input': input_values,
-            'output': short_title if short_title else '',
+            'output': short_title,
             'payload': {
-                'full_title': journal_title if journal_title else '',
-                '$ref': record if record else '',
+                'full_title': journal_title,
+                '$ref': record,
             },
         },
     })
