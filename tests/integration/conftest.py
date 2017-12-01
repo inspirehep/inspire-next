@@ -61,6 +61,7 @@ def app():
         CELERY_CACHE_BACKEND='memory',
         CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
         SECRET_KEY='secret!',
+        RECORD_EDITOR_FILE_UPLOAD_FOLDER='tests/integration/editor/temp',
         TESTING=True,
     )
 
