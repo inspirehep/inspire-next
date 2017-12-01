@@ -212,6 +212,10 @@ def submission_fulltext_download(obj, eng):
         )
 
         if pdf:
+            obj.data['documents'] = [
+                document for document in obj.data.get('documents', ())
+                if document.get('key') != filename
+            ]
             lb = LiteratureBuilder(source=obj.data['acquisition_source']['source'], record=obj.data)
             lb.add_document(
                 filename,

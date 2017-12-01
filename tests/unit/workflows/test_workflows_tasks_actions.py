@@ -26,6 +26,7 @@ import os
 import pkg_resources
 
 import pytest
+import requests_mock
 from flask import current_app
 from mock import patch
 
@@ -46,9 +47,10 @@ from inspirehep.modules.workflows.tasks.actions import (
     reject_record,
     refextract,
     shall_halt_workflow,
+    submission_fulltext_download,
 )
 
-from mocks import MockEng, MockObj
+from mocks import MockEng, MockObj, MockFiles
 
 
 def _get_auto_reject_obj(decision, has_core_keywords):
@@ -463,3 +465,104 @@ def test_refextract_from_text(mock_get_pdf_in_workflow):
 
     assert refextract(obj, eng) is None
     assert obj.data['references'][0]['raw_refs'][0]['source'] == 'submitter'
+
+
+def test_submission_fulltext_download():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '1605.03844.pdf')),
+        )
+
+        schema = load_schema('hep')
+        subschema = schema['properties']['acquisition_source']
+        data = {
+            'acquisition_source': {
+                'datetime': '2017-11-30T16:38:43.352370',
+                'email': 'david.caro@cern.ch',
+                'internal_uid': 54252,
+                'method': 'submitter',
+                'orcid': '0000-0002-2174-4493',
+                'source': 'submitter',
+                'submission_number': '1'
+            }
+        }
+        assert validate(data['acquisition_source'], subschema) is None
+
+        extra_data = {
+            'submission_pdf': 'http://export.arxiv.org/pdf/1605.03844',
+        }
+        files = MockFiles({})
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
+
+        assert submission_fulltext_download(obj, eng)
+
+        expected_key = 'fulltext.pdf'
+        expected_documents = [
+            {
+                'fulltext': True,
+                'key': expected_key,
+                'original_url': 'http://export.arxiv.org/pdf/1605.03844',
+                'source': 'submitter',
+                'url': '/api/files/%s/%s' % (
+                    obj.files[expected_key].bucket_id,
+                    expected_key,
+                ),
+            }
+        ]
+        result = obj.data['documents']
+
+        assert expected_documents == result
+
+
+def test_submission_fulltext_download_does_not_duplicate_documents():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '1605.03844.pdf')),
+        )
+
+        schema = load_schema('hep')
+        subschema = schema['properties']['acquisition_source']
+        data = {
+            'acquisition_source': {
+                'datetime': '2017-11-30T16:38:43.352370',
+                'email': 'david.caro@cern.ch',
+                'internal_uid': 54252,
+                'method': 'submitter',
+                'orcid': '0000-0002-2174-4493',
+                'source': 'submitter',
+                'submission_number': '1'
+            }
+        }
+        assert validate(data['acquisition_source'], subschema) is None
+
+        extra_data = {
+            'submission_pdf': 'http://export.arxiv.org/pdf/1605.03844',
+        }
+        files = MockFiles({})
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
+
+        assert submission_fulltext_download(obj, eng)
+        assert submission_fulltext_download(obj, eng)
+
+        expected_key = 'fulltext.pdf'
+        expected_documents = [
+            {
+                'fulltext': True,
+                'key': expected_key,
+                'original_url': 'http://export.arxiv.org/pdf/1605.03844',
+                'source': 'submitter',
+                'url': '/api/files/%s/%s' % (
+                    obj.files[expected_key].bucket_id,
+                    expected_key,
+                ),
+            }
+        ]
+        result = obj.data['documents']
+
+        assert expected_documents == result

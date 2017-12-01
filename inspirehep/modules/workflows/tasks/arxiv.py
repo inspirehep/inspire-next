@@ -86,6 +86,10 @@ def arxiv_fulltext_download(obj, eng):
     )
 
     if pdf:
+        obj.data['documents'] = [
+            document for document in obj.data.get('documents', ())
+            if document.get('key') != filename
+        ]
         lb = LiteratureBuilder(source='arxiv', record=obj.data)
         lb.add_document(
             filename,

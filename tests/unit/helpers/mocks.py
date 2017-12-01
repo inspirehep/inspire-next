@@ -87,23 +87,28 @@ class MockFiles(object):
 class MockFileObject(object):
 
     def __init__(self, key):
-        self.obj = {'key': key}
-        self.bucket_id = '0b9dd5d1-feae-4ba5-809d-3a029b0bc110'
+        self.obj = {
+            'key': key,
+            'file': MockSubfile(uri='/dummy/path/%s' % key),
+            'bucket_id': '0b9dd5d1-feae-4ba5-809d-3a029b0bc110',
+        }
 
     def __eq__(self, other):
         return self.obj['key'] == other.obj['key']
 
-    def __getitem__(self, key):
+    def __getattr__(self, key):
         return self.obj[key]
-
-    def __setitem__(self, key, value):
-        self.obj[key] = value
 
     def delete(self):
         pass
 
     def get_version(self):
         return MockObjectVersion()
+
+
+class MockSubfile(object):
+    def __init__(self, uri):
+        self.uri = uri
 
 
 class MockObjectVersion(object):
