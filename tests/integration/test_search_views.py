@@ -85,7 +85,7 @@ def test_search_logs(current_app_mock, api_client):
                             }
                         }
                     ],
-                    'minimum_should_match': 1,
+                    'minimum_should_match': '0<1',
                     'must': [{
                         'match_all': {}
                     }]
