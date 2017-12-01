@@ -88,6 +88,9 @@ def does_exist_in_inspirehep(query, collections=None):
 
 
 def duplicated_validator(property_name, property_value):
+    def _is_not_deleted(base_record, match_result):
+        return not get_value(match_result, '_source.deleted', default=False)
+
     config = {
         'algorithm': [
             {
@@ -103,6 +106,7 @@ def duplicated_validator(property_name, property_value):
                         'type': 'exact',
                     },
                 ],
+                'validator': _is_not_deleted,
             },
         ],
         'doc_type': 'hep',
@@ -119,11 +123,11 @@ def duplicated_validator(property_name, property_value):
         }
 
     matches = dedupe_list(match(data, config))
-    mached_ids = [int(el['_source']['control_number']) for el in matches]
-    if mached_ids:
+    matched_ids = [int(el['_source']['control_number']) for el in matches]
+    if matched_ids:
         url = url_for(
             'invenio_records_ui.literature',
-            pid_value=mached_ids[0],
+            pid_value=matched_ids[0],
         )
         raise ValidationError(
             'There exists already an item with the same %s. '
