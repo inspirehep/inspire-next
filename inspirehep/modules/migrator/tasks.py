@@ -276,26 +276,25 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
 
 def record_insert_or_replace(json):
     """Insert or replace a record."""
-    control_number = json.get('control_number', json.get('recid'))
-    if control_number:
-        pid_type = get_pid_type_from_schema(json['$schema'])
-        try:
-            pid = PersistentIdentifier.get(pid_type, control_number)
-            record = InspireRecord.get_record(pid.object_uuid)
-            record.clear()
-            record.update(json)
-            record.commit()
-        except PIDDoesNotExistError:
-            record = InspireRecord.create(json, id_=None)
-            # Create persistent identifier.
-            inspire_recid_minter(str(record.id), json)
+    pid_type = get_pid_type_from_schema(json['$schema'])
+    control_number = json['control_number']
 
-        if json.get('deleted'):
-            new_recid = get_recid_from_ref(json.get('new_record'))
-            if not new_recid:
-                record.delete()
+    try:
+        pid = PersistentIdentifier.get(pid_type, control_number)
+        record = InspireRecord.get_record(pid.object_uuid)
+        record.clear()
+        record.update(json)
+        record.commit()
+    except PIDDoesNotExistError:
+        record = InspireRecord.create(json, id_=None)
+        inspire_recid_minter(str(record.id), json)
 
-        return record
+    if json.get('deleted'):
+        new_recid = get_recid_from_ref(json.get('new_record'))
+        if not new_recid:
+            record.delete()
+
+    return record
 
 
 def migrate_and_insert_record(raw_record):
