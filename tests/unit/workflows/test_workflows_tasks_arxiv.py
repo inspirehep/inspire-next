@@ -607,7 +607,6 @@ def test_arxiv_derive_inspire_categories_appends_categories_with_different_sourc
         ],
         'inspire_categories': [
             {
-                'source': 'undefined',
                 'term': 'Theory-Nucl',
             },
         ],
@@ -623,7 +622,6 @@ def test_arxiv_derive_inspire_categories_appends_categories_with_different_sourc
 
     expected = [
         {
-            'source': 'undefined',
             'term': 'Theory-Nucl',
         },
         {

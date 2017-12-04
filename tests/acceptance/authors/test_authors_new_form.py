@@ -36,7 +36,7 @@ INPUT_AUTHOR_DATA = {
     'native_name': 'M. Twain',
     'public_emails-0-email': 'mark.twain@history.org',
     'status': 'retired',
-    'orcid': '1111-1111-1111-1111',
+    'orcid': '0000-0002-1825-0097',
     'websites-0-webpage': 'http://www.example1.com',
     'websites-1-webpage': 'http://www.example2.com',
     'linkedin_url': 'http://www.example3.com',
