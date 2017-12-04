@@ -58,7 +58,7 @@ install_requires = [
     'elasticsearch~=2.0,>=2.4.1',
     'flask-shell-ipython~=0.0,>=0.3.0',
     'inspire-crawler~=1.0',
-    'inspire-dojson~=56.0,>=56.0.0',
+    'inspire-dojson~=57.0,>=57.0.3',
     'inspire-json-merger~=6.0,>=6.0.0',
     'inspire-matcher~=3.0,>=3.0.0',
     'inspire-query-parser~=2.0,>=2.0.0',

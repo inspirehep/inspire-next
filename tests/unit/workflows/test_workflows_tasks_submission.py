@@ -27,8 +27,6 @@ import requests_mock
 from flask import current_app
 from mock import patch
 
-from inspire_dojson.hep import hep2marc
-from inspire_dojson.hepnames import hepnames2marc
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.submission import (
     close_ticket,
@@ -152,6 +150,7 @@ def test_send_robotupload_works_with_mode_correct_and_extra_data_key():
             data = {}
             extra_data = {
                 'update_payload': {
+                    '$schema': 'http://localhost:5000/schemas/records/hep.json',
                     'arxiv_eprints': [
                         {
                             'categories': [
@@ -167,7 +166,6 @@ def test_send_robotupload_works_with_mode_correct_and_extra_data_key():
             eng = MockEng()
 
             _send_robotupload = send_robotupload(
-                marcxml_processor=hep2marc,
                 mode='correct',
                 extra_data_key='update_payload',
             )
@@ -189,7 +187,7 @@ def test_send_robotupload_works_with_mode_correct_and_extra_data_key():
             assert expected == result
 
 
-def test_send_robotupload_works_with_hep2marc_and_mode_insert():
+def test_send_robotupload_works_with_mode_insert_on_hep():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
             'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
@@ -206,6 +204,7 @@ def test_send_robotupload_works_with_hep2marc_and_mode_insert():
 
         with patch.dict(current_app.config, config):
             data = {
+                '$schema': 'http://localhost:5000/schemas/records/hep.json',
                 'arxiv_eprints': [
                     {
                         'categories': [
@@ -222,7 +221,6 @@ def test_send_robotupload_works_with_hep2marc_and_mode_insert():
             eng = MockEng()
 
             _send_robotupload = send_robotupload(
-                marcxml_processor=hep2marc,
                 mode='insert',
             )
 
@@ -243,7 +241,7 @@ def test_send_robotupload_works_with_hep2marc_and_mode_insert():
             assert expected == result
 
 
-def test_send_robotupload_works_with_hepnames2marc_and_mode_insert():
+def test_send_robotupload_works_with_mode_insert_on_authors():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
             'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
@@ -260,6 +258,7 @@ def test_send_robotupload_works_with_hepnames2marc_and_mode_insert():
 
         with patch.dict(current_app.config, config):
             data = {
+                '$schema': 'http://localhost:5000/schemas/records/authors.json',
                 'arxiv_categories': [
                     'hep-th',
                 ],
@@ -271,7 +270,6 @@ def test_send_robotupload_works_with_hepnames2marc_and_mode_insert():
             eng = MockEng()
 
             _send_robotupload = send_robotupload(
-                marcxml_processor=hepnames2marc,
                 mode='insert',
             )
 
@@ -309,6 +307,7 @@ def test_send_robotupload_works_with_mode_holdingpen_and_without_callback_url():
 
         with patch.dict(current_app.config, config):
             data = {
+                '$schema': 'http://localhost:5000/schemas/records/authors.json',
                 'arxiv_categories': [
                     'hep-th',
                 ],
@@ -320,7 +319,6 @@ def test_send_robotupload_works_with_mode_holdingpen_and_without_callback_url():
             eng = MockEng()
 
             _send_robotupload = send_robotupload(
-                marcxml_processor=hepnames2marc,
                 mode='holdingpen',
                 callback_url=None,
             )
@@ -354,6 +352,7 @@ def test_send_robotupload_logs_on_error_response():
 
         with patch.dict(current_app.config, config):
             data = {
+                '$schema': 'http://localhost:5000/schemas/records/hep.json',
                 'arxiv_eprints': [
                     {
                         'categories': [
@@ -370,7 +369,6 @@ def test_send_robotupload_logs_on_error_response():
             eng = MockEng()
 
             _send_robotupload = send_robotupload(
-                marcxml_processor=hep2marc,
                 mode='insert',
             )
 
@@ -406,6 +404,7 @@ def test_send_robotupload_does_nothing_when_not_in_production_mode():
 
         with patch.dict(current_app.config, config):
             data = {
+                '$schema': 'http://localhost:5000/schemas/records/hep.json',
                 'arxiv_eprints': [
                     {
                         'categories': [
@@ -422,7 +421,6 @@ def test_send_robotupload_does_nothing_when_not_in_production_mode():
             eng = MockEng()
 
             _send_robotupload = send_robotupload(
-                marcxml_processor=hep2marc,
                 mode='insert',
             )
 

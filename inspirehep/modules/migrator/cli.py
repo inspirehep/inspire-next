@@ -24,31 +24,31 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
 import csv
-import traceback
+import os
 import sys
-
+import traceback
 from itertools import dropwhile
-import click
-import requests
-import jsonschema
 
+import click
+import jsonschema
+import requests
 from flask_cli import with_appcontext
 
+from dojson.contrib.marc21.utils import create_record
+
+from inspire_dojson import marcxml2record
 from inspire_schemas.api import validate
 from inspire_utils.helpers import force_list
 
+from .models import InspireProdRecords
 from .tasks import (
     add_citation_counts,
     migrate,
-    remigrate_records,
     migrate_chunk,
+    remigrate_records,
     split_blob,
-    create_record,
-    marc_create_record,
 )
-from .models import InspireProdRecords
 
 REAL_COLLECTIONS = (
     'INSTITUTION',
@@ -140,13 +140,13 @@ def reporterrors(output):
     results_length = results.count()
     with click.progressbar(results.yield_per(100), length=results_length) as bar:
         for obj in bar:
-            marc_record = marc_create_record(obj.marcxml, keep_singletons=False)
+            marc_record = create_record(obj.marcxml, keep_singletons=False)
             collection = get_collection(marc_record)
             if 'DELETED' in collection:
                 continue
             recid = int(marc_record['001'])
             try:
-                json_record = create_record(marc_record)
+                json_record = marcxml2record(obj.marcxml)
             except Exception as err:
                 tb = u''.join(traceback.format_tb(sys.exc_info()[2]))
                 errors.setdefault((collection, 'dojson', tb), []).append(recid)

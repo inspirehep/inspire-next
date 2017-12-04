@@ -25,14 +25,13 @@ from __future__ import absolute_import, division, print_function
 import datetime
 import json
 import os
+
 import pkg_resources
 
 from invenio_accounts.testutils import login_user_via_session
 
-from dojson.contrib.marc21.utils import create_record
-
+from inspire_dojson import marcxml2record
 from inspirehep.modules.workflows.utils import convert
-from inspire_dojson.hep import hep
 
 
 def do_resolve_workflow(app, workflow_id, action='accept_core'):
@@ -150,8 +149,7 @@ def generate_record():
         record_oai_arxiv_plots,
         "oaiarXiv2marcxml.xsl"
     )
-    record_marc = create_record(record_oai_arxiv_plots_marcxml)
-    json_data = hep.do(record_marc)
+    json_data = marcxml2record(record_oai_arxiv_plots_marcxml)
 
     if 'preprint_date' in json_data:
         json_data['preprint_date'] = datetime.date.today().isoformat()
@@ -173,8 +171,7 @@ def already_harvested_on_legacy_record():
         record_oai_arxiv_plots,
         "oaiarXiv2marcxml.xsl"
     )
-    record_marc = create_record(record_oai_arxiv_plots_marcxml)
-    json_data = hep.do(record_marc)
+    json_data = marcxml2record(record_oai_arxiv_plots_marcxml)
 
     categories = []
     for eprint in json_data.get('arxiv_eprints', []):

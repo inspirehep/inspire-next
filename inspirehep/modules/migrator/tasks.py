@@ -42,7 +42,6 @@ from redis import StrictRedis
 from redis_lock import Lock
 from six import text_type
 
-from dojson.contrib.marc21.utils import create_record as marc_create_record
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer, current_record_to_index
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -50,7 +49,7 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
 from invenio_search.utils import schema_to_index
 
-from inspire_dojson.processors import overdo_marc_dict
+from inspire_dojson import marcxml2record
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.dedupers import dedupe_list
 from inspire_utils.helpers import force_list
@@ -275,19 +274,6 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
         success, failed))
 
 
-def create_record(record):
-    """Create record from marc21 model."""
-    json = overdo_marc_dict(record)
-
-    if '$schema' in json:
-        json['$schema'] = url_for(
-            'invenio_jsonschemas.get_schema',
-            schema_path="records/{0}".format(json['$schema'])
-        )
-
-    return json
-
-
 def record_insert_or_replace(json):
     """Insert or replace a record."""
     control_number = json.get('control_number', json.get('recid'))
@@ -314,22 +300,22 @@ def record_insert_or_replace(json):
 
 def migrate_and_insert_record(raw_record):
     """Convert a marc21 record to JSON and insert it into the DB."""
-    try:
-        record = marc_create_record(raw_record, keep_singletons=False)
-    except Exception as e:
-        logger.exception('Migrator MARC 21 read Error')
-        return None
-
-    recid = int(record['001'])
-    prod_record = InspireProdRecords(recid=recid)
-    prod_record.marcxml = raw_record
     error = None
 
     try:
-        json_record = create_record(record)
+        json_record = marcxml2record(raw_record)
+        if '$schema' in json_record:
+            json_record['$schema'] = url_for(
+                'invenio_jsonschemas.get_schema',
+                schema_path='records/{0}'.format(json_record['$schema']),
+            )
     except Exception as e:
         logger.exception('Migrator DoJSON Error')
         error = e
+
+    recid = json_record['control_number']
+    prod_record = InspireProdRecords(recid=recid)
+    prod_record.marcxml = raw_record
 
     try:
         if not error:

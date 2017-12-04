@@ -26,7 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from workflow.patterns.controlflow import IF, IF_ELSE, IF_NOT
 
-from inspire_dojson.hepnames import hepnames2marc
 from inspirehep.modules.workflows.tasks.actions import (
     halt_record,
     in_production_mode,
@@ -53,7 +52,6 @@ from inspirehep.modules.authors.tasks import (
 
 SEND_TO_LEGACY = [
     send_robotupload(
-        marcxml_processor=hepnames2marc,
         mode="insert"
     ),
 ]
@@ -86,7 +84,6 @@ NOTIFY_NOT_ACCEPTED = [
 
 SEND_UPDATE_NOTIFICATION = [
     send_robotupload(
-        marcxml_processor=hepnames2marc,
         mode="holdingpen",
         callback_url=None
     ),
