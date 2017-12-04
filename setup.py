@@ -183,6 +183,7 @@ setup(
             'inspirehep_author_update_css = inspirehep.modules.authors.bundles:update_css',
             'inspirehep_authors_update_form_js = inspirehep.modules.authors.bundles:updatejs',
             'inspirehep_detailed_js = inspirehep.modules.theme.bundles:detailedjs',
+            'inspirehep_editor_js = inspirehep.modules.editor.bundles:js',
             'inspirehep_forms_css = inspirehep.modules.forms.bundles:css',
             'inspirehep_forms_js = inspirehep.modules.forms.bundles:js',
             'inspirehep_holding_css = inspirehep.modules.theme.bundles:holding_pen_css',
@@ -203,7 +204,7 @@ setup(
             'invenio_collections = invenio_collections:InvenioCollections',
         ],
         'invenio_base.api_blueprints': [
-            'inspirehep_editor = inspirehep.modules.editor:blueprint',
+            'inspirehep_editor = inspirehep.modules.editor:blueprint_api',
         ],
         'invenio_base.apps': [
             'inspire_arxiv = inspirehep.modules.arxiv:InspireArXiv',
@@ -219,6 +220,9 @@ setup(
             'inspire_tools = inspirehep.modules.tools:InspireTools',
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
+        ],
+        'invenio_base.blueprints': [
+            'inspirehep_editor = inspirehep.modules.editor:blueprint',
         ],
         'invenio_celery.tasks': [
             'inspire_migrator = inspirehep.modules.migrator.tasks',

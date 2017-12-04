@@ -20,19 +20,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-""" Record related utils."""
+"""Bundle definition for record editor."""
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.modules.pidstore.utils import (
-    get_endpoint_from_pid_type,
-    get_pid_type_from_schema
+from invenio_assets import NpmBundle
+
+js = NpmBundle(
+    npm={
+        "record-editor": "^0.11.0"
+    }
 )
-
-
-def get_endpoint_from_record(record):
-    """Return the endpoint corresponding to a record."""
-    pid_type = get_pid_type_from_schema(record['$schema'])
-    endpoint = get_endpoint_from_pid_type(pid_type)
-
-    return endpoint

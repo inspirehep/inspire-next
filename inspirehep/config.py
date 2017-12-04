@@ -33,8 +33,6 @@ from celery.schedules import crontab
 from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
 
-from inspirehep.modules.records.utils import get_detailed_template_from_record
-
 
 # Debug
 # =====
@@ -165,8 +163,6 @@ we don't want to register the signals twice, but we want to explicitly
 call `register_signals()` on our own.
 """
 
-RECORD_EDITOR_INDEX_TEMPLATE = 'inspirehep_theme/invenio_record_editor/index.html'
-RECORD_EDITOR_PREVIEW_TEMPLATE_FUNCTION = get_detailed_template_from_record
 RECORD_EDITOR_FILE_UPLOAD_FOLDER = 'inspirehep/modules/editor/temp'
 
 # Path to where journal kb file is stored from `inspirehep.modules.refextract.tasks.create_journal_kb_file`
