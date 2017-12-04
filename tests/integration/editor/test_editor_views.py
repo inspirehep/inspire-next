@@ -107,6 +107,13 @@ def record_with_two_revisions(app):
     _delete_record('lit', 111)
 
 
+@pytest.fixture(scope='function')
+def clean_uploads_folder(app):
+    yield
+    uploads = app.config['RECORD_EDITOR_FILE_UPLOAD_FOLDER']
+    shutil.rmtree(uploads)
+
+
 def test_get_revisions(log_in_as_cataloger, record_with_two_revisions, api_client):
     response = api_client.get(
         '/editor/literature/111/revisions',
@@ -439,7 +446,7 @@ def test_manual_merge(mock_start_merger, log_in_as_cataloger, api_client):
     assert expected == result
 
 
-def test_upload(app, log_in_as_cataloger, api_client):
+def test_upload(app, log_in_as_cataloger, api_client, clean_uploads_folder):
 
     response = api_client.post(
         '/editor/upload',
@@ -448,8 +455,10 @@ def test_upload(app, log_in_as_cataloger, api_client):
             'file': (StringIO('my file contents'), 'attachment.pdf'),
         },
     )
-    tempfolder = app.config['RECORD_EDITOR_FILE_UPLOAD_FOLDER']
-    assert json.loads(response.data)['path'] == os.path.join(tempfolder, 'attachment.pdf')
+    uploads_folder = app.config['RECORD_EDITOR_FILE_UPLOAD_FOLDER']
+    result = json.loads(response.data)['path']
+    expected = os.path.realpath(os.path.join(uploads_folder, 'attachment.pdf'))
+    assert result == expected
     assert response.status_code == 200
 
     response = api_client.post(
@@ -460,6 +469,9 @@ def test_upload(app, log_in_as_cataloger, api_client):
         },
     )
 
-    assert json.loads(response.data)['path'] == os.path.join(tempfolder, 'attachment.pdf_1')
+    result = json.loads(response.data)['path']
+    expected = os.path.realpath(
+        os.path.join(uploads_folder, 'attachment.pdf_1'),
+    )
+    assert result == expected
     assert response.status_code == 200
-    shutil.rmtree(tempfolder)

@@ -24,30 +24,33 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
 from flask import Blueprint, jsonify, request, current_app
 from flask_login import current_user
+from fs.opener import fsopendir
 from sqlalchemy_continuum import transaction_class, version_class
 from werkzeug.utils import secure_filename
 
 from invenio_db import db
 from invenio_records.models import RecordMetadata
-
-from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
-from inspirehep.modules.tools import authorlist
-from inspirehep.modules.workflows.workflows.manual_merge import start_merger
-from inspirehep.utils.record_getter import get_db_record
-from inspirehep.utils.references import (
-    local_refextract_kbs_path,
-    map_refextract_to_schema,
-)
 from refextract import (
     extract_references_from_string,
     extract_references_from_url,
 )
 
-from .permissions import editor_permission, editor_use_api_permission
-from ...utils import tickets
+from inspirehep.modules.editor.permissions import (
+    editor_permission,
+    editor_use_api_permission,
+)
+from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
+from inspirehep.modules.tools import authorlist
+from inspirehep.utils import tickets
+from inspirehep.utils.record_getter import get_db_record
+from inspirehep.utils.references import (
+    local_refextract_kbs_path,
+    map_refextract_to_schema,
+)
+from inspirehep.utils.url import copy_file
+from inspirehep.modules.workflows.workflows.manual_merge import start_merger
 
 MAX_UNIQUE_KEY_COUNT = 100
 
@@ -262,17 +265,25 @@ def _simplify_ticket_response(ticket):
 def upload_files():
     if 'file' not in request.files:
         return jsonify(success=False, message='No file part'), 400
+
     attachment = request.files['file']
-    if attachment:
-        filedir = current_app.config['RECORD_EDITOR_FILE_UPLOAD_FOLDER']
-        if not os.path.isdir(filedir):
-            os.makedirs(filedir)
-        filename = secure_filename(attachment.filename)
-        filepath = os.path.join(filedir, filename)
-        if os.path.isfile(filepath):
-            count = 1
-            while os.path.isfile(filepath) and count < MAX_UNIQUE_KEY_COUNT:
-                filepath = '%s_%s' % (filepath, count)
-                count += 1
-        attachment.save(filepath)
-        return jsonify(dict(path=filepath))
+    if not attachment:
+        return
+
+    filedir = current_app.config['RECORD_EDITOR_FILE_UPLOAD_FOLDER']
+    fs = fsopendir(filedir, create_dir=True)
+    filename = secure_filename(attachment.filename)
+    base_filename = filename
+    count = 1
+    while fs.isfile(filename) and count < MAX_UNIQUE_KEY_COUNT:
+        filename = '%s_%s' % (base_filename, count)
+        count += 1
+
+    with fs.open(filename, mode='wb') as remote_file:
+        copy_file(attachment.stream, remote_file)
+
+    full_url = fs.getpathurl(filename, allow_none=True)
+    if not full_url:
+        full_url = fs.getsyspath(filename)
+
+    return jsonify({'path': full_url})
