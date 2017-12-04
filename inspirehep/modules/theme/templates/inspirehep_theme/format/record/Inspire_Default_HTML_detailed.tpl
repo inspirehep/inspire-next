@@ -176,5 +176,16 @@
         }
     );
   </script>
+<script type="text/javascript">
+require([
+    "jquery",
+    "mathjax"
+    ], function ($) {
+      $(document).ready(function () {
+           MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
+      })
+    }
+  ); 
+</script>
   {% include "inspirehep_theme/typeahead.html" %}
 {% endblock additional_javascript %}
