@@ -24,8 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import json
-
 from invenio_db import db
 
 from inspire_dojson.utils import get_record_ref
@@ -65,7 +63,7 @@ def merge_records(obj, eng):
     )
 
     obj.data = merged
-    obj.extra_data['conflicts'] = [json.loads(el.to_json()) for el in conflicts]
+    obj.extra_data['conflicts'] = conflicts
     obj.save()
 
 

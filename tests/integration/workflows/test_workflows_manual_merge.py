@@ -54,6 +54,10 @@ def test_manual_merge_existing_records(workflow_app):
     json_head = fake_record('This is the HEAD', 1)
     json_update = fake_record('While this is the update', 2)
 
+    # this two fields will create a merging conflict
+    json_head['core'] = True
+    json_update['core'] = False
+
     head = record_insert_or_replace(json_head)
     update = record_insert_or_replace(json_update)
     head_id = head.id
