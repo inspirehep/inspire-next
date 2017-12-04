@@ -30,7 +30,6 @@ from workflow.patterns.controlflow import (
     IF_NOT,
 )
 
-from inspire_dojson.hep import hep2marc
 from inspirehep.modules.workflows.tasks.refextract import extract_journal_info
 from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_author_list,
@@ -289,13 +288,11 @@ SEND_TO_LEGACY_AND_WAIT = [
         [
             prepare_update_payload(extra_data_key="update_payload"),
             send_robotupload(
-                marcxml_processor=hep2marc,
                 mode="correct",
                 extra_data_key="update_payload"
             ),
         ], [
             send_robotupload(
-                marcxml_processor=hep2marc,
                 mode="insert"
             ),
             wait_webcoll,

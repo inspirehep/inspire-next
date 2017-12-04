@@ -28,23 +28,20 @@ import os
 import re
 from functools import wraps
 
-import requests
 import backoff
+import requests
+from backports.tempfile import TemporaryDirectory
 from flask import current_app
 from lxml.etree import XMLSyntaxError
 from wand.exceptions import DelegateError
 from werkzeug import secure_filename
-from backports.tempfile import TemporaryDirectory
 
-from dojson.contrib.marc21.utils import create_record
-
-from inspire_dojson.hep import hep
+from inspire_dojson import marcxml2record
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.utils import classify_field
 from inspirehep.modules.workflows.utils import convert
 from inspirehep.utils.record import get_arxiv_categories, get_arxiv_id
 from inspirehep.utils.url import is_pdf_link
-
 from plotextractor.api import process_tarball
 from plotextractor.converter import untar
 from plotextractor.errors import InvalidTarball, NoTexFilesFound
@@ -247,8 +244,7 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
                                 xml_content.split('\n', 1)[1],
                                 stylesheet,
                             )
-                        authors_rec = create_record(authors_xml)
-                        authorlist_record = hep.do(authors_rec)
+                        authorlist_record = marcxml2record(authors_xml)
                         obj.data.update(authorlist_record)
                         break
 

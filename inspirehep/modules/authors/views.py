@@ -43,12 +43,11 @@ from flask_breadcrumbs import register_breadcrumb
 from flask_login import login_required, current_user
 from werkzeug.datastructures import MultiDict
 
-from dojson.contrib.marc21.utils import create_record
 from invenio_db import db
 from invenio_workflows import workflow_object_class, start, resume
 from invenio_workflows_ui.api import WorkflowUIRecord
 
-from inspire_dojson.hepnames import hepnames
+from inspire_dojson import marcxml2record
 from inspire_utils.record import get_value
 from inspirehep.modules.forms.form import DataExporter
 
@@ -242,7 +241,7 @@ def update(recid):
             record_regex = re.compile(
                 r"\<record\>.*\<\/record\>", re.MULTILINE + re.DOTALL)
             xml_content = record_regex.search(xml.content).group()
-            data = hepnames.do(create_record(xml_content))  # .encode("utf-8")
+            data = marcxml2record(xml_content)
             convert_for_form(data)
         except requests.exceptions.RequestException:
             pass

@@ -35,7 +35,7 @@ from flask import current_app
 
 from invenio_accounts.models import User
 
-from inspire_dojson.utils import legacy_export_as_marc
+from inspire_dojson import record2marcxml
 from inspirehep.utils.robotupload import make_robotupload_marcxml
 from inspirehep.utils import tickets
 from inspirehep.utils.proxies import rt_instance
@@ -187,7 +187,6 @@ def close_ticket(ticket_id_key="ticket_id"):
 
 def send_robotupload(
     url=None,
-    marcxml_processor=None,
     callback_url="callback/workflows/robotupload",
     mode="insert",
     extra_data_key=None
@@ -215,8 +214,7 @@ def send_robotupload(
             data = obj.extra_data.get(extra_data_key) or {}
         else:
             data = obj.data
-        marc_json = marcxml_processor.do(data)
-        marcxml = legacy_export_as_marc(marc_json)
+        marcxml = record2marcxml(data)
 
         if current_app.debug:
             # Log what we are sending

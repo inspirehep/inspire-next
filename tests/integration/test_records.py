@@ -27,7 +27,6 @@ import pytest
 import StringIO
 from mock import patch, mock_open
 
-from dojson.contrib.marc21.utils import create_record
 from invenio_db import db
 from invenio_pidstore.models import (
     PersistentIdentifier,
@@ -36,7 +35,7 @@ from invenio_pidstore.models import (
 )
 from invenio_search import current_search_client as es
 
-from inspire_dojson.hep import hep
+from inspire_dojson import marcxml2record
 from inspire_utils.record import get_value
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.tasks import merge_merged_records, update_refs
@@ -86,7 +85,7 @@ def deleted_record(app):
         '</record>'
     )
 
-    record = hep.do(create_record(snippet))
+    record = marcxml2record(snippet)
     record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
     with db.session.begin_nested():
@@ -157,10 +156,10 @@ def merged_records(app):
         '</record>'
     )
 
-    merged_record = hep.do(create_record(merged_snippet))
+    merged_record = marcxml2record(merged_snippet)
     merged_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
-    deleted_record = hep.do(create_record(deleted_snippet))
+    deleted_record = marcxml2record(deleted_snippet)
     deleted_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
     with db.session.begin_nested():
