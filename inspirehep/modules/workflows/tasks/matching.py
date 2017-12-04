@@ -101,6 +101,7 @@ def article_exists(obj, eng):
         obj.extra_data['record_matches'] = record_ids
         return True
 
+    obj.extra_data['record_matches'] = []
     return False
 
 
@@ -196,6 +197,7 @@ def pending_in_holding_pen(obj, eng):
         obj.extra_data['holdingpen_matches'] = holdingpen_ids
         return True
 
+    obj.extra_data['holdingpen_matches'] = []
     return False
 
 

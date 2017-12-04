@@ -46,6 +46,7 @@ def test_article_exists_returns_true_if_something_matched(mock_match):
     eng = MockEng()
 
     assert article_exists(obj, eng)
+    assert 'record_matches' in obj.extra_data
 
     expected = [4328]
     result = obj.extra_data['record_matches']
@@ -64,8 +65,12 @@ def test_article_exists_returns_false_if_nothing_matched(mock_match):
     eng = MockEng()
 
     assert not article_exists(obj, eng)
+    assert 'record_matches' in obj.extra_data
 
-    assert 'record_matches' not in obj.extra_data
+    expected = []
+    result = obj.extra_data['record_matches']
+
+    assert expected == result
 
 
 def test_is_being_harvested_on_legacy_returns_true_when_there_is_one_core_category(app):
@@ -234,6 +239,7 @@ def test_pending_in_holding_pen_returns_true_if_something_matched(mock_match):
     eng = MockEng()
 
     assert pending_in_holding_pen(obj, eng)
+    assert 'holdingpen_matches' in obj.extra_data
 
     expected = [1]
     result = obj.extra_data['holdingpen_matches']
@@ -252,5 +258,8 @@ def test_pending_in_holding_pen_returns_false_if_nothing_matched(mock_match):
     eng = MockEng()
 
     assert not pending_in_holding_pen(obj, eng)
+    assert 'holdingpen_matches' in obj.extra_data
+    expected = []
+    result = obj.extra_data['holdingpen_matches']
 
-    assert 'holdingpen_matches' not in obj.extra_data
+    assert expected == result
