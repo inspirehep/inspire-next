@@ -24,9 +24,11 @@
 
 from __future__ import absolute_import, division, print_function
 
-from flask import Blueprint, jsonify, request
+import os
+from flask import Blueprint, jsonify, request, current_app
 from flask_login import current_user
 from sqlalchemy_continuum import transaction_class, version_class
+from werkzeug.utils import secure_filename
 
 from invenio_db import db
 from invenio_records.models import RecordMetadata
@@ -47,6 +49,7 @@ from refextract import (
 from .permissions import editor_permission, editor_use_api_permission
 from ...utils import tickets
 
+MAX_UNIQUE_KEY_COUNT = 100
 
 blueprint = Blueprint(
     'inspirehep_editor',
@@ -250,3 +253,24 @@ def _simplify_ticket_response(ticket):
         owner=ticket['Owner'],
         date=ticket['Created'],
         link=ticket['Link'])
+
+
+@blueprint.route('/upload', methods=['POST'])
+@editor_use_api_permission.require(http_exception=403)
+def upload_files():
+    if 'file' not in request.files:
+        return jsonify(success=False, message='No file part'), 400
+    attachment = request.files['file']
+    if attachment:
+        filedir = current_app.config['RECORD_EDITOR_FILE_UPLOAD_FOLDER']
+        if not os.path.isdir(filedir):
+            os.makedirs(filedir)
+        filename = secure_filename(attachment.filename)
+        filepath = os.path.join(filedir, filename)
+        if os.path.isfile(filepath):
+            count = 1
+            while os.path.isfile(filepath) and count < MAX_UNIQUE_KEY_COUNT:
+                filepath = '%s_%s' % (filepath, count)
+                count += 1
+        attachment.save(filepath)
+        return jsonify(dict(path=filepath))

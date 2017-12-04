@@ -24,12 +24,14 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import json
+import shutil
 
 import pkg_resources
 import pytest
 import requests_mock
 
 from mock import patch
+from StringIO import StringIO
 
 from invenio_accounts.models import SessionActivity
 from invenio_accounts.testutils import login_user_via_session
@@ -435,3 +437,29 @@ def test_manual_merge(mock_start_merger, log_in_as_cataloger, api_client):
     result = json.loads(response.data)
 
     assert expected == result
+
+
+def test_upload(app, log_in_as_cataloger, api_client):
+
+    response = api_client.post(
+        '/editor/upload',
+        content_type='multipart/form-data',
+        data={
+            'file': (StringIO('my file contents'), 'attachment.pdf'),
+        },
+    )
+    tempfolder = app.config['RECORD_EDITOR_FILE_UPLOAD_FOLDER']
+    assert json.loads(response.data)['path'] == os.path.join(tempfolder, 'attachment.pdf')
+    assert response.status_code == 200
+
+    response = api_client.post(
+        '/editor/upload',
+        content_type='multipart/form-data',
+        data={
+            'file': (StringIO('my file contents'), 'attachment.pdf'),
+        },
+    )
+
+    assert json.loads(response.data)['path'] == os.path.join(tempfolder, 'attachment.pdf_1')
+    assert response.status_code == 200
+    shutil.rmtree(tempfolder)
