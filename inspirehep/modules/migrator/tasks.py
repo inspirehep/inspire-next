@@ -28,6 +28,7 @@ import gzip
 import re
 import zlib
 from collections import Counter
+from datetime import datetime
 from itertools import chain
 
 import click
@@ -284,9 +285,13 @@ def record_insert_or_replace(json):
         record = InspireRecord.get_record(pid.object_uuid)
         record.clear()
         record.update(json)
+        if json.get('legacy_creation_date'):
+            record.model.created = datetime.strptime(json['legacy_creation_date'], '%Y-%m-%d')
         record.commit()
     except PIDDoesNotExistError:
         record = InspireRecord.create(json, id_=None)
+        if json.get('legacy_creation_date'):
+            record.model.created = datetime.strptime(json['legacy_creation_date'], '%Y-%m-%d')
         inspire_recid_minter(str(record.id), json)
 
     if json.get('deleted'):
