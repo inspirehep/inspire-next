@@ -170,6 +170,7 @@
 {% macro record_links(record) %}
   {% set viewInDisplayed = [] %}
   {% set comma = joiner() %}
+  {% set adsLinked = [] %}
 
   {% if record.get('urls') %}
     {% for url in record.get('urls') %}
@@ -178,7 +179,7 @@
           {% set actual_url = url.get('value') %}
           {% set isExternalUrl = actual_url | is_external_link %}
           {% if isExternalUrl and not viewInDisplayed %}
-            View in
+            View in:
             {% do viewInDisplayed.append(1) %}
           {% endif %}
           {{ comma() }}
@@ -188,85 +189,24 @@
     {% endfor %}
   {% endif %}
 
-  {% for system_number in record.external_system_identifiers %}
+  {% for external_system_identifier in record.external_system_identifiers %}
     {% if not viewInDisplayed and not isExternalUrl %}
-      View in
+      View in:
       {% do viewInDisplayed.append(1) %}
     {% endif %}
-
-    {% set ads = 'http://adsabs.harvard.edu/abs/' %}
-    {% set cds = 'http://cds.cern.ch/record/' %}
-    {% set euclid = 'http://projecteuclid.org/' %}
-    {% set hal = 'https://hal.archives-ouvertes.fr/' %}
-    {% set kek = 'https://lib-extopc.kek.jp/preprints/PDF/' %}
-    {% set msnet = 'http://www.ams.org/mathscinet-getitem?mr=' %}
-    {% set zblatt = 'http://www.zentralblatt-math.org/zmath/en/search/?an=' %}
-    {% set osti = 'https://www.osti.gov/scitech/biblio/' %}
-    {% set adsLinked = [] %}
-
-    {% if (system_number.get('schema') | lower) == 'kekscan' %}
-      {{ comma() }}
-      {% set extid = system_number.get('value') | replace("-", "") %}
-            {% if extid|length == 7 and not extid.startswith('19') and not extid.startswith('20') %}
-                {% set year = '19' + extid[:2] + '/' %}
-                {% set yymm = extid[:4] + '/' %}
-                <a href='{{kek}}{{year}}{{yymm}}{{extid}}.pdf'>
-                  KEK scanned document
-                </a>
-            {% elif extid|length == 9 %}
-                {% set year = extid[:4] + '/' %}
-                {% set extid = extid[2:] %}
-                {% set yymm = extid[:4] + '/' %}
-                <a href='{{kek}}{{year}}{{yymm}}{{extid}}.pdf'>
-                  KEK scanned document
-                </a>
-            {% endif %}
-    {% elif (system_number.get('schema') | lower) == 'cds' %}
-      {{ comma() }}
-      <a href='{{ cds }}{{system_number.get('value')}}'>
-        CERN Document Server
-      </a>
-    {% elif (system_number.get('schema') | lower) == 'osti' %}
-      {{ comma() }}
-      <a href='{{ osti }}{{system_number.get('value')}}'>
-        OSTI Information Bridge Server
-      </a>
-    {% elif (system_number.get('schema') | lower) == 'ads' %}
-      {{ comma() }}
-      <a href='{{ ads }}{{system_number.get('value')}}'>
-        ADS Abstract Service
-      </a>
+    {{ comma() }}
+    <a href="{{ external_system_identifier['url_link'] }}">{{ external_system_identifier['url_name'] }}</a>
+    {% if external_system_identifier['url_name'] == 'ADS Abstract Service' %}
       {% do adsLinked.append(1) %}
-    {# HAL: Show only if user is admin - still valid? #}
-    {% elif (system_number.get('schema') | lower) == 'hal' %}
-      {{ comma() }}
-      <a href='{{ hal }}{{system_number.get('value')}}'>
-        HAL Archives Ouvertes
-      </a>
-    {% elif (system_number.get('schema') | lower) == 'msnet' %}
-      {{ comma() }}
-      <a href='{{ msnet }}{{system_number.get('value')}}'>
-        AMS MathSciNet
-      </a>
-    {% elif (system_number.get('schema') | lower) == 'zblatt' %}
-      {{ comma() }}
-      <a href='{{ zblatt }}{{system_number.get('value')}}'>
-        zbMATH
-      </a>
-    {% elif (system_number.get('schema') | lower) == 'euclid' %}
-      {{ comma() }}
-      <a href='{{ euclid }}{{system_number.get('value')}}'>
-        Project Euclid
-      </a>
     {% endif %}
   {% endfor %}
 
   {# Fallback ADS link via arXiv:e-print #}
   {% if not adsLinked %}
-    {% set ads = 'http://adsabs.harvard.edu/abs/' %}
+      {% set ads = 'http://adsabs.harvard.edu/abs/' %}
       {% if record.get('arxiv_eprints') | is_list() %}
         {% if not viewInDisplayed %}
-          View in
+          View in:
           {% do viewInDisplayed.append(1) %}
         {% endif %}
         {% set filtered_arxiv = record.get('arxiv_eprints') %}
@@ -277,7 +217,7 @@
           </a>
         {% endfor %}
       {% endif %}
-    {% endif %}
+  {% endif %}
 
 {% endmacro %}
 
