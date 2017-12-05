@@ -336,6 +336,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 'inspirehep.modules.records.serializers'
                 ':impactgraph_v1_response'
             ),
+            'application/marcxml+xml': 'inspirehep.modules.records.serializers:marcxml_v1_response',
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
@@ -360,6 +361,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 'inspirehep.modules.records.serializers'
                 ':cvformattext_v1_search'),
             'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
+            'application/marcxml+xml': 'inspirehep.modules.records.serializers:marcxml_v1_search',
         },
         suggesters=dict(
             abstract_source=dict(completion=dict(

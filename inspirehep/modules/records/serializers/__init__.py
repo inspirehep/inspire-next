@@ -35,6 +35,7 @@ from .cvformatlatex_serializer import CVFORMATLATEXSerializer
 from .cvformathtml_serializer import CVFORMATHTMLSerializer
 from .cvformattext_serializer import CVFORMATTEXTSerializer
 from .schemas.json import RecordSchemaJSONBRIEFV1
+from .marcxml import MARCXMLSerializer
 
 from .response import record_responsify_nocache
 
@@ -53,6 +54,7 @@ latexus_v1 = LATEXUSSerializer()
 cvformatlatex_v1 = CVFORMATLATEXSerializer()
 cvformathtml_v1 = CVFORMATHTMLSerializer()
 cvformattext_v1 = CVFORMATTEXTSerializer()
+marcxml_v1 = MARCXMLSerializer()
 
 bibtex_v1_response = record_responsify_nocache(
     bibtex_v1, 'application/x-bibtex')
@@ -66,6 +68,7 @@ cvformathtml_v1_response = record_responsify_nocache(cvformathtml_v1,
                                                      'application/x-cvformathtml')
 cvformattext_v1_response = record_responsify_nocache(cvformattext_v1,
                                                      'application/x-cvformattext')
+marcxml_v1_response = record_responsify_nocache(marcxml_v1, 'application/marcxml+xml')
 
 bibtex_v1_search = search_responsify(bibtex_v1, 'application/x-bibtex')
 latexeu_v1_search = search_responsify(latexeu_v1, 'application/x-latexeu')
@@ -79,3 +82,4 @@ cvformattext_v1_search = search_responsify(cvformattext_v1,
 impactgraph_v1 = ImpactGraphSerializer()
 impactgraph_v1_response = record_responsify_nocache(impactgraph_v1,
                                                     'application/x-impact.graph+json')
+marcxml_v1_search = search_responsify(marcxml_v1, 'application/marcxml+xml')
