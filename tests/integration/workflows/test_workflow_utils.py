@@ -29,6 +29,7 @@ from invenio_db import db
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.utils import (
     insert_wf_record_source,
+    read_all_wf_record_sources,
     read_wf_record_source,
 )
 
@@ -91,3 +92,21 @@ def test_wf_record_source_does_not_match_db_content(dummy_record):
     db.session.commit()  # write in the db
     retrieved_root = read_wf_record_source(record_uuid=dummy_record.id, source='Elsevier')
     assert retrieved_root is None
+
+
+def test_read_all_wf_record_sources(dummy_record):
+    insert_wf_record_source(
+        json=dummy_record,
+        record_uuid=dummy_record.id,
+        source='arXiv'
+    )
+
+    insert_wf_record_source(
+        json=dummy_record,
+        record_uuid=dummy_record.id,
+        source='Elsevier'
+    )
+    db.session.commit()
+
+    entries = read_all_wf_record_sources(dummy_record.id)
+    assert len(entries) == 2
