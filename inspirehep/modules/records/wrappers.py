@@ -51,13 +51,13 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
         """
         if ext_sys_id_info[0] == 'KEK scanned document':
             extid = extid.replace("-", "")
+            # Assumption - The Kek ids will always be either 7 or 9
+            # digits long (after replacing the '-'s)
             if len(extid) == 7 and not extid.startswith('19') and not extid.startswith('20'):
                 year = '19' + extid[:2] + '/'
             elif len(extid) == 9:
                 year = extid[:4] + '/'
                 extid = extid[2:]
-            else:
-                return
             yymm = extid[:4] + '/'
             return {'url_name': ext_sys_id_info[0],
                     'url_link': ext_sys_id_info[1] + year + yymm + extid + '.pdf'}
