@@ -49,16 +49,53 @@ def test_literature_record_external_system_identifiers():
 
     expected = [
         {
-            'schema': 'DESY',
-            'value': 'D04-00213',
+            'url_link': 'http://adsabs.harvard.edu/abs/2004PrPh...52..200K',
+            'url_name': 'ADS Abstract Service',
+        },
+    ]
+    result = record.external_system_identifiers
+
+    assert expected == result
+
+
+def test_literature_record_external_system_identifiers_handles_kekscan():
+    record = LiteratureRecord({
+        'external_system_identifiers': [
+            {
+                'schema': 'DESY',
+                'value': 'D04-00213',
+            },
+            {
+                'schema': 'CDS',
+                'value': '2231692',
+            },
+            {
+                'schema': 'CDS',
+                'value': '2232052',
+            },
+            {
+                'schema': 'HAL',
+                'value': 'in2p3-01394924',
+            },
+            {
+                'schema': 'KEKSCAN',
+                'value': '200727065',
+            },
+        ],
+    })
+
+    expected = [
+        {
+            'url_link': 'http://cds.cern.ch/record/2231692',
+            'url_name': 'CERN Document Server',
         },
         {
-            'schema': 'ADS',
-            'value': '2004PrPh...52..200K',
+            'url_link': 'https://hal.archives-ouvertes.fr/in2p3-01394924',
+            'url_name': 'HAL Archives Ouvertes',
         },
         {
-            'schema': 'SPIRES',
-            'value': 'SPIRES-5682037',
+            'url_link': 'https://lib-extopc.kek.jp/preprints/PDF/2007/0727/0727065.pdf',
+            'url_name': 'KEK scanned document',
         },
     ]
     result = record.external_system_identifiers
