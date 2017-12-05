@@ -170,6 +170,7 @@
 {% macro record_links(record) %}
   {% set viewInDisplayed = [] %}
   {% set comma = joiner() %}
+  {% set adsLinked = [] %}
 
   {% if record.get('urls') %}
     {% for url in record.get('urls') %}
@@ -196,11 +197,14 @@
     {% endif %}
     {{ comma() }}
     <a href="{{ external_system_identifier['url_link'] }}">{{ external_system_identifier['url_name'] }}</a>
+    {% if external_system_identifier['url_name'] == 'ADS Abstract Service' %}
+      {% do adsLinked.append(1) %}
+    {% endif %}
   {% endfor %}
 
   {# Fallback ADS link via arXiv:e-print #}
-  {% if 'ADS Abstract Service' not in record.external_system_identifiers %}
-    {% set ads = 'http://adsabs.harvard.edu/abs/' %}
+  {% if not adsLinked %}
+      {% set ads = 'http://adsabs.harvard.edu/abs/' %}
       {% if record.get('arxiv_eprints') | is_list() %}
         {% if not viewInDisplayed %}
           View in:
@@ -214,7 +218,7 @@
           </a>
         {% endfor %}
       {% endif %}
-    {% endif %}
+  {% endif %}
 
 {% endmacro %}
 

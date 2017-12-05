@@ -43,6 +43,28 @@ class AdminToolsMixin(object):
 class LiteratureRecord(ESRecord, AdminToolsMixin):
     """Record class specialized for literature records."""
 
+    def set_links_for_ids(self, extid, ext_sys_id_info):
+        """Urls and names for external system identifiers
+
+        Returns a dictionary that contains the name of the
+        external_system_identifier as the key and it's url as the value
+        """
+        if ext_sys_id_info[0] == 'KEK scanned document':
+            extid = extid.replace("-", "")
+            if len(extid) == 7 and not extid.startswith('19') and not extid.startswith('20'):
+                year = '19' + extid[:2] + '/'
+            elif len(extid) == 9:
+                year = extid[:4] + '/'
+                extid = extid[2:]
+            else:
+                return
+            yymm = extid[:4] + '/'
+            return {'url_name': ext_sys_id_info[0],
+                    'url_link': ext_sys_id_info[1] + year + yymm + extid + '.pdf'}
+        else:
+            return {'url_name': ext_sys_id_info[0],
+                    'url_link': ext_sys_id_info[1] + extid}
+
     @property
     def title(self):
         """Get preferred title."""
@@ -114,39 +136,6 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
 
         return pub_info_list
 
-    def remove_repeated_identifiers(self, ext_sys_ids):
-        """ Keep only first of each kind of external_system_identifer
-        """
-        seen = set()
-        unrepeated_ext_sys_ids = []
-        for ext_sys_id in ext_sys_ids:
-            if ext_sys_id['schema'] not in seen:
-                seen.add(ext_sys_id['schema'])
-                unrepeated_ext_sys_ids.append(ext_sys_id)
-        return unrepeated_ext_sys_ids
-
-    def set_links_for_ids(self, extid, ext_sys_id_info):
-        """Urls and names for external system identifiers
-
-        Returns a dictionary that contains the name of the
-        external_system_identifier as the key and it's url as the value
-        """
-        if ext_sys_id_info[0] == 'KEK scanned document':
-            extid = extid.replace("-", "")
-            if len(extid) == 7 and not extid.startswith('19') and not extid.startswith('20'):
-                year = '19' + extid[:2] + '/'
-            elif len(extid) == 9:
-                year = extid[:4] + '/'
-                extid = extid[2:]
-            else:
-                return
-            yymm = extid[:4] + '/'
-            return {'url_name': ext_sys_id_info[0],
-                    'url_link': ext_sys_id_info[1] + year + yymm + extid + '.pdf'}
-        else:
-            return {'url_name': ext_sys_id_info[0],
-                    'url_link': ext_sys_id_info[1] + extid}
-
     @property
     def external_system_identifiers(self):
         """External system identification information.
@@ -189,25 +178,23 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
             ],
         }
 
-        unique_ext_sys_ids = []
+        unique_ext_ids = []
         filtered_ext_ids = []
         mapped_ext_ids = []
 
-        '''
-        Keep only first of each kind of external_system_identifiers
-        '''
-        unique_ext_sys_ids = self.remove_repeated_identifiers(self.get('external_system_identifiers', []))
+        # Keep only first of each kind of external_system_identifiers
+        seen = set()
+        for ext_sys_id in self.get('external_system_identifiers', []):
+            if ext_sys_id['schema'] not in seen:
+                seen.add(ext_sys_id['schema'])
+                unique_ext_ids.append(ext_sys_id)
 
-        '''
-        Keep only those external_system_identifiers whose 'schema' appear
-        as keys in ext_id_dict
-        '''
-        filtered_ext_ids = filter(lambda x: x['schema'].lower() in ext_id_dict.keys(), unique_ext_sys_ids)
+        # Keep only those external_system_identifiers whose 'schema' appear
+        # as keys in ext_id_dict
+        filtered_ext_ids = filter(lambda x: x['schema'].lower() in ext_id_dict.keys(), unique_ext_ids)
 
-        '''
-        Map each external_system_identifier in filtered _ext_ids to
-        a link name and link url
-        '''
+        # Map each external_system_identifier in filtered _ext_ids to
+        # a link name and link url
         mapped_ext_ids = map(lambda x: self.set_links_for_ids(x['value'], list(ext_id_dict[x['schema'].lower()])), filtered_ext_ids)
         return mapped_ext_ids
 
