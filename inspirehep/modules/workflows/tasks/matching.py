@@ -219,6 +219,9 @@ def update_existing_workflow_object(obj, eng):
     """Update the data of the old object with the new data."""
     holdingpen_ids = obj.extra_data.get('holdingpen_matches', [])
 
+    if not holdingpen_ids:
+        return
+
     for matched_id in holdingpen_ids:
         existing_obj = workflow_object_class.get(matched_id)
         if (
