@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
 from functools import wraps
 
 from invenio_classifier import (
@@ -75,10 +76,10 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
         )
 
         fast_mode = False
+        tmp_pdf = get_pdf_in_workflow(obj)
         try:
-            uri = get_pdf_in_workflow(obj)
-            if uri:
-                result = get_keywords_from_local_file(uri, **params)
+            if tmp_pdf:
+                result = get_keywords_from_local_file(tmp_pdf, **params)
             else:
                 data = []
                 titles = obj.data.get('titles')
@@ -95,6 +96,9 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
         except ClassifierException as e:
             obj.log.exception(e)
             return
+        finally:
+            if tmp_pdf and os.path.exists(tmp_pdf):
+                os.unlink(tmp_pdf)
 
         result['complete_output'] = clean_instances_from_data(
             result.get("complete_output", {})

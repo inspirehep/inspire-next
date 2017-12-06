@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,27 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-""" Record related utils."""
-
-from __future__ import absolute_import, division, print_function
-
-from flask import current_app
-
-from inspirehep.modules.pidstore.utils import (
-    get_endpoint_from_pid_type,
-    get_pid_type_from_schema
-)
-
-
-def get_endpoint_from_record(record):
-    """Return the endpoint corresponding to a record."""
-    pid_type = get_pid_type_from_schema(record['$schema'])
-    endpoint = get_endpoint_from_pid_type(pid_type)
-
-    return endpoint
-
-
-def get_detailed_template_from_record(record):
-    """Return the detailed template corresponding to the given record."""
-    endpoint = get_endpoint_from_record(record)
-    return current_app.config['RECORDS_UI_ENDPOINTS'][endpoint]['template']
+# pyxrootd, not available from pypi
+# NOTE: The -e is not used as it must run the 'install' command, not
+# 'develop' to properly install
+git+https://github.com/xrootd/xrootd-python.git#egg=pyxrootd

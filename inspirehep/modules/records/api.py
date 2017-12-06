@@ -30,6 +30,7 @@ from datetime import datetime
 import arrow
 from elasticsearch.exceptions import NotFoundError
 from flask import current_app
+from fs.opener import fsopen
 
 from inspire_schemas.api import validate
 from inspire_schemas.builders import LiteratureBuilder
@@ -39,7 +40,6 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_files.api import Record
 from invenio_db import db
 
-from inspirehep.modules.records.utils import open_url_or_path
 from inspirehep.utils.record_getter import (
     RecordGetterError,
     get_es_record_by_uuid
@@ -85,7 +85,9 @@ class InspireRecord(Record):
         new_record = super(InspireRecord, cls).create(*args, **kwargs)
 
         if not skip_files:
-            new_record.download_documents_and_figures(src_records=files_src_records)
+            new_record.download_documents_and_figures(
+                src_records=files_src_records,
+            )
             new_record.commit()
 
         return new_record
@@ -115,7 +117,10 @@ class InspireRecord(Record):
         super(InspireRecord, self).update(*args, **kwargs)
 
         if not skip_files:
-            self.download_documents_and_figures(src_records=files_src_records, only_new=True)
+            self.download_documents_and_figures(
+                src_records=files_src_records,
+                only_new=True,
+            )
 
     def merge(self, other):
         """Redirect pidstore of current record to the other InspireRecord.
@@ -250,7 +255,7 @@ class InspireRecord(Record):
             dict: with the medatada of the given ``doc_or_fig_obj`` updated as
                 follows:
                 * In the case it has to be downloaded: the url is set to
-                  something that you can use open_url_or_path on.
+                  something that you can use fsopen on.
                 * In the case it does not have to be downloaded: the url is
                   left intact pointing to the /api/files endpoint.
 
@@ -376,7 +381,7 @@ class InspireRecord(Record):
         if key not in self.files:
             key = self._get_unique_files_key(base_file_name=key)
 
-        stream = open_url_or_path(doc_or_fig_obj['url'])
+        stream = fsopen(doc_or_fig_obj['url'])
         return self.add_document_or_figure(
             metadata=doc_or_fig_obj,
             key=key,
