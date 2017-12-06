@@ -25,7 +25,6 @@
 from __future__ import absolute_import, division, print_function
 
 from datetime import date
-from functools import wraps
 
 from dateutil.relativedelta import relativedelta
 from flask import (
@@ -193,34 +192,31 @@ def data():
 # Error handlers
 #
 
-def api_friendly_error_handler(f):
-    @wraps(f)
-    def wrapper(error, *args, **kwargs):
-        if current_app.config.get('RESTFUL_API'):
-            return jsonify(code=error.code, message=error.name), error.code
-        return f(error, *args, **kwargs)
+def error_render_response(config_template_name, error):
+    if current_app.config.get('RESTFUL_API', False):
+        return jsonify(message=error.name, code=error.code), error.code
 
-    return wrapper
+    return render_template(current_app.config[config_template_name]), error.code
 
 
-@api_friendly_error_handler
-def unauthorized(error):
-    return render_template(current_app.config['THEME_401_TEMPLATE']), error.code
+def unauthorized(e):
+    """Error handler to show a 401.html page in case of a 401 error."""
+    return error_render_response('THEME_401_TEMPLATE', e)
 
 
-@api_friendly_error_handler
-def insufficient_permissions(error):
-    return render_template(current_app.config['THEME_403_TEMPLATE']), error.code
+def insufficient_permissions(e):
+    """Error handler to show a 403.html page in case of a 403 error."""
+    return error_render_response('THEME_403_TEMPLATE', e)
 
 
-@api_friendly_error_handler
-def page_not_found(error):
-    return render_template(current_app.config['THEME_404_TEMPLATE']), error.code
+def page_not_found(e):
+    """Error handler to show a 404.html page in case of a 404 error."""
+    return error_render_response('THEME_404_TEMPLATE', e)
 
 
-@api_friendly_error_handler
-def internal_error(error):
-    return render_template(current_app.config['THEME_500_TEMPLATE']), error.code
+def internal_error(e):
+    """Error handler to show a 500.html page in case of a 500 error."""
+    return error_render_response('THEME_500_TEMPLATE', e)
 
 
 #
