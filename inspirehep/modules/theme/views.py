@@ -24,9 +24,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+import sys
 from datetime import date
 from functools import wraps
 
+import six
 from dateutil.relativedelta import relativedelta
 from flask import (
     Blueprint,
@@ -197,7 +199,10 @@ def api_friendly_error_handler(f):
     @wraps(f)
     def wrapper(error, *args, **kwargs):
         if current_app.config.get('RESTFUL_API'):
-            return jsonify(code=error.code, message=error.name), error.code
+            try:
+                return jsonify(code=error.code, message=error.name), error.code
+            except Exception:
+                six.reraise(*sys.exc_info())
         return f(error, *args, **kwargs)
 
     return wrapper
