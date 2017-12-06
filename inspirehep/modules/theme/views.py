@@ -24,9 +24,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+import sys
 from datetime import date
 from functools import wraps
 
+import six
 from dateutil.relativedelta import relativedelta
 from flask import (
     Blueprint,
@@ -197,7 +199,10 @@ def api_friendly_error_handler(f):
     @wraps(f)
     def wrapper(error, *args, **kwargs):
         if current_app.config.get('RESTFUL_API'):
-            return jsonify(code=error.code, message=error.name), error.code
+            try:
+                return jsonify(code=error.code, message=error.name), error.code
+            except Exception:
+                six.reraise(*sys.exc_info())
         return f(error, *args, **kwargs)
 
     return wrapper
@@ -205,22 +210,22 @@ def api_friendly_error_handler(f):
 
 @api_friendly_error_handler
 def unauthorized(error):
-    return render_template(current_app.config['THEME_401_TEMPLATE']), error.code
+    return render_template(current_app.config['THEME_401_TEMPLATE']), 401
 
 
 @api_friendly_error_handler
 def insufficient_permissions(error):
-    return render_template(current_app.config['THEME_403_TEMPLATE']), error.code
+    return render_template(current_app.config['THEME_403_TEMPLATE']), 403
 
 
 @api_friendly_error_handler
 def page_not_found(error):
-    return render_template(current_app.config['THEME_404_TEMPLATE']), error.code
+    return render_template(current_app.config['THEME_404_TEMPLATE']), 404
 
 
 @api_friendly_error_handler
 def internal_error(error):
-    return render_template(current_app.config['THEME_500_TEMPLATE']), error.code
+    return render_template(current_app.config['THEME_500_TEMPLATE']), 500
 
 
 #
