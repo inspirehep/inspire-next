@@ -210,22 +210,22 @@ def api_friendly_error_handler(f):
 
 @api_friendly_error_handler
 def unauthorized(error):
-    return render_template(current_app.config['THEME_401_TEMPLATE']), error.code
+    return render_template(current_app.config['THEME_401_TEMPLATE']), 401
 
 
 @api_friendly_error_handler
 def insufficient_permissions(error):
-    return render_template(current_app.config['THEME_403_TEMPLATE']), error.code
+    return render_template(current_app.config['THEME_403_TEMPLATE']), 403
 
 
 @api_friendly_error_handler
 def page_not_found(error):
-    return render_template(current_app.config['THEME_404_TEMPLATE']), error.code
+    return render_template(current_app.config['THEME_404_TEMPLATE']), 404
 
 
 @api_friendly_error_handler
 def internal_error(error):
-    return render_template(current_app.config['THEME_500_TEMPLATE']), error.code
+    return render_template(current_app.config['THEME_500_TEMPLATE']), 500
 
 
 #
