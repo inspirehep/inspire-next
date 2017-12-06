@@ -28,8 +28,11 @@ from invenio_db import db
 
 from inspire_dojson.utils import get_record_ref
 from inspire_json_merger.api import merge
-from inspirehep.modules.workflows.utils import insert_wf_record_source
-from inspirehep.modules.workflows.utils import with_debug_logging
+from inspirehep.modules.workflows.utils import (
+    with_debug_logging,
+    read_all_wf_record_sources
+)
+from inspirehep.modules.workflows.models import WorkflowsRecordSources
 from inspirehep.utils.record_getter import get_db_record
 
 
@@ -90,11 +93,12 @@ def halt_for_merge_approval(obj, eng):
 
 @with_debug_logging
 def save_roots(obj, eng):
-    """Save ``head`` and ``update`` in the ``WorkflowRecordSources`` table.
+    """Save the head and update roots in the db.
 
-    Note:
-        The ``update`` is saved if and only if they have different sources,
-        because there can only be one root per source for a given record.
+    Merge the head and update roots in according to their sources and link
+    them to the merged record.
+    If both head and update have a root with a given source, than the head's
+    one is taken and the update's one skipped.
 
     Args:
         obj: a workflow object.
@@ -104,24 +108,28 @@ def save_roots(obj, eng):
         None
 
     """
-    head, update = obj.extra_data['head'], obj.extra_data['update']
-    head_source, update_source = obj.extra_data['head_source'], obj.extra_data['update_source']
-    head_uuid, update_uuid = obj.extra_data['head_uuid'], obj.extra_data['update_uuid']
+    def _merge_roots(new_uuid, head_roots, update_roots):
+        """Return the new roots to link to head."""
+        head_sources = [h.source for h in head_roots]
+        for u in update_roots:
+            if u.source not in head_sources:
+                head_roots.append(
+                    WorkflowsRecordSources(
+                        source=u.source,
+                        record_id=new_uuid,
+                        json=u.json
+                    )
+                )
+        return head_roots
 
+    head_uuid, update_uuid = obj.extra_data['head_uuid'], obj.extra_data['update_uuid']
     obj.save()  # XXX: otherwise obj.extra_data will be wiped by a db session commit below.
 
-    if update_source != head_source:
-        insert_wf_record_source(
-            json=update,
-            record_uuid=update_uuid,
-            source=update_source,
-        )
+    head_roots = read_all_wf_record_sources(head_uuid)
+    update_roots = read_all_wf_record_sources(update_uuid)
 
-    insert_wf_record_source(
-        json=head,
-        record_uuid=head_uuid,
-        source=head_source,
-    )
+    db.session.bulk_save_objects(_merge_roots(head_uuid, head_roots, update_roots))
+    db.session.commit()
 
 
 @with_debug_logging

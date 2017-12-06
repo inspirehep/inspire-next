@@ -27,7 +27,11 @@ import pytest
 from invenio_workflows import ObjectStatus, workflow_object_class
 
 from inspirehep.modules.records import RecordMetadata
-from inspirehep.modules.workflows.utils import read_wf_record_source
+from inspirehep.modules.workflows.tasks.manual_merging import save_roots
+from inspirehep.modules.workflows.utils import (
+    insert_wf_record_source,
+    read_wf_record_source,
+)
 from inspirehep.modules.workflows.workflows.manual_merge import start_merger
 from inspirehep.utils.record import get_source
 from inspirehep.utils.record_getter import get_db_record, RecordGetterError
@@ -78,14 +82,9 @@ def test_manual_merge_existing_records(workflow_app):
     assert obj.extra_data['approved'] is True
     assert obj.extra_data['auto-approved'] is False
 
+    # no root present before
     last_root = read_wf_record_source(head_id, 'arxiv')
-    assert last_root.json == head
-
-    head_source = obj.extra_data['head_source']
-    update_source = obj.extra_data['update_source']
-
-    assert head_source == update_source
-    # since head and update have the same source, only head is saved as root
+    assert last_root is None
     root_update = read_wf_record_source(update_id, get_source(update))
     assert root_update is None
 
@@ -123,3 +122,32 @@ def test_manual_merge_with_none_record(workflow_app):
             update_id=non_existing_id,
             current_user_id=1,
         )
+
+
+def test_save_roots(workflow_app):
+    # XXX: for some reason, this must be internal.
+    from inspirehep.modules.migrator.tasks import record_insert_or_replace
+
+    head = record_insert_or_replace(fake_record('title1', 123))
+    update = record_insert_or_replace(fake_record('title2', 456))
+
+    obj = workflow_object_class.create(
+        data={},
+        data_type='hep'
+    )
+    obj.extra_data['head_uuid'] = str(head.id)
+    obj.extra_data['update_uuid'] = str(update.id)
+    obj.save()
+
+    insert_wf_record_source(json={}, record_uuid=head.id, source='a')
+    insert_wf_record_source(json={}, record_uuid=head.id, source='b')
+
+    # this will not be saved because there's already an entry with source `a`
+    insert_wf_record_source(json={}, record_uuid=update.id, source='a')
+    insert_wf_record_source(json={}, record_uuid=update.id, source='c')
+
+    save_roots(obj, None)
+
+    assert read_wf_record_source(str(head.id), 'a')
+    assert read_wf_record_source(str(head.id), 'b')
+    assert read_wf_record_source(str(head.id), 'c')

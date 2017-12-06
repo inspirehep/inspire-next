@@ -216,6 +216,19 @@ def read_wf_record_source(record_uuid, source):
     return entry
 
 
+def read_all_wf_record_sources(record_uuid):
+    """Retrieve all ``WorkflowRecordSource`` for a given record id.
+
+    Args:
+        record_uuid(string): the uuid of the record
+
+    Return:
+        (list): the ``WorkflowRecordSource``s related to ``record_uuid``
+    """
+    entries = list(WorkflowsRecordSources.query.filter_by(record_id=str(record_uuid)))
+    return entries
+
+
 def insert_wf_record_source(json, record_uuid, source):
     """Stores a record in the WorkflowRecordSource table in the db.
 

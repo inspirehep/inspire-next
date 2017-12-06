@@ -60,7 +60,7 @@ install_requires = [
     'flask-shell-ipython~=0.0,>=0.3.0',
     'inspire-crawler~=1.0',
     'inspire-dojson~=57.0,>=57.0.3',
-    'inspire-json-merger~=6.0,>=6.0.0',
+    'inspire-json-merger~=6.0,>=6.0.1',
     'inspire-matcher~=3.0,>=3.0.0',
     'inspire-query-parser~=2.0,>=2.0.0',
     'inspire-schemas~=56.0,>=56.0.3',
