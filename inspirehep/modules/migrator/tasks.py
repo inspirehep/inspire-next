@@ -104,22 +104,37 @@ def split_stream(stream):
 
 
 @shared_task(ignore_result=True)
-def remigrate_records(only_broken=True):
+def remigrate_records(only_broken=True, skip_files=None):
     """Remigrate records.
 
     Directly migrates the records (declared as broken), e.g. if the dojson
     conversion script have been corrected.
     """
-    query = db.session.query(InspireProdRecords).filter_by(valid=False) if only_broken else db.session.query(InspireProdRecords)
+    if skip_files is None:
+        skip_files = current_app.config.get(
+             'RECORDS_MIGRATION_SKIP_FILES',
+             False,
+        )
+
+    query = db.session.query(InspireProdRecords)
+    if only_broken:
+        query = query.filter_by(valid=False)
+
     for i, chunk in enumerate(chunker(query.yield_per(CHUNK_SIZE))):
         records = [record.marcxml for record in chunk]
         logger.info("Processed {} records".format(i * CHUNK_SIZE))
-        migrate_chunk.delay(records)
+        migrate_chunk.delay(records, skip_files=skip_files)
 
 
 @shared_task(ignore_result=True)
-def migrate(source, wait_for_results=False):
+def migrate(source, wait_for_results=False, skip_files=None):
     """Main migration function."""
+    if skip_files is None:
+        skip_files = current_app.config.get(
+             'RECORDS_MIGRATION_SKIP_FILES',
+             False,
+        )
+
     if source.endswith('.gz'):
         fd = gzip.open(source)
     else:
@@ -135,9 +150,9 @@ def migrate(source, wait_for_results=False):
     for i, chunk in enumerate(chunker(split_stream(fd), CHUNK_SIZE)):
         print("Processed {} records".format(i * CHUNK_SIZE))
         if wait_for_results:
-            tasks.append(migrate_chunk.s(chunk))
+            tasks.append(migrate_chunk.s(chunk, skip_files=skip_files))
         else:
-            migrate_chunk.delay(chunk)
+            migrate_chunk.delay(chunk, skip_files=skip_files)
 
     if wait_for_results:
         job = group(tasks)
@@ -148,8 +163,13 @@ def migrate(source, wait_for_results=False):
 
 
 @shared_task(ignore_result=True)
-def continuous_migration():
+def continuous_migration(skip_files=None):
     """Task to continuously migrate what is pushed up by Legacy."""
+    if skip_files is None:
+        skip_files = current_app.config.get(
+             'RECORDS_MIGRATION_SKIP_FILES',
+             False,
+        )
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
     lock = Lock(r, 'continuous_migration', expire=120, auto_renewal=True)
@@ -158,7 +178,10 @@ def continuous_migration():
             while r.llen('legacy_records'):
                 raw_record = r.lrange('legacy_records', 0, 0)
                 if raw_record:
-                    migrate_and_insert_record(zlib.decompress(raw_record[0]))
+                    migrate_and_insert_record(
+                        zlib.decompress(raw_record[0]),
+                        skip_files=skip_files,
+                    )
                     db.session.commit()
                 r.lpop('legacy_records')
         finally:
@@ -182,7 +205,7 @@ def create_index_op(record):
 
 
 @shared_task(ignore_result=False, compress='zlib', acks_late=True)
-def migrate_chunk(chunk):
+def migrate_chunk(chunk, skip_files=False):
     models_committed.disconnect(index_after_commit)
 
     index_queue = []
@@ -190,7 +213,10 @@ def migrate_chunk(chunk):
     try:
         for raw_record in chunk:
             with db.session.begin_nested():
-                record = migrate_and_insert_record(raw_record)
+                record = migrate_and_insert_record(
+                    raw_record,
+                    skip_files=skip_files,
+                )
                 if record:
                     index_queue.append(create_index_op(record))
         db.session.commit()
@@ -275,7 +301,7 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
         success, failed))
 
 
-def record_insert_or_replace(json):
+def record_insert_or_replace(json, skip_files=False):
     """Insert or replace a record."""
     pid_type = get_pid_type_from_schema(json['$schema'])
     control_number = json['control_number']
@@ -284,12 +310,12 @@ def record_insert_or_replace(json):
         pid = PersistentIdentifier.get(pid_type, control_number)
         record = InspireRecord.get_record(pid.object_uuid)
         record.clear()
-        record.update(json)
+        record.update(json, skip_files=skip_files)
         if json.get('legacy_creation_date'):
             record.model.created = datetime.strptime(json['legacy_creation_date'], '%Y-%m-%d')
         record.commit()
     except PIDDoesNotExistError:
-        record = InspireRecord.create(json, id_=None)
+        record = InspireRecord.create(json, id_=None, skip_files=skip_files)
         if json.get('legacy_creation_date'):
             record.model.created = datetime.strptime(json['legacy_creation_date'], '%Y-%m-%d')
         inspire_recid_minter(str(record.id), json)
@@ -302,7 +328,7 @@ def record_insert_or_replace(json):
     return record
 
 
-def migrate_and_insert_record(raw_record):
+def migrate_and_insert_record(raw_record, skip_files=False):
     """Convert a marc21 record to JSON and insert it into the DB."""
     error = None
 
@@ -323,7 +349,7 @@ def migrate_and_insert_record(raw_record):
 
     try:
         if not error:
-            record = record_insert_or_replace(json_record)
+            record = record_insert_or_replace(json_record, skip_files=skip_files)
     except ValidationError as e:
         # Aggregate logs by part of schema being validated.
         pattern = u'Migrator Validator Error: {}, Value: %r, Record: %r'
