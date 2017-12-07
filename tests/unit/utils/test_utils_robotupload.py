@@ -78,3 +78,20 @@ def test_make_robotupload_marcxml_handles_unicode():
         )  # record/1503367
 
         make_robotupload_marcxml('http://localhost:5000', snippet, 'insert')
+
+
+def test_make_robotupload_marcxml_handles_non_unicode():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://localhost:5000/batchuploader/robotupload/insert'
+        )
+
+        snippet = (
+            u'<record>'
+            u'  <datafield tag="700" ind1=" " ind2=" ">'
+            u'    <subfield code="a">André, M.</subfield>'
+            u'  </datafield>'
+            u'</record>'
+        ).encode('utf-8')  # record/1503367
+
+        make_robotupload_marcxml('http://localhost:5000', snippet, 'insert')

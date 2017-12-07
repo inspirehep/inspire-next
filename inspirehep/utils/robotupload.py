@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 import os
 
 import requests
+from six import text_type
 from flask import current_app
 
 from .url import make_user_agent_string
@@ -43,11 +44,14 @@ def make_robotupload_marcxml(url, marcxml, mode, **kwargs):
     else:
         base_url = url
 
+    if isinstance(marcxml, text_type):
+        marcxml = marcxml.encode('utf8')
+
     if base_url:
         url = os.path.join(base_url, "batchuploader/robotupload", mode)
         return requests.post(
             url=url,
-            data=marcxml.encode('utf8'),
+            data=marcxml,
             headers=headers,
             params=kwargs,
         )
