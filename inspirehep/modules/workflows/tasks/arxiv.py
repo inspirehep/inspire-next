@@ -162,7 +162,8 @@ def arxiv_plot_extract(obj, eng):
 
             if 'figures' in obj.data:
                 for figure in obj.data['figures']:
-                    del obj.files[figure['key']]
+                    if figure['key'] in obj.files:
+                        del obj.files[figure['key']]
                 del obj.data['figures']
 
             lb = LiteratureBuilder(source='arxiv', record=obj.data)
