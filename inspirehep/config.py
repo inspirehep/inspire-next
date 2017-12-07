@@ -1152,6 +1152,16 @@ Note:
   ``InspireRecord.update`` takes precedence on this config variable.
 
 """
+RECORDS_MIGRATION_SKIP_FILES = False
+"""Disable the downloading of files at record migration time.
+
+Note:
+
+  This variable takes precedence over ``RECORDS_SKIP_FILES``, but can be
+  overriden by the ``skip_files`` parameters of the ``remigrate_records``,
+  ``migrate`` and ``continuous_migration`` from the
+  ``inspirehep.modules.migrator.tasks`` module.
+"""
 
 JSONSCHEMAS_HOST = "localhost:5000"
 JSONSCHEMAS_REPLACE_REFS = True
