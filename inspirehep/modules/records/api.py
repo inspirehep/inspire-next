@@ -381,7 +381,7 @@ class InspireRecord(Record):
         if key not in self.files:
             key = self._get_unique_files_key(base_file_name=key)
 
-        stream = fsopen(doc_or_fig_obj['url'])
+        stream = fsopen(doc_or_fig_obj['url'], mode='rb')
         return self.add_document_or_figure(
             metadata=doc_or_fig_obj,
             key=key,
