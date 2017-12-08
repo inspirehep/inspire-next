@@ -456,10 +456,19 @@ def test_populate_earliest_date_from_preprint_date():
     assert expected == result
 
 
-def test_populate_experiment_suggest_populates_if_record_is_experiment():
-    json_dict = {
+def test_populate_experiment_suggest():
+    schema = load_schema('experiments')
+    legacy_name_schema = schema['properties']['legacy_name']
+    long_name_schema = schema['properties']['long_name']
+    name_variants_schema = schema['properties']['name_variants']
+    collaboration_schema = schema['properties']['collaboration']
+    accelerator_schema = schema['properties']['accelerator']
+    experiment_schema = schema['properties']['experiment']
+    institutions_schema = schema['properties']['institutions']
+
+    record = {
         '$schema': 'http://foo/experiments.json',
-        'self': {'$ref': 'http://foo/$ref'},
+        'self': {'$ref': 'https://localhost:5000/api/experiments/bar'},
         'legacy_name': 'foo',
         'long_name': 'foobarbaz',
         'name_variants': [
@@ -483,21 +492,37 @@ def test_populate_experiment_suggest_populates_if_record_is_experiment():
         ],
     }
 
-    populate_experiment_suggest(None, json_dict)
+    assert validate(record['legacy_name'], legacy_name_schema) is None
+    assert validate(record['long_name'], long_name_schema) is None
+    assert validate(record['name_variants'], name_variants_schema) is None
+    assert validate(record['collaboration'], collaboration_schema) is None
+    assert validate(record['accelerator'], accelerator_schema) is None
+    assert validate(record['institutions'], institutions_schema) is None
+    assert validate(record['experiment'], experiment_schema) is None
 
-    assert json_dict['experiment_suggest']['input'] == [
-        'LHC',
-        'D0',
-        'SHINE',
-        'NA61',
-        'ICN',
-        'foo',
-        'foobarbaz',
-        'bar',
-        'baz',
-    ]
-    assert json_dict['experiment_suggest']['output'] == 'foo'
-    assert json_dict['experiment_suggest']['payload']['$ref'] == 'http://foo/$ref'
+    populate_experiment_suggest(None, record)
+
+    expected = {
+        'input': [
+            'LHC',
+            'D0',
+            'SHINE',
+            'NA61',
+            'ICN',
+            'foo',
+            'foobarbaz',
+            'bar',
+            'baz',
+        ],
+        'output': 'foo',
+        'payload': {
+            '$ref': 'https://localhost:5000/api/experiments/bar',
+        }
+    }
+
+    result = record['experiment_suggest']
+
+    assert expected == result
 
 
 def test_populate_experiment_suggest_does_nothing_if_record_is_not_experiment():

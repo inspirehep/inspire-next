@@ -413,7 +413,7 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
     })
 
 
-def generate_name_variations(sender, json, *args, **kwargs):
+def populate_name_variations(sender, json, *args, **kwargs):
     """Generate name variations for each signature of a Literature record."""
     if 'hep.json' not in json.get('$schema'):
         return
