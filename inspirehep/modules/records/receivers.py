@@ -384,21 +384,30 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
     if 'experiments.json' not in json.get('$schema'):
         return
 
-    name_variants = force_list(json.get('name_variants', []))
+    experiment_paths = [
+        'accelerator.value',
+        'collaboration.value',
+        'experiment.short_name',
+        'experiment.value',
+        'institutions.value',
+        'legacy_name',
+        'long_name',
+        'name_variants',
+    ]
+
+    input_values = [el for el in chain.from_iterable(
+        [force_list(get_value(json, path)) for path in experiment_paths]) if el]
+
     legacy_name = json.get('legacy_name', '')
 
-    input_values = []
-    input_values.append(legacy_name)
-    input_values.extend(name_variants)
-
-    input_values = [el for el in input_values if el]
+    record = get_value(json, 'self.$ref', '')
 
     json.update({
         'experiment_suggest': {
             'input': input_values,
             'output': legacy_name,
             'payload': {
-                '$ref': get_value(json, 'self.$ref'),
+                '$ref': record,
             },
         },
     })
