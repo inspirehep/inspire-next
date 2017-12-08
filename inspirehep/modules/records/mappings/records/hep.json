@@ -292,7 +292,7 @@
                     },
                     "type": "object"
                 },
-                "bookautocomplete": {
+                "book_suggest": {
                     "payloads": true,
                     "type": "completion"
                 },

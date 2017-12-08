@@ -106,16 +106,12 @@
                         },
                         "title": {
                             "copy_to": [
-                                "journalautocomplete",
                                 "lowercase_journal_titles"
                             ],
                             "type": "string"
                         }
                     },
                     "type": "object"
-                },
-                "journalautocomplete": {
-                    "type": "string"
                 },
                 "legacy_creation_date": {
                     "format": "yyyy||yyyy-MM||yyyy-MM-dd",
@@ -205,7 +201,6 @@
                 },
                 "short_title": {
                     "copy_to": [
-                        "journalautocomplete",
                         "lowercase_journal_titles"
                     ],
                     "type": "string"
@@ -216,7 +211,6 @@
                 },
                 "title_variants": {
                     "copy_to": [
-                        "journalautocomplete",
                         "lowercase_journal_titles"
                     ],
                     "type": "string"

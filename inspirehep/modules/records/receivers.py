@@ -132,13 +132,13 @@ def enhance_after_index(sender, json, *args, **kwargs):
 
     .. note::
 
-       ``populate_recid_from_ref`` **MUST** come before ``populate_bookautocomplete``
+       ``populate_recid_from_ref`` **MUST** come before ``populate_book_suggest``
        because the latter puts a JSON reference in a completion payload, which
        would be expanded to an incorrect ``payload_recid`` by the former.
 
     """
     populate_recid_from_ref(sender, json, *args, **kwargs)
-    populate_bookautocomplete(sender, json, *args, **kwargs)
+    populate_book_suggest(sender, json, *args, **kwargs)
     populate_book_series_suggest(sender, json, *args, **kwargs)
     populate_collaboration_suggest(sender, json, *args, **kwargs)
     populate_conference_suggest(sender, json, *args, **kwargs)
@@ -154,8 +154,8 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_title_suggest(sender, json, *args, **kwargs)
 
 
-def populate_bookautocomplete(sender, json, *args, **kwargs):
-    """Populate the ``bookautocomplete`` field of Literature records."""
+def populate_book_suggest(sender, json, *args, **kwargs):
+    """Populate the ``book_suggest`` field of Literature records."""
     if 'hep.json' not in json.get('$schema'):
         return
 
@@ -180,7 +180,7 @@ def populate_bookautocomplete(sender, json, *args, **kwargs):
     record = get_value(json, 'self.$ref', '')
 
     json.update({
-        'bookautocomplete': {
+        'book_suggest': {
             'input': input_values,
             'payload': {
                 'authors': authors,

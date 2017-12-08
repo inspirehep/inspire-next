@@ -367,7 +367,7 @@ RECORDS_REST_ENDPOINTS = dict(
                 field='abstracts.abstract_source_suggest'
             )),
             book_title=dict(completion=dict(
-                field='bookautocomplete'
+                field='book_suggest'
             )),
             book_series=dict(completion=dict(
                 field='book_series.book_series_suggest'
