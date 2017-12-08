@@ -32,7 +32,7 @@ from inspirehep.modules.records.receivers import (
     assign_uuid,
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
-    populate_bookautocomplete,
+    populate_book_suggest,
     populate_book_series_suggest,
     populate_collaboration_suggest,
     populate_conference_suggest,
@@ -47,7 +47,7 @@ from inspirehep.modules.records.receivers import (
 )
 
 
-def test_populate_bookautocomplete_from_authors():
+def test_populate_book_suggest_from_authors():
     schema = load_schema('hep')
     authors_schema = schema['properties']['authors']
     document_type_schema = schema['properties']['document_type']
@@ -69,7 +69,7 @@ def test_populate_bookautocomplete_from_authors():
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
     expected = {
         'input': [
@@ -83,12 +83,12 @@ def test_populate_bookautocomplete_from_authors():
             'title': [],
         },
     }
-    result = record['bookautocomplete']
+    result = record['book_suggest']
 
     assert expected == result
 
 
-def test_populate_bookautocomplete_from_titles():
+def test_populate_book_suggest_from_titles():
     schema = load_schema('hep')
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
@@ -110,7 +110,7 @@ def test_populate_bookautocomplete_from_titles():
     assert validate(record['self'], self_schema) is None
     assert validate(record['titles'], titles_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
     expected = {
         'input': [
@@ -124,12 +124,12 @@ def test_populate_bookautocomplete_from_titles():
             ],
         },
     }
-    result = record['bookautocomplete']
+    result = record['book_suggest']
 
     assert expected == result
 
 
-def test_populate_bookautocomplete_from_imprints_dates():
+def test_populate_book_suggest_from_imprints_dates():
     schema = load_schema('hep')
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
@@ -151,7 +151,7 @@ def test_populate_bookautocomplete_from_imprints_dates():
     assert validate(record['imprints'], imprints_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
     expected = {
         'input': [
@@ -163,12 +163,12 @@ def test_populate_bookautocomplete_from_imprints_dates():
             'title': [],
         },
     }
-    result = record['bookautocomplete']
+    result = record['book_suggest']
 
     assert expected == result
 
 
-def test_populate_bookautocomplete_from_imprints_publishers():
+def test_populate_book_suggest_from_imprints_publishers():
     schema = load_schema('hep')
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
@@ -190,7 +190,7 @@ def test_populate_bookautocomplete_from_imprints_publishers():
     assert validate(record['imprints'], imprints_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
     expected = {
         'input': [
@@ -202,12 +202,12 @@ def test_populate_bookautocomplete_from_imprints_publishers():
             'title': [],
         },
     }
-    result = record['bookautocomplete']
+    result = record['book_suggest']
 
     assert expected == result
 
 
-def test_populate_bookautocomplete_from_isbns_values():
+def test_populate_book_suggest_from_isbns_values():
     schema = load_schema('hep')
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
@@ -229,7 +229,7 @@ def test_populate_bookautocomplete_from_isbns_values():
     assert validate(record['isbns'], isbns_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
     expected = {
         'input': [
@@ -241,20 +241,20 @@ def test_populate_bookautocomplete_from_isbns_values():
             'title': [],
         },
     }
-    result = record['bookautocomplete']
+    result = record['book_suggest']
 
     assert expected == result
 
 
-def test_populate_bookautocomplete_does_nothing_if_record_is_not_literature():
+def test_populate_book_suggest_does_nothing_if_record_is_not_literature():
     record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
-    assert 'bookautocomplete' not in record
+    assert 'book_suggest' not in record
 
 
-def test_populate_bookautocomplete_does_nothing_if_record_is_not_a_book():
+def test_populate_book_suggest_does_nothing_if_record_is_not_a_book():
     schema = load_schema('hep')
     authors_schema = schema['properties']['authors']
     document_type_schema = schema['properties']['document_type']
@@ -276,9 +276,9 @@ def test_populate_bookautocomplete_does_nothing_if_record_is_not_a_book():
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
-    assert 'bookautocomplete' not in record
+    assert 'book_suggest' not in record
 
 
 def test_populate_book_series_suggest():
