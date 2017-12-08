@@ -197,7 +197,7 @@ def populate_book_series_suggest(sender, json, *args, **kwargs):
         return
 
     doc_types = json.get('document_type', [])
-    if all(doc_type not in doc_types for doc_type in ['book', 'thesis', 'proceedings']):
+    if not set(doc_types) & {'book', 'thesis', 'proceedings'}:
         return
 
     book_series = json.get('book_series', [])
@@ -236,12 +236,26 @@ def populate_conference_suggest(sender, json, *args, **kwargs):
     if 'conferences.json' not in json.get('$schema'):
         return
 
+    conference_paths = [
+        'cnum',
+        'acronyms',
+        'series.name',
+        'titles.source',
+        'titles.subtitle',
+        'titles.title',
+        'opening_date',
+    ]
+
+    input_values = [el for el in chain.from_iterable(
+        [force_list(get_value(json, path)) for path in conference_paths]) if el]
+
     cnum = json.get('cnum', '')
+
     record = get_value(json, 'self.$ref', '')
 
     json.update({
         'conference_suggest': {
-            'input': cnum,
+            'input': input_values,
             'output': cnum,
             'payload': {
                 '$ref': record,
@@ -255,16 +269,18 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
     if 'experiments.json' not in json.get('$schema'):
         return
 
-    legacy_name = json.get('legacy_name', '')
-    long_name = json.get('long_name', '')
-    name_variants = json.get('name_variants', '')
-    record = get_value(json, 'self.$ref', '')
+    experiment_paths = [
+        'legacy_name',
+        'long_name',
+        'name_variants',
+    ]
 
-    input_values = []
-    input_values.append(legacy_name)
-    input_values.append(long_name)
-    input_values.extend(name_variants)
-    input_values = [el for el in input_values if el]
+    input_values = [el for el in chain.from_iterable(
+        [force_list(get_value(json, path)) for path in experiment_paths]) if el]
+
+    legacy_name = json.get('legacy_name', '')
+
+    record = get_value(json, 'self.$ref', '')
 
     json.update({
         'experiment_suggest': {
@@ -409,15 +425,17 @@ def populate_title_suggest(sender, json, *args, **kwargs):
     if 'journals.json' not in json.get('$schema'):
         return
 
+    conference_paths = [
+        'journal_title.title',
+        'short_title',
+        'title_variants',
+    ]
+
+    input_values = [el for el in chain.from_iterable(
+        [force_list(get_value(json, path)) for path in conference_paths]) if el]
+
     journal_title = get_value(json, 'journal_title.title', '')
     short_title = json.get('short_title', '')
-    title_variants = json.get('title_variants', [])
-
-    input_values = []
-    input_values.append(journal_title)
-    input_values.append(short_title)
-    input_values.extend(title_variants)
-    input_values = [el for el in input_values if el]
 
     record = get_value(json, 'self.$ref', '')
 
