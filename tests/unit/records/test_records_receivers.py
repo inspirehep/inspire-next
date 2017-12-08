@@ -790,15 +790,41 @@ def test_populate_experiment_suggest_populates_if_record_is_experiment():
         '$schema': 'http://foo/experiments.json',
         'self': {'$ref': 'http://foo/$ref'},
         'legacy_name': 'foo',
+        'long_name': 'foobarbaz',
         'name_variants': [
             'bar',
             'baz',
+        ],
+        'collaboration': {
+            'value': 'D0',
+        },
+        'accelerator': {
+            'value': 'LHC',
+        },
+        'experiment': {
+            'short_name': 'SHINE',
+            'value': 'NA61',
+        },
+        'institutions': [
+            {
+                'value': 'ICN',
+            },
         ],
     }
 
     populate_experiment_suggest(None, json_dict)
 
-    assert json_dict['experiment_suggest']['input'] == ['foo', 'bar', 'baz']
+    assert json_dict['experiment_suggest']['input'] == [
+        'LHC',
+        'D0',
+        'SHINE',
+        'NA61',
+        'ICN',
+        'foo',
+        'foobarbaz',
+        'bar',
+        'baz',
+    ]
     assert json_dict['experiment_suggest']['output'] == 'foo'
     assert json_dict['experiment_suggest']['payload']['$ref'] == 'http://foo/$ref'
 
