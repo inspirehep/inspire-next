@@ -20,8 +20,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Helpers for handling records."""
-
 from __future__ import absolute_import, division, print_function
 
 from itertools import chain
@@ -33,13 +31,20 @@ def get_abstract(record):
     """Return the first abstract of a record.
 
     Args:
-        record(InspireRecord): a record.
+        record (InspireRecord): a record.
 
     Returns:
-        string: the first abstract of the record.
+        str: the first abstract of the record.
 
     Examples:
-        >>> record = {'abstracts': [{'value': 'Probably not.'}]}
+        >>> record = {
+        ...     'abstracts': [
+        ...         {
+        ...             'source': 'arXiv',
+        ...             'value': 'Probably not.',
+        ...         },
+        ...     ],
+        ... }
         >>> get_abstract(record)
         'Probably not.'
 
@@ -51,15 +56,25 @@ def get_arxiv_categories(record):
     """Return all the arXiv categories of a record.
 
     Args:
-        record: a record.
+        record (InspireRecord): a record.
 
     Returns:
-        list: all the arXiv categories of the record.
+        list(str): all the arXiv categories of the record.
 
     Examples:
-        >>> record = {'arxiv_eprints': [{'categories': ['hep-ph', 'hep-th']}]}
+        >>> record = {
+        ...     'arxiv_eprints': [
+        ...         {
+        ...             'categories': [
+        ...                 'hep-th',
+        ...                 'hep-ph',
+        ...             ],
+        ...             'value': '1612.08928',
+        ...         },
+        ...     ],
+        ... }
         >>> get_arxiv_categories(record)
-        ['hep-ph', 'hep-th']
+        ['hep-th', 'hep-ph']
 
     """
     return list(chain.from_iterable(
@@ -67,7 +82,30 @@ def get_arxiv_categories(record):
 
 
 def get_arxiv_id(record):
-    """Return the first arXiv identifier of a record."""
+    """Return the first arXiv identifier of a record.
+
+    Args:
+        record (InspireRecord): a record.
+
+    Returns:
+        str: the first arXiv identifier of the record.
+
+    Examples:
+        >>> record = {
+        ...     'arxiv_eprints': [
+        ...         {
+        ...             'categories': [
+        ...                 'hep-th',
+        ...                 'hep-ph',
+        ...             ],
+        ...             'value': '1612.08928',
+        ...         },
+        ...     ],
+        ... }
+        >>> get_arxiv_id(record)
+        '1612.08928'
+
+    """
     return get_value(record, 'arxiv_eprints.value[0]', default='')
 
 
@@ -75,25 +113,70 @@ def get_source(record):
     """Return the acquisition source of a record.
 
     Args:
-        record(InspireRecord): a record.
+        record (InspireRecord): a record.
 
     Returns:
         str: the acquisition source of the record.
 
     Examples:
-        >>> record = {'acquisition_source': {'source': 'arxiv'}}
+        >>> record = {
+        ...     'acquisition_source': {
+        ...         'method': 'oai',
+        ...         'source': 'arxiv',
+        ...     }
+        ... }
         >>> get_source(record)
         'arxiv'
 
     """
-    return get_value(record, 'acquisition_source.source')
+    return get_value(record, 'acquisition_source.source', default='')
 
 
 def get_subtitle(record):
-    """Get preferred subtitle from record."""
+    """Return the first subtitle of a record.
+
+    Args:
+        record (InspireRecord): a record.
+
+    Returns:
+        str: the first subtitle of the record.
+
+    Examples:
+        >>> record = {
+        ...     'titles': [
+        ...         {
+        ...             'subtitle': 'A mathematical exposition',
+        ...             'title': 'The General Theory of Relativity',
+        ...         },
+        ...     ],
+        ... }
+        >>> get_subtitle(record)
+        'A mathematical exposition'
+
+    """
     return get_value(record, 'titles.subtitle[0]', default='')
 
 
 def get_title(record):
-    """Get preferred title from record."""
+    """Return the first title of a record.
+
+    Args:
+        record (InspireRecord): a record.
+
+    Returns:
+        str: the first title of the record.
+
+    Examples:
+        >>> record = {
+        ...     'titles': [
+        ...         {
+        ...             'subtitle': 'A mathematical exposition',
+        ...             'title': 'The General Theory of Relativity',
+        ...         },
+        ...     ],
+        ... }
+        >>> get_title(record)
+        'The General Theory of Relativity'
+
+    """
     return get_value(record, 'titles.title[0]', default='')

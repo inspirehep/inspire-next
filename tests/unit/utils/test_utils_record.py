@@ -33,7 +33,7 @@ from inspirehep.utils.record import (
 )
 
 
-def test_get_abstract_returns_first_abstract():
+def test_get_abstract():
     schema = load_schema('hep')
     subschema = schema['properties']['abstracts']
 
@@ -41,23 +41,19 @@ def test_get_abstract_returns_first_abstract():
         'abstracts': [
             {
                 'source': 'arXiv',
-                'value': 'first abstract',
-            },
-            {
-                'source': 'publisher',
-                'value': 'second abstract',
+                'value': 'Probably not.',
             },
         ],
     }
+    assert validate(record['abstracts'], subschema) is None
 
-    expected = 'first abstract'
+    expected = 'Probably not.'
     result = get_abstract(record)
 
-    assert validate(record['abstracts'], subschema) is None
     assert expected == result
 
 
-def test_get_arxiv_categories_returns_all_arxiv_categories():
+def test_get_arxiv_categories():
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
@@ -65,47 +61,39 @@ def test_get_arxiv_categories_returns_all_arxiv_categories():
         'arxiv_eprints': [
             {
                 'categories': [
-                    'nucl-th',
+                    'hep-th',
+                    'hep-ph',
                 ],
-                'value': '1605.03898'
+                'value': '1612.08928',
             },
         ],
-    }  # literature/1458300
+    }
     assert validate(record['arxiv_eprints'], subschema) is None
 
-    expected = ['nucl-th']
+    expected = ['hep-th', 'hep-ph']
     result = get_arxiv_categories(record)
 
     assert expected == result
 
 
-def test_get_arxiv_id_returns_empty_string_when_no_arxiv_eprints():
-    record = {}
+def test_get_arxiv_id():
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
 
-    expected = ''
-    result = get_arxiv_id(record)
-
-    assert expected == result
-
-
-def test_get_arxiv_id_returns_empty_string_when_arxiv_eprints_is_empty():
-    record = {'arxiv_eprints': []}
-
-    expected = ''
-    result = get_arxiv_id(record)
-
-    assert expected == result
-
-
-def test_get_arxiv_id_returns_first_arxiv_identifier():
     record = {
         'arxiv_eprints': [
-            {'value': 'first arXiv identifier'},
-            {'value': 'second arXiv identifier'},
+            {
+                'categories': [
+                    'hep-th',
+                    'hep-ph',
+                ],
+                'value': '1612.08928',
+            },
         ],
     }
+    assert validate(record['arxiv_eprints'], subschema) is None
 
-    expected = 'first arXiv identifier'
+    expected = '1612.08928'
     result = get_arxiv_id(record)
 
     assert expected == result
@@ -117,6 +105,7 @@ def test_get_source():
 
     record = {
         'acquisition_source': {
+            'method': 'oai',
             'source': 'arxiv',
         },
     }
@@ -128,65 +117,41 @@ def test_get_source():
     assert expected == result
 
 
-def test_get_subtitle_returns_empty_string_when_no_titles():
-    record = {}
+def test_get_subtitle():
+    schema = load_schema('hep')
+    subschema = schema['properties']['titles']
 
-    expected = ''
-    result = get_subtitle(record)
-
-    assert expected == result
-
-
-def test_get_subtitle_returns_empty_string_when_titles_is_empty():
-    record = {'titles': []}
-
-    expected = ''
-    result = get_subtitle(record)
-
-    assert expected == result
-
-
-def test_get_subtitle_returns_first_subtitle():
     record = {
         'titles': [
-            {'subtitle': 'first subtitle'},
-            {'subtitle': 'second subtitle'},
+            {
+                'subtitle': 'A mathematical exposition',
+                'title': 'The General Theory of Relativity',
+            },
         ],
     }
+    assert validate(record['titles'], subschema) is None
 
-    expected = 'first subtitle'
+    expected = 'A mathematical exposition'
     result = get_subtitle(record)
 
     assert expected == result
 
 
-def test_get_title_returns_empty_string_when_no_titles():
-    record = {}
+def test_get_title():
+    schema = load_schema('hep')
+    subschema = schema['properties']['titles']
 
-    expected = ''
-    result = get_title(record)
-
-    assert expected == result
-
-
-def test_get_title_returns_empty_string_when_titles_is_empty():
-    record = {'titles': []}
-
-    expected = ''
-    result = get_title(record)
-
-    assert expected == result
-
-
-def test_get_title_returns_first_title():
     record = {
         'titles': [
-            {'title': 'first title'},
-            {'title': 'second title'},
+            {
+                'subtitle': 'A mathematical exposition',
+                'title': 'The General Theory of Relativity',
+            },
         ],
     }
+    assert validate(record['titles'], subschema) is None
 
-    expected = 'first title'
+    expected = 'The General Theory of Relativity'
     result = get_title(record)
 
     assert expected == result
