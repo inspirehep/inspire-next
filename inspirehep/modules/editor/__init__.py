@@ -24,4 +24,5 @@
 
 from __future__ import absolute_import, division, print_function
 
+from .api import blueprint_api  # noqa: F401
 from .views import blueprint  # noqa: F401

@@ -164,7 +164,7 @@ def test_get_revision(log_in_as_cataloger, record_with_two_revisions, api_client
     assert result['titles'][0]['title'] == 'record rev0'
 
 
-@patch('inspirehep.modules.editor.views.tickets')
+@patch('inspirehep.modules.editor.api.tickets')
 def test_create_rt_ticket(mock_tickets, log_in_as_cataloger, api_client):
     mock_tickets.create_ticket.return_value = 1
 
@@ -183,7 +183,7 @@ def test_create_rt_ticket(mock_tickets, log_in_as_cataloger, api_client):
     assert response.status_code == 200
 
 
-@patch('inspirehep.modules.editor.views.tickets')
+@patch('inspirehep.modules.editor.api.tickets')
 def test_create_rt_ticket_only_needs_queue_and_recid(mock_tickets, log_in_as_cataloger, api_client):
     mock_tickets.create_ticket.return_value = 1
 
@@ -199,7 +199,7 @@ def test_create_rt_ticket_only_needs_queue_and_recid(mock_tickets, log_in_as_cat
     assert response.status_code == 200
 
 
-@patch('inspirehep.modules.editor.views.tickets')
+@patch('inspirehep.modules.editor.api.tickets')
 def test_create_rt_ticket_returns_500_on_error(mock_tickets, log_in_as_cataloger, api_client):
     mock_tickets.create_ticket.return_value = -1
 
@@ -229,7 +229,7 @@ def test_create_rt_ticket_returns_403_on_authentication_error(api_client):
     assert response.status_code == 403
 
 
-@patch('inspirehep.modules.editor.views.tickets')
+@patch('inspirehep.modules.editor.api.tickets')
 def test_resolve_rt_ticket(mock_tickets, log_in_as_cataloger, api_client):
     response = api_client.get('/editor/literature/1497201/rt/tickets/4328/resolve')
 
@@ -247,7 +247,7 @@ def test_resolve_rt_ticket_returns_403_on_authentication_error(api_client):
     assert response.status_code == 403
 
 
-@patch('inspirehep.modules.editor.views.tickets')
+@patch('inspirehep.modules.editor.api.tickets')
 def test_get_tickets_for_record(mock_tickets, log_in_as_cataloger, api_client):
     response = api_client.get('/editor/literature/1497201/rt/tickets')
 
@@ -260,7 +260,7 @@ def test_get_tickets_for_record_returns_403_on_authentication_error(api_client):
     assert response.status_code == 403
 
 
-@patch('inspirehep.modules.editor.views.tickets')
+@patch('inspirehep.modules.editor.api.tickets')
 def test_get_rt_users(mock_tickets, log_in_as_cataloger, api_client):
     response = api_client.get('/editor/rt/users')
 
@@ -273,7 +273,7 @@ def test_get_rt_users_returns_403_on_authentication_error(api_client):
     assert response.status_code == 403
 
 
-@patch('inspirehep.modules.editor.views.tickets')
+@patch('inspirehep.modules.editor.api.tickets')
 def test_get_rt_queues(mock_tickets, log_in_as_cataloger, api_client):
     response = api_client.get('/editor/rt/queues')
 
@@ -425,7 +425,7 @@ def test_refextract_url(log_in_as_cataloger, api_client):
     assert get_value({'references': references}, 'references.reference.publication_info.journal_title')
 
 
-@patch('inspirehep.modules.editor.views.start_merger')
+@patch('inspirehep.modules.editor.api.start_merger')
 def test_manual_merge(mock_start_merger, log_in_as_cataloger, api_client):
     mock_start_merger.return_value = 100
 
