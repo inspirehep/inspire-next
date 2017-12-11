@@ -43,11 +43,12 @@ class AdminToolsMixin(object):
 class LiteratureRecord(ESRecord, AdminToolsMixin):
     """Record class specialized for literature records."""
 
-    def set_links_for_ids(self, extid, ext_sys_id_info):
+    def get_link_info_for_external_sys_identifiers(self, extid, ext_sys_id_info):
         """Urls and names for external system identifiers
 
-        Returns a dictionary that contains the name of the
-        external_system_identifier as the key and it's url as the value
+        Returns a dictionary with 2 key value pairs, the first of which is the
+        name of the external_system_identifier and the second is
+        a link to the record in that external_system_identifer
         """
         if ext_sys_id_info[0] == 'KEK scanned document':
             extid = extid.replace("-", "")
@@ -181,6 +182,7 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
         unique_ext_ids = []
         filtered_ext_ids = []
         mapped_ext_ids = []
+        ads_linked = False
 
         # Keep only first of each kind of external_system_identifiers
         seen = set()
@@ -191,11 +193,23 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
 
         # Keep only those external_system_identifiers whose 'schema' appear
         # as keys in ext_id_dict
-        filtered_ext_ids = filter(lambda x: x['schema'].lower() in ext_id_dict.keys(), unique_ext_ids)
+        filtered_ext_ids = filter(lambda x: x['schema'].lower() in ext_id_dict, unique_ext_ids)
 
         # Map each external_system_identifier in filtered _ext_ids to
         # a link name and link url
-        mapped_ext_ids = map(lambda x: self.set_links_for_ids(x['value'], list(ext_id_dict[x['schema'].lower()])), filtered_ext_ids)
+        mapped_ext_ids = map(lambda x: self.get_link_info_for_external_sys_identifiers(x['value'], list(ext_id_dict[x['schema'].lower()])), filtered_ext_ids)
+
+        # Set fallback ADS link via arXiv:e-print
+        for ext_sys_id in mapped_ext_ids:
+            if ext_sys_id['url_name'] == ext_id_dict['ads'][0]:
+                ads_linked = True
+        if not ads_linked and self.get('arxiv_eprints'):
+            for report_number in self.get('arxiv_eprints'):
+                mapped_ext_ids.append({
+                    'url_name': ext_id_dict['ads'][0],
+                    'url_link': ext_id_dict['ads'][1] + report_number.get('value')
+                })
+
         return mapped_ext_ids
 
 

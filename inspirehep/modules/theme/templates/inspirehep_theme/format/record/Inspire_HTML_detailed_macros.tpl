@@ -196,28 +196,7 @@
     {% endif %}
     {{ comma() }}
     <a href="{{ external_system_identifier['url_link'] }}">{{ external_system_identifier['url_name'] }}</a>
-    {% if external_system_identifier['url_name'] == 'ADS Abstract Service' %}
-      {% do adsLinked.append(1) %}
-    {% endif %}
   {% endfor %}
-
-  {# Fallback ADS link via arXiv:e-print #}
-  {% if not adsLinked %}
-      {% set ads = 'http://adsabs.harvard.edu/abs/' %}
-      {% if record.get('arxiv_eprints') | is_list() %}
-        {% if not viewInDisplayed %}
-          View in:
-          {% do viewInDisplayed.append(1) %}
-        {% endif %}
-        {% set filtered_arxiv = record.get('arxiv_eprints') %}
-        {% for report_number in filtered_arxiv %}
-          {{ comma() }}
-          <a href='{{ ads }}{{report_number.get('value')}}'>
-            ADS Abstract Service
-          </a>
-        {% endfor %}
-      {% endif %}
-  {% endif %}
 
 {% endmacro %}
 
