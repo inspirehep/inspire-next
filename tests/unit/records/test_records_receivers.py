@@ -317,7 +317,23 @@ def test_populate_book_series_suggest():
 
 
 def test_populate_book_series_suggest_does_nothing_if_record_is_not_literature():
-    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
+    schema = load_schema('hep')
+    book_series_schema = schema['properties']['book_series']
+    document_type_schema = schema['properties']['document_type']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'book',
+        ],
+        'book_series': [
+            {
+                'title': 'foo',
+            },
+        ],
+    }
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['book_series'], book_series_schema) is None
 
     populate_book_series_suggest(None, record)
 
@@ -386,7 +402,18 @@ def test_populate_collaboration_suggest():
 
 
 def test_populate_collaboration_suggest_does_nothing_if_record_is_not_literature():
-    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
+    schema = load_schema('hep')
+    subschema = schema['properties']['collaborations']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'collaborations': [
+            {
+                'value': 'foo',
+            },
+        ],
+    }
+    assert validate(record['collaborations'], subschema) is None
 
     populate_collaboration_suggest(None, record)
 
@@ -411,8 +438,8 @@ def test_populate_conference_suggest():
         ],
         'address': [
             {
-                'cities': ['Batavia'],
-                'postal_address': ['22607 Hamburg'],
+                'cities': ['Batavia', 'Berlin'],
+                'postal_address': ['22607 Hamburg', '1293 Bern'],
             }
         ],
         'series': [
@@ -440,20 +467,21 @@ def test_populate_conference_suggest():
     assert validate(record['self'], self_schema) is None
     assert validate(record['opening_date'], opening_date_schema) is None
 
-
     populate_conference_suggest(None, record)
 
     expected = {
         'input': [
             'C87-12-25',
             'SUSY 2018',
-            'Batavia',
-            '22607 Hamburg',
             'Conf Series',
             'A source',
             'A subtitle',
             'A title',
             '2009-03-12',
+            'Batavia',
+            'Berlin',
+            '22607 Hamburg',
+            '1293 Bern',
         ],
         'output': 'C87-12-25',
         'payload': {

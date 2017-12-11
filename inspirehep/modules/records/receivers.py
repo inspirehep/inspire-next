@@ -247,8 +247,13 @@ def populate_conference_suggest(sender, json, *args, **kwargs):
         'opening_date',
     ]
 
+    cities = get_value(json, 'address.cities')
+    postal_addresses = get_value(json, 'address.postal_address')
+
     input_values = [el for el in chain.from_iterable(
         [force_list(get_value(json, path)) for path in conference_paths]) if el]
+    input_values.extend(el for el in cities[0] if el)
+    input_values.extend(el for el in postal_addresses[0] if el)
 
     cnum = json.get('cnum', '')
 
