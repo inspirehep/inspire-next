@@ -33,34 +33,39 @@ def test_literature_record_external_system_identifiers():
                 'value': 'D04-00213',
             },
             {
-                'schema': 'ADS',
-                'value': '2004PrPh...52..200K',
+                'schema': 'CDS',
+                'value': '2231692',
             },
             {
-                'schema': 'ADS',
-                'value': '2006PhR...429..121K',
+                'schema': 'CDS',
+                'value': '2232052',
             },
             {
-                'schema': 'SPIRES',
-                'value': 'SPIRES-5682037',
+                'schema': 'HAL',
+                'value': 'in2p3-01394924',
             },
+            {
+                'schema': 'KEKSCAN',
+                'value': '200727065'
+            }
         ],
     })
 
     expected = [
         {
-            'schema': 'DESY',
-            'value': 'D04-00213',
+            'url_name': 'CERN Document Server',
+            'url_link': 'http://cds.cern.ch/record/2231692'
         },
         {
-            'schema': 'ADS',
-            'value': '2004PrPh...52..200K',
+            'url_name': 'HAL Archives Ouvertes',
+            'url_link': 'https://hal.archives-ouvertes.fr/in2p3-01394924'
         },
         {
-            'schema': 'SPIRES',
-            'value': 'SPIRES-5682037',
-        },
+            'url_name': 'KEK scanned document',
+            'url_link': 'https://lib-extopc.kek.jp/preprints/PDF/2007/0727/0727065.pdf'
+        }
     ]
+
     result = record.external_system_identifiers
 
     assert expected == result
