@@ -528,8 +528,10 @@ define(function(require, exports, module) {
       this.$formWrapper.show('blind', 1000);
       $actionBar.show('blind', 1000);
 
-      // run checkDepositionType() only when showing the rest of the form
+      // run checkDepositionType() and collapseLinksPanel()
+      // only when showing the rest of the form
       this.checkDepositionType();
+      this.collapseLinksPanel();
     },
 
     /**
@@ -610,6 +612,13 @@ define(function(require, exports, module) {
       })).done(function() {
         that.slideDownPanel();
       });
+    },
+
+    // Collapse the links panel by default if the record is imported from arXiv
+    collapseLinksPanel: function collapseLinksPanel() {
+      if($.trim(this.$arxiv_id_field.val().length) > 0) {
+        $('#collapse-3').prev().find('a.panel-toggle').click();
+      }
     },
 
     /**
