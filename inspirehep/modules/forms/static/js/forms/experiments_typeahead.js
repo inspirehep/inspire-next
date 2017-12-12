@@ -30,11 +30,11 @@ define([
     this.dataEngine = new Bloodhound({
       name: 'experiments',
       remote: {
-        url: '/api/experiments?q=experimentautocomplete:%QUERY*',
+        url: '/api/experiments/_suggest?experiment=%QUERY',
         filter: function(response) {
-          return response.hits.hits.sort(function (x, y) {
-            var x_title = x.metadata.legacy_name,
-                y_title = y.metadata.legacy_name;
+          return response.experiment[0].options.sort(function (x, y) {
+            var x_title = x.text,
+                y_title = y.text;
 
             return x_title.localeCompare(y_title);
           });
@@ -49,7 +49,7 @@ define([
     this.$element = $element;
 
     var suggestionTemplate = Hogan.compile(
-      '<strong>{{ display_name }}</strong><br>'
+      '<strong>{{ text }}</strong><br>'
     );
 
     this.$element.typeahead({
@@ -67,15 +67,15 @@ define([
         }.bind(this));
       }.bind(this),
       displayKey: function(data) {
-        return data.metadata.legacy_name;
+        return data.text;
       },
       templates: {
         empty: function(data) {
           return 'Cannot find this experiment in our database.';
         },
         suggestion: function(data) {
-          data.metadata.display_name = data.metadata.legacy_name;
-          return suggestionTemplate.render.call(suggestionTemplate, data.metadata);
+
+          return suggestionTemplate.render.call(suggestionTemplate, data);
         }.bind(this)
       }
     });
