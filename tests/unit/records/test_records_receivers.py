@@ -485,7 +485,10 @@ def test_populate_conference_suggest():
         ],
         'output': 'C87-12-25',
         'payload': {
-            '$ref': 'http://localhost:5000/api/conferences/bar'
+            '$ref': 'http://localhost:5000/api/conferences/bar',
+            'city': 'Batavia',
+            'opening_date': '2009-03-12',
+            'title': 'A title',
         },
     }
 

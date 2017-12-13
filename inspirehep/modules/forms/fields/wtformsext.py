@@ -150,17 +150,6 @@ class FormField(INSPIREField, wtforms.FormField):
         self.form.post_process(form=self.form, formfields=formfields,
                                submit=submit)
 
-    def perform_autocomplete(self, form, name, term, limit=50):
-        """Run auto-complete method for field.
-
-        This method should not be called directly, instead use
-        Form.autocomplete().
-        """
-        if name.startswith(self.name + self.separator):
-            form = self.form_class(prefix=self.name + self.separator)
-            return form.autocomplete(name, term, limit=limit, _form=form)
-        return None
-
     def get_flags(self, filter_func=None):
         """Get flags."""
         flags = self.form.get_flags(filter_func=filter_func)
@@ -292,6 +281,7 @@ class FieldList(INSPIREField, wtforms.FieldList):
                 submit=submit
             )
 
+    # TODO: this obsolete way of autocompletion should be removed.
     def perform_autocomplete(self, form, name, term, limit=50):
         """Run auto-complete method for field.
 

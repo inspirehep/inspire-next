@@ -21,52 +21,67 @@
  */
 
 define([
-  'js/forms/extended_typeahead'
-], function(ExtendedTypeahead) {
+  'jquery',
+  'js/jquery_plugin',
+], function($, jQueryPlugin) {
 
-  function conferencesTypeahead($element) {
-    $element.extendedTypeahead({
-      suggestionTemplate: Hogan.compile(
-        '<b>{{ title }}</b><br>' +
+  function ConferencesTypeahead($element) {
+    this.dataEngine = new Bloodhound({
+      name: 'conferences',
+      remote: {
+        url: '/api/conferences/_suggest?conference=%QUERY',
+        filter: function(response) {
+          return response.conference[0].options;
+        }
+      },
+      datumTokenizer: function() {},
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      limit: 100,
+    });
+
+    this.dataEngine.initialize();
+    this.$element = $element;
+
+    var suggestionTemplate = Hogan.compile(
+      '<strong>{{#text}} {{ text }} {{/text}}</strong><br>' +
         '<small>' +
-        '{{ opening_date }}, {{ city }}, {{ country }}<br>' +
-        '{{ cnum }}' +
+        '{{#payload.title}} {{ payload.title }} {{/payload.title}}<br>' +
+        '{{#payload.city}} {{ payload.city }} {{/payload.city}} ' +
+        '{{#payload.opening_date}} {{ payload.opening_date }} {{/payload.opening_date}}' +
         '</small>'
-      ),
-      selectedValueTemplate: Hogan.compile(
-        '{{ title }}, {{ opening_date }}, {{ city }}, {{ country }}'
-      ),
-      cannotFindMessage: 'Cannot find this conference in our database.',
-      extractRawValue: function(data) {
-        return data.cnum;
+    );
+
+    this.$element.typeahead({
+      minLength: 3
+    }, {
+      // after typeahead upgrade to 0.11 can be substituted with:
+      // source: this.engine.ttAdapter(),
+      // https://github.com/twitter/typeahead.js/issues/166
+      source: function(query, callback) {
+        // trigger can be deleted after typeahead upgrade to 0.11
+        this.$element.trigger('typeahead:asyncrequest');
+        this.dataEngine.get(query, function(suggestions) {
+          this.$element.trigger('typeahead:asyncreceive');
+          callback(suggestions);
+        }.bind(this));
+      }.bind(this),
+      displayKey: function(data) {
+        return data.text;
       },
-      displayKey: null,
-      displayfn: function(obj) {
-        return obj;
-      },
-      dataEngine: new Bloodhound({
-        name: 'conferences',
-        remote: {
-          url: '/api/conferences?q=conferenceautocomplete:%QUERY*',
-          filter: function(response) {
-            return $.map(response.hits.hits, function(el) {
-              el.metadata.city = el.metadata.address[0].cities[0];
-              el.metadata.country = el.metadata.address[0].country_code;
-              el.metadata.title = el.metadata.titles[0].title;
-              return el.metadata
-            }).sort(function(x, y) {
-              return new Date(y.opening_date) - new Date(x.opening_date);
-            });
-          }
+      templates: {
+        empty: function(data) {
+          return 'Cannot find this conference in our database.';
         },
-        datumTokenizer: function() {},
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        limit: 100,
-      })
+        suggestion: function(data) {
+          return suggestionTemplate.render.call(suggestionTemplate, data);
+        }.bind(this)
+      }
     });
 
     return $element;
   }
 
-  return conferencesTypeahead;
+  $.fn.conferencesTypeahead = jQueryPlugin(ConferencesTypeahead, 'conference-typeahead');
+
+  return ConferencesTypeahead;
 });

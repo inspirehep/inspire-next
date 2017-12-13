@@ -37,6 +37,7 @@ define(function(require, exports, module) {
     tpl_loader_failed = require('hgn!js/forms/templates/loader_failed'),
     AffiliationsTypeahead = require("js/forms/affiliations_typeahead"),
     AuthorsTypeahead = require("js/forms/authors_typeahead"),
+    ConferencesTypeahead = require("js/forms/conferences_typeahead"),
     ExperimentsTypeahead = require("js/forms/experiments_typeahead"),
     JournalsTypeahead = require("js/forms/journals_typeahead");
 
@@ -709,6 +710,8 @@ define(function(require, exports, module) {
           $(data.item).affiliationsTypeahead();
         } else if ($(data.item).data("autocomplete") === "author") {
           $(data.item).authorsTypeahead();
+        } else if ($(data.item).data("autocomplete") === "conference") {
+          $(data.item).conferencesTypeahead();
         } else if ($(data.item).data("autocomplete") === "experiment") {
           $(data.item).experimentsTypeahead();
         } else if ($(data.item).data("autocomplete") === "journal") {

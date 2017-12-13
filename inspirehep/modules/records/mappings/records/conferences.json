@@ -26,13 +26,11 @@
                     "type": "object"
                 },
                 "acronyms": {
-                    "copy_to": "conferenceautocomplete",
                     "type": "string"
                 },
                 "address": {
                     "properties": {
                         "cities": {
-                            "copy_to": "conferenceautocomplete",
                             "type": "string"
                         },
                         "country_code": {
@@ -42,7 +40,6 @@
                             "type": "string"
                         },
                         "postal_address": {
-                            "copy_to": "conferenceautocomplete",
                             "type": "string"
                         },
                         "postal_code": {
@@ -73,10 +70,6 @@
                     "type": "date"
                 },
                 "cnum": {
-                    "copy_to": "conferenceautocomplete",
-                    "type": "string"
-                },
-                "conferenceautocomplete": {
                     "type": "string"
                 },
                 "conference_suggest": {
@@ -149,7 +142,6 @@
                     "type": "object"
                 },
                 "opening_date": {
-                    "copy_to": "conferenceautocomplete",
                     "format": "yyyy||yyyy-MM||yyyy-MM-dd",
                     "type": "date"
                 },
@@ -206,7 +198,6 @@
                             "type": "string"
                         },
                         "title": {
-                            "copy_to": "conferenceautocomplete",
                             "type": "string"
                         }
                     },

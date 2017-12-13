@@ -247,17 +247,18 @@ def populate_conference_suggest(sender, json, *args, **kwargs):
         'opening_date',
     ]
 
-    cities = get_value(json, 'address.cities')
-    postal_addresses = get_value(json, 'address.postal_address')
+    cities = list(chain.from_iterable(get_value(json, 'address.cities')))
+    postal_addresses = list(chain.from_iterable(get_value(json, 'address.postal_address')))
 
-    input_values = [el for el in chain.from_iterable(
-        [force_list(get_value(json, path)) for path in conference_paths]) if el]
-    input_values.extend(el for el in cities[0] if el)
-    input_values.extend(el for el in postal_addresses[0] if el)
+    input_values = [el for el in chain.from_iterable([force_list(get_value(json, path)) for path in conference_paths])]
+    input_values.extend(cities)
+    input_values.extend(postal_addresses)
+    input_values = [el for el in input_values if el]
 
     cnum = json.get('cnum', '')
-
+    opening_date = json.get('opening_date', '')
     record = get_value(json, 'self.$ref', '')
+    title = get_value(json, 'titles.title', '')
 
     json.update({
         'conference_suggest': {
@@ -265,6 +266,9 @@ def populate_conference_suggest(sender, json, *args, **kwargs):
             'output': cnum,
             'payload': {
                 '$ref': record,
+                'city': cities[0],
+                'opening_date': opening_date,
+                'title': title[0],
             }
         },
     })
@@ -431,14 +435,14 @@ def populate_title_suggest(sender, json, *args, **kwargs):
     if 'journals.json' not in json.get('$schema'):
         return
 
-    conference_paths = [
+    journal_paths = [
         'journal_title.title',
         'short_title',
         'title_variants',
     ]
 
     input_values = [el for el in chain.from_iterable(
-        [force_list(get_value(json, path)) for path in conference_paths]) if el]
+        [force_list(get_value(json, path)) for path in journal_paths]) if el]
 
     journal_title = get_value(json, 'journal_title.title', '')
     short_title = json.get('short_title', '')
@@ -478,12 +482,14 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
     input_values.extend(postal_codes)
     input_values = [el for el in input_values if el]
 
+    record = get_value(json, 'self.$ref')
+
     json.update({
         'affiliation_suggest': {
             'input': input_values,
             'output': legacy_ICN,
             'payload': {
-                '$ref': get_value(json, 'self.$ref'),
+                '$ref': record,
                 'ICN': ICN,
                 'institution_acronyms': institution_acronyms,
                 'institution_names': institution_names,
