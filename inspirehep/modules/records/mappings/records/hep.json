@@ -1036,6 +1036,16 @@
                     "properties": {
                         "full_title": {
                             "analyzer": "title",
+                            "fields": {
+                                "search": {
+                                    "analyzer": "title_search_analyzer",
+                                    "type": "string"
+                                },
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
                             "type": "string"
                         },
                         "source": {
@@ -1097,7 +1107,19 @@
                     ],
                     "filter": [
                         "lowercase_normalizer",
-                        "ascii_normalizer"
+                        "ascii_normalizer",
+                        "porter_stem"
+                    ],
+                    "tokenizer": "icu_tokenizer",
+                    "type": "custom"
+                },
+                "title_search_analyzer": {
+                    "char_filter": [
+                        "tex_normalizer"
+                    ],
+                    "filter": [
+                        "lowercase",
+                        "bishingle_filter"
                     ],
                     "tokenizer": "icu_tokenizer",
                     "type": "custom"
@@ -1122,6 +1144,12 @@
                 },
                 "lowercase_normalizer": {
                     "type": "lowercase"
+                },
+                "bishingle_filter": {
+                    "type": "shingle",
+                    "min_shingle_size": 2,
+                    "max_shingle_size": 2,
+                    "output_unigrams": false
                 }
             }
         }

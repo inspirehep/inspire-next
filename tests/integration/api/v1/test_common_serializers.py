@@ -35,9 +35,9 @@ def test_literature_recids_serializer(api_client):
 
     response_json = json.loads(response.data)
 
-    assert response_json['hits']['total'] == 2
+    assert response_json['hits']['total'] == 3
 
-    expected_recids = {1373790, 701585}
+    expected_recids = {1407506, 1373790, 701585}
     response_recids = set([recid for recid in response_json['hits']['recids']])
 
     assert response_recids == expected_recids
