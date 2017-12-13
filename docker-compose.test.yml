@@ -237,7 +237,7 @@ services:
         - "curl http://localhost:9200/_cluster/health | grep '.status.:.\\(green\\|yellow\\)'"
 
   test-rabbitmq:
-    image: rabbitmq:3.6.14
+    image: rabbitmq
     healthcheck:
       timeout: 5s
       interval: 5s
