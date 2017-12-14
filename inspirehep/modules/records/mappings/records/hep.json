@@ -425,6 +425,12 @@
                             "type": "string"
                         },
                         "value": {
+                            "fields": {
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
                             "type": "string"
                         }
                     },
