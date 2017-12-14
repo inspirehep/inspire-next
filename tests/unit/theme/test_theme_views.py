@@ -51,6 +51,14 @@ def test_postfeedback_logged_in_user(app_client):
     assert json.loads(response.data) == {'success': True}
 
 
+@mock.patch('inspirehep.modules.theme.views.current_user', user_with_email)
+def test_postfeedback_handles_unicode(app_client):
+    response = app_client.post('/postfeedback', data=dict(feedback=u'β-decay'))
+
+    assert response.status_code == 200
+    assert json.loads(response.data) == {'success': True}
+
+
 @mock.patch('inspirehep.modules.theme.views.current_user', user_empty_email)
 def test_postfeedback_empty_email(app_client):
     """Rejects feedback from user with empty email."""
