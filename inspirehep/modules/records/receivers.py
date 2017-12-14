@@ -261,6 +261,7 @@ def populate_conference_suggest(sender, json, *args, **kwargs):
     conference_paths = [
         'cnum',
         'acronyms',
+        'address.country_code',
         'series.name',
         'titles.source',
         'titles.subtitle',
@@ -276,6 +277,7 @@ def populate_conference_suggest(sender, json, *args, **kwargs):
     input_values.extend(postal_addresses)
     input_values = [el for el in input_values if el]
 
+    country = get_value(json, 'address.country_code', '')
     cnum = json.get('cnum', '')
     opening_date = json.get('opening_date', '')
     record = get_value(json, 'self.$ref', '')
@@ -284,12 +286,13 @@ def populate_conference_suggest(sender, json, *args, **kwargs):
     json.update({
         'conference_suggest': {
             'input': input_values,
-            'output': cnum,
+            'output': title[0],
             'payload': {
                 '$ref': record,
                 'city': cities[0],
+                'country': country[0],
                 'opening_date': opening_date,
-                'title': title[0],
+                'cnum': cnum,
             }
         },
     })

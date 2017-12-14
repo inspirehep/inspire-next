@@ -80,7 +80,7 @@ def test_populate_author_suggest():
     assert expected == result
 
 
-def test_populate_conference_suggest_does_nothing_if_record_is_not_conference():
+def test_populate_author_suggest_does_nothing_if_record_is_not_author():
     record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
 
     populate_author_suggest(None, record)
@@ -480,6 +480,7 @@ def test_populate_conference_suggest():
         'address': [
             {
                 'cities': ['Batavia', 'Berlin'],
+                'country_code': 'GE',
                 'postal_address': ['22607 Hamburg', '1293 Bern'],
             }
         ],
@@ -514,6 +515,7 @@ def test_populate_conference_suggest():
         'input': [
             'C87-12-25',
             'SUSY 2018',
+            'GE',
             'Conf Series',
             'A source',
             'A subtitle',
@@ -524,12 +526,13 @@ def test_populate_conference_suggest():
             '22607 Hamburg',
             '1293 Bern',
         ],
-        'output': 'C87-12-25',
+        'output': 'A title',
         'payload': {
             '$ref': 'http://localhost:5000/api/conferences/bar',
             'city': 'Batavia',
+            'country': 'GE',
             'opening_date': '2009-03-12',
-            'title': 'A title',
+            'cnum': 'C87-12-25',
         },
     }
 

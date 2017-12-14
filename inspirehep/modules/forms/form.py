@@ -139,7 +139,6 @@ class INSPIREForm(Form):
             field.post_process(form, formfields=formfields,
                                extra_processors=extra, submit=submit)
 
-
     @property
     def json_data(self):
         """Return form data in a format suitable for the standard JSON encoder.

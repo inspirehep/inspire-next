@@ -45,9 +45,10 @@ define([
     var suggestionTemplate = Hogan.compile(
       '<strong>{{#text}} {{ text }} {{/text}}</strong><br>' +
         '<small>' +
-        '{{#payload.title}} {{ payload.title }} {{/payload.title}}<br>' +
-        '{{#payload.city}} {{ payload.city }} {{/payload.city}} ' +
-        '{{#payload.opening_date}} {{ payload.opening_date }} {{/payload.opening_date}}' +
+        '{{#payload.opening_date}} {{ payload.opening_date }}, {{/payload.opening_date}}' +
+        '{{#payload.city}} {{ payload.city }}, {{/payload.city}} ' +
+        '{{#payload.country}} {{ payload.country }} {{/payload.country}}<br>' +
+        '{{#payload.cnum}} {{ payload.cnum }} {{/payload.cnum}}<br>' +
         '</small>'
     );
 
