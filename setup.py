@@ -210,7 +210,7 @@ setup(
             'inspire_multieditor = inspirehep.modules.multieditor:ApiMultiEditor',
         ],
         'invenio_base.api_blueprints': [
-            'inspirehep_editor = inspirehep.modules.editor:blueprint',
+            'inspirehep_editor = inspirehep.modules.editor:blueprint_api',
         ],
         'invenio_base.apps': [
             'inspire_multieditor = inspirehep.modules.multieditor:MultiEditor',

@@ -62,6 +62,10 @@ def update():
             ids = set(ids) & set(form['ids'])
     else:
         return jsonify({'message': 'Please use the search before you apply actions'}), 400
+
+    if not get_actions(user_actions, multieditor_session['schema']):
+        return jsonify({'message': 'Invalid Actions'}), 400
+
     for i, chunk in enumerate(chunker(ids, 200)):
         tasks.process_records.delay(records_ids=chunk, user_actions=user_actions, schema=multieditor_session['schema'])
     return jsonify({'message': 'Records are being updated'})
@@ -85,7 +89,9 @@ def preview():
                                                    uuids=multieditor_session['uuids'])
 
     old_records = copy.deepcopy(records)
-    actions = get_actions(user_actions)
+    actions = get_actions(user_actions, multieditor_session['schema'])
+    if not actions:
+        return jsonify({'message': 'Invalid Actions'}), 400
     for record in records:
         for action in actions:
             action.apply(record, multieditor_session['schema'])

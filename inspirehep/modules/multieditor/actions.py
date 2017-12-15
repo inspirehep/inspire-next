@@ -113,16 +113,7 @@ class Addition(Action):
                 record[key].append(self.value)
                 self.changed = True
         else:
-            if schema['type'] == 'object':
-                if schema['properties'].get(key):
-                    new_schema = schema['properties'][key]
-                else:
-                    return
-            elif schema['type'] == 'array':
-                if schema['items']['properties'].get(key):
-                    new_schema = schema['items']['properties'][key]
-                else:
-                    return
+            new_schema = schema_progression(schema, key)
             if isinstance(record[key], list):
                 for array_record in record[key]:
                     self.apply(array_record, new_schema, position + 1, conditions_passed)
@@ -146,40 +137,31 @@ class Deletion(Action):
             return
         if not record.get(key):
             return
-        if schema['type'] == 'object':
-            if schema['properties'].get(key):
-                new_schema = schema['properties'][key]
-            else:
-                return
-        elif schema['type'] == 'array':
-            if schema['items']['properties'].get(key):
-                new_schema = schema['items']['properties'][key]
-            else:
-                return
+        new_schema = schema_progression(schema, key)
         if position == len(self.keypath) - 1:
-            self.update_value = serialize_value(self.update_value, new_schema)
-            if self.update_value == 'error':
+            serialized_update_value = serialize_value(self.update_value, new_schema)
+            if serialized_update_value == 'error':
                 return
             if isinstance(record[key], list):
                 list_size = len(record[key])
                 if self.match_type == 'regex':
                     record[key] = [x for x in record[key] if not re.search(
-                        self.update_value, x)]
+                        serialized_update_value, x)]
                 elif self.match_type == 'exact':
-                    record[key] = [x for x in record[key] if not x == self.update_value]
+                    record[key] = [x for x in record[key] if not x == serialized_update_value]
                 elif self.match_type == 'contains':
-                    record[key] = [x for x in record[key] if not self.update_value.lower() in x.lower()]
+                    record[key] = [x for x in record[key] if not serialized_update_value.lower() in x.lower()]
                 if list_size > len(record[key]):
                     self.changed = True
             else:
-                if self.match_type == 'exact' and record[key] == self.update_value:
+                if self.match_type == 'exact' and record[key] == serialized_update_value:
                     del record[key]
                     self.changed = True
                 elif self.match_type == 'regex' and re.search(
-                        self.update_value, record[key]):
+                        serialized_update_value, record[key]):
                     del record[key]
                     self.changed = True
-                elif self.match_type == 'contains' and self.update_value.lower() in record[key].lower():
+                elif self.match_type == 'contains' and serialized_update_value.lower() in record[key].lower():
                     del record[key]
                     self.changed = True
                 return
@@ -211,45 +193,37 @@ class Update(Action):
             return
         if not record.get(key):
             return
-        if schema['type'] == 'object':
-            if schema['properties'].get(key):
-                new_schema = schema['properties'][key]
-            else:
-                return
-        elif schema['type'] == 'array':
-            if schema['items']['properties'].get(key):
-                new_schema = schema['items']['properties'][key]
-            else:
-                return
+        new_schema = schema_progression(schema, key)
         if position == len(self.keypath) - 1:
             self.value = serialize_value(self.value, new_schema)
-            if self.value == 'error':
+            serialized_update_value = serialize_value(self.update_value, new_schema)
+            if serialized_update_value == 'error':
                 return
             if isinstance(record[key], list):
                 if self.match_type == 'regex':
                     for count, index in enumerate(record[key]):
-                        if re.search(self.update_value, index):
+                        if re.search(serialized_update_value, index):
                             record[key][count] = self.value
                             self.changed = True
                 elif self.match_type == 'exact':
                     for count, index in enumerate(record[key]):
-                        if self.update_value == index:
+                        if serialized_update_value == index:
                             record[key][count] = self.value
                             self.changed = True
                 elif self.match_type == 'contains':
                     for count, index in enumerate(record[key]):
-                        if self.update_value.lower() in index.lower():
+                        if serialized_update_value.lower() in index.lower():
                             record[key][count] = self.value
                             self.changed = True
             else:
-                if self.match_type == 'exact' and record[key] == self.update_value:
+                if self.match_type == 'exact' and record[key] == serialized_update_value:
                     record[key] = self.value
                     self.changed = True
                 if self.match_type == 'regex' and re.search(
-                        self.update_value, record[key]):
+                        serialized_update_value, record[key]):
                             record[key] = self.value
                             self.changed = True
-                elif self.match_type == 'contains' and self.update_value.lower() in record[key].lower():
+                elif self.match_type == 'contains' and serialized_update_value.lower() in record[key].lower():
                     record[key] = self.value
                     self.changed = True
                 return
@@ -318,16 +292,7 @@ def check_value(record, schema, match_type, keypath, update_value, position):
         return False
     if not record.get(key):
         return match_type == 'missing'
-    if schema['type'] == 'object':
-        if schema['properties'].get(key):
-            new_schema = schema['properties'][key]
-        else:
-            return False
-    elif schema['type'] == 'array':
-        if schema['items']['properties'].get(key):
-            new_schema = schema['items']['properties'][key]
-        else:
-            return False
+    new_schema = schema_progression(schema, key)
     temp_record = record[key]
     if isinstance(temp_record, list):
         for index, array_record in enumerate(temp_record):
@@ -367,7 +332,7 @@ def check_value(record, schema, match_type, keypath, update_value, position):
 def serialize_value(value, schema):
     if schema['type'] == 'array':
         schema = schema['items']
-    if schema['type'] == 'number':
+    if schema['type'] == 'integer':
         serialized_value = int(value)
     elif schema['type'] == 'boolean':
         if value.lower() == 'true':
@@ -402,3 +367,10 @@ def compare_records(old_records, new_records, schema):
         else:
             errors.append(None)
     return json_patches, errors
+
+
+def schema_progression(schema, key):
+    if schema['type'] == 'object':
+        return schema['properties'][key]
+    elif schema['type'] == 'array':
+        return schema['items']['properties'][key]

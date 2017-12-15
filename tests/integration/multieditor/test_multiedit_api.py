@@ -140,3 +140,26 @@ def test_api_permision(api_client):
         content_type='application/json'
     )
     assert response.status_code == 403
+
+
+def test_multieditor_update_api_faulty_actions(api_client):
+    login_user_via_session(api_client, email='cataloger@inspirehep.net')
+    api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
+
+    response = api_client.post(
+        '/multieditor/preview',
+        content_type='application/json',
+        data=json.dumps({
+            'userActions': {
+                'actions': [{
+                    'actionName': 'Addition', 'value': {'full_name': 'success'},
+                    'matchType': 'is equal to',
+                    'mainKey': 'not_in_schema'
+                }],
+                'conditions': [],
+            },
+            'ids': [],
+            'allSelected': True,
+        }),
+    )
+    assert 'Invalid Actions' in json.loads(response.data)['message']

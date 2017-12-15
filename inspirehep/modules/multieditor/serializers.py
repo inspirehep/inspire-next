@@ -33,7 +33,7 @@ match_type_map = {
 }
 
 
-def sanitize_user_action(action, conditions=None):
+def sanitize_user_action(schema, action, conditions=None):
     """
     Sanitizes the user action and serializes it in the class format
     :param action:  use action as received from the frontend
@@ -44,6 +44,8 @@ def sanitize_user_action(action, conditions=None):
     if not conditions:
         conditions = []
     keypath = action.get('mainKey', '').split('.')
+    if not check_provided_key_path(keypath, schema):
+        return None
     if keypath:
         action_kwargs['keypath'] = keypath
         action_kwargs['value'] = action.get('value')
@@ -54,7 +56,7 @@ def sanitize_user_action(action, conditions=None):
     return action_kwargs
 
 
-def sanitize_user_conditions(user_conditions):
+def sanitize_user_conditions(user_conditions, schema):
     """
     Sanitizes the user conditions and serializes them in the class format
     :param user_conditions: user conditions as received from the frontend
@@ -65,6 +67,8 @@ def sanitize_user_conditions(user_conditions):
         if not condition.get('key'):
             continue
         keypath = condition['key'].split('.')
+        if not check_provided_key_path(keypath, schema):
+            return 'error'
         user_condition = {'value': condition['value'],
                           'keypath': keypath,
                           'match_type': match_type_map[condition['matchType']]}
@@ -79,15 +83,40 @@ ACTIONS_MAP = {
 }
 
 
-def get_actions(user_actions):
+def get_actions(user_actions, schema):
     """
     Serializes the user actions
     :param user_actions: actions and conditions as they were received from the frontend
     :return: returns the serialized actions
     """
-    conditions = sanitize_user_conditions(user_actions.get('conditions', []))
+    if user_actions.get('conditions', []):
+        conditions = sanitize_user_conditions(user_actions.get('conditions', []), schema)
+        if conditions == 'error':
+            return None
+    else:
+        conditions = []
     actions = []
+
     for action in user_actions.get('actions', []):
-        sanitized_action = sanitize_user_action(action, conditions)
+        sanitized_action = sanitize_user_action(schema, action, conditions)
+        if not sanitized_action:
+            return None
         actions.append(ACTIONS_MAP[action.get('actionName', '')](**sanitized_action))
     return actions
+
+
+def check_provided_key_path(keypath, schema):
+    for key in keypath:
+        if schema['type'] == 'object':
+            if schema['properties'].get(key):
+                schema = schema['properties'][key]
+            else:
+                return False
+        elif schema['type'] == 'array':
+            if schema['items']['properties'].get(key):
+                schema = schema['items']['properties'][key]
+            else:
+                return False
+        else:
+            return False
+    return True

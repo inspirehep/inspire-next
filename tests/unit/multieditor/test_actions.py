@@ -129,7 +129,7 @@ def test_addition_root_key_with_deeper_condition(get_schema):
     add = Addition(keypath=['preprint_date'],
                    conditions=[{'keypath': ['public_notes', 'value'], 'value': 'Preliminary results',
                                 'match_type': 'exact'},
-                               {'keypath': ['core'], 'value': True, 'match_type': 'exact'}],
+                               {'keypath': ['core'], 'value': 'True', 'match_type': 'exact'}],
                    value="2016")
     add.apply(record, get_schema)
     assert record == expected_map
@@ -166,14 +166,14 @@ def test_addition_root_key_with_deeper_condition_negative(get_schema):
     add = Addition(keypath=['preprint_date'],
                    conditions=[{'keypath': ['public_notes', 'value'], 'value': 'Preliminary results',
                                 'match_type': 'exact'},
-                               {'keypath': ['core'], 'value': False, 'match_type': 'exact'}],
+                               {'keypath': ['core'], 'value': 'False', 'match_type': 'exact'}],
                    match_type='exact',
                    value="2016")
     add.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_addition_object_with_condition(get_schema):
+def test_addition_object_with_conditions(get_schema):
     """Should test adding an object with condition"""
     record = {
         "public_notes": [
@@ -207,13 +207,13 @@ def test_addition_object_with_condition(get_schema):
     add = Addition(keypath=['titles'],
                    conditions=[{'keypath': ['public_notes', 'value'], 'value': 'Preliminary results',
                                 'match_type': 'exact'},
-                               {'keypath': ['core'], 'value': True, 'match_type': 'exact'}],
+                               {'keypath': ['core'], 'value': 'True', 'match_type': 'exact'}],
                    value={'title': "success"})
     add.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_addition_object():
+def test_addition_object(get_schema):
     """should test record addition for object"""
     record = {
         'key_a': {
@@ -251,7 +251,7 @@ def test_addition_object():
     assert record == expected_map
 
 
-def test_addition_array_with_condition():
+def test_addition_array_with_condition(get_schema):
     """should test record addition for object using condition check"""
     record = {
         'key_a': {
@@ -401,7 +401,7 @@ def test_addition_array_with_condition_missing_record():
     assert record == expected_map
 
 
-def test_addition_object_condition(get_schema):
+def test_addition_object_with_condition(get_schema):
     record = {
         "authors": [
             {
@@ -456,102 +456,88 @@ def test_addition_object_condition(get_schema):
     assert record == expected_map
 
 
-def test_deletion_array():
+def test_deletion_array_to_empty(get_schema):
     """should test record deletion for nested array"""
-    record = {
-        'key_a': [{'key_c': ['val5', 'val4']},
-                  {'key_c': ['val1', 'val6']},
-                  {'key_c': ['val6', 'val6']},
-                  {'key_c': ['val3']}],
-        'key_b': {'key_c': {'key_d': 'val'}}
-    }
+    record = {'texkeys': ['test', 'test', 'test2', 'test'],
+              'cited': True}
     expected_map = {
-        'key_a': [{'key_c': ['val5', 'val4']},
-                  {'key_c': ['val1']},
-                  {'key_c': ['val3']}],
-        'key_b': {'key_c': {'key_d': 'val'}}
+        'cited': True
     }
 
-    delete = Deletion(update_value='val6',
-                      keypath=['key_a', 'key_c'],
-                      match_type='exact')
-    delete.apply(record)
+    delete = Deletion(update_value='test',
+                      keypath=['texkeys'],
+                      match_type='contains')
+    delete.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_deletion_array_contains():
+def test_deletion_array(get_schema):
     """should test record deletion for nested array"""
-    record = {
-        'key_a': [{'key_c': ['val5', 'val4']},
-                  {'key_c': ['val1', 'val6']},
-                  {'key_c': ['val4', 'val6']},
-                  {'key_c': ['val3']}],
-        'key_b': {'key_f': {'key_d': 'val'}}
-    }
+    record = {'texkeys': ['test', 'test', 'test2', 'test'],
+              'cited': True}
     expected_map = {
-        'key_b': {'key_f': {'key_d': 'val'}}
+        'texkeys': ['test2'],
+        'cited': True
+    }
+
+    delete = Deletion(update_value='test',
+                      keypath=['texkeys'],
+                      match_type='exact')
+    delete.apply(record, get_schema)
+    assert record == expected_map
+
+
+def test_deletion_array_contains(get_schema):
+    """should test record deletion for nested array"""
+    record = {'inspire_categories': [{'term': 'Val'},
+                                     {'term': 'value'},
+                                     {'term': 'value5'}],
+              'cited': True}
+    expected_map = {
+        'cited': True
     }
 
     delete = Deletion(update_value='val',
-                      keypath=['key_a', 'key_c'],
+                      keypath=['inspire_categories', 'term'],
                       match_type='contains')
-    delete.apply(record)
+    delete.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_deletion_array_regex():
+def test_deletion_array_regex(get_schema):
     """should test record deletion for nested array"""
-    record = {
-        'key_a': [{'key_c': ['val5', 'val4']},
-                  {'key_c': ['val1', 'val6']},
-                  {'key_c': ['val4', 'val6']},
-                  {'key_c': ['val3']}],
-        'key_b': {'key_f': {'key_d': 'val'}}
-    }
+    record = {'inspire_categories': [{'term': 'val'},
+                                     {'term': 'value'},
+                                     {'term': 'value5'}],
+              'cited': True}
     expected_map = {
-        'key_b': {'key_f': {'key_d': 'val'}}
+        'cited': True
     }
 
     delete = Deletion(update_value='va.*',
-                      keypath=['key_a', 'key_c'],
+                      keypath=['inspire_categories', 'term'],
                       match_type='regex')
-    delete.apply(record)
+    delete.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_deletion_exact_empty_rec():
-    record = {
-        'key1': {
-            'key2': {
-                'key3': 'val'
-            }
-        }
-    }
-    expected_map = {}
-    delete = Deletion(update_value='val',
-                      keypath=['key1', 'key2', 'key3'],
-                      match_type='exact')
-    delete.apply(record)
-    assert record == expected_map
-
-
-def test_deletion_contains():
-    record = {'key': 'val'}
+def test_deletion_contains(get_schema):
+    record = {'inspire_categories': [{'term': 'val'}]}
     expected_map = {}
     delete = Deletion(update_value='v',
-                      keypath=['key'],
+                      keypath=['inspire_categories', 'term'],
                       match_type='contains')
-    delete.apply(record)
+    delete.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_deletion_regex():
-    record = {'key': 'val'}
+def test_deletion_regex(get_schema):
+    record = {'inspire_categories': [{'term': 'val'}]}
     expected_map = {}
     delete = Deletion(update_value='v.*',
-                      keypath=['key'],
+                      keypath=['inspire_categories', 'term'],
                       match_type='regex')
-    delete.apply(record)
+    delete.apply(record, get_schema)
     assert record == expected_map
 
 
@@ -610,29 +596,51 @@ def test_record_creation_array(get_schema):
     assert create_schema_record(get_schema, key, value) == target_object
 
 
-def test_update_regex():
-    record = {'key': 'val'}
-    expected_map = {'key': 'success'}
+def test_update_regex(get_schema):
+    record = {'inspire_categories': [{'term': 'val'}]}
+    expected_map = {'inspire_categories': [{'term': 'success'}]}
     update = Update(update_value='v.*',
                     value="success",
-                    keypath=['key'],
+                    keypath=['inspire_categories', 'term'],
                     match_type='regex')
-    update.apply(record)
+    update.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_update_contains():
-    record = {'key': 'val'}
-    expected_map = {'key': 'success'}
+def test_update_contains(get_schema):
+    record = {'inspire_categories': [{'term': 'val'}, {'term': 'Val'}]}
+    expected_map = {'inspire_categories': [{'term': 'success'}, {'term': 'success'}]}
     update = Update(update_value='v',
                     value="success",
-                    keypath=['key'],
+                    keypath=['inspire_categories', 'term'],
                     match_type='contains')
-    update.apply(record)
+    update.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_record_update_field_not_existing():
+def test_update_boolean(get_schema):
+    record = {'citeable': True}
+    expected_map = {'citeable': False}
+    update = Update(update_value='True',
+                    value='False',
+                    keypath=['citeable'],
+                    match_type='exact')
+    update.apply(record, get_schema)
+    assert record == expected_map
+
+
+def test_update_number(get_schema):
+    record = {'number_of_pages': 1984}
+    expected_map = {'number_of_pages': 1990}
+    update = Update(update_value='1984',
+                    value='1990',
+                    keypath=['number_of_pages'],
+                    match_type='exact')
+    update.apply(record, get_schema)
+    assert record == expected_map
+
+
+def test_record_update_field_not_existing(get_schema):
     """should test sub_record creation for missing object"""
     record = {'abstracts': [{'not_source': 'success'}]}
     expected_map = {'abstracts': [{'not_source': 'success'}]}
@@ -640,71 +648,65 @@ def test_record_update_field_not_existing():
                     update_value='success',
                     match_type='exact',
                     value="failure")
-    update.apply(record)
+    update.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_update_array_exact():
+def test_update_array_exact(get_schema):
     """should test record edit for nested complex array."""
     record = {
-        'key_a': [{'key_c': ['val5', 'val4']},
-                  {'key_c': ['val1', 'val6']}],
-        'key_b': {'key_c': {'key_d': 'dummy'}}
+        'references': [{'reference': {'collaborations': ['Val', 'val4']}},
+                       {'reference': {'collaborations': ['val1', 'test val']}}],
     }
     expected_map = {
-        'key_a': [{'key_c': ['val5', 'success']},
-                  {'key_c': ['val1', 'val6']}],
-        'key_b': {'key_c': {'key_d': 'dummy'}}
+        'references': [{'reference': {'collaborations': ['Val', 'success']}},
+                       {'reference': {'collaborations': ['val1', 'test val']}}],
     }
     update = Update(update_value='val4',
-                    keypath=['key_a', 'key_c'],
+                    keypath=['references', 'reference', 'collaborations'],
                     match_type='exact',
                     value="success")
-    update.apply(record)
+    update.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_update_array_contains():
+def test_update_array_contains(get_schema):
     """should test record edit for nested complex array."""
     record = {
-        'key_a': [{'key_c': ['val5', 'val4']},
-                  {'key_c': ['val1', 'val6']}],
-        'key_b': {'key_c': {'key_d': 'dummy'}}
+        'references': [{'reference': {'collaborations': ['Val', 'val']}},
+                       {'reference': {'collaborations': ['val1', 'test val']}}],
     }
     expected_map = {
-        'key_a': [{'key_c': ['success', 'success']},
-                  {'key_c': ['success', 'success']}],
-        'key_b': {'key_c': {'key_d': 'dummy'}}
+        'references': [{'reference': {'collaborations': ['success', 'success']}},
+                       {'reference': {'collaborations': ['success', 'success']}}],
     }
     update = Update(update_value='val',
-                    keypath=['key_a', 'key_c'],
+                    keypath=['references', 'reference', 'collaborations'],
                     match_type='contains',
                     value="success")
-    update.apply(record)
+    update.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_update_array_regex():
+def test_update_array_regex(get_schema):
     """should test record edit for nested complex array."""
     record = {
-        'key_a': [{'key_c': ['val5', 'val4']},
-                  {'key_c': ['val1', 'val6']}],
-        'key_b': {'key_c': {'key_d': 'dummy'}}
+        'references': [{'reference': {'collaborations': ['val5', 'val']}},
+                       {'reference': {'collaborations': ['val1', 'val6']}}],
     }
     expected_map = {
-        'key_a': [{'key_c': ['success', 'success']},
-                  {'key_c': ['success', 'success']}],
-        'key_b': {'key_c': {'key_d': 'dummy'}}
+        'references': [{'reference': {'collaborations': ['success', 'success']}},
+                       {'reference': {'collaborations': ['success', 'success']}}],
     }
     update = Update(update_value='val.*',
-                    keypath=['key_a', 'key_c'],
+                    keypath=['references', 'reference', 'collaborations'],
                     match_type='regex',
                     value="success")
-    update.apply(record)
+    update.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_update_condition_array_regex():
+def test_update_condition_array_regex(get_schema):
     """should test action for nested complex array and multiple check values"""
     record = {
         'references': [{'reference': {'collaborations': ['val5', 'tes4'], 'title':{'title': 'test'}}},
@@ -722,11 +724,11 @@ def test_update_condition_array_regex():
                                  'value':'tes.*'}],
                     match_type='exact',
                     value="success")
-    update.apply(record)
+    update.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_update_with_missing_keypath():
+def test_update_with_missing_keypath(get_schema):
     """should test sub_record update handling for missing object"""
     record = {
         "abstracts": [
@@ -747,16 +749,14 @@ def test_update_with_missing_keypath():
                     keypath=['abstracts', 'source'],
                     value="success",
                     match_type='exact')
-    update.apply(record)
+    update.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_update_check_regex_condition():
+def test_update_check_regex_condition(get_schema):
     record = {
         "document_type": ["book chapter"],
-        "texkeypath": [
-            "Braendas:1972ts"
-        ],
+        "texkeys": ["Braendas:1972ts"],
         "authors": [
             {
                 "affiliations": [
@@ -782,13 +782,12 @@ def test_update_check_regex_condition():
             ],
                 "signature_block": "MANl",
             }
-        ]
+        ],
+        'number_of_pages': 184
     }
     expected_map = {
         "document_type": ["book chapter"],
-        "texkeypath": [
-            "Braendas:1972ts"
-        ],
+        "texkeys": ["Braendas:1972ts"],
         "authors": [
             {
                 "affiliations": [
@@ -815,7 +814,8 @@ def test_update_check_regex_condition():
                 ],
                 "signature_block": "MANl",
             }
-        ]
+        ],
+        'number_of_pages': 184
     }
     update = Update(update_value='Rome.*',
                     keypath=['authors', 'affiliations', 'value'],
@@ -825,17 +825,20 @@ def test_update_check_regex_condition():
                                 {'keypath': ['document_type'],
                                  'match_type': 'contains',
                                  'value': 'book'},
-                                {'keypath': ['texkeypath'],
+                                {'keypath': ['texkeys'],
                                  'match_type': 'exact',
-                                 'value': 'Braendas:1972ts'}
+                                 'value': 'Braendas:1972ts'},
+                                {'keypath': ['number_of_pages'],
+                                 'match_type': 'exact',
+                                 'value': '184'}
                                 ],
                     match_type='regex',
                     value="Success")
-    update.apply(record)
+    update.apply(record, get_schema)
     assert record == expected_map
 
 
-def test_update_for_missing_key():
+def test_update_for_missing_key(get_schema):
     record = {
         "document_type": ["book chapter"],
         "authors": [
@@ -904,5 +907,5 @@ def test_update_for_missing_key():
                                 ],
                     match_type='exact',
                     value="Success")
-    update.apply(record)
+    update.apply(record, get_schema)
     assert record == expected_map

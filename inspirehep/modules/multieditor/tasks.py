@@ -41,7 +41,7 @@ def process_records(records_ids, user_actions, schema):
     commit_record = False
     commit_session = False
     errors = []
-    actions = get_actions(user_actions)
+    actions = get_actions(user_actions, schema)
     records = Record.get_records(records_ids)
     for record in records:
         for action in actions:
