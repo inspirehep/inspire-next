@@ -43,6 +43,29 @@ class AdminToolsMixin(object):
 class LiteratureRecord(ESRecord, AdminToolsMixin):
     """Record class specialized for literature records."""
 
+    def get_link_info_for_external_sys_identifiers(self, extid, ext_sys_id_info):
+        """Urls and names for external system identifiers
+
+        Returns a dictionary with 2 key value pairs, the first of which is the
+        name of the external_system_identifier and the second is
+        a link to the record in that external_system_identifer
+        """
+        if ext_sys_id_info[0] == 'KEK scanned document':
+            extid = extid.replace("-", "")
+            if len(extid) == 7 and not extid.startswith('19') and not extid.startswith('20'):
+                year = '19' + extid[:2] + '/'
+            elif len(extid) == 9:
+                year = extid[:4] + '/'
+                extid = extid[2:]
+            else:
+                return
+            yymm = extid[:4] + '/'
+            return {'url_name': ext_sys_id_info[0],
+                    'url_link': ext_sys_id_info[1] + year + yymm + extid + '.pdf'}
+        else:
+            return {'url_name': ext_sys_id_info[0],
+                    'url_link': ext_sys_id_info[1] + extid}
+
     @property
     def title(self):
         """Get preferred title."""
@@ -121,13 +144,73 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
         Returns a list that contains information on first of each kind of
         external_system_idenitfiers
         """
-        ext_sys_id_list = []
+        ext_id_dict = {
+            'ads': [
+                'ADS Abstract Service',
+                'http://adsabs.harvard.edu/abs/',
+            ],
+            'cds': [
+                'CERN Document Server',
+                'http://cds.cern.ch/record/'
+            ],
+            'euclid': [
+                'Project Euclid',
+                'http://projecteuclid.org/',
+            ],
+            'hal': [
+                'HAL Archives Ouvertes',
+                'https://hal.archives-ouvertes.fr/',
+            ],
+            'kekscan': [
+                'KEK scanned document',
+                'https://lib-extopc.kek.jp/preprints/PDF/',
+            ],
+            'msnet': [
+                'AMS MathSciNet',
+                'http://www.ams.org/mathscinet-getitem?mr=',
+            ],
+            'osti': [
+                'OSTI Information Bridge Server',
+                'https://www.osti.gov/scitech/biblio/',
+            ],
+            'zblatt': [
+                'zbMATH',
+                'http://www.zentralblatt-math.org/zmath/en/search/?an=',
+            ],
+        }
+
+        unique_ext_ids = []
+        filtered_ext_ids = []
+        mapped_ext_ids = []
+        ads_linked = False
+
+        # Keep only first of each kind of external_system_identifiers
         seen = set()
         for ext_sys_id in self.get('external_system_identifiers', []):
             if ext_sys_id['schema'] not in seen:
                 seen.add(ext_sys_id['schema'])
-                ext_sys_id_list.append(ext_sys_id)
-        return ext_sys_id_list
+                unique_ext_ids.append(ext_sys_id)
+
+        # Keep only those external_system_identifiers whose 'schema' appear
+        # as keys in ext_id_dict
+        filtered_ext_ids = filter(lambda x: x['schema'].lower() in ext_id_dict, unique_ext_ids)
+
+        # Map each external_system_identifier in filtered _ext_ids to
+        # a link name and link url
+        mapped_ext_ids = map(lambda x: self.get_link_info_for_external_sys_identifiers(x['value'], list(ext_id_dict[x['schema'].lower()])), filtered_ext_ids)
+
+        # Set fallback ADS link via arXiv:e-print
+        for ext_sys_id in mapped_ext_ids:
+            if ext_sys_id['url_name'] == ext_id_dict['ads'][0]:
+                ads_linked = True
+        if not ads_linked and self.get('arxiv_eprints'):
+            for report_number in self.get('arxiv_eprints'):
+                mapped_ext_ids.append({
+                    'url_name': ext_id_dict['ads'][0],
+                    'url_link': ext_id_dict['ads'][1] + report_number.get('value')
+                })
+
+        return mapped_ext_ids
 
 
 class AuthorsRecord(ESRecord, AdminToolsMixin):
