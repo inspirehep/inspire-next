@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import gzip
+import logging
 import re
 import zlib
 from collections import Counter
@@ -33,7 +34,6 @@ from itertools import chain
 
 import click
 from celery import group, shared_task
-from celery.utils.log import get_task_logger
 from elasticsearch.helpers import bulk as es_bulk
 from elasticsearch.helpers import scan as es_scan
 from flask import current_app, url_for
@@ -63,7 +63,7 @@ from inspirehep.modules.records.receivers import index_after_commit
 from .models import InspireProdRecords
 
 
-logger = get_task_logger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 CHUNK_SIZE = 100
 LARGE_CHUNK_SIZE = 2000
@@ -122,7 +122,7 @@ def remigrate_records(only_broken=True, skip_files=None):
 
     for i, chunk in enumerate(chunker(query.yield_per(CHUNK_SIZE))):
         records = [record.marcxml for record in chunk]
-        logger.info("Processed {} records".format(i * CHUNK_SIZE))
+        LOGGER.info("Processed {} records".format(i * CHUNK_SIZE))
         migrate_chunk.delay(records, skip_files=skip_files)
 
 
@@ -187,7 +187,7 @@ def continuous_migration(skip_files=None):
         finally:
             lock.release()
     else:
-        logger.info("Continuous_migration already executed. Skipping.")
+        LOGGER.info("Continuous_migration already executed. Skipping.")
 
 
 def create_index_op(record):
@@ -340,7 +340,7 @@ def migrate_and_insert_record(raw_record, skip_files=False):
                 schema_path='records/{0}'.format(json_record['$schema']),
             )
     except Exception as e:
-        logger.exception('Migrator DoJSON Error')
+        LOGGER.exception('Migrator DoJSON Error')
         error = e
 
     recid = json_record['control_number']
@@ -353,12 +353,12 @@ def migrate_and_insert_record(raw_record, skip_files=False):
     except ValidationError as e:
         # Aggregate logs by part of schema being validated.
         pattern = u'Migrator Validator Error: {}, Value: %r, Record: %r'
-        logger.error(pattern.format('.'.join(e.schema_path)), e.instance, recid)
+        LOGGER.error(pattern.format('.'.join(e.schema_path)), e.instance, recid)
         error = e
     except Exception as e:
         # Receivers can always cause exceptions and we could dump the entire
         # chunk because of a single broken record.
-        logger.exception('Migrator Record Insert Error')
+        LOGGER.exception('Migrator Record Insert Error')
         error = e
 
     if error:
