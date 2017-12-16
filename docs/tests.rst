@@ -140,9 +140,9 @@ they expect to see. For example
 .. code-block:: python
 
     def test_mail_format(login):
-        create_author.go_to()
-        assert create_author.write_mail('wrong mail').has_error()
-        assert not create_author.write_mail('me@me.com').has_error()
+        author_submission_form.go_to()
+        assert author_submission_form.write_mail('wrong mail').has_error()
+        assert not author_submission_form.write_mail('me@me.com').has_error()
 
 asserts that, when the user visits the "Create Author" page and writes ``wrong
 mail``, they see an error, while when they visit the same page but write a valid
@@ -161,7 +161,7 @@ can take when interacting with that page. For example the
     def go_to():
         Arsenic().get(os.environ['SERVER_NAME'] + '/authors/new')
 
-method in :file:`inspirehep/bat/pages/create_author.py` represents the action of
+method in :file:`inspirehep/bat/pages/author_submission_form.py` represents the action of
 visiting the "Create Author" page, while
 
 .. code-block:: python

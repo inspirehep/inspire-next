@@ -23,7 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.bat.pages import (
-    create_literature,
+    literature_submission_form,
     holdingpen_literature_detail,
     holdingpen_literature_list,
 )
@@ -52,8 +52,8 @@ def test_literature_create_chapter_manually(login):
         'extra-comments': 'comments about the document'
     }
 
-    create_literature.go_to()
-    assert create_literature.submit_chapter(input_data).has_error()
+    literature_submission_form.go_to()
+    assert literature_submission_form.submit_chapter(input_data).has_error()
     _check_back_office(input_data)
 
 
@@ -83,8 +83,8 @@ def test_literature_create_book_manually(login):
         'extra-comments': 'comments about the document'
     }
 
-    create_literature.go_to()
-    assert create_literature.submit_book(input_data).has_error()
+    literature_submission_form.go_to()
+    assert literature_submission_form.submit_book(input_data).has_error()
     _check_back_office(input_data)
 
 
@@ -114,8 +114,8 @@ def test_literature_create_thesis_manually(login):
         'extra-comments': 'comments about the document'
     }
 
-    create_literature.go_to()
-    assert create_literature.submit_thesis(input_data).has_error()
+    literature_submission_form.go_to()
+    assert literature_submission_form.submit_thesis(input_data).has_error()
     _check_back_office(input_data)
 
 
@@ -145,8 +145,8 @@ def test_literature_create_article_journal_manually(login):
         'extra-comments': 'comments about the document'
     }
 
-    create_literature.go_to()
-    assert create_literature.submit_journal_article(input_data).has_error()
+    literature_submission_form.go_to()
+    assert literature_submission_form.submit_journal_article(input_data).has_error()
     _check_back_office(input_data)
 
 
@@ -177,8 +177,8 @@ def test_literature_create_article_journal_with_proceeding_manually(login):
         'extra-comments': 'comments about the document'
     }
 
-    create_literature.go_to()
-    assert create_literature.submit_journal_article_with_proceeding(
+    literature_submission_form.go_to()
+    assert literature_submission_form.submit_journal_article_with_proceeding(
         input_data
     ).has_error()
     _check_back_office(input_data)
@@ -199,32 +199,32 @@ def _check_back_office(input_data):
 
 
 def test_thesis_info_autocomplete_supervisor_institution(login):
-    create_literature.go_to()
-    assert create_literature.write_institution_thesis(
+    literature_submission_form.go_to()
+    assert literature_submission_form.write_institution_thesis(
         'CER',
         'CERN',
     ).has_error()
 
 
 def test_journal_info_autocomplete_title(login):
-    create_literature.go_to()
-    assert create_literature.write_journal_title(
+    literature_submission_form.go_to()
+    assert literature_submission_form.write_journal_title(
         'Nuc',
         'Nucl.Phys.',
     ).has_error()
 
 
 def test_conference_info_autocomplete_title(login):
-    create_literature.go_to()
-    assert create_literature.write_conference(
+    literature_submission_form.go_to()
+    assert literature_submission_form.write_conference(
         'autrans',
         'IN2P3 School of Statistics, 2012-05-28, Autrans, FR',
     ).has_error()
 
 
 def test_basic_info_autocomplete_affiliation(login):
-    create_literature.go_to()
-    assert create_literature.write_affiliation('oxf', 'Oxford U.').has_error()
+    literature_submission_form.go_to()
+    assert literature_submission_form.write_affiliation('oxf', 'Oxford U.').has_error()
 
 
 def test_import_from_arXiv(login):
@@ -246,8 +246,8 @@ def test_import_from_arXiv(login):
         ),
     }
 
-    create_literature.go_to()
-    assert create_literature.submit_arxiv_id(
+    literature_submission_form.go_to()
+    assert literature_submission_form.submit_arxiv_id(
         'hep-th/9711200',
         expected_data,
     ).has_error()
@@ -269,8 +269,8 @@ def test_import_from_doi(login):
         ),
     }
 
-    create_literature.go_to()
-    assert create_literature.submit_doi_id(
+    literature_submission_form.go_to()
+    assert literature_submission_form.submit_doi_id(
         '10.1086/305772',
         expected_data,
     ).has_error()
