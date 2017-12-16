@@ -63,7 +63,6 @@ def load_submitted_record(input_data):
             '2000' in record and
             '2001' in record
         )
-        assert res
         return res
 
     try:

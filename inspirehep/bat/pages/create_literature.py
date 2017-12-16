@@ -36,8 +36,82 @@ from ..arsenic import Arsenic, ArsenicResponse
 from ..EC import TryClick
 
 
+SUBMIT_BUTTON = '//div[@id="webdeposit_form_accordion"]/div[4]/span/button'
+SUBMIT_RESULT_ALERT_SUCCESS = (
+    '(//div[@class="alert alert-success alert-form-success"])'
+)
+SUBMIT_RESULT_ALERT_CHAPTER_SUCCESS = (
+    '(//div[@class="alert alert-warning alert-form-warning"])'
+)
+SUBJECTS_BUTTON = '(//button[@type="button"])[8]'
+SUBJECT_ACCELERATORS = 'input[type=\"checkbox\"]'
+EXPAND_CONFERENCE_INFO = """
+    document.evaluate(
+        "//div[@id='webdeposit_form_accordion']/div[3]/div[8]/div[1]",
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+    ).singleNodeValue.click()
+"""
+EXPAND_PROCEEDINGS_INFO = """
+    document.evaluate(
+        "//div[@id='webdeposit_form_accordion']/div[3]/div[9]/div[1]",
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+    ).singleNodeValue.click()
+"""
+EXPAND_REFERENCES = """
+    document.evaluate(
+        "//div[@id='webdeposit_form_accordion']/div[3]/div[10]/div[1]",
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+    ).singleNodeValue.click()
+"""
+EXPAND_ADDITIONAL_COMMENTS = """
+    document.evaluate(
+        "//div[@id='webdeposit_form_accordion']/div[3]/div[11]/div[1]",
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+    ).singleNodeValue.click()
+"""
+
+
+
 def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/literature/new')
+
+
+def submit_article(input_data):
+    def _assert_successful_article_submission():
+        result = (
+            'The INSPIRE staff will review it and your changes will be added '
+            'to INSPIRE.'
+        ) in WebDriverWait(Arsenic(), 10).until(
+            EC.visibility_of_element_located(
+                (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
+            )
+        ).text
+        assert result
+        return result
+
+    _skip_import_data()
+    Arsenic().hide_title_bar()
+    _populate_document_type('article')
+    _populate_links(input_data)
+    _populate_basic_info(input_data)
+    _populate_thesis_info(input_data)
+    _populate_references_comment(input_data)
+    Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
+    Arsenic().show_title_bar()
+
+    return ArsenicResponse(_assert_successful_article_submission)
 
 
 def submit_thesis(input_data):
@@ -47,23 +121,18 @@ def submit_thesis(input_data):
             'to INSPIRE.'
         ) in WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located(
-                (
-                    By.XPATH,
-                    '(//div[@class="alert alert-success alert-form-success"])',
-                )
+                (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
             )
         ).text
 
     _skip_import_data()
     Arsenic().hide_title_bar()
-    _select_thesis()
-    _links_population(input_data)
-    _basic_info_population(input_data)
-    _thesis_info_population(input_data)
-    _references_comment_population(input_data)
-    Arsenic().find_element_by_xpath(
-        '//div[@id="webdeposit_form_accordion"]/div[4]/span/button'
-    ).click()
+    _populate_document_type('thesis')
+    _populate_links(input_data)
+    _deprecated_populate_basic_info(input_data)
+    _populate_thesis_info(input_data)
+    _populate_references_comment(input_data)
+    Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
     Arsenic().show_title_bar()
 
     return ArsenicResponse(_submit_thesis)
@@ -76,23 +145,18 @@ def submit_book(input_data):
             'to INSPIRE.'
         ) in WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located(
-                (
-                    By.XPATH,
-                    '(//div[@class="alert alert-success alert-form-success"])',
-                )
+                (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
             )
         ).text
 
     _skip_import_data()
     Arsenic().hide_title_bar()
-    _select_book()
-    _links_population(input_data)
-    _basic_info_population(input_data)
-    _book_info_population(input_data)
-    _references_comment_population(input_data)
-    Arsenic().find_element_by_xpath(
-        '//div[@id="webdeposit_form_accordion"]/div[4]/span/button'
-    ).click()
+    _populate_document_type('book')
+    _populate_links(input_data)
+    _deprecated_populate_basic_info(input_data)
+    _populate_book_info(input_data)
+    _populate_references_comment(input_data)
+    Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
     Arsenic().show_title_bar()
 
     return ArsenicResponse(_submit_book)
@@ -105,23 +169,18 @@ def submit_chapter(input_data):
             'to INSPIRE.'
         ) in WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located(
-                (
-                    By.XPATH,
-                    '(//div[@class="alert alert-warning alert-form-warning"])',
-                )
+                (By.XPATH, SUBMIT_RESULT_ALERT_CHAPTER_SUCCESS)
             )
         ).text
 
     _skip_import_data()
     Arsenic().hide_title_bar()
-    _select_chapter()
-    _links_population(input_data)
-    _chapter_info_population(input_data)
-    _basic_info_population(input_data)
-    _references_comment_population(input_data)
-    Arsenic().find_element_by_xpath(
-        '//div[@id="webdeposit_form_accordion"]/div[4]/span/button'
-    ).click()
+    _populate_document_type('chapter')
+    _populate_links(input_data)
+    _populate_chapter_info(input_data)
+    _deprecated_populate_basic_info(input_data)
+    _populate_references_comment(input_data)
+    Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
     Arsenic().show_title_bar()
 
     return ArsenicResponse(_submit_chapter)
@@ -134,23 +193,18 @@ def submit_journal_article_with_proceeding(input_data):
             'to INSPIRE.'
         ) in WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located(
-                (
-                    By.XPATH,
-                    '(//div[@class="alert alert-success alert-form-success"])',
-                )
+                (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
             )
         ).text
 
     _skip_import_data()
     Arsenic().hide_title_bar()
-    _links_population(input_data)
-    _basic_info_population(input_data)
-    _proceedings_population(input_data)
-    _journal_conference_population(input_data)
-    _references_comment_population(input_data)
-    Arsenic().find_element_by_xpath(
-        '//div[@id="webdeposit_form_accordion"]/div[4]/span/button'
-    ).click()
+    _populate_links(input_data)
+    _deprecated_populate_basic_info(input_data)
+    _populate_proceedings(input_data)
+    _populate_journal_conference(input_data)
+    _populate_references_comment(input_data)
+    Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
     Arsenic().show_title_bar()
 
     return ArsenicResponse(_submit_journal_article_with_proceeding)
@@ -163,28 +217,23 @@ def submit_journal_article(input_data):
             'to INSPIRE.'
         ) in WebDriverWait(Arsenic(), 10).until(
             EC.visibility_of_element_located(
-                (
-                    By.XPATH,
-                    '(//div[@class="alert alert-success alert-form-success"])',
-                )
+                (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
             )
         ).text
 
     _skip_import_data()
     Arsenic().hide_title_bar()
-    _links_population(input_data)
-    _basic_info_population(input_data)
-    _journal_conference_population(input_data)
-    _references_comment_population(input_data)
-    Arsenic().find_element_by_xpath(
-        '//div[@id="webdeposit_form_accordion"]/div[4]/span/button'
-    ).click()
+    _populate_links(input_data)
+    _deprecated_populate_basic_info(input_data)
+    _populate_journal_conference(input_data)
+    _populate_references_comment(input_data)
+    Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
     Arsenic().show_title_bar()
 
     return ArsenicResponse(_submit_journal_article)
 
 
-def _thesis_info_population(input_data):
+def _populate_thesis_info(input_data):
     WebDriverWait(Arsenic(), 10).until(
         EC.visibility_of_element_located((By.ID, 'supervisors-0-name'))
     )
@@ -208,7 +257,7 @@ def _thesis_info_population(input_data):
     )
 
 
-def _book_info_population(input_data):
+def _populate_book_info(input_data):
     WebDriverWait(Arsenic(), 10).until(
         EC.visibility_of_element_located((By.ID, 'series_title'))
     )
@@ -229,7 +278,7 @@ def _book_info_population(input_data):
     )
 
 
-def _chapter_info_population(input_data):
+def _populate_chapter_info(input_data):
     WebDriverWait(Arsenic(), 10).until(
         EC.visibility_of_element_located((By.ID, 'book_title'))
     )
@@ -244,11 +293,51 @@ def _chapter_info_population(input_data):
     )
 
 
-def _links_population(input_data):
-    Arsenic().find_element_by_id('url').send_keys(input_data['pdf-1'])
+def _populate_links(input_data):
+    if 'pdf-1' in input_data:
+        Arsenic().find_element_by_id('url').send_keys(input_data['pdf-1'])
 
 
-def _basic_info_population(input_data):
+def _populate_basic_info(input_data):
+    if 'title' in input_data:
+        Arsenic().find_element_by_id('title').send_keys(input_data['title'])
+
+    if 'language' in input_data:
+        Select(Arsenic().find_element_by_id('language')).select_by_value(
+            input_data['language']
+        )
+
+    if 'title_translation' in input_data:
+        Arsenic().find_element_by_id('title_translation').send_keys(
+            input_data['title_translation']
+        )
+
+
+    _populate_subjects(input_data.get('subjects', []))
+    _populate_authors(input_data.get('authors', []))
+
+    if 'collaboration' in input_data:
+        try:
+            Arsenic().find_element_by_id('collaboration').send_keys(
+                input_data['collaboration']
+            )
+        except (ElementNotVisibleException, WebDriverException):
+            pass
+
+    if 'experiment' in input_data:
+        Arsenic().find_element_by_id('experiment').send_keys(
+            input_data['experiment']
+        )
+
+    if 'abstract' in input_data:
+        Arsenic().find_element_by_id('abstract').send_keys(
+            input_data['abstract']
+        )
+
+    _populate_report_numbers(input_data.get('report_numbers', []))
+
+
+def _deprecated_populate_basic_info(input_data):
     Arsenic().find_element_by_id('title').send_keys(input_data['title'])
     Select(Arsenic().find_element_by_id('language')).select_by_value(
         input_data['language']
@@ -256,11 +345,13 @@ def _basic_info_population(input_data):
     Arsenic().find_element_by_id('title_translation').send_keys(
         input_data['title_translation']
     )
+
     Arsenic().find_element_by_xpath('(//button[@type="button"])[8]').click()
     Arsenic().find_element_by_css_selector('input[type=\"checkbox\"]').click()
     Arsenic().find_element_by_xpath(
         '//input[@value="' + input_data['subject'] + '"]'
     ).click()
+
     Arsenic().find_element_by_xpath('(//button[@type="button"])[8]').click()
     Arsenic().find_element_by_id('authors-0-name').send_keys(
         input_data['author-0']
@@ -286,7 +377,9 @@ def _basic_info_population(input_data):
     Arsenic().find_element_by_id('experiment').send_keys(
         input_data['experiment']
     )
-    Arsenic().find_element_by_id('abstract').send_keys(input_data['abstract'])
+    Arsenic().find_element_by_id('abstract').send_keys(
+        input_data['abstract']
+    )
     Arsenic().find_element_by_id('report_numbers-0-report_number').send_keys(
         input_data['report-number-0']
     )
@@ -296,7 +389,8 @@ def _basic_info_population(input_data):
     )
 
 
-def _journal_conference_population(input_data):
+
+def _populate_journal_conference(input_data):
     Arsenic().find_element_by_id('journal_title').send_keys(
         input_data['journal_title']
     )
@@ -312,7 +406,7 @@ def _journal_conference_population(input_data):
             (By.ID, 'conf_name'))).send_keys(input_data['conf-name'])
 
 
-def _proceedings_population(input_data):
+def _populate_proceedings(input_data):
     WebDriverWait(Arsenic(), 10).until(
         EC.visibility_of_element_located(
             (By.ID, 'nonpublic_note')
@@ -320,7 +414,7 @@ def _proceedings_population(input_data):
     ).send_keys(input_data['non-public-note'])
 
 
-def _references_comment_population(input_data):
+def _populate_references_comment(input_data):
     WebDriverWait(Arsenic(), 10).until(
         EC.visibility_of_element_located(
             (By.ID, 'references')
@@ -338,7 +432,7 @@ def write_institution_thesis(institution, expected_data):
             'supervisors-0-affiliation', institution)
 
     _skip_import_data()
-    _select_thesis()
+    _populate_document_type('thesis')
     WebDriverWait(Arsenic(), 5).until(
         EC.visibility_of_element_located((By.ID, 'supervisors-0-affiliation'))
     )
@@ -465,58 +559,52 @@ def _skip_import_data():
             'Type of Document',
         )
     )
-    Arsenic().execute_script(
-        """document.evaluate(
-            "//div[@id='webdeposit_form_accordion']/div[3]/div[8]/div[1]",
-            document,
-            null,
-            XPathResult.FIRST_ORDERED_NODE_TYPE,
-            null
-        ).singleNodeValue.click()"""
-    )
-    Arsenic().execute_script(
-        """document.evaluate(
-            "//div[@id='webdeposit_form_accordion']/div[3]/div[9]/div[1]",
-            document,
-            null,
-            XPathResult.FIRST_ORDERED_NODE_TYPE,
-            null
-        ).singleNodeValue.click()"""
-    )
-    Arsenic().execute_script(
-        """document.evaluate(
-            "//div[@id='webdeposit_form_accordion']/div[3]/div[10]/div[1]",
-            document,
-            null,
-            XPathResult.FIRST_ORDERED_NODE_TYPE,
-            null
-        ).singleNodeValue.click()"""
-    )
-    Arsenic().execute_script(
-        """document.evaluate(
-            "//div[@id='webdeposit_form_accordion']/div[3]/div[11]/div[1]",
-            document,
-            null,
-            XPathResult.FIRST_ORDERED_NODE_TYPE,
-            null
-        ).singleNodeValue.click()"""
-    )
+    Arsenic().execute_script(EXPAND_CONFERENCE_INFO)
+    Arsenic().execute_script(EXPAND_PROCEEDINGS_INFO)
+    Arsenic().execute_script(EXPAND_REFERENCES)
+    Arsenic().execute_script(EXPAND_ADDITIONAL_COMMENTS)
     Arsenic().show_title_bar()
 
 
-def _select_thesis():
+def _populate_document_type(document_type):
     Select(Arsenic().find_element_by_id('type_of_doc')).select_by_value(
-        'thesis'
+        document_type
     )
 
 
-def _select_book():
-    Select(Arsenic().find_element_by_id('type_of_doc')).select_by_value(
-        'book'
-    )
+def _populate_subjects(subjects):
+
+    Arsenic().find_element_by_xpath(SUBJECTS_BUTTON).click()
+    Arsenic().find_element_by_css_selector(SUBJECT_ACCELERATORS).click()
+    for subject in subjects:
+        Arsenic().find_element_by_xpath(
+            '//input[@value="' + subject + '"]'
+        ).click()
+
+    Arsenic().find_element_by_xpath(SUBJECTS_BUTTON).click()
 
 
-def _select_chapter():
-    Select(Arsenic().find_element_by_id('type_of_doc')).select_by_value(
-        'chapter'
-    )
+def _populate_authors(authors):
+    for index, author in enumerate(authors):
+        Arsenic().find_element_by_id('authors-%s-name' % index).send_keys(
+            author['name']
+        )
+        if 'affiliation' in author:
+            Arsenic().find_element_by_id(
+                'authors-%s-affiliation' % index
+            ).send_keys(
+                author['affiliation'],
+                author['name'],
+            )
+
+        Arsenic().find_element_by_link_text('Add another author').click()
+
+
+def _populate_report_numbers(report_numbers):
+    for index, report_number in enumerate(report_numbers):
+        Arsenic().find_element_by_id(
+            'report_numbers-%s-report_number' % index
+        ).send_keys(report_number)
+        Arsenic().find_element_by_link_text(
+            'Add another report number'
+        ).click()

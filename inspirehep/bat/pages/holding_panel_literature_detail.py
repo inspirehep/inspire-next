@@ -34,6 +34,15 @@ from ..arsenic import Arsenic, ArsenicResponse
 from inspirehep.bat.EC import GetText, TryClick
 
 
+TITLE_AND_DESCRIPTION = '(//div[@class="ng-scope"])[2]'
+SUBMISSION_INFO = '//p[@class="text-center ng-scope"]'
+SUBJECT_AREAS = '(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])'
+FIRST_SUBJECT_AREA = SUBJECT_AREAS + '[1]'
+SECOND_SUBJECT_AREA = SUBJECT_AREAS + '[2]'
+ACCEPT_NON_CORE_BUTTON = '//button[@class="btn btn-warning"]'
+ACCEPTED_MESSAGE = '//div[@class="alert ng-scope alert-accept"]'
+
+
 def go_to():
     holding_panel_literature_list.go_to()
     holding_panel_literature_list.click_first_record()
@@ -42,30 +51,30 @@ def go_to():
 def load_submitted_record(input_data):
     def _load_submitted_record():
         return (
-            'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record and
+            input_data.get('abstract', '') in record and
             'Submitted by admin@inspirehep.net\non' in record and
-            'Wisconsin U., Madison' in record and
-            'My Title For Test' in record and
-            'Brown, James' in record and
-            'White, Barry' in record and
+            input_data.get('title', '') in record and
+            all(
+                name_part in record
+                for name_part in input_data.get('author-0', '').split()
+            ) and
+            input_data.get('author-0-affiliation', '') in record and
+            all(
+                name_part in record
+                for name_part in input_data.get('author-1', '').split()
+            ) and
+            input_data.get('author-1-affiliation', '') in record and
             'Accelerators' in record and
-            'Computing' in record and
-            'CERN' in record
+            input_data.get('subject', '') in record
         )
 
     try:
         record = WebDriverWait(Arsenic(), 10).until(
-            GetText((By.XPATH, '(//div[@class="ng-scope"])[2]'))
+            GetText((By.XPATH, TITLE_AND_DESCRIPTION))
         )
-        record += Arsenic().find_element_by_xpath(
-            '//p[@class="text-center ng-scope"]'
-        ).text
-        record += Arsenic().find_element_by_xpath(
-            '(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[1]'
-        ).text
-        record += Arsenic().find_element_by_xpath(
-            '(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[2]'
-        ).text
+        record += Arsenic().find_element_by_xpath(SUBMISSION_INFO).text
+        record += Arsenic().find_element_by_xpath(FIRST_SUBJECT_AREA).text
+        record += Arsenic().find_element_by_xpath(SECOND_SUBJECT_AREA).text
     except (ElementNotVisibleException, WebDriverException):
         go_to()
         record = load_submitted_record(input_data)
@@ -76,11 +85,11 @@ def load_submitted_record(input_data):
 def accept_record():
     def _accept_record():
         return 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
-            GetText((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))
+            GetText((By.XPATH, ACCEPTED_MESSAGE))
         )
 
     WebDriverWait(Arsenic(), 10).until(
-        TryClick((By.XPATH, '//button[@class="btn btn-warning"]'))
+        TryClick((By.XPATH, ACCEPT_NON_CORE_BUTTON))
     )
 
     return ArsenicResponse(_accept_record)
