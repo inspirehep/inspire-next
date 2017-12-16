@@ -29,7 +29,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
-from . import holding_panel_literature_list
+from . import holdingpen_literature_list
 from ..arsenic import Arsenic, ArsenicResponse
 from inspirehep.bat.EC import GetText, TryClick
 
@@ -44,8 +44,8 @@ ACCEPTED_MESSAGE = '//div[@class="alert ng-scope alert-accept"]'
 
 
 def go_to():
-    holding_panel_literature_list.go_to()
-    holding_panel_literature_list.click_first_record()
+    holdingpen_literature_list.go_to()
+    holdingpen_literature_list.click_first_record()
 
 
 def load_submitted_record(input_data):

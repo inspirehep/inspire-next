@@ -32,13 +32,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from inspirehep.bat.EC import GetText
 
-from . import holding_panel_author_list
+from . import holdingpen_author_list
 from ..arsenic import Arsenic, ArsenicResponse
 
 
 def go_to():
-    holding_panel_author_list.go_to()
-    holding_panel_author_list.click_first_record()
+    holdingpen_author_list.go_to()
+    holdingpen_author_list.click_first_record()
 
 
 def load_submitted_record(input_data):

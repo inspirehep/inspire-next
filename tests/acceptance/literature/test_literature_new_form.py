@@ -24,8 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 from inspirehep.bat.pages import (
     create_literature,
-    holding_panel_literature_detail,
-    holding_panel_literature_list,
+    holdingpen_literature_detail,
+    holdingpen_literature_list,
 )
 
 
@@ -185,17 +185,17 @@ def test_literature_create_article_journal_with_proceeding_manually(login):
 
 
 def _check_back_office(input_data):
-    holding_panel_literature_list.go_to()
-    assert holding_panel_literature_list.load_submitted_record().has_error()
+    holdingpen_literature_list.go_to()
+    assert holdingpen_literature_list.load_submitted_record().has_error()
 
-    holding_panel_literature_detail.go_to()
-    assert holding_panel_literature_detail.load_submitted_record(
+    holdingpen_literature_detail.go_to()
+    assert holdingpen_literature_detail.load_submitted_record(
         input_data
     ).has_error()
-    assert holding_panel_literature_detail.accept_record().has_error()
+    assert holdingpen_literature_detail.accept_record().has_error()
 
-    holding_panel_literature_list.go_to()
-    assert holding_panel_literature_list.load_completed_record().has_error()
+    holdingpen_literature_list.go_to()
+    assert holdingpen_literature_list.load_completed_record().has_error()
 
 
 def test_thesis_info_autocomplete_supervisor_institution(login):
