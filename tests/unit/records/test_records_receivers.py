@@ -38,6 +38,7 @@ from inspirehep.modules.records.receivers import (
     populate_recid_from_ref,
     populate_title_suggest,
     populate_author_count,
+    populate_authors_full_name_unicode_normalized,
 )
 
 
@@ -1066,3 +1067,65 @@ def test_populate_author_count_does_nothing_if_record_is_not_literature():
     populate_author_count(None, record)
 
     assert 'author_count' not in record
+
+
+def test_populate_authors_full_name_unicode_normalized():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    record = {
+        '$schema': 'http://localhost:5000/records/schemas/hep.json',
+        'authors': [
+            {
+                'full_name': u'Müller, J.',
+            },
+            {
+                'full_name': u'Muller, J.',
+            },
+        ],
+    }
+    assert validate(record['authors'], subschema) is None
+
+    populate_authors_full_name_unicode_normalized(None, record)
+
+    expected = [
+        {
+            'full_name': u'Müller, J.',
+            'full_name_unicode_normalized': u'müller, j.',
+        },
+        {
+            'full_name': u'Muller, J.',
+            'full_name_unicode_normalized': u'muller, j.',
+        },
+    ]
+    result = record['authors']
+
+    assert expected == result
+
+
+def test_populate_authors_full_name_unicode_normalized_does_nothing_if_record_is_not_literature():
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/other.json',
+        'authors': [
+            {
+                'full_name': u'Müller, J.',
+            },
+            {
+                'full_name': u'Muller, J.',
+            },
+        ],
+    }
+
+    populate_authors_full_name_unicode_normalized(None, record)
+
+    expected = [
+        {
+            'full_name': u'Müller, J.',
+        },
+        {
+            'full_name': u'Muller, J.',
+        },
+    ]
+    result = record['authors']
+
+    assert expected == result

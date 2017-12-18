@@ -63,7 +63,7 @@ install_requires = [
     'inspire-dojson~=58.0,>=58.0.0',
     'inspire-json-merger~=7.0,>=7.0.0',
     'inspire-matcher~=4.0,>=4.0.0',
-    'inspire-query-parser~=3.0,>=3.0.0',
+    'inspire-query-parser~=3.0,>=3.1.5',
     'inspire-schemas~=57.0,>=57.0.0',
     'inspire-utils~=2.0,>=2.0.0',
     'invenio-access>=1.0.0b1',
