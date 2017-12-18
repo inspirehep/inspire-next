@@ -45,6 +45,7 @@ from invenio_records.models import RecordMetadata
 
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_utils.record import get_value
+from inspirehep.modules.records.json_ref_loader import replace_refs
 
 from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_pdf,
@@ -232,30 +233,17 @@ def is_submission(obj, eng):
 
 
 @with_debug_logging
-def _get_journal_title(obj, eng):
-    """Return the journal title of the publication."""
-    publication = obj.data.get('publication_info')
-    if publication:
-        return publication[0].get('journal_title')
-
-
-@with_debug_logging
 def get_journal_coverage(obj, eng):
     """Return the journal coverage that this article belongs to."""
-    a_journal_title = _get_journal_title(obj, eng)
+    journals = replace_refs(get_value(obj.data, 'publication_info.journal_record'), 'db')
 
-    query = RecordMetadata.query.filter(
-        RecordMetadata.json['_collections'].op('?')('Journals')).filter(
-        cast(RecordMetadata.json['short_title'], String) == type_coerce(a_journal_title, JSON))
+    if not journals:
+        return
 
-    result = db.session.execute(query).fetchone()
-
-    if result:
-        journal_coverage = result.records_metadata_json['_harvesting_info']['coverage']
+    if any(journal['_harvesting_info'].get('coverage') == 'full' for journal in journals):
+        obj.extra_data['journal_coverage'] = 'full'
     else:
-        journal_coverage = None
-
-    obj.extra_data['journal_coverage'] = journal_coverage
+        obj.extra_data['journal_coverage'] = 'partial'
 
 
 @with_debug_logging
