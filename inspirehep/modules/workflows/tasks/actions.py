@@ -233,6 +233,20 @@ def is_submission(obj, eng):
 
 
 @with_debug_logging
+def get_journal_coverage(obj, eng):
+    """Return the journal coverage that this article belongs to."""
+    journals = replace_refs(get_value(obj.data, 'publication_info.journal_record'), 'db')
+
+    if not journals:
+        return
+
+    if any(journal['_harvesting_info'].get('coverage') == 'full' for journal in journals):
+        obj.extra_data['journal_coverage'] = 'full'
+    else:
+        obj.extra_data['journal_coverage'] = 'partial'
+
+
+@with_debug_logging
 def submission_fulltext_download(obj, eng):
     submission_pdf = obj.extra_data.get('submission_pdf')
     if submission_pdf and is_pdf_link(submission_pdf):
