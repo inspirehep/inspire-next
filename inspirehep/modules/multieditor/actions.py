@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,11 +23,10 @@
 from __future__ import absolute_import, print_function, division
 
 import re
-
+from collections import namedtuple
 
 from jsonschema import ValidationError
 from inspire_schemas.api import validate
-
 from inspirehep.utils.record import inspire_diff
 
 
@@ -56,35 +55,32 @@ class Action(object):
         self.update_value = update_value
         self.conditions = conditions
         self.changed = False
+        self.conditions_result = namedtuple('conditions_result', ['conditions_passed', 'key', 'fails_any_condition'])
 
     def get_next_key_and_condition_check(self, record, schema, position, conditions_passed):
         """
-
         :param record: record to be processed
         :param position: recursion level
         :param conditions_passed: number of conditions that got checked and passed
         :return: returns the new number of conditions passed,
          the new key for this recursion and if a condition got checked and the failed the check
         """
+
         key = self.keypath[position]
-        condition_failed = False
-        if self.conditions:
+        fails_any_condition = False
+        if not self.conditions:
+            return self.conditions_result(conditions_passed, key, fails_any_condition)
+        else:
             for condition in self.conditions:
-                should_check = False
-                if position < len(condition.get('keypath')):
-                    if key != condition.get('keypath')[position] and\
-                     (position == 0 or self.keypath[position - 1] == condition.get('keypath')[position - 1]):
-                        should_check = True
-                    elif key == condition.get('keypath')[position] and position == len(self.keypath) - 1:
-                        should_check = True
-                    if should_check:
-                        if not check_value(record=record, schema=schema, keypath=condition.get('keypath'),
-                                           update_value=condition.get('value', ''),
-                                           match_type=condition.get('match_type', ''), position=position):
-                            condition_failed = True
-                        else:
-                            conditions_passed = conditions_passed + 1  # number of conditions that passed successfully
-        return conditions_passed, key, condition_failed
+                if should_run_condition(self, key, condition, position):
+                    if condition_passses(record=record, schema=schema, keypath=condition['keypath'],
+                                             update_value=condition['value'],
+                                             match_type=condition['match_type'], position=position):
+                        conditions_passed = conditions_passed + 1
+                    else:
+                        fails_any_condition = True
+
+        return self.conditions_result(conditions_passed, key, fails_any_condition)
 
 
 class Addition(Action):
@@ -98,8 +94,11 @@ class Addition(Action):
         :param conditions_passed: number of conditions that run and passed
         :return:
         """
-        conditions_passed, key, condition_failed = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
-        if not schema or condition_failed:
+        conditions_result = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
+        conditions_passed = conditions_result.conditions_passed
+        key = conditions_result.key
+        fails_any_condition = conditions_result.fails_any_condition
+        if not schema or fails_any_condition:
             return
         if not record.get(key):
             if self.conditions and conditions_passed < len(self.conditions):
@@ -131,9 +130,11 @@ class Deletion(Action):
         :param conditions_passed: number of conditions that run and passed
         :return:
         """
-        conditions_passed, key, condition_failed =\
-            self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
-        if not schema or condition_failed:
+        conditions_result = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
+        conditions_passed = conditions_result.conditions_passed
+        key = conditions_result.key
+        fails_any_condition = conditions_result.fails_any_condition
+        if not schema or fails_any_condition:
             return
         if not record.get(key):
             return
@@ -188,8 +189,11 @@ class Update(Action):
         :param conditions_passed: number of conditions that run and passed
         :return:
         """
-        conditions_passed, key, condition_failed = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
-        if not schema or condition_failed:
+        conditions_result = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
+        conditions_passed = conditions_result.conditions_passed
+        key = conditions_result.key
+        fails_any_condition = conditions_result.fails_any_condition
+        if not schema or fails_any_condition:
             return
         if not record.get(key):
             return
@@ -277,7 +281,7 @@ def create_schema_record(schema, path, value):
     return record
 
 
-def check_value(record, schema, match_type, keypath, update_value, position):
+def condition_passses(record, schema, match_type, keypath, update_value, position):
     """
     Function that checks the validity of the action condition
     :param record: the subrecord in which our field of interest resides
@@ -308,7 +312,7 @@ def check_value(record, schema, match_type, keypath, update_value, position):
                         update_value, array_record):
                         return True
             else:
-                if check_value(array_record, new_schema, match_type,
+                if condition_passses(array_record, new_schema, match_type,
                                keypath, update_value, position + 1):
                     return True
     else:
@@ -324,7 +328,7 @@ def check_value(record, schema, match_type, keypath, update_value, position):
                     update_value, temp_record):
                 return True
         else:
-            return check_value(temp_record, new_schema, match_type,
+            return condition_passses(temp_record, new_schema, match_type,
                                keypath, update_value, position + 1)
     return False
 
@@ -374,3 +378,16 @@ def schema_progression(schema, key):
         return schema['properties'][key]
     elif schema['type'] == 'array':
         return schema['items']['properties'][key]
+
+
+def should_run_condition(self, key, condition, position):
+    if position < len(condition['keypath']):
+        if key != condition['keypath'][position] and \
+                (position == 0 or
+                 self.keypath[position - 1] == condition['keypath'][position - 1]):
+            return True
+        elif key == condition['keypath'][position] and\
+                position == len(self.keypath) - 1:
+            return True
+    else:
+        return False

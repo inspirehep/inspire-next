@@ -67,9 +67,9 @@ def sanitize_user_conditions(user_conditions, schema):
         if not condition.get('key'):
             continue
         keypath = condition['key'].split('.')
-        if not check_provided_key_path(keypath, schema):
+        if not check_provided_key_path(keypath, schema) and not match_type_map.get(condition.get('matchType', '')):
             return 'error'
-        user_condition = {'value': condition['value'],
+        user_condition = {'value': condition.get('value', ''),
                           'keypath': keypath,
                           'match_type': match_type_map[condition['matchType']]}
         conditions.append(user_condition)
