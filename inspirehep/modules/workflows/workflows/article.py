@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 from workflow.patterns.controlflow import (
     IF,
+    IF_NOT,
     IF_ELSE,
 )
 
@@ -203,7 +204,7 @@ POSTENHANCE_RECORD = [
 ]
 
 
-SEND_TO_LEGACY_AND_WAIT = [
+SEND_TO_LEGACY = [
     IF_ELSE(
         is_marked('is-update'),
         [
@@ -212,8 +213,15 @@ SEND_TO_LEGACY_AND_WAIT = [
         ],
         [
             send_robotupload(mode="insert"),
-            wait_webcoll,
         ]
+    ),
+]
+
+
+WAIT_FOR_LEGACY_WEBCOLL = [
+    IF_NOT(
+        is_marked('is-update'),
+        wait_webcoll,
     ),
 ]
 
@@ -437,8 +445,9 @@ class Article(object):
                 is_record_accepted,
                 (
                     POSTENHANCE_RECORD +
+                    SEND_TO_LEGACY +
                     STORE_RECORD +
-                    SEND_TO_LEGACY_AND_WAIT +
+                    WAIT_FOR_LEGACY_WEBCOLL +
                     NOTIFY_ACCEPTED +
                     NOTIFY_CURATOR_IF_CORE
                 ),

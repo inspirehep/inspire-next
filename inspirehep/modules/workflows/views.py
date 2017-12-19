@@ -81,6 +81,7 @@ def _continue_workflow(workflow_id, recid, result=None):
         str(recid)
     )
     workflow_object.extra_data['recid'] = recid
+    workflow_object.data['control_number'] = recid
     workflow_object.extra_data['callback_result'] = result
     workflow_object.save()
     db.session.commit()
