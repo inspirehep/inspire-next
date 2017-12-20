@@ -69,11 +69,12 @@ from inspirehep.modules.workflows.tasks.magpie import (
     guess_experiments,
 )
 from inspirehep.modules.workflows.tasks.matching import (
+    belongs_to_relevant_category,
+    set_coreness_in_extra_data,
     stop_processing,
     match_non_completed_wf_in_holdingpen,
     match_previously_rejected_wf_in_holdingpen,
     article_exists,
-    already_harvested,
     previously_rejected,
     has_same_source,
     stop_matched_holdingpen_wfs,
@@ -149,6 +150,18 @@ ENHANCE_RECORD = [
     ),
     guess_keywords,
     guess_coreness,
+    IF_ELSE(
+        is_submission,
+        mark('auto-approved', False),
+        IF_ELSE(
+            belongs_to_relevant_category,
+            [
+                mark('auto-approved', True),
+                set_coreness_in_extra_data,
+            ],
+            mark('auto-approved', False),
+        ),
+    ),
 ]
 
 
@@ -244,9 +257,13 @@ STOP_IF_EXISTING_SUBMISSION = [
 HALT_FOR_APPROVAL = [
     IF_ELSE(
         is_record_relevant,
-        halt_record(
-            action="hep_approval",
-            message="Submission halted for curator approval.",
+        IF_ELSE(
+            is_marked('auto-approved'),
+            mark('approved', True),
+            halt_record(
+                action="hep_approval",
+                message="Submission halted for curator approval.",
+            )
         ),
         [
             reject_record("Article automatically rejected"),
@@ -367,25 +384,14 @@ MARK_IF_UPDATE = [
 ]
 
 
-STOP_IF_ALREADY_HARVESTED_ON_LEGACY_OR_TOO_OLD = [
+STOP_IF_TOO_OLD = [
     # checks to perform only for harvested records
     IF_ELSE(
         is_submission,
         [
-            mark('already-ingested', False),
             mark('too-many-days', False),
         ],
         [
-            IF_ELSE(
-                already_harvested,
-                [
-                    mark('already-ingested', True),
-                    save_workflow,
-                    stop_processing
-                ],
-                mark('already-ingested', False),
-            ),
-
             IF_ELSE(
                 previously_rejected(),
                 [
@@ -410,8 +416,8 @@ NOTIFY_IF_SUBMISSION = [
 
 
 INIT_MARKS = [
-    mark('already-ingested', None),
     mark('too-many-days', None),
+    mark('auto-approved', None),
     mark('already-in-holding-pen', None),
     mark('previously_rejected', None),
     mark('is-update', None),
@@ -436,7 +442,7 @@ class Article(object):
 
     workflow = (
         PRE_PROCESSING +
-        STOP_IF_ALREADY_HARVESTED_ON_LEGACY_OR_TOO_OLD +
+        STOP_IF_TOO_OLD +
         NOTIFY_IF_SUBMISSION +
         MARK_IF_MATCH_IN_HOLDINGPEN +
         PROCESS_HOLDINGPEN_MATCHES +

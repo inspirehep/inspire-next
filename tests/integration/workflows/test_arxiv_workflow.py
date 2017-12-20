@@ -36,7 +36,7 @@ from invenio_workflows import (
 )
 
 from calls import (
-    already_harvested_on_legacy_record,
+    core_record,
     do_accept_core,
     do_webcoll_callback,
     do_robotupload_callback,
@@ -124,7 +124,7 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
     return_value=[],
 )
-def test_harvesting_arxiv_workflow_already_on_legacy(
+def test_harvesting_arxiv_workflow_core_record_auto_accepted(
     mocked_download,
     mocked_is_pdf,
     mocked_refextract_extract_refs,
@@ -134,12 +134,12 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
     mocked_external_services
 ):
     """Test a full harvesting workflow."""
-    record, categories = already_harvested_on_legacy_record()
+    record, categories = core_record()
 
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
         "MAGPIE_API_URL": "http://example.com/magpie",
-        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': categories,
+        'ARXIV_CATEGORIES': categories,
     }
     with workflow_app.app_context():
         with mock.patch.dict(workflow_app.config, extra_config):
@@ -148,9 +148,9 @@ def test_harvesting_arxiv_workflow_already_on_legacy(
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
 
-        assert obj.status == ObjectStatus.COMPLETED
-        assert 'already-ingested' in obj.extra_data
-        assert obj.extra_data['already-ingested']
+        assert obj.extra_data['approved'] is True
+        assert obj.extra_data['auto-approved'] is True
+        assert obj.data['core'] is True
 
 
 @mock.patch(
@@ -265,14 +265,12 @@ def test_match_in_holdingpen_stops_pending_wf(
     update_wf = eng2.objects[0]
 
     assert update_wf.status == ObjectStatus.HALTED
-    assert update_wf.extra_data['already-ingested'] is False
     assert update_wf.extra_data['already-in-holding-pen'] is True
     assert update_wf.extra_data['previously_rejected'] is False
     assert update_wf.extra_data['stopped-matched-holdingpen-wf'] is True
     assert update_wf.extra_data['is-update'] is False
 
     old_wf = workflow_object_class.get(obj_id)
-    assert old_wf.extra_data['already-ingested'] is False
     assert old_wf.extra_data['already-in-holding-pen'] is False
     assert old_wf.extra_data['previously_rejected'] is False
     assert old_wf.extra_data['stopped-by-wf'] == update_wf.id

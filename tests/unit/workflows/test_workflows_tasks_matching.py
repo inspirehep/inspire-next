@@ -26,13 +26,15 @@ from mock import patch
 
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.matching import (
-    already_harvested,
     article_exists,
-    is_being_harvested_on_legacy,
+    belongs_to_relevant_category,
+    get_coreness,
     _pending_in_holding_pen,
 )
 
 from mocks import MockEng, MockObj
+
+from inspirehep.modules.workflows.tasks.matching import Coreness
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
@@ -73,159 +75,94 @@ def test_article_exists_returns_false_if_nothing_matched(mock_match):
     assert expected == result
 
 
-def test_is_being_harvested_on_legacy_returns_true_when_there_is_one_core_category(app):
+def test_belongs_to_relevant_category_returns_true_and_is_core(app):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
-    record = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'hep-ph',
-                    'astro-ph.CO',
-                    'gr-qc',
-                ],
-                'value': '1609.03939',
-            },
-        ],
-    }
-    assert validate(record['arxiv_eprints'], subschema) is None
-
-    extra_config = {
-        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [
-            'hep-ph'
-        ]
+    categories_config = {
+        'ARXIV_CATEGORIES': {
+            'core': ['hep-ph'],
+            'non-core': ['astro-ph.CO', 'gr-qc']
+        }
     }
 
-    with patch.dict(app.config, extra_config):
-        assert is_being_harvested_on_legacy(record)
+    with patch.dict(app.config, categories_config):
+        obj = MockObj
+        eng = MockEng
+        obj.data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'hep-ph',
+                        'astro-ph.CO',
+                        'gr-qc',
+                    ],
+                    'value': '1609.03939',
+                },
+            ],
+        }
+        assert validate(obj.data['arxiv_eprints'], subschema) is None
+        assert belongs_to_relevant_category(obj, eng) is True
+        assert get_coreness(obj.data) is Coreness.core
 
 
-def test_is_being_harvested_on_legacy_uses_the_correct_capitalization(app):
+def test_belongs_to_relevant_category_returns_true_and_is_non_core(app):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
-    record = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'astro-ph.CO',
-                ],
-                'value': '1705.00502',
-            },
-        ],
-    }
-    assert validate(record['arxiv_eprints'], subschema) is None
-
-    extra_config = {
-        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [
-            'astro-ph.CO'
-        ]
+    categories_config = {
+        'ARXIV_CATEGORIES': {
+            'core':     ['hep-ph'],
+            'non-core': ['astro-ph.CO', 'gr-qc']
+        }
     }
 
-    with patch.dict(app.config, extra_config):
-        assert is_being_harvested_on_legacy(record)
+    with patch.dict(app.config, categories_config):
+        obj = MockObj
+        eng = MockEng
+        obj.data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'astro-ph.CO',
+                        'gr-qc',
+                    ],
+                    'value': '1609.03939',
+                },
+            ],
+        }
+        assert validate(obj.data['arxiv_eprints'], subschema) is None
+        assert belongs_to_relevant_category(obj, eng) is True
+        assert get_coreness(obj.data) is Coreness.non_core
 
 
-def test_is_being_harvested_on_legacy_returns_false_otherwise(app):
+def test_belongs_to_relevant_category_returns_false(app):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
-    record = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'math.CO',
-                ],
-                'value': '1705.01122',
-            },
-        ],
-    }
-    assert validate(record['arxiv_eprints'], subschema) is None
-
-    extra_config = {
-        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [
-            'astro-ph.CO'
-        ]
+    categories_config = {
+        'ARXIV_CATEGORIES': {
+            'core':     ['hep-ph'],
+            'non-core': ['astro-ph.CO', 'gr-qc']
+        }
     }
 
-    with patch.dict(app.config, extra_config):
-        assert not is_being_harvested_on_legacy(record)
-
-
-def test_already_harvested_returns_true_when_there_is_one_core_category(app):
-    schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
-
-    data = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'hep-ph',
-                    'astro-ph.CO',
-                    'gr-qc',
-                ],
-                'value': '1609.03939',
-            },
-        ],
-    }
-    extra_data = {}
-    assert validate(data['arxiv_eprints'], subschema) is None
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    extra_config = {
-        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [
-            'astro-ph.CO'
-        ]
-    }
-
-    with patch.dict(app.config, extra_config):
-        assert already_harvested(obj, eng)
-
-    expected = (
-        'Record with arXiv id 1609.03939 is'
-        ' already being harvested on Legacy.'
-    )
-    result = obj.log._info.getvalue()
-
-    assert expected == result
-
-
-def test_already_harvested_returns_false_otherwise(app):
-    schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
-
-    data = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'math.CO',
-                ],
-                'value': '1705.01122',
-            },
-        ],
-    }
-    extra_data = {}
-    assert validate(data['arxiv_eprints'], subschema) is None
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    extra_config = {
-        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY': [
-            'astro-ph.CO'
-        ]
-    }
-
-    with patch.dict(app.config, extra_config):
-        assert not already_harvested(obj, eng)
-
-    expected = ''
-    result = obj.log._info.getvalue()
-
-    assert expected == result
+    with patch.dict(app.config, categories_config):
+        obj = MockObj
+        eng = MockEng
+        obj.data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'math.CO',
+                    ],
+                    'value': '1705.01122',
+                },
+            ],
+        }
+        assert validate(obj.data['arxiv_eprints'], subschema) is None
+        assert belongs_to_relevant_category(obj, eng) is False
+        assert get_coreness(obj.data) is Coreness.non_relevant
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
