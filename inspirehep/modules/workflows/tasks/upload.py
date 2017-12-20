@@ -44,7 +44,9 @@ def store_record(obj, eng):
         record.update(obj.data, files_src_records=[obj])
 
     else:
-        record = InspireRecord.create(obj.data, id_=None)
+        # Skip the files to avoid issues in case the record has already pid
+        # TODO: remove the skip files once labs becomes master
+        record = InspireRecord.create(obj.data, id_=None, skip_files=True)
         # Create persistent identifier.
         created_pid = inspire_recid_minter(str(record.id), record).pid_value
         # Now that we have a recid, we can properly download the documents
