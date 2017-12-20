@@ -103,7 +103,7 @@ def split_stream(stream):
             buf.append(row)
 
 
-@shared_task(ignore_result=True)
+@shared_task(ignore_result=True, queue='migrator')
 def remigrate_records(only_broken=True, skip_files=None):
     """Remigrate records.
 
@@ -126,7 +126,7 @@ def remigrate_records(only_broken=True, skip_files=None):
         migrate_chunk.delay(records, skip_files=skip_files)
 
 
-@shared_task(ignore_result=True)
+@shared_task(ignore_result=True, queue='migrator')
 def migrate(source, wait_for_results=False, skip_files=None):
     """Main migration function."""
     if skip_files is None:
@@ -204,7 +204,12 @@ def create_index_op(record):
     }
 
 
-@shared_task(ignore_result=False, compress='zlib', acks_late=True)
+@shared_task(
+    ignore_result=False,
+    compress='zlib',
+    acks_late=True,
+    queue='migrator',
+)
 def migrate_chunk(chunk, skip_files=False):
     models_committed.disconnect(index_after_commit)
 
