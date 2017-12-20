@@ -379,7 +379,6 @@ def error_workflow(message):
     return _error_workflow
 
 
-# TODO: this approach must be verified, i.e. the behaviour of `normalize_journal_title`.
 @with_debug_logging
 def normalize_journal_titles(obj, eng):
     """Normalize the journal titles
@@ -399,7 +398,7 @@ def normalize_journal_titles(obj, eng):
         eng: a workflow engine.
 
     Returns:
-        None
+       None
     """
     publications = obj.data.get('publication_info')
 
@@ -410,7 +409,6 @@ def normalize_journal_titles(obj, eng):
         if 'journal_title' in publication:
             normalized_title = normalize_journal_title(publication['journal_title'])
             obj.data['publication_info'][index]['journal_title'] = normalized_title
-
             ref_query = RecordMetadata.query.filter(
                 RecordMetadata.json['_collections'].op('?')('Journals')).filter(
                 cast(RecordMetadata.json['short_title'], String) == type_coerce(normalized_title, JSON))

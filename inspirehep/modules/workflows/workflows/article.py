@@ -43,7 +43,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     error_workflow,
     halt_record,
     is_record_relevant,
-    in_production_mode,
     get_journal_coverage,
     is_record_accepted,
     reject_record,
