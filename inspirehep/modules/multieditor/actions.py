@@ -24,13 +24,15 @@ from __future__ import absolute_import, print_function, division
 
 import re
 from collections import namedtuple
-
+from abc import ABCMeta, abstractmethod
 from jsonschema import ValidationError
 from inspire_schemas.api import validate
 from inspirehep.utils.record import inspire_diff
 
 
 class Action(object):
+    __metaclass__ = ABCMeta
+
     def __init__(self, keypath, value=None, match_type=None, update_value=None,
                  conditions=None):
         """
@@ -74,19 +76,33 @@ class Action(object):
             for condition in self.conditions:
                 if should_run_condition(self, key, condition, position):
                     if condition_passses(record=record, schema=schema, keypath=condition['keypath'],
-                                             update_value=condition['value'],
-                                             match_type=condition['match_type'], position=position):
+                                         update_value=condition['value'],
+                                         match_type=condition['match_type'], position=position):
                         conditions_passed = conditions_passed + 1
                     else:
                         fails_any_condition = True
 
         return self.conditions_result(conditions_passed, key, fails_any_condition)
 
+    @abstractmethod
+    def apply(self, **kwargs):
+        return None
+
+    def __repr__(self):
+        return '%s(keypath=%s, value=%s, match_type=%s, update_value=%s, conditions=%s '\
+               % (type(self), self.keypath, self.value, self.match_type, self.update_value, self.conditions)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class Addition(Action):
     """Class that when applied adds a new primitive field or object to the selected path
     if the conditions are satisfied"""
-    def apply(self, record, schema, position=0, conditions_passed=0):
+    def apply(self, record, schema):
+        self._apply(record=record, schema=schema, position=0, conditions_passed=0)
+
+    def _apply(self, record, schema, position, conditions_passed):
         """
         :param record: record in which the field to be updated resides
         :param schema: schema on which our record is based
@@ -94,10 +110,7 @@ class Addition(Action):
         :param conditions_passed: number of conditions that run and passed
         :return:
         """
-        conditions_result = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
-        conditions_passed = conditions_result.conditions_passed
-        key = conditions_result.key
-        fails_any_condition = conditions_result.fails_any_condition
+        conditions_passed, key, fails_any_condition = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
         if not schema or fails_any_condition:
             return
         if not record.get(key):
@@ -107,22 +120,21 @@ class Addition(Action):
             record.update(create_schema_record(schema, remaining_path, self.value))
             self.changed = True
             return
-        if position == len(self.keypath) - 1:
+        elif is_last_key(position, self.keypath):
             if isinstance(record[key], list):
                 record[key].append(self.value)
                 self.changed = True
-        else:
-            new_schema = schema_progression(schema, key)
-            if isinstance(record[key], list):
-                for array_record in record[key]:
-                    self.apply(array_record, new_schema, position + 1, conditions_passed)
-            else:
-                self.apply(record[key], new_schema, position + 1, conditions_passed)
+            return
+        new_schema = schema_progression(schema, key)
+        handle_record(self, record, key, new_schema, position, conditions_passed)
 
 
 class Deletion(Action):
     """Class that when applied deletes the appropriate field if the conditions are satisfied"""
-    def apply(self, record, schema, position=0, conditions_passed=0):
+    def apply(self, record, schema):
+        self._apply(record=record, schema=schema, position=0, conditions_passed=0)
+
+    def _apply(self, record, schema, position, conditions_passed):
         """
         :param record: record in which the field to be deleted resides
         :param schema: schema on which our record is based
@@ -130,58 +142,26 @@ class Deletion(Action):
         :param conditions_passed: number of conditions that run and passed
         :return:
         """
-        conditions_result = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
-        conditions_passed = conditions_result.conditions_passed
-        key = conditions_result.key
-        fails_any_condition = conditions_result.fails_any_condition
-        if not schema or fails_any_condition:
-            return
-        if not record.get(key):
+        conditions_passed, key, fails_any_condition = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
+        if not schema or fails_any_condition or not record.get(key):
             return
         new_schema = schema_progression(schema, key)
-        if position == len(self.keypath) - 1:
-            serialized_update_value = serialize_value(self.update_value, new_schema)
-            if serialized_update_value == 'error':
-                return
-            if isinstance(record[key], list):
-                list_size = len(record[key])
-                if self.match_type == 'regex':
-                    record[key] = [x for x in record[key] if not re.search(
-                        serialized_update_value, x)]
-                elif self.match_type == 'exact':
-                    record[key] = [x for x in record[key] if not x == serialized_update_value]
-                elif self.match_type == 'contains':
-                    record[key] = [x for x in record[key] if not serialized_update_value.lower() in x.lower()]
-                if list_size > len(record[key]):
-                    self.changed = True
-            else:
-                if self.match_type == 'exact' and record[key] == serialized_update_value:
-                    del record[key]
-                    self.changed = True
-                elif self.match_type == 'regex' and re.search(
-                        serialized_update_value, record[key]):
-                    del record[key]
-                    self.changed = True
-                elif self.match_type == 'contains' and serialized_update_value.lower() in record[key].lower():
-                    del record[key]
-                    self.changed = True
+        if is_last_key(position, self.keypath):
+            handle_deletion_process(self, record, key, new_schema)
+            if record.get(key) is None:
                 return
         else:
-            if isinstance(record[key], list):
-                for array_record in record[key]:
-                    self.apply(array_record, new_schema, position + 1, conditions_passed)
-            else:
-                self.apply(record[key], new_schema, position + 1, conditions_passed)
-        if isinstance(record[key], list):
-            record[key] = [item for item in record[key] if item not in [{}, '', []]]
-        if record[key] in [{}, '', []]:
-            del record[key]
+            handle_record(self, record, key, new_schema, position, conditions_passed)
+        clean_empty(record, key)
 
 
 class Update(Action):
     """Class that when applied updates the appropriate field if the conditions
      are satisfied and replaces its value with the one provided"""
-    def apply(self, record, schema, position=0, conditions_passed=0):
+    def apply(self, record, schema):
+        self._apply(record=record, schema=schema, position=0, conditions_passed=0)
+
+    def _apply(self, record, schema, position, conditions_passed):
         """
         :param record: record in which the field to be updated resides
         :param schema: schema on which our record is based
@@ -189,54 +169,23 @@ class Update(Action):
         :param conditions_passed: number of conditions that run and passed
         :return:
         """
-        conditions_result = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
-        conditions_passed = conditions_result.conditions_passed
-        key = conditions_result.key
-        fails_any_condition = conditions_result.fails_any_condition
-        if not schema or fails_any_condition:
-            return
-        if not record.get(key):
+        conditions_passed, key, fails_any_condition = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
+        if not schema or fails_any_condition or not record.get(key):
             return
         new_schema = schema_progression(schema, key)
-        if position == len(self.keypath) - 1:
-            self.value = serialize_value(self.value, new_schema)
-            serialized_update_value = serialize_value(self.update_value, new_schema)
-            if serialized_update_value == 'error':
-                return
-            if isinstance(record[key], list):
-                if self.match_type == 'regex':
-                    for count, index in enumerate(record[key]):
-                        if re.search(serialized_update_value, index):
-                            record[key][count] = self.value
-                            self.changed = True
-                elif self.match_type == 'exact':
-                    for count, index in enumerate(record[key]):
-                        if serialized_update_value == index:
-                            record[key][count] = self.value
-                            self.changed = True
-                elif self.match_type == 'contains':
-                    for count, index in enumerate(record[key]):
-                        if serialized_update_value.lower() in index.lower():
-                            record[key][count] = self.value
-                            self.changed = True
-            else:
-                if self.match_type == 'exact' and record[key] == serialized_update_value:
-                    record[key] = self.value
-                    self.changed = True
-                if self.match_type == 'regex' and re.search(
-                        serialized_update_value, record[key]):
-                            record[key] = self.value
-                            self.changed = True
-                elif self.match_type == 'contains' and serialized_update_value.lower() in record[key].lower():
-                    record[key] = self.value
-                    self.changed = True
-                return
+        if is_last_key(position, self.keypath):
+            handle_update_process(self, record, key, new_schema)
+            return
         else:
-            if isinstance(record[key], list):
-                for array_record in record[key]:
-                    self.apply(array_record, new_schema, position + 1, conditions_passed)
-            else:
-                self.apply(record[key], new_schema, position + 1, conditions_passed)
+            handle_record(self, record, key, new_schema, position, conditions_passed)
+
+
+def handle_record(self, record, key, schema, position, conditions_passed):
+        if isinstance(record[key], list):
+            for array_record in record[key]:
+                self._apply(array_record, schema, position + 1, conditions_passed)
+        else:
+            self._apply(record[key], schema, position + 1, conditions_passed)
 
 
 def create_schema_record(schema, path, value):
@@ -300,7 +249,7 @@ def condition_passses(record, schema, match_type, keypath, update_value, positio
     temp_record = record[key]
     if isinstance(temp_record, list):
         for index, array_record in enumerate(temp_record):
-            if position + 1 == len(keypath):
+            if is_last_key(position, keypath):
                 update_value = serialize_value(update_value, new_schema)
                 if update_value == 'error':
                     return False
@@ -316,7 +265,7 @@ def condition_passses(record, schema, match_type, keypath, update_value, positio
                                keypath, update_value, position + 1):
                     return True
     else:
-        if position + 1 == len(keypath):
+        if is_last_key(position, keypath):
             update_value = serialize_value(update_value, new_schema)
             if update_value == 'error':
                 return False
@@ -391,3 +340,76 @@ def should_run_condition(self, key, condition, position):
             return True
     else:
         return False
+
+
+def handle_update_process(self, record, key, schema):
+    self.value = serialize_value(self.value, schema)
+    serialized_update_value = serialize_value(self.update_value, schema)
+    if serialized_update_value == 'error':
+        return
+    if isinstance(record[key], list):
+        if self.match_type == 'regex':
+            for count, index in enumerate(record[key]):
+                if re.search(serialized_update_value, index):
+                    record[key][count] = self.value
+                    self.changed = True
+        elif self.match_type == 'exact':
+            for count, index in enumerate(record[key]):
+                if serialized_update_value == index:
+                    record[key][count] = self.value
+                    self.changed = True
+        elif self.match_type == 'contains':
+            for count, index in enumerate(record[key]):
+                if serialized_update_value.lower() in index.lower():
+                    record[key][count] = self.value
+                    self.changed = True
+    else:
+        if self.match_type == 'exact' and record[key] == serialized_update_value:
+            record[key] = self.value
+            self.changed = True
+        if self.match_type == 'regex' and re.search(
+                serialized_update_value, record[key]):
+            record[key] = self.value
+            self.changed = True
+        elif self.match_type == 'contains' and serialized_update_value.lower() in record[key].lower():
+            record[key] = self.value
+            self.changed = True
+
+
+def handle_deletion_process(self, record, key, schema):
+    serialized_update_value = serialize_value(self.update_value, schema)
+    if serialized_update_value == 'error':
+        return
+    if isinstance(record[key], list):
+        list_size = len(record[key])
+        if self.match_type == 'regex':
+            record[key] = [x for x in record[key] if not re.search(
+                serialized_update_value, x)]
+        elif self.match_type == 'exact':
+            record[key] = [x for x in record[key] if not x == serialized_update_value]
+        elif self.match_type == 'contains':
+            record[key] = [x for x in record[key] if not serialized_update_value.lower() in x.lower()]
+        if list_size > len(record[key]):
+            self.changed = True
+    else:
+        if self.match_type == 'exact' and record[key] == serialized_update_value:
+            del record[key]
+            self.changed = True
+        elif self.match_type == 'regex' and re.search(
+                serialized_update_value, record[key]):
+            del record[key]
+            self.changed = True
+        elif self.match_type == 'contains' and serialized_update_value.lower() in record[key].lower():
+            del record[key]
+            self.changed = True
+
+
+def clean_empty(record, key):
+    if isinstance(record[key], list):
+        record[key] = [item for item in record[key] if item not in [{}, '', []]]
+    if record[key] in [{}, '', []]:
+        del record[key]
+
+
+def is_last_key(position, keypath):
+    return position + 1 == len(keypath)
