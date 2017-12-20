@@ -40,7 +40,7 @@ def authorlist(text):
     text = replace_undesirable_characters(text)
     result = create_authors(text)
 
-    if result.has_key('authors'):
+    if 'authors' in result:
         for fullname, author_affs in result['authors']:
             builder.add_author(
                 builder.make_author(fullname, raw_affiliations=author_affs)

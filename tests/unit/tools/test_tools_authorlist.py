@@ -20,8 +20,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
 import pytest
-from inspirehep.modules.tools.authorlist create_authors
+
+from inspirehep.modules.tools.authorlist import create_authors
 
 
 def test_create_authors_without_affiliations():
@@ -59,7 +61,7 @@ def test_create_authors_without_affiliations():
     result = create_authors(text)
 
     assert expected == result['authors']
-    assert 'warnings' not in result.keys()
+    assert 'Found no affiliations (empty line needed)' in result['warnings']
 
 
 def test_create_authors_with_affiliations():
@@ -84,6 +86,7 @@ def test_create_authors_with_affiliations():
     result = create_authors(text)
 
     assert expected == result['authors']
+    assert 'warnings' not in result.keys()
 
 
 def test_create_authors_with_no_text():
@@ -489,7 +492,7 @@ def test_create_authors_with_many_affiliations():
     assert expected == result['authors']
 
 
-def test_authorlist_handles_spaces_at_the_end_of_an_author_or_affiliation():
+def test_create_authors_handles_spaces_at_the_end_of_an_author_or_affiliation():
     text = (
         'J. Smith1 \n'
         '\n'
@@ -525,7 +528,7 @@ def test_create_authors_with_letters():
     assert 'Is this part of a name or missing aff-id?' in result['warnings']
 
 
-def test_unused_affiliation():
+def test_create_authors_unused_affiliation():
     text = (
         'K. Sachs 1, F. Schwennsen 1\n'
         '\n'
@@ -542,3 +545,44 @@ def test_unused_affiliation():
     assert expected == result['authors']
     assert 'Unused affiliation-IDs' in result['warnings']
 
+
+def test_create_authors_no_empty_line():
+    text = (
+        'K. Sachs1, M. Moskovic2\n'
+        '1 DESY, D 22607 Hamburg, Germany\n'
+        '2 CERN, CH 1211 Geneva 23, Switzerland\n'
+    )
+
+    expected = [
+        (u'K. Sachs', []),
+        (u'M. Moskovic', []),
+        (u'DESY', []),
+        (u'D', []),
+        (u'Hamburg', []),
+        (u'Germany', []),
+        (u'CERN', []),
+        (u'CH', []),
+        (u'Geneva', []),
+        (u'Switzerland', []),
+    ]
+    result = create_authors(text)
+
+    assert expected == result['authors']
+    assert 'Found no affiliations (empty line needed)' in result['warnings']
+
+
+def test_create_authors_author_blocks_by_affiliation():
+    text = (
+        'K. Sachs, F. Schwennsen\n'
+        'DESY, D 22607 Hamburg, Germany\n'
+        '\n'
+        'A. Holtkamp, M. Moskovic\n'
+        'CERN, CH 1211 Geneva 23, Switzerland\n'
+        '\n'
+        'T. Schwander\n'
+        'SLAC, Stanford, USA\n'
+    )
+
+    with pytest.raises(ValueError) as excinfo:
+        create_authors(text)
+    assert 'Authors grouped by affiliation? - Comming soon' in str(excinfo.value)

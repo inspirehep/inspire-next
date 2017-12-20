@@ -23,16 +23,18 @@
 
 """Utility functions for authorlist."""
 
+from __future__ import absolute_import, division, print_function
 import re
 import six
 
 re_emptyline = re.compile(r'\n\s*\n', re.UNICODE)
-re_hyphens = re.compile(\
+re_hyphens = re.compile(
     r'(\\255|\u02D7|\u0335|\u0336|\u2212|\u2013|\u002D|\uFE63|\uFF0D)', re.UNICODE)
 re_multiple_space = re.compile(r'\s{2,}', re.UNICODE)
 re_potential_key = re.compile(r"^(?:\d|[^\w.'-])+$", re.UNICODE)
 re_trailing_nonword = re.compile(r"((?:\d|[^\w,.'-])+ )", re.UNICODE)
 re_symbols = re.compile(r'[^\w ]', re.UNICODE)
+
 
 def split_id(word):
     """
@@ -83,6 +85,8 @@ def parse_authors(text, affiliations):
         else:
             key_type = 'symbol'
             warning += 'CAUTION! Using symbols (# and stuff) as aff-IDs.\n'
+    else:
+        warning += 'Found no affiliations (empty line needed)\n\n'
 
     author_names = []
     author_affs = []
@@ -179,9 +183,9 @@ def determine_aff_type(text):
     Return corresponding search pattern.
     """
 
-    line_pattern_single = {'alpha':re.compile(r'^([a-z]+)\.*$', re.UNICODE),
-                           'digit':re.compile(r'^(\d+)\.*$', re.UNICODE),
-                           'symbol':re.compile(r'^(.)\.*$', re.UNICODE)}
+    line_pattern_single = {'alpha': re.compile(r'^([a-z]+)\.*$', re.UNICODE),
+                           'digit': re.compile(r'^(\d+)\.*$', re.UNICODE),
+                           'symbol': re.compile(r'^(.)\.*$', re.UNICODE)}
 
     line_pattern_line = {'alpha': re.compile(r'^([a-z]+)[ .]+(.*)', re.UNICODE),
                          'digit': re.compile(r'^(\d+)[ .]*(.*)', re.UNICODE),
@@ -201,15 +205,15 @@ def determine_aff_type(text):
         if aff_type:
             aff_pattern = line_pattern_single[aff_type]
         else:
-            raise ValueError('Cannot identify type of affiliation, '\
-                'dont mix letters and digits.', single_char)
+            raise ValueError('Cannot identify type of affiliation, '
+                'found IDs: %s' % single_char)
     else:
         aff_type = determine_aff_type_character(first_char)
         if aff_type:
             aff_pattern = line_pattern_line[aff_type]
         else:
-            raise ValueError('Cannot identify type of affiliations, '\
-                'need at least one single-character aff-ID.', first_char)
+            raise ValueError('Cannot identify type of affiliations, '
+                'found IDs: %s' % first_char)
 
     return aff_pattern
 
@@ -284,7 +288,7 @@ def create_authors(text):
     warnings = ""
 
     if not text:
-        return  {}
+        return {}
 
     if not isinstance(text, six.text_type):
         text = text.decode('utf-8')
@@ -300,7 +304,6 @@ def create_authors(text):
     for num in empty_blocks:
         text_blocks.pop(num)
 
-
     if len(text_blocks) == 0:
         authors = []
     elif len(text_blocks) == 1:
@@ -311,12 +314,11 @@ def create_authors(text):
         authors, text = parse_authors(text_blocks[0], affiliations)
         warnings += text
     else:
-#        authors = parse_blocks(text_blocks)
-        raise ValueError('Authors grouped by affiliation? - Comming soon.\n'\
+        # authors = parse_blocks(text_blocks)
+        raise ValueError('Authors grouped by affiliation? - Comming soon.\n'
             'Or too many empty lines.')
 
     if warnings:
-        return  {'authors': authors, 'warnings': warnings}
+        return {'authors': authors, 'warnings': warnings}
     else:
-        return  {'authors': authors}
-
+        return {'authors': authors}

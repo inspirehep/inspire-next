@@ -30,6 +30,7 @@ from inspirehep.modules.tools.utils import authorlist
 def test_affiliation_with_utf8_character():
     text = (
         'C. Patrignani1 K. Agashe2 G. Aielli1,2\n'
+        '\n'
         '1 Universit`a di Bologna and INFN, Italy\n'
         '2 University of Maryland, MD 20742-4111, USA'
     )
