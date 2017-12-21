@@ -33,10 +33,6 @@ from inspirehep.modules.migrator.tasks import record_insert_or_replace
 from inspirehep.utils.record_getter import get_db_record
 
 
-class MockObj(object):
-    pass
-
-
 @pytest.fixture
 def book_with_another_document_type(app):
     """Temporarily add another document type to a book record."""
@@ -59,7 +55,6 @@ def test_check_book_existence_handles_multiple_document_types(book_with_another_
 
 
 def test_find_book_id(app):
-    obj = MockObj()
     formdata = {
         'book_title': 'The Large Hadron Collider',
         'parent_book': '',
@@ -71,13 +66,12 @@ def test_find_book_id(app):
         'parent_book': 'http://localhost:5000/api/literature/1373790',
         'type_of_doc': 'chapter',
     }
-    result = find_book_id(obj, formdata)
+    result = find_book_id(formdata)
 
     assert expected == result
 
 
 def test_normalize_to_journal_title_converts_from_series_title(app):
-    obj = MockObj()
     formdata = {
         'journal_title': '',
         'series_title': 'Physical Review',
@@ -89,6 +83,6 @@ def test_normalize_to_journal_title_converts_from_series_title(app):
         'series_title': 'Physical Review',
         'type_of_doc': 'book',
     }
-    result = normalize_journal_title(obj, formdata)
+    result = normalize_journal_title(formdata)
 
     assert expected == result
