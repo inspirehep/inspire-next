@@ -25,7 +25,15 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+from sqlalchemy import (
+     JSON,
+     String,
+     cast,
+     type_coerce,
+ )
+
 from functools import wraps
+import re
 
 from flask import current_app
 from werkzeug import secure_filename
@@ -33,15 +41,10 @@ from timeout_decorator import TimeoutError
 
 from invenio_db import db
 from invenio_workflows import ObjectStatus
+from invenio_records.models import RecordMetadata
 
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_utils.record import get_value
-from inspirehep.modules.workflows.utils import (
-    get_pdf_in_workflow,
-    log_workflows_action,
-)
-from inspirehep.utils.record import get_arxiv_id
-from inspirehep.utils.url import is_pdf_link
 
 from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_pdf,
@@ -49,8 +52,16 @@ from inspirehep.modules.workflows.tasks.refextract import (
 )
 from inspirehep.modules.workflows.utils import (
     download_file_to_workflow,
+    get_pdf_in_workflow,
+    log_workflows_action,
     with_debug_logging,
 )
+from inspirehep.utils.normalizers import normalize_journal_title
+from inspirehep.utils.record import get_arxiv_id
+from inspirehep.utils.url import is_pdf_link
+
+
+RE_ALPHANUMERIC = re.compile('\W+', re.UNICODE)
 
 
 def mark(key, value):
@@ -351,3 +362,44 @@ def error_workflow(message):
         % message
     )
     return _error_workflow
+
+
+# TODO: this approach must be verified, i.e. the behaviour of `normalize_journal_title`.
+@with_debug_logging
+def normalize_journal_titles(obj, eng):
+    """Normalize the journal titles
+
+    Normalize the journal titles stored in the `journal_title` field of each object
+    contained in `publication_info`.
+
+    Note:
+        The DB is queried in order to get the `$ref` of each journal and add it in
+        `journal_record`.
+
+    TODO:
+        Refactor: it must be checked that `normalize_journal_title` is appropriate.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        None
+    """
+    publications = obj.data.get('publication_info')
+
+    if not publications:
+        return None
+
+    for index, publication in enumerate(publications):
+        if 'journal_title' in publication:
+            normalized_title = normalize_journal_title(publication['journal_title'])
+            obj.data['publication_info'][index]['journal_title'] = normalized_title
+
+            ref_query = RecordMetadata.query.filter(
+                RecordMetadata.json['_collections'].op('?')('Journals')).filter(
+                cast(RecordMetadata.json['short_title'], String) == type_coerce(normalized_title, JSON))
+            result = db.session.execute(ref_query).fetchone()
+
+            if result:
+                obj.data['publication_info'][index]['journal_record'] = result.records_metadata_json['self']

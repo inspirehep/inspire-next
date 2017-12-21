@@ -50,6 +50,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_submission,
     is_arxiv_paper,
     mark,
+    normalize_journal_titles,
     prepare_update_payload,
     refextract,
     submission_fulltext_download,
@@ -130,6 +131,7 @@ ENHANCE_RECORD = [
             refextract,
         ]
     ),
+    normalize_journal_titles,
     extract_journal_info,
     classify_paper(
         taxonomy="HEPont.rdf",
