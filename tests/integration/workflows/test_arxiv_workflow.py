@@ -24,32 +24,16 @@
 
 from __future__ import absolute_import, division, print_function
 
-import json
 import mock
-import os
-import pkg_resources
-import pytest
-import re
-import requests_mock
-from tempfile import mkstemp
-
-from flask import current_app
 
 from invenio_search import current_search_client as es
 from invenio_db import db
-from invenio_pidstore.models import PersistentIdentifier
-from invenio_search.api import current_search_client as es
 from invenio_workflows import (
     ObjectStatus,
     WorkflowEngine,
     start,
     workflow_object_class,
 )
-from invenio_workflows.models import WorkflowObjectModel
-
-from inspirehep.modules.refextract.tasks import create_journal_kb_file
-from inspirehep.modules.workflows.tasks.actions import normalize_journal_titles
-from inspirehep.utils.record_getter import get_db_record
 
 from calls import (
     already_harvested_on_legacy_record,
@@ -64,61 +48,6 @@ from mocks import (
     fake_magpie_api_request,
 )
 from utils import get_halted_workflow
-
-
-def _delete_record(pid_type, pid_value):
-    get_db_record(pid_type, pid_value)._delete(force=True)
-
-    pid = PersistentIdentifier.get(pid_type, pid_value)
-    PersistentIdentifier.delete(pid)
-
-    object_uuid = pid.object_uuid
-    PersistentIdentifier.query.filter(
-        object_uuid == PersistentIdentifier.object_uuid).delete()
-
-    db.session.commit()
-
-
-@pytest.fixture(scope='function')
-def workflow(workflow_app):
-    workflow_object = workflow_object_class.create(
-        data={},
-        id_user=1,
-        data_type="hep"
-    )
-    workflow_object.save()
-    db.session.commit()
-    workflow_object.continue_workflow = lambda **args: True
-
-    yield workflow_object
-
-    WorkflowObjectModel.query.filter_by(id=workflow_object.id).delete()
-    db.session.commit()
-
-
-@pytest.fixture(scope='function')
-def insert_journals_in_db(workflow_app):
-    """Temporarily add few journals in the DB"""
-    from inspirehep.modules.migrator.tasks import record_insert_or_replace  # imported here because it is a Celery task
-
-    journal_1 = json.loads(pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', 'jou_record_refereed.json')))
-
-    journal_2 = json.loads(pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', 'jou_record_refereed_and_proceedings.json')))
-
-    with db.session.begin_nested():
-        record_insert_or_replace(journal_1)
-        record_insert_or_replace(journal_2)
-
-    db.session.commit()
-    es.indices.refresh('records-journals')
-
-    yield
-
-    _delete_record('jou', 1936475)
-    _delete_record('jou', 1936476)
-    es.indices.refresh('records-journals')
 
 
 @mock.patch(
@@ -446,112 +375,3 @@ def test_match_in_holdingpen_different_sources_continues(
     assert obj.extra_data['holdingpen_matches'] == [wf_to_match]
     assert obj.extra_data['previously_rejected'] is False
     assert not obj.extra_data.get('stopped-matched-holdingpen-wf')
-        eng = WorkflowEngine.from_uuid(workflow_uuid)
-        obj = eng.processed_objects[0]
-        # It was accepted
-        assert obj.status == ObjectStatus.COMPLETED
-
-
-def test_normalize_journal_titles_known_journals_with_ref(workflow_app, insert_journals_in_db, workflow):
-    temporary_fd, path = mkstemp()
-    config = {'REFEXTRACT_JOURNAL_KB_PATH': path}
-
-    with mock.patch.dict(current_app.config, config):
-        create_journal_kb_file()
-
-        workflow.data = json.loads(pkg_resources.resource_string(
-            __name__, os.path.join('fixtures', 'lit_record_known_journals_with_refs.json')))
-
-        normalize_journal_titles(workflow, None)
-
-        assert workflow.data['publication_info'][0]['journal_title'] == 'Test.Jou.1'
-        assert workflow.data['publication_info'][2]['journal_title'] == 'Test.Jou.2'
-        assert workflow.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
-        assert workflow.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
-
-        os.close(temporary_fd)
-        os.remove(path)
-
-
-def test_normalize_journal_titles_known_journals_no_ref(workflow_app, insert_journals_in_db, workflow):
-    temporary_fd, path = mkstemp()
-    config = {'REFEXTRACT_JOURNAL_KB_PATH': path}
-
-    with mock.patch.dict(current_app.config, config):
-        create_journal_kb_file()
-
-        workflow.data = json.loads(pkg_resources.resource_string(
-            __name__, os.path.join('fixtures', 'lit_record_known_journals_with_no_refs.json')))
-
-        normalize_journal_titles(workflow, None)
-
-        assert workflow.data['publication_info'][0]['journal_title'] == 'Test.Jou.1'
-        assert workflow.data['publication_info'][2]['journal_title'] == 'Test.Jou.2'
-        assert workflow.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
-        assert workflow.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
-
-        os.close(temporary_fd)
-        os.remove(path)
-
-
-def test_normalize_journal_titles_known_journals_wrong_ref(workflow_app, insert_journals_in_db, workflow):
-    temporary_fd, path = mkstemp()
-    config = {'REFEXTRACT_JOURNAL_KB_PATH': path}
-
-    with mock.patch.dict(current_app.config, config):
-        create_journal_kb_file()
-
-        workflow.data = json.loads(pkg_resources.resource_string(
-            __name__, os.path.join('fixtures', 'lit_record_known_journals_with_wrong_refs.json')))
-
-        normalize_journal_titles(workflow, None)
-
-        assert workflow.data['publication_info'][0]['journal_title'] == 'Test.Jou.1'
-        assert workflow.data['publication_info'][2]['journal_title'] == 'Test.Jou.2'
-        assert workflow.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
-        assert workflow.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
-
-        os.close(temporary_fd)
-        os.remove(path)
-
-
-def test_normalize_journal_titles_unknown_journals_with_ref(workflow_app, insert_journals_in_db, workflow):
-    temporary_fd, path = mkstemp()
-    config = {'REFEXTRACT_JOURNAL_KB_PATH': path}
-
-    with mock.patch.dict(current_app.config, config):
-        create_journal_kb_file()
-
-        workflow.data = json.loads(pkg_resources.resource_string(
-            __name__, os.path.join('fixtures', 'lit_record_unknown_journals_with_refs.json')))
-
-        normalize_journal_titles(workflow, None)
-
-        assert workflow.data['publication_info'][0]['journal_title'] == 'Unknown1'
-        assert workflow.data['publication_info'][2]['journal_title'] == 'Unknown2'
-        assert workflow.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/0000000'}
-        assert workflow.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1111111'}
-
-        os.close(temporary_fd)
-        os.remove(path)
-
-
-def test_normalize_journal_titles_unknown_journals_no_ref(workflow_app, insert_journals_in_db, workflow):
-    temporary_fd, path = mkstemp()
-    config = {'REFEXTRACT_JOURNAL_KB_PATH': path}
-
-    with mock.patch.dict(current_app.config, config):
-        create_journal_kb_file()
-
-        workflow.data = json.loads(pkg_resources.resource_string(
-            __name__, os.path.join('fixtures', 'lit_record_unknown_journals_with_no_refs.json')))
-
-        normalize_journal_titles(workflow, None)
-
-        assert workflow.data['publication_info'][0]['journal_title'] == 'Unknown1'
-        assert workflow.data['publication_info'][2]['journal_title'] == 'Unknown2'
-        assert 'journal_record' not in workflow.data['publication_info'][0]
-        assert 'journal_record' not in workflow.data['publication_info'][2]
-
-        os.close(temporary_fd)
-        os.remove(path)

@@ -7,6 +7,11 @@
     "journal_title":{
         "title":"A Test Journal1"
     },
+    "title_variants":[
+        "A Test Journal1 Variant 1",
+        "A Test Journal1 Variant 2",
+        "A Test Journal1 Variant 3"
+    ],
     "self":{
         "$ref":"http://localhost:5000/api/journals/1936475"
     },
