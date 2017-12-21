@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import copy
 import os
 import re
 
@@ -279,6 +280,10 @@ def submitupdate():
     )
     workflow_object.data = data
     workflow_object.extra_data = extra_data
+    workflow_object.extra_data['source_data'] = {
+        'data': copy.deepcopy(data),
+        'extra_data': copy.deepcopy(extra_data),
+    }
     workflow_object.save()
     db.session.commit()
 
@@ -314,6 +319,10 @@ def submitnew():
     )
     workflow_object.data = data
     workflow_object.extra_data = extra_data
+    workflow_object.extra_data['source_data'] = {
+        'data': copy.deepcopy(data),
+        'extra_data': copy.deepcopy(extra_data),
+    }
     workflow_object.save()
     db.session.commit()
 
@@ -372,7 +381,6 @@ def reviewhandler():
     visitor.visit(form)
 
     workflow_object = workflow_object_class.get(objectid)
-    workflow_object.data = formdata_to_model(workflow_object, visitor.data)
     data, _ = formdata_to_model(
         formdata=visitor.data,
         id_workflow=workflow_object.id,
@@ -381,7 +389,6 @@ def reviewhandler():
     workflow_object.data = data
     workflow_object.extra_data["approved"] = True
     workflow_object.extra_data["ticket"] = request.form.get('ticket') == "True"
-    workflow_object.extra_data['formdata'] = visitor.data
     workflow_object.save()
     db.session.commit()
 
