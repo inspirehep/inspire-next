@@ -24,7 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import copy
 import os
 import re
 
@@ -53,7 +52,7 @@ from inspirehep.modules.forms.form import DataExporter
 
 from .forms import AuthorUpdateForm
 from .permissions import holdingpen_author_permission
-from .tasks import formdata_to_model
+from .utils import formdata_to_model
 
 
 blueprint = Blueprint(
@@ -265,16 +264,21 @@ def submitupdate():
     form = AuthorUpdateForm(formdata=request.form, is_update=True)
     visitor = DataExporter()
     visitor.visit(form)
+    id_user = current_user.get_id()
 
     workflow_object = workflow_object_class.create(
         data={},
-        id_user=current_user.get_id(),
+        id_user=id_user,
         data_type="authors"
     )
-
-    workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
-    workflow_object.extra_data['is-update'] = True
-    workflow_object.data = formdata_to_model(workflow_object, visitor.data)
+    data, extra_data = formdata_to_model(
+        formdata=visitor.data,
+        id_workflow=workflow_object.id,
+        id_user=id_user,
+        is_update=True,
+    )
+    workflow_object.data = data
+    workflow_object.extra_data = extra_data
     workflow_object.save()
     db.session.commit()
 
@@ -295,15 +299,21 @@ def submitnew():
     form = AuthorUpdateForm(formdata=request.form)
     visitor = DataExporter()
     visitor.visit(form)
+    id_user = current_user.get_id()
 
     workflow_object = workflow_object_class.create(
         data={},
-        id_user=current_user.get_id(),
+        id_user=id_user,
         data_type="authors"
     )
-    workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
-    workflow_object.extra_data['is-update'] = False
-    workflow_object.data = formdata_to_model(workflow_object, visitor.data)
+    data, extra_data = formdata_to_model(
+        formdata=visitor.data,
+        id_workflow=workflow_object.id,
+        id_user=id_user,
+        is_update=False,
+    )
+    workflow_object.data = data
+    workflow_object.extra_data = extra_data
     workflow_object.save()
     db.session.commit()
 
@@ -362,10 +372,16 @@ def reviewhandler():
     visitor.visit(form)
 
     workflow_object = workflow_object_class.get(objectid)
+    workflow_object.data = formdata_to_model(workflow_object, visitor.data)
+    data, _ = formdata_to_model(
+        formdata=visitor.data,
+        id_workflow=workflow_object.id,
+        id_user=current_user.get_id(),
+    )
+    workflow_object.data = data
     workflow_object.extra_data["approved"] = True
     workflow_object.extra_data["ticket"] = request.form.get('ticket') == "True"
     workflow_object.extra_data['formdata'] = visitor.data
-    workflow_object.data = formdata_to_model(workflow_object, visitor.data)
     workflow_object.save()
     db.session.commit()
 

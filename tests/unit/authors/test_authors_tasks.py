@@ -41,11 +41,21 @@ from mocks import MockObj
 @pytest.fixture()
 def data():
     return {
-        "control_number": 123,
-        "name": {
-            "preferred_name": "John Doe"
+        'control_number': 123,
+        'name': {
+            'preferred_name': 'John Doe'
         },
-        "bai": "John.Doe.1"
+        'bai': 'John.Doe.1',
+        '_private_notes': [
+            {
+                'value': 'not user comment',
+                'source': 'arxiv',
+            },
+            {
+                'value': 'good user comment',
+                'source': 'submitter',
+            },
+        ],
     }
 
 
@@ -57,18 +67,25 @@ def unicode_data():
         'name': {
             'preferred_name': u'Diego Martínez',
         },
+        '_private_notes': [
+            {
+                'value': 'not user comment',
+                'source': 'arxiv',
+            },
+            {
+                'value': u'good user comment from user Diego Martínez',
+                'source': 'submitter',
+            },
+        ],
     }
 
 
 @pytest.fixture()
 def extra_data():
     return {
-        "formdata": {
-            "extra_comments": "Foo bar"
-        },
-        "reason": "Test reason",
-        "url": "http://example.com",
-        "recid": 123
+        'reason': 'Test reason',
+        'url': 'http://example.com',
+        'recid': 123,
     }
 
 
@@ -84,7 +101,7 @@ def test_new_ticket_context(data, extra_data, user):
     assert isinstance(ctx['object'], MockObj)
     assert ctx['email'] == 'foo@bar.com'
     assert ctx['subject'] == 'Your suggestion to INSPIRE: author John Doe'
-    assert ctx['user_comment'] == 'Foo bar'
+    assert ctx['user_comment'] == 'good user comment'
 
 
 def test_new_ticket_context_handles_unicode(unicode_data, extra_data, user):
@@ -94,7 +111,7 @@ def test_new_ticket_context_handles_unicode(unicode_data, extra_data, user):
     assert isinstance(ctx['object'], MockObj)
     assert ctx['email'] == 'foo@bar.com'
     assert ctx['subject'] == u'Your suggestion to INSPIRE: author Diego Martínez'
-    assert ctx['user_comment'] == 'Foo bar'
+    assert ctx['user_comment'] == u'good user comment from user Diego Martínez'
 
 
 def test_update_ticket_context(data, extra_data, user):
@@ -107,7 +124,7 @@ def test_update_ticket_context(data, extra_data, user):
             'url': 'http://inspirehep.net/record/123',
             'bibedit_url': 'http://inspirehep.net/record/123/edit',
             'email': 'foo@bar.com',
-            'user_comment': 'Foo bar',
+            'user_comment': 'good user comment',
             'subject': 'Your update to author John Doe on INSPIRE',
         }
         ctx = update_ticket_context(user, obj)
@@ -124,7 +141,7 @@ def test_update_ticket_context_handles_unicode(unicode_data, extra_data, user):
             'url': 'http://inspirehep.net/record/123',
             'bibedit_url': 'http://inspirehep.net/record/123/edit',
             'email': 'foo@bar.com',
-            'user_comment': 'Foo bar',
+            'user_comment': u'good user comment from user Diego Martínez',
             'subject': u'Your update to author Diego Martínez on INSPIRE',
         }
         ctx = update_ticket_context(user, obj)
@@ -146,7 +163,7 @@ def test_curation_ticket_context(data, extra_data, user):
     ctx = curation_ticket_context(user, obj)
     assert isinstance(ctx['object'], MockObj)
     assert ctx['recid'] == 123
-    assert ctx['user_comment'] == 'Foo bar'
+    assert ctx['user_comment'] == 'good user comment'
     assert ctx['subject'] == 'Curation needed for author John Doe [John.Doe.1]'
     assert ctx['email'] == 'foo@bar.com'
     assert ctx['record_url'] == 'http://example.com'
@@ -156,7 +173,7 @@ def test_curation_ticket_context_handles_unicode(unicode_data, extra_data, user)
     obj = MockObj(unicode_data, extra_data)
     ctx = curation_ticket_context(user, obj)
     assert isinstance(ctx['object'], MockObj)
-    assert ctx['user_comment'] == 'Foo bar'
+    assert ctx['user_comment'] == u'good user comment from user Diego Martínez'
     assert ctx['subject'] == u'Curation needed for author Diego Martínez [Diego.Martinez.Santos.1]'
     assert ctx['email'] == 'foo@bar.com'
     assert ctx['record_url'] == 'http://example.com'
