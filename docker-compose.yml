@@ -65,7 +65,7 @@ services:
   worker:
     extends:
       service: service_base
-    command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge -Q cerely,migrator
+    command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge -Q celery,migrator
     volumes_from:
       - static
     depends_on:
