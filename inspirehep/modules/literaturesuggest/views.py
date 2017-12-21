@@ -100,6 +100,10 @@ def submit():
     )
     workflow_object.data = data
     workflow_object.extra_data = extra_data
+    workflow_object.extra_data['source_data'] = {
+        'data': copy.deepcopy(data),
+        'extra_data': copy.deepcopy(extra_data),
+    }
     workflow_object.save()
     db.session.commit()
 
