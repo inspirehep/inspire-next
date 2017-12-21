@@ -46,7 +46,7 @@ from invenio_workflows import workflow_object_class, start
 
 from .forms import LiteratureForm
 from .normalizers import normalize_formdata
-from .tasks import formdata_to_model
+from .utils import formdata_to_model
 
 
 blueprint = Blueprint('inspirehep_literature_suggest',
@@ -78,17 +78,28 @@ def create():
 def submit():
     """Get form data and start workflow."""
     form = LiteratureForm(formdata=request.form)
+    id_user = current_user.get_id()
+
     visitor = DataExporter()
     visitor.visit(form)
+    formdata = copy.deepcopy(visitor.data)
+    formdata = normalize_formdata(
+        id_user=id_user,
+        formdata=formdata,
+    )
 
     workflow_object = workflow_object_class.create(
         data={},
         id_user=current_user.get_id(),
         data_type="hep"
     )
-    workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
-    visitor.data = normalize_formdata(workflow_object, visitor.data)
-    workflow_object.data = formdata_to_model(workflow_object, visitor.data)
+    data, extra_data = formdata_to_model(
+        id_workflow=workflow_object.id,
+        id_user=id_user,
+        formdata=formdata,
+    )
+    workflow_object.data = data
+    workflow_object.extra_data = extra_data
     workflow_object.save()
     db.session.commit()
 
