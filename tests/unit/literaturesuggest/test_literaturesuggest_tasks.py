@@ -22,13 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-from mock import patch
-
-from inspire_schemas.api import LiteratureBuilder, load_schema, validate
 from inspirehep.modules.literaturesuggest.tasks import (
     curation_ticket_context,
     curation_ticket_needed,
-    formdata_to_model,
     new_ticket_context,
     reply_ticket_context,
 )
@@ -48,17 +44,18 @@ def test_new_ticket_context():
                 'value': 'bar',
             },
         ],
+        '_private_notes': [
+            {
+                'value': 'not user comment',
+                'source': 'arxiv',
+            },
+            {
+                'value': 'good user comment',
+                'source': 'submitter',
+            },
+        ],
     }
-    extra_data = {
-        'formdata': {
-            'extra_comments': [
-                'baz',
-            ],
-            'references': [
-                'qux',
-            ],
-        },
-    }
+    extra_data = {}
 
     obj = MockObj(data, extra_data)
     user = MockUser('user@example.com')
@@ -69,12 +66,7 @@ def test_new_ticket_context():
         'identifier': [
             'bar',
         ],
-        'user_comment': [
-            'baz',
-        ],
-        'references': [
-            'qux',
-        ],
+        'user_comment': 'good user comment',
         'object': obj,
         'subject': 'Your suggestion to INSPIRE: foo',
     }
@@ -109,7 +101,6 @@ def test_new_ticket_context_handles_unicode():
         ),
         'identifier': '',
         'user_comment': '',
-        'references': None,
         'object': obj,
         'subject': (
             u'Your suggestion to INSPIRE: Chocs caractéristiques et ondes '
@@ -170,19 +161,21 @@ def test_curation_ticket_context():
                 'value': 'bar',
             },
         ],
+        '_private_notes': [
+            {
+                'value': 'not user comment',
+                'source': 'arxiv',
+            },
+            {
+                'value': 'good user comment',
+                'source': 'submitter',
+            },
+        ],
     }
     extra_data = {
         'recid': 'baz',
         'url': 'qux',
-        'formdata': {
-            'url': 'quux',
-            'references': [
-                'plugh',
-            ],
-            'extra_comments': [
-                'xyzzy',
-            ]
-        }
+        'submission_pdf': 'http://path.to/my.pdf',
     }
 
     obj = MockObj(data, extra_data)
@@ -191,14 +184,9 @@ def test_curation_ticket_context():
     expected = {
         'recid': 'baz',
         'record_url': 'qux',
-        'link_to_pdf': 'quux',
+        'link_to_pdf': 'http://path.to/my.pdf',
         'email': 'user@example.com',
-        'references': [
-            'plugh',
-        ],
-        'user_comment': [
-            'xyzzy',
-        ],
+        'user_comment': 'good user comment',
         'subject': 'math.GT/0309136 arXiv:0706.0001v1 doi:bar foo (#baz)',
     }
     result = curation_ticket_context(user, obj)
@@ -211,191 +199,3 @@ def test_curation_ticket_needed():
     eng = MockEng()
 
     assert curation_ticket_needed(obj, eng)
-
-
-def test_formdata_to_model_ignores_arxiv_pdf():
-    data = {}
-    extra_data = {}
-    obj = MockObj(data, extra_data)
-    formdata = {
-        'type_of_doc': 'article',
-        'title': 'Test title',
-        'url': 'https://arxiv.org/pdf/1511.04200.pdf'
-    }
-
-    formdata_to_model(obj, formdata)
-
-    assert 'submission_pdf' not in obj.extra_data
-
-
-def test_formdata_to_model_ignores_arxiv_additional_url():
-    data = {}
-    extra_data = {}
-    obj = MockObj(data, extra_data)
-    formdata = {
-        'type_of_doc': 'article',
-        'title': 'Test title',
-        'additional_url': 'https://arxiv.org/abs/1511.04200'
-    }
-
-    record = formdata_to_model(obj, formdata)
-
-    assert 'urls' not in record
-
-
-def test_formdata_to_model_only_pdf():
-    data = {}
-    extra_data = {}
-    obj = MockObj(data, extra_data)
-    formdata = {
-        'type_of_doc': 'article',
-        'title': 'Test title',
-        'url': 'https://ora.ox.ac.uk/content01.pdf'
-    }
-
-    formdata_to_model(obj, formdata)
-
-    expected = {
-        'submission_pdf': 'https://ora.ox.ac.uk/content01.pdf'
-    }
-
-    assert expected == obj.extra_data
-
-
-def test_formdata_to_model_only_additional_url():
-    data = {}
-    extra_data = {}
-    obj = MockObj(data, extra_data)
-    formdata = {
-        'type_of_doc': 'article',
-        'title': 'Test title',
-        'additional_url': 'https://ora.ox.ac.uk/splash_page.html'
-    }
-
-    record = formdata_to_model(obj, formdata)
-
-    expected_urls = [{
-        'value': 'https://ora.ox.ac.uk/splash_page.html'
-    }]
-
-    assert expected_urls == record['urls']
-    assert 'submission_pdf' not in obj.extra_data
-
-
-def test_formdata_to_model_pdf_and_additional_url():
-    data = {}
-    extra_data = {}
-    obj = MockObj(data, extra_data)
-    formdata = {
-        'type_of_doc': 'article',
-        'title': 'Test title',
-        'url': 'https://ora.ox.ac.uk/content01.pdf',
-        'additional_url': 'https://ora.ox.ac.uk/splash_page.html'
-    }
-
-    record = formdata_to_model(obj, formdata)
-
-    expected_extra_data = {
-        'submission_pdf': 'https://ora.ox.ac.uk/content01.pdf'
-    }
-
-    expected_urls = [{
-        'value': 'https://ora.ox.ac.uk/splash_page.html'
-    }]
-
-    assert expected_extra_data == obj.extra_data
-    assert expected_urls == record['urls']
-
-
-@patch.object(LiteratureBuilder, 'validate_record')
-def test_formdata_to_model_only_book(mock_validate_record):
-    schema = load_schema('hep')
-    subschema = schema['properties']['book_series']
-
-    data = {}
-    extra_data = {}
-    obj = MockObj(data, extra_data)
-    formdata = {
-        'series_title': 'Astrophysics No2',
-        'series_volume': 'Universe',
-        'type_of_doc': 'book',
-    }
-
-    expected = [
-        {
-            'title': 'Astrophysics No2',
-            'volume': 'Universe',
-        },
-    ]
-    result = formdata_to_model(obj, formdata)
-
-    assert validate(result['book_series'], subschema) is None
-    assert expected == result['book_series']
-
-
-@patch.object(LiteratureBuilder, 'validate_record')
-def test_formdata_to_model_only_thesis(mock_validate_record):
-    schema = load_schema('hep')
-    subschema = schema['properties']['thesis_info']
-
-    data = {}
-    extra_data = {}
-    obj = MockObj(data, extra_data)
-    formdata = {
-        'defense_date': '2010-03-03',
-        'degree_type': 'phd',
-        'institution': 'Harvard',
-        'thesis_date': '2011-05-03',
-        'type_of_doc': 'thesis',
-    }
-
-    expected = {
-        'date': '2011-05-03',
-        'defense_date': '2010-03-03',
-        'degree_type': 'phd',
-        'institutions': [
-            {'name': 'Harvard'},
-        ],
-    }
-    result = formdata_to_model(obj, formdata)
-
-    assert validate(result['thesis_info'], subschema) is None
-    assert expected == result['thesis_info']
-
-
-@patch.object(LiteratureBuilder, 'validate_record')
-def test_formdata_to_model_only_chapter(mock_validate_record):
-    schema = load_schema('hep')
-    book_series_subschema = schema['properties']['book_series']
-    publication_info_subschema = schema['properties']['publication_info']
-
-    data = {}
-    extra_data = {}
-    obj = MockObj(data, extra_data)
-    formdata = {
-        'end_page': '1200',
-        'parent_book': 'http://localhost:5000/api/literature/1373790',
-        'series_title': 'Astrophysics',
-        'start_page': '150',
-        'type_of_doc': 'chapter',
-    }
-
-    expected_book_series = [
-        {'title': 'Astrophysics'},
-    ]
-    expected_publication_info = [
-        {
-            'page_end': '1200',
-            'page_start': '150',
-            'parent_record': {
-                '$ref': 'http://localhost:5000/api/literature/1373790',
-            },
-        },
-    ]
-    result = formdata_to_model(obj, formdata)
-
-    assert validate(result['book_series'], book_series_subschema) is None
-    assert expected_book_series == result['book_series']
-
-    assert validate(result['publication_info'], publication_info_subschema) is None
-    assert expected_publication_info == result['publication_info']
