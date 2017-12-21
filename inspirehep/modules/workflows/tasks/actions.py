@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import copy
 import os
 from sqlalchemy import (
     JSON,
@@ -45,6 +46,7 @@ from invenio_records.models import RecordMetadata
 
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_utils.record import get_value
+from inspire_utils.logging import getStackTraceLogger
 from inspirehep.modules.records.json_ref_loader import replace_refs
 
 from inspirehep.modules.workflows.tasks.refextract import (
@@ -62,6 +64,7 @@ from inspirehep.utils.record import get_arxiv_id
 from inspirehep.utils.url import is_pdf_link
 
 
+LOGGER = getStackTraceLogger(__name__)
 RE_ALPHANUMERIC = re.compile('\W+', re.UNICODE)
 
 
@@ -416,3 +419,27 @@ def normalize_journal_titles(obj, eng):
 
             if result:
                 obj.data['publication_info'][index]['journal_record'] = result.records_metadata_json['self']
+
+
+@with_debug_logging
+def cleanup_workflow(obj, eng):
+    source_data = obj.extra_data.get('source_data', {})
+    if not source_data:
+        LOGGER.info('Skipping cleanup as no "source_data" was found.')
+        return
+
+    LOGGER.info('Cleaning up workflow object.')
+    orig_extra_data = source_data['extra_data']
+    orig_data = source_data['data']
+    orig_schema = obj.data.get('$schema')
+    orig_task_history = obj.extra_data.get('_task_history')
+    obj.data = orig_data
+    obj.extra_data = orig_extra_data
+    obj.extra_data['source_data'] = {
+        'data': copy.deepcopy(orig_data),
+        'extra_data': copy.deepcopy(orig_extra_data),
+    }
+    if orig_schema is not None:
+        obj.data['$schema'] = orig_schema
+    if orig_task_history is not None:
+        obj.extra_data['_task_history'] = orig_task_history

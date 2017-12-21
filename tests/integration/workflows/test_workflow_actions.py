@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import copy
 import json
 import os
 import pkg_resources
@@ -35,6 +36,7 @@ from invenio_search.api import current_search_client as es
 from invenio_workflows import workflow_object_class
 
 from inspirehep.modules.workflows.tasks.actions import (
+    cleanup_workflow,
     get_journal_coverage,
     normalize_journal_titles,
 )
@@ -435,3 +437,34 @@ def test_get_journal_coverage_full(workflow_app, insert_journals_in_db):
     get_journal_coverage(obj, None)
 
     assert obj.extra_data['journal_coverage'] == 'full'    # not all journals have 'full' coverage
+
+
+def test_cleanup(workflow_app):
+    orig_data = {
+        'dummy': 'data'
+    }
+    orig_extra_data = {
+        'extra': 'data'
+    }
+
+    obj = workflow_object_class.create(
+        data=copy.deepcopy(orig_data),
+        id_user=1,
+        data_type='hep'
+    )
+    obj.extra_data = copy.deepcopy(orig_extra_data)
+    obj.extra_data['source_data'] = {
+        'data': orig_data,
+        'extra_data': orig_extra_data,
+    }
+
+    obj.data['new data key'] = True
+    obj.extra_data['new extra data key'] = True
+
+    assert 'new data key' in obj.data
+    assert 'new extra data key' in obj.extra_data
+
+    cleanup_workflow(obj, None)
+
+    assert obj.data == orig_data
+    assert obj.extra_data == orig_extra_data
