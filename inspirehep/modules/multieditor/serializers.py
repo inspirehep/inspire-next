@@ -25,15 +25,21 @@ from __future__ import absolute_import, print_function, division
 
 from .actions import Addition, Deletion, Update
 
-match_type_map = {
+UI_TO_MATCHTYPE = {
     'contains': 'contains',
     'is equal to': 'exact',
     'does not exist': 'missing',
     'matches regular expression': 'regex'
 }
 
+ACTIONS_MAP = {
+    'Addition': Addition,
+    'Deletion': Deletion,
+    'Update': Update
+}
 
-def sanitize_user_action(schema, action, conditions=None):
+
+def get_action_kwargs(schema, action, conditions=None):
     """
     Sanitizes the user action and serializes it in the class format
     :param action:  use action as received from the frontend
@@ -44,12 +50,12 @@ def sanitize_user_action(schema, action, conditions=None):
     if not conditions:
         conditions = []
     keypath = action.get('mainKey', '').split('.')
-    if not check_provided_key_path(keypath, schema):
+    if not is_valid_key_path(keypath, schema) or not UI_TO_MATCHTYPE.get(action.get('matchType', '')):
         return None
     if keypath:
         action_kwargs['keypath'] = keypath
         action_kwargs['value'] = action.get('value')
-        action_kwargs['match_type'] = match_type_map[action.get('matchType')]
+        action_kwargs['match_type'] = UI_TO_MATCHTYPE[action.get('matchType')]
         action_kwargs['conditions'] = conditions
         if action.get('updateValue'):
             action_kwargs['update_value'] = action.get('updateValue')
@@ -67,20 +73,13 @@ def sanitize_user_conditions(user_conditions, schema):
         if not condition.get('key'):
             continue
         keypath = condition['key'].split('.')
-        if not check_provided_key_path(keypath, schema) and not match_type_map.get(condition.get('matchType', '')):
+        if not is_valid_key_path(keypath, schema) or not UI_TO_MATCHTYPE.get(condition.get('matchType', '')):
             return 'error'
         user_condition = {'value': condition.get('value', ''),
                           'keypath': keypath,
-                          'match_type': match_type_map[condition['matchType']]}
+                          'match_type': UI_TO_MATCHTYPE[condition['matchType']]}
         conditions.append(user_condition)
     return conditions
-
-
-ACTIONS_MAP = {
-    'Addition': Addition,
-    'Deletion': Deletion,
-    'Update': Update
-}
 
 
 def get_actions(user_actions, schema):
@@ -89,8 +88,9 @@ def get_actions(user_actions, schema):
     :param user_actions: actions and conditions as they were received from the frontend
     :return: returns the serialized actions
     """
-    if user_actions.get('conditions', []):
-        conditions = sanitize_user_conditions(user_actions.get('conditions', []), schema)
+    conditions = user_actions.get('conditions', [])
+    if conditions:
+        conditions = sanitize_user_conditions(conditions, schema)
         if conditions == 'error':
             return None
     else:
@@ -98,14 +98,14 @@ def get_actions(user_actions, schema):
     actions = []
 
     for action in user_actions.get('actions', []):
-        sanitized_action = sanitize_user_action(schema, action, conditions)
+        sanitized_action = get_action_kwargs(schema, action, conditions)
         if not sanitized_action:
             return None
         actions.append(ACTIONS_MAP[action.get('actionName', '')](**sanitized_action))
     return actions
 
 
-def check_provided_key_path(keypath, schema):
+def is_valid_key_path(keypath, schema):
     for key in keypath:
         if schema['type'] == 'object':
             if schema['properties'].get(key):

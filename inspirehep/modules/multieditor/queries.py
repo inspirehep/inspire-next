@@ -30,7 +30,7 @@ from __future__ import absolute_import, print_function, division
 from ..search import api
 from invenio_records.api import Record
 
-CLS_MAP = {
+INDEX_TO_QUERIES = {
     'hep': api.LiteratureSearch,
     'authors': api.AuthorsSearch,
     'data': api.DataSearch,
@@ -49,7 +49,8 @@ def get_total_records(query_string, index):
     :param index: index of the records to be searched
     :return: returns the total records that match our query
     """
-    query_result = CLS_MAP[index]().query_from_iq(query_string).params(
+    query_result = INDEX_TO_QUERIES[index]()\
+        .query_from_iq(query_string).params(
         size=1,
         fields=[]
     ).execute()
@@ -63,15 +64,13 @@ def get_record_ids_from_query(query_string, index):
     :param index: index of the records to be searched
     :return: return the uuids of the records that matched our query
     """
-    uuids = []
-
-    query_result = CLS_MAP[index]().query_from_iq(query_string).params(
+    query_result = INDEX_TO_QUERIES[index]()\
+        .query_from_iq(query_string).params(
         size=2000,
         fields=[]
     ).scan()
 
-    for result in query_result:
-        uuids.append(result.meta.id)
+    uuids = [result.meta.id for result in query_result]
     return uuids
 
 

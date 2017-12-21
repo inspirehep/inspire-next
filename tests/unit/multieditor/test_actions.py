@@ -26,7 +26,7 @@ import json
 import os
 import pytest
 
-from inspirehep.modules.multieditor.actions import Addition, Deletion, Update, create_schema_record
+from inspirehep.modules.multieditor.actions import Addition, Deletion, Update, create_object_from_path
 
 
 @pytest.fixture
@@ -546,7 +546,7 @@ def test_record_creation_root_array(get_schema):
     key = ['corporate_author']
     value = 'success'
     target_object = {'corporate_author': ['success']}
-    assert create_schema_record(get_schema, key, value) == target_object
+    assert create_object_from_path(get_schema, key, value) == target_object
 
 
 def test_record_creation_root_object(get_schema):
@@ -554,7 +554,7 @@ def test_record_creation_root_object(get_schema):
     key = ['self', '$ref']
     value = 'success'
     target_object = {'self': {'$ref': 'success'}}
-    assert create_schema_record(get_schema, key, value) == target_object
+    assert create_object_from_path(get_schema, key, value) == target_object
 
 
 def test_record_creation():
@@ -569,7 +569,7 @@ def test_record_creation():
     key = ['source']
     value = 'success'
     target_object = {'source': 'success'}
-    assert create_schema_record(schema_2, key, value) == target_object
+    assert create_object_from_path(schema_2, key, value) == target_object
 
 
 def test_record_creation_complex_array(get_schema):
@@ -577,7 +577,7 @@ def test_record_creation_complex_array(get_schema):
     key = ['arxiv_eprints', 'categories']
     value = 'astro-ph'
     target_object = {'arxiv_eprints': [{'categories': ['astro-ph']}]}
-    assert create_schema_record(get_schema, key, value) == target_object
+    assert create_object_from_path(get_schema, key, value) == target_object
 
 
 def test_record_creation_complex(get_schema):
@@ -585,7 +585,7 @@ def test_record_creation_complex(get_schema):
     key = ['authors', 'affiliations', 'value']
     value = 'success'
     target_object = {'authors': [{'affiliations': [{'value': 'success'}]}]}
-    assert create_schema_record(get_schema, key, value) == target_object
+    assert create_object_from_path(get_schema, key, value) == target_object
 
 
 def test_record_creation_array(get_schema):
@@ -593,7 +593,7 @@ def test_record_creation_array(get_schema):
     key = ['authors']
     value = {'full_name': 'success'}
     target_object = {'authors': [{'full_name': 'success'}]}
-    assert create_schema_record(get_schema, key, value) == target_object
+    assert create_object_from_path(get_schema, key, value) == target_object
 
 
 def test_update_regex(get_schema):

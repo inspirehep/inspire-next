@@ -27,11 +27,13 @@ from celery import shared_task
 from invenio_records.api import Record
 from invenio_db import db
 
+from inspirehep.modules.workflows.utils import with_debug_logging
 from jsonschema import ValidationError
 from .serializers import get_actions
 
 
 @shared_task(ignore_result=True)
+@with_debug_logging
 def process_records(records_ids, user_actions, schema):
     """
     :param records_ids: ids of the records to be processed

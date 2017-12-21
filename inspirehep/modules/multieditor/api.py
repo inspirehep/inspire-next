@@ -54,19 +54,20 @@ def update():
     user_actions = form.get('userActions', {})
     all_selected = form.get('allSelected', False)
     multieditor_session = session.get('multieditor_session', {})
+    user_selected_ids = form['ids']
     if multieditor_session:
         ids = multieditor_session['uuids']
         if all_selected:
-            ids = set(ids) - set(form['ids'])  # in that case frontend ids are the disselected ones
+            ids_to_update = set(ids) - set(user_selected_ids)
         else:
-            ids = set(ids) & set(form['ids'])
+            ids_to_update = set(ids) & set(user_selected_ids)
     else:
         return jsonify({'message': 'Please use the search before you apply actions'}), 400
 
     if not get_actions(user_actions, multieditor_session['schema']):
         return jsonify({'message': 'Invalid Actions'}), 400
 
-    for i, chunk in enumerate(chunker(ids, 200)):
+    for i, chunk in enumerate(chunker(ids_to_update, 200)):
         tasks.process_records.delay(records_ids=chunk, user_actions=user_actions, schema=multieditor_session['schema'])
     return jsonify({'message': 'Records are being updated'})
 
@@ -122,16 +123,15 @@ def search():
     query_string = request.args.get('queryString', '')
     page_number = int(request.args.get('pageNum', 1))
     page_size = int(request.args.get('pageSize', 10))
-    schema_name = request.args.get('index', '')
-    schema = load_schema(schema_name, resolved=True)
-    total_records = queries.get_total_records(query_string, schema_name)
+    index_name = request.args.get('index', '')
+    schema = load_schema(index_name, resolved=True)
+    total_records = queries.get_total_records(query_string, index_name)
     if total_records > current_app.config['MULTI_MAX_RECORDS']:
         return jsonify({'message': 'Please narrow the results using a query to be less than 10000'}), 400
-    uuids = queries.get_record_ids_from_query(query_string, schema_name)
+    uuids = queries.get_record_ids_from_query(query_string, index_name)
     session['multieditor_session'] = {
         'uuids': uuids,
         'schema': schema,
-        'schema_name': schema_name
     }
     records_uuids, records = queries.get_paginated_records(page_number=page_number,
                                                            page_size=page_size,
