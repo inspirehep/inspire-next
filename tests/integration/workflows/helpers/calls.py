@@ -157,13 +157,13 @@ def generate_record():
     return json_data
 
 
-def already_harvested_on_legacy_record():
+def core_record():
     """Provide record fixture."""
     record_oai_arxiv_plots = pkg_resources.resource_string(
         __name__,
         os.path.join(
             '../fixtures',
-            'oai_arxiv_record_already_on_legacy.xml'
+            'oai_arxiv_core_record.xml'
         )
     )
     # Convert to MARCXML, then dict, then HEP JSON
@@ -173,9 +173,12 @@ def already_harvested_on_legacy_record():
     )
     json_data = marcxml2record(record_oai_arxiv_plots_marcxml)
 
-    categories = []
+    categories = {'core': [], 'non-core': []}
     for eprint in json_data.get('arxiv_eprints', []):
-        categories.extend(eprint.get('categories', []))
+        categories['core'].extend(eprint.get('categories', []))
+
+    if 'preprint_date' in json_data:
+        json_data['preprint_date'] = datetime.date.today().isoformat()
 
     assert categories
 

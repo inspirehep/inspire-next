@@ -1216,19 +1216,23 @@ LEGACY_BASE_URL = "http://inspirehep.net"
 ARXIV_PDF_URL = "http://export.arxiv.org/pdf/{arxiv_id}"
 ARXIV_TARBALL_URL = "http://export.arxiv.org/e-print/{arxiv_id}"
 
-ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY = [
-    'astro-ph.CO',
-    'astro-ph.HE',
-    'gr-qc',
-    'hep-ex',
-    'hep-lat',
-    'hep-ph',
-    'hep-th',
-    'nucl-ex',
-    'nucl-th',
-    'physics.acc-ph',
-    'physics.ins-det',
-]
+ARXIV_CATEGORIES = {
+    'core': [
+        'hep-ex',
+        'hep-lat',
+        'hep-ph',
+        'hep-th',
+    ],
+    'non-core': [
+        'astro-ph.CO',
+        'astro-ph.HE',
+        'gr-qc',
+        'nucl-ex',
+        'nucl-th',
+        'physics.acc-ph',
+        'physics.ins-det',
+    ]
+}
 RECORDS_DEFAULT_FILE_LOCATION_NAME = "records"
 """Name of default records Location reference."""
 

@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import datetime
+from enum import Enum
 from functools import wraps
 
 from flask import current_app
@@ -35,10 +36,16 @@ from invenio_workflows import workflow_object_class, WorkflowEngine
 from inspire_matcher.api import match
 from inspire_utils.dedupers import dedupe_list
 from inspirehep.utils.datefilter import date_older_than
-from inspirehep.utils.record import get_arxiv_categories, get_arxiv_id, get_value
+from inspirehep.utils.record import get_arxiv_categories, get_value
 from inspirehep.modules.workflows.tasks.actions import mark
 
 from ..utils import with_debug_logging
+
+
+class Coreness(Enum):
+    core = True
+    non_core = False
+    non_relevant = None
 
 
 @with_debug_logging
@@ -107,30 +114,44 @@ def article_exists(obj, eng):
 
 
 @with_debug_logging
-def is_being_harvested_on_legacy(record):
-    """Return True if the record is being harvested on Legacy.
+def belongs_to_relevant_category(obj, eng):
+    """Return True if the record is Core or Non-Core.
 
-    If the record belongs to one of the CORE arXiv categories then it
-    is already being harvested on Legacy.
+    Arguments:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        bool: ``True`` if the ingested article belongs to a relevant
+        category, else ``False``.
+
     """
-    arxiv_categories = get_arxiv_categories(record)
-    legacy_categories = current_app.config.get(
-        'ARXIV_CATEGORIES_ALREADY_HARVESTED_ON_LEGACY', [])
+    return get_coreness(obj.data) is not Coreness.non_relevant
 
-    return len(set(arxiv_categories) & set(legacy_categories)) > 0
+
+def get_coreness(record):
+    """Return the coreness of the record harvested.
+
+    Args:
+        record(dict): the record harvested.
+
+    Return:
+        a Coreness value in according to the record's coreness level.
+    """
+    arxiv_categories = set(get_arxiv_categories(record))
+    relevant_categories = current_app.config.get('ARXIV_CATEGORIES', [])
+
+    if arxiv_categories & set(relevant_categories['core']):
+        return Coreness.core
+    elif arxiv_categories & set(relevant_categories['non-core']):
+        return Coreness.non_core
+    else:
+        return Coreness.non_relevant
 
 
 @with_debug_logging
-def already_harvested(obj, eng):
-    """Check if record is already harvested."""
-    if is_being_harvested_on_legacy(obj.data):
-        obj.log.info((
-            'Record with arXiv id {arxiv_id} is'
-            ' already being harvested on Legacy.'
-        ).format(arxiv_id=get_arxiv_id(obj.data)))
-        return True
-
-    return False
+def set_coreness_in_extra_data(obj, eng):
+    obj.extra_data['core'] = get_coreness(obj.data).value
 
 
 def previously_rejected(days_ago=None):
