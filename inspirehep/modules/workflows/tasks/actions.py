@@ -26,11 +26,11 @@ from __future__ import absolute_import, division, print_function
 
 import os
 from sqlalchemy import (
-     JSON,
-     String,
-     cast,
-     type_coerce,
- )
+    JSON,
+    String,
+    cast,
+    type_coerce,
+)
 
 from functools import wraps
 import re
@@ -45,6 +45,7 @@ from invenio_records.models import RecordMetadata
 
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_utils.record import get_value
+from inspirehep.modules.records.json_ref_loader import replace_refs
 
 from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_pdf,
@@ -232,6 +233,20 @@ def is_submission(obj, eng):
 
 
 @with_debug_logging
+def get_journal_coverage(obj, eng):
+    """Return the journal coverage that this article belongs to."""
+    journals = replace_refs(get_value(obj.data, 'publication_info.journal_record'), 'db')
+
+    if not journals:
+        return
+
+    if any(journal['_harvesting_info'].get('coverage') == 'full' for journal in journals):
+        obj.extra_data['journal_coverage'] = 'full'
+    else:
+        obj.extra_data['journal_coverage'] = 'partial'
+
+
+@with_debug_logging
 def submission_fulltext_download(obj, eng):
     submission_pdf = obj.extra_data.get('submission_pdf')
     if submission_pdf and is_pdf_link(submission_pdf):
@@ -364,7 +379,6 @@ def error_workflow(message):
     return _error_workflow
 
 
-# TODO: this approach must be verified, i.e. the behaviour of `normalize_journal_title`.
 @with_debug_logging
 def normalize_journal_titles(obj, eng):
     """Normalize the journal titles
@@ -384,7 +398,7 @@ def normalize_journal_titles(obj, eng):
         eng: a workflow engine.
 
     Returns:
-        None
+       None
     """
     publications = obj.data.get('publication_info')
 
@@ -395,7 +409,6 @@ def normalize_journal_titles(obj, eng):
         if 'journal_title' in publication:
             normalized_title = normalize_journal_title(publication['journal_title'])
             obj.data['publication_info'][index]['journal_title'] = normalized_title
-
             ref_query = RecordMetadata.query.filter(
                 RecordMetadata.json['_collections'].op('?')('Journals')).filter(
                 cast(RecordMetadata.json['short_title'], String) == type_coerce(normalized_title, JSON))
