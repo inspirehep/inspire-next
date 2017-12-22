@@ -310,16 +310,19 @@ ERROR_WITH_UNEXPECTED_WORKFLOW_PATH = [
 
 # Currently we handle harvests as if all were arxiv, that will have to change.
 PROCESS_HOLDINGPEN_MATCH_HARVEST = [
-    IF(
-        is_marked('previously_rejected'),
+    IF_NOT(
+        is_marked('is-update'),
         IF(
-            has_same_source('previously_rejected_matches'),
-            [
-                mark('approved', False),  # auto-reject
-                save_workflow,
-                stop_processing,
-            ],
-        )
+            is_marked('previously_rejected'),
+            IF(
+                has_same_source('previously_rejected_matches'),
+                [
+                    mark('approved', False),  # auto-reject
+                    save_workflow,
+                    stop_processing,
+                ],
+            )
+        ),
     ),
 
     IF_ELSE(
@@ -445,8 +448,8 @@ class Article(object):
         STOP_IF_TOO_OLD +
         NOTIFY_IF_SUBMISSION +
         MARK_IF_MATCH_IN_HOLDINGPEN +
-        PROCESS_HOLDINGPEN_MATCHES +
         MARK_IF_UPDATE +
+        PROCESS_HOLDINGPEN_MATCHES +
         ENHANCE_RECORD +
         STOP_IF_EXISTING_SUBMISSION +
         HALT_FOR_APPROVAL +
