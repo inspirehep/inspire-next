@@ -29,17 +29,32 @@ from flask import url_for
 from invenio_db import db
 
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
+from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
-
-from ..utils import with_debug_logging
+from inspirehep.modules.workflows.utils import with_debug_logging
+from inspirehep.utils.record_getter import get_db_record
 
 
 @with_debug_logging
 def store_record(obj, eng):
     """Insert or replace a record."""
+    def _get_updated_record(obj):
+        """TODO: use only head_uuid once we have them merger."""
+        if 'head_uuid' in obj.extra_data:
+            updated_record = InspireRecord.get_record(
+                obj.extra_data['head_uuid'],
+            )
+        else:
+            pid_type = get_pid_type_from_schema(obj.data['$schema'])
+            updated_record_id = obj.extra_data['record_matches'][0]
+            updated_record = get_db_record(pid_type, updated_record_id)
+
+        return updated_record
+
     is_update = obj.extra_data.get('is-update')
     if is_update:
-        record = InspireRecord.get_record(obj.extra_data['head_uuid'])
+        record = _get_updated_record(obj)
+        obj.data['control_number'] = record['control_number']
         record.clear()
         record.update(obj.data, files_src_records=[obj])
 
