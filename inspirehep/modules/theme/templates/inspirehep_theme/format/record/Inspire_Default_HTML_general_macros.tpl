@@ -54,7 +54,9 @@
 
 {% macro render_record_authors(record, is_brief, number_of_displayed_authors=10, show_affiliations=true, collaboration_only=false) %}
   {% set collaboration_displayed = [] %}
+  {% set author_and_collaboration_displayed = [] %}
   {% if record.collaborations and not record.get('corporate_author') %}
+    {% do author_and_collaboration_displayed.append(1) %}
     {% for collaboration in record.collaborations %}
       {% if collaboration['value'] %}
       <a href="/search?p=collaboration:'{{ collaboration['value'] }}'">{{ collaboration['value'] }}</a>
@@ -72,11 +74,9 @@
       {% endif %}
     {% endfor %}
     {% if record.authors is defined %}
-     ({{ render_author_names(record, record.authors[0], show_affiliation = True) }} <i>et al.</i>)
+      {% do author_and_collaboration_displayed.append(1) %}
+      ({{ render_author_names(record, record.authors[0], show_affiliation = True) }} <i>et al.</i>)
     {% endif %}
-    - <i><a id="authors-show-more" class="authors-show-more" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
-      Show {{ record.authors | count }} authors & affiliations
-    </a></i>
   {% endif %}
 
 
@@ -97,9 +97,7 @@
             ({{ render_author_names(record, authors[0], show_affiliation = True) }} <i>et al.</i>)
           {% endif %}
         {% else %}
-        - <i><a id="authors-show-more" class="authors-show-more" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
-          Show {{ record.authors | count }} authors & affiliations
-        </a></i>
+          {% do author_and_collaboration_displayed.append(1) %}
         {% endif %}
     {% else %}
         {% if not is_brief and show_affiliations %}
@@ -149,6 +147,11 @@
     {% endif %}
   {% elif record.get('corporate_author') %}
     {{ record.get('corporate_author')|join('; ') }}
+  {% endif %}
+  {% if author_and_collaboration_displayed|length > 0%}
+    <i><a id="authors-show-more" class="authors-show-more" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
+     Show {{ record.authors | count }} authors & affiliations
+    </a></i>
   {% endif %}
 {% endmacro %}
 
