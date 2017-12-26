@@ -83,6 +83,130 @@ EXPAND_ADDITIONAL_COMMENTS = """
 """
 
 
+class InputData(object):
+    def __init__(self, data=None):
+        self.data = data or {}
+
+    def __getitem__(self, key):
+        return self.data[key]
+
+    def __getattr__(self, key):
+        try:
+            return self.data[key]
+        except KeyError:
+            raise AttributeError(
+                '%s instance has no attribute %s' % (
+                    self.__class__.__name__,
+                    key,
+                )
+            )
+
+    def __contains__(self, key):
+        return key in self.data
+
+
+    def _add_all(self, **kwargs):
+        self.data.update(kwargs)
+
+    def get(self, *args, **kwargs):
+        return self.data.get(*args, **kwargs)
+
+    def add_thesis_info(
+        self,
+        defense_date,
+        degree_type,
+        institution,
+        supervisor_affiliation,
+        supervisor_name,
+        thesis_date,
+    ):
+        self._add_all(
+            defense_date=defense_date,
+            degree_type=degree_type,
+            institution=institution,
+            supervisor_affiliation=supervisor_affiliation,
+            supervisor_name=supervisor_name,
+            thesis_date=thesis_date,
+        )
+
+    def add_links(self, pdf_url):
+        self.data['pdf_url'] = pdf_url
+
+    def add_basic_info(
+        self,
+        abstract,
+        title,
+        language,
+        title_translation,
+        collaboration,
+        experiment,
+        authors=(),
+        report_numbers=(),
+        subjects=(),
+    ):
+        self._add_all(
+            abstract=abstract,
+            collaboration=collaboration,
+            experiment=experiment,
+            language=language,
+            title=title,
+            title_translation=title_translation,
+            authors=authors,
+            report_numbers=report_numbers,
+            subjects=subjects,
+        )
+
+    def add_book_info(
+        self,
+        book_title,
+        book_volume,
+        publication_date,
+        publication_place,
+        publisher_name,
+    ):
+        self._add_all(
+            book_title=book_title,
+            book_volume=book_volume,
+            publication_date=publication_date,
+            publication_place=publication_place,
+            publisher_name=publisher_name,
+        )
+
+    def add_book_chapter_info(self, book_title, page_start, page_end):
+        self._add_all(
+            book_title=book_title,
+            page_start=page_start,
+            page_end=page_end,
+        )
+
+    def add_journal_info(
+        self,
+        journal_title,
+        volume,
+        issue,
+        year,
+        page_range,
+        conf_name,
+    ):
+        self._add_all(
+            journal_title=journal_title,
+            volume=volume,
+            issue=issue,
+            year=year,
+            page_range=page_range,
+            conf_name=conf_name,
+        )
+
+    def add_references_comments(self, references, extra_comments):
+        self._add_all(
+            references=references,
+            extra_comments=extra_comments,
+        )
+
+    def add_proceedings(self, nonpublic_note):
+        self._add_all(nonpublic_note=nonpublic_note)
+
+
 def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/literature/new')
 
