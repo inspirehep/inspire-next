@@ -34,7 +34,7 @@ from ..arsenic import Arsenic, ArsenicResponse
 from inspirehep.bat.EC import GetText, TryClick
 
 
-TITLE_AND_DESCRIPTION = '(//div[@class="ng-scope"])[2]'
+BASIC_INFO = '(//div[@class="ng-scope"])[2]'
 SUBMISSION_INFO = '//p[@class="text-center ng-scope"]'
 SUBJECT_AREAS = '(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])'
 FIRST_SUBJECT_AREA = SUBJECT_AREAS + '[1]'
@@ -48,38 +48,36 @@ def go_to():
     holdingpen_literature_list.click_first_record()
 
 
-def load_submitted_record(input_data):
-    def _assert_has_no_errors():
-        assert (
-            input_data.get('abstract', '') in record and
-            'Submitted by admin@inspirehep.net\non' in record and
-            input_data.get('title', '') in record and
-            all(
-                name_part in record
-                for name_part in input_data.get('author-0', '').split()
-            ) and
-            input_data.get('author-0-affiliation', '') in record and
-            all(
-                name_part in record
-                for name_part in input_data.get('author-1', '').split()
-            ) and
-            input_data.get('author-1-affiliation', '') in record and
-            'Accelerators' in record and
-            input_data.get('subject', '') in record
-        )
+def assert_first_record_matches(input_data, try_count=0):
+    def _assert_author_matches(author, authors_info):
+        for name_part in author.get('name', ''):
+            assert name_part in authors_info
+
+        assert author.get('affiliation', '') in authors_info
 
     try:
-        record = WebDriverWait(Arsenic(), 10).until(
-            GetText((By.XPATH, TITLE_AND_DESCRIPTION))
+        basic_info = WebDriverWait(Arsenic(), 10).until(
+            GetText((By.XPATH, BASIC_INFO))
         )
-        record += Arsenic().find_element_by_xpath(SUBMISSION_INFO).text
-        record += Arsenic().find_element_by_xpath(FIRST_SUBJECT_AREA).text
-        record += Arsenic().find_element_by_xpath(SECOND_SUBJECT_AREA).text
+        submission_info = Arsenic().find_element_by_xpath(SUBMISSION_INFO).text
+        first_subject = Arsenic().find_element_by_xpath(FIRST_SUBJECT_AREA).text
+        second_subject = Arsenic().find_element_by_xpath(SECOND_SUBJECT_AREA).text
     except (ElementNotVisibleException, WebDriverException):
+        try_count += 1
         go_to()
-        record = load_submitted_record(input_data)
+        if try_count > 15:
+            raise
+        assert_first_record_matches(input_data, try_count=try_count)
 
-    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
+    for author in input_data.authors:
+        _assert_author_matches(author, basic_info)
+    if input_data.subjects:
+        assert input_data.subjects[0] in first_subject
+    if len(input_data.subjects) > 1:
+        assert input_data.subjects[1] in second_subject
+
+    assert input_data.get('abstract', '') in basic_info
+    assert 'Submitted by admin@inspirehep.net\non' in submission_info
 
 
 def accept_record():

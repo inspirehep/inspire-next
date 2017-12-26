@@ -30,10 +30,17 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select, WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait
 
-from ..arsenic import Arsenic, ArsenicResponse
-from ..EC import TryClick
+from inspirehep.bat.arsenic import Arsenic, ArsenicResponse
+from inspirehep.bat.actions import (
+    click,
+    get_text_of,
+    get_value_of,
+    write,
+    select,
+    wait_for,
+)
 
 
 SUBMIT_BUTTON = '//div[@id="webdeposit_form_accordion"]/div[4]/span/button'
@@ -44,7 +51,10 @@ SUBMIT_RESULT_ALERT_CHAPTER_SUCCESS = (
     '(//div[@class="alert alert-warning alert-form-warning"])'
 )
 SUBJECTS_BUTTON = '(//button[@type="button"])[8]'
-SUBJECT_ACCELERATORS = 'input[type=\"checkbox\"]'
+GOOD_MESSAGE = (
+    'The INSPIRE staff will review it and your changes will be added '
+    'to INSPIRE.'
+)
 EXPAND_CONFERENCE_INFO = """
     document.evaluate(
         "//div[@id='webdeposit_form_accordion']/div[3]/div[8]/div[1]",
@@ -103,7 +113,6 @@ class InputData(object):
 
     def __contains__(self, key):
         return key in self.data
-
 
     def _add_all(self, **kwargs):
         self.data.update(kwargs)
@@ -213,24 +222,15 @@ def go_to():
 
 def submit_article(input_data):
     def _assert_has_no_errors():
-        result = (
-            'The INSPIRE staff will review it and your changes will be added '
-            'to INSPIRE.'
-        ) in WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located(
-                (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
-            )
-        ).text
-        assert result
+        message = get_text_of(xpath=SUBMIT_RESULT_ALERT_SUCCESS)
+        assert GOOD_MESSAGE in message
 
     _skip_import_data()
     Arsenic().hide_title_bar()
     _populate_document_type('article')
     _populate_links(input_data)
     _populate_basic_info(input_data)
-    _populate_thesis_info(input_data)
-    _populate_references_comment(input_data)
-    Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
+    click(xpath=SUBMIT_BUTTON)
     Arsenic().show_title_bar()
 
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
@@ -238,24 +238,17 @@ def submit_article(input_data):
 
 def submit_thesis(input_data):
     def _assert_has_no_errors():
-        message = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located(
-                (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
-            )
-        ).text
-        assert (
-            'The INSPIRE staff will review it and your changes will be added '
-            'to INSPIRE.'
-        ) in message
+        message = get_text_of(xpath=SUBMIT_RESULT_ALERT_SUCCESS)
+        assert GOOD_MESSAGE in message
 
     _skip_import_data()
     Arsenic().hide_title_bar()
     _populate_document_type('thesis')
     _populate_links(input_data)
-    _deprecated_populate_basic_info(input_data)
+    _populate_basic_info(input_data)
     _populate_thesis_info(input_data)
     _populate_references_comment(input_data)
-    Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
+    click(xpath=SUBMIT_BUTTON)
     Arsenic().show_title_bar()
 
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
@@ -263,25 +256,17 @@ def submit_thesis(input_data):
 
 def submit_book(input_data):
     def _assert_has_no_errors():
-        message = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located(
-                (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
-            )
-        ).text
-
-        assert (
-            'The INSPIRE staff will review it and your changes will be added '
-            'to INSPIRE.'
-        ) in message
+        message = get_text_of(xpath=SUBMIT_RESULT_ALERT_SUCCESS)
+        assert GOOD_MESSAGE in message
 
     _skip_import_data()
     Arsenic().hide_title_bar()
     _populate_document_type('book')
     _populate_links(input_data)
-    _deprecated_populate_basic_info(input_data)
+    _populate_basic_info(input_data)
     _populate_book_info(input_data)
     _populate_references_comment(input_data)
-    Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
+    click(xpath=SUBMIT_BUTTON)
     Arsenic().show_title_bar()
 
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
@@ -289,25 +274,17 @@ def submit_book(input_data):
 
 def submit_chapter(input_data):
     def _assert_has_no_errors():
-        message = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located(
-                (By.XPATH, SUBMIT_RESULT_ALERT_CHAPTER_SUCCESS)
-            )
-        ).text
-
-        assert (
-            'The INSPIRE staff will review it and your changes will be added '
-            'to INSPIRE.'
-        ) in message
+        message = get_text_of(xpath=SUBMIT_RESULT_ALERT_CHAPTER_SUCCESS)
+        assert GOOD_MESSAGE in message
 
     _skip_import_data()
     Arsenic().hide_title_bar()
     _populate_document_type('chapter')
     _populate_links(input_data)
     _populate_chapter_info(input_data)
-    _deprecated_populate_basic_info(input_data)
+    _populate_basic_info(input_data)
     _populate_references_comment(input_data)
-    Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
+    click(xpath=SUBMIT_BUTTON)
     Arsenic().show_title_bar()
 
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
@@ -315,25 +292,17 @@ def submit_chapter(input_data):
 
 def submit_journal_article_with_proceeding(input_data):
     def _assert_has_no_errors():
-        message = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located(
-                (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
-            )
-        ).text
-
-        assert (
-            'The INSPIRE staff will review it and your changes will be added '
-            'to INSPIRE.'
-        ) in message
+        message = get_text_of(xpath=SUBMIT_RESULT_ALERT_SUCCESS)
+        assert GOOD_MESSAGE in message
 
     _skip_import_data()
     Arsenic().hide_title_bar()
     _populate_links(input_data)
-    _deprecated_populate_basic_info(input_data)
+    _populate_basic_info(input_data)
     _populate_proceedings(input_data)
     _populate_journal_conference(input_data)
     _populate_references_comment(input_data)
-    Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
+    click(xpath=SUBMIT_BUTTON)
     Arsenic().show_title_bar()
 
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
@@ -341,236 +310,112 @@ def submit_journal_article_with_proceeding(input_data):
 
 def submit_journal_article(input_data):
     def _assert_has_no_errors():
-        message = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located(
-                (By.XPATH, SUBMIT_RESULT_ALERT_SUCCESS)
-            )
-        ).text
-        assert (
-            'The INSPIRE staff will review it and your changes will be added '
-            'to INSPIRE.'
-        ) in message
+        message = get_text_of(xpath=SUBMIT_RESULT_ALERT_SUCCESS)
+        assert GOOD_MESSAGE in message
 
     _skip_import_data()
     Arsenic().hide_title_bar()
     _populate_links(input_data)
-    _deprecated_populate_basic_info(input_data)
+    _populate_basic_info(input_data)
     _populate_journal_conference(input_data)
     _populate_references_comment(input_data)
-    Arsenic().find_element_by_xpath(SUBMIT_BUTTON).click()
+    click(xpath=SUBMIT_BUTTON)
     Arsenic().show_title_bar()
 
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def _populate_thesis_info(input_data):
-    WebDriverWait(Arsenic(), 10).until(
-        EC.visibility_of_element_located((By.ID, 'supervisors-0-name'))
+    wait_for(_id='supervisors-0-name')
+    write(_id='supervisors-0-name', data=input_data.supervisor_name)
+    write(
+        _id='supervisors-0-affiliation',
+        data=input_data.supervisor_affiliation,
     )
-    Arsenic().find_element_by_id('supervisors-0-name').send_keys(
-        input_data['supervisor']
-    )
-    Arsenic().find_element_by_id('supervisors-0-affiliation').send_keys(
-        input_data['supervisor-affiliation']
-    )
-    Arsenic().find_element_by_id('thesis_date').send_keys(
-        input_data['thesis-date']
-    )
-    Arsenic().find_element_by_id('defense_date').send_keys(
-        input_data['defense-date']
-    )
-    Select(Arsenic().find_element_by_id('degree_type')).select_by_value(
-        input_data['degree-type']
-    )
-    Arsenic().find_element_by_id('institution').send_keys(
-        input_data['institution']
-    )
+    write(_id='thesis_date', data=input_data.thesis_date)
+    write(_id='defense_date', data=input_data.defense_date)
+    write(_id='degree_type', data=input_data.degree_type)
+    write(_id='institution', data=input_data.institution)
 
 
 def _populate_book_info(input_data):
-    WebDriverWait(Arsenic(), 10).until(
-        EC.visibility_of_element_located((By.ID, 'series_title'))
-    )
-    Arsenic().find_element_by_id('publisher_name').send_keys(
-        input_data['publisher-name']
-    )
-    Arsenic().find_element_by_id('publication_date').send_keys(
-        input_data['publication-date']
-    )
-    Arsenic().find_element_by_id('publication_place').send_keys(
-        input_data['publication-place']
-    )
-    Arsenic().find_element_by_id('series_title').send_keys(
-        input_data['book-title']
-    )
-    Arsenic().find_element_by_id('series_volume').send_keys(
-        input_data['book-volume']
-    )
+    wait_for(_id='series_title')
+    write(_id='publisher_name', data=input_data.publisher_name)
+    write(_id='publication_date', data=input_data.publication_date)
+    write(_id='publication_place', data=input_data.publication_place)
+    write(_id='series_title', data=input_data.book_title)
+    write(_id='series_volume', data=input_data.book_volume)
 
 
 def _populate_chapter_info(input_data):
-    WebDriverWait(Arsenic(), 10).until(
-        EC.visibility_of_element_located((By.ID, 'book_title'))
-    )
-    Arsenic().find_element_by_id('book_title').send_keys(
-        input_data['book-title']
-    )
-    Arsenic().find_element_by_id('start_page').send_keys(
-        input_data['page-start']
-    )
-    Arsenic().find_element_by_id('end_page').send_keys(
-        input_data['page-end']
-    )
+    wait_for(_id='book_title')
+    write(_id='book_title', data=input_data.book_title)
+    write(_id='start_page', data=input_data.page_start)
+    write(_id='end_page', data=input_data.page_end)
 
 
 def _populate_links(input_data):
-    if 'pdf-1' in input_data:
-        Arsenic().find_element_by_id('url').send_keys(input_data['pdf-1'])
+    if 'pdf_url' in input_data:
+        write(_id='url', data=input_data.pdf_url)
 
 
 def _populate_basic_info(input_data):
     if 'title' in input_data:
-        Arsenic().find_element_by_id('title').send_keys(input_data['title'])
+        write(_id='title', data=input_data.title)
 
     if 'language' in input_data:
-        Select(Arsenic().find_element_by_id('language')).select_by_value(
-            input_data['language']
-        )
+        select(_id='language', value=input_data.language)
 
     if 'title_translation' in input_data:
-        Arsenic().find_element_by_id('title_translation').send_keys(
-            input_data['title_translation']
-        )
+        write(_id='title_translation', data=input_data.title_translation)
 
-    _populate_subjects(input_data.get('subjects', []))
-    _populate_authors(input_data.get('authors', []))
+    _populate_subjects(input_data.subjects)
+    _populate_authors(input_data.authors)
 
     if 'collaboration' in input_data:
         try:
-            Arsenic().find_element_by_id('collaboration').send_keys(
-                input_data['collaboration']
-            )
+            write(_id='collaboration', data=input_data.collaboration)
         except (ElementNotVisibleException, WebDriverException):
             pass
 
     if 'experiment' in input_data:
-        Arsenic().find_element_by_id('experiment').send_keys(
-            input_data['experiment']
-        )
+        write(_id='experiment', data=input_data.experiment)
 
     if 'abstract' in input_data:
-        Arsenic().find_element_by_id('abstract').send_keys(
-            input_data['abstract']
-        )
+        write(_id='abstract', data=input_data.abstract)
 
-    _populate_report_numbers(input_data.get('report_numbers', []))
-
-
-def _deprecated_populate_basic_info(input_data):
-    Arsenic().find_element_by_id('title').send_keys(input_data['title'])
-    Select(Arsenic().find_element_by_id('language')).select_by_value(
-        input_data['language']
-    )
-    Arsenic().find_element_by_id('title_translation').send_keys(
-        input_data['title_translation']
-    )
-
-    Arsenic().find_element_by_xpath('(//button[@type="button"])[8]').click()
-    Arsenic().find_element_by_css_selector('input[type=\"checkbox\"]').click()
-    Arsenic().find_element_by_xpath(
-        '//input[@value="' + input_data['subject'] + '"]'
-    ).click()
-
-    Arsenic().find_element_by_xpath('(//button[@type="button"])[8]').click()
-    Arsenic().find_element_by_id('authors-0-name').send_keys(
-        input_data['author-0']
-    )
-    Arsenic().find_element_by_id('authors-0-affiliation').send_keys(
-        input_data['author-0-affiliation']
-    )
-    Arsenic().find_element_by_link_text('Add another author').click()
-    Arsenic().find_element_by_id('authors-1-name').send_keys(
-        input_data['author-1']
-    )
-    Arsenic().find_element_by_id('authors-1-affiliation').send_keys(
-        input_data['author-1-affiliation']
-    )
-
-    try:
-        Arsenic().find_element_by_id('collaboration').send_keys(
-            input_data['collaboration']
-        )
-    except (ElementNotVisibleException, WebDriverException):
-        pass
-
-    Arsenic().find_element_by_id('experiment').send_keys(
-        input_data['experiment']
-    )
-    Arsenic().find_element_by_id('abstract').send_keys(
-        input_data['abstract']
-    )
-    Arsenic().find_element_by_id('report_numbers-0-report_number').send_keys(
-        input_data['report-number-0']
-    )
-    Arsenic().find_element_by_link_text('Add another report number').click()
-    Arsenic().find_element_by_id('report_numbers-1-report_number').send_keys(
-        input_data['report-number-1']
-    )
+    _populate_report_numbers(input_data.report_numbers)
 
 
 def _populate_journal_conference(input_data):
-    Arsenic().find_element_by_id('journal_title').send_keys(
-        input_data['journal_title']
-    )
-    Arsenic().find_element_by_id('volume').send_keys(input_data['volume'])
-    Arsenic().find_element_by_id('issue').send_keys(input_data['issue'])
-    Arsenic().find_element_by_id('year').send_keys(input_data['year'])
-    Arsenic().find_element_by_id('page_range_article_id').send_keys(
-        input_data['page-range-article']
-    )
-
-    WebDriverWait(Arsenic(), 10).until(
-        EC.visibility_of_element_located(
-            (By.ID, 'conf_name'))).send_keys(input_data['conf-name'])
+    write(_id='journal_title', data=input_data.journal_title)
+    write(_id='volume', data=input_data.volume)
+    write(_id='issue', data=input_data.issue)
+    write(_id='year', data=input_data.year)
+    write(_id='page_range_article_id', data=input_data.page_range)
+    write(_id='conf_name', data=input_data.conf_name)
 
 
 def _populate_proceedings(input_data):
-    WebDriverWait(Arsenic(), 10).until(
-        EC.visibility_of_element_located(
-            (By.ID, 'nonpublic_note')
-        )
-    ).send_keys(input_data['non-public-note'])
+    write(_id='nonpublic_note', data=input_data.nonpublic_note)
 
 
 def _populate_references_comment(input_data):
-    WebDriverWait(Arsenic(), 10).until(
-        EC.visibility_of_element_located(
-            (By.ID, 'references')
-        )
-    ).send_keys(input_data['references'])
-
-    WebDriverWait(Arsenic(), 10).until(
-        EC.visibility_of_element_located((By.ID, 'extra_comments'))
-    ).send_keys(input_data['extra-comments'])
+    write(_id='references', data=input_data.references)
+    write(_id='extra_comments', data=input_data.extra_comments)
 
 
 def write_pdf_link(pdf_link):
     try:
-        WebDriverWait(Arsenic(), 5).until(
-            EC.visibility_of_element_located((By.ID, 'url'))
-        )
+        wait_for(_id='url')
     except (ElementNotVisibleException, WebDriverException):
         _skip_import_data()
-    field = WebDriverWait(Arsenic(), 5).until(
-        EC.visibility_of_element_located((By.ID, 'url'))
-    )
+    field = wait_for(_id='url')
     field.send_keys(pdf_link)
     Arsenic().hide_title_bar()
     Arsenic().click_with_coordinates('state-group-url', 5, 5)
     try:
-        message_err = WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located((By.ID, 'state-url'))
-        ).text
+        message_err = get_text_of(_id='state-url')
     except (ElementNotVisibleException, WebDriverException):
         message_err = ''
     Arsenic().show_title_bar()
@@ -594,23 +439,17 @@ def write_pdf_link(pdf_link):
 
 def write_date_thesis(date_field, error_message_id, date):
     try:
-        WebDriverWait(Arsenic(), 5).until(
-            EC.visibility_of_element_located((By.ID, date_field))
-        )
+        wait_for(_id=date_field)
     except (ElementNotVisibleException, WebDriverException):
         _skip_import_data()
         _populate_document_type('thesis')
 
-    field = WebDriverWait(Arsenic(), 5).until(
-        EC.visibility_of_element_located((By.ID, date_field))
-    )
+    field = wait_for(_id=date_field)
     field.send_keys(date)
     Arsenic().hide_title_bar()
     Arsenic().click_with_coordinates('state-group-supervisors', 5, 5)
     try:
-        error_message = WebDriverWait(Arsenic(), 5).until(
-            EC.visibility_of_element_located((By.ID, error_message_id))
-        ).text
+        error_message = get_text_of(_id=error_message_id)
     except (ElementNotVisibleException, WebDriverException):
         error_message = ''
     Arsenic().show_title_bar()
@@ -645,9 +484,7 @@ def write_institution_thesis(institution, expected_data):
 
     _skip_import_data()
     _populate_document_type('thesis')
-    WebDriverWait(Arsenic(), 5).until(
-        EC.visibility_of_element_located((By.ID, 'supervisors-0-affiliation'))
-    )
+    wait_for(_id='supervisors-0-affiliation')
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
@@ -691,38 +528,22 @@ def write_affiliation(affiliation, expected_data):
 
 
 def submit_arxiv_id(arxiv_id, expected_data):
-    Arsenic().find_element_by_id('arxiv_id').send_keys(arxiv_id)
-    WebDriverWait(Arsenic(), 10).until(
-        EC.visibility_of_element_located((By.ID, 'importData'))
-    ).click()
-    WebDriverWait(Arsenic(), 20).until(
-        EC.visibility_of_element_located((By.ID, 'acceptData'))
-    ).click()
-    WebDriverWait(Arsenic(), 20).until(
-        EC.visibility_of_element_located((By.ID, 'arxiv_id'))
-    )
+    write(_id='arxiv_id', data=arxiv_id)
+    click(_id='importData')
+    click(_id='acceptData')
+    wait_for(_id='arxiv_id')
     _skip_import_data()
 
     output_data = {
-        'doi': Arsenic().find_element_by_id('doi').get_attribute('value'),
-        'year': Arsenic().find_element_by_id('year').get_attribute('value'),
-        'issue': Arsenic().find_element_by_id('issue').get_attribute('value'),
-        'title': Arsenic().find_element_by_id('title').get_attribute('value'),
-        'volume': Arsenic().find_element_by_id('volume').get_attribute(
-            'value'
-        ),
-        'abstract': Arsenic().find_element_by_id('abstract').get_attribute(
-            'value'
-        ),
-        'author': Arsenic().find_element_by_id('authors-0-name').get_attribute(
-            'value'
-        ),
-        'journal': Arsenic().find_element_by_id('journal_title').get_attribute(
-            'value'
-        ),
-        'page-range': Arsenic().find_element_by_id(
-            'page_range_article_id'
-        ).get_attribute('value')
+        'doi': get_value_of(_id='doi'),
+        'year': get_value_of(_id='year'),
+        'issue': get_value_of(_id='issue'),
+        'title': get_value_of(_id='title'),
+        'volume': get_value_of(_id='volume'),
+        'abstract': get_value_of(_id='abstract'),
+        'author': get_value_of(_id='authors-0-name'),
+        'journal': get_value_of(_id='journal_title'),
+        'page-range': get_value_of(_id='page_range_article_id'),
     }
 
     def _assert_has_no_errors():
@@ -732,38 +553,22 @@ def submit_arxiv_id(arxiv_id, expected_data):
 
 
 def submit_doi_id(doi_id, expected_data):
-    Arsenic().find_element_by_id('doi').send_keys(doi_id)
-    Arsenic().find_element_by_id('importData').click()
-    WebDriverWait(Arsenic(), 20).until(
-        EC.visibility_of_element_located((By.ID, 'acceptData'))
-    ).click()
-    WebDriverWait(Arsenic(), 20).until(
-        EC.visibility_of_element_located((By.ID, 'doi'))
-    )
+    write(_id='doi', data=doi_id)
+    click(_id='importData')
+    click(_id='acceptData')
+    wait_for(_id='doi')
     _skip_import_data()
 
     output_data = {
-        'year': Arsenic().find_element_by_id('year').get_attribute('value'),
-        'title': Arsenic().find_element_by_id('title').get_attribute('value'),
-        'issue': Arsenic().find_element_by_id('issue').get_attribute('value'),
-        'volume': Arsenic().find_element_by_id('volume').get_attribute(
-            'value'
-        ),
-        'journal': Arsenic().find_element_by_id('journal_title').get_attribute(
-            'value'
-        ),
-        'author': Arsenic().find_element_by_id('authors-0-name').get_attribute(
-            'value'
-        ),
-        'author-1': Arsenic().find_element_by_id(
-            'authors-1-name'
-        ).get_attribute('value'),
-        'author-2': Arsenic().find_element_by_id(
-            'authors-2-name'
-        ).get_attribute('value'),
-        'page-range': Arsenic().find_element_by_id(
-            'page_range_article_id'
-        ).get_attribute('value')
+        'year': get_value_of(_id='year'),
+        'title': get_value_of(_id='title'),
+        'issue': get_value_of(_id='issue'),
+        'volume': get_value_of(_id='volume'),
+        'journal': get_value_of(_id='journal_title'),
+        'author': get_value_of(_id='authors-0-name'),
+        'author-1': get_value_of(_id='authors-1-name'),
+        'author-2': get_value_of(_id='authors-2-name'),
+        'page-range': get_value_of(_id='page_range_article_id'),
     }
 
     def _assert_has_no_errors():
@@ -774,9 +579,7 @@ def submit_doi_id(doi_id, expected_data):
 
 def _skip_import_data():
     Arsenic().hide_title_bar()
-    WebDriverWait(Arsenic(), 10).until(
-        TryClick((By.ID, 'skipImportData'))
-    ).click()
+    click(_id='skipImportData')
     WebDriverWait(Arsenic(), 10).until(
         EC.text_to_be_present_in_element(
             (By.ID, 'form_container'),
@@ -791,44 +594,34 @@ def _skip_import_data():
 
 
 def _populate_document_type(document_type):
-    Select(Arsenic().find_element_by_id('type_of_doc')).select_by_value(
-        document_type
-    )
+    select(_id='type_of_doc', value=document_type)
 
 
 def _populate_subjects(subjects):
 
-    Arsenic().find_element_by_xpath(SUBJECTS_BUTTON).click()
-    Arsenic().find_element_by_css_selector(SUBJECT_ACCELERATORS).click()
+    click(xpath=SUBJECTS_BUTTON)
     for subject in subjects:
-        Arsenic().find_element_by_xpath(
-            '//input[@value="' + subject + '"]'
-        ).click()
+        click(xpath='//input[@value="' + subject + '"]')
 
-    Arsenic().find_element_by_xpath(SUBJECTS_BUTTON).click()
+    click(xpath=SUBJECTS_BUTTON)
 
 
 def _populate_authors(authors):
     for index, author in enumerate(authors):
-        Arsenic().find_element_by_id('authors-%s-name' % index).send_keys(
-            author['name']
-        )
+        write(_id='authors-%s-name' % index, data=author['name'])
         if 'affiliation' in author:
-            Arsenic().find_element_by_id(
-                'authors-%s-affiliation' % index
-            ).send_keys(
-                author['affiliation'],
-                author['name'],
+            write(
+                _id='authors-%s-affiliation' % index,
+                data=(
+                    author['affiliation'],
+                    author['name'],
+                ),
             )
 
-        Arsenic().find_element_by_link_text('Add another author').click()
+        click(link_text='Add another author')
 
 
 def _populate_report_numbers(report_numbers):
     for index, report_number in enumerate(report_numbers):
-        Arsenic().find_element_by_id(
-            'report_numbers-%s-report_number' % index
-        ).send_keys(report_number)
-        Arsenic().find_element_by_link_text(
-            'Add another report number'
-        ).click()
+        write(_id='report_numbers-%s-report_number' % index, data=report_number)
+        click(link_text='Add another report number')

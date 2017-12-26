@@ -68,6 +68,7 @@ def write(data, _id=None, xpath=None, link_text=None):
     elem = wait_for(_id=_id, xpath=xpath, link_text=link_text)
     return elem.send_keys(*data)
 
+
 def get_text_of(_id=None, xpath=None, link_text=None):
     by, value = _parse_selectors(_id=_id, xpath=xpath, link_text=link_text)
     return WebDriverWait(Arsenic(), 10).until(GetText((by, value)))

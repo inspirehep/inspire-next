@@ -277,6 +277,7 @@ def _populate_experiments(input_data):
         input_data['experiments-0-end_year']
     )
 
+
 def _populate_advisor(input_data):
     Arsenic().find_element_by_id('advisors-0-name').send_keys(
         input_data['advisors-0-name']

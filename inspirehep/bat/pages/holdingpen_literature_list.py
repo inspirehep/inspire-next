@@ -28,71 +28,70 @@ from selenium.common.exceptions import (
     ElementNotVisibleException,
     WebDriverException,
 )
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 
-from ..arsenic import Arsenic, ArsenicResponse
-from inspirehep.bat.EC import GetText
+from inspirehep.bat.arsenic import Arsenic
+from inspirehep.bat.actions import click, get_text_of
+
+
+FIRST_RECORD = '//div[@class="row hp-item ng-scope"][1]'
+FIRST_RECORD_DETAILS = (
+    FIRST_RECORD + '/div/div/div[2]/holding-pen-template-handler'
+)
+FIRST_RECORD_TITLE = FIRST_RECORD_DETAILS + '/h4/a'
+FIRST_RECORD_SHOW_ABSTRACT_LINK = FIRST_RECORD_DETAILS + '/div/a'
 
 
 def go_to():
-    Arsenic().get(os.environ['SERVER_NAME'] + '/holdingpen/list/?page=1&size=10&workflow_name=HEP')
+    Arsenic().get(
+        os.environ['SERVER_NAME'] +
+        '/holdingpen/list/?page=1&size=10&workflow_name=HEP'
+    )
 
 
-def force_load_record(xpath):
-    def _refresh_page():
-        go_to()
-        return force_load_record(xpath)
+def get_first_record_info(try_count=0):
+    def _refresh_and_retry(try_count):
+        Arsenic().refresh()
+        return get_first_record_info(try_count=try_count)
 
     try:
-        WebDriverWait(Arsenic(), 10).until(
-            EC.visibility_of_element_located(
-                (By.XPATH, xpath)
-            )
-        ).click()
-        record = WebDriverWait(Arsenic(), 10).until(
-            GetText(
-                (By.XPATH, '//div[@class="row hp-item ng-scope"][1]')
-            )
-        )
+        click(xpath=FIRST_RECORD_SHOW_ABSTRACT_LINK)
+        record = get_text_of(xpath=FIRST_RECORD)
     except (ElementNotVisibleException, WebDriverException):
-        record = _refresh_page()
+        try_count += 1
+        if try_count >= 15:
+            raise
+        record = _refresh_and_retry(try_count=try_count)
 
     if 'Waiting' in record:
-        return _refresh_page()
+        try_count += 1
+        if try_count >= 15:
+            raise Exception(
+                'Timed out waiting for record to get out of Waiting status.'
+            )
+        return _refresh_and_retry(try_count=try_count)
 
     return record
 
 
 def click_first_record():
-    WebDriverWait(Arsenic(), 10).until(
-        EC.visibility_of_element_located(
-            (By.XPATH, '//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler'))).click()
-
-    WebDriverWait(Arsenic(), 10).until(
-        EC.visibility_of_element_located(
-            (By.XPATH, '(//div[@class="ng-scope"])[2]')))
+    click(xpath=FIRST_RECORD_TITLE)
 
 
-def load_submitted_record():
-    def _load_submitted_record():
-        assert (
-            'Computing' in record and
-            'Accelerators' in record and
-            'My Title For Test' in record and
-            'admin@inspirehep.net' in record and
-            'White, Barry; Brown, James' in record and
-            'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record
-        )
+def assert_first_record_matches(input_data):
+    record = get_first_record_info()
 
-    record = force_load_record('//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler/div[3]/a')
-    return ArsenicResponse(_load_submitted_record)
+    for author in input_data.authors:
+        for name_part in author['name'].split():
+            assert name_part in record
+
+    for subject in input_data.subjects:
+        assert subject in record
+
+    assert input_data.title in record
+    assert 'admin@inspirehep.net' in record
+    assert input_data.abstract in record
 
 
-def load_completed_record():
-    def _load_completed_record():
-        assert 'Completed' in record
-
-    record = force_load_record('//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler/div[4]/a')
-    return ArsenicResponse(_load_completed_record)
+def assert_first_record_completed():
+    record = get_first_record_info()
+    assert 'Completed' in record
