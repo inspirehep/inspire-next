@@ -182,7 +182,6 @@ setup(
             'view_restricted_collection = inspirehep.modules.records.permissions:action_view_restricted_collection',
         ],
         'invenio_assets.bundles': [
-            'inspirehep_multi_record_editor_js = inspirehep.modules.multieditor.bundles:js',
             'almondjs = inspirehep.modules.theme.bundles:almondjs',
             'inspirehep_author_profile_js = inspirehep.modules.authors.bundles:js',
             'inspirehep_author_update_css = inspirehep.modules.authors.bundles:update_css',
@@ -195,6 +194,7 @@ setup(
             'inspirehep_holding_js = inspirehep.modules.workflows.bundles:details_js',
             'inspirehep_landing_page_css = inspirehep.modules.theme.bundles:landing_page_css',
             'inspirehep_literaturesuggest_js = inspirehep.modules.literaturesuggest.bundles:js',
+            'inspirehep_multi_record_editor_js = inspirehep.modules.multieditor.bundles:js',
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
             'inspirehep_theme_js = inspirehep.modules.theme.bundles:js',
             'inspirehep_tools_authorlist_js = inspirehep.modules.tools.bundles:js',

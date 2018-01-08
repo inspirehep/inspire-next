@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,9 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-
 from __future__ import absolute_import, division, print_function
+
 import json
+import pytest
+
 from invenio_accounts.testutils import login_user_via_session
 from invenio_records.api import Record
 
@@ -42,7 +44,7 @@ def test_multieditor_preview_api(api_client):
         data=json.dumps({
             'userActions': {
                 'actions': [{
-                    'actionName': 'Addition', 'value': {'full_name': 'success'},
+                    'actionName': 'Addition', 'value': {'full_name': 'James Bond'},
                     'matchType': 'is equal to',
                     'mainKey': 'authors'
                 }],
@@ -55,8 +57,10 @@ def test_multieditor_preview_api(api_client):
         }),
     )
 
-    expected_patch = [{u'path': [u'authors', 1], u'value': {u'full_name': u'success'}, u'op': u'add'}]
-    assert expected_patch == json.loads(response.data)['json_patches'][0]
+    expected_patch = [{u'path': [u'authors', 1], u'value': {u'full_name': u'James Bond'}, u'op': u'add'}]
+    gotten_patches = json.loads(response.data)['json_patches']
+    assert len(gotten_patches) == 1
+    assert expected_patch == gotten_patches[0]
 
 
 def test_multieditor_update_api(api_client):
@@ -69,7 +73,7 @@ def test_multieditor_update_api(api_client):
         data=json.dumps({
             'userActions': {
                 'actions': [{
-                    'actionName': 'Addition', 'value': {'full_name': 'success'},
+                    'actionName': 'Addition', 'value': {'full_name': 'James Bond'},
                     'matchType': 'is equal to',
                     'mainKey': 'authors'
                 }],
@@ -81,7 +85,7 @@ def test_multieditor_update_api(api_client):
     )
 
     records = Record.get_records(json.loads(response.data)['uuids'])
-    assert 'success' in records[0]['authors'][-1]['full_name']
+    assert 'James Bond' in records[0]['authors'][-1]['full_name']
     uuid_to_delete = records[0]['authors'][-1]['uuid']
 
     api_client.post(
@@ -104,7 +108,7 @@ def test_multieditor_update_api(api_client):
                     },
                     {
                         'actionName': 'Deletion',
-                        'updateValue': 'success',
+                        'updateValue': 'James Bond',
                         'matchType': 'is equal to',
                         'mainKey': 'authors.full_name',
                     }
@@ -113,7 +117,7 @@ def test_multieditor_update_api(api_client):
                     {
                         'key': 'authors.full_name',
                         'matchType': 'is equal to',
-                        'value': 'success'
+                        'value': 'James Bond'
                     }
                 ]
             },
@@ -123,7 +127,7 @@ def test_multieditor_update_api(api_client):
     )
     records = Record.get_records(json.loads(response.data)['uuids'])
     if records[0].get('authors'):
-        assert 'success' not in records[0]['authors'][-1]['full_name']
+        assert 'James Bond' not in records[0]['authors'][-1]['full_name']
 
 
 def test_api_permision(api_client):
@@ -152,7 +156,7 @@ def test_multieditor_update_api_faulty_actions(api_client):
         data=json.dumps({
             'userActions': {
                 'actions': [{
-                    'actionName': 'Addition', 'value': {'full_name': 'success'},
+                    'actionName': 'Addition', 'value': {'full_name': 'James Bond'},
                     'matchType': 'is equal to',
                     'mainKey': 'not_in_schema'
                 }],
@@ -163,3 +167,4 @@ def test_multieditor_update_api_faulty_actions(api_client):
         }),
     )
     assert 'Invalid Actions' in json.loads(response.data)['message']
+    assert response.status_code == 400

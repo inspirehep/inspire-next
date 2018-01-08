@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 from __future__ import absolute_import, print_function, division
 
 
-from .actions import Addition, Deletion, Update
+from .actions import AddProcessor, DeleteProcessor, UpdateProcessor
 
 UI_TO_MATCHTYPE = {
     'contains': 'contains',
@@ -33,9 +33,9 @@ UI_TO_MATCHTYPE = {
 }
 
 ACTIONS_MAP = {
-    'Addition': Addition,
-    'Deletion': Deletion,
-    'Update': Update
+    'Addition': AddProcessor,
+    'Deletion': DeleteProcessor,
+    'Update': UpdateProcessor
 }
 
 
@@ -98,10 +98,15 @@ def get_actions(user_actions, schema):
     actions = []
 
     for action in user_actions.get('actions', []):
-        sanitized_action = get_action_kwargs(schema, action, conditions)
-        if not sanitized_action:
+        action_kwargs = get_action_kwargs(schema, action, conditions)
+        if not action_kwargs:
             return None
-        actions.append(ACTIONS_MAP[action.get('actionName', '')](**sanitized_action))
+        action_name = action.get('actionName', '')
+        if action_name not in ACTIONS_MAP:
+            return None
+        action_cls = ACTIONS_MAP[action_name]
+        new_action = action_cls(**action_kwargs)
+        actions.append(new_action)
     return actions
 
 

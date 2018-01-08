@@ -185,39 +185,64 @@ def get_title(record):
     return get_value(record, 'titles.title[0]', default='')
 
 
-def inspire_diff(old_record, new_record):
+def get_inspire_patch(old_record, new_record):
     """:param old_record: initial record
         :type old_record: object
 
        :param new_record: touched record
        :type new_record: object
 
-        Returns a JSON patch object with the only difference
+        Returns an Inspire Patch (JSON patch) object with the only difference
         of the path keys being an array
         """
     json_patch = []
-    for single_diff in diff(old_record, new_record):
-        single_diff = list(single_diff)
-        path = force_list(single_diff[1])  # in case the path is a string and not an array
-        if single_diff[0] == 'add':
-            if not path[0]:
-                path = force_list(single_diff[2][0][0])
-            else:
-                path.append(single_diff[2][0][0])
-            json_patch.append({'op': single_diff[0],
-                               'path': path,
-                               'value': single_diff[2][0][1]})
-        elif single_diff[0] == 'remove':
-            if not path[0]:
-                path = force_list(single_diff[2][0][0])
-            else:
-                path.append(single_diff[2][0][0])
-            json_patch.append({'op': single_diff[0], 'path': path})
-        elif single_diff[0] == 'change':
-            json_patch.append({'op': 'replace',
-                               'path': path,
-                               'value': single_diff[2][1]})
-    if len(json_patch) == 0:
-        return None
+    for diff_element in diff(old_record, new_record):
+        json_patch.append(_get_inspire_diff(diff_element))
+    return json_patch or None
+
+
+def _get_inspire_diff(diff):
+    diff = list(diff)
+    path = force_list(diff[1])  # in case the path is a string and not an array
+    if diff[0] == 'add':
+        return _get_inspire_diff_add(diff, path)
+    elif diff[0] == 'remove':
+        return _get_inspire_diff_remove(diff, path)
+    elif diff[0] == 'change':
+        return _get_inspire_diff_change(diff, path)
+
+
+def _get_inspire_diff_add(diff, path):
+    """
+    diff form examples:
+    ('add', '', ['stargazers', (2, '/users/40')])
+    ('add', 'stargazers', [(2, '/users/40')]),
+    """
+    if not path[0]:
+        path = force_list(diff[2][0][0])
     else:
-        return json_patch
+        path.append(diff[2][0][0])
+    return ({'op': diff[0],
+                       'path': path,
+                       'value': diff[2][0][1]})
+
+
+def _get_inspire_diff_remove(diff, path):
+    """
+    diff form examples:
+    ('remove', 'stargazers', [(2, '/users/40')]),"""
+    if not path[0]:
+        path = force_list(diff[2][0][0])
+    else:
+        path.append(diff[2][0][0])
+    return {'op': diff[0], 'path': path}
+
+
+def _get_inspire_diff_change(diff, path):
+    """
+    diff form examples:
+    ('change', ['settings', 'assignees', 2], (201, 202)),
+    ('change', 'title', ('hello', 'hellooo'))]"""
+    return ({'op': 'replace',
+             'path': path,
+             'value': diff[2][1]})

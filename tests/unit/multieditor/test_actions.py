@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not waive the privileges and immunities
+# In processing this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
@@ -26,7 +26,7 @@ import json
 import os
 import pytest
 
-from inspirehep.modules.multieditor.actions import Addition, Deletion, Update, create_object_from_path
+from inspirehep.modules.multieditor.actions import AddProcessor, DeleteProcessor, UpdateProcessor, create_object_from_path
 
 
 @pytest.fixture
@@ -45,8 +45,8 @@ def test_addition_root_key(get_schema):
     expected_map = {
         'preprint_date': '2016'
     }
-    add = Addition(keypath=['preprint_date'], value='2016')
-    add.apply(record, get_schema)
+    add = AddProcessor(keypath=['preprint_date'], value='2016')
+    add.process(record, get_schema)
     assert record == expected_map
 
 
@@ -66,8 +66,8 @@ def test_addition_root_object(get_schema):
                 'source': 'AIP',
                 'value': 'Variational principles presented as a logical extension.'
              }
-    add = Addition(keypath=['abstracts'], value=object_to_add)
-    add.apply(record, get_schema)
+    add = AddProcessor(keypath=['abstracts'], value=object_to_add)
+    add.process(record, get_schema)
     assert record == expected_map
 
 
@@ -78,9 +78,9 @@ def test_addition_missing_root_key(get_schema):
     expected_map = {
         '_collections': ['Literature']
     }
-    add = Addition(keypath=['_collections'], value='Literature',
-                   conditions=[{'keypath': ['_collections'], 'match_type':'missing', 'value': ''}])
-    add.apply(record, get_schema)
+    add = AddProcessor(keypath=['_collections'], value='Literature',
+                       conditions=[{'keypath': ['_collections'], 'match_type':'missing', 'value': ''}])
+    add.process(record, get_schema)
     assert record == expected_map
 
 
@@ -95,9 +95,9 @@ def test_addition_missing_deeper_key(get_schema):
             }
         ]
     }
-    add = Addition(keypath=['public_notes'], value={'value': 'Preliminary results'},
-                   conditions=[{'keypath': ['public_notes', 'value'], 'match_type':'missing', 'value': ''}])
-    add.apply(record, get_schema)
+    add = AddProcessor(keypath=['public_notes'], value={'value': 'Preliminary results'},
+                       conditions=[{'keypath': ['public_notes', 'value'], 'match_type':'missing', 'value': ''}])
+    add.process(record, get_schema)
     assert record == expected_map
 
 
@@ -126,12 +126,12 @@ def test_addition_root_key_with_deeper_condition(get_schema):
         'core': True,
         'preprint_date': '2016'
     }
-    add = Addition(keypath=['preprint_date'],
-                   conditions=[{'keypath': ['public_notes', 'value'], 'value': 'Preliminary results',
-                                'match_type': 'exact'},
-                               {'keypath': ['core'], 'value': 'True', 'match_type': 'exact'}],
-                   value='2016')
-    add.apply(record, get_schema)
+    add = AddProcessor(keypath=['preprint_date'],
+                       conditions=[{'keypath': ['public_notes', 'value'], 'value': 'Preliminary results',
+                                   'match_type': 'exact'},
+                                   {'keypath': ['core'], 'value': 'True', 'match_type': 'exact'}],
+                       value='2016')
+    add.process(record, get_schema)
     assert record == expected_map
 
 
@@ -163,13 +163,13 @@ def test_addition_root_key_with_deeper_condition_negative(get_schema):
             }
         ],
     }
-    add = Addition(keypath=['preprint_date'],
-                   conditions=[{'keypath': ['public_notes', 'value'], 'value': 'Preliminary results',
-                                'match_type': 'exact'},
-                               {'keypath': ['core'], 'value': 'False', 'match_type': 'exact'}],
-                   match_type='exact',
-                   value='2016')
-    add.apply(record, get_schema)
+    add = AddProcessor(keypath=['preprint_date'],
+                       conditions=[{'keypath': ['public_notes', 'value'], 'value': 'Preliminary results',
+                                    'match_type': 'exact'},
+                                   {'keypath': ['core'], 'value': 'False', 'match_type': 'exact'}],
+                       match_type='exact',
+                       value='2016')
+    add.process(record, get_schema)
     assert record == expected_map
 
 
@@ -204,12 +204,12 @@ def test_addition_object_with_conditions(get_schema):
             }
         ],
     }
-    add = Addition(keypath=['titles'],
-                   conditions=[{'keypath': ['public_notes', 'value'], 'value': 'Preliminary results',
-                                'match_type': 'exact'},
-                               {'keypath': ['core'], 'value': 'True', 'match_type': 'exact'}],
-                   value={'title': 'success'})
-    add.apply(record, get_schema)
+    add = AddProcessor(keypath=['titles'],
+                       conditions=[{'keypath': ['public_notes', 'value'], 'value': 'Preliminary results',
+                                    'match_type': 'exact'},
+                                   {'keypath': ['core'], 'value': 'True', 'match_type': 'exact'}],
+                       value={'title': 'success'})
+    add.process(record, get_schema)
     assert record == expected_map
 
 
@@ -246,8 +246,8 @@ def test_addition_object(get_schema):
         },
         'type': 'object',
     }
-    add = Addition(keypath=['key_a', 'key_b'], value='success')
-    add.apply(record, custom_schema)
+    add = AddProcessor(keypath=['key_a', 'key_b'], value='success')
+    add.process(record, custom_schema)
     assert record == expected_map
 
 
@@ -290,12 +290,12 @@ def test_addition_array_with_condition(get_schema):
         },
         'type': 'object',
     }
-    add = Addition(keypath=['key_a', 'key_b'],
-                   conditions=[{'keypath': ['key_a', 'key_c'],
-                                'match_type': 'exact',
-                                'value':'test'}],
-                   value='World')
-    add.apply(record, custom_schema)
+    add = AddProcessor(keypath=['key_a', 'key_b'],
+                       conditions=[{'keypath': ['key_a', 'key_c'],
+                                    'match_type': 'exact',
+                                    'value':'test'}],
+                       value='World')
+    add.process(record, custom_schema)
     assert record == expected_map
 
 
@@ -325,12 +325,12 @@ def test_addition_array(get_schema):
         ],
         'document_type': ['book']
     }
-    add = Addition(keypath=['titles', 'subtitle'], value='success')
-    add.apply(record, get_schema)
+    add = AddProcessor(keypath=['titles', 'subtitle'], value='success')
+    add.process(record, get_schema)
     assert record == expected_map
 
 
-def test_addition_array_with_condition_condition(get_schema):
+def test_addition_array_with_condition(get_schema):
     record = {
         'titles': [
             {
@@ -355,12 +355,12 @@ def test_addition_array_with_condition_condition(get_schema):
         ],
         'document_type': ['book']
     }
-    add = Addition(keypath=['titles', 'subtitle'],
-                   conditions=[{'keypath': ['titles', 'title'],
-                                'match_type': 'contains',
-                                'value':'test'}],
-                   value='success')
-    add.apply(record, get_schema)
+    add = AddProcessor(keypath=['titles', 'subtitle'],
+                       conditions=[{'keypath': ['titles', 'title'],
+                                    'match_type': 'contains',
+                                    'value':'test'}],
+                       value='success')
+    add.process(record, get_schema)
     assert record == expected_map
 
 
@@ -392,12 +392,12 @@ def test_addition_array_with_condition_missing_record():
         },
         'type': 'object',
     }
-    add = Addition(keypath=['key_a', 'key_b'],
-                   conditions=[{'keypath': ['key_a', 'key_c'],
-                                'match_type': 'exact',
-                                'value':'test'}],
-                   value='World')
-    add.apply(record, custom_schema)
+    add = AddProcessor(keypath=['key_a', 'key_b'],
+                       conditions=[{'keypath': ['key_a', 'key_c'],
+                                    'match_type': 'exact',
+                                    'value':'test'}],
+                       value='World')
+    add.process(record, custom_schema)
     assert record == expected_map
 
 
@@ -446,13 +446,13 @@ def test_addition_object_with_condition(get_schema):
             }
         ]
     }
-    add = Addition(keypath=['authors', 'affiliations'],
-                   conditions=[{'keypath': ['authors', 'signature_block'],
-                                'match_type': 'exact',
-                                'value':'BANARo'}],
-                   value={'curated_relation': True,
-                          'value': 'Success'})
-    add.apply(record, get_schema)
+    add = AddProcessor(keypath=['authors', 'affiliations'],
+                       conditions=[{'keypath': ['authors', 'signature_block'],
+                                    'match_type': 'exact',
+                                    'value':'BANARo'}],
+                       value={'curated_relation': True,
+                              'value': 'Success'})
+    add.process(record, get_schema)
     assert record == expected_map
 
 
@@ -464,10 +464,10 @@ def test_deletion_array_to_empty(get_schema):
         'cited': True
     }
 
-    delete = Deletion(update_value='test',
-                      keypath=['texkeys'],
-                      match_type='contains')
-    delete.apply(record, get_schema)
+    delete = DeleteProcessor(update_value='test',
+                             keypath=['texkeys'],
+                             match_type='contains')
+    delete.process(record, get_schema)
     assert record == expected_map
 
 
@@ -480,10 +480,10 @@ def test_deletion_array(get_schema):
         'cited': True
     }
 
-    delete = Deletion(update_value='test',
-                      keypath=['texkeys'],
-                      match_type='exact')
-    delete.apply(record, get_schema)
+    delete = DeleteProcessor(update_value='test',
+                             keypath=['texkeys'],
+                             match_type='exact')
+    delete.process(record, get_schema)
     assert record == expected_map
 
 
@@ -497,10 +497,10 @@ def test_deletion_array_contains(get_schema):
         'cited': True
     }
 
-    delete = Deletion(update_value='val',
-                      keypath=['inspire_categories', 'term'],
-                      match_type='contains')
-    delete.apply(record, get_schema)
+    delete = DeleteProcessor(update_value='val',
+                             keypath=['inspire_categories', 'term'],
+                             match_type='contains')
+    delete.process(record, get_schema)
     assert record == expected_map
 
 
@@ -514,30 +514,30 @@ def test_deletion_array_regex(get_schema):
         'cited': True
     }
 
-    delete = Deletion(update_value='va.*',
-                      keypath=['inspire_categories', 'term'],
-                      match_type='regex')
-    delete.apply(record, get_schema)
+    delete = DeleteProcessor(update_value='va.*',
+                             keypath=['inspire_categories', 'term'],
+                             match_type='regex')
+    delete.process(record, get_schema)
     assert record == expected_map
 
 
 def test_deletion_contains(get_schema):
     record = {'inspire_categories': [{'term': 'val'}]}
     expected_map = {}
-    delete = Deletion(update_value='v',
-                      keypath=['inspire_categories', 'term'],
-                      match_type='contains')
-    delete.apply(record, get_schema)
+    delete = DeleteProcessor(update_value='v',
+                             keypath=['inspire_categories', 'term'],
+                             match_type='contains')
+    delete.process(record, get_schema)
     assert record == expected_map
 
 
 def test_deletion_regex(get_schema):
     record = {'inspire_categories': [{'term': 'val'}]}
     expected_map = {}
-    delete = Deletion(update_value='v.*',
-                      keypath=['inspire_categories', 'term'],
-                      match_type='regex')
-    delete.apply(record, get_schema)
+    delete = DeleteProcessor(update_value='v.*',
+                             keypath=['inspire_categories', 'term'],
+                             match_type='regex')
+    delete.process(record, get_schema)
     assert record == expected_map
 
 
@@ -599,44 +599,44 @@ def test_record_creation_array(get_schema):
 def test_update_regex(get_schema):
     record = {'inspire_categories': [{'term': 'val'}]}
     expected_map = {'inspire_categories': [{'term': 'success'}]}
-    update = Update(update_value='v.*',
-                    value='success',
-                    keypath=['inspire_categories', 'term'],
-                    match_type='regex')
-    update.apply(record, get_schema)
+    update = UpdateProcessor(update_value='v.*',
+                             value='success',
+                             keypath=['inspire_categories', 'term'],
+                             match_type='regex')
+    update.process(record, get_schema)
     assert record == expected_map
 
 
 def test_update_contains(get_schema):
     record = {'inspire_categories': [{'term': 'val'}, {'term': 'Val'}]}
     expected_map = {'inspire_categories': [{'term': 'success'}, {'term': 'success'}]}
-    update = Update(update_value='v',
-                    value='success',
-                    keypath=['inspire_categories', 'term'],
-                    match_type='contains')
-    update.apply(record, get_schema)
+    update = UpdateProcessor(update_value='v',
+                             value='success',
+                             keypath=['inspire_categories', 'term'],
+                             match_type='contains')
+    update.process(record, get_schema)
     assert record == expected_map
 
 
 def test_update_boolean(get_schema):
     record = {'citeable': True}
     expected_map = {'citeable': False}
-    update = Update(update_value='True',
-                    value='False',
-                    keypath=['citeable'],
-                    match_type='exact')
-    update.apply(record, get_schema)
+    update = UpdateProcessor(update_value='True',
+                             value='False',
+                             keypath=['citeable'],
+                             match_type='exact')
+    update.process(record, get_schema)
     assert record == expected_map
 
 
 def test_update_number(get_schema):
     record = {'number_of_pages': 1984}
     expected_map = {'number_of_pages': 1990}
-    update = Update(update_value='1984',
-                    value='1990',
-                    keypath=['number_of_pages'],
-                    match_type='exact')
-    update.apply(record, get_schema)
+    update = UpdateProcessor(update_value='1984',
+                             value='1990',
+                             keypath=['number_of_pages'],
+                             match_type='exact')
+    update.process(record, get_schema)
     assert record == expected_map
 
 
@@ -644,11 +644,11 @@ def test_record_update_field_not_existing(get_schema):
     """should test sub_record creation for missing object"""
     record = {'abstracts': [{'not_source': 'success'}]}
     expected_map = {'abstracts': [{'not_source': 'success'}]}
-    update = Update(keypath=['abstracts', 'source'],
-                    update_value='success',
-                    match_type='exact',
-                    value='failure')
-    update.apply(record, get_schema)
+    update = UpdateProcessor(keypath=['abstracts', 'source'],
+                             update_value='success',
+                             match_type='exact',
+                             value='failure')
+    update.process(record, get_schema)
     assert record == expected_map
 
 
@@ -662,11 +662,11 @@ def test_update_array_exact(get_schema):
         'references': [{'reference': {'collaborations': ['Val', 'success']}},
                        {'reference': {'collaborations': ['val1', 'test val']}}],
     }
-    update = Update(update_value='val4',
-                    keypath=['references', 'reference', 'collaborations'],
-                    match_type='exact',
-                    value='success')
-    update.apply(record, get_schema)
+    update = UpdateProcessor(update_value='val4',
+                             keypath=['references', 'reference', 'collaborations'],
+                             match_type='exact',
+                             value='success')
+    update.process(record, get_schema)
     assert record == expected_map
 
 
@@ -680,11 +680,11 @@ def test_update_array_contains(get_schema):
         'references': [{'reference': {'collaborations': ['success', 'success']}},
                        {'reference': {'collaborations': ['success', 'success']}}],
     }
-    update = Update(update_value='val',
-                    keypath=['references', 'reference', 'collaborations'],
-                    match_type='contains',
-                    value='success')
-    update.apply(record, get_schema)
+    update = UpdateProcessor(update_value='val',
+                             keypath=['references', 'reference', 'collaborations'],
+                             match_type='contains',
+                             value='success')
+    update.process(record, get_schema)
     assert record == expected_map
 
 
@@ -698,11 +698,11 @@ def test_update_array_regex(get_schema):
         'references': [{'reference': {'collaborations': ['success', 'success']}},
                        {'reference': {'collaborations': ['success', 'success']}}],
     }
-    update = Update(update_value='val.*',
-                    keypath=['references', 'reference', 'collaborations'],
-                    match_type='regex',
-                    value='success')
-    update.apply(record, get_schema)
+    update = UpdateProcessor(update_value='val.*',
+                             keypath=['references', 'reference', 'collaborations'],
+                             match_type='regex',
+                             value='success')
+    update.process(record, get_schema)
     assert record == expected_map
 
 
@@ -717,14 +717,14 @@ def test_update_condition_array_regex(get_schema):
                        {'reference': {'collaborations': ['val1', 'tes4'], 'title':{'title': 'not'}}}]
     }
 
-    update = Update(update_value='val5',
-                    keypath=['references', 'reference', 'collaborations'],
-                    conditions=[{'keypath': ['references', 'reference', 'title', 'title'],
-                                'match_type': 'regex',
-                                 'value':'tes.*'}],
-                    match_type='exact',
-                    value='success')
-    update.apply(record, get_schema)
+    update = UpdateProcessor(update_value='val5',
+                             keypath=['references', 'reference', 'collaborations'],
+                             conditions=[{'keypath': ['references', 'reference', 'title', 'title'],
+                                          'match_type': 'regex',
+                                          'value':'tes.*'}],
+                             match_type='exact',
+                             value='success')
+    update.process(record, get_schema)
     assert record == expected_map
 
 
@@ -745,11 +745,11 @@ def test_update_with_missing_keypath(get_schema):
         ],
     }
 
-    update = Update(update_value='test',
-                    keypath=['abstracts', 'source'],
-                    value='success',
-                    match_type='exact')
-    update.apply(record, get_schema)
+    update = UpdateProcessor(update_value='test',
+                             keypath=['abstracts', 'source'],
+                             value='success',
+                             match_type='exact')
+    update.process(record, get_schema)
     assert record == expected_map
 
 
@@ -817,24 +817,24 @@ def test_update_check_regex_condition(get_schema):
         ],
         'number_of_pages': 184
     }
-    update = Update(update_value='Rome.*',
-                    keypath=['authors', 'affiliations', 'value'],
-                    conditions=[{'keypath': ['authors', 'signature_block'],
-                                'match_type':'exact',
-                                 'value':'BANARo'},
-                                {'keypath': ['document_type'],
-                                 'match_type': 'contains',
-                                 'value': 'book'},
-                                {'keypath': ['texkeys'],
-                                 'match_type': 'exact',
-                                 'value': 'Braendas:1972ts'},
-                                {'keypath': ['number_of_pages'],
-                                 'match_type': 'exact',
-                                 'value': '184'}
-                                ],
-                    match_type='regex',
-                    value='Success')
-    update.apply(record, get_schema)
+    update = UpdateProcessor(update_value='Rome.*',
+                             keypath=['authors', 'affiliations', 'value'],
+                             conditions=[{'keypath': ['authors', 'signature_block'],
+                                         'match_type':'exact',
+                                          'value':'BANARo'},
+                                         {'keypath': ['document_type'],
+                                         'match_type': 'contains',
+                                          'value': 'book'},
+                                         {'keypath': ['texkeys'],
+                                         'match_type': 'exact',
+                                          'value': 'Braendas:1972ts'},
+                                         {'keypath': ['number_of_pages'],
+                                         'match_type': 'exact',
+                                          'value': '184'}
+                                         ],
+                             match_type='regex',
+                             value='Success')
+    update.process(record, get_schema)
     assert record == expected_map
 
 
@@ -896,16 +896,16 @@ def test_update_for_missing_key(get_schema):
             }
         ]
     }
-    update = Update(update_value='Rome U.',
-                    keypath=['authors', 'affiliations', 'value'],
-                    conditions=[{'keypath': ['authors', 'signature_block'],
-                                'match_type':'missing',
-                                 'value': ''},
-                                {'keypath': ['document_type'],
-                                 'match_type': 'regex',
-                                 'value': 'book.*'},
-                                ],
-                    match_type='exact',
-                    value='Success')
-    update.apply(record, get_schema)
+    update = UpdateProcessor(update_value='Rome U.',
+                             keypath=['authors', 'affiliations', 'value'],
+                             conditions=[{'keypath': ['authors', 'signature_block'],
+                                         'match_type':'missing',
+                                          'value': ''},
+                                         {'keypath': ['document_type'],
+                                         'match_type': 'regex',
+                                          'value': 'book.*'},
+                                         ],
+                             match_type='exact',
+                             value='Success')
+    update.process(record, get_schema)
     assert record == expected_map

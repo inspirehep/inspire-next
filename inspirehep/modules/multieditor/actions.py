@@ -27,10 +27,10 @@ from collections import namedtuple
 from abc import ABCMeta, abstractmethod
 from jsonschema import ValidationError
 from inspire_schemas.api import validate
-from inspirehep.utils.record import inspire_diff
+from inspirehep.utils.record import get_inspire_patch
 
 
-class Action(object):
+class ActionProcessor(object):
     __metaclass__ = ABCMeta
 
     def __init__(self, keypath, value=None, match_type=None, update_value=None,
@@ -87,12 +87,12 @@ class Action(object):
     def handle_record(self, record, key, schema, position, conditions_passed):
         if isinstance(record[key], list):
             for array_record in record[key]:
-                self._apply(array_record, schema, position + 1, conditions_passed)
+                self._process(array_record, schema, position + 1, conditions_passed)
         else:
-            self._apply(record[key], schema, position + 1, conditions_passed)
+            self._process(record[key], schema, position + 1, conditions_passed)
 
     @abstractmethod
-    def apply(self, **kwargs):
+    def process(self, **kwargs):
         return None
 
     def __repr__(self):
@@ -123,7 +123,7 @@ class Action(object):
         return MATCHING_ACTIONS[name]
 
 
-class Addition(Action):
+class AddProcessor(ActionProcessor):
     """Class that when applied adds a new primitive field or object to the selected path
     if the conditions are satisfied"""
 
@@ -136,10 +136,10 @@ class Addition(Action):
     def _handle_contains_match(self, *args):
         return None
 
-    def apply(self, record, schema):
-        self._apply(record=record, schema=schema, position=0, conditions_passed=0)
+    def process(self, record, schema):
+        self._process(record=record, schema=schema, position=0, conditions_passed=0)
 
-    def _apply(self, record, schema, position, conditions_passed):
+    def _process(self, record, schema, position, conditions_passed):
         """
         :param record: record in which the field to be updated resides
         :param schema: schema on which our record is based
@@ -166,7 +166,7 @@ class Addition(Action):
         self.handle_record(record, key, new_schema, position, conditions_passed)
 
 
-class Deletion(Action):
+class DeleteProcessor(ActionProcessor):
     """Class that when applied deletes the appropriate field if the conditions are satisfied"""
 
     def _handle_exact_match(self, record, key, serialized_update_value):
@@ -203,10 +203,10 @@ class Deletion(Action):
                 del record[key]
                 self.changed = True
 
-    def apply(self, record, schema):
-        self._apply(record=record, schema=schema, position=0, conditions_passed=0)
+    def process(self, record, schema):
+        self._process(record=record, schema=schema, position=0, conditions_passed=0)
 
-    def _apply(self, record, schema, position, conditions_passed):
+    def _process(self, record, schema, position, conditions_passed):
         """
         :param record: record in which the field to be deleted resides
         :param schema: schema on which our record is based
@@ -240,7 +240,7 @@ class Deletion(Action):
         return record
 
 
-class Update(Action):
+class UpdateProcessor(ActionProcessor):
     """Class that when applied updates the appropriate field if the conditions
      are satisfied and replaces its value with the one provided"""
 
@@ -277,10 +277,10 @@ class Update(Action):
                 record[key] = self.value
                 self.changed = True
 
-    def apply(self, record, schema):
-        self._apply(record=record, schema=schema, position=0, conditions_passed=0)
+    def process(self, record, schema):
+        self._process(record=record, schema=schema, position=0, conditions_passed=0)
 
-    def _apply(self, record, schema, position, conditions_passed):
+    def _process(self, record, schema, position, conditions_passed):
         """
         :param record: record in which the field to be updated resides
         :param schema: schema on which our record is based
@@ -439,7 +439,7 @@ def compare_records(old_records, new_records, schema):
     json_patches = []
     errors = []
     for index, new_record in enumerate(new_records):
-        json_patches.append(inspire_diff(old_records[index], new_record))
+        json_patches.append(get_inspire_patch(old_records[index], new_record))
         try:
             validate(new_record, schema)
         except (ValidationError, Exception) as e:
