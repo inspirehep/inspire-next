@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 from wtforms import Field, FieldList, Form, FormField
 
 
-CFG_GROUPS_META = {
+FORMS_GROUPS_META = {
     'classes': None,
     'indication': None,
     'description': None,
@@ -34,7 +34,7 @@ CFG_GROUPS_META = {
 """Default group metadata."""
 
 
-CFG_FIELD_FLAGS = [
+FORMS_FIELD_FLAGS = [
     'hidden',
     'disabled',
     'touched',
@@ -77,7 +77,7 @@ class INSPIREForm(Form):
             for group in self.groups:
                 group_obj = {
                     'name': group[0],
-                    'meta': CFG_GROUPS_META.copy(),
+                    'meta': FORMS_GROUPS_META.copy(),
                 }
 
                 fields = []

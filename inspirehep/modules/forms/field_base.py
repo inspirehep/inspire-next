@@ -104,7 +104,7 @@ import warnings
 
 from wtforms import Field
 
-from .form import CFG_FIELD_FLAGS
+from .form import FORMS_FIELD_FLAGS
 
 
 class INSPIREField(Field):
@@ -163,9 +163,9 @@ class INSPIREField(Field):
         self._message_state = ''
 
         # Get flag values (e.g. hidden, disabled) before super() call.
-        # See CFG_FIELD_FLAGS for all defined flags.
+        # See FORMS_FIELD_FLAGS for all defined flags.
         flag_values = {}
-        for flag in CFG_FIELD_FLAGS:
+        for flag in FORMS_FIELD_FLAGS:
             flag_values[flag] = kwargs.pop(flag, False)
 
         # Call super-constructor.
@@ -273,7 +273,7 @@ class INSPIREField(Field):
     def set_flags(self, flags):
         """Set field flags."""
         field_flags = flags.get(self.name, [])
-        for check_flag in CFG_FIELD_FLAGS:
+        for check_flag in FORMS_FIELD_FLAGS:
             setattr(self.flags, check_flag, check_flag in field_flags)
 
     @property
