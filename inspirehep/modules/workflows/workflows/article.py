@@ -40,6 +40,7 @@ from inspirehep.modules.workflows.tasks.arxiv import (
 )
 from inspirehep.modules.workflows.tasks.actions import (
     add_core,
+    cleanup_workflow,
     error_workflow,
     halt_record,
     is_record_relevant,
@@ -434,6 +435,8 @@ INIT_MARKS = [
 PRE_PROCESSING = [
     # Make sure schema is set for proper indexing in Holding Pen
     set_schema,
+    cleanup_workflow,
+    save_workflow,
     INIT_MARKS,
 ]
 

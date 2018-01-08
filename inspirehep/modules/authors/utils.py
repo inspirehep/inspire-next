@@ -25,11 +25,22 @@
 from __future__ import absolute_import, division, print_function
 
 import re
-
+import copy
+import datetime
 
 import numpy as np
+from flask import url_for
 from beard.utils.strings import asciify
 from beard.clustering import block_phonetic
+from sqlalchemy.orm.exc import NoResultFound
+
+from invenio_accounts.models import User
+from invenio_oauthclient.models import UserIdentity
+
+from inspire_dojson.utils import strip_empty_values
+from inspire_schemas.api import validate
+from inspirehep.modules.forms.utils import filter_empty_elements
+from .dojson.model import updateform
 
 
 _bai_parentheses_cleaner = \
@@ -126,3 +137,79 @@ def phonetic_blocks(full_names, phonetic_algorithm='nysiis'):
     )
 
     return dict(zip(full_names, phonetic_blocks))
+
+
+def formdata_to_model(formdata, id_workflow, id_user, is_update=False):
+    """Generate the record model dict and extra_data dict from the form data.
+
+    Returns:
+        tuple(dict, dict): tuple containing the dict representaion of a record
+            and the extra_data to create a new workflow.
+    """
+    form_fields = copy.deepcopy(formdata)
+    extra_data = {}
+
+    filter_empty_elements(
+        form_fields,
+        ['institution_history', 'advisors',
+         'websites', 'experiments']
+    )
+    data = updateform.do(form_fields)
+
+    data['_collections'] = ['Authors']
+
+    if '$schema' in data and not data['$schema'].startswith('http'):
+        data['$schema'] = url_for(
+            'invenio_jsonschemas.get_schema',
+            schema_path="records/{0}".format(data['$schema'])
+        )
+
+    author_name = ''
+
+    if 'family_name' in form_fields and form_fields['family_name']:
+        author_name = form_fields['family_name'].strip() + ', '
+    if 'given_names' in form_fields and form_fields['given_names']:
+        author_name += form_fields['given_names']
+
+    if author_name:
+        data.get('name', {})['value'] = author_name
+
+    if 'extra_comments' in form_fields and form_fields['extra_comments']:
+        data.setdefault('_private_notes', []).append({
+            'source': 'submitter',
+            'value': form_fields['extra_comments']
+        })
+
+    data['stub'] = False
+
+    # ==========
+    # Submitter Info
+    # ==========
+    try:
+        user_email = User.query.get(id_user).email
+    except AttributeError:
+        user_email = ''
+    try:
+        orcid = UserIdentity.query.filter_by(
+            id_user=id_user,
+            method='orcid'
+        ).one().id
+    except NoResultFound:
+        orcid = ''
+    data['acquisition_source'] = dict(
+        email=user_email,
+        datetime=datetime.datetime.utcnow().isoformat(),
+        method="submitter",
+        orcid=orcid,
+        submission_number=str(id_workflow),
+        internal_uid=int(id_user),
+    )
+
+    data = strip_empty_values(data)
+
+    validate(data, 'authors')
+
+    if is_update is not None:
+        extra_data['is-update'] = is_update
+
+    return data, extra_data

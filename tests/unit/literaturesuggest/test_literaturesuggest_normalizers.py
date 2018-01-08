@@ -28,12 +28,7 @@ from inspirehep.modules.literaturesuggest.normalizers import (
 )
 
 
-class DummyObj(object):
-    pass
-
-
 def test_split_page_range_article_id():
-    obj = DummyObj()
     formdata = {'page_range_article_id': '789-890'}
 
     expected = {
@@ -42,13 +37,12 @@ def test_split_page_range_article_id():
         'page_range_article_id': '789-890',
         'start_page': '789',
     }
-    result = split_page_range_article_id(obj, formdata)
+    result = split_page_range_article_id(formdata)
 
     assert expected == result
 
 
 def test_remove_english_language():
-    obj = DummyObj()
     formdata = {
         'language': 'en',
         'title_translation': (
@@ -58,6 +52,6 @@ def test_remove_english_language():
     }
 
     expected = {}
-    result = remove_english_language(obj, formdata)
+    result = remove_english_language(formdata)
 
     assert expected == result

@@ -74,19 +74,19 @@ def check_journal_existence(title):
     return db.session.execute(query)
 
 
-def normalize_formdata(obj, formdata):
-    formdata = normalize_provided_doi(obj, formdata)
-    formdata = get_user_orcid(obj, formdata)
-    formdata = get_user_email(obj, formdata)
-    formdata = split_page_range_article_id(obj, formdata)
-    formdata = normalize_journal_title(obj, formdata)
-    formdata = remove_english_language(obj, formdata)
-    formdata = find_book_id(obj, formdata)
+def normalize_formdata(id_user, formdata):
+    formdata = normalize_provided_doi(formdata)
+    formdata = get_user_orcid(id_user, formdata)
+    formdata = get_user_email(id_user, formdata)
+    formdata = split_page_range_article_id(formdata)
+    formdata = normalize_journal_title(formdata)
+    formdata = remove_english_language(formdata)
+    formdata = find_book_id(formdata)
 
     return formdata
 
 
-def normalize_provided_doi(obj, formdata):
+def normalize_provided_doi(formdata):
     try:
         doi = formdata.get('doi')
         formdata['doi'] = normalize_doi(doi)
@@ -96,26 +96,26 @@ def normalize_provided_doi(obj, formdata):
     return formdata
 
 
-def get_user_email(obj, formdata):
+def get_user_email(id_user, formdata):
     try:
-        formdata['email'] = User.query.get(obj.id_user).email
+        formdata['email'] = User.query.get(id_user).email
     except AttributeError:
         formdata['email'] = None
 
     return formdata
 
 
-def get_user_orcid(obj, formdata):
+def get_user_orcid(id_user, formdata):
     try:
         formdata['orcid'] = UserIdentity.query.filter_by(
-            id_user=obj.id_user, method='orcid').one().id
+            id_user=id_user, method='orcid').one().id
     except NoResultFound:
         formdata['orcid'] = None
 
     return formdata
 
 
-def split_page_range_article_id(obj, formdata):
+def split_page_range_article_id(formdata):
     page_range_article_id = formdata.get('page_range_article_id')
 
     if page_range_article_id:
@@ -127,7 +127,7 @@ def split_page_range_article_id(obj, formdata):
     return formdata
 
 
-def normalize_journal_title(obj, formdata):
+def normalize_journal_title(formdata):
     if formdata.get('type_of_doc') == 'book' or formdata.get('type_of_doc') == 'chapter':
         result = check_journal_existence(formdata.get('series_title'))
         if result.rowcount > 0:
@@ -137,7 +137,7 @@ def normalize_journal_title(obj, formdata):
     return formdata
 
 
-def find_book_id(obj, formdata):
+def find_book_id(formdata):
     if formdata.get('type_of_doc') == 'chapter':
         if not formdata.get('parent_book'):
             result = list(check_book_existence(formdata.get('book_title')))
@@ -146,7 +146,7 @@ def find_book_id(obj, formdata):
     return formdata
 
 
-def remove_english_language(obj, formdata):
+def remove_english_language(formdata):
     if formdata.get('language') == 'en':
         del formdata['language']
         del formdata['title_translation']

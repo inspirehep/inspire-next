@@ -27,10 +27,12 @@ from __future__ import absolute_import, division, print_function
 from workflow.patterns.controlflow import IF, IF_ELSE, IF_NOT
 
 from inspirehep.modules.workflows.tasks.actions import (
+    cleanup_workflow,
     halt_record,
     in_production_mode,
     is_marked,
     is_record_accepted,
+    save_workflow,
 )
 
 from inspirehep.modules.workflows.tasks.submission import (
@@ -126,6 +128,8 @@ class Author(object):
     workflow = [
         # Make sure schema is set for proper indexing in Holding Pen
         set_schema,
+        cleanup_workflow,
+        save_workflow,
         IF_ELSE(
             is_marked('is-update'),
             SEND_UPDATE_NOTIFICATION,
