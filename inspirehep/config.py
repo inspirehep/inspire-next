@@ -1408,7 +1408,7 @@ CRAWLER_SETTINGS = {
 
 # Legacy PID provider
 # ===================
-LEGACY_PID_PROVIDER = None  # e.g. "http://example.org/batchuploader/allocaterecord"
+PIDSTORE_LEGACY_PID_PROVIDER = None  # e.g. "http://example.org/batchuploader/allocaterecord"
 
 # Inspire subject translation
 # ===========================

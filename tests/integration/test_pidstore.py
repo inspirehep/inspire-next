@@ -31,7 +31,8 @@ from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
 
 def test_getting_next_recid_from_legacy(app):
     extra_config = {
-        'LEGACY_PID_PROVIDER': 'http://server/batchuploader/allocaterecord',
+        'PIDSTORE_LEGACY_PID_PROVIDER':
+            'http://server/batchuploader/allocaterecord',
     }
 
     with mock.patch.dict(current_app.config, extra_config):
