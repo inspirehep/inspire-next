@@ -35,6 +35,18 @@
 
 {% if results %}
 <h4>{{ results_title }}</h4>
+
+{% if 'warnings' in results %}
+<div>
+  <p>There are some problems with the input. Please check the following warnings:</p>
+  <ul>
+    {% for warning in results.warnings %}
+    <li>{{ warning }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
 <button class="btn btn-default" id="copy-button" data-clipboard-target="resultarea">Copy to clipboard</button>
 <pre><textarea class="form-control" form="authorlist" id="resultarea" rows="10">
 {% for author in results['authors'] %}
@@ -46,7 +58,6 @@ $$v{{ affiliation.get('value') }}
 
 {% endfor %}
 </textarea></pre>
-
 
 {% else %}
 <div>
@@ -71,9 +82,9 @@ F. Lastname1, F M Otherlastname1,2
 F. Lastname a
 F.M. Otherlastname b*
 
-a 
+a
 CERN
-b 
+b
 Otheraffiliation
 </pre></p>
 <hr>
@@ -85,7 +96,7 @@ $ Otheraffiliation
 </pre></p>
 <hr>
 
-You should make sure there is 
+You should make sure there is
 <ul>
 <li>an empty line between authors and affiliation
 <li>no other empty lines
@@ -93,7 +104,7 @@ You should make sure there is
 <li>aff-IDs in separate line or separated by space from affiliation
 </ul>
 
-<ADDRESS>If it fails, please send the example to Kirsten</ADDRESS>
+<address>If it fails, please send the example to Kirsten</address>
 </div>
 {% endif %}
 
