@@ -123,7 +123,7 @@ def sorted_options(sort_options):
     return [
         dict(
             title=v['title'],
-            value=('-{0}'.format(k)
+            value=('{0}'.format(k)
                    if v.get('default_order', 'asc') == 'desc' else k),
         )
         for k, v in
