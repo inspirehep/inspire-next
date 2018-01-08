@@ -1198,8 +1198,8 @@ THEME_500_TEMPLATE = "inspirehep_theme/errors/500.html"
 
 # Feedback
 # ========
-CFG_SITE_SUPPORT_EMAIL = "admin@inspirehep.net"
-INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
+THEME_SITE_SUPPORT_EMAIL = "admin@inspirehep.net"
+THEME_LABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 
 # Submission
 # ==========

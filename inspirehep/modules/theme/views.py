@@ -664,8 +664,8 @@ def postfeedback():
 
     content = u'Feedback:\n{feedback}'.format(feedback=feedback)
     message = {
-        'sender': current_app.config['CFG_SITE_SUPPORT_EMAIL'],
-        'recipients': [current_app.config['INSPIRELABS_FEEDBACK_EMAIL']],
+        'sender': current_app.config['THEME_SITE_SUPPORT_EMAIL'],
+        'recipients': [current_app.config['THEME_LABS_FEEDBACK_EMAIL']],
         'subject': 'INSPIRE Labs Feedback',
         'body': content,
         'reply_to': replytoaddr
