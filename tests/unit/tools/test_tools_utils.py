@@ -22,12 +22,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
 from inspirehep.modules.tools.utils import authorlist
 
 
-def test_affiliation_with_utf8_character():
+def test_authorlist_affiliation_with_utf8_character():
     text = (
         'C. Patrignani1 K. Agashe2 G. Aielli1,2\n'
         '\n'
@@ -62,7 +60,7 @@ def test_affiliation_with_utf8_character():
     assert 'warnings' not in result.keys()
 
 
-def test_authors_with_warning():
+def test_authorlist_with_warning():
     text = (
         'Y.X. Ali1,* 20, E I Andronov20\n'
         '\n'
@@ -89,5 +87,4 @@ def test_authors_with_warning():
     result = authorlist(text)
 
     assert expected == result['authors']
-    assert 'Unresolved aff-ID or stray footnote symbol' in result['warnings']
-
+    assert 'Unresolved aff-ID or stray footnote symbol' in result['warnings'][0]

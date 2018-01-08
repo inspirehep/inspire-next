@@ -21,9 +21,10 @@
 # or submit itself to any jurisdiction.
 
 
-"""Utility functions for authorlist."""
+"""Functions to parse an authorlist."""
 
 from __future__ import absolute_import, division, print_function
+
 import re
 import six
 
@@ -61,12 +62,12 @@ def parse_authors(text, affiliations):
     Can be separated by ',', newline or affiliation tag.
     Returns:
     List of tuples: (author_fullname, [author_affiliations])
-    String: warning
+    List of strings: warnings
     """
     import copy
 
     authors = []
-    warning = ""
+    warnings = []
 
     text = text.replace(',', ' , ')
     text = text.replace('\n', ' , ')
@@ -84,9 +85,9 @@ def parse_authors(text, affiliations):
             key_type = 'digit'
         else:
             key_type = 'symbol'
-            warning += 'CAUTION! Using symbols (# and stuff) as aff-IDs.\n'
+            warnings.append('CAUTION! Using symbols (# and stuff) as aff-IDs.')
     else:
-        warning += 'Found no affiliations (empty line needed)\n\n'
+        warnings.append('Found no affiliations (empty line needed)')
 
     author_names = []
     author_affs = []
@@ -98,7 +99,7 @@ def parse_authors(text, affiliations):
             if author_names:
                 fullname = ' '.join(author_names)
                 if len(author_names) == 1:
-                    warning += 'Author without firstname: %s\n' % fullname
+                    warnings.append('Author without firstname: %s' % fullname)
                 author_names = []
             if word in aff_keys:
                 author_affs.append(affiliations[word])
@@ -112,24 +113,27 @@ def parse_authors(text, affiliations):
                         if aff_key in unused_aff_keys:
                             unused_aff_keys.remove(aff_key)
                     else:
-                        warning += \
-                            'Unresolved aff-ID or stray footnote symbol. '\
-                            'Problematic author and aff-id: %s %s\n' % \
+                        warnings.append(
+                            'Unresolved aff-ID or stray footnote symbol. '
+                            'Problematic author and aff-id: %s %s' %
                             (fullname, aff_key)
+                        )
         else:
             # (part of) (next) author name, process previous author
             if key_type == 'alpha' and word.islower() and word.isalpha():
                 three_words = \
                     list_of_words[max(nw-2, 0):min(nw+3, len(list_of_words))-1]
-                warning += \
-                    'Is this part of a name or missing aff-id? "%s" in %s \n' %\
+                warnings.append(
+                    'Is this part of a name or missing aff-id? "%s" in %s' %
                     (word, ' '.join(three_words))
+                )
             if fullname:
                 if affiliations and not author_affs:
                     # there should be affiliations
-                    warning += \
-                       'Author without affiliation-id. '\
-                       'Problematic author: %s\n' % fullname
+                    warnings.append(
+                       'Author without affiliation-id. '
+                       'Problematic author: %s' % fullname
+                    )
 
                 authors.append((fullname, author_affs))
                 author_affs = []
@@ -140,15 +144,15 @@ def parse_authors(text, affiliations):
     if author_names:
         fullname = ' '.join(author_names)
         if len(author_names) == 1:
-            warning += 'Author without firstname: %s\n' % fullname
+            warnings.append('Author without firstname: %s' % fullname)
         author_affs = []
     if fullname:
         authors.append((fullname, author_affs))
 
     if unused_aff_keys:
-        warning += 'Unused affiliation-IDs: %s\n' % unused_aff_keys
+        warnings.append('Unused affiliation-IDs: %s' % unused_aff_keys)
 
-    return authors, warning
+    return authors, warnings
 
 
 def determine_aff_type_character(char_list):
@@ -206,14 +210,14 @@ def determine_aff_type(text):
             aff_pattern = line_pattern_single[aff_type]
         else:
             raise ValueError('Cannot identify type of affiliation, '
-                'found IDs: %s' % single_char)
+                             'found IDs: %s' % single_char)
     else:
         aff_type = determine_aff_type_character(first_char)
         if aff_type:
             aff_pattern = line_pattern_line[aff_type]
         else:
             raise ValueError('Cannot identify type of affiliations, '
-                'found IDs: %s' % first_char)
+                             'found IDs: %s' % first_char)
 
     return aff_pattern
 
@@ -281,11 +285,9 @@ def create_authors(text):
     more blocks: authors grouped by affiliation (not implemented yet)
 
     Returns:
-    List of tuples: (author_fullname, [author_affiliations])
-    String: warning
+        dict: with two keys: ``authors`` of the form ``(author_fullname,
+        [author_affiliations])`` and ``warnings`` which is a list of strings.
     """
-
-    warnings = ""
 
     if not text:
         return {}
@@ -305,18 +307,16 @@ def create_authors(text):
         text_blocks.pop(num)
 
     if len(text_blocks) == 0:
-        authors = []
+        authors, warnings = [], []
     elif len(text_blocks) == 1:
-        authors, text = parse_authors(text_blocks[0], {})
-        warnings += text
+        authors, warnings = parse_authors(text_blocks[0], {})
     elif len(text_blocks) == 2:
         affiliations = parse_affiliations(text_blocks[1])
-        authors, text = parse_authors(text_blocks[0], affiliations)
-        warnings += text
+        authors, warnings = parse_authors(text_blocks[0], affiliations)
     else:
         # authors = parse_blocks(text_blocks)
-        raise ValueError('Authors grouped by affiliation? - Comming soon.\n'
-            'Or too many empty lines.')
+        raise ValueError('Authors grouped by affiliation? - Comming soon.'
+                         'Or too many empty lines.')
 
     if warnings:
         return {'authors': authors, 'warnings': warnings}

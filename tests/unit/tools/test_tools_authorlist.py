@@ -108,7 +108,7 @@ def test_create_authors_with_no_firstnames():
     result = create_authors(text)
 
     assert expected == result['authors']
-    assert 'Author without firstname' in result['warnings']
+    assert 'Author without firstname: Einstein' in result['warnings']
 
 
 def test_create_authors_with_missing_affid():
@@ -125,9 +125,10 @@ def test_create_authors_with_missing_affid():
         (u'A. Einstein', []),
         (u'N. Bohr', []),
     ]
+    warning = 'Unresolved aff-ID or stray footnote symbol. Problematic author and aff-id: N. Bohr 2'
 
     assert expected == result['authors']
-    assert 'Unresolved aff-ID' in result['warnings']
+    assert warning in result['warnings']
 
 
 def test_create_authors_with_affid_but_missing_affiliation():
@@ -144,9 +145,10 @@ def test_create_authors_with_affid_but_missing_affiliation():
         (u'A. Einstein', []),
         (u'N. Bohr', [u'K\xf8benhavns Universitet']),
     ]
+    warning = 'Unresolved aff-ID or stray footnote symbol. Problematic author and aff-id: A. Einstein 1'
 
     assert expected == result['authors']
-    assert 'Unresolved aff-ID' in result['warnings']
+    assert warning in result['warnings']
 
 
 def test_create_authors_with_invalid_affiliation():
@@ -178,9 +180,10 @@ def test_create_authors_with_one_author_missing_affiliation():
         (u'A. Einstein', []),
         (u'N. Bohr', [u'ETH', u'K\xf8benhavns Universitet']),
     ]
+    warning = 'Author without affiliation-id. Problematic author: A. Einstein'
 
     assert expected == result['authors']
-    assert 'Author without affiliation-id' in result['warnings']
+    assert warning in result['warnings']
 
 
 def test_create_authors_ignores_space_between_authors_and_affiliations():
@@ -344,11 +347,12 @@ def test_create_authors_multiple_affiliations_on_single_line():
         (u'E I Andronov', [u'DESY']),
         (u'Einstein', [u'ETH Z\xdcRICH15PRINCETON']),
     ]
+    warning = 'Unresolved aff-ID or stray footnote symbol. Problematic author and aff-id: Einstein 15'
 
     result = create_authors(text)
 
     assert expected == result['authors']
-    assert 'Unresolved aff-ID' in result['warnings']
+    assert warning in result['warnings']
 
 
 def test_create_authors_space_between_affids():
@@ -403,10 +407,11 @@ def test_create_authors_note_footnotes():
         (u'Y.X. Ali', [u'CERN', u'DESY']),
         (u'E I Andronov', [u'DESY']),
     ]
+    warning = u'Unresolved aff-ID or stray footnote symbol. Problematic author and aff-id: Y.X. Ali †'
     result = create_authors(text)
 
     assert expected == result['authors']
-    assert 'stray footnote symbol' in result['warnings']
+    assert warning in result['warnings']
 
 
 def test_create_authors_note_symbols():
@@ -422,10 +427,11 @@ def test_create_authors_note_symbols():
         (u'Y.X. Aduszkiewic\u017e', [u'CERN']),
         (u'E I Andronov', [u'DESY']),
     ]
+    warning = 'CAUTION! Using symbols (# and stuff) as aff-IDs.'
     result = create_authors(text)
 
     assert expected == result['authors']
-    assert 'CAUTION! Using symbols' in result['warnings']
+    assert warning in result['warnings']
 
 
 def test_create_authors_comma_wrong_position():
@@ -521,11 +527,12 @@ def test_create_authors_with_letters():
         (u'L. di Caprio', []),
         (u'B. Smith', ['Fermilab']),
     ]
+    warnings = ['Is this part of a name or missing aff-id? "di" in a L. di Caprio', 'Author without affiliation-id. Problematic author: L. di Caprio']
+
     result = create_authors(text)
 
     assert expected == result['authors']
-    assert 'Author without affiliation-id.' in result['warnings']
-    assert 'Is this part of a name or missing aff-id?' in result['warnings']
+    assert all(warning in result['warnings'] for warning in warnings)
 
 
 def test_create_authors_unused_affiliation():
@@ -543,7 +550,7 @@ def test_create_authors_unused_affiliation():
     result = create_authors(text)
 
     assert expected == result['authors']
-    assert 'Unused affiliation-IDs' in result['warnings']
+    assert "Unused affiliation-IDs: [u'2']" in result['warnings']
 
 
 def test_create_authors_no_empty_line():
