@@ -33,6 +33,7 @@ from itertools import dropwhile
 import click
 import jsonschema
 import requests
+from flask import url_for
 from flask_cli import with_appcontext
 
 from dojson.contrib.marc21.utils import create_record
@@ -134,6 +135,13 @@ def reporterrors(output):
                 return collection
         return 'HEP'
 
+    def fix_schema(json_record):
+        if not json_record['$schema'].startswith('http'):
+            json_record['$schema'] = url_for(
+                'invenio_jsonschemas.get_schema',
+                schema_path='records/{0}'.format(json_record['$schema'])
+            )
+
     click.echo("Reporting broken records into {0}".format(output))
     errors = {}
     results = InspireProdRecords.query.filter(InspireProdRecords.valid == False) # noqa: ignore=F712
@@ -151,6 +159,8 @@ def reporterrors(output):
                 tb = u''.join(traceback.format_tb(sys.exc_info()[2]))
                 errors.setdefault((collection, 'dojson', tb), []).append(recid)
                 continue
+
+            fix_schema(json_record)
 
             try:
                 validate(json_record)
