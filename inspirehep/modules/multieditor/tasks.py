@@ -24,7 +24,7 @@
 from __future__ import absolute_import, print_function, division
 
 from celery import shared_task
-from celery.utils.log import get_task_logger
+import logging
 
 from invenio_records.api import Record
 from invenio_db import db
@@ -41,7 +41,7 @@ def process_records(records_ids, user_actions, schema):
     :param user_actions: user actions as received from frontend
     :param schema: corresponding schema for the records to be processed
     """
-    logger = get_task_logger(__name__)
+    logger = logging.getLogger(__name__)
     commit_record = False
     commit_session = False
     actions = get_actions(user_actions, schema)
@@ -56,7 +56,7 @@ def process_records(records_ids, user_actions, schema):
             try:
                 record.commit()
             except (ValidationError, Exception) as e:
-                logger.exception(e.message)
+                logger.error('I have an error %s', e.message)
             else:
                 commit_session = True
             commit_record = False
