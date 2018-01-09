@@ -36,7 +36,7 @@ from mocks import MockEng, MockObj
 
 
 def test_get_beard_url_from_configuration():
-    config = {'BEARD_API_URL': 'https://beard.inspirehep.net'}
+    config = {'WORKFLOWS_BEARD_API_URL': 'https://beard.inspirehep.net'}
 
     with patch.dict(current_app.config, config):
         expected = 'https://beard.inspirehep.net/predictor/coreness'
@@ -46,7 +46,7 @@ def test_get_beard_url_from_configuration():
 
 
 def test_get_beard_url_returns_none_when_not_in_configuration():
-    config = {'BEARD_API_URL': ''}
+    config = {'WORKFLOWS_BEARD_API_URL': ''}
 
     with patch.dict(current_app.config, config):
         assert get_beard_url() is None

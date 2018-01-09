@@ -80,8 +80,8 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     """Test a full harvesting workflow."""
     record = generate_record()
     extra_config = {
-        "BEARD_API_URL": "http://example.com/beard",
-        "MAGPIE_API_URL": "http://example.com/magpie",
+        "WORKFLOWS_BEARD_API_URL": "http://example.com/beard",
+        "WORKFLOWS_MAGPIE_API_URL": "http://example.com/magpie",
     }
 
     workflow_uuid, eng, obj = get_halted_workflow(
@@ -137,8 +137,8 @@ def test_harvesting_arxiv_workflow_core_record_auto_accepted(
     record, categories = core_record()
 
     extra_config = {
-        "BEARD_API_URL": "http://example.com/beard",
-        "MAGPIE_API_URL": "http://example.com/magpie",
+        "WORKFLOWS_BEARD_API_URL": "http://example.com/beard",
+        "WORKFLOWS_MAGPIE_API_URL": "http://example.com/magpie",
         'WORKFLOWS_ARXIV_CATEGORIES': categories,
     }
     with workflow_app.app_context():

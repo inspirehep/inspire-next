@@ -37,7 +37,7 @@ from ..utils import with_debug_logging
 @with_debug_logging
 def get_magpie_url():
     """Return the Magpie URL endpoint, if any."""
-    base_url = current_app.config.get("MAGPIE_API_URL")
+    base_url = current_app.config.get("WORKFLOWS_MAGPIE_API_URL")
     if not base_url:
         return
     return "{base_url}/predict".format(
