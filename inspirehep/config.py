@@ -55,7 +55,7 @@ REQUIREJS_CONFIG = 'js/build.js'
 INSPIRE_FULL_THEME = True
 """Allows to switch between labs.inspirehep.net view and full version."""
 THEME_SITENAME = "inspirehep"
-BASE_TEMPLATE = "inspirehep_theme/page.html"
+INSPIRE_BASE_TEMPLATE = "inspirehep_theme/page.html"
 
 # Database
 # ========
@@ -289,7 +289,7 @@ SEARCH_TYPEAHEAD_HINT_URL = '/search/suggest?field=%TYPE&query=%QUERY'
 SEARCH_TYPEAHEAD_DEFAULT_SET = 'invenio'
 
 SEARCH_ELASTIC_HOSTS = ['localhost']
-SEARCH_UI_BASE_TEMPLATE = BASE_TEMPLATE
+SEARCH_UI_BASE_TEMPLATE = INSPIRE_BASE_TEMPLATE
 SEARCH_UI_SEARCH_TEMPLATE = 'search/search.html'
 SEARCH_UI_SEARCH_API = '/api/literature/'
 SEARCH_UI_SEARCH_INDEX = 'records-hep'
@@ -1245,7 +1245,7 @@ WORKFLOWS_DEFAULT_FILE_LOCATION_NAME = "holdingpen"
 WORKFLOWS_OBJECT_CLASS = "invenio_workflows_files.api.WorkflowObject"
 """Enable obj.files API."""
 
-WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
+WORKFLOWS_UI_BASE_TEMPLATE = INSPIRE_BASE_TEMPLATE
 WORKFLOWS_UI_INDEX_TEMPLATE = "inspire_workflows/index.html"
 WORKFLOWS_UI_LIST_TEMPLATE = "inspire_workflows/list.html"
 WORKFLOWS_UI_DETAILS_TEMPLATE = "inspire_workflows/details.html"
