@@ -139,7 +139,7 @@ def test_harvesting_arxiv_workflow_core_record_auto_accepted(
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
         "MAGPIE_API_URL": "http://example.com/magpie",
-        'ARXIV_CATEGORIES': categories,
+        'WORKFLOWS_ARXIV_CATEGORIES': categories,
     }
     with workflow_app.app_context():
         with mock.patch.dict(workflow_app.config, extra_config):

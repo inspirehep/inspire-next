@@ -1213,10 +1213,10 @@ LEGACY_BASE_URL = "http://inspirehep.net"
 
 # Harvesting and Workflows
 # ========================
-ARXIV_PDF_URL = "http://export.arxiv.org/pdf/{arxiv_id}"
-ARXIV_TARBALL_URL = "http://export.arxiv.org/e-print/{arxiv_id}"
+WORKFLOWS_ARXIV_PDF_URL = "http://export.arxiv.org/pdf/{arxiv_id}"
+WORKFLOWS_ARXIV_TARBALL_URL = "http://export.arxiv.org/e-print/{arxiv_id}"
 
-ARXIV_CATEGORIES = {
+WORKFLOWS_ARXIV_CATEGORIES = {
     'core': [
         'hep-ex',
         'hep-lat',

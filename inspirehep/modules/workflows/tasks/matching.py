@@ -139,7 +139,7 @@ def get_coreness(record):
         a Coreness value in according to the record's coreness level.
     """
     arxiv_categories = set(get_arxiv_categories(record))
-    relevant_categories = current_app.config.get('ARXIV_CATEGORIES', [])
+    relevant_categories = current_app.config.get('WORKFLOWS_ARXIV_CATEGORIES', [])
 
     if arxiv_categories & set(relevant_categories['core']):
         return Coreness.core

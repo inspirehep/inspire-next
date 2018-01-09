@@ -80,7 +80,7 @@ def test_belongs_to_relevant_category_returns_true_and_is_core(app):
     subschema = schema['properties']['arxiv_eprints']
 
     categories_config = {
-        'ARXIV_CATEGORIES': {
+        'WORKFLOWS_ARXIV_CATEGORIES': {
             'core': ['hep-ph'],
             'non-core': ['astro-ph.CO', 'gr-qc']
         }
@@ -111,7 +111,7 @@ def test_belongs_to_relevant_category_returns_true_and_is_non_core(app):
     subschema = schema['properties']['arxiv_eprints']
 
     categories_config = {
-        'ARXIV_CATEGORIES': {
+        'WORKFLOWS_ARXIV_CATEGORIES': {
             'core':     ['hep-ph'],
             'non-core': ['astro-ph.CO', 'gr-qc']
         }
@@ -141,7 +141,7 @@ def test_belongs_to_relevant_category_returns_false(app):
     subschema = schema['properties']['arxiv_eprints']
 
     categories_config = {
-        'ARXIV_CATEGORIES': {
+        'WORKFLOWS_ARXIV_CATEGORIES': {
             'core':     ['hep-ph'],
             'non-core': ['astro-ph.CO', 'gr-qc']
         }

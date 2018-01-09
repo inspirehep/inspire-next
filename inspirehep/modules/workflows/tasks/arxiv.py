@@ -71,7 +71,7 @@ def arxiv_fulltext_download(obj, eng):
     """
     arxiv_id = get_arxiv_id(obj.data)
     filename = secure_filename('{0}.pdf'.format(arxiv_id))
-    url = current_app.config['ARXIV_PDF_URL'].format(arxiv_id=arxiv_id)
+    url = current_app.config['WORKFLOWS_ARXIV_PDF_URL'].format(arxiv_id=arxiv_id)
 
     if not is_pdf_link(url):
         if NO_PDF_ON_ARXIV in requests.get(url).content:
@@ -117,7 +117,7 @@ def arxiv_package_download(obj, eng):
     tarball = download_file_to_workflow(
         workflow=obj,
         name=filename,
-        url=current_app.config['ARXIV_TARBALL_URL'].format(arxiv_id=arxiv_id),
+        url=current_app.config['WORKFLOWS_ARXIV_TARBALL_URL'].format(arxiv_id=arxiv_id),
     )
 
     if tarball:
