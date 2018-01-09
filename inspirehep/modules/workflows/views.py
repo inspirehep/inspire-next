@@ -47,7 +47,7 @@ blueprint = Blueprint(
 def _get_base_url():
     """Return base URL for generated URLs for remote reference."""
     base_url = current_app.config.get(
-        "LEGACY_ROBOTUPLOAD_URL",
+        "WORKFLOWS_LEGACY_ROBOTUPLOAD_URL",
         current_app.config["SERVER_NAME"],
     )
     if not re.match('^https?://', base_url):

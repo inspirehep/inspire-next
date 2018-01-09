@@ -55,7 +55,7 @@ def workflow_app():
         CELERY_CACHE_BACKEND='memory',
         CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
         PRODUCTION_MODE=True,
-        LEGACY_ROBOTUPLOAD_URL=(
+        WORKFLOWS_LEGACY_ROBOTUPLOAD_URL=(
             'http://localhost:1234'
         ),
         MAGPIE_API_URL="http://example.com/magpie",

@@ -142,7 +142,7 @@ def test_send_robotupload_works_with_mode_correct_and_extra_data_key():
         )
 
         config = {
-            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'WORKFLOWS_LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
             'PRODUCTION_MODE': True,
         }
 
@@ -198,7 +198,7 @@ def test_send_robotupload_works_with_mode_insert_on_hep():
         subschema = schema['properties']['arxiv_eprints']
 
         config = {
-            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'WORKFLOWS_LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
             'PRODUCTION_MODE': True,
         }
 
@@ -252,7 +252,7 @@ def test_send_robotupload_works_with_mode_insert_on_authors():
         subschema = schema['properties']['arxiv_categories']
 
         config = {
-            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'WORKFLOWS_LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
             'PRODUCTION_MODE': True,
         }
 
@@ -301,7 +301,7 @@ def test_send_robotupload_works_with_mode_holdingpen_and_without_callback_url():
         subschema = schema['properties']['arxiv_categories']
 
         config = {
-            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'WORKFLOWS_LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
             'PRODUCTION_MODE': True,
         }
 
@@ -346,7 +346,7 @@ def test_send_robotupload_logs_on_error_response():
         subschema = schema['properties']['arxiv_eprints']
 
         config = {
-            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'WORKFLOWS_LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
             'PRODUCTION_MODE': True,
         }
 
@@ -398,7 +398,7 @@ def test_send_robotupload_does_nothing_when_not_in_production_mode():
         subschema = schema['properties']['arxiv_eprints']
 
         config = {
-            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'WORKFLOWS_LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
             'PRODUCTION_MODE': False,
         }
 

@@ -1203,7 +1203,7 @@ THEME_LABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 
 # Submission
 # ==========
-LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
+WORKFLOWS_LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 
 # Web services and APIs
 # =====================
