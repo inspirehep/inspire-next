@@ -171,7 +171,10 @@ def arxiv_plot_extract(obj, eng):
                 plot_name = os.path.basename(plot.get('url'))
                 key = plot_name
                 if plot_name in obj.files.keys:
-                    key = '{number}_{name}'.format(number=index, name=plot_name)
+                    key = 'w{number}_{name}'.format(
+                        number=index,
+                        name=plot_name,
+                    )
                 with open(plot.get('url')) as plot_file:
                     obj.files[key] = plot_file
 
