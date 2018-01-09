@@ -24,9 +24,10 @@
 from __future__ import absolute_import, print_function, division
 
 from celery import shared_task
+from celery.utils.log import get_task_logger
+
 from invenio_records.api import Record
 from invenio_db import db
-
 from inspirehep.modules.workflows.utils import with_debug_logging
 from jsonschema import ValidationError
 from .serializers import get_actions
@@ -40,14 +41,14 @@ def process_records(records_ids, user_actions, schema):
     :param user_actions: user actions as received from frontend
     :param schema: corresponding schema for the records to be processed
     """
+    logger = get_task_logger(__name__)
     commit_record = False
     commit_session = False
-    errors = []
     actions = get_actions(user_actions, schema)
     records = Record.get_records(records_ids)
     for record in records:
         for action in actions:
-            action.apply(record=record, schema=schema)
+            action.process(record=record, schema=schema)
             if action.changed:
                 commit_record = True
                 action.changed = False
@@ -55,7 +56,7 @@ def process_records(records_ids, user_actions, schema):
             try:
                 record.commit()
             except (ValidationError, Exception) as e:
-                errors.append(e.message)
+                logger.exception(e.message)
             else:
                 commit_session = True
             commit_record = False

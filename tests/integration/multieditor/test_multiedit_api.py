@@ -87,7 +87,7 @@ def test_multieditor_update_api(api_client):
     records = Record.get_records(json.loads(response.data)['uuids'])
     assert 'James Bond' in records[0]['authors'][-1]['full_name']
     uuid_to_delete = records[0]['authors'][-1]['uuid']
-
+    signature_block_to_delete = records[0]['authors'][-1]['signature_block']
     api_client.post(
         '/multieditor/update',
         content_type='application/json',
@@ -96,7 +96,7 @@ def test_multieditor_update_api(api_client):
                 'actions': [
                     {
                         'actionName': 'Deletion',
-                        'updateValue': 'SAC',
+                        'updateValue': signature_block_to_delete,
                         'matchType': 'is equal to',
                         'mainKey': 'authors.signature_block',
                     },
@@ -130,17 +130,33 @@ def test_multieditor_update_api(api_client):
         assert 'James Bond' not in records[0]['authors'][-1]['full_name']
 
 
-def test_api_permision(api_client):
-    login_user_via_session(api_client, email='johndoe@inspirehep.net')
+@pytest.mark.parametrize('user_info,status', [
+    # Logged in user without permissions assigned
+    (dict(email='johndoe@inspirehep.net'), 403),
+    # Logged in user with permissions assigned
+    (dict(email='cataloger@inspirehep.net'), 200),
+    # admin user
+    (dict(email='admin@inspirehep.net'), 200),
+])
+def test_api_permision_search(api_client, user_info, status):
+    login_user_via_session(api_client, email=user_info['email'])
     response = api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
-    assert response.status_code == 403
+    assert response.status_code == status
+
+
+@pytest.mark.parametrize('user_info,endpoint', [
+    # Logged in user without permissions assigned
+    (dict(email='johndoe@inspirehep.net'), 'update'),
+    (dict(email='johndoe@inspirehep.net'), 'preview'),
+    # No user logged in
+    (None, 'update'),
+    (None, 'preview')
+])
+def test_api_permission_(api_client, user_info, endpoint):
+    if user_info:
+        login_user_via_session(api_client, email=user_info['email'])
     response = api_client.post(
-        '/multieditor/update',
-        content_type='application/json'
-    )
-    assert response.status_code == 403
-    response = api_client.post(
-        '/multieditor/preview',
+        '/multieditor/'+endpoint,
         content_type='application/json'
     )
     assert response.status_code == 403
@@ -166,5 +182,5 @@ def test_multieditor_update_api_faulty_actions(api_client):
             'allSelected': True,
         }),
     )
-    assert 'Invalid Actions' in json.loads(response.data)['message']
+    assert 'The actions that were provided are invalid' in json.loads(response.data)['message']
     assert response.status_code == 400

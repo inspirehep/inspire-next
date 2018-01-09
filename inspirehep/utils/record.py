@@ -223,8 +223,8 @@ def _get_inspire_diff_add(diff, path):
     else:
         path.append(diff[2][0][0])
     return ({'op': diff[0],
-                       'path': path,
-                       'value': diff[2][0][1]})
+             'path': path,
+             'value': diff[2][0][1]})
 
 
 def _get_inspire_diff_remove(diff, path):

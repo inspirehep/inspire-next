@@ -22,36 +22,34 @@
 
 from __future__ import absolute_import, print_function, division
 
-import json
-import os
 import pytest
 
-from inspirehep.modules.multieditor.actions import AddProcessor, DeleteProcessor, UpdateProcessor, create_object_from_path
+from inspire_schemas.api import load_schema
+from inspirehep.modules.multieditor.actions import AddProcessor, DeleteProcessor, UpdateProcessor,\
+    create_object_from_path
 
 
 @pytest.fixture
 def get_schema():
-    curr_path = os.path.dirname(__file__)
-    with open(os.path.join(curr_path, 'fixtures/schema.json')) \
-            as data_file:
-        schema = json.load(data_file)
-    return schema
+    return load_schema('hep', resolved=True)
 
 
 def test_addition_root_key(get_schema):
-    """Should test adding a root primitive key"""
+    """Test adding a root primitive key"""
+    subschema = {'type': 'object', 'properties': {'preprint_date': get_schema['properties']['preprint_date']}}
     record = {
     }
     expected_map = {
         'preprint_date': '2016'
     }
     add = AddProcessor(keypath=['preprint_date'], value='2016')
-    add.process(record, get_schema)
+    add.process(record, subschema)
     assert record == expected_map
 
 
 def test_addition_root_object(get_schema):
-    """Should test adding a root primitive key"""
+    """Test adding a root primitive key"""
+    subschema = {'type': 'object', 'properties': {'abstracts': get_schema['properties']['abstracts']}}
     record = {
     }
     expected_map = {
@@ -67,12 +65,13 @@ def test_addition_root_object(get_schema):
                 'value': 'Variational principles presented as a logical extension.'
              }
     add = AddProcessor(keypath=['abstracts'], value=object_to_add)
-    add.process(record, get_schema)
+    add.process(record, subschema)
     assert record == expected_map
 
 
 def test_addition_missing_root_key(get_schema):
-    """Should test adding an object with a non allready existing key"""
+    """Test adding an object with a non allready existing key"""
+    subschema = {'type': 'object', 'properties': {'_collections': get_schema['properties']['_collections']}}
     record = {
     }
     expected_map = {
@@ -80,12 +79,13 @@ def test_addition_missing_root_key(get_schema):
     }
     add = AddProcessor(keypath=['_collections'], value='Literature',
                        conditions=[{'keypath': ['_collections'], 'match_type':'missing', 'value': ''}])
-    add.process(record, get_schema)
+    add.process(record, subschema)
     assert record == expected_map
 
 
 def test_addition_missing_deeper_key(get_schema):
-    """Should test adding an object with condition on a non existing deep key"""
+    """Test adding an object with condition on a non existing deep key"""
+    subschema = {'type': 'object', 'properties': {'public_notes': get_schema['properties']['public_notes']}}
     record = {
     }
     expected_map = {
@@ -97,12 +97,15 @@ def test_addition_missing_deeper_key(get_schema):
     }
     add = AddProcessor(keypath=['public_notes'], value={'value': 'Preliminary results'},
                        conditions=[{'keypath': ['public_notes', 'value'], 'match_type':'missing', 'value': ''}])
-    add.process(record, get_schema)
+    add.process(record, subschema)
     assert record == expected_map
 
 
 def test_addition_root_key_with_deeper_condition(get_schema):
-    """Should test adding a primitive key with multiple deeper conditions"""
+    """Test adding a primitive key with multiple deeper conditions"""
+    subschema = {'type': 'object', 'properties': {'preprint_date': get_schema['properties']['preprint_date'],
+                                                  'core': get_schema['properties']['core'],
+                                                  'public_notes': get_schema['properties']['public_notes']}}
     record = {
         'public_notes': [
             {
@@ -131,12 +134,15 @@ def test_addition_root_key_with_deeper_condition(get_schema):
                                    'match_type': 'exact'},
                                    {'keypath': ['core'], 'value': 'True', 'match_type': 'exact'}],
                        value='2016')
-    add.process(record, get_schema)
+    add.process(record, subschema)
     assert record == expected_map
 
 
 def test_addition_root_key_with_deeper_condition_negative(get_schema):
-    """Should test adding an object with negative condition"""
+    """Test adding an object with negative condition"""
+    subschema = {'type': 'object', 'properties': {'public_notes': get_schema['properties']['public_notes'],
+                                                  'core': get_schema['properties']['core'],
+                                                  'titles': get_schema['properties']['titles']}}
     record = {
         'public_notes': [
             {
@@ -169,12 +175,15 @@ def test_addition_root_key_with_deeper_condition_negative(get_schema):
                                    {'keypath': ['core'], 'value': 'False', 'match_type': 'exact'}],
                        match_type='exact',
                        value='2016')
-    add.process(record, get_schema)
+    add.process(record, subschema)
     assert record == expected_map
 
 
 def test_addition_object_with_conditions(get_schema):
-    """Should test adding an object with condition"""
+    """Test adding an object with condition"""
+    subschema = {'type': 'object', 'properties': {'public_notes': get_schema['properties']['public_notes'],
+                                                  'core': get_schema['properties']['core'],
+                                                  'titles': get_schema['properties']['titles']}}
     record = {
         'public_notes': [
             {
@@ -200,7 +209,7 @@ def test_addition_object_with_conditions(get_schema):
                 'title': 'test',
             },
             {
-                'title': 'success'
+                'title': 'Just another title'
             }
         ],
     }
@@ -208,13 +217,13 @@ def test_addition_object_with_conditions(get_schema):
                        conditions=[{'keypath': ['public_notes', 'value'], 'value': 'Preliminary results',
                                     'match_type': 'exact'},
                                    {'keypath': ['core'], 'value': 'True', 'match_type': 'exact'}],
-                       value={'title': 'success'})
-    add.process(record, get_schema)
+                       value={'title': 'Just another title'})
+    add.process(record, subschema)
     assert record == expected_map
 
 
-def test_addition_object(get_schema):
-    """should test record addition for object"""
+def test_addition_object():
+    """Test record addition for object"""
     record = {
         'key_a': {
             'key_c': 'test'
@@ -222,7 +231,7 @@ def test_addition_object(get_schema):
     }
     expected_map = {
         'key_a': {
-            'key_b': 'success',
+            'key_b': 'Just another title',
             'key_c': 'test'
         }
     }
@@ -246,13 +255,13 @@ def test_addition_object(get_schema):
         },
         'type': 'object',
     }
-    add = AddProcessor(keypath=['key_a', 'key_b'], value='success')
+    add = AddProcessor(keypath=['key_a', 'key_b'], value='Just another title')
     add.process(record, custom_schema)
     assert record == expected_map
 
 
-def test_addition_array_with_condition(get_schema):
-    """should test record addition for object using condition check"""
+def test_addition_array_with_exact_condition():
+    """Test record addition for object using condition check"""
     record = {
         'key_a': {
             'key_b': ['Hello'],
@@ -300,7 +309,9 @@ def test_addition_array_with_condition(get_schema):
 
 
 def test_addition_array(get_schema):
-    """should test record addition for nested array"""
+    """Test record addition for field addition in nested array"""
+    subschema = {'type': 'object', 'properties': {'titles': get_schema['properties']['titles'],
+                                                  'document_type': get_schema['properties']['document_type']}}
     record = {
         'titles': [
             {
@@ -316,21 +327,23 @@ def test_addition_array(get_schema):
         'titles': [
             {
                 'title': 'test',
-                'subtitle': 'success'
+                'subtitle': 'Just another title'
             },
             {
                 'title': 'test',
-                'subtitle': 'success'
+                'subtitle': 'Just another title'
             }
         ],
         'document_type': ['book']
     }
-    add = AddProcessor(keypath=['titles', 'subtitle'], value='success')
-    add.process(record, get_schema)
+    add = AddProcessor(keypath=['titles', 'subtitle'], value='Just another title')
+    add.process(record, subschema)
     assert record == expected_map
 
 
-def test_addition_array_with_condition(get_schema):
+def test_addition_array_with_contains_condition(get_schema):
+    subschema = {'type': 'object', 'properties': {'titles': get_schema['properties']['titles'],
+                                                  'document_type': get_schema['properties']['document_type']}}
     record = {
         'titles': [
             {
@@ -346,11 +359,11 @@ def test_addition_array_with_condition(get_schema):
         'titles': [
             {
                 'title': 'test_1',
-                'subtitle': 'success'
+                'subtitle': 'Just another title'
             },
             {
                 'title': 'test',
-                'subtitle': 'success'
+                'subtitle': 'Just another title'
             }
         ],
         'document_type': ['book']
@@ -359,8 +372,8 @@ def test_addition_array_with_condition(get_schema):
                        conditions=[{'keypath': ['titles', 'title'],
                                     'match_type': 'contains',
                                     'value':'test'}],
-                       value='success')
-    add.process(record, get_schema)
+                       value='Just another title')
+    add.process(record, subschema)
     assert record == expected_map
 
 
@@ -402,6 +415,7 @@ def test_addition_array_with_condition_missing_record():
 
 
 def test_addition_object_with_condition(get_schema):
+    subschema = {'type': 'object', 'properties': {'authors': get_schema['properties']['authors']}}
     record = {
         'authors': [
             {
@@ -431,7 +445,7 @@ def test_addition_object_with_condition(get_schema):
                     },
                     {
                         'curated_relation': True,
-                        'value': 'Success'
+                        'value': 'Just another author'
                     }
                 ],
                 'signature_block': 'BANARo'
@@ -451,114 +465,126 @@ def test_addition_object_with_condition(get_schema):
                                     'match_type': 'exact',
                                     'value':'BANARo'}],
                        value={'curated_relation': True,
-                              'value': 'Success'})
-    add.process(record, get_schema)
+                              'value': 'Just another author'})
+    add.process(record, subschema)
     assert record == expected_map
 
 
 def test_deletion_array_to_empty(get_schema):
-    """should test record deletion for nested array"""
+    """Test record contains deletion for nested array"""
+    subschema = {'type': 'object', 'properties': {'texkeys': get_schema['properties']['texkeys'],
+                                                  'citeable': get_schema['properties']['citeable']}}
     record = {'texkeys': ['test', 'test', 'test2', 'test'],
-              'cited': True}
+              'citeable': True}
     expected_map = {
-        'cited': True
+        'citeable': True
     }
 
     delete = DeleteProcessor(update_value='test',
                              keypath=['texkeys'],
                              match_type='contains')
-    delete.process(record, get_schema)
+    delete.process(record, subschema)
     assert record == expected_map
 
 
 def test_deletion_array(get_schema):
-    """should test record deletion for nested array"""
+    """Test record exact deletion for nested array"""
+    subschema = {'type': 'object', 'properties': {'texkeys': get_schema['properties']['texkeys'],
+                                                  'citeable': get_schema['properties']['citeable']}}
     record = {'texkeys': ['test', 'test', 'test2', 'test'],
-              'cited': True}
+              'citeable': True}
     expected_map = {
         'texkeys': ['test2'],
-        'cited': True
+        'citeable': True
     }
 
     delete = DeleteProcessor(update_value='test',
                              keypath=['texkeys'],
                              match_type='exact')
-    delete.process(record, get_schema)
+    delete.process(record, subschema)
     assert record == expected_map
 
 
 def test_deletion_array_contains(get_schema):
-    """should test record deletion for nested array"""
+    """Test record deletion for nested array"""
+    subschema = {'type': 'object', 'properties': {'inspire_categories': get_schema['properties']['inspire_categories'],
+                                                  'citeable': get_schema['properties']['citeable']}}
     record = {'inspire_categories': [{'term': 'Val'},
                                      {'term': 'value'},
                                      {'term': 'value5'}],
-              'cited': True}
+              'citeable': True}
     expected_map = {
-        'cited': True
+        'citeable': True
     }
 
     delete = DeleteProcessor(update_value='val',
                              keypath=['inspire_categories', 'term'],
                              match_type='contains')
-    delete.process(record, get_schema)
+    delete.process(record, subschema)
     assert record == expected_map
 
 
 def test_deletion_array_regex(get_schema):
-    """should test record deletion for nested array"""
+    """Test record regex deletion for nested array"""
+    subschema = {'type': 'object', 'properties': {'inspire_categories': get_schema['properties']['inspire_categories'],
+                                                  'citeable': get_schema['properties']['citeable']}}
     record = {'inspire_categories': [{'term': 'val'},
                                      {'term': 'value'},
                                      {'term': 'value5'}],
-              'cited': True}
+              'citeable': True}
     expected_map = {
-        'cited': True
+        'citeable': True
     }
 
     delete = DeleteProcessor(update_value='va.*',
                              keypath=['inspire_categories', 'term'],
                              match_type='regex')
-    delete.process(record, get_schema)
+    delete.process(record, subschema)
     assert record == expected_map
 
 
 def test_deletion_contains(get_schema):
+    subschema = {'type': 'object', 'properties': {'inspire_categories': get_schema['properties']['inspire_categories']}}
     record = {'inspire_categories': [{'term': 'val'}]}
     expected_map = {}
     delete = DeleteProcessor(update_value='v',
                              keypath=['inspire_categories', 'term'],
                              match_type='contains')
-    delete.process(record, get_schema)
+    delete.process(record, subschema)
     assert record == expected_map
 
 
 def test_deletion_regex(get_schema):
+    subschema = {'type': 'object', 'properties': {'inspire_categories': get_schema['properties']['inspire_categories']}}
     record = {'inspire_categories': [{'term': 'val'}]}
     expected_map = {}
     delete = DeleteProcessor(update_value='v.*',
                              keypath=['inspire_categories', 'term'],
                              match_type='regex')
-    delete.process(record, get_schema)
+    delete.process(record, subschema)
     assert record == expected_map
 
 
 def test_record_creation_root_array(get_schema):
-    """should test sub_record creation for missing object"""
+    """Test sub_record creation for missing object"""
+    subschema = {'type': 'object', 'properties': {'corporate_author': get_schema['properties']['corporate_author']}}
     key = ['corporate_author']
-    value = 'success'
-    target_object = {'corporate_author': ['success']}
-    assert create_object_from_path(get_schema, key, value) == target_object
+    value = 'Just another author'
+    target_object = {'corporate_author': ['Just another author']}
+    assert create_object_from_path(subschema, key, value) == target_object
 
 
 def test_record_creation_root_object(get_schema):
-    """should test sub_record creation for missing object"""
+    """Test sub_record creation for missing object"""
+    subschema = {'type': 'object', 'properties': {'self': get_schema['properties']['self']}}
     key = ['self', '$ref']
-    value = 'success'
-    target_object = {'self': {'$ref': 'success'}}
-    assert create_object_from_path(get_schema, key, value) == target_object
+    value = 'ref_value'
+    target_object = {'self': {'$ref': 'ref_value'}}
+    assert create_object_from_path(subschema, key, value) == target_object
 
 
 def test_record_creation():
-    """should test sub_record creation for missing object"""
+    """Test sub_record creation for missing object"""
     schema_2 = {
         'properties': {
             'source': {
@@ -567,153 +593,165 @@ def test_record_creation():
         'type': 'object',
     }
     key = ['source']
-    value = 'success'
-    target_object = {'source': 'success'}
+    value = 'source_value'
+    target_object = {'source': 'source_value'}
     assert create_object_from_path(schema_2, key, value) == target_object
 
 
 def test_record_creation_complex_array(get_schema):
-    """should test sub_record creation for missing object"""
+    """Test sub_record creation for missing object"""
+    subschema = {'type': 'object', 'properties': {'arxiv_eprints': get_schema['properties']['arxiv_eprints']}}
     key = ['arxiv_eprints', 'categories']
     value = 'astro-ph'
     target_object = {'arxiv_eprints': [{'categories': ['astro-ph']}]}
-    assert create_object_from_path(get_schema, key, value) == target_object
+    assert create_object_from_path(subschema, key, value) == target_object
 
 
 def test_record_creation_complex(get_schema):
-    """should test sub_record creation for missing object"""
+    """Test sub_record creation for missing object"""
+    subschema = {'type': 'object', 'properties': {'authors': get_schema['properties']['authors']}}
     key = ['authors', 'affiliations', 'value']
-    value = 'success'
-    target_object = {'authors': [{'affiliations': [{'value': 'success'}]}]}
-    assert create_object_from_path(get_schema, key, value) == target_object
+    value = 'affiliation_value'
+    target_object = {'authors': [{'affiliations': [{'value': 'affiliation_value'}]}]}
+    assert create_object_from_path(subschema, key, value) == target_object
 
 
 def test_record_creation_array(get_schema):
-    """should test sub_record creation for missing object"""
+    """Test sub_record creation for missing object"""
+    subschema = {'type': 'object', 'properties': {'authors': get_schema['properties']['authors']}}
     key = ['authors']
-    value = {'full_name': 'success'}
-    target_object = {'authors': [{'full_name': 'success'}]}
-    assert create_object_from_path(get_schema, key, value) == target_object
+    value = {'full_name': 'James Bond'}
+    target_object = {'authors': [{'full_name': 'James Bond'}]}
+    assert create_object_from_path(subschema, key, value) == target_object
 
 
 def test_update_regex(get_schema):
+    subschema = {'type': 'object', 'properties': {'inspire_categories': get_schema['properties']['inspire_categories']}}
     record = {'inspire_categories': [{'term': 'val'}]}
-    expected_map = {'inspire_categories': [{'term': 'success'}]}
+    expected_map = {'inspire_categories': [{'term': 'term_value'}]}
     update = UpdateProcessor(update_value='v.*',
-                             value='success',
+                             value='term_value',
                              keypath=['inspire_categories', 'term'],
                              match_type='regex')
-    update.process(record, get_schema)
+    update.process(record, subschema)
     assert record == expected_map
 
 
 def test_update_contains(get_schema):
+    subschema = {'type': 'object', 'properties': {'inspire_categories': get_schema['properties']['inspire_categories']}}
     record = {'inspire_categories': [{'term': 'val'}, {'term': 'Val'}]}
-    expected_map = {'inspire_categories': [{'term': 'success'}, {'term': 'success'}]}
+    expected_map = {'inspire_categories': [{'term': 'term_value'}, {'term': 'term_value'}]}
     update = UpdateProcessor(update_value='v',
-                             value='success',
+                             value='term_value',
                              keypath=['inspire_categories', 'term'],
                              match_type='contains')
-    update.process(record, get_schema)
+    update.process(record, subschema)
     assert record == expected_map
 
 
 def test_update_boolean(get_schema):
+    subschema = {'type': 'object', 'properties': {'citeable': get_schema['properties']['citeable']}}
     record = {'citeable': True}
     expected_map = {'citeable': False}
     update = UpdateProcessor(update_value='True',
                              value='False',
                              keypath=['citeable'],
                              match_type='exact')
-    update.process(record, get_schema)
+    update.process(record, subschema)
     assert record == expected_map
 
 
 def test_update_number(get_schema):
+    subschema = {'type': 'object', 'properties': {'number_of_pages': get_schema['properties']['number_of_pages']}}
     record = {'number_of_pages': 1984}
     expected_map = {'number_of_pages': 1990}
     update = UpdateProcessor(update_value='1984',
                              value='1990',
                              keypath=['number_of_pages'],
                              match_type='exact')
-    update.process(record, get_schema)
+    update.process(record, subschema)
     assert record == expected_map
 
 
 def test_record_update_field_not_existing(get_schema):
-    """should test sub_record creation for missing object"""
-    record = {'abstracts': [{'not_source': 'success'}]}
-    expected_map = {'abstracts': [{'not_source': 'success'}]}
+    """Test sub_record creation for missing object"""
+    subschema = {'type': 'object', 'properties': {'abstracts': get_schema['properties']['abstracts']}}
+    record = {'abstracts': [{'value': 'abstract_value'}]}
+    expected_map = {'abstracts': [{'value': 'abstract_value'}]}
     update = UpdateProcessor(keypath=['abstracts', 'source'],
-                             update_value='success',
+                             update_value='abstract_value',
                              match_type='exact',
                              value='failure')
-    update.process(record, get_schema)
+    update.process(record, subschema)
     assert record == expected_map
 
 
 def test_update_array_exact(get_schema):
-    """should test record edit for nested complex array."""
+    """Test record edit for nested complex array."""
+    subschema = {'type': 'object', 'properties': {'references': get_schema['properties']['references']}}
     record = {
         'references': [{'reference': {'collaborations': ['Val', 'val4']}},
                        {'reference': {'collaborations': ['val1', 'test val']}}],
     }
     expected_map = {
-        'references': [{'reference': {'collaborations': ['Val', 'success']}},
+        'references': [{'reference': {'collaborations': ['Val', 'new_value']}},
                        {'reference': {'collaborations': ['val1', 'test val']}}],
     }
     update = UpdateProcessor(update_value='val4',
                              keypath=['references', 'reference', 'collaborations'],
                              match_type='exact',
-                             value='success')
-    update.process(record, get_schema)
+                             value='new_value')
+    update.process(record, subschema)
     assert record == expected_map
 
 
 def test_update_array_contains(get_schema):
-    """should test record edit for nested complex array."""
+    """Test record edit for nested complex array."""
+    subschema = {'type': 'object', 'properties': {'references': get_schema['properties']['references']}}
     record = {
         'references': [{'reference': {'collaborations': ['Val', 'val']}},
                        {'reference': {'collaborations': ['val1', 'test val']}}],
     }
     expected_map = {
-        'references': [{'reference': {'collaborations': ['success', 'success']}},
-                       {'reference': {'collaborations': ['success', 'success']}}],
+        'references': [{'reference': {'collaborations': ['collaboration_value', 'collaboration_value']}},
+                       {'reference': {'collaborations': ['collaboration_value', 'collaboration_value']}}],
     }
     update = UpdateProcessor(update_value='val',
                              keypath=['references', 'reference', 'collaborations'],
                              match_type='contains',
-                             value='success')
-    update.process(record, get_schema)
+                             value='collaboration_value')
+    update.process(record, subschema)
     assert record == expected_map
 
 
 def test_update_array_regex(get_schema):
-    """should test record edit for nested complex array."""
+    """Test record edit for nested complex array."""
+    subschema = {'type': 'object', 'properties': {'references': get_schema['properties']['references']}}
     record = {
         'references': [{'reference': {'collaborations': ['val5', 'val']}},
                        {'reference': {'collaborations': ['val1', 'val6']}}],
     }
     expected_map = {
-        'references': [{'reference': {'collaborations': ['success', 'success']}},
-                       {'reference': {'collaborations': ['success', 'success']}}],
+        'references': [{'reference': {'collaborations': ['collaboration_value', 'collaboration_value']}},
+                       {'reference': {'collaborations': ['collaboration_value', 'collaboration_value']}}],
     }
     update = UpdateProcessor(update_value='val.*',
                              keypath=['references', 'reference', 'collaborations'],
                              match_type='regex',
-                             value='success')
-    update.process(record, get_schema)
+                             value='collaboration_value')
+    update.process(record, subschema)
     assert record == expected_map
 
 
 def test_update_condition_array_regex(get_schema):
-    """should test action for nested complex array and multiple check values"""
+    """Test action for nested complex array and multiple check values"""
+    subschema = {'type': 'object', 'properties': {'references': get_schema['properties']['references']}}
     record = {
         'references': [{'reference': {'collaborations': ['val5', 'tes4'], 'title':{'title': 'test'}}},
                        {'reference': {'collaborations': ['val1', 'tes4'], 'title':{'title': 'not'}}}]
     }
     expected_map = {
-        'references': [{'reference': {'collaborations': ['success', 'tes4'], 'title':{'title': 'test'}}},
+        'references': [{'reference': {'collaborations': ['collaboration_value', 'tes4'], 'title':{'title': 'test'}}},
                        {'reference': {'collaborations': ['val1', 'tes4'], 'title':{'title': 'not'}}}]
     }
 
@@ -723,13 +761,14 @@ def test_update_condition_array_regex(get_schema):
                                           'match_type': 'regex',
                                           'value':'tes.*'}],
                              match_type='exact',
-                             value='success')
-    update.process(record, get_schema)
+                             value='collaboration_value')
+    update.process(record, subschema)
     assert record == expected_map
 
 
 def test_update_with_missing_keypath(get_schema):
-    """should test sub_record update handling for missing object"""
+    """Test sub_record update handling for missing object"""
+    subschema = {'type': 'object', 'properties': {'abstracts': get_schema['properties']['abstracts']}}
     record = {
         'abstracts': [
             {
@@ -747,13 +786,17 @@ def test_update_with_missing_keypath(get_schema):
 
     update = UpdateProcessor(update_value='test',
                              keypath=['abstracts', 'source'],
-                             value='success',
+                             value='just a source',
                              match_type='exact')
-    update.process(record, get_schema)
+    update.process(record, subschema)
     assert record == expected_map
 
 
 def test_update_check_regex_condition(get_schema):
+    subschema = {'type': 'object', 'properties': {'authors': get_schema['properties']['authors'],
+                                                  'number_of_pages': get_schema['properties']['number_of_pages'],
+                                                  'document_type': get_schema['properties']['document_type'],
+                                                  'texkeys': get_schema['properties']['texkeys']}}
     record = {
         'document_type': ['book chapter'],
         'texkeys': ['Braendas:1972ts'],
@@ -792,10 +835,10 @@ def test_update_check_regex_condition(get_schema):
             {
                 'affiliations': [
                     {
-                        'value': 'Success'
+                        'value': 'an affiliation value'
                     },
                     {
-                        'value': 'Success'
+                        'value': 'an affiliation value'
                     },
                     {
                         'value': 'INFN'
@@ -833,12 +876,14 @@ def test_update_check_regex_condition(get_schema):
                                           'value': '184'}
                                          ],
                              match_type='regex',
-                             value='Success')
-    update.process(record, get_schema)
+                             value='an affiliation value')
+    update.process(record, subschema)
     assert record == expected_map
 
 
 def test_update_for_missing_key(get_schema):
+    subschema = {'type': 'object', 'properties': {'authors': get_schema['properties']['authors'],
+                                                  'document_type': get_schema['properties']['document_type']}}
     record = {
         'document_type': ['book chapter'],
         'authors': [
@@ -887,7 +932,7 @@ def test_update_for_missing_key(get_schema):
             {
                 'affiliations': [
                     {
-                        'value': 'Success'
+                        'value': 'an affiliation value'
                     },
                     {
                         'value': 'Not INF'
@@ -906,6 +951,6 @@ def test_update_for_missing_key(get_schema):
                                           'value': 'book.*'},
                                          ],
                              match_type='exact',
-                             value='Success')
-    update.process(record, get_schema)
+                             value='an affiliation value')
+    update.process(record, subschema)
     assert record == expected_map

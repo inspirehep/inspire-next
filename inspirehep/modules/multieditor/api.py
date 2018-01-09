@@ -37,6 +37,7 @@ from .actions import compare_records
 from . import queries
 from .permissions import multieditor_use_permission
 from .serializers import get_actions
+from .exceptions import InvalidValue, SchemaError, InvalidActions
 
 blueprint = Blueprint(
     'inspirehep_multieditor',
@@ -64,8 +65,10 @@ def update():
     else:
         return jsonify({'message': 'Please use the search before you apply actions'}), 400
 
-    if not get_actions(user_actions, multieditor_session['schema']):
-        return jsonify({'message': 'Invalid Actions'}), 400
+    try:
+        get_actions(user_actions, multieditor_session['schema'])
+    except InvalidActions as err:
+        return jsonify({'message': err.message}), 400
 
     for i, chunk in enumerate(chunker(ids_to_update, 200)):
         tasks.process_records.delay(records_ids=chunk, user_actions=user_actions, schema=multieditor_session['schema'])
@@ -90,13 +93,16 @@ def preview():
                                                    uuids=multieditor_session['uuids'])
 
     old_records = copy.deepcopy(records)
-    actions = get_actions(user_actions, multieditor_session['schema'])
-    if not actions:
-        return jsonify({'message': 'Invalid Actions'}), 400
+    try:
+        actions = get_actions(user_actions, multieditor_session['schema'])
+    except InvalidActions as err:
+        return jsonify({'message': err.message}), 400
     for record in records:
         for action in actions:
-            action.apply(record, multieditor_session['schema'])
-
+            try:
+                action.process(record, multieditor_session['schema'])
+            except (SchemaError, InvalidValue) as err:
+                return jsonify({'message': err.message}), 400
     json_patches, errors = compare_records(old_records, records, multieditor_session['schema'])
 
     return jsonify({'json_records': old_records, 'errors': errors, 'json_patches': json_patches, 'uuids': uuids})

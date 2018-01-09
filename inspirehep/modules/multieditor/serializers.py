@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import, print_function, division
 
-
+from .exceptions import InvalidActions
 from .actions import AddProcessor, DeleteProcessor, UpdateProcessor
 
 UI_TO_MATCHTYPE = {
@@ -51,7 +51,7 @@ def get_action_kwargs(schema, action, conditions=None):
         conditions = []
     keypath = action.get('mainKey', '').split('.')
     if not is_valid_key_path(keypath, schema) or not UI_TO_MATCHTYPE.get(action.get('matchType', '')):
-        return None
+        raise InvalidActions
     if keypath:
         action_kwargs['keypath'] = keypath
         action_kwargs['value'] = action.get('value')
@@ -74,7 +74,7 @@ def sanitize_user_conditions(user_conditions, schema):
             continue
         keypath = condition['key'].split('.')
         if not is_valid_key_path(keypath, schema) or not UI_TO_MATCHTYPE.get(condition.get('matchType', '')):
-            return 'error'
+            raise InvalidActions
         user_condition = {'value': condition.get('value', ''),
                           'keypath': keypath,
                           'match_type': UI_TO_MATCHTYPE[condition['matchType']]}
@@ -91,8 +91,6 @@ def get_actions(user_actions, schema):
     conditions = user_actions.get('conditions', [])
     if conditions:
         conditions = sanitize_user_conditions(conditions, schema)
-        if conditions == 'error':
-            return None
     else:
         conditions = []
     actions = []
@@ -100,10 +98,10 @@ def get_actions(user_actions, schema):
     for action in user_actions.get('actions', []):
         action_kwargs = get_action_kwargs(schema, action, conditions)
         if not action_kwargs:
-            return None
+            raise InvalidActions
         action_name = action.get('actionName', '')
         if action_name not in ACTIONS_MAP:
-            return None
+            raise InvalidActions
         action_cls = ACTIONS_MAP[action_name]
         new_action = action_cls(**action_kwargs)
         actions.append(new_action)
@@ -116,12 +114,12 @@ def is_valid_key_path(keypath, schema):
             if schema['properties'].get(key):
                 schema = schema['properties'][key]
             else:
-                return False
+                raise InvalidActions
         elif schema['type'] == 'array':
             if schema['items']['properties'].get(key):
                 schema = schema['items']['properties'][key]
             else:
-                return False
+                raise InvalidActions
         else:
-            return False
+            raise InvalidActions
     return True

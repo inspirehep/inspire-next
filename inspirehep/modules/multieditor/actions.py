@@ -25,9 +25,11 @@ from __future__ import absolute_import, print_function, division
 import re
 from collections import namedtuple
 from abc import ABCMeta, abstractmethod
+
 from jsonschema import ValidationError
 from inspire_schemas.api import validate
 from inspirehep.utils.record import get_inspire_patch
+from .exceptions import InvalidValue, SchemaError
 
 
 class ActionProcessor(object):
@@ -148,7 +150,9 @@ class AddProcessor(ActionProcessor):
         :return:
         """
         conditions_passed, key, fails_any_condition = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
-        if not schema or fails_any_condition:
+        if not schema:
+            raise SchemaError
+        elif fails_any_condition:
             return
         if not record.get(key):
             if self.conditions and conditions_passed < len(self.conditions):
@@ -215,7 +219,9 @@ class DeleteProcessor(ActionProcessor):
         :return:
         """
         conditions_passed, key, fails_any_condition = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
-        if not schema or fails_any_condition or not record.get(key):
+        if not schema:
+            raise SchemaError
+        elif fails_any_condition or not record.get(key):
             return
         new_schema = get_subschema(schema, key)
         if is_last_key(position, self.keypath):
@@ -228,8 +234,6 @@ class DeleteProcessor(ActionProcessor):
 
     def handle_deletion_process(self, record, key, schema):
         serialized_update_value = serialize_value(self.update_value, schema)
-        if serialized_update_value == 'error':
-            return
         self.get_matching_function(self.match_type)(record, key, serialized_update_value)
 
     def clean_empty(self, record, key):
@@ -289,7 +293,9 @@ class UpdateProcessor(ActionProcessor):
         :return:
         """
         conditions_passed, key, fails_any_condition = self.get_next_key_and_condition_check(record, schema, position, conditions_passed)
-        if not schema or fails_any_condition or not record.get(key):
+        if not schema:
+            raise SchemaError
+        elif fails_any_condition or not record.get(key):
             return
         new_schema = get_subschema(schema, key)
         if is_last_key(position, self.keypath):
@@ -301,8 +307,6 @@ class UpdateProcessor(ActionProcessor):
     def handle_update_process(self, record, key, schema):
         self.value = serialize_value(self.value, schema)
         serialized_update_value = serialize_value(self.update_value, schema)
-        if serialized_update_value == 'error':
-            return
         self.get_matching_function(self.match_type)(record, key, serialized_update_value)
 
 
@@ -360,7 +364,7 @@ def condition_passses(record, schema, match_type, keypath, update_value, positio
     """
     key = keypath[position]
     if not schema:
-        return False
+        raise SchemaError
     if not record.get(key):
         return match_type == 'missing'
     new_schema = get_subschema(schema, key)
@@ -374,8 +378,6 @@ def condition_passses(record, schema, match_type, keypath, update_value, positio
 
 def handle_condition_matching(record, update_value, match_type, schema):
     update_value = serialize_value(update_value, schema)
-    if update_value == 'error':
-        return False
     if isinstance(record, list):
         for index, array_record in enumerate(record):
                 if match_type == 'exact' and array_record == update_value:
@@ -413,18 +415,21 @@ def serialize_value(value, schema):
     if schema['type'] == 'array':
         schema = schema['items']
     if schema['type'] == 'integer':
-        serialized_value = int(value)
+        try:
+            serialized_value = int(value)
+        except ValueError:
+            raise InvalidValue(value)
     elif schema['type'] == 'boolean':
         if value.lower() == 'true':
             serialized_value = True
         elif value.lower() == 'false':
             serialized_value = False
         else:
-            return 'error'
+            raise InvalidValue
     elif schema['type'] == 'string':
         serialized_value = value
     else:
-        return 'error'
+        raise InvalidValue
     return serialized_value
 
 
