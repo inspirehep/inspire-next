@@ -50,7 +50,7 @@ class INSPIREWorkflows(object):
             app.instance_path, "workflows", "storage"
         )
         app.config["WORKFLOWS_FILE_LOCATION"] = os.path.join(
-            app.config['BASE_FILES_LOCATION'],
+            app.config['INSPIRE_BASE_FILES_LOCATION'],
             "workflows", "files"
         )
         app.config['CLASSIFIER_WORKDIR'] = pkg_resources.resource_filename(

@@ -36,7 +36,7 @@ from invenio_files_rest.models import Location
 def init_default_storage_path():
     """Init default file store location."""
     try:
-        uri = current_app.config['BASE_FILES_LOCATION']
+        uri = current_app.config['INSPIRE_BASE_FILES_LOCATION']
         if uri.startswith('/') and not os.path.exists(uri):
             os.makedirs(uri)
         loc = Location(
@@ -75,7 +75,7 @@ def init_records_files_storage_path(default=False):
     """Init records file store location."""
     try:
         uri = os.path.join(
-            current_app.config['BASE_FILES_LOCATION'],
+            current_app.config['INSPIRE_BASE_FILES_LOCATION'],
             "records", "files"
         )
         if uri.startswith('/') and not os.path.exists(uri):

@@ -86,7 +86,7 @@ ACCESS_CACHE = "invenio_cache:current_cache"
 
 # Files
 # =====
-BASE_FILES_LOCATION = os.path.join(sys.prefix, 'var/data')
+INSPIRE_BASE_FILES_LOCATION = os.path.join(sys.prefix, 'var/data')
 
 # This is needed in order to be able to use EOS files locations
 MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100 MiB
