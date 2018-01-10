@@ -78,6 +78,9 @@ def convert_to_tei(record):
     elif _is_art(record):
         ctx = _get_art_context(record)
         return render_template('hal/art.xml', **ctx)
+    elif _is_preprint(record):
+        ctx = _get_preprint_context(record)
+        return render_template('hal/preprint.xml', **ctx)
 
     raise NotImplementedError
 
@@ -161,5 +164,33 @@ def _get_art_context(record):
         'page_artid': get_page_artid(record),
         'peer_reviewed': get_peer_reviewed(record),
         'publication_date': get_publication_date(record),
+        'title': get_title(record),
+    }
+
+
+def _is_preprint(record):
+    document_types = get_document_types(record)
+
+    return 'article' in document_types
+
+
+def _get_preprint_context(record):
+    abstract = get_abstract(record)
+    try:
+        abstract_language = detect(abstract)
+    except LangDetectException:
+        abstract_language = ''
+
+    return {
+        'abstract': abstract,
+        'abstract_language': abstract_language,
+        'arxiv_id': get_arxiv_id(record),
+        'authors': get_authors(record),
+        'collaborations': get_collaborations(record),
+        'divulgation': get_divulgation(record),
+        'domains': get_domains(record),
+        'inspire_id': get_inspire_id(record),
+        'keywords': get_keywords(record),
+        'language': get_language(record),
         'title': get_title(record),
     }
