@@ -363,14 +363,19 @@ def test_authorlist_text_exception(log_in_as_cataloger, api_client):
         '/editor/authorlist/text',
         content_type='application/json',
         data=json.dumps({
-            'text': 'A. Einstein, N. Bohr2'
+            'text': (
+                'F. Lastname1, F.M. Otherlastname1,2\n'
+                '\n'
+                'CERN\n'
+                '2 Otheraffiliation'
+            )
         })
     )
 
     assert response.status_code == 500
 
     expected = {
-        'message': 'Could not find affiliations',
+        'message': "Cannot identify type of affiliations, found IDs: [u'C', u'2']",
         'status': 500
     }
     result = json.loads(response.data)
