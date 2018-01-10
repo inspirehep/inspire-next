@@ -33,7 +33,7 @@ from celery.schedules import crontab
 
 from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
-from inspire_schemas import utils as schema_utils
+from inspire_schemas.utils import ARXIV_TO_INSPIRE_CATEGORY_MAPPING  # noqa: F401
 
 
 # Debug
@@ -1411,11 +1411,6 @@ CRAWLER_SETTINGS = {
 # Legacy PID provider
 # ===================
 PIDSTORE_LEGACY_PID_PROVIDER = None  # e.g. "http://example.org/batchuploader/allocaterecord"
-
-# Inspire subject translation
-# ===========================
-ARXIV_TO_INSPIRE_CATEGORY_MAPPING = schema_utils.ARXIV_TO_INSPIRE_CATEGORY_MAPPING
-
 
 # Configuration for the $ref updater
 # ==================================
