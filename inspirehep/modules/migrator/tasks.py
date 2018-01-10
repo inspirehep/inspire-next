@@ -36,7 +36,7 @@ import click
 from celery import group, shared_task
 from elasticsearch.helpers import bulk as es_bulk
 from elasticsearch.helpers import scan as es_scan
-from flask import current_app, url_for
+from flask import current_app
 from flask_sqlalchemy import models_committed
 from jsonschema import ValidationError
 from redis import StrictRedis
@@ -59,6 +59,7 @@ from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.receivers import index_after_commit
+from inspirehep.utils.schema import ensure_valid_schema
 
 from .models import InspireProdRecords
 
@@ -340,10 +341,7 @@ def migrate_and_insert_record(raw_record, skip_files=False):
     try:
         json_record = marcxml2record(raw_record)
         if '$schema' in json_record:
-            json_record['$schema'] = url_for(
-                'invenio_jsonschemas.get_schema',
-                schema_path='records/{0}'.format(json_record['$schema']),
-            )
+            ensure_valid_schema(json_record)
     except Exception as e:
         LOGGER.exception('Migrator DoJSON Error')
         error = e
