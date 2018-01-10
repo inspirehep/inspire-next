@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.records.serializers.fields_export import (
     get_authors_with_role,
     bibtex_document_type,
@@ -34,7 +35,7 @@ from inspirehep.modules.records.serializers.fields_export import (
     get_country_name_by_code,
     get_author,
     get_best_publication_info,
-    get_note
+    get_note,
 )
 
 
@@ -76,6 +77,37 @@ def test_bibtex_document_type():
     }
     expected = "mastersthesis"
     result = bibtex_document_type("thesis", test_record)
+    assert expected == result
+
+
+def test_bibtex_document_type_recognizes_phd_theses():
+    schema = load_schema('hep')
+    document_type_schema = schema['properties']['document_type']
+    thesis_info_schema = schema['properties']['thesis_info']
+
+    record = {
+        'document_type': ['thesis'],
+        'thesis_info': {'degree_type': 'phd'},
+    }
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['thesis_info'], thesis_info_schema) is None
+
+    expected = 'phdthesis'
+    result = bibtex_document_type('thesis', record)
+
+    assert expected == result
+
+
+def test_bibtex_document_type_handles_missing_thesis_info():
+    schema = load_schema('hep')
+    subschema = schema['properties']['document_type']
+
+    record = {'document_type': ['thesis']}
+    assert validate(record['document_type'], subschema) is None
+
+    expected = 'mastersthesis'
+    result = bibtex_document_type('thesis', record)
+
     assert expected == result
 
 
@@ -140,6 +172,19 @@ def test_get_type():
     }
     expected = 'Bachelor thesis'
     result = get_type(test_data, 'mastersthesis')
+    assert expected == result
+
+
+def test_get_type_handles_missing_thesis_info():
+    schema = load_schema('hep')
+    subschema = schema['properties']['document_type']
+
+    record = {'document_type': ['thesis']}
+    assert validate(record['document_type'], subschema) is None
+
+    expected = 'Other thesis'
+    result = get_type(record, 'mastersthesis')
+
     assert expected == result
 
 
