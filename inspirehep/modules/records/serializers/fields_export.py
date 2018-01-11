@@ -90,7 +90,7 @@ def bibtex_document_type(doc_type, obj):
     if doc_type in DOCUMENT_TYPE_MAP:
         return DOCUMENT_TYPE_MAP[doc_type]
     # Theses need special treatment, because bibtex differentiates between their types:
-    elif doc_type == 'thesis' and obj['thesis_info']['degree_type'] in ('phd', 'habilitation'):
+    elif doc_type == 'thesis' and get_value(obj, 'thesis_info.degree_type') in ('phd', 'habilitation'):
         return 'phdthesis'
     # Other types of theses (other, bachelor, laurea) don't have separate types in bibtex:
     # We will use the type field (see `get_type`) to indicate the type of diploma.
@@ -260,7 +260,7 @@ def get_arxiv_prefix(data, doc_type):
 
 @extractor('school')
 def get_school(data, doc_type):
-    schools = [school['name'] for school in get_value(data, 'thesis_info.institutions')]
+    schools = [school['name'] for school in get_value(data, 'thesis_info.institutions', [])]
     if schools:
         return ', '.join(schools)
 
@@ -309,8 +309,9 @@ def get_isbn(data, doc_type):
 
 @extractor('type')
 def get_type(data, doc_type):
-    if doc_type == 'mastersthesis' and data['thesis_info']['degree_type'] not in ('master', 'diploma'):
-        return "{} thesis".format(data['thesis_info']['degree_type'].title())
+    degree_type = get_value(data, 'thesis_info.degree_type', 'other')
+    if doc_type == 'mastersthesis' and degree_type not in ('master', 'diploma'):
+        return '{} thesis'.format(degree_type.title())
 
 
 @extractor('edition')
