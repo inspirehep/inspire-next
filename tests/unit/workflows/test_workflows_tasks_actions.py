@@ -43,6 +43,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_record_relevant,
     is_submission,
     mark,
+    populate_journal_coverage,
     prepare_update_payload,
     reject_record,
     refextract,
@@ -395,6 +396,84 @@ def test_is_submission_returns_false_if_obj_has_falsy_acquisition_source():
     eng = MockEng()
 
     assert not is_submission(obj, eng)
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_populate_journal_coverage_writes_full_if_any_coverage_is_full(mock_replace_refs):
+    schema = load_schema('journals')
+    subschema = schema['properties']['_harvesting_info']
+
+    journals = [{'_harvesting_info': {'coverage': 'full'}}]
+    assert validate(journals[0]['_harvesting_info'], subschema) is None
+
+    mock_replace_refs.return_value = journals
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    data = {
+        'publication_info': [
+            {'journal_record': {'$ref': 'http://localhost:/api/journals/1213103'}},
+        ],
+    }
+    extra_data = {}
+    assert validate(data['publication_info'], subschema) is None
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert populate_journal_coverage(obj, eng) is None
+
+    expected = 'full'
+    result = obj.extra_data['journal_coverage']
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_populate_journal_coverage_writes_partial_if_all_coverages_are_partial(mock_replace_refs):
+    schema = load_schema('journals')
+    subschema = schema['properties']['_harvesting_info']
+
+    journals = [{'_harvesting_info': {'coverage': 'partial'}}]
+    assert validate(journals[0]['_harvesting_info'], subschema) is None
+
+    mock_replace_refs.return_value = journals
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    data = {
+        'publication_info': [
+            {'journal_record': {'$ref': 'http://localhost:/api/journals/1212337'}},
+        ],
+    }
+    extra_data = {}
+    assert validate(data['publication_info'], subschema) is None
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert populate_journal_coverage(obj, eng) is None
+
+    expected = 'partial'
+    result = obj.extra_data['journal_coverage']
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_populate_journal_coverage_does_nothing_if_no_journal_is_found(mock_replace_refs):
+    mock_replace_refs.return_value = []
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert populate_journal_coverage(obj, eng) is None
+    assert 'journal_coverage' not in obj.extra_data
 
 
 def test_prepare_update_payload():
