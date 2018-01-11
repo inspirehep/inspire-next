@@ -308,6 +308,7 @@ def refextract(obj, eng):
 
     Returns:
         None
+
     """
     pdf_references, text_references = [], []
     source = get_value(obj.data, 'acquisition_source.source')
@@ -416,3 +417,52 @@ def normalize_journal_titles(obj, eng):
 
             if result:
                 obj.data['publication_info'][index]['journal_record'] = result.records_metadata_json['self']
+
+
+@with_debug_logging
+def set_document_type_and_refereed(obj, eng):
+    """Set the `refereed` field to the appropriate value based on the journals' `refereed`
+    and `proceedings` fields values. Also, modify the `document_type` field accordingly.
+
+    The journal information is retrieved using the `journal_record` field value which is a
+    json reference to the journal records.
+
+    Note:
+        If some of the journals present in the `publication_info` have no `journal_record`
+        json reference associated, only the ones that do have the associated reference
+        are taken into account in making the decisions. If there are no journals or none
+        have an associated json reference to the corresponding journal record, the function
+        return  None and no further changes are being made.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        None
+
+    """
+    journals = replace_refs(get_value(obj.data, 'publication_info.journal_record'), 'db')
+
+    if not journals:
+        return
+
+    if any(journal.get('refereed') and journal.get('proceedings') for journal in journals) \
+            and 'conference paper' not in obj.data.get('document_type'):
+                    obj.data['refereed'] = True
+
+    if any(journal.get('refereed') and not journal.get('proceedings') for journal in journals):
+        obj.data['refereed'] = True
+
+    if all(journal.get('proceedings') for journal in journals) \
+            and all(not journal.get('refereed') for journal in journals):
+        doc_types = obj.data.get('document_type')
+        for index, doc_type in enumerate(doc_types):
+            if doc_type == 'article':
+                del obj.data['document_type'][index]
+                if 'conference paper' not in doc_types:
+                    obj.data['document_type'].append('conference paper')
+                break
+
+    if all(not journal.get('refereed', True) for journal in journals):
+                obj.data['refereed'] = False

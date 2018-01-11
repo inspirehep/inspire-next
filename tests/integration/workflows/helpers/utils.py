@@ -31,6 +31,7 @@ from invenio_workflows import (
     WorkflowEngine,
     start,
 )
+
 from inspirehep.utils.record_getter import get_db_record
 
 

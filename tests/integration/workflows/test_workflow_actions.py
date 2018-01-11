@@ -38,6 +38,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     get_journal_coverage,
     normalize_journal_titles,
 )
+from inspirehep.modules.workflows.tasks.actions import set_document_type_and_refereed
 
 from utils import _delete_record
 
@@ -62,12 +63,24 @@ def insert_journals_in_db(workflow_app):
     journal_pro_and_ref = json.loads(pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', 'jou_record_refereed_and_proceedings.json')))
 
+    journal_no_pro_and_not_ref = json.loads(pkg_resources.resource_string(
+        __name__, os.path.join('fixtures', 'jou_record_not_refereed_and_no_proceedings.json')))
+
+    journal_pro_and_no_ref_a = json.loads(pkg_resources.resource_string(
+        __name__, os.path.join('fixtures', 'jou_record_not_refereed_and_proceedings.json')))
+
+    journal_pro_and_no_ref_b = json.loads(pkg_resources.resource_string(
+        __name__, os.path.join('fixtures', 'jou_record_not_refereed_and_proceedings_2.json')))
+
     with db.session.begin_nested():
         record_insert_or_replace(journal_full_1)
         record_insert_or_replace(journal_partial_1)
         record_insert_or_replace(journal_partial_2)
         record_insert_or_replace(journal_no_pro_and_ref)
         record_insert_or_replace(journal_pro_and_ref)
+        record_insert_or_replace(journal_no_pro_and_not_ref)
+        record_insert_or_replace(journal_pro_and_no_ref_a)
+        record_insert_or_replace(journal_pro_and_no_ref_b)
     db.session.commit()
     es.indices.refresh('records-journals')
 
@@ -75,6 +88,9 @@ def insert_journals_in_db(workflow_app):
 
     _delete_record('jou', 1936475)
     _delete_record('jou', 1936476)
+    _delete_record('jou', 1936477)
+    _delete_record('jou', 1936478)
+    _delete_record('jou', 1936479)
     _delete_record('jou', 1936480)
     _delete_record('jou', 1936481)
     _delete_record('jou', 1936482)
@@ -96,7 +112,7 @@ def test_normalize_journal_titles_known_journals_with_ref(workflow_app, insert_j
         ],
         "publication_info": [
             {
-                "journal_title": "A Test Journal1",
+                "journal_title": "No Proceedings and Refereed J.",
                 "journal_record": {
                     "$ref": "http://localhost:5000/api/journals/1936475"
                 }
@@ -105,7 +121,7 @@ def test_normalize_journal_titles_known_journals_with_ref(workflow_app, insert_j
                 "cnum": "C01-01-01"
             },
             {
-                "journal_title": "Test.Jou.2",
+                "journal_title": "Pro.Ref.J.",
                 "journal_record": {
                     "$ref": "http://localhost:5000/api/journals/1936476"
                 }
@@ -121,8 +137,8 @@ def test_normalize_journal_titles_known_journals_with_ref(workflow_app, insert_j
 
     normalize_journal_titles(obj, None)
 
-    assert obj.data['publication_info'][0]['journal_title'] == 'Test.Jou.1'
-    assert obj.data['publication_info'][2]['journal_title'] == 'Test.Jou.2'
+    assert obj.data['publication_info'][0]['journal_title'] == 'No.Pro.Ref.J.'
+    assert obj.data['publication_info'][2]['journal_title'] == 'Pro.Ref.J.'
     assert obj.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
 
@@ -142,7 +158,7 @@ def test_normalize_journal_titles_known_journals_with_ref_from_variants(workflow
         ],
         "publication_info": [
             {
-                "journal_title": "A Test Journal1 Variant 2",
+                "journal_title": "No Proceedings and Refereed J. Variant 2",
                 "journal_record": {
                     "$ref": "http://localhost:5000/api/journals/1936475"
                 }
@@ -151,7 +167,7 @@ def test_normalize_journal_titles_known_journals_with_ref_from_variants(workflow
                 "cnum": "C01-01-01"
             },
             {
-                "journal_title": "A Test Journal2 Variant 3",
+                "journal_title": "Proceedings and Refereed J. Variant 3",
                 "journal_record": {
                     "$ref": "http://localhost:5000/api/journals/1936476"
                 }
@@ -167,8 +183,8 @@ def test_normalize_journal_titles_known_journals_with_ref_from_variants(workflow
 
     normalize_journal_titles(obj, None)
 
-    assert obj.data['publication_info'][0]['journal_title'] == 'Test.Jou.1'
-    assert obj.data['publication_info'][2]['journal_title'] == 'Test.Jou.2'
+    assert obj.data['publication_info'][0]['journal_title'] == 'No.Pro.Ref.J.'
+    assert obj.data['publication_info'][2]['journal_title'] == 'Pro.Ref.J.'
     assert obj.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
 
@@ -188,13 +204,13 @@ def test_normalize_journal_titles_known_journals_no_ref(workflow_app, insert_jou
         ],
         "publication_info": [
             {
-                "journal_title": "A Test Journal1"
+                "journal_title": "No Proceedings and Refereed J."
             },
             {
                 "cnum": "C01-01-01"
             },
             {
-                "journal_title": "Test.Jou.2"
+                "journal_title": "Pro.Ref.J."
             }
         ]
     }
@@ -207,8 +223,8 @@ def test_normalize_journal_titles_known_journals_no_ref(workflow_app, insert_jou
 
     normalize_journal_titles(obj, None)
 
-    assert obj.data['publication_info'][0]['journal_title'] == 'Test.Jou.1'
-    assert obj.data['publication_info'][2]['journal_title'] == 'Test.Jou.2'
+    assert obj.data['publication_info'][0]['journal_title'] == 'No.Pro.Ref.J.'
+    assert obj.data['publication_info'][2]['journal_title'] == 'Pro.Ref.J.'
     assert obj.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
 
@@ -228,7 +244,7 @@ def test_normalize_journal_titles_known_journals_wrong_ref(workflow_app, insert_
         ],
         "publication_info": [
             {
-                "journal_title": "A Test Journal1",
+                "journal_title": "No Proceedings and Refereed J.",
                 "journal_record": {
                     "$ref": "wrong1"
                 }
@@ -237,7 +253,7 @@ def test_normalize_journal_titles_known_journals_wrong_ref(workflow_app, insert_
                 "cnum": "C01-01-01"
             },
             {
-                "journal_title": "Test.Jou.2",
+                "journal_title": "Pro.Ref.J.",
                 "journal_record": {
                     "$ref": "wrong2"
                 }
@@ -253,8 +269,8 @@ def test_normalize_journal_titles_known_journals_wrong_ref(workflow_app, insert_
 
     normalize_journal_titles(obj, None)
 
-    assert obj.data['publication_info'][0]['journal_title'] == 'Test.Jou.1'
-    assert obj.data['publication_info'][2]['journal_title'] == 'Test.Jou.2'
+    assert obj.data['publication_info'][0]['journal_title'] == 'No.Pro.Ref.J.'
+    assert obj.data['publication_info'][2]['journal_title'] == 'Pro.Ref.J.'
     assert obj.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
 
@@ -388,7 +404,7 @@ def test_get_journal_coverage_partial(workflow_app, insert_journals_in_db):
 
     get_journal_coverage(obj, None)
 
-    assert obj.extra_data['journal_coverage'] == 'partial'   # both journals have 'full' coverage
+    assert obj.extra_data['journal_coverage'] == 'partial'  # both journals have 'full' coverage
 
 
 def test_get_journal_coverage_full(workflow_app, insert_journals_in_db):
@@ -434,4 +450,296 @@ def test_get_journal_coverage_full(workflow_app, insert_journals_in_db):
 
     get_journal_coverage(obj, None)
 
-    assert obj.extra_data['journal_coverage'] == 'full'    # not all journals have 'full' coverage
+    assert obj.extra_data['journal_coverage'] == 'full'  # not all journals have 'full' coverage
+
+
+def test_set_document_type_and_refereed_all_proceedings_none_refereed(workflow_app, insert_journals_in_db):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            "A title"
+        ],
+        "document_type": [
+            "article",
+            "book",
+            "note"
+        ],
+        "publication_info": [
+            {
+                "cnum": "C01-01-01"
+            },
+            {
+                "journal_title": "Pro.No.Ref.J.A.",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/1936478"
+                }
+            },
+            {
+                "cnum": "C01-02-03"
+            },
+            {
+                "journal_title": "Pro.No.Ref.J.B.",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/1936479"
+                }
+            }
+        ]
+    }
+
+    obj = workflow_object_class.create(
+        data=record,
+        id_user=1,
+        data_type="hep"
+    )
+
+    set_document_type_and_refereed(obj, None)
+
+    assert 'conference paper' in record['document_type']
+    assert not record['refereed']    # both journals have 'referred' False
+
+
+def test_set_document_type_and_refereed_all_proceedings_none_refereed_not_article(workflow_app, insert_journals_in_db):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            "A title"
+        ],
+        "document_type": [
+            "book",
+            "note",
+            "report"
+        ],
+        "publication_info": [
+            {
+                "journal_title": "Pro.No.Ref.J.A.",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/1936478"
+                }
+            },
+            {
+                "cnum": "C01-01-01"
+            },
+            {
+                "journal_title": "Pro.No.Ref.J.B.",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/1936479"
+                }
+            }
+        ]
+    }
+
+    obj = workflow_object_class.create(
+        data=record,
+        id_user=1,
+        data_type="hep"
+    )
+
+    set_document_type_and_refereed(obj, None)
+
+    assert 'conference paper' not in record['document_type']
+    assert not record['refereed']  # both journals have 'referred' False
+
+
+def test_set_document_type_and_refereed_any_refereed_and_proceedings_but_no_conference_paper(workflow_app, insert_journals_in_db):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            "A title"
+        ],
+        "document_type": [
+            "book",
+            "note",
+            "report"
+        ],
+        "publication_info": [
+            {
+                "journal_title": "Pro.Ref.J.",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/1936476"
+                }
+            },
+            {
+                "cnum": "C01-01-01"
+            }
+        ]
+    }
+
+    obj = workflow_object_class.create(
+        data=record,
+        id_user=1,
+        data_type="hep"
+    )
+
+    set_document_type_and_refereed(obj, None)
+
+    assert 'conference paper' not in record['document_type']
+    assert record['refereed']
+
+
+def test_set_document_type_and_refereed_any_refereed_and_proceedings_and_conference_paper(workflow_app, insert_journals_in_db):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            "A title"
+        ],
+        "document_type": [
+            "conference paper",
+            "book",
+            "note",
+            "report"
+        ],
+        "publication_info": [
+            {
+                "journal_title": "Pro.Ref.J.",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/1936476"
+                }
+            },
+            {
+                "cnum": "C01-01-01"
+            }
+        ]
+    }
+
+    obj = workflow_object_class.create(
+        data=record,
+        id_user=1,
+        data_type="hep"
+    )
+
+    set_document_type_and_refereed(obj, None)
+
+    assert 'conference paper' in record['document_type']
+    assert 'refereed' not in record
+
+
+def test_set_document_type_and_refereed_any_refereed_and_none_proceedings(workflow_app, insert_journals_in_db):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            "A title"
+        ],
+        "document_type": [
+            "conference paper",
+            "book",
+            "note",
+            "report"
+        ],
+        "publication_info": [
+            {
+                "journal_title": "No.Pro.Ref.J.",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/1936475"
+                }
+            },
+            {
+                "cnum": "C01-01-01"
+            }
+        ]
+    }
+
+    obj = workflow_object_class.create(
+        data=record,
+        id_user=1,
+        data_type="hep"
+    )
+
+    set_document_type_and_refereed(obj, None)
+
+    assert 'conference paper' in record['document_type']
+    assert record['refereed']
+
+
+def test_set_document_type_and_refereed_all_not_refereed(workflow_app, insert_journals_in_db):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            "A title"
+        ],
+        "document_type": [
+            "conference paper",
+            "book",
+            "note",
+            "report"
+        ],
+        "publication_info": [
+            {
+                "journal_title": "No.Pro.No.Ref.J.",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/1936477"
+                }
+            },
+            {
+                "cnum": "C01-01-01"
+            },
+            {
+                "journal_title": "Pro.No.Ref.J.A.",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/1936478"
+                }
+            }
+        ]
+    }
+
+    obj = workflow_object_class.create(
+        data=record,
+        id_user=1,
+        data_type="hep"
+    )
+
+    set_document_type_and_refereed(obj, None)
+
+    assert 'conference paper' in record['document_type']
+    assert not record['refereed']
+
+
+def test_set_document_type_and_refereed_no_journal_references(workflow_app, insert_journals_in_db):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+
+        "titles": [
+            "A title"
+        ],
+        "document_type": [
+            "article",
+            "book",
+            "note",
+            "report"
+        ],
+        "publication_info": [
+            {
+                "journal_title": "Pro.No.Ref.J.A."
+            },
+            {
+                "cnum": "C01-01-01"
+            },
+            {
+                "journal_title": "Pro.No.Ref.J.B."
+            }
+        ]
+    }
+
+    obj = workflow_object_class.create(
+        data=record,
+        id_user=1,
+        data_type="hep"
+    )
+
+    set_document_type_and_refereed(obj, None)
+
+    assert 'conference paper' not in record['document_type']
+    assert set_document_type_and_refereed(obj, None) is None

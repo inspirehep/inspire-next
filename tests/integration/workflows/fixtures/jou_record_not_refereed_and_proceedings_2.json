@@ -1,0 +1,16 @@
+{
+    "$schema":"http://localhost:5000/schemas/records/journals.json",
+    "_collections":[
+        "Journals"
+    ],
+    "control_number":1936479,
+    "journal_title":{
+        "title":"Proceedings and Not Refereed J. B"
+    },
+    "self":{
+        "$ref":"http://localhost:5000/api/journals/1936479"
+    },
+    "proceedings":true,
+    "refereed":false,
+    "short_title":"Pro.No.Ref.J.B."
+}

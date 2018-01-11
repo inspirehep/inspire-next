@@ -5,17 +5,17 @@
     ],
     "control_number":1936475,
     "journal_title":{
-        "title":"A Test Journal1"
+        "title":"No Proceedings and Refereed J."
     },
     "title_variants":[
-        "A Test Journal1 Variant 1",
-        "A Test Journal1 Variant 2",
-        "A Test Journal1 Variant 3"
+        "No Proceedings and Refereed J. Variant 1",
+        "No Proceedings and Refereed J. Variant 2",
+        "No Proceedings and Refereed J. Variant 3"
     ],
     "self":{
         "$ref":"http://localhost:5000/api/journals/1936475"
     },
     "proceedings":false,
     "refereed":true,
-    "short_title":"Test.Jou.1"
+    "short_title":"No.Pro.Ref.J."
 }
