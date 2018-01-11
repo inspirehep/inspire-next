@@ -35,6 +35,18 @@
 
 {% if results %}
 <h4>{{ results_title }}</h4>
+
+{% if 'warnings' in results %}
+<div>
+  <p>There are some problems with the input. Please check the following warnings:</p>
+  <ul>
+    {% for warning in results.warnings %}
+    <li>{{ warning }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
 <button class="btn btn-default" id="copy-button" data-clipboard-target="resultarea">Copy to clipboard</button>
 <pre><textarea class="form-control" form="authorlist" id="resultarea" rows="10">
 {% for author in results['authors'] %}
@@ -47,21 +59,52 @@ $$v{{ affiliation.get('value') }}
 {% endfor %}
 </textarea></pre>
 
-
 {% else %}
 <div>
 {% if errors %}
     <p>Sorry! Seems there is a problem somewhere. Please see error message: {{ errors }}</p>
 {% endif %}
 Currently supported input string formats:
-<p><pre>F. Lastname, F.M. Otherlastname</pre></p>
+
 <p><pre>
-F. Lastname1, F.M. Otherlastname1,2
+F. Lastname
+F.M. Otherlastname
+</pre></p>
+<hr>
+<p><pre>
+F. Lastname1, F M Otherlastname1,2
+
 1 CERN
 2 Otheraffiliation
 </pre></p>
-You should make sure there is only one affiliation per line and the affiliation
-IDs in author names are separated with commas.
+<hr>
+<p><pre>
+F. Lastname a
+F.M. Otherlastname b*
+
+a
+CERN
+b
+Otheraffiliation
+</pre></p>
+<hr>
+<p><pre>
+F. Lastname * F. M. Otherlastname $1
+
+* CERN
+$ Otheraffiliation
+</pre></p>
+<hr>
+
+You should make sure there is
+<ul>
+<li>an empty line between authors and affiliation
+<li>no other empty lines
+<li>only one affiliation per line
+<li>aff-IDs in separate line or separated by space from affiliation
+</ul>
+
+<address>If it fails, please send the example to Kirsten</address>
 </div>
 {% endif %}
 

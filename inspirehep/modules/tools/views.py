@@ -55,7 +55,7 @@ def authorlist_form():
     results = {}
     results_title = ''
     errors = ''
-    text = form.author_string.data
+    text = form.author_string.data or ''
     try:
         results = authorlist(text)
         results_title = 'Author list string in MARC21'
