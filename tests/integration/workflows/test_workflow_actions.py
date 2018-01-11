@@ -35,7 +35,7 @@ from invenio_search.api import current_search_client as es
 from invenio_workflows import workflow_object_class
 
 from inspirehep.modules.workflows.tasks.actions import (
-    get_journal_coverage,
+    populate_journal_coverage,
     normalize_journal_titles,
 )
 
@@ -345,7 +345,7 @@ def test_normalize_journal_titles_unknown_journals_no_ref(workflow_app, insert_j
     assert 'journal_record' not in obj.data['publication_info'][2]
 
 
-def test_get_journal_coverage_partial(workflow_app, insert_journals_in_db):
+def test_populate_journal_coverage_partial(workflow_app, insert_journals_in_db):
     record = {
         "_collections": [
             "Literature"
@@ -386,12 +386,12 @@ def test_get_journal_coverage_partial(workflow_app, insert_journals_in_db):
         data_type="hep"
     )
 
-    get_journal_coverage(obj, None)
+    populate_journal_coverage(obj, None)
 
     assert obj.extra_data['journal_coverage'] == 'partial'   # both journals have 'full' coverage
 
 
-def test_get_journal_coverage_full(workflow_app, insert_journals_in_db):
+def test_populate_journal_coverage_full(workflow_app, insert_journals_in_db):
     record = {
         "_collections": [
             "Literature"
@@ -432,6 +432,6 @@ def test_get_journal_coverage_full(workflow_app, insert_journals_in_db):
         data_type="hep"
     )
 
-    get_journal_coverage(obj, None)
+    populate_journal_coverage(obj, None)
 
     assert obj.extra_data['journal_coverage'] == 'full'    # not all journals have 'full' coverage

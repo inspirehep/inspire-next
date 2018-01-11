@@ -46,7 +46,6 @@ from invenio_records.models import RecordMetadata
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_utils.record import get_value
 from inspirehep.modules.records.json_ref_loader import replace_refs
-
 from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_pdf,
     extract_references_from_text,
@@ -233,14 +232,26 @@ def is_submission(obj, eng):
 
 
 @with_debug_logging
-def get_journal_coverage(obj, eng):
-    """Return the journal coverage that this article belongs to."""
-    journals = replace_refs(get_value(obj.data, 'publication_info.journal_record'), 'db')
+def populate_journal_coverage(obj, eng):
+    """Populate ``journal_coverage`` from the Journals DB.
 
+    Searches in the Journals DB if the current article was published in a
+    journal that we harvest entirely, then populates the ``journal_coverage``
+    key in ``extra_data`` with ``'full'`` if it was, ``'partial' otherwise.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        None
+
+    """
+    journals = replace_refs(get_value(obj.data, 'publication_info.journal_record'), 'db')
     if not journals:
         return
 
-    if any(journal['_harvesting_info'].get('coverage') == 'full' for journal in journals):
+    if any(get_value(journal, '_harvesting_info.coverage') == 'full' for journal in journals):
         obj.extra_data['journal_coverage'] = 'full'
     else:
         obj.extra_data['journal_coverage'] = 'partial'
