@@ -31,13 +31,13 @@ from invenio_records.api import Record
 
 def test_multieditor_search_api(api_client):
     login_user_via_session(api_client, email='cataloger@inspirehep.net')
-    response = api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
+    response = api_client.get('/multieditor/search?number=1&q=control_number:736770&index=hep')
     assert 736770 == json.loads(response.data)['json_records'][0]['control_number']
 
 
 def test_multieditor_preview_api(api_client):
     login_user_via_session(api_client, email='cataloger@inspirehep.net')
-    api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
+    api_client.get('/multieditor/search?number=1&q=control_number:736770&index=hep')
     response = api_client.post(
         '/multieditor/preview',
         content_type='application/json',
@@ -65,7 +65,7 @@ def test_multieditor_preview_api(api_client):
 
 def test_multieditor_update_api(api_client):
     login_user_via_session(api_client, email='cataloger@inspirehep.net')
-    response = api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
+    response = api_client.get('/multieditor/search?number=1&q=control_number:736770&index=hep')
 
     api_client.post(
         '/multieditor/update',
@@ -140,7 +140,7 @@ def test_multieditor_update_api(api_client):
 ])
 def test_api_permision_search(api_client, user_info, status):
     login_user_via_session(api_client, email=user_info['email'])
-    response = api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
+    response = api_client.get('/multieditor/search?number=1&q=control_number:736770&index=hep')
     assert response.status_code == status
 
 
@@ -152,7 +152,7 @@ def test_api_permision_search(api_client, user_info, status):
     (None, 'update'),
     (None, 'preview')
 ])
-def test_api_permission_(api_client, user_info, endpoint):
+def test_api_permission(api_client, user_info, endpoint):
     if user_info:
         login_user_via_session(api_client, email=user_info['email'])
     response = api_client.post(
@@ -164,7 +164,7 @@ def test_api_permission_(api_client, user_info, endpoint):
 
 def test_multieditor_update_api_faulty_actions(api_client):
     login_user_via_session(api_client, email='cataloger@inspirehep.net')
-    api_client.get('/multieditor/search?pageNum=1&queryString=control_number:736770&index=hep')
+    api_client.get('/multieditor/search?number=1&q=control_number:736770&index=hep')
 
     response = api_client.post(
         '/multieditor/preview',

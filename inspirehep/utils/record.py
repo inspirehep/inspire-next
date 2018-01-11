@@ -24,8 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 from itertools import chain
 
-from dictdiffer import diff
-from inspire_utils.helpers import force_list
+import jsonpatch
 
 from inspire_utils.record import get_value
 
@@ -196,53 +195,21 @@ def get_inspire_patch(old_record, new_record):
         of the path keys being an array
         """
     json_patch = []
-    for diff_element in diff(old_record, new_record):
+    for diff_element in jsonpatch.JsonPatch.from_diff(old_record, new_record):
         json_patch.append(_get_inspire_diff(diff_element))
     return json_patch or None
 
 
 def _get_inspire_diff(diff):
-    diff = list(diff)
-    path = force_list(diff[1])  # in case the path is a string and not an array
-    if diff[0] == 'add':
-        return _get_inspire_diff_add(diff, path)
-    elif diff[0] == 'remove':
-        return _get_inspire_diff_remove(diff, path)
-    elif diff[0] == 'change':
-        return _get_inspire_diff_change(diff, path)
-
-
-def _get_inspire_diff_add(diff, path):
     """
-    diff form examples:
-    ('add', '', ['stargazers', (2, '/users/40')])
-    ('add', 'stargazers', [(2, '/users/40')]),
+    :param diff:
+    :return: diff element with array of keys instead of path string
     """
-    if not path[0]:
-        path = force_list(diff[2][0][0])
-    else:
-        path.append(diff[2][0][0])
-    return ({'op': diff[0],
-             'path': path,
-             'value': diff[2][0][1]})
-
-
-def _get_inspire_diff_remove(diff, path):
-    """
-    diff form examples:
-    ('remove', 'stargazers', [(2, '/users/40')]),"""
-    if not path[0]:
-        path = force_list(diff[2][0][0])
-    else:
-        path.append(diff[2][0][0])
-    return {'op': diff[0], 'path': path}
-
-
-def _get_inspire_diff_change(diff, path):
-    """
-    diff form examples:
-    ('change', ['settings', 'assignees', 2], (201, 202)),
-    ('change', 'title', ('hello', 'hellooo'))]"""
-    return ({'op': 'replace',
-             'path': path,
-             'value': diff[2][1]})
+    diff['path'] = diff['path'].split('/')
+    diff['path'].pop(0)
+    for index, key in enumerate(diff['path']):
+        try:
+            diff['path'][index] = int(key)
+        except ValueError:
+            pass
+    return diff

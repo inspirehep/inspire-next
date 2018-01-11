@@ -43,14 +43,14 @@ INDEX_TO_QUERIES = {
 }
 
 
-def get_total_records(query_string, index):
+def get_total_records(query, index):
     """
-    :param query_string: query string
+    :param query: query string
     :param index: index of the records to be searched
     :return: returns the total records that match our query
     """
     query_result = INDEX_TO_QUERIES[index]()\
-        .query_from_iq(query_string).params(
+        .query_from_iq(query).params(
         size=1,
         fields=[]
     ).execute()
@@ -58,14 +58,14 @@ def get_total_records(query_string, index):
     return query_result.hits.total
 
 
-def get_record_ids_from_query(query_string, index):
+def get_record_ids_from_query(query, index):
     """
-    :param query_string: query string
+    :param query: query string
     :param index: index of the records to be searched
     :return: return the uuids of the records that matched our query
     """
     query_result = INDEX_TO_QUERIES[index]()\
-        .query_from_iq(query_string).params(
+        .query_from_iq(query).params(
         size=2000,
         fields=[]
     ).scan()
@@ -74,14 +74,14 @@ def get_record_ids_from_query(query_string, index):
     return uuids
 
 
-def get_paginated_records(page_number, page_size, uuids):
+def get_paginated_records(number, size, uuids):
     """
-    :param page_number: number of frontend page
-    :param page_size:  size of the frontend page
+    :param number: number of frontend page
+    :param size:  size of the frontend page
     :param uuids: uuids that matched our query
     :return: returns the paginated uuids and db records
     """
-    paginated_uuids = uuids[(page_number-1)*page_size:(page_number*page_size)]
+    paginated_uuids = uuids[(number-1)*size:(number*size)]
     db_records = Record.get_records(paginated_uuids)
     records_uuids = [str(record.id) for record in db_records]
     return records_uuids, db_records,

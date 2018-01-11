@@ -22,7 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
 from inspire_schemas.api import load_schema, validate
 from inspirehep.utils.record import (
     get_abstract,
@@ -179,14 +178,13 @@ def test_inspire_patch():
         }
     }
     result = get_inspire_patch(first, second)
-    assert result == [{'op': 'replace', 'path': ['settings', 'assignees', 2], 'value': 202},
+    assert result == [{'op': 'remove', 'path': ['fork_count']},
+                      {'op': 'replace', 'path': ['settings', 'assignees', 2], 'value': 202},
                       {'op': 'add', 'path': ['stargazers', 2], 'value': '/users/40'},
                       {'op': 'remove', 'path': ['library', 1]},
-                      {'op': 'replace', 'path': ['title'], 'value': 'hellooo'},
-                      {'op': 'remove', 'path': ['fork_count']}]
+                      {'op': 'replace', 'path': ['title'], 'value': 'hellooo'}]
 
 
-@pytest.mark.xfail(reason='library is problematic for the moment, will try to fix it')
 def test_inspire_patch_removing_from_index():
     first = {
         'settings': {

@@ -105,7 +105,7 @@ install_requires = [
     'setproctitle~=1.0,>=1.1.10',
     'timeout-decorator~=0.0,>=0.4.0',
     'workflow~=2.0,>=2.1.3',
-    'dictdiffer~=0.7.0',
+    'jsonpatch==1.16',
 ]
 
 docs_require = [

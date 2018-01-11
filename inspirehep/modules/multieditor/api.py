@@ -27,6 +27,7 @@
 from __future__ import absolute_import, print_function, division
 
 from flask import Blueprint, request, jsonify, session, current_app
+from flask.views import MethodView
 import copy
 import json
 
@@ -47,101 +48,110 @@ blueprint = Blueprint(
 )
 
 
-@blueprint.route("/update", methods=['POST'])
-@multieditor_use_permission.require(http_exception=403)
-def update():
-    """Apply the user actions to the database records."""
-    form = json.loads(request.data)
-    user_actions = form.get('userActions', {})
-    all_selected = form.get('allSelected', False)
-    multieditor_session = session.get('multieditor_session', {})
-    user_selected_ids = form['ids']
-    if multieditor_session:
-        ids = multieditor_session['uuids']
-        if all_selected:
-            ids_to_update = set(ids) - set(user_selected_ids)
+class UpdateAPI(MethodView):
+    decorators = [multieditor_use_permission.require(http_exception=403)]
+
+    def post(self):
+        """Apply the user actions to the database records."""
+        form = json.loads(request.data)
+        user_actions = form.get('userActions', {})
+        all_selected = form.get('allSelected', False)
+        multieditor_session = session.get('multieditor_session', {})
+        user_selected_ids = form['ids']
+        if multieditor_session:
+            ids = multieditor_session['uuids']
+            if all_selected:
+                ids_to_update = set(ids) - set(user_selected_ids)
+            else:
+                ids_to_update = set(ids) & set(user_selected_ids)
         else:
-            ids_to_update = set(ids) & set(user_selected_ids)
-    else:
-        return jsonify({'message': 'Please use the search before you apply actions'}), 400
+            return jsonify({'message': 'Please use the search before you apply actions'}), 400
 
-    try:
-        get_actions(user_actions, multieditor_session['schema'])
-    except InvalidActions as err:
-        return jsonify({'message': err.message}), 400
+        try:
+            get_actions(user_actions, multieditor_session['schema'])
+        except InvalidActions as err:
+            return jsonify({'message': err.message}), 400
 
-    for i, chunk in enumerate(chunker(ids_to_update, 200)):
-        tasks.process_records.delay(records_ids=chunk, user_actions=user_actions, schema=multieditor_session['schema'])
-    return jsonify({'message': 'Records are being updated'})
+        for i, chunk in enumerate(chunker(ids_to_update, 200)):
+            tasks.process_records.delay(records_ids=chunk, user_actions=user_actions, schema=multieditor_session['schema'])
+        return jsonify({'message': 'Records are being updated'})
 
 
-@blueprint.route("/preview", methods=['POST'])
-@multieditor_use_permission.require(http_exception=403)
-def preview():
-    """Preview the user actions in the first (page size) records."""
-    form = json.loads(request.data)
-    user_actions = form.get('userActions', {})
-    page_size = form.get('pageSize', 10)
-    page_number = form.get('pageNum', 1)
-    multieditor_session = session.get('multieditor_session', {})
-
-    if not multieditor_session:
-        return jsonify({'message': 'Please use the search before you apply actions'}), 400
-
-    uuids, records = queries.get_paginated_records(page_number=page_number,
-                                                   page_size=page_size,
-                                                   uuids=multieditor_session['uuids'])
-
-    old_records = copy.deepcopy(records)
-    try:
-        actions = get_actions(user_actions, multieditor_session['schema'])
-    except InvalidActions as err:
-        return jsonify({'message': err.message}), 400
-    for record in records:
-        for action in actions:
-            try:
-                action.process(record, multieditor_session['schema'])
-            except (SchemaError, InvalidValue) as err:
-                return jsonify({'message': err.message}), 400
-    json_patches, errors = compare_records(old_records, records, multieditor_session['schema'])
-
-    return jsonify({'json_records': old_records, 'errors': errors, 'json_patches': json_patches, 'uuids': uuids})
+update_api = UpdateAPI.as_view('update_api')
+blueprint.add_url_rule('/update', view_func=update_api, methods=['POST'])
 
 
-@blueprint.route("/paginate", methods=['GET'])
-@multieditor_use_permission.require(http_exception=403)
-def paginate():
-    """Get paginated records from the session"""
-    page_number = int(request.args.get('pageNum', 1))
-    page_size = int(request.args.get('pageSize', 10))
-    multieditor_session = session.get('multieditor_session', {})
-    if not multieditor_session:
-        return jsonify({'message': 'Please refresh your page'}), 400
-    uuids, records = queries.get_paginated_records(page_number=page_number,
-                                                   page_size=page_size, uuids=multieditor_session['uuids'])
-    return jsonify({'uuids': uuids, 'json_records': records})
+class PreviewAPI(MethodView):
+    decorators = [multieditor_use_permission.require(http_exception=403)]
+
+    def post(self):
+        """Preview the user actions in the first (page size) records."""
+        form = json.loads(request.data)
+        user_actions = form.get('userActions', {})
+        size = form.get('size', 10)
+        number = form.get('number', 1)
+        multieditor_session = session.get('multieditor_session', {})
+
+        if not multieditor_session:
+            return jsonify({'message': 'Please use the search before you apply actions'}), 400
+
+        uuids, records = queries.get_paginated_records(number=number,
+                                                       size=size,
+                                                       uuids=multieditor_session['uuids'])
+
+        old_records = copy.deepcopy(records)
+        try:
+            actions = get_actions(user_actions, multieditor_session['schema'])
+        except InvalidActions as err:
+            return jsonify({'message': err.message}), 400
+        for record in records:
+            for action in actions:
+                try:
+                    action.process(record, multieditor_session['schema'])
+                except (SchemaError, InvalidValue) as err:
+                    return jsonify({'message': err.message}), 400
+        json_patches, errors = compare_records(old_records, records, multieditor_session['schema'])
+
+        return jsonify({'json_records': old_records, 'errors': errors, 'json_patches': json_patches, 'uuids': uuids})
 
 
-@blueprint.route("/search", methods=['GET'])
-@multieditor_use_permission.require(http_exception=403)
-def search():
-    """Search for records using the query and store the result's ids"""
-    query_string = request.args.get('queryString', '')
-    page_number = int(request.args.get('pageNum', 1))
-    page_size = int(request.args.get('pageSize', 10))
-    index_name = request.args.get('index', '')
-    schema = load_schema(index_name, resolved=True)
-    total_records = queries.get_total_records(query_string, index_name)
-    if total_records > current_app.config['MULTI_MAX_RECORDS']:
-        return jsonify({'message': 'Please narrow the results using a query to be less than 10000'}), 400
-    uuids = queries.get_record_ids_from_query(query_string, index_name)
-    session['multieditor_session'] = {
-        'uuids': uuids,
-        'schema': schema,
-    }
-    records_uuids, records = queries.get_paginated_records(page_number=page_number,
-                                                           page_size=page_size,
-                                                           uuids=uuids)
-    return jsonify({'total_records': total_records,
-                    'uuids': records_uuids,
-                    'json_records': records})
+preview_api = PreviewAPI.as_view('preview_api')
+blueprint.add_url_rule('/preview', view_func=preview_api, methods=['POST'])
+
+
+class SearchAPI(MethodView):
+    decorators = [multieditor_use_permission.require(http_exception=403)]
+
+    def get(self):
+        """Search for records using the query and store the result's ids"""
+        query = request.args.get('q', None)
+        number = int(request.args.get('number', 1))
+        size = int(request.args.get('size', 10))
+        if query:
+            index_name = request.args.get('index', '')
+            schema = load_schema(index_name, resolved=True)
+            total_records = queries.get_total_records(query, index_name)
+            if total_records > current_app.config['MULTI_MAX_RECORDS']:
+                return jsonify({'message': 'Please narrow the results using a query to be less than 10000'}), 400
+            uuids = queries.get_record_ids_from_query(query, index_name)
+            session['multieditor_session'] = {
+                'uuids': uuids,
+                'schema': schema,
+            }
+            records_uuids, records = queries.get_paginated_records(number=number,
+                                                                   size=size,
+                                                                   uuids=uuids)
+        else:
+            multieditor_session = session.get('multieditor_session', {})
+            if not multieditor_session:
+                return jsonify({'message': 'Please refresh your page'}), 400
+            records_uuids, records = queries.get_paginated_records(number=number,
+                                                                   size=size, uuids=multieditor_session['uuids'])
+            total_records = None
+        return jsonify({'total_records': total_records,
+                        'uuids': records_uuids,
+                        'json_records': records})
+
+
+search_api = SearchAPI.as_view('search_api')
+blueprint.add_url_rule('/search', view_func=search_api, methods=['GET'])
