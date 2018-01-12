@@ -1204,12 +1204,14 @@ INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 # Submission
 # ==========
 LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
+LEGACY_MATCH_ENDPOINT = "http://inspirehep.net/search"
 
 # Web services and APIs
 # =====================
 BEARD_API_URL = None  # e.g. "http://beard.inspirehep.net/api"
 MAGPIE_API_URL = None  # e.g. "http://magpie.inspirehep.net/api"
 LEGACY_BASE_URL = "http://inspirehep.net"
+
 
 # Harvesting and Workflows
 # ========================
