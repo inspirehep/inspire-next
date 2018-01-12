@@ -231,7 +231,7 @@ SEND_TO_LEGACY = [
             send_robotupload(mode="correct", extra_data_key="update_payload"),
         ],
         [
-            send_robotupload(mode="insert"),
+            send_robotupload(mode="replace"),
         ]
     ),
 ]
@@ -460,8 +460,8 @@ class Article(object):
                 is_record_accepted,
                 (
                     POSTENHANCE_RECORD +
-                    SEND_TO_LEGACY +
                     STORE_RECORD +
+                    SEND_TO_LEGACY +
                     WAIT_FOR_LEGACY_WEBCOLL +
                     NOTIFY_ACCEPTED +
                     NOTIFY_CURATOR_IF_CORE
