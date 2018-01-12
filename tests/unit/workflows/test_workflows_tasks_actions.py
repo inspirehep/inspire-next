@@ -47,6 +47,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     prepare_update_payload,
     reject_record,
     refextract,
+    set_refereed_and_fix_document_type,
     shall_halt_workflow,
     submission_fulltext_download,
 )
@@ -650,3 +651,131 @@ def test_submission_fulltext_download_does_not_duplicate_documents():
         result = obj.data['documents']
 
         assert expected_documents == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_set_refereed_and_fix_document_type(mock_replace_refs):
+    schema = load_schema('journals')
+    subschema = schema['properties']['refereed']
+
+    journals = [{'refereed': True}]
+    assert validate(journals[0]['refereed'], subschema) is None
+
+    mock_replace_refs.return_value = journals
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['refereed']
+
+    data = {'document_type': ['article']}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert set_refereed_and_fix_document_type(obj, eng) is None
+
+    expected = True
+    result = obj.data['refereed']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_set_refereed_and_fix_document_type_handles_journals_that_publish_mixed_content(mock_replace_refs):
+    schema = load_schema('journals')
+    proceedings_schema = schema['properties']['proceedings']
+    refereed_schema = schema['properties']['refereed']
+
+    journals = [{'proceedings': True, 'refereed': True}]
+    assert validate(journals[0]['proceedings'], proceedings_schema) is None
+    assert validate(journals[0]['refereed'], refereed_schema) is None
+
+    mock_replace_refs.return_value = journals
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['refereed']
+
+    data = {'document_type': ['article']}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert set_refereed_and_fix_document_type(obj, eng) is None
+
+    expected = True
+    result = obj.data['refereed']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_set_refereed_and_fix_document_type_sets_refereed_to_false_if_all_journals_are_not_refereed(mock_replace_refs):
+    schema = load_schema('journals')
+    subschema = schema['properties']['refereed']
+
+    journals = [{'refereed': False}]
+    assert validate(journals[0]['refereed'], subschema) is None
+
+    mock_replace_refs.return_value = journals
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['refereed']
+
+    data = {'document_type': ['article']}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert set_refereed_and_fix_document_type(obj, eng) is None
+
+    expected = False
+    result = obj.data['refereed']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_set_refereed_and_fix_document_type_replaces_article_with_conference_paper_if_needed(mock_replace_refs):
+    schema = load_schema('journals')
+    subschema = schema['properties']['proceedings']
+
+    journals = [{'proceedings': True}]
+    assert validate(journals[0]['proceedings'], subschema) is None
+
+    mock_replace_refs.return_value = journals
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['document_type']
+
+    data = {'document_type': ['article']}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert set_refereed_and_fix_document_type(obj, eng) is None
+
+    expected = ['conference paper']
+    result = obj.data['document_type']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_set_refereed_and_fix_document_type_does_nothing_if_no_journals_were_found(mock_replace_refs):
+    mock_replace_refs.return_value = []
+
+    data = {'document_type': ['article']}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert set_refereed_and_fix_document_type(obj, eng) is None
+    assert 'refereed' not in obj.data
