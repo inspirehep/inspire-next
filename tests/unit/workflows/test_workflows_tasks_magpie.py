@@ -39,7 +39,7 @@ from mocks import MockEng, MockObj
 
 
 def test_get_magpie_url_returns_value_from_configuration():
-    config = {'MAGPIE_API_URL': 'https://magpie.inspirehep.net'}
+    config = {'WORKFLOWS_MAGPIE_API_URL': 'https://magpie.inspirehep.net'}
 
     with patch.dict(current_app.config, config):
         expected = 'https://magpie.inspirehep.net/predict'

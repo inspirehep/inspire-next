@@ -48,17 +48,17 @@ def workflow_app():
        Use ``app`` instead.
     """
     app = create_app(
-        BEARD_API_URL="http://example.com/beard",
+        WORKFLOWS_BEARD_API_URL="http://example.com/beard",
         DEBUG=True,
         CELERY_ALWAYS_EAGER=True,
         CELERY_RESULT_BACKEND='cache',
         CELERY_CACHE_BACKEND='memory',
         CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
         PRODUCTION_MODE=True,
-        LEGACY_ROBOTUPLOAD_URL=(
+        WORKFLOWS_LEGACY_ROBOTUPLOAD_URL=(
             'http://localhost:1234'
         ),
-        MAGPIE_API_URL="http://example.com/magpie",
+        WORKFLOWS_MAGPIE_API_URL="http://example.com/magpie",
         WORKFLOWS_MATCH_REMOTE_SERVER_URL="http://legacy_search.endpoint/",
         WORKFLOWS_FILE_LOCATION="/",
         WTF_CSRF_ENABLED=False,
@@ -121,7 +121,7 @@ def mocked_external_services(workflow_app):
             requests_mock.ANY,
             re.compile(
                 '.*' +
-                workflow_app.config['BEARD_API_URL'] +
+                workflow_app.config['WORKFLOWS_BEARD_API_URL'] +
                 '/text/phonetic_blocks.*'
             ),
             status_code=200,

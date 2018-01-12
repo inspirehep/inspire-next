@@ -40,7 +40,7 @@ def make_robotupload_marcxml(url, marcxml, mode, **kwargs):
         "Content-Type": "application/marcxml+xml",
     }
     if url is None:
-        base_url = current_app.config.get("LEGACY_ROBOTUPLOAD_URL")
+        base_url = current_app.config.get("WORKFLOWS_LEGACY_ROBOTUPLOAD_URL")
     else:
         base_url = url
 
@@ -58,5 +58,5 @@ def make_robotupload_marcxml(url, marcxml, mode, **kwargs):
     else:
         raise ValueError(
             "Base URL missing for robotupload. "
-            "Please check `LEGACY_ROBOTUPLOAD_URL` config."
+            "Please check `WORKFLOWS_LEGACY_ROBOTUPLOAD_URL` config."
         )

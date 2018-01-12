@@ -41,10 +41,10 @@ For example, on Ubuntu/Debian you could execute:
     (inspire)$ sudo aptitude install -y libblas-dev liblapack-dev gfortran imagemagick
 
 For guessing, you need to point to a Beard Web service with the config variable
-``BEARD_API_URL``.
+``WORKFLOWS_BEARD_API_URL``.
 
 For keyword extraction using Magpie, you need to point to a Magpie Web service with the config variable
-``MAGPIE_API_URL``.
+``WORKFLOWS_MAGPIE_API_URL``.
 
 For hepcrawl crawling of sources via scrapy, you need to point to a scrapyd web service running `hepcrawl` project.
 

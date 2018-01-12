@@ -36,7 +36,7 @@ from ..utils import with_debug_logging
 @with_debug_logging
 def get_beard_url():
     """Return the BEARD URL endpoint, if any."""
-    base_url = current_app.config.get('BEARD_API_URL')
+    base_url = current_app.config.get('WORKFLOWS_BEARD_API_URL')
     if not base_url:
         return
 

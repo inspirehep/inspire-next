@@ -28,10 +28,12 @@ import os
 import sys
 import pkg_resources
 
+
 from celery.schedules import crontab
 
 from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
+from inspire_schemas.utils import ARXIV_TO_INSPIRE_CATEGORY_MAPPING  # noqa: F401
 
 
 # Debug
@@ -55,7 +57,7 @@ REQUIREJS_CONFIG = 'js/build.js'
 INSPIRE_FULL_THEME = True
 """Allows to switch between labs.inspirehep.net view and full version."""
 THEME_SITENAME = "inspirehep"
-BASE_TEMPLATE = "inspirehep_theme/page.html"
+INSPIRE_BASE_TEMPLATE = "inspirehep_theme/page.html"
 
 # Database
 # ========
@@ -86,7 +88,7 @@ ACCESS_CACHE = "invenio_cache:current_cache"
 
 # Files
 # =====
-BASE_FILES_LOCATION = os.path.join(sys.prefix, 'var/data')
+INSPIRE_BASE_FILES_LOCATION = os.path.join(sys.prefix, 'var/data')
 
 # This is needed in order to be able to use EOS files locations
 MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100 MiB
@@ -289,7 +291,7 @@ SEARCH_TYPEAHEAD_HINT_URL = '/search/suggest?field=%TYPE&query=%QUERY'
 SEARCH_TYPEAHEAD_DEFAULT_SET = 'invenio'
 
 SEARCH_ELASTIC_HOSTS = ['localhost']
-SEARCH_UI_BASE_TEMPLATE = BASE_TEMPLATE
+SEARCH_UI_BASE_TEMPLATE = INSPIRE_BASE_TEMPLATE
 SEARCH_UI_SEARCH_TEMPLATE = 'search/search.html'
 SEARCH_UI_SEARCH_API = '/api/literature/'
 SEARCH_UI_SEARCH_INDEX = 'records-hep'
@@ -1198,25 +1200,25 @@ THEME_500_TEMPLATE = "inspirehep_theme/errors/500.html"
 
 # Feedback
 # ========
-CFG_SITE_SUPPORT_EMAIL = "admin@inspirehep.net"
-INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
+THEME_SITE_SUPPORT_EMAIL = "admin@inspirehep.net"
+THEME_LABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 
 # Submission
 # ==========
-LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
+WORKFLOWS_LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 
 # Web services and APIs
 # =====================
-BEARD_API_URL = None  # e.g. "http://beard.inspirehep.net/api"
-MAGPIE_API_URL = None  # e.g. "http://magpie.inspirehep.net/api"
+WORKFLOWS_BEARD_API_URL = None  # e.g. "http://beard.inspirehep.net/api"
+WORKFLOWS_MAGPIE_API_URL = None  # e.g. "http://magpie.inspirehep.net/api"
 LEGACY_BASE_URL = "http://inspirehep.net"
 
 # Harvesting and Workflows
 # ========================
-ARXIV_PDF_URL = "http://export.arxiv.org/pdf/{arxiv_id}"
-ARXIV_TARBALL_URL = "http://export.arxiv.org/e-print/{arxiv_id}"
+WORKFLOWS_ARXIV_PDF_URL = "http://export.arxiv.org/pdf/{arxiv_id}"
+WORKFLOWS_ARXIV_TARBALL_URL = "http://export.arxiv.org/e-print/{arxiv_id}"
 
-ARXIV_CATEGORIES = {
+WORKFLOWS_ARXIV_CATEGORIES = {
     'core': [
         'hep-ex',
         'hep-lat',
@@ -1245,7 +1247,7 @@ WORKFLOWS_DEFAULT_FILE_LOCATION_NAME = "holdingpen"
 WORKFLOWS_OBJECT_CLASS = "invenio_workflows_files.api.WorkflowObject"
 """Enable obj.files API."""
 
-WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
+WORKFLOWS_UI_BASE_TEMPLATE = INSPIRE_BASE_TEMPLATE
 WORKFLOWS_UI_INDEX_TEMPLATE = "inspire_workflows/index.html"
 WORKFLOWS_UI_LIST_TEMPLATE = "inspire_workflows/list.html"
 WORKFLOWS_UI_DETAILS_TEMPLATE = "inspire_workflows/details.html"
@@ -1408,174 +1410,7 @@ CRAWLER_SETTINGS = {
 
 # Legacy PID provider
 # ===================
-LEGACY_PID_PROVIDER = None  # e.g. "http://example.org/batchuploader/allocaterecord"
-
-# Inspire subject translation
-# ===========================
-ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
-    "alg-geom": "Math and Math Physics",
-    "astro-ph": "Astrophysics",
-    "astro-ph.CO": "Astrophysics",
-    "astro-ph.EP": "Astrophysics",
-    "astro-ph.GA": "Astrophysics",
-    "astro-ph.HE": "Astrophysics",
-    "astro-ph.IM": "Instrumentation",
-    "astro-ph.SR": "Astrophysics",
-    "cond-mat": "General Physics",
-    "cond-mat.dis-nn": "General Physics",
-    "cond-mat.mes-hall": "General Physics",
-    "cond-mat.mtrl-sci": "General Physics",
-    "cond-mat.other": "General Physics",
-    "cond-mat.quant-gas": "General Physics",
-    "cond-mat.soft": "General Physics",
-    "cond-mat.stat-mech": "General Physics",
-    "cond-mat.str-el": "General Physics",
-    "cond-mat.supr-con": "General Physics",
-    "cs": "Computing",
-    "cs.AI": "Computing",
-    "cs.AR": "Computing",
-    "cs.CC": "Computing",
-    "cs.CE": "Computing",
-    "cs.CG": "Computing",
-    "cs.CL": "Computing",
-    "cs.CR": "Computing",
-    "cs.CV": "Computing",
-    "cs.CY": "Computing",
-    "cs.DB": "Computing",
-    "cs.DC": "Computing",
-    "cs.DL": "Computing",
-    "cs.DM": "Computing",
-    "cs.DS": "Computing",
-    "cs.ET": "Computing",
-    "cs.FL": "Computing",
-    "cs.GL": "Computing",
-    "cs.GR": "Computing",
-    "cs.GT": "Computing",
-    "cs.HC": "Computing",
-    "cs.IR": "Computing",
-    "cs.IT": "Computing",
-    "cs.LG": "Computing",
-    "cs.LO": "Computing",
-    "cs.MA": "Computing",
-    "cs.MM": "Computing",
-    "cs.MS": "Computing",
-    "cs.NA": "Computing",
-    "cs.NE": "Computing",
-    "cs.NI": "Computing",
-    "cs.OH": "Computing",
-    "cs.OS": "Computing",
-    "cs.PF": "Computing",
-    "cs.PL": "Computing",
-    "cs.RO": "Computing",
-    "cs.SC": "Computing",
-    "cs.SD": "Computing",
-    "cs.SE": "Computing",
-    "cs.SI": "Computing",
-    "cs.SY": "Computing",
-    "dg-ga": "Math and Math Physics",
-    "gr-qc": "Gravitation and Cosmology",
-    "hep-ex": "Experiment-HEP",
-    "hep-lat": "Lattice",
-    "hep-ph": "Phenomenology-HEP",
-    "hep-th": "Theory-HEP",
-    "math": "Math and Math Physics",
-    "math-ph": "Math and Math Physics",
-    "math.AC": "Math and Math Physics",
-    "math.AG": "Math and Math Physics",
-    "math.AP": "Math and Math Physics",
-    "math.AT": "Math and Math Physics",
-    "math.CA": "Math and Math Physics",
-    "math.CO": "Math and Math Physics",
-    "math.CT": "Math and Math Physics",
-    "math.CV": "Math and Math Physics",
-    "math.DG": "Math and Math Physics",
-    "math.DS": "Math and Math Physics",
-    "math.FA": "Math and Math Physics",
-    "math.GM": "Math and Math Physics",
-    "math.GN": "Math and Math Physics",
-    "math.GR": "Math and Math Physics",
-    "math.GT": "Math and Math Physics",
-    "math.HO": "Math and Math Physics",
-    "math.IT": "Math and Math Physics",
-    "math.KT": "Math and Math Physics",
-    "math.LO": "Math and Math Physics",
-    "math.MG": "Math and Math Physics",
-    "math.MP": "Math and Math Physics",
-    "math.NA": "Math and Math Physics",
-    "math.NT": "Math and Math Physics",
-    "math.OA": "Math and Math Physics",
-    "math.OC": "Math and Math Physics",
-    "math.PR": "Math and Math Physics",
-    "math.QA": "Math and Math Physics",
-    "math.RA": "Math and Math Physics",
-    "math.RT": "Math and Math Physics",
-    "math.SG": "Math and Math Physics",
-    "math.SP": "Math and Math Physics",
-    "math.ST": "Math and Math Physics",
-    "nlin": "General Physics",
-    "nlin.AO": "General Physics",
-    "nlin.CD": "General Physics",
-    "nlin.CG": "General Physics",
-    "nlin.PS": "Math and Math Physics",
-    "nlin.SI": "Math and Math Physics",
-    "nucl-ex": "Experiment-Nucl",
-    "nucl-th": "Theory-Nucl",
-    "patt-sol": "Math and Math Physics",
-    "physics": "General Physics",
-    "physics.acc-ph": "Accelerators",
-    "physics.ao-ph": "General Physics",
-    "physics.atm-clus": "General Physics",
-    "physics.atom-ph": "General Physics",
-    "physics.bio-ph": "Other",
-    "physics.chem-ph": "Other",
-    "physics.class-ph": "General Physics",
-    "physics.comp-ph": "Computing",
-    "physics.data-an": "Data Analysis and Statistics",
-    "physics.ed-ph": "Other",
-    "physics.flu-dyn": "General Physics",
-    "physics.gen-ph": "General Physics",
-    "physics.geo-ph": "General Physics",
-    "physics.hist-ph": "Other",
-    "physics.ins-det": "Instrumentation",
-    "physics.med-ph": "Other",
-    "physics.optics": "General Physics",
-    "physics.plasm-ph": "General Physics",
-    "physics.pop-ph": "Other",
-    "physics.soc-ph": "Other",
-    "physics.space-ph": "Astrophysics",
-    "q-alg": "Math and Math Physics",
-    "q-bio": "Other",
-    "q-bio.BM": "Other",
-    "q-bio.CB": "Other",
-    "q-bio.GN": "Other",
-    "q-bio.MN": "Other",
-    "q-bio.NC": "Other",
-    "q-bio.OT": "Other",
-    "q-bio.PE": "Other",
-    "q-bio.QM": "Other",
-    "q-bio.SC": "Other",
-    "q-bio.TO": "Other",
-    "q-fin": "Other",
-    "q-fin.CP": "Other",
-    "q-fin.EC": "Other",
-    "q-fin.GN": "Other",
-    "q-fin.MF": "Other",
-    "q-fin.PM": "Other",
-    "q-fin.PR": "Other",
-    "q-fin.RM": "Other",
-    "q-fin.ST": "Other",
-    "q-fin.TR": "Other",
-    "quant-ph": "General Physics",
-    "solv-int": "Math and Math Physics",
-    "stat": "Other",
-    "stat.AP": "Other",
-    "stat.CO": "Other",
-    "stat.ME": "Other",
-    "stat.ML": "Other",
-    "stat.OT": "Other",
-    "stat.TH": "Other"
-}
-
+PIDSTORE_LEGACY_PID_PROVIDER = None  # e.g. "http://example.org/batchuploader/allocaterecord"
 
 # Configuration for the $ref updater
 # ==================================

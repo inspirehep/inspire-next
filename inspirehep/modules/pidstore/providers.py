@@ -41,7 +41,7 @@ def _get_next_pid_from_legacy():
         'User-Agent': 'invenio_webupload'
     }
 
-    url = current_app.config.get('LEGACY_PID_PROVIDER')
+    url = current_app.config.get('PIDSTORE_LEGACY_PID_PROVIDER')
     next_pid = requests.get(url, headers=headers).json()
 
     return next_pid
@@ -67,7 +67,7 @@ class InspireRecordIdProvider(BaseProvider):
         """Create a new record identifier."""
         # Request next integer in recid sequence.
         if 'pid_value' not in kwargs:
-            if current_app.config.get('LEGACY_PID_PROVIDER'):
+            if current_app.config.get('PIDSTORE_LEGACY_PID_PROVIDER'):
                 kwargs['pid_value'] = _get_next_pid_from_legacy()
                 RecordIdentifier.insert(kwargs['pid_value'])
             else:

@@ -46,7 +46,7 @@ def test_make_robotupload_marcxml_falls_back_to_config_when_url_is_none():
             'POST', 'http://inspirehep.net/batchuploader/robotupload/insert'
         )
 
-        config = {'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net'}
+        config = {'WORKFLOWS_LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net'}
 
         with patch.dict(current_app.config, config):
             make_robotupload_marcxml(None, '<record></record>', 'insert')
@@ -60,7 +60,7 @@ def test_make_robotupload_marcxml_raises_when_url_is_none_and_config_is_empty():
 
         with pytest.raises(ValueError) as excinfo:
             make_robotupload_marcxml(None, '<record></record>', 'insert')
-        assert 'LEGACY_ROBOTUPLOAD_URL' in str(excinfo.value)
+        assert 'WORKFLOWS_LEGACY_ROBOTUPLOAD_URL' in str(excinfo.value)
 
 
 def test_make_robotupload_marcxml_handles_unicode():

@@ -44,14 +44,14 @@ class INSPIREUtils(object):
 
     def create_rt_instance(self, app):
         """Make a RT instance and return it."""
-        url = app.config.get("CFG_BIBCATALOG_SYSTEM_RT_URL", "")
-        login = app.config.get("CFG_BIBCATALOG_SYSTEM_RT_DEFAULT_USER", "")
+        url = app.config.get("UTILS_REQUEST_TRACKER_URL", "")
+        login = app.config.get("UTILS_REQUEST_TRACKER_DEFAULT_USER", "")
         verify_cert = app.config.get(
-            "CFG_BIBCATALOG_SYSTEM_RT_VERIFY_SSL",
+            "UTILS_REQUEST_TRACKER_VERIFY_SSL",
             True,
         )
         password = app.config.get(
-            "CFG_BIBCATALOG_SYSTEM_RT_DEFAULT_PWD", "")
+            "UTILS_REQUEST_TRACKER_DEFAULT_PWD", "")
         if url:
             tracker = InspireRt(
                 url=url,
