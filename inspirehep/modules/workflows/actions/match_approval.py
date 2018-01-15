@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,11 +20,24 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Inspire workflows."""
+"""Match action for INSPIRE."""
 
 from __future__ import absolute_import, division, print_function
 
-from .author_approval import AuthorApproval  # noqa: F401
-from .hep_approval import HEPApproval        # noqa: F401
-from .match_approval import MatchApproval  # noqa: F401
-from .merge_approval import MergeApproval    # noqa: F401
+from invenio_workflows import ObjectStatus
+
+
+class MatchApproval(object):
+    """Class representing the match action."""
+    name = "Match action"
+
+    @staticmethod
+    def resolve(obj, *args, **kwargs):
+        """Resolve the action taken in the approval action."""
+        value = kwargs.get("request_data", {}).get("match_recid")
+        obj.extra_data["fuzzy_match_approved_id"] = value
+        obj.remove_action()
+        obj.status = ObjectStatus.RUNNING
+        obj.save()
+        obj.continue_workflow(delayed=True)
+        return bool(value)

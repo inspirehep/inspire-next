@@ -23,13 +23,12 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+from mock import patch
 import pkg_resources
-
 import pytest
 import requests_mock
 from flask import current_app
 from jsonschema import ValidationError
-from mock import patch
 
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.actions import (

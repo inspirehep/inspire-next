@@ -184,22 +184,37 @@ def record_from_db(workflow_app):
         'arxiv_eprints': [
             {'categories': ['hep-th'], 'value': '1407.7587'}
         ],
-        'control_number': 1234
+        'control_number': 1234,
+        'authors': [
+            {'full_name': 'Maldacena, J.'},
+            {'full_name': 'Strominger, A.'},
+        ],
+        'abstracts': [
+            {'source': 'arxiv', 'value': 'A basic abstract.'}
+        ],
+        'report_numbers': [{'value': 'DESY-17-036'}]
     }
     record = InspireRecord.create(json, id_=None, skip_files=True)
+    record.commit()
+    rec_uuid = record.id
 
-    pid = PersistentIdentifier.create(
+    PersistentIdentifier.create(
         pid_type='lit',
         pid_value=json['control_number'],
         object_type='rec',
         object_uuid=record.id
     )
     db.session.commit()
-
-    es.indices.refresh('holdingpen-hep')
     es.indices.refresh('records-hep')
 
     yield record
 
-    db.session.delete(pid)
+    record = InspireRecord.get_record(rec_uuid)
+    pid = PersistentIdentifier.get(
+        pid_type='lit',
+        pid_value=record['control_number']
+    )
+
+    pid.unassign()
+    pid.delete()
     record.delete()
