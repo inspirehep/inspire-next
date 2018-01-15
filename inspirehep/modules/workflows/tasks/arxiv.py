@@ -277,8 +277,10 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
                             stylesheet,
                         )
 
-                    authorlist_record = marcxml2record(authors_xml)
-                    obj.data.update(authorlist_record)
+                    extracted_authors = marcxml2record(authors_xml).get('authors')
+                    if extracted_authors:
+                        obj.data['authors'] = extracted_authors
+
                     return
 
     return _author_list
