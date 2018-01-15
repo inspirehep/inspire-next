@@ -36,7 +36,7 @@ js = NpmBundle(
     filters=RequireJSFilter(exclude=[_js]),
     npm={
         "eonasdan-bootstrap-datetimepicker": "~4.15.35",
-        "typeahead.js": "~0.10.5",
+        "typeahead.js": "~0.11.1",
         "bootstrap-multiselect": "~0.9.13",
         "moment": "~2.11.2",
     }
