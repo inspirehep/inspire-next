@@ -712,6 +712,46 @@ def test_arxiv_author_list_handles_auto_ignore_comment():
     assert default_arxiv_author_list(obj, eng) is None
 
 
+def test_arxiv_author_list_only_overrides_authors():
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1703.09986.tar.gz'))
+
+    data = {
+        '$schema': 'http://localhost:5000/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '1703.09986',
+            },
+        ],
+    }  # record/1519995
+    extra_data = {}
+    files = MockFiles({
+        '1703.09986.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    default_arxiv_author_list = arxiv_author_list()
+    default_arxiv_author_list(obj, eng)
+
+    assert 'arxiv_eprints' in obj.data
+    assert obj.data['arxiv_eprints'] == data['arxiv_eprints']
+    assert '$schema' in obj.data
+    assert obj.data['$schema'] == data['$schema']
+
+
 @patch('inspirehep.modules.workflows.tasks.arxiv.untar')
 def test_arxiv_author_list_logs_on_error(mock_untar):
     mock_untar.side_effect = InvalidTarball
