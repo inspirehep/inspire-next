@@ -39,6 +39,9 @@ This guide expects you to have installed in your system the following tools:
 * redis
 * elasticsearch
 
+CentOS
+~~~~~~
+
 .. code-block:: console
 
     $ sudo yum install python-virtualenv python-virtualenvwrapper \
@@ -55,6 +58,37 @@ will need also to add the following workarounds:
     $ sudo usermod -a -G $USER elasticsearch
     $ newgrp elasticsearch  # or log out and in again
     $ sudo ln -s /etc/elasticsearch /usr/share/elasticsearch/config
+
+MacOS
+~~~~~
+
+.. code-block:: console
+
+    $ brew install postgresql
+    $ brew install libxml2
+    $ brew install libxslt
+    $ brew install redis
+    $ brew cask install caskroom/versions/java8
+    $ brew install elasticsearch@2.4
+    $ brew install rabbitmq
+    $ brew install imagemagick@6
+    $ brew install libmagic
+    $ brew install ghostscript
+    $ brew install poppler
+
+You might also need to link imagemagick:
+
+.. code-block:: console
+
+    $ brew link --force imagemagick@6
+
+Add to ~/.bash_profile:
+
+.. code-block:: console
+
+    # ElasticSearch.
+    export PATH="/usr/local/opt/elasticsearch@2.4/bin:$PATH"
+
 
 Create a virtual environment
 ############################
@@ -99,6 +133,7 @@ setuptools to latest too:
     (inspirehep)$ pip install --upgrade pip setuptools
     (inspirehep)$ cdvirtualenv src/inspirehep
     (inspirehep)$ pip install -r requirements.txt --pre --exists-action i
+    (inspirehep)$ pip install honcho
 
 And for development:
 
@@ -217,6 +252,13 @@ We use `honcho`_ to manage our services and run the development server. See
     (inspirehep)$ cdvirtualenv src/inspirehep
     (inspirehep)$ honcho start
 
+In MacOS you still need to manually run rabbitmq and postgresql:
+
+.. code-block:: console
+
+    $ brew services start rabbitmq
+    $ brew services start postgresql
+
 
 And the site is now available on http://localhost:5000.
 
@@ -234,6 +276,12 @@ First of all, we will need to install the `analysis-icu` elasticsearch plugin.
 .. code-block:: console
 
     (inspirehep)$ plugin install analysis-icu
+
+For MacOS the `plugin` command will probably not be available system wide, so:
+
+.. code-block:: console
+
+    $ /usr/local/Cellar/elasticsearch\@2.4/2.4.6/libexec/bin/plugin install analysis-icu
 
 
 Now we are ready to create the indexes:

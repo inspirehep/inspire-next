@@ -132,6 +132,7 @@ extras_require = {
     'tests': tests_require,
     'web-node': [
         'gunicorn~=19.0,>=19.7.1',
+        'honcho~=1.0,>=1.0.1',
     ],
     'worker-node': [
         'flower~=0.0,>=0.9.2',
