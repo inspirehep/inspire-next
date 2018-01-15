@@ -1065,20 +1065,20 @@ RECORDS_REST_SORT_OPTIONS = {
     "records-hep": {
         "bestmatch": {
             "title": 'Best match',
-            "fields": ['_score'],
-            "default_order": 'desc',  # Used for invenio-search-js config
+            "fields": ['-_score'],
+            "default_order": 'asc',  # Used for invenio-search-js config
             "order": 1,
         },
         "mostrecent": {
             "title": 'Most recent',
-            "fields": ['earliest_date'],
-            "default_order": 'desc',  # Used for invenio-search-js config
+            "fields": ['-earliest_date'],
+            "default_order": 'asc',  # Used for invenio-search-js config
             "order": 2,
         },
         "mostcited": {
             "title": 'Most cited',
-            "fields": ['citation_count'],
-            "default_order": 'desc',  # Used for invenio-search-js config
+            "fields": ['-citation_count'],
+            "default_order": 'asc',  # Used for invenio-search-js config
             "order": 3,
         },
     },
@@ -1349,14 +1349,14 @@ WORKFLOWS_UI_REST_SORT_OPTIONS = {
     "holdingpen": {
         "bestmatch": {
             "title": 'Best match',
-            "fields": ['_score'],
-            "default_order": 'desc',
+            "fields": ['-_score'],
+            "default_order": 'asc',
             "order": 1,
         },
         "mostrecent": {
             "title": 'Most recent',
-            "fields": ['metadata.acquisition_source.datetime'],
-            "default_order": 'desc',
+            "fields": ['-metadata.acquisition_source.datetime'],
+            "default_order": 'asc',
             "order": 2,
         },
         'core': {
