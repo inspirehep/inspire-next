@@ -235,45 +235,50 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
         filename = secure_filename('{0}.tar.gz'.format(arxiv_id))
         tarball = obj.files[filename]
 
-        if tarball:
-            with TemporaryDirectory(prefix='author_list') as scratch_space:
-                tarball_file = retrieve_uri(
+        if not tarball:
+            obj.log.info(
+                'Skipping author list extraction, no tarball with nam "%s" found' % filename
+            )
+            return
+
+        with TemporaryDirectory(prefix='author_list') as scratch_space:
+            tarball_file = retrieve_uri(
+                tarball.file.uri,
+                outdir=scratch_space,
+            )
+            try:
+                file_list = untar(tarball_file, scratch_space)
+            except InvalidTarball:
+                obj.log.info(
+                    'Invalid tarball %s for arxiv_id %s',
                     tarball.file.uri,
-                    outdir=scratch_space,
+                    arxiv_id,
                 )
-                try:
-                    file_list = untar(tarball_file, scratch_space)
-                except InvalidTarball:
-                    obj.log.info(
-                        'Invalid tarball %s for arxiv_id %s',
-                        tarball.file.uri,
-                        arxiv_id,
-                    )
+                return
+
+            obj.log.info('Extracted tarball to: {0}'.format(scratch_space))
+            xml_files_list = [path for path in file_list if path.endswith('.xml')]
+            obj.log.info('Found xmlfiles: {0}'.format(xml_files_list))
+
+            for xml_file in xml_files_list:
+                with open(xml_file, 'r') as xml_file_fd:
+                    xml_content = xml_file_fd.read()
+
+                match = REGEXP_AUTHLIST.findall(xml_content)
+                if match:
+                    obj.log.info('Found a match for author extraction')
+                    try:
+                        authors_xml = convert(xml_content, stylesheet)
+                    except XMLSyntaxError:
+                        # Probably the %auto-ignore comment exists, so we skip the
+                        # first line. See: inspirehep/inspire-next/issues/2195
+                        authors_xml = convert(
+                            xml_content.split('\n', 1)[1],
+                            stylesheet,
+                        )
+
+                    authorlist_record = marcxml2record(authors_xml)
+                    obj.data.update(authorlist_record)
                     return
-                obj.log.info('Extracted tarball to: {0}'.format(scratch_space))
-
-                xml_files_list = [path for path in file_list
-                                  if path.endswith('.xml')]
-                obj.log.info('Found xmlfiles: {0}'.format(xml_files_list))
-
-                for xml_file in xml_files_list:
-                    with open(xml_file, 'r') as xml_file_fd:
-                        xml_content = xml_file_fd.read()
-
-                    match = REGEXP_AUTHLIST.findall(xml_content)
-                    if match:
-                        obj.log.info('Found a match for author extraction')
-                        try:
-                            authors_xml = convert(xml_content, stylesheet)
-                        except XMLSyntaxError:
-                            # Probably the %auto-ignore comment exists, so we skip the
-                            # first line. See: inspirehep/inspire-next/issues/2195
-                            authors_xml = convert(
-                                xml_content.split('\n', 1)[1],
-                                stylesheet,
-                            )
-                        authorlist_record = marcxml2record(authors_xml)
-                        obj.data.update(authorlist_record)
-                        break
 
     return _author_list
