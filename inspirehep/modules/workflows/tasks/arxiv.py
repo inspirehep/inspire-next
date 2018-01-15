@@ -237,7 +237,7 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
 
         if not tarball:
             obj.log.info(
-                'Skipping author list extraction, no tarball with nam "%s" found' % filename
+                'Skipping author list extraction, no tarball with name "%s" found' % filename
             )
             return
 

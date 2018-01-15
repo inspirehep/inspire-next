@@ -679,11 +679,11 @@ def test_arxiv_derive_inspire_categories_does_nothing_with_existing_categories()
 
 def test_arxiv_author_list_handles_auto_ignore_comment():
     schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
 
     filename = pkg_resources.resource_filename(
         __name__, os.path.join('fixtures', '1703.09986.tar.gz'))
 
+    eprints_subschema = schema['properties']['arxiv_eprints']
     data = {
         'arxiv_eprints': [
             {
@@ -694,6 +694,8 @@ def test_arxiv_author_list_handles_auto_ignore_comment():
             },
         ],
     }  # record/1519995
+    validate(data['arxiv_eprints'], eprints_subschema)
+
     extra_data = {}
     files = MockFiles({
         '1703.09986.tar.gz': AttrDict({
@@ -702,7 +704,19 @@ def test_arxiv_author_list_handles_auto_ignore_comment():
             })
         })
     })
-    assert validate(data['arxiv_eprints'], subschema) is None
+
+    authors_subschema = schema['properties']['authors']
+    expected_authors = [
+        {
+            'affiliations': [{'value': 'Yerevan Phys. Inst.'}],
+            'ids': [
+                {'value': 'INSPIRE-00312131', 'schema': 'INSPIRE ID'},
+                {'value': 'CERN-432142', 'schema': 'CERN'},
+            ],
+            'full_name': 'Sirunyan, Albert M',
+        },
+    ]
+    validate(expected_authors, authors_subschema)
 
     obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
@@ -710,6 +724,7 @@ def test_arxiv_author_list_handles_auto_ignore_comment():
     default_arxiv_author_list = arxiv_author_list()
 
     assert default_arxiv_author_list(obj, eng) is None
+    assert obj.data.get('authors') == expected_authors
 
 
 def test_arxiv_author_list_only_overrides_authors():
