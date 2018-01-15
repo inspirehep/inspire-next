@@ -32,6 +32,7 @@ from elasticsearch.exceptions import NotFoundError
 from flask import current_app
 from fs.opener import fsopen
 
+from inspire_dojson.utils import strip_empty_values
 from inspire_schemas.api import validate
 from inspire_schemas.builders import LiteratureBuilder
 from invenio_files_rest.models import Bucket
@@ -82,7 +83,8 @@ class InspireRecord(Record):
         files_src_records = kwargs.pop('files_src_records', ())
         skip_files = kwargs.pop('skip_files', config_skip_files)
 
-        new_record = super(InspireRecord, cls).create(*args, **kwargs)
+        data = strip_empty_values(*args)
+        new_record = super(InspireRecord, cls).create(data=data, **kwargs)
 
         if not skip_files:
             new_record.download_documents_and_figures(

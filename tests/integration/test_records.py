@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import copy
+from jsonschema import ValidationError
 import pytest
 import StringIO
 from mock import patch, mock_open
@@ -38,6 +39,7 @@ from invenio_search import current_search_client as es
 from inspire_dojson import marcxml2record
 from inspire_utils.record import get_value
 from inspire_dojson.utils import get_recid_from_ref
+from inspire_schemas.api import validate
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.tasks import merge_merged_records, update_refs
 from inspirehep.modules.migrator.tasks import record_insert_or_replace
@@ -967,3 +969,35 @@ def test_create_with_skip_files_param_overrides_records_skip_files_conf_and_does
     assert len(record.files) == 0
     assert record['documents'] == record_json['documents']
     assert record['figures'] == record_json['figures']
+
+
+def test_record_with_non_valid_content_is_cleaned_and_created_properly(
+        app):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 1,
+        'document_type':  [
+            'article',
+        ],
+        'titles':         [
+            {'title': 'foo'},
+        ],
+        '_collections':   [
+            'Literature'
+        ],
+        # these two fields make the record not valid
+        'documents': [],
+        'urls': [
+            {'url': ''},
+        ],
+        # record/1628455/export/xme -- with some modification
+    }
+    non_valid = False
+    try:
+        validate(record_json)
+    except ValidationError:
+        non_valid = True
+
+    assert non_valid
+    record = InspireRecord.create(record_json)
+    validate(record)
