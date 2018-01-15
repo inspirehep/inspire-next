@@ -260,6 +260,7 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
             xml_files_list = [path for path in file_list if path.endswith('.xml')]
             obj.log.info('Found xmlfiles: {0}'.format(xml_files_list))
 
+            extracted_authors = []
             for xml_file in xml_files_list:
                 with open(xml_file, 'r') as xml_file_fd:
                     xml_content = xml_file_fd.read()
@@ -277,10 +278,9 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
                             stylesheet,
                         )
 
-                    extracted_authors = marcxml2record(authors_xml).get('authors')
-                    if extracted_authors:
-                        obj.data['authors'] = extracted_authors
+                    extracted_authors.extend(marcxml2record(authors_xml).get('authors', []))
 
-                    return
+            if extracted_authors:
+                obj.data['authors'] = extracted_authors
 
     return _author_list
