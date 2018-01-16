@@ -106,14 +106,17 @@ class ActionProcessor(object):
 
     @abstractmethod
     def _handle_exact_match(self, *args):
+        """Abstract method to be implemented in subclasses"""
         return None
 
     @abstractmethod
     def _handle_regex_match(self, *args):
+        """Abstract method to be implemented in subclasses"""
         return None
 
     @abstractmethod
     def _handle_contains_match(self, *args):
+        """Abstract method to be implemented in subclasses"""
         return None
 
     def get_matching_function(self, name):
@@ -130,12 +133,15 @@ class AddProcessor(ActionProcessor):
     if the conditions are satisfied"""
 
     def _handle_exact_match(self, *args):
+        """Method is not needed here but since its abstract it needs to be implemented"""
         return None
 
     def _handle_regex_match(self, *args):
+        """Method is not needed here but since its abstract it needs to be implemented"""
         return None
 
     def _handle_contains_match(self, *args):
+        """Method is not needed here but since its abstract it needs to be implemented"""
         return None
 
     def process(self, record, schema):
@@ -174,6 +180,13 @@ class DeleteProcessor(ActionProcessor):
     """Class that when applied deletes the appropriate field if the conditions are satisfied"""
 
     def _handle_exact_match(self, record, key, serialized_update_value):
+        """
+        Handles the exact match case and deletes the provided value from the record
+        :param record: record to be checked
+        :param key: key of the record to be checked
+        :param serialized_update_value: value to be checked if it resides in the record[key]
+        :return:
+        """
         if isinstance(record[key], list):
             list_size = len(record[key])
             record[key] = [x for x in record[key] if x != serialized_update_value]
@@ -185,6 +198,13 @@ class DeleteProcessor(ActionProcessor):
                 self.changed = True
 
     def _handle_regex_match(self, record, key, serialized_update_value):
+        """
+        Handles the regex match case and deletes the provided value from the record
+        :param record: record to be checked
+        :param key: key of the record to be checked
+        :param serialized_update_value: value to be checked if it resides in the record[key]
+        :return:
+        """
         if isinstance(record[key], list):
             list_size = len(record[key])
             record[key] = [x for x in record[key] if not re.search(
@@ -197,6 +217,13 @@ class DeleteProcessor(ActionProcessor):
                 self.changed = True
 
     def _handle_contains_match(self, record, key, serialized_update_value):
+        """
+        Handles the contains match case and deletes the provided value from the record
+        :param record: record to be checked
+        :param key: key of the record to be checked
+        :param serialized_update_value: value to be checked if it resides in the record[key]
+        :return:
+        """
         if isinstance(record[key], list):
             list_size = len(record[key])
             record[key] = [x for x in record[key] if serialized_update_value.lower() not in x.lower()]
@@ -237,6 +264,11 @@ class DeleteProcessor(ActionProcessor):
         self.get_matching_function(self.match_type)(record, key, serialized_update_value)
 
     def clean_empty(self, record, key):
+        """
+        :param record: record to be cleaned
+        :param key: key inside which the deletion took place
+        :return:
+        """
         if isinstance(record[key], list):
             record[key] = [item for item in record[key] if item not in [{}, '', []]]
         if record[key] in [{}, '', []]:
@@ -249,6 +281,13 @@ class UpdateProcessor(ActionProcessor):
      are satisfied and replaces its value with the one provided"""
 
     def _handle_exact_match(self, record, key, serialized_update_value):
+        """
+        Handles the exact match case and updates the targeted value from the record to the provided one
+        :param record: record to be checked
+        :param key: key of the record to be checked
+        :param serialized_update_value: value to be checked if it resides in the record[key]
+        :return:
+        """
         if isinstance(record[key], list):
             for count, index in enumerate(record[key]):
                 if serialized_update_value == index:
@@ -260,6 +299,13 @@ class UpdateProcessor(ActionProcessor):
                 self.changed = True
 
     def _handle_regex_match(self, record, key, serialized_update_value):
+        """
+        Handles the regex match case and updates the targeted value from the record to the provided one
+        :param record: record to be checked
+        :param key: key of the record to be checked
+        :param serialized_update_value: value to be checked if it resides in the record[key]
+        :return:
+        """
         if isinstance(record[key], list):
             for count, index in enumerate(record[key]):
                 if re.search(serialized_update_value, index):
@@ -271,6 +317,13 @@ class UpdateProcessor(ActionProcessor):
                 self.changed = True
 
     def _handle_contains_match(self, record, key, serialized_update_value):
+        """
+        Handles the contains match case and updates the targeted value from the record to the provided one
+        :param record: record to be checked
+        :param key: key of the record to be checked
+        :param serialized_update_value: value to be checked if it resides in the record[key]
+        :return:
+        """
         if isinstance(record[key], list):
             for count, index in enumerate(record[key]):
                 if serialized_update_value.lower() in index.lower():
@@ -352,7 +405,7 @@ def create_object_from_path(schema, path, value):
     return record
 
 
-def condition_passses(record, schema, match_type, keypath, update_value, position):
+def condition_passes(record, schema, match_type, keypath, update_value, position):
     """
     Function that checks the validity of the action condition
     :param record: the subrecord in which our field of interest resides
@@ -377,6 +430,14 @@ def condition_passses(record, schema, match_type, keypath, update_value, positio
 
 
 def handle_condition_matching(record, update_value, match_type, schema):
+    """
+    Checks if the condition is valid or not
+    :param record: record in which the condition is checked
+    :param update_value: value to be checked
+    :param match_type: match type of condition
+    :param schema: schema to serialize the value to
+    :return: boolean depending on the success of the matching
+    """
     update_value = serialize_value(update_value, schema)
     if isinstance(record, list):
         for index, array_record in enumerate(record):
@@ -402,16 +463,22 @@ def handle_condition_progression(record, schema, match_type,
                                  keypath, update_value, position):
     if isinstance(record, list):
         for index in record:
-            if condition_passses(index, schema, match_type,
+            if condition_passes(index, schema, match_type,
                                  keypath, update_value, position + 1):
                 return True
     else:
-        return condition_passses(record, schema, match_type,
+        return condition_passes(record, schema, match_type,
                                  keypath, update_value, position + 1)
     return False
 
 
 def serialize_value(value, schema):
+    """
+    Serializes value according to the schema.
+    :param value: value to be serialized
+    :param schema: schema for the value to be serialized to
+    :return: the serialized value
+    """
     if schema['type'] == 'array':
         schema = schema['items']
     if schema['type'] == 'integer':
@@ -439,7 +506,7 @@ def compare_records(old_records, new_records, schema):
     :param old_records: records before actions
     :param new_records: records after actions
     :param schema: corresponding schema of the records
-    :return:
+    :return:json patches[object] and errors[string]
     """
     json_patches = []
     errors = []
@@ -447,7 +514,7 @@ def compare_records(old_records, new_records, schema):
         json_patches.append(get_inspire_patch(old_records[index], new_record))
         try:
             validate(new_record, schema)
-        except (ValidationError, Exception) as e:
+        except ValidationError as e:
             errors.append(e.message)
         else:
             errors.append(None)
@@ -462,6 +529,14 @@ def get_subschema(schema, key):
 
 
 def should_run_condition(self, key, condition, position):
+    """
+    Checks if the condition check should run.
+    :param self: 
+    :param key: current key of action
+    :param condition: condition that should be checked
+    :param position: depth of recursion
+    :return: 
+    """
     if position < len(condition['keypath']):
         if key != condition['keypath'][position] and \
                 (position == 0 or

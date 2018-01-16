@@ -38,6 +38,10 @@ ACTIONS_MAP = {
     'Update': UpdateProcessor
 }
 
+AVAILABLE_ACTIONS = ['Addition', 'Deletion', 'Update']
+AVAILABLE_ACTION_MATCHTYPES = ['contains', 'is equal to', 'matches regular expression']
+AVAILABLE_CONDITION_MATCHTYPES = ['contains', 'is equal to', 'matches regular expression', 'does not exist']
+
 
 def get_action_kwargs(schema, action, conditions=None):
     """
@@ -50,8 +54,11 @@ def get_action_kwargs(schema, action, conditions=None):
     if not conditions:
         conditions = []
     keypath = action.get('mainKey', '').split('.')
-    if not is_valid_key_path(keypath, schema) or not UI_TO_MATCHTYPE.get(action.get('matchType', '')):
-        raise InvalidActions
+    is_valid_key_path(keypath, schema)
+    if not AVAILABLE_ACTION_MATCHTYPES.get(action.get('matchType', '')):
+        raise InvalidActions('Matchtype "%s" is not a valid action matchtype,'
+                             ' valid action matchtypes are %s' % (action.get('matchType', ''),
+                                                                  AVAILABLE_ACTION_MATCHTYPES))
     if keypath:
         action_kwargs['keypath'] = keypath
         action_kwargs['value'] = action.get('value')
@@ -73,8 +80,11 @@ def sanitize_user_conditions(user_conditions, schema):
         if not condition.get('key'):
             continue
         keypath = condition['key'].split('.')
-        if not is_valid_key_path(keypath, schema) or not UI_TO_MATCHTYPE.get(condition.get('matchType', '')):
-            raise InvalidActions
+        is_valid_key_path(keypath, schema)
+        if not AVAILABLE_CONDITION_MATCHTYPES.get(condition.get('matchType', '')):
+            raise InvalidActions('Matchtype "%s" is not a valid condition matchtype,'
+                                 ' valid condition matchtypes are %s' % (condition.get('matchType', ''),
+                                                                         AVAILABLE_CONDITION_MATCHTYPES))
         user_condition = {'value': condition.get('value', ''),
                           'keypath': keypath,
                           'match_type': UI_TO_MATCHTYPE[condition['matchType']]}
@@ -98,10 +108,12 @@ def get_actions(user_actions, schema):
     for action in user_actions.get('actions', []):
         action_kwargs = get_action_kwargs(schema, action, conditions)
         if not action_kwargs:
-            raise InvalidActions
+            raise InvalidActions('No action arguments were provided')
         action_name = action.get('actionName', '')
         if action_name not in ACTIONS_MAP:
-            raise InvalidActions
+            raise InvalidActions('Action "%s" is not a valid action,'
+                                 ' valid actions are %s' % (action.get('matchType', ''),
+                                                            AVAILABLE_ACTIONS))
         action_cls = ACTIONS_MAP[action_name]
         new_action = action_cls(**action_kwargs)
         actions.append(new_action)
@@ -109,17 +121,19 @@ def get_actions(user_actions, schema):
 
 
 def is_valid_key_path(keypath, schema):
+    """
+    Checks the validity of the keypath provided in accordance with the schema
+    :param keypath: array of keys
+    :param schema: schema record
+    """
     for key in keypath:
         if schema['type'] == 'object':
             if schema['properties'].get(key):
                 schema = schema['properties'][key]
             else:
-                raise InvalidActions
+                raise InvalidActions('The key and the schema that were provided do not match')
         elif schema['type'] == 'array':
             if schema['items']['properties'].get(key):
                 schema = schema['items']['properties'][key]
             else:
-                raise InvalidActions
-        else:
-            raise InvalidActions
-    return True
+                raise InvalidActions('The key and the schema that were provided do not match')

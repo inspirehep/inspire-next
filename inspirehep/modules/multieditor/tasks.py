@@ -55,7 +55,7 @@ def process_records(records_ids, user_actions, schema):
         if commit_record:
             try:
                 record.commit()
-            except (ValidationError, Exception) as e:
+            except ValidationError as e:
                 logger.error('I have an error %s', e.message)
             else:
                 commit_session = True

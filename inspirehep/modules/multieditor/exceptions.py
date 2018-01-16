@@ -24,8 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 
 class InvalidActions(Exception):
-    def __init__(self):
-        super(InvalidActions, self).__init__("The actions that were provided are invalid")
+    pass
 
 
 class SchemaError(Exception):

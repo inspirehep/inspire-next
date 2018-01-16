@@ -66,7 +66,7 @@ class UpdateAPI(MethodView):
             else:
                 ids_to_update = set(ids) & set(user_selected_ids)
         else:
-            return jsonify({'message': 'Please use the search before you apply actions'}), 400
+            return jsonify({'message': 'Please use the search before you apply actions'}), 401
 
         try:
             get_actions(user_actions, multieditor_session['schema'])
@@ -97,7 +97,7 @@ class PreviewAPI(MethodView):
         multieditor_session = session.get('multieditor_session', {})
 
         if not multieditor_session:
-            return jsonify({'message': 'Please use the search before you apply actions'}), 400
+            return jsonify({'message': 'Please use the search before you apply actions'}), 401
 
         uuids, records = queries.get_paginated_records(number=number,
                                                        size=size,

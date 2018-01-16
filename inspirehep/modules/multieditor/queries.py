@@ -30,7 +30,7 @@ from __future__ import absolute_import, print_function, division
 from ..search import api
 from invenio_records.api import Record
 
-INDEX_TO_QUERIES = {
+SCHEMA_TO_QUERIES = {
     'hep': api.LiteratureSearch,
     'authors': api.AuthorsSearch,
     'data': api.DataSearch,
@@ -43,13 +43,13 @@ INDEX_TO_QUERIES = {
 }
 
 
-def get_total_records(query, index):
+def get_total_records(query, schema):
     """
     :param query: query string
-    :param index: index of the records to be searched
+    :param schema: schema of the records to be searched
     :return: returns the total records that match our query
     """
-    query_result = INDEX_TO_QUERIES[index]() \
+    query_result = SCHEMA_TO_QUERIES[schema]() \
         .query_from_iq(query).params(
         size=1,
         fields=[]
@@ -58,13 +58,13 @@ def get_total_records(query, index):
     return query_result.hits.total
 
 
-def get_record_ids_from_query(query, index):
+def get_record_ids_from_query(query, schema):
     """
     :param query: query string
-    :param index: index of the records to be searched
+    :param schema: schema of the records to be searched
     :return: return the uuids of the records that matched our query
     """
-    query_result = INDEX_TO_QUERIES[index]()\
+    query_result = SCHEMA_TO_QUERIES[schema]()\
         .query_from_iq(query).params(
         size=2000,
         fields=[]
