@@ -25,14 +25,14 @@ from __future__ import absolute_import, division, print_function
 
 class InvalidActions(Exception):
     def __init__(self):
-        Exception.__init__(self, "The actions that were provided are invalid")
+        super(InvalidActions, self).__init__("The actions that were provided are invalid")
 
 
 class SchemaError(Exception):
     def __init__(self):
-        Exception.__init__(self, "Invalid or missing schema")
+        super(SchemaError, self).__init__("Invalid or missing schema")
 
 
 class InvalidValue(Exception):
     def __init__(self, value):
-        Exception.__init__(self, "The value {0} cant be serialized for this field".format(value))
+        super(InvalidValue, self).__init__("The value {0} cant be serialized for this field".format(value))

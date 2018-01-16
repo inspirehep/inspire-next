@@ -43,16 +43,17 @@ from .exceptions import InvalidValue, SchemaError, InvalidActions
 blueprint = Blueprint(
     'inspirehep_multieditor',
     __name__,
-    template_folder='templates',
     url_prefix='/multieditor',
 )
 
 
 class UpdateAPI(MethodView):
+    """The update api is used for editing the records with the provided actions and
+     depositing them to the database."""
     decorators = [multieditor_use_permission.require(http_exception=403)]
 
     def post(self):
-        """Apply the user actions to the database records."""
+        """Apply the user actions to the searched records and deposit the changed records to the database."""
         form = json.loads(request.data)
         user_actions = form.get('userActions', {})
         all_selected = form.get('allSelected', False)
@@ -82,10 +83,13 @@ blueprint.add_url_rule('/update', view_func=update_api, methods=['POST'])
 
 
 class PreviewAPI(MethodView):
+    """The preview api is used for the user to see how the actions she selected affect the records,
+    before applying them to the database."""
     decorators = [multieditor_use_permission.require(http_exception=403)]
 
     def post(self):
-        """Preview the user actions in the first (page size) records."""
+        """Preview the user actions in the corresponding page's records,
+        returning the old records with JSON patches for the changed ones."""
         form = json.loads(request.data)
         user_actions = form.get('userActions', {})
         size = form.get('size', 10)
@@ -120,14 +124,17 @@ blueprint.add_url_rule('/preview', view_func=preview_api, methods=['POST'])
 
 
 class SearchAPI(MethodView):
+    """The search api is used to provide the user with the records that
+    correspond to her query."""
     decorators = [multieditor_use_permission.require(http_exception=403)]
 
     def get(self):
-        """Search for records using the query and store the result's ids"""
-        query = request.args.get('q', None)
-        number = int(request.args.get('number', 1))
-        size = int(request.args.get('size', 10))
-        if query:
+        """Search for records using the provided query and store the result's ids,
+        or paginate through the allready searched records."""
+        query = request.args.get('q', '', type=str)
+        number = int(request.args.get('number', 1, type=int))
+        size = int(request.args.get('size', 10, type=int))
+        if request.args.get('q') is not None:
             index_name = request.args.get('index', '')
             schema = load_schema(index_name, resolved=True)
             total_records = queries.get_total_records(query, index_name)
@@ -138,16 +145,15 @@ class SearchAPI(MethodView):
                 'uuids': uuids,
                 'schema': schema,
             }
-            records_uuids, records = queries.get_paginated_records(number=number,
-                                                                   size=size,
-                                                                   uuids=uuids)
         else:
             multieditor_session = session.get('multieditor_session', {})
             if not multieditor_session:
                 return jsonify({'message': 'Please refresh your page'}), 400
-            records_uuids, records = queries.get_paginated_records(number=number,
-                                                                   size=size, uuids=multieditor_session['uuids'])
+            uuids = multieditor_session['uuids']
             total_records = None
+        records_uuids, records = queries.get_paginated_records(number=number,
+                                                               size=size,
+                                                               uuids=uuids)
         return jsonify({'total_records': total_records,
                         'uuids': records_uuids,
                         'json_records': records})

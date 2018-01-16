@@ -49,7 +49,7 @@ def get_total_records(query, index):
     :param index: index of the records to be searched
     :return: returns the total records that match our query
     """
-    query_result = INDEX_TO_QUERIES[index]()\
+    query_result = INDEX_TO_QUERIES[index]() \
         .query_from_iq(query).params(
         size=1,
         fields=[]
