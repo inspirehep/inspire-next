@@ -198,6 +198,17 @@
     <a href="{{ external_system_identifier['url_link'] }}">{{ external_system_identifier['url_name'] }}</a>
   {% endfor %}
 
+  {% if record.get('documents') %}
+    {% for document in record.documents %}
+      {% if not viewInDisplayed %}
+        View in:
+        {% do viewInDisplayed.append(1) %}
+      {% endif %}
+      {{ comma() }}
+      <a href="{{ document['url'] }}">PDF</a>
+    {% endfor %}
+  {% endif %}
+
 {% endmacro %}
 
 {% macro record_references(record) %}
