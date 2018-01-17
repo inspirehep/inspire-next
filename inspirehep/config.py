@@ -1119,7 +1119,7 @@ RECORDS_REST_SORT_OPTIONS = {
 RECORDS_REST_DEFAULT_SORT = {
     "records-hep": {
         "query": "-bestmatch",
-        "noquery": "-mostrecent"
+        "noquery": "mostrecent"
     },
 
     "records-data": {
@@ -1129,7 +1129,7 @@ RECORDS_REST_DEFAULT_SORT = {
 
     "records-jobs": {
         "query": "bestmatch",
-        "noquery": "-mostrecent"
+        "noquery": "mostrecent"
     }
 }
 
@@ -1391,7 +1391,7 @@ WORKFLOWS_UI_REST_SORT_OPTIONS = {
 WORKFLOWS_UI_REST_DEFAULT_SORT = {
     "holdingpen": {
         "query": "-bestmatch",
-        "noquery": "-mostrecent"
+        "noquery": "mostrecent"
     }
 }
 
