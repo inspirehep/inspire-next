@@ -345,6 +345,7 @@ def migrate_and_insert_record(raw_record, skip_files=False):
     except Exception as e:
         LOGGER.exception('Migrator DoJSON Error')
         error = e
+        recid = 'No recid extracted'
     else:
         recid = json_record['control_number']
         prod_record = InspireProdRecords(recid=recid)
