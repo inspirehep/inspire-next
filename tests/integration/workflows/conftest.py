@@ -29,11 +29,14 @@ import requests_mock
 import sys
 
 from invenio_db import db
+from invenio_pidstore.models import PersistentIdentifier
+from invenio_search.cli import current_search_client as es
 
 from inspirehep.factory import create_app
 from inspirehep.modules.fixtures.collections import init_collections
 from inspirehep.modules.fixtures.files import init_all_storage_paths
 from inspirehep.modules.fixtures.users import init_users_and_permissions
+from inspirehep.modules.records.api import InspireRecord
 
 # Use the helpers folder to store test helpers.
 # See: http://stackoverflow.com/a/33515264/374865
@@ -129,3 +132,34 @@ def mocked_external_services(workflow_app):
         )
 
         yield
+
+
+@pytest.fixture
+def record_from_db(workflow_app):
+    json = {
+        '$schema':        'http://localhost:5000/schemas/records/hep.json',
+        '_collections':   ['Literature'],
+        'document_type':  ['article'],
+        'titles':         [{'title': 'Fancy title for a new record'}],
+        'arxiv_eprints':  [
+            {'categories': ['hep-th'], 'value': '1407.7587'}
+        ],
+        'control_number': 1234
+    }
+    record = InspireRecord.create(json, id_=None, skip_files=True)
+
+    pid = PersistentIdentifier.create(
+        pid_type='lit',
+        pid_value=json['control_number'],
+        object_type='rec',
+        object_uuid=record.id
+    )
+    db.session.commit()
+
+    es.indices.refresh('holdingpen-hep')
+    es.indices.refresh('records-hep')
+
+    yield record
+
+    db.session.delete(pid)
+    record.delete()
