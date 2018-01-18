@@ -194,7 +194,6 @@ setup(
             'inspirehep_holding_js = inspirehep.modules.workflows.bundles:details_js',
             'inspirehep_landing_page_css = inspirehep.modules.theme.bundles:landing_page_css',
             'inspirehep_literaturesuggest_js = inspirehep.modules.literaturesuggest.bundles:js',
-            'inspirehep_multi_record_editor_js = inspirehep.modules.multieditor.bundles:js',
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
             'inspirehep_theme_js = inspirehep.modules.theme.bundles:js',
             'inspirehep_tools_authorlist_js = inspirehep.modules.tools.bundles:js',
@@ -213,7 +212,6 @@ setup(
             'inspirehep_editor = inspirehep.modules.editor:blueprint_api',
         ],
         'invenio_base.apps': [
-            'inspire_multieditor = inspirehep.modules.multieditor:MultiEditor',
             'inspire_arxiv = inspirehep.modules.arxiv:InspireArXiv',
             'inspire_authors = inspirehep.modules.authors:InspireAuthors',
             'inspire_crossref = inspirehep.modules.crossref:InspireCrossref',

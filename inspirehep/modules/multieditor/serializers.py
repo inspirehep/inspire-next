@@ -55,7 +55,7 @@ def get_action_kwargs(schema, action, conditions=None):
         conditions = []
     keypath = action.get('mainKey', '').split('.')
     is_valid_key_path(keypath, schema)
-    if not AVAILABLE_ACTION_MATCHTYPES.get(action.get('matchType', '')):
+    if action.get('matchType', '') not in AVAILABLE_ACTION_MATCHTYPES:
         raise InvalidActions('Matchtype "%s" is not a valid action matchtype,'
                              ' valid action matchtypes are %s' % (action.get('matchType', ''),
                                                                   AVAILABLE_ACTION_MATCHTYPES))
@@ -81,7 +81,7 @@ def sanitize_user_conditions(user_conditions, schema):
             continue
         keypath = condition['key'].split('.')
         is_valid_key_path(keypath, schema)
-        if not AVAILABLE_CONDITION_MATCHTYPES.get(condition.get('matchType', '')):
+        if condition.get('matchType', '') not in AVAILABLE_CONDITION_MATCHTYPES:
             raise InvalidActions('Matchtype "%s" is not a valid condition matchtype,'
                                  ' valid condition matchtypes are %s' % (condition.get('matchType', ''),
                                                                          AVAILABLE_CONDITION_MATCHTYPES))

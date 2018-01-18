@@ -24,19 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .views import blueprint
 from .api import blueprint as api_blueprint
 from . import config
-
-
-class MultiEditor(object):
-    def __init__(self, app=None):
-        if app:
-            self.init_app(app)
-
-    def init_app(self, app):
-        app.register_blueprint(blueprint)
-        app.extensions['inspire-multieditor'] = self
 
 
 class ApiMultiEditor(object):
