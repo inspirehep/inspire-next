@@ -44,7 +44,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_submission,
     mark,
     populate_journal_coverage,
-    prepare_update_payload,
     reject_record,
     refextract,
     set_refereed_and_fix_document_type,
@@ -475,36 +474,6 @@ def test_populate_journal_coverage_does_nothing_if_no_journal_is_found(mock_repl
 
     assert populate_journal_coverage(obj, eng) is None
     assert 'journal_coverage' not in obj.extra_data
-
-
-def test_prepare_update_payload():
-    obj = MockObj({}, {})
-    eng = MockEng()
-
-    default_prepare_update_payload = prepare_update_payload()
-
-    assert default_prepare_update_payload(obj, eng) is None
-    assert obj.extra_data['update_payload'] == {}
-
-
-def test_prepare_update_payload_accepts_a_custom_key():
-    obj = MockObj({}, {})
-    eng = MockEng()
-
-    custom_key_prepare_update_payload = prepare_update_payload('custom_key')
-
-    assert custom_key_prepare_update_payload(obj, eng) is None
-    assert obj.extra_data['custom_key'] == {}
-
-
-def test_prepare_update_payload_overwrites():
-    obj = MockObj({'bar': 'baz'}, {'foo': 'foo'})
-    eng = MockEng()
-
-    foo_prepare_update_payload = prepare_update_payload('foo')
-
-    assert foo_prepare_update_payload(obj, eng) is None
-    assert obj.extra_data['foo'] == {'bar': 'baz'}
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.get_pdf_in_workflow')

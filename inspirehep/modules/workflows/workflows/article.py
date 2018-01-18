@@ -52,7 +52,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_arxiv_paper,
     mark,
     normalize_journal_titles,
-    prepare_update_payload,
     refextract,
     set_refereed_and_fix_document_type,
     submission_fulltext_download,
@@ -227,8 +226,9 @@ SEND_TO_LEGACY = [
     IF_ELSE(
         is_marked('is-update'),
         [
-            prepare_update_payload(extra_data_key="update_payload"),
-            send_robotupload(mode="correct", extra_data_key="update_payload"),
+            # TODO: once we have the merger in place
+            # send_robotupload(mode="replace")
+            mark('skipped-robot-upload', True)
         ],
         [
             send_robotupload(mode="replace"),
@@ -256,9 +256,22 @@ STOP_IF_EXISTING_SUBMISSION = [
 ]
 
 
-HALT_FOR_APPROVAL = [
-    IF_ELSE(
+HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
+    IF_NOT(
         is_record_relevant,
+        [
+            reject_record("Article automatically rejected"),
+            mark('approved', False),  # auto reject
+            save_workflow,
+            stop_processing,
+        ]
+    ),
+
+    IF_ELSE(
+        is_marked('is-update'),
+        [
+            mark('approved', True)
+        ],
         IF_ELSE(
             is_marked('auto-approved'),
             mark('approved', True),
@@ -267,18 +280,16 @@ HALT_FOR_APPROVAL = [
                 message="Submission halted for curator approval.",
             )
         ),
-        [
-            reject_record("Article automatically rejected"),
-            mark('approved', False),  # auto reject
-            save_workflow,
-            stop_processing,
-        ]
     )
 ]
 
 
 STORE_RECORD = [
-    store_record
+    IF_ELSE(
+        is_marked('is-update'),
+        mark('skipped-store-record', True),
+        store_record,
+    )
 ]
 
 
@@ -447,14 +458,13 @@ class Article(object):
 
     workflow = (
         PRE_PROCESSING +
-        STOP_IF_TOO_OLD +
         NOTIFY_IF_SUBMISSION +
         MARK_IF_MATCH_IN_HOLDINGPEN +
         MARK_IF_UPDATE +
         PROCESS_HOLDINGPEN_MATCHES +
         ENHANCE_RECORD +
         STOP_IF_EXISTING_SUBMISSION +
-        HALT_FOR_APPROVAL +
+        HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT +
         [
             IF_ELSE(
                 is_record_accepted,
