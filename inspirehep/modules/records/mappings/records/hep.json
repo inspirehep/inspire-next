@@ -702,7 +702,8 @@
                             "type": "string"
                         },
                         "year": {
-                            "type": "integer"
+                            "format": "yyyy",
+                            "type": "date"
                         }
                     },
                     "type": "nested"
@@ -881,7 +882,8 @@
                                             "type": "string"
                                         },
                                         "year": {
-                                            "type": "integer"
+                                            "format": "yyyy",
+                                            "type": "date"
                                         }
                                     },
                                     "type": "object"
