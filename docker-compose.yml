@@ -38,6 +38,7 @@ services:
       - APP_ES_BULK_TIMEOUT=240
       - APP_CRAWLER_HOST_URL=http://scrapyd:6800
       - APP_CRAWLER_API_PIPELINE_URL=http://flower:5555/api/task/async-apply
+      - APP_LAST_RUNS_PATH=.lastruns
       - APP_OAIHARVESTER_WORKDIR=/virtualenv/oaiharvest_workdir
 
   # Services using the inspirehep code.
@@ -65,7 +66,7 @@ services:
   worker:
     extends:
       service: service_base
-    command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge -Q celery,migrator
+    command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge -Q celery,migrator,harvests
     volumes_from:
       - static
     depends_on:
