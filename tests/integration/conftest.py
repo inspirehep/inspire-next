@@ -90,6 +90,23 @@ def app():
         yield app
 
 
+@pytest.fixture(scope='function')
+def isolated_app(app):
+    """
+    Create an instance of app with db isolation.
+    This means that no changes are persisted to the db because at the end
+    of each test the db is rolled back. This is achieved leveraging nested
+    transactions.
+    Note: probably a neater solution is the one suggested here:
+    http://docs.sqlalchemy.org/en/latest/orm/session_transaction.html#joining-a-session-into-an-external-transaction-such-as-for-test-suites
+
+    See tests/integration/test_db_isolation.py for some examples.
+    """
+    db.session.begin_nested()
+    yield
+    db.session.rollback()
+
+
 @pytest.fixture(scope='module')
 def small_app():
     """Flask application with few records and module scope.
