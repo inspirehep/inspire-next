@@ -104,7 +104,6 @@ def submit():
         return redirect(url_for('.success'))
 
 
-
 @blueprint.route('/new/success', methods=['GET'])
 def success():
     """Render success template for the user."""
