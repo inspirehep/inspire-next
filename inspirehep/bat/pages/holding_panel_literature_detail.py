@@ -86,11 +86,13 @@ def accept_record():
             TryClick((By.XPATH, '//button[@class="btn btn-warning"]'))
         )
     except Exception as exc:
+        scrn_shot = Arsenic().selenium.get_screenshot_as_base64()
         Arsenic().get(
             os.environ['SERVER_NAME'] + '/api/holdingpen'
         )
         new_message = exc.message
-        new_message += '\nPage Source:\n' + '#' * 20 + Arsenic().page_source
+        new_message += '\nPage Source:\n' + '#' * 20 + '\n' + Arsenic().page_source
+        new_message += '\nPage Screenshot base64:\n' + '#' * 20 + '\n' + scrn_shot
         raise exc.__class__(new_message)
 
     return ArsenicResponse(_accept_record)
