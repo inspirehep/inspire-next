@@ -56,7 +56,10 @@ from inspire_utils.dedupers import dedupe_list
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
-from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
+from inspirehep.modules.pidstore.utils import (
+    get_pid_type_from_schema,
+    get_pid_types_from_endpoints,
+)
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.receivers import index_after_commit
 from inspirehep.utils.schema import ensure_valid_schema
@@ -240,13 +243,11 @@ def migrate_chunk(chunk, skip_files=False):
     models_committed.connect(index_after_commit)
 
 
-NUMERIC_PID_TYPES = ('lit', 'con', 'exp', 'jou', 'aut', 'job', 'ins')
-
-
 def _build_recid_to_uuid_map(citations_lookup):
+    numeric_pid_types = get_pid_types_from_endpoints()
     pids = PersistentIdentifier.query.filter(
         PersistentIdentifier.object_type == 'rec',
-        PersistentIdentifier.pid_type.in_(NUMERIC_PID_TYPES)).yield_per(
+        PersistentIdentifier.pid_type.in_(numeric_pid_types)).yield_per(
         1000)
     with click.progressbar(pids) as bar:
         return {
