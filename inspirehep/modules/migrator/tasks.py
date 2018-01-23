@@ -240,18 +240,23 @@ def migrate_chunk(chunk, skip_files=False):
     models_committed.connect(index_after_commit)
 
 
+NUMERIC_PID_TYPES = ('lit', 'con', 'exp', 'jou', 'aut', 'job', 'ins')
+
+
+def _build_recid_to_uuid_map(citations_lookup):
+    pids = PersistentIdentifier.query.filter(
+        PersistentIdentifier.object_type == 'rec',
+        PersistentIdentifier.pid_type.in_(NUMERIC_PID_TYPES)).yield_per(
+        1000)
+    with click.progressbar(pids) as bar:
+        return {
+            pid.object_uuid: citations_lookup[int(pid.pid_value)]
+            for pid in bar if int(pid.pid_value) in citations_lookup
+        }
+
+
 @shared_task()
 def add_citation_counts(chunk_size=500, request_timeout=120):
-    def _build_recid_to_uuid_map(citations_lookup):
-        pids = PersistentIdentifier.query.filter(
-            PersistentIdentifier.object_type == 'rec').yield_per(1000)
-
-        with click.progressbar(pids) as bar:
-            return {
-                pid.object_uuid: citations_lookup[int(pid.pid_value)]
-                for pid in bar if int(pid.pid_value) in citations_lookup
-            }
-
     def _get_records_to_update_generator(citations_lookup):
         with click.progressbar(citations_lookup.iteritems()) as bar:
             for uuid, citation_count in bar:
