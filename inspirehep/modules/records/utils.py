@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspirehep.modules.migrator.tasks import chunker
+from invenio_records.api import Record
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
     get_pid_type_from_schema
@@ -36,3 +38,39 @@ def get_endpoint_from_record(record):
     endpoint = get_endpoint_from_pid_type(pid_type)
 
     return endpoint
+
+
+def filter_records(uuids, filters):
+    '''
+    :param uuids: uuids of the records
+    :param filters: filters to be applied(format: {keypath: , value:})
+    :return:
+    '''
+    total_matches = 0
+    is_match = False
+    for i, chunk in enumerate(chunker(uuids, 200)):
+        records = Record.get_records(chunk)
+        for record in records:
+            for single_filter in filters:
+                temp_record = record
+                is_match = recursive_filter(temp_record, single_filter['keys'], single_filter['value'], 0)
+                if not is_match:
+                    break
+            if is_match:
+                total_matches = total_matches +1
+    return total_matches
+
+
+def recursive_filter(record, keys, value, position):
+    if position == len(keys):
+        return record == value
+    if not record.get(keys[position]):
+        return False
+    record = record[keys[position]]
+    if isinstance(record, list):
+        for index, array_record in enumerate(record):
+            if recursive_filter(record[index], keys, value, position+1):
+                return True
+        return False
+    else:
+        return recursive_filter(record, keys, value, position + 1)

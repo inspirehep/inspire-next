@@ -27,7 +27,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "_export_to": {
                     "properties": {
@@ -58,7 +58,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "_private_notes": {
                     "properties": {
@@ -69,7 +69,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "abstracts": {
                     "properties": {
@@ -83,7 +83,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "accelerator_experiments": {
                     "properties": {
@@ -115,7 +115,7 @@
                             "type": "object"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "acquisition_source": {
                     "properties": {
@@ -159,7 +159,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "author_count": {
                     "type": "integer"
@@ -230,7 +230,7 @@
                                     "type": "string"
                                 }
                             },
-                            "type": "object"
+                            "type": "nested"
                         },
                         "inspire_roles": {
                             "type": "string"
@@ -252,7 +252,7 @@
                                     "type": "string"
                                 }
                             },
-                            "type": "object"
+                            "type": "nested"
                         },
                         "recid": {
                             "type": "integer"
@@ -272,7 +272,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "book_series": {
                     "properties": {
@@ -283,7 +283,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "bookautocomplete": {
                     "payloads": true,
@@ -312,7 +312,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "control_number": {
                     "type": "integer"
@@ -335,7 +335,7 @@
                             "type": "integer"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "core": {
                     "type": "boolean"
@@ -387,7 +387,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "dois": {
                     "properties": {
@@ -407,7 +407,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "earliest_date": {
                     "format": "yyyy||yyyy-MM||yyyy-MM-dd",
@@ -434,7 +434,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "facet_arxiv_categories": {
                     "index": "not_analyzed",
@@ -477,7 +477,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "funding_info": {
                     "properties": {
@@ -491,7 +491,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "imprints": {
                     "properties": {
@@ -506,7 +506,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "inspire_categories": {
                     "properties": {
@@ -518,7 +518,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "isbns": {
                     "properties": {
@@ -535,7 +535,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "keywords": {
                     "properties": {
@@ -549,7 +549,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "languages": {
                     "type": "string"
@@ -573,7 +573,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "new_recid": {
                     "type": "integer"
@@ -604,7 +604,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "preprint_date": {
                     "format": "yyyy||yyyy-MM||yyyy-MM-dd",
@@ -619,7 +619,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "publication_info": {
                     "properties": {
@@ -726,7 +726,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "refereed": {
                     "type": "boolean"
@@ -749,7 +749,7 @@
                                     "type": "string"
                                 }
                             },
-                            "type": "object"
+                            "type": "nested"
                         },
                         "recid": {
                             "type": "integer"
@@ -782,7 +782,7 @@
                                             "type": "string"
                                         }
                                     },
-                                    "type": "object"
+                                    "type": "nested"
                                 },
                                 "book_series": {
                                     "properties": {
@@ -843,7 +843,7 @@
                                             "type": "string"
                                         }
                                     },
-                                    "type": "object"
+                                    "type": "nested"
                                 },
                                 "publication_info": {
                                     "properties": {
@@ -884,7 +884,7 @@
                                             "type": "integer"
                                         }
                                     },
-                                    "type": "object"
+                                    "type": "nested"
                                 },
                                 "report_numbers": {
                                     "type": "string"
@@ -915,13 +915,13 @@
                                             "type": "string"
                                         }
                                     },
-                                    "type": "object"
+                                    "type": "nested"
                                 }
                             },
                             "type": "object"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "related_records": {
                     "properties": {
@@ -943,7 +943,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "report_numbers": {
                     "properties": {
@@ -967,7 +967,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "self": {
                     "properties": {
@@ -1016,7 +1016,7 @@
                                     "type": "object"
                                 }
                             },
-                            "type": "object"
+                            "type": "nested"
                         }
                     },
                     "type": "object"
@@ -1036,7 +1036,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "titles": {
                     "properties": {
@@ -1056,7 +1056,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "urls": {
                     "properties": {
@@ -1067,7 +1067,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "withdrawn": {
                     "type": "boolean"
