@@ -105,6 +105,7 @@ install_requires = [
     'setproctitle~=1.0,>=1.1.10',
     'timeout-decorator~=0.0,>=0.4.0',
     'workflow~=2.0,>=2.1.3',
+    'jsonpatch==1.16',  # Using specific method as the functionality in the later ones changes
 ]
 
 docs_require = [
@@ -176,6 +177,7 @@ setup(
         'invenio_access.actions': [
             'admin_holdingpen_authors = inspirehep.modules.authors.permissions:action_admin_holdingpen_authors',
             'editor_use_api = inspirehep.modules.editor.permissions:action_editor_use_api',
+            'multieditor_use = inspirehep.modules.multieditor.permissions:action_multieditor_use',
             'update_collection = inspirehep.modules.records.permissions:action_update_collection',
             'view_restricted_collection = inspirehep.modules.records.permissions:action_view_restricted_collection',
         ],
@@ -204,6 +206,7 @@ setup(
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'invenio_collections = invenio_collections:InvenioCollections',
+            'inspire_multieditor = inspirehep.modules.multieditor:ApiMultiEditor',
         ],
         'invenio_base.api_blueprints': [
             'inspirehep_editor = inspirehep.modules.editor:blueprint_api',

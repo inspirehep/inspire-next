@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .api import blueprint as api_blueprint
+from .views import blueprint as api_blueprint
 from . import config
 
 

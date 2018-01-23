@@ -26,6 +26,10 @@ from __future__ import absolute_import, print_function, division
 
 
 from invenio_records.api import Record
+from jsonschema import ValidationError
+from inspire_schemas.api import validate
+
+from inspirehep.utils.record import get_inspire_patch
 from inspirehep.modules.migrator.tasks import chunker
 
 
@@ -63,3 +67,24 @@ def recursive_filter(record, keys, value, position):
         return False
     else:
         return recursive_filter(record, keys, value, position + 1)
+
+
+def compare_records(old_records, new_records, schema):
+    """
+    Compares and validates the records after the actions have been applied
+    :param old_records: records before actions
+    :param new_records: records after actions
+    :param schema: corresponding schema of the records
+    :return:json patches[object] and errors[string]
+    """
+    json_patches = []
+    errors = []
+    for index, new_record in enumerate(new_records):
+        json_patches.append(get_inspire_patch(old_records[index], new_record))
+        try:
+            validate(new_record, schema)
+        except ValidationError as e:
+            errors.append(e.message)
+        else:
+            errors.append(None)
+    return json_patches, errors

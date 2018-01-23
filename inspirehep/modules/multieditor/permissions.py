@@ -20,9 +20,18 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIRE editor."""
-
 from __future__ import absolute_import, division, print_function
 
-from .views import blueprint  # noqa: F401
-from .ext import ApiMultiEditor  # noqa: F401
+from invenio_access.permissions import (
+    ParameterizedActionNeed,
+    Permission,
+)
+
+
+action_multieditor_use = ParameterizedActionNeed(
+    'multieditor-use', argument=None
+)
+
+multieditor_use_permission = Permission(
+    action_multieditor_use
+)
