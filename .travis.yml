@@ -72,3 +72,6 @@ after_script:
   # Coverage report contains Docker paths. We replace them, so that we can run Coveralls.
   - sed -i 's@\"/code/@'"\"$(pwd)/"'@g' .coverage
   - coveralls
+
+after_failure:
+  - docker-compose -f docker-compose.test.yml logs --tail 500
