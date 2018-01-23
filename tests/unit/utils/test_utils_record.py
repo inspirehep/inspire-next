@@ -30,6 +30,7 @@ from inspirehep.utils.record import (
     get_source,
     get_subtitle,
     get_title,
+    get_inspire_patch
 )
 
 
@@ -155,3 +156,46 @@ def test_get_title():
     result = get_title(record)
 
     assert expected == result
+
+
+def test_inspire_patch():
+    first = {
+        'title': 'hello',
+        'library': ['Boston', 'Chicago'],
+        'fork_count': 20,
+        'stargazers': ['/users/20', '/users/30'],
+        'settings': {
+            'assignees': [100, 101, 201],
+        }
+    }
+
+    second = {
+        'title': 'hellooo',
+        'library': ['Boston'],
+        'stargazers': ['/users/20', '/users/30', '/users/40'],
+        'settings': {
+            'assignees': [100, 101, 202],
+        }
+    }
+    result = get_inspire_patch(first, second)
+    assert result == [{'op': 'remove', 'path': ['fork_count']},
+                      {'op': 'replace', 'path': ['settings', 'assignees', 2], 'value': 202},
+                      {'op': 'add', 'path': ['stargazers', 2], 'value': '/users/40'},
+                      {'op': 'remove', 'path': ['library', 1]},
+                      {'op': 'replace', 'path': ['title'], 'value': 'hellooo'}]
+
+
+def test_inspire_patch_removing_from_index():
+    first = {
+        'settings': {
+            'assignees': [100, 101, 202],
+        }
+    }
+
+    second = {
+        'settings': {
+            'assignees': [101, 202],
+        }
+    }
+    result = get_inspire_patch(first, second)
+    assert result == [{'op': 'remove', 'path': ['settings', 'assignees', 0]}]
