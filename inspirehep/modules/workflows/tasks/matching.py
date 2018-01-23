@@ -25,7 +25,6 @@
 from __future__ import absolute_import, division, print_function
 
 import datetime
-from enum import Enum
 from functools import wraps
 
 from flask import current_app
@@ -40,12 +39,6 @@ from inspirehep.utils.record import get_arxiv_categories, get_value
 from inspirehep.modules.workflows.tasks.actions import mark
 
 from ..utils import with_debug_logging
-
-
-class Coreness(Enum):
-    core = True
-    non_core = False
-    non_relevant = None
 
 
 @with_debug_logging
@@ -113,45 +106,58 @@ def article_exists(obj, eng):
     return False
 
 
-@with_debug_logging
-def belongs_to_relevant_category(obj, eng):
-    """Return True if the record is Core or Non-Core.
+def auto_approve(obj, eng):
+    """Check if auto approve the current ingested article.
 
     Arguments:
         obj: a workflow object.
         eng: a workflow engine.
 
-    Returns:
-        bool: ``True`` if the ingested article belongs to a relevant
-        category, else ``False``.
-
+    Return:
+        bool: True when the record belongs to an arXiv category that is fully
+        harvested or if the primary category is `physics.data-an`, otherwise
+        False.
     """
-    return get_coreness(obj.data) is not Coreness.non_relevant
+    return has_fully_harvested_category(obj.data) or physics_data_an_is_primary_category(obj.data)
 
 
-def get_coreness(record):
-    """Return the coreness of the record harvested.
+def has_fully_harvested_category(record):
+    """Check if the record in `obj.data` has fully harvested categories.
 
-    Args:
-        record(dict): the record harvested.
+    Arguments:
+        record(dict): the ingested article.
 
     Return:
-        a Coreness value in according to the record's coreness level.
+        bool: True when the record belongs to an arXiv category that is fully
+        harvested, otherwise False.
     """
-    arxiv_categories = set(get_arxiv_categories(record))
-    relevant_categories = current_app.config.get('ARXIV_CATEGORIES', [])
+    record_categories = set(get_arxiv_categories(record))
+    harvested_categories = current_app.config.get('ARXIV_CATEGORIES', {})
+    return len(
+        record_categories &
+        set(
+            harvested_categories.get('core') +
+            harvested_categories.get('non-core')
+        )
+    ) > 0
 
-    if arxiv_categories & set(relevant_categories['core']):
-        return Coreness.core
-    elif arxiv_categories & set(relevant_categories['non-core']):
-        return Coreness.non_core
-    else:
-        return Coreness.non_relevant
+
+def physics_data_an_is_primary_category(record):
+    record_categories = get_arxiv_categories(record)
+    if record_categories:
+        return record_categories[0] == 'physics.data-an'
+    return False
 
 
 @with_debug_logging
-def set_coreness_in_extra_data(obj, eng):
-    obj.extra_data['core'] = get_coreness(obj.data).value
+def set_core_in_extra_data(obj, eng):
+    """Set `core=True` in `obj.extra_data` if the record belongs to a core arXiv category"""
+    def _is_core(record):
+        return set(get_arxiv_categories(record)) & \
+               set(current_app.config.get('ARXIV_CATEGORIES', {}).get('core'))
+
+    if _is_core(obj.data):
+        obj.extra_data['core'] = True
 
 
 def previously_rejected(days_ago=None):
