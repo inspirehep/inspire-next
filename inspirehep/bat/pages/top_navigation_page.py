@@ -39,7 +39,16 @@ def log_in(user_id, password):
 
 
 def log_out():
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'user-info')))
+    try:
+        WebDriverWait(Arsenic(), 10).until(
+            EC.visibility_of_element_located((By.ID, 'user-info'))
+        )
+    except Exception as exc:
+        scrn_shot = Arsenic().selenium.get_screenshot_as_base64()
+        new_message = exc.message
+        new_message += '\nPage Screenshot base64:\n' + '#' * 20 + '\n' + scrn_shot
+        raise exc.__class__(new_message)
+
     Arsenic().find_element_by_id('user-info').click()
     Arsenic().find_element_by_xpath('(//button[@type="button"])[2]').click()
 
