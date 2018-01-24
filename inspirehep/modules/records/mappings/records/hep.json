@@ -211,6 +211,10 @@
                             },
                             "type": "string"
                         },
+                        "full_name_unicode_normalized": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
                         "ids": {
                             "properties": {
                                 "schema": {
