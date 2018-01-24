@@ -27,14 +27,13 @@ from mock import patch
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.matching import (
     article_exists,
-    belongs_to_relevant_category,
-    get_coreness,
+    has_fully_harvested_category,
+    physics_data_an_is_primary_category,
+    set_core_in_extra_data,
     _pending_in_holding_pen,
 )
 
 from mocks import MockEng, MockObj
-
-from inspirehep.modules.workflows.tasks.matching import Coreness
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
@@ -75,7 +74,7 @@ def test_article_exists_returns_false_if_nothing_matched(mock_match):
     assert expected == result
 
 
-def test_belongs_to_relevant_category_returns_true_and_is_core(app):
+def test_has_fully_harvested_category_is_true_with_core_categories(app):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
@@ -87,9 +86,7 @@ def test_belongs_to_relevant_category_returns_true_and_is_core(app):
     }
 
     with patch.dict(app.config, categories_config):
-        obj = MockObj
-        eng = MockEng
-        obj.data = {
+        record = {
             'arxiv_eprints': [
                 {
                     'categories': [
@@ -101,12 +98,11 @@ def test_belongs_to_relevant_category_returns_true_and_is_core(app):
                 },
             ],
         }
-        assert validate(obj.data['arxiv_eprints'], subschema) is None
-        assert belongs_to_relevant_category(obj, eng) is True
-        assert get_coreness(obj.data) is Coreness.core
+        assert validate(record['arxiv_eprints'], subschema) is None
+        assert has_fully_harvested_category(record)
 
 
-def test_belongs_to_relevant_category_returns_true_and_is_non_core(app):
+def test_has_fully_harvested_category_is_true_with_non_core_categories(app):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
@@ -118,9 +114,7 @@ def test_belongs_to_relevant_category_returns_true_and_is_non_core(app):
     }
 
     with patch.dict(app.config, categories_config):
-        obj = MockObj
-        eng = MockEng
-        obj.data = {
+        record = {
             'arxiv_eprints': [
                 {
                     'categories': [
@@ -131,12 +125,11 @@ def test_belongs_to_relevant_category_returns_true_and_is_non_core(app):
                 },
             ],
         }
-        assert validate(obj.data['arxiv_eprints'], subschema) is None
-        assert belongs_to_relevant_category(obj, eng) is True
-        assert get_coreness(obj.data) is Coreness.non_core
+        assert validate(record['arxiv_eprints'], subschema) is None
+        assert has_fully_harvested_category(record)
 
 
-def test_belongs_to_relevant_category_returns_false(app):
+def test_has_fully_harvested_category_is_false_with_others_categories(app):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
@@ -148,21 +141,118 @@ def test_belongs_to_relevant_category_returns_false(app):
     }
 
     with patch.dict(app.config, categories_config):
-        obj = MockObj
-        eng = MockEng
+        record = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'math',
+                    ],
+                    'value': '1609.03939',
+                },
+            ],
+        }
+        assert validate(record['arxiv_eprints'], subschema) is None
+        assert not has_fully_harvested_category(record)
+
+
+def physics_data_an_is_primary_category_is_false(app):
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+    record = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'math',
+                ],
+                'value': '1609.03939',
+            },
+        ],
+    }
+    assert validate(record['arxiv_eprints'], subschema) is None
+    assert not physics_data_an_is_primary_category(record)
+
+
+def physics_data_an_is_primary_category_is_true(app):
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+    record = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'physics.data-an',
+                ],
+                'value': '1609.03939',
+            },
+        ],
+    }
+    assert validate(record['arxiv_eprints'], subschema) is None
+    assert physics_data_an_is_primary_category(record)
+
+
+def test_core_is_written_in_extradata_if_article_is_core(app):
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    categories_config = {
+        'ARXIV_CATEGORIES': {
+            'core':     ['hep-ph'],
+            'non-core': ['astro-ph.CO', 'gr-qc']
+        }
+    }
+
+    with patch.dict(app.config, categories_config):
+        data = {}
+        extra_data = {}
+
+        obj = MockObj(data, extra_data)
+        eng = MockEng()
+
         obj.data = {
             'arxiv_eprints': [
                 {
                     'categories': [
-                        'math.CO',
+                        'hep-ph',
                     ],
                     'value': '1705.01122',
                 },
             ],
         }
         assert validate(obj.data['arxiv_eprints'], subschema) is None
-        assert belongs_to_relevant_category(obj, eng) is False
-        assert get_coreness(obj.data) is Coreness.non_relevant
+        set_core_in_extra_data(obj, eng)
+        assert obj.extra_data['core']
+
+
+def test_core_is_not_written_in_extradata_if_article_is_non_core(app):
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    categories_config = {
+        'ARXIV_CATEGORIES': {
+            'core':     ['hep-ph'],
+            'non-core': ['astro-ph.CO', 'gr-qc']
+        }
+    }
+
+    with patch.dict(app.config, categories_config):
+        data = {}
+        extra_data = {}
+
+        obj = MockObj(data, extra_data)
+        eng = MockEng()
+
+        obj.data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'astro-ph.CO',
+                    ],
+                    'value': '1705.01122',
+                },
+            ],
+        }
+        assert validate(obj.data['arxiv_eprints'], subschema) is None
+        set_core_in_extra_data(obj, eng)
+        assert 'core' not in obj.extra_data
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')

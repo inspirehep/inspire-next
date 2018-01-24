@@ -69,8 +69,6 @@ from inspirehep.modules.workflows.tasks.magpie import (
     guess_experiments,
 )
 from inspirehep.modules.workflows.tasks.matching import (
-    belongs_to_relevant_category,
-    set_coreness_in_extra_data,
     stop_processing,
     match_non_completed_wf_in_holdingpen,
     match_previously_rejected_wf_in_holdingpen,
@@ -78,6 +76,8 @@ from inspirehep.modules.workflows.tasks.matching import (
     previously_rejected,
     has_same_source,
     stop_matched_holdingpen_wfs,
+    auto_approve,
+    set_core_in_extra_data,
 )
 from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
 from inspirehep.modules.workflows.tasks.submission import (
@@ -154,10 +154,10 @@ ENHANCE_RECORD = [
         is_submission,
         mark('auto-approved', False),
         IF_ELSE(
-            belongs_to_relevant_category,
+            auto_approve,
             [
                 mark('auto-approved', True),
-                set_coreness_in_extra_data,
+                set_core_in_extra_data,
             ],
             mark('auto-approved', False),
         ),
