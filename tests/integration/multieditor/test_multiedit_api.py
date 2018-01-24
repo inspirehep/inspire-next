@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2017 CERN.
+# Copyright (C) 2014-2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ def test_multieditor_preview_api(api_client):
     login_user_via_session(api_client, email='cataloger@inspirehep.net')
     api_client.get('/multieditor/search?number=1&q=control_number:736770&index=hep')
     response = api_client.post(
-        '/multieditor/preview',
+        '/multieditor/search',
         content_type='application/json',
         data=json.dumps({
             'userActions': {
@@ -50,22 +50,22 @@ def test_multieditor_preview_api(api_client):
                 }],
                 'conditions': [],
             },
-            'queryString': 'control_number:736770',
-            'pageNum': 1,
-            'pageSize': 10,
+            'size': 10,
             'allSelected': True,
         }),
     )
 
     expected_patch = [{u'path': [u'authors', 1], u'value': {u'full_name': u'James Bond'}, u'op': u'add'}]
     gotten_patches = json.loads(response.data)['json_patches']
+    total_affected = json.loads(response.data)['affected_records']
+    assert total_affected == 1
     assert len(gotten_patches) == 1
     assert expected_patch == gotten_patches[0]
 
 
 def test_multieditor_update_api(api_client):
     login_user_via_session(api_client, email='cataloger@inspirehep.net')
-    response = api_client.get('/multieditor/search?number=1&q=control_number:736770&index=hep')
+    response = api_client.get('/multieditor/search?page=1&size=10&q=control_number:736770&index=hep')
 
     api_client.post(
         '/multieditor/update',
@@ -140,17 +140,17 @@ def test_multieditor_update_api(api_client):
 ])
 def test_api_permision_search(api_client, user_info, status):
     login_user_via_session(api_client, email=user_info['email'])
-    response = api_client.get('/multieditor/search?number=1&q=control_number:736770&index=hep')
+    response = api_client.get('/multieditor/search?page=1&size=10&q=control_number:736770&index=hep')
     assert response.status_code == status
 
 
 @pytest.mark.parametrize('user_info,endpoint', [
     # Logged in user without permissions assigned
     (dict(email='johndoe@inspirehep.net'), 'update'),
-    (dict(email='johndoe@inspirehep.net'), 'preview'),
+    (dict(email='johndoe@inspirehep.net'), 'search'),
     # No user logged in
     (None, 'update'),
-    (None, 'preview')
+    (None, 'search')
 ])
 def test_api_permission(api_client, user_info, endpoint):
     if user_info:
@@ -164,10 +164,10 @@ def test_api_permission(api_client, user_info, endpoint):
 
 def test_multieditor_update_api_faulty_actions(api_client):
     login_user_via_session(api_client, email='cataloger@inspirehep.net')
-    api_client.get('/multieditor/search?number=1&q=control_number:736770&index=hep')
+    api_client.get('/multieditor/search?page=1&size=10&q=control_number:736770&index=hep')
 
     response = api_client.post(
-        '/multieditor/preview',
+        '/multieditor/search',
         content_type='application/json',
         data=json.dumps({
             'userActions': {
@@ -182,5 +182,5 @@ def test_multieditor_update_api_faulty_actions(api_client):
             'allSelected': True,
         }),
     )
-    assert 'The actions that were provided are invalid' in json.loads(response.data)['message']
+    assert 'The key and the schema that were provided do not match' in json.loads(response.data)['message']
     assert response.status_code == 400

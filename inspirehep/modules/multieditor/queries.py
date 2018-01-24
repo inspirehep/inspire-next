@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2017 CERN.
+# Copyright (C) 2014-2017 CERN.
 #
 # INSPIRE is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,13 +22,13 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-
 """Module for quering in multi record editor used in http://inspirehep.net."""
 
 from __future__ import absolute_import, print_function, division
 
-from ..search import api
 from invenio_records.api import Record
+
+from ..search import api
 
 SCHEMA_TO_QUERIES = {
     'hep': api.LiteratureSearch,
@@ -39,7 +39,6 @@ SCHEMA_TO_QUERIES = {
     'institutions': api.InstitutionsSearch,
     'experiments': api.ExperimentsSearch,
     'journals': api.JournalsSearch
-
 }
 
 
@@ -74,14 +73,14 @@ def get_record_ids_from_query(query, schema):
     return uuids
 
 
-def get_paginated_records(number, size, uuids):
+def get_paginated_records(page, size, uuids):
     """
-    :param number: number of frontend page
+    :param page: page of frontend page
     :param size:  size of the frontend page
     :param uuids: uuids that matched our query
     :return: returns the paginated uuids and db records
     """
-    paginated_uuids = uuids[(number-1)*size:(number*size)]
+    paginated_uuids = uuids[(page-1)*size:(page*size)]
     db_records = Record.get_records(paginated_uuids)
     records_uuids = [str(record.id) for record in db_records]
     return records_uuids, db_records,

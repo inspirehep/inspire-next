@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2017 CERN.
+# Copyright (C) 2014-2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import re
 from collections import namedtuple
 from abc import ABCMeta, abstractmethod
 
-from .exceptions import InvalidValue, SchemaError
+from .errors import InvalidValue, SchemaError
 
 
 class ActionProcessor(object):
@@ -74,9 +74,9 @@ class ActionProcessor(object):
         else:
             for condition in self.conditions:
                 if should_run_condition(self, key, condition, position):
-                    if condition_passses(record=record, schema=schema, keypath=condition['keypath'],
-                                         update_value=condition['value'],
-                                         match_type=condition['match_type'], position=position):
+                    if condition_passes(record=record, schema=schema, keypath=condition['keypath'],
+                                        update_value=condition['value'],
+                                        match_type=condition['match_type'], position=position):
                         conditions_passed = conditions_passed + 1
                     else:
                         fails_any_condition = True

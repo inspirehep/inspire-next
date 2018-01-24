@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2017 CERN.
+# Copyright (C) 2014-2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,14 +24,16 @@ from __future__ import absolute_import, division, print_function
 
 
 class InvalidActions(Exception):
-    pass
+    """Invalid action exception."""
 
 
 class SchemaError(Exception):
+    """Exception that handles faulty or missing schema"""
     def __init__(self):
         super(SchemaError, self).__init__("Invalid or missing schema")
 
 
 class InvalidValue(Exception):
+    """Exception that handles a non schema serializable value"""
     def __init__(self, value):
         super(InvalidValue, self).__init__("The value {0} cant be serialized for this field".format(value))

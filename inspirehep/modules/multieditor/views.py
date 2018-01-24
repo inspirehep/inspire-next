@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2017 CERN.
+# Copyright (C) 2014-2017 CERN.
 #
 # INSPIRE is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -26,7 +26,7 @@
 
 from __future__ import absolute_import, print_function, division
 
-from flask import Blueprint, request, jsonify, session, current_app
+from flask import Blueprint, request, jsonify, session, current_app, abort
 from flask.views import MethodView
 import copy
 import json
@@ -34,11 +34,12 @@ import json
 from inspire_schemas.api import load_schema
 from inspirehep.modules.multieditor import tasks
 from inspirehep.modules.migrator.tasks import chunker
-from .utilities import compare_records, filter_records
+
+from .utils import compare_records, match_records
 from . import queries
 from .permissions import multieditor_use_permission
 from .serializers import get_actions
-from .exceptions import InvalidValue, SchemaError, InvalidActions
+from .errors import InvalidValue, SchemaError, InvalidActions
 
 blueprint = Blueprint(
     'inspirehep_multieditor',
@@ -66,7 +67,7 @@ class UpdateAPI(MethodView):
             else:
                 ids_to_update = set(ids) & set(user_selected_ids)
         else:
-            return jsonify({'message': 'Please use the search before you apply actions'}), 401
+            abort(401)
 
         try:
             get_actions(user_actions, multieditor_session['schema'])
@@ -82,47 +83,6 @@ update_api = UpdateAPI.as_view('update_api')
 blueprint.add_url_rule('/update', view_func=update_api, methods=['POST'])
 
 
-class PreviewAPI(MethodView):
-    """The preview api is used for the user to see how the actions she selected affect the records,
-    before applying them to the database."""
-    decorators = [multieditor_use_permission.require(http_exception=403)]
-
-    def post(self):
-        """Preview the user actions in the corresponding page's records,
-        returning the old records with JSON patches for the changed ones."""
-        form = json.loads(request.data)
-        user_actions = form.get('userActions', {})
-        size = form.get('size', 10)
-        number = form.get('number', 1)
-        multieditor_session = session.get('multieditor_session', {})
-
-        if not multieditor_session:
-            return jsonify({'message': 'Please use the search before you apply actions'}), 401
-
-        uuids, records = queries.get_paginated_records(number=number,
-                                                       size=size,
-                                                       uuids=multieditor_session['uuids'])
-
-        old_records = copy.deepcopy(records)
-        try:
-            actions = get_actions(user_actions, multieditor_session['schema'])
-        except InvalidActions as err:
-            return jsonify({'message': err.message}), 400
-        for record in records:
-            for action in actions:
-                try:
-                    action.process(record, multieditor_session['schema'])
-                except (SchemaError, InvalidValue) as err:
-                    return jsonify({'message': err.message}), 400
-        json_patches, errors = compare_records(old_records, records, multieditor_session['schema'])
-
-        return jsonify({'json_records': old_records, 'errors': errors, 'json_patches': json_patches, 'uuids': uuids})
-
-
-preview_api = PreviewAPI.as_view('preview_api')
-blueprint.add_url_rule('/preview', view_func=preview_api, methods=['POST'])
-
-
 class SearchAPI(MethodView):
     """The search api is used to provide the user with the records that
     correspond to her query."""
@@ -132,7 +92,7 @@ class SearchAPI(MethodView):
         """Search for records using the provided query and store the result's ids,
         or paginate through the allready searched records."""
         query = request.args.get('q', '', type=str)
-        number = int(request.args.get('number', 1, type=int))
+        page = int(request.args.get('page', 1, type=int))
         size = int(request.args.get('size', 10, type=int))
         if request.args.get('q') is not None:
             index_name = request.args.get('index', '')
@@ -146,18 +106,60 @@ class SearchAPI(MethodView):
                 'schema': schema,
             }
         else:
-            multieditor_session = session.get('multieditor_session', {})
-            if not multieditor_session:
-                return jsonify({'message': 'Please refresh your page'}), 400
-            uuids = multieditor_session['uuids']
+            uuids, records, schema = check_session_and_get_paginated_records(page, size)
             total_records = None
-        records_uuids, records = queries.get_paginated_records(number=number,
+        records_uuids, records = queries.get_paginated_records(page=page,
                                                                size=size,
                                                                uuids=uuids)
         return jsonify({'total_records': total_records,
                         'uuids': records_uuids,
                         'json_records': records})
+    
+    def post(self):
+        """Preview the user actions in the corresponding page's records,
+        returning the old records with JSON patches for the changed ones."""
+        form = json.loads(request.data)
+        user_actions = form.get('userActions', {})
+        size = form.get('size', 10)
+        page = form.get('page', 1)
+        uuids, records, schema = check_session_and_get_paginated_records(page, size)
+
+        old_records = copy.deepcopy(records)
+        try:
+            actions = get_actions(user_actions, schema)
+        except InvalidActions as err:
+            return jsonify({'message': err.message}), 400
+        for record in records:
+            for action in actions:
+                try:
+                    action.process(record, schema)
+                except (SchemaError, InvalidValue) as err:
+                    return jsonify({'message': err.message}), 400
+        json_patches, errors = compare_records(old_records, records, schema)
+        if not form.get('page'):
+            multieditor_session = session.get('multieditor_session', {})
+            if not multieditor_session:
+                abort(401)
+            affected_records = match_records(multieditor_session['uuids'], actions, schema)
+        else:
+            affected_records = None
+        return jsonify({'json_records': old_records, 'errors': errors, 'json_patches': json_patches, 'uuids': uuids,
+                        'affected_records': affected_records})
 
 
 search_api = SearchAPI.as_view('search_api')
-blueprint.add_url_rule('/search', view_func=search_api, methods=['GET'])
+blueprint.add_url_rule('/search', view_func=search_api, methods=['GET', 'POST'])
+
+
+def check_session_and_get_paginated_records(page, size):
+    multieditor_session = session.get('multieditor_session', {})
+    if not multieditor_session:
+        abort(401)
+    uuids, records = queries.get_paginated_records(page=page, size=size, uuids=multieditor_session['uuids'])
+    schema = multieditor_session['schema']
+    return uuids, records,  schema
+
+
+@blueprint.errorhandler(401)
+def expired_session():
+    return jsonify({'message': 'Please use the search before you apply actions'}), 401

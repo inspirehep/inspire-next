@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2017 CERN.
+# Copyright (C) 2014-2017 CERN.
 #
 # INSPIRE is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, print_function, division
 
+import re
 
 from invenio_records.api import Record
 from jsonschema import ValidationError
@@ -31,42 +32,6 @@ from inspire_schemas.api import validate
 
 from inspirehep.utils.record import get_inspire_patch
 from inspirehep.modules.migrator.tasks import chunker
-
-
-def filter_records(uuids, filters):
-    '''
-    :param uuids: uuids of the records
-    :param filters: filters to be applied(format: {keypath: , value:})
-    :return:
-    '''
-    total_matches = 0
-    is_match = False
-    for i, chunk in enumerate(chunker(uuids, 200)):
-        records = Record.get_records(chunk)
-        for record in records:
-            for single_filter in filters:
-                temp_record = record
-                is_match = recursive_filter(temp_record, single_filter['keys'], single_filter['value'], 0)
-                if not is_match:
-                    break
-            if is_match:
-                total_matches = total_matches + 1
-    return total_matches
-
-
-def recursive_filter(record, keys, value, position):
-    if position == len(keys):
-        return record == value
-    if not record.get(keys[position]):
-        return False
-    record = record[keys[position]]
-    if isinstance(record, list):
-        for index, array_record in enumerate(record):
-            if recursive_filter(record[index], keys, value, position+1):
-                return True
-        return False
-    else:
-        return recursive_filter(record, keys, value, position + 1)
 
 
 def compare_records(old_records, new_records, schema):
@@ -88,3 +53,22 @@ def compare_records(old_records, new_records, schema):
         else:
             errors.append(None)
     return json_patches, errors
+
+
+def match_records(records_ids, actions, schema):
+        """
+        :param records_ids: ids of the records to be processed
+        :param user_actions: user actions as received from frontend
+        :param schema: corresponding schema of the records
+        """
+        total_records_affected = 0
+        for chunk in chunker(records_ids, 200):
+            records = Record.get_records(chunk)
+            for record in records:
+                for action in actions:
+                    action.process(record=record, schema=schema)
+                    if action.changed:
+                        total_records_affected += 1
+                        action.changed = False
+                        break
+        return total_records_affected
