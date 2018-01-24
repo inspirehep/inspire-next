@@ -22,9 +22,9 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-from __future__ import absolute_import, print_function, division
+"""Multieditor utilities"""
 
-import re
+from __future__ import absolute_import, print_function, division
 
 from invenio_records.api import Record
 from jsonschema import ValidationError

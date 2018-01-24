@@ -20,6 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""Multieditor User Input serializing and validation"""
+
 from __future__ import absolute_import, print_function, division
 
 from .errors import InvalidActions
