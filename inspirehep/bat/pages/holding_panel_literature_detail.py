@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import re
 
 from selenium.common.exceptions import (
     ElementNotVisibleException,
@@ -81,17 +82,20 @@ def accept_record():
             GetText((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))
         )
 
+    arsenic = Arsenic()
     try:
-        WebDriverWait(Arsenic(), 90).until(
+        api_url_reg = re.compile('https?://[^/]+/api.*')
+        if api_url_reg.match(arsenic.current_url):
+            go_to()
+
+        WebDriverWait(arsenic, 90).until(
             TryClick((By.XPATH, '//button[@class="btn btn-warning"]'))
         )
     except Exception as exc:
-        scrn_shot = Arsenic().selenium.get_screenshot_as_base64()
-        Arsenic().get(
-            os.environ['SERVER_NAME'] + '/api/holdingpen'
-        )
+        scrn_shot = arsenic.selenium.get_screenshot_as_base64()
+        arsenic.get(os.environ['SERVER_NAME'] + '/api/holdingpen')
         new_message = exc.message
-        new_message += '\nPage Source:\n' + '#' * 20 + '\n' + Arsenic().page_source
+        new_message += '\nPage Source:\n' + '#' * 20 + '\n' + arsenic.page_source
         new_message += '\nPage Screenshot base64:\n' + '#' * 20 + '\n' + scrn_shot
         raise exc.__class__(new_message)
 
