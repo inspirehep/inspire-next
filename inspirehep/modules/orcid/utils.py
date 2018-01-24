@@ -24,22 +24,24 @@
 
 from __future__ import absolute_import, division, print_function
 
-import re
-from orcid import MemberAPI
-from .converter import OrcidConverter
-from inspire_utils.record import get_value
 import logging
-from itertools import chain
-from inspirehep.modules.records.json_ref_loader import replace_refs
+import re
+
 from flask import current_app
-from sqlalchemy.orm.exc import NoResultFound
-from .models import InspireOrcidPutCodes
 from invenio_oauthclient.models import (
+    RemoteAccount,
     RemoteToken,
     User,
-    RemoteAccount,
     UserIdentity,
 )
+from itertools import chain
+from orcid import MemberAPI
+from sqlalchemy.orm.exc import NoResultFound
+
+from .converter import OrcidConverter
+from .models import InspireOrcidPutCodes
+from inspire_utils.record import get_value
+from inspirehep.modules.records.json_ref_loader import replace_refs
 
 
 LOGGER = logging.getLogger(__name__)

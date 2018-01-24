@@ -24,34 +24,38 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
-
-from lxml import etree
 import mock
-from flask import current_app
-from orcid.orcid import MemberAPI
-import requests_mock
-
+import os
 import pkg_resources
 import pytest
+import requests_mock
 
-from invenio_oauthclient.utils import oauth_link_external_id
-from invenio_oauthclient.models import RemoteToken, User, UserIdentity, RemoteAccount
+from flask import current_app
+from lxml import etree
+from orcid.orcid import MemberAPI
+
 from invenio_db import db
-from inspire_utils.record import get_value
+from invenio_oauthclient.utils import oauth_link_external_id
+from invenio_oauthclient.models import (
+    RemoteAccount,
+    RemoteToken,
+    User,
+    UserIdentity,
+)
 
+from inspire_utils.record import get_value
 from inspirehep.utils.record_getter import get_db_record
 from inspirehep.modules.orcid.utils import (
+    _find_put_code_for_record_in_orcid,
+    _get_author_orcids_for_record,
+    _get_put_code,
     _recid_from_url,
-    _was_record_pushed_by_inspire,
     _hep_orcid_records_matching,
     _oauth_token_for_orcid,
-    _get_put_code,
-    _find_put_code_for_record_in_orcid,
-    push_record_with_orcid,
     _orcid_hep_publication_info_matching,
-    _get_author_orcids_for_record,
+    _was_record_pushed_by_inspire,
     push_record_to_all,
+    push_record_with_orcid,
 )
 
 
