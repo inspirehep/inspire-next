@@ -56,7 +56,10 @@ from inspire_utils.dedupers import dedupe_list
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
-from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
+from inspirehep.modules.pidstore.utils import (
+    get_pid_type_from_schema,
+    get_pid_types_from_endpoints,
+)
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.receivers import index_after_commit
 from inspirehep.utils.schema import ensure_valid_schema
@@ -240,18 +243,21 @@ def migrate_chunk(chunk, skip_files=False):
     models_committed.connect(index_after_commit)
 
 
+def _build_recid_to_uuid_map(citations_lookup):
+    numeric_pid_types = get_pid_types_from_endpoints()
+    pids = PersistentIdentifier.query.filter(
+        PersistentIdentifier.object_type == 'rec',
+        PersistentIdentifier.pid_type.in_(numeric_pid_types)).yield_per(
+        1000)
+    with click.progressbar(pids) as bar:
+        return {
+            pid.object_uuid: citations_lookup[int(pid.pid_value)]
+            for pid in bar if int(pid.pid_value) in citations_lookup
+        }
+
+
 @shared_task()
 def add_citation_counts(chunk_size=500, request_timeout=120):
-    def _build_recid_to_uuid_map(citations_lookup):
-        pids = PersistentIdentifier.query.filter(
-            PersistentIdentifier.object_type == 'rec').yield_per(1000)
-
-        with click.progressbar(pids) as bar:
-            return {
-                pid.object_uuid: citations_lookup[int(pid.pid_value)]
-                for pid in bar if int(pid.pid_value) in citations_lookup
-            }
-
     def _get_records_to_update_generator(citations_lookup):
         with click.progressbar(citations_lookup.iteritems()) as bar:
             for uuid, citation_count in bar:
