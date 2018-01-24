@@ -24,12 +24,20 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
 import re
+import requests
 
 from orcid import MemberAPI
+from urlparse import urljoin
 
 from inspire_utils.config import load_config
 from inspire_utils.record import get_value
+
+from .converter import OrcidConverter
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 RECID_FROM_INSPIRE_URL = re.compile(
@@ -111,6 +119,74 @@ def get_author_putcodes(orcid, oauth_token):
     return author_putcodes, errors
 
 
+def push_record_with_orcid(recid, orcid, oauth_token, put_code=None):
+    """Push record to ORCID with a specific ORCID ID.
+
+    Args:
+        recid (string): HEP record to push
+        orcid (string): ORCID identifier to push onto
+        oauth_token (string): ORCID user OAUTH token
+        put_code (Union[string, NoneType]): put-code to push record onto,
+            if None will push as a new record
+
+    Returns:
+        string: the put-code of the updated/inserted item
+    """
+    config = load_config()
+
+    server_name = config['SERVER_NAME']
+
+    record_api_endpoint = _get_api_url_for_recid(
+        server_name, config['SEARCH_UI_SEARCH_API'], recid
+    )
+
+    hep_response = requests.get(record_api_endpoint, headers={
+        'Accept': 'application/json'
+    })
+    record = hep_response.json()['metadata']
+
+    bibtex_response = requests.get(record_api_endpoint, headers={
+        'Accept': 'application/x-bibtex'
+    })
+    bibtex_string = bibtex_response.text
+
+    client_key = config['ORCID_APP_CREDENTIALS']['consumer_key']
+    client_secret = config['ORCID_APP_CREDENTIALS']['consumer_secret']
+
+    orcid_api = MemberAPI(client_key, client_secret)
+
+    orcid_xml = OrcidConverter(
+        record, server_name, put_code=put_code, bibtex_citation=bibtex_string
+    ).get_xml()
+
+    if put_code:
+        LOGGER.info("Pushing record #{} with put-code {}.".format(
+            recid,
+            put_code
+        ))
+        orcid_api.update_record(
+            orcid_id=orcid,
+            token=oauth_token,
+            request_type='work',
+            data=orcid_xml,
+            put_code=put_code,
+            content_type='application/orcid+xml',
+        )
+    else:
+        LOGGER.info("No put-code found, pushing new record #{}.".format(recid))
+        put_code = orcid_api.add_record(
+            orcid_id=orcid,
+            token=oauth_token,
+            request_type='work',
+            data=orcid_xml,
+            content_type='application/orcid+xml',
+        )
+
+        LOGGER.info("Record added with put-code {}.".format(put_code))
+
+    return put_code
+
+
 def _get_api():
     """Get ORCID API.
 
@@ -136,3 +212,24 @@ def _split_lists(sequence, chunk_size):
     return [
         sequence[i:i + chunk_size] for i in range(0, len(sequence), chunk_size)
     ]
+
+
+def _get_api_url_for_recid(server_name, api_endpoint, recid):
+    """Return API url for record
+
+    Args:
+        server_name (string): server authority
+        api_endpoint (string): api path
+        recid (string): record ID
+
+    Returns:
+        string: API URL for the record
+    """
+    if not re.match('^https?://', server_name):
+        server_name = 'http://{}'.format(server_name)
+
+    if not api_endpoint.endswith('/'):
+        api_endpoint = api_endpoint + '/'
+
+    api_url = urljoin(server_name, api_endpoint)
+    return urljoin(api_url, recid)
