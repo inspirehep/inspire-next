@@ -95,7 +95,6 @@ install_requires = [
     'invenio-workflows~=7.0',
     'langdetect~=1.0,>=1.0.7',
     'librabbitmq~=1.0,>=1.6.1',
-    'orcid~=0.0,>=0.7.0',
     'plotextractor~=0.0,>=0.1.6',
     'pybtex~=0.0,>=0.21',
     'python-redis-lock~=3.0,>=3.2.0',
