@@ -50,6 +50,8 @@ from inspirehep.modules.orcid.utils import (
     _find_put_code_for_record_in_orcid,
     push_record_with_orcid,
     _orcid_hep_publication_info_matching,
+    _get_author_orcids_for_record,
+    push_record_to_all,
 )
 
 
@@ -280,3 +282,24 @@ def test_orcid_hep_publication_info_matching():
     result = _orcid_hep_publication_info_matching(sample_work, sample_hep)
 
     assert expected == result
+
+
+def test_get_author_orcids_for_record():
+    record = get_db_record('lit', 1496635)
+
+    expected = {
+        '0000-0002-7216-5264',
+        '0000-0001-7658-8777',
+        '0000-0002-0468-541X',
+        '0000-0002-8189-8267',
+        '0000-0003-4792-9178',
+    }
+    result = set(_get_author_orcids_for_record(record))
+
+    assert expected == result
+
+
+def test_push_record_to_all(mock_api):
+    record = get_db_record('lit', 1496635)
+
+    push_record_to_all(record)

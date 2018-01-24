@@ -29,7 +29,10 @@ from orcid import MemberAPI
 from .converter import OrcidConverter
 from inspire_utils.record import get_value
 import logging
+from itertools import chain
+from inspirehep.modules.records.json_ref_loader import replace_refs
 from flask import current_app
+from sqlalchemy.orm.exc import NoResultFound
 from .models import InspireOrcidPutCodes
 from invenio_oauthclient.models import (
     RemoteToken,
@@ -48,6 +51,24 @@ RECID_FROM_INSPIRE_URL = re.compile(
 )
 
 
+def push_record_to_all(record):
+    """Push record to all authorized associated ORCIDS.
+
+    Args:
+        record (dict): HEP record to be pushed
+    """
+    associated_orcids = _get_author_orcids_for_record(record)
+    for orcid in associated_orcids:
+        try:
+            push_record_with_orcid(record, orcid)
+        except NoResultFound:
+            LOGGER.info(
+                'No OAUTH token for {}, can\'t push #{}.'.format(
+                    orcid, record['control_number']
+                )
+            )
+
+
 def push_record_with_orcid(record, orcid):
     """Push record to ORCID with a specific ORCID ID.
 
@@ -55,6 +76,7 @@ def push_record_with_orcid(record, orcid):
         record (dict): HEP record to push
         orcid (string): ORCID identifier to push onto
     """
+    recid = record['control_number']
     client_key = current_app.config['ORCID_APP_CREDENTIALS']['consumer_key']
     client_secret = current_app.config['ORCID_APP_CREDENTIALS']['consumer_secret']
     oauth_token = _oauth_token_for_orcid(orcid)
@@ -65,8 +87,8 @@ def push_record_with_orcid(record, orcid):
     orcid_xml = OrcidConverter(record, put_code).get_xml()
 
     if put_code:
-        LOGGER.info("Pushing record update {} with put-code {}.".format(
-            record,
+        LOGGER.info("Pushing record #{} with put-code {}.".format(
+            recid,
             put_code
         ))
         orcid_api.update_record(
@@ -78,7 +100,7 @@ def push_record_with_orcid(record, orcid):
             content_type='application/orcid+xml',
         )
     else:
-        LOGGER.info("No put-code found, pushing record {} as new.".format(record))
+        LOGGER.info("No put-code found, pushing new record #{}.".format(recid))
         inserted_put_code = orcid_api.add_record(
             orcid_id=orcid,
             token=oauth_token,
@@ -87,10 +109,7 @@ def push_record_with_orcid(record, orcid):
             content_type='application/orcid+xml',
         )
 
-        InspireOrcidPutCodes.set_put_code(
-            recid=record['control_number'],
-            put_code=inserted_put_code,
-        )
+        InspireOrcidPutCodes.set_put_code(recid=recid, put_code=inserted_put_code)
 
         LOGGER.info("Record added with put-code {}.".format(inserted_put_code))
 
@@ -283,3 +302,20 @@ def _orcid_hep_publication_info_matching(work_entry, hep):
             return True
 
     return False
+
+
+def _get_author_orcids_for_record(record):
+    """List all of the known author ORCIDs of a record.
+
+    Args:
+        record (dict): HEP record
+
+    Returns:
+        Iterable[string]: ORCIDs of authors
+    """
+    authors_with_refs = {'authors': replace_refs(record.get('authors'))}
+    return (
+        uid['value'] for uid
+        in chain(*get_value(authors_with_refs, 'authors.record.ids', []))
+        if uid['schema'] == 'ORCID'
+    )
