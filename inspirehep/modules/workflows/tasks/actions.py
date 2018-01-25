@@ -257,6 +257,29 @@ def populate_journal_coverage(obj, eng):
 
 
 @with_debug_logging
+def fix_submission_number(obj, eng):
+    """Ensure that the submission number contains the workflow object id.
+
+    Unlike form submissions, records coming from HEPCrawl can't know yet which
+    workflow object they will create, so they use the crawler job id as their
+    submission number. We would like to have there instead the id of the workflow
+    object from which they came from, so that, given a record, we can link to their
+    original Holding Pen entry.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        None
+
+    """
+    method = get_value(obj.data, 'acquisition_source.method', default='')
+    if method == 'hepcrawl':
+        obj.data['acquisition_source']['submission_number'] = obj.id
+
+
+@with_debug_logging
 def submission_fulltext_download(obj, eng):
     submission_pdf = obj.extra_data.get('submission_pdf')
     if submission_pdf and is_pdf_link(submission_pdf):

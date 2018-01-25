@@ -34,6 +34,7 @@ from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.actions import (
     _is_auto_rejected,
     add_core,
+    fix_submission_number,
     halt_record,
     in_production_mode,
     is_arxiv_paper,
@@ -44,8 +45,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_submission,
     mark,
     populate_journal_coverage,
-    reject_record,
     refextract,
+    reject_record,
     set_refereed_and_fix_document_type,
     shall_halt_workflow,
     submission_fulltext_download,
@@ -396,6 +397,48 @@ def test_is_submission_returns_false_if_obj_has_falsy_acquisition_source():
     eng = MockEng()
 
     assert not is_submission(obj, eng)
+
+
+def test_fix_submission_number():
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+
+    data = {
+        'acquisition_source': {
+            'method': 'hepcrawl',
+            'submission_number': '751e374a017311e896d6fa163ec92c6a',
+        },
+    }
+    extra_data = {}
+    assert validate(data['acquisition_source'], subschema) is None
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    fix_submission_number(obj, eng)
+
+    assert obj.data['acquisition_source']['submission_number'] == 1
+
+
+def fix_submission_number_does_nothing_if_method_is_not_hepcrawl():
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+
+    data = {
+        'acquisition_source': {
+            'method': 'submitter',
+            'submission_number': '869215',
+        },
+    }
+    extra_data = {}
+    assert validate(data['acquisition_source'], subschema) is None
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    fix_submission_number(obj, eng)
+
+    assert obj.data['acquisition_source']['submission_number'] == '869215'
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
