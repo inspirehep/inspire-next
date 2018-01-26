@@ -34,6 +34,7 @@ from itertools import chain
 
 import click
 from celery import group, shared_task
+from dojson.contrib.marc21.utils import create_record
 from elasticsearch.helpers import bulk as es_bulk
 from elasticsearch.helpers import scan as es_scan
 from flask import current_app
@@ -341,48 +342,44 @@ def record_insert_or_replace(json, skip_files=False):
 
 
 def migrate_and_insert_record(raw_record, skip_files=False):
-    """Convert a marc21 record to JSON and insert it into the DB."""
-    error = None
-
+    """Migrate a record and insert it if valid, or log otherwise."""
     try:
         json_record = marcxml2record(raw_record)
+        recid = json_record['control_number']
     except Exception as e:
         LOGGER.exception('Migrator DoJSON Error')
-        error = e
-        recid = 'No recid extracted'
-        prod_record = None
-    else:
-        if '$schema' in json_record:
-            ensure_valid_schema(json_record)
+        recid = _get_recid(raw_record)
+        _store_migrator_error(recid, raw_record, e)
+        return None
 
-        recid = json_record['control_number']
-        prod_record = InspireProdRecords(recid=recid)
-        prod_record.marcxml = raw_record
+    if '$schema' in json_record:
+        ensure_valid_schema(json_record)
 
     try:
-        if not error:
-            record = record_insert_or_replace(json_record, skip_files=skip_files)
+        record = record_insert_or_replace(json_record, skip_files=skip_files)
     except ValidationError as e:
-        # Aggregate logs by part of schema being validated.
         pattern = u'Migrator Validator Error: {}, Value: %r, Record: %r'
         LOGGER.error(pattern.format('.'.join(e.schema_path)), e.instance, recid)
-        error = e
+        _store_migrator_error(recid, raw_record, e)
     except Exception as e:
-        # Receivers can always cause exceptions and we could dump the entire
-        # chunk because of a single broken record.
         LOGGER.exception('Migrator Record Insert Error')
-        error = e
-
-    if error:
-        # Invalid record, will not get indexed.
-        error_str = u'{0}: Record {1}: {2}'.format(type(error), recid, e)
-        if prod_record:
-            prod_record.valid = False
-            prod_record.errors = error_str
-            db.session.merge(prod_record)
-
-        return None
+        _store_migrator_error(recid, raw_record, e)
     else:
+        prod_record = InspireProdRecords(recid=recid)
+        prod_record.marcxml = raw_record
         prod_record.valid = True
         db.session.merge(prod_record)
         return record
+
+
+def _get_recid(raw_record):
+    return int(create_record(raw_record)['001'])
+
+
+def _store_migrator_error(recid, marcxml, error):
+    error_str = u'{0}: Record {1}: {2}'.format(type(error), recid, error)
+    prod_record = InspireProdRecords(recid=recid)
+    prod_record.valid = False
+    prod_record.marcxml = marcxml
+    prod_record.errors = error_str
+    db.session.merge(prod_record)
