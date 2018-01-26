@@ -22,7 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
 import re
 
 from selenium.common.exceptions import (
@@ -32,9 +31,10 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
-from . import holding_panel_literature_list
-from ..arsenic import Arsenic, ArsenicResponse
+from inspirehep.bat.arsenic import Arsenic, ArsenicResponse
 from inspirehep.bat.EC import GetText, TryClick
+from inspirehep.bat.pages import holding_panel_literature_list
+from inspirehep.bat.utils import handle_timeuot_exception
 
 
 def go_to():
@@ -92,11 +92,6 @@ def accept_record():
             TryClick((By.XPATH, '//button[@class="btn btn-warning"]'))
         )
     except Exception as exc:
-        scrn_shot = arsenic.selenium.get_screenshot_as_base64()
-        arsenic.get(os.environ['SERVER_NAME'] + '/api/holdingpen')
-        new_message = exc.message
-        new_message += '\nPage Source:\n' + '#' * 20 + '\n' + arsenic.page_source
-        new_message += '\nPage Screenshot base64:\n' + '#' * 20 + '\n' + scrn_shot
-        raise exc.__class__(new_message)
+        handle_timeuot_exception(arsenic=arsenic, exc=exc, with_api=True)
 
     return ArsenicResponse(_accept_record)

@@ -29,8 +29,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from . import create_literature
-from ..arsenic import Arsenic
+from inspirehep.bat.arsenic import Arsenic
+from inspirehep.bat.pages import create_literature
+from inspirehep.bat.utils import handle_timeuot_exception
 
 
 def log_in(user_id, password):
@@ -51,11 +52,7 @@ def log_out():
             EC.visibility_of_element_located((By.ID, 'user-info'))
         )
     except Exception as exc:
-        scrn_shot = Arsenic().selenium.get_screenshot_as_base64()
-        new_message = exc.message
-        new_message += '\nCurrent URL: %s\n' % arsenic.current_url
-        new_message += '\nPage Screenshot base64:\n' + '#' * 20 + '\n' + scrn_shot
-        raise exc.__class__(new_message)
+        handle_timeuot_exception(arsenic=arsenic, exc=exc)
 
     arsenic.find_element_by_id('user-info').click()
     arsenic.find_element_by_xpath('(//button[@type="button"])[2]').click()
