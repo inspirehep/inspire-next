@@ -34,6 +34,7 @@ from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.actions import (
     _is_auto_rejected,
     add_core,
+    fix_submission_number,
     halt_record,
     in_production_mode,
     is_arxiv_paper,
@@ -43,9 +44,10 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_record_relevant,
     is_submission,
     mark,
-    prepare_update_payload,
-    reject_record,
+    populate_journal_coverage,
     refextract,
+    reject_record,
+    set_refereed_and_fix_document_type,
     shall_halt_workflow,
     submission_fulltext_download,
 )
@@ -397,34 +399,138 @@ def test_is_submission_returns_false_if_obj_has_falsy_acquisition_source():
     assert not is_submission(obj, eng)
 
 
-def test_prepare_update_payload():
-    obj = MockObj({}, {})
+def test_fix_submission_number():
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+
+    data = {
+        'acquisition_source': {
+            'method': 'hepcrawl',
+            'submission_number': '751e374a017311e896d6fa163ec92c6a',
+        },
+    }
+    extra_data = {}
+    assert validate(data['acquisition_source'], subschema) is None
+
+    obj = MockObj(data, extra_data)
     eng = MockEng()
 
-    default_prepare_update_payload = prepare_update_payload()
+    fix_submission_number(obj, eng)
 
-    assert default_prepare_update_payload(obj, eng) is None
-    assert obj.extra_data['update_payload'] == {}
+    expected = {
+        'method': 'hepcrawl',
+        'submission_number': '1',
+    }
+    result = obj.data['acquisition_source']
+
+    assert validate(result, subschema) is None
+    assert expected == result
 
 
-def test_prepare_update_payload_accepts_a_custom_key():
-    obj = MockObj({}, {})
+def fix_submission_number_does_nothing_if_method_is_not_hepcrawl():
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+
+    data = {
+        'acquisition_source': {
+            'method': 'submitter',
+            'submission_number': '869215',
+        },
+    }
+    extra_data = {}
+    assert validate(data['acquisition_source'], subschema) is None
+
+    obj = MockObj(data, extra_data)
     eng = MockEng()
 
-    custom_key_prepare_update_payload = prepare_update_payload('custom_key')
+    fix_submission_number(obj, eng)
 
-    assert custom_key_prepare_update_payload(obj, eng) is None
-    assert obj.extra_data['custom_key'] == {}
+    expected = {
+        'method': 'submitter',
+        'submission_number': '869215',
+    }
+    result = obj.data['acquisition_source']
+
+    assert validate(result, subschema) is None
+    assert expected == result
 
 
-def test_prepare_update_payload_overwrites():
-    obj = MockObj({'bar': 'baz'}, {'foo': 'foo'})
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_populate_journal_coverage_writes_full_if_any_coverage_is_full(mock_replace_refs):
+    schema = load_schema('journals')
+    subschema = schema['properties']['_harvesting_info']
+
+    journals = [{'_harvesting_info': {'coverage': 'full'}}]
+    assert validate(journals[0]['_harvesting_info'], subschema) is None
+
+    mock_replace_refs.return_value = journals
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    data = {
+        'publication_info': [
+            {'journal_record': {'$ref': 'http://localhost:/api/journals/1213103'}},
+        ],
+    }
+    extra_data = {}
+    assert validate(data['publication_info'], subschema) is None
+
+    obj = MockObj(data, extra_data)
     eng = MockEng()
 
-    foo_prepare_update_payload = prepare_update_payload('foo')
+    assert populate_journal_coverage(obj, eng) is None
 
-    assert foo_prepare_update_payload(obj, eng) is None
-    assert obj.extra_data['foo'] == {'bar': 'baz'}
+    expected = 'full'
+    result = obj.extra_data['journal_coverage']
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_populate_journal_coverage_writes_partial_if_all_coverages_are_partial(mock_replace_refs):
+    schema = load_schema('journals')
+    subschema = schema['properties']['_harvesting_info']
+
+    journals = [{'_harvesting_info': {'coverage': 'partial'}}]
+    assert validate(journals[0]['_harvesting_info'], subschema) is None
+
+    mock_replace_refs.return_value = journals
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    data = {
+        'publication_info': [
+            {'journal_record': {'$ref': 'http://localhost:/api/journals/1212337'}},
+        ],
+    }
+    extra_data = {}
+    assert validate(data['publication_info'], subschema) is None
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert populate_journal_coverage(obj, eng) is None
+
+    expected = 'partial'
+    result = obj.extra_data['journal_coverage']
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_populate_journal_coverage_does_nothing_if_no_journal_is_found(mock_replace_refs):
+    mock_replace_refs.return_value = []
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert populate_journal_coverage(obj, eng) is None
+    assert 'journal_coverage' not in obj.extra_data
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.get_pdf_in_workflow')
@@ -571,3 +677,131 @@ def test_submission_fulltext_download_does_not_duplicate_documents():
         result = obj.data['documents']
 
         assert expected_documents == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_set_refereed_and_fix_document_type(mock_replace_refs):
+    schema = load_schema('journals')
+    subschema = schema['properties']['refereed']
+
+    journals = [{'refereed': True}]
+    assert validate(journals[0]['refereed'], subschema) is None
+
+    mock_replace_refs.return_value = journals
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['refereed']
+
+    data = {'document_type': ['article']}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert set_refereed_and_fix_document_type(obj, eng) is None
+
+    expected = True
+    result = obj.data['refereed']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_set_refereed_and_fix_document_type_handles_journals_that_publish_mixed_content(mock_replace_refs):
+    schema = load_schema('journals')
+    proceedings_schema = schema['properties']['proceedings']
+    refereed_schema = schema['properties']['refereed']
+
+    journals = [{'proceedings': True, 'refereed': True}]
+    assert validate(journals[0]['proceedings'], proceedings_schema) is None
+    assert validate(journals[0]['refereed'], refereed_schema) is None
+
+    mock_replace_refs.return_value = journals
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['refereed']
+
+    data = {'document_type': ['article']}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert set_refereed_and_fix_document_type(obj, eng) is None
+
+    expected = True
+    result = obj.data['refereed']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_set_refereed_and_fix_document_type_sets_refereed_to_false_if_all_journals_are_not_refereed(mock_replace_refs):
+    schema = load_schema('journals')
+    subschema = schema['properties']['refereed']
+
+    journals = [{'refereed': False}]
+    assert validate(journals[0]['refereed'], subschema) is None
+
+    mock_replace_refs.return_value = journals
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['refereed']
+
+    data = {'document_type': ['article']}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert set_refereed_and_fix_document_type(obj, eng) is None
+
+    expected = False
+    result = obj.data['refereed']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_set_refereed_and_fix_document_type_replaces_article_with_conference_paper_if_needed(mock_replace_refs):
+    schema = load_schema('journals')
+    subschema = schema['properties']['proceedings']
+
+    journals = [{'proceedings': True}]
+    assert validate(journals[0]['proceedings'], subschema) is None
+
+    mock_replace_refs.return_value = journals
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['document_type']
+
+    data = {'document_type': ['article']}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert set_refereed_and_fix_document_type(obj, eng) is None
+
+    expected = ['conference paper']
+    result = obj.data['document_type']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+def test_set_refereed_and_fix_document_type_does_nothing_if_no_journals_were_found(mock_replace_refs):
+    mock_replace_refs.return_value = []
+
+    data = {'document_type': ['article']}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert set_refereed_and_fix_document_type(obj, eng) is None
+    assert 'refereed' not in obj.data

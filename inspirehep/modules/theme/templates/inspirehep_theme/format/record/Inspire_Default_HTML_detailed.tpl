@@ -76,7 +76,7 @@
         <div class="col-md-12" id="admin-tools">
           {% for tool in record.admin_tools %}
             {% if tool == 'editor' %}
-              <a href="/editor/literature/{{record.control_number}}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+              <a href="/editor/record/literature/{{record.control_number}}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
             {% endif %}
           {% endfor %}
         </div>

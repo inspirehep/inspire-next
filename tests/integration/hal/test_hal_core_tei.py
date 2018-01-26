@@ -59,3 +59,13 @@ def test_convert_to_tei(cern_with_hal_id):
     result = etree.fromstring(convert_to_tei(record).encode('utf8'))
 
     assert schema.validate(result)
+
+
+def test_convert_to_tei_handles_preprints(app):
+    record = get_db_record('lit', 1498589)
+
+    schema = etree.XMLSchema(etree.parse(pkg_resources.resource_stream(
+        __name__, os.path.join('fixtures', 'aofr.xsd'))))
+    result = etree.fromstring(convert_to_tei(record).encode('utf8'))
+
+    assert schema.validate(result)

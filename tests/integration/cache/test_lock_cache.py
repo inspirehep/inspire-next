@@ -20,14 +20,37 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Bundle definition for record editor."""
+"""Test lock cache."""
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_assets import NpmBundle
+from inspirehep.modules.cache import lock_cache
 
-js = NpmBundle(
-    npm={
-        "record-editor": "^0.12.0"
-    }
-)
+
+def test_lock_cache_creation(app):
+    """Test set key."""
+    lock_cache.set('Defenders', 'Jessica Jones')
+    expected = 'Jessica Jones'
+    result = lock_cache.get('Defenders')
+
+    assert expected == result
+
+    lock_cache.set('Defenders', 'Jessica Jones, Luke Cage')
+    expected = 'Jessica Jones, Luke Cage'
+    result = lock_cache.get('Defenders')
+
+    assert expected == result
+
+
+def test_lock_cache_deletion():
+    """Test delete key."""
+    lock_cache.set('Defenders', 'Jessica Jones')
+    expected = 'Jessica Jones'
+    result = lock_cache.get('Defenders')
+
+    assert expected == result
+
+    lock_cache.delete('Defenders')
+    result = lock_cache.get('Defenders')
+
+    assert result is None

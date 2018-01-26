@@ -73,7 +73,8 @@ def does_exist_in_inspirehep(query, collections=None):
             params['c'] = collections
 
     json_reply = requests.get(
-        "http://inspirehep.net/search?", params=params).text
+        current_app.config['LEGACY_MATCH_ENDPOINT'] + "?", params=params
+    ).text
 
     reply = loads(json_reply)
     # not an array -> invalid answer
@@ -142,7 +143,10 @@ def inspirehep_duplicated_validator(inspire_query, property_name, collections=No
     Needs to be wrapped in a function with proper validator signature.
     """
     if does_exist_in_inspirehep(inspire_query, collections):
-        url = "http://inspirehep.net/search?" + urlencode({'p': inspire_query})
+        url = "{0}?{1}".format(
+            current_app.config['LEGACY_MATCH_ENDPOINT'],
+            urlencode({'p': inspire_query})
+        )
         if collections:
             if len(collections) == 1:
                 url += '&' + urlencode({'cc': collections[0]})

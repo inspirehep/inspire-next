@@ -20,14 +20,32 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Bundle definition for record editor."""
-
 from __future__ import absolute_import, division, print_function
 
-from invenio_assets import NpmBundle
+from inspirehep.utils.schema import ensure_valid_schema
 
-js = NpmBundle(
-    npm={
-        "record-editor": "^0.12.0"
+
+def test_ensure_valid_schema_invalid():
+    record = {
+        '$schema': 'authors.json'
     }
-)
+
+    expected = {
+        '$schema': 'http://localhost:5000/schemas/records/authors.json'
+    }
+    ensure_valid_schema(record)
+
+    assert record == expected
+
+
+def test_ensure_valid_schema_already_valid():
+    record = {
+        '$schema': 'https://labs.inspirehep.net/schemas/records/authors.json'
+    }
+
+    expected = {
+        '$schema': 'https://labs.inspirehep.net/schemas/records/authors.json'
+    }
+    ensure_valid_schema(record)
+
+    assert record == expected

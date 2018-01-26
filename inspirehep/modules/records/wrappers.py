@@ -193,11 +193,14 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
 
         # Keep only those external_system_identifiers whose 'schema' appear
         # as keys in ext_id_dict
-        filtered_ext_ids = filter(lambda x: x['schema'].lower() in ext_id_dict, unique_ext_ids)
+        filtered_ext_ids = [unique_ext_id for unique_ext_id in unique_ext_ids
+                            if unique_ext_id['schema'].lower() in ext_id_dict]
 
         # Map each external_system_identifier in filtered _ext_ids to
         # a link name and link url
-        mapped_ext_ids = map(lambda x: self.get_link_info_for_external_sys_identifiers(x['value'], list(ext_id_dict[x['schema'].lower()])), filtered_ext_ids)
+        mapped_ext_ids = [self.get_link_info_for_external_sys_identifiers(filtered_ext_id['value'],
+                          list(ext_id_dict[filtered_ext_id['schema'].lower()]))
+                          for filtered_ext_id in filtered_ext_ids]
 
         # Set fallback ADS link via arXiv:e-print
         for ext_sys_id in mapped_ext_ids:

@@ -24,8 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from flask import url_for
-
 from invenio_db import db
 
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
@@ -33,6 +31,7 @@ from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.utils import with_debug_logging
 from inspirehep.utils.record_getter import get_db_record
+from inspirehep.utils.schema import ensure_valid_schema
 
 
 @with_debug_logging
@@ -87,12 +86,9 @@ def set_schema(obj, eng):
     else:
         obj.log.debug('Schema already there')
 
-    if not obj.data['$schema'].startswith('http'):
-        old_schema = obj.data['$schema']
-        obj.data['$schema'] = url_for(
-            'invenio_jsonschemas.get_schema',
-            schema_path="records/{0}".format(obj.data['$schema'])
-        )
+    old_schema = obj.data['$schema']
+    ensure_valid_schema(obj.data)
+    if obj.data['$schema'] != old_schema:
         obj.log.debug(
             'Schema changed to %s from %s', obj.data['$schema'], old_schema
         )

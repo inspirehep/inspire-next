@@ -29,6 +29,10 @@ from six import iteritems
 from six.moves.urllib.parse import urlsplit
 
 
+def get_pid_types_from_endpoints():
+    return _get_pid_type_endpoint_map().keys()
+
+
 def _get_pid_type_endpoint_map():
     pid_type_endpoint_map = {}
     for key, value in iteritems(current_app.config['RECORDS_REST_ENDPOINTS']):

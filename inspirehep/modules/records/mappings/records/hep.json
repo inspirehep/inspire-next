@@ -211,6 +211,10 @@
                             },
                             "type": "string"
                         },
+                        "full_name_unicode_normalized": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
                         "ids": {
                             "properties": {
                                 "schema": {
@@ -702,7 +706,8 @@
                             "type": "string"
                         },
                         "year": {
-                            "type": "integer"
+                            "format": "yyyy",
+                            "type": "date"
                         }
                     },
                     "type": "nested"
@@ -881,7 +886,8 @@
                                             "type": "string"
                                         },
                                         "year": {
-                                            "type": "integer"
+                                            "format": "yyyy",
+                                            "type": "date"
                                         }
                                     },
                                     "type": "object"

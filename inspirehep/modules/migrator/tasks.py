@@ -36,7 +36,7 @@ import click
 from celery import group, shared_task
 from elasticsearch.helpers import bulk as es_bulk
 from elasticsearch.helpers import scan as es_scan
-from flask import current_app, url_for
+from flask import current_app
 from flask_sqlalchemy import models_committed
 from jsonschema import ValidationError
 from redis import StrictRedis
@@ -56,9 +56,13 @@ from inspire_utils.dedupers import dedupe_list
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
-from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
+from inspirehep.modules.pidstore.utils import (
+    get_pid_type_from_schema,
+    get_pid_types_from_endpoints,
+)
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.receivers import index_after_commit
+from inspirehep.utils.schema import ensure_valid_schema
 
 from .models import InspireProdRecords
 
@@ -239,18 +243,21 @@ def migrate_chunk(chunk, skip_files=False):
     models_committed.connect(index_after_commit)
 
 
+def _build_recid_to_uuid_map(citations_lookup):
+    numeric_pid_types = get_pid_types_from_endpoints()
+    pids = PersistentIdentifier.query.filter(
+        PersistentIdentifier.object_type == 'rec',
+        PersistentIdentifier.pid_type.in_(numeric_pid_types)).yield_per(
+        1000)
+    with click.progressbar(pids) as bar:
+        return {
+            pid.object_uuid: citations_lookup[int(pid.pid_value)]
+            for pid in bar if int(pid.pid_value) in citations_lookup
+        }
+
+
 @shared_task()
 def add_citation_counts(chunk_size=500, request_timeout=120):
-    def _build_recid_to_uuid_map(citations_lookup):
-        pids = PersistentIdentifier.query.filter(
-            PersistentIdentifier.object_type == 'rec').yield_per(1000)
-
-        with click.progressbar(pids) as bar:
-            return {
-                pid.object_uuid: citations_lookup[int(pid.pid_value)]
-                for pid in bar if int(pid.pid_value) in citations_lookup
-            }
-
     def _get_records_to_update_generator(citations_lookup):
         with click.progressbar(citations_lookup.iteritems()) as bar:
             for uuid, citation_count in bar:
@@ -339,15 +346,15 @@ def migrate_and_insert_record(raw_record, skip_files=False):
 
     try:
         json_record = marcxml2record(raw_record)
-        if '$schema' in json_record:
-            json_record['$schema'] = url_for(
-                'invenio_jsonschemas.get_schema',
-                schema_path='records/{0}'.format(json_record['$schema']),
-            )
     except Exception as e:
         LOGGER.exception('Migrator DoJSON Error')
         error = e
+        recid = 'No recid extracted'
+        prod_record = None
     else:
+        if '$schema' in json_record:
+            ensure_valid_schema(json_record)
+
         recid = json_record['control_number']
         prod_record = InspireProdRecords(recid=recid)
         prod_record.marcxml = raw_record
@@ -369,9 +376,11 @@ def migrate_and_insert_record(raw_record, skip_files=False):
     if error:
         # Invalid record, will not get indexed.
         error_str = u'{0}: Record {1}: {2}'.format(type(error), recid, e)
-        prod_record.valid = False
-        prod_record.errors = error_str
-        db.session.merge(prod_record)
+        if prod_record:
+            prod_record.valid = False
+            prod_record.errors = error_str
+            db.session.merge(prod_record)
+
         return None
     else:
         prod_record.valid = True

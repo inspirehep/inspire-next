@@ -25,19 +25,18 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import re
+from functools import wraps
+
+from flask import current_app
 from sqlalchemy import (
     JSON,
     String,
     cast,
     type_coerce,
 )
-
-from functools import wraps
-import re
-
-from flask import current_app
-from werkzeug import secure_filename
 from timeout_decorator import TimeoutError
+from werkzeug import secure_filename
 
 from invenio_db import db
 from invenio_workflows import ObjectStatus
@@ -46,7 +45,6 @@ from invenio_records.models import RecordMetadata
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_utils.record import get_value
 from inspirehep.modules.records.json_ref_loader import replace_refs
-
 from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_pdf,
     extract_references_from_text,
@@ -233,17 +231,52 @@ def is_submission(obj, eng):
 
 
 @with_debug_logging
-def get_journal_coverage(obj, eng):
-    """Return the journal coverage that this article belongs to."""
-    journals = replace_refs(get_value(obj.data, 'publication_info.journal_record'), 'db')
+def populate_journal_coverage(obj, eng):
+    """Populate ``journal_coverage`` from the Journals DB.
 
+    Searches in the Journals DB if the current article was published in a
+    journal that we harvest entirely, then populates the ``journal_coverage``
+    key in ``extra_data`` with ``'full'`` if it was, ``'partial' otherwise.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        None
+
+    """
+    journals = replace_refs(get_value(obj.data, 'publication_info.journal_record'), 'db')
     if not journals:
         return
 
-    if any(journal['_harvesting_info'].get('coverage') == 'full' for journal in journals):
+    if any(get_value(journal, '_harvesting_info.coverage') == 'full' for journal in journals):
         obj.extra_data['journal_coverage'] = 'full'
     else:
         obj.extra_data['journal_coverage'] = 'partial'
+
+
+@with_debug_logging
+def fix_submission_number(obj, eng):
+    """Ensure that the submission number contains the workflow object id.
+
+    Unlike form submissions, records coming from HEPCrawl can't know yet which
+    workflow object they will create, so they use the crawler job id as their
+    submission number. We would like to have there instead the id of the workflow
+    object from which they came from, so that, given a record, we can link to their
+    original Holding Pen entry.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        None
+
+    """
+    method = get_value(obj.data, 'acquisition_source.method', default='')
+    if method == 'hepcrawl':
+        obj.data['acquisition_source']['submission_number'] = str(obj.id)
 
 
 @with_debug_logging
@@ -274,21 +307,6 @@ def submission_fulltext_download(obj, eng):
             return obj.files[filename].file.uri
         else:
             obj.log.info('Cannot fetch PDF provided by user from %s', submission_pdf)
-
-
-def prepare_update_payload(extra_data_key="update_payload"):
-    @with_debug_logging
-    @wraps(prepare_update_payload)
-    def _prepare_update_payload(obj, eng):
-        # TODO: Perform auto-merge if possible and update only necessary data
-        # See obj.extra_data["record_matches"] for data on matches
-
-        # FIXME: Just update entire record for now
-        obj.extra_data[extra_data_key] = obj.data
-
-    _prepare_update_payload.__doc__ = (
-        'Prepare the update payload, extra_data_key=%s.' % extra_data_key)
-    return _prepare_update_payload
 
 
 @with_debug_logging
@@ -416,3 +434,56 @@ def normalize_journal_titles(obj, eng):
 
             if result:
                 obj.data['publication_info'][index]['journal_record'] = result.records_metadata_json['self']
+
+
+@with_debug_logging
+def set_refereed_and_fix_document_type(obj, eng):
+    """Set the ``refereed`` field using the Journals DB.
+
+    Searches in the Journals DB if the current article was published in journals
+    that we know for sure to be peer-reviewed, or that publish both peer-reviewed
+    and non peer-reviewed content but for which we can infer that it belongs to
+    the former category, and sets the ``refereed`` key in ``data`` to ``True`` if
+    that was the case. If instead we know for sure that all journals in which it
+    published are **not** peer-reviewed we set it to ``False``.
+
+    Also replaces the ``article`` document type with ``conference paper`` if the
+    paper was only published in non refereed proceedings.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        None
+
+    """
+    journals = replace_refs(get_value(obj.data, 'publication_info.journal_record'), 'db')
+    if not journals:
+        return
+
+    is_published_in_a_refereed_journal_that_does_not_publish_proceedings = any(
+        journal.get('refereed') and not journal.get('proceedings') for journal in journals)
+    is_published_in_a_refereed_journal_that_also_publishes_proceedings = any(
+        journal.get('refereed') and journal.get('proceedings') for journal in journals)
+    is_not_a_conference_paper = 'conference paper' not in obj.data['document_type']
+
+    is_published_exclusively_in_non_refereed_journals = all(
+        not journal.get('refereed', True) for journal in journals)
+
+    if is_published_in_a_refereed_journal_that_does_not_publish_proceedings:
+        obj.data['refereed'] = True
+    elif is_not_a_conference_paper and is_published_in_a_refereed_journal_that_also_publishes_proceedings:
+        obj.data['refereed'] = True
+    elif is_published_exclusively_in_non_refereed_journals:
+        obj.data['refereed'] = False
+
+    is_published_only_in_proceedings = all(journal.get('proceedings') for journal in journals)
+    is_published_only_in_non_refereed_journals = all(not journal.get('refereed') for journal in journals)
+
+    if is_published_only_in_proceedings and is_published_only_in_non_refereed_journals:
+        try:
+            obj.data['document_type'].remove('article')
+            obj.data['document_type'].append('conference paper')
+        except ValueError:
+            pass

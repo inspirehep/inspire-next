@@ -210,6 +210,11 @@ def _robotupload_has_error(result):
     return True, message
 
 
+def _is_an_update(workflow_id):
+    workflow_object = workflow_object_class.get(workflow_id)
+    return bool(workflow_object.extra_data.get('is-update'))
+
+
 def _parse_robotupload_result(result, workflow_id):
     response = {}
     recid = int(result.get('recid'))
@@ -236,17 +241,19 @@ def _parse_robotupload_result(result, workflow_id):
         }
         return response
 
-    pending_entry = WorkflowsPendingRecord(
-        workflow_id=workflow_id,
-        record_id=recid,
-    )
-    db.session.add(pending_entry)
-    db.session.commit()
-    current_app.logger.debug(
-        'Successfully added recid:workflow %s:%s to pending list.',
-        recid,
-        workflow_id,
-    )
+    if not _is_an_update(workflow_id):
+        pending_entry = WorkflowsPendingRecord(
+            workflow_id=workflow_id,
+            record_id=recid,
+        )
+        db.session.add(pending_entry)
+        db.session.commit()
+
+        current_app.logger.debug(
+            'Successfully added recid:workflow %s:%s to pending list.',
+            recid,
+            workflow_id,
+        )
 
     continue_response = _find_and_continue_workflow(
         workflow_id=workflow_id,

@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from copy import copy, deepcopy
+
 from six import StringIO
 
 
@@ -38,11 +40,11 @@ class MockEng(object):
 class MockObj(object):
 
     def __init__(self, data, extra_data, data_type='hep', files=None, id=1, id_user=1):
-        self.data = data
-        self.extra_data = extra_data
+        self.data = deepcopy(data)
+        self.extra_data = deepcopy(extra_data)
 
         self.data_type = data_type
-        self.files = files
+        self.files = files if files is None else copy(files)
         self.id = id
         self.id_user = id_user
 

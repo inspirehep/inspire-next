@@ -326,9 +326,11 @@ def api_friendly_error_handler(f):
     @wraps(f)
     def wrapper(error, *args, **kwargs):
         if current_app.config.get('RESTFUL_API'):
-            try:
+            # See: https://hynek.me/articles/hasattr/
+            code, name = getattr(error, 'code', None), getattr(error, 'name', None)
+            if code is not None and name is not None:
                 return jsonify(code=error.code, message=error.name), error.code
-            except Exception:
+            else:
                 six.reraise(*sys.exc_info())
         return f(error, *args, **kwargs)
 

@@ -20,14 +20,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Bundle definition for record editor."""
+"""Helper proxies."""
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_assets import NpmBundle
+from werkzeug.local import LocalProxy
 
-js = NpmBundle(
-    npm={
-        "record-editor": "^0.12.0"
-    }
+from .providers.lock import LockCache
+
+lock_cache = LocalProxy(
+    lambda: LockCache()
 )

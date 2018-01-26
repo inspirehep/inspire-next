@@ -63,7 +63,7 @@ install_requires = [
     'inspire-dojson~=58.0,>=58.0.0',
     'inspire-json-merger~=7.0,>=7.0.0',
     'inspire-matcher~=4.0,>=4.0.0',
-    'inspire-query-parser~=3.0,>=3.0.0',
+    'inspire-query-parser~=3.0,>=3.1.5',
     'inspire-schemas~=57.0,>=57.0.0',
     'inspire-utils~=2.0,>=2.0.0',
     'invenio-access>=1.0.0b1',
@@ -126,12 +126,13 @@ extras_require = {
         'ipdb~=0.0,>=0.10.3',
     ],
     'crawler-node': [
-        'hepcrawl~=5.0,>=5.0',
+        'hepcrawl~=9.0,>=9.0',
     ],
     'docs': docs_require,
     'tests': tests_require,
     'web-node': [
         'gunicorn~=19.0,>=19.7.1',
+        'honcho~=1.0,>=1.0.1',
     ],
     'worker-node': [
         'flower~=0.0,>=0.9.2',

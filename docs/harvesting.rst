@@ -107,7 +107,7 @@ In your local config (`${VIRTUAL_ENV}/var/inspirehep-instance/inspirehep.cfg`) a
 
 Now you are ready to trigger harvests. There are two options on how to trigger harvests; `oaiharvester` like in 3.1 (TODO: trigger via shell/CLI).
 
-Via OAI-PMH:
+Via Invenio oaiharvester (**deprecated for arXiv**):
 
 .. code-block:: bash
 
@@ -124,3 +124,9 @@ Via shell:
 
     from inspire_crawler.tasks import schedule_crawl
     schedule_crawl(spider, workflow, **kwargs)
+
+Via inspirehep cli:
+
+.. code-block:: bash
+
+    (inspire)$ inspirehep crawler schedule --kwarg 'sets=hep-ph,math-ph' --kwarg 'from_date=2018-01-01' arXiv article

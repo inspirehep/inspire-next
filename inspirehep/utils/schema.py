@@ -20,14 +20,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Bundle definition for record editor."""
-
 from __future__ import absolute_import, division, print_function
 
-from invenio_assets import NpmBundle
+from flask import url_for
 
-js = NpmBundle(
-    npm={
-        "record-editor": "^0.12.0"
-    }
-)
+
+def ensure_valid_schema(record):
+    """Make sure the ``$schema`` key of the record is valid.
+
+    This is done by setting the correct url to the schema, in case it only
+    contains the schema filename.
+    """
+    if not record['$schema'].startswith('http'):
+        record['$schema'] = url_for(
+            'invenio_jsonschemas.get_schema',
+            schema_path="records/{0}".format(record['$schema'])
+        )

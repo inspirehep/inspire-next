@@ -26,7 +26,7 @@ import copy
 import datetime
 import os
 
-from flask import current_app, url_for
+from flask import current_app
 from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_accounts.models import User
@@ -36,6 +36,7 @@ from inspire_dojson.utils import strip_empty_values
 from inspire_schemas.api import validate
 from inspirehep.modules.forms.utils import filter_empty_elements
 from inspirehep.modules.workflows.utils import with_debug_logging
+from inspirehep.utils.schema import ensure_valid_schema
 
 from .dojson.model import updateform
 
@@ -59,14 +60,12 @@ def formdata_to_model(obj, formdata):
     # ======
     # Schema
     # ======
+
+    # FIXME it's not clear whether $schema is ever present at this stage
     if '$schema' not in data and '$schema' in obj.data:
         data['$schema'] = obj.data.get('$schema')
-
-    if '$schema' in data and not data['$schema'].startswith('http'):
-        data['$schema'] = url_for(
-            'invenio_jsonschemas.get_schema',
-            schema_path="records/{0}".format(data['$schema'])
-        )
+    if '$schema' in data:
+        ensure_valid_schema(data)
 
     author_name = ''
 

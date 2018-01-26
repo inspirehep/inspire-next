@@ -41,6 +41,7 @@ from inspire_dojson import marcxml2record
 from inspire_schemas.api import validate
 from inspire_utils.helpers import force_list
 
+from inspirehep.utils.schema import ensure_valid_schema
 from .models import InspireProdRecords
 from .tasks import (
     add_citation_counts,
@@ -151,6 +152,8 @@ def reporterrors(output):
                 tb = u''.join(traceback.format_tb(sys.exc_info()[2]))
                 errors.setdefault((collection, 'dojson', tb), []).append(recid)
                 continue
+
+            ensure_valid_schema(json_record)
 
             try:
                 validate(json_record)

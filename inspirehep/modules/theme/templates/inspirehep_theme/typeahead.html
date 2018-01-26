@@ -80,15 +80,6 @@ require(
               scope.placeholder = attrs.placeholder;
               scope.updateQuery = updateQuery;
               scope.collection = attrs.collection;
-
-              $("#search").searchTypeahead({
-                // A server returning a list of values is needed
-                // Also CORS needs to be enabled, e.g with a browser extension
-                value_hints_url: "{{config.get('SEARCH_TYPEAHEAD_HINT_URL')|safe}}",
-                options_sets: parser_config,
-                default_set: "{{config.get('SEARCH_TYPEAHEAD_DEFAULT_SET')}}",
-                suggestion_fn: suggestion_fn
-              });
             }
             function templateUrl(element, attrs) {
               return attrs.template;
@@ -100,15 +91,6 @@ require(
               templateUrl: templateUrl,
               link: link,
             };
-        });
-      {% else %}
-        $("#search").searchTypeahead({
-          // A server returning a list of values is needed
-          // Also CORS needs to be enabled, e.g with a browser extension
-          value_hints_url: "{{config.get('SEARCH_TYPEAHEAD_HINT_URL')|safe}}",
-          options_sets: parser_config,
-          default_set: "{{config.get('SEARCH_TYPEAHEAD_DEFAULT_SET')}}",
-          suggestion_fn: suggestion_fn
         });
       {% endif %}
 

@@ -26,6 +26,7 @@ from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
     get_pid_type_from_endpoint,
     get_pid_type_from_schema,
+    get_pid_types_from_endpoints,
 )
 
 
@@ -55,3 +56,8 @@ def test_get_pid_from_schema_supports_relative_urls():
     result = get_pid_type_from_schema('schemas/record/authors.json')
 
     assert expected == result
+
+
+def test_get_pid_types_from_endpoint(app):
+    pid_types = set(('lit', 'con', 'exp', 'jou', 'aut', 'job', 'ins'))
+    assert pid_types.issubset(get_pid_types_from_endpoints())
