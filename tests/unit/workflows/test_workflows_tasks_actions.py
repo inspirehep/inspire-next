@@ -417,7 +417,14 @@ def test_fix_submission_number():
 
     fix_submission_number(obj, eng)
 
-    assert obj.data['acquisition_source']['submission_number'] == 1
+    expected = {
+        'method': 'hepcrawl',
+        'submission_number': '1',
+    }
+    result = obj.data['acquisition_source']
+
+    assert validate(result, subschema) is None
+    assert expected == result
 
 
 def fix_submission_number_does_nothing_if_method_is_not_hepcrawl():
@@ -438,7 +445,14 @@ def fix_submission_number_does_nothing_if_method_is_not_hepcrawl():
 
     fix_submission_number(obj, eng)
 
-    assert obj.data['acquisition_source']['submission_number'] == '869215'
+    expected = {
+        'method': 'submitter',
+        'submission_number': '869215',
+    }
+    result = obj.data['acquisition_source']
+
+    assert validate(result, subschema) is None
+    assert expected == result
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
