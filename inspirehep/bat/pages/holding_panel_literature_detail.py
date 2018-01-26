@@ -88,7 +88,7 @@ def accept_record():
         if api_url_reg.match(arsenic.current_url):
             go_to()
 
-        WebDriverWait(arsenic, 90).until(
+        WebDriverWait(arsenic, 120).until(
             TryClick((By.XPATH, '//button[@class="btn btn-warning"]'))
         )
     except Exception as exc:
