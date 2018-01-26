@@ -33,6 +33,7 @@ def setup_and_teardown_db():
     with db.session.begin_nested():
         entry = InspireOrcidPutCodes()
         entry.recid = 111111
+        entry.orcid = '0000-0001-7102-4649'
         entry.put_code = 222222
         with db.session.begin_nested():
             db.session.add(entry)
@@ -44,25 +45,39 @@ def setup_and_teardown_db():
 
 
 def test_set_put_code_new(setup_and_teardown_db):
-    InspireOrcidPutCodes.set_put_code(recid=123456, put_code=456789)
+    InspireOrcidPutCodes.set_put_code(
+        recid=123456,
+        orcid='0000-0001-7102-4649',
+        put_code=456789
+    )
 
     expected = 456789
-    result = InspireOrcidPutCodes.query.filter_by(recid=123456).one().put_code
+    result = InspireOrcidPutCodes.query.filter_by(
+        recid=123456,
+        orcid='0000-0001-7102-4649'
+    ).one().put_code
 
     assert expected == result
 
 
 def test_set_put_code_existing(setup_and_teardown_db):
-    InspireOrcidPutCodes.set_put_code(recid=111111, put_code=456789)
+    InspireOrcidPutCodes.set_put_code(
+        recid=111111,
+        orcid='0000-0001-7102-4649',
+        put_code=456789
+    )
 
     expected = 456789
-    result = InspireOrcidPutCodes.query.filter_by(recid=111111).one().put_code
+    result = InspireOrcidPutCodes.query.filter_by(
+        recid=111111,
+        orcid='0000-0001-7102-4649'
+    ).one().put_code
 
     assert expected == result
 
 
 def test_get_put_code(setup_and_teardown_db):
     expected = 222222
-    result = InspireOrcidPutCodes.get_put_code(111111)
+    result = InspireOrcidPutCodes.get_put_code(111111, '0000-0001-7102-4649')
 
     assert expected == result

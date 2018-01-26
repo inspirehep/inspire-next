@@ -111,7 +111,11 @@ def push_record_with_orcid(record, orcid):
             content_type='application/orcid+xml',
         )
 
-        InspireOrcidPutCodes.set_put_code(recid=recid, put_code=inserted_put_code)
+        InspireOrcidPutCodes.set_put_code(
+            recid=recid,
+            orcid=orcid,
+            put_code=inserted_put_code
+        )
 
         LOGGER.info("Record added with put-code {}.".format(inserted_put_code))
 
@@ -140,7 +144,7 @@ def _find_put_code_for_record_in_orcid(record, orcid, oauth_token, api):
     Returns:
         Union[string, NoneType]: put code or None if not found
     """
-    stored_code = InspireOrcidPutCodes.get_put_code(record['control_number'])
+    stored_code = InspireOrcidPutCodes.get_put_code(record['control_number'], orcid)
     if stored_code:
         return stored_code
 

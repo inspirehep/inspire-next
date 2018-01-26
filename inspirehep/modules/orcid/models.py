@@ -30,38 +30,44 @@ from invenio_db import db
 class InspireOrcidPutCodes(db.Model):
     __tablename__ = 'inspire_orcid_put_codes'
 
-    recid = db.Column(db.Integer, primary_key=True, index=True)
+    recid = db.Column(db.Integer, nullable=False, primary_key=True)
+    orcid = db.Column(db.String(19), nullable=False, primary_key=True)
     put_code = db.Column(db.Integer, nullable=False, index=True)
 
+    # __table_args__ = (db.PrimaryKeyConstraint('idx_recid_orcid', 'recid', 'orcid'), )
+
     @classmethod
-    def set_put_code(cls, recid, put_code):
+    def set_put_code(cls, recid, orcid, put_code):
         """Set a put-code for a record.
 
         Args:
             recid (int): record ID
+            orcid (string): ORCID
             put_code (int): ORCID put-code
         """
-        query_existing = cls.query.filter_by(recid=recid)
+        query_existing = cls.query.filter_by(recid=recid, orcid=orcid)
         if query_existing.count() >= 1:
             query_existing.one().put_code = put_code
             return
 
         entry = cls()
         entry.recid = recid
+        entry.orcid = orcid
         entry.put_code = put_code
         with db.session.begin_nested():
             db.session.add(entry)
 
     @classmethod
-    def get_put_code(cls, recid):
+    def get_put_code(cls, recid, orcid):
         """Get put-code for a record.
 
         Args:
             recid (int): record ID
+            orcid (string): ORCID
 
         Returns:
             Union[int, None]: put-code for record, or None if not set
         """
-        query = cls.query.filter_by(recid=recid)
+        query = cls.query.filter_by(recid=recid, orcid=orcid)
         if query.count() >= 1:
             return query.one().put_code
