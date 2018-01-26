@@ -110,3 +110,26 @@ def test_alembic_revision_cb5153afd839(alembic_app):
     assert 'workflows_record_sources' not in inspector.get_table_names()
 
     drop_alembic_version_table()
+
+
+def test_alembic_revision_f9b4c18cfd69(alembic_app):
+    ext = alembic_app.extensions['invenio-db']
+
+    if db.engine.name == 'sqlite':
+        raise pytest.skip('Upgrades are not supported on SQLite.')
+
+    db.drop_all()
+    drop_alembic_version_table()
+
+    inspector = inspect(db.engine)
+    assert 'inspire_orcid_put_codes' not in inspector.get_table_names()
+
+    ext.alembic.upgrade(target='f9b4c18cfd69')
+    inspector = inspect(db.engine)
+    assert 'inspire_orcid_put_codes' in inspector.get_table_names()
+
+    ext.alembic.downgrade(target='cb5153afd839')
+    inspector = inspect(db.engine)
+    assert 'inspire_orcid_put_codes' not in inspector.get_table_names()
+
+    drop_alembic_version_table()
