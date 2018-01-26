@@ -22,11 +22,15 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
 import uuid
+from mock import patch
 
-from inspirehep.modules.migrator.tasks import _build_recid_to_uuid_map
+import pytest
+
 from invenio_pidstore.models import PersistentIdentifier
+
+from inspirehep.modules.migrator.models import InspireProdRecords
+from inspirehep.modules.migrator.tasks import _build_recid_to_uuid_map, migrate_and_insert_record
 
 
 def test_build_recid_to_uuid_map_numeric_pid_allowed_for_lit_and_con(isolated_app):
@@ -61,3 +65,94 @@ def test_build_recid_to_uuid_map_ignored_types(isolated_app):
         citations_lookup[pid.pid_value] = 6
     result = _build_recid_to_uuid_map(citations_lookup)
     assert result == {}
+
+
+@patch('inspirehep.modules.migrator.tasks.LOGGER')
+def test_migrate_and_insert_record_valid_record(mock_logger, isolated_app):
+    raw_record = (
+        '<record>'
+        '  <controlfield tag="001">12345</controlfield>'
+        '  <datafield tag="245" ind1=" " ind2=" ">'
+        '    <subfield code="a">On the validity of INSPIRE records</subfield>'
+        '  </datafield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    migrate_and_insert_record(raw_record)
+
+    prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
+    assert prod_record.valid is True
+    assert prod_record.marcxml == raw_record
+
+    assert not mock_logger.error.called
+    assert not mock_logger.exception.called
+
+
+@patch('inspirehep.modules.migrator.tasks.LOGGER')
+def test_migrate_and_insert_record_dojson_error(mock_logger, isolated_app):
+    raw_record = (
+        '<record>'
+        '  <controlfield tag="001">12345</controlfield>'
+        '  <datafield tag="260" ind1=" " ind2=" ">'
+        '    <subfield code="c">Definitely not a date</subfield>'
+        '  </datafield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    migrate_and_insert_record(raw_record)
+
+    prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
+    assert prod_record.valid is False
+    assert prod_record.marcxml == raw_record
+
+    assert not mock_logger.error.called
+    mock_logger.exception.assert_called_once_with('Migrator DoJSON Error')
+
+
+@patch('inspirehep.modules.migrator.tasks.LOGGER')
+def test_migrate_and_insert_record_invalid_record(mock_logger, isolated_app):
+    raw_record = (
+        '<record>'
+        '  <controlfield tag="001">12345</controlfield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    migrate_and_insert_record(raw_record)
+
+    prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
+    assert prod_record.valid is False
+    assert prod_record.marcxml == raw_record
+
+    assert mock_logger.error.called
+    assert not mock_logger.exception.called
+
+
+@patch('inspirehep.modules.migrator.tasks.record_insert_or_replace', side_effect=Exception())
+@patch('inspirehep.modules.migrator.tasks.LOGGER')
+def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
+    raw_record = (
+        '<record>'
+        '  <controlfield tag="001">12345</controlfield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    migrate_and_insert_record(raw_record)
+
+    prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
+    assert prod_record.valid is False
+    assert prod_record.marcxml == raw_record
+
+    assert not mock_logger.error.called
+    mock_logger.exception.assert_called_once_with('Migrator Record Insert Error')
