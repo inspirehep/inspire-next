@@ -276,7 +276,7 @@ def fix_submission_number(obj, eng):
     """
     method = get_value(obj.data, 'acquisition_source.method', default='')
     if method == 'hepcrawl':
-        obj.data['acquisition_source']['submission_number'] = obj.id
+        obj.data['acquisition_source']['submission_number'] = str(obj.id)
 
 
 @with_debug_logging
