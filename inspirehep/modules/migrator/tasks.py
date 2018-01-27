@@ -267,6 +267,7 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
                     '_index': index,
                     '_type': doc_type,
                     '_id': str(uuid),
+                    '_version_type': 'force',  # XXX: removed in ES@5
                     'doc': {'citation_count': citation_count}
                 }
 
