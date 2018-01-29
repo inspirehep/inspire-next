@@ -165,6 +165,8 @@ services:
         condition: service_started
       selenium:
         condition: service_started
+      selenium:
+        condition: service_started
       test-web:
         condition: service_started
     environment:
@@ -191,7 +193,7 @@ services:
   test-worker:
     extends:
       service: test-service_base
-    command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge -Q celery,migrator
+    command: celery worker -E -A inspirehep.celery --loglevel=INFO -Q celery,migrator
     volumes_from:
       - test-static
     depends_on:
