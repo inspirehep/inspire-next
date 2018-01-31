@@ -45,8 +45,8 @@ def new_ticket_context(user, obj):
         email=user.email,
         object=obj,
         subject=subject,
-        user_comment=get_user_comments(
-            private_notes=obj.data.get('_private_notes', [])
+        user_comment='\n'.join(
+            get_user_comments(private_notes=obj.data.get('_private_notes', []))
         ),
     )
 
@@ -66,8 +66,8 @@ def update_ticket_context(user, obj):
         url=record_url,
         bibedit_url=record_url + "/edit",
         subject=subject,
-        user_comment=get_user_comments(
-            private_notes=obj.data.get('_private_notes', [])
+        user_comment='\n'.join(
+            get_user_comments(private_notes=obj.data.get('_private_notes', []))
         ),
     )
 
@@ -100,7 +100,7 @@ def curation_ticket_context(user, obj):
         recid=recid,
         subject=subject,
         record_url=record_url,
-        user_comment=get_user_comments(
-            private_notes=obj.data.get('_private_notes', [])
+        user_comment='\n'.join(
+            get_user_comments(private_notes=obj.data.get('_private_notes', []))
         ),
     )

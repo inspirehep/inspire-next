@@ -53,13 +53,8 @@ def filter_empty_elements(recjson, list_fields):
 
 
 def get_user_comments(private_notes):
-    user_comments = next(
-        (
-            note.get('value')
-            for note in private_notes
-            if note.get('source') == 'submitter'
-        ),
-        '',
-    )
-
+    user_comments = [
+        comment['value'] for comment in private_notes
+        if comment.get('source') == 'submitter'
+    ]
     return user_comments

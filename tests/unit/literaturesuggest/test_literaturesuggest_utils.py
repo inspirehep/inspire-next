@@ -192,3 +192,22 @@ def test_formdata_to_model_only_chapter(mock_validate_record):
 
     assert validate(data['publication_info'], publication_info_subschema) is None
     assert expected_publication_info == data['publication_info']
+
+
+@patch.object(LiteratureBuilder, 'validate_record')
+def test_formdata_to_model_extra_comments(mock_validate_record):
+    schema = load_schema('hep')
+    private_notes_subschema = schema['properties']['_private_notes']
+
+    formdata = {'extra_comments': 'Custom user input with comments.'}
+
+    expected_private_notes = [
+        {
+            'source': 'submitter',
+            'value': 'Custom user input with comments.',
+        }
+    ]
+    data, _ = formdata_to_model(formdata=formdata, id_workflow=1, id_user=1)
+
+    validate(data['_private_notes'], private_notes_subschema)
+    assert expected_private_notes == data['_private_notes']

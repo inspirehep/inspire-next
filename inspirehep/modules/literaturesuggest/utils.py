@@ -94,11 +94,8 @@ def formdata_to_model(formdata, id_workflow, id_user):
         source='user'
     )
 
-    for key in ('extra_comments', 'nonpublic_note',
-                'hidden_notes', 'conf_name', 'references'):
-        builder.add_private_note(
-            private_notes=form_fields.get(key)
-        )
+    for key in ('extra_comments', 'nonpublic_note', 'hidden_notes', 'conf_name', 'references'):
+        builder.add_private_note(private_notes=form_fields.get(key))
 
     year = form_fields.get('year')
     try:
