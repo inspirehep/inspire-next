@@ -428,6 +428,11 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
             'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
         },
+        suggesters=dict(
+            author=dict(completion=dict(
+                field='author_suggest'
+            ))
+        ),
         list_route='/authors/',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',

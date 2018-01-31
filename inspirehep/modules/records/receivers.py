@@ -148,11 +148,32 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_affiliation_suggest(sender, json, *args, **kwargs)
     populate_author_count(sender, json, *args, **kwargs)
     populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs)
+    populate_author_suggest(sender, json, *args, **kwargs)
     populate_earliest_date(sender, json, *args, **kwargs)
-    populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_inspire_document_type(sender, json, *args, **kwargs)
     populate_name_variations(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
+
+
+def populate_author_suggest(sender, json, *args, **kwargs):
+    """Populate the ``author_suggest`` field of Authors records."""
+    if 'authors.json' not in json.get('$schema'):
+        return
+
+    name = get_value(json, 'name.value', '')
+    input_values = [name]
+
+    record = get_value(json, 'self.$ref', '')
+
+    json.update({
+        'author_suggest': {
+            'input': input_values,
+            'output': name,
+            'payload': {
+                '$ref': record,
+            }
+        },
+    })
 
 
 def populate_book_suggest(sender, json, *args, **kwargs):
@@ -269,35 +290,6 @@ def populate_conference_suggest(sender, json, *args, **kwargs):
                 'city': cities[0],
                 'opening_date': opening_date,
                 'title': title[0],
-            }
-        },
-    })
-
-
-def populate_experiment_suggest(sender, json, *args, **kwargs):
-    """Populate the ``experiment_suggest`` field of Experiments records."""
-    if 'experiments.json' not in json.get('$schema'):
-        return
-
-    experiment_paths = [
-        'legacy_name',
-        'long_name',
-        'name_variants',
-    ]
-
-    input_values = [el for el in chain.from_iterable(
-        [force_list(get_value(json, path)) for path in experiment_paths]) if el]
-
-    legacy_name = json.get('legacy_name', '')
-
-    record = get_value(json, 'self.$ref', '')
-
-    json.update({
-        'experiment_suggest': {
-            'input': input_values,
-            'output': legacy_name,
-            'payload': {
-                '$ref': record,
             }
         },
     })

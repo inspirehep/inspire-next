@@ -32,6 +32,7 @@ from inspirehep.modules.records.receivers import (
     assign_uuid,
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
+    populate_author_suggest,
     populate_book_suggest,
     populate_book_series_suggest,
     populate_collaboration_suggest,
@@ -45,6 +46,46 @@ from inspirehep.modules.records.receivers import (
     populate_author_count,
     populate_authors_full_name_unicode_normalized,
 )
+
+
+def test_populate_author_suggest():
+    schema = load_schema('authors')
+    name_schema = schema['properties']['name']
+    self_schema = schema['properties']['self']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/authors.json',
+        'name': {
+            'value': 'Aab, Alexander',
+        },
+        'self': {
+            '$ref': 'http://localhost:5000/api/authors/bar'
+        },
+    }
+    assert validate(record['name'], name_schema) is None
+    assert validate(record['self'], self_schema) is None
+
+    populate_author_suggest(None, record)
+
+    expected = {
+        'input': ['Aab, Alexander'],
+        'output': 'Aab, Alexander',
+        'payload': {
+            '$ref': 'http://localhost:5000/api/authors/bar',
+        },
+    }
+
+    result = record['author_suggest']
+
+    assert expected == result
+
+
+def test_populate_conference_suggest_does_nothing_if_record_is_not_conference():
+    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
+
+    populate_author_suggest(None, record)
+
+    assert 'author_suggest' not in record
 
 
 def test_populate_book_suggest_from_authors():
@@ -592,24 +633,6 @@ def test_populate_experiment_suggest_from_legacy_name_from_name_variants():
     result = record['experiment_suggest']
 
     assert expected == result
-
-
-def test_populate_experiment_suggest_does_nothing_if_record_is_not_experiment():
-    schema = load_schema('experiments')
-    subschema = schema['properties']['legacy_name']
-
-    record = {
-        '$schema': 'http://localhost:5000/schemas/records/other.json',
-        'legacy_name': 'foo',
-        'self': {
-            '$ref': 'http://localhost:5000/api/experiments/bar'
-        },
-    }
-    assert validate(record['legacy_name'], subschema) is None
-
-    populate_experiment_suggest(None, record)
-
-    assert 'experiment_suggest' not in record
 
 
 def test_assign_phonetic_block_handles_ascii_names():

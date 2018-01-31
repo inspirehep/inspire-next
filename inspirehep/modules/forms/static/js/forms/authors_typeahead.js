@@ -30,9 +30,9 @@ define([
     this.dataEngine = new Bloodhound({
       name: 'authors',
       remote: {
-        url: '/api/authors?q=authorautocomplete:%QUERY*',
+        url: '/api/authors/_suggest?author=%QUERY',
         filter: function(response) {
-          return $.map(response.hits.hits, function(el) { return el });
+          return response.author[0].options;
         }
       },
       datumTokenizer: function() {},
@@ -44,10 +44,7 @@ define([
     this.$element = $element;
 
     var suggestionTemplate = Hogan.compile(
-      '<strong>{{ name.value }}</strong><br>' +
-      '<small>' +
-      '{{#affiliation}}{{ affiliation }}<br>{{/affiliation}}' +
-      '</small>'
+      '<strong>{{#text}} {{ text }} {{/text}}</strong>'
     );
 
     this.$element.typeahead({
@@ -65,24 +62,14 @@ define([
         }.bind(this));
       }.bind(this),
       displayKey: function(data) {
-        return data.metadata.name.value;
+        return data.text;
       },
       templates: {
         empty: function(data) {
           return 'Cannot find this author in our database.';
         },
         suggestion: function(data) {
-          data.metadata.affiliation = null;
-          if (data.metadata.positions) {
-            var currentPosition = $.map(data.metadata.positions, function(item, idx) {
-              if ('status' in item && 'institution' in item) {
-                if (item.status.toLowerCase() === "current") {
-                  data.metadata.affiliation = item.institution.name;
-                }
-              }
-            });
-          }
-          return suggestionTemplate.render.call(suggestionTemplate, data.metadata);
+          return suggestionTemplate.render.call(suggestionTemplate, data);
         }.bind(this)
       }
     });
