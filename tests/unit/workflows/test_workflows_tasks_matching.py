@@ -108,7 +108,7 @@ def test_has_fully_harvested_category_is_true_with_non_core_categories(app):
 
     categories_config = {
         'ARXIV_CATEGORIES': {
-            'core':     ['hep-ph'],
+            'core': ['hep-ph'],
             'non-core': ['astro-ph.CO', 'gr-qc']
         }
     }
@@ -135,7 +135,7 @@ def test_has_fully_harvested_category_is_false_with_others_categories(app):
 
     categories_config = {
         'ARXIV_CATEGORIES': {
-            'core':     ['hep-ph'],
+            'core': ['hep-ph'],
             'non-core': ['astro-ph.CO', 'gr-qc']
         }
     }
@@ -195,7 +195,7 @@ def test_core_is_written_in_extradata_if_article_is_core(app):
 
     categories_config = {
         'ARXIV_CATEGORIES': {
-            'core':     ['hep-ph'],
+            'core': ['hep-ph'],
             'non-core': ['astro-ph.CO', 'gr-qc']
         }
     }
@@ -228,7 +228,7 @@ def test_core_is_not_written_in_extradata_if_article_is_non_core(app):
 
     categories_config = {
         'ARXIV_CATEGORIES': {
-            'core':     ['hep-ph'],
+            'core': ['hep-ph'],
             'non-core': ['astro-ph.CO', 'gr-qc']
         }
     }

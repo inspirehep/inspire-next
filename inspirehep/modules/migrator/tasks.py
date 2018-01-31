@@ -117,8 +117,8 @@ def remigrate_records(only_broken=True, skip_files=None):
     """
     if skip_files is None:
         skip_files = current_app.config.get(
-             'RECORDS_MIGRATION_SKIP_FILES',
-             False,
+            'RECORDS_MIGRATION_SKIP_FILES',
+            False,
         )
 
     query = db.session.query(InspireProdRecords)
@@ -136,8 +136,8 @@ def migrate(source, wait_for_results=False, skip_files=None):
     """Main migration function."""
     if skip_files is None:
         skip_files = current_app.config.get(
-             'RECORDS_MIGRATION_SKIP_FILES',
-             False,
+            'RECORDS_MIGRATION_SKIP_FILES',
+            False,
         )
 
     if source.endswith('.gz'):
@@ -172,8 +172,8 @@ def continuous_migration(skip_files=None):
     """Task to continuously migrate what is pushed up by Legacy."""
     if skip_files is None:
         skip_files = current_app.config.get(
-             'RECORDS_MIGRATION_SKIP_FILES',
-             False,
+            'RECORDS_MIGRATION_SKIP_FILES',
+            False,
         )
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
