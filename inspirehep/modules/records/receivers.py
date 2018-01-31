@@ -160,8 +160,16 @@ def populate_author_suggest(sender, json, *args, **kwargs):
     if 'authors.json' not in json.get('$schema'):
         return
 
+    author_paths = [
+        'name.preferred_name',
+        'name.value',
+        'native_name',
+        'other_names',
+        'previous_names',
+    ]
+
     name = get_value(json, 'name.value', '')
-    input_values = [name]
+    input_values = [el for el in chain.from_iterable([force_list(get_value(json, path)) for path in author_paths])]
 
     record = get_value(json, 'self.$ref', '')
 
@@ -266,6 +274,9 @@ def populate_conference_suggest(sender, json, *args, **kwargs):
         'titles.source',
         'titles.subtitle',
         'titles.title',
+        'alternative_titles.source',
+        'alternative_titles.subtitle',
+        'alternative_titles.title',
         'opening_date',
     ]
 

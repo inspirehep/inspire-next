@@ -56,8 +56,19 @@ def test_populate_author_suggest():
     record = {
         '$schema': 'http://localhost:5000/schemas/records/authors.json',
         'name': {
+            'preferred_name': 'Alexander Aab',
             'value': 'Aab, Alexander',
         },
+        'native_name': [
+          'Alexandru, Aab',
+        ],
+        'other_names': [
+            'Alexandru, Ab',
+            'Alexander, Ab',
+        ],
+        'previous_names': [
+          'Alexis, Aban'
+        ],
         'self': {
             '$ref': 'http://localhost:5000/api/authors/bar'
         },
@@ -68,7 +79,13 @@ def test_populate_author_suggest():
     populate_author_suggest(None, record)
 
     expected = {
-        'input': ['Aab, Alexander'],
+        'input': ['Alexander Aab',
+                  'Aab, Alexander',
+                  'Alexandru, Aab',
+                  'Alexandru, Ab',
+                  'Alexander, Ab',
+                  'Alexis, Aban',
+                  ],
         'output': 'Aab, Alexander',
         'payload': {
             '$ref': 'http://localhost:5000/api/authors/bar',
@@ -496,6 +513,13 @@ def test_populate_conference_suggest():
                 'title': 'A title',
             },
         ],
+        'alternative_titles': [
+            {
+                'source': 'An alternative source',
+                'subtitle': 'An alternative subtitle',
+                'title': 'An alternative title',
+            },
+        ],
         'opening_date': '2009-03-12',
         'self': {
             '$ref': 'http://localhost:5000/api/conferences/bar'
@@ -520,6 +544,9 @@ def test_populate_conference_suggest():
             'A source',
             'A subtitle',
             'A title',
+            'An alternative source',
+            'An alternative subtitle',
+            'An alternative title',
             '2009-03-12',
             'Batavia',
             'Berlin',
