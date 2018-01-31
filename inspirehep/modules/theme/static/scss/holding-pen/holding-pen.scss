@@ -665,15 +665,36 @@ $hp_table_bg: #fff;
   width: max-content;
   p {
     font-size: 16px;
-    color: $belize-hole;
+    color: #333;
   }
   input[type="radio"]{
     display: none;
   }
   button {
-    background-color: $belize-hole;
-    border-color: #165292;
     margin-top: 8px;
+    display: inline-block;
+    &.best-match {
+      background-color: $belize-hole;
+      border-color: #165292;
+      &:hover {
+        background-color: #0d1318;
+        border-color: black;
+      }
+    }
+    &.no-match {
+      background-color: white;
+      border-color: $grey;
+      color: $grey;
+      margin-left: 5px;
+      &:hover {
+        border-color: $pete-river;    
+      }
+      &:active, &:focus {
+        background-color: white;
+        border-color: $pete-river;
+        color: $grey;
+      }
+    }
   }
   input[type="radio"] + label
   {
