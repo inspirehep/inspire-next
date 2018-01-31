@@ -54,12 +54,8 @@ services:
         condition: service_healthy
       test-indexer:
         condition: service_healthy
-      test-rabbitmq:
-        condition: service_healthy
       test-redis:
         condition: service_healthy
-      test-worker:
-        condition: service_started
 
   integration:
     extends:
@@ -72,12 +68,8 @@ services:
         condition: service_healthy
       test-indexer:
         condition: service_healthy
-      test-rabbitmq:
-        condition: service_healthy
       test-redis:
         condition: service_healthy
-      test-worker:
-        condition: service_started
 
   acceptance:
     extends:
