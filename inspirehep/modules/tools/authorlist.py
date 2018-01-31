@@ -122,7 +122,7 @@ def parse_authors(text, affiliations):
             # (part of) (next) author name, process previous author
             if key_type == 'alpha' and word.islower() and word.isalpha():
                 three_words = \
-                    list_of_words[max(nw-2, 0):min(nw+3, len(list_of_words))-1]
+                    list_of_words[max(nw - 2, 0):min(nw + 3, len(list_of_words)) - 1]
                 warnings.append(
                     'Is this part of a name or missing aff-id? "%s" in %s' %
                     (word, ' '.join(three_words))
@@ -131,8 +131,8 @@ def parse_authors(text, affiliations):
                 if affiliations and not author_affs:
                     # there should be affiliations
                     warnings.append(
-                       'Author without affiliation-id. '
-                       'Problematic author: %s' % fullname
+                        'Author without affiliation-id. '
+                        'Problematic author: %s' % fullname
                     )
 
                 authors.append((fullname, author_affs))
