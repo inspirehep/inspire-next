@@ -25,28 +25,18 @@ from __future__ import absolute_import, division, print_function
 from idutils import is_arxiv_post_2007
 
 from inspire_utils.record import get_value
+from inspirehep.modules.forms.utils import get_user_comments
 from inspirehep.modules.workflows.utils import with_debug_logging
 from inspirehep.utils.record import get_title
-
-
-def _get_user_comment(workflow_object):
-    user_comment = next(
-        (
-            note.get('value')
-            for note in workflow_object.data.get('_private_notes', [])
-            if note.get('source') == 'submitter'
-        ),
-        '',
-    )
-
-    return user_comment
 
 
 def new_ticket_context(user, obj):
     """Context for literature new tickets."""
     title = get_title(obj.data)
     subject = u"Your suggestion to INSPIRE: {0}".format(title)
-    user_comment = _get_user_comment(obj)
+    user_comment = get_user_comments(
+        private_notes=obj.data.get('_private_notes', [])
+    )
     identifiers = get_value(obj.data, "external_system_numbers.value") or []
     return dict(
         email=user.email,
@@ -90,7 +80,9 @@ def curation_ticket_context(user, obj):
         arxiv_ids + dois + report_numbers + ['(#{0})'.format(recid)]
     ))
 
-    user_comment = _get_user_comment(obj)
+    user_comment = get_user_comments(
+        private_notes=obj.data.get('_private_notes', [])
+    )
 
     return dict(
         recid=recid,

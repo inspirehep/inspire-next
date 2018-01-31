@@ -26,6 +26,7 @@ import os
 
 from flask import current_app
 
+from inspirehep.modules.forms.utils import get_user_comments
 from inspirehep.modules.workflows.utils import with_debug_logging
 
 
@@ -33,19 +34,6 @@ from inspirehep.modules.workflows.utils import with_debug_logging
 def curation_ticket_needed(obj, eng):
     """Check if the a curation ticket is needed."""
     return obj.extra_data.get("ticket", False)
-
-
-def _get_user_comment(workflow_object):
-    user_comment = next(
-        (
-            note.get('value')
-            for note in workflow_object.data.get('_private_notes', [])
-            if note.get('source') == 'submitter'
-        ),
-        '',
-    )
-
-    return user_comment
 
 
 def new_ticket_context(user, obj):
@@ -57,7 +45,9 @@ def new_ticket_context(user, obj):
         email=user.email,
         object=obj,
         subject=subject,
-        user_comment=_get_user_comment(obj),
+        user_comment=get_user_comments(
+            private_notes=obj.data.get('_private_notes', [])
+        ),
     )
 
 
@@ -76,7 +66,9 @@ def update_ticket_context(user, obj):
         url=record_url,
         bibedit_url=record_url + "/edit",
         subject=subject,
-        user_comment=_get_user_comment(obj),
+        user_comment=get_user_comments(
+            private_notes=obj.data.get('_private_notes', [])
+        ),
     )
 
 
@@ -108,5 +100,7 @@ def curation_ticket_context(user, obj):
         recid=recid,
         subject=subject,
         record_url=record_url,
-        user_comment=_get_user_comment(obj),
+        user_comment=get_user_comments(
+            private_notes=obj.data.get('_private_notes', [])
+        ),
     )

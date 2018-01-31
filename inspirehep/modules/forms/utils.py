@@ -50,3 +50,16 @@ def filter_empty_elements(recjson, list_fields):
             del recjson[k]
 
     return recjson
+
+
+def get_user_comments(private_notes):
+    user_comments = next(
+        (
+            note.get('value')
+            for note in private_notes
+            if note.get('source') == 'submitter'
+        ),
+        '',
+    )
+
+    return user_comments
