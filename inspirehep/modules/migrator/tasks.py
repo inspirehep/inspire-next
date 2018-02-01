@@ -25,7 +25,6 @@
 from __future__ import absolute_import, division, print_function
 
 import gzip
-import logging
 import re
 import zlib
 from collections import Counter
@@ -55,6 +54,7 @@ from inspire_dojson import marcxml2record
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.dedupers import dedupe_list
 from inspire_utils.helpers import force_list
+from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import (
@@ -68,7 +68,7 @@ from inspirehep.utils.schema import ensure_valid_schema
 from .models import InspireProdRecords
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = getStackTraceLogger(__name__)
 
 CHUNK_SIZE = 100
 LARGE_CHUNK_SIZE = 2000
