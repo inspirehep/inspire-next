@@ -137,11 +137,11 @@ def mocked_external_services(workflow_app):
 @pytest.fixture
 def record_from_db(workflow_app):
     json = {
-        '$schema':        'http://localhost:5000/schemas/records/hep.json',
-        '_collections':   ['Literature'],
-        'document_type':  ['article'],
-        'titles':         [{'title': 'Fancy title for a new record'}],
-        'arxiv_eprints':  [
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'document_type': ['article'],
+        'titles': [{'title': 'Fancy title for a new record'}],
+        'arxiv_eprints': [
             {'categories': ['hep-th'], 'value': '1407.7587'}
         ],
         'control_number': 1234

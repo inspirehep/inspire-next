@@ -45,10 +45,10 @@ def insert_journals_in_db(workflow_app):
     from inspirehep.modules.migrator.tasks import record_insert_or_replace  # imported here because it is a Celery task
 
     journal_no_pro_and_ref = json.loads(pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', 'jou_record_refereed.json')))
+        __name__, os.path.join('fixtures', 'jou_record_refereed.json')))
 
     journal_pro_and_ref = json.loads(pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', 'jou_record_refereed_and_proceedings.json')))
+        __name__, os.path.join('fixtures', 'jou_record_refereed_and_proceedings.json')))
 
     with db.session.begin_nested():
         record_insert_or_replace(journal_no_pro_and_ref)

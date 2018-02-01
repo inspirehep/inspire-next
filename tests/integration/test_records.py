@@ -976,13 +976,13 @@ def test_record_with_non_valid_content_is_cleaned_and_created_properly(
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 1,
-        'document_type':  [
+        'document_type': [
             'article',
         ],
-        'titles':         [
+        'titles': [
             {'title': 'foo'},
         ],
-        '_collections':   [
+        '_collections': [
             'Literature'
         ],
         # these two fields make the record not valid

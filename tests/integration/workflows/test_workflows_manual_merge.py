@@ -42,7 +42,7 @@ from calls import do_resolve_manual_merge_wf
 def fake_record(title, rec_id):
     return {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
-        'titles':  [{'title': title}],
+        'titles': [{'title': title}],
         '_collections': ['Literature'],
         'document_type': ['article'],
         'acquisition_source': {'source': 'arxiv'},

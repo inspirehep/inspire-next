@@ -80,7 +80,7 @@ def test_create_authors_with_affiliations():
         (u'V.P. Gon\xe7alves', [
             u'Lund University',
             u'Instituto de F\xedsica, Universidade de S\xe3o Paulo'
-            ],),
+        ],),
         (u'F.S. Navarra', [u'Fermilab'],),
     ]
     result = create_authors(text)
