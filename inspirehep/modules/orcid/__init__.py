@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2017-2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-# Bleeding edge packages not yet released on Pypi
--e git+https://github.com/CZ-NIC/python-rt.git@64cc54b1aa7514906be60f8bbd7e5ed18b56bba6#egg=rt
+"""
+ORCID integration module.
+"""
 
-# SWORD2 client fork
--e git+https://github.com/inspirehep/python-client-sword2.git#egg=sword2
+from __future__ import absolute_import, division, print_function
 
-# python-orcid with support for v2.0 API and XML
--e git+https://github.com/ORCID/python-orcid.git@2.0update#egg=orcid
+from .converter import OrcidConverter  # noqa: F401
+from .builder import OrcidBuilder  # noqa: F401
