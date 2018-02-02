@@ -199,11 +199,11 @@ setup(
             'requirejs = inspirehep.modules.theme.bundles:requirejs',
         ],
         'invenio_base.api_apps': [
-            'inspire_search = inspirehep.modules.search:InspireSearch',
-            'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
-            'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
-            'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'invenio_collections = invenio_collections:InvenioCollections',
+            'inspire_search = inspirehep.modules.search:InspireSearch',
+            'inspire_rt = inspirehep.modules.rt:InspireRtExt',
+            'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
+            'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
         ],
         'invenio_base.api_blueprints': [
             'inspirehep_editor = inspirehep.modules.editor:blueprint_api',
@@ -218,9 +218,9 @@ setup(
             'inspire_literaturesuggest = inspirehep.modules.literaturesuggest:InspireLiteratureSuggest',
             'inspire_migrator = inspirehep.modules.migrator:InspireMigrator',
             'inspire_search = inspirehep.modules.search:InspireSearch',
+            'inspire_rt = inspirehep.modules.rt:InspireRtExt',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_tools = inspirehep.modules.tools:InspireTools',
-            'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
         ],
         'invenio_base.blueprints': [

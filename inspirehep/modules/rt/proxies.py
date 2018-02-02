@@ -29,6 +29,6 @@ from werkzeug.local import LocalProxy
 
 
 rt_instance = LocalProxy(
-    lambda: current_app.extensions['inspire-utils'].rt_instance
+    lambda: current_app.extensions['inspire-rt'].rt_instance
 )
 """Helper proxy to access the state object."""
