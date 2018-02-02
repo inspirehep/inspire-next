@@ -31,9 +31,9 @@ define([
     this.dataEngine = new Bloodhound({
       name: 'affiliations',
       remote: {
-        url: '/api/institutions?q=affautocomplete:%QUERY*',
+        url: '/api/institutions/_suggest?affiliation=%QUERY',
         filter: function(response) {
-          return $.map(response.hits.hits, function(el) { return el });
+          return $.map(response.affiliation[0].options, function(el) { return el.payload });
         }
       },
       datumTokenizer: function() {},
@@ -47,9 +47,10 @@ define([
     var suggestionTemplate = Hogan.compile(
       '<strong>{{ legacy_ICN }}</strong><br>' +
       '<small>' +
-      '{{#ICN}}{{#show_future_name}}Alternative name: {{future_name}}<br>{{/show_future_name}}{{/ICN}}' +
-      '{{#department}}{{ department }}<br>{{/department}}' +
-      '{{#institution}}{{ institution }}{{/institution}}' +
+        '{{#ICN}}{{#show_future_name}}Alternative name: {{future_name}}<br>{{/show_future_name}}{{/ICN}}' +
+        '{{#department}}{{ department }}<br>{{/department}}' +
+        '{{#institution}}{{ institution }}{{/institution}}' +
+        '{{#institution_name}}{{ institution_name }}{{/institution_name}}' +
       '</small>'
     );
 
@@ -68,7 +69,7 @@ define([
         }.bind(this));
       }.bind(this),
       displayKey: function(data) {
-        return data.metadata.legacy_ICN;
+        return data.legacy_ICN;
       },
       templates: {
         empty: function(data) {
@@ -76,21 +77,24 @@ define([
         },
         suggestion: function(data) {
           function _getICN() {
-            if (!data.metadata.ICN) {
+            if (!data.ICN) {
               return;
             }
-            for (let i=0; i<data.metadata.ICN.length; i++) {
-              if (data.metadata.ICN[i] !== data.metadata.legacy_ICN) {
-                return data.metadata.ICN[i];
+            for (let i=0; i<data.ICN.length; i++) {
+              if (data.ICN[i] !== data.legacy_ICN) {
+                return data.ICN[i];
               }
             }
           }
           let ICN = _getICN();
           if (ICN) {
-            data.metadata.show_future_name = true;
-            data.metadata.future_name = ICN;
+            data.show_future_name = true;
+            data.future_name = ICN;
           }
-          return suggestionTemplate.render.call(suggestionTemplate, data.metadata);
+          if (data.institution_names && data.institution_names.length > 0) {
+            data.institution_name = data.institution_names[0];
+          }
+          return suggestionTemplate.render.call(suggestionTemplate, data);
         }.bind(this)
       }
     });

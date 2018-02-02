@@ -250,6 +250,7 @@ class INSPIREField(Field):
                 for p in (extra_processors or []):
                     p(form, self, submit=submit, fields=formfields)
 
+    # TODO: this obsolete way of autocompletion should be removed.
     def perform_autocomplete(self, form, name, term, limit=50):
         """Run auto-complete method for field.
 

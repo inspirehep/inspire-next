@@ -285,11 +285,14 @@
                         },
                         "volume": {
                             "type": "string"
+                        },
+                        "book_series_suggest": {
+                            "type": "completion"
                         }
                     },
                     "type": "object"
                 },
-                "bookautocomplete": {
+                "book_suggest": {
                     "payloads": true,
                     "type": "completion"
                 },
@@ -314,6 +317,9 @@
                         },
                         "value": {
                             "type": "string"
+                        },
+                        "collaboration_suggest": {
+                            "type": "completion"
                         }
                     },
                     "type": "object"
@@ -974,6 +980,10 @@
                         }
                     },
                     "type": "object"
+                },
+                "report_number_suggest": {
+                    "payloads": true,
+                    "type": "completion"
                 },
                 "self": {
                     "properties": {

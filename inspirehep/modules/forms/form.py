@@ -139,69 +139,6 @@ class INSPIREForm(Form):
             field.post_process(form, formfields=formfields,
                                extra_processors=extra, submit=submit)
 
-    # def autocomplete(self, name, term, limit=50, _form=None):
-    #     """
-    #     Auto complete a form field.
-    #     Example::
-    #         form = FormClass()
-    #         form.autocomplete('related_identifiers-1-scheme','do')
-    #     Implementation notes:
-    #     The form will first try a fast lookup by field name in the form, and
-    #     delegate the auto-completion to the field. This will work for all but
-    #     field enclosures (FieldList and FormField). If the first lookup fails,
-    #     each field enclosure is checked if they can auto-complete the term,
-    #     which usually involves parsing the field name and generating a
-    #     stub-field (see further details in wtforms_field module).
-    #     @param name: Name of field (e.g. title or related_identifiers-1-scheme)
-    #     @param term: Term to return auto-complete results for
-    #     @param limit: Maximum number of results to return
-    #     @return: None in case field could not be found, otherwise a (possibly
-    #         empty) list of results.
-    #     """
-    #     if name in self._fields:
-    #         res = self._fields[name].perform_autocomplete(
-    #             _form or self,
-    #             name,
-    #             term,
-    #             limit=limit,
-    #         )
-    #         if res is not None:
-    #             return res[:limit]
-    #     else:
-    #         for f in self._fields.values():
-    # Only check field enclosures which cannot be found with above
-    # method.
-    #             if name.startswith(f.name):
-    #                 res = f.perform_autocomplete(
-    #                     _form or self,
-    #                     name,
-    #                     term,
-    #                     limit=limit,
-    #                 )
-    #                 if res is not None:
-    #                     return res[:limit]
-    #     return None
-
-    # def get_flags(self, filter_func=filter_flags):
-    #     """Return dictionary of fields and their set flags."""
-    #     flags = {}
-
-    #     for f in self._fields.values():
-    #         if hasattr(f, 'get_flags'):
-    #             flags.update(f.get_flags(filter_func=filter_func))
-    #         else:
-    #             flags.update({f.name: filter_func(f)})
-
-    #     return flags
-
-    # def set_flags(self, flags):
-    #     """Set flags on fields.
-    #     @param flags: Dictionary of fields and their set flags (same structure
-    #                   as returned by get_flags).
-    #     """
-    #     for f in self._fields.values():
-    #         f.set_flags(flags)
-
     @property
     def json_data(self):
         """Return form data in a format suitable for the standard JSON encoder.

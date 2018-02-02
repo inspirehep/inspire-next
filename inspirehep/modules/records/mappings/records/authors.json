@@ -91,8 +91,9 @@
                     "copy_to": "facet_arxiv_categories",
                     "type": "string"
                 },
-                "authorautocomplete": {
-                    "type": "string"
+                "author_suggest": {
+                    "payloads": true,
+                    "type": "completion"
                 },
                 "birth_date": {
                     "format": "yyyy||yyyy-MM||yyyy-MM-dd",
@@ -207,7 +208,6 @@
                             "type": "string"
                         },
                         "value": {
-                            "copy_to": "authorautocomplete",
                             "type": "string"
                         }
                     },

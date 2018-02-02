@@ -175,6 +175,8 @@ class AuthorInlineForm(INSPIREForm):
         # validators=[
         #     validators.Required(),
         # ],
+        placeholder='Start typing for suggestions',
+        autocomplete='author',
         export_key='full_name',
     )
     affiliation = fields.TextField(

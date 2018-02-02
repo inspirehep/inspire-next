@@ -32,17 +32,80 @@ from inspirehep.modules.records.receivers import (
     assign_uuid,
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
-    populate_bookautocomplete,
+    populate_author_suggest,
+    populate_book_suggest,
+    populate_book_series_suggest,
+    populate_collaboration_suggest,
+    populate_conference_suggest,
     populate_earliest_date,
+    populate_experiment_suggest,
     populate_inspire_document_type,
     populate_recid_from_ref,
+    populate_report_number_suggest,
     populate_title_suggest,
     populate_author_count,
     populate_authors_full_name_unicode_normalized,
 )
 
 
-def test_populate_bookautocomplete_from_authors():
+def test_populate_author_suggest():
+    schema = load_schema('authors')
+    name_schema = schema['properties']['name']
+    self_schema = schema['properties']['self']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/authors.json',
+        'name': {
+            'preferred_name': 'Alexander Aab',
+            'value': 'Aab, Alexander',
+        },
+        'native_name': [
+          'Alexandru, Aab',
+        ],
+        'other_names': [
+            'Alexandru, Ab',
+            'Alexander, Ab',
+        ],
+        'previous_names': [
+          'Alexis, Aban'
+        ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/authors/bar'
+        },
+    }
+    assert validate(record['name'], name_schema) is None
+    assert validate(record['self'], self_schema) is None
+
+    populate_author_suggest(None, record)
+
+    expected = {
+        'input': ['Alexander Aab',
+                  'Aab, Alexander',
+                  'Alexandru, Aab',
+                  'Alexandru, Ab',
+                  'Alexander, Ab',
+                  'Alexis, Aban',
+                  ],
+        'output': 'Aab, Alexander',
+        'payload': {
+            '$ref': 'http://localhost:5000/api/authors/bar',
+        },
+    }
+
+    result = record['author_suggest']
+
+    assert expected == result
+
+
+def test_populate_author_suggest_does_nothing_if_record_is_not_author():
+    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
+
+    populate_author_suggest(None, record)
+
+    assert 'author_suggest' not in record
+
+
+def test_populate_book_suggest_from_authors():
     schema = load_schema('hep')
     authors_schema = schema['properties']['authors']
     document_type_schema = schema['properties']['document_type']
@@ -64,7 +127,7 @@ def test_populate_bookautocomplete_from_authors():
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
     expected = {
         'input': [
@@ -78,12 +141,12 @@ def test_populate_bookautocomplete_from_authors():
             'title': [],
         },
     }
-    result = record['bookautocomplete']
+    result = record['book_suggest']
 
     assert expected == result
 
 
-def test_populate_bookautocomplete_from_titles():
+def test_populate_book_suggest_from_titles():
     schema = load_schema('hep')
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
@@ -105,7 +168,7 @@ def test_populate_bookautocomplete_from_titles():
     assert validate(record['self'], self_schema) is None
     assert validate(record['titles'], titles_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
     expected = {
         'input': [
@@ -119,12 +182,12 @@ def test_populate_bookautocomplete_from_titles():
             ],
         },
     }
-    result = record['bookautocomplete']
+    result = record['book_suggest']
 
     assert expected == result
 
 
-def test_populate_bookautocomplete_from_imprints_dates():
+def test_populate_book_suggest_from_imprints_dates():
     schema = load_schema('hep')
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
@@ -146,7 +209,7 @@ def test_populate_bookautocomplete_from_imprints_dates():
     assert validate(record['imprints'], imprints_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
     expected = {
         'input': [
@@ -158,12 +221,12 @@ def test_populate_bookautocomplete_from_imprints_dates():
             'title': [],
         },
     }
-    result = record['bookautocomplete']
+    result = record['book_suggest']
 
     assert expected == result
 
 
-def test_populate_bookautocomplete_from_imprints_publishers():
+def test_populate_book_suggest_from_imprints_publishers():
     schema = load_schema('hep')
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
@@ -185,7 +248,7 @@ def test_populate_bookautocomplete_from_imprints_publishers():
     assert validate(record['imprints'], imprints_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
     expected = {
         'input': [
@@ -197,12 +260,12 @@ def test_populate_bookautocomplete_from_imprints_publishers():
             'title': [],
         },
     }
-    result = record['bookautocomplete']
+    result = record['book_suggest']
 
     assert expected == result
 
 
-def test_populate_bookautocomplete_from_isbns_values():
+def test_populate_book_suggest_from_isbns_values():
     schema = load_schema('hep')
     document_type_schema = schema['properties']['document_type']
     self_schema = schema['properties']['self']
@@ -224,7 +287,7 @@ def test_populate_bookautocomplete_from_isbns_values():
     assert validate(record['isbns'], isbns_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
     expected = {
         'input': [
@@ -236,20 +299,20 @@ def test_populate_bookautocomplete_from_isbns_values():
             'title': [],
         },
     }
-    result = record['bookautocomplete']
+    result = record['book_suggest']
 
     assert expected == result
 
 
-def test_populate_bookautocomplete_does_nothing_if_record_is_not_literature():
+def test_populate_book_suggest_does_nothing_if_record_is_not_literature():
     record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
-    assert 'bookautocomplete' not in record
+    assert 'book_suggest' not in record
 
 
-def test_populate_bookautocomplete_does_nothing_if_record_is_not_a_book():
+def test_populate_book_suggest_does_nothing_if_record_is_not_a_book():
     schema = load_schema('hep')
     authors_schema = schema['properties']['authors']
     document_type_schema = schema['properties']['document_type']
@@ -271,9 +334,335 @@ def test_populate_bookautocomplete_does_nothing_if_record_is_not_a_book():
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_book_suggest(None, record)
 
-    assert 'bookautocomplete' not in record
+    assert 'book_suggest' not in record
+
+
+def test_populate_book_series_suggest():
+    schema = load_schema('hep')
+    book_series_schema = schema['properties']['book_series']
+    document_type_schema = schema['properties']['document_type']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'book',
+        ],
+        'book_series': [
+            {
+                'title': 'foo',
+            },
+        ],
+    }
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['book_series'], book_series_schema) is None
+
+    populate_book_series_suggest(None, record)
+
+    expected = [
+        {
+            'book_series_suggest': {
+                'input': 'foo',
+                'output': 'foo',
+            },
+            'title': 'foo',
+        },
+    ]
+    result = record['book_series']
+
+    assert expected == result
+
+
+def test_populate_book_series_suggest_does_nothing_if_record_is_not_literature():
+    schema = load_schema('hep')
+    book_series_schema = schema['properties']['book_series']
+    document_type_schema = schema['properties']['document_type']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'book',
+        ],
+        'book_series': [
+            {
+                'title': 'foo',
+            },
+        ],
+    }
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['book_series'], book_series_schema) is None
+
+    populate_book_series_suggest(None, record)
+
+    assert 'book_series_suggest' not in record['book_series']
+
+
+def test_populate_book_series_suggest_does_nothing_if_wrong_doc_type():
+    schema = load_schema('hep')
+    book_series_schema = schema['properties']['book_series']
+    document_type_schema = schema['properties']['document_type']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'note',
+        ],
+        'book_series': [
+            {
+                'title': 'foo',
+            },
+        ],
+    }
+    assert validate(record['document_type'], document_type_schema) is None
+    assert validate(record['book_series'], book_series_schema) is None
+
+    populate_book_series_suggest(None, record)
+
+    expected = [
+        {
+            'title': 'foo',
+        },
+    ]
+    result = record['book_series']
+
+    assert expected == result
+
+
+def test_populate_collaboration_suggest():
+    schema = load_schema('hep')
+    subschema = schema['properties']['collaborations']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'collaborations': [
+            {
+                'value': 'foo',
+            },
+        ],
+    }
+    assert validate(record['collaborations'], subschema) is None
+
+    populate_collaboration_suggest(None, record)
+
+    expected = [
+        {
+            'collaboration_suggest': {
+                'input': 'foo',
+                'output': 'foo',
+            },
+            'value': 'foo',
+        },
+    ]
+    result = record['collaborations']
+
+    assert expected == result
+
+
+def test_populate_collaboration_suggest_does_nothing_if_record_is_not_literature():
+    schema = load_schema('hep')
+    subschema = schema['properties']['collaborations']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'collaborations': [
+            {
+                'value': 'foo',
+            },
+        ],
+    }
+    assert validate(record['collaborations'], subschema) is None
+
+    populate_collaboration_suggest(None, record)
+
+    assert 'collaboration_suggest' not in record['collaborations']
+
+
+def test_populate_conference_suggest():
+    schema = load_schema('conferences')
+    cnum_schema = schema['properties']['cnum']
+    acronyms_schema = schema['properties']['acronyms']
+    address_schema = schema['properties']['address']
+    series_schema = schema['properties']['series']
+    titles_schema = schema['properties']['titles']
+    self_schema = schema['properties']['self']
+    opening_date_schema = schema['properties']['opening_date']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/conferences.json',
+        'cnum': 'C87-12-25',
+        'acronyms': [
+            'SUSY 2018',
+        ],
+        'address': [
+            {
+                'cities': ['Batavia', 'Berlin'],
+                'country_code': 'GE',
+                'postal_address': ['22607 Hamburg', '1293 Bern'],
+            }
+        ],
+        'series': [
+            {
+                'name': 'Conf Series',
+            },
+        ],
+        'titles': [
+            {
+                'source': 'A source',
+                'subtitle': 'A subtitle',
+                'title': 'A title',
+            },
+        ],
+        'alternative_titles': [
+            {
+                'source': 'An alternative source',
+                'subtitle': 'An alternative subtitle',
+                'title': 'An alternative title',
+            },
+        ],
+        'opening_date': '2009-03-12',
+        'self': {
+            '$ref': 'http://localhost:5000/api/conferences/bar'
+        },
+    }
+    assert validate(record['cnum'], cnum_schema) is None
+    assert validate(record['acronyms'], acronyms_schema) is None
+    assert validate(record['address'], address_schema) is None
+    assert validate(record['series'], series_schema) is None
+    assert validate(record['titles'], titles_schema) is None
+    assert validate(record['self'], self_schema) is None
+    assert validate(record['opening_date'], opening_date_schema) is None
+
+    populate_conference_suggest(None, record)
+
+    expected = {
+        'input': [
+            'C87-12-25',
+            'SUSY 2018',
+            'GE',
+            'Conf Series',
+            'A source',
+            'A subtitle',
+            'A title',
+            'An alternative source',
+            'An alternative subtitle',
+            'An alternative title',
+            '2009-03-12',
+            'Batavia',
+            'Berlin',
+            '22607 Hamburg',
+            '1293 Bern',
+        ],
+        'output': 'A title',
+        'payload': {
+            '$ref': 'http://localhost:5000/api/conferences/bar',
+            'city': 'Batavia',
+            'country': 'GE',
+            'opening_date': '2009-03-12',
+            'cnum': 'C87-12-25',
+        },
+    }
+
+    result = record['conference_suggest']
+
+    assert expected == result
+
+
+def test_populate_conference_suggest_does_nothing_if_record_is_not_conference():
+    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
+
+    populate_conference_suggest(None, record)
+
+    assert 'conference_suggest' not in record
+
+
+def test_populate_experiment_suggest_from_legacy_name():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['legacy_name']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/experiments.json',
+        'legacy_name': 'foo',
+        'self': {
+            '$ref': 'http://localhost:5000/api/experiments/bar'
+        },
+    }
+    assert validate(record['legacy_name'], subschema) is None
+
+    populate_experiment_suggest(None, record)
+
+    expected = {
+        'input': ['foo'],
+        'output': 'foo',
+        'payload': {
+            '$ref': 'http://localhost:5000/api/experiments/bar'
+        },
+    }
+
+    result = record['experiment_suggest']
+
+    assert expected == result
+
+
+def test_populate_experiment_suggest_from_legacy_name_from_long_name():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['long_name']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/experiments.json',
+        'legacy_name': 'foo',
+        'long_name': 'bar',
+        'self': {
+            '$ref': 'http://localhost:5000/api/experiments/bar'
+        },
+    }
+    assert validate(record['long_name'], subschema) is None
+
+    populate_experiment_suggest(None, record)
+
+    expected = {
+        'input': ['foo', 'bar'],
+        'output': 'foo',
+        'payload': {
+            '$ref': 'http://localhost:5000/api/experiments/bar'
+        },
+    }
+
+    result = record['experiment_suggest']
+
+    assert expected == result
+
+
+def test_populate_experiment_suggest_from_legacy_name_from_name_variants():
+    schema = load_schema('experiments')
+    subschema = schema['properties']['name_variants']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/experiments.json',
+        'legacy_name': 'foo',
+        'name_variants': [
+            'bar',
+            'baz',
+            ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/experiments/bar'
+        },
+    }
+    assert validate(record['name_variants'], subschema) is None
+
+    populate_experiment_suggest(None, record)
+
+    expected = {
+        'input': ['foo', 'bar', 'baz'],
+        'output': 'foo',
+        'payload': {
+            '$ref': 'http://localhost:5000/api/experiments/bar'
+        },
+    }
+
+    result = record['experiment_suggest']
+
+    assert expected == result
 
 
 def test_assign_phonetic_block_handles_ascii_names():
@@ -454,6 +843,83 @@ def test_populate_earliest_date_from_preprint_date():
     result = record['earliest_date']
 
     assert expected == result
+
+
+def test_populate_experiment_suggest():
+    schema = load_schema('experiments')
+    legacy_name_schema = schema['properties']['legacy_name']
+    long_name_schema = schema['properties']['long_name']
+    name_variants_schema = schema['properties']['name_variants']
+    collaboration_schema = schema['properties']['collaboration']
+    accelerator_schema = schema['properties']['accelerator']
+    experiment_schema = schema['properties']['experiment']
+    institutions_schema = schema['properties']['institutions']
+
+    record = {
+        '$schema': 'http://foo/experiments.json',
+        'self': {'$ref': 'https://localhost:5000/api/experiments/bar'},
+        'legacy_name': 'foo',
+        'long_name': 'foobarbaz',
+        'name_variants': [
+            'bar',
+            'baz',
+        ],
+        'collaboration': {
+            'value': 'D0',
+        },
+        'accelerator': {
+            'value': 'LHC',
+        },
+        'experiment': {
+            'short_name': 'SHINE',
+            'value': 'NA61',
+        },
+        'institutions': [
+            {
+                'value': 'ICN',
+            },
+        ],
+    }
+
+    assert validate(record['legacy_name'], legacy_name_schema) is None
+    assert validate(record['long_name'], long_name_schema) is None
+    assert validate(record['name_variants'], name_variants_schema) is None
+    assert validate(record['collaboration'], collaboration_schema) is None
+    assert validate(record['accelerator'], accelerator_schema) is None
+    assert validate(record['institutions'], institutions_schema) is None
+    assert validate(record['experiment'], experiment_schema) is None
+
+    populate_experiment_suggest(None, record)
+
+    expected = {
+        'input': [
+            'LHC',
+            'D0',
+            'SHINE',
+            'NA61',
+            'ICN',
+            'foo',
+            'foobarbaz',
+            'bar',
+            'baz',
+        ],
+        'output': 'foo',
+        'payload': {
+            '$ref': 'https://localhost:5000/api/experiments/bar',
+        }
+    }
+
+    result = record['experiment_suggest']
+
+    assert expected == result
+
+
+def test_populate_experiment_suggest_does_nothing_if_record_is_not_experiment():
+    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
+
+    populate_experiment_suggest(None, record)
+
+    assert 'experiment_suggest' not in record
 
 
 def test_populate_earliest_date_from_thesis_info_date():
@@ -675,6 +1141,53 @@ def test_populate_recid_from_ref_handles_deleted_records():
     assert json_dict['deleted_recids'] == [1, 2]
 
 
+def test_populate_report_number_suggest():
+    schema = load_schema('hep')
+    report_numbers_schema = schema['properties']['report_numbers']
+    self_schema = schema['properties']['self']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'report_numbers': [
+            {
+                'value': 'foo',
+            },
+            {
+                'value': 'bar',
+            },
+            {
+                'value': 'baz',
+            },
+        ],
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/bar',
+        },
+    }
+    assert validate(record['report_numbers'], report_numbers_schema) is None
+    assert validate(record['self'], self_schema) is None
+
+    populate_report_number_suggest(None, record)
+
+    expected = {
+        'input': ['foo', 'bar', 'baz'],
+        'output': 'foo',
+        'payload': {
+           '$ref': 'http://localhost:5000/api/literature/bar'
+        },
+    }
+    result = record['report_number_suggest']
+
+    assert expected == result
+
+
+def test_populate_report_number_suggest_does_nothing_if_record_is_not_literature():
+    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
+
+    populate_report_number_suggest(None, record)
+
+    assert 'report_number_suggest' not in record
+
+
 def test_populate_abstract_source_suggest():
     schema = load_schema('hep')
     subschema = schema['properties']['abstracts']
@@ -735,21 +1248,26 @@ def test_populate_abstract_source_suggest_does_nothing_if_record_is_not_literatu
     assert expected == result
 
 
-def test_populate_title_suggest_with_all_inputs():
+def test_populate_title_suggest():
     schema = load_schema('journals')
     journal_title_schema = schema['properties']['journal_title']
     short_title_schema = schema['properties']['short_title']
     title_variants_schema = schema['properties']['title_variants']
+    self_schema = schema['properties']['self']
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/journals.json',
         'journal_title': {'title': 'The Journal of High Energy Physics (JHEP)'},
         'short_title': 'JHEP',
         'title_variants': ['JOURNAL OF HIGH ENERGY PHYSICS'],
+        'self': {
+            '$ref': 'https://localhost:5000/api/journals/bar',
+        },
     }
     assert validate(record['journal_title'], journal_title_schema) is None
     assert validate(record['short_title'], short_title_schema) is None
     assert validate(record['title_variants'], title_variants_schema) is None
+    assert validate(record['self'], self_schema) is None
 
     populate_title_suggest(None, record)
 
@@ -757,11 +1275,12 @@ def test_populate_title_suggest_with_all_inputs():
         'input': [
             'The Journal of High Energy Physics (JHEP)',
             'JHEP',
-            'JOURNAL OF HIGH ENERGY PHYSICS'
+            'JOURNAL OF HIGH ENERGY PHYSICS',
         ],
         'output': 'JHEP',
         'payload': {
-            'full_title': 'The Journal of High Energy Physics (JHEP)'
+            'full_title': 'The Journal of High Energy Physics (JHEP)',
+            '$ref': 'https://localhost:5000/api/journals/bar',
         }
     }
 

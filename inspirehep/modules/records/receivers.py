@@ -132,25 +132,60 @@ def enhance_after_index(sender, json, *args, **kwargs):
 
     .. note::
 
-       ``populate_recid_from_ref`` **MUST** come before ``populate_bookautocomplete``
+       ``populate_recid_from_ref`` **MUST** come before ``populate_book_suggest``
        because the latter puts a JSON reference in a completion payload, which
        would be expanded to an incorrect ``payload_recid`` by the former.
 
     """
     populate_recid_from_ref(sender, json, *args, **kwargs)
-    populate_bookautocomplete(sender, json, *args, **kwargs)
+    populate_book_suggest(sender, json, *args, **kwargs)
+    populate_book_series_suggest(sender, json, *args, **kwargs)
+    populate_collaboration_suggest(sender, json, *args, **kwargs)
+    populate_conference_suggest(sender, json, *args, **kwargs)
+    populate_experiment_suggest(sender, json, *args, **kwargs)
+    populate_report_number_suggest(sender, json, *args, **kwargs)
     populate_abstract_source_suggest(sender, json, *args, **kwargs)
     populate_affiliation_suggest(sender, json, *args, **kwargs)
     populate_author_count(sender, json, *args, **kwargs)
     populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs)
+    populate_author_suggest(sender, json, *args, **kwargs)
     populate_earliest_date(sender, json, *args, **kwargs)
     populate_inspire_document_type(sender, json, *args, **kwargs)
     populate_name_variations(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
 
 
-def populate_bookautocomplete(sender, json, *args, **kwargs):
-    """Populate the ```bookautocomplete`` field of Literature records."""
+def populate_author_suggest(sender, json, *args, **kwargs):
+    """Populate the ``author_suggest`` field of Authors records."""
+    if 'authors.json' not in json.get('$schema'):
+        return
+
+    author_paths = [
+        'name.preferred_name',
+        'name.value',
+        'native_name',
+        'other_names',
+        'previous_names',
+    ]
+
+    name = get_value(json, 'name.value', '')
+    input_values = [el for el in chain.from_iterable([force_list(get_value(json, path)) for path in author_paths])]
+
+    record = get_value(json, 'self.$ref', '')
+
+    json.update({
+        'author_suggest': {
+            'input': input_values,
+            'output': name,
+            'payload': {
+                '$ref': record,
+            }
+        },
+    })
+
+
+def populate_book_suggest(sender, json, *args, **kwargs):
+    """Populate the ``book_suggest`` field of Literature records."""
     if 'hep.json' not in json.get('$schema'):
         return
 
@@ -172,16 +207,104 @@ def populate_bookautocomplete(sender, json, *args, **kwargs):
     input_values.extend(titles)
     input_values = [el for el in input_values if el]
 
-    ref = get_value(json, 'self.$ref')
+    record = get_value(json, 'self.$ref', '')
 
     json.update({
-        'bookautocomplete': {
+        'book_suggest': {
             'input': input_values,
             'payload': {
                 'authors': authors,
-                'id': ref,
+                'id': record,
                 'title': titles,
             },
+        },
+    })
+
+
+def populate_book_series_suggest(sender, json, *args, **kwargs):
+    """Populate the ``book_series.book_series_suggest`` field of Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
+    doc_types = json.get('document_type', [])
+    if not set(doc_types) & {'book', 'thesis', 'proceedings'}:
+        return
+
+    book_series = json.get('book_series', [])
+
+    for series in book_series:
+        title = series.get('title')
+        if title:
+            series.update({
+                'book_series_suggest': {
+                    'input': title,
+                    'output': title
+                },
+            })
+
+
+def populate_collaboration_suggest(sender, json, *args, **kwargs):
+    """Populate the ``collaborations.collaboration_suggest`` field of Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
+    collaborations = json.get('collaborations', [])
+
+    for collaboration in collaborations:
+        name = collaboration.get('value')
+        if name:
+            collaboration.update({
+                'collaboration_suggest': {
+                    'input': name,
+                    'output': name,
+                },
+            })
+
+
+def populate_conference_suggest(sender, json, *args, **kwargs):
+    """Populate the ``conference_suggest`` field of Conferences records."""
+    if 'conferences.json' not in json.get('$schema'):
+        return
+
+    conference_paths = [
+        'cnum',
+        'acronyms',
+        'address.country_code',
+        'series.name',
+        'titles.source',
+        'titles.subtitle',
+        'titles.title',
+        'alternative_titles.source',
+        'alternative_titles.subtitle',
+        'alternative_titles.title',
+        'opening_date',
+    ]
+
+    cities = list(chain.from_iterable(get_value(json, 'address.cities')))
+    postal_addresses = list(chain.from_iterable(get_value(json, 'address.postal_address')))
+
+    input_values = [el for el in chain.from_iterable([force_list(get_value(json, path)) for path in conference_paths])]
+    input_values.extend(cities)
+    input_values.extend(postal_addresses)
+    input_values = [el for el in input_values if el]
+
+    country = get_value(json, 'address.country_code', '')
+    cnum = json.get('cnum', '')
+    opening_date = json.get('opening_date', '')
+    record = get_value(json, 'self.$ref', '')
+    title = get_value(json, 'titles.title', '')
+
+    json.update({
+        'conference_suggest': {
+            'input': input_values,
+            'output': title[0],
+            'payload': {
+                '$ref': record,
+                'city': cities[0],
+                'country': country[0],
+                'opening_date': opening_date,
+                'cnum': cnum,
+            }
         },
     })
 
@@ -275,6 +398,26 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
     _recursive_find_refs(json)
 
 
+def populate_report_number_suggest(sender, json, *args, **kwargs):
+    """Populate the ``report_number_suggest`` field of Literature records."""
+    if 'hep.json' not in json.get('$schema'):
+        return
+
+    report_numbers = get_value(json, 'report_numbers.value', [])
+
+    record = get_value(json, 'self.$ref', '')
+
+    json.update({
+        'report_number_suggest': {
+            'input': report_numbers,
+            'output': report_numbers[0] if report_numbers else '',
+            'payload': {
+                '$ref': record,
+            }
+        },
+    })
+
+
 def populate_abstract_source_suggest(sender, json, *args, **kwargs):
     """Populate the ``abstract_source_suggest`` field in Literature records."""
     if 'hep.json' not in json.get('$schema'):
@@ -298,24 +441,29 @@ def populate_title_suggest(sender, json, *args, **kwargs):
     if 'journals.json' not in json.get('$schema'):
         return
 
-    journal_title = get_value(json, 'journal_title.title', default='')
-    short_title = json.get('short_title', '')
-    title_variants = json.get('title_variants', [])
+    journal_paths = [
+        'journal_title.title',
+        'short_title',
+        'title_variants',
+    ]
 
-    input_values = []
-    input_values.append(journal_title)
-    input_values.append(short_title)
-    input_values.extend(title_variants)
-    input_values = [el for el in input_values if el]
+    input_values = [el for el in chain.from_iterable(
+        [force_list(get_value(json, path)) for path in journal_paths]) if el]
+
+    journal_title = get_value(json, 'journal_title.title', '')
+    short_title = json.get('short_title', '')
+
+    record = get_value(json, 'self.$ref', '')
 
     json.update({
         'title_suggest': {
             'input': input_values,
-            'output': short_title if short_title else '',
+            'output': short_title,
             'payload': {
-                'full_title': journal_title if journal_title else '',
+                'full_title': journal_title,
+                '$ref': record,
             },
-        }
+        },
     })
 
 
@@ -340,12 +488,14 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
     input_values.extend(postal_codes)
     input_values = [el for el in input_values if el]
 
+    record = get_value(json, 'self.$ref')
+
     json.update({
         'affiliation_suggest': {
             'input': input_values,
             'output': legacy_ICN,
             'payload': {
-                '$ref': get_value(json, 'self.$ref'),
+                '$ref': record,
                 'ICN': ICN,
                 'institution_acronyms': institution_acronyms,
                 'institution_names': institution_names,
@@ -376,6 +526,42 @@ def populate_earliest_date(sender, json, *args, **kwargs):
         result = earliest_date(dates)
         if result:
             json['earliest_date'] = result
+
+
+def populate_experiment_suggest(sender, json, *args, **kwargs):
+    """Populates experiment_suggest field of experiment records."""
+
+    # FIXME: Use a dedicated method when #1355 will be resolved.
+    if 'experiments.json' not in json.get('$schema'):
+        return
+
+    experiment_paths = [
+        'accelerator.value',
+        'collaboration.value',
+        'experiment.short_name',
+        'experiment.value',
+        'institutions.value',
+        'legacy_name',
+        'long_name',
+        'name_variants',
+    ]
+
+    input_values = [el for el in chain.from_iterable(
+        [force_list(get_value(json, path)) for path in experiment_paths]) if el]
+
+    legacy_name = json.get('legacy_name', '')
+
+    record = get_value(json, 'self.$ref', '')
+
+    json.update({
+        'experiment_suggest': {
+            'input': input_values,
+            'output': legacy_name,
+            'payload': {
+                '$ref': record,
+            },
+        },
+    })
 
 
 def populate_name_variations(sender, json, *args, **kwargs):

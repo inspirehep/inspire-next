@@ -367,8 +367,17 @@ RECORDS_REST_ENDPOINTS = dict(
                 field='abstracts.abstract_source_suggest'
             )),
             book_title=dict(completion=dict(
-                field='bookautocomplete'
-            ))
+                field='book_suggest'
+            )),
+            book_series=dict(completion=dict(
+                field='book_series.book_series_suggest'
+            )),
+            collaboration_name=dict(completion=dict(
+                field='collaborations.collaboration_suggest'
+            )),
+            report_number=dict(completion=dict(
+                field='report_number_suggest'
+            )),
         ),
         list_route='/literature/',
         item_route=(
@@ -419,6 +428,11 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
             'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
         },
+        suggesters=dict(
+            author=dict(completion=dict(
+                field='author_suggest'
+            ))
+        ),
         list_route='/authors/',
         item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',
@@ -602,6 +616,11 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
             'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
         },
+        suggesters=dict(
+            conference=dict(completion=dict(
+                field='conference_suggest'
+            ))
+        ),
         list_route='/conferences/',
         item_route='/conferences/<pid(con,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',

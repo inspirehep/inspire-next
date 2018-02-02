@@ -28,9 +28,7 @@ define(function(require, exports, module) {
   var tpl_flash_message = require('hgn!js/forms/templates/flash_message');
   var DataMapper = require("js/literaturesuggest/mapper");
   var TaskManager = require("js/literaturesuggest/task_manager");
-  var conferencesTypeahead = require("js/forms/conferences_typeahead");
   var books_typeahead = require("js/forms/books_typeahead");
-  var AffiliationsTypeahead = require("js/forms/affiliations_typeahead");
   var PreviewModal = require("js/literaturesuggest/modal_preview");
   var SynchronizedField = require("js/literaturesuggest/synchronized_field");
   require("js/literaturesuggest/message_box");
@@ -196,8 +194,6 @@ define(function(require, exports, module) {
         hoganTemplate: tpl_flash_message
       })[0];
 
-      conferencesTypeahead(this.$conference);
-
       books_typeahead(this.$book);
 
       function clear_fields(fields) {
@@ -250,23 +246,6 @@ define(function(require, exports, module) {
 
       this.setSettersForTypeaheadFields();
 
-      this.$conferenceId.synchronizedField({
-        $frontendField: this.$conference,
-        synchronizationEvents: 'typeahead:selected change blur',
-        propagatedEvents: 'typeahead:selected change blur',
-        synchronizationFn: function($originalField, $frontendField) {
-          $originalField.val(
-            $frontendField.data('extended-typeahead').getRawValue());
-          $originalField.trigger('change');
-        },
-        reverseSynchronizationFn: function($originalField, $frontendField) {
-          $frontendField.data('extended-typeahead')
-            .initFromRawValue($originalField.val(), 0);
-        }
-      });
-
-      this.addConferenceInfoField();
-
       this.addBookInfoField();
 
       this.$bookTitle.on('blur', function(){
@@ -317,31 +296,6 @@ define(function(require, exports, module) {
       this.$skipButton.click(function(event) {
         that.showForm();
       });
-
-      this.$submissionForm.on("form:init-autocomplete", function(ev, data) {
-        if ($(data.item).data("autocomplete") === "affiliation") {
-          $(data.item).affiliationsTypeahead();
-        }
-      }.bind(this));
-
-      // for spinner at conferences typeahead
-      this.$conference.on('typeahead:asyncrequest', function() {
-        $(this).addClass('ui-autocomplete-loading');
-      });
-      this.$conference.on('typeahead:asynccancel typeahead:asyncreceive',
-        function() {
-          $(this).removeClass('ui-autocomplete-loading');
-        }
-      );
-
-      // reminder about using the typeahead to get the conference.
-      this.$conference.on('change blur typeahead:selected', function() {
-        if (!this.$conferenceId.val() && $.trim(this.$conference.val())) {
-          this.$conferenceInfoField.show();
-        } else {
-          this.$conferenceInfoField.hide();
-        }
-      }.bind(this));
 
         this.$book.on('change blur typeahead:selected', function() {
           if (!this.$bookId.val() && $.trim(this.$book.val())) {
