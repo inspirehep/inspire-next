@@ -22,15 +22,4 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.modules.rt.tickets import _strip_lines
-
-
-def test__strip_lines():
-    multiline_string = """Line 1
-    Line2 with space at the end """
-
-    expected = "Line 1\n Line2 with space at the end"
-
-    stripped = _strip_lines(multiline_string)
-
-    assert expected == stripped
+from .ext import InspireRtExt  # noqa: F401
