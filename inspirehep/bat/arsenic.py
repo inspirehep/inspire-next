@@ -72,7 +72,38 @@ class Arsenic(object):
 
 
 class ArsenicResponse(object):
-    has_error = None
+    def __init__(
+        self,
+        assert_has_no_errors_func=None,
+        assert_has_errors_func=None,
+    ):
+        """Init method.
 
-    def __init__(self, has_error):
-        self.has_error = has_error
+        :param assert_has_errors_func: function that asserts if there were
+            errors.
+        :type assert_has_errors_func: function
+        :param assert_has_no_errors_func: function to assert there were no
+            errors
+        :type assert_has_no_errors_func: function
+        """
+        if not assert_has_no_errors_func and not assert_has_no_errors_func:
+            raise TypeError(
+                'At least one of assert_has_no_errors_func or '
+                'assert_has_no_errors_func arguments must be passed.'
+            )
+        if not assert_has_errors_func:
+            def assert_has_errors_func(*args, **kwargs):
+                raise NotImplemented('No assert_has_errors_func was passed.')
+
+        if not assert_has_no_errors_func:
+            def assert_has_no_errors_func(*args, **kwargs):
+                raise NotImplemented('No assert_has_no_errors_func was passed.')
+
+        self._assert_has_errors = assert_has_errors_func
+        self._assert_has_no_errors = assert_has_no_errors_func
+
+    def assert_has_errors(self):
+        return self._assert_has_errors()
+
+    def assert_has_no_errors(self):
+        return self._assert_has_no_errors()

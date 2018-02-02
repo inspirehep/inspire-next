@@ -32,18 +32,23 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from inspirehep.bat.EC import GetText
 
-from . import holding_panel_author_list
+from . import holdingpen_author_list
 from ..arsenic import Arsenic, ArsenicResponse
 
 
+ACCEPTED_MESSAGE = '//div[@class="alert ng-scope alert-accept"]'
+REJECTED_MESSAGE = '//div[@class="alert ng-scope alert-reject"]'
+ACCEPTED_WITH_CURATION_MESSAGE = '//span[@ng-switch-when="accept_curate"]'
+
+
 def go_to():
-    holding_panel_author_list.go_to()
-    holding_panel_author_list.click_first_record()
+    holdingpen_author_list.go_to()
+    holdingpen_author_list.click_first_record()
 
 
 def load_submitted_record(input_data):
-    def _load_submitted_record():
-        res = (
+    def _assert_has_no_errors():
+        assert (
             'M. Twain' in record and
             'Twain, Mark' in record and
             'retired' in record and
@@ -63,64 +68,80 @@ def load_submitted_record(input_data):
             '2000' in record and
             '2001' in record
         )
-        assert res
-        return res
 
+    wait = WebDriverWait(Arsenic(), 10)
     try:
-        record = WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-detailed-info')))
-        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-links')))
-        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-notes')))
-        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-submission-info')))
-        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-subjects')))
-        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-positions')))
-        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-experiments')))
-        record += WebDriverWait(Arsenic(), 10).until(GetText((By.ID, 'hp-panel-advisors')))
+        record = wait.until(GetText((By.ID, 'hp-panel-detailed-info')))
+        record += wait.until(GetText((By.ID, 'hp-panel-links')))
+        record += wait.until(GetText((By.ID, 'hp-panel-notes')))
+        record += wait.until(GetText((By.ID, 'hp-panel-submission-info')))
+        record += wait.until(GetText((By.ID, 'hp-panel-subjects')))
+        record += wait.until(GetText((By.ID, 'hp-panel-positions')))
+        record += wait.until(GetText((By.ID, 'hp-panel-experiments')))
+        record += wait.until(GetText((By.ID, 'hp-panel-advisors')))
     except (ElementNotVisibleException, WebDriverException):
         go_to()
         record = load_submitted_record(input_data)
 
-    return ArsenicResponse(_load_submitted_record)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def accept_record():
-    def _accept_record():
-        return 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
-            GetText((By.XPATH, '//div[@class="alert ng-scope alert-accept"]')))
+    def _assert_has_no_errors():
+        assert (
+            'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(
+                GetText((By.XPATH, ACCEPTED_MESSAGE))
+            )
+        )
 
     Arsenic().find_element_by_id('btn-accept').click()
-    return ArsenicResponse(_accept_record)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def reject_record():
-    def _reject_record():
-        return 'Rejected' in WebDriverWait(Arsenic(), 10).until(
-            GetText((By.XPATH, '//div[@class="alert ng-scope alert-reject"]')))
+    def _assert_has_no_errors():
+        assert (
+            'Rejected' in WebDriverWait(Arsenic(), 10).until(
+                GetText((By.XPATH, REJECTED_MESSAGE))
+            )
+        )
 
     Arsenic().find_element_by_id('btn-reject-submission').click()
-    return ArsenicResponse(_reject_record)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def curation_record():
-    def _curation_record():
-        return 'Accepted with Curation' in WebDriverWait(Arsenic(), 10).until(
-            GetText((By.XPATH, '//span[@ng-switch-when="accept_curate"]')))
+    def _assert_has_no_errors():
+        assert (
+            'Accepted with Curation' in WebDriverWait(Arsenic(), 10).until(
+                GetText((By.XPATH, ACCEPTED_WITH_CURATION_MESSAGE))
+            )
+        )
 
     Arsenic().find_element_by_id('btn-accept-curation').click()
-    return ArsenicResponse(_curation_record)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
 def review_record(input_data):
-    def _review_record():
-        def _text_in_element(element_id, text):
+    def _assert_has_no_errors():
+        def _assert_text_in_element(element_id, text):
             try:
-                return text in Arsenic().find_element_by_id(element_id).get_attribute('value')
+                assert (
+                    text in Arsenic().find_element_by_id(
+                        element_id
+                    ).get_attribute('value')
+                )
             except TypeError:
-                return text in Arsenic().find_element_by_id(element_id).text
-        return (
-            WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'inspireid'))) and
-            WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'bai'))) and
-            all([_text_in_element(element_id, text) for element_id, text in input_data.iteritems()])
+                assert text in Arsenic().find_element_by_id(element_id).text
+
+        assert WebDriverWait(Arsenic(), 10).until(
+            EC.visibility_of_element_located((By.ID, 'inspireid'))
         )
+        assert WebDriverWait(Arsenic(), 10).until(
+            EC.visibility_of_element_located((By.ID, 'bai'))
+        )
+        for element_id, text in input_data.iteritems():
+            _assert_text_in_element(element_id, text)
 
     Arsenic().find_element_by_id('btn-review-submission').click()
-    return ArsenicResponse(_review_record)
+    return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)

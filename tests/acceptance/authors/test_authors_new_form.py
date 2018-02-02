@@ -23,9 +23,9 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.bat.pages import (
-    create_author,
-    holding_panel_author_detail,
-    holding_panel_author_list,
+    author_submission_form,
+    holdingpen_author_detail,
+    holdingpen_author_list,
 )
 
 
@@ -57,18 +57,21 @@ INPUT_AUTHOR_DATA = {
 
 
 def test_institutions_typeahead(login):
-    create_author.go_to()
-    assert create_author.write_institution('cer', 'CERN').has_error()
+    author_submission_form.go_to()
+
+    author_submission_form.write_institution('cer', 'CERN').assert_has_no_errors()
 
 
 def test_experiments_typehead(login):
-    create_author.go_to()
-    assert create_author.write_experiment('atl', 'ATLAS').has_error()
+    author_submission_form.go_to()
+
+    author_submission_form.write_experiment('atl', 'ATLAS').assert_has_no_errors()
 
 
 def test_advisors_typehead(login):
-    create_author.go_to()
-    assert create_author.write_advisor('alexe', 'Vorobyev, Alexey').has_error()
+    author_submission_form.go_to()
+
+    author_submission_form.write_advisor('alexe', 'Vorobyev, Alexey').assert_has_no_errors()
 
 
 def test_mandatory_fields(login):
@@ -78,61 +81,70 @@ def test_mandatory_fields(login):
         'reserach-field': 'This field is required.'
     }
 
-    create_author.go_to()
-    assert create_author.submit_empty_form(expected_data).has_error()
+    author_submission_form.go_to()
+
+    author_submission_form.submit_empty_form(expected_data).assert_has_no_errors()
 
 
 def test_submit_author(login):
-    create_author.go_to()
-    assert create_author.submit_author(INPUT_AUTHOR_DATA).has_error()
+    author_submission_form.go_to()
 
-    holding_panel_author_list.go_to()
-    assert holding_panel_author_list.load_submission_record(
-        INPUT_AUTHOR_DATA
-    ).has_error()
+    author_submission_form.submit_author(INPUT_AUTHOR_DATA).assert_has_no_errors()
 
-    holding_panel_author_detail.go_to()
-    assert holding_panel_author_detail.load_submitted_record(
+    holdingpen_author_list.go_to()
+
+    holdingpen_author_list.load_submission_record(
         INPUT_AUTHOR_DATA
-    ).has_error()
-    holding_panel_author_detail.reject_record()
+    ).assert_has_no_errors()
+
+    holdingpen_author_detail.go_to()
+
+    holdingpen_author_detail.load_submitted_record(
+        INPUT_AUTHOR_DATA
+    ).assert_has_no_errors()
+
+    holdingpen_author_detail.reject_record()
 
 
 def test_accept_author(login):
-    create_author.go_to()
-    create_author.submit_author(INPUT_AUTHOR_DATA)
-    holding_panel_author_list.go_to()
-    holding_panel_author_list.load_submission_record(INPUT_AUTHOR_DATA)
-    holding_panel_author_detail.go_to()
-    holding_panel_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holding_panel_author_detail.accept_record().has_error()
+    author_submission_form.go_to()
+    author_submission_form.submit_author(INPUT_AUTHOR_DATA)
+    holdingpen_author_list.go_to()
+    holdingpen_author_list.load_submission_record(INPUT_AUTHOR_DATA)
+    holdingpen_author_detail.go_to()
+    holdingpen_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
+
+    holdingpen_author_detail.accept_record().assert_has_no_errors()
 
 
 def test_reject_author(login):
-    create_author.go_to()
-    create_author.submit_author(INPUT_AUTHOR_DATA)
-    holding_panel_author_list.go_to()
-    holding_panel_author_list.load_submission_record(INPUT_AUTHOR_DATA)
-    holding_panel_author_detail.go_to()
-    holding_panel_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holding_panel_author_detail.reject_record().has_error()
+    author_submission_form.go_to()
+    author_submission_form.submit_author(INPUT_AUTHOR_DATA)
+    holdingpen_author_list.go_to()
+    holdingpen_author_list.load_submission_record(INPUT_AUTHOR_DATA)
+    holdingpen_author_detail.go_to()
+    holdingpen_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
+
+    holdingpen_author_detail.reject_record().assert_has_no_errors()
 
 
 def test_curation_author(login):
-    create_author.go_to()
-    create_author.submit_author(INPUT_AUTHOR_DATA)
-    holding_panel_author_list.go_to()
-    holding_panel_author_list.load_submission_record(INPUT_AUTHOR_DATA)
-    holding_panel_author_detail.go_to()
-    holding_panel_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holding_panel_author_detail.curation_record().has_error()
+    author_submission_form.go_to()
+    author_submission_form.submit_author(INPUT_AUTHOR_DATA)
+    holdingpen_author_list.go_to()
+    holdingpen_author_list.load_submission_record(INPUT_AUTHOR_DATA)
+    holdingpen_author_detail.go_to()
+    holdingpen_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
+
+    holdingpen_author_detail.curation_record().assert_has_no_errors()
 
 
 def test_review_submission_author(login):
-    create_author.go_to()
-    create_author.submit_author(INPUT_AUTHOR_DATA)
-    holding_panel_author_list.go_to()
-    holding_panel_author_list.load_submission_record(INPUT_AUTHOR_DATA)
-    holding_panel_author_detail.go_to()
-    holding_panel_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
-    assert holding_panel_author_detail.review_record(INPUT_AUTHOR_DATA).has_error()
+    author_submission_form.go_to()
+    author_submission_form.submit_author(INPUT_AUTHOR_DATA)
+    holdingpen_author_list.go_to()
+    holdingpen_author_list.load_submission_record(INPUT_AUTHOR_DATA)
+    holdingpen_author_detail.go_to()
+    holdingpen_author_detail.load_submitted_record(INPUT_AUTHOR_DATA)
+
+    holdingpen_author_detail.review_record(INPUT_AUTHOR_DATA).assert_has_no_errors()

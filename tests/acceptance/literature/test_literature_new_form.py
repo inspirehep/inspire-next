@@ -23,208 +23,238 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.bat.pages import (
-    create_literature,
-    holding_panel_literature_detail,
-    holding_panel_literature_list,
+    literature_submission_form,
+    holdingpen_literature_detail,
+    holdingpen_literature_list,
 )
 
 
-def test_literature_create_chapter_manually(login):
-    input_data = {
-        'pdf-1': 'http://example.com/a-pdf',
-        'title': 'My Title For Test',
-        'language': 'ru',
-        'title_translation': 'My Title was in Russian',
-        'subject': 'Computing',
-        'author-0': 'Barry White',
-        'author-0-affiliation': 'Wisconsin U., Madison',
-        'author-1': 'James Brown',
-        'author-1-affiliation': 'CERN',
-        'collaboration': 'This is a collaboration',
-        'experiment': 'This is an experiment',
-        'abstract': 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
-        'report-number-0': '100',
-        'report-number-1': '101',
-        'book-title': 'Relativistic Quantum Mechanics',
-        'page-start': '512',
-        'page-end': '1024',
-        'references': 'references',
-        'extra-comments': 'comments about the document'
-    }
+def _accept_and_complete(input_data):
+    holdingpen_literature_list.go_to()
+    holdingpen_literature_list.assert_first_record_matches(input_data)
 
-    create_literature.go_to()
-    assert create_literature.submit_chapter(input_data).has_error()
-    _check_back_office(input_data)
+    holdingpen_literature_detail.go_to()
+    holdingpen_literature_detail.assert_first_record_matches(input_data)
+    holdingpen_literature_detail.accept_record().assert_has_no_errors()
+
+    holdingpen_literature_list.go_to()
+    holdingpen_literature_list.assert_first_record_matches(input_data)
+    holdingpen_literature_list.assert_first_record_completed()
 
 
-def test_literature_create_book_manually(login):
-    input_data = {
-        'pdf-1': 'http://example.com/a-pdf',
-        'title': 'My Title For Test',
-        'language': 'ru',
-        'title_translation': 'My Title was in Russian',
-        'subject': 'Computing',
-        'author-0': 'Barry White',
-        'author-0-affiliation': 'Wisconsin U., Madison',
-        'author-1': 'James Brown',
-        'author-1-affiliation': 'CERN',
-        'collaboration': 'This is a collaboration',
-        'experiment': 'This is an experiment',
-        'abstract': 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
-        'report-number-0': '100',
-        'report-number-1': '101',
-        'publisher-name': 'Oxford University',
-        'publication-date': '2001-01-01',
-        'publication-place': 'Oxford',
-        'book-edition': 'No 2',
-        'book-title': 'Astrowars',
-        'book-volume': 'Andromeda',
-        'references': 'references',
-        'extra-comments': 'comments about the document'
-    }
+def test_literature_create_chapter(login):
+    input_data = literature_submission_form.InputData()
+    input_data.add_basic_info(
+        abstract='Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
+        title='My Title For Test',
+        language='ru',
+        title_translation='My Title was in Russian',
+        collaboration='This is a collaboration',
+        experiment='This is an experiment',
+        authors=(
+            {'name': 'Barry White', 'affiliation': 'Wisconsin U., Madison'},
+            {'name': 'James Brown', 'affiliation': 'CERN'},
+        ),
+        report_numbers=('100', '101'),
+        subjects=('Accelerators', 'Computing'),
+    )
+    input_data.add_links(pdf_url='http://example.com/a-pdf')
+    input_data.add_references_comments(
+        references='references',
+        extra_comments='comments about the document',
+    )
+    input_data.add_book_chapter_info(
+        book_title='Relativistic Quantum Mechanics',
+        page_start='512',
+        page_end='1024',
+    )
 
-    create_literature.go_to()
-    assert create_literature.submit_book(input_data).has_error()
-    _check_back_office(input_data)
+    literature_submission_form.go_to()
 
-
-def test_literature_create_thesis_manually(login):
-    input_data = {
-        'pdf-1': 'http://example.com/a-pdf',
-        'title': 'My Title For Test',
-        'language': 'ru',
-        'title_translation': 'My Title was in Russian',
-        'subject': 'Computing',
-        'author-0': 'Barry White',
-        'author-0-affiliation': 'Wisconsin U., Madison',
-        'author-1': 'James Brown',
-        'author-1-affiliation': 'CERN',
-        'collaboration': 'This is a collaboration',
-        'experiment': 'This is an experiment',
-        'abstract': 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
-        'report-number-0': '100',
-        'report-number-1': '101',
-        'supervisor': 'Mister Yellow',
-        'supervisor-affiliation': 'CERN',
-        'thesis-date': '2001-01-01',
-        'defense-date': '2002-02-01',
-        'degree-type': 'bachelor',
-        'institution': 'Wisconsin U., Madison',
-        'references': 'references',
-        'extra-comments': 'comments about the document'
-    }
-
-    create_literature.go_to()
-    assert create_literature.submit_thesis(input_data).has_error()
-    _check_back_office(input_data)
+    literature_submission_form.submit_chapter(input_data).assert_has_no_errors()
+    _accept_and_complete(input_data)
 
 
-def test_literature_create_article_journal_manually(login):
-    input_data = {
-        'pdf-1': 'http://example.com/a-pdf',
-        'title': 'My Title For Test',
-        'language': 'ru',
-        'title_translation': 'My Title was in Russian',
-        'subject': 'Computing',
-        'author-0': 'Barry White',
-        'author-0-affiliation': 'Wisconsin U., Madison',
-        'author-1': 'James Brown',
-        'author-1-affiliation': 'CERN',
-        'collaboration': 'This is a collaboration',
-        'experiment': 'This is an experiment',
-        'abstract': 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
-        'report-number-0': '100',
-        'report-number-1': '101',
-        'journal_title': 'europe',
-        'volume': 'Volume',
-        'issue': 'issue',
-        'year': '2014',
-        'page-range-article': '100-110',
-        'conf-name': 'This Conference',
-        'references': 'references',
-        'extra-comments': 'comments about the document'
-    }
+def test_literature_create_book(login):
+    input_data = literature_submission_form.InputData()
+    input_data.add_basic_info(
+        abstract='Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
+        title='My Title For Test',
+        language='ru',
+        title_translation='My Title was in Russian',
+        collaboration='This is a collaboration',
+        experiment='This is an experiment',
+        authors=(
+            {'name': 'Barry White', 'affiliation': 'Wisconsin U., Madison'},
+            {'name': 'James Brown', 'affiliation': 'CERN'},
+        ),
+        report_numbers=('100', '101'),
+        subjects=('Accelerators', 'Computing'),
+    )
+    input_data.add_links(pdf_url='http://example.com/a-pdf')
+    input_data.add_references_comments(
+        references='references',
+        extra_comments='comments about the document',
+    )
+    input_data.add_book_info(
+        book_title='Astrowars',
+        book_volume='Andromeda',
+        publication_date='2001-01-01',
+        publication_place='Oxford',
+        publisher_name='Oxford University',
+    )
 
-    create_literature.go_to()
-    assert create_literature.submit_journal_article(input_data).has_error()
-    _check_back_office(input_data)
+    literature_submission_form.go_to()
+
+    literature_submission_form.submit_book(input_data).assert_has_no_errors()
+    _accept_and_complete(input_data)
 
 
-def test_literature_create_article_journal_with_proceeding_manually(login):
-    input_data = {
-        'pdf-1': 'http://example.com/a-pdf',
-        'title': 'My Title For Test',
-        'language': 'ru',
-        'title_translation': 'My Title was in Russian',
-        'subject': 'Computing',
-        'author-0': 'Barry White',
-        'author-0-affiliation': 'Wisconsin U., Madison',
-        'author-1': 'James Brown',
-        'author-1-affiliation': 'CERN',
-        'collaboration': 'This is a collaboration',
-        'experiment': 'This is a experiment',
-        'abstract': 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
-        'report-number-0': '100',
-        'report-number-1': '101',
-        'journal_title': 'europe',
-        'volume': 'Volume',
-        'issue': 'issue',
-        'year': '2014',
-        'page-range-article': '100-110',
-        'conf-name': 'This Conference',
-        'non-public-note': 'This proceedings',
-        'references': 'references',
-        'extra-comments': 'comments about the document'
-    }
+def test_literature_create_thesis(login):
+    input_data = literature_submission_form.InputData()
+    input_data.add_basic_info(
+        abstract='Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
+        title='My Title For Test',
+        language='ru',
+        title_translation='My Title was in Russian',
+        collaboration='This is a collaboration',
+        experiment='This is an experiment',
+        authors=(
+            {'name': 'Barry White', 'affiliation': 'Wisconsin U., Madison'},
+            {'name': 'James Brown', 'affiliation': 'CERN'},
+        ),
+        report_numbers=('100', '101'),
+        subjects=('Accelerators', 'Computing'),
+    )
+    input_data.add_links(pdf_url='http://example.com/a-pdf')
+    input_data.add_references_comments(
+        references='references',
+        extra_comments='comments about the document',
+    )
+    input_data.add_thesis_info(
+        supervisor_name='Mister Yellow',
+        supervisor_affiliation='CERN',
+        thesis_date='2001-01-01',
+        defense_date='2002-02-01',
+        degree_type='bachelor',
+        institution='Wisconsin U., Madison',
+    )
 
-    create_literature.go_to()
-    assert create_literature.submit_journal_article_with_proceeding(
+    literature_submission_form.go_to()
+    literature_submission_form.submit_thesis(input_data).assert_has_no_errors()
+    _accept_and_complete(input_data)
+
+
+def test_literature_create_article_journal(login):
+    input_data = literature_submission_form.InputData(
+        {
+        }
+    )
+    input_data.add_basic_info(
+        abstract='Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
+        title='My Title For Test',
+        language='ru',
+        title_translation='My Title was in Russian',
+        collaboration='This is a collaboration',
+        experiment='This is an experiment',
+        authors=(
+            {'name': 'Barry White', 'affiliation': 'Wisconsin U., Madison'},
+            {'name': 'James Brown', 'affiliation': 'CERN'},
+        ),
+        report_numbers=('100', '101'),
+        subjects=('Accelerators', 'Computing'),
+    )
+    input_data.add_links(pdf_url='http://example.com/a-pdf')
+    input_data.add_references_comments(
+        references='references',
+        extra_comments='comments about the document',
+    )
+    input_data.add_journal_info(
+        journal_title='europe',
+        volume='Volume',
+        issue='issue',
+        year='2014',
+        page_range='100-110',
+        conf_name='This Conference',
+    )
+
+    literature_submission_form.go_to()
+
+    literature_submission_form.submit_journal_article(
         input_data
-    ).has_error()
-    _check_back_office(input_data)
+    ).assert_has_no_errors()
+    _accept_and_complete(input_data)
 
 
-def _check_back_office(input_data):
-    holding_panel_literature_list.go_to()
-    assert holding_panel_literature_list.load_submitted_record().has_error()
+def test_literature_create_article_journal_with_proceeding(login):
+    input_data = literature_submission_form.InputData()
+    input_data.add_basic_info(
+        abstract='Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
+        title='My Title For Test',
+        language='ru',
+        title_translation='My Title was in Russian',
+        collaboration='This is a collaboration',
+        experiment='This is an experiment',
+        authors=(
+            {'name': 'Barry White', 'affiliation': 'Wisconsin U., Madison'},
+            {'name': 'James Brown', 'affiliation': 'CERN'},
+        ),
+        report_numbers=('100', '101'),
+        subjects=('Accelerators', 'Computing'),
+    )
+    input_data.add_links(pdf_url='http://example.com/a-pdf')
+    input_data.add_references_comments(
+        references='references',
+        extra_comments='comments about the document',
+    )
+    input_data.add_journal_info(
+        journal_title='europe',
+        volume='Volume',
+        issue='issue',
+        year='2014',
+        page_range='100-110',
+        conf_name='This Conference',
+    )
+    input_data.add_proceedings(nonpublic_note='This proceedings')
 
-    holding_panel_literature_detail.go_to()
-    assert holding_panel_literature_detail.load_submitted_record(
+    literature_submission_form.go_to()
+
+    literature_submission_form.submit_journal_article_with_proceeding(
         input_data
-    ).has_error()
-    assert holding_panel_literature_detail.accept_record().has_error()
-
-    holding_panel_literature_list.go_to()
-    assert holding_panel_literature_list.load_completed_record().has_error()
+    ).assert_has_no_errors()
+    _accept_and_complete(input_data)
 
 
 def test_thesis_info_autocomplete_supervisor_institution(login):
-    create_literature.go_to()
-    assert create_literature.write_institution_thesis(
+    literature_submission_form.go_to()
+    literature_submission_form.write_institution_thesis(
         'CER',
         'CERN',
-    ).has_error()
+    ).assert_has_no_errors()
 
 
 def test_journal_info_autocomplete_title(login):
-    create_literature.go_to()
-    assert create_literature.write_journal_title(
+    literature_submission_form.go_to()
+    literature_submission_form.write_journal_title(
         'Nuc',
         'Nucl.Phys.',
-    ).has_error()
+    ).assert_has_no_errors()
 
 
 def test_conference_info_autocomplete_title(login):
-    create_literature.go_to()
-    assert create_literature.write_conference(
+    literature_submission_form.go_to()
+    literature_submission_form.write_conference(
         'autrans',
         'IN2P3 School of Statistics, 2012-05-28, Autrans, FR',
-    ).has_error()
+    ).assert_has_no_errors()
 
 
 def test_basic_info_autocomplete_affiliation(login):
-    create_literature.go_to()
-    assert create_literature.write_affiliation('oxf', 'Oxford U.').has_error()
+    literature_submission_form.go_to()
+    literature_submission_form.write_affiliation(
+        'oxf',
+        'Oxford U.',
+    ).assert_has_no_errors()
 
 
 def test_import_from_arXiv(login):
@@ -246,11 +276,11 @@ def test_import_from_arXiv(login):
         ),
     }
 
-    create_literature.go_to()
-    assert create_literature.submit_arxiv_id(
+    literature_submission_form.go_to()
+    literature_submission_form.submit_arxiv_id(
         'hep-th/9711200',
         expected_data,
-    ).has_error()
+    ).assert_has_no_errors()
 
 
 def test_import_from_doi(login):
@@ -269,8 +299,9 @@ def test_import_from_doi(login):
         ),
     }
 
-    create_literature.go_to()
-    assert create_literature.submit_doi_id(
+    literature_submission_form.go_to()
+
+    literature_submission_form.submit_doi_id(
         '10.1086/305772',
         expected_data,
-    ).has_error()
+    ).assert_has_no_errors()
