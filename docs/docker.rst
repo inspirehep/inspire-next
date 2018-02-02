@@ -24,8 +24,7 @@ Docker (Linux)
 ==============
 
 Docker is an application that makes it simple and easy to run processes in a container,
-which are like virtual machines, but more resource-friendly. For a detailed introduction to the
-different components of a Docker container. For a detailed introduction to the different components
+which are like virtual machines, but more resource-friendly. For a detailed introduction to the different components
 of a Docker container, you can follow `this tutorial
 <https://www.digitalocean.com/community/tutorials/the-docker-ecosystem-an-introduction-to-common-components>`_.
 
