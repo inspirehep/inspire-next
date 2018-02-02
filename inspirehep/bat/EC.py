@@ -45,6 +45,7 @@ class TryClick(object):
     def __call__(self, driver):
         element = EC.visibility_of_element_located(self.locator)(driver)
         if not element:
+            driver.refresh()
             return False
 
         try:

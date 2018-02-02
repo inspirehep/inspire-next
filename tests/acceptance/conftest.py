@@ -26,7 +26,7 @@ import pytest
 
 from invenio_db import db
 from invenio_search import current_search_client as es
-from invenio_workflows import workflow_object_class
+from invenio_workflows import workflow_object_class, Workflow
 
 from inspirehep.bat.arsenic import Arsenic
 from inspirehep.bat.pages import top_navigation_page

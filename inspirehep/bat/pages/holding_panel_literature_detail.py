@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 from selenium.common.exceptions import (
     ElementNotVisibleException,
     WebDriverException,
@@ -29,9 +31,10 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
-from . import holding_panel_literature_list
-from ..arsenic import Arsenic, ArsenicResponse
+from inspirehep.bat.arsenic import Arsenic, ArsenicResponse
 from inspirehep.bat.EC import GetText, TryClick
+from inspirehep.bat.pages import holding_panel_literature_list
+from inspirehep.bat.utils import handle_timeuot_exception
 
 
 def go_to():
@@ -79,8 +82,16 @@ def accept_record():
             GetText((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))
         )
 
-    WebDriverWait(Arsenic(), 10).until(
-        TryClick((By.XPATH, '//button[@class="btn btn-warning"]'))
-    )
+    arsenic = Arsenic()
+    try:
+        api_url_reg = re.compile('https?://[^/]+/api.*')
+        if api_url_reg.match(arsenic.current_url):
+            go_to()
+
+        WebDriverWait(arsenic, 120).until(
+            TryClick((By.XPATH, '//button[@class="btn btn-warning"]'))
+        )
+    except Exception as exc:
+        handle_timeuot_exception(arsenic=arsenic, exc=exc, with_api=True)
 
     return ArsenicResponse(_accept_record)

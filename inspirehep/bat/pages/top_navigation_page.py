@@ -22,13 +22,16 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
 from os import environ
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from ..arsenic import Arsenic
+from inspirehep.bat.arsenic import Arsenic
+from inspirehep.bat.pages import create_literature
+from inspirehep.bat.utils import handle_timeuot_exception
 
 
 def log_in(user_id, password):
@@ -39,9 +42,20 @@ def log_in(user_id, password):
 
 
 def log_out():
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'user-info')))
-    Arsenic().find_element_by_id('user-info').click()
-    Arsenic().find_element_by_xpath('(//button[@type="button"])[2]').click()
+    arsenic = Arsenic()
+    try:
+        api_url_reg = re.compile('https?://[^/]+/api.*')
+        if api_url_reg.match(arsenic.current_url):
+            create_literature.go_to()
+
+        WebDriverWait(Arsenic(), 10).until(
+            EC.visibility_of_element_located((By.ID, 'user-info'))
+        )
+    except Exception as exc:
+        handle_timeuot_exception(arsenic=arsenic, exc=exc)
+
+    arsenic.find_element_by_id('user-info').click()
+    arsenic.find_element_by_xpath('(//button[@type="button"])[2]').click()
 
 
 def am_i_logged():
