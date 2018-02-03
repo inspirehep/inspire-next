@@ -41,7 +41,7 @@ services:
       service: test-service_base
     volumes_from:
       - test-static
-    command: bash -c "py.test inspirehep tests/unit && make -C docs html"
+    command: bash -c "flake8 inspirehep tests && py.test tests/unit && make -C docs html"
 
   workflows:
     extends:
