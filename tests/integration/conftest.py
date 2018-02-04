@@ -43,7 +43,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
 
 @pytest.fixture(scope='session')
 def app():
-    """Flask application.
+    """
+    ** DEPRECATED: use isolated_app instead **
+    
+    Flask application.
 
     Creates a Flask application with a simple testing configuration,
     then creates an application context and inside of it recreates
