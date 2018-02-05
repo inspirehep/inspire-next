@@ -154,7 +154,7 @@ def set_core_in_extra_data(obj, eng):
     """Set `core=True` in `obj.extra_data` if the record belongs to a core arXiv category"""
     def _is_core(record):
         return set(get_arxiv_categories(record)) & \
-               set(current_app.config.get('ARXIV_CATEGORIES', {}).get('core'))
+            set(current_app.config.get('ARXIV_CATEGORIES', {}).get('core'))
 
     if _is_core(obj.data):
         obj.extra_data['core'] = True

@@ -41,7 +41,7 @@ services:
       service: test-service_base
     volumes_from:
       - test-static
-    command: bash -c "py.test inspirehep tests/unit && make -C docs html"
+    command: bash -c "flake8 inspirehep tests && py.test tests/unit && make -C docs html"
 
   workflows:
     extends:
@@ -54,12 +54,8 @@ services:
         condition: service_healthy
       test-indexer:
         condition: service_healthy
-      test-rabbitmq:
-        condition: service_healthy
       test-redis:
         condition: service_healthy
-      test-worker:
-        condition: service_started
 
   integration:
     extends:
@@ -72,12 +68,8 @@ services:
         condition: service_healthy
       test-indexer:
         condition: service_healthy
-      test-rabbitmq:
-        condition: service_healthy
       test-redis:
         condition: service_healthy
-      test-worker:
-        condition: service_started
 
   acceptance:
     extends:

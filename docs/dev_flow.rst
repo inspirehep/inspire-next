@@ -28,7 +28,7 @@ Git configuration
 
 First of all we have to set up some basic git configuration values:
 
-* Set up the user info that will be used by Git as author and commiter for
+* Set up the user info that will be used by Git as author and committer for
   each commit.
 
 .. code-block:: console
@@ -44,11 +44,11 @@ First of all we have to set up some basic git configuration values:
     git config --global format.signoff true
 
 
-Recomended: configure your ssh key on GitHub
+Recommended: configure your ssh key on GitHub
 ============================================
 
 That will allow you to easily access the git repositories without having to
-enter you user and password every time in a secure manner.
+enter your user and password every time in a secure manner.
 
 If you don't have one already, create an ssh key:
 
@@ -59,7 +59,7 @@ If you don't have one already, create an ssh key:
 It will ask for a path and a password, the password is optional.
 
 Now go to the `github settings page for keys`_ and add the contents of the
-public key you just creted, by default `~/.ssh/id_rsa.pub`.
+public key you just created, by default `~/.ssh/id_rsa.pub`.
 
 .. warning::
 
@@ -191,7 +191,7 @@ repositoy:
 
 .. note::
     The `-f` flag is required if it's not the first time you push, and you
-    rebased you changes in between.
+    rebased your changes in between.
 
 Now you can go to your github repo page, and create a new pull request, that
 will ask you to specify a new message and description for it, if you had

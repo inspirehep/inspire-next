@@ -95,6 +95,7 @@ install_requires = [
     'invenio-workflows~=7.0',
     'langdetect~=1.0,>=1.0.7',
     'librabbitmq~=1.0,>=1.6.1',
+    'marshmallow~=2.0,>=2.15.0',  # See: inveniosoftware/invenio-records-rest#186
     'orcid~=0.0,>=0.7.0',
     'plotextractor~=0.0,>=0.1.6',
     'pybtex~=0.0,>=0.21',
@@ -115,7 +116,6 @@ tests_require = [
     'flake8-future-import~=0.0,>=0.4.3',
     'mock~=2.0,>=2.0.0',
     'pytest-cov~=2.0,>=2.5.1',
-    'pytest-flake8~=0.0,>=0.9',
     'pytest-selenium~=1.0,>=1.11.1',
     'pytest~=3.0,>=3.3.0',
     'requests_mock~=1.0,>=1.3.0',

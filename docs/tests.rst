@@ -140,9 +140,9 @@ they expect to see. For example
 .. code-block:: python
 
     def test_mail_format(login):
-        create_author.go_to()
-        assert create_author.write_mail('wrong mail').has_error()
-        assert not create_author.write_mail('me@me.com').has_error()
+        author_submission_form.go_to()
+        author_submission_form.write_mail('wrong mail').assert_has_error()
+        author_submission_form.write_mail('me@me.com').assert_has_no_error()
 
 asserts that, when the user visits the "Create Author" page and writes ``wrong
 mail``, they see an error, while when they visit the same page but write a valid
@@ -161,25 +161,25 @@ can take when interacting with that page. For example the
     def go_to():
         Arsenic().get(os.environ['SERVER_NAME'] + '/authors/new')
 
-method in :file:`inspirehep/bat/pages/create_author.py` represents the action of
-visiting the "Create Author" page, while
+method in :file:`inspirehep/bat/pages/author_submission_form.py` represents
+the action of visiting the "Create Author" page, while
 
 .. code-block:: python
 
     def write_institution(institution, expected_data):
-        def _write_institution():
-            return expected_data in Arsenic().write_in_autocomplete_field(
+        def _assert_has_error():
+            assert expected_data in Arsenic().write_in_autocomplete_field(
                 'institution_history-0-name', institution)
 
-        return ArsenicResponse(_write_institution)
+        return ArsenicResponse(assert_has_error=_assert_has_error)
 
 in the same module represents the action of filling the autocomplete field
 of id ``institution_history-0-name`` with the content of the ``institution``
 variable.
 
 Note that the latter method returns a closure over ``expected_data`` and
-``institution`` which is going to be used by an ``has_error`` call to determine
-if the action was successful or not.
+``institution`` which is going to be used by an ``assert_has_error`` call to
+determine if the action was successful or not.
 
 
 Arsenic
@@ -193,8 +193,8 @@ ArsenicResponse
 ~~~~~~~~~~~~~~~
 
 As mentioned above, an ``ArsenicResponse`` wraps a closure that is going to be
-used by an ``has_error`` call to determine if the action executed
-successfully.
+used by an ``assert_has_error`` or ``assert_has_no_error`` call to determine
+if the action executed successfully or not.
 
 
 How to Debug the Selenium Tests

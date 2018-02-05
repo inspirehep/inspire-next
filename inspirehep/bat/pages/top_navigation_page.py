@@ -39,10 +39,16 @@ def log_in(user_id, password):
 
 
 def log_out():
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'user-info')))
+    WebDriverWait(Arsenic(), 10).until(
+        EC.visibility_of_element_located((By.ID, 'user-info'))
+    )
     Arsenic().find_element_by_id('user-info').click()
     Arsenic().find_element_by_xpath('(//button[@type="button"])[2]').click()
 
 
 def am_i_logged():
-    return (WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'user-info'))).text == 'My account')
+    return (
+        WebDriverWait(Arsenic(), 10).until(
+            EC.visibility_of_element_located((By.ID, 'user-info'))
+        ).text == 'My account'
+    )
