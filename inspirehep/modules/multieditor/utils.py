@@ -35,12 +35,12 @@ from inspirehep.modules.migrator.tasks import chunker
 
 
 def compare_records(old_records, new_records, schema):
-    """
-    Compares and validates the records after the actions have been applied
+    """Compares and validates the records after the actions have been applied
     :param old_records: records before actions
     :param new_records: records after actions
     :param schema: corresponding schema of the records
-    :return:json patches[object] and errors[string]
+    Returns:
+        json patches[object] and errors[string]
     """
     json_patches = []
     errors = []
@@ -56,10 +56,12 @@ def compare_records(old_records, new_records, schema):
 
 
 def match_records(records_ids, actions, schema):
-        """
+        """Filter all results and return the affected number
         :param records_ids: ids of the records to be processed
         :param user_actions: user actions as received from frontend
         :param schema: corresponding schema of the records
+        Returns:
+            int: number of total matches
         """
         total_records_affected = 0
         for chunk in chunker(records_ids, 200):

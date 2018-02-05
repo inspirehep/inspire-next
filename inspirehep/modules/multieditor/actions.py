@@ -463,11 +463,11 @@ def handle_condition_progression(record, schema, match_type,
     if isinstance(record, list):
         for index in record:
             if condition_passes(index, schema, match_type,
-                                 keypath, update_value, position + 1):
+                                keypath, update_value, position + 1):
                 return True
     else:
         return condition_passes(record, schema, match_type,
-                                 keypath, update_value, position + 1)
+                                keypath, update_value, position + 1)
     return False
 
 
@@ -509,11 +509,10 @@ def get_subschema(schema, key):
 def should_run_condition(self, key, condition, position):
     """
     Checks if the condition check should run.
-    :param self: 
     :param key: current key of action
     :param condition: condition that should be checked
     :param position: depth of recursion
-    :return: 
+    :return: the validity of the condition(boolean)
     """
     if position < len(condition['keypath']):
         if key != condition['keypath'][position] and \

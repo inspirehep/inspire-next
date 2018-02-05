@@ -114,7 +114,7 @@ class SearchAPI(MethodView):
         return jsonify({'total_records': total_records,
                         'uuids': records_uuids,
                         'json_records': records})
-    
+
     def post(self):
         """Preview the user actions in the corresponding page's records,
         returning the old records with JSON patches for the changed ones."""
