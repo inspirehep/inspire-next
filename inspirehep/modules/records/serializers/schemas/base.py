@@ -27,8 +27,6 @@ from __future__ import absolute_import, division, print_function
 from pybtex.database import Entry, Person
 from six import text_type
 
-from inspire_utils.record import get_value
-
 from ..fields_export import get_authors_with_role, extractor, bibtex_type_and_fields
 
 
@@ -49,7 +47,7 @@ class PybtexSchema(object):
             pybtex.database.Entity: Pybtex entity
         """
         doc_type, fields = bibtex_type_and_fields(record)
-        texkey = get_value(record, 'texkeys[0]')
+        texkey = record['texkeys'][0]
 
         template_data = []
 
