@@ -22,98 +22,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-import copy
-import datetime
 import os
 
 from flask import current_app
-from sqlalchemy.orm.exc import NoResultFound
 
-from invenio_accounts.models import User
-from invenio_oauthclient.models import UserIdentity
-
-from inspire_dojson.utils import strip_empty_values
-from inspire_schemas.api import validate
-from inspirehep.modules.forms.utils import filter_empty_elements
+from inspirehep.modules.forms.utils import get_user_comments
 from inspirehep.modules.workflows.utils import with_debug_logging
-from inspirehep.utils.schema import ensure_valid_schema
-
-from .dojson.model import updateform
-
-
-def formdata_to_model(obj, formdata):
-    """Manipulate form data to match authors data model."""
-    form_fields = copy.deepcopy(formdata)
-
-    filter_empty_elements(
-        form_fields,
-        ['institution_history', 'advisors',
-         'websites', 'experiments']
-    )
-    data = updateform.do(form_fields)
-
-    # ===========
-    # Collections
-    # ===========
-    data['_collections'] = ['Authors']
-
-    # ======
-    # Schema
-    # ======
-
-    # FIXME it's not clear whether $schema is ever present at this stage
-    if '$schema' not in data and '$schema' in obj.data:
-        data['$schema'] = obj.data.get('$schema')
-    if '$schema' in data:
-        ensure_valid_schema(data)
-
-    author_name = ''
-
-    if 'family_name' in form_fields and form_fields['family_name']:
-        author_name = form_fields['family_name'].strip() + ', '
-    if 'given_names' in form_fields and form_fields['given_names']:
-        author_name += form_fields['given_names']
-
-    if author_name:
-        data.get('name', {})['value'] = author_name
-
-    # Add comments to extra data
-    if 'extra_comments' in form_fields and form_fields['extra_comments']:
-        data.setdefault('_private_notes', []).append({
-            'source': 'submitter',
-            'value': form_fields['extra_comments']
-        })
-
-    data['stub'] = False
-
-    # ==========
-    # Submitter Info
-    # ==========
-    try:
-        user_email = User.query.get(obj.id_user).email
-    except AttributeError:
-        user_email = ''
-    try:
-        orcid = UserIdentity.query.filter_by(
-            id_user=obj.id_user,
-            method='orcid'
-        ).one().id
-    except NoResultFound:
-        orcid = ''
-    data['acquisition_source'] = dict(
-        email=user_email,
-        datetime=datetime.datetime.utcnow().isoformat(),
-        method="submitter",
-        orcid=orcid,
-        submission_number=str(obj.id),
-        internal_uid=int(obj.id_user),
-    )
-
-    data = strip_empty_values(data)
-
-    validate(data, 'authors')
-
-    return data
 
 
 @with_debug_logging
@@ -131,7 +45,9 @@ def new_ticket_context(user, obj):
         email=user.email,
         object=obj,
         subject=subject,
-        user_comment=obj.extra_data.get('formdata', {}).get('extra_comments', ''),
+        user_comment='\n'.join(
+            get_user_comments(private_notes=obj.data.get('_private_notes', []))
+        ),
     )
 
 
@@ -140,14 +56,19 @@ def update_ticket_context(user, obj):
     subject = u"Your update to author {0} on INSPIRE".format(
         obj.data.get("name").get("preferred_name")
     )
-    record_url = os.path.join(current_app.config["AUTHORS_UPDATE_BASE_URL"], "record",
-                              str(obj.data.get("control_number", "")))
+    record_url = os.path.join(
+        current_app.config["AUTHORS_UPDATE_BASE_URL"],
+        "record",
+        str(obj.data.get("control_number", "")),
+    )
     return dict(
         email=user.email,
         url=record_url,
         bibedit_url=record_url + "/edit",
         subject=subject,
-        user_comment=obj.extra_data.get('formdata', {}).get('extra_comments', ''),
+        user_comment='\n'.join(
+            get_user_comments(private_notes=obj.data.get('_private_notes', []))
+        ),
     )
 
 
@@ -179,5 +100,7 @@ def curation_ticket_context(user, obj):
         recid=recid,
         subject=subject,
         record_url=record_url,
-        user_comment=obj.extra_data.get('formdata', {}).get('extra_comments', ''),
+        user_comment='\n'.join(
+            get_user_comments(private_notes=obj.data.get('_private_notes', []))
+        ),
     )
