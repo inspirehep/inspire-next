@@ -280,33 +280,44 @@ def fix_submission_number(obj, eng):
 
 
 @with_debug_logging
-def submission_fulltext_download(obj, eng):
+def populate_submission_document(obj, eng):
     submission_pdf = obj.extra_data.get('submission_pdf')
     if submission_pdf and is_pdf_link(submission_pdf):
         filename = secure_filename('fulltext.pdf')
-        pdf = download_file_to_workflow(
-            workflow=obj,
-            name=filename,
+        obj.data['documents'] = [
+            document for document in obj.data.get('documents', ())
+            if document.get('key') != filename
+        ]
+        lb = LiteratureBuilder(
+            source=obj.data['acquisition_source']['source'], record=obj.data)
+        lb.add_document(
+            filename,
+            fulltext=True,
             url=submission_pdf,
+            original_url=submission_pdf,
         )
+        obj.data = lb.record
 
-        if pdf:
-            obj.data['documents'] = [
-                document for document in obj.data.get('documents', ())
-                if document.get('key') != filename
-            ]
-            lb = LiteratureBuilder(source=obj.data['acquisition_source']['source'], record=obj.data)
-            lb.add_document(
-                filename,
-                fulltext=True,
-                original_url=submission_pdf,
-                url='/api/files/{bucket}/{key}'.format(bucket=obj.files[filename].bucket_id, key=filename)
+
+@with_debug_logging
+def download_documents(obj, eng):
+    documents = obj.data.get('documents')
+    if documents:
+        for document in documents:
+            filename = document['key']
+            url = document['url']
+            downloaded = download_file_to_workflow(
+                workflow=obj,
+                name=filename,
+                url=url,
             )
-            obj.data = lb.record
-            obj.log.info('PDF provided by user from %s', submission_pdf)
-            return obj.files[filename].file.uri
-        else:
-            obj.log.info('Cannot fetch PDF provided by user from %s', submission_pdf)
+            if downloaded:
+                document['url'] = '/api/files/{bucket}/{key}'.format(
+                    bucket=obj.files[filename].bucket_id, key=filename)
+                obj.log.info('Document downloaded from %s', url)
+            else:
+                obj.log.error(
+                    'Cannot download document from %s', url)
 
 
 @with_debug_logging

@@ -35,59 +35,101 @@ from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_author_list,
     arxiv_derive_inspire_categories,
-    arxiv_fulltext_download,
     arxiv_package_download,
     arxiv_plot_extract,
+    populate_arxiv_document,
 )
 from plotextractor.errors import InvalidTarball
 
 from mocks import AttrDict, MockEng, MockFiles, MockObj
 
 
-def test_arxiv_fulltext_download_logs_on_success():
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
-            content=pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', '1605.03844.pdf')),
-        )
+def test_populate_arxiv_document():
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
 
-        schema = load_schema('hep')
-        subschema = schema['properties']['arxiv_eprints']
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'physics.ins-det',
+                ],
+                'value': '1605.03844',
+            },
+        ],
+    }  # literature/1458302
 
-        data = {
-            'arxiv_eprints': [
-                {
-                    'categories': [
-                        'physics.ins-det',
-                    ],
-                    'value': '1605.03844',
-                },
-            ],
-        }  # literature/1458302
-        extra_data = {}
-        files = MockFiles({})
-        assert validate(data['arxiv_eprints'], subschema) is None
+    assert validate(data['arxiv_eprints'], subschema) is None
+    extra_data = {}
+    files = MockFiles({})
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
 
-        obj = MockObj(data, extra_data, files=files)
-        eng = MockEng()
-
-        assert arxiv_fulltext_download(obj, eng) is None
-
-        expected = 'PDF retrieved from arXiv for 1605.03844'
-        result = obj.log._info.getvalue()
-
-        assert expected == result
+    assert populate_arxiv_document(obj, eng) is None
+    expected_url = 'http://export.arxiv.org/pdf/1605.03844'
+    expected_documents = [
+        {
+            'key': '1605.03844.pdf',
+            'fulltext': True,
+            'hidden': True,
+            'material': 'preprint',
+            'original_url': expected_url,
+            'url': expected_url,
+            'source': 'arxiv',
+        }
+    ]
+    documents = obj.data['documents']
+    assert expected_documents == documents
 
 
-def test_arxiv_fulltext_download_logs_on_pdf_not_existing():
+def test_populate_arxiv_document_does_not_duplicate():
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'physics.ins-det',
+                ],
+                'value': '1605.03844',
+            },
+        ],
+    }  # literature/1458302
+
+    assert validate(data['arxiv_eprints'], subschema) is None
+    extra_data = {}
+    files = MockFiles({})
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    assert populate_arxiv_document(obj, eng) is None
+    assert populate_arxiv_document(obj, eng) is None
+
+    expected_url = 'http://export.arxiv.org/pdf/1605.03844'
+    expected_documents = [
+        {
+            'key': '1605.03844.pdf',
+            'fulltext': True,
+            'hidden': True,
+            'material': 'preprint',
+            'original_url': expected_url,
+            'url': expected_url,
+            'source': 'arxiv',
+        }
+    ]
+    documents = obj.data['documents']
+
+    assert expected_documents == documents
+
+
+def test_populate_arxiv_document_logs_on_pdf_not_existing():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
             'GET', 'http://export.arxiv.org/pdf/1707.02785',
             content=pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', '1707.02785.html')),
         )
-
         schema = load_schema('hep')
         subschema = schema['properties']['arxiv_eprints']
 
@@ -108,7 +150,7 @@ def test_arxiv_fulltext_download_logs_on_pdf_not_existing():
         obj = MockObj(data, extra_data, files=files)
         eng = MockEng()
 
-        assert arxiv_fulltext_download(obj, eng) is None
+        assert populate_arxiv_document(obj, eng) is None
 
         expected = 'No PDF is available for 1707.02785'
         result = obj.log._info.getvalue()
@@ -116,7 +158,7 @@ def test_arxiv_fulltext_download_logs_on_pdf_not_existing():
         assert expected == result
 
 
-def test_arxiv_fulltext_download_retries_on_error():
+def test_populate_arxiv_document_retries_on_error():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
             'GET', 'http://export.arxiv.org/pdf/1605.03814',
@@ -153,101 +195,22 @@ def test_arxiv_fulltext_download_retries_on_error():
         obj = MockObj(data, extra_data, files=files)
         eng = MockEng()
 
-        assert arxiv_fulltext_download(obj, eng) is None
+        assert populate_arxiv_document(obj, eng) is None
 
-        expected = 'PDF retrieved from arXiv for 1605.03814'
-        result = obj.log._info.getvalue()
-
-        assert expected == result
-
-
-def test_arxiv_fulltext_download_polulates_documents():
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
-            content=pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', '1605.03844.pdf')),
-        )
-
-        schema = load_schema('hep')
-        subschema = schema['properties']['arxiv_eprints']
-
-        data = {
-            'arxiv_eprints': [
-                {
-                    'categories': [
-                        'physics.ins-det',
-                    ],
-                    'value': '1605.03844',
-                },
-            ],
-        }  # literature/1458302
-        extra_data = {}
-        files = MockFiles({})
-        assert validate(data['arxiv_eprints'], subschema) is None
-
-        obj = MockObj(data, extra_data, files=files)
-        eng = MockEng()
-
-        assert arxiv_fulltext_download(obj, eng) is None
-
-        expected = [{
-            'fulltext': True,
-            'original_url': 'http://export.arxiv.org/pdf/1605.03844',
-            'url': '/api/files/0b9dd5d1-feae-4ba5-809d-3a029b0bc110/1605.03844.pdf',
-            'material': 'preprint',
-            'source': 'arxiv',
-            'key': '1605.03844.pdf',
-            'hidden': True
-        }]
-        result = obj.data['documents']
-
-        assert expected == result
-
-
-def test_arxiv_fulltext_download_does_not_duplicate_documents():
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
-            content=pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', '1605.03844.pdf')),
-        )
-
-        schema = load_schema('hep')
-        subschema = schema['properties']['arxiv_eprints']
-
-        data = {
-            'arxiv_eprints': [
-                {
-                    'categories': [
-                        'physics.ins-det',
-                    ],
-                    'value': '1605.03844',
-                },
-            ],
-        }  # literature/1458302
-        extra_data = {}
-        files = MockFiles({})
-        assert validate(data['arxiv_eprints'], subschema) is None
-
-        obj = MockObj(data, extra_data, files=files)
-        eng = MockEng()
-
-        assert arxiv_fulltext_download(obj, eng) is None
-        assert arxiv_fulltext_download(obj, eng) is None
-
-        expected = [{
-            'fulltext': True,
-            'original_url': 'http://export.arxiv.org/pdf/1605.03844',
-            'url': '/api/files/0b9dd5d1-feae-4ba5-809d-3a029b0bc110/1605.03844.pdf',
-            'material': 'preprint',
-            'source': 'arxiv',
-            'key': '1605.03844.pdf',
-            'hidden': True
-        }]
-        result = obj.data['documents']
-
-        assert expected == result
+        expected_url = 'http://export.arxiv.org/pdf/1605.03814'
+        expected_documents = [
+            {
+                'key': '1605.03814.pdf',
+                'fulltext': True,
+                'hidden': True,
+                'material': 'preprint',
+                'original_url': expected_url,
+                'url': expected_url,
+                'source': 'arxiv',
+            }
+        ]
+        documents = obj.data['documents']
+        assert expected_documents == documents
 
 
 def test_arxiv_package_download_logs_on_success():

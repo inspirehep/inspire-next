@@ -51,10 +51,14 @@ from utils import get_halted_workflow
 
 
 @mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link'
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
 )
 @mock.patch(
@@ -74,6 +78,7 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     mocked_refextract_extract_refs,
     mocked_api_request_magpie,
     mocked_api_request_beard,
+    mocked_package_download,
     workflow_app,
     mocked_external_services,
 ):
@@ -109,6 +114,10 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     side_effect=fake_download_file,
 )
 @mock.patch(
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
     return_value=True
 )
@@ -130,8 +139,9 @@ def test_harvesting_arxiv_workflow_core_record_auto_accepted(
     mocked_refextract_extract_refs,
     mocked_api_request_magpie,
     mocked_api_request_beard,
+    mocked_package_download,
     workflow_app,
-    mocked_external_services
+    mocked_external_services,
 ):
     """Test a full harvesting workflow."""
     record, categories = core_record()
@@ -155,6 +165,10 @@ def test_harvesting_arxiv_workflow_core_record_auto_accepted(
 
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
 )
 @mock.patch(
@@ -184,6 +198,7 @@ def test_harvesting_arxiv_workflow_manual_accepted(
     mocked_api_request_beard,
     mocked_download_utils,
     mocked_download_arxiv,
+    mocked_package_download,
     workflow_app,
     mocked_external_services,
 ):
@@ -224,11 +239,15 @@ def test_harvesting_arxiv_workflow_manual_accepted(
 
 
 @mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
     return_value=True
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
 )
 @mock.patch(
@@ -243,6 +262,7 @@ def test_match_in_holdingpen_stops_pending_wf(
     mocked_download_arxiv,
     mocked_api_request_beard,
     mocked_api_request_magpie,
+    mocked_package_download,
     workflow_app,
     mocked_external_services,
 ):
@@ -280,11 +300,15 @@ def test_match_in_holdingpen_stops_pending_wf(
 
 
 @mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
     return_value=True
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
 )
 @mock.patch(
@@ -299,6 +323,7 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
     mocked_download_arxiv,
     mocked_api_request_beard,
     mocked_api_request_magpie,
+    mocked_package_download,
     workflow_app,
     mocked_external_services,
 ):
@@ -329,11 +354,15 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
 
 
 @mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
     return_value=True
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
 )
 @mock.patch(
@@ -348,6 +377,7 @@ def test_match_in_holdingpen_different_sources_continues(
     mocked_download_arxiv,
     mocked_api_request_beard,
     mocked_api_request_magpie,
+    mocked_package_download,
     workflow_app,
     mocked_external_services,
 ):
@@ -376,11 +406,15 @@ def test_match_in_holdingpen_different_sources_continues(
 
 
 @mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
     return_value=True
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
 )
 @mock.patch(
@@ -395,6 +429,7 @@ def test_arxiv_update_is_not_store_on_legacy_and_labs(
     mocked_download_arxiv,
     mocked_api_request_beard,
     mocked_api_request_magpie,
+    mocked_package_download,
     workflow_app,
     mocked_external_services,
     record_from_db,

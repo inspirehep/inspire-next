@@ -34,6 +34,7 @@ from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.actions import (
     _is_auto_rejected,
     add_core,
+    download_documents,
     fix_submission_number,
     halt_record,
     in_production_mode,
@@ -45,11 +46,11 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_submission,
     mark,
     populate_journal_coverage,
+    populate_submission_document,
     refextract,
     reject_record,
     set_refereed_and_fix_document_type,
     shall_halt_workflow,
-    submission_fulltext_download,
 )
 from inspirehep.utils.url import retrieve_uri
 
@@ -70,6 +71,87 @@ def _get_auto_reject_obj(decision, has_core_keywords):
     }
 
     return MockObj({}, obj_params)
+
+
+def test_download_documents():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '1605.03844.pdf')),
+        )
+
+        schema = load_schema('hep')
+        subschema = schema['properties']['documents']
+
+        data = {
+            'documents': [
+                {
+                    'key': '1605.03844.pdf',
+                    'url': 'http://export.arxiv.org/pdf/1605.03844'
+                },
+            ],
+        }  # literature/1458302
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['documents'], subschema) is None
+
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
+
+        assert download_documents(obj, eng) is None
+
+        documents = obj.data['documents']
+        expected_document_url = '/api/files/0b9dd5d1-feae-4ba5-809d-3a029b0bc110/1605.03844.pdf'
+
+        assert 1 == len(documents)
+        assert expected_document_url == documents[0]['url']
+
+
+def test_download_documents_with_multiple_documents():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '1605.03844.pdf')),
+        )
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1605.03845',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '1605.03844.pdf')),
+        )
+
+        schema = load_schema('hep')
+        subschema = schema['properties']['documents']
+
+        data = {
+            'documents': [
+                {
+                    'key': '1605.03844.pdf',
+                    'url': 'http://export.arxiv.org/pdf/1605.03844'
+                },
+                {
+                    'key': '1605.03845.pdf',
+                    'url': 'http://export.arxiv.org/pdf/1605.03845'
+                },
+            ],
+        }  # literature/1458302
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['documents'], subschema) is None
+
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
+
+        assert download_documents(obj, eng) is None
+
+        documents = obj.data['documents']
+        expected_document_url_1 = '/api/files/0b9dd5d1-feae-4ba5-809d-3a029b0bc110/1605.03844.pdf'
+        expected_document_url_2 = '/api/files/0b9dd5d1-feae-4ba5-809d-3a029b0bc110/1605.03845.pdf'
+
+        assert 2 == len(documents)
+        assert expected_document_url_1 == documents[0]['url']
+        assert expected_document_url_2 == documents[1]['url']
 
 
 def test_mark():
@@ -578,12 +660,93 @@ def test_refextract_from_text(mock_get_pdf_in_workflow):
     assert obj.data['references'][0]['raw_refs'][0]['source'] == 'submitter'
 
 
-def test_submission_fulltext_download():
+def test_populate_submission_document():
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+    data = {
+        'acquisition_source': {
+            'datetime': '2017-11-30T16:38:43.352370',
+            'email': 'david.caro@cern.ch',
+            'internal_uid': 54252,
+            'method': 'submitter',
+            'orcid': '0000-0002-2174-4493',
+            'source': 'submitter',
+            'submission_number': '1'
+        }
+    }
+    assert validate(data['acquisition_source'], subschema) is None
+
+    extra_data = {
+        'submission_pdf': 'http://export.arxiv.org/pdf/1605.03844',
+    }
+    files = MockFiles({})
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    assert populate_submission_document(obj, eng) is None
+
+    expected_key = 'fulltext.pdf'
+    expected_documents = [
+        {
+            'fulltext': True,
+            'key': expected_key,
+            'original_url': 'http://export.arxiv.org/pdf/1605.03844',
+            'source': 'submitter',
+            'url': 'http://export.arxiv.org/pdf/1605.03844',
+        }
+    ]
+    documents = obj.data['documents']
+
+    assert expected_documents == documents
+
+
+def test_populate_submission_document_does_not_duplicate_documents():
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+    data = {
+        'acquisition_source': {
+            'datetime': '2017-11-30T16:38:43.352370',
+            'email': 'david.caro@cern.ch',
+            'internal_uid': 54252,
+            'method': 'submitter',
+            'orcid': '0000-0002-2174-4493',
+            'source': 'submitter',
+            'submission_number': '1'
+        }
+    }
+    assert validate(data['acquisition_source'], subschema) is None
+
+    extra_data = {
+        'submission_pdf': 'http://export.arxiv.org/pdf/1605.03844',
+    }
+    files = MockFiles({})
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    assert populate_submission_document(obj, eng) is None
+    assert populate_submission_document(obj, eng) is None
+
+    expected_key = 'fulltext.pdf'
+    expected_documents = [
+        {
+            'fulltext': True,
+            'key': expected_key,
+            'original_url': 'http://export.arxiv.org/pdf/1605.03844',
+            'source': 'submitter',
+            'url': 'http://export.arxiv.org/pdf/1605.03844',
+        }
+    ]
+    documents = obj.data['documents']
+
+    assert expected_documents == documents
+
+
+def test_populate_submission_document_without_pdf():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            'GET', 'http://export.arxiv.org/pdf/1707.02785',
             content=pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', '1605.03844.pdf')),
+                __name__, os.path.join('fixtures', '1707.02785.html')),
         )
 
         schema = load_schema('hep')
@@ -602,81 +765,16 @@ def test_submission_fulltext_download():
         assert validate(data['acquisition_source'], subschema) is None
 
         extra_data = {
-            'submission_pdf': 'http://export.arxiv.org/pdf/1605.03844',
+            'submission_pdf': 'http://export.arxiv.org/pdf/1707.02785',
         }
         files = MockFiles({})
         obj = MockObj(data, extra_data, files=files)
         eng = MockEng()
 
-        assert submission_fulltext_download(obj, eng)
+        assert populate_submission_document(obj, eng) is None
 
-        expected_key = 'fulltext.pdf'
-        expected_documents = [
-            {
-                'fulltext': True,
-                'key': expected_key,
-                'original_url': 'http://export.arxiv.org/pdf/1605.03844',
-                'source': 'submitter',
-                'url': '/api/files/%s/%s' % (
-                    obj.files[expected_key].bucket_id,
-                    expected_key,
-                ),
-            }
-        ]
-        result = obj.data['documents']
-
-        assert expected_documents == result
-
-
-def test_submission_fulltext_download_does_not_duplicate_documents():
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
-            content=pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', '1605.03844.pdf')),
-        )
-
-        schema = load_schema('hep')
-        subschema = schema['properties']['acquisition_source']
-        data = {
-            'acquisition_source': {
-                'datetime': '2017-11-30T16:38:43.352370',
-                'email': 'david.caro@cern.ch',
-                'internal_uid': 54252,
-                'method': 'submitter',
-                'orcid': '0000-0002-2174-4493',
-                'source': 'submitter',
-                'submission_number': '1'
-            }
-        }
-        assert validate(data['acquisition_source'], subschema) is None
-
-        extra_data = {
-            'submission_pdf': 'http://export.arxiv.org/pdf/1605.03844',
-        }
-        files = MockFiles({})
-        obj = MockObj(data, extra_data, files=files)
-        eng = MockEng()
-
-        assert submission_fulltext_download(obj, eng)
-        assert submission_fulltext_download(obj, eng)
-
-        expected_key = 'fulltext.pdf'
-        expected_documents = [
-            {
-                'fulltext': True,
-                'key': expected_key,
-                'original_url': 'http://export.arxiv.org/pdf/1605.03844',
-                'source': 'submitter',
-                'url': '/api/files/%s/%s' % (
-                    obj.files[expected_key].bucket_id,
-                    expected_key,
-                ),
-            }
-        ]
-        result = obj.data['documents']
-
-        assert expected_documents == result
+        documents = obj.data.get('documents', [])
+        assert 0 == len(documents)
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
