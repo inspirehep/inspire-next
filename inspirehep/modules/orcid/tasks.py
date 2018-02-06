@@ -90,7 +90,8 @@ def _link_user_and_token(user, name, orcid, token):
             secret=None,
             extra_data={
                 'orcid': orcid,
-                'full_name': name
+                'full_name': name,
+                'allow_push': True,
             }
         ))
 
