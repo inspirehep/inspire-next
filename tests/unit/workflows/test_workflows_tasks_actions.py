@@ -43,6 +43,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_record_accepted,
     is_record_relevant,
     is_submission,
+    is_valid,
     mark,
     populate_journal_coverage,
     refextract,
@@ -397,6 +398,34 @@ def test_is_submission_returns_false_if_obj_has_falsy_acquisition_source():
     eng = MockEng()
 
     assert not is_submission(obj, eng)
+
+
+def test_is_valid():
+    obj = MockObj({
+        '_collections': ['Literature'],
+        'document_type': ['article'],
+        'titles': [{'title': 'a title'}]}, {})
+    eng = MockEng()
+
+    assert is_valid(obj, eng)
+
+
+def test_is_valid_returns_false_if_record_is_not_schema_compliant():
+    obj = MockObj({
+        'document_type': ['article'],
+        'titles': [{'title': 'a title'}]}, {})
+    eng = MockEng()
+
+    assert not is_valid(obj, eng)
+
+
+def test_is_valid_returns_false_if_record_doesn_not_have_all_mandatory_fields():
+    obj = MockObj({
+        'document_type': ['article'],
+        'titles': [{'title': 'a title'}]}, {})
+    eng = MockEng()
+
+    assert not is_valid(obj, eng)
 
 
 def test_fix_submission_number():
