@@ -65,7 +65,7 @@ install_requires = [
     'inspire-matcher~=4.0,>=4.0.0',
     'inspire-query-parser~=3.0,>=3.1.5',
     'inspire-schemas~=57.0,>=57.0.0',
-    'inspire-utils~=2.0,>=2.0.0',
+    'inspire-utils~=2.0,>=2.0.5',
     'invenio-access>=1.0.0b1',
     'invenio-accounts>=1.0.0b10',
     'invenio-admin>=1.0.0b4',
@@ -96,7 +96,6 @@ install_requires = [
     'langdetect~=1.0,>=1.0.7',
     'librabbitmq~=1.0,>=1.6.1',
     'marshmallow~=2.0,>=2.15.0',  # See: inveniosoftware/invenio-records-rest#186
-    'orcid~=0.0,>=0.7.0',
     'plotextractor~=0.0,>=0.1.6',
     'pybtex~=0.0,>=0.21',
     'python-redis-lock~=3.0,>=3.2.0',
