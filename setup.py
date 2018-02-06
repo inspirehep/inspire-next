@@ -228,6 +228,7 @@ setup(
         ],
         'invenio_celery.tasks': [
             'inspire_migrator = inspirehep.modules.migrator.tasks',
+            'inspire_orcid = inspirehep.modules.orcid.tasks',
             'inspire_records = inspirehep.modules.records.tasks',
             'inspire_refextract = inspirehep.modules.refextract.tasks',
         ],
