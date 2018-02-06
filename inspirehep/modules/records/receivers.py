@@ -25,8 +25,8 @@
 from __future__ import absolute_import, division, print_function
 
 import uuid
-from unicodedata import normalize
 from itertools import chain
+from unicodedata import normalize
 
 import six
 from flask import current_app
@@ -49,6 +49,10 @@ from inspire_utils.record import get_value
 from inspirehep.modules.authors.utils import phonetic_blocks
 
 
+def is_hep(record):
+    return 'hep.json' in record.get('$schema')
+
+
 #
 # before_record_insert & before_record_update
 #
@@ -62,7 +66,7 @@ def assign_phonetic_block(sender, record, *args, **kwargs):
     signature's full name, skipping those that are not recognized
     as real names, but logging an error when that happens.
     """
-    if 'hep.json' not in record.get('$schema'):
+    if not is_hep(record):
         return
 
     authors = record.get('authors', [])
@@ -90,7 +94,7 @@ def assign_phonetic_block(sender, record, *args, **kwargs):
 @before_record_update.connect
 def assign_uuid(sender, record, *args, **kwargs):
     """Assign a UUID to each signature of a Literature record."""
-    if 'hep.json' not in record.get('$schema'):
+    if not is_hep(record):
         return
 
     authors = record.get('authors', [])
@@ -151,7 +155,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
 
 def populate_bookautocomplete(sender, json, *args, **kwargs):
     """Populate the ```bookautocomplete`` field of Literature records."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     if 'book' not in json.get('document_type', []):
@@ -188,7 +192,7 @@ def populate_bookautocomplete(sender, json, *args, **kwargs):
 
 def populate_inspire_document_type(sender, json, *args, **kwargs):
     """Populate the ``facet_inspire_doc_type`` field of Literature records."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     result = []
@@ -277,7 +281,7 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
 
 def populate_abstract_source_suggest(sender, json, *args, **kwargs):
     """Populate the ``abstract_source_suggest`` field in Literature records."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     abstracts = json.get('abstracts', [])
@@ -357,7 +361,7 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
 
 def populate_earliest_date(sender, json, *args, **kwargs):
     """Populate the ``earliest_date`` field of Literature records."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     date_paths = [
@@ -380,7 +384,7 @@ def populate_earliest_date(sender, json, *args, **kwargs):
 
 def populate_name_variations(sender, json, *args, **kwargs):
     """Generate name variations for each signature of a Literature record."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     authors = json.get('authors', [])
@@ -404,7 +408,7 @@ def populate_name_variations(sender, json, *args, **kwargs):
 
 def populate_author_count(sender, json, *args, **kwargs):
     """Populate the ``author_count`` field of Literature records."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     authors = json.get('authors', [])
@@ -418,7 +422,7 @@ def populate_author_count(sender, json, *args, **kwargs):
 
 def populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs):
     """Populate the ``authors.full_name_normalized`` field of Literature records."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     authors = json.get('authors', [])
