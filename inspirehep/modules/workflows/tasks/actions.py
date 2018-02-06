@@ -40,9 +40,11 @@ from werkzeug import secure_filename
 
 from invenio_db import db
 from invenio_workflows import ObjectStatus
+from invenio_workflows.errors import WorkflowsError
 from invenio_records.models import RecordMetadata
 
 from inspire_schemas.builders import LiteratureBuilder
+from inspire_schemas.utils import validate
 from inspire_utils.record import get_value
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.workflows.tasks.refextract import (
@@ -58,6 +60,7 @@ from inspirehep.modules.workflows.utils import (
 from inspirehep.utils.normalizers import normalize_journal_title
 from inspirehep.utils.record import get_arxiv_id
 from inspirehep.utils.url import is_pdf_link
+from jsonschema.exceptions import ValidationError
 
 
 RE_ALPHANUMERIC = re.compile('\W+', re.UNICODE)
@@ -231,6 +234,16 @@ def is_submission(obj, eng):
 
 
 @with_debug_logging
+def is_valid(obj, *args, **kwargs):
+    """Check if the record is schema compliant."""
+    try:
+        if validate(obj.data, 'hep') is None:
+            return True
+    except ValidationError:
+        return False
+
+
+@with_debug_logging
 def populate_journal_coverage(obj, eng):
     """Populate ``journal_coverage`` from the Journals DB.
 
@@ -389,6 +402,7 @@ def error_workflow(message):
         obj.log.error(message)
         obj.extra_data['_error_message'] = message
         obj.status = ObjectStatus.ERROR
+        raise WorkflowsError
 
     _error_workflow.__doc__ = (
         'Force an error in the workflow object with the message "%s".'
