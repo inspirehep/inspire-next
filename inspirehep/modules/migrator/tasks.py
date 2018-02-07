@@ -62,6 +62,7 @@ from inspirehep.modules.pidstore.utils import (
     get_pid_types_from_endpoints,
 )
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.cache.utils import redis_locking_context
 from inspirehep.modules.records.receivers import index_after_commit
 from inspirehep.utils.schema import ensure_valid_schema
 
@@ -175,11 +176,9 @@ def continuous_migration(skip_files=None):
             'RECORDS_MIGRATION_SKIP_FILES',
             False,
         )
-    redis_url = current_app.config.get('CACHE_REDIS_URL')
-    r = StrictRedis.from_url(redis_url)
-    lock = Lock(r, 'continuous_migration', expire=120, auto_renewal=True)
-    if lock.acquire(blocking=False):
-        try:
+
+    try:
+        with redis_locking_context('legacy_records') as r:
             while r.llen('legacy_records'):
                 raw_record = r.lrange('legacy_records', 0, 0)
                 if raw_record:
@@ -189,9 +188,7 @@ def continuous_migration(skip_files=None):
                     )
                     db.session.commit()
                 r.lpop('legacy_records')
-        finally:
-            lock.release()
-    else:
+    except RuntimeError:
         LOGGER.info("Continuous_migration already executed. Skipping.")
 
 
