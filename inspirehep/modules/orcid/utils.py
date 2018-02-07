@@ -28,8 +28,8 @@ import re
 
 from orcid import MemberAPI
 
-from inspire_utils.record import get_value
 from inspire_utils.config import load_config
+from inspire_utils.record import get_value
 
 
 RECID_FROM_INSPIRE_URL = re.compile(

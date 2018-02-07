@@ -33,7 +33,7 @@ from inspirehep.modules.orcid.utils import get_author_putcodes, CONFIG
 
 
 def get_file(fixture_name):
-    """Get and parse an XML file from ./fixtures directory"""
+    """Get contents of fixture files"""
     path = pkg_resources.resource_filename(
         __name__,
         os.path.join('fixtures', fixture_name)
@@ -53,7 +53,7 @@ def mock_api():
         )
         mock_api.get(
             'https://api.orcid.org/v2.0/0000-0002-1825-0097/works/912982,912977',
-            text=get_file('work.json'),
+            text=get_file('work_details.json'),
             headers={'Content-Type': 'application/orcid+json'}
         )
         yield
