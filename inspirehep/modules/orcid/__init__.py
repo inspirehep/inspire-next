@@ -24,4 +24,5 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .ext import InspireOrcid  # noqa: F401
+from .converter import OrcidConverter  # noqa: F401
+from .builder import OrcidBuilder  # noqa: F401
