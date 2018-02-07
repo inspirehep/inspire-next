@@ -193,7 +193,7 @@ class OrcidConverter(object):
         try:
             conference_record = get_conference_record(self.record)
             return get_conference_title(conference_record)
-        except TypeError:  # TODO: Fixed in the bibtex PR
+        except TypeError:
             pass
 
     @property
