@@ -165,8 +165,9 @@ def reject_record(message):
 
 def _is_auto_rejected(workflow_obj):
     relevance_prediction = workflow_obj.extra_data.get('relevance_prediction')
-    classification_results = workflow_obj.extra_data.get('classifier_results')
-    if not relevance_prediction or not classification_results:
+    classification_results = workflow_obj.extra_data.get('classifier_results', {})
+    fulltext_used = classification_results.get('fulltext_used')
+    if not relevance_prediction or not classification_results or not fulltext_used:
         return False
 
     decision = relevance_prediction.get('decision')
