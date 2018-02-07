@@ -89,3 +89,39 @@ def test_classify_paper_with_no_fulltext(get_pdf_in_workflow):
 
     assert obj.extra_data['classifier_results']['complete_output']['core_keywords'] == expected
     assert obj.extra_data['classifier_results']['fulltext_used'] is False
+
+
+@patch('inspirehep.modules.workflows.tasks.classifier.get_pdf_in_workflow')
+def test_classify_paper_uses_keywords(get_pdf_in_workflow):
+    data = {
+        'titles': [
+            {
+                'title': 'Some title',
+            },
+        ],
+        'keywords': [
+            {
+                'value': 'Higgs boson',
+            },
+        ],
+    }
+    obj = MockObj(data, {})
+    eng = MockEng()
+    get_pdf_in_workflow.return_value = None
+
+    expected = [
+        {
+            'number': 1,
+            'keyword': 'Higgs particle'
+        }
+    ]
+
+    classify_paper(
+        taxonomy="HEPont.rdf",
+        only_core_tags=False,
+        spires=True,
+        with_author_keywords=True,
+    )(obj, eng)
+
+    assert obj.extra_data['classifier_results']['complete_output']['core_keywords'] == expected
+    assert obj.extra_data['classifier_results']['fulltext_used'] is False

@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 import os
 from functools import wraps
 
+from inspire_utils.record import get_value
 from invenio_classifier import (
     get_keywords_from_local_file,
     get_keywords_from_text,
@@ -81,13 +82,10 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
             if tmp_pdf:
                 result = get_keywords_from_local_file(tmp_pdf, **params)
             else:
-                data = []
-                titles = obj.data.get('titles')
-                if titles:
-                    data.extend([t.get('title', '') for t in titles])
-                abstracts = obj.data.get('abstracts')
-                if abstracts:
-                    data.extend([t.get('value', '') for t in abstracts])
+                data = get_value(obj.data, 'titles.title', [])
+                data.extend(get_value(obj.data, 'titles.subtitle', []))
+                data.extend(get_value(obj.data, 'abstracts.value', []))
+                data.extend(get_value(obj.data, 'keywords.value', []))
                 if not data:
                     obj.log.error("No classification done due to missing data.")
                     return
