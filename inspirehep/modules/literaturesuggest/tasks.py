@@ -202,7 +202,6 @@ def formdata_to_model(obj, formdata):
         orcid=form_fields.get('orcid'),
         method='submitter'
     )
-    builder.validate_record()
 
     return builder.record
 
