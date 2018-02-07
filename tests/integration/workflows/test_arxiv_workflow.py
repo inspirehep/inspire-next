@@ -433,14 +433,14 @@ def test_article_workflow_error_raises_when_record_is_not_valid(workflow_app):
     )
     obj_id = obj.id
 
-    with pytest.raises(WorkflowsError):
+    with pytest.raises(WorkflowsError, message='Expecting WorkflowsError',
+                       match='The record contained in the workflow is not schema compliant.'):
         start('article', invalid_record, obj_id)
 
     obj = workflow_object_class.get(obj_id)
 
     assert obj.status == ObjectStatus.ERROR
-    assert obj.extra_data['invalid-record'] is True
-    assert obj.extra_data['_error_message'] == 'Workflow record is not schema compliant.'
+    assert obj.extra_data['_error_message'] == "u'_collections' is a required property"
 
 
 def test_article_workflow_when_record_is_valid(workflow_app):
@@ -459,5 +459,4 @@ def test_article_workflow_when_record_is_valid(workflow_app):
     obj = eng.objects[0]
 
     assert obj.status != ObjectStatus.ERROR
-    assert obj.extra_data['invalid-record'] is None
     assert '_error_message' not in obj.extra_data

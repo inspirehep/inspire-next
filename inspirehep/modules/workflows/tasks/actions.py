@@ -229,18 +229,20 @@ def is_submission(obj, eng):
     """Is this a submission?"""
     source = obj.data.get('acquisition_source')
     if source:
-        return source.get('method') == "submitter"
+        return source.get('method') == 'submitter'
     return False
 
 
 @with_debug_logging
-def is_valid(obj, *args, **kwargs):
-    """Check if the record is schema compliant."""
+def stop_in_error_if_record_not_valid(obj, eng):
+    """Check if the record is schema compliant and stop the workflow in ERROR state it it is not."""
     try:
-        if validate(obj.data, 'hep') is None:
-            return True
-    except ValidationError:
-        return False
+        validate(obj.data, 'hep')
+    except ValidationError as err:
+        obj.log.error(err.message)
+        obj.extra_data['_error_message'] = err.message
+        obj.status = ObjectStatus.ERROR
+        raise WorkflowsError('The record contained in the workflow is not schema compliant.')
 
 
 @with_debug_logging
@@ -402,7 +404,7 @@ def error_workflow(message):
         obj.log.error(message)
         obj.extra_data['_error_message'] = message
         obj.status = ObjectStatus.ERROR
-        raise WorkflowsError
+        raise WorkflowsError(message)
 
     _error_workflow.__doc__ = (
         'Force an error in the workflow object with the message "%s".'

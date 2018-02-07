@@ -49,7 +49,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_record_accepted,
     is_record_relevant,
     is_submission,
-    is_valid,
+    stop_in_error_if_record_not_valid,
     mark,
     normalize_journal_titles,
     populate_journal_coverage,
@@ -323,12 +323,6 @@ ERROR_WITH_UNEXPECTED_WORKFLOW_PATH = [
     save_workflow,
 ]
 
-ERROR_WITH_INVALID_RECORD = [
-    mark('invalid-record', True),
-    error_workflow('Workflow record is not schema compliant.'),
-    save_workflow,
-]
-
 
 # Currently we handle harvests as if all were arxiv, that will have to change.
 PROCESS_HOLDINGPEN_MATCH_HARVEST = [
@@ -446,7 +440,6 @@ INIT_MARKS = [
     mark('already-in-holding-pen', None),
     mark('previously_rejected', None),
     mark('is-update', None),
-    mark('invalid-record', None),
     mark('stopped-matched-holdingpen-wf', None),
     mark('approved', None),
     mark('unexpected-workflow-path', None),
@@ -458,11 +451,7 @@ PRE_PROCESSING = [
     # Make sure schema is set for proper indexing in Holding Pen
     set_schema,
     INIT_MARKS,
-    IF_NOT(
-        is_valid,
-        ERROR_WITH_INVALID_RECORD,
-
-    ),
+    stop_in_error_if_record_not_valid
 ]
 
 
