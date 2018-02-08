@@ -628,6 +628,7 @@
                 "publication_info": {
                     "properties": {
                         "artid": {
+                            "copy_to": "publication_info.page_artid",
                             "type": "string"
                         },
                         "cnum": {
@@ -679,10 +680,14 @@
                         "material": {
                             "type": "string"
                         },
+                        "page_artid": {
+                            "type": "string"
+                        },
                         "page_end": {
                             "type": "string"
                         },
                         "page_start": {
+                            "copy_to": "publication_info.page_artid",
                             "type": "string"
                         },
                         "parent_isbn": {
