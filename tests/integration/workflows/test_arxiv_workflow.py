@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
+import pytest
 
 from invenio_search import current_search_client as es
 from invenio_db import db
@@ -34,6 +35,7 @@ from invenio_workflows import (
     start,
     workflow_object_class,
 )
+from invenio_workflows.errors import WorkflowsError
 
 from calls import (
     core_record,
@@ -447,3 +449,49 @@ def test_arxiv_update_is_not_store_on_legacy_and_labs(
     assert obj.extra_data['record_matches']
     assert obj.extra_data['skipped-robot-upload']
     assert obj.extra_data['skipped-store-record']
+
+
+def test_article_workflow_raises_when_record_is_not_valid(workflow_app):
+    invalid_record = {
+        "titles": [
+            {"title": "A title"}
+        ],
+        "document_type": [
+            "article"
+        ],
+    }
+
+    obj = workflow_object_class.create(
+        data=invalid_record,
+        id_user=1,
+        data_type='hep'
+    )
+    obj_id = obj.id
+
+    with pytest.raises(WorkflowsError):
+        start('article', invalid_record, obj_id)
+
+    obj = workflow_object_class.get(obj_id)
+
+    assert obj.status == ObjectStatus.ERROR
+    assert 'not schema compliant' in obj.extra_data['_error_msg']
+    assert '_collections' in obj.extra_data['_error_msg']
+
+
+def test_article_workflow_when_record_is_valid(workflow_app):
+    valid_record = {
+        "_collections": ["Literature"],
+        "titles": [
+            {"title": "A title"}
+        ],
+        "document_type": [
+            "article"
+        ],
+    }
+
+    eng_uuid = start('article', [valid_record])
+    eng = WorkflowEngine.from_uuid(eng_uuid)
+    obj = eng.objects[0]
+
+    assert obj.status != ObjectStatus.ERROR
+    assert '_error_msg' not in obj.extra_data
