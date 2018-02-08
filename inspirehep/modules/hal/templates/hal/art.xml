@@ -13,6 +13,9 @@
   <biblStruct>
     <analytic>
       <title>{{ title }}</title>
+      {% if subtitle %}
+      <title type="sub">{{ subtitle }}</title>
+      {% endif %}
       {% for author in authors %}
       <author role="aut">
         <persName>
