@@ -39,8 +39,6 @@ RECID_FROM_INSPIRE_URL = re.compile(
 
 WORKS_BULK_QUERY_LIMIT = 50
 
-CONFIG = load_config()
-
 
 def get_author_putcodes(orcid, oauth_token):
     """Get put-codes for author works pushed by INSPIRE.
@@ -119,8 +117,9 @@ def _get_api():
     Returns:
         MemberAPI: ORCID API
     """
-    client_key = CONFIG['ORCID_APP_CREDENTIALS']['consumer_key']
-    client_secret = CONFIG['ORCID_APP_CREDENTIALS']['consumer_secret']
+    config = load_config()
+    client_key = config['ORCID_APP_CREDENTIALS']['consumer_key']
+    client_secret = config['ORCID_APP_CREDENTIALS']['consumer_secret']
     return MemberAPI(client_key, client_secret)
 
 

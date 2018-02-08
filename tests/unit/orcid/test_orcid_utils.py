@@ -22,14 +22,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+import mock
 import os
 import pkg_resources
 import pytest
 import requests_mock
 
-from mock import patch
-
-from inspirehep.modules.orcid.utils import get_author_putcodes, CONFIG
+from inspirehep.modules.orcid.utils import get_author_putcodes, _split_lists
 
 
 def get_file(fixture_name):
@@ -59,16 +58,20 @@ def mock_api():
         yield
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def mock_config():
-    """Yield with fake config"""
-    mock_conf = {
-        'ORCID_APP_CREDENTIALS': {
-            'consumer_key': "0000-0002-3874-0886",
-            'consumer_secret': "01234567-89ab-cdef-0123-456789abcdef",
+    """Fake ORCID_APP_CREDENTIALS"""
+    with mock.patch(
+        'inspirehep.modules.orcid.utils.load_config',
+        return_value={
+            'ORCID_APP_CREDENTIALS': {
+                'consumer_key': '0000-0002-3874-0886',
+                'consumer_secret': '01234567-89ab-cdef-0123-456789abcdef',
+            },
+            'SERVER_NAME': 'http://localhost:5000',
+            'SEARCH_UI_SEARCH_API': '/api/literature/'
         }
-    }
-    with patch.dict(CONFIG, mock_conf):
+    ):
         yield
 
 
@@ -77,3 +80,19 @@ def test_get_author_putcodes(mock_api, mock_config):
 
     assert pairs == [('4328', 912982)]
     assert errors == [912977]
+
+
+@pytest.mark.parametrize(
+    'test_sequence,test_length,expected',
+    [
+        ([1, 2, 3, 4], 2, [[1, 2], [3, 4]]),
+        ([1, 2, 3, 4, 5], 3, [[1, 2, 3], [4, 5]]),
+        (['a', 'b', 'c'], 1, [['a'], ['b'], ['c']]),
+        (['just_one'], 1, [['just_one']]),
+        (['just_one'], 10, [['just_one']]),
+        ([], 10, []),
+    ]
+)
+def test_split_lists(test_sequence, test_length, expected):
+    result = _split_lists(test_sequence, test_length)
+    assert expected == result
