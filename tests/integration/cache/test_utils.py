@@ -20,15 +20,42 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""ORCID extension."""
+"""Test lock cache."""
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
 
-class InspireOrcid(object):
-    def __init__(self, app=None):
-        if app:
-            self.init_app(app)
+from redis import StrictRedis
+from redis_lock import Lock
 
-    def init_app(self, app):
-        app.extensions['inspire-orcid'] = self
+from inspirehep.modules.cache.utils import (
+    redis_locking_context,
+    RedisLockError,
+)
+
+
+@pytest.fixture
+def lock_redis(app):
+    redis_url = app.config.get('CACHE_REDIS_URL')
+    redis = StrictRedis.from_url(redis_url)
+    lock = Lock(redis, 'my_lock', expire=60)
+    lock.acquire(blocking=False)
+
+    yield
+
+    lock.release()
+
+
+def test_redis_locking_context_fail_if_locked(lock_redis, app):
+    with pytest.raises(RedisLockError):
+        with redis_locking_context('my_lock'):
+            pass
+
+
+def test_redis_locking_context_test_locks(app):
+    with redis_locking_context('my_lock') as redis:
+        lock = Lock(redis, 'my_lock', expire=60)
+        lock_acquired = lock.acquire(blocking=False)
+
+    assert not lock_acquired

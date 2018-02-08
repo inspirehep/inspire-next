@@ -30,11 +30,19 @@ from celery.utils.log import get_task_logger
 from redis import StrictRedis
 from redis_lock import Lock
 from simplejson import loads
+
 from invenio_oauthclient.utils import oauth_get_user, oauth_link_external_id
 from invenio_oauthclient.models import RemoteToken, User, RemoteAccount, UserIdentity
 from invenio_db import db
-from inspire_utils.record import get_value
 from invenio_oauthclient.errors import AlreadyLinkedError
+from inspire_utils.logging import getStackTraceLogger
+from inspire_utils.record import get_value
+from inspirehep.modules.orcid.api import push_record_with_orcid, get_author_putcodes
+from inspirehep.modules.orcid.utils import get_orcid_recid_key, redis_locking_context
+
+
+LOGGER = getStackTraceLogger(__name__)
+
 
 logger = get_task_logger(__name__)
 
@@ -143,3 +151,63 @@ def import_legacy_orcid_tokens():
     for user_data in legacy_orcid_arrays():
         orcid, token, email, name = user_data
         _register_user(name, email, orcid, token)
+
+
+@shared_task(bind=True)
+def push_orcid(self, orcid, rec_id, oauth_token):
+    """Celery task to push a record to ORCID.
+
+    Args:
+        self(celery.Task): the task
+        orcid(string): an orcid identifier.
+        rec_id(int): inspire record's id to push to ORCID.
+        oauth_token(string): orcid token.
+    """
+    try:
+        attempt_push(orcid, rec_id, oauth_token)
+    except Exception:
+        raise self.retry(max_retries=3, countdown=300)
+
+
+def attempt_push(orcid, rec_id, oauth_token):
+    """Push a record to ORCID.
+
+    Args:
+        orcid(string): an orcid identifier.
+        rec_id(int): inspire record's id to push to ORCID.
+        oauth_token(string): orcid token.
+    """
+    put_code = get_putcode_from_redis(orcid, rec_id)
+
+    if not put_code:
+        record_put_codes = get_author_putcodes(orcid, oauth_token)
+
+        for rec_id, put_code in record_put_codes:
+            store_record_in_redis(orcid, rec_id, put_code)
+
+        put_code = get_putcode_from_redis(orcid, rec_id)
+
+    new_code = push_record_with_orcid(str(rec_id), orcid, oauth_token, put_code)
+
+    if not put_code:
+        store_record_in_redis(orcid, rec_id, new_code)
+
+
+def store_record_in_redis(orcid, rec_id, put_code):
+    """Store the entry <orcid:recid, value> in Redis.
+
+    Args:
+        orcid(string): the author's orcid.
+        rec_id(int): inspire record's id pushed to ORCID.
+        put_code(string): the put_code used to push the record to ORCID.
+    """
+    with redis_locking_context('orcid_push') as r:
+        orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
+        r.set(orcid_recid_key, put_code)
+
+
+def get_putcode_from_redis(orcid, rec_id):
+    """Retrieve from Redis the put_code for the given ORCID - record id"""
+    with redis_locking_context('orcid_push') as r:
+        orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
+        return r.get(orcid_recid_key)

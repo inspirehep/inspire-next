@@ -25,17 +25,11 @@
 from __future__ import absolute_import, division, print_function
 
 import re
-import requests
-
-from orcid import MemberAPI
 from urlparse import urljoin
 
-from inspire_utils.config import load_config
 from inspire_utils.logging import getStackTraceLogger
-from inspire_utils.record import get_value
 
-from .converter import OrcidConverter
-
+from inspirehep.modules.cache.utils import redis_locking_context, RedisLockError
 
 LOGGER = getStackTraceLogger(__name__)
 
@@ -46,158 +40,6 @@ RECID_FROM_INSPIRE_URL = re.compile(
 )
 
 WORKS_BULK_QUERY_LIMIT = 50
-
-
-def get_author_putcodes(orcid, oauth_token):
-    """Get put-codes for author works pushed by INSPIRE.
-
-    Args:
-        orcid (string): author's ORCID
-        oauth_token (string): author's OAUTH token
-
-    Returns:
-        Tuple[
-            List[Tuple[string, string]],
-            List[string]
-        ]: list of tuples of the form (recid, put_code) with results,
-            and another list of put-codes for which we failed to obtain
-            the recids (should never happen)
-    """
-    api = _get_api()
-    # This reads the record _summary_ (no URLs attached):
-    user_works = api.read_record_member(
-        orcid,
-        'works',
-        oauth_token,
-        accept_type='application/orcid+json',
-    )
-
-    put_codes = [
-        str(item[0]) for item
-        in get_value(user_works, 'group.work-summary.put-code')
-    ]
-
-    # We can batch requests for _detailed_ records for maximum
-    # `WORKS_BULK_QUERY_LIMIT` put-codes at once:
-    detailed_works = {'bulk': []}
-
-    for put_code_batch in _split_lists(put_codes, WORKS_BULK_QUERY_LIMIT):
-        batch = api.read_record_member(
-            orcid,
-            'works',
-            oauth_token,
-            accept_type='application/orcid+json',
-            put_code=put_code_batch,
-        )
-
-        detailed_works['bulk'].extend(batch['bulk'])
-
-    # Now that we have all of the detailed records, we extract recids.
-    # If it's not possible (and it should always be), we put the put-code in
-    # `errors`
-    author_putcodes = []
-    errors = []
-
-    for item in detailed_works['bulk']:
-        put_code = get_value(item, 'work.put-code')
-        if not put_code:
-            continue
-
-        try:
-            url = get_value(item, 'work.url.value')
-            match = RECID_FROM_INSPIRE_URL.match(url)
-            recid = match.group(1)
-        except (TypeError, AttributeError):
-            errors.append(put_code)
-            continue
-
-        if put_code:
-            author_putcodes.append(
-                (recid, put_code)
-            )
-
-    return author_putcodes, errors
-
-
-def push_record_with_orcid(recid, orcid, oauth_token, put_code=None):
-    """Push record to ORCID with a specific ORCID ID.
-
-    Args:
-        recid (string): HEP record to push
-        orcid (string): ORCID identifier to push onto
-        oauth_token (string): ORCID user OAUTH token
-        put_code (Union[string, NoneType]): put-code to push record onto,
-            if None will push as a new record
-
-    Returns:
-        string: the put-code of the updated/inserted item
-    """
-    config = load_config()
-    client_key = config['ORCID_APP_CREDENTIALS']['consumer_key']
-    client_secret = config['ORCID_APP_CREDENTIALS']['consumer_secret']
-    server_name = config["SERVER_NAME"]
-
-    record = _get_hep_record(config, recid)
-    if not record:
-        LOGGER.error('Cannot push record #{}, as metadata don\'t exist'.format(recid))
-
-    try:
-        bibtex = _get_bibtex_record(config, recid)
-    except requests.HTTPError:
-        bibtex = None
-        LOGGER.warning('Pushing record #{} without BibTex, as fetching'
-                       'it failed!'.format(recid))
-
-    orcid_api = MemberAPI(client_key, client_secret)
-
-    orcid_xml = OrcidConverter(
-        record, server_name, put_code=put_code, bibtex_citation=bibtex
-    ).get_xml()
-
-    if put_code:
-        LOGGER.info("Pushing record #{} with put-code {} to ORCID {}.".format(
-            recid,
-            put_code,
-            orcid
-        ))
-        orcid_api.update_record(
-            orcid_id=orcid,
-            token=oauth_token,
-            request_type='work',
-            data=orcid_xml,
-            put_code=put_code,
-            content_type='application/orcid+xml',
-        )
-    else:
-        LOGGER.info(
-            "No put-code found, pushing new record #{} to ORCID {}.".format(
-                recid,
-                orcid,
-            )
-        )
-        put_code = orcid_api.add_record(
-            orcid_id=orcid,
-            token=oauth_token,
-            request_type='work',
-            data=orcid_xml,
-            content_type='application/orcid+xml',
-        )
-
-        LOGGER.info("Record added with put-code {}.".format(put_code))
-
-    return put_code
-
-
-def _get_api():
-    """Get ORCID API.
-
-    Returns:
-        MemberAPI: ORCID API
-    """
-    config = load_config()
-    client_key = config['ORCID_APP_CREDENTIALS']['consumer_key']
-    client_secret = config['ORCID_APP_CREDENTIALS']['consumer_secret']
-    return MemberAPI(client_key, client_secret)
 
 
 def _split_lists(sequence, chunk_size):
@@ -236,53 +78,39 @@ def _get_api_url_for_recid(server_name, api_endpoint, recid):
     return urljoin(api_url, recid)
 
 
-def _get_record_by_mime(config, recid, mime_type):
-    """
+def get_orcid_recid_key(orcid, rec_id):
+    """Return the string 'orcid:``orcid_value``:``rec_id``'"""
+    return 'orcidputcodes:{}:{}'.format(orcid, rec_id)
+
+
+def store_record_in_redis(orcid, rec_id, put_code):
+    """Store the entry <orcid:recid, value> in Redis.
 
     Args:
-        config (inspire_utils.config.Config): configuration
-        recid (string): HEP record ID
-        mime_type (string): accept type
+        orcid(string): the author's orcid.
+        rec_id(int): inspire record's id pushed to ORCID.
+        put_code(string): the put_code used to push the record to ORCID.
 
     Returns:
-        requests.Response: response form API
+        bool: True if the entry is set in Redis, False otherwise.
     """
-    server_name = config['SERVER_NAME']
+    try:
+        with redis_locking_context('orcid_push') as r:
+            orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
+            r.set(orcid_recid_key, put_code)
+            return True
 
-    record_api_endpoint = _get_api_url_for_recid(
-        server_name, config['SEARCH_UI_SEARCH_API'], recid
-    )
-
-    response = requests.get(record_api_endpoint, headers={
-        'Accept': mime_type
-    })
-    response.raise_for_status()
-    return response
+    except RedisLockError:
+        LOGGER.info("Push to ORCID failed for record {}".format(rec_id))
+        return False
 
 
-def _get_hep_record(config, recid):
-    """
+def get_putcode_from_redis(orcid, rec_id):
+    """Retrieve from Redis the put_code for the given ORCID - record id"""
+    try:
+        with redis_locking_context('orcid_push') as r:
+            orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
+            return r.get(orcid_recid_key)
 
-    Args:
-        config (inspire_utils.config.Config): configuration
-        recid (string): HEP record ID
-
-    Returns:
-        dict: HEP record
-    """
-    hep_response = _get_record_by_mime(config, recid, 'application/json')
-    return hep_response.json()['metadata']
-
-
-def _get_bibtex_record(config, recid):
-    """
-
-    Args:
-        config (inspire_utils.config.Config): configuration
-        recid (string): HEP record ID
-
-    Returns:
-        dict: BibTeX serialized record
-    """
-    bibtex_response = _get_record_by_mime(config, recid, 'application/x-bibtex')
-    return bibtex_response.text
+    except RedisLockError:
+        LOGGER.info("Push to ORCID failed for record {}".format(rec_id))

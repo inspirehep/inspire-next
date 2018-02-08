@@ -1170,6 +1170,8 @@ INDEXER_BULK_REQUEST_TIMEOUT = float(120)
 
 # OAuthclient
 # ===========
+ORCID_SANDBOX = True
+
 orcid.REMOTE_MEMBER_APP['params']['request_token_params'] = {
     'scope': ' '.join([
         '/read-limited',
@@ -1178,6 +1180,12 @@ orcid.REMOTE_MEMBER_APP['params']['request_token_params'] = {
     ]),
     'show_login': 'true',
 }
+
+ORCID_APP_CREDENTIALS = dict(
+    consumer_key="CHANGE_ME",
+    consumer_secret="CHANGE_ME",
+)
+
 orcid.REMOTE_MEMBER_APP['remember'] = True
 OAUTHCLIENT_REMOTE_APPS = dict(
     orcid=orcid.REMOTE_MEMBER_APP,
