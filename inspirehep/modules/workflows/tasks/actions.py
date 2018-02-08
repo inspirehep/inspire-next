@@ -316,23 +316,22 @@ def populate_submission_document(obj, eng):
 
 @with_debug_logging
 def download_documents(obj, eng):
-    documents = obj.data.get('documents')
-    if documents:
-        for document in documents:
-            filename = document['key']
-            url = document['url']
-            downloaded = download_file_to_workflow(
-                workflow=obj,
-                name=filename,
-                url=url,
-            )
-            if downloaded:
-                document['url'] = '/api/files/{bucket}/{key}'.format(
-                    bucket=obj.files[filename].bucket_id, key=filename)
-                obj.log.info('Document downloaded from %s', url)
-            else:
-                obj.log.error(
-                    'Cannot download document from %s', url)
+    documents = obj.data.get('documents', [])
+    for document in documents:
+        filename = document['key']
+        url = document['url']
+        downloaded = download_file_to_workflow(
+            workflow=obj,
+            name=filename,
+            url=url,
+        )
+        if downloaded:
+            document['url'] = '/api/files/{bucket}/{key}'.format(
+                bucket=obj.files[filename].bucket_id, key=filename)
+            obj.log.info('Document downloaded from %s', url)
+        else:
+            obj.log.error(
+                'Cannot download document from %s', url)
 
 
 @with_debug_logging
