@@ -1194,6 +1194,7 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
     consumer_key="CHANGE_ME",
     consumer_secret="CHANGE_ME",
 )
+ORCID_PUSH_TASK_ENDPOINT = 'inspirehep.modules.orcid.tasks.push_orcid'
 
 OAUTHCLIENT_SETTINGS_TEMPLATE = 'inspirehep_theme/page.html'
 

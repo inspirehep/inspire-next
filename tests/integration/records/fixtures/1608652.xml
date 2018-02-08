@@ -1,0 +1,644 @@
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+<record>
+  <controlfield tag="001">1608652</controlfield>
+  <controlfield tag="005">20171004140503.0</controlfield>
+  <datafield tag="024" ind1="7" ind2=" ">
+    <subfield code="2">DOI</subfield>
+    <subfield code="a">10.18429/JACoW-IPAC2017-WEYB1</subfield>
+  </datafield>
+  <datafield tag="024" ind1="7" ind2=" ">
+    <subfield code="a">10.3204/PUBDB-2017-05953</subfield>
+    <subfield code="2">DOI</subfield>
+    <subfield code="9">Deutsches Elektronen-Synchrotron</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">Wootton:2017zzc</subfield>
+    <subfield code="9">INSPIRETeX</subfield>
+  </datafield>
+  <datafield tag="100" ind1=" " ind2=" ">
+    <subfield code="a">Wootton, Kent</subfield>
+    <subfield code="j">JACoW-00038738</subfield>
+    <subfield code="m">dummy1@email.com</subfield>
+    <subfield code="v">SLAC, Menlo Park, California, USA</subfield>
+    <subfield code="w">K.P.Wootton.1</subfield>
+    <subfield code="x">1284350</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="245" ind1=" " ind2=" ">
+    <subfield code="a">Towards a Fully Integrated Accelerator on a Chip: Dielectric Laser Acceleration (DLA) From the Source to Relativistic Electrons</subfield>
+    <subfield code="9">JACoW</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="c">2017-05</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">6</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">*Brief entry*</subfield>
+  </datafield>
+  <datafield tag="520" ind1=" " ind2=" ">
+    <subfield code="a">Dielectric laser acceleration of electrons has recently been demonstrated with significantly higher accelerating gradients than other structure-based linear accelerators. Towards the development of an integrated 1 MeV electron accelerator based on dielectric laser accelerator technologies, development in several relevant technologies is needed. In this work, recent developments on electron sources, bunching, accelerating, focussing, deflecting and laser coupling structures are reported. With an eye to the near future, components required for a 1 MeV kinetic energy tabletop accelerator producing sub-femtosecond electron bunches are outlined.</subfield>
+    <subfield code="9">Deutsches Elektronen-Synchrotron</subfield>
+  </datafield>
+  <datafield tag="540" ind1=" " ind2=" ">
+    <subfield code="a">CC-BY-3.0</subfield>
+    <subfield code="u">http://creativecommons.org/licenses/by/3.0/</subfield>
+    <subfield code="9">JACoW</subfield>
+  </datafield>
+  <datafield tag="650" ind1="1" ind2="7">
+    <subfield code="2">INSPIRE</subfield>
+    <subfield code="a">Accelerators</subfield>
+  </datafield>
+  <datafield tag="653" ind1="1" ind2=" ">
+    <subfield code="a">laser</subfield>
+    <subfield code="2">JACoW</subfield>
+  </datafield>
+  <datafield tag="653" ind1="1" ind2=" ">
+    <subfield code="a">electron</subfield>
+    <subfield code="2">JACoW</subfield>
+  </datafield>
+  <datafield tag="653" ind1="1" ind2=" ">
+    <subfield code="a">acceleration</subfield>
+    <subfield code="2">JACoW</subfield>
+  </datafield>
+  <datafield tag="653" ind1="1" ind2=" ">
+    <subfield code="a">emittance</subfield>
+    <subfield code="2">JACoW</subfield>
+  </datafield>
+  <datafield tag="653" ind1="1" ind2=" ">
+    <subfield code="a">simulation</subfield>
+    <subfield code="2">JACoW</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Kärtner, Franz</subfield>
+    <subfield code="j">ORCID:0000-0001-8829-5461</subfield>
+    <subfield code="m">dummy1@email.com</subfield>
+    <subfield code="v">Deutsches Elektronen-Synchrotron</subfield>
+    <subfield code="v">Centre for Free-Electron Laser Science</subfield>
+    <subfield code="w">F.X.Kartner.1</subfield>
+    <subfield code="x">1040341</subfield>
+    <subfield code="y">1</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Tafel, Alex</subfield>
+    <subfield code="j">ORCID:0000-0002-2174-4493</subfield>
+    <subfield code="m">dummy2@email.com</subfield>
+    <subfield code="v">Friedrich-Alexander Universitaet Erlangen-Nuernberg, University Erlangen-Nuernberg LFTE, Erlangen, Germany</subfield>
+    <subfield code="w">A.Tafel.1</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="773" ind1=" " ind2=" ">
+    <subfield code="z">9783954501823</subfield>
+  </datafield>
+  <datafield tag="773" ind1=" " ind2=" ">
+    <subfield code="y">2017</subfield>
+    <subfield code="c">2520-2525</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2=" ">
+    <subfield code="s">100176</subfield>
+    <subfield code="u">http://inspirehep.net/record/1608652/files/Towards%20a%20fully%20integrated%20acc%20on%20a%20chip.pdf</subfield>
+    <subfield code="y">Fulltext</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2=" ">
+    <subfield code="s">121338</subfield>
+    <subfield code="u">http://inspirehep.net/record/1608652/files/weyb1.pdf</subfield>
+  </datafield>
+  <datafield tag="909" ind1="C" ind2="O">
+    <subfield code="o">oai:inspirehep.net:1608652</subfield>
+    <subfield code="p">INSPIRE:HEP</subfield>
+  </datafield>
+  <datafield tag="961" ind1=" " ind2=" ">
+    <subfield code="x">2017-07-05</subfield>
+    <subfield code="c">2017-10-04</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">HEP</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">ConferencePaper</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">1</subfield>
+    <subfield code="h">R. J. England, et al.</subfield>
+    <subfield code="t">Dielectric laser accelerators</subfield>
+    <subfield code="s">Rev.Mod.Phys.,86,1337-1389</subfield>
+    <subfield code="y">2014</subfield>
+    <subfield code="0">1256037</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">2</subfield>
+    <subfield code="h">R. J. England</subfield>
+    <subfield code="t">Review of laser-driven photonic structure based particle acceleration</subfield>
+    <subfield code="p">IEEE</subfield>
+    <subfield code="m">J. Sel Top</subfield>
+    <subfield code="s">Quant.Electron.,22,4401007</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">3</subfield>
+    <subfield code="h">K. P. Wootton, J. McNeur, and K. J. Leedle</subfield>
+    <subfield code="t">Dielectric laser accelerators: designs, experiments, and applications</subfield>
+    <subfield code="m">Rev. Accel</subfield>
+    <subfield code="s">Sci.Technol.,9,105-126</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">4</subfield>
+    <subfield code="h">J. D. Lawson</subfield>
+    <subfield code="t">Laser Accelerators?</subfield>
+    <subfield code="m">Rutherford Laboratory, Chilton, Oxon, UK, Rep. RL-75-043, Sep</subfield>
+    <subfield code="y">1975</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">5</subfield>
+    <subfield code="h">E. A. Peralta, et al.</subfield>
+    <subfield code="t">Demonstration of electron acceleration in a laser-driven dielectric microstructure</subfield>
+    <subfield code="s">Nature,503,91-94</subfield>
+    <subfield code="m">Proceedings of IPAC2017, Copenhagen, Denmark WEYB1 03 Novel Particle Sources and Acceleration Techniques A16 Advanced Concepts 2523 Copyright©2017CC-BY-3.0andbytherespectiveauthors</subfield>
+    <subfield code="i">978-3-95450-182-3</subfield>
+    <subfield code="y">2013</subfield>
+    <subfield code="0">1255743</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">6</subfield>
+    <subfield code="h">J. Breuer and P. Hommelhoff</subfield>
+    <subfield code="t">Laser-based acceleration of nonrelativistic electrons at a dielectric structure</subfield>
+    <subfield code="s">Phys.Rev.Lett.,111,134803</subfield>
+    <subfield code="y">2013</subfield>
+    <subfield code="0">1246412</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">7</subfield>
+    <subfield code="h">K. P. Wootton, et al.</subfield>
+    <subfield code="t">Demonstration of acceleration of relativistic electrons at a dielectric microstructure using femtosecond laser pulses</subfield>
+    <subfield code="s">Opt.Lett.,41,2696-2699</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">8</subfield>
+    <subfield code="h">E. R. Colby and L. K. Len</subfield>
+    <subfield code="t">Roadmap to the future</subfield>
+    <subfield code="m">Rev. Accel</subfield>
+    <subfield code="s">Sci.Technol.,9,1-18</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">9</subfield>
+    <subfield code="h">K. J. Leedle, et al.</subfield>
+    <subfield code="t">Laser acceleration and deflection of 96.3 keV electrons with a silicon dielectric structure</subfield>
+    <subfield code="m">Optica, vol. 2, pp. 158-161</subfield>
+    <subfield code="y">2015</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">10</subfield>
+    <subfield code="h">K. J. Leedle, et al.</subfield>
+    <subfield code="t">Dielectric laser acceleration of sub-100 keV electrons with silicon dual-pillar grating structures</subfield>
+    <subfield code="s">Opt.Lett.,40,4344-4347</subfield>
+    <subfield code="y">2015</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">11</subfield>
+    <subfield code="h">J. Breuer, R. Graf, A. Apolonski, and P. Hommellhoff</subfield>
+    <subfield code="t">Dielectric laser acceleration of nonrelativistic electrons at a single fused silica grating structure: experimental part</subfield>
+    <subfield code="s">Phys.Rev.ST Accel.Beams,17,021301</subfield>
+    <subfield code="y">2014</subfield>
+    <subfield code="0">1316648</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">12</subfield>
+    <subfield code="h">J. Hoffrogge, et al.</subfield>
+    <subfield code="t">Tip-based source of femtosecond electron pulses at 30 keV</subfield>
+    <subfield code="s">J.Appl.Phys.,115,094506</subfield>
+    <subfield code="y">2014</subfield>
+    <subfield code="0">1376182</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">13</subfield>
+    <subfield code="h">D. Ehberger, et al.</subfield>
+    <subfield code="t">Highly coherent electron beam from a laser-triggered tungsten needle tip</subfield>
+    <subfield code="s">Phys.Rev.Lett.,114,227601</subfield>
+    <subfield code="y">2015</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">14</subfield>
+    <subfield code="h">M. Förster, et al.</subfield>
+    <subfield code="t">Two-color coherent control of femtosecond above-threshold photoemission from a tungsten nanotip</subfield>
+    <subfield code="s">Phys.Rev.Lett.,117,217601</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">15</subfield>
+    <subfield code="h">J. McNeur, et al.</subfield>
+    <subfield code="t">A miniaturized electron source based on dielectric laser accelerator operation at higher spatial harmonics and a nanotip photoemitter</subfield>
+    <subfield code="s">J.Phys.,B49,034006</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">16</subfield>
+    <subfield code="h">E. I. Simakov, et al.</subfield>
+    <subfield code="t">Diamond field emitter array cathodes and possibilities of employing additive manufacturing for dielectric laser accelerating structures</subfield>
+    <subfield code="s">AIP Conf.Proc.,1812,060010</subfield>
+    <subfield code="y">2017</subfield>
+    <subfield code="0">1517002</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">17</subfield>
+    <subfield code="h">H. Ye, et al.</subfield>
+    <subfield code="t">Velocity map imaging of electrons strong-field photoemitted from Si-nanotip</subfield>
+    <subfield code="m">in Proceedings of the 19th International Conference on Ultrafast Phenomena, Okinawa, Japan, Jul., paper 09.Wed.P3.37</subfield>
+    <subfield code="y">2014</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">18</subfield>
+    <subfield code="h">R. K. Li, et al.</subfield>
+    <subfield code="t">Nanometer emittance ultralow charge beams from rf photoinjectors</subfield>
+    <subfield code="s">Phys.Rev.ST Accel.Beams,15,090702</subfield>
+    <subfield code="y">2012</subfield>
+    <subfield code="0">1187896</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">19</subfield>
+    <subfield code="h">J. Maxson, et al.</subfield>
+    <subfield code="t">Direct measurement of sub-10 fs relativistic electron beams with ultralow emittance</subfield>
+    <subfield code="s">Phys.Rev.Lett.,118,154802</subfield>
+    <subfield code="y">2017</subfield>
+    <subfield code="0">1496062</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">20</subfield>
+    <subfield code="h">A. Ody, et al.</subfield>
+    <subfield code="t">Flat electron beam sources for DLA accelerators</subfield>
+    <subfield code="m">Nucl. Instrum. Methods Phys. Res., Sect. A DOI:</subfield>
+    <subfield code="a">doi:10.1016/j.nima.2016.10.041</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">21</subfield>
+    <subfield code="h">T. Plettner, P. P. Lu, and R. L. Byer</subfield>
+    <subfield code="t">Proposed few-optical cycle laser-driven particle accelerator structure</subfield>
+    <subfield code="s">Phys.Rev.ST Accel.Beams,9,111301</subfield>
+    <subfield code="y">2006</subfield>
+    <subfield code="0">728235</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">22</subfield>
+    <subfield code="h">T. Plettner, R. L. Byer, and B. Montazeri</subfield>
+    <subfield code="t">Electromagnetic forces in the vacuum region of laser-driven layered grating structures</subfield>
+    <subfield code="s">J.Mod.Opt.,58,1518-1528</subfield>
+    <subfield code="y">2011</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">23</subfield>
+    <subfield code="h">J. McNeur, et al.</subfield>
+    <subfield code="t">Elements of a dielectric laser accelerator</subfield>
+    <subfield code="r">arXiv:1604.07684 [physics.acc-ph]</subfield>
+    <subfield code="0">1452597</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">24</subfield>
+    <subfield code="h">M. Kozák, et al.</subfield>
+    <subfield code="t">Transverse and longitudinal characterization of electron beams using interaction with optical nearfields</subfield>
+    <subfield code="s">Opt.Lett.,41,3435-3438</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">25</subfield>
+    <subfield code="h">M. Kozák, et al.</subfield>
+    <subfield code="t">Dielectric laser acceleration of subrelativistic electrons by few-cycle laser pulses</subfield>
+    <subfield code="m">Nucl. Instrum. Methods Phys. Res., Sect. A DOI:</subfield>
+    <subfield code="a">doi:10.1016/j.nima.2016.12.051</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">26</subfield>
+    <subfield code="h">M. Kozák, et al.</subfield>
+    <subfield code="t">Optical gating and streaking of freeelectrons with sub-optical cycle precision</subfield>
+    <subfield code="m">Nat. Commun., vol. 8, p. 14342</subfield>
+    <subfield code="y">2017</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">27</subfield>
+    <subfield code="h">A. C. Tien, et al.</subfield>
+    <subfield code="t">Short-pulse laser damage in transparent materials as a function of pulse duration</subfield>
+    <subfield code="s">Phys.Rev.Lett.,82,3883-3886</subfield>
+    <subfield code="y">1999</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">28</subfield>
+    <subfield code="h">K. Soong, et al.</subfield>
+    <subfield code="t">Laser damage threshold measurements of optical materials for direct laser accelerators</subfield>
+    <subfield code="s">AIP Conf.Proc.,1507,511-515</subfield>
+    <subfield code="y">2012</subfield>
+    <subfield code="0">1215391</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">29</subfield>
+    <subfield code="h">K. Koyama, et al.</subfield>
+    <subfield code="t">Parameter study of a laser-driven dielectric accelerator for radiobiology research</subfield>
+    <subfield code="s">J.Phys.,B47,234005</subfield>
+    <subfield code="y">2014</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">30</subfield>
+    <subfield code="h">A. Aimidula, et al.</subfield>
+    <subfield code="t">Numerically optimized structures for dielectric asymmetric dual-grating laser accelerators</subfield>
+    <subfield code="s">Phys.Plasmas,21,023110</subfield>
+    <subfield code="y">2014</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">31</subfield>
+    <subfield code="h">A. Aimidula, et al.</subfield>
+    <subfield code="t">Design of a photonic crystal accelerator for basic radiation biology</subfield>
+    <subfield code="m">in Proc. 4th Int. Particle Accelerator Conference, Shanghai, China, paper TUPEA065, pp. 1283-1285, May</subfield>
+    <subfield code="y">2013</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">32</subfield>
+    <subfield code="h">Z. Wu, et al.</subfield>
+    <subfield code="t">Silica Rod Array for Laser Driven Particle Acceleration</subfield>
+    <subfield code="m">in Proc. North American Particle Accelerator Conference, Pasadena, CA, USA, paper MOPAC033, pp. 141-143, Sep</subfield>
+    <subfield code="y">2013</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">33</subfield>
+    <subfield code="h">C. M. Sears, et al.</subfield>
+    <subfield code="t">Production and characterization of attosecond electron bunch trains</subfield>
+    <subfield code="s">Phys.Rev.ST Accel.Beams,11,061301</subfield>
+    <subfield code="y">2008</subfield>
+    <subfield code="0">787246</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">34</subfield>
+    <subfield code="h">C. M. Sears, et al.</subfield>
+    <subfield code="t">Phase stable net acceleration of electrons from a two-stage optical accelerator</subfield>
+    <subfield code="s">Phys.Rev.ST Accel.Beams,11,101301</subfield>
+    <subfield code="y">2008</subfield>
+    <subfield code="0">805034</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">35</subfield>
+    <subfield code="h">F. Mayet, et al.</subfield>
+    <subfield code="t">A concept for phase-synchronous acceleration of microbunch trains in DLA structures at SINBAD</subfield>
+    <subfield code="m">presented at the 8th Int. Particle Accelerator Conf. (IPAC’17), Copenhagen, Denmark, May, paper WEPVA006, this conference</subfield>
+    <subfield code="y">2017</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">36</subfield>
+    <subfield code="h">U. Niedermayer, O. Boine-Frankenheim, and T. Egenolf</subfield>
+    <subfield code="t">Designing a Dielectric Laser Accelerator on a Chip</subfield>
+    <subfield code="m">presented at the 8th Int. Particle Accelerator Conf. (IPAC’17), Copenhagen, Denmark, May, paper WEPVA003, this conference</subfield>
+    <subfield code="y">2017</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">37</subfield>
+    <subfield code="h">J. McNeur, et al.</subfield>
+    <subfield code="t">Recent experimental results and future directions of the DLA single grating project</subfield>
+    <subfield code="s">AIP Conf.Proc.,1777,060006</subfield>
+    <subfield code="y">2016</subfield>
+    <subfield code="0">1496772</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">38</subfield>
+    <subfield code="h">D. Cesar, et al.</subfield>
+    <subfield code="t">Demonstration of Single-Shot Picosecond Time-Resolved MeV Electron Imaging Using a Compact Permanent Magnet Quadrupole Based Lens</subfield>
+    <subfield code="s">Phys.Rev.Lett.,117,024801</subfield>
+    <subfield code="y">2016</subfield>
+    <subfield code="0">1441255</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">39</subfield>
+    <subfield code="h">J. Harrison, et al.</subfield>
+    <subfield code="t">High-gradient microelectromechanical system quadrupole electromagnets for particle beam focusing and steering</subfield>
+    <subfield code="s">Phys.Rev.ST Accel.Beams,18,023501</subfield>
+    <subfield code="m">WEYB1 Proceedings of IPAC2017, Copenhagen, Denmark 2524 Copyright©2017CC-BY-3.0andbytherespectiveauthors 03 Novel Particle Sources and Acceleration Techniques A16 Advanced Concepts</subfield>
+    <subfield code="i">978-3-95450-182-3</subfield>
+    <subfield code="y">2015</subfield>
+    <subfield code="0">1345992</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">40</subfield>
+    <subfield code="h">K. Soong, et al.</subfield>
+    <subfield code="t">Grating-based deflecting, focusing, and diagnostic dielectric laser accelerator structures</subfield>
+    <subfield code="s">AIP Conf.Proc.,1507,516-520</subfield>
+    <subfield code="y">2012</subfield>
+    <subfield code="0">1215390</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">41</subfield>
+    <subfield code="h">K. P. Wootton, et al.</subfield>
+    <subfield code="t">Dielectric laser acceleration and focusing using short-pulse lasers with an arbitrary laser phase distribution</subfield>
+    <subfield code="s">AIP Conf.Proc.,1812,060001</subfield>
+    <subfield code="y">2017</subfield>
+    <subfield code="0">1516994</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">42</subfield>
+    <subfield code="h">R. L. Byer</subfield>
+    <subfield code="t">Diode Laser-Pumped Solid-State Lasers</subfield>
+    <subfield code="s">Science,239,742-747</subfield>
+    <subfield code="y">1988</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">43</subfield>
+    <subfield code="h">R. Martinsen</subfield>
+    <subfield code="t">Industrial markets beckon for high-power diode lasers</subfield>
+    <subfield code="m">Optics &amp; Laser Europe, vol. 154, pp. 26-27</subfield>
+    <subfield code="y">2007</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">44</subfield>
+    <subfield code="h">H. Hoogland, et al.</subfield>
+    <subfield code="t">Compact ultrashort pulsed 2.05 μm all-PM fiber laser for dielectric laser acceleration of nonrelativistic electrons</subfield>
+    <subfield code="m">in Proceedings of Conference on Lasers and Electro-Optics, San Jose, CA, USA, Jun., paper SF1I.7</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">45</subfield>
+    <subfield code="h">J. E. Clayton, P. A. Lovoi, and W. Leemans</subfield>
+    <subfield code="t">Laser accelerator driven particle brachytherapy devices, systems and methods</subfield>
+    <subfield code="m">US Patent 8,878,464, Nov. 04</subfield>
+    <subfield code="y">2014</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">46</subfield>
+    <subfield code="h">K. Murari, et al.</subfield>
+    <subfield code="t">Kagome-fiber-based pulse compression of mid-infrared picosecond pulses from a Ho:YLF amplifier</subfield>
+    <subfield code="m">Optica, vol. 3, pp. 816-822</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">47</subfield>
+    <subfield code="h">C. Lee, et al.</subfield>
+    <subfield code="t">Novel fabrication of 3D woodpile accelerator by silicon membrane stacking</subfield>
+    <subfield code="s">AIP Conf.Proc.,1777,060005</subfield>
+    <subfield code="y">2016</subfield>
+    <subfield code="0">1496771</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">48</subfield>
+    <subfield code="h">E. Colby, G. Lum, T. Plettner, and J. Spencer</subfield>
+    <subfield code="t">Gamma radiation studies on optical materials</subfield>
+    <subfield code="s">IEEE Trans.Nucl.Sci.,49,2857-2867</subfield>
+    <subfield code="y">2002</subfield>
+    <subfield code="0">609165</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">49</subfield>
+    <subfield code="h">Z. Wu, et al.</subfield>
+    <subfield code="t">Coupling power into accelerating mode of a three-dimensional silicon woodpile photonic band-gap waveguide</subfield>
+    <subfield code="s">Phys.Rev.ST Accel.Beams,17,081301</subfield>
+    <subfield code="y">2014</subfield>
+    <subfield code="0">1332591</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">50</subfield>
+    <subfield code="h">Z. Wu, et al.</subfield>
+    <subfield code="t">A new accelerating mode in a silicon woodpile laser accelerator and its high-efficiency power coupler design</subfield>
+    <subfield code="m">in Proceedings of IPAC’15, Richmond, VA, USA, May, paper WEPJE013, p. 2702-2704</subfield>
+    <subfield code="y">2015</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">51</subfield>
+    <subfield code="h">Z. Wu, et al.</subfield>
+    <subfield code="t">A traveling-wave forward coupler design for a new accelerating mode in a silicon woodpile accelerator</subfield>
+    <subfield code="p">IEEE</subfield>
+    <subfield code="m">J. Sel Top</subfield>
+    <subfield code="s">Quant.Electron.,22,4400909</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">52</subfield>
+    <subfield code="h">K. Soong and R. L. Byer</subfield>
+    <subfield code="t">Design of a subnanometer resolution beam position monitor for dielectric laser accelerators</subfield>
+    <subfield code="s">Opt.Lett.,37,975-977</subfield>
+    <subfield code="y">2012</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">53</subfield>
+    <subfield code="h">K. Soong, et al.</subfield>
+    <subfield code="t">Electron beam position monitor for a dielectric microaccelerator</subfield>
+    <subfield code="s">Opt.Lett.,39,4747-4750</subfield>
+    <subfield code="y">2014</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">54</subfield>
+    <subfield code="h">K. J. Leedle</subfield>
+    <subfield code="t">Laser acceleration and deflection of sub-100 keV electrons with silicon dielectric laser accelerator structures</subfield>
+    <subfield code="m">Ph.D. thesis, Stanford University, Stanford, CA, USA</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">55</subfield>
+    <subfield code="h">T. Egenolf, U. Niedermayer, and O. Boine-Frankenheim</subfield>
+    <subfield code="t">Simulations of DLA Grating Structures in the Frequency Domain</subfield>
+    <subfield code="m">presented at the 8th Int. Particle Accelerator Conf. (IPAC’17), Copenhagen, Denmark, May, paper WEPVA002, this conference</subfield>
+    <subfield code="y">2017</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">56</subfield>
+    <subfield code="h">J. McNeur, et al.</subfield>
+    <subfield code="t">Experimental results from the microaccelerator platform, a resonant slab-symmetric dielectric laser accelerator</subfield>
+    <subfield code="s">AIP Conf.Proc.,1777,060014</subfield>
+    <subfield code="y">2016</subfield>
+    <subfield code="0">1496779</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">57</subfield>
+    <subfield code="h">G. Travish, et al.</subfield>
+    <subfield code="t">Fabrication of optical scale dielectric laser accelerators: challenges, tolerances and other scary tales from the foundry</subfield>
+    <subfield code="s">AIP Conf.Proc.,1777,060012</subfield>
+    <subfield code="y">2016</subfield>
+    <subfield code="0">1496777</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">58</subfield>
+    <subfield code="h">A. Szczepkowicz</subfield>
+    <subfield code="t">Guided mode resonance, resonant grating thickness and finite-size effects in dielectric laser acceleration structures</subfield>
+    <subfield code="s">Appl.Opt.,55,2634-2638</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">59</subfield>
+    <subfield code="h">H. Deng, et al.</subfield>
+    <subfield code="t">Design of racetrack ring resonator based dielectric laser accelerators</subfield>
+    <subfield code="r">arXiv:1701.08945 [physics.accph]</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">60</subfield>
+    <subfield code="h">T. Hughes, et al.</subfield>
+    <subfield code="t">Method for computationally efficient design of dielectric laser accelerator structures</subfield>
+    <subfield code="r">arXiv:1705.02392 [physics.optics]</subfield>
+    <subfield code="0">1598515</subfield>
+    <subfield code="z">1</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">61</subfield>
+    <subfield code="h">B. M. Cowan, et al.</subfield>
+    <subfield code="t">Full-scale simulations of dielectric laser-driven accelerators</subfield>
+    <subfield code="m">in Proc. 14th Int. Conference on Numerical Simulation of Optoelectronic Devices, Palma de Mallorca, Spain Piscataway, NJ, USA), pp. 113-114, Sep</subfield>
+    <subfield code="p">IEEE</subfield>
+    <subfield code="y">2014</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">62</subfield>
+    <subfield code="h">Y. Wei, et al.</subfield>
+    <subfield code="t">Dielectric accelerators driven by pulse-fronttilted lasers</subfield>
+    <subfield code="m">presented at the 8th Int. Particle Accelerator Conf. (IPAC’17), Copenhagen, Denmark, May, paper WEPVA020, this conference</subfield>
+    <subfield code="y">2017</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">63</subfield>
+    <subfield code="h">F. Mayet, et al.</subfield>
+    <subfield code="t">Simulations and plans for a dielectric laser acceleration experiment at SINBAD</subfield>
+    <subfield code="m">presented at the 8th Int. Particle Accelerator Conf. (IPAC’17), Copenhagen, Denmark, May, paper WEPVA007, this conference</subfield>
+    <subfield code="y">2017</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">64</subfield>
+    <subfield code="h">F. Mayet and W. Kuropka</subfield>
+    <subfield code="t">A fast particle tracking tool for the simulation of dielectric laser accelerators</subfield>
+    <subfield code="m">presented at the 8th Int. Particle Accelerator Conf. (IPAC’17), Copenhagen, Denmark, May, paper THPAB013, this conference</subfield>
+    <subfield code="y">2017</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">65</subfield>
+    <subfield code="h">W. Kuropka, F. Mayet, J. R. W. Assmann, and U. Dorda</subfield>
+    <subfield code="t">Simulation of Many Period Grating-Based Dielectric Laser Accelerators for Electrons</subfield>
+    <subfield code="m">presented at the 8th Int. Particle Accelerator Conf. (IPAC’17), Copenhagen, Denmark, May, paper WEPVA005, this conference. Proceedings of IPAC, Copenhagen, Denmark WEYB1 03 Novel Particle Sources and Acceleration Techniques A16 Advanced Concep100 45535    0 45535    0     0  15178      0 --:--:--  0:00:03 --:--:-- 11787
+ts 2525 Copyright©CC-BY-3.0andbytherespectiveauthors</subfield>
+    <subfield code="i">978-3-95450-182-3</subfield>
+    <subfield code="y">2017</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="6">
+    <subfield code="a">0-0-0-1-0-0-1</subfield>
+    <subfield code="t">2017-07-05 11:59:52</subfield>
+    <subfield code="v">Invenio/1.1.2.1260-aa76f refextract/1.5.44</subfield>
+    <subfield code="v">content.pdf;1</subfield>
+  </datafield>
+</record>
+
+</collection>
