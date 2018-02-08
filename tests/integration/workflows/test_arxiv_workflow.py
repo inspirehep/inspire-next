@@ -416,7 +416,7 @@ def test_arxiv_update_is_not_store_on_legacy_and_labs(
     assert obj.extra_data['skipped-store-record']
 
 
-def test_article_workflow_error_raises_when_record_is_not_valid(workflow_app):
+def test_article_workflow_raises_when_record_is_not_valid(workflow_app):
     invalid_record = {
         "titles": [
             {"title": "A title"}
@@ -433,21 +433,18 @@ def test_article_workflow_error_raises_when_record_is_not_valid(workflow_app):
     )
     obj_id = obj.id
 
-    with pytest.raises(
-            WorkflowsError,
-            message='Expecting WorkflowsError',
-            match='The record contained in the workflow is not schema compliant.'
-    ):
+    with pytest.raises(WorkflowsError):
         start('article', invalid_record, obj_id)
 
     obj = workflow_object_class.get(obj_id)
 
     assert obj.status == ObjectStatus.ERROR
-    assert '_error_msg' in obj.extra_data
+    assert 'not schema compliant' in obj.extra_data['_error_msg']
+    assert '_collections' in obj.extra_data['_error_msg']
 
 
 def test_article_workflow_when_record_is_valid(workflow_app):
-    invalid_record = {
+    valid_record = {
         "_collections": ["Literature"],
         "titles": [
             {"title": "A title"}
@@ -457,7 +454,7 @@ def test_article_workflow_when_record_is_valid(workflow_app):
         ],
     }
 
-    eng_uuid = start('article', [invalid_record])
+    eng_uuid = start('article', [valid_record])
     eng = WorkflowEngine.from_uuid(eng_uuid)
     obj = eng.objects[0]
 

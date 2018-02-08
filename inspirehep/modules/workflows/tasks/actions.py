@@ -39,7 +39,6 @@ from timeout_decorator import TimeoutError
 from werkzeug import secure_filename
 
 from invenio_db import db
-from invenio_workflows import ObjectStatus
 from invenio_workflows.errors import WorkflowsError
 from invenio_records.models import RecordMetadata
 
@@ -239,10 +238,9 @@ def stop_in_error_if_record_not_valid(obj, eng):
     try:
         validate(obj.data, 'hep')
     except ValidationError as err:
-        obj.log.error(err.message)
-        obj.extra_data['_error_msg'] = err.message
-        obj.status = ObjectStatus.ERROR
-        raise WorkflowsError('The record contained in the workflow is not schema compliant.')
+        message = 'The record contained in the workflow is not schema compliant: \n' + err.message
+        error_workflow_fct = error_workflow(message)
+        error_workflow_fct(obj, eng)
 
 
 @with_debug_logging
@@ -402,8 +400,6 @@ def error_workflow(message):
     @wraps(error_workflow)
     def _error_workflow(obj, eng):
         obj.log.error(message)
-        obj.extra_data['_error_msg'] = message
-        obj.status = ObjectStatus.ERROR
         raise WorkflowsError(message)
 
     _error_workflow.__doc__ = (
