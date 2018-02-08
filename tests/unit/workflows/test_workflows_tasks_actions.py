@@ -52,7 +52,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     set_refereed_and_fix_document_type,
     shall_halt_workflow,
 )
-from inspirehep.utils.url import retrieve_uri
 
 from mocks import MockEng, MockObj, MockFiles
 
@@ -630,12 +629,11 @@ def test_populate_journal_coverage_does_nothing_if_no_journal_is_found(mock_repl
 
 @patch('inspirehep.modules.workflows.tasks.actions.get_pdf_in_workflow')
 def test_refextract_from_pdf(mock_get_pdf_in_workflow):
-    mock_get_pdf_in_workflow.return_value = retrieve_uri(
-        pkg_resources.resource_filename(
-            __name__,
-            os.path.join('fixtures', '1704.00452.pdf'),
-        )
+    mock_get_pdf_in_workflow.return_value.__enter__.return_value = pkg_resources.resource_filename(
+        __name__,
+        os.path.join('fixtures', '1704.00452.pdf'),
     )
+    mock_get_pdf_in_workflow.return_value.__exit__.return_value = None
 
     schema = load_schema('hep')
     subschema = schema['properties']['acquisition_source']
@@ -653,7 +651,8 @@ def test_refextract_from_pdf(mock_get_pdf_in_workflow):
 
 @patch('inspirehep.modules.workflows.tasks.actions.get_pdf_in_workflow')
 def test_refextract_from_text(mock_get_pdf_in_workflow):
-    mock_get_pdf_in_workflow.return_value = None
+    mock_get_pdf_in_workflow.return_value.__enter__.return_value = None
+    mock_get_pdf_in_workflow.return_value.__exit__.return_value = None
 
     schema = load_schema('hep')
     subschema = schema['properties']['acquisition_source']

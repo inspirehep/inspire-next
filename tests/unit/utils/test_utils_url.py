@@ -22,11 +22,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
 import requests_mock
 from flask import current_app
 from mock import patch
+from six import binary_type
 
-from inspirehep.utils.url import is_pdf_link, make_user_agent_string
+from inspirehep.utils.url import is_pdf_link, make_user_agent_string, retrieve_uri
 
 
 def test_is_pdf_link_handles_empty_requests():
@@ -47,3 +49,16 @@ def test_make_user_agent_string():
 
         user_agent_with_component = make_user_agent_string("submission")
         assert user_agent_with_component == "InspireHEP-0.1.0 (+http://inspirehep.net;) [submission]"
+
+
+def test_retrieve_uri(tmpdir):
+    test_file = tmpdir.join('file.txt')
+    test_file.write('some content')
+
+    uri = 'file://' + binary_type(test_file)
+
+    with retrieve_uri(uri) as local_path, open(local_path) as local_file:
+        path_copy = local_path
+        assert local_file.read() == 'some content'
+
+    assert not os.path.exists(path_copy)

@@ -124,8 +124,8 @@ def arxiv_plot_extract(obj, eng):
     tarball = obj.files[filename]
 
     if tarball:
-        with TemporaryDirectory(prefix='plot_extract') as scratch_space:
-            tarball_file = retrieve_uri(tarball.file.uri, outdir=scratch_space)
+        with TemporaryDirectory(prefix='plot_extract') as scratch_space, \
+                retrieve_uri(tarball.file.uri, outdir=scratch_space) as tarball_file:
             try:
                 plots = process_tarball(
                     tarball_file,
@@ -227,11 +227,8 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
             )
             return
 
-        with TemporaryDirectory(prefix='author_list') as scratch_space:
-            tarball_file = retrieve_uri(
-                tarball.file.uri,
-                outdir=scratch_space,
-            )
+        with TemporaryDirectory(prefix='author_list') as scratch_space, \
+                retrieve_uri(tarball.file.uri, outdir=scratch_space) as tarball_file:
             try:
                 file_list = untar(tarball_file, scratch_space)
             except InvalidTarball:

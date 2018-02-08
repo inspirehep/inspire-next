@@ -28,7 +28,7 @@ import json
 import logging
 import os
 import traceback
-from contextlib import closing
+from contextlib import closing, contextmanager
 from functools import wraps
 
 import backoff
@@ -153,14 +153,17 @@ def with_debug_logging(func):
     return _decorator
 
 
+@contextmanager
 @with_debug_logging
 def get_pdf_in_workflow(obj):
     """Return the fullpath to the PDF attached to a workflow object"""
     for filename in obj.files.keys:
         if filename.endswith('.pdf'):
-            return retrieve_uri(obj.files[filename].file.uri)
+            with retrieve_uri(obj.files[filename].file.uri) as local_file:
+                yield local_file
 
     obj.log.info('No PDF available')
+    yield None
 
 
 @backoff.on_exception(backoff.expo, requests.packages.urllib3.exceptions.ProtocolError, max_tries=5)

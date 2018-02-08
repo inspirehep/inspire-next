@@ -35,7 +35,8 @@ def test_classify_paper_with_fulltext(get_pdf_in_workflow, tmpdir):
     eng = MockEng()
     fulltext = tmpdir.join('fulltext.txt')
     fulltext.write('Higgs boson')
-    get_pdf_in_workflow.return_value = binary_type(fulltext)
+    get_pdf_in_workflow.return_value.__enter__.return_value = binary_type(fulltext)
+    get_pdf_in_workflow.return_value.__exit__.return_value = None
 
     expected = [
         {
@@ -71,7 +72,8 @@ def test_classify_paper_with_no_fulltext(get_pdf_in_workflow):
     }
     obj = MockObj(data, {})
     eng = MockEng()
-    get_pdf_in_workflow.return_value = None
+    get_pdf_in_workflow.return_value.__enter__.return_value = None
+    get_pdf_in_workflow.return_value.__exit__.return_value = None
 
     expected = [
         {
@@ -107,7 +109,8 @@ def test_classify_paper_uses_keywords(get_pdf_in_workflow):
     }
     obj = MockObj(data, {})
     eng = MockEng()
-    get_pdf_in_workflow.return_value = None
+    get_pdf_in_workflow.return_value.__enter__.return_value = None
+    get_pdf_in_workflow.return_value.__exit__.return_value = None
 
     expected = [
         {

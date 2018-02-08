@@ -22,7 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
 from contextlib import contextmanager
 
 from flask import current_app
@@ -124,9 +123,5 @@ def local_refextract_kbs_path():
     """Get the path to the temporary refextract kbs from the application config.
     """
     journal_kb_path = current_app.config.get('REFEXTRACT_JOURNAL_KB_PATH')
-    temp_journal_kb_path = retrieve_uri(journal_kb_path)
-    try:
+    with retrieve_uri(journal_kb_path) as temp_journal_kb_path:
         yield {'journals': temp_journal_kb_path}
-    finally:
-        if os.path.exists(temp_journal_kb_path):
-            os.unlink(temp_journal_kb_path)

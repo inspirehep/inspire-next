@@ -24,7 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
 import re
 from functools import wraps
 
@@ -357,15 +356,12 @@ def refextract(obj, eng):
     pdf_references, text_references = [], []
     source = get_value(obj.data, 'acquisition_source.source')
 
-    tmp_pdf = get_pdf_in_workflow(obj)
-    if tmp_pdf:
-        try:
-            pdf_references = extract_references_from_pdf(tmp_pdf, source)
-        except TimeoutError:
-            obj.log.error('Timeout when extracting references from PDF.')
-        finally:
-            if os.path.exists(tmp_pdf):
-                os.unlink(tmp_pdf)
+    with get_pdf_in_workflow(obj) as tmp_pdf:
+        if tmp_pdf:
+            try:
+                pdf_references = extract_references_from_pdf(tmp_pdf, source)
+            except TimeoutError:
+                obj.log.error('Timeout when extracting references from PDF.')
 
     text = get_value(obj.extra_data, 'formdata.references')
     if text:
