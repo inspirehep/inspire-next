@@ -33,13 +33,14 @@ from workflow.patterns.controlflow import (
 from inspirehep.modules.workflows.tasks.refextract import extract_journal_info
 from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_author_list,
-    arxiv_fulltext_download,
     arxiv_package_download,
     arxiv_plot_extract,
     arxiv_derive_inspire_categories,
+    populate_arxiv_document,
 )
 from inspirehep.modules.workflows.tasks.actions import (
     add_core,
+    download_documents,
     error_workflow,
     fix_submission_number,
     halt_record,
@@ -52,11 +53,11 @@ from inspirehep.modules.workflows.tasks.actions import (
     mark,
     normalize_journal_titles,
     populate_journal_coverage,
+    populate_submission_document,
     refextract,
     reject_record,
     save_workflow,
     set_refereed_and_fix_document_type,
-    submission_fulltext_download,
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -119,21 +120,19 @@ ENHANCE_RECORD = [
     IF(
         is_arxiv_paper,
         [
-            arxiv_fulltext_download,
+            populate_arxiv_document,
             arxiv_package_download,
             arxiv_plot_extract,
-            refextract,
             arxiv_derive_inspire_categories,
             arxiv_author_list("authorlist2marcxml.xsl"),
         ]
     ),
     IF(
         is_submission,
-        [
-            submission_fulltext_download,
-            refextract,
-        ]
+        populate_submission_document,
     ),
+    download_documents,
+    refextract,
     normalize_journal_titles,
     extract_journal_info,
     populate_journal_coverage,

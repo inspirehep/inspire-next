@@ -63,14 +63,8 @@ NO_PDF_ON_ARXIV = 'The author has provided no source to generate PDF, and no PDF
 
 @with_debug_logging
 @backoff.on_exception(backoff.expo, DownloadError, base=4, max_tries=5)
-def arxiv_fulltext_download(obj, eng):
-    """Perform the fulltext download step for arXiv records.
-
-    :param obj: Workflow Object to process
-    :param eng: Workflow Engine processing the object
-    """
+def populate_arxiv_document(obj, eng):
     arxiv_id = get_arxiv_id(obj.data)
-    filename = secure_filename('{0}.pdf'.format(arxiv_id))
     url = current_app.config['ARXIV_PDF_URL'].format(arxiv_id=arxiv_id)
 
     if not is_pdf_link(url):
@@ -79,30 +73,22 @@ def arxiv_fulltext_download(obj, eng):
             return
         raise DownloadError("{url} is not serving a PDF file.".format(url=url))
 
-    pdf = download_file_to_workflow(
-        workflow=obj,
-        name=filename,
+    filename = secure_filename('{0}.pdf'.format(arxiv_id))
+    obj.data['documents'] = [
+        document for document in obj.data.get('documents', ())
+        if document.get('key') != filename
+    ]
+
+    lb = LiteratureBuilder(source='arxiv', record=obj.data)
+    lb.add_document(
+        filename,
+        fulltext=True,
+        hidden=True,
+        material='preprint',
+        original_url=url,
         url=url,
     )
-
-    if pdf:
-        obj.data['documents'] = [
-            document for document in obj.data.get('documents', ())
-            if document.get('key') != filename
-        ]
-        lb = LiteratureBuilder(source='arxiv', record=obj.data)
-        lb.add_document(
-            filename,
-            fulltext=True,
-            hidden=True,
-            material='preprint',
-            original_url=url,
-            url='/api/files/{bucket}/{key}'.format(bucket=obj.files[filename].bucket_id, key=filename)
-        )
-        obj.data = lb.record
-        obj.log.info('PDF retrieved from arXiv for %s', arxiv_id)
-    else:
-        obj.log.error('Cannot retrieve PDF from arXiv for %s', arxiv_id)
+    obj.data = lb.record
 
 
 @with_debug_logging
