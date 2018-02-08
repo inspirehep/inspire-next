@@ -155,15 +155,33 @@ def with_debug_logging(func):
 
 @contextmanager
 @with_debug_logging
-def get_pdf_in_workflow(obj):
-    """Return the fullpath to the PDF attached to a workflow object"""
-    for filename in obj.files.keys:
-        if filename.endswith('.pdf'):
-            with retrieve_uri(obj.files[filename].file.uri) as local_file:
-                yield local_file
+def get_document_in_workflow(obj):
+    """Context manager giving the path to the document attached to a workflow object.
 
-    obj.log.info('No PDF available')
-    yield None
+    Arg:
+        obj: workflow object
+
+    Returns:
+        Optional[str]: The path to a local copy of the document.  If no
+        documents are present, it retuns None.  If several documents are
+        present, it prioritizes the fulltext. If several documents with the
+        same priority are present, it takes the first one and logs an error.
+    """
+    documents = obj.data.get('documents', [])
+    fulltexts = [document for document in documents if document.get('fulltext')]
+    documents = fulltexts or documents
+
+    if not documents:
+        obj.log.info('No document available')
+        yield None
+        return
+    elif len(documents) > 1:
+        obj.log.error('More than one document in workflow, first one used')
+
+    key = documents[0]['key']
+    obj.log.info('Using document with key "%s"', key)
+    with retrieve_uri(obj.files[key].file.uri) as local_file:
+        yield local_file
 
 
 @backoff.on_exception(backoff.expo, requests.packages.urllib3.exceptions.ProtocolError, max_tries=5)

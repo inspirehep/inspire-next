@@ -627,13 +627,13 @@ def test_populate_journal_coverage_does_nothing_if_no_journal_is_found(mock_repl
     assert 'journal_coverage' not in obj.extra_data
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.get_pdf_in_workflow')
-def test_refextract_from_pdf(mock_get_pdf_in_workflow):
-    mock_get_pdf_in_workflow.return_value.__enter__.return_value = pkg_resources.resource_filename(
+@patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow')
+def test_refextract_from_pdf(mock_get_document_in_workflow):
+    mock_get_document_in_workflow.return_value.__enter__.return_value = pkg_resources.resource_filename(
         __name__,
         os.path.join('fixtures', '1704.00452.pdf'),
     )
-    mock_get_pdf_in_workflow.return_value.__exit__.return_value = None
+    mock_get_document_in_workflow.return_value.__exit__.return_value = None
 
     schema = load_schema('hep')
     subschema = schema['properties']['acquisition_source']
@@ -649,10 +649,10 @@ def test_refextract_from_pdf(mock_get_pdf_in_workflow):
     assert obj.data['references'][0]['raw_refs'][0]['source'] == 'arXiv'
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.get_pdf_in_workflow')
-def test_refextract_from_text(mock_get_pdf_in_workflow):
-    mock_get_pdf_in_workflow.return_value.__enter__.return_value = None
-    mock_get_pdf_in_workflow.return_value.__exit__.return_value = None
+@patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow')
+def test_refextract_from_text(mock_get_document_in_workflow):
+    mock_get_document_in_workflow.return_value.__enter__.return_value = None
+    mock_get_document_in_workflow.return_value.__exit__.return_value = None
 
     schema = load_schema('hep')
     subschema = schema['properties']['acquisition_source']

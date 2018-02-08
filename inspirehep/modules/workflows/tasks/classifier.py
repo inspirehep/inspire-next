@@ -35,7 +35,7 @@ from invenio_classifier.errors import ClassifierException
 from invenio_classifier.reader import KeywordToken
 
 from ..proxies import antihep_keywords
-from ..utils import with_debug_logging, get_pdf_in_workflow
+from ..utils import with_debug_logging, get_document_in_workflow
 
 
 @with_debug_logging
@@ -76,10 +76,10 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
         )
 
         fulltext_used = True
-        with get_pdf_in_workflow(obj) as tmp_pdf:
+        with get_document_in_workflow(obj) as tmp_document:
             try:
-                if tmp_pdf:
-                    result = get_keywords_from_local_file(tmp_pdf, **params)
+                if tmp_document:
+                    result = get_keywords_from_local_file(tmp_document, **params)
                 else:
                     data = get_value(obj.data, 'titles.title', [])
                     data.extend(get_value(obj.data, 'titles.subtitle', []))

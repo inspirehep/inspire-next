@@ -29,10 +29,14 @@ import pytest
 import requests
 import requests_mock
 
+from contextlib import contextmanager
+from mock import patch
+
 from inspirehep.modules.workflows.utils import (
     convert,
     download_file_to_workflow,
     json_api_request,
+    get_document_in_workflow,
 )
 
 from mocks import MockFiles, MockFileObject, MockObj
@@ -76,6 +80,83 @@ def test_json_api_request_retries_on_connection_error():
         result = json_api_request('http://example.org/api', {})
 
         assert expected == result
+
+
+@contextmanager
+def mock_retrieve_uri(arg):
+    yield arg
+
+
+@patch('inspirehep.modules.workflows.utils.retrieve_uri', mock_retrieve_uri)
+def test_get_document_in_workflow():
+    data = {
+        'documents': [
+            {
+                'key': 'fulltext.xml',
+                'fulltext': True,
+            },
+        ],
+    }
+    files = MockFiles({})
+    files['fulltext.xml'] = None
+    obj = MockObj(data, {}, files=files)
+
+    with get_document_in_workflow(obj) as local_file:
+        assert local_file == files['fulltext.xml'].file.uri
+
+
+@patch('inspirehep.modules.workflows.utils.retrieve_uri', mock_retrieve_uri)
+def test_get_document_in_workflow_returns_None_when_no_documents():
+    files = MockFiles({})
+    obj = MockObj({}, {}, files=files)
+
+    with get_document_in_workflow(obj) as local_file:
+        assert local_file is None
+
+
+@patch('inspirehep.modules.workflows.utils.retrieve_uri', mock_retrieve_uri)
+def test_get_document_in_workflow_prefers_fulltext():
+    data = {
+        'documents': [
+            {
+                'key': 'table_of_contents.pdf',
+            },
+            {
+                'key': 'fulltext.xml',
+                'fulltext': True,
+            },
+        ],
+    }
+    files = MockFiles({})
+    files['fulltext.xml'] = None
+    files['table_of_contents.pdf'] = None
+    obj = MockObj(data, {}, files=files)
+
+    with get_document_in_workflow(obj) as local_file:
+        assert local_file == files['fulltext.xml'].file.uri
+
+
+@patch('inspirehep.modules.workflows.utils.retrieve_uri', mock_retrieve_uri)
+def test_get_document_in_workflow_takes_first_among_equals():
+    data = {
+        'documents': [
+            {
+                'key': 'table_of_contents.pdf',
+            },
+            {
+                'key': 'document.pdf',
+            },
+        ],
+    }
+    files = MockFiles({})
+    files['document.pdf'] = None
+    files['table_of_contents.pdf'] = None
+    obj = MockObj(data, {}, files=files)
+
+    with get_document_in_workflow(obj) as local_file:
+        assert local_file == files['table_of_contents.pdf'].file.uri
+
+    assert 'More than one document in workflow, first one used' in obj.log._error.getvalue()
 
 
 @pytest.fixture

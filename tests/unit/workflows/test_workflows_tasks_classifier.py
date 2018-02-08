@@ -29,14 +29,14 @@ from inspirehep.modules.workflows.tasks.classifier import classify_paper
 from mocks import MockEng, MockObj
 
 
-@patch('inspirehep.modules.workflows.tasks.classifier.get_pdf_in_workflow')
-def test_classify_paper_with_fulltext(get_pdf_in_workflow, tmpdir):
+@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
+def test_classify_paper_with_fulltext(get_document_in_workflow, tmpdir):
     obj = MockObj({}, {})
     eng = MockEng()
     fulltext = tmpdir.join('fulltext.txt')
     fulltext.write('Higgs boson')
-    get_pdf_in_workflow.return_value.__enter__.return_value = binary_type(fulltext)
-    get_pdf_in_workflow.return_value.__exit__.return_value = None
+    get_document_in_workflow.return_value.__enter__.return_value = binary_type(fulltext)
+    get_document_in_workflow.return_value.__exit__.return_value = None
 
     expected = [
         {
@@ -56,8 +56,8 @@ def test_classify_paper_with_fulltext(get_pdf_in_workflow, tmpdir):
     assert obj.extra_data['classifier_results']['fulltext_used'] is True
 
 
-@patch('inspirehep.modules.workflows.tasks.classifier.get_pdf_in_workflow')
-def test_classify_paper_with_no_fulltext(get_pdf_in_workflow):
+@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
+def test_classify_paper_with_no_fulltext(get_document_in_workflow):
     data = {
         'titles': [
             {
@@ -72,8 +72,8 @@ def test_classify_paper_with_no_fulltext(get_pdf_in_workflow):
     }
     obj = MockObj(data, {})
     eng = MockEng()
-    get_pdf_in_workflow.return_value.__enter__.return_value = None
-    get_pdf_in_workflow.return_value.__exit__.return_value = None
+    get_document_in_workflow.return_value.__enter__.return_value = None
+    get_document_in_workflow.return_value.__exit__.return_value = None
 
     expected = [
         {
@@ -93,8 +93,8 @@ def test_classify_paper_with_no_fulltext(get_pdf_in_workflow):
     assert obj.extra_data['classifier_results']['fulltext_used'] is False
 
 
-@patch('inspirehep.modules.workflows.tasks.classifier.get_pdf_in_workflow')
-def test_classify_paper_uses_keywords(get_pdf_in_workflow):
+@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
+def test_classify_paper_uses_keywords(get_document_in_workflow):
     data = {
         'titles': [
             {
@@ -109,8 +109,8 @@ def test_classify_paper_uses_keywords(get_pdf_in_workflow):
     }
     obj = MockObj(data, {})
     eng = MockEng()
-    get_pdf_in_workflow.return_value.__enter__.return_value = None
-    get_pdf_in_workflow.return_value.__exit__.return_value = None
+    get_document_in_workflow.return_value.__enter__.return_value = None
+    get_document_in_workflow.return_value.__exit__.return_value = None
 
     expected = [
         {

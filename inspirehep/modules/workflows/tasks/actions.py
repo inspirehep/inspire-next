@@ -53,7 +53,7 @@ from inspirehep.modules.workflows.tasks.refextract import (
 )
 from inspirehep.modules.workflows.utils import (
     download_file_to_workflow,
-    get_pdf_in_workflow,
+    get_document_in_workflow,
     log_workflows_action,
     with_debug_logging,
 )
@@ -355,10 +355,10 @@ def refextract(obj, eng):
     pdf_references, text_references = [], []
     source = get_value(obj.data, 'acquisition_source.source')
 
-    with get_pdf_in_workflow(obj) as tmp_pdf:
-        if tmp_pdf:
+    with get_document_in_workflow(obj) as tmp_document:
+        if tmp_document:
             try:
-                pdf_references = extract_references_from_pdf(tmp_pdf, source)
+                pdf_references = extract_references_from_pdf(tmp_document, source)
             except TimeoutError:
                 obj.log.error('Timeout when extracting references from PDF.')
 
