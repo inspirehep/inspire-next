@@ -29,6 +29,7 @@ import re
 from functools import wraps
 
 from flask import current_app
+from jsonschema.exceptions import ValidationError
 from sqlalchemy import (
     JSON,
     String,
@@ -40,9 +41,11 @@ from werkzeug import secure_filename
 
 from invenio_db import db
 from invenio_workflows import ObjectStatus
+from invenio_workflows.errors import WorkflowsError
 from invenio_records.models import RecordMetadata
 
 from inspire_schemas.builders import LiteratureBuilder
+from inspire_schemas.utils import validate
 from inspire_utils.record import get_value
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.workflows.tasks.refextract import (
@@ -227,8 +230,20 @@ def is_submission(obj, eng):
     """Is this a submission?"""
     source = obj.data.get('acquisition_source')
     if source:
-        return source.get('method') == "submitter"
+        return source.get('method') == 'submitter'
     return False
+
+
+@with_debug_logging
+def stop_in_error_if_record_not_valid(obj, eng):
+    """Check if the record is schema compliant and stop the workflow in ERROR state it it is not."""
+    try:
+        validate(obj.data, 'hep')
+    except ValidationError as err:
+        obj.log.error(err.message)
+        obj.extra_data['_error_msg'] = err.message
+        obj.status = ObjectStatus.ERROR
+        raise WorkflowsError('The record contained in the workflow is not schema compliant.')
 
 
 @with_debug_logging
@@ -399,8 +414,9 @@ def error_workflow(message):
     @wraps(error_workflow)
     def _error_workflow(obj, eng):
         obj.log.error(message)
-        obj.extra_data['_error_message'] = message
+        obj.extra_data['_error_msg'] = message
         obj.status = ObjectStatus.ERROR
+        raise WorkflowsError(message)
 
     _error_workflow.__doc__ = (
         'Force an error in the workflow object with the message "%s".'
