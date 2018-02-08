@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 import os
 from functools import wraps
 
+from inspire_utils.record import get_value
 from invenio_classifier import (
     get_keywords_from_local_file,
     get_keywords_from_text,
@@ -75,24 +76,21 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
             extract_acronyms=extract_acronyms
         )
 
-        fast_mode = False
+        fulltext_used = True
         tmp_pdf = get_pdf_in_workflow(obj)
         try:
             if tmp_pdf:
                 result = get_keywords_from_local_file(tmp_pdf, **params)
             else:
-                data = []
-                titles = obj.data.get('titles')
-                if titles:
-                    data.extend([t.get('title', '') for t in titles])
-                abstracts = obj.data.get('abstracts')
-                if abstracts:
-                    data.extend([t.get('value', '') for t in abstracts])
+                data = get_value(obj.data, 'titles.title', [])
+                data.extend(get_value(obj.data, 'titles.subtitle', []))
+                data.extend(get_value(obj.data, 'abstracts.value', []))
+                data.extend(get_value(obj.data, 'keywords.value', []))
                 if not data:
                     obj.log.error("No classification done due to missing data.")
                     return
                 result = get_keywords_from_text(data, **params)
-                fast_mode = True
+                fulltext_used = False
         except ClassifierException as e:
             obj.log.exception(e)
             return
@@ -103,7 +101,7 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
         result['complete_output'] = clean_instances_from_data(
             result.get("complete_output", {})
         )
-        result["fast_mode"] = fast_mode
+        result["fulltext_used"] = fulltext_used
 
         # Check if it is not empty output before adding
         if any(result.get("complete_output", {}).values()):

@@ -57,12 +57,13 @@ from inspirehep.utils.url import retrieve_uri
 from mocks import MockEng, MockObj, MockFiles
 
 
-def _get_auto_reject_obj(decision, has_core_keywords):
+def _get_auto_reject_obj(decision, has_core_keywords, fulltext_used):
     obj_params = {
         'classifier_results': {
             'complete_output': {
                 'core_keywords': ['something'] if has_core_keywords else [],
             },
+            'fulltext_used': fulltext_used,
         },
         'relevance_prediction': {
             'max_score': '0.222113',
@@ -357,20 +358,32 @@ def test_reject_record(l_w_a):
 @pytest.mark.parametrize(
     'expected,obj',
     [
-        (False, _get_auto_reject_obj('Core', has_core_keywords=False)),
-        (False, _get_auto_reject_obj('Non-Core', has_core_keywords=False)),
-        (True, _get_auto_reject_obj('Rejected', has_core_keywords=False)),
-        (False, _get_auto_reject_obj('Core', has_core_keywords=True)),
-        (False, _get_auto_reject_obj('Non-Core', has_core_keywords=True)),
-        (False, _get_auto_reject_obj('Rejected', has_core_keywords=True)),
+        (False, _get_auto_reject_obj('Core', has_core_keywords=False, fulltext_used=True)),
+        (False, _get_auto_reject_obj('Non-Core', has_core_keywords=False, fulltext_used=True)),
+        (True, _get_auto_reject_obj('Rejected', has_core_keywords=False, fulltext_used=True)),
+        (False, _get_auto_reject_obj('Core', has_core_keywords=True, fulltext_used=True)),
+        (False, _get_auto_reject_obj('Non-Core', has_core_keywords=True, fulltext_used=True)),
+        (False, _get_auto_reject_obj('Rejected', has_core_keywords=True, fulltext_used=True)),
+        (False, _get_auto_reject_obj('Core', has_core_keywords=False, fulltext_used=False)),
+        (False, _get_auto_reject_obj('Non-Core', has_core_keywords=False, fulltext_used=False)),
+        (False, _get_auto_reject_obj('Rejected', has_core_keywords=False, fulltext_used=False)),
+        (False, _get_auto_reject_obj('Core', has_core_keywords=True, fulltext_used=False)),
+        (False, _get_auto_reject_obj('Non-Core', has_core_keywords=True, fulltext_used=False)),
+        (False, _get_auto_reject_obj('Rejected', has_core_keywords=True, fulltext_used=False)),
     ],
     ids=[
-        'Dont reject: No core keywords with core decision',
-        'Dont reject: No core keywords with non-core decision',
-        'Reject: No core keywords with rejected decision',
-        'Dont reject: Core keywords with core decision',
-        'Dont reject: Core keywords with non-core decision',
-        'Dont reject: Core keywords with rejected decision',
+        'Dont reject: No core keywords (from fulltext) with core decision',
+        'Dont reject: No core keywords (from fulltext) with non-core decision',
+        'Reject: No core keywords (from fulltext) with rejected decision',
+        'Dont reject: Core keywords (from fulltext) with core decision',
+        'Dont reject: Core keywords (from fulltext) with non-core decision',
+        'Dont reject: Core keywords (from fulltext) with rejected decision',
+        'Dont reject: No core keywords (not from fulltext) with core decision',
+        'Dont reject: No core keywords (not from fulltext) with non-core decision',
+        'Dont reject: No core keywords (not from fulltext) with rejected decision',
+        'Dont reject: Core keywords (not from fulltext) with core decision',
+        'Dont reject: Core keywords (not from fulltext) with non-core decision',
+        'Dont reject: Core keywords (not from fulltext) with rejected decision',
     ]
 )
 def test__is_auto_rejected(expected, obj):
