@@ -1105,6 +1105,9 @@
                     "char_filter": [
                         "alphanumeric_normalizer"
                     ],
+                    "filter": [
+                        "lowercase_normalizer"
+                    ],
                     "tokenizer": "keyword",
                     "type": "custom"
                 },
