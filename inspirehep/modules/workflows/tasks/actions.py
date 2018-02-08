@@ -239,8 +239,8 @@ def stop_in_error_if_record_not_valid(obj, eng):
         validate(obj.data, 'hep')
     except ValidationError as err:
         message = 'The record contained in the workflow is not schema compliant: \n' + err.message
-        error_workflow_fct = error_workflow(message)
-        error_workflow_fct(obj, eng)
+        obj.log.error(message)
+        raise WorkflowsError(message)
 
 
 @with_debug_logging
