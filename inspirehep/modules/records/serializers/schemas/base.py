@@ -24,10 +24,15 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+
 from pybtex.database import Entry, Person
 from six import text_type
 
 from ..fields_export import get_authors_with_role, extractor, bibtex_type_and_fields
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class PybtexSchema(object):
@@ -47,7 +52,11 @@ class PybtexSchema(object):
             pybtex.database.Entity: Pybtex entity
         """
         doc_type, fields = bibtex_type_and_fields(record)
-        texkey = record['texkeys'][0]
+        try:
+            texkey = record['texkeys'][0]
+        except KeyError:
+            texkey = str(record['control_number'])
+            LOGGER.error('No texkey for record ID {}'.format(record['control_number']))
 
         template_data = []
 
