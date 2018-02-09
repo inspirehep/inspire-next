@@ -133,36 +133,32 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None):
         string: the put-code of the updated/inserted item
     """
     config = load_config()
-
-    server_name = config['SERVER_NAME']
-
-    record_api_endpoint = _get_api_url_for_recid(
-        server_name, config['SEARCH_UI_SEARCH_API'], recid
-    )
-
-    hep_response = requests.get(record_api_endpoint, headers={
-        'Accept': 'application/json'
-    })
-    record = hep_response.json()['metadata']
-
-    bibtex_response = requests.get(record_api_endpoint, headers={
-        'Accept': 'application/x-bibtex'
-    })
-    bibtex_string = bibtex_response.text
-
     client_key = config['ORCID_APP_CREDENTIALS']['consumer_key']
     client_secret = config['ORCID_APP_CREDENTIALS']['consumer_secret']
+    server_name = config["SERVER_NAME"]
+
+    record = _get_hep_record(config, recid)
+    if not record:
+        LOGGER.error('Cannot push record #{}, as metadata don\'t exist'.format(recid))
+
+    try:
+        bibtex = _get_bibtex_record(config, recid)
+    except requests.HTTPError:
+        bibtex = None
+        LOGGER.warning('Pushing record #{} without BibTex, as fetching'
+                       'it failed!'.format(recid))
 
     orcid_api = MemberAPI(client_key, client_secret)
 
     orcid_xml = OrcidConverter(
-        record, server_name, put_code=put_code, bibtex_citation=bibtex_string
+        record, server_name, put_code=put_code, bibtex_citation=bibtex
     ).get_xml()
 
     if put_code:
-        LOGGER.info("Pushing record #{} with put-code {}.".format(
+        LOGGER.info("Pushing record #{} with put-code {} to ORCID {}.".format(
             recid,
-            put_code
+            put_code,
+            orcid
         ))
         orcid_api.update_record(
             orcid_id=orcid,
@@ -173,7 +169,12 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None):
             content_type='application/orcid+xml',
         )
     else:
-        LOGGER.info("No put-code found, pushing new record #{}.".format(recid))
+        LOGGER.info(
+            "No put-code found, pushing new record #{} to ORCID {}.".format(
+                recid,
+                orcid,
+            )
+        )
         put_code = orcid_api.add_record(
             orcid_id=orcid,
             token=oauth_token,
@@ -233,3 +234,55 @@ def _get_api_url_for_recid(server_name, api_endpoint, recid):
 
     api_url = urljoin(server_name, api_endpoint)
     return urljoin(api_url, recid)
+
+
+def _get_record_by_mime(config, recid, mime_type):
+    """
+
+    Args:
+        config (inspire_utils.config.Config): configuration
+        recid (string): HEP record ID
+        mime_type (string): accept type
+
+    Returns:
+        requests.Response: response form API
+    """
+    server_name = config['SERVER_NAME']
+
+    record_api_endpoint = _get_api_url_for_recid(
+        server_name, config['SEARCH_UI_SEARCH_API'], recid
+    )
+
+    response = requests.get(record_api_endpoint, headers={
+        'Accept': mime_type
+    })
+    response.raise_for_status()
+    return response
+
+
+def _get_hep_record(config, recid):
+    """
+
+    Args:
+        config (inspire_utils.config.Config): configuration
+        recid (string): HEP record ID
+
+    Returns:
+        dict: HEP record
+    """
+    hep_response = _get_record_by_mime(config, recid, 'application/json')
+    return hep_response.json()['metadata']
+
+
+def _get_bibtex_record(config, recid):
+    """
+
+    Args:
+        config (inspire_utils.config.Config): configuration
+        recid (string): HEP record ID
+
+    Returns:
+        dict: BibTeX serialized record
+    """
+    bibtex_response = _get_record_by_mime(config, recid, 'application/x-bibtex')
+    return bibtex_response.text
