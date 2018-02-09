@@ -168,3 +168,25 @@ def test_format_inbook(app):
 
     assert result is not None
     assert pybtex_entries_equal(result, expected)
+
+
+def test_format_article_no_texkey(app):
+    article = get_db_record('lit', 4328)
+    del article['texkeys']
+    expected = ("4328", Entry('article', [
+        ('journal', u'Nucl.Phys.'),
+        ('pages', u'579--588'),
+        ('title', u'Partial Symmetries of Weak Interactions'),
+        ('volume', u'22'),
+        ('year', u'1961'),
+        ('doi', u'10.1016/0029-5582(61)90469-2'),
+    ], persons={
+        'editor': [],
+        'author': [Person(u"Glashow, S.L.")],
+    }))
+
+    schema = PybtexSchema()
+    result = schema.load(article)
+
+    assert result is not None
+    assert pybtex_entries_equal(result, expected)

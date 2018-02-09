@@ -27,9 +27,12 @@ from __future__ import absolute_import, division, print_function
 from pybtex.database import Entry, Person
 from six import text_type
 
-from inspire_utils.record import get_value
+from inspire_utils.logging import getStackTraceLogger
 
 from ..fields_export import get_authors_with_role, extractor, bibtex_type_and_fields
+
+
+LOGGER = getStackTraceLogger(__name__)
 
 
 class PybtexSchema(object):
@@ -49,7 +52,11 @@ class PybtexSchema(object):
             pybtex.database.Entity: Pybtex entity
         """
         doc_type, fields = bibtex_type_and_fields(record)
-        texkey = get_value(record, 'texkeys[0]')
+        try:
+            texkey = record['texkeys'][0]
+        except KeyError:
+            texkey = str(record['control_number'])
+            LOGGER.error('No texkey for record ID {}'.format(record['control_number']))
 
         template_data = []
 
