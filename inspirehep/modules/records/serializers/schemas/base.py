@@ -24,15 +24,15 @@
 
 from __future__ import absolute_import, division, print_function
 
-import logging
-
 from pybtex.database import Entry, Person
 from six import text_type
+
+from inspire_utils.logging import getStackTraceLogger
 
 from ..fields_export import get_authors_with_role, extractor, bibtex_type_and_fields
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = getStackTraceLogger(__name__)
 
 
 class PybtexSchema(object):
