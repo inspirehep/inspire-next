@@ -24,7 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import logging
 import re
 import requests
 
@@ -32,12 +31,13 @@ from orcid import MemberAPI
 from urlparse import urljoin
 
 from inspire_utils.config import load_config
+from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
 
 from .converter import OrcidConverter
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = getStackTraceLogger(__name__)
 
 
 RECID_FROM_INSPIRE_URL = re.compile(
