@@ -136,20 +136,13 @@ def do_webcoll_callback(app, recids, server_name='http://fake.na.me'):
 
 def generate_record():
     """Provide record fixture."""
-    record_oai_arxiv_plots = pkg_resources.resource_string(
+    json_data = json.loads(pkg_resources.resource_string(
         __name__,
         os.path.join(
             '../fixtures',
-            'oai_arxiv_record_with_plots.xml'
+            'oai_arxiv_core_record.json'
         )
-    )
-
-    # Convert to MARCXML, then dict, then HEP JSON
-    record_oai_arxiv_plots_marcxml = convert(
-        record_oai_arxiv_plots,
-        "oaiarXiv2marcxml.xsl"
-    )
-    json_data = marcxml2record(record_oai_arxiv_plots_marcxml)
+    ))
 
     if 'preprint_date' in json_data:
         json_data['preprint_date'] = datetime.date.today().isoformat()
