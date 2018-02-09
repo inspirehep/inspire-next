@@ -28,6 +28,7 @@ import io
 import tempfile
 
 import requests
+from contextlib import contextmanager
 from flask import current_app
 from fs.opener import fsopen
 
@@ -79,19 +80,12 @@ def copy_file(src_file, dst_file, buffer_size=io.DEFAULT_BUFFER_SIZE):
         next_chunk = src_file.read(buffer_size)
 
 
+@contextmanager
 def retrieve_uri(uri, outdir=None):
     """Retrieves the given uri and stores it in a temporary file."""
-    local_file = tempfile.NamedTemporaryFile(
-        prefix='inspire',
-        dir=outdir,
-        delete=False,
-    )
+    with tempfile.NamedTemporaryFile(prefix='inspire', dir=outdir) as local_file, \
+            fsopen(uri, mode='rb') as remote_file:
+        copy_file(remote_file, local_file)
 
-    try:
-        with fsopen(uri, mode='rb') as remote_file:
-            copy_file(remote_file, local_file)
-
-    finally:
-        local_file.close()
-
-    return local_file.name
+        local_file.flush()
+        yield local_file.name

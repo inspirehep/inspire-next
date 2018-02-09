@@ -24,7 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
 from functools import wraps
 
 from inspire_utils.record import get_value
@@ -36,7 +35,7 @@ from invenio_classifier.errors import ClassifierException
 from invenio_classifier.reader import KeywordToken
 
 from ..proxies import antihep_keywords
-from ..utils import with_debug_logging, get_pdf_in_workflow
+from ..utils import with_debug_logging, get_document_in_workflow
 
 
 @with_debug_logging
@@ -77,26 +76,23 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
         )
 
         fulltext_used = True
-        tmp_pdf = get_pdf_in_workflow(obj)
-        try:
-            if tmp_pdf:
-                result = get_keywords_from_local_file(tmp_pdf, **params)
-            else:
-                data = get_value(obj.data, 'titles.title', [])
-                data.extend(get_value(obj.data, 'titles.subtitle', []))
-                data.extend(get_value(obj.data, 'abstracts.value', []))
-                data.extend(get_value(obj.data, 'keywords.value', []))
-                if not data:
-                    obj.log.error("No classification done due to missing data.")
-                    return
-                result = get_keywords_from_text(data, **params)
-                fulltext_used = False
-        except ClassifierException as e:
-            obj.log.exception(e)
-            return
-        finally:
-            if tmp_pdf and os.path.exists(tmp_pdf):
-                os.unlink(tmp_pdf)
+        with get_document_in_workflow(obj) as tmp_document:
+            try:
+                if tmp_document:
+                    result = get_keywords_from_local_file(tmp_document, **params)
+                else:
+                    data = get_value(obj.data, 'titles.title', [])
+                    data.extend(get_value(obj.data, 'titles.subtitle', []))
+                    data.extend(get_value(obj.data, 'abstracts.value', []))
+                    data.extend(get_value(obj.data, 'keywords.value', []))
+                    if not data:
+                        obj.log.error("No classification done due to missing data.")
+                        return
+                    result = get_keywords_from_text(data, **params)
+                    fulltext_used = False
+            except ClassifierException as e:
+                obj.log.exception(e)
+                return
 
         result['complete_output'] = clean_instances_from_data(
             result.get("complete_output", {})

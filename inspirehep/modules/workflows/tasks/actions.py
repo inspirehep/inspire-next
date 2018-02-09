@@ -24,7 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
 import re
 from functools import wraps
 
@@ -54,7 +53,7 @@ from inspirehep.modules.workflows.tasks.refextract import (
 )
 from inspirehep.modules.workflows.utils import (
     download_file_to_workflow,
-    get_pdf_in_workflow,
+    get_document_in_workflow,
     log_workflows_action,
     with_debug_logging,
 )
@@ -317,23 +316,22 @@ def populate_submission_document(obj, eng):
 
 @with_debug_logging
 def download_documents(obj, eng):
-    documents = obj.data.get('documents')
-    if documents:
-        for document in documents:
-            filename = document['key']
-            url = document['url']
-            downloaded = download_file_to_workflow(
-                workflow=obj,
-                name=filename,
-                url=url,
-            )
-            if downloaded:
-                document['url'] = '/api/files/{bucket}/{key}'.format(
-                    bucket=obj.files[filename].bucket_id, key=filename)
-                obj.log.info('Document downloaded from %s', url)
-            else:
-                obj.log.error(
-                    'Cannot download document from %s', url)
+    documents = obj.data.get('documents', [])
+    for document in documents:
+        filename = document['key']
+        url = document['url']
+        downloaded = download_file_to_workflow(
+            workflow=obj,
+            name=filename,
+            url=url,
+        )
+        if downloaded:
+            document['url'] = '/api/files/{bucket}/{key}'.format(
+                bucket=obj.files[filename].bucket_id, key=filename)
+            obj.log.info('Document downloaded from %s', url)
+        else:
+            obj.log.error(
+                'Cannot download document from %s', url)
 
 
 @with_debug_logging
@@ -357,15 +355,12 @@ def refextract(obj, eng):
     pdf_references, text_references = [], []
     source = get_value(obj.data, 'acquisition_source.source')
 
-    tmp_pdf = get_pdf_in_workflow(obj)
-    if tmp_pdf:
-        try:
-            pdf_references = extract_references_from_pdf(tmp_pdf, source)
-        except TimeoutError:
-            obj.log.error('Timeout when extracting references from PDF.')
-        finally:
-            if os.path.exists(tmp_pdf):
-                os.unlink(tmp_pdf)
+    with get_document_in_workflow(obj) as tmp_document:
+        if tmp_document:
+            try:
+                pdf_references = extract_references_from_pdf(tmp_document, source)
+            except TimeoutError:
+                obj.log.error('Timeout when extracting references from PDF.')
 
     text = get_value(obj.extra_data, 'formdata.references')
     if text:
