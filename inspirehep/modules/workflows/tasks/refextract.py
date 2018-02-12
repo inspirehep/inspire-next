@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from itertools import chain
+
 from timeout_decorator import timeout
 
 from inspire_schemas.utils import (
@@ -31,6 +33,7 @@ from inspire_schemas.utils import (
     split_page_artid,
 )
 from inspire_utils.helpers import maybe_int
+from inspire_utils.logging import getStackTraceLogger
 from inspirehep.utils.references import (
     local_refextract_kbs_path,
     map_refextract_to_schema,
@@ -42,6 +45,9 @@ from refextract import (
 )
 
 from ..utils import with_debug_logging
+
+
+LOGGER = getStackTraceLogger(__name__)
 
 
 @with_debug_logging
@@ -123,3 +129,62 @@ def extract_references_from_text(text, source=None, custom_kbs_file=None):
         )
 
     return map_refextract_to_schema(extracted_references, source=source)
+
+
+def extract_references_from_raw_refs(references, custom_kbs_file=None):
+    """Extract references from raw references in reference list.
+
+    Args:
+        references(List[dict]): a schema-compliant ``references`` field. If an element
+            already contains a structured reference (that is, a ``reference`` key),
+            it is not modified.  Otherwise, the contents of the
+            ``raw_refs`` is extracted by ``refextract``.
+        custom_kbs_file(dict): configuration for refextract knowledge bases.
+
+    Returns:
+        List[dict]: a schema-compliant ``references`` field, with all
+        previously unextracted references extracted.
+    """
+    return list(chain.from_iterable(
+        extract_references_from_raw_ref(ref, custom_kbs_file=custom_kbs_file) for ref in references
+    ))
+
+
+def extract_references_from_raw_ref(reference, custom_kbs_file=None):
+    """Extract references from raw references in reference element.
+
+    Args:
+        reference(dict): a schema-compliant element of the ``references``
+            field. If it already contains a structured reference (that is, a
+            ``reference`` key), no further processing is done.  Otherwise, the
+            contents of the ``raw_refs`` is extracted by ``refextract``.
+        custom_kbs_file(dict): configuration for refextract knowledge bases.
+
+    Returns:
+        List[dict]: a list of schema-compliant elements of the ``references`` field, with all
+        previously unextracted references extracted.
+
+    Note:
+        This function returns a list of references because one raw reference
+        might correspond to several references.
+    """
+    if 'reference' in reference or 'raw_refs' not in reference:
+        return [reference]
+
+    text_raw_refs = [ref for ref in reference['raw_refs'] if ref['schema'] == 'text']
+    nontext_schemas = [ref['schema'] for ref in reference['raw_refs'] if ref['schema'] != 'text']
+
+    if nontext_schemas:
+        LOGGER.error('Impossible to extract references from non-text raw_refs with schemas %s', nontext_schemas)
+        return [reference]
+
+    if len(text_raw_refs) > 1:
+        LOGGER.error(
+            'More than one text raw reference in %s, taking first one, the others will be lost',
+            text_raw_refs
+        )
+
+    raw_ref = text_raw_refs[0]
+    return extract_references_from_text(
+        raw_ref['value'], source=raw_ref['source'], custom_kbs_file=custom_kbs_file
+    )

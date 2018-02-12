@@ -799,6 +799,32 @@ def test_refextract_from_text(mock_get_document_in_workflow):
     assert obj.data['references'][0]['raw_refs'][0]['source'] == 'submitter'
 
 
+def test_refextract_from_raw_refs():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    data = {
+        'references': [
+            {
+                'raw_refs': [
+                    {
+                        'schema': 'text',
+                        'source': 'arXiv',
+                        'value': '[37] M. Vallisneri, \u201cUse and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects,\u201d Phys. Rev. D 77, 042001 (2008) doi:10.1103/PhysRevD.77.042001 [gr-qc/0703086 [GR-QC]].'
+                    },
+                ],
+            },
+        ],
+    }
+    assert validate(data['references'], subschema) is None
+
+    obj = MockObj(data, {})
+    eng = MockEng()
+
+    assert refextract(obj, eng) is None
+    assert 'reference' in obj.data['references'][0]
+
+
 def test_populate_submission_document():
     schema = load_schema('hep')
     subschema = schema['properties']['acquisition_source']
