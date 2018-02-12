@@ -50,22 +50,33 @@ def workflow_app():
     .. deprecated:: 2017-09-18
        Use ``app`` instead.
     """
-    app = create_app(
-        BEARD_API_URL="http://example.com/beard",
-        DEBUG=True,
-        CELERY_ALWAYS_EAGER=True,
-        CELERY_RESULT_BACKEND='cache',
-        CELERY_CACHE_BACKEND='memory',
-        CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
-        PRODUCTION_MODE=True,
-        LEGACY_ROBOTUPLOAD_URL=(
-            'http://localhost:1234'
-        ),
-        MAGPIE_API_URL="http://example.com/magpie",
-        WORKFLOWS_MATCH_REMOTE_SERVER_URL="http://legacy_search.endpoint/",
-        WORKFLOWS_FILE_LOCATION="/",
-        WTF_CSRF_ENABLED=False,
-    )
+    RT_URL = "http://rt.inspire"
+
+    with requests_mock.Mocker() as m:
+        m.register_uri(
+            requests_mock.ANY,
+            re.compile('.*' + RT_URL + '.*'),
+            status_code=200,
+            text='Status 200'
+        )
+
+        app = create_app(
+            BEARD_API_URL="http://example.com/beard",
+            DEBUG=True,
+            CELERY_ALWAYS_EAGER=True,
+            CELERY_RESULT_BACKEND='cache',
+            CELERY_CACHE_BACKEND='memory',
+            CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
+            PRODUCTION_MODE=True,
+            LEGACY_ROBOTUPLOAD_URL=(
+                'http://localhost:1234'
+            ),
+            MAGPIE_API_URL="http://example.com/magpie",
+            WORKFLOWS_MATCH_REMOTE_SERVER_URL="http://legacy_search.endpoint/",
+            WORKFLOWS_FILE_LOCATION="/",
+            WTF_CSRF_ENABLED=False,
+            CFG_BIBCATALOG_SYSTEM_RT_URL=RT_URL
+        )
 
     with app.app_context():
         yield app
@@ -129,6 +140,15 @@ def mocked_external_services(workflow_app):
             ),
             status_code=200,
             json={'phonetic_blocks': {}},
+        )
+        requests_mocker.register_uri(
+            requests_mock.ANY,
+            re.compile(
+                '.*' +
+                workflow_app.config['CFG_BIBCATALOG_SYSTEM_RT_URL'] +
+                '/ticket/new.*'
+            ),
+            status_code=200,
         )
 
         yield

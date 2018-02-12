@@ -255,14 +255,14 @@ def curation_ticket_context(user, obj):
         arxiv_ids + dois + report_numbers + ['(#{0})'.format(recid)]
     ))
 
-    references = obj.extra_data.get('formdata').get('references')
+    references = obj.extra_data.get('formdata', {}).get('references')
     user_comment = obj.extra_data.get('formdata', {}).get('extra_comments', '')
 
     return dict(
         recid=recid,
         record_url=record_url,
         link_to_pdf=link_to_pdf,
-        email=user.email,
+        email=user.email if user else '',
         references=references,
         user_comment=user_comment,
         subject=subject
