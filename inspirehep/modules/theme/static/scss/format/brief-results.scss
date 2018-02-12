@@ -197,6 +197,9 @@ article.search-result {
 
   &.literature-facet {
     border-color: $literature-collection;
+    text {
+      font-size: 10px;
+    }
   }
 
   &.authors-facet {
