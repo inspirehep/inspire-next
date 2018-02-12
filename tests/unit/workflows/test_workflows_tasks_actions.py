@@ -446,21 +446,148 @@ def test_is_experimental_paper_returns_false_otherwise():
     assert not is_experimental_paper(obj, eng)
 
 
-def test_is_arxiv_paper():
-    obj = MockObj({
+def test_is_arxiv_paper_returns_false_if_acquision_source_not_present():
+
+    obj = MockObj({}, {})
+
+    assert not is_arxiv_paper(obj)
+
+
+def test_is_arxiv_paper_returns_false_if_method_is_not_hepcrawl_or_arxiv():
+    schema = load_schema('hep')
+    acquisition_source_schema = schema['properties']['acquisition_source']
+    arxiv_eprints_schema = schema['properties']['arxiv_eprints']
+
+    data = {
+        'acquisition_source': {
+            'method': 'batchuploader',
+            'source': 'arxiv',
+        },
         'arxiv_eprints': [
             {
                 'categories': ['hep-th'],
-                'value': 'oai:arXiv.org:0801.4782',
+                'value': '0801.4782',
             },
         ],
-    }, {})
+    }
+
+    assert validate(data['acquisition_source'], acquisition_source_schema) is None
+    assert validate(data['arxiv_eprints'], arxiv_eprints_schema) is None
+
+    obj = MockObj(data, {})
+
+    assert not is_arxiv_paper(obj)
+
+
+def test_is_arxiv_paper_for_submission():
+    schema = load_schema('hep')
+    acquisition_source_schema = schema['properties']['acquisition_source']
+    arxiv_eprints_schema = schema['properties']['arxiv_eprints']
+
+    data = {
+        'acquisition_source': {
+            'method': 'submitter'
+        },
+        'arxiv_eprints': [
+            {
+                'categories': ['hep-th'],
+                'value': '0801.4782',
+            },
+        ],
+    }
+
+    assert validate(data['acquisition_source'], acquisition_source_schema) is None
+    assert validate(data['arxiv_eprints'], arxiv_eprints_schema) is None
+
+    obj = MockObj(data, {})
 
     assert is_arxiv_paper(obj)
 
 
-def test_is_arxiv_paper_returns_false_when_arxiv_eprints_is_empty():
-    obj = MockObj({'arxiv_eprints': []}, {})
+def test_is_arxiv_paper_returns_false_when_arxiv_eprints_is_not_present_for_submission():
+    schema = load_schema('hep')
+    sub_schema = schema['properties']['acquisition_source']
+
+    data = {
+        'acquisition_source': {
+            'method': 'submitter'
+        },
+    }
+
+    assert validate(data['acquisition_source'], sub_schema) is None
+
+    obj = MockObj(data, {})
+
+    assert not is_arxiv_paper(obj)
+
+
+def test_is_arxiv_paper_for_hepcrawl():
+    schema = load_schema('hep')
+    sub_schema = schema['properties']['acquisition_source']
+
+    data = {
+        'acquisition_source': {
+            'method': 'hepcrawl',
+            'source': 'arxiv'
+        },
+    }
+
+    assert validate(data['acquisition_source'], sub_schema) is None
+
+    obj = MockObj(data, {})
+
+    assert is_arxiv_paper(obj)
+
+
+def test_is_arxiv_paper_ignores_case_for_hepcrawl():
+    schema = load_schema('hep')
+    sub_schema = schema['properties']['acquisition_source']
+
+    data = {
+        'acquisition_source': {
+            'method': 'hepcrawl',
+            'source': 'arXiv'
+        },
+    }
+
+    assert validate(data['acquisition_source'], sub_schema) is None
+
+    obj = MockObj(data, {})
+
+    assert is_arxiv_paper(obj)
+
+
+def test_is_arxiv_paper_returns_false_if_source_is_not_arxiv_for_hepcrawl():
+    schema = load_schema('hep')
+    sub_schema = schema['properties']['acquisition_source']
+
+    data = {
+        'acquisition_source': {
+            'method': 'hepcrawl',
+            'source': 'something else'
+        },
+    }
+
+    assert validate(data['acquisition_source'], sub_schema) is None
+
+    obj = MockObj(data, {})
+
+    assert not is_arxiv_paper(obj)
+
+
+def test_is_arxiv_paper_returns_false_if_source_is_not_present_for_hepcrawl():
+    schema = load_schema('hep')
+    sub_schema = schema['properties']['acquisition_source']
+
+    data = {
+        'acquisition_source': {
+            'method': 'hepcrawl',
+        },
+    }
+
+    assert validate(data['acquisition_source'], sub_schema) is None
+
+    obj = MockObj(data, {})
 
     assert not is_arxiv_paper(obj)
 
