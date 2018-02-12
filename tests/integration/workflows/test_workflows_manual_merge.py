@@ -25,8 +25,8 @@ from __future__ import absolute_import, division, print_function
 import pytest
 
 from invenio_workflows import ObjectStatus, workflow_object_class
+from invenio_records.api import RecordMetadata
 
-from inspirehep.modules.records import RecordMetadata
 from inspirehep.modules.workflows.tasks.manual_merging import save_roots
 from inspirehep.modules.workflows.utils import (
     insert_wf_record_source,

@@ -32,16 +32,9 @@ import six
 from celery import Task
 from flask import current_app
 from flask_sqlalchemy import models_committed
-from sqlalchemy.orm.exc import NoResultFound
 
-from invenio_db import db
 from invenio_indexer.api import RecordIndexer
 from invenio_indexer.signals import before_record_index
-from invenio_oauthclient.models import (
-    UserIdentity,
-    RemoteAccount,
-    RemoteToken,
-)
 from invenio_records.api import Record
 from invenio_records.models import RecordMetadata
 from invenio_records.signals import (
@@ -57,6 +50,7 @@ from inspire_utils.helpers import force_list
 from inspire_utils.name import generate_name_variations
 from inspire_utils.record import get_value
 from inspirehep.modules.authors.utils import phonetic_blocks
+from inspirehep.modules.orcid.utils import get_push_access_token
 
 
 def is_hep(record):
@@ -136,36 +130,6 @@ def index_after_commit(sender, changes):
                 indexer.delete(Record(model_instance.json, model_instance))
 
 
-def _get_account_and_token(orcid):
-    account_token_join = db.session.query(RemoteAccount, RemoteToken).join("remote_tokens")
-    account_token_user_join = account_token_join.join(UserIdentity, UserIdentity.id_user == RemoteAccount.user_id)
-    account, remote_token = account_token_user_join.filter(UserIdentity.id == orcid).one()
-
-    return account, remote_token
-
-
-def _get_orcid_push_access_token(orcid):
-    try:
-        account, remote_token = _get_account_and_token(orcid)
-    except NoResultFound:
-        return None
-
-    if not account.extra_data.get('allow_push'):
-        return None
-
-    # the other member is the secret, used only on OAuth v1, we don't
-    # support it.
-    token, _ = remote_token.token()
-
-    return token
-
-
-def _get_orcid(author_ids):
-    for author_id in author_ids:
-        if author_id.get('schema', '').lower() == 'orcid':
-            return author_id['value']
-
-
 @after_record_insert.connect
 @after_record_update.connect
 def push_to_orcid(sender, record, *args, **kwargs):
@@ -173,6 +137,11 @@ def push_to_orcid(sender, record, *args, **kwargs):
     """
     if not is_hep(record):
         return
+
+    def _get_orcid(author_ids):
+        for author_id in author_ids:
+            if author_id.get('schema', '').lower() == 'orcid':
+                return author_id['value']
 
     task_name = current_app.config['ORCID_PUSH_TASK_ENDPOINT']
     authors = record.get('authors', ())
@@ -182,7 +151,7 @@ def push_to_orcid(sender, record, *args, **kwargs):
         if not orcid:
             continue
 
-        token = _get_orcid_push_access_token(orcid)
+        token = get_push_access_token(orcid)
         if token is None:
             continue
 
