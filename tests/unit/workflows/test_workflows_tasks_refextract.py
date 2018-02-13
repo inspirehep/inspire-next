@@ -30,6 +30,7 @@ from inspirehep.modules.workflows.tasks.refextract import (
     extract_journal_info,
     extract_references_from_pdf,
     extract_references_from_text,
+    extract_references_from_raw_ref,
 )
 
 from mocks import MockEng, MockObj
@@ -170,3 +171,127 @@ def test_extract_references_from_text_populates_raw_refs_source():
     result = extract_references_from_text(text, source='submitter')
 
     assert result[0]['raw_refs'][0]['source'] == 'submitter'
+
+
+def test_extract_references_from_raw_ref_single_text():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    reference = {
+        'raw_refs': [
+            {
+                'schema': 'text',
+                'source': 'arXiv',
+                'value': '[37] M. Vallisneri, \u201cUse and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects,\u201d Phys. Rev. D 77, 042001 (2008) doi:10.1103/PhysRevD.77.042001 [gr-qc/0703086 [GR-QC]].'
+            },
+        ],
+    }
+
+    result = extract_references_from_raw_ref(reference)
+
+    assert validate(result, subschema) is None
+    assert len(result) == 1
+    assert 'reference' in result[0]
+    assert result[0]['raw_refs'] == reference['raw_refs']
+
+
+def test_extract_references_from_raw_ref_multiple_text_takes_first():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    reference = {
+        'raw_refs': [
+            {
+                'schema': 'text',
+                'source': 'arXiv',
+                'value': '[37] M. Vallisneri, \u201cUse and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects,\u201d Phys. Rev. D 77, 042001 (2008) doi:10.1103/PhysRevD.77.042001 [gr-qc/0703086 [GR-QC]].'
+            },
+            {
+                'schema': 'text',
+                'source': 'somewhere',
+                'value': 'Some other content'
+            }
+        ],
+    }
+
+    result = extract_references_from_raw_ref(reference)
+
+    assert validate(result, subschema) is None
+    assert len(result) == 1
+    assert 'reference' in result[0]
+    assert result[0]['raw_refs'][0] == reference['raw_refs'][0]
+
+
+def test_extract_references_from_raw_ref_wrong_schema():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    reference = {
+        'raw_refs': [
+            {
+                'source': 'American Physical Society',
+                'value': (
+                    '<ref id="c1"><label>[1]</label><mixed-citation publication-type="journal"><object-id>1</object-id><person-group'
+                    'person-group-type="author"><string-name>Z. Chacko</string-name>, <string-name>H.-S.'
+                    'Goh</string-name>, and <string-name>R. Harnik</string-name></person-group>,'
+                    '<article-title>The Twin Higgs: Natural Electroweak Breaking from Mirror Symmetry</article-title>,'
+                    '<source>Phys. Rev. Lett.</source> <volume>96</volume>, <page-range>231802</page-range>'
+                    '(<year>2006</year>).<pub-id pub-id-type="coden">PRLTAO</pub-id><issn>0031-9007</issn><pub-id'
+                    'pub-id-type="doi" specific-use="suppress-display">10.1103/PhysRevLett.96.231802</pub-id></mixed-citation></ref>'
+                ),
+                'schema': 'JATS',
+            },
+        ],
+    }
+
+    result = extract_references_from_raw_ref(reference)
+
+    assert validate(result, subschema) is None
+    assert len(result) == 1
+    assert 'reference' not in result[0]
+    assert result[0]['raw_refs'][0] == reference['raw_refs'][0]
+
+
+def test_extract_references_from_raw_ref_reference_exists():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    reference = {
+        'raw_refs': [
+            {
+                'schema': 'text',
+                'source': 'arXiv',
+                'value': '[37] M. Vallisneri, \u201cUse and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects,\u201d Phys. Rev. D 77, 042001 (2008) doi:10.1103/PhysRevD.77.042001 [gr-qc/0703086 [GR-QC]].'
+            },
+        ],
+        'reference': {
+            'arxiv_eprint': 'gr-qc/0703086',
+            'authors': [
+                {
+                    'full_name': 'Vallisneri, M.'
+                }
+            ],
+            'dois': [
+                '10.1103/PhysRevD.77.042001'
+            ],
+            'label': '37',
+            'misc': [
+                'Phys. Rev. D',
+                '77, 042001',
+                '[GR-QC]]'
+            ],
+            'publication_info': {
+                'year': 2008
+            },
+            'texkey': 'Vallisneri:2007ev',
+            'title': {
+                'title': 'Use and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects'
+            }
+        }
+    }
+
+    result = extract_references_from_raw_ref(reference)
+
+    assert validate(result, subschema) is None
+    assert len(result) == 1
+    assert result[0] == reference

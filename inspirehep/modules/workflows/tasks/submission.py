@@ -309,10 +309,3 @@ def prepare_keywords(obj, eng):
     obj.data['keywords'] = keywords
 
     obj.log.debug('Finally got keywords: \n%s', pformat(keywords))
-
-
-@with_debug_logging
-def remove_references(obj, eng):
-    obj.log.info(obj.data)
-    if 'references' in obj.data:
-        del obj.data['references']

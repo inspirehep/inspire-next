@@ -50,6 +50,7 @@ from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_pdf,
     extract_references_from_text,
+    extract_references_from_raw_refs,
 )
 from inspirehep.modules.workflows.utils import (
     download_file_to_workflow,
@@ -353,6 +354,11 @@ def refextract(obj, eng):
     Returns:
         None
     """
+    if 'references' in obj.data:
+        obj.log.info('Found references in metadata, extracting unextracted raw_refs')
+        obj.data['references'] = extract_references_from_raw_refs(obj.data['references'])
+        return
+
     pdf_references, text_references = [], []
     source = get_value(obj.data, 'acquisition_source.source')
 
