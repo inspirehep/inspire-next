@@ -24,6 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 from itertools import chain
 
+import jsonpatch
+
 from inspire_utils.record import get_value
 
 
@@ -180,3 +182,34 @@ def get_title(record):
 
     """
     return get_value(record, 'titles.title[0]', default='')
+
+
+def get_inspire_patch(old_record, new_record):
+    """:param old_record: initial record
+        :type old_record: object
+
+       :param new_record: touched record
+       :type new_record: object
+
+        Returns an Inspire Patch (JSON patch) object with the only difference
+        of the path keys being an array
+        """
+    json_patch = []
+    for diff_element in jsonpatch.JsonPatch.from_diff(old_record, new_record):
+        json_patch.append(_get_inspire_diff(diff_element))
+    return json_patch or None
+
+
+def _get_inspire_diff(diff):
+    """
+    :param diff:
+    :return: diff element with array of keys instead of path string
+    """
+    diff['path'] = diff['path'].split('/')
+    diff['path'].pop(0)
+    for index, key in enumerate(diff['path']):
+        try:
+            diff['path'][index] = int(key)
+        except ValueError:
+            pass
+    return diff
