@@ -81,10 +81,7 @@ def create_ticket(template,
     @wraps(create_ticket)
     def _create_ticket(obj, eng):
         user = User.query.get(obj.id_user)
-        if not user:
-            obj.log.error(
-                "No user found for object %s, skipping ticket creation", obj.id)
-            return
+
         context = {}
         if context_factory:
             context = context_factory(user, obj)
@@ -95,7 +92,7 @@ def create_ticket(template,
                 u'To: {requestors} Queue: {queue}'.format(
                     queue=queue,
                     subject=context.get('subject'),
-                    requestors=user.email,
+                    requestors=user.email if user else '',
                 )
             )
             return
@@ -106,7 +103,7 @@ def create_ticket(template,
                          queue,
                          template,
                          context,
-                         user.email,
+                         user.email if user else '',
                          recid,
                          ticket_id_key)
 
