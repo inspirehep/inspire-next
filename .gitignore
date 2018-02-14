@@ -134,6 +134,7 @@ twistd.pid
 
 # Build artifacts
 dbs/
+items/
 
 # editor upload folder
 inspirehep/modules/editor/temp/
