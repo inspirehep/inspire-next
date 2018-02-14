@@ -178,12 +178,19 @@ def _is_auto_rejected(workflow_obj):
     return decision.lower() == 'rejected' and len(core_keywords) == 0
 
 
+def _is_auto_approved(workflow_obj):
+    return workflow_obj.extra_data.get('auto-approved', False)
+
+
 @with_debug_logging
 def is_record_relevant(obj, eng):
     """Shall we halt this workflow for potential acceptance or just reject?"""
 
     # We do not auto-reject any user submissions
     if is_submission(obj, eng):
+        return True
+
+    if _is_auto_approved(workflow_obj=obj):
         return True
 
     if _is_auto_rejected(workflow_obj=obj):

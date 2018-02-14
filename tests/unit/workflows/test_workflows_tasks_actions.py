@@ -390,29 +390,41 @@ def test__is_auto_rejected(expected, obj):
 
 
 @pytest.mark.parametrize(
-    'expected,should_submission,should_auto_reject',
+    'expected, should_submission, should_auto_reject, should_auto_approve',
     [
-        (True, True, True),
-        (True, True, False),
-        (False, False, True),
-        (True, False, False),
+        (True, True, True, False),
+        (True, True, False, False),
+        (False, False, True, False),
+        (True, False, False, False),
+        (True, True, True, True),
+        (True, True, False, True),
+        (True, False, True, True),
+        (True, False, False, True),
     ],
     ids=[
-        'Relevant: is submission and autorejected',
-        'Relevant: is submission and not autorejected',
-        'Not relevant: is not submission and autorejected',
-        'Relevant: is not submission and not autorejected',
+        'Relevant: non auto-approved is submission and autorejected',
+        'Relevant: non auto-approved is submission and not autorejected',
+        'Not relevant: non auto-approved is not submission and autorejected',
+        'Relevant: non auto-approved is not submission and not autorejected',
+        'Relevant: auto-approved is submission and autorejected',
+        'Relevant: auto-approved is submission and not autorejected',
+        'Relevant: auto-approved is not submission and autorejected',
+        'Relevant: auto-approved is not submission and not autorejected',
     ]
 )
 @patch('inspirehep.modules.workflows.tasks.actions.is_submission')
 @patch('inspirehep.modules.workflows.tasks.actions._is_auto_rejected')
+@patch('inspirehep.modules.workflows.tasks.actions._is_auto_approved')
 def test_is_record_relevant(
+    _is_auto_approved_mock,
     _is_auto_rejected_mock,
     is_submission_mock,
     expected,
     should_submission,
     should_auto_reject,
+    should_auto_approve,
 ):
+    _is_auto_approved_mock.return_value = should_auto_approve
     _is_auto_rejected_mock.return_value = should_auto_reject
     is_submission_mock.return_value = should_submission
     obj = object()
