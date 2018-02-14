@@ -35,7 +35,7 @@ from invenio_workflows import (
     start,
     workflow_object_class,
 )
-from invenio_workflows.errors import WorkflowsError
+from jsonschema import ValidationError
 
 from calls import (
     core_record,
@@ -468,13 +468,14 @@ def test_article_workflow_stops_when_record_is_not_valid(workflow_app):
     )
     obj_id = obj.id
 
-    with pytest.raises(WorkflowsError):
+    with pytest.raises(ValidationError):
         start('article', invalid_record, obj_id)
 
     obj = workflow_object_class.get(obj_id)
 
     assert obj.status == ObjectStatus.ERROR
     assert '_error_msg' in obj.extra_data
+    assert 'required' in obj.extra_data['_error_msg']
 
 
 def test_article_workflow_continues_when_record_is_valid(workflow_app):

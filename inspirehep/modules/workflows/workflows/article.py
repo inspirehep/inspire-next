@@ -50,7 +50,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_record_accepted,
     is_record_relevant,
     is_submission,
-    stop_in_error_if_record_not_valid,
     mark,
     normalize_journal_titles,
     populate_journal_coverage,
@@ -59,6 +58,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     reject_record,
     save_workflow,
     set_refereed_and_fix_document_type,
+    validate_record,
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -448,7 +448,7 @@ PRE_PROCESSING = [
     # Make sure schema is set for proper indexing in Holding Pen
     set_schema,
     INIT_MARKS,
-    stop_in_error_if_record_not_valid
+    validate_record
 ]
 
 

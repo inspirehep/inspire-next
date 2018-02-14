@@ -28,7 +28,6 @@ import re
 from functools import wraps
 
 from flask import current_app
-from jsonschema.exceptions import ValidationError
 from sqlalchemy import (
     JSON,
     String,
@@ -236,15 +235,9 @@ def is_submission(obj, eng):
 
 
 @with_debug_logging
-def stop_in_error_if_record_not_valid(obj, eng):
+def validate_record(obj, eng):
     """Check if the record is schema compliant and stop the workflow in ERROR state it it is not."""
-    try:
-        validate(obj.data, 'hep')
-    except ValidationError as err:
-        obj.log.error(err.message)
-        obj.extra_data['_error_msg'] = err.message
-        obj.status = ObjectStatus.ERROR
-        raise WorkflowsError('The record contained in the workflow is not schema compliant.')
+    validate(obj.data, 'hep')
 
 
 @with_debug_logging
