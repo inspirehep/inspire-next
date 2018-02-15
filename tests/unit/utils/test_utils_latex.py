@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 import mock
 import pytest
 
-from inspirehep.utils.latex import Latex
+from inspirehep.utils.latex import decode_latex, Latex
 
 
 def test_format_output_row_unknown_field():
@@ -708,3 +708,19 @@ def test_get_report_number_yes_publi_info_yes_arxiv(g_a, g_p_i):
     latex = Latex(record, 'latex_eu')
 
     assert latex._get_report_number() is None
+
+
+def test_decode_latex():
+    name_with_latex = u'{\\AA}άλφα'
+    expected_value = u'Åάλφα'
+    assert decode_latex(name_with_latex) == expected_value
+
+    name_with_latex = '{\\AA}βήτα'
+    expected_value = u'Åβήτα'
+    assert decode_latex(name_with_latex) == expected_value
+
+
+def test_decode_latex_with_empty_string():
+    name_with_latex = ''
+    expected_value = ''
+    assert decode_latex(name_with_latex) == expected_value

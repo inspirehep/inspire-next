@@ -94,6 +94,7 @@ install_requires = [
     'invenio-workflows-ui~=2.0',
     'invenio-workflows~=7.0',
     'langdetect~=1.0,>=1.0.7',
+    'latexcodec~=1.0,>=1.0.5',
     'librabbitmq~=1.0,>=1.6.1',
     'marshmallow~=2.0,>=2.15.0',  # See: inveniosoftware/invenio-records-rest#186
     'plotextractor~=0.0,>=0.1.6',
