@@ -49,6 +49,7 @@ install_requires = [
     'Flask~=0.0,>=0.12.2',
     'IDUtils~=0.0,>=0.2.4',
     'SQLAlchemy~=1.0,>=1.1.14,<1.2',
+    'SQLAlchemy-Utils~=0.0,<0.33',
     'amqp~=1.0,>=1.4.9',
     'backoff~=1.0,>=1.4.3',
     'backports.tempfile>=1.0rc1',
