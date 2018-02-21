@@ -28,7 +28,12 @@ from flask import render_template
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 
-from inspirehep.utils.record import get_abstract, get_arxiv_id, get_title
+from inspirehep.utils.record import (
+    get_abstract,
+    get_arxiv_id,
+    get_subtitle,
+    get_title,
+)
 
 from ..utils import (
     get_authors,
@@ -128,6 +133,7 @@ def _get_comm_context(record):
         'page_artid': get_page_artid(record),
         'peer_reviewed': get_peer_reviewed(record),
         'publication_date': get_publication_date(record),
+        'subtitle': get_subtitle(record),
         'title': get_title(record),
     }
 
@@ -164,6 +170,7 @@ def _get_art_context(record):
         'page_artid': get_page_artid(record),
         'peer_reviewed': get_peer_reviewed(record),
         'publication_date': get_publication_date(record),
+        'subtitle': get_subtitle(record),
         'title': get_title(record),
     }
 
@@ -192,5 +199,6 @@ def _get_preprint_context(record):
         'inspire_id': get_inspire_id(record),
         'keywords': get_keywords(record),
         'language': get_language(record),
+        'subtitle': get_subtitle(record),
         'title': get_title(record),
     }
