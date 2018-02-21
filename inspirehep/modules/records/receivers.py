@@ -25,10 +25,11 @@
 from __future__ import absolute_import, division, print_function
 
 import uuid
-from unicodedata import normalize
 from itertools import chain
+from unicodedata import normalize
 
 import six
+from celery import Task
 from flask import current_app
 from flask_sqlalchemy import models_committed
 
@@ -37,6 +38,8 @@ from invenio_indexer.signals import before_record_index
 from invenio_records.api import Record
 from invenio_records.models import RecordMetadata
 from invenio_records.signals import (
+    after_record_insert,
+    after_record_update,
     before_record_insert,
     before_record_update,
 )
@@ -47,6 +50,11 @@ from inspire_utils.helpers import force_list
 from inspire_utils.name import generate_name_variations
 from inspire_utils.record import get_value
 from inspirehep.modules.authors.utils import phonetic_blocks
+from inspirehep.modules.orcid.utils import get_push_access_token
+
+
+def is_hep(record):
+    return 'hep.json' in record.get('$schema')
 
 
 #
@@ -62,7 +70,7 @@ def assign_phonetic_block(sender, record, *args, **kwargs):
     signature's full name, skipping those that are not recognized
     as real names, but logging an error when that happens.
     """
-    if 'hep.json' not in record.get('$schema'):
+    if not is_hep(record):
         return
 
     authors = record.get('authors', [])
@@ -90,7 +98,7 @@ def assign_phonetic_block(sender, record, *args, **kwargs):
 @before_record_update.connect
 def assign_uuid(sender, record, *args, **kwargs):
     """Assign a UUID to each signature of a Literature record."""
-    if 'hep.json' not in record.get('$schema'):
+    if not is_hep(record):
         return
 
     authors = record.get('authors', [])
@@ -122,6 +130,43 @@ def index_after_commit(sender, changes):
                 indexer.delete(Record(model_instance.json, model_instance))
 
 
+@after_record_insert.connect
+@after_record_update.connect
+def push_to_orcid(sender, record, *args, **kwargs):
+    """If needed, queue the push of the new changes to ORCID.
+    """
+    if not is_hep(record):
+        return
+
+    def _get_orcid(author_ids):
+        for author_id in author_ids:
+            if author_id.get('schema', '').lower() == 'orcid':
+                return author_id['value']
+
+    task_name = current_app.config['ORCID_PUSH_TASK_ENDPOINT']
+    authors = record.get('authors', ())
+
+    for author in authors:
+        orcid = _get_orcid(author.get('ids', ()))
+        if not orcid:
+            continue
+
+        token = get_push_access_token(orcid)
+        if token is None:
+            continue
+
+        push_to_orcid_task = Task()
+        push_to_orcid_task.name = task_name
+        push_to_orcid_task.apply_async(
+            queue='orcid_push',
+            kwargs={
+                'orcid': orcid,
+                'rec_id': record['control_number'],
+                'token': token,
+            },
+        )
+
+
 #
 # before_record_index
 #
@@ -151,7 +196,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
 
 def populate_bookautocomplete(sender, json, *args, **kwargs):
     """Populate the ```bookautocomplete`` field of Literature records."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     if 'book' not in json.get('document_type', []):
@@ -188,7 +233,7 @@ def populate_bookautocomplete(sender, json, *args, **kwargs):
 
 def populate_inspire_document_type(sender, json, *args, **kwargs):
     """Populate the ``facet_inspire_doc_type`` field of Literature records."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     result = []
@@ -277,7 +322,7 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
 
 def populate_abstract_source_suggest(sender, json, *args, **kwargs):
     """Populate the ``abstract_source_suggest`` field in Literature records."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     abstracts = json.get('abstracts', [])
@@ -357,7 +402,7 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
 
 def populate_earliest_date(sender, json, *args, **kwargs):
     """Populate the ``earliest_date`` field of Literature records."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     date_paths = [
@@ -380,7 +425,7 @@ def populate_earliest_date(sender, json, *args, **kwargs):
 
 def populate_name_variations(sender, json, *args, **kwargs):
     """Generate name variations for each signature of a Literature record."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     authors = json.get('authors', [])
@@ -404,7 +449,7 @@ def populate_name_variations(sender, json, *args, **kwargs):
 
 def populate_author_count(sender, json, *args, **kwargs):
     """Populate the ``author_count`` field of Literature records."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     authors = json.get('authors', [])
@@ -418,7 +463,7 @@ def populate_author_count(sender, json, *args, **kwargs):
 
 def populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs):
     """Populate the ``authors.full_name_normalized`` field of Literature records."""
-    if 'hep.json' not in json.get('$schema'):
+    if not is_hep(json):
         return
 
     authors = json.get('authors', [])

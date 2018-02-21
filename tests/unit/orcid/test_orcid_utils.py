@@ -24,7 +24,61 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 
-from inspirehep.modules.orcid.utils import _split_lists
+import mock
+import os
+import pkg_resources
+import requests_mock
+
+from sqlalchemy.orm.exc import NoResultFound
+
+from inspirehep.modules.orcid.utils import (
+    _split_lists,
+    get_push_access_token,
+)
+
+
+def get_file(fixture_name):
+    """Get contents of fixture files"""
+    path = pkg_resources.resource_filename(
+        __name__,
+        os.path.join('fixtures', fixture_name)
+    )
+    with open(path, 'r') as file:
+        return file.read()
+
+
+@pytest.fixture
+def mock_api():
+    """Yield with fake responses"""
+    with requests_mock.mock() as mock_api:
+        mock_api.get(
+            'https://api.orcid.org/v2.0/0000-0002-1825-0097/works',
+            text=get_file('works.json'),
+            headers={'Content-Type': 'application/orcid+json'},
+        )
+        mock_api.get(
+            'https://api.orcid.org/v2.0/0000-0002-1825-0097/works/912982,912977',
+            text=get_file('work_details.json'),
+            headers={'Content-Type': 'application/orcid+json'}
+        )
+        yield
+
+
+@pytest.fixture(scope='module')
+def mock_config():
+    """Fake ORCID_APP_CREDENTIALS"""
+    with mock.patch(
+        'inspirehep.modules.orcid.utils.load_config',
+        return_value={
+            'ORCID_APP_CREDENTIALS': {
+                'consumer_key': '0000-0002-3874-0886',
+                'consumer_secret': '01234567-89ab-cdef-0123-456789abcdef',
+            },
+            'SERVER_NAME': 'http://localhost:5000',
+            'SEARCH_UI_SEARCH_API': '/api/literature/'
+        }
+    ):
+        yield
 
 
 @pytest.mark.parametrize(
@@ -41,3 +95,46 @@ from inspirehep.modules.orcid.utils import _split_lists
 def test_split_lists(test_sequence, test_length, expected):
     result = _split_lists(test_sequence, test_length)
     assert expected == result
+
+
+def mock_get_account_token_not_found(*args, **kwargs):
+    raise NoResultFound
+
+
+def mock_get_account_token_not_allowed(*args, **kwargs):
+    token = mock.Mock()
+    token.token.return_value = 'dummy_token', None
+    account = mock.Mock()
+    account.extra_data = {}
+    return account, token
+
+
+def mock_get_account_token_allowed(*args, **kwargs):
+    token = mock.Mock()
+    token.token.return_value = 'dummy_token', None
+    account = mock.Mock()
+    account.extra_data = {
+        'allow_push': True
+    }
+    return account, token
+
+
+@pytest.mark.parametrize(
+    'get_account_token_mock, expected_token',
+    [
+        [mock_get_account_token_not_found, None],
+        [mock_get_account_token_not_allowed, None],
+        [mock_get_account_token_allowed, 'dummy_token'],
+
+    ],
+    ids=[
+        "If there's no token returns None",
+        "If there's token, but push is not allowed, returns None",
+        "If there's token and push is allowed return the token",
+    ]
+)
+def test_get_push_access_token(get_account_token_mock, expected_token):
+    with mock.patch('inspirehep.modules.orcid.utils._get_account_and_token', get_account_token_mock):
+        token = get_push_access_token('dummy orcid')
+
+    assert token == expected_token
