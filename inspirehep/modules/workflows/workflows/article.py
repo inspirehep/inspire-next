@@ -450,7 +450,7 @@ PRE_PROCESSING = [
     # Make sure schema is set for proper indexing in Holding Pen
     set_schema,
     INIT_MARKS,
-    validate_record
+    validate_record('hep')
 ]
 
 

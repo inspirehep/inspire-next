@@ -241,10 +241,14 @@ def is_submission(obj, eng):
     return False
 
 
-@with_debug_logging
-def validate_record(obj, eng):
-    """Check if the record is schema compliant and stop the workflow in ERROR state it it is not."""
-    validate(obj.data, 'hep')
+def validate_record(schema):
+    @with_debug_logging
+    @wraps(validate_record)
+    def _validate_record(obj, eng):
+        validate(obj.data, schema)
+
+    _validate_record.__doc__ = 'Validate the workflow record against the "%s" schema.' % schema
+    return _validate_record
 
 
 @with_debug_logging
