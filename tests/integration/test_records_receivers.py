@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2014-2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,9 +25,76 @@ from __future__ import absolute_import, division, print_function
 import pytest
 from elasticsearch import NotFoundError
 
+from invenio_db import db
+from invenio_search.api import current_search_client as es
+
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.records.receivers import update_related_records_successor_relations
 from inspirehep.modules.search import LiteratureSearch
 from inspirehep.utils.record import get_title
+from inspirehep.utils.record_getter import get_db_record
+
+
+@pytest.fixture(scope='function')
+def mock_hep_records_in_db(isolated_app):
+    """Temporarily add a few hep records in the DB"""
+    from inspirehep.modules.migrator.tasks import record_insert_or_replace  # imported here because it is a Celery task
+
+    related_record = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "control_number": 1936475,
+        "_collections": [
+            "Literature"
+        ],
+        "document_type": [
+            "book",
+            "note",
+            "report"
+        ],
+        "self": {"$ref": "http://localhost:5000/api/hep/1936475"},
+        "related_records": [
+            {
+                "record": {"$ref": "http://localhost:5000/api/hep/1936476"}
+            },
+            {
+                "record": {"$ref": "http://localhost:5000/api/hep/1936477"},
+                "relation": "predecessor"
+            },
+            {
+                "record": {"$ref": "http://localhost:5000/api/hep/1936478"},
+                "relation": "parent"
+            },
+        ],
+        "titles": [
+            {"title": "Related Record"}
+        ]
+    }
+
+    already_existing_record = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "control_number": 1936476,
+        "_collections": [
+            "Literature"
+        ],
+        "document_type": [
+            "book",
+            "note",
+            "report"
+        ],
+        "self": {"$ref": "http://localhost:5000/api/hep/1936476"},
+        "titles": [
+            {"title": "Existing Record"}
+        ]
+    }
+
+    record_insert_or_replace(related_record)
+    record_insert_or_replace(already_existing_record)
+    db.session.commit()
+    es.indices.refresh('records-hep')
+
+    yield
+
+    es.indices.refresh('records-hep')
 
 
 def test_that_db_changes_are_mirrored_in_es(app):
@@ -64,3 +131,124 @@ def test_that_db_changes_are_mirrored_in_es(app):
 
     with pytest.raises(NotFoundError):
         es_record = search.get_source(record.id)
+
+
+def test_update_related_records_successor_relations_new_record_with_wrong_relation_value(isolated_app, mock_hep_records_in_db):
+    new_record = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "control_number": 1936478,
+        "_collections": [
+            "Literature"
+        ],
+        "document_type": [
+            "book"
+        ],
+        "self": {"$ref": "http://localhost:5000/api/hep/1936478"},
+        "related_records": [
+            {
+                "record": {"$ref": "http://localhost:5000/api/hep/1936475"},
+                "relation": "predecessor"
+            }
+        ],
+        "titles": [
+            {"title": "New Record"}
+        ]
+    }
+
+    update_related_records_successor_relations(None, new_record)
+
+    result = get_db_record('lit', 1936475)
+
+    expected = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "control_number": 1936475,
+        "_collections": [
+            "Literature"
+        ],
+        "document_type": [
+            "book",
+            "note",
+            "report"
+        ],
+        "self": {"$ref": "http://localhost:5000/api/hep/1936475"},
+        "related_records": [
+            {
+                "record": {"$ref": "http://localhost:5000/api/hep/1936476"}
+            },
+            {
+                "record": {"$ref": "http://localhost:5000/api/hep/1936477"},
+                "relation": "predecessor"
+            },
+            {
+                "record": {"$ref": "http://localhost:5000/api/hep/1936478"},
+                "relation": "successor"  # successfully updated relation - originally wrong value : 'parent'
+            },
+        ],
+        "titles": [
+            {"title": "Related Record"}
+        ]
+    }
+
+    assert result == expected
+
+
+def test_update_related_records_successor_relations_existing_record_with_no_relation_field(isolated_app, mock_hep_records_in_db):
+    updated_already_existing_record = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "control_number": 1936476,
+        "_collections": [
+            "Literature"
+        ],
+        "document_type": [
+            "book",
+            "note",
+            "report"
+        ],
+        "self": {"$ref": "http://localhost:5000/api/hep/1936476"},
+        "related_records": [
+            {
+                "record": {"$ref": "http://localhost:5000/api/hep/1936475"},
+                "relation": "predecessor"
+            }
+        ],
+        "titles": [
+            {"title": "Existing Record"}
+        ]
+    }
+
+    update_related_records_successor_relations(None, updated_already_existing_record)
+
+    result = get_db_record('lit', 1936475)
+
+    expected = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "control_number": 1936475,
+        "_collections": [
+            "Literature"
+        ],
+        "document_type": [
+            "book",
+            "note",
+            "report"
+        ],
+        "self": {"$ref": "http://localhost:5000/api/hep/1936475"},
+        "related_records": [
+            {
+                "record": {"$ref": "http://localhost:5000/api/hep/1936476"},
+                "relation": "successor"  # successfully updated relation - originally non-existent field
+            },
+            {
+                "record": {"$ref": "http://localhost:5000/api/hep/1936477"},
+                "relation": "predecessor"
+            },
+            {
+                "record": {"$ref": "http://localhost:5000/api/hep/1936478"},
+                "relation": "parent"
+            },
+        ],
+        "titles": [
+            {"title": "Related Record"}
+        ]
+    }
+
+    assert expected == result

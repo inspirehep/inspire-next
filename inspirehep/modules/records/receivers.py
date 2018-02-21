@@ -41,12 +41,15 @@ from invenio_records.signals import (
     before_record_update,
 )
 
+from invenio_pidstore.models import PersistentIdentifier
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.date import earliest_date
 from inspire_utils.helpers import force_list
 from inspire_utils.name import generate_name_variations
 from inspire_utils.record import get_value
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.authors.utils import phonetic_blocks
+from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 
 
 #
@@ -147,6 +150,42 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_inspire_document_type(sender, json, *args, **kwargs)
     populate_name_variations(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
+
+
+def update_related_records_successor_relations(sender, json, *args, **kwargs):
+    """Update the `relation` field in `related_records` of predecessor records to the value `successor`."""
+    if 'related_records' not in json:
+        return
+
+    pid_type = get_pid_type_from_schema(json['$schema'])
+
+    try:
+        related_recids = [
+            get_recid_from_ref(record['record'])
+            for record in json['related_records']
+            if record['relation'] == 'predecessor'
+        ]
+
+        for related_recid in related_recids:
+            related_pid = PersistentIdentifier.get(pid_type, related_recid)
+            related_record = InspireRecord.get_record(related_pid.object_uuid)
+
+            related_records_in_related_record = get_value(related_record, 'related_records', [])
+
+            for rel_record in related_records_in_related_record:
+                if rel_record['record'] == json['self']:
+                    rel_record.update({'relation': 'successor'})
+                    break
+
+            related_record.update({'related_records': related_records_in_related_record}, skip_files=True)
+
+            related_record.commit()
+    except KeyError:
+        # current_app.logger.error(
+        #     'Cannot preserve reference integrity with related records for record %d: %s',
+        #     record.get('control_number'), err)
+        # return
+        pass
 
 
 def populate_bookautocomplete(sender, json, *args, **kwargs):
