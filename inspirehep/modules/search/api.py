@@ -91,8 +91,8 @@ class SearchMixin(object):
                 **kwargs
             )
             results = [document['_source'] for document in documents['docs']]
-        except RequestError as e:
-            logger.exception(e)
+        except RequestError:
+            pass
 
         return results
 
