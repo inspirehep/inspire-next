@@ -20,25 +20,36 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""ORCID util tests."""
+"""Cache."""
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
+from contextlib import contextmanager
 
-from inspirehep.modules.orcid.utils import _get_api_url_for_recid
+from flask import current_app as app
+from redis import StrictRedis
+from redis_lock import Lock
 
 
-@pytest.mark.parametrize(
-    'server_name,api_endpoint,recid,expected',
-    [
-        ('inspirehep.net', '/api/literature/', '123', 'http://inspirehep.net/api/literature/123'),
-        ('http://inspirehep.net', '/api/literature/', '123', 'http://inspirehep.net/api/literature/123'),
-        ('https://inspirehep.net', '/api/literature/', '123', 'https://inspirehep.net/api/literature/123'),
-        ('http://inspirehep.net', 'api/literature', '123', 'http://inspirehep.net/api/literature/123'),
-        ('http://inspirehep.net/', '/api/literature', '123', 'http://inspirehep.net/api/literature/123'),
-    ]
-)
-def test_get_api_url_for_recid(server_name, api_endpoint, recid, expected):
-    result = _get_api_url_for_recid(server_name, api_endpoint, recid)
-    assert expected == result
+@contextmanager
+def redis_locking_context(lock_name, expire=120, auto_renewal=True):
+    """Locked Context Manager to perform operations on Redis."""
+    if not lock_name:
+        raise RedisLockError('Lock name not specified.')
+
+    redis_url = app.config.get('CACHE_REDIS_URL')
+
+    redis = StrictRedis.from_url(redis_url)
+    lock = Lock(redis, lock_name, expire=expire, auto_renewal=auto_renewal)
+
+    if lock.acquire(blocking=False):
+        try:
+            yield redis
+        finally:
+            lock.release()
+    else:
+        raise RedisLockError('Can not acquire Redis lock for %s', lock_name)
+
+
+class RedisLockError(Exception):
+    pass
