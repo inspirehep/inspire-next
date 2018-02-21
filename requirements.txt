@@ -28,3 +28,6 @@
 
 # python-orcid with support for v2.0 API and XML
 -e git+https://github.com/ORCID/python-orcid.git@2.0update#egg=orcid
+
+# invenio-indexer with queue support
+-e git+https://github.com/drjova/invenio-indexer.git@add-queue#egg=invenio-indexer

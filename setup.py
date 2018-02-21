@@ -78,7 +78,8 @@ install_requires = [
     'invenio-config>=1.0.0b3',
     'invenio-db[postgresql,versioning]>=1.0.0b8',
     'invenio-files-rest>=1.0.0a20',
-    'invenio-indexer>=1.0.0a10',
+    # FIXME: https://github.com/inveniosoftware/invenio-indexer/pull/78
+    # 'invenio-indexer>=1.0.0a10',
     'invenio-jsonschemas>=1.0.0a5',
     'invenio-logging>=1.0.0b3',
     'invenio-mail>=1.0.0b1',
