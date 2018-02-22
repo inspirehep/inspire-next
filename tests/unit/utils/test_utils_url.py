@@ -23,12 +23,18 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import pytest
 import requests_mock
 from flask import current_app
 from mock import patch
-from six import binary_type
+from six import binary_type, text_type
 
-from inspirehep.utils.url import is_pdf_link, make_user_agent_string, retrieve_uri
+from inspirehep.utils.url import (
+    is_pdf_link,
+    make_user_agent_string,
+    retrieve_uri,
+    get_prod_url_for_recid,
+)
 
 
 def test_is_pdf_link_handles_empty_requests():
@@ -62,3 +68,31 @@ def test_retrieve_uri(tmpdir):
         assert local_file.read() == 'some content'
 
     assert not os.path.exists(path_copy)
+
+
+@pytest.mark.parametrize(
+    'recid,base,expected',
+    [
+        (12345, None, 'http://inspirehep.net/record/12345'),
+        (12345, 'SOME_OTHER_URL_PATTERN', 'http://labs.inspirehep.net/record/12345'),
+        (text_type(2434), None, 'http://inspirehep.net/record/2434'),
+        (binary_type(3563), None, 'http://inspirehep.net/record/3563'),
+    ],
+    ids=[
+        'integer recid',
+        'custom config var',
+        'unicode recid',
+        'binary string recid',
+    ]
+)
+def test_get_legacy_url_for_record(recid, base, expected):
+    config = {
+        'LEGACY_RECORD_URL_PATTERN': 'http://inspirehep.net/record/{recid}',
+        'SOME_OTHER_URL_PATTERN': 'http://labs.inspirehep.net/record/{recid}',
+    }
+
+    with patch.dict(current_app.config, config):
+        if base:
+            assert get_prod_url_for_recid(recid, base) == expected
+        else:
+            assert get_prod_url_for_recid(recid) == expected

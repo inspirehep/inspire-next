@@ -32,6 +32,7 @@ from contextlib import contextmanager
 from flask import current_app
 from fs.opener import fsopen
 
+from inspire_utils.urls import record_url_by_pattern
 from inspirehep import __version__
 
 
@@ -89,3 +90,17 @@ def retrieve_uri(uri, outdir=None):
 
         local_file.flush()
         yield local_file.name
+
+
+def get_prod_url_for_recid(recid, pattern_config_var='LEGACY_RECORD_URL_PATTERN'):
+    """Get a URL to a record on INSPIRE.
+
+    Args:
+        recid (Union[int, string]): record ID
+        pattern_config_var (string): config var with the pattern
+
+    Return:
+        text_type: URL
+    """
+    pattern = current_app.config[pattern_config_var]
+    return record_url_by_pattern(pattern, recid)
