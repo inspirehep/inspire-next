@@ -50,6 +50,16 @@ def data():
 
 
 @pytest.fixture()
+def data_no_recid():
+    return {
+        "name": {
+            "preferred_name": "John Doe"
+        },
+        "bai": "John.Doe.1"
+    }
+
+
+@pytest.fixture()
 def unicode_data():
     return {
         'bai': 'Diego.Martinez.Santos.1',
@@ -129,6 +139,16 @@ def test_update_ticket_context_handles_unicode(unicode_data, extra_data, user):
         }
         ctx = update_ticket_context(user, obj)
         assert ctx == expected
+
+
+def test_update_ticket_context_fail_no_recid(data_no_recid, extra_data, user):
+    config = {
+        'AUTHORS_UPDATE_BASE_URL': 'http://inspirehep.net'
+    }
+    obj = MockObj(data_no_recid, extra_data)
+    with patch.dict(current_app.config, config):
+        with pytest.raises(KeyError):
+            update_ticket_context(user, obj)
 
 
 def test_reply_ticket_context(data, extra_data, user):
