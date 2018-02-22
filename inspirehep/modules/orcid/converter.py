@@ -24,10 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-import re
-
 from inspire_utils.date import PartialDate
 from inspire_utils.record import get_value
+from inspire_utils.urls import record_url_by_pattern
 
 from inspirehep.modules.hal.utils import get_journal_title, \
     get_publication_date, get_conference_title, get_conference_record, \
@@ -61,17 +60,21 @@ class OrcidConverter(object):
         'thesis': 'dissertation',
     }
 
-    def __init__(self, record, server_name, put_code=None,
+    def __init__(self, record, url_pattern, put_code=None,
                  visibility=None, bibtex_citation=None):
         """Constructor.
 
         Args:
-            record (dict): a record.
+            record (dict): a record
+            url_pattern (Callable[[int], string]): a pattern for record url
+            put_code (Union[int, string]): ORCID record put-code
+            visibility (string): visibility setting, can only be specified for new records
+            bibtex_citation (string): BibTeX-serialized record
         """
         self.record = record
         self.put_code = put_code
         self.visibility = visibility
-        self.server_name = server_name
+        self.url_pattern = url_pattern
         self.bibtex_citation = bibtex_citation
 
     def get_xml(self):
@@ -120,9 +123,7 @@ class OrcidConverter(object):
             builder.add_external_id('isbn', isbn)
 
         # Add URL pointing to INSPIRE to ORCID
-        if not re.match('^https?://', self.server_name):
-            self.server_name = 'http://{}'.format(self.server_name)
-        builder.add_url('{}/record/{}'.format(self.server_name, self.recid))
+        builder.add_url(record_url_by_pattern(self.url_pattern, self.recid))
 
         # Add authors/editors/etc. to the ORCID record
         for author in self.record.get('authors', []):
