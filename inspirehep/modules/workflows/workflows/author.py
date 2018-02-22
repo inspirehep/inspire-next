@@ -34,12 +34,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     validate_record,
 )
 
-from inspirehep.modules.workflows.tasks.submission import (
-    close_ticket,
-    create_ticket,
-    reply_ticket,
-    send_robotupload
-)
+from inspirehep.modules.workflows.tasks.submission import send_robotupload
 from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
 
 from inspirehep.modules.authors.tasks import (
@@ -50,6 +45,8 @@ from inspirehep.modules.authors.tasks import (
     update_ticket_context,
 )
 
+from inspirehep.modules.rt.tasks import close_ticket, create_ticket, \
+    reply_ticket
 
 SEND_TO_LEGACY = [
     send_robotupload(

@@ -29,157 +29,16 @@ import logging
 from functools import wraps
 from pprint import pformat
 
-import backoff
-import rt
 from flask import current_app
-
-from invenio_accounts.models import User
 
 from inspire_dojson import record2marcxml
 from inspirehep.utils.robotupload import make_robotupload_marcxml
-from inspirehep.modules.rt import tickets
-from inspirehep.modules.rt.proxies import rt_instance
+
 
 from .actions import in_production_mode
 from ..utils import with_debug_logging
 
-
 LOGGER = logging.getLogger(__name__)
-
-
-@with_debug_logging
-@backoff.on_exception(backoff.expo, rt.ConnectionError, base=4, max_tries=5)
-def submit_rt_ticket(obj,
-                     queue,
-                     template,
-                     context,
-                     requestors,
-                     recid,
-                     ticket_id_key):
-    """Submit ticket to RT with the given parameters."""
-    new_ticket_id = tickets.create_ticket_with_template(queue,
-                                                        requestors,
-                                                        template,
-                                                        context,
-                                                        context.get("subject"),
-                                                        recid)
-    obj.extra_data[ticket_id_key] = new_ticket_id
-    obj.log.info(u'Ticket {0} created'.format(new_ticket_id))
-    return True
-
-
-def create_ticket(template,
-                  context_factory=None,
-                  queue="Test",
-                  ticket_id_key="ticket_id"):
-    """Create a ticket for the submission.
-
-    Creates the ticket in the given queue and stores the ticket ID
-    in the extra_data key specified in ticket_id_key.
-    """
-    @with_debug_logging
-    @wraps(create_ticket)
-    def _create_ticket(obj, eng):
-        user = User.query.get(obj.id_user)
-
-        context = {}
-        if context_factory:
-            context = context_factory(user, obj)
-
-        if not in_production_mode():
-            obj.log.info(
-                u'Was going to create ticket: {subject}\n'
-                u'To: {requestors} Queue: {queue}'.format(
-                    queue=queue,
-                    subject=context.get('subject'),
-                    requestors=user.email if user else '',
-                )
-            )
-            return
-
-        recid = obj.extra_data.get("recid") or obj.data.get("control_number")
-
-        submit_rt_ticket(obj,
-                         queue,
-                         template,
-                         context,
-                         user.email if user else '',
-                         recid,
-                         ticket_id_key)
-
-    return _create_ticket
-
-
-def reply_ticket(template=None,
-                 context_factory=None,
-                 keep_new=False):
-    """Reply to a ticket for the submission."""
-    @with_debug_logging
-    @wraps(reply_ticket)
-    def _reply_ticket(obj, eng):
-        ticket_id = obj.extra_data.get("ticket_id", "")
-
-        if not rt_instance:
-            obj.log.error("No RT instance available. Skipping!")
-            obj.log.info(
-                "Was going to reply to {ticket_id}\n".format(
-                    ticket_id=ticket_id,
-                )
-            )
-            return
-
-        if not ticket_id:
-            obj.log.error("No ticket ID found!")
-            return
-
-        user = User.query.get(obj.id_user)
-        if not user:
-            obj.log.error(
-                "No user found for object %s, skipping ticket creation", obj.id)
-            return
-
-        if template:
-            context = {}
-            if context_factory:
-                context = context_factory(user, obj)
-            tickets.reply_ticket_with_template(ticket_id,
-                                               template,
-                                               context,
-                                               keep_new)
-        else:
-            # Body already rendered in reason.
-            body = obj.extra_data.get("reason", "")
-            if body:
-                tickets.reply_ticket(ticket_id, body, keep_new)
-            else:
-                obj.log.error("No body for ticket reply. Skipping reply.")
-                return
-
-    return _reply_ticket
-
-
-def close_ticket(ticket_id_key="ticket_id"):
-    """Close the ticket associated with this record found in given key."""
-    @with_debug_logging
-    @wraps(close_ticket)
-    def _close_ticket(obj, eng):
-        ticket_id = obj.extra_data.get(ticket_id_key, "")
-        if not ticket_id:
-            obj.log.error("No ticket ID found!")
-            return
-
-        if not rt_instance:
-            obj.log.error("No RT instance available. Skipping!")
-            obj.log.info(
-                "Was going to close ticket {ticket_id}".format(
-                    ticket_id=ticket_id,
-                )
-            )
-            return
-
-        tickets.resolve_ticket(ticket_id)
-
-    return _close_ticket
 
 
 def send_robotupload(
