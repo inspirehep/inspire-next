@@ -92,7 +92,7 @@ def retrieve_uri(uri, outdir=None):
         yield local_file.name
 
 
-def get_prod_url_for_recid(recid, pattern_config_var='LEGACY_RECORD_URL_PATTERN'):
+def get_legacy_url_for_recid(recid):
     """Get a URL to a record on INSPIRE.
 
     Args:
@@ -102,5 +102,5 @@ def get_prod_url_for_recid(recid, pattern_config_var='LEGACY_RECORD_URL_PATTERN'
     Return:
         text_type: URL
     """
-    pattern = current_app.config[pattern_config_var]
+    pattern = current_app.config['LEGACY_RECORD_URL_PATTERN']
     return record_url_by_pattern(pattern, recid)

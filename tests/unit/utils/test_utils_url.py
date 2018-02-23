@@ -33,7 +33,7 @@ from inspirehep.utils.url import (
     is_pdf_link,
     make_user_agent_string,
     retrieve_uri,
-    get_prod_url_for_recid,
+    get_legacy_url_for_recid,
 )
 
 
@@ -71,28 +71,22 @@ def test_retrieve_uri(tmpdir):
 
 
 @pytest.mark.parametrize(
-    'recid,base,expected',
+    'recid,expected',
     [
-        (12345, None, 'http://inspirehep.net/record/12345'),
-        (12345, 'SOME_OTHER_URL_PATTERN', 'http://labs.inspirehep.net/record/12345'),
-        (text_type(2434), None, 'http://inspirehep.net/record/2434'),
-        (binary_type(3563), None, 'http://inspirehep.net/record/3563'),
+        (12345, 'http://inspirehep.net/record/12345'),
+        (text_type(2434), 'http://inspirehep.net/record/2434'),
+        (binary_type(3563), 'http://inspirehep.net/record/3563'),
     ],
     ids=[
         'integer recid',
-        'custom config var',
         'unicode recid',
         'binary string recid',
     ]
 )
-def test_get_legacy_url_for_record(recid, base, expected):
+def test_get_legacy_url_for_record(recid, expected):
     config = {
         'LEGACY_RECORD_URL_PATTERN': 'http://inspirehep.net/record/{recid}',
-        'SOME_OTHER_URL_PATTERN': 'http://labs.inspirehep.net/record/{recid}',
     }
 
     with patch.dict(current_app.config, config):
-        if base:
-            assert get_prod_url_for_recid(recid, base) == expected
-        else:
-            assert get_prod_url_for_recid(recid) == expected
+        assert get_legacy_url_for_recid(recid) == expected
