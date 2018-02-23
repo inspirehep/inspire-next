@@ -28,9 +28,9 @@ from rt import AuthorizationError
 from .tickets import InspireRt
 
 
-class INSPIREUtils(object):
+class InspireRtExt(object):
 
-    """Utils extension."""
+    """Inspire RT extension."""
 
     def __init__(self, app=None):
         """Initialize the extension."""
@@ -40,7 +40,7 @@ class INSPIREUtils(object):
     def init_app(self, app):
         """Initialize the application."""
         self.rt_instance = self.create_rt_instance(app)
-        app.extensions["inspire-utils"] = self
+        app.extensions["inspire-rt"] = self
 
     def create_rt_instance(self, app):
         """Make a RT instance and return it."""

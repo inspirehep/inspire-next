@@ -37,8 +37,8 @@ from invenio_accounts.models import User
 
 from inspire_dojson import record2marcxml
 from inspirehep.utils.robotupload import make_robotupload_marcxml
-from inspirehep.utils import tickets
-from inspirehep.utils.proxies import rt_instance
+from inspirehep.modules.rt import tickets
+from inspirehep.modules.rt.proxies import rt_instance
 
 from .actions import in_production_mode
 from ..utils import with_debug_logging
