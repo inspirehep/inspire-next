@@ -47,7 +47,7 @@ class MockOrcidAPI(object):
     def __init__(self, response=None):
         self._response = response
 
-    def search_member(self, query):
+    def search(self, query):
         if self._response:
             return self._response
 

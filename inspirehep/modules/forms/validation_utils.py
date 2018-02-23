@@ -71,7 +71,7 @@ def ORCIDValidator(form, field):
         api = orcid.MemberAPI(current_app.config["ORCID_APP_CREDENTIALS"]["consumer_key"],
                               current_app.config["ORCID_APP_CREDENTIALS"]["consumer_secret"])
         try:
-            result = api.search_member("orcid:" + orcid_id)
+            result = api.search("orcid:" + orcid_id)
             if result['orcid-search-results']["num-found"] == 0:
                 raise StopValidation(msg)
         except RequestException:
