@@ -149,6 +149,26 @@ def mocked_external_services(workflow_app):
                 '/ticket/new.*'
             ),
             status_code=200,
+            text='RT/3.8.7 200 Ok\n\n# Ticket 1 created.\n# Ticket 1 updated.'
+        )
+        requests_mocker.register_uri(
+            requests_mock.ANY,
+            re.compile(
+                '.*' +
+                workflow_app.config['CFG_BIBCATALOG_SYSTEM_RT_URL'] +
+                '/ticket/.*/comment'
+            ),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            requests_mock.ANY,
+            re.compile(
+                '.*' +
+                workflow_app.config['CFG_BIBCATALOG_SYSTEM_RT_URL'] +
+                '/ticket/.*/edit'
+            ),
+            status_code=200,
+            text='Irrelevant part 1 of message \nIrrelevant part 2 of message \n# Ticket 1 updated.'
         )
 
         yield

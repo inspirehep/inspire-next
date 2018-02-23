@@ -28,6 +28,7 @@ import pkg_resources
 import pytest
 import requests_mock
 from flask import current_app
+from jsonschema import ValidationError
 from mock import patch
 
 from inspire_schemas.api import load_schema, validate
@@ -51,6 +52,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     reject_record,
     set_refereed_and_fix_document_type,
     shall_halt_workflow,
+    validate_record,
 )
 
 from mocks import MockEng, MockObj, MockFiles
@@ -1080,3 +1082,52 @@ def test_set_refereed_and_fix_document_type_does_nothing_if_no_journals_were_fou
 
     assert set_refereed_and_fix_document_type(obj, eng) is None
     assert 'refereed' not in obj.data
+
+
+def test_validate_record():
+    schema = load_schema('hep')
+
+    data = {
+        '_collections': [
+            'Literature',
+        ],
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'Partial Symmetries of Weak Interactions'},
+        ],
+    }
+    extra_data = {}
+    assert validate(data, schema) is None
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    _validate_record = validate_record('hep')
+
+    assert _validate_record(obj, eng) is None
+
+
+def test_validate_record_raises_when_record_is_invalid():
+    schema = load_schema('hep')
+
+    data = {
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'Partial Symmetries of Weak Interactions'},
+        ],
+    }
+    extra_data = {}
+    with pytest.raises(ValidationError):
+        validate(data, schema)
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    _validate_record = validate_record('hep')
+
+    with pytest.raises(ValidationError):
+        _validate_record(obj, eng)

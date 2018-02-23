@@ -31,6 +31,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     in_production_mode,
     is_marked,
     is_record_accepted,
+    validate_record,
 )
 
 from inspirehep.modules.workflows.tasks.submission import (
@@ -126,6 +127,7 @@ class Author(object):
     workflow = [
         # Make sure schema is set for proper indexing in Holding Pen
         set_schema,
+        validate_record('authors'),
         IF_ELSE(
             is_marked('is-update'),
             SEND_UPDATE_NOTIFICATION,
