@@ -34,7 +34,7 @@ from inspire_dojson.utils import strip_empty_values
 from inspirehep.modules.forms.utils import filter_empty_elements
 from inspirehep.modules.workflows.utils import with_debug_logging
 from inspirehep.utils.schema import ensure_valid_schema
-from inspirehep.utils.url import get_url_for_record
+from inspirehep.utils.url import get_prod_url_for_recid
 
 from .dojson.model import updateform
 
@@ -136,10 +136,7 @@ def update_ticket_context(user, obj):
     subject = u"Your update to author {0} on INSPIRE".format(
         obj.data.get("name").get("preferred_name")
     )
-    record_url = get_url_for_record(
-        obj.data['control_number'],
-        'AUTHORS_UPDATE_BASE_URL'
-    )
+    record_url = get_prod_url_for_recid(obj.data['control_number'])
     return dict(
         email=user.email,
         url=record_url,

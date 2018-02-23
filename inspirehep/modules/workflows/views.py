@@ -24,8 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import re
-
 from os.path import join
 from flask import Blueprint, jsonify, request, current_app
 
@@ -33,6 +31,7 @@ from invenio_db import db
 from invenio_workflows import workflow_object_class, ObjectStatus
 from invenio_workflows.errors import WorkflowsMissingObject
 
+from inspire_utils.urls import ensure_scheme
 from inspirehep.modules.workflows.models import WorkflowsPendingRecord
 
 blueprint = Blueprint(
@@ -50,9 +49,7 @@ def _get_base_url():
         "LEGACY_ROBOTUPLOAD_URL",
         current_app.config["SERVER_NAME"],
     )
-    if not re.match('^https?://', base_url):
-        base_url = 'http://{}'.format(base_url)
-    return base_url
+    return ensure_scheme(base_url)
 
 
 def _continue_workflow(workflow_id, recid, result=None):

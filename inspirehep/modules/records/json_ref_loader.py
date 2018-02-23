@@ -24,8 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import re
-
 from flask import current_app, url_for
 from jsonref import JsonLoader, JsonRef
 from werkzeug.urls import url_parse
@@ -34,6 +32,7 @@ import jsonresolver
 from jsonresolver.contrib.jsonref import json_loader_factory
 
 from inspire_schemas.utils import load_schema
+from inspire_utils.urls import ensure_scheme
 from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
 from inspirehep.utils import record_getter
 
@@ -52,9 +51,7 @@ class AbstractRecordLoader(JsonLoader):
         parsed_uri = url_parse(uri)
         # Add http:// protocol so uri.netloc is correctly parsed.
         server_name = current_app.config.get('SERVER_NAME')
-        if not re.match('^https?://', server_name):
-            server_name = 'http://{}'.format(server_name)
-        parsed_server = url_parse(server_name)
+        parsed_server = url_parse(ensure_scheme(server_name))
 
         if parsed_uri.netloc and parsed_uri.netloc != parsed_server.netloc:
             return super(AbstractRecordLoader, self).get_remote_json(uri,
