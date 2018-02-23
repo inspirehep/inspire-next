@@ -199,6 +199,7 @@ setup(
             'requirejs = inspirehep.modules.theme.bundles:requirejs',
         ],
         'invenio_base.api_apps': [
+            'inspire_records = inspirehep.modules.records.ext:InspireRecords',
             'inspire_search = inspirehep.modules.search:InspireSearch',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
@@ -217,6 +218,7 @@ setup(
             'inspire_hal = inspirehep.modules.hal:InspireHAL',
             'inspire_literaturesuggest = inspirehep.modules.literaturesuggest:InspireLiteratureSuggest',
             'inspire_migrator = inspirehep.modules.migrator:InspireMigrator',
+            'inspire_records = inspirehep.modules.records.ext:InspireRecords',
             'inspire_search = inspirehep.modules.search:InspireSearch',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_tools = inspirehep.modules.tools:InspireTools',
