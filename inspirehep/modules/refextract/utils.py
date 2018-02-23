@@ -25,17 +25,17 @@ from __future__ import absolute_import, division, print_function
 import re
 
 import codecs
+from tempfile import TemporaryFile
 from fs.opener import fsopen
+from inspirehep.utils.url import copy_file
 
 
 RE_ALPHANUMERIC = re.compile('\W+', re.UNICODE)
 
 
 class KbWriter(object):
-    def __init__(self, kb_path, batch_size=1000):
+    def __init__(self, kb_path):
         self.kb_path = kb_path
-        self.data_buffer = []
-        self.batch_size = batch_size
 
     def add_entry(self, value, kb_key):
         kb_line = self._get_kb_line(
@@ -43,32 +43,23 @@ class KbWriter(object):
             kb_key=kb_key,
         )
         if kb_line:
-            self._write(kb_line)
+            self.local_file.write(kb_line)
 
     def __enter__(self):
+        self.local_file = TemporaryFile(prefix='inspire')
+
         return self
 
     def __exit__(self, *exc):
         return self._close()
 
-    def _write(self, line):
-        if not line:
-            return
-
-        self.data_buffer.append(line)
-
-        if len(self.data_buffer) >= self.batch_size:
-            self._flush()
-
-    def _flush(self):
-        with fsopen(self.kb_path, mode='wb') as fd:
-            fd.write(''.join(self.data_buffer))
-
-        self.data_buffer = []
-
     def _close(self):
-        if len(self.data_buffer):
-            self._flush()
+        try:
+            self.local_file.seek(0)
+            with fsopen(self.kb_path, mode='wb') as kb_file:
+                copy_file(self.local_file, kb_file)
+        finally:
+            self.local_file.close()
 
     @classmethod
     def _get_kb_line(cls, raw_title, kb_key):
