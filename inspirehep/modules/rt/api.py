@@ -20,15 +20,28 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Utils proxies."""
+"""INSPIRE-HEP ticketing system API."""
 
 from __future__ import absolute_import, division, print_function
 
-from flask import current_app
-from werkzeug.local import LocalProxy
+import backoff
+import rt
+
+from .tickets import create_ticket_with_template
 
 
-rt_instance = LocalProxy(
-    lambda: current_app.extensions['inspire-utils'].rt_instance
-)
-"""Helper proxy to access the state object."""
+@backoff.on_exception(backoff.expo, rt.ConnectionError, base=4, max_tries=5)
+def submit_ticket(obj, queue, template, context, requestors, recid,
+                  ticket_id_key):
+    """Create a ticket."""
+    new_ticket_id = create_ticket_with_template(
+        queue,
+        requestors,
+        template,
+        context,
+        context.get("subject"),
+        recid
+    )
+    obj.extra_data[ticket_id_key] = new_ticket_id
+    obj.log.info(u'Ticket {0} created'.format(new_ticket_id))
+    return True

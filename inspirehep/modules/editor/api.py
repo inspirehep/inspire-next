@@ -43,7 +43,7 @@ from inspirehep.modules.editor.permissions import (
 )
 from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
 from inspirehep.modules.tools import authorlist
-from inspirehep.utils import tickets
+from inspirehep.modules.rt import tickets
 from inspirehep.utils.record_getter import get_db_record
 from inspirehep.utils.references import (
     local_refextract_kbs_path,
