@@ -269,3 +269,22 @@ def insert_wf_record_source(json, record_uuid, source):
     else:
         record_source.json = json
     db.session.commit()
+
+
+def inspire_schemas_exception_to_validation_errors(validation_exception):
+    """Creates a validation_errors dictionary from an inspire-schemas validation exception.
+
+
+    Args:
+        validation_exception(InspireSchemasException): validation exception instance.
+
+    Returns:
+        dict: validation_errors formatted dict, ready to put in the workflow extra_data.
+    """
+    validation_errors = [
+        {
+            "path": validation_exception.path,
+            "message": "dummy error message",
+        }
+    ]
+    return validation_errors

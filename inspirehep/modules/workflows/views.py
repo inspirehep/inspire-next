@@ -24,16 +24,25 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
 import re
-
 from os.path import join
-from flask import Blueprint, jsonify, request, current_app
 
+from flask import (
+    Blueprint,
+    abort,
+    current_app,
+    jsonify,
+    request,
+)
+from inspire_schemas.api import validate
+from inspire_schemas.errors import InspireSchemasException
 from invenio_db import db
 from invenio_workflows import workflow_object_class, ObjectStatus
 from invenio_workflows.errors import WorkflowsMissingObject
 
 from inspirehep.modules.workflows.models import WorkflowsPendingRecord
+from inspirehep.modules.workflows.utils import inspire_schemas_exception_to_validation_errors
 
 blueprint = Blueprint(
     'inspire_workflows',
@@ -379,3 +388,130 @@ def robotupload_callback():
         responses[recid] = response
 
     return jsonify(responses)
+
+
+@blueprint.route('/workflows/resolve_validation_errors', methods=['POST'])
+def resolve_validation_errors_callback():
+    """Handle callback from validation errors.
+
+    When validation errors occurr, the workflow stops in ERROR state, to
+    continue this endpoint is called.
+
+    Examples:
+        An example of successful call:
+
+            $ curl \\
+                http://web:5000/callback/workflows/resolve_validation_errors \\
+                -H "Host: localhost:5000" \\
+                -H "Content-Type: application/json" \\
+                -d '{
+                    "_extra_data": {
+                        ... extra data content
+                    },
+                    "id": 910648,
+                    "metadata": {
+                        "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
+                        ... record content
+                    }
+                }'
+
+        The response:
+
+            HTTP 200 OK
+
+            {"mesage": "Workflow 910648 validated, continuing it."}
+
+
+        A failed example:
+
+            $ curl \\
+                http://web:5000/callback/workflows/resolve_validation_errors \\
+                -H "Host: localhost:5000" \\
+                -H "Content-Type: application/json" \\
+                -d '{
+                    "_extra_data": {
+                        ... extra data content
+                    },
+                    "id": 910648,
+                    "metadata": {
+                        "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
+                        ... record content
+                    }
+                }'
+
+        The error response will contain the workflow that was passed, with the
+        new validation errors:
+
+            HTTP 400 Bad request
+
+            {
+                "_extra_data": {
+                    "validatior_errors": [
+                        {
+                            "path": ["path", "to", "error"],
+                            "message": "required: ['missing_key1', 'missing_key2']"
+                        }
+                    ],
+                    ... rest of extra data content
+                },
+                "id": 910648,
+                "metadata": {
+                    "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
+                    ... record content
+                }
+            }
+
+    """
+    def _get_key_or_abort(key, workflow_data):
+        value = workflow_data.get(key)
+        if value is not None:
+            return value
+
+        response = jsonify(
+            {
+                u"message": u"Malformed workflow passed, '%s' key was not found:\n%s" % (
+                    key,
+                    json.dumps(workflow_data, indent=4),
+                )
+            }
+        )
+        abort(status=400, response=response)
+
+    workflow_data = request.get_json()
+    record_data = _get_key_or_abort(key='metadata', workflow_data=workflow_data)
+
+    _get_key_or_abort(key='extra_data', workflow_data=workflow_data)
+
+    try:
+        validate(schema='hep', data=record_data)
+    except InspireSchemasException as error:
+        validation_errors = inspire_schemas_exception_to_validation_errors(error)
+        workflow_data['extra_data']['validation_errors'] = validation_errors
+        response_data = {
+            "error": "validation error",
+            "workflow": workflow_data,
+        }
+        response = jsonify(response_data)
+        abort(status=400, response=response)
+
+    workflow_id = _get_key_or_abort(key='id', workflow_data=workflow_data)
+
+    try:
+        workflow = workflow_object_class.get(workflow_id)
+    except WorkflowsMissingObject:
+        response_data = {
+            "error": "workflow not found",
+            "message": "The workflow with id %s was not found" % workflow_id,
+        }
+        response = jsonify(response_data)
+        abort(status=400, response=response)
+
+    del workflow.extra_data['validation_errors']
+    workflow.data = record_data
+    workflow.save()
+    db.session.commit()
+    workflow.continue_workflow(delayed=True)
+    response_data = {
+        "message": "Workflow %s validated, continuing it." % workflow.id,
+    }
+    return jsonify(response_data)
