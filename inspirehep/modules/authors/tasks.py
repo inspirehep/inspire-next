@@ -24,9 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import copy
 import datetime
-import os
 
-from flask import current_app
 from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_accounts.models import User
@@ -36,6 +34,7 @@ from inspire_dojson.utils import strip_empty_values
 from inspirehep.modules.forms.utils import filter_empty_elements
 from inspirehep.modules.workflows.utils import with_debug_logging
 from inspirehep.utils.schema import ensure_valid_schema
+from inspirehep.utils.url import get_legacy_url_for_recid
 
 from .dojson.model import updateform
 
@@ -137,12 +136,11 @@ def update_ticket_context(user, obj):
     subject = u"Your update to author {0} on INSPIRE".format(
         obj.data.get("name").get("preferred_name")
     )
-    record_url = os.path.join(current_app.config["AUTHORS_UPDATE_BASE_URL"], "record",
-                              str(obj.data["control_number"]))
+    record_url = get_legacy_url_for_recid(obj.data['control_number'])
     return dict(
         email=user.email,
         url=record_url,
-        bibedit_url=record_url + "/edit",
+        bibedit_url=record_url + '/edit',
         subject=subject,
         user_comment=obj.extra_data.get('formdata', {}).get('extra_comments', ''),
     )

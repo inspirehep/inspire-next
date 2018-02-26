@@ -54,8 +54,6 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None):
     Returns:
         string: the put-code of the updated/inserted item
     """
-    server_name = app.config["SERVER_NAME"]
-
     record = _get_hep_record(app.config, recid)
 
     try:
@@ -68,7 +66,7 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None):
     orcid_api = _get_api()
 
     orcid_xml = OrcidConverter(
-        record, server_name, put_code=put_code, bibtex_citation=bibtex
+        record, app.config['LEGACY_RECORD_URL_PATTERN'], put_code=put_code, bibtex_citation=bibtex
     ).get_xml()
 
     if put_code:
@@ -151,7 +149,7 @@ def _get_bibtex_record(config, recid):
         recid (string): HEP record ID
 
     Returns:
-        dict: BibTeX serialized record
+        string: BibTeX serialized record
     """
     bibtex_response = _get_record_by_mime(config, recid, 'application/x-bibtex')
     return bibtex_response.text

@@ -25,14 +25,12 @@
 from __future__ import absolute_import, division, print_function
 
 import copy
-import os
 import re
 
 import requests
 from flask import (
     abort,
     Blueprint,
-    current_app,
     jsonify,
     render_template,
     request,
@@ -50,6 +48,7 @@ from invenio_workflows_ui.api import WorkflowUIRecord
 from inspire_dojson import marcxml2record
 from inspire_utils.record import get_value
 from inspirehep.modules.forms.form import DataExporter
+from inspirehep.utils.url import get_legacy_url_for_recid
 
 from .forms import AuthorUpdateForm
 from .permissions import holdingpen_author_permission
@@ -234,9 +233,7 @@ def update(recid):
     data = {}
     if recid:
         try:
-            url = os.path.join(
-                current_app.config["AUTHORS_UPDATE_BASE_URL"],
-                "record", str(recid), "export", "xm")
+            url = get_legacy_url_for_recid(recid) + '/export/xm'
             xml = requests.get(url)
             record_regex = re.compile(
                 r"\<record\>.*\<\/record\>", re.MULTILINE + re.DOTALL)

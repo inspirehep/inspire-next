@@ -26,7 +26,6 @@ import json
 import os
 import pkg_resources
 
-from flask import current_app
 from inspirehep.modules.orcid import OrcidConverter
 from lxml import etree
 
@@ -77,7 +76,7 @@ def test_format_article(app, api_client):
                 <common:external-id-relationship>self</common:external-id-relationship>
             </common:external-id>
         </common:external-ids>
-        <work:url>http://localhost:5000/record/4328</work:url>
+        <work:url>http://inspirehep.net/record/4328</work:url>
         <work:contributors>
             <work:contributor>
                 <work:credit-name>Glashow, S.L.</work:credit-name>
@@ -92,7 +91,7 @@ def test_format_article(app, api_client):
 
     result = OrcidConverter(
         article['metadata'],
-        server_name=current_app.config['SERVER_NAME']
+        url_pattern='http://inspirehep.net/record/{recid}',
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
@@ -118,7 +117,7 @@ def test_format_conference_paper(app, api_client):
                 <common:external-id-relationship>self</common:external-id-relationship>
             </common:external-id>
         </common:external-ids>
-        <work:url>http://localhost:5000/record/524480</work:url>
+        <work:url>http://inspirehep.net/record/524480</work:url>
         <work:contributors>
             <work:contributor>
                 <work:credit-name>Hu, Wayne</work:credit-name>
@@ -133,7 +132,7 @@ def test_format_conference_paper(app, api_client):
 
     result = OrcidConverter(
         inproceedings['metadata'],
-        server_name=current_app.config['SERVER_NAME']
+        url_pattern='http://inspirehep.net/record/{recid}',
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
@@ -161,7 +160,7 @@ def test_format_proceedings(app, api_client):
                 <common:external-id-relationship>self</common:external-id-relationship>
             </common:external-id>
         </common:external-ids>
-        <work:url>http://localhost:5000/record/701585</work:url>
+        <work:url>http://inspirehep.net/record/701585</work:url>
         <work:contributors>
             <work:contributor>
                 <work:credit-name>De Roeck, A.</work:credit-name>
@@ -183,7 +182,7 @@ def test_format_proceedings(app, api_client):
 
     result = OrcidConverter(
         proceedings['metadata'],
-        server_name=current_app.config['SERVER_NAME']
+        url_pattern='http://inspirehep.net/record/{recid}',
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
@@ -200,7 +199,7 @@ def test_format_thesis(app, api_client):
             <common:title>MAGIC $\\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes</common:title>
         </work:title>
         <work:type>dissertation</work:type>
-        <work:url>http://localhost:5000/record/1395663</work:url>
+        <work:url>http://inspirehep.net/record/1395663</work:url>
         <work:contributors>
             <work:contributor>
                 <work:credit-name>Mankuzhiyil, Nijil</work:credit-name>
@@ -215,7 +214,7 @@ def test_format_thesis(app, api_client):
 
     result = OrcidConverter(
         phdthesis['metadata'],
-        server_name=current_app.config['SERVER_NAME']
+        url_pattern='http://inspirehep.net/record/{recid}',
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
@@ -251,7 +250,7 @@ def test_format_book(app, api_client):
                 <common:external-id-value>9780511242960</common:external-id-value>
             </common:external-id>
         </common:external-ids>
-        <work:url>http://localhost:5000/record/736770</work:url>
+        <work:url>http://inspirehep.net/record/736770</work:url>
         <work:contributors>
             <work:contributor>
                 <work:credit-name>Fecko, M.</work:credit-name>
@@ -266,7 +265,7 @@ def test_format_book(app, api_client):
 
     result = OrcidConverter(
         book['metadata'],
-        server_name=current_app.config['SERVER_NAME']
+        url_pattern='http://inspirehep.net/record/{recid}',
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
@@ -300,7 +299,7 @@ def test_format_book_chapter(app, api_client):
                 <common:external-id-relationship>self</common:external-id-relationship>
             </common:external-id>
         </common:external-ids>
-        <work:url>http://localhost:5000/record/1375491</work:url>
+        <work:url>http://inspirehep.net/record/1375491</work:url>
         <work:contributors>
             <work:contributor>
                 <work:credit-name>Bechtle, Philip</work:credit-name>
@@ -329,7 +328,7 @@ def test_format_book_chapter(app, api_client):
 
     result = OrcidConverter(
         inbook['metadata'],
-        server_name=current_app.config['SERVER_NAME']
+        url_pattern='http://inspirehep.net/record/{recid}',
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)

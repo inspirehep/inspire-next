@@ -26,8 +26,8 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
+from six.moves.urllib.parse import urljoin
 from sqlalchemy.orm.exc import NoResultFound
-from urlparse import urljoin
 
 from invenio_db import db
 from invenio_oauthclient.models import (
@@ -37,6 +37,7 @@ from invenio_oauthclient.models import (
 )
 
 from inspire_utils.logging import getStackTraceLogger
+from inspire_utils.urls import ensure_scheme
 from inspirehep.modules.cache.utils import redis_locking_context, RedisLockError
 
 LOGGER = getStackTraceLogger(__name__)
@@ -76,13 +77,10 @@ def _get_api_url_for_recid(server_name, api_endpoint, recid):
     Returns:
         string: API URL for the record
     """
-    if not re.match('^https?://', server_name):
-        server_name = 'http://{}'.format(server_name)
-
     if not api_endpoint.endswith('/'):
         api_endpoint = api_endpoint + '/'
 
-    api_url = urljoin(server_name, api_endpoint)
+    api_url = urljoin(ensure_scheme(server_name), api_endpoint)
     return urljoin(api_url, recid)
 
 

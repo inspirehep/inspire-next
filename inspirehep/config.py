@@ -1220,6 +1220,7 @@ LEGACY_MATCH_ENDPOINT = "http://inspirehep.net/search"
 BEARD_API_URL = None  # e.g. "http://beard.inspirehep.net/api"
 MAGPIE_API_URL = None  # e.g. "http://magpie.inspirehep.net/api"
 LEGACY_BASE_URL = "http://inspirehep.net"
+LEGACY_RECORD_URL_PATTERN = 'http://inspirehep.net/record/{recid}'
 
 
 # Harvesting and Workflows
@@ -1403,8 +1404,6 @@ WORKFLOWS_UI_REST_DEFAULT_SORT = {
         "noquery": "mostrecent"
     }
 }
-
-AUTHORS_UPDATE_BASE_URL = LEGACY_BASE_URL
 
 # Crawling
 # ========
