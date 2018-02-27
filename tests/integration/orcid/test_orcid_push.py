@@ -32,7 +32,8 @@ import vcr
 
 from redis import StrictRedis
 
-from inspirehep.modules.orcid.tasks import push_orcid
+import inspirehep.modules.orcid.tasks as tasks
+from inspirehep.modules.orcid.tasks import push_orcid, attempt_push
 
 
 @pytest.fixture(scope='function')
@@ -40,9 +41,13 @@ def redis_setup(api):
     redis_url = api.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
 
+    r.set('orcidputcodes:0000-0002-2152-2169:1375491', '1001')
+    r.set('orcidputcodes:0000-0002-2152-2169:524480', '1002')
+    r.set('orcidputcodes:0000-0002-2152-2169:701585', '1003')
+
     yield r
 
-    r.delete('orcidputcodes:0000-0002-2169-2152:4328')
+    r.delete(*r.keys('orcidputcodes:*'))
 
 
 @pytest.fixture
@@ -110,3 +115,40 @@ def test_push_to_orcid_update_no_cache(
 
         # Check that all requests were made exactly once
         assert cassette.play_counts.values() == [1, 1, 1]
+
+
+@pytest.mark.parametrize(
+    'recid,put_code',
+    [
+        (1375491, '1001'),
+        (524480, '1002'),
+        (701585, '1003'),
+    ]
+)
+def test_push_to_orcid_verify_correct_being_pushed(
+        api,
+        redis_setup,
+        mocked_internal_services,
+        mock_config,
+        monkeypatch,
+        recid,
+        put_code,
+):
+    orcid = '0000-0002-2152-2169'
+
+    def _get_author_putcodes(_orcid, tk):
+        return [
+            (1375491, '1001'),
+            (524480, '1002'),
+            (701585, '1003'),
+        ]
+
+    def _push_record_with_orcid(_recid, _orcid, tk, _put_code=None):
+        assert _recid == str(recid)
+        assert _orcid == orcid
+        assert _put_code == put_code
+
+    monkeypatch.setattr(tasks, 'get_author_putcodes', _get_author_putcodes)
+    monkeypatch.setattr(tasks, 'push_record_with_orcid', _push_record_with_orcid)
+
+    attempt_push(orcid, recid, 'fake-token')

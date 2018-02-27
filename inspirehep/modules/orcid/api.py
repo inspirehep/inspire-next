@@ -52,7 +52,7 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None):
             if None will push as a new record
 
     Returns:
-        string: the put-code of the updated/inserted item
+        string: the put-code of the inserted item
     """
     record = _get_hep_record(app.config, recid)
 
