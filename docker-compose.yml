@@ -137,7 +137,7 @@ services:
   scrapyd:
     extends:
       service: service_base
-    command: scrapyd
+    command: bash -c "rm -f twistd.pid && exec scrapyd"
     volumes_from:
       - static
 
