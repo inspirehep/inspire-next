@@ -42,21 +42,28 @@ def mock_config(api):
 
 @pytest.fixture
 def mocked_internal_services(api_client):
-    hep_response = api_client.get('/literature/4328')
-    bibtex_response = api_client.get('/literature/4328', headers={
-        'Accept': 'application/x-bibtex',
-    })
+    predownload = ['4328', '1375491', '524480', '701585']
+    hep_responses = {}
+    bibtex_responses = {}
+
+    for recid in predownload:
+        url = 'http://labs.inspirehep.net/api/literature/' + recid
+        hep_resp = api_client.get('/literature/' + recid)
+        bibtex_resp = api_client.get('/literature/' + recid, headers={
+            'Accept': 'application/x-bibtex',
+        })
+        hep_responses[url] = hep_resp
+        bibtex_responses[url] = bibtex_resp
 
     def api_matcher(request):
-        if request.url == 'http://labs.inspirehep.net/api/literature/4328':
-            resp = requests.Response()
-            resp.status_code = 200
-            if request.headers['Accept'] == 'application/json':
-                resp._content = hep_response.data
-                return resp
-            elif request.headers['Accept'] == 'application/x-bibtex':
-                resp._content = bibtex_response.data
-                return resp
+        resp = requests.Response()
+        resp.status_code = 200
+        if request.headers['Accept'] == 'application/json':
+            resp._content = hep_responses[request.url].data
+            return resp
+        elif request.headers['Accept'] == 'application/x-bibtex':
+            resp._content = bibtex_responses[request.url].data
+            return resp
 
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(

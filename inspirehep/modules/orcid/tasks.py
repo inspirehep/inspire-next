@@ -182,8 +182,8 @@ def attempt_push(orcid, rec_id, oauth_token):
     if not put_code:
         record_put_codes = get_author_putcodes(orcid, oauth_token)
 
-        for rec_id, put_code in record_put_codes:
-            store_record_in_redis(orcid, rec_id, put_code)
+        for fetched_rec_id, fetched_put_code in record_put_codes:
+            store_record_in_redis(orcid, fetched_rec_id, fetched_put_code)
 
         put_code = get_putcode_from_redis(orcid, rec_id)
 
