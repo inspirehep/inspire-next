@@ -220,7 +220,7 @@ class OrcidConverter(object):
     @property
     def recid(self):
         """Get INSPIRE record ID."""
-        return self.record['self_recid']
+        return self.record['control_number']
 
     @property
     def title_translation(self):
