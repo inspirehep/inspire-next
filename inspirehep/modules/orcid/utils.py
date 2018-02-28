@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
+from flask import current_app
 from six.moves.urllib.parse import urljoin
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -35,6 +36,7 @@ from invenio_oauthclient.models import (
     RemoteAccount,
     RemoteToken,
 )
+from invenio_oauthclient.utils import oauth_link_external_id
 
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.urls import ensure_scheme
@@ -143,3 +145,32 @@ def get_push_access_token(orcid):
     token, _ = remote_token.token()
 
     return token
+
+
+def account_setup(remote, token, resp):
+    """Perform additional setup after user have been logged in.
+
+    This is a modified version of
+    :ref:`invenio_oauthclient.contrib.orcid.account_setup` that stores
+    additional metadata.
+
+    :param remote: The remote application.
+    :param token: The token value.
+    :param resp: The response.
+    """
+    with db.session.begin_nested():
+        # Retrieve ORCID from response.
+        orcid = resp.get('orcid')
+        full_name = resp.get('name')
+
+        # Set ORCID in extra_data.
+        token.remote_account.extra_data = {
+            'orcid': orcid,
+            'full_name': full_name,
+            'allow_push': current_app.config('ORCID_ALLOW_PUSH_DEFAULT', False)
+        }
+
+        user = token.remote_account.user
+
+        # Create user <-> external id link.
+        oauth_link_external_id(user, {'id': orcid, 'method': 'orcid'})
