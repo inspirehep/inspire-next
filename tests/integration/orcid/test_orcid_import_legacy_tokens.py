@@ -24,11 +24,16 @@ from __future__ import absolute_import, division, print_function
 
 from flask import current_app
 from redis import StrictRedis
-from pytest import fixture
+from pytest import fixture, mark
 from mock import patch
 from simplejson import dumps
 
-from inspirehep.modules.orcid.tasks import legacy_orcid_arrays, import_legacy_orcid_tokens, _register_user
+from inspirehep.modules.orcid.tasks import (
+    import_legacy_orcid_tokens,
+    legacy_orcid_arrays,
+    _find_user_matching,
+    _register_user,
+)
 from invenio_oauthclient.models import User, RemoteToken, RemoteAccount, UserIdentity
 from invenio_db import db
 
@@ -251,3 +256,34 @@ def test_unlinked_user_exists(app_with_config, teardown_sample_user):
 
     # Assert new token
     assert_db_has_n_legacy_records(1, SAMPLE_USER)
+
+
+@mark.parametrize(
+    'orcid,email',
+    [
+        ('0000-0002-1825-0097', 'email.not@in.db'),
+        ('9876-5432-0987-6543', 'j.carberry@orcid.org'),
+        ('0000-0002-1825-0097', 'j.carberry@orcid.org'),
+    ],
+    ids=[
+        'verify match on orcid',
+        'verify match on email',
+        'verify match on both',
+    ]
+)
+def test_find_user_matching(app_with_config, teardown_sample_user, orcid, email):
+    """Add a token to an existing user with an ORCID paired."""
+    assert_db_has_n_legacy_records(0, SAMPLE_USER)
+
+    # Register sample user
+    _register_user(**SAMPLE_USER)
+
+    # Check state after migration
+    assert_db_has_n_legacy_records(1, SAMPLE_USER)
+
+    # Remove token and remote account
+    user_by_orcid = _find_user_matching(orcid, email)
+
+    # Assert the user found is the one added
+    assert user_by_orcid.email == SAMPLE_USER['email']
+    assert User.query.filter_by(email=SAMPLE_USER['email']).count() == 1
