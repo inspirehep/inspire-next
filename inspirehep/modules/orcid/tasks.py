@@ -31,7 +31,7 @@ from redis import StrictRedis
 from redis_lock import Lock
 from simplejson import loads
 
-from invenio_oauthclient.utils import oauth_get_user, oauth_link_external_id
+from invenio_oauthclient.utils import oauth_link_external_id
 from invenio_oauthclient.models import RemoteToken, User, RemoteAccount, UserIdentity
 from invenio_db import db
 from invenio_oauthclient.errors import AlreadyLinkedError
@@ -123,21 +123,14 @@ def _register_user(name, email, orcid, token):
     """
 
     # Try to find an existing user entry
-    user_by_orcid = oauth_get_user(orcid)
-    user_by_email = oauth_get_user(None, {
-        'user': {
-            'email': email
-        }
-    })
+    user = _find_user_matching(orcid, email)
 
     # Make the user if didn't find existing one
-    if not user_by_email and not user_by_orcid:
+    if not user:
         user = User()
         user.email = email
         with db.session.begin_nested():
             db.session.add(user)
-    else:
-        user = user_by_orcid or user_by_email
 
     _link_user_and_token(user, name, orcid, token)
 
@@ -211,3 +204,11 @@ def get_putcode_from_redis(orcid, rec_id):
     with redis_locking_context('orcid_push') as r:
         orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
         return r.get(orcid_recid_key)
+
+
+def _find_user_matching(orcid, email):
+    """Attempt to find a user in our DB on either ORCID or email."""
+    user_identity = UserIdentity.query.filter_by(id=orcid, method='orcid').first()
+    if user_identity:
+        return user_identity.user
+    return User.query.filter_by(email=email).one_or_none()
