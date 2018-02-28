@@ -72,7 +72,7 @@ def ORCIDValidator(form, field):
                               current_app.config["ORCID_APP_CREDENTIALS"]["consumer_secret"])
         try:
             result = api.search("orcid:" + orcid_id)
-            if result['orcid-search-results']["num-found"] == 0:
+            if result["num-found"] == 0:
                 raise StopValidation(msg)
         except RequestException:
             return
