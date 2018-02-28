@@ -1185,6 +1185,8 @@ orcid.REMOTE_MEMBER_APP['params']['request_token_params'] = {
     'show_login': 'true',
 }
 
+orcid.REMOTE_MEMBER_APP['signup_handler']['setup'] = 'inspirehep.modules.orcid.utils.account_setup'
+
 ORCID_APP_CREDENTIALS = dict(
     consumer_key="CHANGE_ME",
     consumer_secret="CHANGE_ME",
@@ -1199,6 +1201,7 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
     consumer_secret="CHANGE_ME",
 )
 ORCID_PUSH_TASK_ENDPOINT = 'inspirehep.modules.orcid.tasks.orcid_push'
+ORCID_ALLOW_PUSH_DEFAULT = False
 
 OAUTHCLIENT_SETTINGS_TEMPLATE = 'inspirehep_theme/page.html'
 
