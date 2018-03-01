@@ -30,6 +30,7 @@ from flask import current_app
 from werkzeug.utils import import_string
 
 from invenio_pidstore.models import PersistentIdentifier
+from invenio_records.models import RecordMetadata
 
 from inspirehep.modules.pidstore.utils import get_endpoint_from_pid_type
 
@@ -105,3 +106,19 @@ def get_db_record(pid_type, recid):
     from inspirehep.modules.records.api import InspireRecord
     pid = PersistentIdentifier.get(pid_type, recid)
     return InspireRecord.get_record(pid.object_uuid)
+
+
+def get_db_records(pid_type, recids):
+    """Get an iterator on record metadata from the DB."""
+    recids = [str(recid) for recid in recids]
+
+    if not recids:
+        return iter([])
+
+    query = RecordMetadata.query.join(
+        PersistentIdentifier, RecordMetadata.id == PersistentIdentifier.object_uuid
+    ).filter(
+        PersistentIdentifier.pid_value.in_(recids), PersistentIdentifier.pid_type == pid_type
+    )
+
+    return (record.json for record in query.yield_per(100))

@@ -43,7 +43,7 @@ from inspire_schemas.api import validate
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.tasks import merge_merged_records, update_refs
 from inspirehep.modules.migrator.tasks import record_insert_or_replace
-from inspirehep.utils.record_getter import get_db_record, get_es_records
+from inspirehep.utils.record_getter import get_db_record
 
 from utils import _delete_record
 
@@ -361,22 +361,6 @@ def test_references_can_be_updated(app, records_to_be_merged):
         pointing_record, 'accelerator_experiments[0].record.$ref')
 
     assert expected == result
-
-
-def test_get_es_records_handles_empty_lists(app):
-    get_es_records('lit', [])  # Does not raise.
-
-
-def test_get_es_records_accepts_lists_of_integers(app):
-    records = get_es_records('lit', [4328])
-
-    assert len(records) == 1
-
-
-def test_get_es_records_accepts_lists_of_strings(app):
-    records = get_es_records('lit', ['4328'])
-
-    assert len(records) == 1
 
 
 def test_records_files_attached_correctly(app):
