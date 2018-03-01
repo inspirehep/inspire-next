@@ -32,7 +32,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from . import holdingpen_literature_list
 from ..arsenic import Arsenic, ArsenicResponse
 from inspirehep.bat.EC import GetText, TryClick
-
+from inspirehep.bat.utils import handle_timeuot_exception
 
 BASIC_INFO = '(//div[@class="ng-scope"])[2]'
 SUBMISSION_INFO = '//p[@class="text-center ng-scope"]'
@@ -87,8 +87,12 @@ def accept_record():
         )
         assert 'Accepted as Non-CORE' in message
 
-    WebDriverWait(Arsenic(), 10).until(
-        TryClick((By.XPATH, ACCEPT_NON_CORE_BUTTON))
-    )
+    arsenic = Arsenic()
+    try:
+        WebDriverWait(Arsenic(), 10).until(
+            TryClick((By.XPATH, ACCEPT_NON_CORE_BUTTON))
+        )
+    except Exception as exc:
+        handle_timeuot_exception(arsenic=arsenic, exc=exc, with_api=True)
 
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)

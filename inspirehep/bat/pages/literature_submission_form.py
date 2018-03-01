@@ -101,8 +101,8 @@ def wait_for_thank_you(alert_type='success'):
         EC.visibility_of_element_located(
             (
                 By.XPATH,
-               '//div[@class="alert alert-{0} alert-form-{0}"]'.format(
-                   alert_type
+                '//div[@class="alert alert-{0} alert-form-{0}"]'.format(
+                    alert_type
                 ),
             )
         )

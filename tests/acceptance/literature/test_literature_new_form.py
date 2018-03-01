@@ -28,8 +28,6 @@ from inspirehep.bat.pages import (
     holdingpen_literature_list,
 )
 
-import base64
-
 
 def _accept_and_complete(input_data):
     holdingpen_literature_list.go_to()
