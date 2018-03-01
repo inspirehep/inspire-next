@@ -95,6 +95,7 @@ def login(arsenic):
     """Log in as the admin user."""
     top_navigation_page.log_in('admin@inspirehep.net', '123456')
     yield
+
     top_navigation_page.log_out()
 
 
