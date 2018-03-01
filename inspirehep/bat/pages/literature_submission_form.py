@@ -96,7 +96,7 @@ EXPAND_ADDITIONAL_COMMENTS = """
 def wait_for_thank_you(alert_type='success'):
     WebDriverWait(
         Arsenic(),
-        10,
+        50,
     ).until(
         EC.visibility_of_element_located(
             (
