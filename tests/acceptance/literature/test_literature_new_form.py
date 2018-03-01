@@ -28,6 +28,8 @@ from inspirehep.bat.pages import (
     holdingpen_literature_list,
 )
 
+import base64
+
 
 def _accept_and_complete(input_data):
     holdingpen_literature_list.go_to()
@@ -68,9 +70,7 @@ def test_literature_create_chapter(login):
         page_start='512',
         page_end='1024',
     )
-
     literature_submission_form.go_to()
-
     literature_submission_form.submit_chapter(input_data).assert_has_no_errors()
     _accept_and_complete(input_data)
 
@@ -105,7 +105,6 @@ def test_literature_create_book(login):
     )
 
     literature_submission_form.go_to()
-
     literature_submission_form.submit_book(input_data).assert_has_no_errors()
     _accept_and_complete(input_data)
 

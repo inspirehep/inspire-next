@@ -93,6 +93,22 @@ EXPAND_ADDITIONAL_COMMENTS = """
 """
 
 
+def wait_for_thank_you(alert_type='success'):
+    WebDriverWait(
+        Arsenic(),
+        10,
+    ).until(
+        EC.visibility_of_element_located(
+            (
+                By.XPATH,
+               '//div[@class="alert alert-{0} alert-form-{0}"]'.format(
+                   alert_type
+                ),
+            )
+        )
+    )
+
+
 class InputData(object):
     def __init__(self, data=None):
         self.data = data or {}
@@ -232,7 +248,7 @@ def submit_article(input_data):
     _populate_basic_info(input_data)
     click(xpath=SUBMIT_BUTTON)
     Arsenic().show_title_bar()
-
+    wait_for_thank_you()
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
@@ -250,7 +266,7 @@ def submit_thesis(input_data):
     _populate_references_comment(input_data)
     click(xpath=SUBMIT_BUTTON)
     Arsenic().show_title_bar()
-
+    wait_for_thank_you()
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
@@ -268,7 +284,7 @@ def submit_book(input_data):
     _populate_references_comment(input_data)
     click(xpath=SUBMIT_BUTTON)
     Arsenic().show_title_bar()
-
+    wait_for_thank_you()
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
@@ -286,7 +302,7 @@ def submit_chapter(input_data):
     _populate_references_comment(input_data)
     click(xpath=SUBMIT_BUTTON)
     Arsenic().show_title_bar()
-
+    wait_for_thank_you(alert_type='warning')
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
@@ -304,7 +320,7 @@ def submit_journal_article_with_proceeding(input_data):
     _populate_references_comment(input_data)
     click(xpath=SUBMIT_BUTTON)
     Arsenic().show_title_bar()
-
+    wait_for_thank_you()
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 
@@ -321,7 +337,7 @@ def submit_journal_article(input_data):
     _populate_references_comment(input_data)
     click(xpath=SUBMIT_BUTTON)
     Arsenic().show_title_bar()
-
+    wait_for_thank_you()
     return ArsenicResponse(assert_has_no_errors_func=_assert_has_no_errors)
 
 

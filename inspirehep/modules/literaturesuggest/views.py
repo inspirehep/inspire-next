@@ -42,12 +42,12 @@ from werkzeug.datastructures import MultiDict
 from inspirehep.modules.forms.form import DataExporter
 
 from invenio_db import db
-from invenio_workflows import workflow_object_class, start
+from invenio_workflows import workflow_object_class
 
 from .forms import LiteratureForm
 from .normalizers import normalize_formdata
 from .tasks import formdata_to_model
-
+from ..workflows.utils import start_workflow
 
 blueprint = Blueprint('inspirehep_literature_suggest',
                       __name__,
@@ -94,7 +94,10 @@ def submit():
 
     # Start workflow. delayed=True will execute the workflow in the
     # background using, for example, Celery.
-    start.delay("article", object_id=workflow_object.id)
+    start_workflow(
+        workflow="article",
+        workflow_object=workflow_object
+    )
     if 'chapter' in visitor.data.get('type_of_doc') and not visitor.data.get('parent_book'):
         return redirect(url_for('.success_book_parent'))
     else:
