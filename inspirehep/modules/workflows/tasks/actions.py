@@ -500,14 +500,17 @@ def set_refereed_and_fix_document_type(obj, eng):
         journal.get('refereed') and not journal.get('proceedings') for journal in journals)
     is_published_in_a_refereed_journal_that_also_publishes_proceedings = any(
         journal.get('refereed') and journal.get('proceedings') for journal in journals)
-    is_not_a_conference_paper = 'conference paper' not in obj.data['document_type']
+    is_not_a_conference_paper_nor_proceedings = not {'conference paper', 'proceedings'}.intersection(
+        obj.data['document_type']
+    )
 
     is_published_exclusively_in_non_refereed_journals = all(
         not journal.get('refereed', True) for journal in journals)
 
     if is_published_in_a_refereed_journal_that_does_not_publish_proceedings:
         obj.data['refereed'] = True
-    elif is_not_a_conference_paper and is_published_in_a_refereed_journal_that_also_publishes_proceedings:
+    elif (is_not_a_conference_paper_nor_proceedings and
+          is_published_in_a_refereed_journal_that_also_publishes_proceedings):
         obj.data['refereed'] = True
     elif is_published_exclusively_in_non_refereed_journals:
         obj.data['refereed'] = False
