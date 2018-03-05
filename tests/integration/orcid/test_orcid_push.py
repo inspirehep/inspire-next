@@ -33,7 +33,7 @@ import vcr
 from redis import StrictRedis
 
 import inspirehep.modules.orcid.tasks as tasks
-from inspirehep.modules.orcid.tasks import push_orcid, attempt_push
+from inspirehep.modules.orcid.tasks import orcid_push, attempt_push
 
 
 @pytest.fixture(scope='function')
@@ -81,10 +81,10 @@ def test_push_to_orcid_new_update_with_cache(
         record_mode='none',
     ) as cassette:
         # Push as new
-        push_orcid(orcid, rec_id, token)
+        orcid_push(orcid, rec_id, token)
 
         # Push update
-        push_orcid(orcid, rec_id, token)
+        orcid_push(orcid, rec_id, token)
 
         # Check that all requests were made exactly once
         assert cassette.play_counts.values() == [1, 1, 1]
@@ -111,7 +111,7 @@ def test_push_to_orcid_update_no_cache(
         record_mode='none',
     ) as cassette:
         # Push update
-        push_orcid(orcid, rec_id, token)
+        orcid_push(orcid, rec_id, token)
 
         # Check that all requests were made exactly once
         assert cassette.play_counts.values() == [1, 1, 1]

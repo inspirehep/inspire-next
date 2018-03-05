@@ -147,7 +147,7 @@ def import_legacy_orcid_tokens():
 
 
 @shared_task(bind=True)
-def push_orcid(self, orcid, rec_id, oauth_token):
+def orcid_push(self, orcid, rec_id, oauth_token):
     """Celery task to push a record to ORCID.
 
     Args:
