@@ -33,7 +33,7 @@ import vcr
 from redis import StrictRedis
 
 import inspirehep.modules.orcid.tasks as tasks
-from inspirehep.modules.orcid.tasks import orcid_push, attempt_push
+from inspirehep.modules.orcid.tasks import attempt_push, orcid_push
 
 
 @pytest.fixture(scope='function')
