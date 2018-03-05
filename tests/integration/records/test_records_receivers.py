@@ -227,7 +227,7 @@ def test_orcid_push_triggered_on_create_record_with_allow_push(mocked_Task, app,
         'kwargs': {
             'orcid': user_with_permission['orcid'],
             'rec_id': 1608652,
-            'token': user_with_permission['token'],
+            'oauth_token': user_with_permission['token'],
         },
         'queue': 'orcid_push',
     }
@@ -242,7 +242,7 @@ def test_orcid_push_triggered_on_record_update_with_allow_push(mocked_Task, app,
         'kwargs': {
             'orcid': user_with_permission['orcid'],
             'rec_id': 1608652,
-            'token': user_with_permission['token'],
+            'oauth_token': user_with_permission['token'],
         },
         'queue': 'orcid_push',
     }
@@ -261,7 +261,7 @@ def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_
         'kwargs': {
             'orcid': two_users_with_permission[0]['orcid'],
             'rec_id': 1608652,
-            'token': two_users_with_permission[0]['token'],
+            'oauth_token': two_users_with_permission[0]['token'],
         },
         'queue': 'orcid_push',
     }
@@ -269,7 +269,7 @@ def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_
         'kwargs': {
             'orcid': two_users_with_permission[1]['orcid'],
             'rec_id': 1608652,
-            'token': two_users_with_permission[1]['token'],
+            'oauth_token': two_users_with_permission[1]['token'],
         },
         'queue': 'orcid_push',
     }

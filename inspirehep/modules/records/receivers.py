@@ -162,7 +162,7 @@ def push_to_orcid(sender, record, *args, **kwargs):
             kwargs={
                 'orcid': orcid,
                 'rec_id': record['control_number'],
-                'token': token,
+                'oauth_token': token,
             },
         )
 
