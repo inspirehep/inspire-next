@@ -44,17 +44,17 @@ def test_add_author():
     <work:work xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work">
         <work:contributors>
             <work:contributor>
-                <work:credit-name>Josiah Carberry</work:credit-name>
-                <work:contributor-attributes>
-                    <work:contributor-sequence>first</work:contributor-sequence>
-                    <work:contributor-role>author</work:contributor-role>
-                </work:contributor-attributes>
                 <common:contributor-orcid>
                     <common:uri>http://orcid.org/0000-0002-1825-0097</common:uri>
                     <common:path>0000-0002-1825-0097</common:path>
                     <common:host>orcid.org</common:host>
                 </common:contributor-orcid>
+                <work:credit-name>Josiah Carberry</work:credit-name>
                 <work:contributor-email>j.carberry@orcid.org</work:contributor-email>
+                <work:contributor-attributes>
+                    <work:contributor-sequence>first</work:contributor-sequence>
+                    <work:contributor-role>author</work:contributor-role>
+                </work:contributor-attributes>
             </work:contributor>
         </work:contributors>
     </work:work>
@@ -72,17 +72,17 @@ def test_add_multiple_authors():
     <work:work xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work">
         <work:contributors>
             <work:contributor>
-                <work:credit-name>Josiah Carberry</work:credit-name>
-                <work:contributor-attributes>
-                    <work:contributor-sequence>first</work:contributor-sequence>
-                    <work:contributor-role>author</work:contributor-role>
-                </work:contributor-attributes>
                 <common:contributor-orcid>
                     <common:uri>http://orcid.org/0000-0002-1825-0097</common:uri>
                     <common:path>0000-0002-1825-0097</common:path>
                     <common:host>orcid.org</common:host>
                 </common:contributor-orcid>
+                <work:credit-name>Josiah Carberry</work:credit-name>
                 <work:contributor-email>j.carberry@orcid.org</work:contributor-email>
+                <work:contributor-attributes>
+                    <work:contributor-sequence>first</work:contributor-sequence>
+                    <work:contributor-role>author</work:contributor-role>
+                </work:contributor-attributes>
             </work:contributor>
             <work:contributor>
                 <work:credit-name>Homer Simpson</work:credit-name>

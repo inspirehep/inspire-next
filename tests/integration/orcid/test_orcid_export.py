@@ -332,3 +332,49 @@ def test_format_book_chapter(app, api_client):
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
+
+
+def test_format_thesis_with_author_orcid(app, api_client):
+    response = api_client.get('/literature/1395663')
+    assert response.status_code == 200
+    phdthesis = json.loads(response.data)
+
+    phdthesis['metadata']['authors'][0]['ids'] = [
+        {
+            'schema': 'ORCID',
+            'value': '0000-0002-1825-0097',
+        }
+    ]
+    phdthesis['metadata']['authors'][0]['emails'] = ['email@fake-domain.local']
+
+    expected = xml_parse("""
+    <work:work xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work">
+        <work:title>
+            <common:title>MAGIC $\\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes</common:title>
+        </work:title>
+        <work:type>dissertation</work:type>
+        <work:url>http://inspirehep.net/record/1395663</work:url>
+        <work:contributors>
+            <work:contributor>
+                <common:contributor-orcid>
+                    <common:uri>http://orcid.org/0000-0002-1825-0097</common:uri>
+                    <common:path>0000-0002-1825-0097</common:path>
+                    <common:host>orcid.org</common:host>
+                </common:contributor-orcid>
+                <work:credit-name>Mankuzhiyil, Nijil</work:credit-name>
+                <work:contributor-email>email@fake-domain.local</work:contributor-email>
+                <work:contributor-attributes>
+                    <work:contributor-sequence>first</work:contributor-sequence>
+                    <work:contributor-role>author</work:contributor-role>
+                </work:contributor-attributes>
+            </work:contributor>
+        </work:contributors>
+    </work:work>
+    """)
+
+    result = OrcidConverter(
+        phdthesis['metadata'],
+        url_pattern='http://inspirehep.net/record/{recid}',
+    ).get_xml()
+    assert valid_against_schema(result)
+    assert xml_compare(expected, result)
