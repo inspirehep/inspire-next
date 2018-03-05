@@ -64,7 +64,7 @@
   <b>DOI</b>
   {% for value in filtered_doi %}
     {{ comma() }}
-    <a href="http://dx.doi.org/{{ value.value | trim | safe}}" title="DOI"> {{ value.value }}</a>
+    <a href="https://doi.org/{{ value.value | trim | safe}}" title="DOI"> {{ value.value }}</a>
   {% endfor %}
     <br>
 {% endmacro %}

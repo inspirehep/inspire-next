@@ -72,7 +72,7 @@ def test_format_article(app, api_client):
             <common:external-id>
                 <common:external-id-type>doi</common:external-id-type>
                 <common:external-id-value>10.1016/0029-5582(61)90469-2</common:external-id-value>
-                <common:external-id-url>http://dx.doi.org/10.1016/0029-5582(61)90469-2</common:external-id-url>
+                <common:external-id-url>https://doi.org/10.1016/0029-5582(61)90469-2</common:external-id-url>
                 <common:external-id-relationship>self</common:external-id-relationship>
             </common:external-id>
         </common:external-ids>
@@ -289,7 +289,7 @@ def test_format_book_chapter(app, api_client):
             <common:external-id>
                 <common:external-id-type>doi</common:external-id-type>
                 <common:external-id-value>10.1007/978-3-319-15001-7_10</common:external-id-value>
-                <common:external-id-url>http://dx.doi.org/10.1007/978-3-319-15001-7_10</common:external-id-url>
+                <common:external-id-url>https://doi.org/10.1007/978-3-319-15001-7_10</common:external-id-url>
                 <common:external-id-relationship>self</common:external-id-relationship>
             </common:external-id>
             <common:external-id>

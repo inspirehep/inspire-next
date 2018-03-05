@@ -234,7 +234,7 @@ def proceedings_link(record):
                     dois = record['dois']
                     proceedings.append(
                         '<a href="/record/{recid}">#{i}</a> (DOI: <a '
-                        'href="http://dx.doi.org/{doi}">{doi}</a>'.format(
+                        'href="https://doi.org/{doi}">{doi}</a>'.format(
                             recid=record['control_number'],
                             doi=dois[0]['value'], i=i))
                 except KeyError:

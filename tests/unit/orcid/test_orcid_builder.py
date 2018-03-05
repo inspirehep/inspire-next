@@ -190,7 +190,7 @@ def test_add_external_id():
             <common:external-id>
                 <common:external-id-type>doi</common:external-id-type>
                 <common:external-id-value>10.1087/20120404</common:external-id-value>
-                <common:external-id-url>http://doi.org/10.1087/20120404</common:external-id-url>
+                <common:external-id-url>https://doi.org/10.1087/20120404</common:external-id-url>
                 <common:external-id-relationship>self</common:external-id-relationship>
             </common:external-id>
         </common:external-ids>
@@ -198,7 +198,7 @@ def test_add_external_id():
     """)
 
     builder = OrcidBuilder()
-    builder.add_external_id("doi", "10.1087/20120404", "http://doi.org/10.1087/20120404", "self")
+    builder.add_external_id("doi", "10.1087/20120404", "https://doi.org/10.1087/20120404", "self")
     result = builder.get_xml()
 
     assert xml_compare(result, expected)
@@ -211,7 +211,7 @@ def test_add_multiple_external_ids():
             <common:external-id>
                 <common:external-id-type>doi</common:external-id-type>
                 <common:external-id-value>10.5555/12345679</common:external-id-value>
-                <common:external-id-url>http://dx.doi.org/10.5555/12345679</common:external-id-url>
+                <common:external-id-url>https://doi.org/10.5555/12345679</common:external-id-url>
                 <common:external-id-relationship>self</common:external-id-relationship>
             </common:external-id>
             <common:external-id>

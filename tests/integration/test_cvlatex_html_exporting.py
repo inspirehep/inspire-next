@@ -31,7 +31,7 @@ def test_format_cv_latex_html(app):
 
     expected = (
         '<a href="localhost:5000/record/4328">Partial Symmetries of Weak Interactions.'
-        '</a>,By S.L. Glashow.,<a href="http://dx.doi.org/10.1016/0029-5582(61)90469-2"'
+        '</a>,By S.L. Glashow.,<a href="https://doi.org/10.1016/0029-5582(61)90469-2"'
         '>10.1016/0029-5582(61)90469-2</a>.,Nucl.Phys. 22 (1961) 579-588.,,')
     result = Cv_latex_html_text(record, 'cv_latex_html', ',').format()
 

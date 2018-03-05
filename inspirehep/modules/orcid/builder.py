@@ -158,7 +158,7 @@ class OrcidBuilder(object):
             value (string): the identifier itself
             relationship (string): either "part-of" or "self", optional, see `OrcidBuilder._make_external_id_field`
         """
-        self.add_external_id('doi', value, 'http://dx.doi.org/{}'.format(value), relationship)
+        self.add_external_id('doi', value, 'https://doi.org/{}'.format(value), relationship)
 
     def add_arxiv(self, value, relationship=None):
         """Add arXiv identifier to the record.
