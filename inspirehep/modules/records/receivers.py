@@ -135,7 +135,7 @@ def index_after_commit(sender, changes):
 def push_to_orcid(sender, record, *args, **kwargs):
     """If needed, queue the push of the new changes to ORCID.
     """
-    if not is_hep(record):
+    if not is_hep(record) or not current_app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']:
         return
 
     def _get_orcid(author_ids):
