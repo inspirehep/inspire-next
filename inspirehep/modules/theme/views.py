@@ -367,6 +367,15 @@ def ping():
 
 
 #
+# Health
+#
+
+@blueprint.route('/health', methods=['GET', 'HEAD'])
+def health():
+    return 'OK'
+
+
+#
 # Handlers for AJAX requests regarding references and citations
 #
 
