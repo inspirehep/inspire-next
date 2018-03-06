@@ -26,6 +26,8 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
+from itertools import chain
+
 from flask import current_app
 from six.moves.urllib.parse import urljoin
 from sqlalchemy.orm.exc import NoResultFound
@@ -38,9 +40,12 @@ from invenio_oauthclient.models import (
 )
 from invenio_oauthclient.utils import oauth_link_external_id
 
+from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.logging import getStackTraceLogger
+from inspire_utils.record import get_values_for_schema
 from inspire_utils.urls import ensure_scheme
 from inspirehep.modules.cache.utils import redis_locking_context, RedisLockError
+from inspirehep.utils.record_getter import get_db_records
 
 LOGGER = getStackTraceLogger(__name__)
 
@@ -174,3 +179,32 @@ def account_setup(remote, token, resp):
 
         # Create user <-> external id link.
         oauth_link_external_id(user, {'id': orcid, 'method': 'orcid'})
+
+
+def get_orcids_for_push(record):
+    """Obtain the ORCIDs associated to the list of authors in the Literature record.
+
+    The ORCIDs are looked up both in the ``ids`` of the ``authors`` and in the
+    Author records that have claimed the paper.
+
+    Args:
+        record(dict): metadata from a Literature record
+
+    Returns:
+        Iterator[str]: all ORCIDs associated to these authors
+    """
+    orcids_on_record = []
+    author_recids_with_claims = []
+
+    for author in record.get('authors', []):
+        orcids_in_author = get_values_for_schema(author.get('ids', []), 'ORCID')
+        if orcids_in_author:
+            orcids_on_record.extend(orcids_in_author)
+        elif author.get('curated_relation') is True and 'record' in author:
+            author_recids_with_claims.append(get_recid_from_ref(author['record']))
+
+    author_records = get_db_records('aut', author_recids_with_claims)
+    all_ids = (author.get('ids', []) for author in author_records)
+    orcids_in_authors = chain.from_iterable(get_values_for_schema(ids, 'ORCID') for ids in all_ids)
+
+    return chain(orcids_on_record, orcids_in_authors)
