@@ -28,6 +28,3 @@
 
 # python-orcid with support for v2.0 API and XML
 -e git+https://github.com/ORCID/python-orcid.git@2.0update#egg=orcid
-
-# FIXME: remove me when v1.0.0b2 is released
--e git+https://github.com/inveniosoftware/invenio-indexer.git#egg=invenio-indexer
