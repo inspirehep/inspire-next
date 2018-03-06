@@ -39,6 +39,10 @@ from invenio_records_rest.facets import range_filter, terms_filter
 DEBUG_TB_INTERCEPT_REDIRECTS = False
 SERVER_NAME = 'localhost:5000'
 
+# Feature flags
+# =============
+FEATURE_FLAG_ENABLE_ORCID_PUSH = False
+
 # Default language and timezone
 # =============================
 BABEL_DEFAULT_LANGUAGE = 'en'

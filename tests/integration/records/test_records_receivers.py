@@ -148,6 +148,12 @@ def record(raw_record):
     return _record
 
 
+@pytest.fixture
+def enable_orcid_push_feature(app):
+    with mock.patch.dict(app.config, {'FEATURE_FLAG_ENABLE_ORCID_PUSH': True}):
+        yield
+
+
 def create_user(orcid, email, name, consumer_key, token=None, allow_push=False):
     user = User()
     user.email = email
@@ -219,7 +225,7 @@ def test_orcid_push_not_triggered_on_create_record_without_token(mocked_Task, ap
 
 
 @mock.patch('inspirehep.modules.records.receivers.Task')
-def test_orcid_push_triggered_on_create_record_with_allow_push(mocked_Task, app, raw_record, user_with_permission):
+def test_orcid_push_triggered_on_create_record_with_allow_push(mocked_Task, app, raw_record, user_with_permission, enable_orcid_push_feature):
     mocked_Task.return_value = mocked_Task
     migrate_and_insert_record(raw_record, skip_files=True)
 
@@ -236,7 +242,7 @@ def test_orcid_push_triggered_on_create_record_with_allow_push(mocked_Task, app,
 
 
 @mock.patch('inspirehep.modules.records.receivers.Task')
-def test_orcid_push_triggered_on_record_update_with_allow_push(mocked_Task, app, record, user_with_permission):
+def test_orcid_push_triggered_on_record_update_with_allow_push(mocked_Task, app, record, user_with_permission, enable_orcid_push_feature):
     mocked_Task.return_value = mocked_Task
     expected_kwargs = {
         'kwargs': {
@@ -253,7 +259,7 @@ def test_orcid_push_triggered_on_record_update_with_allow_push(mocked_Task, app,
 
 
 @mock.patch('inspirehep.modules.records.receivers.Task')
-def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_push(mocked_Task, app, raw_record, two_users_with_permission):
+def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_push(mocked_Task, app, raw_record, two_users_with_permission, enable_orcid_push_feature):
     mocked_Task.return_value = mocked_Task
     migrate_and_insert_record(raw_record, skip_files=True)
 
@@ -313,3 +319,10 @@ def test_that_db_changes_are_mirrored_in_es(app):
 
     with pytest.raises(NotFoundError):
         es_record = search.get_source(record.id)
+
+
+@mock.patch('inspirehep.modules.records.receivers.Task')
+def test_orcid_push_not_triggered_on_create_record_no_feat_flag(mocked_Task, app, raw_record, user_with_permission):
+    migrate_and_insert_record(raw_record, skip_files=True)
+
+    mocked_Task.assert_not_called()
