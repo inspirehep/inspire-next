@@ -72,10 +72,15 @@ def push_to_redis(user_record):
     r.lpush('legacy_orcid_tokens', user_record_json)
 
 
-def assert_db_has_n_legacy_records(n, record):
+def assert_db_has_n_legacy_tokens(n, record):
     assert n == User.query.filter_by(email=record['email']).count()
     assert n == RemoteAccount.query.join(User).join(UserIdentity).filter(UserIdentity.id == record['orcid']).count()
-    assert n == RemoteToken.query.filter_by(access_token=record['token']).count()
+
+    tokens = RemoteToken.query.filter_by(access_token=record['token']).all()
+    assert n == len(tokens)
+    for token in tokens:
+        assert token.remote_account.extra_data['allow_push'] is True
+
     assert n == UserIdentity.query.filter_by(id=record['orcid']).count()
 
 
@@ -92,7 +97,7 @@ def teardown_sample_user(app):
     yield
 
     cleanup_record(SAMPLE_USER)
-    assert_db_has_n_legacy_records(0, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER)
 
 
 @fixture(scope='function')
@@ -100,7 +105,7 @@ def teardown_sample_user_2(app):
     yield
 
     cleanup_record(SAMPLE_USER_2)
-    assert_db_has_n_legacy_records(0, SAMPLE_USER_2)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER_2)
 
 
 @fixture(scope='function')
@@ -108,7 +113,7 @@ def teardown_sample_user_edited(app):
     yield
 
     cleanup_record(SAMPLE_USER_EDITED)
-    assert_db_has_n_legacy_records(0, SAMPLE_USER_EDITED)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER_EDITED)
 
 
 @fixture(scope='function')
@@ -169,16 +174,16 @@ def test_import_multiple_orcid_tokens_no_user_exists(
 
     # Check initial state
     assert redis_setup.llen('legacy_orcid_tokens') == 2
-    assert_db_has_n_legacy_records(0, SAMPLE_USER)
-    assert_db_has_n_legacy_records(0, SAMPLE_USER_2)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER_2)
 
     # Migrate
     import_legacy_orcid_tokens()
 
     # Check state after migration
     assert not redis_setup.llen('legacy_orcid_tokens')
-    assert_db_has_n_legacy_records(1, SAMPLE_USER)
-    assert_db_has_n_legacy_records(1, SAMPLE_USER_2)
+    assert_db_has_n_legacy_tokens(1, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(1, SAMPLE_USER_2)
 
 
 def test_import_multiple_orcid_tokens_no_configuration(
@@ -189,45 +194,45 @@ def test_import_multiple_orcid_tokens_no_configuration(
 
     # Check initial state
     assert redis_setup.llen('legacy_orcid_tokens') == 2
-    assert_db_has_n_legacy_records(0, SAMPLE_USER)
-    assert_db_has_n_legacy_records(0, SAMPLE_USER_2)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER_2)
 
     # Migrate
     import_legacy_orcid_tokens()
 
     # Assert state unchanged after migration
     assert redis_setup.llen('legacy_orcid_tokens') == 2
-    assert_db_has_n_legacy_records(0, SAMPLE_USER)
-    assert_db_has_n_legacy_records(0, SAMPLE_USER_2)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER_2)
 
 
 def test_linked_user_with_token_exists(app_with_config, teardown_sample_user):
     """Ignore token, if already has one."""
-    assert_db_has_n_legacy_records(0, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER)
 
     # Register sample user
     _register_user(**SAMPLE_USER)
 
     # Check state after migration
-    assert_db_has_n_legacy_records(1, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(1, SAMPLE_USER)
 
     # Register the same user with another token
     _register_user(**SAMPLE_USER_EDITED)
 
     # Assert token unchanged
-    assert_db_has_n_legacy_records(1, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(1, SAMPLE_USER)
     assert 0 == RemoteToken.query.filter_by(token=SAMPLE_USER_EDITED).count()
 
 
 def test_linked_user_without_token_exists(app_with_config, teardown_sample_user_edited):
     """Add a token to an existing user with an ORCID paired."""
-    assert_db_has_n_legacy_records(0, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER)
 
     # Register sample user
     _register_user(**SAMPLE_USER)
 
     # Check state after migration
-    assert_db_has_n_legacy_records(1, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(1, SAMPLE_USER)
 
     # Remove token and remote account
     RemoteToken.query.filter_by(access_token=SAMPLE_USER['token']).delete()
@@ -238,12 +243,12 @@ def test_linked_user_without_token_exists(app_with_config, teardown_sample_user_
     _register_user(**SAMPLE_USER_EDITED)
 
     # Assert new token
-    assert_db_has_n_legacy_records(1, SAMPLE_USER_EDITED)
+    assert_db_has_n_legacy_tokens(1, SAMPLE_USER_EDITED)
 
 
 def test_unlinked_user_exists(app_with_config, teardown_sample_user):
     """Add a token to an existing user without a paired ORCID."""
-    assert_db_has_n_legacy_records(0, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER)
 
     # Register sample user
     user = User()
@@ -255,7 +260,7 @@ def test_unlinked_user_exists(app_with_config, teardown_sample_user):
     _register_user(**SAMPLE_USER)
 
     # Assert new token
-    assert_db_has_n_legacy_records(1, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(1, SAMPLE_USER)
 
 
 @mark.parametrize(
@@ -273,13 +278,13 @@ def test_unlinked_user_exists(app_with_config, teardown_sample_user):
 )
 def test_find_user_matching(app_with_config, teardown_sample_user, orcid, email):
     """Add a token to an existing user with an ORCID paired."""
-    assert_db_has_n_legacy_records(0, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER)
 
     # Register sample user
     _register_user(**SAMPLE_USER)
 
     # Check state after migration
-    assert_db_has_n_legacy_records(1, SAMPLE_USER)
+    assert_db_has_n_legacy_tokens(1, SAMPLE_USER)
 
     # Remove token and remote account
     user_by_orcid = _find_user_matching(orcid, email)
