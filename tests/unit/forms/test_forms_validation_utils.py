@@ -78,7 +78,20 @@ def test_doi_syntax_validator_raises_on_invalid_dois():
 
 @patch('inspirehep.modules.forms.validation_utils.orcid.MemberAPI')
 def test_orcid_validator_accepts_existing_orcids(mock_member_api):
-    mock_orcid_api = MockOrcidAPI({'orcid-search-results': {'num-found': 1}})
+    mock_orcid_api = MockOrcidAPI(
+        {
+            'num-found': 1,
+            'result': [
+                {
+                    'orcid-identifier': {
+                        'host': 'orcid.org',
+                        'path': '0000-0002-7638-5686',
+                        'uri': 'http://orcid.org/0000-0002-7638-5686'
+                    }
+                }
+            ]
+        }
+    )
     mock_member_api.return_value = mock_orcid_api
 
     config = {
@@ -96,7 +109,7 @@ def test_orcid_validator_accepts_existing_orcids(mock_member_api):
 
 @patch('inspirehep.modules.forms.validation_utils.orcid.MemberAPI')
 def test_orcid_validator_raises_on_non_existing_orcids(mock_member_api):
-    mock_orcid_api = MockOrcidAPI({'orcid-search-results': {'num-found': 0}})
+    mock_orcid_api = MockOrcidAPI({'num-found': 0, 'result': []})
     mock_member_api.return_value = mock_orcid_api
 
     config = {
