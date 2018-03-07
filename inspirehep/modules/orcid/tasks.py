@@ -28,7 +28,6 @@ from flask import current_app
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from redis import StrictRedis
-from redis_lock import Lock
 from simplejson import loads
 
 from invenio_oauthclient.utils import oauth_link_external_id
@@ -48,23 +47,23 @@ logger = get_task_logger(__name__)
 
 
 def legacy_orcid_arrays():
-    """Generator to fetch token data from redis.
+    """
+    Generator to fetch token data from redis.
+
+    Note: this function consumes the queue populated by the legacy tasklet:
+    inspire/bibtasklets/bst_orcidsync.py
 
     Yields:
         list: user data in the form of [orcid, token, email, name]
     """
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
-    lock = Lock(r, 'import_legacy_orcid_tokens', expire=120, auto_renewal=True)
-    if lock.acquire(blocking=False):
-        try:
-            while r.llen('legacy_orcid_tokens'):
-                yield loads(r.lrange('legacy_orcid_tokens', 0, 1)[0])
-                r.lpop('legacy_orcid_tokens')
-        finally:
-            lock.release()
-    else:
-        logger.info("Import_legacy_orcid_tokens already executed. Skipping.")
+
+    key = 'legacy_orcid_tokens'
+    token = r.lpop(key)
+    while token:
+        yield loads(token)
+        token = r.lpop(key)
 
 
 def _link_user_and_token(user, name, orcid, token):

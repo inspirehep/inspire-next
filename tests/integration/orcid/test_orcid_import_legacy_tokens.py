@@ -145,7 +145,7 @@ def app_without_config(app):
         yield app
 
 
-def test_multiple_list_generator(app, redis_setup):
+def test_legacy_orcid_arrays(app, redis_setup):
     """Test the generator functionality."""
     push_to_redis(SAMPLE_USER_2)
     push_to_redis(SAMPLE_USER)
