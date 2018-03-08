@@ -590,11 +590,29 @@ def test_fuzzy_matched_goes_trough_the_workflow(
 
         return custom_continue_workflow
 
+    es_query = {
+        'algorithm': [
+            {
+                'queries': [
+                    {
+                        'path': 'report_numbers.value',
+                        'search_path': 'report_numbers.value.raw',
+                        'type': 'exact',
+                    },
+                ],
+            },
+        ],
+        'doc_type': 'hep',
+        'index': 'records-hep',
+    }
+
     record = record_from_db
     del record['arxiv_eprints']
     rec_id = record['control_number']
 
-    eng_uuid = start('article', [record])
+    with mock.patch.dict(workflow_app.config['FUZZY_MATCH'], es_query):
+        eng_uuid = start('article', [record])
+
     obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
     obj = workflow_object_class.get(obj_id)
 
