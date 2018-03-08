@@ -84,23 +84,30 @@ def _link_user_and_token(user, name, orcid, token):
         # User already has their ORCID linked
         pass
 
-    # Is there already a token associated with this ORCID identifier?
-    if RemoteToken.query.join(RemoteAccount).join(User).join(UserIdentity).filter(UserIdentity.id == orcid).count():
-        return
+    # Check whether there are already tokens associated with this
+    # ORCID identifier.
+    tokens = RemoteToken.query.join(RemoteAccount).join(User)\
+        .join(UserIdentity).filter(UserIdentity.id == orcid).all()
 
-    # If not, create and put the token entry
-    with db.session.begin_nested():
-        db.session.add(RemoteToken.create(
-            user_id=user.id,
-            client_id=get_value(current_app.config, 'ORCID_APP_CREDENTIALS.consumer_key'),
-            token=token,
-            secret=None,
-            extra_data={
-                'orcid': orcid,
-                'full_name': name,
-                'allow_push': True,
-            }
-        ))
+    if tokens:
+        # Force the allow_push.
+        with db.session.begin_nested():
+            for token in tokens:
+                token.remote_account.extra_data['allow_push'] = True
+    else:
+        # If not, create and put the token entry
+        with db.session.begin_nested():
+            db.session.add(RemoteToken.create(
+                user_id=user.id,
+                client_id=get_value(current_app.config, 'ORCID_APP_CREDENTIALS.consumer_key'),
+                token=token,
+                secret=None,
+                extra_data={
+                    'orcid': orcid,
+                    'full_name': name,
+                    'allow_push': True,
+                }
+            ))
 
 
 def _register_user(name, email, orcid, token):
