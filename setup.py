@@ -62,7 +62,7 @@ install_requires = [
     'inspire-crawler~=1.0',
     'inspire-dojson~=58.0,>=58.0.0',
     'inspire-json-merger~=7.0,>=7.0.0',
-    'inspire-matcher~=4.0,>=4.0.0',
+    'inspire-matcher~=4.1,>=4.1.1',
     'inspire-query-parser~=3.0,>=3.1.5',
     'inspire-schemas~=57.0,>=57.0.0',
     'inspire-utils~=2.0,>=2.0.7',
@@ -262,6 +262,7 @@ setup(
             'author_approval = inspirehep.modules.workflows.actions.author_approval:AuthorApproval',
             'hep_approval = inspirehep.modules.workflows.actions.hep_approval:HEPApproval',
             'merge_approval = inspirehep.modules.workflows.actions.merge_approval:MergeApproval',
+            'match_approval = inspirehep.modules.workflows.actions.match_approval:MatchApproval',
         ],
     },
     classifiers=[

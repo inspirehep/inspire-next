@@ -22,22 +22,28 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
 from mock import patch
+from inspire_utils.record import get_value
 
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.matching import (
-    article_exists,
+    exact_match,
+    fuzzy_match,
     has_fully_harvested_category,
+    is_fuzzy_match_approved,
+    pending_in_holding_pen,
     physics_data_an_is_primary_category,
     set_core_in_extra_data,
-    _pending_in_holding_pen,
+    set_exact_match_as_approved_in_extradata,
+    set_fuzzy_match_approved_in_extradata,
 )
 
 from mocks import MockEng, MockObj
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_article_exists_returns_true_if_something_matched(mock_match):
+def test_exact_match_returns_true_if_something_matched(mock_match):
     mock_match.return_value = iter([{'_source': {'control_number': 4328}}])
 
     data = {}
@@ -46,17 +52,55 @@ def test_article_exists_returns_true_if_something_matched(mock_match):
     obj = MockObj(data, extra_data)
     eng = MockEng()
 
-    assert article_exists(obj, eng)
-    assert 'record_matches' in obj.extra_data
+    assert exact_match(obj, eng)
+    assert 'matches' in obj.extra_data
 
     expected = [4328]
-    result = obj.extra_data['record_matches']
+    result = get_value(obj.extra_data, 'matches.exact')
 
     assert expected == result
 
 
+def test_set_exact_match_as_approved_in_extradata():
+    data = {}
+    extra_data = {
+        'matches': {'exact': [1, 2]}
+    }
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    set_exact_match_as_approved_in_extradata(obj, eng)
+
+    assert get_value(obj.extra_data, 'matches.approved') is 1
+
+
+def test_set_exact_match_as_approved_in_extradata_with_empty_list_raises_exception():
+    data = {}
+    extra_data = {
+        'matches': {'exact': []}
+    }
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+    with pytest.raises(IndexError):
+        set_exact_match_as_approved_in_extradata(obj, eng)
+
+
+def test_set_exact_match_as_approved_in_extradata_no_exact_key_raises_exception():
+    data = {}
+    extra_data = {
+        'matches': {'wrongkey': [1]}
+    }
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+    with pytest.raises(KeyError):
+        set_exact_match_as_approved_in_extradata(obj, eng)
+
+
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_article_exists_returns_false_if_nothing_matched(mock_match):
+def test_exact_match_returns_false_if_nothing_matched(mock_match):
     mock_match.return_value = iter([])
 
     data = {}
@@ -65,11 +109,11 @@ def test_article_exists_returns_false_if_nothing_matched(mock_match):
     obj = MockObj(data, extra_data)
     eng = MockEng()
 
-    assert not article_exists(obj, eng)
-    assert 'record_matches' in obj.extra_data
+    assert not exact_match(obj, eng)
+    assert 'matches' in obj.extra_data
 
     expected = []
-    result = obj.extra_data['record_matches']
+    result = get_value(obj.extra_data, 'matches.exact')
 
     assert expected == result
 
@@ -265,7 +309,7 @@ def test_pending_in_holding_pen_returns_true_if_something_matched(mock_match):
     obj = MockObj(data, extra_data, id=2)
     eng = MockEng()
 
-    assert _pending_in_holding_pen(obj, eng)
+    assert pending_in_holding_pen(obj, eng)
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
@@ -278,4 +322,96 @@ def test_pending_in_holding_pen_returns_false_if_nothing_matched(mock_match):
     obj = MockObj(data, extra_data)
     eng = MockEng()
 
-    assert not _pending_in_holding_pen(obj, eng)
+    assert not pending_in_holding_pen(obj, eng)
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_fuzzy_match_returns_true_if_something_matched(mock_match):
+    mock_match.return_value = iter([{'_source': {'control_number': 4328}}])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert fuzzy_match(obj, eng)
+    assert 'matches' in obj.extra_data
+
+    expected = [4328]
+    result = get_value(obj.extra_data, 'matches.fuzzy')
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_fuzzy_match_returns_false_if_nothing_matched(mock_match):
+    mock_match.return_value = iter([])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert not fuzzy_match(obj, eng)
+    assert 'matches' in obj.extra_data
+
+    expected = []
+    result = get_value(obj.extra_data, 'matches.fuzzy')
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_is_fuzzy_match_approved_returns_true_if_there_is_a_match_approved(mock_match):
+    data = {}
+    extra_data = {'fuzzy_match_approved_id': 4328}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert is_fuzzy_match_approved(obj, eng)
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_is_fuzzy_match_approved_returns_False_if_there_is_not_a_match_approved(mock_match):
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert not is_fuzzy_match_approved(obj, eng)
+
+
+def test_set_fuzzy_match_approved_in_extradata():
+    data = {}
+    extra_data = {
+        'fuzzy_match_approved_id': 1
+    }
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    set_fuzzy_match_approved_in_extradata(obj, eng)
+
+    expected = 1
+    result = get_value(obj.extra_data, 'matches.approved')
+
+    assert expected == result
+
+
+def test_set_fuzzy_match_approved_in_extradata_no_fuzzy_key():
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    set_fuzzy_match_approved_in_extradata(obj, eng)
+
+    expected = None
+    result = get_value(obj.extra_data, 'matches.approved')
+
+    assert expected == result

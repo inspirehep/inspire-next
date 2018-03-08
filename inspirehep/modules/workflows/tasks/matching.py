@@ -78,13 +78,13 @@ def is_too_old(record, days_ago=5):
 
 
 @with_debug_logging
-def article_exists(obj, eng):
+def exact_match(obj, eng):
     """Return ``True`` if the record is already present in the system.
 
     Uses the default configuration of the ``inspire-matcher`` to find
     duplicates of the current workflow object in the system.
 
-    Also sets the ``record_matches`` property in ``extra_data`` to the list of
+    Also sets the ``matches.exact`` property in ``extra_data`` to the list of
     control numbers that matched.
 
     Arguments:
@@ -96,14 +96,57 @@ def article_exists(obj, eng):
         ``False`` otherwise.
 
     """
-    matches = dedupe_list(match(obj.data))
+    exact_match_config = current_app.config['EXACT_MATCH']
+    matches = dedupe_list(match(obj.data, exact_match_config))
     record_ids = [el['_source']['control_number'] for el in matches]
-    if record_ids:
-        obj.extra_data['record_matches'] = record_ids
-        return True
+    obj.extra_data.setdefault('matches', {})['exact'] = record_ids
+    return bool(record_ids)
 
-    obj.extra_data['record_matches'] = []
-    return False
+
+@with_debug_logging
+def fuzzy_match(obj, eng):
+    """Return ``True`` if a similar record is found in the system.
+
+    Uses a custom configuration for ``inspire-matcher`` to find records
+    similar to the current workflow object's payload in the system.
+
+    Also sets the ``matches.fuzzy`` property in ``extra_data`` to the list of
+    control numbers that matched.
+
+    Arguments:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        bool: ``True`` if the workflow object has a duplicate in the system
+        ``False`` otherwise.
+
+    """
+    fuzzy_match_config = current_app.config['FUZZY_MATCH']
+    matches = dedupe_list(match(obj.data, fuzzy_match_config))
+    record_ids = [el['_source']['control_number'] for el in matches]
+    obj.extra_data.setdefault('matches', {})['fuzzy'] = record_ids
+    return bool(record_ids)
+
+
+@with_debug_logging
+def is_fuzzy_match_approved(obj, eng):
+    """Check if a fuzzy match has been approved by a human."""
+    return obj.extra_data.get('fuzzy_match_approved_id')
+
+
+@with_debug_logging
+def set_fuzzy_match_approved_in_extradata(obj, eng):
+    """Set the human approved match in `matches.approved` in extra_data."""
+    approved_match = obj.extra_data.get('fuzzy_match_approved_id')
+    obj.extra_data.setdefault('matches', {})['approved'] = approved_match
+
+
+@with_debug_logging
+def set_exact_match_as_approved_in_extradata(obj, eng):
+    """Set the best match in `matches.approved` in extra_data."""
+    best_match = obj.extra_data['matches']['exact'][0]
+    obj.extra_data.setdefault('matches', {})['approved'] = best_match
 
 
 def auto_approve(obj, eng):
@@ -201,7 +244,7 @@ def match_non_completed_wf_in_holdingpen(obj, eng):
     def _non_completed(base_record, match_result):
         return not get_value(match_result, '_source._workflow.status') == 'COMPLETED'
 
-    matched_ids = _pending_in_holding_pen(obj, _non_completed)
+    matched_ids = pending_in_holding_pen(obj, _non_completed)
     obj.extra_data['holdingpen_matches'] = matched_ids
     return bool(matched_ids)
 
@@ -229,13 +272,13 @@ def match_previously_rejected_wf_in_holdingpen(obj, eng):
         return get_value(match_result, '_source._workflow.status') == 'COMPLETED' and \
             get_value(match_result, '_source._extra_data.approved') is False
 
-    matched_ids = _pending_in_holding_pen(obj, _rejected_and_completed)
+    matched_ids = pending_in_holding_pen(obj, _rejected_and_completed)
     obj.extra_data['previously_rejected_matches'] = matched_ids
     return bool(matched_ids)
 
 
 @with_debug_logging
-def _pending_in_holding_pen(obj, validation_func):
+def pending_in_holding_pen(obj, validation_func):
     """Return the list of matching workflows in the holdingpen.
 
     Matches the holdingpen records by their ``arxiv_eprint``, their ``doi``,

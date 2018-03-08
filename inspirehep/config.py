@@ -33,6 +33,8 @@ from celery.schedules import crontab
 from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
 
+from inspire_matcher.config import MATCHER_DEFAULT_CONFIGURATION as exact_match
+
 
 # Debug
 # =====
@@ -1634,3 +1636,41 @@ INSPIRE_REF_UPDATER_WHITELISTS = {
     ],
 }
 """Controls which fields are updated when the referred record is updated."""
+
+# Configuration for the matcher
+# =============================
+EXACT_MATCH = exact_match
+EXACT_MATCH['source'] = ['control_number']
+
+FUZZY_MATCH = {
+    'algorithm': [
+        {
+            'queries': [
+                {
+                    'clauses': [
+                        {
+                            'boost': 20,
+                            'path': 'abstracts',
+                        },
+                        {
+                            'boost': 10,
+                            'path': 'authors[:3]',
+                        },
+                        {
+                            'boost': 20,
+                            'path': 'titles',
+                        },
+                        {
+                            'boost': 10,
+                            'path': 'report_numbers',
+                        },
+                    ],
+                    'type': 'fuzzy',
+                }
+            ]
+        }
+    ],
+    'doc_type': 'hep',
+    'index': 'records-hep',
+    'source': ['control_number']
+}

@@ -32,6 +32,7 @@ from invenio_db import db
 from invenio_workflows import (
     ObjectStatus,
     WorkflowEngine,
+    WorkflowObject,
     start,
     workflow_object_class,
 )
@@ -42,6 +43,7 @@ from calls import (
     do_accept_core,
     do_webcoll_callback,
     do_robotupload_callback,
+    do_resolve_matching,
     generate_record,
 )
 from mocks import (
@@ -76,11 +78,12 @@ from utils import get_halted_workflow
     return_value=[],
 )
 def test_harvesting_arxiv_workflow_manual_rejected(
-    mocked_arxiv_download,
     mocked_refextract_extract_refs,
     mocked_api_request_magpie,
-    mocked_api_request_beard,
-    mocked_package_download,
+    mocked_beard_api,
+    mocked_actions_download,
+    mocked_is_pdf_link,
+    mocked_arxiv_download,
     workflow_app,
     mocked_external_services,
 ):
@@ -109,6 +112,7 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     obj = workflow_object_class.get(obj_id)
     # It was rejected
     assert obj.status == ObjectStatus.COMPLETED
+    assert obj.extra_data["approved"] is False
 
 
 @mock.patch(
@@ -136,12 +140,12 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     return_value=[],
 )
 def test_harvesting_arxiv_workflow_core_record_auto_accepted(
-    mocked_download,
-    mocked_is_pdf,
     mocked_refextract_extract_refs,
     mocked_api_request_magpie,
     mocked_api_request_beard,
+    mocked_is_pdf_link,
     mocked_package_download,
+    mocked_arxiv_download,
     workflow_app,
     mocked_external_services,
 ):
@@ -221,23 +225,22 @@ def test_harvesting_arxiv_workflow_manual_accepted(
     obj = eng.processed_objects[0]
     assert obj.status == ObjectStatus.WAITING
 
-    response = do_robotupload_callback(
+    do_robotupload_callback(
         app=workflow_app,
         workflow_id=obj.id,
         recids=[12345],
     )
-    assert response.status_code == 200
 
     obj = workflow_object_class.get(obj.id)
     assert obj.status == ObjectStatus.WAITING
 
-    response = do_webcoll_callback(app=workflow_app, recids=[12345])
-    assert response.status_code == 200
+    do_webcoll_callback(app=workflow_app, recids=[12345])
 
     eng = WorkflowEngine.from_uuid(workflow_uuid)
     obj = eng.processed_objects[0]
     # It was accepted
     assert obj.status == ObjectStatus.COMPLETED
+    assert obj.extra_data['approved'] is True
 
 
 @mock.patch(
@@ -261,10 +264,11 @@ def test_harvesting_arxiv_workflow_manual_accepted(
     side_effect=fake_magpie_api_request,
 )
 def test_match_in_holdingpen_stops_pending_wf(
-    mocked_download_arxiv,
-    mocked_api_request_beard,
     mocked_api_request_magpie,
+    mocked_api_request_beard,
     mocked_package_download,
+    mocked_is_pdf_link,
+    mocked_download_arxiv,
     workflow_app,
     mocked_external_services,
 ):
@@ -322,10 +326,11 @@ def test_match_in_holdingpen_stops_pending_wf(
     side_effect=fake_magpie_api_request,
 )
 def test_match_in_holdingpen_previously_rejected_wf_stop(
-    mocked_download_arxiv,
-    mocked_api_request_beard,
     mocked_api_request_magpie,
+    mocked_api_request_beard,
     mocked_package_download,
+    mocked_is_pdf_link,
+    mocked_download_arxiv,
     workflow_app,
     mocked_external_services,
 ):
@@ -376,10 +381,11 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
     side_effect=fake_magpie_api_request,
 )
 def test_match_in_holdingpen_different_sources_continues(
-    mocked_download_arxiv,
-    mocked_api_request_beard,
     mocked_api_request_magpie,
+    mocked_api_request_beard,
     mocked_package_download,
+    mocked_is_pdf_link,
+    mocked_download_arxiv,
     workflow_app,
     mocked_external_services,
 ):
@@ -446,7 +452,7 @@ def test_arxiv_update_is_not_store_on_legacy_and_labs(
     assert obj.extra_data['holdingpen_matches'] == []
     assert obj.extra_data['previously_rejected'] is False
     assert obj.extra_data['is-update'] is True
-    assert obj.extra_data['record_matches']
+    assert obj.extra_data['matches']['exact']
     assert obj.extra_data['skipped-robot-upload']
     assert obj.extra_data['skipped-store-record']
 
@@ -498,3 +504,114 @@ def test_article_workflow_continues_when_record_is_valid(workflow_app):
 
     assert obj.status != ObjectStatus.ERROR
     assert '_error_msg' not in obj.extra_data
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
+    return_value=True
+)
+def test_update_exact_matched_goes_trough_the_workflow(
+    mocked_is_pdf_link,
+    mocked_download_arxiv,
+    mocked_api_request_beard,
+    mocked_api_request_magpie,
+    workflow_app,
+    mocked_external_services,
+    record_from_db
+):
+    record = record_from_db
+    eng_uuid = start('article', [record])
+    obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
+    obj = workflow_object_class.get(obj_id)
+
+    assert obj.extra_data['already-in-holding-pen'] is False
+    assert obj.extra_data['holdingpen_matches'] == []
+    assert obj.extra_data['previously_rejected'] is False
+    assert not obj.extra_data.get('stopped-matched-holdingpen-wf')
+    assert obj.extra_data['is-update']
+    assert obj.extra_data['exact-matched']
+    assert obj.extra_data['matches']['exact'] == [record.get('control_number')]
+    assert obj.extra_data['matches']['approved'] == record.get('control_number')
+    assert obj.extra_data['approved']
+    assert obj.status == ObjectStatus.COMPLETED
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
+    return_value=True
+)
+def test_fuzzy_matched_goes_trough_the_workflow(
+    mocked_is_pdf_link,
+    mocked_download_arxiv,
+    mocked_api_request_beard,
+    mocked_api_request_magpie,
+    workflow_app,
+    mocked_external_services,
+    record_from_db,
+):
+    """Test update article fuzzy matched.
+
+    In this test the `WorkflowObject.continue_workflow` is mocked because in
+    the test suite celery is run in eager mode. This prevents celery to switch
+    back from the api context to the app context, generating errors during
+    the workflow execution. The patched version of `continue_workflow` uses
+    the correct application context to run the workflow.
+    """
+    def continue_wf_patched_context(workflow_app):
+        workflow_object_class._custom_continue = workflow_object_class.continue_workflow
+
+        def custom_continue_workflow(self, *args, **kwargs):
+            with workflow_app.app_context():
+                self._custom_continue(*args, **kwargs)
+
+        return custom_continue_workflow
+
+    record = record_from_db
+    del record['arxiv_eprints']
+    rec_id = record['control_number']
+
+    eng_uuid = start('article', [record])
+    obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
+    obj = workflow_object_class.get(obj_id)
+
+    assert obj.status == ObjectStatus.HALTED  # for matching approval
+    obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
+    obj = workflow_object_class.get(obj_id)
+
+    assert obj.extra_data['already-in-holding-pen'] is False
+    assert obj.extra_data['holdingpen_matches'] == []
+    assert obj.extra_data['matches']['fuzzy'] == [rec_id]
+
+    WorkflowObject.continue_workflow = continue_wf_patched_context(workflow_app)
+    do_resolve_matching(workflow_app, obj.id, rec_id)
+
+    obj = workflow_object_class.get(obj_id)
+    assert obj.extra_data['matches']['approved'] == rec_id
+    assert obj.extra_data['fuzzy-matched']
+    assert obj.extra_data['is-update']
+    assert obj.extra_data['approved']
+    assert obj.status == ObjectStatus.COMPLETED
