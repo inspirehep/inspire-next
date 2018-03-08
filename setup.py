@@ -59,7 +59,7 @@ install_requires = [
     'elasticsearch~=2.0,>=2.4.1',
     'flask-shell-ipython~=0.0,>=0.3.0',
     'fs~=0.0,>=0.5.4',
-    'inspire-crawler~=1.0',
+    'inspire-crawler~=2.0',
     'inspire-dojson~=58.0,>=58.0.0',
     'inspire-json-merger~=7.0,>=7.0.0',
     'inspire-matcher~=4.1,>=4.1.1',
@@ -126,7 +126,7 @@ extras_require = {
         'ipdb~=0.0,>=0.10.3',
     ],
     'crawler-node': [
-        'hepcrawl~=9.0,>=9.0',
+        'hepcrawl~=10.0,>=10.0.5',
     ],
     'docs': docs_require,
     'tests': tests_require,
