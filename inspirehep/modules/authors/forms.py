@@ -562,11 +562,7 @@ class AuthorUpdateForm(INSPIREForm):
     def __init__(self, *args, **kwargs):
         """Constructor."""
         super(AuthorUpdateForm, self).__init__(*args, **kwargs)
-        is_update = kwargs.pop('is_update', False)
         is_review = kwargs.pop('is_review', False)
-        if is_update:
-            self.orcid.widget = HiddenInput()
-            self.orcid.validators = []
         if is_review:
             self.bai.widget = TextInput()
             self.bai.flags = Flags()
