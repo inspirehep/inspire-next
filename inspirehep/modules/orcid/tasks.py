@@ -25,8 +25,9 @@
 from __future__ import absolute_import, division, print_function
 
 from flask import current_app
+from sqlalchemy.exc import SQLAlchemyError
+
 from celery import shared_task
-from celery.utils.log import get_task_logger
 from redis import StrictRedis
 from simplejson import loads
 
@@ -41,9 +42,6 @@ from inspirehep.modules.orcid.utils import get_orcid_recid_key, redis_locking_co
 
 
 LOGGER = getStackTraceLogger(__name__)
-
-
-logger = get_task_logger(__name__)
 
 
 def legacy_orcid_arrays():
@@ -148,8 +146,13 @@ def import_legacy_orcid_tokens():
         return
 
     for user_data in legacy_orcid_arrays():
-        orcid, token, email, name = user_data
-        _register_user(name, email, orcid, token)
+        try:
+            orcid, token, email, name = user_data
+            _register_user(name, email, orcid, token)
+        except SQLAlchemyError as ex:
+            LOGGER.exception(ex)
+
+    db.session.commit()
 
 
 @shared_task(bind=True)
