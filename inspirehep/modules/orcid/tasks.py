@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 from flask import current_app
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -165,6 +167,10 @@ def orcid_push(self, orcid, rec_id, oauth_token):
         rec_id(int): inspire record's id to push to ORCID.
         oauth_token(string): orcid token.
     """
+    if not re.match(current_app.config.get(
+            'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX', '^$'), orcid):
+        return None
+
     try:
         attempt_push(orcid, rec_id, oauth_token)
     except Exception:
