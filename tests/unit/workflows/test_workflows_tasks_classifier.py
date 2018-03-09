@@ -22,8 +22,11 @@
 
 from __future__ import absolute_import, division, print_function
 
-from six import binary_type
+import os
+
+import pkg_resources
 from mock import patch
+from six import binary_type
 
 from inspirehep.modules.workflows.tasks.classifier import classify_paper
 from mocks import MockEng, MockObj
@@ -128,3 +131,22 @@ def test_classify_paper_uses_keywords(get_document_in_workflow):
 
     assert obj.extra_data['classifier_results']['complete_output']['core_keywords'] == expected
     assert obj.extra_data['classifier_results']['fulltext_used'] is False
+
+
+@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
+def test_classify_paper_does_not_raise_on_unprintable_keywords(get_document_in_workflow):
+    paper_with_unprintable_keywords = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1802.08709.pdf'))
+
+    get_document_in_workflow.return_value.__enter__.return_value = paper_with_unprintable_keywords
+    get_document_in_workflow.return_value.__exit__.return_value = None
+
+    obj = MockObj({}, {})
+    eng = MockEng()
+
+    classify_paper(
+        taxonomy='HEPont.rdf',
+        only_core_tags=False,
+        spires=True,
+        with_author_keywords=True,
+    )(obj, eng)  # Does not raise.
