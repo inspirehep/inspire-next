@@ -73,7 +73,7 @@ install_requires = [
     'invenio-base>=1.0.0a16',
     'invenio-cache>=1.0.0b1',
     'invenio-celery>=1.0.0b3',
-    'invenio-classifier~=1.0,>=1.3.1',
+    'invenio-classifier~=1.0,>=1.3.2',
     'invenio-collections>=1.0.0a4',
     'invenio-config>=1.0.0b3',
     'invenio-db[postgresql,versioning]>=1.0.0b8',
