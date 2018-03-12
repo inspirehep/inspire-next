@@ -44,6 +44,12 @@ SERVER_NAME = 'localhost:5000'
 # Feature flags
 # =============
 FEATURE_FLAG_ENABLE_ORCID_PUSH = False
+# Only push to ORCIDs that match this regex.
+# Examples:
+#   any ORCID -> ".*"
+#   none -> "^$"
+#   some ORCIDs -> "^(0000-0002-7638-5686|0000-0002-7638-5687)$"
+FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '.*'
 
 # Default language and timezone
 # =============================
