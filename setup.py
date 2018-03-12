@@ -54,9 +54,9 @@ install_requires = [
     'backports.tempfile>=1.0rc1',
     'beard~=0.0,>=0.2.0',
     'celery~=3.0,>=3.1.25',
-    'enum34~=1.0,>=1.1.6',
     'elasticsearch-dsl~=2.0,>=2.2.0',
     'elasticsearch~=2.0,>=2.4.1',
+    'enum34~=1.0,>=1.1.6',
     'flask-shell-ipython~=0.0,>=0.3.0',
     'fs~=0.0,>=0.5.4',
     'inspire-crawler~=2.0',
@@ -97,6 +97,7 @@ install_requires = [
     'librabbitmq~=1.0,>=1.6.1',
     'marshmallow~=2.0,>=2.15.0',  # See: inveniosoftware/invenio-records-rest#186
     'plotextractor~=0.0,>=0.1.6',
+    'pyOpenSSL~=17.0,>=17.5.0',
     'pybtex~=0.0,>=0.21',
     'python-redis-lock~=3.0,>=3.2.0',
     'raven[flask]~=6.0,>=6.2.1',
@@ -104,8 +105,8 @@ install_requires = [
     'requests~=2.0,>=2.18.4',
     'setproctitle~=1.0,>=1.1.10',
     'timeout-decorator~=0.0,>=0.4.0',
-    'workflow~=2.0,>=2.1.3',
     'vcrpy~=1.0,>=1.11.1',
+    'workflow~=2.0,>=2.1.3',
 ]
 
 docs_require = [
