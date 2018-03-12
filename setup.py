@@ -97,6 +97,7 @@ install_requires = [
     'librabbitmq~=1.0,>=1.6.1',
     'marshmallow~=2.0,>=2.15.0',  # See: inveniosoftware/invenio-records-rest#186
     'plotextractor~=0.0,>=0.1.6',
+    'pyOpenSSL~=17.0,>=17.5.0',
     'pybtex~=0.0,>=0.21',
     'python-redis-lock~=3.0,>=3.2.0',
     'raven[flask]~=6.0,>=6.2.1',
