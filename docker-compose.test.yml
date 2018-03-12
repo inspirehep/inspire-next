@@ -191,7 +191,7 @@ services:
   test-worker:
     extends:
       service: test-service_base
-    command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge --queues celery,migrator,harvests,orcid_push
+    command: celery worker -E -A inspirehep.celery --loglevel=INFO --queues celery,migrator,harvests,orcid_push
     volumes_from:
       - test-static
     depends_on:

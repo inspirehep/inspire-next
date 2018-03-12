@@ -42,7 +42,10 @@ from flask_login import login_required, current_user
 from werkzeug.datastructures import MultiDict
 
 from invenio_db import db
-from invenio_workflows import workflow_object_class, start, resume
+from invenio_workflows import (
+    workflow_object_class,
+    resume,
+)
 from invenio_workflows_ui.api import WorkflowUIRecord
 
 from inspire_dojson import marcxml2record
@@ -53,7 +56,7 @@ from inspirehep.utils.url import get_legacy_url_for_recid
 from .forms import AuthorUpdateForm
 from .permissions import holdingpen_author_permission
 from .tasks import formdata_to_model
-
+from ..workflows.utils import start_workflow
 
 blueprint = Blueprint(
     'inspirehep_authors',
@@ -276,7 +279,10 @@ def submitupdate():
     db.session.commit()
 
     # Start workflow. delay will execute the workflow in the background
-    start.delay("author", object_id=workflow_object.id)
+    start_workflow(
+        workflow="author",
+        workflow_object=workflow_object
+    )
 
     ctx = {
         "inspire_url": get_inspire_url(visitor.data)
@@ -306,7 +312,10 @@ def submitnew():
 
     # Start workflow. delayed=True will execute the workflow in the
     # background using, for example, Celery.
-    start.delay("author", object_id=workflow_object.id)
+    start_workflow(
+        workflow="author",
+        workflow_object=workflow_object
+    )
 
     ctx = {
         "inspire_url": get_inspire_url(visitor.data)
