@@ -172,7 +172,7 @@ def account_setup(remote, token, resp):
         token.remote_account.extra_data = {
             'orcid': orcid,
             'full_name': full_name,
-            'allow_push': current_app.config('ORCID_ALLOW_PUSH_DEFAULT', False)
+            'allow_push': current_app.config.get('ORCID_ALLOW_PUSH_DEFAULT', False)
         }
 
         user = token.remote_account.user
