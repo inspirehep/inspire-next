@@ -138,6 +138,10 @@ def push_to_orcid(sender, record, *args, **kwargs):
     if not is_hep(record) or not current_app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']:
         return
 
+    # Ensure there is a control number. This is not always the case because of broken store_record.
+    if not 'control_number' in record:
+        return
+
     task_name = current_app.config['ORCID_PUSH_TASK_ENDPOINT']
 
     for orcid in get_orcids_for_push(record):

@@ -140,6 +140,12 @@ def raw_record(app):
 
 
 @pytest.fixture(scope='function')
+def raw_record_with_no_control_number(raw_record):
+    del raw_record['control_number']
+    yield raw_record
+
+
+@pytest.fixture(scope='function')
 def record(raw_record):
     with mock.patch('inspirehep.modules.records.receivers.Task') as mocked_Task:
         mocked_Task.return_value = mocked_Task
@@ -219,6 +225,13 @@ def test_orcid_push_not_triggered_on_create_record_without_allow_push(mocked_Tas
 
 @mock.patch('inspirehep.modules.records.receivers.Task')
 def test_orcid_push_not_triggered_on_create_record_without_token(mocked_Task, app, raw_record, user_without_token):
+    migrate_and_insert_record(raw_record, skip_files=True)
+
+    mocked_Task.assert_not_called()
+
+
+@mock.patch('inspirehep.modules.records.receivers.Task')
+def test_orcid_push_not_triggered_on_create_record_without_control_number(mocked_Task, app, raw_record_with_no_control_number, user_with_permission, enable_orcid_push_feature):
     migrate_and_insert_record(raw_record, skip_files=True)
 
     mocked_Task.assert_not_called()
