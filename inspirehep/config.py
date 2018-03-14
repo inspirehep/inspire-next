@@ -50,6 +50,7 @@ FEATURE_FLAG_ENABLE_ORCID_PUSH = False
 #   none -> "^$"
 #   some ORCIDs -> "^(0000-0002-7638-5686|0000-0002-7638-5687)$"
 FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '.*'
+FEATURE_FLAG_ENABLE_FUZZY_MATCHER = False
 
 # Default language and timezone
 # =============================
