@@ -42,6 +42,12 @@ from inspirehep.modules.migrator.tasks import (
 
 
 @pytest.fixture
+def enable_orcid_push_feature(app):
+    with patch.dict(app.config, {'FEATURE_FLAG_ENABLE_ORCID_PUSH': True}):
+        yield
+
+
+@pytest.fixture
 def cleanup():
     yield
     InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).delete()
@@ -175,34 +181,34 @@ def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
 
 
 @patch('inspirehep.modules.records.receivers.get_push_access_token', return_value='fake-token')
-@patch(
-    'inspirehep.modules.orcid.tasks.attempt_push',
-    side_effect=AssertionError("Should't have attempted to push")
-)
-def test_orcid_push_disabled_on_migrate(app, cleanup):
+def test_orcid_push_disabled_on_migrate(app, cleanup, enable_orcid_push_feature):
     record_fixture_path = pkg_resources.resource_filename(
         __name__,
         os.path.join('fixtures', 'dummy.xml')
     )
 
-    migrate.delay(record_fixture_path, wait_for_results=True)
+    with patch('inspirehep.modules.orcid.tasks.attempt_push') as attempt_push:
+        migrate.delay(record_fixture_path, wait_for_results=True)
+        attempt_push.assert_not_called()
 
     prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
     assert prod_record.valid
+
+    assert app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']
 
 
 @patch('inspirehep.modules.records.receivers.get_push_access_token', return_value='fake-token')
-@patch(
-    'inspirehep.modules.orcid.tasks.attempt_push',
-    side_effect=AssertionError("Should't have attempted to push")
-)
-def test_orcid_push_disabled_on_migrate_chunk(app, cleanup):
+def test_orcid_push_disabled_on_migrate_chunk(app, cleanup, enable_orcid_push_feature):
     record_fixture_path = pkg_resources.resource_filename(
         __name__,
         os.path.join('fixtures', 'dummy.xml')
     )
 
-    migrate_chunk([open(record_fixture_path).read()])
+    with patch('inspirehep.modules.orcid.tasks.attempt_push') as attempt_push:
+        migrate_chunk([open(record_fixture_path).read()])
+        attempt_push.assert_not_called()
 
     prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
     assert prod_record.valid
+
+    assert app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']
