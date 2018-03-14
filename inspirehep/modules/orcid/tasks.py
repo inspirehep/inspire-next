@@ -97,7 +97,7 @@ def _link_user_and_token(user, name, orcid, token):
     else:
         # If not, create and put the token entry
         with db.session.begin_nested():
-            db.session.add(RemoteToken.create(
+            RemoteToken.create(
                 user_id=user.id,
                 client_id=get_value(current_app.config, 'ORCID_APP_CREDENTIALS.consumer_key'),
                 token=token,
@@ -107,7 +107,7 @@ def _link_user_and_token(user, name, orcid, token):
                     'full_name': name,
                     'allow_push': True,
                 }
-            ))
+            )
 
 
 def _register_user(name, email, orcid, token):
@@ -133,9 +133,9 @@ def _register_user(name, email, orcid, token):
 
     # Make the user if didn't find existing one
     if not user:
-        user = User()
-        user.email = email
         with db.session.begin_nested():
+            user = User()
+            user.email = email
             db.session.add(user)
 
     _link_user_and_token(user, name, orcid, token)

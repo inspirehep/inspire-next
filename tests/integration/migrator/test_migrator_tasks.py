@@ -25,12 +25,28 @@ from __future__ import absolute_import, division, print_function
 import uuid
 from mock import patch
 
+import os
+import pkg_resources
 import pytest
 
+from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.modules.migrator.models import InspireProdRecords
-from inspirehep.modules.migrator.tasks import _build_recid_to_uuid_map, migrate_and_insert_record
+from inspirehep.modules.migrator.tasks import (
+    _build_recid_to_uuid_map,
+    migrate,
+    migrate_and_insert_record,
+    migrate_chunk,
+)
+
+
+@pytest.fixture
+def cleanup():
+    yield
+    InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).delete()
+    db.session.commit()
+    assert InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).count() == 0
 
 
 def test_build_recid_to_uuid_map_numeric_pid_allowed_for_lit_and_con(isolated_app):
@@ -156,3 +172,37 @@ def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
 
     assert not mock_logger.error.called
     mock_logger.exception.assert_called_once_with('Migrator Record Insert Error')
+
+
+@patch('inspirehep.modules.records.receivers.get_push_access_token', return_value='fake-token')
+@patch(
+    'inspirehep.modules.orcid.tasks.attempt_push',
+    side_effect=AssertionError("Should't have attempted to push")
+)
+def test_orcid_push_disabled_on_migrate(app, cleanup):
+    record_fixture_path = pkg_resources.resource_filename(
+        __name__,
+        os.path.join('fixtures', 'dummy.xml')
+    )
+
+    migrate.delay(record_fixture_path, wait_for_results=True)
+
+    prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
+    assert prod_record.valid
+
+
+@patch('inspirehep.modules.records.receivers.get_push_access_token', return_value='fake-token')
+@patch(
+    'inspirehep.modules.orcid.tasks.attempt_push',
+    side_effect=AssertionError("Should't have attempted to push")
+)
+def test_orcid_push_disabled_on_migrate_chunk(app, cleanup):
+    record_fixture_path = pkg_resources.resource_filename(
+        __name__,
+        os.path.join('fixtures', 'dummy.xml')
+    )
+
+    migrate_chunk([open(record_fixture_path).read()])
+
+    prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
+    assert prod_record.valid
