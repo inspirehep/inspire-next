@@ -22,7 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+import latexcodec  # noqa: F401
 import re
+from six import text_type
 
 from inspirehep.utils.record_getter import get_es_record
 from .export import MissingRequiredFieldError, Export
@@ -294,3 +296,18 @@ class Latex(Export):
                     return ''
         else:
             return ''
+
+
+def decode_latex(latex_text):
+    """Decode latex text.
+
+    Args:
+        latex_text (str): a latex text.
+
+    Returns:
+        str: the latex text decoded.
+    """
+    if not isinstance(latex_text, text_type):
+        latex_text = text_type(latex_text, 'utf8')
+
+    return re.sub('{|}', '', latex_text.decode('ulatex+utf8'))

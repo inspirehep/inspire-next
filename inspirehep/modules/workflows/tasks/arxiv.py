@@ -43,6 +43,7 @@ from plotextractor.api import process_tarball
 from plotextractor.converter import untar
 from plotextractor.errors import InvalidTarball, NoTexFilesFound
 
+from inspirehep.utils.latex import decode_latex
 from inspirehep.utils.record import get_arxiv_categories, get_arxiv_id
 from inspirehep.utils.url import is_pdf_link, retrieve_uri
 from inspirehep.modules.workflows.errors import DownloadError
@@ -51,7 +52,6 @@ from inspirehep.modules.workflows.utils import (
     download_file_to_workflow,
     with_debug_logging,
 )
-
 
 REGEXP_AUTHLIST = re.compile(
     "<collaborationauthorlist.*?>.*?</collaborationauthorlist>", re.DOTALL)
@@ -264,6 +264,9 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
                     extracted_authors.extend(marcxml2record(authors_xml).get('authors', []))
 
             if extracted_authors:
+                for author in extracted_authors:
+                    author['full_name'] = decode_latex(author['full_name'])
+
                 obj.data['authors'] = extracted_authors
 
     return _author_list
