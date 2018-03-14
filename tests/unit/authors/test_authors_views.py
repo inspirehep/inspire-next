@@ -22,72 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.modules.authors.views import convert_for_form, get_inspire_url
-
-
-def test_convert_for_form_without_name_urls_fc_positions_advisors_and_ids():
-    without_name_urls_fc_positions_advisors_and_ids = {}
-    convert_for_form(without_name_urls_fc_positions_advisors_and_ids)
-
-    assert {} == without_name_urls_fc_positions_advisors_and_ids
-
-
-def test_convert_for_form_public_emails():
-    current_and_old_emails = {
-        'positions': [
-            {
-                "emails": [
-                    "michael.abbott@uct.ac.za"
-                ]
-            },
-            {
-                "emails": [
-                    "abbott@theory.tifr.res.in"
-                ]
-            },
-            {
-                "old_emails": [
-                    "abbott@het.brown.edu"
-                ]
-            }
-        ]
-    }
-    convert_for_form(current_and_old_emails)
-
-    expected = [
-        {
-            "email": "michael.abbott@uct.ac.za",
-            "original_email": "michael.abbott@uct.ac.za"
-        },
-        {
-            "email": "abbott@theory.tifr.res.in",
-            "original_email": "abbott@theory.tifr.res.in"
-        }
-    ]
-
-    assert expected == current_and_old_emails['public_emails']
-
-
-def test_convert_for_form_advisors():
-    record = {
-        'advisors': [
-            {
-                'degree_type': 'other',
-                'name': 'Avignone, Frank T.',
-                'curated_relation': False
-            }
-        ]
-    }
-    convert_for_form(record)
-
-    expected = [
-        {
-            'degree_type': 'other',
-            'name': 'Avignone, Frank T.'
-        }
-    ]
-
-    assert expected == record['advisors']
+from inspirehep.modules.authors.views import get_inspire_url
 
 
 def test_get_inspire_url_with_bai():

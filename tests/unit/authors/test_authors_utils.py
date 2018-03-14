@@ -22,7 +22,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.modules.authors.utils import bai
+from inspirehep.modules.authors.utils import (
+    bai,
+    get_author_record_from_xml_response,
+)
 
 
 def test_that_bai_conforms_to_the_spec():
@@ -46,3 +49,66 @@ def test_that_bai_conforms_to_the_spec():
     assert bai("Müller, Andreas") == "A.Mueller"
     assert bai("Hernández-Tomé, G.") == "G.Hernandez.Tome"
     assert bai("José de Goya y Lucientes, Francisco Y H") == "F.Y.H.Jose.de.Goya.y.Lucientes"
+
+
+def test_get_author_record_from_xml_response():
+    xml = """<?xml version="1.0" encoding="UTF-8"?>\n
+    <collection
+        xmlns="http://www.loc.gov/MARC21/slim">\n
+        <record>\n
+            <datafield tag="100" ind1=" " ind2=" ">\n
+                <subfield code="a">Aab, Alexander</subfield>\n
+            </datafield>\n
+            <datafield tag="980" ind1=" " ind2=" ">\n
+                <subfield code="a">HEPNAMES</subfield>\n
+            </datafield>\n
+            <datafield tag="980" ind1=" " ind2=" ">\n
+                <subfield code="a">USEFUL</subfield>\n
+            </datafield>\n
+        </record>\n
+    </collection>"""
+
+    expected = {
+        '$schema': 'authors.json',
+        '_collections': ['Authors'],
+        'deleted': False,
+        'name': {'value': 'Aab, Alexander'},
+        'stub': False
+    }
+
+    result = get_author_record_from_xml_response(xml)
+
+    assert result == expected
+
+
+def test_get_author_record_from_xml_response_fails_if_wrong_collection():
+    xml = """<?xml version="1.0" encoding="UTF-8"?>\n
+    <collection
+        xmlns="http://www.loc.gov/MARC21/slim">\n
+        <record>\n
+            <datafield tag="245" ind1=" " ind2=" ">\n
+                <subfield code="a">Gravitational Waves in Doubly Coupled Bigravity</subfield>\n
+                <subfield code="9">arXiv</subfield>\n
+            </datafield>\n
+            <datafield tag="980" ind1=" " ind2=" ">\n
+                <subfield code="a">HEP</subfield>\n
+            </datafield>\n
+            <datafield tag="980" ind1=" " ind2=" ">\n
+                <subfield code="a">Published</subfield>\n
+            </datafield>\n
+        </record>\n
+    </collection>"""
+
+    result = get_author_record_from_xml_response(xml)
+
+    assert not result
+
+
+def test_get_author_record_from_xml_response_fails_if_no_record():
+    xml = """<?xml version="1.0" encoding="UTF-8"?>\n
+    <collection xmlns="http://www.loc.gov/MARC21/slim">\n\n
+    </collection>"""
+
+    result = get_author_record_from_xml_response(xml)
+
+    assert not result

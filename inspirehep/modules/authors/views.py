@@ -25,9 +25,8 @@
 from __future__ import absolute_import, division, print_function
 
 import copy
-import re
-
 import requests
+
 from flask import (
     abort,
     Blueprint,
@@ -35,25 +34,23 @@ from flask import (
     render_template,
     request,
     url_for,
-    redirect,
 )
 from flask_breadcrumbs import register_breadcrumb
 from flask_login import login_required, current_user
-from werkzeug.datastructures import MultiDict
-
+from inspire_utils.record import get_value
 from invenio_db import db
 from invenio_workflows import workflow_object_class, start, resume
 from invenio_workflows_ui.api import WorkflowUIRecord
+from werkzeug.datastructures import MultiDict
 
-from inspire_dojson import marcxml2record
-from inspire_utils.record import get_value
 from inspirehep.modules.forms.form import DataExporter
+from inspirehep.utils.record_getter import RecordGetterError, get_db_record
 from inspirehep.utils.url import get_legacy_url_for_recid
-
 from .forms import AuthorUpdateForm
 from .permissions import holdingpen_author_permission
 from .tasks import formdata_to_model
-
+from .core import convert_for_form
+from .utils import get_author_record_from_xml_response
 
 blueprint = Blueprint(
     'inspirehep_authors',
@@ -62,106 +59,6 @@ blueprint = Blueprint(
     template_folder='templates',
     static_folder='static',
 )
-
-
-def set_int_or_skip(mydict, key, myint):
-    try:
-        mydict[key] = int(myint)
-    except ValueError:
-        pass
-
-
-def convert_for_form(data):
-    """
-    Convert author data model form field names.
-
-    FIXME This might be better in a different file and as a dojson conversion
-    """
-    if "name" in data:
-        data["full_name"] = data["name"].get("value")
-        try:
-            data["given_names"] = data["name"].get(
-                "value").split(",")[1].strip()
-        except IndexError:
-            data["given_names"] = ""
-        data["family_name"] = data["name"].get("value").split(",")[0].strip()
-        data["display_name"] = data["name"].get("preferred_name")
-    if "native_name" in data:
-        data["native_name"] = data["native_name"][0]
-    if "urls" in data:
-        data["websites"] = []
-        for url in data["urls"]:
-            if not url.get('description'):
-                data["websites"].append({"webpage": url["value"]})
-            else:
-                if url["description"].lower() == "twitter":
-                    data["twitter_url"] = url["value"]
-                elif url["description"].lower() == "blog":
-                    data["blog_url"] = url["value"]
-                elif url["description"].lower() == "linkedin":
-                    data["linkedin_url"] = url["value"]
-        del data["urls"]
-    if 'arxiv_categories' in data:
-        data['research_field'] = data['arxiv_categories']
-    if "positions" in data:
-        data["institution_history"] = []
-        data["public_emails"] = []
-        for position in data["positions"]:
-            if not any(
-                [
-                    key in position for key in ('institution', '_rank',
-                                                'start_year', 'end_year')
-                ]
-            ):
-                if 'emails' in position:
-                    for email in position['emails']:
-                        data["public_emails"].append(
-                            {
-                                'email': email,
-                                'original_email': email
-                            }
-                        )
-                continue
-            pos = {}
-            pos["name"] = position.get("institution", {}).get("name")
-            rank = position.get("_rank", "")
-            if rank:
-                pos["rank"] = rank
-            set_int_or_skip(pos, "start_year", position.get("start_date", ""))
-            set_int_or_skip(pos, "end_year", position.get("end_date", ""))
-            pos["current"] = True if position.get("current") else False
-            pos["old_emails"] = position.get("old_emails", [])
-            if position.get("emails"):
-                pos["emails"] = position['emails']
-                for email in position['emails']:
-                    data["public_emails"].append(
-                        {
-                            'email': email,
-                            'original_email': email
-                        }
-                    )
-            data["institution_history"].append(pos)
-        data["institution_history"].reverse()
-    if 'advisors' in data:
-        advisors = data['advisors']
-        data['advisors'] = []
-        for advisor in advisors:
-            adv = {}
-            adv["name"] = advisor.get("name", "")
-            adv["degree_type"] = advisor.get("degree_type", "")
-            data["advisors"].append(adv)
-    if "ids" in data:
-        for id in data["ids"]:
-            try:
-                if id["schema"] == "ORCID":
-                    data["orcid"] = id["value"]
-                elif id["schema"] == "INSPIRE BAI":
-                    data["bai"] = id["value"]
-                elif id["schema"] == "INSPIRE ID":
-                    data["inspireid"] = id["value"]
-            except KeyError:
-                # Protect against cases when there is no value in metadata
-                pass
 
 
 def get_inspire_url(data):
@@ -230,21 +127,27 @@ def new():
 @login_required
 def update(recid):
     """View for INSPIRE author update form."""
-    data = {}
-    if recid:
+    try:
+        data = get_db_record('aut', recid)
+    except RecordGetterError:
+        # TODO: a different approach will be needed when Legacy shuts down.
         try:
             url = get_legacy_url_for_recid(recid) + '/export/xm'
-            xml = requests.get(url)
-            record_regex = re.compile(
-                r"\<record\>.*\<\/record\>", re.MULTILINE + re.DOTALL)
-            xml_content = record_regex.search(xml.content).group()
-            data = marcxml2record(xml_content)
-            convert_for_form(data)
+            xml_response = requests.get(url)
+            xml_response.raise_for_status()
         except requests.exceptions.RequestException:
-            pass
-        data["control_number"] = recid
-    else:
-        return redirect(url_for("inspirehep_authors.new"))
+            if xml_response.status_code == 404:
+                abort(404)
+            abort(400)
+
+        data = get_author_record_from_xml_response(xml_response.content)
+
+    if not data:
+        abort(400)
+
+    convert_for_form(data)
+    data['control_number'] = recid
+
     form = AuthorUpdateForm(data=data, is_update=True)
     ctx = {
         "action": url_for('.submitupdate'),
