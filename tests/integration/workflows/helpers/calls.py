@@ -193,3 +193,25 @@ def core_record():
     assert categories
 
     return json_data, categories
+
+
+def do_validation_callback(app, worfklow_id, metadata, extra_data):
+    """Do a validation callback request.
+
+       Note:
+           If ``malformed`` is true it will make the payload
+           invalid, by removing two required ``keys``; ``id``
+           and ``_extra_data``.
+    """
+    client = app.test_client()
+    payload = {
+        'id': worfklow_id,
+        'metadata': metadata,
+        '_extra_data': extra_data
+    }
+
+    return client.put(
+        '/callback/workflows/resolve_validation_errors',
+        data=json.dumps(payload),
+        content_type='application/json',
+    )

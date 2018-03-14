@@ -30,13 +30,15 @@ import os
 import traceback
 from contextlib import closing, contextmanager
 from functools import wraps
-
+from six import text_type
 import backoff
 import lxml.etree as ET
 import requests
-from flask import current_app
+from flask import current_app, url_for
 
 from invenio_db import db
+from inspire_schemas.utils import \
+    get_validation_errors as _get_validation_errors
 
 from inspirehep.utils.url import retrieve_uri
 from inspirehep.modules.workflows.models import (
@@ -269,3 +271,38 @@ def insert_wf_record_source(json, record_uuid, source):
     else:
         record_source.json = json
     db.session.commit()
+
+
+def get_resolve_validation_callback_url():
+    """Resolve validation callback.
+
+    Returns the callback url for resolving the validation errors.
+
+    Note:
+        It's using ``inspire_workflows.callback_resolve_validation``
+        route.
+    """
+    return url_for(
+        'inspire_workflows.callback_resolve_validation',
+        _external=True
+    )
+
+
+def get_validation_errors(data, schema):
+    """Creates a ``validation_errors`` dictionary.
+
+    Args:
+        data (dict): the object to validate.
+        schema (str): the name of the schema.
+
+    Returns:
+        dict: ``validation_errors`` formatted dict.
+    """
+    errors = _get_validation_errors(data, schema=schema)
+    error_messages = [
+        {
+            'path': map(text_type, error.absolute_path),
+            'message': text_type(error.message),
+        } for error in errors
+    ]
+    return error_messages

@@ -33,3 +33,73 @@ class DownloadError(WorkflowsError):
 class MergeError(WorkflowsError):
 
     """Error representing a failed merge in a workflow."""
+
+
+class CallbackError(WorkflowsError):
+    """Callback exception."""
+
+    code = 400
+    error_code = 'CALLBACK_ERROR'
+    errors = None
+    message = 'Workflow callback error.'
+    workflow = None
+
+    def to_dict(self):
+        """Execption to dictionary."""
+        response = {}
+        response['error_code'] = self.error_code
+        if self.errors is not None:
+            response['errors'] = self.errors
+        response['message'] = self.message
+        if self.workflow is not None:
+            response['workflow'] = self.workflow
+        return response
+
+
+class CallbackMalformedError(CallbackError):
+    """Malformed request exception."""
+
+    error_code = 'MALFORMED'
+    message = 'The workflow request is malformed.'
+
+    def __init__(self, errors=None, **kwargs):
+        """Initialize exception."""
+        super(CallbackMalformedError, self).__init__(**kwargs)
+        self.errors = errors
+
+
+class CallbackWorkflowNotFoundError(CallbackError):
+    """Workflow not found exception."""
+
+    code = 404
+    error_code = 'WORKFLOW_NOT_FOUND'
+
+    def __init__(self, workflow_id, **kwargs):
+        """Initialize exception."""
+        super(CallbackWorkflowNotFoundError, self).__init__(**kwargs)
+        self.message = 'The workflow with id "{}" was not found.'.format(
+            workflow_id)
+
+
+class CallbackValidationError(CallbackError):
+    """Validation error exception."""
+
+    error_code = 'VALIDATION_ERROR'
+    message = 'Validation error.'
+
+    def __init__(self, workflow_data, **kwargs):
+        """Initialize exception."""
+        super(CallbackValidationError, self).__init__(**kwargs)
+        self.workflow = workflow_data
+
+
+class CallbackWorkflowNotInValidationError(CallbackError):
+    """Validation workflow not in validation error exception."""
+
+    error_code = 'WORKFLOW_NOT_IN_ERROR_STATE'
+
+    def __init__(self, workflow_id, **kwargs):
+        """Initialize exception."""
+        super(CallbackWorkflowNotInValidationError, self).__init__(**kwargs)
+        self.message = 'Workflow {} is not in validation error state.'.format(
+            workflow_id)

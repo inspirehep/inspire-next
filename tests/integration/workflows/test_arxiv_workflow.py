@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
 import mock
 import pytest
 
@@ -41,14 +42,15 @@ from jsonschema import ValidationError
 from calls import (
     core_record,
     do_accept_core,
-    do_webcoll_callback,
-    do_robotupload_callback,
     do_resolve_matching,
+    do_robotupload_callback,
+    do_validation_callback,
+    do_webcoll_callback,
     generate_record,
 )
 from mocks import (
-    fake_download_file,
     fake_beard_api_request,
+    fake_download_file,
     fake_magpie_api_request,
 )
 from utils import get_halted_workflow
@@ -489,6 +491,13 @@ def test_article_workflow_stops_when_record_is_not_valid(workflow_app):
     assert '_error_msg' in obj.extra_data
     assert 'required' in obj.extra_data['_error_msg']
 
+    expected_url = 'http://localhost:5000/callback/workflows/resolve_validation_errors'
+
+    assert expected_url == obj.extra_data['callback_url']
+    assert obj.extra_data['validation_errors']
+    assert 'message' in obj.extra_data['validation_errors'][0]
+    assert 'path' in obj.extra_data['validation_errors'][0]
+
 
 def test_article_workflow_continues_when_record_is_valid(workflow_app):
     valid_record = {
@@ -640,3 +649,152 @@ def test_fuzzy_matched_goes_trough_the_workflow(
     assert obj.extra_data['is-update']
     assert obj.extra_data['approved']
     assert obj.status == ObjectStatus.COMPLETED
+
+
+def test_validation_error_callback_with_a_valid(workflow_app):
+    valid_record = {
+        '_collections': [
+            'Literature',
+        ],
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'A title'},
+        ],
+    }
+
+    eng_uuid = start('article', [valid_record])
+
+    eng = WorkflowEngine.from_uuid(eng_uuid)
+    obj = eng.objects[0]
+
+    assert obj.status != ObjectStatus.ERROR
+
+    response = do_validation_callback(
+        workflow_app,
+        obj.id,
+        obj.data,
+        obj.extra_data
+    )
+
+    expected_error_code = 'WORKFLOW_NOT_IN_ERROR_STATE'
+    data = json.loads(response.get_data())
+
+    assert response.status_code == 400
+    assert expected_error_code == data['error_code']
+
+
+def test_validation_error_callback_with_validation_error(workflow_app):
+    invalid_record = {
+        '_collections': [
+            'Literature',
+        ],
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'A title'},
+        ],
+        'preprint_date': 'Jessica Jones'
+    }
+
+    obj = workflow_object_class.create(
+        data=invalid_record,
+        data_type='hep',
+        id_user=1,
+    )
+    obj_id = obj.id
+
+    with pytest.raises(ValidationError):
+        start('article', invalid_record, obj_id)
+
+    assert obj.status == ObjectStatus.ERROR
+
+    response = do_validation_callback(
+        workflow_app,
+        obj.id,
+        obj.data,
+        obj.extra_data
+    )
+
+    expected_message = 'Validation error.'
+    expected_error_code = 'VALIDATION_ERROR'
+    data = json.loads(response.get_data())
+
+    assert response.status_code == 400
+    assert expected_error_code == data['error_code']
+    assert expected_message == data['message']
+
+    assert data['workflow']['_extra_data']['callback_url']
+    assert len(data['workflow']['_extra_data']['validation_errors']) == 1
+
+
+def test_validation_error_callback_with_missing_worfklow(workflow_app):
+    invalid_record = {
+        '_collections': [
+            'Literature',
+        ],
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'A title'},
+        ],
+    }
+
+    eng_uuid = start('article', [invalid_record])
+
+    eng = WorkflowEngine.from_uuid(eng_uuid)
+    obj = eng.objects[0]
+
+    response = do_validation_callback(
+        workflow_app,
+        1111,
+        obj.data,
+        obj.extra_data
+    )
+
+    data = json.loads(response.get_data())
+    expected_message = 'The workflow with id "1111" was not found.'
+    expected_error_code = 'WORKFLOW_NOT_FOUND'
+
+    assert response.status_code == 404
+    assert expected_error_code == data['error_code']
+    assert expected_message == data['message']
+
+
+def test_validation_error_callback_with_malformed_with_invalid_types(workflow_app):
+    invalid_record = {
+        '_collections': [
+            'Literature',
+        ],
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'A title'},
+        ],
+    }
+
+    eng_uuid = start('article', [invalid_record])
+
+    eng = WorkflowEngine.from_uuid(eng_uuid)
+    obj = eng.objects[0]
+
+    response = do_validation_callback(
+        workflow_app,
+        # id
+        'Alias Investigations',
+        obj.data,
+        # extra_data
+        'Jessica Jones'
+    )
+    data = json.loads(response.get_data())
+    expected_message = 'The workflow request is malformed.'
+    expected_error_code = 'MALFORMED'
+
+    assert response.status_code == 400
+    assert expected_error_code == data['error_code']
+    assert expected_message == data['message']
+    assert 'errors' in data

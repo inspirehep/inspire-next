@@ -25,14 +25,34 @@
 from __future__ import absolute_import, division, print_function
 
 from os.path import join
-from flask import Blueprint, jsonify, request, current_app
 
+from flask import (
+    Blueprint,
+    current_app,
+    jsonify,
+    request
+)
+from flask.views import MethodView
 from invenio_db import db
+from inspire_schemas.api import validate
 from invenio_workflows import workflow_object_class, ObjectStatus
 from invenio_workflows.errors import WorkflowsMissingObject
+from jsonschema.exceptions import ValidationError
 
 from inspire_utils.urls import ensure_scheme
+from inspirehep.modules.workflows.errors import (
+    CallbackError,
+    CallbackValidationError,
+    CallbackWorkflowNotFoundError,
+    CallbackWorkflowNotInValidationError
+)
+from inspirehep.modules.workflows.loaders import workflow_loader
 from inspirehep.modules.workflows.models import WorkflowsPendingRecord
+from inspirehep.modules.workflows.utils import (
+    get_resolve_validation_callback_url,
+    get_validation_errors
+)
+
 
 blueprint = Blueprint(
     'inspire_workflows',
@@ -41,6 +61,13 @@ blueprint = Blueprint(
     template_folder='templates',
     static_folder="static",
 )
+
+
+@blueprint.errorhandler(CallbackError)
+def error_handler(error):
+    """Callback error handler."""
+    response = jsonify(error.to_dict())
+    return response, error.code
 
 
 def _get_base_url():
@@ -376,3 +403,140 @@ def robotupload_callback():
         responses[recid] = response
 
     return jsonify(responses)
+
+
+def _validate_workflow_schema(workflow_data):
+    """Validate the ``metadata`` against the ``hep`` JSONSchema.
+
+    Args:
+        workflow_data (dist): the workflow dict.
+
+    Raises:
+        CallbackValidationError: if the workflow ``metadata`` is not valid
+            against ``hep`` JSONSchema.
+    """
+
+    # Check for validation errors
+    try:
+        validate(workflow_data['metadata'])
+    except ValidationError:
+        workflow_data['_extra_data']['validation_errors'] = \
+            get_validation_errors(workflow_data['metadata'], 'hep')
+        workflow_data['_extra_data']['callback_url'] = \
+            get_resolve_validation_callback_url()
+        raise CallbackValidationError(workflow_data)
+
+
+class ResolveValidationResource(MethodView):
+    """Resolve validation error callback."""
+
+    def put(self):
+        """Handle callback from validation errors.
+
+        When validation errors occur, the workflow stops in ``ERROR`` state, to
+        continue this endpoint is called.
+
+        Args:
+            workflow_data (dict): the workflow object send in the
+                request's payload.
+
+        Examples:
+            An example of successful call:
+
+                $ curl \\
+                    http://web:5000/callback/workflows/resolve_validation_errors \\
+                    -H "Host: localhost:5000" \\
+                    -H "Content-Type: application/json" \\
+                    -d '{
+                        "_extra_data": {
+                            ... extra data content
+                        },
+                        "id": 910648,
+                        "metadata": {
+                            "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
+                            ... record content
+                        }
+                    }'
+
+            The response:
+
+                HTTP 200 OK
+
+                {"mesage": "Workflow 910648 validated, continuing it."}
+
+
+            A failed example:
+
+                $ curl \\
+                    http://web:5000/callback/workflows/resolve_validation_errors \\
+                    -H "Host: localhost:5000" \\
+                    -H "Content-Type: application/json" \\
+                    -d '{
+                        "_extra_data": {
+                            ... extra data content
+                        },
+                        "id": 910648,
+                        "metadata": {
+                            "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
+                            ... record content
+                        }
+                    }'
+
+            The error response will contain the workflow that was passed, with the
+            new validation errors:
+
+                HTTP 400 Bad request
+
+                {
+                    "_extra_data": {
+                        "validatior_errors": [
+                            {
+                                "path": ["path", "to", "error"],
+                                "message": "required: ['missing_key1', 'missing_key2']"
+                            }
+                        ],
+                        ... rest of extra data content
+                    },
+                    "id": 910648,
+                    "metadata": {
+                        "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
+                        ... record content
+                    }
+                }
+        """
+        workflow_data = workflow_loader()
+        _validate_workflow_schema(workflow_data)
+
+        workflow_id = workflow_data['id']
+        try:
+            workflow = workflow_object_class.get(workflow_id)
+        except WorkflowsMissingObject:
+            raise CallbackWorkflowNotFoundError(workflow_id)
+
+        if workflow.status != ObjectStatus.ERROR or \
+           'callback_url' not in workflow.extra_data:
+            raise CallbackWorkflowNotInValidationError(workflow_id)
+
+        workflow.data = workflow_data['metadata']
+        workflow.status = ObjectStatus.RUNNING
+
+        workflow.extra_data.pop('callback_url', None)
+        workflow.extra_data.pop('validation_errors', None)
+
+        workflow.save()
+        db.session.commit()
+        workflow.continue_workflow(delayed=True)
+
+        data = {
+            'message': 'Workflow {} is continuing.'.format(workflow.id),
+        }
+        return jsonify(data), 200
+
+
+callback_resolve_validation = ResolveValidationResource.as_view(
+    'callback_resolve_validation')
+
+blueprint.add_url_rule(
+    '/workflows/resolve_validation_errors',
+    view_func=callback_resolve_validation,
+)
