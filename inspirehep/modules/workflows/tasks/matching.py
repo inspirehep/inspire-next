@@ -122,6 +122,9 @@ def fuzzy_match(obj, eng):
         ``False`` otherwise.
 
     """
+    if not current_app.config.get('FEATURE_FLAG_ENABLE_FUZZY_MATCHER'):
+        return False
+
     fuzzy_match_config = current_app.config['FUZZY_MATCH']
     matches = dedupe_list(match(obj.data, fuzzy_match_config))
     record_ids = [el['_source']['control_number'] for el in matches]

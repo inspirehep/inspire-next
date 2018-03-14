@@ -54,6 +54,12 @@ from mocks import (
 from utils import get_halted_workflow
 
 
+@pytest.fixture
+def enable_fuzzy_matcher(workflow_app):
+    with mock.patch.dict(workflow_app.config, {'FEATURE_FLAG_ENABLE_FUZZY_MATCHER': True}):
+        yield
+
+
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
@@ -572,6 +578,7 @@ def test_fuzzy_matched_goes_trough_the_workflow(
     workflow_app,
     mocked_external_services,
     record_from_db,
+    enable_fuzzy_matcher,
 ):
     """Test update article fuzzy matched.
 
