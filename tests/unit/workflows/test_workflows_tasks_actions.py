@@ -434,19 +434,42 @@ def test_is_record_relevant(
     assert is_record_relevant(obj, eng) is expected
 
 
-def test_is_experimental_paper():
-    obj = MockObj({
+def test_is_experimental_paper_returns_true_if_obj_has_an_experimental_arxiv_category():
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    data = {
         'arxiv_eprints': [
-            {'categories': ['hep-ex']},
-        ]
-    }, {})
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': 'hep-ex/0008040',
+            },
+        ],
+    }  # literature/532168
+    extra_data = {}
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data)
     eng = MockEng()
 
     assert is_experimental_paper(obj, eng)
 
 
-def test_is_experimental_paper_returns_true_if_inspire_categories_in_list():
-    obj = MockObj({'inspire_categories': [{'term': 'Experiment-HEP'}]}, {})
+def test_is_experimental_paper_returns_true_if_obj_has_an_experimental_inspire_category():
+    schema = load_schema('hep')
+    subschema = schema['properties']['inspire_categories']
+
+    data = {
+        'inspire_categories': [
+            {'term': 'Experiment-HEP'},
+        ],
+    }  # literature/532168
+    extra_data = {}
+    assert validate(data['inspire_categories'], subschema) is None
+
+    obj = MockObj(data, extra_data)
     eng = MockEng()
 
     assert is_experimental_paper(obj, eng)
@@ -454,6 +477,24 @@ def test_is_experimental_paper_returns_true_if_inspire_categories_in_list():
 
 def test_is_experimental_paper_returns_false_otherwise():
     obj = MockObj({}, {})
+    eng = MockEng()
+
+    assert not is_experimental_paper(obj, eng)
+
+
+def test_is_experimental_paper_does_not_raise_if_obj_has_no_arxiv_category():
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    data = {
+        'arxiv_eprints': [
+            {'value': '1712.02280'},
+        ],
+    }
+    extra_data = {}
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data)
     eng = MockEng()
 
     assert not is_experimental_paper(obj, eng)
