@@ -34,7 +34,7 @@ from inspire_dojson import marcxml2record
 from inspirehep.modules.workflows.utils import convert
 
 
-def do_resolve_workflow(app, workflow_id, action='accept_core'):
+def _call_workflow_resolve_api(app, workflow_id, data):
     """Calls to the workflow resolve endpoint.
 
     :param app: flask app to use
@@ -43,11 +43,6 @@ def do_resolve_workflow(app, workflow_id, action='accept_core'):
     'accept')
     """
     client = app.test_client()
-    data = {
-        'value': action,
-        'id': workflow_id,
-    }
-
     login_user_via_session(client, email='cataloger@inspirehep.net')
     return client.post(
         '/api/holdingpen/%s/action/resolve' % workflow_id,
@@ -56,12 +51,33 @@ def do_resolve_workflow(app, workflow_id, action='accept_core'):
     )
 
 
-def do_resolve_manual_merge_wf(app, workflow_id):
-    """Solve the the given workflow's conflicts.
-    """
-    response = do_resolve_workflow(
+def do_resolve_workflow(app, workflow_id, action='accept_core'):
+    data = {'value': action, 'id': workflow_id}
+    response = _call_workflow_resolve_api(
         app=app,
-        workflow_id=workflow_id
+        workflow_id=workflow_id,
+        data=data
+    )
+    assert response.status_code == 200
+    return response
+
+
+def do_resolve_manual_merge_wf(app, workflow_id):
+    """Accept one of the proposed matches."""
+    response = _call_workflow_resolve_api(
+        app=app,
+        workflow_id=workflow_id,
+        data=None
+    )
+    assert response.status_code == 200
+
+
+def do_resolve_matching(app, workflow_id, match_id):
+    data = {'match_recid': match_id}
+    response = _call_workflow_resolve_api(
+        app=app,
+        workflow_id=workflow_id,
+        data=data
     )
     assert response.status_code == 200
 
@@ -77,7 +93,6 @@ def do_accept_core(app, workflow_id):
         workflow_id=workflow_id,
         action='accept_core',
     )
-    assert response.status_code == 200
     response_data = json.loads(response.data)
     assert response_data == {
         'acknowledged': True,
@@ -110,11 +125,12 @@ def do_robotupload_callback(
         ],
     }
 
-    return client.post(
+    response = client.post(
         '/callback/workflows/robotupload',
         data=json.dumps(data),
         content_type='application/json',
     )
+    assert response.status_code == 200
 
 
 def do_webcoll_callback(app, recids, server_name='http://fake.na.me'):
@@ -127,11 +143,12 @@ def do_webcoll_callback(app, recids, server_name='http://fake.na.me'):
     client = app.test_client()
     data = {"recids": recids}
 
-    return client.post(
+    response = client.post(
         '/callback/workflows/webcoll',
         data=data,
         content_type='application/x-www-form-urlencoded',
     )
+    assert response.status_code == 200
 
 
 def generate_record():
@@ -176,3 +193,25 @@ def core_record():
     assert categories
 
     return json_data, categories
+
+
+def do_validation_callback(app, worfklow_id, metadata, extra_data):
+    """Do a validation callback request.
+
+       Note:
+           If ``malformed`` is true it will make the payload
+           invalid, by removing two required ``keys``; ``id``
+           and ``_extra_data``.
+    """
+    client = app.test_client()
+    payload = {
+        'id': worfklow_id,
+        'metadata': metadata,
+        '_extra_data': extra_data
+    }
+
+    return client.put(
+        '/callback/workflows/resolve_validation_errors',
+        data=json.dumps(payload),
+        content_type='application/json',
+    )

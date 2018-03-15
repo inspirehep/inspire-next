@@ -50,7 +50,7 @@ from inspire_utils.helpers import force_list
 from inspire_utils.name import generate_name_variations
 from inspire_utils.record import get_value
 from inspirehep.modules.authors.utils import phonetic_blocks
-from inspirehep.modules.orcid.utils import get_push_access_token
+from inspirehep.modules.orcid.utils import get_push_access_token, get_orcids_for_push
 
 
 def is_hep(record):
@@ -138,19 +138,13 @@ def push_to_orcid(sender, record, *args, **kwargs):
     if not is_hep(record) or not current_app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']:
         return
 
-    def _get_orcid(author_ids):
-        for author_id in author_ids:
-            if author_id.get('schema', '').lower() == 'orcid':
-                return author_id['value']
+    # Ensure there is a control number. This is not always the case because of broken store_record.
+    if 'control_number' not in record:
+        return
 
     task_name = current_app.config['ORCID_PUSH_TASK_ENDPOINT']
-    authors = record.get('authors', ())
 
-    for author in authors:
-        orcid = _get_orcid(author.get('ids', ()))
-        if not orcid:
-            continue
-
+    for orcid in get_orcids_for_push(record):
         token = get_push_access_token(orcid)
         if token is None:
             continue

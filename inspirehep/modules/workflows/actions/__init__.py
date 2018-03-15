@@ -20,10 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Our workflows."""
+"""Inspire workflows."""
 
 from __future__ import absolute_import, division, print_function
 
-from .hep_approval import HEPApproval        # noqa: F401
-from .merge_approval import MergeApproval    # noqa: F401
 from .author_approval import AuthorApproval  # noqa: F401
+from .hep_approval import HEPApproval        # noqa: F401
+from .match_approval import MatchApproval  # noqa: F401
+from .merge_approval import MergeApproval    # noqa: F401

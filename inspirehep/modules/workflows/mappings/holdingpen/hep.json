@@ -12,7 +12,7 @@
                         "is-update": {
                             "type": "boolean"
                         },
-                        "record_matches": {
+                        "matches": {
                             "enabled": false,
                             "include_in_all": false,
                             "type": "object"

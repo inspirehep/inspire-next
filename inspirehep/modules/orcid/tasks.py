@@ -24,11 +24,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 from flask import current_app
+from sqlalchemy.exc import SQLAlchemyError
+
 from celery import shared_task
-from celery.utils.log import get_task_logger
 from redis import StrictRedis
-from redis_lock import Lock
 from simplejson import loads
 
 from invenio_oauthclient.utils import oauth_link_external_id
@@ -44,27 +46,24 @@ from inspirehep.modules.orcid.utils import get_orcid_recid_key, redis_locking_co
 LOGGER = getStackTraceLogger(__name__)
 
 
-logger = get_task_logger(__name__)
-
-
 def legacy_orcid_arrays():
-    """Generator to fetch token data from redis.
+    """
+    Generator to fetch token data from redis.
+
+    Note: this function consumes the queue populated by the legacy tasklet:
+    inspire/bibtasklets/bst_orcidsync.py
 
     Yields:
         list: user data in the form of [orcid, token, email, name]
     """
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
-    lock = Lock(r, 'import_legacy_orcid_tokens', expire=120, auto_renewal=True)
-    if lock.acquire(blocking=False):
-        try:
-            while r.llen('legacy_orcid_tokens'):
-                yield loads(r.lrange('legacy_orcid_tokens', 0, 1)[0])
-                r.lpop('legacy_orcid_tokens')
-        finally:
-            lock.release()
-    else:
-        logger.info("Import_legacy_orcid_tokens already executed. Skipping.")
+
+    key = 'legacy_orcid_tokens'
+    token = r.lpop(key)
+    while token:
+        yield loads(token)
+        token = r.lpop(key)
 
 
 def _link_user_and_token(user, name, orcid, token):
@@ -85,23 +84,30 @@ def _link_user_and_token(user, name, orcid, token):
         # User already has their ORCID linked
         pass
 
-    # Is there already a token associated with this ORCID identifier?
-    if RemoteToken.query.join(RemoteAccount).join(User).join(UserIdentity).filter(UserIdentity.id == orcid).count():
-        return
+    # Check whether there are already tokens associated with this
+    # ORCID identifier.
+    tokens = RemoteToken.query.join(RemoteAccount).join(User)\
+        .join(UserIdentity).filter(UserIdentity.id == orcid).all()
 
-    # If not, create and put the token entry
-    with db.session.begin_nested():
-        db.session.add(RemoteToken.create(
-            user_id=user.id,
-            client_id=get_value(current_app.config, 'ORCID_APP_CREDENTIALS.consumer_key'),
-            token=token,
-            secret=None,
-            extra_data={
-                'orcid': orcid,
-                'full_name': name,
-                'allow_push': True,
-            }
-        ))
+    if tokens:
+        # Force the allow_push.
+        with db.session.begin_nested():
+            for token in tokens:
+                token.remote_account.extra_data['allow_push'] = True
+    else:
+        # If not, create and put the token entry
+        with db.session.begin_nested():
+            RemoteToken.create(
+                user_id=user.id,
+                client_id=get_value(current_app.config, 'ORCID_APP_CREDENTIALS.consumer_key'),
+                token=token,
+                secret=None,
+                extra_data={
+                    'orcid': orcid,
+                    'full_name': name,
+                    'allow_push': True,
+                }
+            )
 
 
 def _register_user(name, email, orcid, token):
@@ -127,9 +133,9 @@ def _register_user(name, email, orcid, token):
 
     # Make the user if didn't find existing one
     if not user:
-        user = User()
-        user.email = email
         with db.session.begin_nested():
+            user = User()
+            user.email = email
             db.session.add(user)
 
     _link_user_and_token(user, name, orcid, token)
@@ -142,8 +148,13 @@ def import_legacy_orcid_tokens():
         return
 
     for user_data in legacy_orcid_arrays():
-        orcid, token, email, name = user_data
-        _register_user(name, email, orcid, token)
+        try:
+            orcid, token, email, name = user_data
+            _register_user(name, email, orcid, token)
+        except SQLAlchemyError as ex:
+            LOGGER.exception(ex)
+
+    db.session.commit()
 
 
 @shared_task(bind=True)
@@ -156,6 +167,10 @@ def orcid_push(self, orcid, rec_id, oauth_token):
         rec_id(int): inspire record's id to push to ORCID.
         oauth_token(string): orcid token.
     """
+    if not re.match(current_app.config.get(
+            'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX', '^$'), orcid):
+        return None
+
     try:
         attempt_push(orcid, rec_id, oauth_token)
     except Exception:

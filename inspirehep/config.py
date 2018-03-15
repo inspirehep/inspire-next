@@ -33,6 +33,8 @@ from celery.schedules import crontab
 from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
 
+from inspire_matcher.config import MATCHER_DEFAULT_CONFIGURATION as exact_match
+
 
 # Debug
 # =====
@@ -42,6 +44,13 @@ SERVER_NAME = 'localhost:5000'
 # Feature flags
 # =============
 FEATURE_FLAG_ENABLE_ORCID_PUSH = False
+# Only push to ORCIDs that match this regex.
+# Examples:
+#   any ORCID -> ".*"
+#   none -> "^$"
+#   some ORCIDs -> "^(0000-0002-7638-5686|0000-0002-7638-5687)$"
+FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '.*'
+FEATURE_FLAG_ENABLE_FUZZY_MATCHER = False
 
 # Default language and timezone
 # =============================
@@ -1185,6 +1194,8 @@ orcid.REMOTE_MEMBER_APP['params']['request_token_params'] = {
     'show_login': 'true',
 }
 
+orcid.REMOTE_MEMBER_APP['signup_handler']['setup'] = 'inspirehep.modules.orcid.utils.account_setup'
+
 ORCID_APP_CREDENTIALS = dict(
     consumer_key="CHANGE_ME",
     consumer_secret="CHANGE_ME",
@@ -1199,6 +1210,7 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
     consumer_secret="CHANGE_ME",
 )
 ORCID_PUSH_TASK_ENDPOINT = 'inspirehep.modules.orcid.tasks.orcid_push'
+ORCID_ALLOW_PUSH_DEFAULT = False
 
 OAUTHCLIENT_SETTINGS_TEMPLATE = 'inspirehep_theme/page.html'
 
@@ -1631,3 +1643,41 @@ INSPIRE_REF_UPDATER_WHITELISTS = {
     ],
 }
 """Controls which fields are updated when the referred record is updated."""
+
+# Configuration for the matcher
+# =============================
+EXACT_MATCH = exact_match
+EXACT_MATCH['source'] = ['control_number']
+
+FUZZY_MATCH = {
+    'algorithm': [
+        {
+            'queries': [
+                {
+                    'clauses': [
+                        {
+                            'boost': 20,
+                            'path': 'abstracts',
+                        },
+                        {
+                            'boost': 10,
+                            'path': 'authors[:3]',
+                        },
+                        {
+                            'boost': 20,
+                            'path': 'titles',
+                        },
+                        {
+                            'boost': 10,
+                            'path': 'report_numbers',
+                        },
+                    ],
+                    'type': 'fuzzy',
+                }
+            ]
+        }
+    ],
+    'doc_type': 'hep',
+    'index': 'records-hep',
+    'source': ['control_number']
+}

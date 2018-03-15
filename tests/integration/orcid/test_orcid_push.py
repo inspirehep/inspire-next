@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import mock
 import pkg_resources
 import pytest
 import re
@@ -152,3 +153,76 @@ def test_push_to_orcid_verify_correct_being_pushed(
     monkeypatch.setattr(tasks, 'push_record_with_orcid', _push_record_with_orcid)
 
     attempt_push(orcid, recid, 'fake-token')
+
+
+def test_feature_flag_orcid_push_whitelist_regex_none():
+    FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '^$'
+
+    compiled = re.compile(FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX)
+    assert not re.match(compiled, '0000-0002-7638-5686')
+    assert not re.match(compiled, 'foo')
+    # Be careful with the empty string.
+    assert re.match(compiled, '')
+
+
+def test_feature_flag_orcid_push_whitelist_regex_any():
+    FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '.*'
+
+    compiled = re.compile(FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX)
+    assert re.match(compiled, '0000-0002-7638-5686')
+    assert re.match(compiled, 'foo')
+    assert re.match(compiled, '')
+
+
+def test_feature_flag_orcid_push_whitelist_regex_some():
+    FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '^(0000-0002-7638-5686|0000-0002-7638-5687)$'
+
+    compiled = re.compile(FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX)
+    assert re.match(compiled, '0000-0002-7638-5686')
+    assert not re.match(compiled, '0000-0002-7638-5686XX')
+    assert not re.match(compiled, '0000-0002-7638-56')
+    assert not re.match(compiled, '0000-0002-7638-5689')
+    assert not re.match(compiled, 'foo')
+    assert not re.match(compiled, '')
+
+
+def test_orcid_push_feature_flag_orcid_push_whitelist_regex_any(api):
+    orcid = '0000-0002-7638-5686'
+    regex = '.*'
+
+    with mock.patch('inspirehep.modules.orcid.tasks.attempt_push') as mock_attempt_push, \
+            mock.patch.dict(
+                'inspirehep.modules.orcid.tasks.current_app.config', {
+                    'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX': regex,
+                }):
+        orcid_push(orcid, 'rec_id', 'token')
+
+    mock_attempt_push.assert_called_once_with(orcid, mock.ANY, mock.ANY)
+
+
+def test_orcid_push_feature_flag_orcid_push_whitelist_regex_none(api):
+    orcid = '0000-0002-7638-5686'
+    regex = '^$'
+
+    with mock.patch('inspirehep.modules.orcid.tasks.attempt_push') as mock_attempt_push, \
+            mock.patch.dict(
+                'inspirehep.modules.orcid.tasks.current_app.config', {
+                    'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX': regex,
+                }):
+        orcid_push(orcid, 'rec_id', 'token')
+
+    mock_attempt_push.assert_not_called()
+
+
+def test_orcid_push_feature_flag_orcid_push_whitelist_regex_some(api):
+    orcid = '0000-0002-7638-5686'
+    regex = '^(0000-0002-7638-5686|0000-0002-7638-5687)$'
+
+    with mock.patch('inspirehep.modules.orcid.tasks.attempt_push') as mock_attempt_push, \
+            mock.patch.dict(
+                'inspirehep.modules.orcid.tasks.current_app.config', {
+                    'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX': regex,
+                }):
+        orcid_push(orcid, 'rec_id', 'token')
+
+    mock_attempt_push.assert_called_once_with(orcid, mock.ANY, mock.ANY)

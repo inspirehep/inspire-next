@@ -38,14 +38,14 @@ from inspirehep.utils.schema import ensure_valid_schema
 def store_record(obj, eng):
     """Insert or replace a record."""
     def _get_updated_record(obj):
-        """TODO: use only head_uuid once we have them merger."""
+        """TODO: use only head_uuid once we have the merger."""
         if 'head_uuid' in obj.extra_data:
             updated_record = InspireRecord.get_record(
                 obj.extra_data['head_uuid'],
             )
         else:
             pid_type = get_pid_type_from_schema(obj.data['$schema'])
-            updated_record_id = obj.extra_data['record_matches'][0]
+            updated_record_id = obj.extra_data['matches']['approved']
             updated_record = get_db_record(pid_type, updated_record_id)
 
         return updated_record

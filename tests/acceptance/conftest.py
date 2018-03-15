@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 import pytest
 
 from invenio_db import db
+from invenio_records.models import RecordMetadata
 from invenio_search import current_search_client as es
 from invenio_workflows import workflow_object_class
 
@@ -116,3 +117,13 @@ def cleanup_workflows_tables(app):
                 obj.delete()
 
         db.session.commit()
+
+
+@pytest.fixture(autouse=True, scope='function')
+def cleanup_literatures(app):
+    recs = RecordMetadata.query.filter(RecordMetadata.json['_collections'].op('?')('Literature')).all()
+    for lit_record in recs:
+        db.session.delete(lit_record)
+
+    db.session.commit()
+    es.indices.refresh('records-hep')

@@ -237,17 +237,17 @@ class OrcidBuilder(object):
         if role:
             contributor_attributes.append(_WORK('contributor-role', role))
 
-        contributor = _WORK(
-            'contributor',
-            _WORK('credit-name', credit_name),
-            contributor_attributes
-        )
+        contributor = _WORK('contributor')
 
         if orcid:
             contributor.append(self._make_contributor_orcid_field(orcid))
 
+        contributor.append(_WORK('credit-name', credit_name))
+
         if email:
             contributor.append(_WORK('contributor-email', email))
+
+        contributor.append(contributor_attributes)
 
         return contributor
 

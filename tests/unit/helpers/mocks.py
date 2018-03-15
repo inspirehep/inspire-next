@@ -49,9 +49,21 @@ class MockObj(object):
         self.id_user = id_user
 
         self.log = MockLog()
+        self.workflow = MockWorkflow('article')
 
     def save(self):
         pass
+
+    def remove_action(self):
+        pass
+
+    def continue_workflow(self, delayed=False):
+        pass
+
+
+class MockWorkflow(object):
+    def __init__(self, name):
+        self.name = name
 
 
 class AttrDict(dict):

@@ -75,7 +75,11 @@ from inspirehep.modules.workflows.tasks.matching import (
     stop_processing,
     match_non_completed_wf_in_holdingpen,
     match_previously_rejected_wf_in_holdingpen,
-    article_exists,
+    exact_match,
+    fuzzy_match,
+    is_fuzzy_match_approved,
+    set_exact_match_as_approved_in_extradata,
+    set_fuzzy_match_approved_in_extradata,
     previously_rejected,
     has_same_source,
     stop_matched_holdingpen_wfs,
@@ -262,16 +266,6 @@ STOP_IF_EXISTING_SUBMISSION = [
 
 
 HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
-    IF_NOT(
-        is_record_relevant,
-        [
-            reject_record("Article automatically rejected"),
-            mark('approved', False),  # auto reject
-            save_workflow,
-            stop_processing,
-        ]
-    ),
-
     IF_ELSE(
         is_marked('is-update'),
         [
@@ -285,7 +279,16 @@ HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
                 message="Submission halted for curator approval.",
             )
         ),
-    )
+    ),
+    IF_NOT(
+        is_record_relevant,
+        [
+            reject_record("Article automatically rejected"),
+            mark('approved', False),  # auto reject
+            save_workflow,
+            stop_processing,
+        ]
+    ),
 ]
 
 
@@ -395,11 +398,33 @@ PROCESS_HOLDINGPEN_MATCHES = [
 ]
 
 
-MARK_IF_UPDATE = [
+CHECK_IS_UPDATE = [
     IF_ELSE(
-        article_exists,
-        mark('is-update', True),
-        mark('is-update', False),
+        exact_match,
+        [
+            set_exact_match_as_approved_in_extradata,
+            mark('is-update', True),
+            mark('exact-matched', True),
+        ],
+        IF_ELSE(
+            fuzzy_match,
+            [
+                halt_record(
+                    action="match_approval",
+                    message="Halted for matching approval.",
+                ),
+                IF_ELSE(
+                    is_fuzzy_match_approved,
+                    [
+                        set_fuzzy_match_approved_in_extradata,
+                        mark('fuzzy-matched', True),
+                        mark('is-update', True),
+                    ],
+                    mark('is-update', False),
+                )
+            ],
+            mark('is-update', False),
+        )
     ),
     save_workflow,
 ]
@@ -466,7 +491,7 @@ class Article(object):
         PRE_PROCESSING +
         NOTIFY_IF_SUBMISSION +
         MARK_IF_MATCH_IN_HOLDINGPEN +
-        MARK_IF_UPDATE +
+        CHECK_IS_UPDATE +
         PROCESS_HOLDINGPEN_MATCHES +
         ENHANCE_RECORD +
         STOP_IF_EXISTING_SUBMISSION +

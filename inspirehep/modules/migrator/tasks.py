@@ -38,6 +38,7 @@ from elasticsearch.helpers import bulk as es_bulk
 from elasticsearch.helpers import scan as es_scan
 from flask import current_app
 from flask_sqlalchemy import models_committed
+from functools import wraps
 from jsonschema import ValidationError
 from redis import StrictRedis
 from redis_lock import Lock
@@ -74,6 +75,27 @@ CHUNK_SIZE = 100
 LARGE_CHUNK_SIZE = 2000
 
 split_marc = re.compile('<record.*?>.*?</record>', re.DOTALL)
+
+
+def disable_orcid_push(task_function):
+    """Temporarily disable ORCID push
+
+    Decorator to temporarily disable ORCID push while a given task is running,
+    and only for that task. Takes care of restoring the previous state in case
+    of errors or when the task is finished. This does not interfere with other
+    tasks, firstly because of ditto, secondly because configuration is only
+    changed within the worker's process (thus doesn't affect parallel tasks).
+    """
+    @wraps(task_function)
+    def _task_function(*args, **kwargs):
+        initial_state = current_app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']
+        current_app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH'] = False
+        try:
+            task_function(*args, **kwargs)
+        finally:
+            current_app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH'] = initial_state
+
+    return _task_function
 
 
 def chunker(iterable, chunksize=CHUNK_SIZE):
@@ -215,6 +237,7 @@ def create_index_op(record):
     acks_late=True,
     queue='migrator',
 )
+@disable_orcid_push
 def migrate_chunk(chunk, skip_files=False):
     models_committed.disconnect(index_after_commit)
 

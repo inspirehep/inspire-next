@@ -828,3 +828,51 @@ def test_arxiv_author_list_handles_multiple_author_xml_files():
     validate(expected_authors, authors_subschema)
 
     assert obj.data.get('authors') == expected_authors
+
+
+def test_arxiv_author_list_does_not_produce_latex():
+    schema = load_schema('hep')
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1802.03388.tar.gz'))
+
+    eprints_subschema = schema['properties']['arxiv_eprints']
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '1802.03388',
+            },
+        ],
+    }
+    validate(data['arxiv_eprints'], eprints_subschema)
+
+    extra_data = {}
+    files = MockFiles({
+        '1802.03388.tar.gz': AttrDict({'file': AttrDict({'uri': filename})})
+    })
+
+    authors_subschema = schema['properties']['authors']
+    expected_authors = [
+        {
+            'affiliations': [{'value': 'Lund U.'}],
+            'ids': [
+                {
+                    'value': 'INSPIRE-00061248',
+                    'schema': 'INSPIRE ID'
+                }
+            ],
+            'full_name': u'Åkesson, Torsten Paul Ake'
+        },
+    ]
+    validate(expected_authors, authors_subschema)
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    default_arxiv_author_list = arxiv_author_list()
+
+    assert default_arxiv_author_list(obj, eng) is None
+    assert obj.data.get('authors') == expected_authors
