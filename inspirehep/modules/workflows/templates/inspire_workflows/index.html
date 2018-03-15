@@ -72,7 +72,7 @@
     <div class="col-md-3 col-sm-6">	
       <holding-pen-dashboard-item	
         template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"	
-        filter_string="workflow_name=HEP&q=-metadata.acquisition_source.source:arXiv%20AND%20metadata.acquisition_source.method:hepcrawl"	
+        filter_string="data_type=hep&q=-metadata.acquisition_source.source:arXiv AND metadata.acquisition_source.method:hepcrawl"
         secondary_filter="status"	
         section_title="publisher harvests">	
       </holding-pen-dashboard-item>	
