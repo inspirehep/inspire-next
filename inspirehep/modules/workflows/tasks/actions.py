@@ -25,7 +25,6 @@
 from __future__ import absolute_import, division, print_function
 
 import sys
-import re
 from functools import wraps
 from six import reraise
 
@@ -62,9 +61,27 @@ from inspirehep.modules.workflows.utils import (
     with_debug_logging,
 )
 from inspirehep.utils.normalizers import normalize_journal_title
+from inspirehep.utils.record import get_arxiv_categories, get_inspire_categories
 from inspirehep.utils.url import is_pdf_link
 
-RE_ALPHANUMERIC = re.compile('\W+', re.UNICODE)
+EXPERIMENTAL_ARXIV_CATEGORIES = [
+    'astro-ph',
+    'astro-ph.CO',
+    'astro-ph.EP',
+    'astro-ph.GA',
+    'astro-ph.HE',
+    'astro-ph.IM',
+    'astro-ph.SR',
+    'hep-ex',
+    'nucl-ex',
+    'physics.ins-det',
+]
+EXPERIMENTAL_INSPIRE_CATEGORIES = [
+    'Astrophysics',
+    'Experiment-HEP',
+    'Experiment-Nucl',
+    'Instrumentation',
+]
 
 
 def mark(key, value):
@@ -204,22 +221,25 @@ def is_record_relevant(obj, eng):
 
 @with_debug_logging
 def is_experimental_paper(obj, eng):
-    """Check if the record is an experimental paper."""
-    categories = list(
-        get_value(obj.data, "arxiv_eprints.categories", [[]])[0]
-    ) + list(get_value(obj.data, "inspire_categories.term", []))
+    """Check if a workflow contains an experimental paper.
 
-    categories_to_check = [
-        "hep-ex", "nucl-ex", "astro-ph", "astro-ph.IM", "astro-ph.CO",
-        "astro-ph.EP", "astro-ph.GA", "astro-ph.HE", "astro-ph.SR",
-        "physics.ins-det", "Experiment-HEP", "Experiment-Nucl",
-        "Astrophysics", "Instrumentation"
-    ]
-    for experimental_category in categories_to_check:
-        if experimental_category in categories:
-            return True
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
 
-    return False
+    Returns:
+        bool: whether the workflow contains an experimental paper.
+
+    """
+    arxiv_categories = get_arxiv_categories(obj.data)
+    inspire_categories = get_inspire_categories(obj.data)
+
+    has_experimental_arxiv_category = len(
+        set(arxiv_categories) & set(EXPERIMENTAL_ARXIV_CATEGORIES)) > 0
+    has_experimental_inspire_category = len(
+        set(inspire_categories) & set(EXPERIMENTAL_INSPIRE_CATEGORIES)) > 0
+
+    return has_experimental_arxiv_category or has_experimental_inspire_category
 
 
 @with_debug_logging

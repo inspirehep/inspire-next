@@ -27,6 +27,7 @@ from inspirehep.utils.record import (
     get_abstract,
     get_arxiv_categories,
     get_arxiv_id,
+    get_inspire_categories,
     get_source,
     get_subtitle,
     get_title,
@@ -95,6 +96,23 @@ def test_get_arxiv_id():
 
     expected = '1612.08928'
     result = get_arxiv_id(record)
+
+    assert expected == result
+
+
+def test_get_inspire_categories():
+    schema = load_schema('hep')
+    subschema = schema['properties']['inspire_categories']
+
+    record = {
+        'inspire_categories': [
+            {'term': 'Experiment-HEP'},
+        ],
+    }
+    assert validate(record['inspire_categories'], subschema) is None
+
+    expected = ['Experiment-HEP']
+    result = get_inspire_categories(record)
 
     assert expected == result
 

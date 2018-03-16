@@ -109,6 +109,28 @@ def get_arxiv_id(record):
     return get_value(record, 'arxiv_eprints.value[0]', default='')
 
 
+def get_inspire_categories(record):
+    """Return all the INSPIRE categories of a record.
+
+    Args:
+        record (InspireRecord): a record.
+
+    Returns:
+        list(str): all the INSPIRE categories of the record.
+
+    Examples:
+        >>> record = {
+        ...     'inspire_categories': [
+        ...         {'term': 'Experiment-HEP'},
+        ...     ],
+        ... }
+        >>> get_inspire_categories(record)
+        ['Experiment-HEP']
+
+    """
+    return get_value(record, 'inspire_categories.term', default=[])
+
+
 def get_source(record):
     """Return the acquisition source of a record.
 
