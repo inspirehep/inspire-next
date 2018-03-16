@@ -108,7 +108,7 @@ def mock_search_articles_by_doi():
                 'ISSN': [
                     '0020-7748',
                 ],
-                'URL': 'http://dx.doi.org/10.1023/a:1026654312961',
+                'URL': 'https://doi.org/10.1023/a:1026654312961',
                 'alternative-id': [
                     '297194',
                 ],
@@ -188,7 +188,7 @@ def mock_search_articles_by_doi():
                     '0004-637X',
                     '1538-4357',
                 ],
-                'URL': 'http://dx.doi.org/10.1086/305772',
+                'URL': 'https://doi.org/10.1086/305772',
                 'alternative-id': [
                     '10.1086/305772',
                 ],

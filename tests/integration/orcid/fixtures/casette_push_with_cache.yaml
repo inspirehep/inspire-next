@@ -33,7 +33,7 @@ interactions:
       \    author = \"Glashow, S.L.\",\n    journal = \"Nucl.Phys.\",\n    volume\
       \ = \"22\",\n    pages = \"579--588\",\n    doi = \"10.1016/0029-5582(61)90469-2\"\
       ,\n    title = \"Partial Symmetries of Weak Interactions\",\n    year = \"1961\"\
-      \n}\n</work:citation-value></work:citation><work:type>journal-article</work:type><common:publication-date><common:year>1961</common:year></common:publication-date><common:external-ids><common:external-id><common:external-id-type>doi</common:external-id-type><common:external-id-value>10.1016/0029-5582(61)90469-2</common:external-id-value><common:external-id-url>http://dx.doi.org/10.1016/0029-5582(61)90469-2</common:external-id-url><common:external-id-relationship>self</common:external-id-relationship></common:external-id></common:external-ids><work:url>http://labs.inspirehep.net/record/4328</work:url><work:contributors><work:contributor><work:credit-name>Glashow,\
+      \n}\n</work:citation-value></work:citation><work:type>journal-article</work:type><common:publication-date><common:year>1961</common:year></common:publication-date><common:external-ids><common:external-id><common:external-id-type>doi</common:external-id-type><common:external-id-value>10.1016/0029-5582(61)90469-2</common:external-id-value><common:external-id-url>https://doi.org/10.1016/0029-5582(61)90469-2</common:external-id-url><common:external-id-relationship>self</common:external-id-relationship></common:external-id></common:external-ids><work:url>http://labs.inspirehep.net/record/4328</work:url><work:contributors><work:contributor><work:credit-name>Glashow,\
       \ S.L.</work:credit-name><work:contributor-attributes><work:contributor-sequence>first</work:contributor-sequence><work:contributor-role>author</work:contributor-role></work:contributor-attributes></work:contributor></work:contributors></work:work>"
     headers:
       Accept: [application/orcid+json]
@@ -68,7 +68,7 @@ interactions:
       \    author = \"Glashow, S.L.\",\n    journal = \"Nucl.Phys.\",\n    volume\
       \ = \"22\",\n    pages = \"579--588\",\n    doi = \"10.1016/0029-5582(61)90469-2\"\
       ,\n    title = \"Partial Symmetries of Weak Interactions\",\n    year = \"1961\"\
-      \n}\n</work:citation-value></work:citation><work:type>journal-article</work:type><common:publication-date><common:year>1961</common:year></common:publication-date><common:external-ids><common:external-id><common:external-id-type>doi</common:external-id-type><common:external-id-value>10.1016/0029-5582(61)90469-2</common:external-id-value><common:external-id-url>http://dx.doi.org/10.1016/0029-5582(61)90469-2</common:external-id-url><common:external-id-relationship>self</common:external-id-relationship></common:external-id></common:external-ids><work:url>http://labs.inspirehep.net/record/4328</work:url><work:contributors><work:contributor><work:credit-name>Glashow,\
+      \n}\n</work:citation-value></work:citation><work:type>journal-article</work:type><common:publication-date><common:year>1961</common:year></common:publication-date><common:external-ids><common:external-id><common:external-id-type>doi</common:external-id-type><common:external-id-value>10.1016/0029-5582(61)90469-2</common:external-id-value><common:external-id-url>https://doi.org/10.1016/0029-5582(61)90469-2</common:external-id-url><common:external-id-relationship>self</common:external-id-relationship></common:external-id></common:external-ids><work:url>http://labs.inspirehep.net/record/4328</work:url><work:contributors><work:contributor><work:credit-name>Glashow,\
       \ S.L.</work:credit-name><work:contributor-attributes><work:contributor-sequence>first</work:contributor-sequence><work:contributor-role>author</work:contributor-role></work:contributor-attributes></work:contributor></work:contributors></work:work>"
     headers:
       Accept: [application/orcid+json]
@@ -100,7 +100,7 @@ interactions:
         \ : null,\n    \"day\" : null,\n    \"media-type\" : null\n  },\n  \"external-ids\"\
         \ : {\n    \"external-id\" : [ {\n      \"external-id-type\" : \"doi\",\n\
         \      \"external-id-value\" : \"10.1016/0029-5582(61)90469-2\",\n      \"\
-        external-id-url\" : {\n        \"value\" : \"http://dx.doi.org/10.1016/0029-5582(61)90469-2\"\
+        external-id-url\" : {\n        \"value\" : \"https://doi.org/10.1016/0029-5582(61)90469-2\"\
         \n      },\n      \"external-id-relationship\" : \"SELF\"\n    } ]\n  },\n\
         \  \"url\" : {\n    \"value\" : \"http://labs.inspirehep.net/record/4328\"\
         \n  },\n  \"contributors\" : {\n    \"contributor\" : [ {\n      \"contributor-orcid\"\

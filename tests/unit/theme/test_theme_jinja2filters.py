@@ -566,7 +566,7 @@ def test_proceedings_link_joins_with_a_comma_and_a_space(s, mock_perform_es_sear
     with_cnum = {'cnum': 'banana'}
 
     expected = ('Proceedings: <a href="/record/1407068">#1</a> (DOI: <a '
-                'href="http://dx.doi.org/10.1016/j.ppnp.2015.10.002">'
+                'href="https://doi.org/10.1016/j.ppnp.2015.10.002">'
                 '10.1016/j.ppnp.2015.10.002</a>, '
                 '<a href="/record/1407079">#2</a>')
     result = proceedings_link(with_cnum)

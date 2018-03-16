@@ -33,7 +33,7 @@ interactions:
                       "external-id-value": "10.1016/0029-5582(61)90469-2",
                       "external-id-relationship": "SELF",
                       "external-id-url": {
-                        "value": "http://dx.doi.org/10.1016/0029-5582(61)90469-2"
+                        "value": "https://doi.org/10.1016/0029-5582(61)90469-2"
                       },
                       "external-id-type": "doi"
                     }
@@ -84,7 +84,7 @@ interactions:
                       "external-id-value": "10.1016/0029-5582(61)90469-2",
                       "external-id-relationship": "SELF",
                       "external-id-url": {
-                        "value": "http://dx.doi.org/10.1016/0029-5582(61)90469-2"
+                        "value": "https://doi.org/10.1016/0029-5582(61)90469-2"
                       },
                       "external-id-type": "doi"
                     }
@@ -124,7 +124,7 @@ interactions:
                   "external-id-value": "10.1016/0029-5582(61)90469-2",
                   "external-id-relationship": "SELF",
                   "external-id-url": {
-                    "value": "http://dx.doi.org/10.1016/0029-5582(61)90469-2"
+                    "value": "https://doi.org/10.1016/0029-5582(61)90469-2"
                   },
                   "external-id-type": "doi"
                 }
@@ -264,7 +264,7 @@ interactions:
                   "external-id-value": "10.1016/0029-5582(61)90469-2",
                   "external-id-relationship": "SELF",
                   "external-id-url": {
-                    "value": "http://dx.doi.org/10.1016/0029-5582(61)90469-2"
+                    "value": "https://doi.org/10.1016/0029-5582(61)90469-2"
                   },
                   "external-id-type": "doi"
                 }

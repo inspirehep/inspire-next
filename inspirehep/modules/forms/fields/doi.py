@@ -57,7 +57,7 @@ class DOIField(INSPIREField, StringField):
             ],
             filters=[
                 strip_string,
-                strip_prefixes("doi:", "http://dx.doi.org/"),
+                strip_prefixes("doi:", "https://doi.org/"),
             ],
             placeholder="e.g. 10.1234/foo.bar...",
             widget_classes="form-control"

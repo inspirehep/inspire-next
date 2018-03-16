@@ -122,7 +122,7 @@ class Cv_latex_html_text(Export):
         elif field == 'doi':
             dois_splitted = value.split(',')
             for k, v in enumerate(dois_splitted):
-                v = '<a href="http://dx.doi.org/' + v + '">' + v + '</a>'
+                v = '<a href="https://doi.org/' + v + '">' + v + '</a>'
                 dois_splitted[k] = v
             out += u'{0}.{1}'.format(', '.join(out for out in dois_splitted),
                                      self.separator)
