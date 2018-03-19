@@ -185,6 +185,9 @@ def record_from_db(workflow_app):
             {'categories': ['hep-th'], 'value': '1407.7587'}
         ],
         'control_number': 1234,
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/1234'
+        },
         'authors': [
             {'full_name': 'Maldacena, J.'},
             {'full_name': 'Strominger, A.'},
