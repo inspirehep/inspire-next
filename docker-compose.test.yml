@@ -74,7 +74,7 @@ services:
   ui:
     extends:
       service: test-service_base
-    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance/ui
+    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/ui
     volumes_from:
       - test-static
     depends_on:
@@ -98,7 +98,7 @@ services:
   visible_ui:
     extends:
       service: test-service_base
-    command: py.test --driver Firefox --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance/ui
+    command: py.test --driver Firefox --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/ui
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     volumes_from:
@@ -125,7 +125,7 @@ services:
   ui-authors:
     extends:
       service: test-service_base
-    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance/ui/authors
+    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/ui/authors
     volumes_from:
       - test-static
     depends_on:
@@ -149,7 +149,7 @@ services:
   ui-literature:
     extends:
       service: test-service_base
-    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance/ui/literature
+    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/ui/literature
     volumes_from:
       - test-static
     depends_on:
