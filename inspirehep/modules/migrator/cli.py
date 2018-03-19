@@ -42,7 +42,7 @@ from inspire_schemas.api import validate
 from inspire_utils.helpers import force_list
 
 from inspirehep.utils.schema import ensure_valid_schema
-from .models import InspireProdRecords
+from .models import LegacyRecordsMirror
 from .tasks import (
     add_citation_counts,
     migrate,
@@ -137,7 +137,7 @@ def reporterrors(output):
 
     click.echo("Reporting broken records into {0}".format(output))
     errors = {}
-    results = InspireProdRecords.query.filter(InspireProdRecords.valid == False) # noqa: ignore=F712
+    results = LegacyRecordsMirror.query.filter(LegacyRecordsMirror.valid == False) # noqa: ignore=F712
     results_length = results.count()
     with click.progressbar(results.yield_per(100), length=results_length) as bar:
         for obj in bar:
