@@ -66,7 +66,7 @@ from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.receivers import index_after_commit
 from inspirehep.utils.schema import ensure_valid_schema
 
-from .models import InspireProdRecords
+from .models import LegacyRecordsMirror
 
 
 LOGGER = getStackTraceLogger(__name__)
@@ -143,7 +143,7 @@ def remigrate_records(only_broken=True, skip_files=None):
             False,
         )
 
-    query = db.session.query(InspireProdRecords)
+    query = db.session.query(LegacyRecordsMirror)
     if only_broken:
         query = query.filter_by(valid=False)
 
@@ -388,7 +388,7 @@ def migrate_and_insert_record(raw_record, skip_files=False):
         LOGGER.exception('Migrator Record Insert Error')
         _store_migrator_error(recid, raw_record, e)
     else:
-        prod_record = InspireProdRecords(recid=recid)
+        prod_record = LegacyRecordsMirror(recid=recid)
         prod_record.marcxml = raw_record
         prod_record.valid = True
         db.session.merge(prod_record)
@@ -401,7 +401,7 @@ def _get_recid(raw_record):
 
 def _store_migrator_error(recid, marcxml, error):
     error_str = u'{0}: Record {1}: {2}'.format(type(error), recid, error)
-    prod_record = InspireProdRecords(recid=recid)
+    prod_record = LegacyRecordsMirror(recid=recid)
     prod_record.valid = False
     prod_record.marcxml = marcxml
     prod_record.errors = error_str
