@@ -37,8 +37,8 @@ env:
     - BASE_USER_UID=2000
     - BASE_USER_GID=2000
   matrix:
-    - SUITE=acceptance-literature
-    - SUITE=acceptance-authors
+    - SUITE=ui-literature
+    - SUITE=ui-authors
     - SUITE=workflows
     - SUITE=integration
     - SUITE=unit
