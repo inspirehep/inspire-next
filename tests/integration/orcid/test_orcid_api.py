@@ -52,8 +52,9 @@ def mock_orcid_api(app, mocked_internal_services):
 
 def test_push_record_with_orcid(api_client, mock_orcid_api, mock_config):
     expected_put_code = '895497'
+    expected_hash = '2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
 
-    result_put_code = push_record_with_orcid(
+    result_put_code, result_hash = push_record_with_orcid(
         recid='4328',
         orcid='0000-0002-1825-0097',
         oauth_token='fake-token',
@@ -61,6 +62,7 @@ def test_push_record_with_orcid(api_client, mock_orcid_api, mock_config):
     )
 
     assert expected_put_code == result_put_code
+    assert expected_hash == result_hash
 
     orcid_requests_made = [
         str(r) for r in mock_orcid_api.request_history if 'orcid' in r.url
@@ -73,7 +75,9 @@ def test_push_record_with_orcid(api_client, mock_orcid_api, mock_config):
 
 def test_push_record_with_orcid_new(api_client, mock_orcid_api, mock_config):
     expected_put_code = '123456'
-    result_put_code = push_record_with_orcid(
+    expected_hash = '2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
+
+    result_put_code, result_hash = push_record_with_orcid(
         recid='4328',
         orcid='0000-0002-1825-0097',
         oauth_token='fake-token',
@@ -81,6 +85,7 @@ def test_push_record_with_orcid_new(api_client, mock_orcid_api, mock_config):
     )
 
     assert expected_put_code == result_put_code
+    assert expected_hash == result_hash
 
     orcid_requests_made = [
         str(r) for r in mock_orcid_api.request_history if 'orcid' in r.url
