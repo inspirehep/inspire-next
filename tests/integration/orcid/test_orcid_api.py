@@ -37,17 +37,18 @@ from inspirehep.modules.orcid.api import push_record_with_orcid, get_author_putc
 @pytest.fixture
 def mock_orcid_api(app, mocked_internal_services):
     """Yield a MemberAPI and mock responses"""
-    mocked_internal_services.put(
+    mocker, matcher = mocked_internal_services
+    mocker.put(
         'https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/work/895497',
         text='200 OK'
     )
-    mocked_internal_services.post(
+    mocker.post(
         'https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/work',
         headers={
             'Location': 'https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/work/123456'
         },
     )
-    return mocked_internal_services
+    return mocker
 
 
 def test_push_record_with_orcid(api_client, mock_orcid_api, mock_config):

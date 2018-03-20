@@ -53,12 +53,13 @@ def redis_setup(api):
 
 @pytest.fixture
 def mock_allow_orcid(mocked_internal_services):
-    mocked_internal_services.register_uri(
+    mocker, matcher = mocked_internal_services
+    mocker.register_uri(
         requests_mock.ANY,
         re.compile('.*(orcid).*'),
         real_http=True,
     )
-    yield mocked_internal_services
+    yield mocker, matcher
 
 
 def test_push_to_orcid_same_with_cache(
@@ -74,7 +75,7 @@ def test_push_to_orcid_same_with_cache(
     with vcr.use_cassette(
         pkg_resources.resource_filename(
             __name__,
-            'fixtures/casette_push_with_cache.yaml'
+            'fixtures/casette_push_same_with_cache.yaml'
         ),
         decode_compressed_response=True,
         filter_headers=['Authorization'],
@@ -89,6 +90,38 @@ def test_push_to_orcid_same_with_cache(
 
         # Check that the update request didn't happen:
         assert cassette.play_counts.values() == [1, 1]
+
+
+def test_push_to_orcid_update_with_cache(
+    api,
+    redis_setup,
+    mock_allow_orcid,
+    mock_config
+):
+    mocker, matcher = mock_allow_orcid
+    rec_id = 4328
+    orcid = '0000-0002-2169-2152'
+    token = 'fake-token'
+
+    with vcr.use_cassette(
+        pkg_resources.resource_filename(
+            __name__,
+            'fixtures/casette_push_update_with_cache.yaml'
+        ),
+        decode_compressed_response=True,
+        filter_headers=['Authorization'],
+        ignore_localhost=True,
+        record_mode='none',
+    ) as cassette:
+        # Push as new
+        orcid_push(orcid, rec_id, token)
+
+        with matcher.patch_record(4328, {'titles': [{'title': 'Changed'}]}):
+            # Push the updated record
+            orcid_push(orcid, rec_id, token)
+
+        # Check that the update request didn't happen:
+        assert cassette.play_counts.values() == [1, 1, 1]
 
 
 def test_push_to_orcid_update_no_cache(

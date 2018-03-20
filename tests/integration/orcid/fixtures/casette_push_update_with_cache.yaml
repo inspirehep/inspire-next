@@ -64,7 +64,7 @@ interactions:
 - request:
     body: !!python/unicode "<work:work xmlns:common=\"http://www.orcid.org/ns/common\"\
       \ xmlns:work=\"http://www.orcid.org/ns/work\" put-code=\"914503\"><work:title><common:title>\
-      This Title Has Changed</common:title></work:title><work:journal-title>Nucl.Phys.</work:journal-title><work:citation><work:citation-type>bibtex</work:citation-type><work:citation-value>@article{Glashow:1961tr,\n\
+      Changed</common:title></work:title><work:journal-title>Nucl.Phys.</work:journal-title><work:citation><work:citation-type>bibtex</work:citation-type><work:citation-value>@article{Glashow:1961tr,\n\
       \    author = \"Glashow, S.L.\",\n    journal = \"Nucl.Phys.\",\n    volume\
       \ = \"22\",\n    pages = \"579--588\",\n    doi = \"10.1016/0029-5582(61)90469-2\"\
       ,\n    title = \"Partial Symmetries of Weak Interactions\",\n    year = \"1961\"\
@@ -94,7 +94,7 @@ interactions:
         citation-value\" : \"@article{Glashow:1961tr,\\n    author = \\\"Glashow,\
         \ S.L.\\\",\\n    journal = \\\"Nucl.Phys.\\\",\\n    volume = \\\"22\\\"\
         ,\\n    pages = \\\"579--588\\\",\\n    doi = \\\"10.1016/0029-5582(61)90469-2\\\
-        \",\\n    title = \\\"This Title Has Changed\\\",\\n    year\
+        \",\\n    title = \\\"Changed\\\",\\n    year\
         \ = \\\"1961\\\"\\n}\\n\"\n  },\n  \"type\" : \"JOURNAL_ARTICLE\",\n  \"publication-date\"\
         \ : {\n    \"year\" : {\n      \"value\" : \"1961\"\n    },\n    \"month\"\
         \ : null,\n    \"day\" : null,\n    \"media-type\" : null\n  },\n  \"external-ids\"\

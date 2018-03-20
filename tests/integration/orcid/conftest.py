@@ -24,6 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+from contextlib import contextmanager
+from json import dumps, loads
+
 import mock
 import pytest
 import re
@@ -42,28 +45,49 @@ def mock_config(api):
 
 @pytest.fixture
 def mocked_internal_services(api_client):
-    predownload = ['4328', '1375491', '524480', '701585']
-    hep_responses = {}
-    bibtex_responses = {}
+    class ApiMatcher:
+        predownload = [4328, 1375491, 524480, 701585]
+        hep_responses = {}
+        bibtex_responses = {}
 
-    for recid in predownload:
-        url = 'http://labs.inspirehep.net/api/literature/' + recid
-        hep_resp = api_client.get('/literature/' + recid)
-        bibtex_resp = api_client.get('/literature/' + recid, headers={
-            'Accept': 'application/x-bibtex',
-        })
-        hep_responses[url] = hep_resp
-        bibtex_responses[url] = bibtex_resp
+        def __init__(self):
+            for recid in self.predownload:
+                url = self._get_url(recid)
+                hep_resp = api_client.get('/literature/' + str(recid))
+                bibtex_resp = api_client.get('/literature/' + str(recid), headers={
+                    'Accept': 'application/x-bibtex',
+                })
+                self.hep_responses[url] = hep_resp
+                self.bibtex_responses[url] = bibtex_resp
 
-    def api_matcher(request):
-        resp = requests.Response()
-        resp.status_code = 200
-        if request.headers['Accept'] == 'application/json':
-            resp._content = hep_responses[request.url].data
-            return resp
-        elif request.headers['Accept'] == 'application/x-bibtex':
-            resp._content = bibtex_responses[request.url].data
-            return resp
+        @contextmanager
+        def patch_record(self, recid, patch):
+            url = self._get_url(recid)
+            response = self.hep_responses[url]
+            original = response.data
+
+            record = loads(response.data)
+            record['metadata'].update(patch)
+            response.data = dumps(record)
+
+            yield
+
+            response.data = original
+
+        def __call__(self, request):
+            resp = requests.Response()
+            resp.status_code = 200
+            if request.headers['Accept'] == 'application/json':
+                resp._content = self.hep_responses[request.url].data
+                return resp
+            elif request.headers['Accept'] == 'application/x-bibtex':
+                resp._content = self.bibtex_responses[request.url].data
+                return resp
+
+        def _get_url(self, recid):
+            return 'http://labs.inspirehep.net/api/literature/' + str(recid)
+
+    api_matcher = ApiMatcher()
 
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
@@ -72,4 +96,4 @@ def mocked_internal_services(api_client):
             real_http=True,
         )
         requests_mocker.add_matcher(api_matcher)
-        yield requests_mocker
+        yield requests_mocker, api_matcher
