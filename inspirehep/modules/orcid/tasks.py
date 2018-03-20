@@ -31,7 +31,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from celery import shared_task
 from redis import StrictRedis
-from simplejson import dumps, loads
+from simplejson import loads
 
 from invenio_oauthclient.utils import oauth_link_external_id
 from invenio_oauthclient.models import RemoteToken, User, RemoteAccount, UserIdentity
@@ -39,11 +39,12 @@ from invenio_db import db
 from invenio_oauthclient.errors import AlreadyLinkedError
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
+from inspirehep.modules.cache.utils import redis_locking_context
 from inspirehep.modules.orcid.api import (
     push_record_with_orcid,
     get_author_putcodes,
 )
-from inspirehep.modules.orcid.utils import get_orcid_recid_key, redis_locking_context
+from inspirehep.modules.orcid.utils import get_orcid_recid_key
 
 
 LOGGER = getStackTraceLogger(__name__)
@@ -230,7 +231,10 @@ def store_record_in_redis(orcid, rec_id, put_code, hashed):
     """
     with redis_locking_context('orcid_push') as r:
         orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-        r.set(orcid_recid_key, dumps([put_code, hashed]))
+        to_cache = {'putcode': put_code}
+        if hashed:
+            to_cache['hash'] = hashed
+        r.hmset(orcid_recid_key, to_cache)
 
 
 def get_putcode_and_hash_from_redis(orcid, rec_id):
@@ -238,7 +242,9 @@ def get_putcode_and_hash_from_redis(orcid, rec_id):
     with redis_locking_context('orcid_push') as r:
         orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
         try:
-            return loads(r.get(orcid_recid_key))
+            put_code = r.hget(orcid_recid_key, 'putcode')
+            hashed = r.hget(orcid_recid_key, 'hash')
+            return put_code, hashed
         except TypeError:
             return None, None
 

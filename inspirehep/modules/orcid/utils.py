@@ -45,7 +45,6 @@ from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_values_for_schema
 from inspire_utils.urls import ensure_scheme
-from inspirehep.modules.cache.utils import redis_locking_context, RedisLockError
 from inspirehep.utils.record_getter import get_db_records
 
 LOGGER = getStackTraceLogger(__name__)
@@ -95,38 +94,6 @@ def _get_api_url_for_recid(server_name, api_endpoint, recid):
 def get_orcid_recid_key(orcid, rec_id):
     """Return the string 'orcid:``orcid_value``:``rec_id``'"""
     return 'orcidcache:{}:{}'.format(orcid, rec_id)
-
-
-def store_record_in_redis(orcid, rec_id, put_code):
-    """Store the entry <orcid:recid, value> in Redis.
-
-    Args:
-        orcid(string): the author's orcid.
-        rec_id(int): inspire record's id pushed to ORCID.
-        put_code(string): the put_code used to push the record to ORCID.
-
-    Returns:
-        bool: True if the entry is set in Redis, False otherwise.
-    """
-    try:
-        with redis_locking_context('orcid_push') as r:
-            orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-            r.set(orcid_recid_key, put_code)
-            return True
-
-    except RedisLockError:
-        LOGGER.info("Push to ORCID failed for record {}".format(rec_id))
-        return False
-
-
-def get_putcode_from_redis(orcid, rec_id):
-    """Retrieve from Redis the put_code for the given ORCID - record id"""
-    try:
-        with redis_locking_context('orcid_push') as r:
-            orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-            return r.get(orcid_recid_key)
-    except RedisLockError:
-        LOGGER.info("Push to ORCID failed for record {}".format(rec_id))
 
 
 def _get_account_and_token(orcid):
