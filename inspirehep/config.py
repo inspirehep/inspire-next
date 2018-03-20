@@ -1242,6 +1242,7 @@ LEGACY_RECORD_URL_PATTERN = 'http://inspirehep.net/record/{recid}'
 # Harvesting and Workflows
 # ========================
 ARXIV_PDF_URL = "http://export.arxiv.org/pdf/{arxiv_id}"
+ARXIV_PDF_URL_ALTERNATIVE = "http://arxiv.org/pdf/{arxiv_id}"
 ARXIV_TARBALL_URL = "http://export.arxiv.org/e-print/{arxiv_id}"
 
 ARXIV_CATEGORIES = {
