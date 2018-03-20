@@ -42,9 +42,9 @@ def redis_setup(api):
     redis_url = api.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
 
-    r.set('orcidcache:0000-0002-2152-2169:1375491', '["1001", null]')
-    r.set('orcidcache:0000-0002-2152-2169:524480', '["1002", null]')
-    r.set('orcidcache:0000-0002-2152-2169:701585', '["1003", null]')
+    r.hmset('orcidcache:0000-0002-2152-2169:1375491', {'putcode': '1001'})
+    r.hmset('orcidcache:0000-0002-2152-2169:524480', {'putcode': '1002'})
+    r.hmset('orcidcache:0000-0002-2152-2169:701585', {'putcode': '1003'})
 
     yield r
 
