@@ -1,0 +1,64 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://api.sandbox.orcid.org/v2.0/0000-0002-2169-2152/works
+  response:
+    body: {string: !!python/unicode "{\n  \"last-modified-date\" : null,\n  \"group\"\
+        \ : [ ],\n  \"path\" : \"/0000-0002-2169-2152/works\"\n}"}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['91']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Wed, 14 Feb 2018 13:08:19 GMT']
+      expires: ['0']
+      pragma: [no-cache]
+      server: [nginx/1.10.0]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: !!python/unicode "<work:work xmlns:common=\"http://www.orcid.org/ns/common\"\
+      \ xmlns:work=\"http://www.orcid.org/ns/work\"><work:title><common:title>Partial\
+      \ Symmetries of Weak Interactions</common:title></work:title><work:journal-title>Nucl.Phys.</work:journal-title><work:citation><work:citation-type>bibtex</work:citation-type><work:citation-value>@article{Glashow:1961tr,\n\
+      \    author = \"Glashow, S.L.\",\n    journal = \"Nucl.Phys.\",\n    volume\
+      \ = \"22\",\n    pages = \"579--588\",\n    doi = \"10.1016/0029-5582(61)90469-2\"\
+      ,\n    title = \"Partial Symmetries of Weak Interactions\",\n    year = \"1961\"\
+      \n}\n</work:citation-value></work:citation><work:type>journal-article</work:type><common:publication-date><common:year>1961</common:year></common:publication-date><common:external-ids><common:external-id><common:external-id-type>doi</common:external-id-type><common:external-id-value>10.1016/0029-5582(61)90469-2</common:external-id-value><common:external-id-url>http://dx.doi.org/10.1016/0029-5582(61)90469-2</common:external-id-url><common:external-id-relationship>self</common:external-id-relationship></common:external-id></common:external-ids><work:url>http://labs.inspirehep.net/record/4328</work:url><work:contributors><work:contributor><work:credit-name>Glashow,\
+      \ S.L.</work:credit-name><work:contributor-attributes><work:contributor-sequence>first</work:contributor-sequence><work:contributor-role>author</work:contributor-role></work:contributor-attributes></work:contributor></work:contributors></work:work>"
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['1481']
+      Content-Type: [application/orcid+xml]
+      User-Agent: [python-requests/2.18.4]
+    method: POST
+    uri: https://api.sandbox.orcid.org/v2.0/0000-0002-2169-2152/work
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['0']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Wed, 14 Feb 2018 13:08:20 GMT']
+      expires: ['0']
+      location: ['http://api.sandbox.orcid.org/orcid-api-web/v2.0/0000-0002-2169-2152/work/914503']
+      pragma: [no-cache]
+      server: [nginx/1.10.0]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 201, message: Created}
+version: 1
