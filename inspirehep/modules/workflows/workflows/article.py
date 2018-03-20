@@ -120,6 +120,20 @@ NOTIFY_SUBMISSION = [
     ),
 ]
 
+CHECK_AUTO_APPROVE = [
+    IF_ELSE(
+        is_submission,
+        mark('auto-approved', False),
+        IF_ELSE(
+            auto_approve,
+            [
+                mark('auto-approved', True),
+                set_core_in_extra_data,
+            ],
+            mark('auto-approved', False),
+        ),
+    ),
+]
 
 ENHANCE_RECORD = [
     IF(
@@ -155,18 +169,6 @@ ENHANCE_RECORD = [
     ),
     guess_keywords,
     guess_coreness,
-    IF_ELSE(
-        is_submission,
-        mark('auto-approved', False),
-        IF_ELSE(
-            auto_approve,
-            [
-                mark('auto-approved', True),
-                set_core_in_extra_data,
-            ],
-            mark('auto-approved', False),
-        ),
-    ),
 ]
 
 
@@ -335,14 +337,17 @@ PROCESS_HOLDINGPEN_MATCH_HARVEST = [
         is_marked('is-update'),
         IF(
             is_marked('previously_rejected'),
-            IF(
-                has_same_source('previously_rejected_matches'),
-                [
-                    mark('approved', False),  # auto-reject
-                    save_workflow,
-                    stop_processing,
-                ],
-            )
+            IF_NOT(
+                is_marked('auto-approved'),
+                IF(
+                    has_same_source('previously_rejected_matches'),
+                    [
+                        mark('approved', False),  # auto-reject
+                        save_workflow,
+                        stop_processing,
+                    ],
+                )
+            ),
         ),
     ),
 
@@ -492,6 +497,7 @@ class Article(object):
         NOTIFY_IF_SUBMISSION +
         MARK_IF_MATCH_IN_HOLDINGPEN +
         CHECK_IS_UPDATE +
+        CHECK_AUTO_APPROVE +
         PROCESS_HOLDINGPEN_MATCHES +
         ENHANCE_RECORD +
         STOP_IF_EXISTING_SUBMISSION +
