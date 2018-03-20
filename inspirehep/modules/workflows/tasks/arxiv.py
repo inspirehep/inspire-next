@@ -65,12 +65,18 @@ NO_PDF_ON_ARXIV = 'The author has provided no source to generate PDF, and no PDF
 @backoff.on_exception(backoff.expo, DownloadError, base=4, max_tries=5)
 def populate_arxiv_document(obj, eng):
     arxiv_id = get_arxiv_id(obj.data)
-    url = current_app.config['ARXIV_PDF_URL'].format(arxiv_id=arxiv_id)
 
-    if not is_pdf_link(url):
+    for conf_name in ('ARXIV_PDF_URL', 'ARXIV_PDF_URL_ALTERNATIVE'):
+        url = current_app.config[conf_name].format(arxiv_id=arxiv_id)
+        is_valid_pdf_link = is_pdf_link(url)
+        if is_valid_pdf_link:
+            break
+
         if NO_PDF_ON_ARXIV in requests.get(url).content:
             obj.log.info('No PDF is available for %s', arxiv_id)
             return
+
+    if not is_valid_pdf_link:
         raise DownloadError("{url} is not serving a PDF file.".format(url=url))
 
     filename = secure_filename('{0}.pdf'.format(arxiv_id))

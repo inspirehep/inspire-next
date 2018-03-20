@@ -124,11 +124,20 @@ def test_populate_arxiv_document_does_not_duplicate():
 
 
 def test_populate_arxiv_document_logs_on_pdf_not_existing():
+    response500 = {'content': '', 'status_code': 500}
+    response200 = {
+        'content': pkg_resources.resource_string(
+            __name__, os.path.join('fixtures', '1707.02785.html')),
+        'status_code': 200,
+    }
     with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1707.02785',
-            content=pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', '1707.02785.html')),
+        requests_mocker.get(
+            'http://export.arxiv.org/pdf/1707.02785',
+            (response200,),
+        )
+        requests_mocker.get(
+            'http://arxiv.org/pdf/1707.02785',
+            (response500,),
         )
         schema = load_schema('hep')
         subschema = schema['properties']['arxiv_eprints']
@@ -158,23 +167,76 @@ def test_populate_arxiv_document_logs_on_pdf_not_existing():
         assert expected == result
 
 
-def test_populate_arxiv_document_retries_on_error():
+def test_populate_arxiv_document_alternative_url():
+    response500 = {'content': '', 'status_code': 500}
+    response200 = {
+        'content': pkg_resources.resource_string(
+            __name__, os.path.join('fixtures', '1605.03814.pdf')),
+        'status_code': 200,
+    }
     with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03814',
-            [
+        requests_mocker.get(
+            'http://export.arxiv.org/pdf/1605.03814',
+            (response500,),
+        )
+        requests_mocker.get(
+            'http://arxiv.org/pdf/1605.03814',
+            (response200,)
+        )
+        schema = load_schema('hep')
+        subschema = schema['properties']['arxiv_eprints']
+
+        data = {
+            'arxiv_eprints': [
                 {
-                    'content': '',
-                    'status_code': 500,
-                },
-                {
-                    'content': pkg_resources.resource_string(
-                        __name__, os.path.join('fixtures', '1605.03814.pdf')),
-                    'status_code': 200,
+                    'categories': [
+                        'hep-ex',
+                    ],
+                    'value': '1605.03814',
                 },
             ],
-        )
+        }  # literature/1458270
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['arxiv_eprints'], subschema) is None
 
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
+
+        assert populate_arxiv_document(obj, eng) is None
+
+        expected_url = 'http://arxiv.org/pdf/1605.03814'
+        expected_documents = [
+            {
+                'key': '1605.03814.pdf',
+                'fulltext': True,
+                'hidden': True,
+                'material': 'preprint',
+                'original_url': expected_url,
+                'url': expected_url,
+                'source': 'arxiv',
+            }
+        ]
+        documents = obj.data['documents']
+        assert expected_documents == documents
+
+
+def test_populate_arxiv_document_retries_on_error():
+    response500 = {'content': '', 'status_code': 500}
+    response200 = {
+        'content': pkg_resources.resource_string(
+            __name__, os.path.join('fixtures', '1605.03814.pdf')),
+        'status_code': 200,
+    }
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.get(
+            'http://export.arxiv.org/pdf/1605.03814',
+            (response500, response200),
+        )
+        requests_mocker.get(
+            'http://arxiv.org/pdf/1605.03814',
+            (response500,)
+        )
         schema = load_schema('hep')
         subschema = schema['properties']['arxiv_eprints']
 
