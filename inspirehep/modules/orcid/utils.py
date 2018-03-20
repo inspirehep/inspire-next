@@ -24,12 +24,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+import hashlib
 import re
 
 from itertools import chain
-
 from flask import current_app
 from six.moves.urllib.parse import urljoin
+from StringIO import StringIO
 from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_db import db
@@ -93,7 +94,7 @@ def _get_api_url_for_recid(server_name, api_endpoint, recid):
 
 def get_orcid_recid_key(orcid, rec_id):
     """Return the string 'orcid:``orcid_value``:``rec_id``'"""
-    return 'orcidputcodes:{}:{}'.format(orcid, rec_id)
+    return 'orcidcache:{}:{}'.format(orcid, rec_id)
 
 
 def store_record_in_redis(orcid, rec_id, put_code):
@@ -208,3 +209,36 @@ def get_orcids_for_push(record):
     orcids_in_authors = chain.from_iterable(get_values_for_schema(ids, 'ORCID') for ids in all_ids)
 
     return chain(orcids_on_record, orcids_in_authors)
+
+
+def hash_xml_element(element):
+    """Compute a hash for XML element comparison.
+
+    Args:
+        element (lxml.etree._Element): the XML node
+
+    Return:
+        string: hash
+    """
+    canonical_string = canonicalize_xml_element(element)
+    hash = hashlib.sha1(canonical_string)
+    return hash.hexdigest()
+
+
+def canonicalize_xml_element(element):
+    """Return a string with a canonical representation of the element.
+
+    Args:
+        element (lxml.etree._Element): the XML node
+
+    Return:
+        string: canonical representation
+    """
+    element_tree = element.getroottree()
+    output_stream = StringIO()
+    element_tree.write_c14n(
+        output_stream,
+        with_comments=False,
+        exclusive=True,
+    )
+    return output_stream.getvalue()

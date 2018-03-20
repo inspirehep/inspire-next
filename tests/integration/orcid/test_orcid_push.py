@@ -42,13 +42,13 @@ def redis_setup(api):
     redis_url = api.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
 
-    r.set('orcidputcodes:0000-0002-2152-2169:1375491', '1001')
-    r.set('orcidputcodes:0000-0002-2152-2169:524480', '1002')
-    r.set('orcidputcodes:0000-0002-2152-2169:701585', '1003')
+    r.set('orcidcache:0000-0002-2152-2169:1375491', '["1001", null]')
+    r.set('orcidcache:0000-0002-2152-2169:524480', '["1002", null]')
+    r.set('orcidcache:0000-0002-2152-2169:701585', '["1003", null]')
 
     yield r
 
-    r.delete(*r.keys('orcidputcodes:*'))
+    r.delete(*r.keys('orcidcache:*'))
 
 
 @pytest.fixture
@@ -58,10 +58,10 @@ def mock_allow_orcid(mocked_internal_services):
         re.compile('.*(orcid).*'),
         real_http=True,
     )
-    yield
+    yield mocked_internal_services
 
 
-def test_push_to_orcid_new_update_with_cache(
+def test_push_to_orcid_same_with_cache(
     api,
     redis_setup,
     mock_allow_orcid,
@@ -84,11 +84,11 @@ def test_push_to_orcid_new_update_with_cache(
         # Push as new
         orcid_push(orcid, rec_id, token)
 
-        # Push update
+        # Push the same record again
         orcid_push(orcid, rec_id, token)
 
-        # Check that all requests were made exactly once
-        assert cassette.play_counts.values() == [1, 1, 1]
+        # Check that the update request didn't happen:
+        assert cassette.play_counts.values() == [1, 1]
 
 
 def test_push_to_orcid_update_no_cache(
@@ -119,7 +119,7 @@ def test_push_to_orcid_update_no_cache(
 
 
 @pytest.mark.parametrize(
-    'recid,put_code',
+    '_recid,_put_code',
     [
         (1375491, '1001'),
         (524480, '1002'),
@@ -132,27 +132,30 @@ def test_push_to_orcid_verify_correct_being_pushed(
         mocked_internal_services,
         mock_config,
         monkeypatch,
-        recid,
-        put_code,
+        _recid,
+        _put_code,
 ):
-    orcid = '0000-0002-2152-2169'
+    _orcid = '0000-0002-2152-2169'
 
-    def _get_author_putcodes(_orcid, tk):
+    def _get_author_putcodes(orcid, oauth_token):
         return [
             (1375491, '1001'),
             (524480, '1002'),
             (701585, '1003'),
         ]
 
-    def _push_record_with_orcid(_recid, _orcid, tk, _put_code=None):
-        assert _recid == str(recid)
-        assert _orcid == orcid
-        assert _put_code == put_code
+    def _push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=None):
+        assert recid == str(_recid)
+        assert orcid == _orcid
+        assert put_code == _put_code
+        assert old_hash is None
+
+        return put_code, 'new-hash'
 
     monkeypatch.setattr(tasks, 'get_author_putcodes', _get_author_putcodes)
     monkeypatch.setattr(tasks, 'push_record_with_orcid', _push_record_with_orcid)
 
-    attempt_push(orcid, recid, 'fake-token')
+    attempt_push(_orcid, _recid, 'fake-token')
 
 
 def test_feature_flag_orcid_push_whitelist_regex_none():

@@ -31,7 +31,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from celery import shared_task
 from redis import StrictRedis
-from simplejson import loads
+from simplejson import dumps, loads
 
 from invenio_oauthclient.utils import oauth_link_external_id
 from invenio_oauthclient.models import RemoteToken, User, RemoteAccount, UserIdentity
@@ -39,7 +39,10 @@ from invenio_db import db
 from invenio_oauthclient.errors import AlreadyLinkedError
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
-from inspirehep.modules.orcid.api import push_record_with_orcid, get_author_putcodes
+from inspirehep.modules.orcid.api import (
+    push_record_with_orcid,
+    get_author_putcodes,
+)
 from inspirehep.modules.orcid.utils import get_orcid_recid_key, redis_locking_context
 
 
@@ -185,40 +188,59 @@ def attempt_push(orcid, rec_id, oauth_token):
         rec_id(int): inspire record's id to push to ORCID.
         oauth_token(string): orcid token.
     """
-    put_code = get_putcode_from_redis(orcid, rec_id)
+    put_code, hashed = get_putcode_and_hash_from_redis(orcid, rec_id)
 
     if not put_code:
-        record_put_codes = get_author_putcodes(orcid, oauth_token)
+        recache_all_author_putcodes(orcid, oauth_token)
+        put_code, hashed = get_putcode_and_hash_from_redis(orcid, rec_id)
 
-        for fetched_rec_id, fetched_put_code in record_put_codes:
-            store_record_in_redis(orcid, fetched_rec_id, fetched_put_code)
+    new_code, new_hash = push_record_with_orcid(
+        recid=str(rec_id),
+        orcid=orcid,
+        oauth_token=oauth_token,
+        put_code=put_code,
+        old_hash=hashed,
+    )
 
-        put_code = get_putcode_from_redis(orcid, rec_id)
-
-    new_code = push_record_with_orcid(str(rec_id), orcid, oauth_token, put_code)
-
-    if not put_code:
-        store_record_in_redis(orcid, rec_id, new_code)
+    if new_code != put_code:
+        store_record_in_redis(orcid, rec_id, new_code, new_hash)
 
 
-def store_record_in_redis(orcid, rec_id, put_code):
+def recache_all_author_putcodes(orcid, oauth_token):
+    """Fetch all putcodes from ORCID and cache them.
+
+    Args:
+        orcid(string): an orcid identifier.
+        oauth_token(string): orcid token.
+    """
+    record_put_codes = get_author_putcodes(orcid, oauth_token)
+
+    for fetched_rec_id, fetched_put_code in record_put_codes:
+        store_record_in_redis(orcid, fetched_rec_id, fetched_put_code, None)
+
+
+def store_record_in_redis(orcid, rec_id, put_code, hashed):
     """Store the entry <orcid:recid, value> in Redis.
 
     Args:
         orcid(string): the author's orcid.
         rec_id(int): inspire record's id pushed to ORCID.
         put_code(string): the put_code used to push the record to ORCID.
+        hash(Union[string, NoneType]): hashed ORCID record
     """
     with redis_locking_context('orcid_push') as r:
         orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-        r.set(orcid_recid_key, put_code)
+        r.set(orcid_recid_key, dumps([put_code, hashed]))
 
 
-def get_putcode_from_redis(orcid, rec_id):
+def get_putcode_and_hash_from_redis(orcid, rec_id):
     """Retrieve from Redis the put_code for the given ORCID - record id"""
     with redis_locking_context('orcid_push') as r:
         orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-        return r.get(orcid_recid_key)
+        try:
+            return loads(r.get(orcid_recid_key))
+        except TypeError:
+            return None, None
 
 
 def _find_user_matching(orcid, email):
