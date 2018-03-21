@@ -7,11 +7,11 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: https://api.sandbox.orcid.org/v2.0/0000-0001-7102-4649/works
+    uri: https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/works
   response:
     body: {string: !!python/unicode
       '{
-        "path": "/0000-0001-7102-4649/works",
+        "path": "/0000-0002-1825-0097/works",
         "group": [
           {
             "work-summary": [
@@ -45,9 +45,9 @@ interactions:
                 "visibility": "PUBLIC",
                 "source": {
                   "source-orcid": {
-                    "path": "0000-0001-7102-4649",
+                    "path": "0000-0002-1825-0097",
                     "host": "sandbox.orcid.org",
-                    "uri": "http://sandbox.orcid.org/0000-0001-7102-4649"
+                    "uri": "http://sandbox.orcid.org/0000-0002-1825-0097"
                   },
                   "source-name": {
                     "value": "inspire010"
@@ -63,7 +63,7 @@ interactions:
                   }
                 },
                 "display-index": "1",
-                "path": "/0000-0001-7102-4649/work/912981",
+                "path": "/0000-0002-1825-0097/work/912981",
                 "type": "JOURNAL_ARTICLE"
               },
               {
@@ -114,7 +114,7 @@ interactions:
                   }
                 },
                 "display-index": "0",
-                "path": "/0000-0001-7102-4649/work/912978",
+                "path": "/0000-0002-1825-0097/work/912978",
                 "type": "JOURNAL_ARTICLE"
               }
             ],
@@ -177,7 +177,7 @@ interactions:
                 },
                 "publication-date": null,
                 "display-index": "0",
-                "path": "/0000-0001-7102-4649/work/912977",
+                "path": "/0000-0002-1825-0097/work/912977",
                 "type": "CONFERENCE_PAPER"
               }
             ],
@@ -224,7 +224,7 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: https://api.sandbox.orcid.org/v2.0/0000-0001-7102-4649/works/912978,912977
+    uri: https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/works/912978,912977
   response:
     body: {string: !!python/unicode
     '{

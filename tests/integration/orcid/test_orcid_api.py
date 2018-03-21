@@ -24,87 +24,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
-
 import mock
-import pkg_resources
 import pytest
-import vcr
 
 from inspirehep.modules.orcid.api import push_record_with_orcid, get_author_putcodes, LOGGER
-
-
-@pytest.fixture
-def mock_orcid_api(app, mocked_internal_services):
-    """Yield a MemberAPI and mock responses"""
-    mocker, matcher = mocked_internal_services
-    mocker.put(
-        'https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/work/895497',
-        text='200 OK'
-    )
-    mocker.post(
-        'https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/work',
-        headers={
-            'Location': 'https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/work/123456'
-        },
-    )
-    return mocker
-
-
-def test_push_record_with_orcid(api_client, mock_orcid_api, mock_config):
-    expected_put_code = '895497'
-    expected_hash = '2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
-
-    result_put_code, result_hash = push_record_with_orcid(
-        recid='4328',
-        orcid='0000-0002-1825-0097',
-        oauth_token='fake-token',
-        put_code='895497',
-    )
-
-    assert expected_put_code == result_put_code
-    assert expected_hash == result_hash
-
-    orcid_requests_made = [
-        str(r) for r in mock_orcid_api.request_history if 'orcid' in r.url
-    ]
-    orcid_requests_expected = [
-        'PUT https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/work/895497'
-    ]
-    assert orcid_requests_made == orcid_requests_expected
-
-
-def test_push_record_with_orcid_new(api_client, mock_orcid_api, mock_config):
-    expected_put_code = '123456'
-    expected_hash = '2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
-
-    result_put_code, result_hash = push_record_with_orcid(
-        recid='4328',
-        orcid='0000-0002-1825-0097',
-        oauth_token='fake-token',
-        put_code=None,
-    )
-
-    assert expected_put_code == result_put_code
-    assert expected_hash == result_hash
-
-    orcid_requests_made = [
-        str(r) for r in mock_orcid_api.request_history if 'orcid' in r.url
-    ]
-    orcid_requests_expected = [
-        'POST https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/work'
-    ]
-    assert orcid_requests_made == orcid_requests_expected
-
-
-def get_file_contents(fixture_name):
-    """Get contents of fixture files"""
-    path = pkg_resources.resource_filename(
-        __name__,
-        os.path.join('fixtures', fixture_name)
-    )
-    with open(path, 'r') as fixture_fd:
-        return fixture_fd.read()
 
 
 @pytest.fixture
@@ -119,18 +42,63 @@ def mock_logger():
         yield mock_logger
 
 
-def test_get_author_putcodes(app, mock_config, mock_logger):
-    with vcr.use_cassette(
-        pkg_resources.resource_filename(
-            __name__,
-            'fixtures/casette_get_putcodes.yaml'
-        ),
-        decode_compressed_response=True,
-        filter_headers=['Authorization'],
-        ignore_localhost=True,
-        record_mode='none'
-    ):
-        pairs = get_author_putcodes('0000-0001-7102-4649', 'fake-token')
+@pytest.mark.vcr()
+def test_push_record_with_orcid_new(mock_config, vcr_cassette):
+    expected_put_code = '920107'
+    expected_hash = '2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
 
-        assert pairs == [('4328', '912978')]
-        assert '912977' in mock_logger.message
+    result_put_code, result_hash = push_record_with_orcid(
+        recid='4328',
+        orcid='0000-0002-1825-0097',
+        oauth_token='fake-token',
+        put_code=None,
+        old_hash=None,
+    )
+
+    assert expected_put_code == result_put_code
+    assert expected_hash == result_hash
+    assert vcr_cassette.all_played
+
+
+@pytest.mark.vcr()
+def test_push_record_with_orcid_update(mock_config, vcr_cassette):
+    expected_put_code = '920107'
+    expected_hash = '2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
+
+    result_put_code, result_hash = push_record_with_orcid(
+        recid='4328',
+        orcid='0000-0002-1825-0097',
+        oauth_token='fake-token',
+        put_code='920107',
+        old_hash=None,
+    )
+
+    assert expected_put_code == result_put_code
+    assert expected_hash == result_hash
+    assert vcr_cassette.all_played
+
+
+@pytest.mark.vcr()
+def test_push_record_with_orcid_dont_push_if_no_change(mock_config, vcr_cassette):
+    expected_put_code = '920107'
+    expected_hash = '2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
+
+    result_put_code, result_hash = push_record_with_orcid(
+        recid='4328',
+        orcid='0000-0002-1825-0097',
+        oauth_token='fake-token',
+        put_code='920107',
+        old_hash='2995c60336bce71134ebdc12fc50b1ccaf0fd7cd',
+    )
+
+    assert expected_put_code == result_put_code
+    assert expected_hash == result_hash
+    assert vcr_cassette.all_played
+
+
+@pytest.mark.vcr()
+def test_get_author_putcodes(mock_config, mock_logger):
+    pairs = get_author_putcodes('0000-0002-1825-0097', 'fake-token')
+
+    assert pairs == [('4328', '912978')]
+    assert '912977' in mock_logger.message
