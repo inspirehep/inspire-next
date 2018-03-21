@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+<record>
+  <controlfield tag="001">1663923</controlfield>
+  <controlfield tag="005">20180323233254.0</controlfield>
+  <datafield tag="024" ind1="7" ind2=" ">
+    <subfield code="2">DOI</subfield>
+    <subfield code="9">submitter</subfield>
+    <subfield code="a">10.1109/TASC.2018.2810192</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">Chiuchiolo:2018vld</subfield>
+    <subfield code="9">INSPIRETeX</subfield>
+  </datafield>
+  <datafield tag="100" ind1=" " ind2=" ">
+    <subfield code="a">Chiuchiolo, Antonella</subfield>
+    <subfield code="u">CERN</subfield>
+    <subfield code="w">A.Chiuchiolo.1</subfield>
+    <subfield code="x">1651311</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">902725</subfield>
+  </datafield>
+  <datafield tag="245" ind1=" " ind2=" ">
+    <subfield code="9">submitter</subfield>
+    <subfield code="a">Strain measurements with Fiber Bragg Grating sensors in the short models of the HiLumi LHC Low-Beta Quadrupole Magnet MQXF</subfield>
+  </datafield>
+  <datafield tag="246" ind1=" " ind2=" ">
+    <subfield code="9">crossref</subfield>
+    <subfield code="a">Strain measurements with Fiber Bragg Grating sensors in the short models of the HiLumi LHC Low-Beta Quadrupole Magnet MQXF</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">1</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">* Temporary entry *</subfield>
+  </datafield>
+  <datafield tag="520" ind1=" " ind2=" ">
+    <subfield code="9">submitter</subfield>
+    <subfield code="a">The replacement of the LHC Nb-Ti inner triplet magnets with more powerful quadrupole magnets based on Nb$_{3}$Sn superconductor, as foreseen by the HiLumi LHC Project, has pushed the technology advancement not only in the manufacturing process and tooling but also in the instrumentation. For the short model quadrupole magnet MQXFS-5, fabricated and tested at CERN, fiber optic sensors, based on Fiber Bragg Grating (FBG) technology, have been proposed for monitoring the magnet mechanical behavior from its assembly to its operation in cryogenic conditions. After the experience gained with the FBG integration in short model racetrack coils, the paper deals with the first integration of 16 FBG sensors arranged into 8 fibers and glued on the coils and on the support structure of the Nb$_{3}$Sn quadrupole. The advantages offered by the FBGs' multiplexing capability has allowed the integration improvement of the FBG-based measuring system in the magnet structure as well as in the test facility. Examples of strain measurements during magnet assembly, cool-down and powering are presented in the paper and compared with strain gauges data.</subfield>
+  </datafield>
+  <datafield tag="650" ind1="1" ind2="7">
+    <subfield code="2">INSPIRE</subfield>
+    <subfield code="9">user</subfield>
+    <subfield code="a">Accelerators</subfield>
+  </datafield>
+  <datafield tag="693" ind1=" " ind2=" ">
+    <subfield code="a">CERN HL-LHC</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Bajas, Hugues</subfield>
+    <subfield code="w">H.Bajas.1</subfield>
+    <subfield code="x">1224659</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Bajko, Marta</subfield>
+    <subfield code="w">M.Bajko.1</subfield>
+    <subfield code="x">1610987</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Bourcey, Nicolas</subfield>
+    <subfield code="w">N.Bourcey.1</subfield>
+    <subfield code="x">1646768</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Cabon, Morgane</subfield>
+    <subfield code="w">M.Cabon.1</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Ferracin, Paolo</subfield>
+    <subfield code="w">P.Ferracin.2</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Grosclaude, Philippe</subfield>
+    <subfield code="w">P.Grosclaude.2</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Guinchard, Michael</subfield>
+    <subfield code="w">M.Guinchard.2</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Perez, Juan Carlos</subfield>
+    <subfield code="w">J.C.Perez.1</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Vallone, Giorgio</subfield>
+    <subfield code="w">Giorgio.Vallone.1</subfield>
+    <subfield code="x">1599484</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="773" ind1=" " ind2=" ">
+    <subfield code="p">IEEE Trans.Appl.Supercond.</subfield>
+    <subfield code="y">2018</subfield>
+    <subfield code="1">1213547</subfield>
+  </datafield>
+  <datafield tag="909" ind1="C" ind2="O">
+    <subfield code="o">oai:inspirehep.net:1663923</subfield>
+    <subfield code="p">INSPIRE:HEP</subfield>
+  </datafield>
+  <datafield tag="961" ind1=" " ind2=" ">
+    <subfield code="x">2018-03-23</subfield>
+    <subfield code="c">2018-03-23</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">CORE</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">HEP</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">ConferencePaper</subfield>
+  </datafield>
+</record>
+
+</collection>

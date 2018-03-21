@@ -59,7 +59,7 @@ def app(request):
     with app.app_context():
         # Celery task imports must be local, otherwise their
         # configuration would use the default pickle serializer.
-        from inspirehep.modules.migrator.tasks import migrate
+        from inspirehep.modules.migrator.tasks import migrate_from_file
 
         db.drop_all()
         db.create_all()
@@ -72,7 +72,7 @@ def app(request):
         init_users_and_permissions()
         init_collections()
 
-        migrate('./inspirehep/demosite/data/demo-records-acceptance.xml.gz', wait_for_results=True)
+        migrate_from_file('./inspirehep/demosite/data/demo-records-acceptance.xml.gz', wait_for_results=True)
         es.indices.refresh('records-hep')
 
         yield app

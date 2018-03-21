@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .cli import migrator
+from .cli import migrator, migrate
 
 
 class InspireMigrator(object):
@@ -33,5 +33,6 @@ class InspireMigrator(object):
             self.init_app(app)
 
     def init_app(self, app):
-        app.cli.add_command(migrator)
+        app.cli.add_command(migrate)
+        app.cli.add_command(migrator)  # Deprecated
         app.extensions['inspire-migrator'] = self
