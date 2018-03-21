@@ -34,5 +34,6 @@ def ensure_valid_schema(record):
     if not record['$schema'].startswith('http'):
         record['$schema'] = url_for(
             'invenio_jsonschemas.get_schema',
-            schema_path="records/{0}".format(record['$schema'])
+            schema_path="records/{0}".format(record['$schema']),
+            _external=True,
         )

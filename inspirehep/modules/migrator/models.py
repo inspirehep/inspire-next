@@ -80,4 +80,5 @@ class InspireProdRecords(db.Model):
         # FIXME also get last_updated from marcxml
         record = cls(recid=recid)
         record.marcxml = raw_record
+        record.valid = None
         return record
