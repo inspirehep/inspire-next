@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 from datetime import datetime
 from zlib import compress, decompress, error
 
@@ -40,6 +42,8 @@ class InspireProdRecords(db.Model):
     valid = db.Column(db.Boolean, default=None, nullable=True, index=True)
     errors = db.Column(db.Text(), nullable=True)
 
+    re_recid = re.compile('<controlfield.*?tag=.001.*?>(?P<recid>\d+)</controlfield>')
+
     @hybrid_property
     def marcxml(self):
         """marcxml column wrapper to compress/decompress on the fly."""
@@ -52,3 +56,18 @@ class InspireProdRecords(db.Model):
     @marcxml.setter
     def marcxml(self, value):
         self._marcxml = compress(value)
+
+    @classmethod
+    def from_marcxml(cls, raw_record):
+        """Create an instance from a MARCXML record.
+
+        The record must have a ``001`` tag containing the recid, otherwise it raises a ValueError.
+        """
+        try:
+            recid = int(cls.re_recid.search(raw_record).group('recid'))
+        except AttributeError:
+            raise ValueError('The MARCXML record contains no recid or recid is malformed')
+        # FIXME also get last_updated from marcxml
+        record = cls(recid=recid)
+        record.marcxml = raw_record
+        return record
