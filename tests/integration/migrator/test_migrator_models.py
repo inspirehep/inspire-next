@@ -43,7 +43,7 @@ def test_inspire_prod_records_from_marcxml():
     assert record.recid == 1591551
     assert record.marcxml == raw_record
     assert record.valid is None
-    assert record.errors is None
+    assert record.error is None
 
 
 def test_inspire_prod_records_from_marcxml_raises_for_invalid_recid():
@@ -59,3 +59,12 @@ def test_inspire_prod_records_from_marcxml_raises_for_invalid_recid():
 
     with pytest.raises(ValueError):
         InspireProdRecords.from_marcxml(raw_record)
+
+
+def test_inspire_prod_records_error():
+    record = InspireProdRecords(recid='12345')
+    error = ValueError(u'This is an error with ùnicode')
+
+    record.error = error
+
+    assert record.error == u'ValueError: This is an error with ùnicode'

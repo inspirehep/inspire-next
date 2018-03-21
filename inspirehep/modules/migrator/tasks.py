@@ -369,9 +369,7 @@ def _get_recid(raw_record):
 
 
 def _store_migrator_error(recid, marcxml, error):
-    error_str = u'{0}: Record {1}: {2}'.format(type(error), recid, error)
     prod_record = InspireProdRecords(recid=recid)
-    prod_record.valid = False
     prod_record.marcxml = marcxml
-    prod_record.errors = error_str
+    prod_record.error = error
     db.session.merge(prod_record)
