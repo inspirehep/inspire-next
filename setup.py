@@ -100,6 +100,7 @@ install_requires = [
     'plotextractor~=0.0,>=0.1.6',
     'pyOpenSSL~=17.0,>=17.5.0',
     'pybtex~=0.0,>=0.21',
+    'pytest-vcr>=0.3.0',
     'python-redis-lock~=3.0,>=3.2.0',
     'raven[flask]~=6.0,>=6.2.1',
     'refextract~=0.0,>=0.2.2',
