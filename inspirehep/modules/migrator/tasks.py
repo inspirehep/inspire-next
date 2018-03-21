@@ -32,7 +32,6 @@ from itertools import chain
 
 import click
 from celery import group, shared_task
-from dojson.contrib.marc21.utils import create_record
 from elasticsearch.helpers import bulk as es_bulk
 from elasticsearch.helpers import scan as es_scan
 from flask import current_app
@@ -334,13 +333,28 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
 
 def migrate_and_insert_record(raw_record, skip_files=False):
     """Migrate a record and insert it if valid, or log otherwise."""
+    prod_record = InspireProdRecords.from_marcxml(raw_record)
+    return migrate_record_from_mirror(prod_record, skip_files=skip_files)
+
+
+def migrate_record_from_mirror(prod_record, skip_files=False):
+    """Migrate a mirrored legacy record into an Inspire record.
+
+    Args:
+        prod_record(InspireProdRecords): the mirrored record to migrate.
+        skip_files(bool): flag indicating whether the files in the record
+            metadata should be copied over from legacy and attach to the
+            record.
+
+    Returns:
+        dict: the migrated record metadata, which is also inserted into the database.
+    """
     try:
-        json_record = marcxml2record(raw_record)
-        recid = json_record['control_number']
-    except Exception as e:
+        json_record = marcxml2record(prod_record.marcxml)
+    except Exception as exc:
         LOGGER.exception('Migrator DoJSON Error')
-        recid = _get_recid(raw_record)
-        _store_migrator_error(recid, raw_record, e)
+        prod_record.error = exc
+        db.session.merge(prod_record)
         return None
 
     if '$schema' in json_record:
@@ -349,27 +363,16 @@ def migrate_and_insert_record(raw_record, skip_files=False):
     try:
         record = InspireRecord.create_or_update(json_record, skip_files=skip_files)
         record.commit()
-    except ValidationError as e:
+    except ValidationError as exc:
         pattern = u'Migrator Validator Error: {}, Value: %r, Record: %r'
-        LOGGER.error(pattern.format('.'.join(e.schema_path)), e.instance, recid)
-        _store_migrator_error(recid, raw_record, e)
-    except Exception as e:
+        LOGGER.error(pattern.format('.'.join(exc.schema_path)), exc.instance, prod_record.recid)
+        prod_record.error = exc
+        db.session.merge(prod_record)
+    except Exception as exc:
         LOGGER.exception('Migrator Record Insert Error')
-        _store_migrator_error(recid, raw_record, e)
+        prod_record.error = exc
+        db.session.merge(prod_record)
     else:
-        prod_record = InspireProdRecords(recid=recid)
-        prod_record.marcxml = raw_record
         prod_record.valid = True
         db.session.merge(prod_record)
         return record
-
-
-def _get_recid(raw_record):
-    return int(create_record(raw_record)['001'])
-
-
-def _store_migrator_error(recid, marcxml, error):
-    prod_record = InspireProdRecords(recid=recid)
-    prod_record.marcxml = marcxml
-    prod_record.error = error
-    db.session.merge(prod_record)
