@@ -40,7 +40,7 @@ class InspireProdRecords(db.Model):
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
     _marcxml = db.Column('marcxml', db.LargeBinary, nullable=False)
     valid = db.Column(db.Boolean, default=None, nullable=True, index=True)
-    errors = db.Column(db.Text(), nullable=True)
+    _errors = db.Column('errors', db.Text(), nullable=True)
 
     re_recid = re.compile('<controlfield.*?tag=.001.*?>(?P<recid>\d+)</controlfield>')
 
@@ -56,6 +56,16 @@ class InspireProdRecords(db.Model):
     @marcxml.setter
     def marcxml(self, value):
         self._marcxml = compress(value)
+
+    @hybrid_property
+    def error(self):
+        return self._errors
+
+    @error.setter
+    def error(self, value):
+        """Errors column setter that stores an Exception and sets the ``valid`` flag."""
+        self.valid = False
+        self._errors = u'{}: {}'.format(type(value).__name__, value)
 
     @classmethod
     def from_marcxml(cls, raw_record):
