@@ -23,3 +23,13 @@
 """Workflows serializers."""
 
 from __future__ import absolute_import, division, print_function
+
+from invenio_workflows_ui.serializers.response import (
+    workflow_responsify,
+    search_responsify,
+)
+from .json import WorkflowJSONSerializer
+
+json_v1 = WorkflowJSONSerializer()
+json_serializer = workflow_responsify(json_v1, 'application/json')
+json_search_serializer = search_responsify(json_v1, 'application/json')

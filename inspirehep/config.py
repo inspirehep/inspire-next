@@ -1284,11 +1284,11 @@ WORKFLOWS_UI_API_URL = "/api/holdingpen/"
 
 WORKFLOWS_UI_REST_ENDPOINT = dict(
     workflow_object_serializers={
-        'application/json': ('invenio_workflows_ui.serializers'
+        'application/json': ('inspirehep.modules.workflows.serializers'
                              ':json_serializer'),
     },
     search_serializers={
-        'application/json': ('invenio_workflows_ui.serializers'
+        'application/json': ('inspirehep.modules.workflows.serializers'
                              ':json_search_serializer')
     },
     action_serializers={
