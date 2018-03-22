@@ -24,12 +24,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+import hashlib
 import re
 
 from itertools import chain
-
 from flask import current_app
 from six.moves.urllib.parse import urljoin
+from StringIO import StringIO
 from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_db import db
@@ -44,7 +45,6 @@ from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_values_for_schema
 from inspire_utils.urls import ensure_scheme
-from inspirehep.modules.cache.utils import redis_locking_context, RedisLockError
 from inspirehep.utils.record_getter import get_db_records
 
 LOGGER = getStackTraceLogger(__name__)
@@ -92,40 +92,8 @@ def _get_api_url_for_recid(server_name, api_endpoint, recid):
 
 
 def get_orcid_recid_key(orcid, rec_id):
-    """Return the string 'orcid:``orcid_value``:``rec_id``'"""
-    return 'orcidputcodes:{}:{}'.format(orcid, rec_id)
-
-
-def store_record_in_redis(orcid, rec_id, put_code):
-    """Store the entry <orcid:recid, value> in Redis.
-
-    Args:
-        orcid(string): the author's orcid.
-        rec_id(int): inspire record's id pushed to ORCID.
-        put_code(string): the put_code used to push the record to ORCID.
-
-    Returns:
-        bool: True if the entry is set in Redis, False otherwise.
-    """
-    try:
-        with redis_locking_context('orcid_push') as r:
-            orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-            r.set(orcid_recid_key, put_code)
-            return True
-
-    except RedisLockError:
-        LOGGER.info("Push to ORCID failed for record {}".format(rec_id))
-        return False
-
-
-def get_putcode_from_redis(orcid, rec_id):
-    """Retrieve from Redis the put_code for the given ORCID - record id"""
-    try:
-        with redis_locking_context('orcid_push') as r:
-            orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-            return r.get(orcid_recid_key)
-    except RedisLockError:
-        LOGGER.info("Push to ORCID failed for record {}".format(rec_id))
+    """Return the string 'orcidcache:``orcid_value``:``rec_id``'"""
+    return 'orcidcache:{}:{}'.format(orcid, rec_id)
 
 
 def _get_account_and_token(orcid):
@@ -208,3 +176,36 @@ def get_orcids_for_push(record):
     orcids_in_authors = chain.from_iterable(get_values_for_schema(ids, 'ORCID') for ids in all_ids)
 
     return chain(orcids_on_record, orcids_in_authors)
+
+
+def hash_xml_element(element):
+    """Compute a hash for XML element comparison.
+
+    Args:
+        element (lxml.etree._Element): the XML node
+
+    Return:
+        string: hash
+    """
+    canonical_string = canonicalize_xml_element(element)
+    hash = hashlib.sha1(canonical_string)
+    return 'sha1:' + hash.hexdigest()
+
+
+def canonicalize_xml_element(element):
+    """Return a string with a canonical representation of the element.
+
+    Args:
+        element (lxml.etree._Element): the XML node
+
+    Return:
+        string: canonical representation
+    """
+    element_tree = element.getroottree()
+    output_stream = StringIO()
+    element_tree.write_c14n(
+        output_stream,
+        with_comments=False,
+        exclusive=True,
+    )
+    return output_stream.getvalue()

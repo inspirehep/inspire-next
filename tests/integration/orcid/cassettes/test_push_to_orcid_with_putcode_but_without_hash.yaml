@@ -1,0 +1,310 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://api.sandbox.orcid.org/v2.0/0000-0002-2169-2152/works
+  response:
+    body: {string: !!python/unicode "{\n  \"last-modified-date\" : {\n    \"value\"\
+        \ : 1521644439187\n  },\n  \"group\" : [ {\n    \"last-modified-date\" : {\n\
+        \      \"value\" : 1521644439187\n    },\n    \"external-ids\" : {\n     \
+        \ \"external-id\" : [ {\n        \"external-id-type\" : \"doi\",\n       \
+        \ \"external-id-value\" : \"10.1016/0029-5582(61)90469-2\",\n        \"external-id-url\"\
+        \ : {\n          \"value\" : \"http://dx.doi.org/10.1016/0029-5582(61)90469-2\"\
+        \n        },\n        \"external-id-relationship\" : \"SELF\"\n      } ]\n\
+        \    },\n    \"work-summary\" : [ {\n      \"put-code\" : 920107,\n      \"\
+        created-date\" : {\n        \"value\" : 1521644439187\n      },\n      \"\
+        last-modified-date\" : {\n        \"value\" : 1521644439187\n      },\n  \
+        \    \"source\" : {\n        \"source-orcid\" : null,\n        \"source-client-id\"\
+        \ : {\n          \"uri\" : \"http://sandbox.orcid.org/client/CHANGE_ME\"\
+        ,\n          \"path\" : \"CHANGE_ME\",\n          \"host\" : \"\
+        sandbox.orcid.org\"\n        },\n        \"source-name\" : {\n          \"\
+        value\" : \"INSPIRE-PROFILE-PUSH\"\n        }\n      },\n      \"title\" :\
+        \ {\n        \"title\" : {\n          \"value\" : \"Partial Symmetries of\
+        \ Weak Interactions\"\n        },\n        \"subtitle\" : null,\n        \"\
+        translated-title\" : null\n      },\n      \"external-ids\" : {\n        \"\
+        external-id\" : [ {\n          \"external-id-type\" : \"doi\",\n         \
+        \ \"external-id-value\" : \"10.1016/0029-5582(61)90469-2\",\n          \"\
+        external-id-url\" : {\n            \"value\" : \"http://dx.doi.org/10.1016/0029-5582(61)90469-2\"\
+        \n          },\n          \"external-id-relationship\" : \"SELF\"\n      \
+        \  } ]\n      },\n      \"type\" : \"JOURNAL_ARTICLE\",\n      \"publication-date\"\
+        \ : {\n        \"year\" : {\n          \"value\" : \"1961\"\n        },\n\
+        \        \"month\" : null,\n        \"day\" : null,\n        \"media-type\"\
+        \ : null\n      },\n      \"visibility\" : \"PRIVATE\",\n      \"path\" :\
+        \ \"/0000-0002-2169-2152/work/920107\",\n      \"display-index\" : \"0\"\n\
+        \    } ]\n  } ],\n  \"path\" : \"/0000-0002-2169-2152/works\"\n}"}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['1875']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Thu, 22 Mar 2018 10:28:44 GMT']
+      expires: ['0']
+      pragma: [no-cache]
+      server: [nginx/1.10.0]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://api.sandbox.orcid.org/v2.0/0000-0002-2169-2152/works/920107
+  response:
+    body: {string: !!python/unicode "{\n  \"bulk\" : [ {\n    \"work\" : {\n     \
+        \ \"created-date\" : {\n        \"value\" : 1521644439187\n      },\n    \
+        \  \"last-modified-date\" : {\n        \"value\" : 1521644439187\n      },\n\
+        \      \"source\" : {\n        \"source-orcid\" : null,\n        \"source-client-id\"\
+        \ : {\n          \"uri\" : \"http://sandbox.orcid.org/client/CHANGE_ME\"\
+        ,\n          \"path\" : \"CHANGE_ME\",\n          \"host\" : \"\
+        sandbox.orcid.org\"\n        },\n        \"source-name\" : {\n          \"\
+        value\" : \"INSPIRE-PROFILE-PUSH\"\n        }\n      },\n      \"put-code\"\
+        \ : 920107,\n      \"path\" : null,\n      \"title\" : {\n        \"title\"\
+        \ : {\n          \"value\" : \"Partial Symmetries of Weak Interactions\"\n\
+        \        },\n        \"subtitle\" : null,\n        \"translated-title\" :\
+        \ null\n      },\n      \"journal-title\" : {\n        \"value\" : \"Nucl.Phys.\"\
+        \n      },\n      \"short-description\" : null,\n      \"citation\" : {\n\
+        \        \"citation-type\" : \"BIBTEX\",\n        \"citation-value\" : \"\
+        @article{Glashow:1961tr,\\n    author = \\\"Glashow, S.L.\\\",\\n    journal\
+        \ = \\\"Nucl.Phys.\\\",\\n    volume = \\\"22\\\",\\n    pages = \\\"579--588\\\
+        \",\\n    doi = \\\"10.1016/0029-5582(61)90469-2\\\",\\n    title = \\\"Partial\
+        \ Symmetries of Weak Interactions\\\",\\n    year = \\\"1961\\\"\\n}\\n\"\n\
+        \      },\n      \"type\" : \"JOURNAL_ARTICLE\",\n      \"publication-date\"\
+        \ : {\n        \"year\" : {\n          \"value\" : \"1961\"\n        },\n\
+        \        \"month\" : null,\n        \"day\" : null,\n        \"media-type\"\
+        \ : null\n      },\n      \"external-ids\" : {\n        \"external-id\" :\
+        \ [ {\n          \"external-id-type\" : \"doi\",\n          \"external-id-value\"\
+        \ : \"10.1016/0029-5582(61)90469-2\",\n          \"external-id-url\" : {\n\
+        \            \"value\" : \"http://dx.doi.org/10.1016/0029-5582(61)90469-2\"\
+        \n          },\n          \"external-id-relationship\" : \"SELF\"\n      \
+        \  } ]\n      },\n      \"url\" : {\n        \"value\" : \"http://inspirehep.net/record/4328\"\
+        \n      },\n      \"contributors\" : {\n        \"contributor\" : [ {\n  \
+        \        \"contributor-orcid\" : null,\n          \"credit-name\" : {\n  \
+        \          \"value\" : \"Glashow, S.L.\"\n          },\n          \"contributor-email\"\
+        \ : null,\n          \"contributor-attributes\" : {\n            \"contributor-sequence\"\
+        \ : \"FIRST\",\n            \"contributor-role\" : \"AUTHOR\"\n          }\n\
+        \        } ]\n      },\n      \"language-code\" : null,\n      \"country\"\
+        \ : null,\n      \"visibility\" : \"PRIVATE\"\n    }\n  } ]\n}"}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['2281']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Thu, 22 Mar 2018 10:28:57 GMT']
+      expires: ['0']
+      pragma: [no-cache]
+      server: [nginx/1.10.0]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://labs.inspirehep.net/api/literature/4328
+  response:
+    body: {string: !!python/unicode "{\n  \"created\": null, \n  \"id\": 4328, \n\
+        \  \"links\": {\n    \"self\": \"https://labs.inspirehep.net/api/literature/4328\"\
+        \n  }, \n  \"metadata\": {\n    \"$schema\": \"https://labs.inspirehep.net/schemas/records/hep.json\"\
+        , \n    \"_collections\": [\n      \"Literature\"\n    ], \n    \"_created\"\
+        : \"1982-01-01T00:00:00+00:00\", \n    \"_desy_bookkeeping\": [\n      {\n\
+        \        \"identifier\": \"D82-03581\"\n      }\n    ], \n    \"_private_notes\"\
+        : [\n      {\n        \"source\": \"SPIRES-HIDDEN\", \n        \"value\":\
+        \ \"Title changed from ALLCAPS\"\n      }, \n      {\n        \"source\":\
+        \ \"SPIRES-HIDDEN\", \n        \"value\": \"DOI from CrossRef\"\n      },\
+        \ \n      {\n        \"value\": \"FC=p based on DCC=ZU and DK=CP\"\n     \
+        \ }\n    ], \n    \"_updated\": \"2018-01-19T06:57:49.577135+00:00\", \n \
+        \   \"abstracts\": [\n      {\n        \"abstract_source_suggest\": {\n  \
+        \        \"input\": \"Elsevier\", \n          \"output\": \"Elsevier\"\n \
+        \       }, \n        \"source\": \"Elsevier\", \n        \"value\": \"Weak\
+        \ and electromagnetic interactions of the leptons are examined under the hypothesis\
+        \ that the weak interactions are mediated by vector bosons. With only an isotopic\
+        \ triplet of leptons coupled to a triplet of vector bosons (two charged decay-intermediaries\
+        \ and the photon) the theory possesses no partial-symmetries. Such symmetries\
+        \ may be established if additional vector bosons or additional leptons are\
+        \ introduced. Since the latter possibility yields a theory disagreeing with\
+        \ experiment, the simplest partially-symmetric model reproducing the observed\
+        \ electromagnetic and weak interactions of leptons requires the existence\
+        \ of at least four vector-boson fields (including the photon). Corresponding\
+        \ partially-conserved quantities suggest leptonic analogues to the conserved\
+        \ quantities associated with strong interactions: strangeness and isobaric\
+        \ spin.\"\n      }\n    ], \n    \"author_count\": 1, \n    \"authors\": [\n\
+        \      {\n        \"affiliations\": [\n          {\n            \"recid\"\
+        : 903881, \n            \"record\": {\n              \"$ref\": \"http://labs.inspirehep.net/api/institutions/903881\"\
+        \n            }, \n            \"value\": \"Copenhagen U.\"\n          }\n\
+        \        ], \n        \"curated_relation\": true, \n        \"full_name\"\
+        : \"Glashow, S.L.\", \n        \"full_name_unicode_normalized\": \"glashow,\
+        \ s.l.\", \n        \"ids\": [\n          {\n            \"schema\": \"INSPIRE\
+        \ ID\", \n            \"value\": \"INSPIRE-00085173\"\n          }\n     \
+        \   ], \n        \"name_suggest\": {\n          \"input\": [\n           \
+        \ \"glashow s\", \n            \"glashow s.l.\", \n            \"glashow,\
+        \ s\", \n            \"s glashow\", \n            \"glashow\", \n        \
+        \    \"s.l., glashow\", \n            \"s.l. glashow\", \n            \"glashow,\
+        \ s.l.\", \n            \"s, glashow\"\n          ], \n          \"output\"\
+        : \"Glashow, S.L.\", \n          \"payload\": {\n            \"bai\": null\n\
+        \          }\n        }, \n        \"name_variations\": [\n          \"glashow\
+        \ s\", \n          \"glashow s.l.\", \n          \"glashow, s\", \n      \
+        \    \"s glashow\", \n          \"glashow\", \n          \"s.l., glashow\"\
+        , \n          \"s.l. glashow\", \n          \"glashow, s.l.\", \n        \
+        \  \"s, glashow\"\n        ], \n        \"recid\": 1008235, \n        \"record\"\
+        : {\n          \"$ref\": \"http://labs.inspirehep.net/api/authors/1008235\"\
+        \n        }, \n        \"signature_block\": \"GLASs\", \n        \"uuid\"\
+        : \"844076be-0dde-498a-87ad-449934726e07\"\n      }\n    ], \n    \"citeable\"\
+        : true, \n    \"control_number\": 4328, \n    \"core\": true, \n    \"curated\"\
+        : true, \n    \"document_type\": [\n      \"article\"\n    ], \n    \"documents\"\
+        : [\n      {\n        \"hidden\": true, \n        \"key\": \"0029558261904692.xml\"\
+        , \n        \"url\": \"/afs/cern.ch/project/inspire/PROD/var/data/files/g122/2457396/content.xml;1\"\
+        \n      }\n    ], \n    \"dois\": [\n      {\n        \"value\": \"10.1016/0029-5582(61)90469-2\"\
+        \n      }\n    ], \n    \"earliest_date\": \"1961\", \n    \"external_system_identifiers\"\
+        : [\n      {\n        \"schema\": \"OSTI\", \n        \"value\": \"4082455\"\
+        \n      }, \n      {\n        \"schema\": \"SPIRES\", \n        \"value\"\
+        : \"SPIRES-154008\"\n      }\n    ], \n    \"facet_inspire_doc_type\": [\n\
+        \      \"article\", \n      \"peer reviewed\"\n    ], \n    \"inspire_categories\"\
+        : [\n      {\n        \"source\": \"curator\", \n        \"term\": \"Phenomenology-HEP\"\
+        \n      }\n    ], \n    \"keywords\": [\n      {\n        \"schema\": \"INSPIRE\"\
+        , \n        \"value\": \"ELECTROWEAK INTERACTION\"\n      }, \n      {\n \
+        \       \"schema\": \"INSPIRE\", \n        \"value\": \"COUPLING: YUKAWA\"\
+        \n      }, \n      {\n        \"schema\": \"INSPIRE\", \n        \"value\"\
+        : \"YUKAWA: COUPLING\"\n      }, \n      {\n        \"schema\": \"INSPIRE\"\
+        , \n        \"value\": \"CURRENT: CONSERVATION LAW\"\n      }, \n      {\n\
+        \        \"schema\": \"INSPIRE\", \n        \"value\": \"PARITY: VIOLATION\"\
+        \n      }, \n      {\n        \"schema\": \"INSPIRE\", \n        \"value\"\
+        : \"VIOLATION: PARITY\"\n      }, \n      {\n        \"schema\": \"INSPIRE\"\
+        , \n        \"value\": \"GAUGE BOSON\"\n      }, \n      {\n        \"schema\"\
+        : \"INSPIRE\", \n        \"value\": \"INVARIANCE: CP\"\n      }\n    ], \n\
+        \    \"legacy_creation_date\": \"1982-01-01\", \n    \"number_of_pages\":\
+        \ 10, \n    \"preprint_date\": \"1961\", \n    \"publication_info\": [\n \
+        \     {\n        \"journal_recid\": 1214548, \n        \"journal_record\"\
+        : {\n          \"$ref\": \"http://labs.inspirehep.net/api/journals/1214548\"\
+        \n        }, \n        \"journal_title\": \"Nucl.Phys.\", \n        \"journal_volume\"\
+        : \"22\", \n        \"page_end\": \"588\", \n        \"page_start\": \"579\"\
+        , \n        \"year\": 1961\n      }, \n      {\n        \"pubinfo_freetext\"\
+        : \"Nucl. Phys. 22 (1961) 579-588\"\n      }, \n      {\n        \"pubinfo_freetext\"\
+        : \"Also in *Lai, C. H. (Ed.): Gauge Theory Of Weak and Electromagnetic Interactions*,\
+        \ 171-180\"\n      }\n    ], \n    \"refereed\": true, \n    \"self\": {\n\
+        \      \"$ref\": \"http://labs.inspirehep.net/api/literature/4328\"\n    },\
+        \ \n    \"self_recid\": 4328, \n    \"texkeys\": [\n      \"Glashow:1961tr\"\
+        \n    ], \n    \"titles\": [\n      {\n        \"title\": \"Partial Symmetries\
+        \ of Weak Interactions\"\n      }\n    ]\n  }, \n  \"updated\": \"2018-01-19T06:57:49.577135+00:00\"\
+        \n}"}
+    headers:
+      access-control-allow-origin: ['*']
+      access-control-expose-headers: ['Content-Type, ETag, Link, X-RateLimit-Limit,
+          X-RateLimit-Remaining, X-RateLimit-Reset']
+      content-length: ['5818']
+      content-type: [application/json]
+      date: ['Thu, 22 Mar 2018 10:28:57 GMT']
+      etag: [W/"None"]
+      last-modified: ['Fri, 19 Jan 2018 06:57:49 GMT']
+      link: ['<https://labs.inspirehep.net/api/literature/4328>; rel="self"']
+      server: [nginx/1.12.2]
+      strict-transport-security: [max-age=31536000]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/x-bibtex]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://labs.inspirehep.net/api/literature/4328
+  response:
+    body: {string: !!python/unicode "@article{Glashow:1961tr,\n    author = \"Glashow,\
+        \ S.L.\",\n    journal = \"Nucl.Phys.\",\n    volume = \"22\",\n    pages\
+        \ = \"579--588\",\n    doi = \"10.1016/0029-5582(61)90469-2\",\n    title\
+        \ = \"Partial Symmetries of Weak Interactions\",\n    year = \"1961\"\n}\n"}
+    headers:
+      access-control-allow-origin: ['*']
+      access-control-expose-headers: ['Content-Type, ETag, Link, X-RateLimit-Limit,
+          X-RateLimit-Remaining, X-RateLimit-Reset']
+      content-length: ['243']
+      content-type: [application/x-bibtex]
+      date: ['Thu, 22 Mar 2018 10:28:58 GMT']
+      server: [nginx/1.12.2]
+      strict-transport-security: [max-age=31536000]
+    status: {code: 200, message: OK}
+- request:
+    body: !!python/unicode "<work:work xmlns:common=\"http://www.orcid.org/ns/common\"\
+      \ xmlns:work=\"http://www.orcid.org/ns/work\" put-code=\"920107\"><work:title><common:title>Partial\
+      \ Symmetries of Weak Interactions</common:title></work:title><work:journal-title>Nucl.Phys.</work:journal-title><work:citation><work:citation-type>bibtex</work:citation-type><work:citation-value>@article{Glashow:1961tr,\n\
+      \    author = \"Glashow, S.L.\",\n    journal = \"Nucl.Phys.\",\n    volume\
+      \ = \"22\",\n    pages = \"579--588\",\n    doi = \"10.1016/0029-5582(61)90469-2\"\
+      ,\n    title = \"Partial Symmetries of Weak Interactions\",\n    year = \"1961\"\
+      \n}\n</work:citation-value></work:citation><work:type>journal-article</work:type><common:publication-date><common:year>1961</common:year></common:publication-date><common:external-ids><common:external-id><common:external-id-type>doi</common:external-id-type><common:external-id-value>10.1016/0029-5582(61)90469-2</common:external-id-value><common:external-id-url>http://dx.doi.org/10.1016/0029-5582(61)90469-2</common:external-id-url><common:external-id-relationship>self</common:external-id-relationship></common:external-id></common:external-ids><work:url>http://inspirehep.net/record/4328</work:url><work:contributors><work:contributor><work:credit-name>Glashow,\
+      \ S.L.</work:credit-name><work:contributor-attributes><work:contributor-sequence>first</work:contributor-sequence><work:contributor-role>author</work:contributor-role></work:contributor-attributes></work:contributor></work:contributors></work:work>"
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['1494']
+      Content-Type: [application/orcid+xml]
+      User-Agent: [python-requests/2.18.4]
+    method: PUT
+    uri: https://api.sandbox.orcid.org/v2.0/0000-0002-2169-2152/work/920107
+  response:
+    body: {string: !!python/unicode "{\n  \"created-date\" : {\n    \"value\" : 1521644439187\n\
+        \  },\n  \"last-modified-date\" : {\n    \"value\" : 1521644439187\n  },\n\
+        \  \"source\" : {\n    \"source-orcid\" : null,\n    \"source-client-id\"\
+        \ : {\n      \"uri\" : \"http://sandbox.orcid.org/client/CHANGE_ME\"\
+        ,\n      \"path\" : \"CHANGE_ME\",\n      \"host\" : \"sandbox.orcid.org\"\
+        \n    },\n    \"source-name\" : {\n      \"value\" : \"INSPIRE-PROFILE-PUSH\"\
+        \n    }\n  },\n  \"put-code\" : 920107,\n  \"path\" : null,\n  \"title\" :\
+        \ {\n    \"title\" : {\n      \"value\" : \"Partial Symmetries of Weak Interactions\"\
+        \n    },\n    \"subtitle\" : null,\n    \"translated-title\" : null\n  },\n\
+        \  \"journal-title\" : {\n    \"value\" : \"Nucl.Phys.\"\n  },\n  \"short-description\"\
+        \ : null,\n  \"citation\" : {\n    \"citation-type\" : \"BIBTEX\",\n    \"\
+        citation-value\" : \"@article{Glashow:1961tr,\\n    author = \\\"Glashow,\
+        \ S.L.\\\",\\n    journal = \\\"Nucl.Phys.\\\",\\n    volume = \\\"22\\\"\
+        ,\\n    pages = \\\"579--588\\\",\\n    doi = \\\"10.1016/0029-5582(61)90469-2\\\
+        \",\\n    title = \\\"Partial Symmetries of Weak Interactions\\\",\\n    year\
+        \ = \\\"1961\\\"\\n}\\n\"\n  },\n  \"type\" : \"JOURNAL_ARTICLE\",\n  \"publication-date\"\
+        \ : {\n    \"year\" : {\n      \"value\" : \"1961\"\n    },\n    \"month\"\
+        \ : null,\n    \"day\" : null,\n    \"media-type\" : null\n  },\n  \"external-ids\"\
+        \ : {\n    \"external-id\" : [ {\n      \"external-id-type\" : \"doi\",\n\
+        \      \"external-id-value\" : \"10.1016/0029-5582(61)90469-2\",\n      \"\
+        external-id-url\" : {\n        \"value\" : \"http://dx.doi.org/10.1016/0029-5582(61)90469-2\"\
+        \n      },\n      \"external-id-relationship\" : \"SELF\"\n    } ]\n  },\n\
+        \  \"url\" : {\n    \"value\" : \"http://inspirehep.net/record/4328\"\n  },\n\
+        \  \"contributors\" : {\n    \"contributor\" : [ {\n      \"contributor-orcid\"\
+        \ : null,\n      \"credit-name\" : {\n        \"value\" : \"Glashow, S.L.\"\
+        \n      },\n      \"contributor-email\" : null,\n      \"contributor-attributes\"\
+        \ : {\n        \"contributor-sequence\" : \"FIRST\",\n        \"contributor-role\"\
+        \ : \"AUTHOR\"\n      }\n    } ]\n  },\n  \"language-code\" : null,\n  \"\
+        country\" : null,\n  \"visibility\" : \"PRIVATE\"\n}"}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['1951']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Thu, 22 Mar 2018 10:28:58 GMT']
+      expires: ['0']
+      pragma: [no-cache]
+      server: [nginx/1.10.0]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+version: 1

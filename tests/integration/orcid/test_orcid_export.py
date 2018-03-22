@@ -27,6 +27,7 @@ import os
 import pkg_resources
 
 from inspirehep.modules.orcid import OrcidConverter
+from inspirehep.modules.orcid.utils import hash_xml_element
 from lxml import etree
 
 
@@ -95,6 +96,7 @@ def test_format_article(app, api_client):
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
+    assert hash_xml_element(expected) == hash_xml_element(result)
 
 
 def test_format_conference_paper(app, api_client):
@@ -136,6 +138,7 @@ def test_format_conference_paper(app, api_client):
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
+    assert hash_xml_element(expected) == hash_xml_element(result)
 
 
 def test_format_proceedings(app, api_client):
@@ -186,6 +189,7 @@ def test_format_proceedings(app, api_client):
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
+    assert hash_xml_element(expected) == hash_xml_element(result)
 
 
 def test_format_thesis(app, api_client):
@@ -218,6 +222,7 @@ def test_format_thesis(app, api_client):
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
+    assert hash_xml_element(expected) == hash_xml_element(result)
 
 
 def test_format_book(app, api_client):
@@ -269,6 +274,7 @@ def test_format_book(app, api_client):
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
+    assert hash_xml_element(expected) == hash_xml_element(result)
 
 
 def test_format_book_chapter(app, api_client):
@@ -332,6 +338,7 @@ def test_format_book_chapter(app, api_client):
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
+    assert hash_xml_element(expected) == hash_xml_element(result)
 
 
 def test_format_thesis_with_author_orcid(app, api_client):
@@ -378,3 +385,4 @@ def test_format_thesis_with_author_orcid(app, api_client):
     ).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
+    assert hash_xml_element(expected) == hash_xml_element(result)
