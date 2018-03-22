@@ -45,7 +45,7 @@ def mock_logger():
 @pytest.mark.vcr()
 def test_push_record_with_orcid_new(mock_config, vcr_cassette):
     expected_put_code = '920107'
-    expected_hash = '2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
+    expected_hash = 'sha1:2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
 
     result_put_code, result_hash = push_record_with_orcid(
         recid='4328',
@@ -63,7 +63,7 @@ def test_push_record_with_orcid_new(mock_config, vcr_cassette):
 @pytest.mark.vcr()
 def test_push_record_with_orcid_update(mock_config, vcr_cassette):
     expected_put_code = '920107'
-    expected_hash = '2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
+    expected_hash = 'sha1:2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
 
     result_put_code, result_hash = push_record_with_orcid(
         recid='4328',
@@ -81,14 +81,14 @@ def test_push_record_with_orcid_update(mock_config, vcr_cassette):
 @pytest.mark.vcr()
 def test_push_record_with_orcid_dont_push_if_no_change(mock_config, vcr_cassette):
     expected_put_code = '920107'
-    expected_hash = '2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
+    expected_hash = 'sha1:2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
 
     result_put_code, result_hash = push_record_with_orcid(
         recid='4328',
         orcid='0000-0002-1825-0097',
         oauth_token='fake-token',
         put_code='920107',
-        old_hash='2995c60336bce71134ebdc12fc50b1ccaf0fd7cd',
+        old_hash='sha1:2995c60336bce71134ebdc12fc50b1ccaf0fd7cd',
     )
 
     assert expected_put_code == result_put_code

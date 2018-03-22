@@ -33,6 +33,10 @@ def mock_config(app):
     patch = {
         'ORCID_SANDBOX': True,
         'SERVER_NAME': 'https://labs.inspirehep.net',
+        'ORCID_APP_CREDENTIALS': {
+            'consumer_key': 'CHANGE_ME',
+            'consumer_secret': 'CHANGE_ME',
+        }
     }
     with mock.patch.dict(app.config, patch):
         yield
