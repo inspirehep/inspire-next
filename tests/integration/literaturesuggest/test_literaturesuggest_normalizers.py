@@ -29,7 +29,7 @@ from inspirehep.modules.literaturesuggest.normalizers import (
     find_book_id,
     normalize_journal_title,
 )
-from inspirehep.modules.migrator.tasks import record_insert_or_replace
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.record_getter import get_db_record
 
 
@@ -42,13 +42,15 @@ def book_with_another_document_type(app):
     """Temporarily add another document type to a book record."""
     record = get_db_record('lit', 1373790)
     record['document_type'] = ['book', 'proceedings']
-    record_insert_or_replace(record)
+    record = InspireRecord.create_or_update(record)
+    record.commit()
 
     yield
 
     record = get_db_record('lit', 1373790)
     record['document_type'] = ['book']
-    record_insert_or_replace(record)
+    record = InspireRecord.create_or_update(record)
+    record.commit()
 
 
 def test_check_book_existence_handles_multiple_document_types(book_with_another_document_type):
