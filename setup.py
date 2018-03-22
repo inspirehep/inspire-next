@@ -100,14 +100,12 @@ install_requires = [
     'plotextractor~=0.0,>=0.1.6',
     'pyOpenSSL~=17.0,>=17.5.0',
     'pybtex~=0.0,>=0.21',
-    'pytest-vcr>=0.3.0',
     'python-redis-lock~=3.0,>=3.2.0',
     'raven[flask]~=6.0,>=6.2.1',
     'refextract~=0.0,>=0.2.2',
     'requests~=2.0,>=2.18.4',
     'setproctitle~=1.0,>=1.1.10',
     'timeout-decorator~=0.0,>=0.4.0',
-    'vcrpy~=1.0,>=1.11.1',
     'workflow~=2.0,>=2.1.3',
 ]
 
@@ -120,6 +118,7 @@ tests_require = [
     'mock~=2.0,>=2.0.0',
     'pytest-cov~=2.0,>=2.5.1',
     'pytest-selenium~=1.0,>=1.11.1',
+    'pytest-vcr~=0.0,>=0.3.0',
     'pytest~=3.0,>=3.3.0',
     'requests_mock~=1.0,>=1.3.0',
 ]
