@@ -189,21 +189,21 @@ def attempt_push(orcid, rec_id, oauth_token):
         rec_id(int): inspire record's id to push to ORCID.
         oauth_token(string): orcid token.
     """
-    put_code, hashed = get_putcode_and_hash_from_redis(orcid, rec_id)
+    put_code, previous_hash = get_putcode_and_hash_from_redis(orcid, rec_id)
 
     if not put_code:
         recache_all_author_putcodes(orcid, oauth_token)
-        put_code, hashed = get_putcode_and_hash_from_redis(orcid, rec_id)
+        put_code, previous_hash = get_putcode_and_hash_from_redis(orcid, rec_id)
 
     new_code, new_hash = push_record_with_orcid(
         recid=str(rec_id),
         orcid=orcid,
         oauth_token=oauth_token,
         put_code=put_code,
-        old_hash=hashed,
+        old_hash=previous_hash,
     )
 
-    if new_code != put_code:
+    if new_code != put_code or new_hash != previous_hash:
         store_record_in_redis(orcid, rec_id, new_code, new_hash)
 
 
@@ -220,14 +220,14 @@ def recache_all_author_putcodes(orcid, oauth_token):
         store_record_in_redis(orcid, fetched_rec_id, fetched_put_code, None)
 
 
-def store_record_in_redis(orcid, rec_id, put_code, hashed):
+def store_record_in_redis(orcid, rec_id, put_code, hashed=None):
     """Store the entry <orcid:recid, value> in Redis.
 
     Args:
         orcid(string): the author's orcid.
         rec_id(int): inspire record's id pushed to ORCID.
         put_code(string): the put_code used to push the record to ORCID.
-        hash(Union[string, NoneType]): hashed ORCID record
+        hashed(Optional[string]): hashed ORCID record
     """
     with redis_locking_context('orcid_push') as r:
         orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
@@ -241,12 +241,9 @@ def get_putcode_and_hash_from_redis(orcid, rec_id):
     """Retrieve from Redis the put_code for the given ORCID - record id"""
     with redis_locking_context('orcid_push') as r:
         orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-        try:
-            put_code = r.hget(orcid_recid_key, 'putcode')
-            hashed = r.hget(orcid_recid_key, 'hash')
-            return put_code, hashed
-        except TypeError:
-            return None, None
+        put_code = r.hget(orcid_recid_key, 'putcode')
+        hashed = r.hget(orcid_recid_key, 'hash')
+        return put_code, hashed
 
 
 def _find_user_matching(orcid, email):

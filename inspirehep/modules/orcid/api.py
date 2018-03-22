@@ -30,16 +30,18 @@ from itertools import chain
 from flask import current_app as app
 from orcid import MemberAPI
 
+from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
 from inspirehep.modules.orcid import OrcidConverter
 from inspirehep.modules.orcid.utils import (
-    LOGGER,
     _get_api_url_for_recid,
     _split_lists,
     WORKS_BULK_QUERY_LIMIT,
     RECID_FROM_INSPIRE_URL,
     hash_xml_element,
 )
+
+LOGGER = getStackTraceLogger(__name__)
 
 
 def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=None):
@@ -51,7 +53,7 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
         oauth_token (string): ORCID user OAUTH token
         put_code (Union[string, NoneType]): put-code to push record onto,
             if None will push as a new record
-        old_hash (Union[string, NoneType]): previous hash of the record
+        old_hash (Optional[string]): previous hash of the record
 
     Returns:
         Tuple[string, string]: a tuple with two elements:
@@ -62,6 +64,7 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
 
     new_hash = calculate_hash_for_record(record)
     if new_hash == old_hash:
+        LOGGER.info('Hash unchanged: not pushing #{} as not a meaningful update')
         return put_code, new_hash
 
     try:

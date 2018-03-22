@@ -31,7 +31,11 @@ import re
 from redis import StrictRedis
 
 import inspirehep.modules.orcid.tasks as tasks
-from inspirehep.modules.orcid.tasks import attempt_push, orcid_push
+from inspirehep.modules.orcid.tasks import (
+    attempt_push,
+    orcid_push,
+    recache_all_author_putcodes
+)
 
 
 @pytest.fixture(scope='function')
@@ -102,6 +106,26 @@ def test_push_to_orcid_update_no_cache(
     orcid_push(orcid, rec_id, token)
 
     # Check that the record was added:
+    assert vcr_cassette.all_played
+
+
+@pytest.mark.vcr()
+def test_push_to_orcid_with_putcode_but_without_hash(
+    mock_config,
+    vcr_cassette,
+    redis_setup,
+):
+    rec_id = 4328
+    orcid = '0000-0002-2169-2152'
+    token = 'fake-token'
+
+    # Fetch the putcodes, no hashes present yet
+    recache_all_author_putcodes(orcid, token)
+
+    # Push the record
+    orcid_push(orcid, rec_id, token)
+
+    # Check that the update request didn't happen:
     assert vcr_cassette.all_played
 
 

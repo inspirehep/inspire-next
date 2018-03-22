@@ -92,7 +92,7 @@ def _get_api_url_for_recid(server_name, api_endpoint, recid):
 
 
 def get_orcid_recid_key(orcid, rec_id):
-    """Return the string 'orcid:``orcid_value``:``rec_id``'"""
+    """Return the string 'orcidcache:``orcid_value``:``rec_id``'"""
     return 'orcidcache:{}:{}'.format(orcid, rec_id)
 
 
@@ -189,7 +189,7 @@ def hash_xml_element(element):
     """
     canonical_string = canonicalize_xml_element(element)
     hash = hashlib.sha1(canonical_string)
-    return hash.hexdigest()
+    return 'sha1:' + hash.hexdigest()
 
 
 def canonicalize_xml_element(element):
