@@ -30,18 +30,21 @@ from itertools import chain
 from flask import current_app as app
 from orcid import MemberAPI
 
+from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
 from inspirehep.modules.orcid import OrcidConverter
 from inspirehep.modules.orcid.utils import (
-    LOGGER,
     _get_api_url_for_recid,
     _split_lists,
     WORKS_BULK_QUERY_LIMIT,
     RECID_FROM_INSPIRE_URL,
+    hash_xml_element,
 )
 
+LOGGER = getStackTraceLogger(__name__)
 
-def push_record_with_orcid(recid, orcid, oauth_token, put_code=None):
+
+def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=None):
     """Push record to ORCID with a specific ORCID ID.
 
     Args:
@@ -50,11 +53,19 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None):
         oauth_token (string): ORCID user OAUTH token
         put_code (Union[string, NoneType]): put-code to push record onto,
             if None will push as a new record
+        old_hash (Optional[string]): previous hash of the record
 
     Returns:
-        string: the put-code of the inserted item
+        Tuple[string, string]: a tuple with two elements:
+            - the put-code of the inserted item,
+            - and the new hash of the ORCID record
     """
     record = _get_hep_record(app.config, recid)
+
+    new_hash = calculate_hash_for_record(record)
+    if new_hash == old_hash:
+        LOGGER.info('Hash unchanged: not pushing #{} as not a meaningful update')
+        return put_code, new_hash
 
     try:
         bibtex = _get_bibtex_record(app.config, recid)
@@ -100,7 +111,20 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None):
 
         LOGGER.info("Record added with put-code {}.".format(put_code))
 
-    return put_code
+    return put_code, new_hash
+
+
+def calculate_hash_for_record(record):
+    """Generate hash for an ORCID-serialised HEP record
+
+    Args:
+        record (dict): HEP record
+
+    Returns:
+        string: hash of the record
+    """
+    orcid_rec = OrcidConverter(record, app.config['LEGACY_RECORD_URL_PATTERN'])
+    return hash_xml_element(orcid_rec.get_xml())
 
 
 def _get_record_by_mime(config, recid, mime_type):

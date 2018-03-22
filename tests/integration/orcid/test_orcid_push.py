@@ -25,101 +25,112 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
-import pkg_resources
 import pytest
 import re
-import requests_mock
-import vcr
 
 from redis import StrictRedis
 
 import inspirehep.modules.orcid.tasks as tasks
-from inspirehep.modules.orcid.tasks import attempt_push, orcid_push
+from inspirehep.modules.orcid.tasks import (
+    attempt_push,
+    orcid_push,
+    recache_all_author_putcodes
+)
 
 
 @pytest.fixture(scope='function')
-def redis_setup(api):
-    redis_url = api.config.get('CACHE_REDIS_URL')
+def redis_setup(app):
+    redis_url = app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
 
-    r.set('orcidputcodes:0000-0002-2152-2169:1375491', '1001')
-    r.set('orcidputcodes:0000-0002-2152-2169:524480', '1002')
-    r.set('orcidputcodes:0000-0002-2152-2169:701585', '1003')
+    r.hmset('orcidcache:0000-0002-2152-2169:1375491', {'putcode': '1001'})
+    r.hmset('orcidcache:0000-0002-2152-2169:524480', {'putcode': '1002'})
+    r.hmset('orcidcache:0000-0002-2152-2169:701585', {'putcode': '1003'})
 
     yield r
 
-    r.delete(*r.keys('orcidputcodes:*'))
+    r.delete(*r.keys('orcidcache:*'))
 
 
-@pytest.fixture
-def mock_allow_orcid(mocked_internal_services):
-    mocked_internal_services.register_uri(
-        requests_mock.ANY,
-        re.compile('.*(orcid).*'),
-        real_http=True,
-    )
-    yield
-
-
-def test_push_to_orcid_new_update_with_cache(
-    api,
+@pytest.mark.vcr()
+def test_push_to_orcid_same_with_cache(
+    mock_config,
+    vcr_cassette,
     redis_setup,
-    mock_allow_orcid,
-    mock_config
 ):
     rec_id = 4328
     orcid = '0000-0002-2169-2152'
     token = 'fake-token'
 
-    with vcr.use_cassette(
-        pkg_resources.resource_filename(
-            __name__,
-            'fixtures/casette_push_with_cache.yaml'
-        ),
-        decode_compressed_response=True,
-        filter_headers=['Authorization'],
-        ignore_localhost=True,
-        record_mode='none',
-    ) as cassette:
-        # Push as new
-        orcid_push(orcid, rec_id, token)
+    # Push as new
+    orcid_push(orcid, rec_id, token)
 
-        # Push update
-        orcid_push(orcid, rec_id, token)
+    # Push the same record again
+    orcid_push(orcid, rec_id, token)
 
-        # Check that all requests were made exactly once
-        assert cassette.play_counts.values() == [1, 1, 1]
+    # Check that the update request didn't happen:
+    assert vcr_cassette.all_played
 
 
+@pytest.mark.vcr()
+def test_push_to_orcid_update_with_cache(
+    mock_config,
+    vcr_cassette,
+    redis_setup,
+):
+    rec_id = 4328
+    orcid = '0000-0002-2169-2152'
+    token = 'fake-token'
+
+    # Push as new
+    orcid_push(orcid, rec_id, token)
+
+    # Push the updated record
+    orcid_push(orcid, rec_id, token)
+
+    # Check that the update happened:
+    assert vcr_cassette.all_played
+
+
+@pytest.mark.vcr()
 def test_push_to_orcid_update_no_cache(
-    api,
+    mock_config,
+    vcr_cassette,
     redis_setup,
-    mock_allow_orcid,
-    mock_config
 ):
     rec_id = 4328
     orcid = '0000-0002-2169-2152'
     token = 'fake-token'
 
-    with vcr.use_cassette(
-        pkg_resources.resource_filename(
-            __name__,
-            'fixtures/casette_push_no_cache.yaml'
-        ),
-        decode_compressed_response=True,
-        filter_headers=['Authorization'],
-        ignore_localhost=True,
-        record_mode='none',
-    ) as cassette:
-        # Push update
-        orcid_push(orcid, rec_id, token)
+    # Push update
+    orcid_push(orcid, rec_id, token)
 
-        # Check that all requests were made exactly once
-        assert cassette.play_counts.values() == [1, 1, 1]
+    # Check that the record was added:
+    assert vcr_cassette.all_played
+
+
+@pytest.mark.vcr()
+def test_push_to_orcid_with_putcode_but_without_hash(
+    mock_config,
+    vcr_cassette,
+    redis_setup,
+):
+    rec_id = 4328
+    orcid = '0000-0002-2169-2152'
+    token = 'fake-token'
+
+    # Fetch the putcodes, no hashes present yet
+    recache_all_author_putcodes(orcid, token)
+
+    # Push the record
+    orcid_push(orcid, rec_id, token)
+
+    # Check that the update request didn't happen:
+    assert vcr_cassette.all_played
 
 
 @pytest.mark.parametrize(
-    'recid,put_code',
+    '_recid,_put_code',
     [
         (1375491, '1001'),
         (524480, '1002'),
@@ -127,32 +138,33 @@ def test_push_to_orcid_update_no_cache(
     ]
 )
 def test_push_to_orcid_verify_correct_being_pushed(
-        api,
         redis_setup,
-        mocked_internal_services,
         mock_config,
         monkeypatch,
-        recid,
-        put_code,
+        _recid,
+        _put_code,
 ):
-    orcid = '0000-0002-2152-2169'
+    _orcid = '0000-0002-2152-2169'
 
-    def _get_author_putcodes(_orcid, tk):
+    def _get_author_putcodes(orcid, oauth_token):
         return [
             (1375491, '1001'),
             (524480, '1002'),
             (701585, '1003'),
         ]
 
-    def _push_record_with_orcid(_recid, _orcid, tk, _put_code=None):
-        assert _recid == str(recid)
-        assert _orcid == orcid
-        assert _put_code == put_code
+    def _push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=None):
+        assert recid == str(_recid)
+        assert orcid == _orcid
+        assert put_code == _put_code
+        assert old_hash is None
+
+        return put_code, 'new-hash'
 
     monkeypatch.setattr(tasks, 'get_author_putcodes', _get_author_putcodes)
     monkeypatch.setattr(tasks, 'push_record_with_orcid', _push_record_with_orcid)
 
-    attempt_push(orcid, recid, 'fake-token')
+    attempt_push(_orcid, _recid, 'fake-token')
 
 
 def test_feature_flag_orcid_push_whitelist_regex_none():
