@@ -111,7 +111,7 @@ def fuzzy_match(obj, eng):
     similar to the current workflow object's payload in the system.
 
     Also sets the ``matches.fuzzy`` property in ``extra_data`` to the list of
-    the first 5 control numbers that matched.
+    the brief of first 5 record that matched.
 
     Arguments:
         obj: a workflow object.
@@ -127,9 +127,21 @@ def fuzzy_match(obj, eng):
 
     fuzzy_match_config = current_app.config['FUZZY_MATCH']
     matches = dedupe_list(match(obj.data, fuzzy_match_config))
-    record_ids = [el['_source']['control_number'] for el in matches]
+    record_ids = [_get_hep_record_brief(el['_source']) for el in matches]
     obj.extra_data.setdefault('matches', {})['fuzzy'] = record_ids[0:5]
     return bool(record_ids)
+
+
+def _get_hep_record_brief(hep_record):
+    brief = {
+        'control_number': hep_record['control_number'],
+        'title': get_value(hep_record, 'titles[0].title'),
+    }
+
+    abstract = get_value(hep_record, 'abstracts[0].value')
+    if abstract is not None:
+        brief['abstract'] = abstract
+    return brief
 
 
 @with_debug_logging
