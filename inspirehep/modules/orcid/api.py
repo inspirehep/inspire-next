@@ -64,7 +64,7 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
 
     new_hash = calculate_hash_for_record(record)
     if new_hash == old_hash:
-        LOGGER.info('Hash unchanged: not pushing #{} as not a meaningful update')
+        LOGGER.info('Hash unchanged: not pushing #{} as not a meaningful update'.format(recid))
         return put_code, new_hash
 
     try:
