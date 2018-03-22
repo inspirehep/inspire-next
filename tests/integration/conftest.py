@@ -104,7 +104,7 @@ def isolated_app(app):
 
     """
     with db.session.begin_nested():
-        yield
+        yield app
     db.session.rollback()
 
 

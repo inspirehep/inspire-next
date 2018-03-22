@@ -198,12 +198,6 @@ def record_from_db(workflow_app):
     record.commit()
     rec_uuid = record.id
 
-    PersistentIdentifier.create(
-        pid_type='lit',
-        pid_value=json['control_number'],
-        object_type='rec',
-        object_uuid=record.id
-    )
     db.session.commit()
     es.indices.refresh('records-hep')
 
@@ -218,3 +212,4 @@ def record_from_db(workflow_app):
     pid.unassign()
     pid.delete()
     record.delete()
+    record.commit()

@@ -301,6 +301,7 @@ def test_that_db_changes_are_mirrored_in_es(app):
     # When a record is created in the DB, it is also created in ES.
 
     record = InspireRecord.create(json)
+    record.commit()
     es_record = search.get_source(record.id)
 
     assert get_title(es_record) == 'foo'

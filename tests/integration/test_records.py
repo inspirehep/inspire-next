@@ -42,10 +42,16 @@ from inspire_dojson.utils import get_recid_from_ref
 from inspire_schemas.api import validate
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.tasks import merge_merged_records, update_refs
-from inspirehep.modules.migrator.tasks import record_insert_or_replace
 from inspirehep.utils.record_getter import get_db_record
 
 from utils import _delete_record
+
+
+def _create_record(json):
+    """Insert or replace a record."""
+    record = InspireRecord.create_or_update(json, skip_files=False)
+    record.commit()
+    return record
 
 
 def _delete_merged_records(pid_type, merged_pid_value, deleted_pid_value, merged_uuid, deleted_uuid):
@@ -92,7 +98,7 @@ def deleted_record(app):
     record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
     with db.session.begin_nested():
-        record_insert_or_replace(record)
+        _create_record(record)
     db.session.commit()
 
     yield
@@ -118,7 +124,7 @@ def not_yet_deleted_record(app):
     }
 
     with db.session.begin_nested():
-        record_insert_or_replace(record)
+        _create_record(record)
     db.session.commit()
 
     yield
@@ -166,8 +172,8 @@ def merged_records(app):
     deleted_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
     with db.session.begin_nested():
-        merged_uuid = record_insert_or_replace(merged_record).id
-        deleted_uuid = record_insert_or_replace(deleted_record).id
+        merged_uuid = _create_record(merged_record).id
+        deleted_uuid = _create_record(deleted_record).id
     db.session.commit()
 
     es.indices.refresh('records-hep')
@@ -210,8 +216,8 @@ def not_yet_merged_records(app):
     }
 
     with db.session.begin_nested():
-        merged_uuid = record_insert_or_replace(merged_record).id
-        deleted_uuid = record_insert_or_replace(deleted_record).id
+        merged_uuid = _create_record(merged_record).id
+        deleted_uuid = _create_record(deleted_record).id
     db.session.commit()
 
     yield
@@ -274,9 +280,9 @@ def records_to_be_merged(app):
     }
 
     with db.session.begin_nested():
-        merged_uuid = record_insert_or_replace(merged_record).id
-        deleted_uuid = record_insert_or_replace(deleted_record).id
-        record_insert_or_replace(pointing_record)
+        merged_uuid = _create_record(merged_record).id
+        deleted_uuid = _create_record(deleted_record).id
+        _create_record(pointing_record)
     db.session.commit()
 
     es.indices.refresh('records-hep')
@@ -296,6 +302,7 @@ def test_record_can_be_deleted(api_client, not_yet_deleted_record):
 
     record = get_db_record('lit', 111)
     record.delete()
+    record.commit()
     db.session.commit()
 
     assert api_client.get('/literature/111').status_code == 410
@@ -363,7 +370,7 @@ def test_references_can_be_updated(app, records_to_be_merged):
     assert expected == result
 
 
-def test_records_files_attached_correctly(app):
+def test_records_files_attached_correctly(isolated_app):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': [
@@ -388,7 +395,7 @@ def test_records_files_attached_correctly(app):
     'inspirehep.modules.records.api.fsopen',
     mock_open(read_data='dummy body'),
 )
-def test_create_handles_documents(app):
+def test_create_handles_documents(isolated_app):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 1,
@@ -418,7 +425,7 @@ def test_create_handles_documents(app):
     assert file_content == expected_file_content
 
 
-def test_update_handles_documents(app):
+def test_update_handles_documents(isolated_app):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 1,
@@ -467,7 +474,7 @@ def test_update_handles_documents(app):
     'inspirehep.modules.records.api.fsopen',
     mock_open(read_data='dummy body'),
 )
-def test_create_handles_figures(app):
+def test_create_handles_figures(isolated_app):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 1,
@@ -497,7 +504,7 @@ def test_create_handles_figures(app):
     assert file_content == expected_file_content
 
 
-def test_update_handles_figures(app):
+def test_update_handles_figures(isolated_app):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 1,
@@ -546,7 +553,7 @@ def test_update_handles_figures(app):
     'inspirehep.modules.records.api.fsopen',
     mock_open(read_data='doc1 body'),
 )
-def test_update_with_only_new(app):
+def test_update_with_only_new(isolated_app):
     doc1_expected_file_content = 'doc1 body'
     doc1_expected_key = '1_Fulltext.pdf'
     doc2_expected_file_content = 'doc2 body'
@@ -622,62 +629,7 @@ def test_update_with_only_new(app):
     'inspirehep.modules.records.api.fsopen',
     mock_open(read_data='dummy body'),
 )
-def test_create_with_source_record_with_same_control_number(app):
-    expected_file_content = 'dummy body'
-    expected_key = '1_Fulltext.pdf'
-
-    record1_json = {
-        '$schema': 'http://localhost:5000/schemas/records/hep.json',
-        'control_number': 1,
-        'document_type': [
-            'article',
-        ],
-        'titles': [
-            {'title': 'foo'},
-        ],
-        '_collections': [
-            'Literature'
-        ],  # DESY harvest
-        'documents': [{
-            'key': 'Fulltext.pdf',
-            'url': '/some/non/existing/path.pdf',
-        }],
-    }
-
-    record2_json = {
-        '$schema': 'http://localhost:5000/schemas/records/hep.json',
-        'control_number': 1,
-        'document_type': [
-            'article',
-        ],
-        'titles': [
-            {'title': 'foo'},
-        ],
-        '_collections': [
-            'Literature'
-        ],  # DESY harvest
-    }
-
-    record1 = InspireRecord.create(record1_json)
-    rec1_file_content = open(record1.files[expected_key].obj.file.uri).read()
-    assert rec1_file_content == expected_file_content
-
-    record2_json['documents'] = copy.deepcopy(record1['documents'])
-
-    record2 = InspireRecord.create(record2_json, files_src_records=[record1])
-
-    assert len(record2.files) == len(record2_json['documents'])
-    assert len(record2['documents']) == len(record2_json['documents'])
-    assert record2['documents'][0]['url'] != record1['documents'][0]['url']
-    rec2_file_content = open(record2.files[expected_key].obj.file.uri).read()
-    assert rec2_file_content == expected_file_content
-
-
-@patch(
-    'inspirehep.modules.records.api.fsopen',
-    mock_open(read_data='dummy body'),
-)
-def test_create_with_source_record_with_different_control_number(app):
+def test_create_with_source_record_with_different_control_number(isolated_app):
     expected_file_content = 'dummy body'
     rec1_expected_key = '1_Fulltext.pdf'
     rec2_expected_key = '2_Fulltext.pdf'
@@ -737,7 +689,7 @@ def test_create_with_source_record_with_different_control_number(app):
     'inspirehep.modules.records.api.fsopen',
     mock_open(read_data='dummy body'),
 )
-def test_create_with_multiple_source_records(app):
+def test_create_with_multiple_source_records(isolated_app):
     expected_file_content = 'dummy body'
     rec1_expected_key = '1_Fulltext.pdf'
     rec2_expected_key = '2_Fulltext.pdf'
@@ -837,7 +789,7 @@ def test_create_with_multiple_source_records(app):
     assert current_descs == expected_descs
 
 
-def test_create_with_records_skip_files_conf_does_not_add_documents_or_figures(app):
+def test_create_with_records_skip_files_conf_does_not_add_documents_or_figures(isolated_app):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 1,
@@ -860,7 +812,7 @@ def test_create_with_records_skip_files_conf_does_not_add_documents_or_figures(a
         }]  # record/1628455/export/xme -- with some modification
     }
 
-    with patch.dict(app.config, {'RECORDS_SKIP_FILES': True}):
+    with patch.dict(isolated_app.config, {'RECORDS_SKIP_FILES': True}):
         record = InspireRecord.create(record_json)
 
     assert len(record.files) == 0
@@ -872,7 +824,7 @@ def test_create_with_records_skip_files_conf_does_not_add_documents_or_figures(a
     'inspirehep.modules.records.api.fsopen',
     mock_open(read_data='dummy body'),
 )
-def test_create_with_skip_files_param_overrides_records_skip_files_conf_and_does_add_documents_or_figures(app):
+def test_create_with_skip_files_param_overrides_records_skip_files_conf_and_does_add_documents_or_figures(isolated_app):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 1,
@@ -900,7 +852,7 @@ def test_create_with_skip_files_param_overrides_records_skip_files_conf_and_does
     expected_figure_file_content = 'dummy body'
     expected_figure_key = '1_graph.png'
 
-    with patch.dict(app.config, {'RECORDS_SKIP_FILES': True}):
+    with patch.dict(isolated_app.config, {'RECORDS_SKIP_FILES': True}):
         with patch(
             'inspirehep.modules.records.api.fsopen',
             mock_open(read_data=expected_figure_file_content),
@@ -924,7 +876,7 @@ def test_create_with_skip_files_param_overrides_records_skip_files_conf_and_does
     assert figure_file_content == expected_figure_file_content
 
 
-def test_create_with_skip_files_param_overrides_records_skip_files_conf_and_does_not_add_documents_or_figures(app):
+def test_create_with_skip_files_param_overrides_records_skip_files_conf_and_does_not_add_documents_or_figures(isolated_app):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 1,
@@ -947,7 +899,7 @@ def test_create_with_skip_files_param_overrides_records_skip_files_conf_and_does
         }]  # record/1628455/export/xme -- with some modification
     }
 
-    with patch.dict(app.config, {'RECORDS_SKIP_FILES': False}):
+    with patch.dict(isolated_app.config, {'RECORDS_SKIP_FILES': False}):
         record = InspireRecord.create(record_json, skip_files=True)
 
     assert len(record.files) == 0
@@ -956,7 +908,7 @@ def test_create_with_skip_files_param_overrides_records_skip_files_conf_and_does
 
 
 def test_record_with_non_valid_content_is_cleaned_and_created_properly(
-        app):
+        isolated_app):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'control_number': 1,
