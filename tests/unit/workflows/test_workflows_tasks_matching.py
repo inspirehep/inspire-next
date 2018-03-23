@@ -413,6 +413,117 @@ def test_fuzzy_match_returns_true_if_something_matched_without_abstracts(mock_ma
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_fuzzy_match_returns_true_if_something_matched_with_4_authors(mock_match, enable_fuzzy_matcher):
+    schema = load_schema('hep')
+    authors_schema = schema['properties']['authors']
+    titles_schema = schema['properties']['titles']
+
+    matched_record = {
+        'control_number': 4328,
+        'titles': [
+            {
+                'title': 'title',
+            },
+        ],
+        'authors': [
+            {
+                'full_name': 'Author 1'
+            },
+            {
+                'full_name': 'Author, 2'
+            },
+            {
+                'full_name': 'Author, 3'
+            },
+            {
+                'full_name': 'Author, 4'
+            }
+        ]
+    }
+
+    assert validate(matched_record['titles'], titles_schema) is None
+    assert validate(matched_record['authors'], authors_schema) is None
+
+    mock_match.return_value = iter([{'_source': matched_record}])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert fuzzy_match(obj, eng)
+    assert 'matches' in obj.extra_data
+
+    expected = [{
+        'control_number': 4328,
+        'title': 'title',
+        'authors': [
+            {
+                'full_name': 'Author 1'
+            },
+            {
+                'full_name': 'Author, 2'
+            },
+            {
+                'full_name': 'Author, 3'
+            },
+        ],
+    }]
+    result = get_value(obj.extra_data, 'matches.fuzzy')
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_fuzzy_match_returns_true_if_something_matched_with_1_author(mock_match, enable_fuzzy_matcher):
+    schema = load_schema('hep')
+    authors_schema = schema['properties']['authors']
+    titles_schema = schema['properties']['titles']
+
+    matched_record = {
+        'control_number': 4328,
+        'titles': [
+            {
+                'title': 'title',
+            },
+        ],
+        'authors': [
+            {
+                'full_name': 'Author 1'
+            },
+        ]
+    }
+
+    assert validate(matched_record['titles'], titles_schema) is None
+    assert validate(matched_record['authors'], authors_schema) is None
+
+    mock_match.return_value = iter([{'_source': matched_record}])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert fuzzy_match(obj, eng)
+    assert 'matches' in obj.extra_data
+
+    expected = [{
+        'control_number': 4328,
+        'title': 'title',
+        'authors': [
+            {
+                'full_name': 'Author 1'
+            },
+        ],
+    }]
+    result = get_value(obj.extra_data, 'matches.fuzzy')
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
 def test_fuzzy_match_returns_false_if_nothing_matched(mock_match, enable_fuzzy_matcher):
     mock_match.return_value = iter([])
 
