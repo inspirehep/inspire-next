@@ -141,6 +141,13 @@ def _get_hep_record_brief(hep_record):
     abstract = get_value(hep_record, 'abstracts[0].value')
     if abstract is not None:
         brief['abstract'] = abstract
+
+    authors = hep_record.get('authors')
+    if authors is not None:
+        author_briefs = []
+        for author in authors[:3]:
+            author_briefs.append({'full_name': author['full_name']})
+        brief['authors'] = author_briefs
     return brief
 
 
