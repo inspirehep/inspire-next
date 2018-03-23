@@ -45,82 +45,96 @@ from mocks import AttrDict, MockEng, MockFiles, MockObj
 
 
 def test_populate_arxiv_document():
-    schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '1605.03844.pdf')),
+        )
 
-    data = {
-        'arxiv_eprints': [
+        schema = load_schema('hep')
+        subschema = schema['properties']['arxiv_eprints']
+
+        data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'physics.ins-det',
+                    ],
+                    'value': '1605.03844',
+                },
+            ],
+        }  # literature/1458302
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['arxiv_eprints'], subschema) is None
+
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
+
+        assert populate_arxiv_document(obj, eng) is None
+
+        expected = [
             {
-                'categories': [
-                    'physics.ins-det',
-                ],
-                'value': '1605.03844',
+                'key': '1605.03844.pdf',
+                'fulltext': True,
+                'hidden': True,
+                'material': 'preprint',
+                'original_url': 'http://export.arxiv.org/pdf/1605.03844',
+                'url': 'http://export.arxiv.org/pdf/1605.03844',
+                'source': 'arxiv',
             },
-        ],
-    }  # literature/1458302
+        ]
+        result = obj.data['documents']
 
-    assert validate(data['arxiv_eprints'], subschema) is None
-    extra_data = {}
-    files = MockFiles({})
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
-
-    assert populate_arxiv_document(obj, eng) is None
-    expected_url = 'http://export.arxiv.org/pdf/1605.03844'
-    expected_documents = [
-        {
-            'key': '1605.03844.pdf',
-            'fulltext': True,
-            'hidden': True,
-            'material': 'preprint',
-            'original_url': expected_url,
-            'url': expected_url,
-            'source': 'arxiv',
-        }
-    ]
-    documents = obj.data['documents']
-    assert expected_documents == documents
+        assert expected == result
 
 
-def test_populate_arxiv_document_does_not_duplicate():
-    schema = load_schema('hep')
-    subschema = schema['properties']['arxiv_eprints']
+def test_populate_arxiv_document_does_not_duplicate_files_if_called_multiple_times():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '1605.03844.pdf')),
+        )
 
-    data = {
-        'arxiv_eprints': [
+        schema = load_schema('hep')
+        subschema = schema['properties']['arxiv_eprints']
+
+        data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'physics.ins-det',
+                    ],
+                    'value': '1605.03844',
+                },
+            ],
+        }  # literature/1458302
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['arxiv_eprints'], subschema) is None
+
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
+
+        assert populate_arxiv_document(obj, eng) is None
+        assert populate_arxiv_document(obj, eng) is None
+
+        expected = [
             {
-                'categories': [
-                    'physics.ins-det',
-                ],
-                'value': '1605.03844',
+                'key': '1605.03844.pdf',
+                'fulltext': True,
+                'hidden': True,
+                'material': 'preprint',
+                'original_url': 'http://export.arxiv.org/pdf/1605.03844',
+                'url': 'http://export.arxiv.org/pdf/1605.03844',
+                'source': 'arxiv',
             },
-        ],
-    }  # literature/1458302
+        ]
+        result = obj.data['documents']
 
-    assert validate(data['arxiv_eprints'], subschema) is None
-    extra_data = {}
-    files = MockFiles({})
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
-
-    assert populate_arxiv_document(obj, eng) is None
-    assert populate_arxiv_document(obj, eng) is None
-
-    expected_url = 'http://export.arxiv.org/pdf/1605.03844'
-    expected_documents = [
-        {
-            'key': '1605.03844.pdf',
-            'fulltext': True,
-            'hidden': True,
-            'material': 'preprint',
-            'original_url': expected_url,
-            'url': expected_url,
-            'source': 'arxiv',
-        }
-    ]
-    documents = obj.data['documents']
-
-    assert expected_documents == documents
+        assert expected == result
 
 
 def test_populate_arxiv_document_logs_on_pdf_not_existing():
@@ -512,6 +526,9 @@ def test_arxiv_plot_extract_logs_when_tarball_is_invalid(mock_process_tarball):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1612.00626'))
+
     data = {
         'arxiv_eprints': [
             {
@@ -526,7 +543,7 @@ def test_arxiv_plot_extract_logs_when_tarball_is_invalid(mock_process_tarball):
     files = MockFiles({
         '1612.00626.tar.gz': AttrDict({
             'file': AttrDict({
-                'uri': 'http://export.arxiv.org/e-print/1612.00626',
+                'uri': filename,
             })
         })
     })
@@ -536,11 +553,7 @@ def test_arxiv_plot_extract_logs_when_tarball_is_invalid(mock_process_tarball):
     eng = MockEng()
 
     assert arxiv_plot_extract(obj, eng) is None
-
-    expected = 'Invalid tarball http://export.arxiv.org/e-print/1612.00626 for arxiv_id 1612.00626'
-    result = obj.log._info.getvalue()
-
-    assert expected == result
+    assert '1612.00626' in obj.log._info.getvalue()
 
 
 @patch('inspirehep.modules.workflows.tasks.arxiv.process_tarball')
@@ -549,6 +562,9 @@ def test_arxiv_plot_extract_logs_when_images_are_invalid(mock_process_tarball):
 
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1612.00624'))
 
     data = {
         'arxiv_eprints': [
@@ -564,7 +580,7 @@ def test_arxiv_plot_extract_logs_when_images_are_invalid(mock_process_tarball):
     files = MockFiles({
         '1612.00624.tar.gz': AttrDict({
             'file': AttrDict({
-                'uri': 'http://export.arxiv.org/e-print/1612.00624',
+                'uri': filename,
             })
         })
     })
@@ -574,11 +590,7 @@ def test_arxiv_plot_extract_logs_when_images_are_invalid(mock_process_tarball):
     eng = MockEng()
 
     assert arxiv_plot_extract(obj, eng) is None
-
-    expected = 'Error extracting plots for 1612.00624. Report and skip.'
-    result = obj.log._error.getvalue()
-
-    assert expected == result
+    assert '1612.00624' in obj.log._error.getvalue()
 
 
 def test_arxiv_derive_inspire_categories():
@@ -800,6 +812,9 @@ def test_arxiv_author_list_logs_on_error(mock_untar):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
 
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1605.07707'))
+
     data = {
         'arxiv_eprints': [
             {
@@ -814,7 +829,7 @@ def test_arxiv_author_list_logs_on_error(mock_untar):
     files = MockFiles({
         '1605.07707.tar.gz': AttrDict({
             'file': AttrDict({
-                'uri': 'http://export.arxiv.org/e-print/1605.07707',
+                'uri': filename,
             })
         })
     })
@@ -826,11 +841,7 @@ def test_arxiv_author_list_logs_on_error(mock_untar):
     default_arxiv_author_list = arxiv_author_list()
 
     assert default_arxiv_author_list(obj, eng) is None
-
-    expected = 'Invalid tarball http://export.arxiv.org/e-print/1605.07707 for arxiv_id 1605.07707'
-    result = obj.log._info.getvalue()
-
-    assert expected == result
+    assert '1605.07707' in obj.log._info.getvalue()
 
 
 def test_arxiv_author_list_handles_multiple_author_xml_files():
