@@ -25,6 +25,8 @@ from __future__ import absolute_import, division, print_function
 import json
 from collections import Counter
 
+from elasticsearch_dsl import Q
+
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
 from inspirehep.modules.search import LiteratureSearch
@@ -59,19 +61,15 @@ class AuthorAPIStats(object):
 
         statistics_citations = {}
 
-        search = LiteratureSearch().query({
-            "match": {
-                "authors.recid": author_pid
-            }
-        }).params(
-            _source=[
-                "citation_count",
-                "control_number",
-                "facet_inspire_doc_type",
-                "facet_inspire_categories",
-                "keywords",
-            ]
-        )
+        query = Q('match', authors__recid=author_pid)
+        search = LiteratureSearch().query('nested', path='authors', query=query)\
+                                   .params(_source=[
+                                       'citation_count',
+                                       'control_number',
+                                       'facet_inspire_doc_type',
+                                       'facet_inspire_categories',
+                                       'keywords',
+                                   ])
 
         for result in search.scan():
             result_source = result.to_dict()
