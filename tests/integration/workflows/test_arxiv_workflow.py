@@ -54,6 +54,7 @@ from mocks import (
     fake_magpie_api_request,
 )
 from utils import get_halted_workflow
+from inspirehep.modules.workflows.tasks.matching import _get_hep_record_brief
 
 
 @pytest.fixture
@@ -638,7 +639,7 @@ def test_fuzzy_matched_goes_trough_the_workflow(
 
     assert obj.extra_data['already-in-holding-pen'] is False
     assert obj.extra_data['holdingpen_matches'] == []
-    assert obj.extra_data['matches']['fuzzy'] == [rec_id]
+    assert obj.extra_data['matches']['fuzzy'][0] == _get_hep_record_brief(record)
 
     WorkflowObject.continue_workflow = continue_wf_patched_context(workflow_app)
     do_resolve_matching(workflow_app, obj.id, rec_id)

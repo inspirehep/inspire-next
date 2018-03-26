@@ -1680,5 +1680,5 @@ FUZZY_MATCH = {
     ],
     'doc_type': 'hep',
     'index': 'records-hep',
-    'source': ['control_number']
+    'source': ['control_number', 'titles', 'abstracts', 'authors']
 }
