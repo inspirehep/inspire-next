@@ -53,7 +53,7 @@ install_requires = [
     'backoff~=1.0,>=1.4.3',
     'backports.tempfile>=1.0rc1',
     'beard~=0.0,>=0.2.0',
-    'celery~=3.0,>=3.1.25',
+    'celery~=3.0,>=3.1.25,<3.1.26',
     'elasticsearch-dsl~=2.0,>=2.2.0',
     'elasticsearch~=2.0,>=2.4.1',
     'enum34~=1.0,>=1.1.6',
