@@ -331,9 +331,12 @@ def test_pending_in_holding_pen_returns_false_if_nothing_matched(mock_match):
     assert not pending_in_holding_pen(obj, eng)
 
 
+@patch('inspirehep.modules.workflows.tasks.matching.get_record_ref')
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_fuzzy_match_returns_true_if_something_matched(mock_match, enable_fuzzy_matcher):
+def test_fuzzy_match_returns_true_if_something_matched(mock_match, mock_get_record_ref, enable_fuzzy_matcher):
     mock_match.return_value = iter([{'_source': {'control_number': 4328}}])
+    mock_get_record_ref.side_effect = lambda recid, pid_type: {'$ref': '/ref/{recid}'.format(recid=recid)}
+    expected = [{'$ref': '/ref/4328'}]
 
     data = {}
     extra_data = {}
@@ -344,7 +347,6 @@ def test_fuzzy_match_returns_true_if_something_matched(mock_match, enable_fuzzy_
     assert fuzzy_match(obj, eng)
     assert 'matches' in obj.extra_data
 
-    expected = [4328]
     result = get_value(obj.extra_data, 'matches.fuzzy')
 
     assert expected == result
