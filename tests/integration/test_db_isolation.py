@@ -32,7 +32,6 @@ from __future__ import absolute_import, division, print_function
 import pytest
 
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_db import db
 
 
 # Test `app` fixture.
@@ -81,25 +80,3 @@ def test_isolated_app_fixture_has_db_isolation_step2(pids_count_in_app, isolated
     # This proves that the step1 and the step2 are isolated.
     # The #PIDs must NOT have incremented.
     assert PersistentIdentifier.query.count() == pids_count_in_app
-
-
-def test_isolated_app_fixture_commit(isolated_app):
-    pids_count = PersistentIdentifier.query.count()
-
-    PersistentIdentifier.create(
-        pid_type='type1',
-        pid_value='value1',
-    )
-    db.session.commit()
-    assert PersistentIdentifier.query.count() == pids_count + 1
-
-
-def test_isolated_app_fixture_rollback(isolated_app):
-    pids_count = PersistentIdentifier.query.count()
-
-    PersistentIdentifier.create(
-        pid_type='type1',
-        pid_value='value1',
-    )
-    db.session.rollback()
-    assert PersistentIdentifier.query.count() == pids_count
