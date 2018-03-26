@@ -304,8 +304,7 @@ $hp_table_bg: #fff;
 
     .hp-item {
       background-color: $hp_table_bg;
-      margin-bottom: 6px;
-      padding-bottom: 10px;
+      margin-bottom: 20px;
       padding-top: 10px;
       border-radius: 0;
       -webkit-transition: all 0.3s;
@@ -662,16 +661,39 @@ $hp_table_bg: #fff;
 }
 
 .matches-container {
-  width: max-content;
+  background-color: #dadede !important;
+  display: inline-block;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+  width: 100%;
+  
+  .panel-heading {
+    font-size: 12px;
+  }
+
+  .authors {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: $blue-haze;
+  }
+  
   p {
-    font-size: 16px;
+    font-size: 13px;
     color: #333;
   }
+
+  .match-message-container {
+    text-align: center;
+    p {
+      margin: 0;
+    }
+  }
+
   input[type="radio"]{
     display: none;
   }
   button {
-    margin-top: 8px;
     display: inline-block;
     &.best-match {
       background-color: $belize-hole;
