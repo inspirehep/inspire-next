@@ -24,6 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 import json
 
+from elasticsearch_dsl import Q
+
 from inspirehep.modules.search import LiteratureSearch
 from inspirehep.utils.record import get_title
 
@@ -47,23 +49,19 @@ class AuthorAPIPublications(object):
         author_pid = pid.pid_value
         publications = []
 
-        search = LiteratureSearch().query({
-            "match": {
-                "authors.recid": author_pid
-            }
-        }).params(
-            _source=[
-                "accelerator_experiments",
-                "earliest_date",
-                "citation_count",
-                "control_number",
-                "facet_inspire_doc_type",
-                "publication_info",
-                "self",
-                "keywords",
-                "titles",
-            ]
-        )
+        query = Q('match', authors__recid=author_pid)
+        search = LiteratureSearch().query('nested', path='authors', query=query)\
+                                   .params(_source=[
+                                       'accelerator_experiments',
+                                       'citation_count',
+                                       'control_number',
+                                       'earliest_date',
+                                       'facet_inspire_doc_type',
+                                       'keywords',
+                                       'publication_info',
+                                       'self',
+                                       'titles',
+                                   ])
 
         for result in search.scan():
             result_source = result.to_dict()

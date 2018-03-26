@@ -28,9 +28,12 @@ import hashlib
 import re
 
 from itertools import chain
+from elasticsearch_dsl import Q
 from flask import current_app
 from six.moves.urllib.parse import urljoin
 from StringIO import StringIO
+from sqlalchemy import type_coerce
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_db import db
@@ -40,11 +43,14 @@ from invenio_oauthclient.models import (
     RemoteToken,
 )
 from invenio_oauthclient.utils import oauth_link_external_id
+from invenio_pidstore.models import PersistentIdentifier
+from invenio_records.models import RecordMetadata
 
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_values_for_schema
 from inspire_utils.urls import ensure_scheme
+from inspirehep.modules.search.api import LiteratureSearch
 from inspirehep.utils.record_getter import get_db_records
 
 LOGGER = getStackTraceLogger(__name__)
@@ -209,3 +215,36 @@ def canonicalize_xml_element(element):
         exclusive=True,
     )
     return output_stream.getvalue()
+
+
+def get_literature_recids_for_orcid(orcid):
+    """Return the Literature recids that were claimed by an ORCiD.
+
+    We record the fact that the Author record X has claimed the Literature
+    record Y by storing in Y an author object with a ``$ref`` pointing to X
+    and the key ``curated_relation`` set to ``True``. Therefore this method
+    first searches the DB for the Author records for the one containing the
+    given ORCiD, and then uses its recid to search in ES for the Literature
+    records that satisfy the above property.
+
+    Args:
+        orcid (str): the ORCiD.
+
+    Return:
+        list(int): the recids of the Literature records that were claimed
+        by that ORCiD.
+
+    """
+    orcid_object = '[{"schema": "ORCID", "value": "%s"}]' % orcid
+    author_recid = db.session.query(PersistentIdentifier.pid_value)\
+                             .filter(PersistentIdentifier.object_type == 'rec')\
+                             .filter(PersistentIdentifier.object_uuid == RecordMetadata.id)\
+                             .filter(PersistentIdentifier.pid_type == 'aut')\
+                             .filter(type_coerce(RecordMetadata.json, JSONB)['ids'].contains(orcid_object))\
+                             .one().pid_value
+
+    query = Q('match', authors__curated_relation=True) & Q('match', authors__recid=author_recid)
+    search_by_curated_author = LiteratureSearch().query('nested', path='authors', query=query)\
+                                                 .params(_source=['control_number'])
+
+    return [el['control_number'] for el in search_by_curated_author]

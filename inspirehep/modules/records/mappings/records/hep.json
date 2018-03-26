@@ -276,7 +276,7 @@
                             "type": "string"
                         }
                     },
-                    "type": "object"
+                    "type": "nested"
                 },
                 "book_series": {
                     "properties": {
