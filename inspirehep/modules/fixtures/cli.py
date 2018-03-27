@@ -26,7 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 import click
 
-from flask_cli import with_appcontext
+from flask.cli import with_appcontext
 
 from .collections import init_collections
 from .files import init_all_storage_paths

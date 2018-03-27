@@ -31,7 +31,7 @@ from functools import partial
 
 from click.testing import CliRunner
 from flask import current_app
-from flask_cli import ScriptInfo
+from flask.cli import ScriptInfo
 
 from invenio_db import db
 from invenio_search import current_search_client as es
