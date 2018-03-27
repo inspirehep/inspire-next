@@ -20,24 +20,4 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Persistent identifier minters."""
-
 from __future__ import absolute_import, division, print_function
-
-from collections import namedtuple
-
-from .providers.recid import InspireRecordIdProvider
-from .utils import get_pid_type_from_schema
-
-FetchedPID = namedtuple('FetchedPID', ['provider', 'pid_type', 'pid_value'])
-
-
-def inspire_recid_fetcher(record_uuid, data):
-    """Fetch a record's identifiers."""
-    assert "$schema" in data
-    assert "control_number" in data
-    return FetchedPID(
-        provider=InspireRecordIdProvider,
-        pid_type=get_pid_type_from_schema(data['$schema']),
-        pid_value=str(data['control_number']),
-    )

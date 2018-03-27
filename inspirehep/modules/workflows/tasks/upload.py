@@ -26,7 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from invenio_db import db
 
-from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.utils import with_debug_logging
@@ -62,11 +61,10 @@ def store_record(obj, eng):
         # TODO: remove the skip files once labs becomes master
         record = InspireRecord.create(obj.data, id_=None, skip_files=True)
         # Create persistent identifier.
-        created_pid = inspire_recid_minter(str(record.id), record).pid_value
         # Now that we have a recid, we can properly download the documents
         record.download_documents_and_figures(src_records=[obj])
 
-        obj.data['control_number'] = created_pid
+        obj.data['control_number'] = record['control_number']
         # store head_uuid to store the root later
         obj.extra_data['head_uuid'] = str(record.id)
 

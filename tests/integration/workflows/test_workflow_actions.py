@@ -34,6 +34,7 @@ from invenio_db import db
 from invenio_search.api import current_search_client as es
 from invenio_workflows import workflow_object_class
 
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.tasks.actions import normalize_journal_titles
 
 from utils import _delete_record
@@ -42,7 +43,6 @@ from utils import _delete_record
 @pytest.fixture(scope='function')
 def insert_journals_in_db(workflow_app):
     """Temporarily add few journals in the DB"""
-    from inspirehep.modules.migrator.tasks import record_insert_or_replace  # imported here because it is a Celery task
 
     journal_no_pro_and_ref = json.loads(pkg_resources.resource_string(
         __name__, os.path.join('fixtures', 'jou_record_refereed.json')))
@@ -51,8 +51,12 @@ def insert_journals_in_db(workflow_app):
         __name__, os.path.join('fixtures', 'jou_record_refereed_and_proceedings.json')))
 
     with db.session.begin_nested():
-        record_insert_or_replace(journal_no_pro_and_ref)
-        record_insert_or_replace(journal_pro_and_ref)
+        journal_no_pro_and_ref = InspireRecord.create_or_update(
+            journal_no_pro_and_ref, skip_files=False)
+        journal_no_pro_and_ref.commit()
+        journal_pro_and_ref = InspireRecord.create_or_update(
+            journal_pro_and_ref, skip_files=False)
+        journal_pro_and_ref.commit()
     db.session.commit()
     es.indices.refresh('records-journals')
 

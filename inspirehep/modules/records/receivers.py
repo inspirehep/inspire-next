@@ -38,7 +38,6 @@ from invenio_indexer.signals import before_record_index
 from invenio_records.api import Record
 from invenio_records.models import RecordMetadata
 from invenio_records.signals import (
-    after_record_insert,
     after_record_update,
     before_record_insert,
     before_record_update,
@@ -130,7 +129,6 @@ def index_after_commit(sender, changes):
                 indexer.delete(Record(model_instance.json, model_instance))
 
 
-@after_record_insert.connect
 @after_record_update.connect
 def push_to_orcid(sender, record, *args, **kwargs):
     """If needed, queue the push of the new changes to ORCID.

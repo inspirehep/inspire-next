@@ -45,9 +45,10 @@ def test_get_head_source_no_rec_on_the_db_gives_none(app):
 
 def test_get_head_source_return_arxiv_when_one_arxive_source_present(app, simple_record):
     # XXX: for some reason, this must be internal.
-    from inspirehep.modules.migrator.tasks import record_insert_or_replace
+    from inspirehep.modules.records.api import InspireRecord
 
-    rec = record_insert_or_replace(simple_record)
+    rec = InspireRecord.create_or_update(simple_record)
+    rec.commit()
     uuid = rec.id
 
     # two sources for the same record

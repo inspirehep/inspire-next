@@ -29,7 +29,7 @@ from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
 from inspire_dojson.utils import get_record_ref
 from inspire_schemas.api import validate
-from inspirehep.modules.migrator.tasks import record_insert_or_replace
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.orcid.utils import (
     _get_api_url_for_recid,
     get_literature_recids_for_orcid,
@@ -59,7 +59,9 @@ def author_in_isolated_app(isolated_app):
 
     assert validate(record, 'authors') is None
 
-    yield record_insert_or_replace(record)['control_number']
+    record = InspireRecord.create_or_update(record)
+    record.commit()
+    yield record['control_number']
 
 
 @pytest.mark.parametrize(
@@ -218,7 +220,8 @@ def test_get_literature_recids_for_orcid_raises_if_no_author_is_found(isolated_a
 def test_get_literature_recids_for_orcid_raises_if_two_authors_are_found(isolated_app):
     record = get_db_record('aut', 1061000)
     record['control_number'] = 1061001
-    record_insert_or_replace(record)
+    record = InspireRecord.create_or_update(record)
+    record.commit()
 
     with pytest.raises(MultipleResultsFound):
         get_literature_recids_for_orcid('0000-0003-4792-9178')
@@ -227,7 +230,8 @@ def test_get_literature_recids_for_orcid_raises_if_two_authors_are_found(isolate
 def test_get_literature_recids_for_orcid_still_works_if_author_has_no_ids(isolated_app):
     record = get_db_record('aut', 1061000)
     del record['ids']
-    record_insert_or_replace(record)
+    record = InspireRecord.create_or_update(record)
+    record.commit()
 
     with pytest.raises(NoResultFound):
         get_literature_recids_for_orcid('0000-0003-4792-9178')
@@ -236,7 +240,8 @@ def test_get_literature_recids_for_orcid_still_works_if_author_has_no_ids(isolat
 def test_get_literature_recids_for_orcid_still_works_if_author_has_no_orcid_id(isolated_app):
     record = get_db_record('aut', 1061000)
     record['ids'] = [{'schema': 'INSPIRE BAI', 'value': 'Maurizio.Martinelli.1'}]
-    record_insert_or_replace(record)
+    record = InspireRecord.create_or_update(record)
+    record.commit()
 
     with pytest.raises(NoResultFound):
         get_literature_recids_for_orcid('0000-0003-4792-9178')

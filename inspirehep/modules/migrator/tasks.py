@@ -28,7 +28,6 @@ import gzip
 import re
 import zlib
 from collections import Counter
-from datetime import datetime
 from itertools import chain
 
 import click
@@ -46,23 +45,19 @@ from six import text_type
 
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer, current_record_to_index
-from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
 from invenio_search.utils import schema_to_index
 
 from inspire_dojson import marcxml2record
-from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.dedupers import dedupe_list
 from inspire_utils.helpers import force_list
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
-from inspirehep.modules.pidstore.minters import inspire_recid_minter
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.pidstore.utils import (
-    get_pid_type_from_schema,
     get_pid_types_from_endpoints,
 )
-from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.receivers import index_after_commit
 from inspirehep.utils.schema import ensure_valid_schema
 
@@ -337,33 +332,6 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
         success, failed))
 
 
-def record_insert_or_replace(json, skip_files=False):
-    """Insert or replace a record."""
-    pid_type = get_pid_type_from_schema(json['$schema'])
-    control_number = json['control_number']
-
-    try:
-        pid = PersistentIdentifier.get(pid_type, control_number)
-        record = InspireRecord.get_record(pid.object_uuid)
-        record.clear()
-        record.update(json, skip_files=skip_files)
-        if json.get('legacy_creation_date'):
-            record.model.created = datetime.strptime(json['legacy_creation_date'], '%Y-%m-%d')
-        record.commit()
-    except PIDDoesNotExistError:
-        record = InspireRecord.create(json, id_=None, skip_files=skip_files)
-        if json.get('legacy_creation_date'):
-            record.model.created = datetime.strptime(json['legacy_creation_date'], '%Y-%m-%d')
-        inspire_recid_minter(str(record.id), json)
-
-    if json.get('deleted'):
-        new_recid = get_recid_from_ref(json.get('new_record'))
-        if not new_recid:
-            record.delete()
-
-    return record
-
-
 def migrate_and_insert_record(raw_record, skip_files=False):
     """Migrate a record and insert it if valid, or log otherwise."""
     try:
@@ -379,7 +347,8 @@ def migrate_and_insert_record(raw_record, skip_files=False):
         ensure_valid_schema(json_record)
 
     try:
-        record = record_insert_or_replace(json_record, skip_files=skip_files)
+        record = InspireRecord.create_or_update(json_record, skip_files=skip_files)
+        record.commit()
     except ValidationError as e:
         pattern = u'Migrator Validator Error: {}, Value: %r, Record: %r'
         LOGGER.error(pattern.format('.'.join(e.schema_path)), e.instance, recid)

@@ -40,7 +40,7 @@ from invenio_db import db
 
 from inspire_schemas.api import load_schema, validate
 from inspire_utils.record import get_value
-from inspirehep.modules.migrator.tasks import record_insert_or_replace
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.record_getter import get_db_record
 
 from utils import _delete_record
@@ -93,13 +93,15 @@ def record_with_two_revisions(app):
     }
 
     with db.session.begin_nested():
-        record_insert_or_replace(record)
+        record = InspireRecord.create_or_update(record)
+        record.commit()
     db.session.commit()
 
     record['titles'][0]['title'] = 'record rev1'
 
     with db.session.begin_nested():
-        record_insert_or_replace(record)
+        record = InspireRecord.create_or_update(record)
+        record.commit()
     db.session.commit()
 
     yield
