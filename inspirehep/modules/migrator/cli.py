@@ -39,7 +39,7 @@ import jsonschema
 from dojson.contrib.marc21.utils import create_record
 
 from flask import current_app
-from flask_cli import with_appcontext
+from flask.cli import with_appcontext
 
 from inspire_dojson import marcxml2record
 from inspire_schemas.api import validate
