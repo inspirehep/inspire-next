@@ -53,7 +53,7 @@ def filter_core_keywords(obj, eng):
     obj.extra_data['classifier_results']["complete_output"] = result
 
 
-def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
+def classify_paper(taxonomy=None, rebuild_cache=False, no_cache=False,
                    output_limit=20, spires=False,
                    match_mode='full', with_author_keywords=False,
                    extract_acronyms=False, only_core_tags=False,
@@ -62,8 +62,9 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
     @with_debug_logging
     @wraps(classify_paper)
     def _classify_paper(obj, eng):
+        from flask import current_app
         params = dict(
-            taxonomy_name=taxonomy,
+            taxonomy_name=taxonomy or current_app.config['HEP_ONTOLOGY_FILE'],
             output_mode='dict',
             output_limit=output_limit,
             spires=spires,

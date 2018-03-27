@@ -43,8 +43,33 @@ from inspirehep.modules.records.api import InspireRecord
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
 
 
+HIGGS_TAXONOMY = '''<?xml version="1.0" encoding="UTF-8" ?>
+
+<rdf:RDF xmlns="http://www.w3.org/2004/02/skos/core#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+    <Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Higgsparticle">
+        <prefLabel xml:lang="en">Higgs particle</prefLabel>
+        <altLabel xml:lang="en">Higgs boson</altLabel>
+        <hiddenLabel xml:lang="en">Higgses</hiddenLabel>
+        <note xml:lang="en">core</note>
+    </Concept>
+
+</rdf:RDF>
+'''
+
+
+@pytest.fixture()
+def higgs_taxonomy(tmpdir):
+    taxonomy = tmpdir.join('HEPont.rdf')
+    taxonomy.write(HIGGS_TAXONOMY)
+    yield str(taxonomy)
+
+
 @pytest.fixture
-def workflow_app():
+def workflow_app(higgs_taxonomy):
     """Flask application with no records and function scope.
 
     .. deprecated:: 2017-09-18
@@ -62,20 +87,21 @@ def workflow_app():
 
         app = create_app(
             BEARD_API_URL="http://example.com/beard",
-            DEBUG=True,
             CELERY_ALWAYS_EAGER=True,
-            CELERY_RESULT_BACKEND='cache',
             CELERY_CACHE_BACKEND='memory',
             CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
+            CELERY_RESULT_BACKEND='cache',
+            CFG_BIBCATALOG_SYSTEM_RT_URL=RT_URL,
+            DEBUG=True,
+            HEP_ONTOLOGY_FILE=higgs_taxonomy,
             PRODUCTION_MODE=True,
             LEGACY_ROBOTUPLOAD_URL=(
                 'http://localhost:1234'
             ),
             MAGPIE_API_URL="http://example.com/magpie",
-            WORKFLOWS_MATCH_REMOTE_SERVER_URL="http://legacy_search.endpoint/",
             WORKFLOWS_FILE_LOCATION="/",
+            WORKFLOWS_MATCH_REMOTE_SERVER_URL="http://legacy_search.endpoint/",
             WTF_CSRF_ENABLED=False,
-            CFG_BIBCATALOG_SYSTEM_RT_URL=RT_URL
         )
 
     with app.app_context():
