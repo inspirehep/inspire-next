@@ -31,7 +31,7 @@ from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier, RecordIdentifier
 from invenio_search import current_search_client as es
 
-from inspirehep.modules.migrator.tasks import record_insert_or_replace
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.record_getter import get_db_record
 
 
@@ -70,7 +70,8 @@ def mock_addresses(addresses, mocked_local=False):
 
 def _create_record(record_json):
     with db.session.begin_nested():
-        record_insert_or_replace(record_json)
+        record = InspireRecord.create_or_update(record_json)
+        record.commit()
 
     db.session.commit()
     es.indices.refresh()

@@ -158,7 +158,7 @@ def test_migrate_and_insert_record_invalid_record(mock_logger, isolated_app):
     assert not mock_logger.exception.called
 
 
-@patch('inspirehep.modules.migrator.tasks.record_insert_or_replace', side_effect=Exception())
+@patch('inspirehep.modules.records.api.InspireRecord.create_or_update', side_effect=Exception())
 @patch('inspirehep.modules.migrator.tasks.LOGGER')
 def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
     raw_record = (
@@ -169,7 +169,6 @@ def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
         '  </datafield>'
         '</record>'
     )
-
     migrate_and_insert_record(raw_record)
 
     prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()

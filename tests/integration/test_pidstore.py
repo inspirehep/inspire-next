@@ -26,7 +26,7 @@ import mock
 import requests_mock
 from flask import current_app
 
-from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
+from inspirehep.modules.pidstore.providers.recid import InspireRecordIdProvider
 
 
 def test_getting_next_recid_from_legacy(app):
