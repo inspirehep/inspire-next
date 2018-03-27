@@ -82,7 +82,7 @@ def relogin_if_needed(f):
         try:
             return f(*args, **kwargs)
         except AuthorizationError:
-            rt_instance.login()
+            rt_instance.login_local()
             return f(*args, **kwargs)
     return decorated_function
 
