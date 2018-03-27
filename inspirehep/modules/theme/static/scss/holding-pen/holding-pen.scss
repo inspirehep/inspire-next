@@ -660,13 +660,19 @@ $hp_table_bg: #fff;
 
 }
 
+.result-row {
+  padding-bottom: 10px;
+}
+
 .matches-container {
   background-color: #dadede !important;
-  display: inline-block;
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
-  padding: 10px;
-  width: 100%;
+  padding: 0 10px 10px 10px;
+
+  &.detail-panel {
+    padding-top: 5px !important;
+  }
 
   h5 {
     color: $blue-haze;
@@ -674,6 +680,15 @@ $hp_table_bg: #fff;
   
   .panel-heading {
     font-size: 12px;
+  }
+
+  hr {
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+
+  .panel-group {
+    margin-bottom: 10px;
   }
 
   .authors {
