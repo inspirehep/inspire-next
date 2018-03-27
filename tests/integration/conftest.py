@@ -27,6 +27,12 @@ import os
 
 import pytest
 
+from functools import partial
+
+from click.testing import CliRunner
+from flask import current_app
+from flask.cli import ScriptInfo
+
 from invenio_db import db
 from invenio_search import current_search_client as es
 
@@ -68,7 +74,7 @@ def app():
     with app.app_context():
         # Celery task imports must be local, otherwise their
         # configuration would use the default pickle serializer.
-        from inspirehep.modules.migrator.tasks import add_citation_counts, migrate
+        from inspirehep.modules.migrator.tasks import add_citation_counts, migrate_from_file
 
         db.drop_all()
         db.create_all()
@@ -81,7 +87,7 @@ def app():
         init_users_and_permissions()
         init_collections()
 
-        migrate('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
+        migrate_from_file('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
         es.indices.refresh('records-hep')  # Makes sure that all HEP records were migrated.
 
         add_citation_counts()
@@ -177,3 +183,13 @@ def api_client(api):
     """Flask test client for the API application."""
     with api.test_client() as client:
         yield client
+
+
+@pytest.fixture(scope='function')
+def app_cli_runner(app):
+    """Click CLI runner inside the Flask application."""
+    runner = CliRunner()
+    obj = ScriptInfo(create_app=lambda info: current_app)
+    runner._invoke = runner.invoke
+    runner.invoke = partial(runner.invoke, obj=obj)
+    return runner

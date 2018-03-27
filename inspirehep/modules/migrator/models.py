@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 from datetime import datetime
 from zlib import compress, decompress, error
 
@@ -38,7 +40,9 @@ class InspireProdRecords(db.Model):
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
     _marcxml = db.Column('marcxml', db.LargeBinary, nullable=False)
     valid = db.Column(db.Boolean, default=None, nullable=True, index=True)
-    errors = db.Column(db.Text(), nullable=True)
+    _errors = db.Column('errors', db.Text(), nullable=True)
+
+    re_recid = re.compile('<controlfield.*?tag=.001.*?>(?P<recid>\d+)</controlfield>')
 
     @hybrid_property
     def marcxml(self):
@@ -52,3 +56,29 @@ class InspireProdRecords(db.Model):
     @marcxml.setter
     def marcxml(self, value):
         self._marcxml = compress(value)
+
+    @hybrid_property
+    def error(self):
+        return self._errors
+
+    @error.setter
+    def error(self, value):
+        """Errors column setter that stores an Exception and sets the ``valid`` flag."""
+        self.valid = False
+        self._errors = u'{}: {}'.format(type(value).__name__, value)
+
+    @classmethod
+    def from_marcxml(cls, raw_record):
+        """Create an instance from a MARCXML record.
+
+        The record must have a ``001`` tag containing the recid, otherwise it raises a ValueError.
+        """
+        try:
+            recid = int(cls.re_recid.search(raw_record).group('recid'))
+        except AttributeError:
+            raise ValueError('The MARCXML record contains no recid or recid is malformed')
+        # FIXME also get last_updated from marcxml
+        record = cls(recid=recid)
+        record.marcxml = raw_record
+        record.valid = None
+        return record
