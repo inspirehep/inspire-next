@@ -1287,6 +1287,9 @@ ARXIV_CATEGORIES = {
         'physics.ins-det',
     ]
 }
+HEP_ONTOLOGY_FILE = "HEPont.rdf"
+"""Name or path of the ontology to use for hep articles keyword extraction."""
+
 RECORDS_DEFAULT_FILE_LOCATION_NAME = "records"
 """Name of default records Location reference."""
 
