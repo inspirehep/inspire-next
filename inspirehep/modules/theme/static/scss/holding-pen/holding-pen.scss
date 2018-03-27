@@ -667,6 +667,10 @@ $hp_table_bg: #fff;
   border-bottom: 1px solid #ccc;
   padding: 10px;
   width: 100%;
+
+  h5 {
+    color: $blue-haze;
+  }
   
   .panel-heading {
     font-size: 12px;
