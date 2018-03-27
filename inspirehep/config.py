@@ -1675,7 +1675,8 @@ FUZZY_MATCH = {
                     ],
                     'type': 'fuzzy',
                 }
-            ]
+            ],
+            'validator': 'inspire_matcher.validators:authors_titles_validator'
         }
     ],
     'doc_type': 'hep',
