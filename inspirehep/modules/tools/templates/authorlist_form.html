@@ -30,9 +30,13 @@
   <dl>
     {{ render_field(form.author_string) }}
   </dl>
-  <p><input class="btn btn-default" type="submit" value="Format">
+  <div class="tools-authorlist">
+    <button class="btn btn-primary">Format</button>
+    <a class="btn btn-default" href="/tools/authorlist" title="Clear authorlist">Clear</a>
+  </div>
 </form>
 
+<hr />
 {% if results %}
 <h4>{{ results_title }}</h4>
 
