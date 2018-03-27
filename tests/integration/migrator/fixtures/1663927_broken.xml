@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+<record>
+  <controlfield tag="001">1663927</controlfield>
+  <controlfield tag="005">20180324183147.0</controlfield>
+  <datafield tag="520" ind1=" " ind2=" ">
+    <subfield code="a">Searching for new particles beyond the standard model is crucial for understanding several fundamental conundrums in physics and astrophysics. Several hypothetical particles can mediate exotic spin-dependent interactions between ordinary fermions, which enable laboratory searches via the detection of the interactions. Most laboratory searches utilize a macroscopic source and detector, thus allowing the detection of interactions with submillimeter force range and above. It remains a challenge to detect the interactions at shorter force ranges. Here we propose and demonstrate that a near-surface nitrogen-vacancy center in diamond can be utilized as a quantum sensor to detect the monopole–dipole interaction between an electron spin and nucleons. Our result sets a constraint for the electron–nucleon coupling, $g_{{\mathrm{s}}}^{\mathrm{N}}g_{\mathrm{p}}^{\mathrm{e}}$ , with the force range 0.1–23 μm. The obtained upper bound of the coupling at 20 μm is $g_{{\mathrm{s}}}^{\mathrm{N}}g_{\mathrm{p}}^{\mathrm{e}}$  &lt; 6.24 × 10$^{−15}$.</subfield>
+    <subfield code="9">Springer</subfield>
+  </datafield>
+  <datafield tag="773" ind1=" " ind2=" ">
+    <subfield code="p">Nature Commun.</subfield>
+    <subfield code="y">2018</subfield>
+    <subfield code="c">739</subfield>
+    <subfield code="v">9</subfield>
+    <subfield code="n">1</subfield>
+    <subfield code="1">1211687</subfield>
+  </datafield>
+  <datafield tag="909" ind1="C" ind2="O">
+    <subfield code="o">oai:inspirehep.net:1663927</subfield>
+    <subfield code="p">INSPIRE:HEP</subfield>
+  </datafield>
+  <datafield tag="961" ind1=" " ind2=" ">
+    <subfield code="x">2018-03-24</subfield>
+    <subfield code="c">2018-03-24</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">HEP</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">Published</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">Citeable</subfield>
+  </datafield>
+  <datafield tag="024" ind1="7" ind2=" ">
+    <subfield code="a">10.1038/s41467-018-03152-9</subfield>
+    <subfield code="2">DOI</subfield>
+    <subfield code="9">Springer</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">Rong:2018rcp</subfield>
+    <subfield code="9">INSPIRETeX</subfield>
+  </datafield>
+  <datafield tag="100" ind1=" " ind2=" ">
+    <subfield code="j">ORCID:0000-0001-8788-0896</subfield>
+    <subfield code="a">Rong, Xing</subfield>
+    <subfield code="v">CAS Key Laboratory of Microscale Magnetic Resonance U. and Department of Modern Physics - Science U. and Technology of China (USTC) - Hefei - 230026 - China</subfield>
+    <subfield code="v">Hefei National Laboratory for Physical Sciences at the Microscale - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="v">Synergetic Innovation Center of Quantum Information and Quantum Physics - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">X.Rong.2</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="c">Not a date</subfield>
+    <subfield code="t">published</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">*Brief entry*</subfield>
+  </datafield>
+  <datafield tag="245" ind1=" " ind2=" ">
+    <subfield code="a">Searching for an exotic spin-dependent interaction with a single electron-spin quantum sensor</subfield>
+    <subfield code="9">Nature</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/RevModPhys.71.S112</subfield>
+    <subfield code="y">1999</subfield>
+    <subfield code="h">Schwarz, J. H. &amp; Seiberg, N.</subfield>
+    <subfield code="m">String theory, supersymmetry, unification, and all that</subfield>
+    <subfield code="s">Rev.Mod.Phys.,71,S112-S120</subfield>
+    <subfield code="x">Schwarz, J. H. &amp; Seiberg, N. String theory, supersymmetry, unification, and all that. Rev. Mod. Phys. 71, S112–S120 (1999)., DOI: 10.1103/RevModPhys.71.S112</subfield>
+    <subfield code="0">468468</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1146/annurev-nucl-102014-022120</subfield>
+    <subfield code="y">2015</subfield>
+    <subfield code="h">Graham, P. W., Irastorza, I. G., Lamoreaux, S. K., Lindner, A. &amp; van Bibber, K. A.</subfield>
+    <subfield code="m">Experimental searches for the axion and axion-like particles</subfield>
+    <subfield code="s">Ann.Rev.Nucl.Part.Sci.,65,485-514</subfield>
+    <subfield code="x">Graham, P. W., Irastorza, I. G., Lamoreaux, S. K., Lindner, A. &amp; van Bibber, K. A. Experimental searches for the axion and axion-like particles. Annu. Rev. Nucl. Part. Sci. 65, 485–514 (2015)., DOI: 10.1146/annurev-nucl-102014-022120</subfield>
+    <subfield code="0">1414695</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1016/j.physrep.2016.06.005</subfield>
+    <subfield code="y">2016</subfield>
+    <subfield code="h">Marsh, D. J.</subfield>
+    <subfield code="m">Axion cosmology</subfield>
+    <subfield code="s">Phys.Rept.,643,1-79</subfield>
+    <subfield code="x">Marsh, D. J. Axion cosmology. Phys. Rep. 643, 1–79 (2016)., DOI: 10.1016/j.physrep.2016.06.005</subfield>
+    <subfield code="0">1400955</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1016/j.physrep.2004.08.031</subfield>
+    <subfield code="y">2005</subfield>
+    <subfield code="h">Bertone, G., Hooper, D. &amp; Silk, J.</subfield>
+    <subfield code="m">Particle dark matter: evidence, candidates and constraints</subfield>
+    <subfield code="s">Phys.Rept.,405,279-390</subfield>
+    <subfield code="x">Bertone, G., Hooper, D. &amp; Silk, J. Particle dark matter: evidence, candidates and constraints. Phys. Rep. 405, 279–390 (2005)., DOI: 10.1016/j.physrep.2004.08.031</subfield>
+    <subfield code="0">648746</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevLett.113.251302</subfield>
+    <subfield code="y">2014</subfield>
+    <subfield code="h">Kamionkowski, M., Pradler, J. &amp; Walker, D. G. E.</subfield>
+    <subfield code="m">Dark energy from the string axiverse</subfield>
+    <subfield code="s">Phys.Rev.Lett.,113,251302</subfield>
+    <subfield code="x">Kamionkowski, M., Pradler, J. &amp; Walker, D. G. E. Dark energy from the string axiverse. Phys. Rev. Lett. 113, 251302 (2014)., DOI: 10.1103/PhysRevLett.113.251302</subfield>
+    <subfield code="0">1313571</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevLett.38.1440</subfield>
+    <subfield code="y">1977</subfield>
+    <subfield code="h">Peccei, R. D. &amp; Quinn, H. R.</subfield>
+    <subfield code="m">CP conservation in the presence of instantons</subfield>
+    <subfield code="s">Phys.Rev.Lett.,38,1440-1443</subfield>
+    <subfield code="x">Peccei, R. D. &amp; Quinn, H. R. CP conservation in the presence of instantons. Phys. Rev. Lett. 38, 1440–1443 (1977)., DOI: 10.1103/PhysRevLett.38.1440</subfield>
+    <subfield code="0">119084</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevD.30.130</subfield>
+    <subfield code="y">1984</subfield>
+    <subfield code="h">Moody, J. E. &amp; Wilczek, F.</subfield>
+    <subfield code="m">New macroscopic forces?</subfield>
+    <subfield code="s">Phys.Rev.,D30,130-138</subfield>
+    <subfield code="x">Moody, J. E. &amp; Wilczek, F. New macroscopic forces? Phys. Rev. D 30, 130–138 (1984)., DOI: 10.1103/PhysRevD.30.130</subfield>
+    <subfield code="0">14419</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevLett.67.1735</subfield>
+    <subfield code="y">1991</subfield>
+    <subfield code="h">Wineland, D. J., Bollinger, J. J., Heinzen, D. J., Itano, W. M. &amp; Raizen, M. G.</subfield>
+    <subfield code="m">Search for anomalous spin-dependent forces using stored-ion spectroscopy</subfield>
+    <subfield code="s">Phys.Rev.Lett.,67,1735-1738</subfield>
+    <subfield code="x">Wineland, D. J., Bollinger, J. J., Heinzen, D. J., Itano, W. M. &amp; Raizen, M. G. Search for anomalous spin-dependent forces using stored-ion spectroscopy. Phys. Rev. Lett. 67, 1735–1738 (1991)., DOI: 10.1103/PhysRevLett.67.1735</subfield>
+    <subfield code="0">331853</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevLett.77.2170</subfield>
+    <subfield code="y">1996</subfield>
+    <subfield code="h">Youdin, A. N., Krause, D.</subfield>
+    <subfield code="m">Jr., Jagannathan, K., Hunter, L. R. &amp; Lamoreaux, S. K</subfield>
+    <subfield code="m">Limits on spin-mass couplings within the axion window</subfield>
+    <subfield code="s">Phys.Rev.Lett.,77,2170-2173</subfield>
+    <subfield code="x">Youdin, A. N., Krause, D. Jr., Jagannathan, K., Hunter, L. R. &amp; Lamoreaux, S. K. Limits on spin–mass couplings within the axion window. Phys. Rev. Lett. 77, 2170–2173 (1996)., DOI: 10.1103/PhysRevLett.77.2170</subfield>
+    <subfield code="0">429518</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevD.78.092006</subfield>
+    <subfield code="y">2008</subfield>
+    <subfield code="h">Heckel, B. R. et al.</subfield>
+    <subfield code="m">Preferred-frame and CP-violation tests with polarized electrons</subfield>
+    <subfield code="s">Phys.Rev.,D78,092006</subfield>
+    <subfield code="x">Heckel, B. R. et al. Preferred-frame and CP-violation tests with polarized electrons. Phys. Rev. D 78, 092006 (2008)., DOI: 10.1103/PhysRevD.78.092006</subfield>
+    <subfield code="0">793464</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevLett.115.201801</subfield>
+    <subfield code="y">2015</subfield>
+    <subfield code="h">Terrano, W. A., Adelberger, E. G., Lee, J. G. &amp; Heckel, B. R.</subfield>
+    <subfield code="m">Short-range, spin-dependent interactions of electrons: a probe for exotic pseudo-goldstone bosons</subfield>
+    <subfield code="s">Phys.Rev.Lett.,115,201801</subfield>
+    <subfield code="x">Terrano, W. A., Adelberger, E. G., Lee, J. G. &amp; Heckel, B. R. Short-range, spin-dependent interactions of electrons: a probe for exotic pseudo-goldstone bosons. Phys. Rev. Lett. 115, 201801 (2015)., DOI: 10.1103/PhysRevLett.115.201801</subfield>
+    <subfield code="0">1387508</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevLett.106.041801</subfield>
+    <subfield code="y">2011</subfield>
+    <subfield code="h">Hoedl, S. A., Fleischer, F., Adelberger, E. G. &amp; Heckel, B. R.</subfield>
+    <subfield code="m">Improved constraints on an axion-mediated force</subfield>
+    <subfield code="s">Phys.Rev.Lett.,106,041801</subfield>
+    <subfield code="x">Hoedl, S. A., Fleischer, F., Adelberger, E. G. &amp; Heckel, B. R. Improved constraints on an axion-mediated force. Phys. Rev. Lett. 106, 041801 (2011)., DOI: 10.1103/PhysRevLett.106.041801</subfield>
+    <subfield code="0">886394</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevLett.105.170401</subfield>
+    <subfield code="y">2010</subfield>
+    <subfield code="h">Petukhov, A. K., Pignol, G., Jullien, D. &amp; Andersen, K. H.</subfield>
+    <subfield code="m">Polarized (3)He as a probe for short-range spin-dependent interactions</subfield>
+    <subfield code="s">Phys.Rev.Lett.,105,170401</subfield>
+    <subfield code="x">Petukhov, A. K., Pignol, G., Jullien, D. &amp; Andersen, K. H. Polarized (3)He as a probe for short-range spin-dependent interactions. Phys. Rev. Lett. 105, 170401 (2010)., DOI: 10.1103/PhysRevLett.105.170401</subfield>
+    <subfield code="0">873425</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevLett.82.2439</subfield>
+    <subfield code="y">1999</subfield>
+    <subfield code="h">Pan, S</subfield>
+    <subfield code="m">Ni, W.-T</subfield>
+    <subfield code="m">-s, Yeh, H.-C., Hou, L.-S. &amp; Wan, J</subfield>
+    <subfield code="m">Search for an axionlike spin coupling using a paramagnetic salt with a dc squid</subfield>
+    <subfield code="s">Phys.Rev.Lett.,82,2439-2442</subfield>
+    <subfield code="x">Ni, W.-T., Pan, S.-s, Yeh, H.-C., Hou, L.-S. &amp; Wan, J. Search for an axionlike spin coupling using a paramagnetic salt with a dc squid. Phys. Rev. Lett. 82, 2439–2442 (1999)., DOI: 10.1103/PhysRevLett.82.2439</subfield>
+    <subfield code="0">500175</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevLett.111.102001</subfield>
+    <subfield code="y">2013</subfield>
+    <subfield code="h">Bulatowicz, M. et al.</subfield>
+    <subfield code="m">Laboratory search for a long-range t-odd, p-odd interaction from axionlike particles using dual-species nuclear magnetic resonance with polarized (129)Xe and (131)Xe gas</subfield>
+    <subfield code="s">Phys.Rev.Lett.,111,102001</subfield>
+    <subfield code="x">Bulatowicz, M. et al. Laboratory search for a long-range t-odd, p-odd interaction from axionlike particles using dual-species nuclear magnetic resonance with polarized (129)Xe and (131)Xe gas. Phys. Rev. Lett. 111, 102001 (2013)., DOI: 10.1103/PhysRevLett.111.102001</subfield>
+    <subfield code="0">1215604</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevD.86.015001</subfield>
+    <subfield code="y">2012</subfield>
+    <subfield code="h">Raffelt, G.</subfield>
+    <subfield code="m">Limits on a CP-violating scalar axion-nucleon interaction</subfield>
+    <subfield code="s">Phys.Rev.,D86,015001</subfield>
+    <subfield code="x">Raffelt, G. Limits on a CP-violating scalar axion-nucleon interaction. Phys. Rev. D 86, 015001 (2012)., DOI: 10.1103/PhysRevD.86.015001</subfield>
+    <subfield code="0">1113906</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1088/1126-6708/2006/11/005</subfield>
+    <subfield code="y">2006</subfield>
+    <subfield code="h">Dobrescu, B. A. &amp; Mocioiu, I.</subfield>
+    <subfield code="m">Spin-dependent macroscopic forces from new particle exchange</subfield>
+    <subfield code="s">JHEP,2006,005</subfield>
+    <subfield code="x">Dobrescu, B. A. &amp; Mocioiu, I. Spin-dependent macroscopic forces from new particle exchange. J. High Energy Phys. 2006, 005 (2006)., DOI: 10.1088/1126-6708/2006/11/005</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1016/j.physrep.2013.02.001</subfield>
+    <subfield code="y">2013</subfield>
+    <subfield code="h">Doherty, M. W. et al.</subfield>
+    <subfield code="m">The nitrogen-vacancy colour centre in diamond</subfield>
+    <subfield code="s">Phys.Rept.,528,1-45</subfield>
+    <subfield code="x">Doherty, M. W. et al. The nitrogen-vacancy colour centre in diamond. Phys. Rep. 528, 1–45 (2013)., DOI: 10.1016/j.physrep.2013.02.001</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/RevModPhys.89.035002</subfield>
+    <subfield code="y">2017</subfield>
+    <subfield code="h">Degen, C. L., Reinhard, F. &amp; Cappellaro, P.</subfield>
+    <subfield code="m">Quantum sensing</subfield>
+    <subfield code="s">Rev.Mod.Phys.,89,035002</subfield>
+    <subfield code="x">Degen, C. L., Reinhard, F. &amp; Cappellaro, P. Quantum sensing. Rev. Mod. Phys. 89, 035002 (2017)., DOI: 10.1103/RevModPhys.89.035002</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="y">2015</subfield>
+    <subfield code="a">doi:10.1038/ncomms9748</subfield>
+    <subfield code="x">Rong, X. et al. Experimental fault-tolerant universal quantum gates with solid-state spins under ambient conditions. Nat. Commun. 6, 8748 (2015)., DOI: 10.1038/ncomms9748</subfield>
+    <subfield code="m">Experimental fault-tolerant universal quantum gates with solid-state spins under ambient conditions. Nat. Commun. 6, 8748</subfield>
+    <subfield code="h">Rong, X. et al.</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="y">2013</subfield>
+    <subfield code="a">doi:10.1038/ncomms2771</subfield>
+    <subfield code="x">Bar-Gill, N., Pham, L. M., Jarmola, A., Budker, D. &amp; Walsworth, R. L. Solid-state electronic spin coherence time approaching one second. Nat. Commun. 4, 1743 (2013)., DOI: 10.1038/ncomms2771</subfield>
+    <subfield code="m">Solid-state electronic spin coherence time approaching one second. Nat. Commun. 4, 1743</subfield>
+    <subfield code="h">Bar-Gill, N., Pham, L. M., Jarmola, A., Budker, D. &amp; Walsworth, R. L.</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRev.80.580</subfield>
+    <subfield code="y">1950</subfield>
+    <subfield code="h">Hahn, E. L.</subfield>
+    <subfield code="m">Spin echoes</subfield>
+    <subfield code="s">Phys.Rev.,80,580-594</subfield>
+    <subfield code="x">Hahn, E. L. Spin echoes. Phys. Rev. 80, 580–594 (1950)., DOI: 10.1103/PhysRev.80.580</subfield>
+    <subfield code="0">47855</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevD.86.010001</subfield>
+    <subfield code="y">2012</subfield>
+    <subfield code="h">Beringer, J. et al.</subfield>
+    <subfield code="m">Review of particle physics</subfield>
+    <subfield code="s">Phys.Rev.,D86,010001</subfield>
+    <subfield code="x">Beringer, J. et al. Review of particle physics. Phys. Rev. D 86, 010001 (2012)., DOI: 10.1103/PhysRevD.86.010001</subfield>
+    <subfield code="0">1126428</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevD.51.1495</subfield>
+    <subfield code="y">1995</subfield>
+    <subfield code="h">Raffelt, D. &amp; Weiss, A. Red</subfield>
+    <subfield code="m">giant bound on the axion-electron coupling reexamined</subfield>
+    <subfield code="s">Phys.Rev.,D51,1495</subfield>
+    <subfield code="x">Raffelt, D. &amp; Weiss, A. Red giant bound on the axion-electron coupling reexamined. Phys. Rev. D 51, 1495 (1995)., DOI: 10.1103/PhysRevD.51.1495</subfield>
+    <subfield code="0">377502</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1142/S0218271806009558</subfield>
+    <subfield code="y">2006</subfield>
+    <subfield code="h">Jain, P. &amp; Mandal, S.</subfield>
+    <subfield code="m">Evading the astrophysical limits on light pseudoscalars</subfield>
+    <subfield code="s">Int.J.Mod.Phys.,D15,2095</subfield>
+    <subfield code="x">Jain, P. &amp; Mandal, S. Evading the astrophysical limits on light pseudoscalars. Int. J. Mod. Phys. D 15, 2095 (2006)., DOI: 10.1142/S0218271806009558</subfield>
+    <subfield code="0">699703</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="y">2009</subfield>
+    <subfield code="a">doi:10.1038/nmat2420</subfield>
+    <subfield code="x">Balasubramanian, G. et al. Ultralong spin coherence time in isotopically engineered diamond. Nat. Mater. 8, 383–387 (2009)., DOI: 10.1038/nmat2420</subfield>
+    <subfield code="m">Ultralong spin coherence time in isotopically engineered diamond. Nat. Mater. 8, 383-387</subfield>
+    <subfield code="h">Balasubramanian, G. et al.</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1038/nature08470</subfield>
+    <subfield code="y">2009</subfield>
+    <subfield code="h">Du, J. et al.</subfield>
+    <subfield code="m">Preserving electron spin coherence in solids by optimal dynamical decoupling</subfield>
+    <subfield code="s">Nature,461,1265-1268</subfield>
+    <subfield code="x">Du, J. et al. Preserving electron spin coherence in solids by optimal dynamical decoupling. Nature 461, 1265–1268 (2009)., DOI: 10.1038/nature08470</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1126/science.1192739</subfield>
+    <subfield code="y">2010</subfield>
+    <subfield code="h">de Lange, G., Wang, Z. H., Ristè, D., Dobrovitski, V. V. &amp; Hanson, R.</subfield>
+    <subfield code="m">Universal dynamical decoupling of a single solid-state spin from a spin bath</subfield>
+    <subfield code="s">Science,330,60-63</subfield>
+    <subfield code="x">de Lange, G., Wang, Z. H., Ristè, D., Dobrovitski, V. V. &amp; Hanson, R. Universal dynamical decoupling of a single solid-state spin from a spin bath. Science 330, 60–63 (2010)., DOI: 10.1126/science.1192739</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevLett.115.081801</subfield>
+    <subfield code="y">2015</subfield>
+    <subfield code="h">Kotler, S., Ozeri, R. &amp; Kimball, D. F. J.</subfield>
+    <subfield code="m">Constraints on exotic dipole-dipole couplings between electrons at the micrometer scale</subfield>
+    <subfield code="s">Phys.Rev.Lett.,115,081801</subfield>
+    <subfield code="x">Kotler, S., Ozeri, R. &amp; Kimball, D. F. J. Constraints on exotic dipole-dipole couplings between electrons at the micrometer scale. Phys. Rev. Lett. 115, 081801 (2015)., DOI: 10.1103/PhysRevLett.115.081801</subfield>
+    <subfield code="0">1342322</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="y">2013</subfield>
+    <subfield code="a">doi:10.1038/nphys2543</subfield>
+    <subfield code="x">Grinolds, M. S. et al. Nanoscale magnetic imaging of a single electron spin under ambient conditions. Nat. Phys. 9, 215–219 (2013)., DOI: 10.1038/nphys2543</subfield>
+    <subfield code="m">Nanoscale magnetic imaging of a single electron spin under ambient conditions. Nat. Phys. 9, 215-219</subfield>
+    <subfield code="h">Grinolds, M. S. et al.</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevLett.110.082003</subfield>
+    <subfield code="y">2013</subfield>
+    <subfield code="h">Yan, H. &amp; Snow, W. M.</subfield>
+    <subfield code="m">New limit on possible long-range parity-odd interactions of the neutron from neutron-spin rotation in liquid (4)He</subfield>
+    <subfield code="s">Phys.Rev.Lett.,110,082003</subfield>
+    <subfield code="x">Yan, H. &amp; Snow, W. M. New limit on possible long-range parity-odd interactions of the neutron from neutron-spin rotation in liquid (4)He. Phys. Rev. Lett. 110, 082003 (2013)., DOI: 10.1103/PhysRevLett.110.082003</subfield>
+    <subfield code="0">1204594</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1103/PhysRevLett.115.182001</subfield>
+    <subfield code="y">2015</subfield>
+    <subfield code="h">Yan, H. et al.</subfield>
+    <subfield code="m">Searching for new spin- and velocity-dependent interactions by spin relaxation of polarized (3)He gas</subfield>
+    <subfield code="s">Phys.Rev.Lett.,115,182001</subfield>
+    <subfield code="x">Yan, H. et al. Searching for new spin- and velocity-dependent interactions by spin relaxation of polarized (3)He gas. Phys. Rev. Lett. 115, 182001 (2015)., DOI: 10.1103/PhysRevLett.115.182001</subfield>
+    <subfield code="0">1335764</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="y">2008</subfield>
+    <subfield code="a">doi:10.1038/nphys1075</subfield>
+    <subfield code="x">Taylor, J. M. et al. High-sensitivity diamond magnetometer with nanoscale resolution. Nat. Phys. 4, 810–816 (2008)., DOI: 10.1038/nphys1075</subfield>
+    <subfield code="m">High-sensitivity diamond magnetometer with nanoscale resolution. Nat. Phys. 4, 810-816</subfield>
+    <subfield code="h">Taylor, J. M. et al.</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1038/nature07279</subfield>
+    <subfield code="y">2008</subfield>
+    <subfield code="h">Maze, J. R. et al.</subfield>
+    <subfield code="m">Nanoscale magnetic sensing with an individual electronic spin in diamond</subfield>
+    <subfield code="s">Nature,455,644-647</subfield>
+    <subfield code="x">Maze, J. R. et al. Nanoscale magnetic sensing with an individual electronic spin in diamond. Nature 455, 644–647 (2008)., DOI: 10.1038/nature07279</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1038/nature07278</subfield>
+    <subfield code="y">2008</subfield>
+    <subfield code="h">Balasubramanian, G. et al.</subfield>
+    <subfield code="m">Nanoscale imaging magnetometry with diamond spins under ambient conditions</subfield>
+    <subfield code="s">Nature,455,648-651</subfield>
+    <subfield code="x">Balasubramanian, G. et al. Nanoscale imaging magnetometry with diamond spins under ambient conditions. Nature 455, 648–651 (2008)., DOI: 10.1038/nature07278</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1126/science.aaa4298</subfield>
+    <subfield code="y">2015</subfield>
+    <subfield code="h">Kolkowitz, S. et al.</subfield>
+    <subfield code="m">Probing johnson noise and ballistic transport in normal metals with a single-spin qubit</subfield>
+    <subfield code="s">Science,347,1129-1132</subfield>
+    <subfield code="x">Kolkowitz, S. et al. Probing johnson noise and ballistic transport in normal metals with a single-spin qubit. Science 347, 1129–1132 (2015)., DOI: 10.1126/science.aaa4298</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1126/science.aaa2253</subfield>
+    <subfield code="y">2015</subfield>
+    <subfield code="h">Shi, F. et al.</subfield>
+    <subfield code="m">Single-protein spin resonance spectroscopy under ambient conditions</subfield>
+    <subfield code="s">Science,347,1135-1138</subfield>
+    <subfield code="x">Shi, F. et al. Single-protein spin resonance spectroscopy under ambient conditions. Science 347, 1135–1138 (2015)., DOI: 10.1126/science.aaa2253</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1126/science.aal2538</subfield>
+    <subfield code="y">2017</subfield>
+    <subfield code="h">Lovchinsky, I. et al.</subfield>
+    <subfield code="m">Magnetic resonance spectroscopy of an atomically thin material using a single-spin qubit</subfield>
+    <subfield code="s">Science,355,503-507</subfield>
+    <subfield code="x">Lovchinsky, I. et al. Magnetic resonance spectroscopy of an atomically thin material using a single-spin qubit. Science 355, 503–507 (2017)., DOI: 10.1126/science.aal2538</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="9">refextract</subfield>
+    <subfield code="a">doi:10.1126/science.1216821</subfield>
+    <subfield code="y">2012</subfield>
+    <subfield code="h">Kolkowitz, S. et al.</subfield>
+    <subfield code="m">Coherent sensing of a mechanical resonator with a single-spin qubit</subfield>
+    <subfield code="s">Science,335,1603-1606</subfield>
+    <subfield code="x">Kolkowitz, S. et al. Coherent sensing of a mechanical resonator with a single-spin qubit. Science 335, 1603–1606 (2012)., DOI: 10.1126/science.1216821</subfield>
+  </datafield>
+  <datafield tag="650" ind1="1" ind2="7">
+    <subfield code="2">INSPIRE</subfield>
+    <subfield code="a">General Physics</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Wang, Mengqi</subfield>
+    <subfield code="v">CAS Key Laboratory of Microscale Magnetic Resonance U. and Department of Modern Physics - Science U. and Technology of China (USTC) - Hefei - 230026 - China</subfield>
+    <subfield code="v">Hefei National Laboratory for Physical Sciences at the Microscale - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="v">Synergetic Innovation Center of Quantum Information and Quantum Physics - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">M.Wang.15</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Geng, Jianpei</subfield>
+    <subfield code="v">CAS Key Laboratory of Microscale Magnetic Resonance U. and Department of Modern Physics - Science U. and Technology of China (USTC) - Hefei - 230026 - China</subfield>
+    <subfield code="v">Hefei National Laboratory for Physical Sciences at the Microscale - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">J.Geng.2</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Qin, Xi</subfield>
+    <subfield code="v">CAS Key Laboratory of Microscale Magnetic Resonance U. and Department of Modern Physics - Science U. and Technology of China (USTC) - Hefei - 230026 - China</subfield>
+    <subfield code="v">Hefei National Laboratory for Physical Sciences at the Microscale - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="v">Synergetic Innovation Center of Quantum Information and Quantum Physics - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">X.Qin.4</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Guo, Maosen</subfield>
+    <subfield code="v">CAS Key Laboratory of Microscale Magnetic Resonance U. and Department of Modern Physics - Science U. and Technology of China (USTC) - Hefei - 230026 - China</subfield>
+    <subfield code="v">Synergetic Innovation Center of Quantum Information and Quantum Physics - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">M.Guo.5</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Jiao, Man</subfield>
+    <subfield code="v">CAS Key Laboratory of Microscale Magnetic Resonance U. and Department of Modern Physics - Science U. and Technology of China (USTC) - Hefei - 230026 - China</subfield>
+    <subfield code="v">Synergetic Innovation Center of Quantum Information and Quantum Physics - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">M.Jiao.2</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Xie, Yijin</subfield>
+    <subfield code="v">CAS Key Laboratory of Microscale Magnetic Resonance U. and Department of Modern Physics - Science U. and Technology of China (USTC) - Hefei - 230026 - China</subfield>
+    <subfield code="v">Synergetic Innovation Center of Quantum Information and Quantum Physics - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">Y.Xie.13</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Wang, Pengfei</subfield>
+    <subfield code="v">CAS Key Laboratory of Microscale Magnetic Resonance U. and Department of Modern Physics - Science U. and Technology of China (USTC) - Hefei - 230026 - China</subfield>
+    <subfield code="v">Hefei National Laboratory for Physical Sciences at the Microscale - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="v">Synergetic Innovation Center of Quantum Information and Quantum Physics - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">P.Wang.19</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Huang, Pu</subfield>
+    <subfield code="v">CAS Key Laboratory of Microscale Magnetic Resonance U. and Department of Modern Physics - Science U. and Technology of China (USTC) - Hefei - 230026 - China</subfield>
+    <subfield code="v">Hefei National Laboratory for Physical Sciences at the Microscale - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="v">Synergetic Innovation Center of Quantum Information and Quantum Physics - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">P.Huang.1</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Shi, Fazhan</subfield>
+    <subfield code="v">CAS Key Laboratory of Microscale Magnetic Resonance U. and Department of Modern Physics - Science U. and Technology of China (USTC) - Hefei - 230026 - China</subfield>
+    <subfield code="v">Hefei National Laboratory for Physical Sciences at the Microscale - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="v">Synergetic Innovation Center of Quantum Information and Quantum Physics - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">F.Shi.2</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Cai, Yi-Fu</subfield>
+    <subfield code="v">CAS Key Laboratory for Research in Galaxies and Cosmology - Department of Astronomy - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="v">School of Astronomy and Space Science - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">Yi.Fu.Cai.1</subfield>
+    <subfield code="x">1041069</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Zou, Chongwen</subfield>
+    <subfield code="v">National Synchrotron Radiation Laboratory - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">C.Zou.3</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Du, Jiangfeng</subfield>
+    <subfield code="v">CAS Key Laboratory of Microscale Magnetic Resonance U. and Department of Modern Physics - Science U. and Technology of China (USTC) - Hefei - 230026 - China</subfield>
+    <subfield code="v">Hefei National Laboratory for Physical Sciences at the Microscale - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="v">Synergetic Innovation Center of Quantum Information and Quantum Physics - USTC - Hefei - 230026 - China</subfield>
+    <subfield code="w">J.Du.5</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+</record>
+
+</collection>
