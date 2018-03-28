@@ -43,7 +43,7 @@ setup_requires = []
 install_requires = [
     'Babel~=2.0,>=2.5.1',
     'Flask-Breadcrumbs~=0.0,>=0.4.0',
-    'Flask-CeleryExt~=0.0,>=0.3.0',
+    'Flask-CeleryExt~=0.0,>=0.3.1',
     'Flask-Gravatar~=0.0,>=0.4.2',
     'Flask-Login~=0.0,>=0.4.0',
     'Flask~=0.0,>=0.12.2',
@@ -53,7 +53,7 @@ install_requires = [
     'backoff~=1.0,>=1.4.3',
     'backports.tempfile>=1.0rc1',
     'beard~=0.0,>=0.2.0',
-    'celery~=3.0,>=3.1.25,<3.1.26',
+    'celery~=3.0,>=3.1.26post2',
     'elasticsearch-dsl~=2.0,>=2.2.0',
     'elasticsearch~=2.0,>=2.4.1',
     'enum34~=1.0,>=1.1.6',
