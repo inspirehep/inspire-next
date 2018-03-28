@@ -25,11 +25,17 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
 from inspire_dojson.utils import get_record_ref
 from inspire_schemas.api import validate
-from inspirehep.modules.migrator.tasks import record_insert_or_replace
-from inspirehep.modules.orcid.utils import _get_api_url_for_recid, get_orcids_for_push
+from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.orcid.utils import (
+    _get_api_url_for_recid,
+    get_literature_recids_for_orcid,
+    get_orcids_for_push,
+)
+from inspirehep.utils.record_getter import get_db_record
 
 
 @pytest.fixture(scope='function')
@@ -53,7 +59,9 @@ def author_in_isolated_app(isolated_app):
 
     assert validate(record, 'authors') is None
 
-    yield record_insert_or_replace(record)['control_number']
+    record = InspireRecord.create_or_update(record)
+    record.commit()
+    yield record['control_number']
 
 
 @pytest.mark.parametrize(
@@ -195,3 +203,45 @@ def test_orcids_for_push_orcid_in_author_with_claim(author_in_isolated_app):
 
     assert validate(record, 'hep') is None
     assert list(get_orcids_for_push(record)) == ['0000-0002-1825-0097']
+
+
+def test_get_literature_recids_for_orcid(isolated_app):
+    expected = [1496635]
+    result = get_literature_recids_for_orcid('0000-0003-4792-9178')
+
+    assert expected == result
+
+
+def test_get_literature_recids_for_orcid_raises_if_no_author_is_found(isolated_app):
+    with pytest.raises(NoResultFound):
+        get_literature_recids_for_orcid('THIS-ORCID-DOES-NOT-EXIST')
+
+
+def test_get_literature_recids_for_orcid_raises_if_two_authors_are_found(isolated_app):
+    record = get_db_record('aut', 1061000)
+    record['control_number'] = 1061001
+    record = InspireRecord.create_or_update(record)
+    record.commit()
+
+    with pytest.raises(MultipleResultsFound):
+        get_literature_recids_for_orcid('0000-0003-4792-9178')
+
+
+def test_get_literature_recids_for_orcid_still_works_if_author_has_no_ids(isolated_app):
+    record = get_db_record('aut', 1061000)
+    del record['ids']
+    record = InspireRecord.create_or_update(record)
+    record.commit()
+
+    with pytest.raises(NoResultFound):
+        get_literature_recids_for_orcid('0000-0003-4792-9178')
+
+
+def test_get_literature_recids_for_orcid_still_works_if_author_has_no_orcid_id(isolated_app):
+    record = get_db_record('aut', 1061000)
+    record['ids'] = [{'schema': 'INSPIRE BAI', 'value': 'Maurizio.Martinelli.1'}]
+    record = InspireRecord.create_or_update(record)
+    record.commit()
+
+    with pytest.raises(NoResultFound):
+        get_literature_recids_for_orcid('0000-0003-4792-9178')

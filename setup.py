@@ -53,7 +53,7 @@ install_requires = [
     'backoff~=1.0,>=1.4.3',
     'backports.tempfile>=1.0rc1',
     'beard~=0.0,>=0.2.0',
-    'celery~=3.0,>=3.1.25',
+    'celery~=3.0,>=3.1.25,<3.1.26',
     'elasticsearch-dsl~=2.0,>=2.2.0',
     'elasticsearch~=2.0,>=2.4.1',
     'enum34~=1.0,>=1.1.6',
@@ -82,7 +82,7 @@ install_requires = [
     'invenio-jsonschemas>=1.0.0a5',
     'invenio-logging>=1.0.0b3',
     'invenio-mail>=1.0.0b1',
-    'invenio-oauthclient>=1.0.0b5',
+    'invenio-oauthclient==1.0.0b5',  # Pin to specific version because a DB migration is required: see INSPIR-434
     'invenio-records-files>=1.0.0a9',
     'invenio-records-rest>=1.0.0b1',
     'invenio-records-ui>=1.0.0b1',
@@ -106,7 +106,6 @@ install_requires = [
     'requests~=2.0,>=2.18.4',
     'setproctitle~=1.0,>=1.1.10',
     'timeout-decorator~=0.0,>=0.4.0',
-    'vcrpy~=1.0,>=1.11.1',
     'workflow~=2.0,>=2.1.3',
 ]
 
@@ -119,6 +118,7 @@ tests_require = [
     'mock~=2.0,>=2.0.0',
     'pytest-cov~=2.0,>=2.5.1',
     'pytest-selenium~=1.0,>=1.11.1',
+    'pytest-vcr~=0.0,>=0.3.0',
     'pytest~=3.0,>=3.3.0',
     'requests_mock~=1.0,>=1.3.0',
 ]

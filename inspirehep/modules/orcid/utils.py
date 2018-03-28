@@ -24,12 +24,16 @@
 
 from __future__ import absolute_import, division, print_function
 
+import hashlib
 import re
 
 from itertools import chain
-
+from elasticsearch_dsl import Q
 from flask import current_app
 from six.moves.urllib.parse import urljoin
+from StringIO import StringIO
+from sqlalchemy import type_coerce
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_db import db
@@ -39,12 +43,14 @@ from invenio_oauthclient.models import (
     RemoteToken,
 )
 from invenio_oauthclient.utils import oauth_link_external_id
+from invenio_pidstore.models import PersistentIdentifier
+from invenio_records.models import RecordMetadata
 
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_values_for_schema
 from inspire_utils.urls import ensure_scheme
-from inspirehep.modules.cache.utils import redis_locking_context, RedisLockError
+from inspirehep.modules.search.api import LiteratureSearch
 from inspirehep.utils.record_getter import get_db_records
 
 LOGGER = getStackTraceLogger(__name__)
@@ -92,40 +98,8 @@ def _get_api_url_for_recid(server_name, api_endpoint, recid):
 
 
 def get_orcid_recid_key(orcid, rec_id):
-    """Return the string 'orcid:``orcid_value``:``rec_id``'"""
-    return 'orcidputcodes:{}:{}'.format(orcid, rec_id)
-
-
-def store_record_in_redis(orcid, rec_id, put_code):
-    """Store the entry <orcid:recid, value> in Redis.
-
-    Args:
-        orcid(string): the author's orcid.
-        rec_id(int): inspire record's id pushed to ORCID.
-        put_code(string): the put_code used to push the record to ORCID.
-
-    Returns:
-        bool: True if the entry is set in Redis, False otherwise.
-    """
-    try:
-        with redis_locking_context('orcid_push') as r:
-            orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-            r.set(orcid_recid_key, put_code)
-            return True
-
-    except RedisLockError:
-        LOGGER.info("Push to ORCID failed for record {}".format(rec_id))
-        return False
-
-
-def get_putcode_from_redis(orcid, rec_id):
-    """Retrieve from Redis the put_code for the given ORCID - record id"""
-    try:
-        with redis_locking_context('orcid_push') as r:
-            orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-            return r.get(orcid_recid_key)
-    except RedisLockError:
-        LOGGER.info("Push to ORCID failed for record {}".format(rec_id))
+    """Return the string 'orcidcache:``orcid_value``:``rec_id``'"""
+    return 'orcidcache:{}:{}'.format(orcid, rec_id)
 
 
 def _get_account_and_token(orcid):
@@ -208,3 +182,71 @@ def get_orcids_for_push(record):
     orcids_in_authors = chain.from_iterable(get_values_for_schema(ids, 'ORCID') for ids in all_ids)
 
     return chain(orcids_on_record, orcids_in_authors)
+
+
+def hash_xml_element(element):
+    """Compute a hash for XML element comparison.
+
+    Args:
+        element (lxml.etree._Element): the XML node
+
+    Return:
+        string: hash
+    """
+    canonical_string = canonicalize_xml_element(element)
+    hash = hashlib.sha1(canonical_string)
+    return 'sha1:' + hash.hexdigest()
+
+
+def canonicalize_xml_element(element):
+    """Return a string with a canonical representation of the element.
+
+    Args:
+        element (lxml.etree._Element): the XML node
+
+    Return:
+        string: canonical representation
+    """
+    element_tree = element.getroottree()
+    output_stream = StringIO()
+    element_tree.write_c14n(
+        output_stream,
+        with_comments=False,
+        exclusive=True,
+    )
+    return output_stream.getvalue()
+
+
+def get_literature_recids_for_orcid(orcid):
+    """Return the Literature recids that were claimed by an ORCiD.
+
+    We record the fact that the Author record X has claimed the Literature
+    record Y by storing in Y an author object with a ``$ref`` pointing to X
+    and the key ``curated_relation`` set to ``True``. Therefore this method
+    first searches the DB for the Author records for the one containing the
+    given ORCiD, and then uses its recid to search in ES for the Literature
+    records that satisfy the above property.
+
+    Args:
+        orcid (str): the ORCiD.
+
+    Return:
+        list(int): the recids of the Literature records that were claimed
+        by that ORCiD.
+
+    """
+    orcid_object = '[{"schema": "ORCID", "value": "%s"}]' % orcid
+    # this first query is written in a way that can use the index on (json -> ids)
+    author_rec_uuid = db.session.query(RecordMetadata.id)\
+        .filter(type_coerce(RecordMetadata.json, JSONB)['ids'].contains(orcid_object)).one().id
+    author_recid = db.session.query(PersistentIdentifier.pid_value).filter(
+        PersistentIdentifier.object_type == 'rec',
+        PersistentIdentifier.object_uuid == author_rec_uuid,
+        PersistentIdentifier.pid_type == 'aut',
+    ).one().pid_value
+
+    query = Q('match', authors__curated_relation=True) & Q('match', authors__recid=author_recid)
+    search_by_curated_author = LiteratureSearch().query('nested', path='authors', query=query)\
+                                                 .params(_source=['control_number'])
+
+    return [el['control_number'] for el in search_by_curated_author]

@@ -35,9 +35,8 @@ from invenio_pidstore.models import PersistentIdentifier
 from inspirehep.modules.migrator.models import InspireProdRecords
 from inspirehep.modules.migrator.tasks import (
     _build_recid_to_uuid_map,
-    migrate,
+    migrate_from_file,
     migrate_and_insert_record,
-    migrate_chunk,
 )
 
 
@@ -158,7 +157,7 @@ def test_migrate_and_insert_record_invalid_record(mock_logger, isolated_app):
     assert not mock_logger.exception.called
 
 
-@patch('inspirehep.modules.migrator.tasks.record_insert_or_replace', side_effect=Exception())
+@patch('inspirehep.modules.records.api.InspireRecord.create_or_update', side_effect=Exception())
 @patch('inspirehep.modules.migrator.tasks.LOGGER')
 def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
     raw_record = (
@@ -169,7 +168,6 @@ def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
         '  </datafield>'
         '</record>'
     )
-
     migrate_and_insert_record(raw_record)
 
     prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
@@ -181,31 +179,14 @@ def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
 
 
 @patch('inspirehep.modules.records.receivers.get_push_access_token', return_value='fake-token')
-def test_orcid_push_disabled_on_migrate(app, cleanup, enable_orcid_push_feature):
+def test_orcid_push_disabled_on_migrate_from_mirror(app, cleanup, enable_orcid_push_feature):
     record_fixture_path = pkg_resources.resource_filename(
         __name__,
         os.path.join('fixtures', 'dummy.xml')
     )
 
     with patch('inspirehep.modules.orcid.tasks.attempt_push') as attempt_push:
-        migrate.delay(record_fixture_path, wait_for_results=True)
-        attempt_push.assert_not_called()
-
-    prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
-    assert prod_record.valid
-
-    assert app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']
-
-
-@patch('inspirehep.modules.records.receivers.get_push_access_token', return_value='fake-token')
-def test_orcid_push_disabled_on_migrate_chunk(app, cleanup, enable_orcid_push_feature):
-    record_fixture_path = pkg_resources.resource_filename(
-        __name__,
-        os.path.join('fixtures', 'dummy.xml')
-    )
-
-    with patch('inspirehep.modules.orcid.tasks.attempt_push') as attempt_push:
-        migrate_chunk([open(record_fixture_path).read()])
+        migrate_from_file.delay(record_fixture_path, wait_for_results=True)
         attempt_push.assert_not_called()
 
     prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()

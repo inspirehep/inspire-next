@@ -1167,9 +1167,7 @@ RECORDS_MIGRATION_SKIP_FILES = False
 Note:
 
   This variable takes precedence over ``RECORDS_SKIP_FILES``, but can be
-  overriden by the ``skip_files`` parameters of the ``remigrate_records``,
-  ``migrate`` and ``continuous_migration`` from the
-  ``inspirehep.modules.migrator.tasks`` module.
+  overriden by the tasks in the ``inspirehep.modules.migrator.tasks`` module.
 """
 
 JSONSCHEMAS_HOST = "localhost:5000"
@@ -1242,6 +1240,7 @@ LEGACY_RECORD_URL_PATTERN = 'http://inspirehep.net/record/{recid}'
 # Harvesting and Workflows
 # ========================
 ARXIV_PDF_URL = "http://export.arxiv.org/pdf/{arxiv_id}"
+ARXIV_PDF_URL_ALTERNATIVE = "http://arxiv.org/pdf/{arxiv_id}"
 ARXIV_TARBALL_URL = "http://export.arxiv.org/e-print/{arxiv_id}"
 
 ARXIV_CATEGORIES = {
@@ -1674,10 +1673,11 @@ FUZZY_MATCH = {
                     ],
                     'type': 'fuzzy',
                 }
-            ]
+            ],
+            'validator': 'inspire_matcher.validators:authors_titles_validator'
         }
     ],
     'doc_type': 'hep',
     'index': 'records-hep',
-    'source': ['control_number']
+    'source': ['control_number', 'titles', 'abstracts', 'authors']
 }

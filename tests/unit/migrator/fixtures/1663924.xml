@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+<record>
+  <controlfield tag="001">1663924</controlfield>
+  <controlfield tag="005">20180323235216.0</controlfield>
+  <datafield tag="024" ind1="7" ind2=" ">
+    <subfield code="2">DOI</subfield>
+    <subfield code="9">submitter</subfield>
+    <subfield code="a">10.18429/JACoW-COOL2015-MOYAUD04</subfield>
+  </datafield>
+  <datafield tag="100" ind1=" " ind2=" ">
+    <subfield code="a">Dimopoulou, C.</subfield>
+    <subfield code="u">Darmstadt, GSI</subfield>
+    <subfield code="w">C.Dimopoulou.1</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">903807</subfield>
+  </datafield>
+  <datafield tag="245" ind1=" " ind2=" ">
+    <subfield code="9">submitter</subfield>
+    <subfield code="a">Stochastic Cooling Developments for the Collector Ring at FAIR</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">* Temporary entry *</subfield>
+  </datafield>
+  <datafield tag="520" ind1=" " ind2=" ">
+    <subfield code="9">submitter</subfield>
+    <subfield code="a">A Status report on the ongoing developments for the demanding stochastic cooling system of the Collector Ring is given. The system operates in the frequency band 1-2 GHz, it has to provide fast 3D cooling of antiproton, rare isotope (RIBs) and stable heavy ion beams. The main challenges are
+(i) the cooling of antiprotons by means of cryogenic movable pick-up electrodes and (ii) the fast two-stage cooling (pre-cooling by the Palmer method, followed by the notch filter method) of the hot rare isotope beams. Progress in designing, testing and integrating the hardware is discussed.</subfield>
+  </datafield>
+  <datafield tag="650" ind1="1" ind2="7">
+    <subfield code="2">INSPIRE</subfield>
+    <subfield code="9">user</subfield>
+    <subfield code="a">Accelerators</subfield>
+  </datafield>
+  <datafield tag="693" ind1=" " ind2=" ">
+    <subfield code="a">GSI FAIR</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Barker, D.</subfield>
+    <subfield code="u">Darmstadt, GSI</subfield>
+    <subfield code="w">D.Barker.5</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">903807</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Böhm, R.</subfield>
+    <subfield code="u">Darmstadt, GSI</subfield>
+    <subfield code="w">R.Boehm.1</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">903807</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Hettrich, R.</subfield>
+    <subfield code="u">Darmstadt, GSI</subfield>
+    <subfield code="w">R.Hettrich.1</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">903807</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Maier, W.</subfield>
+    <subfield code="u">Darmstadt, GSI</subfield>
+    <subfield code="w">W.Maier.2</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">903807</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Peschke, C.</subfield>
+    <subfield code="u">Darmstadt, GSI</subfield>
+    <subfield code="w">C.Peschke.1</subfield>
+    <subfield code="x">1077081</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">903807</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Stuhl, A.</subfield>
+    <subfield code="u">Darmstadt, GSI</subfield>
+    <subfield code="w">A.Stuhl.1</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">903807</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Wunderlich, S.</subfield>
+    <subfield code="u">Darmstadt, GSI</subfield>
+    <subfield code="w">S.Wunderlich.1</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">903807</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Thorndahl, L.</subfield>
+    <subfield code="u">CERN</subfield>
+    <subfield code="w">L.Thorndahl.1</subfield>
+    <subfield code="x">986142</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">902725</subfield>
+  </datafield>
+  <datafield tag="773" ind1=" " ind2=" ">
+    <subfield code="w">C15-09-28.1</subfield>
+    <subfield code="2">1401500</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2=" ">
+    <subfield code="u">http://accelconf.web.cern.ch/AccelConf/cool2015/papers/moyaud04.pdf</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2=" ">
+    <subfield code="s">4133860</subfield>
+    <subfield code="u">http://inspirehep.net/record/1663924/files/fulltext.pdf</subfield>
+    <subfield code="y">Fulltext</subfield>
+  </datafield>
+  <datafield tag="909" ind1="C" ind2="O">
+    <subfield code="o">oai:inspirehep.net:1663924</subfield>
+    <subfield code="p">INSPIRE:HEP</subfield>
+  </datafield>
+  <datafield tag="961" ind1=" " ind2=" ">
+    <subfield code="x">2018-03-23</subfield>
+    <subfield code="c">2018-03-23</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">CORE</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">HEP</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">ConferencePaper</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">1</subfield>
+    <subfield code="h">C. Dimopoulou et al.</subfield>
+    <subfield code="m">JACoW Proc. COOL’11, Alushta, TUIOB02</subfield>
+    <subfield code="y">2011</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">1</subfield>
+    <subfield code="m">JACoW Proc. IPAC’12, New Orleans, MOPPD005</subfield>
+    <subfield code="y">2012</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">1</subfield>
+    <subfield code="m">JACoW Proc. COOL’13, Mürren, TUAM1HA01</subfield>
+    <subfield code="y">2013</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">2</subfield>
+    <subfield code="h">C. Dimopoulou</subfield>
+    <subfield code="s">ICFA Beam Dyn.Newslett.,64,108</subfield>
+    <subfield code="y">2014</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">3</subfield>
+    <subfield code="h">R. Maier et al.</subfield>
+    <subfield code="m">JACoW Proc. PAC’11, New York, THOCN2</subfield>
+    <subfield code="y">2011</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">3</subfield>
+    <subfield code="h">H. Stockhorst et al.</subfield>
+    <subfield code="s">ICFA Beam Dyn.Newslett.,64,122</subfield>
+    <subfield code="y">2014</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">4</subfield>
+    <subfield code="h">D. Barker et al.</subfield>
+    <subfield code="m">presented at COOL’15, Newport News, VA, USA, paper FRWAUD03, These Proceedings</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">5</subfield>
+    <subfield code="h">C. Peschke et al.</subfield>
+    <subfield code="m">JACoW Proc. COOL’13, Mürren, WEPPO20</subfield>
+    <subfield code="y">2013</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">6</subfield>
+    <subfield code="h">S. Wunderlich et al.</subfield>
+    <subfield code="m">presented at COOL’15, Newport News, VA, USA, paper TUPF07, These Proceedings</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">7</subfield>
+    <subfield code="h">W. Maier et al.</subfield>
+    <subfield code="m">JACoW Proc. COOL’13, Mürren, WEPPO19 (2013). MOYAUD04 Proceedings of COOL2015, Newport News, VA, USA 28 Copyright©CC-BY-3.0andbytherespectiveauthors Stochastic Cooling</subfield>
+    <subfield code="i">978-3-95450-174-8</subfield>
+    <subfield code="y">2016</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="6">
+    <subfield code="a">0-0-0-1-0-0-1</subfield>
+    <subfield code="t">2018-03-23 23:41:51</subfield>
+    <subfield code="v">Invenio/1.1.2.1260-aa76f refextract/1.5.44</subfield>
+    <subfield code="v">content.pdf;1</subfield>
+  </datafield>
+</record>
+
+</collection>

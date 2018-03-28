@@ -31,7 +31,7 @@ from lxml import etree
 from invenio_search.api import current_search_client as es
 
 from inspirehep.modules.hal.core.tei import convert_to_tei
-from inspirehep.modules.migrator.tasks import record_insert_or_replace
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.record_getter import get_db_record
 
 
@@ -40,14 +40,16 @@ def cern_with_hal_id(app):
     """Temporarily add the HAL id to the CERN record."""
     record = get_db_record('ins', 902725)
     record['external_system_identifiers'] = [{'schema': 'HAL', 'value': '300037'}]
-    record_insert_or_replace(record)
+    record = InspireRecord.create_or_update(record)
+    record.commit()
     es.indices.refresh('records-institutions')
 
     yield
 
     record = get_db_record('ins', 902725)
     del record['external_system_identifiers']
-    record_insert_or_replace(record)
+    record = InspireRecord.create_or_update(record)
+    record.commit()
     es.indices.refresh('records-institutions')
 
 

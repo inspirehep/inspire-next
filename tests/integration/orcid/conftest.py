@@ -26,50 +26,37 @@ from __future__ import absolute_import, division, print_function
 
 import mock
 import pytest
-import re
-import requests
-import requests_mock
 
 
 @pytest.fixture()
-def mock_config(api):
-    with mock.patch.dict(api.config, {
+def mock_config(app):
+    patch = {
         'ORCID_SANDBOX': True,
-        'SERVER_NAME': 'http://labs.inspirehep.net',
-    }):
+        'SERVER_NAME': 'https://labs.inspirehep.net',
+        'ORCID_APP_CREDENTIALS': {
+            'consumer_key': 'CHANGE_ME',
+            'consumer_secret': 'CHANGE_ME',
+        }
+    }
+    with mock.patch.dict(app.config, patch):
         yield
 
 
 @pytest.fixture
-def mocked_internal_services(api_client):
-    predownload = ['4328', '1375491', '524480', '701585']
-    hep_responses = {}
-    bibtex_responses = {}
+def vcr_config():
+    return {
+        'decode_compressed_response': True,
+        'filter_headers': ['Authorization'],
+        'ignore_hosts': ['test-indexer'],
+        'record_mode': 'none',
+    }
 
-    for recid in predownload:
-        url = 'http://labs.inspirehep.net/api/literature/' + recid
-        hep_resp = api_client.get('/literature/' + recid)
-        bibtex_resp = api_client.get('/literature/' + recid, headers={
-            'Accept': 'application/x-bibtex',
-        })
-        hep_responses[url] = hep_resp
-        bibtex_responses[url] = bibtex_resp
 
-    def api_matcher(request):
-        resp = requests.Response()
-        resp.status_code = 200
-        if request.headers['Accept'] == 'application/json':
-            resp._content = hep_responses[request.url].data
-            return resp
-        elif request.headers['Accept'] == 'application/x-bibtex':
-            resp._content = bibtex_responses[request.url].data
-            return resp
-
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            requests_mock.ANY,
-            re.compile('.*(indexer).*'),
-            real_http=True,
-        )
-        requests_mocker.add_matcher(api_matcher)
-        yield requests_mocker
+@pytest.fixture
+def vcr(vcr):
+    vcr.register_matcher(
+        'accept',
+        lambda r1, r2: r1.headers.get('Accept') == r2.headers.get('Accept'),
+    )
+    vcr.match_on = ['method', 'scheme', 'host', 'port', 'path', 'query', 'accept']
+    return vcr

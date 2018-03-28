@@ -26,13 +26,14 @@ from __future__ import absolute_import, division, print_function
 
 import copy
 from datetime import datetime
+import uuid
 
 import arrow
 from elasticsearch.exceptions import NotFoundError
 from flask import current_app
 from fs.opener import fsopen
 
-from inspire_dojson.utils import strip_empty_values
+from inspire_dojson.utils import get_recid_from_ref, strip_empty_values
 from inspire_schemas.api import validate
 from inspire_schemas.builders import LiteratureBuilder
 from invenio_files_rest.models import Bucket
@@ -41,6 +42,8 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_files.api import Record
 from invenio_db import db
 
+from inspirehep.modules.pidstore.minters import inspire_recid_minter
+from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.utils.record_getter import (
     RecordGetterError,
     get_es_record_by_uuid
@@ -55,7 +58,7 @@ class InspireRecord(Record):
     """Record class that fetches records from DataBase."""
 
     @classmethod
-    def create(cls, *args, **kwargs):
+    def create(cls, data, id_=None, **kwargs):
         """Override the default ``create``.
 
         To handle also the docmuments and figures retrieval.
@@ -64,6 +67,51 @@ class InspireRecord(Record):
 
             Might create an extra revision in the record if it had to download
             any documents or figures.
+
+        Keyword Args:
+
+            id_(uuid): an optional uuid to assign to the created record object.
+            files_src_records(List[InspireRecord]): if passed, it will try to
+                get the files for the documents and figures from the first
+                record in the list that has it in it's files iterator before
+                downloading them, for example to merge existing
+                records.
+            skip_files(bool): if ``True`` it will skip the files retrieval
+                described above. Note also that, if not passed, it will fall
+                back to the value of the ``RECORDS_SKIP_FILES`` configuration
+                variable.
+
+        Examples:
+            >>> record = {
+            ...     '$schema': 'hep.json',
+            ... }
+            >>> record = InspireRecord.create(record)
+            >>> record.commit()
+        """
+        files_src_records = kwargs.pop('files_src_records', [])
+        skip_files = kwargs.pop(
+            'skip_files', current_app.config.get('RECORDS_SKIP_FILES'))
+
+        id_ = id_ or uuid.uuid4()
+        data = strip_empty_values(data)
+
+        cls.mint(id_, data)
+        record = super(InspireRecord, cls).create(data, id_=id_, **kwargs)
+
+        if not skip_files:
+            record.download_documents_and_figures(
+                src_records=files_src_records,
+            )
+
+        return record
+
+    @classmethod
+    def create_or_update(cls, data, **kwargs):
+        """Create or update a record.
+
+        It will check if there is any record registered with the same
+        ``control_number`` and ``pid_type``. If it's ``True``, it will update
+        the current record, otherwise it will create a new one.
 
         Keyword Args:
 
@@ -77,24 +125,48 @@ class InspireRecord(Record):
                 back to the value of the ``RECORDS_SKIP_FILES`` configuration
                 variable.
 
+        Examples:
+            >>> record = {
+            ...     '$schema': 'hep.json',
+            ... }
+            >>> record = InspireRecord.create_or_update(record)
+            >>> record.commit()
         """
-        config_skip_files = current_app.config.get('RECORDS_SKIP_FILES')
 
-        files_src_records = kwargs.pop('files_src_records', ())
-        skip_files = kwargs.pop('skip_files', config_skip_files)
+        pid_type = get_pid_type_from_schema(data['$schema'])
+        control_number = data.get('control_number')
 
-        data = strip_empty_values(*args)
-        new_record = super(InspireRecord, cls).create(data=data, **kwargs)
+        files_src_records = kwargs.pop('files_src_records', [])
+        skip_files = kwargs.pop(
+            'skip_files', current_app.config.get('RECORDS_SKIP_FILES'))
+
+        try:
+            pid = PersistentIdentifier.get(pid_type, control_number)
+            record = super(InspireRecord, cls).get_record(pid.object_uuid)
+            record.clear()
+            record.update(data, skip_files=skip_files, **kwargs)
+
+            if data.get('legacy_creation_date'):
+                record.model.created = datetime.strptime(data['legacy_creation_date'], '%Y-%m-%d')
+
+        except PIDDoesNotExistError:
+            record = cls.create(data, skip_files=skip_files, **kwargs)
+
+            if data.get('legacy_creation_date'):
+                record.model.created = datetime.strptime(data['legacy_creation_date'], '%Y-%m-%d')
+
+        if data.get('deleted'):
+            new_recid = get_recid_from_ref(data.get('new_record'))
+            if not new_recid:
+                record.delete()
 
         if not skip_files:
-            new_record.download_documents_and_figures(
+            record.download_documents_and_figures(
                 src_records=files_src_records,
             )
-            new_record.commit()
+        return record
 
-        return new_record
-
-    def update(self, *args, **kwargs):
+    def update(self, data, **kwargs):
         """Override the default ``update``.
 
         To handle also the docmuments and figures retrieval.
@@ -109,14 +181,12 @@ class InspireRecord(Record):
                 described above. Note also that, if not passed, it will fall
                 back to the value of the ``RECORDS_SKIP_FILES`` configuration
                 variable.
-
         """
-        config_skip_files = current_app.config.get('RECORDS_SKIP_FILES')
-
         files_src_records = kwargs.pop('files_src_records', ())
-        skip_files = kwargs.pop('skip_files', config_skip_files)
+        skip_files = kwargs.pop(
+            'skip_files', current_app.config.get('RECORDS_SKIP_FILES'))
 
-        super(InspireRecord, self).update(*args, **kwargs)
+        super(InspireRecord, self).update(data, **kwargs)
 
         if not skip_files:
             self.download_documents_and_figures(
@@ -145,16 +215,17 @@ class InspireRecord(Record):
 
     def delete(self):
         """Mark as deleted all pidstores for a specific record."""
+
         pids = PersistentIdentifier.query.filter(
             PersistentIdentifier.object_uuid == self.id
         ).all()
+
         with db.session.begin_nested():
             for pid in pids:
                 pid.delete()
                 db.session.add(pid)
 
         self['deleted'] = True
-        self.commit()
 
     def _delete(self, *args, **kwargs):
         super(InspireRecord, self).delete(*args, **kwargs)
@@ -179,6 +250,11 @@ class InspireRecord(Record):
     def validate(self):
         """Validate the record, also ensuring format compliance."""
         validate(self)
+
+    @staticmethod
+    def mint(id_, data):
+        """Mint the record."""
+        return inspire_recid_minter(id_, data)
 
     def add_document_or_figure(
         self,

@@ -26,7 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 from collections import namedtuple
 
-from .providers import InspireRecordIdProvider
+from .providers.recid import InspireRecordIdProvider
 from .utils import get_pid_type_from_schema
 
 FetchedPID = namedtuple('FetchedPID', ['provider', 'pid_type', 'pid_value'])

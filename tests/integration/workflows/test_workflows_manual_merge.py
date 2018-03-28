@@ -32,6 +32,7 @@ from inspirehep.modules.workflows.utils import (
     insert_wf_record_source,
     read_wf_record_source,
 )
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.workflows.manual_merge import start_merger
 from inspirehep.utils.record import get_source
 from inspirehep.utils.record_getter import get_db_record, RecordGetterError
@@ -52,8 +53,6 @@ def fake_record(title, rec_id):
 
 
 def test_manual_merge_existing_records(workflow_app):
-    # XXX: for some reason, this must be internal.
-    from inspirehep.modules.migrator.tasks import record_insert_or_replace
 
     json_head = fake_record('This is the HEAD', 1)
     json_update = fake_record('While this is the update', 2)
@@ -62,8 +61,10 @@ def test_manual_merge_existing_records(workflow_app):
     json_head['core'] = True
     json_update['core'] = False
 
-    head = record_insert_or_replace(json_head)
-    update = record_insert_or_replace(json_update)
+    head = InspireRecord.create_or_update(json_head, skip_files=False)
+    head.commit()
+    update = InspireRecord.create_or_update(json_update, skip_files=False)
+    update.commit()
     head_id = head.id
     update_id = update.id
 
@@ -108,12 +109,11 @@ def test_manual_merge_existing_records(workflow_app):
 
 
 def test_manual_merge_with_none_record(workflow_app):
-    # XXX: for some reason, this must be internal.
-    from inspirehep.modules.migrator.tasks import record_insert_or_replace
 
     json_head = fake_record('This is the HEAD', 1)
 
-    record_insert_or_replace(json_head)
+    head = InspireRecord.create_or_update(json_head, skip_files=False)
+    head.commit()
     non_existing_id = 123456789
 
     with pytest.raises(RecordGetterError):
@@ -125,11 +125,11 @@ def test_manual_merge_with_none_record(workflow_app):
 
 
 def test_save_roots(workflow_app):
-    # XXX: for some reason, this must be internal.
-    from inspirehep.modules.migrator.tasks import record_insert_or_replace
 
-    head = record_insert_or_replace(fake_record('title1', 123))
-    update = record_insert_or_replace(fake_record('title2', 456))
+    head = InspireRecord.create_or_update(fake_record('title1', 123), skip_files=False)
+    head.commit()
+    update = InspireRecord.create_or_update(fake_record('title2', 456), skip_files=False)
+    update.commit()
 
     obj = workflow_object_class.create(
         data={},

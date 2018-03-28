@@ -24,6 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 import json
 
+from elasticsearch_dsl import Q
+
 from inspirehep.modules.search import LiteratureSearch
 
 
@@ -46,17 +48,13 @@ class AuthorAPICoauthors(object):
         author_pid = pid.pid_value
         coauthors = {}
 
-        search = LiteratureSearch().query({
-            "match": {
-                "authors.recid": author_pid
-            }
-        }).params(
-            _source=[
-                "authors.full_name",
-                "authors.recid",
-                "authors.record",
-            ]
-        )
+        query = Q('match', authors__recid=author_pid)
+        search = LiteratureSearch().query('nested', path='authors', query=query)\
+                                   .params(_source=[
+                                       'authors.full_name',
+                                       'authors.recid',
+                                       'authors.record',
+                                   ])
 
         for result in search.scan():
             result_source = result.to_dict()['authors']

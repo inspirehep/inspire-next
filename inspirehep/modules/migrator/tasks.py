@@ -26,14 +26,16 @@ from __future__ import absolute_import, division, print_function
 
 import gzip
 import re
+import tarfile
 import zlib
 from collections import Counter
-from datetime import datetime
+from contextlib import closing
 from itertools import chain
 
 import click
+import requests
+
 from celery import group, shared_task
-from dojson.contrib.marc21.utils import create_record
 from elasticsearch.helpers import bulk as es_bulk
 from elasticsearch.helpers import scan as es_scan
 from flask import current_app
@@ -42,32 +44,26 @@ from functools import wraps
 from jsonschema import ValidationError
 from redis import StrictRedis
 from redis_lock import Lock
-from six import text_type
 
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer, current_record_to_index
-from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
 from invenio_search.utils import schema_to_index
 
 from inspire_dojson import marcxml2record
-from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.dedupers import dedupe_list
 from inspire_utils.helpers import force_list
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
-from inspirehep.modules.pidstore.minters import inspire_recid_minter
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.pidstore.utils import (
-    get_pid_type_from_schema,
     get_pid_types_from_endpoints,
 )
-from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.receivers import index_after_commit
 from inspirehep.utils.schema import ensure_valid_schema
 
 from .models import InspireProdRecords
-
 
 LOGGER = getStackTraceLogger(__name__)
 
@@ -116,26 +112,67 @@ def split_blob(blob):
 
 
 def split_stream(stream):
-    """Split the stream using <record.*?>.*?</record> as pattern."""
+    """Split the stream using <record.*?>.*?</record> as pattern.
+
+    This operates line by line in order not to load the entire file in memory.
+    """
+    len_closing_tag = len('</record>')
     buf = []
     for row in stream:
-        row = text_type(row, 'utf8')
+        row = row.decode('utf8')
         index = row.rfind('</record>')
         if index >= 0:
-            buf.append(row[:index + 9])
+            buf.append(row[:index + len_closing_tag])
             for blob in split_blob(''.join(buf)):
                 yield blob.encode('utf8')
-            buf = [row[index + 9:]]
+            buf = [row[index + len_closing_tag:]]
         else:
             buf.append(row)
 
 
-@shared_task(ignore_result=True, queue='migrator')
-def remigrate_records(only_broken=True, skip_files=None):
-    """Remigrate records.
+def read_file(source):
+    if source.endswith('.gz'):
+        with gzip.open(source, 'rb') as fd:
+            for line in fd:
+                yield line
+    elif source.endswith('.tar'):  # assuming prodsync tarball
+        with closing(tarfile.open(source)) as tar:
+            for file_ in tar:
+                print('Processing {}'.format(file_.name))
+                unzipped = gzip.GzipFile(fileobj=tar.extractfile(file_), mode='rb')
+                for line in unzipped:
+                    yield line
+    else:
+        with open(source, 'rb') as fd:
+            for line in fd:
+                yield line
 
-    Directly migrates the records (declared as broken), e.g. if the dojson
-    conversion script have been corrected.
+
+def migrate_record_from_legacy(recid):
+    response = requests.get('http://inspirehep.net/record/{recid}/export/xme'.format(recid=recid))
+    response.raise_for_status()
+    migrate_and_insert_record(next(split_blob(response.content)))
+    db.session.commit()
+
+
+@shared_task(ignore_result=True, queue='migrator')
+@disable_orcid_push
+def migrate_from_mirror(also_migrate=None, wait_for_results=False, skip_files=None):
+    """Migrate legacy records from the local mirror.
+
+    By default, only the records that have not been migrated yet are migrated.
+
+    Args:
+        also_migrate(Optional[string]): if set to ``'broken'``, also broken
+            records will be migrated. If set to ``'all'``, all records will be
+            migrated.
+        skip_files(Optional[bool]): flag indicating whether the files in the
+            record metadata should be copied over from legacy and attach to the
+            record. If None, the corresponding setting is read from the
+            configuration.
+        wait_for_results(bool): flag indicating whether the task should wait
+            for the migration to finish (if True) or fire and forget the migration
+            tasks (if False).
     """
     if skip_files is None:
         skip_files = current_app.config.get(
@@ -143,50 +180,48 @@ def remigrate_records(only_broken=True, skip_files=None):
             False,
         )
 
-    query = db.session.query(InspireProdRecords)
-    if only_broken:
-        query = query.filter_by(valid=False)
-
-    for i, chunk in enumerate(chunker(query.yield_per(CHUNK_SIZE))):
-        records = [record.marcxml for record in chunk]
-        LOGGER.info("Processed {} records".format(i * CHUNK_SIZE))
-        migrate_chunk.delay(records, skip_files=skip_files)
-
-
-@shared_task(ignore_result=True, queue='migrator')
-def migrate(source, wait_for_results=False, skip_files=None):
-    """Main migration function."""
-    if skip_files is None:
-        skip_files = current_app.config.get(
-            'RECORDS_MIGRATION_SKIP_FILES',
-            False,
-        )
-
-    if source.endswith('.gz'):
-        fd = gzip.open(source)
-    else:
-        fd = open(source)
+    query = InspireProdRecords.query.with_entities(InspireProdRecords.recid)
+    if also_migrate is None:
+        query = query.filter(InspireProdRecords.valid.is_(None))
+    elif also_migrate == 'broken':
+        query = query.filter(InspireProdRecords.valid.isnot(True))
+    elif also_migrate != 'all':
+        raise ValueError('"also_migrate" should be either None, "all" or "broken"')
 
     if wait_for_results:
-        # if the wait_for_results is true we enable returning results from migrate_chunk task
-        # so that we could use them to synchronize migrate task (which in that case waits for
-        # the migrate_chunk tasks to complete before it finishes).
+        # if the wait_for_results is true we enable returning results from the
+        # migrate_recids_from_mirror task so that we could use them to
+        # synchronize migrate task (which in that case waits for the
+        # migrate_recids_from_mirror tasks to complete before it finishes).
         tasks = []
-        migrate_chunk.ignore_result = False
+        migrate_recids_from_mirror.ignore_result = False
 
-    for i, chunk in enumerate(chunker(split_stream(fd), CHUNK_SIZE)):
-        print("Processed {} records".format(i * CHUNK_SIZE))
+    for i, chunk in enumerate(chunker(query.yield_per(CHUNK_SIZE)), 1):
+        print("Scheduled {} records for migration".format(i * CHUNK_SIZE))
         if wait_for_results:
-            tasks.append(migrate_chunk.s(chunk, skip_files=skip_files))
+            tasks.append(migrate_recids_from_mirror.s(chunk, skip_files=skip_files))
         else:
-            migrate_chunk.delay(chunk, skip_files=skip_files)
+            migrate_recids_from_mirror.delay(chunk, skip_files=skip_files)
 
     if wait_for_results:
         job = group(tasks)
         result = job.apply_async()
         result.join()
-        migrate_chunk.ignore_result = True
+        migrate_recids_from_mirror.ignore_result = True
         print('All migration tasks have been completed.')
+
+
+@shared_task(ignore_result=True, queue='migrator')
+def migrate_from_file(source, wait_for_results=False):
+    populate_mirror_from_file(source)
+    migrate_from_mirror(wait_for_results=wait_for_results)
+
+
+@shared_task(ignore_result=True, queue='migrator')
+def populate_mirror_from_file(source):
+    for i, chunk in enumerate(chunker(split_stream(read_file(source)), CHUNK_SIZE), 1):
+        insert_into_mirror(chunk)
+        print("Inserted {} records into mirror".format(i * CHUNK_SIZE))
 
 
 @shared_task(ignore_result=True)
@@ -231,30 +266,21 @@ def create_index_op(record):
     }
 
 
-@shared_task(
-    ignore_result=False,
-    compress='zlib',
-    acks_late=True,
-    queue='migrator',
-)
-@disable_orcid_push
-def migrate_chunk(chunk, skip_files=False):
+@shared_task(ignore_result=False, queue='migrator')
+def migrate_recids_from_mirror(prod_recids, skip_files=False):
     models_committed.disconnect(index_after_commit)
 
     index_queue = []
 
-    try:
-        for raw_record in chunk:
-            with db.session.begin_nested():
-                record = migrate_and_insert_record(
-                    raw_record,
-                    skip_files=skip_files,
-                )
-                if record:
-                    index_queue.append(create_index_op(record))
-        db.session.commit()
-    finally:
-        db.session.close()
+    for recid in prod_recids:
+        with db.session.begin_nested():
+            record = migrate_record_from_mirror(
+                InspireProdRecords.query.get(recid),
+                skip_files=skip_files,
+            )
+            if record:
+                index_queue.append(create_index_op(record))
+    db.session.commit()
 
     req_timeout = current_app.config['INDEXER_BULK_REQUEST_TIMEOUT']
     es_bulk(
@@ -337,72 +363,56 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
         success, failed))
 
 
-def record_insert_or_replace(json, skip_files=False):
-    """Insert or replace a record."""
-    pid_type = get_pid_type_from_schema(json['$schema'])
-    control_number = json['control_number']
-
-    try:
-        pid = PersistentIdentifier.get(pid_type, control_number)
-        record = InspireRecord.get_record(pid.object_uuid)
-        record.clear()
-        record.update(json, skip_files=skip_files)
-        if json.get('legacy_creation_date'):
-            record.model.created = datetime.strptime(json['legacy_creation_date'], '%Y-%m-%d')
-        record.commit()
-    except PIDDoesNotExistError:
-        record = InspireRecord.create(json, id_=None, skip_files=skip_files)
-        if json.get('legacy_creation_date'):
-            record.model.created = datetime.strptime(json['legacy_creation_date'], '%Y-%m-%d')
-        inspire_recid_minter(str(record.id), json)
-
-    if json.get('deleted'):
-        new_recid = get_recid_from_ref(json.get('new_record'))
-        if not new_recid:
-            record.delete()
-
-    return record
+def insert_into_mirror(raw_records):
+    for raw_record in raw_records:
+        prod_record = InspireProdRecords.from_marcxml(raw_record)
+        db.session.merge(prod_record)
+    db.session.commit()
 
 
 def migrate_and_insert_record(raw_record, skip_files=False):
     """Migrate a record and insert it if valid, or log otherwise."""
+    prod_record = InspireProdRecords.from_marcxml(raw_record)
+    db.session.merge(prod_record)
+    return migrate_record_from_mirror(prod_record, skip_files=skip_files)
+
+
+def migrate_record_from_mirror(prod_record, skip_files=False):
+    """Migrate a mirrored legacy record into an Inspire record.
+
+    Args:
+        prod_record(InspireProdRecords): the mirrored record to migrate.
+        skip_files(bool): flag indicating whether the files in the record
+            metadata should be copied over from legacy and attach to the
+            record.
+
+    Returns:
+        dict: the migrated record metadata, which is also inserted into the database.
+    """
     try:
-        json_record = marcxml2record(raw_record)
-        recid = json_record['control_number']
-    except Exception as e:
+        json_record = marcxml2record(prod_record.marcxml)
+    except Exception as exc:
         LOGGER.exception('Migrator DoJSON Error')
-        recid = _get_recid(raw_record)
-        _store_migrator_error(recid, raw_record, e)
+        prod_record.error = exc
+        db.session.merge(prod_record)
         return None
 
     if '$schema' in json_record:
         ensure_valid_schema(json_record)
 
     try:
-        record = record_insert_or_replace(json_record, skip_files=skip_files)
-    except ValidationError as e:
+        record = InspireRecord.create_or_update(json_record, skip_files=skip_files)
+        record.commit()
+    except ValidationError as exc:
         pattern = u'Migrator Validator Error: {}, Value: %r, Record: %r'
-        LOGGER.error(pattern.format('.'.join(e.schema_path)), e.instance, recid)
-        _store_migrator_error(recid, raw_record, e)
-    except Exception as e:
+        LOGGER.error(pattern.format('.'.join(exc.schema_path)), exc.instance, prod_record.recid)
+        prod_record.error = exc
+        db.session.merge(prod_record)
+    except Exception as exc:
         LOGGER.exception('Migrator Record Insert Error')
-        _store_migrator_error(recid, raw_record, e)
+        prod_record.error = exc
+        db.session.merge(prod_record)
     else:
-        prod_record = InspireProdRecords(recid=recid)
-        prod_record.marcxml = raw_record
         prod_record.valid = True
         db.session.merge(prod_record)
         return record
-
-
-def _get_recid(raw_record):
-    return int(create_record(raw_record)['001'])
-
-
-def _store_migrator_error(recid, marcxml, error):
-    error_str = u'{0}: Record {1}: {2}'.format(type(error), recid, error)
-    prod_record = InspireProdRecords(recid=recid)
-    prod_record.valid = False
-    prod_record.marcxml = marcxml
-    prod_record.errors = error_str
-    db.session.merge(prod_record)

@@ -54,6 +54,7 @@ from mocks import (
     fake_magpie_api_request,
 )
 from utils import get_halted_workflow
+from inspirehep.modules.workflows.tasks.matching import _get_hep_record_brief
 
 
 @pytest.fixture
@@ -638,7 +639,7 @@ def test_fuzzy_matched_goes_trough_the_workflow(
 
     assert obj.extra_data['already-in-holding-pen'] is False
     assert obj.extra_data['holdingpen_matches'] == []
-    assert obj.extra_data['matches']['fuzzy'] == [rec_id]
+    assert obj.extra_data['matches']['fuzzy'][0] == _get_hep_record_brief(record)
 
     WorkflowObject.continue_workflow = continue_wf_patched_context(workflow_app)
     do_resolve_matching(workflow_app, obj.id, rec_id)
@@ -798,3 +799,123 @@ def test_validation_error_callback_with_malformed_with_invalid_types(workflow_ap
     assert expected_error_code == data['error_code']
     assert expected_message == data['message']
     assert 'errors' in data
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
+    return_value=True
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
+    return_value=[],
+)
+def test_keep_previously_rejected_from_fully_harvested_category_is_auto_approved(
+        mocked_refextract_extract_refs,
+        mocked_api_request_magpie,
+        mocked_api_request_beard,
+        mocked_is_pdf_link,
+        mocked_package_download,
+        mocked_arxiv_download,
+        workflow_app,
+        mocked_external_services,
+):
+    record, categories = core_record()
+    obj = workflow_object_class.create(
+        data=record,
+        status=ObjectStatus.COMPLETED,
+        data_type='hep',
+    )
+    obj.extra_data['approved'] = False  # reject it
+    obj.save()
+    es.indices.refresh('holdingpen-hep')
+
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+        "MAGPIE_API_URL": "http://example.com/magpie",
+        'ARXIV_CATEGORIES': categories,
+    }
+    with workflow_app.app_context():
+        with mock.patch.dict(workflow_app.config, extra_config):
+            workflow_uuid = start('article', [record])
+            eng = WorkflowEngine.from_uuid(workflow_uuid)
+            obj2 = eng.processed_objects[0]
+            assert obj2.extra_data['auto-approved']
+            assert len(obj2.extra_data['previously_rejected_matches']) > 0
+            assert obj.status == ObjectStatus.COMPLETED
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
+    return_value=True
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
+    return_value=[],
+)
+def test_previously_rejected_from_not_fully_harvested_category_is_not_auto_approved(
+        mocked_refextract_extract_refs,
+        mocked_api_request_magpie,
+        mocked_api_request_beard,
+        mocked_is_pdf_link,
+        mocked_package_download,
+        mocked_arxiv_download,
+        workflow_app,
+        mocked_external_services,
+):
+    record, categories = core_record()
+    record['arxiv_eprints'][0]['categories'] = ['q-bio.GN']
+
+    obj = workflow_object_class.create(
+        data=record,
+        status=ObjectStatus.COMPLETED,
+        data_type='hep',
+    )
+    obj.extra_data['approved'] = False  # reject it
+    obj.save()
+    es.indices.refresh('holdingpen-hep')
+
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+        "MAGPIE_API_URL": "http://example.com/magpie",
+        'ARXIV_CATEGORIES': categories,
+    }
+    with workflow_app.app_context():
+        with mock.patch.dict(workflow_app.config, extra_config):
+            workflow_uuid = start('article', [record])
+            eng = WorkflowEngine.from_uuid(workflow_uuid)
+            obj2 = eng.processed_objects[0]
+            assert not obj2.extra_data['auto-approved']
+            assert len(obj2.extra_data['previously_rejected_matches']) > 0
+            assert obj.status == ObjectStatus.COMPLETED
