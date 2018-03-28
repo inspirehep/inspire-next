@@ -186,6 +186,37 @@ def test_import_multiple_orcid_tokens_no_user_exists(
     assert_db_has_n_legacy_tokens(1, SAMPLE_USER_2)
 
 
+@patch('inspirehep.modules.orcid.tasks.orcid_push')
+@patch('inspirehep.modules.orcid.tasks.get_literature_recids_for_orcid')
+def test_import_legacy_orcid_tokens_pushes_on_new_user(
+        mock_get_literature_recids_for_orcid, mock_orcid_push,
+        app_with_config, redis_setup, teardown_sample_user):
+    mock_get_literature_recids_for_orcid.return_value = [4328]
+
+    push_to_redis(SAMPLE_USER)
+
+    # Check initial state
+    assert redis_setup.llen('legacy_orcid_tokens') == 1
+    assert_db_has_n_legacy_tokens(0, SAMPLE_USER)
+
+    # Migrate
+    import_legacy_orcid_tokens()
+
+    # Check state after migration
+    assert not redis_setup.llen('legacy_orcid_tokens')
+    assert_db_has_n_legacy_tokens(1, SAMPLE_USER)
+
+    # Check that we pushed to ORCID
+    mock_orcid_push.apply_async.assert_called_with(
+        queue='orcid_push_legacy_tokens',
+        kwargs={
+            'orcid': '0000-0002-1825-0097',
+            'rec_id': 4328,
+            'token': '3d25a708-dae9-48eb-b676-80a2bfb9d35c',
+        },
+    )
+
+
 def test_import_multiple_orcid_tokens_no_configuration(
         app_without_config, redis_setup, teardown_sample_user, teardown_sample_user_2):
     """Attempt and fail to create new users when configuration missing."""
