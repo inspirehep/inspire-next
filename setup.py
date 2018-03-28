@@ -82,7 +82,7 @@ install_requires = [
     'invenio-jsonschemas>=1.0.0a5',
     'invenio-logging>=1.0.0b3',
     'invenio-mail>=1.0.0b1',
-    'invenio-oauthclient>=1.0.0b5',
+    'invenio-oauthclient==1.0.0b5',  # Pin to specific version because a DB migration is required: see INSPIR-434
     'invenio-records-files>=1.0.0a9',
     'invenio-records-rest>=1.0.0b1',
     'invenio-records-ui>=1.0.0b1',
