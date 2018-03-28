@@ -144,7 +144,7 @@ class InspireRecord(Record):
             pid = PersistentIdentifier.get(pid_type, control_number)
             record = super(InspireRecord, cls).get_record(pid.object_uuid)
             record.clear()
-            record.update(data, **kwargs)
+            record.update(data, skip_files=skip_files, **kwargs)
 
             if data.get('legacy_creation_date'):
                 record.model.created = datetime.strptime(data['legacy_creation_date'], '%Y-%m-%d')
