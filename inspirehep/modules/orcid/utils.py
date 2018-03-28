@@ -236,12 +236,14 @@ def get_literature_recids_for_orcid(orcid):
 
     """
     orcid_object = '[{"schema": "ORCID", "value": "%s"}]' % orcid
-    author_recid = db.session.query(PersistentIdentifier.pid_value)\
-                             .filter(PersistentIdentifier.object_type == 'rec')\
-                             .filter(PersistentIdentifier.object_uuid == RecordMetadata.id)\
-                             .filter(PersistentIdentifier.pid_type == 'aut')\
-                             .filter(type_coerce(RecordMetadata.json, JSONB)['ids'].contains(orcid_object))\
-                             .one().pid_value
+    # this first query is written in a way that can use the index on (json -> ids)
+    author_rec_uuid = db.session.query(RecordMetadata.id)\
+        .filter(type_coerce(RecordMetadata.json, JSONB)['ids'].contains(orcid_object)).one().id
+    author_recid = db.session.query(PersistentIdentifier.pid_value).filter(
+        PersistentIdentifier.object_type == 'rec',
+        PersistentIdentifier.object_uuid == author_rec_uuid,
+        PersistentIdentifier.pid_type == 'aut',
+    ).one().pid_value
 
     query = Q('match', authors__curated_relation=True) & Q('match', authors__recid=author_recid)
     search_by_curated_author = LiteratureSearch().query('nested', path='authors', query=query)\
