@@ -1,0 +1,22 @@
+INDEX ON JSONB TYPE FIELD
+
+The following SQL query adds an index to RecordMetadata.json field.
+The index can then be used in queries like:
+
+db.session.query(RecordMetadata.id)\
+.filter(type_coerce(RecordMetadata.json, JSONB)['ids'].contains(orcid_object)).one()
+
+Note: this query assumes that RecordMetadata.json field requires to
+be coerced to JSONB type as it wasn'e defined properly in the model.
+
+We are about to do this operation manually because our Alembic migrations
+are currently broken and we have the urge of creating this index.
+
+Note: this index and this file will be removed when we solved the
+problem with our Alembic migration and replaced by a proper
+migration. See: https://its.cern.ch/jira/browse/INSPIR-375
+
+
+-- CREATE INDEX CONCURRENTLY json_ids_index ON records_metadata USING gin ((json -> 'ids'));
+
+-- DROP INDEX CONCURRENTLY json_ids_index;
