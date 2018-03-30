@@ -323,7 +323,7 @@ Add demo records
 .. code-block:: console
 
     (inspirehep)$ cdvirtualenv src/inspirehep
-    (inspirehep)$ inspirehep migrator populate -f inspirehep/demosite/data/demo-records.xml.gz --wait=true
+    (inspirehep)$ inspirehep migrate file --force --wait inspirehep/demosite/data/demo-records.xml.gz
 
 
 .. note::
