@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+
 import pytest
 import requests_mock
 from flask import current_app
@@ -30,10 +31,10 @@ from mock import patch
 from six import binary_type, text_type
 
 from inspirehep.utils.url import (
+    get_legacy_url_for_recid,
     is_pdf_link,
     make_user_agent_string,
     retrieve_uri,
-    get_legacy_url_for_recid,
 )
 
 
@@ -42,6 +43,11 @@ def test_is_pdf_link_handles_empty_requests():
         requests_mocker.register_uri('GET', 'http://example.org/empty-pdf', text='')
 
         assert not is_pdf_link('http://example.org/empty-pdf')
+
+
+@pytest.mark.vcr()
+def test_is_pdf_link_handles_pdfs_starting_with_blank_lines():
+    assert is_pdf_link('https://arxiv.org/pdf/1803.01183.pdf')
 
 
 @patch('inspirehep.utils.url.__version__', '0.1.0')
