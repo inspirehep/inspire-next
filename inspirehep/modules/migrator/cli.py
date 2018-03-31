@@ -69,11 +69,12 @@ REAL_COLLECTIONS = (
 
 
 def halt_if_debug_mode(force):
-    message = '''The application is running in debug mode, which leaks memory
-    when doing many database operations. To avoid problems, disable debug mode.
-    This can be done by setting "DEBUG=False" in the config or setting the
-    environment variable "APP_DEBUG=False". If you know what you are doing, you
-    can pass the "--force" flag to disable this check.
+    message = '''\
+    The application is running in debug mode, which leaks memory when doing
+    many database operations. To avoid problems, disable debug mode. This can
+    be done by setting "DEBUG=False" in the config or setting the environment
+    variable "APP_DEBUG=False". If you know what you are doing, you can pass
+    the "--force" flag to disable this check.
     '''
     if not force and current_app.config.get('DEBUG'):
         click.echo(dedent(message), err=True)
