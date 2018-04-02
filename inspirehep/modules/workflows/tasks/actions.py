@@ -270,11 +270,17 @@ def is_arxiv_paper(obj, eng):
 
 @with_debug_logging
 def is_submission(obj, eng):
-    """Is this a submission?"""
-    source = obj.data.get('acquisition_source')
-    if source:
-        return source.get('method') == 'submitter'
-    return False
+    """Check if a workflow contains a submission.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        bool: whether the workflow contains a submission.
+
+    """
+    return get_method(obj.data) == 'submitter'
 
 
 def validate_record(schema):
