@@ -500,11 +500,11 @@ def test_is_experimental_paper_does_not_raise_if_obj_has_no_arxiv_category():
     assert not is_experimental_paper(obj, eng)
 
 
-def test_is_arxiv_paper_returns_false_if_acquision_source_not_present():
-
+def test_is_arxiv_paper_returns_false_if_acquision_source_is_not_present():
     obj = MockObj({}, {})
+    eng = MockEng()
 
-    assert not is_arxiv_paper(obj)
+    assert not is_arxiv_paper(obj, eng)
 
 
 def test_is_arxiv_paper_returns_false_if_method_is_not_hepcrawl_or_arxiv():
@@ -519,18 +519,21 @@ def test_is_arxiv_paper_returns_false_if_method_is_not_hepcrawl_or_arxiv():
         },
         'arxiv_eprints': [
             {
-                'categories': ['hep-th'],
+                'categories': [
+                    'hep-th',
+                ],
                 'value': '0801.4782',
             },
         ],
     }
-
+    extra_data = {}
     assert validate(data['acquisition_source'], acquisition_source_schema) is None
     assert validate(data['arxiv_eprints'], arxiv_eprints_schema) is None
 
-    obj = MockObj(data, {})
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
 
-    assert not is_arxiv_paper(obj)
+    assert not is_arxiv_paper(obj, eng)
 
 
 def test_is_arxiv_paper_for_submission():
@@ -540,110 +543,118 @@ def test_is_arxiv_paper_for_submission():
 
     data = {
         'acquisition_source': {
-            'method': 'submitter'
+            'method': 'submitter',
         },
         'arxiv_eprints': [
             {
-                'categories': ['hep-th'],
+                'categories': [
+                    'hep-th',
+                ],
                 'value': '0801.4782',
             },
         ],
     }
-
+    extra_data = {}
     assert validate(data['acquisition_source'], acquisition_source_schema) is None
     assert validate(data['arxiv_eprints'], arxiv_eprints_schema) is None
 
-    obj = MockObj(data, {})
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
 
-    assert is_arxiv_paper(obj)
+    assert is_arxiv_paper(obj, eng)
 
 
 def test_is_arxiv_paper_returns_false_when_arxiv_eprints_is_not_present_for_submission():
     schema = load_schema('hep')
-    sub_schema = schema['properties']['acquisition_source']
+    subschema = schema['properties']['acquisition_source']
 
     data = {
         'acquisition_source': {
-            'method': 'submitter'
+            'method': 'submitter',
         },
     }
+    extra_data = {}
+    assert validate(data['acquisition_source'], subschema) is None
 
-    assert validate(data['acquisition_source'], sub_schema) is None
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
 
-    obj = MockObj(data, {})
-
-    assert not is_arxiv_paper(obj)
+    assert not is_arxiv_paper(obj, eng)
 
 
 def test_is_arxiv_paper_for_hepcrawl():
     schema = load_schema('hep')
-    sub_schema = schema['properties']['acquisition_source']
+    subschema = schema['properties']['acquisition_source']
 
     data = {
         'acquisition_source': {
             'method': 'hepcrawl',
-            'source': 'arxiv'
+            'source': 'arxiv',
         },
     }
+    extra_data = {}
+    assert validate(data['acquisition_source'], subschema) is None
 
-    assert validate(data['acquisition_source'], sub_schema) is None
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
 
-    obj = MockObj(data, {})
-
-    assert is_arxiv_paper(obj)
+    assert is_arxiv_paper(obj, eng)
 
 
 def test_is_arxiv_paper_ignores_case_for_hepcrawl():
     schema = load_schema('hep')
-    sub_schema = schema['properties']['acquisition_source']
+    subschema = schema['properties']['acquisition_source']
 
     data = {
         'acquisition_source': {
             'method': 'hepcrawl',
-            'source': 'arXiv'
+            'source': 'arXiv',
         },
     }
+    extra_data = {}
+    assert validate(data['acquisition_source'], subschema) is None
 
-    assert validate(data['acquisition_source'], sub_schema) is None
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
 
-    obj = MockObj(data, {})
-
-    assert is_arxiv_paper(obj)
+    assert is_arxiv_paper(obj, eng)
 
 
 def test_is_arxiv_paper_returns_false_if_source_is_not_arxiv_for_hepcrawl():
     schema = load_schema('hep')
-    sub_schema = schema['properties']['acquisition_source']
+    subschema = schema['properties']['acquisition_source']
 
     data = {
         'acquisition_source': {
             'method': 'hepcrawl',
-            'source': 'something else'
+            'source': 'something else',
         },
     }
+    extra_data = {}
+    assert validate(data['acquisition_source'], subschema) is None
 
-    assert validate(data['acquisition_source'], sub_schema) is None
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
 
-    obj = MockObj(data, {})
-
-    assert not is_arxiv_paper(obj)
+    assert not is_arxiv_paper(obj, eng)
 
 
 def test_is_arxiv_paper_returns_false_if_source_is_not_present_for_hepcrawl():
     schema = load_schema('hep')
-    sub_schema = schema['properties']['acquisition_source']
+    subschema = schema['properties']['acquisition_source']
 
     data = {
         'acquisition_source': {
             'method': 'hepcrawl',
         },
     }
+    extra_data = {}
+    assert validate(data['acquisition_source'], subschema) is None
 
-    assert validate(data['acquisition_source'], sub_schema) is None
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
 
-    obj = MockObj(data, {})
-
-    assert not is_arxiv_paper(obj)
+    assert not is_arxiv_paper(obj, eng)
 
 
 def test_is_submission():
