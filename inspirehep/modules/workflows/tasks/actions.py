@@ -36,7 +36,7 @@ from sqlalchemy import (
     cast,
     type_coerce,
 )
-from timeout_decorator import TimeoutError
+from timeout_decorator import timeout
 from werkzeug import secure_filename
 
 from invenio_db import db
@@ -372,6 +372,7 @@ def download_documents(obj, eng):
                 'Cannot download document from %s', url)
 
 
+@timeout(5 * 60)
 @with_debug_logging
 def refextract(obj, eng):
     """Extract references from various sources and add them to the workflow.
@@ -400,17 +401,11 @@ def refextract(obj, eng):
 
     with get_document_in_workflow(obj) as tmp_document:
         if tmp_document:
-            try:
-                pdf_references = extract_references_from_pdf(tmp_document, source)
-            except TimeoutError:
-                obj.log.error('Timeout when extracting references from PDF.')
+            pdf_references = extract_references_from_pdf(tmp_document, source)
 
     text = get_value(obj.extra_data, 'formdata.references')
     if text:
-        try:
-            text_references = extract_references_from_text(text, source)
-        except TimeoutError:
-            obj.log.error('Timeout when extracting references from text.')
+        text_references = extract_references_from_text(text, source)
 
     if len(pdf_references) == len(text_references) == 0:
         obj.log.info('No references extracted.')
