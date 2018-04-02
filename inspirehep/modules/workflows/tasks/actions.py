@@ -61,7 +61,12 @@ from inspirehep.modules.workflows.utils import (
     with_debug_logging,
 )
 from inspirehep.utils.normalizers import normalize_journal_title
-from inspirehep.utils.record import get_arxiv_categories, get_inspire_categories
+from inspirehep.utils.record import (
+    get_arxiv_categories,
+    get_inspire_categories,
+    get_method,
+    get_source,
+)
 from inspirehep.utils.url import is_pdf_link
 
 EXPERIMENTAL_ARXIV_CATEGORIES = [
@@ -243,11 +248,19 @@ def is_experimental_paper(obj, eng):
 
 
 @with_debug_logging
-def is_arxiv_paper(obj, *args, **kwargs):
-    """Check if the record is from arXiv."""
+def is_arxiv_paper(obj, eng):
+    """Check if a workflow contains a paper from arXiv.
 
-    method = get_value(obj.data, 'acquisition_source.method')
-    source = get_value(obj.data, 'acquisition_source.source', default='')
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        bool: whether the workflow contains a paper from arXiv.
+
+    """
+    method = get_method(obj.data)
+    source = get_source(obj.data)
 
     is_submission_with_arxiv = method == 'submitter' and 'arxiv_eprints' in obj.data
     is_harvested_from_arxiv = method == 'hepcrawl' and source.lower() == 'arxiv'
