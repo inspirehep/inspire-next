@@ -416,7 +416,7 @@ def refextract(obj, eng):
         return
 
     pdf_references, text_references = [], []
-    source = get_value(obj.data, 'acquisition_source.source')
+    source = get_source(obj.data)
 
     with get_document_in_workflow(obj) as tmp_document:
         if tmp_document:
