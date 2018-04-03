@@ -28,6 +28,7 @@ from inspirehep.utils.record import (
     get_arxiv_categories,
     get_arxiv_id,
     get_inspire_categories,
+    get_method,
     get_source,
     get_subtitle,
     get_title,
@@ -113,6 +114,24 @@ def test_get_inspire_categories():
 
     expected = ['Experiment-HEP']
     result = get_inspire_categories(record)
+
+    assert expected == result
+
+
+def test_get_method():
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+
+    record = {
+        'acquisition_source': {
+            'method': 'oai',
+            'source': 'arxiv',
+        },
+    }
+    assert validate(record['acquisition_source'], subschema) is None
+
+    expected = 'oai'
+    result = get_method(record)
 
     assert expected == result
 

@@ -131,6 +131,29 @@ def get_inspire_categories(record):
     return get_value(record, 'inspire_categories.term', default=[])
 
 
+def get_method(record):
+    """Return the acquisition method of a record.
+
+    Args:
+        record (InspireRecord): a record.
+
+    Returns:
+        str: the acquisition method of the record.
+
+    Examples:
+        >>> record = {
+        ...     'acquisition_source': {
+        ...         'method': 'oai',
+        ...         'source': 'arxiv',
+        ...     }
+        ... }
+        >>> get_method(record)
+        'oai'
+
+    """
+    return get_value(record, 'acquisition_source.method', default='')
+
+
 def get_source(record):
     """Return the acquisition source of a record.
 

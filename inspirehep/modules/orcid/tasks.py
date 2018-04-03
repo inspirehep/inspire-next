@@ -44,7 +44,10 @@ from inspirehep.modules.orcid.api import (
     push_record_with_orcid,
     get_author_putcodes,
 )
-from inspirehep.modules.orcid.utils import get_orcid_recid_key
+from inspirehep.modules.orcid.utils import (
+    get_literature_recids_for_orcid,
+    get_orcid_recid_key,
+)
 
 
 LOGGER = getStackTraceLogger(__name__)
@@ -77,7 +80,14 @@ def _link_user_and_token(user, name, orcid, token):
         user (invenio_oauthclient.models.User): an existing user object to connect the token to
         orcid (string): user's ORCID identifier
         token (string): OAUTH token for the user
+
+    Returns:
+        str: the ORCID associated with the new token if we created one, or the
+        ORCID associated with the token whose ``allow_push`` flag changed state.
+
     """
+    result = None
+
     try:
         # Link user and ORCID
         oauth_link_external_id(user, {
@@ -97,10 +107,13 @@ def _link_user_and_token(user, name, orcid, token):
         # Force the allow_push.
         with db.session.begin_nested():
             for token in tokens:
+                if not token.remote_account.extra_data['allow_push']:
+                    result = orcid
                 token.remote_account.extra_data['allow_push'] = True
     else:
         # If not, create and put the token entry
         with db.session.begin_nested():
+            result = orcid
             RemoteToken.create(
                 user_id=user.id,
                 client_id=get_value(current_app.config, 'ORCID_APP_CREDENTIALS.consumer_key'),
@@ -112,6 +125,8 @@ def _link_user_and_token(user, name, orcid, token):
                     'allow_push': True,
                 }
             )
+
+    return result
 
 
 def _register_user(name, email, orcid, token):
@@ -130,6 +145,11 @@ def _register_user(name, email, orcid, token):
         email (string): user's email address
         orcid (string): user's ORCID identifier
         token (string): OAUTH authorization token
+
+    Returns:
+        str: the ORCID associated with the new user if we created one, or the
+        ORCID associated with the user whose ``allow_push`` flag changed state.
+
     """
 
     # Try to find an existing user entry
@@ -142,7 +162,7 @@ def _register_user(name, email, orcid, token):
             user.email = email
             db.session.add(user)
 
-    _link_user_and_token(user, name, orcid, token)
+    return _link_user_and_token(user, name, orcid, token)
 
 
 @shared_task(ignore_result=True)
@@ -154,7 +174,18 @@ def import_legacy_orcid_tokens():
     for user_data in legacy_orcid_arrays():
         try:
             orcid, token, email, name = user_data
-            _register_user(name, email, orcid, token)
+            orcid_to_push = _register_user(name, email, orcid, token)
+            if orcid_to_push:
+                recids = get_literature_recids_for_orcid(orcid_to_push)
+                for recid in recids:
+                    orcid_push.apply_async(
+                        queue='orcid_push_legacy_tokens',
+                        kwargs={
+                            'orcid': orcid_to_push,
+                            'rec_id': recid,
+                            'token': token,
+                        },
+                    )
         except SQLAlchemyError as ex:
             LOGGER.exception(ex)
 

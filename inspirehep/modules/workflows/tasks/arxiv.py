@@ -33,6 +33,7 @@ import requests
 from backports.tempfile import TemporaryDirectory
 from flask import current_app
 from lxml.etree import XMLSyntaxError
+from timeout_decorator import timeout
 from wand.exceptions import DelegateError
 from werkzeug import secure_filename
 
@@ -118,6 +119,7 @@ def arxiv_package_download(obj, eng):
         obj.log.error('Cannot retrieve tarball from arXiv for %s', arxiv_id)
 
 
+@timeout(5 * 60)
 @with_debug_logging
 def arxiv_plot_extract(obj, eng):
     """Extract plots from an arXiv archive.
