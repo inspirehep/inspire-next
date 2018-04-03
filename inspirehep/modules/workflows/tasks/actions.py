@@ -36,7 +36,7 @@ from sqlalchemy import (
     cast,
     type_coerce,
 )
-from timeout_decorator import TimeoutError
+from timeout_decorator import timeout
 from werkzeug import secure_filename
 
 from invenio_db import db
@@ -61,7 +61,12 @@ from inspirehep.modules.workflows.utils import (
     with_debug_logging,
 )
 from inspirehep.utils.normalizers import normalize_journal_title
-from inspirehep.utils.record import get_arxiv_categories, get_inspire_categories
+from inspirehep.utils.record import (
+    get_arxiv_categories,
+    get_inspire_categories,
+    get_method,
+    get_source,
+)
 from inspirehep.utils.url import is_pdf_link
 
 EXPERIMENTAL_ARXIV_CATEGORIES = [
@@ -243,11 +248,19 @@ def is_experimental_paper(obj, eng):
 
 
 @with_debug_logging
-def is_arxiv_paper(obj, *args, **kwargs):
-    """Check if the record is from arXiv."""
+def is_arxiv_paper(obj, eng):
+    """Check if a workflow contains a paper from arXiv.
 
-    method = get_value(obj.data, 'acquisition_source.method')
-    source = get_value(obj.data, 'acquisition_source.source', default='')
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        bool: whether the workflow contains a paper from arXiv.
+
+    """
+    method = get_method(obj.data)
+    source = get_source(obj.data)
 
     is_submission_with_arxiv = method == 'submitter' and 'arxiv_eprints' in obj.data
     is_harvested_from_arxiv = method == 'hepcrawl' and source.lower() == 'arxiv'
@@ -257,11 +270,17 @@ def is_arxiv_paper(obj, *args, **kwargs):
 
 @with_debug_logging
 def is_submission(obj, eng):
-    """Is this a submission?"""
-    source = obj.data.get('acquisition_source')
-    if source:
-        return source.get('method') == 'submitter'
-    return False
+    """Check if a workflow contains a submission.
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        bool: whether the workflow contains a submission.
+
+    """
+    return get_method(obj.data) == 'submitter'
 
 
 def validate_record(schema):
@@ -372,6 +391,7 @@ def download_documents(obj, eng):
                 'Cannot download document from %s', url)
 
 
+@timeout(5 * 60)
 @with_debug_logging
 def refextract(obj, eng):
     """Extract references from various sources and add them to the workflow.
@@ -396,21 +416,15 @@ def refextract(obj, eng):
         return
 
     pdf_references, text_references = [], []
-    source = get_value(obj.data, 'acquisition_source.source')
+    source = get_source(obj.data)
 
     with get_document_in_workflow(obj) as tmp_document:
         if tmp_document:
-            try:
-                pdf_references = extract_references_from_pdf(tmp_document, source)
-            except TimeoutError:
-                obj.log.error('Timeout when extracting references from PDF.')
+            pdf_references = extract_references_from_pdf(tmp_document, source)
 
     text = get_value(obj.extra_data, 'formdata.references')
     if text:
-        try:
-            text_references = extract_references_from_text(text, source)
-        except TimeoutError:
-            obj.log.error('Timeout when extracting references from text.')
+        text_references = extract_references_from_text(text, source)
 
     if len(pdf_references) == len(text_references) == 0:
         obj.log.info('No references extracted.')

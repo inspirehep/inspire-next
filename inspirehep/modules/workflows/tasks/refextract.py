@@ -26,8 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from itertools import chain
 
-from timeout_decorator import timeout
-
 from inspire_schemas.utils import (
     convert_old_publication_info_to_new,
     split_page_artid,
@@ -105,7 +103,6 @@ def extract_journal_info(obj, eng):
     obj.data['publication_info'] = convert_old_publication_info_to_new(obj.data['publication_info'])
 
 
-@timeout(5 * 60)
 def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
     """Extract references from PDF and return in INSPIRE format."""
     with local_refextract_kbs_path() as kbs_path:
@@ -118,7 +115,6 @@ def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
     return map_refextract_to_schema(extracted_references, source=source)
 
 
-@timeout(5 * 60)
 def extract_references_from_text(text, source=None, custom_kbs_file=None):
     """Extract references from text and return in INSPIRE format."""
     with local_refextract_kbs_path() as kbs_path:
