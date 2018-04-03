@@ -44,7 +44,8 @@ from inspirehep.modules.workflows.errors import (
     CallbackError,
     CallbackValidationError,
     CallbackWorkflowNotFoundError,
-    CallbackWorkflowNotInValidationError
+    CallbackWorkflowNotInMergeState,
+    CallbackWorkflowNotInValidationError,
 )
 from inspirehep.modules.workflows.loaders import workflow_loader
 from inspirehep.modules.workflows.models import WorkflowsPendingRecord
@@ -52,6 +53,7 @@ from inspirehep.modules.workflows.utils import (
     get_resolve_validation_callback_url,
     get_validation_errors
 )
+from inspirehep.utils.record import get_value
 
 
 blueprint = Blueprint(
@@ -427,6 +429,62 @@ def _validate_workflow_schema(workflow_data):
         raise CallbackValidationError(workflow_data)
 
 
+class ResolveMergeResource(MethodView):
+    """Resolve merge callback.
+
+    When the workflow needs to resolve conficts, the workflow stops in
+    ``HALTED`` state, to continue this endpoint is called. If it's called
+    and the conflicts are not resolved it will just save the workflow.
+
+    Args:
+        workflow_data (dict): the workflow object send in the request's payload.
+
+    """
+
+    def put(self):
+        """Handle callback for merge conflicts."""
+        workflow_data = workflow_loader()
+        workflow_id = workflow_data['id']
+
+        try:
+            workflow = workflow_object_class.get(workflow_id)
+        except WorkflowsMissingObject:
+            raise CallbackWorkflowNotFoundError(workflow_id)
+
+        if workflow.status != ObjectStatus.HALTED or \
+           'callback_url' not in workflow.extra_data:
+            raise CallbackWorkflowNotInMergeState(workflow.id)
+
+        conflicts = get_value(workflow_data['_extra_data'], 'conflicts', default=[])
+
+        workflow.data = workflow_data['metadata']
+        workflow.extra_data['conflicts'] = conflicts
+
+        if not conflicts:
+            workflow.status = ObjectStatus.RUNNING
+
+            workflow.extra_data.pop('callback_url', None)
+            workflow.extra_data.pop('conflicts', None)
+
+            workflow.save()
+            db.session.commit()
+            workflow.continue_workflow(delayed=True)
+
+            data = {
+                'message': 'Workflow {} is continuing.'.format(workflow.id),
+            }
+            return jsonify(data), 200
+
+        # just save
+        data = {
+            'message': 'Workflow {} has been saved with conflicts.'.format(workflow.id),
+        }
+        workflow.save()
+        db.session.commit()
+
+        return jsonify(data), 200
+
+
 class ResolveValidationResource(MethodView):
     """Resolve validation error callback."""
 
@@ -535,8 +593,14 @@ class ResolveValidationResource(MethodView):
 
 callback_resolve_validation = ResolveValidationResource.as_view(
     'callback_resolve_validation')
+callback_resolve_merge_conflicts = ResolveMergeResource.as_view(
+    'callback_resolve_merge_conflicts')
 
 blueprint.add_url_rule(
     '/workflows/resolve_validation_errors',
     view_func=callback_resolve_validation,
+)
+blueprint.add_url_rule(
+    '/workflows/resolve_merge_conflicts',
+    view_func=callback_resolve_merge_conflicts,
 )

@@ -196,6 +196,13 @@ def send_robotupload(
     @with_debug_logging
     @wraps(send_robotupload)
     def _send_robotupload(obj, eng):
+        is_update = obj.extra_data.get('is-update')
+
+        if is_update and not current_app.config.get('FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY', False):
+            obj.log.info(
+                'skipping upload to legacy, feature flag ``FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY`` is disabled.')
+            return
+
         combined_callback_url = ''
         if callback_url:
             combined_callback_url = os.path.join(

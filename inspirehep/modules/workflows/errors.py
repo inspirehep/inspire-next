@@ -103,3 +103,15 @@ class CallbackWorkflowNotInValidationError(CallbackError):
         super(CallbackWorkflowNotInValidationError, self).__init__(**kwargs)
         self.message = 'Workflow {} is not in validation error state.'.format(
             workflow_id)
+
+
+class CallbackWorkflowNotInMergeState(CallbackError):
+    """Workflow not in validation error exception."""
+
+    error_code = 'WORKFLOW_NOT_IN_MERGE_STATE'
+
+    def __init__(self, workflow_id, **kwargs):
+        """Initialize exception."""
+        super(CallbackWorkflowNotInMergeState, self).__init__(**kwargs)
+        self.message = 'Workflow {} is not in merge state.'.format(
+            workflow_id)
