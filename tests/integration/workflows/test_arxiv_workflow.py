@@ -918,4 +918,4 @@ def test_previously_rejected_from_not_fully_harvested_category_is_not_auto_appro
             obj2 = eng.processed_objects[0]
             assert not obj2.extra_data['auto-approved']
             assert len(obj2.extra_data['previously_rejected_matches']) > 0
-            assert obj.status == ObjectStatus.COMPLETED
+            assert obj2.status == ObjectStatus.COMPLETED
