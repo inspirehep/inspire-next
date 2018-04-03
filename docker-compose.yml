@@ -69,6 +69,15 @@ services:
     command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge --queues celery,migrator,harvests,orcid_push
     volumes_from:
       - static
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD"
+        - "bash"
+        - "-c"
+        - "/virtualenv/bin/celery --broker=amqp://guest:guest@rabbitmq:5672// inspect ping | grep OK"
     depends_on:
       database:
         condition: service_healthy

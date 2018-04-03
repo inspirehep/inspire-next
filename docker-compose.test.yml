@@ -87,7 +87,7 @@ services:
       test-redis:
         condition: service_healthy
       test-worker:
-        condition: service_started
+        condition: service_healthy
       selenium:
         condition: service_started
       test-web:
@@ -113,7 +113,7 @@ services:
       test-redis:
         condition: service_healthy
       test-worker:
-        condition: service_started
+        condition: service_healthy
       selenium:
         condition: service_started
       test-web:
@@ -138,7 +138,7 @@ services:
       test-redis:
         condition: service_healthy
       test-worker:
-        condition: service_started
+        condition: service_healthy
       selenium:
         condition: service_started
       test-web:
@@ -162,7 +162,7 @@ services:
       test-redis:
         condition: service_healthy
       test-worker:
-        condition: service_started
+        condition: service_healthy
       selenium:
         condition: service_started
       test-web:
@@ -194,6 +194,15 @@ services:
     command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge --queues celery,migrator,harvests,orcid_push
     volumes_from:
       - test-static
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD"
+        - "bash"
+        - "-c"
+        - "/virtualenv/bin/celery --broker=amqp://guest:guest@test-rabbitmq:5672// inspect ping | grep OK"
     depends_on:
       test-database:
         condition: service_healthy
