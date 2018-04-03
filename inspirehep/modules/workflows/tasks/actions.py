@@ -69,6 +69,8 @@ from inspirehep.utils.record import (
 )
 from inspirehep.utils.url import is_pdf_link
 
+from . import config_ref_matcher
+
 EXPERIMENTAL_ARXIV_CATEGORIES = [
     'astro-ph',
     'astro-ph.CO',
@@ -410,6 +412,16 @@ def refextract(obj, eng):
     Returns:
         None
     """
+
+    # Get the configurations for ElasticSearch defined in config_ref_matcher.py
+    # TODO: This seems like a hacky way to get to load config. Not sure but the
+    #       configs can problably be loaded in the flask app meaning this part
+    #       likely doesn't have to run each time.
+    config = {}
+    for conf in dir(config_ref_matcher):
+        if conf.startswith('config_'):
+            config[conf] = getattr(config_ref_matcher, conf)
+
     if 'references' in obj.data:
         obj.log.info('Found references in metadata, extracting unextracted raw_refs')
         obj.data['references'] = extract_references_from_raw_refs(obj.data['references'])
@@ -435,6 +447,31 @@ def refextract(obj, eng):
         obj.log.info('Extracted %d references from text.', len(text_references))
         obj.data['references'] = text_references
 
+def match_reference(reference):
+    if reference.get('legacy_curated') and reference.get('recid'):
+        return reference['recid']
+
+    journal_title = get_value(reference, 'reference.publication_info.journal_title')
+    if journal_title in ['JCAP', 'JHEP']:
+        try:
+            if get_value(reference, 'reference.publication_info.year'):
+                reference['reference']['publication_info']['year'] = str(reference['reference']['publication_info']['year'])
+            result = next(match(reference, config_for_jcap_and_jhep))
+            return result['_source']['control_number']
+        except StopIteration:
+            pass
+
+    try:
+        result = next(match(reference, config))
+        return result['_source']['control_number']
+    except StopIteration:
+        pass
+
+    try:
+        result = next(match(reference, config_for_data))
+        return result['_source']['control_number']
+    except StopIteration:
+        pass
 
 @with_debug_logging
 def save_workflow(obj, eng):
