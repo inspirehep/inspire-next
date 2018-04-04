@@ -126,6 +126,19 @@ def get_push_access_token(orcid):
     return token
 
 
+def get_push_access_tokens(orcids):
+    remote_accounts = db.session.query(RemoteAccount)\
+        .filter(RemoteAccount.user_id == UserIdentity.id_user)\
+        .filter(UserIdentity.id.in_(orcids)).all()
+
+    remote_tokens = []
+    for remote_account in remote_accounts:
+        if remote_account.extra_data.get('allow_push', False):
+            remote_tokens.extend(remote_account.remote_tokens)
+
+    return remote_tokens
+
+
 def account_setup(remote, token, resp):
     """Perform additional setup after user have been logged in.
 
