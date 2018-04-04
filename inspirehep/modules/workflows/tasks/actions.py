@@ -69,6 +69,10 @@ from inspirehep.utils.record import (
 )
 from inspirehep.utils.url import is_pdf_link
 
+#TODO: Proper placement of the new imports
+from elasticsearch.helpers import scan
+from invenio_search import InvenioSearch
+from inspire_matcher import InspireMatcher, match
 from . import config_ref_matcher
 
 EXPERIMENTAL_ARXIV_CATEGORIES = [
@@ -413,20 +417,13 @@ def refextract(obj, eng):
         None
     """
 
-    # Get the configurations for ElasticSearch defined in config_ref_matcher.py
-    # TODO: This seems like a hacky way to get to load config. Not sure but the
-    #       configs can problably be loaded in the flask app meaning this part
-    #       likely doesn't have to run each time.
-    config = {}
-    for conf in dir(config_ref_matcher):
-        if conf.startswith('config_'):
-            config[conf] = getattr(config_ref_matcher, conf)
-
+    # Check if the references already exist in the the obj data
     if 'references' in obj.data:
         obj.log.info('Found references in metadata, extracting unextracted raw_refs')
         obj.data['references'] = extract_references_from_raw_refs(obj.data['references'])
         return
 
+    # Get the references from PDF and the user submitted text for references
     pdf_references, text_references = [], []
     source = get_source(obj.data)
 
@@ -438,37 +435,84 @@ def refextract(obj, eng):
     if text:
         text_references = extract_references_from_text(text, source)
 
-    if len(pdf_references) == len(text_references) == 0:
+    # Get the configurations for ElasticSearch defined in config_ref_matcher.py
+    # TODO: This seems like a hacky way to get to load config. Not sure but the
+    #       configs can problably be loaded in the flask app meaning this part
+    #       likely doesn't have to run each time.
+    config = {}
+    for conf in dir(config_ref_matcher):
+        if conf.startswith('config_'):
+            config[conf] = getattr(config_ref_matcher, conf)
+
+    # Initilize the InvenioSearch and InspireMatcher
+    InvenioSearch(current_app)
+    InspireMatcher(current_app)
+
+    # Search for reference matches among the list of references
+    # TODO: So far, we are onlu counting refs, but we also need to associate
+    #       them with the appropriate records IDs
+    with current_app.app_context():
+        # Match pdf_references
+        for pdf_ref in pdf_references:
+            if match_reference(pdf_ref, config):
+                pdf_match_count += 1
+        # Match text_references
+        for text_ref in text_references:
+            if match_reference(text_ref, config):
+                text_match_count += 1
+
+    # TODO: Reference association
+    # TODO: Optionally, check if both sets can be merged (Not sure if
+    #       this would help a lot, so could just be extra computation)
+    if pdf_match_count == text_match_count == 0:
         obj.log.info('No references extracted.')
-    elif len(pdf_references) >= len(text_references):
+    elif pdf_match_count > text_match_count:
         obj.log.info('Extracted %d references from PDF.', len(pdf_references))
         obj.data['references'] = pdf_references
-    elif len(text_references) > len(pdf_references):
+    elif text_match_count > pdf_match_count:
         obj.log.info('Extracted %d references from text.', len(text_references))
         obj.data['references'] = text_references
 
-def match_reference(reference):
+#TODO: Check if this needs a debug logger. Additionally, check if the function
+#      is placed right. Also check if the data citations matching code is
+#      correct.
+def match_reference(reference, config):
+    """Match references given a reference metadata using InspireMatcher queires.
+
+    Args:
+        reference: The reference metadata
+        config: The configutaion(s) for ElasticSearch queries
+
+    Returns:
+        The record ID of the matched reference
+    """
+
+    # Match record ID if it exists and is legacy curated
     if reference.get('legacy_curated') and reference.get('recid'):
         return reference['recid']
 
+    # Match in JCAP and JHEP
     journal_title = get_value(reference, 'reference.publication_info.journal_title')
     if journal_title in ['JCAP', 'JHEP']:
         try:
             if get_value(reference, 'reference.publication_info.year'):
-                reference['reference']['publication_info']['year'] = str(reference['reference']['publication_info']['year'])
-            result = next(match(reference, config_for_jcap_and_jhep))
+                reference['reference']['publication_info']['year'] = str(
+                    reference['reference']['publication_info']['year'])
+            result = next(match(reference, config['config_jcap_jhep']))
             return result['_source']['control_number']
         except StopIteration:
             pass
 
+    # Match in data records
     try:
-        result = next(match(reference, config))
+        result = next(match(reference, config['config_data']))
         return result['_source']['control_number']
     except StopIteration:
         pass
 
+    # The general match query in all HEP records
     try:
-        result = next(match(reference, config_for_data))
+        result = next(match(reference, config['config_general']))
         return result['_source']['control_number']
     except StopIteration:
         pass
