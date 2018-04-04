@@ -20,27 +20,21 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""HAL extension."""
-
 from __future__ import absolute_import, division, print_function
 
-from . import config
-from .cli import hal
-from .views import blueprint
+import click
+
+from flask.cli import with_appcontext
+
+from .bulk_push import run
 
 
-class InspireHAL(object):
-    def __init__(self, app=None):
-        if app:
-            self.init_app(app)
+@click.group()
+def hal():
+    """Command related to pushing records to HAL."""
 
-    def init_app(self, app):
-        self.init_config(app)
-        app.register_blueprint(blueprint)
-        app.cli.add_command(hal)
-        app.extensions['inspire-hal'] = self
 
-    def init_config(self, app):
-        for k in dir(config):
-            if k.startswith('HAL_'):
-                app.config.setdefault(k, getattr(config, k))
+@hal.command()
+@with_appcontext
+def push():
+    run()
