@@ -178,16 +178,19 @@ def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
     mock_logger.exception.assert_called_once_with('Migrator Record Insert Error')
 
 
-@patch('inspirehep.modules.records.receivers.get_push_access_token', return_value='fake-token')
 def test_orcid_push_disabled_on_migrate_from_mirror(app, cleanup, enable_orcid_push_feature):
     record_fixture_path = pkg_resources.resource_filename(
         __name__,
         os.path.join('fixtures', 'dummy.xml')
     )
 
-    with patch('inspirehep.modules.orcid.tasks.attempt_push') as attempt_push:
+    with patch('inspirehep.modules.orcid.tasks.attempt_push') as mock_attempt_push, \
+            patch('inspirehep.modules.records.receivers.get_push_access_tokens') as mock_get_push_access_tokens:
+        mock_get_push_access_tokens.return_value.remote_account.extra_data['orcid'] = '0000-0002-1825-0097'
+        mock_get_push_access_tokens.return_value.access_token = 'mytoken'
+
         migrate_from_file.delay(record_fixture_path, wait_for_results=True)
-        attempt_push.assert_not_called()
+        mock_attempt_push.assert_not_called()
 
     prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
     assert prod_record.valid
