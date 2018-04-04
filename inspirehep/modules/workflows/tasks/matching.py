@@ -41,7 +41,6 @@ from inspirehep.modules.workflows.tasks.actions import mark
 from ..utils import with_debug_logging
 
 
-@with_debug_logging
 def is_too_old(record, days_ago=5):
     """Return True if the record is more than days_ago days old.
 
