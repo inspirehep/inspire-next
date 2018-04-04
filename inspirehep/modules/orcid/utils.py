@@ -34,7 +34,6 @@ from six.moves.urllib.parse import urljoin
 from StringIO import StringIO
 from sqlalchemy import type_coerce
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_db import db
 from invenio_oauthclient.models import (
@@ -108,22 +107,6 @@ def _get_account_and_token(orcid):
     account, remote_token = account_token_user_join.filter(UserIdentity.id == orcid).one()
 
     return account, remote_token
-
-
-def get_push_access_token(orcid):
-    try:
-        account, remote_token = _get_account_and_token(orcid)
-    except NoResultFound:
-        return None
-
-    if not account.extra_data.get('allow_push'):
-        return None
-
-    # the other member is the secret, used only on OAuth v1, we don't
-    # support it.
-    token, _ = remote_token.token()
-
-    return token
 
 
 def get_push_access_tokens(orcids):
