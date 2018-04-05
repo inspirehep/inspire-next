@@ -212,7 +212,7 @@ def test_import_legacy_orcid_tokens_pushes_on_new_user(
         kwargs={
             'orcid': '0000-0002-1825-0097',
             'rec_id': 4328,
-            'token': '3d25a708-dae9-48eb-b676-80a2bfb9d35c',
+            'oauth_token': '3d25a708-dae9-48eb-b676-80a2bfb9d35c',
         },
     )
 
