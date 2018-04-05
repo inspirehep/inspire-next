@@ -35,7 +35,6 @@ from sqlalchemy.orm.exc import NoResultFound
 from inspirehep.modules.orcid.utils import (
     _split_lists,
     canonicalize_xml_element,
-    get_push_access_token,
 )
 
 
@@ -125,27 +124,6 @@ def mock_get_account_token_allowed(*args, **kwargs):
         'allow_push': True
     }
     return account, token
-
-
-@pytest.mark.parametrize(
-    'get_account_token_mock, expected_token',
-    [
-        [mock_get_account_token_not_found, None],
-        [mock_get_account_token_not_allowed, None],
-        [mock_get_account_token_allowed, 'dummy_token'],
-
-    ],
-    ids=[
-        "If there's no token returns None",
-        "If there's token, but push is not allowed, returns None",
-        "If there's token and push is allowed return the token",
-    ]
-)
-def test_get_push_access_token(get_account_token_mock, expected_token):
-    with mock.patch('inspirehep.modules.orcid.utils._get_account_and_token', get_account_token_mock):
-        token = get_push_access_token('dummy orcid')
-
-    assert token == expected_token
 
 
 def test_canonicalize_xml_element():

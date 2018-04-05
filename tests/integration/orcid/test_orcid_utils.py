@@ -34,7 +34,6 @@ from inspirehep.modules.orcid.utils import (
     _get_api_url_for_recid,
     get_literature_recids_for_orcid,
     get_orcids_for_push,
-    get_push_access_token,
     get_push_access_tokens,
 )
 from inspirehep.utils.record_getter import get_db_record
@@ -250,16 +249,6 @@ def test_get_literature_recids_for_orcid_still_works_if_author_has_no_orcid_id(i
 
     with pytest.raises(NoResultFound):
         get_literature_recids_for_orcid('0000-0003-4792-9178')
-
-
-def test_get_push_access_token_happy_flow(isolated_app):
-    orcid = '0000-0003-4792-9178'
-    expected_remote_token = TestRemoteToken.create_for_orcid(
-        orcid).remote_token
-
-    remote_token = get_push_access_token(orcid)
-
-    assert remote_token == expected_remote_token.access_token
 
 
 class TestGetPushAccessTokens(object):

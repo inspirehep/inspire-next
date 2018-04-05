@@ -32,7 +32,6 @@ from inspirehep.modules.orcid.tasks import orcid_push  # noqa: F401
 from inspirehep.modules.workflows.tasks.upload import store_record
 
 
-@patch('inspirehep.modules.records.receivers.get_push_access_token', return_value='token')
 @patch('inspirehep.modules.orcid.tasks.attempt_push')
 def test_store_record_does_not_raise_in_the_orcid_receiver(mock_attempt_push, app):
     config = {
