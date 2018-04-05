@@ -448,8 +448,6 @@ def refextract(obj, eng):
             config[conf] = getattr(config_ref_matcher, conf)
 
     # Search for reference matches among the list of references
-    # TODO: So far, we are only counting refs, but we also need to associate
-    #       them with the appropriate records IDs
     pdf_match_count = 0
     text_match_count = 0
     # Match pdf_references
@@ -457,16 +455,20 @@ def refextract(obj, eng):
         for i, pdf_ref in enumerate(pdf_references):
             matched_recID = match_reference(pdf_ref, config) or 0
             if matched_recID:
-                pdf_references[i]['recid'] = matched_recID
-                #pdf_references[i]['record']['$ref'] = "http://labs.inspirehep.net/api/literature/"+str(matched_recID)
+                #pdf_references[i]['recid'] = matched_recID
+                pdf_references[i]['record'] = {
+                    '$ref':"http://labs.inspirehep.net/api/literature/"+str(matched_recID)
+                }
                 pdf_match_count += 1
     # Match text_references
     if text:
         for text_ref in text_references:
             matched_recID = match_reference(text_ref, config) or 0
             if matched_recID:
-                text_references[i]['recid'] = matched_recID
-                #text_references[i]['record']['$ref'] = "http://labs.inspirehep.net/api/literature/"+str(matched_recID)
+                #text_references[i]['recid'] = matched_recID
+                text_references[i]['record'] = {
+                    '$ref':"http://labs.inspirehep.net/api/literature/"+str(matched_recID)
+                }
                 text_match_count += 1
 
     obj.log.info('PDF Matches: %d', pdf_match_count)
