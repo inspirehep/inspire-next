@@ -49,7 +49,10 @@ from inspire_utils.helpers import force_list
 from inspire_utils.name import generate_name_variations
 from inspire_utils.record import get_value
 from inspirehep.modules.authors.utils import phonetic_blocks
-from inspirehep.modules.orcid.utils import get_push_access_token, get_orcids_for_push
+from inspirehep.modules.orcid.utils import (
+    get_push_access_tokens,
+    get_orcids_for_push,
+)
 
 
 def is_hep(record):
@@ -142,10 +145,11 @@ def push_to_orcid(sender, record, *args, **kwargs):
 
     task_name = current_app.config['ORCID_PUSH_TASK_ENDPOINT']
 
-    for orcid in get_orcids_for_push(record):
-        token = get_push_access_token(orcid)
-        if token is None:
-            continue
+    orcids = get_orcids_for_push(record)
+    remote_tokens = get_push_access_tokens(orcids)
+    for remote_token in remote_tokens:
+        access_token = remote_token.access_token
+        orcid = remote_token.remote_account.extra_data['orcid']
 
         push_to_orcid_task = Task()
         push_to_orcid_task.name = task_name
@@ -154,7 +158,7 @@ def push_to_orcid(sender, record, *args, **kwargs):
             kwargs={
                 'orcid': orcid,
                 'rec_id': record['control_number'],
-                'oauth_token': token,
+                'oauth_token': access_token,
             },
         )
 

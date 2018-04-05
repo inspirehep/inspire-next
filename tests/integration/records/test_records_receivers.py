@@ -285,7 +285,7 @@ def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_
     assert mocked_Task.apply_async.call_count == 2
 
 
-def test_that_db_changes_are_mirrored_in_es(app):
+def test_that_db_changes_are_mirrored_in_es(isolated_app):
     search = LiteratureSearch()
     json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
