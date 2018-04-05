@@ -50,8 +50,9 @@ define([
           url: '/api/conferences?q=conferenceautocomplete:%QUERY*',
           filter: function(response) {
             return $.map(response.hits.hits, function(el) {
-              el.metadata.city = el.metadata.address[0].cities[0];
-              el.metadata.country = el.metadata.address[0].country_code;
+              obj = el.metadata.address.find(function (obj) { return obj.hasOwnProperty('cities') });
+              el.metadata.city = obj.cities ? obj.cities[0] : '';
+              el.metadata.country = obj.country_code ? obj.country_code : '';
               el.metadata.title = el.metadata.titles[0].title;
               return el.metadata
             }).sort(function(x, y) {
