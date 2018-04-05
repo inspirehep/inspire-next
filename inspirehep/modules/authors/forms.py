@@ -563,6 +563,12 @@ class AuthorUpdateForm(INSPIREForm):
         """Constructor."""
         super(AuthorUpdateForm, self).__init__(*args, **kwargs)
         is_review = kwargs.pop('is_review', False)
+        is_update = kwargs.pop('is_update', False)
+
+        if is_update:
+            # remove validation for duplicate ORCIDs on update
+            self.orcid.validators = self.orcid.validators[:-1]
+
         if is_review:
             self.bai.widget = TextInput()
             self.bai.flags = Flags()
