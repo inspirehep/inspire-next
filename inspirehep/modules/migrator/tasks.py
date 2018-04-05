@@ -195,7 +195,8 @@ def migrate_from_mirror(also_migrate=None, wait_for_results=False, skip_files=No
         tasks = []
         migrate_recids_from_mirror.ignore_result = False
 
-    for i, chunk in enumerate(chunker(query.yield_per(CHUNK_SIZE)), 1):
+    chunked_recids = chunker(res.recid for res in query.yield_per(CHUNK_SIZE))
+    for i, chunk in enumerate(chunked_recids, 1):
         print("Scheduled {} records for migration".format(i * CHUNK_SIZE))
         if wait_for_results:
             tasks.append(migrate_recids_from_mirror.s(chunk, skip_files=skip_files))
