@@ -156,7 +156,6 @@ def migrate_record_from_legacy(recid):
 
 
 @shared_task(ignore_result=True, queue='migrator')
-@disable_orcid_push
 def migrate_from_mirror(also_migrate=None, wait_for_results=False, skip_files=None):
     """Migrate legacy records from the local mirror.
 
@@ -267,6 +266,7 @@ def create_index_op(record):
 
 
 @shared_task(ignore_result=False, queue='migrator')
+@disable_orcid_push
 def migrate_recids_from_mirror(prod_recids, skip_files=False):
     models_committed.disconnect(index_after_commit)
 
