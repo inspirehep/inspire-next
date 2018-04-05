@@ -28,7 +28,7 @@ import sys
 from functools import wraps
 from six import reraise
 
-from flask import current_app
+from flask import Flask, current_app
 from jsonschema.exceptions import ValidationError
 from sqlalchemy import (
     JSON,
@@ -73,7 +73,10 @@ from inspirehep.utils.url import is_pdf_link
 from elasticsearch.helpers import scan
 from invenio_search import InvenioSearch
 from inspire_matcher import InspireMatcher, match
+from inspire_utils.logging import getStackTraceLogger
 from . import config_ref_matcher
+
+LOGGER = getStackTraceLogger(__name__)
 
 EXPERIMENTAL_ARXIV_CATEGORIES = [
     'astro-ph',
@@ -93,7 +96,6 @@ EXPERIMENTAL_INSPIRE_CATEGORIES = [
     'Experiment-Nucl',
     'Instrumentation',
 ]
-
 
 def mark(key, value):
     """Mark the workflow object by putting a value in a key in extra_data.
@@ -420,6 +422,7 @@ def refextract(obj, eng):
     # Check if the references already exist in the the obj data
     if 'references' in obj.data:
         obj.log.info('Found references in metadata, extracting unextracted raw_refs')
+        LOGGER.error('Found references in metadata, extracting unextracted raw_refs')
         obj.data['references'] = extract_references_from_raw_refs(obj.data['references'])
         return
 
@@ -435,7 +438,7 @@ def refextract(obj, eng):
     if text:
         text_references = extract_references_from_text(text, source)
 
-    # Get the configurations for ElasticSearch defined in config_ref_matcher.py
+    # Get the configurations for InspireMatcher defined in config_ref_matcher.py
     # TODO: This seems like a hacky way to get to load config. Not sure but the
     #       configs can problably be loaded in the flask app meaning this part
     #       likely doesn't have to run each time.
@@ -444,28 +447,47 @@ def refextract(obj, eng):
         if conf.startswith('config_'):
             config[conf] = getattr(config_ref_matcher, conf)
 
-    # Initilize the InvenioSearch and InspireMatcher
-    InvenioSearch(current_app)
-    InspireMatcher(current_app)
-
     # Search for reference matches among the list of references
-    # TODO: So far, we are onlu counting refs, but we also need to associate
+    # TODO: So far, we are only counting refs, but we also need to associate
     #       them with the appropriate records IDs
-    with current_app.app_context():
-        # Match pdf_references
-        for pdf_ref in pdf_references:
-            if match_reference(pdf_ref, config):
+    pdf_match_count = 0
+    text_match_count = 0
+    # Match pdf_references
+    if tmp_document:
+        for i, pdf_ref in enumerate(pdf_references):
+            matched_recID = match_reference(pdf_ref, config) or 0
+            if matched_recID:
+                pdf_references[i]['recid'] = matched_recID
+                #pdf_references[i]['record']['$ref'] = "http://labs.inspirehep.net/api/literature/"+str(matched_recID)
                 pdf_match_count += 1
-        # Match text_references
+    # Match text_references
+    if text:
         for text_ref in text_references:
-            if match_reference(text_ref, config):
+            matched_recID = match_reference(text_ref, config) or 0
+            if matched_recID:
+                text_references[i]['recid'] = matched_recID
+                #text_references[i]['record']['$ref'] = "http://labs.inspirehep.net/api/literature/"+str(matched_recID)
                 text_match_count += 1
 
-    # TODO: Reference association
-    # TODO: Optionally, check if both sets can be merged (Not sure if
+    obj.log.info('PDF Matches: %d', pdf_match_count)
+    obj.log.info('Text Matches: %d', text_match_count)
+    LOGGER.error('PDF Matches: %d', pdf_match_count)
+    LOGGER.error('Text Matches: %d', text_match_count)
+    LOGGER.error('Total PDF: %d', len(pdf_references))
+    LOGGER.error('Total Text: %d', len(text_references))
+    # TODO: Discuss: Optionally, check if both sets can be merged (Not sure if
     #       this would help a lot, so could just be extra computation)
     if pdf_match_count == text_match_count == 0:
         obj.log.info('No references extracted.')
+        # TODO: Consider classification of such a reference, since this can be
+        #       kind of indicative of INSPIRE irrelevant articles.
+    elif pdf_match_count == text_match_count != 0:
+        # We prefer the text references in this case, since 1/6th of the records
+        # do carry text references, and they have more chance to be correct than
+        # pdf refereces. In 5/6th of the cases, the pdf references would
+        # automatically take preference, as the pdf_match_count would be greater.
+        obj.log.info('Extracted %d references from text.', len(text_references))
+        obj.data['references'] = text_references
     elif pdf_match_count > text_match_count:
         obj.log.info('Extracted %d references from PDF.', len(pdf_references))
         obj.data['references'] = pdf_references
@@ -473,23 +495,18 @@ def refextract(obj, eng):
         obj.log.info('Extracted %d references from text.', len(text_references))
         obj.data['references'] = text_references
 
-#TODO: Check if this needs a debug logger. Additionally, check if the function
-#      is placed right. Also check if the data citations matching code is
-#      correct.
+#TODO: Check if the function is placed right. I think it might need to placed
+#       in another file.
 def match_reference(reference, config):
     """Match references given a reference metadata using InspireMatcher queires.
 
     Args:
         reference: The reference metadata
-        config: The configutaion(s) for ElasticSearch queries
+        config: The configutaion(s) for InspireMatcher queries
 
     Returns:
         The record ID of the matched reference
     """
-
-    # Match record ID if it exists and is legacy curated
-    if reference.get('legacy_curated') and reference.get('recid'):
-        return reference['recid']
 
     # Match in JCAP and JHEP
     journal_title = get_value(reference, 'reference.publication_info.journal_title')
