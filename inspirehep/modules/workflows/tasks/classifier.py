@@ -106,7 +106,6 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
     return _classify_paper
 
 
-@with_debug_logging
 def clean_instances_from_data(output):
     """Check if specific keys are of InstanceType and replace them with their id."""
     new_output = {}
