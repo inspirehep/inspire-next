@@ -260,6 +260,6 @@ def get_literature_recids_for_orcid(orcid):
 
     query = Q('match', authors__curated_relation=True) & Q('match', authors__recid=author_recid)
     search_by_curated_author = LiteratureSearch().query('nested', path='authors', query=query)\
-                                                 .params(_source=['control_number'])
+                                                 .params(_source=['control_number'], size=9999)
 
     return [el['control_number'] for el in search_by_curated_author]
