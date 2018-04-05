@@ -20,7 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Reference Matcher Configurations for ElasticSearch searches."""
+"""Reference Matcher Configurations for InspireMatcher and ElasticSearch
+ searches."""
 
 from __future__ import absolute_import, division, print_function
 
