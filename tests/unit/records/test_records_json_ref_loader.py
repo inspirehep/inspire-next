@@ -39,8 +39,8 @@ def _build_url(endpoint='literature', recid='42'):
     return '{}/api/{}/{}'.format(server, endpoint, recid)
 
 
-@patch('inspirehep.modules.records.json_ref_loader.record_getter.get_es_record')
-@patch('inspirehep.modules.records.json_ref_loader.record_getter.get_db_record')
+@patch('inspirehep.modules.records.json_ref_loader.record_getter.get_es_record', autospec=True)
+@patch('inspirehep.modules.records.json_ref_loader.record_getter.get_db_record', autospec=True)
 def test_replace_refs_correct_sources(get_db_rec, get_es_rec):
     with_es_record = {'ES': 'ES'}
     with_db_record = {'DB': 'DB'}
@@ -55,9 +55,9 @@ def test_replace_refs_correct_sources(get_db_rec, get_es_rec):
     assert es_rec == with_es_record
 
 
-@patch('inspirehep.modules.records.json_ref_loader.get_pid_type_from_endpoint')
-@patch('inspirehep.modules.records.json_ref_loader.JsonLoader.get_remote_json')
-@patch('inspirehep.modules.records.json_ref_loader.AbstractRecordLoader.get_record')
+@patch('inspirehep.modules.records.json_ref_loader.get_pid_type_from_endpoint', autospec=True)
+@patch('inspirehep.modules.records.json_ref_loader.JsonLoader.get_remote_json', autospec=True)
+@patch('inspirehep.modules.records.json_ref_loader.AbstractRecordLoader.get_record', autospec=True)
 def test_abstract_loader_url_fallbacks(get_record, super_get_r_j, g_p_t_f_e):
     with_super = {'SUPER': 'SUPER'}
     with_actual = {'ACTUAL': 'ACTUAL'}
@@ -119,8 +119,8 @@ def test_abstract_loader_url_fallbacks(get_record, super_get_r_j, g_p_t_f_e):
         assert expect_super == with_super
 
 
-@patch('inspirehep.modules.records.json_ref_loader.get_pid_type_from_endpoint')
-@patch('inspirehep.modules.records.json_ref_loader.AbstractRecordLoader.get_record')
+@patch('inspirehep.modules.records.json_ref_loader.get_pid_type_from_endpoint', autospec=True)
+@patch('inspirehep.modules.records.json_ref_loader.AbstractRecordLoader.get_record', autospec=True)
 def test_abstract_loader_recid_parsing(get_record, g_p_t_f_e):
     with_actual = {'ACTUAL': 'ACTUAL'}
     g_p_t_f_e.side_effect = ['pt1', 'pt2', 'pt3']
@@ -146,7 +146,7 @@ def test_abstract_loader_recid_parsing(get_record, g_p_t_f_e):
         get_record.assert_called_with('pt3', '3')
 
 
-@patch('inspirehep.modules.records.json_ref_loader.AbstractRecordLoader.get_record')
+@patch('inspirehep.modules.records.json_ref_loader.AbstractRecordLoader.get_record', autospec=True)
 def test_abstract_loader_return_none(get_record):
     config = {'SERVER_NAME': 'http://inspirehep.net'}
 
@@ -163,9 +163,9 @@ def test_abstract_loader_return_none(get_record):
         assert get_record.call_count == 0
 
 
-@patch('inspirehep.modules.records.json_ref_loader.get_pid_type_from_endpoint')
-@patch('inspirehep.modules.records.json_ref_loader.record_getter.get_es_record')
-@patch('inspirehep.modules.records.json_ref_loader.record_getter.get_db_record')
+@patch('inspirehep.modules.records.json_ref_loader.get_pid_type_from_endpoint', autospec=True)
+@patch('inspirehep.modules.records.json_ref_loader.record_getter.get_es_record', autospec=True)
+@patch('inspirehep.modules.records.json_ref_loader.record_getter.get_db_record', autospec=True)
 def test_specific_loaders_return_none(get_db_rec, get_es_rec, g_p_t_f_e):
     g_p_t_f_e.return_value = 'pt'
     get_es_rec.side_effect = RecordGetterError('err', None)

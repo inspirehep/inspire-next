@@ -66,25 +66,31 @@ def enable_fuzzy_matcher(workflow_app):
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link'
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
     return_value=[],
+    autospec=True,
 )
 def test_harvesting_arxiv_workflow_manual_rejected(
     mocked_refextract_extract_refs,
@@ -127,26 +133,32 @@ def test_harvesting_arxiv_workflow_manual_rejected(
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
+    return_value=True,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
     return_value=[],
+    autospec=True,
 )
 def test_harvesting_arxiv_workflow_core_record_auto_accepted(
     mocked_refextract_extract_refs,
@@ -181,30 +193,37 @@ def test_harvesting_arxiv_workflow_core_record_auto_accepted(
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.utils.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.matching.match',
     return_value=iter([]),
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
     return_value=[],
+    autospec=True,
 )
 def test_harvesting_arxiv_workflow_manual_accepted(
     mocked_refextract_extract_refs,
@@ -255,22 +274,27 @@ def test_harvesting_arxiv_workflow_manual_accepted(
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
+    return_value=True,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
+    autospec=True,
 )
 def test_match_in_holdingpen_stops_pending_wf(
     mocked_api_request_magpie,
@@ -317,22 +341,27 @@ def test_match_in_holdingpen_stops_pending_wf(
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
+    return_value=True,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
+    autospec=True,
 )
 def test_match_in_holdingpen_previously_rejected_wf_stop(
     mocked_api_request_magpie,
@@ -372,22 +401,27 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
+    return_value=True,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
+    autospec=True,
 )
 def test_match_in_holdingpen_different_sources_continues(
     mocked_api_request_magpie,
@@ -425,22 +459,27 @@ def test_match_in_holdingpen_different_sources_continues(
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
+    return_value=True,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
+    autospec=True,
 )
 def test_arxiv_update_is_not_store_on_legacy_and_labs(
     mocked_download_arxiv,
@@ -525,18 +564,22 @@ def test_article_workflow_continues_when_record_is_valid(workflow_app):
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
+    return_value=True,
+    autospec=True,
 )
 def test_update_exact_matched_goes_trough_the_workflow(
     mocked_is_pdf_link,
@@ -567,18 +610,22 @@ def test_update_exact_matched_goes_trough_the_workflow(
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
+    return_value=True,
+    autospec=True,
 )
 def test_fuzzy_matched_goes_trough_the_workflow(
     mocked_is_pdf_link,
@@ -804,26 +851,31 @@ def test_validation_error_callback_with_malformed_with_invalid_types(workflow_ap
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
+    return_value=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
     return_value=[],
+    autospec=True,
 )
 def test_keep_previously_rejected_from_fully_harvested_category_is_auto_approved(
         mocked_refextract_extract_refs,
@@ -863,26 +915,32 @@ def test_keep_previously_rejected_from_fully_harvested_category_is_auto_approved
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
     side_effect=fake_download_file,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
+    return_value=True,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.beard.json_api_request',
     side_effect=fake_beard_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
+    autospec=True,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
     return_value=[],
+    autospec=True,
 )
 def test_previously_rejected_from_not_fully_harvested_category_is_not_auto_approved(
         mocked_refextract_extract_refs,

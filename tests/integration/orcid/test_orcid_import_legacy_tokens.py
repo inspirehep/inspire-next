@@ -186,8 +186,8 @@ def test_import_multiple_orcid_tokens_no_user_exists(
     assert_db_has_n_legacy_tokens(1, SAMPLE_USER_2)
 
 
-@patch('inspirehep.modules.orcid.tasks.orcid_push')
-@patch('inspirehep.modules.orcid.tasks.get_literature_recids_for_orcid')
+@patch('inspirehep.modules.orcid.tasks.orcid_push', autospec=True)
+@patch('inspirehep.modules.orcid.tasks.get_literature_recids_for_orcid', autospec=True)
 def test_import_legacy_orcid_tokens_pushes_on_new_user(
         mock_get_literature_recids_for_orcid, mock_orcid_push,
         app_with_config, redis_setup, teardown_sample_user):

@@ -117,7 +117,7 @@ def test_get_conference_end_date():
     assert expected == result
 
 
-@patch('inspirehep.modules.hal.utils.replace_refs')
+@patch('inspirehep.modules.hal.utils.replace_refs', autospec=True)
 def test_get_conference_record(replace_refs):
     schema = load_schema('hep')
     control_number_schema = schema['properties']['control_number']

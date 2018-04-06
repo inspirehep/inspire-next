@@ -76,7 +76,7 @@ def test_doi_syntax_validator_raises_on_invalid_dois():
         assert doi_syntax_validator(None, field)
 
 
-@patch('inspirehep.modules.forms.validation_utils.orcid.MemberAPI')
+@patch('inspirehep.modules.forms.validation_utils.orcid.MemberAPI', autospec=True)
 def test_orcid_validator_accepts_existing_orcids(mock_member_api):
     mock_orcid_api = MockOrcidAPI({
         'num-found': 1,
@@ -105,7 +105,7 @@ def test_orcid_validator_accepts_existing_orcids(mock_member_api):
         assert ORCIDValidator(None, field) is None
 
 
-@patch('inspirehep.modules.forms.validation_utils.orcid.MemberAPI')
+@patch('inspirehep.modules.forms.validation_utils.orcid.MemberAPI', autospec=True)
 def test_orcid_validator_raises_on_non_existing_orcids(mock_member_api):
     mock_orcid_api = MockOrcidAPI({'num-found': 0, 'result': []})
     mock_member_api.return_value = mock_orcid_api
@@ -124,7 +124,7 @@ def test_orcid_validator_raises_on_non_existing_orcids(mock_member_api):
             ORCIDValidator(None, field)
 
 
-@patch('inspirehep.modules.forms.validation_utils.orcid.MemberAPI')
+@patch('inspirehep.modules.forms.validation_utils.orcid.MemberAPI', autospec=True)
 def test_orcid_validator_accepts_everything_when_orcid_is_not_configured(mock_member_api):
     mock_orcid_api = MockOrcidAPI({'orcid-search-results': {'num-found': 0}})
     mock_member_api.return_value = mock_orcid_api
@@ -137,7 +137,7 @@ def test_orcid_validator_accepts_everything_when_orcid_is_not_configured(mock_me
         assert ORCIDValidator(None, field) is None
 
 
-@patch('inspirehep.modules.forms.validation_utils.orcid.MemberAPI')
+@patch('inspirehep.modules.forms.validation_utils.orcid.MemberAPI', autospec=True)
 def test_orcid_validator_accepts_everything_when_orcid_is_down(mock_member_api):
     mock_orcid_api = MockOrcidAPI()
     mock_member_api.return_value = mock_orcid_api

@@ -674,8 +674,8 @@ def test_get_publi_info_from_publication_info_a_list_of_two_elements():
     assert expected == result
 
 
-@mock.patch('inspirehep.utils.latex.Latex._get_publi_info')
-@mock.patch('inspirehep.utils.latex.Latex._get_arxiv')
+@mock.patch('inspirehep.utils.latex.Latex._get_publi_info', autospec=True)
+@mock.patch('inspirehep.utils.latex.Latex._get_arxiv', autospec=True)
 def test_get_report_number_no_publi_info_yes_arxiv(g_a, g_p_i):
     g_a.return_value = False
     g_p_i.return_value = True
@@ -686,8 +686,8 @@ def test_get_report_number_no_publi_info_yes_arxiv(g_a, g_p_i):
     assert latex._get_report_number() is None
 
 
-@mock.patch('inspirehep.utils.latex.Latex._get_publi_info')
-@mock.patch('inspirehep.utils.latex.Latex._get_arxiv')
+@mock.patch('inspirehep.utils.latex.Latex._get_publi_info', autospec=True)
+@mock.patch('inspirehep.utils.latex.Latex._get_arxiv', autospec=True)
 def test_get_report_number_yes_publi_info_no_arxiv(g_a, g_p_i):
     g_a.return_value = True
     g_p_i.return_value = False
@@ -698,8 +698,8 @@ def test_get_report_number_yes_publi_info_no_arxiv(g_a, g_p_i):
     assert latex._get_report_number() is None
 
 
-@mock.patch('inspirehep.utils.latex.Latex._get_publi_info')
-@mock.patch('inspirehep.utils.latex.Latex._get_arxiv')
+@mock.patch('inspirehep.utils.latex.Latex._get_publi_info', autospec=True)
+@mock.patch('inspirehep.utils.latex.Latex._get_arxiv', autospec=True)
 def test_get_report_number_yes_publi_info_yes_arxiv(g_a, g_p_i):
     g_a.return_value = True
     g_p_i.return_value = True

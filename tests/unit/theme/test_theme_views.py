@@ -84,7 +84,7 @@ def test_postfeedback_empty_feedback(app_client):
     assert json.loads(response.data) == {'success': False}
 
 
-@mock.patch('inspirehep.modules.theme.views.send_email.delay')
+@mock.patch('inspirehep.modules.theme.views.send_email.delay', autospec=True)
 def test_postfeedback_send_email_failure(delay, app_client):
     """Informs the user when a server error occurred."""
     class FailedResult():

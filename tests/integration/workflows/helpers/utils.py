@@ -53,7 +53,8 @@ def _delete_record(pid_type, pid_value):
 
 
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link'
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
+    autospec=True,
 )
 def get_halted_workflow(mocked_is_pdf_link, app, record, extra_config=None):
     mocked_is_pdf_link.return_value = True

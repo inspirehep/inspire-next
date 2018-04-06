@@ -202,7 +202,7 @@ def test_orcid_push_feature_flag_orcid_push_whitelist_regex_any(api):
     orcid = '0000-0002-7638-5686'
     regex = '.*'
 
-    with mock.patch('inspirehep.modules.orcid.tasks.attempt_push') as mock_attempt_push, \
+    with mock.patch('inspirehep.modules.orcid.tasks.attempt_push', autospec=True) as mock_attempt_push, \
             mock.patch.dict(
                 'inspirehep.modules.orcid.tasks.current_app.config', {
                     'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX': regex,
@@ -216,7 +216,7 @@ def test_orcid_push_feature_flag_orcid_push_whitelist_regex_none(api):
     orcid = '0000-0002-7638-5686'
     regex = '^$'
 
-    with mock.patch('inspirehep.modules.orcid.tasks.attempt_push') as mock_attempt_push, \
+    with mock.patch('inspirehep.modules.orcid.tasks.attempt_push', autospec=True) as mock_attempt_push, \
             mock.patch.dict(
                 'inspirehep.modules.orcid.tasks.current_app.config', {
                     'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX': regex,
@@ -230,7 +230,7 @@ def test_orcid_push_feature_flag_orcid_push_whitelist_regex_some(api):
     orcid = '0000-0002-7638-5686'
     regex = '^(0000-0002-7638-5686|0000-0002-7638-5687)$'
 
-    with mock.patch('inspirehep.modules.orcid.tasks.attempt_push') as mock_attempt_push, \
+    with mock.patch('inspirehep.modules.orcid.tasks.attempt_push', autospec=True) as mock_attempt_push, \
             mock.patch.dict(
                 'inspirehep.modules.orcid.tasks.current_app.config', {
                     'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX': regex,
