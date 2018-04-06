@@ -606,7 +606,7 @@ def test_fuzzy_matcher_not_run_on_feat_flag_disabled():
     with patch('inspirehep.modules.workflows.tasks.matching.match', autospec=True) as match:
         fuzzy_match(obj, eng)
 
-        match.assert_not_called()
+        match.mock.assert_not_called()
 
 
 def test_fuzzy_matcher_run_on_feat_flag_enabled(enable_fuzzy_matcher):
@@ -619,4 +619,4 @@ def test_fuzzy_matcher_run_on_feat_flag_enabled(enable_fuzzy_matcher):
     with patch('inspirehep.modules.workflows.tasks.matching.match', autospec=True) as match:
         fuzzy_match(obj, eng)
 
-        match.assert_called()
+        match.mock.assert_called()

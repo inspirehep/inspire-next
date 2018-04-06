@@ -69,7 +69,7 @@ def enable_fuzzy_matcher(workflow_app):
     autospec=True,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link'
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
     autospec=True,
 )
 @mock.patch(

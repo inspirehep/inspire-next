@@ -108,8 +108,8 @@ def test_migrate_and_insert_record_valid_record(mock_logger, isolated_app):
     assert prod_record.valid is True
     assert prod_record.marcxml == raw_record
 
-    assert not mock_logger.error.called
-    assert not mock_logger.exception.called
+    mock_logger.error.assert_not_called()
+    mock_logger.exception.assert_not_called()
 
 
 @patch('inspirehep.modules.migrator.tasks.LOGGER', autospec=True)
@@ -132,7 +132,7 @@ def test_migrate_and_insert_record_dojson_error(mock_logger, isolated_app):
     assert prod_record.valid is False
     assert prod_record.marcxml == raw_record
 
-    assert not mock_logger.error.called
+    mock_logger.error.assert_not_called()
     mock_logger.exception.assert_called_once_with('Migrator DoJSON Error')
 
 
@@ -153,8 +153,8 @@ def test_migrate_and_insert_record_invalid_record(mock_logger, isolated_app):
     assert prod_record.valid is False
     assert prod_record.marcxml == raw_record
 
-    assert mock_logger.error.called
-    assert not mock_logger.exception.called
+    mock_logger.error.assert_not_called()
+    mock_logger.exception.assert_not_called()
 
 
 @patch('inspirehep.modules.records.api.InspireRecord.create_or_update', side_effect=Exception(), autospec=True)
@@ -174,7 +174,7 @@ def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
     assert prod_record.valid is False
     assert prod_record.marcxml == raw_record
 
-    assert not mock_logger.error.called
+    mock_logger.error.assert_not_called()
     mock_logger.exception.assert_called_once_with('Migrator Record Insert Error')
 
 
