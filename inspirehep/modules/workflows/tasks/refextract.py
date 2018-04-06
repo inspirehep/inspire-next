@@ -184,3 +184,7 @@ def extract_references_from_raw_ref(reference, custom_kbs_file=None):
     return extract_references_from_text(
         raw_ref['value'], source=raw_ref['source'], custom_kbs_file=custom_kbs_file
     )
+
+
+def match_reference(reference):
+    pass
