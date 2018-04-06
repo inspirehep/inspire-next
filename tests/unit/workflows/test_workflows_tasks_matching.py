@@ -438,7 +438,8 @@ def test_fuzzy_match_returns_true_if_something_matched_with_4_authors(mock_match
             {
                 'full_name': 'Author, 4'
             }
-        ]
+        ],
+        'authors_count': 4
     }
 
     assert validate(matched_record['titles'], titles_schema) is None
@@ -469,6 +470,7 @@ def test_fuzzy_match_returns_true_if_something_matched_with_4_authors(mock_match
                 'full_name': 'Author, 3'
             },
         ],
+        'authors_count': 4
     }]
     result = get_value(obj.extra_data, 'matches.fuzzy')
 
@@ -492,7 +494,8 @@ def test_fuzzy_match_returns_true_if_something_matched_with_1_author(mock_match,
             {
                 'full_name': 'Author 1'
             },
-        ]
+        ],
+        'authors_count': 1
     }
 
     assert validate(matched_record['titles'], titles_schema) is None
@@ -515,6 +518,242 @@ def test_fuzzy_match_returns_true_if_something_matched_with_1_author(mock_match,
         'authors': [
             {
                 'full_name': 'Author 1'
+            },
+        ],
+        'authors_count': 1
+    }]
+    result = get_value(obj.extra_data, 'matches.fuzzy')
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_fuzzy_match_returns_true_if_something_matched_with_number_of_pages(mock_match, enable_fuzzy_matcher):
+    schema = load_schema('hep')
+    titles_schema = schema['properties']['titles']
+    number_of_pages_schema = schema['properties']['number_of_pages']
+
+    matched_record = {
+        'control_number': 4328,
+        'titles': [
+            {
+                'title': 'title',
+            },
+        ],
+        'number_of_pages': 10,
+    }
+
+    assert validate(matched_record['titles'], titles_schema) is None
+    assert validate(matched_record['number_of_pages'], number_of_pages_schema) is None
+
+    mock_match.return_value = iter([{'_source': matched_record}])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert fuzzy_match(obj, eng)
+    assert 'matches' in obj.extra_data
+
+    expected = [{
+        'control_number': 4328,
+        'title': 'title',
+        'number_of_pages': 10,
+    }]
+    result = get_value(obj.extra_data, 'matches.fuzzy')
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_fuzzy_match_returns_true_if_something_matched_with_arxiv_eprints(mock_match, enable_fuzzy_matcher):
+    schema = load_schema('hep')
+    arxiv_eprints_schema = schema['properties']['arxiv_eprints']
+    titles_schema = schema['properties']['titles']
+
+    matched_record = {
+        'control_number': 1472986,
+        'titles': [
+            {
+                'title': 'title',
+            },
+        ],
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ph'
+                ],
+                'value': '1606.09129'
+            }
+        ],
+    }
+
+    assert validate(matched_record['titles'], titles_schema) is None
+    assert validate(matched_record['arxiv_eprints'], arxiv_eprints_schema) is None
+
+    mock_match.return_value = iter([{'_source': matched_record}])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert fuzzy_match(obj, eng)
+    assert 'matches' in obj.extra_data
+
+    expected = [{
+        'control_number': 1472986,
+        'title': 'title',
+        'arxiv_eprint': '1606.09129',
+    }]
+    result = get_value(obj.extra_data, 'matches.fuzzy')
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_fuzzy_match_returns_true_if_something_matched_with_earliest_date(mock_match, enable_fuzzy_matcher):
+    schema = load_schema('hep')
+    titles_schema = schema['properties']['titles']
+
+    matched_record = {
+        'control_number': 1472986,
+        'titles': [
+            {
+                'title': 'title',
+            },
+        ],
+        'earliest_date': '2016-06-29',
+    }
+
+    assert validate(matched_record['titles'], titles_schema) is None
+
+    mock_match.return_value = iter([{'_source': matched_record}])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert fuzzy_match(obj, eng)
+    assert 'matches' in obj.extra_data
+
+    expected = [{
+        'control_number': 1472986,
+        'title': 'title',
+        'earliest_date': '2016-06-29',
+    }]
+    result = get_value(obj.extra_data, 'matches.fuzzy')
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_fuzzy_match_returns_true_if_something_matched_with_more_than_1_public_notes(mock_match, enable_fuzzy_matcher):
+    schema = load_schema('hep')
+    public_notes_schema = schema['properties']['public_notes']
+    titles_schema = schema['properties']['titles']
+
+    matched_record = {
+        'control_number': 1472986,
+        'titles': [
+            {
+                'title': 'title',
+            },
+        ],
+        'public_notes': [
+            {
+                'source': 'arXiv',
+                'value': '4 pages, 4 figures',
+            },
+            {
+                'source': 'arXiv',
+                'value': 'Some other public note',
+            },
+        ],
+    }
+
+    assert validate(matched_record['titles'], titles_schema) is None
+    assert validate(matched_record['public_notes'], public_notes_schema) is None
+
+    mock_match.return_value = iter([{'_source': matched_record}])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert fuzzy_match(obj, eng)
+    assert 'matches' in obj.extra_data
+
+    expected = [{
+        'control_number': 1472986,
+        'title': 'title',
+        'public_notes': [
+            {'value': '4 pages, 4 figures'},
+            {'value': 'Some other public note'},
+        ],
+    }]
+    result = get_value(obj.extra_data, 'matches.fuzzy')
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.matching.match')
+def test_fuzzy_match_returns_true_if_something_matched_with_publication_info(mock_match, enable_fuzzy_matcher):
+    schema = load_schema('hep')
+    publication_info_schema = schema['properties']['publication_info']
+    titles_schema = schema['properties']['titles']
+
+    matched_record = {
+        'control_number': 1472986,
+        'titles': [
+            {
+                'title': 'title',
+            },
+        ],
+        'publication_info': [
+            {
+                'artid': '054021',
+                'journal_issue': '5',
+                'journal_title': 'Phys.Rev.D',
+                'journal_volume': '94',
+                'pubinfo_freetext': 'Phys. Rev. D94 (2016) 054021',
+                'year': 2016
+            },
+        ],
+    }
+
+    assert validate(matched_record['titles'], titles_schema) is None
+    assert validate(matched_record['publication_info'], publication_info_schema) is None
+
+    mock_match.return_value = iter([{'_source': matched_record}])
+
+    data = {}
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert fuzzy_match(obj, eng)
+    assert 'matches' in obj.extra_data
+
+    expected = [{
+        'control_number': 1472986,
+        'title': 'title',
+        'publication_info': [
+            {
+                'artid': '054021',
+                'journal_issue': '5',
+                'journal_title': 'Phys.Rev.D',
+                'journal_volume': '94',
+                'pubinfo_freetext': 'Phys. Rev. D94 (2016) 054021',
+                'year': 2016
             },
         ],
     }]
