@@ -580,6 +580,7 @@ def test_fuzzy_matched_goes_trough_the_workflow(
     }
 
     record = record_from_db
+    expected_brief = _get_hep_record_brief(record)
     del record['arxiv_eprints']
     rec_id = record['control_number']
 
@@ -595,7 +596,7 @@ def test_fuzzy_matched_goes_trough_the_workflow(
 
     assert obj.extra_data['already-in-holding-pen'] is False
     assert obj.extra_data['holdingpen_matches'] == []
-    assert obj.extra_data['matches']['fuzzy'][0] == _get_hep_record_brief(record)
+    assert obj.extra_data['matches']['fuzzy'][0] == expected_brief
 
     WorkflowObject.continue_workflow = continue_wf_patched_context(workflow_app)
     do_resolve_matching(workflow_app, obj.id, rec_id)

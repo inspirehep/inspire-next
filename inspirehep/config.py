@@ -1709,5 +1709,7 @@ FUZZY_MATCH = {
     ],
     'doc_type': 'hep',
     'index': 'records-hep',
-    'source': ['control_number', 'titles', 'abstracts', 'authors']
+    'source': ['control_number', 'titles', 'abstracts', 'authors',
+               'arxiv_eprints', 'public_notes', 'number_of_pages',
+               'publication_info', 'earliest_date']
 }
