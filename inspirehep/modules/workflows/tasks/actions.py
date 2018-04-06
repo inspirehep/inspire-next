@@ -28,7 +28,7 @@ import sys
 from functools import wraps
 from six import reraise
 
-from flask import Flask, current_app
+from flask import current_app
 from jsonschema.exceptions import ValidationError
 from sqlalchemy import (
     JSON,
@@ -43,6 +43,7 @@ from invenio_db import db
 from invenio_workflows import ObjectStatus
 from invenio_workflows.errors import WorkflowsError
 from invenio_records.models import RecordMetadata
+from inspire_matcher import match
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.utils import validate
 from inspire_utils.record import get_value
@@ -69,14 +70,7 @@ from inspirehep.utils.record import (
 )
 from inspirehep.utils.url import is_pdf_link
 
-#TODO: Proper placement of the new imports
-from elasticsearch.helpers import scan
-from invenio_search import InvenioSearch
-from inspire_matcher import InspireMatcher, match
-from inspire_utils.logging import getStackTraceLogger
 from . import config_ref_matcher
-
-LOGGER = getStackTraceLogger(__name__)
 
 EXPERIMENTAL_ARXIV_CATEGORIES = [
     'astro-ph',
@@ -406,10 +400,8 @@ def refextract(obj, eng):
 
     Runs ``refextract`` on both the PDF attached to the workflow and the
     references provided by the submitter, if any, then chooses the one
-    that generated the most and attaches them to the workflow object.
-
-    Note:
-        We might want to compare the number of *matched* references instead.
+    that has the most most record matches and attaches them to the workflow
+    object.
 
     Args:
         obj: a workflow object.
@@ -422,7 +414,6 @@ def refextract(obj, eng):
     # Check if the references already exist in the the obj data
     if 'references' in obj.data:
         obj.log.info('Found references in metadata, extracting unextracted raw_refs')
-        LOGGER.error('Found references in metadata, extracting unextracted raw_refs')
         obj.data['references'] = extract_references_from_raw_refs(obj.data['references'])
         return
 
@@ -455,7 +446,6 @@ def refextract(obj, eng):
         for i, pdf_ref in enumerate(pdf_references):
             matched_recID = match_reference(pdf_ref, config) or 0
             if matched_recID:
-                #pdf_references[i]['recid'] = matched_recID
                 pdf_references[i]['record'] = {
                     '$ref':"http://labs.inspirehep.net/api/literature/"+str(matched_recID)
                 }
@@ -465,18 +455,11 @@ def refextract(obj, eng):
         for text_ref in text_references:
             matched_recID = match_reference(text_ref, config) or 0
             if matched_recID:
-                #text_references[i]['recid'] = matched_recID
                 text_references[i]['record'] = {
                     '$ref':"http://labs.inspirehep.net/api/literature/"+str(matched_recID)
                 }
                 text_match_count += 1
 
-    obj.log.info('PDF Matches: %d', pdf_match_count)
-    obj.log.info('Text Matches: %d', text_match_count)
-    LOGGER.error('PDF Matches: %d', pdf_match_count)
-    LOGGER.error('Text Matches: %d', text_match_count)
-    LOGGER.error('Total PDF: %d', len(pdf_references))
-    LOGGER.error('Total Text: %d', len(text_references))
     # TODO: Discuss: Optionally, check if both sets can be merged (Not sure if
     #       this would help a lot, so could just be extra computation)
     if pdf_match_count == text_match_count == 0:
@@ -484,12 +467,12 @@ def refextract(obj, eng):
         # TODO: Consider classification of such a reference, since this can be
         #       kind of indicative of INSPIRE irrelevant articles.
     elif pdf_match_count == text_match_count != 0:
+        obj.log.info('Extracted %d references from text.', len(text_references))
+        obj.data['references'] = text_references
         # We prefer the text references in this case, since 1/6th of the records
         # do carry text references, and they have more chance to be correct than
         # pdf refereces. In 5/6th of the cases, the pdf references would
         # automatically take preference, as the pdf_match_count would be greater.
-        obj.log.info('Extracted %d references from text.', len(text_references))
-        obj.data['references'] = text_references
     elif pdf_match_count > text_match_count:
         obj.log.info('Extracted %d references from PDF.', len(pdf_references))
         obj.data['references'] = pdf_references
