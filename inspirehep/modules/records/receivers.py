@@ -146,11 +146,8 @@ def push_to_orcid(sender, record, *args, **kwargs):
     task_name = current_app.config['ORCID_PUSH_TASK_ENDPOINT']
 
     orcids = get_orcids_for_push(record)
-    remote_tokens = get_push_access_tokens(orcids)
-    for remote_token in remote_tokens:
-        access_token = remote_token.access_token
-        orcid = remote_token.remote_account.extra_data['orcid']
-
+    orcids_and_tokens = get_push_access_tokens(orcids)
+    for orcid, access_token in orcids_and_tokens:
         push_to_orcid_task = Task()
         push_to_orcid_task.name = task_name
         push_to_orcid_task.apply_async(
