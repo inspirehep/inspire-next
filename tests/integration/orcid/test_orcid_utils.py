@@ -256,10 +256,11 @@ class TestGetPushAccessTokens(object):
         orcid = '0000-0003-4792-9178'
         expected_remote_token = TestRemoteToken.create_for_orcid(orcid).remote_token
 
-        remote_tokens = get_push_access_tokens([orcid])
+        orcids_and_tokens = get_push_access_tokens([orcid])
 
-        assert len(remote_tokens) == 1
-        assert remote_tokens[0].access_token == expected_remote_token.access_token
+        assert len(orcids_and_tokens) == 1
+        assert orcids_and_tokens[0].id == orcid
+        assert orcids_and_tokens[0].access_token == expected_remote_token.access_token
 
     def test_get_push_access_tokens_multiple_tokens(self, isolated_app):
         orcid1 = '0000-0003-4792-9178'
@@ -267,11 +268,13 @@ class TestGetPushAccessTokens(object):
         orcid2 = '0000-0003-4792-9179'
         expected_remote_token2 = TestRemoteToken.create_for_orcid(orcid2).remote_token
 
-        remote_tokens = get_push_access_tokens([orcid1, orcid2])
+        orcids_and_tokens = get_push_access_tokens([orcid1, orcid2])
 
-        assert len(remote_tokens) == 2
-        assert remote_tokens[0].access_token == expected_remote_token1.access_token
-        assert remote_tokens[1].access_token == expected_remote_token2.access_token
+        assert len(orcids_and_tokens) == 2
+        assert orcids_and_tokens[0].id == orcid1
+        assert orcids_and_tokens[0].access_token == expected_remote_token1.access_token
+        assert orcids_and_tokens[1].id == orcid2
+        assert orcids_and_tokens[1].access_token == expected_remote_token2.access_token
 
     def test_get_push_access_tokens_allow_push(self, isolated_app):
         orcid1 = '0000-0003-4792-9178'
@@ -279,7 +282,8 @@ class TestGetPushAccessTokens(object):
         orcid2 = '0000-0003-4792-9179'
         TestRemoteToken.create_for_orcid(orcid2, allow_push=False).remote_token
 
-        remote_tokens = get_push_access_tokens([orcid1, orcid2])
+        orcids_and_tokens = get_push_access_tokens([orcid1, orcid2])
 
-        assert len(remote_tokens) == 1
-        assert remote_tokens[0].access_token == expected_remote_token.access_token
+        assert len(orcids_and_tokens) == 1
+        assert orcids_and_tokens[0].id == orcid1
+        assert orcids_and_tokens[0].access_token == expected_remote_token.access_token
