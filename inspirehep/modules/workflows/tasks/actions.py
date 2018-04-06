@@ -43,6 +43,7 @@ from invenio_db import db
 from invenio_workflows import ObjectStatus
 from invenio_workflows.errors import WorkflowsError
 from invenio_records.models import RecordMetadata
+from inspire_dojson.utils import get_record_ref
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.utils import validate
 from inspire_utils.record import get_value
@@ -51,6 +52,7 @@ from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_pdf,
     extract_references_from_raw_refs,
     extract_references_from_text,
+    match_reference,
 )
 from inspirehep.modules.workflows.utils import (
     download_file_to_workflow,
@@ -402,19 +404,23 @@ def refextract(obj, eng):
     references provided by the submitter, if any, then chooses the one
     that generated the most and attaches them to the workflow object.
 
-    Note:
-        We might want to compare the number of *matched* references instead.
-
     Args:
         obj: a workflow object.
         eng: a workflow engine.
 
     Returns:
         None
+
     """
     if 'references' in obj.data:
-        obj.log.info('Found references in metadata, extracting unextracted raw_refs')
-        obj.data['references'] = extract_references_from_raw_refs(obj.data['references'])
+        raw_references = extract_references_from_raw_refs(obj.data['references'])
+        for i, raw_reference in enumerate(raw_references):
+            matched_recid = match_reference(raw_reference)
+            if matched_recid:
+                raw_references[i]['record'] = get_record_ref('literature', matched_recid)
+
+        obj.log.info('Extracted %d references from raw refs.', len(raw_references))
+        obj.data['references'] = raw_references
         return
 
     pdf_references, text_references = [], []
@@ -423,17 +429,25 @@ def refextract(obj, eng):
     with get_document_in_workflow(obj) as tmp_document:
         if tmp_document:
             pdf_references = extract_references_from_pdf(tmp_document, source)
+            for i, pdf_reference in enumerate(pdf_references):
+                matched_recid = match_reference(pdf_reference)
+                if matched_recid:
+                    pdf_references[i]['record'] = get_record_ref('literature', matched_recid)
 
     text = get_value(obj.extra_data, 'formdata.references')
     if text:
         text_references = extract_references_from_text(text, source)
+        for i, text_reference in enumerate(text_references):
+            matched_recid = match_reference(text_reference)
+            if matched_recid:
+                text_references[i]['record'] = get_record_ref('literature', matched_recid)
 
     if len(pdf_references) == len(text_references) == 0:
         obj.log.info('No references extracted.')
-    elif len(pdf_references) >= len(text_references):
+    elif len(pdf_references) > len(text_references):
         obj.log.info('Extracted %d references from PDF.', len(pdf_references))
         obj.data['references'] = pdf_references
-    elif len(text_references) > len(pdf_references):
+    elif len(text_references) >= len(pdf_references):
         obj.log.info('Extracted %d references from text.', len(text_references))
         obj.data['references'] = text_references
 
