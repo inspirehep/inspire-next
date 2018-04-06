@@ -295,7 +295,7 @@ def prepare_keywords(obj, eng):
 
     keywords = obj.data.get('keywords', [])
     for keyword in prediction.get('keywords', []):
-        # TODO: differentiate between curated and gueesed keywords
+        # TODO: differentiate between curated and guessed keywords
         keywords.append(
             {
                 'value': keyword['label'],
