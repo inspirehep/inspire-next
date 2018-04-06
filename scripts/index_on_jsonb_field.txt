@@ -1,10 +1,19 @@
 INDEX ON JSONB TYPE FIELD
 
+
+1. RECORDSMETADATA.JSON ids
+===========================
 The following SQL query adds an index to RecordMetadata.json field.
 The index can then be used in queries like:
 
 db.session.query(RecordMetadata.id)\
-.filter(type_coerce(RecordMetadata.json, JSONB)['ids'].contains(orcid_object)).one()
+.filter(type_coerce(RecordMetadata.json, JSONB)['ids'].contains('[{"schema": "ORCID", "value": "0000-"}]')).one()
+
+Which translates to:
+SELECT records_metadata.id AS records_metadata_id
+FROM records_metadata
+WHERE ((records_metadata.json -> 'ids')) @> '[{"schema": "ORCID", "value": "0000-"}]';
+
 
 Note: this query assumes that RecordMetadata.json field requires to
 be coerced to JSONB type as it wasn'e defined properly in the model.
@@ -20,3 +29,28 @@ migration. See: https://its.cern.ch/jira/browse/INSPIR-375
 -- CREATE INDEX CONCURRENTLY json_ids_index ON records_metadata USING gin ((json -> 'ids'));
 
 -- DROP INDEX CONCURRENTLY json_ids_index;
+
+
+2. RECORDSMETADATA.JSON _export_to
+==================================
+The following SQL query adds an index to RecordMetadata.json field.
+The index can then be used in queries like:
+
+RecordMetadata.query.filter(type_coerce(RecordMetadata.json, JSONB)['_export_to'].contains('[{"HAL": true}]')
+
+Which translates to:
+
+SELECT *
+FROM records_metadata
+WHERE (records_metadata.json -> '_export_to') @> '[{"HAL": true}]';
+
+
+-- CREATE INDEX CONCURRENTLY json_export_to_index ON records_metadata USING gin ((json -> '_export_to'));
+
+-- DROP INDEX CONCURRENTLY json_export_to_index;
+
+
+3. NOTE
+=======
+In order to test indexes in a small db (eg. dev machine) you might need to disable the sequential scan:
+-- SET enable_seqscan = OFF;

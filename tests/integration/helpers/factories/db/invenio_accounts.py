@@ -20,27 +20,29 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""HAL extension."""
-
 from __future__ import absolute_import, division, print_function
 
-from . import config
-from .cli import hal
-from .views import blueprint
+from invenio_accounts.models import User
+
+from .base import TestBaseModel
 
 
-class InspireHAL(object):
-    def __init__(self, app=None):
-        if app:
-            self.init_app(app)
+class TestUser(TestBaseModel):
+    """
+    Create User instances.
 
-    def init_app(self, app):
-        self.init_config(app)
-        app.register_blueprint(blueprint)
-        app.cli.add_command(hal)
-        app.extensions['inspire-hal'] = self
+    Example:
+        >>> from factories.db.invenio_accounts import TestUser
+        >>> factory = TestUser.create_from_kwargs(email='foo@bar.com')
+        >>> factory.user
+        <User (transient 4661300240)>
+        >>> factory.user.email
+        'foo@bar.com'
+    """
+    model_class = User
 
-    def init_config(self, app):
-        for k in dir(config):
-            if k.startswith('HAL_'):
-                app.config.setdefault(k, getattr(config, k))
+    @classmethod
+    def create_from_kwargs(cls, **kwargs):
+        instance = cls()
+        instance.user = super(TestUser, cls).create_from_kwargs(kwargs)
+        return instance

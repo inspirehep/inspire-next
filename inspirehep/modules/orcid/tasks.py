@@ -183,7 +183,7 @@ def import_legacy_orcid_tokens():
                         kwargs={
                             'orcid': orcid_to_push,
                             'rec_id': recid,
-                            'token': token,
+                            'oauth_token': token,
                         },
                     )
         except SQLAlchemyError as ex:

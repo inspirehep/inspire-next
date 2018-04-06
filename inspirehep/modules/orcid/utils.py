@@ -34,7 +34,6 @@ from six.moves.urllib.parse import urljoin
 from StringIO import StringIO
 from sqlalchemy import type_coerce
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_db import db
 from invenio_oauthclient.models import (
@@ -110,20 +109,17 @@ def _get_account_and_token(orcid):
     return account, remote_token
 
 
-def get_push_access_token(orcid):
-    try:
-        account, remote_token = _get_account_and_token(orcid)
-    except NoResultFound:
-        return None
+def get_push_access_tokens(orcids):
+    remote_accounts = db.session.query(RemoteAccount)\
+        .filter(RemoteAccount.user_id == UserIdentity.id_user)\
+        .filter(UserIdentity.id.in_(orcids)).all()
 
-    if not account.extra_data.get('allow_push'):
-        return None
+    remote_tokens = []
+    for remote_account in remote_accounts:
+        if remote_account.extra_data.get('allow_push', False):
+            remote_tokens.extend(remote_account.remote_tokens)
 
-    # the other member is the secret, used only on OAuth v1, we don't
-    # support it.
-    token, _ = remote_token.token()
-
-    return token
+    return remote_tokens
 
 
 def account_setup(remote, token, resp):
@@ -247,6 +243,6 @@ def get_literature_recids_for_orcid(orcid):
 
     query = Q('match', authors__curated_relation=True) & Q('match', authors__recid=author_recid)
     search_by_curated_author = LiteratureSearch().query('nested', path='authors', query=query)\
-                                                 .params(_source=['control_number'])
+                                                 .params(_source=['control_number'], size=9999)
 
     return [el['control_number'] for el in search_by_curated_author]

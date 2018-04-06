@@ -252,6 +252,7 @@ def is_experimental_paper(obj, eng):
 @with_debug_logging
 def is_arxiv_paper(obj, eng):
     """Check if a workflow contains a paper from arXiv.
+<<<<<<< HEAD
 
     Args:
         obj: a workflow object.
@@ -260,6 +261,16 @@ def is_arxiv_paper(obj, eng):
     Returns:
         bool: whether the workflow contains a paper from arXiv.
 
+=======
+
+    Args:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        bool: whether the workflow contains a paper from arXiv.
+
+>>>>>>> c20d8c29d585f9ba0acc0a0d9b63f16b17a18838
     """
     method = get_method(obj.data)
     source = get_source(obj.data)
