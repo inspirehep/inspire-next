@@ -54,4 +54,3 @@ WHERE (records_metadata.json -> '_export_to') @> '[{"HAL": true}]';
 =======
 In order to test indexes in a small db (eg. dev machine) you might need to disable the sequential scan:
 -- SET enable_seqscan = OFF;
-
