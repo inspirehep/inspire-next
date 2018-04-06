@@ -32,7 +32,7 @@ from elasticsearch_dsl import Q
 from flask import current_app
 from six.moves.urllib.parse import urljoin
 from StringIO import StringIO
-from sqlalchemy import type_coerce
+from sqlalchemy import cast, type_coerce
 from sqlalchemy.dialects.postgresql import JSONB
 
 from invenio_db import db
@@ -101,25 +101,25 @@ def get_orcid_recid_key(orcid, rec_id):
     return 'orcidcache:{}:{}'.format(orcid, rec_id)
 
 
-def _get_account_and_token(orcid):
-    account_token_join = db.session.query(RemoteAccount, RemoteToken).join("remote_tokens")
-    account_token_user_join = account_token_join.join(UserIdentity, UserIdentity.id_user == RemoteAccount.user_id)
-    account, remote_token = account_token_user_join.filter(UserIdentity.id == orcid).one()
-
-    return account, remote_token
-
-
 def get_push_access_tokens(orcids):
-    remote_accounts = db.session.query(RemoteAccount)\
-        .filter(RemoteAccount.user_id == UserIdentity.id_user)\
-        .filter(UserIdentity.id.in_(orcids)).all()
+    """Get the remote tokens for the given ORCIDs.
 
-    remote_tokens = []
-    for remote_account in remote_accounts:
-        if remote_account.extra_data.get('allow_push', False):
-            remote_tokens.extend(remote_account.remote_tokens)
+    Args:
+        orcids(List[str]): ORCIDs to get the tokens for.
 
-    return remote_tokens
+    Returns:
+        sqlalchemy.util._collections.result: pairs of (ORCID, access_token),
+        for ORCIDs having a token. These are similar to named tuples, in that
+        the values can be retrieved by index or by attribute, respectively
+        ``id`` and ``access_token``.
+
+    """
+    return db.session.query(UserIdentity.id, RemoteToken.access_token).filter(
+        RemoteToken.id_remote_account == RemoteAccount.id,
+        RemoteAccount.user_id == UserIdentity.id_user,
+        UserIdentity.id.in_(orcids),
+        cast(RemoteAccount.extra_data, JSONB).contains({'allow_push': True}),
+    ).all()
 
 
 def account_setup(remote, token, resp):
