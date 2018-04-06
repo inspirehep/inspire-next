@@ -23,3 +23,154 @@
 """Workflows configuration."""
 
 from __future__ import absolute_import, division, print_function
+
+
+#
+# Configuration used when matching references.
+#
+
+WORKFLOWS_REFERENCE_MATCHER_DEFAULT_CONFIG = {
+    'algorithm': [
+        {
+            'queries': [
+                {
+                    'path': 'reference.arxiv_eprint',
+                    'search_path': 'arxiv_eprints.value.raw',
+                    'type': 'exact',
+                },
+                {
+                    'path': 'reference.dois',
+                    'search_path': 'dois.value.raw',
+                    'type': 'exact',
+                },
+                {
+                    'path': 'reference.isbn',
+                    'search_path': 'isbns.value.raw',
+                    'type': 'exact',
+                },
+                {
+                    'path': 'reference.report_numbers',
+                    'search_path': 'report_numbers.value.fuzzy',
+                    'type': 'exact',
+                },
+                {
+                    'paths': [
+                        'reference.publication_info.journal_title',
+                        'reference.publication_info.journal_volume',
+                        'reference.publication_info.artid',
+                    ],
+                    'search_paths': [
+                        'publication_info.journal_title.raw',
+                        'publication_info.journal_volume',
+                        'publication_info.artid',
+                    ],
+                    'type': 'nested',
+                },
+                {
+                    'paths': [
+                        'reference.publication_info.journal_title',
+                        'reference.publication_info.journal_volume',
+                        'reference.publication_info.page_start',
+                    ],
+                    'search_paths': [
+                        'publication_info.journal_title.raw',
+                        'publication_info.journal_volume',
+                        'publication_info.page_start',
+                    ],
+                    'type': 'nested',
+                },
+            ],
+        },
+    ],
+    'doc_type': 'hep',
+    'index': 'records-hep',
+    'source': [
+        'control_number',
+    ],
+}
+"""TODO."""
+
+WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG = {
+    'algorithm': [
+        {
+            'queries': [
+                {
+                    'path': 'reference.arxiv_eprint',
+                    'search_path': 'arxiv_eprints.value.raw',
+                    'type': 'exact',
+                },
+                {
+                    'path': 'reference.dois',
+                    'search_path': 'dois.value.raw',
+                    'type': 'exact',
+                },
+                {
+                    'path': 'reference.isbn',
+                    'search_path': 'isbns.value.raw',
+                    'type': 'exact',
+                },
+                {
+                    'path': 'reference.report_numbers',
+                    'search_path': 'report_numbers.value.fuzzy',
+                    'type': 'exact',
+                },
+                {
+                    'paths': [
+                        'reference.publication_info.journal_title',
+                        'reference.publication_info.journal_volume',
+                        'reference.publication_info.year',
+                        'reference.publication_info.artid',
+                    ],
+                    'search_paths': [
+                        'publication_info.journal_title.raw',
+                        'publication_info.journal_volume',
+                        'publication_info.year',
+                        'publication_info.artid',
+                    ],
+                    'type': 'nested',
+                },
+                {
+                    'paths': [
+                        'reference.publication_info.journal_title',
+                        'reference.publication_info.journal_volume',
+                        'reference.publication_info.year',
+                        'reference.publication_info.page_start',
+                    ],
+                    'search_paths': [
+                        'publication_info.journal_title.raw',
+                        'publication_info.journal_volume',
+                        'publication_info.year',
+                        'publication_info.page_start',
+                    ],
+                    'type': 'nested',
+                },
+            ],
+        },
+    ],
+    'doc_type': 'hep',
+    'index': 'records-hep',
+    'source': [
+        'control_number',
+    ],
+}
+"""TODO."""
+
+WORKFLOWS_REFERENCE_MATCHER_DATA_CONFIG = {
+    'algorithm': [
+        {
+            'queries': [
+                {
+                    'path': 'reference.dois',
+                    'search_path': 'dois.value.raw',
+                    'type': 'exact',
+                },
+            ],
+        },
+    ],
+    'doc_type': 'data',
+    'index': 'records-data',
+    'source': [
+        'control_number',
+    ],
+}
+"""TODO."""
