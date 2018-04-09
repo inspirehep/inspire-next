@@ -224,11 +224,6 @@ def match_reference(reference):
     config_jcap_and_jhep = current_app.config['WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG']
     config_data = current_app.config['WORKFLOWS_REFERENCE_MATCHER_DATA_CONFIG']
 
-    if len('config_default') != 0:
-        LOGGER.error('THIS IS NORMAL BEHAVIOUR!!!!!!!!!!!!!!!!!!!!')
-    else:
-        LOGGER.error('CONFIG NOT LOADING!!!!! ABORT MISSION!!!!!!!!!!')
-
     journal_title = get_value(reference, 'reference.publication_info.journal_title')
     if journal_title in ['JCAP', 'JHEP']:
         try:
