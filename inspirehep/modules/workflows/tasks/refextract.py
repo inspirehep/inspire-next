@@ -24,14 +24,19 @@
 
 from __future__ import absolute_import, division, print_function
 
+from flask import current_app
+
 from itertools import chain
 
+from inspire_dojson.utils import get_record_ref
+from inspire_matcher import match
 from inspire_schemas.utils import (
     convert_old_publication_info_to_new,
     split_page_artid,
 )
 from inspire_utils.helpers import maybe_int
 from inspire_utils.logging import getStackTraceLogger
+from inspire_utils.record import get_value
 from inspirehep.utils.references import (
     local_refextract_kbs_path,
     map_refextract_to_schema,
@@ -186,5 +191,58 @@ def extract_references_from_raw_ref(reference, custom_kbs_file=None):
     )
 
 
+def match_references(references):
+    """Match references to record ids given a list of references.
+
+    Args:
+        references: Schema compliant list of references
+
+    Returns:
+        associated_references: The same list with the associated record ids (if any)
+    """
+
+    for i, reference in enumerate(references):
+        matched_recid = match_reference(reference)
+        if matched_recid:
+            references[i]['record'] = get_record_ref(matched_recid, 'literature')
+
+    return references
+
+
 def match_reference(reference):
-    pass
+    """Match references given a reference metadata using InspireMatcher queires.
+
+    Args:
+        reference: The reference metadata
+        config: The configutaion(s) for InspireMatcher queries
+
+    Returns:
+        The record ID of the matched reference
+    """
+
+    config_default = current_app.config['WORKFLOWS_REFERENCE_MATCHER_DEFAULT_CONFIG']
+    config_jcap_and_jhep = current_app.config['WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG']
+    config_data = current_app.config['WORKFLOWS_REFERENCE_MATCHER_DATA_CONFIG']
+
+    journal_title = get_value(reference, 'reference.publication_info.journal_title')
+    if journal_title in ['JCAP', 'JHEP']:
+        try:
+            if get_value(reference, 'reference.publication_info.year'):
+                reference['reference']['publication_info']['year'] = str(
+                    reference['reference']['publication_info']['year'])
+            result = next(match(reference, config_jcap_and_jhep))
+            return result['_source']['control_number']
+        except StopIteration:
+            pass
+
+    try:
+        result = next(match(reference, config_data))
+        return result['_source']['control_number']
+    except StopIteration:
+        pass
+
+    try:
+        result = next(match(reference, config_default))
+        return result['_source']['control_number']
+    except StopIteration:
+        pass
