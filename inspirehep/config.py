@@ -29,6 +29,7 @@ import sys
 import pkg_resources
 
 from celery.schedules import crontab
+from logging.config import dictConfig
 
 from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
@@ -112,6 +113,28 @@ REST_ENABLE_CORS = True
 # =======
 # To enable file logging set it to e.g. "{sys_prefix}/var/log/inspirehep.log"
 LOGGING_FS_LOGFILE = None
+
+dictConfig({
+    'version': 1,
+    'formatters': {
+        'default': {
+            'format': '[%(asctime)s] %(levelname)s/%(module)s: %(message)s',
+        }
+    },
+    'handlers': {
+        'stdout_handler': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+        }
+    },
+    'loggers': {
+        'inspirehep.modules.orcid': {
+            'level': 'INFO',
+            'handlers': ['stdout_handler'],
+            'propagate': True,
+        },
+    }
+})
 
 # Accounts
 # ========

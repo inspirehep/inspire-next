@@ -33,8 +33,8 @@ from inspirehep.modules.orcid.api import push_record_with_orcid, get_author_putc
 @pytest.fixture
 def mock_logger():
     class MockLogger(object):
-        def error(self, message):
-            self.message = message
+        def error(self, message, *args):
+            self.message = message % args
 
     mock_logger = MockLogger()
 

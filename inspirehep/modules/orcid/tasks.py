@@ -220,6 +220,8 @@ def attempt_push(orcid, rec_id, oauth_token):
         rec_id(int): inspire record's id to push to ORCID.
         oauth_token(string): orcid token.
     """
+    LOGGER.info('Will attempt to push #%s onto %s', rec_id, orcid)
+
     put_code, previous_hash = get_putcode_and_hash_from_redis(orcid, rec_id)
 
     if not put_code:
