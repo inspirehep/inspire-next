@@ -294,3 +294,58 @@ def record_to_merge(workflow_app):
     pid.delete()
     record.delete()
     record.commit()
+
+
+@pytest.fixture
+def insert_cited_record_for_matching(workflow_app):
+    json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': [
+            'Literature'
+        ],
+        'authors': [
+            {
+                'full_name': 'Jessica, Jones',
+            },
+        ],
+        'document_type': [
+            'thesis'
+        ],
+        'number_of_pages': 100,
+        'preprint_date': '2016-11-16',
+        'public_notes': [
+            {
+                'source': 'arXiv',
+                'value': '100 pages, 36 figures'
+            }
+        ],
+        'titles': [
+            {
+                'title': 'Alias Investigations'
+            }
+        ],
+        'dois': [
+            {
+                'value': '10.1007/978-3-319-15001-7'
+            }
+        ],
+    }
+    record = InspireRecord.create(json, id_=None, skip_files=True)
+    record.commit()
+    rec_uuid = record.id
+
+    db.session.commit()
+    es.indices.refresh('records-hep')
+
+    yield record
+
+    record = InspireRecord.get_record(rec_uuid)
+    pid = PersistentIdentifier.get(
+        pid_type='lit',
+        pid_value=record['control_number']
+    )
+
+    pid.unassign()
+    pid.delete()
+    record.delete()
+    record.commit()
