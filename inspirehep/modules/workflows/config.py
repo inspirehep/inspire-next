@@ -88,7 +88,7 @@ WORKFLOWS_REFERENCE_MATCHER_DEFAULT_CONFIG = {
         'control_number',
     ],
 }
-"""TODO."""
+"""Configuration for matching all HEP records."""
 
 WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG = {
     'algorithm': [
@@ -153,7 +153,9 @@ WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG = {
         'control_number',
     ],
 }
-"""TODO."""
+"""Configuration for matching records JCAP and JHEP records since
+they have a particular configuration and we have to look at the
+year as well for accurate matching."""
 
 WORKFLOWS_REFERENCE_MATCHER_DATA_CONFIG = {
     'algorithm': [
@@ -173,4 +175,5 @@ WORKFLOWS_REFERENCE_MATCHER_DATA_CONFIG = {
         'control_number',
     ],
 }
-"""TODO."""
+"""Configuration used for matching data records. Note that the
+index and doc_type are for data records."""
