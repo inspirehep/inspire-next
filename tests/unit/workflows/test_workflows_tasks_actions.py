@@ -47,7 +47,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     mark,
     populate_journal_coverage,
     populate_submission_document,
-    refextract,
     reject_record,
     set_refereed_and_fix_document_type,
     shall_halt_workflow,
