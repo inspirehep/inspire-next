@@ -31,6 +31,7 @@ from mock import patch
 import pkg_resources
 
 from invenio_db import db
+from invenio_pidstore.models import PersistentIdentifier
 from invenio_search.api import current_search_client as es
 
 from inspire_schemas.api import load_schema, validate
@@ -121,6 +122,7 @@ def test_refextract_from_pdf(mock_get_document_in_workflow):
 
     record = InspireRecord.create(cited_record_json, id_=None, skip_files=True)
     record.commit()
+    rec_uuid = record.id
 
     db.session.commit()
     es.indices.refresh('records-hep')
@@ -148,6 +150,16 @@ def test_refextract_from_pdf(mock_get_document_in_workflow):
     # Assert that the cited record is identified correctly
     assert obj.data['references'][2]['record']['$ref'] == 'http://localhost:5000/api/literature/1800000'
 
+    yield record
+
+    record = InspireRecord.get_record(rec_uuid)
+    pid = PersistentIdentifier.get(
+        pid_type='lit',
+        pid_value=record['control_number']
+    )
+
+    pid.unassign()
+    pid.delete()
     record.delete()
     record.commit()
 
@@ -176,6 +188,7 @@ def test_refextract_from_text(mock_get_document_in_workflow):
 
     record = InspireRecord.create(cited_record_json, id_=None, skip_files=True)
     record.commit()
+    rec_uuid = record.id
 
     db.session.commit()
     es.indices.refresh('records-hep')
@@ -204,10 +217,21 @@ def test_refextract_from_text(mock_get_document_in_workflow):
     # Assert that the cited record is identified correctly
     assert obj.data['references'][0]['record']['$ref'] == 'http://localhost:5000/api/literature/1800001'
 
+    yield record
+
+    record = InspireRecord.get_record(rec_uuid)
+    pid = PersistentIdentifier.get(
+        pid_type='lit',
+        pid_value=record['control_number']
+    )
+
+    pid.unassign()
+    pid.delete()
     record.delete()
     record.commit()
 
 
+@pytest.fixture
 def test_refextract_from_raw_refs():
 
     # Insert the record which is going to be cited
@@ -233,6 +257,7 @@ def test_refextract_from_raw_refs():
 
     record = InspireRecord.create(cited_record_json, id_=None, skip_files=True)
     record.commit()
+    rec_uuid = record.id
 
     db.session.commit()
     es.indices.refresh('records-hep')
@@ -265,5 +290,15 @@ def test_refextract_from_raw_refs():
     # Assert that the cited record is identified correctly
     assert obj.data['references'][0]['record']['$ref'] == 'http://localhost:5000/api/literature/1800002'
 
+    yield record
+
+    record = InspireRecord.get_record(rec_uuid)
+    pid = PersistentIdentifier.get(
+        pid_type='lit',
+        pid_value=record['control_number']
+    )
+
+    pid.unassign()
+    pid.delete()
     record.delete()
     record.commit()
