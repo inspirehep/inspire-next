@@ -125,7 +125,7 @@ def test_refextract_from_pdf(mock_get_document_in_workflow):
     rec_uuid = record.id
 
     db.session.commit()
-    es.indices.refresh('records-hep')
+    #es.indices.refresh('records-hep')
 
     # Insert the citing record
     mock_get_document_in_workflow.return_value.__enter__.return_value = pkg_resources.resource_filename(
@@ -231,7 +231,6 @@ def test_refextract_from_text(mock_get_document_in_workflow):
     record.commit()
 
 
-@pytest.fixture
 def test_refextract_from_raw_refs():
 
     # Insert the record which is going to be cited
@@ -289,8 +288,6 @@ def test_refextract_from_raw_refs():
 
     # Assert that the cited record is identified correctly
     assert obj.data['references'][0]['record']['$ref'] == 'http://localhost:5000/api/literature/1800002'
-
-    yield record
 
     record = InspireRecord.get_record(rec_uuid)
     pid = PersistentIdentifier.get(
