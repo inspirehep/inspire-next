@@ -64,15 +64,18 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
 
     new_hash = calculate_hash_for_record(record)
     if new_hash == old_hash:
-        LOGGER.info('Hash unchanged: not pushing #{} as not a meaningful update'.format(recid))
+        LOGGER.info(
+            'Hash unchanged: not pushing #%s as not a meaningful update', recid
+        )
         return put_code, new_hash
 
     try:
         bibtex = _get_bibtex_record(app.config, recid)
     except requests.RequestException:
         bibtex = None
-        LOGGER.error('Pushing record #{} without BibTex, as fetching'
-                     'it failed!'.format(recid))
+        LOGGER.error(
+            'Pushing record #%s without BibTex, as fetching it failed!', recid
+        )
 
     orcid_api = _get_api()
 
@@ -81,11 +84,9 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
     ).get_xml()
 
     if put_code:
-        LOGGER.info("Pushing record #{} with put-code {} to ORCID {}.".format(
-            recid,
-            put_code,
-            orcid
-        ))
+        LOGGER.info(
+            "Pushing record #%s with put-code %s onto %s.", recid, put_code, orcid,
+        )
         orcid_api.update_record(
             orcid_id=orcid,
             token=oauth_token,
@@ -96,10 +97,7 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
         )
     else:
         LOGGER.info(
-            "No put-code found, pushing new record #{} to ORCID {}.".format(
-                recid,
-                orcid,
-            )
+            "No put-code found, pushing new record #%s to ORCID %s.", recid, orcid,
         )
         put_code = orcid_api.add_record(
             orcid_id=orcid,
@@ -109,7 +107,7 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
             content_type='application/orcid+xml',
         )
 
-        LOGGER.info("Record added with put-code {}.".format(put_code))
+    LOGGER.info("Push of %s onto %s completed with put-code %s.", recid, orcid, put_code)
 
     return put_code, new_hash
 
@@ -249,9 +247,8 @@ def get_author_putcodes(orcid, oauth_token):
 
     if errors:
         LOGGER.error(
-            'Failed to match putcodes {} from {} to HEP records.'.format(
-                ', '.join(errors), orcid
-            )
+            'Failed to match putcodes %s from %s to HEP records.',
+            ', '.join(errors), orcid
         )
 
     return author_putcodes

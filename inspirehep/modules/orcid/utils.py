@@ -46,13 +46,10 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.models import RecordMetadata
 
 from inspire_dojson.utils import get_recid_from_ref
-from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_values_for_schema
 from inspire_utils.urls import ensure_scheme
 from inspirehep.modules.search.api import LiteratureSearch
 from inspirehep.utils.record_getter import get_db_records
-
-LOGGER = getStackTraceLogger(__name__)
 
 
 RECID_FROM_INSPIRE_URL = re.compile(
