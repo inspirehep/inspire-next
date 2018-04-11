@@ -150,8 +150,6 @@ def test_refextract_from_pdf(mock_get_document_in_workflow):
     # Assert that the cited record is identified correctly
     assert obj.data['references'][2]['record']['$ref'] == 'http://localhost:5000/api/literature/1800000'
 
-    yield record
-
     record = InspireRecord.get_record(rec_uuid)
     pid = PersistentIdentifier.get(
         pid_type='lit',
@@ -216,8 +214,6 @@ def test_refextract_from_text(mock_get_document_in_workflow):
 
     # Assert that the cited record is identified correctly
     assert obj.data['references'][0]['record']['$ref'] == 'http://localhost:5000/api/literature/1800001'
-
-    yield record
 
     record = InspireRecord.get_record(rec_uuid)
     pid = PersistentIdentifier.get(
