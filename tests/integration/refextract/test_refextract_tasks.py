@@ -105,7 +105,7 @@ def test_refextract_from_pdf(mock_get_document_in_workflow):
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         '_collections': ['Literature'],
         'document_type': ['article'],
-        'titles': [{'title': 'On global solutions to the Navier-Stokes system with large  $L^{3,\\infty}$ initial data'}],
+        'titles': [{'title': 'On global solutions to the Navier-Stokes system with large $L^{3,\\infty}$ initial data'}],
         'arxiv_eprints': [
             {'categories': ['math.AP'], 'value': '1603.03211'}
         ],
@@ -115,7 +115,7 @@ def test_refextract_from_pdf(mock_get_document_in_workflow):
             {'full_name': 'Seregin, G.'},
         ],
         'abstracts': [
-            {'source': 'arxiv', 'value': 'his paper addresses a question concerning the behaviour of a sequence of\r\nglobal solutions to the Navier-Stokes equations, with the corresponding\r\nsequence of smooth initial data being bounded in the (non-energy class) weak\r\nLebesgue space $L^{3,\\infty}$. It is closely related to the question of what\r\nwould be a reasonable definition of global weak solutions with a non-energy\r\nclass of initial data, including the aforementioned Lorentz space. This paper\r\ncan be regarded as an extension of a similar problem regarding the Lebesgue\r\nspace $L_3$ to the weak Lebesgue space $L^{3,\\infty}$, whose norms are both\r\nscale invariant with the respect to the Navier-Stokes scaling.'}
+            {'source': 'arxiv', 'value': 'This paper addresses a question concerning the behaviour of a sequence of\r\nglobal solutions to the Navier-Stokes equations, with the corresponding\r\nsequence of smooth initial data being bounded in the (non-energy class) weak\r\nLebesgue space $L^{3,\\infty}$. It is closely related to the question of what\r\nwould be a reasonable definition of global weak solutions with a non-energy\r\nclass of initial data, including the aforementioned Lorentz space. This paper\r\ncan be regarded as an extension of a similar problem regarding the Lebesgue\r\nspace $L_3$ to the weak Lebesgue space $L^{3,\\infty}$, whose norms are both\r\nscale invariant with the respect to the Navier-Stokes scaling.'}
         ],
     }
 
@@ -160,17 +160,17 @@ def test_refextract_from_text(mock_get_document_in_workflow):
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         '_collections': ['Literature'],
         'document_type': ['article'],
-        'titles': [{'title': 'On global solutions to the Navier-Stokes system with large  $L^{3,\\infty}$ initial data'}],
+        'titles': [{'title': 'Data2Vis: Automatic Generation of Data Visualizations Using  Sequence-to-Sequence Recurrent Neural Networks'}],
         'arxiv_eprints': [
-            {'categories': ['math.AP'], 'value': '1603.03211'}
+            {'categories': ['cs.HC', 'cs.AI', 'cs.LG'], 'value': '1804.03126'}
         ],
-        'control_number': 1800000,
+        'control_number': 1800001,
         'authors': [
-            {'full_name': 'Barker, T.'},
-            {'full_name': 'Seregin, G.'},
+            {'full_name': 'Dibia, Victor'},
+            {'full_name': 'Demiralp, Çağatay'},
         ],
         'abstracts': [
-            {'source': 'arxiv', 'value': 'his paper addresses a question concerning the behaviour of a sequence of\r\nglobal solutions to the Navier-Stokes equations, with the corresponding\r\nsequence of smooth initial data being bounded in the (non-energy class) weak\r\nLebesgue space $L^{3,\\infty}$. It is closely related to the question of what\r\nwould be a reasonable definition of global weak solutions with a non-energy\r\nclass of initial data, including the aforementioned Lorentz space. This paper\r\ncan be regarded as an extension of a similar problem regarding the Lebesgue\r\nspace $L_3$ to the weak Lebesgue space $L^{3,\\infty}$, whose norms are both\r\nscale invariant with the respect to the Navier-Stokes scaling.'}
+            {'source': 'arxiv', 'value': 'Rapidly creating effective visualizations using expressive grammars is\r\nchallenging for users who have limited time and limited skills in statistics\r\nand data visualization. Even high-level, dedicated visualization tools often\r\nrequire users to manually select among data attributes, decide which\r\ntransformations to apply, and specify mappings between visual encoding\r\nvariables and raw or transformed attributes. In this paper, we introduce\r\nData2Vis, a neural translation model, for automatically generating\r\nvisualizations from given datasets. We formulate visualization generation as a\r\nsequence to sequence translation problem where data specification is mapped to\r\na visualization specification in a declarative language (Vega-Lite). To this\r\nend, we train a multilayered Long Short-Term Memory (LSTM) model with attention\r\non a corpus of visualization specifications.'}
         ],
     }
 
@@ -190,7 +190,7 @@ def test_refextract_from_text(mock_get_document_in_workflow):
     data = {'acquisition_source': {'source': 'submitter'}}
     extra_data = {
         'formdata': {
-            'references': '[2] T. Baker and G. Seregin, On global solutions to the Navier-Stokes system with large L3,∞ initial data, arXiv:1603.03211.',
+            'references': '[23] Dibia, Victor, and Demiralp, Çağatay, Data2Vis: Automatic Generation of Data Visualizations Using  Sequence-to-Sequence Recurrent Neural Networks, arXiv:1804.03126.',
         },
     }
     assert validate(data['acquisition_source'], subschema) is None
@@ -202,7 +202,7 @@ def test_refextract_from_text(mock_get_document_in_workflow):
     assert obj.data['references'][0]['raw_refs'][0]['source'] == 'submitter'
 
     # Assert that the cited record is identified correctly
-    assert obj.data['references'][0]['record']['$ref'] == 'http://localhost:5000/api/literature/1800000'
+    assert obj.data['references'][0]['record']['$ref'] == 'http://localhost:5000/api/literature/1800001'
 
     record.delete()
     record.commit()
@@ -215,17 +215,19 @@ def test_refextract_from_raw_refs():
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         '_collections': ['Literature'],
         'document_type': ['article'],
-        'titles': [{'title': 'On global solutions to the Navier-Stokes system with large  $L^{3,\\infty}$ initial data'}],
+        'titles': [{'title': 'Blazingly Fast Video Object Segmentation with Pixel-Wise Metric Learning'}],
         'arxiv_eprints': [
-            {'categories': ['math.AP'], 'value': '1603.03211'}
+            {'categories': ['cs.CV'], 'value': '1804.03131'}
         ],
-        'control_number': 1800000,
+        'control_number': 1800002,
         'authors': [
-            {'full_name': 'Barker, T.'},
-            {'full_name': 'Seregin, G.'},
+            {'full_name': 'Chen, Yuhua'},
+            {'full_name': 'Pont-Tuset, Jordi'},
+            {'full_name': 'Montes, Alberto'},
+            {'full_name': 'Van Gool, Luc'},
         ],
         'abstracts': [
-            {'source': 'arxiv', 'value': 'his paper addresses a question concerning the behaviour of a sequence of\r\nglobal solutions to the Navier-Stokes equations, with the corresponding\r\nsequence of smooth initial data being bounded in the (non-energy class) weak\r\nLebesgue space $L^{3,\\infty}$. It is closely related to the question of what\r\nwould be a reasonable definition of global weak solutions with a non-energy\r\nclass of initial data, including the aforementioned Lorentz space. This paper\r\ncan be regarded as an extension of a similar problem regarding the Lebesgue\r\nspace $L_3$ to the weak Lebesgue space $L^{3,\\infty}$, whose norms are both\r\nscale invariant with the respect to the Navier-Stokes scaling.'}
+            {'source': 'arxiv', 'value': 'This paper tackles the problem of video object segmentation, given some user\r\nannotation which indicates the object of interest. The problem is formulated as\r\npixel-wise retrieval in a learned embedding space: we embed pixels of the same\r\nobject instance into the vicinity of each other, using a fully convolutional\r\nnetwork trained by a modified triplet loss as the embedding model. Then the\r\nannotated pixels are set as reference and the rest of the pixels are classified\r\nusing a nearest-neighbor approach. The proposed method supports different kinds\r\nof user input such as segmentation mask in the first frame (sei-supervised\r\nscenario), or a sparse set of clicked points (interactive scenario). In the\r\nsemi-supervised scenario, we achieve results competitive with the state of the\r\nart but at a fraction of computation cost (275 milliseconds per frame).'}
         ],
     }
 
@@ -246,7 +248,7 @@ def test_refextract_from_raw_refs():
                     {
                         'schema': 'text',
                         'source': 'arXiv',
-                        'value': '[2] T. Baker and G. Seregin, On global solutions to the Navier-Stokes system with large L3,∞ initial data, arXiv:1603.03211.'
+                        'value': '[3] Chen, Yuhua, Pont-Tuset, Jordi, Montes, Alberto, and Van Gool, Luc, Blazingly Fast Video Object Segmentation with Pixel-Wise Metric Learning, arXiv:1804.03131.'
                     },
                 ],
             },
@@ -261,7 +263,7 @@ def test_refextract_from_raw_refs():
     assert 'reference' in obj.data['references'][0]
 
     # Assert that the cited record is identified correctly
-    assert obj.data['references'][0]['record']['$ref'] == 'http://localhost:5000/api/literature/1800000'
+    assert obj.data['references'][0]['record']['$ref'] == 'http://localhost:5000/api/literature/1800002'
 
     record.delete()
     record.commit()
