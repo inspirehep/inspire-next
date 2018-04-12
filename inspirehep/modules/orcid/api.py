@@ -39,6 +39,7 @@ from inspirehep.modules.orcid.utils import (
     WORKS_BULK_QUERY_LIMIT,
     RECID_FROM_INSPIRE_URL,
     hash_xml_element,
+    log_time_context,
 )
 
 LOGGER = getStackTraceLogger(__name__)
@@ -87,25 +88,27 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
         LOGGER.info(
             "Pushing record #%s with put-code %s onto %s.", recid, put_code, orcid,
         )
-        orcid_api.update_record(
-            orcid_id=orcid,
-            token=oauth_token,
-            request_type='work',
-            data=orcid_xml,
-            put_code=put_code,
-            content_type='application/orcid+xml',
-        )
+        with log_time_context('Pushing updated record', LOGGER):
+            orcid_api.update_record(
+                orcid_id=orcid,
+                token=oauth_token,
+                request_type='work',
+                data=orcid_xml,
+                put_code=put_code,
+                content_type='application/orcid+xml',
+            )
     else:
         LOGGER.info(
             "No put-code found, pushing new record #%s to ORCID %s.", recid, orcid,
         )
-        put_code = orcid_api.add_record(
-            orcid_id=orcid,
-            token=oauth_token,
-            request_type='work',
-            data=orcid_xml,
-            content_type='application/orcid+xml',
-        )
+        with log_time_context('Pushing new record', LOGGER):
+            put_code = orcid_api.add_record(
+                orcid_id=orcid,
+                token=oauth_token,
+                request_type='work',
+                data=orcid_xml,
+                content_type='application/orcid+xml',
+            )
 
     LOGGER.info("Push of %s onto %s completed with put-code %s.", recid, orcid, put_code)
 
@@ -142,11 +145,15 @@ def _get_record_by_mime(config, recid, mime_type):
         server_name, config['SEARCH_UI_SEARCH_API'], recid
     )
 
-    response = requests.get(record_api_endpoint, headers={
-        'Accept': mime_type
-    })
-    response.raise_for_status()
-    return response
+    with log_time_context(
+        'Getting %s #%s record from inspire' % (mime_type, recid),
+        LOGGER,
+    ):
+        response = requests.get(record_api_endpoint, headers={
+            'Accept': mime_type
+        })
+        response.raise_for_status()
+        return response
 
 
 def _get_hep_record(config, recid):
@@ -188,9 +195,22 @@ def get_author_putcodes(orcid, oauth_token):
         List[Tuple[string, string]]: list of tuples of the form
             (recid, put_code) with results.
     """
+    def timed_read_record_member(orcid, request_type, oauth_token, accept_type, put_code=None):
+        with log_time_context(
+            'Request for %s for %s' % (request_type, orcid),
+            LOGGER
+        ):
+            return api.read_record_member(
+                orcid,
+                'works',
+                oauth_token,
+                accept_type=accept_type,
+                put_code=put_code,
+            )
+
     api = _get_api()
     # This reads the record _summary_ (no URLs attached):
-    user_works = api.read_record_member(
+    user_works = timed_read_record_member(
         orcid,
         'works',
         oauth_token,
@@ -212,7 +232,7 @@ def get_author_putcodes(orcid, oauth_token):
     detailed_works = []
 
     for put_code_batch in _split_lists(put_codes, WORKS_BULK_QUERY_LIMIT):
-        batch = api.read_record_member(
+        batch = timed_read_record_member(
             orcid,
             'works',
             oauth_token,

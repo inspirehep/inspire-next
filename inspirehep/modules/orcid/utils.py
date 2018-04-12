@@ -28,6 +28,7 @@ import hashlib
 import re
 import time
 
+from contextlib import contextmanager
 from itertools import chain
 from elasticsearch_dsl import Q
 from flask import current_app
@@ -247,20 +248,25 @@ def get_literature_recids_for_orcid(orcid):
     return [el['control_number'] for el in search_by_curated_author]
 
 
+@contextmanager
+def log_time_context(name, logger):
+    initial = time.time()
+    status = 'succeed'
+    try:
+        yield
+    except Exception:
+        status = 'fail'
+        raise
+    finally:
+        logger.info('%s took %s to %s', name, time.time() - initial, status)
+
+
 def log_time(logger):
     def _wrapper(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            initial = time.time()
-            status = 'succeed'
-            try:
-                result = func(*args, **kwargs)
-            except Exception:
-                status = 'fail'
-                raise
-            finally:
-                logger.info('%s took %s to %s', func.__name__, time.time() - initial, status)
-            return result
+            with log_time_context(func.__name__, logger):
+                return func(*args, **kwargs)
         return wrapper
 
     return _wrapper
