@@ -80,11 +80,14 @@ from inspirehep.modules.workflows.tasks.matching import (
     is_fuzzy_match_approved,
     set_exact_match_as_approved_in_extradata,
     set_fuzzy_match_approved_in_extradata,
-    previously_rejected,
     has_same_source,
     stop_matched_holdingpen_wfs,
     auto_approve,
     set_core_in_extra_data,
+)
+from inspirehep.modules.workflows.tasks.merging import (
+    has_conflicts,
+    merge_articles,
 )
 from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
 from inspirehep.modules.workflows.tasks.submission import (
@@ -234,17 +237,7 @@ POSTENHANCE_RECORD = [
 
 
 SEND_TO_LEGACY = [
-    IF_ELSE(
-        is_marked('is-update'),
-        [
-            # TODO: once we have the merger in place
-            # send_robotupload(mode="replace")
-            mark('skipped-robot-upload', True)
-        ],
-        [
-            send_robotupload(mode="replace"),
-        ]
-    ),
+    send_robotupload(mode='replace'),
 ]
 
 
@@ -280,7 +273,16 @@ HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
     IF_ELSE(
         is_marked('is-update'),
         [
-            mark('approved', True)
+            merge_articles,
+            IF(
+                has_conflicts,
+                halt_record(
+                    action='merge_approval',
+                    message='Submission halted for merging conflicts.'
+                ),
+            ),
+            mark('approved', True),
+            mark('merged', True),
         ],
         IF_ELSE(
             is_marked('auto-approved'),
@@ -295,11 +297,7 @@ HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
 
 
 STORE_RECORD = [
-    IF_ELSE(
-        is_marked('is-update'),
-        mark('skipped-store-record', True),
-        store_record,
-    )
+    store_record,
 ]
 
 
@@ -435,29 +433,6 @@ CHECK_IS_UPDATE = [
 ]
 
 
-STOP_IF_TOO_OLD = [
-    # checks to perform only for harvested records
-    IF_ELSE(
-        is_submission,
-        [
-            mark('too-many-days', False),
-        ],
-        [
-            IF_ELSE(
-                previously_rejected(),
-                [
-                    mark('too-many-days', True),
-                    save_workflow,
-                    stop_processing,
-                ],
-                mark('too-many-days', False),
-            ),
-        ]
-    ),
-    save_workflow,
-]
-
-
 NOTIFY_IF_SUBMISSION = [
     IF(
         is_submission,
@@ -467,7 +442,6 @@ NOTIFY_IF_SUBMISSION = [
 
 
 INIT_MARKS = [
-    mark('too-many-days', None),
     mark('auto-approved', None),
     mark('already-in-holding-pen', None),
     mark('previously_rejected', None),

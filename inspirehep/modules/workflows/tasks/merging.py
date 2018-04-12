@@ -24,7 +24,17 @@
 
 from __future__ import absolute_import, division, print_function
 
+from flask import current_app
+
+from inspire_json_merger.api import merge
+from invenio_pidstore.models import PersistentIdentifier
+
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.models import WorkflowsRecordSources
+from inspirehep.modules.workflows.utils import (
+    get_resolve_merge_conflicts_callback_url,
+    with_debug_logging
+)
 
 
 def get_head_source(head_uuid):
@@ -48,3 +58,53 @@ def get_head_source(head_uuid):
         return None
 
     return 'arxiv' if 'arxiv' in roots_sources else 'publisher'
+
+
+@with_debug_logging
+def has_conflicts(obj, eng):
+    """Return if the workflow has any confilicts."""
+    return obj.extra_data.get('conflicts')
+
+
+@with_debug_logging
+def merge_articles(obj, eng):
+    """Merge two articles.
+
+    The workflow payload is overwritten by the merged record, the conflicts are
+    stored in ``extra_data.conflicts``. Also, it adds a ``callback_url`` which
+    contains the endpoint which resolves the merge conflicts.
+
+    Note:
+        For the time being the ``root`` will be ignored, and we'll rely only
+        on the ``head``, hence it is a rootless implementation. Also when
+        the feature flag ``FEATURE_FLAG_ENABLE_MERGER`` is ``False`` it
+        will skip the merge.
+
+    """
+    if not current_app.config.get('FEATURE_FLAG_ENABLE_MERGER'):
+        return None
+
+    matched_control_number = obj.extra_data['matches']['approved']
+
+    head_uuid = PersistentIdentifier.get(
+        'lit', matched_control_number).object_uuid
+
+    obj.extra_data['head_uuid'] = str(head_uuid)
+
+    head = InspireRecord.get_record(head_uuid)
+    root = {}
+    update = obj.data
+
+    merged, conflicts = merge(
+        head=head,
+        root=root,
+        update=update
+    )
+
+    obj.data = merged
+
+    if conflicts:
+        obj.extra_data['conflicts'] = conflicts
+        obj.extra_data['callback_url'] = \
+            get_resolve_merge_conflicts_callback_url()
+    obj.save()

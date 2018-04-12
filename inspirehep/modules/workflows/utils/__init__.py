@@ -288,6 +288,21 @@ def get_resolve_validation_callback_url():
     )
 
 
+def get_resolve_merge_conflicts_callback_url():
+    """Resolve validation callback.
+
+    Returns the callback url for resolving the merge conflicts.
+
+    Note:
+        It's using ``inspire_workflows.callback_resolve_merge_conflicts``
+        route.
+    """
+    return url_for(
+        'inspire_workflows.callback_resolve_merge_conflicts',
+        _external=True
+    )
+
+
 def get_validation_errors(data, schema):
     """Creates a ``validation_errors`` dictionary.
 

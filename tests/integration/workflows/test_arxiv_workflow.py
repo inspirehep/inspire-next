@@ -422,50 +422,6 @@ def test_match_in_holdingpen_different_sources_continues(
     assert not obj.extra_data.get('stopped-matched-holdingpen-wf')
 
 
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
-    side_effect=fake_download_file,
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
-    side_effect=fake_download_file,
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
-    side_effect=fake_magpie_api_request,
-)
-def test_arxiv_update_is_not_store_on_legacy_and_labs(
-    mocked_download_arxiv,
-    mocked_api_request_beard,
-    mocked_api_request_magpie,
-    mocked_package_download,
-    workflow_app,
-    mocked_external_services,
-    record_from_db,
-):
-    json = record_from_db
-    eng_uuid = start('article', [json])
-    eng = WorkflowEngine.from_uuid(eng_uuid)
-    obj = eng.objects[0]
-
-    assert obj.status == ObjectStatus.COMPLETED
-    assert obj.extra_data['already-in-holding-pen'] is False
-    assert obj.extra_data['holdingpen_matches'] == []
-    assert obj.extra_data['previously_rejected'] is False
-    assert obj.extra_data['is-update'] is True
-    assert obj.extra_data['matches']['exact']
-    assert obj.extra_data['skipped-robot-upload']
-    assert obj.extra_data['skipped-store-record']
-
-
 def test_article_workflow_stops_when_record_is_not_valid(workflow_app):
     invalid_record = {
         'document_type': [
