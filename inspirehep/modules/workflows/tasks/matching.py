@@ -24,9 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import datetime
-from functools import wraps
-
 from flask import current_app
 
 from invenio_db import db
@@ -34,46 +31,10 @@ from invenio_workflows import workflow_object_class, WorkflowEngine
 
 from inspire_matcher.api import match
 from inspire_utils.dedupers import dedupe_list
-from inspirehep.utils.datefilter import date_older_than
 from inspirehep.utils.record import get_arxiv_categories, get_value
 from inspirehep.modules.workflows.tasks.actions import mark
 
 from ..utils import with_debug_logging
-
-
-def is_too_old(record, days_ago=5):
-    """Return True if the record is more than days_ago days old.
-
-    If the record is older then it's probably an update of an earlier
-    record, and we don't want those.
-    """
-    date_format = "%Y-%m-%d"
-    earliest_date = record.get('earliest_date', '')
-    if not earliest_date:
-        earliest_date = record.get('preprint_date', '')
-
-    if earliest_date:
-        try:
-            parsed_date = datetime.datetime.strptime(
-                earliest_date,
-                date_format,
-            )
-
-        except ValueError as err:
-            raise ValueError(
-                (
-                    'Unrecognized earliest_date format "%s", valid formats is '
-                    '%s: %s'
-                ) % (earliest_date, date_format, err)
-            )
-
-        if not date_older_than(
-            parsed_date,
-            datetime.datetime.utcnow(),
-            days=days_ago,
-        ):
-            return False
-    return True
 
 
 @with_debug_logging
@@ -222,25 +183,6 @@ def set_core_in_extra_data(obj, eng):
 
     if _is_core(obj.data):
         obj.extra_data['core'] = True
-
-
-def previously_rejected(days_ago=None):
-    """Check if record exist on INSPIRE or already rejected."""
-    @with_debug_logging
-    @wraps(previously_rejected)
-    def _previously_rejected(obj, eng):
-        if days_ago is None:
-            _days_ago = current_app.config.get('INSPIRE_ACCEPTANCE_TIMEOUT', 5)
-        else:
-            _days_ago = days_ago
-
-        if is_too_old(obj.data, days_ago=_days_ago):
-            obj.log.info("Record is likely rejected previously.")
-            return True
-
-        return False
-
-    return _previously_rejected
 
 
 def match_non_completed_wf_in_holdingpen(obj, eng):
