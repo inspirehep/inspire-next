@@ -43,7 +43,7 @@ from inspirehep.modules.records.api import InspireRecord
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
 
 
-HIGGS_TAXONOMY = '''<?xml version="1.0" encoding="UTF-8" ?>
+HIGGS_ONTOLOGY = '''<?xml version="1.0" encoding="UTF-8" ?>
 
 <rdf:RDF xmlns="http://www.w3.org/2004/02/skos/core#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -62,14 +62,14 @@ HIGGS_TAXONOMY = '''<?xml version="1.0" encoding="UTF-8" ?>
 
 
 @pytest.fixture()
-def higgs_taxonomy(tmpdir):
-    taxonomy = tmpdir.join('HEPont.rdf')
-    taxonomy.write(HIGGS_TAXONOMY)
-    yield str(taxonomy)
+def higgs_ontology(tmpdir):
+    ontology = tmpdir.join('HEPont.rdf')
+    ontology.write(HIGGS_ONTOLOGY)
+    yield str(ontology)
 
 
 @pytest.fixture
-def workflow_app(higgs_taxonomy):
+def workflow_app(higgs_ontology):
     """Flask application with no records and function scope.
 
     .. deprecated:: 2017-09-18
@@ -93,7 +93,7 @@ def workflow_app(higgs_taxonomy):
             CELERY_RESULT_BACKEND='cache',
             CFG_BIBCATALOG_SYSTEM_RT_URL=RT_URL,
             DEBUG=True,
-            HEP_ONTOLOGY_FILE=higgs_taxonomy,
+            HEP_ONTOLOGY_FILE=higgs_ontology,
             PRODUCTION_MODE=True,
             LEGACY_ROBOTUPLOAD_URL=(
                 'http://localhost:1234'
