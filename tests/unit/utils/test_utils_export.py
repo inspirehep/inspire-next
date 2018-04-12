@@ -390,7 +390,7 @@ def test_get_slac_citation_from_control_number():
     del Export._get_pubnote
 
 
-@mock.patch('inspirehep.utils.export.get_es_record')
+@mock.patch('inspirehep.utils.export.get_es_record', autospec=True)
 def test_get_citation_number_no_citations(g_e_r):
     g_e_r.return_value = {'citation_count': 0}
 
@@ -402,8 +402,8 @@ def test_get_citation_number_no_citations(g_e_r):
     assert expected == result
 
 
-@mock.patch('inspirehep.utils.export.time.strftime')
-@mock.patch('inspirehep.utils.export.get_es_record')
+@mock.patch('inspirehep.utils.export.time.strftime', autospec=True)
+@mock.patch('inspirehep.utils.export.get_es_record', autospec=True)
 def test_get_citation_number_one_citation(g_e_r, strftime):
     strftime.return_value = '02 Feb 1993'
     g_e_r.return_value = {'citation_count': 1}
@@ -416,8 +416,8 @@ def test_get_citation_number_one_citation(g_e_r, strftime):
     assert expected == result
 
 
-@mock.patch('inspirehep.utils.export.time.strftime')
-@mock.patch('inspirehep.utils.export.get_es_record')
+@mock.patch('inspirehep.utils.export.time.strftime', autospec=True)
+@mock.patch('inspirehep.utils.export.get_es_record', autospec=True)
 def test_get_citation_number_two_citations(g_e_r, strftime):
     strftime.return_value = '02 Feb 1993'
     g_e_r.return_value = {'citation_count': 2}
@@ -430,7 +430,7 @@ def test_get_citation_number_two_citations(g_e_r, strftime):
     assert expected == result
 
 
-@mock.patch('inspirehep.utils.export.get_es_record')
+@mock.patch('inspirehep.utils.export.get_es_record', autospec=True)
 def test_get_citation_number_no_citation_count(g_e_r):
     g_e_r.return_value = {}
 

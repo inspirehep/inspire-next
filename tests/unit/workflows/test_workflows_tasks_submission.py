@@ -42,8 +42,8 @@ from inspirehep.modules.workflows.tasks.submission import (
 from mocks import MockEng, MockObj, MockUser
 
 
-@patch('inspirehep.modules.workflows.tasks.submission.User')
-@patch('inspirehep.modules.workflows.tasks.submission.tickets.reply_ticket_with_template')
+@patch('inspirehep.modules.workflows.tasks.submission.User', autospec=True)
+@patch('inspirehep.modules.workflows.tasks.submission.tickets.reply_ticket_with_template', autospec=True)
 @patch('inspirehep.modules.workflows.tasks.submission.rt_instance', lambda: True)
 def test_reply_ticket_calls_tickets_reply_with_template_when_template_is_set(mock_reply_ticket_with_template, mock_user):
     mock_user.query.get.return_value = MockUser('user@example.com')
@@ -66,8 +66,8 @@ def test_reply_ticket_calls_tickets_reply_with_template_when_template_is_set(moc
     )
 
 
-@patch('inspirehep.modules.workflows.tasks.submission.User')
-@patch('inspirehep.modules.workflows.tasks.submission.tickets.reply_ticket')
+@patch('inspirehep.modules.workflows.tasks.submission.User', autospec=True)
+@patch('inspirehep.modules.workflows.tasks.submission.tickets.reply_ticket', autospec=True)
 @patch('inspirehep.modules.workflows.tasks.submission.rt_instance', lambda: True)
 def test_reply_ticket_calls_tickets_reply_when_template_is_not_set(mock_reply_ticket, mock_user):
     mock_user.query.get.return_value = MockUser('user@example.com')
@@ -88,8 +88,8 @@ def test_reply_ticket_calls_tickets_reply_when_template_is_not_set(mock_reply_ti
     )
 
 
-@patch('inspirehep.modules.workflows.tasks.submission.User')
-@patch('inspirehep.modules.workflows.tasks.submission.tickets.resolve_ticket')
+@patch('inspirehep.modules.workflows.tasks.submission.User', autospec=True)
+@patch('inspirehep.modules.workflows.tasks.submission.tickets.resolve_ticket', autospec=True)
 @patch('inspirehep.modules.workflows.tasks.submission.rt_instance', lambda: True)
 def test_close_ticket_calls_tickets_resolve(mock_resolve_ticket, mock_user):
     mock_user.query.get.return_value = MockUser('user@example.com')
@@ -108,8 +108,8 @@ def test_close_ticket_calls_tickets_resolve(mock_resolve_ticket, mock_user):
     )
 
 
-@patch('inspirehep.modules.workflows.tasks.submission.User')
-@patch('inspirehep.modules.workflows.tasks.submission.tickets.create_ticket_with_template')
+@patch('inspirehep.modules.workflows.tasks.submission.User', autospec=True)
+@patch('inspirehep.modules.workflows.tasks.submission.tickets.create_ticket_with_template', autospec=True)
 @patch('inspirehep.modules.workflows.tasks.submission.rt_instance', lambda: True)
 def test_create_ticket_calls_tickets_create_with_template(mock_create_ticket_with_template, mock_user):
     mock_user.query.get.return_value = MockUser('user@example.com')

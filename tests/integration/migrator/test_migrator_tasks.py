@@ -88,7 +88,7 @@ def test_build_recid_to_uuid_map_ignored_types(isolated_app):
     assert result == {}
 
 
-@patch('inspirehep.modules.migrator.tasks.LOGGER')
+@patch('inspirehep.modules.migrator.tasks.LOGGER', autospec=True)
 def test_migrate_and_insert_record_valid_record(mock_logger, isolated_app):
     raw_record = (
         '<record>'
@@ -108,11 +108,11 @@ def test_migrate_and_insert_record_valid_record(mock_logger, isolated_app):
     assert prod_record.valid is True
     assert prod_record.marcxml == raw_record
 
-    assert not mock_logger.error.called
-    assert not mock_logger.exception.called
+    mock_logger.error.assert_not_called()
+    mock_logger.exception.assert_not_called()
 
 
-@patch('inspirehep.modules.migrator.tasks.LOGGER')
+@patch('inspirehep.modules.migrator.tasks.LOGGER', autospec=True)
 def test_migrate_and_insert_record_dojson_error(mock_logger, isolated_app):
     raw_record = (
         '<record>'
@@ -132,11 +132,11 @@ def test_migrate_and_insert_record_dojson_error(mock_logger, isolated_app):
     assert prod_record.valid is False
     assert prod_record.marcxml == raw_record
 
-    assert not mock_logger.error.called
+    mock_logger.error.assert_not_called()
     mock_logger.exception.assert_called_once_with('Migrator DoJSON Error')
 
 
-@patch('inspirehep.modules.migrator.tasks.LOGGER')
+@patch('inspirehep.modules.migrator.tasks.LOGGER', autospec=True)
 def test_migrate_and_insert_record_invalid_record(mock_logger, isolated_app):
     raw_record = (
         '<record>'
@@ -153,12 +153,12 @@ def test_migrate_and_insert_record_invalid_record(mock_logger, isolated_app):
     assert prod_record.valid is False
     assert prod_record.marcxml == raw_record
 
-    assert mock_logger.error.called
-    assert not mock_logger.exception.called
+    mock_logger.error.assert_not_called()
+    mock_logger.exception.assert_not_called()
 
 
-@patch('inspirehep.modules.records.api.InspireRecord.create_or_update', side_effect=Exception())
-@patch('inspirehep.modules.migrator.tasks.LOGGER')
+@patch('inspirehep.modules.records.api.InspireRecord.create_or_update', side_effect=Exception(), autospec=True)
+@patch('inspirehep.modules.migrator.tasks.LOGGER', autospec=True)
 def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
     raw_record = (
         '<record>'
@@ -174,7 +174,7 @@ def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
     assert prod_record.valid is False
     assert prod_record.marcxml == raw_record
 
-    assert not mock_logger.error.called
+    mock_logger.error.assert_not_called()
     mock_logger.exception.assert_called_once_with('Migrator Record Insert Error')
 
 
@@ -184,8 +184,8 @@ def test_orcid_push_disabled_on_migrate_from_mirror(app, cleanup, enable_orcid_p
         os.path.join('fixtures', 'dummy.xml')
     )
 
-    with patch('inspirehep.modules.orcid.tasks.attempt_push') as mock_attempt_push, \
-            patch('inspirehep.modules.records.receivers.get_push_access_tokens') as mock_get_push_access_tokens:
+    with patch('inspirehep.modules.orcid.tasks.attempt_push', autospec=True) as mock_attempt_push, \
+            patch('inspirehep.modules.records.receivers.get_push_access_tokens', autospec=True) as mock_get_push_access_tokens:
         mock_get_push_access_tokens.return_value.remote_account.extra_data['orcid'] = '0000-0002-1825-0097'
         mock_get_push_access_tokens.return_value.access_token = 'mytoken'
 

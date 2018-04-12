@@ -183,7 +183,7 @@ def test_year_validator_raises_on_year_invalid_because_too_late():
         year_validator(None, field)
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch('inspirehep.modules.forms.validators.simple_fields.match', autospec=True)
 def test_duplicated_validator_existing_arxiv_invalid(match_mock):
     match_mock.return_value = [{'_source': {'control_number': 123}}]
 
@@ -191,14 +191,14 @@ def test_duplicated_validator_existing_arxiv_invalid(match_mock):
         duplicated_validator('arXiv ID', 'dummy_id')
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch('inspirehep.modules.forms.validators.simple_fields.match', autospec=True)
 def test_duplicated_validator_non_existing_arxiv_valid(match_mock):
     match_mock.return_value = []
 
     duplicated_validator('arXiv ID', 'dummy_id')
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch('inspirehep.modules.forms.validators.simple_fields.match', autospec=True)
 def test_duplicated_validator_existing_doi_invalid(match_mock):
     match_mock.return_value = [{'_source': {'control_number': 123}}]
 
@@ -206,14 +206,14 @@ def test_duplicated_validator_existing_doi_invalid(match_mock):
         duplicated_validator('DOI', 'dummy_id')
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch('inspirehep.modules.forms.validators.simple_fields.match', autospec=True)
 def test_duplicated_validator_non_existing_doi_valid(match_mock):
     match_mock.return_value = []
 
     duplicated_validator('DOI', 'dummy_id')
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch('inspirehep.modules.forms.validators.simple_fields.match', autospec=True)
 def test_duplicated_doi_validator_local_existing_doi_invalid(match_mock):
     match_mock.return_value = [{'_source': {'control_number': 123}}]
     field = MockField(u'10.1088/1475-7516/2013/12/014')
@@ -222,13 +222,14 @@ def test_duplicated_doi_validator_local_existing_doi_invalid(match_mock):
         duplicated_doi_validator(None, field)
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch('inspirehep.modules.forms.validators.simple_fields.match', autospec=True)
 @patch(
-    'inspirehep.modules.forms.validators.simple_fields'
-    '.does_exist_in_inspirehep'
+    'inspirehep.modules.forms.validators.simple_fields.does_exist_in_inspirehep',
+    autospec=True,
 )
 @patch(
-    'inspirehep.modules.forms.validators.simple_fields._get_current_user_roles'
+    'inspirehep.modules.forms.validators.simple_fields._get_current_user_roles',
+    autospec=True,
 )
 def test_duplicated_doi_validator_remote_existing_doi_invalid(
     get_current_user_roles_mock,
@@ -244,13 +245,14 @@ def test_duplicated_doi_validator_remote_existing_doi_invalid(
         duplicated_doi_validator(None, field)
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch('inspirehep.modules.forms.validators.simple_fields.match', autospec=True)
 @patch(
-    'inspirehep.modules.forms.validators.simple_fields'
-    '.does_exist_in_inspirehep'
+    'inspirehep.modules.forms.validators.simple_fields.does_exist_in_inspirehep',
+    autospec=True,
 )
 @patch(
-    'inspirehep.modules.forms.validators.simple_fields._get_current_user_roles'
+    'inspirehep.modules.forms.validators.simple_fields._get_current_user_roles',
+    autospec=True,
 )
 def test_duplicated_doi_validator_not_exsting_anywhere_valid(
     get_current_user_roles_mock,
@@ -265,7 +267,7 @@ def test_duplicated_doi_validator_not_exsting_anywhere_valid(
     duplicated_doi_validator(None, field)
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch('inspirehep.modules.forms.validators.simple_fields.match', autospec=True)
 def test_duplicated_arxiv_id_validator_local_existing_doi_invalid(match_mock):
     match_mock.return_value = [{'_source': {'control_number': 123}}]
     field = MockField(u'1207.7235')
@@ -274,13 +276,14 @@ def test_duplicated_arxiv_id_validator_local_existing_doi_invalid(match_mock):
         duplicated_arxiv_id_validator(None, field)
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch('inspirehep.modules.forms.validators.simple_fields.match', autospec=True)
 @patch(
-    'inspirehep.modules.forms.validators.simple_fields'
-    '.does_exist_in_inspirehep'
+    'inspirehep.modules.forms.validators.simple_fields.does_exist_in_inspirehep',
+    autospec=True,
 )
 @patch(
-    'inspirehep.modules.forms.validators.simple_fields._get_current_user_roles'
+    'inspirehep.modules.forms.validators.simple_fields._get_current_user_roles',
+    autospec=True,
 )
 def test_duplicated_arxiv_id_validator_remote_existing_doi_invalid(
     get_current_user_roles_mock,
@@ -296,13 +299,14 @@ def test_duplicated_arxiv_id_validator_remote_existing_doi_invalid(
         duplicated_arxiv_id_validator(None, field)
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.match')
+@patch('inspirehep.modules.forms.validators.simple_fields.match', autospec=True)
 @patch(
-    'inspirehep.modules.forms.validators.simple_fields'
-    '.does_exist_in_inspirehep'
+    'inspirehep.modules.forms.validators.simple_fields.does_exist_in_inspirehep',
+    autospec=True,
 )
 @patch(
-    'inspirehep.modules.forms.validators.simple_fields._get_current_user_roles'
+    'inspirehep.modules.forms.validators.simple_fields._get_current_user_roles',
+    autospec=True,
 )
 def test_duplicated_arxiv_id_validator_not_exsting_anywhere_valid(
     get_current_user_roles_mock,
@@ -317,7 +321,7 @@ def test_duplicated_arxiv_id_validator_not_exsting_anywhere_valid(
     duplicated_arxiv_id_validator(None, field)
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.es')
+@patch('inspirehep.modules.forms.validators.simple_fields.es', autospec=True)
 def test_already_pending_in_holdingpen_validator_arxiv_id_non_existing_valid(
     es_mock,
 ):
@@ -330,7 +334,7 @@ def test_already_pending_in_holdingpen_validator_arxiv_id_non_existing_valid(
     already_pending_in_holdingpen_validator('arXiv ID', 'dummy_id')
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.es')
+@patch('inspirehep.modules.forms.validators.simple_fields.es', autospec=True)
 def test_already_pending_in_holdingpen_validator_arxiv_id_existing_invalid(
     es_mock,
 ):
@@ -344,7 +348,7 @@ def test_already_pending_in_holdingpen_validator_arxiv_id_existing_invalid(
         already_pending_in_holdingpen_validator('arXiv ID', 'dummy_id')
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.es')
+@patch('inspirehep.modules.forms.validators.simple_fields.es', autospec=True)
 def test_already_pending_in_holdingpen_validator_doi_non_existing_valid(
     es_mock,
 ):
@@ -357,7 +361,7 @@ def test_already_pending_in_holdingpen_validator_doi_non_existing_valid(
     already_pending_in_holdingpen_validator('DOI', 'dummy_id')
 
 
-@patch('inspirehep.modules.forms.validators.simple_fields.es')
+@patch('inspirehep.modules.forms.validators.simple_fields.es', autospec=True)
 def test_already_pending_in_holdingpen_validator_doi_existing_invalid(
     es_mock,
 ):

@@ -83,7 +83,8 @@ def mock_config():
             },
             'SERVER_NAME': 'http://localhost:5000',
             'SEARCH_UI_SEARCH_API': '/api/literature/'
-        }
+        },
+        autospec=True,
     ):
         yield
 

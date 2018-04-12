@@ -407,7 +407,8 @@ def test_get_publi_info_from_publication_info_a_list_of_two_elements():
 
 @mock.patch(
     'inspirehep.utils.cv_latex.config',
-    mock.Mock(SERVER_NAME='http://localhost:5000'))
+    mock.Mock(SERVER_NAME='http://localhost:5000')
+)
 def test_get_url():
     record = {'control_number': 1}
 

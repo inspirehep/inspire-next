@@ -32,7 +32,7 @@ from inspirehep.modules.workflows.tasks.classifier import classify_paper
 from mocks import MockEng, MockObj
 
 
-@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
+@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow', autospec=True)
 def test_classify_paper_with_fulltext(get_document_in_workflow, tmpdir):
     obj = MockObj({}, {})
     eng = MockEng()
@@ -59,7 +59,7 @@ def test_classify_paper_with_fulltext(get_document_in_workflow, tmpdir):
     assert obj.extra_data['classifier_results']['fulltext_used'] is True
 
 
-@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
+@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow', autospec=True)
 def test_classify_paper_with_no_fulltext(get_document_in_workflow):
     data = {
         'titles': [
@@ -96,7 +96,7 @@ def test_classify_paper_with_no_fulltext(get_document_in_workflow):
     assert obj.extra_data['classifier_results']['fulltext_used'] is False
 
 
-@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
+@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow', autospec=True)
 def test_classify_paper_uses_keywords(get_document_in_workflow):
     data = {
         'titles': [
@@ -133,7 +133,7 @@ def test_classify_paper_uses_keywords(get_document_in_workflow):
     assert obj.extra_data['classifier_results']['fulltext_used'] is False
 
 
-@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
+@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow', autospec=True)
 def test_classify_paper_does_not_raise_on_unprintable_keywords(get_document_in_workflow):
     paper_with_unprintable_keywords = pkg_resources.resource_filename(
         __name__, os.path.join('fixtures', '1802.08709.pdf'))

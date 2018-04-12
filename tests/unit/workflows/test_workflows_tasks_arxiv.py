@@ -362,7 +362,7 @@ def test_arxiv_package_download_logs_on_error():
         assert expected == result
 
 
-@patch('plotextractor.api.os')
+@patch('plotextractor.api.os', autospec=True)
 def test_arxiv_plot_extract_populates_files_with_plots(mock_os):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
@@ -418,7 +418,7 @@ def test_arxiv_plot_extract_populates_files_with_plots(mock_os):
         rmtree(temporary_dir)
 
 
-@patch('plotextractor.api.os')
+@patch('plotextractor.api.os', autospec=True)
 def test_arxiv_plot_extract_is_safe_to_rerun(mock_os):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
@@ -475,7 +475,7 @@ def test_arxiv_plot_extract_is_safe_to_rerun(mock_os):
         rmtree(temporary_dir)
 
 
-@patch('plotextractor.api.os')
+@patch('plotextractor.api.os', autospec=True)
 def test_arxiv_plot_extract_handles_duplicate_plot_names(mock_os):
     schema = load_schema('hep')
     subschema = schema['properties']['arxiv_eprints']
@@ -519,7 +519,7 @@ def test_arxiv_plot_extract_handles_duplicate_plot_names(mock_os):
         rmtree(temporary_dir)
 
 
-@patch('inspirehep.modules.workflows.tasks.arxiv.process_tarball')
+@patch('inspirehep.modules.workflows.tasks.arxiv.process_tarball', autospec=True)
 def test_arxiv_plot_extract_logs_when_tarball_is_invalid(mock_process_tarball):
     mock_process_tarball.side_effect = InvalidTarball
 
@@ -556,7 +556,7 @@ def test_arxiv_plot_extract_logs_when_tarball_is_invalid(mock_process_tarball):
     assert '1612.00626' in obj.log._info.getvalue()
 
 
-@patch('inspirehep.modules.workflows.tasks.arxiv.process_tarball')
+@patch('inspirehep.modules.workflows.tasks.arxiv.process_tarball', autospec=True)
 def test_arxiv_plot_extract_logs_when_images_are_invalid(mock_process_tarball):
     mock_process_tarball.side_effect = DelegateError
 
@@ -805,7 +805,7 @@ def test_arxiv_author_list_only_overrides_authors():
     assert obj.data['$schema'] == data['$schema']
 
 
-@patch('inspirehep.modules.workflows.tasks.arxiv.untar')
+@patch('inspirehep.modules.workflows.tasks.arxiv.untar', autospec=True)
 def test_arxiv_author_list_logs_on_error(mock_untar):
     mock_untar.side_effect = InvalidTarball
 

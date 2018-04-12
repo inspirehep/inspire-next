@@ -232,7 +232,7 @@ def mock_perform_es_search_tworecord():
     )
 
 
-@patch('inspirehep.modules.theme.jinja2filters.current_app.jinja_env.get_template')
+@patch('inspirehep.modules.theme.jinja2filters.current_app.jinja_env.get_template', autospec=True)
 def test_apply_template_on_array_returns_empty_list_on_empty_list(g_t, jinja_env):
     g_t.return_value = jinja_env.from_string('{{ content }}')
 
@@ -242,7 +242,7 @@ def test_apply_template_on_array_returns_empty_list_on_empty_list(g_t, jinja_env
     assert expected == result
 
 
-@patch('inspirehep.modules.theme.jinja2filters.current_app.jinja_env.get_template')
+@patch('inspirehep.modules.theme.jinja2filters.current_app.jinja_env.get_template', autospec=True)
 def test_apply_template_on_array_applies_template(g_t, jinja_env):
     g_t.return_value = jinja_env.from_string('{{ content }}')
 
@@ -252,7 +252,7 @@ def test_apply_template_on_array_applies_template(g_t, jinja_env):
     assert expected == result
 
 
-@patch('inspirehep.modules.theme.jinja2filters.current_app.jinja_env.get_template')
+@patch('inspirehep.modules.theme.jinja2filters.current_app.jinja_env.get_template', autospec=True)
 def test_apply_template_on_array_accepts_strings_as_a_list_of_one_element(g_t, jinja_env):
     g_t.return_value = jinja_env.from_string('{{ content }}')
 
@@ -535,7 +535,7 @@ def test_proceedings_link_returns_empty_string_without_cnum():
     assert expected == result
 
 
-@patch('inspirehep.modules.theme.jinja2filters.LiteratureSearch.execute')
+@patch('inspirehep.modules.theme.jinja2filters.LiteratureSearch.execute', autospec=True)
 def test_proceedings_link_returns_empty_string_with_zero_search_results(c, mock_perform_es_search_empty):
     c.return_value = mock_perform_es_search_empty
 
@@ -547,7 +547,7 @@ def test_proceedings_link_returns_empty_string_with_zero_search_results(c, mock_
     assert expected == result
 
 
-@patch('inspirehep.modules.theme.jinja2filters.LiteratureSearch.execute')
+@patch('inspirehep.modules.theme.jinja2filters.LiteratureSearch.execute', autospec=True)
 def test_proceedings_link_returns_a_link_with_one_search_result(c, mock_perform_es_search_onerecord):
     c.return_value = mock_perform_es_search_onerecord
 
@@ -559,7 +559,7 @@ def test_proceedings_link_returns_a_link_with_one_search_result(c, mock_perform_
     assert expected == result
 
 
-@patch('inspirehep.modules.theme.jinja2filters.LiteratureSearch.execute')
+@patch('inspirehep.modules.theme.jinja2filters.LiteratureSearch.execute', autospec=True)
 def test_proceedings_link_joins_with_a_comma_and_a_space(s, mock_perform_es_search_tworecord):
     s.return_value = mock_perform_es_search_tworecord
 
@@ -619,7 +619,7 @@ def test_link_to_hep_affiliation_returns_empty_string_when_record_has_no_ICN():
     assert expected == result
 
 
-@patch('inspirehep.modules.theme.jinja2filters.InstitutionsSearch.execute')
+@patch('inspirehep.modules.theme.jinja2filters.InstitutionsSearch.execute', autospec=True)
 def test_link_to_hep_affiliation_returns_empty_string_when_empty_results(s, mock_perform_es_search_empty):
     s.return_value = mock_perform_es_search_empty
 
@@ -631,7 +631,7 @@ def test_link_to_hep_affiliation_returns_empty_string_when_empty_results(s, mock
     assert expected == result
 
 
-@patch('inspirehep.modules.theme.jinja2filters.InstitutionsSearch.execute')
+@patch('inspirehep.modules.theme.jinja2filters.InstitutionsSearch.execute', autospec=True)
 def test_link_to_hep_affiliation_singular_when_one_result(s, mock_perform_es_search_onerecord):
     s.return_value = mock_perform_es_search_onerecord
 
@@ -643,7 +643,7 @@ def test_link_to_hep_affiliation_singular_when_one_result(s, mock_perform_es_sea
     assert expected == result
 
 
-@patch('inspirehep.modules.theme.jinja2filters.InstitutionsSearch.execute')
+@patch('inspirehep.modules.theme.jinja2filters.InstitutionsSearch.execute', autospec=True)
 def test_link_to_hep_affiliation_plural_when_more_results(s, mock_perform_es_search_tworecord):
     s.return_value = mock_perform_es_search_tworecord
 
@@ -1002,7 +1002,7 @@ def test_publication_info_from_pubinfo_freetext():
     assert expected == result
 
 
-@patch('inspirehep.modules.records.wrappers.replace_refs')
+@patch('inspirehep.modules.records.wrappers.replace_refs', autospec=True)
 def test_publication_info_from_conference_recid_and_parent_recid(r_r, mock_replace_refs):
     conf_rec = {'$ref': 'http://x/y/976391'}
     parent_rec = {'$ref': 'http://x/y/1402672'}
@@ -1030,7 +1030,7 @@ def test_publication_info_from_conference_recid_and_parent_recid(r_r, mock_repla
     assert expected == result
 
 
-@patch('inspirehep.modules.records.wrappers.replace_refs')
+@patch('inspirehep.modules.records.wrappers.replace_refs', autospec=True)
 def test_publication_info_from_conference_recid_and_parent_recid_with_pages(r_r, mock_replace_refs):
     with_title = '50th Rencontres de Moriond on EW Interactions and Unified Theories'
     conf_rec = {'$ref': 'http://x/y/1331207'}
@@ -1061,7 +1061,7 @@ def test_publication_info_from_conference_recid_and_parent_recid_with_pages(r_r,
     assert expected == result
 
 
-@patch('inspirehep.modules.records.wrappers.replace_refs')
+@patch('inspirehep.modules.records.wrappers.replace_refs', autospec=True)
 def test_publication_info_with_pub_info_and_conf_info(r_r, mock_replace_refs):
     with_title = '2005 International Linear Collider Workshop (LCWS 2005)'
     conf_rec = {'$ref': 'http://x/y/976391'}
@@ -1094,7 +1094,7 @@ def test_publication_info_with_pub_info_and_conf_info(r_r, mock_replace_refs):
     assert expected == result
 
 
-@patch('inspirehep.modules.records.wrappers.replace_refs')
+@patch('inspirehep.modules.records.wrappers.replace_refs', autospec=True)
 def test_publication_info_with_pub_info_and_conf_info_not_found(r_r):
     conf_rec = {'$ref': 'http://x/y/976391'}
     parent_rec = {'$ref': 'http://x/y/706120'}
@@ -1122,7 +1122,7 @@ def test_publication_info_with_pub_info_and_conf_info_not_found(r_r):
     assert expected == result
 
 
-@patch('inspirehep.modules.records.wrappers.replace_refs')
+@patch('inspirehep.modules.records.wrappers.replace_refs', autospec=True)
 def test_publication_info_from_conference_recid_and_not_parent_recid(r_r, mock_replace_refs):
     with_title = '20th International Workshop on Deep-Inelastic Scattering and Related Subjects'
     conf_rec = {'$ref': 'http://x/y/1086512'}
@@ -1242,7 +1242,7 @@ def test_is_cataloger_returns_false_when_user_has_no_roles():
     assert not is_cataloger(user)
 
 
-@patch('inspirehep.modules.theme.jinja2filters.url_decode')
+@patch('inspirehep.modules.theme.jinja2filters.url_decode', autospec=True)
 def test_back_to_search_link_handles_unicode_title(mocked_url_decode):
     collection = 'HEP'
     unicode_query = u'Göbel, Carla'

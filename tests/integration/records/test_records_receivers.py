@@ -141,7 +141,7 @@ def raw_record(app):
 
 @pytest.fixture(scope='function')
 def record(raw_record):
-    with mock.patch('inspirehep.modules.records.receivers.Task') as mocked_Task:
+    with mock.patch('inspirehep.modules.records.receivers.Task', autospec=True) as mocked_Task:
         mocked_Task.return_value = mocked_Task
         _record = migrate_and_insert_record(raw_record, skip_files=True)
 
@@ -205,26 +205,26 @@ def assert_db_has_no_author_record(author_recid):
     assert InspireRecord.query.filter_by().count() == 0
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
+@mock.patch('inspirehep.modules.records.receivers.Task', autospec=True)
 def test_orcid_push_not_trigger_for_author_records(mocked_Task, user_with_permission):
     mocked_Task.assert_not_called()
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
+@mock.patch('inspirehep.modules.records.receivers.Task', autospec=True)
 def test_orcid_push_not_triggered_on_create_record_without_allow_push(mocked_Task, app, raw_record, user_without_permission):
     migrate_and_insert_record(raw_record, skip_files=True)
 
     mocked_Task.assert_not_called()
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
+@mock.patch('inspirehep.modules.records.receivers.Task', autospec=True)
 def test_orcid_push_not_triggered_on_create_record_without_token(mocked_Task, app, raw_record, user_without_token):
     migrate_and_insert_record(raw_record, skip_files=True)
 
     mocked_Task.assert_not_called()
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
+@mock.patch('inspirehep.modules.records.receivers.Task', autospec=True)
 def test_orcid_push_triggered_on_create_record_with_allow_push(mocked_Task, app, raw_record, user_with_permission, enable_orcid_push_feature):
     mocked_Task.return_value = mocked_Task
     migrate_and_insert_record(raw_record, skip_files=True)
@@ -241,7 +241,7 @@ def test_orcid_push_triggered_on_create_record_with_allow_push(mocked_Task, app,
     mocked_Task.apply_async.assert_called_once_with(**expected_kwargs)
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
+@mock.patch('inspirehep.modules.records.receivers.Task', autospec=True)
 def test_orcid_push_triggered_on_record_update_with_allow_push(mocked_Task, app, record, user_with_permission, enable_orcid_push_feature):
     mocked_Task.return_value = mocked_Task
     expected_kwargs = {
@@ -258,7 +258,7 @@ def test_orcid_push_triggered_on_record_update_with_allow_push(mocked_Task, app,
     mocked_Task.apply_async.assert_called_once_with(**expected_kwargs)
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
+@mock.patch('inspirehep.modules.records.receivers.Task', autospec=True)
 def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_push(mocked_Task, app, raw_record, two_users_with_permission, enable_orcid_push_feature):
     mocked_Task.return_value = mocked_Task
     migrate_and_insert_record(raw_record, skip_files=True)
@@ -322,7 +322,7 @@ def test_that_db_changes_are_mirrored_in_es(isolated_app):
         es_record = search.get_source(record.id)
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
+@mock.patch('inspirehep.modules.records.receivers.Task', autospec=True)
 def test_orcid_push_not_triggered_on_create_record_no_feat_flag(mocked_Task, app, raw_record, user_with_permission):
     migrate_and_insert_record(raw_record, skip_files=True)
 

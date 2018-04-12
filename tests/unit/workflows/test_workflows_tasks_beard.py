@@ -86,7 +86,7 @@ def test_prepare_payload():
     assert expected == result
 
 
-@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
+@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url', autospec=True)
 def test_guess_coreness_fails_without_a_beard_url(g_b_u):
     g_b_u.return_value = ''
 
@@ -97,8 +97,8 @@ def test_guess_coreness_fails_without_a_beard_url(g_b_u):
     assert 'relevance_prediction' not in obj.extra_data
 
 
-@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
-@patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url', autospec=True)
+@patch('inspirehep.modules.workflows.tasks.beard.json_api_request', autospec=True)
 def test_guess_coreness_does_not_fail_when_request_fails(j_a_r, g_b_u):
     j_a_r.side_effect = requests.exceptions.RequestException()
     g_b_u.return_value = 'https://beard.inspirehep.net/predictor/coreness'
@@ -110,8 +110,8 @@ def test_guess_coreness_does_not_fail_when_request_fails(j_a_r, g_b_u):
     assert 'relevance_prediction' not in obj.extra_data
 
 
-@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
-@patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url', autospec=True)
+@patch('inspirehep.modules.workflows.tasks.beard.json_api_request', autospec=True)
 def test_guess_coreness_when_core(j_a_r, g_b_u):
     j_a_r.return_value = {
         'decision': 'CORE',
@@ -139,8 +139,8 @@ def test_guess_coreness_when_core(j_a_r, g_b_u):
     }
 
 
-@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
-@patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url', autospec=True)
+@patch('inspirehep.modules.workflows.tasks.beard.json_api_request', autospec=True)
 def test_guess_coreness_when_non_core(j_a_r, g_b_u):
     j_a_r.return_value = {
         'decision': 'Non-CORE',
@@ -168,8 +168,8 @@ def test_guess_coreness_when_non_core(j_a_r, g_b_u):
     }
 
 
-@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
-@patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
+@patch('inspirehep.modules.workflows.tasks.beard.get_beard_url', autospec=True)
+@patch('inspirehep.modules.workflows.tasks.beard.json_api_request', autospec=True)
 def test_guess_coreness_when_rejected(j_a_r, g_b_u):
     j_a_r.return_value = {
         'decision': 'Rejected',

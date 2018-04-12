@@ -377,7 +377,7 @@ def test_assign_phonetick_block_ignores_malformed_names():
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.records.receivers.uuid.uuid4')
+@mock.patch('inspirehep.modules.records.receivers.uuid.uuid4', autospec=True)
 def test_assign_uuid(mock_uuid4):
     mock_uuid4.return_value = UUID('727238f3-8ed6-40b6-97d2-dc3cd1429131')
 
@@ -406,7 +406,7 @@ def test_assign_uuid(mock_uuid4):
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.records.receivers.uuid.uuid4')
+@mock.patch('inspirehep.modules.records.receivers.uuid.uuid4', autospec=True)
 def test_assign_uuid_does_not_touch_existing_uuids(mock_uuid4):
     mock_uuid4.return_value = UUID('727238f3-8ed6-40b6-97d2-dc3cd1429131')
 

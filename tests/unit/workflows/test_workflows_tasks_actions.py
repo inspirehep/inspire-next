@@ -322,7 +322,7 @@ def test_halt_record_accepts_custom_msg():
     assert eng.msg == 'bar'
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.log_workflows_action')
+@patch('inspirehep.modules.workflows.tasks.actions.log_workflows_action', autospec=True)
 def test_reject_record(l_w_a):
     obj = MockObj({}, {
         'relevance_prediction': {
@@ -413,9 +413,9 @@ def test__is_auto_rejected(expected, obj):
         'Relevant: auto-approved is not submission and not autorejected',
     ]
 )
-@patch('inspirehep.modules.workflows.tasks.actions.is_submission')
-@patch('inspirehep.modules.workflows.tasks.actions._is_auto_rejected')
-@patch('inspirehep.modules.workflows.tasks.actions._is_auto_approved')
+@patch('inspirehep.modules.workflows.tasks.actions.is_submission', autospec=True)
+@patch('inspirehep.modules.workflows.tasks.actions._is_auto_rejected', autospec=True)
+@patch('inspirehep.modules.workflows.tasks.actions._is_auto_approved', autospec=True)
 def test_is_record_relevant(
     _is_auto_approved_mock,
     _is_auto_rejected_mock,
@@ -741,7 +741,7 @@ def fix_submission_number_does_nothing_if_method_is_not_hepcrawl():
     assert expected == result
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs', autospec=True)
 def test_populate_journal_coverage_writes_full_if_any_coverage_is_full(mock_replace_refs):
     schema = load_schema('journals')
     subschema = schema['properties']['_harvesting_info']
@@ -773,7 +773,7 @@ def test_populate_journal_coverage_writes_full_if_any_coverage_is_full(mock_repl
     assert expected == result
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs', autospec=True)
 def test_populate_journal_coverage_writes_partial_if_all_coverages_are_partial(mock_replace_refs):
     schema = load_schema('journals')
     subschema = schema['properties']['_harvesting_info']
@@ -805,7 +805,7 @@ def test_populate_journal_coverage_writes_partial_if_all_coverages_are_partial(m
     assert expected == result
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs', autospec=True)
 def test_populate_journal_coverage_does_nothing_if_no_journal_is_found(mock_replace_refs):
     mock_replace_refs.return_value = []
 
@@ -819,7 +819,7 @@ def test_populate_journal_coverage_does_nothing_if_no_journal_is_found(mock_repl
     assert 'journal_coverage' not in obj.extra_data
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow')
+@patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow', autospec=True)
 def test_refextract_from_pdf(mock_get_document_in_workflow):
     mock_get_document_in_workflow.return_value.__enter__.return_value = pkg_resources.resource_filename(
         __name__,
@@ -841,7 +841,7 @@ def test_refextract_from_pdf(mock_get_document_in_workflow):
     assert obj.data['references'][0]['raw_refs'][0]['source'] == 'arXiv'
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow')
+@patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow', autospec=True)
 def test_refextract_from_text(mock_get_document_in_workflow):
     mock_get_document_in_workflow.return_value.__enter__.return_value = None
     mock_get_document_in_workflow.return_value.__exit__.return_value = None
@@ -1021,7 +1021,7 @@ def test_populate_submission_document_without_pdf():
         assert 0 == len(documents)
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs', autospec=True)
 def test_set_refereed_and_fix_document_type(mock_replace_refs):
     schema = load_schema('journals')
     subschema = schema['properties']['refereed']
@@ -1049,7 +1049,7 @@ def test_set_refereed_and_fix_document_type(mock_replace_refs):
     assert expected == result
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs', autospec=True)
 def test_set_refereed_and_fix_document_type_handles_journals_that_publish_mixed_content(mock_replace_refs):
     schema = load_schema('journals')
     proceedings_schema = schema['properties']['proceedings']
@@ -1079,7 +1079,7 @@ def test_set_refereed_and_fix_document_type_handles_journals_that_publish_mixed_
     assert expected == result
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs', autospec=True)
 def test_set_refereed_and_fix_document_type_sets_refereed_to_false_if_all_journals_are_not_refereed(mock_replace_refs):
     schema = load_schema('journals')
     subschema = schema['properties']['refereed']
@@ -1107,7 +1107,7 @@ def test_set_refereed_and_fix_document_type_sets_refereed_to_false_if_all_journa
     assert expected == result
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs', autospec=True)
 def test_set_refereed_and_fix_document_type_replaces_article_with_conference_paper_if_needed(mock_replace_refs):
     schema = load_schema('journals')
     subschema = schema['properties']['proceedings']
@@ -1135,7 +1135,7 @@ def test_set_refereed_and_fix_document_type_replaces_article_with_conference_pap
     assert expected == result
 
 
-@patch('inspirehep.modules.workflows.tasks.actions.replace_refs')
+@patch('inspirehep.modules.workflows.tasks.actions.replace_refs', autospec=True)
 def test_set_refereed_and_fix_document_type_does_nothing_if_no_journals_were_found(mock_replace_refs):
     mock_replace_refs.return_value = []
 
