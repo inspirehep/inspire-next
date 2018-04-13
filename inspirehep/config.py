@@ -117,11 +117,12 @@ REST_ENABLE_CORS = True
 # To enable file logging set it to e.g. "{sys_prefix}/var/log/inspirehep.log"
 LOGGING_FS_LOGFILE = None
 
+# This configures a logger for the ORCID module
 dictConfig({
     'version': 1,
     'formatters': {
         'default': {
-            'format': '[%(asctime)s] %(levelname)s/%(module)s: %(message)s',
+            'format': '[%(asctime)s: %(levelname)s/%(processName)s] %(name)s: %(message)s',
         }
     },
     'handlers': {
