@@ -47,6 +47,7 @@ from inspirehep.modules.orcid.api import (
 from inspirehep.modules.orcid.utils import (
     get_literature_recids_for_orcid,
     get_orcid_recid_key,
+    log_time,
 )
 
 
@@ -176,6 +177,10 @@ def import_legacy_orcid_tokens():
             orcid, token, email, name = user_data
             orcid_to_push = _register_user(name, email, orcid, token)
             if orcid_to_push:
+                LOGGER.info(
+                    'allow_push now enabled on %s, will push all works now',
+                    orcid_to_push
+                )
                 recids = get_literature_recids_for_orcid(orcid_to_push)
                 for recid in recids:
                     orcid_push.apply_async(
@@ -208,8 +213,8 @@ def orcid_push(self, orcid, rec_id, oauth_token):
 
     try:
         attempt_push(orcid, rec_id, oauth_token)
-    except Exception:
-        raise self.retry(max_retries=3, countdown=300)
+    except Exception as e:
+        raise self.retry(max_retries=3, countdown=300, exc=e)
 
 
 def attempt_push(orcid, rec_id, oauth_token):
@@ -220,9 +225,12 @@ def attempt_push(orcid, rec_id, oauth_token):
         rec_id(int): inspire record's id to push to ORCID.
         oauth_token(string): orcid token.
     """
+    LOGGER.info('Will attempt to push #%s onto %s', rec_id, orcid)
+
     put_code, previous_hash = get_putcode_and_hash_from_redis(orcid, rec_id)
 
     if not put_code:
+        LOGGER.info('Put-code %s not found in cache - will recache now')
         recache_all_author_putcodes(orcid, oauth_token)
         put_code, previous_hash = get_putcode_and_hash_from_redis(orcid, rec_id)
 
@@ -238,6 +246,7 @@ def attempt_push(orcid, rec_id, oauth_token):
         store_record_in_redis(orcid, rec_id, new_code, new_hash)
 
 
+@log_time(LOGGER)
 def recache_all_author_putcodes(orcid, oauth_token):
     """Fetch all putcodes from ORCID and cache them.
 

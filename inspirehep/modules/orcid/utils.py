@@ -26,10 +26,13 @@ from __future__ import absolute_import, division, print_function
 
 import hashlib
 import re
+import time
 
+from contextlib import contextmanager
 from itertools import chain
 from elasticsearch_dsl import Q
 from flask import current_app
+from functools import wraps
 from six.moves.urllib.parse import urljoin
 from StringIO import StringIO
 from sqlalchemy import cast, type_coerce
@@ -46,13 +49,10 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.models import RecordMetadata
 
 from inspire_dojson.utils import get_recid_from_ref
-from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_values_for_schema
 from inspire_utils.urls import ensure_scheme
 from inspirehep.modules.search.api import LiteratureSearch
 from inspirehep.utils.record_getter import get_db_records
-
-LOGGER = getStackTraceLogger(__name__)
 
 
 RECID_FROM_INSPIRE_URL = re.compile(
@@ -246,3 +246,27 @@ def get_literature_recids_for_orcid(orcid):
                                                  .params(_source=['control_number'], size=9999)
 
     return [el['control_number'] for el in search_by_curated_author]
+
+
+@contextmanager
+def log_time_context(name, logger):
+    initial = time.time()
+    status = 'succeed'
+    try:
+        yield
+    except Exception:
+        status = 'fail'
+        raise
+    finally:
+        logger.info('%s took %s to %s', name, time.time() - initial, status)
+
+
+def log_time(logger):
+    def _wrapper(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            with log_time_context(func.__name__, logger):
+                return func(*args, **kwargs)
+        return wrapper
+
+    return _wrapper

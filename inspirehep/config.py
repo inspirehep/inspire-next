@@ -29,6 +29,7 @@ import sys
 import pkg_resources
 
 from celery.schedules import crontab
+from logging.config import dictConfig
 
 from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
@@ -51,6 +52,9 @@ FEATURE_FLAG_ENABLE_ORCID_PUSH = False
 #   some ORCIDs -> "^(0000-0002-7638-5686|0000-0002-7638-5687)$"
 FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '.*'
 FEATURE_FLAG_ENABLE_FUZZY_MATCHER = False
+FEATURE_FLAG_ENABLE_MERGER = False
+FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY = False
+"""This feature flag will prevent to send a ``replace`` update to legacy."""
 
 # Default language and timezone
 # =============================
@@ -112,6 +116,29 @@ REST_ENABLE_CORS = True
 # =======
 # To enable file logging set it to e.g. "{sys_prefix}/var/log/inspirehep.log"
 LOGGING_FS_LOGFILE = None
+
+# This configures a logger for the ORCID module
+dictConfig({
+    'version': 1,
+    'formatters': {
+        'default': {
+            'format': '[%(asctime)s: %(levelname)s/%(processName)s] %(name)s: %(message)s',
+        }
+    },
+    'handlers': {
+        'stdout_handler': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+        }
+    },
+    'loggers': {
+        'inspirehep.modules.orcid': {
+            'level': 'INFO',
+            'handlers': ['stdout_handler'],
+            'propagate': True,
+        },
+    }
+})
 
 # Accounts
 # ========

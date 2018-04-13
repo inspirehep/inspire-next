@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from flask import current_app
+
 from invenio_db import db
 
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
@@ -50,7 +52,14 @@ def store_record(obj, eng):
         return updated_record
 
     is_update = obj.extra_data.get('is-update')
+
     if is_update:
+        if not current_app.config.get('FEATURE_FLAG_ENABLE_MERGER', False):
+            obj.log.info(
+                'skipping update record, feature flag ``FEATURE_FLAG_ENABLE_MERGER`` is disabled.'
+            )
+            return
+
         record = _get_updated_record(obj)
         obj.data['control_number'] = record['control_number']
         record.clear()
