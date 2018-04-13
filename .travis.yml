@@ -37,11 +37,11 @@ env:
     - BASE_USER_UID=2000
     - BASE_USER_GID=2000
   matrix:
-    - SUITE=acceptance-literature
-    - SUITE=acceptance-authors
-    - SUITE=workflows
-    - SUITE=integration
-    - SUITE=unit
+    - SUITE=ui-literature IMAGES="selenium test-database test-indexer test-rabbitmq test-redis test-web"
+    - SUITE=ui-authors IMAGES="selenium test-database test-indexer test-rabbitmq test-redis test-web"
+    - SUITE=workflows IMAGES="test-database test-indexer test-rabbitmq test-redis test-web"
+    - SUITE=integration IMAGES="test-database test-indexer test-redis"
+    - SUITE=unit IMAGES=""
 
 matrix:
   fast_finish: true
@@ -58,9 +58,10 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
 
 install:
-  - travis_retry docker-compose pull --parallel
+  - travis_retry docker-compose -f docker-compose.deps.yml pull --parallel pip assets
   - travis_retry docker-compose -f docker-compose.deps.yml run --rm pip
   - travis_retry docker-compose -f docker-compose.deps.yml run --rm assets
+  - travis_retry docker-compose -f docker-compose.test.yml pull --parallel ${SUITE} ${IMAGES}
 
 script:
   - docker-compose -f docker-compose.test.yml run --rm ${SUITE}
