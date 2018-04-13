@@ -159,7 +159,6 @@ ENHANCE_RECORD = [
     extract_journal_info,
     populate_journal_coverage,
     classify_paper(
-        taxonomy="HEPont.rdf",
         only_core_tags=False,
         spires=True,
         with_author_keywords=True,
