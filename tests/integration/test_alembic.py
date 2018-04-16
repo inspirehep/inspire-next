@@ -50,6 +50,15 @@ def test_downgrade(alembic_app):
     ext = alembic_app.extensions['invenio-db']
     ext.alembic.stamp()
 
+    # 402af3fbf68b
+
+    ext.alembic.downgrade(target='d99c70308006')
+
+    assert 'inspire_prod_records' in _get_table_names()
+    assert 'inspire_prod_records_recid_seq' in _get_sequences()
+    assert 'legacy_records_mirror' not in _get_table_names()
+    assert 'legacy_records_mirror_recid_seq' not in _get_sequences()
+
     # cb9f81e8251c & cb5153afd839
 
     ext.alembic.downgrade(target='fddb3cfe7a9c')
@@ -102,6 +111,15 @@ def test_upgrade(alembic_app):
     ext.alembic.upgrade(target='cb5153afd839')
 
     assert 'workflows_record_sources' in _get_table_names()
+
+    # 402af3fbf68b
+
+    ext.alembic.upgrade(target='402af3fbf68b')
+
+    assert 'inspire_prod_records' not in _get_table_names()
+    assert 'inspire_prod_records_recid_seq' not in _get_sequences()
+    assert 'legacy_records_mirror' in _get_table_names()
+    assert 'legacy_records_mirror_recid_seq' in _get_sequences()
 
 
 def _get_indexes(tablename):

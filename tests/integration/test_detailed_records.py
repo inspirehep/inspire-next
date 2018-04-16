@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 from invenio_accounts.testutils import login_user_via_session
 from invenio_records.models import RecordMetadata
 
-from inspirehep.modules.migrator.models import InspireProdRecords
+from inspirehep.modules.migrator.models import LegacyRecordsMirror
 
 
 def test_all_records_were_loaded(app):
@@ -38,7 +38,7 @@ def test_all_records_were_loaded(app):
 
 
 def test_all_records_are_valid(app):
-    invalid = InspireProdRecords.query.filter(InspireProdRecords.valid is False).values(InspireProdRecords.recid)
+    invalid = LegacyRecordsMirror.query.filter(LegacyRecordsMirror.valid is False).values(LegacyRecordsMirror.recid)
     recids = [el[0] for el in invalid]
 
     assert recids == []
