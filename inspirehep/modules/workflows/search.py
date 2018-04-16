@@ -49,6 +49,7 @@ def holdingpen_search_factory(self, search, **kwargs):
         '_extra_data.classifier_results.fulltext_used',
         '_extra_data.journal_coverage', '_extra_data._action',
         '_extra_data.matches', '_extra_data.crawl_errors',
+        '_extra_data.conflicts',
         '_extra_data.validation_errors', '_extra_data.callback_url',
     ]
     search = search.extra(_source={"include": includes})
