@@ -30,7 +30,7 @@ import pytest
 from flask import current_app
 from redis import StrictRedis
 
-from inspirehep.modules.migrator.models import InspireProdRecords
+from inspirehep.modules.migrator.models import LegacyRecordsMirror
 from inspirehep.modules.migrator.tasks import continuous_migration
 from inspirehep.utils.record_getter import get_db_record
 
@@ -99,7 +99,7 @@ def test_continuous_migration_handles_a_single_record(app, record_1502656):
     get_db_record('lit', 1502656)  # Does not raise.
 
     expected = record_1502656
-    result = InspireProdRecords.query.get(1502656).marcxml
+    result = LegacyRecordsMirror.query.get(1502656).marcxml
 
     assert expected == result
 
@@ -116,14 +116,14 @@ def test_continuous_migration_handles_multiple_records(app, record_1502655_and_1
     get_db_record('aut', 1502655)  # Does not raise.
 
     expected = record_1502655_and_1502656[0]
-    result = InspireProdRecords.query.get(1502655).marcxml
+    result = LegacyRecordsMirror.query.get(1502655).marcxml
 
     assert expected == result
 
     get_db_record('lit', 1502656)  # Does not raise.
 
     expected = record_1502655_and_1502656[1]
-    result = InspireProdRecords.query.get(1502656).marcxml
+    result = LegacyRecordsMirror.query.get(1502656).marcxml
 
     assert expected == result
 
@@ -145,6 +145,6 @@ def test_continuous_migration_handles_record_updates(app, record_1502656_and_upd
     assert expected == result
 
     expected = record_1502656_and_update[1]
-    result = InspireProdRecords.query.get(1502656).marcxml
+    result = LegacyRecordsMirror.query.get(1502656).marcxml
 
     assert expected == result
