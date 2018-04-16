@@ -167,13 +167,13 @@ def generate_record():
     return json_data
 
 
-def insert_citing_record():
+def insert_core_record():
     """Provide record fixture."""
     json_data = json.loads(pkg_resources.resource_string(
         __name__,
         os.path.join(
             '../fixtures',
-            'oai_arxiv_cited_record.json'
+            'oai_arxiv_core_record.json'
         )
     ))
 
