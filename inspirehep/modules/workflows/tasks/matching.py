@@ -102,12 +102,37 @@ def _get_hep_record_brief(hep_record):
     if abstract is not None:
         brief['abstract'] = abstract
 
+    arxiv_eprint = get_value(hep_record, 'arxiv_eprints[0].value')
+    if arxiv_eprint is not None:
+        brief['arxiv_eprint'] = arxiv_eprint
+
+    number_of_pages = get_value(hep_record, 'number_of_pages')
+    if number_of_pages is not None:
+        brief['number_of_pages'] = number_of_pages
+
+    earliest_date = get_value(hep_record, 'earliest_date')
+    if earliest_date is not None:
+        brief['earliest_date'] = earliest_date
+
     authors = hep_record.get('authors')
     if authors is not None:
+        brief['authors_count'] = len(authors)
         author_briefs = []
         for author in authors[:3]:
             author_briefs.append({'full_name': author['full_name']})
         brief['authors'] = author_briefs
+
+    public_notes = hep_record.get('public_notes')
+    if public_notes is not None:
+        public_notes_value = []
+        for public_note in public_notes:
+            public_notes_value.append({'value': public_note['value']})
+        brief['public_notes'] = public_notes_value
+
+    publication_info = hep_record.get('publication_info')
+    if publication_info is not None:
+        brief['publication_info'] = publication_info
+
     return brief
 
 

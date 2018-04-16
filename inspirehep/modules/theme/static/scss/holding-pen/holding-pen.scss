@@ -316,6 +316,7 @@ $hp_table_bg: #fff;
       -ms-transition: all 0.3s;
       -o-transition: all 0.3s;
       transition: all 0.3s;
+      border: 1px solid $silver;
 
       &.hperror {
         border-left: 4px solid $alizarin;
@@ -336,6 +337,47 @@ $hp_table_bg: #fff;
       .custom-h {
         margin-top: 0;
         display: inline;
+      }
+      
+      .label {
+        padding-left: 0px;
+        font-size: 12px;
+        color: #777777;
+        font-weight: normal;
+      }
+      
+      .abstract {
+        font-size: 12px;
+      }
+
+      .authors {
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #777777;
+        font-weight: bold;
+      }
+
+      dl {
+        margin: 5px 0;
+      }
+
+      dt {
+        font-size: 12px;
+        color: #7f8c8d;
+        width: 100px;
+        font-weight: normal;
+      }
+
+      dd {
+        margin-left: 120px;
+        font-size: 12px;
+        color: #333;
+      }
+
+      .regular-text {
+        font-size: 12px;
+        color: #333;
+        margin-bottom: 0px;
       }
 
         .btn-danger {
@@ -669,7 +711,7 @@ $hp_table_bg: #fff;
 }
 
 .matches-container {
-  background-color: #dadede !important;
+  background-color: #ffffff !important;
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
   padding: 0 10px 10px 10px;
@@ -678,12 +720,62 @@ $hp_table_bg: #fff;
     padding-top: 5px !important;
   }
 
-  h5 {
-    color: $blue-haze;
+  .list-inline {
+    font-size: 12px;
+  }
+
+  a {
+    font-size: 12px;
   }
   
+  ul {
+    margin-bottom: 0px;
+    list-style: none;
+    padding-left: 0px;
+  }
+  
+  dl {
+    margin-bottom: 5px;
+  }
+
+  dt {
+    font-size: 12px;
+    color: #7f8c8d;
+    width: 120px;
+    font-weight: normal;
+  }
+
+  dd {
+    margin-left: 140px;
+    font-size: 12px;
+    color: #333;
+  }
+
+  .label {
+    font-size: 12px;
+    color: #777777;
+    padding-left: 0px;
+    font-weight: normal;
+  }
+
+  .regular-text {
+    font-size: 12px;
+    color: #333;
+  }
+
+  .panel {
+    background-color: #f7f7f7;
+  }
+
   .panel-heading {
     font-size: 12px;
+    padding-bottom: 0px;
+  }
+
+  .panel-body {
+    padding-top: 0px;
+    padding-left: 40px;
+    border-top: 0px !important;
   }
 
   hr {
@@ -694,13 +786,20 @@ $hp_table_bg: #fff;
   .panel-group {
     margin-bottom: 10px;
   }
-
-  .authors {
-    margin-bottom: 10px;
-    font-size: 14px;
-    color: $blue-haze;
-  }
   
+  .public-notes {
+    h6 {
+      color: #333;
+      margin-bottom: 5px;
+    }
+    
+    ul {
+      list-style-position: inside;
+      padding-left: 0;
+      font-size: 12px;
+    }
+  }
+
   p {
     font-size: 13px;
     color: #333;
@@ -728,7 +827,7 @@ $hp_table_bg: #fff;
     }
     &.no-match {
       background-color: white;
-      border-color: $grey;
+      border-color: #ccc;
       color: $grey;
       margin-left: 5px;
       &:hover {
