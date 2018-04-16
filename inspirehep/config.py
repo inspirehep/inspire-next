@@ -1357,6 +1357,7 @@ WORKFLOWS_UI_DATA_TYPES = dict(
 WORKFLOWS_UI_REST_FACETS = {
     "holdingpen": {
         "filters": {
+            "pending_action": terms_filter('_extra_data._action'),
             "status": terms_filter('_workflow.status'),
             "source": terms_filter('metadata.acquisition_source.source'),
             "method": terms_filter('metadata.acquisition_source.method'),
@@ -1394,6 +1395,11 @@ WORKFLOWS_UI_REST_FACETS = {
                 'terms': {
                     'field': '_extra_data.relevance_prediction.decision',
                     'size': 20,
+                },
+            },
+            'pending_action': {
+                'terms': {
+                    'field': '_extra_data._action',
                 },
             },
         }
