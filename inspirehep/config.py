@@ -1287,6 +1287,9 @@ ARXIV_CATEGORIES = {
         'physics.ins-det',
     ]
 }
+HEP_ONTOLOGY_FILE = "HEPont.rdf"
+"""Name or path of the ontology to use for hep articles keyword extraction."""
+
 RECORDS_DEFAULT_FILE_LOCATION_NAME = "records"
 """Name of default records Location reference."""
 
@@ -1354,6 +1357,7 @@ WORKFLOWS_UI_DATA_TYPES = dict(
 WORKFLOWS_UI_REST_FACETS = {
     "holdingpen": {
         "filters": {
+            "pending_action": terms_filter('_extra_data._action'),
             "status": terms_filter('_workflow.status'),
             "source": terms_filter('metadata.acquisition_source.source'),
             "method": terms_filter('metadata.acquisition_source.method'),
@@ -1391,6 +1395,11 @@ WORKFLOWS_UI_REST_FACETS = {
                 'terms': {
                     'field': '_extra_data.relevance_prediction.decision',
                     'size': 20,
+                },
+            },
+            'pending_action': {
+                'terms': {
+                    'field': '_extra_data._action',
                 },
             },
         }
@@ -1706,5 +1715,7 @@ FUZZY_MATCH = {
     ],
     'doc_type': 'hep',
     'index': 'records-hep',
-    'source': ['control_number', 'titles', 'abstracts', 'authors']
+    'source': ['control_number', 'titles', 'abstracts', 'authors',
+               'arxiv_eprints', 'public_notes', 'number_of_pages',
+               'publication_info', 'earliest_date']
 }

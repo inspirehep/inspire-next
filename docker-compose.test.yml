@@ -71,10 +71,10 @@ services:
       test-redis:
         condition: service_healthy
 
-  acceptance:
+  ui:
     extends:
       service: test-service_base
-    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance
+    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/ui
     volumes_from:
       - test-static
     depends_on:
@@ -95,10 +95,10 @@ services:
     environment:
       - SERVER_NAME=test-web:5000
 
-  visible_acceptance:
+  visible_ui:
     extends:
       service: test-service_base
-    command: py.test --driver Firefox --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance
+    command: py.test --driver Firefox --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/ui
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     volumes_from:
@@ -122,10 +122,10 @@ services:
       - SERVER_NAME=test-web:5000
       - DISPLAY=$DISPLAY
 
-  acceptance-authors:
+  ui-authors:
     extends:
       service: test-service_base
-    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance/authors
+    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/ui/authors
     volumes_from:
       - test-static
     depends_on:
@@ -146,10 +146,10 @@ services:
     environment:
       - SERVER_NAME=test-web:5000
 
-  acceptance-literature:
+  ui-literature:
     extends:
       service: test-service_base
-    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance/literature
+    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/ui/literature
     volumes_from:
       - test-static
     depends_on:
@@ -164,6 +164,28 @@ services:
       test-worker:
         condition: service_healthy
       selenium:
+        condition: service_started
+      test-web:
+        condition: service_started
+    environment:
+      - SERVER_NAME=test-web:5000
+
+  e2e:
+    extends:
+      service: test-service_base
+    command: py.test tests/e2e
+    volumes_from:
+      - test-static
+    depends_on:
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+      test-worker:
         condition: service_started
       test-web:
         condition: service_started
@@ -191,7 +213,7 @@ services:
   test-worker:
     extends:
       service: test-service_base
-    command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge --queues celery,migrator,harvests,orcid_push
+    command: celery worker -E -A inspirehep.celery_tests --loglevel=INFO --purge --queues celery,migrator,harvests,orcid_push
     volumes_from:
       - test-static
     healthcheck:

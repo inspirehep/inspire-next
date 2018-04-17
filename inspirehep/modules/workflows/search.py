@@ -39,8 +39,10 @@ def holdingpen_search_factory(self, search, **kwargs):
     search, urlkwargs = default_search_factory(self, search, **kwargs)
     includes = [
         'metadata.titles', 'metadata.abstracts', 'metadata.authors',
-        'metadata.inspire_categories', 'metadata.name', 'metadata.positions',
-        'metadata.acquisition_source', 'metadata.arxiv_eprints',
+        'metadata.earliest_date', 'metadata.publication_info',
+        'metadata.number_of_pages', 'metadata.arxiv_eprints',
+        'metadata.public_notes', 'metadata.inspire_categories',
+        'metadata.name', 'metadata.positions', 'metadata.acquisition_source',
         'metadata.arxiv_categories', '_workflow',
         '_extra_data.relevance_prediction', '_extra_data.user_action',
         '_extra_data.classifier_results.complete_output',

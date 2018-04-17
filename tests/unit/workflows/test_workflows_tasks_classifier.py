@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 import os
 
 import pkg_resources
+import pytest
 from mock import patch
 from six import binary_type
 
@@ -32,8 +33,33 @@ from inspirehep.modules.workflows.tasks.classifier import classify_paper
 from mocks import MockEng, MockObj
 
 
+HIGGS_ONTOLOGY = '''<?xml version="1.0" encoding="UTF-8" ?>
+
+<rdf:RDF xmlns="http://www.w3.org/2004/02/skos/core#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+    <Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Higgsparticle">
+        <prefLabel xml:lang="en">Higgs particle</prefLabel>
+        <altLabel xml:lang="en">Higgs boson</altLabel>
+        <hiddenLabel xml:lang="en">Higgses</hiddenLabel>
+        <note xml:lang="en">core</note>
+    </Concept>
+
+</rdf:RDF>
+'''
+
+
+@pytest.fixture()
+def higgs_ontology(tmpdir):
+    ontology = tmpdir.join('HEPont.rdf')
+    ontology.write(HIGGS_ONTOLOGY)
+    yield str(ontology)
+
+
 @patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
-def test_classify_paper_with_fulltext(get_document_in_workflow, tmpdir):
+def test_classify_paper_with_fulltext(get_document_in_workflow, tmpdir, higgs_ontology):
     obj = MockObj({}, {})
     eng = MockEng()
     fulltext = tmpdir.join('fulltext.txt')
@@ -49,10 +75,11 @@ def test_classify_paper_with_fulltext(get_document_in_workflow, tmpdir):
     ]
 
     classify_paper(
-        taxonomy="HEPont.rdf",
+        taxonomy=higgs_ontology,
         only_core_tags=False,
         spires=True,
         with_author_keywords=True,
+        no_cache=True,
     )(obj, eng)
 
     assert obj.extra_data['classifier_results']['complete_output']['core_keywords'] == expected
@@ -60,7 +87,7 @@ def test_classify_paper_with_fulltext(get_document_in_workflow, tmpdir):
 
 
 @patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
-def test_classify_paper_with_no_fulltext(get_document_in_workflow):
+def test_classify_paper_with_no_fulltext(get_document_in_workflow, higgs_ontology):
     data = {
         'titles': [
             {
@@ -86,10 +113,11 @@ def test_classify_paper_with_no_fulltext(get_document_in_workflow):
     ]
 
     classify_paper(
-        taxonomy="HEPont.rdf",
+        taxonomy=higgs_ontology,
         only_core_tags=False,
         spires=True,
         with_author_keywords=True,
+        no_cache=True,
     )(obj, eng)
 
     assert obj.extra_data['classifier_results']['complete_output']['core_keywords'] == expected
@@ -97,7 +125,7 @@ def test_classify_paper_with_no_fulltext(get_document_in_workflow):
 
 
 @patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
-def test_classify_paper_uses_keywords(get_document_in_workflow):
+def test_classify_paper_uses_keywords(get_document_in_workflow, higgs_ontology):
     data = {
         'titles': [
             {
@@ -123,10 +151,11 @@ def test_classify_paper_uses_keywords(get_document_in_workflow):
     ]
 
     classify_paper(
-        taxonomy="HEPont.rdf",
+        taxonomy=higgs_ontology,
         only_core_tags=False,
         spires=True,
         with_author_keywords=True,
+        no_cache=True,
     )(obj, eng)
 
     assert obj.extra_data['classifier_results']['complete_output']['core_keywords'] == expected
@@ -134,7 +163,7 @@ def test_classify_paper_uses_keywords(get_document_in_workflow):
 
 
 @patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
-def test_classify_paper_does_not_raise_on_unprintable_keywords(get_document_in_workflow):
+def test_classify_paper_does_not_raise_on_unprintable_keywords(get_document_in_workflow, higgs_ontology):
     paper_with_unprintable_keywords = pkg_resources.resource_filename(
         __name__, os.path.join('fixtures', '1802.08709.pdf'))
 
@@ -145,8 +174,9 @@ def test_classify_paper_does_not_raise_on_unprintable_keywords(get_document_in_w
     eng = MockEng()
 
     classify_paper(
-        taxonomy='HEPont.rdf',
+        taxonomy=higgs_ontology,
         only_core_tags=False,
         spires=True,
         with_author_keywords=True,
+        no_cache=True,
     )(obj, eng)  # Does not raise.
