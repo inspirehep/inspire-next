@@ -22,18 +22,14 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
 from sqlalchemy import inspect
 
-from invenio_db.utils import drop_alembic_version_table
 from invenio_db import db
+from invenio_db.utils import drop_alembic_version_table
 
 
 def test_alembic_revision_fddb3cfe7a9c(alembic_app):
     ext = alembic_app.extensions['invenio-db']
-
-    if db.engine.name == 'sqlite':
-        raise pytest.skip('Upgrades are not supported on SQLite.')
 
     db.drop_all()
     drop_alembic_version_table()
@@ -65,9 +61,6 @@ def test_alembic_revision_cb9f81e8251c(alembic_app):
 
     ext = alembic_app.extensions['invenio-db']
 
-    if db.engine.name == 'sqlite':
-        raise pytest.skip('Upgrades are not supported on SQLite.')
-
     ext.alembic.stamp()
 
     ext.alembic.downgrade(target='fddb3cfe7a9c')
@@ -92,9 +85,6 @@ def test_alembic_revision_cb9f81e8251c(alembic_app):
 def test_alembic_revision_cb5153afd839(alembic_app):
     ext = alembic_app.extensions['invenio-db']
 
-    if db.engine.name == 'sqlite':
-        raise pytest.skip('Upgrades are not supported on SQLite.')
-
     db.drop_all()
     drop_alembic_version_table()
 
@@ -108,5 +98,28 @@ def test_alembic_revision_cb5153afd839(alembic_app):
     ext.alembic.downgrade(target='fddb3cfe7a9c')
     inspector = inspect(db.engine)
     assert 'workflows_record_sources' not in inspector.get_table_names()
+
+    drop_alembic_version_table()
+
+
+def test_alembic_revision_402af3fbf68b(alembic_app):
+    ext = alembic_app.extensions['invenio-db']
+
+    db.drop_all()
+    drop_alembic_version_table()
+
+    inspector = inspect(db.engine)
+    assert 'inspire_prod_records' not in inspector.get_table_names()
+    assert 'legacy_records_mirror' not in inspector.get_table_names()
+
+    ext.alembic.upgrade(target='402af3fbf68b')
+    inspector = inspect(db.engine)
+    assert 'inspire_prod_records' not in inspector.get_table_names()
+    assert 'legacy_records_mirror' in inspector.get_table_names()
+
+    ext.alembic.downgrade(target='d99c70308006')
+    inspector = inspect(db.engine)
+    assert 'inspire_prod_records' in inspector.get_table_names()
+    assert 'legacy_records_mirror' not in inspector.get_table_names()
 
     drop_alembic_version_table()
