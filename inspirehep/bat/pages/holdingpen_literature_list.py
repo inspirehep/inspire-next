@@ -38,7 +38,7 @@ FIRST_RECORD_DETAILS = (
     FIRST_RECORD + '/div/div/div[2]/holding-pen-template-handler'
 )
 FIRST_RECORD_TITLE = FIRST_RECORD_DETAILS + '/h4/a'
-FIRST_RECORD_SHOW_ABSTRACT_LINK = FIRST_RECORD_DETAILS + '/div/a'
+FIRST_RECORD_SHOW_ABSTRACT_LINK = '//div[@class="abstract ng-scope"]/a'
 
 
 def go_to():
