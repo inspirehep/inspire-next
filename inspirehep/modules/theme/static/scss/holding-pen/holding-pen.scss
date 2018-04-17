@@ -552,9 +552,14 @@ $hp_table_bg: #fff;
       .record-title {
         font-size: 1.7em;
       }
+
       .record-abstract {
         color: $blue-haze;
         display: block;
+      }
+      
+      .record-pub-info {
+        margin-bottom: 10px;
       }
 
       .record-authors {
@@ -765,6 +770,10 @@ $hp_table_bg: #fff;
 
   .panel {
     background-color: #f7f7f7;
+  }
+  
+  .authors {
+    margin-bottom: 10px;
   }
 
   .panel-heading {
