@@ -33,6 +33,7 @@ import pytest
 
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
+from invenio_records.models import RecordMetadata
 from invenio_search.api import current_search_client as es
 from invenio_workflows import (
     WorkflowEngine,
@@ -40,10 +41,11 @@ from invenio_workflows import (
     workflow_object_class,
 )
 
+from inspire_dojson.utils import get_record_ref
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.tasks.actions import normalize_journal_titles
 
-from calls import core_record
+from calls import insert_citing_record
 
 from mocks import (
     fake_beard_api_request,
@@ -365,7 +367,6 @@ def test_normalize_journal_titles_unknown_journals_no_ref(workflow_app, insert_j
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
 )
-@mock.patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow')
 def test_refextract_from_pdf(
     mocked_api_request_magpie,
     mocked_api_request_beard,
@@ -377,50 +378,46 @@ def test_refextract_from_pdf(
 ):
     """Test refextract by going through the entire workflow."""
 
-    '''Import the cited record'''
-
     cited_record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         '_collections': ['Literature'],
-      'abstracts': [
-        {
-          'source': 'arXiv',
-          'value': 'The effects on the non-relativistic dynamics of a system compound by two electrons interacting by a Coulomb potential and with an external harmonic\r\noscillator potential, confined to move in a two dimensional Euclidean space, are investigated. In particular, it is shown that it is possible to determine\r\nexactly and in a closed form a finite portion of the energy spectrum and the associated eigeinfunctions for the Schr\\\"odinger equation describing the relative motion of the electrons, by putting it into the form of a biconfluent Heun equation. In the same framework, another set of solutions of this type can\r\nbe straightforwardly obtained for the case when the two electrons are submitted also to an external constant magnetic field.'
-        }
-      ],
-      'arxiv_eprints': [
-        {
-          'categories': ['quant-ph', 'cond-mat.mes-hall', 'cond-mat.str-el', 'math-ph', 'math.MP'],
-          'value': '1308.0815'
-        }
-      ],
-      'authors': [
-        {'full_name': 'Caruso, F.'},
-        {'full_name': 'Martins, J.'},
-        {'full_name': 'Oguri, V.'},
-      ],
-      'document_type': ['article'],
-      'dois': [
-        {'value': '10.1016/j.aop.2014.04.023'}
-      ],
-      'titles': [
-        {
-          'source': 'arXiv',
-          'title': 'Solving a two-electron quantum dot model in terms of polynomial solutions of a Biconfluent Heun equation'
-        }
-      ],
+        'abstracts': [
+            {
+                'source': 'arXiv',
+                'value': 'The effects on the non-relativistic dynamics of a system compound by two electrons interacting by a Coulomb potential and with an external harmonic\r\noscillator potential, confined to move in a two dimensional Euclidean space, are investigated. In particular, it is shown that it is possible to determine\r\nexactly and in a closed form a finite portion of the energy spectrum and the associated eigeinfunctions for the Schrodinger equation describing the relative motion of the electrons, by putting it into the form of a biconfluent Heun equation. In the same framework, another set of solutions of this type can\r\nbe straightforwardly obtained for the case when the two electrons are submitted also to an external constant magnetic field.'
+            }
+        ],
+        'arxiv_eprints': [
+            {
+                'categories': ['quant-ph', 'cond-mat.mes-hall', 'cond-mat.str-el', 'math-ph', 'math.MP'],
+                'value': '1308.0815'
+            }
+        ],
+        'authors': [
+            {'full_name': 'Caruso, F.'},
+            {'full_name': 'Martins, J.'},
+            {'full_name': 'Oguri, V.'},
+        ],
+        'document_type': ['article'],
+        'dois': [
+            {'value': '10.1016/j.aop.2014.04.023'}
+        ],
+        'titles': [
+            {
+                'source': 'arXiv',
+                'title': 'Solving a two-electron quantum dot model in terms of polynomial solutions of a Biconfluent Heun equation'
+            }
+        ],
     }
 
-    record = InspireRecord.create(cited_record_json, id_=None)
-    record.commit()
-    rec_uuid = record.id
+    cited_record = InspireRecord.create(cited_record_json, id_=None)
+    cited_record.commit()
+    rec_uuid = cited_record.id
 
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    '''Import the citing record'''
-
-    record, categories = core_record()
+    citing_record, categories = insert_citing_record()
 
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
@@ -430,22 +427,17 @@ def test_refextract_from_pdf(
 
     with workflow_app.app_context():
         with mock.patch.dict(workflow_app.config, extra_config):
-            citing_doc_workflow_uuid = start('article', [record])
+            citing_doc_workflow_uuid = start('article', [citing_record])
 
         citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)
         citing_doc_obj = citing_doc_eng.processed_objects[0]
 
-        assert citing_doc_obj.data['references'][7]['record']['$ref'] == cited_doc_obj.data['control_number']
+        assert citing_doc_obj.data['references'][7]['record'] == get_record_ref(cited_record['control_number'], 'literature')
 
     '''Cleanup stuff'''
 
-    record = InspireRecord.get_record(rec_uuid)
-    pid = PersistentIdentifier.get(
-        pid_type='lit',
-        pid_value=record['control_number']
-    )
+    record = RecordMetadata.query.get(rec_uuid)
 
-    pid.unassign()
-    pid.delete()
-    record.delete()
-    record.commit()
+    PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == record.id).delete()
+    db.session.delete(record)
+    db.session.commit()
