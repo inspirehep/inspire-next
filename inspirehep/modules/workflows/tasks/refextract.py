@@ -214,7 +214,7 @@ def match_reference(reference):
 
     Args:
         reference: The reference metadata
-        config: The configutaion(s) for InspireMatcher queries
+        config: The configurtaion(s) for InspireMatcher queries
 
     Returns:
         The record ID of the matched reference
@@ -222,27 +222,13 @@ def match_reference(reference):
 
     config_default = current_app.config['WORKFLOWS_REFERENCE_MATCHER_DEFAULT_CONFIG']
     config_jcap_and_jhep = current_app.config['WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG']
-    config_data = current_app.config['WORKFLOWS_REFERENCE_MATCHER_DATA_CONFIG']
 
     journal_title = get_value(reference, 'reference.publication_info.journal_title')
     if journal_title in ['JCAP', 'JHEP']:
-        try:
-            if get_value(reference, 'reference.publication_info.year'):
-                reference['reference']['publication_info']['year'] = str(
-                    reference['reference']['publication_info']['year'])
-            result = next(match(reference, config_jcap_and_jhep))
+        result = next(match(reference, config_jcap_and_jhep), None)
+        if result:
             return result['_source']['control_number']
-        except StopIteration:
-            pass
 
-    try:
-        result = next(match(reference, config_data))
+    result = next(match(reference, config_default), None)
+    if result:
         return result['_source']['control_number']
-    except StopIteration:
-        pass
-
-    try:
-        result = next(match(reference, config_default))
-        return result['_source']['control_number']
-    except StopIteration:
-        pass
