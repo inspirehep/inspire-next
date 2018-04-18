@@ -433,10 +433,10 @@ def refextract(obj, eng):
 
     if len(pdf_references) == len(text_references) == 0:
         obj.log.info('No references extracted.')
-    elif len(pdf_references) >= len(text_references):
+    elif len(pdf_references) > len(text_references):
         obj.log.info('Extracted %d references from PDF.', len(pdf_references))
         obj.data['references'] = pdf_references
-    elif len(text_references) > len(pdf_references):
+    elif len(text_references) >= len(pdf_references):
         obj.log.info('Extracted %d references from text.', len(text_references))
         obj.data['references'] = text_references
 
