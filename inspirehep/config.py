@@ -1451,7 +1451,7 @@ WORKFLOWS_UI_REST_SORT_OPTIONS = {
 
 WORKFLOWS_UI_REST_DEFAULT_SORT = {
     "holdingpen": {
-        "query": "-bestmatch",
+        "query": "mostrecent",
         "noquery": "mostrecent"
     }
 }
