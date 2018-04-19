@@ -55,6 +55,36 @@ WORKFLOWS_REFERENCE_MATCHER_DEFAULT_CONFIG = {
                 },
                 {
                     'paths': [
+                        'reference.publication_info.journal_issue',
+                        'reference.publication_info.journal_title',
+                        'reference.publication_info.journal_volume',
+                        'reference.publication_info.artid',
+                    ],
+                    'search_paths': [
+                        'publication_info.journal_issue',
+                        'publication_info.journal_title.raw',
+                        'publication_info.journal_volume',
+                        'publication_info.artid',
+                    ],
+                    'type': 'nested',
+                },
+                {
+                    'paths': [
+                        'reference.publication_info.journal_issue',
+                        'reference.publication_info.journal_title',
+                        'reference.publication_info.journal_volume',
+                        'reference.publication_info.page_start',
+                    ],
+                    'search_paths': [
+                        'publication_info.journal_issue',
+                        'publication_info.journal_title.raw',
+                        'publication_info.journal_volume',
+                        'publication_info.page_start',
+                    ],
+                    'type': 'nested',
+                },
+                {
+                    'paths': [
                         'reference.publication_info.journal_title',
                         'reference.publication_info.journal_volume',
                         'reference.publication_info.artid',
