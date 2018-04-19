@@ -44,6 +44,9 @@ def delete_records_without_control_number():
 def delete_record_by_pid(pid_type, pid_value):
     """
     Delete a single record by PID.
+
+    Example:
+        >>> delete_record_by_pid('lit', 1667913)
     """
     record = RecordMetadata.query.filter(RecordMetadata.id == PersistentIdentifier.object_uuid)\
         .filter(PersistentIdentifier.pid_value == str(pid_value),
