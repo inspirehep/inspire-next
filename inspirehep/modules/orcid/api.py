@@ -32,6 +32,7 @@ from orcid import MemberAPI
 
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
+from inspirehep.utils.lock import distributed_lock
 from inspirehep.modules.orcid import OrcidConverter
 from inspirehep.modules.orcid.utils import (
     _get_api_url_for_recid,
@@ -85,11 +86,14 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
         record, app.config['LEGACY_RECORD_URL_PATTERN'], put_code=put_code, bibtex_citation=bibtex
     ).get_xml()
 
+    lock_name = 'orcid:{}'.format(orcid)
+
     if put_code:
         LOGGER.info(
             "Pushing record #%s with put-code %s onto %s.", recid, put_code, orcid,
         )
-        with log_time_context('Pushing updated record', LOGGER):
+        with log_time_context('Pushing updated record', LOGGER), \
+                distributed_lock(lock_name, blocking=True):
             orcid_api.update_record(
                 orcid_id=orcid,
                 token=oauth_token,
@@ -102,7 +106,8 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
         LOGGER.info(
             "No put-code found, pushing new record #%s to ORCID %s.", recid, orcid,
         )
-        with log_time_context('Pushing new record', LOGGER):
+        with log_time_context('Pushing new record', LOGGER), \
+                distributed_lock(lock_name, blocking=True):
             put_code = orcid_api.add_record(
                 orcid_id=orcid,
                 token=oauth_token,
