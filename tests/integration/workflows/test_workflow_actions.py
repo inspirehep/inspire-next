@@ -34,6 +34,7 @@ import pytest
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.models import RecordMetadata
+from inspire_schemas.api import load_schema, validate
 from invenio_search.api import current_search_client as es
 from invenio_workflows import (
     WorkflowEngine,
@@ -128,7 +129,7 @@ def insert_cited_record(workflow_app):
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    yield cited_record
+    yield
 
     record = RecordMetadata.query.get(rec_uuid)
 
@@ -431,7 +432,7 @@ def test_refextract_from_pdf(
     workflow_app,
     mocked_external_services
 ):
-    """Test refextract by going through the entire workflow."""
+    """Test refextract from PDF by going through the entire workflow."""
 
     citing_record, categories = insert_citing_record()
 
@@ -441,11 +442,16 @@ def test_refextract_from_pdf(
         'ARXIV_CATEGORIES': categories,
     }
 
-    with workflow_app.app_context():
-        with mock.patch.dict(workflow_app.config, extra_config):
-            citing_doc_workflow_uuid = start('article', [citing_record])
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
 
-        citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)
-        citing_doc_obj = citing_doc_eng.processed_objects[0]
+    assert validate(citing_record['acquisition_source'], subschema) is None
 
-        assert citing_doc_obj.data['references'][7]['record']['$ref'] == 'http://localhost:5000/api/literature/1'
+    with mock.patch.dict(workflow_app.config, extra_config):
+        citing_doc_workflow_uuid = start('article', [citing_record])
+
+    citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)
+    citing_doc_obj = citing_doc_eng.processed_objects[0]
+
+    assert citing_doc_obj.data['references'][7]['record']['$ref'] == 'http://localhost:5000/api/literature/1'
+    assert citing_doc_obj.data['references'][0]['raw_refs'][0]['source'] == 'arXiv'

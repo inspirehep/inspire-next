@@ -154,8 +154,8 @@ ENHANCE_RECORD = [
         populate_submission_document,
     ),
     download_documents,
-    refextract,
     normalize_journal_titles,
+    refextract,
     extract_journal_info,
     populate_journal_coverage,
     classify_paper(

@@ -181,11 +181,6 @@ def insert_citing_record():
     for eprint in json_data.get('arxiv_eprints', []):
         categories['core'].extend(eprint.get('categories', []))
 
-    if 'preprint_date' in json_data:
-        json_data['preprint_date'] = datetime.date.today().isoformat()
-
-    assert categories
-
     return json_data, categories
 
 

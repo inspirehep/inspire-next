@@ -48,6 +48,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     populate_journal_coverage,
     populate_submission_document,
     reject_record,
+    refextract,
     set_refereed_and_fix_document_type,
     shall_halt_workflow,
     validate_record,
@@ -1124,3 +1125,63 @@ def test_validate_record_raises_when_record_is_invalid():
 
     with pytest.raises(ValidationError):
         _validate_record(obj, eng)
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow')
+@patch(
+    'inspirehep.modules.workflows.tasks.refextract.match',
+    return_value=iter([])
+)
+def test_refextract_from_text(mock_match, mock_get_document_in_workflow):
+    """TODO: Make this an integration test and also test reference matching."""
+
+    mock_get_document_in_workflow.return_value.__enter__.return_value = None
+    mock_get_document_in_workflow.return_value.__exit__.return_value = None
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+
+    data = {'acquisition_source': {'source': 'submitter'}}
+    extra_data = {
+        'formdata': {
+            'references': 'M.R. Douglas, G.W. Moore, D-branes, quivers, and ALE instantons, arXiv:hep-th/9603167',
+        },
+    }
+    assert validate(data['acquisition_source'], subschema) is None
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert refextract(obj, eng) is None
+    assert obj.data['references'][0]['raw_refs'][0]['source'] == 'submitter'
+
+
+@patch(
+    'inspirehep.modules.workflows.tasks.refextract.match',
+    return_value=iter([])
+)
+def test_refextract_from_raw_refs(mock_match):
+    """TODO: Make this an integration test and also test reference matching."""
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    data = {
+        'references': [
+            {
+                'raw_refs': [
+                    {
+                        'schema': 'text',
+                        'source': 'arXiv',
+                        'value': '[37] M. Vallisneri, \u201cUse and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects,\u201d Phys. Rev. D 77, 042001 (2008) doi:10.1103/PhysRevD.77.042001 [gr-qc/0703086 [GR-QC]].'
+                    },
+                ],
+            },
+        ],
+    }
+    assert validate(data['references'], subschema) is None
+
+    obj = MockObj(data, {})
+    eng = MockEng()
+
+    assert refextract(obj, eng) is None
+    assert 'reference' in obj.data['references'][0]

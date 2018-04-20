@@ -51,7 +51,7 @@ from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_pdf,
     extract_references_from_raw_refs,
     extract_references_from_text,
-    match_references,
+    match_reference,
 )
 from inspirehep.modules.workflows.utils import (
     download_file_to_workflow,
@@ -412,10 +412,10 @@ def refextract(obj, eng):
 
     """
     if 'references' in obj.data:
-        raw_references = extract_references_from_raw_refs(obj.data['references'])
-        raw_references = match_references(raw_references)
-        obj.log.info('Extracted %d references from raw refs.', len(raw_references))
-        obj.data['references'] = raw_references
+        extracted_raw_references = extract_references_from_raw_refs(obj.data['references'])
+        extracted_raw_references = [match_reference(ref) for ref in extracted_raw_references]
+        obj.log.info('Extracted %d references from raw refs.', len(extracted_raw_references))
+        obj.data['references'] = extracted_raw_references
         return
 
     pdf_references, text_references = [], []
@@ -424,12 +424,12 @@ def refextract(obj, eng):
     with get_document_in_workflow(obj) as tmp_document:
         if tmp_document:
             pdf_references = extract_references_from_pdf(tmp_document, source)
-            pdf_references = match_references(pdf_references)
+            pdf_references = [match_reference(ref) for ref in pdf_references]
 
     text = get_value(obj.extra_data, 'formdata.references')
     if text:
         text_references = extract_references_from_text(text, source)
-        text_references = match_references(text_references)
+        text_references = [match_reference(ref) for ref in text_references]
 
     if len(pdf_references) == len(text_references) == 0:
         obj.log.info('No references extracted.')
