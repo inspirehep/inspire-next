@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from copy import deepcopy
-
 from invenio_db import db
 from invenio_oauthclient.models import (
     UserIdentity,
@@ -56,7 +54,7 @@ class TestUserIdentity(TestBaseModel):
         instance = cls()
 
         # Check all required fields.
-        updated_kwargs = deepcopy(kwargs)
+        updated_kwargs = kwargs.copy()
         if not kwargs.pop('id', None):
             updated_kwargs['id'] = generate_random_string(255)
         if not kwargs.pop('method', None):
@@ -101,7 +99,7 @@ class TestRemoteAccount(TestBaseModel):
         instance = cls()
 
         # Check all required fields.
-        updated_kwargs = deepcopy(kwargs)
+        updated_kwargs = kwargs.copy()
         if not kwargs.pop('client_id', None):
             updated_kwargs['client_id'] = generate_random_string(255)
         if not kwargs.pop('user_id', None):
@@ -140,7 +138,7 @@ class TestRemoteToken(TestBaseModel):
         instance = cls()
 
         # Check all required fields.
-        updated_kwargs = deepcopy(kwargs)
+        updated_kwargs = kwargs.copy()
         if not kwargs.pop('access_token', None):
             updated_kwargs['access_token'] = generate_random_string(255)
         if not kwargs.pop('remote_account', None):
