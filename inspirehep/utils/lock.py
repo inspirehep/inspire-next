@@ -62,7 +62,7 @@ def distributed_lock(lock_name, expire=10, auto_renewal=True, blocking=False):
     redis = StrictRedis.from_url(redis_url)
     lock = Lock(redis, lock_name, expire=expire, auto_renewal=auto_renewal)
 
-    if lock.acquire(blocking=False):
+    if lock.acquire(blocking=blocking):
         try:
             yield
         finally:
