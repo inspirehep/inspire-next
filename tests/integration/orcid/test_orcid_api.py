@@ -78,8 +78,7 @@ def test_push_record_with_orcid_update(mock_config, vcr_cassette):
     assert vcr_cassette.all_played
 
 
-@pytest.mark.vcr()
-def test_push_record_with_orcid_dont_push_if_no_change(mock_config, vcr_cassette):
+def test_push_record_with_orcid_dont_push_if_no_change(mock_config):
     expected_put_code = '920107'
     expected_hash = 'sha1:2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
 
@@ -93,7 +92,6 @@ def test_push_record_with_orcid_dont_push_if_no_change(mock_config, vcr_cassette
 
     assert expected_put_code == result_put_code
     assert expected_hash == result_hash
-    assert vcr_cassette.all_played
 
 
 @pytest.mark.vcr()
