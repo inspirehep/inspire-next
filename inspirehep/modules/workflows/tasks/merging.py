@@ -96,7 +96,7 @@ def merge_articles(obj, eng):
     update = obj.data
 
     merged, conflicts = merge(
-        head=head,
+        head=head.dumps(),
         root=root,
         update=update
     )
