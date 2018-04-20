@@ -39,7 +39,6 @@ from invenio_db import db
 from invenio_oauthclient.errors import AlreadyLinkedError
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
-from inspirehep.modules.cache.utils import redis_locking_context
 from inspirehep.modules.orcid.api import (
     push_record_with_orcid,
     get_author_putcodes,
@@ -269,21 +268,24 @@ def store_record_in_redis(orcid, rec_id, put_code, hashed=None):
         put_code(string): the put_code used to push the record to ORCID.
         hashed(Optional[string]): hashed ORCID record
     """
-    with redis_locking_context('orcid_push') as r:
-        orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-        to_cache = {'putcode': put_code}
-        if hashed:
-            to_cache['hash'] = hashed
-        r.hmset(orcid_recid_key, to_cache)
+    redis_url = current_app.config.get('CACHE_REDIS_URL')
+    r = StrictRedis.from_url(redis_url)
+
+    orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
+    to_cache = {'putcode': put_code}
+    if hashed:
+        to_cache['hash'] = hashed
+    r.hmset(orcid_recid_key, to_cache)
 
 
 def get_putcode_and_hash_from_redis(orcid, rec_id):
     """Retrieve from Redis the put_code for the given ORCID - record id"""
-    with redis_locking_context('orcid_push') as r:
-        orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-        put_code = r.hget(orcid_recid_key, 'putcode')
-        hashed = r.hget(orcid_recid_key, 'hash')
-        return put_code, hashed
+    redis_url = current_app.config.get('CACHE_REDIS_URL')
+    r = StrictRedis.from_url(redis_url)
+
+    orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
+    cached = r.hgetall(orcid_recid_key)
+    return cached.get('putcode'), cached.get('hash')
 
 
 def _find_user_matching(orcid, email):
