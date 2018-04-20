@@ -84,11 +84,16 @@ def test_push_record_with_orcid_update(mock_config, vcr_cassette):
     assert vcr_cassette.all_played
 
 
-@mock.patch('inspirehep.modules.orcid.api._get_api')
-def test_push_record_with_orcid_new_uses_lock(mock_get_api, mock_config, app):
+def test_push_record_with_orcid_new_uses_lock(mock_config, app):
+    def forever(*args, **kwargs):
+        while True:
+            pass
+
     class PushThread(Thread):
         def run(self):
-            with app.app_context():
+            with app.app_context(),\
+                    mock.patch('inspirehep.modules.orcid.api._get_api') as mock_get_api:
+                mock_get_api.return_value.add_record.side_effect = forever
                 push_record_with_orcid(
                     recid='4328',
                     orcid='0000-0002-1825-0097',
@@ -97,38 +102,45 @@ def test_push_record_with_orcid_new_uses_lock(mock_get_api, mock_config, app):
                     old_hash=None,
                 )
 
-    mock_get_api.return_value.add_record.side_effect = lambda *args, **kwargs: sleep(3)
     redis_url = app.config.get('CACHE_REDIS_URL')
     redis = StrictRedis.from_url(redis_url)
     lock = Lock(redis, 'orcid:0000-0002-1825-0097')
 
-    PushThread().start()
-    sleep(1)
+    t = PushThread()
+    t.daemon = True
+    t.start()
+    sleep(3)
 
     assert lock.acquire(blocking=False) is False
     lock.reset()
 
 
-@mock.patch('inspirehep.modules.orcid.api._get_api')
-def test_push_record_with_orcid_update_uses_lock(mock_get_api, mock_config, app):
+def test_push_record_with_orcid_update_uses_lock(mock_config, app):
+    def forever(*args, **kwargs):
+        while True:
+            pass
+
     class PushThread(Thread):
         def run(self):
-            with app.app_context():
+            with app.app_context(), \
+                    mock.patch('inspirehep.modules.orcid.api._get_api') as mock_get_api:
+                mock_get_api.return_value.update_record.side_effect = forever
                 push_record_with_orcid(
                     recid='4328',
-                    orcid='0000-0002-1825-0097',
+                    orcid='0000-0002-1825-0098',
                     oauth_token='fake-token',
                     put_code='920107',
                     old_hash=None,
                 )
 
-    mock_get_api.return_value.updae_record.side_effect = lambda *args, **kwargs: sleep(3)
     redis_url = app.config.get('CACHE_REDIS_URL')
     redis = StrictRedis.from_url(redis_url)
-    lock = Lock(redis, 'orcid:0000-0002-1825-0097')
+    lock = Lock(redis, 'orcid:0000-0002-1825-0098')
 
-    PushThread().start()
-    sleep(1)
+    t = PushThread()
+    t.daemon = True
+    t.start()
+    sleep(3)
 
     assert lock.acquire(blocking=False) is False
     lock.reset()
