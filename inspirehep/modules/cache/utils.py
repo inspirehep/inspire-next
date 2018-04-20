@@ -32,7 +32,7 @@ from redis_lock import Lock
 
 
 @contextmanager
-def redis_locking_context(lock_name, expire=120, auto_renewal=True):
+def redis_locking_context(lock_name, expire=120, auto_renewal=True, blocking=False):
     """Locked Context Manager to perform operations on Redis."""
     if not lock_name:
         raise RedisLockError('Lock name not specified.')
@@ -42,7 +42,7 @@ def redis_locking_context(lock_name, expire=120, auto_renewal=True):
     redis = StrictRedis.from_url(redis_url)
     lock = Lock(redis, lock_name, expire=expire, auto_renewal=auto_renewal)
 
-    if lock.acquire(blocking=False):
+    if lock.acquire(blocking=blocking):
         try:
             yield redis
         finally:

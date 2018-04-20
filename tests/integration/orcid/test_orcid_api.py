@@ -27,6 +27,12 @@ from __future__ import absolute_import, division, print_function
 import mock
 import pytest
 
+from time import sleep
+
+from redis import StrictRedis
+from redis_lock import Lock
+from threading import Thread
+
 from inspirehep.modules.orcid.api import push_record_with_orcid, get_author_putcodes, LOGGER
 
 
@@ -76,6 +82,56 @@ def test_push_record_with_orcid_update(mock_config, vcr_cassette):
     assert expected_put_code == result_put_code
     assert expected_hash == result_hash
     assert vcr_cassette.all_played
+
+
+@mock.patch('inspirehep.modules.orcid.api._get_api')
+def test_push_record_with_orcid_new_uses_lock(mock_get_api, mock_config, app):
+    class PushThread(Thread):
+        def run(self):
+            with app.app_context():
+                push_record_with_orcid(
+                    recid='4328',
+                    orcid='0000-0002-1825-0097',
+                    oauth_token='fake-token',
+                    put_code=None,
+                    old_hash=None,
+                )
+
+    mock_get_api.return_value.add_record.side_effect = lambda *args, **kwargs: sleep(3)
+    redis_url = app.config.get('CACHE_REDIS_URL')
+    redis = StrictRedis.from_url(redis_url)
+    lock = Lock(redis, 'orcid:0000-0002-1825-0097')
+
+    PushThread().start()
+    sleep(1)
+
+    assert lock.acquire(blocking=False) is False
+    lock.reset()
+
+
+@mock.patch('inspirehep.modules.orcid.api._get_api')
+def test_push_record_with_orcid_update_uses_lock(mock_get_api, mock_config, app):
+    class PushThread(Thread):
+        def run(self):
+            with app.app_context():
+                push_record_with_orcid(
+                    recid='4328',
+                    orcid='0000-0002-1825-0097',
+                    oauth_token='fake-token',
+                    put_code='920107',
+                    old_hash=None,
+                )
+
+    mock_get_api.return_value.updae_record.side_effect = lambda *args, **kwargs: sleep(3)
+    redis_url = app.config.get('CACHE_REDIS_URL')
+    redis = StrictRedis.from_url(redis_url)
+    lock = Lock(redis, 'orcid:0000-0002-1825-0097')
+
+    PushThread().start()
+    sleep(1)
+
+    assert lock.acquire(blocking=False) is False
+    lock.reset()
 
 
 @pytest.mark.vcr()
