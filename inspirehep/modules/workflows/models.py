@@ -26,10 +26,18 @@ from __future__ import absolute_import, division, print_function
 
 from datetime import datetime
 
+import enum
+
 from sqlalchemy.dialects import postgresql
 from sqlalchemy_utils.types import JSONType, UUIDType
 
 from invenio_db import db
+
+
+class SourceEnum(enum.IntEnum):
+    arxiv = 1
+    submitter = 2
+    publisher = 3
 
 
 class WorkflowsAudit(db.Model):
@@ -88,20 +96,31 @@ class WorkflowsRecordSources(db.Model):
         db.PrimaryKeyConstraint('record_id', 'source'),
     )
 
-    source = db.Column(
-        db.Text,
-        default='',
-        nullable=False,
-    )
     record_id = db.Column(
         UUIDType,
         db.ForeignKey('records_metadata.id', ondelete='CASCADE'),
         nullable=False,
     )
+
+    source = db.Column(
+        db.Enum(SourceEnum),
+        nullable=False,
+    )
+
+    created = db.Column(
+        db.DateTime(),
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    updated = db.Column(
+        db.DateTime(),
+        default=datetime.utcnow,
+        nullable=False
+    )
+
     json = db.Column(
-        JSONType().with_variant(
-            postgresql.JSON(none_as_null=True),
-            'postgresql',
-        ),
+        postgresql.JSONB(),
         default=lambda: dict(),
+        nullable=True
     )
