@@ -191,24 +191,6 @@ def extract_references_from_raw_ref(reference, custom_kbs_file=None):
     )
 
 
-def match_references(references):
-    """Match references to record ids given a list of references.
-
-    Args:
-        references: Schema compliant list of references
-
-    Returns:
-        associated_references: The same list with the associated record ids (if any)
-    """
-
-    for i, reference in enumerate(references):
-        matched_recid = match_reference(reference)
-        if matched_recid:
-            references[i]['record'] = get_record_ref(matched_recid, 'literature')
-
-    return references
-
-
 def match_reference(reference):
     """Match references given a reference metadata using InspireMatcher queires.
 
@@ -224,11 +206,9 @@ def match_reference(reference):
     config_jcap_and_jhep = current_app.config['WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG']
 
     journal_title = get_value(reference, 'reference.publication_info.journal_title')
-    if journal_title in ['JCAP', 'JHEP']:
-        result = next(match(reference, config_jcap_and_jhep), None)
-        if result:
-            return result['_source']['control_number']
-
-    result = next(match(reference, config_default), None)
+    config = config_jcap_and_jhep if journal_title in ['JCAP', 'JHEP'] else config_default
+    result = next(match(reference, config), None)
     if result:
-        return result['_source']['control_number']
+        matched_recid = result['_source']['control_number']
+        reference['record'] = get_record_ref(matched_recid, 'literature')
+    return reference
