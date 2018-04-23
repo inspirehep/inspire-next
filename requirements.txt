@@ -28,3 +28,7 @@
 
 # python-orcid with support for v2.0 API and XML
 -e git+https://github.com/ORCID/python-orcid.git@2.0update#egg=orcid
+
+# flower until flower > 0.9.2 is released
+# https://github.com/mher/flower/commit/30022a93bdacd2826d7ffa32b52bd3e406cb33c1
+-e git+https://github.com/mher/flower.git#egg=flower
