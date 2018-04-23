@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Cache."""
+"""Locking."""
 
 from __future__ import absolute_import, division, print_function
 
@@ -32,10 +32,30 @@ from redis_lock import Lock
 
 
 @contextmanager
-def redis_locking_context(lock_name, expire=120, auto_renewal=True):
-    """Locked Context Manager to perform operations on Redis."""
+def distributed_lock(lock_name, expire=10, auto_renewal=True, blocking=False):
+    """Context manager to acquire a lock visible by all processes.
+
+    This lock is implemented through Redis in order to be globally visible.
+
+    Args:
+        lock_name (str): name of the lock to be acquired.
+        expire (int): duration in seconds after which the lock is released if
+            not renewed in the meantime.
+        auto_renewal (bool): if ``True``, the lock is automatically renewed as long
+            as the context manager is still active.
+        blocking (bool): if ``True``, wait for the lock to be released. If ``False``,
+            return immediately, raising :class:`DistributedLockError`.
+
+    It is recommended to set ``expire`` to a small value and
+    ``auto_renewal=True``, which ensures the lock gets released quickly in case
+    the process is killed without limiting the time that can be spent holding
+    the lock.
+
+    Raises:
+        DistributedLockError: when ``blocking`` is set to ``False`` and the lock is already acquired.
+    """
     if not lock_name:
-        raise RedisLockError('Lock name not specified.')
+        raise ValueError('Lock name not specified.')
 
     redis_url = app.config.get('CACHE_REDIS_URL')
 
@@ -44,12 +64,12 @@ def redis_locking_context(lock_name, expire=120, auto_renewal=True):
 
     if lock.acquire(blocking=False):
         try:
-            yield redis
+            yield
         finally:
             lock.release()
     else:
-        raise RedisLockError('Can not acquire Redis lock for %s', lock_name)
+        raise DistributedLockError('Cannot acquire lock for %s', lock_name)
 
 
-class RedisLockError(Exception):
+class DistributedLockError(Exception):
     pass
