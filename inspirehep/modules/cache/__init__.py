@@ -23,5 +23,3 @@
 """INSPIRE cache."""
 
 from __future__ import absolute_import, division, print_function
-
-from .proxies import lock_cache  # noqa: F401
