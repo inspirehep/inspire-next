@@ -36,7 +36,7 @@ from __future__ import absolute_import, division, print_function
 from alembic import op
 
 revision = '402af3fbf68b'
-down_revision = 'd99c70308006'
+down_revision = '53e8594bc789'
 branch_labels = ()
 depends_on = None
 
