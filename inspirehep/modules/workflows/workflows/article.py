@@ -73,6 +73,7 @@ from inspirehep.modules.workflows.tasks.magpie import (
 )
 from inspirehep.modules.workflows.tasks.matching import (
     stop_processing,
+    raise_if_match_wf_in_error_or_initial,
     match_non_completed_wf_in_holdingpen,
     match_previously_rejected_wf_in_holdingpen,
     exact_match,
@@ -301,6 +302,7 @@ STORE_RECORD = [
 
 
 MARK_IF_MATCH_IN_HOLDINGPEN = [
+    raise_if_match_wf_in_error_or_initial,
     IF_ELSE(
         match_non_completed_wf_in_holdingpen,
         [
