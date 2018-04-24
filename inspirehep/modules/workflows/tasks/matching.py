@@ -28,6 +28,8 @@ from flask import current_app
 
 from invenio_db import db
 from invenio_workflows import workflow_object_class, WorkflowEngine
+from invenio_workflows.errors import WorkflowsError
+
 
 from inspire_matcher.api import match
 from inspire_utils.dedupers import dedupe_list
@@ -235,6 +237,38 @@ def match_non_completed_wf_in_holdingpen(obj, eng):
     matched_ids = pending_in_holding_pen(obj, _non_completed)
     obj.extra_data['holdingpen_matches'] = matched_ids
     return bool(matched_ids)
+
+
+def raise_if_match_wf_in_error_or_initial(obj, eng):
+    """Raise if a matching wf is in ERROR or INITIAL state in the HoldingPen.
+
+    Uses a custom configuration of the ``inspire-matcher`` to find duplicates
+    of the current workflow object in the Holding Pen not in the
+    that are in ERROR or INITIAL state.
+
+    If any match is found, it sets ``error_workflows_matched`` in
+    ``extra_data`` to the list of ids that matched and raise an error.
+
+    Arguments:
+        obj: a workflow object.
+        eng: a workflow engine.
+
+    Returns:
+        None
+
+    """
+    def _filter(base_record, match_result):
+        return get_value(
+            match_result, '_source._workflow.status'
+        ) in ('ERROR', 'INITIAL')
+
+    matched_ids = pending_in_holding_pen(obj, _filter)
+    if bool(matched_ids):
+        obj.extra_data['error_workflows_matched'] = matched_ids
+        raise WorkflowsError(
+            'Cannot continue processing. Found workflows in ERROR or INITIAL '
+            'state: {}'.format(matched_ids)
+        )
 
 
 def match_previously_rejected_wf_in_holdingpen(obj, eng):
