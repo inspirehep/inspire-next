@@ -26,10 +26,18 @@ from __future__ import absolute_import, division, print_function
 
 from datetime import datetime
 
+import enum
+
 from sqlalchemy.dialects import postgresql
-from sqlalchemy_utils.types import JSONType, UUIDType
+from sqlalchemy_utils.types import UUIDType
 
 from invenio_db import db
+
+
+class SourceEnum(enum.IntEnum):
+    arxiv = 1
+    submitter = 2
+    publisher = 3
 
 
 class WorkflowsAudit(db.Model):
@@ -81,27 +89,49 @@ class WorkflowsPendingRecord(db.Model):
     record_id = db.Column(db.Integer, nullable=False)
 
 
-class WorkflowsRecordSources(db.Model):
+class Timestamp(object):
+    """Timestamp model mix-in with fractional seconds support.
+    SQLAlchemy-Utils timestamp model does not have support for fractional
+    seconds.
+    """
+
+    created = db.Column(
+        db.DateTime(),
+        default=datetime.utcnow,
+        nullable=False
+    )
+    updated = db.Column(
+        db.DateTime(),
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+
+@db.event.listens_for(Timestamp, 'before_update', propagate=True)
+def timestamp_before_update(mapper, connection, target):
+    """Update `updated` property with current time on `before_update` event."""
+    target.updated = datetime.utcnow()
+
+
+class WorkflowsRecordSources(db.Model, Timestamp):
 
     __tablename__ = 'workflows_record_sources'
     __table_args__ = (
-        db.PrimaryKeyConstraint('record_id', 'source'),
+        db.PrimaryKeyConstraint('record_uuid', 'source'),
     )
 
-    source = db.Column(
-        db.Text,
-        default='',
-        nullable=False,
-    )
-    record_id = db.Column(
+    record_uuid = db.Column(
         UUIDType,
         db.ForeignKey('records_metadata.id', ondelete='CASCADE'),
         nullable=False,
     )
+
+    source = db.Column(
+        db.Enum(SourceEnum),
+        nullable=False,
+    )
+
     json = db.Column(
-        JSONType().with_variant(
-            postgresql.JSON(none_as_null=True),
-            'postgresql',
-        ),
+        postgresql.JSONB(),
         default=lambda: dict(),
     )

@@ -139,15 +139,20 @@ def test_save_roots(workflow_app):
     obj.extra_data['update_uuid'] = str(update.id)
     obj.save()
 
-    insert_wf_record_source(json={}, record_uuid=head.id, source='a')
-    insert_wf_record_source(json={}, record_uuid=head.id, source='b')
+    # Union: keep the most recently created/updated root from each source.
+    insert_wf_record_source(json={'version': 'original'}, record_uuid=head.id, source='arxiv')
 
-    # this will not be saved because there's already an entry with source `a`
-    insert_wf_record_source(json={}, record_uuid=update.id, source='a')
-    insert_wf_record_source(json={}, record_uuid=update.id, source='c')
+    insert_wf_record_source(json={'version': 'updated'}, record_uuid=update.id, source='arxiv')
+
+    insert_wf_record_source(json={'version': 'updated'}, record_uuid=update.id, source='publisher')
 
     save_roots(obj, None)
 
-    assert read_wf_record_source(str(head.id), 'a')
-    assert read_wf_record_source(str(head.id), 'b')
-    assert read_wf_record_source(str(head.id), 'c')
+    arxiv_rec = read_wf_record_source(head.id, 'arxiv')
+    assert arxiv_rec.json == {'version': 'updated'}
+
+    pub_rec = read_wf_record_source(head.id, 'publisher')
+    assert pub_rec.json == {'version': 'updated'}
+
+    assert not read_wf_record_source(update.id, 'arxiv')
+    assert not read_wf_record_source(update.id, 'publisher')

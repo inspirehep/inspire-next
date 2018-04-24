@@ -30,34 +30,13 @@ from inspire_json_merger.api import merge
 from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.modules.records.api import InspireRecord
-from inspirehep.modules.workflows.models import WorkflowsRecordSources
 from inspirehep.modules.workflows.utils import (
     get_resolve_merge_conflicts_callback_url,
+    read_wf_record_source,
     with_debug_logging
 )
 
-
-def get_head_source(head_uuid):
-    """Return the right source for the record having uuid=``uuid``.
-
-    Args:
-        head_uuid(string): the uuid of the record to get the source
-
-    Return:
-        (string):
-        * ``publisher`` if there is at least a non arxiv root
-        * ``arxiv`` if there are no publisher roots and an arxiv root
-        * None if there are no root records
-    """
-    roots_sources = set(
-        r.source for r in
-        WorkflowsRecordSources.query.filter_by(record_id=head_uuid).all()
-    )
-
-    if not roots_sources:
-        return None
-
-    return 'arxiv' if 'arxiv' in roots_sources else 'publisher'
+from inspirehep.utils.record import get_source
 
 
 @with_debug_logging
@@ -75,9 +54,7 @@ def merge_articles(obj, eng):
     contains the endpoint which resolves the merge conflicts.
 
     Note:
-        For the time being the ``root`` will be ignored, and we'll rely only
-        on the ``head``, hence it is a rootless implementation. Also when
-        the feature flag ``FEATURE_FLAG_ENABLE_MERGER`` is ``False`` it
+        When the feature flag ``FEATURE_FLAG_ENABLE_MERGER`` is ``False`` it
         will skip the merge.
 
     """
@@ -92,13 +69,15 @@ def merge_articles(obj, eng):
     obj.extra_data['head_uuid'] = str(head_uuid)
 
     head = InspireRecord.get_record(head_uuid)
-    root = {}
     update = obj.data
+    update_source = get_source(update).lower()
+    head_root = read_wf_record_source(record_uuid=head.id, source=update_source)
+    head_root = head_root.json if head_root else {}
 
     merged, conflicts = merge(
         head=head.dumps(),
-        root=root,
-        update=update
+        root=head_root,
+        update=update,
     )
 
     obj.data = merged

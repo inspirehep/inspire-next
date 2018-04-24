@@ -27,9 +27,15 @@ from flask import current_app
 
 from invenio_workflows import workflow_object_class
 
+from factories.db.invenio_records import TestRecordMetadata
+
 # FIXME: otherwise this task is not found by Celery.
 from inspirehep.modules.orcid.tasks import orcid_push  # noqa: F401
-from inspirehep.modules.workflows.tasks.upload import store_record
+from inspirehep.modules.workflows.tasks.upload import store_root, store_record
+from inspirehep.modules.workflows.utils import (
+    insert_wf_record_source,
+    read_wf_record_source,
+)
 
 
 @patch('inspirehep.modules.orcid.tasks.attempt_push')
@@ -66,3 +72,74 @@ def test_store_record_does_not_raise_in_the_orcid_receiver(mock_attempt_push, ap
         })
 
         store_record(obj, eng)  # Does not raise.
+
+
+def test_store_root_new_record(workflow_app):
+    config = {
+        'FEATURE_FLAG_ENABLE_MERGER': True
+    }
+    eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
+
+    with patch.dict(current_app.config, config):
+        head = TestRecordMetadata.create_from_kwargs(index=False, has_pid=False)
+        head_uuid = head.record_metadata.id
+        record = head.record_metadata.json
+
+        obj = workflow_object_class.create(record)
+
+        root = {
+            'version': 'original',
+            'acquisition_source': {'source': 'arXiv'}
+        }
+
+        extra_data = {
+            'head_uuid': str(head_uuid),
+            'merger_root': root,
+        }
+
+        obj.extra_data = extra_data
+
+        store_root(obj, eng)
+
+        root_entry = read_wf_record_source(head_uuid, 'arxiv')
+
+        assert root_entry.json == root
+
+
+def test_store_root_update_record(workflow_app):
+    config = {
+        'FEATURE_FLAG_ENABLE_MERGER': True
+    }
+    eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
+
+    with patch.dict(current_app.config, config):
+        head = TestRecordMetadata.create_from_kwargs(index=False, has_pid=False)
+        head_uuid = head.record_metadata.id
+        record = head.record_metadata.json
+
+        original_root = {
+            'version': 'original',
+            'acquisition_source': {'source': 'arXiv'},
+        }
+
+        update_root = {
+            'version': 'updated',
+            'acquisition_source': {'source': 'arXiv'},
+        }
+
+        insert_wf_record_source(json=original_root, record_uuid=head_uuid, source='arxiv')
+
+        obj = workflow_object_class.create(record)
+
+        extra_data = {
+            'head_uuid': str(head_uuid),
+            'merger_root': update_root,
+        }
+
+        obj.extra_data = extra_data
+
+        store_root(obj, eng)
+
+        root_entry = read_wf_record_source(head_uuid, 'arxiv')
+
+        assert root_entry.json == update_root
