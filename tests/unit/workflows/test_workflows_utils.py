@@ -28,15 +28,19 @@ import pkg_resources
 import pytest
 import requests
 import requests_mock
+import time
 
 from contextlib import contextmanager
 from mock import patch
 
+from timeout_decorator import timeout
+
 from inspirehep.modules.workflows.utils import (
     convert,
     download_file_to_workflow,
-    json_api_request,
     get_document_in_workflow,
+    ignore_timeout_error,
+    json_api_request,
 )
 
 from mocks import MockFiles, MockFileObject, MockObj
@@ -185,3 +189,16 @@ def test_xslt(oai_xml, oai_xml_result):
     xml = convert(xml=oai_xml, xslt_filename='oaiarXiv2marcxml.xsl')
     assert xml
     assert xml == oai_xml_result
+
+
+@patch('inspirehep.modules.workflows.utils.LOGGER')
+def test_ignore_timeout_decorator(mock_logger):
+
+    @ignore_timeout_error
+    @timeout(1)
+    def f():
+        time.sleep(2)
+
+    f()
+
+    assert mock_logger.error.called

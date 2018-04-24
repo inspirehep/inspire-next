@@ -51,6 +51,7 @@ from inspirehep.modules.workflows.errors import DownloadError
 from inspirehep.modules.workflows.utils import (
     convert,
     download_file_to_workflow,
+    ignore_timeout_error,
     with_debug_logging,
 )
 
@@ -119,6 +120,7 @@ def arxiv_package_download(obj, eng):
         obj.log.error('Cannot retrieve tarball from arXiv for %s', arxiv_id)
 
 
+@ignore_timeout_error
 @timeout(5 * 60)
 @with_debug_logging
 def arxiv_plot_extract(obj, eng):
