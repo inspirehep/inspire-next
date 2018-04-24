@@ -302,7 +302,7 @@ def prepare_keywords(obj, eng):
 
     keywords = obj.data.get('keywords', [])
     for keyword in prediction.get('keywords', []):
-        # TODO: differentiate between curated and gueesed keywords
+        # TODO: differentiate between curated and guessed keywords
         keywords.append(
             {
                 'value': keyword['label'],
@@ -313,10 +313,3 @@ def prepare_keywords(obj, eng):
     obj.data['keywords'] = keywords
 
     obj.log.debug('Finally got keywords: \n%s', pformat(keywords))
-
-
-@with_debug_logging
-def remove_references(obj, eng):
-    obj.log.info(obj.data)
-    if 'references' in obj.data:
-        del obj.data['references']

@@ -24,14 +24,19 @@
 
 from __future__ import absolute_import, division, print_function
 
+from flask import current_app
+
 from itertools import chain
 
+from inspire_dojson.utils import get_record_ref
+from inspire_matcher import match
 from inspire_schemas.utils import (
     convert_old_publication_info_to_new,
     split_page_artid,
 )
 from inspire_utils.helpers import maybe_int
 from inspire_utils.logging import getStackTraceLogger
+from inspire_utils.record import get_value
 from inspirehep.utils.references import (
     local_refextract_kbs_path,
     map_refextract_to_schema,
@@ -184,3 +189,26 @@ def extract_references_from_raw_ref(reference, custom_kbs_file=None):
     return extract_references_from_text(
         raw_ref['value'], source=raw_ref['source'], custom_kbs_file=custom_kbs_file
     )
+
+
+def match_reference(reference):
+    """Match references given a reference metadata using InspireMatcher queires.
+
+    Args:
+        reference: The reference metadata
+        config: The configurtaion(s) for InspireMatcher queries
+
+    Returns:
+        The record ID of the matched reference
+    """
+
+    config_default = current_app.config['WORKFLOWS_REFERENCE_MATCHER_DEFAULT_CONFIG']
+    config_jcap_and_jhep = current_app.config['WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG']
+
+    journal_title = get_value(reference, 'reference.publication_info.journal_title')
+    config = config_jcap_and_jhep if journal_title in ['JCAP', 'JHEP'] else config_default
+    result = next(match(reference, config), None)
+    if result:
+        matched_recid = result['_source']['control_number']
+        reference['record'] = get_record_ref(matched_recid, 'literature')
+    return reference

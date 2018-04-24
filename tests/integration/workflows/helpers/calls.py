@@ -167,6 +167,23 @@ def generate_record():
     return json_data
 
 
+def insert_citing_record():
+    """Provide record fixture."""
+    json_data = json.loads(pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            '../fixtures',
+            'oai_arxiv_citing_record.json'
+        )
+    ))
+
+    categories = {'core': [], 'non-core': []}
+    for eprint in json_data.get('arxiv_eprints', []):
+        categories['core'].extend(eprint.get('categories', []))
+
+    return json_data, categories
+
+
 def core_record():
     """Provide record fixture."""
     record_oai_arxiv_plots = pkg_resources.resource_string(
