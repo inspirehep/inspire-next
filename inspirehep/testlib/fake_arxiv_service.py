@@ -78,7 +78,7 @@ def oai_api():
     today = time.strftime("%Y-%m-%d")
     url_request = 'http://export.arxiv.org/oai2?verb=ListRecords&from={}&set=physics&metadataPrefix=arXivRaw'.format(today)
 
-    with my_vcr.use_cassette('core_article.yml'):
+    with my_vcr.use_cassette('non_core_article.yml'):
         resp = requests.get(url_request)
         return resp.text
 

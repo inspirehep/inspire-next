@@ -279,6 +279,24 @@ services:
     volumes_from:
       - test-static
 
+  fake-rt:
+    extends:
+      service: test-service_base
+    ports:
+      - "7777:5000"
+    command: gunicorn -b 0.0.0.0:7777 -t 3600 --access-logfile "-" --reload inspirehep.testlib.fake_rt_service
+    volumes_from:
+      - test-static
+
+  fake-legacy:
+    extends:
+      service: test-service_base
+    ports:
+      - "6666:5000"
+    command: gunicorn -b 0.0.0.0:6666 -t 3600 --access-logfile "-" --reload inspirehep.testlib.fake_legacy_service
+    volumes_from:
+      - test-static
+
   test-scrapyd:
     extends:
       service: test-service_base
@@ -320,11 +338,14 @@ services:
       - APP_ARXIV_PDF_URL="/pdf/{arxiv_id}"
       - APP_ARXIV_PDF_URL_ALTERNATIVE="/pdf/{arxiv_id}"
       - APP_ARXIV_TARBALL_URL="/e-print/{arxiv_id}"
+      - APP_PRODUCTION_MODE=True
+      - APP_LEGACY_ROBOTUPLOAD_URL="http://fake-legacy:6666/"
+
 
   test-worker-e2e:
     extends:
       service: test-service_base
-    command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge --queues celery,migrator,harvests,orcid_push
+    command: celery worker -E -A inspirehep.celery_tests --loglevel=INFO --purge --queues celery,migrator,harvests,orcid_push
     volumes_from:
       - test-static
     depends_on:
@@ -341,6 +362,9 @@ services:
       - APP_ARXIV_PDF_URL="http://fake-arxiv:8888/pdf/{arxiv_id}"
       - APP_ARXIV_PDF_URL_ALTERNATIVE="http://fake-arxiv:8888/pdf/{arxiv_id}"
       - APP_ARXIV_TARBALL_URL="http://fake-arxiv:8888/e-print/{arxiv_id}"
+      - APP_PRODUCTION_MODE=True
+      - APP_LEGACY_ROBOTUPLOAD_URL="http://fake-legacy:6666/"
+      - APP_LEGACY_PID_PROVIDER="http://fake-legacy:6666//batchuploader/allocaterecord"
 
   e2e:
     extends:
@@ -362,6 +386,10 @@ services:
       test-web-e2e:
         condition: service_started
       fake-arxiv:
+        condition: service_started
+      fake-rt:
+        condition: service_started
+      fake-legacy:
         condition: service_started
       test-scrapyd:
         condition: service_started

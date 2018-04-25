@@ -33,7 +33,7 @@ from inspirehep.testlib.api_clients import InspireApiClient
 
 @pytest.fixture(autouse=True, scope='function')
 def init_environment():
-    init_db = './scripts/recreate_records'
+    init_db = './scripts/recreate_records --no-populate'
     subprocess.call(init_db.split())
 
 
@@ -43,7 +43,7 @@ def inspire_client():
     return InspireApiClient()
 
 
-@backoff.on_exception(backoff.constant, RetryError, interval=10, max_time=200)
+@backoff.on_exception(backoff.constant, RetryError, interval=1, max_time=200)
 def wait_for_n_entries_in_status(inspire_client, entries_number, status):
     hp_entries = inspire_client.holdingpen.get_list_entries()
     raise_if_false(all(entry.status == status for entry in hp_entries))
@@ -51,7 +51,7 @@ def wait_for_n_entries_in_status(inspire_client, entries_number, status):
     return hp_entries
 
 
-def test_harvest_core_article_goes_in(inspire_client):
+def test_harvest_non_core_article_goes_in(inspire_client):
     arxiv_service = FakeArxivService()
     arxiv_service.run_harvest()
 
@@ -62,12 +62,12 @@ def test_harvest_core_article_goes_in(inspire_client):
 
     # check workflows goes as expected
     assert entry.status == 'COMPLETED'
-    assert entry.core is True
+    assert entry.core is False
     assert entry.approved is True
 
-    assert entry.title == 'Renormalized Quantum Yang-Mills Fields in Curved Spacetime'
-    assert entry.arxiv_eprint == '0705.3340'
-    assert entry.doi == '10.1142/S0129055X08003420'
+    assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
+    assert entry.arxiv_eprint == '1404.0579'
+    assert entry.doi == '10.1016/j.nima.2014.04.029'
     assert entry.control_number
 
     # check literature record is available and consistent
