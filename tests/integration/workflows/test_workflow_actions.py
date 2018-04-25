@@ -437,9 +437,10 @@ def test_refextract_from_pdf(
     citing_record, categories = insert_citing_record()
 
     extra_config = {
-        "BEARD_API_URL": "http://example.com/beard",
-        "MAGPIE_API_URL": "http://example.com/magpie",
+        'BEARD_API_URL': 'http://example.com/beard',
+        'MAGPIE_API_URL': 'http://example.com/magpie',
         'ARXIV_CATEGORIES': categories,
+        'FEATURE_FLAG_ENABLE_SENDING_REFERENCES_TO_LEGACY': True,
     }
 
     schema = load_schema('hep')
