@@ -52,7 +52,7 @@ def test_get_head_source_return_arxiv_when_one_arxive_source_present(app, simple
     uuid = rec.id
 
     # two sources for the same record
-    insert_wf_record_source(json=simple_record, record_uuid=uuid, source='ejl')
+    insert_wf_record_source(json=simple_record, record_uuid=uuid, source='publisher')
 
     assert get_head_source(uuid) == 'publisher'
 
