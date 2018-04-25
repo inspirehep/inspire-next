@@ -209,4 +209,99 @@ help flag:
     $ inspirehep crawler job --help
 
 
+Operations in QA
+================
+
+Migrate records in QA
+---------------------
+
+The labs database contains a full copy of the legacy records in MARCXML format,
+called the mirror. Migrating records from legacy involves connecting to the
+right machine and setting up the work environment, populating the mirror from
+the file and migrating the records from the mirror, and finally updating the
+state of the legacy test database.
+
+
+Setting up the environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. First of all establish a Kerberos authentication (this can be helpful:
+   http://linux.web.cern.ch/linux/docs/kerberos-access.shtml )
+
+2. After you have run the ``kinit`` command and have successfully authenticated you should be able to
+   connect to the builder machine:
+
+.. code-block:: shell
+
+    localhost$ ssh username@inspire-qa-worker3-build1.cern.ch
+
+3. Get root access:
+
+.. code-block:: shell
+
+    build1$ sudo -s
+
+4. At this point it's a good idea to initialize a screen so you have something to connect to and reestablish your
+   session if something happens to your connection while working remotely to a machine.
+   You can use ``byobu``, which is a more user-friendly alternative to ``tmux`` or ``screen``:
+
+.. code-block:: shell
+
+    # This will also reconnect to a running session if any
+    build1$ byobu
+
+5. To finish the setup, you need to get into the Inspire virtual environment:
+
+
+.. code-block:: shell
+
+    build1# workon inspire
+
+
+Perform the record migration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. Make sure you have access to the dump of the records on the local machine,
+   for example in your local directory or in ``/tmp`` (otherwise transfer it there
+   via scp). You can use either a single ``.xml.gz`` file corresponding to
+   a single legacy dump, or a whole ``prodsync.tar`` which besides a full
+   first dump contains daily incremental dumps of modified records.
+
+3. Now you can migrate the records, which will be done using the ``inspirehep migrate`` command:
+
+.. note::
+
+      You shouldn't drop the database or destroy the es index as
+      the existing records will be overwritten with the ones introduced.
+
+.. code-block:: shell
+
+    build1$ inspirehep migrate file --wait filename
+
+.. note::
+
+      Instead of doing a full migration from file, it is possible to only
+      populate the mirror or migrate from the mirror. See ``inspirhep migrate
+      --help`` for more information.
+
+4. After migrating the records since we are getting the initial incrementation
+   value for our database records from the legacy test database, you should set
+   the total number of records migrated to the legacy test incrementation
+   table, otherwise every further submission will generate an already existing
+   recid, thus failing:
+
+.. code-block:: shell
+
+    #connect to the legacy qa web node
+    build1$ ssh inspirevm16.cern.ch
+
+    #connect to the legacy qa db
+    legacy_node$ /opt/cds-invenio/bin/dbexec -i
+
+    # to check the autoincrement:
+    mysql> SHOW CREATE TABLE bibrec;
+
+    #to set the new value:
+    mysql> ALTER TABLE bibrec AUTO_INCREMENT=XXXX;
+
 .. _es-cli: http://es-cli.readthedocs.io
