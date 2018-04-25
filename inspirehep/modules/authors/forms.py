@@ -280,6 +280,7 @@ class WebpageInlineForm(INSPIREForm):
         placeholder='http://www.example.com',
         widget=ColumnInput(class_="col-xs-10"),
         widget_classes="form-control",
+        validators=[validators.URL(), validators.Optional()]
     )
 
 
@@ -429,6 +430,7 @@ class AuthorUpdateForm(INSPIREForm):
         placeholder='http://www.example.com',
         icon="fa fa-wordpress",
         widget_classes="form-control",
+        validators=[validators.URL(), validators.Optional()]
     )
 
     twitter_url = fields.StringField(
@@ -436,6 +438,7 @@ class AuthorUpdateForm(INSPIREForm):
         placeholder='https://twitter.com/inspirehep',
         icon="fa fa-twitter",
         widget_classes="form-control",
+        validators=[validators.URL(), validators.Optional()]
     )
 
     linkedin_url = fields.StringField(
@@ -443,6 +446,7 @@ class AuthorUpdateForm(INSPIREForm):
         placeholder='https://www.linkedin.com/pub/john-francis-lampen/16/750/778',
         icon="fa fa-linkedin-square",
         widget_classes="form-control",
+        validators=[validators.URL(), validators.Optional()]
     )
 
     websites = fields.DynamicFieldList(
