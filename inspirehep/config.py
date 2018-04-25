@@ -55,6 +55,7 @@ FEATURE_FLAG_ENABLE_FUZZY_MATCHER = False
 FEATURE_FLAG_ENABLE_MERGER = False
 FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY = False
 """This feature flag will prevent to send a ``replace`` update to legacy."""
+FEATURE_FLAG_ENABLE_SENDING_REFERENCES_TO_LEGACY = False
 
 # Default language and timezone
 # =============================
