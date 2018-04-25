@@ -426,6 +426,128 @@ def test_send_robotupload_does_nothing_when_not_in_production_mode():
             assert _send_robotupload(obj, eng) is None
 
 
+def test_send_robotupload_removes_references_if_feature_flag_disabled():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            text='[INFO] foo bar baz'
+        )
+
+        schema = load_schema('hep')
+        subschema = schema['properties']['references']
+
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
+        }
+
+        with patch.dict(current_app.config, config), \
+                patch('inspirehep.modules.workflows.tasks.submission.record2marcxml') as mock_record2marcxml:
+            data = {
+                '$schema': 'http://localhost:5000/schemas/records/hep.json',
+                'references': [
+                    {
+                        'raw_refs': [
+                            {
+                                'schema': 'text',
+                                'value': '[1] J. Maldacena and A. Strominger, hep-th/9710014.',
+                            },
+                        ],
+                    },
+                ]
+            }
+            data_without_references = {
+                '$schema': 'http://localhost:5000/schemas/records/hep.json',
+            }
+            extra_data = {}
+            assert validate(data['references'], subschema) is None
+
+            obj = MockObj(data, extra_data)
+            eng = MockEng()
+
+            _send_robotupload = send_robotupload(
+                mode='insert',
+            )
+
+            assert _send_robotupload(obj, eng) is None
+            assert mock_record2marcxml.called_with(data_without_references)
+
+
+def test_send_robotupload_works_doesnt_fail_when_removing_references_and_no_references():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            text='[INFO] foo bar baz'
+        )
+
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
+        }
+
+        with patch.dict(current_app.config, config), \
+                patch('inspirehep.modules.workflows.tasks.submission.record2marcxml') as mock_record2marcxml:
+            data = {
+                '$schema': 'http://localhost:5000/schemas/records/hep.json',
+            }
+            extra_data = {}
+
+            obj = MockObj(data, extra_data)
+            eng = MockEng()
+
+            _send_robotupload = send_robotupload(
+                mode='insert',
+            )
+
+            assert _send_robotupload(obj, eng) is None
+            assert mock_record2marcxml.called_with(data)
+
+
+def test_send_robotupload_keeps_references_if_feature_flag_enabled():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            text='[INFO] foo bar baz'
+        )
+
+        schema = load_schema('hep')
+        subschema = schema['properties']['references']
+
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
+            'FEATURE_FLAG_ENABLE_SENDING_REFERENCES_TO_LEGACY': True,
+        }
+
+        with patch.dict(current_app.config, config), \
+                patch('inspirehep.modules.workflows.tasks.submission.record2marcxml') as mock_record2marcxml:
+            data = {
+                '$schema': 'http://localhost:5000/schemas/records/hep.json',
+                'references': [
+                    {
+                        'raw_refs': [
+                            {
+                                'schema': 'text',
+                                'value': '[1] J. Maldacena and A. Strominger, hep-th/9710014.',
+                            },
+                        ],
+                    },
+                ]
+            }
+            extra_data = {}
+            assert validate(data['references'], subschema) is None
+
+            obj = MockObj(data, extra_data)
+            eng = MockEng()
+
+            _send_robotupload = send_robotupload(
+                mode='insert',
+            )
+
+            assert _send_robotupload(obj, eng) is None
+            assert mock_record2marcxml.called_with(data)  # includes references
+
+
 def test_wait_webcoll_halts_the_workflow_engine_when_in_production_mode():
     config = {'PRODUCTION_MODE': True}
 
