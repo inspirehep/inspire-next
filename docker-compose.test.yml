@@ -279,15 +279,6 @@ services:
     volumes_from:
       - test-static
 
-  fake-rt:
-    extends:
-      service: test-service_base
-    ports:
-      - "7777:5000"
-    command: gunicorn -b 0.0.0.0:7777 -t 3600 --access-logfile "-" --reload inspirehep.testlib.fake_rt_service
-    volumes_from:
-      - test-static
-
   fake-legacy:
     extends:
       service: test-service_base
@@ -318,7 +309,9 @@ services:
     links:
       - test-scrapyd
 
-  test-web-e2e:
+  # we need the .local to allow session cookies to be used correctly by the
+  # browsers/http libraries (like requests)
+  test-web-e2e.local:
     extends:
       service: test-service_base
     command: gunicorn -b 0.0.0.0:5000 -t 3600 -w 1 --access-logfile "-" inspirehep.wsgi_with_coverage:application
@@ -334,7 +327,8 @@ services:
       test-redis:
         condition: service_healthy
     environment:
-      - APP_SERVER_NAME=test-web-e2e:5000
+      - APP_SERVER_NAME="test-web-e2e.local:5000"
+      - APP_SESSON_COOKIE_DOMAIN=".local:5000"
       - APP_ARXIV_PDF_URL="/pdf/{arxiv_id}"
       - APP_ARXIV_PDF_URL_ALTERNATIVE="/pdf/{arxiv_id}"
       - APP_ARXIV_TARBALL_URL="/e-print/{arxiv_id}"
@@ -358,7 +352,6 @@ services:
       test-redis:
         condition: service_healthy
     environment:
-      - APP_SERVER_NAME=test-worker-e2e:5000
       - APP_ARXIV_PDF_URL="http://fake-arxiv:8888/pdf/{arxiv_id}"
       - APP_ARXIV_PDF_URL_ALTERNATIVE="http://fake-arxiv:8888/pdf/{arxiv_id}"
       - APP_ARXIV_TARBALL_URL="http://fake-arxiv:8888/e-print/{arxiv_id}"
@@ -383,11 +376,9 @@ services:
         condition: service_healthy
       test-worker-e2e:
         condition: service_started
-      test-web-e2e:
+      test-web-e2e.local:
         condition: service_started
       fake-arxiv:
-        condition: service_started
-      fake-rt:
         condition: service_started
       fake-legacy:
         condition: service_started

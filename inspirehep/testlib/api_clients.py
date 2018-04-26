@@ -24,96 +24,160 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
 import requests
 import re
 
+from urlparse import urljoin
 from inspirehep.testlib.api_entries import HoldingpenEntry, LiteratureEntry
 
-WEB_URL = 'http://test-web-e2e:5000'
-LOCAL_LOGIN_URL = '/login/?next=%2F&local=1'
-HOLDINGPEN_API_URL = '/api/holdingpen/'
-LITERATURE_API_URL = '/api/literature/'
 
+class Session(requests.Session):
+    def __init__(self, *args, **kwargs):
+        self._base_url = kwargs.pop('base_url', 'http://inspirehep.local')
+        super(Session, self).__init__(*args, **kwargs)
 
-def _get_url(url):
-    if not url.startswith('/'):
-        url = '/{}'.format(url)
-    return '{}{}'.format(WEB_URL, url)
+    def get_full_url(self, *paths):
+        full_url = self._base_url
+        for path in paths[:-1]:
+            if not path.endswith('/'):
+                path = path + '/'
+
+            full_url = urljoin(full_url, path)
+
+        full_url = urljoin(full_url, paths[-1])
+        return full_url
+
+    def get(self, url, *args, **kwargs):
+        full_url = self.get_full_url(url)
+        return requests.get(full_url, *args, **kwargs)
+
+    def post(self, url, *args, **kwargs):
+        full_url = self.get_full_url(url)
+        return requests.post(full_url, *args, **kwargs)
 
 
 class InspireApiClient(object):
     """Inspire Client for end-to-end testing"""
+    LOCAL_LOGIN_URL = '/login/?next=%2F&local=1'
 
-    def __init__(self, auto_login=True):
+    def __init__(self, auto_login=True, base_url='http://inpirehep.local'):
         self.auto_login = auto_login
         self._session = None
+        self._client = Session(base_url=base_url)
 
         if auto_login:
             self.login_local()
 
-        self.holdingpen = HoldingpenApiClient(self._session)
-        self.literature = LiteratureApiClient(self._session)
+        self.holdingpen = HoldingpenApiClient(self._client)
+        self.literature = LiteratureApiClient(self._client)
 
-    def login_local(self):
+    def login_local(self, user='admin@inspirehep.net', password='123456'):
         """Perform a local log-in in Inspire storing the session"""
         login_data = {
             'csrf_token': '',
-            'email': 'admin@inspirehep.net',
-            'password': '123456'
+            'email': user,
+            'password': password,
         }
-        login_url = _get_url(LOCAL_LOGIN_URL)
-        page = requests.get(login_url)
+        page = self._client.get(self.LOCAL_LOGIN_URL)
         csrf_token = re.search(
             '(?<=name="csrf_token" type="hidden" value=")[^"]*',
             page.text
         ).group()
-        cookie = re.search('session=[^; ]*', page.headers['Set-Cookie']).group()
         login_data['csrf_token'] = csrf_token
-        response = requests.post(
-            url=login_url,
+        response = self._client.post(
+            url=self.LOCAL_LOGIN_URL,
             data=login_data,
-            headers={'Cookie': cookie},
             allow_redirects=False
         )
-        self._session = {'Cookie': response.headers['Set-Cookie']}
         return response
 
 
 class HoldingpenApiClient(object):
     """Client for the Inspire Holdingpen"""
+    HOLDINGPEN_API_URL = '/api/holdingpen/'
 
-    def __init__(self, login_headers):
-        if not login_headers:
-            raise ValueError('Can not query holdingpen without being logged-in')
-        self._login_headers = login_headers
+    def __init__(self, client):
+        self._client = client
 
     def get_list_entries(self):
-        resp = requests.get(
-            _get_url(HOLDINGPEN_API_URL),
-            headers=self._login_headers
-        )
+        resp = self._client.get(self.HOLDINGPEN_API_URL)
         return [
             HoldingpenEntry(json=e['_source'], id=e['_id'])
             for e in resp.json()['hits']['hits']
         ]
 
     def get_detail_entry(self, holdingpen_id):
-        resp = requests.get(
-            "{}{}".format(_get_url(HOLDINGPEN_API_URL), holdingpen_id),
-            headers=self._login_headers
+        resp = self._client.get(
+            self._client.get_full_url(self.HOLDINGPEN_API_URL, holdingpen_id),
         )
         return HoldingpenEntry(resp.json())
 
 
 class LiteratureApiClient(object):
     """Client for the Inspire Literature section"""
+    LITERATURE_API_URL = '/api/literature/'
 
-    def __init__(self, login_headers):
-        self._login_headers = login_headers
+    def __init__(self, client):
+        self._client = client
 
     def get_record(self, rec_id):
-        resp = requests.get(
-            "{}{}".format(_get_url(LITERATURE_API_URL), rec_id),
-            headers=self._login_headers
+        resp = self._client.get(
+            self._client.get_full_url(self.LITERATURE_API_URL, rec_id),
         )
         return LiteratureEntry(resp.json())
+
+
+class RobotuploadCallbackResult(dict):
+    def __init__(self, recid, error_message, success, marcxml, url):
+        self.update(
+            {
+                "recid": recid,
+                "error_message": error_message,
+                "success": success,
+                "marcxml": marcxml,
+                "url": url,
+            }
+        )
+
+
+class CallbackClient(object):
+    """Client for the Inspire callbacks"""
+    CALLBACK_URL = '/callback/workflows'
+
+    def __init__(self, client):
+        self._client = client
+
+    def robotupload(self, nonce, results):
+        """
+        Args:
+            nonce(int): nonce parameter passed to robotupload, usually the
+                workflow id.
+            results(list[RobotuploadCallbackResult]): list of robotupload
+                results.
+        """
+        data = {
+            "nonce": nonce,
+            "results": results,
+        }
+
+        response = self._client.post(
+            self._client.get_full_url(self.CALLBACK_URL, '/robotupload'),
+            data=json.dumps(data),
+            headers={'Content-type': 'application/json'}
+        )
+        return response
+
+    def webcoll(self, recids):
+        """
+        Args:
+            recids(list(int)): list of recids that webcoll parsed.
+        """
+        data = {"recids": recids}
+
+        response = self._client.post(
+            '/webcoll',
+            data=data,
+            headers={'Content-type': 'application/x-www-form-urlencoded'}
+        )
+        return response

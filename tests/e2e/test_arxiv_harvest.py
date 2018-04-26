@@ -40,7 +40,7 @@ def init_environment():
 @pytest.fixture
 def inspire_client():
     """Share the same client to reuse the same session"""
-    return InspireApiClient()
+    return InspireApiClient(base_url='http://test-web-e2e.local:5000')
 
 
 @backoff.on_exception(backoff.constant, RetryError, interval=1, max_time=200)

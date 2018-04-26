@@ -25,14 +25,15 @@
 from __future__ import absolute_import, division, print_function
 
 import logging
-import json
-import requests
 import time
 
 from flask import Flask, jsonify, request
 from threading import Thread
 
-from inspirehep.testlib.api_clients import InspireApiClient
+from inspirehep.testlib.api_clients import (
+    InspireApiClient,
+    RobotuploadCallbackResult,
+)
 
 DEFAULT_CONFIG = {
     'DEBUG': True,
@@ -70,38 +71,27 @@ def robot_upload(args):
 def do_callbacks(workflow_id):
     server_name = application.config['SERVER_NAME']
 
-    rec_id = InspireApiClient().holdingpen.get_detail_entry(workflow_id).control_number
+    inspire_client = InspireApiClient(base_url='http://test-web-e2e.local:5000')
+    hp_entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
 
-    # robotupload callback
-    data = {
-        "nonce": workflow_id,
-        "results": [
-            {
-                "recid": rec_id,
-                "error_message": "",
-                "success": True,
-                "marcxml": "fake marcxml (not really used yet anywhere)",
-                "url": "%s/record/%s" % (server_name, rec_id),
-            }
+    response = inspire_client.callbacks.robotupload(
+        nonce=workflow_id,
+        results=[
+            RobotuploadCallbackResult(
+                recid=hp_entry.control_number,
+                error_message="",
+                success=True,
+                marcxml="fake marcxml (not really used yet anywhere)",
+                url="%s/record/%s" % (server_name, hp_entry.control_number),
+            ),
         ],
-    }
-
-    response = requests.post(
-        'http://test-web-e2e:5000/callback/workflows/robotupload',
-        data=json.dumps(data),
-        headers={'Content-type': 'application/json'}
     )
     assert response.status_code == 200
 
     time.sleep(2)
 
-    # webcoll collback
-    data = {"recids": [rec_id]}
-
-    response = requests.post(
-        'http://test-web-e2e:5000/callback/workflows/webcoll',
-        data=data,
-        headers={'Content-type': 'application/x-www-form-urlencoded'}
+    response = inspire_client.callbacks.webcoll(
+        recids=[hp_entry.control_number],
     )
     assert response.status_code == 200
 

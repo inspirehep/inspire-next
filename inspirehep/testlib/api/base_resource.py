@@ -20,33 +20,17 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Fake RT service module"""
+"""Base resource class and utils."""
 
 from __future__ import absolute_import, division, print_function
 
-import requests
-from flask import Flask
 
-from inspirehep.testlib.inspire_vcr import inspire_vcr as my_vcr
-
-
-DEFAULT_CONFIG = {
-    'DEBUG': True,
-    'TESTING': True,
-}
-
-
-def create_fake_flask_app(config=DEFAULT_CONFIG):
-    app = Flask(__name__)
-    app.config.update(config)
-    return app
-
-
-application = create_fake_flask_app()
-
-
-@application.route('/<args>')
-def home(args):
-    with my_vcr('rt_tickets').use_cassette('rt_request.yml'):
-        resp = requests.get(args)
-        return resp.text
+class BaseResource(object):
+    def __repr__(self):
+        classname = self.__class__.__name__
+        args = ', '.join(
+            '%s=%r' % item
+            for item in self.__dict__.items()
+            if not item[0].startswith('_')
+        )
+        return '{classname}({args})'.format(classname=classname, args=args)
