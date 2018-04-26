@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import requests
 import subprocess
 
 import backoff
@@ -60,11 +61,16 @@ def wait_for(func, *args, **kwargs):
 
 
 def test_harvest_non_core_article_goes_in(inspire_client):
+    requests.post(
+        url='http://mitm-manager.local/config',
+        json={'active_scenario': 'harvest_non_core_article_goes_in'},
+    )
+
     inspire_client.holdingpen.run_harvest(
         spider='arXiv',
         workflow='article',
-        url='http://fake-arxiv:8888/oai2',
-        sets='physics,hep-th',
+        url='http://export.arxiv.org/oai2',
+        sets='physics',
         from_date='2018-03-25',
     )
 

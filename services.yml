@@ -24,7 +24,7 @@ version: '2.1'
 
 services:
   base:
-    image: inspirehep/python-base
+    image: inspirehep/python-base-test
     tty: true
     environment:
       - BASE_USER_UID=${BASE_USER_UID:-1000}
@@ -44,7 +44,6 @@ services:
       - LC_IDENTIFICATION=en_US.UTF-8
       - LC_ALL=
       - APP_CRAWL_ONCE_PATH=/code/scrapy/crawl_once
-
   indexer:
     image: inspirehep/elasticsearch
     command: elasticsearch -Dcluster.name="inspire" -Ddiscovery.zen.ping.multicast.enabled=false
@@ -61,3 +60,4 @@ services:
     volumes:
         - ".:/code"
         - "${DOCKER_DATA}/tmp/virtualenv:/virtualenv"
+

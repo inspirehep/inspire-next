@@ -36,6 +36,28 @@ services:
       - APP_ACCOUNTS_SESSION_REDIS_URL=redis://test-redis:6379/2
       - APP_SEARCH_ELASTIC_HOSTS=test-indexer
 
+  proxied_base:
+    extends: test-service_base
+    environment:
+      - HTTP_PROXY=mitm-proxy:8080
+      - http_proxy=mitm-proxy:8080
+      - HTTPS_PROXY=mitm-proxy:8080
+      - https_proxy=mitm-proxy:8080
+
+  mitm-proxy:
+    image: inspirehep/inspire-mitmproxy:0.5
+    tty: true
+    ports:
+      - 127.0.0.1:8081:8081
+    environment:
+      - SCENARIOS_PATH=/inspire-next/tests/e2e/scenarios/
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test: nc -z 127.0.0.1:8080
+    volumes:
+        - ".:/inspire-next"
 
   unit:
     extends:
@@ -270,18 +292,9 @@ services:
       service: static
 
       # Service for mocking external services.
-  fake-arxiv:
-    extends:
-      service: test-service_base
-    ports:
-      - "8888:5000"
-    command: gunicorn -b 0.0.0.0:8888 -t 3600 --access-logfile "-" --reload inspirehep.testlib.fake_arxiv_service
-    volumes_from:
-      - test-static
-
   fake-legacy:
     extends:
-      service: test-service_base
+      service: proxied_base
     ports:
       - "6666:5000"
     command: gunicorn -b 0.0.0.0:6666 -t 3600 --access-logfile "-" --reload inspirehep.testlib.fake_legacy_service
@@ -290,7 +303,7 @@ services:
 
   test-scrapyd:
     extends:
-      service: test-service_base
+      service: proxied_base
     command: bash -c "rm -f twistd.pid && exec scrapyd"
     volumes_from:
       - test-static
@@ -308,7 +321,7 @@ services:
 
   test-scrapyd-deploy:
     extends:
-      service: test-service_base
+      service: proxied_base
     working_dir: /virtualenv/lib/python2.7/site-packages/hepcrawl
     command: bash -c "sed -i -e 's|^url .*|url = http://test-scrapyd:6800|' scrapy.cfg && exec scrapyd-deploy"
     volumes_from:
@@ -320,7 +333,7 @@ services:
   # browsers/http libraries (like requests)
   test-web-e2e.local:
     extends:
-      service: test-service_base
+      service: proxied_base
     command: gunicorn -b 0.0.0.0:5000 -t 3600 -w 1 --access-logfile "-" inspirehep.wsgi_with_coverage:application
     volumes_from:
       - test-static
@@ -345,7 +358,7 @@ services:
 
   test-worker-e2e:
     extends:
-      service: test-service_base
+      service: proxied_base
     command: celery worker -E -A inspirehep.celery_tests --loglevel=DEBUG --purge --queues celery,migrator,harvests,orcid_push
     healthcheck:
       timeout: 5s
@@ -368,20 +381,19 @@ services:
       test-redis:
         condition: service_healthy
     environment:
-      - APP_ARXIV_PDF_URL="http://fake-arxiv:8888/pdf/{arxiv_id}"
-      - APP_ARXIV_PDF_URL_ALTERNATIVE="http://fake-arxiv:8888/pdf/{arxiv_id}"
-      - APP_ARXIV_TARBALL_URL="http://fake-arxiv:8888/e-print/{arxiv_id}"
       - APP_PRODUCTION_MODE=True
       - APP_LEGACY_ROBOTUPLOAD_URL="http://fake-legacy:6666/"
       - APP_LEGACY_PID_PROVIDER="http://fake-legacy:6666//batchuploader/allocaterecord"
 
   e2e:
     extends:
-      service: test-service_base
+      service: proxied_base
     command: py.test tests/e2e
     volumes_from:
       - test-static
     depends_on:
+      mitm-proxy:
+        condition: service_healthy
       test-database:
         condition: service_healthy
       test-indexer:
@@ -393,8 +405,6 @@ services:
       test-worker-e2e:
         condition: service_started
       test-web-e2e.local:
-        condition: service_started
-      fake-arxiv:
         condition: service_started
       fake-legacy:
         condition: service_started
