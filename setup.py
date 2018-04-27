@@ -46,7 +46,7 @@ install_requires = [
     'Flask-CeleryExt~=0.0,>=0.3.1',
     'Flask-Gravatar~=0.0,>=0.4.2',
     'Flask-Login~=0.0,>=0.4.0',
-    'Flask~=0.0,>=0.12.2',
+    'Flask==0.12.2',
     'IDUtils~=0.0,>=0.2.4',
     'SQLAlchemy~=1.0,>=1.2.5',
     'amqp~=1.0,>=1.4.9',
