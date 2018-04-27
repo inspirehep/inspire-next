@@ -59,6 +59,14 @@ def test_downgrade(alembic_app):
     assert 'legacy_records_mirror' not in _get_table_names()
     assert 'legacy_records_mirror_recid_seq' not in _get_sequences()
 
+    # 53e8594bc789
+
+    ext.alembic.downgrade(target='53e8594bc789')
+
+    # d99c70308006
+
+    ext.alembic.downgrade(target='d99c70308006')
+
     # cb9f81e8251c & cb5153afd839
 
     ext.alembic.downgrade(target='fddb3cfe7a9c')
@@ -111,6 +119,14 @@ def test_upgrade(alembic_app):
     ext.alembic.upgrade(target='cb5153afd839')
 
     assert 'workflows_record_sources' in _get_table_names()
+
+    # d99c70308006
+
+    ext.alembic.upgrade(target='d99c70308006')
+
+    # 53e8594bc789
+
+    ext.alembic.upgrade(target='53e8594bc789')
 
     # 402af3fbf68b
 
