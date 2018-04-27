@@ -38,7 +38,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     wait_webcoll,
 )
 
-from mocks import MockEng, MockObj, MockUser
+from mocks import MockEng, MockObj, MockUser, MockWorkflow
 
 
 @patch('inspirehep.modules.workflows.tasks.submission.User')
@@ -747,3 +747,297 @@ def test_prepare_keywords_does_nothing_if_no_keywords_were_predicted():
 
     assert validate(result['keywords'], subschema) is None
     assert expected == result['keywords']
+
+
+def test_send_robotupload_new_authors_when_feature_flag_is_disabled():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            text='[INFO] foo bar baz'
+        )
+
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
+            'FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY': False
+        }
+
+        with patch.dict(current_app.config, config), \
+                patch('inspirehep.modules.workflows.tasks.submission.record2marcxml'):
+            data = {
+                '$schema': 'http://localhost:5000/schemas/records/authors.json',
+                'name': {
+                    'preferred_name': 'Jessica Jones',
+                    'value': 'Jones, Jessica'
+                }
+            }
+            extra_data = {}
+
+            obj = MockObj(data, extra_data)
+            obj.workflow = MockWorkflow('author')
+            eng = MockEng()
+
+            _send_robotupload = send_robotupload(
+                mode='insert',
+            )
+
+            assert _send_robotupload(obj, eng) is None
+
+            expected = (
+                'Robotupload sent!'
+                '[INFO] foo bar baz'
+                'end of upload'
+            )
+            result = obj.log._info.getvalue()
+
+            assert expected == result
+
+
+def test_send_robotupload_update_authors_when_feature_flag_is_disabled():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            text='[INFO] foo bar baz'
+        )
+
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
+            'FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY': False
+        }
+
+        with patch.dict(current_app.config, config), \
+                patch('inspirehep.modules.workflows.tasks.submission.record2marcxml'):
+            data = {
+                '$schema': 'http://localhost:5000/schemas/records/authors.json',
+                'name': {
+                    'preferred_name': 'Jessica Jones',
+                    'value': 'Jones, Jessica'
+                }
+            }
+            extra_data = {
+                'is-update': True
+            }
+
+            obj = MockObj(data, extra_data)
+            obj.workflow = MockWorkflow('author')
+            eng = MockEng()
+
+            _send_robotupload = send_robotupload(
+                mode='insert',
+            )
+
+            assert _send_robotupload(obj, eng) is None
+
+            expected = (
+                'Robotupload sent!'
+                '[INFO] foo bar baz'
+                'end of upload'
+            )
+            result = obj.log._info.getvalue()
+
+            assert expected == result
+
+
+def test_send_robotupload_new_authors_when_feature_flag_is_enabled():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            text='[INFO] foo bar baz'
+        )
+
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
+            'FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY': True
+        }
+
+        with patch.dict(current_app.config, config), \
+                patch('inspirehep.modules.workflows.tasks.submission.record2marcxml'):
+            data = {
+                '$schema': 'http://localhost:5000/schemas/records/authors.json',
+                'name': {
+                    'preferred_name': 'Jessica Jones',
+                    'value': 'Jones, Jessica'
+                }
+            }
+            extra_data = {
+                'is-update': True
+            }
+
+            obj = MockObj(data, extra_data)
+            obj.workflow = MockWorkflow('author')
+            eng = MockEng()
+
+            _send_robotupload = send_robotupload(
+                mode='insert',
+            )
+
+            assert _send_robotupload(obj, eng) is None
+
+            expected = (
+                'Robotupload sent!'
+                '[INFO] foo bar baz'
+                'end of upload'
+            )
+            result = obj.log._info.getvalue()
+
+            assert expected == result
+
+
+def test_send_robotupload_update_authors_when_feature_flag_is_enabled():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            text='[INFO] foo bar baz'
+        )
+
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
+            'FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY': True
+        }
+
+        with patch.dict(current_app.config, config), \
+                patch('inspirehep.modules.workflows.tasks.submission.record2marcxml'):
+            data = {
+                '$schema': 'http://localhost:5000/schemas/records/authors.json',
+                'name': {
+                    'preferred_name': 'Jessica Jones',
+                    'value': 'Jones, Jessica'
+                }
+            }
+            extra_data = {
+                'is-update': True
+            }
+
+            obj = MockObj(data, extra_data)
+            obj.workflow = MockWorkflow('author')
+            eng = MockEng()
+
+            _send_robotupload = send_robotupload(
+                mode='insert',
+            )
+
+            assert _send_robotupload(obj, eng) is None
+
+            expected = (
+                'Robotupload sent!'
+                '[INFO] foo bar baz'
+                'end of upload'
+            )
+            result = obj.log._info.getvalue()
+
+            assert expected == result
+
+
+def test_send_robotupload_new_article_when_feature_flag_is_disabled():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            text='[INFO] foo bar baz'
+        )
+
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
+            'FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY': False
+        }
+
+        with patch.dict(current_app.config, config), \
+                patch('inspirehep.modules.workflows.tasks.submission.record2marcxml'):
+            data = {
+                '$schema': 'http://localhost:5000/schemas/records/hep.json',
+            }
+
+            extra_data = {}
+
+            obj = MockObj(data, extra_data)
+            eng = MockEng()
+
+            _send_robotupload = send_robotupload(
+                mode='insert',
+            )
+
+            assert _send_robotupload(obj, eng) is None
+
+            expected = (
+                'Robotupload sent!'
+                '[INFO] foo bar baz'
+                'end of upload'
+            )
+            result = obj.log._info.getvalue()
+
+            assert expected == result
+
+
+def test_send_robotupload_update_article_when_feature_flag_is_disabled():
+    config = {
+        'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+        'PRODUCTION_MODE': True,
+        'FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY': False
+    }
+
+    with patch.dict(current_app.config, config), \
+            patch('inspirehep.modules.workflows.tasks.submission.record2marcxml'):
+        data = {
+            '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        }
+
+        extra_data = {
+            'is-update': True
+        }
+
+        obj = MockObj(data, extra_data)
+        eng = MockEng()
+
+        _send_robotupload = send_robotupload(
+            mode='insert',
+        )
+
+        expected_log = 'skipping upload to legacy, feature flag ``FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY`` is disabled.'
+
+        assert _send_robotupload(obj, eng) is None
+        assert expected_log in obj.log._info.getvalue()
+
+
+def test_send_robotupload_update_article_when_feature_flag_is_enabled():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            text='[INFO] foo bar baz'
+        )
+
+        config = {
+            'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+            'PRODUCTION_MODE': True,
+            'FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY': True
+        }
+
+        with patch.dict(current_app.config, config), \
+                patch('inspirehep.modules.workflows.tasks.submission.record2marcxml'):
+            data = {
+                '$schema': 'http://localhost:5000/schemas/records/hep.json',
+            }
+
+            extra_data = {
+                'is-update': True
+            }
+
+            obj = MockObj(data, extra_data)
+            eng = MockEng()
+
+            _send_robotupload = send_robotupload(
+                mode='insert',
+            )
+
+            assert _send_robotupload(obj, eng) is None
+
+            expected = (
+                'Robotupload sent!'
+                '[INFO] foo bar baz'
+                'end of upload'
+            )
+            result = obj.log._info.getvalue()
+
+            assert expected == result
