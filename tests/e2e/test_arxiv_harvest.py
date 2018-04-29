@@ -43,26 +43,38 @@ def inspire_client():
     return InspireApiClient(base_url='http://test-web-e2e.local:5000')
 
 
-@backoff.on_exception(backoff.constant, RetryError, interval=1, max_time=200)
-def wait_for_n_entries_in_status(inspire_client, entries_number, status):
-    hp_entries = inspire_client.holdingpen.get_list_entries()
-    raise_if_false(all(entry.status == status for entry in hp_entries))
-    raise_if_false(len(hp_entries) == entries_number)
-    return hp_entries
+def wait_for(func, *args, **kwargs):
+    max_time = kwargs.pop('max_time', 200)
+    interval = kwargs.pop('interval', 1)
+
+    decorator = backoff.on_exception(
+        backoff.constant,
+        AssertionError,
+        interval=interval,
+        max_time=max_time,
+    )
+    decorated = decorator(func)
+    return decorated(*args, **kwargs)
 
 
 def test_harvest_non_core_article_goes_in(inspire_client):
     arxiv_service = FakeArxivService()
     arxiv_service.run_harvest()
 
-    hp_entries = wait_for_n_entries_in_status(inspire_client, 1, 'COMPLETED')
-    assert len(hp_entries) == 1
+    def _all_completed():
+        hp_entries = inspire_client.holdingpen.get_list_entries()
+        assert len(hp_entries) == 1
+        assert all(entry.status == 'COMPLETED' for entry in hp_entries)
+        return hp_entries[0]
 
-    entry = inspire_client.holdingpen.get_detail_entry(hp_entries[0].workflow_id)
+    completed_entry = wait_for(_all_completed)
+    entry = inspire_client.holdingpen.get_detail_entry(
+        completed_entry.workflow_id
+    )
 
     # check workflows goes as expected
     assert entry.status == 'COMPLETED'
-    assert entry.core is False
+    assert entry.core is None
     assert entry.approved is True
 
     assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
