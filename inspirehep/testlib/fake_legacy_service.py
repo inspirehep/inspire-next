@@ -30,10 +30,9 @@ import time
 from flask import Flask, jsonify, request
 from threading import Thread
 
-from inspirehep.testlib.api_clients import (
-    InspireApiClient,
-    RobotuploadCallbackResult,
-)
+from inspirehep.testlib.api import InspireApiClient
+from inspirehep.testlib.api.callback import RobotuploadCallbackResult
+
 
 DEFAULT_CONFIG = {
     'DEBUG': True,
@@ -74,7 +73,7 @@ def do_callbacks(workflow_id):
     inspire_client = InspireApiClient(base_url='http://test-web-e2e.local:5000')
     hp_entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
 
-    response = inspire_client.callbacks.robotupload(
+    response = inspire_client.callback.robotupload(
         nonce=workflow_id,
         results=[
             RobotuploadCallbackResult(
@@ -86,14 +85,16 @@ def do_callbacks(workflow_id):
             ),
         ],
     )
-    assert response.status_code == 200
+    print(response.text)
+    response.raise_for_status()
 
     time.sleep(2)
 
-    response = inspire_client.callbacks.webcoll(
+    response = inspire_client.callback.webcoll(
         recids=[hp_entry.control_number],
     )
-    assert response.status_code == 200
+    print(response.text)
+    response.raise_for_status()
 
 
 @application.route('/batchuploader/allocaterecord', methods=['GET'])

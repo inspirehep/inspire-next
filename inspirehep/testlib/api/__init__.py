@@ -40,7 +40,9 @@ class Session(requests.Session):
 
     def get_full_url(self, *paths):
         full_path = urljoin(*paths)
-        return self._base_url + '/' + full_path
+        if not full_path.startswith('/'):
+            full_path = '/' + full_path
+        return self._base_url + full_path
 
     def bare_get(self, *args, **kwargs):
         return super(Session, self).get(*args, **kwargs)

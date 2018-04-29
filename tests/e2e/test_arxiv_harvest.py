@@ -27,8 +27,7 @@ import pytest
 import subprocess
 
 from inspirehep.testlib.fake_arxiv_service import FakeArxivService
-from inspirehep.testlib.errors import raise_if_false, RetryError
-from inspirehep.testlib.api_clients import InspireApiClient
+from inspirehep.testlib.api import InspireApiClient
 
 
 @pytest.fixture(autouse=True, scope='function')
