@@ -20,30 +20,33 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""Workflows extension."""
+
 from __future__ import absolute_import, division, print_function
 
 import os
+
 import pkg_resources
 
+from . import config
 from .views import blueprint
 
 
-class INSPIREWorkflows(object):
-    """INSPIRE workflows extension."""
-
-    def __init__(self, app=None, **kwargs):
-        """Extension initialization."""
+class InspireWorkflows(object):
+    def __init__(self, app=None):
         if app:
-            self.init_app(app, **kwargs)
+            self.init_app(app)
 
-    def init_app(self, app, assets=None, **kwargs):
-        """Initialize application object."""
+    def init_app(self, app):
         self.init_config(app)
         app.register_blueprint(blueprint)
         app.extensions['inspire-workflows'] = self
 
     def init_config(self, app):
-        """Initialize configuration."""
+        for k in dir(config):
+            if k.startswith('WORKFLOWS_'):
+                app.config.setdefault(k, getattr(config, k))
+
         app.config.setdefault("WORKFLOWS_PENDING_RECORDS_CACHE_TIMEOUT",
                               2629743)
         app.config["WORKFLOWS_STORAGEDIR"] = os.path.join(

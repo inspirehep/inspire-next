@@ -145,17 +145,16 @@ $hp_table_bg: #fff;
         background-color: $turquoise;
       }
 
+      &.publisher-updates {
+        background-color: $green-sea;
+      }
+
       &.author-updates {
         background-color: $belize-hole;
       }
 
       &.arxiv-harvests {
-        background-color: white;
-        color: $midnight-blue !important;
-
-        a {
-          color: $link-color;
-        }
+        background-color: $violet;
       }
 
       &.new-literature-submissions {
@@ -348,6 +347,12 @@ $hp_table_bg: #fff;
       
       .abstract {
         font-size: 12px;
+      }
+
+      .public-notes {
+        margin-bottom: 0px;
+        list-style: none;
+        padding-left: 0px;
       }
 
       .authors {
@@ -552,9 +557,14 @@ $hp_table_bg: #fff;
       .record-title {
         font-size: 1.7em;
       }
+
       .record-abstract {
         color: $blue-haze;
         display: block;
+      }
+      
+      .record-pub-info {
+        margin-bottom: 10px;
       }
 
       .record-authors {
@@ -765,6 +775,10 @@ $hp_table_bg: #fff;
 
   .panel {
     background-color: #f7f7f7;
+  }
+  
+  .authors {
+    margin-bottom: 10px;
   }
 
   .panel-heading {

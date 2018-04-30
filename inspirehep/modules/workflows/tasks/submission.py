@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import logging
+from copy import copy
 from functools import wraps
 from pprint import pformat
 
@@ -218,6 +219,11 @@ def send_robotupload(
             data = obj.extra_data.get(extra_data_key) or {}
         else:
             data = obj.data
+
+        if not current_app.config.get('FEATURE_FLAG_ENABLE_SENDING_REFERENCES_TO_LEGACY'):
+            data = copy(data)
+            data.pop('references', None)
+
         marcxml = record2marcxml(data)
 
         if current_app.debug:
@@ -302,7 +308,7 @@ def prepare_keywords(obj, eng):
 
     keywords = obj.data.get('keywords', [])
     for keyword in prediction.get('keywords', []):
-        # TODO: differentiate between curated and gueesed keywords
+        # TODO: differentiate between curated and guessed keywords
         keywords.append(
             {
                 'value': keyword['label'],
@@ -313,10 +319,3 @@ def prepare_keywords(obj, eng):
     obj.data['keywords'] = keywords
 
     obj.log.debug('Finally got keywords: \n%s', pformat(keywords))
-
-
-@with_debug_logging
-def remove_references(obj, eng):
-    obj.log.info(obj.data)
-    if 'references' in obj.data:
-        del obj.data['references']

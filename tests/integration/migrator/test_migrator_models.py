@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 
-from inspirehep.modules.migrator.models import InspireProdRecords
+from inspirehep.modules.migrator.models import LegacyRecordsMirror
 
 
 def test_inspire_prod_records_from_marcxml():
@@ -38,7 +38,7 @@ def test_inspire_prod_records_from_marcxml():
         </record>
         '''
 
-    record = InspireProdRecords.from_marcxml(raw_record)
+    record = LegacyRecordsMirror.from_marcxml(raw_record)
 
     assert record.recid == 1591551
     assert record.marcxml == raw_record
@@ -58,11 +58,11 @@ def test_inspire_prod_records_from_marcxml_raises_for_invalid_recid():
         '''
 
     with pytest.raises(ValueError):
-        InspireProdRecords.from_marcxml(raw_record)
+        LegacyRecordsMirror.from_marcxml(raw_record)
 
 
 def test_inspire_prod_records_error():
-    record = InspireProdRecords(recid='12345')
+    record = LegacyRecordsMirror(recid='12345')
     error = ValueError(u'This is an error with ùnicode')
 
     record.error = error

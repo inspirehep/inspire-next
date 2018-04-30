@@ -73,6 +73,7 @@ from inspirehep.modules.workflows.tasks.magpie import (
 )
 from inspirehep.modules.workflows.tasks.matching import (
     stop_processing,
+    raise_if_match_wf_in_error_or_initial,
     match_non_completed_wf_in_holdingpen,
     match_previously_rejected_wf_in_holdingpen,
     exact_match,
@@ -95,7 +96,6 @@ from inspirehep.modules.workflows.tasks.submission import (
     create_ticket,
     filter_keywords,
     prepare_keywords,
-    remove_references,
     reply_ticket,
     send_robotupload,
     wait_webcoll,
@@ -154,8 +154,8 @@ ENHANCE_RECORD = [
         populate_submission_document,
     ),
     download_documents,
-    refextract,
     normalize_journal_titles,
+    refextract,
     extract_journal_info,
     populate_journal_coverage,
     classify_paper(
@@ -229,7 +229,6 @@ POSTENHANCE_RECORD = [
     add_core,
     filter_keywords,
     prepare_keywords,
-    remove_references,
     set_refereed_and_fix_document_type,
     fix_submission_number,
 ]
@@ -301,6 +300,7 @@ STORE_RECORD = [
 
 
 MARK_IF_MATCH_IN_HOLDINGPEN = [
+    raise_if_match_wf_in_error_or_initial,
     IF_ELSE(
         match_non_completed_wf_in_holdingpen,
         [

@@ -32,6 +32,7 @@ from orcid import MemberAPI
 
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
+from inspirehep.utils.lock import distributed_lock
 from inspirehep.modules.orcid import OrcidConverter
 from inspirehep.modules.orcid.utils import (
     _get_api_url_for_recid,
@@ -41,6 +42,7 @@ from inspirehep.modules.orcid.utils import (
     hash_xml_element,
     log_time_context,
 )
+from inspirehep.utils.record_getter import get_db_record
 
 LOGGER = getStackTraceLogger(__name__)
 
@@ -61,7 +63,7 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
             - the put-code of the inserted item,
             - and the new hash of the ORCID record
     """
-    record = _get_hep_record(app.config, recid)
+    record = get_db_record('lit', recid)
 
     new_hash = calculate_hash_for_record(record)
     if new_hash == old_hash:
@@ -84,11 +86,14 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
         record, app.config['LEGACY_RECORD_URL_PATTERN'], put_code=put_code, bibtex_citation=bibtex
     ).get_xml()
 
+    lock_name = 'orcid:{}'.format(orcid)
+
     if put_code:
         LOGGER.info(
             "Pushing record #%s with put-code %s onto %s.", recid, put_code, orcid,
         )
-        with log_time_context('Pushing updated record', LOGGER):
+        with log_time_context('Pushing updated record', LOGGER), \
+                distributed_lock(lock_name, blocking=True):
             orcid_api.update_record(
                 orcid_id=orcid,
                 token=oauth_token,
@@ -101,7 +106,8 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
         LOGGER.info(
             "No put-code found, pushing new record #%s to ORCID %s.", recid, orcid,
         )
-        with log_time_context('Pushing new record', LOGGER):
+        with log_time_context('Pushing new record', LOGGER), \
+                distributed_lock(lock_name, blocking=True):
             put_code = orcid_api.add_record(
                 orcid_id=orcid,
                 token=oauth_token,
@@ -128,17 +134,18 @@ def calculate_hash_for_record(record):
     return hash_xml_element(orcid_rec.get_xml())
 
 
-def _get_record_by_mime(config, recid, mime_type):
+def _get_bibtex_record(config, recid):
     """
+    Call Inspire API to get the bibtex for a given record id.
 
     Args:
         config (inspire_utils.config.Config): configuration
         recid (string): HEP record ID
-        mime_type (string): accept type
 
     Returns:
-        requests.Response: response form API
+        string: BibTeX serialized record
     """
+    mime_type = 'application/x-bibtex'
     server_name = config['SERVER_NAME']
 
     record_api_endpoint = _get_api_url_for_recid(
@@ -149,39 +156,12 @@ def _get_record_by_mime(config, recid, mime_type):
         'Getting %s #%s record from inspire' % (mime_type, recid),
         LOGGER,
     ):
-        response = requests.get(record_api_endpoint, headers={
-            'Accept': mime_type
-        })
+        response = requests.get(
+            record_api_endpoint,
+            headers={'Accept': mime_type, },
+            timeout=30)
         response.raise_for_status()
-        return response
-
-
-def _get_hep_record(config, recid):
-    """
-
-    Args:
-        config (inspire_utils.config.Config): configuration
-        recid (string): HEP record ID
-
-    Returns:
-        dict: HEP record
-    """
-    hep_response = _get_record_by_mime(config, recid, 'application/json')
-    return hep_response.json()['metadata']
-
-
-def _get_bibtex_record(config, recid):
-    """
-
-    Args:
-        config (inspire_utils.config.Config): configuration
-        recid (string): HEP record ID
-
-    Returns:
-        string: BibTeX serialized record
-    """
-    bibtex_response = _get_record_by_mime(config, recid, 'application/x-bibtex')
-    return bibtex_response.text
+        return response.text
 
 
 def get_author_putcodes(orcid, oauth_token):

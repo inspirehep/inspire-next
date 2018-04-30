@@ -46,7 +46,7 @@ install_requires = [
     'Flask-CeleryExt~=0.0,>=0.3.1',
     'Flask-Gravatar~=0.0,>=0.4.2',
     'Flask-Login~=0.0,>=0.4.0',
-    'Flask~=0.0,>=0.12.2',
+    'Flask~=0.0,>=0.12.4',
     'IDUtils~=0.0,>=0.2.4',
     'SQLAlchemy~=1.0,>=1.2.5',
     'amqp~=1.0,>=1.4.9',
@@ -137,7 +137,8 @@ extras_require = {
         'honcho~=1.0,>=1.0.1',
     ],
     'worker-node': [
-        'flower~=0.0,>=0.9.2',
+        # FIXME: until flower > 0.9.2 is released
+        # 'flower~=0.0,>=0.9.2',
         'superlance~=1.0,>=1.0.0',
     ],
     'xrootd': [
@@ -205,7 +206,7 @@ setup(
             'inspire_search = inspirehep.modules.search:InspireSearch',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
-            'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
+            'inspire_workflows = inspirehep.modules.workflows:InspireWorkflows',
             'invenio_collections = invenio_collections:InvenioCollections',
         ],
         'invenio_base.api_blueprints': [
@@ -225,7 +226,7 @@ setup(
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_tools = inspirehep.modules.tools:InspireTools',
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
-            'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
+            'inspire_workflows = inspirehep.modules.workflows:InspireWorkflows',
         ],
         'invenio_base.blueprints': [
             'inspirehep_editor = inspirehep.modules.editor:blueprint',

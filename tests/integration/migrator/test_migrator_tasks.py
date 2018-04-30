@@ -32,7 +32,7 @@ import pytest
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 
-from inspirehep.modules.migrator.models import InspireProdRecords
+from inspirehep.modules.migrator.models import LegacyRecordsMirror
 from inspirehep.modules.migrator.tasks import (
     _build_recid_to_uuid_map,
     migrate_from_file,
@@ -49,9 +49,9 @@ def enable_orcid_push_feature(app):
 @pytest.fixture
 def cleanup():
     yield
-    InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).delete()
+    LegacyRecordsMirror.query.filter(LegacyRecordsMirror.recid == 12345).delete()
     db.session.commit()
-    assert InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).count() == 0
+    assert LegacyRecordsMirror.query.filter(LegacyRecordsMirror.recid == 12345).count() == 0
 
 
 def test_build_recid_to_uuid_map_numeric_pid_allowed_for_lit_and_con(isolated_app):
@@ -104,7 +104,7 @@ def test_migrate_and_insert_record_valid_record(mock_logger, isolated_app):
 
     migrate_and_insert_record(raw_record)
 
-    prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
+    prod_record = LegacyRecordsMirror.query.filter(LegacyRecordsMirror.recid == 12345).one()
     assert prod_record.valid is True
     assert prod_record.marcxml == raw_record
 
@@ -128,7 +128,7 @@ def test_migrate_and_insert_record_dojson_error(mock_logger, isolated_app):
 
     migrate_and_insert_record(raw_record)
 
-    prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
+    prod_record = LegacyRecordsMirror.query.filter(LegacyRecordsMirror.recid == 12345).one()
     assert prod_record.valid is False
     assert prod_record.marcxml == raw_record
 
@@ -149,7 +149,7 @@ def test_migrate_and_insert_record_invalid_record(mock_logger, isolated_app):
 
     migrate_and_insert_record(raw_record)
 
-    prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
+    prod_record = LegacyRecordsMirror.query.filter(LegacyRecordsMirror.recid == 12345).one()
     assert prod_record.valid is False
     assert prod_record.marcxml == raw_record
 
@@ -170,7 +170,7 @@ def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
     )
     migrate_and_insert_record(raw_record)
 
-    prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
+    prod_record = LegacyRecordsMirror.query.filter(LegacyRecordsMirror.recid == 12345).one()
     assert prod_record.valid is False
     assert prod_record.marcxml == raw_record
 
@@ -192,7 +192,7 @@ def test_orcid_push_disabled_on_migrate_from_mirror(app, cleanup, enable_orcid_p
         migrate_from_file.delay(record_fixture_path, wait_for_results=True)
         mock_attempt_push.assert_not_called()
 
-    prod_record = InspireProdRecords.query.filter(InspireProdRecords.recid == 12345).one()
+    prod_record = LegacyRecordsMirror.query.filter(LegacyRecordsMirror.recid == 12345).one()
     assert prod_record.valid
 
     assert app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']

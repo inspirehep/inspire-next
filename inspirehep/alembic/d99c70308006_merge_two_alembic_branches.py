@@ -20,6 +20,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIRE cache providers."""
+"""Merge two alembic branches."""
 
 from __future__ import absolute_import, division, print_function
+
+revision = 'd99c70308006'
+down_revision = ('cb9f81e8251c', 'cb5153afd839')
+branch_labels = ()
+depends_on = None
+
+
+def upgrade():
+    pass
+
+
+def downgrade():
+    pass

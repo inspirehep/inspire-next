@@ -30,7 +30,7 @@ import pytest
 
 from invenio_db import db
 from inspirehep.modules.migrator.cli import migrate
-from inspirehep.modules.migrator.models import InspireProdRecords
+from inspirehep.modules.migrator.models import LegacyRecordsMirror
 from inspirehep.modules.migrator.tasks import populate_mirror_from_file
 
 
@@ -67,7 +67,7 @@ def test_migrate_file_mirror_only(app_cli_runner, api_client):
     file_name = pkg_resources.resource_filename(__name__, os.path.join('fixtures', '1663924.xml'))
 
     result = app_cli_runner.invoke(migrate, ['file', '-w', '-m', '-f', file_name])
-    prod_record = InspireProdRecords.query.get(1663924)
+    prod_record = LegacyRecordsMirror.query.get(1663924)
     response = api_client.get('/literature/1663924')
 
     assert result.exit_code == 0
@@ -111,7 +111,7 @@ def test_migrate_mirror_broken_migrates_invalid(app_cli_runner, api_client):
     assert result.exit_code == 0
     assert response.status_code == 404  # it's broken
 
-    prod_record = InspireProdRecords.query.get(1663927)
+    prod_record = LegacyRecordsMirror.query.get(1663927)
     prod_record.marcxml = prod_record.marcxml.replace('Not a date', '2018')
 
     assert prod_record.valid is False
@@ -142,7 +142,7 @@ def test_migrate_mirror_all_migrates_all(app_cli_runner, api_client):
     assert result.exit_code == 0
     assert response.status_code == 200
 
-    prod_record = InspireProdRecords.query.get(1663924)
+    prod_record = LegacyRecordsMirror.query.get(1663924)
     prod_record.marcxml = prod_record.marcxml.replace('A Status report on', 'A funny joke about')
 
     assert prod_record.valid is True

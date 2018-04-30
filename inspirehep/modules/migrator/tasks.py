@@ -63,7 +63,7 @@ from inspirehep.modules.pidstore.utils import (
 from inspirehep.modules.records.receivers import index_after_commit
 from inspirehep.utils.schema import ensure_valid_schema
 
-from .models import InspireProdRecords
+from .models import LegacyRecordsMirror
 
 LOGGER = getStackTraceLogger(__name__)
 
@@ -156,7 +156,6 @@ def migrate_record_from_legacy(recid):
 
 
 @shared_task(ignore_result=True, queue='migrator')
-@disable_orcid_push
 def migrate_from_mirror(also_migrate=None, wait_for_results=False, skip_files=None):
     """Migrate legacy records from the local mirror.
 
@@ -180,11 +179,11 @@ def migrate_from_mirror(also_migrate=None, wait_for_results=False, skip_files=No
             False,
         )
 
-    query = InspireProdRecords.query.with_entities(InspireProdRecords.recid)
+    query = LegacyRecordsMirror.query.with_entities(LegacyRecordsMirror.recid)
     if also_migrate is None:
-        query = query.filter(InspireProdRecords.valid.is_(None))
+        query = query.filter(LegacyRecordsMirror.valid.is_(None))
     elif also_migrate == 'broken':
-        query = query.filter(InspireProdRecords.valid.isnot(True))
+        query = query.filter(LegacyRecordsMirror.valid.isnot(True))
     elif also_migrate != 'all':
         raise ValueError('"also_migrate" should be either None, "all" or "broken"')
 
@@ -196,7 +195,8 @@ def migrate_from_mirror(also_migrate=None, wait_for_results=False, skip_files=No
         tasks = []
         migrate_recids_from_mirror.ignore_result = False
 
-    for i, chunk in enumerate(chunker(query.yield_per(CHUNK_SIZE)), 1):
+    chunked_recids = chunker(res.recid for res in query.yield_per(CHUNK_SIZE))
+    for i, chunk in enumerate(chunked_recids, 1):
         print("Scheduled {} records for migration".format(i * CHUNK_SIZE))
         if wait_for_results:
             tasks.append(migrate_recids_from_mirror.s(chunk, skip_files=skip_files))
@@ -267,6 +267,7 @@ def create_index_op(record):
 
 
 @shared_task(ignore_result=False, queue='migrator')
+@disable_orcid_push
 def migrate_recids_from_mirror(prod_recids, skip_files=False):
     models_committed.disconnect(index_after_commit)
 
@@ -275,7 +276,7 @@ def migrate_recids_from_mirror(prod_recids, skip_files=False):
     for recid in prod_recids:
         with db.session.begin_nested():
             record = migrate_record_from_mirror(
-                InspireProdRecords.query.get(recid),
+                LegacyRecordsMirror.query.get(recid),
                 skip_files=skip_files,
             )
             if record:
@@ -365,14 +366,14 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
 
 def insert_into_mirror(raw_records):
     for raw_record in raw_records:
-        prod_record = InspireProdRecords.from_marcxml(raw_record)
+        prod_record = LegacyRecordsMirror.from_marcxml(raw_record)
         db.session.merge(prod_record)
     db.session.commit()
 
 
 def migrate_and_insert_record(raw_record, skip_files=False):
     """Migrate a record and insert it if valid, or log otherwise."""
-    prod_record = InspireProdRecords.from_marcxml(raw_record)
+    prod_record = LegacyRecordsMirror.from_marcxml(raw_record)
     db.session.merge(prod_record)
     return migrate_record_from_mirror(prod_record, skip_files=skip_files)
 
@@ -381,7 +382,7 @@ def migrate_record_from_mirror(prod_record, skip_files=False):
     """Migrate a mirrored legacy record into an Inspire record.
 
     Args:
-        prod_record(InspireProdRecords): the mirrored record to migrate.
+        prod_record(LegacyRecordsMirror): the mirrored record to migrate.
         skip_files(bool): flag indicating whether the files in the record
             metadata should be copied over from legacy and attach to the
             record.

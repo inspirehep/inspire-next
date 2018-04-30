@@ -23,90 +23,142 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
-from sqlalchemy import inspect
+from sqlalchemy import inspect, text
 
-from invenio_db.utils import drop_alembic_version_table
 from invenio_db import db
+from invenio_db.utils import drop_alembic_version_table
+
+from inspirehep.factory import create_app
 
 
-def test_alembic_revision_fddb3cfe7a9c(alembic_app):
+@pytest.fixture()
+def alembic_app():
+    """Flask application for Alembic tests."""
+    app = create_app(
+        DEBUG=True,
+        SQLALCHEMY_DATABASE_URI='postgresql+psycopg2://inspirehep:dbpass123@localhost:5432/inspirehep_alembic',
+    )
+
+    with app.app_context():
+        db.create_all()
+        yield app
+        db.drop_all()
+        drop_alembic_version_table()
+
+
+def test_downgrade(alembic_app):
     ext = alembic_app.extensions['invenio-db']
-
-    if db.engine.name == 'sqlite':
-        raise pytest.skip('Upgrades are not supported on SQLite.')
-
-    db.drop_all()
-    drop_alembic_version_table()
-
-    inspector = inspect(db.engine)
-    assert 'inspire_prod_records' not in inspector.get_table_names()
-    assert 'workflows_audit_logging' not in inspector.get_table_names()
-    assert 'workflows_pending_record' not in inspector.get_table_names()
-
-    ext.alembic.upgrade(target='fddb3cfe7a9c')
-    inspector = inspect(db.engine)
-    assert 'inspire_prod_records' in inspector.get_table_names()
-    assert 'workflows_audit_logging' in inspector.get_table_names()
-    assert 'workflows_pending_record' in inspector.get_table_names()
-
-    ext.alembic.downgrade(target='a82a46d12408')
-    inspector = inspect(db.engine)
-    assert 'inspire_prod_records' not in inspector.get_table_names()
-    assert 'workflows_audit_logging' not in inspector.get_table_names()
-    assert 'workflows_pending_record' not in inspector.get_table_names()
-
-    drop_alembic_version_table()
-
-
-def test_alembic_revision_cb9f81e8251c(alembic_app):
-    def get_indexes(tablename):
-        index_names = db.session.execute("select indexname from pg_indexes where tablename='{}'".format(tablename)).fetchall()
-        return [index[0] for index in index_names]
-
-    ext = alembic_app.extensions['invenio-db']
-
-    if db.engine.name == 'sqlite':
-        raise pytest.skip('Upgrades are not supported on SQLite.')
-
     ext.alembic.stamp()
+
+    # 402af3fbf68b
+
+    ext.alembic.downgrade(target='d99c70308006')
+
+    assert 'inspire_prod_records' in _get_table_names()
+    assert 'inspire_prod_records_recid_seq' in _get_sequences()
+    assert 'legacy_records_mirror' not in _get_table_names()
+    assert 'legacy_records_mirror_recid_seq' not in _get_sequences()
+
+    # 53e8594bc789
+
+    ext.alembic.downgrade(target='53e8594bc789')
+
+    # d99c70308006
+
+    ext.alembic.downgrade(target='d99c70308006')
+
+    # cb9f81e8251c & cb5153afd839
 
     ext.alembic.downgrade(target='fddb3cfe7a9c')
 
-    index_names = get_indexes('records_metadata')
-    assert 'idxgindoctype' not in index_names
-    assert 'idxgintitles' not in index_names
-    assert 'idxginjournaltitle' not in index_names
-    assert 'idxgincollections' not in index_names
+    assert 'idxgindoctype' not in _get_indexes('records_metadata')
+    assert 'idxgintitles' not in _get_indexes('records_metadata')
+    assert 'idxginjournaltitle' not in _get_indexes('records_metadata')
+    assert 'idxgincollections' not in _get_indexes('records_metadata')
+
+    assert 'workflows_record_sources' not in _get_table_names()
+
+    # fddb3cfe7a9c
+
+    ext.alembic.downgrade(target='a82a46d12408')
+
+    assert 'inspire_prod_records' not in _get_table_names()
+    assert 'inspire_prod_records_recid_seq' not in _get_sequences()
+    assert 'workflows_audit_logging' not in _get_table_names()
+    assert 'workflows_audit_logging_id_seq' not in _get_sequences()
+    assert 'workflows_pending_record' not in _get_table_names()
+
+
+def test_upgrade(alembic_app):
+    ext = alembic_app.extensions['invenio-db']
+    ext.alembic.stamp()
+    ext.alembic.downgrade(target='a82a46d12408')
+
+    # fddb3cfe7a9c
+
+    ext.alembic.upgrade(target='fddb3cfe7a9c')
+
+    assert 'inspire_prod_records' in _get_table_names()
+    assert 'inspire_prod_records_recid_seq' in _get_sequences()
+    assert 'workflows_audit_logging' in _get_table_names()
+    assert 'workflows_audit_logging_id_seq' in _get_sequences()
+    assert 'workflows_pending_record' in _get_table_names()
+
+    # cb9f81e8251c
 
     ext.alembic.upgrade(target='cb9f81e8251c')
 
-    index_names = get_indexes('records_metadata')
-    assert 'idxgindoctype' in index_names
-    assert 'idxgintitles' in index_names
-    assert 'idxginjournaltitle' in index_names
-    assert 'idxgincollections' in index_names
+    assert 'idxgindoctype' in _get_indexes('records_metadata')
+    assert 'idxgintitles' in _get_indexes('records_metadata')
+    assert 'idxginjournaltitle' in _get_indexes('records_metadata')
+    assert 'idxgincollections' in _get_indexes('records_metadata')
 
-    drop_alembic_version_table()
-
-
-def test_alembic_revision_cb5153afd839(alembic_app):
-    ext = alembic_app.extensions['invenio-db']
-
-    if db.engine.name == 'sqlite':
-        raise pytest.skip('Upgrades are not supported on SQLite.')
-
-    db.drop_all()
-    drop_alembic_version_table()
-
-    inspector = inspect(db.engine)
-    assert 'workflows_record_sources' not in inspector.get_table_names()
-
-    ext.alembic.upgrade(target='cb5153afd839')
-    inspector = inspect(db.engine)
-    assert 'workflows_record_sources' in inspector.get_table_names()
+    # cb5153afd839
 
     ext.alembic.downgrade(target='fddb3cfe7a9c')
-    inspector = inspect(db.engine)
-    assert 'workflows_record_sources' not in inspector.get_table_names()
+    ext.alembic.upgrade(target='cb5153afd839')
 
-    drop_alembic_version_table()
+    assert 'workflows_record_sources' in _get_table_names()
+
+    # d99c70308006
+
+    ext.alembic.upgrade(target='d99c70308006')
+
+    # 53e8594bc789
+
+    ext.alembic.upgrade(target='53e8594bc789')
+
+    # 402af3fbf68b
+
+    ext.alembic.upgrade(target='402af3fbf68b')
+
+    assert 'inspire_prod_records' not in _get_table_names()
+    assert 'inspire_prod_records_recid_seq' not in _get_sequences()
+    assert 'legacy_records_mirror' in _get_table_names()
+    assert 'legacy_records_mirror_recid_seq' in _get_sequences()
+
+
+def _get_indexes(tablename):
+    query = text('''
+        SELECT indexname
+        FROM pg_indexes
+        WHERE tablename=:tablename
+    ''').bindparams(tablename=tablename)
+
+    return [el.indexname for el in db.session.execute(query)]
+
+
+def _get_sequences():
+    query = text('''
+        SELECT relname
+        FROM pg_class
+        WHERE relkind='S'
+    ''')
+
+    return [el.relname for el in db.session.execute(query)]
+
+
+def _get_table_names():
+    inspector = inspect(db.engine)
+
+    return inspector.get_table_names()
