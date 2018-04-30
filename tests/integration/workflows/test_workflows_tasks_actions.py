@@ -86,7 +86,7 @@ def insert_journals_in_db(workflow_app):
 @pytest.fixture
 def insert_cited_record(workflow_app):
     """Adds a record with arXiv: 1308.0815 which can be cited by another record.
-    See test_refextract_from_pdf for reference and context.
+    See test_refextract_from_pdf_for_default_config for reference and context.
     Only to be used in conjunction with arXiv: 1407.7587 as it cites this
     record."""
 
@@ -432,7 +432,8 @@ def test_refextract_from_pdf(
     workflow_app,
     mocked_external_services
 ):
-    """Test refextract from PDF by going through the entire workflow."""
+    """Test refextract from PDF and reference matching for default Configuration
+     by going through the entire workflow."""
 
     citing_record, categories = insert_citing_record()
 
