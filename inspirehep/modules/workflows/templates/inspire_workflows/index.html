@@ -63,7 +63,7 @@
         template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"
         filter_string="source=arXiv&workflow_name=HEP&q=!_extra_data.is-update:true"
         secondary_filter="status"
-        section_title="arxiv harvests">
+        section_title="new arxiv harvests">
       </holding-pen-dashboard-item>
 
     </div>
@@ -94,7 +94,7 @@
         template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"	
         filter_string="data_type=hep&is-update=false&q=-metadata.acquisition_source.source:arXiv AND metadata.acquisition_source.method:hepcrawl"
         secondary_filter="status"
-        section_title="publisher harvests">
+        section_title="new publisher harvests">
       </holding-pen-dashboard-item>
     </div>
 
