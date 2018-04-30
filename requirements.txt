@@ -32,3 +32,6 @@
 # flower until flower > 0.9.2 is released
 # https://github.com/mher/flower/commit/30022a93bdacd2826d7ffa32b52bd3e406cb33c1
 -e git+https://github.com/mher/flower.git#egg=flower
+
+-e git+https://github.com/jacquerie/inspire-dojson.git@bump-flask-1#egg=inspire_dojson
+-e git+https://github.com/jacquerie/inspire-matcher.git@bump-flask-1#egg=inspire_matcher
