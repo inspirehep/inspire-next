@@ -60,6 +60,20 @@ def test_push_record_with_orcid_new(mock_config, vcr_cassette):
     assert vcr_cassette.all_played
 
 
+@mock.patch('inspirehep.modules.orcid.api.distributed_lock')
+@mock.patch('inspirehep.modules.orcid.api._get_api')
+def test_push_record_with_orcid_new_uses_lock(mock_get_api, mock_distributed_lock, mock_config):
+    push_record_with_orcid(
+        recid='4328',
+        orcid='0000-0002-1825-0097',
+        oauth_token='fake-token',
+        put_code=None,
+        old_hash=None,
+    )
+
+    mock_distributed_lock.assert_called_with('orcid:0000-0002-1825-0097', blocking=True)
+
+
 @pytest.mark.vcr()
 def test_push_record_with_orcid_update(mock_config, vcr_cassette):
     expected_put_code = '920107'
@@ -78,8 +92,21 @@ def test_push_record_with_orcid_update(mock_config, vcr_cassette):
     assert vcr_cassette.all_played
 
 
-@pytest.mark.vcr()
-def test_push_record_with_orcid_dont_push_if_no_change(mock_config, vcr_cassette):
+@mock.patch('inspirehep.modules.orcid.api.distributed_lock')
+@mock.patch('inspirehep.modules.orcid.api._get_api')
+def test_push_record_with_orcid_update_uses_lock(mock_get_api, mock_distributed_lock, mock_config):
+    push_record_with_orcid(
+        recid='4328',
+        orcid='0000-0002-1825-0097',
+        oauth_token='fake-token',
+        put_code='920107',
+        old_hash=None,
+    )
+
+    mock_distributed_lock.assert_called_with('orcid:0000-0002-1825-0097', blocking=True)
+
+
+def test_push_record_with_orcid_dont_push_if_no_change(mock_config):
     expected_put_code = '920107'
     expected_hash = 'sha1:2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
 
@@ -93,7 +120,6 @@ def test_push_record_with_orcid_dont_push_if_no_change(mock_config, vcr_cassette
 
     assert expected_put_code == result_put_code
     assert expected_hash == result_hash
-    assert vcr_cassette.all_played
 
 
 @pytest.mark.vcr()

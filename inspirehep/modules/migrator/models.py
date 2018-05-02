@@ -33,8 +33,8 @@ from invenio_db import db
 from sqlalchemy.ext.hybrid import hybrid_property
 
 
-class InspireProdRecords(db.Model):
-    __tablename__ = 'inspire_prod_records'
+class LegacyRecordsMirror(db.Model):
+    __tablename__ = 'legacy_records_mirror'
 
     recid = db.Column(db.Integer, primary_key=True, index=True)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)

@@ -37,6 +37,7 @@ from invenio_workflows import (
     start,
     workflow_object_class,
 )
+from invenio_workflows.errors import WorkflowsError
 from jsonschema import ValidationError
 
 from calls import (
@@ -876,3 +877,27 @@ def test_previously_rejected_from_not_fully_harvested_category_is_not_auto_appro
             assert not obj2.extra_data['auto-approved']
             assert len(obj2.extra_data['previously_rejected_matches']) > 0
             assert obj2.status == ObjectStatus.COMPLETED
+
+
+def test_match_wf_in_error_goes_in_error_state(workflow_app):
+    record = generate_record()
+
+    obj = workflow_object_class.create(data=record, data_type='hep')
+    obj.status = ObjectStatus.ERROR
+    obj.save()
+    es.indices.refresh('holdingpen-hep')
+
+    with pytest.raises(WorkflowsError):
+        start('article', record)
+
+
+def test_match_wf_in_error_goes_in_initial_state(workflow_app):
+    record = generate_record()
+
+    obj = workflow_object_class.create(data=record, data_type='hep')
+    obj.status = ObjectStatus.INITIAL
+    obj.save()
+    es.indices.refresh('holdingpen-hep')
+
+    with pytest.raises(WorkflowsError):
+        start('article', record)

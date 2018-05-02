@@ -25,7 +25,6 @@
 from __future__ import absolute_import, division, print_function
 
 import json
-import logging
 import os
 import traceback
 from contextlib import closing, contextmanager
@@ -35,10 +34,13 @@ import backoff
 import lxml.etree as ET
 import requests
 from flask import current_app, url_for
+from timeout_decorator import TimeoutError
 
 from invenio_db import db
+
 from inspire_schemas.utils import \
     get_validation_errors as _get_validation_errors
+from inspire_utils.logging import getStackTraceLogger
 
 from inspirehep.utils.url import retrieve_uri
 from inspirehep.modules.workflows.models import (
@@ -47,7 +49,7 @@ from inspirehep.modules.workflows.models import (
 )
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = getStackTraceLogger(__name__)
 
 
 @backoff.on_exception(backoff.expo, requests.packages.urllib3.exceptions.ConnectionError, base=4, max_tries=5)
@@ -153,6 +155,25 @@ def with_debug_logging(func):
         return res
 
     return _decorator
+
+
+def ignore_timeout_error(func):
+    """Ignore the TimeoutError.
+
+    Quick fix for ``refextract`` and ``plotextract`` tasks only. It
+    shouldn't be used for others!
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except TimeoutError:
+            LOGGER.error(
+                'Timeout error while extracting raised from: %s.',
+                func.__name__
+            )
+    return wrapper
 
 
 @contextmanager
