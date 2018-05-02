@@ -1185,3 +1185,68 @@ def test_refextract_from_raw_refs(mock_match):
 
     assert refextract(obj, eng) is None
     assert 'reference' in obj.data['references'][0]
+
+
+@patch(
+    'inspirehep.modules.workflows.tasks.refextract.match',
+    return_value=iter([])
+)
+def test_refextract_valid_refs_from_raw_refs(mock_match):
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    data = {
+        'references': [
+            {
+                'raw_refs': [
+                    {
+                        'schema': 'text',
+                        'source': 'arXiv',
+                        'value': '[37] M. Vallisneri, \u201cUse and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects,\u201d Phys. Rev. D 77, 042001 (2008) doi:10.1103/PhysRevD.77.042001 [gr-qc/0703086 [GR-QC]].'
+                    },
+                    {
+                        'schema': 'text',
+                        'source': 'arXiv',
+                        'value': '[37] M. Vallisneri, \u201cUse and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects,\u201d Phys. Rev. D 77, 042001 (2008) doi:10.1103/PhysRevD.77.042001 [gr-qc/0703086 [GR-QC]].'
+                    },
+                ],
+            },
+        ],
+    }
+    obj = MockObj(data, {})
+    eng = MockEng()
+
+    assert refextract(obj, eng) is None
+    assert len(obj.data['references']) == 1
+    assert validate(obj.data['references'], subschema) is None
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow')
+@patch(
+    'inspirehep.modules.workflows.tasks.refextract.match',
+    return_value=iter([])
+)
+def test_refextract_valid_refs_from_text(mock_match, mock_get_document_in_workflow):
+    """TODO: Make this an integration test and also test reference matching."""
+
+    mock_get_document_in_workflow.return_value.__enter__.return_value = None
+    mock_get_document_in_workflow.return_value.__exit__.return_value = None
+
+    schema = load_schema('hep')
+    refs_subschema = schema['properties']['references']
+    acquisition_source_subschema = schema['properties']['acquisition_source']
+
+    data = {'acquisition_source': {'source': 'submitter'}}
+    extra_data = {
+        'formdata': {
+            'references': 'M.R. Douglas, G.W. Moore, D-branes, quivers, and ALE instantons, arXiv:hep-th/9603167\nM.R. Douglas, G.W. Moore, D-branes, quivers, and ALE instantons, arXiv:hep-th/9603167',
+        },
+    }
+    assert validate(data['acquisition_source'], acquisition_source_subschema) is None
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert refextract(obj, eng) is None
+    assert len(obj.data['references']) == 1
+    assert validate(obj.data['references'], refs_subschema) is None
