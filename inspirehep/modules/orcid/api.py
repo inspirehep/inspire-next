@@ -24,8 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import requests
-
 from itertools import chain
 from flask import current_app as app
 from orcid import MemberAPI
@@ -35,13 +33,13 @@ from inspire_utils.record import get_value
 from inspirehep.utils.lock import distributed_lock
 from inspirehep.modules.orcid import OrcidConverter
 from inspirehep.modules.orcid.utils import (
-    _get_api_url_for_recid,
     _split_lists,
     WORKS_BULK_QUERY_LIMIT,
     RECID_FROM_INSPIRE_URL,
     hash_xml_element,
     log_time_context,
 )
+from inspirehep.modules.records.serializers import bibtex_v1
 from inspirehep.utils.record_getter import get_db_record
 
 LOGGER = getStackTraceLogger(__name__)
@@ -73,8 +71,8 @@ def push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=No
         return put_code, new_hash
 
     try:
-        bibtex = _get_bibtex_record(app.config, recid)
-    except requests.RequestException:
+        bibtex = bibtex_v1.serialize(recid, record)
+    except Exception:
         bibtex = None
         LOGGER.error(
             'Pushing record #%s without BibTex, as fetching it failed!', recid
@@ -132,36 +130,6 @@ def calculate_hash_for_record(record):
     """
     orcid_rec = OrcidConverter(record, app.config['LEGACY_RECORD_URL_PATTERN'])
     return hash_xml_element(orcid_rec.get_xml())
-
-
-def _get_bibtex_record(config, recid):
-    """
-    Call Inspire API to get the bibtex for a given record id.
-
-    Args:
-        config (inspire_utils.config.Config): configuration
-        recid (string): HEP record ID
-
-    Returns:
-        string: BibTeX serialized record
-    """
-    mime_type = 'application/x-bibtex'
-    server_name = config['SERVER_NAME']
-
-    record_api_endpoint = _get_api_url_for_recid(
-        server_name, config['SEARCH_UI_SEARCH_API'], recid
-    )
-
-    with log_time_context(
-        'Getting %s #%s record from inspire' % (mime_type, recid),
-        LOGGER,
-    ):
-        response = requests.get(
-            record_api_endpoint,
-            headers={'Accept': mime_type, },
-            timeout=30)
-        response.raise_for_status()
-        return response.text
 
 
 def get_author_putcodes(orcid, oauth_token):
