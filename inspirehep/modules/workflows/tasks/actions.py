@@ -46,6 +46,7 @@ from invenio_records.models import RecordMetadata
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.utils import validate
 from inspire_utils.record import get_value
+from inspire_utils.dedupers import dedupe_list
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_pdf,
@@ -415,7 +416,7 @@ def refextract(obj, eng):
         extracted_raw_references = extract_references_from_raw_refs(obj.data['references'])
         extracted_raw_references = [match_reference(ref) for ref in extracted_raw_references]
         obj.log.info('Extracted %d references from raw refs.', len(extracted_raw_references))
-        obj.data['references'] = extracted_raw_references
+        obj.data['references'] = dedupe_list(extracted_raw_references)
         return
 
     pdf_references, text_references = [], []
@@ -425,11 +426,13 @@ def refextract(obj, eng):
         if tmp_document:
             pdf_references = extract_references_from_pdf(tmp_document, source)
             pdf_references = [match_reference(ref) for ref in pdf_references]
+            pdf_references = dedupe_list(pdf_references)
 
     text = get_value(obj.extra_data, 'formdata.references')
     if text:
         text_references = extract_references_from_text(text, source)
         text_references = [match_reference(ref) for ref in text_references]
+        text_references = dedupe_list(text_references)
 
     if len(pdf_references) == len(text_references) == 0:
         obj.log.info('No references extracted.')
