@@ -263,4 +263,4 @@ def _get_api():
     client_key = app.config['ORCID_APP_CREDENTIALS']['consumer_key']
     client_secret = app.config['ORCID_APP_CREDENTIALS']['consumer_secret']
     sandbox = app.config['ORCID_SANDBOX']
-    return MemberAPI(client_key, client_secret, sandbox)
+    return MemberAPI(client_key, client_secret, sandbox, timeout=30)
