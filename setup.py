@@ -97,6 +97,7 @@ install_requires = [
     'latexcodec~=1.0,>=1.0.5',
     'librabbitmq~=1.0,>=1.6.1',
     'marshmallow~=2.0,>=2.15.0',  # See: inveniosoftware/invenio-records-rest#186
+    'orcid~=1.0,>=1.0.2',
     'plotextractor~=0.0,>=0.1.6',
     'pyOpenSSL~=17.0,>=17.5.0',
     'pybtex~=0.0,>=0.21',
