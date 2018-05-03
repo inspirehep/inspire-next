@@ -2,30 +2,6 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: [application/x-bibtex]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.18.4]
-    method: GET
-    uri: https://labs.inspirehep.net/api/literature/4328
-  response:
-    body: {string: !!python/unicode "@article{Glashow:1961tr,\n    author = \"Glashow,\
-        \ S.L.\",\n    journal = \"Nucl.Phys.\",\n    volume = \"22\",\n    pages\
-        \ = \"579--588\",\n    doi = \"10.1016/0029-5582(61)90469-2\",\n    title\
-        \ = \"Partial Symmetries of Weak Interactions\",\n    year = \"1961\"\n}\n"}
-    headers:
-      access-control-allow-origin: ['*']
-      access-control-expose-headers: ['Content-Type, ETag, Link, X-RateLimit-Limit,
-          X-RateLimit-Remaining, X-RateLimit-Reset']
-      content-length: ['243']
-      content-type: [application/x-bibtex]
-      date: ['Wed, 21 Mar 2018 14:22:27 GMT']
-      server: [nginx/1.12.2]
-      strict-transport-security: [max-age=31536000]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
       Accept: [application/orcid+json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]

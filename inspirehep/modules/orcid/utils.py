@@ -33,7 +33,6 @@ from itertools import chain
 from elasticsearch_dsl import Q
 from flask import current_app
 from functools import wraps
-from six.moves.urllib.parse import urljoin
 from StringIO import StringIO
 from sqlalchemy import cast, type_coerce
 from sqlalchemy.dialects.postgresql import JSONB
@@ -50,7 +49,6 @@ from invenio_records.models import RecordMetadata
 
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.record import get_values_for_schema
-from inspire_utils.urls import ensure_scheme
 from inspirehep.modules.search.api import LiteratureSearch
 from inspirehep.utils.record_getter import get_db_records
 
@@ -76,24 +74,6 @@ def _split_lists(sequence, chunk_size):
     return [
         sequence[i:i + chunk_size] for i in range(0, len(sequence), chunk_size)
     ]
-
-
-def _get_api_url_for_recid(server_name, api_endpoint, recid):
-    """Return API url for record
-
-    Args:
-        server_name (string): server authority
-        api_endpoint (string): api path
-        recid (string): record ID
-
-    Returns:
-        string: API URL for the record
-    """
-    if not api_endpoint.endswith('/'):
-        api_endpoint = api_endpoint + '/'
-
-    api_url = urljoin(ensure_scheme(server_name), api_endpoint)
-    return urljoin(api_url, recid)
 
 
 def get_orcid_recid_key(orcid, rec_id):
