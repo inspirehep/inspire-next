@@ -55,7 +55,7 @@ class TestRecordMetadata(TestBaseModel):
     }
 
     @classmethod
-    def create_from_kwargs(cls, index=True, has_pid=True, **kwargs):
+    def create_from_kwargs(cls, index_name='', **kwargs):
         instance = cls()
 
         updated_kwargs = copy.deepcopy(kwargs)
@@ -81,25 +81,24 @@ class TestRecordMetadata(TestBaseModel):
         instance.record_metadata = super(TestRecordMetadata, cls)\
                 .create_from_kwargs(updated_kwargs)
 
-        if index:
+        if index_name:
             instance.es_index_result = es.index(
-                index='records-hep',
-                doc_type='hep',
+                index=index_name,
+                doc_type=index_name.split('-')[-1],
                 body=instance.record_metadata.json,
                 params={}
             )
-            instance.es_refresh_result = es.indices.refresh('records-hep')
+            instance.es_refresh_result = es.indices.refresh(index_name)
 
-        if has_pid:
-            instance.persistent_identifier = TestPersistentIdentifier\
-                    .create_from_kwargs(
-                        object_uuid=instance.record_metadata.id,
-                        pid_value=instance.record_metadata.json.get('control_number')
-                    ).persistent_identifier
+        instance.persistent_identifier = TestPersistentIdentifier\
+                .create_from_kwargs(
+                    object_uuid=instance.record_metadata.id,
+                    pid_value=instance.record_metadata.json.get('control_number'),
+                    **kwargs).persistent_identifier
         return instance
 
     @classmethod
-    def create_from_file(cls, module_name, filename, index=True, has_pid=True):
+    def create_from_file(cls, module_name, filename, index_name=''):
         """Create Record instance from file.
 
         Note:
@@ -117,4 +116,4 @@ class TestRecordMetadata(TestBaseModel):
 
         data = json.load(open(path))
         return cls.create_from_kwargs(
-            index=index, has_pid=has_pid, json=data)
+            index_name=index_name, json=data)
