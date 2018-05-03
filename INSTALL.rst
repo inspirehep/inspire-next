@@ -345,16 +345,6 @@ Now you can create regular users (optional) with the command:
 
     (inspirehep)$ inspirehep users create your@email.com -a
 
-Adding records from files
-#########################
-
-Same way as demo records:
-
-.. code-block:: console
-
-    (inspirehep)$ inspirehep migrator populate -f inspirehep/demosite/data/sample.xml
-
-
 Access the records (web/rest)
 #############################
 
@@ -364,17 +354,6 @@ While running `honcho` you can access the records at
 
     $ firefox http://localhost:5000/literature/1
     $ curl -i -H "Accept: application/json" http://localhost:5000/api/records/1
-
-
-Generating doJSON output
-########################
-
-If you want to test the doJSON output for a specific rule, make sure it is added to doJSON
-entry points and then do the following (e.g. for the `hep` rule):
-
-.. code-block:: console
-
-    (inspirehep)$ dojson -l marcxml -i inspirehep/demosite/data/sample.xml do hep
 
 
 .. _this issue: https://github.com/inspirehep/inspire-next/issues/1296
