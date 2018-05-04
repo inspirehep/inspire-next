@@ -155,7 +155,6 @@ def migrate_record_from_legacy(recid):
     db.session.commit()
 
 
-@shared_task(ignore_result=True, queue='migrator')
 def migrate_from_mirror(also_migrate=None, wait_for_results=False, skip_files=None):
     """Migrate legacy records from the local mirror.
 
@@ -211,13 +210,11 @@ def migrate_from_mirror(also_migrate=None, wait_for_results=False, skip_files=No
         print('All migration tasks have been completed.')
 
 
-@shared_task(ignore_result=True, queue='migrator')
 def migrate_from_file(source, wait_for_results=False):
     populate_mirror_from_file(source)
     migrate_from_mirror(wait_for_results=wait_for_results)
 
 
-@shared_task(ignore_result=True, queue='migrator')
 def populate_mirror_from_file(source):
     for i, chunk in enumerate(chunker(split_stream(read_file(source)), CHUNK_SIZE), 1):
         insert_into_mirror(chunk)
