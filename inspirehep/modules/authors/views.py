@@ -42,7 +42,12 @@ from flask_login import login_required, current_user
 from werkzeug.datastructures import MultiDict
 
 from invenio_db import db
-from invenio_workflows import workflow_object_class, start, resume
+from invenio_workflows import (
+    WorkflowEngine,
+    resume,
+    start,
+    workflow_object_class,
+)
 from invenio_workflows_ui.api import WorkflowUIRecord
 
 from inspire_dojson import marcxml2record
@@ -268,10 +273,12 @@ def submitupdate():
         id_user=current_user.get_id(),
         data_type="authors"
     )
-
+    engine = WorkflowEngine.with_name('author')
+    engine.save()
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
     workflow_object.extra_data['is-update'] = True
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
+    workflow_object.id_workflow = str(engine.uuid)
     workflow_object.save()
     db.session.commit()
 
@@ -298,9 +305,12 @@ def submitnew():
         id_user=current_user.get_id(),
         data_type="authors"
     )
+    engine = WorkflowEngine.with_name('author')
+    engine.save()
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
     workflow_object.extra_data['is-update'] = False
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
+    workflow_object.id_workflow = str(engine.uuid)
     workflow_object.save()
     db.session.commit()
 
