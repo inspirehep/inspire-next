@@ -84,7 +84,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = True
 # Celery
 # ======
 CELERY_BROKER_URL = "pyamqp://guest:guest@localhost:5672//"
-CELERY_RESULT_BACKEND = "rpc://guest:guest@localhost:5672//"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/1"
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']
 CELERY_TIMEZONE = 'Europe/Amsterdam'
 CELERY_WORKER_DISABLE_RATE_LIMITS = True
