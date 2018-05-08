@@ -52,10 +52,10 @@ def store_record(obj, eng):
         return updated_record
 
     is_update = obj.extra_data.get('is-update')
-    is_article = obj.workflow.name == 'article'
+    is_authors = eng.workflow_definition.data_type == 'authors'
 
     if is_update:
-        if is_article and not current_app.config.get('FEATURE_FLAG_ENABLE_MERGER', False):
+        if not is_authors and not current_app.config.get('FEATURE_FLAG_ENABLE_MERGER', False):
             obj.log.info(
                 'skipping update record, feature flag ``FEATURE_FLAG_ENABLE_MERGER`` is disabled.'
             )

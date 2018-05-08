@@ -775,7 +775,7 @@ def test_send_robotupload_new_authors_when_feature_flag_is_disabled():
 
             obj = MockObj(data, extra_data)
             obj.workflow = MockWorkflow('author')
-            eng = MockEng()
+            eng = MockEng(data_type='authors')
 
             _send_robotupload = send_robotupload(
                 mode='insert',
@@ -821,7 +821,7 @@ def test_send_robotupload_update_authors_when_feature_flag_is_disabled():
 
             obj = MockObj(data, extra_data)
             obj.workflow = MockWorkflow('author')
-            eng = MockEng()
+            eng = MockEng(data_type='authors')
 
             _send_robotupload = send_robotupload(
                 mode='insert',
@@ -867,7 +867,7 @@ def test_send_robotupload_new_authors_when_feature_flag_is_enabled():
 
             obj = MockObj(data, extra_data)
             obj.workflow = MockWorkflow('author')
-            eng = MockEng()
+            eng = MockEng(data_type='authors')
 
             _send_robotupload = send_robotupload(
                 mode='insert',
@@ -913,7 +913,7 @@ def test_send_robotupload_update_authors_when_feature_flag_is_enabled():
 
             obj = MockObj(data, extra_data)
             obj.workflow = MockWorkflow('author')
-            eng = MockEng()
+            eng = MockEng(data_type='authors')
 
             _send_robotupload = send_robotupload(
                 mode='insert',

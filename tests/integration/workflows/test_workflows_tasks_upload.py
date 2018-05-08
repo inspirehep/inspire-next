@@ -22,12 +22,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-from mock import patch
+from mock import MagicMock, patch
 from flask import current_app
 
 from invenio_workflows import workflow_object_class
-from invenio_workflows.models import Workflow
-
 
 # FIXME: otherwise this task is not found by Celery.
 from inspirehep.modules.orcid.tasks import orcid_push  # noqa: F401
@@ -40,9 +38,9 @@ def test_store_record_does_not_raise_in_the_orcid_receiver(mock_attempt_push, ap
         'FEATURE_FLAG_ENABLE_ORCID_PUSH': True,
         'RECORDS_SKIP_FILES': False,
     }
+    eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
 
     with patch.dict(current_app.config, config):
-        workflow_obj = Workflow(name='article')
         obj = workflow_object_class.create({
             '$schema': 'http://localhost:5000/schemas/records/hep.json',
             '_collections': [
@@ -65,6 +63,6 @@ def test_store_record_does_not_raise_in_the_orcid_receiver(mock_attempt_push, ap
             'titles': [
                 {'title': 'title'},
             ],
-        }, workflow=workflow_obj)
+        })
 
-        store_record(obj, None)  # Does not raise.
+        store_record(obj, eng)  # Does not raise.
