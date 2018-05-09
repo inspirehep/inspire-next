@@ -72,7 +72,7 @@ def disable_file_upload(workflow_app):
 
 def test_merge_with_disabled_merge_on_update_feature_flag(workflow_app, disable_file_upload):
     factory = TestRecordMetadata.create_from_file(
-        __name__, 'record_for_merging.json')
+        __name__, 'record_for_merging.json', index_name='records-hep')
 
     record_update = RECORD_WITHOUT_CONFLICTS
     record_update.update({
@@ -92,7 +92,7 @@ def test_merge_with_disabled_merge_on_update_feature_flag(workflow_app, disable_
 
 def test_merge_without_conflicts(workflow_app, enable_merge_on_update, disable_file_upload):
     factory = TestRecordMetadata.create_from_file(
-        __name__, 'record_for_merging.json')
+        __name__, 'record_for_merging.json', index_name='records-hep')
 
     record_update = RECORD_WITHOUT_CONFLICTS
     record_update.update({
@@ -116,7 +116,7 @@ def test_merge_without_conflicts(workflow_app, enable_merge_on_update, disable_f
 
 def test_merge_with_conflicts(workflow_app, enable_merge_on_update, disable_file_upload):
     factory = TestRecordMetadata.create_from_file(
-        __name__, 'record_for_merging.json')
+        __name__, 'record_for_merging.json', index_name='records-hep')
 
     record_update = RECORD_WITH_CONFLICTS
     record_update.update({
@@ -138,7 +138,7 @@ def test_merge_with_conflicts(workflow_app, enable_merge_on_update, disable_file
 
 def test_merge_without_conflicts_callback_url(workflow_app, enable_merge_on_update, disable_file_upload):
     factory = TestRecordMetadata.create_from_file(
-        __name__, 'record_for_merging.json')
+        __name__, 'record_for_merging.json', index_name='records-hep')
 
     record_update = RECORD_WITHOUT_CONFLICTS
     record_update.update({
@@ -176,7 +176,7 @@ def test_merge_without_conflicts_callback_url(workflow_app, enable_merge_on_upda
 
 def test_merge_with_conflicts_callback_url(workflow_app, enable_merge_on_update, disable_file_upload):
     factory = TestRecordMetadata.create_from_file(
-        __name__, 'record_for_merging.json')
+        __name__, 'record_for_merging.json', index_name='records-hep')
 
     record_update = RECORD_WITH_CONFLICTS
     record_update.update({
@@ -224,7 +224,7 @@ def test_merge_with_conflicts_callback_url(workflow_app, enable_merge_on_update,
 
 def test_merge_with_conflicts_callback_url_and_resolve(workflow_app, enable_merge_on_update, disable_file_upload):
     factory = TestRecordMetadata.create_from_file(
-        __name__, 'record_for_merging.json')
+        __name__, 'record_for_merging.json', index_name='records-hep')
 
     record_update = RECORD_WITH_CONFLICTS
     record_update.update({
@@ -277,7 +277,7 @@ def test_merge_with_conflicts_callback_url_and_resolve(workflow_app, enable_merg
 
 def test_merge_callback_url_with_malformed_workflow(workflow_app, enable_merge_on_update, disable_file_upload):
     factory = TestRecordMetadata.create_from_file(
-        __name__, 'record_for_merging.json')
+        __name__, 'record_for_merging.json', index_name='records-hep')
 
     record_update = RECORD_WITH_CONFLICTS
     record_update.update({

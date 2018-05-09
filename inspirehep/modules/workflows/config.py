@@ -186,3 +186,24 @@ WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG = {
 """Configuration for matching records JCAP and JHEP records since
 they have a particular configuration and we have to look at the
 year as well for accurate matching."""
+
+WORKFLOWS_REFERENCE_MATCHER_DATA_CONFIG = {
+    'algorithm': [
+        {
+            'queries': [
+                {
+                    'path': 'reference.dois',
+                    'search_path': 'dois.value.raw',
+                    'type': 'exact',
+                },
+            ],
+        },
+    ],
+    'doc_type': 'data',
+    'index': 'records-data',
+    'source': [
+        'control_number',
+    ]
+}
+"""Configuration for matching data records. Please note that the
+index and doc_type are different for data records."""

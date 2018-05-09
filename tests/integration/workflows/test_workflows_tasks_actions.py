@@ -32,8 +32,6 @@ import pkg_resources
 import pytest
 
 from invenio_db import db
-from invenio_pidstore.models import PersistentIdentifier
-from invenio_records.models import RecordMetadata
 from inspire_schemas.api import load_schema, validate
 from invenio_search.api import current_search_client as es
 from invenio_workflows import (
@@ -46,6 +44,8 @@ from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.tasks.actions import normalize_journal_titles
 
 from calls import insert_citing_record
+
+from factories.db.invenio_records import TestRecordMetadata
 
 from mocks import (
     fake_beard_api_request,
@@ -81,61 +81,6 @@ def insert_journals_in_db(workflow_app):
     _delete_record('jou', 1936475)
     _delete_record('jou', 1936476)
     es.indices.refresh('records-journals')
-
-
-@pytest.fixture
-def insert_cited_record(workflow_app):
-    """Adds a record with arXiv: 1308.0815 which can be cited by another record.
-    See test_refextract_from_pdf for reference and context.
-    Only to be used in conjunction with arXiv: 1407.7587 as it cites this
-    record."""
-
-    cited_record_json = {
-        '$schema': 'http://localhost:5000/schemas/records/hep.json',
-        '_collections': ['Literature'],
-        'abstracts': [
-            {
-                'source': 'arXiv',
-                'value': 'The effects on the non-relativistic dynamics of a system compound by two electrons interacting by a Coulomb potential and with an external harmonic\r\noscillator potential, confined to move in a two dimensional Euclidean space, are investigated. In particular, it is shown that it is possible to determine\r\nexactly and in a closed form a finite portion of the energy spectrum and the associated eigeinfunctions for the Schrodinger equation describing the relative motion of the electrons, by putting it into the form of a biconfluent Heun equation. In the same framework, another set of solutions of this type can\r\nbe straightforwardly obtained for the case when the two electrons are submitted also to an external constant magnetic field.'
-            }
-        ],
-        'arxiv_eprints': [
-            {
-                'categories': ['quant-ph', 'cond-mat.mes-hall', 'cond-mat.str-el', 'math-ph', 'math.MP'],
-                'value': '1308.0815'
-            }
-        ],
-        'authors': [
-            {'full_name': 'Caruso, F.'},
-            {'full_name': 'Martins, J.'},
-            {'full_name': 'Oguri, V.'},
-        ],
-        'document_type': ['article'],
-        'dois': [
-            {'value': '10.1016/j.aop.2014.04.023'}
-        ],
-        'titles': [
-            {
-                'source': 'arXiv',
-                'title': 'Solving a two-electron quantum dot model in terms of polynomial solutions of a Biconfluent Heun equation'
-            }
-        ],
-    }
-
-    cited_record = InspireRecord.create(cited_record_json, id_=None)
-    cited_record.commit()
-    rec_uuid = cited_record.id
-
-    db.session.commit()
-    es.indices.refresh('records-hep')
-
-    yield
-
-    record = RecordMetadata.query.get(rec_uuid)
-
-    PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == record.id).delete()
-    db.session.delete(record)
-    db.session.commit()
 
 
 def test_normalize_journal_titles_known_journals_with_ref(workflow_app, insert_journals_in_db):
@@ -428,12 +373,33 @@ def test_refextract_from_pdf(
     mocked_is_pdf_link,
     mocked_package_download,
     mocked_arxiv_download,
-    insert_cited_record,
     workflow_app,
     mocked_external_services
 ):
-    """Test refextract from PDF by going through the entire workflow."""
+    """Test refextract from PDF and reference matching for default Configuration
+     by going through the entire workflow."""
 
+    cited_record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'arxiv_eprints': [
+            {
+                'categories': ['quant-ph', 'cond-mat.mes-hall', 'cond-mat.str-el', 'math-ph', 'math.MP'],
+                'value': '1308.0815'
+            }
+        ],
+        'control_number': 1000,
+        'document_type': ['article'],
+        'titles': [
+            {
+                'source': 'arXiv',
+                'title': 'Solving a two-electron quantum dot model in terms of polynomial solutions of a Biconfluent Heun equation'
+            }
+        ],
+    }
+
+    TestRecordMetadata.create_from_kwargs(
+        json=cited_record_json, index='records-hep', pid_type='lit')
     citing_record, categories = insert_citing_record()
 
     extra_config = {
@@ -453,5 +419,5 @@ def test_refextract_from_pdf(
     citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)
     citing_doc_obj = citing_doc_eng.processed_objects[0]
 
-    assert citing_doc_obj.data['references'][7]['record']['$ref'] == 'http://localhost:5000/api/literature/1'
+    assert citing_doc_obj.data['references'][7]['record']['$ref'] == 'http://localhost:5000/api/literature/1000'
     assert citing_doc_obj.data['references'][0]['raw_refs'][0]['source'] == 'arXiv'

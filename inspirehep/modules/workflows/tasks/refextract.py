@@ -192,23 +192,41 @@ def extract_references_from_raw_ref(reference, custom_kbs_file=None):
 
 
 def match_reference(reference):
-    """Match references given a reference metadata using InspireMatcher queires.
+    """Match a reference using inspire-matcher.
 
     Args:
-        reference: The reference metadata
-        config: The configurtaion(s) for InspireMatcher queries
+        reference (dict): the metadata of a reference.
 
     Returns:
-        The record ID of the matched reference
+        dict: the matched reference.
+
     """
+    # XXX: avoid this type casting.
+    if get_value(reference, 'reference.publication_info.year'):
+        reference['reference']['publication_info']['year'] = str(reference['reference']['publication_info']['year'])
 
     config_default = current_app.config['WORKFLOWS_REFERENCE_MATCHER_DEFAULT_CONFIG']
     config_jcap_and_jhep = current_app.config['WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG']
+    config_data = current_app.config['WORKFLOWS_REFERENCE_MATCHER_DATA_CONFIG']
 
     journal_title = get_value(reference, 'reference.publication_info.journal_title')
-    config = config_jcap_and_jhep if journal_title in ['JCAP', 'JHEP'] else config_default
+    if journal_title in ['JHEP', 'JCAP']:
+        config = config_jcap_and_jhep
+    else:
+        config = config_default
+
     result = next(match(reference, config), None)
     if result:
         matched_recid = result['_source']['control_number']
         reference['record'] = get_record_ref(matched_recid, 'literature')
+
+    result_for_data = next(match(reference, config_data), None)
+    if result_for_data:
+        matched_recid = result_for_data['_source']['control_number']
+        reference['record'] = get_record_ref(matched_recid, 'data')
+
+    # XXX: avoid this type casting.
+    if get_value(reference, 'reference.publication_info.year'):
+        reference['reference']['publication_info']['year'] = int(reference['reference']['publication_info']['year'])
+
     return reference
