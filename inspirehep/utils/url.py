@@ -65,14 +65,11 @@ def is_pdf_link(url):
     except requests.exceptions.RequestException:
         return False
 
-    try:
-        first_significant_line = next(response.iter_lines(1))
-        while not first_significant_line.strip():
-            first_significant_line = next(response.iter_lines(1))
-    except StopIteration:
+    significant_lines = [line for line in response.iter_lines(10) if line.strip()]
+    if not significant_lines:
         return False
 
-    return first_significant_line.startswith('%PDF')
+    return significant_lines[0].startswith('%PDF')
 
 
 def copy_file(src_file, dst_file, buffer_size=io.DEFAULT_BUFFER_SIZE):

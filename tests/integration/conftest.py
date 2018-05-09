@@ -114,38 +114,6 @@ def isolated_app(app):
     db.session.rollback()
 
 
-@pytest.fixture(scope='module')
-def small_app():
-    """Flask application with few records and module scope.
-
-    .. deprecated:: 2017-09-18
-       Use ``app`` instead.
-    """
-    app = create_app()
-    app.config.update({'DEBUG': True})
-
-    with app.app_context():
-        # Celery task imports must be local, otherwise their
-        # configuration would use the default pickle serializer.
-        from inspirehep.modules.migrator.tasks import migrate
-
-        db.drop_all()
-        db.create_all()
-
-        _es = app.extensions['invenio-search']
-        list(_es.delete(ignore=[404]))
-        list(_es.create(ignore=[400]))
-
-        init_all_storage_paths()
-        init_users_and_permissions()
-        init_collections()
-
-        migrate('./inspirehep/demosite/data/demo-records-small.xml', wait_for_results=True)
-        es.indices.refresh('records-hep')
-
-        yield app
-
-
 @pytest.fixture()
 def app_client(app):
     """Flask test client for the application.

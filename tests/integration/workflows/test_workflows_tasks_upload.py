@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from mock import patch
+from mock import MagicMock, patch
 from flask import current_app
 
 from invenio_workflows import workflow_object_class
@@ -38,6 +38,7 @@ def test_store_record_does_not_raise_in_the_orcid_receiver(mock_attempt_push, ap
         'FEATURE_FLAG_ENABLE_ORCID_PUSH': True,
         'RECORDS_SKIP_FILES': False,
     }
+    eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
 
     with patch.dict(current_app.config, config):
         obj = workflow_object_class.create({
@@ -64,4 +65,4 @@ def test_store_record_does_not_raise_in_the_orcid_receiver(mock_attempt_push, ap
             ],
         })
 
-        store_record(obj, None)  # Does not raise.
+        store_record(obj, eng)  # Does not raise.

@@ -198,8 +198,9 @@ def send_robotupload(
     @wraps(send_robotupload)
     def _send_robotupload(obj, eng):
         is_update = obj.extra_data.get('is-update')
+        is_authors = eng.workflow_definition.data_type == 'authors'
 
-        if is_update and not current_app.config.get('FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY', False):
+        if not is_authors and is_update and not current_app.config.get('FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY', False):
             obj.log.info(
                 'skipping upload to legacy, feature flag ``FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY`` is disabled.')
             return

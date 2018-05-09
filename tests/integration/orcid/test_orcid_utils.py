@@ -31,7 +31,6 @@ from inspire_dojson.utils import get_record_ref
 from inspire_schemas.api import validate
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.orcid.utils import (
-    _get_api_url_for_recid,
     get_literature_recids_for_orcid,
     get_orcids_for_push,
     get_push_access_tokens,
@@ -66,21 +65,6 @@ def author_in_isolated_app(isolated_app):
     record = InspireRecord.create_or_update(record)
     record.commit()
     yield record['control_number']
-
-
-@pytest.mark.parametrize(
-    'server_name,api_endpoint,recid,expected',
-    [
-        ('inspirehep.net', '/api/literature/', '123', 'http://inspirehep.net/api/literature/123'),
-        ('http://inspirehep.net', '/api/literature/', '123', 'http://inspirehep.net/api/literature/123'),
-        ('https://inspirehep.net', '/api/literature/', '123', 'https://inspirehep.net/api/literature/123'),
-        ('http://inspirehep.net', 'api/literature', '123', 'http://inspirehep.net/api/literature/123'),
-        ('http://inspirehep.net/', '/api/literature', '123', 'http://inspirehep.net/api/literature/123'),
-    ]
-)
-def test_get_api_url_for_recid(server_name, api_endpoint, recid, expected):
-    result = _get_api_url_for_recid(server_name, api_endpoint, recid)
-    assert expected == result
 
 
 def test_orcids_for_push_no_authors(isolated_app):
