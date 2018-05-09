@@ -28,12 +28,16 @@ from flask import current_app
 
 from itertools import chain
 
-from inspire_dojson.utils import get_record_ref
+from inspire_dojson.utils import (
+    get_record_ref,
+    get_recid_from_ref
+)
 from inspire_matcher import match
 from inspire_schemas.utils import (
     convert_old_publication_info_to_new,
     split_page_artid,
 )
+from inspire_utils.dedupers import dedupe_list
 from inspire_utils.helpers import maybe_int
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
@@ -48,7 +52,6 @@ from refextract import (
 )
 
 from ..utils import with_debug_logging
-
 
 LOGGER = getStackTraceLogger(__name__)
 
@@ -191,42 +194,97 @@ def extract_references_from_raw_ref(reference, custom_kbs_file=None):
     )
 
 
-def match_reference(reference):
+def match_references(references):
+    """Match references to their respective records in INSPIRE.
+
+    Args:
+        references (list): the list of references.
+
+    Returns:
+        list: the matched references.
+    """
+    matched_references, previous_matched_recid = [], None
+    for ref in references:
+        ref = match_reference(ref, previous_matched_recid)
+        matched_references.append(ref)
+        if 'record' in ref:
+            previous_matched_recid = get_recid_from_ref(ref['record'])
+
+    return matched_references
+
+
+def match_reference(reference, previous_matched_recid=None):
     """Match a reference using inspire-matcher.
 
     Args:
         reference (dict): the metadata of a reference.
+        previous_matched_recid (int): the record id of the last matched
+            reference from the list of references.
 
     Returns:
         dict: the matched reference.
-
     """
-    # XXX: avoid this type casting.
-    if get_value(reference, 'reference.publication_info.year'):
-        reference['reference']['publication_info']['year'] = str(reference['reference']['publication_info']['year'])
-
-    config_default = current_app.config['WORKFLOWS_REFERENCE_MATCHER_DEFAULT_CONFIG']
-    config_jcap_and_jhep = current_app.config['WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG']
-    config_data = current_app.config['WORKFLOWS_REFERENCE_MATCHER_DATA_CONFIG']
+    config_unique_identifiers = current_app.config[
+        'WORKFLOWS_REFERENCE_MATCHER_UNIQUE_IDENTIFIERS_CONFIG']
+    config_default_publication_info = current_app.config[
+        'WORKFLOWS_REFERENCE_MATCHER_DEFAULT_PUBLICATION_INFO_CONFIG']
+    config_jcap_and_jhep_publication_info = current_app.config[
+        'WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_PUBLICATION_INFO_CONFIG']
+    config_data = current_app.config[
+        'WORKFLOWS_REFERENCE_MATCHER_DATA_CONFIG']
 
     journal_title = get_value(reference, 'reference.publication_info.journal_title')
-    if journal_title in ['JHEP', 'JCAP']:
-        config = config_jcap_and_jhep
-    else:
-        config = config_default
+    config_publication_info = config_jcap_and_jhep_publication_info if \
+        journal_title in ['JCAP', 'JHEP'] else config_default_publication_info
 
-    result = next(match(reference, config), None)
-    if result:
-        matched_recid = result['_source']['control_number']
-        reference['record'] = get_record_ref(matched_recid, 'literature')
+    configs = [config_unique_identifiers, config_publication_info, config_data]
 
-    result_for_data = next(match(reference, config_data), None)
-    if result_for_data:
-        matched_recid = result_for_data['_source']['control_number']
-        reference['record'] = get_record_ref(matched_recid, 'data')
-
-    # XXX: avoid this type casting.
-    if get_value(reference, 'reference.publication_info.year'):
-        reference['reference']['publication_info']['year'] = int(reference['reference']['publication_info']['year'])
+    matches = (match_reference_with_config(reference, config, previous_matched_recid) for config in configs)
+    matches = (matched_record for matched_record in matches if 'record' in matched_record)
+    reference = next(matches, reference)
 
     return reference
+
+
+def match_reference_with_config(reference, config, previous_matched_recid=None):
+    """Match a reference using inspire-matcher given the config.
+
+    Args:
+        reference (dict): the metadata of the reference.
+        config (dict): the list of inspire-matcher configurations for queries.
+        previous_matched_recid (int): the record id of the last matched
+            reference from the list of references.
+
+    Returns:
+        dict: the matched reference.
+    """
+    # XXX: avoid this type casting.
+    try:
+        reference['reference']['publication_info']['year'] = str(
+            reference['reference']['publication_info']['year'])
+    except KeyError:
+        pass
+
+    matched_records = dedupe_list(list(match(reference, config)))
+    same_as_previous = any(matched_record['_source']['control_number'] == previous_matched_recid for matched_record in matched_records)
+    if len(matched_records) == 1:
+        _add_match_to_reference(reference, matched_records[0]['_source']['control_number'], config['index'])
+    elif same_as_previous:
+        _add_match_to_reference(reference, previous_matched_recid, config['index'])
+
+    # XXX: avoid this type casting.
+    try:
+        reference['reference']['publication_info']['year'] = int(
+            reference['reference']['publication_info']['year'])
+    except KeyError:
+        pass
+
+    return reference
+
+
+def _add_match_to_reference(reference, matched_recid, es_index):
+    """Modifies a reference to include its record id."""
+    if es_index == 'records-data':
+        reference['record'] = get_record_ref(matched_recid, 'data')
+    elif es_index == 'records-hep':
+        reference['record'] = get_record_ref(matched_recid, 'literature')

@@ -23,7 +23,11 @@
 from __future__ import absolute_import, division, print_function
 
 from inspire_schemas.api import load_schema, validate
-from inspirehep.modules.workflows.tasks.refextract import match_reference
+from inspire_utils.record import get_value
+from inspirehep.modules.workflows.tasks.refextract import (
+    match_references,
+    match_reference
+)
 
 from factories.db.invenio_records import TestRecordMetadata
 
@@ -71,7 +75,6 @@ def test_match_reference_for_jcap_and_jhep_config():
     subschema = schema['properties']['references']
 
     assert validate([reference], subschema) is None
-
     reference = match_reference(reference)
 
     assert reference['record']['$ref'] == 'http://localhost:5000/api/literature/1'
@@ -109,3 +112,166 @@ def test_match_reference_for_data_config():
     reference = match_reference(reference)
 
     assert reference['record']['$ref'] == 'http://localhost:5000/api/data/1'
+
+
+def test_match_references_matches_when_multiple_match_if_same_as_previous():
+    """Test reference matcher for when inspire-matcher returns multiple matches
+    where the matched record id is one of the previous matched record id as well"""
+
+    original_cited_record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'control_number': 1,
+        'document_type': ['article'],
+        'publication_info': [
+            {
+                'artid': '159',
+                'journal_title': 'JHEP',
+                'journal_volume': '03',
+                'page_start': '159',
+                'year': 2016
+            },
+            {
+                'artid': '074',
+                'journal_title': 'JHEP',
+                'journal_volume': '05',
+                'material': 'erratum',
+                'page_start': '074',
+                'year': 2017
+            }
+        ]
+    }
+
+    errata_cited_record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'control_number': 2,
+        'document_type': ['article'],
+        'publication_info': [
+            {
+                'artid': '074',
+                'journal_title': 'JHEP',
+                'journal_volume': '05',
+                'material': 'erratum',
+                'page_start': '074',
+                'year': 2017
+            }
+        ]
+    }
+
+    TestRecordMetadata.create_from_kwargs(
+        json=original_cited_record_json, index_name='records-hep')
+
+    TestRecordMetadata.create_from_kwargs(
+        json=errata_cited_record_json, index_name='records-hep')
+
+    references = [
+        {
+            'reference': {
+                'publication_info': {
+                    'artid': '159',
+                    'journal_title': 'JHEP',
+                    'journal_volume': '03',
+                    'page_start': '159',
+                    'year': 2016
+                }
+            }
+        },
+        {
+            'reference': {
+                'publication_info': {
+                    'artid': '074',
+                    'journal_title': 'JHEP',
+                    'journal_volume': '05',
+                    'page_start': '074',
+                    'year': 2017
+                }
+            }
+        }
+    ]
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    assert validate(references, subschema) is None
+
+    matched_references = match_references(references)
+
+    assert matched_references[1]['record']['$ref'] == 'http://localhost:5000/api/literature/1'
+    assert validate(matched_references, subschema) is None
+
+
+def test_match_references_no_match_when_multiple_match_different_from_previous():
+    """Test reference matcher for when inspire-matcher returns multiple matches
+    where the matched record id is not the same as the previous matched record id"""
+
+    original_cited_record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'control_number': 1,
+        'document_type': ['article'],
+        'publication_info': [
+            {
+                'artid': '159',
+                'journal_title': 'JHEP',
+                'journal_volume': '03',
+                'page_start': '159',
+                'year': 2016
+            },
+            {
+                'artid': '074',
+                'journal_title': 'JHEP',
+                'journal_volume': '05',
+                'material': 'erratum',
+                'page_start': '074',
+                'year': 2017
+            }
+        ]
+    }
+
+    errata_cited_record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'control_number': 2,
+        'document_type': ['article'],
+        'publication_info': [
+            {
+                'artid': '074',
+                'journal_title': 'JHEP',
+                'journal_volume': '05',
+                'material': 'erratum',
+                'page_start': '074',
+                'year': 2017
+            }
+        ]
+    }
+
+    TestRecordMetadata.create_from_kwargs(
+        json=original_cited_record_json, index_name='records-hep')
+
+    TestRecordMetadata.create_from_kwargs(
+        json=errata_cited_record_json, index_name='records-hep')
+
+    references = [
+        {
+            'reference': {
+                'publication_info': {
+                    'artid': '074',
+                    'journal_title': 'JHEP',
+                    'journal_volume': '05',
+                    'page_start': '074',
+                    'year': 2017
+                }
+            }
+        }
+    ]
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    assert validate(references, subschema) is None
+
+    references = match_references(references)
+
+    assert get_value(references[0], 'record') is None
+    assert validate(references, subschema) is None
