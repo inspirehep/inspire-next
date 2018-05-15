@@ -94,3 +94,13 @@ class InspireApiClient(object):
             allow_redirects=False
         )
         return response
+
+    def __repr__(self):
+        return "{}(auto_login={}, base_url='{}')".format(
+            self.__class__.__name__,
+            self.auto_login,
+            self._client._base_url
+        )
+
+    def __str__(self):
+        return repr(self)
