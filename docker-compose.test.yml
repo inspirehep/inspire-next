@@ -298,6 +298,13 @@ services:
       - APP_FILES_STORE=/tmp/file_urls
       - APP_LAST_RUNS_PATH=/code/.scrapy/last_runs
       - APP_CRAWL_ONCE_PATH=/code/.scrapy
+      - APP_BROKER_URL=pyamqp://guest:guest@test-rabbitmq:5672//
+      - APP_CELERY_RESULT_BACKEND=redis://test-redis:6379/1
+    depends_on:
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
 
   test-scrapyd-deploy:
     extends:
@@ -339,7 +346,16 @@ services:
   test-worker-e2e:
     extends:
       service: test-service_base
-    command: celery worker -E -A inspirehep.celery_tests --loglevel=INFO --purge --queues celery,migrator,harvests,orcid_push
+    command: celery worker -E -A inspirehep.celery_tests --loglevel=DEBUG --purge --queues celery,migrator,harvests,orcid_push
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD"
+        - "bash"
+        - "-c"
+        - "/virtualenv/bin/celery --broker=pyamqp://guest:guest@test-rabbitmq:5672// inspect ping | grep OK"
     volumes_from:
       - test-static
     depends_on:
