@@ -1,5 +1,5 @@
 """
-REMOVE ALL RECORDS WITHOUT CONTROL NUMBER.
+RESTART A WORKFLOW.
 
 This snippet can be used to restart workflows.
 """
