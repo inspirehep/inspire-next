@@ -22,9 +22,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+import subprocess
+
 import backoff
 import pytest
-import subprocess
 
 from inspirehep.testlib.fake_arxiv_service import FakeArxivService
 from inspirehep.testlib.api import InspireApiClient
@@ -39,7 +41,9 @@ def init_environment():
 @pytest.fixture
 def inspire_client():
     """Share the same client to reuse the same session"""
-    return InspireApiClient(base_url='http://test-web-e2e.local:5000')
+    # E2E_NS is set by k8s when running the test in Jenkins
+    inspire_url = os.environ.get('E2E_NS', 'http://test-web-e2e.local:5000')
+    return InspireApiClient(base_url=inspire_url)
 
 
 def wait_for(func, *args, **kwargs):
