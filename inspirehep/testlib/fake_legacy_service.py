@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import logging
+import os
 import time
 
 from flask import Flask, jsonify, request
@@ -69,8 +70,9 @@ def robot_upload(args):
 
 def do_callbacks(workflow_id):
     server_name = application.config['SERVER_NAME']
+    inspire_url = os.environ.get('INSPIRE_API_URL', 'http://test-web-e2e.local:5000')
 
-    inspire_client = InspireApiClient(base_url='http://test-web-e2e.local:5000')
+    inspire_client = InspireApiClient(base_url=inspire_url)
     hp_entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
 
     response = inspire_client.callback.robotupload(

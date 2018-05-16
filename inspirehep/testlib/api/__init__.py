@@ -114,21 +114,18 @@ class InspireApiClient(object):
             'password': password,
         }
         page = self._client.get(self.LOCAL_LOGIN_URL)
-
         try:
             page.raise_for_status()
             csrf_token = re.search(
                 '(?<=name="csrf_token" type="hidden" value=")[^"]*',
                 page.text
             ).group()
-
         except Exception as e:
             raise Exception(
-                "exception: %s\n %s" % (
+                "Exception: %s\n %s" % (
                     e, self._client.response_to_string(page)
                 )
             )
-        
         login_data['csrf_token'] = csrf_token
         response = self._client.post(
             self.LOCAL_LOGIN_URL,
