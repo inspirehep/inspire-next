@@ -41,7 +41,7 @@ def init_environment():
 @pytest.fixture
 def inspire_client():
     """Share the same client to reuse the same session"""
-    # E2E_NS is set by k8s when running the test in Jenkins
+    # INSPIRE_API_URL is set by k8s when running the test in Jenkins
     inspire_url = os.environ.get('INSPIRE_API_URL', 'http://test-web-e2e.local:5000')
     return InspireApiClient(base_url=inspire_url)
 

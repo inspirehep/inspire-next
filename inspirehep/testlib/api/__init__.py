@@ -58,6 +58,37 @@ class Session(requests.Session):
         full_url = self.get_full_url(*args)
         return super(Session, self).post(full_url, **kwargs)
 
+    @staticmethod
+    def response_to_string(res):
+        """
+        :param res: :class:`requests.Response` object
+        Parse the given request and generate an informative string from it
+        """
+        if 'Authorization' in res.request.headers:
+            res.request.headers['Authorization'] = "*****"
+        return """
+    ####################################
+    url = %s
+    headers = %s
+    -------- data sent -----------------
+    %s
+    ------------------------------------
+    @@@@@ response @@@@@@@@@@@@@@@@
+    headers = %s
+    code = %d
+    reason = %s
+    --------- data received ------------
+    %s
+    ------------------------------------
+    ####################################
+    """ % (res.url,
+           str(res.request.headers),
+           res.request.body,
+           res.headers,
+           res.status_code,
+           res.reason,
+           res.text)
+
 
 class InspireApiClient(object):
     """Inspire Client for end-to-end testing"""
@@ -83,10 +114,21 @@ class InspireApiClient(object):
             'password': password,
         }
         page = self._client.get(self.LOCAL_LOGIN_URL)
-        csrf_token = re.search(
-            '(?<=name="csrf_token" type="hidden" value=")[^"]*',
-            page.text
-        ).group()
+
+        try:
+            page.raise_for_status()
+            csrf_token = re.search(
+                '(?<=name="csrf_token" type="hidden" value=")[^"]*',
+                page.text
+            ).group()
+
+        except Exception as e:
+            raise Exception(
+                "exception: %s\n %s" % (
+                    e, self._client.response_to_string(page)
+                )
+            )
+        
         login_data['csrf_token'] = csrf_token
         response = self._client.post(
             self.LOCAL_LOGIN_URL,
