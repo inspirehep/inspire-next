@@ -50,7 +50,7 @@ is, the configuration must contain
 
 .. code-block:: python
 
-    CELERY_ALWAYS_EAGER = True
+    CELERY_TASK_ALWAYS_EAGER = True
     CELERY_RESULT_BACKEND = 'cache'
     CELERY_CACHE_BACKEND = 'memory'
 

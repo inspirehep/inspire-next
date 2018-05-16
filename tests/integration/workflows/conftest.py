@@ -87,9 +87,9 @@ def workflow_app(higgs_ontology):
 
         app = create_app(
             BEARD_API_URL="http://example.com/beard",
-            CELERY_ALWAYS_EAGER=True,
+            CELERY_TASK_ALWAYS_EAGER=True,
             CELERY_CACHE_BACKEND='memory',
-            CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
+            CELERY_TASK_EAGER_PROPAGATES=True,
             CELERY_RESULT_BACKEND='cache',
             CFG_BIBCATALOG_SYSTEM_RT_URL=RT_URL,
             DEBUG=True,

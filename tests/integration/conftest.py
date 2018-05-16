@@ -26,6 +26,7 @@ import sys
 import os
 
 import pytest
+import sqlalchemy
 
 from functools import partial
 
@@ -49,7 +50,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
 
 @pytest.fixture(scope='session')
 def app():
-    """Flask application.
+    """
+    Deprecated: do not use this fixture for new tests, unless for very
+    specific use cases. Use `isolated_app` instead.
+
+    Flask application with demosite data and without any database isolation:
+    any db transaction performed during the tests are persisted into the db.
 
     Creates a Flask application with a simple testing configuration,
     then creates an application context and inside of it recreates
@@ -62,10 +68,10 @@ def app():
     app = create_app(
         DEBUG=True,
         WTF_CSRF_ENABLED=False,
-        CELERY_ALWAYS_EAGER=True,
+        CELERY_TASK_ALWAYS_EAGER=True,
         CELERY_RESULT_BACKEND='cache',
         CELERY_CACHE_BACKEND='memory',
-        CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
+        CELERY_TASK_EAGER_PROPAGATES=True,
         SECRET_KEY='secret!',
         RECORD_EDITOR_FILE_UPLOAD_FOLDER='tests/integration/editor/temp',
         TESTING=True,
@@ -98,20 +104,43 @@ def app():
 
 @pytest.fixture(scope='function')
 def isolated_app(app):
-    """Flask application with database isolation and function scope.
-
-    When using this fixture no changes will be persisted to the database
-    because at the end of each test the database is rolled back. This is
-    achieved by using a nested transaction. For examples on how to use it,
-    please see tests/integration/test_db_isolation.py.
-
-    Note:
-        A neater solution seems to be the one suggested in https://goo.gl/31EKXq.
-
     """
-    with db.session.begin_nested():
-        yield app
-    db.session.rollback()
+    Flask application with demosite data and with database isolation: db
+    transactions performed during the tests are not persisted into the db,
+    because transactions are rolled back on tear down.
+    Inspired by: https://goo.gl/31EKXq
+
+    Note: creating an isolated app without the demosite is challenging,
+    see: https://its.cern.ch/jira/browse/INSPIR-425
+
+    Note: the order of execution between the `app` fixture (session-scoped)
+    and the `isolated_app` fixture should not matter.
+    Some work to investigate that was done here:
+    https://github.com/turtle321/inspire-next/commit/a3575c4f59890d274e7b5fcdfdaeac9685d0a755
+    """
+    original_session = db.session
+    connection = db.engine.connect()
+    transaction = connection.begin()
+    db.session.begin_nested()
+
+    # Custom attribute to mark the session as isolated.
+    db.session._is_isolated = True
+
+    @sqlalchemy.event.listens_for(db.session, 'after_transaction_end')
+    def restart_savepoint(session, transaction):
+        if transaction.nested and not transaction._parent.nested and \
+                getattr(db.session, '_is_isolated', False):
+
+            session.expire_all()
+            session.begin_nested()
+
+    yield app
+
+    db.session._is_isolated = False
+    db.session.close()
+    transaction.rollback()
+    connection.close()
+    db.session = original_session
 
 
 @pytest.fixture()

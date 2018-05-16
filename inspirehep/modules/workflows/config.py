@@ -29,7 +29,7 @@ from __future__ import absolute_import, division, print_function
 # Configuration used when matching references.
 #
 
-WORKFLOWS_REFERENCE_MATCHER_DEFAULT_CONFIG = {
+WORKFLOWS_REFERENCE_MATCHER_UNIQUE_IDENTIFIERS_CONFIG = {
     'algorithm': [
         {
             'queries': [
@@ -53,62 +53,6 @@ WORKFLOWS_REFERENCE_MATCHER_DEFAULT_CONFIG = {
                     'search_path': 'report_numbers.value.fuzzy',
                     'type': 'exact',
                 },
-                {
-                    'paths': [
-                        'reference.publication_info.journal_issue',
-                        'reference.publication_info.journal_title',
-                        'reference.publication_info.journal_volume',
-                        'reference.publication_info.artid',
-                    ],
-                    'search_paths': [
-                        'publication_info.journal_issue',
-                        'publication_info.journal_title.raw',
-                        'publication_info.journal_volume',
-                        'publication_info.page_artid',
-                    ],
-                    'type': 'nested',
-                },
-                {
-                    'paths': [
-                        'reference.publication_info.journal_issue',
-                        'reference.publication_info.journal_title',
-                        'reference.publication_info.journal_volume',
-                        'reference.publication_info.page_start',
-                    ],
-                    'search_paths': [
-                        'publication_info.journal_issue',
-                        'publication_info.journal_title.raw',
-                        'publication_info.journal_volume',
-                        'publication_info.page_artid',
-                    ],
-                    'type': 'nested',
-                },
-                {
-                    'paths': [
-                        'reference.publication_info.journal_title',
-                        'reference.publication_info.journal_volume',
-                        'reference.publication_info.artid',
-                    ],
-                    'search_paths': [
-                        'publication_info.journal_title.raw',
-                        'publication_info.journal_volume',
-                        'publication_info.page_artid',
-                    ],
-                    'type': 'nested',
-                },
-                {
-                    'paths': [
-                        'reference.publication_info.journal_title',
-                        'reference.publication_info.journal_volume',
-                        'reference.publication_info.page_start',
-                    ],
-                    'search_paths': [
-                        'publication_info.journal_title.raw',
-                        'publication_info.journal_volume',
-                        'publication_info.page_artid',
-                    ],
-                    'type': 'nested',
-                },
             ],
         },
     ],
@@ -118,32 +62,86 @@ WORKFLOWS_REFERENCE_MATCHER_DEFAULT_CONFIG = {
         'control_number',
     ],
 }
-"""Configuration for matching all HEP records."""
+"""Configuration for matching all HEP records (including JHEP and JCAP records)
+using unique identifiers."""
 
-WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG = {
+WORKFLOWS_REFERENCE_MATCHER_DEFAULT_PUBLICATION_INFO_CONFIG = {
     'algorithm': [
         {
             'queries': [
                 {
-                    'path': 'reference.arxiv_eprint',
-                    'search_path': 'arxiv_eprints.value.raw',
-                    'type': 'exact',
+                    'paths': [
+                        'reference.publication_info.journal_issue',
+                        'reference.publication_info.journal_title',
+                        'reference.publication_info.journal_volume',
+                        'reference.publication_info.artid',
+                    ],
+                    'search_paths': [
+                        'publication_info.journal_issue',
+                        'publication_info.journal_title.raw',
+                        'publication_info.journal_volume',
+                        'publication_info.page_artid',
+                    ],
+                    'type': 'nested',
                 },
                 {
-                    'path': 'reference.dois',
-                    'search_path': 'dois.value.raw',
-                    'type': 'exact',
+                    'paths': [
+                        'reference.publication_info.journal_issue',
+                        'reference.publication_info.journal_title',
+                        'reference.publication_info.journal_volume',
+                        'reference.publication_info.page_start',
+                    ],
+                    'search_paths': [
+                        'publication_info.journal_issue',
+                        'publication_info.journal_title.raw',
+                        'publication_info.journal_volume',
+                        'publication_info.page_artid',
+                    ],
+                    'type': 'nested',
                 },
                 {
-                    'path': 'reference.isbn',
-                    'search_path': 'isbns.value.raw',
-                    'type': 'exact',
+                    'paths': [
+                        'reference.publication_info.journal_title',
+                        'reference.publication_info.journal_volume',
+                        'reference.publication_info.artid',
+                    ],
+                    'search_paths': [
+                        'publication_info.journal_title.raw',
+                        'publication_info.journal_volume',
+                        'publication_info.page_artid',
+                    ],
+                    'type': 'nested',
                 },
                 {
-                    'path': 'reference.report_numbers',
-                    'search_path': 'report_numbers.value.fuzzy',
-                    'type': 'exact',
+                    'paths': [
+                        'reference.publication_info.journal_title',
+                        'reference.publication_info.journal_volume',
+                        'reference.publication_info.page_start',
+                    ],
+                    'search_paths': [
+                        'publication_info.journal_title.raw',
+                        'publication_info.journal_volume',
+                        'publication_info.page_artid',
+                    ],
+                    'type': 'nested',
                 },
+            ],
+        },
+    ],
+    'doc_type': 'hep',
+    'index': 'records-hep',
+    'source': [
+        'control_number',
+    ],
+}
+"""Configuration for matching all HEP records using publication_info.
+These are separate from the unique queries since these can result in
+multiple matches (particularly in the case of errata)."""
+
+WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_PUBLICATION_INFO_CONFIG = {
+    'algorithm': [
+        {
+            'queries': [
                 {
                     'paths': [
                         'reference.publication_info.journal_title',
@@ -183,6 +181,29 @@ WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_CONFIG = {
         'control_number',
     ],
 }
-"""Configuration for matching records JCAP and JHEP records since
-they have a particular configuration and we have to look at the
-year as well for accurate matching."""
+"""Configuration for matching records JCAP and JHEP records using the
+publication_info, since we have to look at the year as well for accurate
+matching.
+These are separate from the unique queries since these can result in
+multiple matches (particularly in the case of errata)."""
+
+WORKFLOWS_REFERENCE_MATCHER_DATA_CONFIG = {
+    'algorithm': [
+        {
+            'queries': [
+                {
+                    'path': 'reference.dois',
+                    'search_path': 'dois.value.raw',
+                    'type': 'exact',
+                },
+            ],
+        },
+    ],
+    'doc_type': 'data',
+    'index': 'records-data',
+    'source': [
+        'control_number',
+    ]
+}
+"""Configuration for matching data records. Please note that the
+index and doc_type are different for data records."""
