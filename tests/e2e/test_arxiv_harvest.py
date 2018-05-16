@@ -28,7 +28,6 @@ import subprocess
 import backoff
 import pytest
 
-from inspirehep.testlib.fake_arxiv_service import FakeArxivService
 from inspirehep.testlib.api import InspireApiClient
 
 
@@ -61,8 +60,13 @@ def wait_for(func, *args, **kwargs):
 
 
 def test_harvest_non_core_article_goes_in(inspire_client):
-    arxiv_service = FakeArxivService()
-    arxiv_service.run_harvest()
+    inspire_client.holdingpen.run_harvest(
+        spider='arXiv',
+        workflow='article',
+        url='http://fake-arxiv:8888/oai2',
+        sets='physics,hep-th',
+        from_date='2018-03-25',
+    )
 
     def _all_completed():
         hp_entries = inspire_client.holdingpen.get_list_entries()

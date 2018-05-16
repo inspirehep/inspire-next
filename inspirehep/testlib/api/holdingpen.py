@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import subprocess
+
 from inspirehep.testlib.api.base_resource import BaseResource
 
 
@@ -86,3 +88,16 @@ class HoldingpenApiClient(object):
         resp = self._client.get(self.HOLDINGPEN_API_URL, str(holdingpen_id))
         resp.raise_for_status()
         return HoldingpenResource.from_json(resp.json())
+
+    def run_harvest(self, spider, workflow='article', **kwargs):
+        """Run a harvest scheduling a job in celery"""
+        run_harvest = 'inspirehep crawler schedule %s %s %s' % (
+            spider,
+            workflow,
+            ' '.join('--kwarg %s=%s' % (k, v) for k, v in kwargs.items()),
+        )
+
+        assert subprocess.check_output(
+            run_harvest.split(),
+            stderr=subprocess.STDOUT
+        )

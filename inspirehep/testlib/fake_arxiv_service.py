@@ -25,7 +25,6 @@
 from __future__ import absolute_import, division, print_function
 
 import requests
-import subprocess
 import time
 
 from flask import Flask
@@ -81,22 +80,3 @@ def oai_api():
     with my_vcr.use_cassette('non_core_article.yml'):
         resp = requests.get(url_request)
         return resp.text
-
-
-class FakeArxivService(object):
-    """Service used to run arXiv harvest operations"""
-    def __init__(self):
-        # TODO: initialize here the scenario
-        pass
-
-    def run_harvest(self):
-        """Run an arXiv harvest scheduling a job in celery"""
-        # TODO: set self.harvest_scenario in the config for fake_arxiv_service
-        run_harvest = 'inspirehep crawler schedule arXiv article --kwarg ' \
-            'url=http://fake-arxiv:8888/oai2 --kwarg sets=physics,' \
-            'hep-th --kwarg from_date=2018-03-25'
-
-        assert subprocess.check_output(
-            run_harvest.split(),
-            stderr=subprocess.STDOUT
-        )
