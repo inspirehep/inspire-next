@@ -47,7 +47,7 @@ def inspire_client():
 
 def wait_for(func, *args, **kwargs):
     max_time = kwargs.pop('max_time', 200)
-    interval = kwargs.pop('interval', 1)
+    interval = kwargs.pop('interval', 2)
 
     decorator = backoff.on_exception(
         backoff.constant,
@@ -70,8 +70,12 @@ def test_harvest_non_core_article_goes_in(inspire_client):
 
     def _all_completed():
         hp_entries = inspire_client.holdingpen.get_list_entries()
-        assert len(hp_entries) == 1
-        assert all(entry.status == 'COMPLETED' for entry in hp_entries)
+        try:
+            assert len(hp_entries) == 1
+            assert all(entry.status == 'COMPLETED' for entry in hp_entries)
+        except AssertionError:
+            print('Current holdingpen entries: %s' % hp_entries)
+            raise
         return hp_entries[0]
 
     completed_entry = wait_for(_all_completed)
