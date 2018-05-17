@@ -9,11 +9,11 @@
 
 from __future__ import absolute_import, division, print_function
 
-import enum
 import sqlalchemy as sa
 
 from alembic import op
 from datetime import datetime
+from sqlalchemy.dialects import postgresql
 
 
 # revision identifiers, used by Alembic.
@@ -23,21 +23,18 @@ branch_labels = ()
 depends_on = None
 
 
-class SourceEnum(enum.IntEnum):
-    arxiv = 1
-    submitter = 2
-    publisher = 3
-
-
 def upgrade():
     """Upgrade database."""
+    source_enum = postgresql.ENUM('arxiv', 'submitter', 'publisher', name='source_enum')
+    source_enum.create(op.get_bind())
+
     op.add_column(
         'workflows_record_sources',
         sa.Column(
             'created',
             sa.DateTime(),
             default=datetime.utcnow,
-            nullable=False,
+            nullable=True,
         )
     )
 
@@ -47,7 +44,7 @@ def upgrade():
             'updated',
             sa.DateTime(),
             default=datetime.utcnow,
-            nullable=False,
+            nullable=True,
         )
     )
 
@@ -61,8 +58,8 @@ def upgrade():
         'workflows_record_sources',
         'source',
         existing_type=sa.Text,
-        type_=sa.Enum(SourceEnum),
-        postgresql_using='source::sourceenum',
+        type_=sa.Enum('arxiv', 'submitter', 'publisher', name='source_enum'),
+        postgresql_using='source::source_enum',
     )
 
     op.alter_column(
@@ -94,7 +91,7 @@ def downgrade():
     op.alter_column(
         'workflows_record_sources',
         'source',
-        existing_type=sa.Enum(SourceEnum),
+        existing_type=sa.Enum('arxiv', 'submitter', 'publisher', name='source_enum'),
         type_=sa.Text,
         postgresql_using='source::text',
     )
@@ -105,3 +102,6 @@ def downgrade():
         type_=sa.dialects.postgresql.JSON,
         postgresql_using='json::text::json',
     )
+
+    source_enum = postgresql.ENUM('arxiv', 'submitter', 'publisher', name='source_enum')
+    source_enum.drop(op.get_bind())

@@ -26,18 +26,10 @@ from __future__ import absolute_import, division, print_function
 
 from datetime import datetime
 
-import enum
-
 from sqlalchemy.dialects import postgresql
 from sqlalchemy_utils.types import UUIDType
 
 from invenio_db import db
-
-
-class SourceEnum(enum.IntEnum):
-    arxiv = 1
-    submitter = 2
-    publisher = 3
 
 
 class WorkflowsAudit(db.Model):
@@ -98,12 +90,12 @@ class Timestamp(object):
     created = db.Column(
         db.DateTime(),
         default=datetime.utcnow,
-        nullable=False
+        nullable=True,
     )
     updated = db.Column(
         db.DateTime(),
         default=datetime.utcnow,
-        nullable=False
+        nullable=True,
     )
 
 
@@ -127,7 +119,7 @@ class WorkflowsRecordSources(db.Model, Timestamp):
     )
 
     source = db.Column(
-        db.Enum(SourceEnum),
+        postgresql.ENUM('arxiv', 'submitter', 'publisher', name='source_enum'),
         nullable=False,
     )
 
