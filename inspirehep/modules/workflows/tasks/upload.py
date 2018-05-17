@@ -87,6 +87,9 @@ def store_root(obj, eng):
 
     source = get_source(root).lower()
 
+    if not source:
+        return
+
     root_record = WorkflowsRecordSources(
         source=get_source_for_root(source),
         record_uuid=head_uuid,

@@ -253,7 +253,10 @@ def read_wf_record_source(record_uuid, source):
     Return:
         (dict): the given record, if any or None
     """
+    if not source:
+        return
     source = get_source_for_root(source)
+
     entry = WorkflowsRecordSources.query.filter_by(
         record_uuid=str(record_uuid),
         source=source.lower(),
@@ -282,9 +285,13 @@ def insert_wf_record_source(json, record_uuid, source):
         record_uuid(uuid): the record's uuid
         source(string): the source of the record
     """
+    if not source:
+        return
+
     source = get_source_for_root(source)
     record_source = read_wf_record_source(
         record_uuid=record_uuid, source=source)
+
     if record_source is None:
         record_source = WorkflowsRecordSources(
             source=source.lower(),
