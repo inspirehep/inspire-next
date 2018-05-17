@@ -247,15 +247,15 @@ def read_wf_record_source(record_uuid, source):
     """Retrieve a record from the ``WorkflowRecordSource`` table.
 
     Args:
-        record_uuid(string): the uuid of the record
+        record_uuid(uuid): the uuid of the record
         source(string): the acquisition source value of the record
 
     Return:
         (dict): the given record, if any or None
     """
     entry = WorkflowsRecordSources.query.filter_by(
-        record_id=str(record_uuid),
-        source=source.lower()
+        record_uuid=str(record_uuid),
+        source=source.lower(),
     ).one_or_none()
     return entry
 
@@ -264,12 +264,12 @@ def read_all_wf_record_sources(record_uuid):
     """Retrieve all ``WorkflowRecordSource`` for a given record id.
 
     Args:
-        record_uuid(string): the uuid of the record
+        record_uuid(uuid): the uuid of the record
 
     Return:
         (list): the ``WorkflowRecordSource``s related to ``record_uuid``
     """
-    entries = list(WorkflowsRecordSources.query.filter_by(record_id=str(record_uuid)))
+    entries = list(WorkflowsRecordSources.query.filter_by(record_uuid=str(record_uuid)))
     return entries
 
 
@@ -286,7 +286,7 @@ def insert_wf_record_source(json, record_uuid, source):
         record_source = WorkflowsRecordSources(
             source=source.lower(),
             json=json,
-            record_id=record_uuid
+            record_uuid=record_uuid,
         )
         db.session.add(record_source)
     else:

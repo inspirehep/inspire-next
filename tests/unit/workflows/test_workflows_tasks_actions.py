@@ -47,6 +47,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     mark,
     populate_journal_coverage,
     populate_submission_document,
+    preserve_root,
     reject_record,
     refextract,
     set_refereed_and_fix_document_type,
@@ -320,6 +321,19 @@ def test_halt_record_accepts_custom_msg():
 
     assert bar_message_halt_record(obj, eng) is None
     assert eng.msg == 'bar'
+
+
+def test_preserve_root():
+    config = {
+        'FEATURE_FLAG_ENABLE_MERGER': True
+    }
+
+    with patch.dict(current_app.config, config):
+        obj = MockObj({'foo': 'bar'}, {})
+        eng = MockEng()
+
+        assert preserve_root(obj, eng) is None
+        assert obj.extra_data['merger_root'] == {'foo': 'bar'}
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.log_workflows_action')

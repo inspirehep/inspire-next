@@ -1,0 +1,43 @@
+{
+    "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
+    "_collections": [
+      "Literature"
+    ],
+    "acquisition_source": {
+      "source": "arXiv"
+    },
+    "arxiv_eprints": [
+      {
+        "categories": [
+          "hep-lat",
+          "hep-th"
+        ],
+        "value": "1703.04802"
+      }
+    ],
+    "collaborations": [
+      {
+        "record":
+        {
+          "$ref": "http://newlabs.inspirehep.net/api/literature/684121"
+        },
+        "value": "ATLAS"
+      },
+      {
+        "record":
+        {
+          "$ref": "http://newlabs.inspirehep.net/api/literature/684122"
+        },
+        "value": "CMS"
+      }
+    ],
+    "document_type": [
+      "article"
+    ],
+    "titles": [
+      {
+        "source": "arXiv",
+        "title": "4D $\\mathcal{N}=1$ SYM supercurrent in terms of the gradient flow"
+      }
+    ]
+}

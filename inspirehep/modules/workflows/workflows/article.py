@@ -54,6 +54,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     normalize_journal_titles,
     populate_journal_coverage,
     populate_submission_document,
+    preserve_root,
     refextract,
     reject_record,
     save_workflow,
@@ -90,7 +91,11 @@ from inspirehep.modules.workflows.tasks.merging import (
     has_conflicts,
     merge_articles,
 )
-from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
+from inspirehep.modules.workflows.tasks.upload import (
+    set_schema,
+    store_record,
+    store_root,
+)
 from inspirehep.modules.workflows.tasks.submission import (
     close_ticket,
     create_ticket,
@@ -268,6 +273,7 @@ HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
             stop_processing,
         ],
     ),
+    preserve_root,
     IF_ELSE(
         is_marked('is-update'),
         [
@@ -296,6 +302,7 @@ HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
 
 STORE_RECORD = [
     store_record,
+    store_root,
 ]
 
 
