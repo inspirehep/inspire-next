@@ -47,8 +47,9 @@ from .wsgi import application  # noqa
 
 
 def save_coverage():
-    cov.stop()
-    cov.save()
+    if cov:
+        cov.stop()
+        cov.save()
 
 
 atexit.register(save_coverage)
