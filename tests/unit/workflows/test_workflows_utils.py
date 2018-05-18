@@ -39,6 +39,7 @@ from inspirehep.modules.workflows.utils import (
     convert,
     download_file_to_workflow,
     get_document_in_workflow,
+    get_source_for_root,
     ignore_timeout_error,
     json_api_request,
 )
@@ -202,3 +203,16 @@ def test_ignore_timeout_decorator(mock_logger):
     f()
 
     assert mock_logger.error.called
+
+
+@pytest.mark.parametrize('source,expected_source', [
+    ('publisher', 'publisher'),
+    ('desy', 'publisher'),
+    ('jessica jones', 'publisher'),
+    ('arxiv', 'arxiv'),
+    ('submitter', 'submitter'),
+])
+def test_get_source_root(source, expected_source):
+    result = get_source_for_root(source)
+
+    assert expected_source == result

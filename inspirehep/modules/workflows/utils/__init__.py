@@ -253,6 +253,7 @@ def read_wf_record_source(record_uuid, source):
     Return:
         (dict): the given record, if any or None
     """
+    source = get_source_for_root(source)
     entry = WorkflowsRecordSources.query.filter_by(
         record_uuid=str(record_uuid),
         source=source.lower(),
@@ -281,7 +282,9 @@ def insert_wf_record_source(json, record_uuid, source):
         record_uuid(uuid): the record's uuid
         source(string): the source of the record
     """
-    record_source = read_wf_record_source(record_uuid=record_uuid, source=source)
+    source = get_source_for_root(source)
+    record_source = read_wf_record_source(
+        record_uuid=record_uuid, source=source)
     if record_source is None:
         record_source = WorkflowsRecordSources(
             source=source.lower(),
@@ -292,6 +295,23 @@ def insert_wf_record_source(json, record_uuid, source):
     else:
         record_source.json = json
     db.session.commit()
+
+
+def get_source_for_root(source):
+    """Source for the root workflow object.
+
+    Args:
+        source(str): the record source.
+
+    Return:
+        (str): the source for the root workflow object.
+
+    Note:
+        For the time being any workflow with ``acquisition_source.source``
+        different than ``arxiv`` and ``submitter`` will be stored as
+        ``publisher``.
+    """
+    return source if source in ['arxiv', 'submitter'] else 'publisher'
 
 
 def get_resolve_validation_callback_url():

@@ -30,7 +30,10 @@ from invenio_db import db
 
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.models import WorkflowsRecordSources
-from inspirehep.modules.workflows.utils import with_debug_logging
+from inspirehep.modules.workflows.utils import (
+    get_source_for_root,
+    with_debug_logging,
+)
 from inspirehep.utils.record import get_source
 from inspirehep.utils.schema import ensure_valid_schema
 
@@ -81,10 +84,11 @@ def store_root(obj, eng):
 
     root = obj.extra_data['merger_root']
     head_uuid = obj.extra_data['head_uuid']
+
     source = get_source(root).lower()
 
     root_record = WorkflowsRecordSources(
-        source=source,
+        source=get_source_for_root(source),
         record_uuid=head_uuid,
         json=root,
     )
