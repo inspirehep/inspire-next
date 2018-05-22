@@ -39,10 +39,45 @@ from invenio_workflows import (
     start,
 )
 
-from inspirehep.modules.workflows.utils import insert_wf_record_source, read_wf_record_source
+from inspirehep.modules.workflows.utils import (
+    insert_wf_record_source,
+    read_all_wf_record_sources,
+    read_wf_record_source,
+)
 
 from factories.db.invenio_records import TestRecordMetadata
 
+
+RECORD_WITHOUT_ACQUISITION_SOURCE_AND_CONFLICTS = {
+    '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
+    'titles': [
+        {
+            'title': 'Update with conflicts title.'
+        },
+    ],
+    'document_type': ['article'],
+    '_collections': ['Literature'],
+    'collaborations': [
+        {
+            'record':
+                {
+                    '$ref': 'http://newlabs.inspirehep.net/api/literature/684121'
+                },
+            'value': 'ALICE'
+        },
+    ],
+}
+
+RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS = {
+    '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
+    'titles': [
+        {
+            'title': 'Update without conflicts title.'
+        },
+    ],
+    'document_type': ['article'],
+    '_collections': ['Literature'],
+}
 
 RECORD_WITHOUT_CONFLICTS = {
     '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
@@ -151,6 +186,90 @@ def test_merge_with_disabled_merge_on_update_feature_flag(
 
         updated_root = read_wf_record_source(factory.record_metadata.id, 'arxiv')
         assert updated_root is None
+
+
+@patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+def test_merge_without_conflicts_handles_update_without_acquisition_source_and_acts_as_rootless(
+        mocked_api_request_magpie,
+        mocked_beard_api,
+        workflow_app,
+        mocked_external_services,
+        disable_file_upload,
+        enable_merge_on_update,
+):
+    with patch('inspire_json_merger.config.PublisherOnArxivOperations.conflict_filters', ['acquisition_source.source']):
+        factory = TestRecordMetadata.create_from_file(
+            __name__, 'merge_record_arxiv.json', index_name='records-hep')
+
+        record_update = RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS
+        record_update.update({
+            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
+        })
+
+        eng_uuid = start('article', [record_update])
+
+        eng = WorkflowEngine.from_uuid(eng_uuid)
+        obj = eng.objects[0]
+
+        conflicts = obj.extra_data.get('conflicts')
+
+        assert obj.status == ObjectStatus.COMPLETED
+        assert not conflicts
+
+        assert obj.extra_data.get('callback_url') is None
+        assert obj.extra_data.get('is-update') is True
+
+        # source us unknown, so no new root is saved.
+        roots = read_all_wf_record_sources(factory.record_metadata.id)
+        assert not roots
+
+
+@patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+def test_merge_with_conflicts_handles_update_without_acquisition_source_and_acts_as_rootless(
+        mocked_api_request_magpie,
+        mocked_beard_api,
+        workflow_app,
+        mocked_external_services,
+        disable_file_upload,
+        enable_merge_on_update,
+):
+    with patch('inspire_json_merger.config.PublisherOnArxivOperations.conflict_filters', ['acquisition_source.source']):
+        factory = TestRecordMetadata.create_from_file(
+            __name__, 'merge_record_arxiv.json', index_name='records-hep')
+
+        record_update = RECORD_WITHOUT_ACQUISITION_SOURCE_AND_CONFLICTS
+        record_update.update({
+            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
+        })
+
+        # By default the root is {}.
+
+        eng_uuid = start('article', [record_update])
+
+        eng = WorkflowEngine.from_uuid(eng_uuid)
+        obj = eng.objects[0]
+
+        conflicts = obj.extra_data.get('conflicts')
+        assert obj.status == ObjectStatus.HALTED
+        assert len(conflicts) == 2
+
+        assert obj.extra_data.get('callback_url') is not None
+        assert obj.extra_data.get('is-update') is True
+        assert obj.extra_data['merger_root'] == record_update
 
 
 @patch(
