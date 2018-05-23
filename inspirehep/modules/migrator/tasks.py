@@ -195,8 +195,8 @@ def migrate_from_mirror(also_migrate=None, wait_for_results=False, skip_files=No
         migrate_recids_from_mirror.ignore_result = False
 
     chunked_recids = chunker(res.recid for res in query.yield_per(CHUNK_SIZE))
-    for i, chunk in enumerate(chunked_recids, 1):
-        print("Scheduled {} records for migration".format(i * CHUNK_SIZE))
+    for i, chunk in enumerate(chunked_recids):
+        print("Scheduled {} records for migration".format(i * CHUNK_SIZE + len(chunk)))
         if wait_for_results:
             tasks.append(migrate_recids_from_mirror.s(chunk, skip_files=skip_files))
         else:
@@ -216,9 +216,9 @@ def migrate_from_file(source, wait_for_results=False):
 
 
 def populate_mirror_from_file(source):
-    for i, chunk in enumerate(chunker(split_stream(read_file(source)), CHUNK_SIZE), 1):
+    for i, chunk in enumerate(chunker(split_stream(read_file(source)), CHUNK_SIZE)):
         insert_into_mirror(chunk)
-        print("Inserted {} records into mirror".format(i * CHUNK_SIZE))
+        print("Inserted {} records into mirror".format(i * CHUNK_SIZE + len(chunk)))
 
 
 @shared_task(ignore_result=True)
