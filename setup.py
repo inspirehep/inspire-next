@@ -187,6 +187,7 @@ setup(
         'invenio_access.actions': [
             'admin_holdingpen_authors = inspirehep.modules.authors.permissions:action_admin_holdingpen_authors',
             'editor_use_api = inspirehep.modules.editor.permissions:action_editor_use_api',
+            'migrator-use-api = inspirehep.modules.migrator.permissions:action_migrator_use_api',
             'update_collection = inspirehep.modules.records.permissions:action_update_collection',
             'view_restricted_collection = inspirehep.modules.records.permissions:action_view_restricted_collection',
         ],
@@ -218,6 +219,7 @@ setup(
         ],
         'invenio_base.api_blueprints': [
             'inspirehep_editor = inspirehep.modules.editor:blueprint_api',
+            'inspire_migrator = inspirehep.modules.migrator.views:blueprint',
         ],
         'invenio_base.apps': [
             'inspire_arxiv = inspirehep.modules.arxiv:InspireArXiv',
