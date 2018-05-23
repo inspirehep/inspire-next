@@ -6,7 +6,7 @@ request:
     Connection: [keep-alive]
     User-Agent: [python-requests/2.18.4]
   method: GET
-  uri: http://export.arxiv.org/oai2?from=2018-03-25&verb=ListRecords&set=physics&metadataPrefix=arXiv
+  url: http://export.arxiv.org/oai2?from=2018-03-25&verb=ListRecords&set=physics&metadataPrefix=arXiv
 response:
   body: !!binary |
     H4sICC6L4VoAA3RtcAC1Vk1z2zYQvetX7PDUzkikJNu1o6GYceI0dmo3Httpk146ELkSkYAAA4D6

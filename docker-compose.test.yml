@@ -45,12 +45,16 @@ services:
       - https_proxy=mitm-proxy:8080
 
   mitm-proxy:
-    image: inspirehep/inspire-mitmproxy:0.5
+    image: inspirehep/inspire-mitmproxy:0.8
     tty: true
     ports:
       - 127.0.0.1:8081:8081
     environment:
       - SCENARIOS_PATH=/inspire-next/tests/e2e/scenarios/
+      - HTTP_PROXY=mitm-proxy:8080
+      - http_proxy=mitm-proxy:8080
+      - HTTPS_PROXY=mitm-proxy:8080
+      - https_proxy=mitm-proxy:8080
     healthcheck:
       timeout: 5s
       interval: 5s
@@ -291,16 +295,6 @@ services:
       file: services.yml
       service: static
 
-      # Service for mocking external services.
-  fake-legacy:
-    extends:
-      service: proxied_base
-    ports:
-      - "6666:5000"
-    command: gunicorn -b 0.0.0.0:6666 -t 3600 --access-logfile "-" --reload inspirehep.testlib.fake_legacy_service
-    volumes_from:
-      - test-static
-
   test-scrapyd:
     extends:
       service: proxied_base
@@ -353,7 +347,7 @@ services:
       - APP_ARXIV_PDF_URL_ALTERNATIVE="/pdf/{arxiv_id}"
       - APP_ARXIV_TARBALL_URL="/e-print/{arxiv_id}"
       - APP_PRODUCTION_MODE=True
-      - APP_LEGACY_ROBOTUPLOAD_URL="http://fake-legacy:6666/"
+      - APP_LEGACY_ROBOTUPLOAD_URL="http://inspirehep.net/"
 
 
   test-worker-e2e:
@@ -382,8 +376,8 @@ services:
         condition: service_healthy
     environment:
       - APP_PRODUCTION_MODE=True
-      - APP_LEGACY_ROBOTUPLOAD_URL="http://fake-legacy:6666/"
-      - APP_LEGACY_PID_PROVIDER="http://fake-legacy:6666//batchuploader/allocaterecord"
+      - APP_LEGACY_ROBOTUPLOAD_URL="http://inspirehep.net/"
+      - APP_LEGACY_PID_PROVIDER="http://inspirehep.net//batchuploader/allocaterecord"
 
   e2e:
     extends:
@@ -405,8 +399,6 @@ services:
       test-worker-e2e:
         condition: service_started
       test-web-e2e.local:
-        condition: service_started
-      fake-legacy:
         condition: service_started
       test-scrapyd:
         condition: service_started
