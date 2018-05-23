@@ -43,6 +43,12 @@ services:
       - http_proxy=mitm-proxy:8080
       - HTTPS_PROXY=mitm-proxy:8080
       - https_proxy=mitm-proxy:8080
+      - APP_CFG_BIBCATALOG_SYSTEM_RT_URL="https://rt.inspirehep.net/REST/1.0/"
+      - APP_CFG_BIBCATALOG_SYSTEM_RT_DEFAULT_USER="rtuser"
+      - APP_CFG_BIBCATALOG_SYSTEM_RT_DEFAULT_PWD="rtpass"
+      - APP_CFG_BIBCATALOG_SYSTEM_RT_VERIFY_SSL="False"
+      - APP_BIBCATALOG_QUEUES="Test"
+
 
   mitm-proxy:
     image: inspirehep/inspire-mitmproxy:0
