@@ -114,11 +114,11 @@ callbacks:
 - delay: 3
   request:
     method: POST
-    url: http://test-web-e2e.local:5000/callback/workflows/robotupload
+    url: http://${INSPIRE_NEXT_NETLOC}/callback/workflows/robotupload
     headers:
       Accept: ['*/*']
       Content-Type: ['application/json']
-    body: |
+    body: >
       {
         "nonce": "1",
         "results": [
@@ -134,7 +134,7 @@ callbacks:
 - delay: 6
   request:
     method: POST
-    url: http://test-web-e2e.local:5000/callback/workflows/webcoll
+    url: http://${INSPIRE_NEXT_NETLOC}/callback/workflows/webcoll
     headers:
       Accept: ['*/*']
       Content-Type: ['application/x-www-form-urlencoded']

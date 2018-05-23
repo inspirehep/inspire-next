@@ -55,6 +55,7 @@ services:
       - http_proxy=mitm-proxy:8080
       - HTTPS_PROXY=mitm-proxy:8080
       - https_proxy=mitm-proxy:8080
+      - INSPIRE_NEXT_NETLOC=test-web-e2e.local:5000
     healthcheck:
       timeout: 5s
       interval: 5s
