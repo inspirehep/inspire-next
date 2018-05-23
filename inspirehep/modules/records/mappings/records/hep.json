@@ -270,6 +270,12 @@
                             "type": "object"
                         },
                         "signature_block": {
+                            "fields": {
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
                             "type": "string"
                         },
                         "uuid": {
