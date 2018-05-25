@@ -23,10 +23,13 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
-from sqlalchemy import inspect, text
+from sqlalchemy import func, inspect, text, type_coerce
+from sqlalchemy.types import Text
+from sqlalchemy.dialects.postgresql import ARRAY
 
 from invenio_db import db
 from invenio_db.utils import drop_alembic_version_table
+from invenio_records.models import RecordMetadata
 
 from inspirehep.factory import create_app
 
@@ -49,6 +52,12 @@ def alembic_app():
 def test_downgrade(alembic_app):
     ext = alembic_app.extensions['invenio-db']
     ext.alembic.stamp()
+
+    # 47bc5e7e1a87
+
+    ext.alembic.downgrade(target='17ff155db70d')
+
+    assert 'ix_records_metadata_json_signature_blocks' not in _get_indexes('records_metadata')
 
     # 402af3fbf68b
 
@@ -136,6 +145,17 @@ def test_upgrade(alembic_app):
     assert 'inspire_prod_records_recid_seq' not in _get_sequences()
     assert 'legacy_records_mirror' in _get_table_names()
     assert 'legacy_records_mirror_recid_seq' in _get_sequences()
+
+    # 47bc5e7e1a87
+
+    ext.alembic.upgrade(target='47bc5e7e1a87')
+
+    assert 'ix_records_metadata_json_signature_blocks' in _get_indexes('records_metadata')
+
+    assert db.session.query(RecordMetadata).filter(
+        type_coerce(func.signature_blocks(RecordMetadata.json), ARRAY(Text)).contains(['GLASs'])
+    ).first() is None  # no exception, no result since no demo records in alembic app
+    db.session.close()
 
 
 def _get_indexes(tablename):

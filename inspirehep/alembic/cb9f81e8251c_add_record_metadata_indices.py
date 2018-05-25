@@ -30,7 +30,7 @@ from alembic import op
 revision = 'cb9f81e8251c'
 down_revision = 'fddb3cfe7a9c'
 branch_labels = ()
-depends_on = None
+depends_on = '07fb52561c5c'
 
 
 def upgrade():
