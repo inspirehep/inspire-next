@@ -1,0 +1,42 @@
+request:
+  body: null
+  headers:
+    Accept: ['*/*']
+    Accept-Encoding: ['gzip, deflate']
+    Connection: [keep-alive]
+    User-Agent: [python-requests/2.18.4]
+  method: GET
+  url: http://export.arxiv.org/oai2?from=2018-03-25&verb=ListRecords&set=physics&metadataPrefix=arXiv
+response:
+  body: !!binary |
+    H4sICC6L4VoAA3RtcAC1Vk1z2zYQvetX7PDUzkikJNu1o6GYceI0dmo3Httpk146ELkSkYAAA4D6
+    6K/vAyXKUr8ml94AYrH7dt/bBdOX60rRkq2TRk+jUTyMiHVuCqkX0+jD04+Di+hl1kvfX94M7u+u
+    CdbaTaPS+3qSJKvVKjY1a2HzUi7ZxcYuEpgm43iYRFvjydrJowurk9ZsPByOko93t495yZUYSO28
+    0DnjlpMT1368NbnwLa5viUffYrTLI167IkJall1ttOMr4TkbD0cXg+HJYHz+NBpNRqeTs9Pf0uTI
+    JNz42rDzoWSzaXQrnX/g3NjCRTS3pppGnZfhKKKKvSiEF/eW53I9jYT9KJcPYhWRYz+N6nLjZO6i
+    bIec17WxPhZ2LZctaiPkOCBoQyL4QbgWSlhhUbIo2GIhC9ZeziU2uDppwwVHSGZ4Gg/Pzl+kyYFN
+    LwU4eBZVvUv+dDA+S5Pnr70UQB9rzrMd1olucjXgdZp0B7002cfv8sWyS/UvinnOLTDSGf0fWvmX
+    SPSfx50uZJEdlSwUoplV0nvk+U5oel1acGHqki29YqtFwxY12dv00l1PPffWchTtKp79ykWfxnRZ
+    W0LdTylobTQ5OaG3d0/b8oeA8g/OLsbDky8zeA4bfDONzfl3v6k5u8LXgy142IXC0kuvOHsqmd7f
+    frq7//BIN9oHmIquN4U1C9b0JOyCfZpsbcFY40tjXfYuptfxPqk+/YK9sMI56WWf3mInG6VMn17F
+    9BjTNWuQ74zu05uYbkpl5vM+wclPrBxv+nQf0y1r6USfHmK6k0oHr5e4nJeVLHyf7rD2SNqKNOlQ
+    9FLwyQtjJbtOfDGIHxTsaS/CAxtcMFUFbbvsBdViwa5PoxOay0WDFoZpd9pLP6NsKMUAXZn9DFeA
+    DUXZpgI89mVMl3R+dgaGhpgF9F2g6Ps0ObwFHo3MRsN4NBz9kHyOtaxEHOziIJoxNBPOe6mSOWN2
+    ZH8T3e7AJdpoXueqcRhVgwKasnKWYAwnaWcTqJnhu8h9dqlJdkSWHZG+JZLcxnmuaCUcFbxkhRlY
+    0NxY8gcywIhhK0MhSHi6evP4qQ+PdC2qWWMXoJdtJfQmpqCdneMc4w/A4M3MSZAyGoa+lHqwEkoF
+    Kftm1ihhKWelaCXDGaFJhGoqqZuKHHgCarwplJcIxTZ+1iGHhOAceALSvN2HUNsdPApdALgMCHxp
+    TbMo2zMIDxyv0IJM0reJW67MMqSNUdzazFhUSmosNoBeNcojE4iD6qaqA55t1QLlud0EPDJHwqoI
+    Mw0Lo9qgz7UIeLzBSRNgghOCpQ+ejmK2mKXOLQvH7VeMXXTQJiS2Zw5levYdMOCV4BBWKQjKg7va
+    Gs+534Foo7dx3EbnKIW3mDBWFLKdfW3QPYJSKBN8Og79EeKuxBe8Q6wKck1doyscOg01K5ocAY7y
+    aD3s7d2RHg6E1k7ioIGO9RD96v3DzSNhOtpQ6Jb1ACzYuybPEXaOAYJKQIoipFY0rVGbIZoMBdux
+    /w+qRQz02Ti0LLRdbfM2eldiJxeYQ3Mxs3L7HPTb0LjdGuPN6Fwf5yJDGcLjy0WMGdS1G2Zq9zKE
+    9cHzluwf3+T4Ue7+MLLenyAoeRtbCQAA
+  headers:
+    connection: [Keep-Alive]
+    content-encoding: [gzip]
+    content-type: [text/xml]
+    date: ['Tue, 27 Mar 2018 11:14:50 GMT']
+    keep-alive: ['timeout=5, max=100']
+    server: [Apache]
+    vary: ['Accept-Encoding,User-Agent']
+  status: {code: 200, message: OK}
