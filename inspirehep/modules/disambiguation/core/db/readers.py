@@ -25,6 +25,8 @@
 from __future__ import absolute_import, division, print_function
 
 from elasticsearch_dsl import Q
+from sqlalchemy import type_coerce
+from sqlalchemy.dialects.postgresql import JSONB
 
 from invenio_records.models import RecordMetadata
 
@@ -51,7 +53,8 @@ def get_all_curated_signatures():
         dict: a curated signature.
 
     """
-    query = RecordMetadata.query.with_entities(RecordMetadata.json)
+    query = RecordMetadata.query.with_entities(RecordMetadata.json).filter(
+        type_coerce(RecordMetadata.json, JSONB)['_collections'].contains(['Literature']))
 
     for record in query.yield_per(1000):
         for signature in record.json.get('authors', []):
