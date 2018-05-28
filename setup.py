@@ -49,6 +49,7 @@ install_requires = [
     'Flask~=0.0,>=0.12.4',
     'IDUtils~=1.0,>=1.0.1',
     'SQLAlchemy~=1.0,>=1.2.5',
+    'amqp~=2.0,>2.2.0,!=2.3.0',  # TODO delete this comment
     'backoff~=1.0,>=1.4.3',
     'backports.tempfile>=1.0rc1',
     'beard~=0.0,>=0.2.0',
