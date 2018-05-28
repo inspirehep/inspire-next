@@ -25,5 +25,11 @@
 from __future__ import absolute_import, division, print_function
 
 
+DISAMBIGUATION_CLUSTERS_PATH = '/tmp/clusters.json'
+"""The path to the file that will store the curated clusters."""
+
+DISAMBIGUATION_SIGNATURES_PATH = '/tmp/signatures.jl'
+"""The path to the file that will store the curated signatures."""
+
 DISAMBIGUATION_MODEL_PATH = '/tmp/inspire-disambiguation-model.pkl'
 """The path to the model that will be used to run the disambiguation."""
