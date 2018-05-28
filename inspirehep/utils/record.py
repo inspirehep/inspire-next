@@ -109,6 +109,24 @@ def get_arxiv_id(record):
     return get_value(record, 'arxiv_eprints.value[0]', default='')
 
 
+def get_collaborations(record):
+    """Return the collaborations associated with a record.
+
+    Args:
+        record(InspireRecord): a record.
+
+    Returns:
+        list(str): the collaborations associated with the record.
+
+    Examples:
+        >>> record = {'collaborations': [{'value': 'CMS'}]}
+        >>> get_collaborations(record)
+        ['CMS']
+
+    """
+    return get_value(record, 'collaborations.value', default=[])
+
+
 def get_inspire_categories(record):
     """Return all the INSPIRE categories of a record.
 
@@ -129,6 +147,31 @@ def get_inspire_categories(record):
 
     """
     return get_value(record, 'inspire_categories.term', default=[])
+
+
+def get_keywords(record):
+    """Return the keywords assigned to a record.
+
+    Args:
+        record(InspireRecord): a record.
+
+    Returns:
+        list(str): the keywords assigned to the record.
+
+    Examples:
+        >>> record = {
+        ...     'keywords': [
+        ...         {
+        ...             'schema': 'INSPIRE',
+        ...             'value': 'CKM matrix',
+        ...         },
+        ...     ],
+        ... }
+        >>> get_keywords(record)
+        ['CKM matrix']
+
+    """
+    return get_value(record, 'keywords.value', default=[])
 
 
 def get_method(record):
