@@ -24,11 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
-import sys
 from datetime import date
-from functools import wraps
 
-import six
 from dateutil.relativedelta import relativedelta
 from flask import (
     Blueprint,
@@ -322,37 +319,18 @@ def data():
 # Error handlers
 #
 
-def api_friendly_error_handler(f):
-    @wraps(f)
-    def wrapper(error, *args, **kwargs):
-        if current_app.config.get('RESTFUL_API'):
-            # See: https://hynek.me/articles/hasattr/
-            code, name = getattr(error, 'code', None), getattr(error, 'name', None)
-            if code is not None and name is not None:
-                return jsonify(code=error.code, message=error.name), error.code
-            else:
-                six.reraise(*sys.exc_info())
-        return f(error, *args, **kwargs)
-
-    return wrapper
-
-
-@api_friendly_error_handler
 def unauthorized(error):
     return render_template(current_app.config['THEME_401_TEMPLATE']), 401
 
 
-@api_friendly_error_handler
 def insufficient_permissions(error):
     return render_template(current_app.config['THEME_403_TEMPLATE']), 403
 
 
-@api_friendly_error_handler
 def page_not_found(error):
     return render_template(current_app.config['THEME_404_TEMPLATE']), 404
 
 
-@api_friendly_error_handler
 def internal_error(error):
     return render_template(current_app.config['THEME_500_TEMPLATE']), 500
 
