@@ -22,9 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
-from tempfile import mkstemp
-
 import pytest
 from flask import current_app
 from mock import patch
@@ -50,40 +47,34 @@ def jhep_with_malformed_title(app):
     record.commit()
 
 
-def test_create_journal_kb_file(app):
-    temporary_fd, path = mkstemp()
-    config = {'REFEXTRACT_JOURNAL_KB_PATH': path}
+def test_create_journal_kb_file(app, tmpdir):
+    journal_kb_fd = tmpdir.join('journal-titles.kb')
+
+    config = {'REFEXTRACT_JOURNAL_KB_PATH': str(journal_kb_fd)}
 
     with patch.dict(current_app.config, config):
         create_journal_kb_file()
 
-    with open(path, 'r') as fd:
-        journal_kb = fd.read().splitlines()
+    journal_kb = journal_kb_fd.read().splitlines()
 
-        assert 'JHEP---JHEP' in journal_kb
-        '''short_title -> short_title'''
+    # short_title -> short_title
+    assert 'JHEP---JHEP' in journal_kb
 
-        assert 'THE JOURNAL OF HIGH ENERGY PHYSICS JHEP---JHEP' in journal_kb
-        '''journal_title.title -> short_title, normalization is applied'''
+    # journal_title.title -> short_title, normalization is applied
+    assert 'THE JOURNAL OF HIGH ENERGY PHYSICS JHEP---JHEP' in journal_kb
 
-        assert 'JOURNAL OF HIGH ENERGY PHYSICS---JHEP' in journal_kb
-        '''title_variants -> short_title'''
-
-    os.close(temporary_fd)
-    os.remove(path)
+    # title_variants -> short_title
+    assert 'JOURNAL OF HIGH ENERGY PHYSICS---JHEP' in journal_kb
 
 
-def test_create_journal_kb_file_handles_malformed_title_variants(jhep_with_malformed_title):
-    temporary_fd, path = mkstemp()
-    config = {'REFEXTRACT_JOURNAL_KB_PATH': path}
+def test_create_journal_kb_file_handles_malformed_title_variants(jhep_with_malformed_title, tmpdir):
+    journal_kb_fd = tmpdir.join('journal-titles.kb')
+
+    config = {'REFEXTRACT_JOURNAL_KB_PATH': str(journal_kb_fd)}
 
     with patch.dict(current_app.config, config):
         create_journal_kb_file()
 
-    with open(path, 'r') as fd:
-        journal_kb = fd.read().splitlines()
+    journal_kb = journal_kb_fd.read().splitlines()
 
-        assert '---JHEP' not in journal_kb
-
-    os.close(temporary_fd)
-    os.remove(path)
+    assert '---JHEP' not in journal_kb
