@@ -998,6 +998,12 @@
                     "type": "integer"
                 },
                 "texkeys": {
+                    "fields": {
+                        "raw": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    },
                     "type": "string"
                 },
                 "thesis_info": {
