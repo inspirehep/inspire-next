@@ -332,6 +332,15 @@ services:
     command: gunicorn -b 0.0.0.0:5000 -t 3600 -w 1 --access-logfile "-" inspirehep.wsgi_with_coverage:application
     volumes_from:
       - test-static
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 15
+      test:
+        - "CMD"
+        - "bash"
+        - "-c"
+        - "env http_proxy= curl -v http://test-web-e2e.local:5000/ping | grep OK"
     depends_on:
       test-database:
         condition: service_healthy
@@ -349,6 +358,7 @@ services:
       - APP_ARXIV_TARBALL_URL="/e-print/{arxiv_id}"
       - APP_PRODUCTION_MODE=True
       - APP_LEGACY_ROBOTUPLOAD_URL="http://inspirehep.net/"
+      - APP_CRAWLER_HOST_URL=http://test-scrapyd:6800
 
 
   test-worker-e2e:
@@ -379,13 +389,15 @@ services:
       - APP_PRODUCTION_MODE=True
       - APP_LEGACY_ROBOTUPLOAD_URL="http://inspirehep.net/"
       - APP_LEGACY_PID_PROVIDER="http://inspirehep.net//batchuploader/allocaterecord"
+      - APP_CRAWLER_HOST_URL=http://test-scrapyd:6800
 
-  e2e:
+  # This is needed as docker-compose does not wait for the entry services to
+  # be actually healthy when doing `docker-compose run e2e`, but only for
+  # derived dependent services.
+  e2e-deps-placeholder:
     extends:
       service: proxied_base
-    command: py.test tests/e2e
-    volumes_from:
-      - test-static
+    command: "true"
     depends_on:
       mitm-proxy:
         condition: service_healthy
@@ -397,13 +409,23 @@ services:
         condition: service_healthy
       test-redis:
         condition: service_healthy
-      test-worker-e2e:
-        condition: service_started
       test-web-e2e.local:
+        condition: service_healthy
+      test-worker-e2e:
         condition: service_started
       test-scrapyd:
         condition: service_started
       test-scrapyd-deploy:
+        condition: service_started
+
+  e2e:
+    extends:
+      service: proxied_base
+    command: py.test -vvv tests/e2e
+    volumes_from:
+      - test-static
+    depends_on:
+      e2e-deps-placeholder:
         condition: service_started
     environment:
       - APP_SERVER_NAME=test-web:5000
