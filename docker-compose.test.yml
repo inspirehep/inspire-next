@@ -88,7 +88,7 @@ services:
   integration:
     extends:
       service: test-service_base
-    command: py.test tests/integration --ignore tests/integration/workflows
+    command: py.test tests/integration --ignore tests/integration/workflows --ignore tests/integration/search
     volumes_from:
       - test-static
     depends_on:
