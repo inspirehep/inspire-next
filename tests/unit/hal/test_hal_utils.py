@@ -26,7 +26,6 @@ from mock import patch
 
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.hal.utils import (
-    get_collaborations,
     get_conference_city,
     get_conference_country,
     get_conference_end_date,
@@ -40,30 +39,12 @@ from inspirehep.modules.hal.utils import (
     get_journal_issue,
     get_journal_title,
     get_journal_volume,
-    get_keywords,
     get_language,
     get_page_artid,
     get_peer_reviewed,
     get_publication_date,
     is_published,
 )
-
-
-def test_get_collaborations():
-    schema = load_schema('hep')
-    subschema = schema['properties']['collaborations']
-
-    record = {
-        'collaborations': [
-            {'value': 'CMS'},
-        ],
-    }
-    assert validate(record['collaborations'], subschema) is None
-
-    expected = ['CMS']
-    result = get_collaborations(record)
-
-    assert expected == result
 
 
 def test_get_conference_city():
@@ -292,26 +273,6 @@ def test_get_journal_volume():
 
     expected = 'D94'
     result = get_journal_volume(record)
-
-    assert expected == result
-
-
-def test_get_keywords():
-    schema = load_schema('hep')
-    subschema = schema['properties']['keywords']
-
-    record = {
-        'keywords': [
-            {
-                'schema': 'INSPIRE',
-                'value': 'CKM matrix',
-            },
-        ],
-    }
-    assert validate(record['keywords'], subschema) is None
-
-    expected = ['CKM matrix']
-    result = get_keywords(record)
 
     assert expected == result
 

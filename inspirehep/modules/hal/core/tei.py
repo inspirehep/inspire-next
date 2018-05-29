@@ -31,13 +31,14 @@ from langdetect.lang_detect_exception import LangDetectException
 from inspirehep.utils.record import (
     get_abstract,
     get_arxiv_id,
+    get_collaborations,
+    get_keywords,
     get_subtitle,
     get_title,
 )
 
 from ..utils import (
     get_authors,
-    get_collaborations,
     get_conference_city,
     get_conference_country,
     get_conference_end_date,
@@ -52,7 +53,6 @@ from ..utils import (
     get_journal_issue,
     get_journal_title,
     get_journal_volume,
-    get_keywords,
     get_language,
     get_page_artid,
     get_peer_reviewed,
