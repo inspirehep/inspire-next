@@ -83,7 +83,7 @@ install_requires = [
     'invenio-mail~=1.0,>=1.0.0',
     'invenio-oauthclient~=1.0,>=1.0.0',
     'invenio-records-files>=1.0.0a10',
-    'invenio-records-rest~=1.0,>=1.0.1',
+    'invenio-records-rest~=1.0,>=1.0.1,<1.1.0',
     'invenio-records-ui~=1.0,>=1.0.0',
     'invenio-records~=1.0,>=1.0.0',
     'invenio-rest~=1.0,>=1.0.0',
