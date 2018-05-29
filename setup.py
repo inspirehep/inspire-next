@@ -203,7 +203,6 @@ setup(
         'invenio_base.api_apps': [
             'inspire_records = inspirehep.modules.records.ext:InspireRecords',
             'inspire_search = inspirehep.modules.search:InspireSearch',
-            'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_workflows = inspirehep.modules.workflows:InspireWorkflows',
             'invenio_collections = invenio_collections:InvenioCollections',

@@ -98,25 +98,3 @@ def test_postfeedback_send_email_failure(delay, app_client):
 
     assert response.status_code == 500
     assert json.loads(response.data) == {'success': False}
-
-
-def test_page_not_found_renders_template_when_in_app(app_client):
-    response = app_client.get('/does-not-exist')
-
-    assert response.status_code == 404
-    assert response.mimetype == 'text/html'
-
-
-def test_page_not_Found_returns_json_when_in_api(api_client):
-    response = api_client.get('/does-not-exist')
-
-    assert response.status_code == 404
-    assert response.mimetype == 'application/json'
-
-    expected = {
-        'code': 404,
-        'message': 'Not Found',
-    }
-    result = json.loads(response.data)
-
-    assert expected == result
