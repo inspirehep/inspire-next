@@ -49,6 +49,11 @@ WORKFLOWS_REFERENCE_MATCHER_UNIQUE_IDENTIFIERS_CONFIG = {
                     'type': 'exact',
                 },
                 {
+                    'path': 'reference.texkey',
+                    'search_path': 'texkeys.raw',
+                    'type': 'exact',
+                },
+                {
                     'path': 'reference.report_numbers',
                     'search_path': 'report_numbers.value.fuzzy',
                     'type': 'exact',
