@@ -75,25 +75,19 @@ def assign_phonetic_block(sender, record, *args, **kwargs):
     if not is_hep(record):
         return
 
-    authors = record.get('authors', [])
-
-    authors_map = {}
-    for i, author in enumerate(authors):
-        if 'full_name' in author:
-            authors_map[author['full_name']] = i
+    author_names = get_value(record, 'authors.full_name', default=[])
 
     try:
-        signatures_blocks = phonetic_blocks(authors_map.keys())
+        signature_blocks = phonetic_blocks(author_names)
     except Exception as err:
         current_app.logger.error(
             'Cannot extract phonetic blocks for record %d: %s',
             record.get('control_number'), err)
         return
 
-    for full_name, signature_block in six.iteritems(signatures_blocks):
-        authors[authors_map[full_name]].update({
-            'signature_block': signature_block,
-        })
+    for author in record.get('authors', []):
+        if author['full_name'] in signature_blocks:
+            author['signature_block'] = signature_blocks[author['full_name']]
 
 
 @before_record_insert.connect

@@ -354,7 +354,46 @@ def test_assign_phonetic_block_handles_jimmy():
     assert expected == result
 
 
-def test_assign_phonetick_block_ignores_malformed_names():
+def test_assign_phonetic_block_handles_two_authors_with_the_same_name():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    record = {
+        '$schema': 'http://localhost:5000/records/schemas/hep.json',
+        'authors': [
+            {
+                'full_name': 'Wang, Meng',
+                'uuid': '986d27a9-5890-445a-bb35-00f56bea003e',
+            },
+            {
+                'full_name': 'Wang, Meng',
+                'uuid': '9b645148-a13c-47e2-9e24-8e9b173e308b',
+            },
+        ],
+    }  # literature/1662077
+    assert validate(record['authors'], subschema) is None
+
+    assign_phonetic_block(None, record)
+
+    expected = [
+        {
+            'full_name': 'Wang, Meng',
+            'signature_block': 'WANGm',
+            'uuid': '986d27a9-5890-445a-bb35-00f56bea003e',
+        },
+        {
+            'full_name': 'Wang, Meng',
+            'signature_block': 'WANGm',
+            'uuid': '9b645148-a13c-47e2-9e24-8e9b173e308b',
+        },
+    ]
+    result = record['authors']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
+def test_assign_phonetic_block_ignores_malformed_names():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
 
