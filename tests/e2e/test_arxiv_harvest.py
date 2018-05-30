@@ -23,13 +23,13 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-import requests
 import subprocess
 
 import backoff
 import pytest
 
 from inspirehep.testlib.api import InspireApiClient
+from inspirehep.testlib.api.mitm_client import MITMClient
 
 
 @pytest.fixture(autouse=True, scope='function')
@@ -46,6 +46,12 @@ def inspire_client():
     return InspireApiClient(base_url=inspire_url)
 
 
+@pytest.fixture
+def mitm_client():
+    mitmproxy_url = os.environ.get('MITMPROXY_HOST', 'http://mitm-manager.local')
+    return MITMClient(mitmproxy_url)
+
+
 def wait_for(func, *args, **kwargs):
     max_time = kwargs.pop('max_time', 200)
     interval = kwargs.pop('interval', 2)
@@ -60,11 +66,8 @@ def wait_for(func, *args, **kwargs):
     return decorated(*args, **kwargs)
 
 
-def test_harvest_non_core_article_goes_in(inspire_client):
-    requests.post(
-        url='http://mitm-manager.local/config',
-        json={'active_scenario': 'harvest_non_core_article_goes_in'},
-    )
+def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
+    mitm_client.set_scenario('harvest_non_core_article_goes_in')
 
     inspire_client.holdingpen.run_harvest(
         spider='arXiv',

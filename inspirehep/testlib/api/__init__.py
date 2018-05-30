@@ -44,12 +44,6 @@ class Session(requests.Session):
             full_path = '/' + full_path
         return self._base_url + full_path
 
-    def bare_get(self, *args, **kwargs):
-        return super(Session, self).get(*args, **kwargs)
-
-    def bare_post(self, *args, **kwargs):
-        return super(Session, self).post(*args, **kwargs)
-
     def get(self, *args, **kwargs):
         full_url = self.get_full_url(*args)
         return super(Session, self).get(full_url, **kwargs)
@@ -57,6 +51,10 @@ class Session(requests.Session):
     def post(self, *args, **kwargs):
         full_url = self.get_full_url(*args)
         return super(Session, self).post(full_url, **kwargs)
+
+    def put(self, *args, **kwargs):
+        full_url = self.get_full_url(*args)
+        return super(Session, self).put(full_url, **kwargs)
 
     @staticmethod
     def response_to_string(res):

@@ -45,7 +45,7 @@ services:
       - https_proxy=mitm-proxy:8080
 
   mitm-proxy:
-    image: inspirehep/inspire-mitmproxy:0.8
+    image: inspirehep/inspire-mitmproxy:0
     tty: true
     ports:
       - 127.0.0.1:8081:8081
