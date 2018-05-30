@@ -93,7 +93,7 @@ def formdata_to_model(obj, formdata):
     )
 
     for key in ('extra_comments', 'nonpublic_note',
-                'hidden_notes', 'conf_name', 'references'):
+                'hidden_notes', 'conf_name'):
         builder.add_private_note(
             private_notes=form_fields.get(key)
         )
