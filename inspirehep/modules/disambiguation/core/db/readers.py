@@ -95,7 +95,7 @@ def get_signatures_matching_a_phonetic_encoding(phonetic_encoding):
         record = record.to_dict()
         publication = _build_publication(record)
         for author in record.get('authors', []):
-            if author['signature_block'] == phonetic_encoding:
+            if author.get('signature_block') == phonetic_encoding:
                 yield _build_signature(author, publication)
 
 
@@ -118,7 +118,7 @@ def _build_signature(author, publication):
         'author_name': author['full_name'],
         'publication': publication,
         'publication_id': publication['publication_id'],
-        'signature_block': author['signature_block'],
+        'signature_block': author.get('signature_block'),
         'signature_uuid': author['uuid'],
     }
 
