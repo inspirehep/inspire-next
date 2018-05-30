@@ -68,6 +68,12 @@ def test_get_all_curated_signatures(isolated_app):
     assert expected in result
 
 
+def test_get_all_curated_signatures_does_not_raise_on_authors_without_a_signature_block(isolated_app):
+    TestRecordMetadata.create_from_file(__name__, '1662077.json')
+
+    list(get_all_curated_signatures())  # Does not raise.
+
+
 def test_get_signatures_matching_a_phonetic_encoding(isolated_app):
     TestRecordMetadata.create_from_file(__name__, '8201.json', index_name='records-hep')
     TestRecordMetadata.create_from_file(__name__, '1518353.json', index_name='records-hep')
@@ -149,3 +155,9 @@ def test_get_signatures_matching_a_phonetic_encoding(isolated_app):
     result = list(get_signatures_matching_a_phonetic_encoding('Rm'))
 
     assert sorted(expected) == sorted(result)
+
+
+def test_get_signatures_matching_a_phonetic_encoding_does_not_raise_on_authors_without_a_signature_block(isolated_app):
+    TestRecordMetadata.create_from_file(__name__, '1662077.json', index_name='records-hep')
+
+    list(get_signatures_matching_a_phonetic_encoding('WANGm'))  # Does not raise.
