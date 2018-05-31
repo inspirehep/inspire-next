@@ -42,17 +42,13 @@ from inspirehep.utils.record import (
 )
 
 SIGNATURE_FIELDS = [
-    'abstracts.value',
     'authors.affiliations.value',
+    'authors.curated_relation',
     'authors.full_name',
     'authors.record',
     'authors.signature_block',
     'authors.uuid',
-    'collaborations.value',
     'control_number',
-    'inspire_categories.term',
-    'keywords.value',
-    'titles.title',
 ]
 
 
@@ -71,10 +67,10 @@ def get_all_curated_signatures():
         type_coerce(RecordMetadata.json, JSONB)['_collections'].contains(['Literature']))
 
     for record in query.yield_per(1000):
-        publication = _build_publication(record.json)
+        publication_id = record.json['control_number']
         for author in record.json.get('authors', []):
             if author.get('curated_relation'):
-                yield _build_signature(author, publication)
+                yield _build_signature(author, publication_id)
 
 
 def get_signatures_matching_a_phonetic_encoding(phonetic_encoding):
@@ -93,16 +89,33 @@ def get_signatures_matching_a_phonetic_encoding(phonetic_encoding):
 
     for record in search_by_phonetic_encoding:
         record = record.to_dict()
-        publication = _build_publication(record)
+        publication_id = record['control_number']
         for author in record.get('authors', []):
             if author.get('signature_block') == phonetic_encoding:
-                yield _build_signature(author, publication)
+                yield _build_signature(author, publication_id)
+
+
+def get_all_publications():
+    """Get all publications from the DB.
+
+    Walks through all Literature records and collects all information
+    that will be useful for ``BEARD`` during training and prediction.
+
+    Yields:
+        dict: a publication.
+
+    """
+    query = RecordMetadata.query.with_entities(RecordMetadata.json).filter(
+        type_coerce(RecordMetadata.json, JSONB)['_collections'].contains(['Literature']))
+
+    for record in query.yield_per(1000):
+        yield _build_publication(record.json)
 
 
 def _build_publication(record):
     return {
         'abstract': get_abstract(record),
-        'authors': _get_authors_names(record),
+        'authors': _get_authors(record),
         'collaborations': get_collaborations(record),
         'keywords': get_keywords(record),
         'publication_id': record['control_number'],
@@ -111,13 +124,12 @@ def _build_publication(record):
     }
 
 
-def _build_signature(author, publication):
+def _build_signature(author, publication_id):
     return {
         'author_affiliation': _get_author_affiliation(author),
-        'author_id': get_recid_from_ref(author.get('record')),
+        'author_id': _get_author_id(author),
         'author_name': author['full_name'],
-        'publication': publication,
-        'publication_id': publication['publication_id'],
+        'publication_id': publication_id,
         'signature_block': author.get('signature_block'),
         'signature_uuid': author['uuid'],
     }
@@ -127,5 +139,10 @@ def _get_author_affiliation(author):
     return get_value(author, 'affiliations.value[0]', default='')
 
 
-def _get_authors_names(record):
+def _get_author_id(author):
+    if author.get('curated_relation'):
+        return get_recid_from_ref(author.get('record'))
+
+
+def _get_authors(record):
     return get_value(record, 'authors.full_name', default=[])

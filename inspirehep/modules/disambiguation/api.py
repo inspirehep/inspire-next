@@ -29,17 +29,19 @@ from collections import defaultdict
 
 from flask import current_app
 
-from inspirehep.modules.disambiguation.core.db.readers import get_all_curated_signatures
+from inspirehep.modules.disambiguation.core.db.readers import (
+    get_all_curated_signatures,
+    get_all_publications,
+)
 
 
-def save_training_data():
-    """Save training data to disk.
+def save_signatures_and_clusters():
+    """Save signatures and starting clusters to disk.
 
-    Saves two files to disk called (by default) ``clusters.json`` and ``signatures.json``.
+    Saves two files to disk called (by default) ``clusters.json`` and ``signatures.jl``.
     The former contains a dictionary that represents the starting clusters that are used
-    by BEARD as ground truth, while the latter contains one line per curated signature
+    by ``BEARD`` as ground truth, while the latter contains one line per curated signature
     present in INSPIRE.
-
     """
     clusters = defaultdict(list)
 
@@ -51,3 +53,17 @@ def save_training_data():
 
     with open(current_app.config['DISAMBIGUATION_CLUSTERS_PATH'], 'w') as fd:
         json.dump(clusters, fd)
+
+
+def save_publications():
+    """Save publications to disk.
+
+    Saves a file to disk called (by default) ``publications.json`` which contains all
+    information that will be useful for ``BEARD`` during training and prediction.
+    """
+    publications = {}
+    for publication in get_all_publications():
+        publications[publication['publication_id']] = publication
+
+    with open(current_app.config['DISAMBIGUATION_PUBLICATIONS_PATH'], 'w') as fd:
+        json.dump(publications, fd)
