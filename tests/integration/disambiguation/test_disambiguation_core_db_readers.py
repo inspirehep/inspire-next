@@ -60,7 +60,7 @@ def test_get_signatures_matching_a_phonetic_encoding(isolated_app):
     expected = [
         {
             'author_affiliation': 'SUNY, Stony Brook',
-            'author_id': 991871,
+            'author_id': None,
             'author_name': 'Rho, Mannque',
             'publication_id': 8201,
             'signature_block': 'Rm',
@@ -84,6 +84,24 @@ def test_get_signatures_matching_a_phonetic_encoding_does_not_raise_on_authors_w
     TestRecordMetadata.create_from_file(__name__, '1662077.json', index_name='records-hep')
 
     list(get_signatures_matching_a_phonetic_encoding('WANGm'))  # Does not raise.
+
+
+def test_get_signatures_matching_a_phonetic_encoding_attributes_author_id_only_when_curated(isolated_app):
+    TestRecordMetadata.create_from_file(__name__, '1667581.json', index_name='records-hep')
+
+    expected = [
+        {
+            'author_affiliation': 'INFN, Padua',
+            'author_id': None,
+            'author_name': 'Torassa, Ezio',
+            'publication_id': 1667581,
+            'signature_block': 'TARASe',
+            'signature_uuid': '7a067384-777a-4acd-a4df-6f9a4ff50068',
+        },
+    ]
+    result = list(get_signatures_matching_a_phonetic_encoding('TARASe'))
+
+    assert expected == result
 
 
 def test_get_all_publications():

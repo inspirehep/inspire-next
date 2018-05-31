@@ -43,6 +43,7 @@ from inspirehep.utils.record import (
 
 SIGNATURE_FIELDS = [
     'authors.affiliations.value',
+    'authors.curated_relation',
     'authors.full_name',
     'authors.record',
     'authors.signature_block',
@@ -126,7 +127,7 @@ def _build_publication(record):
 def _build_signature(author, publication_id):
     return {
         'author_affiliation': _get_author_affiliation(author),
-        'author_id': get_recid_from_ref(author.get('record')),
+        'author_id': _get_author_id(author),
         'author_name': author['full_name'],
         'publication_id': publication_id,
         'signature_block': author.get('signature_block'),
@@ -136,6 +137,11 @@ def _build_signature(author, publication_id):
 
 def _get_author_affiliation(author):
     return get_value(author, 'affiliations.value[0]', default='')
+
+
+def _get_author_id(author):
+    if author.get('curated_relation'):
+        return get_recid_from_ref(author.get('record'))
 
 
 def _get_authors_names(record):
