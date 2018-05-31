@@ -31,6 +31,7 @@ from posixpath import join as urljoin
 from inspirehep.testlib.api.literature import LiteratureApiClient
 from inspirehep.testlib.api.callback import CallbackClient
 from inspirehep.testlib.api.holdingpen import HoldingpenApiClient
+from inspirehep.testlib.api.e2e import E2EClient
 
 
 class Session(requests.Session):
@@ -103,6 +104,7 @@ class InspireApiClient(object):
         self.holdingpen = HoldingpenApiClient(self._client)
         self.literature = LiteratureApiClient(self._client)
         self.callback = CallbackClient(self._client)
+        self.e2e = E2EClient(self._client)
 
     def login_local(self, user='admin@inspirehep.net', password='123456'):
         """Perform a local log-in in Inspire storing the session"""

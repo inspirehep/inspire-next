@@ -23,19 +23,12 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-import subprocess
 
 import backoff
 import pytest
 
 from inspirehep.testlib.api import InspireApiClient
 from inspirehep.testlib.api.mitm_client import MITMClient
-
-
-@pytest.fixture(autouse=True, scope='function')
-def init_environment():
-    init_db = './scripts/recreate_records --no-populate'
-    subprocess.call(init_db.split())
 
 
 @pytest.fixture
@@ -50,6 +43,15 @@ def inspire_client():
 def mitm_client():
     mitmproxy_url = os.environ.get('MITMPROXY_HOST', 'http://mitm-manager.local')
     return MITMClient(mitmproxy_url)
+
+
+@pytest.fixture(autouse=True, scope='function')
+def init_environment(inspire_client):
+    inspire_client.e2e.init_db()
+    inspire_client.e2e.init_es()
+    inspire_client.e2e.init_fixtures()
+    # refresh login session
+    inspire_client.login_local()
 
 
 def wait_for(func, *args, **kwargs):
@@ -69,7 +71,7 @@ def wait_for(func, *args, **kwargs):
 def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
     mitm_client.set_scenario('harvest_non_core_article_goes_in')
 
-    inspire_client.holdingpen.run_harvest(
+    inspire_client.e2e.schedule_crawl(
         spider='arXiv',
         workflow='article',
         url='http://export.arxiv.org/oai2',
