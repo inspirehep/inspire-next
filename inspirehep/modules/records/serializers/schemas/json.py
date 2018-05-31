@@ -27,8 +27,8 @@ from __future__ import absolute_import, division, print_function
 from marshmallow import Schema, fields
 
 
-class RecordSchemaJSONBRIEFV1(Schema):
-    """Schema for brief records v1 in JSON."""
+class RecordSchemaJSONUIV1(Schema):
+    """Schema for record UI."""
 
     id = fields.Integer(attribute='pid.pid_value')
     metadata = fields.Raw()

@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from invenio_records_rest.serializers.response import search_responsify
 
 from .impactgraph_serializer import ImpactGraphSerializer
-from .json_literature import LiteratureJSONBriefSerializer
+from .json_literature import LiteratureJSONUISerializer
 from .pybtex_serializer_base import PybtexSerializerBase
 from .writers import BibtexWriter
 from .schemas.base import PybtexSchema
@@ -36,19 +36,22 @@ from .latexus_serializer import LATEXUSSerializer
 from .cvformatlatex_serializer import CVFORMATLATEXSerializer
 from .cvformathtml_serializer import CVFORMATHTMLSerializer
 from .cvformattext_serializer import CVFORMATTEXTSerializer
-from .schemas.json import RecordSchemaJSONBRIEFV1
+from .schemas.json import RecordSchemaJSONUIV1
 from .marcxml import MARCXMLSerializer
 
 from .response import record_responsify_nocache
 
-json_literature_brief_v1 = LiteratureJSONBriefSerializer(
-    RecordSchemaJSONBRIEFV1
+json_literature_ui_v1 = LiteratureJSONUISerializer(
+    RecordSchemaJSONUIV1
 )
-json_literature_brief_v1_search = search_responsify(
-    json_literature_brief_v1,
-    'application/vnd+inspire.brief+json'
+json_literature_ui_v1_search = search_responsify(
+    json_literature_ui_v1,
+    'application/vnd+inspire.literature.ui+json'
 )
-
+json_literature_ui_v1_response = record_responsify_nocache(
+    json_literature_ui_v1,
+    'application/vnd+inspire.literature.ui+json'
+)
 
 bibtex_v1 = PybtexSerializerBase(PybtexSchema(), BibtexWriter())
 latexeu_v1 = LATEXEUSerializer()
