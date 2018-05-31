@@ -115,7 +115,7 @@ def get_all_publications():
 def _build_publication(record):
     return {
         'abstract': get_abstract(record),
-        'authors': _get_authors_names(record),
+        'authors': _get_authors(record),
         'collaborations': get_collaborations(record),
         'keywords': get_keywords(record),
         'publication_id': record['control_number'],
@@ -144,5 +144,5 @@ def _get_author_id(author):
         return get_recid_from_ref(author.get('record'))
 
 
-def _get_authors_names(record):
+def _get_authors(record):
     return get_value(record, 'authors.full_name', default=[])
