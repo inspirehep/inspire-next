@@ -30,27 +30,16 @@ from inspire_utils.date import format_date
 from inspirehep.modules.records.wrappers import LiteratureRecord
 
 
-def process_es_hit(record):
+def _get_ui_metadata(record):
+    """Record extra metadata for the UI.
+
+    Args:
+        record(dict): the record.
+
+    Returns:
+        dict: the extra metadata.
     """
-    Process record coming from Elasticsearch.
 
-    Allows to remove unnecessary fields to reduce bandwidth and speed
-    up the client application.
-    """
-    if 'authors' in record:
-        record['authors'] = record['authors'][:10]
-    if 'references' in record:
-        del record['references']
-
-    return record
-
-
-def get_display_fields(record):
-    """
-    Add extra fields used for display by client application.
-
-    Jinja2 filters can be applied here to format certain fields.
-    """
     display = {}
     record = LiteratureRecord(record)
     if 'references' in record:
@@ -62,32 +51,44 @@ def get_display_fields(record):
         display['conference_info'] = record.conference_information
     if 'authors' in record:
         display['number_of_authors'] = len(record['authors'])
+    if 'external_system_identifiers' in record:
+        display['external_system_identifiers'] = \
+            record.external_system_identifiers
     display['admin_tools'] = record.admin_tools
 
     return display
 
 
-class LiteratureJSONBriefSerializer(JSONSerializer):
+def _preprocess_result(result):
+    record = result['metadata']
+
+    ui_metadata = _get_ui_metadata(record)
+    # FIXME: Deprecated, must be removed once the new UI is released
+    result['display'] = ui_metadata
+
+    if 'authors' in record:
+        record['authors'] = record['authors'][:10]
+    if 'references' in record:
+        del record['references']
+
+    record.update(ui_metadata)
+    result['metadata'] = record
+
+    return result
+
+
+class LiteratureJSONUISerializer(JSONSerializer):
     """JSON brief format serializer."""
 
-    @staticmethod
-    def preprocess_search_hit(pid, record_hit, links_factory=None):
-        """Prepare a record hit from Elasticsearch for serialization."""
-        links_factory = links_factory or (lambda x: dict())
-        # Get extra display fields before the ES hit gets processed
-        display = get_display_fields(record_hit['_source'])
-        record = dict(
-            pid=pid,
-            metadata=process_es_hit(record_hit['_source']),
-            links=links_factory(pid),
-            display=display,
-            revision=record_hit['_version'],
-            created=None,
-            updated=None,
+    def preprocess_record(self, pid, record, links_factory=None, **kwargs):
+        result = super(LiteratureJSONUISerializer, self).preprocess_record(
+            pid, record, links_factory=links_factory, **kwargs
         )
-        # Move created/updated attrs from source to object.
-        for key in ['_created', '_updated']:
-            if key in record['metadata']:
-                record[key[1:]] = record['metadata'][key]
-                del record['metadata'][key]
-        return record
+        return _preprocess_result(result)
+
+    def preprocess_search_hit(self, pid, record_hit, links_factory=None,
+                              **kwargs):
+        result = super(LiteratureJSONUISerializer, self).\
+            preprocess_search_hit(pid, record_hit,
+                                  links_factory=links_factory, **kwargs)
+        return _preprocess_result(result)
