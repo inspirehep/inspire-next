@@ -50,7 +50,7 @@ def make_user_agent_string(component=""):
 def is_pdf_link(url):
     """Return ``True`` if ``url`` points to a PDF.
 
-    Returns ``True`` if the first significant line of the response starts with
+    Returns ``True`` if the first non-whitespace characters of the response are
     ``%PDF``.
 
     Args:
@@ -65,11 +65,9 @@ def is_pdf_link(url):
     except requests.exceptions.RequestException:
         return False
 
-    significant_lines = [line for line in response.iter_lines(10) if line.strip()]
-    if not significant_lines:
-        return False
+    significant_bytes = next(response.iter_content(10000), '').strip()
 
-    return significant_lines[0].startswith('%PDF')
+    return significant_bytes.startswith('%PDF')
 
 
 def copy_file(src_file, dst_file, buffer_size=io.DEFAULT_BUFFER_SIZE):
