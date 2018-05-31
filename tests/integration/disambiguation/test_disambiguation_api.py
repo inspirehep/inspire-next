@@ -29,10 +29,13 @@ from flask import current_app
 
 from factories.db.invenio_records import TestRecordMetadata
 
-from inspirehep.modules.disambiguation.api import save_training_data
+from inspirehep.modules.disambiguation.api import (
+    save_publications,
+    save_signatures_and_clusters,
+)
 
 
-def test_save_training_data(isolated_app, tmpdir):
+def test_save_signatures_and_clusters(isolated_app, tmpdir):
     TestRecordMetadata.create_from_file(__name__, '792017.json')
 
     clusters_fd = tmpdir.join('clusters.json')
@@ -44,7 +47,7 @@ def test_save_training_data(isolated_app, tmpdir):
     }
 
     with patch.dict(current_app.config, config):
-        save_training_data()
+        save_signatures_and_clusters()
 
     clusters = json.load(clusters_fd)
 
@@ -57,29 +60,44 @@ def test_save_training_data(isolated_app, tmpdir):
         'author_affiliation': 'CERN',
         'author_id': 1010819,
         'author_name': 'Ellis, John R.',
-        'publication': {
-            'abstract': 'This talk describes past progress in probing the structure of matter and the content of the Universe, which has led to the Standard Model of elementary particles, and the prospects for establishing new physics beyond the Standard Model using the LHC particle collider at CERN.',
-            'authors': ['Ellis, John R.'],
-            'collaborations': [],
-            'keywords': [
-                '29.20.Db',
-                '98.80.-k',
-                '12.60.-i',
-                'elementary particles',
-                'standard model',
-                'cosmology',
-                'particle accelerators',
-                'Elementary particles',
-                'Beyond the Standard Model',
-                'Colliders',
-                'Large Hadron Collider',
-                'Standard Model',
-            ],
-            'publication_id': 792017,
-            'title': 'The quest for elementary particles',
-            'topics': ['Phenomenology-HEP'],
-        },
         'publication_id': 792017,
         'signature_block': 'ELj',
         'signature_uuid': '94f560d2-6791-43ec-a379-d3dc4ad0ceb7',
     } in signatures
+
+
+def test_save_publications(isolated_app, tmpdir):
+    TestRecordMetadata.create_from_file(__name__, '792017.json')
+
+    publications_fd = tmpdir.join('publications.json')
+
+    config = {'DISAMBIGUATION_PUBLICATIONS_PATH': str(publications_fd)}
+
+    with patch.dict(current_app.config, config):
+        save_publications()
+
+    publications = json.load(publications_fd)
+
+    assert '792017' in publications
+    assert {
+        'abstract': 'This talk describes past progress in probing the structure of matter and the content of the Universe, which has led to the Standard Model of elementary particles, and the prospects for establishing new physics beyond the Standard Model using the LHC particle collider at CERN.',
+        'authors': ['Ellis, John R.'],
+        'collaborations': [],
+        'keywords': [
+            '29.20.Db',
+            '98.80.-k',
+            '12.60.-i',
+            'elementary particles',
+            'standard model',
+            'cosmology',
+            'particle accelerators',
+            'Elementary particles',
+            'Beyond the Standard Model',
+            'Colliders',
+            'Large Hadron Collider',
+            'Standard Model',
+        ],
+        'publication_id': 792017,
+        'title': 'The quest for elementary particles',
+        'topics': ['Phenomenology-HEP'],
+    } == publications['792017']
