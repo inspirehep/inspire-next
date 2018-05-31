@@ -20,35 +20,35 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-""" Record related utils."""
-
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.modules.pidstore.utils import (
-    get_endpoint_from_pid_type,
-    get_pid_type_from_schema
-)
-from inspirehep.utils.record_getter import get_db_records
+from factories.db.invenio_records import TestRecordMetadata
+
+from inspirehep.modules.records.utils import get_resolved_references
 
 
-def get_endpoint_from_record(record):
-    """Return the endpoint corresponding to a record."""
-    pid_type = get_pid_type_from_schema(record['$schema'])
-    endpoint = get_endpoint_from_pid_type(pid_type)
-
-    return endpoint
+def test_get_resolved_references_handles_empty_list(isolated_app):
+    results = get_resolved_references([])
+    assert results == []
 
 
-def get_resolved_references(record_ids):
-    """Resolve record in record's references.
+def test_get_resolved_references_with_missing_record(isolated_app):
+    TestRecordMetadata.create_from_file(
+        __name__, '29177.json', index_name='records-hep')
+    references = [9999999]
+    results = get_resolved_references(references)
+    expected = []
 
-    Args:
-        record_ids(list): a list of record ids.
+    assert expected == list(results)
 
-    Returns:
-        list: a list with resolved records.
-    """
-    if not record_ids:
-        return []
 
-    return get_db_records('lit', record_ids)
+def test_existing_references(isolated_app):
+    instance = TestRecordMetadata.create_from_file(
+        __name__, '29177.json', index_name='records-hep')
+
+    references = [29177]
+
+    results = get_resolved_references(references)
+    expected = [instance.record_metadata.json]
+    result = list(results)
+    assert expected == result

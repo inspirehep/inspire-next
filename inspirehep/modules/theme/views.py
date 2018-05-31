@@ -350,7 +350,10 @@ def ping():
 
 @blueprint.route('/ajax/references', methods=['GET'])
 def ajax_references():
-    """Handler for datatables references view"""
+    """Handler for datatables references view.
+
+    .. deprecated:: 2018-06-07
+    """
     recid = request.args.get('recid', '')
     endpoint = request.args.get('endpoint', '')
 
