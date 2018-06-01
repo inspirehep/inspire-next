@@ -41,18 +41,10 @@ services:
       - APP_LAST_RUNS_PATH=.lastruns
       - APP_OAIHARVESTER_WORKDIR=/virtualenv/oaiharvest_workdir
 
-  proxied_base:
-    extends: service_base
-    environment:
-      - HTTP_PROXY=mitm-proxy:8080
-      - http_proxy=mitm-proxy:8080
-      - HTTPS_PROXY=mitm-proxy:8080
-      - https_proxy=mitm-proxy:8080
-
   # Services using the inspirehep code.
   web:
     extends:
-      service: proxied_base
+      service: service_base
     command: gunicorn -b 0.0.0.0:5000 -t 3600 --access-logfile "-" --reload inspirehep.wsgi
     volumes_from:
       - static
@@ -67,15 +59,13 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      mitm-proxy:
-        condition: service_healthy
     environment:
       - APP_DEBUG=True
       - APP_ASSETS_DEBUG=True
 
   worker:
     extends:
-      service: proxied_base
+      service: service_base
     command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge --queues celery,migrator,harvests,orcid_push
     volumes_from:
       - static
@@ -96,8 +86,6 @@ services:
       rabbitmq:
         condition: service_healthy
       redis:
-        condition: service_healthy
-      mitm-proxy:
         condition: service_healthy
 
   # Services needed for inspirehep to run.
@@ -157,28 +145,10 @@ services:
 
   scrapyd:
     extends:
-      service: proxied_base
+      service: service_base
     command: bash -c "rm -f twistd.pid && exec scrapyd"
     volumes_from:
       - static
-    depends_on:
-      mitm-proxy:
-        condition: service_healthy
-
-  mitm-proxy:
-    image: inspirehep/inspire-mitmproxy:0.4
-    tty: true
-    ports:
-      - 127.0.0.1:8081:8081
-    environment:
-      - SCENARIOS_PATH=/inspire-next/tests/e2e/scenarios/
-    healthcheck:
-      timeout: 5s
-      interval: 5s
-      retries: 5
-      test: nc -z 127.0.0.1:8080
-    volumes:
-        - ".:/inspire-next"
 
   # Services useful for monitoring/debugging.
   flower:
