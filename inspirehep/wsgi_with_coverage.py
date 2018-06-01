@@ -87,6 +87,7 @@ app.url_map.update()
 @app.route('/e2e/init_db', methods=['GET'])
 def init_db():
     LOGGER.info('Recreating the DB')
+    db.session.close()
     db.drop_all()
     db.create_all()
     db.session.commit()

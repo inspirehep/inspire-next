@@ -108,6 +108,7 @@ class InspireApiClient(object):
 
     def login_local(self, user='admin@inspirehep.net', password='123456'):
         """Perform a local log-in in Inspire storing the session"""
+        self._client.cookies.clear()
         login_data = {
             'csrf_token': '',
             'email': user,
