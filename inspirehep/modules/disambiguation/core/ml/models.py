@@ -33,6 +33,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 
 from beard.utils import normalize_name
+from inspirehep.modules.disambiguation.utils import ensure_attributes
 
 
 class EthnicityEstimator(object):
@@ -54,10 +55,12 @@ class EthnicityEstimator(object):
         self.X = normalized_names
         self.y = ethnicities
 
+    @ensure_attributes(['estimator'], 'Run "fit" before "save".')
     def save(self, output_filename):
         with open(output_filename, 'w') as fd:
             pickle.dump(self.estimator, fd, protocol=pickle.HIGHEST_PROTOCOL)
 
+    @ensure_attributes(['X', 'y'], 'Run "load" before "fit".')
     def fit(self):
         self.estimator = Pipeline([
             ('transformer', TfidfVectorizer(analyzer='char_wb',
@@ -69,5 +72,6 @@ class EthnicityEstimator(object):
         ])
         self.estimator.fit(self.X, self.y)
 
+    @ensure_attributes(['estimator'], 'Run "fit" before "predict".')
     def predict(self, X):
         return self.estimator.predict(X)
