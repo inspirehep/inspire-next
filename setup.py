@@ -99,6 +99,7 @@ install_requires = [
     'langdetect~=1.0,>=1.0.7',
     'latexcodec~=1.0,>=1.0.5',
     'marshmallow~=2.0,>=2.15.0',  # See: inveniosoftware/invenio-records-rest#186
+    'numpy~=1.0,>=1.14.3',
     'orcid~=1.0,>=1.0.2',
     'plotextractor~=0.0,>=0.1.6',
     'pyOpenSSL~=17.0,>=17.5.0',
@@ -107,6 +108,7 @@ install_requires = [
     'raven[flask]~=6.0,>=6.2.1',
     'refextract~=0.0,>=0.2.2',
     'requests~=2.0,>=2.18.4',
+    'scikit-learn~=0.0,>=0.19.1',
     'setproctitle~=1.0,>=1.1.10',
     'timeout-decorator~=0.0,>=0.4.0',
     'workflow~=2.0,>=2.1.3',
