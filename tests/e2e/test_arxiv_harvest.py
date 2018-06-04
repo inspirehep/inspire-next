@@ -96,15 +96,14 @@ def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
         completed_entry.workflow_id
     )
 
-    # check workflows goes as expected
-    assert entry.status == 'COMPLETED'
-    assert entry.core is None
+    # check workflow goes as expected
     assert entry.approved is True
-
-    assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
     assert entry.arxiv_eprint == '1404.0579'
-    assert entry.doi == '10.1016/j.nima.2014.04.029'
     assert entry.control_number
+    assert entry.core is None
+    assert entry.doi == '10.1016/j.nima.2014.04.029'
+    assert entry.status == 'COMPLETED'
+    assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
 
     # check literature record is available and consistent
     record = inspire_client.literature.get_record(entry.control_number)
@@ -144,15 +143,78 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
         completed_entry.workflow_id
     )
 
-    # check workflows goes as expected
-    assert entry.status == 'COMPLETED'
-    assert entry.core
+    # check workflow goes as expected
     assert entry.approved is True
-
-    assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
     assert entry.arxiv_eprint == '1404.0579'
-    assert entry.doi == '10.1016/j.nima.2014.04.029'
     assert entry.control_number
+    assert entry.core
+    assert entry.doi == '10.1016/j.nima.2014.04.029'
+    assert entry.status == 'COMPLETED'
+    assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
+
+    # check literature record is available and consistent
+    record = inspire_client.literature.get_record(entry.control_number)
+    assert record.title == entry.title
+
+    # check that the external services were actually called
+    mitm_client.assert_interaction_used(
+        service_name='LegacyService',
+        interaction_name='robotupload',
+        times=1,
+    )
+    mitm_client.assert_interaction_used(
+        service_name='RTService',
+        interaction_name='ticket_new',
+        times=1,
+    )
+
+
+def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client):
+    mitm_client.set_scenario('harvest_core_article_manual_accept_goes_in')
+
+    inspire_client.e2e.schedule_crawl(
+        spider='arXiv',
+        workflow='article',
+        url='http://export.arxiv.org/oai2',
+        sets='q-bio',
+        from_date='2018-03-25',
+    )
+
+    def _all_in_status(status):
+        hp_entries = inspire_client.holdingpen.get_list_entries()
+        try:
+            assert len(hp_entries) == 1
+            assert all(entry.status == status for entry in hp_entries)
+        except AssertionError:
+            print(
+                'Current holdingpen entries (waiting for them to be in %s status): %s'
+                % (status, hp_entries)
+            )
+            raise
+        return hp_entries[0]
+
+    halted_entry = wait_for(lambda: _all_in_status('HALTED'))
+    entry = inspire_client.holdingpen.get_detail_entry(halted_entry.workflow_id)
+
+    # check workflow gets halted
+    assert entry.approved is None
+    assert entry.arxiv_eprint == '1404.0579'
+    assert entry.control_number is None
+    assert entry.core is None
+    assert entry.doi == '10.1016/j.nima.2014.04.029'
+    assert entry.status == 'HALTED'
+    assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
+
+    inspire_client.holdingpen.accept_core(holdingpen_id=entry.workflow_id)
+
+    # check that completed workflow is ok
+    completed_entry = wait_for(lambda: _all_in_status('COMPLETED'))
+    entry = inspire_client.holdingpen.get_detail_entry(completed_entry.workflow_id)
+
+    assert entry.arxiv_eprint == '1404.0579'
+    assert entry.control_number is 42
+    assert entry.doi == '10.1016/j.nima.2014.04.029'
+    assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
 
     # check literature record is available and consistent
     record = inspire_client.literature.get_record(entry.control_number)
