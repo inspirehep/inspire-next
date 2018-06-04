@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
+
 from inspirehep.modules.disambiguation.core.ml.models import EthnicityEstimator
 
 TRAINING_DATA = '''\
@@ -38,5 +40,22 @@ def test_ethnicity_estimator(tmpdir):
 
     estimator = EthnicityEstimator()
     estimator.load(str(input_file))
+    estimator.fit()
+    estimator.save(str(output_file))
+
+
+def test_ethnicity_estimator_methods_must_be_called_in_the_right_order(tmpdir):
+    input_file = tmpdir.join('input.csv')
+    input_file.write(TRAINING_DATA)
+    output_file = tmpdir.join('output.pkl')
+
+    estimator = EthnicityEstimator()
+    with pytest.raises(ValueError) as excinfo:
+        estimator.fit()
+    assert '"load" before "fit"' in str(excinfo.value)
+    estimator.load(str(input_file))
+    with pytest.raises(ValueError) as excinfo:
+        estimator.save(str(output_file))
+    assert '"fit" before "save"' in str(excinfo.value)
     estimator.fit()
     estimator.save(str(output_file))
