@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from .cli import check
+
 
 class InspireRecords(object):
     def __init__(self, app=None):
@@ -31,6 +33,7 @@ class InspireRecords(object):
             self.init_app(app)
 
     def init_app(self, app):
+        app.cli.add_command(check)
         app.extensions['inspire-records'] = self
 
         # Register the receivers:
