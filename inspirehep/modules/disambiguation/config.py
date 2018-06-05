@@ -23,22 +23,3 @@
 """Disambiguation configuration."""
 
 from __future__ import absolute_import, division, print_function
-
-
-DISAMBIGUATION_CLUSTERS_PATH = '/tmp/clusters.json'
-"""The path to the file that will store the curated clusters."""
-
-DISAMBIGUTATION_PUBLICATIONS_PATH = '/tmp/publications.json'
-"""The path to the file that will store the publication."""
-
-DISAMBIGUATION_SIGNATURES_PATH = '/tmp/signatures.jl'
-"""The path to the file that will store the curated signatures."""
-
-DISAMBIGUATION_MODEL_PATH = '/tmp/inspire-disambiguation-model.pkl'
-"""The path to the model that will be used to run the disambiguation."""
-
-DISAMBIGUATION_ETHNICITY_DATA_PATH = '/tmp/ethnicity.csv'
-"""The path to the data used to train the ethnicity estimator model."""
-
-DISAMBIGUATION_ETHNICITY_MODEL_PATH = '/tmp/ethnicity.pkl'
-"""The path to the trained ethnicity estimator model."""
