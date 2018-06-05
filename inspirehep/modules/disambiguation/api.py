@@ -33,6 +33,7 @@ from inspirehep.modules.disambiguation.core.db.readers import (
     get_all_curated_signatures,
     get_all_publications,
 )
+from inspirehep.modules.disambiguation.core.ml.models import EthnicityEstimator
 
 
 def save_signatures_and_clusters():
@@ -67,3 +68,11 @@ def save_publications():
 
     with open(current_app.config['DISAMBIGUATION_PUBLICATIONS_PATH'], 'w') as fd:
         json.dump(publications, fd)
+
+
+def train_and_save_ethnicity_model():
+    """Train the ethnicity estimator model and save it to disk."""
+    estimator = EthnicityEstimator()
+    estimator.load_data(current_app.config['DISAMBIGUATION_ETHNICITY_DATA_PATH'])
+    estimator.fit()
+    estimator.save_model(current_app.config['DISAMBIGUATION_ETHNICITY_MODEL_PATH'])
