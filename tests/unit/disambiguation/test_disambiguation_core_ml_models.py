@@ -37,6 +37,10 @@ def test_ethnicity_estimator(tmpdir):
     output_file = tmpdir.join('output.pkl')
 
     estimator = EthnicityEstimator()
-    estimator.load(str(input_file))
+    estimator.load_data(str(input_file))
     estimator.fit()
-    estimator.save(str(output_file))
+    estimator.save_model(str(output_file))
+
+    another_estimator = EthnicityEstimator()
+    another_estimator.load_model(str(output_file))
+    another_estimator.predict(['Guinness, Alec'])

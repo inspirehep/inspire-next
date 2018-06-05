@@ -39,7 +39,7 @@ class EthnicityEstimator(object):
     def __init__(self, C=4.0):
         self.C = C
 
-    def load(self, input_filename):
+    def load_data(self, input_filename):
         ethnicities, lasts, firsts = [], [], []
         with open(input_filename, 'r') as fd:
             reader = csv.DictReader(fd)
@@ -54,7 +54,11 @@ class EthnicityEstimator(object):
         self.X = normalized_names
         self.y = ethnicities
 
-    def save(self, output_filename):
+    def load_model(self, input_filename):
+        with open(input_filename, 'r') as fd:
+            self.estimator = pickle.load(fd)
+
+    def save_model(self, output_filename):
         with open(output_filename, 'w') as fd:
             pickle.dump(self.estimator, fd, protocol=pickle.HIGHEST_PROTOCOL)
 
