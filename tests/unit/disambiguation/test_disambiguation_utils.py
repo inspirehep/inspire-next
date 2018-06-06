@@ -20,6 +20,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Disambiguation configuration."""
-
 from __future__ import absolute_import, division, print_function
+
+import os
+
+from inspirehep.modules.disambiguation.utils import open_file_in_folder
+
+
+def test_open_file_in_folder(tmpdir):
+    with open_file_in_folder(os.path.join(str(tmpdir), 'foo', 'bar'), 'w') as fd:
+        fd.write('baz')
+
+    expected = 'baz'
+    with open(os.path.join(str(tmpdir), 'foo', 'bar')) as fd:
+        result = fd.read()
+
+    assert expected == result

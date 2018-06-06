@@ -20,12 +20,22 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""Disambiguation utils."""
+
 from __future__ import absolute_import, division, print_function
 
+import os
+from contextlib import contextmanager
 
-def test_ext(app):
-    assert 'inspire-disambiguation' in app.extensions
 
+@contextmanager
+def open_file_in_folder(filename, mode='r', buffering=-1):
+    """Open a file in a folder, creating the folder if it does not exist."""
+    try:
+        os.makedirs(os.path.dirname(filename))
+    except OSError:
+        if not os.path.isdir(os.path.dirname(filename)):
+            raise
 
-def test_ext_loads_the_configuration(app):
-    assert 'DISAMBIGUATION_MODEL_PATH' in app.config
+    with open(filename, mode, buffering) as fd:
+        yield fd

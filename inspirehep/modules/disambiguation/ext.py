@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+
 from . import config
 
 
@@ -37,6 +39,20 @@ class InspireDisambiguation(object):
         app.extensions['inspire-disambiguation'] = self
 
     def init_config(self, app):
+        disambiguation_base_path = os.path.join(app.instance_path, 'disambiguation')
+
+        app.config['DISAMBIGUATION_BASE_PATH'] = disambiguation_base_path
+        app.config['DISAMBIGUATION_CLUSTERS_PATH'] = os.path.join(
+            disambiguation_base_path, 'clusters.json')
+        app.config['DISAMBIGUATION_PUBLICATIONS_PATH'] = os.path.join(
+            disambiguation_base_path, 'publications.json')
+        app.config['DISAMBIGUATION_SIGNATURES_PATH'] = os.path.join(
+            disambiguation_base_path, 'signatures.jl')
+        app.config['DISAMBIGUATION_ETHNICITY_DATA_PATH'] = os.path.join(
+            disambiguation_base_path, 'ethnicity.csv')
+        app.config['DISAMBIGUATION_ETHNICITY_MOEL_PATH'] = os.path.join(
+            disambiguation_base_path, 'ethnicity.pkl')
+
         for k in dir(config):
             if k.startswith('DISAMBIGUATION_'):
                 app.config.setdefault(k, getattr(config, k))

@@ -33,6 +33,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 
 from beard.utils import normalize_name
+from inspirehep.modules.disambiguation.utils import open_file_in_folder
 
 
 class EthnicityEstimator(object):
@@ -59,7 +60,7 @@ class EthnicityEstimator(object):
             self.estimator = pickle.load(fd)
 
     def save_model(self, output_filename):
-        with open(output_filename, 'w') as fd:
+        with open_file_in_folder(output_filename, 'w') as fd:
             pickle.dump(self.estimator, fd, protocol=pickle.HIGHEST_PROTOCOL)
 
     def fit(self):
