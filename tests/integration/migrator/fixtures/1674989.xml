@@ -1,0 +1,46 @@
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+<record>
+  <controlfield tag="001">1674989</controlfield>
+  <controlfield tag="005">20180528145158.0</controlfield>
+  <datafield tag="100" ind1=" " ind2=" ">
+    <subfield code="a">Emparan, Roberto</subfield>
+    <subfield code="u">CERN</subfield>
+  </datafield>
+  <datafield tag="245" ind1=" " ind2=" ">
+    <subfield code="9">submitter</subfield>
+    <subfield code="a">More is Different: Black Holes in Higher Dimensions</subfield>
+  </datafield>
+  <datafield tag="520" ind1=" " ind2=" ">
+    <subfield code="9">submitter</subfield>
+    <subfield code="a">I review of some of the recent developments in the ﬁeld of classical General Relativity in
+dimension D&gt; 4, and in particular its vacuum black hole solutions. These black holes are
+proving to have properties rather diﬀerent from their four-dimensional counterparts, the Schwarzschild and Kerr black holes and a number of qualitatively new solutions and phenomena have begun to be uncovered. Still one feels that we are only seeing the tip of the iceberg.</subfield>
+  </datafield>
+  <datafield tag="650" ind1="1" ind2="7">
+    <subfield code="2">INSPIRE</subfield>
+    <subfield code="9">user</subfield>
+    <subfield code="a">Gravitation and Cosmology</subfield>
+  </datafield>
+  <datafield tag="773" ind1=" " ind2=" ">
+    <subfield code="c">101-112</subfield>
+    <subfield code="w">C02-09-22.1</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2=" ">
+    <subfield code="u">https://books.google.com/books?hl=en&amp;lr=&amp;id=JRpzQnpDjU4C&amp;oi=fnd&amp;pg=PA101&amp;dq=emparan,+roberto&amp;ots=0MG-JU8lDU&amp;sig=qQ1NO0f3551KzTGLyDoXd9HiEQc</subfield>
+  </datafield>
+  <datafield tag="909" ind1="C" ind2="O">
+    <subfield code="o">oai:inspirehep.net:1674989</subfield>
+    <subfield code="p">INSPIRE:HEP</subfield>
+    <subfield code="p">ForCDS</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">CORE</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">HEP</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">ConferencePaper</subfield>
+  </datafield>
+</record>
+</collection>

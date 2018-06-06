@@ -1,0 +1,118 @@
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+<record>
+  <controlfield tag="001">1674997</controlfield>
+  <controlfield tag="005">20180528160904.0</controlfield>
+  <datafield tag="695" ind1=" " ind2=" ">
+    <subfield code="2">INSPIRE</subfield>
+    <subfield code="a">string model</subfield>
+  </datafield>
+  <datafield tag="909" ind1="C" ind2="O">
+    <subfield code="o">oai:inspirehep.net:1674997</subfield>
+    <subfield code="p">INSPIRE:HEP</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">223</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">HEP</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">BOOK</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">CORE</subfield>
+  </datafield>
+  <datafield tag="245" ind1=" " ind2=" ">
+    <subfield code="a">A primer on string theory</subfield>
+  </datafield>
+  <datafield tag="024" ind1="7" ind2=" ">
+    <subfield code="2">DOI</subfield>
+    <subfield code="a">10.1017/9781316672631</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">Schomerus:2017ycz</subfield>
+    <subfield code="9">INSPIRETeX</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">Cambridge</subfield>
+    <subfield code="b">Cambridge Univ. Pr.</subfield>
+    <subfield code="c">2017</subfield>
+  </datafield>
+  <datafield tag="020" ind1=" " ind2=" ">
+    <subfield code="a">9781316612835</subfield>
+    <subfield code="b">Print</subfield>
+  </datafield>
+  <datafield tag="020" ind1=" " ind2=" ">
+    <subfield code="a">9781107160019</subfield>
+    <subfield code="b">Print</subfield>
+  </datafield>
+  <datafield tag="650" ind1="1" ind2="7">
+    <subfield code="2">INSPIRE</subfield>
+    <subfield code="a">Phenomenology-HEP</subfield>
+  </datafield>
+  <datafield tag="100" ind1=" " ind2=" ">
+    <subfield code="a">Schomerus, Volker</subfield>
+    <subfield code="u">DESY</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Historical introduction and overview</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">The classical closed bosonic string</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Free bosonic quantum field theory</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Covariant quantization</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Light-cone quantization</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Branes and quantization of open strings</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Open strings and gauge theory</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Free fermionic quantum field theory</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Supersymmetry in 10 dimensions</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Construction of type IIA/B superstrings</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Branes in type II superstring theory</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Construction of heterotic superstrings</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Introduction to conformal field theory</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Modular invariants and orbifolds</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Closed strings on the 3-sphere</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">CALABI-YAU spaces</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">CALABI-YAU compactifications</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">String dualities</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">Gauge/string dualities</subfield>
+  </datafield>
+  <datafield tag="505" ind1=" " ind2=" ">
+    <subfield code="t">AdS/CFT correspondence</subfield>
+  </datafield>
+</record>
+</collection>

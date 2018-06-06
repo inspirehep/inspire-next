@@ -143,6 +143,7 @@ def isolated_app(app):
     db.session = original_session
 
 
+# TODO: all fixtures using ``app`` must be replaced by ones that use ``isolated_app``.
 @pytest.fixture()
 def app_client(app):
     """Flask test client for the application.
@@ -159,10 +160,23 @@ def api(app):
     yield app.wsgi_app.mounts['/api']
 
 
+@pytest.fixture(scope='function')
+def isolated_api(isolated_app):
+    """Flask API application."""
+    yield isolated_app.wsgi_app.mounts['/api']
+
+
 @pytest.fixture()
 def api_client(api):
     """Flask test client for the API application."""
     with api.test_client() as client:
+        yield client
+
+
+@pytest.fixture()
+def isolated_api_client(isolated_api):
+    """Flask test client for the API application."""
+    with isolated_api.test_client() as client:
         yield client
 
 

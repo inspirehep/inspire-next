@@ -62,7 +62,17 @@ def test_inspire_prod_records_from_marcxml_raises_for_invalid_recid():
 
 
 def test_inspire_prod_records_error():
-    record = LegacyRecordsMirror(recid='12345')
+    raw_record = '''
+        <record>
+          <controlfield tag="001">12345</controlfield>
+          <controlfield tag="005">20171011194718.0</controlfield>
+          <datafield tag="100" ind1=" " ind2=" ">
+            <subfield code="a">Chetyrkin, K.G.</subfield>
+          </datafield>
+        </record>
+        '''
+
+    record = LegacyRecordsMirror(recid='12345', _marcxml=raw_record)
     error = ValueError(u'This is an error with ùnicode')
 
     record.error = error
