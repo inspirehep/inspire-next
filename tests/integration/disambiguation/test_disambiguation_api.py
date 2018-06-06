@@ -32,7 +32,15 @@ from factories.db.invenio_records import TestRecordMetadata
 from inspirehep.modules.disambiguation.api import (
     save_publications,
     save_signatures_and_clusters,
+    train_and_save_ethnicity_model,
 )
+from inspirehep.modules.disambiguation.core.ml.models import EthnicityEstimator
+
+TRAINING_DATA = '''\
+RACE,NAMELAST,NAMEFRST
+1,EASTWOOD,CLINT
+5,MIFUNE,TOSHIRO
+'''
 
 
 def test_save_signatures_and_clusters(isolated_app, tmpdir):
@@ -101,3 +109,21 @@ def test_save_publications(isolated_app, tmpdir):
         'title': 'The quest for elementary particles',
         'topics': ['Phenomenology-HEP'],
     } == publications['792017']
+
+
+def test_train_and_save_ethnicity_model(tmpdir):
+    ethnicity_data_fd = tmpdir.join('ethnicity.csv')
+    ethnicity_data_fd.write(TRAINING_DATA)
+    ethnicity_model_fd = tmpdir.join('ethnicity.pkl')
+
+    config = {
+        'DISAMBIGUATION_ETHNICITY_DATA_PATH': str(ethnicity_data_fd),
+        'DISAMBIGUATION_ETHNICITY_MODEL_PATH': str(ethnicity_model_fd),
+    }
+
+    with patch.dict(current_app.config, config):
+        train_and_save_ethnicity_model()
+
+    estimator = EthnicityEstimator()
+    estimator.load_model(str(ethnicity_model_fd))
+    estimator.predict(['Guinness, Alec'])
