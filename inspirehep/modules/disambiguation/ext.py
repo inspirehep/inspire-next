@@ -50,7 +50,7 @@ class InspireDisambiguation(object):
             disambiguation_base_path, 'signatures.jl')
         app.config['DISAMBIGUATION_ETHNICITY_DATA_PATH'] = os.path.join(
             disambiguation_base_path, 'ethnicity.csv')
-        app.config['DISAMBIGUATION_ETHNICITY_MOEL_PATH'] = os.path.join(
+        app.config['DISAMBIGUATION_ETHNICITY_MODEL_PATH'] = os.path.join(
             disambiguation_base_path, 'ethnicity.pkl')
 
         for k in dir(config):
