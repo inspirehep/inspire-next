@@ -27,8 +27,25 @@ from factories.db.invenio_records import TestRecordMetadata
 from inspirehep.modules.disambiguation.core.db.readers import (
     get_all_curated_signatures,
     get_all_publications,
+    get_all_signatures,
     get_signatures_matching_a_phonetic_encoding,
 )
+
+
+def test_get_all_signatures(isolated_app):
+    TestRecordMetadata.create_from_file(__name__, '8201.json')
+
+    expected = {
+        'author_affiliation': 'SUNY, Stony Brook',
+        'author_id': None,
+        'author_name': 'Rho, Mannque',
+        'publication_id': 8201,
+        'signature_block': 'Rm',
+        'signature_uuid': 'fe4220bf-7c57-4191-8d0c-6e791e84c505',
+    }
+    result = list(get_all_signatures())
+
+    assert expected in result
 
 
 def test_get_all_curated_signatures(isolated_app):
