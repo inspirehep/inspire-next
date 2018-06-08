@@ -33,9 +33,13 @@ from inspirehep.modules.disambiguation.api import (
     save_curated_signatures_and_input_clusters,
     save_publications,
     save_sampled_pairs,
+    train_and_save_distance_model,
     train_and_save_ethnicity_model,
 )
-from inspirehep.modules.disambiguation.core.ml.models import EthnicityEstimator
+from inspirehep.modules.disambiguation.core.ml.models import (
+    DistanceEstimator,
+    EthnicityEstimator,
+)
 
 ETHNICITY_TRAINING_DATA = '''\
 RACE,NAMELAST,NAMEFRST
@@ -175,3 +179,39 @@ def test_train_and_save_ethnicity_model(isolated_app, tmpdir):
 
     estimator = EthnicityEstimator()
     estimator.load_model(str(ethnicity_model_fd))
+
+
+def test_train_and_save_distance_model(isolated_app, tmpdir):
+    TestRecordMetadata.create_from_file(__name__, '765515.json')
+    TestRecordMetadata.create_from_file(__name__, '765975.json')
+
+    curated_signatures_fd = tmpdir.join('curated_signatures.jsonl')
+    sampled_pairs_fd = tmpdir.join('sampled_pairs.jsonl')
+    publications_fd = tmpdir.join('publications.jsonl')
+    ethnicity_data_fd = tmpdir.join('ethnicity.csv')
+    ethnicity_data_fd.write(ETHNICITY_TRAINING_DATA)
+    ethnicity_model_fd = tmpdir.join('ethnicity.pkl')
+    distance_model_fd = tmpdir.join('distance.pkl')
+
+    config = {
+        'DISAMBIGUATION_CURATED_SIGNATURES_PATH': str(curated_signatures_fd),
+        'DISAMBIGUATION_SAMPLED_PAIRS_PATH': str(sampled_pairs_fd),
+        'DISAMBIGUATION_SAMPLED_PAIRS_SIZE': 12 * 100,
+        'DISAMBIGUATION_PUBLICATIONS_PATH': str(publications_fd),
+        'DISAMBIGUATION_ETHNICITY_DATA_PATH': str(ethnicity_data_fd),
+        'DISAMBIGUATION_ETHNICITY_MODEL_PATH': str(ethnicity_model_fd),
+        'DISAMBIGUATION_DISTANCE_MODEL_PATH': str(distance_model_fd)
+    }
+
+    with patch.dict(current_app.config, config):
+        save_curated_signatures_and_input_clusters()
+        save_sampled_pairs()
+        save_publications()
+        train_and_save_ethnicity_model()
+        train_and_save_distance_model()
+
+    ethnicity_estimator = EthnicityEstimator()
+    ethnicity_estimator.load_model(str(ethnicity_model_fd))
+
+    distance_estimator = DistanceEstimator(ethnicity_estimator)
+    distance_estimator.load_model(str(distance_model_fd))
