@@ -52,6 +52,25 @@ SIGNATURE_FIELDS = [
 ]
 
 
+def get_all_signatures():
+    """Get all signatures from the DB.
+
+    Walks through all Literature records and collects all signatures
+    in order to build the running set for ``BEARD``.
+
+    Yields:
+        dict: a signature.
+
+    """
+    query = RecordMetadata.query.with_entities(RecordMetadata.json).filter(
+        type_coerce(RecordMetadata.json, JSONB)['_collections'].contains(['Literature']))
+
+    for record in query.yield_per(1000):
+        publication_id = record.json['control_number']
+        for author in record.json.get('authors', []):
+            yield _build_signature(author, publication_id)
+
+
 def get_all_curated_signatures():
     """Get all curated signatures from the DB.
 
