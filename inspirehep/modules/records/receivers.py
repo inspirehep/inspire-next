@@ -86,7 +86,7 @@ def assign_phonetic_block(sender, record, *args, **kwargs):
         return
 
     for author in record.get('authors', []):
-        if author['full_name'] in signature_blocks:
+        if author['full_name'] in signature_blocks and signature_blocks[author['full_name']]:
             author['signature_block'] = signature_blocks[author['full_name']]
 
 
