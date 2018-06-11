@@ -30,6 +30,7 @@ import pkg_resources
 
 from . import config
 from .views import blueprint
+from .workflows.views import blueprint as wf_blueprint
 
 
 class InspireWorkflows(object):
@@ -40,6 +41,7 @@ class InspireWorkflows(object):
     def init_app(self, app):
         self.init_config(app)
         app.register_blueprint(blueprint)
+        app.register_blueprint(wf_blueprint)
         app.extensions['inspire-workflows'] = self
 
     def init_config(self, app):
