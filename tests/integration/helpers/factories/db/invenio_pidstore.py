@@ -57,7 +57,7 @@ class TestPersistentIdentifier(TestBaseModel):
         if not kwargs.pop('object_uuid', None):
             updated_kwargs['object_uuid'] = uuid.uuid4()
         if not kwargs.pop('status', None):
-            updated_kwargs['status'] = PIDStatus.NEW
+            updated_kwargs['status'] = PIDStatus.REGISTERED
 
         instance.persistent_identifier = super(
             TestPersistentIdentifier, cls).create_from_kwargs(updated_kwargs)

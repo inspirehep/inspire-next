@@ -270,6 +270,12 @@
                             "type": "object"
                         },
                         "signature_block": {
+                            "fields": {
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
                             "type": "string"
                         },
                         "uuid": {
@@ -992,6 +998,12 @@
                     "type": "integer"
                 },
                 "texkeys": {
+                    "fields": {
+                        "raw": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    },
                     "type": "string"
                 },
                 "thesis_info": {
@@ -1053,6 +1065,12 @@
                     "properties": {
                         "full_title": {
                             "analyzer": "title",
+                            "fields": {
+                                "search": {
+                                    "analyzer": "title_whitespace_tokenized",
+                                    "type": "string"
+                                }
+                            },
                             "type": "string"
                         },
                         "source": {
@@ -1120,6 +1138,17 @@
                         "ascii_normalizer"
                     ],
                     "tokenizer": "icu_tokenizer",
+                    "type": "custom"
+                },
+                "title_whitespace_tokenized": {
+                    "char_filter": [
+                        "tex_normalizer"
+                    ],
+                    "filter": [
+                        "lowercase_normalizer",
+                        "ascii_normalizer"
+                    ],
+                    "tokenizer": "whitespace",
                     "type": "custom"
                 }
             },

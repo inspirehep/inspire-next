@@ -28,29 +28,19 @@ from flask import current_app
 
 from invenio_db import db
 
-from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
-from inspirehep.modules.workflows.utils import with_debug_logging
-from inspirehep.utils.record_getter import get_db_record
+from inspirehep.modules.workflows.models import WorkflowsRecordSources
+from inspirehep.modules.workflows.utils import (
+    get_source_for_root,
+    with_debug_logging,
+)
+from inspirehep.utils.record import get_source
 from inspirehep.utils.schema import ensure_valid_schema
 
 
 @with_debug_logging
 def store_record(obj, eng):
     """Insert or replace a record."""
-    def _get_updated_record(obj):
-        """TODO: use only head_uuid once we have the merger."""
-        if 'head_uuid' in obj.extra_data:
-            updated_record = InspireRecord.get_record(
-                obj.extra_data['head_uuid'],
-            )
-        else:
-            pid_type = get_pid_type_from_schema(obj.data['$schema'])
-            updated_record_id = obj.extra_data['matches']['approved']
-            updated_record = get_db_record(pid_type, updated_record_id)
-
-        return updated_record
-
     is_update = obj.extra_data.get('is-update')
     is_authors = eng.workflow_definition.data_type == 'authors'
 
@@ -61,7 +51,7 @@ def store_record(obj, eng):
             )
             return
 
-        record = _get_updated_record(obj)
+        record = InspireRecord.get_record(obj.extra_data['head_uuid'])
         obj.data['control_number'] = record['control_number']
         record.clear()
         record.update(obj.data, files_src_records=[obj])
@@ -80,6 +70,32 @@ def store_record(obj, eng):
 
     record.commit()
     obj.save()
+    db.session.commit()
+
+
+@with_debug_logging
+def store_root(obj, eng):
+    """Insert or update the current record head's root into the ``WorkflowsRecordSources`` table."""
+    if not current_app.config.get('FEATURE_FLAG_ENABLE_MERGER', False):
+        obj.log.info(
+            'skipping storing source root, feature flag ``FEATURE_FLAG_ENABLE_MERGER`` is disabled.'
+        )
+        return
+
+    root = obj.extra_data['merger_root']
+    head_uuid = obj.extra_data['head_uuid']
+
+    source = get_source(root).lower()
+
+    if not source:
+        return
+
+    root_record = WorkflowsRecordSources(
+        source=get_source_for_root(source),
+        record_uuid=head_uuid,
+        json=root,
+    )
+    db.session.merge(root_record)
     db.session.commit()
 
 

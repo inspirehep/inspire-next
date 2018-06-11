@@ -36,6 +36,40 @@ services:
       - APP_ACCOUNTS_SESSION_REDIS_URL=redis://test-redis:6379/2
       - APP_SEARCH_ELASTIC_HOSTS=test-indexer
 
+  proxied_base:
+    extends: test-service_base
+    environment:
+      - HTTP_PROXY=mitm-proxy:8080
+      - http_proxy=mitm-proxy:8080
+      - HTTPS_PROXY=mitm-proxy:8080
+      - https_proxy=mitm-proxy:8080
+      - APP_CFG_BIBCATALOG_SYSTEM_RT_URL="https://rt.inspirehep.net/REST/1.0/"
+      - APP_CFG_BIBCATALOG_SYSTEM_RT_DEFAULT_USER="rtuser"
+      - APP_CFG_BIBCATALOG_SYSTEM_RT_DEFAULT_PWD="rtpass"
+      - APP_CFG_BIBCATALOG_SYSTEM_RT_VERIFY_SSL="False"
+      - APP_BIBCATALOG_QUEUES="Test"
+
+
+  mitm-proxy:
+    image: inspirehep/inspire-mitmproxy:0
+    tty: true
+    ports:
+      - 127.0.0.1:8081:8081
+    environment:
+      - SCENARIOS_PATH=/inspire-next/tests/e2e/scenarios/
+      - HTTP_PROXY=mitm-proxy:8080
+      - http_proxy=mitm-proxy:8080
+      - HTTPS_PROXY=mitm-proxy:8080
+      - https_proxy=mitm-proxy:8080
+      - INSPIRE_NEXT_NETLOC=test-web-e2e.local:5000
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test: nc -z 127.0.0.1:8080
+    volumes:
+        - ".:/inspire-next"
+
   unit:
     extends:
       service: test-service_base
@@ -170,28 +204,6 @@ services:
     environment:
       - SERVER_NAME=test-web:5000
 
-  e2e:
-    extends:
-      service: test-service_base
-    command: py.test tests/e2e
-    volumes_from:
-      - test-static
-    depends_on:
-      test-database:
-        condition: service_healthy
-      test-indexer:
-        condition: service_healthy
-      test-rabbitmq:
-        condition: service_healthy
-      test-redis:
-        condition: service_healthy
-      test-worker:
-        condition: service_started
-      test-web:
-        condition: service_started
-    environment:
-      - SERVER_NAME=test-web:5000
-
   test-web:
     extends:
       service: test-service_base
@@ -289,3 +301,138 @@ services:
     extends:
       file: services.yml
       service: static
+
+  test-scrapyd:
+    extends:
+      service: proxied_base
+    command: bash -c "rm -f twistd.pid && exec scrapyd"
+    volumes_from:
+      - test-static
+    environment:
+      - APP_FILES_STORE=/tmp/file_urls
+      - APP_LAST_RUNS_PATH=/code/.scrapy/last_runs
+      - APP_CRAWL_ONCE_PATH=/code/.scrapy
+      - APP_BROKER_URL=pyamqp://guest:guest@test-rabbitmq:5672//
+      - APP_CELERY_RESULT_BACKEND=redis://test-redis:6379/1
+    depends_on:
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+
+  test-scrapyd-deploy:
+    extends:
+      service: proxied_base
+    working_dir: /virtualenv/lib/python2.7/site-packages/hepcrawl
+    command: bash -c "sed -i -e 's|^url .*|url = http://test-scrapyd:6800|' scrapy.cfg && exec scrapyd-deploy"
+    volumes_from:
+      - test-static
+    links:
+      - test-scrapyd
+
+  # we need the .local to allow session cookies to be used correctly by the
+  # browsers/http libraries (like requests)
+  test-web-e2e.local:
+    extends:
+      service: proxied_base
+    command: gunicorn -b 0.0.0.0:5000 -t 3600 -w 1 --access-logfile "-" inspirehep.wsgi_with_coverage:application
+    volumes_from:
+      - test-static
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 15
+      test:
+        - "CMD"
+        - "bash"
+        - "-c"
+        - "env http_proxy= curl -v http://test-web-e2e.local:5000/ping | grep OK"
+    depends_on:
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+    environment:
+      - APP_SERVER_NAME="test-web-e2e.local:5000"
+      - APP_SESSON_COOKIE_DOMAIN=".local:5000"
+      - APP_ARXIV_PDF_URL="/pdf/{arxiv_id}"
+      - APP_ARXIV_PDF_URL_ALTERNATIVE="/pdf/{arxiv_id}"
+      - APP_ARXIV_TARBALL_URL="/e-print/{arxiv_id}"
+      - APP_PRODUCTION_MODE=True
+      - APP_LEGACY_ROBOTUPLOAD_URL="http://inspirehep.net/"
+      - APP_CRAWLER_HOST_URL=http://test-scrapyd:6800
+
+
+  test-worker-e2e:
+    extends:
+      service: proxied_base
+    command: celery worker -E -A inspirehep.celery_tests --loglevel=DEBUG --purge --queues celery,migrator,harvests,orcid_push
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD"
+        - "bash"
+        - "-c"
+        - "/virtualenv/bin/celery --broker=pyamqp://guest:guest@test-rabbitmq:5672// inspect ping | grep OK"
+    volumes_from:
+      - test-static
+    depends_on:
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+    environment:
+      - APP_PRODUCTION_MODE=True
+      - APP_LEGACY_ROBOTUPLOAD_URL="http://inspirehep.net/"
+      - APP_LEGACY_PID_PROVIDER="http://inspirehep.net//batchuploader/allocaterecord"
+      - APP_CRAWLER_HOST_URL=http://test-scrapyd:6800
+
+  # This is needed as docker-compose does not wait for the entry services to
+  # be actually healthy when doing `docker-compose run e2e`, but only for
+  # derived dependent services.
+  e2e-deps-placeholder:
+    extends:
+      service: proxied_base
+    command: "true"
+    depends_on:
+      mitm-proxy:
+        condition: service_healthy
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-rabbitmq:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+      test-web-e2e.local:
+        condition: service_healthy
+      test-worker-e2e:
+        condition: service_started
+      test-scrapyd:
+        condition: service_started
+      test-scrapyd-deploy:
+        condition: service_started
+
+  e2e:
+    extends:
+      service: proxied_base
+    command: py.test -vvv tests/e2e
+    volumes_from:
+      - test-static
+    depends_on:
+      e2e-deps-placeholder:
+        condition: service_started
+    environment:
+      - APP_SERVER_NAME=test-web:5000
+      - APP_CRAWLER_HOST_URL=http://test-scrapyd:6800

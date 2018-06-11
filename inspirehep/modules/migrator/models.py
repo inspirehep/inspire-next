@@ -32,6 +32,8 @@ from zlib import compress, decompress, error
 from invenio_db import db
 from sqlalchemy.ext.hybrid import hybrid_property
 
+from .utils import get_collection_from_marcxml
+
 
 class LegacyRecordsMirror(db.Model):
     __tablename__ = 'legacy_records_mirror'
@@ -41,6 +43,7 @@ class LegacyRecordsMirror(db.Model):
     _marcxml = db.Column('marcxml', db.LargeBinary, nullable=False)
     valid = db.Column(db.Boolean, default=None, nullable=True, index=True)
     _errors = db.Column('errors', db.Text(), nullable=True)
+    collection = db.Column(db.Text(), default='')
 
     re_recid = re.compile('<controlfield.*?tag=.001.*?>(?P<recid>\d+)</controlfield>')
 
@@ -65,6 +68,7 @@ class LegacyRecordsMirror(db.Model):
     def error(self, value):
         """Errors column setter that stores an Exception and sets the ``valid`` flag."""
         self.valid = False
+        self.collection = get_collection_from_marcxml(self.marcxml)
         self._errors = u'{}: {}'.format(type(value).__name__, value)
 
     @classmethod
@@ -82,3 +86,9 @@ class LegacyRecordsMirror(db.Model):
         record.marcxml = raw_record
         record.valid = None
         return record
+
+
+@db.event.listens_for(LegacyRecordsMirror, 'before_update', propagate=True)
+def timestamp_before_update(mapper, connection, target):
+    """Update `last_updated` property with current time on `before_update` event."""
+    target.last_updated = datetime.utcnow()

@@ -1,0 +1,56 @@
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+<record>
+  <controlfield tag="001">1674987</controlfield>
+  <controlfield tag="005">20180528140440.0</controlfield>
+  <datafield tag="024" ind1="7" ind2=" ">
+    <subfield code="2">DOI</subfield>
+    <subfield code="9">submitter</subfield>
+    <subfield code="a">10.1016/j.nima.2018.05.040</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">Akgun:2018jur</subfield>
+    <subfield code="9">INSPIRETeX</subfield>
+  </datafield>
+  <datafield tag="100" ind1=" " ind2=" ">
+    <subfield code="a">Akgün, Bora</subfield>
+    <subfield code="u">CERN</subfield>
+  </datafield>
+  <datafield tag="245" ind1=" " ind2=" ">
+    <subfield code="9">submitter</subfield>
+    <subfield code="a">Performance of the CMS phase 1 pixel detector</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">* Temporary entry *</subfield>
+  </datafield>
+  <datafield tag="520" ind1=" " ind2=" ">
+    <subfield code="9">submitter</subfield>
+    <subfield code="a">It is anticipated that the LHC accelerator will reach and exceed the luminosity of L=2 $\times 1034L=2×10^{34}$cm$^{−2}$s$^{−1}$ during the LHC Run 2 period until 2023. At this higher luminosity and increased hit occupancies the CMS phase-0 pixel detector would have been subjected to severe dead time and inefficiencies introduced by limited buffers in the analog read-out chip and effects of radiation damage in the sensors. Therefore a new pixel detector has been built and replaced the phase-0 detector in the 2016/17 LHC extended year-end technical stop. The CMS phase-1 pixel detector features four central barrel layers and three end-cap disks in forward and backward direction for robust tracking performance, and a significantly reduced overall material budget including new cooling and powering schemes. The design of the new front-end readout chip comprises larger data buffers, an increased transmission bandwidth, and low-threshold comparators. These improvements allow the new pixel detector to sustain and improve the efficiency of the current pixel tracker at the increased requirements imposed by high luminosities and pile-up. A new DAQ system has been developed based on a combination of custom and standard microTCA parts. This contribution gives an overview of the design and performance of the CMS phase-1 pixel detector.</subfield>
+  </datafield>
+  <datafield tag="650" ind1="1" ind2="7">
+    <subfield code="2">INSPIRE</subfield>
+    <subfield code="9">user</subfield>
+    <subfield code="a">Instrumentation</subfield>
+  </datafield>
+  <datafield tag="693" ind1=" " ind2=" ">
+    <subfield code="e">CERN-LHC-CMS</subfield>
+  </datafield>
+  <datafield tag="773" ind1=" " ind2=" ">
+    <subfield code="p">Nucl.Instrum.Meth.</subfield>
+    <subfield code="w">C17-12-10.2</subfield>
+    <subfield code="y">2018</subfield>
+  </datafield>
+  <datafield tag="909" ind1="C" ind2="O">
+    <subfield code="o">oai:inspirehep.net:1674987</subfield>
+    <subfield code="p">INSPIRE:HEP</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">CORE</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">HEP</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">ConferencePaper</subfield>
+  </datafield>
+</record>
+</collection>

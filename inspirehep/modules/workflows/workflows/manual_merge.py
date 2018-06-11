@@ -24,14 +24,12 @@ from __future__ import absolute_import, division, print_function
 
 from invenio_workflows import start, workflow_object_class
 
-from inspire_json_merger.api import get_head_source as merger_get_source
 from inspirehep.modules.workflows.tasks.manual_merging import (
     halt_for_merge_approval,
     merge_records,
     save_roots,
     store_records,
 )
-from inspirehep.modules.workflows.tasks.merging import get_head_source
 from inspirehep.utils.record import get_source
 from inspirehep.utils.record_getter import get_db_record
 
@@ -79,13 +77,9 @@ def start_merger(head_id, update_id, current_user_id=None):
     wf_id = workflow_object.id    # to retrieve it later
     workflow_object.extra_data.update(data)
 
-    # preparing identifiers in order to do less requests possible later
-    head_source = get_head_source(head.id) or merger_get_source(head)
-
     update_source = get_source(update)
     update_source = update_source if update_source else 'arxiv'
 
-    workflow_object.extra_data['head_source'] = head_source.lower()
     workflow_object.extra_data['update_source'] = update_source.lower()
 
     workflow_object.extra_data['head_control_number'] = head_id

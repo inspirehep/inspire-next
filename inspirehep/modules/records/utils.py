@@ -28,6 +28,7 @@ from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
     get_pid_type_from_schema
 )
+from inspirehep.utils.record_getter import get_db_records
 
 
 def get_endpoint_from_record(record):
@@ -36,3 +37,18 @@ def get_endpoint_from_record(record):
     endpoint = get_endpoint_from_pid_type(pid_type)
 
     return endpoint
+
+
+def get_resolved_references(record_ids):
+    """Resolve record in record's references.
+
+    Args:
+        record_ids(list): a list of record ids.
+
+    Returns:
+        list: a list with resolved records.
+    """
+    if not record_ids:
+        return []
+
+    return get_db_records('lit', record_ids)

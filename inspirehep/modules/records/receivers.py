@@ -75,25 +75,19 @@ def assign_phonetic_block(sender, record, *args, **kwargs):
     if not is_hep(record):
         return
 
-    authors = record.get('authors', [])
-
-    authors_map = {}
-    for i, author in enumerate(authors):
-        if 'full_name' in author:
-            authors_map[author['full_name']] = i
+    author_names = get_value(record, 'authors.full_name', default=[])
 
     try:
-        signatures_blocks = phonetic_blocks(authors_map.keys())
+        signature_blocks = phonetic_blocks(author_names)
     except Exception as err:
         current_app.logger.error(
             'Cannot extract phonetic blocks for record %d: %s',
             record.get('control_number'), err)
         return
 
-    for full_name, signature_block in six.iteritems(signatures_blocks):
-        authors[authors_map[full_name]].update({
-            'signature_block': signature_block,
-        })
+    for author in record.get('authors', []):
+        if author['full_name'] in signature_blocks:
+            author['signature_block'] = signature_blocks[author['full_name']]
 
 
 @before_record_insert.connect
@@ -111,31 +105,12 @@ def assign_uuid(sender, record, *args, **kwargs):
 
 
 #
-# models_committed
+# after_record_update
 #
-
-@models_committed.connect
-def index_after_commit(sender, changes):
-    """Index a record in ES after it was committed to the DB.
-
-    This cannot happen in an ``after_record_commit`` receiver from Invenio-Records
-    because, despite the name, at that point we are not yet sure whether the record
-    has been really committed to the DB.
-    """
-    indexer = RecordIndexer()
-
-    for model_instance, change in changes:
-        if isinstance(model_instance, RecordMetadata):
-            if change in ('insert', 'update'):
-                indexer.index(Record(model_instance.json, model_instance))
-            else:
-                indexer.delete(Record(model_instance.json, model_instance))
-
 
 @after_record_update.connect
 def push_to_orcid(sender, record, *args, **kwargs):
-    """If needed, queue the push of the new changes to ORCID.
-    """
+    """If needed, queue the push of the new changes to ORCID."""
     if not is_hep(record) or not current_app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']:
         return
 
@@ -158,6 +133,28 @@ def push_to_orcid(sender, record, *args, **kwargs):
                 'oauth_token': access_token,
             },
         )
+
+
+#
+# models_committed
+#
+
+@models_committed.connect
+def index_after_commit(sender, changes):
+    """Index a record in ES after it was committed to the DB.
+
+    This cannot happen in an ``after_record_commit`` receiver from Invenio-Records
+    because, despite the name, at that point we are not yet sure whether the record
+    has been really committed to the DB.
+    """
+    indexer = RecordIndexer()
+
+    for model_instance, change in changes:
+        if isinstance(model_instance, RecordMetadata):
+            if change in ('insert', 'update'):
+                indexer.index(Record(model_instance.json, model_instance))
+            else:
+                indexer.delete(Record(model_instance.json, model_instance))
 
 
 #

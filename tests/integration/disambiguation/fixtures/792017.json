@@ -1,0 +1,160 @@
+{
+    "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
+    "_collections": [
+        "Literature"
+    ],
+    "_private_notes": [
+        {
+            "source": "CERN",
+            "value": "CDS-1112288"
+        }
+    ],
+    "abstracts": [
+        {
+            "source": "AIP",
+            "value": "This talk describes past progress in probing the structure of matter and the content of the Universe, which has led to the Standard Model of elementary particles, and the prospects for establishing new physics beyond the Standard Model using the LHC particle collider at CERN."
+        }
+    ],
+    "authors": [
+        {
+            "affiliations": [
+                {
+                    "record": {
+                        "$ref": "http://labs.inspirehep.net/api/institutions/902725"
+                    },
+                    "value": "CERN"
+                }
+            ],
+            "curated_relation": true,
+            "full_name": "Ellis, John R.",
+            "ids": [
+                {
+                    "schema": "INSPIRE ID",
+                    "value": "INSPIRE-00146525"
+                }
+            ],
+            "raw_affiliations": [
+                {
+                    "value": "CERN. Department of Physics. TH Division Geneva, Switzerland"
+                }
+            ],
+            "record": {
+                "$ref": "http://labs.inspirehep.net/api/authors/1010819"
+            },
+            "signature_block": "ELj",
+            "uuid": "94f560d2-6791-43ec-a379-d3dc4ad0ceb7"
+        }
+    ],
+    "citeable": true,
+    "control_number": 792017,
+    "core": true,
+    "curated": true,
+    "document_type": [
+        "conference paper"
+    ],
+    "dois": [
+        {
+            "value": "10.1063/1.2927617"
+        }
+    ],
+    "external_system_identifiers": [
+        {
+            "schema": "CDS",
+            "value": "1112288"
+        },
+        {
+            "schema": "SPIRES",
+            "value": "SPIRES-7854250"
+        }
+    ],
+    "imprints": [
+        {
+            "date": "2008-04-21"
+        }
+    ],
+    "inspire_categories": [
+        {
+            "term": "Phenomenology-HEP"
+        }
+    ],
+    "keywords": [
+        {
+            "schema": "PACS",
+            "value": "29.20.Db"
+        },
+        {
+            "schema": "PACS",
+            "value": "98.80.-k"
+        },
+        {
+            "schema": "PACS",
+            "value": "12.60.-i"
+        },
+        {
+            "source": "author",
+            "value": "elementary particles"
+        },
+        {
+            "source": "author",
+            "value": "standard model"
+        },
+        {
+            "source": "author",
+            "value": "cosmology"
+        },
+        {
+            "source": "author",
+            "value": "particle accelerators"
+        },
+        {
+            "source": "author",
+            "value": "Elementary particles"
+        },
+        {
+            "source": "author",
+            "value": "Beyond the Standard Model"
+        },
+        {
+            "source": "author",
+            "value": "Colliders"
+        },
+        {
+            "source": "author",
+            "value": "Large Hadron Collider"
+        },
+        {
+            "source": "author",
+            "value": "Standard Model"
+        }
+    ],
+    "legacy_creation_date": "2008-08-01",
+    "number_of_pages": 9,
+    "preprint_date": "2008",
+    "publication_info": [
+        {
+            "cnum": "C07-11-26",
+            "conference_record": {
+                "$ref": "http://labs.inspirehep.net/api/conferences/978840"
+            },
+            "journal_record": {
+                "$ref": "http://labs.inspirehep.net/api/journals/1213302"
+            },
+            "journal_title": "AIP Conf.Proc.",
+            "journal_volume": "1006",
+            "page_end": "11",
+            "page_start": "3",
+            "year": 2008
+        }
+    ],
+    "self": {
+        "$ref": "http://labs.inspirehep.net/api/literature/792017"
+    },
+    "texkeys": [
+        "Ellis:2008zzc"
+    ],
+    "titles": [
+        {
+            "title": "The quest for elementary particles"
+        }
+    ]
+}

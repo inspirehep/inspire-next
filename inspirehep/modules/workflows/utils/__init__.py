@@ -247,15 +247,19 @@ def read_wf_record_source(record_uuid, source):
     """Retrieve a record from the ``WorkflowRecordSource`` table.
 
     Args:
-        record_uuid(string): the uuid of the record
+        record_uuid(uuid): the uuid of the record
         source(string): the acquisition source value of the record
 
     Return:
         (dict): the given record, if any or None
     """
+    if not source:
+        return
+    source = get_source_for_root(source)
+
     entry = WorkflowsRecordSources.query.filter_by(
-        record_id=str(record_uuid),
-        source=source.lower()
+        record_uuid=str(record_uuid),
+        source=source.lower(),
     ).one_or_none()
     return entry
 
@@ -264,12 +268,12 @@ def read_all_wf_record_sources(record_uuid):
     """Retrieve all ``WorkflowRecordSource`` for a given record id.
 
     Args:
-        record_uuid(string): the uuid of the record
+        record_uuid(uuid): the uuid of the record
 
     Return:
         (list): the ``WorkflowRecordSource``s related to ``record_uuid``
     """
-    entries = list(WorkflowsRecordSources.query.filter_by(record_id=str(record_uuid)))
+    entries = list(WorkflowsRecordSources.query.filter_by(record_uuid=str(record_uuid)))
     return entries
 
 
@@ -281,17 +285,40 @@ def insert_wf_record_source(json, record_uuid, source):
         record_uuid(uuid): the record's uuid
         source(string): the source of the record
     """
-    record_source = read_wf_record_source(record_uuid=record_uuid, source=source)
+    if not source:
+        return
+
+    source = get_source_for_root(source)
+    record_source = read_wf_record_source(
+        record_uuid=record_uuid, source=source)
+
     if record_source is None:
         record_source = WorkflowsRecordSources(
             source=source.lower(),
             json=json,
-            record_id=record_uuid
+            record_uuid=record_uuid,
         )
         db.session.add(record_source)
     else:
         record_source.json = json
     db.session.commit()
+
+
+def get_source_for_root(source):
+    """Source for the root workflow object.
+
+    Args:
+        source(str): the record source.
+
+    Return:
+        (str): the source for the root workflow object.
+
+    Note:
+        For the time being any workflow with ``acquisition_source.source``
+        different than ``arxiv`` and ``submitter`` will be stored as
+        ``publisher``.
+    """
+    return source if source in ['arxiv', 'submitter'] else 'publisher'
 
 
 def get_resolve_validation_callback_url():

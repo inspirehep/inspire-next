@@ -35,9 +35,18 @@ import atexit
 
 import coverage
 from flask import jsonify, request
+from inspire_crawler.tasks import schedule_crawl
+from inspire_utils.logging import getStackTraceLogger
+from invenio_db import db
 
-from inspirehep.modules.literaturesuggest.views import validate as literature_validate
 from inspirehep.modules.authors.views import validate as author_validate
+from inspirehep.modules.fixtures.collections import init_collections
+from inspirehep.modules.fixtures.files import init_all_storage_paths
+from inspirehep.modules.fixtures.users import init_users_and_permissions
+from inspirehep.modules.literaturesuggest.views import validate as literature_validate
+
+
+LOGGER = getStackTraceLogger(__name__)
 
 
 cov = coverage.Coverage()
@@ -47,8 +56,9 @@ from .wsgi import application  # noqa
 
 
 def save_coverage():
-    cov.stop()
-    cov.save()
+    if cov:
+        cov.stop()
+        cov.save()
 
 
 atexit.register(save_coverage)
@@ -72,6 +82,48 @@ del app.view_functions['inspirehep_arxiv.search']
 del app.view_functions['inspirehep_crossref.search']
 
 app.url_map.update()
+
+
+@app.route('/e2e/init_db', methods=['GET'])
+def init_db():
+    LOGGER.info('Recreating the DB')
+    db.session.close()
+    db.drop_all()
+    db.create_all()
+    db.session.commit()
+    LOGGER.info('Recreating the DB: done')
+    return jsonify("Db recreated")
+
+
+@app.route('/e2e/init_es', methods=['GET'])
+def init_es():
+    LOGGER.info('Recreating the ES')
+    _es = app.extensions['invenio-search']
+    list(_es.delete(ignore=[404]))
+    list(_es.create(ignore=[400]))
+    LOGGER.info('Recreating the ES: done')
+    return jsonify("ES recreated")
+
+
+@app.route('/e2e/init_fixtures', methods=['GET'])
+def init_fixtures():
+    LOGGER.info('Initializing fixtures')
+    init_all_storage_paths()
+    init_users_and_permissions()
+    init_collections()
+    db.session.commit()
+    db.session.close()
+    LOGGER.info('Initializing fixtures: done')
+    return jsonify("Fixtures initialized")
+
+
+@app.route('/e2e/schedule_crawl', methods=['POST'])
+def schedule_crawl_endopint():
+    LOGGER.info('Scheduling crawl:\n%s', request.json)
+    params = dict(request.json)
+    res = schedule_crawl(**params)
+    LOGGER.info('Scheduling crawl: done')
+    return jsonify(res)
 
 
 @app.route('/submit/literature/validate', endpoint='inspirehep_literature_suggest.validate', methods=['POST'])

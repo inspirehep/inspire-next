@@ -43,7 +43,6 @@ from flask.cli import with_appcontext
 
 from inspire_dojson import marcxml2record
 from inspire_schemas.api import validate
-from inspire_utils.helpers import force_list
 
 from inspirehep.utils.schema import ensure_valid_schema
 from .models import LegacyRecordsMirror
@@ -54,18 +53,7 @@ from .tasks import (
     migrate_record_from_legacy,
     populate_mirror_from_file,
 )
-
-REAL_COLLECTIONS = (
-    'INSTITUTION',
-    'EXPERIMENT',
-    'JOURNALS',
-    'JOURNALSNEW',
-    'HEPNAMES',
-    'JOB',
-    'JOBHIDDEN',
-    'CONFERENCES',
-    'DATA',
-)
+from .utils import get_collection
 
 
 def halt_if_debug_mode(force):
@@ -202,19 +190,6 @@ def count_citations():
 @with_appcontext
 def reporterrors(output):
     """Reports in a friendly way all failed records and corresponding motivation."""
-    def get_collection(marc_record):
-        collections = set()
-        for field in force_list(marc_record.get('980__')):
-            for v in field.values():
-                for e in force_list(v):
-                    collections.add(e.upper().strip())
-        if 'DELETED' in collections:
-            return 'DELETED'
-        for collection in collections:
-            if collection in REAL_COLLECTIONS:
-                return collection
-        return 'HEP'
-
     click.echo("Reporting broken records into {0}".format(output))
     errors = {}
     results = LegacyRecordsMirror.query.filter(LegacyRecordsMirror.valid == False) # noqa: ignore=F712

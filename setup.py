@@ -49,6 +49,10 @@ install_requires = [
     'Flask~=0.0,>=0.12.4',
     'IDUtils~=1.0,>=1.0.1',
     'SQLAlchemy~=1.0,>=1.2.5',
+    # SQLAlchemy-Continuum==1.3.5 breaks our code (VersionConflict), see:
+    # https://its.cern.ch/jira/browse/INSPIR-831
+    # https://github.com/kvesteri/sqlalchemy-continuum/issues/187
+    'SQLAlchemy-Continuum==1.3.4',
     'backoff~=1.0,>=1.4.3',
     'backports.tempfile>=1.0rc1',
     'beard~=0.0,>=0.2.0',
@@ -95,6 +99,7 @@ install_requires = [
     'langdetect~=1.0,>=1.0.7',
     'latexcodec~=1.0,>=1.0.5',
     'marshmallow~=2.0,>=2.15.0',  # See: inveniosoftware/invenio-records-rest#186
+    'numpy~=1.0,>=1.14.3',
     'orcid~=1.0,>=1.0.2',
     'plotextractor~=0.0,>=0.1.6',
     'pyOpenSSL~=17.0,>=17.5.0',
@@ -103,8 +108,12 @@ install_requires = [
     'raven[flask]~=6.0,>=6.2.1',
     'refextract~=0.0,>=0.2.2',
     'requests~=2.0,>=2.18.4',
+    'scikit-learn~=0.0,>=0.19.1',
     'setproctitle~=1.0,>=1.1.10',
     'timeout-decorator~=0.0,>=0.4.0',
+    # Pin urllib3 to version 1.22 as version 1.23 is incompatible with requirements
+    # from python-requests (<1.23) (https://travis-ci.org/inspirehep/inspire-next/builds/388221674)
+    'urllib3~=1.0,<1.23',
     'workflow~=2.0,>=2.1.3',
 ]
 
@@ -178,6 +187,7 @@ setup(
         'invenio_access.actions': [
             'admin_holdingpen_authors = inspirehep.modules.authors.permissions:action_admin_holdingpen_authors',
             'editor_use_api = inspirehep.modules.editor.permissions:action_editor_use_api',
+            'migrator-use-api = inspirehep.modules.migrator.permissions:action_migrator_use_api',
             'update_collection = inspirehep.modules.records.permissions:action_update_collection',
             'view_restricted_collection = inspirehep.modules.records.permissions:action_view_restricted_collection',
         ],
@@ -203,18 +213,19 @@ setup(
         'invenio_base.api_apps': [
             'inspire_records = inspirehep.modules.records.ext:InspireRecords',
             'inspire_search = inspirehep.modules.search:InspireSearch',
-            'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_workflows = inspirehep.modules.workflows:InspireWorkflows',
             'invenio_collections = invenio_collections:InvenioCollections',
         ],
         'invenio_base.api_blueprints': [
             'inspirehep_editor = inspirehep.modules.editor:blueprint_api',
+            'inspire_migrator = inspirehep.modules.migrator.views:blueprint',
         ],
         'invenio_base.apps': [
             'inspire_arxiv = inspirehep.modules.arxiv:InspireArXiv',
             'inspire_authors = inspirehep.modules.authors:InspireAuthors',
             'inspire_crossref = inspirehep.modules.crossref:InspireCrossref',
+            'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
             'inspire_fixtures = inspirehep.modules.fixtures:InspireFixtures',
             'inspire_forms = inspirehep.modules.forms:InspireForms',
             'inspire_hal = inspirehep.modules.hal:InspireHAL',

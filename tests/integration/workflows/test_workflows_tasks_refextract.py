@@ -275,3 +275,38 @@ def test_match_references_no_match_when_multiple_match_different_from_previous()
 
     assert get_value(references[0], 'record') is None
     assert validate(references, subschema) is None
+
+
+def test_match_reference_on_texkey():
+    cited_record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'control_number': 1,
+        'document_type': ['article'],
+        'texkeys': [
+            'Giudice:2007fh',
+        ],
+        'titles': [
+            {
+                'title': 'The Strongly-Interacting Light Higgs'
+            }
+        ],
+    }
+
+    TestRecordMetadata.create_from_kwargs(
+        json=cited_record_json, index_name='records-hep')
+
+    reference = {
+        'reference': {
+            'texkey': 'Giudice:2007fh',
+        }
+    }
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    assert validate([reference], subschema) is None
+    reference = match_reference(reference)
+
+    assert reference['record']['$ref'] == 'http://localhost:5000/api/literature/1'
+    assert validate([reference], subschema) is None
