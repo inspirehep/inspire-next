@@ -35,6 +35,10 @@ from inspirehep.utils.url import retrieve_uri
 
 
 def get_and_format_references(record):
+    """Format references.
+
+    .. deprecated:: 2018-06-07
+    """
     out = []
     references = record.get('references')
     if references:
