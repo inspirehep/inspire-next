@@ -26,6 +26,7 @@ import os
 from tempfile import NamedTemporaryFile
 import pytest
 
+from invenio_pidstore.models import PersistentIdentifier, RecordIdentifier
 from jsonschema import ValidationError
 from six.moves.urllib.parse import quote
 
@@ -72,3 +73,22 @@ def test_download_local_file(isolated_app):
 
         assert 1 == len(documents)
         assert 1 == len(files)
+
+
+def test_create_does_not_save_zombie_identifiers_if_record_creation_fails(isolated_app):
+    invalid_record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': [
+            'Literature',
+        ],
+        'control_number': 1936477,
+    }
+
+    with pytest.raises(ValidationError):
+        InspireRecord.create(invalid_record)
+
+    record_identifier = RecordIdentifier.query.filter_by(recid=1936477).one_or_none()
+    persistent_identifier = PersistentIdentifier.query.filter_by(pid_value='1936477').one_or_none()
+
+    assert not record_identifier
+    assert not persistent_identifier
