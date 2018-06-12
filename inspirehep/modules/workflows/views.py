@@ -28,6 +28,7 @@ from os.path import join
 
 from flask import (
     Blueprint,
+    abort,
     current_app,
     jsonify,
     redirect,
@@ -48,6 +49,7 @@ from jsonschema.exceptions import ValidationError
 from inspire_utils.urls import ensure_scheme
 from inspirehep.modules.workflows.errors import (
     CallbackError,
+    CallbackRecordNotFoundError,
     CallbackValidationError,
     CallbackWorkflowNotInWaitingEditState,
     CallbackWorkflowNotFoundError,
@@ -56,6 +58,7 @@ from inspirehep.modules.workflows.errors import (
 )
 from inspirehep.modules.workflows.loaders import workflow_loader
 from inspirehep.modules.workflows.models import WorkflowsPendingRecord
+from inspirehep.modules.records.permissions import RecordPermission
 from inspirehep.modules.workflows.utils import (
     get_resolve_validation_callback_url,
     get_validation_errors
@@ -639,6 +642,16 @@ class ResolveEditArticleResource(MethodView):
            'callback_url' not in workflow.extra_data:
             raise CallbackWorkflowNotInWaitingEditState(workflow.id)
 
+        recid = workflow_data['metadata'].get('control_number')
+        try:
+            record = get_db_record('lit', recid)
+        except:
+            raise CallbackRecordNotFoundError(recid)
+
+        record_permission = RecordPermission.create(action='update', record=record)
+        if not record_permission.can():
+            abort(403, record_permission)
+
         workflow_id = workflow.id
         workflow.data = workflow_data['metadata']
         workflow.status = ObjectStatus.RUNNING
@@ -650,8 +663,16 @@ class ResolveEditArticleResource(MethodView):
         return jsonify(data), 200
 
 
-def start_edit_article_workflow(rec_id):
-    record = get_db_record('lit', rec_id)
+def start_edit_article_workflow(recid):
+    try:
+        record = get_db_record('lit', recid)
+    except:
+        raise CallbackRecordNotFoundError(recid)
+
+    record_permission = RecordPermission.create(action='update', record=record)
+    if not record_permission.can():
+        abort(403, record_permission)
+
     eng_uuid = start('edit_article', data=record)
     obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
     url = "{}{}".format(current_app.config['WORKFLOWS_EDITOR_API_URL'], obj_id)
@@ -674,7 +695,7 @@ callback_blueprint.add_url_rule(
     view_func=callback_resolve_merge_conflicts,
 )
 workflow_blueprint.add_url_rule(
-    '/edit_article/<rec_id>',
+    '/edit_article/<recid>',
     view_func=start_edit_article_workflow,
 )
 workflow_blueprint.add_url_rule(

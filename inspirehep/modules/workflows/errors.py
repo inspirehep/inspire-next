@@ -127,3 +127,15 @@ class CallbackWorkflowNotInWaitingEditState(CallbackError):
         super(CallbackWorkflowNotInWaitingEditState, self).__init__(**kwargs)
         self.message = 'Workflow {} is not in waiting for curation state.'.\
             format(workflow_id)
+
+
+class CallbackRecordNotFoundError(CallbackError):
+    """Record not found exception."""
+
+    code = 404
+    error_code = 'RECORD_NOT_FOUND'
+
+    def __init__(self, recid, **kwargs):
+        """Initialize exception."""
+        super(CallbackRecordNotFoundError, self).__init__(**kwargs)
+        self.message = 'The record with id "{}" was not found.'.format(recid)
