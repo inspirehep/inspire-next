@@ -95,7 +95,7 @@ install_requires = [
     'invenio-search~=1.0,>=1.0.0',
     'invenio-userprofiles~=1.0,>=1.0.0',
     'invenio-workflows-files~=1.0,>=1.0.0',
-    'invenio-workflows-ui~=2.0,>=2.0.2',
+    'invenio-workflows-ui~=2.0,>=2.0.3',
     'invenio-workflows~=7.0,>=7.0.1',
     'langdetect~=1.0,>=1.0.7',
     'latexcodec~=1.0,>=1.0.5',
