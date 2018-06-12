@@ -46,6 +46,8 @@ class InspireDisambiguation(object):
             disambiguation_base_path, 'curated_signatures.jsonl')
         app.config['DISAMBIGUATION_INPUT_CLUSTERS_PATH'] = os.path.join(
             disambiguation_base_path, 'input_clusters.jsonl')
+        app.config['DISAMBIGUATION_SAMPLED_PAIRS_PATH'] = os.path.join(
+            disambiguation_base_path, 'sampled_pairs.jsonl')
         app.config['DISAMBIGUATION_PUBLICATIONS_PATH'] = os.path.join(
             disambiguation_base_path, 'publications.jsonl')
         app.config['DISAMBIGUATION_ETHNICITY_DATA_PATH'] = os.path.join(

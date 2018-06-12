@@ -23,3 +23,6 @@
 """Disambiguation configuration."""
 
 from __future__ import absolute_import, division, print_function
+
+
+DISAMBIGUATION_SAMPLED_PAIRS_SIZE = 1000000

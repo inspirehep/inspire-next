@@ -35,6 +35,7 @@ from inspirehep.modules.disambiguation.core.db.readers import (
     get_all_publications,
 )
 from inspirehep.modules.disambiguation.core.ml.models import EthnicityEstimator
+from inspirehep.modules.disambiguation.core.ml.sampling import sample_signature_pairs
 from inspirehep.modules.disambiguation.utils import open_file_in_folder
 
 
@@ -70,6 +71,21 @@ def save_curated_signatures_and_input_clusters():
                 'cluster_id': cluster_id,
                 'signature_uuids': [signature_uuid],
             }) + '\n')
+
+
+def save_sampled_pairs():
+    """Save sampled signature pairs to disk.
+
+    Save a file to disk called (by default) ``sampled_pairs.jsonl``, which
+    contains one line per each pair of signatures sampled from INSPIRE that
+    will be used by ``BEARD`` during training.
+    """
+    with open_file_in_folder(current_app.config['DISAMBIGUATION_SAMPLED_PAIRS_PATH'], 'w') as fd:
+        signatures_path = current_app.config['DISAMBIGUATION_CURATED_SIGNATURES_PATH']
+        clusters_path = current_app.config['DISAMBIGUATION_INPUT_CLUSTERS_PATH']
+        pairs_size = current_app.config['DISAMBIGUATION_SAMPLED_PAIRS_SIZE']
+        for pair in sample_signature_pairs(signatures_path, clusters_path, pairs_size):
+            fd.write(json.dumps(pair) + '\n')
 
 
 def save_publications():
