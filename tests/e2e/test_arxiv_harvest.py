@@ -29,7 +29,7 @@ import backoff
 import pytest
 
 from inspirehep.testlib.api import InspireApiClient
-from inspirehep.testlib.api.mitm_client import MITMClient
+from inspirehep.testlib.api.mitm_client import MITMClient, with_mitmproxy
 
 
 @pytest.fixture
@@ -70,9 +70,8 @@ def wait_for(func, *args, **kwargs):
     return decorated(*args, **kwargs)
 
 
+@with_mitmproxy
 def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
-    mitm_client.set_scenario('harvest_non_core_article_goes_in')
-
     inspire_client.e2e.schedule_crawl(
         spider='arXiv',
         workflow='article',
@@ -117,9 +116,8 @@ def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
     )
 
 
+@with_mitmproxy
 def test_harvest_core_article_goes_in(inspire_client, mitm_client):
-    mitm_client.set_scenario('harvest_core_article_goes_in')
-
     inspire_client.e2e.schedule_crawl(
         spider='arXiv',
         workflow='article',
@@ -169,9 +167,8 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
     )
 
 
+@with_mitmproxy
 def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client):
-    mitm_client.set_scenario('harvest_core_article_manual_accept_goes_in')
-
     inspire_client.e2e.schedule_crawl(
         spider='arXiv',
         workflow='article',
