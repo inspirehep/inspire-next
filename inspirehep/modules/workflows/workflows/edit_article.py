@@ -20,20 +20,32 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Tests for workflow views."""
+from __future__ import absolute_import, division, print_function
 
-from factories.db.invenio_records import TestRecordMetadata
+from invenio_db import db
+
+from inspirehep.modules.workflows.tasks.actions import validate_record
+from inspirehep.modules.workflows.tasks.upload import store_record
+from inspirehep.modules.workflows.tasks.submission import send_robotupload
 
 
-def test_view_edit_lit(isolated_api_client):
-    factory = TestRecordMetadata.create_from_kwargs(json={})
+def change_status_to_waiting(obj, eng):
+    eng.wait(msg='Waiting for JLab curation.')
+    obj.save()
+    db.session.commit()
 
-    response = isolated_api_client.get("/workflow/edit_lit/{}".format(
-        factory.record_metadata.json['control_number'])
+
+class EditArticle(object):
+    """Editing workflow for Literature collection."""
+
+    name = 'edit_article'
+    data_type = 'hep'
+
+    workflow = (
+        [
+            change_status_to_waiting,
+            validate_record('hep'),
+            send_robotupload,
+            store_record,
+        ]
     )
-    assert response.status_code == 302
-
-
-def test_view_edit_lit_wrong_recid(isolated_api_client):
-    response = isolated_api_client.get("/workflow/edit_lit/1")
-    assert response.status_code == 500

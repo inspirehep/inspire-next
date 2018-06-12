@@ -20,11 +20,21 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Our workflows."""
+"""Tests for workflow views."""
 
-from __future__ import absolute_import, division, print_function
+from factories.db.invenio_records import TestRecordMetadata
 
-from .article import Article            # noqa: F401
-from .author import Author              # noqa: F401
-from .manual_merge import ManualMerge   # noqa: F401
-from .edit_article import EditArticle   # noqa: F401
+
+def test_view_edit_lit(api_client):
+    factory = TestRecordMetadata.create_from_kwargs(json={})
+    control_number =  factory.record_metadata.json['control_number']
+    endpoint_url = "/callback/workflows/edit_lit/{}".format(control_number)
+
+    response = api_client.get(endpoint_url)
+    assert response.status_code == 302
+    assert "/editor/holdingpen/" in response.data
+
+
+def test_view_edit_lit_wrong_recid(api_client):
+    response = api_client.get("/callback/workflows/edit_lit/1")
+    assert response.status_code == 500

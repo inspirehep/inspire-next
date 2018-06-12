@@ -30,12 +30,18 @@ from flask import (
     Blueprint,
     current_app,
     jsonify,
+    redirect,
     request
 )
 from flask.views import MethodView
 from invenio_db import db
 from inspire_schemas.api import validate
-from invenio_workflows import workflow_object_class, ObjectStatus
+from invenio_workflows import (
+    ObjectStatus,
+    start,
+    workflow_object_class,
+    WorkflowEngine,
+)
 from invenio_workflows.errors import WorkflowsMissingObject
 from jsonschema.exceptions import ValidationError
 
@@ -54,6 +60,7 @@ from inspirehep.modules.workflows.utils import (
     get_validation_errors
 )
 from inspirehep.utils.record import get_value
+from inspirehep.utils.record_getter import get_db_record, RecordGetterError
 
 
 blueprint = Blueprint(
@@ -70,6 +77,11 @@ def error_handler(error):
     """Callback error handler."""
     response = jsonify(error.to_dict())
     return response, error.code
+
+
+@blueprint.errorhandler(RecordGetterError)
+def handle_record_getter_error(error):
+    return str(error.cause), 500
 
 
 def _get_base_url():
@@ -591,6 +603,14 @@ class ResolveValidationResource(MethodView):
         return jsonify(data), 200
 
 
+def start_edit_workflow(rec_id):
+    record = get_db_record('lit', rec_id)
+    eng_uuid = start('edit_article', data=record)
+    obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
+    url = "{}{}".format(current_app.config['WORKFLOWS_EDITOR_API_URL'], obj_id)
+    return redirect(location=url, code=302)
+
+
 callback_resolve_validation = ResolveValidationResource.as_view(
     'callback_resolve_validation')
 callback_resolve_merge_conflicts = ResolveMergeResource.as_view(
@@ -603,4 +623,8 @@ blueprint.add_url_rule(
 blueprint.add_url_rule(
     '/workflows/resolve_merge_conflicts',
     view_func=callback_resolve_merge_conflicts,
+)
+blueprint.add_url_rule(
+    '/workflows/edit_lit/<rec_id>',
+    view_func=start_edit_workflow,
 )
