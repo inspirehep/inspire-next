@@ -30,8 +30,8 @@ from flask import current_app
 from factories.db.invenio_records import TestRecordMetadata
 
 from inspirehep.modules.disambiguation.api import (
+    save_curated_signatures_and_input_clusters,
     save_publications,
-    save_signatures_and_clusters,
     train_and_save_ethnicity_model,
 )
 from inspirehep.modules.disambiguation.core.ml.models import EthnicityEstimator
@@ -43,26 +43,34 @@ RACE,NAMELAST,NAMEFRST
 '''
 
 
-def test_save_signatures_and_clusters(isolated_app, tmpdir):
+def test_save_curated_signatures_and_input_clusters(isolated_app, tmpdir):
     TestRecordMetadata.create_from_file(__name__, '792017.json')
 
-    clusters_fd = tmpdir.join('clusters.json')
-    signatures_fd = tmpdir.join('signatures.jl')
+    curated_signatures_fd = tmpdir.join('curated_signatures.jsonl')
+    input_clusters_fd = tmpdir.join('input_clusters.jsonl')
 
     config = {
-        'DISAMBIGUATION_CLUSTERS_PATH': str(clusters_fd),
-        'DISAMBIGUATION_SIGNATURES_PATH': str(signatures_fd),
+        'DISAMBIGUATION_CURATED_SIGNATURES_PATH': str(curated_signatures_fd),
+        'DISAMBIGUATION_INPUT_CLUSTERS_PATH': str(input_clusters_fd),
     }
 
     with patch.dict(current_app.config, config):
-        save_signatures_and_clusters()
+        save_curated_signatures_and_input_clusters()
 
-    clusters = json.load(clusters_fd)
+    input_clusters = [json.loads(line) for line in input_clusters_fd.readlines()]
+    reversed_input_clusters = {
+        input_cluster['cluster_id']: {
+            'author_id': input_cluster['author_id'],
+            'signature_uuids': input_cluster['signature_uuids'],
+        } for input_cluster in input_clusters
+    }  # XXX: so that the assertion doesn't depend on cluster_id.
 
-    assert '1010819' in clusters
-    assert ['94f560d2-6791-43ec-a379-d3dc4ad0ceb7'] == clusters['1010819']
+    assert {
+        'author_id': 1010819,
+        'signature_uuids': ['94f560d2-6791-43ec-a379-d3dc4ad0ceb7'],
+    } in reversed_input_clusters.values()
 
-    signatures = [json.loads(line) for line in signatures_fd.readlines()]
+    curated_signatures = [json.loads(line) for line in curated_signatures_fd.readlines()]
 
     assert {
         'author_affiliation': 'CERN',
@@ -71,22 +79,21 @@ def test_save_signatures_and_clusters(isolated_app, tmpdir):
         'publication_id': 792017,
         'signature_block': 'ELj',
         'signature_uuid': '94f560d2-6791-43ec-a379-d3dc4ad0ceb7',
-    } in signatures
+    } in curated_signatures
 
 
 def test_save_publications(isolated_app, tmpdir):
     TestRecordMetadata.create_from_file(__name__, '792017.json')
 
-    publications_fd = tmpdir.join('publications.json')
+    publications_fd = tmpdir.join('publications.jsonl')
 
     config = {'DISAMBIGUATION_PUBLICATIONS_PATH': str(publications_fd)}
 
     with patch.dict(current_app.config, config):
         save_publications()
 
-    publications = json.load(publications_fd)
+    publications = [json.loads(line) for line in publications_fd.readlines()]
 
-    assert '792017' in publications
     assert {
         'abstract': 'This talk describes past progress in probing the structure of matter and the content of the Universe, which has led to the Standard Model of elementary particles, and the prospects for establishing new physics beyond the Standard Model using the LHC particle collider at CERN.',
         'authors': ['Ellis, John R.'],
@@ -108,7 +115,7 @@ def test_save_publications(isolated_app, tmpdir):
         'publication_id': 792017,
         'title': 'The quest for elementary particles',
         'topics': ['Phenomenology-HEP'],
-    } == publications['792017']
+    } in publications
 
 
 def test_train_and_save_ethnicity_model(tmpdir):
