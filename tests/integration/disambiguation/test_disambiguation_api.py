@@ -118,7 +118,7 @@ def test_save_publications(isolated_app, tmpdir):
     } in publications
 
 
-def test_train_and_save_ethnicity_model(tmpdir):
+def test_train_and_save_ethnicity_model(isolated_app, tmpdir):
     ethnicity_data_fd = tmpdir.join('ethnicity.csv')
     ethnicity_data_fd.write(TRAINING_DATA)
     ethnicity_model_fd = tmpdir.join('ethnicity.pkl')
