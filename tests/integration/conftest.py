@@ -154,6 +154,16 @@ def app_client(app):
         yield client
 
 
+@pytest.fixture()
+def isolated_app_client(isolated_app):
+    """Flask test client for the application.
+
+    See: http://flask.pocoo.org/docs/0.12/testing/#keeping-the-context-around.
+    """
+    with isolated_app.test_client() as client:
+        yield client
+
+
 @pytest.fixture(scope='session')
 def api(app):
     """Flask API application."""
