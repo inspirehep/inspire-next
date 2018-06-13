@@ -63,6 +63,9 @@ WORKFLOWS_REFERENCE_MATCHER_UNIQUE_IDENTIFIERS_CONFIG = {
     ],
     'doc_type': 'hep',
     'index': 'records-hep',
+    'collections': [
+        'Literature',
+    ],
     'source': [
         'control_number',
     ],
@@ -135,6 +138,9 @@ WORKFLOWS_REFERENCE_MATCHER_DEFAULT_PUBLICATION_INFO_CONFIG = {
     ],
     'doc_type': 'hep',
     'index': 'records-hep',
+    'collections': [
+        'Literature',
+    ],
     'source': [
         'control_number',
     ],
@@ -182,6 +188,9 @@ WORKFLOWS_REFERENCE_MATCHER_JHEP_AND_JCAP_PUBLICATION_INFO_CONFIG = {
     ],
     'doc_type': 'hep',
     'index': 'records-hep',
+    'collections': [
+        'Literature',
+    ],
     'source': [
         'control_number',
     ],
