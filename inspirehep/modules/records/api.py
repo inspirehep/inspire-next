@@ -32,6 +32,7 @@ import arrow
 from elasticsearch.exceptions import NotFoundError
 from flask import current_app
 from fs.opener import fsopen
+from six.moves.urllib.parse import urlparse, unquote
 
 from inspire_dojson.utils import get_recid_from_ref, strip_empty_values
 from inspire_schemas.api import validate
@@ -459,7 +460,12 @@ class InspireRecord(Record):
         if key not in self.files:
             key = self._get_unique_files_key(base_file_name=key)
 
-        stream = fsopen(doc_or_fig_obj['url'], mode='rb')
+        url = doc_or_fig_obj['url']
+        scheme = urlparse(url).scheme
+        if scheme == 'file':
+            url = unquote(url)
+
+        stream = fsopen(url, mode='rb')
         return self.add_document_or_figure(
             metadata=doc_or_fig_obj,
             key=key,

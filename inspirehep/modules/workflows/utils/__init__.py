@@ -30,12 +30,13 @@ import traceback
 from contextlib import closing, contextmanager
 from functools import wraps
 from six import text_type
+from six.moves.urllib.parse import unquote
 import backoff
 import lxml.etree as ET
 import requests
 from flask import current_app, url_for
 from timeout_decorator import TimeoutError
-
+from fs.opener import fsopen
 from invenio_db import db
 
 from inspire_schemas.utils import \
@@ -205,6 +206,14 @@ def get_document_in_workflow(obj):
     obj.log.info('Using document with key "%s"', key)
     with retrieve_uri(obj.files[key].file.uri) as local_file:
         yield local_file
+
+
+@with_debug_logging
+def copy_file_to_workflow(workflow, name, url):
+    url = unquote(url)
+    stream = fsopen(url, mode='rb')
+    workflow.files[name] = stream
+    return workflow.files[name]
 
 
 @backoff.on_exception(backoff.expo, requests.packages.urllib3.exceptions.ProtocolError, max_tries=5)
