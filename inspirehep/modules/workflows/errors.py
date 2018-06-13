@@ -115,3 +115,15 @@ class CallbackWorkflowNotInMergeState(CallbackError):
         super(CallbackWorkflowNotInMergeState, self).__init__(**kwargs)
         self.message = 'Workflow {} is not in merge state.'.format(
             workflow_id)
+
+
+class CallbackWorkflowNotInWaitingEditState(CallbackError):
+    """Workflow not in validation error exception."""
+
+    error_code = 'WORKFLOW_NOT_IN_WAITING_FOR_CURATION_STATE'
+
+    def __init__(self, workflow_id, **kwargs):
+        """Initialize exception."""
+        super(CallbackWorkflowNotInWaitingEditState, self).__init__(**kwargs)
+        self.message = 'Workflow {} is not in waiting for curation state.'.\
+            format(workflow_id)

@@ -22,19 +22,74 @@
 
 """Tests for workflow views."""
 
+from __future__ import absolute_import, division, print_function
+
+import json
+
+from invenio_workflows import ObjectStatus, WorkflowEngine, start
+
+from inspirehep.utils.record_getter import get_db_record
 from factories.db.invenio_records import TestRecordMetadata
 
 
-def test_view_edit_lit(api_client):
+def test_jlab_edit_view(api_client):
     factory = TestRecordMetadata.create_from_kwargs(json={})
-    control_number =  factory.record_metadata.json['control_number']
-    endpoint_url = "/callback/workflows/edit_lit/{}".format(control_number)
+    control_number = factory.record_metadata.json['control_number']
+    endpoint_url = "/workflows/edit_article/{}".format(control_number)
 
     response = api_client.get(endpoint_url)
     assert response.status_code == 302
     assert "/editor/holdingpen/" in response.data
 
 
-def test_view_edit_lit_wrong_recid(api_client):
-    response = api_client.get("/callback/workflows/edit_lit/1")
+def test_jlab_edit_view_wrong_recid(api_client):
+    response = api_client.get("/workflows/edit_article/1")
     assert response.status_code == 500
+
+
+def test_edit_article_workflow(workflow_app):
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'nucl-th'
+                ],
+                'value': '1802.03287'
+            }
+        ],
+        'control_number': 123,
+        'document_type': ['article'],
+        'titles': [{'title': 'Resource Pooling in Large-Scale Content Delivery Systems'}],
+        'self': {'$ref': 'http://localhost:5000/schemas/records/hep.json'},
+        '_collections': ['Literature']
+    }
+    factory = TestRecordMetadata.create_from_kwargs(json=record)
+    eng_uuid = start('edit_article', data=factory.record_metadata.json)
+    obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
+
+    assert obj.status == ObjectStatus.WAITING
+    assert obj.extra_data['callback_url']
+
+    # simulate changes in the editor and save
+    new_title = 'JLab edited this fancy title'
+    obj.data['titles'][0]['title'] = new_title
+
+    payload = {
+        'id': obj.id,
+        'metadata': obj.data,
+        '_extra_data': obj.extra_data
+    }
+
+    workflow_app.test_client().put(
+        obj.extra_data['callback_url'],
+        data=json.dumps(payload),
+        content_type='application/json'
+    )
+
+    obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
+    assert obj.status == ObjectStatus.COMPLETED
+    assert obj.data['titles'][0]['title'] == new_title
+
+    record = get_db_record('lit', 123)
+    assert record['titles'][0]['title'] == new_title

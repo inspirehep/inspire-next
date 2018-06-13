@@ -25,14 +25,25 @@ from __future__ import absolute_import, division, print_function
 from invenio_db import db
 
 from inspirehep.modules.workflows.tasks.actions import validate_record
-from inspirehep.modules.workflows.tasks.upload import store_record
 from inspirehep.modules.workflows.tasks.submission import send_robotupload
+from inspirehep.modules.workflows.utils import get_resolve_edit_article_callback_url
+from inspirehep.utils.record_getter import get_db_record
+from ..utils import with_debug_logging
 
 
+@with_debug_logging
 def change_status_to_waiting(obj, eng):
-    eng.wait(msg='Waiting for JLab curation.')
+    obj.extra_data['callback_url'] = get_resolve_edit_article_callback_url()
+    eng.wait(msg='Waiting for curation.')
     obj.save()
     db.session.commit()
+
+
+def update_record(obj, eng):
+    control_number = obj.data['control_number']
+    record = get_db_record('lit', control_number)
+    record.update(obj.data)
+    record.commit()
 
 
 class EditArticle(object):
@@ -45,5 +56,5 @@ class EditArticle(object):
         change_status_to_waiting,
         validate_record('hep'),
         send_robotupload,
-        store_record,
+        update_record,
     ])
