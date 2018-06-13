@@ -22,10 +22,15 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+from tempfile import NamedTemporaryFile
 import pytest
 
-from inspirehep.utils.record_getter import get_db_record
 from jsonschema import ValidationError
+from six.moves.urllib.parse import quote
+
+from inspirehep.modules.records.api import InspireRecord
+from inspirehep.utils.record_getter import get_db_record
 
 
 def test_validate_validates_format(app):
@@ -33,3 +38,37 @@ def test_validate_validates_format(app):
     article.setdefault('acquisition_source', {})['email'] = 'not an email'
     with pytest.raises(ValidationError):
         article.commit()
+
+
+def test_download_local_file(isolated_app):
+    with NamedTemporaryFile(suffix=';1') as temp_file:
+        file_location = 'file://{0}'.format(quote(temp_file.name))
+        file_name = os.path.basename(temp_file.name)
+        data = {
+            '$schema': 'http://localhost:5000/schemas/records/hep.json',
+            '_collections': [
+                'Literature'
+            ],
+            'document_type': [
+                'article'
+            ],
+            'titles': [
+                {
+                    'title': 'h'
+                },
+            ],
+            'documents': [
+                {
+                    'key': file_name,
+                    'url': file_location,
+                },
+            ],
+        }
+
+        record = InspireRecord.create(data)
+
+        documents = record['documents']
+        files = record['_files']
+
+        assert 1 == len(documents)
+        assert 1 == len(files)

@@ -31,6 +31,7 @@ from six import reraise
 
 from flask import current_app
 from jsonschema.exceptions import ValidationError
+from six.moves.urllib.parse import urlparse
 from sqlalchemy import (
     JSON,
     String,
@@ -56,6 +57,7 @@ from inspirehep.modules.workflows.tasks.refextract import (
     match_references,
 )
 from inspirehep.modules.workflows.utils import (
+    copy_file_to_workflow,
     download_file_to_workflow,
     get_document_in_workflow,
     get_resolve_validation_callback_url,
@@ -381,11 +383,15 @@ def download_documents(obj, eng):
     for document in documents:
         filename = document['key']
         url = document['url']
-        downloaded = download_file_to_workflow(
-            workflow=obj,
-            name=filename,
-            url=url,
-        )
+        scheme = urlparse(url).scheme
+        if scheme == 'file':
+            downloaded = copy_file_to_workflow(obj, filename, url)
+        else:
+            downloaded = download_file_to_workflow(
+                workflow=obj,
+                name=filename,
+                url=url,
+            )
         if downloaded:
             document['url'] = '/api/files/{bucket}/{key}'.format(
                 bucket=obj.files[filename].bucket_id, key=filename)
