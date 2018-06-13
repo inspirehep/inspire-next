@@ -20,11 +20,39 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Our workflows."""
-
 from __future__ import absolute_import, division, print_function
 
-from .article import Article            # noqa: F401
-from .author import Author              # noqa: F401
-from .manual_merge import ManualMerge   # noqa: F401
-from .edit_article import EditArticle   # noqa: F401
+from invenio_db import db
+
+from inspirehep.modules.workflows.tasks.actions import validate_record
+from inspirehep.modules.workflows.tasks.submission import send_robotupload
+from inspirehep.modules.workflows.utils import get_resolve_edit_article_callback_url
+from inspirehep.utils.record_getter import get_db_record
+
+
+def change_status_to_waiting(obj, eng):
+    obj.extra_data['callback_url'] = get_resolve_edit_article_callback_url()
+    eng.wait(msg='Waiting for JLab curation.')
+    obj.save()
+    db.session.commit()
+
+
+def update_record(obj, eng):
+    control_number = obj.data['control_number']
+    record = get_db_record('lit', control_number)
+    record.update(obj.data)
+    record.commit()
+
+
+class EditArticle(object):
+    """Editing workflow for Literature collection."""
+
+    name = 'edit_article'
+    data_type = 'hep'
+
+    workflow = ([
+        change_status_to_waiting,
+        validate_record('hep'),
+        send_robotupload,
+        update_record,
+    ])

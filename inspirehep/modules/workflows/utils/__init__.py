@@ -340,7 +340,7 @@ def get_resolve_validation_callback_url():
         route.
     """
     return url_for(
-        'inspire_workflows.callback_resolve_validation',
+        'inspire_workflows_callbacks.callback_resolve_validation',
         _external=True
     )
 
@@ -355,7 +355,20 @@ def get_resolve_merge_conflicts_callback_url():
         route.
     """
     return url_for(
-        'inspire_workflows.callback_resolve_merge_conflicts',
+        'inspire_workflows_callbacks.callback_resolve_merge_conflicts',
+        _external=True
+    )
+
+
+def get_resolve_edit_article_callback_url():
+    """Resolve edit_article workflow letting it continue.
+
+    Note:
+        It's using ``inspire_workflows.callback_resolve_edit_article``
+        route.
+    """
+    return url_for(
+        'inspire_workflows.callback_resolve_edit_article',
         _external=True
     )
 

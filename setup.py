@@ -95,7 +95,7 @@ install_requires = [
     'invenio-search~=1.0,>=1.0.0',
     'invenio-userprofiles~=1.0,>=1.0.0',
     'invenio-workflows-files~=1.0,>=1.0.0',
-    'invenio-workflows-ui~=2.0,>=2.0.2',
+    'invenio-workflows-ui~=2.0,>=2.0.3',
     'invenio-workflows~=7.0,>=7.0.1',
     'langdetect~=1.0,>=1.0.7',
     'latexcodec~=1.0,>=1.0.5',
@@ -271,6 +271,7 @@ setup(
             'article = inspirehep.modules.workflows.workflows:Article',
             'author = inspirehep.modules.workflows.workflows:Author',
             'manual_merge = inspirehep.modules.workflows.workflows:ManualMerge',
+            'edit_article = inspirehep.modules.workflows.workflows:EditArticle',
         ],
         'invenio_workflows_ui.actions': [
             'author_approval = inspirehep.modules.workflows.actions.author_approval:AuthorApproval',
