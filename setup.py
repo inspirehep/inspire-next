@@ -57,6 +57,7 @@ install_requires = [
     'backports.tempfile>=1.0rc1',
     'beard~=0.0,>=0.2.0',
     'celery~=4.0,>=4.1.0,<4.2.0',
+    'click-spinner~=0.0,>=0.1.8',
     'elasticsearch-dsl~=2.0,>=2.2.0',
     'elasticsearch~=2.0,>=2.4.1',
     'enum34~=1.0,>=1.1.6',
