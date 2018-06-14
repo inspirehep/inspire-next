@@ -42,12 +42,14 @@ class InspireDisambiguation(object):
         disambiguation_base_path = os.path.join(app.instance_path, 'disambiguation')
 
         app.config['DISAMBIGUATION_BASE_PATH'] = disambiguation_base_path
-        app.config['DISAMBIGUATION_CLUSTERS_PATH'] = os.path.join(
-            disambiguation_base_path, 'clusters.json')
+        app.config['DISAMBIGUATION_CURATED_SIGNATURES_PATH'] = os.path.join(
+            disambiguation_base_path, 'curated_signatures.jsonl')
+        app.config['DISAMBIGUATION_INPUT_CLUSTERS_PATH'] = os.path.join(
+            disambiguation_base_path, 'input_clusters.jsonl')
+        app.config['DISAMBIGUATION_SAMPLED_PAIRS_PATH'] = os.path.join(
+            disambiguation_base_path, 'sampled_pairs.jsonl')
         app.config['DISAMBIGUATION_PUBLICATIONS_PATH'] = os.path.join(
-            disambiguation_base_path, 'publications.json')
-        app.config['DISAMBIGUATION_SIGNATURES_PATH'] = os.path.join(
-            disambiguation_base_path, 'signatures.jl')
+            disambiguation_base_path, 'publications.jsonl')
         app.config['DISAMBIGUATION_ETHNICITY_DATA_PATH'] = os.path.join(
             disambiguation_base_path, 'ethnicity.csv')
         app.config['DISAMBIGUATION_ETHNICITY_MODEL_PATH'] = os.path.join(

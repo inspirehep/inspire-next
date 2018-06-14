@@ -416,6 +416,29 @@ def test_assign_phonetic_block_ignores_malformed_names():
     assert expected == result
 
 
+def test_assign_phonetic_block_discards_empty_signature_blocks():
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+
+    record = {
+        '$schema': 'http://localhost:5000/records/schemas/hep.json',
+        'authors': [
+            {'full_name': 'ae'},
+        ],
+    }  # record/1422285
+    assert validate(record['authors'], subschema) is None
+
+    assign_phonetic_block(None, record)
+
+    expected = [
+        {'full_name': 'ae'},
+    ]
+    result = record['authors']
+
+    assert validate(result, subschema) is None
+    assert expected == result
+
+
 @mock.patch('inspirehep.modules.records.receivers.uuid.uuid4')
 def test_assign_uuid(mock_uuid4):
     mock_uuid4.return_value = UUID('727238f3-8ed6-40b6-97d2-dc3cd1429131')

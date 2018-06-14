@@ -37,6 +37,7 @@ from timeout_decorator import timeout
 
 from inspirehep.modules.workflows.utils import (
     convert,
+    copy_file_to_workflow,
     download_file_to_workflow,
     get_document_in_workflow,
     get_source_for_root,
@@ -69,6 +70,25 @@ def test_download_file_to_workflow_retries_on_protocol_error():
             obj, '1605.03844.pdf', 'http://export.arxiv.org/pdf/1605.03844')
 
         assert expected == result
+
+
+@patch('inspirehep.modules.workflows.utils.fsopen')
+def test_copy_file_to_workflow(mock_fsopen):
+    mock_fsopen.return_value = 'jessica jones'
+
+    data = {}
+    extra_data = {}
+    files = MockFiles({})
+
+    obj = MockObj(data, extra_data, files=files)
+
+    expected = MockFileObject(key='jessicajones.defenders;1')
+    result = copy_file_to_workflow(
+        obj, 'jessicajones.defenders;1', 'file://jessicajones.defenders%3B1')
+
+    assert expected == result
+    mock_fsopen.assert_called_once_with(
+        'file://jessicajones.defenders;1', mode='rb')
 
 
 def test_json_api_request_retries_on_connection_error():

@@ -310,3 +310,62 @@ def test_match_reference_on_texkey():
 
     assert reference['record']['$ref'] == 'http://localhost:5000/api/literature/1'
     assert validate([reference], subschema) is None
+
+
+def test_match_reference_ignores_hidden_collections():
+    cited_record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['HAL Hidden'],
+        'control_number': 1,
+        'document_type': ['article'],
+        'dois': [{
+            'value': '10.1371/journal.pone.0188398',
+        }],
+    }
+
+    TestRecordMetadata.create_from_kwargs(
+        json=cited_record_json, index_name='records-hep')
+
+    reference = {
+        'reference': {
+            'dois': ['10.1371/journal.pone.0188398'],
+        }
+    }
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    assert validate([reference], subschema) is None
+    reference = match_reference(reference)
+
+    assert 'record' not in reference
+
+
+def test_match_reference_ignores_deleted():
+    cited_record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'control_number': 1,
+        'document_type': ['article'],
+        'deleted': True,
+        'dois': [{
+            'value': '10.1371/journal.pone.0188398',
+        }],
+    }
+
+    TestRecordMetadata.create_from_kwargs(
+        json=cited_record_json, index_name='records-hep')
+
+    reference = {
+        'reference': {
+            'dois': ['10.1371/journal.pone.0188398'],
+        }
+    }
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    assert validate([reference], subschema) is None
+    reference = match_reference(reference)
+
+    assert 'record' not in reference
