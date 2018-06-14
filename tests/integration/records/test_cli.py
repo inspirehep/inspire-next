@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+
 from inspirehep.modules.records.cli import check
 
 
@@ -57,5 +59,8 @@ def test_check_unlinked_references_generate_files(app_cli_runner, isolated_app, 
 
 def test_check_unlinked_references_works_without_arguments(app_cli_runner, isolated_app, tmpdir):
     result = app_cli_runner.invoke(check, ['unlinked_references'])
+
+    os.remove("missing_cited_dois.txt")
+    os.remove("missing_cited_arxiv_eprints.txt")
 
     assert result.exit_code == 0

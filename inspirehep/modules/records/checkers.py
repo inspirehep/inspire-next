@@ -57,22 +57,16 @@ def order_dictionary_into_list(result_dict):
     return sorted_list
 
 
-def link_dois_and_arxivs(dois, arxiv_id, linked_ids, core):
-    """Link the ``arxiv_id`` eprint with all the dois in ``dois`` in the ``linked_ids`` dict,
-    counting how many times they appear in the same reference"""
-    if arxiv_id and len(dois) > 0:
-        for doi in dois:
-            increase_cited_count(linked_ids, u'{}|{}'.format(doi, arxiv_id), core)
-
-
 def add_linked_ids(dois, arxiv_ids, linked_ids):
     """Increase the amount of times a paper with a specific doi
-    has been cited by using its corresponding arxiv eprint and viceversa"""
-    for ids, count in linked_ids.iteritems():
-        doi, arxiv_id = ids.split('|')
+    has been cited by using its corresponding arxiv eprint and viceversa
 
-        total_count_core = dois[doi][0] + arxiv_ids[arxiv_id][0] - count[0]
-        total_count_non_core = dois[doi][1] + arxiv_ids[arxiv_id][1] - count[1]
+    ``double_count`` is used to count the times that a doi and an arxiv eprint
+    appear in the same paper so that we don't count them twice in the final result"""
+    for (doi, arxiv_id), double_count in linked_ids.iteritems():
+
+        total_count_core = dois[doi][0] + arxiv_ids[arxiv_id][0] - double_count[0]
+        total_count_non_core = dois[doi][1] + arxiv_ids[arxiv_id][1] - double_count[1]
 
         dois[doi] = (total_count_core, total_count_non_core)
         arxiv_ids[arxiv_id] = (total_count_core, total_count_non_core)
@@ -110,12 +104,17 @@ def check_unlinked_references():
 
     for reference in data:
         dois = get_value(reference, 'reference.reference.dois', [])
+        arxiv_id = get_value(reference, 'reference.reference.arxiv_eprint')
+
+        if arxiv_id and len(dois) > 0:
+            for doi in dois:
+                increase_cited_count(linked_ids, (doi, arxiv_id), reference["core"])
+
         for doi in dois:
             increase_cited_count(result_doi, doi, reference["core"])
-        arxiv_id = get_value(reference, 'reference.reference.arxiv_eprint')
+
         if arxiv_id:
             increase_cited_count(result_arxiv, arxiv_id, reference["core"])
-        link_dois_and_arxivs(dois, arxiv_id, linked_ids, reference["core"])
 
     add_linked_ids(result_doi, result_arxiv, linked_ids)
 
