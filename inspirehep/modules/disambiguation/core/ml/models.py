@@ -45,7 +45,7 @@ class EthnicityEstimator(object):
         with open(input_filename, 'r') as fd:
             reader = csv.DictReader(fd)
             for row in reader:
-                ethnicities.append(row['RACE'])
+                ethnicities.append(int(row['RACE']))
                 lasts.append(row['NAMELAST'])
                 firsts.append(row['NAMEFRST'])
 
