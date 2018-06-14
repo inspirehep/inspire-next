@@ -108,6 +108,7 @@ from inspirehep.modules.workflows.tasks.submission import (
 
 from inspirehep.modules.literaturesuggest.tasks import (
     curation_ticket_needed,
+    jlab_ticket_needed,
     reply_ticket_context,
     new_ticket_context,
     curation_ticket_context,
@@ -214,18 +215,29 @@ NOTIFY_ACCEPTED = [
 ]
 
 
-NOTIFY_CURATOR_IF_CORE = [
+NOTIFY_CURATOR_IF_NEEDED = [
     IF_NOT(
         is_marked('is-update'),
-        IF(
-            curation_ticket_needed,
-            create_ticket(
-                template='literaturesuggest/tickets/curation_core.html',
-                queue='HEP_curation',
-                context_factory=curation_ticket_context,
-                ticket_id_key='curation_ticket_id',
+        [
+            IF(
+                curation_ticket_needed,
+                create_ticket(
+                    template='literaturesuggest/tickets/curation_core.html',
+                    queue='HEP_curation',
+                    context_factory=curation_ticket_context,
+                    ticket_id_key='curation_ticket_id',
+                ),
             ),
-        ),
+            IF(
+                jlab_ticket_needed,
+                create_ticket(
+                    template='literaturesuggest/tickets/curation_jlab.html',
+                    queue='HEP_curation_jlab',
+                    context_factory=curation_ticket_context,
+                    ticket_id_key='curation_ticket_id',
+                ),
+            )
+        ]
     ),
 ]
 
@@ -491,7 +503,7 @@ class Article(object):
                     SEND_TO_LEGACY +
                     WAIT_FOR_LEGACY_WEBCOLL +
                     NOTIFY_ACCEPTED +
-                    NOTIFY_CURATOR_IF_CORE
+                    NOTIFY_CURATOR_IF_NEEDED
                 ),
                 NOTIFY_NOT_ACCEPTED,
             ),

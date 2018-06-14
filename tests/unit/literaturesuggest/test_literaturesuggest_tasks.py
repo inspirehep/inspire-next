@@ -199,6 +199,7 @@ def test_curation_ticket_context():
         'user_comment': [
             'xyzzy',
         ],
+        'server_name': 'localhost:5000',
         'subject': 'math.GT/0309136 arXiv:0706.0001v1 doi:bar foo (#baz)',
     }
     result = curation_ticket_context(user, obj)

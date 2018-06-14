@@ -1248,6 +1248,9 @@ ARXIV_CATEGORIES = {
         'physics.ins-det',
     ]
 }
+JLAB_ARXIV_CATEGORIES = [
+    'nucl-th'
+]
 HEP_ONTOLOGY_FILE = "HEPont.rdf"
 """Name or path of the ontology to use for hep articles keyword extraction."""
 
