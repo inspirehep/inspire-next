@@ -35,7 +35,7 @@ def test_check_unlinked_references_generate_files(app_cli_runner, isolated_app, 
     assert result.exit_code == 0
 
     result = doi_fd_content[0]
-    expected = '10.1103/PhysRevLett.13.321: (3, 0)'
+    expected = '10.1016/j.physletb.2012.08.020: (4, 0)'
 
     assert result == expected
 
