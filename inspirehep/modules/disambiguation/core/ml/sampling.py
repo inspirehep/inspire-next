@@ -59,8 +59,11 @@ def sample_signature_pairs(signatures_path, clusters_path, pairs_size):
            different authors, while the latter is to avoid oversampling the
            typical case of signatures with exactly the same author name.
 
-        3. Finally we sample from each of the four categories uniformly with
-           replacement a quarter of the samples.
+        3. Finally we sample from each of the non-empty resulting categories
+           an equal portion of the desired number of pairs. Note that this
+           requires that it must be divisible by 12, the LCM of the possible
+           number of non-empty categories, to make sure that we will sample
+           the same number of pairs from each category.
 
     Yields:
         dict: a signature pair.
@@ -113,12 +116,14 @@ def sample_signature_pairs(signatures_path, clusters_path, pairs_size):
     # 3. Sample
     #
 
-    for category in [
-        same_cluster_same_name,
-        same_cluster_different_name,
-        different_cluster_same_name,
-        different_cluster_different_name,
-    ]:
-        if category:
-            for pair in np.random.choice(category, replace=True, size=(pairs_size // 4)):
-                yield pair
+    non_empty_categories = [
+        category for category in [
+            same_cluster_same_name,
+            same_cluster_different_name,
+            different_cluster_same_name,
+            different_cluster_different_name,
+        ] if category
+    ]
+    for category in non_empty_categories:
+        for pair in np.random.choice(category, replace=True, size=(pairs_size // len(non_empty_categories))):
+            yield pair

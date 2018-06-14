@@ -25,4 +25,16 @@
 from __future__ import absolute_import, division, print_function
 
 
-DISAMBIGUATION_SAMPLED_PAIRS_SIZE = 1000000
+DISAMBIGUATION_SAMPLED_PAIRS_SIZE = 12 * 100000
+"""The number of signature pairs we use during training.
+
+Since INSPIRE has ~3M curated signatures it would take too much time
+to train on all possible pairs, so we sample ~1M pairs in such a way
+that they are representative of the known clusters structure.
+
+Note:
+
+    It MUST be a multiple of 12 for the reason explained in
+    :mod:`inspirehep.modules.disambiguation.core.ml.sampling`.
+
+"""

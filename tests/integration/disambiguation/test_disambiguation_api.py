@@ -95,7 +95,7 @@ def test_save_sampled_signature_pairs(isolated_app, tmpdir):
         'DISAMBIGUATION_CURATED_SIGNATURES_PATH': str(curated_signatures_fd),
         'DISAMBIGUATION_INPUT_CLUSTERS_PATH': str(input_clusters_fd),
         'DISAMBIGUATION_SAMPLED_PAIRS_PATH': str(sampled_pairs_fd),
-        'DISAMBIGUATION_SAMPLED_PAIRS_SIZE': 1000,
+        'DISAMBIGUATION_SAMPLED_PAIRS_SIZE': 12 * 100,
     }
 
     with patch.dict(current_app.config, config):
