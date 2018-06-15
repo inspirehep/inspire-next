@@ -75,19 +75,19 @@ def sample_signature_pairs(signatures_path, clusters_path, pairs_size):
     #
 
     blocks = defaultdict(list)
-    signatures_reversed = {}
+    author_names_by_signature_uuid = {}
     with open(signatures_path, 'r') as fd:
         for line in fd:
             signature = json.loads(line)
             blocks[signature['signature_block']].append(signature['signature_uuid'])
-            signatures_reversed[signature['signature_uuid']] = signature['author_name']
+            author_names_by_signature_uuid[signature['signature_uuid']] = signature['author_name']
 
-    clusters_reversed = {}
+    cluster_ids_by_signature_uuid = {}
     with open(clusters_path, 'r') as fd:
         for line in fd:
             cluster = json.loads(line)
             for signature_uuid in cluster['signature_uuids']:
-                clusters_reversed[signature_uuid] = cluster['cluster_id']
+                cluster_ids_by_signature_uuid[signature_uuid] = cluster['cluster_id']
 
     #
     # 2. Classify
@@ -99,10 +99,10 @@ def sample_signature_pairs(signatures_path, clusters_path, pairs_size):
     different_cluster_different_name = []
     for _, block in six.iteritems(blocks):
         for s1, s2 in itertools.combinations(block, 2):
-            s1_cluster_id = clusters_reversed[s1]
-            s2_cluster_id = clusters_reversed[s2]
-            s1_author_name = signatures_reversed[s1]
-            s2_author_name = signatures_reversed[s2]
+            s1_cluster_id = cluster_ids_by_signature_uuid[s1]
+            s2_cluster_id = cluster_ids_by_signature_uuid[s2]
+            s1_author_name = author_names_by_signature_uuid[s1]
+            s2_author_name = author_names_by_signature_uuid[s2]
             if s1_cluster_id == s2_cluster_id and s1_author_name == s2_author_name:
                 same_cluster_same_name.append({'same_cluster': True, 'signature_uuids': [s1, s2]})
             elif s1_cluster_id == s2_cluster_id and s1_author_name != s2_author_name:

@@ -59,7 +59,7 @@ def test_save_curated_signatures_and_input_clusters(isolated_app, tmpdir):
         save_curated_signatures_and_input_clusters()
 
     input_clusters = [json.loads(line) for line in input_clusters_fd.readlines()]
-    reversed_input_clusters = {
+    input_clusters_by_id = {
         input_cluster['cluster_id']: {
             'author_id': input_cluster['author_id'],
             'signature_uuids': input_cluster['signature_uuids'],
@@ -69,7 +69,7 @@ def test_save_curated_signatures_and_input_clusters(isolated_app, tmpdir):
     assert {
         'author_id': 1010819,
         'signature_uuids': ['94f560d2-6791-43ec-a379-d3dc4ad0ceb7'],
-    } in reversed_input_clusters.values()
+    } in input_clusters_by_id.values()
 
     curated_signatures = [json.loads(line) for line in curated_signatures_fd.readlines()]
 
