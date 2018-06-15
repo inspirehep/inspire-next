@@ -368,7 +368,7 @@ def get_resolve_edit_article_callback_url():
         route.
     """
     return url_for(
-        'inspire_workflows.callback_resolve_edit_article',
+        'inspire_workflows_callbacks.callback_resolve_edit_article',
         _external=True
     )
 

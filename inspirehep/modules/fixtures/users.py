@@ -160,7 +160,7 @@ def init_jlab_permissions():
     ))
     db.session.add(ActionRoles(
         action='update-collection',
-        role=cataloger,
+        role=jlab_curator,
     ))
 
 

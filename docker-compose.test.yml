@@ -80,7 +80,7 @@ services:
   workflows:
     extends:
       service: test-service_base
-    command: py.test tests/integration/workflows
+    command: py.test -vvv --pdb tests/integration/workflows
     volumes_from:
       - test-static
     depends_on:

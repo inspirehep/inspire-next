@@ -86,15 +86,11 @@ workflow_blueprint = Blueprint(
 
 
 @callback_blueprint.errorhandler(CallbackError)
+@workflow_blueprint.errorhandler(CallbackError)
 def error_handler(error):
     """Callback error handler."""
     response = jsonify(error.to_dict())
     return response, error.code
-
-
-@workflow_blueprint.errorhandler(RecordGetterError)
-def handle_record_getter_error(error):
-    return str(error.cause), 500
 
 
 def _get_base_url():
@@ -645,7 +641,7 @@ class ResolveEditArticleResource(MethodView):
         recid = workflow_data['metadata'].get('control_number')
         try:
             record = get_db_record('lit', recid)
-        except:
+        except RecordGetterError:
             raise CallbackRecordNotFoundError(recid)
 
         record_permission = RecordPermission.create(action='update', record=record)
@@ -666,7 +662,7 @@ class ResolveEditArticleResource(MethodView):
 def start_edit_article_workflow(recid):
     try:
         record = get_db_record('lit', recid)
-    except:
+    except RecordGetterError:
         raise CallbackRecordNotFoundError(recid)
 
     record_permission = RecordPermission.create(action='update', record=record)
@@ -698,7 +694,7 @@ workflow_blueprint.add_url_rule(
     '/edit_article/<recid>',
     view_func=start_edit_article_workflow,
 )
-workflow_blueprint.add_url_rule(
-    '/resolve_edit_article',
+callback_blueprint.add_url_rule(
+    '/workflows/resolve_edit_article',
     view_func=callback_resolve_edit_article
 )
