@@ -34,7 +34,10 @@ from inspirehep.modules.disambiguation.core.db.readers import (
     get_all_curated_signatures,
     get_all_publications,
 )
-from inspirehep.modules.disambiguation.core.ml.models import EthnicityEstimator
+from inspirehep.modules.disambiguation.core.ml.models import (
+    DistanceEstimator,
+    EthnicityEstimator,
+)
 from inspirehep.modules.disambiguation.core.ml.sampling import sample_signature_pairs
 from inspirehep.modules.disambiguation.utils import open_file_in_folder
 
@@ -106,3 +109,19 @@ def train_and_save_ethnicity_model():
     estimator.load_data(current_app.config['DISAMBIGUATION_ETHNICITY_DATA_PATH'])
     estimator.fit()
     estimator.save_model(current_app.config['DISAMBIGUATION_ETHNICITY_MODEL_PATH'])
+
+
+def train_and_save_distance_model():
+    """Train the distance estimator model and save it to disk."""
+    ethnicity_estimator = EthnicityEstimator()
+    ethnicity_estimator.load_model(current_app.config['DISAMBIGUATION_ETHNICITY_MODEL_PATH'])
+
+    distance_estimator = DistanceEstimator(ethnicity_estimator)
+    distance_estimator.load_data(
+        current_app.config['DISAMBIGUATION_CURATED_SIGNATURES_PATH'],
+        current_app.config['DISAMBIGUATION_SAMPLED_PAIRS_PATH'],
+        current_app.config['DISAMBIGUATION_SAMPLED_PAIRS_SIZE'],
+        current_app.config['DISAMBIGUATION_PUBLICATIONS_PATH'],
+    )
+    distance_estimator.fit()
+    distance_estimator.save_model(current_app.config['DISAMBIGUATION_DISTANCE_MODEL_PATH'])
