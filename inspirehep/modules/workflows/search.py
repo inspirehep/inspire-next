@@ -43,13 +43,13 @@ def holdingpen_search_factory(self, search, **kwargs):
         'metadata.number_of_pages', 'metadata.arxiv_eprints',
         'metadata.public_notes', 'metadata.inspire_categories',
         'metadata.name', 'metadata.positions', 'metadata.acquisition_source',
-        'metadata.arxiv_categories', '_workflow',
+        'metadata.arxiv_categories', 'metadata.references', '_workflow',
         '_extra_data.relevance_prediction', '_extra_data.user_action',
         '_extra_data.classifier_results.complete_output',
         '_extra_data.classifier_results.fulltext_used',
         '_extra_data.journal_coverage', '_extra_data._action',
         '_extra_data.matches', '_extra_data.crawl_errors',
-        '_extra_data.conflicts',
+        '_extra_data.conflicts', '_extra_data.reference_count',
         '_extra_data.validation_errors', '_extra_data.callback_url',
     ]
     search = search.extra(_source={"include": includes})
