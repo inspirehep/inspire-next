@@ -37,10 +37,15 @@ from inspirehep.modules.disambiguation.api import (
 )
 from inspirehep.modules.disambiguation.core.ml.models import EthnicityEstimator
 
-TRAINING_DATA = '''\
+ETHNICITY_TRAINING_DATA = '''\
 RACE,NAMELAST,NAMEFRST
-1,EASTWOOD,CLINT
-5,MIFUNE,TOSHIRO
+1,BAR,FOO
+2,BAR,FOO
+3,BAR,FOO
+4,BAR,FOO
+5,BAR,FOO
+6,BAR,FOO
+7,BAR,FOO
 '''
 
 
@@ -157,7 +162,7 @@ def test_save_publications(isolated_app, tmpdir):
 
 def test_train_and_save_ethnicity_model(isolated_app, tmpdir):
     ethnicity_data_fd = tmpdir.join('ethnicity.csv')
-    ethnicity_data_fd.write(TRAINING_DATA)
+    ethnicity_data_fd.write(ETHNICITY_TRAINING_DATA)
     ethnicity_model_fd = tmpdir.join('ethnicity.pkl')
 
     config = {
@@ -170,4 +175,3 @@ def test_train_and_save_ethnicity_model(isolated_app, tmpdir):
 
     estimator = EthnicityEstimator()
     estimator.load_model(str(ethnicity_model_fd))
-    estimator.predict(['Guinness, Alec'])
