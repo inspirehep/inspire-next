@@ -73,6 +73,17 @@ def _workflow_in_status(inspire_client, holdingpen_id, status):
     return entry
 
 
+def _workflows_in_status(holdingpen_client, num_entries, status):
+    hp_entries = holdingpen_client.get_list_entries()
+    entries_in_status = [entry for entry in hp_entries if entry.status == status]
+    try:
+        assert len(entries_in_status) == num_entries
+    except AssertionError:
+        print('Current holdingpen entries: %s' % hp_entries)
+        raise
+    return entries_in_status
+
+
 def number_of_entries(inspire_client, num_entries):
     hp_entries = inspire_client.holdingpen.get_list_entries()
     try:
@@ -144,12 +155,82 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
     assert entry.doi == '10.1016/j.nima.2014.04.029'
     assert entry.status == 'COMPLETED'
     assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
+    assert not entry.is_update
 
     # check literature record is available and consistent
     record = inspire_client.literature.get_record(entry.control_number)
     assert record.title == entry.title
 
     # check that the external services were actually called
+    mitm_client.assert_interaction_used(
+        service_name='LegacyService',
+        interaction_name='robotupload',
+        times=1,
+    )
+    mitm_client.assert_interaction_used(
+        service_name='RTService',
+        interaction_name='ticket_new',
+        times=1,
+    )
+
+    # update
+    inspire_client.e2e.schedule_crawl(
+        spider='arXiv',
+        workflow='article',
+        url='http://export.arxiv.org/oai2',
+        sets='physics',
+        from_date='2018-03-26',
+    )
+
+    update_entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            num_entries=1,
+            status='HALTED'
+        )
+    )[0]
+    update_entry = inspire_client.holdingpen.get_detail_entry(
+        update_entry.workflow_id
+    )
+
+    # check workflow goes as expected
+    assert update_entry.auto_approved is True
+    assert update_entry.arxiv_eprint == '1404.0579'
+    assert update_entry.core
+    assert update_entry.doi == '10.1016/j.nima.2014.04.029'
+    assert update_entry.status == 'HALTED'
+    # due to the conflict and merge, the title is the old one
+    assert update_entry.title == 'The OLYMPUS Internal Hydrogen Target updated'
+    assert update_entry.is_update
+    assert update_entry.approved_match == entry.control_number
+
+    inspire_client.holdingpen.resolve_merge_conflicts(hp_entry=update_entry)
+
+    update_entry = wait_for(
+        lambda: _workflow_in_status(
+            inspire_client=inspire_client,
+            holdingpen_id=update_entry.workflow_id,
+            status='COMPLETED',
+        )
+    )
+
+    # check workflow goes as expected
+    assert update_entry.auto_approved is True
+    assert update_entry.arxiv_eprint == '1404.0579'
+    assert update_entry.core
+    assert update_entry.doi == '10.1016/j.nima.2014.04.029'
+    assert update_entry.status == 'COMPLETED'
+    # due to the conflict and merge, the title is the old one
+    assert update_entry.title == 'The OLYMPUS Internal Hydrogen Target updated'
+    assert update_entry.is_update
+    assert update_entry.approved_match == entry.control_number
+
+    # check literature record is available and consistent
+    record = inspire_client.literature.get_record(update_entry.control_number)
+    assert record.title == update_entry.title
+
+    # check that the external services were actually called, the updates flag
+    # is disabled
     mitm_client.assert_interaction_used(
         service_name='LegacyService',
         interaction_name='robotupload',
