@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+
 from inspirehep.modules.records.cli import check
 
 
@@ -35,7 +37,7 @@ def test_check_unlinked_references_generate_files(app_cli_runner, isolated_app, 
     assert result.exit_code == 0
 
     result = doi_fd_content[0]
-    expected = '10.1103/PhysRevLett.13.321: (3, 0)'
+    expected = '10.1016/j.physletb.2012.08.020: (4, 0)'
 
     assert result == expected
 
@@ -57,5 +59,8 @@ def test_check_unlinked_references_generate_files(app_cli_runner, isolated_app, 
 
 def test_check_unlinked_references_works_without_arguments(app_cli_runner, isolated_app, tmpdir):
     result = app_cli_runner.invoke(check, ['unlinked_references'])
+
+    os.remove("missing_cited_dois.txt")
+    os.remove("missing_cited_arxiv_eprints.txt")
 
     assert result.exit_code == 0

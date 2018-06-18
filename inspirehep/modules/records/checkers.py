@@ -57,6 +57,21 @@ def order_dictionary_into_list(result_dict):
     return sorted_list
 
 
+def add_linked_ids(dois, arxiv_ids, linked_ids):
+    """Increase the amount of times a paper with a specific doi
+    has been cited by using its corresponding arxiv eprint and viceversa
+
+    ``double_count`` is used to count the times that a doi and an arxiv eprint
+    appear in the same paper so that we don't count them twice in the final result"""
+    for (doi, arxiv_id), double_count in linked_ids.iteritems():
+
+        total_count_core = dois[doi][0] + arxiv_ids[arxiv_id][0] - double_count[0]
+        total_count_non_core = dois[doi][1] + arxiv_ids[arxiv_id][1] - double_count[1]
+
+        dois[doi] = (total_count_core, total_count_non_core)
+        arxiv_ids[arxiv_id] = (total_count_core, total_count_non_core)
+
+
 def get_all_unlinked_references():
     """Return a list of dict, in which each dictionary corresponds to one reference object
     and the status of core or non core"""
@@ -83,16 +98,25 @@ def check_unlinked_references():
     Once all the data is read, it is ordered by most relevant to less relevant."""
 
     result_doi, result_arxiv = defaultdict(lambda: (0, 0)), defaultdict(lambda: (0, 0))
+    linked_ids = defaultdict(lambda: (0, 0))
 
     data = get_all_unlinked_references()
 
     for reference in data:
         dois = get_value(reference, 'reference.reference.dois', [])
+        arxiv_id = get_value(reference, 'reference.reference.arxiv_eprint')
+
+        if arxiv_id and len(dois) > 0:
+            for doi in dois:
+                increase_cited_count(linked_ids, (doi, arxiv_id), reference["core"])
+
         for doi in dois:
             increase_cited_count(result_doi, doi, reference["core"])
-        arxiv_id = get_value(reference, 'reference.reference.arxiv_eprint', '')
+
         if arxiv_id:
             increase_cited_count(result_arxiv, arxiv_id, reference["core"])
+
+    add_linked_ids(result_doi, result_arxiv, linked_ids)
 
     result_doi = order_dictionary_into_list(result_doi)
     result_arxiv = order_dictionary_into_list(result_arxiv)
