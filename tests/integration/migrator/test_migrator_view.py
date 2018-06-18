@@ -83,6 +83,45 @@ def test_get_returns_the_records_in_descending_order_by_last_updated(
     assert expected_data == response_data
 
 
+def test_get_does_not_return_deleted_records(
+        isolated_api_client,
+        isolated_log_in_as_cataloger,
+):
+    TestLegacyRecordsMirror.create_from_file(__name__, '1674997.xml', collection='HEP',
+                                             _errors='Error: Least recent error.', valid=False)
+    TestLegacyRecordsMirror.create_from_file(__name__, '1674989.xml', collection='DELETED',
+                                             _errors='Error: Middle error.', valid=False)
+    TestLegacyRecordsMirror.create_from_file(__name__, '1674987.xml', collection='HEPNAMES',
+                                             _errors='Error: Most recent error.', valid=False)
+
+    response = isolated_api_client.get(
+        '/migrator/errors',
+        content_type='application/json',
+    )
+
+    expected_data = {
+        'data': [
+            {
+                'recid': 1674987,
+                'collection': 'HEPNAMES',
+                'valid': False,
+                'error': 'Error: Most recent error.'
+            },
+            {
+                'recid': 1674997,
+                'collection': 'HEP',
+                'valid': False,
+                'error': 'Error: Least recent error.'
+            },
+        ]
+    }
+
+    response_data = json.loads(response.data)
+
+    assert response.status_code == 200
+    assert expected_data == response_data
+
+
 def test_get_returns_empty_data_because_there_are_no_mirror_records_with_errors(
         isolated_api_client,
         isolated_log_in_as_cataloger,
