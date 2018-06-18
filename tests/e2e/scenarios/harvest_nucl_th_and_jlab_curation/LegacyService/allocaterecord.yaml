@@ -1,0 +1,19 @@
+request:
+  body: null
+  headers:
+    Accept: ['*/*']
+    Accept-Encoding: ['gzip, deflate']
+    Connection: [keep-alive]
+    Host: [inspirehep.net]
+    User-Agent: [invenio_webupload]
+  method: GET
+  url: http://inspirehep.net//batchuploader/allocaterecord
+response:
+  body: '42'
+  headers:
+    Server: [gunicorn/19.7.1]
+    Date: ['Thu, 17 May 2018 09:47:21 GMT']
+    Connection: [close]
+    Content-Type: [application/json]
+    Content-Length: ['3']
+  status: {code: 200, message: OK}

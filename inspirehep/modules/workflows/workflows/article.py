@@ -219,22 +219,22 @@ NOTIFY_CURATOR_IF_NEEDED = [
     IF_NOT(
         is_marked('is-update'),
         [
-            IF(
-                curation_ticket_needed,
-                create_ticket(
-                    template='literaturesuggest/tickets/curation_core.html',
-                    queue='HEP_curation',
-                    context_factory=curation_ticket_context,
-                    ticket_id_key='curation_ticket_id',
-                ),
-            ),
-            IF(
+            IF_ELSE(
                 jlab_ticket_needed,
                 create_ticket(
                     template='literaturesuggest/tickets/curation_jlab.html',
                     queue='HEP_curation_jlab',
                     context_factory=curation_ticket_context,
                     ticket_id_key='curation_ticket_id',
+                ),
+                IF(
+                    curation_ticket_needed,
+                    create_ticket(
+                        template='literaturesuggest/tickets/curation_core.html',
+                        queue='HEP_curation',
+                        context_factory=curation_ticket_context,
+                        ticket_id_key='curation_ticket_id',
+                    ),
                 ),
             )
         ]

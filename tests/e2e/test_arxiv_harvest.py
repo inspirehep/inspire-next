@@ -228,3 +228,49 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
         interaction_name='ticket_new',
         times=1,
     )
+
+
+@with_mitmproxy
+def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
+    inspire_client.e2e.schedule_crawl(
+        spider='arXiv_single',
+        workflow='article',
+        url='http://export.arxiv.org/oai2',
+        identifier='oai:arXiv.org:1806.05669',  # nucl-th record
+    )
+
+    def _all_in_status(status):
+        hp_entries = inspire_client.holdingpen.get_list_entries()
+        try:
+            assert len(hp_entries) == 1
+            assert all(entry.status == status for entry in hp_entries)
+        except AssertionError:
+            print(
+                'Current holdingpen entries (waiting for them to be in %s status): %s'
+                % (status, hp_entries)
+            )
+            raise
+        return hp_entries[0]
+
+    halted_entry = wait_for(lambda: _all_in_status('COMPLETED'))
+    entry = inspire_client.holdingpen.get_detail_entry(halted_entry.workflow_id)
+
+    assert entry.arxiv_eprint == '1806.05669'
+    assert entry.control_number is 42
+    assert entry.title == 'Probing the in-Medium QCD Force by Open Heavy-Flavor Observables'
+
+    # check literature record is available and consistent
+    record = inspire_client.literature.get_record(entry.control_number)
+    assert record.title == entry.title
+
+    # check that the external services were actually called
+    mitm_client.assert_interaction_used(
+        service_name='LegacyService',
+        interaction_name='robotupload',
+        times=1,
+    )
+    mitm_client.assert_interaction_used(
+        service_name='RTService',
+        interaction_name='ticket_new',
+        times=1,
+    )
