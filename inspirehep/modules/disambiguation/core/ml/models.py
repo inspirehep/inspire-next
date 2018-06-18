@@ -65,11 +65,13 @@ class EthnicityEstimator(object):
 
     def fit(self):
         self.estimator = Pipeline([
-            ('transformer', TfidfVectorizer(analyzer='char_wb',
-                                            ngram_range=(1, 5),
-                                            min_df=0.00005,
-                                            dtype=np.float32,
-                                            decode_error='replace')),
+            ('transformer', TfidfVectorizer(
+                analyzer='char_wb',
+                ngram_range=(1, 5),
+                min_df=0.00005,
+                dtype=np.float32,
+                decode_error='replace',
+            )),
             ('classifier', LinearSVC(C=self.C)),
         ])
         self.estimator.fit(self.X, self.y)
