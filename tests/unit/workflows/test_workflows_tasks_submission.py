@@ -35,6 +35,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     prepare_keywords,
     reply_ticket,
     send_robotupload,
+    send_to_legacy,
     wait_webcoll,
 )
 
@@ -991,20 +992,16 @@ def test_send_robotupload_update_article_when_feature_flag_is_disabled():
         obj = MockObj(data, extra_data)
         eng = MockEng()
 
-        _send_robotupload = send_robotupload(
-            mode='insert',
-        )
-
         expected_log = 'skipping upload to legacy, feature flag ``FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY`` is disabled.'
 
-        assert _send_robotupload(obj, eng) is None
+        assert send_to_legacy(obj, eng) is None
         assert expected_log in obj.log._info.getvalue()
 
 
 def test_send_robotupload_update_article_when_feature_flag_is_enabled():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
-            'POST', 'http://inspirehep.net/batchuploader/robotupload/insert',
+            'POST', 'http://inspirehep.net/batchuploader/robotupload/replace',
             text='[INFO] foo bar baz'
         )
 
@@ -1027,11 +1024,7 @@ def test_send_robotupload_update_article_when_feature_flag_is_enabled():
             obj = MockObj(data, extra_data)
             eng = MockEng()
 
-            _send_robotupload = send_robotupload(
-                mode='insert',
-            )
-
-            assert _send_robotupload(obj, eng) is None
+            assert send_to_legacy(obj, eng) is None
 
             expected = (
                 'Robotupload sent!'

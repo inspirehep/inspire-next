@@ -60,7 +60,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     save_workflow,
     set_refereed_and_fix_document_type,
     validate_record,
-    jlab_ticket_needed)
+    jlab_ticket_needed,
+)
 
 from inspirehep.modules.workflows.tasks.classifier import (
     classify_paper,
@@ -102,13 +103,12 @@ from inspirehep.modules.workflows.tasks.submission import (
     filter_keywords,
     prepare_keywords,
     reply_ticket,
-    send_robotupload,
+    send_to_legacy,
     wait_webcoll,
 )
 
 from inspirehep.modules.literaturesuggest.tasks import (
     curation_ticket_needed,
-    jlab_ticket_needed,
     reply_ticket_context,
     new_ticket_context,
     curation_ticket_context,
@@ -252,7 +252,7 @@ POSTENHANCE_RECORD = [
 
 
 SEND_TO_LEGACY = [
-    send_robotupload(mode='replace'),
+    send_to_legacy,
 ]
 
 

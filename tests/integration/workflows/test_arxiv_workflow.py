@@ -607,6 +607,8 @@ def test_fuzzy_matched_goes_trough_the_workflow(
     assert obj.extra_data['fuzzy-matched']
     assert obj.extra_data['is-update']
     assert obj.extra_data['approved']
+
+    obj = workflow_object_class.get(obj_id)
     assert obj.status == ObjectStatus.COMPLETED
 
 

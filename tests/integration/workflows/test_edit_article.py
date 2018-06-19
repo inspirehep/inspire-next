@@ -29,6 +29,8 @@ import json
 from invenio_workflows import ObjectStatus, WorkflowEngine, start
 
 from inspirehep.utils.record_getter import get_db_record
+
+from calls import do_robotupload_callback
 from factories.db.invenio_records import TestRecordMetadata
 
 
@@ -47,7 +49,7 @@ def test_jlab_edit_view_wrong_recid(api_client):
     assert response.status_code == 500
 
 
-def test_edit_article_workflow(workflow_app):
+def test_edit_article_workflow(workflow_app, mocked_external_services):
     record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'arxiv_eprints': [
@@ -88,8 +90,14 @@ def test_edit_article_workflow(workflow_app):
     )
 
     obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
-    assert obj.status == ObjectStatus.COMPLETED
+    assert obj.status == ObjectStatus.WAITING  # waiting for robot_upload
     assert obj.data['titles'][0]['title'] == new_title
+
+    do_robotupload_callback(
+        app=workflow_app,
+        workflow_id=obj.id,
+        recids=[obj.data['control_number']],
+    )
 
     record = get_db_record('lit', 123)
     assert record['titles'][0]['title'] == new_title

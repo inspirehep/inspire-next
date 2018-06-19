@@ -197,14 +197,6 @@ def send_robotupload(
     @with_debug_logging
     @wraps(send_robotupload)
     def _send_robotupload(obj, eng):
-        is_update = obj.extra_data.get('is-update')
-        is_authors = eng.workflow_definition.data_type == 'authors'
-
-        if not is_authors and is_update and not current_app.config.get('FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY', False):
-            obj.log.info(
-                'skipping upload to legacy, feature flag ``FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY`` is disabled.')
-            return
-
         combined_callback_url = ''
         if callback_url:
             combined_callback_url = os.path.join(
@@ -274,6 +266,16 @@ def send_robotupload(
         obj.log.info("end of upload")
 
     return _send_robotupload
+
+
+def send_to_legacy(obj, eng):
+    update_legacy_flag = current_app.config.get('FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY', False)
+
+    if obj.extra_data.get('is-update', False) and not update_legacy_flag:
+        obj.log.info('skipping upload to legacy, feature flag ``FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY`` is disabled.')
+        return
+    else:
+        send_robotupload(mode='replace')(obj, eng)
 
 
 @with_debug_logging

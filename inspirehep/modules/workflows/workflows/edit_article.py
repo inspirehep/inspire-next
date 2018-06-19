@@ -52,7 +52,7 @@ class EditArticle(object):
         [
             change_status_to_waiting,
             validate_record('hep'),
-            send_robotupload,
+            send_robotupload(mode='replace'),
             update_record,
         ]
     )
