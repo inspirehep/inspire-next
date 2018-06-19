@@ -45,7 +45,7 @@ any modifications made to the db will not be propagated to elasticsearch.
 
 .. code-block:: shell
 
-    es-cli -m path/to/the/new/mapping.json 'https://user:pass@my.es.instan.ce/myindex'
+    es-cli remap -m path/to/the/new/mapping.json 'https://user:pass@my.es.instan.ce/myindex'
 
 
 Things to have into account:

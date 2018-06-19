@@ -4,6 +4,7 @@
             "_all": {
                 "enabled": true
             },
+            "dynamic": false,
             "date_detection": false,
             "numeric_detection": false,
             "properties": {
