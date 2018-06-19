@@ -402,7 +402,7 @@ def download_documents(obj, eng):
 
 
 @ignore_timeout_error
-@timeout(5 * 60)
+@timeout(10 * 60)
 @with_debug_logging
 def refextract(obj, eng):
     """Extract references from various sources and add them to the workflow.
