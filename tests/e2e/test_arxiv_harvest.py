@@ -192,6 +192,7 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
     )
 
     halted_entry = wait_for(lambda: _all_in_status(inspire_client, 'COMPLETED'))
+
     entry = inspire_client.holdingpen.get_detail_entry(halted_entry.workflow_id)
 
     assert entry.arxiv_eprint == '1806.05669'

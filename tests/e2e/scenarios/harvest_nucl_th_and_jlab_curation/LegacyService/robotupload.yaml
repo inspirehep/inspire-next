@@ -4,11 +4,10 @@ request:
     Accept-Encoding: ['gzip, deflate']
     Connection: [keep-alive]
     Host: [inspirehep.net]
-    User-Agent: ['InspireHEP-0.1.0 (+localhost:5000;) [inspire]']
+    User-Agent: ['InspireHEP-0.1.0 (+test-web-e2e.local:5000;) [inspire]']
     Content-Type: [application/marcxml+xml]
-    Content-Length: ['4146']
   method: POST
-  url: http://inspirehep.net/batchuploader/robotupload/replace?nonce=1&priority=5&callback_url=https%3A%2F%2Flocalhost%3A5000%2Fcallback%2Fworkflows%2Frobotupload
+  url: http://inspirehep.net/batchuploader/robotupload/replace?nonce=1&priority=5&callback_url=https%3A%2F%2Ftest-web-e2e.local%3A5000%2Fcallback%2Fworkflows%2Frobotupload
   body: |
     <record>
       <controlfield tag="001">42</controlfield>
@@ -89,7 +88,7 @@ request:
         <subfield code="a">Citeable</subfield>
       </datafield>
       <datafield tag="FFT" ind1=" " ind2=" ">
-        <subfield code="a">http://localhost:5000/api/files/90d446bf-f2ab-45ea-aa55-9fd12ae03f6a/1404.0579.pdf</subfield>
+        <subfield code="a">http://test-web-e2e.local:5000/api/files/90d446bf-f2ab-45ea-aa55-9fd12ae03f6a/1404.0579.pdf</subfield>
         <subfield code="d">Fulltext</subfield>
         <subfield code="t">arXiv</subfield>
       </datafield>

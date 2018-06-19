@@ -358,6 +358,7 @@ services:
         condition: service_healthy
     environment:
       - APP_SERVER_NAME="test-web-e2e.local:5000"
+      - APP_JSONSCHEMAS_HOST="test-web-e2e.local:5000"
       - APP_SESSON_COOKIE_DOMAIN=".local:5000"
       - APP_ARXIV_PDF_URL="/pdf/{arxiv_id}"
       - APP_ARXIV_PDF_URL_ALTERNATIVE="/pdf/{arxiv_id}"
@@ -392,6 +393,8 @@ services:
       test-redis:
         condition: service_healthy
     environment:
+      - APP_SERVER_NAME="test-web-e2e.local:5000"
+      - APP_JSONSCHEMAS_HOST="test-web-e2e.local:5000"
       - APP_PRODUCTION_MODE=True
       - APP_LEGACY_ROBOTUPLOAD_URL="http://inspirehep.net/"
       - APP_LEGACY_PID_PROVIDER="http://inspirehep.net//batchuploader/allocaterecord"
