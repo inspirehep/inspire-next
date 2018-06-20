@@ -500,7 +500,6 @@ def preserve_root(obj, eng):
         return
 
     obj.extra_data['merger_root'] = deepcopy(obj.data)
-    obj.save()
 
 
 @with_debug_logging
