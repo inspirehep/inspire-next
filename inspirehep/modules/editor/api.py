@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, current_app, jsonify, request
 from flask_login import current_user
 from fs.opener import fsopendir
 from sqlalchemy_continuum import transaction_class, version_class

@@ -27,3 +27,4 @@ from __future__ import absolute_import, division, print_function
 from .article import Article            # noqa: F401
 from .author import Author              # noqa: F401
 from .manual_merge import ManualMerge   # noqa: F401
+from .edit_article import EditArticle   # noqa: F401
