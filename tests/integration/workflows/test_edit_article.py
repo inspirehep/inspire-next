@@ -26,7 +26,9 @@ from __future__ import absolute_import, division, print_function
 
 import json
 
+import pytest
 from invenio_workflows import ObjectStatus, WorkflowEngine, start
+from invenio_accounts.testutils import login_user_via_session
 
 from inspirehep.utils.record_getter import get_db_record
 
@@ -34,7 +36,39 @@ from calls import do_robotupload_callback
 from factories.db.invenio_records import TestRecordMetadata
 
 
-def test_jlab_edit_view(api_client):
+@pytest.fixture(scope='function')
+def edit_workflow(workflow_app):
+    app_client = workflow_app.test_client()
+    login_user_via_session(app_client, email='admin@inspirehep.net')
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'nucl-th'
+                ],
+                'value': '1802.03287'
+            }
+        ],
+        'control_number': 123,
+        'document_type': ['article'],
+        'titles': [{'title': 'Resource Pooling in Large-Scale Content Delivery Systems'}],
+        'self': {'$ref': 'http://localhost:5000/schemas/records/hep.json'},
+        '_collections': ['Literature']
+    }
+    factory = TestRecordMetadata.create_from_kwargs(json=record)
+    eng_uuid = start('edit_article', data=factory.record_metadata.json)
+    obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
+
+    assert obj.status == ObjectStatus.WAITING
+    assert obj.extra_data['callback_url']
+    return obj
+
+
+def test_edit_article_view(api_client):
+    login_user_via_session(api_client, email='admin@inspirehep.net')
+
     factory = TestRecordMetadata.create_from_kwargs(json={})
     control_number = factory.record_metadata.json['control_number']
     endpoint_url = "/workflows/edit_article/{}".format(control_number)
@@ -44,12 +78,17 @@ def test_jlab_edit_view(api_client):
     assert "/editor/holdingpen/" in response.data
 
 
-def test_jlab_edit_view_wrong_recid(api_client):
+def test_edit_article_view_wrong_recid(api_client):
+    login_user_via_session(api_client, email='admin@inspirehep.net')
+
     response = api_client.get("/workflows/edit_article/1")
-    assert response.status_code == 500
+    assert response.status_code == 404
 
 
 def test_edit_article_workflow(workflow_app, mocked_external_services):
+    app_client = workflow_app.test_client()
+    login_user_via_session(app_client, email='admin@inspirehep.net')
+
     record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'arxiv_eprints': [
@@ -74,7 +113,7 @@ def test_edit_article_workflow(workflow_app, mocked_external_services):
     assert obj.extra_data['callback_url']
 
     # simulate changes in the editor and save
-    new_title = 'JLab edited this fancy title'
+    new_title = 'Somebody edited this fancy title'
     obj.data['titles'][0]['title'] = new_title
 
     payload = {
@@ -83,7 +122,7 @@ def test_edit_article_workflow(workflow_app, mocked_external_services):
         '_extra_data': obj.extra_data
     }
 
-    workflow_app.test_client().put(
+    app_client.put(
         obj.extra_data['callback_url'],
         data=json.dumps(payload),
         content_type='application/json'
@@ -101,3 +140,61 @@ def test_edit_article_workflow(workflow_app, mocked_external_services):
 
     record = get_db_record('lit', 123)
     assert record['titles'][0]['title'] == new_title
+
+
+@pytest.mark.parametrize('user_info, expected_status_code', [
+    (None, 403),
+    ({'email': 'johndoe@inspirehep.net'}, 403),
+    ({'email': 'jlabcurator@inspirehep.net'}, 302),
+    ({'email': 'cataloger@inspirehep.net'}, 302),
+    ({'email': 'admin@inspirehep.net'}, 302),
+])
+def test_edit_article_start_permission(
+    app,
+    app_client,
+    user_info,
+    expected_status_code,
+    mocked_external_services,
+):
+    if user_info:
+        login_user_via_session(app_client, email=user_info['email'])
+
+    factory = TestRecordMetadata.create_from_kwargs(json={})
+    control_number = factory.record_metadata.json['control_number']
+    endpoint_url = "/workflows/edit_article/{}".format(control_number)
+
+    response = app_client.get(endpoint_url)
+    assert response.status_code == expected_status_code
+
+
+@pytest.mark.parametrize('user_info, expected_status_code', [
+    (None, 403),
+    ({'email': 'johndoe@inspirehep.net'}, 403),
+    ({'email': 'jlabcurator@inspirehep.net'}, 200),
+    ({'email': 'cataloger@inspirehep.net'}, 200),
+    ({'email': 'admin@inspirehep.net'}, 200),
+])
+def test_edit_article_callback_permission(
+    user_info,
+    expected_status_code,
+    edit_workflow,
+    api_client,
+    mocked_external_services,
+):
+    if user_info:
+        login_user_via_session(api_client, email=user_info['email'])
+    else:
+        with api_client.session_transaction() as sess:
+            sess['user_id'] = None
+
+    payload = {
+        "_id": edit_workflow.id,
+        "_extra_data": edit_workflow.extra_data,
+        "metadata": edit_workflow.data,
+    }
+    response = api_client.put(
+        edit_workflow.extra_data['callback_url'],
+        data=json.dumps(payload),
+        content_type='application/json'
+    )
+    assert response.status_code == expected_status_code
