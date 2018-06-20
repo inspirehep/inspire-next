@@ -60,7 +60,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     save_workflow,
     set_refereed_and_fix_document_type,
     validate_record,
-)
+    jlab_ticket_needed)
 
 from inspirehep.modules.workflows.tasks.classifier import (
     classify_paper,

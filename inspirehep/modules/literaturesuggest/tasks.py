@@ -26,10 +26,10 @@ import copy
 import datetime
 
 from idutils import is_arxiv_post_2007
-
 from inspire_schemas.api import LiteratureBuilder
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
+
 from inspirehep.modules.forms.utils import filter_empty_elements
 from inspirehep.modules.workflows.utils import with_debug_logging
 from inspirehep.utils.record import get_title

@@ -22,10 +22,14 @@
 
 from __future__ import absolute_import, division, print_function
 
+from flask import current_app
 from invenio_workflows import ObjectStatus
+from mock import patch
 
 from inspirehep.modules.workflows.actions import MatchApproval, MergeApproval
-from mocks import MockObj
+from mocks import MockEng, MockObj
+
+from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed
 
 
 def test_match_approval_gets_match_recid():
@@ -78,3 +82,43 @@ def test_merge_approval():
     assert result
     assert obj.extra_data['approved']
     assert not obj.extra_data['auto-approved']
+
+
+def test_jlab_ticket_needed_returns_false():
+    config = {'JLAB_ARXIV_CATEGORIES': ['nucl-th']}
+
+    with patch.dict(current_app.config, config):
+        data = {
+            'arxiv_eprints': [
+                {
+                    'categories': ['math.DG'],
+                    'value': '1806.03979'
+                }
+            ]
+        }
+        extra_data = {}
+
+        obj = MockObj(data, extra_data)
+        eng = MockEng()
+
+        assert jlab_ticket_needed(obj, eng) is False
+
+
+def test_jlab_ticket_needed_returns_true():
+    config = {'JLAB_ARXIV_CATEGORIES': ['nucl-th']}
+
+    with patch.dict(current_app.config, config):
+        extra_data = {}
+        data = {
+            'arxiv_eprints': [
+                {
+                    'categories': ['nucl-th', 'hep-th'],
+                    'value': '1806.03979'
+                }
+            ]
+        }
+
+        obj = MockObj(data, extra_data)
+        eng = MockEng()
+
+        assert jlab_ticket_needed(obj, eng) is True
