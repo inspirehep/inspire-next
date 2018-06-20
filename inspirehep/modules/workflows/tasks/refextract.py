@@ -28,6 +28,8 @@ from flask import current_app
 
 from itertools import chain
 
+from timeout_decorator import timeout
+
 from inspire_dojson.utils import (
     get_record_ref,
     get_recid_from_ref
@@ -37,6 +39,7 @@ from inspire_schemas.utils import (
     convert_old_publication_info_to_new,
     split_page_artid,
 )
+from inspirehep.modules.workflows.utils import ignore_timeout_error
 from inspire_utils.dedupers import dedupe_list
 from inspire_utils.helpers import maybe_int
 from inspire_utils.logging import getStackTraceLogger
@@ -111,6 +114,8 @@ def extract_journal_info(obj, eng):
     obj.data['publication_info'] = convert_old_publication_info_to_new(obj.data['publication_info'])
 
 
+@ignore_timeout_error
+@timeout(5 * 60)
 def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
     """Extract references from PDF and return in INSPIRE format."""
     with local_refextract_kbs_path() as kbs_path:
@@ -123,6 +128,8 @@ def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
     return map_refextract_to_schema(extracted_references, source=source)
 
 
+@ignore_timeout_error
+@timeout(5 * 60)
 def extract_references_from_text(text, source=None, custom_kbs_file=None):
     """Extract references from text and return in INSPIRE format."""
     with local_refextract_kbs_path() as kbs_path:
@@ -135,6 +142,8 @@ def extract_references_from_text(text, source=None, custom_kbs_file=None):
     return map_refextract_to_schema(extracted_references, source=source)
 
 
+@ignore_timeout_error
+@timeout(5 * 60)
 def extract_references_from_raw_refs(references, custom_kbs_file=None):
     """Extract references from raw references in reference list.
 
