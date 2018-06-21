@@ -421,3 +421,78 @@ def test_refextract_from_pdf(
 
     assert citing_doc_obj.data['references'][7]['record']['$ref'] == 'http://localhost:5000/api/literature/1000'
     assert citing_doc_obj.data['references'][0]['raw_refs'][0]['source'] == 'arXiv'
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
+    return_value=True
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+def test_count_reference_coreness(
+    mocked_api_request_magpie,
+    mocked_api_request_beard,
+    mocked_is_pdf_link,
+    mocked_package_download,
+    mocked_arxiv_download,
+    isolated_app,
+    mocked_external_services
+):
+    cited_record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'arxiv_eprints': [
+            {
+                'categories': ['quant-ph', 'cond-mat.mes-hall', 'cond-mat.str-el', 'math-ph', 'math.MP'],
+                'value': '1308.0815'
+            }
+        ],
+        'control_number': 1000,
+        'document_type': ['article'],
+        'titles': [
+            {
+                'source': 'arXiv',
+                'title': 'Solving a two-electron quantum dot model in terms of polynomial solutions of a Biconfluent Heun equation'
+            }
+        ],
+    }
+
+    TestRecordMetadata.create_from_kwargs(
+        json=cited_record_json, index='records-hep', pid_type='lit')
+    citing_record, categories = insert_citing_record()
+
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+        "MAGPIE_API_URL": "http://example.com/magpie",
+        'ARXIV_CATEGORIES': categories,
+    }
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['acquisition_source']
+
+    assert validate(citing_record['acquisition_source'], subschema) is None
+
+    with mock.patch.dict(isolated_app.config, extra_config):
+        citing_doc_workflow_uuid = start('article', [citing_record])
+
+    citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)
+    citing_doc_obj = citing_doc_eng.processed_objects[0]
+
+    assert citing_doc_obj.extra_data['reference_count'] == {
+        'core': 0,
+        'non_core': 1,
+    }
