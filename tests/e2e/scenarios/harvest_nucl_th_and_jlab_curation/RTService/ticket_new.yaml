@@ -1,5 +1,10 @@
 callbacks: []
-match: {}
+match:
+  exact:
+    - url
+    - method
+  regex:
+    body: .*HEP_curation_jlab.*%2Fworkflows%2Fedit_article.*
 request:
   body: content=id%3A+ticket%2Fnew%0AQueue%3A+HEP_curation_jlab%0AText%3A+Curate+record+here%3A+https%3A%2F%2Ftest-web-e2e.local%3A5000%2Fworkflows%2Fedit_article%2F42.%0A+++++++Record+url%3A+http%3A%2F%2Finspirehep.net%2Frecord%2F42%0ASubject%3A+arXiv%3A1806.05669+%28%2342%29%0ACF.%7BRecordID%7D%3A+42%0A
   headers:
