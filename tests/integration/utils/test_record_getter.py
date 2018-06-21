@@ -53,27 +53,24 @@ def test_get_es_records_finds_right_results(app):
 
 
 def test_get_db_records_handles_empty_lists(app):
-    assert list(get_db_records('lit', [])) == []
+    assert list(get_db_records([])) == []
 
 
-def test_get_db_records_accepts_lists_of_integers(app):
-    records = list(get_db_records('lit', [4328]))
-
-    assert len(records) == 1
-
-
-def test_get_db_records_accepts_lists_of_strings(app):
-    records = list(get_db_records('lit', ['4328']))
+def test_get_db_records_accepts_integer_pid_values(app):
+    records = list(get_db_records([('lit', 4328)]))
 
     assert len(records) == 1
 
 
-def test_get_db_records_finds_right_results(app):
-    literature = [1498175, 1090628]
-    authors = [983059]
+def test_get_db_records_accepts_string_pid_values(app):
+    records = list(get_db_records([('lit', '4328')]))
 
-    results = list(get_db_records('lit', literature + authors))
-    recids = {result['control_number'] for result in results}
+    assert len(records) == 1
 
-    assert len(results) == len(literature)
-    assert recids == set(literature)
+
+def test_get_db_records_accept_multiple_pid_types(app):
+    records = [('lit', 1498175), ('lit', 1090628), ('aut', 983059)]
+
+    results = list(get_db_records(records))
+
+    assert len(results) == 3
