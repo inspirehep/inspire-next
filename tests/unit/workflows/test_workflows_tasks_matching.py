@@ -48,6 +48,12 @@ def enable_fuzzy_matcher(app):
         yield
 
 
+@pytest.fixture
+def disable_fuzzy_matcher(app):
+    with patch.dict(app.config, {'FEATURE_FLAG_ENABLE_FUZZY_MATCHER': False}):
+        yield
+
+
 @patch('inspirehep.modules.workflows.tasks.matching.match')
 def test_exact_match_returns_true_if_something_matched(mock_match):
     mock_match.return_value = iter([{'_source': {'control_number': 4328}}])
@@ -835,7 +841,7 @@ def test_set_fuzzy_match_approved_in_extradata_no_fuzzy_key():
     assert expected == result
 
 
-def test_fuzzy_matcher_not_run_on_feat_flag_disabled():
+def test_fuzzy_matcher_not_run_on_feat_flag_disabled(disable_fuzzy_matcher):
     data = {}
     extra_data = {}
 
