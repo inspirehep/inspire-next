@@ -38,10 +38,14 @@ from .utils import get_collection_from_marcxml
 class LegacyRecordsMirror(db.Model):
     __tablename__ = 'legacy_records_mirror'
 
-    recid = db.Column(db.Integer, primary_key=True, index=True)
+    __table_args__ = (
+        db.Index('ix_legacy_records_mirror_valid_collection', 'valid', 'collection'),
+    )
+
+    recid = db.Column(db.Integer, primary_key=True)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
     _marcxml = db.Column('marcxml', db.LargeBinary, nullable=False)
-    valid = db.Column(db.Boolean, default=None, nullable=True, index=True)
+    valid = db.Column(db.Boolean, default=None, nullable=True)
     _errors = db.Column('errors', db.Text(), nullable=True)
     collection = db.Column(db.Text(), default='')
 

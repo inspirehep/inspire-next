@@ -29,6 +29,7 @@ from flask import (
 from flask.views import MethodView
 
 from sqlalchemy import desc
+from sqlalchemy.sql.expression import false
 
 from inspirehep.modules.migrator.permissions import migrator_use_api_permission
 
@@ -48,7 +49,11 @@ class MigratorErrorListResource(MethodView):
     decorators = [migrator_use_api_permission.require(http_exception=403)]
 
     def get(self):
-        errors = LegacyRecordsMirror.query.filter_by(valid=False).order_by(desc(LegacyRecordsMirror.last_updated)).all()
+        errors = LegacyRecordsMirror.query\
+            .filter(LegacyRecordsMirror.valid == false())\
+            .filter(LegacyRecordsMirror.collection != 'DELETED')\
+            .order_by(desc(LegacyRecordsMirror.last_updated)).all()
+
         data = {'data': errors}
         response = jsonify(migrator_error_list_dumper(data))
 

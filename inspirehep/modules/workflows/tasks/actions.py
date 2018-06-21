@@ -38,7 +38,6 @@ from sqlalchemy import (
     cast,
     type_coerce,
 )
-from timeout_decorator import timeout
 from werkzeug import secure_filename
 
 from invenio_db import db
@@ -62,7 +61,6 @@ from inspirehep.modules.workflows.utils import (
     get_document_in_workflow,
     get_resolve_validation_callback_url,
     get_validation_errors,
-    ignore_timeout_error,
     log_workflows_action,
     with_debug_logging,
 )
@@ -401,8 +399,6 @@ def download_documents(obj, eng):
                 'Cannot download document from %s', url)
 
 
-@ignore_timeout_error
-@timeout(5 * 60)
 @with_debug_logging
 def refextract(obj, eng):
     """Extract references from various sources and add them to the workflow.

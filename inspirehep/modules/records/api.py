@@ -96,8 +96,9 @@ class InspireRecord(Record):
         id_ = id_ or uuid.uuid4()
         data = strip_empty_values(data)
 
-        cls.mint(id_, data)
-        record = super(InspireRecord, cls).create(data, id_=id_, **kwargs)
+        with db.session.begin_nested():
+            cls.mint(id_, data)
+            record = super(InspireRecord, cls).create(data, id_=id_, **kwargs)
 
         if not skip_files:
             record.download_documents_and_figures(
