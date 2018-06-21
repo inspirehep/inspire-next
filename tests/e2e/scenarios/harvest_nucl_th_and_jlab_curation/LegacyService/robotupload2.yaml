@@ -1,0 +1,141 @@
+request:
+  headers:
+    Accept: ['*/*']
+    Accept-Encoding: ['gzip, deflate']
+    Connection: [keep-alive]
+    Host: [inspirehep.net]
+    User-Agent: ['InspireHEP-0.1.0 (+test-web-e2e.local:5000;) [inspire]']
+    Content-Type: [application/marcxml+xml]
+  method: POST
+  url: http://inspirehep.net/batchuploader/robotupload/replace?nonce=2&priority=5&callback_url=https%3A%2F%2Ftest-web-e2e.local%3A5000%2Fcallback%2Fworkflows%2Frobotupload
+  body: |
+    <record>
+      <controlfield tag="001">42</controlfield>
+      <datafield tag="024" ind1="7" ind2=" ">
+        <subfield code="2">DOI</subfield>
+        <subfield code="9">arXiv</subfield>
+        <subfield code="a">10.1016/j.nima.2014.04.029</subfield>
+        <subfield code="q">publication</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+        <subfield code="9">arXiv</subfield>
+        <subfield code="a">oai:arXiv.org:1404.0579</subfield>
+      </datafield>
+      <datafield tag="037" ind1=" " ind2=" ">
+        <subfield code="9">arXiv</subfield>
+        <subfield code="a">arXiv:1404.0579</subfield>
+        <subfield code="c">physics.ins-det</subfield>
+      </datafield>
+      <datafield tag="245" ind1=" " ind2=" ">
+        <subfield code="9">arXiv</subfield>
+        <subfield code="a">The OLYMPUS Internal Hydrogen Target</subfield>
+      </datafield>
+      <datafield tag="300" ind1=" " ind2=" ">
+        <subfield code="a">9</subfield>
+      </datafield>
+      <datafield tag="500" ind1=" " ind2=" ">
+        <subfield code="a">* Brief entry *</subfield>
+      </datafield>
+      <datafield tag="500" ind1=" " ind2=" ">
+        <subfield code="9">arXiv</subfield>
+        <subfield code="a">9 pages, 13 figures</subfield>
+      </datafield>
+      <datafield tag="520" ind1=" " ind2=" ">
+        <subfield code="9">arXiv</subfield>
+        <subfield code="a">An internal hydrogen target system was developed for the OLYMPUS experiment at DESY, in Hamburg, Germany. The target consisted of a long, thin-walled, tubular cell within an aluminum scattering chamber. Hydrogen entered at the center of the cell and exited through the ends, where it was removed from the beamline by a multistage pumping system. A cryogenic coldhead cooled the target cell to counteract heating from the beam and increase the density of hydrogen in the target. A fixed collimator protected the cell from synchrotron radiation and the beam halo. A series of wakefield suppressors reduced heating from beam wakefields. The target system was installed within the DORIS storage ring and was successfully operated during the course of the OLYMPUS experiment in 2012. Information on the design, fabrication, and performance of the target system is reported.</subfield>
+      </datafield>
+      <datafield tag="540" ind1=" " ind2=" ">
+        <subfield code="3">preprint</subfield>
+        <subfield code="a">arXiv nonexclusive-distrib 1.0</subfield>
+        <subfield code="u">http://arxiv.org/licenses/nonexclusive-distrib/1.0/</subfield>
+      </datafield>
+      <datafield tag="541" ind1=" " ind2=" ">
+        <subfield code="a">arXiv</subfield>
+        <subfield code="c">hepcrawl</subfield>
+        <subfield code="d">2018-05-17T09:46:27.318653</subfield>
+        <subfield code="e">1</subfield>
+      </datafield>
+      <datafield tag="650" ind1="1" ind2="7">
+        <subfield code="2">INSPIRE</subfield>
+        <subfield code="9">arxiv</subfield>
+        <subfield code="a">Instrumentation</subfield>
+      </datafield>
+      <datafield tag="650" ind1="1" ind2="7">
+        <subfield code="2">INSPIRE</subfield>
+        <subfield code="9">arxiv</subfield>
+        <subfield code="a">Experiment-Nucl</subfield>
+      </datafield>
+      <datafield tag="650" ind1="1" ind2="7">
+        <subfield code="2">arXiv</subfield>
+        <subfield code="a">physics.ins-det</subfield>
+      </datafield>
+      <datafield tag="650" ind1="1" ind2="7">
+        <subfield code="2">arXiv</subfield>
+        <subfield code="a">nucl-ex</subfield>
+      </datafield>
+      <datafield tag="773" ind1=" " ind2=" ">
+        <subfield code="c">20-27</subfield>
+        <subfield code="m">publication</subfield>
+        <subfield code="p">Nucl. Instrum. Methods Phys. Res., </subfield>
+        <subfield code="v">A755</subfield>
+        <subfield code="x">Nucl. Instrum. Meth. A 755, 20-27 (2014)</subfield>
+        <subfield code="y">2014</subfield>
+      </datafield>
+      <datafield tag="980" ind1=" " ind2=" ">
+        <subfield code="a">HEP</subfield>
+      </datafield>
+      <datafield tag="980" ind1=" " ind2=" ">
+        <subfield code="a">Citeable</subfield>
+      </datafield>
+      <datafield tag="FFT" ind1=" " ind2=" ">
+        <subfield code="a">http://test-web-e2e.local:5000/api/files/90d446bf-f2ab-45ea-aa55-9fd12ae03f6a/1404.0579.pdf</subfield>
+        <subfield code="d">Fulltext</subfield>
+        <subfield code="t">arXiv</subfield>
+      </datafield>
+    </record>
+response:
+  headers:
+    Server: [gunicorn/19.7.1]
+    Date: ['Thu, 17 May 2018 09:47:21 GMT']
+    Connection: [close]
+    Content-Type: [text/html; charset=utf-8]
+    Content-Length: ['46']
+  status: {code: 200, message: OK}
+  body: |
+    Robotupload sent!
+    [INFO] some info
+    end of upload
+match:
+  exact:
+  - method
+  regex:
+    url: 'http://inspirehep\.net/batchuploader/robotupload/replace\?nonce=2&priority=5&callback_url=https%3A%2F%2F.*%3A5000%2Fcallback%2Fworkflows%2Frobotupload'
+callbacks:
+- delay: 3
+  request:
+    method: POST
+    url: http://${INSPIRE_NEXT_NETLOC}/callback/workflows/robotupload
+    headers:
+      Accept: ['*/*']
+      Content-Type: ['application/json']
+    body: >
+      {
+        "nonce": "2",
+        "results": [
+          {
+            "error_message": "",
+            "marcxml": "fake marcxml (not really used yet anywhere)",
+            "recid": 42,
+            "success": true,
+            "url": "None/record/42"
+          }
+        ]
+      }
+- delay: 8
+  request:
+    method: POST
+    url: http://${INSPIRE_NEXT_NETLOC}/callback/workflows/webcoll
+    headers:
+      Accept: ['*/*']
+      Content-Type: ['application/x-www-form-urlencoded']
+    body: 'recids=42'

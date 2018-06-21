@@ -593,3 +593,11 @@ def set_refereed_and_fix_document_type(obj, eng):
             obj.data['document_type'].append('conference paper')
         except ValueError:
             pass
+
+
+@with_debug_logging
+def jlab_ticket_needed(obj, eng):
+    """Check if the a JLab curation ticket is needed."""
+    jlab_categories = set(current_app.config['JLAB_ARXIV_CATEGORIES'])
+    arxiv_categories = set(get_arxiv_categories(obj.data))
+    return bool(jlab_categories & arxiv_categories)

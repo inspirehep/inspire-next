@@ -25,11 +25,12 @@ from __future__ import absolute_import, division, print_function
 import copy
 import datetime
 
+from flask import current_app
 from idutils import is_arxiv_post_2007
-
 from inspire_schemas.api import LiteratureBuilder
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
+
 from inspirehep.modules.forms.utils import filter_empty_elements
 from inspirehep.modules.workflows.utils import with_debug_logging
 from inspirehep.utils.record import get_title
@@ -237,6 +238,7 @@ def reply_ticket_context(user, obj):
 def curation_ticket_context(user, obj):
     recid = obj.extra_data.get('recid')
     record_url = obj.extra_data.get('url')
+    server_name = current_app.config['SERVER_NAME']
 
     arxiv_ids = get_value(obj.data, 'arxiv_eprints.value') or []
     for index, arxiv_id in enumerate(arxiv_ids):
@@ -259,13 +261,14 @@ def curation_ticket_context(user, obj):
     user_comment = obj.extra_data.get('formdata', {}).get('extra_comments', '')
 
     return dict(
+        email=user.email if user else '',
+        link_to_pdf=link_to_pdf,
         recid=recid,
         record_url=record_url,
-        link_to_pdf=link_to_pdf,
-        email=user.email if user else '',
         references=references,
+        server_name=server_name,
+        subject=subject,
         user_comment=user_comment,
-        subject=subject
     )
 
 

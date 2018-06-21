@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 import copy
 import subprocess
+from urlparse import urlparse
 
 from inspirehep.testlib.api.base_resource import BaseResource
 
@@ -65,7 +66,7 @@ class HoldingpenResource(BaseResource):
 
         extra_data = json.get('_extra_data', {})
 
-        hp_enty = cls(
+        hp_entry = cls(
             workflow_id=workflow_id,
             approved=extra_data.get('approved'),
             is_update=extra_data.get('is-update'),
@@ -76,8 +77,8 @@ class HoldingpenResource(BaseResource):
             arxiv_eprint=json['metadata'].get('arxiv_eprints', [{}])[0].get('value'),
             doi=json['metadata'].get('dois', [{}])[0].get('value'),
         )
-        hp_enty._raw_json = json
-        return hp_enty
+        hp_entry._raw_json = json
+        return hp_entry
 
     def to_json(self):
         """
@@ -177,7 +178,6 @@ class HoldingpenApiClient(object):
         Returns:
             requests.Response: The actual http response to the last call (the
                 actual /resolve endpoint).
-
         Raises:
             requests.exceptions.BaseHttpError: any error related to the http
                 calls made.
@@ -229,6 +229,19 @@ class HoldingpenApiClient(object):
             resolution_data=resolution_data,
         )
         return resolve_response
+
+    def resume_wf(self, hp_entry):
+        full_callback_url = hp_entry._raw_json['_extra_data']['callback_url']
+        callback_url = urlparse(full_callback_url).path
+
+        payload = {
+            'id': hp_entry.workflow_id,
+            'metadata': hp_entry._raw_json['metadata'],
+            '_extra_data': hp_entry._raw_json['_extra_data']
+        }
+        res = self._client.put(callback_url, json=payload)
+        res.raise_for_status()
+        return res
 
     def accept_core(self, holdingpen_id):
         res = self._resolve_hep_approval(

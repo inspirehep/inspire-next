@@ -1248,6 +1248,9 @@ ARXIV_CATEGORIES = {
         'physics.ins-det',
     ]
 }
+JLAB_ARXIV_CATEGORIES = [
+    'nucl-th'
+]
 HEP_ONTOLOGY_FILE = "HEPont.rdf"
 """Name or path of the ontology to use for hep articles keyword extraction."""
 
@@ -1271,6 +1274,7 @@ WORKFLOWS_UI_LIST_ROW_TEMPLATE = "inspire_workflows/list_row.html"
 
 WORKFLOWS_UI_URL = "/holdingpen"
 WORKFLOWS_UI_API_URL = "/api/holdingpen/"
+WORKFLOWS_EDITOR_API_URL = "/editor/holdingpen/"
 
 WORKFLOWS_UI_REST_ENDPOINT = {
     'workflow_object_serializers': {
