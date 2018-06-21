@@ -98,7 +98,7 @@ class TestRecordMetadata(TestBaseModel):
         return instance
 
     @classmethod
-    def create_from_file(cls, module_name, filename, index_name=''):
+    def create_from_file(cls, module_name, filename, **kwargs):
         """Create Record instance from file.
 
         Note:
@@ -115,5 +115,4 @@ class TestRecordMetadata(TestBaseModel):
             module_name, os.path.join('fixtures', filename))
 
         data = json.load(open(path))
-        return cls.create_from_kwargs(
-            index_name=index_name, json=data)
+        return cls.create_from_kwargs(json=data, **kwargs)

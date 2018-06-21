@@ -24,31 +24,55 @@ from __future__ import absolute_import, division, print_function
 
 from factories.db.invenio_records import TestRecordMetadata
 
-from inspirehep.modules.records.utils import get_resolved_references
+from inspirehep.modules.records.utils import get_linked_records_in_field
 
 
-def test_get_resolved_references_handles_empty_list(isolated_app):
-    results = get_resolved_references([])
-    assert results == []
+def test_get_linked_records_in_field_handles_empty_field(isolated_app):
+    results = get_linked_records_in_field({}, 'foo')
+    assert list(results) == []
 
 
-def test_get_resolved_references_with_missing_record(isolated_app):
-    TestRecordMetadata.create_from_file(
-        __name__, '29177.json', index_name='records-hep')
-    references = [9999999]
-    results = get_resolved_references(references)
+def test_get_linked_records_in_field_with_missing_link(isolated_app):
+    TestRecordMetadata.create_from_file(__name__, '29177.json')
+    record = {
+        'references': [
+            {'record': {'$ref': 'https://labs.inspirehep.net/api/literature/1234'}},
+        ],
+    }
+    results = get_linked_records_in_field(record, 'references.record')
     expected = []
 
     assert expected == list(results)
 
 
-def test_existing_references(isolated_app):
-    instance = TestRecordMetadata.create_from_file(
-        __name__, '29177.json', index_name='records-hep')
+def test_get_linked_records_in_field_finds_existing_link(isolated_app):
+    instance = TestRecordMetadata.create_from_file(__name__, '29177.json')
 
-    references = [29177]
+    record = {
+        'references': [
+            {'record': {'$ref': 'https://labs.inspirehep.net/api/literature/29177'}},
+        ],
+    }
 
-    results = get_resolved_references(references)
+    results = get_linked_records_in_field(record, 'references.record')
     expected = [instance.record_metadata.json]
     result = list(results)
+    assert expected == result
+
+
+def test_get_linked_records_in_field_handles_multiple_pid_types(isolated_app):
+    instances = [
+        TestRecordMetadata.create_from_file(__name__, '29177.json'),
+        TestRecordMetadata.create_from_file(__name__, '1575134.json', pid_type='dat'),
+    ]
+
+    record = {
+        'references': [
+            {'record': {'$ref': 'https://labs.inspirehep.net/api/literature/29177'}},
+            {'record': {'$ref': 'https://labs.inspirehep.net/api/data/1575134'}},
+        ],
+    }
+    results = get_linked_records_in_field(record, 'references.record')
+    expected = list(sorted(instance.record_metadata.json for instance in instances))
+    result = list(sorted(results))  # FIXME: order is not preserved!
     assert expected == result

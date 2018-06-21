@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspire_utils.record import get_value
+from inspire_utils.helpers import force_list
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
     get_pid_type_from_schema
@@ -39,16 +41,38 @@ def get_endpoint_from_record(record):
     return endpoint
 
 
-def get_resolved_references(record_ids):
-    """Resolve record in record's references.
+def get_pid_from_record_uri(record_uri):
+    """Transform a URI to a record into a (pid_type, pid_value) pair."""
+    parts = [part for part in record_uri.split('/') if part]
+    pid_type = parts[-2][:3]
+    pid_value = parts[-1]
+
+    return pid_type, pid_value
+
+
+def get_linked_records_in_field(record, field_path):
+    """Get all linked records in a given field.
 
     Args:
-        record_ids(list): a list of record ids.
+        record (dict): the record containing the links
+        field_path (string): a dotted field path specification understandable
+            by ``get_value``, containing a json reference to another record.
 
     Returns:
-        list: a list with resolved records.
-    """
-    if not record_ids:
-        return []
+        Iterator[dict]: an iterator on the linked record.
 
-    return get_db_records('lit', record_ids)
+    Warning:
+        Currently, the order in which the linked records are yielded is
+        different from the order in which they appear in the record.
+
+    Example:
+        >>> record = {'references': [
+        ...     {'record': {'$ref': 'https://labs.inspirehep.net/api/literature/1234'}},
+        ...     {'record': {'$ref': 'https://labs.inspirehep.net/api/data/421'}},
+        ... ]}
+        >>> get_linked_record_in_field(record, 'references.record')
+        [...]
+    """
+    full_path = '.'.join([field_path, '$ref'])
+    pids = force_list([get_pid_from_record_uri(rec) for rec in get_value(record, full_path, [])])
+    return get_db_records(pids)
