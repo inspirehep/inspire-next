@@ -27,9 +27,10 @@ from __future__ import absolute_import, division, print_function
 import json
 
 import pytest
-from invenio_workflows import ObjectStatus, WorkflowEngine, start
+from invenio_workflows import ObjectStatus, WorkflowEngine, start, workflow_object_class
 from invenio_accounts.testutils import login_user_via_session
 
+from inspirehep.utils.tickets import get_rt_link_for_ticket
 from inspirehep.utils.record_getter import get_db_record
 
 from calls import do_robotupload_callback
@@ -66,22 +67,41 @@ def edit_workflow(workflow_app):
     return obj
 
 
-def test_edit_article_view(api_client):
-    login_user_via_session(api_client, email='admin@inspirehep.net')
+def test_edit_article_view(workflow_api_client):
+    login_user_via_session(workflow_api_client, email='admin@inspirehep.net')
 
     factory = TestRecordMetadata.create_from_kwargs(json={})
     control_number = factory.record_metadata.json['control_number']
     endpoint_url = "/workflows/edit_article/{}".format(control_number)
 
-    response = api_client.get(endpoint_url)
+    response = workflow_api_client.get(endpoint_url)
     assert response.status_code == 302
-    assert "/editor/holdingpen/" in response.data
+    assert "/editor/holdingpen/" in response.headers['Location']
 
 
-def test_edit_article_view_wrong_recid(api_client):
-    login_user_via_session(api_client, email='admin@inspirehep.net')
+def test_edit_article_view_sets_curation_ticket_if_referrer_is_rt_ticket(workflow_api_client):
+    login_user_via_session(workflow_api_client, email='admin@inspirehep.net')
 
-    response = api_client.get("/workflows/edit_article/1")
+    factory = TestRecordMetadata.create_from_kwargs(json={})
+    control_number = factory.record_metadata.json['control_number']
+    endpoint_url = "/workflows/edit_article/{}".format(control_number)
+
+    response = workflow_api_client.get(
+        endpoint_url,
+        headers={'Referer': get_rt_link_for_ticket(1234)}
+    )
+    assert response.status_code == 302
+    assert "/editor/holdingpen/" in response.headers['Location']
+
+    wflw_id = response.headers['Location'].split('/')[-1]
+    wflw = workflow_object_class.get(wflw_id)
+    assert wflw.extra_data.get('curation_ticket_id') == 1234
+
+
+def test_edit_article_view_wrong_recid(workflow_api_client):
+    login_user_via_session(workflow_api_client, email='admin@inspirehep.net')
+
+    response = workflow_api_client.get("/workflows/edit_article/1")
     assert response.status_code == 404
 
 
@@ -178,13 +198,13 @@ def test_edit_article_callback_permission(
     user_info,
     expected_status_code,
     edit_workflow,
-    api_client,
+    workflow_api_client,
     mocked_external_services,
 ):
     if user_info:
-        login_user_via_session(api_client, email=user_info['email'])
+        login_user_via_session(workflow_api_client, email=user_info['email'])
     else:
-        with api_client.session_transaction() as sess:
+        with workflow_api_client.session_transaction() as sess:
             sess['user_id'] = None
 
     payload = {
