@@ -65,7 +65,7 @@ class TestRecordMetadata(TestBaseModel):
         json_ = copy.deepcopy(cls.JSON_SKELETON)
         json_.update(kwargs.pop('json', {}))
 
-        if 'titles' not in json_:
+        if kwargs.get('pid_type', 'lit') == 'lit' and 'titles' not in json_:
             json_.update({
                 'titles': [
                     {
