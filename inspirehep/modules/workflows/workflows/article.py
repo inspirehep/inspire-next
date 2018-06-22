@@ -40,6 +40,7 @@ from inspirehep.modules.workflows.tasks.arxiv import (
 )
 from inspirehep.modules.workflows.tasks.actions import (
     add_core,
+    count_reference_coreness,
     download_documents,
     error_workflow,
     fix_submission_number,
@@ -162,6 +163,7 @@ ENHANCE_RECORD = [
     download_documents,
     normalize_journal_titles,
     refextract,
+    count_reference_coreness,
     extract_journal_info,
     populate_journal_coverage,
     classify_paper(

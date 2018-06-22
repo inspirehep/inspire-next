@@ -49,6 +49,7 @@ from inspire_schemas.utils import validate
 from inspire_utils.record import get_value
 from inspire_utils.dedupers import dedupe_list
 from inspirehep.modules.records.json_ref_loader import replace_refs
+from inspirehep.modules.records.utils import get_linked_records_in_field
 from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_pdf,
     extract_references_from_raw_refs,
@@ -442,6 +443,19 @@ def refextract(obj, eng):
     elif len(matched_text_references) >= len(matched_pdf_references):
         obj.log.info('Extracted %d references from text.', len(matched_text_references))
         obj.data['references'] = matched_text_references
+
+
+@with_debug_logging
+def count_reference_coreness(obj, eng):
+    """Count number of core/non-core matched references."""
+    cited_records = list(get_linked_records_in_field(obj.data, 'references.record'))
+    count_core = len([rec for rec in cited_records if rec.get('core') is True])
+    count_non_core = len(cited_records) - count_core
+
+    obj.extra_data['reference_count'] = {
+        'core': count_core,
+        'non_core': count_non_core,
+    }
 
 
 @with_debug_logging

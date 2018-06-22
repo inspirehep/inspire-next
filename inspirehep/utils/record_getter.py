@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 from functools import wraps
 
 from flask import current_app
+from sqlalchemy import tuple_
 from werkzeug.utils import import_string
 
 from invenio_pidstore.models import PersistentIdentifier
@@ -108,17 +109,30 @@ def get_db_record(pid_type, recid):
     return InspireRecord.get_record(pid.object_uuid)
 
 
-def get_db_records(pid_type, recids):
-    """Get an iterator on record metadata from the DB."""
-    recids = [str(recid) for recid in recids]
+def get_db_records(pids):
+    """Get an iterator on record metadata from the DB.
 
-    if not recids:
-        return iter([])
+    Args:
+        pids (Iterable[Tuple[str, Union[str, int]]): a list of (pid_type, pid_value) tuples.
+
+    Yields:
+        dict: metadata of a record found in the database.
+
+    Warning:
+        The order in which records are returned is different from the order of
+        the input.
+    """
+    pids = [(pid_type, str(pid_value)) for (pid_type, pid_value) in pids]
+
+    if not pids:
+        return
 
     query = RecordMetadata.query.join(
         PersistentIdentifier, RecordMetadata.id == PersistentIdentifier.object_uuid
     ).filter(
-        PersistentIdentifier.pid_value.in_(recids), PersistentIdentifier.pid_type == pid_type
+        PersistentIdentifier.object_type == 'rec',  # So it can use the 'idx_object' index
+        tuple_(PersistentIdentifier.pid_type, PersistentIdentifier.pid_value).in_(pids)
     )
 
-    return (record.json for record in query.yield_per(100))
+    for record in query.yield_per(100):
+        yield record.json
