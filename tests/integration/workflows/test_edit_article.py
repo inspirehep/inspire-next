@@ -212,9 +212,68 @@ def test_edit_article_callback_permission(
         "_extra_data": edit_workflow.extra_data,
         "metadata": edit_workflow.data,
     }
-    response = api_client.put(
+    response = workflow_api_client.put(
         edit_workflow.extra_data['callback_url'],
         data=json.dumps(payload),
         content_type='application/json'
     )
     assert response.status_code == expected_status_code
+
+
+def test_edit_article_callback_redirects_to_rt(
+    edit_workflow,
+    workflow_api_client,
+    mocked_external_services,
+    workflow_app,
+):
+    user_info = {'email': 'jlabcurator@inspirehep.net'}
+
+    login_user_via_session(workflow_api_client, email=user_info['email'])
+
+    edit_workflow.extra_data['curation_ticket_id'] = 1234
+    payload = {
+        "_id": edit_workflow.id,
+        "_extra_data": edit_workflow.extra_data,
+        "metadata": edit_workflow.data,
+    }
+    response = workflow_api_client.put(
+        edit_workflow.extra_data['callback_url'],
+        data=json.dumps(payload),
+        content_type='application/json',
+    )
+
+    expected_redirect = get_rt_link_for_ticket(1234)
+
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    assert 'redirect_url' in data
+    assert data['redirect_url'] == expected_redirect
+
+
+def test_edit_article_callback_redirects_to_root_if_no_referrer(
+    edit_workflow,
+    workflow_api_client,
+    mocked_external_services,
+    workflow_app,
+):
+    user_info = {'email': 'jlabcurator@inspirehep.net'}
+
+    login_user_via_session(workflow_api_client, email=user_info['email'])
+
+    payload = {
+        "_id": edit_workflow.id,
+        "_extra_data": edit_workflow.extra_data,
+        "metadata": edit_workflow.data,
+    }
+    response = workflow_api_client.put(
+        edit_workflow.extra_data['callback_url'],
+        data=json.dumps(payload),
+        content_type='application/json',
+    )
+
+    expected_redirect = 'http://%s/' % workflow_app.config['SERVER_NAME']
+
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    assert 'redirect_url' in data
+    assert data['redirect_url'] == expected_redirect

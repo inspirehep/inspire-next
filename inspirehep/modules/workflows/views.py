@@ -657,7 +657,17 @@ class ResolveEditArticleResource(MethodView):
         workflow.save()
         db.session.commit()
         workflow.continue_workflow(delayed=True)
-        data = {'message': 'Workflow {} is continuing.'.format(workflow_id)}
+
+        ticket_id = workflow_data['_extra_data'].get('curation_ticket_id')
+        if ticket_id:
+            redirect_url = get_rt_link_for_ticket(ticket_id)
+        else:
+            redirect_url = '%s://%s/' % (request.scheme, request.host)
+
+        data = {
+            'message': 'Workflow {} is continuing.'.format(workflow_id),
+            'redirect_url': redirect_url,
+        }
         return jsonify(data), 200
 
 
