@@ -10,6 +10,10 @@
             "properties": {
                 "_extra_data": {
                     "properties": {
+                        "_action": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
                         "is-update": {
                             "type": "boolean"
                         },

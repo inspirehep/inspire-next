@@ -109,7 +109,7 @@ def record_update_permission_factory(record=None):
     return RecordPermission.create(record=record, action='update')
 
 
-class RecordPermission(object):
+class RecordPermission(Permission):
     """Record permission.
 
     - Read access given if collection not restricted.

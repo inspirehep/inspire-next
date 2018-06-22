@@ -108,6 +108,19 @@ def workflow_app(higgs_ontology):
         yield app
 
 
+@pytest.fixture
+def workflow_api(workflow_app):
+    """Flask API application."""
+    yield workflow_app.wsgi_app.mounts['/api']
+
+
+@pytest.fixture
+def workflow_api_client(workflow_api):
+    """Flask test client for the API application."""
+    with workflow_api.test_client() as client:
+        yield client
+
+
 def drop_all(app):
     db.drop_all()
     _es = app.extensions['invenio-search']

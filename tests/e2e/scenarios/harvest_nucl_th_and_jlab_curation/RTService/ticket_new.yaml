@@ -1,0 +1,32 @@
+callbacks: []
+match:
+  exact:
+    - url
+    - method
+  regex:
+    body: .*HEP_curation_jlab.*%2Fworkflows%2Fedit_article.*
+request:
+  body: content=id%3A+ticket%2Fnew%0AQueue%3A+HEP_curation_jlab%0AText%3A+Curate+record+here%3A+https%3A%2F%2Ftest-web-e2e.local%3A5000%2Fworkflows%2Fedit_article%2F42.%0A+++++++Record+url%3A+http%3A%2F%2Finspirehep.net%2Frecord%2F42%0ASubject%3A+arXiv%3A1806.05669+%28%2342%29%0ACF.%7BRecordID%7D%3A+42%0A
+  headers:
+    Accept: ['*/*']
+    Accept-Encoding: ['gzip, deflate']
+    Connection: [keep-alive]
+    Content-Type: [application/x-www-form-urlencoded]
+    Cookie: [RT_SID_INSPIRE-HEP.443=b16459f905f0f82a5b38704f7e321473]
+    Host: [rt.inspirehep.net]
+    User-Agent: [python-requests/2.19.1]
+  method: POST
+  url: https://rt.inspirehep.net/REST/1.0/ticket/new
+response:
+  headers:
+    Date: ['Wed, 23 May 2018 14:20:15 GMT']
+    Server: [Apache]
+    Set-Cookie: ['RT_SID_INSPIRE-HEP.443=2356e17e7fb25cb47ee568459fd6e0b7; path=/; secure; HttpOnly']
+    X-Frame-Options: [DENY]
+    Connection: [close]
+    Transfer-Encoding: [chunked]
+    Content-Type: ['text/plain; charset=utf-8']
+  status: {code: 200, message: OK}
+  body: |
+    RT/4.2.14 200 Ok
+    # Ticket 723851 created.

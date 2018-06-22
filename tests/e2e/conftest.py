@@ -20,11 +20,35 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Our workflows."""
-
 from __future__ import absolute_import, division, print_function
 
-from .article import Article            # noqa: F401
-from .author import Author              # noqa: F401
-from .manual_merge import ManualMerge   # noqa: F401
-from .edit_article import EditArticle   # noqa: F401
+import os
+import pytest
+import time
+
+from inspirehep.testlib.api import InspireApiClient
+from inspirehep.testlib.api.mitm_client import MITMClient
+
+
+@pytest.fixture(autouse=True, scope='function')
+def init_environment(inspire_client):
+    inspire_client.e2e.init_db()
+    inspire_client.e2e.init_es()
+    inspire_client.e2e.init_fixtures()
+    # refresh login session, giving a bit of time
+    time.sleep(1)
+    inspire_client.login_local()
+
+
+@pytest.fixture
+def inspire_client():
+    """Share the same client to reuse the same session"""
+    # INSPIRE_API_URL is set by k8s when running the test in Jenkins
+    inspire_url = os.environ.get('INSPIRE_API_URL', 'http://test-web-e2e.local:5000')
+    return InspireApiClient(base_url=inspire_url)
+
+
+@pytest.fixture
+def mitm_client():
+    mitmproxy_url = os.environ.get('MITMPROXY_HOST', 'http://mitm-manager.local')
+    return MITMClient(mitmproxy_url)

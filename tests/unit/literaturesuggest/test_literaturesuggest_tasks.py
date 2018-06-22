@@ -22,9 +22,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspire_schemas.api import LiteratureBuilder, load_schema, validate
 from mock import patch
 
-from inspire_schemas.api import LiteratureBuilder, load_schema, validate
+from mocks import MockEng, MockObj, MockUser
+
 from inspirehep.modules.literaturesuggest.tasks import (
     curation_ticket_context,
     curation_ticket_needed,
@@ -32,8 +34,6 @@ from inspirehep.modules.literaturesuggest.tasks import (
     new_ticket_context,
     reply_ticket_context,
 )
-
-from mocks import MockEng, MockObj, MockUser
 
 
 def test_new_ticket_context():
@@ -199,6 +199,7 @@ def test_curation_ticket_context():
         'user_comment': [
             'xyzzy',
         ],
+        'server_name': 'localhost:5000',
         'subject': 'math.GT/0309136 arXiv:0706.0001v1 doi:bar foo (#baz)',
     }
     result = curation_ticket_context(user, obj)

@@ -24,40 +24,53 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
 from os.path import join
 
 from flask import (
     Blueprint,
+    abort,
     current_app,
     jsonify,
-    request
+    redirect,
+    request,
 )
 from flask.views import MethodView
 from invenio_db import db
 from inspire_schemas.api import validate
-from invenio_workflows import workflow_object_class, ObjectStatus
+from invenio_workflows import (
+    ObjectStatus,
+    start,
+    workflow_object_class,
+    WorkflowEngine,
+)
 from invenio_workflows.errors import WorkflowsMissingObject
 from jsonschema.exceptions import ValidationError
 
 from inspire_utils.urls import ensure_scheme
+from inspirehep.utils.tickets import get_rt_link_for_ticket
 from inspirehep.modules.workflows.errors import (
     CallbackError,
+    CallbackRecordNotFoundError,
     CallbackValidationError,
+    CallbackWorkflowNotInWaitingEditState,
     CallbackWorkflowNotFoundError,
     CallbackWorkflowNotInMergeState,
     CallbackWorkflowNotInValidationError,
 )
 from inspirehep.modules.workflows.loaders import workflow_loader
 from inspirehep.modules.workflows.models import WorkflowsPendingRecord
+from inspirehep.modules.records.permissions import RecordPermission
 from inspirehep.modules.workflows.utils import (
     get_resolve_validation_callback_url,
     get_validation_errors
 )
 from inspirehep.utils.record import get_value
+from inspirehep.utils.record_getter import get_db_record, RecordGetterError
 
 
-blueprint = Blueprint(
-    'inspire_workflows',
+callback_blueprint = Blueprint(
+    'inspire_workflows_callbacks',
     __name__,
     url_prefix="/callback",
     template_folder='templates',
@@ -65,7 +78,17 @@ blueprint = Blueprint(
 )
 
 
-@blueprint.errorhandler(CallbackError)
+workflow_blueprint = Blueprint(
+    'inspire_workflows',
+    __name__,
+    url_prefix="/workflows",
+    template_folder='templates',
+    static_folder="static",
+)
+
+
+@callback_blueprint.errorhandler(CallbackError)
+@workflow_blueprint.errorhandler(CallbackError)
 def error_handler(error):
     """Callback error handler."""
     response = jsonify(error.to_dict())
@@ -163,7 +186,7 @@ def _put_workflow_in_error_state(workflow_id, error_message, result):
     }
 
 
-@blueprint.route('/workflows/webcoll', methods=['POST'])
+@callback_blueprint.route('/workflows/webcoll', methods=['POST'])
 def webcoll_callback():
     """Handle a callback from webcoll with the record ids processed.
 
@@ -309,7 +332,7 @@ def _parse_robotupload_result(result, workflow_id):
     return response
 
 
-@blueprint.route('/workflows/robotupload', methods=['POST'])
+@callback_blueprint.route('/workflows/robotupload', methods=['POST'])
 def robotupload_callback():
     """Handle callback from robotupload.
 
@@ -591,16 +614,110 @@ class ResolveValidationResource(MethodView):
         return jsonify(data), 200
 
 
+class ResolveEditArticleResource(MethodView):
+    """Resolve `edit_article` callback.
+
+    When the workflow needs to resolve conficts, the workflow stops in
+    ``HALTED`` state, to continue this endpoint is called. If it's called
+    and the conflicts are not resolved it will just save the workflow.
+
+    Args:
+        workflow_data (dict): the workflow object send in the request's payload.
+
+    """
+
+    def put(self):
+        """Handle callback for merge conflicts."""
+        workflow_data = workflow_loader()
+        workflow_id = workflow_data['id']
+
+        try:
+            workflow = workflow_object_class.get(workflow_id)
+        except WorkflowsMissingObject:
+            raise CallbackWorkflowNotFoundError(workflow_id)
+
+        if workflow.status != ObjectStatus.WAITING or \
+           'callback_url' not in workflow.extra_data:
+            raise CallbackWorkflowNotInWaitingEditState(workflow.id)
+
+        recid = workflow_data['metadata'].get('control_number')
+        try:
+            record = get_db_record('lit', recid)
+        except RecordGetterError:
+            raise CallbackRecordNotFoundError(recid)
+
+        record_permission = RecordPermission.create(action='update', record=record)
+        if not record_permission.can():
+            abort(403, record_permission)
+
+        workflow_id = workflow.id
+        workflow.data = workflow_data['metadata']
+        workflow.status = ObjectStatus.RUNNING
+        workflow.extra_data.pop('callback_url', None)
+        workflow.save()
+        db.session.commit()
+        workflow.continue_workflow(delayed=True)
+
+        ticket_id = workflow_data['_extra_data'].get('curation_ticket_id')
+        if ticket_id:
+            redirect_url = get_rt_link_for_ticket(ticket_id)
+        else:
+            redirect_url = '%s://%s/' % (request.scheme, request.host)
+
+        data = {
+            'message': 'Workflow {} is continuing.'.format(workflow_id),
+            'redirect_url': redirect_url,
+        }
+        return jsonify(data), 200
+
+
+def start_edit_article_workflow(recid):
+    try:
+        record = get_db_record('lit', recid)
+    except RecordGetterError:
+        raise CallbackRecordNotFoundError(recid)
+
+    record_permission = RecordPermission.create(action='update', record=record)
+    if not record_permission.can():
+        abort(403, record_permission)
+
+    eng_uuid = start('edit_article', data=record)
+    workflow_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
+    workflow = workflow_object_class.get(workflow_id)
+
+    if request.referrer:
+        base_rt_url = get_rt_link_for_ticket('').replace('?', '\?')
+        ticket_match = re.match(base_rt_url + '(?P<ticket_id>\d+)', request.referrer)
+        if ticket_match:
+            ticket_id = int(ticket_match.group('ticket_id'))
+            workflow.extra_data['curation_ticket_id'] = ticket_id
+            workflow.save()
+            db.session.commit()
+
+    url = "{}{}".format(current_app.config['WORKFLOWS_EDITOR_API_URL'], workflow_id)
+    return redirect(location=url, code=302)
+
+
 callback_resolve_validation = ResolveValidationResource.as_view(
     'callback_resolve_validation')
 callback_resolve_merge_conflicts = ResolveMergeResource.as_view(
     'callback_resolve_merge_conflicts')
+callback_resolve_edit_article = ResolveEditArticleResource.as_view(
+    'callback_resolve_edit_article')
 
-blueprint.add_url_rule(
+callback_blueprint.add_url_rule(
     '/workflows/resolve_validation_errors',
     view_func=callback_resolve_validation,
 )
-blueprint.add_url_rule(
+callback_blueprint.add_url_rule(
     '/workflows/resolve_merge_conflicts',
     view_func=callback_resolve_merge_conflicts,
+)
+workflow_blueprint.add_url_rule(
+    '/edit_article/<recid>',
+    view_func=start_edit_article_workflow,
+)
+callback_blueprint.add_url_rule(
+    '/workflows/resolve_edit_article',
+    view_func=callback_resolve_edit_article
 )
