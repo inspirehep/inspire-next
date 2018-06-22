@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
 from os.path import join
 
 from flask import (
@@ -32,7 +33,7 @@ from flask import (
     current_app,
     jsonify,
     redirect,
-    request
+    request,
 )
 from flask.views import MethodView
 from invenio_db import db
@@ -47,6 +48,7 @@ from invenio_workflows.errors import WorkflowsMissingObject
 from jsonschema.exceptions import ValidationError
 
 from inspire_utils.urls import ensure_scheme
+from inspirehep.utils.tickets import get_rt_link_for_ticket
 from inspirehep.modules.workflows.errors import (
     CallbackError,
     CallbackRecordNotFoundError,
@@ -655,7 +657,17 @@ class ResolveEditArticleResource(MethodView):
         workflow.save()
         db.session.commit()
         workflow.continue_workflow(delayed=True)
-        data = {'message': 'Workflow {} is continuing.'.format(workflow_id)}
+
+        ticket_id = workflow_data['_extra_data'].get('curation_ticket_id')
+        if ticket_id:
+            redirect_url = get_rt_link_for_ticket(ticket_id)
+        else:
+            redirect_url = '%s://%s/' % (request.scheme, request.host)
+
+        data = {
+            'message': 'Workflow {} is continuing.'.format(workflow_id),
+            'redirect_url': redirect_url,
+        }
         return jsonify(data), 200
 
 
@@ -670,8 +682,19 @@ def start_edit_article_workflow(recid):
         abort(403, record_permission)
 
     eng_uuid = start('edit_article', data=record)
-    obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
-    url = "{}{}".format(current_app.config['WORKFLOWS_EDITOR_API_URL'], obj_id)
+    workflow_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
+    workflow = workflow_object_class.get(workflow_id)
+
+    if request.referrer:
+        base_rt_url = get_rt_link_for_ticket('').replace('?', '\?')
+        ticket_match = re.match(base_rt_url + '(?P<ticket_id>\d+)', request.referrer)
+        if ticket_match:
+            ticket_id = int(ticket_match.group('ticket_id'))
+            workflow.extra_data['curation_ticket_id'] = ticket_id
+            workflow.save()
+            db.session.commit()
+
+    url = "{}{}".format(current_app.config['WORKFLOWS_EDITOR_API_URL'], workflow_id)
     return redirect(location=url, code=302)
 
 
