@@ -38,7 +38,7 @@ from inspirehep.modules.workflows.utils import (
 )
 
 
-@patch('inspirehep.modules.orcid.tasks.attempt_push')
+@patch('inspirehep.modules.orcid.api.push_record_with_orcid')
 def test_store_record_does_not_raise_in_the_orcid_receiver(mock_attempt_push, app):
     config = {
         'FEATURE_FLAG_ENABLE_ORCID_PUSH': True,

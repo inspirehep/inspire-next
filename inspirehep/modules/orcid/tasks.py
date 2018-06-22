@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import re
+import traceback
 
 from flask import current_app
 from sqlalchemy.exc import SQLAlchemyError
@@ -39,15 +40,8 @@ from invenio_db import db
 from invenio_oauthclient.errors import AlreadyLinkedError
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
-from inspirehep.modules.orcid.api import (
-    push_record_with_orcid,
-    get_author_putcodes,
-)
-from inspirehep.modules.orcid.utils import (
-    get_literature_recids_for_orcid,
-    get_orcid_recid_key,
-    log_time,
-)
+from inspirehep.modules.orcid.api import push_record_with_orcid
+from inspirehep.modules.orcid.utils import get_literature_recids_for_orcid
 
 
 LOGGER = getStackTraceLogger(__name__)
@@ -211,81 +205,16 @@ def orcid_push(self, orcid, rec_id, oauth_token):
         return None
 
     try:
-        attempt_push(orcid, rec_id, oauth_token)
-    except Exception as e:
-        raise self.retry(max_retries=3, countdown=300, exc=e)
-
-
-def attempt_push(orcid, rec_id, oauth_token):
-    """Push a record to ORCID.
-
-    Args:
-        orcid(string): an orcid identifier.
-        rec_id(int): inspire record's id to push to ORCID.
-        oauth_token(string): orcid token.
-    """
-    LOGGER.info('Will attempt to push #%s onto %s', rec_id, orcid)
-
-    put_code, previous_hash = get_putcode_and_hash_from_redis(orcid, rec_id)
-
-    if not put_code:
-        LOGGER.info('Put-code %s not found in cache - will recache now')
-        recache_all_author_putcodes(orcid, oauth_token)
-        put_code, previous_hash = get_putcode_and_hash_from_redis(orcid, rec_id)
-
-    new_code, new_hash = push_record_with_orcid(
-        recid=str(rec_id),
-        orcid=orcid,
-        oauth_token=oauth_token,
-        put_code=put_code,
-        old_hash=previous_hash,
-    )
-
-    if new_code != put_code or new_hash != previous_hash:
-        store_record_in_redis(orcid, rec_id, new_code, new_hash)
-
-
-@log_time(LOGGER)
-def recache_all_author_putcodes(orcid, oauth_token):
-    """Fetch all putcodes from ORCID and cache them.
-
-    Args:
-        orcid(string): an orcid identifier.
-        oauth_token(string): orcid token.
-    """
-    record_put_codes = get_author_putcodes(orcid, oauth_token)
-
-    for fetched_rec_id, fetched_put_code in record_put_codes:
-        store_record_in_redis(orcid, fetched_rec_id, fetched_put_code, None)
-
-
-def store_record_in_redis(orcid, rec_id, put_code, hashed=None):
-    """Store the entry <orcid:recid, value> in Redis.
-
-    Args:
-        orcid(string): the author's orcid.
-        rec_id(int): inspire record's id pushed to ORCID.
-        put_code(string): the put_code used to push the record to ORCID.
-        hashed(Optional[string]): hashed ORCID record
-    """
-    redis_url = current_app.config.get('CACHE_REDIS_URL')
-    r = StrictRedis.from_url(redis_url)
-
-    orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-    to_cache = {'putcode': put_code}
-    if hashed:
-        to_cache['hash'] = hashed
-    r.hmset(orcid_recid_key, to_cache)
-
-
-def get_putcode_and_hash_from_redis(orcid, rec_id):
-    """Retrieve from Redis the put_code for the given ORCID - record id"""
-    redis_url = current_app.config.get('CACHE_REDIS_URL')
-    r = StrictRedis.from_url(redis_url)
-
-    orcid_recid_key = get_orcid_recid_key(orcid, rec_id)
-    cached = r.hgetall(orcid_recid_key)
-    return cached.get('putcode'), cached.get('hash')
+        LOGGER.info('Will attempt to push #%s onto %s', rec_id, orcid)
+        push_record_with_orcid(
+            recid=str(rec_id),
+            orcid=orcid,
+            oauth_token=oauth_token,
+        )
+    except Exception as exc:
+        LOGGER.info('Orcid push attempt (celery task) for orcid={} and rec_id={}'
+                    ' failed:\n{}'.format(orcid, rec_id, traceback.format_exc()))
+        raise self.retry(max_retries=3, countdown=300, exc=exc)
 
 
 def _find_user_matching(orcid, email):

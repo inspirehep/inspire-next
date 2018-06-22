@@ -34,9 +34,9 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from inspirehep.modules.orcid.utils import (
     _split_lists,
-    canonicalize_xml_element,
     log_time,
 )
+from inspirehep.modules.orcid.cache import OrcidHasher
 
 
 def xml_parse(xml_string):
@@ -149,7 +149,8 @@ def test_canonicalize_xml_element():
         </work:work>
         """)
 
-    assert canonicalize_xml_element(xml1) == canonicalize_xml_element(xml2)
+    assert (OrcidHasher()._canonicalize_xml_element(xml1) ==
+            OrcidHasher()._canonicalize_xml_element(xml2))
 
 
 class MockLogger(object):

@@ -20,28 +20,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""ORCID push common fixtures."""
-
 from __future__ import absolute_import, division, print_function
 
-import pytest
+from utils import override_config
 
 
-@pytest.fixture
-def vcr_config():
-    return {
-        'decode_compressed_response': True,
-        'filter_headers': ['Authorization'],
-        'ignore_hosts': ['test-indexer'],
-        'record_mode': 'none',
-    }
+def test_override_config(app):
+    with override_config(foo1='bar1', foo2='bar2'):
+        from flask import current_app
+        assert current_app.config['foo1'] == 'bar1'
+        assert current_app.config['foo2'] == 'bar2'
 
-
-@pytest.fixture
-def vcr(vcr):
-    vcr.register_matcher(
-        'accept',
-        lambda r1, r2: r1.headers.get('Accept') == r2.headers.get('Accept'),
-    )
-    vcr.match_on = ['method', 'scheme', 'host', 'port', 'path', 'query', 'accept']
-    return vcr
+    assert not hasattr(current_app.config, 'foo1')
+    assert not hasattr(current_app.config, 'foo2')
