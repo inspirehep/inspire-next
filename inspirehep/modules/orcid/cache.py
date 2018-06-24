@@ -28,6 +28,7 @@ from redis import StrictRedis
 from StringIO import StringIO
 
 from .converter import OrcidConverter
+from .exceptions import EmptyPutcodeError
 
 
 class OrcidCache(object):
@@ -49,6 +50,9 @@ class OrcidCache(object):
             putcode(string): the putcode used to push the record to ORCID.
             hash_value(Optional[string]): hashed ORCID record content.
         """
+        if not putcode:
+            raise EmptyPutcodeError
+
         key = self._get_key(recid)
         value = {'putcode': putcode}
         if hash_value:

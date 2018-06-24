@@ -23,7 +23,15 @@
 from __future__ import absolute_import, division, print_function
 
 
-class DuplicatedExternalIdentifiersError(Exception):
+class BaseOrcidException(Exception):
+    pass
+
+
+class BaseOrcidApiException(BaseOrcidException):
+    pass
+
+
+class DuplicatedExternalIdentifiersError(BaseOrcidApiException):
     http_status_code = 409
     orcid_error_code = 9021
 
@@ -38,5 +46,9 @@ class DuplicatedExternalIdentifiersError(Exception):
             return False
 
 
-class PutcodeNotFoundInCacheException(Exception):
+class PutcodeNotFoundInCacheException(BaseOrcidException):
+    pass
+
+
+class EmptyPutcodeError(BaseOrcidException):
     pass

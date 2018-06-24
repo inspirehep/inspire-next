@@ -44,6 +44,7 @@ from inspirehep.utils.record_getter import get_db_record
 from .cache import OrcidCache, OrcidHasher
 from .exceptions import (
     DuplicatedExternalIdentifiersError,
+    EmptyPutcodeError,
     PutcodeNotFoundInCacheException,
 )
 from .utils import log_time
@@ -139,10 +140,12 @@ def push_record_with_orcid(recid, orcid, oauth_token, putcode=None, old_hash=Non
                 if not putcode:
                     raise PutcodeNotFoundInCacheException(
                         'Putcode not found in cache for recid {} after having'
-                        'recached all putcodes for the orcid {}'.format(recid, orcid))
+                        ' recached all putcodes for the orcid {}'.format(recid, orcid))
                 return push_record_with_orcid(recid, orcid, oauth_token, putcode, previous_hash)
             else:
                 raise exc
+        if not putcode:
+            raise EmptyPutcodeError
 
     LOGGER.info("Push of %s onto %s completed with put-code %s.", recid, orcid, putcode)
 
