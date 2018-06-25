@@ -80,7 +80,8 @@ def app():
     with app.app_context():
         # Celery task imports must be local, otherwise their
         # configuration would use the default pickle serializer.
-        from inspirehep.modules.migrator.tasks import add_citation_counts, migrate_from_file
+        from inspirehep.modules.migrator.tasks import add_citation_counts
+        from inspirehep.modules.migrator.tasks import migrate_from_file
 
         db.drop_all()
         db.create_all()

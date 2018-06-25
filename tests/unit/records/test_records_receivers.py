@@ -70,13 +70,6 @@ def test_populate_bookautocomplete_from_authors():
         'input': [
             'Rafelski, Johann',
         ],
-        'payload': {
-            'authors': [
-                'Rafelski, Johann',
-            ],
-            'id': 'http://localhost:5000/api/literature/1519486',
-            'title': [],
-        },
     }
     result = record['bookautocomplete']
 
@@ -111,13 +104,6 @@ def test_populate_bookautocomplete_from_titles():
         'input': [
             'Relativity Matters',
         ],
-        'payload': {
-            'authors': [],
-            'id': 'http://localhost:5000/api/literature/1519486',
-            'title': [
-                'Relativity Matters',
-            ],
-        },
     }
     result = record['bookautocomplete']
 
@@ -152,11 +138,6 @@ def test_populate_bookautocomplete_from_imprints_dates():
         'input': [
             '2010-07-23',
         ],
-        'payload': {
-            'authors': [],
-            'id': 'http://localhost:5000/api/literature/1519486',
-            'title': [],
-        },
     }
     result = record['bookautocomplete']
 
@@ -190,12 +171,7 @@ def test_populate_bookautocomplete_from_imprints_publishers():
     expected = {
         'input': [
             'Springer',
-        ],
-        'payload': {
-            'authors': [],
-            'id': 'http://localhost:5000/api/literature/1519486',
-            'title': [],
-        },
+        ]
     }
     result = record['bookautocomplete']
 
@@ -230,11 +206,6 @@ def test_populate_bookautocomplete_from_isbns_values():
         'input': [
             '0201021153',
         ],
-        'payload': {
-            'authors': [],
-            'id': 'http://localhost:5000/api/literature/1519486',
-            'title': [],
-        },
     }
     result = record['bookautocomplete']
 
@@ -758,7 +729,6 @@ def test_populate_abstract_source_suggest():
         {
             'abstract_source_suggest': {
                 'input': 'foo',
-                'output': 'foo',
             },
             'source': 'foo',
             'value': 'bar',
@@ -821,10 +791,6 @@ def test_populate_title_suggest_with_all_inputs():
             'JHEP',
             'JOURNAL OF HIGH ENERGY PHYSICS'
         ],
-        'output': 'JHEP',
-        'payload': {
-            'full_title': 'The Journal of High Energy Physics (JHEP)'
-        }
     }
 
     result = record['title_suggest']
@@ -860,16 +826,6 @@ def test_populate_affiliation_suggest_from_icn():
             'CERN, Geneva',
             'CERN',
         ],
-        'output': 'CERN',
-        'payload': {
-            '$ref': None,
-            'ICN': [
-                'CERN, Geneva',
-            ],
-            'institution_acronyms': [],
-            'institution_names': [],
-            'legacy_ICN': 'CERN',
-        },
     }
     result = record['affiliation_suggest']
 
@@ -896,16 +852,6 @@ def test_populate_affiliation_suggest_from_institution_hierarchy_acronym():
             'CERN',
             'CERN',
         ],
-        'output': 'CERN',
-        'payload': {
-            '$ref': None,
-            'ICN': [],
-            'institution_acronyms': [
-                'CERN',
-            ],
-            'institution_names': [],
-            'legacy_ICN': 'CERN',
-        },
     }
     result = record['affiliation_suggest']
 
@@ -932,16 +878,6 @@ def test_populate_affiliation_suggest_from_institution_hierarchy_name():
             'European Organization for Nuclear Research',
             'CERN',
         ],
-        'output': 'CERN',
-        'payload': {
-            '$ref': None,
-            'ICN': [],
-            'institution_acronyms': [],
-            'institution_names': [
-                'European Organization for Nuclear Research',
-            ],
-            'legacy_ICN': 'CERN',
-        },
     }
     result = record['affiliation_suggest']
 
@@ -964,14 +900,6 @@ def test_populate_affiliation_suggest_from_legacy_icn():
         'input': [
             'CERN',
         ],
-        'output': 'CERN',
-        'payload': {
-            '$ref': None,
-            'ICN': [],
-            'institution_acronyms': [],
-            'institution_names': [],
-            'legacy_ICN': 'CERN',
-        },
     }
     result = record['affiliation_suggest']
 
@@ -998,14 +926,6 @@ def test_populate_affiliation_suggest_from_name_variants():
             'CERN',
             u'Centre Européen de Recherches Nucléaires',
         ],
-        'output': 'CERN',
-        'payload': {
-            '$ref': None,
-            'ICN': [],
-            'institution_acronyms': [],
-            'institution_names': [],
-            'legacy_ICN': 'CERN',
-        },
     }
     result = record['affiliation_suggest']
 
@@ -1032,14 +952,6 @@ def test_populate_affiliation_suggest_from_postal_code():
             'CERN',
             '1211',
         ],
-        'output': 'CERN',
-        'payload': {
-            '$ref': None,
-            'ICN': [],
-            'institution_acronyms': [],
-            'institution_names': [],
-            'legacy_ICN': 'CERN',
-        },
     }
     result = record['affiliation_suggest']
 
@@ -1065,14 +977,6 @@ def test_populate_affiliation_suggest_to_ref():
         'input': [
             'CERN',
         ],
-        'output': 'CERN',
-        'payload': {
-            '$ref': 'http://localhost:5000/api/institutions/902725',
-            'ICN': [],
-            'institution_acronyms': [],
-            'institution_names': [],
-            'legacy_ICN': 'CERN',
-        },
     }
     result = record['affiliation_suggest']
 

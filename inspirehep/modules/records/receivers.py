@@ -168,8 +168,8 @@ def enhance_after_index(sender, json, *args, **kwargs):
     .. note::
 
        ``populate_recid_from_ref`` **MUST** come before ``populate_bookautocomplete``
-       because the latter puts a JSON reference in a completion payload, which
-       would be expanded to an incorrect ``payload_recid`` by the former.
+       because the latter puts a JSON reference in a completion _source, which
+       would be expanded to an incorrect ``_source_recid`` by the former.
 
     """
     populate_recid_from_ref(sender, json, *args, **kwargs)
@@ -207,16 +207,9 @@ def populate_bookautocomplete(sender, json, *args, **kwargs):
     input_values.extend(titles)
     input_values = [el for el in input_values if el]
 
-    ref = get_value(json, 'self.$ref')
-
     json.update({
         'bookautocomplete': {
             'input': input_values,
-            'payload': {
-                'authors': authors,
-                'id': ref,
-                'title': titles,
-            },
         },
     })
 
@@ -323,7 +316,6 @@ def populate_abstract_source_suggest(sender, json, *args, **kwargs):
             abstract.update({
                 'abstract_source_suggest': {
                     'input': source,
-                    'output': source,
                 },
             })
 
@@ -346,10 +338,6 @@ def populate_title_suggest(sender, json, *args, **kwargs):
     json.update({
         'title_suggest': {
             'input': input_values,
-            'output': short_title if short_title else '',
-            'payload': {
-                'full_title': journal_title if journal_title else '',
-            },
         }
     })
 
@@ -378,14 +366,6 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
     json.update({
         'affiliation_suggest': {
             'input': input_values,
-            'output': legacy_ICN,
-            'payload': {
-                '$ref': get_value(json, 'self.$ref'),
-                'ICN': ICN,
-                'institution_acronyms': institution_acronyms,
-                'institution_names': institution_names,
-                'legacy_ICN': legacy_ICN,
-            },
         },
     })
 
@@ -423,17 +403,11 @@ def populate_name_variations(sender, json, *args, **kwargs):
     for author in authors:
         full_name = author.get('full_name')
         if full_name:
-            bais = [
-                el['value'] for el in author.get('ids', [])
-                if el['schema'] == 'INSPIRE BAI'
-            ]
             name_variations = generate_name_variations(full_name)
 
             author.update({'name_variations': name_variations})
             author.update({'name_suggest': {
-                'input': name_variations,
-                'output': full_name,
-                'payload': {'bai': bais[0] if bais else None}
+                'input': [variation for variation in name_variations if variation],
             }})
 
 
