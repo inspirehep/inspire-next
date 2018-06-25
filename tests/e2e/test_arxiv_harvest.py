@@ -47,8 +47,8 @@ def wait_for(func, *args, **kwargs):
     return decorated(*args, **kwargs)
 
 
-def _all_in_status(inspire_client, status):
-    hp_entries = inspire_client.holdingpen.get_list_entries()
+def _all_in_status(holdingpen_client, status):
+    hp_entries = holdingpen_client.get_list_entries()
     try:
         assert len(hp_entries) == 1
         assert all(entry.status == status for entry in hp_entries)
@@ -75,8 +75,8 @@ def _workflows_in_status(holdingpen_client, num_entries, status):
     return entries_in_status
 
 
-def _number_of_entries(inspire_client, num_entries):
-    hp_entries = inspire_client.holdingpen.get_list_entries()
+def _number_of_entries(holdingpen_client, num_entries):
+    hp_entries = holdingpen_client.get_list_entries()
     try:
         assert len(hp_entries) == num_entries, (
             'Current holdingpen entries (waiting for them to be in %d current number): %d'
@@ -97,7 +97,7 @@ def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
         from_date='2018-03-25',
     )
 
-    completed_entry = wait_for(lambda: _all_in_status(inspire_client, 'COMPLETED'))
+    completed_entry = wait_for(lambda: _all_in_status(inspire_client.holdingpen, 'COMPLETED'))
     entry = inspire_client.holdingpen.get_detail_entry(
         completed_entry.workflow_id
     )
@@ -133,7 +133,7 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
         from_date='2018-03-25',
     )
 
-    completed_entry = wait_for(lambda: _all_in_status(inspire_client, 'COMPLETED'))
+    completed_entry = wait_for(lambda: _all_in_status(inspire_client.holdingpen, 'COMPLETED'))
     entry = inspire_client.holdingpen.get_detail_entry(
         completed_entry.workflow_id
     )
@@ -248,7 +248,7 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
         from_date='2018-03-25',
     )
 
-    halted_entry = wait_for(lambda: _all_in_status(inspire_client, 'HALTED'))
+    halted_entry = wait_for(lambda: _all_in_status(inspire_client.holdingpen, 'HALTED'))
     entry = inspire_client.holdingpen.get_detail_entry(halted_entry.workflow_id)
 
     # check workflow gets halted
@@ -263,7 +263,7 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
     inspire_client.holdingpen.accept_core(holdingpen_id=entry.workflow_id)
 
     # check that completed workflow is ok
-    completed_entry = wait_for(lambda: _all_in_status(inspire_client, 'COMPLETED'))
+    completed_entry = wait_for(lambda: _all_in_status(inspire_client.holdingpen, 'COMPLETED'))
     entry = inspire_client.holdingpen.get_detail_entry(completed_entry.workflow_id)
 
     assert entry.arxiv_eprint == '1404.0579'
@@ -297,7 +297,7 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
         identifier='oai:arXiv.org:1806.05669',  # nucl-th record
     )
 
-    halted_entry = wait_for(lambda: _all_in_status(inspire_client, 'COMPLETED'))
+    halted_entry = wait_for(lambda: _all_in_status(inspire_client.holdingpen, 'COMPLETED'))
 
     entry = inspire_client.holdingpen.get_detail_entry(halted_entry.workflow_id)
 
@@ -331,7 +331,7 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
     curation_link = _get_ticket_content()
     assert inspire_client._client.get(curation_link).status_code == 200
 
-    new_entries = wait_for(lambda: _number_of_entries(inspire_client, 2))
+    new_entries = wait_for(lambda: _number_of_entries(inspire_client.holdingpen, 2))
     assert len(new_entries) == 2
     edit_article_wf = filter(lambda entry: entry.status == 'WAITING', new_entries)[0]
 
