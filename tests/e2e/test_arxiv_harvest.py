@@ -61,25 +61,16 @@ def _all_in_status(inspire_client, status):
     return hp_entries[0]
 
 
-def _workflow_in_status(inspire_client, holdingpen_id, status):
-    entry = inspire_client.holdingpen.get_detail_entry(holdingpen_id)
-    try:
-        assert entry.status == status, (
-            'Current holdingpen entries (waiting ' 'for them to be in %s status): %s'
-            % (status, entry)
-        )
-    except AssertionError:
-        raise
-    return entry
-
-
 def _workflows_in_status(holdingpen_client, num_entries, status):
     hp_entries = holdingpen_client.get_list_entries()
     entries_in_status = [entry for entry in hp_entries if entry.status == status]
     try:
         assert len(entries_in_status) == num_entries
     except AssertionError:
-        print('Current holdingpen entries: %s' % hp_entries)
+        print(
+            'Current holdingpen entries (waiting for %s of them to be in %s status): %s'
+            % (num_entries, status, hp_entries)
+        )
         raise
     return entries_in_status
 
@@ -207,11 +198,15 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
     inspire_client.holdingpen.resolve_merge_conflicts(hp_entry=update_entry)
 
     update_entry = wait_for(
-        lambda: _workflow_in_status(
-            inspire_client=inspire_client,
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client,
             holdingpen_id=update_entry.workflow_id,
             status='COMPLETED',
+            num_entries=1,
         )
+    )[0]
+    update_entry = inspire_client.holdingpen.get_detail_entry(
+        update_entry.workflow_id
     )
 
     # check workflow goes as expected
@@ -351,7 +346,15 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
     entry = apply_changes_to_wf()
     inspire_client.holdingpen.resume(entry)
 
-    entry = wait_for(lambda: _workflow_in_status(inspire_client, entry.workflow_id, 'COMPLETED'))
+    entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            workflow_id=entry.workflow_id,
+            status='COMPLETED',
+            num_entries=1,
+        )
+    )
+    entry = inspire_client.holdingpen.get_detail_entry(entry.workflow_id)
 
     time.sleep(5)
     # check literature record is available and consistent
