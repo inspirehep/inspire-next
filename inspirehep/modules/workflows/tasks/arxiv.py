@@ -120,7 +120,7 @@ def arxiv_package_download(obj, eng):
         obj.log.error('Cannot retrieve tarball from arXiv for %s', arxiv_id)
 
 
-@ignore_timeout_error
+@ignore_timeout_error()
 @timeout(5 * 60)
 @with_debug_logging
 def arxiv_plot_extract(obj, eng):

@@ -215,7 +215,7 @@ def test_xslt(oai_xml, oai_xml_result):
 @patch('inspirehep.modules.workflows.utils.LOGGER')
 def test_ignore_timeout_decorator(mock_logger):
 
-    @ignore_timeout_error
+    @ignore_timeout_error()
     @timeout(1)
     def f():
         time.sleep(2)
@@ -223,6 +223,20 @@ def test_ignore_timeout_decorator(mock_logger):
     f()
 
     assert mock_logger.error.called
+
+
+@patch('inspirehep.modules.workflows.utils.LOGGER')
+def test_ignore_timeout_decorator_returns_the_argument_on_error(mock_logger):
+
+    @ignore_timeout_error('foo')
+    @timeout(1)
+    def f():
+        time.sleep(2)
+
+    result = f()
+
+    assert mock_logger.error.called
+    assert result == 'foo'
 
 
 @pytest.mark.parametrize('source,expected_source', [

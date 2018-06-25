@@ -158,23 +158,25 @@ def with_debug_logging(func):
     return _decorator
 
 
-def ignore_timeout_error(func):
-    """Ignore the TimeoutError.
+def ignore_timeout_error(return_value=None):
+    """Ignore the TimeoutError, returning return_value when it happens.
 
     Quick fix for ``refextract`` and ``plotextract`` tasks only. It
     shouldn't be used for others!
     """
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except TimeoutError:
-            LOGGER.error(
-                'Timeout error while extracting raised from: %s.',
-                func.__name__
-            )
-    return wrapper
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except TimeoutError:
+                LOGGER.error(
+                    'Timeout error while extracting raised from: %s.',
+                    func.__name__
+                )
+                return return_value
+        return wrapper
+    return decorator
 
 
 @contextmanager
