@@ -166,6 +166,9 @@
                 },
                 "authors": {
                     "properties": {
+                        "suggest": {
+                            "type": "completion"
+                        },
                         "affiliations": {
                             "properties": {
                                 "curated_relation": {
@@ -293,9 +296,6 @@
                         }
                     },
                     "type": "object"
-                },
-                "bookautocomplete": {
-                    "type": "completion"
                 },
                 "citation_count": {
                     "type": "integer"
@@ -503,6 +503,9 @@
                 },
                 "imprints": {
                     "properties": {
+                        "suggest": {
+                            "type": "completion"
+                        },
                         "date": {
                             "format": "yyyy||yyyy-MM||yyyy-MM-dd",
                             "type": "date"
@@ -530,6 +533,9 @@
                 },
                 "isbns": {
                     "properties": {
+                        "suggest": {
+                            "type": "completion"
+                        },
                         "medium": {
                             "type": "string"
                         },
@@ -1061,6 +1067,9 @@
                 },
                 "titles": {
                     "properties": {
+                        "suggest": {
+                            "type": "completion"
+                        },
                         "full_title": {
                             "analyzer": "title",
                             "fields": {
