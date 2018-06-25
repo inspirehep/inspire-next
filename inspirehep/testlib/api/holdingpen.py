@@ -34,13 +34,14 @@ from inspirehep.testlib.api.base_resource import BaseResource
 class HoldingpenResource(BaseResource):
     """Inspire holdingpen entry to represent a workflow"""
 
-    def __init__(self, workflow_id, approved, is_update, core, status, title, doi=None, arxiv_eprint=None, control_number=None):
+    def __init__(self, workflow_id, approved, is_update, core, status, title, auto_approved=None, doi=None, arxiv_eprint=None, control_number=None, approved_match=None):
         """
         Don't use this constructor yet unless you know what you are doing, use
         `from_json` instead as this one does not create a full holdingpen entry.
 
         """
         self.approved = approved
+        self.auto_approved = auto_approved
         self.is_update = is_update
         self.core = core
         self.status = status
@@ -49,7 +50,14 @@ class HoldingpenResource(BaseResource):
         self.title = title
         self.arxiv_eprint = arxiv_eprint
         self.doi = doi
+        self.approved_match = approved_match
         self._raw_json = None
+
+    def set_action(self, action):
+        self._raw_json['_extra_data']['_action'] = action
+
+    def set_conflicts(self, conflicts):
+        self._raw_json['_extra_data']['conflicts'] = conflicts
 
     @classmethod
     def from_json(cls, json, workflow_id=None):
@@ -69,6 +77,7 @@ class HoldingpenResource(BaseResource):
         hp_entry = cls(
             workflow_id=workflow_id,
             approved=extra_data.get('approved'),
+            auto_approved=extra_data.get('auto-approved'),
             is_update=extra_data.get('is-update'),
             core=extra_data.get('core'),
             status=json['_workflow']['status'],
@@ -76,6 +85,7 @@ class HoldingpenResource(BaseResource):
             control_number=json['metadata'].get('control_number'),
             arxiv_eprint=json['metadata'].get('arxiv_eprints', [{}])[0].get('value'),
             doi=json['metadata'].get('dois', [{}])[0].get('value'),
+            approved_match=extra_data.get('matches', {}).get('approved'),
         )
         hp_entry._raw_json = json
         return hp_entry
@@ -230,7 +240,7 @@ class HoldingpenApiClient(object):
         )
         return resolve_response
 
-    def resume_wf(self, hp_entry):
+    def resume(self, hp_entry):
         full_callback_url = hp_entry._raw_json['_extra_data']['callback_url']
         callback_url = urlparse(full_callback_url).path
 
@@ -241,6 +251,12 @@ class HoldingpenApiClient(object):
         }
         res = self._client.put(callback_url, json=payload)
         res.raise_for_status()
+        return res
+
+    def resolve_merge_conflicts(self, hp_entry):
+        hp_entry.set_action(action='merge_approval')
+        hp_entry.set_conflicts(conflicts={})
+        res = self.resume(hp_entry=hp_entry)
         return res
 
     def accept_core(self, holdingpen_id):

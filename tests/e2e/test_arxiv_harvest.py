@@ -47,8 +47,8 @@ def wait_for(func, *args, **kwargs):
     return decorated(*args, **kwargs)
 
 
-def _all_in_status(inspire_client, status):
-    hp_entries = inspire_client.holdingpen.get_list_entries()
+def _all_in_status(holdingpen_client, status):
+    hp_entries = holdingpen_client.get_list_entries()
     try:
         assert len(hp_entries) == 1
         assert all(entry.status == status for entry in hp_entries)
@@ -61,20 +61,22 @@ def _all_in_status(inspire_client, status):
     return hp_entries[0]
 
 
-def _workflow_in_status(inspire_client, holdingpen_id, status):
-    entry = inspire_client.holdingpen.get_detail_entry(holdingpen_id)
+def _workflows_in_status(holdingpen_client, num_entries, status):
+    hp_entries = holdingpen_client.get_list_entries()
+    entries_in_status = [entry for entry in hp_entries if entry.status == status]
     try:
-        assert entry.status == status, (
-            'Current holdingpen entries (waiting ' 'for them to be in %s status): %s'
-            % (status, entry)
-        )
+        assert len(entries_in_status) == num_entries
     except AssertionError:
+        print(
+            'Current holdingpen entries (waiting for %s of them to be in %s status): %s'
+            % (num_entries, status, hp_entries)
+        )
         raise
-    return entry
+    return entries_in_status
 
 
-def number_of_entries(inspire_client, num_entries):
-    hp_entries = inspire_client.holdingpen.get_list_entries()
+def _number_of_entries(holdingpen_client, num_entries):
+    hp_entries = holdingpen_client.get_list_entries()
     try:
         assert len(hp_entries) == num_entries, (
             'Current holdingpen entries (waiting for them to be in %d current number): %d'
@@ -95,7 +97,13 @@ def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
         from_date='2018-03-25',
     )
 
-    completed_entry = wait_for(lambda: _all_in_status(inspire_client, 'COMPLETED'))
+    completed_entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            status='COMPLETED',
+            num_entries=1,
+        )
+    )[0]
     entry = inspire_client.holdingpen.get_detail_entry(
         completed_entry.workflow_id
     )
@@ -131,7 +139,13 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
         from_date='2018-03-25',
     )
 
-    completed_entry = wait_for(lambda: _all_in_status(inspire_client, 'COMPLETED'))
+    completed_entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            status='COMPLETED',
+            num_entries=1,
+        )
+    )[0]
     entry = inspire_client.holdingpen.get_detail_entry(
         completed_entry.workflow_id
     )
@@ -144,12 +158,85 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
     assert entry.doi == '10.1016/j.nima.2014.04.029'
     assert entry.status == 'COMPLETED'
     assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
+    assert not entry.is_update
 
     # check literature record is available and consistent
     record = inspire_client.literature.get_record(entry.control_number)
     assert record.title == entry.title
 
     # check that the external services were actually called
+    mitm_client.assert_interaction_used(
+        service_name='LegacyService',
+        interaction_name='robotupload',
+        times=1,
+    )
+    mitm_client.assert_interaction_used(
+        service_name='RTService',
+        interaction_name='ticket_new',
+        times=1,
+    )
+
+    # update
+    inspire_client.e2e.schedule_crawl(
+        spider='arXiv',
+        workflow='article',
+        url='http://export.arxiv.org/oai2',
+        sets='physics',
+        from_date='2018-03-26',
+    )
+
+    update_entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            num_entries=1,
+            status='HALTED'
+        )
+    )[0]
+    update_entry = inspire_client.holdingpen.get_detail_entry(
+        update_entry.workflow_id
+    )
+
+    # check workflow goes as expected
+    assert update_entry.auto_approved is True
+    assert update_entry.arxiv_eprint == '1404.0579'
+    assert update_entry.core
+    assert update_entry.doi == '10.1016/j.nima.2014.04.029'
+    assert update_entry.status == 'HALTED'
+    # due to the conflict and merge, the title is the old one
+    assert update_entry.title == 'The OLYMPUS Internal Hydrogen Target updated'
+    assert update_entry.is_update
+    assert update_entry.approved_match == entry.control_number
+
+    inspire_client.holdingpen.resolve_merge_conflicts(hp_entry=update_entry)
+
+    wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            status='COMPLETED',
+            num_entries=2,
+        )
+    )
+    update_entry = inspire_client.holdingpen.get_detail_entry(
+        update_entry.workflow_id
+    )
+
+    # check workflow goes as expected
+    assert update_entry.auto_approved is True
+    assert update_entry.arxiv_eprint == '1404.0579'
+    assert update_entry.core
+    assert update_entry.doi == '10.1016/j.nima.2014.04.029'
+    assert update_entry.status == 'COMPLETED'
+    # due to the conflict and merge, the title is the old one
+    assert update_entry.title == 'The OLYMPUS Internal Hydrogen Target updated'
+    assert update_entry.is_update
+    assert update_entry.approved_match == entry.control_number
+
+    # check literature record is available and consistent
+    record = inspire_client.literature.get_record(update_entry.control_number)
+    assert record.title == update_entry.title
+
+    # check that the external services were actually called, the updates flag
+    # is disabled
     mitm_client.assert_interaction_used(
         service_name='LegacyService',
         interaction_name='robotupload',
@@ -172,7 +259,13 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
         from_date='2018-03-25',
     )
 
-    halted_entry = wait_for(lambda: _all_in_status(inspire_client, 'HALTED'))
+    halted_entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            status='HALTED',
+            num_entries=1,
+        )
+    )[0]
     entry = inspire_client.holdingpen.get_detail_entry(halted_entry.workflow_id)
 
     # check workflow gets halted
@@ -187,7 +280,13 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
     inspire_client.holdingpen.accept_core(holdingpen_id=entry.workflow_id)
 
     # check that completed workflow is ok
-    completed_entry = wait_for(lambda: _all_in_status(inspire_client, 'COMPLETED'))
+    completed_entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            status='COMPLETED',
+            num_entries=1,
+        )
+    )[0]
     entry = inspire_client.holdingpen.get_detail_entry(completed_entry.workflow_id)
 
     assert entry.arxiv_eprint == '1404.0579'
@@ -221,9 +320,14 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
         identifier='oai:arXiv.org:1806.05669',  # nucl-th record
     )
 
-    halted_entry = wait_for(lambda: _all_in_status(inspire_client, 'COMPLETED'))
-
-    entry = inspire_client.holdingpen.get_detail_entry(halted_entry.workflow_id)
+    completed_entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            status='COMPLETED',
+            num_entries=1,
+        )
+    )[0]
+    entry = inspire_client.holdingpen.get_detail_entry(completed_entry.workflow_id)
 
     assert entry.arxiv_eprint == '1806.05669'
     assert entry.control_number is 42
@@ -255,7 +359,7 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
     curation_link = _get_ticket_content()
     assert inspire_client._client.get(curation_link).status_code == 200
 
-    new_entries = wait_for(lambda: number_of_entries(inspire_client, 2))
+    new_entries = wait_for(lambda: _number_of_entries(inspire_client.holdingpen, 2))
     assert len(new_entries) == 2
     edit_article_wf = filter(lambda entry: entry.status == 'WAITING', new_entries)[0]
 
@@ -268,9 +372,16 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
         return HoldingpenResource.from_json(curated_content)
 
     entry = apply_changes_to_wf()
-    inspire_client.holdingpen.resume_wf(entry)
+    inspire_client.holdingpen.resume(entry)
 
-    entry = wait_for(lambda: _workflow_in_status(inspire_client, entry.workflow_id, 'COMPLETED'))
+    entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            status='COMPLETED',
+            num_entries=1,
+        )
+    )[0]
+    entry = inspire_client.holdingpen.get_detail_entry(entry.workflow_id)
 
     time.sleep(5)
     # check literature record is available and consistent
