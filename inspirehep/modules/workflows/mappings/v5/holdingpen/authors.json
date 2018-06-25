@@ -1,0 +1,51 @@
+{
+    "mappings": {
+        "authors": {
+            "_all": {
+                "enabled": true
+            },
+            "date_detection": false,
+            "numeric_detection": false,
+            "properties": {
+                "_extra_data": {
+                    "properties": {
+                        "is-update": {
+                            "type": "boolean"
+                        }
+                    },
+                    "type": "object"
+                },
+                "_workflow": {
+                    "properties": {
+                        "status": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
+                        "workflow_name": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "metadata": {
+                    "properties": {
+                        "acquisition_source": {
+                            "properties": {
+                                "datetime": {
+                                    "type": "date"
+                                },
+                                "method": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,1176 @@
+{
+    "mappings": {
+        "hep": {
+            "_all": {
+                "enabled": true
+            },
+            "date_detection": false,
+            "numeric_detection": false,
+            "properties": {
+                "$schema": {
+                    "type": "string"
+                },
+                "_collections": {
+                    "analyzer": "lowercase_analyzer",
+                    "type": "string"
+                },
+                "_desy_bookkeeping": {
+                    "properties": {
+                        "date": {
+                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                            "type": "date"
+                        },
+                        "expert": {
+                            "type": "string"
+                        },
+                        "status": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "_export_to": {
+                    "properties": {
+                        "CDS": {
+                            "type": "boolean"
+                        },
+                        "HAL": {
+                            "type": "boolean"
+                        }
+                    },
+                    "type": "object"
+                },
+                "_files": {
+                    "properties": {
+                        "bucket": {
+                            "type": "string"
+                        },
+                        "checksum": {
+                            "type": "string"
+                        },
+                        "key": {
+                            "type": "string"
+                        },
+                        "size": {
+                            "type": "integer"
+                        },
+                        "version_id": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "_private_notes": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "abstracts": {
+                    "properties": {
+                        "abstract_source_suggest": {
+                            "type": "completion"
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "accelerator_experiments": {
+                    "properties": {
+                        "accelerator": {
+                            "type": "string"
+                        },
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "experiment": {
+                            "type": "string"
+                        },
+                        "institution": {
+                            "type": "string"
+                        },
+                        "legacy_name": {
+                            "copy_to": "facet_experiment",
+                            "type": "string"
+                        },
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                "acquisition_source": {
+                    "properties": {
+                        "datetime": {
+                            "type": "string"
+                        },
+                        "email": {
+                            "type": "string"
+                        },
+                        "internal_uid": {
+                            "type": "integer"
+                        },
+                        "method": {
+                            "type": "string"
+                        },
+                        "orcid": {
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "submission_number": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "arxiv_eprints": {
+                    "properties": {
+                        "categories": {
+                            "copy_to": "facet_arxiv_categories",
+                            "type": "string"
+                        },
+                        "value": {
+                            "fields": {
+                                "raw": {
+                                    "analyzer": "lowercase_analyzer",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "author_count": {
+                    "type": "integer"
+                },
+                "authors": {
+                    "properties": {
+                        "affiliations": {
+                            "properties": {
+                                "curated_relation": {
+                                    "type": "boolean"
+                                },
+                                "recid": {
+                                    "type": "integer"
+                                },
+                                "record": {
+                                    "properties": {
+                                        "$ref": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "alternative_names": {
+                            "type": "string"
+                        },
+                        "credit_roles": {
+                            "type": "string"
+                        },
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "emails": {
+                            "type": "string"
+                        },
+                        "full_name": {
+                            "analyzer": "author_name_analyzer",
+                            "copy_to": "facet_author_name",
+                            "fields": {
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "string"
+                        },
+                        "full_name_unicode_normalized": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
+                        "ids": {
+                            "properties": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "fields": {
+                                        "raw": {
+                                            "index": "not_analyzed",
+                                            "type": "string"
+                                        },
+                                        "search": {
+                                            "analyzer": "lowercase_analyzer",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "inspire_roles": {
+                            "type": "string"
+                        },
+                        "name_suggest": {
+                            "type": "completion"
+                        },
+                        "name_variations": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
+                        "raw_affiliations": {
+                            "properties": {
+                                "source": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "signature_block": {
+                            "fields": {
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "string"
+                        },
+                        "uuid": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "nested"
+                },
+                "book_series": {
+                    "properties": {
+                        "title": {
+                            "type": "string"
+                        },
+                        "volume": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "bookautocomplete": {
+                    "type": "completion"
+                },
+                "citation_count": {
+                    "type": "integer"
+                },
+                "citeable": {
+                    "type": "boolean"
+                },
+                "collaborations": {
+                    "properties": {
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "control_number": {
+                    "type": "integer"
+                },
+                "copyright": {
+                    "properties": {
+                        "holder": {
+                            "type": "string"
+                        },
+                        "material": {
+                            "type": "string"
+                        },
+                        "statement": {
+                            "type": "string"
+                        },
+                        "url": {
+                            "type": "string"
+                        },
+                        "year": {
+                            "type": "integer"
+                        }
+                    },
+                    "type": "object"
+                },
+                "core": {
+                    "type": "boolean"
+                },
+                "corporate_author": {
+                    "type": "string"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "deleted_recids": {
+                    "type": "integer"
+                },
+                "deleted_records": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "document_type": {
+                    "type": "string"
+                },
+                "documents": {
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "fulltext": {
+                            "type": "boolean"
+                        },
+                        "hidden": {
+                            "type": "boolean"
+                        },
+                        "key": {
+                            "type": "string"
+                        },
+                        "material": {
+                            "type": "string"
+                        },
+                        "original_url": {
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "url": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "dois": {
+                    "properties": {
+                        "material": {
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "fields": {
+                                "raw": {
+                                    "analyzer": "lowercase_analyzer",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "earliest_date": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "editions": {
+                    "type": "string"
+                },
+                "energy_ranges": {
+                    "type": "string"
+                },
+                "external_system_identifiers": {
+                    "properties": {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "fields": {
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "facet_arxiv_categories": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "facet_author_name": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "facet_experiment": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "facet_inspire_categories": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "facet_inspire_doc_type": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "figures": {
+                    "properties": {
+                        "caption": {
+                            "type": "string"
+                        },
+                        "key": {
+                            "type": "string"
+                        },
+                        "label": {
+                            "type": "string"
+                        },
+                        "material": {
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "url": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "funding_info": {
+                    "properties": {
+                        "agency": {
+                            "type": "string"
+                        },
+                        "grant_number": {
+                            "type": "string"
+                        },
+                        "project_number": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "imprints": {
+                    "properties": {
+                        "date": {
+                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                            "type": "date"
+                        },
+                        "place": {
+                            "type": "string"
+                        },
+                        "publisher": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "inspire_categories": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "term": {
+                            "copy_to": "facet_inspire_categories",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "isbns": {
+                    "properties": {
+                        "medium": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "fields": {
+                                "raw": {
+                                    "analyzer": "lowercase_analyzer",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "keywords": {
+                    "properties": {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "languages": {
+                    "type": "string"
+                },
+                "legacy_creation_date": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "license": {
+                    "properties": {
+                        "imposing": {
+                            "type": "string"
+                        },
+                        "license": {
+                            "type": "string"
+                        },
+                        "material": {
+                            "type": "string"
+                        },
+                        "url": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "new_recid": {
+                    "type": "integer"
+                },
+                "new_record": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "number_of_pages": {
+                    "type": "integer"
+                },
+                "persistent_identifiers": {
+                    "properties": {
+                        "material": {
+                            "type": "string"
+                        },
+                        "schema": {
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "preprint_date": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "public_notes": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "publication_info": {
+                    "properties": {
+                        "artid": {
+                            "copy_to": "publication_info.page_artid",
+                            "type": "string"
+                        },
+                        "cnum": {
+                            "type": "string"
+                        },
+                        "conf_acronym": {
+                            "type": "string"
+                        },
+                        "conference_recid": {
+                            "type": "integer"
+                        },
+                        "conference_record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "journal_issue": {
+                            "type": "string"
+                        },
+                        "journal_recid": {
+                            "type": "integer"
+                        },
+                        "journal_record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "journal_title": {
+                            "fields": {
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "string"
+                        },
+                        "journal_volume": {
+                            "type": "string"
+                        },
+                        "material": {
+                            "type": "string"
+                        },
+                        "page_artid": {
+                            "type": "string"
+                        },
+                        "page_end": {
+                            "type": "string"
+                        },
+                        "page_start": {
+                            "copy_to": "publication_info.page_artid",
+                            "type": "string"
+                        },
+                        "parent_isbn": {
+                            "type": "string"
+                        },
+                        "parent_recid": {
+                            "type": "integer"
+                        },
+                        "parent_record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "parent_report_number": {
+                            "type": "string"
+                        },
+                        "pubinfo_freetext": {
+                            "type": "string"
+                        },
+                        "year": {
+                            "format": "yyyy",
+                            "type": "date"
+                        }
+                    },
+                    "type": "nested"
+                },
+                "publication_type": {
+                    "type": "string"
+                },
+                "record_affiliations": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "refereed": {
+                    "type": "boolean"
+                },
+                "references": {
+                    "include_in_all": false,
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "raw_refs": {
+                            "properties": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "source": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "reference": {
+                            "properties": {
+                                "arxiv_eprint": {
+                                    "fields": {
+                                        "raw": {
+                                            "index": "not_analyzed",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "string"
+                                },
+                                "authors": {
+                                    "properties": {
+                                        "full_name": {
+                                            "type": "string"
+                                        },
+                                        "inspire_role": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "book_series": {
+                                    "properties": {
+                                        "title": {
+                                            "type": "string"
+                                        },
+                                        "volume": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "collaborations": {
+                                    "type": "string"
+                                },
+                                "document_type": {
+                                    "type": "string"
+                                },
+                                "dois": {
+                                    "fields": {
+                                        "raw": {
+                                            "index": "not_analyzed",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "string"
+                                },
+                                "imprint": {
+                                    "properties": {
+                                        "date": {
+                                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                                            "type": "date"
+                                        },
+                                        "place": {
+                                            "type": "string"
+                                        },
+                                        "publisher": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "isbn": {
+                                    "type": "string"
+                                },
+                                "label": {
+                                    "type": "string"
+                                },
+                                "misc": {
+                                    "type": "string"
+                                },
+                                "persistent_identifiers": {
+                                    "properties": {
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "publication_info": {
+                                    "properties": {
+                                        "artid": {
+                                            "type": "string"
+                                        },
+                                        "cnum": {
+                                            "type": "string"
+                                        },
+                                        "journal_issue": {
+                                            "type": "string"
+                                        },
+                                        "journal_title": {
+                                            "type": "string"
+                                        },
+                                        "journal_volume": {
+                                            "type": "string"
+                                        },
+                                        "material": {
+                                            "type": "string"
+                                        },
+                                        "page_end": {
+                                            "type": "string"
+                                        },
+                                        "page_start": {
+                                            "type": "string"
+                                        },
+                                        "parent_isbn": {
+                                            "type": "string"
+                                        },
+                                        "parent_report_number": {
+                                            "type": "string"
+                                        },
+                                        "parent_title": {
+                                            "type": "string"
+                                        },
+                                        "year": {
+                                            "format": "yyyy",
+                                            "type": "date"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "report_numbers": {
+                                    "type": "string"
+                                },
+                                "texkey": {
+                                    "type": "string"
+                                },
+                                "title": {
+                                    "properties": {
+                                        "source": {
+                                            "type": "string"
+                                        },
+                                        "subtitle": {
+                                            "type": "string"
+                                        },
+                                        "title": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "urls": {
+                                    "properties": {
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                "related_records": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "relation": {
+                            "type": "string"
+                        },
+                        "relation_freetext": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "report_numbers": {
+                    "properties": {
+                        "hidden": {
+                            "type": "boolean"
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "fields": {
+                                "fuzzy": {
+                                    "analyzer": "report_number",
+                                    "type": "string"
+                                },
+                                "raw": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "self": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "self_recid": {
+                    "type": "integer"
+                },
+                "texkeys": {
+                    "fields": {
+                        "raw": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    },
+                    "type": "string"
+                },
+                "thesis_info": {
+                    "properties": {
+                        "date": {
+                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                            "type": "date"
+                        },
+                        "defense_date": {
+                            "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                            "type": "date"
+                        },
+                        "degree_type": {
+                            "type": "string"
+                        },
+                        "institutions": {
+                            "properties": {
+                                "curated_relation": {
+                                    "type": "boolean"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "recid": {
+                                    "type": "integer"
+                                },
+                                "record": {
+                                    "properties": {
+                                        "$ref": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                "title_translations": {
+                    "properties": {
+                        "language": {
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "subtitle": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "titles": {
+                    "properties": {
+                        "full_title": {
+                            "analyzer": "title",
+                            "fields": {
+                                "search": {
+                                    "analyzer": "title_whitespace_tokenized",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "subtitle": {
+                            "copy_to": "titles.full_title",
+                            "type": "string"
+                        },
+                        "title": {
+                            "copy_to": "titles.full_title",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "urls": {
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "withdrawn": {
+                    "type": "boolean"
+                }
+            }
+        }
+    },
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "author_name_analyzer": {
+                    "filter": [
+                        "icu_folding"
+                    ],
+                    "tokenizer": "icu_tokenizer",
+                    "type": "custom"
+                },
+                "lowercase_analyzer": {
+                    "filter": "lowercase",
+                    "tokenizer": "keyword",
+                    "type": "custom"
+                },
+                "report_number": {
+                    "char_filter": [
+                        "alphanumeric_normalizer"
+                    ],
+                    "filter": [
+                        "lowercase_normalizer"
+                    ],
+                    "tokenizer": "keyword",
+                    "type": "custom"
+                },
+                "title": {
+                    "char_filter": [
+                        "tex_normalizer"
+                    ],
+                    "filter": [
+                        "lowercase_normalizer",
+                        "ascii_normalizer"
+                    ],
+                    "tokenizer": "icu_tokenizer",
+                    "type": "custom"
+                },
+                "title_whitespace_tokenized": {
+                    "char_filter": [
+                        "tex_normalizer"
+                    ],
+                    "filter": [
+                        "lowercase_normalizer",
+                        "ascii_normalizer"
+                    ],
+                    "tokenizer": "whitespace",
+                    "type": "custom"
+                }
+            },
+            "char_filter": {
+                "alphanumeric_normalizer": {
+                    "pattern": "[^A-Za-z0-9]",
+                    "replacement": "",
+                    "type": "pattern_replace"
+                },
+                "tex_normalizer": {
+                    "pattern": "\\$[^$]+\\$",
+                    "replacement": "",
+                    "type": "pattern_replace"
+                }
+            },
+            "filter": {
+                "ascii_normalizer": {
+                    "preserve_original": true,
+                    "type": "asciifolding"
+                },
+                "lowercase_normalizer": {
+                    "type": "lowercase"
+                }
+            }
+        }
+    }
+}
