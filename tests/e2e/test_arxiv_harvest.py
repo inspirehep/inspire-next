@@ -84,7 +84,7 @@ def _workflows_in_status(holdingpen_client, num_entries, status):
     return entries_in_status
 
 
-def number_of_entries(inspire_client, num_entries):
+def _number_of_entries(inspire_client, num_entries):
     hp_entries = inspire_client.holdingpen.get_list_entries()
     try:
         assert len(hp_entries) == num_entries, (
@@ -336,7 +336,7 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
     curation_link = _get_ticket_content()
     assert inspire_client._client.get(curation_link).status_code == 200
 
-    new_entries = wait_for(lambda: number_of_entries(inspire_client, 2))
+    new_entries = wait_for(lambda: _number_of_entries(inspire_client, 2))
     assert len(new_entries) == 2
     edit_article_wf = filter(lambda entry: entry.status == 'WAITING', new_entries)[0]
 
