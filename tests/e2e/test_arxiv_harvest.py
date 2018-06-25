@@ -349,7 +349,7 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
         return HoldingpenResource.from_json(curated_content)
 
     entry = apply_changes_to_wf()
-    inspire_client.holdingpen.resume_wf(entry)
+    inspire_client.holdingpen.resume(entry)
 
     entry = wait_for(lambda: _workflow_in_status(inspire_client, entry.workflow_id, 'COMPLETED'))
 

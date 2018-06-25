@@ -240,7 +240,7 @@ class HoldingpenApiClient(object):
         )
         return resolve_response
 
-    def resume_wf(self, hp_entry):
+    def resume(self, hp_entry):
         full_callback_url = hp_entry._raw_json['_extra_data']['callback_url']
         callback_url = urlparse(full_callback_url).path
 
@@ -256,7 +256,7 @@ class HoldingpenApiClient(object):
     def resolve_merge_conflicts(self, hp_entry):
         hp_entry.set_action(action='merge_approval')
         hp_entry.set_conflicts(conflicts={})
-        res = self.resume_wf(hp_entry=hp_entry)
+        res = self.resume(hp_entry=hp_entry)
         return res
 
     def accept_core(self, holdingpen_id):
