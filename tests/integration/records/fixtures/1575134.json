@@ -1,0 +1,16 @@
+{
+    "$schema": "https://labs.inspirehep.net/schemas/records/data.json",
+    "_collections": [
+        "Data"
+    ],
+    "control_number": 1575134,
+    "deleted": false,
+    "dois": [
+        {
+            "value": "10.17182/hepdata.2719.v1/t4"
+        }
+    ],
+    "self": {
+        "$ref": "http://labs.inspirehep.net/api/data/1575134"
+    }
+}

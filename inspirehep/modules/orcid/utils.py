@@ -153,7 +153,7 @@ def get_orcids_for_push(record):
         elif author.get('curated_relation') is True and 'record' in author:
             author_recids_with_claims.append(get_recid_from_ref(author['record']))
 
-    author_records = get_db_records('aut', author_recids_with_claims)
+    author_records = get_db_records(('aut', recid) for recid in author_recids_with_claims)
     all_ids = (author.get('ids', []) for author in author_records)
     orcids_in_authors = chain.from_iterable(get_values_for_schema(ids, 'ORCID') for ids in all_ids)
 

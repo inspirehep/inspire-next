@@ -114,7 +114,7 @@ def extract_journal_info(obj, eng):
     obj.data['publication_info'] = convert_old_publication_info_to_new(obj.data['publication_info'])
 
 
-@ignore_timeout_error
+@ignore_timeout_error(return_value=[])
 @timeout(5 * 60)
 def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
     """Extract references from PDF and return in INSPIRE format."""
@@ -128,7 +128,7 @@ def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
     return map_refextract_to_schema(extracted_references, source=source)
 
 
-@ignore_timeout_error
+@ignore_timeout_error(return_value=[])
 @timeout(5 * 60)
 def extract_references_from_text(text, source=None, custom_kbs_file=None):
     """Extract references from text and return in INSPIRE format."""
@@ -142,7 +142,7 @@ def extract_references_from_text(text, source=None, custom_kbs_file=None):
     return map_refextract_to_schema(extracted_references, source=source)
 
 
-@ignore_timeout_error
+@ignore_timeout_error(return_value=[])
 @timeout(5 * 60)
 def extract_references_from_raw_refs(references, custom_kbs_file=None):
     """Extract references from raw references in reference list.

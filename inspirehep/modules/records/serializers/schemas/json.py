@@ -28,7 +28,7 @@ from inspire_dojson.utils import get_recid_from_ref, strip_empty_values
 from inspire_utils.helpers import force_list
 from marshmallow import Schema, fields, missing, pre_dump
 
-from inspirehep.modules.records.utils import get_resolved_references
+from inspirehep.modules.records.utils import get_linked_records_in_field
 
 
 class RecordSchemaJSONUIV1(Schema):
@@ -76,7 +76,7 @@ class ReferencesSchemaJSONUIV1(RecordSchemaJSONUIV1):
             data['metadata']['references'] = []
             return data
 
-        reference_records = self.resolve_records(references)
+        reference_records = self.resolve_records(data)
         for reference in references:
             if 'record' in reference:
                 reference_record_id = get_recid_from_ref(
@@ -115,12 +115,8 @@ class ReferencesSchemaJSONUIV1(RecordSchemaJSONUIV1):
         return self.format_reference(reference)
 
     @staticmethod
-    def resolve_records(references):
-        ids = [
-            get_recid_from_ref(reference['record'])
-            for reference in references if 'record' in reference
-        ]
-        resolved_records = get_resolved_references(ids)
+    def resolve_records(data):
+        resolved_records = get_linked_records_in_field(data, 'metadata.references.record')
         return {
             record['control_number']: record
             for record in resolved_records
