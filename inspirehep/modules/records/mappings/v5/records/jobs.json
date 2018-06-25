@@ -1,0 +1,234 @@
+{
+    "mappings": {
+        "jobs": {
+            "_all": {
+                "enabled": true
+            },
+            "date_detection": false,
+            "numeric_detection": false,
+            "properties": {
+                "$schema": {
+                    "type": "string"
+                },
+                "_collections": {
+                    "analyzer": "lowercase_analyzer",
+                    "type": "string"
+                },
+                "_private_notes": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "address": {
+                    "properties": {
+                        "cities": {
+                            "type": "string"
+                        },
+                        "country_code": {
+                            "type": "string"
+                        },
+                        "place_name": {
+                            "type": "string"
+                        },
+                        "postal_address": {
+                            "type": "string"
+                        },
+                        "postal_code": {
+                            "type": "string"
+                        },
+                        "state": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "closed_date": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "contact_details": {
+                    "properties": {
+                        "email": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "control_number": {
+                    "type": "integer"
+                },
+                "deadline_date": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "deleted_recids": {
+                    "type": "integer"
+                },
+                "deleted_records": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "earliest_date": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "experiments": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                "external_system_identifiers": {
+                    "properties": {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "inspire_categories": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "term": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "institutions": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                "legacy_creation_date": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "new_recid": {
+                    "type": "integer"
+                },
+                "new_record": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "position": {
+                    "type": "string"
+                },
+                "public_notes": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "ranks": {
+                    "type": "string"
+                },
+                "reference_email": {
+                    "type": "string"
+                },
+                "regions": {
+                    "type": "string"
+                },
+                "self": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "self_recid": {
+                    "type": "integer"
+                },
+                "urls": {
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            }
+        }
+    },
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "lowercase_analyzer": {
+                    "filter": "lowercase",
+                    "tokenizer": "keyword",
+                    "type": "custom"
+                }
+            }
+        }
+    }
+}
