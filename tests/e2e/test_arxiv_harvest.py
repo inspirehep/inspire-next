@@ -97,7 +97,13 @@ def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
         from_date='2018-03-25',
     )
 
-    completed_entry = wait_for(lambda: _all_in_status(inspire_client.holdingpen, 'COMPLETED'))
+    completed_entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            status='COMPLETED',
+            num_entries=1,
+        )
+    )[0]
     entry = inspire_client.holdingpen.get_detail_entry(
         completed_entry.workflow_id
     )
@@ -133,7 +139,13 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
         from_date='2018-03-25',
     )
 
-    completed_entry = wait_for(lambda: _all_in_status(inspire_client.holdingpen, 'COMPLETED'))
+    completed_entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            status='COMPLETED',
+            num_entries=1,
+        )
+    )[0]
     entry = inspire_client.holdingpen.get_detail_entry(
         completed_entry.workflow_id
     )
@@ -197,14 +209,13 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
 
     inspire_client.holdingpen.resolve_merge_conflicts(hp_entry=update_entry)
 
-    update_entry = wait_for(
+    wait_for(
         lambda: _workflows_in_status(
-            holdingpen_client=inspire_client,
-            holdingpen_id=update_entry.workflow_id,
+            holdingpen_client=inspire_client.holdingpen,
             status='COMPLETED',
-            num_entries=1,
+            num_entries=2,
         )
-    )[0]
+    )
     update_entry = inspire_client.holdingpen.get_detail_entry(
         update_entry.workflow_id
     )
@@ -248,7 +259,13 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
         from_date='2018-03-25',
     )
 
-    halted_entry = wait_for(lambda: _all_in_status(inspire_client.holdingpen, 'HALTED'))
+    halted_entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            status='HALTED',
+            num_entries=1,
+        )
+    )[0]
     entry = inspire_client.holdingpen.get_detail_entry(halted_entry.workflow_id)
 
     # check workflow gets halted
@@ -263,7 +280,13 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
     inspire_client.holdingpen.accept_core(holdingpen_id=entry.workflow_id)
 
     # check that completed workflow is ok
-    completed_entry = wait_for(lambda: _all_in_status(inspire_client.holdingpen, 'COMPLETED'))
+    completed_entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            status='COMPLETED',
+            num_entries=1,
+        )
+    )[0]
     entry = inspire_client.holdingpen.get_detail_entry(completed_entry.workflow_id)
 
     assert entry.arxiv_eprint == '1404.0579'
@@ -297,9 +320,14 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
         identifier='oai:arXiv.org:1806.05669',  # nucl-th record
     )
 
-    halted_entry = wait_for(lambda: _all_in_status(inspire_client.holdingpen, 'COMPLETED'))
-
-    entry = inspire_client.holdingpen.get_detail_entry(halted_entry.workflow_id)
+    completed_entry = wait_for(
+        lambda: _workflows_in_status(
+            holdingpen_client=inspire_client.holdingpen,
+            status='COMPLETED',
+            num_entries=1,
+        )
+    )[0]
+    entry = inspire_client.holdingpen.get_detail_entry(completed_entry.workflow_id)
 
     assert entry.arxiv_eprint == '1806.05669'
     assert entry.control_number is 42
@@ -349,11 +377,10 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
     entry = wait_for(
         lambda: _workflows_in_status(
             holdingpen_client=inspire_client.holdingpen,
-            workflow_id=entry.workflow_id,
             status='COMPLETED',
             num_entries=1,
         )
-    )
+    )[0]
     entry = inspire_client.holdingpen.get_detail_entry(entry.workflow_id)
 
     time.sleep(5)
