@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_db import db
-
 from inspirehep.modules.workflows.tasks.actions import validate_record
 from inspirehep.modules.workflows.tasks.submission import send_robotupload
 from inspirehep.modules.workflows.utils import get_resolve_edit_article_callback_url
@@ -37,21 +35,11 @@ def change_status_to_waiting(obj, eng):
     eng.wait(msg='Waiting for curation.')
 
 
-@with_debug_logging
 def update_record(obj, eng):
     control_number = obj.data['control_number']
     record = get_db_record('lit', control_number)
     record.update(obj.data)
     record.commit()
-
-
-@with_debug_logging
-def update_wf_payload_from_db(obj, eng):
-    control_number = obj.data['control_number']
-    record = get_db_record('lit', control_number)
-    obj.data = record
-    obj.save()
-    db.session.commit()
 
 
 class EditArticle(object):
@@ -62,7 +50,6 @@ class EditArticle(object):
 
     workflow = (
         [
-            update_wf_payload_from_db,
             change_status_to_waiting,
             validate_record('hep'),
             send_robotupload(mode='replace'),
