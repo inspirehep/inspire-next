@@ -24,11 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 import json
-import pytest
-from copy import deepcopy
 
+import pytest
 from invenio_workflows import ObjectStatus, WorkflowEngine, start, workflow_object_class
 from invenio_accounts.testutils import login_user_via_session
 
@@ -162,30 +160,6 @@ def test_edit_article_workflow(workflow_app, mocked_external_services):
 
     record = get_db_record('lit', 123)
     assert record['titles'][0]['title'] == new_title
-
-
-def test_edit_article_workflow_loads_latest_data(workflow_app, mocked_external_services):
-    app_client = workflow_app.test_client()
-    login_user_via_session(app_client, email='admin@inspirehep.net')
-
-    old_content = {
-        '$schema': 'http://localhost:5000/schemas/records/hep.json',
-        'control_number': 123,
-        'document_type': ['article'],
-        'titles': [{'title': 'Resource Pooling in Large-Scale Content Delivery Systems'}],
-        'self': {'$ref': 'http://localhost:5000/schemas/records/hep.json'},
-        '_collections': ['Literature']
-    }
-
-    new_content = deepcopy(old_content)
-    new_title = 'This is the newest content in the DB'
-    new_content['titles'][0]['title'] = new_title
-    TestRecordMetadata.create_from_kwargs(json=new_content)
-
-    eng_uuid = start('edit_article', data=old_content)
-    obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
-
-    assert obj.data['titles'][0]['title'] == new_title
 
 
 @pytest.mark.parametrize('user_info, expected_status_code', [
