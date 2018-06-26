@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import logging
 
-from flask import request
+from flask import current_app, request
 from flask_security import current_user
 
 from elasticsearch import RequestError
@@ -68,7 +68,7 @@ class SearchMixin(object):
         :returns: dict
         """
         return es.get_source(
-            index=self.Meta.index,
+            index=current_app.config['SEARCH_INDEX_PREFIX'] + '-' + self.Meta.index,
             doc_type=self.Meta.doc_types,
             id=uuid,
             **kwargs

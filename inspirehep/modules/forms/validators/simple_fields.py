@@ -31,6 +31,7 @@ from flask import current_app, url_for
 from flask_login import current_user
 from idutils import is_arxiv
 from invenio_search import current_search_client as es
+from invenio_search.utils import prefix_index
 from wtforms.validators import ValidationError, StopValidation
 
 from inspire_matcher.api import match
@@ -279,7 +280,7 @@ def already_pending_in_holdingpen_validator(property_name, value):
     }
 
     hits = es.search(
-        index='holdingpen-hep',
+        index=prefix_index(app=current_app, index='holdingpen-hep'),
         doc_type='hep',
         body=query,
     )['hits']['hits']
