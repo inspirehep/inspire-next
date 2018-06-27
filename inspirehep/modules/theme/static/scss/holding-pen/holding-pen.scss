@@ -187,15 +187,15 @@ $hp_table_bg: #fff;
       -webkit-transition: all .5s;
       -moz-transition: all .5s;
       transition: all .5s;
-      background-color: $clouds;
+      background-color: white;
       border: none;
       padding: 7px;
       margin-top: -8px;
       border-radius: 3px;
       font-size: .9em;
-      color: $grey;
+      color: black;
       &:focus {
-        width: 500px;
+        width: 700px;
       }
     }
   }
