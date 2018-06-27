@@ -23,7 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.workflows.tasks.actions import validate_record
-from inspirehep.modules.workflows.tasks.submission import send_robotupload
+from inspirehep.modules.workflows.tasks.submission import cleanup_pending_workflow, send_robotupload
 from inspirehep.modules.workflows.utils import get_resolve_edit_article_callback_url
 from inspirehep.utils.record_getter import get_db_record
 from ..utils import with_debug_logging
@@ -52,7 +52,8 @@ class EditArticle(object):
         [
             change_status_to_waiting,
             validate_record('hep'),
-            send_robotupload(mode='replace'),
             update_record,
+            send_robotupload(mode='replace'),
+            cleanup_pending_workflow,
         ]
     )
