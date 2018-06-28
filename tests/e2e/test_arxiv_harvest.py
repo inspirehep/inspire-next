@@ -209,8 +209,7 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
     update_entry = inspire_client.holdingpen.get_detail_entry(update_entry.workflow_id)
 
     # check workflow goes as expected
-    # due to the merge, the titles get extended, the merger considers the
-    # record in the db as publisher, so the update title is last.
+    # due to the merge, the titles get extended
     expected_titles = [
         LiteratureResourceTitle(
             title='The OLYMPUS Internal Hydrogen Target updated',
