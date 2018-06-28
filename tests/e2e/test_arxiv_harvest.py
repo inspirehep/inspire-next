@@ -198,23 +198,17 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
         from_date='2018-03-26',
     )
 
-    update_entry = wait_for(
+    completed_entries = wait_for(
         lambda: _workflows_in_status(
             holdingpen_client=inspire_client.holdingpen,
-            num_entries=1,
-            status='HALTED'
+            num_entries=2,
+            status='COMPLETED'
         )
-    )[0]
-    update_entry = inspire_client.holdingpen.get_detail_entry(
-        update_entry.workflow_id
     )
+    update_entry = max(completed_entries, key=lambda entry: entry.workflow_id)
+    update_entry = inspire_client.holdingpen.get_detail_entry(update_entry.workflow_id)
 
     # check workflow goes as expected
-    assert update_entry.auto_approved is True
-    assert update_entry.arxiv_eprint == '1404.0579'
-    assert update_entry.core
-    assert update_entry.doi == '10.1016/j.nima.2014.04.029'
-    assert update_entry.status == 'HALTED'
     # due to the merge, the titles get extended, the merger considers the
     # record in the db as publisher, so the update title is last.
     expected_titles = [
@@ -227,24 +221,6 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
             source='arXiv',
         ),
     ]
-    assert update_entry.titles == expected_titles
-    assert update_entry.is_update
-    assert update_entry.approved_match == entry.control_number
-
-    inspire_client.holdingpen.resolve_merge_conflicts(hp_entry=update_entry)
-
-    wait_for(
-        lambda: _workflows_in_status(
-            holdingpen_client=inspire_client.holdingpen,
-            status='COMPLETED',
-            num_entries=2,
-        )
-    )
-    update_entry = inspire_client.holdingpen.get_detail_entry(
-        update_entry.workflow_id
-    )
-
-    # check workflow goes as expected
     assert update_entry.auto_approved is True
     assert update_entry.arxiv_eprint == '1404.0579'
     assert update_entry.core
