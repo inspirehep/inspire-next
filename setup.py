@@ -106,6 +106,9 @@ install_requires = [
     'pyOpenSSL~=17.0,>=17.5.0',
     'pybtex~=0.0,>=0.21',
     'python-redis-lock~=3.0,>=3.2.0',
+    # TODO: remove once we figure out how to, see:
+    # https://its.cern.ch/jira/browse/INSPIR-973
+    'pyyaml<4.0',
     'raven[flask]~=6.0,>=6.2.1',
     'refextract~=0.0,>=0.2.2',
     'requests~=2.0,>=2.18.4',
