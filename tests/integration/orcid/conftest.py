@@ -46,7 +46,12 @@ def mock_config(app):
 def vcr_config():
     return {
         'decode_compressed_response': True,
-        'filter_headers': ['Authorization'],
+        # 'filter_headers': ['Authorization'],
+        'filter_headers': [
+            ('Authorization', None),
+            ('User-Agent', None),
+            ('Content-Length', None),
+        ],
         'ignore_hosts': ['test-indexer'],
         'record_mode': 'none',
     }
