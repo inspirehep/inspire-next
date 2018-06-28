@@ -30,6 +30,7 @@ import urllib2
 import yaml
 
 from inspirehep.testlib.api.holdingpen import HoldingpenResource
+from inspirehep.testlib.api.literature import LiteratureResourceTitle
 from inspirehep.testlib.api.mitm_client import with_mitmproxy
 
 
@@ -115,11 +116,17 @@ def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
     assert entry.core is None
     assert entry.doi == '10.1016/j.nima.2014.04.029'
     assert entry.status == 'COMPLETED'
-    assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
+    expected_titles = [
+        LiteratureResourceTitle(
+            title='The OLYMPUS Internal Hydrogen Target',
+            source='arXiv',
+        )
+    ]
+    assert entry.titles == expected_titles
 
     # check literature record is available and consistent
     record = inspire_client.literature.get_record(entry.control_number)
-    assert record.title == entry.title
+    assert entry.titles == record.titles
 
     # check that the external services were actually called
     mitm_client.assert_interaction_used(
@@ -157,12 +164,18 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
     assert entry.core
     assert entry.doi == '10.1016/j.nima.2014.04.029'
     assert entry.status == 'COMPLETED'
-    assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
+    expected_titles = [
+        LiteratureResourceTitle(
+            title='The OLYMPUS Internal Hydrogen Target',
+            source='arXiv',
+        )
+    ]
+    assert entry.titles == expected_titles
     assert not entry.is_update
 
     # check literature record is available and consistent
     record = inspire_client.literature.get_record(entry.control_number)
-    assert record.title == entry.title
+    assert record.titles == entry.titles
 
     # check that the external services were actually called
     mitm_client.assert_interaction_used(
@@ -202,8 +215,19 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
     assert update_entry.core
     assert update_entry.doi == '10.1016/j.nima.2014.04.029'
     assert update_entry.status == 'HALTED'
-    # due to the conflict and merge, the title is the old one
-    assert update_entry.title == 'The OLYMPUS Internal Hydrogen Target updated'
+    # due to the merge, the titles get extended, the merger considers the
+    # record in the db as publisher, so the update title is last.
+    expected_titles = [
+        LiteratureResourceTitle(
+            title='The OLYMPUS Internal Hydrogen Target updated',
+            source='arXiv',
+        ),
+        LiteratureResourceTitle(
+            title='The OLYMPUS Internal Hydrogen Target',
+            source='arXiv',
+        ),
+    ]
+    assert update_entry.titles == expected_titles
     assert update_entry.is_update
     assert update_entry.approved_match == entry.control_number
 
@@ -226,14 +250,13 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
     assert update_entry.core
     assert update_entry.doi == '10.1016/j.nima.2014.04.029'
     assert update_entry.status == 'COMPLETED'
-    # due to the conflict and merge, the title is the old one
-    assert update_entry.title == 'The OLYMPUS Internal Hydrogen Target updated'
+    assert update_entry.titles == expected_titles
     assert update_entry.is_update
     assert update_entry.approved_match == entry.control_number
 
     # check literature record is available and consistent
     record = inspire_client.literature.get_record(update_entry.control_number)
-    assert record.title == update_entry.title
+    assert record.titles == update_entry.titles
 
     # check that the external services were actually called, the updates flag
     # is disabled
@@ -275,7 +298,13 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
     assert entry.core is None
     assert entry.doi == '10.1016/j.nima.2014.04.029'
     assert entry.status == 'HALTED'
-    assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
+    expected_titles = [
+        LiteratureResourceTitle(
+            title='The OLYMPUS Internal Hydrogen Target',
+            source='arXiv',
+        )
+    ]
+    assert entry.titles == expected_titles
 
     inspire_client.holdingpen.accept_core(holdingpen_id=entry.workflow_id)
 
@@ -292,11 +321,11 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
     assert entry.arxiv_eprint == '1404.0579'
     assert entry.control_number is 42
     assert entry.doi == '10.1016/j.nima.2014.04.029'
-    assert entry.title == 'The OLYMPUS Internal Hydrogen Target'
+    assert entry.titles == expected_titles
 
     # check literature record is available and consistent
     record = inspire_client.literature.get_record(entry.control_number)
-    assert record.title == entry.title
+    assert record.titles == entry.titles
 
     # check that the external services were actually called
     mitm_client.assert_interaction_used(
@@ -331,11 +360,17 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
 
     assert entry.arxiv_eprint == '1806.05669'
     assert entry.control_number is 42
-    assert entry.title == 'Probing the in-Medium QCD Force by Open Heavy-Flavor Observables'
+    expected_titles = [
+        LiteratureResourceTitle(
+            title='Probing the in-Medium QCD Force by Open Heavy-Flavor Observables',
+            source='arXiv',
+        )
+    ]
+    assert entry.titles == expected_titles
 
     # check literature record is available and consistent
     record = inspire_client.literature.get_record(entry.control_number)
-    assert record.title == entry.title
+    assert record.titles == entry.titles
 
     # check that the external services were actually called
     mitm_client.assert_interaction_used(
@@ -386,4 +421,10 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
     time.sleep(5)
     # check literature record is available and consistent
     record = inspire_client.literature.get_record(entry.control_number)
-    assert record.title == 'Title changed by JLab curator'
+    expected_titles = [
+        LiteratureResourceTitle(
+            title='Title changed by JLab curator',
+            source='arXiv',
+        )
+    ]
+    assert record.titles == expected_titles
