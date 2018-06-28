@@ -28,13 +28,30 @@ from __future__ import absolute_import, division, print_function
 from inspirehep.testlib.api.base_resource import BaseResource
 
 
+class LiteratureResourceTitle(BaseResource):
+    def __init__(self, source, title):
+        self.source = source
+        self.title = title
+
+    def to_json(self):
+        return {
+            "source": self.source,
+            "title": self.title
+        }
+
+    @classmethod
+    def from_json(cls, json):
+        title = cls(title=json.get('title'), source=json.get('source'))
+        return title
+
+
 class LiteratureResource(BaseResource):
     """Inspire base entry to represent a literature record"""
-    def __init__(self, control_number, doi, arxiv_eprint, title):
+    def __init__(self, control_number, doi, arxiv_eprint, titles):
         self.control_number = control_number
         self.doi = doi
         self.arxiv_eprint = arxiv_eprint
-        self.title = title
+        self.titles = titles
 
     @classmethod
     def from_json(cls, json):
@@ -46,7 +63,7 @@ class LiteratureResource(BaseResource):
             control_number=json['metadata'].get('control_number'),
             doi=json['metadata'].get('dois', [{}])[0].get('value'),
             arxiv_eprint=json['metadata'].get('arxiv_eprints', [{}])[0].get('value'),
-            title=json['metadata']['titles'][0]['title'],
+            titles=[LiteratureResourceTitle.from_json(title) for title in json['metadata']['titles']],
         )
         lit._raw_json = json
         return lit

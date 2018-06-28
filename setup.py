@@ -65,7 +65,7 @@ install_requires = [
     'fs~=0.0,>=0.5.4',
     'inspire-crawler~=3.0,>=3.0.0',
     'inspire-dojson~=59.0,>=59.0.0',
-    'inspire-json-merger~=7.0,>=7.0.0',
+    'inspire-json-merger~=7.0,>=7.0.10',
     'inspire-matcher~=5.0,>=5.0.1',
     'inspire-query-parser~=3.0,>=3.1.5',
     'inspire-schemas~=57.0,>=57.0.0',
@@ -106,6 +106,9 @@ install_requires = [
     'pyOpenSSL~=17.0,>=17.5.0',
     'pybtex~=0.0,>=0.21',
     'python-redis-lock~=3.0,>=3.2.0',
+    # TODO: remove once we figure out how to, see:
+    # https://its.cern.ch/jira/browse/INSPIR-973
+    'pyyaml<4.0',
     'raven[flask]~=6.0,>=6.2.1',
     'refextract~=0.0,>=0.2.2',
     'requests~=2.0,>=2.18.4',

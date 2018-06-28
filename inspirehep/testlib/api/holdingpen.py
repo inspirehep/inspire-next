@@ -29,12 +29,13 @@ import subprocess
 from urlparse import urlparse
 
 from inspirehep.testlib.api.base_resource import BaseResource
+from inspirehep.testlib.api.literature import LiteratureResourceTitle
 
 
 class HoldingpenResource(BaseResource):
     """Inspire holdingpen entry to represent a workflow"""
 
-    def __init__(self, workflow_id, approved, is_update, core, status, title, auto_approved=None, doi=None, arxiv_eprint=None, control_number=None, approved_match=None):
+    def __init__(self, workflow_id, approved, is_update, core, status, titles, auto_approved=None, doi=None, arxiv_eprint=None, control_number=None, approved_match=None):
         """
         Don't use this constructor yet unless you know what you are doing, use
         `from_json` instead as this one does not create a full holdingpen entry.
@@ -47,7 +48,7 @@ class HoldingpenResource(BaseResource):
         self.status = status
         self.workflow_id = workflow_id
         self.control_number = control_number
-        self.title = title
+        self.titles = titles
         self.arxiv_eprint = arxiv_eprint
         self.doi = doi
         self.approved_match = approved_match
@@ -81,7 +82,7 @@ class HoldingpenResource(BaseResource):
             is_update=extra_data.get('is-update'),
             core=extra_data.get('core'),
             status=json['_workflow']['status'],
-            title=json['metadata']['titles'][0]['title'],
+            titles=[LiteratureResourceTitle.from_json(title) for title in json['metadata']['titles']],
             control_number=json['metadata'].get('control_number'),
             arxiv_eprint=json['metadata'].get('arxiv_eprints', [{}])[0].get('value'),
             doi=json['metadata'].get('dois', [{}])[0].get('value'),
@@ -108,7 +109,7 @@ class HoldingpenResource(BaseResource):
         }
         new_json['_extra_data'].update(new_extra_data)
         new_json['workflow_id'] = self.workflow_id,
-        new_json['metadata']['titles'][0]['title'] = self.title
+        new_json['metadata']['titles'] = [title.to_json() for title in self.titles]
         new_json['_workflow']['status'] = self.status
 
         if self.control_number is not None:
