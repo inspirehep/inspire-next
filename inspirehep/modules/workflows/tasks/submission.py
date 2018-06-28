@@ -35,14 +35,15 @@ import rt
 from flask import current_app
 
 from invenio_accounts.models import User
+from invenio_db import db
 
 from inspire_dojson import record2marcxml
+from inspirehep.modules.workflows.models import WorkflowsPendingRecord
+from inspirehep.modules.workflows.tasks.actions import in_production_mode
+from inspirehep.modules.workflows.utils import with_debug_logging
 from inspirehep.utils.robotupload import make_robotupload_marcxml
 from inspirehep.utils import tickets
 from inspirehep.utils.proxies import rt_instance
-
-from .actions import in_production_mode
-from ..utils import with_debug_logging
 
 
 LOGGER = logging.getLogger(__name__)
@@ -322,3 +323,12 @@ def prepare_keywords(obj, eng):
     obj.data['keywords'] = keywords
 
     obj.log.debug('Finally got keywords: \n%s', pformat(keywords))
+
+
+@with_debug_logging
+def cleanup_pending_workflow(obj, eng):
+    """Cleans up the pending workflow entry for this workflow if any."""
+    WorkflowsPendingRecord.query.filter(
+        WorkflowsPendingRecord.workflow_id == obj.id
+    ).delete()
+    db.session.commit()
