@@ -927,7 +927,6 @@ RECORDS_REST_FACETS = {
                     "interval": "year",
                     "format": "yyyy",
                     "min_doc_count": 1,
-                    "order": {"_count": "desc"}
                 }
             }
         }
@@ -976,7 +975,6 @@ RECORDS_REST_FACETS = {
                     "field": "opening_date",
                     "interval": "year",
                     "min_doc_count": 1,
-                    "order": {"_count": "desc"}
                 }
             }
         }
