@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Login Success</title>
+</head>
+
+<body>
+  <noscript>
+    You need to enable JavaScript to be able to login!
+  </noscript>
+  Login Success!
+  <script>
+    document.body.onload = function () {
+      var loggedInUser = JSON.parse('{{ user | tojson }}');
+      window.opener.postMessage(
+        {
+          payload: loggedInUser,
+          status: 'success'
+        },
+        window.opener.location
+      );
+    };
+  </script>
+</body>
+
+</html>
