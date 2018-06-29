@@ -956,7 +956,6 @@ RECORDS_REST_FACETS = {
     "records-authors": {
         "filters": {
             "arxiv_categories": terms_filter('facet_arxiv_categories'),
-            "inspire_categories": terms_filter('facet_inspire_categories'),
             "institution": terms_filter('facet_institution_name')
         },
         "aggs": {
@@ -977,7 +976,7 @@ RECORDS_REST_FACETS = {
     "records-conferences": {
         "filters": {
             "series": terms_filter('series'),
-            "inspire_categories": terms_filter('inspire_categories.term')
+            "inspire_categories": terms_filter('facet_inspire_categories'),
         },
         "aggs": {
             "series": {
@@ -988,7 +987,7 @@ RECORDS_REST_FACETS = {
             },
             "inspire_categories": {
                 "terms": {
-                    "field": "inspire_categories.term",
+                    "field": "facet_inspire_categories",
                     "size": 20
                 }
             },
@@ -996,6 +995,7 @@ RECORDS_REST_FACETS = {
                 "date_histogram": {
                     "field": "opening_date",
                     "interval": "year",
+                    "format": "yyyy",
                     "min_doc_count": 1,
                     "order": {"_count": "desc"}
                 }

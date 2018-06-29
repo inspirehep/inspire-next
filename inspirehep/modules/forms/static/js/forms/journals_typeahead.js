@@ -71,8 +71,8 @@ define([
         },
         suggestion: function(data) {
           var metadata = {};
-          metadata['title'] = data.payload.full_title;
-          metadata['short_title'] = data.text;
+          metadata['title'] = data._source.journal_title.title;
+          metadata['short_title'] = data._source.short_title;
           return suggestionTemplate.render.call(suggestionTemplate, metadata);
         }.bind(this)
       }

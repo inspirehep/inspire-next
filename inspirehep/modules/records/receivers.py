@@ -168,8 +168,8 @@ def enhance_after_index(sender, json, *args, **kwargs):
     .. note::
 
        ``populate_recid_from_ref`` **MUST** come before ``populate_bookautocomplete``
-       because the latter puts a JSON reference in a completion payload, which
-       would be expanded to an incorrect ``payload_recid`` by the former.
+       because the latter puts a JSON reference in a completion _source, which
+       would be expanded to an incorrect ``_source_recid`` by the former.
 
     """
     populate_recid_from_ref(sender, json, *args, **kwargs)
@@ -322,7 +322,6 @@ def populate_abstract_source_suggest(sender, json, *args, **kwargs):
             abstract.update({
                 'abstract_source_suggest': {
                     'input': source,
-                    'output': source,
                 },
             })
 
@@ -345,10 +344,6 @@ def populate_title_suggest(sender, json, *args, **kwargs):
     json.update({
         'title_suggest': {
             'input': input_values,
-            'output': short_title if short_title else '',
-            'payload': {
-                'full_title': journal_title if journal_title else '',
-            },
         }
     })
 
@@ -377,14 +372,6 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
     json.update({
         'affiliation_suggest': {
             'input': input_values,
-            'output': legacy_ICN,
-            'payload': {
-                '$ref': get_value(json, 'self.$ref'),
-                'ICN': ICN,
-                'institution_acronyms': institution_acronyms,
-                'institution_names': institution_names,
-                'legacy_ICN': legacy_ICN,
-            },
         },
     })
 
@@ -431,8 +418,6 @@ def populate_name_variations(sender, json, *args, **kwargs):
             author.update({'name_variations': name_variations})
             author.update({'name_suggest': {
                 'input': name_variations,
-                'output': full_name,
-                'payload': {'bai': bais[0] if bais else None}
             }})
 
 
