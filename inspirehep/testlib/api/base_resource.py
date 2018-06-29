@@ -41,5 +41,3 @@ class BaseResource(object):
                 return False
 
         return len(dir(self)) == len(dir(other))
-
-        return True
