@@ -42,7 +42,7 @@ def mock_logger():
         yield mock_logger
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr(record_mode='new_episodes')
 def test_push_record_with_orcid_new(mock_config, vcr_cassette):
     expected_put_code = '920107'
     expected_hash = 'sha1:2995c60336bce71134ebdc12fc50b1ccaf0fd7cd'
