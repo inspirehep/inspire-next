@@ -29,20 +29,12 @@ import os
 import pkg_resources
 import requests_mock
 
-from lxml import etree
 from sqlalchemy.orm.exc import NoResultFound
 
 from inspirehep.modules.orcid.utils import (
     _split_lists,
     log_time,
 )
-from inspirehep.modules.orcid.cache import OrcidHasher
-
-
-def xml_parse(xml_string):
-    """Parse an ``xml_string`` into XML."""
-    parser = etree.XMLParser(remove_blank_text=True)
-    return etree.fromstring(xml_string, parser)
 
 
 def get_file(fixture_name):
@@ -125,32 +117,6 @@ def mock_get_account_token_allowed(*args, **kwargs):
         'allow_push': True
     }
     return account, token
-
-
-def test_canonicalize_xml_element():
-    xml1 = xml_parse("""
-        <work:work xmlns:common="http://www.orcid.org/ns/common"
-            xmlns:work="http://www.orcid.org/ns/work"
-            xmlns:superfluous="http://127.0.0.1">
-            <work:title>
-                <common:title><![CDATA[A <Dissertation>]]></common:title>
-            </work:title>
-            <work:type>dissertation</work:type>
-        </work:work>
-        """)
-
-    xml2 = xml_parse("""
-    <work:work xmlns:work="http://www.orcid.org/ns/work" xmlns:common="http://www.orcid.org/ns/common">
-            <!-- I'm a comment, strip me -->
-            <work:title>
-                <common:title>A &lt;Dissertation&gt;</common:title>
-            </work:title>
-            <work:type>dissertation</work:type>
-        </work:work>
-        """)
-
-    assert (OrcidHasher()._canonicalize_xml_element(xml1) ==
-            OrcidHasher()._canonicalize_xml_element(xml2))
 
 
 class MockLogger(object):

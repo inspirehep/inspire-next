@@ -22,14 +22,21 @@
 
 from __future__ import absolute_import, division, print_function
 
+import copy
+
 from utils import override_config
 
 
 def test_override_config(app):
-    with override_config(foo1='bar1', foo2='bar2'):
-        from flask import current_app
-        assert current_app.config['foo1'] == 'bar1'
-        assert current_app.config['foo2'] == 'bar2'
+    from flask import current_app
+    old_config = copy.copy(current_app.config)
 
-    assert not hasattr(current_app.config, 'foo1')
-    assert not hasattr(current_app.config, 'foo2')
+    with override_config(
+            myusernametestoverrideconfig='john',
+            mypasswordtestoverrideconfig='secret'):
+        assert current_app.config['myusernametestoverrideconfig'] == 'john'
+        assert current_app.config['mypasswordtestoverrideconfig'] == 'secret'
+
+    assert 'myusernametestoverrideconfig' not in current_app.config
+    assert 'mypasswordtestoverrideconfig' not in current_app.config
+    assert current_app.config == old_config

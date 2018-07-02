@@ -41,7 +41,7 @@ from inspirehep.modules.orcid.utils import (
 from inspirehep.modules.records.serializers import bibtex_v1
 from inspirehep.utils.record_getter import get_db_record
 
-from .cache import OrcidCache, OrcidHasher
+from .cache import OrcidCache
 from .exceptions import (
     DuplicatedExternalIdentifiersError,
     EmptyPutcodeError,
@@ -53,50 +53,43 @@ from .utils import log_time
 LOGGER = getStackTraceLogger(__name__)
 
 
-def push_record_with_orcid(recid, orcid, oauth_token, putcode=None, old_hash=None):
+def push_record_with_orcid(recid, orcid, oauth_token):
     """Push record to ORCID with a specific ORCID ID.
 
     Args:
         recid (string): HEP record to push
         orcid (string): ORCID identifier to push onto
         oauth_token (string): ORCID user OAUTH token
-        putcode (Union[string, NoneType]): put-code to push record onto,
-            if None will push as a new record
-        old_hash (Optional[string]): previous hash of the record
 
     Returns:
         Tuple[string, string]: a tuple with two elements:
             - the put-code of the inserted item,
             - and the new hash of the ORCID record
     """
-    record = get_db_record('lit', recid)
+    inspire_record = get_db_record('lit', recid)
+    orcid_cache = OrcidCache(orcid, recid)
 
-    orcid_cache = OrcidCache(orcid)
+    putcode = orcid_cache.read_work_putcode()
+    if not orcid_cache.has_work_content_changed(inspire_record):
+        LOGGER.info('Hash unchanged: not pushing #%s as not a meaningful update'
+                    ' for orcid:', recid, orcid)
+        return putcode
 
-    if not putcode or not old_hash:
-        cached_putcode, cached_old_hash = orcid_cache.read_record_data(recid)
-        putcode = putcode or cached_putcode
-        old_hash = old_hash or cached_old_hash
-
-    new_hash = OrcidHasher().compute_hash(record)
-    if new_hash == old_hash:
-        LOGGER.info(
-            'Hash unchanged: not pushing #%s as not a meaningful update', recid
-        )
-        return putcode, new_hash
-
+    # TODO Move bibtex serialization into the the converter
     try:
-        bibtex = bibtex_v1.serialize(recid, record)
+        bibtex = bibtex_v1.serialize(recid, inspire_record)
     except Exception:
         bibtex = None
         LOGGER.error(
             'Pushing record #%s without BibTex, as fetching it failed!', recid
         )
 
+    # TODO Split orcid API client networking part from our business logic.
+    # This TODO is also a requirement for proper app monitoring.
     orcid_api = _get_api()
 
     orcid_xml = OrcidConverter(
-        record, app.config['LEGACY_RECORD_URL_PATTERN'], put_code=putcode, bibtex_citation=bibtex
+        inspire_record, app.config['LEGACY_RECORD_URL_PATTERN'], put_code=putcode, bibtex_citation=bibtex
     ).get_xml()
 
     lock_name = 'orcid:{}'.format(orcid)
@@ -136,21 +129,21 @@ def push_record_with_orcid(recid, orcid, oauth_token, putcode=None, old_hash=Non
         except Exception as exc:
             if DuplicatedExternalIdentifiersError.match(exc):
                 recache_author_putcodes(orcid, oauth_token)
-                putcode, previous_hash = orcid_cache.read_record_data(recid)
+                putcode = orcid_cache.read_work_putcode()
                 if not putcode:
                     raise PutcodeNotFoundInCacheException(
                         'Putcode not found in cache for recid {} after having'
                         ' recached all putcodes for the orcid {}'.format(recid, orcid))
-                return push_record_with_orcid(recid, orcid, oauth_token, putcode, previous_hash)
+                return push_record_with_orcid(recid, orcid, oauth_token)
             else:
-                raise exc
+                raise
         if not putcode:
             raise EmptyPutcodeError
 
     LOGGER.info("Push of %s onto %s completed with put-code %s.", recid, orcid, putcode)
 
-    orcid_cache.write_record_data(recid, putcode, new_hash)
-    return putcode, new_hash
+    orcid_cache.write_work_putcode(putcode, inspire_record)
+    return putcode
 
 
 @log_time(LOGGER)
@@ -162,9 +155,9 @@ def recache_author_putcodes(orcid, oauth_token):
         oauth_token(string): orcid token.
     """
     record_putcodes = get_author_putcodes(orcid, oauth_token)
-    cache = OrcidCache(orcid)
     for fetched_recid, fetched_putcode in record_putcodes:
-        cache.write_record_data(fetched_recid, fetched_putcode, None)
+        orcid_cache = OrcidCache(orcid, fetched_recid)
+        orcid_cache.write_work_putcode(fetched_putcode)
 
 
 def get_author_putcodes(orcid, oauth_token):

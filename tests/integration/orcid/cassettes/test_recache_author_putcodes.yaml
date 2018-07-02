@@ -9,48 +9,111 @@ interactions:
     method: GET
     uri: https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/works
   response:
-    body: {string: !!python/unicode '{ "path": "/0000-0002-1825-0097/works", "group":
-        [ { "work-summary": [ { "put-code": 912981, "title": { "translated-title":
-        null, "subtitle": null, "title": { "value": "Partial Symmetries of Weak Interactions"
-        } }, "last-modified-date": { "value": 1519143190177 }, "external-ids": { "external-id":
-        [ { "external-id-value": "10.1016/0029-5582(61)90469-2", "external-id-relationship":
-        "SELF", "external-id-url": { "value": "http://dx.doi.org/10.1016/0029-5582(61)90469-2"
-        }, "external-id-type": "doi" } ] }, "created-date": { "value": 1508427576466
-        }, "visibility": "PUBLIC", "source": { "source-orcid": { "path": "0000-0002-1825-0097",
-        "host": "sandbox.orcid.org", "uri": "http://sandbox.orcid.org/0000-0002-1825-0097"
-        }, "source-name": { "value": "inspire010" }, "source-client-id": null }, "publication-date":
-        { "month": null, "day": null, "media-type": null, "year": { "value": "1961"
-        } }, "display-index": "1", "path": "/0000-0002-1825-0097/work/912981", "type":
-        "JOURNAL_ARTICLE" }, { "put-code": 912978, "title": { "translated-title":
-        null, "subtitle": null, "title": { "value": "Partial Symmetries of Weak Interactions"
-        } }, "last-modified-date": { "value": 1519143190177 }, "external-ids": { "external-id":
-        [ { "external-id-value": "10.1016/0029-5582(61)90469-2", "external-id-relationship":
-        "SELF", "external-id-url": { "value": "http://dx.doi.org/10.1016/0029-5582(61)90469-2"
-        }, "external-id-type": "doi" } ] }, "created-date": { "value": 1516716146242
-        }, "visibility": "PUBLIC", "source": { "source-orcid": null, "source-name":
-        { "value": "INSPIRE-PROFILE-PUSH" }, "source-client-id": { "path": "CHANGE_ME",
-        "host": "sandbox.orcid.org", "uri": "http://sandbox.orcid.org/client/CHANGE_ME"
-        } }, "publication-date": { "month": null, "day": null, "media-type": null,
-        "year": { "value": "1961" } }, "display-index": "0", "path": "/0000-0002-1825-0097/work/912978",
-        "type": "JOURNAL_ARTICLE" } ], "external-ids": { "external-id": [ { "external-id-value":
-        "10.1016/0029-5582(61)90469-2", "external-id-relationship": "SELF", "external-id-url":
-        { "value": "http://dx.doi.org/10.1016/0029-5582(61)90469-2" }, "external-id-type":
-        "doi" } ] }, "last-modified-date": { "value": 1519143190177 } }, { "work-summary":
-        [ { "put-code": 912977, "title": { "translated-title": null, "subtitle": null,
-        "title": { "value": "CMB anisotropies: A Decadal survey" } }, "last-modified-date":
-        { "value": 1519143233490 }, "external-ids": { "external-id": [ { "external-id-value":
-        "astro-ph/0002520", "external-id-relationship": "SELF", "external-id-url":
-        { "value": "http://arxiv.org/abs/astro-ph/0002520" }, "external-id-type":
-        "arxiv" } ] }, "created-date": { "value": 1516715359801 }, "visibility": "PUBLIC",
-        "source": { "source-orcid": null, "source-name": { "value": "INSPIRE-PROFILE-PUSH"
-        }, "source-client-id": { "path": "CHANGE_ME", "host": "sandbox.orcid.org",
-        "uri": "http://sandbox.orcid.org/client/CHANGE_ME" } }, "publication-date":
-        null, "display-index": "0", "path": "/0000-0002-1825-0097/work/912977", "type":
-        "CONFERENCE_PAPER" } ], "external-ids": { "external-id": [ { "external-id-value":
-        "astro-ph/0002520", "external-id-relationship": "SELF", "external-id-url":
-        { "value": "http://arxiv.org/abs/astro-ph/0002520" }, "external-id-type":
-        "arxiv" } ] }, "last-modified-date": { "value": 1519143233490 } } ], "last-modified-date":
-        { "value": 1519143233490 } }'}
+    body: {string: !!python/unicode
+    '{"group": [{"external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                                     "external-id-type": "doi",
+                                                     "external-id-url": {"value": "http://dx.doi.org/10.1016/0029-5582(61)90469-2"},
+                                                     "external-id-value": "10.1016/0029-5582(61)90469-2"}]},
+                 "last-modified-date": {"value": 1519143190177},
+                 "work-summary": [{"created-date": {"value": 1508427576466},
+                                    "display-index": "1",
+                                    "external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                                                        "external-id-type": "doi",
+                                                                        "external-id-url": {"value": "http://dx.doi.org/10.1016/0029-5582(61)90469-2"},
+                                                                        "external-id-value": "10.1016/0029-5582(61)90469-2"}]},
+                                    "last-modified-date": {"value": 1519143190177},
+                                    "path": "/0000-0002-1825-0097/work/912981",
+                                    "publication-date": {"day": null,
+                                                          "media-type": null,
+                                                          "month": null,
+                                                          "year": {"value": "1961"}},
+                                    "put-code": 912981,
+                                    "source": {"source-client-id": null,
+                                                "source-name": {"value": "inspire010"},
+                                                "source-orcid": {"host": "sandbox.orcid.org",
+                                                                  "path": "0000-0002-1825-0097",
+                                                                  "uri": "http://sandbox.orcid.org/0000-0002-1825-0097"}},
+                                    "title": {"subtitle": null,
+                                               "title": {"value": "Partial Symmetries of Weak Interactions"},
+                                               "translated-title": null},
+                                    "type": "JOURNAL_ARTICLE",
+                                    "visibility": "PUBLIC"},
+                                   {"created-date": {"value": 1516716146242},
+                                    "display-index": "0",
+                                    "external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                                                        "external-id-type": "doi",
+                                                                        "external-id-url": {"value": "http://dx.doi.org/10.1016/0029-5582(61)90469-2"},
+                                                                        "external-id-value": "10.1016/0029-5582(61)90469-2"}]},
+                                    "last-modified-date": {"value": 1519143190177},
+                                    "path": "/0000-0002-1825-0097/work/912978",
+                                    "publication-date": {"day": null,
+                                                          "media-type": null,
+                                                          "month": null,
+                                                          "year": {"value": "1961"}},
+                                    "put-code": 912978,
+                                    "source": {"source-client-id": {"host": "sandbox.orcid.org",
+                                                                      "path": "CHANGE_ME",
+                                                                      "uri": "http://sandbox.orcid.org/client/CHANGE_ME"},
+                                                "source-name": {"value": "INSPIRE-PROFILE-PUSH"},
+                                                "source-orcid": null},
+                                    "title": {"subtitle": null,
+                                               "title": {"value": "Partial Symmetries of Weak Interactions"},
+                                               "translated-title": null},
+                                    "type": "JOURNAL_ARTICLE",
+                                    "visibility": "PUBLIC"}]},
+                {"external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                                     "external-id-type": "arxiv",
+                                                     "external-id-url": {"value": "http://arxiv.org/abs/astro-ph/0002520"},
+                                                     "external-id-value": "astro-ph/0002520"}]},
+                 "last-modified-date": {"value": 1519143233490},
+                 "work-summary": [{"created-date": {"value": 1516715359801},
+                                    "display-index": "0",
+                                    "external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                                                        "external-id-type": "arxiv",
+                                                                        "external-id-url": {"value": "http://arxiv.org/abs/astro-ph/0002520"},
+                                                                        "external-id-value": "astro-ph/0002520"}]},
+                                    "last-modified-date": {"value": 1519143233490},
+                                    "path": "/0000-0002-1825-0097/work/912977",
+                                    "publication-date": null,
+                                    "put-code": 912977,
+                                    "source": {"source-client-id": {"host": "sandbox.orcid.org",
+                                                                      "path": "CHANGE_ME",
+                                                                      "uri": "http://sandbox.orcid.org/client/CHANGE_ME"},
+                                                "source-name": {"value": "INSPIRE-PROFILE-PUSH"},
+                                                "source-orcid": null},
+                                    "title": {"subtitle": null,
+                                               "title": {"value": "CMB anisotropies: A Decadal survey"},
+                                               "translated-title": null},
+                                    "type": "CONFERENCE_PAPER",
+                                    "visibility": "PUBLIC"}]},
+                {"external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                                     "external-id-type": "arxiv",
+                                                     "external-id-url": {"value": "http://arxiv.org/abs/astro-ph/0002520"},
+                                                     "external-id-value": "astro-ph/0002520"}]},
+                 "last-modified-date": {"value": 1519143233490},
+                 "work-summary": [{"created-date": {"value": 1516715359801},
+                                    "display-index": "0",
+                                    "external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                                                        "external-id-type": "arxiv",
+                                                                        "external-id-url": {"value": "http://arxiv.org/abs/astro-ph/0002520"},
+                                                                        "external-id-value": "astro-ph/0002520"}]},
+                                    "last-modified-date": {"value": 1519143233490},
+                                    "path": "/0000-0002-1825-0097/work/912979",
+                                    "publication-date": null,
+                                    "put-code": 912979,
+                                    "source": {"source-client-id": {"host": "sandbox.orcid.org",
+                                                                      "path": "CHANGE_ME",
+                                                                      "uri": "http://sandbox.orcid.org/client/CHANGE_ME"},
+                                                "source-name": {"value": "INSPIRE-PROFILE-PUSH"},
+                                                "source-orcid": null},
+                                    "title": {"subtitle": null,
+                                               "title": {"value": "CMB anisotropies: A Decadal survey"},
+                                               "translated-title": null},
+                                    "type": "CONFERENCE_PAPER",
+                                    "visibility": "PUBLIC"}]}],
+     "last-modified-date": {"value": 1519143233490},
+     "path": "/0000-0002-1825-0097/works"
+     }'}
     headers:
       access-control-allow-origin: ['*']
       cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
@@ -73,7 +136,7 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.19.1]
     method: GET
-    uri: https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/works/912978,912977
+    uri: https://api.sandbox.orcid.org/v2.0/0000-0002-1825-0097/works/912978,912977,912979
   response:
     body: {string: !!python/unicode
     '{
@@ -162,6 +225,79 @@ interactions:
           "work": {
             "language-code": null,
             "put-code": 912977,
+            "contributors": {
+              "contributor": [
+                {
+                  "contributor-orcid": null,
+                  "contributor-attributes": {
+                    "contributor-role": "AUTHOR",
+                    "contributor-sequence": "FIRST"
+                  },
+                  "credit-name": {
+                    "value": "Hu, Wayne"
+                  },
+                  "contributor-email": null
+                }
+              ]
+            },
+            "title": {
+              "translated-title": null,
+              "subtitle": null,
+              "title": {
+                "value": "CMB anisotropies: A Decadal survey"
+              }
+            },
+            "url": {
+              "value": "http://labs.inspirehep.net/record/4327"
+            },
+            "external-ids": {
+              "external-id": [
+                {
+                  "external-id-value": "astro-ph/0002520",
+                  "external-id-relationship": "SELF",
+                  "external-id-url": {
+                    "value": "http://arxiv.org/abs/astro-ph/0002520"
+                  },
+                  "external-id-type": "arxiv"
+                }
+              ]
+            },
+            "last-modified-date": {
+              "value": 1519143233490
+            },
+            "citation": {
+              "citation-type": "BIBTEX",
+              "citation-value": "@inproceedings{Hu:2000az,\n    author = \"Hu, Wayne\",\n    booktitle = \"4th RESCEU International Symposium on Birth and Evolution of the Universe\",\n    address = \"Tokyo, Japan\",\n    archivePrefix = \"arXiv\",\n    eprint = \"astro-ph/0002520\",\n    title = \"CMB anisotropies: A Decadal survey\"\n}\n"
+            },
+            "created-date": {
+              "value": 1516715359801
+            },
+            "visibility": "PUBLIC",
+            "source": {
+              "source-orcid": null,
+              "source-name": {
+                "value": "INSPIRE-PROFILE-PUSH"
+              },
+              "source-client-id": {
+                "path": "CHANGE_ME",
+                "host": "sandbox.orcid.org",
+                "uri": "http://sandbox.orcid.org/client/CHANGE_ME"
+              }
+            },
+            "publication-date": null,
+            "journal-title": {
+              "value": "4th RESCEU International Symposium on Birth and Evolution of the Universe"
+            },
+            "country": null,
+            "path": null,
+            "short-description": null,
+            "type": "CONFERENCE_PAPER"
+          }
+        },
+        {
+          "work": {
+            "language-code": null,
+            "put-code": 912979,
             "contributors": {
               "contributor": [
                 {

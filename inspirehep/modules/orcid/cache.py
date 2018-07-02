@@ -31,69 +31,114 @@ from .converter import OrcidConverter
 from .exceptions import EmptyPutcodeError
 
 
+# Redis client as module-level singleton.
+_redis_client = None
+
+
+def _init_redis_client():
+    """
+    Note: the `_redis_client` module-level var cannot be initialized at module-load
+    time because accessing flask.current_app raises the exception:
+    "RuntimeError: Working outside of application context"
+    """
+    url = app.config.get('CACHE_REDIS_URL')
+    global _redis_client
+    _redis_client = StrictRedis.from_url(url)
+
+
 class OrcidCache(object):
     def __init__(self, orcid):
-        redis_url = app.config.get('CACHE_REDIS_URL')
-        self.redis = StrictRedis.from_url(redis_url)
-        self.orcid = orcid
+        """
+        Orcid cached data.
 
-    def _get_key(self, recid):
+        Args:
+            orcid (string): orcid identifier.
+        """
+        self.orcid = orcid
+        self._cached_hash_value = None
+        self._new_hash_value = None
+        if not _redis_client:
+            _init_redis_client()
+        self.redis = _redis_client
+
+    def get_key(self, recid):
         """Return the string 'orcidcache:``orcid_value``:``recid``'"""
         return 'orcidcache:{}:{}'.format(self.orcid, recid)
 
-    def write_record_data(self, recid, putcode, hash_value=None):
+    def write_work_putcode(self, recid, putcode, inspire_record=None):
         """
         Write the putcode and the hash for the given (orcid, recid).
 
         Args:
-            recid(int): inspire record's id.
-            putcode(string): the putcode used to push the record to ORCID.
-            hash_value(Optional[string]): hashed ORCID record content.
+            recid (string): record identifier.
+            putcode (string): the putcode used to push the record to ORCID.
+            inspire_record (InspireRecord): InspireRecord instance. If provided,
+             the hash for the record content is re-computed.
         """
         if not putcode:
             raise EmptyPutcodeError
 
-        key = self._get_key(recid)
-        value = {'putcode': putcode}
-        if hash_value:
-            value['hash'] = hash_value
-        self.redis.hmset(key, value)
+        data = {'putcode': putcode}
 
-    def read_record_data(self, recid):
-        """
-        Read the putcode and the hash for the given (orcid, recid).
+        if inspire_record:
+            if not self._new_hash_value:
+                self._new_hash_value = _OrcidHasher(inspire_record).compute_hash()
+            data['hash'] = self._new_hash_value
 
-        Args:
-            recid(int): inspire record's id.
-        """
-        key = self._get_key(recid)
+        key = self.get_key(recid)
+        self.redis.hmset(key, data)
+
+    def read_work_putcode(self, recid):
+        """Read the putcode for the given (orcid, recid)."""
+        key = self.get_key(recid)
         value = self.redis.hgetall(key)
-        return value.get('putcode'), value.get('hash')
+        self._cached_hash_value = value.get('hash')
+        return value.get('putcode')
 
-
-class OrcidHasher(object):
-    def compute_hash(self, record):
-        """Generate hash for an ORCID-serialised HEP record
+    def has_work_content_changed(self, recid, inspire_record):
+        """
+        True if the work content has changed compared to the cached version.
 
         Args:
-            record (dict): HEP record
+            recid (string): record identifier.
+            inspire_record (InspireRecord): InspireRecord instance. If provided,
+             the hash for the record content is re-computed.
+        """
+        if not self._cached_hash_value:
+            self.read_work_putcode(recid)
+        if not self._new_hash_value:
+            self._new_hash_value = _OrcidHasher(inspire_record).compute_hash()
+        return self._cached_hash_value != self._new_hash_value
 
-        Returns:
+
+class _OrcidHasher(object):
+    def __init__(self, inspire_record):
+        self.inspire_record = inspire_record
+
+    def compute_hash(self):
+        """Generate hash for an ORCID-serialised HEP record.
+
+        Return:
             string: hash of the record
         """
-        orcid_rec = OrcidConverter(record, app.config['LEGACY_RECORD_URL_PATTERN'])
-        return self._hash_xml_element(orcid_rec.get_xml())
+        orcid_record = OrcidConverter(
+            self.inspire_record,
+            app.config['LEGACY_RECORD_URL_PATTERN']
+        )
+        xml = orcid_record.get_xml()  # lxml.etree._Element
+        return self._hash_xml_element(xml)
 
-    def _hash_xml_element(self, element):
+    @classmethod
+    def _hash_xml_element(cls, element):
         """Compute a hash for XML element comparison.
 
         Args:
-            element (lxml.etree._Element): the XML node
+            element (lxml.etree._Element): the XML node.
 
         Return:
             string: hash
         """
-        canonical_string = self._canonicalize_xml_element(element)
+        canonical_string = cls._canonicalize_xml_element(element)
         hash_value = hashlib.sha1(canonical_string)
         return 'sha1:' + hash_value.hexdigest()
 

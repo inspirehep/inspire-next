@@ -54,122 +54,111 @@ CONFIG = dict(
 @pytest.mark.usefixtures('isolated_app')
 class TestPushRecordWithOrcid(object):
     def setup(self):
-        TestRecordMetadata.create_from_file(__name__, 'test_orcid_api_test_push_record_with_orcid.json')
+        factory = TestRecordMetadata.create_from_file(__name__, 'test_orcid_api_test_push_record_with_orcid.json')
         self.recid = '8201'
         self.putcode = '920107'
         self.hash_value = 'sha1:c6d51f84927dd82d16ee0aaccb64d13313a023b2'
         self.orcid = '0000-0002-1825-0097'
         self.oauth_token = 'fake-token'
+        self.inspire_record = factory.inspire_record
         self.cache = OrcidCache(self.orcid)
 
     def teardown(self):
         """
         Cleanup the cache after each test (as atm there is no cache isolation).
         """
-        key = self.cache._get_key(self.recid)
+        key = self.cache.get_key(self.recid)
         self.cache.redis.delete(key)
 
     @pytest.mark.vcr()
     def test_new_record(self, vcr_cassette):
         with override_config(**CONFIG), \
                 mock.patch('inspirehep.modules.orcid.api.recache_author_putcodes', wraps=recache_author_putcodes) as mock_recache_author_putcodes:
-            putcode, hash_value = push_record_with_orcid(
+            putcode = push_record_with_orcid(
                 recid=self.recid,
                 orcid=self.orcid,
                 oauth_token=self.oauth_token,
-                putcode=None,
-                old_hash=None,
             )
 
         assert putcode == self.putcode
-        assert hash_value == self.hash_value
         mock_recache_author_putcodes.assert_not_called()
         assert vcr_cassette.all_played
 
     @pytest.mark.vcr()
-    def test_new_record_alredy_existent_error(self, vcr_cassette):
+    def test_new_record_already_existent_error(self, vcr_cassette):
         with override_config(**CONFIG), \
                 mock.patch('inspirehep.modules.orcid.api.recache_author_putcodes', wraps=recache_author_putcodes) as mock_recache_author_putcodes:
-            putcode, hash_value = push_record_with_orcid(
+            putcode = push_record_with_orcid(
                 recid=self.recid,
                 orcid=self.orcid,
                 oauth_token=self.oauth_token,
-                putcode=None,
-                old_hash=None,
             )
 
         assert putcode == self.putcode
-        assert hash_value == self.hash_value
         mock_recache_author_putcodes.assert_called_with(self.orcid, self.oauth_token)
         assert vcr_cassette.all_played
 
     @pytest.mark.vcr()
-    def test_new_record_alredy_existent_error_and_putcode_not_found(self, vcr_cassette):
+    def test_new_record_already_existent_error_and_putcode_not_found(self, vcr_cassette):
         with override_config(**CONFIG), \
-                mock.patch.object(OrcidCache, 'read_record_data', return_value=(None, None)):
+                mock.patch.object(OrcidCache, 'read_work_putcode', return_value=None):
 
             with pytest.raises(PutcodeNotFoundInCacheException):
                 push_record_with_orcid(
                     recid=self.recid,
                     orcid=self.orcid,
                     oauth_token=self.oauth_token,
-                    putcode=None,
-                    old_hash=None,
                 )
+        assert vcr_cassette.all_played
 
     @pytest.mark.vcr()
     def test_updated_record_cache_hit(self, vcr_cassette):
-        self.cache.write_record_data(self.recid, self.putcode, 'old_hash')
+        # Fill the cache with the right putcode but no hash.
+        self.cache.write_work_putcode(self.recid, self.putcode)
 
         with override_config(**CONFIG), \
                 mock.patch('inspirehep.modules.orcid.api.recache_author_putcodes', wraps=recache_author_putcodes) as mock_recache_author_putcodes:
-            putcode, hash_value = push_record_with_orcid(
+            putcode = push_record_with_orcid(
                 recid=self.recid,
                 orcid=self.orcid,
                 oauth_token=self.oauth_token,
-                putcode=None,
-                old_hash=None,
             )
 
         assert putcode == self.putcode
-        assert hash_value == self.hash_value
         mock_recache_author_putcodes.assert_not_called()
         assert vcr_cassette.all_played
 
     def test_updated_record_cache_hit_same_hash(self):
-        self.cache.write_record_data(self.recid, self.putcode, self.hash_value)
+        # Fill the cache with the right putcode and same hash.
+        self.cache.write_work_putcode(self.recid, self.putcode, self.inspire_record)
 
         with override_config(**CONFIG), \
                 mock.patch('inspirehep.modules.orcid.api.recache_author_putcodes', wraps=recache_author_putcodes) as mock_recache_author_putcodes:
-            putcode, hash_value = push_record_with_orcid(
+            putcode = push_record_with_orcid(
                 recid=self.recid,
                 orcid=self.orcid,
                 oauth_token=self.oauth_token,
-                putcode=None,
-                old_hash=None,
             )
 
         assert putcode == self.putcode
-        assert hash_value == self.hash_value
         mock_recache_author_putcodes.assert_not_called()
 
     @pytest.mark.vcr()
-    def test_distributed_lock_with_new_record(self):
+    def test_distributed_lock_with_new_record(self, vcr_cassette):
         with override_config(**CONFIG), \
                 mock.patch('inspirehep.modules.orcid.api.distributed_lock', wraps=distributed_lock) as mock_distributed_lock:
             push_record_with_orcid(
                 recid=self.recid,
                 orcid=self.orcid,
                 oauth_token=self.oauth_token,
-                putcode=None,
-                old_hash=None,
             )
 
         mock_distributed_lock.assert_called_with('orcid:0000-0002-1825-0097', blocking=True)
+        assert vcr_cassette.all_played
 
     @pytest.mark.vcr()
-    def test_distributed_lock_with_updated_record(self):
-        self.cache.write_record_data(self.recid, self.putcode, 'old_hash')
+    def test_distributed_lock_with_updated_record(self, vcr_cassette):
+        self.cache.write_work_putcode(self.recid, self.putcode)
 
         with override_config(**CONFIG), \
                 mock.patch('inspirehep.modules.orcid.api.distributed_lock', wraps=distributed_lock) as mock_distributed_lock:
@@ -177,25 +166,31 @@ class TestPushRecordWithOrcid(object):
                 recid=self.recid,
                 orcid=self.orcid,
                 oauth_token=self.oauth_token,
-                putcode=None,
-                old_hash=None,
             )
 
         mock_distributed_lock.assert_called_with('orcid:0000-0002-1825-0097', blocking=True)
+        assert vcr_cassette.all_played
 
 
 @pytest.mark.vcr()
-def test_recache_author_putcodes():
+def test_recache_author_putcodes(isolated_app, vcr_cassette):
     orcid = '0000-0002-1825-0097'
     oauth_token = 'fake-token'
+    recid1 = '4328'
+    putcode1 = '912978'
+    recid2 = '4327'
+    putcode2 = '912977'
+    # putcode3 = '912979'  # Non inspire.
 
     with override_config(**CONFIG):
         recache_author_putcodes(orcid, oauth_token)
 
     # Ensure the putcodes have been cached.
     cache = OrcidCache(orcid)
-    putcode, _ = cache.read_record_data('4328')
-    assert putcode == '912978'
+    assert cache.read_work_putcode(recid1) == putcode1
+    assert cache.read_work_putcode(recid2) == putcode2
+    assert not cache.read_work_putcode('524480')
+    assert vcr_cassette.all_played
 
 
 @pytest.fixture
@@ -211,9 +206,10 @@ def mock_logger():
 
 
 @pytest.mark.vcr()
-def test_get_author_putcodes(mock_logger):
+def test_get_author_putcodes(isolated_app, mock_logger, vcr_cassette):
     with override_config(**CONFIG):
         pairs = get_author_putcodes('0000-0002-1825-0097', 'fake-token')
 
     assert pairs == [('4328', '912978')]
     assert '912977' in mock_logger.message
+    assert vcr_cassette.all_played
