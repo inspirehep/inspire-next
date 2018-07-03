@@ -22,28 +22,15 @@
 
 from __future__ import absolute_import, division, print_function
 
-from flask import current_app as app
+import flask
 import hashlib
+
+from flask import current_app as app
 from redis import StrictRedis
 from StringIO import StringIO
 
 from .converter import OrcidConverter
 from .exceptions import EmptyPutcodeError
-
-
-# Redis client as module-level singleton.
-_redis_client = None
-
-
-def _init_redis_client():
-    """
-    Note: the `_redis_client` module-level var cannot be initialized at module-load
-    time because accessing flask.current_app raises the exception:
-    "RuntimeError: Working outside of application context"
-    """
-    url = app.config.get('CACHE_REDIS_URL')
-    global _redis_client
-    _redis_client = StrictRedis.from_url(url)
 
 
 class OrcidCache(object):
@@ -58,9 +45,15 @@ class OrcidCache(object):
         self.recid = recid
         self._cached_hash_value = None
         self._new_hash_value = None
-        if not _redis_client:
-            _init_redis_client()
-        self.redis = _redis_client
+
+    @property
+    def redis(self):
+        redis = getattr(flask.g, 'redis_client', None)
+        if redis is None:
+            url = app.config.get('CACHE_REDIS_URL')
+            redis = StrictRedis.from_url(url)
+            flask.g.redis_client = redis
+        return redis
 
     @property
     def _key(self):
