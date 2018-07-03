@@ -47,7 +47,7 @@ def _init_redis_client():
 
 
 class OrcidCache(object):
-    def __init__(self, orcid):
+    def __init__(self, orcid, recid):
         """
         Orcid cached data.
 
@@ -55,22 +55,23 @@ class OrcidCache(object):
             orcid (string): orcid identifier.
         """
         self.orcid = orcid
+        self.recid = recid
         self._cached_hash_value = None
         self._new_hash_value = None
         if not _redis_client:
             _init_redis_client()
         self.redis = _redis_client
 
-    def get_key(self, recid):
+    @property
+    def _key(self):
         """Return the string 'orcidcache:``orcid_value``:``recid``'"""
-        return 'orcidcache:{}:{}'.format(self.orcid, recid)
+        return 'orcidcache:{}:{}'.format(self.orcid, self.recid)
 
-    def write_work_putcode(self, recid, putcode, inspire_record=None):
+    def write_work_putcode(self, putcode, inspire_record=None):
         """
         Write the putcode and the hash for the given (orcid, recid).
 
         Args:
-            recid (string): record identifier.
             putcode (string): the putcode used to push the record to ORCID.
             inspire_record (InspireRecord): InspireRecord instance. If provided,
              the hash for the record content is re-computed.
@@ -85,27 +86,24 @@ class OrcidCache(object):
                 self._new_hash_value = _OrcidHasher(inspire_record).compute_hash()
             data['hash'] = self._new_hash_value
 
-        key = self.get_key(recid)
-        self.redis.hmset(key, data)
+        self.redis.hmset(self._key, data)
 
-    def read_work_putcode(self, recid):
+    def read_work_putcode(self):
         """Read the putcode for the given (orcid, recid)."""
-        key = self.get_key(recid)
-        value = self.redis.hgetall(key)
+        value = self.redis.hgetall(self._key)
         self._cached_hash_value = value.get('hash')
         return value.get('putcode')
 
-    def has_work_content_changed(self, recid, inspire_record):
+    def has_work_content_changed(self, inspire_record):
         """
         True if the work content has changed compared to the cached version.
 
         Args:
-            recid (string): record identifier.
             inspire_record (InspireRecord): InspireRecord instance. If provided,
              the hash for the record content is re-computed.
         """
         if not self._cached_hash_value:
-            self.read_work_putcode(recid)
+            self.read_work_putcode()
         if not self._new_hash_value:
             self._new_hash_value = _OrcidHasher(inspire_record).compute_hash()
         return self._cached_hash_value != self._new_hash_value

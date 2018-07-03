@@ -61,13 +61,13 @@ class TestPushRecordWithOrcid(object):
         self.orcid = '0000-0002-1825-0097'
         self.oauth_token = 'fake-token'
         self.inspire_record = factory.inspire_record
-        self.cache = OrcidCache(self.orcid)
+        self.cache = OrcidCache(self.orcid, self.recid)
 
     def teardown(self):
         """
         Cleanup the cache after each test (as atm there is no cache isolation).
         """
-        key = self.cache.get_key(self.recid)
+        key = self.cache._key
         self.cache.redis.delete(key)
 
     @pytest.mark.vcr()
@@ -114,7 +114,7 @@ class TestPushRecordWithOrcid(object):
     @pytest.mark.vcr()
     def test_updated_record_cache_hit(self, vcr_cassette):
         # Fill the cache with the right putcode but no hash.
-        self.cache.write_work_putcode(self.recid, self.putcode)
+        self.cache.write_work_putcode(self.putcode)
 
         with override_config(**CONFIG), \
                 mock.patch('inspirehep.modules.orcid.api.recache_author_putcodes', wraps=recache_author_putcodes) as mock_recache_author_putcodes:
@@ -130,7 +130,7 @@ class TestPushRecordWithOrcid(object):
 
     def test_updated_record_cache_hit_same_hash(self):
         # Fill the cache with the right putcode and same hash.
-        self.cache.write_work_putcode(self.recid, self.putcode, self.inspire_record)
+        self.cache.write_work_putcode(self.putcode, self.inspire_record)
 
         with override_config(**CONFIG), \
                 mock.patch('inspirehep.modules.orcid.api.recache_author_putcodes', wraps=recache_author_putcodes) as mock_recache_author_putcodes:
@@ -158,7 +158,7 @@ class TestPushRecordWithOrcid(object):
 
     @pytest.mark.vcr()
     def test_distributed_lock_with_updated_record(self, vcr_cassette):
-        self.cache.write_work_putcode(self.recid, self.putcode)
+        self.cache.write_work_putcode(self.putcode)
 
         with override_config(**CONFIG), \
                 mock.patch('inspirehep.modules.orcid.api.distributed_lock', wraps=distributed_lock) as mock_distributed_lock:
@@ -186,10 +186,10 @@ def test_recache_author_putcodes(isolated_app, vcr_cassette):
         recache_author_putcodes(orcid, oauth_token)
 
     # Ensure the putcodes have been cached.
-    cache = OrcidCache(orcid)
-    assert cache.read_work_putcode(recid1) == putcode1
-    assert cache.read_work_putcode(recid2) == putcode2
-    assert not cache.read_work_putcode('524480')
+    cache = OrcidCache(orcid, recid1)
+    assert cache.read_work_putcode() == putcode1
+    cache = OrcidCache(orcid, recid2)
+    assert cache.read_work_putcode() == putcode2
     assert vcr_cassette.all_played
 
 

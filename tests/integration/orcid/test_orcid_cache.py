@@ -42,53 +42,53 @@ class TestOrcidCache(object):
         self.hash_value = 'sha1:ede49b12e11f5284fdced7596a28791ddf32c8fc'
         factory = TestRecordMetadata.create_from_file(__name__, 'test_orcid_cache_record.json')
         self.inspire_record = factory.inspire_record
-        self.cache = OrcidCache(self.orcid)
+        self.cache = OrcidCache(self.orcid, self.recid)
 
     def teardown(self):
         """
         Cleanup the cache after each test (as atm there is no cache isolation).
         """
-        key = self.cache.get_key(self.recid)
+        key = self.cache._key
         self.cache.redis.delete(key)
 
     def test_read_write_new_key(self):
-        self.cache.write_work_putcode(self.recid, self.putcode, self.inspire_record)
-        putcode = self.cache.read_work_putcode(self.recid)
+        self.cache.write_work_putcode(self.putcode, self.inspire_record)
+        putcode = self.cache.read_work_putcode()
         assert putcode == self.putcode
 
     def test_read_write_existent_key(self):
-        self.cache.write_work_putcode(self.recid, self.putcode, self.inspire_record)
-        self.cache.write_work_putcode(self.recid, '0000', self.inspire_record)
-        putcode = self.cache.read_work_putcode(self.recid)
+        self.cache.write_work_putcode(self.putcode, self.inspire_record)
+        self.cache.write_work_putcode('0000', self.inspire_record)
+        putcode = self.cache.read_work_putcode()
         assert putcode == '0000'
 
     def test_read_non_existent_key(self):
-        putcode = self.cache.read_work_putcode(self.recid)
+        putcode = self.cache.read_work_putcode()
         assert not putcode
 
     def test_has_work_content_changed_no(self):
-        self.cache.write_work_putcode(self.recid, self.putcode, self.inspire_record)
+        self.cache.write_work_putcode(self.putcode, self.inspire_record)
 
-        cache = OrcidCache(self.orcid)
-        assert not cache.has_work_content_changed(self.recid, self.inspire_record)
+        cache = OrcidCache(self.orcid, self.recid)
+        assert not cache.has_work_content_changed(self.inspire_record)
 
     def test_has_work_content_changed_yes(self):
-        self.cache.write_work_putcode(self.recid, self.putcode, self.inspire_record)
+        self.cache.write_work_putcode(self.putcode, self.inspire_record)
 
         self.inspire_record['titles'][0]['title'] = 'mytitle'
-        cache = OrcidCache(self.orcid)
-        assert cache.has_work_content_changed(self.recid, self.inspire_record)
+        cache = OrcidCache(self.orcid, self.recid)
+        assert cache.has_work_content_changed(self.inspire_record)
 
     def test_write_work_putcode_do_recompute(self):
-        self.cache.write_work_putcode(self.recid, self.putcode, self.inspire_record)
+        self.cache.write_work_putcode(self.putcode, self.inspire_record)
 
-        self.cache.read_work_putcode(self.recid)
+        self.cache.read_work_putcode()
         assert self.cache._cached_hash_value == self.hash_value
 
     def test_write_work_putcode_do_not_recompute(self):
-        self.cache.write_work_putcode(self.recid, self.putcode)
+        self.cache.write_work_putcode(self.putcode)
 
-        self.cache.read_work_putcode(self.recid)
+        self.cache.read_work_putcode()
         assert not self.cache._cached_hash_value
 
 
