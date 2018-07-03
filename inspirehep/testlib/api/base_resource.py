@@ -34,3 +34,10 @@ class BaseResource(object):
             if not item[0].startswith('_')
         )
         return '{classname}({args})'.format(classname=classname, args=args)
+
+    def __eq__(self, other):
+        for this_prop, other_prop in zip(dir(self), dir(other)):
+            if this_prop != other_prop:
+                return False
+
+        return len(dir(self)) == len(dir(other))

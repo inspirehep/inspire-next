@@ -32,6 +32,7 @@ from invenio_accounts.testutils import login_user_via_session
 
 from inspirehep.utils.tickets import get_rt_link_for_ticket
 from inspirehep.utils.record_getter import get_db_record
+from inspirehep.modules.workflows.models import WorkflowsPendingRecord
 
 from calls import do_robotupload_callback
 from factories.db.invenio_records import TestRecordMetadata
@@ -160,6 +161,11 @@ def test_edit_article_workflow(workflow_app, mocked_external_services):
 
     record = get_db_record('lit', 123)
     assert record['titles'][0]['title'] == new_title
+
+    obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
+    assert obj.status == ObjectStatus.COMPLETED
+    pending_records = WorkflowsPendingRecord.query.filter_by(workflow_id=obj.id).all()
+    assert not pending_records
 
 
 @pytest.mark.parametrize('user_info, expected_status_code', [
