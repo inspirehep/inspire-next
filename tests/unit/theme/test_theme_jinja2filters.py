@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import jinja2
 import pytest
-from elasticsearch_dsl import result
+from elasticsearch_dsl import response, search
 from flask import current_app
 from mock import Mock, patch
 
@@ -103,7 +103,8 @@ def mock_replace_refs():
 
 @pytest.fixture
 def mock_perform_es_search():
-    return result.Response(
+    return response.Response(
+        search.Search(),
         {
             "hits": {
                 "hits": [
@@ -155,7 +156,8 @@ def mock_perform_es_search():
 
 @pytest.fixture
 def mock_perform_es_search_empty():
-    return result.Response(
+    return response.Response(
+        search.Search(),
         {
             "hits": {
                 "total": 0,
@@ -168,7 +170,8 @@ def mock_perform_es_search_empty():
 
 @pytest.fixture
 def mock_perform_es_search_onerecord():
-    return result.Response(
+    return response.Response(
+        search.Search(),
         {
             "hits": {
                 "hits": [
@@ -194,7 +197,8 @@ def mock_perform_es_search_onerecord():
 
 @pytest.fixture
 def mock_perform_es_search_tworecord():
-    return result.Response(
+    return response.Response(
+        search.Search(),
         {
             "hits": {
                 "hits": [
