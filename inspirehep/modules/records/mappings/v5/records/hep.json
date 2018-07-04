@@ -8,11 +8,11 @@
             "numeric_detection": false,
             "properties": {
                 "$schema": {
-                    "type": "string"
+                    "type": "keyword"
                 },
                 "_collections": {
-                    "analyzer": "lowercase_analyzer",
-                    "type": "string"
+                    "normalizer": "lowercase_normalizer",
+                    "type": "keyword"
                 },
                 "_desy_bookkeeping": {
                     "properties": {
@@ -21,10 +21,10 @@
                             "type": "date"
                         },
                         "expert": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "status": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
@@ -43,19 +43,19 @@
                 "_files": {
                     "properties": {
                         "bucket": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "checksum": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "key": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "size": {
                             "type": "integer"
                         },
                         "version_id": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
@@ -63,10 +63,10 @@
                 "_private_notes": {
                     "properties": {
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "value": {
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -77,10 +77,10 @@
                             "type": "completion"
                         },
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "value": {
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -88,20 +88,20 @@
                 "accelerator_experiments": {
                     "properties": {
                         "accelerator": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "curated_relation": {
                             "type": "boolean"
                         },
                         "experiment": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "institution": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "legacy_name": {
                             "copy_to": "facet_experiment",
-                            "type": "string"
+                            "type": "text"
                         },
                         "recid": {
                             "type": "integer"
@@ -109,7 +109,7 @@
                         "record": {
                             "properties": {
                                 "$ref": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
@@ -120,25 +120,25 @@
                 "acquisition_source": {
                     "properties": {
                         "datetime": {
-                            "type": "string"
+                            "type": "date"
                         },
                         "email": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "internal_uid": {
                             "type": "integer"
                         },
                         "method": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "orcid": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "submission_number": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
@@ -147,16 +147,16 @@
                     "properties": {
                         "categories": {
                             "copy_to": "facet_arxiv_categories",
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "value": {
                             "fields": {
                                 "raw": {
-                                    "analyzer": "lowercase_analyzer",
-                                    "type": "string"
+                                    "normalizer": "lowercase_normalizer",
+                                    "type": "keyword"
                                 }
                             },
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -180,82 +180,78 @@
                                 "record": {
                                     "properties": {
                                         "$ref": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         }
                                     },
                                     "type": "object"
                                 },
                                 "value": {
-                                    "type": "string"
+                                    "type": "text"
                                 }
                             },
                             "type": "object"
                         },
                         "alternative_names": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "credit_roles": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "curated_relation": {
                             "type": "boolean"
                         },
                         "emails": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "full_name": {
                             "analyzer": "author_name_analyzer",
                             "copy_to": "facet_author_name",
                             "fields": {
                                 "raw": {
-                                    "index": "not_analyzed",
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
-                            "type": "string"
+                            "type": "text"
                         },
                         "full_name_unicode_normalized": {
-                            "index": "not_analyzed",
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "ids": {
                             "properties": {
                                 "schema": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 },
                                 "value": {
                                     "fields": {
                                         "raw": {
-                                            "index": "not_analyzed",
-                                            "type": "string"
+                                            "type": "keyword"
                                         },
                                         "search": {
                                             "analyzer": "lowercase_analyzer",
-                                            "type": "string"
+                                            "type": "text"
                                         }
                                     },
-                                    "type": "string"
+                                    "type": "text"
                                 }
                             },
                             "type": "object"
                         },
                         "inspire_roles": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "name_suggest": {
                             "type": "completion"
                         },
                         "name_variations": {
-                            "index": "not_analyzed",
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "raw_affiliations": {
                             "properties": {
                                 "source": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 },
                                 "value": {
-                                    "type": "string"
+                                    "type": "text"
                                 }
                             },
                             "type": "object"
@@ -266,7 +262,7 @@
                         "record": {
                             "properties": {
                                 "$ref": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
@@ -274,14 +270,13 @@
                         "signature_block": {
                             "fields": {
                                 "raw": {
-                                    "index": "not_analyzed",
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
-                            "type": "string"
+                            "type": "text"
                         },
                         "uuid": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "nested"
@@ -289,10 +284,10 @@
                 "book_series": {
                     "properties": {
                         "title": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "volume": {
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -311,13 +306,13 @@
                         "record": {
                             "properties": {
                                 "$ref": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
                         },
                         "value": {
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -328,16 +323,16 @@
                 "copyright": {
                     "properties": {
                         "holder": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "material": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "statement": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "url": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "year": {
                             "type": "integer"
@@ -349,7 +344,7 @@
                     "type": "boolean"
                 },
                 "corporate_author": {
-                    "type": "string"
+                    "type": "text"
                 },
                 "deleted": {
                     "type": "boolean"
@@ -360,18 +355,18 @@
                 "deleted_records": {
                     "properties": {
                         "$ref": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
                 },
                 "document_type": {
-                    "type": "string"
+                    "type": "keyword"
                 },
                 "documents": {
                     "properties": {
                         "description": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "fulltext": {
                             "type": "boolean"
@@ -380,19 +375,19 @@
                             "type": "boolean"
                         },
                         "key": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "material": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "original_url": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "url": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
@@ -400,19 +395,19 @@
                 "dois": {
                     "properties": {
                         "material": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "value": {
                             "fields": {
                                 "raw": {
-                                    "analyzer": "lowercase_analyzer",
-                                    "type": "string"
+                                    "normalizer": "lowercase_normalizer",
+                                    "type": "keyword"
                                 }
                             },
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -422,67 +417,61 @@
                     "type": "date"
                 },
                 "editions": {
-                    "type": "string"
+                    "type": "text"
                 },
                 "energy_ranges": {
-                    "type": "string"
+                    "type": "text"
                 },
                 "external_system_identifiers": {
                     "properties": {
                         "schema": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "value": {
                             "fields": {
                                 "raw": {
-                                    "index": "not_analyzed",
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
                 },
                 "facet_arxiv_categories": {
-                    "index": "not_analyzed",
-                    "type": "string"
+                    "type": "keyword"
                 },
                 "facet_author_name": {
-                    "index": "not_analyzed",
-                    "type": "string"
+                    "type": "keyword"
                 },
                 "facet_experiment": {
-                    "index": "not_analyzed",
-                    "type": "string"
+                    "type": "keyword"
                 },
                 "facet_inspire_categories": {
-                    "index": "not_analyzed",
-                    "type": "string"
+                    "type": "keyword"
                 },
                 "facet_inspire_doc_type": {
-                    "index": "not_analyzed",
-                    "type": "string"
+                    "type": "keyword"
                 },
                 "figures": {
                     "properties": {
                         "caption": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "key": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "label": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "material": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "url": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
@@ -490,13 +479,13 @@
                 "funding_info": {
                     "properties": {
                         "agency": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "grant_number": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "project_number": {
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -511,10 +500,10 @@
                             "type": "date"
                         },
                         "place": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "publisher": {
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -522,11 +511,11 @@
                 "inspire_categories": {
                     "properties": {
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "term": {
                             "copy_to": "facet_inspire_categories",
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
@@ -537,16 +526,16 @@
                             "type": "completion"
                         },
                         "medium": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "value": {
                             "fields": {
                                 "raw": {
-                                    "analyzer": "lowercase_analyzer",
-                                    "type": "string"
+                                    "normalizer": "lowercase_normalizer",
+                                    "type": "keyword"
                                 }
                             },
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -554,19 +543,19 @@
                 "keywords": {
                     "properties": {
                         "schema": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "value": {
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
                 },
                 "languages": {
-                    "type": "string"
+                    "type": "keyword"
                 },
                 "legacy_creation_date": {
                     "format": "yyyy||yyyy-MM||yyyy-MM-dd",
@@ -575,16 +564,16 @@
                 "license": {
                     "properties": {
                         "imposing": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "license": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "material": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "url": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
@@ -595,7 +584,7 @@
                 "new_record": {
                     "properties": {
                         "$ref": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
@@ -606,16 +595,16 @@
                 "persistent_identifiers": {
                     "properties": {
                         "material": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "schema": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "value": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
@@ -627,10 +616,10 @@
                 "public_notes": {
                     "properties": {
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "value": {
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -639,13 +628,13 @@
                     "properties": {
                         "artid": {
                             "copy_to": "publication_info.page_artid",
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "cnum": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "conf_acronym": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "conference_recid": {
                             "type": "integer"
@@ -653,7 +642,7 @@
                         "conference_record": {
                             "properties": {
                                 "$ref": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
@@ -662,7 +651,7 @@
                             "type": "boolean"
                         },
                         "journal_issue": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "journal_recid": {
                             "type": "integer"
@@ -670,7 +659,7 @@
                         "journal_record": {
                             "properties": {
                                 "$ref": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
@@ -678,30 +667,29 @@
                         "journal_title": {
                             "fields": {
                                 "raw": {
-                                    "index": "not_analyzed",
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
-                            "type": "string"
+                            "type": "text"
                         },
                         "journal_volume": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "material": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "page_artid": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "page_end": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "page_start": {
                             "copy_to": "publication_info.page_artid",
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "parent_isbn": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "parent_recid": {
                             "type": "integer"
@@ -709,16 +697,17 @@
                         "parent_record": {
                             "properties": {
                                 "$ref": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
                         },
                         "parent_report_number": {
-                            "type": "string"
+                            "analyzer": "report_number",
+                            "type": "text"
                         },
                         "pubinfo_freetext": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "year": {
                             "format": "yyyy",
@@ -728,7 +717,7 @@
                     "type": "nested"
                 },
                 "publication_type": {
-                    "type": "string"
+                    "type": "keyword"
                 },
                 "record_affiliations": {
                     "properties": {
@@ -738,12 +727,12 @@
                         "record": {
                             "properties": {
                                 "$ref": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             }
                         },
                         "value": {
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -760,13 +749,13 @@
                         "raw_refs": {
                             "properties": {
                                 "schema": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 },
                                 "source": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 },
                                 "value": {
-                                    "type": "string"
+                                    "type": "text"
                                 }
                             },
                             "type": "object"
@@ -777,7 +766,7 @@
                         "record": {
                             "properties": {
                                 "$ref": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
@@ -787,19 +776,18 @@
                                 "arxiv_eprint": {
                                     "fields": {
                                         "raw": {
-                                            "index": "not_analyzed",
-                                            "type": "string"
+                                            "type": "keyword"
                                         }
                                     },
-                                    "type": "string"
+                                    "type": "text"
                                 },
                                 "authors": {
                                     "properties": {
                                         "full_name": {
-                                            "type": "string"
+                                            "type": "text"
                                         },
                                         "inspire_role": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         }
                                     },
                                     "type": "object"
@@ -807,28 +795,27 @@
                                 "book_series": {
                                     "properties": {
                                         "title": {
-                                            "type": "string"
+                                            "type": "text"
                                         },
                                         "volume": {
-                                            "type": "string"
+                                            "type": "text"
                                         }
                                     },
                                     "type": "object"
                                 },
                                 "collaborations": {
-                                    "type": "string"
+                                    "type": "text"
                                 },
                                 "document_type": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 },
                                 "dois": {
                                     "fields": {
                                         "raw": {
-                                            "index": "not_analyzed",
-                                            "type": "string"
+                                            "type": "keyword"
                                         }
                                     },
-                                    "type": "string"
+                                    "type": "text"
                                 },
                                 "imprint": {
                                     "properties": {
@@ -837,30 +824,30 @@
                                             "type": "date"
                                         },
                                         "place": {
-                                            "type": "string"
+                                            "type": "text"
                                         },
                                         "publisher": {
-                                            "type": "string"
+                                            "type": "text"
                                         }
                                     },
                                     "type": "object"
                                 },
                                 "isbn": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 },
                                 "label": {
-                                    "type": "string"
+                                    "type": "text"
                                 },
                                 "misc": {
-                                    "type": "string"
+                                    "type": "text"
                                 },
                                 "persistent_identifiers": {
                                     "properties": {
                                         "schema": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         },
                                         "value": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         }
                                     },
                                     "type": "object"
@@ -868,37 +855,38 @@
                                 "publication_info": {
                                     "properties": {
                                         "artid": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         },
                                         "cnum": {
-                                            "type": "string"
+                                            "type": "text"
                                         },
                                         "journal_issue": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         },
                                         "journal_title": {
-                                            "type": "string"
+                                            "type": "text"
                                         },
                                         "journal_volume": {
-                                            "type": "string"
+                                            "type": "text"
                                         },
                                         "material": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         },
                                         "page_end": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         },
                                         "page_start": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         },
                                         "parent_isbn": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         },
                                         "parent_report_number": {
-                                            "type": "string"
+                                            "analyzer": "report_number",
+                                            "type": "text"
                                         },
                                         "parent_title": {
-                                            "type": "string"
+                                            "type": "text"
                                         },
                                         "year": {
                                             "format": "yyyy",
@@ -908,21 +896,22 @@
                                     "type": "object"
                                 },
                                 "report_numbers": {
-                                    "type": "string"
+                                    "analyzer": "report_number",
+                                    "type": "text"
                                 },
                                 "texkey": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 },
                                 "title": {
                                     "properties": {
                                         "source": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         },
                                         "subtitle": {
-                                            "type": "string"
+                                            "type": "text"
                                         },
                                         "title": {
-                                            "type": "string"
+                                            "type": "text"
                                         }
                                     },
                                     "type": "object"
@@ -930,10 +919,10 @@
                                 "urls": {
                                     "properties": {
                                         "description": {
-                                            "type": "string"
+                                            "type": "text"
                                         },
                                         "value": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         }
                                     },
                                     "type": "object"
@@ -952,16 +941,16 @@
                         "record": {
                             "properties": {
                                 "$ref": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
                         },
                         "relation": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "relation_freetext": {
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -972,20 +961,19 @@
                             "type": "boolean"
                         },
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "value": {
                             "fields": {
                                 "fuzzy": {
                                     "analyzer": "report_number",
-                                    "type": "string"
+                                    "type": "text"
                                 },
                                 "raw": {
-                                    "index": "not_analyzed",
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -993,7 +981,7 @@
                 "self": {
                     "properties": {
                         "$ref": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
@@ -1004,11 +992,10 @@
                 "texkeys": {
                     "fields": {
                         "raw": {
-                            "index": "not_analyzed",
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
-                    "type": "string"
+                    "type": "text"
                 },
                 "thesis_info": {
                     "properties": {
@@ -1021,7 +1008,7 @@
                             "type": "date"
                         },
                         "degree_type": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "institutions": {
                             "properties": {
@@ -1029,7 +1016,7 @@
                                     "type": "boolean"
                                 },
                                 "name": {
-                                    "type": "string"
+                                    "type": "text"
                                 },
                                 "recid": {
                                     "type": "integer"
@@ -1037,7 +1024,7 @@
                                 "record": {
                                     "properties": {
                                         "$ref": {
-                                            "type": "string"
+                                            "type": "keyword"
                                         }
                                     },
                                     "type": "object"
@@ -1051,16 +1038,16 @@
                 "title_translations": {
                     "properties": {
                         "language": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "subtitle": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "title": {
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -1075,21 +1062,21 @@
                             "fields": {
                                 "search": {
                                     "analyzer": "title_whitespace_tokenized",
-                                    "type": "string"
+                                    "type": "text"
                                 }
                             },
-                            "type": "string"
+                            "type": "text"
                         },
                         "source": {
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "subtitle": {
                             "copy_to": "titles.full_title",
-                            "type": "string"
+                            "type": "text"
                         },
                         "title": {
                             "copy_to": "titles.full_title",
-                            "type": "string"
+                            "type": "text"
                         }
                     },
                     "type": "object"
@@ -1097,10 +1084,10 @@
                 "urls": {
                     "properties": {
                         "description": {
-                            "type": "string"
+                            "type": "text"
                         },
                         "value": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
@@ -1157,6 +1144,13 @@
                     ],
                     "tokenizer": "whitespace",
                     "type": "custom"
+                }
+            },
+            "normalizer": {
+                "lowercase_normalizer": {
+                    "type": "custom",
+                    "char_filter": [],
+                    "filter": ["lowercase"]
                 }
             },
             "char_filter": {
