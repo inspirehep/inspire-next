@@ -975,7 +975,7 @@ RECORDS_REST_FACETS = {
     "records-conferences": {
         "filters": {
             "series": terms_filter('series'),
-            "inspire_categories": terms_filter('facet_inspire_categories'),
+            "inspire_categories": terms_filter('inspire_categories.term'),
         },
         "aggs": {
             "series": {
@@ -986,7 +986,7 @@ RECORDS_REST_FACETS = {
             },
             "inspire_categories": {
                 "terms": {
-                    "field": "facet_inspire_categories",
+                    "field": "inspire_categories.term",
                     "size": 20
                 }
             },
@@ -1062,7 +1062,7 @@ RECORDS_REST_FACETS = {
         "aggs": {
             "continent": {
                 "terms": {
-                    "field": "continent",
+                    "field": "regions",
                     "size": 20
                 }
             },

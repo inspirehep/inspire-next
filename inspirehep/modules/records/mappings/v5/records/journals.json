@@ -162,7 +162,7 @@
                     "type": "object"
                 },
                 "publisher": {
-                    "type": "string"
+                    "type": "keyword"
                 },
                 "refereed": {
                     "type": "boolean"

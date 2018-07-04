@@ -130,7 +130,7 @@
                             "type": "string"
                         },
                         "term": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
@@ -187,13 +187,13 @@
                     "type": "object"
                 },
                 "ranks": {
-                    "type": "string"
+                    "type": "keyword"
                 },
                 "reference_email": {
                     "type": "string"
                 },
                 "regions": {
-                    "type": "string"
+                    "type": "keyword"
                 },
                 "self": {
                     "properties": {

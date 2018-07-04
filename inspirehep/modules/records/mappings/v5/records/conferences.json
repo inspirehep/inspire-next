@@ -124,7 +124,7 @@
                             "type": "string"
                         },
                         "term": {
-                            "type": "string"
+                            "type": "keyword"
                         }
                     },
                     "type": "object"
