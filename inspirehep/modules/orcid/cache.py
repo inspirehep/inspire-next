@@ -30,7 +30,6 @@ from redis import StrictRedis
 from StringIO import StringIO
 
 from .converter import OrcidConverter
-from .exceptions import EmptyPutcodeError
 
 
 class OrcidCache(object):
@@ -68,9 +67,12 @@ class OrcidCache(object):
             putcode (string): the putcode used to push the record to ORCID.
             inspire_record (InspireRecord): InspireRecord instance. If provided,
              the hash for the record content is re-computed.
+
+        Raises:
+            ValueError: when the putcode is empty.
         """
         if not putcode:
-            raise EmptyPutcodeError
+            raise ValueError('Empty putcode not allowed')
 
         data = {'putcode': putcode}
 

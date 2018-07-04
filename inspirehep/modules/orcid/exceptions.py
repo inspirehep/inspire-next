@@ -48,7 +48,3 @@ class DuplicatedExternalIdentifiersError(BaseOrcidApiException):
 
 class PutcodeNotFoundInCacheException(BaseOrcidException):
     pass
-
-
-class EmptyPutcodeError(BaseOrcidException):
-    pass
