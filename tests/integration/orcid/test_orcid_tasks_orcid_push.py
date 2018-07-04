@@ -30,11 +30,19 @@ import re
 
 from redis import StrictRedis
 
-import inspirehep.modules.orcid.tasks as tasks
-from inspirehep.modules.orcid.tasks import (
-    attempt_push,
-    orcid_push,
-    recache_all_author_putcodes
+from inspirehep.modules.orcid.api import recache_author_putcodes
+from inspirehep.modules.orcid.tasks import orcid_push
+
+from utils import override_config
+
+
+CONFIG = dict(
+    ORCID_SANDBOX=True,
+    SERVER_NAME='https://labs.inspirehep.net',
+    ORCID_APP_CREDENTIALS={
+        'consumer_key': 'CHANGE_ME',
+        'consumer_secret': 'CHANGE_ME'
+    }
 )
 
 
@@ -54,7 +62,6 @@ def redis_setup(app):
 
 @pytest.mark.vcr()
 def test_push_to_orcid_same_with_cache(
-    mock_config,
     vcr_cassette,
     redis_setup,
 ):
@@ -62,11 +69,12 @@ def test_push_to_orcid_same_with_cache(
     orcid = '0000-0002-2169-2152'
     token = 'fake-token'
 
-    # Push as new
-    orcid_push(orcid, rec_id, token)
+    with override_config(**CONFIG):
+        # Push as new
+        orcid_push(orcid, rec_id, token)
 
-    # Push the same record again
-    orcid_push(orcid, rec_id, token)
+        # Push the same record again
+        orcid_push(orcid, rec_id, token)
 
     # Check that the update request didn't happen:
     assert vcr_cassette.all_played
@@ -74,7 +82,6 @@ def test_push_to_orcid_same_with_cache(
 
 @pytest.mark.vcr()
 def test_push_to_orcid_update_with_cache(
-    mock_config,
     vcr_cassette,
     redis_setup,
 ):
@@ -82,11 +89,12 @@ def test_push_to_orcid_update_with_cache(
     orcid = '0000-0002-2169-2152'
     token = 'fake-token'
 
-    # Push as new
-    orcid_push(orcid, rec_id, token)
+    with override_config(**CONFIG):
+        # Push as new
+        orcid_push(orcid, rec_id, token)
 
-    # Push the updated record
-    orcid_push(orcid, rec_id, token)
+        # Push the updated record
+        orcid_push(orcid, rec_id, token)
 
     # Check that the update happened:
     assert vcr_cassette.all_played
@@ -94,7 +102,6 @@ def test_push_to_orcid_update_with_cache(
 
 @pytest.mark.vcr()
 def test_push_to_orcid_update_no_cache(
-    mock_config,
     vcr_cassette,
     redis_setup,
 ):
@@ -102,8 +109,9 @@ def test_push_to_orcid_update_no_cache(
     orcid = '0000-0002-2169-2152'
     token = 'fake-token'
 
-    # Push update
-    orcid_push(orcid, rec_id, token)
+    with override_config(**CONFIG):
+        # Push update
+        orcid_push(orcid, rec_id, token)
 
     # Check that the record was added:
     assert vcr_cassette.all_played
@@ -111,7 +119,6 @@ def test_push_to_orcid_update_no_cache(
 
 @pytest.mark.vcr()
 def test_push_to_orcid_with_putcode_but_without_hash(
-    mock_config,
     vcr_cassette,
     redis_setup,
 ):
@@ -119,52 +126,15 @@ def test_push_to_orcid_with_putcode_but_without_hash(
     orcid = '0000-0002-2169-2152'
     token = 'fake-token'
 
-    # Fetch the putcodes, no hashes present yet
-    recache_all_author_putcodes(orcid, token)
+    with override_config(**CONFIG):
+        # Fetch the putcodes, no hashes present yet
+        recache_author_putcodes(orcid, token)
 
-    # Push the record
-    orcid_push(orcid, rec_id, token)
+        # Push the record
+        orcid_push(orcid, rec_id, token)
 
     # Check that the update request didn't happen:
     assert vcr_cassette.all_played
-
-
-@pytest.mark.parametrize(
-    '_recid,_put_code',
-    [
-        (1375491, '1001'),
-        (524480, '1002'),
-        (701585, '1003'),
-    ]
-)
-def test_push_to_orcid_verify_correct_being_pushed(
-        redis_setup,
-        mock_config,
-        monkeypatch,
-        _recid,
-        _put_code,
-):
-    _orcid = '0000-0002-2152-2169'
-
-    def _get_author_putcodes(orcid, oauth_token):
-        return [
-            (1375491, '1001'),
-            (524480, '1002'),
-            (701585, '1003'),
-        ]
-
-    def _push_record_with_orcid(recid, orcid, oauth_token, put_code=None, old_hash=None):
-        assert recid == str(_recid)
-        assert orcid == _orcid
-        assert put_code == _put_code
-        assert old_hash is None
-
-        return put_code, 'new-hash'
-
-    monkeypatch.setattr(tasks, 'get_author_putcodes', _get_author_putcodes)
-    monkeypatch.setattr(tasks, 'push_record_with_orcid', _push_record_with_orcid)
-
-    attempt_push(_orcid, _recid, 'fake-token')
 
 
 def test_feature_flag_orcid_push_whitelist_regex_none():
@@ -202,39 +172,39 @@ def test_orcid_push_feature_flag_orcid_push_whitelist_regex_any(api):
     orcid = '0000-0002-7638-5686'
     regex = '.*'
 
-    with mock.patch('inspirehep.modules.orcid.tasks.attempt_push') as mock_attempt_push, \
+    with mock.patch('inspirehep.modules.orcid.tasks.push_record_with_orcid') as mock_push_record_with_orcid, \
             mock.patch.dict(
                 'inspirehep.modules.orcid.tasks.current_app.config', {
                     'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX': regex,
                 }):
         orcid_push(orcid, 'rec_id', 'token')
 
-    mock_attempt_push.assert_called_once_with(orcid, mock.ANY, mock.ANY)
+    mock_push_record_with_orcid.assert_called_once_with(oauth_token='token', orcid='0000-0002-7638-5686', recid='rec_id')
 
 
 def test_orcid_push_feature_flag_orcid_push_whitelist_regex_none(api):
     orcid = '0000-0002-7638-5686'
     regex = '^$'
 
-    with mock.patch('inspirehep.modules.orcid.tasks.attempt_push') as mock_attempt_push, \
+    with mock.patch('inspirehep.modules.orcid.tasks.push_record_with_orcid') as mock_push_record_with_orcid, \
             mock.patch.dict(
                 'inspirehep.modules.orcid.tasks.current_app.config', {
                     'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX': regex,
                 }):
         orcid_push(orcid, 'rec_id', 'token')
 
-    mock_attempt_push.assert_not_called()
+    mock_push_record_with_orcid.assert_not_called()
 
 
 def test_orcid_push_feature_flag_orcid_push_whitelist_regex_some(api):
     orcid = '0000-0002-7638-5686'
     regex = '^(0000-0002-7638-5686|0000-0002-7638-5687)$'
 
-    with mock.patch('inspirehep.modules.orcid.tasks.attempt_push') as mock_attempt_push, \
+    with mock.patch('inspirehep.modules.orcid.tasks.push_record_with_orcid') as mock_push_record_with_orcid, \
             mock.patch.dict(
                 'inspirehep.modules.orcid.tasks.current_app.config', {
                     'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX': regex,
                 }):
         orcid_push(orcid, 'rec_id', 'token')
 
-    mock_attempt_push.assert_called_once_with(orcid, mock.ANY, mock.ANY)
+    mock_push_record_with_orcid.assert_called_once_with(oauth_token='token', orcid='0000-0002-7638-5686', recid='rec_id')

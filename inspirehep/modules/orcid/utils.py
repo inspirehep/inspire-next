@@ -24,7 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import hashlib
 import re
 import time
 
@@ -33,7 +32,6 @@ from itertools import chain
 from elasticsearch_dsl import Q
 from flask import current_app
 from functools import wraps
-from StringIO import StringIO
 from sqlalchemy import cast, type_coerce
 from sqlalchemy.dialects.postgresql import JSONB
 
@@ -74,11 +72,6 @@ def _split_lists(sequence, chunk_size):
     return [
         sequence[i:i + chunk_size] for i in range(0, len(sequence), chunk_size)
     ]
-
-
-def get_orcid_recid_key(orcid, rec_id):
-    """Return the string 'orcidcache:``orcid_value``:``rec_id``'"""
-    return 'orcidcache:{}:{}'.format(orcid, rec_id)
 
 
 def get_push_access_tokens(orcids):
@@ -158,39 +151,6 @@ def get_orcids_for_push(record):
     orcids_in_authors = chain.from_iterable(get_values_for_schema(ids, 'ORCID') for ids in all_ids)
 
     return chain(orcids_on_record, orcids_in_authors)
-
-
-def hash_xml_element(element):
-    """Compute a hash for XML element comparison.
-
-    Args:
-        element (lxml.etree._Element): the XML node
-
-    Return:
-        string: hash
-    """
-    canonical_string = canonicalize_xml_element(element)
-    hash = hashlib.sha1(canonical_string)
-    return 'sha1:' + hash.hexdigest()
-
-
-def canonicalize_xml_element(element):
-    """Return a string with a canonical representation of the element.
-
-    Args:
-        element (lxml.etree._Element): the XML node
-
-    Return:
-        string: canonical representation
-    """
-    element_tree = element.getroottree()
-    output_stream = StringIO()
-    element_tree.write_c14n(
-        output_stream,
-        with_comments=False,
-        exclusive=True,
-    )
-    return output_stream.getvalue()
 
 
 def get_literature_recids_for_orcid(orcid):

@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import mock
 import re
 from contextlib import contextmanager
 
@@ -77,3 +78,21 @@ def _create_record(record_json):
     es.indices.refresh()
 
     return record_json
+
+
+def override_config(**kwargs):
+    """
+    Override Flask's current app configuration.
+    Note: it's a CONTEXT MANAGER.
+
+    Example:
+        from utils import override_config
+
+        with override_config(
+            MY_FEATURE_FLAG_ACTIVE=True,
+            MY_USERNAME='username',
+        ):
+            ...
+    """
+    from flask import current_app
+    return mock.patch.dict(current_app.config, kwargs)

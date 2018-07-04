@@ -20,28 +20,31 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""ORCID push common fixtures."""
-
 from __future__ import absolute_import, division, print_function
 
-import pytest
+
+class BaseOrcidException(Exception):
+    pass
 
 
-@pytest.fixture
-def vcr_config():
-    return {
-        'decode_compressed_response': True,
-        'filter_headers': ['Authorization'],
-        'ignore_hosts': ['test-indexer'],
-        'record_mode': 'none',
-    }
+class BaseOrcidApiException(BaseOrcidException):
+    pass
 
 
-@pytest.fixture
-def vcr(vcr):
-    vcr.register_matcher(
-        'accept',
-        lambda r1, r2: r1.headers.get('Accept') == r2.headers.get('Accept'),
-    )
-    vcr.match_on = ['method', 'scheme', 'host', 'port', 'path', 'query', 'accept']
-    return vcr
+class DuplicatedExternalIdentifiersError(BaseOrcidApiException):
+    http_status_code = 409
+    orcid_error_code = 9021
+
+    @classmethod
+    def match(cls, exception):
+        try:
+            return (
+                exception.response.status_code == cls.http_status_code and
+                exception.response.json()['error-code'] == cls.orcid_error_code
+            )
+        except Exception:
+            return False
+
+
+class PutcodeNotFoundInCacheException(BaseOrcidException):
+    pass

@@ -20,28 +20,24 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""ORCID push common fixtures."""
-
 from __future__ import absolute_import, division, print_function
 
-import pytest
+import mock
+
+from inspirehep.modules.orcid.exceptions import DuplicatedExternalIdentifiersError
 
 
-@pytest.fixture
-def vcr_config():
-    return {
-        'decode_compressed_response': True,
-        'filter_headers': ['Authorization'],
-        'ignore_hosts': ['test-indexer'],
-        'record_mode': 'none',
-    }
+def test_match():
+    mock_exception = mock.Mock()
+    mock_exception.response.status_code = 409
+    mock_exception.response.json.return_value = {'error-code': 9021}
+
+    assert DuplicatedExternalIdentifiersError.match(mock_exception)
 
 
-@pytest.fixture
-def vcr(vcr):
-    vcr.register_matcher(
-        'accept',
-        lambda r1, r2: r1.headers.get('Accept') == r2.headers.get('Accept'),
-    )
-    vcr.match_on = ['method', 'scheme', 'host', 'port', 'path', 'query', 'accept']
-    return vcr
+def test_match_unsuccessful():
+    mock_exception = mock.Mock()
+    mock_exception.response.status_code = 500
+    mock_exception.response.json.return_value = {'error-code': 9021}
+
+    assert not DuplicatedExternalIdentifiersError.match(mock_exception)
