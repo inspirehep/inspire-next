@@ -6,7 +6,7 @@
   "abstracts": [
     {
       "abstract_source_suggest": {
-        "input": "arXiv",
+        "input": "arXiv"
       },
       "source": "arXiv",
       "value": "Holographic RG flows are studied in an Einstein-dilaton theory with a general potential. The superpotential formalism is utilized in order to characterize and classify all solutions that are associated to asymptotically AdS space-times. Such solutions correspond to holographic RG flows and are characterized by their holographic $\\beta$-functions. Novel solutions are found that have exotic properties from a RG point-of view. Some have $\\beta$-functions that are defined patch-wise and lead to flows where the $\\beta$-function changes sign without the flow stopping. Others describe flows that end in non-neighboring extrema in field space. Finally others describe regular flows between two minima of the potential and correspond holographically to flows driven by the VEV of an irrelevant operator in the UV CFT."
