@@ -403,15 +403,11 @@ def populate_name_variations(sender, json, *args, **kwargs):
     for author in authors:
         full_name = author.get('full_name')
         if full_name:
-            # bais = [
-            #     el['value'] for el in author.get('ids', [])
-            #     if el['schema'] == 'INSPIRE BAI'
-            # ]
             name_variations = generate_name_variations(full_name)
 
             author.update({'name_variations': name_variations})
             author.update({'name_suggest': {
-                'input': name_variations,
+                'input': [variation for variation in name_variations if variation],
             }})
 
 
