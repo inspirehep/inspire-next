@@ -149,8 +149,7 @@ extras_require = {
         'honcho~=1.0,>=1.0.1',
     ],
     'worker-node': [
-        # FIXME: until flower > 0.9.2 is released
-        # 'flower~=0.0,>=0.9.2',
+        'flower~=0.0,>=0.9.2',
         'superlance~=1.0,>=1.0.0',
     ],
     'xrootd': [
