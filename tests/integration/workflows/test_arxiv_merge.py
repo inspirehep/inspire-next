@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import copy
 import json
 import pytest
 
@@ -48,15 +49,19 @@ from inspirehep.modules.workflows.utils import (
 from factories.db.invenio_records import TestRecordMetadata
 
 
-RECORD_WITHOUT_ACQUISITION_SOURCE_AND_CONFLICTS = {
+RECORD_SKELETON = {
     '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
     'titles': [
         {
-            'title': 'Update with conflicts title.'
+            'title': 'A record title.'
         },
     ],
     'document_type': ['article'],
     '_collections': ['Literature'],
+}
+
+RECORD_WITHOUT_ACQUISITION_SOURCE_AND_WITH_CONFLICTS = copy.deepcopy(RECORD_SKELETON)
+RECORD_WITHOUT_ACQUISITION_SOURCE_AND_WITH_CONFLICTS.update({
     'collaborations': [
         {
             'record':
@@ -66,40 +71,15 @@ RECORD_WITHOUT_ACQUISITION_SOURCE_AND_CONFLICTS = {
             'value': 'ALICE'
         },
     ],
-}
+})
 
-RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS = {
-    '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
-    'titles': [
-        {
-            'title': 'Update without conflicts title.'
-        },
-    ],
-    'document_type': ['article'],
-    '_collections': ['Literature'],
-}
+RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS = copy.deepcopy(RECORD_SKELETON)
 
-RECORD_WITHOUT_CONFLICTS = {
-    '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
-    'titles': [
-        {
-            'title': 'Update without conflicts title.'
-        },
-    ],
-    'document_type': ['article'],
-    '_collections': ['Literature'],
-    'acquisition_source': {'source': 'arXiv'},
-}
+ARXIV_RECORD_WITHOUT_CONFLICTS = copy.deepcopy(RECORD_SKELETON)
+ARXIV_RECORD_WITHOUT_CONFLICTS.update({'acquisition_source': {'source': 'arXiv'}})
 
-RECORD_WITH_CONFLICTS = {
-    '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
-    'titles': [
-        {
-            'title': 'Update with conflicts title.'
-        },
-    ],
-    'document_type': ['article'],
-    '_collections': ['Literature'],
+ARXIV_RECORD_WITH_CONFLICTS = copy.deepcopy(RECORD_SKELETON)
+ARXIV_RECORD_WITH_CONFLICTS.update({
     'acquisition_source': {'source': 'arXiv'},
     'collaborations': [
         {
@@ -110,28 +90,7 @@ RECORD_WITH_CONFLICTS = {
             'value': 'ALICE'
         },
     ],
-}
-
-ARXIV_ROOT = {
-    '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
-    'titles': [
-        {
-            'title': 'Root title.'
-        },
-    ],
-    'document_type': ['article'],
-    '_collections': ['Literature'],
-    'acquisition_source': {'source': 'arXiv'},
-    'collaborations': [
-        {
-            'record':
-                {
-                    '$ref': 'http://newlabs.inspirehep.net/api/literature/684121'
-                },
-            'value': 'ALICE'
-        },
-    ],
-}
+})
 
 
 @pytest.fixture
@@ -154,6 +113,65 @@ def disable_file_upload(workflow_app):
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
 )
+def test_merge_handles_remove_list_items_conflicts(
+        mocked_api_request_magpie,
+        mocked_beard_api,
+        workflow_app,
+        mocked_external_services,
+        disable_file_upload,
+        enable_merge_on_update,
+):
+    with patch('inspire_json_merger.config.PublisherOnArxivOperations.conflict_filters', ['acquisition_source.source']):
+        factory = TestRecordMetadata.create_from_file(
+            __name__, 'merge_record_arxiv.json', index_name='records-hep')
+
+        record_update = copy.deepcopy(ARXIV_RECORD_WITHOUT_CONFLICTS)
+        record_update.update({
+            'acquisition_source': {'source': 'publisher'},
+            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints'),
+            'book_series': [{'title': 'Lectures in Testing', 'volume': '3'}],
+        })
+
+        publisher_root = copy.deepcopy(RECORD_SKELETON)
+        publisher_root.update({
+            'acquisition_source': {'source': 'publisher'},
+            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints'),
+            'book_series': [{'title': 'IEEE Nucl.Sci.Symp.Conf.Rec.', 'volume': '1'},
+                            {'title': 'CMS Web-Based Monitoring', 'volume': '2'},
+                            {'title': 'Lectures in Testing', 'volume': '3'}],
+        })
+
+        insert_wf_record_source(json=publisher_root, record_uuid=factory.record_metadata.id, source='publisher')
+
+        eng_uuid = start('article', [record_update])
+
+        eng = WorkflowEngine.from_uuid(eng_uuid)
+        obj = eng.objects[0]
+
+        conflicts = obj.extra_data.get('conflicts')
+        assert obj.status == ObjectStatus.HALTED
+        assert conflicts == [
+            {
+                'path': '/book_series',
+                'op': 'remove',
+                'value': None,
+                '$type': u'REMOVE_FIELD'
+            }
+        ]
+
+        assert obj.extra_data.get('callback_url') is not None
+        assert obj.extra_data.get('is-update') is True
+        assert obj.extra_data['merger_root'] == record_update
+
+
+@patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
 def test_merge_with_disabled_merge_on_update_feature_flag(
         mocked_api_request_magpie,
         mocked_beard_api,
@@ -166,7 +184,7 @@ def test_merge_with_disabled_merge_on_update_feature_flag(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITHOUT_CONFLICTS
+        record_update = copy.deepcopy(ARXIV_RECORD_WITHOUT_CONFLICTS)
         record_update.update({
             'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
         })
@@ -208,7 +226,7 @@ def test_merge_without_conflicts_handles_update_without_acquisition_source_and_a
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS
+        record_update = copy.deepcopy(RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS)
         record_update.update({
             'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
         })
@@ -251,7 +269,7 @@ def test_merge_with_conflicts_handles_update_without_acquisition_source_and_acts
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITHOUT_ACQUISITION_SOURCE_AND_CONFLICTS
+        record_update = copy.deepcopy(RECORD_WITHOUT_ACQUISITION_SOURCE_AND_WITH_CONFLICTS)
         record_update.update({
             'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
         })
@@ -292,7 +310,7 @@ def test_merge_with_conflicts_rootful(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITH_CONFLICTS
+        record_update = copy.deepcopy(ARXIV_RECORD_WITH_CONFLICTS)
         record_update.update({
             'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
         })
@@ -333,16 +351,27 @@ def test_merge_without_conflicts_rootful(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITH_CONFLICTS
+        record_update = copy.deepcopy(ARXIV_RECORD_WITH_CONFLICTS)
         record_update.update({
             'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
         })
 
-        ARXIV_ROOT.update({
-            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
+        arxiv_root = copy.deepcopy(RECORD_SKELETON)
+        arxiv_root.update({
+            'acquisition_source': {'source': 'arXiv'},
+            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints'),
+            'collaborations': [
+                {
+                    'record':
+                        {
+                            '$ref': 'http://newlabs.inspirehep.net/api/literature/684121'
+                        },
+                    'value': 'ALICE'
+                },
+            ],
         })
 
-        insert_wf_record_source(json=ARXIV_ROOT, record_uuid=factory.record_metadata.id, source='arxiv')
+        insert_wf_record_source(json=arxiv_root, record_uuid=factory.record_metadata.id, source='arxiv')
 
         eng_uuid = start('article', [record_update])
 
@@ -381,7 +410,7 @@ def test_merge_without_conflicts_callback_url(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITHOUT_CONFLICTS
+        record_update = copy.deepcopy(ARXIV_RECORD_WITHOUT_CONFLICTS)
         record_update.update({
             'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
         })
@@ -438,7 +467,7 @@ def test_merge_with_conflicts_callback_url(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITH_CONFLICTS
+        record_update = copy.deepcopy(ARXIV_RECORD_WITH_CONFLICTS)
         record_update.update({
             'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
         })
@@ -507,7 +536,7 @@ def test_merge_with_conflicts_callback_url_and_resolve(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITH_CONFLICTS
+        record_update = copy.deepcopy(ARXIV_RECORD_WITH_CONFLICTS)
         record_update.update({
             'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
         })
@@ -582,7 +611,7 @@ def test_merge_callback_url_with_malformed_workflow(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITH_CONFLICTS
+        record_update = copy.deepcopy(ARXIV_RECORD_WITH_CONFLICTS)
         record_update.update({
             'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
         })
