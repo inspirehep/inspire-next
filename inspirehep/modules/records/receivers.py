@@ -192,32 +192,26 @@ def populate_bookautocomplete(sender, json, *args, **kwargs):
     if 'book' not in json.get('document_type', []):
         return
 
-    isbns = json.get('isbns', [])
-    if isbns:
-        for isbn in isbns:
-            isbn['suggest'] = isbn['value']
+    paths = [
+        'imprints.date',
+        'imprints.publisher',
+        'isbns.value',
+    ]
 
-    imprints = json.get('imprints', [])
-    if imprints:
-        for isbn in imprints:
-            suggests = []
-            if isbn['date']:
-                suggests.append(isbn['date'])
+    authors = force_list(get_value(json, 'authors.full_name', default=[]))
+    titles = force_list(get_value(json, 'titles.title', default=[]))
 
-            if isbn['publisher']:
-                suggests.append(isbn['date'])
+    input_values = list(chain.from_iterable(
+        force_list(get_value(json, path, default=[])) for path in paths))
+    input_values.extend(authors)
+    input_values.extend(titles)
+    input_values = [el for el in input_values if el]
 
-            isbn['suggest'] = suggests
-
-    authors = json.get('authors', [])
-    if authors:
-        for author in authors:
-            author['suggest'] = author['full_name']
-
-    titles = json.get('titles', [])
-    if titles:
-        for title in titles:
-            title['suggest'] = title['title']
+    json.update({
+        'bookautocomplete': {
+            'input': input_values,
+        },
+    })
 
 
 def populate_inspire_document_type(sender, json, *args, **kwargs):
