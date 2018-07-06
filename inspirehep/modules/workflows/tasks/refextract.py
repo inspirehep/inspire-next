@@ -274,10 +274,12 @@ def match_reference_with_config(reference, config, previous_matched_recid=None):
     except KeyError:
         pass
 
-    matched_records = dedupe_list(list(match(reference, config)))
-    same_as_previous = any(matched_record['_source']['control_number'] == previous_matched_recid for matched_record in matched_records)
-    if len(matched_records) == 1:
-        _add_match_to_reference(reference, matched_records[0]['_source']['control_number'], config['index'])
+    matched_recids = [matched_record['_source']['control_number'] for matched_record in match(reference, config)]
+    matched_recids = dedupe_list(matched_recids)
+
+    same_as_previous = any(matched_recid == previous_matched_recid for matched_recid in matched_recids)
+    if len(matched_recids) == 1:
+        _add_match_to_reference(reference, matched_recids[0], config['index'])
     elif same_as_previous:
         _add_match_to_reference(reference, previous_matched_recid, config['index'])
 
