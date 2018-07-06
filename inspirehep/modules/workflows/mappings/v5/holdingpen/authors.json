@@ -11,6 +11,9 @@
                     "properties": {
                         "is-update": {
                             "type": "boolean"
+                        },
+                        "_action": {
+                            "type": "keyword"
                         }
                     },
                     "type": "object"

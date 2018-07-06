@@ -63,7 +63,7 @@ define([
         }.bind(this));
       }.bind(this),
       displayKey: function(data) {
-        return data.text;
+        return data._source.short_title;
       },
       templates: {
         empty: function(data) {
