@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from mock import patch
+
 from inspire_schemas.api import load_schema, validate
 from inspire_utils.record import get_value
 from inspirehep.modules.workflows.tasks.refextract import (
@@ -369,3 +371,50 @@ def test_match_reference_ignores_deleted():
     reference = match_reference(reference)
 
     assert 'record' not in reference
+
+
+@patch(
+    'inspirehep.modules.workflows.tasks.refextract.match',
+    return_value=[
+        {
+            u'_score': 1.6650109,
+            u'_type': u'hep',
+            u'_id': u'AWRuwf9plgR0Y_yvhtt4',
+            u'_source': {u'control_number': 1},
+            u'_index': u'records-hep'
+        },
+        {
+            u'_score': 3.2345618,
+            u'_type': u'hep',
+            u'_id': u'AWRuwf9plgR0Y_yvhtt4',
+            u'_source': {u'control_number': 1},
+            u'_index': u'records-hep'
+        }
+    ],
+)
+def test_match_references_finds_match_when_repeated_record_with_different_scores(
+    mocked_inspire_matcher_match
+):
+    references = [
+        {
+            'reference': {
+                'publication_info': {
+                    'artid': '045',
+                    'journal_title': 'JHEP',
+                    'journal_volume': '06',
+                    'page_start': '045',
+                    'year': 2007
+                }
+            }
+        }
+    ]
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    assert validate(references, subschema) is None
+    references = match_references(references)
+
+    assert len(references) == 1
+    assert references[0]['record']['$ref'] == 'http://localhost:5000/api/literature/1'
+    assert validate(references, subschema) is None
