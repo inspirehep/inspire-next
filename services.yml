@@ -46,7 +46,7 @@ services:
       - APP_CRAWL_ONCE_PATH=/code/scrapy/crawl_once
 
   indexer:
-    image: inspirehep/elasticsearch
+    image: inspirehep/elasticsearch5
     command: gosu elasticsearch env ES_JAVA_OPTS="-Xms2g -Xmx2g" elasticsearch -Ecluster.name="inspire-dev"
     entrypoint: /docker-entrypoint.sh
 
