@@ -78,7 +78,8 @@ install_requires = [
     'invenio-cache~=1.0,>=1.0.0',
     'invenio-celery~=1.0,>=1.0.0',
     'invenio-classifier~=1.0,>=1.3.2',
-    'invenio-collections>=1.0.0a4',
+    # Until invenio-collections support ES5:
+    # 'invenio-collections>=1.0.0a4',
     'invenio-config~=1.0,>=1.0.0',
     'invenio-db[postgresql,versioning]~=1.0,>=1.0.0',
     'invenio-files-rest>=1.0.0a22',
