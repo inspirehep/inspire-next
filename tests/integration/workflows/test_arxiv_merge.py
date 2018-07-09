@@ -55,17 +55,18 @@ RECORD_WITHOUT_ACQUISITION_SOURCE_AND_CONFLICTS = {
             'title': 'Update with conflicts title.'
         },
     ],
+    'arxiv_eprints': [
+        {
+            'categories': [
+                'hep-lat',
+                'hep-th'
+            ],
+            'value': '1703.04802'
+        }
+    ],
     'document_type': ['article'],
     '_collections': ['Literature'],
-    'collaborations': [
-        {
-            'record':
-                {
-                    '$ref': 'http://newlabs.inspirehep.net/api/literature/684121'
-                },
-            'value': 'ALICE'
-        },
-    ],
+    'number_of_pages': 42,
 }
 
 RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS = {
@@ -74,6 +75,15 @@ RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS = {
         {
             'title': 'Update without conflicts title.'
         },
+    ],
+    'arxiv_eprints': [
+        {
+            'categories': [
+                'hep-lat',
+                'hep-th'
+            ],
+            'value': '1703.04802'
+        }
     ],
     'document_type': ['article'],
     '_collections': ['Literature'],
@@ -85,6 +95,15 @@ RECORD_WITHOUT_CONFLICTS = {
         {
             'title': 'Update without conflicts title.'
         },
+    ],
+    'arxiv_eprints': [
+        {
+            'categories': [
+                'hep-lat',
+                'hep-th'
+            ],
+            'value': '1703.04802'
+        }
     ],
     'document_type': ['article'],
     '_collections': ['Literature'],
@@ -98,40 +117,22 @@ RECORD_WITH_CONFLICTS = {
             'title': 'Update with conflicts title.'
         },
     ],
+    'arxiv_eprints': [
+        {
+            'categories': [
+                'hep-lat',
+                'hep-th'
+            ],
+            'value': '1703.04802'
+        }
+    ],
     'document_type': ['article'],
     '_collections': ['Literature'],
     'acquisition_source': {'source': 'arXiv'},
-    'collaborations': [
-        {
-            'record':
-                {
-                    '$ref': 'http://newlabs.inspirehep.net/api/literature/684121'
-                },
-            'value': 'ALICE'
-        },
-    ],
+    'number_of_pages': 42,
 }
 
-ARXIV_ROOT = {
-    '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
-    'titles': [
-        {
-            'title': 'Root title.'
-        },
-    ],
-    'document_type': ['article'],
-    '_collections': ['Literature'],
-    'acquisition_source': {'source': 'arXiv'},
-    'collaborations': [
-        {
-            'record':
-                {
-                    '$ref': 'http://newlabs.inspirehep.net/api/literature/684121'
-                },
-            'value': 'ALICE'
-        },
-    ],
-}
+ARXIV_ROOT = RECORD_WITH_CONFLICTS
 
 
 @pytest.fixture
@@ -167,10 +168,6 @@ def test_merge_with_disabled_merge_on_update_feature_flag(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
         record_update = RECORD_WITHOUT_CONFLICTS
-        record_update.update({
-            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
-        })
-
         eng_uuid = start('article', [record_update])
 
         eng = WorkflowEngine.from_uuid(eng_uuid)
@@ -209,9 +206,6 @@ def test_merge_without_conflicts_handles_update_without_acquisition_source_and_a
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
         record_update = RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS
-        record_update.update({
-            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
-        })
 
         eng_uuid = start('article', [record_update])
 
@@ -248,13 +242,10 @@ def test_merge_with_conflicts_handles_update_without_acquisition_source_and_acts
         enable_merge_on_update,
 ):
     with patch('inspire_json_merger.config.PublisherOnArxivOperations.conflict_filters', ['acquisition_source.source']):
-        factory = TestRecordMetadata.create_from_file(
+        TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
         record_update = RECORD_WITHOUT_ACQUISITION_SOURCE_AND_CONFLICTS
-        record_update.update({
-            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
-        })
 
         # By default the root is {}.
 
@@ -265,7 +256,7 @@ def test_merge_with_conflicts_handles_update_without_acquisition_source_and_acts
 
         conflicts = obj.extra_data.get('conflicts')
         assert obj.status == ObjectStatus.HALTED
-        assert len(conflicts) == 2
+        assert len(conflicts) == 1
 
         assert obj.extra_data.get('callback_url') is not None
         assert obj.extra_data.get('is-update') is True
@@ -289,13 +280,10 @@ def test_merge_with_conflicts_rootful(
         enable_merge_on_update,
 ):
     with patch('inspire_json_merger.config.ArxivOnArxivOperations.conflict_filters', ['acquisition_source.source']):
-        factory = TestRecordMetadata.create_from_file(
+        TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
         record_update = RECORD_WITH_CONFLICTS
-        record_update.update({
-            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
-        })
 
         # By default the root is {}.
 
@@ -334,13 +322,6 @@ def test_merge_without_conflicts_rootful(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
         record_update = RECORD_WITH_CONFLICTS
-        record_update.update({
-            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
-        })
-
-        ARXIV_ROOT.update({
-            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
-        })
 
         insert_wf_record_source(json=ARXIV_ROOT, record_uuid=factory.record_metadata.id, source='arxiv')
 
@@ -382,9 +363,6 @@ def test_merge_without_conflicts_callback_url(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
         record_update = RECORD_WITHOUT_CONFLICTS
-        record_update.update({
-            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
-        })
 
         eng_uuid = start('article', [record_update])
 
@@ -439,9 +417,6 @@ def test_merge_with_conflicts_callback_url(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
         record_update = RECORD_WITH_CONFLICTS
-        record_update.update({
-            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
-        })
 
         eng_uuid = start('article', [record_update])
 
@@ -508,9 +483,6 @@ def test_merge_with_conflicts_callback_url_and_resolve(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
         record_update = RECORD_WITH_CONFLICTS
-        record_update.update({
-            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
-        })
 
         eng_uuid = start('article', [record_update])
 
@@ -529,7 +501,7 @@ def test_merge_with_conflicts_callback_url_and_resolve(
         assert obj.extra_data['merger_root'] == record_update
 
         # resolve conflicts
-        obj.data['collaborations'] = factory.record_metadata.json.get('collaborations')
+        obj.data['number_of_pages'] = factory.record_metadata.json.get('number_of_pages')
         del obj.extra_data['conflicts']
 
         payload = {
@@ -583,9 +555,6 @@ def test_merge_callback_url_with_malformed_workflow(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
         record_update = RECORD_WITH_CONFLICTS
-        record_update.update({
-            'arxiv_eprints': factory.record_metadata.json.get('arxiv_eprints')
-        })
 
         eng_uuid = start('article', [record_update])
 

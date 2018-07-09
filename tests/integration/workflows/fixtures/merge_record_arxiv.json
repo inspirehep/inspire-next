@@ -15,25 +15,10 @@
         "value": "1703.04802"
       }
     ],
-    "collaborations": [
-      {
-        "record":
-        {
-          "$ref": "http://newlabs.inspirehep.net/api/literature/684121"
-        },
-        "value": "ATLAS"
-      },
-      {
-        "record":
-        {
-          "$ref": "http://newlabs.inspirehep.net/api/literature/684122"
-        },
-        "value": "CMS"
-      }
-    ],
     "document_type": [
       "article"
     ],
+    "number_of_pages": 5,
     "titles": [
       {
         "source": "arXiv",
