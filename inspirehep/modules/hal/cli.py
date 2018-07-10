@@ -26,7 +26,7 @@ import click
 
 from flask.cli import with_appcontext
 
-from .bulk_push import run
+from inspirehep.modules.hal.bulk_push import run
 
 
 @click.group()
@@ -37,4 +37,22 @@ def hal():
 @hal.command()
 @with_appcontext
 def push():
-    run()
+    click.echo('>> PUSH TO HAL\n')
+    username = raw_input('Username: ')
+    password = raw_input('Password: ')
+    limit = raw_input('Limit the query? [number, 0 means no limit] ')
+    limit = int(limit)
+    yield_amt = raw_input('Yield amount? [suggested 100] ')
+    yield_amt = int(yield_amt)
+    if yield_amt < 10:
+        raise Exception('Yield amount should be >= 10')
+    click.echo('\n')
+
+    total, now, ok, ko = run(
+        username=username,
+        password=password,
+        limit=limit,
+        yield_amt=yield_amt,
+    )
+
+    click.echo('%s records processed in %s: %s ok, %s ko' % (total, now, ok, ko))
