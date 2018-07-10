@@ -219,6 +219,8 @@ def test_merge_without_conflicts_handles_update_without_acquisition_source_and_a
 
         assert obj.extra_data.get('callback_url') is None
         assert obj.extra_data.get('is-update') is True
+        assert obj.extra_data['merger_head_revision'] == 0
+        assert obj.extra_data['merger_original_root'] == {}
 
         # source us unknown, so no new root is saved.
         roots = read_all_wf_record_sources(factory.record_metadata.id)
@@ -261,6 +263,8 @@ def test_merge_with_conflicts_handles_update_without_acquisition_source_and_acts
         assert obj.extra_data.get('callback_url') is not None
         assert obj.extra_data.get('is-update') is True
         assert obj.extra_data['merger_root'] == record_update
+        assert obj.extra_data['merger_head_revision'] == 0
+        assert obj.extra_data['merger_original_root'] == {}
 
 
 @patch(
@@ -299,6 +303,8 @@ def test_merge_with_conflicts_rootful(
         assert obj.extra_data.get('callback_url') is not None
         assert obj.extra_data.get('is-update') is True
         assert obj.extra_data['merger_root'] == record_update
+        assert obj.extra_data['merger_head_revision'] == 0
+        assert obj.extra_data['merger_original_root'] == {}
 
 
 @patch(
@@ -337,6 +343,8 @@ def test_merge_without_conflicts_rootful(
 
         assert obj.extra_data.get('callback_url') is None
         assert obj.extra_data.get('is-update') is True
+        assert obj.extra_data['merger_head_revision'] == 0
+        assert obj.extra_data['merger_original_root'] == ARXIV_ROOT
 
         updated_root = read_wf_record_source(factory.record_metadata.id, 'arxiv')
         assert updated_root.json == record_update
