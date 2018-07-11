@@ -698,6 +698,28 @@ def start_edit_article_workflow(recid):
     return redirect(location=url, code=302)
 
 
+@workflow_blueprint.route('/inspect_merge/<int:holdingpen_id>', methods=['GET'])
+def inspect_merge(holdingpen_id):
+    wf = workflow_object_class.get(holdingpen_id)
+    revision_id = wf.extra_data.get('merger_head_revision', None)
+    if revision_id is None:
+        abort(400, 'Cannot inspect merge operation on this workflow')
+
+    root = wf.extra_data.get('merger_original_root')
+    update = wf.extra_data['merger_root']
+    merged = get_db_record('lit', wf.data['control_number'])
+    # XXX merged.revisions[revision_id] should work if not for the messed up
+    # non-consecutive versions in prod
+    head = merged.model.versions.filter_by(version_id=(revision_id + 1)).one().json
+
+    return jsonify(
+        root=root,
+        head=head,
+        update=update,
+        merged=merged
+    )
+
+
 callback_resolve_validation = ResolveValidationResource.as_view(
     'callback_resolve_validation')
 callback_resolve_merge_conflicts = ResolveMergeResource.as_view(
