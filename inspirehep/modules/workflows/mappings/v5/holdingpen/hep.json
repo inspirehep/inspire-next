@@ -38,12 +38,10 @@
                 "_workflow": {
                     "properties": {
                         "status": {
-                            "index": "not_analyzed",
-                            "type": "string"
+                            "type": "keyword"
                         },
                         "workflow_name": {
-                            "index": "not_analyzed",
-                            "type": "string"
+                            "type": "keyword"
                         }
                     }
                 },
@@ -55,12 +53,10 @@
                                     "type": "date"
                                 },
                                 "method": {
-                                    "index": "not_analyzed",
-                                    "type": "string"
+                                    "type": "keyword"
                                 },
                                 "source": {
-                                    "index": "not_analyzed",
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
@@ -68,16 +64,16 @@
                         "arxiv_eprints": {
                             "properties": {
                                 "categories": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 },
                                 "value": {
                                     "fields": {
                                         "raw": {
-                                            "analyzer": "lowercase_analyzer",
-                                            "type": "string"
+                                            "normalizer": "lowercase_normalizer",
+                                            "type": "keyword"
                                         }
                                     },
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
@@ -85,19 +81,19 @@
                         "dois": {
                             "properties": {
                                 "material": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 },
                                 "source": {
-                                    "type": "string"
+                                    "type": "keyword"
                                 },
                                 "value": {
                                     "fields": {
                                         "raw": {
-                                            "analyzer": "lowercase_analyzer",
-                                            "type": "string"
+                                            "normalizer": "lowercase_normalizer",
+                                            "type": "keyword"
                                         }
                                     },
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
@@ -105,8 +101,7 @@
                         "inspire_categories": {
                             "properties": {
                                 "term": {
-                                    "index": "not_analyzed",
-                                    "type": "string"
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
@@ -119,11 +114,11 @@
     },
     "settings": {
         "analysis": {
-            "analyzer": {
-                "lowercase_analyzer": {
-                    "filter": "lowercase",
-                    "tokenizer": "keyword",
-                    "type": "custom"
+            "normalizer": {
+                "lowercase_normalizer": {
+                    "type": "custom",
+                    "char_filter": [],
+                    "filter": ["lowercase"]
                 }
             }
         }
