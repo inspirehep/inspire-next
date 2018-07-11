@@ -105,6 +105,10 @@ def workflow_app(higgs_ontology):
         )
 
     with app.app_context():
+        db.session.close_all()
+        drop_all(app)
+        create_all(app)
+
         yield app
 
 
@@ -135,13 +139,6 @@ def create_all(app):
     init_all_storage_paths()
     init_users_and_permissions()
     init_collections()
-
-
-@pytest.fixture(autouse=True)
-def cleanup_workflows(workflow_app):
-    db.session.close_all()
-    drop_all(app=workflow_app)
-    create_all(app=workflow_app)
 
 
 @pytest.fixture
