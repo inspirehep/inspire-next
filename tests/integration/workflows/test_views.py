@@ -31,7 +31,7 @@ from invenio_db import db
 from factories.db.invenio_records import TestRecordMetadata
 
 
-def test_inspect_merge_view(isolated_app):
+def test_inspect_merge_view(workflow_app):
 
     factory = TestRecordMetadata.create_from_kwargs(
         json={'titles': [{'title': 'Curated version'}]}
@@ -68,13 +68,13 @@ def test_inspect_merge_view(isolated_app):
         'merged': factory.record_metadata.json
     }
 
-    with isolated_app.test_client() as client:
+    with workflow_app.test_client() as client:
         response = client.get('/workflows/inspect_merge/{}'.format(obj.id))
         assert response.status_code == 200
         assert json.loads(response.data) == expected
 
 
-def test_inspect_merge_view_returns_400(isolated_app):
+def test_inspect_merge_view_returns_400(workflow_app):
 
     factory = TestRecordMetadata.create_from_kwargs(
         json={'titles': [{'title': 'Curated version'}]}
@@ -87,6 +87,6 @@ def test_inspect_merge_view_returns_400(isolated_app):
     obj.save()
     db.session.commit()
 
-    with isolated_app.test_client() as client:
+    with workflow_app.test_client() as client:
         response = client.get('/workflows/inspect_merge/{}'.format(obj.id))
         assert response.status_code == 400
