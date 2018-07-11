@@ -37,13 +37,14 @@ from __future__ import absolute_import, division, print_function
 import datetime
 import time
 
-import click
-
 from flask import current_app
 
 from invenio_records.models import RecordMetadata
 from inspirehep.modules.hal.core.tei import convert_to_tei
 from inspirehep.modules.hal.core.sword import create, update
+
+
+HAL_LOG_FILE = '/opt/inspire/HAL.log'
 
 
 def _set_config():
@@ -52,18 +53,7 @@ def _set_config():
     current_app.config['HAL_EDIT_IRI'] = 'https://api.archives-ouvertes.fr/sword/'
 
 
-def run():
-    click.echo('>> PUSH TO HAL\n')
-    username = raw_input('Username: ')
-    password = raw_input('Password: ')
-    limit = raw_input('Limit the query? [number, 0 means no limit] ')
-    limit = int(limit)
-    yield_amt = raw_input('Yield amount? [suggested 100] ')
-    yield_amt = int(yield_amt)
-    if yield_amt < 10:
-        raise Exception('Yield amount should be >= 10')
-    click.echo('\n')
-
+def run(username, password, limit, yield_amt):
     start = time.time()
     _set_config()
     current_app.config['HAL_USER_NAME'] = username
@@ -71,20 +61,17 @@ def run():
     records = RecordMetadata.query.filter(RecordMetadata.json['_export_to'].op('@>')('{"HAL": true}'))
     if limit > 0:
         records = records.limit(limit)
-    # log_file = os.path.join(os.path.dirname(__file__), 'HAL.log')
-    log_file = '/opt/inspire/HAL.log'
     ok = ko = 0
-    with open(log_file, 'w') as f:
-        for i, raw_record in enumerate(records.yield_per(yield_amt)):
-            if i % 10 == 0:
+    with open(HAL_LOG_FILE, 'w') as log_file_fd:
+        for total, raw_record in enumerate(records.yield_per(yield_amt)):
+            if total % 10 == 0:
                 now = str(datetime.timedelta(seconds=time.time() - start))
-                click.echo('%s records processed in %s: %s ok, %s ko' % (i, now, ok, ko))
             record = raw_record.json
             if 'Literature' in record['_collections'] or 'HAL Hidden' in record['_collections']:
                 try:
                     tei = convert_to_tei(record)
                 except Exception as e:
-                    f.write('EXC TEI: %s %s\n' % (record['control_number'], str(e)))
+                    log_file_fd.write('EXC TEI: %s %s\n' % (record['control_number'], str(e)))
                     # ko.append(record['control_number'])
                     ko += 1
                     continue
@@ -99,10 +86,10 @@ def run():
                                 hal_id = id_['value']
                         if hal_id:
                             update(tei.encode('utf8'), hal_id.encode('utf8'))
-                            f.write('UPD: %s %s\n' % (record['control_number'], hal_id))
+                            log_file_fd.write('UPD: %s %s\n' % (record['control_number'], hal_id))
                         else:
                             receipt = create(tei.encode('utf8'))
-                            f.write('NEW: %s %s\n' % (record['control_number'], receipt.id))
+                            log_file_fd.write('NEW: %s %s\n' % (record['control_number'], receipt.id))
                         success = True
                         break
                     except Exception as e:
@@ -111,7 +98,8 @@ def run():
                     # ok.append(record['control_number'])
                     ok += 1
                 else:
-                    f.write('EXC HAL: %s %s\n' % (record['control_number'], str(e)))
+                    log_file_fd.write('EXC HAL: %s %s\n' % (record['control_number'], str(e)))
                     # ko.append(record['control_number'])
                     ko += 1
-    click.echo('%s records processed in %s: %s ok, %s ko' % (i, now, ok, ko))
+
+    return total, now, ok, ko

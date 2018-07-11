@@ -26,6 +26,5 @@
 # SWORD2 client fork
 -e git+https://github.com/inspirehep/python-client-sword2.git#egg=sword2
 
-# flower until flower > 0.9.2 is released
-# https://github.com/mher/flower/commit/30022a93bdacd2826d7ffa32b52bd3e406cb33c1
--e git+https://github.com/mher/flower.git#egg=flower
+# https://github.com/inveniosoftware/dictdiffer/pull/111
+-e git+https://github.com/inspirehep/dictdiffer.git#egg=dictdiffer

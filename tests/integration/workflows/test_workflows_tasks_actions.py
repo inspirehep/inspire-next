@@ -49,7 +49,7 @@ from mocks import (
 
 
 @pytest.fixture(scope='function')
-def insert_journals_in_db(isolated_app):
+def insert_journals_in_db(workflow_app):
     """Temporarily add few journals in the DB"""
     TestRecordMetadata.create_from_file(
         __name__, 'jou_record_refereed.json', pid_type='jou', index_name='records-journals'
@@ -59,7 +59,7 @@ def insert_journals_in_db(isolated_app):
     )
 
 
-def test_normalize_journal_titles_known_journals_with_ref(isolated_app, insert_journals_in_db):
+def test_normalize_journal_titles_known_journals_with_ref(workflow_app, insert_journals_in_db):
     record = {
         "_collections": [
             "Literature"
@@ -105,7 +105,7 @@ def test_normalize_journal_titles_known_journals_with_ref(isolated_app, insert_j
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
 
 
-def test_normalize_journal_titles_known_journals_with_ref_from_variants(isolated_app, insert_journals_in_db):
+def test_normalize_journal_titles_known_journals_with_ref_from_variants(workflow_app, insert_journals_in_db):
     record = {
         "_collections": [
             "Literature"
@@ -151,7 +151,7 @@ def test_normalize_journal_titles_known_journals_with_ref_from_variants(isolated
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
 
 
-def test_normalize_journal_titles_known_journals_no_ref(isolated_app, insert_journals_in_db):
+def test_normalize_journal_titles_known_journals_no_ref(workflow_app, insert_journals_in_db):
     record = {
         "_collections": [
             "Literature"
@@ -191,7 +191,7 @@ def test_normalize_journal_titles_known_journals_no_ref(isolated_app, insert_jou
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
 
 
-def test_normalize_journal_titles_known_journals_wrong_ref(isolated_app, insert_journals_in_db):
+def test_normalize_journal_titles_known_journals_wrong_ref(workflow_app, insert_journals_in_db):
     record = {
         "_collections": [
             "Literature"
@@ -237,7 +237,7 @@ def test_normalize_journal_titles_known_journals_wrong_ref(isolated_app, insert_
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
 
 
-def test_normalize_journal_titles_unknown_journals_with_ref(isolated_app, insert_journals_in_db):
+def test_normalize_journal_titles_unknown_journals_with_ref(workflow_app, insert_journals_in_db):
     record = {
         "_collections": [
             "Literature"
@@ -283,7 +283,7 @@ def test_normalize_journal_titles_unknown_journals_with_ref(isolated_app, insert
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1111111'}
 
 
-def test_normalize_journal_titles_unknown_journals_no_ref(isolated_app, insert_journals_in_db):
+def test_normalize_journal_titles_unknown_journals_no_ref(workflow_app, insert_journals_in_db):
     record = {
         "_collections": [
             "Literature"
@@ -349,7 +349,7 @@ def test_refextract_from_pdf(
     mocked_is_pdf_link,
     mocked_package_download,
     mocked_arxiv_download,
-    isolated_app,
+    workflow_app,
     mocked_external_services
 ):
     """Test refextract from PDF and reference matching for default Configuration
@@ -389,7 +389,7 @@ def test_refextract_from_pdf(
 
     assert validate(citing_record['acquisition_source'], subschema) is None
 
-    with mock.patch.dict(isolated_app.config, extra_config):
+    with mock.patch.dict(workflow_app.config, extra_config):
         citing_doc_workflow_uuid = start('article', [citing_record])
 
     citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)
@@ -425,7 +425,7 @@ def test_count_reference_coreness(
     mocked_is_pdf_link,
     mocked_package_download,
     mocked_arxiv_download,
-    isolated_app,
+    workflow_app,
     mocked_external_services
 ):
     cited_record_json = {
@@ -462,7 +462,7 @@ def test_count_reference_coreness(
 
     assert validate(citing_record['acquisition_source'], subschema) is None
 
-    with mock.patch.dict(isolated_app.config, extra_config):
+    with mock.patch.dict(workflow_app.config, extra_config):
         citing_doc_workflow_uuid = start('article', [citing_record])
 
     citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)

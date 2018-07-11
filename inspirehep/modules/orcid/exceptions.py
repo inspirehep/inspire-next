@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,37 +22,29 @@
 
 from __future__ import absolute_import, division, print_function
 
-import click
 
-from flask.cli import with_appcontext
-
-from inspirehep.modules.hal.bulk_push import run
+class BaseOrcidException(Exception):
+    pass
 
 
-@click.group()
-def hal():
-    """Command related to pushing records to HAL."""
+class BaseOrcidApiException(BaseOrcidException):
+    pass
 
 
-@hal.command()
-@with_appcontext
-def push():
-    click.echo('>> PUSH TO HAL\n')
-    username = raw_input('Username: ')
-    password = raw_input('Password: ')
-    limit = raw_input('Limit the query? [number, 0 means no limit] ')
-    limit = int(limit)
-    yield_amt = raw_input('Yield amount? [suggested 100] ')
-    yield_amt = int(yield_amt)
-    if yield_amt < 10:
-        raise Exception('Yield amount should be >= 10')
-    click.echo('\n')
+class DuplicatedExternalIdentifiersError(BaseOrcidApiException):
+    http_status_code = 409
+    orcid_error_code = 9021
 
-    total, now, ok, ko = run(
-        username=username,
-        password=password,
-        limit=limit,
-        yield_amt=yield_amt,
-    )
+    @classmethod
+    def match(cls, exception):
+        try:
+            return (
+                exception.response.status_code == cls.http_status_code and
+                exception.response.json()['error-code'] == cls.orcid_error_code
+            )
+        except Exception:
+            return False
 
-    click.echo('%s records processed in %s: %s ok, %s ko' % (total, now, ok, ko))
+
+class PutcodeNotFoundInCacheException(BaseOrcidException):
+    pass

@@ -29,6 +29,7 @@ import pkg_resources
 import random
 import uuid
 
+from inspirehep.modules.records.api import InspireRecord
 from invenio_records.models import RecordMetadata
 from invenio_search import current_search_client as es
 
@@ -41,10 +42,13 @@ class TestRecordMetadata(TestBaseModel):
 
     Example:
         >>> from factories.db.invenio_records import TestRecordMetadata
-        >>> factory = TestRecordMetadata.create_from_kwargs(json={})
+        >>> factory = TestRecordMetadata.create_from_kwargs(json={'name': 'joe'})
         >>> factory.record_metadata
         <RecordMetadata (transient 4661300240)>
         >>> factory.record_metadata.json
+        {'name': 'joe', '_collections': ['Literature'], 'control_number': 5, 'titles': [{'title': 'dfjMz4eAgcJS1642UvCGPSieqhnIU6DuasOBHVlHA88tGqwpHOv8Kln63wkZ'}], '$schema': 'http://localhost:5000/schemas/record/hep.json', 'document_type': ['article']}
+        >>> type(factory.inspire_record)
+        <class 'inspirehep.modules.records.api.InspireRecord'>
     """
     model_class = RecordMetadata
 
@@ -95,6 +99,10 @@ class TestRecordMetadata(TestBaseModel):
                     object_uuid=instance.record_metadata.id,
                     pid_value=instance.record_metadata.json.get('control_number'),
                     **kwargs).persistent_identifier
+
+        instance.inspire_record = InspireRecord(instance.record_metadata.json,
+                                                model=RecordMetadata)
+
         return instance
 
     @classmethod
