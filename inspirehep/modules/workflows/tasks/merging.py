@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from copy import deepcopy
 from flask import current_app
 
 from inspire_json_merger.api import merge
@@ -73,6 +74,9 @@ def merge_articles(obj, eng):
     update_source = get_source(update).lower()
     head_root = read_wf_record_source(record_uuid=head.id, source=update_source)
     head_root = head_root.json if head_root else {}
+
+    obj.extra_data['merger_head_revision'] = head.revision_id
+    obj.extra_data['merger_original_root'] = deepcopy(head_root)
 
     merged, conflicts = merge(
         head=head.dumps(),
