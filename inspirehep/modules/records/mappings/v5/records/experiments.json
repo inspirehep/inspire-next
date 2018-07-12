@@ -1,0 +1,282 @@
+{
+    "mappings": {
+        "experiments": {
+            "_all": {
+                "enabled": true
+            },
+            "date_detection": false,
+            "numeric_detection": false,
+            "properties": {
+                "$schema": {
+                    "type": "string"
+                },
+                "_collections": {
+                    "analyzer": "lowercase_analyzer",
+                    "type": "string"
+                },
+                "_full_ingestion": {
+                    "type": "boolean"
+                },
+                "_private_notes": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "accelerator": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "collaboration": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "subgroup_names": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "control_number": {
+                    "type": "integer"
+                },
+                "core": {
+                    "type": "boolean"
+                },
+                "date_approved": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "date_cancelled": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "date_completed": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "date_proposed": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "date_started": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "deleted_recids": {
+                    "type": "integer"
+                },
+                "deleted_records": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "experiment": {
+                    "properties": {
+                        "short_name": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "experimentautocomplete": {
+                    "type": "string"
+                },
+                "external_system_identifiers": {
+                    "properties": {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "inspire_categories": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "term": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "inspire_classification": {
+                    "type": "string"
+                },
+                "institutions": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "legacy_creation_date": {
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+                    "type": "date"
+                },
+                "legacy_name": {
+                    "copy_to": "experimentautocomplete",
+                    "type": "string"
+                },
+                "long_name": {
+                    "type": "string"
+                },
+                "name_variants": {
+                    "type": "string"
+                },
+                "new_recid": {
+                    "type": "integer"
+                },
+                "new_record": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "project_type": {
+                    "type": "string"
+                },
+                "public_notes": {
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "related_records": {
+                    "properties": {
+                        "curated_relation": {
+                            "type": "boolean"
+                        },
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "record": {
+                            "properties": {
+                                "$ref": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "relation": {
+                            "type": "string"
+                        },
+                        "relation_freetext": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "self": {
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "self_recid": {
+                    "type": "integer"
+                },
+                "urls": {
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            }
+        }
+    },
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "lowercase_analyzer": {
+                    "filter": "lowercase",
+                    "tokenizer": "keyword",
+                    "type": "custom"
+                }
+            }
+        }
+    }
+}

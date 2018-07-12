@@ -248,7 +248,7 @@ class JobsRecord(ESRecord, AdminToolsMixin):
             result = JobsSearch()
             return result.query({
                 'more_like_this': {
-                    'docs': [
+                    'like': [
                         {
                             '_id': id_,
                         },
