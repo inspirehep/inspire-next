@@ -44,17 +44,19 @@ services:
       - LC_IDENTIFICATION=en_US.UTF-8
       - LC_ALL=
       - APP_CRAWL_ONCE_PATH=/code/scrapy/crawl_once
+
   indexer:
     image: inspirehep/elasticsearch
-    command: elasticsearch -Dcluster.name="inspire" -Ddiscovery.zen.ping.multicast.enabled=false
-    environment:
-      - ES_HEAP_SIZE=2g
+    command: gosu elasticsearch env ES_JAVA_OPTS="-Xms2g -Xmx2g" elasticsearch -Ecluster.name="inspire-dev"
+    entrypoint: /docker-entrypoint.sh
+
   database:
     image: postgres:9.4.5
     environment:
       - POSTGRES_PASSWORD=dbpass123
       - POSTGRES_USER=inspirehep
       - PGDATA=/var/lib/postgresql/data/pgdata
+
   static:
     image: busybox
     volumes:
