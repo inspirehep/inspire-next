@@ -580,6 +580,33 @@ def test_arxiv_plot_extract_logs_when_images_are_invalid(mock_process_tarball):
     assert '1612.00624' in obj.log._error.getvalue()
 
 
+@patch('inspirehep.modules.workflows.tasks.arxiv.process_tarball')
+def test_arxiv_plot_extract_no_file(mock_process_tarball):
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'physics.ins-det',
+                ],
+                'value': '1612.00626',
+            },
+        ],
+    }  # synthetic data
+    extra_data = {}
+    files = MockFiles({})
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    assert arxiv_plot_extract(obj, eng) is None
+    assert 'No file named=' in obj.log._info.getvalue()
+    mock_process_tarball.assert_not_called()
+
+
 def test_arxiv_derive_inspire_categories():
     schema = load_schema('hep')
     arxiv_eprints_schema = schema['properties']['arxiv_eprints']
