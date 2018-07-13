@@ -37,7 +37,11 @@ from .latexus_serializer import LATEXUSSerializer
 from .cvformatlatex_serializer import CVFORMATLATEXSerializer
 from .cvformathtml_serializer import CVFORMATHTMLSerializer
 from .cvformattext_serializer import CVFORMATTEXTSerializer
-from .schemas.json import RecordSchemaJSONUIV1, ReferencesSchemaJSONUIV1
+from .schemas.json import (
+    AuthorsSchemaJSONUIV1,
+    RecordSchemaJSONUIV1,
+    ReferencesSchemaJSONUIV1,
+)
 from .marcxml import MARCXMLSerializer
 from .response import record_responsify_nocache
 
@@ -62,6 +66,18 @@ json_literature_references_v1_search = search_responsify(
 )
 json_literature_references_v1_response = record_responsify_nocache(
     json_literature_references_v1,
+    'application/json',
+)
+
+json_literature_authors_v1 = JSONSerializer(
+    AuthorsSchemaJSONUIV1
+)
+json_literature_authors_v1_search = search_responsify(
+    json_literature_authors_v1,
+    'application/json',
+)
+json_literature_authors_v1_response = record_responsify_nocache(
+    json_literature_authors_v1,
     'application/json',
 )
 
