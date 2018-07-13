@@ -131,62 +131,66 @@ def arxiv_plot_extract(obj, eng):
     """
     arxiv_id = get_arxiv_id(obj.data)
     filename = secure_filename('{0}.tar.gz'.format(arxiv_id))
-    tarball = obj.files[filename]
 
-    if tarball:
-        with TemporaryDirectory(prefix='plot_extract') as scratch_space, \
-                retrieve_uri(tarball.file.uri, outdir=scratch_space) as tarball_file:
-            try:
-                plots = process_tarball(
-                    tarball_file,
-                    output_directory=scratch_space,
+    try:
+        tarball = obj.files[filename]
+    except KeyError:
+        obj.log.info('No file named=%s for arxiv_id %s', filename, arxiv_id)
+        return
+
+    with TemporaryDirectory(prefix='plot_extract') as scratch_space, \
+            retrieve_uri(tarball.file.uri, outdir=scratch_space) as tarball_file:
+        try:
+            plots = process_tarball(
+                tarball_file,
+                output_directory=scratch_space,
+            )
+        except (InvalidTarball, NoTexFilesFound):
+            obj.log.info(
+                'Invalid tarball %s for arxiv_id %s',
+                tarball.file.uri,
+                arxiv_id,
+            )
+            return
+        except DelegateError as err:
+            obj.log.error(
+                'Error extracting plots for %s. Report and skip.',
+                arxiv_id,
+            )
+            current_app.logger.exception(err)
+            return
+
+        if 'figures' in obj.data:
+            for figure in obj.data['figures']:
+                if figure['key'] in obj.files:
+                    del obj.files[figure['key']]
+            del obj.data['figures']
+
+        lb = LiteratureBuilder(source='arxiv', record=obj.data)
+        for index, plot in enumerate(plots):
+            plot_name = os.path.basename(plot.get('url'))
+            key = plot_name
+            if plot_name in obj.files.keys:
+                key = 'w{number}_{name}'.format(
+                    number=index,
+                    name=plot_name,
                 )
-            except (InvalidTarball, NoTexFilesFound):
-                obj.log.info(
-                    'Invalid tarball %s for arxiv_id %s',
-                    tarball.file.uri,
-                    arxiv_id,
-                )
-                return
-            except DelegateError as err:
-                obj.log.error(
-                    'Error extracting plots for %s. Report and skip.',
-                    arxiv_id,
-                )
-                current_app.logger.exception(err)
-                return
+            with open(plot.get('url')) as plot_file:
+                obj.files[key] = plot_file
 
-            if 'figures' in obj.data:
-                for figure in obj.data['figures']:
-                    if figure['key'] in obj.files:
-                        del obj.files[figure['key']]
-                del obj.data['figures']
-
-            lb = LiteratureBuilder(source='arxiv', record=obj.data)
-            for index, plot in enumerate(plots):
-                plot_name = os.path.basename(plot.get('url'))
-                key = plot_name
-                if plot_name in obj.files.keys:
-                    key = 'w{number}_{name}'.format(
-                        number=index,
-                        name=plot_name,
-                    )
-                with open(plot.get('url')) as plot_file:
-                    obj.files[key] = plot_file
-
-                lb.add_figure(
+            lb.add_figure(
+                key=key,
+                caption=''.join(plot.get('captions', [])),
+                label=plot.get('label'),
+                material='preprint',
+                url='/api/files/{bucket}/{key}'.format(
+                    bucket=obj.files[key].bucket_id,
                     key=key,
-                    caption=''.join(plot.get('captions', [])),
-                    label=plot.get('label'),
-                    material='preprint',
-                    url='/api/files/{bucket}/{key}'.format(
-                        bucket=obj.files[key].bucket_id,
-                        key=key,
-                    )
                 )
+            )
 
-            obj.data = lb.record
-            obj.log.info('Added {0} plots.'.format(len(plots)))
+        obj.data = lb.record
+        obj.log.info('Added {0} plots.'.format(len(plots)))
 
 
 @with_debug_logging
