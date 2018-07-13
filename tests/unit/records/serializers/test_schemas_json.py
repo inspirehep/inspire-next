@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 import json
 
 from inspirehep.modules.records.serializers.schemas.json import \
-    ReferencesSchemaJSONUIV1
+    AuthorsSchemaJSONUIV1, ReferencesSchemaJSONUIV1
 
 
 def test_metadata_references_items_empty():
@@ -142,5 +142,58 @@ def test_references_schema_missing_data():
         },
     }
     expected = {'metadata': {'references': []}}
+    result = json.loads(schema.dumps(record).data)
+    assert expected == result
+
+
+def test_authors_schema():
+    schema = AuthorsSchemaJSONUIV1()
+    record = {
+        'metadata': {
+            'control_number': 123,
+            'titles': [
+                {
+                    'title': 'Jessica Jones',
+                },
+            ],
+            'authors': [
+                {
+                    'full_name': 'Frank Castle',
+                },
+            ],
+            'collaborations': [{
+                'value': 'LHCb',
+            }],
+            'dois': [
+                {
+                    'value': '10.1088/1361-6633/aa5514',
+                },
+            ],
+            'arxiv_eprints': [
+                {
+                    'value': '1607.06746',
+                },
+            ],
+            'urls': [
+                {
+                    'value': 'http://sf2a.eu/semaine-sf2a/2013/proceedings/'
+                }
+            ],
+        },
+    }
+    expected = {
+        'metadata': {
+            'authors': [
+                {
+                    'full_name': 'Frank Castle'
+                }
+            ],
+            'collaborations': [
+                {
+                    'value': 'LHCb'
+                }
+            ]
+        }
+    }
     result = json.loads(schema.dumps(record).data)
     assert expected == result

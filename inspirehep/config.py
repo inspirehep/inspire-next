@@ -437,6 +437,26 @@ LITERATURE_REFERENCES_REST_ENDPOINT = {
     'update_permission_factory_imp': "inspirehep.modules.records.permissions:record_update_permission_factory",
 }
 
+LITERATURE_AUTHORS_REST_ENDPOINT = {
+    'pid_type': 'lit',
+    'search_class': 'inspirehep.modules.search:LiteratureSearch',
+    'pid_minter': 'inspire_recid_minter',
+    'pid_fetcher': 'inspire_recid_fetcher',
+    'record_serializers': {
+        'application/json': 'inspirehep.modules.records.serializers:json_literature_authors_v1_response',
+    },
+    'record_class': 'inspirehep.modules.records.api:InspireRecord',
+    'search_serializers': {
+        'application/json': 'inspirehep.modules.records.serializers:json_literature_authors_v1_search',
+    },
+    'list_route': '/literature/authors',
+    'item_route': '/literature/<pid(lit,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/authors',
+    'default_media_type': 'application/json',
+    'search_factory_imp': 'inspirehep.modules.search.search_factory:inspire_search_factory',
+    'read_permission_factory_imp': "inspirehep.modules.records.permissions:record_read_permission_factory",
+    'update_permission_factory_imp': "inspirehep.modules.records.permissions:record_update_permission_factory",
+}
+
 AUTHORS_REST_ENDPOINT = {
     'default_endpoint_prefix': True,
     'pid_type': 'aut',
@@ -805,6 +825,7 @@ RECORDS_REST_ENDPOINTS = {
     'literature': LITERATURE_REST_ENDPOINT,
     'literature_db': LITERATURE_DB_REST_ENDPOINT,
     'literature_references': LITERATURE_REFERENCES_REST_ENDPOINT,
+    'literature_authors': LITERATURE_AUTHORS_REST_ENDPOINT,
     'authors': AUTHORS_REST_ENDPOINT,
     'authors_db': AUTHORS_DB_REST_ENDPOINT,
     'authors_citations': AUTHORS_CITATION_REST_ENDPOINT,
