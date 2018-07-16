@@ -249,6 +249,7 @@ setup(
             'inspire_orcid = inspirehep.modules.orcid.tasks',
             'inspire_records = inspirehep.modules.records.tasks',
             'inspire_refextract = inspirehep.modules.refextract.tasks',
+            'inspire_hal = inspirehep.modules.hal.tasks',
         ],
         'invenio_db.alembic': [
             'inspirehep = inspirehep:alembic',
