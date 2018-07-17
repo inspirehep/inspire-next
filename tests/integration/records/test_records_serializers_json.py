@@ -39,6 +39,10 @@ def test_literature_authors_serializer_record(isolated_api_client):
             {
                 'full_name': 'Frank Castle',
             },
+            {
+                'full_name': 'Smith, John',
+                'inspire_roles': ['supervisor'],
+            },
         ],
         'collaborations': [{
             'value': 'LHCb',
@@ -68,14 +72,23 @@ def test_literature_authors_serializer_record(isolated_api_client):
     expected_metadata = {
         'authors': [
             {
-                'full_name': 'Frank Castle'
+                'full_name': 'Frank Castle',
+                'first_name': 'Frank Castle',
             }
         ],
         'collaborations': [
             {
                 'value': 'LHCb'
             }
-        ]
+        ],
+        'supervisors': [
+            {
+                'full_name': 'Smith, John',
+                'first_name': 'John',
+                'last_name': 'Smith',
+                'inspire_roles': ['supervisor'],
+            }
+        ],
     }
 
     result = json.loads(response.get_data(as_text=True))
