@@ -22,28 +22,32 @@
 
 from __future__ import absolute_import, division, print_function
 
-from elasticsearch_dsl.result import Response
+from elasticsearch_dsl.response import Response
+from elasticsearch_dsl.search import Search
 
 from inspirehep.utils.experiments import render_people, render_contributions
 
 
 def test_render_people():
-    hits = Response({
-        'hits': {
-            'hits': [
-                {
-                    '_type': 'authors',
-                    '_source': {
-                        'control_number': 1,
-                        'name': {
-                            'preferred_name': 'preferred_name',
+    hits = Response(
+        Search(),
+        {
+            'hits': {
+                'hits': [
+                    {
+                        '_type': 'authors',
+                        '_source': {
+                            'control_number': 1,
+                            'name': {
+                                'preferred_name': 'preferred_name',
+                            },
                         },
                     },
-                },
-            ],
-            'total': 1,
-        },
-    }).hits
+                ],
+                'total': 1,
+            },
+        }
+    ).hits
 
     expected = ([
         [
@@ -56,35 +60,38 @@ def test_render_people():
 
 
 def test_render_contributions():
-    hits = Response({
-        'hits': {
-            'hits': [
-                {
-                    '_type': 'hep',
-                    '_source': {
-                        'citation_count': 1,
-                        'control_number': 1,
-                        'publication_info': [
-                            {'journal_title': 'first-journal_title'},
-                        ],
-                        'titles': [
-                            {'title': 'first-title'},
-                        ],
+    hits = Response(
+        Search(),
+        {
+            'hits': {
+                'hits': [
+                    {
+                        '_type': 'hep',
+                        '_source': {
+                            'citation_count': 1,
+                            'control_number': 1,
+                            'publication_info': [
+                                {'journal_title': 'first-journal_title'},
+                            ],
+                            'titles': [
+                                {'title': 'first-title'},
+                            ],
+                        },
                     },
-                },
-                {
-                    '_type': 'hep',
-                    '_source': {
-                        'control_number': 2,
-                        'titles': [
-                            {'title': 'second-title'},
-                        ],
+                    {
+                        '_type': 'hep',
+                        '_source': {
+                            'control_number': 2,
+                            'titles': [
+                                {'title': 'second-title'},
+                            ],
+                        },
                     },
-                },
-            ],
-            'total': 2,
-        },
-    }).hits
+                ],
+                'total': 2,
+            },
+        }
+    ).hits
 
     expected = ([
         [

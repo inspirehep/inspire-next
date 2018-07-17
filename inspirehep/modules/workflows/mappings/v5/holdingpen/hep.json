@@ -1,0 +1,126 @@
+{
+    "mappings": {
+        "hep": {
+            "_all": {
+                "enabled": true
+            },
+            "dynamic": false,
+            "date_detection": false,
+            "numeric_detection": false,
+            "properties": {
+                "_extra_data": {
+                    "properties": {
+                        "_action": {
+                            "type": "keyword"
+                        },
+                        "is-update": {
+                            "type": "boolean"
+                        },
+                        "matches": {
+                            "enabled": false,
+                            "include_in_all": false,
+                            "type": "object"
+                        },
+                        "relevance_prediction": {
+                            "properties": {
+                                "decision": {
+                                    "type": "keyword"
+                                },
+                                "relevance_score": {
+                                    "type": "float"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                "_workflow": {
+                    "properties": {
+                        "status": {
+                            "type": "keyword"
+                        },
+                        "workflow_name": {
+                            "type": "keyword"
+                        }
+                    }
+                },
+                "metadata": {
+                    "properties": {
+                        "acquisition_source": {
+                            "properties": {
+                                "datetime": {
+                                    "type": "date"
+                                },
+                                "method": {
+                                    "type": "keyword"
+                                },
+                                "source": {
+                                    "type": "keyword"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "arxiv_eprints": {
+                            "properties": {
+                                "categories": {
+                                    "type": "keyword"
+                                },
+                                "value": {
+                                    "fields": {
+                                        "raw": {
+                                            "normalizer": "lowercase_normalizer",
+                                            "type": "keyword"
+                                        }
+                                    },
+                                    "type": "keyword"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "dois": {
+                            "properties": {
+                                "material": {
+                                    "type": "keyword"
+                                },
+                                "source": {
+                                    "type": "keyword"
+                                },
+                                "value": {
+                                    "fields": {
+                                        "raw": {
+                                            "normalizer": "lowercase_normalizer",
+                                            "type": "keyword"
+                                        }
+                                    },
+                                    "type": "keyword"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "inspire_categories": {
+                            "properties": {
+                                "term": {
+                                    "type": "keyword"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                }
+            }
+        }
+    },
+    "settings": {
+        "analysis": {
+            "normalizer": {
+                "lowercase_normalizer": {
+                    "type": "custom",
+                    "char_filter": [],
+                    "filter": ["lowercase"]
+                }
+            }
+        }
+    }
+}

@@ -22,7 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
-from elasticsearch_dsl.result import Response
+from elasticsearch_dsl.response import Response
+from elasticsearch_dsl.search import Search
 
 from inspirehep.utils.conferences import (
     render_conferences,
@@ -31,31 +32,34 @@ from inspirehep.utils.conferences import (
 
 
 def test_render_conferences(request_context):
-    hits = Response({
-        'hits': {
-            'hits': [
-                {
-                    '_type': 'conferences',
-                    '_source': {
-                        'address': [
-                            {'original_address': 'original_address'},
-                        ],
-                        'control_number': 1,
-                        'titles': [
-                            {'title': 'title'},
-                        ],
+    hits = Response(
+        Search(),
+        {
+            'hits': {
+                'hits': [
+                    {
+                        '_type': 'conferences',
+                        '_source': {
+                            'address': [
+                                {'original_address': 'original_address'},
+                            ],
+                            'control_number': 1,
+                            'titles': [
+                                {'title': 'title'},
+                            ],
+                        },
                     },
-                },
-                {
-                    '_type': 'conferences',
-                    '_source': {
-                        'control_number': 2,
+                    {
+                        '_type': 'conferences',
+                        '_source': {
+                            'control_number': 2,
+                        },
                     },
-                },
-            ],
-            'total': 2,
-        },
-    }).hits
+                ],
+                'total': 2,
+            },
+        }
+    ).hits
 
     expected = ([
         [
@@ -71,25 +75,28 @@ def test_render_conferences(request_context):
 
 
 def test_render_conferences_handles_unicode(request_context):
-    hits = Response({
-        'hits': {
-            'hits': [
-                {
-                    '_type': 'conference',
-                    '_source': {
-                        'address': [
-                            {'original_address': 'Paris, France'},
-                        ],
-                        'control_number': 1351301,
-                        'titles': [
-                            {'title': u'Théorie de Cordes en France'},
-                        ],
+    hits = Response(
+        Search(),
+        {
+            'hits': {
+                'hits': [
+                    {
+                        '_type': 'conference',
+                        '_source': {
+                            'address': [
+                                {'original_address': 'Paris, France'},
+                            ],
+                            'control_number': 1351301,
+                            'titles': [
+                                {'title': u'Théorie de Cordes en France'},
+                            ],
+                        },
                     },
-                },
-            ],
-            'total': 1,
-        },
-    }).hits
+                ],
+                'total': 1,
+            },
+        }
+    ).hits
 
     expected = ([
         [
@@ -105,35 +112,38 @@ def test_render_conferences_handles_unicode(request_context):
 
 
 def test_render_contributions():
-    hits = Response({
-        'hits': {
-            'hits': [
-                {
-                    '_type': 'hep',
-                    '_source': {
-                        'citation_count': 1,
-                        'control_number': 1,
-                        'publication_info': [
-                            {'journal_title': 'first-journal_title'},
-                        ],
-                        'titles': [
-                            {'title': 'first-title'},
-                        ],
+    hits = Response(
+        Search(),
+        {
+            'hits': {
+                'hits': [
+                    {
+                        '_type': 'hep',
+                        '_source': {
+                            'citation_count': 1,
+                            'control_number': 1,
+                            'publication_info': [
+                                {'journal_title': 'first-journal_title'},
+                            ],
+                            'titles': [
+                                {'title': 'first-title'},
+                            ],
+                        },
                     },
-                },
-                {
-                    '_type': 'hep',
-                    '_source': {
-                        'control_number': 2,
-                        'titles': [
-                            {'title': 'second-title'},
-                        ],
+                    {
+                        '_type': 'hep',
+                        '_source': {
+                            'control_number': 2,
+                            'titles': [
+                                {'title': 'second-title'},
+                            ],
+                        },
                     },
-                },
-            ],
-            'total': 2,
-        },
-    }).hits
+                ],
+                'total': 2,
+            },
+        }
+    ).hits
 
     expected = ([
         [
@@ -155,22 +165,25 @@ def test_render_contributions():
 
 
 def test_render_contributions_handles_unicode():
-    hits = Response({
-        'hits': {
-            'hits': [
-                {
-                    '_type': 'hep',
-                    '_source': {
-                        'control_number': 1427573,
-                        'titles': [
-                            {'title': u'Storage Ring Based EDM Search — Achievements and Goals'},
-                        ],
+    hits = Response(
+        Search(),
+        {
+            'hits': {
+                'hits': [
+                    {
+                        '_type': 'hep',
+                        '_source': {
+                            'control_number': 1427573,
+                            'titles': [
+                                {'title': u'Storage Ring Based EDM Search — Achievements and Goals'},
+                            ],
+                        },
                     },
-                },
-            ],
-            'total': 1,
-        },
-    }).hits
+                ],
+                'total': 1,
+            },
+        }
+    ).hits
 
     expected = ([
         [

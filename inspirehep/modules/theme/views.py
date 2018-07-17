@@ -437,6 +437,7 @@ def get_experiment_publications(experiment_name):
         "term": {"accelerator_experiments.experiment": experiment_name}
     }
     search = LiteratureSearch().query(query)
+    # FIXME: search_type=count is deprecated, but the whole function doesn't work anymore
     search = search.params(search_type="count")
     return search.execute().hits.total
 
@@ -452,6 +453,7 @@ def get_institution_people_datatables_rows(recid):
         "term",
         authors__affiliations__recid=recid
     )
+    # FIXME: search_type=count is deprecated, but the whole function doesn't work anymore
     query = query.params(search_type="count")
 
     query.aggs.bucket("authors", "nested", path="authors")\

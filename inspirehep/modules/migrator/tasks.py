@@ -324,11 +324,10 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
     with click.progressbar(es_scan(
             es,
             query={
-                '_source': 'references.recid',
-                'filter': {
+                'query': {
                     'exists': {
                         'field': 'references.recid'
-                    }
+                    },
                 },
                 'size': LARGE_CHUNK_SIZE
             },
