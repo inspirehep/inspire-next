@@ -98,6 +98,8 @@ install_requires = [
     'invenio-workflows-files~=1.0,>=1.0.0',
     'invenio-workflows-ui~=2.0,>=2.0.3',
     'invenio-workflows~=7.0,>=7.0.1',
+    # Pin the version of jsonschema, as not to catch alpha 3.0 release
+    'jsonschema~=2.0,>=2.6.0',
     'langdetect~=1.0,>=1.0.7',
     'latexcodec~=1.0,>=1.0.5',
     'marshmallow~=2.0,>=2.15.0',  # See: inveniosoftware/invenio-records-rest#186
