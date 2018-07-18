@@ -265,7 +265,7 @@ define(['statistics'], function(Profile) {
     return {
       require: '^profileInit',
       restrict: 'E',
-      templateUrl: '/static/js/authors/templates/statistics.html',
+      templateUrl: '/assets/js/authors/templates/statistics.html',
     };
   });
 });

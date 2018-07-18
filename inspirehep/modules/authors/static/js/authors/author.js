@@ -56,7 +56,7 @@ define(['author'], function(Author) {
     return {
       require: '^profileInit',
       restrict: 'E',
-      templateUrl: '/static/js/authors/templates/collaborators.html',
+      templateUrl: '/assets/js/authors/templates/collaborators.html',
     };
   });
 
@@ -92,7 +92,7 @@ define(['author'], function(Author) {
      return {
       require: '^profileInit',
       restrict: 'E',
-      templateUrl: '/static/js/authors/templates/position.html',
+      templateUrl: '/assets/js/authors/templates/position.html',
       scope: true,
       link: function(scope) {
         scope.positions = scope.education;
@@ -192,7 +192,7 @@ define(['author'], function(Author) {
             if (position.hasOwnProperty('rank')) {
               tempPosition['rank'] = ranks[position.rank];
 
-              if (position.rank == 'MAS' || 
+              if (position.rank == 'MAS' ||
                 position.rank == 'UG') {
                 scope.education.push(tempPosition);
               } else {
@@ -214,7 +214,7 @@ define(['author'], function(Author) {
     return {
       require: '^profileInit',
       restrict: 'E',
-      templateUrl: '/static/js/authors/templates/position.html',
+      templateUrl: '/assets/js/authors/templates/position.html',
       scope: true,
       link: function(scope) {
         scope.positions = scope.work;

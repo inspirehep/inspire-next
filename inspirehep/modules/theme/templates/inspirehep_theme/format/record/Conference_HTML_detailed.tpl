@@ -44,7 +44,7 @@
             <h2 class="record-detailed-subtitle">{{ record | conference_date }}</h2>
             {% if record['urls'] %}
               <div class="detailed-record-field">
-                <label>Link to the conference website:</label> 
+                <label>Link to the conference website:</label>
                 {% for url in record['urls'] %}
                   <a href="{{ url['value'] }}">{{ url['value'] }}</a>
                   <br>
@@ -319,7 +319,7 @@
       if (status === google.maps.GeocoderStatus.OK) {
         resultsMap.setCenter(results[0].geometry.location);
         var image = {
-          url: '/static/images/map/marker-conferences.png',
+          url: '/assets/images/map/marker-conferences.png',
           scaledSize: new google.maps.Size(25, 25)
         };
         var marker = new google.maps.Marker({
