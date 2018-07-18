@@ -42,6 +42,18 @@ class RecordSchemaJSONUIV1(Schema):
     updated = fields.Str()
 
 
+class MetadataAuthorsSchemaV1(Schema):
+
+    authors = fields.Raw(dump_only=True)
+    collaborations = fields.Raw(dump_only=True)
+
+
+class AuthorsSchemaJSONUIV1(RecordSchemaJSONUIV1):
+    """Schema for literature authors."""
+
+    metadata = fields.Nested(MetadataAuthorsSchemaV1, dump_only=True)
+
+
 class MetadataReferencesSchemaItemV1(Schema):
     arxiv_eprints = fields.List(fields.Dict())
     authors = fields.Method('get_authors')

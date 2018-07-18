@@ -88,7 +88,7 @@ def suggest():
     if field == "authors.name_suggest":
         bai_name_map = {}
         for suggestion in suggestions['suggestions'][0]['options']:
-            bai = suggestion['payload']['bai']
+            bai = suggestion['_source']['bai']
             if bai in bai_name_map:
                 bai_name_map[bai].append(
                     suggestion['text']

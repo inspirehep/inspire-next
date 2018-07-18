@@ -20,15 +20,4 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-# Bleeding edge packages not yet released on Pypi
--e git+https://github.com/CZ-NIC/python-rt.git@64cc54b1aa7514906be60f8bbd7e5ed18b56bba6#egg=rt
-
-# SWORD2 client fork
--e git+https://github.com/inspirehep/python-client-sword2.git#egg=sword2
-
-# https://github.com/inveniosoftware/dictdiffer/pull/111
--e git+https://github.com/inspirehep/dictdiffer.git#egg=dictdiffer
-
-# invenio-collections until ES5 support is added:
-# https://github.com/inveniosoftware/invenio-collections/pull/87
--e git+https://github.com/szymonlopaciuk/invenio-collections.git@es5#egg=invenio-collections
+from __future__ import absolute_import, division, print_function

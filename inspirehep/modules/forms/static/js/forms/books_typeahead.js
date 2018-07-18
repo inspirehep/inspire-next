@@ -50,12 +50,12 @@ define([
           filter: function(response) {
             return $.map(response.book_title[0].options, function(el) {
               el.et_al = '';
-              if (typeof el.payload.title !== 'undefined'){
-                el.title = el.payload.title[0];
+              if (typeof el._source.title !== 'undefined'){
+                el.title = el._source.title[0];
               }
-              if (typeof el.payload.authors !== 'undefined'){
-                  el.author_list = el.payload.authors.slice(0,2).map(function(a) {return a.replace(',', '') }).toString().replace(',',', ');
-                  if( el.payload.authors.length > 3 ) {
+              if (typeof el._source.authors !== 'undefined'){
+                  el.author_list = el._source.authors.slice(0,2).map(function(a) {return a.replace(',', '') }).toString().replace(',',', ');
+                  if( el._source.authors.length > 3 ) {
                     el.et_al = 'et al.';
                   }
                 }

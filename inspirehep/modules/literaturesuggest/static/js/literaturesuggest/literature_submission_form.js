@@ -228,11 +228,11 @@ define(function(require, exports, module) {
       };
 
       function add_book_values(datum) {
-        if (datum.payload.id !== undefined) {
-          document.getElementById("parent_book").value = datum.payload.id;
+        if (datum._source.id !== undefined) {
+          document.getElementById("parent_book").value = datum._source.id;
         }
         addBookInfoField_success(datum.title,
-           datum.payload.authors.map(function(a) { return a.replace(',', '') }),
+           datum._source.authors.map(function(a) { return a.replace(',', '') }),
           datum.et_al);
       }
 

@@ -278,15 +278,6 @@ STOP_IF_EXISTING_SUBMISSION = [
 
 
 HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
-    IF_NOT(
-        is_record_relevant,
-        [
-            reject_record('Article automatically rejected'),
-            mark('approved', False),
-            save_workflow,
-            stop_processing,
-        ],
-    ),
     preserve_root,
     IF_ELSE(
         is_marked('is-update'),
@@ -305,10 +296,21 @@ HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
         IF_ELSE(
             is_marked('auto-approved'),
             mark('approved', True),
-            halt_record(
-                action="hep_approval",
-                message="Submission halted for curator approval.",
-            )
+            [
+                IF_NOT(
+                    is_record_relevant,
+                    [
+                        reject_record('Article automatically rejected'),
+                        mark('approved', False),
+                        save_workflow,
+                        stop_processing,
+                    ],
+                ),
+                halt_record(
+                    action="hep_approval",
+                    message="Submission halted for curator approval.",
+                )
+            ]
         ),
     ),
 ]
