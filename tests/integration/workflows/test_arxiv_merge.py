@@ -609,3 +609,39 @@ def test_merge_callback_url_with_malformed_workflow(
 
         updated_root = read_wf_record_source(factory.record_metadata.id, 'arxiv')
         assert updated_root is None
+
+
+@patch(
+    'inspirehep.modules.workflows.workflows.article.is_record_relevant',
+)
+@patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+def test_regression_non_relevant_update_is_not_rejected_and_gets_merged(
+    mocked_api_request_magpie,
+    mocked_beard_api,
+    mock_is_record_relevant,
+    workflow_app,
+    mocked_external_services,
+    disable_file_upload,
+    enable_merge_on_update,
+):
+    factory = TestRecordMetadata.create_from_file(
+        __name__, 'merge_record_arxiv.json', index_name='records-hep'
+    )
+    eng_uuid = start('article', [factory.record_metadata.json])
+
+    eng = WorkflowEngine.from_uuid(eng_uuid)
+    obj = eng.objects[0]
+
+    mock_is_record_relevant.assert_not_called()
+
+    assert obj.extra_data.get('is-update') is True
+    assert obj.extra_data['approved'] is True
+    assert obj.extra_data['auto-approved'] is True
+    assert obj.extra_data['merged'] is True
