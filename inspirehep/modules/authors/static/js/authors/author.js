@@ -56,7 +56,7 @@ define(['author'], function(Author) {
     return {
       require: '^profileInit',
       restrict: 'E',
-      templateUrl: '/static/js/authors/templates/collaborators.html',
+      templateUrl: '/oldui/js/authors/templates/collaborators.html',
     };
   });
 
@@ -92,7 +92,7 @@ define(['author'], function(Author) {
      return {
       require: '^profileInit',
       restrict: 'E',
-      templateUrl: '/static/js/authors/templates/position.html',
+      templateUrl: '/oldui/js/authors/templates/position.html',
       scope: true,
       link: function(scope) {
         scope.positions = scope.education;
@@ -214,7 +214,7 @@ define(['author'], function(Author) {
     return {
       require: '^profileInit',
       restrict: 'E',
-      templateUrl: '/static/js/authors/templates/position.html',
+      templateUrl: '/oldui/js/authors/templates/position.html',
       scope: true,
       link: function(scope) {
         scope.positions = scope.work;

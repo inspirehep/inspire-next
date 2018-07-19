@@ -393,7 +393,7 @@ class AuthorUpdateForm(INSPIREForm):
     )
 
     orcid = fields.StringField(
-        label='ORCID <img src="/static/images/orcid_icon_24.png" style="height:20px">',
+        label='ORCID <img src="/oldui/images/orcid_icon_24.png" style="height:20px">',
         widget_classes="form-control",
         description=u"""ORCID provides a persistent digital identifier that distinguishes you from other researchers. Learn more at <a href="http://orcid.org" tabIndex="-1" target="_blank">orcid.org</a>""",
         widget=WrappedInput(wrapper="""
