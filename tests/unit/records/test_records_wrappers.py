@@ -101,3 +101,94 @@ def test_literature_record_external_system_identifiers_handles_kekscan():
     result = record.external_system_identifiers
 
     assert expected == result
+
+
+def test_literature_record_publication_information_with_pubinfo_freetext():
+    record = LiteratureRecord({
+        'publication_info': [
+            {
+                'pubinfo_freetext': 'Symmetry 10, 287 (2018)',
+            },
+            {
+                'cnum': 'C93-07-01',
+                'conference_recid': 968950,
+                'conference_record': {
+                    '$ref': 'http://labs.inspirehep.net/api/conferences/968950'
+                },
+            },
+        ],
+    })
+
+    expected = [
+        {
+            'pubinfo_freetext': 'Symmetry 10, 287 (2018)',
+        },
+    ]
+
+    assert expected == record.publication_information
+
+
+def test_literature_record_publication_information_with_journal_title():
+    record = LiteratureRecord({
+        'publication_info': [
+            {
+                'artid': '128',
+                'journal_issue': '7',
+                'journal_title': 'Astropart.Phys.',
+                'journal_volume': '103',
+                'page_end': '48',
+                'page_start': '41',
+                'year': '2018',
+            },
+            {
+                'cnum': 'C93-07-01',
+                'conference_recid': 968950,
+                'conference_record': {
+                    '$ref': 'http://labs.inspirehep.net/api/conferences/968950'
+                },
+            },
+        ],
+    })
+
+    expected = [
+        {
+            'artid': '128',
+            'journal_issue': '7',
+            'journal_title': 'Astropart.Phys.',
+            'journal_volume': '103',
+            'page_end': '48',
+            'page_start': '41',
+            'year': '2018',
+        },
+    ]
+
+    assert expected == record.publication_information
+
+
+def test_literature_record_publication_information_handles_missing_fields():
+    record = LiteratureRecord({
+        'publication_info': [
+            {
+                'journal_title': 'Astropart.Phys.',
+                'year': 2018,
+                'pubinfo_freetext': 'Symmetry 10, 287 (2018)',
+            },
+            {
+                'cnum': 'C93-07-01',
+                'conference_recid': 968950,
+                'conference_record': {
+                    '$ref': 'http://labs.inspirehep.net/api/conferences/968950'
+                },
+            },
+        ],
+    })
+
+    expected = [
+        {
+            'journal_title': 'Astropart.Phys.',
+            'year': '2018',
+            'pubinfo_freetext': 'Symmetry 10, 287 (2018)',
+        },
+    ]
+
+    assert expected == record.publication_information
