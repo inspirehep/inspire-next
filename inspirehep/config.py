@@ -1185,7 +1185,7 @@ JSONSCHEMAS_LOADER_CLS = 'inspirehep.modules.records.json_ref_loader.SCHEMA_LOAD
 INDEXER_DEFAULT_INDEX = "records-hep"
 INDEXER_DEFAULT_DOC_TYPE = "hep"
 INDEXER_REPLACE_REFS = False
-INDEXER_BULK_REQUEST_TIMEOUT = float(120)
+INDEXER_BULK_REQUEST_TIMEOUT = float(900)
 
 # OAuthclient
 # ===========
