@@ -319,7 +319,7 @@
       if (status === google.maps.GeocoderStatus.OK) {
         resultsMap.setCenter(results[0].geometry.location);
         var image = {
-          url: '/static/images/map/marker-conferences.png',
+          url: '/oldui/images/map/marker-conferences.png',
           scaledSize: new google.maps.Size(25, 25)
         };
         var marker = new google.maps.Marker({

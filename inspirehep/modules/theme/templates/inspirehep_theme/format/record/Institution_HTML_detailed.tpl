@@ -260,7 +260,7 @@
         if (status === google.maps.GeocoderStatus.OK) {
           map.setCenter(results[0].geometry.location);
           var image = {
-            url: '/static/images/map/marker-institutions.png',
+            url: '/oldui/images/map/marker-institutions.png',
             scaledSize: new google.maps.Size(25, 25)
           };
           var marker = new google.maps.Marker({
