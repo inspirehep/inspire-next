@@ -33,7 +33,6 @@ import requests
 from backports.tempfile import TemporaryDirectory
 from flask import current_app
 from lxml.etree import XMLSyntaxError
-from timeout_decorator import timeout
 from wand.exceptions import DelegateError
 from werkzeug import secure_filename
 
@@ -52,6 +51,7 @@ from inspirehep.modules.workflows.utils import (
     convert,
     download_file_to_workflow,
     ignore_timeout_error,
+    timeout_with_config,
     with_debug_logging,
 )
 
@@ -121,7 +121,7 @@ def arxiv_package_download(obj, eng):
 
 
 @ignore_timeout_error()
-@timeout(5 * 60)
+@timeout_with_config('WORKFLOWS_PLOTEXTRACT_TIMEOUT')
 @with_debug_logging
 def arxiv_plot_extract(obj, eng):
     """Extract plots from an arXiv archive.
