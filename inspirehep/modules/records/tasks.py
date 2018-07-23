@@ -26,9 +26,10 @@ from __future__ import absolute_import, division, print_function
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
-from elasticsearch.helpers import scan
+from elasticsearch.helpers import bulk, scan
 from flask import current_app
 from six import iteritems
+from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
@@ -38,6 +39,7 @@ from inspire_dojson.utils import get_recid_from_ref
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.utils import get_endpoint_from_record
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
+from inspirehep.utils.record import create_index_op
 
 
 logger = get_task_logger(__name__)
@@ -177,3 +179,28 @@ def get_merged_records():
     records = InspireRecord.get_records(uuids)
 
     return records
+
+
+@shared_task(ignore_result=False, max_retries=0)
+def batch_reindex(uuids, request_timeout):
+    """Task for bulk reindexing records."""
+    def actions():
+        for uuid in uuids:
+            try:
+                record = InspireRecord.get_record(uuid)
+                yield create_index_op(record, version_type='force')
+            except NoResultFound as e:
+                logger.warn('Record %s failed to load: %s', uuid, e)
+
+    success, failures = bulk(
+        es,
+        actions(),
+        request_timeout=request_timeout,
+        raise_on_error=False,
+        raise_on_exception=False,
+    )
+
+    return {
+        'success': success,
+        'failures': [failure for failure in failures or []],
+    }

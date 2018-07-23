@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from six import iteritems
+
 from flask_login import current_user
 
 from inspirehep.utils.record import get_title
@@ -123,17 +125,21 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
         """
         pub_info_list = []
         for pub_info in self['publication_info']:
-            if pub_info.get('journal_title', '') or pub_info.get('pubinfo_freetext', ''):
-                pub_info_list.append({
-                    'journal_title': pub_info.get('journal_title', ''),
-                    'journal_volume': pub_info.get('journal_volume', ''),
+            item = {}
+            if pub_info.get('journal_title') or pub_info.get('pubinfo_freetext'):
+                item.update({
+                    'journal_title': pub_info.get('journal_title'),
+                    'journal_volume': pub_info.get('journal_volume'),
                     'year': str(pub_info.get('year', '')),
-                    'journal_issue': pub_info.get('journal_issue', ''),
+                    'journal_issue': pub_info.get('journal_issue'),
                     'page_start': str(pub_info.get('page_start', '')),
                     'page_end': str(pub_info.get('page_end', '')),
-                    'artid': pub_info.get('artid', ''),
-                    'pubinfo_freetext': pub_info.get('pubinfo_freetext', '')
+                    'artid': pub_info.get('artid'),
+                    'pubinfo_freetext': pub_info.get('pubinfo_freetext'),
                 })
+
+            if item:
+                pub_info_list.append({key: value for (key, value) in iteritems(item) if value})
 
         return pub_info_list
 

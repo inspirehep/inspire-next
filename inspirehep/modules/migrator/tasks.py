@@ -46,7 +46,6 @@ from redis import StrictRedis
 from redis_lock import Lock
 
 from invenio_db import db
-from invenio_indexer.api import RecordIndexer, current_record_to_index
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
 from invenio_search.utils import schema_to_index
@@ -62,6 +61,7 @@ from inspirehep.modules.pidstore.utils import (
 )
 from inspirehep.modules.records.receivers import index_after_commit
 from inspirehep.utils.schema import ensure_valid_schema
+from inspirehep.utils.record import create_index_op
 
 from .models import LegacyRecordsMirror
 
@@ -247,20 +247,6 @@ def continuous_migration(skip_files=None):
             lock.release()
     else:
         LOGGER.info("Continuous_migration already executed. Skipping.")
-
-
-def create_index_op(record):
-    index, doc_type = current_record_to_index(record)
-
-    return {
-        '_op_type': 'index',
-        '_index': index,
-        '_type': doc_type,
-        '_id': str(record.id),
-        '_version': record.revision_id,
-        '_version_type': 'external_gte',
-        '_source': RecordIndexer._prepare_record(record, index, doc_type),
-    }
 
 
 @shared_task(ignore_result=False, queue='migrator')
