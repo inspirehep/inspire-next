@@ -145,3 +145,5 @@ inspirehep/modules/editor/temp/
 
 # scrapy generated files
 .scrapy/
+.lastruns/
+scrapy/

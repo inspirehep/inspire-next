@@ -1,0 +1,26 @@
+request:
+  headers:
+    Host: [rt.inspirehep.net]
+    Connection: [keep-alive]
+    Accept-Encoding: ['gzip, deflate']
+    Accept: ['*/*']
+    User-Agent: ['python-requests/2.18.4']
+    Content-Length: ['27']
+    Content-Type: [application/x-www-form-urlencoded]
+  method: POST
+  url: https://rt.inspirehep.net/REST/1.0/
+  body: user=rtuser&pass=rtpass
+response:
+  headers:
+    Date: ['Wed, 23 May 2018 14:18:12 GMT']
+    Server: [Apache]
+    Set-Cookie: ['RT_SID_INSPIRE-HEP.443=b16459f905f0f82a5b38704f7e321473; path=/; secure; HttpOnly']
+    X-Frame-Options: [DENY]
+    Connection: [close]
+    Transfer-Encoding: [chunked]
+    Content-Type: ['text/plain; charset=utf-8']
+  status: {code: 200, message: OK}
+  body: |
+    RT/4.2.14 200 Ok
+    # Invalid object specification: ''
+    id:

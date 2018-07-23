@@ -35,35 +35,27 @@ from inspirehep.testlib.api.literature import LiteratureResourceTitle
 class HoldingpenResource(BaseResource):
     """Inspire holdingpen entry to represent a workflow"""
 
-    def __init__(self, workflow_id, approved, is_update, core, status, titles, auto_approved=None, doi=None, arxiv_eprint=None, control_number=None, approved_match=None):
+    def __init__(self, workflow_id, approved, is_update, core, status, control_number):
         """
         Don't use this constructor yet unless you know what you are doing, use
         `from_json` instead as this one does not create a full holdingpen entry.
 
         """
+        self.control_number = control_number
         self.approved = approved
-        self.auto_approved = auto_approved
         self.is_update = is_update
         self.core = core
         self.status = status
         self.workflow_id = workflow_id
-        self.control_number = control_number
-        self.titles = titles
-        self.arxiv_eprint = arxiv_eprint
-        self.doi = doi
-        self.approved_match = approved_match
         self._raw_json = None
 
     def set_action(self, action):
         self._raw_json['_extra_data']['_action'] = action
 
-    def set_conflicts(self, conflicts):
-        self._raw_json['_extra_data']['conflicts'] = conflicts
-
     @classmethod
     def from_json(cls, json, workflow_id=None):
         """
-        Construcor for a holdingpen entry, it will be able to be mapped to and
+        Constructor for a holdingpen entry, it will be able to be mapped to and
         from json, and used to fully edit entries. Usually you pass to it the
         full raw json from the details of a holdingpen entry.
 
@@ -74,20 +66,35 @@ class HoldingpenResource(BaseResource):
             workflow_id = json['id']
 
         extra_data = json.get('_extra_data', {})
+        data_type = json['_workflow']['data_type']
 
-        hp_entry = cls(
-            workflow_id=workflow_id,
-            approved=extra_data.get('approved'),
-            auto_approved=extra_data.get('auto-approved'),
-            is_update=extra_data.get('is-update'),
-            core=extra_data.get('core'),
-            status=json['_workflow']['status'],
-            titles=[LiteratureResourceTitle.from_json(title) for title in json['metadata']['titles']],
-            control_number=json['metadata'].get('control_number'),
-            arxiv_eprint=json['metadata'].get('arxiv_eprints', [{}])[0].get('value'),
-            doi=json['metadata'].get('dois', [{}])[0].get('value'),
-            approved_match=extra_data.get('matches', {}).get('approved'),
-        )
+        if data_type == 'hep':
+            hp_entry = HoldingpenLiteratureResource(
+                workflow_id=workflow_id,
+                approved=extra_data.get('approved'),
+                auto_approved=extra_data.get('auto-approved'),
+                is_update=extra_data.get('is-update'),
+                core=extra_data.get('core'),
+                status=json['_workflow']['status'],
+                titles=[LiteratureResourceTitle.from_json(title) for title in json['metadata']['titles']],
+                control_number=json['metadata'].get('control_number'),
+                arxiv_eprint=json['metadata'].get('arxiv_eprints', [{}])[0].get('value'),
+                doi=json['metadata'].get('dois', [{}])[0].get('value'),
+                approved_match=extra_data.get('matches', {}).get('approved'),
+            )
+        elif data_type == 'authors':
+            hp_entry = HoldingpenAuthorResource(
+                workflow_id=workflow_id,
+                approved=extra_data.get('approved'),
+                is_update=extra_data.get('is-update'),
+                core=extra_data.get('core'),
+                status=json['_workflow']['status'],
+                control_number=json['metadata'].get('control_number'),
+                display_name=json['metadata']['name']['preferred_name'],
+            )
+        else:
+            raise ValueError('Unsupported holdingpen resource type "{}"'.format(data_type))
+
         hp_entry._raw_json = json
         return hp_entry
 
@@ -98,7 +105,7 @@ class HoldingpenResource(BaseResource):
         it's instantiation.
 
         Returns:
-            json: Json view of the current status of the entry.
+            dict: Json view of the current status of the entry.
         """
         new_json = copy.deepcopy(self._raw_json or {})
 
@@ -109,11 +116,35 @@ class HoldingpenResource(BaseResource):
         }
         new_json['_extra_data'].update(new_extra_data)
         new_json['workflow_id'] = self.workflow_id,
-        new_json['metadata']['titles'] = [title.to_json() for title in self.titles]
         new_json['_workflow']['status'] = self.status
 
         if self.control_number is not None:
             new_json['metadata']['control_number'] = self.control_number
+
+        return new_json
+
+    @property
+    def extra_data(self):
+        return self._raw_json['_extra_data']
+
+
+class HoldingpenLiteratureResource(HoldingpenResource):
+    """Holdingpen entry for a literature workflow."""
+    def __init__(self, titles, auto_approved=None, doi=None, arxiv_eprint=None, approved_match=None, **kwargs):
+        self.auto_approved = auto_approved
+        self.titles = titles
+        self.arxiv_eprint = arxiv_eprint
+        self.doi = doi
+        self.approved_match = approved_match
+        super(HoldingpenLiteratureResource, self).__init__(**kwargs)
+
+    def set_conflicts(self, conflicts):
+        self._raw_json['_extra_data']['conflicts'] = conflicts
+
+    def to_json(self):
+        new_json = super(HoldingpenLiteratureResource, self).to_json()
+
+        new_json['metadata']['titles'] = [title.to_json() for title in self.titles]
 
         if self.arxiv_eprint is not None:
             new_json['metadata']['arxiv_eprints'][0]['value'] = self.arxiv_eprint
@@ -122,6 +153,13 @@ class HoldingpenResource(BaseResource):
             new_json['metadata']['dois'][0]['value'] = self.doi
 
         return new_json
+
+
+class HoldingpenAuthorResource(HoldingpenResource):
+    """Holdingpen for an author workflow."""
+    def __init__(self, display_name, **kwargs):
+        self.display_name = display_name
+        super(HoldingpenAuthorResource, self).__init__(**kwargs)
 
 
 class HoldingpenApiClient(object):

@@ -1,0 +1,29 @@
+callbacks: []
+match: {}
+request:
+  body: content=Status%3A+new%0A
+  headers:
+    Accept: ['*/*']
+    Accept-Encoding: ['gzip, deflate']
+    Connection: [keep-alive]
+    Content-Length: ['24']
+    Content-Type: [application/x-www-form-urlencoded]
+    Cookie: [RT_SID_INSPIRE-HEP.443=2356e17e7fb25cb47ee568459fd6e0b7]
+    Host: [rt.inspirehep.net]
+    User-Agent: [python-requests/2.19.1]
+  method: POST
+  url: https://rt.inspirehep.net/REST/1.0/ticket/723851/edit
+response:
+  headers:
+    Date: ['Wed, 23 May 2018 14:20:15 GMT']
+    Server: [Apache]
+    Set-Cookie: ['RT_SID_INSPIRE-HEP.443=2356e17e7fb25cb47ee568459fd6e0b7; path=/; secure; HttpOnly']
+    X-Frame-Options: [DENY]
+    Connection: [close]
+    Transfer-Encoding: [chunked]
+    Content-Type: ['text/plain; charset=utf-8']
+  status: {code: 200, message: OK}
+  body: |
+    RT/4.2.14 200 Ok
+
+    # Ticket 723875 updated.
