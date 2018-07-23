@@ -54,8 +54,64 @@ from mocks import (
     fake_download_file,
     fake_magpie_api_request,
 )
-from utils import get_halted_workflow
 from inspirehep.modules.workflows.tasks.matching import _get_hep_record_brief
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link'
+)
+def get_halted_workflow(mocked_is_pdf_link, app, record, extra_config=None):
+    mocked_is_pdf_link.return_value = True
+
+    extra_config = extra_config or {}
+    with mock.patch.dict(app.config, extra_config):
+        workflow_uuid = start('article', [record])
+
+    eng = WorkflowEngine.from_uuid(workflow_uuid)
+    obj = eng.processed_objects[0]
+
+    assert obj.status == ObjectStatus.HALTED
+    assert obj.data_type == "hep"
+
+    # Files should have been attached (tarball + pdf, and plots)
+    assert obj.files["1407.7587.pdf"]
+    assert obj.files["1407.7587.tar.gz"]
+
+    assert len(obj.files) > 2
+
+    # A publication note should have been extracted
+    pub_info = obj.data.get('publication_info')
+    assert pub_info
+    assert pub_info[0]
+    assert pub_info[0].get('year') == 2014
+    assert pub_info[0].get('journal_title') == "J. Math. Phys."
+
+    # A prediction should have been made
+    prediction = obj.extra_data.get("relevance_prediction")
+    assert prediction
+    assert prediction['decision'] == 'Non-CORE'
+    assert prediction['scores']['Non-CORE'] == 0.8358207729691823
+
+    expected_experiment_prediction = {
+        'experiments': [
+            {'label': 'CMS', 'score': 0.75495152473449707}
+        ]
+    }
+    experiments_prediction = obj.extra_data.get("experiments_prediction")
+    assert experiments_prediction == expected_experiment_prediction
+
+    keywords_prediction = obj.extra_data.get("keywords_prediction")
+    assert keywords_prediction
+    assert {
+        "label": "galaxy",
+        "score": 0.29424679279327393,
+        "accept": True
+    } in keywords_prediction['keywords']
+
+    # This record should not have been touched yet
+    assert obj.extra_data['approved'] is None
+
+    return workflow_uuid, eng, obj
 
 
 @pytest.fixture
