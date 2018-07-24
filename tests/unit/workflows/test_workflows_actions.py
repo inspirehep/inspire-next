@@ -124,7 +124,7 @@ def test_jlab_ticket_needed_returns_true():
         assert jlab_ticket_needed(obj, eng) is True
 
 
-def test_load_from_source_data():
+def test_load_from_source_data_no_persistent_data():
     data = {
         'document_type': 'article',
         'titles': [{
@@ -166,7 +166,7 @@ def test_load_from_source_data():
                 ]
             }
         },
-        '_task_history': []
+        '_task_history': [],
     }
 
     obj = MockObj(data, extra_data)
