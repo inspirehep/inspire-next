@@ -30,12 +30,65 @@ from marshmallow import Schema, fields, missing, pre_dump
 
 from inspirehep.modules.records.utils import get_linked_records_in_field
 
+from .common import IsbnSchemaV1, ThesisInfoSchemaV1
+
+
+class RecordMetadataSchemaV1(Schema):
+    _collections = fields.Raw()
+    abstracts = fields.Raw()
+    accelerator_experiments = fields.Raw()
+    acquisition_source = fields.Raw()
+    arxiv_eprints = fields.Raw()
+    book_series = fields.Raw()
+    # citeable = fields.Raw()
+    collaborations = fields.Raw()
+    control_number = fields.Raw()
+    # copyright = fields.Raw()
+    # core = fields.Raw()
+    corporate_author = fields.Raw()
+    # curated = fields.Raw()
+    # deleted = fields.Raw()
+    # deleted_records = fields.Raw()
+    document_type = fields.Raw()
+    # documents = fields.Raw()
+    dois = fields.Raw()
+    # editions = fields.Raw()
+    # energy_ranges = fields.Raw()
+    external_system_identifiers = fields.Raw()
+    # figures = fields.Raw()
+    # funding_info = fields.Raw()
+    imprints = fields.Raw()
+    inspire_categories = fields.Raw()
+    isbns = fields.List(fields.Nested(IsbnSchemaV1, dump_only=True))
+    keywords = fields.Raw()
+    languages = fields.Raw()
+    # legacy_creation_date = fields.Raw()
+    # license = fields.Raw()
+    # new_record = fields.Raw()
+    number_of_pages = fields.Raw()
+    persistent_identifiers = fields.Raw()
+    preprint_date = fields.Raw()
+    # public_notes = fields.Raw()
+    publication_info = fields.Raw()
+    # publication_type = fields.Raw()
+    # record_affiliations = fields.Raw()
+    # refereed = fields.Raw()
+    # related_records = fields.Raw()
+    report_numbers = fields.Raw()
+    # self = fields.Raw()
+    texkeys = fields.Raw()
+    thesis_info = fields.Nested(ThesisInfoSchemaV1, dump_only=True)
+    # title_translations = fields.Raw()
+    titles = fields.Raw()
+    # urls = fields.Raw()
+    # withdrawn = fields.Raw()
+
 
 class RecordSchemaJSONUIV1(Schema):
     """Schema for record UI."""
 
     id = fields.Integer(attribute='pid.pid_value')
-    metadata = fields.Raw()
+    metadata = fields.Nested(RecordMetadataSchemaV1, dump_only=True)
     display = fields.Raw()
     links = fields.Raw()
     created = fields.Str()
