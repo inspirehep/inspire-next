@@ -21,7 +21,7 @@
  */
 
 require.config({
-  baseUrl: '/static/',
+  baseUrl: '/assets/',
   paths: {
     'angular': 'node_modules/angular/angular',
     'angular-filter': 'node_modules/angular-filter/dist/angular-filter',

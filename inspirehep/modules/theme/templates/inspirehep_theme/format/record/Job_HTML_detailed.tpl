@@ -178,7 +178,7 @@
                   if (status === google.maps.GeocoderStatus.OK) {
                     resultsMap.setCenter(results[0].geometry.location);
                     var image = {
-                      url: '/static/images/map/marker-institutions.png',
+                      url: '/assets/images/map/marker-institutions.png',
                       scaledSize: new google.maps.Size(25, 25)
                     };
                     var marker = new google.maps.Marker({

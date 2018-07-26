@@ -27,7 +27,7 @@ define(['publications'], function(Publications) {
     return {
       require: '^profileInit',
       restrict: 'E',
-      templateUrl: '/static/js/authors/templates/publications.html',
+      templateUrl: '/assets/js/authors/templates/publications.html',
       scope: true,
       link: function(scope, element) {
         scope.$watch('publications', function() {

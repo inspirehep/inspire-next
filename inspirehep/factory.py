@@ -66,6 +66,7 @@ create_api = create_app_factory(
     extension_entry_points=['invenio_base.api_apps'],
     converter_entry_points=['invenio_base.api_converters'],
     instance_path=instance_path,
+    static_url_path='/assets',
 )
 
 create_app = create_app_factory(
@@ -77,4 +78,5 @@ create_app = create_app_factory(
     wsgi_factory=create_wsgi_factory({'/api': create_api}),
     instance_path=instance_path,
     static_folder=static_folder,
+    static_url_path='/assets',
 )

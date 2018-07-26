@@ -87,11 +87,11 @@
         </holding-pen-dashboard-item>
       </div>
     </div>
-    
+
     {%- if config.get('FEATURE_FLAG_ENABLE_PUBLISHER_HARVESTS_CARD', False) %}
     <div class="col-md-3 col-sm-6">
       <holding-pen-dashboard-item
-        template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"	
+        template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"
         filter_string="data_type=hep&q=-metadata.acquisition_source.source:arXiv AND metadata.acquisition_source.method:hepcrawl AND !_extra_data.is-update:true"
         secondary_filter="status"
         section_title="new publisher harvests">
@@ -99,12 +99,12 @@
     </div>
 
     <div class="col-md-3 col-sm-6">
-      <holding-pen-dashboard-item 
-        template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"  
+      <holding-pen-dashboard-item
+        template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"
         filter_string="data_type=hep&is-update=true&q=-metadata.acquisition_source.source:arXiv AND metadata.acquisition_source.method:hepcrawl"
-        secondary_filter="status" 
-        section_title="publisher updates"> 
-      </holding-pen-dashboard-item> 
+        secondary_filter="status"
+        section_title="publisher updates">
+      </holding-pen-dashboard-item>
     </div>
     {%- endif %}
 
