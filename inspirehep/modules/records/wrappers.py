@@ -136,6 +136,7 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
                     'page_end': str(pub_info.get('page_end', '')),
                     'artid': pub_info.get('artid'),
                     'pubinfo_freetext': pub_info.get('pubinfo_freetext'),
+                    'material': pub_info.get('material'),
                 })
 
             if item:
