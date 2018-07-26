@@ -796,6 +796,19 @@ def linkedaccounts():
     return redirect('/')
 
 
+@blueprint.route('/login_success', methods=['GET'])
+def login_success():
+    """Injects current user to the template and passes it to the parent tab."""
+    return render_template(
+        'inspirehep_theme/login_success.html',
+        user={
+            'data': {
+                'email': current_user.email
+            }
+        }
+    )
+
+
 #
 # Helpers
 #
