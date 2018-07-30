@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 import json
 
 from inspirehep.modules.records.serializers.schemas.json import \
-    ReferencesSchemaJSONUIV1
+    ReferencesSchemaJSONUIV1, RecordSchemaJSONUIV1
 from factories.db.invenio_records import TestRecordMetadata
 
 
@@ -150,6 +150,88 @@ def test_references_schema_with_record(isolated_app):
                     ],
                 }
             ]
+        }
+    }
+
+    result = json.loads(schema.dumps(record).data)
+    assert expected == result
+
+
+def test_conference_info_schema_with_record(isolated_app):
+    schema = RecordSchemaJSONUIV1()
+    conf_record = {
+        "$schema": "http://localhost:5000/schemas/records/conferences.json",
+        "_collections": [
+            "Conferences"
+        ],
+        "control_number": 972464,
+        "self": {
+            "$ref": "http://localhost:5000/api/conferences/972464"
+        },
+        "titles": [
+            {
+                "title": "4th RESCEU International Symposium on Birth and Evolution of the Universe"
+            }
+        ],
+    }
+    TestRecordMetadata.create_from_kwargs(json=conf_record)
+    record = {
+        'metadata': {
+            'publication_info': [
+                {
+                    'artid': '02B006',
+                    'journal_title': 'PTEP',
+                    'journal_volume': '2012',
+                    'year': 2012,
+                    'conference_record': {
+                        '$ref': 'http://labs.inspirehep.net/api/journals/972464'
+                    }
+
+                },
+                {
+                    'artid': '02B006',
+                    'journal_title': 'PTEP',
+                    'journal_volume': '2012',
+                    'year': 2012
+
+                }
+            ]
+
+        }
+    }
+
+    expected = {
+        'metadata': {
+            'publication_info': [
+                {
+                    'artid': '02B006',
+                    'journal_title': 'PTEP',
+                    'journal_volume': '2012',
+                    'year': 2012,
+                    'conference_record': {
+                        '$ref': 'http://labs.inspirehep.net/api/journals/972464'
+                    }
+
+                },
+                {
+                    'artid': '02B006',
+                    'journal_title': 'PTEP',
+                    'journal_volume': '2012',
+                    'year': 2012
+
+                }
+            ],
+            'conference_info': [
+                {
+                    "control_number": 972464,
+                    "titles": [
+                        {
+                            "title": "4th RESCEU International Symposium on Birth and Evolution of the Universe"
+                        }
+                    ]
+                }
+            ]
+
         }
     }
 

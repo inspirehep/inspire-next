@@ -22,6 +22,24 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .isbn import IsbnSchemaV1  # noqa: F401
-from .thesis_info import ThesisInfoSchemaV1  # noqa: F401
-from .conference_info_item import ConferenceInfoItemSchemaV1  # noqa: F401
+from marshmallow import Schema, pre_dump, fields
+
+from inspirehep.modules.records.utils import get_pid_from_record_uri
+from inspirehep.utils.record_getter import get_db_record
+
+
+class ConferenceInfoItemSchemaV1(Schema):
+    titles = fields.Raw()
+    control_number = fields.Raw()
+
+    @pre_dump
+    def resolve_conference_record_as_root(self, pub_info_item):
+        conference_record = pub_info_item.get('conference_record')
+        if conference_record is None:
+            return None
+        _, recid = get_pid_from_record_uri(conference_record.get('$ref'))
+        conference = get_db_record('con', recid).dumps()
+        titles = conference.get('titles')
+        if titles is None:
+            return None
+        return conference
