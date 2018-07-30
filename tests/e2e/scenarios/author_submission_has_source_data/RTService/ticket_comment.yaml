@@ -1,0 +1,29 @@
+callbacks: []
+match: {}
+request:
+  body: content=id%3A+723851%0AAction%3A+correspond%0AText%3A+Dear+admin%40inspirehep.net%2C%0A+++++++%0A+++++++Thank+you+very+much+for+suggesting+information+about+%22Homer+Simpson%22+to+INSPIRE.+It+has+been+received+and+will+be+reviewed+by+our+staff+as+soon+as+possible.+You+will+hear+back+from+us+shortly.%0A+++++++%0A+++++++Thank+you+for+sharing+with+INSPIRE%21%0ACc%3A+%0ABcc%3A+
+  headers:
+    Accept: ['*/*']
+    Accept-Encoding: ['gzip, deflate']
+    Connection: [keep-alive]
+    Content-Length: ['376']
+    Content-Type: [application/x-www-form-urlencoded]
+    Cookie: [RT_SID_INSPIRE-HEP.443=2356e17e7fb25cb47ee568459fd6e0b7]
+    Host: [rt.inspirehep.net]
+    User-Agent: [python-requests/2.19.1]
+  method: POST
+  url: https://rt.inspirehep.net/REST/1.0/ticket/723851/comment
+response:
+  headers:
+    Date: ['Wed, 23 May 2018 14:20:15 GMT']
+    Server: [Apache]
+    Set-Cookie: ['RT_SID_INSPIRE-HEP.443=2356e17e7fb25cb47ee568459fd6e0b7; path=/; secure; HttpOnly']
+    X-Frame-Options: [DENY]
+    Connection: [close]
+    Transfer-Encoding: [chunked]
+    Content-Type: ['text/plain; charset=utf-8']
+  status: {code: 200, message: OK}
+  body: |
+    RT/4.2.14 200 Ok
+
+    # Correspondence added
