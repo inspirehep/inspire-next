@@ -26,11 +26,11 @@ from __future__ import absolute_import, division, print_function
 
 from inspire_dojson.utils import get_recid_from_ref, strip_empty_values
 from inspire_utils.helpers import force_list
-from marshmallow import Schema, fields, missing, pre_dump
+from marshmallow import Schema, fields, missing, pre_dump, post_dump
 
 from inspirehep.modules.records.utils import get_linked_records_in_field
 
-from .common import IsbnSchemaV1, ThesisInfoSchemaV1
+from .common import IsbnSchemaV1, ThesisInfoSchemaV1, ConferenceInfoItemSchemaV1
 
 
 class RecordMetadataSchemaV1(Schema):
@@ -42,11 +42,17 @@ class RecordMetadataSchemaV1(Schema):
     book_series = fields.Raw()
     # citeable = fields.Raw()
     collaborations = fields.Raw()
+    conference_info = fields.Nested(
+        ConferenceInfoItemSchemaV1,
+        dump_only=True,
+        attribute='publication_info',
+        many=True)
     control_number = fields.Raw()
     # copyright = fields.Raw()
     # core = fields.Raw()
     corporate_author = fields.Raw()
     # curated = fields.Raw()
+    date = fields.Raw()
     # deleted = fields.Raw()
     # deleted_records = fields.Raw()
     document_type = fields.Raw()
@@ -65,7 +71,9 @@ class RecordMetadataSchemaV1(Schema):
     # legacy_creation_date = fields.Raw()
     # license = fields.Raw()
     # new_record = fields.Raw()
+    number_of_authors = fields.Raw()
     number_of_pages = fields.Raw()
+    number_of_references = fields.Raw()
     persistent_identifiers = fields.Raw()
     preprint_date = fields.Raw()
     # public_notes = fields.Raw()
@@ -82,6 +90,10 @@ class RecordMetadataSchemaV1(Schema):
     titles = fields.Raw()
     # urls = fields.Raw()
     # withdrawn = fields.Raw()
+
+    @post_dump
+    def strip_empty(self, data):
+        return strip_empty_values(data)
 
 
 class RecordSchemaJSONUIV1(Schema):
@@ -181,7 +193,8 @@ class ReferencesSchemaJSONUIV1(RecordSchemaJSONUIV1):
 
     @staticmethod
     def resolve_records(data):
-        resolved_records = get_linked_records_in_field(data, 'metadata.references.record')
+        resolved_records = get_linked_records_in_field(
+            data, 'metadata.references.record')
         return {
             record['control_number']: record
             for record in resolved_records

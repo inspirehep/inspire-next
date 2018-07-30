@@ -137,6 +137,7 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
                     'artid': pub_info.get('artid'),
                     'pubinfo_freetext': pub_info.get('pubinfo_freetext'),
                     'material': pub_info.get('material'),
+                    'conference_record': pub_info.get('conference_record')
                 })
 
             if item:
