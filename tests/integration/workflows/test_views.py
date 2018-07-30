@@ -30,6 +30,7 @@ from invenio_workflows import workflow_object_class
 from invenio_db import db
 
 from factories.db.invenio_records import TestRecordMetadata
+from workflow_utils import build_workflow
 
 
 def test_inspect_merge_view(workflow_app):
@@ -99,10 +100,8 @@ def test_responses_with_etag(workflow_app):
         json={'titles': [{'title': 'Etag version'}]}
     )
 
-    obj = workflow_object_class.create(
-        data=factory.record_metadata.json,
-        data_type='hep',
-    )
+    workflow_id = build_workflow(factory.record_metadata.json).id
+    obj = workflow_object_class.get(workflow_id)
     obj.save()
     db.session.commit()
 

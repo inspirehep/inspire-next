@@ -29,7 +29,7 @@ from mock import patch
 from inspirehep.modules.workflows.actions import MatchApproval, MergeApproval
 from mocks import MockEng, MockObj
 
-from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed
+from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed, load_from_source_data
 
 
 def test_match_approval_gets_match_recid():
@@ -122,3 +122,57 @@ def test_jlab_ticket_needed_returns_true():
         eng = MockEng()
 
         assert jlab_ticket_needed(obj, eng) is True
+
+
+def test_load_from_source_data():
+    data = {
+        'document_type': 'article',
+        'titles': [{
+            'title': 'Changed in previous workflow run'
+        }]
+    }
+
+    extra_data = {
+        '_last_task_name': 'whatever',
+        'source_data': {
+            'data': {
+                'document_type': 'article',
+                'titles': [{
+                    'title': 'Original title'
+                }]
+            },
+            'extra_data': {}
+        }
+    }
+
+    expected_data = {
+        'document_type': 'article',
+        'titles': [{
+            'title': 'Original title'
+        }]
+    }
+
+    expected_extra_data = {
+        'source_data': {
+            'extra_data': {
+                '_task_history': []
+            },
+            'data': {
+                'document_type': 'article',
+                'titles': [
+                    {
+                        'title': 'Original title'
+                    }
+                ]
+            }
+        },
+        '_task_history': []
+    }
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    load_from_source_data(obj, eng)
+
+    assert obj.data == expected_data
+    assert obj.extra_data == expected_extra_data

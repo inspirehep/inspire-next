@@ -45,6 +45,7 @@ from inspirehep.modules.workflows.utils import (
     read_wf_record_source,
 )
 
+from workflow_utils import build_workflow
 from factories.db.invenio_records import TestRecordMetadata
 
 
@@ -167,8 +168,8 @@ def test_merge_with_disabled_merge_on_update_feature_flag(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITHOUT_CONFLICTS
-        eng_uuid = start('article', [record_update])
+        update_workflow_id = build_workflow(RECORD_WITHOUT_CONFLICTS).id
+        eng_uuid = start('article', object_id=update_workflow_id)
 
         eng = WorkflowEngine.from_uuid(eng_uuid)
         obj = eng.objects[0]
@@ -205,9 +206,9 @@ def test_merge_without_conflicts_handles_update_without_acquisition_source_and_a
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS
+        update_workflow_id = build_workflow(RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS).id
 
-        eng_uuid = start('article', [record_update])
+        eng_uuid = start('article', object_id=update_workflow_id)
 
         eng = WorkflowEngine.from_uuid(eng_uuid)
         obj = eng.objects[0]
@@ -247,11 +248,11 @@ def test_merge_with_conflicts_handles_update_without_acquisition_source_and_acts
         TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITHOUT_ACQUISITION_SOURCE_AND_CONFLICTS
+        update_workflow_id = build_workflow(RECORD_WITHOUT_ACQUISITION_SOURCE_AND_CONFLICTS).id
 
         # By default the root is {}.
 
-        eng_uuid = start('article', [record_update])
+        eng_uuid = start('article', object_id=update_workflow_id)
 
         eng = WorkflowEngine.from_uuid(eng_uuid)
         obj = eng.objects[0]
@@ -262,7 +263,7 @@ def test_merge_with_conflicts_handles_update_without_acquisition_source_and_acts
 
         assert obj.extra_data.get('callback_url') is not None
         assert obj.extra_data.get('is-update') is True
-        assert obj.extra_data['merger_root'] == record_update
+        assert obj.extra_data['merger_root'] == RECORD_WITHOUT_ACQUISITION_SOURCE_AND_CONFLICTS
         assert obj.extra_data['merger_head_revision'] == 0
         assert obj.extra_data['merger_original_root'] == {}
 
@@ -287,11 +288,11 @@ def test_merge_with_conflicts_rootful(
         TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITH_CONFLICTS
+        update_workflow_id = build_workflow(RECORD_WITH_CONFLICTS).id
 
         # By default the root is {}.
 
-        eng_uuid = start('article', [record_update])
+        eng_uuid = start('article', object_id=update_workflow_id)
 
         eng = WorkflowEngine.from_uuid(eng_uuid)
         obj = eng.objects[0]
@@ -302,7 +303,7 @@ def test_merge_with_conflicts_rootful(
 
         assert obj.extra_data.get('callback_url') is not None
         assert obj.extra_data.get('is-update') is True
-        assert obj.extra_data['merger_root'] == record_update
+        assert obj.extra_data['merger_root'] == RECORD_WITH_CONFLICTS
         assert obj.extra_data['merger_head_revision'] == 0
         assert obj.extra_data['merger_original_root'] == {}
 
@@ -327,11 +328,11 @@ def test_merge_without_conflicts_rootful(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITH_CONFLICTS
+        update_workflow_id = build_workflow(RECORD_WITH_CONFLICTS).id
 
         insert_wf_record_source(json=ARXIV_ROOT, record_uuid=factory.record_metadata.id, source='arxiv')
 
-        eng_uuid = start('article', [record_update])
+        eng_uuid = start('article', object_id=update_workflow_id)
 
         eng = WorkflowEngine.from_uuid(eng_uuid)
         obj = eng.objects[0]
@@ -347,7 +348,7 @@ def test_merge_without_conflicts_rootful(
         assert obj.extra_data['merger_original_root'] == ARXIV_ROOT
 
         updated_root = read_wf_record_source(factory.record_metadata.id, 'arxiv')
-        assert updated_root.json == record_update
+        assert updated_root.json == RECORD_WITH_CONFLICTS
 
 
 @patch(
@@ -370,9 +371,9 @@ def test_merge_without_conflicts_callback_url(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITHOUT_CONFLICTS
+        update_workflow_id = build_workflow(RECORD_WITHOUT_CONFLICTS).id
 
-        eng_uuid = start('article', [record_update])
+        eng_uuid = start('article', object_id=update_workflow_id)
 
         eng = WorkflowEngine.from_uuid(eng_uuid)
         obj = eng.objects[0]
@@ -386,7 +387,7 @@ def test_merge_without_conflicts_callback_url(
         assert obj.extra_data.get('is-update') is True
 
         updated_root = read_wf_record_source(factory.record_metadata.id, 'arxiv')
-        assert updated_root.json == record_update
+        assert updated_root.json == RECORD_WITHOUT_CONFLICTS
 
         payload = {
             'id': obj.id,
@@ -424,9 +425,9 @@ def test_merge_with_conflicts_callback_url(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITH_CONFLICTS
+        update_workflow_id = build_workflow(RECORD_WITH_CONFLICTS).id
 
-        eng_uuid = start('article', [record_update])
+        eng_uuid = start('article', object_id=update_workflow_id)
 
         eng = WorkflowEngine.from_uuid(eng_uuid)
         obj = eng.objects[0]
@@ -440,7 +441,7 @@ def test_merge_with_conflicts_callback_url(
         assert len(conflicts) == 1
 
         assert obj.extra_data.get('is-update') is True
-        assert obj.extra_data['merger_root'] == record_update
+        assert obj.extra_data['merger_root'] == RECORD_WITH_CONFLICTS
 
         payload = {
             'id': obj.id,
@@ -490,9 +491,9 @@ def test_merge_with_conflicts_callback_url_and_resolve(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITH_CONFLICTS
+        update_workflow_id = build_workflow(RECORD_WITH_CONFLICTS).id
 
-        eng_uuid = start('article', [record_update])
+        eng_uuid = start('article', object_id=update_workflow_id)
 
         eng = WorkflowEngine.from_uuid(eng_uuid)
         obj = eng.objects[0]
@@ -506,7 +507,7 @@ def test_merge_with_conflicts_callback_url_and_resolve(
         assert len(conflicts) == 1
 
         assert obj.extra_data.get('is-update') is True
-        assert obj.extra_data['merger_root'] == record_update
+        assert obj.extra_data['merger_root'] == RECORD_WITH_CONFLICTS
 
         # resolve conflicts
         obj.data['number_of_pages'] = factory.record_metadata.json.get('number_of_pages')
@@ -539,7 +540,7 @@ def test_merge_with_conflicts_callback_url_and_resolve(
         assert obj.extra_data.get('merged') is True
 
         updated_root = read_wf_record_source(factory.record_metadata.id, 'arxiv')
-        assert updated_root.json == record_update
+        assert updated_root.json == RECORD_WITH_CONFLICTS
 
 
 @patch(
@@ -562,9 +563,9 @@ def test_merge_callback_url_with_malformed_workflow(
         factory = TestRecordMetadata.create_from_file(
             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        record_update = RECORD_WITH_CONFLICTS
+        update_workflow_id = build_workflow(RECORD_WITH_CONFLICTS).id
 
-        eng_uuid = start('article', [record_update])
+        eng_uuid = start('article', object_id=update_workflow_id)
 
         eng = WorkflowEngine.from_uuid(eng_uuid)
         obj = eng.objects[0]
@@ -578,7 +579,7 @@ def test_merge_callback_url_with_malformed_workflow(
         assert len(conflicts) == 1
 
         assert obj.extra_data.get('is-update') is True
-        assert obj.extra_data['merger_root'] == record_update
+        assert obj.extra_data['merger_root'] == RECORD_WITH_CONFLICTS
 
         payload = {
             'id': obj.id,
@@ -634,7 +635,8 @@ def test_regression_non_relevant_update_is_not_rejected_and_gets_merged(
     factory = TestRecordMetadata.create_from_file(
         __name__, 'merge_record_arxiv.json', index_name='records-hep'
     )
-    eng_uuid = start('article', [factory.record_metadata.json])
+    update_workflow_id = build_workflow(factory.record_metadata.json).id
+    eng_uuid = start('article', object_id=update_workflow_id)
 
     eng = WorkflowEngine.from_uuid(eng_uuid)
     obj = eng.objects[0]

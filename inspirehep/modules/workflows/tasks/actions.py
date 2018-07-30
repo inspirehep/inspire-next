@@ -615,3 +615,17 @@ def jlab_ticket_needed(obj, eng):
     jlab_categories = set(current_app.config['JLAB_ARXIV_CATEGORIES'])
     arxiv_categories = set(get_arxiv_categories(obj.data))
     return bool(jlab_categories & arxiv_categories)
+
+
+@with_debug_logging
+def load_from_source_data(obj, enj):
+    """Restore the workflow data and extra_data from source_data."""
+    try:
+        source_data = obj.extra_data['source_data']
+        source_data['extra_data']['_task_history'] = obj.extra_data.get('_task_history', [])
+        obj.data = source_data['data']
+        obj.extra_data = source_data['extra_data']
+        obj.extra_data['source_data'] = deepcopy(source_data)
+        obj.save()
+    except KeyError:
+        raise ValueError("Can't restart workflow as 'source_data' is either missing or corrupted")

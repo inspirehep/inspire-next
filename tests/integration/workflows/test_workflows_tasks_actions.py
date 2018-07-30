@@ -29,13 +29,17 @@ import mock
 import pytest
 
 from inspire_schemas.api import load_schema, validate
+from invenio_db import db
 from invenio_workflows import (
     WorkflowEngine,
     start,
     workflow_object_class,
 )
 
-from inspirehep.modules.workflows.tasks.actions import normalize_journal_titles
+from inspirehep.modules.workflows.tasks.actions import (
+    load_from_source_data,
+    normalize_journal_titles,
+)
 
 from calls import insert_citing_record
 
@@ -46,6 +50,7 @@ from mocks import (
     fake_download_file,
     fake_magpie_api_request,
 )
+from workflow_utils import build_workflow
 
 
 @pytest.fixture(scope='function')
@@ -390,7 +395,8 @@ def test_refextract_from_pdf(
     assert validate(citing_record['acquisition_source'], subschema) is None
 
     with mock.patch.dict(workflow_app.config, extra_config):
-        citing_doc_workflow_uuid = start('article', [citing_record])
+        workflow_id = build_workflow(citing_record).id
+        citing_doc_workflow_uuid = start('article', object_id=workflow_id)
 
     citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)
     citing_doc_obj = citing_doc_eng.processed_objects[0]
@@ -463,7 +469,8 @@ def test_count_reference_coreness(
     assert validate(citing_record['acquisition_source'], subschema) is None
 
     with mock.patch.dict(workflow_app.config, extra_config):
-        citing_doc_workflow_uuid = start('article', [citing_record])
+        workflow_id = build_workflow(citing_record).id
+        citing_doc_workflow_uuid = start('article', object_id=workflow_id)
 
     citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)
     citing_doc_obj = citing_doc_eng.processed_objects[0]
@@ -472,3 +479,93 @@ def test_count_reference_coreness(
         'core': 0,
         'non_core': 1,
     }
+
+
+@pytest.fixture
+def load_from_source_data_workflow(workflow_app):
+    class SourceDataWorkflow(object):
+        workflow = [load_from_source_data]
+
+    workflow_app.extensions['invenio-workflows'].register_workflow(
+        'load_source_data',
+        SourceDataWorkflow,
+    )
+
+    yield workflow_app
+
+    del workflow_app.extensions['invenio-workflows'].workflows['load_source_data']
+
+
+def test_workflow_loads_from_source_data_fails_on_no_source_data(
+    load_from_source_data_workflow,
+    workflow_app,
+    record_from_db,
+):
+    extra_data_without_source_data = {}
+    workflow_id = workflow_object_class.create(
+        data_type='hep',
+        data=record_from_db,
+        extra_data=extra_data_without_source_data,
+    ).id
+
+    with pytest.raises(ValueError) as exc:
+        start('load_source_data', object_id=workflow_id)
+
+    assert exc.match(r'source_data.*missing')
+
+
+def test_workflow_loads_from_source_data_preserves_task_history(
+    load_from_source_data_workflow,
+    workflow_app,
+    record_from_db,
+):
+    workflow_id = build_workflow(record_from_db).id
+
+    start('load_source_data', object_id=workflow_id)
+
+    workflow_object = workflow_object_class.get(workflow_id)
+
+    assert len(workflow_object.extra_data['_task_history']) == 1
+
+    workflow_object.callback_pos = [0]
+    workflow_object.save()
+    db.session.commit()
+
+    with load_from_source_data_workflow.app_context():
+        workflow_object.continue_workflow(start_point='restart_task', delayed=False)
+        task_history_len = len(workflow_object.extra_data['_task_history'])
+
+    assert task_history_len == 2
+
+
+def test_workflow_loads_from_source_data_restores_correctly(
+    load_from_source_data_workflow,
+    workflow_app,
+    record_from_db,
+):
+    original_title = 'Fancy title for a new record'
+    modified_title = 'Title changed!'
+
+    workflow_id = build_workflow(record_from_db).id
+    start('load_source_data', object_id=workflow_id)
+
+    # Modify the workflow
+    workflow_object = workflow_object_class.get(workflow_id)
+    workflow_object.data['titles'][0]['title'] = modified_title
+    workflow_object.save()
+    db.session.commit()
+
+    # Assert that the record was modified
+    workflow_object = workflow_object_class.get(workflow_id)
+    assert workflow_object.data['titles'][0]['title'] == modified_title
+
+    # Restart the workflow and verify that it was reverted to original
+    workflow_object.callback_pos = [0]
+    workflow_object.save()
+    db.session.commit()
+
+    with load_from_source_data_workflow.app_context():
+        workflow_object.continue_workflow(start_point='restart_task', delayed=False)
+        result_title = workflow_object.data['titles'][0]['title']
+
+    assert result_title == original_title
