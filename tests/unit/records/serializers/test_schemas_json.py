@@ -23,9 +23,57 @@
 from __future__ import absolute_import, division, print_function
 
 import json
+import mock
 
 from inspirehep.modules.records.serializers.schemas.json import \
-    AuthorsSchemaJSONUIV1, ReferencesSchemaJSONUIV1
+    AuthorsSchemaJSONUIV1, ReferencesSchemaJSONUIV1, RecordMetadataSchemaV1
+
+
+def test_record_metadata_schema_returns_number_of_authors():
+    schema = RecordMetadataSchemaV1()
+    dump = {'authors': [
+        {'full_name': 'author 1'},
+        {'full_name': 'author 2'}
+    ]}
+    expected = 2
+
+    result = schema.dumps(dump).data
+    number_of_authors = json.loads(result)['number_of_authors']
+    assert expected == number_of_authors
+
+
+def test_record_metadata_schema_returns_number_of_references():
+    schema = RecordMetadataSchemaV1()
+    dump = {'references': [
+        {'reference': {'label': '1'}},
+        {'reference': {'label': '2'}},
+    ]}
+    expected = 2
+
+    result = schema.dumps(dump).data
+    number_of_references = json.loads(result)['number_of_references']
+    assert expected == number_of_references
+
+
+@mock.patch('inspirehep.modules.records.serializers.schemas.json.format_date')
+def test_record_metadata_schema_returns_formatted_date(format_date):
+    schema = RecordMetadataSchemaV1()
+    dump = {'earliest_date': '11/11/2011'}
+    formatted_date = 'Nov, 11, 20111'
+    format_date.return_value = formatted_date
+    expected = {'date': formatted_date}
+
+    result = schema.dumps(dump).data
+    assert expected == json.loads(result)
+
+
+def test_record_metadata_schema_empty_fields():
+    schema = RecordMetadataSchemaV1()
+    dump = {}
+    expected = {}
+
+    result = schema.dumps(dump).data
+    assert expected == json.loads(result)
 
 
 def test_metadata_references_items_empty():
