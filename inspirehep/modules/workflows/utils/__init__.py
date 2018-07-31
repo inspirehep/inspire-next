@@ -35,7 +35,7 @@ import backoff
 import lxml.etree as ET
 import requests
 from flask import current_app, url_for
-from timeout_decorator import TimeoutError
+from timeout_decorator import timeout, TimeoutError
 from fs.opener import fsopen
 from invenio_db import db
 
@@ -175,6 +175,29 @@ def ignore_timeout_error(return_value=None):
                     func.__name__
                 )
                 return return_value
+        return wrapper
+    return decorator
+
+
+def timeout_with_config(config_key):
+    """Decorator to set a configurable timeout on a function.
+
+    Args:
+        config_key (str): config key with a integer value representing the time in
+            seconds after which the decorated function will abort, raising a
+            ``TimeoutError``. If the key is not present in the config, a
+            ``KeyError`` is raised.
+
+    Note:
+        This function is needed because it's impossible to pass a value read
+        from the config as an argument to a decorator, as it gets evaluated
+        before the application context is set up.
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            timeout_time = current_app.config[config_key]
+            return timeout(timeout_time)(func)(*args, **kwargs)
         return wrapper
     return decorator
 
