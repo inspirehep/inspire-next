@@ -52,6 +52,10 @@ def test_references_schema_without_record():
                             {
                                 'full_name': 'Hahn, F.'
                             },
+                            {
+                                'full_name': 'Smith, J.',
+                                'inspire_roles': ['supervisor'],
+                            },
                         ],
                         'label': '388',
                         'misc': [
@@ -90,8 +94,18 @@ def test_references_schema_without_record():
                     ],
                     'authors': [
                         {
-                            'full_name': 'Hahn, F.'
-                        }
+                            'full_name': 'Hahn, F.',
+                            'first_name': 'F.',
+                            'last_name': 'Hahn',
+                        },
+                    ],
+                    'supervisors': [
+                        {
+                            'full_name': 'Smith, J.',
+                            'first_name': 'J.',
+                            'last_name': 'Smith',
+                            'inspire_roles': ['supervisor'],
+                        },
                     ],
                     'dois': [
                         {
@@ -160,6 +174,18 @@ def test_authors_schema():
                 {
                     'full_name': 'Frank Castle',
                 },
+                {
+                    'full_name': 'Smith, John',
+                    'inspire_roles': ['author'],
+                },
+                {
+                    'full_name': 'Black, Joe Jr.',
+                    'inspire_roles': ['editor'],
+                },
+                {
+                    'full_name': 'Jimmy',
+                    'inspire_roles': ['supervisor'],
+                },
             ],
             'collaborations': [{
                 'value': 'LHCb',
@@ -185,14 +211,34 @@ def test_authors_schema():
         'metadata': {
             'authors': [
                 {
-                    'full_name': 'Frank Castle'
-                }
+                    'full_name': 'Frank Castle',
+                    'first_name': 'Frank Castle',
+                },
+                {
+                    'full_name': 'Smith, John',
+                    'first_name': 'John',
+                    'last_name': 'Smith',
+                    'inspire_roles': ['author'],
+                },
+                {
+                    'full_name': 'Black, Joe Jr.',
+                    'first_name': 'Joe Jr.',
+                    'last_name': 'Black',
+                    'inspire_roles': ['editor'],
+                },
             ],
             'collaborations': [
                 {
                     'value': 'LHCb'
                 }
-            ]
+            ],
+            'supervisors': [
+                {
+                    'full_name': 'Jimmy',
+                    'first_name': 'Jimmy',
+                    'inspire_roles': ['supervisor'],
+                },
+            ],
         }
     }
     result = json.loads(schema.dumps(record).data)

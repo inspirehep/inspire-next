@@ -22,8 +22,16 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .author import AuthorSchemaV1  # noqa: F401
-from .conference_info_item import ConferenceInfoItemSchemaV1  # noqa: F401
-from .isbn import IsbnSchemaV1  # noqa: F401
-from .supervisor import SupervisorSchemaV1  # noqa: F401
-from .thesis_info import ThesisInfoSchemaV1  # noqa: F401
+from marshmallow import pre_dump
+
+from .author import AuthorSchemaV1
+
+
+class SupervisorSchemaV1(AuthorSchemaV1):
+    @pre_dump
+    def filter(self, data):
+        if 'inspire_roles' not in data:
+            return {}
+        elif 'supervisor' not in data.get('inspire_roles', ['author']):
+            return {}
+        return data

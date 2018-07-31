@@ -26,11 +26,12 @@ from __future__ import absolute_import, division, print_function
 
 from inspire_dojson.utils import get_recid_from_ref, strip_empty_values
 from inspire_utils.helpers import force_list
-from marshmallow import Schema, fields, missing, pre_dump, post_dump
+from marshmallow import Schema, fields, post_dump, pre_dump
 
+from inspirehep.modules.records.serializers.fields.list_with_limit import ListWithLimit
 from inspirehep.modules.records.utils import get_linked_records_in_field
 
-from .common import IsbnSchemaV1, ThesisInfoSchemaV1, ConferenceInfoItemSchemaV1
+from .common import AuthorSchemaV1, IsbnSchemaV1, ThesisInfoSchemaV1, SupervisorSchemaV1, ConferenceInfoItemSchemaV1
 
 
 class RecordMetadataSchemaV1(Schema):
@@ -39,6 +40,7 @@ class RecordMetadataSchemaV1(Schema):
     accelerator_experiments = fields.Raw()
     acquisition_source = fields.Raw()
     arxiv_eprints = fields.Raw()
+    authors = ListWithLimit(fields.Nested(AuthorSchemaV1, dump_only=True), limit=10)
     book_series = fields.Raw()
     # citeable = fields.Raw()
     collaborations = fields.Raw()
@@ -84,6 +86,7 @@ class RecordMetadataSchemaV1(Schema):
     # related_records = fields.Raw()
     report_numbers = fields.Raw()
     # self = fields.Raw()
+    supervisors = ListWithLimit(fields.Nested(SupervisorSchemaV1, dump_only=True), attribute='authors', limit=10)
     texkeys = fields.Raw()
     thesis_info = fields.Nested(ThesisInfoSchemaV1, dump_only=True)
     # title_translations = fields.Raw()
@@ -108,9 +111,13 @@ class RecordSchemaJSONUIV1(Schema):
 
 
 class MetadataAuthorsSchemaV1(Schema):
+    authors = fields.Nested(AuthorSchemaV1, default=[], dump_only=True, many=True)
+    collaborations = fields.Raw(default=[], dump_only=True)
+    supervisors = fields.Nested(SupervisorSchemaV1, default=[], dump_only=True, many=True, attribute='authors')
 
-    authors = fields.Raw(dump_only=True)
-    collaborations = fields.Raw(dump_only=True)
+    @post_dump
+    def strip_empty(self, data):
+        return strip_empty_values(data)
 
 
 class AuthorsSchemaJSONUIV1(RecordSchemaJSONUIV1):
@@ -121,24 +128,25 @@ class AuthorsSchemaJSONUIV1(RecordSchemaJSONUIV1):
 
 class MetadataReferencesSchemaItemV1(Schema):
     arxiv_eprints = fields.List(fields.Dict())
-    authors = fields.Method('get_authors')
+    authors = ListWithLimit(fields.Nested(AuthorSchemaV1, dump_only=True), limit=10)
     collaborations = fields.List(fields.Dict())
     control_number = fields.Int()
     dois = fields.List(fields.Dict())
     external_system_identifiers = fields.List(fields.Dict())
     label = fields.String()
     publication_info = fields.List(fields.Dict())
+    supervisors = ListWithLimit(fields.Nested(SupervisorSchemaV1, dump_only=True), attribute='authors', limit=10)
     titles = fields.List(fields.Dict())
     urls = fields.List(fields.Dict())
-
-    def get_authors(self, data):
-        authors = data.get('authors', [])
-        return authors[:10] or missing
 
 
 class MetadataReferencesSchemaUIV1(Schema):
     references = fields.Nested(
         MetadataReferencesSchemaItemV1, many=True, dump_only=True)
+
+    @post_dump
+    def strip_empty(self, data):
+        return strip_empty_values(data)
 
 
 class ReferencesSchemaJSONUIV1(RecordSchemaJSONUIV1):

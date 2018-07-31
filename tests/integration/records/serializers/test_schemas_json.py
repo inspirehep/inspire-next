@@ -42,6 +42,14 @@ def test_references_schema_with_record(isolated_app):
             {
                 'full_name': 'Frank Castle',
             },
+            {
+                'full_name': 'Smith, Jim',
+                'inspire_roles': ['editor'],
+            },
+            {
+                'full_name': 'Jimmy',
+                'inspire_roles': ['supervisor'],
+            },
         ],
         'dois': [
             {
@@ -125,10 +133,24 @@ def test_references_schema_with_record(isolated_app):
                             'title': 'Jessica Jones'
                         }
                     ],
-                    'authors': [
+                    'authors': [  # only first 10 authors and supervisors are returned
                         {
-                            'full_name': 'Frank Castle'
-                        }
+                            'full_name': 'Frank Castle',
+                            'first_name': 'Frank Castle',
+                        },
+                        {
+                            'full_name': 'Smith, Jim',
+                            'first_name': 'Jim',
+                            'last_name': 'Smith',
+                            'inspire_roles': ['editor'],
+                        },
+                    ],
+                    'supervisors': [
+                        {
+                            'full_name': 'Jimmy',
+                            'first_name': 'Jimmy',
+                            'inspire_roles': ['supervisor'],
+                        },
                     ],
                     'publication_info': [
                         {

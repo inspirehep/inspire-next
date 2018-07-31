@@ -36,10 +36,10 @@ class ConferenceInfoItemSchemaV1(Schema):
     def resolve_conference_record_as_root(self, pub_info_item):
         conference_record = pub_info_item.get('conference_record')
         if conference_record is None:
-            return None
+            return {}
         _, recid = get_pid_from_record_uri(conference_record.get('$ref'))
         conference = get_db_record('con', recid).dumps()
         titles = conference.get('titles')
         if titles is None:
-            return None
+            return {}
         return conference

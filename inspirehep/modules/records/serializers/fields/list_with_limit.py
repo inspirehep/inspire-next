@@ -22,8 +22,13 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .author import AuthorSchemaV1  # noqa: F401
-from .conference_info_item import ConferenceInfoItemSchemaV1  # noqa: F401
-from .isbn import IsbnSchemaV1  # noqa: F401
-from .supervisor import SupervisorSchemaV1  # noqa: F401
-from .thesis_info import ThesisInfoSchemaV1  # noqa: F401
+from marshmallow import fields, utils
+
+
+class ListWithLimit(fields.List):
+    def _serialize(self, value, attr, obj):
+        if utils.is_collection(value):
+            limit = self.metadata.get('limit')
+            if limit:
+                return super(ListWithLimit, self)._serialize(value[:limit], attr, obj)
+        return super(ListWithLimit, self)._serialize(value, attr, obj)
