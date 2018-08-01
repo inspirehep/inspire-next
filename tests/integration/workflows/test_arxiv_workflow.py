@@ -946,7 +946,7 @@ def test_match_wf_in_error_goes_in_error_state(workflow_app):
     es.indices.refresh('holdingpen-hep')
 
     with pytest.raises(WorkflowsError):
-        start('article', record)
+        start('article', [record])
 
 
 def test_match_wf_in_error_goes_in_initial_state(workflow_app):
@@ -958,4 +958,4 @@ def test_match_wf_in_error_goes_in_initial_state(workflow_app):
     es.indices.refresh('holdingpen-hep')
 
     with pytest.raises(WorkflowsError):
-        start('article', record)
+        start('article', [record])
