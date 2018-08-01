@@ -61,14 +61,14 @@ HIGGS_ONTOLOGY = '''<?xml version="1.0" encoding="UTF-8" ?>
 '''
 
 
-@pytest.fixture()
-def higgs_ontology(tmpdir):
-    ontology = tmpdir.join('HEPont.rdf')
+@pytest.fixture(scope='module')
+def higgs_ontology(tmpdir_factory):
+    ontology = tmpdir_factory.mktemp('data').join('HEPont.rdf')
     ontology.write(HIGGS_ONTOLOGY)
     yield str(ontology)
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def workflow_app(higgs_ontology):
     """Flask application with no records and function scope.
 
