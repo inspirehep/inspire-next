@@ -33,7 +33,7 @@ from marshmallow import Schema, fields, missing, pre_dump, post_dump
 from inspirehep.modules.records.serializers.fields.list_with_limit import ListWithLimit
 from inspirehep.modules.records.utils import get_linked_records_in_field
 
-from .common import AuthorSchemaV1, IsbnSchemaV1, ThesisInfoSchemaV1, SupervisorSchemaV1, ConferenceInfoItemSchemaV1, PublicationInfoItemSchemaV1
+from .common import AuthorSchemaV1, ConferenceInfoItemSchemaV1, ExternalSystemIdentifierSchemaV1, IsbnSchemaV1, PublicationInfoItemSchemaV1, SupervisorSchemaV1, ThesisInfoSchemaV1
 
 
 class RecordMetadataSchemaV1(Schema):
@@ -65,7 +65,8 @@ class RecordMetadataSchemaV1(Schema):
     dois = fields.Raw()
     # editions = fields.Raw()
     # energy_ranges = fields.Raw()
-    external_system_identifiers = fields.Raw()
+    external_system_identifiers = fields.Nested(
+        ExternalSystemIdentifierSchemaV1, dump_only=True, many=True)
     # figures = fields.Raw()
     # funding_info = fields.Raw()
     imprints = fields.Raw()
