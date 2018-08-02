@@ -484,17 +484,19 @@ def publication_info(record):
     result = {}
     pub_infos = []
     if 'publication_info' in record:
-        for pub_info in record.publication_information:
-            pub_info_html = render_macro_from_template(
-                name="pub_info",
-                template="inspirehep_theme/format/record/Publication_info.tpl",
-                ctx=pub_info
-            )
-            if pub_info_html:
-                pub_infos.append(pub_info_html)
+        publication_information = record.publication_information
+        if publication_information:
+            for pub_info in publication_information:
+                pub_info_html = render_macro_from_template(
+                    name="pub_info",
+                    template="inspirehep_theme/format/record/Publication_info.tpl",
+                    ctx=pub_info
+                )
+                if pub_info_html:
+                    pub_infos.append(pub_info_html)
 
-        if pub_infos:
-            result['pub_info'] = pub_infos
+            if pub_infos:
+                result['pub_info'] = pub_infos
 
         # Conference info line
         for conf_info in record.conference_information:

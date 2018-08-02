@@ -123,6 +123,10 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
         Returns a list with information about each publication note in
         the record.
         """
+
+        if 'publication_info' not in self:
+            return None
+
         pub_info_list = []
         for pub_info in self['publication_info']:
             item = {}
@@ -143,7 +147,7 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
             if item:
                 pub_info_list.append({key: value for (key, value) in iteritems(item) if value})
 
-        return pub_info_list
+        return pub_info_list or None
 
     @property
     def external_system_identifiers(self):
