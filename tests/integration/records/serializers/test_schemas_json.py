@@ -26,6 +26,7 @@ import json
 
 from inspirehep.modules.records.serializers.schemas.json import \
     ReferencesSchemaJSONUIV1, RecordSchemaJSONUIV1
+
 from factories.db.invenio_records import TestRecordMetadata
 
 
@@ -105,6 +106,32 @@ def test_references_schema_with_record(isolated_app):
                         }
                     }
                 },
+                {
+                    'reference': {
+                        'authors': [{
+                            'full_name': 'Jessica Jones'
+                        }],
+                        'label': '1',
+                        'misc': ['The J-PARC KOTO experiment 006'],
+                        'publication_info': {
+                            'artid': '02B006',
+                            'journal_volume': '2012',
+                            'year': 2012,
+                        }
+                    }
+                },
+                {
+                    'reference': {
+                        'authors': [{
+                            'full_name': 'Luke Cage'
+                        }],
+                        'label': '2',
+                        'publication_info': {
+                            'journal_title': 'PTEP',
+                            'year': 2012,
+                        }
+                    }
+                }
             ],
         },
     }
@@ -112,27 +139,13 @@ def test_references_schema_with_record(isolated_app):
         'metadata': {
             'references': [
                 {
-                    'arxiv_eprints': [
-                        {
-                            'value': '1607.06746'
-                        }
-                    ],
                     'control_number': 123,
-                    'collaborations': [
-                        {
-                            'value': 'LHCb'
-                        }
-                    ],
-                    'dois': [
-                        {
-                            'value': '10.1088/1361-6633/aa5514'
-                        }
-                    ],
                     'titles': [
                         {
-                            'title': 'Jessica Jones'
-                        }
+                            'title': 'Jessica Jones',
+                        },
                     ],
+                    'label': '389',
                     'authors': [  # only first 10 authors and supervisors are returned
                         {
                             'full_name': 'Frank Castle',
@@ -145,30 +158,34 @@ def test_references_schema_with_record(isolated_app):
                             'inspire_roles': ['editor'],
                         },
                     ],
-                    'supervisors': [
-                        {
-                            'full_name': 'Jimmy',
-                            'first_name': 'Jimmy',
-                            'inspire_roles': ['supervisor'],
-                        },
-                    ],
                     'publication_info': [
                         {
-                            'journal_recid': 1214416,
                             'journal_title': 'Rept.Prog.Phys.',
                             'journal_volume': '80',
-                            'journal_record': {
-                                '$ref': 'http://labs.inspirehep.net/api/journals/1214416'
-                            },
                             'artid': '046201',
                             'year': 2017,
-                            'journal_issue': '4'
-                        }
+                            'journal_issue': '4',
+                        },
                     ],
-                    'urls': [
+                },
+                {
+                    'authors': [{
+                        'full_name': 'Jessica Jones',
+                        'first_name': 'Jessica Jones',
+                    }],
+                    'label': '1',
+                },
+                {
+                    'authors': [{
+                        'full_name': 'Luke Cage',
+                        'first_name': 'Luke Cage',
+                    }],
+                    'label': '2',
+                    'publication_info': [
                         {
-                            'value': 'http://sf2a.eu/semaine-sf2a/2013/proceedings/'
-                        }
+                            'journal_title': 'PTEP',
+                            'year': 2012,
+                        },
                     ],
                 }
             ]
@@ -208,17 +225,14 @@ def test_conference_info_schema_with_record(isolated_app):
                     'conference_record': {
                         '$ref': 'http://labs.inspirehep.net/api/journals/972464'
                     }
-
                 },
                 {
                     'artid': '02B006',
                     'journal_title': 'PTEP',
                     'journal_volume': '2012',
                     'year': 2012
-
                 }
             ]
-
         }
     }
 
