@@ -230,9 +230,6 @@ def test_conference_info_schema_with_record(isolated_app):
                     'journal_title': 'PTEP',
                     'journal_volume': '2012',
                     'year': 2012,
-                    'conference_record': {
-                        '$ref': 'http://labs.inspirehep.net/api/journals/972464'
-                    }
 
                 },
                 {

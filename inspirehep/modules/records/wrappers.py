@@ -73,6 +73,7 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
         """Get preferred title."""
         return get_title(self)
 
+    # TODO: Deprecated, must be removed once the new UI is released
     @property
     def conference_information(self):
         """Conference information.
@@ -116,6 +117,7 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
 
         return conf_info
 
+    # TODO: Deprecated, must be removed once the new UI is released
     @property
     def publication_information(self):
         """Publication information.

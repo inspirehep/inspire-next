@@ -22,10 +22,24 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .author import AuthorSchemaV1  # noqa: F401
-from .conference_info_item import ConferenceInfoItemSchemaV1  # noqa: F401
-from .isbn import IsbnSchemaV1  # noqa: F401
-from .supervisor import SupervisorSchemaV1  # noqa: F401
-from .thesis_info import ThesisInfoSchemaV1  # noqa: F401
-from .publication_info_item import PublicationInfoItemSchemaV1  # noqa: F401
-from .external_system_identifier import ExternalSystemIdentifierSchemaV1    # noqa: F401
+from marshmallow import Schema, pre_dump, fields
+
+
+class PublicationInfoItemSchemaV1(Schema):
+    artid = fields.Raw()
+    journal_issue = fields.Raw()
+    journal_title = fields.Raw()
+    journal_volume = fields.Raw()
+    material = fields.Raw()
+    page_start = fields.Raw()
+    page_end = fields.Raw()
+    pubinfo_freetext = fields.Raw()
+    year = fields.Raw()
+
+    @pre_dump
+    def empty_if_display_display_fields_missing(self, data):
+        journal_title = data.get('journal_title')
+        pubinfo_freetext = data.get('pubinfo_freetext')
+        if journal_title is None and pubinfo_freetext is None:
+            return {}
+        return data
