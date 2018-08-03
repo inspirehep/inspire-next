@@ -378,43 +378,13 @@ LITERATURE_REST_ENDPOINT = {
         'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
         'application/marcxml+xml': INSPIRE_SERIALIZERS + ':marcxml_v1_search',
     },
-    'suggesters': {
-        'abstract_source': {
-            'completion': {
-                'field': 'abstracts.abstract_source_suggest',
-            },
-        },
-        'book_title': {
-            'completion': {
-                'field': 'bookautocomplete'
-            }
-        }
-    },
     'list_route': '/literature/',
-    'item_route': '/literature/<pid(lit,record_class="inspirehep.modules.records.api:ESRecord"):pid_value>',
-    'default_media_type': 'application/json',
-    'max_result_window': 10000,
-    'search_factory_imp': 'inspirehep.modules.search.search_factory:inspire_search_factory',
-    'read_permission_factory_imp': "inspirehep.modules.records.permissions:record_read_permission_factory",
-    'record_class': 'inspirehep.modules.records.api:ESRecord'
-}
-
-LITERATURE_DB_REST_ENDPOINT = {
-    'pid_type': 'lit',
-    'search_class': 'inspirehep.modules.search:LiteratureSearch',
-    'record_serializers': {
-        'application/json': 'invenio_records_rest.serializers:json_v1_response',
-    },
-    'record_class': 'inspirehep.modules.records.api:InspireRecord',
-    'search_serializers': {
-        'application/json': 'invenio_records_rest.serializers:json_v1_search',
-    },
-    'list_route': '/literature/db',
-    'item_route': '/literature/<pid(lit,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/db',
+    'item_route': '/literature/<pid(lit,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
     'default_media_type': 'application/json',
     'search_factory_imp': 'inspirehep.modules.search.search_factory:inspire_search_factory',
     'read_permission_factory_imp': "inspirehep.modules.records.permissions:record_read_permission_factory",
     'update_permission_factory_imp': "inspirehep.modules.records.permissions:record_update_permission_factory",
+    'record_class': 'inspirehep.modules.records.api:InspireRecord',
 }
 
 LITERATURE_REFERENCES_REST_ENDPOINT = {
@@ -823,7 +793,6 @@ JOURNALS_DB_REST_ENDPOINT = {
 
 RECORDS_REST_ENDPOINTS = {
     'literature': LITERATURE_REST_ENDPOINT,
-    'literature_db': LITERATURE_DB_REST_ENDPOINT,
     'literature_references': LITERATURE_REFERENCES_REST_ENDPOINT,
     'literature_authors': LITERATURE_AUTHORS_REST_ENDPOINT,
     'authors': AUTHORS_REST_ENDPOINT,

@@ -206,7 +206,7 @@ def test_record_api_update(app, api_client, user_info, status):
 
     record = get_db_record('lit', 1497201)
 
-    resp = api_client.put('/literature/1497201/db',
+    resp = api_client.put('/literature/1497201',
                           data=json.dumps(record),
                           content_type='application/json')
     assert resp.status_code == status
@@ -232,7 +232,7 @@ def test_record_api_update_restricted_record(app, api_client, user_info, status)
 
     record = get_db_record('lit', 1090628)
 
-    resp = api_client.put('/literature/1090628/db',
+    resp = api_client.put('/literature/1090628',
                           data=json.dumps(record),
                           content_type='application/json')
     assert resp.status_code == status
