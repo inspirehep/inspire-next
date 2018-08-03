@@ -78,6 +78,9 @@
                             },
                             "type": "object"
                         },
+                        "control_number": {
+                            "type": "integer"
+                        },
                         "dois": {
                             "properties": {
                                 "material": {

@@ -57,6 +57,9 @@
                                 }
                             },
                             "type": "object"
+                        },
+                        "control_number": {
+                            "type": "integer"
                         }
                     },
                     "type": "object"

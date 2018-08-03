@@ -24,6 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 
+from time import sleep
+
 from invenio_db import db
 
 from inspirehep.modules.records.api import InspireRecord
@@ -31,7 +33,10 @@ from inspirehep.modules.workflows.utils import (
     insert_wf_record_source,
     read_all_wf_record_sources,
     read_wf_record_source,
+    timeout_with_config,
+    TimeoutError
 )
+from utils import override_config
 
 
 @pytest.fixture()
@@ -142,3 +147,12 @@ def test_read_all_wf_record_sources(dummy_record):
 
     entries = read_all_wf_record_sources(dummy_record.id)
     assert len(entries) == 2
+
+
+def test_timeout_with_config(workflow_app):
+    @timeout_with_config('MAX_NAP_TIME')
+    def long_nap():
+        sleep(5)
+
+    with override_config(MAX_NAP_TIME=1), pytest.raises(TimeoutError):
+        long_nap()

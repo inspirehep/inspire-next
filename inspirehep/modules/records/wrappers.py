@@ -73,6 +73,7 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
         """Get preferred title."""
         return get_title(self)
 
+    # TODO: Deprecated, must be removed once the new UI is released
     @property
     def conference_information(self):
         """Conference information.
@@ -116,6 +117,7 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
 
         return conf_info
 
+    # TODO: Deprecated, must be removed once the new UI is released
     @property
     def publication_information(self):
         """Publication information.
@@ -123,6 +125,10 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
         Returns a list with information about each publication note in
         the record.
         """
+
+        if 'publication_info' not in self:
+            return None
+
         pub_info_list = []
         for pub_info in self['publication_info']:
             item = {}
@@ -136,12 +142,14 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
                     'page_end': str(pub_info.get('page_end', '')),
                     'artid': pub_info.get('artid'),
                     'pubinfo_freetext': pub_info.get('pubinfo_freetext'),
+                    'material': pub_info.get('material'),
+                    'conference_record': pub_info.get('conference_record')
                 })
 
             if item:
                 pub_info_list.append({key: value for (key, value) in iteritems(item) if value})
 
-        return pub_info_list
+        return pub_info_list or None
 
     @property
     def external_system_identifiers(self):

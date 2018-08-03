@@ -51,6 +51,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_record_accepted,
     is_record_relevant,
     is_submission,
+    load_from_source_data,
     mark,
     normalize_journal_titles,
     populate_journal_coverage,
@@ -476,6 +477,7 @@ INIT_MARKS = [
 
 
 PRE_PROCESSING = [
+    load_from_source_data,
     # Make sure schema is set for proper indexing in Holding Pen
     set_schema,
     INIT_MARKS,

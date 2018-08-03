@@ -59,6 +59,8 @@ Defaults to ``<env_prefix>_STATIC_FOLDER`` or if environment variable is not
 set ``<sys.prefix>/var/<app_name>-instance/static``.
 """
 
+static_url_path = '/oldui'
+
 create_api = create_app_factory(
     'inspirehep',
     config_loader=api_config_loader,
@@ -66,6 +68,7 @@ create_api = create_app_factory(
     extension_entry_points=['invenio_base.api_apps'],
     converter_entry_points=['invenio_base.api_converters'],
     instance_path=instance_path,
+    static_url_path=static_url_path,
 )
 
 create_app = create_app_factory(
@@ -77,4 +80,5 @@ create_app = create_app_factory(
     wsgi_factory=create_wsgi_factory({'/api': create_api}),
     instance_path=instance_path,
     static_folder=static_folder,
+    static_url_path=static_url_path,
 )

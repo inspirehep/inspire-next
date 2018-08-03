@@ -54,8 +54,66 @@ from mocks import (
     fake_download_file,
     fake_magpie_api_request,
 )
-from utils import get_halted_workflow
+from workflow_utils import build_workflow
 from inspirehep.modules.workflows.tasks.matching import _get_hep_record_brief
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link'
+)
+def get_halted_workflow(mocked_is_pdf_link, app, record, extra_config=None):
+    mocked_is_pdf_link.return_value = True
+
+    extra_config = extra_config or {}
+    with mock.patch.dict(app.config, extra_config):
+        workflow_id = build_workflow(record).id
+        workflow_uuid = start('article', object_id=workflow_id)
+
+    eng = WorkflowEngine.from_uuid(workflow_uuid)
+    obj = eng.processed_objects[0]
+
+    assert obj.status == ObjectStatus.HALTED
+    assert obj.data_type == "hep"
+
+    # Files should have been attached (tarball + pdf, and plots)
+    assert obj.files["1407.7587.pdf"]
+    assert obj.files["1407.7587.tar.gz"]
+
+    assert len(obj.files) > 2
+
+    # A publication note should have been extracted
+    pub_info = obj.data.get('publication_info')
+    assert pub_info
+    assert pub_info[0]
+    assert pub_info[0].get('year') == 2014
+    assert pub_info[0].get('journal_title') == "J. Math. Phys."
+
+    # A prediction should have been made
+    prediction = obj.extra_data.get("relevance_prediction")
+    assert prediction
+    assert prediction['decision'] == 'Non-CORE'
+    assert prediction['scores']['Non-CORE'] == 0.8358207729691823
+
+    expected_experiment_prediction = {
+        'experiments': [
+            {'label': 'CMS', 'score': 0.75495152473449707}
+        ]
+    }
+    experiments_prediction = obj.extra_data.get("experiments_prediction")
+    assert experiments_prediction == expected_experiment_prediction
+
+    keywords_prediction = obj.extra_data.get("keywords_prediction")
+    assert keywords_prediction
+    assert {
+        "label": "galaxy",
+        "score": 0.29424679279327393,
+        "accept": True
+    } in keywords_prediction['keywords']
+
+    # This record should not have been touched yet
+    assert obj.extra_data['approved'] is None
+
+    return workflow_uuid, eng, obj
 
 
 @pytest.fixture
@@ -168,8 +226,9 @@ def test_harvesting_arxiv_workflow_core_record_auto_accepted(
         'ARXIV_CATEGORIES': categories,
     }
     with workflow_app.app_context():
+        workflow_id = build_workflow(record).id
         with mock.patch.dict(workflow_app.config, extra_config):
-            workflow_uuid = start('article', [record])
+            workflow_uuid = start('article', object_id=workflow_id)
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
@@ -284,7 +343,8 @@ def test_match_in_holdingpen_stops_pending_wf(
 ):
     record = generate_record()
 
-    eng_uuid = start('article', [record])
+    workflow_id = build_workflow(record).id
+    eng_uuid = start('article', object_id=workflow_id)
     es.indices.refresh('holdingpen-hep')
     eng = WorkflowEngine.from_uuid(eng_uuid)
     old_wf = eng.objects[0]
@@ -295,7 +355,8 @@ def test_match_in_holdingpen_stops_pending_wf(
 
     record2 = record
     record['titles'][0]['title'] = 'This is an update that will match the wf in the holdingpen'
-    eng_uuid2 = start('article', [record2])
+    record2_workflow = build_workflow(record2).id
+    eng_uuid2 = start('article', object_id=record2_workflow)
     es.indices.refresh('holdingpen-hep')
     eng2 = WorkflowEngine.from_uuid(eng_uuid2)
     update_wf = eng2.objects[0]
@@ -346,7 +407,8 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
 ):
     record = generate_record()
 
-    eng_uuid = start('article', [record])
+    record_workflow = build_workflow(record).id
+    eng_uuid = start('article', object_id=record_workflow)
     eng = WorkflowEngine.from_uuid(eng_uuid)
     obj_id = eng.objects[0].id
     obj = workflow_object_class.get(obj_id)
@@ -361,7 +423,8 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
     record['titles'][0]['title'] = 'This is an update that will match the wf in the holdingpen'
     # this workflow matches in the holdingpen and stops because the
     # matched one was rejected
-    eng_uuid = start('article', [record])
+    workflow_id = build_workflow(record).id
+    eng_uuid = start('article', object_id=workflow_id)
     eng = WorkflowEngine.from_uuid(eng_uuid)
     obj2 = eng.objects[0]
 
@@ -401,7 +464,8 @@ def test_match_in_holdingpen_different_sources_continues(
 ):
     record = generate_record()
 
-    eng_uuid = start('article', [record])
+    workflow_id = build_workflow(record).id
+    eng_uuid = start('article', object_id=workflow_id)
     es.indices.refresh('holdingpen-hep')
     eng = WorkflowEngine.from_uuid(eng_uuid)
     wf_to_match = eng.objects[0].id
@@ -413,7 +477,8 @@ def test_match_in_holdingpen_different_sources_continues(
     record['acquisition_source']['source'] = 'but not the source'
     # this workflow matches in the holdingpen but continues because has a
     # different source
-    eng_uuid = start('article', [record])
+    workflow_id = build_workflow(record).id
+    eng_uuid = start('article', object_id=workflow_id)
     eng = WorkflowEngine.from_uuid(eng_uuid)
     obj = eng.objects[0]
 
@@ -433,17 +498,12 @@ def test_article_workflow_stops_when_record_is_not_valid(workflow_app):
         ],
     }
 
-    obj = workflow_object_class.create(
-        data=invalid_record,
-        data_type='hep',
-        id_user=1,
-    )
-    obj_id = obj.id
+    workflow_id = build_workflow(invalid_record).id
 
     with pytest.raises(ValidationError):
-        start('article', invalid_record, obj_id)
+        start('article', object_id=workflow_id)
 
-    obj = workflow_object_class.get(obj_id)
+    obj = workflow_object_class.get(workflow_id)
 
     assert obj.status == ObjectStatus.ERROR
     assert '_error_msg' in obj.extra_data
@@ -470,7 +530,8 @@ def test_article_workflow_continues_when_record_is_valid(workflow_app):
         ],
     }
 
-    eng_uuid = start('article', [valid_record])
+    workflow_id = build_workflow(valid_record).id
+    eng_uuid = start('article', object_id=workflow_id)
 
     eng = WorkflowEngine.from_uuid(eng_uuid)
     obj = eng.objects[0]
@@ -505,7 +566,8 @@ def test_update_exact_matched_goes_trough_the_workflow(
     record_from_db
 ):
     record = record_from_db
-    eng_uuid = start('article', [record])
+    workflow_id = build_workflow(record).id
+    eng_uuid = start('article', object_id=workflow_id)
     obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
     obj = workflow_object_class.get(obj_id)
 
@@ -586,7 +648,8 @@ def test_fuzzy_matched_goes_trough_the_workflow(
     rec_id = record['control_number']
 
     with mock.patch.dict(workflow_app.config['FUZZY_MATCH'], es_query):
-        eng_uuid = start('article', [record])
+        workflow_id = build_workflow(record).id
+        eng_uuid = start('article', object_id=workflow_id)
 
     obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
     obj = workflow_object_class.get(obj_id)
@@ -625,7 +688,8 @@ def test_validation_error_callback_with_a_valid(workflow_app):
         ],
     }
 
-    eng_uuid = start('article', [valid_record])
+    workflow_id = build_workflow(valid_record).id
+    eng_uuid = start('article', object_id=workflow_id)
 
     eng = WorkflowEngine.from_uuid(eng_uuid)
     obj = eng.objects[0]
@@ -660,15 +724,12 @@ def test_validation_error_callback_with_validation_error(workflow_app):
         'preprint_date': 'Jessica Jones'
     }
 
-    obj = workflow_object_class.create(
-        data=invalid_record,
-        data_type='hep',
-        id_user=1,
-    )
-    obj_id = obj.id
+    workflow_id = build_workflow(invalid_record).id
 
     with pytest.raises(ValidationError):
-        start('article', invalid_record, obj_id)
+        start('article', object_id=workflow_id)
+
+    obj = workflow_object_class.get(workflow_id)
 
     assert obj.status == ObjectStatus.ERROR
 
@@ -704,7 +765,8 @@ def test_validation_error_callback_with_missing_worfklow(workflow_app):
         ],
     }
 
-    eng_uuid = start('article', [invalid_record])
+    workflow_id = build_workflow(invalid_record).id
+    eng_uuid = start('article', object_id=workflow_id)
 
     eng = WorkflowEngine.from_uuid(eng_uuid)
     obj = eng.objects[0]
@@ -738,7 +800,8 @@ def test_validation_error_callback_with_malformed_with_invalid_types(workflow_ap
         ],
     }
 
-    eng_uuid = start('article', [invalid_record])
+    workflow_id = build_workflow(invalid_record).id
+    eng_uuid = start('article', object_id=workflow_id)
 
     eng = WorkflowEngine.from_uuid(eng_uuid)
     obj = eng.objects[0]
@@ -812,8 +875,9 @@ def test_keep_previously_rejected_from_fully_harvested_category_is_auto_approved
     }
     with workflow_app.app_context():
         with mock.patch.dict(workflow_app.config, extra_config):
-            workflow_uuid = start('article', [record])
-            eng = WorkflowEngine.from_uuid(workflow_uuid)
+            workflow_id = build_workflow(record).id
+            eng_uuid = start('article', object_id=workflow_id)
+            eng = WorkflowEngine.from_uuid(eng_uuid)
             obj2 = eng.processed_objects[0]
             assert obj2.extra_data['auto-approved']
             assert len(obj2.extra_data['previously_rejected_matches']) > 0
@@ -873,8 +937,9 @@ def test_previously_rejected_from_not_fully_harvested_category_is_not_auto_appro
     }
     with workflow_app.app_context():
         with mock.patch.dict(workflow_app.config, extra_config):
-            workflow_uuid = start('article', [record])
-            eng = WorkflowEngine.from_uuid(workflow_uuid)
+            workflow_id = build_workflow(record).id
+            eng_uuid = start('article', object_id=workflow_id)
+            eng = WorkflowEngine.from_uuid(eng_uuid)
             obj2 = eng.processed_objects[0]
             assert not obj2.extra_data['auto-approved']
             assert len(obj2.extra_data['previously_rejected_matches']) > 0
@@ -890,7 +955,8 @@ def test_match_wf_in_error_goes_in_error_state(workflow_app):
     es.indices.refresh('holdingpen-hep')
 
     with pytest.raises(WorkflowsError):
-        start('article', record)
+        workflow_id = build_workflow(record).id
+        start('article', object_id=workflow_id)
 
 
 def test_match_wf_in_error_goes_in_initial_state(workflow_app):
@@ -902,4 +968,17 @@ def test_match_wf_in_error_goes_in_initial_state(workflow_app):
     es.indices.refresh('holdingpen-hep')
 
     with pytest.raises(WorkflowsError):
-        start('article', record)
+        workflow_id = build_workflow(record).id
+        start('article', object_id=workflow_id)
+
+
+def test_start_wf_with_no_source_data_fails(workflow_app):
+    record = generate_record()
+
+    obj = build_workflow(record)
+    del obj.extra_data['source_data']
+    obj.save()
+    db.session.commit()
+
+    with pytest.raises(ValueError):
+        start('article', object_id=obj.id)

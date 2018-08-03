@@ -25,10 +25,12 @@ from __future__ import absolute_import, division, print_function
 from copy import deepcopy
 import json
 
+from invenio_accounts.testutils import login_user_via_session
 from invenio_workflows import workflow_object_class
 from invenio_db import db
 
 from factories.db.invenio_records import TestRecordMetadata
+from workflow_utils import build_workflow
 
 
 def test_inspect_merge_view(workflow_app):
@@ -90,3 +92,35 @@ def test_inspect_merge_view_returns_400(workflow_app):
     with workflow_app.test_client() as client:
         response = client.get('/workflows/inspect_merge/{}'.format(obj.id))
         assert response.status_code == 400
+
+
+def test_responses_with_etag(workflow_app):
+
+    factory = TestRecordMetadata.create_from_kwargs(
+        json={'titles': [{'title': 'Etag version'}]}
+    )
+
+    workflow_id = build_workflow(factory.record_metadata.json).id
+    obj = workflow_object_class.get(workflow_id)
+    obj.save()
+    db.session.commit()
+
+    workflow_url = '/api/holdingpen/{}'.format(obj.id)
+
+    with workflow_app.test_client() as client:
+        login_user_via_session(client, email='cataloger@inspirehep.net')
+        response = client.get(workflow_url)
+        assert response.status_code == 200
+
+        etag = response.headers['ETag']
+        last_modified = response.headers['Last-Modified']
+
+        response = client.get(
+            workflow_url, headers={'If-Modified-Since': last_modified})
+        assert response.status_code == 304
+
+        response = client.get(workflow_url, headers={'If-None-Match': etag})
+        assert response.status_code == 304
+
+        response = client.get(workflow_url, headers={'If-None-Match': 'Jessica Jones'})
+        assert response.status_code == 200

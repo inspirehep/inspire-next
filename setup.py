@@ -96,7 +96,7 @@ install_requires = [
     'invenio-search[elasticsearch5]~=1.0,>=1.0.0',
     'invenio-userprofiles~=1.0,>=1.0.0',
     'invenio-workflows-files~=1.0,>=1.0.0',
-    'invenio-workflows-ui~=2.0,>=2.0.3',
+    'invenio-workflows-ui~=2.0,>=2.0.11',
     'invenio-workflows~=7.0,>=7.0.1',
     # Pin the version of jsonschema, as not to catch alpha 3.0 release
     'jsonschema~=2.0,>=2.6.0',

@@ -32,6 +32,8 @@ from invenio_workflows import (
 
 from jsonschema import ValidationError
 
+from workflow_utils import build_workflow
+
 
 def test_authors_workflow_stops_when_record_is_not_valid(workflow_app):
     invalid_record = {
@@ -41,15 +43,10 @@ def test_authors_workflow_stops_when_record_is_not_valid(workflow_app):
         }
     }
 
-    obj = workflow_object_class.create(
-        data=invalid_record,
-        data_type='authors',
-        id_user=1,
-    )
-    obj_id = obj.id
+    obj_id = build_workflow(invalid_record, data_type='authors').id
 
     with pytest.raises(ValidationError):
-        start('author', invalid_record, obj_id)
+        start('author', object_id=obj_id)
 
     obj = workflow_object_class.get(obj_id)
 
@@ -67,13 +64,11 @@ def test_authors_workflow_continues_when_record_is_valid(workflow_app, mocked_ex
         }
     }
 
-    obj = workflow_object_class.create(
-        data=valid_record,
-        data_type='authors',
-        id_user=1,
-    )
+    workflow_id = build_workflow(valid_record, data_type='authors', id_user=1).id
 
-    start('author', valid_record, obj.id)
+    obj = workflow_object_class.get(workflow_id)
+
+    start('author', object_id=obj.id)
 
     obj = workflow_object_class.get(obj.id)
 

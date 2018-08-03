@@ -112,6 +112,9 @@ node_modules
 # IntelliJ IDE
 .idea
 
+# VSCODE
+.vscode
+
 # Redis
 dump.rdb
 
@@ -142,3 +145,5 @@ inspirehep/modules/editor/temp/
 
 # scrapy generated files
 .scrapy/
+.lastruns/
+scrapy/

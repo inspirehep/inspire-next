@@ -24,6 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 
+from copy import deepcopy
+
 from invenio_search import current_search_client as es
 from invenio_workflows import (
     ObjectStatus,
@@ -44,12 +46,27 @@ from inspirehep.modules.workflows.tasks.matching import (
 @pytest.fixture
 def simple_record(app):
     yield {
-        '$schema': 'http://localhost:5000/schemas/records/hep.json',
-        '_collections': ['Literature'],
-        'document_type': ['article'],
-        'titles': [{'title': 'Superconductivity'}],
-        'acquisition_source': {'source': 'arXiv'},
-        'dois': [{'value': '10.3847/2041-8213/aa9110'}]
+        'data': {
+            '$schema': 'http://localhost:5000/schemas/records/hep.json',
+            '_collections': ['Literature'],
+            'document_type': ['article'],
+            'titles': [{'title': 'Superconductivity'}],
+            'acquisition_source': {'source': 'arXiv'},
+            'dois': [{'value': '10.3847/2041-8213/aa9110'}],
+        },
+        'extra_data': {
+            'source_data': {
+                'data': {
+                    '$schema': 'http://localhost:5000/schemas/records/hep.json',
+                    '_collections': ['Literature'],
+                    'document_type': ['article'],
+                    'titles': [{'title': 'Superconductivity'}],
+                    'acquisition_source': {'source': 'arXiv'},
+                    'dois': [{'value': '10.3847/2041-8213/aa9110'}],
+                },
+                'extra_data': {},
+            },
+        },
     }
 
     _es = app.extensions['invenio-search']
@@ -59,15 +76,15 @@ def simple_record(app):
 
 def test_pending_holdingpen_matches_wf_if_not_completed(app, simple_record):
     obj = workflow_object_class.create(
-        data=simple_record,
         status=ObjectStatus.HALTED,
         data_type='hep',
+        **simple_record
     )
     obj_id = obj.id
     obj.save()
     es.indices.refresh('holdingpen-hep')
 
-    obj2 = WorkflowObject.create(data=simple_record, data_type='hep')
+    obj2 = WorkflowObject.create(data_type='hep', **simple_record)
     assert match_non_completed_wf_in_holdingpen(obj2, None)
     assert obj2.extra_data['holdingpen_matches'] == [obj_id]
 
@@ -82,16 +99,16 @@ def test_pending_holdingpen_matches_wf_if_not_completed(app, simple_record):
 
 def test_match_previously_rejected_wf_in_holdingpen(app, simple_record):
     obj = workflow_object_class.create(
-        data=simple_record,
         status=ObjectStatus.COMPLETED,
         data_type='hep',
+        **simple_record
     )
     obj_id = obj.id
     obj.extra_data['approved'] = False  # reject it
     obj.save()
     es.indices.refresh('holdingpen-hep')
 
-    obj2 = WorkflowObject.create(data=simple_record, data_type='hep')
+    obj2 = WorkflowObject.create(data_type='hep', **simple_record)
     assert match_previously_rejected_wf_in_holdingpen(obj2, None)
     assert obj2.extra_data['previously_rejected_matches'] == [obj_id]
 
@@ -106,15 +123,15 @@ def test_match_previously_rejected_wf_in_holdingpen(app, simple_record):
 
 def test_has_same_source(app, simple_record):
     obj = workflow_object_class.create(
-        data=simple_record,
         status=ObjectStatus.HALTED,
         data_type='hep',
+        **simple_record
     )
     obj_id = obj.id
     obj.save()
     es.indices.refresh('holdingpen-hep')
 
-    obj2 = WorkflowObject.create(data=simple_record, data_type='hep')
+    obj2 = WorkflowObject.create(data_type='hep', **simple_record)
     match_non_completed_wf_in_holdingpen(obj2, None)
 
     same_source_func = has_same_source('holdingpen_matches')
@@ -123,9 +140,9 @@ def test_has_same_source(app, simple_record):
     assert obj2.extra_data['holdingpen_matches'] == [obj_id]
 
     # change source and match the wf in the holdingpen
-    different_source_rec = dict(simple_record)
-    different_source_rec['acquisition_source'] = {'source': 'different'}
-    obj3 = WorkflowObject.create(data=different_source_rec, data_type='hep')
+    different_source_rec = deepcopy(simple_record)
+    different_source_rec['data']['acquisition_source'] = {'source': 'different'}
+    obj3 = WorkflowObject.create(data_type='hep', **different_source_rec)
 
     assert match_non_completed_wf_in_holdingpen(obj3, None)
     assert not same_source_func(obj3, None)
@@ -134,16 +151,20 @@ def test_has_same_source(app, simple_record):
 def test_stop_matched_holdingpen_wfs(app, simple_record):
     # need to run a wf in order to assign to it the wf definition and a uuid
     # for it
-    workflow_uuid = start('article', [simple_record])
+
+    obj = workflow_object_class.create(
+        data_type='hep',
+        **simple_record
+    )
+    workflow_uuid = start('article', object_id=obj.id)
     eng = WorkflowEngine.from_uuid(workflow_uuid)
     obj = eng.processed_objects[0]
     obj.status = ObjectStatus.HALTED
     obj.save()
     obj_id = obj.id
-
     es.indices.refresh('holdingpen-hep')
 
-    obj2 = WorkflowObject.create(data=simple_record, data_type='hep')
+    obj2 = WorkflowObject.create(data_type='hep', **simple_record)
     obj2_id = obj2.id
 
     match_non_completed_wf_in_holdingpen(obj2, None)

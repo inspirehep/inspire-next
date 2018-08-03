@@ -28,8 +28,6 @@ from flask import current_app
 
 from itertools import chain
 
-from timeout_decorator import timeout
-
 from inspire_dojson.utils import (
     get_record_ref,
     get_recid_from_ref
@@ -54,7 +52,7 @@ from refextract import (
     extract_references_from_string,
 )
 
-from ..utils import with_debug_logging
+from ..utils import timeout_with_config, with_debug_logging
 
 LOGGER = getStackTraceLogger(__name__)
 
@@ -115,7 +113,7 @@ def extract_journal_info(obj, eng):
 
 
 @ignore_timeout_error(return_value=[])
-@timeout(5 * 60)
+@timeout_with_config('WORKFLOWS_REFEXTRACT_TIMEOUT')
 def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
     """Extract references from PDF and return in INSPIRE format."""
     with local_refextract_kbs_path() as kbs_path:
@@ -129,7 +127,7 @@ def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
 
 
 @ignore_timeout_error(return_value=[])
-@timeout(5 * 60)
+@timeout_with_config('WORKFLOWS_REFEXTRACT_TIMEOUT')
 def extract_references_from_text(text, source=None, custom_kbs_file=None):
     """Extract references from text and return in INSPIRE format."""
     with local_refextract_kbs_path() as kbs_path:
@@ -143,7 +141,7 @@ def extract_references_from_text(text, source=None, custom_kbs_file=None):
 
 
 @ignore_timeout_error(return_value=[])
-@timeout(5 * 60)
+@timeout_with_config('WORKFLOWS_REFEXTRACT_TIMEOUT')
 def extract_references_from_raw_refs(references, custom_kbs_file=None):
     """Extract references from raw references in reference list.
 

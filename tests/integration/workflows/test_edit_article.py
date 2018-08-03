@@ -176,20 +176,20 @@ def test_edit_article_workflow(workflow_app, mocked_external_services):
     ({'email': 'admin@inspirehep.net'}, 302),
 ])
 def test_edit_article_start_permission(
-    app,
-    app_client,
+    workflow_app,
+    workflow_api_client,
     user_info,
     expected_status_code,
     mocked_external_services,
 ):
     if user_info:
-        login_user_via_session(app_client, email=user_info['email'])
+        login_user_via_session(workflow_api_client, email=user_info['email'])
 
     factory = TestRecordMetadata.create_from_kwargs(json={})
     control_number = factory.record_metadata.json['control_number']
     endpoint_url = "/workflows/edit_article/{}".format(control_number)
 
-    response = app_client.get(endpoint_url)
+    response = workflow_api_client.get(endpoint_url)
     assert response.status_code == expected_status_code
 
 

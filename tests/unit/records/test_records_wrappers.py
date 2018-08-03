@@ -136,6 +136,7 @@ def test_literature_record_publication_information_with_journal_title():
                 'journal_issue': '7',
                 'journal_title': 'Astropart.Phys.',
                 'journal_volume': '103',
+                'material': 'erratum',
                 'page_end': '48',
                 'page_start': '41',
                 'year': '2018',
@@ -156,6 +157,7 @@ def test_literature_record_publication_information_with_journal_title():
             'journal_issue': '7',
             'journal_title': 'Astropart.Phys.',
             'journal_volume': '103',
+            'material': 'erratum',
             'page_end': '48',
             'page_start': '41',
             'year': '2018',
@@ -192,3 +194,25 @@ def test_literature_record_publication_information_handles_missing_fields():
     ]
 
     assert expected == record.publication_information
+
+
+def test_literature_record_publication_information_no_journal_title_or_pubinfo_freetext():
+    record = LiteratureRecord({
+        'publication_info': [
+            {
+                'cnum': 'C93-07-01',
+                'conference_recid': 968950,
+                'conference_record': {
+                    '$ref': 'http://labs.inspirehep.net/api/conferences/968950'
+                },
+            },
+        ],
+    })
+
+    assert not record.publication_information
+
+
+def test_literature_record_publication_information_no_publication_info():
+    record = LiteratureRecord({})
+
+    assert not record.publication_information

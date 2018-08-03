@@ -39,7 +39,7 @@ def _get_ui_metadata(record):
     Returns:
         dict: the extra metadata.
     """
-
+    # FIXME: Deprecated, must be removed once the new UI is released
     display = {}
     record = LiteratureRecord(record)
     if 'references' in record:
@@ -65,13 +65,6 @@ def _preprocess_result(result):
     ui_metadata = _get_ui_metadata(record)
     # FIXME: Deprecated, must be removed once the new UI is released
     result['display'] = ui_metadata
-
-    if 'authors' in record:
-        record['authors'] = record['authors'][:10]
-    if 'references' in record:
-        del record['references']
-
-    record.update(ui_metadata)
     result['metadata'] = record
 
     return result

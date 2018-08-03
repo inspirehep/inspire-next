@@ -23,9 +23,57 @@
 from __future__ import absolute_import, division, print_function
 
 import json
+import mock
 
 from inspirehep.modules.records.serializers.schemas.json import \
-    AuthorsSchemaJSONUIV1, ReferencesSchemaJSONUIV1
+    AuthorsSchemaJSONUIV1, ReferencesSchemaJSONUIV1, RecordMetadataSchemaV1
+
+
+def test_record_metadata_schema_returns_number_of_authors():
+    schema = RecordMetadataSchemaV1()
+    dump = {'authors': [
+        {'full_name': 'author 1'},
+        {'full_name': 'author 2'}
+    ]}
+    expected = 2
+
+    result = schema.dumps(dump).data
+    number_of_authors = json.loads(result)['number_of_authors']
+    assert expected == number_of_authors
+
+
+def test_record_metadata_schema_returns_number_of_references():
+    schema = RecordMetadataSchemaV1()
+    dump = {'references': [
+        {'reference': {'label': '1'}},
+        {'reference': {'label': '2'}},
+    ]}
+    expected = 2
+
+    result = schema.dumps(dump).data
+    number_of_references = json.loads(result)['number_of_references']
+    assert expected == number_of_references
+
+
+@mock.patch('inspirehep.modules.records.serializers.schemas.json.format_date')
+def test_record_metadata_schema_returns_formatted_date(format_date):
+    schema = RecordMetadataSchemaV1()
+    dump = {'earliest_date': '11/11/2011'}
+    formatted_date = 'Nov, 11, 20111'
+    format_date.return_value = formatted_date
+    expected = {'date': formatted_date}
+
+    result = schema.dumps(dump).data
+    assert expected == json.loads(result)
+
+
+def test_record_metadata_schema_empty_fields():
+    schema = RecordMetadataSchemaV1()
+    dump = {}
+    expected = {}
+
+    result = schema.dumps(dump).data
+    assert expected == json.loads(result)
 
 
 def test_metadata_references_items_empty():
@@ -51,6 +99,10 @@ def test_references_schema_without_record():
                         'authors': [
                             {
                                 'full_name': 'Hahn, F.'
+                            },
+                            {
+                                'full_name': 'Smith, J.',
+                                'inspire_roles': ['supervisor'],
                             },
                         ],
                         'label': '388',
@@ -90,8 +142,18 @@ def test_references_schema_without_record():
                     ],
                     'authors': [
                         {
-                            'full_name': 'Hahn, F.'
-                        }
+                            'full_name': 'Hahn, F.',
+                            'first_name': 'F.',
+                            'last_name': 'Hahn',
+                        },
+                    ],
+                    'supervisors': [
+                        {
+                            'full_name': 'Smith, J.',
+                            'first_name': 'J.',
+                            'last_name': 'Smith',
+                            'inspire_roles': ['supervisor'],
+                        },
                     ],
                     'dois': [
                         {
@@ -160,6 +222,18 @@ def test_authors_schema():
                 {
                     'full_name': 'Frank Castle',
                 },
+                {
+                    'full_name': 'Smith, John',
+                    'inspire_roles': ['author'],
+                },
+                {
+                    'full_name': 'Black, Joe Jr.',
+                    'inspire_roles': ['editor'],
+                },
+                {
+                    'full_name': 'Jimmy',
+                    'inspire_roles': ['supervisor'],
+                },
             ],
             'collaborations': [{
                 'value': 'LHCb',
@@ -185,14 +259,34 @@ def test_authors_schema():
         'metadata': {
             'authors': [
                 {
-                    'full_name': 'Frank Castle'
-                }
+                    'full_name': 'Frank Castle',
+                    'first_name': 'Frank Castle',
+                },
+                {
+                    'full_name': 'Smith, John',
+                    'first_name': 'John',
+                    'last_name': 'Smith',
+                    'inspire_roles': ['author'],
+                },
+                {
+                    'full_name': 'Black, Joe Jr.',
+                    'first_name': 'Joe Jr.',
+                    'last_name': 'Black',
+                    'inspire_roles': ['editor'],
+                },
             ],
             'collaborations': [
                 {
                     'value': 'LHCb'
                 }
-            ]
+            ],
+            'supervisors': [
+                {
+                    'full_name': 'Jimmy',
+                    'first_name': 'Jimmy',
+                    'inspire_roles': ['supervisor'],
+                },
+            ],
         }
     }
     result = json.loads(schema.dumps(record).data)

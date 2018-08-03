@@ -221,3 +221,9 @@ WORKFLOWS_REFERENCE_MATCHER_DATA_CONFIG = {
 }
 """Configuration for matching data records. Please note that the
 index and doc_type are different for data records."""
+
+WORKFLOWS_REFEXTRACT_TIMEOUT = 10 * 60
+"""Time in seconds a refextract task is allowed to run before it is killed."""
+
+WORKFLOWS_PLOTEXTRACT_TIMEOUT = 5 * 60
+"""Time in seconds a plotextract task is allowed to run before it is killed."""
