@@ -31,6 +31,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     in_production_mode,
     is_marked,
     is_record_accepted,
+    load_from_source_data,
     validate_record,
 )
 
@@ -125,6 +126,7 @@ class Author(object):
     data_type = "authors"
 
     workflow = [
+        load_from_source_data,
         # Make sure schema is set for proper indexing in Holding Pen
         set_schema,
         validate_record('authors'),

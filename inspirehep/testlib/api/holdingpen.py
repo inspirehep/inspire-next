@@ -123,10 +123,6 @@ class HoldingpenResource(BaseResource):
 
         return new_json
 
-    @property
-    def extra_data(self):
-        return self._raw_json['_extra_data']
-
 
 class HoldingpenLiteratureResource(HoldingpenResource):
     """Holdingpen entry for a literature workflow."""
@@ -161,12 +157,20 @@ class HoldingpenAuthorResource(HoldingpenResource):
         self.display_name = display_name
         super(HoldingpenAuthorResource, self).__init__(**kwargs)
 
+    def to_json(self):
+        new_json = super(HoldingpenAuthorResource, self).to_json()
+
+        new_json['metadata']['name']['preferred_name'] = self.display_name
+
+        return new_json
+
 
 class HoldingpenApiClient(object):
     """Client for the Inspire Holdingpen"""
     HOLDINGPEN_API_URL = '/api/holdingpen/'
     HOLDINGPEN_EDIT_URL = '/api/holdingpen/{workflow_id}/action/edit'
     HOLDINGPEN_RESOLVE_URL = '/api/holdingpen/{workflow_id}/action/resolve'
+    HOLDINGPEN_RESTART_URL = '/api/holdingpen/{workflow_id}/action/restart'
 
     def __init__(self, client):
         self._client = client
@@ -184,9 +188,9 @@ class HoldingpenApiClient(object):
         resp.raise_for_status()
         return HoldingpenResource.from_json(resp.json())
 
-    def _edit_workflow(self, holdingpen_entry):
+    def edit_workflow(self, holdingpen_entry):
         """
-        Helper method to edit a holidngpen entry.
+        Helper method to edit a holdingpen entry.
 
         Args:
             holdingpen_entry(HoldingpenResource): entry updated with the
@@ -194,7 +198,7 @@ class HoldingpenApiClient(object):
 
         Returns:
             requests.Response: The actual http response to the last call (the
-                actual /resolve endpoint).
+                actual /edit endpoint).
 
         Raises:
             requests.exceptions.BaseHttpError: any error related to the http
@@ -203,7 +207,7 @@ class HoldingpenApiClient(object):
         Example:
             >>> my_entry = holdingpen_client.get_detail_entry(holdingpen_id=1234)
             >>> my_entry.core = False   # do some changes
-            >>> holdingpen_client._edit_workflow(holdingpen_entry=my_entry)
+            >>> holdingpen_client.edit_workflow(holdingpen_entry=my_entry)
             <Response [200]>
 
         """
@@ -214,6 +218,13 @@ class HoldingpenApiClient(object):
         )
         edit_response.raise_for_status()
         return edit_response
+
+    def restart_workflow(self, holdingpen_entry_id):
+        restart_response = self._client.post(
+            self.HOLDINGPEN_RESTART_URL.format(workflow_id=holdingpen_entry_id)
+        )
+        restart_response.raise_for_status()
+        return restart_response
 
     def _resolve_workflow(self, holdingpen_entry, resolution_data):
         """
@@ -271,7 +282,7 @@ class HoldingpenApiClient(object):
         # This call is not really changing anyting, but the ui does it always
         # just in case there are modifications through the ui (not the editor)
         # made to the workflow, so we do the same in the tests.
-        self._edit_workflow(holdingpen_entry=entry_to_accept)
+        self.edit_workflow(holdingpen_entry=entry_to_accept)
 
         resolve_response = self._resolve_workflow(
             holdingpen_entry=entry_to_accept,

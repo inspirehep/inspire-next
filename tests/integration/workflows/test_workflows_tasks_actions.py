@@ -35,7 +35,10 @@ from invenio_workflows import (
     workflow_object_class,
 )
 
-from inspirehep.modules.workflows.tasks.actions import normalize_journal_titles
+from inspirehep.modules.workflows.tasks.actions import (
+    load_from_source_data,
+    normalize_journal_titles,
+)
 
 from calls import insert_citing_record
 
@@ -46,6 +49,7 @@ from mocks import (
     fake_download_file,
     fake_magpie_api_request,
 )
+from workflow_utils import build_workflow
 
 
 @pytest.fixture(scope='function')
@@ -390,7 +394,8 @@ def test_refextract_from_pdf(
     assert validate(citing_record['acquisition_source'], subschema) is None
 
     with mock.patch.dict(workflow_app.config, extra_config):
-        citing_doc_workflow_uuid = start('article', [citing_record])
+        workflow_id = build_workflow(citing_record).id
+        citing_doc_workflow_uuid = start('article', object_id=workflow_id)
 
     citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)
     citing_doc_obj = citing_doc_eng.processed_objects[0]
@@ -463,7 +468,8 @@ def test_count_reference_coreness(
     assert validate(citing_record['acquisition_source'], subschema) is None
 
     with mock.patch.dict(workflow_app.config, extra_config):
-        citing_doc_workflow_uuid = start('article', [citing_record])
+        workflow_id = build_workflow(citing_record).id
+        citing_doc_workflow_uuid = start('article', object_id=workflow_id)
 
     citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)
     citing_doc_obj = citing_doc_eng.processed_objects[0]
@@ -472,3 +478,36 @@ def test_count_reference_coreness(
         'core': 0,
         'non_core': 1,
     }
+
+
+@pytest.fixture
+def load_from_source_data_workflow(workflow_app):
+    class SourceDataWorkflow(object):
+        workflow = [load_from_source_data]
+
+    workflow_app.extensions['invenio-workflows'].register_workflow(
+        'load_source_data',
+        SourceDataWorkflow,
+    )
+
+    yield workflow_app
+
+    del workflow_app.extensions['invenio-workflows'].workflows['load_source_data']
+
+
+def test_workflow_loads_from_source_data_fails_on_no_source_data(
+    load_from_source_data_workflow,
+    workflow_app,
+    record_from_db,
+):
+    extra_data_without_source_data = {}
+    workflow_id = workflow_object_class.create(
+        data_type='hep',
+        data=record_from_db,
+        extra_data=extra_data_without_source_data,
+    ).id
+
+    with pytest.raises(ValueError) as exc:
+        start('load_source_data', object_id=workflow_id)
+
+    assert exc.match(r'source_data.*missing')

@@ -58,58 +58,98 @@ def _workflows_in_status(holdingpen_client, num_entries, status):
 
 
 @with_mitmproxy
-def test_literature_submission_has_source_data(inspire_client, mitm_client):
+def test_literature_submission_restarts_cleanly(inspire_client, mitm_client):
+    modified_title = 'Title Modified'
+    original_title = 'Physics of Donut'
+
     literature_form = LiteratureFormInputData(
-        title='Physics of Donut',
+        title=original_title,
         type_of_doc='article',
         language='en',
     )
     literature_form.add_author('Simpson, Homer J.')
     inspire_client.literature_form.submit(literature_form)
 
-    completed_entry = wait_for(
+    halted_entry = wait_for(
         lambda: _workflows_in_status(
             holdingpen_client=inspire_client.holdingpen,
             status='HALTED',
             num_entries=1,
         )
     )[0]
-    entry = inspire_client.holdingpen.get_detail_entry(
-        completed_entry.workflow_id
-    )
+    workflow_id = halted_entry.workflow_id
+    entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
 
-    result_source_data = entry.extra_data['source_data']
+    # Make some changes to the workflow
+    entry.titles[0].title = modified_title
+    entry.approved = True
+    inspire_client.holdingpen.edit_workflow(entry)
 
-    assert result_source_data['data']
-    assert result_source_data['extra_data']
+    # Assert changes were made
+    updated_entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
+
+    updated_title = updated_entry.titles[0].title
+    assert updated_title == modified_title
+    assert updated_entry.approved
+
+    # Restart the workflow
+    inspire_client.holdingpen.restart_workflow(workflow_id)
+
+    # Assert workflow is halted and restored back to original submission
+    def _workflow_halted_with_original_data():
+        entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
+        assert entry.status == 'HALTED'
+        assert entry.titles[0].title == original_title
+        assert not entry.approved
+
+    wait_for(_workflow_halted_with_original_data)
 
 
 @with_mitmproxy
-def test_author_submission_has_source_data(inspire_client, mitm_client):
+def test_author_submission_restarts_cleanly(inspire_client, mitm_client):
+    modified_name = 'Modified Name'
+    original_name = 'Homer Simpson'
+
     author_form = AuthorFormInputData(
         given_names='Homer Jay',
         family_name='Simpson',
-        display_name='Homer Simpson',
+        display_name=original_name,
         status='retired',
         research_field='econ',
     )
 
     inspire_client.author_form.submit(author_form)
 
-    completed_entry = wait_for(
+    halted_entry = wait_for(
         lambda: _workflows_in_status(
             holdingpen_client=inspire_client.holdingpen,
             status='HALTED',
             num_entries=1,
         )
     )[0]
-    entry = inspire_client.holdingpen.get_detail_entry(
-        completed_entry.workflow_id
-    )
+    workflow_id = halted_entry.workflow_id
+    entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
 
-    assert entry.display_name == 'Homer Simpson'
+    # Make some changes to the workflow
+    entry.display_name = modified_name
+    entry.approved = True
+    inspire_client.holdingpen.edit_workflow(entry)
 
-    result_source_data = entry.extra_data['source_data']
+    # Assert changes were made
+    updated_entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
 
-    assert result_source_data['data']
-    assert result_source_data['extra_data']
+    updated_name = updated_entry.display_name
+    assert updated_name == modified_name
+    assert updated_entry.approved
+
+    # Restart the workflow
+    inspire_client.holdingpen.restart_workflow(workflow_id)
+
+    # Assert workflow is halted and restored back to original submission
+    def _workflow_halted_with_original_data():
+        entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
+        assert entry.status == 'HALTED'
+        assert entry.display_name == original_name
+        assert not entry.approved
+
+    wait_for(_workflow_halted_with_original_data)
