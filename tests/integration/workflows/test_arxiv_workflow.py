@@ -970,3 +970,15 @@ def test_match_wf_in_error_goes_in_initial_state(workflow_app):
     with pytest.raises(WorkflowsError):
         workflow_id = build_workflow(record).id
         start('article', object_id=workflow_id)
+
+
+def test_start_wf_with_no_source_data_fails(workflow_app):
+    record = generate_record()
+
+    obj = build_workflow(record)
+    del obj.extra_data['source_data']
+    obj.save()
+    db.session.commit()
+
+    with pytest.raises(ValueError):
+        start('article', object_id=obj.id)

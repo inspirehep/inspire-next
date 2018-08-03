@@ -628,4 +628,4 @@ def load_from_source_data(obj, enj):
         obj.extra_data['source_data'] = deepcopy(source_data)
         obj.save()
     except KeyError:
-        raise ValueError("Can't restart workflow as 'source_data' is either missing or corrupted")
+        raise ValueError("Can't start/restart workflow as 'source_data' is either missing or corrupted")

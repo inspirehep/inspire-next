@@ -29,7 +29,6 @@ import mock
 import pytest
 
 from inspire_schemas.api import load_schema, validate
-from invenio_db import db
 from invenio_workflows import (
     WorkflowEngine,
     start,
@@ -512,60 +511,3 @@ def test_workflow_loads_from_source_data_fails_on_no_source_data(
         start('load_source_data', object_id=workflow_id)
 
     assert exc.match(r'source_data.*missing')
-
-
-def test_workflow_loads_from_source_data_preserves_task_history(
-    load_from_source_data_workflow,
-    workflow_app,
-    record_from_db,
-):
-    workflow_id = build_workflow(record_from_db).id
-
-    start('load_source_data', object_id=workflow_id)
-
-    workflow_object = workflow_object_class.get(workflow_id)
-
-    assert len(workflow_object.extra_data['_task_history']) == 1
-
-    workflow_object.callback_pos = [0]
-    workflow_object.save()
-    db.session.commit()
-
-    with load_from_source_data_workflow.app_context():
-        workflow_object.continue_workflow(start_point='restart_task', delayed=False)
-        task_history_len = len(workflow_object.extra_data['_task_history'])
-
-    assert task_history_len == 2
-
-
-def test_workflow_loads_from_source_data_restores_correctly(
-    load_from_source_data_workflow,
-    workflow_app,
-    record_from_db,
-):
-    original_title = 'Fancy title for a new record'
-    modified_title = 'Title changed!'
-
-    workflow_id = build_workflow(record_from_db).id
-    start('load_source_data', object_id=workflow_id)
-
-    # Modify the workflow
-    workflow_object = workflow_object_class.get(workflow_id)
-    workflow_object.data['titles'][0]['title'] = modified_title
-    workflow_object.save()
-    db.session.commit()
-
-    # Assert that the record was modified
-    workflow_object = workflow_object_class.get(workflow_id)
-    assert workflow_object.data['titles'][0]['title'] == modified_title
-
-    # Restart the workflow and verify that it was reverted to original
-    workflow_object.callback_pos = [0]
-    workflow_object.save()
-    db.session.commit()
-
-    with load_from_source_data_workflow.app_context():
-        workflow_object.continue_workflow(start_point='restart_task', delayed=False)
-        result_title = workflow_object.data['titles'][0]['title']
-
-    assert result_title == original_title
