@@ -272,6 +272,10 @@ def submitupdate():
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
     workflow_object.extra_data['is-update'] = True
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
+    workflow_object.extra_data['source_data'] = {
+        'extra_data': copy.deepcopy(workflow_object.extra_data),
+        'data': copy.deepcopy(workflow_object.data),
+    }
     workflow_object.save()
     db.session.commit()
 
