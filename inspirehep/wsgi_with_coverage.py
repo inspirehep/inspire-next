@@ -40,7 +40,6 @@ from inspire_utils.logging import getStackTraceLogger
 from invenio_db import db
 
 from inspirehep.modules.authors.views import validate as author_validate
-from inspirehep.modules.fixtures.collections import init_collections
 from inspirehep.modules.fixtures.files import init_all_storage_paths
 from inspirehep.modules.fixtures.users import init_users_and_permissions
 from inspirehep.modules.literaturesuggest.views import validate as literature_validate
@@ -110,7 +109,6 @@ def init_fixtures():
     LOGGER.info('Initializing fixtures')
     init_all_storage_paths()
     init_users_and_permissions()
-    init_collections()
     db.session.commit()
     db.session.close()
     LOGGER.info('Initializing fixtures: done')

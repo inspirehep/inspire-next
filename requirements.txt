@@ -28,7 +28,3 @@
 
 # https://github.com/inveniosoftware/dictdiffer/pull/111
 -e git+https://github.com/inspirehep/dictdiffer.git#egg=dictdiffer
-
-# invenio-collections until ES5 support is added:
-# https://github.com/inveniosoftware/invenio-collections/pull/87
--e git+https://github.com/szymonlopaciuk/invenio-collections.git@es5#egg=invenio-collections
