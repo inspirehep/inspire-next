@@ -24,18 +24,19 @@ from __future__ import absolute_import, division, print_function
 
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.records.serializers.fields_export import (
-    get_authors_with_role,
     bibtex_document_type,
     bibtex_type_and_fields,
-    get_year,
+    get_author,
+    get_authors_with_role,
+    get_best_publication_info,
+    get_country_name_by_code,
+    get_collaboration,
     get_journal,
-    get_volume,
+    get_note,
     get_report_number,
     get_type,
-    get_country_name_by_code,
-    get_author,
-    get_best_publication_info,
-    get_note,
+    get_volume,
+    get_year,
 )
 
 
@@ -65,6 +66,25 @@ def test_get_editor_by_role():
     }
     expected = ["Kiritsis, Elias"]
     result = get_authors_with_role(test_record.get('authors'), 'editor')
+    assert expected == result
+
+
+def test_get_collaboration():
+    test_record = {
+        'collaborations': [
+            {'value': 'CMS'},
+            {'value': 'ATLAS'},
+        ],
+    }
+    expected = 'CMS, ATLAS'
+    result = get_collaboration(test_record, 'article')
+    assert expected == result
+
+
+def test_get_collaboration_no_collaborations():
+    test_record = {}
+    expected = ''
+    result = get_collaboration(test_record, 'article')
     assert expected == result
 
 

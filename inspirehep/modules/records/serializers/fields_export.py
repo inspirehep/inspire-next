@@ -336,7 +336,7 @@ def get_url(data, doc_type):
 
 @extractor('collaboration')
 def get_collaboration(data, doc_type):
-    return get_value(data, 'collaborations.value[0]')
+    return ', '.join(get_value(data, 'collaborations.value', default=[]))
 
 
 @extractor('series')
