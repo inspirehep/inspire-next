@@ -27,16 +27,10 @@ from __future__ import absolute_import, division, print_function
 from invenio_records_rest.serializers.response import search_responsify
 from invenio_records_rest.serializers.json import JSONSerializer
 
-from .impactgraph_serializer import ImpactGraphSerializer
 from .json_literature import LiteratureJSONUISerializer
 from .pybtex_serializer_base import PybtexSerializerBase
 from .writers import BibtexWriter
 from .schemas.base import PybtexSchema
-from .latexeu_serializer import LATEXEUSerializer
-from .latexus_serializer import LATEXUSSerializer
-from .cvformatlatex_serializer import CVFORMATLATEXSerializer
-from .cvformathtml_serializer import CVFORMATHTMLSerializer
-from .cvformattext_serializer import CVFORMATTEXTSerializer
 from .schemas.json import (
     AuthorsSchemaJSONUIV1,
     RecordSchemaJSONUIV1,
@@ -82,37 +76,10 @@ json_literature_authors_v1_response = record_responsify_nocache(
 )
 
 bibtex_v1 = PybtexSerializerBase(PybtexSchema(), BibtexWriter())
-latexeu_v1 = LATEXEUSerializer()
-latexus_v1 = LATEXUSSerializer()
-cvformatlatex_v1 = CVFORMATLATEXSerializer()
-cvformathtml_v1 = CVFORMATHTMLSerializer()
-cvformattext_v1 = CVFORMATTEXTSerializer()
 marcxml_v1 = MARCXMLSerializer()
 
-bibtex_v1_response = record_responsify_nocache(
-    bibtex_v1, 'application/x-bibtex')
-latexeu_v1_response = record_responsify_nocache(
-    latexeu_v1, 'application/x-latexeu')
-latexus_v1_response = record_responsify_nocache(
-    latexus_v1, 'application/x-latexus')
-cvformatlatex_v1_response = record_responsify_nocache(cvformatlatex_v1,
-                                                      'application/x-cvformatlatex')
-cvformathtml_v1_response = record_responsify_nocache(cvformathtml_v1,
-                                                     'application/x-cvformathtml')
-cvformattext_v1_response = record_responsify_nocache(cvformattext_v1,
-                                                     'application/x-cvformattext')
+bibtex_v1_response = record_responsify_nocache(bibtex_v1, 'application/x-bibtex')
 marcxml_v1_response = record_responsify_nocache(marcxml_v1, 'application/marcxml+xml')
 
 bibtex_v1_search = search_responsify(bibtex_v1, 'application/x-bibtex')
-latexeu_v1_search = search_responsify(latexeu_v1, 'application/x-latexeu')
-latexus_v1_search = search_responsify(latexus_v1, 'application/x-latexus')
-cvformatlatex_v1_search = search_responsify(cvformatlatex_v1,
-                                            'application/x-cvformatlatex')
-cvformathtml_v1_search = search_responsify(cvformathtml_v1,
-                                           'application/x-cvformathtml')
-cvformattext_v1_search = search_responsify(cvformattext_v1,
-                                           'application/x-cvformattext')
-impactgraph_v1 = ImpactGraphSerializer()
-impactgraph_v1_response = record_responsify_nocache(impactgraph_v1,
-                                                    'application/x-impact.graph+json')
 marcxml_v1_search = search_responsify(marcxml_v1, 'application/marcxml+xml')

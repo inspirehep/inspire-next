@@ -30,7 +30,6 @@ def test_literature_recids_serializer(api_client):
         '/literature/?q=title collider',
         headers={'Accept': 'application/vnd+inspire.ids+json'}
     )
-
     assert response.status_code == 200
 
     response_json = json.loads(response.data)

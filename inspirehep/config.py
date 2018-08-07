@@ -36,7 +36,6 @@ from invenio_records_rest.facets import range_filter, terms_filter
 
 from inspire_matcher.config import MATCHER_DEFAULT_CONFIGURATION as exact_match
 
-
 # Debug
 # =====
 DEBUG_TB_INTERCEPT_REDIRECTS = False
@@ -343,7 +342,6 @@ INSPIRE_ENDPOINT_TO_INDEX = {
     'literature': 'records-hep',
 }
 
-
 # Records
 # =======
 INSPIRE_SERIALIZERS = 'inspirehep.modules.records.serializers'
@@ -358,23 +356,12 @@ LITERATURE_REST_ENDPOINT = {
         'application/json': 'invenio_records_rest.serializers:json_v1_response',
         'application/vnd+inspire.record.ui+json': INSPIRE_SERIALIZERS + ':json_literature_ui_v1_response',
         'application/x-bibtex': INSPIRE_SERIALIZERS + ':bibtex_v1_response',
-        'application/x-latexeu': INSPIRE_SERIALIZERS + ':latexeu_v1_response',
-        'application/x-latexus': INSPIRE_SERIALIZERS + ':latexus_v1_response',
-        'application/x-cvformatlatex': INSPIRE_SERIALIZERS + ':cvformatlatex_v1_response',
-        'application/x-cvformathtml': INSPIRE_SERIALIZERS + ':cvformathtml_v1_response',
-        'application/x-cvformattext': INSPIRE_SERIALIZERS + ':cvformattext_v1_response',
-        'application/x-impact.graph+json': INSPIRE_SERIALIZERS + ':impactgraph_v1_response',
         'application/marcxml+xml': INSPIRE_SERIALIZERS + ':marcxml_v1_response',
     },
     'search_serializers': {
         'application/json': 'invenio_records_rest.serializers:json_v1_search',
         'application/vnd+inspire.record.ui+json': INSPIRE_SERIALIZERS + ':json_literature_ui_v1_search',
         'application/x-bibtex': INSPIRE_SERIALIZERS + ':bibtex_v1_search',
-        'application/x-latexeu': INSPIRE_SERIALIZERS + ':latexeu_v1_search',
-        'application/x-latexus': INSPIRE_SERIALIZERS + ':latexus_v1_search',
-        'application/x-cvformatlatex': INSPIRE_SERIALIZERS + ':cvformatlatex_v1_search',
-        'application/x-cvformathtml': INSPIRE_SERIALIZERS + ':cvformathtml_v1_search',
-        'application/x-cvformattext': INSPIRE_SERIALIZERS + ':cvformattext_v1_search',
         'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
         'application/marcxml+xml': INSPIRE_SERIALIZERS + ':marcxml_v1_search',
     },
@@ -391,30 +378,13 @@ LITERATURE_REST_ENDPOINT = {
         }
     },
     'list_route': '/literature/',
-    'item_route': '/literature/<pid(lit,record_class="inspirehep.modules.records.api:ESRecord"):pid_value>',
+    'item_route': '/literature/<pid(lit,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
     'default_media_type': 'application/json',
     'max_result_window': 10000,
     'search_factory_imp': 'inspirehep.modules.search.search_factory:inspire_search_factory',
     'read_permission_factory_imp': "inspirehep.modules.records.permissions:record_read_permission_factory",
-    'record_class': 'inspirehep.modules.records.api:ESRecord'
-}
-
-LITERATURE_DB_REST_ENDPOINT = {
-    'pid_type': 'lit',
-    'search_class': 'inspirehep.modules.search:LiteratureSearch',
-    'record_serializers': {
-        'application/json': 'invenio_records_rest.serializers:json_v1_response',
-    },
-    'record_class': 'inspirehep.modules.records.api:InspireRecord',
-    'search_serializers': {
-        'application/json': 'invenio_records_rest.serializers:json_v1_search',
-    },
-    'list_route': '/literature/db',
-    'item_route': '/literature/<pid(lit,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/db',
-    'default_media_type': 'application/json',
-    'search_factory_imp': 'inspirehep.modules.search.search_factory:inspire_search_factory',
-    'read_permission_factory_imp': "inspirehep.modules.records.permissions:record_read_permission_factory",
     'update_permission_factory_imp': "inspirehep.modules.records.permissions:record_update_permission_factory",
+    'record_class': 'inspirehep.modules.records.api:InspireRecord',
 }
 
 LITERATURE_REFERENCES_REST_ENDPOINT = {
@@ -820,10 +790,8 @@ JOURNALS_DB_REST_ENDPOINT = {
     'update_permission_factory_imp': "inspirehep.modules.records.permissions:record_update_permission_factory",
 }
 
-
 RECORDS_REST_ENDPOINTS = {
     'literature': LITERATURE_REST_ENDPOINT,
-    'literature_db': LITERATURE_DB_REST_ENDPOINT,
     'literature_references': LITERATURE_REFERENCES_REST_ENDPOINT,
     'literature_authors': LITERATURE_AUTHORS_REST_ENDPOINT,
     'authors': AUTHORS_REST_ENDPOINT,
@@ -1244,7 +1212,6 @@ MAGPIE_API_URL = None  # e.g. "http://magpie.inspirehep.net/api"
 LEGACY_BASE_URL = "http://inspirehep.net"
 LEGACY_RECORD_URL_PATTERN = 'http://inspirehep.net/record/{recid}'
 
-
 # Harvesting and Workflows
 # ========================
 ARXIV_PDF_URL = "http://export.arxiv.org/pdf/{arxiv_id}"
@@ -1615,7 +1582,6 @@ ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
     "stat.OT": "Other",
     "stat.TH": "Other"
 }
-
 
 # Configuration for the $ref updater
 # ==================================
