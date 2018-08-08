@@ -38,7 +38,6 @@ PRIMARY_KEYS_MAP = {
     'accounts_role': dict(old='accounts_role_pkey', new='pk_accounts_role'),
     'accounts_user': dict(old='accounts_user_pkey', new='pk_accounts_user'),
     'accounts_user_session_activity': dict(old='accounts_user_session_activity_pkey', new='pk_accounts_user_session_activity'),
-    'collection': dict(old='collection_pkey', new='pk_collection'),
     'crawler_job': dict(old='crawler_job_pkey', new='pk_crawler_job'),
     'crawler_workflows_object': dict(old='crawler_workflows_object_pkey', new='pk_crawler_workflows_object'),
     'files_bucket': dict(old='files_bucket_pkey', new='pk_files_bucket'),
