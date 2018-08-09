@@ -38,7 +38,6 @@ from invenio_db import db
 from invenio_search import current_search_client as es
 
 from inspirehep.factory import create_app
-from inspirehep.modules.fixtures.collections import init_collections
 from inspirehep.modules.fixtures.files import init_all_storage_paths
 from inspirehep.modules.fixtures.users import init_users_and_permissions
 
@@ -92,7 +91,6 @@ def app():
 
         init_all_storage_paths()
         init_users_and_permissions()
-        init_collections()
 
         migrate_from_file('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
         es.indices.refresh('records-hep')  # Makes sure that all HEP records were migrated.

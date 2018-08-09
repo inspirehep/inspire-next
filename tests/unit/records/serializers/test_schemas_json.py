@@ -135,10 +135,10 @@ def test_references_schema_without_record():
             'references': [
                 {
                     'label': '388',
-                    'collaborations': [
+                    'titles': [
                         {
-                            'value': 'LHCb'
-                        }
+                            'title': 'Luke Cage',
+                        },
                     ],
                     'authors': [
                         {
@@ -146,34 +146,6 @@ def test_references_schema_without_record():
                             'first_name': 'F.',
                             'last_name': 'Hahn',
                         },
-                    ],
-                    'supervisors': [
-                        {
-                            'full_name': 'Smith, J.',
-                            'first_name': 'J.',
-                            'last_name': 'Smith',
-                            'inspire_roles': ['supervisor'],
-                        },
-                    ],
-                    'dois': [
-                        {
-                            'value': '10.1088/1361-6633/aa5514'
-                        }
-                    ],
-                    'titles': [
-                        {
-                            'title': 'Luke Cage'
-                        }
-                    ],
-                    'arxiv_eprints': [
-                        {
-                            'value': '1607.06746'
-                        }
-                    ],
-                    'urls': [
-                        {
-                            'value': 'http://sf2a.eu/semaine-sf2a/2013/proceedings/'
-                        }
                     ],
                 },
             ]

@@ -32,7 +32,6 @@ from invenio_workflows import workflow_object_class
 from inspirehep.bat.arsenic import Arsenic
 from inspirehep.bat.pages import top_navigation_page
 from inspirehep.factory import create_app
-from inspirehep.modules.fixtures.collections import init_collections
 from inspirehep.modules.fixtures.files import init_all_storage_paths
 from inspirehep.modules.fixtures.users import init_users_and_permissions
 from inspirehep.modules.workflows.models import (
@@ -70,7 +69,6 @@ def app(request):
 
         init_all_storage_paths()
         init_users_and_permissions()
-        init_collections()
 
         migrate_from_file('./inspirehep/demosite/data/demo-records-acceptance.xml.gz', wait_for_results=True)
         es.indices.refresh('records-hep')

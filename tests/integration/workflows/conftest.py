@@ -33,7 +33,6 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_search.cli import current_search_client as es
 
 from inspirehep.factory import create_app
-from inspirehep.modules.fixtures.collections import init_collections
 from inspirehep.modules.fixtures.files import init_all_storage_paths
 from inspirehep.modules.fixtures.users import init_users_and_permissions
 from inspirehep.modules.records.api import InspireRecord
@@ -134,7 +133,6 @@ def create_all(app):
 
     init_all_storage_paths()
     init_users_and_permissions()
-    init_collections()
 
 
 @pytest.fixture(autouse=True)
