@@ -91,7 +91,6 @@ def fuzzy_match(obj, eng):
     matches = dedupe_list(match(obj.data, fuzzy_match_config))
     record_ids = [_get_hep_record_brief(el['_source']) for el in matches]
     obj.extra_data.setdefault('matches', {})['fuzzy'] = record_ids[0:5]
-#    obj.extra_data['test'] = obj.extra_data['matches']['exact']
     return bool(record_ids)
 
 
