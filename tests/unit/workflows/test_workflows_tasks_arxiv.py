@@ -728,6 +728,43 @@ def test_arxiv_derive_inspire_categories_does_nothing_with_existing_categories()
     assert expected == result
 
 
+def test_arxiv_author_list_with_missing_tarball():
+    schema = load_schema('hep')
+
+    eprints_subschema = schema['properties']['arxiv_eprints']
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '1703.09986',
+            },
+        ],
+    }  # record/1519995
+    validate(data['arxiv_eprints'], eprints_subschema)
+
+    extra_data = {}
+    files = MockFiles({
+        'jessica.jones.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': 'alias.investigations',
+            })
+        })
+    })
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    default_arxiv_author_list = arxiv_author_list()
+    expected_message = \
+        'Skipping author list extraction, no tarball with name "1703.09986.tar.gz" found'
+
+    assert default_arxiv_author_list(obj, eng) is None
+
+    assert expected_message in obj.log._info.getvalue()
+
+
 def test_arxiv_author_list_handles_auto_ignore_comment():
     schema = load_schema('hep')
 

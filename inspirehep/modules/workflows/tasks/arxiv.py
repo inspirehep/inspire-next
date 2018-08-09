@@ -233,9 +233,9 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     def _author_list(obj, eng):
         arxiv_id = get_arxiv_id(obj.data)
         filename = secure_filename('{0}.tar.gz'.format(arxiv_id))
-        tarball = obj.files[filename]
-
-        if not tarball:
+        try:
+            tarball = obj.files[filename]
+        except KeyError:
             obj.log.info(
                 'Skipping author list extraction, no tarball with name "%s" found' % filename
             )
