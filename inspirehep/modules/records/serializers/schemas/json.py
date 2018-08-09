@@ -53,6 +53,7 @@ class RecordMetadataSchemaV1(Schema):
         AuthorSchemaV1, dump_only=True), limit=10)
     book_series = fields.Raw()
     # citeable = fields.Raw()
+    citations_count = fields.Raw()
     collaborations = fields.Raw()
     conference_info = fields.Nested(
         ConferenceInfoItemSchemaV1,

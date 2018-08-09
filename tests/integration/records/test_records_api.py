@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+
 from tempfile import NamedTemporaryFile
 import pytest
 
@@ -32,6 +33,7 @@ from six.moves.urllib.parse import quote
 
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.record_getter import get_db_record
+from factories.db.invenio_records import TestRecordMetadata
 
 
 def test_validate_validates_format(app):
@@ -92,3 +94,19 @@ def test_create_does_not_save_zombie_identifiers_if_record_creation_fails(isolat
 
     assert not record_identifier
     assert not persistent_identifier
+
+
+def test_citations_count_equals_zero(isolated_app):
+    record = TestRecordMetadata.create_from_kwargs().inspire_record
+    assert record.get_citations_count() == 0L
+
+
+def test_citations_count_non_zero(isolated_app):
+    record_json = {
+        'control_number': 321,
+    }
+    record_1 = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    ref = {'control_number': 4321, 'references': [{'record': {'$ref': record_1._get_ref()}}]}
+
+    TestRecordMetadata.create_from_kwargs(json=ref)
+    assert record_1.get_citations_count() == 1L
