@@ -41,7 +41,7 @@ from ..utils import with_debug_logging
 
 @with_debug_logging
 def exact_match(obj, eng):
-    """Return ``True`` if the record is already present in the system.
+    """Return ``True`` if the record is already present in the system once.
 
     Uses the default configuration of the ``inspire-matcher`` to find
     duplicates of the current workflow object in the system.
@@ -54,7 +54,7 @@ def exact_match(obj, eng):
         eng: a workflow engine.
 
     Returns:
-        bool: ``True`` if the workflow object has a duplicate in the system
+        bool: ``True`` if the workflow object has exactly one duplicate in the system
         ``False`` otherwise.
 
     """
@@ -62,7 +62,7 @@ def exact_match(obj, eng):
     matches = dedupe_list(match(obj.data, exact_match_config))
     record_ids = [el['_source']['control_number'] for el in matches]
     obj.extra_data.setdefault('matches', {})['exact'] = record_ids
-    return bool(record_ids)
+    return len(record_ids) == 1
 
 
 @with_debug_logging
@@ -91,6 +91,7 @@ def fuzzy_match(obj, eng):
     matches = dedupe_list(match(obj.data, fuzzy_match_config))
     record_ids = [_get_hep_record_brief(el['_source']) for el in matches]
     obj.extra_data.setdefault('matches', {})['fuzzy'] = record_ids[0:5]
+#    obj.extra_data['test'] = obj.extra_data['matches']['exact']
     return bool(record_ids)
 
 
