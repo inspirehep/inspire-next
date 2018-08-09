@@ -47,7 +47,7 @@ services:
 
   indexer:
     image: inspirehep/elasticsearch5
-    command: gosu elasticsearch env ES_JAVA_OPTS="-Xms2g -Xmx2g" elasticsearch -Ecluster.name="inspire-dev"
+    command: bash -c "chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/data && gosu elasticsearch env ES_JAVA_OPTS=\"-Xms2g -Xmx2g\" elasticsearch -Ecluster.name=inspire-dev"
     entrypoint: /docker-entrypoint.sh
 
   database:
