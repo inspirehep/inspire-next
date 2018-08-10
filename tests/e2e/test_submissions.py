@@ -24,7 +24,6 @@ from __future__ import absolute_import, division, print_function
 
 import backoff
 
-from inspirehep.testlib.api.author_form import AuthorFormInputData
 from inspirehep.testlib.api.literature_form import LiteratureFormInputData
 from inspirehep.testlib.api.mitm_client import with_mitmproxy
 
@@ -100,60 +99,6 @@ def test_literature_submission_restarts_cleanly(inspire_client, mitm_client):
         entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
         assert entry.status == 'HALTED'
         assert entry.titles[0].title == original_title
-        assert not entry.approved
-
-    wait_for(_workflow_halted_with_original_data)
-
-    mitm_client.assert_interaction_used('RTService', 'ticket_new', times=1)
-    mitm_client.assert_interaction_used('RTService', 'ticket_edit', times=1)
-    mitm_client.assert_interaction_used('RTService', 'ticket_comment', times=1)
-
-
-@with_mitmproxy
-def test_author_submission_restarts_cleanly(inspire_client, mitm_client):
-    modified_name = 'Modified Name'
-    original_name = 'Homer Simpson'
-
-    author_form = AuthorFormInputData(
-        given_names='Homer Jay',
-        family_name='Simpson',
-        display_name=original_name,
-        status='retired',
-        research_field='econ',
-    )
-
-    inspire_client.author_form.submit(author_form)
-
-    halted_entry = wait_for(
-        lambda: _workflows_in_status(
-            holdingpen_client=inspire_client.holdingpen,
-            status='HALTED',
-            num_entries=1,
-        )
-    )[0]
-    workflow_id = halted_entry.workflow_id
-    entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
-
-    # Make some changes to the workflow
-    entry.display_name = modified_name
-    entry.approved = True
-    inspire_client.holdingpen.edit_workflow(entry)
-
-    # Assert changes were made
-    updated_entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
-
-    updated_name = updated_entry.display_name
-    assert updated_name == modified_name
-    assert updated_entry.approved
-
-    # Restart the workflow
-    inspire_client.holdingpen.restart_workflow(workflow_id)
-
-    # Assert workflow is halted and restored back to original submission
-    def _workflow_halted_with_original_data():
-        entry = inspire_client.holdingpen.get_detail_entry(workflow_id)
-        assert entry.status == 'HALTED'
-        assert entry.display_name == original_name
         assert not entry.approved
 
     wait_for(_workflow_halted_with_original_data)

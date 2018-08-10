@@ -28,7 +28,7 @@ from mock import patch
 
 from invenio_accounts.models import User
 
-from inspirehep.modules.authors.tasks import (
+from inspirehep.modules.submissions.tasks import (
     new_ticket_context,
     update_ticket_context,
     reply_ticket_context,

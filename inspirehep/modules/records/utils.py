@@ -411,3 +411,22 @@ def get_citations_from_es(record, page=1, size=10):
         from_=(page - 1) * size,
         size=size,
     ).sort('-earliest_date').execute().hits
+
+
+def populate_author_suggest(json, *args, **kwargs):
+    """Populate the ``author_suggest`` field of Authors records."""
+    author_paths = [
+        'name.preferred_name',
+        'name.previous_names',
+        'name.name_variants',
+        'name.native_names',
+        'name.value',
+    ]
+
+    input_values = [el for el in chain.from_iterable([force_list(get_value(json, path)) for path in author_paths])]
+
+    json.update({
+        'author_suggest': {
+            'input': input_values
+        },
+    })

@@ -23,12 +23,11 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
-from flask import url_for
+
 from flask_security.utils import hash_password
 
 from invenio_access.models import ActionUsers
 from invenio_accounts.models import User
-from invenio_accounts.testutils import login_user_via_session
 from invenio_db import db
 
 
@@ -64,50 +63,3 @@ def users(app):
     User.query.filter_by(email='user@inspirehep.net').delete()
     User.query.filter_by(email='user_allowed@inspirehep.net').delete()
     db.session.commit()
-
-
-def test_holdingpen_author_views_access(app, app_client, users):
-    """Check permissions of author related views."""
-    # An anonymous user is redirected to login page
-    res = app_client.get(url_for('inspirehep_authors.newreview'))
-    assert res.status_code == 302
-    assert 'login' in res.location
-
-    res = app_client.post(
-        url_for('inspirehep_authors.reviewhandler'))
-    assert res.status_code == 302
-    assert 'login' in res.location
-
-    res = app_client.get(
-        url_for('inspirehep_authors.holdingpenreview'))
-    assert res.status_code == 302
-    assert 'login' in res.location
-
-    # Logged-in user with no permission should receive 403
-    login_user_via_session(app_client, email='user@inspirehep.net')
-
-    res = app_client.get(url_for('inspirehep_authors.newreview'))
-    assert res.status_code == 403
-
-    res = app_client.post(
-        url_for('inspirehep_authors.reviewhandler'))
-    assert res.status_code == 403
-
-    res = app_client.get(
-        url_for('inspirehep_authors.holdingpenreview'))
-    assert res.status_code == 403
-
-    # User with admin-holdingpen-authors action allowed can access
-    # XXX: 400 is returned because no object id is passed to the views
-    login_user_via_session(app_client, email='user_allowed@inspirehep.net')
-
-    res = app_client.get(url_for('inspirehep_authors.newreview'))
-    assert res.status_code == 400
-
-    res = app_client.post(
-        url_for('inspirehep_authors.reviewhandler'))
-    assert res.status_code == 400
-
-    res = app_client.get(
-        url_for('inspirehep_authors.holdingpenreview'))
-    assert res.status_code == 400
