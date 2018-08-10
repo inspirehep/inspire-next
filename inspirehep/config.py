@@ -777,44 +777,68 @@ RECORDS_REST_FACETS = {
                 end_date_math='/y')
         },
         "aggs": {
-            "subject": {
-                "terms": {
-                    "field": "facet_inspire_categories",
-                    "size": 20
-                }
-            },
-            "arxiv_categories": {
-                "terms": {
-                    "field": "facet_arxiv_categories",
-                    "size": 20
-                }
-            },
-            "doc_type": {
-                "terms": {
-                    "field": "facet_inspire_doc_type",
-                    "size": 20
-                }
-            },
-            "author": {
-                "terms": {
-                    "field": "facet_author_name",
-                    "size": 20
-                }
-            },
-            "experiment": {
-                "terms": {
-                    "field": "facet_experiment",
-                    "size": 20
-                }
-            },
             "earliest_date": {
                 "date_histogram": {
                     "field": "earliest_date",
                     "interval": "year",
                     "format": "yyyy",
                     "min_doc_count": 1,
+                },
+                "meta": {
+                    "title": "Date",
+                    "order": 1,
+                },
+            },
+            "author": {
+                "terms": {
+                    "field": "facet_author_name",
+                    "size": 20
+                },
+                "meta": {
+                    "title": "Author",
+                    "order": 2,
+                },
+            },
+            "subject": {
+                "terms": {
+                    "field": "facet_inspire_categories",
+                    "size": 20
+                },
+                "meta": {
+                    "title": "Subject",
+                    "order": 3,
                 }
-            }
+            },
+            "arxiv_categories": {
+                "terms": {
+                    "field": "facet_arxiv_categories",
+                    "size": 20
+                },
+                "meta": {
+                    "title": "arXiv Category",
+                    "order": 4,
+                },
+            },
+            "experiment": {
+                "terms": {
+                    "field": "facet_experiment",
+                    "size": 20
+                },
+                "meta": {
+                    "title": "Experiment",
+                    "order": 5,
+                },
+            },
+            "doc_type": {
+                "terms": {
+                    "field": "facet_inspire_doc_type",
+                    "size": 20
+                },
+                "meta": {
+                    "title": "Document Type",
+                    "order": 6,
+                },
+            },
         }
     },
     "records-authors": {
