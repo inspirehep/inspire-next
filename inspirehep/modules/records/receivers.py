@@ -60,6 +60,7 @@ from inspirehep.modules.records.utils import (
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
     populate_author_count,
+    populate_author_suggest,
     populate_authors_full_name_unicode_normalized,
     populate_authors_name_variations,
     populate_bookautocomplete,
@@ -190,6 +191,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
 
     elif is_author(json):
         populate_authors_name_variations(json)
+        populate_author_suggest(json)
 
     elif is_book(json):
         populate_bookautocomplete(json)
