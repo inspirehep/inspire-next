@@ -41,20 +41,22 @@ from ..utils import with_debug_logging
 
 @with_debug_logging
 def exact_match(obj, eng):
-    """Return ``True`` if the record is already present in the system.
+    """Return ``True`` if the record is already present in the system once.
 
     Uses the default configuration of the ``inspire-matcher`` to find
     duplicates of the current workflow object in the system.
 
     Also sets the ``matches.exact`` property in ``extra_data`` to the list of
     control numbers that matched.
-
+    Also sets the ``matches.conflicts`` property in ``extra_data`` to the list of
+    the brief if more than one record matched.
+    
     Arguments:
         obj: a workflow object.
         eng: a workflow engine.
 
     Returns:
-        bool: ``True`` if the workflow object has a duplicate in the system
+        bool: ``True`` if the workflow object has exactly one duplicate in the system
         ``False`` otherwise.
 
     """
@@ -62,7 +64,10 @@ def exact_match(obj, eng):
     matches = dedupe_list(match(obj.data, exact_match_config))
     record_ids = [el['_source']['control_number'] for el in matches]
     obj.extra_data.setdefault('matches', {})['exact'] = record_ids
-    return bool(record_ids)
+    if len(record_ids) > 1:
+        record_briefs = [_get_hep_record_brief(el['_source']) for el in matches]
+        obj.extra_data['matches']['conflicts'] = record_briefs
+    return len(record_ids) == 1
 
 
 @with_debug_logging
@@ -73,14 +78,15 @@ def fuzzy_match(obj, eng):
     similar to the current workflow object's payload in the system.
 
     Also sets the ``matches.fuzzy`` property in ``extra_data`` to the list of
-    the brief of first 5 record that matched.
+    the brief of first MAX_FUZZY_MATCH_DISPLAY record that matched,
+    ignoring records in matches.conflicts.
 
     Arguments:
         obj: a workflow object.
         eng: a workflow engine.
 
     Returns:
-        bool: ``True`` if the workflow object has a duplicate in the system
+        bool: ``True`` if the workflow object has a conflict or a duplicate in the system
         ``False`` otherwise.
 
     """
@@ -89,9 +95,20 @@ def fuzzy_match(obj, eng):
 
     fuzzy_match_config = current_app.config['FUZZY_MATCH']
     matches = dedupe_list(match(obj.data, fuzzy_match_config))
-    record_ids = [_get_hep_record_brief(el['_source']) for el in matches]
-    obj.extra_data.setdefault('matches', {})['fuzzy'] = record_ids[0:5]
-    return bool(record_ids)
+    max_fuzzy_match_display = current_app.config['MAX_FUZZY_MATCH_DISPLAY']
+    if 'matches' in obj.extra_data and 'conflicts' in obj.extra_data['matches']:
+        match_result = True
+        conflict_matches = [el['control_number'] for el in obj.extra_data['matches']['conflicts']]
+        record_ids = []
+        for el in matches[0:max_fuzzy_match_display]:
+            if not el['_source']['control_number'] in conflict_matches:
+                record_ids.append(_get_hep_record_brief(el['_source']))
+    else:   
+        record_ids = [_get_hep_record_brief(el['_source']) for el in matches]
+        match_result = bool(record_ids)
+    
+    obj.extra_data.setdefault('matches', {})['fuzzy'] = record_ids[0:max_fuzzy_match_display]
+    return match_result
 
 
 def _get_hep_record_brief(hep_record):
