@@ -179,6 +179,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_author_count(sender, json, *args, **kwargs)
     populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs)
     populate_earliest_date(sender, json, *args, **kwargs)
+    populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_inspire_document_type(sender, json, *args, **kwargs)
     populate_name_variations(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
@@ -391,6 +392,33 @@ def populate_earliest_date(sender, json, *args, **kwargs):
         result = earliest_date(dates)
         if result:
             json['earliest_date'] = result
+
+
+def populate_experiment_suggest(sender, json, *args, **kwargs):
+    """Populates experiment_suggest field of experiment records."""
+
+    if 'experiments.json' not in json.get('$schema'):
+        return
+
+    experiment_paths = [
+        'accelerator.value',
+        'collaboration.value',
+        'experiment.short_name',
+        'experiment.value',
+        'institutions.value',
+        'legacy_name',
+        'long_name',
+        'name_variants',
+    ]
+
+    input_values = [el for el in chain.from_iterable(
+        [force_list(get_value(json, path)) for path in experiment_paths]) if el]
+
+    json.update({
+        'experiment_suggest': {
+            'input': input_values,
+        },
+    })
 
 
 def populate_name_variations(sender, json, *args, **kwargs):
