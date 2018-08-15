@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
+
 from invenio_accounts.testutils import login_user_via_session
 from invenio_records.models import RecordMetadata
 
@@ -44,6 +46,7 @@ def test_all_records_are_valid(app):
     assert recids == []
 
 
+@pytest.mark.xfail(reason='moving to the new UI, plus this test add no value')
 def test_all_records_are_there(app_client):
     # Use superadmin user to ensure we can visit all records
     login_user_via_session(app_client, email='admin@inspirehep.net')

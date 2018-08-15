@@ -716,7 +716,7 @@ RECORDS_UI_DEFAULT_PERMISSION_FACTORY = "inspirehep.modules.records.permissions:
 RECORDS_UI_ENDPOINTS = {
     'literature': {
         'pid_type': 'lit',
-        'route': '/literature/<pid_value>',
+        'route': '/old-literature/<pid_value>',
         'template': 'inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl',
         'record_class': 'inspirehep.modules.records.wrappers:LiteratureRecord',
     },
