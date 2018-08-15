@@ -53,7 +53,7 @@ def test_all_collections_are_cached(app, app_client):
     # Remove collection cache key
     current_cache.delete('restricted_collections')
 
-    app_client.get("/literature/1497201")
+    app_client.get("/old-literature/1497201")
 
     # Check that cache key has been correctly filled
     assert current_cache.get('restricted_collections') == set(['HERMES Internal Notes'])
@@ -75,7 +75,7 @@ def test_record_public_detailed_read(app, app_client, user_info, status):
         # Login as user
         login_user_via_session(app_client, email=user_info['email'])
 
-    assert app_client.get('/literature/1497201').status_code == status
+    assert app_client.get('/old-literature/1497201').status_code == status
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -94,7 +94,7 @@ def test_record_public_api_read(app, app_client, user_info, status):
         # Login as user
         login_user_via_session(app_client, email=user_info['email'])
 
-    assert app_client.get('/literature/1497201').status_code == status
+    assert app_client.get('/old-literature/1497201').status_code == status
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -115,7 +115,7 @@ def test_record_restricted_detailed_read(app, app_client, user_info, status):
         # Login as user
         login_user_via_session(app_client, email=user_info['email'])
 
-    assert app_client.get('/literature/1090628').status_code == status
+    assert app_client.get('/old-literature/1090628').status_code == status
 
 
 @pytest.mark.parametrize('user_info,status', [

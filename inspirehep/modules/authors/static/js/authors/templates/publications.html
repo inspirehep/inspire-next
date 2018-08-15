@@ -12,7 +12,7 @@
     <tbody>
       <tr ng-repeat="publication in publications">
         <td width="50%">
-          <a href="/literature/{{ publication.id }}">
+          <a href="/old-literature/{{ publication.id }}">
             {{ publication.title | limitTo: 120 }}
           </a>
           <span ng-if="publication.title.length > 120">...</span>
