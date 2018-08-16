@@ -40,6 +40,9 @@ from invenio_workflows import (
 from invenio_workflows.errors import WorkflowsError
 from jsonschema import ValidationError
 
+from inspirehep.modules.workflows.tasks.actions import load_from_source_data
+from inspirehep.modules.workflows.utils import do_not_repeat
+
 from calls import (
     core_record,
     do_accept_core,
@@ -982,3 +985,111 @@ def test_start_wf_with_no_source_data_fails(workflow_app):
 
     with pytest.raises(ValueError):
         start('article', object_id=obj.id)
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
+    return_value=True
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.refextract.extract_references_from_file',
+    return_value=[],
+)
+def test_do_not_repeat(
+    mocked_refextract_extract_refs,
+    mocked_api_request_magpie,
+    mocked_api_request_beard,
+    mocked_is_pdf_link,
+    mocked_package_download,
+    mocked_arxiv_download,
+    workflow_app,
+    mocked_external_services,
+):
+    def return_value(val):
+        def _return_value(obj, eng):
+            obj.extra_data['id'] = val
+            obj.save()
+            return {'id': val}
+        return _return_value
+
+    custom_wf_steps = [
+        load_from_source_data,
+        do_not_repeat('one')(
+            return_value(1),
+        ),
+        do_not_repeat('two')(
+            return_value(2),
+        ),
+    ]
+
+    custom_wf_steps_to_repeat = [
+        load_from_source_data,
+        do_not_repeat('one')(
+            return_value(41),
+        ),
+        do_not_repeat('two')(
+            return_value(42),
+        ),
+        do_not_repeat('three')(
+            return_value(43),
+        ),
+    ]
+
+    expected_persistent_data_first_run = {
+        'one': {'id': 1},
+        'two': {'id': 2}
+    }
+    expected_persistent_data_second_run = {
+        'one': {'id': 1},
+        'two': {'id': 2},
+        'three': {'id': 43},
+    }
+
+    record = generate_record()
+
+    with workflow_app.app_context():
+        wf_id = build_workflow(record).id
+        workflow_uuid = start('article', object_id=wf_id)
+
+        eng = WorkflowEngine.from_uuid(workflow_uuid)
+        obj = eng.processed_objects[0]
+
+        eng = WorkflowEngine.from_uuid(obj.id_workflow)
+        eng.callbacks.replace(custom_wf_steps)
+        eng.process([obj])
+
+        eng = WorkflowEngine.from_uuid(workflow_uuid)
+        obj = eng.processed_objects[0]
+
+        assert obj.status == ObjectStatus.COMPLETED
+        assert obj.extra_data['source_data']['persistent_data']
+        assert obj.extra_data['source_data']['persistent_data'] == expected_persistent_data_first_run
+        assert obj.extra_data['id'] == 2
+
+        eng = WorkflowEngine.from_uuid(obj.id_workflow)
+        eng.callbacks.replace(custom_wf_steps_to_repeat)
+        obj.callback_pos = [0]
+        obj.save()
+        db.session.commit()
+        eng.process([obj])
+
+        eng = WorkflowEngine.from_uuid(workflow_uuid)
+        obj = eng.processed_objects[0]
+        assert obj.extra_data['source_data']['persistent_data'] == expected_persistent_data_second_run
+        assert obj.extra_data['id'] == 43

@@ -104,6 +104,10 @@ def test_literature_submission_restarts_cleanly(inspire_client, mitm_client):
 
     wait_for(_workflow_halted_with_original_data)
 
+    mitm_client.assert_interaction_used('RTService', 'ticket_new', times=1)
+    mitm_client.assert_interaction_used('RTService', 'ticket_edit', times=1)
+    mitm_client.assert_interaction_used('RTService', 'ticket_comment', times=1)
+
 
 @with_mitmproxy
 def test_author_submission_restarts_cleanly(inspire_client, mitm_client):
@@ -153,3 +157,7 @@ def test_author_submission_restarts_cleanly(inspire_client, mitm_client):
         assert not entry.approved
 
     wait_for(_workflow_halted_with_original_data)
+
+    mitm_client.assert_interaction_used('RTService', 'ticket_new', times=1)
+    mitm_client.assert_interaction_used('RTService', 'ticket_edit', times=1)
+    mitm_client.assert_interaction_used('RTService', 'ticket_comment', times=1)
