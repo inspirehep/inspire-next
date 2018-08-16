@@ -29,6 +29,7 @@ import pytest
 import mock
 
 from elasticsearch import NotFoundError
+
 from invenio_db import db
 from invenio_indexer.signals import before_record_index
 from invenio_oauthclient.utils import oauth_link_external_id
@@ -149,8 +150,8 @@ def raw_record(app):
 
 @pytest.fixture(scope='function')
 def record(raw_record):
-    with mock.patch('inspirehep.modules.records.receivers.Task') as mocked_Task:
-        mocked_Task.return_value = mocked_Task
+    with mock.patch('inspirehep.modules.orcid.tasks.orcid_push') as mock_orcid_push:
+        mock_orcid_push.return_value = mock_orcid_push
         _record = migrate_and_insert_record(raw_record, skip_files=True)
 
     return _record
@@ -213,28 +214,27 @@ def assert_db_has_no_author_record(author_recid):
     assert InspireRecord.query.filter_by().count() == 0
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
-def test_orcid_push_not_trigger_for_author_records(mocked_Task, user_with_permission):
-    mocked_Task.assert_not_called()
+@mock.patch('inspirehep.modules.orcid.tasks.orcid_push')
+def test_orcid_push_not_trigger_for_author_records(mock_orcid_push_task, user_with_permission):
+    mock_orcid_push_task.assert_not_called()
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
-def test_orcid_push_not_triggered_on_create_record_without_allow_push(mocked_Task, app, raw_record, user_without_permission):
+@mock.patch('inspirehep.modules.orcid.tasks.orcid_push')
+def test_orcid_push_not_triggered_on_create_record_without_allow_push(mock_orcid_push_task, app, raw_record, user_without_permission):
     migrate_and_insert_record(raw_record, skip_files=True)
 
-    mocked_Task.assert_not_called()
+    mock_orcid_push_task.assert_not_called()
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
-def test_orcid_push_not_triggered_on_create_record_without_token(mocked_Task, app, raw_record, user_without_token):
+@mock.patch('inspirehep.modules.orcid.tasks.orcid_push')
+def test_orcid_push_not_triggered_on_create_record_without_token(mock_orcid_push_task, app, raw_record, user_without_token):
     migrate_and_insert_record(raw_record, skip_files=True)
 
-    mocked_Task.assert_not_called()
+    mock_orcid_push_task.assert_not_called()
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
-def test_orcid_push_triggered_on_create_record_with_allow_push(mocked_Task, app, raw_record, user_with_permission, enable_orcid_push_feature):
-    mocked_Task.return_value = mocked_Task
+@mock.patch('inspirehep.modules.orcid.tasks.orcid_push')
+def test_orcid_push_triggered_on_create_record_with_allow_push(mock_orcid_push_task, app, raw_record, user_with_permission, enable_orcid_push_feature):
     migrate_and_insert_record(raw_record, skip_files=True)
 
     expected_kwargs = {
@@ -246,12 +246,11 @@ def test_orcid_push_triggered_on_create_record_with_allow_push(mocked_Task, app,
         'queue': 'orcid_push',
     }
 
-    mocked_Task.apply_async.assert_called_once_with(**expected_kwargs)
+    mock_orcid_push_task.apply_async.assert_called_once_with(**expected_kwargs)
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
-def test_orcid_push_triggered_on_record_update_with_allow_push(mocked_Task, app, record, user_with_permission, enable_orcid_push_feature):
-    mocked_Task.return_value = mocked_Task
+@mock.patch('inspirehep.modules.orcid.tasks.orcid_push')
+def test_orcid_push_triggered_on_record_update_with_allow_push(mock_orcid_push_task, app, record, user_with_permission, enable_orcid_push_feature):
     expected_kwargs = {
         'kwargs': {
             'orcid': user_with_permission['orcid'],
@@ -263,12 +262,11 @@ def test_orcid_push_triggered_on_record_update_with_allow_push(mocked_Task, app,
 
     record.commit()
 
-    mocked_Task.apply_async.assert_called_once_with(**expected_kwargs)
+    mock_orcid_push_task.apply_async.assert_called_once_with(**expected_kwargs)
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
-def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_push(mocked_Task, app, raw_record, two_users_with_permission, enable_orcid_push_feature):
-    mocked_Task.return_value = mocked_Task
+@mock.patch('inspirehep.modules.orcid.tasks.orcid_push')
+def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_push(mock_orcid_push_task, app, raw_record, two_users_with_permission, enable_orcid_push_feature):
     migrate_and_insert_record(raw_record, skip_files=True)
 
     expected_kwargs_user1 = {
@@ -288,9 +286,9 @@ def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_
         'queue': 'orcid_push',
     }
 
-    mocked_Task.apply_async.assert_any_call(**expected_kwargs_user1)
-    mocked_Task.apply_async.assert_any_call(**expected_kwargs_user2)
-    assert mocked_Task.apply_async.call_count == 2
+    mock_orcid_push_task.apply_async.assert_any_call(**expected_kwargs_user1)
+    mock_orcid_push_task.apply_async.assert_any_call(**expected_kwargs_user2)
+    assert mock_orcid_push_task.apply_async.call_count == 2
 
 
 def test_creating_deleted_record_and_undeleting_created_record_in_es(isolated_app):
@@ -384,7 +382,7 @@ def test_deleting_record_triggers_delete_in_es(isolated_app):
         search.get_source(record.id)
 
 
-@mock.patch('inspirehep.modules.records.receivers.Task')
+@mock.patch('inspirehep.modules.orcid.tasks.orcid_push')
 def test_orcid_push_not_triggered_on_create_record_no_feat_flag(mocked_Task, app, raw_record, user_with_permission):
     migrate_and_insert_record(raw_record, skip_files=True)
 

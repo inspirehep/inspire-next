@@ -26,6 +26,9 @@ import json
 import mock
 import os
 import pkg_resources
+import pytest
+
+from factories.db.invenio_records import TestRecordMetadata
 
 from inspirehep.modules.orcid import OrcidConverter
 from inspirehep.modules.orcid.cache import _OrcidHasher
@@ -387,3 +390,28 @@ def test_format_thesis_with_author_orcid(app, api_client):
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
     assert _OrcidHasher(mock.Mock())._hash_xml_element(expected) == _OrcidHasher(mock.Mock())._hash_xml_element(result)
+
+
+@pytest.mark.usefixtures('isolated_app')
+class TestBibtexCitation(object):
+    def setup(self):
+        factory = TestRecordMetadata.create_from_file(__name__, 'test_orcid_converter_TestBibtexCitation.json')
+        self.inspire_record = factory.inspire_record
+
+    def test_do_add_bibtex_citation(self):
+        converter = OrcidConverter(
+            record=self.inspire_record,
+            url_pattern='http://inspirehep.net/record/{recid}',
+        )
+        xml_root = converter.get_xml(do_add_bibtex_citation=True)
+        top_level_tags = [etree.QName(node).localname for node in xml_root.getchildren()]
+        assert 'citation' in top_level_tags
+
+    def test_do_not_add_bibtex_citation(self):
+        converter = OrcidConverter(
+            record=self.inspire_record,
+            url_pattern='http://inspirehep.net/record/{recid}',
+        )
+        xml_root = converter.get_xml()
+        top_level_tags = [etree.QName(node).localname for node in xml_root.getchildren()]
+        assert 'citation' not in top_level_tags

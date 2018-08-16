@@ -184,13 +184,13 @@ def test_orcid_push_disabled_on_migrate_from_mirror(app, cleanup, enable_orcid_p
         os.path.join('fixtures', 'dummy.xml')
     )
 
-    with patch('inspirehep.modules.orcid.api.push_record_with_orcid') as mock_push_record_with_orcid, \
+    with patch('inspirehep.modules.orcid.domain_models.OrcidPusher') as mock_orcid_pusher, \
             patch('inspirehep.modules.records.receivers.get_push_access_tokens') as mock_get_push_access_tokens:
         mock_get_push_access_tokens.return_value.remote_account.extra_data['orcid'] = '0000-0002-1825-0097'
         mock_get_push_access_tokens.return_value.access_token = 'mytoken'
 
         migrate_from_file(record_fixture_path, wait_for_results=True)
-        mock_push_record_with_orcid.assert_not_called()
+        mock_orcid_pusher.assert_not_called()
 
     prod_record = LegacyRecordsMirror.query.filter(LegacyRecordsMirror.recid == 12345).one()
     assert prod_record.valid

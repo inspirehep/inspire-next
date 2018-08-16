@@ -23,28 +23,45 @@
 from __future__ import absolute_import, division, print_function
 
 
-class BaseOrcidException(Exception):
+class BaseOrcidPusherException(Exception):
+    def __init__(self, from_exc=None, *args, **kwargs):
+        # Sort of exception chaining in Python 2.
+        # No need in Python 3 with the statement: raise exc from cause
+        self.from_exc = from_exc
+        super(BaseOrcidPusherException, self).__init__(*args, **kwargs)
+
+    def __str__(self, *args, **kwargs):
+        output = super(BaseOrcidPusherException, self).__str__(*args, **kwargs)
+        if not self.from_exc:
+            return output
+        output += '\nThis exception was directly caused by the following exception:\n{}'.format(
+            repr(self.from_exc))
+        return output
+
+
+class RecordNotFoundException(BaseOrcidPusherException):
     pass
 
 
-class BaseOrcidApiException(BaseOrcidException):
+class InputDataInvalidException(BaseOrcidPusherException):
+    """
+    The underneath Orcid service client response included an error related
+    to input data like TokenInvalidException, OrcidNotFoundException,
+    PutcodeNotFoundPutException.
+    Note: that re-trying would not help in this case.
+    """
     pass
 
 
-class DuplicatedExternalIdentifiersError(BaseOrcidApiException):
-    http_status_code = 409
-    orcid_error_code = 9021
-
-    @classmethod
-    def match(cls, exception):
-        try:
-            return (
-                exception.response.status_code == cls.http_status_code and
-                exception.response.json()['error-code'] == cls.orcid_error_code
-            )
-        except Exception:
-            return False
+class PutcodeNotFoundInOrcidException(BaseOrcidPusherException):
+    """
+    No putcode was found in ORCID API.
+    """
+    pass
 
 
-class PutcodeNotFoundInCacheException(BaseOrcidException):
+class PutcodeNotFoundInCacheAfterCachingAllPutcodes(BaseOrcidPusherException):
+    """
+    No putcode was found in cache after having cached all author putcodes.
+    """
     pass
