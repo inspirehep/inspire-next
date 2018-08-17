@@ -108,7 +108,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     send_to_legacy,
     wait_webcoll,
 )
-
+from inspirehep.modules.workflows.utils import do_not_repeat
 from inspirehep.modules.literaturesuggest.tasks import (
     curation_ticket_needed,
     reply_ticket_context,
@@ -118,17 +118,21 @@ from inspirehep.modules.literaturesuggest.tasks import (
 
 
 NOTIFY_SUBMISSION = [
-    create_ticket(
-        template="literaturesuggest/tickets/curator_submitted.html",
-        queue="HEP_add_user",
-        context_factory=new_ticket_context,
-        ticket_id_key="ticket_id"
+    do_not_repeat('create_ticket_curator_new_submission')(
+        create_ticket(
+            template="literaturesuggest/tickets/curator_submitted.html",
+            queue="HEP_add_user",
+            context_factory=new_ticket_context,
+            ticket_id_key="ticket_id"
+        ),
     ),
-    reply_ticket(
-        template="literaturesuggest/tickets/user_submitted.html",
-        context_factory=reply_ticket_context,
-        keep_new=True
-    ),
+    do_not_repeat('reply_ticket_user_new_submission')(
+        reply_ticket(
+            template="literaturesuggest/tickets/user_submitted.html",
+            context_factory=reply_ticket_context,
+            keep_new=True
+        ),
+    )
 ]
 
 CHECK_AUTO_APPROVE = [
@@ -186,7 +190,9 @@ ENHANCE_RECORD = [
 NOTIFY_NOT_ACCEPTED = [
     IF(
         is_submission,
-        reply_ticket(context_factory=reply_ticket_context),
+        do_not_repeat('reply_ticket_submission_not_accepted')(
+            reply_ticket(context_factory=reply_ticket_context),
+        ),
     )
 ]
 
@@ -194,14 +200,18 @@ NOTIFY_NOT_ACCEPTED = [
 NOTIFY_ALREADY_EXISTING = [
     reject_record('Article was already found on INSPIRE'),
     mark('approved', False),
-    reply_ticket(
-        template=(
-            "literaturesuggest/tickets/"
-            "user_rejected_exists.html"
+    do_not_repeat('reply_ticket_user_submission_already_in_inspire')(
+        reply_ticket(
+            template=(
+                "literaturesuggest/tickets/"
+                "user_rejected_exists.html"
+            ),
+            context_factory=reply_ticket_context
         ),
-        context_factory=reply_ticket_context
     ),
-    close_ticket(ticket_id_key="ticket_id"),
+    do_not_repeat('close_ticket_user_submission_already_in_inspire')(
+        close_ticket(ticket_id_key="ticket_id")
+    ),
     save_workflow,
     stop_processing,
 ]
@@ -210,9 +220,11 @@ NOTIFY_ALREADY_EXISTING = [
 NOTIFY_ACCEPTED = [
     IF(
         is_submission,
-        reply_ticket(
-            template='literaturesuggest/tickets/user_accepted.html',
-            context_factory=reply_ticket_context,
+        do_not_repeat('reply_ticket_user_submission_accepted')(
+            reply_ticket(
+                template='literaturesuggest/tickets/user_accepted.html',
+                context_factory=reply_ticket_context,
+            ),
         ),
     ),
 ]
@@ -224,19 +236,23 @@ NOTIFY_CURATOR_IF_NEEDED = [
         [
             IF_ELSE(
                 jlab_ticket_needed,
-                create_ticket(
-                    template='literaturesuggest/tickets/curation_jlab.html',
-                    queue='HEP_curation_jlab',
-                    context_factory=curation_ticket_context,
-                    ticket_id_key='curation_ticket_id',
+                do_not_repeat('create_ticket_jlab_curation')(
+                    create_ticket(
+                        template='literaturesuggest/tickets/curation_jlab.html',
+                        queue='HEP_curation_jlab',
+                        context_factory=curation_ticket_context,
+                        ticket_id_key='curation_ticket_id',
+                    ),
                 ),
                 IF(
                     curation_ticket_needed,
-                    create_ticket(
-                        template='literaturesuggest/tickets/curation_core.html',
-                        queue='HEP_curation',
-                        context_factory=curation_ticket_context,
-                        ticket_id_key='curation_ticket_id',
+                    do_not_repeat('create_ticket_curator_core_curation')(
+                        create_ticket(
+                            template='literaturesuggest/tickets/curation_core.html',
+                            queue='HEP_curation',
+                            context_factory=curation_ticket_context,
+                            ticket_id_key='curation_ticket_id',
+                        ),
                     ),
                 ),
             )
@@ -515,7 +531,9 @@ class Article(object):
             ),
             IF(
                 is_submission,
-                close_ticket(ticket_id_key="ticket_id"),
+                do_not_repeat('close_ticket_user_submission')(
+                    close_ticket(ticket_id_key="ticket_id")
+                ),
             )
         ]
     )

@@ -67,7 +67,7 @@ def submit_rt_ticket(obj,
                                                         recid)
     obj.extra_data[ticket_id_key] = new_ticket_id
     obj.log.info(u'Ticket {0} created'.format(new_ticket_id))
-    return True
+    return new_ticket_id
 
 
 def create_ticket(template,
@@ -97,17 +97,20 @@ def create_ticket(template,
                     requestors=user.email if user else '',
                 )
             )
-            return
+            return {}
 
         recid = obj.extra_data.get("recid") or obj.data.get("control_number")
 
-        submit_rt_ticket(obj,
-                         queue,
-                         template,
-                         context,
-                         user.email if user else '',
-                         recid,
-                         ticket_id_key)
+        new_ticket_id = submit_rt_ticket(
+            obj,
+            queue,
+            template,
+            context,
+            user.email if user else '',
+            recid,
+            ticket_id_key
+        )
+        return {ticket_id_key: new_ticket_id}
 
     return _create_ticket
 
@@ -119,7 +122,8 @@ def reply_ticket(template=None,
     @with_debug_logging
     @wraps(reply_ticket)
     def _reply_ticket(obj, eng):
-        ticket_id = obj.extra_data.get("ticket_id", "")
+        ticket_id_key = "ticket_id"
+        ticket_id = obj.extra_data.get(ticket_id_key)
 
         if not rt_instance:
             obj.log.error("No RT instance available. Skipping!")
@@ -128,17 +132,17 @@ def reply_ticket(template=None,
                     ticket_id=ticket_id,
                 )
             )
-            return
+            return {}
 
         if not ticket_id:
             obj.log.error("No ticket ID found!")
-            return
+            return {}
 
         user = User.query.get(obj.id_user)
         if not user:
             obj.log.error(
                 "No user found for object %s, skipping ticket creation", obj.id)
-            return
+            return {}
 
         if template:
             context = {}
@@ -155,7 +159,8 @@ def reply_ticket(template=None,
                 tickets.reply_ticket(ticket_id, body, keep_new)
             else:
                 obj.log.error("No body for ticket reply. Skipping reply.")
-                return
+
+        return {}
 
     return _reply_ticket
 
@@ -168,7 +173,7 @@ def close_ticket(ticket_id_key="ticket_id"):
         ticket_id = obj.extra_data.get(ticket_id_key, "")
         if not ticket_id:
             obj.log.error("No ticket ID found!")
-            return
+            return {}
 
         if not rt_instance:
             obj.log.error("No RT instance available. Skipping!")
@@ -177,9 +182,10 @@ def close_ticket(ticket_id_key="ticket_id"):
                     ticket_id=ticket_id,
                 )
             )
-            return
+            return {}
 
         tickets.resolve_ticket(ticket_id)
+        return {}
 
     return _close_ticket
 

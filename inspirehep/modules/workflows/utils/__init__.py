@@ -158,6 +158,53 @@ def with_debug_logging(func):
     return _decorator
 
 
+def do_not_repeat(step_id):
+    """Decorator used to skip workflow steps when a workflow is re-run.
+
+
+    Will store the result of running the workflow step in source_data.persistent_data
+    after running the first time, and skip the step on the following runs, also applying
+    previously recorded 'changes' to extra_data.
+
+    The decorated function has to conform to the following signature:
+
+        def decorated_step(obj: WorkflowObject, eng: WorkflowEngine) -> Dict[str, Any]: ...
+
+    Where obj and eng are usual arguments following the protocol of all workflow steps.
+    The returned value of the decorated_step will be used as a patch to be applied on the
+    workflow object's source data (which 'replays' changes made by the workflow step).
+
+    Args:
+        step_id (str): name of the workflow step, to be used as key in persistent_data
+
+    Returns:
+        callable: the decorator
+    """
+    def decorator(func):
+        @wraps(func)
+        def _do_not_repeat(obj, eng):
+            source_data = obj.extra_data['source_data']
+            is_task_repeated = step_id in obj.extra_data['source_data'].setdefault('persistent_data', {})
+            if is_task_repeated:
+                extra_data_update = source_data['persistent_data'][step_id]
+                obj.extra_data.update(extra_data_update)
+                obj.save()
+                return
+
+            return_value = func(obj, eng)
+            if not isinstance(return_value, dict):
+                raise TypeError(
+                    "Functions decorated by 'do_not_repeat' must return a "
+                    "dictionary compliant to extra_data info"
+                )
+            source_data['persistent_data'][step_id] = return_value
+            obj.save()
+            return return_value
+
+        return _do_not_repeat
+    return decorator
+
+
 def ignore_timeout_error(return_value=None):
     """Ignore the TimeoutError, returning return_value when it happens.
 

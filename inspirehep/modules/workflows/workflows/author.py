@@ -50,6 +50,7 @@ from inspirehep.modules.authors.tasks import (
     reply_ticket_context,
     update_ticket_context,
 )
+from inspirehep.modules.workflows.utils import do_not_repeat
 
 
 SEND_TO_LEGACY = [
@@ -60,20 +61,26 @@ SEND_TO_LEGACY = [
 
 
 NOTIFY_ACCEPTED = [
-    reply_ticket(
-        template="authors/tickets/user_accepted.html",
-        context_factory=reply_ticket_context),
-    close_ticket(ticket_id_key="ticket_id"),
+    do_not_repeat('reply_ticket_author_submission_accepted')(
+        reply_ticket(
+            template="authors/tickets/user_accepted.html",
+            context_factory=reply_ticket_context)
+    ),
+    do_not_repeat('close_ticket_author_submission_accepted')(
+        close_ticket(ticket_id_key="ticket_id")
+    ),
 ]
 
 
 CLOSE_TICKET_IF_NEEDED = [
     IF(curation_ticket_needed, [
-        create_ticket(
-            template="authors/tickets/curation_needed.html",
-            queue="AUTHORS_curation",
-            context_factory=curation_ticket_context,
-            ticket_id_key="curation_ticket_id"
+        do_not_repeat('create_ticket_author_submission_curation_needed')(
+            create_ticket(
+                template="authors/tickets/curation_needed.html",
+                queue="AUTHORS_curation",
+                context_factory=curation_ticket_context,
+                ticket_id_key="curation_ticket_id"
+            )
         ),
     ]),
 ]
@@ -89,29 +96,37 @@ SEND_UPDATE_NOTIFICATION = [
         mode="holdingpen",
         callback_url=None
     ),
-    create_ticket(
-        template="authors/tickets/curator_update.html",
-        queue="Authors_cor_user",
-        context_factory=update_ticket_context,
+    do_not_repeat('create_ticket_author_submission_curator_update')(
+        create_ticket(
+            template="authors/tickets/curator_update.html",
+            queue="Authors_cor_user",
+            context_factory=update_ticket_context,
+        )
     ),
-    reply_ticket(
-        template="authors/tickets/user_new.html",
-        context_factory=reply_ticket_context,
-        keep_new=True,
+    do_not_repeat('reply_ticket_author_submission_new_user')(
+        reply_ticket(
+            template="authors/tickets/user_new.html",
+            context_factory=reply_ticket_context,
+            keep_new=True,
+        )
     ),
 ]
 
 
 ASK_FOR_REVIEW = [
-    create_ticket(
-        template="authors/tickets/curator_new.html",
-        queue="Authors_add_user",
-        context_factory=new_ticket_context,
+    do_not_repeat('create_ticket_author_submission_curator_new')(
+        create_ticket(
+            template="authors/tickets/curator_new.html",
+            queue="Authors_add_user",
+            context_factory=new_ticket_context,
+        )
     ),
-    reply_ticket(
-        template="authors/tickets/user_new.html",
-        context_factory=reply_ticket_context,
-        keep_new=True,
+    do_not_repeat('reply_ticket_author_submission_user_new')(
+        reply_ticket(
+            template="authors/tickets/user_new.html",
+            context_factory=reply_ticket_context,
+            keep_new=True,
+        )
     ),
     halt_record(
         action="author_approval",
