@@ -192,7 +192,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
 
 def populate_citations_count(sender, json, *args, **kwargs):
     """Populate citations_count in ES from"""
-    if is_hep(json) and is_data(json) and hasattr(sender, 'get_citations_count'):
+    if (is_hep(json) or is_data(json)) and hasattr(sender, 'get_citations_count'):
         # Make sure that sender has method get_citations_count
         citation_count = sender.get_citations_count()
         json.update({'citation_count': citation_count})
