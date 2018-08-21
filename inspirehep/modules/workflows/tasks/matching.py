@@ -428,3 +428,10 @@ def stop_matched_holdingpen_wfs(obj, eng):
         # stop this holdingpen workflow by replacing its steps with a stop step
         holdingpen_wf_eng.callbacks.replace(stopping_steps)
         holdingpen_wf_eng.process([holdingpen_wf])
+
+
+@with_debug_logging
+def has_more_than_one_exact_match(obj, eng):
+    """Does the record have more than one exact match."""
+    exact_matches = obj.extra_data['matches']['exact']
+    return len(set(exact_matches)) > 1

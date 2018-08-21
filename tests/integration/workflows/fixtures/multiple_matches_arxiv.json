@@ -1,0 +1,31 @@
+{
+  "$schema": "http://localhost:5000/schemas/records/hep.json",
+  "_collections": [
+    "Literature"
+  ],
+  "acquisition_source": {
+    "datetime": "2018-08-21T08:55:02.670285",
+    "method": "hepcrawl",
+    "source": "arXiv",
+    "submission_number": "42"
+  },
+  "core": true,
+  "curated": false,
+  "document_type": [
+    "article"
+  ],
+  "arxiv_eprints": [
+    {
+      "categories": [
+        "cs.CE"
+      ],
+      "value": "1808.12345"
+    }
+  ],
+  "titles": [
+    {
+      "source": "submitter",
+      "title": "Test Record For Multiple Exact Matches"
+    }
+  ]
+}

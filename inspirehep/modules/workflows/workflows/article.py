@@ -89,6 +89,7 @@ from inspirehep.modules.workflows.tasks.matching import (
     stop_matched_holdingpen_wfs,
     auto_approve,
     set_core_in_extra_data,
+    has_more_than_one_exact_match,
 )
 from inspirehep.modules.workflows.tasks.merging import (
     has_conflicts,
@@ -447,6 +448,13 @@ CHECK_IS_UPDATE = [
             set_exact_match_as_approved_in_extradata,
             mark('is-update', True),
             mark('exact-matched', True),
+            IF(
+                has_more_than_one_exact_match,
+                halt_record(
+                    action="resolve_multiple_exact_matches",
+                    message="Workflow halted for resolving multiple exact matches.",
+                )
+            ),
         ],
         IF_ELSE(
             fuzzy_match,
