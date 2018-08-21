@@ -26,7 +26,7 @@ from marshmallow import Schema, pre_dump, fields, missing
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.helpers import force_list
 
-from inspirehep.modules.records.serializers.fields.list_with_limit import ListWithLimit
+from inspirehep.modules.records.serializers.fields import ListWithLimit, NestedWithoutEmptyObjects
 from inspirehep.modules.records.utils import get_linked_records_in_field
 
 from .author import AuthorSchemaV1
@@ -34,11 +34,12 @@ from .publication_info_item import PublicationInfoItemSchemaV1
 
 
 class ReferenceItemSchemaV1(Schema):
-    authors = ListWithLimit(fields.Nested(AuthorSchemaV1, dump_only=True), limit=10)
+    authors = ListWithLimit(
+        NestedWithoutEmptyObjects(AuthorSchemaV1, dump_only=True, default=[]), limit=10)
     control_number = fields.Raw()
     label = fields.Raw()
     publication_info = fields.List(
-        fields.Nested(PublicationInfoItemSchemaV1, dump_only=True))
+        NestedWithoutEmptyObjects(PublicationInfoItemSchemaV1, dump_only=True))
     titles = fields.Method('get_titles')
 
     @pre_dump(pass_many=True)

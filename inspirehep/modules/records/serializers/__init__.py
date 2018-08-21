@@ -32,15 +32,15 @@ from .pybtex_serializer_base import PybtexSerializerBase
 from .writers import BibtexWriter
 from .schemas.base import PybtexSchema
 from .schemas.json import (
-    AuthorsSchemaJSONUIV1,
-    RecordSchemaJSONUIV1,
-    ReferencesSchemaJSONUIV1,
+    LiteratureAuthorsSchemaJSONUIV1,
+    LiteratureRecordSchemaJSONUIV1,
+    LiteratureReferencesSchemaJSONUIV1,
 )
 from .marcxml import MARCXMLSerializer
 from .response import record_responsify_nocache
 
 json_literature_ui_v1 = LiteratureJSONUISerializer(
-    RecordSchemaJSONUIV1
+    LiteratureRecordSchemaJSONUIV1
 )
 json_literature_ui_v1_search = search_responsify(
     json_literature_ui_v1,
@@ -52,7 +52,7 @@ json_literature_ui_v1_response = record_responsify_nocache(
 )
 
 json_literature_references_v1 = JSONSerializer(
-    ReferencesSchemaJSONUIV1
+    LiteratureReferencesSchemaJSONUIV1
 )
 json_literature_references_v1_search = search_responsify(
     json_literature_references_v1,
@@ -64,7 +64,7 @@ json_literature_references_v1_response = record_responsify_nocache(
 )
 
 json_literature_authors_v1 = JSONSerializer(
-    AuthorsSchemaJSONUIV1
+    LiteratureAuthorsSchemaJSONUIV1
 )
 json_literature_authors_v1_search = search_responsify(
     json_literature_authors_v1,

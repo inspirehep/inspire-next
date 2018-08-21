@@ -28,6 +28,7 @@ from pybtex.database import Entry, Person
 from six import text_type
 
 from inspire_utils.logging import getStackTraceLogger
+from marshmallow import Schema, fields
 
 from ..fields_export import get_authors_with_role, extractor, bibtex_type_and_fields
 
@@ -73,3 +74,14 @@ class PybtexSchema(object):
             'editor': [Person(x) for x in get_authors_with_role(record.get('authors', []), 'editor')]
         }))
         return data
+
+
+class JSONSchemaUIV1(Schema):
+    """JSON schema."""
+
+    id = fields.Integer(attribute='pid.pid_value')
+    metadata = fields.Raw()
+    display = fields.Raw()
+    links = fields.Raw()
+    created = fields.Str()
+    updated = fields.Str()

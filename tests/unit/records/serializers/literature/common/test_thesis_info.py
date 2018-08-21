@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 import json
 import mock
 
-from inspirehep.modules.records.serializers.schemas.common import ThesisInfoSchemaV1
+from inspirehep.modules.records.serializers.schemas.json.literature.common import ThesisInfoSchemaV1
 
 
 def test_degree_type_phd_becomes_PhD():
@@ -58,7 +58,7 @@ def test_none_fields():
     assert expected == json.loads(result)
 
 
-@mock.patch('inspirehep.modules.records.serializers.schemas.common.thesis_info.format_date')
+@mock.patch('inspirehep.modules.records.serializers.schemas.json.literature.common.thesis_info.format_date')
 def test_formatted_date(format_date):
     format_date.return_value = '7 Jun 1993'
     schema = ThesisInfoSchemaV1()
@@ -70,7 +70,7 @@ def test_formatted_date(format_date):
     assert expected == json.loads(result)
 
 
-@mock.patch('inspirehep.modules.records.serializers.schemas.common.thesis_info.format_date')
+@mock.patch('inspirehep.modules.records.serializers.schemas.json.literature.common.thesis_info.format_date')
 def test_formatted_defense_date(format_date):
     format_date.return_value = '7 Jun 1993'
     schema = ThesisInfoSchemaV1()

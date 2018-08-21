@@ -22,16 +22,36 @@
 
 from __future__ import absolute_import, division, print_function
 
-from marshmallow import pre_dump
+import json
 
-from .author import AuthorSchemaV1
+from inspirehep.modules.records.serializers.schemas.json.literature.common import IsbnSchemaV1
 
 
-class SupervisorSchemaV1(AuthorSchemaV1):
-    @pre_dump
-    def filter(self, data):
-        if 'inspire_roles' not in data:
-            return {}
-        elif 'supervisor' not in data.get('inspire_roles', ['author']):
-            return {}
-        return data
+def test_isbn_medium_online_becomes_eBook():
+    schema = IsbnSchemaV1()
+    dump = {'medium': 'online'}
+    expected = {'medium': 'eBook'}
+
+    result = schema.dumps(dump).data
+
+    assert expected == json.loads(result)
+
+
+def test_isbn_medium_titleized_if_not_online():
+    schema = IsbnSchemaV1()
+    dump = {'medium': 'print'}
+    expected = {'medium': 'Print'}
+
+    result = schema.dumps(dump).data
+
+    assert expected == json.loads(result)
+
+
+def test_none_fields():
+    schema = IsbnSchemaV1()
+    dump = {}
+    expected = {}
+
+    result = schema.dumps(dump).data
+
+    assert expected == json.loads(result)
