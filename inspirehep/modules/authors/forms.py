@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2014-2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -333,13 +333,13 @@ class AuthorUpdateForm(INSPIREForm):
 
     inspireid = fields.StringField(
         label='Inspireid',
-        description=u'e.g. INSPIRE-0000000',
+        description=u'e.g. INSPIRE-12345678',
         widget=HiddenInput(),
         widget_classes="form-control",
         validators=[validators.Optional(),
                     RegexpStopValidator(
-                        "INSPIRE-\\d{8}",
-                        message="A valid Inspireid is in the form of 'INSPIRE-0000000'.",
+                        r"^INSPIRE-\d{8}(?<!00000000)$",
+                        message="A valid Inspireid is in the form of 'INSPIRE-12345678'.",
         )]
     )
 
