@@ -618,7 +618,7 @@ def jlab_ticket_needed(obj, eng):
 
 
 @with_debug_logging
-def load_from_source_data(obj, enj):
+def load_from_source_data(obj, eng):
     """Restore the workflow data and extra_data from source_data."""
     try:
         source_data = obj.extra_data['source_data']
