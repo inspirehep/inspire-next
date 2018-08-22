@@ -22,15 +22,17 @@
 
 from __future__ import absolute_import, division, print_function
 
-from marshmallow import fields, utils
+from marshmallow import pre_dump
+
+from .author import AuthorSchemaV1
 
 
-class ListWithLimit(fields.List):
+class SupervisorSchemaV1(AuthorSchemaV1):
 
-    def _serialize(self, value, attr, obj):
-        if utils.is_collection(value):
-            limit = self.metadata.get('limit')
-            value = [item for item in value if item]
-            if limit:
-                return super(ListWithLimit, self)._serialize(value[:limit], attr, obj)
-        return super(ListWithLimit, self)._serialize(value, attr, obj)
+    @pre_dump
+    def filter(self, data):
+        if 'inspire_roles' not in data:
+            return {}
+        elif 'supervisor' not in data.get('inspire_roles', ['author']):
+            return {}
+        return data

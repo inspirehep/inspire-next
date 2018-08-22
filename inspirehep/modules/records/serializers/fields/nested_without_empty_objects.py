@@ -22,15 +22,15 @@
 
 from __future__ import absolute_import, division, print_function
 
-from marshmallow import fields, utils
+from inspire_dojson.utils import strip_empty_values
+from marshmallow import fields
 
 
-class ListWithLimit(fields.List):
+class NestedWithoutEmptyObjects(fields.Nested):
 
-    def _serialize(self, value, attr, obj):
-        if utils.is_collection(value):
-            limit = self.metadata.get('limit')
-            value = [item for item in value if item]
-            if limit:
-                return super(ListWithLimit, self)._serialize(value[:limit], attr, obj)
-        return super(ListWithLimit, self)._serialize(value, attr, obj)
+    def _serialize(self, nested_obj, attr, obj):
+        result = super(NestedWithoutEmptyObjects, self)._serialize(nested_obj, attr, obj)
+        clean = strip_empty_values(result)
+        if clean is None:
+            return self.default
+        return clean

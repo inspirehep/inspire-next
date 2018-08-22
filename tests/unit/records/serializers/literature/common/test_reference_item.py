@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import json
 
-from inspirehep.modules.records.serializers.schemas.common import ReferenceItemSchemaV1
+from inspirehep.modules.records.serializers.schemas.json.literature.common import ReferenceItemSchemaV1
 
 
 def test_returns_non_empty_fields():

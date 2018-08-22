@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2014-2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Marshmallow JSON schema."""
-
 from __future__ import absolute_import, division, print_function
 
 from inspire_dojson.utils import strip_empty_values
@@ -29,7 +27,8 @@ from inspire_utils.date import format_date
 
 from marshmallow import Schema, fields, missing, post_dump
 
-from inspirehep.modules.records.serializers.fields.list_with_limit import ListWithLimit
+from inspirehep.modules.records.serializers.fields import ListWithLimit, NestedWithoutEmptyObjects
+from inspirehep.modules.records.serializers.schemas.base import JSONSchemaUIV1
 
 from .common import (
     AuthorSchemaV1,
@@ -44,6 +43,7 @@ from .common import (
 
 
 class RecordMetadataSchemaV1(Schema):
+
     _collections = fields.Raw()
     abstracts = fields.Raw()
     accelerator_experiments = fields.Raw()
@@ -128,48 +128,41 @@ class RecordMetadataSchemaV1(Schema):
             return missing
         return len(maybe_none_list)
 
-
-class RecordSchemaJSONUIV1(Schema):
-    """Schema for record UI."""
-
-    id = fields.Integer(attribute='pid.pid_value')
-    metadata = fields.Nested(RecordMetadataSchemaV1, dump_only=True)
-    display = fields.Raw()
-    links = fields.Raw()
-    created = fields.Str()
-    updated = fields.Str()
-
     @post_dump
     def strip_empty(self, data):
         return strip_empty_values(data)
 
 
+class LiteratureRecordSchemaJSONUIV1(JSONSchemaUIV1):
+    """Schema for record UI."""
+
+    metadata = fields.Nested(RecordMetadataSchemaV1, dump_only=True)
+
+
 class MetadataAuthorsSchemaV1(Schema):
-    authors = fields.Nested(AuthorSchemaV1, default=[],
-                            dump_only=True, many=True)
+    authors = NestedWithoutEmptyObjects(
+        AuthorSchemaV1, default=[],
+        dump_only=True, many=True
+    )
     collaborations = fields.Raw(default=[], dump_only=True)
-    supervisors = fields.Nested(
-        SupervisorSchemaV1, default=[], dump_only=True, many=True, attribute='authors')
+    supervisors = NestedWithoutEmptyObjects(
+        SupervisorSchemaV1, default=[], dump_only=True, many=True,
+        attribute='authors'
+    )
 
 
-class AuthorsSchemaJSONUIV1(RecordSchemaJSONUIV1):
+class LiteratureAuthorsSchemaJSONUIV1(JSONSchemaUIV1):
     """Schema for literature authors."""
 
     metadata = fields.Nested(MetadataAuthorsSchemaV1, dump_only=True)
 
 
 class MetadataReferencesSchemaUIV1(Schema):
-    references = fields.Nested(
+    references = NestedWithoutEmptyObjects(
         ReferenceItemSchemaV1, default=[], many=True, dump_only=True)
 
-    @post_dump
-    def strip_empty(self, data):
-        data['references'] = [
-            reference for reference in data['references'] if reference]
-        return data
 
-
-class ReferencesSchemaJSONUIV1(RecordSchemaJSONUIV1):
+class LiteratureReferencesSchemaJSONUIV1(JSONSchemaUIV1):
     """Schema for references."""
 
     metadata = fields.Nested(MetadataReferencesSchemaUIV1, dump_only=True)

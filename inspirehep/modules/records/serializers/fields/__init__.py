@@ -23,3 +23,4 @@
 from __future__ import absolute_import, division, print_function
 
 from .list_with_limit import ListWithLimit  # noqa: F401
+from .nested_without_empty_objects import NestedWithoutEmptyObjects  # noqa: F401

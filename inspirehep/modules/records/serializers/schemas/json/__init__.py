@@ -22,36 +22,4 @@
 
 from __future__ import absolute_import, division, print_function
 
-import json
-
-from inspirehep.modules.records.serializers.schemas.common import IsbnSchemaV1
-
-
-def test_isbn_medium_online_becomes_eBook():
-    schema = IsbnSchemaV1()
-    dump = {'medium': 'online'}
-    expected = {'medium': 'eBook'}
-
-    result = schema.dumps(dump).data
-
-    assert expected == json.loads(result)
-
-
-def test_isbn_medium_titleized_if_not_online():
-    schema = IsbnSchemaV1()
-    dump = {'medium': 'print'}
-    expected = {'medium': 'Print'}
-
-    result = schema.dumps(dump).data
-
-    assert expected == json.loads(result)
-
-
-def test_none_fields():
-    schema = IsbnSchemaV1()
-    dump = {}
-    expected = {}
-
-    result = schema.dumps(dump).data
-
-    assert expected == json.loads(result)
+from .literature import LiteratureAuthorsSchemaJSONUIV1, RecordMetadataSchemaV1, LiteratureRecordSchemaJSONUIV1, LiteratureReferencesSchemaJSONUIV1  # noqa: F401

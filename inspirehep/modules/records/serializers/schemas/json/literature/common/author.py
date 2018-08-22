@@ -38,8 +38,8 @@ class AuthorSchemaV1(Schema):
     record = fields.Raw()
     signature_block = fields.Raw()
     uuid = fields.Raw()
-    first_name = fields.Method('get_first_name')
-    last_name = fields.Method('get_last_name')
+    first_name = fields.Method('get_first_name', default=missing)
+    last_name = fields.Method('get_last_name', default=missing)
 
     def get_first_name(self, data):
         names = data.get('full_name', '').split(',', 1)
@@ -47,13 +47,13 @@ class AuthorSchemaV1(Schema):
         if len(names) > 1:
             return names[1].replace(',', '').strip()
 
-        return names[0]
+        return names[0] or missing
 
     def get_last_name(self, data):
         names = data.get('full_name', '').split(',', 1)
 
         if len(names) > 1:
-            return names[0]
+            return names[0] or missing
 
         return missing
 

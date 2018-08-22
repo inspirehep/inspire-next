@@ -25,13 +25,13 @@ from __future__ import absolute_import, division, print_function
 import json
 
 from inspirehep.modules.records.serializers.schemas.json import \
-    ReferencesSchemaJSONUIV1, RecordSchemaJSONUIV1
+    LiteratureReferencesSchemaJSONUIV1, LiteratureRecordSchemaJSONUIV1
 
 from factories.db.invenio_records import TestRecordMetadata
 
 
 def test_references_schema_with_record(isolated_app):
-    schema = ReferencesSchemaJSONUIV1()
+    schema = LiteratureReferencesSchemaJSONUIV1()
     cited_record = {
         'control_number': 123,
         'titles': [
@@ -197,7 +197,7 @@ def test_references_schema_with_record(isolated_app):
 
 
 def test_conference_info_schema_with_record(isolated_app):
-    schema = RecordSchemaJSONUIV1()
+    schema = LiteratureRecordSchemaJSONUIV1()
     conf_record = {
         "$schema": "http://localhost:5000/schemas/records/conferences.json",
         "_collections": [

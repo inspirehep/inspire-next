@@ -26,7 +26,7 @@ import json
 import mock
 
 from inspirehep.modules.records.serializers.schemas.json import \
-    AuthorsSchemaJSONUIV1, ReferencesSchemaJSONUIV1, RecordMetadataSchemaV1
+    RecordMetadataSchemaV1, LiteratureAuthorsSchemaJSONUIV1, LiteratureReferencesSchemaJSONUIV1
 
 
 def test_record_metadata_schema_returns_number_of_authors():
@@ -55,7 +55,7 @@ def test_record_metadata_schema_returns_number_of_references():
     assert expected == number_of_references
 
 
-@mock.patch('inspirehep.modules.records.serializers.schemas.json.format_date')
+@mock.patch('inspirehep.modules.records.serializers.schemas.json.literature.format_date')
 def test_record_metadata_schema_returns_formatted_date(format_date):
     schema = RecordMetadataSchemaV1()
     dump = {'earliest_date': '11/11/2011'}
@@ -77,7 +77,7 @@ def test_record_metadata_schema_empty_fields():
 
 
 def test_metadata_references_items_empty():
-    schema = ReferencesSchemaJSONUIV1()
+    schema = LiteratureReferencesSchemaJSONUIV1()
     dump = {'metadata': {'titles': [{'title': 'Jessica Jones'}]}}
     expected = {'metadata': {'references': []}}
 
@@ -87,7 +87,7 @@ def test_metadata_references_items_empty():
 
 
 def test_references_schema_without_record():
-    schema = ReferencesSchemaJSONUIV1()
+    schema = LiteratureReferencesSchemaJSONUIV1()
     record = {
         'metadata': {
             'references': [
@@ -157,7 +157,7 @@ def test_references_schema_without_record():
 
 
 def test_references_schema_missing_data():
-    schema = ReferencesSchemaJSONUIV1()
+    schema = LiteratureReferencesSchemaJSONUIV1()
     record = {
         'metadata': {
             'references': [
@@ -180,8 +180,24 @@ def test_references_schema_missing_data():
     assert expected == result
 
 
+def test_references_schema_without_references():
+    schema = LiteratureReferencesSchemaJSONUIV1()
+    record = {
+        'metadata': {
+            'titles': [
+                {
+                    'title': 'Jessica Jones',
+                },
+            ],
+        },
+    }
+    expected = {'metadata': {'references': []}}
+    result = json.loads(schema.dumps(record).data)
+    assert expected == result
+
+
 def test_authors_schema():
-    schema = AuthorsSchemaJSONUIV1()
+    schema = LiteratureAuthorsSchemaJSONUIV1()
     record = {
         'metadata': {
             'control_number': 123,
@@ -259,6 +275,59 @@ def test_authors_schema():
                     'inspire_roles': ['supervisor'],
                 },
             ],
+        }
+    }
+    result = json.loads(schema.dumps(record).data)
+    assert expected == result
+
+
+def test_authors_schema_without_authors():
+    schema = LiteratureAuthorsSchemaJSONUIV1()
+    record = {
+        'metadata': {
+            'control_number': 123,
+            'titles': [
+                {
+                    'title': 'Jessica Jones',
+                },
+            ],
+            'collaborations': [{
+                'value': 'LHCb',
+            }],
+        },
+    }
+    expected = {
+        'metadata': {
+            'authors': [],
+            'collaborations': [
+                {
+                    'value': 'LHCb'
+                }
+            ],
+            'supervisors': [],
+        }
+    }
+    result = json.loads(schema.dumps(record).data)
+    assert expected == result
+
+
+def test_authors_schema_without_authors_and_collaborations():
+    schema = LiteratureAuthorsSchemaJSONUIV1()
+    record = {
+        'metadata': {
+            'control_number': 123,
+            'titles': [
+                {
+                    'title': 'Jessica Jones',
+                },
+            ],
+        },
+    }
+    expected = {
+        'metadata': {
+            'authors': [],
+            'collaborations': [],
+            'supervisors': [],
         }
     }
     result = json.loads(schema.dumps(record).data)
