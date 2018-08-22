@@ -1547,8 +1547,11 @@ INSPIRE_REF_UPDATER_WHITELISTS = {
 
 # Configuration for the matcher
 # =============================
+MATCH_DISPLAY_FIELDS = ['control_number', 'titles', 'abstracts', 'authors',
+               'arxiv_eprints', 'public_notes', 'number_of_pages',
+               'publication_info', 'earliest_date']
 EXACT_MATCH = exact_match
-EXACT_MATCH['source'] = ['control_number']
+EXACT_MATCH['source'] = MATCH_DISPLAY_FIELDS
 
 FUZZY_MATCH = {
     'algorithm': [
@@ -1581,7 +1584,6 @@ FUZZY_MATCH = {
     ],
     'doc_type': 'hep',
     'index': 'records-hep',
-    'source': ['control_number', 'titles', 'abstracts', 'authors',
-               'arxiv_eprints', 'public_notes', 'number_of_pages',
-               'publication_info', 'earliest_date']
+    'source': MATCH_DISPLAY_FIELDS
 }
+MAX_FUZZY_MATCH_DISPLAY = 5
