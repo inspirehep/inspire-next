@@ -32,6 +32,7 @@ from inspirehep.modules.records.receivers import (
     assign_uuid,
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
+    populate_author_suggest,
     populate_bookautocomplete,
     populate_earliest_date,
     populate_experiment_suggest,
@@ -75,6 +76,53 @@ def test_populate_bookautocomplete_from_authors():
     result = record['bookautocomplete']
 
     assert expected == result
+
+
+def test_populate_author_suggest():
+    schema = load_schema('authors')
+
+    record = {
+        '_collections': ['Authors'],
+        '$schema': 'http://localhost:5000/schemas/records/authors.json',
+        'name': {
+            'name_variants': [
+                'A. Aab'
+            ],
+            'native_names': [
+                'Alexandru, Aab'
+            ],
+            'preferred_name': 'Alexander Aab',
+            'previous_names': [
+                'Alexis, Aban'
+            ],
+            'value': 'Aab, Alexander',
+        }
+    }
+    assert validate(record, schema) is None
+
+    populate_author_suggest(None, record)
+
+    expected = {
+        'input': [
+            'A. Aab',
+            'Alexander Aab',
+            'Aab, Alexander',
+            'Alexandru, Aab',
+            'Alexis, Aban',
+        ]
+    }
+
+    result = record['author_suggest']
+
+    assert expected == result
+
+
+def test_populate_author_suggest_does_nothing_if_record_is_not_author():
+    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
+
+    populate_author_suggest(None, record)
+
+    assert 'author_suggest' not in record
 
 
 def test_populate_bookautocomplete_from_titles():

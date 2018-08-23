@@ -94,6 +94,9 @@
                 "authorautocomplete": {
                     "type": "string"
                 },
+                "author_suggest": {
+                    "type": "completion"
+                },
                 "birth_date": {
                     "format": "yyyy||yyyy-MM||yyyy-MM-dd",
                     "type": "date"

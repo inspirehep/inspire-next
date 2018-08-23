@@ -182,6 +182,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_affiliation_suggest(sender, json, *args, **kwargs)
     populate_author_count(sender, json, *args, **kwargs)
     populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs)
+    populate_author_suggest(sender, json, *args, **kwargs)
     populate_earliest_date(sender, json, *args, **kwargs)
     populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_inspire_document_type(sender, json, *args, **kwargs)
@@ -196,6 +197,28 @@ def populate_citations_count(sender, json, *args, **kwargs):
         # Make sure that sender has method get_citations_count
         citation_count = sender.get_citations_count()
         json.update({'citation_count': citation_count})
+
+
+def populate_author_suggest(sender, json, *args, **kwargs):
+    """Populate the ``author_suggest`` field of Authors records."""
+    if 'authors.json' not in json.get('$schema'):
+        return
+
+    author_paths = [
+        'name.preferred_name',
+        'name.previous_names',
+        'name.name_variants',
+        'name.native_names',
+        'name.value',
+    ]
+
+    input_values = [el for el in chain.from_iterable([force_list(get_value(json, path)) for path in author_paths])]
+
+    json.update({
+        'author_suggest': {
+            'input': input_values
+        },
+    })
 
 
 def populate_bookautocomplete(sender, json, *args, **kwargs):
