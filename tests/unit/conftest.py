@@ -29,7 +29,6 @@ import pytest
 
 from inspirehep.factory import create_app
 
-
 # Use the helpers folder to store test helpers.
 # See: http://stackoverflow.com/a/33515264/374865
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
@@ -46,7 +45,8 @@ def app():
     See: http://flask.pocoo.org/docs/0.12/appcontext/.
     """
     app = create_app(
-        DEBUG=True,
+        DEBUG=False,
+        # Tests may fail when turned on because of Flask bug (A setup function was called after the first request was handled. when initializing - when Alembic initialization)
         WTF_CSRF_ENABLED=False,
         CELERY_TASK_ALWAYS_EAGER=True,
         CELERY_RESULT_BACKEND='cache',

@@ -34,7 +34,8 @@ from __future__ import absolute_import, division, print_function
 import atexit
 
 import coverage
-from flask import jsonify, request
+from flask import jsonify, request, current_app
+from flask_alembic import Alembic
 from inspire_crawler.tasks import schedule_crawl
 from inspire_utils.logging import getStackTraceLogger
 from invenio_db import db
@@ -44,9 +45,7 @@ from inspirehep.modules.fixtures.files import init_all_storage_paths
 from inspirehep.modules.fixtures.users import init_users_and_permissions
 from inspirehep.modules.literaturesuggest.views import validate as literature_validate
 
-
 LOGGER = getStackTraceLogger(__name__)
-
 
 cov = coverage.Coverage()
 cov.start()
@@ -61,7 +60,6 @@ def save_coverage():
 
 
 atexit.register(save_coverage)
-
 
 app = getattr(application, 'app', application)
 
@@ -88,7 +86,13 @@ def init_db():
     LOGGER.info('Recreating the DB')
     db.session.close()
     db.drop_all()
+
+    alembic = Alembic(app=current_app)
     db.create_all()
+    alembic.stamp()
+    alembic.downgrade()
+    alembic.upgrade()
+
     db.session.commit()
     LOGGER.info('Recreating the DB: done')
     return jsonify("Db recreated")

@@ -27,6 +27,7 @@ import os
 
 import pytest
 import sqlalchemy
+from flask_alembic import Alembic
 
 from functools import partial
 
@@ -40,7 +41,6 @@ from invenio_search import current_search_client as es
 from inspirehep.factory import create_app
 from inspirehep.modules.fixtures.files import init_all_storage_paths
 from inspirehep.modules.fixtures.users import init_users_and_permissions
-
 
 # Use the helpers folder to store test helpers.
 # See: http://stackoverflow.com/a/33515264/374865
@@ -65,7 +65,8 @@ def app():
     See: http://flask.pocoo.org/docs/0.12/appcontext/.
     """
     app = create_app(
-        DEBUG=True,
+        DEBUG=False,
+        # Tests may fail when turned on because of Flask bug (A setup function was called after the first request was handled. when initializing - when Alembic initialization)
         WTF_CSRF_ENABLED=False,
         CELERY_TASK_ALWAYS_EAGER=True,
         CELERY_RESULT_BACKEND='cache',
@@ -82,8 +83,14 @@ def app():
         from inspirehep.modules.migrator.tasks import add_citation_counts
         from inspirehep.modules.migrator.tasks import migrate_from_file
 
+        db.session.close()
         db.drop_all()
+
+        alembic = Alembic(app=current_app)
         db.create_all()
+        alembic.stamp()
+        alembic.downgrade()
+        alembic.upgrade()
 
         _es = app.extensions['invenio-search']
         list(_es.delete(ignore=[404]))
@@ -129,7 +136,6 @@ def isolated_app(app):
     def restart_savepoint(session, transaction):
         if transaction.nested and not transaction._parent.nested and \
                 getattr(db.session, '_is_isolated', False):
-
             session.expire_all()
             session.begin_nested()
 

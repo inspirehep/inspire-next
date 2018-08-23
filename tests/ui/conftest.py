@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+from flask_alembic import Alembic
 
 from invenio_db import db
 from invenio_records.models import RecordMetadata
@@ -53,7 +54,7 @@ def app(request):
     See: http://flask.pocoo.org/docs/0.12/appcontext/.
     """
     app = create_app()
-    app.config.update({'DEBUG': True})
+    # app.config.update({'DEBUG': True})
 
     with app.app_context():
         # Celery task imports must be local, otherwise their
@@ -61,7 +62,12 @@ def app(request):
         from inspirehep.modules.migrator.tasks import migrate_from_file
 
         db.drop_all()
+
+        alembic = Alembic(app=app)
         db.create_all()
+        alembic.stamp()
+        alembic.downgrade()
+        alembic.upgrade()
 
         _es = app.extensions['invenio-search']
         list(_es.delete(ignore=[404]))

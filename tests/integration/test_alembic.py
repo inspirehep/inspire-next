@@ -36,7 +36,8 @@ from inspirehep.modules.fixtures.users import init_users_and_permissions
 def alembic_app():
     """Flask application for Alembic tests."""
     app = create_app(
-        DEBUG=True,
+        DEBUG=False,
+        # Tests may fail when turned on because of Flask bug (A setup function was called after the first request was handled. when initializing - when Alembic initialization)
         SQLALCHEMY_DATABASE_URI='postgresql+psycopg2://inspirehep:dbpass123@localhost:5432/inspirehep_alembic',
     )
 

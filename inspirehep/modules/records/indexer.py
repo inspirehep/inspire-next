@@ -7,8 +7,10 @@ from inspirehep.modules.records.api import InspireRecord
 
 class InspireRecordIndexer(RecordIndexer):
     def index_by_id(self, record_uuid):
-        """Index a record by record identifier.
-        :param record_uuid: Record identifier.
+        """
+        Index a record by record identifier
+        Args:
+            record_uuid: Record uuid
         """
         return self.index(InspireRecord.get_record(record_uuid))
 
@@ -17,9 +19,14 @@ class InspireRecordIndexer(RecordIndexer):
         self.delete(InspireRecord.get_record(record_uuid))
 
     def _delete_action(self, payload):
-        """Bulk delete action.
-        :param payload: Decoded message body.
-        :returns: Dictionary defining an Elasticsearch bulk 'delete' action.
+        """
+        Bulk delete action.
+        Args:
+            payload: Decoded message body.
+
+        Returns:
+            Dictionary defining an Elasticsearch bulk 'delete' action.
+
         """
         index, doc_type = payload.get('index'), payload.get('doc_type')
         if not (index and doc_type):
@@ -34,9 +41,14 @@ class InspireRecordIndexer(RecordIndexer):
         }
 
     def _index_action(self, payload):
-        """Bulk index action.
-        :param payload: Decoded message body.
-        :returns: Dictionary defining an Elasticsearch bulk 'index' action.
+        """
+        Bulk index action.
+        Args:
+            payload: Decoded message body.
+
+        Returns:
+            Dictionary defining an Elasticsearch bulk 'index' action.
+
         """
         record = InspireRecord.get_record(payload['id'])
         index, doc_type = self.record_to_index(record)

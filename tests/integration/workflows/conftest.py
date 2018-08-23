@@ -28,6 +28,7 @@ import pytest
 import requests_mock
 import sys
 
+from flask_alembic import Alembic
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search.cli import current_search_client as es
@@ -40,7 +41,6 @@ from inspirehep.modules.records.api import InspireRecord
 # Use the helpers folder to store test helpers.
 # See: http://stackoverflow.com/a/33515264/374865
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
-
 
 HIGGS_ONTOLOGY = '''<?xml version="1.0" encoding="UTF-8" ?>
 
@@ -91,7 +91,8 @@ def workflow_app(higgs_ontology):
             CELERY_TASK_EAGER_PROPAGATES=True,
             CELERY_RESULT_BACKEND='cache',
             CFG_BIBCATALOG_SYSTEM_RT_URL=RT_URL,
-            DEBUG=True,
+            DEBUG=False,
+            # Tests may fail when turned on because of Flask bug (A setup function was called after the first request was handled. when initializing - when Alembic initialization)
             HEP_ONTOLOGY_FILE=higgs_ontology,
             PRODUCTION_MODE=True,
             LEGACY_ROBOTUPLOAD_URL=(
@@ -128,6 +129,11 @@ def drop_all(app):
 
 def create_all(app):
     db.create_all()
+    alembic = Alembic(app=app)
+    alembic.stamp()
+    alembic.downgrade()
+    alembic.upgrade()
+
     _es = app.extensions['invenio-search']
     list(_es.create(ignore=[400]))
 
