@@ -32,6 +32,7 @@ from inspirehep.modules.records.receivers import (
     assign_uuid,
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
+    populate_authors_name_variations,
     populate_bookautocomplete,
     populate_earliest_date,
     populate_experiment_suggest,
@@ -41,6 +42,48 @@ from inspirehep.modules.records.receivers import (
     populate_author_count,
     populate_authors_full_name_unicode_normalized,
 )
+from inspire_utils.name import generate_name_variations
+
+
+def test_populate_authors_name_variations():
+    schema = load_schema('authors')
+
+    record = {
+        '$schema': 'http://localhost:5000/records/schemas/authors.json',
+        'name': {'value': 'Silk, James Brian'},
+        '_collections': ['Authors'],
+    }
+    assert validate(record, schema) is None
+
+    populate_authors_name_variations(None, record)
+
+    expected = generate_name_variations(record['name'].get('value'))
+    result = record['name_variations']
+
+    assert expected == result
+
+
+def test_populate_authors_name_variations_does_nothing_if_other_schema():
+    schema = load_schema('hep')
+
+    record = {
+        '$schema': 'http://localhost:5000/records/schemas/hep.json',
+        '_collections': ['Literature'],
+        'authors': [
+            {'full_name': 'Rafelski, Johann'},
+        ],
+        'document_type': [
+            'book',
+        ],
+        'titles': [
+            {'title': 'Relativity Matters'},
+        ],
+    }
+    assert validate(record, schema) is None
+
+    populate_authors_name_variations(None, record)
+
+    assert 'name_variations' not in record
 
 
 def test_populate_bookautocomplete_from_authors():
