@@ -55,6 +55,10 @@ from inspirehep.modules.orcid.utils import (
 )
 
 
+def is_author(record):
+    return 'authors.json' in record.get('$schema')
+
+
 def is_hep(record):
     return 'hep.json' in record.get('$schema')
 
@@ -185,6 +189,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_earliest_date(sender, json, *args, **kwargs)
     populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_inspire_document_type(sender, json, *args, **kwargs)
+    populate_authors_name_variations(sender, json, *args, **kwargs)
     populate_name_variations(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
     populate_citations_count(sender, json, *args, **kwargs)
@@ -449,6 +454,18 @@ def populate_name_variations(sender, json, *args, **kwargs):
             author.update({'name_suggest': {
                 'input': [variation for variation in name_variations if variation],
             }})
+
+
+def populate_authors_name_variations(sender, json, *args, **kwargs):
+    """Generate name variations for an Author record."""
+    if not is_author(json):
+        return
+
+    author_name = get_value(json, 'name.value')
+
+    if author_name:
+        name_variations = generate_name_variations(author_name)
+        json.update({'name_variations': name_variations})
 
 
 def populate_author_count(sender, json, *args, **kwargs):
