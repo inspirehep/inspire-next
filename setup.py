@@ -224,6 +224,7 @@ setup(
         ],
         'invenio_base.api_blueprints': [
             'inspirehep_editor = inspirehep.modules.editor:blueprint_api',
+            'inspirehep_records = inspirehep.modules.records.views:blueprint',
             'inspire_migrator = inspirehep.modules.migrator.views:blueprint',
         ],
         'invenio_base.apps': [

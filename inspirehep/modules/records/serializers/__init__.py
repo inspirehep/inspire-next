@@ -27,11 +27,15 @@ from __future__ import absolute_import, division, print_function
 from invenio_records_rest.serializers.response import search_responsify
 from invenio_records_rest.serializers.json import JSONSerializer
 
-from .json_literature import LiteratureJSONUISerializer
+from .json_literature import (
+    LiteratureCitationsJSONSerializer,
+    LiteratureJSONUISerializer,
+)
 from .pybtex_serializer_base import PybtexSerializerBase
 from .writers import BibtexWriter
 from .schemas.base import PybtexSchema
 from .schemas.json import (
+    RecordMetadataSchemaV1,
     LiteratureAuthorsSchemaJSONUIV1,
     LiteratureRecordSchemaJSONUIV1,
     LiteratureReferencesSchemaJSONUIV1,
@@ -60,6 +64,14 @@ json_literature_references_v1_search = search_responsify(
 )
 json_literature_references_v1_response = record_responsify_nocache(
     json_literature_references_v1,
+    'application/json',
+)
+
+json_literature_citations_v1 = LiteratureCitationsJSONSerializer(
+    RecordMetadataSchemaV1
+)
+json_literature_citations_v1_response = record_responsify_nocache(
+    json_literature_citations_v1,
     'application/json',
 )
 

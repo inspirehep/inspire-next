@@ -367,7 +367,10 @@ def ajax_references():
 
 @blueprint.route('/ajax/citations', methods=['GET'])
 def ajax_citations():
-    """Handler for datatables citations view"""
+    """Handler for datatables citations view
+
+    .. deprecated:: 2018-08-23
+    """
     recid = request.args.get('recid', '')
     endpoint = request.args.get('endpoint', '')
 

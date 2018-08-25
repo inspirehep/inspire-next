@@ -22,4 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .literature import LiteratureAuthorsSchemaJSONUIV1, RecordMetadataSchemaV1, LiteratureRecordSchemaJSONUIV1, LiteratureReferencesSchemaJSONUIV1  # noqa: F401
+from .literature import (  # noqa: F401
+    LiteratureAuthorsSchemaJSONUIV1,  # noqa: F401
+    LiteratureRecordSchemaJSONUIV1,  # noqa: F401
+    LiteratureReferencesSchemaJSONUIV1,  # noqa: F401
+    RecordMetadataSchemaV1,  # noqa: F401
+)

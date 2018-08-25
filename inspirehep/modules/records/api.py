@@ -601,7 +601,7 @@ class InspireRecord(Record):
                                                                        control_number=pid_value))
 
     def _query_citing_records(self):
-        """Returns records which cites this one"""
+        """Returns records which cites this one."""
         ref = self._get_ref()
         if not ref:
             raise Exception("There is no $ref for this object")
@@ -609,9 +609,13 @@ class InspireRecord(Record):
             referenced_records(RecordMetadata.json).contains([ref]))
         return citations
 
+    @property
+    def get_citing_records_query(self):
+        return self._query_citing_records()
+
     def get_citations_count(self):
-        """Returns citations count for this record"""
-        count = self._query_citing_records().count()
+        """Returns citations count for this record."""
+        count = self.get_citing_records_query.count()
         return count
 
 

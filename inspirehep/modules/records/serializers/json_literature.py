@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
+
 from invenio_records_rest.serializers.json import JSONSerializer
 
 from inspire_utils.date import format_date
@@ -97,3 +99,22 @@ class LiteratureJSONUISerializer(JSONSerializer):
             preprocess_search_hit(pid, record_hit,
                                   links_factory=links_factory, **kwargs)
         return _preprocess_result(result)
+
+
+class LiteratureCitationsJSONSerializer(JSONSerializer):
+
+    def preprocess_record(self, pid, record, links_factory=None, **kwargs):
+        """Prepare a record and persistent identifier for serialization."""
+        return record.dumps()
+
+    def serialize(self, pid, records, links_factory=None, **kwargs):
+        return json.dumps(
+            {
+                'metadata': {
+                    'citations': [
+                        self.transform_record(pid, record, **kwargs)
+                        for record in records
+                    ]
+                },
+            }, **self._format_args()
+        )
