@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import json
 
-from inspirehep.modules.records.serializers.schemas.common import PublicationInfoItemSchemaV1
+from inspirehep.modules.records.serializers.schemas.json.literature.common import PublicationInfoItemSchemaV1
 
 
 def test_returns_empty_if_display_fields_missing():

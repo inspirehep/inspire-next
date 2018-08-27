@@ -29,6 +29,7 @@ from invenio_db import db
 from invenio_db.utils import drop_alembic_version_table
 
 from inspirehep.factory import create_app
+from inspirehep.modules.fixtures.users import init_users_and_permissions
 
 
 @pytest.fixture()
@@ -40,7 +41,9 @@ def alembic_app():
     )
 
     with app.app_context():
+        db.drop_all()
         db.create_all()
+        init_users_and_permissions()
         yield app
         db.drop_all()
         drop_alembic_version_table()
@@ -49,6 +52,27 @@ def alembic_app():
 def test_downgrade(alembic_app):
     ext = alembic_app.extensions['invenio-db']
     ext.alembic.stamp()
+
+    # 0bc0a6ee1bc0
+
+    ext.alembic.downgrade(target='0bc0a6ee1bc0')
+    assert 'ix_records_metadata_json_referenced_records' not in _get_indexes('records_metadata')
+
+    # 2f5368ff6d20
+    # TODO Create proper tests for 2f5368ff6d20, eaab22c59b89, f9ea5752e7a5, 17ff155db70d
+
+    ext.alembic.downgrade(target="2f5368ff6d20")
+
+    # eaab22c59b89
+    ext.alembic.downgrade(target="eaab22c59b89")
+
+    # f9ea5752e7a5
+
+    ext.alembic.downgrade(target="f9ea5752e7a5")
+
+    # 17ff155db70d
+
+    ext.alembic.downgrade(target="17ff155db70d")
 
     # 402af3fbf68b
 
@@ -136,6 +160,29 @@ def test_upgrade(alembic_app):
     assert 'inspire_prod_records_recid_seq' not in _get_sequences()
     assert 'legacy_records_mirror' in _get_table_names()
     assert 'legacy_records_mirror_recid_seq' in _get_sequences()
+
+    # 17ff155db70d
+
+    ext.alembic.upgrade(target="17ff155db70d")
+    # Not checking as it only adds or modifies columns
+
+    # f9ea5752e7a5
+
+    ext.alembic.upgrade(target="f9ea5752e7a5")
+    # Not checking as it only adds or modifies columns
+
+    # eaab22c59b89
+    ext.alembic.upgrade(target="eaab22c59b89")
+
+    # 2f5368ff6d20
+    ext.alembic.upgrade(target="2f5368ff6d20")
+    # TODO Create proper tests for 2f5368ff6d20, eaab22c59b89, f9ea5752e7a5, 17ff155db70d
+
+    # 0bc0a6ee1bc0
+
+    ext.alembic.upgrade(target='0bc0a6ee1bc0')
+
+    assert 'ix_records_metadata_json_referenced_records' in _get_indexes('records_metadata')
 
 
 def _get_indexes(tablename):

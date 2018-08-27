@@ -13,6 +13,9 @@
                 "_collections": {
                     "type": "string"
                 },
+                "citation_count": {
+                    "type": "integer"
+                },
                 "control_number": {
                     "type": "integer"
                 },

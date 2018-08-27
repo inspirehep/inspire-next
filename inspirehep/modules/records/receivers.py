@@ -55,8 +55,16 @@ from inspirehep.modules.orcid.utils import (
 )
 
 
+def is_author(record):
+    return 'authors.json' in record.get('$schema')
+
+
 def is_hep(record):
     return 'hep.json' in record.get('$schema')
+
+
+def is_data(record):
+    return 'data.json' in record.get('$schema')
 
 
 #
@@ -181,8 +189,18 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_earliest_date(sender, json, *args, **kwargs)
     populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_inspire_document_type(sender, json, *args, **kwargs)
+    populate_authors_name_variations(sender, json, *args, **kwargs)
     populate_name_variations(sender, json, *args, **kwargs)
     populate_title_suggest(sender, json, *args, **kwargs)
+    populate_citations_count(sender, json, *args, **kwargs)
+
+
+def populate_citations_count(sender, json, *args, **kwargs):
+    """Populate citations_count in ES from"""
+    if (is_hep(json) or is_data(json)) and hasattr(sender, 'get_citations_count'):
+        # Make sure that sender has method get_citations_count
+        citation_count = sender.get_citations_count()
+        json.update({'citation_count': citation_count})
 
 
 def populate_bookautocomplete(sender, json, *args, **kwargs):
@@ -287,14 +305,13 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
             items = []
 
         for key, value in items:
-            if (isinstance(json_root, dict) and isinstance(value, dict) and
-                    '$ref' in value):
+            if (isinstance(json_root, dict) and isinstance(value, dict) and '$ref' in value):
                 # Append '_recid' and remove 'record' from the key name.
                 key_basename = key.replace('record', '').rstrip('_')
                 new_key = '{}_recid'.format(key_basename).lstrip('_')
                 json_root[new_key] = get_recid_from_ref(value)
             elif (isinstance(json_root, dict) and isinstance(value, list) and
-                    key in list_ref_fields_translations):
+                  key in list_ref_fields_translations):
                 new_list = [get_recid_from_ref(v) for v in value]
                 new_key = list_ref_fields_translations[key]
                 json_root[new_key] = new_list
@@ -437,6 +454,18 @@ def populate_name_variations(sender, json, *args, **kwargs):
             author.update({'name_suggest': {
                 'input': [variation for variation in name_variations if variation],
             }})
+
+
+def populate_authors_name_variations(sender, json, *args, **kwargs):
+    """Generate name variations for an Author record."""
+    if not is_author(json):
+        return
+
+    author_name = get_value(json, 'name.value')
+
+    if author_name:
+        name_variations = generate_name_variations(author_name)
+        json.update({'name_variations': name_variations})
 
 
 def populate_author_count(sender, json, *args, **kwargs):

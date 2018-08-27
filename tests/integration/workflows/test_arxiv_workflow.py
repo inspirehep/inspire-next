@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 import json
 import mock
+import pkg_resources
 import pytest
 
 from invenio_search import current_search_client as es
@@ -57,8 +58,9 @@ from mocks import (
     fake_download_file,
     fake_magpie_api_request,
 )
-from workflow_utils import build_workflow
+from factories.db.invenio_records import TestRecordMetadata
 from inspirehep.modules.workflows.tasks.matching import _get_hep_record_brief
+from workflow_utils import build_workflow
 
 
 @mock.patch(
@@ -1093,3 +1095,29 @@ def test_do_not_repeat(
         obj = eng.processed_objects[0]
         assert obj.extra_data['source_data']['persistent_data'] == expected_persistent_data_second_run
         assert obj.extra_data['id'] == 43
+
+
+def test_workflows_halts_on_multiple_exact_matches(workflow_app):
+    # Record from arxiv with just arxiv ID in DB
+    TestRecordMetadata.create_from_file(
+        __name__, 'multiple_matches_arxiv.json', index_name='records-hep'
+    )
+
+    # Record from publisher with just DOI in DB
+    TestRecordMetadata.create_from_file(
+        __name__, 'multiple_matches_publisher.json', index_name='records-hep'
+    )
+
+    path = pkg_resources.resource_filename(__name__, 'fixtures/multiple_matches_arxiv_update.json')
+    update_from_arxiv = json.load(open(path))
+
+    # An update from arxiv with the same arxiv and DOI as above records
+    workflow_id = build_workflow(update_from_arxiv).id
+    start('article', object_id=workflow_id)
+
+    obj = workflow_object_class.get(workflow_id)
+
+    assert len(set(obj.extra_data['matches']['exact'])) == 2
+
+    assert obj.status == ObjectStatus.HALTED
+    assert obj.extra_data['_action'] == 'resolve_multiple_exact_matches'

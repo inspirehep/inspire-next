@@ -1,0 +1,29 @@
+{
+  "$schema": "http://localhost:5000/schemas/records/hep.json",
+  "_collections": [
+    "Literature"
+  ],
+  "acquisition_source": {
+    "datetime": "2018-08-21T08:55:02.670285",
+    "method": "hepcrawl",
+    "source": "desy",
+    "submission_number": "43"
+  },
+  "core": true,
+  "curated": false,
+  "document_type": [
+    "article"
+  ],
+  "dois": [
+    {
+      "source": "submitter",
+      "value": "10.1010/some-doi"
+    }
+  ],
+  "titles": [
+    {
+      "source": "arXiv",
+      "title": "Test Record For Multiple Exact Matches"
+    }
+  ]
+}

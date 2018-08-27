@@ -22,4 +22,4 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .base import PybtexSchema  # noqa: F401
+from .base import PybtexSchema, JSONSchemaUIV1  # noqa: F401

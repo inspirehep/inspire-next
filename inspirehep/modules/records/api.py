@@ -33,8 +33,9 @@ from elasticsearch.exceptions import NotFoundError
 from flask import current_app
 from fs.opener import fsopen
 from six.moves.urllib.parse import urlparse, unquote
+from invenio_records.api import RecordMetadata
 
-from inspire_dojson.utils import get_recid_from_ref, strip_empty_values
+from inspire_dojson.utils import get_recid_from_ref, strip_empty_values, absolute_url
 from inspire_schemas.api import validate
 from inspire_schemas.builders import LiteratureBuilder
 from invenio_files_rest.models import Bucket
@@ -42,20 +43,25 @@ from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_files.api import Record
 from invenio_db import db
+from sqlalchemy import Text
+from sqlalchemy.sql.functions import GenericFunction
+from sqlalchemy.dialects import postgresql
 
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
-from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
+from inspirehep.modules.pidstore.utils import get_pid_type_from_schema, get_endpoint_from_pid_type
 from inspirehep.utils.record_getter import (
     RecordGetterError,
     get_es_record_by_uuid
 )
 
-
 MAX_UNIQUE_KEY_COUNT = 50000
 
 
-class InspireRecord(Record):
+class referenced_records(GenericFunction):
+    type = postgresql.ARRAY(Text)
 
+
+class InspireRecord(Record):
     """Record class that fetches records from DataBase."""
 
     @classmethod
@@ -586,9 +592,30 @@ class InspireRecord(Record):
 
         return new_key
 
+    def _get_ref(self):
+        """Returns full url to this object (as in $ref)"""
+        pid_value = self.get('control_number')
+        pid_type = get_pid_type_from_schema(self.get('$schema'))
+        endpoint = get_endpoint_from_pid_type(pid_type)
+        return absolute_url(u'/api/{endpoint}/{control_number}'.format(endpoint=endpoint,
+                                                                       control_number=pid_value))
+
+    def _query_citing_records(self):
+        """Returns records which cites this one"""
+        ref = self._get_ref()
+        if not ref:
+            raise Exception("There is no $ref for this object")
+        citations = RecordMetadata.query.with_entities(RecordMetadata.id).filter(
+            referenced_records(RecordMetadata.json).contains([ref]))
+        return citations
+
+    def get_citations_count(self):
+        """Returns citations count for this record"""
+        count = self._query_citing_records().count()
+        return count
+
 
 class ESRecord(InspireRecord):
-
     """Record class that fetches records from ElasticSearch."""
 
     @classmethod

@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import json
 
-from inspirehep.modules.records.serializers.schemas.common import ExternalSystemIdentifierSchemaV1
+from inspirehep.modules.records.serializers.schemas.json.literature.common import ExternalSystemIdentifierSchemaV1
 
 from marshmallow import Schema, fields
 
