@@ -15,6 +15,8 @@ from invenio_access.models import ActionRoles
 from invenio_accounts.models import Role
 
 # revision identifiers, used by Alembic.
+from sqlalchemy.orm.exc import NoResultFound
+
 revision = 'eaab22c59b89'
 down_revision = 'f9ea5752e7a5'
 branch_labels = ()
@@ -26,12 +28,15 @@ def upgrade():
     """Upgrade database."""
     bind = op.get_bind()
     session = Session(bind=bind)
-
-    cataloger = session.query(Role).filter(Role.name == 'cataloger').one()
-    session.add(ActionRoles(
-        action='migrator-use-api',
-        role=cataloger)
-    )
+    try:
+        cataloger = session.query(Role).filter(Role.name == 'cataloger').one()
+        session.add(ActionRoles(
+            action='migrator-use-api',
+            role=cataloger)
+        )
+    except NoResultFound:
+        # There can be no data in DB when migration runs, so Ignore if it is empty
+        return
 
     session.commit()
 

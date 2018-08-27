@@ -26,6 +26,7 @@ import pytest
 from flask_alembic import Alembic
 
 from invenio_db import db
+from invenio_db.utils import drop_alembic_version_table
 from invenio_records.models import RecordMetadata
 from invenio_search import current_search_client as es
 from invenio_workflows import workflow_object_class
@@ -60,13 +61,10 @@ def app(request):
         # Celery task imports must be local, otherwise their
         # configuration would use the default pickle serializer.
         from inspirehep.modules.migrator.tasks import migrate_from_file
-
         db.drop_all()
+        drop_alembic_version_table()
 
         alembic = Alembic(app=app)
-        db.create_all()
-        alembic.stamp()
-        alembic.downgrade()
         alembic.upgrade()
 
         _es = app.extensions['invenio-search']

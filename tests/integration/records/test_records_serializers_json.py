@@ -152,22 +152,20 @@ def test_zero_citations_in_vnd_plus_inspire_record_ui_json(isolated_api_client):
 
 
 def test_non_zero_citation_count_in_vnd_plus_inspire_record_ui_json(isolated_api_client):
-    from invenio_db import db
-    with db.session.begin_nested():
-        record_json = {
-            'control_number': 123,
-        }
-        record = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
-        url = '/literature/123'
-        # Add citation
-        ref = {'control_number': 1234, 'references': [{'record': {'$ref': record._get_ref()}}]}
-        TestRecordMetadata.create_from_kwargs(json=ref)
+    record_json = {
+        'control_number': 123,
+    }
+    record = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    url = '/literature/123'
+    # Add citation
+    ref = {'control_number': 1234, 'references': [{'record': {'$ref': record._get_ref()}}]}
+    TestRecordMetadata.create_from_kwargs(json=ref)
 
-        response = isolated_api_client.get(url,
-                                           headers={'Accept': 'application/vnd+inspire.record.ui+json'})
-        assert response.status_code == 200
-        result = json.loads(response.get_data(as_text=True))
-        assert result['metadata']['citation_count'] == 1
+    response = isolated_api_client.get(url,
+                                       headers={'Accept': 'application/vnd+inspire.record.ui+json'})
+    assert response.status_code == 200
+    result = json.loads(response.get_data(as_text=True))
+    assert result['metadata']['citation_count'] == 1
 
 
 def test_zero_citation_count_in_es(isolated_api_client):

@@ -36,6 +36,7 @@ from flask import current_app
 from flask.cli import ScriptInfo
 
 from invenio_db import db
+from invenio_db.utils import drop_alembic_version_table
 from invenio_search import current_search_client as es
 
 from inspirehep.factory import create_app
@@ -85,11 +86,9 @@ def app():
 
         db.session.close()
         db.drop_all()
+        drop_alembic_version_table()
 
         alembic = Alembic(app=current_app)
-        db.create_all()
-        alembic.stamp()
-        alembic.downgrade()
         alembic.upgrade()
 
         _es = app.extensions['invenio-search']

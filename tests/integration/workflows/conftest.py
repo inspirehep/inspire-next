@@ -30,6 +30,7 @@ import sys
 
 from flask_alembic import Alembic
 from invenio_db import db
+from invenio_db.utils import drop_alembic_version_table
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search.cli import current_search_client as es
 
@@ -123,15 +124,13 @@ def workflow_api_client(workflow_api):
 
 def drop_all(app):
     db.drop_all()
+    drop_alembic_version_table()
     _es = app.extensions['invenio-search']
     list(_es.delete(ignore=[404]))
 
 
 def create_all(app):
-    db.create_all()
     alembic = Alembic(app=app)
-    alembic.stamp()
-    alembic.downgrade()
     alembic.upgrade()
 
     _es = app.extensions['invenio-search']

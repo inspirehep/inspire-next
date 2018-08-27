@@ -39,6 +39,7 @@ from flask_alembic import Alembic
 from inspire_crawler.tasks import schedule_crawl
 from inspire_utils.logging import getStackTraceLogger
 from invenio_db import db
+from invenio_db.utils import drop_alembic_version_table
 
 from inspirehep.modules.authors.views import validate as author_validate
 from inspirehep.modules.fixtures.files import init_all_storage_paths
@@ -86,11 +87,9 @@ def init_db():
     LOGGER.info('Recreating the DB')
     db.session.close()
     db.drop_all()
+    drop_alembic_version_table()
 
     alembic = Alembic(app=current_app)
-    db.create_all()
-    alembic.stamp()
-    alembic.downgrade()
     alembic.upgrade()
 
     db.session.commit()
