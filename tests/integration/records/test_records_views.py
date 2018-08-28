@@ -36,7 +36,8 @@ def test_literature_citations_api_with_results(isolated_api_client):
             },
         ],
     }
-    record = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    record = TestRecordMetadata.create_from_kwargs(
+        json=record_json).inspire_record
 
     record_json_ref_1 = {
         'control_number': 222,
@@ -79,16 +80,10 @@ def test_literature_citations_api_with_results(isolated_api_client):
     result = json.loads(response.get_data(as_text=True))
 
     expected_metadata = {
+        "citation_count": 2,
         "citations": [
             {
-                "_collections": [
-                    "Literature"
-                ],
                 "control_number": 222,
-                "document_type": [
-                    "article"
-                ],
-                "number_of_references": 1,
                 "titles": [
                     {
                         "title": "Frank Castle"
@@ -96,14 +91,7 @@ def test_literature_citations_api_with_results(isolated_api_client):
                 ]
             },
             {
-                "_collections": [
-                    "Literature"
-                ],
                 "control_number": 333,
-                "document_type": [
-                    "article"
-                ],
-                "number_of_references": 1,
                 "titles": [
                     {
                         "title": "Luke Cage"
@@ -135,6 +123,7 @@ def test_literature_citations_api_without_results(isolated_api_client):
     result = json.loads(response.get_data(as_text=True))
 
     expected_metadata = {
+        "citation_count": 0,
         "citations": [],
     }
 
@@ -151,7 +140,8 @@ def test_literature_citations_api_with_parameter_page_1(isolated_api_client):
             },
         ],
     }
-    record = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    record = TestRecordMetadata.create_from_kwargs(
+        json=record_json).inspire_record
 
     record_json_ref_1 = {
         'control_number': 222,
@@ -194,16 +184,10 @@ def test_literature_citations_api_with_parameter_page_1(isolated_api_client):
     result = json.loads(response.get_data(as_text=True))
 
     expected_metadata = {
+        "citation_count": 2,
         "citations": [
             {
-                "_collections": [
-                    "Literature"
-                ],
                 "control_number": 222,
-                "document_type": [
-                    "article"
-                ],
-                "number_of_references": 1,
                 "titles": [
                     {
                         "title": "Frank Castle"
@@ -226,7 +210,8 @@ def test_literature_citations_api_with_parameter_page_2(isolated_api_client):
             },
         ],
     }
-    record = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    record = TestRecordMetadata.create_from_kwargs(
+        json=record_json).inspire_record
 
     record_json_ref_1 = {
         'control_number': 222,
@@ -269,22 +254,16 @@ def test_literature_citations_api_with_parameter_page_2(isolated_api_client):
     result = json.loads(response.get_data(as_text=True))
 
     expected_metadata = {
+        "citation_count": 2,
         "citations": [
             {
-                "_collections": [
-                    "Literature"
-                ],
                 "control_number": 333,
-                "document_type": [
-                    "article"
-                ],
-                "number_of_references": 1,
                 "titles": [
                     {
                         "title": "Luke Cage"
                     }
                 ]
-            }
+            },
         ]
     }
 
@@ -301,7 +280,8 @@ def test_literature_citations_api_with_malformed_parameters(isolated_api_client)
             },
         ],
     }
-    record = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    record = TestRecordMetadata.create_from_kwargs(
+        json=record_json).inspire_record
 
     record_json_ref_1 = {
         'control_number': 222,
@@ -354,7 +334,8 @@ def test_literature_citations_api_with_not_existing_pid_value(isolated_api_clien
             },
         ],
     }
-    record = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    record = TestRecordMetadata.create_from_kwargs(
+        json=record_json).inspire_record
 
     record_json_ref_1 = {
         'control_number': 222,

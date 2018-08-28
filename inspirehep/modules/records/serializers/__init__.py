@@ -35,10 +35,10 @@ from .pybtex_serializer_base import PybtexSerializerBase
 from .writers import BibtexWriter
 from .schemas.base import PybtexSchema
 from .schemas.json import (
-    RecordMetadataSchemaV1,
     LiteratureAuthorsSchemaJSONUIV1,
     LiteratureRecordSchemaJSONUIV1,
     LiteratureReferencesSchemaJSONUIV1,
+    CitationItemSchemaV1,
 )
 from .marcxml import MARCXMLSerializer
 from .response import record_responsify_nocache
@@ -68,7 +68,7 @@ json_literature_references_v1_response = record_responsify_nocache(
 )
 
 json_literature_citations_v1 = LiteratureCitationsJSONSerializer(
-    RecordMetadataSchemaV1
+    CitationItemSchemaV1
 )
 json_literature_citations_v1_response = record_responsify_nocache(
     json_literature_citations_v1,

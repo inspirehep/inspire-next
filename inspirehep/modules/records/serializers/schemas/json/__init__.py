@@ -26,5 +26,6 @@ from .literature import (  # noqa: F401
     LiteratureAuthorsSchemaJSONUIV1,  # noqa: F401
     LiteratureRecordSchemaJSONUIV1,  # noqa: F401
     LiteratureReferencesSchemaJSONUIV1,  # noqa: F401
+    CitationItemSchemaV1,  # noqa: F401
     RecordMetadataSchemaV1,  # noqa: F401
 )

@@ -107,14 +107,15 @@ class LiteratureCitationsJSONSerializer(JSONSerializer):
         """Prepare a record and persistent identifier for serialization."""
         return record.dumps()
 
-    def serialize(self, pid, records, links_factory=None, **kwargs):
+    def serialize(self, pid, data, links_factory=None, **kwargs):
         return json.dumps(
             {
                 'metadata': {
                     'citations': [
                         self.transform_record(pid, record, **kwargs)
-                        for record in records
-                    ]
+                        for record in data['citations']
+                    ],
+                    'citation_count': data['citation_count']
                 },
             }, **self._format_args()
         )
