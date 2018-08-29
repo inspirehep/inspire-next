@@ -22,12 +22,18 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .author import AuthorSchemaV1  # noqa: F401
-from .conference_info_item import ConferenceInfoItemSchemaV1  # noqa: F401
-from .isbn import IsbnSchemaV1  # noqa: F401
-from .supervisor import SupervisorSchemaV1  # noqa: F401
-from .thesis_info import ThesisInfoSchemaV1  # noqa: F401
-from .publication_info_item import PublicationInfoItemSchemaV1  # noqa: F401
-from .external_system_identifier import ExternalSystemIdentifierSchemaV1    # noqa: F401
-from .reference_item import ReferenceItemSchemaV1  # noqa: F401
-from .citation_item import CitationItemSchemaV1   # noqa: F401
+from marshmallow import Schema, fields
+
+from inspirehep.modules.records.serializers.fields import ListWithLimit, NestedWithoutEmptyObjects
+
+from .author import AuthorSchemaV1
+from .publication_info_item import PublicationInfoItemSchemaV1
+
+
+class CitationItemSchemaV1(Schema):
+    authors = ListWithLimit(
+        NestedWithoutEmptyObjects(AuthorSchemaV1, dump_only=True), limit=10)
+    control_number = fields.Raw()
+    publication_info = fields.List(
+        NestedWithoutEmptyObjects(PublicationInfoItemSchemaV1, dump_only=True))
+    titles = fields.Raw()

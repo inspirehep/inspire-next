@@ -30,7 +30,7 @@ from marshmallow import Schema, fields, missing, post_dump
 from inspirehep.modules.records.serializers.fields import ListWithLimit, NestedWithoutEmptyObjects
 from inspirehep.modules.records.serializers.schemas.base import JSONSchemaUIV1
 
-from .common import (
+from .common import (  # noqa: F401
     AuthorSchemaV1,
     ConferenceInfoItemSchemaV1,
     ExternalSystemIdentifierSchemaV1,
@@ -38,7 +38,8 @@ from .common import (
     PublicationInfoItemSchemaV1,
     ReferenceItemSchemaV1,
     SupervisorSchemaV1,
-    ThesisInfoSchemaV1
+    ThesisInfoSchemaV1,
+    CitationItemSchemaV1,
 )
 
 
