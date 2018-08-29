@@ -29,6 +29,7 @@ from itertools import chain
 from unicodedata import normalize
 
 import six
+
 from celery import Task
 from flask import current_app
 from flask_sqlalchemy import models_committed
@@ -195,11 +196,12 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_citations_count(sender, json, *args, **kwargs)
 
 
-def populate_citations_count(sender, json, *args, **kwargs):
+def populate_citations_count(sender, json, record, *args, **kwargs):
     """Populate citations_count in ES from"""
-    if (is_hep(json) or is_data(json)) and hasattr(sender, 'get_citations_count'):
-        # Make sure that sender has method get_citations_count
-        citation_count = sender.get_citations_count()
+
+    if (is_hep(json) or is_data(json)) and hasattr(record, 'get_citations_count'):
+        # Make sure that record has method get_citations_count
+        citation_count = record.get_citations_count()
         json.update({'citation_count': citation_count})
 
 

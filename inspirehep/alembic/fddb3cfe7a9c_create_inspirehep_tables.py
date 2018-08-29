@@ -62,7 +62,7 @@ def upgrade():
     op.create_table(
         'workflows_audit_logging',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column('last_updated', sa.DateTime, default=datetime.utcnow, nullable=False, index=True),
+        # sa.Column('last_updated', sa.DateTime, default=datetime.utcnow, nullable=False, index=True),  # Removed in one of the commits but not added to the migrations. Not creating new migration to not break production.
         sa.Column(
             'user_id',
             sa.Integer,
@@ -74,7 +74,10 @@ def upgrade():
         sa.Column('user_action', sa.Text, default='', nullable=False),
         sa.Column('decision', sa.Text, default='', nullable=False),
         sa.Column('source', sa.Text, default='', nullable=False),
-        sa.Column('action', sa.Text, default='', nullable=False)
+        sa.Column('action', sa.Text, default='', nullable=False),
+        sa.Column('created', sa.DateTime, default=datetime.utcnow, nullable=False),
+        sa.Column('object_id', sa.Integer, sa.ForeignKey("workflows_object.id", ondelete="CASCADE"), nullable=False,
+                  index=True)
     )
 
     op.create_table(

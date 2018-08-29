@@ -249,6 +249,7 @@ LITERATURE_REST_ENDPOINT = {
     'pid_minter': 'inspire_recid_minter',
     'pid_fetcher': 'inspire_recid_fetcher',
     'search_class': 'inspirehep.modules.search:LiteratureSearch',
+    'indexer_class': 'inspirehep.modules.records:indexer:InspireRecordIndexer',
     'record_serializers': {
         'application/json': 'invenio_records_rest.serializers:json_v1_response',
         'application/vnd+inspire.record.ui+json': INSPIRE_SERIALIZERS + ':json_literature_ui_v1_response',

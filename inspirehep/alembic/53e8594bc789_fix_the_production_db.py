@@ -48,7 +48,6 @@ PRIMARY_KEYS_MAP = {
     'files_multipartobject_part': dict(old='files_multipartobject_part_pkey', new='pk_files_multipartobject_part'),
     'files_object': dict(old='files_object_pkey', new='pk_files_object'),
     'inspire_prod_records': dict(old='inspire_prod_records_pkey', new='pk_inspire_prod_records'),
-    'oaiharvester_configs': dict(old='oaiharvester_configs_pkey', new='pk_oaiharvester_configs'),
     'oauthclient_remoteaccount': dict(old='oauthclient_remoteaccount_pkey', new='pk_oauthclient_remoteaccount'),
     'oauthclient_remotetoken': dict(old='oauthclient_remotetoken_pkey', new='pk_oauthclient_remotetoken'),
     'oauthclient_useridentity': dict(old='oauthclient_useridentity_pkey', new='pk_oauthclient_useridentity'),
@@ -92,10 +91,6 @@ def upgrade():
     # - PostgreSQL 9.6.2 running in QA on 2018.04.25 does support the "IF NOT EXISTS" in "CREATE INDEX IF NOT EXISTS".
     # The simplest way to implement a "CREATE INDEX IF NOT EXISTS" compatible with old and new versions of PostgreSQL
     # is to first delete the index is exists.
-    op.execute("DROP INDEX IF EXISTS json_ids_index")
-    op.execute("DROP INDEX IF EXISTS json_export_to_index")
-    op.execute("DROP INDEX IF EXISTS _collections")
-    op.execute("DROP INDEX IF EXISTS journal_title")
 
     op.execute("CREATE INDEX json_ids_index ON records_metadata USING gin ((json -> 'ids'))")
     op.execute("CREATE INDEX json_export_to_index ON records_metadata USING gin ((json -> '_export_to'))")
@@ -117,3 +112,9 @@ def downgrade():
     for _, names_list in INDEXES_MAP.items():
         for names in names_list:
             op.execute('ALTER INDEX IF EXISTS {} RENAME TO {}'.format(names['new'], names['old']))
+
+    # Remove indexes
+    op.execute("DROP INDEX json_ids_index")
+    op.execute("DROP INDEX json_export_to_index")
+    op.execute("DROP INDEX _collections")
+    op.execute("DROP INDEX journal_title")

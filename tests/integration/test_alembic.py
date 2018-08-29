@@ -22,78 +22,60 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
+from flask_alembic import Alembic
 from sqlalchemy import inspect, text
 
 from invenio_db import db
-from invenio_db.utils import drop_alembic_version_table
-
-from inspirehep.factory import create_app
-from inspirehep.modules.fixtures.users import init_users_and_permissions
 
 
-@pytest.fixture()
-def alembic_app():
-    """Flask application for Alembic tests."""
-    app = create_app(
-        DEBUG=True,
-        SQLALCHEMY_DATABASE_URI='postgresql+psycopg2://inspirehep:dbpass123@localhost:5432/inspirehep_alembic',
-    )
+def test_downgrade(isolated_app):
+    alembic = Alembic(isolated_app)
+    alembic.upgrade()
 
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-        init_users_and_permissions()
-        yield app
-        db.drop_all()
-        drop_alembic_version_table()
+    # downgrade 0bc0a6ee1bc0 == downgrade to 2f5368ff6d20
 
-
-def test_downgrade(alembic_app):
-    ext = alembic_app.extensions['invenio-db']
-    ext.alembic.stamp()
-
-    # 0bc0a6ee1bc0
-
-    ext.alembic.downgrade(target='0bc0a6ee1bc0')
-    assert 'ix_records_metadata_json_referenced_records' not in _get_indexes('records_metadata')
+    alembic.downgrade(target='2f5368ff6d20')
+    assert 'ix_records_metadata_json_referenced_records' not in _get_indexes(
+        'records_metadata')
 
     # 2f5368ff6d20
-    # TODO Create proper tests for 2f5368ff6d20, eaab22c59b89, f9ea5752e7a5, 17ff155db70d
+    # TODO |Create proper tests for 2f5368ff6d20, eaab22c59b89, f9ea5752e7a5
+    # TODO | and 17ff155db70d
 
-    ext.alembic.downgrade(target="2f5368ff6d20")
+    alembic.downgrade(target="eaab22c59b89")
 
     # eaab22c59b89
-    ext.alembic.downgrade(target="eaab22c59b89")
+    alembic.downgrade(target="f9ea5752e7a5")
 
     # f9ea5752e7a5
 
-    ext.alembic.downgrade(target="f9ea5752e7a5")
+    alembic.downgrade(target="17ff155db70d")
 
     # 17ff155db70d
 
-    ext.alembic.downgrade(target="17ff155db70d")
+    alembic.downgrade(target="402af3fbf68b")
 
     # 402af3fbf68b
 
-    ext.alembic.downgrade(target='d99c70308006')
+    alembic.downgrade(target='53e8594bc789')
+
+    # 53e8594bc789
+
+    alembic.downgrade(target='d99c70308006')
 
     assert 'inspire_prod_records' in _get_table_names()
     assert 'inspire_prod_records_recid_seq' in _get_sequences()
     assert 'legacy_records_mirror' not in _get_table_names()
     assert 'legacy_records_mirror_recid_seq' not in _get_sequences()
 
-    # 53e8594bc789
-
-    ext.alembic.downgrade(target='53e8594bc789')
-
     # d99c70308006
 
-    ext.alembic.downgrade(target='d99c70308006')
+    alembic.downgrade(target='cb9f81e8251c')
+    alembic.downgrade(target='cb5153afd839')
 
     # cb9f81e8251c & cb5153afd839
 
-    ext.alembic.downgrade(target='fddb3cfe7a9c')
+    alembic.downgrade(target='fddb3cfe7a9c')
 
     assert 'idxgindoctype' not in _get_indexes('records_metadata')
     assert 'idxgintitles' not in _get_indexes('records_metadata')
@@ -104,7 +86,7 @@ def test_downgrade(alembic_app):
 
     # fddb3cfe7a9c
 
-    ext.alembic.downgrade(target='a82a46d12408')
+    alembic.downgrade(target='a82a46d12408')
 
     assert 'inspire_prod_records' not in _get_table_names()
     assert 'inspire_prod_records_recid_seq' not in _get_sequences()
@@ -113,14 +95,14 @@ def test_downgrade(alembic_app):
     assert 'workflows_pending_record' not in _get_table_names()
 
 
-def test_upgrade(alembic_app):
-    ext = alembic_app.extensions['invenio-db']
-    ext.alembic.stamp()
-    ext.alembic.downgrade(target='a82a46d12408')
+def test_upgrade(app):
+    alembic = Alembic(app)
+    alembic.upgrade()
+    alembic.downgrade(target='a82a46d12408')
 
     # fddb3cfe7a9c
 
-    ext.alembic.upgrade(target='fddb3cfe7a9c')
+    alembic.upgrade(target='fddb3cfe7a9c')
 
     assert 'inspire_prod_records' in _get_table_names()
     assert 'inspire_prod_records_recid_seq' in _get_sequences()
@@ -130,7 +112,7 @@ def test_upgrade(alembic_app):
 
     # cb9f81e8251c
 
-    ext.alembic.upgrade(target='cb9f81e8251c')
+    alembic.upgrade(target='cb9f81e8251c')
 
     assert 'idxgindoctype' in _get_indexes('records_metadata')
     assert 'idxgintitles' in _get_indexes('records_metadata')
@@ -139,22 +121,22 @@ def test_upgrade(alembic_app):
 
     # cb5153afd839
 
-    ext.alembic.downgrade(target='fddb3cfe7a9c')
-    ext.alembic.upgrade(target='cb5153afd839')
+    alembic.downgrade(target='fddb3cfe7a9c')
+    alembic.upgrade(target='cb5153afd839')
 
     assert 'workflows_record_sources' in _get_table_names()
 
     # d99c70308006
 
-    ext.alembic.upgrade(target='d99c70308006')
+    alembic.upgrade(target='d99c70308006')
 
     # 53e8594bc789
 
-    ext.alembic.upgrade(target='53e8594bc789')
+    alembic.upgrade(target='53e8594bc789')
 
     # 402af3fbf68b
 
-    ext.alembic.upgrade(target='402af3fbf68b')
+    alembic.upgrade(target='402af3fbf68b')
 
     assert 'inspire_prod_records' not in _get_table_names()
     assert 'inspire_prod_records_recid_seq' not in _get_sequences()
@@ -163,26 +145,28 @@ def test_upgrade(alembic_app):
 
     # 17ff155db70d
 
-    ext.alembic.upgrade(target="17ff155db70d")
+    alembic.upgrade(target="17ff155db70d")
     # Not checking as it only adds or modifies columns
 
     # f9ea5752e7a5
 
-    ext.alembic.upgrade(target="f9ea5752e7a5")
+    alembic.upgrade(target="f9ea5752e7a5")
     # Not checking as it only adds or modifies columns
 
     # eaab22c59b89
-    ext.alembic.upgrade(target="eaab22c59b89")
+    alembic.upgrade(target="eaab22c59b89")
 
     # 2f5368ff6d20
-    ext.alembic.upgrade(target="2f5368ff6d20")
-    # TODO Create proper tests for 2f5368ff6d20, eaab22c59b89, f9ea5752e7a5, 17ff155db70d
+    alembic.upgrade(target="2f5368ff6d20")
+    # TODO Create proper tests for 2f5368ff6d20, eaab22c59b89, f9ea5752e7a5,
+    # 17ff155db70d
 
     # 0bc0a6ee1bc0
 
-    ext.alembic.upgrade(target='0bc0a6ee1bc0')
+    alembic.upgrade(target='0bc0a6ee1bc0')
 
-    assert 'ix_records_metadata_json_referenced_records' in _get_indexes('records_metadata')
+    assert 'ix_records_metadata_json_referenced_records' in _get_indexes(
+        'records_metadata')
 
 
 def _get_indexes(tablename):
