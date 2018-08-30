@@ -420,6 +420,7 @@ def test_merge_with_conflicts_callback_url(
         mocked_external_services,
         disable_file_upload,
         enable_merge_on_update,
+
 ):
     with patch('inspire_json_merger.config.ArxivOnArxivOperations.conflict_filters', ['acquisition_source.source']):
         factory = TestRecordMetadata.create_from_file(

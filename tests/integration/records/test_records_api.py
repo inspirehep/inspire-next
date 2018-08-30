@@ -106,7 +106,8 @@ def test_citations_count_non_zero(isolated_app):
         'control_number': 321,
     }
     record_1 = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
-    ref = {'control_number': 4321, 'references': [{'record': {'$ref': record_1._get_ref()}}]}
 
+    ref = {'control_number': 4321, 'references': [{'record': {'$ref': record_1._get_ref()}}]}
     TestRecordMetadata.create_from_kwargs(json=ref)
+
     assert record_1.get_citations_count() == 1L

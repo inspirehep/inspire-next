@@ -36,6 +36,9 @@ depends_on = None
 def upgrade():
     """Upgrade database."""
     op.execute(
+        "ALTER TABLE records_metadata ALTER COLUMN json SET DATA TYPE jsonb USING json::jsonb"
+    )
+    op.execute(
         "CREATE INDEX idxgindoctype ON records_metadata USING gin ((json -> 'document_type'))"
     )
     op.execute(
@@ -55,3 +58,6 @@ def downgrade():
     op.execute("DROP INDEX IF EXISTS idxgintitles")
     op.execute("DROP INDEX IF EXISTS idxginjournaltitle")
     op.execute("DROP INDEX IF EXISTS idxgincollections")
+    op.execute(
+        "ALTER TABLE records_metadata ALTER COLUMN json SET DATA TYPE json USING json::json"
+    )

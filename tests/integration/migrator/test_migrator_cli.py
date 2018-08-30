@@ -27,7 +27,9 @@ import os
 
 import pkg_resources
 import pytest
+from flask import current_app
 
+from mock import patch
 from invenio_db import db
 from inspirehep.modules.migrator.cli import migrate
 from inspirehep.modules.migrator.models import LegacyRecordsMirror
@@ -35,21 +37,29 @@ from inspirehep.modules.migrator.tasks import populate_mirror_from_file
 
 
 def test_migrate_file_halts_in_debug_mode(app_cli_runner):
-    file_name = pkg_resources.resource_filename(__name__, os.path.join('fixtures', '1663923.xml'))
+    config = {
+        'DEBUG': True
+    }
+    with patch.dict(current_app.config, config):
+        file_name = pkg_resources.resource_filename(__name__, os.path.join('fixtures', '1663923.xml'))
 
-    result = app_cli_runner.invoke(migrate, ['file', file_name])
+        result = app_cli_runner.invoke(migrate, ['file', file_name])
 
-    assert result.exit_code == 1
-    assert 'DEBUG' in result.output
+        assert result.exit_code == 1
+        assert 'DEBUG' in result.output
 
 
 def test_migrate_file_doesnt_halt_in_debug_mode_when_forced(app_cli_runner):
-    file_name = pkg_resources.resource_filename(__name__, os.path.join('fixtures', '1663923.xml'))
+    config = {
+        'DEBUG': True
+    }
+    with patch.dict(current_app.config, config):
+        file_name = pkg_resources.resource_filename(__name__, os.path.join('fixtures', '1663923.xml'))
 
-    result = app_cli_runner.invoke(migrate, ['file', '-f', file_name])
+        result = app_cli_runner.invoke(migrate, ['file', '-f', file_name])
 
-    assert result.exit_code == 0
-    assert 'DEBUG' not in result.output
+        assert result.exit_code == 0
+        assert 'DEBUG' not in result.output
 
 
 def test_migrate_file(app_cli_runner, api_client):
@@ -76,17 +86,25 @@ def test_migrate_file_mirror_only(app_cli_runner, api_client):
 
 
 def test_migrate_mirror_halts_in_debug_mode(app_cli_runner):
-    result = app_cli_runner.invoke(migrate, ['mirror', '-a'])
+    config = {
+        'DEBUG': True
+    }
+    with patch.dict(current_app.config, config):
+        result = app_cli_runner.invoke(migrate, ['mirror', '-a'])
 
-    assert result.exit_code == 1
-    assert 'DEBUG' in result.output
+        assert result.exit_code == 1
+        assert 'DEBUG' in result.output
 
 
 def test_migrate_mirror_doesnt_halt_in_debug_mode_when_forced(app_cli_runner):
-    result = app_cli_runner.invoke(migrate, ['mirror', '-f'])
+    config = {
+        'DEBUG': True
+    }
+    with patch.dict(current_app.config, config):
+        result = app_cli_runner.invoke(migrate, ['mirror', '-f'])
 
-    assert result.exit_code == 0
-    assert 'DEBUG' not in result.output
+        assert result.exit_code == 0
+        assert 'DEBUG' not in result.output
 
 
 def test_migrate_mirror_migrates_pending(app_cli_runner, api_client):

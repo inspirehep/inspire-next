@@ -1,4 +1,4 @@
-{%- macro pub_info(journal_title, journal_volume, year, journal_issue, page_start, page_end, artid, pubinfo_freetext) -%}
+{%- macro pub_info(journal_title, journal_volume, year, journal_issue, page_start, page_end, artid, pubinfo_freetext, conference_record) -%}
   {%- if journal_title -%}
     <i>{{journal_title}}</i>
     {%- if journal_volume -%}

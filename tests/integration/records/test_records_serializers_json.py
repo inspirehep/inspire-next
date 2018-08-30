@@ -148,7 +148,7 @@ def test_zero_citations_in_vnd_plus_inspire_record_ui_json(isolated_api_client):
                                        headers={'Accept': 'application/vnd+inspire.record.ui+json'})
     assert response.status_code == 200
     result = json.loads(response.get_data(as_text=True))
-    assert result['metadata']['citations_count'] == 0
+    assert result['metadata']['citation_count'] == 0
 
 
 def test_non_zero_citation_count_in_vnd_plus_inspire_record_ui_json(isolated_api_client):
@@ -165,4 +165,29 @@ def test_non_zero_citation_count_in_vnd_plus_inspire_record_ui_json(isolated_api
                                        headers={'Accept': 'application/vnd+inspire.record.ui+json'})
     assert response.status_code == 200
     result = json.loads(response.get_data(as_text=True))
-    assert result['metadata']['citations_count'] == 1
+    assert result['metadata']['citation_count'] == 1
+
+
+def test_zero_citation_count_in_es(isolated_api_client):
+    cn_map = {
+        1234: 1,
+        12345: 0
+    }
+    record_json = {
+        'control_number': 1234,
+    }
+    record = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    url = '/literature/?page=1&size=25&q=control_number%3A1234'
+    # Add citation
+    ref = {'control_number': 12345, 'references': [{'record': {'$ref': record._get_ref()}}]}
+    TestRecordMetadata.create_from_kwargs(json=ref)
+
+    response = isolated_api_client.get(url,
+                                       headers={'Accept': 'application/vnd+inspire.record.ui+json'})
+    assert response.status_code == 200
+    result = json.loads(response.get_data(as_text=True))
+    for obj in result['hits']['hits']:
+        obj_meta = obj['metadata']
+        if obj_meta['control_number'] not in cn_map.keys():
+            continue
+        assert obj_meta['citation_count'] == cn_map[obj_meta['control_number']]

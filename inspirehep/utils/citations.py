@@ -27,6 +27,7 @@ from inspirehep.utils.jinja2 import render_template_to_string
 
 
 def get_and_format_citations(record):
+    """.. deprecated:: 2018-08-23"""
     result = []
 
     citations = LiteratureSearch().query(

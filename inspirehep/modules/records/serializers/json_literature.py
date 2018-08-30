@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
+
 from invenio_records_rest.serializers.json import JSONSerializer
 
 from inspire_utils.date import format_date
@@ -72,7 +74,7 @@ def _preprocess_result(result, original_record=None):
     if original_record is not None:
         # If it is an db object then get citations from db
         # Otherwise if it is from ES it has citations already in json
-        result['metadata']['citations_count'] = get_citations_count(original_record)
+        result['metadata']['citation_count'] = get_citations_count(original_record)
     record = result['metadata']
     ui_metadata = _get_ui_metadata(record)
     # FIXME: Deprecated, must be removed once the new UI is released
@@ -97,3 +99,23 @@ class LiteratureJSONUISerializer(JSONSerializer):
             preprocess_search_hit(pid, record_hit,
                                   links_factory=links_factory, **kwargs)
         return _preprocess_result(result)
+
+
+class LiteratureCitationsJSONSerializer(JSONSerializer):
+
+    def preprocess_record(self, pid, record, links_factory=None, **kwargs):
+        """Prepare a record and persistent identifier for serialization."""
+        return record.dumps()
+
+    def serialize(self, pid, data, links_factory=None, **kwargs):
+        return json.dumps(
+            {
+                'metadata': {
+                    'citations': [
+                        self.transform_record(pid, record, **kwargs)
+                        for record in data['citations']
+                    ],
+                    'citation_count': data['citation_count']
+                },
+            }, **self._format_args()
+        )

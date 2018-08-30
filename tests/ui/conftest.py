@@ -23,8 +23,10 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+from flask_alembic import Alembic
 
 from invenio_db import db
+from invenio_db.utils import drop_alembic_version_table
 from invenio_records.models import RecordMetadata
 from invenio_search import current_search_client as es
 from invenio_workflows import workflow_object_class
@@ -53,15 +55,17 @@ def app(request):
     See: http://flask.pocoo.org/docs/0.12/appcontext/.
     """
     app = create_app()
-    app.config.update({'DEBUG': True})
+    # app.config.update({'DEBUG': True})
 
     with app.app_context():
         # Celery task imports must be local, otherwise their
         # configuration would use the default pickle serializer.
         from inspirehep.modules.migrator.tasks import migrate_from_file
-
         db.drop_all()
-        db.create_all()
+        drop_alembic_version_table()
+
+        alembic = Alembic(app=app)
+        alembic.upgrade()
 
         _es = app.extensions['invenio-search']
         list(_es.delete(ignore=[404]))
