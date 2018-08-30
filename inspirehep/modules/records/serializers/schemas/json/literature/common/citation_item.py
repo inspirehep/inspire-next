@@ -22,7 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, post_dump
+
+from inspire_dojson.utils import strip_empty_values
 
 from inspirehep.modules.records.serializers.fields import ListWithLimit, NestedWithoutEmptyObjects
 
@@ -37,3 +39,7 @@ class CitationItemSchemaV1(Schema):
     publication_info = fields.List(
         NestedWithoutEmptyObjects(PublicationInfoItemSchemaV1, dump_only=True))
     titles = fields.Raw()
+
+    @post_dump
+    def strip_empty(self, data):
+        return strip_empty_values(data)

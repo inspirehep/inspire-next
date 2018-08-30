@@ -377,3 +377,105 @@ def test_literature_citations_api_with_not_existing_pid_value(isolated_api_clien
     )
 
     assert response.status_code == 404
+
+
+def test_literature_citations_api_with_full_citing_record(isolated_api_client):
+    record_json = {
+        'control_number': 111,
+        'titles': [
+            {
+                'title': 'Jessica Jones',
+            },
+        ],
+    }
+    record = TestRecordMetadata.create_from_kwargs(
+        json=record_json).inspire_record
+
+    record_json_ref_1 = {
+        'control_number': 222,
+        'titles': [
+            {
+                'title': 'Frank Castle',
+            },
+        ],
+        'authors': [
+            {
+                "full_name": "Urhan, Harun",
+                "inspire_roles": [
+                    'supervisor'
+                ],
+            },
+            {
+                "full_name": "Urhan, Ahmet",
+            }
+        ],
+        'publication_info': [
+            {
+                "artid": "HAL Id : hal-01735421, https://hal.archives-ouvertes.fr/hal-01735421",
+                "page_start": "1",
+            }
+        ],
+        'references': [
+            {
+                'record': {
+                    '$ref': record._get_ref()
+                }
+            }
+        ]
+    }
+    TestRecordMetadata.create_from_kwargs(json=record_json_ref_1)
+
+    record_json_ref_2 = {
+        'control_number': 333,
+        'titles': [
+            {
+                'title': 'Luke Cage',
+            },
+        ],
+        'references': [
+            {
+                'record': {
+                    '$ref': record._get_ref()
+                }
+            }
+        ]
+    }
+    TestRecordMetadata.create_from_kwargs(json=record_json_ref_2)
+
+    response = isolated_api_client.get(
+        '/literature/111/citations',
+        headers={'Accept': 'application/json'}
+    )
+    result = json.loads(response.get_data(as_text=True))
+
+    expected_metadata = {
+        "citation_count": 2,
+        "citations": [
+            {
+                'control_number': 222,
+                'titles': [
+                    {
+                        'title': 'Frank Castle',
+                    },
+                ],
+                'authors': [
+                    {
+                        "full_name": "Urhan, Ahmet",
+                        "first_name": "Ahmet",
+                        "last_name": "Urhan",
+                    }
+                ],
+            },
+            {
+                "control_number": 333,
+                "titles": [
+                    {
+                        "title": "Luke Cage"
+                    }
+                ]
+            }
+        ]
+    }
+
+    assert response.status_code == 200
+    assert expected_metadata == result['metadata']
