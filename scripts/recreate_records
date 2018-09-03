@@ -40,5 +40,4 @@ inspirehep fixtures init
 
 if [[ "$1" != "--no-populate" ]]; then
   inspirehep migrate file --force --wait inspirehep/demosite/data/demo-records.xml.gz
-  inspirehep migrator count_citations
 fi
