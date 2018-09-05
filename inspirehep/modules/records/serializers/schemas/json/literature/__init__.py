@@ -41,6 +41,8 @@ from .common import (  # noqa: F401
     SupervisorSchemaV1,
     ThesisInfoSchemaV1,
     CitationItemSchemaV1,
+    CollaborationWithSuffixSchemaV1,
+    CollaborationSchemaV1
 )
 
 
@@ -56,7 +58,8 @@ class RecordMetadataSchemaV1(Schema):
     book_series = fields.Raw()
     # citeable = fields.Raw()
     citation_count = fields.Raw()
-    collaborations = fields.Raw()
+    collaborations = fields.List(fields.Nested(CollaborationSchemaV1, dump_only=True), attribute="collaborations")
+    collaborations_with_suffix = fields.List(fields.Nested(CollaborationWithSuffixSchemaV1, dump_only=True), attribute="collaborations")
     conference_info = fields.Nested(
         ConferenceInfoItemSchemaV1,
         dump_only=True,
