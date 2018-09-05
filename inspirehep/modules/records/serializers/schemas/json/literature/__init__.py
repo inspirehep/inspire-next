@@ -33,6 +33,7 @@ from inspirehep.modules.records.serializers.schemas.base import JSONSchemaUIV1
 from .common import (  # noqa: F401
     AuthorSchemaV1,
     ConferenceInfoItemSchemaV1,
+    DOISchemaV1,
     ExternalSystemIdentifierSchemaV1,
     IsbnSchemaV1,
     PublicationInfoItemSchemaV1,
@@ -74,7 +75,7 @@ class RecordMetadataSchemaV1(Schema):
     # deleted_records = fields.Raw()
     document_type = fields.Raw()
     # documents = fields.Raw()
-    dois = fields.Raw()
+    dois = fields.Nested(DOISchemaV1, dump_only=True, many=True)
     # editions = fields.Raw()
     # energy_ranges = fields.Raw()
     external_system_identifiers = fields.Nested(

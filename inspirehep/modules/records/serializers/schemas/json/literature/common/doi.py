@@ -1,7 +1,7 @@
-#!/bin/bash
+# -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2014-2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,24 +20,28 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-set -e
+from __future__ import absolute_import, division, print_function
 
-if [ ! -d "${VIRTUAL_ENV}" ]; then
-  >&2 echo "You must be in a virtual environment to use this script."
-  exit 1
-fi
+from marshmallow import Schema, post_dump, fields
 
-if [ ! -x "$(command -v inspirehep)" ]; then
-  >&2 echo "You must have the inspirehep command to use this script."
-  exit 1
-fi
 
-inspirehep db drop --yes-i-know
-inspirehep db create
-inspirehep index destroy --force --yes-i-know
-inspirehep index init
-inspirehep fixtures init
+class DOISchemaV1(Schema):
+    material = fields.Raw()
+    value = fields.Raw()
 
-if [[ "$1" != "--no-populate" ]]; then
-  inspirehep migrate file --force --wait inspirehep/demosite/data/demo-records.xml.gz
-fi
+    @post_dump(pass_many=True)
+    def filter(self, data, many):
+        if many:
+            return self.remove_duplicate_doi_values(data)
+        return data
+
+    @staticmethod
+    def remove_duplicate_doi_values(dois):
+        taken_doi_values = set()
+        unique_dois = []
+        for doi in dois:
+            doi_value = doi.get('value')
+            if doi_value not in taken_doi_values:
+                taken_doi_values.add(doi_value)
+                unique_dois.append(doi)
+        return unique_dois

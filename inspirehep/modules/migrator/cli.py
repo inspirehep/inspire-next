@@ -47,7 +47,6 @@ from inspire_schemas.api import validate
 from inspirehep.utils.schema import ensure_valid_schema
 from .models import LegacyRecordsMirror
 from .tasks import (
-    add_citation_counts,
     migrate_from_file,
     migrate_from_mirror,
     migrate_record_from_legacy,
@@ -175,13 +174,6 @@ def one(recid):
     warnings.warn('The "migrator" command is deprecated, use "migrate" instead.', DeprecationWarning)
     click.echo('Migrating record {recid} from INSPIRE legacy'.format(recid=recid))
     migrate_record_from_legacy(recid)
-
-
-@migrator.command()
-def count_citations():
-    """Adds field citation_count to every record in 'HEP' and calculates its proper value."""
-    click.echo("Adding citation_count to all records")
-    add_citation_counts()
 
 
 @migrator.command()
