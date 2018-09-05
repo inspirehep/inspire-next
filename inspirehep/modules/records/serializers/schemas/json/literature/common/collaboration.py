@@ -22,15 +22,17 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .author import AuthorSchemaV1  # noqa: F401
-from .conference_info_item import ConferenceInfoItemSchemaV1  # noqa: F401
-from .doi import DOISchemaV1  # noqa: F401
-from .isbn import IsbnSchemaV1  # noqa: F401
-from .supervisor import SupervisorSchemaV1  # noqa: F401
-from .thesis_info import ThesisInfoSchemaV1  # noqa: F401
-from .publication_info_item import PublicationInfoItemSchemaV1  # noqa: F401
-from .external_system_identifier import ExternalSystemIdentifierSchemaV1    # noqa: F401
-from .reference_item import ReferenceItemSchemaV1  # noqa: F401
-from .citation_item import CitationItemSchemaV1   # noqa: F401
-from .collaboration_with_suffix import CollaborationWithSuffixSchemaV1   # noqa: F401
-from .collaboration import CollaborationSchemaV1   # noqa: F401
+from marshmallow import Schema, fields, pre_dump
+
+import re
+
+
+class CollaborationSchemaV1(Schema):
+    value = fields.Raw()
+    REGEX_COLLABORATIONS_WITH_SUFFIX = re.compile(r".*(group|groups|force|consortium|team)$", re.IGNORECASE)
+
+    @pre_dump
+    def filter(self, data):
+        if re.match(self.REGEX_COLLABORATIONS_WITH_SUFFIX, data.get('value')):
+                return {}
+        return data
