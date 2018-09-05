@@ -28,16 +28,13 @@ import gzip
 import re
 import tarfile
 import zlib
-from collections import Counter
 from contextlib import closing
-from itertools import chain
 
 import click
 import requests
 
 from celery import group, shared_task
 from elasticsearch.helpers import bulk as es_bulk
-from elasticsearch.helpers import scan as es_scan
 from flask import current_app
 from flask_sqlalchemy import models_committed
 from functools import wraps
@@ -48,13 +45,9 @@ from redis_lock import Lock
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
-from invenio_search.utils import schema_to_index
 
 from inspire_dojson import marcxml2record
-from inspire_utils.dedupers import dedupe_list
-from inspire_utils.helpers import force_list
 from inspire_utils.logging import getStackTraceLogger
-from inspire_utils.record import get_value
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.pidstore.utils import (
     get_pid_types_from_endpoints,
@@ -288,62 +281,6 @@ def _build_recid_to_uuid_map(citations_lookup):
             pid.object_uuid: citations_lookup[int(pid.pid_value)]
             for pid in bar if int(pid.pid_value) in citations_lookup
         }
-
-
-@shared_task()
-def add_citation_counts(chunk_size=500, request_timeout=120):
-    def _get_records_to_update_generator(citations_lookup):
-        with click.progressbar(citations_lookup.iteritems()) as bar:
-            for uuid, citation_count in bar:
-                yield {
-                    '_op_type': 'update',
-                    '_index': index,
-                    '_type': doc_type,
-                    '_id': str(uuid),
-                    'doc': {'citation_count': citation_count}
-                }
-
-    index, doc_type = schema_to_index('records/hep.json')
-    citations_lookup = Counter()
-
-    click.echo('Extracting all citations...')
-    with click.progressbar(es_scan(
-            es,
-            query={
-                'query': {
-                    'exists': {
-                        'field': 'references.recid'
-                    },
-                },
-                'size': LARGE_CHUNK_SIZE
-            },
-            scroll=u'2m',
-            index=index,
-            doc_type=doc_type)) as records:
-        for record in records:
-            unique_refs_ids = dedupe_list(list(chain.from_iterable(map(
-                force_list, get_value(record, '_source.references.recid')))))
-
-            for unique_refs_id in unique_refs_ids:
-                citations_lookup[unique_refs_id] += 1
-    click.echo('... DONE.')
-
-    click.echo('Mapping recids to UUIDs...')
-    citations_lookup = _build_recid_to_uuid_map(citations_lookup)
-    click.echo('... DONE.')
-
-    click.echo('Adding citation numbers...')
-    success, failed = es_bulk(
-        es,
-        _get_records_to_update_generator(citations_lookup),
-        chunk_size=chunk_size,
-        raise_on_exception=False,
-        raise_on_error=False,
-        request_timeout=request_timeout,
-        stats_only=True,
-    )
-    click.echo('... DONE: {} records updated with success. {} failures.'.format(
-        success, failed))
 
 
 def insert_into_mirror(raw_records):

@@ -23,14 +23,15 @@
 from __future__ import absolute_import, division, print_function
 
 from inspire_dojson.utils import strip_empty_values
-from marshmallow import fields
+from marshmallow import fields, missing
 
 
 class NestedWithoutEmptyObjects(fields.Nested):
 
     def _serialize(self, nested_obj, attr, obj):
-        result = super(NestedWithoutEmptyObjects, self)._serialize(nested_obj, attr, obj)
+        result = super(NestedWithoutEmptyObjects,
+                       self)._serialize(nested_obj, attr, obj)
         clean = strip_empty_values(result)
         if clean is None:
-            return self.default
+            return self.default if self.default is not missing else None
         return clean

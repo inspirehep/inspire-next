@@ -63,37 +63,60 @@ def test_search_falls_back_to_hep(app_client):
 def test_search_logs(current_app_mock, api_client):
     def _debug(log_output):
         query = {
-            'query': {
-                'bool': {
-                    'filter': [
-                        {
-                            'bool': {
-                                'must_not': [
-                                    {
-                                        'match': {
-                                            '_collections': 'HERMES Internal Notes'
-                                        }
-                                    }
-                                ],
-                                'must': [
-                                    {
-                                        'match': {
-                                            '_collections': 'Literature'
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    'minimum_should_match': '0<1',
-                    'must': [{
-                        'match_all': {}
-                    }]
-                }
-            },
-            'from': 0,
-            'size': 10
-        }
+            u'sort': [{u'earliest_date': {u'order': u'desc'}}],
+            u'from': 0,
+            u'_source': {u'includes': [u'$schema', u'abstracts.value',
+                                       u'arxiv_eprints.value',
+                                       u'authors.affiliation',
+                                       u'authors.full_name',
+                                       u'authors.control_number',
+                                       u'collaborations',
+                                       u'control_number',
+                                       u'citation_count', u'dois.value',
+                                       u'earliest_date',
+                                       u'inspire_categories',
+                                       u'publication_info',
+                                       u'references.reference.title',
+                                       u'report_numbers',
+                                       u'titles.title']},
+            u'aggs': {
+                u'doc_type': {
+                    u'meta': {u'order': 6, u'title': u'Document Type'},
+                    u'terms': {
+                        u'field': u'facet_inspire_doc_type',
+                        u'size': 20}},
+                u'author': {
+                    u'meta': {u'order': 2, u'title': u'Author'},
+                    u'terms': {u'field': u'facet_author_name',
+                               u'size': 20}},
+                u'arxiv_categories': {
+                    u'meta': {u'order': 4, u'title': u'arXiv Category'},
+                    u'terms': {u'field': u'facet_arxiv_categories',
+                               u'size': 20}},
+                u'experiment': {
+                    u'meta': {u'order': 5, u'title': u'Experiment'},
+                    u'terms': {u'field': u'facet_experiment',
+                               u'size': 20}},
+                u'subject': {
+                    u'meta': {u'order': 3, u'title': u'Subject'},
+                    u'terms': {
+                        u'field': u'facet_inspire_categories',
+                        u'size': 20}}, u'earliest_date': {
+                    u'date_histogram': {
+                        u'field': u'earliest_date',
+                        u'interval': u'year',
+                        u'min_doc_count': 1,
+                        u'format': u'yyyy'},
+                    u'meta': {u'order': 1, u'title': u'Date'}}},
+            u'query': {
+                u'bool': {
+                    u'filter': [{u'bool': {u'must_not': [
+                        {u'match': {
+                            u'_collections': u'HERMES Internal Notes'}}],
+                        u'must': [{u'match': {
+                            u'_collections': u'Literature'}}]}}],
+                    u'minimum_should_match': u'0<1',
+                    u'must': [{u'match_all': {}}]}}, u'size': 10}
         assert query == json.loads(log_output)
 
     current_app_mock.logger.debug.side_effect = _debug

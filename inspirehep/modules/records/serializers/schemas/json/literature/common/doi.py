@@ -22,24 +22,26 @@
 
 from __future__ import absolute_import, division, print_function
 
-from marshmallow import Schema, fields, post_dump
-
-from inspire_dojson.utils import strip_empty_values
-
-from inspirehep.modules.records.serializers.fields import ListWithLimit, NestedWithoutEmptyObjects
-
-from .author import AuthorSchemaV1
-from .publication_info_item import PublicationInfoItemSchemaV1
+from marshmallow import Schema, post_dump, fields
 
 
-class CitationItemSchemaV1(Schema):
-    authors = ListWithLimit(
-        NestedWithoutEmptyObjects(AuthorSchemaV1, dump_only=True), limit=10)
-    control_number = fields.Raw()
-    publication_info = fields.List(
-        NestedWithoutEmptyObjects(PublicationInfoItemSchemaV1, dump_only=True))
-    titles = fields.Raw()
+class DOISchemaV1(Schema):
+    material = fields.Raw()
+    value = fields.Raw()
 
-    @post_dump
-    def strip_empty(self, data):
-        return strip_empty_values(data)
+    @post_dump(pass_many=True)
+    def filter(self, data, many):
+        if many:
+            return self.remove_duplicate_doi_values(data)
+        return data
+
+    @staticmethod
+    def remove_duplicate_doi_values(dois):
+        taken_doi_values = set()
+        unique_dois = []
+        for doi in dois:
+            doi_value = doi.get('value')
+            if doi_value not in taken_doi_values:
+                taken_doi_values.add(doi_value)
+                unique_dois.append(doi)
+        return unique_dois
