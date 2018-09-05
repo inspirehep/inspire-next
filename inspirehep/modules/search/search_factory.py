@@ -35,6 +35,36 @@ from invenio_records_rest.sorter import default_sorter_factory
 from inspirehep.modules.search import IQ
 
 
+def select_source(search, search_index):
+    """If search_idex is records-hep it filters the output to get only
+    the useful data.
+
+    Args:
+        search: Elastic search DSL search instance.
+        search_index: Index name
+
+    Returns: Elastic search DSL search instance.
+    """
+    if search_index == 'records-hep':
+        search = search.source(includes=["$schema",
+                                         "abstracts.value",
+                                         "arxiv_eprints.value",
+                                         "authors.affiliation",
+                                         "authors.full_name",
+                                         "authors.control_number",
+                                         "collaborations",
+                                         "control_number",
+                                         "citation_count",
+                                         "dois.value",
+                                         "earliest_date",
+                                         "inspire_categories",
+                                         "publication_info",
+                                         "references.reference.title",
+                                         "report_numbers",
+                                         "titles.title"])
+    return search
+
+
 def inspire_search_factory(self, search):
     """Parse query using Inspire-Query-Parser.
 
@@ -52,17 +82,17 @@ def inspire_search_factory(self, search):
                 request.values.get('q', '')),
             exc_info=True)
         raise InvalidQueryRESTError()
-    finally:
-        if current_app.debug:
-                current_app.logger.debug(
-                    json.dumps(search.to_dict(), indent=4)
-                )
 
     search_index = search._index[0]
     search, urlkwargs = default_facets_factory(search, search_index)
     search, sortkwargs = default_sorter_factory(search, search_index)
+    search = select_source(search, search_index)
     for key, value in sortkwargs.items():
         urlkwargs.add(key, value)
 
     urlkwargs.add('q', query_string)
+    if current_app.debug:
+        current_app.logger.debug(
+            json.dumps(search.to_dict(), indent=4)
+        )
     return search, urlkwargs
