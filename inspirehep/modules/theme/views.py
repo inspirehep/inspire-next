@@ -806,7 +806,8 @@ def login_success():
         'inspirehep_theme/login_success.html',
         user={
             'data': {
-                'email': current_user.email
+                'email': current_user.email,
+                'roles': [role.name for role in current_user.roles]
             }
         }
     )
