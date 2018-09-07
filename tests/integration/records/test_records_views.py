@@ -478,4 +478,8 @@ def test_literature_citations_api_with_full_citing_record(isolated_api_client):
     }
 
     assert response.status_code == 200
+
+    expected_metadata['citations'].sort()
+    result['metadata']['citations'].sort()
+
     assert expected_metadata == result['metadata']
