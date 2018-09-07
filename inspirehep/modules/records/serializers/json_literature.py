@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import json
+from copy import deepcopy
 
 from invenio_records_rest.serializers.json import JSONSerializer
 
@@ -106,7 +107,7 @@ class LiteratureCitationsJSONSerializer(JSONSerializer):
 
     def preprocess_record(self, pid, record, links_factory=None, **kwargs):
         """Prepare a record and persistent identifier for serialization."""
-        return record.dumps()
+        return deepcopy(record)
 
     def serialize(self, pid, data, links_factory=None, **kwargs):
         return json.dumps(

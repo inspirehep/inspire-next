@@ -79,7 +79,7 @@ def merge_articles(obj, eng):
     obj.extra_data['merger_original_root'] = deepcopy(head_root)
 
     merged, conflicts = merge(
-        head=head.dumps(),
+        head=deepcopy(head),
         root=head_root,
         update=update,
     )

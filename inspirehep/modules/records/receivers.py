@@ -187,7 +187,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
     populate_affiliation_suggest(sender, json, *args, **kwargs)
     populate_author_count(sender, json, *args, **kwargs)
     populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs)
-    populate_earliest_date(sender, json, *args, **kwargs)
+    populate_earliest_date(json, *args, **kwargs)
     populate_experiment_suggest(sender, json, *args, **kwargs)
     populate_inspire_document_type(sender, json, *args, **kwargs)
     populate_authors_name_variations(sender, json, *args, **kwargs)
@@ -390,7 +390,7 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
     })
 
 
-def populate_earliest_date(sender, json, *args, **kwargs):
+def populate_earliest_date(json, *args, **kwargs):
     """Populate the ``earliest_date`` field of Literature records."""
     if not is_hep(json):
         return

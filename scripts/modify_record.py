@@ -6,6 +6,7 @@ its control number.
 """
 
 from contextlib import contextmanager
+from copy import deepcopy
 
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
@@ -28,7 +29,7 @@ def modify_record(pid_type, pid_value):
     """
     uuid = PersistentIdentifier.query.filter_by(pid_type=pid_type, pid_value=str(pid_value)).one().object_uuid
     record = InspireRecord.get_record(uuid)
-    data = record.dumps()
+    data = deepcopy(record)
 
     yield data
 

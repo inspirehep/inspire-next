@@ -598,7 +598,7 @@ def test_populate_earliest_date_from_preprint_date():
     }
     assert validate(record['preprint_date'], subschema) is None
 
-    populate_earliest_date(None, record)
+    populate_earliest_date(record)
 
     expected = '2014-05-29'
     result = record['earliest_date']
@@ -618,7 +618,7 @@ def test_populate_earliest_date_from_thesis_info_date():
     }
     assert validate(record['thesis_info'], subschema) is None
 
-    populate_earliest_date(None, record)
+    populate_earliest_date(record)
 
     expected = '2008'
     result = record['earliest_date']
@@ -638,7 +638,7 @@ def test_populate_earliest_date_from_thesis_info_defense_date():
     }
     assert validate(record['thesis_info'], subschema) is None
 
-    populate_earliest_date(None, record)
+    populate_earliest_date(record)
 
     expected = '2012-06-01'
     result = record['earliest_date']
@@ -658,7 +658,7 @@ def test_populate_earliest_date_from_publication_info_year():
     }
     assert validate(record['publication_info'], subschema) is None
 
-    populate_earliest_date(None, record)
+    populate_earliest_date(record)
 
     expected = '2014'
     result = record['earliest_date']
@@ -676,7 +676,7 @@ def test_populate_earliest_date_from_legacy_creation_date():
     }
     assert validate(record['legacy_creation_date'], subschema) is None
 
-    populate_earliest_date(None, record)
+    populate_earliest_date(record)
 
     expected = '2015-11-04'
     result = record['earliest_date']
@@ -696,7 +696,7 @@ def test_populate_earliest_date_from_imprints_date():
     }
     assert validate(record['imprints'], subschema) is None
 
-    populate_earliest_date(None, record)
+    populate_earliest_date(record)
 
     expected = '2014-09-26'
     result = record['earliest_date']
@@ -707,7 +707,7 @@ def test_populate_earliest_date_from_imprints_date():
 def test_populate_earliest_date_does_nothing_if_record_is_not_literature():
     record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
 
-    populate_earliest_date(None, record)
+    populate_earliest_date(record)
 
     assert 'earliest_date' not in record
 
