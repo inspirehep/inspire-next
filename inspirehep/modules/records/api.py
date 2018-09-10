@@ -48,7 +48,7 @@ from sqlalchemy.dialects import postgresql
 
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema, get_endpoint_from_pid_type
-from inspirehep.modules.records.receivers import populate_earliest_date
+from inspirehep.modules.records.utils import populate_earliest_date
 from inspirehep.utils.record_getter import (
     RecordGetterError,
     get_es_record_by_uuid

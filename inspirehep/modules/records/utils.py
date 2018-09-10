@@ -24,6 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+from itertools import chain
+
+from inspire_utils.date import earliest_date
 from inspire_utils.record import get_value
 from inspire_utils.helpers import force_list
 from inspirehep.modules.pidstore.utils import (
@@ -76,3 +79,26 @@ def get_linked_records_in_field(record, field_path):
     full_path = '.'.join([field_path, '$ref'])
     pids = force_list([get_pid_from_record_uri(rec) for rec in get_value(record, full_path, [])])
     return get_db_records(pids)
+
+
+def populate_earliest_date(json, *args, **kwargs):
+    """Populate the ``earliest_date`` field of Literature records."""
+    date_paths = [
+        'preprint_date',
+        'thesis_info.date',
+        'thesis_info.defense_date',
+        'publication_info.year',
+        'legacy_creation_date',
+        'imprints.date',
+    ]
+
+    dates = [
+        str(el) for el in chain.from_iterable(
+            [force_list(get_value(json, path)) for path in date_paths]
+        )
+    ]
+
+    if dates:
+        result = earliest_date(dates)
+        if result:
+            json['earliest_date'] = result

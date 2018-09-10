@@ -45,15 +45,16 @@ from invenio_records.signals import (
 )
 
 from inspire_dojson.utils import get_recid_from_ref
-from inspire_utils.date import earliest_date
 from inspire_utils.helpers import force_list
 from inspire_utils.name import generate_name_variations
 from inspire_utils.record import get_value
+
 from inspirehep.modules.authors.utils import phonetic_blocks
 from inspirehep.modules.orcid.utils import (
     get_push_access_tokens,
     get_orcids_for_push,
 )
+from inspirehep.modules.records.utils import populate_earliest_date
 
 
 def is_author(record):
@@ -388,29 +389,6 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
             'input': input_values,
         },
     })
-
-
-def populate_earliest_date(json, *args, **kwargs):
-    """Populate the ``earliest_date`` field of Literature records."""
-    if not is_hep(json):
-        return
-
-    date_paths = [
-        'preprint_date',
-        'thesis_info.date',
-        'thesis_info.defense_date',
-        'publication_info.year',
-        'legacy_creation_date',
-        'imprints.date',
-    ]
-
-    dates = [str(el) for el in chain.from_iterable(
-        [force_list(get_value(json, path)) for path in date_paths])]
-
-    if dates:
-        result = earliest_date(dates)
-        if result:
-            json['earliest_date'] = result
 
 
 def populate_experiment_suggest(sender, json, *args, **kwargs):
