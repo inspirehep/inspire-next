@@ -25,8 +25,13 @@
 from __future__ import absolute_import, division, print_function
 
 from itertools import chain
+from unicodedata import normalize
 
+import six
+
+from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.date import earliest_date
+from inspire_utils.name import generate_name_variations
 from inspire_utils.record import get_value
 from inspire_utils.helpers import force_list
 from inspirehep.modules.pidstore.utils import (
@@ -58,6 +63,10 @@ def is_experiment(record):
 
 def is_journal(record):
     return 'journals.json' in record.get('$schema')
+
+
+def is_book(record):
+    return 'book' in record.get('document_type', [])
 
 
 def get_endpoint_from_record(record):
@@ -126,3 +135,249 @@ def populate_earliest_date(json, *args, **kwargs):
         result = earliest_date(dates)
         if result:
             json['earliest_date'] = result
+
+
+def populate_citations_count(sender, json, record, *args, **kwargs):
+    """Populate citations_count in ES from"""
+
+    if hasattr(record, 'get_citations_count'):
+        # Make sure that record has method get_citations_count
+        citation_count = record.get_citations_count()
+        json.update({'citation_count': citation_count})
+
+
+def populate_bookautocomplete(sender, json, *args, **kwargs):
+    """Populate the ```bookautocomplete`` field of Literature records."""
+    paths = [
+        'imprints.date',
+        'imprints.publisher',
+        'isbns.value',
+    ]
+
+    authors = force_list(get_value(json, 'authors.full_name', default=[]))
+    titles = force_list(get_value(json, 'titles.title', default=[]))
+
+    input_values = list(chain.from_iterable(
+        force_list(get_value(json, path, default=[])) for path in paths))
+    input_values.extend(authors)
+    input_values.extend(titles)
+    input_values = [el for el in input_values if el]
+
+    json.update({
+        'bookautocomplete': {
+            'input': input_values,
+        },
+    })
+
+
+def populate_inspire_document_type(sender, json, *args, **kwargs):
+    """Populate the ``facet_inspire_doc_type`` field of Literature records."""
+    result = []
+
+    result.extend(json.get('document_type', []))
+    result.extend(json.get('publication_type', []))
+    if 'refereed' in json and json['refereed']:
+        result.append('peer reviewed')
+
+    json['facet_inspire_doc_type'] = result
+
+
+def populate_recid_from_ref(sender, json, *args, **kwargs):
+    """Extract recids from all JSON reference fields and add them to ES.
+
+    For every field that has as a value a JSON reference, adds a sibling
+    after extracting the record identifier. Siblings are named by removing
+    ``record`` occurrences and appending ``_recid`` without doubling or
+    prepending underscores to the original name.
+
+    Example::
+
+        {'record': {'$ref': 'http://x/y/2}}
+
+    is transformed to::
+
+        {
+            'recid': 2,
+            'record': {'$ref': 'http://x/y/2},
+        }
+
+    For every list of object references adds a new list with the
+    corresponding recids, whose name is similarly computed.
+
+    Example::
+
+        {
+            'records': [
+                {'$ref': 'http://x/y/1'},
+                {'$ref': 'http://x/y/2'},
+            ],
+        }
+
+    is transformed to::
+
+        {
+            'recids': [1, 2],
+            'records': [
+                {'$ref': 'http://x/y/1'},
+                {'$ref': 'http://x/y/2'},
+            ],
+        }
+
+    """
+    list_ref_fields_translations = {
+        'deleted_records': 'deleted_recids'
+    }
+
+    def _recursive_find_refs(json_root):
+        if isinstance(json_root, list):
+            items = enumerate(json_root)
+        elif isinstance(json_root, dict):
+            # Note that items have to be generated before altering the dict.
+            # In this case, iteritems might break during iteration.
+            items = json_root.items()
+        else:
+            items = []
+
+        for key, value in items:
+            if (isinstance(json_root, dict) and isinstance(value, dict) and '$ref' in value):
+                # Append '_recid' and remove 'record' from the key name.
+                key_basename = key.replace('record', '').rstrip('_')
+                new_key = '{}_recid'.format(key_basename).lstrip('_')
+                json_root[new_key] = get_recid_from_ref(value)
+            elif (isinstance(json_root, dict) and isinstance(value, list) and
+                  key in list_ref_fields_translations):
+                new_list = [get_recid_from_ref(v) for v in value]
+                new_key = list_ref_fields_translations[key]
+                json_root[new_key] = new_list
+            else:
+                _recursive_find_refs(value)
+
+    _recursive_find_refs(json)
+
+
+def populate_abstract_source_suggest(sender, json, *args, **kwargs):
+    """Populate the ``abstract_source_suggest`` field in Literature records."""
+    abstracts = json.get('abstracts', [])
+
+    for abstract in abstracts:
+        source = abstract.get('source')
+        if source:
+            abstract.update({
+                'abstract_source_suggest': {
+                    'input': source,
+                },
+            })
+
+
+def populate_title_suggest(sender, json, *args, **kwargs):
+    """Populate the ``title_suggest`` field of Journals records."""
+    journal_title = get_value(json, 'journal_title.title', default='')
+    short_title = json.get('short_title', '')
+    title_variants = json.get('title_variants', [])
+
+    input_values = []
+    input_values.append(journal_title)
+    input_values.append(short_title)
+    input_values.extend(title_variants)
+    input_values = [el for el in input_values if el]
+
+    json.update({
+        'title_suggest': {
+            'input': input_values,
+        }
+    })
+
+
+def populate_affiliation_suggest(sender, json, *args, **kwargs):
+    """Populate the ``affiliation_suggest`` field of Institution records."""
+    ICN = json.get('ICN', [])
+    institution_acronyms = get_value(json, 'institution_hierarchy.acronym', default=[])
+    institution_names = get_value(json, 'institution_hierarchy.name', default=[])
+    legacy_ICN = json.get('legacy_ICN', '')
+    name_variants = force_list(get_value(json, 'name_variants.value', default=[]))
+    postal_codes = force_list(get_value(json, 'addresses.postal_code', default=[]))
+
+    input_values = []
+    input_values.extend(ICN)
+    input_values.extend(institution_acronyms)
+    input_values.extend(institution_names)
+    input_values.append(legacy_ICN)
+    input_values.extend(name_variants)
+    input_values.extend(postal_codes)
+    input_values = [el for el in input_values if el]
+
+    json.update({
+        'affiliation_suggest': {
+            'input': input_values,
+        },
+    })
+
+
+def populate_experiment_suggest(sender, json, *args, **kwargs):
+    """Populates experiment_suggest field of experiment records."""
+
+    experiment_paths = [
+        'accelerator.value',
+        'collaboration.value',
+        'experiment.short_name',
+        'experiment.value',
+        'institutions.value',
+        'legacy_name',
+        'long_name',
+        'name_variants',
+    ]
+
+    input_values = [el for el in chain.from_iterable(
+        [force_list(get_value(json, path)) for path in experiment_paths]) if el]
+
+    json.update({
+        'experiment_suggest': {
+            'input': input_values,
+        },
+    })
+
+
+def populate_name_variations(sender, json, *args, **kwargs):
+    """Generate name variations for each signature of a Literature record."""
+    authors = json.get('authors', [])
+
+    for author in authors:
+        full_name = author.get('full_name')
+        if full_name:
+            name_variations = generate_name_variations(full_name)
+
+            author.update({'name_variations': name_variations})
+            author.update({'name_suggest': {
+                'input': [variation for variation in name_variations if variation],
+            }})
+
+
+def populate_authors_name_variations(sender, json, *args, **kwargs):
+    """Generate name variations for an Author record."""
+    author_name = get_value(json, 'name.value')
+
+    if author_name:
+        name_variations = generate_name_variations(author_name)
+        json.update({'name_variations': name_variations})
+
+
+def populate_author_count(sender, json, *args, **kwargs):
+    """Populate the ``author_count`` field of Literature records."""
+    authors = json.get('authors', [])
+
+    authors_excluding_supervisors = [
+        author for author in authors
+        if 'supervisor' not in author.get('inspire_roles', [])
+    ]
+    json['author_count'] = len(authors_excluding_supervisors)
+
+
+def populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs):
+    """Populate the ``authors.full_name_normalized`` field of Literature records."""
+    authors = json.get('authors', [])
+
+    for index, author in enumerate(authors):
+        full_name = six.text_type(author['full_name'])
+        json['authors'][index].update({
+            'full_name_unicode_normalized': normalize('NFKC', full_name).lower()
+        })
