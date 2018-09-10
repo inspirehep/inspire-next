@@ -36,6 +36,30 @@ from inspirehep.modules.pidstore.utils import (
 from inspirehep.utils.record_getter import get_db_records
 
 
+def is_author(record):
+    return 'authors.json' in record.get('$schema')
+
+
+def is_hep(record):
+    return 'hep.json' in record.get('$schema')
+
+
+def is_data(record):
+    return 'data.json' in record.get('$schema')
+
+
+def is_institution(record):
+    return 'institutions.json' in record.get('$schema')
+
+
+def is_experiment(record):
+    return 'experiments.json' in record.get('$schema')
+
+
+def is_journal(record):
+    return 'journals.json' in record.get('$schema')
+
+
 def get_endpoint_from_record(record):
     """Return the endpoint corresponding to a record."""
     pid_type = get_pid_type_from_schema(record['$schema'])

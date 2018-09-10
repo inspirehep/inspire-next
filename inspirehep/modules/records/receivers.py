@@ -54,19 +54,15 @@ from inspirehep.modules.orcid.utils import (
     get_push_access_tokens,
     get_orcids_for_push,
 )
-from inspirehep.modules.records.utils import populate_earliest_date
-
-
-def is_author(record):
-    return 'authors.json' in record.get('$schema')
-
-
-def is_hep(record):
-    return 'hep.json' in record.get('$schema')
-
-
-def is_data(record):
-    return 'data.json' in record.get('$schema')
+from inspirehep.modules.records.utils import (
+    is_author,
+    is_data,
+    is_experiment,
+    is_hep,
+    is_institution,
+    is_journal,
+    populate_earliest_date,
+)
 
 
 #
@@ -183,24 +179,37 @@ def enhance_after_index(sender, json, *args, **kwargs):
 
     """
     populate_recid_from_ref(sender, json, *args, **kwargs)
-    populate_bookautocomplete(sender, json, *args, **kwargs)
-    populate_abstract_source_suggest(sender, json, *args, **kwargs)
-    populate_affiliation_suggest(sender, json, *args, **kwargs)
-    populate_author_count(sender, json, *args, **kwargs)
-    populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs)
-    populate_earliest_date(json, *args, **kwargs)
-    populate_experiment_suggest(sender, json, *args, **kwargs)
-    populate_inspire_document_type(sender, json, *args, **kwargs)
-    populate_authors_name_variations(sender, json, *args, **kwargs)
-    populate_name_variations(sender, json, *args, **kwargs)
-    populate_title_suggest(sender, json, *args, **kwargs)
-    populate_citations_count(sender, json, *args, **kwargs)
+
+    if is_hep(json):
+        populate_bookautocomplete(sender, json, *args, **kwargs)
+        populate_abstract_source_suggest(sender, json, *args, **kwargs)
+        populate_earliest_date(json, *args, **kwargs)
+        populate_author_count(sender, json, *args, **kwargs)
+        populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs)
+        populate_inspire_document_type(sender, json, *args, **kwargs)
+        populate_name_variations(sender, json, *args, **kwargs)
+        populate_citations_count(sender, json, *args, **kwargs)
+
+    elif is_author(json):
+        populate_authors_name_variations(sender, json, *args, **kwargs)
+
+    elif is_institution(json):
+        populate_affiliation_suggest(sender, json, *args, **kwargs)
+
+    elif is_experiment(json):
+        populate_experiment_suggest(sender, json, *args, **kwargs)
+
+    elif is_journal(json):
+        populate_title_suggest(sender, json, *args, **kwargs)
+
+    elif is_data(json):
+        populate_citations_count(sender, json, *args, **kwargs)
 
 
 def populate_citations_count(sender, json, record, *args, **kwargs):
     """Populate citations_count in ES from"""
 
-    if (is_hep(json) or is_data(json)) and hasattr(record, 'get_citations_count'):
+    if hasattr(record, 'get_citations_count'):
         # Make sure that record has method get_citations_count
         citation_count = record.get_citations_count()
         json.update({'citation_count': citation_count})
@@ -208,9 +217,6 @@ def populate_citations_count(sender, json, record, *args, **kwargs):
 
 def populate_bookautocomplete(sender, json, *args, **kwargs):
     """Populate the ```bookautocomplete`` field of Literature records."""
-    if not is_hep(json):
-        return
-
     if 'book' not in json.get('document_type', []):
         return
 
@@ -238,9 +244,6 @@ def populate_bookautocomplete(sender, json, *args, **kwargs):
 
 def populate_inspire_document_type(sender, json, *args, **kwargs):
     """Populate the ``facet_inspire_doc_type`` field of Literature records."""
-    if not is_hep(json):
-        return
-
     result = []
 
     result.extend(json.get('document_type', []))
@@ -326,9 +329,6 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
 
 def populate_abstract_source_suggest(sender, json, *args, **kwargs):
     """Populate the ``abstract_source_suggest`` field in Literature records."""
-    if not is_hep(json):
-        return
-
     abstracts = json.get('abstracts', [])
 
     for abstract in abstracts:
@@ -343,9 +343,6 @@ def populate_abstract_source_suggest(sender, json, *args, **kwargs):
 
 def populate_title_suggest(sender, json, *args, **kwargs):
     """Populate the ``title_suggest`` field of Journals records."""
-    if 'journals.json' not in json.get('$schema'):
-        return
-
     journal_title = get_value(json, 'journal_title.title', default='')
     short_title = json.get('short_title', '')
     title_variants = json.get('title_variants', [])
@@ -365,9 +362,6 @@ def populate_title_suggest(sender, json, *args, **kwargs):
 
 def populate_affiliation_suggest(sender, json, *args, **kwargs):
     """Populate the ``affiliation_suggest`` field of Institution records."""
-    if 'institutions.json' not in json.get('$schema'):
-        return
-
     ICN = json.get('ICN', [])
     institution_acronyms = get_value(json, 'institution_hierarchy.acronym', default=[])
     institution_names = get_value(json, 'institution_hierarchy.name', default=[])
@@ -394,9 +388,6 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
 def populate_experiment_suggest(sender, json, *args, **kwargs):
     """Populates experiment_suggest field of experiment records."""
 
-    if 'experiments.json' not in json.get('$schema'):
-        return
-
     experiment_paths = [
         'accelerator.value',
         'collaboration.value',
@@ -420,9 +411,6 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
 
 def populate_name_variations(sender, json, *args, **kwargs):
     """Generate name variations for each signature of a Literature record."""
-    if not is_hep(json):
-        return
-
     authors = json.get('authors', [])
 
     for author in authors:
@@ -438,9 +426,6 @@ def populate_name_variations(sender, json, *args, **kwargs):
 
 def populate_authors_name_variations(sender, json, *args, **kwargs):
     """Generate name variations for an Author record."""
-    if not is_author(json):
-        return
-
     author_name = get_value(json, 'name.value')
 
     if author_name:
@@ -450,9 +435,6 @@ def populate_authors_name_variations(sender, json, *args, **kwargs):
 
 def populate_author_count(sender, json, *args, **kwargs):
     """Populate the ``author_count`` field of Literature records."""
-    if not is_hep(json):
-        return
-
     authors = json.get('authors', [])
 
     authors_excluding_supervisors = [
@@ -464,9 +446,6 @@ def populate_author_count(sender, json, *args, **kwargs):
 
 def populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs):
     """Populate the ``authors.full_name_normalized`` field of Literature records."""
-    if not is_hep(json):
-        return
-
     authors = json.get('authors', [])
 
     for index, author in enumerate(authors):
