@@ -310,7 +310,7 @@ class InspireRecord(Record):
         if stream is not None:
             self.files[key] = stream
 
-        builder = LiteratureBuilder(record=deepcopy(dict(self)))
+        builder = LiteratureBuilder(record=self.to_dict())
         metadata['key'] = key
         metadata['url'] = '/api/files/{bucket}/{key}'.format(
             bucket=self.files[key].bucket_id,
@@ -619,9 +619,19 @@ class InspireRecord(Record):
         return count
 
     def dumps(self):
+        """Returns a dict 'representation' of the record.
+
+        Note: this is not suitable to create a new record from it, as the
+              representation will include some extra fields that should not be
+              present in the record's json, see the 'to_dict' method instead.
+        """
         base_dict = super(InspireRecord, self).dumps()
         populate_earliest_date(base_dict)
         return base_dict
+
+    def to_dict(self):
+        """Gets a deep copy of the record's json."""
+        return deepcopy(dict(self))
 
 
 class ESRecord(InspireRecord):

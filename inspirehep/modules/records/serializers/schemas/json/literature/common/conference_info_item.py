@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from copy import deepcopy
-
 from marshmallow import Schema, pre_dump, fields
 
 from inspirehep.modules.records.utils import get_pid_from_record_uri
@@ -40,8 +38,8 @@ class ConferenceInfoItemSchemaV1(Schema):
         if conference_record is None:
             return {}
         _, recid = get_pid_from_record_uri(conference_record.get('$ref'))
-        conference = deepcopy(get_db_record('con', recid))
+        conference = get_db_record('con', recid)
         titles = conference.get('titles')
         if titles is None:
             return {}
-        return conference
+        return conference.to_dict()

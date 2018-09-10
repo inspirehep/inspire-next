@@ -29,7 +29,7 @@ def modify_record(pid_type, pid_value):
     """
     uuid = PersistentIdentifier.query.filter_by(pid_type=pid_type, pid_value=str(pid_value)).one().object_uuid
     record = InspireRecord.get_record(uuid)
-    data = deepcopy(record)
+    data = record.to_dict()
 
     yield data
 
