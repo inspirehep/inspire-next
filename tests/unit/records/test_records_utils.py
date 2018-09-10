@@ -177,14 +177,6 @@ def test_populate_earliest_date_from_imprints_date():
     assert expected == result
 
 
-def test_populate_earliest_date_does_nothing_if_record_is_not_literature():
-    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
-
-    populate_earliest_date(record)
-
-    assert 'earliest_date' not in record
-
-
 def test_populate_authors_name_variations():
     schema = load_schema('authors')
 
@@ -195,7 +187,7 @@ def test_populate_authors_name_variations():
     }
     assert validate(record, schema) is None
 
-    populate_authors_name_variations(None, record)
+    populate_authors_name_variations(record)
 
     expected = generate_name_variations(record['name'].get('value'))
     result = record['name_variations']
@@ -221,7 +213,7 @@ def test_populate_authors_name_variations_does_nothing_if_other_schema():
     }
     assert validate(record, schema) is None
 
-    populate_authors_name_variations(None, record)
+    populate_authors_name_variations(record)
 
     assert 'name_variations' not in record
 
@@ -248,7 +240,7 @@ def test_populate_bookautocomplete_from_authors():
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_bookautocomplete(record)
 
     expected = {
         'input': [
@@ -282,7 +274,7 @@ def test_populate_bookautocomplete_from_titles():
     assert validate(record['self'], self_schema) is None
     assert validate(record['titles'], titles_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_bookautocomplete(record)
 
     expected = {
         'input': [
@@ -316,7 +308,7 @@ def test_populate_bookautocomplete_from_imprints_dates():
     assert validate(record['imprints'], imprints_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_bookautocomplete(record)
 
     expected = {
         'input': [
@@ -350,7 +342,7 @@ def test_populate_bookautocomplete_from_imprints_publishers():
     assert validate(record['imprints'], imprints_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_bookautocomplete(record)
 
     expected = {
         'input': [
@@ -384,7 +376,7 @@ def test_populate_bookautocomplete_from_isbns_values():
     assert validate(record['isbns'], isbns_schema) is None
     assert validate(record['self'], self_schema) is None
 
-    populate_bookautocomplete(None, record)
+    populate_bookautocomplete(record)
 
     expected = {
         'input': [
@@ -394,41 +386,6 @@ def test_populate_bookautocomplete_from_isbns_values():
     result = record['bookautocomplete']
 
     assert expected == result
-
-
-def test_populate_bookautocomplete_does_nothing_if_record_is_not_literature():
-    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
-
-    populate_bookautocomplete(None, record)
-
-    assert 'bookautocomplete' not in record
-
-
-def test_populate_bookautocomplete_does_nothing_if_record_is_not_a_book():
-    schema = load_schema('hep')
-    authors_schema = schema['properties']['authors']
-    document_type_schema = schema['properties']['document_type']
-    self_schema = schema['properties']['self']
-
-    record = {
-        '$schema': 'http://localhost:5000/records/schemas/hep.json',
-        'authors': [
-            {'full_name': 'Mohayai, Tanaz Angelina'},
-        ],
-        'document_type': [
-            'article',
-        ],
-        'self': {
-            '$ref': 'http://localhost:5000/api/literature/1520027',
-        }
-    }
-    assert validate(record['authors'], authors_schema) is None
-    assert validate(record['document_type'], document_type_schema) is None
-    assert validate(record['self'], self_schema) is None
-
-    populate_bookautocomplete(None, record)
-
-    assert 'bookautocomplete' not in record
 
 
 def test_populate_experiment_suggest():
@@ -475,7 +432,7 @@ def test_populate_experiment_suggest():
     assert validate(record['institutions'], institutions_schema) is None
     assert validate(record['experiment'], experiment_schema) is None
 
-    populate_experiment_suggest(None, record)
+    populate_experiment_suggest(record)
 
     expected = {
         'input': [
@@ -496,14 +453,6 @@ def test_populate_experiment_suggest():
     assert expected == result
 
 
-def test_populate_experiment_suggest_does_nothing_if_record_is_not_experiment():
-    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
-
-    populate_experiment_suggest(None, record)
-
-    assert 'experiment_suggest' not in record
-
-
 def test_populate_inspire_document_type_from_document_type():
     schema = load_schema('hep')
     subschema = schema['properties']['document_type']
@@ -514,7 +463,7 @@ def test_populate_inspire_document_type_from_document_type():
     }
     assert validate(record['document_type'], subschema) is None
 
-    populate_inspire_document_type(None, record)
+    populate_inspire_document_type(record)
 
     expected = [
         'thesis',
@@ -539,7 +488,7 @@ def test_populate_inspire_document_type_from_refereed():
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['refereed'], refereed_schema) is None
 
-    populate_inspire_document_type(None, record)
+    populate_inspire_document_type(record)
 
     expected = [
         'article',
@@ -567,7 +516,7 @@ def test_populate_inspire_document_type_from_publication_type():
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['publication_type'], publication_type_schema) is None
 
-    populate_inspire_document_type(None, record)
+    populate_inspire_document_type(record)
 
     expected = [
         'article',
@@ -576,14 +525,6 @@ def test_populate_inspire_document_type_from_publication_type():
     result = record['facet_inspire_doc_type']
 
     assert expected == result
-
-
-def test_populate_inspire_document_type_does_nothing_if_record_is_not_literature():
-    record = {'$schema': 'http://localhost:5000/schemas/records/other.json'}
-
-    populate_inspire_document_type(None, record)
-
-    assert 'facet_inspire_doc_type' not in record
 
 
 def test_populate_recid_from_ref():
@@ -595,7 +536,7 @@ def test_populate_recid_from_ref():
         'embedded_record': {'record': {'$ref': 'http://x/y/5'}}
     }
 
-    populate_recid_from_ref(None, json_dict)
+    populate_recid_from_ref(json_dict)
 
     assert json_dict['simple_key_recid'] == 1
     assert json_dict['key_with_recid'] == 2
@@ -612,7 +553,7 @@ def test_populate_recid_from_ref_handles_deleted_records():
         ],
     }
 
-    populate_recid_from_ref(None, json_dict)
+    populate_recid_from_ref(json_dict)
 
     assert json_dict['deleted_recids'] == [1, 2]
 
@@ -632,7 +573,7 @@ def test_populate_abstract_source_suggest():
     }
     assert validate(record['abstracts'], subschema) is None
 
-    populate_abstract_source_suggest(None, record)
+    populate_abstract_source_suggest(record)
 
     expected = [
         {
@@ -664,7 +605,7 @@ def test_populate_title_suggest_with_all_inputs():
     assert validate(record['short_title'], short_title_schema) is None
     assert validate(record['title_variants'], title_variants_schema) is None
 
-    populate_title_suggest(None, record)
+    populate_title_suggest(record)
 
     expected = {
         'input': [
@@ -692,7 +633,7 @@ def test_populate_affiliation_suggest_from_icn():
     }
     assert validate(record['ICN'], subschema) is None
 
-    populate_affiliation_suggest(None, record)
+    populate_affiliation_suggest(record)
 
     expected = {
         'input': [
@@ -718,7 +659,7 @@ def test_populate_affiliation_suggest_from_institution_hierarchy_acronym():
     }
     assert validate(record['institution_hierarchy'], subschema) is None
 
-    populate_affiliation_suggest(None, record)
+    populate_affiliation_suggest(record)
 
     expected = {
         'input': [
@@ -744,7 +685,7 @@ def test_populate_affiliation_suggest_from_institution_hierarchy_name():
     }
     assert validate(record['legacy_ICN'], subschema) is None
 
-    populate_affiliation_suggest(None, record)
+    populate_affiliation_suggest(record)
 
     expected = {
         'input': [
@@ -767,7 +708,7 @@ def test_populate_affiliation_suggest_from_legacy_icn():
     }
     assert validate(record['legacy_ICN'], subschema) is None
 
-    populate_affiliation_suggest(None, record)
+    populate_affiliation_suggest(record)
 
     expected = {
         'input': [
@@ -792,7 +733,7 @@ def test_populate_affiliation_suggest_from_name_variants():
     }
     assert validate(record['name_variants'], subschema) is None
 
-    populate_affiliation_suggest(None, record)
+    populate_affiliation_suggest(record)
 
     expected = {
         'input': [
@@ -818,7 +759,7 @@ def test_populate_affiliation_suggest_from_postal_code():
     }
     assert validate(record['addresses'], subschema) is None
 
-    populate_affiliation_suggest(None, record)
+    populate_affiliation_suggest(record)
 
     expected = {
         'input': [
@@ -844,7 +785,7 @@ def test_populate_affiliation_suggest_to_ref():
     }
     assert validate(record['self'], subschema) is None
 
-    populate_affiliation_suggest(None, record)
+    populate_affiliation_suggest(record)
 
     expected = {
         'input': [
@@ -887,7 +828,7 @@ def test_populate_author_count():
     }
     assert validate(record['authors'], subschema) is None
 
-    populate_author_count(None, record)
+    populate_author_count(record)
 
     assert record['author_count'] == 2
 
@@ -909,7 +850,7 @@ def test_populate_authors_full_name_unicode_normalized():
     }
     assert validate(record['authors'], subschema) is None
 
-    populate_authors_full_name_unicode_normalized(None, record)
+    populate_authors_full_name_unicode_normalized(record)
 
     expected = [
         {

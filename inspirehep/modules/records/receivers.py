@@ -168,31 +168,31 @@ def enhance_after_index(sender, json, *args, **kwargs):
        would be expanded to an incorrect ``_source_recid`` by the former.
 
     """
-    populate_recid_from_ref(sender, json, *args, **kwargs)
+    populate_recid_from_ref(json)
 
     if is_hep(json):
-        populate_abstract_source_suggest(sender, json, *args, **kwargs)
-        populate_earliest_date(json, *args, **kwargs)
-        populate_author_count(sender, json, *args, **kwargs)
-        populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs)
-        populate_inspire_document_type(sender, json, *args, **kwargs)
-        populate_name_variations(sender, json, *args, **kwargs)
-        populate_citations_count(sender, json, *args, **kwargs)
+        populate_abstract_source_suggest(json)
+        populate_earliest_date(json)
+        populate_author_count(json)
+        populate_authors_full_name_unicode_normalized(json)
+        populate_inspire_document_type(json)
+        populate_name_variations(json)
+        populate_citations_count(sender, json)
 
     elif is_author(json):
-        populate_authors_name_variations(sender, json, *args, **kwargs)
+        populate_authors_name_variations(json)
 
     elif is_book(json):
-        populate_bookautocomplete(sender, json, *args, **kwargs)
+        populate_bookautocomplete(json)
 
     elif is_institution(json):
-        populate_affiliation_suggest(sender, json, *args, **kwargs)
+        populate_affiliation_suggest(json)
 
     elif is_experiment(json):
-        populate_experiment_suggest(sender, json, *args, **kwargs)
+        populate_experiment_suggest(json)
 
     elif is_journal(json):
-        populate_title_suggest(sender, json, *args, **kwargs)
+        populate_title_suggest(json)
 
     elif is_data(json):
-        populate_citations_count(sender, json, *args, **kwargs)
+        populate_citations_count(sender, json)

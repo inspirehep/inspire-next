@@ -114,7 +114,7 @@ def get_linked_records_in_field(record, field_path):
     return get_db_records(pids)
 
 
-def populate_earliest_date(json, *args, **kwargs):
+def populate_earliest_date(json):
     """Populate the ``earliest_date`` field of Literature records."""
     date_paths = [
         'preprint_date',
@@ -137,7 +137,7 @@ def populate_earliest_date(json, *args, **kwargs):
             json['earliest_date'] = result
 
 
-def populate_citations_count(sender, json, record, *args, **kwargs):
+def populate_citations_count(json, record):
     """Populate citations_count in ES from"""
 
     if hasattr(record, 'get_citations_count'):
@@ -146,7 +146,7 @@ def populate_citations_count(sender, json, record, *args, **kwargs):
         json.update({'citation_count': citation_count})
 
 
-def populate_bookautocomplete(sender, json, *args, **kwargs):
+def populate_bookautocomplete(json):
     """Populate the ```bookautocomplete`` field of Literature records."""
     paths = [
         'imprints.date',
@@ -170,7 +170,7 @@ def populate_bookautocomplete(sender, json, *args, **kwargs):
     })
 
 
-def populate_inspire_document_type(sender, json, *args, **kwargs):
+def populate_inspire_document_type(json):
     """Populate the ``facet_inspire_doc_type`` field of Literature records."""
     result = []
 
@@ -182,7 +182,7 @@ def populate_inspire_document_type(sender, json, *args, **kwargs):
     json['facet_inspire_doc_type'] = result
 
 
-def populate_recid_from_ref(sender, json, *args, **kwargs):
+def populate_recid_from_ref(json):
     """Extract recids from all JSON reference fields and add them to ES.
 
     For every field that has as a value a JSON reference, adds a sibling
@@ -255,7 +255,7 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
     _recursive_find_refs(json)
 
 
-def populate_abstract_source_suggest(sender, json, *args, **kwargs):
+def populate_abstract_source_suggest(json):
     """Populate the ``abstract_source_suggest`` field in Literature records."""
     abstracts = json.get('abstracts', [])
 
@@ -269,7 +269,7 @@ def populate_abstract_source_suggest(sender, json, *args, **kwargs):
             })
 
 
-def populate_title_suggest(sender, json, *args, **kwargs):
+def populate_title_suggest(json):
     """Populate the ``title_suggest`` field of Journals records."""
     journal_title = get_value(json, 'journal_title.title', default='')
     short_title = json.get('short_title', '')
@@ -288,7 +288,7 @@ def populate_title_suggest(sender, json, *args, **kwargs):
     })
 
 
-def populate_affiliation_suggest(sender, json, *args, **kwargs):
+def populate_affiliation_suggest(json):
     """Populate the ``affiliation_suggest`` field of Institution records."""
     ICN = json.get('ICN', [])
     institution_acronyms = get_value(json, 'institution_hierarchy.acronym', default=[])
@@ -313,7 +313,7 @@ def populate_affiliation_suggest(sender, json, *args, **kwargs):
     })
 
 
-def populate_experiment_suggest(sender, json, *args, **kwargs):
+def populate_experiment_suggest(json):
     """Populates experiment_suggest field of experiment records."""
 
     experiment_paths = [
@@ -337,7 +337,7 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
     })
 
 
-def populate_name_variations(sender, json, *args, **kwargs):
+def populate_name_variations(json):
     """Generate name variations for each signature of a Literature record."""
     authors = json.get('authors', [])
 
@@ -352,7 +352,7 @@ def populate_name_variations(sender, json, *args, **kwargs):
             }})
 
 
-def populate_authors_name_variations(sender, json, *args, **kwargs):
+def populate_authors_name_variations(json):
     """Generate name variations for an Author record."""
     author_name = get_value(json, 'name.value')
 
@@ -361,7 +361,7 @@ def populate_authors_name_variations(sender, json, *args, **kwargs):
         json.update({'name_variations': name_variations})
 
 
-def populate_author_count(sender, json, *args, **kwargs):
+def populate_author_count(json):
     """Populate the ``author_count`` field of Literature records."""
     authors = json.get('authors', [])
 
@@ -372,7 +372,7 @@ def populate_author_count(sender, json, *args, **kwargs):
     json['author_count'] = len(authors_excluding_supervisors)
 
 
-def populate_authors_full_name_unicode_normalized(sender, json, *args, **kwargs):
+def populate_authors_full_name_unicode_normalized(json):
     """Populate the ``authors.full_name_normalized`` field of Literature records."""
     authors = json.get('authors', [])
 
