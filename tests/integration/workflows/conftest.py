@@ -43,6 +43,12 @@ from inspirehep.modules.records.api import InspireRecord
 # See: http://stackoverflow.com/a/33515264/374865
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
 
+
+from factories.db.invenio_records import (
+    cleanup as invenio_records_factory_cleanup,
+)  # noqa
+
+
 HIGGS_ONTOLOGY = '''<?xml version="1.0" encoding="UTF-8" ?>
 
 <rdf:RDF xmlns="http://www.w3.org/2004/02/skos/core#"
@@ -145,6 +151,7 @@ def cleanup_workflows(workflow_app):
     db.session.close_all()
     drop_all(app=workflow_app)
     create_all(app=workflow_app)
+    invenio_records_factory_cleanup()
 
 
 @pytest.fixture

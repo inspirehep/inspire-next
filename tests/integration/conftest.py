@@ -48,6 +48,11 @@ from inspirehep.modules.fixtures.users import init_users_and_permissions
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
 
 
+from factories.db.invenio_records import (
+    cleanup as invenio_records_factory_cleanup,
+)  # noqa
+
+
 @pytest.fixture(scope='session')
 def app():
     """
@@ -141,6 +146,7 @@ def isolated_app(app):
     transaction.rollback()
     connection.close()
     db.session = original_session
+    invenio_records_factory_cleanup()
 
 
 # TODO: all fixtures using ``app`` must be replaced by ones that use ``isolated_app``.

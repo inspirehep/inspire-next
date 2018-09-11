@@ -37,6 +37,28 @@ from .base import TestBaseModel, generate_random_string
 from .invenio_pidstore import TestPersistentIdentifier
 
 
+USED_RECIDS = {}
+MAX_ES_INT = 2147483647
+
+
+def get_next_free_recid():
+    next_recid_candidate = random.randint(1, MAX_ES_INT)
+    while next_recid_candidate in USED_RECIDS:
+        next_recid_candidate = random.randint(1, MAX_ES_INT)
+
+    reserve_recid(next_recid_candidate)
+    return next_recid_candidate
+
+
+def reserve_recid(recid):
+    USED_RECIDS[recid] = True
+
+
+def cleanup():
+    global USED_RECIDS
+    USED_RECIDS = {}
+
+
 class TestRecordMetadata(TestBaseModel):
     """Create Record instance.
 
@@ -78,7 +100,9 @@ class TestRecordMetadata(TestBaseModel):
                 ]
             })
         if 'control_number' not in json_:
-            json_['control_number'] = random.randint(1, 9) * 5
+            json_['control_number'] = get_next_free_recid()
+        else:
+            reserve_recid(json_['control_number'])
 
         updated_kwargs['json'] = json_
 
