@@ -30,6 +30,7 @@ from invenio_records_rest.serializers.json import JSONSerializer
 from .json_literature import (
     LiteratureCitationsJSONSerializer,
     LiteratureJSONUISerializer,
+    FacetsJSONUISerializer
 )
 from .pybtex_serializer_base import PybtexSerializerBase
 from .writers import BibtexWriter
@@ -41,7 +42,7 @@ from .schemas.json import (
     CitationItemSchemaV1,
 )
 from .marcxml import MARCXMLSerializer
-from .response import record_responsify_nocache
+from .response import record_responsify_nocache, facets_responsify
 
 json_literature_ui_v1 = LiteratureJSONUISerializer(
     LiteratureRecordSchemaJSONUIV1
@@ -50,6 +51,7 @@ json_literature_ui_v1_search = search_responsify(
     json_literature_ui_v1,
     'application/vnd+inspire.literature.ui+json'
 )
+
 json_literature_ui_v1_response = record_responsify_nocache(
     json_literature_ui_v1,
     'application/vnd+inspire.literature.ui+json'
@@ -87,11 +89,22 @@ json_literature_authors_v1_response = record_responsify_nocache(
     'application/json',
 )
 
+json_aggregations_ui_v1 = FacetsJSONUISerializer(
+    json_literature_ui_v1
+)
+
+json_literature_search_aggregations_ui_v1 = facets_responsify(
+    json_aggregations_ui_v1,
+    'application/json',
+)
+
 bibtex_v1 = PybtexSerializerBase(PybtexSchema(), BibtexWriter())
 marcxml_v1 = MARCXMLSerializer()
 
-bibtex_v1_response = record_responsify_nocache(bibtex_v1, 'application/x-bibtex')
-marcxml_v1_response = record_responsify_nocache(marcxml_v1, 'application/marcxml+xml')
+bibtex_v1_response = record_responsify_nocache(bibtex_v1,
+                                               'application/x-bibtex')
+marcxml_v1_response = record_responsify_nocache(marcxml_v1,
+                                                'application/marcxml+xml')
 
 bibtex_v1_search = search_responsify(bibtex_v1, 'application/x-bibtex')
 marcxml_v1_search = search_responsify(marcxml_v1, 'application/marcxml+xml')

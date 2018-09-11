@@ -74,7 +74,8 @@ def _preprocess_result(result, original_record=None):
     if original_record is not None:
         # If it is an db object then get citations from db
         # Otherwise if it is from ES it has citations already in json
-        result['metadata']['citation_count'] = get_citations_count(original_record)
+        result['metadata']['citation_count'] = get_citations_count(
+            original_record)
     record = result['metadata']
     ui_metadata = _get_ui_metadata(record)
     # FIXME: Deprecated, must be removed once the new UI is released
@@ -118,4 +119,15 @@ class LiteratureCitationsJSONSerializer(JSONSerializer):
                     'citation_count': data['citation_count']
                 },
             }, **self._format_args()
+        )
+
+
+class FacetsJSONUISerializer(JSONSerializer):
+    """JSON brief format serializer."""
+
+    def serialize_facets(self, query_results, **kwargs):
+        return json.dumps(
+            {
+                'aggregations': query_results.aggregations.to_dict()
+            }
         )

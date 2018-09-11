@@ -31,8 +31,10 @@ from flask import current_app, request
 from invenio_records_rest.errors import InvalidQueryRESTError
 from invenio_records_rest.facets import default_facets_factory
 from invenio_records_rest.sorter import default_sorter_factory
+from werkzeug.datastructures import MultiDict
 
 from inspirehep.modules.search import IQ
+from inspirehep.modules.search.api import LiteratureSearch
 
 
 def select_source(search, search_index):
@@ -84,11 +86,38 @@ def inspire_search_factory(self, search):
         raise InvalidQueryRESTError()
 
     search_index = search._index[0]
-    search, urlkwargs = default_facets_factory(search, search_index)
     search, sortkwargs = default_sorter_factory(search, search_index)
     search = select_source(search, search_index)
-    for key, value in sortkwargs.items():
-        urlkwargs.add(key, value)
+    if current_app.debug:
+        current_app.logger.debug(
+            json.dumps(search.to_dict(), indent=4)
+        )
+    urlkwargs = MultiDict()
+    return search, urlkwargs
+
+
+def inspire_facets_factory(query_string):
+    """Parse query using Inspire-Query-Parser and prepare facets for it
+    Args:
+        self: REST view.
+        search: Elastic search DSL search instance.
+
+    Returns: Tuple with search instance and URL arguments.
+
+    """
+    search = LiteratureSearch()
+    try:
+        search = search.query(IQ(query_string, None))
+    except SyntaxError:
+        current_app.logger.debug(
+            "Failed parsing query: {0}".format(
+                request.values.get('q', '')),
+            exc_info=True)
+        raise InvalidQueryRESTError()
+
+    search_index = search._index[0]
+    search, urlkwargs = default_facets_factory(search, search_index)
+    search = select_source(search, search_index)
 
     urlkwargs.add('q', query_string)
     if current_app.debug:
