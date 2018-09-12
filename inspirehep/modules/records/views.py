@@ -29,7 +29,9 @@ from inspirehep.modules.records.api import InspireRecord
 from invenio_rest.views import ContentNegotiatedMethodView
 from invenio_records_rest.views import pass_record
 
-from .serializers import json_literature_citations_v1_response
+from inspirehep.modules.search.search_factory import inspire_facets_factory
+from .serializers import json_literature_citations_v1_response, \
+    json_literature_search_aggregations_ui_v1
 
 blueprint = Blueprint(
     'inspirehep_records',
@@ -39,7 +41,6 @@ blueprint = Blueprint(
 
 
 class LiteratureCitationsResource(ContentNegotiatedMethodView):
-
     view_name = 'literature_citations'
 
     def __init__(self, **kwargs):
@@ -64,7 +65,8 @@ class LiteratureCitationsResource(ContentNegotiatedMethodView):
         citing_records_results = record.get_citing_records_query.paginate(
             page, size, False)
         citing_records_count = citing_records_results.total
-        citing_records_uuids = [result[0] for result in citing_records_results.items]
+        citing_records_uuids = [result[0] for result in
+                                citing_records_results.items]
         citing_records = InspireRecord.get_records(citing_records_uuids)
         data = {'citations': citing_records,
                 'citation_count': citing_records_count}
@@ -78,4 +80,36 @@ literature_citations_view = LiteratureCitationsResource.as_view(
 blueprint.add_url_rule(
     '/<pid(lit,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citations',
     view_func=literature_citations_view
+)
+
+
+class Facets(ContentNegotiatedMethodView):
+    view_name = 'literature_facets'
+
+    def __init__(self, **kwargs):
+        super(Facets, self).__init__(
+            serializers={
+                'application/json': json_literature_search_aggregations_ui_v1
+            },
+            default_method_media_type={
+                'GET': 'application/json',
+            },
+            default_media_type='application/json',
+            **kwargs)
+
+    def get(self, *args, **kwargs):
+        q = request.values.get('q', '', type=str)
+        query, urlkwargs = inspire_facets_factory(q)
+        results = query.execute()
+
+        return json_literature_search_aggregations_ui_v1(0, results)
+
+
+facets_view = Facets.as_view(
+    Facets.view_name,
+)
+
+blueprint.add_url_rule(
+    '/facets',
+    view_func=facets_view
 )

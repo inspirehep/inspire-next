@@ -63,61 +63,322 @@ def test_search_falls_back_to_hep(app_client):
 def test_search_logs(current_app_mock, api_client):
     def _debug(log_output):
         query = {
-            u'sort': [{u'earliest_date': {u'order': u'desc'}}],
-            u'from': 0,
-            u'_source': {u'includes': [u'$schema', u'abstracts.value',
-                                       u'arxiv_eprints.value',
-                                       u'authors.affiliation',
-                                       u'authors.full_name',
-                                       u'authors.control_number',
-                                       u'collaborations',
-                                       u'control_number',
-                                       u'citation_count', u'dois.value',
-                                       u'earliest_date',
-                                       u'inspire_categories',
-                                       u'publication_info',
-                                       u'references.reference.title',
-                                       u'report_numbers',
-                                       u'titles.title']},
-            u'aggs': {
-                u'doc_type': {
-                    u'meta': {u'order': 6, u'title': u'Document Type'},
-                    u'terms': {
-                        u'field': u'facet_inspire_doc_type',
-                        u'size': 20}},
-                u'author': {
-                    u'meta': {u'order': 2, u'title': u'Author'},
-                    u'terms': {u'field': u'facet_author_name',
-                               u'size': 20}},
-                u'arxiv_categories': {
-                    u'meta': {u'order': 4, u'title': u'arXiv Category'},
-                    u'terms': {u'field': u'facet_arxiv_categories',
-                               u'size': 20}},
-                u'experiment': {
-                    u'meta': {u'order': 5, u'title': u'Experiment'},
-                    u'terms': {u'field': u'facet_experiment',
-                               u'size': 20}},
-                u'subject': {
-                    u'meta': {u'order': 3, u'title': u'Subject'},
-                    u'terms': {
-                        u'field': u'facet_inspire_categories',
-                        u'size': 20}}, u'earliest_date': {
-                    u'date_histogram': {
-                        u'field': u'earliest_date',
-                        u'interval': u'year',
-                        u'min_doc_count': 1,
-                        u'format': u'yyyy'},
-                    u'meta': {u'order': 1, u'title': u'Date'}}},
-            u'query': {
-                u'bool': {
-                    u'filter': [{u'bool': {u'must_not': [
-                        {u'match': {
-                            u'_collections': u'HERMES Internal Notes'}}],
-                        u'must': [{u'match': {
-                            u'_collections': u'Literature'}}]}}],
-                    u'minimum_should_match': u'0<1',
-                    u'must': [{u'match_all': {}}]}}, u'size': 10}
+            "sort": [
+                {
+                    "earliest_date": {
+                        "order": "desc"
+                    }
+                }
+            ],
+            "query": {
+                "bool": {
+                    "filter": [
+                        {
+                            "bool": {
+                                "must_not": [
+                                    {
+                                        "match": {
+                                            "_collections": "HERMES Internal Notes"
+                                        }
+                                    }
+                                ],
+                                "must": [
+                                    {
+                                        "match": {
+                                            "_collections": "Literature"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "minimum_should_match": "0<1",
+                    "must": [
+                        {
+                            "match_all": {}
+                        }
+                    ]
+                }
+            },
+            "_source": {
+                "includes": [
+                    "$schema",
+                    "abstracts.value",
+                    "arxiv_eprints.value",
+                    "authors.affiliation",
+                    "authors.full_name",
+                    "authors.control_number",
+                    "collaborations",
+                    "control_number",
+                    "citation_count",
+                    "dois.value",
+                    "earliest_date",
+                    "inspire_categories",
+                    "publication_info",
+                    "references.reference.title",
+                    "report_numbers",
+                    "titles.title"
+                ]
+            },
+            "from": 0,
+            "size": 10
+        }
         assert query == json.loads(log_output)
 
     current_app_mock.logger.debug.side_effect = _debug
     api_client.get('/literature/')
+
+
+@patch('inspirehep.modules.search.search_factory.current_app')
+def test_search_facets_logs(current_app_mock, api_client):
+    def _debug(log_output):
+        query = {
+            "query": {
+                "bool": {
+                    "filter": [
+                        {
+                            "bool": {
+                                "must_not": [
+                                    {
+                                        "match": {
+                                            "_collections": "HERMES Internal Notes"
+                                        }
+                                    }
+                                ],
+                                "must": [
+                                    {
+                                        "match": {
+                                            "_collections": "Literature"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "minimum_should_match": "0<1",
+                    "must": [
+                        {
+                            "match_all": {}
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "doc_type": {
+                    "meta": {
+                        "order": 6,
+                        "title": "Document Type"
+                    },
+                    "terms": {
+                        "field": "facet_inspire_doc_type",
+                        "size": 20
+                    }
+                },
+                "author": {
+                    "meta": {
+                        "order": 2,
+                        "title": "Author"
+                    },
+                    "terms": {
+                        "field": "facet_author_name",
+                        "size": 20
+                    }
+                },
+                "arxiv_categories": {
+                    "meta": {
+                        "order": 4,
+                        "title": "arXiv Category"
+                    },
+                    "terms": {
+                        "field": "facet_arxiv_categories",
+                        "size": 20
+                    }
+                },
+                "experiment": {
+                    "meta": {
+                        "order": 5,
+                        "title": "Experiment"
+                    },
+                    "terms": {
+                        "field": "facet_experiment",
+                        "size": 20
+                    }
+                },
+                "subject": {
+                    "meta": {
+                        "order": 3,
+                        "title": "Subject"
+                    },
+                    "terms": {
+                        "field": "facet_inspire_categories",
+                        "size": 20
+                    }
+                },
+                "earliest_date": {
+                    "date_histogram": {
+                        "field": "earliest_date",
+                        "interval": "year",
+                        "min_doc_count": 1,
+                        "format": "yyyy"
+                    },
+                    "meta": {
+                        "order": 1,
+                        "title": "Date"
+                    }
+                }
+            },
+            "_source": {
+                "includes": [
+                    "$schema",
+                    "abstracts.value",
+                    "arxiv_eprints.value",
+                    "authors.affiliation",
+                    "authors.full_name",
+                    "authors.control_number",
+                    "collaborations",
+                    "control_number",
+                    "citation_count",
+                    "dois.value",
+                    "earliest_date",
+                    "inspire_categories",
+                    "publication_info",
+                    "references.reference.title",
+                    "report_numbers",
+                    "titles.title"
+                ]
+            }
+        }
+        assert query == json.loads(log_output)
+
+    current_app_mock.logger.debug.side_effect = _debug
+    api_client.get('/literature/facets')
+
+
+@patch('inspirehep.modules.search.search_factory.current_app')
+def test_search_facets_logs_with_query(current_app_mock, api_client):
+    def _debug(log_output):
+        query = {
+            "query": {
+                "bool": {
+                    "filter": [
+                        {
+                            "bool": {
+                                "must_not": [
+                                    {
+                                        "match": {
+                                            "_collections": "HERMES Internal Notes"
+                                        }
+                                    }
+                                ],
+                                "must": [
+                                    {
+                                        "match": {
+                                            "_collections": "Literature"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "minimum_should_match": "0<1",
+                    "must": [
+                        {
+                            "match": {
+                                "_all": {
+                                    "operator": "and",
+                                    "query": "test query"
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggs": {
+                "doc_type": {
+                    "meta": {
+                        "order": 6,
+                        "title": "Document Type"
+                    },
+                    "terms": {
+                        "field": "facet_inspire_doc_type",
+                        "size": 20
+                    }
+                },
+                "author": {
+                    "meta": {
+                        "order": 2,
+                        "title": "Author"
+                    },
+                    "terms": {
+                        "field": "facet_author_name",
+                        "size": 20
+                    }
+                },
+                "arxiv_categories": {
+                    "meta": {
+                        "order": 4,
+                        "title": "arXiv Category"
+                    },
+                    "terms": {
+                        "field": "facet_arxiv_categories",
+                        "size": 20
+                    }
+                },
+                "experiment": {
+                    "meta": {
+                        "order": 5,
+                        "title": "Experiment"
+                    },
+                    "terms": {
+                        "field": "facet_experiment",
+                        "size": 20
+                    }
+                },
+                "subject": {
+                    "meta": {
+                        "order": 3,
+                        "title": "Subject"
+                    },
+                    "terms": {
+                        "field": "facet_inspire_categories",
+                        "size": 20
+                    }
+                },
+                "earliest_date": {
+                    "date_histogram": {
+                        "field": "earliest_date",
+                        "interval": "year",
+                        "min_doc_count": 1,
+                        "format": "yyyy"
+                    },
+                    "meta": {
+                        "order": 1,
+                        "title": "Date"
+                    }
+                }
+            },
+            "_source": {
+                "includes": [
+                    "$schema",
+                    "abstracts.value",
+                    "arxiv_eprints.value",
+                    "authors.affiliation",
+                    "authors.full_name",
+                    "authors.control_number",
+                    "collaborations",
+                    "control_number",
+                    "citation_count",
+                    "dois.value",
+                    "earliest_date",
+                    "inspire_categories",
+                    "publication_info",
+                    "references.reference.title",
+                    "report_numbers",
+                    "titles.title"
+                ]
+            }
+        }
+        assert query == json.loads(log_output)
+
+    current_app_mock.logger.debug.side_effect = _debug
+    api_client.get('/literature/facets?q=test query')
