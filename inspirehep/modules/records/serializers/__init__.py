@@ -89,12 +89,12 @@ json_literature_authors_v1_response = record_responsify_nocache(
     'application/json',
 )
 
-json_aggregations_ui_v1 = FacetsJSONUISerializer(
+json_literature_aggregations_ui_v1 = FacetsJSONUISerializer(
     json_literature_ui_v1
 )
 
 json_literature_search_aggregations_ui_v1 = facets_responsify(
-    json_aggregations_ui_v1,
+    json_literature_aggregations_ui_v1,
     'application/json',
 )
 
