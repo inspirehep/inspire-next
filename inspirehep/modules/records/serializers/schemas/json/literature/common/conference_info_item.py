@@ -38,8 +38,8 @@ class ConferenceInfoItemSchemaV1(Schema):
         if conference_record is None:
             return {}
         _, recid = get_pid_from_record_uri(conference_record.get('$ref'))
-        conference = get_db_record('con', recid).dumps()
+        conference = get_db_record('con', recid)
         titles = conference.get('titles')
         if titles is None:
             return {}
-        return conference
+        return conference.to_dict()
