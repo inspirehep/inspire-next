@@ -24,13 +24,12 @@ from __future__ import absolute_import, division, print_function
 
 import sys
 import os
-
+import mock
 import pytest
 import sqlalchemy
+
 from flask_alembic import Alembic
-
 from functools import partial
-
 from click.testing import CliRunner
 from flask import current_app
 from flask.cli import ScriptInfo
@@ -83,7 +82,9 @@ def app():
         TESTING=True,
     )
 
-    with app.app_context():
+    with app.app_context(), mock.patch(
+            'inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async'
+    ):
         # Celery task imports must be local, otherwise their
         # configuration would use the default pickle serializer.
         from inspirehep.modules.migrator.tasks import migrate_from_file
@@ -103,6 +104,7 @@ def app():
         init_users_and_permissions()
 
         migrate_from_file('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
+
         es.indices.refresh('records-hep')  # Makes sure that all HEP records were migrated.
 
         yield app

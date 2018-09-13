@@ -22,7 +22,7 @@
 
 web: gunicorn inspirehep.wsgi -c gunicorn.cfg
 cache: redis-server
-worker: celery worker -E -A inspirehep.celery --loglevel=INFO --workdir="${VIRTUAL_ENV}" --pidfile="${VIRTUAL_ENV}/worker.pid" --purge -Q celery,migrator,harvests,orcid_push
+worker: celery worker -E -A inspirehep.celery --loglevel=INFO --workdir="${VIRTUAL_ENV}" --pidfile="${VIRTUAL_ENV}/worker.pid" --purge -Q celery,migrator,harvests,orcid_push,bulk_index
 workermon: celery flower -A inspirehep.celery
 # beat: celery beat -A inspirehep.celery --loglevel=INFO --workdir="${VIRTUAL_ENV}" --pidfile="${VIRTUAL_ENV}/worker_beat.pid"
 # mathoid: node_modules/mathoid/server.js -c mathoid.config.yaml
