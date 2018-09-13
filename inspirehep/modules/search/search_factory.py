@@ -61,7 +61,7 @@ def select_source(search, search_index):
                                          "earliest_date",
                                          "inspire_categories",
                                          "publication_info",
-                                         "references.reference.title",
+                                         "references",
                                          "report_numbers",
                                          "titles.title"])
     return search
