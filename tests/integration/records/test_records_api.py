@@ -22,18 +22,23 @@
 
 from __future__ import absolute_import, division, print_function
 
+from copy import deepcopy
 import os
 
-from tempfile import NamedTemporaryFile
 import pytest
 
-from invenio_pidstore.models import PersistentIdentifier, RecordIdentifier
 from jsonschema import ValidationError
 from six.moves.urllib.parse import quote
+from tempfile import NamedTemporaryFile
+
+from invenio_db import db
+from invenio_pidstore.models import PersistentIdentifier, RecordIdentifier
 
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.record_getter import get_db_record
 from factories.db.invenio_records import TestRecordMetadata
+
+from utils import _delete_record
 
 
 def test_validate_validates_format(app):
@@ -180,3 +185,243 @@ def test_not_count_citations_from_other_collections(isolated_app):
     TestRecordMetadata.create_from_kwargs(json=ref)
 
     assert record_1.get_citations_count() == 1
+
+
+def test_get_modified_references_when_prev_version_has_zero(app):
+    json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': ['article'],
+        'titles': [{'title': 'Such a cool title'}],
+        '_collections': ['Literature'],
+    }
+
+    record = InspireRecord.create(json, skip_files=True)
+    record.commit()
+    db.session.commit()
+
+    metadata = record.to_dict()
+    metadata['references'] = [
+        {
+            'record': {'$ref': 'http://labs.inspirehep.net/api/literature/1234'},
+            'reference': {'arxiv_eprint': '1710.1234'}
+        },
+        {
+            'record': {'$ref': 'http://labs.inspirehep.net/api/literature/4321'},
+            'reference': {'arxiv_eprint': '1710.4321'}
+        }
+    ]
+
+    record = get_db_record('lit', record['control_number'])
+    record.clear()
+    record.update(metadata)
+    record.commit()
+    db.session.commit()
+
+    references_diff = record.get_modified_references()
+    expected = set([('lit', '1234'), ('lit', '4321')])
+
+    assert references_diff == expected
+
+    _delete_record('lit', record['control_number'])
+
+
+def test_get_modified_references_when_current_version_has_zero(app):
+    references = [
+        {
+            'record': {'$ref': 'http://labs.inspirehep.net/api/literature/1234'},
+            'reference': {'arxiv_eprint': '1710.1234'}
+        },
+        {
+            'record': {'$ref': 'http://labs.inspirehep.net/api/literature/4321'},
+            'reference': {'arxiv_eprint': '1710.4321'}
+        }
+    ]
+
+    json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': ['article'],
+        'titles': [{'title': 'Such a cool title'}],
+        '_collections': ['Literature'],
+        'references': references
+    }
+    record = InspireRecord.create(json)
+    record.commit()
+    db.session.commit()
+
+    metadata = deepcopy(dict(record))
+    del metadata['references']
+
+    record = get_db_record('lit', record['control_number'])
+    record.clear()
+    record.update(metadata)
+    record.commit()
+    db.session.commit()
+
+    references_diff = record.get_modified_references()
+    expected = set([('lit', '1234'), ('lit', '4321')])
+
+    assert references_diff == expected
+
+    _delete_record('lit', record['control_number'])
+
+
+def test_get_modified_references_when_adding_reference(app):
+    references = [
+        {
+            'record': {'$ref': 'http://labs.inspirehep.net/api/literature/1234'},
+            'reference': {'arxiv_eprint': '1710.1234'}
+        },
+        {
+            'record': {'$ref': 'http://labs.inspirehep.net/api/literature/4321'},
+            'reference': {'arxiv_eprint': '1710.4321'}
+        }
+    ]
+
+    json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': ['article'],
+        'titles': [{'title': 'Such a cool title'}],
+        '_collections': ['Literature'],
+        'references': references
+    }
+
+    record = InspireRecord.create(json)
+    record.commit()
+    db.session.commit()
+
+    metadata = deepcopy(dict(record))
+    metadata['references'].append(
+        {
+            'record': {'$ref': 'http://labs.inspirehep.net/api/literature/666'},
+            'reference': {'arxiv_eprint': '1710.0666'}
+        }
+    )
+    record = get_db_record('lit', record['control_number'])
+    record.clear()
+    record.update(metadata)
+    record.commit()
+    db.session.commit()
+
+    references_diff = record.get_modified_references()
+    expected = set([('lit', '666')])
+
+    assert references_diff == expected
+
+    _delete_record('lit', record['control_number'])
+
+
+def test_get_modified_references_changing_reference_content(app):
+    references = [
+        {
+            'record': {'$ref': 'http://labs.inspirehep.net/api/literature/1234'},
+            'reference': {'arxiv_eprint': '1710.1234'}
+        },
+        {
+            'record': {'$ref': 'http://labs.inspirehep.net/api/literature/4321'},
+            'reference': {'arxiv_eprint': '1710.4321'}
+        }
+    ]
+
+    json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': ['article'],
+        'titles': [{'title': 'Such a cool title'}],
+        '_collections': ['Literature'],
+        'references': references
+    }
+
+    record = InspireRecord.create(json)
+    record.commit()
+    db.session.commit()
+
+    metadata = deepcopy(dict(record))
+    metadata['references'][0]['reference']['arxiv_eprint'] = '1234.5678'
+
+    record = get_db_record('lit', record['control_number'])
+    record.clear()
+    record.update(metadata)
+    record.commit()
+    db.session.commit()
+
+    references_diff = record.get_modified_references()
+
+    assert references_diff == set()
+
+    _delete_record('lit', record['control_number'])
+
+
+def test_get_modified_references_after_record_delete(app):
+    json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': ['article'],
+        'titles': [{'title': 'Such a cool title'}],
+        '_collections': ['Literature'],
+        'references': [
+            {
+                'record': {'$ref': 'http://labs.inspirehep.net/api/literature/1234'},
+                'reference': {'arxiv_eprint': '1710.1234'}
+            },
+            {
+                'record': {'$ref': 'http://labs.inspirehep.net/api/literature/4321'},
+                'reference': {'arxiv_eprint': '1710.4321'}
+            }
+        ]
+    }
+
+    record = InspireRecord.create(json)
+    record.commit()
+    db.session.commit()
+
+    metadata = deepcopy(dict(record))
+    metadata['deleted'] = True
+
+    record = get_db_record('lit', record['control_number'])
+    record.clear()
+    record.update(metadata)
+    record.commit()
+    db.session.commit()
+
+    references_diff = record.get_modified_references()
+
+    assert references_diff == set([('lit', '1234'), ('lit', '4321')])
+
+    _delete_record('lit', record['control_number'])
+
+
+def test_get_modified_references_after_record_undelete(app):
+    json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': ['article'],
+        'titles': [{'title': 'Such a cool title'}],
+        '_collections': ['Literature'],
+        'deleted': True,
+        'references': [
+            {
+                'record': {'$ref': 'http://labs.inspirehep.net/api/literature/1234'},
+                'reference': {'arxiv_eprint': '1710.1234'}
+            },
+            {
+                'record': {'$ref': 'http://labs.inspirehep.net/api/literature/4321'},
+                'reference': {'arxiv_eprint': '1710.4321'}
+            }
+        ]
+    }
+
+    record = InspireRecord.create(json)
+    record.commit()
+    db.session.commit()
+
+    metadata = deepcopy(dict(record))
+    del metadata['deleted']
+
+    record = get_db_record('lit', record['control_number'])
+    record.clear()
+    record.update(metadata)
+    record.commit()
+    db.session.commit()
+
+    references_diff = record.get_modified_references()
+
+    assert references_diff == set([('lit', '1234'), ('lit', '4321')])
+
+    _delete_record('lit', record['control_number'])

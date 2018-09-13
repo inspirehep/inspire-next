@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.record_getter import get_db_records, get_es_records
 
 
@@ -74,3 +75,11 @@ def test_get_db_records_accept_multiple_pid_types(app):
     results = list(get_db_records(records))
 
     assert len(results) == 3
+
+
+def test_get_db_records_return_inspire_record_type(app):
+    records = [('lit', 1498175)]
+
+    record = list(get_db_records(records))[0]
+
+    assert isinstance(record, InspireRecord)

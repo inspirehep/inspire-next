@@ -39,7 +39,8 @@ from inspirehep.modules.workflows.utils import (
 
 
 @patch('inspirehep.modules.orcid.api.push_record_with_orcid')
-def test_store_record_does_not_raise_in_the_orcid_receiver(mock_attempt_push, app):
+@patch('inspirehep.modules.records.receivers.batch_reindex.apply_async')
+def test_store_record_does_not_raise_in_the_orcid_receiver(mocked_indexing_task, mock_attempt_push, workflow_app):
     config = {
         'FEATURE_FLAG_ENABLE_ORCID_PUSH': True,
         'RECORDS_SKIP_FILES': False,
