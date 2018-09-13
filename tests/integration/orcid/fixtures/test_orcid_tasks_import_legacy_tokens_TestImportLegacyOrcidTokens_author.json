@@ -1,0 +1,16 @@
+{
+    "$schema": "https://labs.inspirehep.net/schemas/records/authors.json",
+    "_collections": [
+      "Authors"
+    ],
+    "ids": [
+        {
+            "schema":"ORCID",
+            "value":"0000-0002-0942-3697"
+        }
+    ],
+    "name": {
+        "value":"Rossoni, A."
+    },
+    "control_number": 1259096
+}
