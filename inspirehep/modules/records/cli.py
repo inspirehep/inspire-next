@@ -36,6 +36,18 @@ from flask.cli import with_appcontext
 from .checkers import check_unlinked_references
 from .tasks import batch_reindex
 
+from invenio_records.models import RecordMetadata
+
+from sqlalchemy import (
+    String,
+    cast,
+    type_coerce,
+    or_,
+    not_
+)
+
+from sqlalchemy.dialects.postgresql import JSONB
+
 
 @click.group()
 def check():
@@ -109,13 +121,15 @@ def simpleindex(yes_i_know, pid_type, batch_size, queue_name):
     click.secho('Sending record UUIDs to the indexing queue...', fg='green')
 
     query = (
-        db.session.query(PersistentIdentifier.object_uuid)
+        db.session.query(PersistentIdentifier.object_uuid).join(RecordMetadata, type_coerce(PersistentIdentifier.object_uuid, String) == type_coerce(RecordMetadata.id, String))
         .filter(
             PersistentIdentifier.pid_type.in_(pid_type),
             PersistentIdentifier.object_type == 'rec',
             PersistentIdentifier.status == PIDStatus.REGISTERED,
+            or_(not_(type_coerce(RecordMetadata.json, JSONB).has_key('deleted')), RecordMetadata.json["deleted"] == cast(False, JSONB))  # noqa: F401
         )
     )
+
     request_timeout = current_app.config.get('INDEXER_BULK_REQUEST_TIMEOUT')
     all_tasks = []
     records_per_tasks = {}

@@ -285,6 +285,34 @@ def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_
     assert mocked_Task.apply_async.call_count == 2
 
 
+def test_creating_deleted_record_and_undeleting_created_record_in_es(isolated_app):
+    search = LiteratureSearch()
+    json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        'deleted': True,
+        '_collections': ['Literature']
+    }
+
+    # When a record is created in the DB with deleted flag True, it is not created in ES.
+
+    record = InspireRecord.create(json)
+    record.commit()
+    with pytest.raises(NotFoundError):
+        search.get_source(record.id)
+
+    # When a record is undeleted, it is created in ES.
+
+    record['deleted'] = False
+    record.commit()
+    search.get_source(record.id)
+
+
 def test_that_db_changes_are_mirrored_in_es(isolated_app):
     search = LiteratureSearch()
     json = {
@@ -320,6 +348,32 @@ def test_that_db_changes_are_mirrored_in_es(isolated_app):
 
     with pytest.raises(NotFoundError):
         es_record = search.get_source(record.id)
+
+
+def test_deleting_record_triggers_delete_in_es(isolated_app):
+    search = LiteratureSearch()
+    json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'foo'},
+        ],
+        '_collections': ['Literature']
+    }
+
+    # When a record is created in the DB, it is also created in ES.
+
+    record = InspireRecord.create(json)
+    record.commit()
+    search.get_source(record.id)
+
+    # When a record is updated with deleted flag true, it is deleted in ES
+    record['deleted'] = True
+    record.commit()
+    with pytest.raises(NotFoundError):
+        search.get_source(record.id)
 
 
 @mock.patch('inspirehep.modules.records.receivers.Task')

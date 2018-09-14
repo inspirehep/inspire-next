@@ -25,10 +25,12 @@
 from __future__ import absolute_import, division, print_function
 
 import uuid
+import logging
 
 from celery import Task
 from flask import current_app
 from flask_sqlalchemy import models_committed
+from elasticsearch import NotFoundError
 
 from invenio_indexer.api import RecordIndexer
 from invenio_indexer.signals import before_record_index
@@ -69,6 +71,9 @@ from inspirehep.modules.records.utils import (
     populate_recid_from_ref,
     populate_title_suggest,
 )
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 @before_record_insert.connect
@@ -148,13 +153,17 @@ def index_after_commit(sender, changes):
     has been really committed to the DB.
     """
     indexer = RecordIndexer()
-
     for model_instance, change in changes:
         if isinstance(model_instance, RecordMetadata):
-            if change in ('insert', 'update'):
+            if change in ('insert', 'update') and not model_instance.json.get("deleted"):
                 indexer.index(Record(model_instance.json, model_instance))
             else:
-                indexer.delete(Record(model_instance.json, model_instance))
+                try:
+                    indexer.delete(Record(model_instance.json, model_instance))
+                except NotFoundError:
+                    # Record not found in ES
+                    LOGGER.debug('Record %s not found in ES', model_instance.json.get("id"))
+                    pass
 
 
 @before_record_index.connect

@@ -29,10 +29,12 @@ import json
 import pytest
 from invenio_workflows import ObjectStatus, WorkflowEngine, start, workflow_object_class
 from invenio_accounts.testutils import login_user_via_session
+from elasticsearch import NotFoundError
 
 from inspirehep.utils.tickets import get_rt_link_for_ticket
 from inspirehep.utils.record_getter import get_db_record
 from inspirehep.modules.workflows.models import WorkflowsPendingRecord
+from inspirehep.modules.search import LiteratureSearch
 
 from calls import do_robotupload_callback
 from factories.db.invenio_records import TestRecordMetadata
@@ -161,6 +163,74 @@ def test_edit_article_workflow(workflow_app, mocked_external_services):
 
     record = get_db_record('lit', 123)
     assert record['titles'][0]['title'] == new_title
+
+    obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
+    assert obj.status == ObjectStatus.COMPLETED
+    pending_records = WorkflowsPendingRecord.query.filter_by(workflow_id=obj.id).all()
+    assert not pending_records
+
+
+def test_edit_article_workflow_deleting(workflow_app, mocked_external_services):
+    app_client = workflow_app.test_client()
+    login_user_via_session(app_client, email='admin@inspirehep.net')
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'nucl-th'
+                ],
+                'value': '1802.03287'
+            }
+        ],
+        'control_number': 123,
+        'document_type': ['article'],
+        'titles': [{'title': 'Resource Pooling in Large-Scale Content Delivery Systems'}],
+        'self': {'$ref': 'http://localhost:5000/schemas/records/hep.json'},
+        '_collections': ['Literature']
+    }
+    factory = TestRecordMetadata.create_from_kwargs(json=record)
+    eng_uuid = start('edit_article', data=factory.record_metadata.json)
+    obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
+
+    assert obj.status == ObjectStatus.WAITING
+    assert obj.extra_data['callback_url']
+
+    record = get_db_record('lit', 123)
+    search = LiteratureSearch()
+    search.get_source(record.id)
+
+    # simulate changes in the editor and save
+    obj.data['deleted'] = True
+
+    payload = {
+        'id': obj.id,
+        'metadata': obj.data,
+        '_extra_data': obj.extra_data
+    }
+
+    app_client.put(
+        obj.extra_data['callback_url'],
+        data=json.dumps(payload),
+        content_type='application/json'
+    )
+
+    obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
+    assert obj.status == ObjectStatus.WAITING  # waiting for robot_upload
+    assert obj.data['deleted'] is True
+
+    do_robotupload_callback(
+        app=workflow_app,
+        workflow_id=obj.id,
+        recids=[obj.data['control_number']],
+    )
+
+    record = get_db_record('lit', 123)
+    assert record['deleted'] is True
+
+    with pytest.raises(NotFoundError):
+        search.get_source(record.id)
 
     obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
     assert obj.status == ObjectStatus.COMPLETED
