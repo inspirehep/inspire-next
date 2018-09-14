@@ -183,22 +183,37 @@ def test_literature_citations_api_with_parameter_page_1(isolated_api_client):
     )
     result = json.loads(response.get_data(as_text=True))
 
-    expected_metadata = {
-        "citation_count": 2,
-        "citations": [
-            {
-                "control_number": 222,
-                "titles": [
-                    {
-                        "title": "Frank Castle"
-                    }
-                ]
-            },
-        ]
-    }
+    expected_metadata = [
+        {
+            "citation_count": 2,
+            "citations": [
+                {
+                    "control_number": 222,
+                    "titles": [
+                        {
+                            "title": "Frank Castle"
+                        }
+                    ]
+                },
+            ]
+        },
+        {
+            "citation_count": 2,
+            "citations": [
+                {
+                    "control_number": 333,
+                    "titles": [
+                        {
+                            "title": "Luke Cage"
+                        }
+                    ]
+                },
+            ]
+        }
+    ]
 
     assert response.status_code == 200
-    assert expected_metadata == result['metadata']
+    assert result['metadata'] in expected_metadata
 
 
 def test_literature_citations_api_with_parameter_page_2(isolated_api_client):
