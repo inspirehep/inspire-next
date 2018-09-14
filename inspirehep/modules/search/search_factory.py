@@ -29,10 +29,13 @@ import json
 from flask import current_app, request
 
 from invenio_records_rest.errors import InvalidQueryRESTError
-from invenio_records_rest.facets import default_facets_factory
+from invenio_records_rest.facets import default_facets_factory, _query_filter, \
+    _post_filter
 from invenio_records_rest.sorter import default_sorter_factory
+from werkzeug.datastructures import MultiDict
 
 from inspirehep.modules.search import IQ
+from inspirehep.modules.search.api import LiteratureSearch
 
 
 def select_source(search, search_index):
@@ -59,10 +62,33 @@ def select_source(search, search_index):
                                          "earliest_date",
                                          "inspire_categories",
                                          "publication_info",
-                                         "references.reference.title",
+                                         "references",
                                          "report_numbers",
                                          "titles.title"])
     return search
+
+
+def inspire_filter_factory(search, urlkwargs, search_index):
+    """Copies behaviour of default facets factory but without the aggregations,
+    As facets factory is also responsible for filtering the year and author (invenio mess)
+    Args:
+        search: Elastic search DSL search instance.
+        urlkwargs:
+        search_index: index name
+
+    Returns: tuple with search and urlarguments
+
+    """
+    facets = current_app.config['RECORDS_REST_FACETS'].get(search_index)
+    # Query filter
+    search, urlkwargs = _query_filter(
+        search, urlkwargs, facets.get("filters", {}))
+
+    # Post filter
+    search, urlkwargs = _post_filter(
+        search, urlkwargs, facets.get("post_filters", {}))
+
+    return search, urlkwargs
 
 
 def inspire_search_factory(self, search):
@@ -73,6 +99,7 @@ def inspire_search_factory(self, search):
     :returns: Tuple with search instance and URL arguments.
     """
     query_string = request.values.get('q', '')
+    urlkwargs = MultiDict()
 
     try:
         search = search.query(IQ(query_string, search))
@@ -84,11 +111,40 @@ def inspire_search_factory(self, search):
         raise InvalidQueryRESTError()
 
     search_index = search._index[0]
-    search, urlkwargs = default_facets_factory(search, search_index)
+    search, urlkwargs = inspire_filter_factory(search, urlkwargs, search_index)
     search, sortkwargs = default_sorter_factory(search, search_index)
     search = select_source(search, search_index)
-    for key, value in sortkwargs.items():
-        urlkwargs.add(key, value)
+
+    urlkwargs.add('q', query_string)
+    if current_app.debug:
+        current_app.logger.debug(
+            json.dumps(search.to_dict(), indent=4)
+        )
+    return search, urlkwargs
+
+
+def inspire_facets_factory(query_string):
+    """Parse query using Inspire-Query-Parser and prepare facets for it
+    Args:
+        self: REST view.
+        search: Elastic search DSL search instance.
+
+    Returns: Tuple with search instance and URL arguments.
+
+    """
+    search = LiteratureSearch()
+    try:
+        search = search.query(IQ(query_string, None))
+    except SyntaxError:
+        current_app.logger.debug(
+            "Failed parsing query: {0}".format(
+                request.values.get('q', '')),
+            exc_info=True)
+        raise InvalidQueryRESTError()
+
+    search_index = search._index[0]
+    search, urlkwargs = default_facets_factory(search, search_index)
+    search = select_source(search, search_index)
 
     urlkwargs.add('q', query_string)
     if current_app.debug:

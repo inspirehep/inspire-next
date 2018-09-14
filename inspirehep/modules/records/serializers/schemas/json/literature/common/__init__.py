@@ -32,3 +32,5 @@ from .publication_info_item import PublicationInfoItemSchemaV1  # noqa: F401
 from .external_system_identifier import ExternalSystemIdentifierSchemaV1    # noqa: F401
 from .reference_item import ReferenceItemSchemaV1  # noqa: F401
 from .citation_item import CitationItemSchemaV1   # noqa: F401
+from .collaboration_with_suffix import CollaborationWithSuffixSchemaV1   # noqa: F401
+from .collaboration import CollaborationSchemaV1   # noqa: F401

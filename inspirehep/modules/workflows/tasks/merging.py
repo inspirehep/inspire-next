@@ -69,17 +69,17 @@ def merge_articles(obj, eng):
 
     obj.extra_data['head_uuid'] = str(head_uuid)
 
-    head = InspireRecord.get_record(head_uuid)
+    head_record = InspireRecord.get_record(head_uuid)
     update = obj.data
     update_source = get_source(update).lower()
-    head_root = read_wf_record_source(record_uuid=head.id, source=update_source)
+    head_root = read_wf_record_source(record_uuid=head_record.id, source=update_source)
     head_root = head_root.json if head_root else {}
 
-    obj.extra_data['merger_head_revision'] = head.revision_id
+    obj.extra_data['merger_head_revision'] = head_record.revision_id
     obj.extra_data['merger_original_root'] = deepcopy(head_root)
 
     merged, conflicts = merge(
-        head=head.dumps(),
+        head=head_record.to_dict(),
         root=head_root,
         update=update,
     )

@@ -33,7 +33,7 @@ if [ ! -x "$(command -v inspirehep)" ]; then
 fi
 
 inspirehep db drop --yes-i-know
-inspirehep db create
+inspirehep alembic upgrade
 inspirehep index destroy --force --yes-i-know
 inspirehep index init
 inspirehep fixtures init

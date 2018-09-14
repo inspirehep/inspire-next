@@ -24,10 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-import copy
+from copy import deepcopy
 from datetime import datetime
 import uuid
-
 import arrow
 from elasticsearch.exceptions import NotFoundError
 from flask import current_app
@@ -49,6 +48,7 @@ from sqlalchemy.dialects import postgresql
 
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema, get_endpoint_from_pid_type
+from inspirehep.modules.records.utils import populate_earliest_date
 from inspirehep.utils.record_getter import (
     RecordGetterError,
     get_es_record_by_uuid
@@ -310,7 +310,7 @@ class InspireRecord(Record):
         if stream is not None:
             self.files[key] = stream
 
-        builder = LiteratureBuilder(record=self.dumps())
+        builder = LiteratureBuilder(record=self.to_dict())
         metadata['key'] = key
         metadata['url'] = '/api/files/{bucket}/{key}'.format(
             bucket=self.files[key].bucket_id,
@@ -349,7 +349,7 @@ class InspireRecord(Record):
             Exception: if the url of the given ``doc_or_fig_obj`` is
                 unresolvable.
         """
-        doc_or_fig_obj = copy.deepcopy(doc_or_fig_obj)
+        doc_or_fig_obj = deepcopy(doc_or_fig_obj)
         key = doc_or_fig_obj['key']
         src_record_file = next(
             (
@@ -617,6 +617,21 @@ class InspireRecord(Record):
         """Returns citations count for this record."""
         count = self.get_citing_records_query.count()
         return count
+
+    def dumps(self):
+        """Returns a dict 'representation' of the record.
+
+        Note: this is not suitable to create a new record from it, as the
+              representation will include some extra fields that should not be
+              present in the record's json, see the 'to_dict' method instead.
+        """
+        base_dict = super(InspireRecord, self).dumps()
+        populate_earliest_date(base_dict)
+        return base_dict
+
+    def to_dict(self):
+        """Gets a deep copy of the record's json."""
+        return deepcopy(dict(self))
 
 
 class ESRecord(InspireRecord):

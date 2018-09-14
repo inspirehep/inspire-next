@@ -48,3 +48,26 @@ def record_responsify_nocache(serializer, mimetype):
             response.headers.extend(headers)
         return response
     return view
+
+
+def facets_responsify(serializer, mimetype):
+    """Create a Facets serializer
+
+    As aggregations were removed from search query,
+    now second call to the server is required to acquire data for Facets
+
+    Args:
+        serializer: Serializer instance.
+        mimetype: MIME type of response.
+
+    """
+
+    def view(pid, query_results, code=200, headers=None, links_factory=None):
+        response = current_app.response_class(
+            serializer.serialize_facets(query_results),
+            mimetype=mimetype)
+        response.status_code = code
+        if headers is not None:
+            response.headers.extend(headers)
+        return response
+    return view

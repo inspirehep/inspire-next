@@ -22,24 +22,17 @@
 
 from __future__ import absolute_import, division, print_function
 
-from marshmallow import Schema, pre_dump, fields
+from marshmallow import pre_dump
 
-from inspirehep.modules.records.utils import get_pid_from_record_uri
-from inspirehep.utils.record_getter import get_db_record
+from .collaboration import CollaborationSchemaV1
+
+import re
 
 
-class ConferenceInfoItemSchemaV1(Schema):
-    titles = fields.Raw()
-    control_number = fields.Raw()
+class CollaborationWithSuffixSchemaV1(CollaborationSchemaV1):
 
     @pre_dump
-    def resolve_conference_record_as_root(self, pub_info_item):
-        conference_record = pub_info_item.get('conference_record')
-        if conference_record is None:
-            return {}
-        _, recid = get_pid_from_record_uri(conference_record.get('$ref'))
-        conference = get_db_record('con', recid)
-        titles = conference.get('titles')
-        if titles is None:
-            return {}
-        return conference.to_dict()
+    def filter(self, data):
+        if not re.match(self.REGEX_COLLABORATIONS_WITH_SUFFIX, data.get('value')):
+                return {}
+        return data
