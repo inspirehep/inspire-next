@@ -39,12 +39,20 @@ from .invenio_pidstore import TestPersistentIdentifier
 
 USED_RECIDS = {}
 MAX_ES_INT = 2147483647
+MAX_RANDOMIZE_TRIES = 100
 
 
 def get_next_free_recid():
     next_recid_candidate = random.randint(1, MAX_ES_INT)
-    while next_recid_candidate in USED_RECIDS:
+    cur_try = 0
+    while next_recid_candidate in USED_RECIDS and cur_try < MAX_RANDOMIZE_TRIES:
         next_recid_candidate = random.randint(1, MAX_ES_INT)
+        cur_try += 1
+
+    if cur_try >= MAX_RANDOMIZE_TRIES:
+        raise Exception(
+            'Unable to find a non-used record id, tried %d times.' % cur_try
+        )
 
     reserve_recid(next_recid_candidate)
     return next_recid_candidate
