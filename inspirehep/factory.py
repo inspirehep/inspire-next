@@ -36,7 +36,12 @@ from . import config
 
 env_prefix = 'APP'
 
-config_loader = create_config_loader(config=config, env_prefix=env_prefix)
+
+def config_loader(app, **kwargs_config):
+    invenio_config_loader = create_config_loader(config=config, env_prefix=env_prefix)
+    result = invenio_config_loader(app, **kwargs_config)
+    app.url_map.strict_slashes = False
+    return result
 
 
 def api_config_loader(app, **kwargs_config):
