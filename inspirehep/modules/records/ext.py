@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .cli import check, simpleindex
+from .cli import check, simpleindex, handle_duplicates
 
 
 class InspireRecords(object):
@@ -35,6 +35,7 @@ class InspireRecords(object):
     def init_app(self, app):
         app.cli.add_command(check)
         app.cli.add_command(simpleindex)
+        app.cli.add_command(handle_duplicates)
         app.extensions['inspire-records'] = self
 
         # Register the receivers:
