@@ -607,8 +607,9 @@ class InspireRecord(Record):
         ref = self._get_ref()
         if not ref:
             raise Exception("There is no $ref for this object")
-        citations = session.query(RecordMetadata).with_entities(RecordMetadata.id).filter(
-            referenced_records(RecordMetadata.json).contains([ref]))
+        citations = session.query(RecordMetadata).with_entities(RecordMetadata.id,
+                                                       RecordMetadata.json['control_number']).filter(
+            referenced_records(RecordMetadata.json).contains([ref])).distinct(RecordMetadata.json['control_number'])
         return citations
 
     @property
