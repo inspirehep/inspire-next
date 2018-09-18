@@ -138,7 +138,7 @@ def populate_earliest_date(json):
             json['earliest_date'] = result
 
 
-def populate_citations_count(json, record):
+def populate_citations_count(record, json):
     """Populate citations_count in ES from"""
 
     if hasattr(record, 'get_citations_count'):

@@ -32,7 +32,6 @@ from flask import current_app
 from flask_sqlalchemy import models_committed
 from elasticsearch import NotFoundError
 
-from invenio_indexer.api import RecordIndexer
 from invenio_indexer.signals import before_record_index
 from invenio_records.api import Record
 from invenio_records.models import RecordMetadata
@@ -71,7 +70,7 @@ from inspirehep.modules.records.utils import (
     populate_recid_from_ref,
     populate_title_suggest,
 )
-
+from inspirehep.modules.records.indexer import InspireRecordIndexer
 
 LOGGER = logging.getLogger(__name__)
 
@@ -152,7 +151,7 @@ def index_after_commit(sender, changes):
     because, despite the name, at that point we are not yet sure whether the record
     has been really committed to the DB.
     """
-    indexer = RecordIndexer()
+    indexer = InspireRecordIndexer()
     for model_instance, change in changes:
         if isinstance(model_instance, RecordMetadata):
             if change in ('insert', 'update') and not model_instance.json.get("deleted"):
@@ -167,7 +166,7 @@ def index_after_commit(sender, changes):
 
 
 @before_record_index.connect
-def enhance_after_index(sender, json, *args, **kwargs):
+def enhance_after_index(sender, json, record, *args, **kwargs):
     """Run all the receivers that enhance the record for ES in the right order.
 
     .. note::
@@ -186,7 +185,7 @@ def enhance_after_index(sender, json, *args, **kwargs):
         populate_authors_full_name_unicode_normalized(json)
         populate_inspire_document_type(json)
         populate_name_variations(json)
-        populate_citations_count(sender, json)
+        populate_citations_count(record=record, json=json)
 
     elif is_author(json):
         populate_authors_name_variations(json)
@@ -204,4 +203,4 @@ def enhance_after_index(sender, json, *args, **kwargs):
         populate_title_suggest(json)
 
     elif is_data(json):
-        populate_citations_count(sender, json)
+        populate_citations_count(record=record, json=json)
