@@ -38,6 +38,7 @@ from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
     get_pid_type_from_schema
 )
+from inspirehep.modules.records.exceptions import MissingInspireRecord
 from inspirehep.utils.record_getter import get_db_records
 from inspirehep.modules.search import LiteratureSearch
 
@@ -145,6 +146,8 @@ def populate_citations_count(record, json):
         # Make sure that record has method get_citations_count
         citation_count = record.get_citations_count()
         json.update({'citation_count': citation_count})
+    else:
+        raise MissingInspireRecord("Record is not InspireRecord!")
 
 
 def populate_bookautocomplete(json):
