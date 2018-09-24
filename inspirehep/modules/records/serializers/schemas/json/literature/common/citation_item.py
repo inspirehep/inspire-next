@@ -39,6 +39,7 @@ class CitationItemSchemaV1(Schema):
     publication_info = fields.List(
         NestedWithoutEmptyObjects(PublicationInfoItemSchemaV1, dump_only=True))
     titles = fields.Raw()
+    earliest_date = fields.Raw()
 
     @post_dump
     def strip_empty(self, data):

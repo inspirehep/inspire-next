@@ -24,22 +24,33 @@ from __future__ import absolute_import, division, print_function
 
 import json
 
-from factories.db.invenio_records import TestRecordMetadata
+from invenio_search import current_search_client as es
+
+from inspirehep.modules.records.api import InspireRecord
 
 
 def test_literature_citations_api_with_results(isolated_api_client):
     record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 111,
         'titles': [
             {
                 'title': 'Jessica Jones',
             },
         ],
+        '_collections': ['Literature']
     }
-    record = TestRecordMetadata.create_from_kwargs(
-        json=record_json).inspire_record
+    record = InspireRecord.create(record_json)
+    record.commit()
 
     record_json_ref_1 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 222,
         'titles': [
             {
@@ -52,11 +63,17 @@ def test_literature_citations_api_with_results(isolated_api_client):
                     '$ref': record._get_ref()
                 }
             }
-        ]
+        ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json_ref_1)
+    record_ref_1 = InspireRecord.create(record_json_ref_1)
+    record_ref_1.commit()
 
     record_json_ref_2 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 333,
         'titles': [
             {
@@ -69,9 +86,13 @@ def test_literature_citations_api_with_results(isolated_api_client):
                     '$ref': record._get_ref()
                 }
             }
-        ]
+        ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json_ref_2)
+    record_ref_2 = InspireRecord.create(record_json_ref_2)
+    record_ref_2.commit()
+
+    es.indices.refresh('records-hep')
 
     response = isolated_api_client.get(
         '/literature/111/citations',
@@ -101,20 +122,174 @@ def test_literature_citations_api_with_results(isolated_api_client):
         ]
     }
 
+    expected_metadata['citations'].sort()
+    result['metadata']['citations'].sort()
+
     assert response.status_code == 200
     assert expected_metadata == result['metadata']
 
+    record._delete(force=True)
+    record_ref_1._delete(force=True)
+    record_ref_2._delete(force=True)
 
-def test_literature_citations_api_without_results(isolated_api_client):
+
+def test_literature_citations_api_sorted_by_earliest_date(isolated_api_client):
     record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 111,
         'titles': [
             {
                 'title': 'Jessica Jones',
             },
         ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    record = InspireRecord.create(record_json)
+    record.commit()
+
+    record_json_ref_1 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
+        'control_number': 222,
+        'titles': [
+            {
+                'title': 'Frank Castle',
+            },
+        ],
+        'preprint_date': '2013-10-08',
+        'references': [
+            {
+                'record': {
+                    '$ref': record._get_ref()
+                }
+            }
+        ],
+        '_collections': ['Literature']
+    }
+    record_ref_1 = InspireRecord.create(record_json_ref_1)
+    record_ref_1.commit()
+
+    record_json_ref_2 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
+        'preprint_date': '2015-10-08',
+        'control_number': 333,
+        'titles': [
+            {
+                'title': 'Luke Cage',
+            },
+        ],
+        'references': [
+            {
+                'record': {
+                    '$ref': record._get_ref()
+                }
+            }
+        ],
+        '_collections': ['Literature']
+    }
+    record_ref_2 = InspireRecord.create(record_json_ref_2)
+    record_ref_2.commit()
+
+    record_json_ref_3 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
+        'preprint_date': '2015-11-08',
+        'control_number': 444,
+        'titles': [
+            {
+                'title': 'John Doe',
+            },
+        ],
+        'references': [
+            {
+                'record': {
+                    '$ref': record._get_ref()
+                }
+            }
+        ],
+        '_collections': ['Literature']
+    }
+    record_ref_3 = InspireRecord.create(record_json_ref_3)
+    record_ref_3.commit()
+
+    es.indices.refresh('records-hep')
+
+    response = isolated_api_client.get(
+        '/literature/111/citations',
+        headers={'Accept': 'application/json'}
+    )
+    result = json.loads(response.get_data(as_text=True))
+
+    expected_metadata = {
+        "citation_count": 3,
+        "citations": [
+            {
+                "control_number": 444,
+                "titles": [
+                    {
+                        "title": "John Doe"
+                    }
+                ],
+                "earliest_date": "2015-11-08"
+            },
+            {
+                "control_number": 333,
+                "titles": [
+                    {
+                        "title": "Luke Cage"
+                    }
+                ],
+                "earliest_date": "2015-10-08"
+            },
+            {
+                "control_number": 222,
+                "titles": [
+                    {
+                        "title": "Frank Castle"
+                    }
+                ],
+                "earliest_date": "2013-10-08"
+            }
+        ]
+    }
+
+    assert response.status_code == 200
+    assert expected_metadata == result['metadata']
+
+    record._delete(force=True)
+    record_ref_1._delete(force=True)
+    record_ref_2._delete(force=True)
+    record_ref_3._delete(force=True)
+
+
+def test_literature_citations_api_without_results(isolated_api_client):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
+        'control_number': 111,
+        'titles': [
+            {
+                'title': 'Jessica Jones',
+            },
+        ],
+        '_collections': ['Literature']
+    }
+    record = InspireRecord.create(record_json)
+    record.commit()
+
+    es.indices.refresh('records-hep')
 
     response = isolated_api_client.get(
         '/literature/111/citations',
@@ -130,20 +305,31 @@ def test_literature_citations_api_without_results(isolated_api_client):
     assert response.status_code == 200
     assert expected_metadata == result['metadata']
 
+    record._delete(force=True)
+
 
 def test_literature_citations_api_with_parameter_page_1(isolated_api_client):
     record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 111,
         'titles': [
             {
                 'title': 'Jessica Jones',
             },
         ],
+        '_collections': ['Literature']
     }
-    record = TestRecordMetadata.create_from_kwargs(
-        json=record_json).inspire_record
+    record = InspireRecord.create(record_json)
+    record.commit()
 
     record_json_ref_1 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 222,
         'titles': [
             {
@@ -156,11 +342,17 @@ def test_literature_citations_api_with_parameter_page_1(isolated_api_client):
                     '$ref': record._get_ref()
                 }
             }
-        ]
+        ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json_ref_1)
+    record_ref_1 = InspireRecord.create(record_json_ref_1)
+    record_ref_1.commit()
 
     record_json_ref_2 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 333,
         'titles': [
             {
@@ -173,9 +365,13 @@ def test_literature_citations_api_with_parameter_page_1(isolated_api_client):
                     '$ref': record._get_ref()
                 }
             }
-        ]
+        ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json_ref_2)
+    record_ref_2 = InspireRecord.create(record_json_ref_2)
+    record_ref_2.commit()
+
+    es.indices.refresh('records-hep')
 
     response = isolated_api_client.get(
         '/literature/111/citations?size=1&page=1',
@@ -215,20 +411,33 @@ def test_literature_citations_api_with_parameter_page_1(isolated_api_client):
     assert response.status_code == 200
     assert result['metadata'] in expected_metadata
 
+    record._delete(force=True)
+    record_ref_1._delete(force=True)
+    record_ref_2._delete(force=True)
+
 
 def test_literature_citations_api_with_parameter_page_2(isolated_api_client):
     record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 111,
         'titles': [
             {
                 'title': 'Jessica Jones',
             },
         ],
+        '_collections': ['Literature']
     }
-    record = TestRecordMetadata.create_from_kwargs(
-        json=record_json).inspire_record
+    record = InspireRecord.create(record_json)
+    record.commit()
 
     record_json_ref_1 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 222,
         'titles': [
             {
@@ -241,11 +450,17 @@ def test_literature_citations_api_with_parameter_page_2(isolated_api_client):
                     '$ref': record._get_ref()
                 }
             }
-        ]
+        ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json_ref_1)
+    record_ref_1 = InspireRecord.create(record_json_ref_1)
+    record_ref_1.commit()
 
     record_json_ref_2 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 333,
         'titles': [
             {
@@ -258,9 +473,13 @@ def test_literature_citations_api_with_parameter_page_2(isolated_api_client):
                     '$ref': record._get_ref()
                 }
             }
-        ]
+        ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json_ref_2)
+    record_ref_2 = InspireRecord.create(record_json_ref_2)
+    record_ref_2.commit()
+
+    es.indices.refresh('records-hep')
 
     response = isolated_api_client.get(
         '/literature/111/citations?size=1&page=2',
@@ -268,37 +487,65 @@ def test_literature_citations_api_with_parameter_page_2(isolated_api_client):
     )
     result = json.loads(response.get_data(as_text=True))
 
-    expected_metadata = {
-        "citation_count": 2,
-        "citations": [
-            {
-                "control_number": 333,
-                "titles": [
-                    {
-                        "title": "Luke Cage"
-                    }
-                ]
-            },
-        ]
-    }
+    expected_metadata = [
+        {
+            "citation_count": 2,
+            "citations": [
+                {
+                    "control_number": 222,
+                    "titles": [
+                        {
+                            "title": "Frank Castle"
+                        }
+                    ]
+                },
+            ]
+        },
+        {
+            "citation_count": 2,
+            "citations": [
+                {
+                    "control_number": 333,
+                    "titles": [
+                        {
+                            "title": "Luke Cage"
+                        }
+                    ]
+                },
+            ]
+        }
+    ]
 
     assert response.status_code == 200
-    assert expected_metadata == result['metadata']
+    assert result['metadata'] in expected_metadata
+
+    record._delete(force=True)
+    record_ref_1._delete(force=True)
+    record_ref_2._delete(force=True)
 
 
 def test_literature_citations_api_with_malformed_parameters(isolated_api_client):
     record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 111,
         'titles': [
             {
                 'title': 'Jessica Jones',
             },
         ],
+        '_collections': ['Literature']
     }
-    record = TestRecordMetadata.create_from_kwargs(
-        json=record_json).inspire_record
+    record = InspireRecord.create(record_json)
+    record.commit()
 
     record_json_ref_1 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 222,
         'titles': [
             {
@@ -311,11 +558,17 @@ def test_literature_citations_api_with_malformed_parameters(isolated_api_client)
                     '$ref': record._get_ref()
                 }
             }
-        ]
+        ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json_ref_1)
+    record_ref_1 = InspireRecord.create(record_json_ref_1)
+    record_ref_1.commit()
 
     record_json_ref_2 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 333,
         'titles': [
             {
@@ -328,9 +581,13 @@ def test_literature_citations_api_with_malformed_parameters(isolated_api_client)
                     '$ref': record._get_ref()
                 }
             }
-        ]
+        ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json_ref_2)
+    record_ref_2 = InspireRecord.create(record_json_ref_2)
+    record_ref_2.commit()
+
+    es.indices.refresh('records-hep')
 
     response = isolated_api_client.get(
         '/literature/111/citations?page=-20',
@@ -339,20 +596,33 @@ def test_literature_citations_api_with_malformed_parameters(isolated_api_client)
 
     assert response.status_code == 400
 
+    record._delete(force=True)
+    record_ref_1._delete(force=True)
+    record_ref_2._delete(force=True)
+
 
 def test_literature_citations_api_with_not_existing_pid_value(isolated_api_client):
     record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 111,
         'titles': [
             {
                 'title': 'Jessica Jones',
             },
         ],
+        '_collections': ['Literature']
     }
-    record = TestRecordMetadata.create_from_kwargs(
-        json=record_json).inspire_record
+    record = InspireRecord.create(record_json)
+    record.commit()
 
     record_json_ref_1 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 222,
         'titles': [
             {
@@ -365,11 +635,17 @@ def test_literature_citations_api_with_not_existing_pid_value(isolated_api_clien
                     '$ref': record._get_ref()
                 }
             }
-        ]
+        ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json_ref_1)
+    record_ref_1 = InspireRecord.create(record_json_ref_1)
+    record_ref_1.commit()
 
     record_json_ref_2 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 333,
         'titles': [
             {
@@ -382,9 +658,13 @@ def test_literature_citations_api_with_not_existing_pid_value(isolated_api_clien
                     '$ref': record._get_ref()
                 }
             }
-        ]
+        ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json_ref_2)
+    record_ref_2 = InspireRecord.create(record_json_ref_2)
+    record_ref_2.commit()
+
+    es.indices.refresh('records-hep')
 
     response = isolated_api_client.get(
         '/literature/444/citations',
@@ -393,20 +673,33 @@ def test_literature_citations_api_with_not_existing_pid_value(isolated_api_clien
 
     assert response.status_code == 404
 
+    record._delete(force=True)
+    record_ref_1._delete(force=True)
+    record_ref_2._delete(force=True)
+
 
 def test_literature_citations_api_with_full_citing_record(isolated_api_client):
     record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 111,
         'titles': [
             {
                 'title': 'Jessica Jones',
             },
         ],
+        '_collections': ['Literature']
     }
-    record = TestRecordMetadata.create_from_kwargs(
-        json=record_json).inspire_record
+    record = InspireRecord.create(record_json)
+    record.commit()
 
     record_json_ref_1 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 222,
         'titles': [
             {
@@ -414,12 +707,6 @@ def test_literature_citations_api_with_full_citing_record(isolated_api_client):
             },
         ],
         'authors': [
-            {
-                "full_name": "Urhan, Harun",
-                "inspire_roles": [
-                    'supervisor'
-                ],
-            },
             {
                 "full_name": "Urhan, Ahmet",
             }
@@ -436,11 +723,17 @@ def test_literature_citations_api_with_full_citing_record(isolated_api_client):
                     '$ref': record._get_ref()
                 }
             }
-        ]
+        ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json_ref_1)
+    record_ref_1 = InspireRecord.create(record_json_ref_1)
+    record_ref_1.commit()
 
     record_json_ref_2 = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
         'control_number': 333,
         'titles': [
             {
@@ -453,9 +746,13 @@ def test_literature_citations_api_with_full_citing_record(isolated_api_client):
                     '$ref': record._get_ref()
                 }
             }
-        ]
+        ],
+        '_collections': ['Literature']
     }
-    TestRecordMetadata.create_from_kwargs(json=record_json_ref_2)
+    record_ref_2 = InspireRecord.create(record_json_ref_2)
+    record_ref_2.commit()
+
+    es.indices.refresh('records-hep')
 
     response = isolated_api_client.get(
         '/literature/111/citations',
@@ -463,23 +760,27 @@ def test_literature_citations_api_with_full_citing_record(isolated_api_client):
     )
     result = json.loads(response.get_data(as_text=True))
 
+    result['metadata']['citations'].sort()
+
     expected_metadata = {
         "citation_count": 2,
         "citations": [
             {
-                'control_number': 222,
-                'titles': [
-                    {
-                        'title': 'Frank Castle',
-                    },
-                ],
                 'authors': [
                     {
                         "full_name": "Urhan, Ahmet",
                         "first_name": "Ahmet",
                         "last_name": "Urhan",
+                        "signature_block": "URANa",
+                        "uuid": result['metadata']['citations'][1]['authors'][0]['uuid']
                     }
                 ],
+                'control_number': 222,
+                'titles': [
+                    {
+                        'title': 'Frank Castle',
+                    },
+                ]
             },
             {
                 "control_number": 333,
@@ -495,6 +796,9 @@ def test_literature_citations_api_with_full_citing_record(isolated_api_client):
     assert response.status_code == 200
 
     expected_metadata['citations'].sort()
-    result['metadata']['citations'].sort()
 
     assert expected_metadata == result['metadata']
+
+    record._delete(force=True)
+    record_ref_1._delete(force=True)
+    record_ref_2._delete(force=True)
