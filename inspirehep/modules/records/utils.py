@@ -39,6 +39,7 @@ from inspirehep.modules.pidstore.utils import (
     get_pid_type_from_schema
 )
 from inspirehep.utils.record_getter import get_db_records
+from inspirehep.modules.search import LiteratureSearch
 
 
 def is_author(record):
@@ -381,3 +382,22 @@ def populate_authors_full_name_unicode_normalized(json):
         json['authors'][index].update({
             'full_name_unicode_normalized': normalize('NFKC', full_name).lower()
         })
+
+
+def get_citations_from_es(record, page=1, size=10):
+    if 'control_number' not in record:
+        return None
+
+    return LiteratureSearch().query(
+        'match', references__recid=record['control_number'],
+    ).params(
+        _source=[
+            'authors',
+            'control_number',
+            'earliest_date',
+            'titles',
+            'publication_info'
+        ],
+        from_=(page - 1) * size,
+        size=size,
+    ).sort('-earliest_date').execute().hits

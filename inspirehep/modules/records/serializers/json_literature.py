@@ -71,11 +71,6 @@ def get_citations_count(original_record):
 
 def _preprocess_result(result, original_record=None):
     """Add additional fields to output json"""
-    if original_record is not None:
-        # If it is an db object then get citations from db
-        # Otherwise if it is from ES it has citations already in json
-        result['metadata']['citation_count'] = get_citations_count(
-            original_record)
     record = result['metadata']
     ui_metadata = _get_ui_metadata(record)
     # FIXME: Deprecated, must be removed once the new UI is released
@@ -106,7 +101,7 @@ class LiteratureCitationsJSONSerializer(JSONSerializer):
 
     def preprocess_record(self, pid, record, links_factory=None, **kwargs):
         """Prepare a record and persistent identifier for serialization."""
-        return record.dumps()
+        return record
 
     def serialize(self, pid, data, links_factory=None, **kwargs):
         return json.dumps(
