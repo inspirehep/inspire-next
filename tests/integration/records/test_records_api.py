@@ -111,3 +111,13 @@ def test_citations_count_non_zero(isolated_app):
     TestRecordMetadata.create_from_kwargs(json=ref)
 
     assert record_1.get_citations_count() == 1L
+
+    ref2 = {'control_number': 43211, 'references': [{'record': {'$ref': record_1._get_ref()}}]}
+    TestRecordMetadata.create_from_kwargs(json=ref2)
+
+    assert record_1.get_citations_count() == 2L
+
+    ref3 = {'control_number': 43241, 'references': [{'record': {'$ref': record_1._get_ref()}}]}
+    TestRecordMetadata.create_from_kwargs(json=ref3)
+
+    assert record_1.get_citations_count() == 3L

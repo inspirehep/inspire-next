@@ -47,8 +47,6 @@ from utils import _delete_record
 from factories.db.invenio_records import TestRecordMetadata
 
 
-
-
 @pytest.fixture(scope='function')
 def user_with_permission(app):
     _user_data = {

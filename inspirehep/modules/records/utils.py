@@ -28,12 +28,15 @@ from itertools import chain
 from unicodedata import normalize
 
 import six
+from flask import current_app
 
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.date import earliest_date
 from inspire_utils.name import generate_name_variations
 from inspire_utils.record import get_value
 from inspire_utils.helpers import force_list
+from invenio_db import db
+
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
     get_pid_type_from_schema
@@ -141,10 +144,14 @@ def populate_earliest_date(json):
 
 def populate_citations_count(record, json):
     """Populate citations_count in ES from"""
-
     if hasattr(record, 'get_citations_count'):
         # Make sure that record has method get_citations_count
-        citation_count = record.get_citations_count()
+        # Session is in commited state here, and I cannot open new one...
+        if db.session.is_active:  # For tests and new entries, It tries to count citations when session is closed
+            citation_count = record.get_citations_count()
+        else:
+            current_app.logger.warning("Db session is not active! Not counting citations!")
+            citation_count = 0
         json.update({'citation_count': citation_count})
     else:
         raise MissingInspireRecord("Record is not InspireRecord!")

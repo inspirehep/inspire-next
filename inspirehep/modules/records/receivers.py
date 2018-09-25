@@ -33,7 +33,6 @@ from flask_sqlalchemy import models_committed
 from elasticsearch import NotFoundError
 
 from invenio_indexer.signals import before_record_index
-from invenio_records.api import Record
 from invenio_records.models import RecordMetadata
 from invenio_records.signals import (
     after_record_update,
@@ -48,6 +47,7 @@ from inspirehep.modules.orcid.utils import (
     get_push_access_tokens,
     get_orcids_for_push,
 )
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.utils import (
     is_author,
     is_book,
@@ -155,10 +155,10 @@ def index_after_commit(sender, changes):
     for model_instance, change in changes:
         if isinstance(model_instance, RecordMetadata):
             if change in ('insert', 'update') and not model_instance.json.get("deleted"):
-                indexer.index(Record(model_instance.json, model_instance))
+                indexer.index(InspireRecord(model_instance.json, model_instance))
             else:
                 try:
-                    indexer.delete(Record(model_instance.json, model_instance))
+                    indexer.delete(InspireRecord(model_instance.json, model_instance))
                 except NotFoundError:
                     # Record not found in ES
                     LOGGER.debug('Record %s not found in ES', model_instance.json.get("id"))
