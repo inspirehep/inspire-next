@@ -985,23 +985,17 @@ RECORDS_REST_FACETS = {
 
 RECORDS_REST_SORT_OPTIONS = {
     "records-hep": {
-        "bestmatch": {
-            "title": 'Best match',
-            "fields": ['-_score'],
-            "default_order": 'asc',  # Used for invenio-search-js config
-            "order": 1,
-        },
         "mostrecent": {
             "title": 'Most recent',
             "fields": ['-earliest_date'],
             "default_order": 'asc',  # Used for invenio-search-js config
-            "order": 2,
+            "order": 1,
         },
         "mostcited": {
             "title": 'Most cited',
             "fields": ['-citation_count'],
             "default_order": 'asc',  # Used for invenio-search-js config
-            "order": 3,
+            "order": 2,
         },
     },
 
