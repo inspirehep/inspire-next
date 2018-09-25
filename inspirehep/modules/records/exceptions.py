@@ -22,10 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
-
-class BasicRecordException(Exception):
-    pass
+from invenio_records.errors import RecordsError
 
 
-class MissingInspireRecord(BasicRecordException):
+class MissingInspireRecord(RecordsError):
     pass

@@ -28,7 +28,6 @@ from itertools import chain
 from unicodedata import normalize
 
 import six
-from flask import current_app
 
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.date import earliest_date
@@ -147,11 +146,12 @@ def populate_citations_count(record, json):
     if hasattr(record, 'get_citations_count'):
         # Make sure that record has method get_citations_count
         # Session is in commited state here, and I cannot open new one...
-        if db.session.is_active:  # For tests and new entries, It tries to count citations when session is closed
-            citation_count = record.get_citations_count()
+        if not db.session.is_active:  # For tests and new entries, It tries to count citations when session is closed
+            session = db.Session(bind=db.engine)
+            citation_count = record.get_citations_count(session)
+            session.close()
         else:
-            current_app.logger.warning("Db session is not active! Not counting citations!")
-            citation_count = 0
+            citation_count = record.get_citations_count()
         json.update({'citation_count': citation_count})
     else:
         raise MissingInspireRecord("Record is not InspireRecord!")

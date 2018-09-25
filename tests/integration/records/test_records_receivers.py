@@ -385,7 +385,7 @@ def test_orcid_push_not_triggered_on_create_record_no_feat_flag(mocked_Task, app
     mocked_Task.assert_not_called()
 
 
-def test_check_enchance_after_index_receiver_when_sender_is_not_an_record(isolated_app):
+def test_check_enhance_after_index_receiver_when_sender_is_not_a_record(isolated_app):
     json_rec = {
         "titles": [
             {
@@ -416,7 +416,7 @@ def test_check_enchance_after_index_receiver_when_sender_is_not_an_record(isolat
     assert 'citation_count' in json_rec
 
 
-def test_check_enchance_after_index_receiver_when_record_not_provided(isolated_app):
+def test_check_enhance_after_index_receiver_when_record_not_provided(isolated_app):
     json_rec = {
         "titles": [
             {
