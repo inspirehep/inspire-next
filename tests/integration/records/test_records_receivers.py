@@ -27,8 +27,8 @@ import pkg_resources
 import pytest
 import mock
 from elasticsearch import NotFoundError
-
 from invenio_db import db
+from invenio_indexer.signals import before_record_index
 from invenio_oauthclient.utils import oauth_link_external_id
 from invenio_oauthclient.models import (
     RemoteAccount,
@@ -39,10 +39,12 @@ from invenio_oauthclient.models import (
 
 from inspirehep.modules.migrator.tasks import migrate_and_insert_record
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.records.exceptions import MissingInspireRecord
 from inspirehep.modules.search import LiteratureSearch
 from inspirehep.utils.record import get_title
 
 from utils import _delete_record
+from factories.db.invenio_records import TestRecordMetadata
 
 
 @pytest.fixture(scope='function')
@@ -381,3 +383,65 @@ def test_orcid_push_not_triggered_on_create_record_no_feat_flag(mocked_Task, app
     migrate_and_insert_record(raw_record, skip_files=True)
 
     mocked_Task.assert_not_called()
+
+
+def test_check_enhance_after_index_receiver_when_sender_is_not_a_record(isolated_app):
+    json_rec = {
+        "titles": [
+            {
+                "title": "Some title"
+            },
+        ],
+        "$schema": "https://qa.inspirehep.net/schemas/records/hep.json",
+        "authors": [
+            {
+                "uuid": "e4110d73-5f9e-46a5-b7d8-668d727a3acf",
+                "full_name": "Raczka, P.A.",
+            }
+        ],
+        "citeable": True,
+        "abstracts": [
+            {
+                "value": "Abstract value"
+            }
+        ],
+        "control_number": 425592,
+    }
+    record = TestRecordMetadata.create_from_kwargs(json=json_rec).inspire_record
+    before_record_index.send(
+        isolated_app,
+        json=json_rec,
+        record=record
+    )
+    assert 'citation_count' in json_rec
+
+
+def test_check_enhance_after_index_receiver_when_record_not_provided(isolated_app):
+    json_rec = {
+        "titles": [
+            {
+                "title": "Some title"
+            },
+        ],
+        "$schema": "https://qa.inspirehep.net/schemas/records/hep.json",
+        "authors": [
+            {
+                "uuid": "e4110d73-5f9e-46a5-b7d8-668d727a3acf",
+                "full_name": "Raczka, P.A.",
+            }
+        ],
+        "citeable": True,
+        "abstracts": [
+            {
+                "value": "Abstract value"
+            }
+        ],
+        "control_number": 425592,
+    }
+    with pytest.raises(MissingInspireRecord) as exc:
+        before_record_index.send(
+            isolated_app,
+            json=json_rec,
+            record=None
+        )
+    assert str(exc.value) == "Record is not InspireRecord!"

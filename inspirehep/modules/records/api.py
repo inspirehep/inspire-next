@@ -600,12 +600,14 @@ class InspireRecord(Record):
         return absolute_url(u'/api/{endpoint}/{control_number}'.format(endpoint=endpoint,
                                                                        control_number=pid_value))
 
-    def _query_citing_records(self):
+    def _query_citing_records(self, session=None):
         """Returns records which cites this one."""
+        if not session:
+            session = db.session
         ref = self._get_ref()
         if not ref:
             raise Exception("There is no $ref for this object")
-        citations = RecordMetadata.query.with_entities(RecordMetadata.id).filter(
+        citations = session.query(RecordMetadata).with_entities(RecordMetadata.id).filter(
             referenced_records(RecordMetadata.json).contains([ref]))
         return citations
 
@@ -613,9 +615,10 @@ class InspireRecord(Record):
     def get_citing_records_query(self):
         return self._query_citing_records()
 
-    def get_citations_count(self):
+    def get_citations_count(self, session=None):
         """Returns citations count for this record."""
-        count = self.get_citing_records_query.count()
+
+        count = self._query_citing_records(session).count()
         return count
 
     def dumps(self):

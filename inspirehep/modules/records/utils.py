@@ -34,10 +34,13 @@ from inspire_utils.date import earliest_date
 from inspire_utils.name import generate_name_variations
 from inspire_utils.record import get_value
 from inspire_utils.helpers import force_list
+from invenio_db import db
+
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
     get_pid_type_from_schema
 )
+from inspirehep.modules.records.exceptions import MissingInspireRecord
 from inspirehep.utils.record_getter import get_db_records
 from inspirehep.modules.search import LiteratureSearch
 
@@ -138,13 +141,20 @@ def populate_earliest_date(json):
             json['earliest_date'] = result
 
 
-def populate_citations_count(json, record):
+def populate_citations_count(record, json):
     """Populate citations_count in ES from"""
-
     if hasattr(record, 'get_citations_count'):
         # Make sure that record has method get_citations_count
-        citation_count = record.get_citations_count()
+        # Session is in commited state here, and I cannot open new one...
+        if not db.session.is_active:  # For tests and new entries, It tries to count citations when session is closed
+            session = db.Session(bind=db.engine)
+            citation_count = record.get_citations_count(session)
+            session.close()
+        else:
+            citation_count = record.get_citations_count()
         json.update({'citation_count': citation_count})
+    else:
+        raise MissingInspireRecord("Record is not InspireRecord!")
 
 
 def populate_bookautocomplete(json):
