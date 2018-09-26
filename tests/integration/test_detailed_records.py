@@ -22,9 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
-from invenio_accounts.testutils import login_user_via_session
 from invenio_records.models import RecordMetadata
 
 from inspirehep.modules.migrator.models import LegacyRecordsMirror
@@ -44,22 +41,3 @@ def test_all_records_are_valid(app):
     recids = [el[0] for el in invalid]
 
     assert recids == []
-
-
-@pytest.mark.xfail(reason='moving to the new UI, plus this test add no value')
-def test_all_records_are_there(app_client):
-    # Use superadmin user to ensure we can visit all records
-    login_user_via_session(app_client, email='admin@inspirehep.net')
-
-    failed = []
-    for record in [record.json for record in RecordMetadata.query.all()]:
-        try:
-            absolute_url = record['self']['$ref']
-            relative_url = absolute_url.partition('api')[2]
-            response = app_client.get(relative_url)
-
-            assert response.status_code == 200
-        except Exception:
-            failed.append(record['control_number'])
-
-    assert failed == []

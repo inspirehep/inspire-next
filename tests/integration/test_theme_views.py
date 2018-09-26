@@ -23,48 +23,6 @@
 from __future__ import absolute_import, division, print_function
 
 
-def test_literature_is_there(app_client):
-    assert app_client.get('/literature').status_code == 200
-    assert app_client.get('/collection/literature').status_code == 200
-    assert app_client.get('/').status_code == 200
-
-
-def test_authors_is_there(app_client):
-    assert app_client.get('/authors').status_code == 200
-    assert app_client.get('/collection/authors').status_code == 200
-
-
-def test_conferences_is_there(app_client):
-    assert app_client.get('/conferences').status_code == 200
-
-
-def test_jobs_redirects_to_search(app_client):
-    response = app_client.get('/jobs')
-
-    assert response.status_code == 302
-    assert response.location == 'http://localhost:5000/search?cc=jobs'
-
-
-def test_institutions_is_there(app_client):
-    assert app_client.get('/institutions').status_code == 200
-
-
-def test_experiments_is_there(app_client):
-    assert app_client.get('/experiments').status_code == 200
-
-
-def test_journals_is_there(app_client):
-    assert app_client.get('/journals').status_code == 200
-
-
-def test_data_is_there(app_client):
-    assert app_client.get('/data').status_code == 200
-
-
-def test_ping_responds_ok(app_client):
-    assert app_client.get('/ping').data == 'OK'
-
-
 def test_record_url_redirects_to_literature(app_client):
     response = app_client.get('/record/4328')
 

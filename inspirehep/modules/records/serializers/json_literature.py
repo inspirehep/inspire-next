@@ -28,57 +28,6 @@ import json
 
 from invenio_records_rest.serializers.json import JSONSerializer
 
-from inspire_utils.date import format_date
-from inspirehep.modules.records.wrappers import LiteratureRecord
-
-
-def _get_ui_metadata(record):
-    """Record extra metadata for the UI.
-
-    Args:
-        record(dict): the record.
-
-    Returns:
-        dict: the extra metadata.
-    """
-    # FIXME: Deprecated, must be removed once the new UI is released
-    display = {}
-    record = LiteratureRecord(record)
-    if 'references' in record:
-        display['number_of_references'] = len(record['references'])
-    if 'earliest_date' in record:
-        display['date'] = format_date(record['earliest_date'])
-    if 'publication_info' in record:
-        display['publication_info'] = record.publication_information
-        display['conference_info'] = record.conference_information
-    if 'authors' in record:
-        display['number_of_authors'] = len(record['authors'])
-    if 'external_system_identifiers' in record:
-        display['external_system_identifiers'] = \
-            record.external_system_identifiers
-    display['admin_tools'] = record.admin_tools
-
-    return display
-
-
-def get_citations_count(original_record):
-    """ Try to get citations"""
-    if hasattr(original_record, 'get_citations_count'):
-        """Call it only when it has this method"""
-        return original_record.get_citations_count()
-    return None
-
-
-def _preprocess_result(result, original_record=None):
-    """Add additional fields to output json"""
-    record = result['metadata']
-    ui_metadata = _get_ui_metadata(record)
-    # FIXME: Deprecated, must be removed once the new UI is released
-    result['display'] = ui_metadata
-    result['metadata'] = record
-
-    return result
-
 
 class LiteratureJSONUISerializer(JSONSerializer):
     """JSON brief format serializer."""
@@ -87,14 +36,14 @@ class LiteratureJSONUISerializer(JSONSerializer):
         result = super(LiteratureJSONUISerializer, self).preprocess_record(
             pid, record, links_factory=links_factory, **kwargs
         )
-        return _preprocess_result(result, record)
+        return result
 
     def preprocess_search_hit(self, pid, record_hit, links_factory=None,
                               **kwargs):
         result = super(LiteratureJSONUISerializer, self). \
             preprocess_search_hit(pid, record_hit,
                                   links_factory=links_factory, **kwargs)
-        return _preprocess_result(result)
+        return result
 
 
 class LiteratureCitationsJSONSerializer(JSONSerializer):
