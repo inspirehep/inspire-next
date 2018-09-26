@@ -121,3 +121,17 @@ def test_citations_count_non_zero(isolated_app):
     TestRecordMetadata.create_from_kwargs(json=ref3)
 
     assert record_1.get_citations_count() == 3L
+
+
+def test_doubled_citations_should_not_count_to_citation_count(isolated_app):
+    record_json = {
+        'control_number': 321,
+    }
+    record_1 = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+
+    ref = {'control_number': 4321, 'references': [{'record': {'$ref': record_1._get_ref()}}]}
+    TestRecordMetadata.create_from_kwargs(json=ref)
+    TestRecordMetadata.create_from_kwargs(json=ref, disable_persistent_identifier=True)
+
+    record_1.get_citations_count(show_duplicates=True) == 2
+    record_1.get_citations_count() == 1
