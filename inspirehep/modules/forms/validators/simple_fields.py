@@ -27,7 +27,7 @@ from json import loads
 from urllib import urlencode
 
 import requests
-from flask import current_app, url_for
+from flask import current_app
 from flask_login import current_user
 from idutils import is_arxiv
 from invenio_search import current_search_client as es
@@ -38,7 +38,10 @@ from inspire_schemas.utils import load_schema
 from inspire_utils.dedupers import dedupe_list
 from inspire_utils.record import get_value
 
-from inspirehep.utils.url import is_pdf_link
+from inspirehep.utils.url import (
+    get_legacy_url_for_recid,
+    is_pdf_link,
+)
 
 
 def _get_current_user_roles():
@@ -126,10 +129,7 @@ def duplicated_validator(property_name, property_value):
     matches = dedupe_list(match(data, config))
     matched_ids = [int(el['_source']['control_number']) for el in matches]
     if matched_ids:
-        url = url_for(
-            'invenio_records_ui.literature',
-            pid_value=matched_ids[0],
-        )
+        url = get_legacy_url_for_recid(matched_ids[0])
         raise ValidationError(
             'There exists already an item with the same %s. '
             '<a target="_blank" href="%s">See the record.</a>'
