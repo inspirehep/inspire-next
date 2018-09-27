@@ -340,6 +340,13 @@ AUTHORS_REST_ENDPOINT = {
         'application/json': 'invenio_records_rest.serializers:json_v1_search',
         'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
     },
+    'suggesters': {
+        'author': {
+            'completion': {
+                'field': 'author_suggest',
+            },
+        }
+    },
     'list_route': '/authors/',
     'item_route': '/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
     'default_media_type': 'application/json',
@@ -1339,7 +1346,6 @@ CRAWLER_SETTINGS = {
     "API_PIPELINE_URL": "http://localhost:5555/api/task/async-apply",
     "API_PIPELINE_TASK_ENDPOINT_DEFAULT": "inspire_crawler.tasks.submit_results",
 }
-
 # Legacy PID provider
 # ===================
 LEGACY_PID_PROVIDER = None  # e.g. "http://example.org/batchuploader/allocaterecord"

@@ -38,7 +38,6 @@ env:
     - BASE_USER_GID=2000
   matrix:
     - SUITE=ui-literature IMAGES="selenium test-database test-indexer test-rabbitmq test-redis test-web"
-    - SUITE=ui-authors IMAGES="selenium test-database test-indexer test-rabbitmq test-redis test-web"
     - SUITE=workflows IMAGES="test-database test-indexer test-rabbitmq test-redis test-web"
     - SUITE=integration IMAGES="test-database test-indexer test-redis"
     - SUITE=unit IMAGES=""
