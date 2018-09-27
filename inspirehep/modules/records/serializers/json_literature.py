@@ -64,7 +64,6 @@ def _get_ui_metadata(record):
 def get_citations_count(original_record):
     """ Try to get citations"""
     if hasattr(original_record, 'get_citations_count'):
-        """Call it only when it has this method"""
         return original_record.get_citations_count()
     return None
 
@@ -73,6 +72,12 @@ def _preprocess_result(result, original_record=None):
     """Add additional fields to output json"""
     record = result['metadata']
     ui_metadata = _get_ui_metadata(record)
+
+    if original_record is not None:
+        # If it is an db object then get citations from db
+        result['metadata']['citation_count'] = get_citations_count(
+            original_record
+        )
     # FIXME: Deprecated, must be removed once the new UI is released
     result['display'] = ui_metadata
     result['metadata'] = record

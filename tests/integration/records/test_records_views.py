@@ -28,6 +28,36 @@ from invenio_search import current_search_client as es
 
 from inspirehep.modules.records.api import InspireRecord
 
+from factories.db.invenio_records import TestRecordMetadata
+
+
+def test_literature_api_should_include_citation_count(isolated_api_client):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
+        'control_number': 111,
+        'titles': [
+            {
+                'title': 'Jessica Jones',
+            },
+        ],
+        '_collections': ['Literature']
+    }
+    instance = TestRecordMetadata.create_from_kwargs(json=record_json)
+
+    response = isolated_api_client.get(
+        '/literature/111',
+        headers={
+            'Accept': 'application/vnd+inspire.record.ui+json',
+        }
+    )
+    result = json.loads(response.get_data(as_text=True))
+
+    assert response.status_code == 200
+    assert 'citation_count' in result['metadata']
+
 
 def test_literature_citations_api_with_results(isolated_api_client):
     record_json = {
