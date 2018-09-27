@@ -30,6 +30,9 @@ import re
 import numpy as np
 from beard.utils.strings import asciify
 from beard.clustering import block_phonetic
+from lxml.etree import fromstring, tostring
+
+from inspire_dojson import marcxml2record
 
 
 _bai_parentheses_cleaner = \
@@ -106,6 +109,25 @@ def bai(name):
     bai = _bai_spaces.sub(".", bai)
 
     return bai
+
+
+def get_author_record_from_xml_response(xml_content):
+    """Return record contained in XML if collection is 'authors'.
+
+    Args:
+        xml_content (str): Legacy response XML content.
+
+    Returns:
+        dict: JSON author record contained in the XML.
+
+        None: if record collection is not 'authors'.
+    """
+    xml = fromstring(xml_content)
+    collections_datafields = xml.xpath("//*[local-name() = 'datafield'][@*[local-name()='tag' and .='980']]//*[local-name()='subfield']")
+    collections = [el.text for el in collections_datafields]
+    if 'HEPNAMES' in collections:
+        xml_record = xml.xpath("//*[local-name() = 'record']")[0]
+        return marcxml2record(tostring(xml_record))
 
 
 def phonetic_blocks(full_names, phonetic_algorithm='nysiis'):
