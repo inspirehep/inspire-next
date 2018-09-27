@@ -25,8 +25,11 @@ from __future__ import absolute_import, division, print_function
 import sys
 import os
 
+import backoff
 import pytest
+import requests
 import sqlalchemy
+import uuid
 from flask_alembic import Alembic
 
 from functools import partial
@@ -108,8 +111,71 @@ def app():
         yield app
 
 
+@pytest.fixture(scope='session')
+def isolated_es_session_snapshot():
+    isolated_repo_name = 'original_repo'
+    isolated_snapshot_name = uuid.uuid4().hex
+    all_indices = requests.get('http://test-indexer:9200/_all').json().keys()
+    snapshots = requests.get('http://test-indexer:9200/_snapshot/').json()
+    if isolated_repo_name not in snapshots:
+        create_repo_response = requests.put(
+            'http://test-indexer:9200/_snapshot/%s' % isolated_repo_name,
+            json={
+                'type': 'fs',
+                'settings': {'location': isolated_repo_name, 'compress': True}
+            }
+        )
+        create_repo_response.raise_for_status()
+
+    snapshot = requests.put(
+        'http://test-indexer:9200/_snapshot/%s/%s?wait_for_completion=true' % (
+            isolated_repo_name,
+            isolated_snapshot_name,
+        ),
+        json={
+            'indices': ','.join(all_indices),
+        },
+    )
+    snapshot.raise_for_status()
+
+    yield {
+        'repo': isolated_repo_name,
+        'snapshot': isolated_snapshot_name,
+        'indices': all_indices,
+    }
+
+
 @pytest.fixture(scope='function')
-def isolated_app(app):
+def isolated_es(isolated_es_session_snapshot):
+    isolated_repo_name = isolated_es_session_snapshot['repo']
+    isolated_snapshot_name = isolated_es_session_snapshot['snapshot']
+    all_indices = isolated_es_session_snapshot['indices']
+
+    yield
+
+    close_response = requests.post('http://test-indexer:9200/_all/_close')
+    close_response.raise_for_status()
+
+    restore_response = requests.post(
+        'http://test-indexer:9200/_snapshot/%s/%s/_restore' %
+        (isolated_repo_name, isolated_snapshot_name)
+    )
+    restore_response.raise_for_status()
+
+    open_response = requests.post('http://test-indexer:9200/%s/_open' % ','.join(all_indices))
+    open_response.raise_for_status()
+
+    @backoff.on_exception(backoff.constant, AssertionError, max_time=30, interval=0.1)
+    def _shards_initialized():
+        health = requests.get('http://test-indexer:9200/_cluster/health')
+        health.raise_for_status()
+        assert health.json()['initializing_shards'] == 0
+
+    _shards_initialized()
+
+
+@pytest.fixture(scope='function')
+def isolated_app(app, isolated_es):
     """
     Flask application with demosite data and with database isolation: db
     transactions performed during the tests are not persisted into the db,

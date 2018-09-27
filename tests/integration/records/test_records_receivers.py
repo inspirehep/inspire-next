@@ -287,6 +287,9 @@ def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_
     assert mocked_Task.apply_async.call_count == 2
 
 
+OLD_ID = None
+
+
 def test_creating_deleted_record_and_undeleting_created_record_in_es(isolated_app):
     search = LiteratureSearch()
     json = {
@@ -313,6 +316,16 @@ def test_creating_deleted_record_and_undeleting_created_record_in_es(isolated_ap
     record['deleted'] = False
     record.commit()
     search.get_source(record.id)
+
+    global OLD_ID
+    OLD_ID = record.id
+
+
+def test_es_doesnt_leak(isolated_app):
+    search = LiteratureSearch()
+
+    with pytest.raises(NotFoundError):
+        search.get_source(OLD_ID)
 
 
 def test_that_db_changes_are_mirrored_in_es(isolated_app):
