@@ -725,56 +725,6 @@ RECORDS_REST_ENDPOINTS = {
 
 RECORDS_UI_DEFAULT_PERMISSION_FACTORY = "inspirehep.modules.records.permissions:record_read_permission_factory"
 
-RECORDS_UI_ENDPOINTS = {
-    'literature': {
-        'pid_type': 'lit',
-        'route': '/old-literature/<pid_value>',
-        'template': 'inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl',
-        'record_class': 'inspirehep.modules.records.wrappers:LiteratureRecord',
-    },
-    'authors': {
-        'pid_type': 'aut',
-        'route': '/authors/<pid_value>',
-        'template': 'inspirehep_theme/format/record/authors/Author_HTML_detailed.html',
-        'record_class': 'inspirehep.modules.records.wrappers:AuthorsRecord',
-    },
-    'data': {
-        'pid_type': 'dat',
-        'route': '/data/<pid_value>',
-        'template': 'inspirehep_theme/format/record/Data_HTML_detailed.tpl'
-    },
-    'conferences': {
-        'pid_type': 'con',
-        'route': '/conferences/<pid_value>',
-        'template': 'inspirehep_theme/format/record/Conference_HTML_detailed.tpl',
-        'record_class': 'inspirehep.modules.records.wrappers:ConferencesRecord',
-    },
-    'jobs': {
-        'pid_type': 'job',
-        'route': '/jobs/<pid_value>',
-        'template': 'inspirehep_theme/format/record/Job_HTML_detailed.tpl',
-        'record_class': 'inspirehep.modules.records.wrappers:JobsRecord',
-    },
-    'institutions': {
-        'pid_type': 'ins',
-        'route': '/institutions/<pid_value>',
-        'template': 'inspirehep_theme/format/record/Institution_HTML_detailed.tpl',
-        'record_class': 'inspirehep.modules.records.wrappers:InstitutionsRecord',
-    },
-    'experiments': {
-        'pid_type': 'exp',
-        'route': '/experiments/<pid_value>',
-        'template': 'inspirehep_theme/format/record/Experiment_HTML_detailed.tpl',
-        'record_class': 'inspirehep.modules.records.wrappers:ExperimentsRecord',
-    },
-    'journals': {
-        'pid_type': 'jou',
-        'route': '/journals/<pid_value>',
-        'template': 'inspirehep_theme/format/record/Journal_HTML_detailed.tpl',
-        'record_class': 'inspirehep.modules.records.wrappers:JournalsRecord',
-    },
-}
-
 RECORDS_REST_FACETS = {
     "records-hep": {
         "filters": {

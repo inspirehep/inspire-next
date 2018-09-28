@@ -29,63 +29,7 @@ from flask import current_app
 from inspire_schemas.api import ReferenceBuilder
 from inspire_utils.helpers import force_list
 
-from inspirehep.utils.jinja2 import render_template_to_string
-from inspirehep.utils.record_getter import get_es_records
 from inspirehep.utils.url import retrieve_uri
-
-
-def get_and_format_references(record):
-    """Format references.
-
-    .. deprecated:: 2018-06-07
-    """
-    out = []
-    references = record.get('references')
-    if references:
-        reference_recids = [
-            str(ref['recid']) for ref in references if ref.get('recid')
-        ]
-
-        resolved_references = get_es_records(
-            'lit',
-            reference_recids,
-            _source=[
-                'authors',
-                'citation_count',
-                'collaboration',
-                'control_number',
-                'corporate_author',
-                'earliest_date',
-                'publication_info',
-                'titles',
-            ]
-        )
-
-        # Create mapping to keep reference order
-        recid_to_reference = {
-            ref['control_number']: ref for ref in resolved_references
-        }
-        for reference in references:
-            row = []
-            ref_record = recid_to_reference.get(
-                reference.get('recid'), {}
-            )
-            if 'reference' in reference:
-                reference.update(reference['reference'])
-                del reference['reference']
-            if 'publication_info' in reference:
-                reference['publication_info'] = force_list(
-                    reference['publication_info']
-                )
-            row.append(render_template_to_string(
-                'inspirehep_theme/references.html',
-                record=ref_record,
-                reference=reference
-            ))
-            row.append(ref_record.get('citation_count', ''))
-            out.append(row)
-
-    return out
 
 
 def map_refextract_to_schema(extracted_references, source=None):

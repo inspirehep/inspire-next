@@ -38,10 +38,8 @@ from werkzeug.urls import url_decode
 
 from inspire_utils.date import format_date as _format_date
 from inspire_utils.dedupers import dedupe_list
-from inspirehep.modules.records.wrappers import LiteratureRecord
 from inspirehep.modules.search import InstitutionsSearch, LiteratureSearch
 from inspirehep.utils.jinja2 import render_template_to_string
-from inspirehep.utils.template import render_macro_from_template
 
 from .views import blueprint
 
@@ -471,83 +469,6 @@ def count_plots(record):
 @blueprint.app_template_filter()
 def json_dumps(data):
     return json.dumps(data)
-
-
-@blueprint.app_template_filter()
-def publication_info(record):
-    """Display inline publication and conference information.
-
-    The record is a LiteratureRecord instance
-    """
-    if not isinstance(record, LiteratureRecord):
-        record = LiteratureRecord(record)
-    result = {}
-    pub_infos = []
-    if 'publication_info' in record:
-        publication_information = record.publication_information
-        if publication_information:
-            for pub_info in publication_information:
-                pub_info_html = render_macro_from_template(
-                    name="pub_info",
-                    template="inspirehep_theme/format/record/Publication_info.tpl",
-                    ctx=pub_info
-                )
-                if pub_info_html:
-                    pub_infos.append(pub_info_html)
-
-            if pub_infos:
-                result['pub_info'] = pub_infos
-
-        # Conference info line
-        for conf_info in record.conference_information:
-            if conf_info.get('conference_recid') and conf_info.get('parent_recid'):
-                if result:
-                    result['conf_info'] = render_macro_from_template(
-                        name="conf_with_pub_info",
-                        template="inspirehep_theme/format/record/Conference_info_macros.tpl",
-                        ctx={
-                            'parent_recid': conf_info.get('parent_recid'),
-                            'conference_recid': conf_info.get('conference_recid'),
-                            'conference_title': conf_info.get('conference_title'),
-                        }
-                    )
-                    break
-                else:
-                    result['conf_info'] = render_macro_from_template(
-                        name="conf_without_pub_info",
-                        template="inspirehep_theme/format/record/Conference_info_macros.tpl",
-                        ctx={
-                            'parent_recid': conf_info.get('parent_recid'),
-                            'conference_recid': conf_info.get('conference_recid'),
-                            'conference_title': conf_info.get('conference_title'),
-                            'page_start': conf_info.get('page_start'),
-                            'page_end': conf_info.get('page_end'),
-                            'artid': conf_info.get('artid'),
-                        }
-                    )
-                    break
-            elif conf_info.get('conference_recid') and not conf_info.get('parent_recid'):
-                result['conf_info'] = render_macro_from_template(
-                    name="conference_only",
-                    template="inspirehep_theme/format/record/Conference_info_macros.tpl",
-                    ctx={
-                        'conference_recid': conf_info.get('conference_recid'),
-                        'conference_title': conf_info.get('conference_title'),
-                        'pub_info': bool(result.get('pub_info')),
-                    }
-                )
-            elif conf_info.get('parent_recid') and not conf_info.get('conference_recid'):
-                result['conf_info'] = render_macro_from_template(
-                    name="proceedings_only",
-                    template="inspirehep_theme/format/record/Conference_info_macros.tpl",
-                    ctx={
-                        'parent_recid': conf_info.get('parent_recid'),
-                        'parent_title': conf_info.get('parent_title'),
-                        'pub_info': bool(result.get('pub_info')),
-                    }
-                )
-
-    return result
 
 
 @blueprint.app_template_filter()
