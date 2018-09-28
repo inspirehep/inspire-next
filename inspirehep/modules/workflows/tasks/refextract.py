@@ -231,6 +231,9 @@ def match_reference(reference, previous_matched_recid=None):
     Returns:
         dict: the matched reference.
     """
+    if reference.get('curated_relation'):
+        return reference
+
     config_unique_identifiers = current_app.config[
         'WORKFLOWS_REFERENCE_MATCHER_UNIQUE_IDENTIFIERS_CONFIG']
     config_default_publication_info = current_app.config[
