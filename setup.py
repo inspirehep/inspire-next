@@ -122,6 +122,7 @@ install_requires = [
     # from python-requests (<1.23) (https://travis-ci.org/inspirehep/inspire-next/builds/388221674)
     'urllib3~=1.0,<1.23',
     'workflow~=2.0,>=2.1.3',
+    'click~=6.7,<7.0',
 ]
 
 docs_require = [

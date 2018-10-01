@@ -1,0 +1,42 @@
+{
+    "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
+    "_collections": [
+      "Literature"
+    ],
+    "titles": [
+        {
+            "source":"submitter",
+            "title":"Some Results Arising from the Study of ORCID push"
+        }
+    ],
+    "abstracts": [
+        {
+            "source": "submitter",
+            "value": "This is a record used for testing the ORCID feature."
+        }
+    ],
+    "authors":[
+        {
+            "full_name":"Rossoni, A.",
+            "inspire_roles":[
+                "author"
+            ],
+            "curated_relation": true,
+            "record": {
+                "$ref": "http://labs.inspirehep.net/api/authors/1259096"
+            },
+            "recid":1259096
+        }
+    ],
+    "dois": [
+        {
+            "value": "10.1000/test.orcid.push"
+        }
+    ],
+    "collaborations": [
+    ],
+    "document_type": [
+      "article"
+    ],
+    "preprint_date": "2017-05"
+}

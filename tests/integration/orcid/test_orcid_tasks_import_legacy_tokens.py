@@ -28,7 +28,10 @@ from pytest import fixture, mark
 from mock import patch
 from simplejson import dumps
 
+from factories.db.invenio_records import TestRecordMetadata
+
 from inspirehep.modules.orcid.tasks import (
+    USER_EMAIL_EMPTY_PATTERN,
     import_legacy_orcid_tokens,
     legacy_orcid_arrays,
     _find_user_matching,
@@ -323,3 +326,140 @@ def test_find_user_matching(app_with_config, teardown_sample_user, orcid, email)
     # Assert the user found is the one added
     assert user_by_orcid.email == SAMPLE_USER['email']
     assert User.query.filter_by(email=SAMPLE_USER['email']).count() == 1
+
+
+# The following tests use db isolation.
+@mark.usefixtures('isolated_app')
+class TestImportLegacyOrcidTokens(object):
+    def setup(self):
+        factory_author = TestRecordMetadata.create_from_file(__name__, 'test_orcid_tasks_import_legacy_tokens_TestImportLegacyOrcidTokens_author.json', pid_type='aut')
+        self.inspire_record_author = factory_author.inspire_record
+        factory_literature = TestRecordMetadata.create_from_file(__name__, 'test_orcid_tasks_import_legacy_tokens_TestImportLegacyOrcidTokens_literature.json', index_name='records-hep')
+        self.inspire_record_literature = factory_literature.inspire_record
+
+        self.orcid = '0000-0002-0942-3697'
+
+        self._patcher_legacy_orcid_arrays = patch('inspirehep.modules.orcid.tasks.legacy_orcid_arrays')
+        self.mock_legacy_orcid_arrays = self._patcher_legacy_orcid_arrays.start()
+        self._patcher_orcid_push = patch('inspirehep.modules.orcid.tasks.orcid_push')
+        self.mock_orcid_push = self._patcher_orcid_push.start()
+
+        self._patcher_logger = patch('inspirehep.modules.orcid.tasks.LOGGER')
+        self.mock_logger = self._patcher_logger.start()
+
+    def teardown(self):
+        self._patcher_legacy_orcid_arrays.stop()
+        self._patcher_orcid_push.stop()
+        self.mock_logger.stop()
+
+    def _assert_user_and_token_models(self, orcid, token, email, name):
+        user = User.query.filter_by(email=email).one_or_none()
+        assert user
+        assert len(user.remote_accounts) == 1
+        remote_account = user.remote_accounts[0]
+        assert UserIdentity.query.filter_by(id_user=user.id).one_or_none()
+        assert len(remote_account.remote_tokens) == 1
+        remote_token = remote_account.remote_tokens[0]
+
+        assert remote_token.access_token == token
+        assert remote_account.extra_data['orcid'] == orcid
+        assert remote_account.extra_data['full_name'] == name
+        assert remote_account.extra_data['allow_push']
+
+    def test_happy_flow(self):
+        token = 'mytoken'
+        email = 'myemail@me.com'
+        name = 'myname'
+        self.mock_legacy_orcid_arrays.return_value = (
+            (self.orcid, token, email, name),
+        )
+
+        import_legacy_orcid_tokens()
+
+        self.mock_orcid_push.apply_async.assert_any_call(
+            queue='orcid_push_legacy_tokens',
+            kwargs={
+                'orcid': self.orcid,
+                'rec_id': self.inspire_record_literature['control_number'],
+                'oauth_token': token,
+            },
+        )
+
+        self._assert_user_and_token_models(self.orcid, token, email, name)
+        self.mock_logger.exception.assert_not_called()
+
+    def test_log_exception_when_no_author_record(self):
+        token = 'mytoken'
+        name = 'myname'
+        email = 'myemail@me.com'
+        self.mock_legacy_orcid_arrays.return_value = (
+            ('inexistentorcid', token, email, name),
+        )
+
+        import_legacy_orcid_tokens()
+
+        assert self.mock_logger.exception.call_count == 1
+        # Ensure that when no author record is found with that ORCID, then
+        # the exception is logged.
+        # Note: I couldn't find a better way to assert on exception instances.
+        assert 'NoResultFound' in str(self.mock_logger.exception.call_args)
+
+    def test_2_entries_in_legacy_orcid_arrays_but_1_literature(self):
+        token = 'mytoken'
+        email = 'myemail@me.com'
+        name = 'myname'
+        self.mock_legacy_orcid_arrays.return_value = (
+            (self.orcid, token, email, name),
+            ('myotherorcid', 'myothertoken', 'otheremail@me.com', 'othername'),
+        )
+
+        import_legacy_orcid_tokens()
+
+        self.mock_orcid_push.apply_async.assert_any_call(
+            queue='orcid_push_legacy_tokens',
+            kwargs={
+                'orcid': self.orcid,
+                'rec_id': self.inspire_record_literature['control_number'],
+                'oauth_token': token,
+            },
+        )
+
+        self._assert_user_and_token_models(self.orcid, token, email, name)
+        assert self.mock_logger.exception.call_count == 1
+
+    def test_empty_name(self):
+        token = 'mytoken'
+        email = 'myemail@me.com'
+        name = ''
+        self.mock_legacy_orcid_arrays.return_value = (
+            (self.orcid, token, email, name),
+            ('myotherorcid', 'myothertoken', 'otheremail@me.com', name),
+        )
+
+        import_legacy_orcid_tokens()
+
+        self.mock_orcid_push.apply_async.assert_any_call(
+            queue='orcid_push_legacy_tokens',
+            kwargs={
+                'orcid': self.orcid,
+                'rec_id': self.inspire_record_literature['control_number'],
+                'oauth_token': token,
+            },
+        )
+
+        self._assert_user_and_token_models(self.orcid, token, email, name)
+        assert self.mock_logger.exception.call_count == 1
+
+    def test_empty_email(self):
+        token = 'mytoken'
+        email = ''
+        name = 'myname'
+        self.mock_legacy_orcid_arrays.return_value = (
+            (self.orcid, token, email, name),
+            ('myotherorcid', 'myothertoken', email, 'othername'),
+        )
+
+        import_legacy_orcid_tokens()
+
+        self._assert_user_and_token_models(self.orcid, token, USER_EMAIL_EMPTY_PATTERN.format(self.orcid), name)
+        assert self.mock_logger.exception.call_count == 1

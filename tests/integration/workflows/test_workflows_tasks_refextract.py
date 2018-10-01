@@ -373,6 +373,39 @@ def test_match_reference_ignores_deleted():
     assert 'record' not in reference
 
 
+def test_match_reference_doesnt_touch_curated():
+    cited_record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'control_number': 1,
+        'document_type': ['article'],
+        'dois': [{
+            'value': '10.1371/journal.pone.0188398',
+        }],
+    }
+
+    TestRecordMetadata.create_from_kwargs(
+        json=cited_record_json, index_name='records-hep')
+
+    reference = {
+        'curated_relation': True,
+        'record': {
+            '$ref': 'http://localhost:5000/api/literature/42',
+        },
+        'reference': {
+            'dois': ['10.1371/journal.pone.0188398'],
+        }
+    }
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    assert validate([reference], subschema) is None
+    reference = match_reference(reference)
+
+    assert reference['record']['$ref'] == 'http://localhost:5000/api/literature/42'
+
+
 @patch(
     'inspirehep.modules.workflows.tasks.refextract.match',
     return_value=[

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2018 CERN.
+# Copyright (C) 2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,25 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
-from marshmallow import Schema, fields, post_dump
-
-from inspire_dojson.utils import strip_empty_values
-
-from inspirehep.modules.records.serializers.fields import ListWithLimit, NestedWithoutEmptyObjects
-
-from .author import AuthorSchemaV1
-from .publication_info_item import PublicationInfoItemSchemaV1
+from invenio_records.errors import RecordsError
 
 
-class CitationItemSchemaV1(Schema):
-    authors = ListWithLimit(
-        NestedWithoutEmptyObjects(AuthorSchemaV1, dump_only=True), limit=10)
-    control_number = fields.Raw()
-    publication_info = fields.List(
-        NestedWithoutEmptyObjects(PublicationInfoItemSchemaV1, dump_only=True))
-    titles = fields.Raw()
-    earliest_date = fields.Raw()
-
-    @post_dump
-    def strip_empty(self, data):
-        return strip_empty_values(data)
+class MissingInspireRecord(RecordsError):
+    pass

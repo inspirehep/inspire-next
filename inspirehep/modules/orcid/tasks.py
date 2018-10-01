@@ -45,6 +45,7 @@ from inspirehep.modules.orcid.utils import get_literature_recids_for_orcid
 
 
 LOGGER = getStackTraceLogger(__name__)
+USER_EMAIL_EMPTY_PATTERN = '{}@FAKEEMAILINSPIRE.FAKE'
 
 
 def legacy_orcid_arrays():
@@ -151,6 +152,12 @@ def _register_user(name, email, orcid, token):
 
     # Make the user if didn't find existing one
     if not user:
+
+        if not email:
+            # Generate a (fake) unique email address as User.email is a unique
+            # field.
+            email = USER_EMAIL_EMPTY_PATTERN.format(orcid)
+
         with db.session.begin_nested():
             user = User()
             user.email = email

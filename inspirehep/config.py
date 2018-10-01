@@ -206,7 +206,8 @@ RECORD_EDITOR_FILE_UPLOAD_FOLDER = 'inspirehep/modules/editor/temp'
 
 # Path to where journal kb file is stored from `inspirehep.modules.refextract.tasks.create_journal_kb_file`
 # On production, if you enable celery beat change this path to point to a shared space.
-REFEXTRACT_JOURNAL_KB_PATH = pkg_resources.resource_filename('refextract', 'references/kbs/journal-titles.kb')
+REFEXTRACT_JOURNAL_KB_PATH = pkg_resources.resource_filename(
+    'refextract', 'references/kbs/journal-titles.kb')
 
 # Search
 # ======
@@ -568,6 +569,11 @@ INSTITUTIONS_REST_ENDPOINT = {
     },
     'suggesters': {
         'affiliation': {
+            '_source': [
+                'legacy_ICN',
+                'control_number',
+                'self',
+            ],
             'completion': {
                 'field': 'affiliation_suggest',
             },
@@ -613,6 +619,11 @@ EXPERIMENTS_REST_ENDPOINT = {
     },
     'suggesters': {
         'experiment': {
+            '_source': [
+                'legacy_name',
+                'control_number',
+                'self',
+            ],
             'completion': {
                 'field': 'experiment_suggest',
             },
@@ -974,23 +985,17 @@ RECORDS_REST_FACETS = {
 
 RECORDS_REST_SORT_OPTIONS = {
     "records-hep": {
-        "bestmatch": {
-            "title": 'Best match',
-            "fields": ['-_score'],
-            "default_order": 'asc',  # Used for invenio-search-js config
-            "order": 1,
-        },
         "mostrecent": {
             "title": 'Most recent',
             "fields": ['-earliest_date'],
             "default_order": 'asc',  # Used for invenio-search-js config
-            "order": 2,
+            "order": 1,
         },
         "mostcited": {
             "title": 'Most cited',
             "fields": ['-citation_count'],
             "default_order": 'asc',  # Used for invenio-search-js config
-            "order": 3,
+            "order": 2,
         },
     },
 
