@@ -600,25 +600,32 @@ class InspireRecord(Record):
         return absolute_url(u'/api/{endpoint}/{control_number}'.format(endpoint=endpoint,
                                                                        control_number=pid_value))
 
-    def _query_citing_records(self, session=None):
+    def _query_citing_records(self, show_duplicates=False, session=None):
         """Returns records which cites this one."""
         if not session:
             session = db.session
         ref = self._get_ref()
         if not ref:
             raise Exception("There is no $ref for this object")
-        citations = session.query(RecordMetadata).with_entities(RecordMetadata.id).filter(
-            referenced_records(RecordMetadata.json).contains([ref]))
+        citation_query = session.query(RecordMetadata).with_entities(RecordMetadata.id,
+                                                                     RecordMetadata.json['control_number'])
+        citation_filter = referenced_records(RecordMetadata.json).contains([ref])
+        citations = citation_query.filter(citation_filter)
+        if not show_duplicates:
+            # It just hides duplicates, and still can show citations
+            # which do not have proper PID in PID store
+            # Duplicated data should be removed with the CLI command
+            citations = citations.distinct(RecordMetadata.json['control_number'])
         return citations
 
     @property
     def get_citing_records_query(self):
         return self._query_citing_records()
 
-    def get_citations_count(self, session=None):
+    def get_citations_count(self, session=None, show_duplicates=False):
         """Returns citations count for this record."""
 
-        count = self._query_citing_records(session).count()
+        count = self._query_citing_records(show_duplicates, session).count()
         return count
 
     def dumps(self):
