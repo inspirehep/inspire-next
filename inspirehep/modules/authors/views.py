@@ -29,7 +29,6 @@ from flask import (
     Blueprint,
     redirect,
 )
-from flask_breadcrumbs import register_breadcrumb
 from flask_login import login_required
 
 from .permissions import holdingpen_author_permission
@@ -54,33 +53,27 @@ def validate():
 
 
 @blueprint.route('/new', methods=['GET'])
-@register_breadcrumb(blueprint, '.new', 'New author information')
-@login_required
 def new():
     """Deprecated View for INSPIRE author new form."""
-    return redirect('/submissions/author', 301)
+    return redirect('/submissions/authors', 301)
 
 
 @blueprint.route('/<int:recid>/update', methods=['GET'])
-@register_breadcrumb(blueprint, '.update', 'Update author information')
-@login_required
 def update(recid):
     """Deprecated View for INSPIRE author update form."""
-    return redirect('/submissions/author/{}'.format(recid), 301)
+    return redirect('/submissions/authors/{}'.format(recid), 301)
 
 
 @blueprint.route('/update/submit', methods=['POST'])
-@login_required
 def submitupdate():
     """Deprecated Form action handler for INSPIRE author update form."""
-    return redirect('/submissions/author', 301)
+    return redirect('/submissions/authors', 301)
 
 
 @blueprint.route('/new/submit', methods=['POST'])
-@login_required
 def submitnew():
     """Deprecated Form action handler for INSPIRE author new form."""
-    return redirect('/submissions/author', 301)
+    return redirect('/submissions/authors', 301)
 
 
 @blueprint.route('/new/review', methods=['GET'])
@@ -88,7 +81,7 @@ def submitnew():
 @holdingpen_author_permission.require(http_exception=403)
 def newreview():
     """Deprecated View for INSPIRE author new form review by a cataloger."""
-    return redirect('/submissions/author', 301)
+    return redirect('/submissions/authors', 301)
 
 
 @blueprint.route('/new/review/submit', methods=['POST'])
@@ -96,7 +89,7 @@ def newreview():
 @holdingpen_author_permission.require(http_exception=403)
 def reviewhandler():
     """Deprecated Form handler when a cataloger accepts an author review."""
-    return redirect('/submissions/author', 301)
+    return redirect('/submissions/authors', 301)
 
 
 @blueprint.route('/holdingpenreview', methods=['GET', 'POST'])
@@ -104,4 +97,4 @@ def reviewhandler():
 @holdingpen_author_permission.require(http_exception=403)
 def holdingpenreview():
     """Deprecated Handler for approval or rejection of new authors in Holding Pen."""
-    return redirect('/submissions/author', 301)
+    return redirect('/submissions/authors', 301)
