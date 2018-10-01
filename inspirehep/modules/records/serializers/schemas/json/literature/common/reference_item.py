@@ -38,27 +38,32 @@ class ReferenceItemSchemaV1(Schema):
         NestedWithoutEmptyObjects(AuthorSchemaV1, dump_only=True, default=[]), limit=10)
     control_number = fields.Raw()
     label = fields.Raw()
+    urls = fields.Raw()
     publication_info = fields.List(
         NestedWithoutEmptyObjects(PublicationInfoItemSchemaV1, dump_only=True))
     titles = fields.Method('get_titles')
+    misc = fields.Method('get_misc')
+    arxiv_eprint = fields.Method('get_arxiv_eprints')
+    dois = fields.Method('get_dois')
 
     @pre_dump(pass_many=True)
     def filter_references(self, data, many):
         reference_records = self.get_resolved_references_by_control_number(data)
 
         if not many:
-            reference_record_id = self.get_reference_record_id(data)
-            reference_record = reference_records.get(reference_record_id)
-            reference = self.get_reference_or_linked_reference_with_label(data, reference_record)
-            return reference
+            return self.get_resolved_reference(data, reference_records)
 
         references = []
         for reference in data:
-            reference_record_id = self.get_reference_record_id(reference)
-            reference_record = reference_records.get(reference_record_id)
-            reference = self.get_reference_or_linked_reference_with_label(reference, reference_record)
-            references.append(reference)
+            resolved_reference = self.get_resolved_reference(reference, reference_records)
+            references.append(resolved_reference)
         return references
+
+    def get_resolved_reference(self, data, reference_records):
+        reference_record_id = self.get_reference_record_id(data)
+        reference_record = reference_records.get(reference_record_id)
+        reference = self.get_reference_or_linked_reference_with_label(data, reference_record)
+        return reference
 
     def get_reference_record_id(self, data):
         return get_recid_from_ref(data.get('record'))
@@ -75,7 +80,7 @@ class ReferenceItemSchemaV1(Schema):
     def get_reference_or_linked_reference_with_label(self, data, reference_record):
         if reference_record:
             reference_record.update({
-                'label': data.get('reference', {}).get('label')
+                'label': data.get('reference', {}).get('label', missing)
             })
             return reference_record
         return data.get('reference')
@@ -85,3 +90,29 @@ class ReferenceItemSchemaV1(Schema):
         if title:
             data['titles'] = force_list(title)
         return data.get('titles', missing)
+
+    def get_dois(self, data):
+        dois = data.pop('dois', None)
+        control_number = data.get('control_number')
+        if dois and not control_number:
+            data['dois'] = force_list({'value': dois[0]})
+        elif dois:
+            data['dois'] = force_list(dois[0])
+        return data.get('dois', missing)
+
+    def get_arxiv_eprints(self, data):
+        arxiv_eprint = data.pop('arxiv_eprint', None)
+        arxiv_eprints = data.pop('arxiv_eprints', None)
+        if arxiv_eprint:
+            data['arxiv_eprint'] = force_list({'value': arxiv_eprint})
+        elif arxiv_eprints:
+            data['arxiv_eprint'] = force_list(arxiv_eprints[0])
+        return data.get('arxiv_eprint', missing)
+
+    def get_misc(self, data):
+        titles = data.get('titles')
+        title = data.get('title')
+        misc = data.get('misc')
+        if not title and not titles and misc:
+            return misc[0]
+        return missing
