@@ -27,6 +27,7 @@ from time import sleep
 import click
 import click_spinner
 import json
+import pprint
 
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
@@ -228,3 +229,61 @@ def simpleindex(yes_i_know, pid_type, batch_size, queue_name):
             json.dump(errors_json, log)
 
         click.secho('You can see the errors in %s' % errors_log_path)
+
+
+@click.command()
+@click.option('--remove-no-control-number', is_flag=True)
+@click.option('--remove-duplicates', is_flag=True)
+@click.option('--remove-not-in-pidstore', is_flag=True)
+@click.option('-c', '--print-without-control-number', is_flag=True)
+@click.option('-p', '--print-pid-not-in-pidstore', is_flag=True)
+@click.option('-d', '--print-duplicates', is_flag=True)
+@with_appcontext
+def handle_duplicates(remove_no_control_number, remove_duplicates,
+                      print_without_control_number, print_pid_not_in_pidstore,
+                      print_duplicates, remove_not_in_pidstore):
+    query = RecordMetadata.query.with_entities(RecordMetadata.id).outerjoin(
+        PersistentIdentifier,
+        PersistentIdentifier.object_uuid == RecordMetadata.id).filter(
+            PersistentIdentifier.object_uuid == None)  # noqa: E711
+    out = query.all()
+
+    recs_no_control_number = []
+    recs_no_in_pid_store = []
+    others = []
+    for rec in out:
+        cn = RecordMetadata.query.get(rec).json.get('control_number')
+        if not cn:
+            recs_no_control_number.append(rec)
+        elif not PersistentIdentifier.query.filter(
+                PersistentIdentifier.pid_value == str(cn)).one_or_none():
+            recs_no_in_pid_store.append(rec)
+        else:
+            others.append(rec)
+    click.secho("Found %s records not in PID store" % len(out))
+    click.secho("\t%s records without control number" % len(recs_no_control_number))
+    click.secho("\t%s records with their PID not in pidstore" % len(recs_no_in_pid_store))
+    click.secho("\t%s records which are duplicates of records in pid store" % len(others))
+    if print_without_control_number:
+        click.secho("Records which are missing control number:\n%s" % (pprint.pformat(recs_no_control_number)))
+    if print_pid_not_in_pidstore:
+        click.secho("Records missing in PID store:\n%s" % (pprint.pformat(recs_no_in_pid_store)))
+    if print_duplicates:
+        click.secho("Duplicates:\n%s" % (pprint.pformat(others)))
+
+    if remove_no_control_number:
+        click.secho("Removing records which PID is not in pidstore (%s)" % len(
+            recs_no_in_pid_store))
+        RecordMetadata.query.filter(RecordMetadata.id.in_(
+            [str(r[0]) for r in recs_no_control_number])).delete()
+        db.session.commit()
+    if remove_not_in_pidstore:
+        click.secho("Removing records which looks to be duplicates (%s)" % len(others))
+        RecordMetadata.query.filter(RecordMetadata.id.in_(
+            [str(r[0]) for r in recs_no_in_pid_store])).delete()
+        db.session.commit()
+    if remove_duplicates:
+        click.secho("Removing records which looks to be duplicates (%s)" % len(others))
+        RecordMetadata.query.filter(RecordMetadata.id.in_(
+            [str(r[0]) for r in others])).delete()
+        db.session.commit()
