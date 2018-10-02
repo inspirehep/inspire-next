@@ -171,18 +171,16 @@ def _register_user(name, email, orcid, token):
         ORCID associated with the user whose ``allow_push`` flag changed state.
 
     """
+    if not email:
+        # Generate a (fake) unique email address (because User.email is a
+        # unique field).
+        email = USER_EMAIL_EMPTY_PATTERN.format(orcid)
 
     # Try to find an existing user entry
     user = _find_user_matching(orcid, email)
 
     # Make the user if didn't find existing one
     if not user:
-
-        if not email:
-            # Generate a (fake) unique email address as User.email is a unique
-            # field.
-            email = USER_EMAIL_EMPTY_PATTERN.format(orcid)
-
         with db.session.begin_nested():
             user = User()
             user.email = email
