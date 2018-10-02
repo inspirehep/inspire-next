@@ -44,6 +44,14 @@ def test_returns_non_empty_fields():
                 'title': 'Jessica Jones',
             }
         ],
+        'collaborations': [
+            {
+                'value': 'ATLAS Team'
+            },
+            {
+                'value': 'CMS'
+            }
+        ]
     }
     expected = {
         'control_number': 123,
@@ -59,7 +67,17 @@ def test_returns_non_empty_fields():
             {
                 'title': 'Jessica Jones'
             }
-        ]
+        ],
+        'collaborations': [
+            {
+                'value': 'CMS'
+            }
+        ],
+        'collaborations_with_suffix': [
+            {
+                'value': 'ATLAS Team'
+            },
+        ],
     }
 
     result = schema.dumps(dump).data
