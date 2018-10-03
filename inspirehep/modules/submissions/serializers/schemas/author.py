@@ -33,6 +33,7 @@ class Author(Schema):
     given_name = fields.Raw()
     native_names = fields.Raw()
     public_emails = fields.Raw()
+    orcid = fields.Raw()
 
     status = fields.Raw()
     arxiv_categories = fields.Raw()
@@ -68,6 +69,8 @@ class Author(Schema):
                 get_values_for_schema(data.get('ids', []), 'LINKEDIN')),
             'native_name': get_value(
                 data, 'name.native_names[0]', default=missing),
+            'orcid': self.get_first_or_missing(
+                get_values_for_schema(data.get('ids', []), 'ORCID')),
             'positions': get_value(data, 'positions', default=missing),
             'project_membership': get_value(
                 data, 'project_membership', default=missing),
@@ -133,6 +136,9 @@ class Author(Schema):
 
         linkedin = data.get('linkedin')
         author.add_linkedin(linkedin)
+
+        orcid = data.get('orcid')
+        author.add_orcid(orcid)
 
         native_name = data.get('native_name')
         author.add_native_name(native_name)

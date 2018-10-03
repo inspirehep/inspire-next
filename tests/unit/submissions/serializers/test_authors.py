@@ -362,6 +362,49 @@ def test_load_author_twitter():
     assert expected == result
 
 
+def test_dump_author_orcid():
+    data = {
+        'ids': [
+            {
+                'value': '0000-0002-7638-5686',
+                'schema': 'ORCID',
+            },
+        ],
+    }
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
+    result = Author().dump(data).data
+    expected = {
+        'orcid': '0000-0002-7638-5686'
+    }
+
+    assert validate(data['ids'], subschema) is None
+    assert expected == result
+
+
+def test_load_author_orcid():
+    data = {
+        'orcid': '0000-0002-7638-5686'
+    }
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
+    result = Author().load(data).data
+    expected = {
+        '_collections': ['Authors'],
+        'ids': [
+            {
+                'value': '0000-0002-7638-5686',
+                'schema': 'ORCID',
+            },
+        ],
+    }
+
+    assert validate(expected['ids'], subschema) is None
+    assert expected == result
+
+
 def test_dump_author_comments():
     data = {
         '_private_notes': [
