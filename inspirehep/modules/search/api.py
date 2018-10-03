@@ -23,23 +23,14 @@
 from __future__ import absolute_import, division, print_function
 
 import logging
-
-from flask import request
-from flask_security import current_user
-
 from elasticsearch import RequestError
 from elasticsearch_dsl.query import Q
 
 from invenio_search.api import DefaultFilter, RecordsSearch
 from invenio_search import current_search_client as es
 
-from inspirehep.modules.records.permissions import (
-    all_restricted_collections,
-    user_collections
-)
 
 from .query_factory import inspire_query_factory
-
 
 logger = logging.getLogger(__name__)
 IQ = inspire_query_factory()
@@ -97,32 +88,13 @@ class SearchMixin(object):
         return results
 
 
-def inspire_filter():
-    """Filter applied to all queries."""
-    if request:
-        collection = request.values.get('cc', 'Literature')
-
-        user_roles = [r.name for r in current_user.roles]
-        if 'superuser' in user_roles:
-            user_coll = all_restricted_collections
-        else:
-            user_coll = user_collections
-
-        query = Q('match', _collections=collection)
-
-        for collection in list(all_restricted_collections - user_coll):
-            query = query & ~Q('match', _collections=collection)
-
-        return query
-
-
 class LiteratureSearch(RecordsSearch, SearchMixin):
     """Elasticsearch-dsl specialized class to search in Literature database."""
 
     class Meta:
         index = 'records-hep'
         doc_types = 'hep'
-        default_filter = DefaultFilter(inspire_filter)
+        default_filter = DefaultFilter(Q('match', _collections="Literature"))
 
     def default_fields(self):
         """What fields to use when no keyword is specified."""

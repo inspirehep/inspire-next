@@ -42,9 +42,9 @@ from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_files.api import Record
 from invenio_db import db
-from sqlalchemy import Text
+from sqlalchemy import Text, or_, not_, cast, type_coerce
+from sqlalchemy.dialects.postgresql import JSONB, ARRAY
 from sqlalchemy.sql.functions import GenericFunction
-from sqlalchemy.dialects import postgresql
 
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema, get_endpoint_from_pid_type
@@ -58,7 +58,7 @@ MAX_UNIQUE_KEY_COUNT = 50000
 
 
 class referenced_records(GenericFunction):
-    type = postgresql.ARRAY(Text)
+    type = ARRAY(Text)
 
 
 class InspireRecord(Record):
@@ -610,7 +610,12 @@ class InspireRecord(Record):
         citation_query = session.query(RecordMetadata).with_entities(RecordMetadata.id,
                                                                      RecordMetadata.json['control_number'])
         citation_filter = referenced_records(RecordMetadata.json).contains([ref])
-        citations = citation_query.filter(citation_filter)
+        filter_deleted_records = or_(not_(type_coerce(RecordMetadata.json, JSONB).has_key('deleted')),  # noqa: W601
+                                     not_(RecordMetadata.json['deleted'] == cast(True, JSONB)))
+        only_literature_collection = type_coerce(RecordMetadata.json, JSONB)['_collections'].contains(['Literature'])
+        citations = citation_query.filter(citation_filter,
+                                          filter_deleted_records,
+                                          only_literature_collection)
         if not show_duplicates:
             # It just hides duplicates, and still can show citations
             # which do not have proper PID in PID store

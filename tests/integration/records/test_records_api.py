@@ -133,5 +133,50 @@ def test_doubled_citations_should_not_count_to_citation_count(isolated_app):
     TestRecordMetadata.create_from_kwargs(json=ref)
     TestRecordMetadata.create_from_kwargs(json=ref, disable_persistent_identifier=True)
 
-    record_1.get_citations_count(show_duplicates=True) == 2
-    record_1.get_citations_count() == 1
+    assert record_1.get_citations_count(show_duplicates=True) == 2
+    assert record_1.get_citations_count() == 1
+
+
+def test_deleted_citations_should_not_count_to_citation_count(isolated_app):
+    record_json = {
+        'control_number': 321,
+    }
+    record_1 = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    assert record_1.get_citations_count() == 0
+
+    ref = {'control_number': 4321,
+           'references': [{'record': {'$ref': record_1._get_ref()}}]}
+    TestRecordMetadata.create_from_kwargs(json=ref)
+    assert record_1.get_citations_count() == 1
+
+    ref = {'control_number': 4322,
+           'deleted': True,
+           'references': [{'record': {'$ref': record_1._get_ref()}}]}
+    TestRecordMetadata.create_from_kwargs(json=ref)
+    assert record_1.get_citations_count() == 1
+
+    ref = {'control_number': 4323,
+           'references': [{'record': {'$ref': record_1._get_ref()}}]}
+    TestRecordMetadata.create_from_kwargs(json=ref)
+
+    assert record_1.get_citations_count() == 2
+
+
+def test_not_count_citations_from_other_collections(isolated_app):
+    record_json = {
+        'control_number': 321,
+    }
+    record_1 = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    assert record_1.get_citations_count() == 0
+
+    ref = {'control_number': 4321,
+           'references': [{'record': {'$ref': record_1._get_ref()}}]}
+    TestRecordMetadata.create_from_kwargs(json=ref)
+    assert record_1.get_citations_count() == 1
+
+    ref = {'_collections': ['HERMES Internal Notes'],
+           'control_number': 4323,
+           'references': [{'record': {'$ref': record_1._get_ref()}}]}
+    TestRecordMetadata.create_from_kwargs(json=ref)
+
+    assert record_1.get_citations_count() == 1
