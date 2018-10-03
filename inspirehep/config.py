@@ -342,6 +342,11 @@ AUTHORS_REST_ENDPOINT = {
     },
     'suggesters': {
         'author': {
+            '_source': [
+                'name',
+                'control_number',
+                'self',
+            ],
             'completion': {
                 'field': 'author_suggest',
             },
