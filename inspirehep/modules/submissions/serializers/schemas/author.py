@@ -31,7 +31,7 @@ class Author(Schema):
     display_name = fields.Raw()
     family_name = fields.Raw()
     given_name = fields.Raw()
-    native_names = fields.Raw()
+    native_name = fields.Raw()
     public_emails = fields.Raw()
     orcid = fields.Raw()
 
