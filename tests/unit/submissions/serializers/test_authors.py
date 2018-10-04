@@ -474,6 +474,47 @@ def test_load_author_display_name():
     assert expected == result
 
 
+def test_dump_author_native_name():
+    data = {
+        'name': {
+            'value': 'Jones, Jessica',
+            'native_names': [
+                'Τζέσικα Τζόουνς',
+            ]
+        }
+    }
+
+    result = Author().dump(data).data
+    expected = {
+        'native_name': 'Τζέσικα Τζόουνς',
+        'family_name': 'Jones',
+        'given_name': 'Jessica',
+    }
+
+    assert expected == result
+
+
+def test_load_author_native_name():
+    data = {
+        'native_name': 'Τζέσικα Τζόουνς',
+        'family_name': 'Jones',
+        'given_name': 'Jessica',
+    }
+
+    result = Author().load(data).data
+    expected = {
+        '_collections': ['Authors'],
+        'name': {
+            'value': 'Jones, Jessica',
+            'native_names': [
+                'Τζέσικα Τζόουνς',
+            ]
+        }
+    }
+
+    assert expected == result
+
+
 def test_dump_author_given_and_family_name_normal_case():
     data = {
         'name': {

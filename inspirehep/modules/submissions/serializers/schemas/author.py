@@ -31,7 +31,7 @@ class Author(Schema):
     display_name = fields.Raw()
     family_name = fields.Raw()
     given_name = fields.Raw()
-    native_names = fields.Raw()
+    native_name = fields.Raw()
     public_emails = fields.Raw()
     orcid = fields.Raw()
 
@@ -144,10 +144,40 @@ class Author(Schema):
         author.add_native_name(native_name)
 
         for position in data.get('positions', []):
-            author.add_institution(**position)
+            institution = position.get('institution')
+            start_date = position.get('start_date')
+            end_date = position.get('end_date')
+            rank = position.get('rank')
+            record = position.get('record')
+            curated_relation = position.get('curated_relation', False)
+            current = position.get('current', False)
+
+            author.add_institution(
+                institution,
+                start_date=start_date,
+                end_date=end_date,
+                rank=rank,
+                record=record,
+                curated=curated_relation,
+                current=current
+            )
 
         for project in data.get('project_membership', []):
-            author.add_project(**project)
+            name = project.get('name')
+            record = project.get('record')
+            start_date = project.get('start_date')
+            end_date = project.get('end_date')
+            curated_relation = project.get('curated_relation', False)
+            current = project.get('current', False)
+
+            author.add_project(
+                name,
+                record=record,
+                start_date=start_date,
+                end_date=end_date,
+                curated=curated_relation,
+                current=current
+            )
 
         for email in data.get('public_emails', []):
             author.add_email_address(email)
@@ -164,6 +194,21 @@ class Author(Schema):
         acquisition_source = data.get('acquisition_source')
 
         if acquisition_source:
-            author.add_acquisition_source(**acquisition_source)
+            method = acquisition_source.get('method')
+            submission_number = acquisition_source.get('submission_number')
+            internal_uid = acquisition_source.get('internal_uid')
+            email = acquisition_source.get('email')
+            orcid = acquisition_source.get('orcid')
+            source = acquisition_source.get('source')
+            datetime = acquisition_source.get('datetime')
+            author.add_acquisition_source(
+                method,
+                submission_number=submission_number,
+                internal_uid=internal_uid,
+                email=email,
+                orcid=orcid,
+                source=source,
+                datetime=datetime,
+            )
 
         return author.obj
