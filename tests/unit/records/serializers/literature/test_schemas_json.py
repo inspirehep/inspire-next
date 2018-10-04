@@ -116,9 +116,7 @@ def test_references_schema_without_record():
                             '10.1088/1361-6633/aa5514',
                         ],
                         'arxiv_eprint': '1607.06746',
-                        'collaborations': [
-                            'LHCb',
-                        ],
+                        'collaborations': ['LHCb'],
                         'urls': [
                             {
                                 'value': 'http://sf2a.eu/semaine-sf2a/2013/proceedings/'
@@ -157,6 +155,11 @@ def test_references_schema_without_record():
                             'value': '1607.06746'
                         }
                     ],
+                    'collaborations': [
+                        {
+                            'value': 'LHCb'
+                        }
+                    ],
                     'dois': [
                         {
                             'value': '10.1088/1361-6633/aa5514'
@@ -178,8 +181,8 @@ def test_references_schema_missing_data():
             'references': [
                 {
                     'reference': {
-                        'collaborations': [
-                            'LHCb',
+                        'book_series': [
+                            {'title': 'Cool Book Serie'},
                         ]
                     },
                 },
