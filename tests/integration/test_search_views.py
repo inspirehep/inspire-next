@@ -74,21 +74,8 @@ def test_search_logs(current_app_mock, api_client):
                 "bool": {
                     "filter": [
                         {
-                            "bool": {
-                                "must_not": [
-                                    {
-                                        "match": {
-                                            "_collections": "HERMES Internal Notes"
-                                        }
-                                    }
-                                ],
-                                "must": [
-                                    {
-                                        "match": {
-                                            "_collections": "Literature"
-                                        }
-                                    }
-                                ]
+                            "match": {
+                                "_collections": "Literature"
                             }
                         }
                     ],
@@ -100,6 +87,8 @@ def test_search_logs(current_app_mock, api_client):
                     ]
                 }
             },
+            "size": 10,
+            "from": 0,
             "_source": {
                 "includes": [
                     "$schema",
@@ -120,9 +109,7 @@ def test_search_logs(current_app_mock, api_client):
                     "report_numbers",
                     "titles.title"
                 ]
-            },
-            "from": 0,
-            "size": 10
+            }
         }
         assert query == json.loads(log_output)
 
@@ -138,21 +125,8 @@ def test_search_facets_logs(current_app_mock, api_client):
                 "bool": {
                     "filter": [
                         {
-                            "bool": {
-                                "must_not": [
-                                    {
-                                        "match": {
-                                            "_collections": "HERMES Internal Notes"
-                                        }
-                                    }
-                                ],
-                                "must": [
-                                    {
-                                        "match": {
-                                            "_collections": "Literature"
-                                        }
-                                    }
-                                ]
+                            "match": {
+                                "_collections": "Literature"
                             }
                         }
                     ],
@@ -264,21 +238,8 @@ def test_search_facets_logs_with_query(current_app_mock, api_client):
                 "bool": {
                     "filter": [
                         {
-                            "bool": {
-                                "must_not": [
-                                    {
-                                        "match": {
-                                            "_collections": "HERMES Internal Notes"
-                                        }
-                                    }
-                                ],
-                                "must": [
-                                    {
-                                        "match": {
-                                            "_collections": "Literature"
-                                        }
-                                    }
-                                ]
+                            "match": {
+                                "_collections": "Literature"
                             }
                         }
                     ],
