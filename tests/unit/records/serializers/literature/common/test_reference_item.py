@@ -26,6 +26,8 @@ from inspire_schemas.api import load_schema, validate
 import json
 import mock
 
+from marshmallow import Schema, fields
+
 from inspirehep.modules.records.serializers.schemas.json.literature.common import ReferenceItemSchemaV1
 
 
@@ -57,6 +59,10 @@ def test_returns_non_empty_fields():
                     'value': 'http://www.arthurjaffe.com',
                 },
             ],
+            'collaborations': [
+                'CMS',
+                'ATLAS Team'
+            ]
         }
     }
     expected = {
@@ -94,6 +100,59 @@ def test_returns_non_empty_fields():
                 'value': 'http://www.arthurjaffe.com',
             },
         ],
+        'collaborations': [
+            {
+                'value': 'CMS'
+            }
+        ],
+        'collaborations_with_suffix': [
+            {
+                'value': 'ATLAS Team'
+            },
+        ],
+    }
+
+    result = schema.dumps(dump).data
+    assert expected == json.loads(result)
+
+
+def test_forces_collaborations_to_be_object_if_reference_not_linked():
+    schema = ReferenceItemSchemaV1()
+    dump = {
+        'reference': {
+            'collaborations': ['CMS', 'LHCb'],
+        },
+    }
+    expected = {
+        'collaborations': [
+            {'value': 'CMS'},
+            {'value': 'LHCb'},
+        ],
+    }
+
+    result = schema.dumps(dump).data
+    assert expected == json.loads(result)
+
+
+def test_forces_collaborations_to_be_object_if_reference_not_linked_with_many_true():
+    class TestSchema(Schema):
+        references = fields.Nested(
+            ReferenceItemSchemaV1, dump_only=True, many=True)
+    schema = TestSchema()
+    dump = {
+        'references': [{
+            'reference': {
+                'collaborations': ['CMS', 'LHCb'],
+            },
+        }]
+    }
+    expected = {
+        'references': [{
+            'collaborations': [
+                {'value': 'CMS'},
+                {'value': 'LHCb'},
+            ],
+        }]
     }
 
     result = schema.dumps(dump).data

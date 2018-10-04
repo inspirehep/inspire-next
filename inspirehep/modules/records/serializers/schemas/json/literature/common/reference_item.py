@@ -22,8 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
-from marshmallow import Schema, pre_dump, fields, missing
-from inspire_dojson.utils import get_recid_from_ref
+from marshmallow import Schema, pre_dump, post_dump, fields, missing
+from inspire_dojson.utils import get_recid_from_ref, strip_empty_values
 from inspire_utils.helpers import force_list
 
 from inspirehep.modules.records.serializers.fields import ListWithLimit, NestedWithoutEmptyObjects
@@ -31,12 +31,18 @@ from inspirehep.modules.records.utils import get_linked_records_in_field
 from inspire_utils.record import get_value
 
 from .author import AuthorSchemaV1
+from .collaboration import CollaborationSchemaV1
+from .collaboration_with_suffix import CollaborationWithSuffixSchemaV1
 from .publication_info_item import PublicationInfoItemSchemaV1
 
 
 class ReferenceItemSchemaV1(Schema):
     authors = ListWithLimit(
         NestedWithoutEmptyObjects(AuthorSchemaV1, dump_only=True, default=[]), limit=10)
+    collaborations = fields.List(fields.Nested(
+        CollaborationSchemaV1, dump_only=True), attribute="collaborations")
+    collaborations_with_suffix = fields.List(fields.Nested(
+        CollaborationWithSuffixSchemaV1, dump_only=True), attribute="collaborations")
     control_number = fields.Raw()
     label = fields.Raw()
     urls = fields.Raw()
@@ -49,21 +55,33 @@ class ReferenceItemSchemaV1(Schema):
 
     @pre_dump(pass_many=True)
     def filter_references(self, data, many):
-        reference_records = self.get_resolved_references_by_control_number(data)
+        reference_records = self.get_resolved_references_by_control_number(
+            data)
 
         if not many:
             return self.get_resolved_reference(data, reference_records)
 
         references = []
         for reference in data:
-            resolved_reference = self.get_resolved_reference(reference, reference_records)
+            resolved_reference = self.get_resolved_reference(
+                reference, reference_records)
             references.append(resolved_reference)
         return references
+
+    @pre_dump
+    def force_each_collaboration_to_be_object(self, data):
+        if not data.get('record'):
+            collaborations = get_value(data, 'reference.collaborations')
+            if collaborations:
+                data['reference']['collaborations'] = [{'value': collaboration}
+                                                       for collaboration in collaborations]
+        return data
 
     def get_resolved_reference(self, data, reference_records):
         reference_record_id = self.get_reference_record_id(data)
         reference_record = reference_records.get(reference_record_id)
-        reference = self.get_reference_or_linked_reference_with_label(data, reference_record)
+        reference = self.get_reference_or_linked_reference_with_label(
+            data, reference_record)
         return reference
 
     def get_reference_record_id(self, data):
@@ -96,9 +114,11 @@ class ReferenceItemSchemaV1(Schema):
         dois = data.get('dois', None)
         control_number = data.get('control_number')
         if dois and not control_number:
-            data['dois'] = force_list({'value': get_value(data, 'dois[0]', default=missing)})
+            data['dois'] = force_list(
+                {'value': get_value(data, 'dois[0]', default=missing)})
         elif dois:
-            data['dois'] = force_list({'value': get_value(data, 'dois[0].value', default=missing)})
+            data['dois'] = force_list(
+                {'value': get_value(data, 'dois[0].value', default=missing)})
         return data.get('dois', missing)
 
     def get_arxiv_eprints(self, data):
@@ -107,7 +127,8 @@ class ReferenceItemSchemaV1(Schema):
         if arxiv_eprint:
             data['arxiv_eprint'] = force_list({'value': arxiv_eprint})
         elif arxiv_eprints:
-            data['arxiv_eprint'] = force_list({'value': get_value(data, 'arxiv_eprints[0].value', default=missing)})
+            data['arxiv_eprint'] = force_list(
+                {'value': get_value(data, 'arxiv_eprints[0].value', default=missing)})
         data.pop('arxiv_eprints', None)
         return data.get('arxiv_eprint', missing)
 
@@ -118,3 +139,7 @@ class ReferenceItemSchemaV1(Schema):
         if not title and not titles and misc:
             return misc[0]
         return missing
+
+    @post_dump
+    def strip_empty(self, data):
+        return strip_empty_values(data)

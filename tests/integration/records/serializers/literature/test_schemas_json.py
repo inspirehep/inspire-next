@@ -186,7 +186,10 @@ def test_references_schema_with_record(isolated_app):
                         {
                             'value': '1607.06746'
                         }
-                    ]
+                    ],
+                    'collaborations': [{
+                        'value': 'LHCb',
+                    }],
                 },
                 {
                     'authors': [{
