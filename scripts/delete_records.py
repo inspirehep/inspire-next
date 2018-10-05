@@ -12,7 +12,7 @@ from sqlalchemy import not_, type_coerce
 
 from invenio_db import db
 from invenio_files_rest.models import Bucket, ObjectVersion
-from invenio_pidstore.models import PersistentIdentifier
+from invenio_pidstore.models import PersistentIdentifier, RecordIdentifier
 from invenio_records_files.models import RecordsBuckets
 from invenio_records.models import RecordMetadata
 
@@ -23,7 +23,10 @@ def _delete_record(record):
     ObjectVersion.query.filter(ObjectVersion.bucket == bucket).delete()
     db.session.delete(bucket)
     db.session.delete(rec_bucket)
-    PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == record.id).delete()
+    pid = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == record.id).one()
+    recid = RecordIdentifier.query.get(pid.pid_value)
+    db.session.delete(recid)
+    db.session.delete(pid)
     db.session.delete(record)
     db.session.commit()
 
