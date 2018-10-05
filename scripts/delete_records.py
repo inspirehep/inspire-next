@@ -18,11 +18,12 @@ from invenio_records.models import RecordMetadata
 
 
 def _delete_record(record):
-    rec_bucket = RecordsBuckets.query.filter(RecordsBuckets.record == record).one()
-    bucket = rec_bucket.bucket
-    ObjectVersion.query.filter(ObjectVersion.bucket == bucket).delete()
-    db.session.delete(bucket)
-    db.session.delete(rec_bucket)
+    rec_bucket = RecordsBuckets.query.filter(RecordsBuckets.record == record).one_or_none()
+    if rec_bucket:
+        bucket = rec_bucket.bucket
+        ObjectVersion.query.filter(ObjectVersion.bucket == bucket).delete()
+        db.session.delete(bucket)
+        db.session.delete(rec_bucket)
     pid = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == record.id).one()
     recid = RecordIdentifier.query.get(pid.pid_value)
     db.session.delete(recid)
