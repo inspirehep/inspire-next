@@ -36,6 +36,8 @@ from invenio_records_rest.facets import range_filter, terms_filter
 
 from inspire_matcher.config import MATCHER_DEFAULT_CONFIGURATION as exact_match
 
+from .modules.records.facets import range_author_count_filter
+
 # Debug
 # =====
 DEBUG_TB_INTERCEPT_REDIRECTS = False
@@ -791,6 +793,7 @@ RECORDS_REST_FACETS = {
     "records-hep": {
         "filters": {
             "author": terms_filter('facet_author_name'),
+            "author_count": range_author_count_filter('author_count'),
             "subject": terms_filter('facet_inspire_categories'),
             "arxiv_categories": terms_filter('facet_arxiv_categories'),
             "doc_type": terms_filter('facet_inspire_doc_type'),
@@ -813,6 +816,22 @@ RECORDS_REST_FACETS = {
                     "order": 1,
                 },
             },
+            "author_count": {
+                "range": {
+                    "field": "author_count",
+                    "ranges": [
+                        {
+                            "key": "10 authors or less",
+                            "from": 1,
+                            "to": 10,
+                        },
+                    ],
+                },
+                "meta": {
+                    "title": "Number of authors",
+                    "order": 2,
+                },
+            },
             "author": {
                 "terms": {
                     "field": "facet_author_name",
@@ -820,7 +839,7 @@ RECORDS_REST_FACETS = {
                 },
                 "meta": {
                     "title": "Author",
-                    "order": 2,
+                    "order": 3,
                 },
             },
             "subject": {
@@ -830,7 +849,7 @@ RECORDS_REST_FACETS = {
                 },
                 "meta": {
                     "title": "Subject",
-                    "order": 3,
+                    "order": 4,
                 }
             },
             "arxiv_categories": {
@@ -840,7 +859,7 @@ RECORDS_REST_FACETS = {
                 },
                 "meta": {
                     "title": "arXiv Category",
-                    "order": 4,
+                    "order": 5,
                 },
             },
             "experiment": {
@@ -850,7 +869,7 @@ RECORDS_REST_FACETS = {
                 },
                 "meta": {
                     "title": "Experiment",
-                    "order": 5,
+                    "order": 6,
                 },
             },
             "doc_type": {
@@ -860,7 +879,7 @@ RECORDS_REST_FACETS = {
                 },
                 "meta": {
                     "title": "Document Type",
-                    "order": 6,
+                    "order": 7,
                 },
             },
         }
