@@ -336,11 +336,13 @@ AUTHORS_REST_ENDPOINT = {
     'search_class': 'inspirehep.modules.search:AuthorsSearch',
     'record_serializers': {
         'application/json': 'invenio_records_rest.serializers:json_v1_response',
+        'application/vnd+inspire.record.ui+json': 'invenio_records_rest.serializers:json_v1_response',
     },
     'record_class': 'inspirehep.modules.records.api:InspireRecord',
     'search_serializers': {
         'application/json': 'invenio_records_rest.serializers:json_v1_search',
         'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
+        'application/vnd+inspire.record.ui+json': 'invenio_records_rest.serializers:json_v1_search',
     },
     'suggesters': {
         'author': {
