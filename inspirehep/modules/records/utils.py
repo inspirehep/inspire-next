@@ -383,6 +383,12 @@ def populate_author_count(json):
     json['author_count'] = len(authors_excluding_supervisors)
 
 
+def populate_number_of_references(json):
+    """Populate the 'number_of_references' field of Literature records."""
+    references = json.get('references', [])
+    json['number_of_references'] = len(references)
+
+
 def populate_authors_full_name_unicode_normalized(json):
     """Populate the ``authors.full_name_normalized`` field of Literature records."""
     authors = json.get('authors', [])
