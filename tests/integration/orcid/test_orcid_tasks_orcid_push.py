@@ -27,8 +27,12 @@ import mock
 import pytest
 import re
 
+from flask import current_app
 from requests.exceptions import RequestException
 
+from factories.db.invenio_records import TestRecordMetadata
+from inspirehep.modules.orcid import exceptions
+from inspirehep.modules.orcid.cache import OrcidCache
 from inspirehep.modules.orcid.tasks import orcid_push
 
 from utils import override_config
@@ -115,7 +119,7 @@ class TestOrcidPushFeatureFlag(object):
 
 
 @pytest.mark.usefixtures('isolated_app')
-class TestOrcidPush(object):
+class TestOrcidPushRetryTask(object):
     def setup(self):
         self._patcher = mock.patch('inspirehep.modules.orcid.domain_models.OrcidPusher')
         self.mock_pusher = self._patcher.start()
@@ -140,7 +144,10 @@ class TestOrcidPush(object):
         self.mock_pusher.return_value.push.assert_called_once()
 
     def test_retry_triggered(self):
-        self.mock_pusher.return_value.push.side_effect = RequestException
+        exc = RequestException()
+        exc.response = mock.Mock()
+        exc.request = mock.Mock()
+        self.mock_pusher.return_value.push.side_effect = exc
 
         with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
                              FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*'), \
@@ -164,3 +171,48 @@ class TestOrcidPush(object):
         self.mock_pusher.assert_called_once_with(self.orcid, self.recid, self.oauth_token)
         self.mock_pusher.return_value.push.assert_called_once()
         mock_orcid_push_task_retry.assert_not_called()
+
+
+def get_local_access_tokens(orcid):
+    # Pick the token from local inspirehep.cfg first.
+    # This way you can store tokens in your local inspirehep.cfg (ignored
+    # by git). This is handy when recording new episodes.
+    local_tokens = current_app.config.get('ORCID_APP_LOCAL_TOKENS')
+    if local_tokens:
+        return local_tokens.get(orcid)
+    return None
+
+
+@pytest.mark.usefixtures('isolated_app')
+class TestOrcidPushTask(object):
+    # NOTE: Only a few test here (1 happy flow and a few error flows). Exhaustive
+    # testing is done in the domain model tests.
+    def setup(self):
+        factory = TestRecordMetadata.create_from_file(__name__, 'test_orcid_tasks_orcid_push_TestOrcidPush.json')
+        self.orcid = '0000-0002-0942-3697'
+        self.recid = factory.record_metadata.json['control_number']
+        self.inspire_record = factory.inspire_record
+        self.cache = OrcidCache(self.orcid, self.recid)
+        self.oauth_token = get_local_access_tokens(self.orcid) or 'mytoken'
+
+    def teardown(self):
+        self.cache.redis.delete(self.cache._key)
+
+    def test_push_new_work_happy_flow(self):
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*'):
+            orcid_push(self.orcid, self.recid, self.oauth_token)
+        assert not self.cache.has_work_content_changed(self.inspire_record)
+
+    def test_push_new_work_invalid_data_orcid(self):
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*'), \
+                pytest.raises(exceptions.InputDataInvalidException):
+            orcid_push('0000-0002-0000-XXXX', self.recid, self.oauth_token)
+
+    def test_push_new_work_already_existent(self):
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*',
+                             ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}):
+            orcid_push(self.orcid, self.recid, self.oauth_token)
+        assert not self.cache.has_work_content_changed(self.inspire_record)

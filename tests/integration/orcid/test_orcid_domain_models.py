@@ -150,8 +150,6 @@ class TestOrcidPusherPostNewWork(object):
         self.inspire_record = factory.inspire_record
         self.cache = OrcidCache(self.orcid, self.recid)
         self.oauth_token = get_local_access_tokens(self.orcid) or 'mytoken'
-        self.source_client_id_path = '0000-0001-8607-8906'
-
         # Disable logging.
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = logging.CRITICAL
 
@@ -160,9 +158,8 @@ class TestOrcidPusherPostNewWork(object):
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = 0
 
     def test_push_new_work_happy_flow(self):
-        with override_config(ORCID_APP_CREDENTIALS={'consumer_key': self.source_client_id_path}):
-            pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
-            result_putcode = pusher.push()
+        pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
+        result_putcode = pusher.push()
         assert result_putcode == 47160445
         assert not self.cache.has_work_content_changed(self.inspire_record)
 
@@ -185,15 +182,17 @@ class TestOrcidPusherPostNewWork(object):
             pusher.push()
 
     def test_push_new_work_already_existent(self):
-        with override_config(ORCID_APP_CREDENTIALS={'consumer_key': self.source_client_id_path}):
+        # ORCID_APP_CREDENTIALS is required because ORCID adds it as source_client_id_path.
+        with override_config(ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}):
             pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
             result_putcode = pusher.push()
         assert result_putcode == '47160445'
         assert not self.cache.has_work_content_changed(self.inspire_record)
 
     def test_push_new_work_already_existent_putcode_exception(self):
-        with override_config(ORCID_APP_CREDENTIALS={'consumer_key': self.source_client_id_path}):
-            pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
-            with pytest.raises(exceptions.PutcodeNotFoundInOrcidException):
-                pusher.push()
+        pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
+        # ORCID_APP_CREDENTIALS is required because ORCID adds it as source_client_id_path.
+        with override_config(ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}), \
+                pytest.raises(exceptions.PutcodeNotFoundInOrcidException):
+            pusher.push()
         assert self.cache.has_work_content_changed(self.inspire_record)
