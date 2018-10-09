@@ -28,6 +28,44 @@ from invenio_accounts.testutils import login_user_via_session
 from invenio_workflows import workflow_object_class
 
 
+def test_new_author_submit_without_authentication_post(api_client):
+    response = api_client.post(
+        '/submissions/authors',
+        content_type='application/json',
+        data=json.dumps({
+            'data': {
+                'given_name': 'Harun',
+                'display_name': 'Harun Urhan',
+                'status': 'active'
+            }
+        })
+    )
+    assert response.status_code == 401
+
+
+def test_new_author_submit_without_authentication_get(api_client):
+    response = api_client.get(
+        '/submissions/authors',
+        content_type='application/json',
+    )
+    assert response.status_code == 401
+
+
+def test_new_author_submit_without_authentication_put(api_client):
+    response = api_client.put(
+        '/submissions/authors',
+        content_type='application/json',
+        data=json.dumps({
+            'data': {
+                'given_name': 'Harun',
+                'display_name': 'Harun Urhan',
+                'status': 'active'
+            }
+        })
+    )
+    assert response.status_code == 401
+
+
 def test_new_author_submit_with_required_fields(api_client):
     login_user_via_session(api_client, email='johndoe@inspirehep.net')
 
