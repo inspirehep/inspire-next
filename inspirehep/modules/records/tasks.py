@@ -34,8 +34,8 @@ from sqlalchemy.orm.exc import NoResultFound
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
-from inspire_dojson.utils import get_recid_from_ref
 
+from inspire_dojson.utils import get_recid_from_ref
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.utils import get_endpoint_from_record
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
@@ -182,7 +182,7 @@ def get_merged_records():
 
 
 @shared_task(ignore_result=False, max_retries=0)
-def batch_reindex(uuids, request_timeout=None):
+def batch_reindex(uuids, request_timeout):
     """Task for bulk reindexing records."""
     def actions():
         for uuid in uuids:
@@ -191,9 +191,6 @@ def batch_reindex(uuids, request_timeout=None):
                 yield create_index_op(record, version_type='force')
             except NoResultFound as e:
                 logger.warn('Record %s failed to load: %s', uuid, e)
-
-    if not request_timeout:
-        request_timeout = current_app.config['INDEXER_BULK_REQUEST_TIMEOUT']
 
     success, failures = bulk(
         es,

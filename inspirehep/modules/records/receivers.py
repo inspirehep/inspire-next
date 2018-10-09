@@ -31,15 +31,10 @@ from celery import Task
 from flask import current_app
 from flask_sqlalchemy import models_committed
 from elasticsearch import NotFoundError
-from sqlalchemy import tuple_
 
-
-from invenio_db import db
 from invenio_indexer.signals import before_record_index
-from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.models import RecordMetadata
 from invenio_records.signals import (
-    after_record_insert,
     after_record_update,
     before_record_insert,
     before_record_update,
@@ -53,8 +48,6 @@ from inspirehep.modules.orcid.utils import (
     get_orcids_for_push,
 )
 from inspirehep.modules.records.api import InspireRecord
-from inspirehep.modules.records.indexer import InspireRecordIndexer
-from inspirehep.modules.records.tasks import batch_reindex
 from inspirehep.modules.records.utils import (
     is_author,
     is_book,
@@ -78,7 +71,7 @@ from inspirehep.modules.records.utils import (
     populate_recid_from_ref,
     populate_title_suggest,
 )
-
+from inspirehep.modules.records.indexer import InspireRecordIndexer
 
 LOGGER = logging.getLogger(__name__)
 
@@ -160,7 +153,6 @@ def index_after_commit(sender, changes):
     has been really committed to the DB.
     """
     indexer = InspireRecordIndexer()
-
     for model_instance, change in changes:
         if isinstance(model_instance, RecordMetadata):
             if change in ('insert', 'update') and not model_instance.json.get("deleted"):
@@ -214,27 +206,3 @@ def enhance_after_index(sender, json, record, *args, **kwargs):
 
     elif is_data(json):
         populate_citations_count(record=record, json=json)
-
-
-@after_record_insert.connect
-@after_record_update.connect
-def index_new_cited_records_after_record_update(sender, record, *args, **kwargs):
-    """Index records whose reference has been added or deleted"""
-    pids = record.get_modified_references()
-
-    if not pids:
-        return
-
-    uuids = [
-        pid.object_uuid for pid in
-        db.session.query(PersistentIdentifier.object_uuid).filter(
-            PersistentIdentifier.object_type == 'rec',
-            tuple_(PersistentIdentifier.pid_type, PersistentIdentifier.pid_value).in_(pids)
-        )
-    ]
-
-    if uuids:
-        return batch_reindex.apply_async(
-            kwargs={'uuids': uuids},
-            queue='bulk_index',
-        )
