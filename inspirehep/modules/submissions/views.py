@@ -26,7 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 import copy
 import datetime
-import json
 
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -75,13 +74,13 @@ class SubmissionsResource(MethodView):
         return jsonify({'data': serialized_record.data})
 
     def post(self, endpoint):
-        submission_data = json.loads(request.data)
+        submission_data = request.get_json()
         workflow_object_id = self.start_workflow_for_submission(
             endpoint, submission_data['data'])
         return jsonify({'workflow_object_id': workflow_object_id})
 
     def put(self, endpoint, pid_value):
-        submission_data = json.loads(request.data)
+        submission_data = request.get_json()
         workflow_object_id = self.start_workflow_for_submission(
             endpoint, submission_data['data'], pid_value)
         return jsonify({'workflow_object_id': workflow_object_id})

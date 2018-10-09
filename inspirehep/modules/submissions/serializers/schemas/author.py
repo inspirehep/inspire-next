@@ -104,7 +104,7 @@ class Author(Schema):
 
     def get_full_name(self, family_name, given_name):
         if given_name and family_name:
-            return '{}, {}'.format(family_name, given_name)
+            return u'{}, {}'.format(family_name, given_name)
         return given_name or family_name
 
     def get_value_by_description_key(self, data, value):

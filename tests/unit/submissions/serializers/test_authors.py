@@ -579,6 +579,23 @@ def test_load_author_given_and_family_name_normal_case():
     assert expected == result
 
 
+def test_load_author_given_and_family_name_normal_case_with_unicode():
+    data = {
+        'family_name': u'Gérard',
+        'given_name': u'Jessica',
+    }
+
+    result = Author().load(data).data
+    expected = {
+        '_collections': ['Authors'],
+        'name': {
+            'value': u'Gérard, Jessica',
+        },
+    }
+
+    assert expected == result
+
+
 def test_load_author_given_and_family_name_jimmy_case():
     data = {
         'given_name': 'Jimmy',
