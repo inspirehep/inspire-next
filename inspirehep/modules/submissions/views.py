@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 import copy
 import datetime
+from functools import wraps
 
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -48,7 +49,18 @@ blueprint = Blueprint(
 )
 
 
+def login_required(func):
+    @wraps(func)
+    def check_if_is_logged_in(*args, **kwargs):
+        if not current_user.is_authenticated:
+            abort(401)
+        return func(*args, **kwargs)
+    return check_if_is_logged_in
+
+
 class SubmissionsResource(MethodView):
+
+    decorators = [login_required]
 
     endpoint_to_data_type = {
         'literature': 'hep',
