@@ -740,6 +740,9 @@
                 "refereed": {
                     "type": "boolean"
                 },
+                "number_of_references": { 
+                    "type": "integer" 
+                },
                 "references": {
                     "include_in_all": false,
                     "properties": {
