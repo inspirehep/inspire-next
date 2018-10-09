@@ -514,7 +514,7 @@ def test_add_citation_indexes_also_cites_record_when_new_citation_is_added(
     record.commit()
     db.session.commit()
 
-    expected_kwargs = {'uuids': [cited.id]}
+    expected_kwargs = {'uuids': [str(cited.id)]}
 
     mocked_indexing_task.assert_called_with(
         kwargs=expected_kwargs,
@@ -577,7 +577,7 @@ def test_add_citation_indexes_also_cites_record_when_citation_is_deleted(
     record = InspireRecord.create(data=citing_json, skip_files=True)
     db.session.commit()
 
-    expected_kwargs = {'uuids': [cited.id]}
+    expected_kwargs = {'uuids': [str(cited.id)]}
 
     mocked_indexing_task.assert_called_with(
         kwargs=expected_kwargs,
@@ -594,7 +594,7 @@ def test_add_citation_indexes_also_cites_record_when_citation_is_deleted(
     record.commit()
     db.session.commit()
 
-    expected_kwargs = {'uuids': [cited.id]}
+    expected_kwargs = {'uuids': [str(cited.id)]}
 
     mocked_indexing_task.assert_called_with(
         kwargs=expected_kwargs,
@@ -694,7 +694,7 @@ def test_add_citation_indexes_also_cites_two_records(
     record.commit()
     db.session.commit()
 
-    expected_kwargs = {'uuids': [cited1.id, cited2.id]}
+    expected_kwargs = {'uuids': [str(cited1.id), str(cited2.id)]}
 
     mocked_indexing_task.assert_called_once()
 
@@ -761,7 +761,7 @@ def test_add_citation_indexes_also_cites_record_when_citer_is_deleted(
     record = InspireRecord.create(data=citing_json, skip_files=True)
     db.session.commit()
 
-    expected_kwargs = {'uuids': [cited.id]}
+    expected_kwargs = {'uuids': [str(cited.id)]}
 
     mocked_indexing_task.assert_called_with(
         kwargs=expected_kwargs,
@@ -776,7 +776,7 @@ def test_add_citation_indexes_also_cites_record_when_citer_is_deleted(
     record.commit()
     db.session.commit()
 
-    expected_kwargs = {'uuids': [cited.id]}
+    expected_kwargs = {'uuids': [str(cited.id)]}
 
     mocked_indexing_task.assert_called_with(
         kwargs=expected_kwargs,
