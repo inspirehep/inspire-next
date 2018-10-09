@@ -30,9 +30,11 @@ import json
 import pprint
 
 from invenio_db import db
+from invenio_files_rest.models import ObjectVersion
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from flask import current_app
 from flask.cli import with_appcontext
+from invenio_records_files.models import RecordsBuckets
 
 from .checkers import check_unlinked_references
 from .tasks import batch_reindex
@@ -295,34 +297,51 @@ def handle_duplicates(remove_no_control_number, remove_duplicates,
     if remove_no_control_number:
         click.secho("Removing records which do not have control number (%s)" % (
             len(recs_no_control_number)))
-        removed = RecordMetadata.query.filter(
-            RecordMetadata.id.in_(
-                [str(r[0]) for r in recs_no_control_number]
-            )
-        ).delete(synchronize_session=False)
+        removed_records, _, _ = _remove_records(recs_no_control_number)
         click.secho("Removed %s out of %s records which did not have." % (
-            removed, len(recs_no_control_number)))
+            removed_records, len(recs_no_control_number)))
 
     if remove_not_in_pidstore:
         click.secho("Removing records which PID is not in PID store but they are no duplicates (%s)" % (
             len(recs_no_in_pid_store)))
-        removed = RecordMetadata.query.filter(
-            RecordMetadata.id.in_(
-                [str(r[0]) for r in recs_no_in_pid_store]
-            )
-        ).delete(
-            synchronize_session=False)
+        removed_records, _, _ = _remove_records(recs_no_in_pid_store)
         click.secho("Removed %s out of %s records which PID was missing from PID store." % (
-            removed, len(recs_no_in_pid_store)))
+            removed_records, len(recs_no_in_pid_store)))
 
     if remove_duplicates:
         click.secho("Removing records which looks to be duplicates (%s)" % (
             len(others)))
-        removed = RecordMetadata.query.filter(
-            RecordMetadata.id.in_(
-                [str(r[0]) for r in others]
-            )
-        ).delete(synchronize_session=False)
+        removed_records, _, _ = _remove_records(others)
         click.secho("Removed %s out of %s records which looks to be duplicates." % (
-            removed, len(others)))
+            removed_records, len(others)))
     db.session.commit()
+
+
+def _remove_records(records_ids):
+    """ This method is only a helper for removal of records which are not in PID store.
+        If you will use it for records which are in PID store it will fail as it not removes data from PID store itself.
+    Args:
+        records_ids: List of tuples with record.id and record.control_number
+
+    Returns: Tuple with information how many records, buckets and objects was removed
+
+    """
+    records_ids = [str(r[0]) for r in records_ids]
+    recs = RecordMetadata.query.filter(
+        RecordMetadata.id.in_(records_ids)
+    )
+    recs_buckets = RecordsBuckets.query.filter(
+        RecordsBuckets.record_id.in_(records_ids)
+    )
+
+    # as in_ is not working for relationships...
+    buckets_ids = [str(bucket.bucket_id) for bucket in recs_buckets]
+    objects = ObjectVersion.query.filter(
+        ObjectVersion.bucket_id.in_(buckets_ids)
+    )
+
+    removed_objects = objects.delete(synchronize_session=False)
+    removed_buckets = recs_buckets.delete(synchronize_session=False)
+    removed_records = recs.delete(synchronize_session=False)
+
+    return(removed_records, removed_buckets, removed_objects)
