@@ -260,8 +260,7 @@ def record_from_db(workflow_app):
 
     pid.unassign()
     pid.delete()
-    record.delete()
-    record.commit()
+    record._delete(force=True)
 
 
 @pytest.fixture
@@ -315,5 +314,4 @@ def record_to_merge(workflow_app):
 
     pid.unassign()
     pid.delete()
-    record.delete()
-    record.commit()
+    record._delete(force=True)

@@ -122,6 +122,8 @@ def get_db_records(pids):
         The order in which records are returned is different from the order of
         the input.
     """
+    from inspirehep.modules.records.api import InspireRecord
+
     pids = [(pid_type, str(pid_value)) for (pid_type, pid_value) in pids]
 
     if not pids:
@@ -135,4 +137,4 @@ def get_db_records(pids):
     )
 
     for record in query.yield_per(100):
-        yield record.json
+        yield InspireRecord(record.json, model=record)

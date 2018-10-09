@@ -24,13 +24,12 @@ from __future__ import absolute_import, division, print_function
 
 import sys
 import os
-
+import mock
 import pytest
 import sqlalchemy
+
 from flask_alembic import Alembic
-
 from functools import partial
-
 from click.testing import CliRunner
 from flask import current_app
 from flask.cli import ScriptInfo
@@ -102,7 +101,9 @@ def app():
         init_all_storage_paths()
         init_users_and_permissions()
 
-        migrate_from_file('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
+        with mock.patch('inspirehep.modules.records.receivers.batch_reindex.apply_async'):
+            migrate_from_file('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
+
         es.indices.refresh('records-hep')  # Makes sure that all HEP records were migrated.
 
         yield app
