@@ -226,7 +226,7 @@ def index_new_cited_records_after_record_update(sender, record, *args, **kwargs)
         return
 
     uuids = [
-        pid.object_uuid for pid in
+        str(pid.object_uuid) for pid in
         db.session.query(PersistentIdentifier.object_uuid).filter(
             PersistentIdentifier.object_type == 'rec',
             tuple_(PersistentIdentifier.pid_type, PersistentIdentifier.pid_value).in_(pids)
