@@ -29,12 +29,18 @@ from inspire_dojson.utils import strip_empty_values
 from inspirehep.modules.records.serializers.fields import ListWithLimit, NestedWithoutEmptyObjects
 
 from .author import AuthorSchemaV1
+from .collaboration import CollaborationSchemaV1
+from .collaboration_with_suffix import CollaborationWithSuffixSchemaV1
 from .publication_info_item import PublicationInfoItemSchemaV1
 
 
 class CitationItemSchemaV1(Schema):
     authors = ListWithLimit(
         NestedWithoutEmptyObjects(AuthorSchemaV1, dump_only=True), limit=10)
+    collaborations = fields.List(fields.Nested(
+        CollaborationSchemaV1, dump_only=True), attribute="collaborations")
+    collaborations_with_suffix = fields.List(fields.Nested(
+        CollaborationWithSuffixSchemaV1, dump_only=True), attribute="collaborations")
     control_number = fields.Raw()
     publication_info = fields.List(
         NestedWithoutEmptyObjects(PublicationInfoItemSchemaV1, dump_only=True))

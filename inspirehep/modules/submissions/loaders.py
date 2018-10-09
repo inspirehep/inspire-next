@@ -20,20 +20,21 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""UI for Invenio-Search."""
+"""Submission loaders."""
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_assets import NpmBundle
+from flask import request
 
-js = NpmBundle(
-    'js/search/app.js',
-    filters='requirejs',
-    output='gen/inspirehepsearch.%(version)s.js',
-    depends=("node_modules/inspirehep-search-js/**/*.js", ),
-    npm={
-        'invenio-search-js': '~1.4.0',
-        'angular-loading-bar': '~0.9.0',
-        'inspirehep-search-js': '~2.0.0'
-    },
-)
+from .serializers.schemas import Author
+
+
+def loader(schema_class):
+    def json_loader():
+        data = request.get_json()
+        result = schema_class().load(data)
+        return result.data
+    return loader
+
+
+author_loader = loader(Author)

@@ -20,20 +20,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""UI for Invenio-Search."""
+"""Submission module."""
 
 from __future__ import absolute_import, division, print_function
-
-from invenio_assets import NpmBundle
-
-js = NpmBundle(
-    'js/search/app.js',
-    filters='requirejs',
-    output='gen/inspirehepsearch.%(version)s.js',
-    depends=("node_modules/inspirehep-search-js/**/*.js", ),
-    npm={
-        'invenio-search-js': '~1.4.0',
-        'angular-loading-bar': '~0.9.0',
-        'inspirehep-search-js': '~2.0.0'
-    },
-)

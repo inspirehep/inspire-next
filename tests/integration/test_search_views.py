@@ -74,21 +74,8 @@ def test_search_logs(current_app_mock, api_client):
                 "bool": {
                     "filter": [
                         {
-                            "bool": {
-                                "must_not": [
-                                    {
-                                        "match": {
-                                            "_collections": "HERMES Internal Notes"
-                                        }
-                                    }
-                                ],
-                                "must": [
-                                    {
-                                        "match": {
-                                            "_collections": "Literature"
-                                        }
-                                    }
-                                ]
+                            "match": {
+                                "_collections": "Literature"
                             }
                         }
                     ],
@@ -100,134 +87,8 @@ def test_search_logs(current_app_mock, api_client):
                     ]
                 }
             },
-            "_source": {
-                "includes": [
-                    "$schema",
-                    "abstracts.value",
-                    "arxiv_eprints.value",
-                    "arxiv_eprints.categories",
-                    "authors.affiliations",
-                    "authors.full_name",
-                    "authors.control_number",
-                    "collaborations",
-                    "control_number",
-                    "citation_count",
-                    "dois.value",
-                    "earliest_date",
-                    "inspire_categories",
-                    "publication_info",
-                    "references",
-                    "report_numbers",
-                    "titles.title"
-                ]
-            },
+            "size": 10,
             "from": 0,
-            "size": 10
-        }
-        assert query == json.loads(log_output)
-
-    current_app_mock.logger.debug.side_effect = _debug
-    api_client.get('/literature/')
-
-
-@patch('inspirehep.modules.search.search_factory.current_app')
-def test_search_facets_logs(current_app_mock, api_client):
-    def _debug(log_output):
-        query = {
-            "query": {
-                "bool": {
-                    "filter": [
-                        {
-                            "bool": {
-                                "must_not": [
-                                    {
-                                        "match": {
-                                            "_collections": "HERMES Internal Notes"
-                                        }
-                                    }
-                                ],
-                                "must": [
-                                    {
-                                        "match": {
-                                            "_collections": "Literature"
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    "minimum_should_match": "0<1",
-                    "must": [
-                        {
-                            "match_all": {}
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "doc_type": {
-                    "meta": {
-                        "order": 6,
-                        "title": "Document Type"
-                    },
-                    "terms": {
-                        "field": "facet_inspire_doc_type",
-                        "size": 20
-                    }
-                },
-                "author": {
-                    "meta": {
-                        "order": 2,
-                        "title": "Author"
-                    },
-                    "terms": {
-                        "field": "facet_author_name",
-                        "size": 20
-                    }
-                },
-                "arxiv_categories": {
-                    "meta": {
-                        "order": 4,
-                        "title": "arXiv Category"
-                    },
-                    "terms": {
-                        "field": "facet_arxiv_categories",
-                        "size": 20
-                    }
-                },
-                "experiment": {
-                    "meta": {
-                        "order": 5,
-                        "title": "Experiment"
-                    },
-                    "terms": {
-                        "field": "facet_experiment",
-                        "size": 20
-                    }
-                },
-                "subject": {
-                    "meta": {
-                        "order": 3,
-                        "title": "Subject"
-                    },
-                    "terms": {
-                        "field": "facet_inspire_categories",
-                        "size": 20
-                    }
-                },
-                "earliest_date": {
-                    "date_histogram": {
-                        "field": "earliest_date",
-                        "interval": "year",
-                        "min_doc_count": 1,
-                        "format": "yyyy"
-                    },
-                    "meta": {
-                        "order": 1,
-                        "title": "Date"
-                    }
-                }
-            },
             "_source": {
                 "includes": [
                     "$schema",
@@ -253,112 +114,13 @@ def test_search_facets_logs(current_app_mock, api_client):
         assert query == json.loads(log_output)
 
     current_app_mock.logger.debug.side_effect = _debug
-    api_client.get('/literature/facets')
+    api_client.get('/literature/')
 
 
 @patch('inspirehep.modules.search.search_factory.current_app')
-def test_search_facets_logs_with_query(current_app_mock, api_client):
+def test_search_facets_logs(current_app_mock, api_client):
     def _debug(log_output):
         query = {
-            "query": {
-                "bool": {
-                    "filter": [
-                        {
-                            "bool": {
-                                "must_not": [
-                                    {
-                                        "match": {
-                                            "_collections": "HERMES Internal Notes"
-                                        }
-                                    }
-                                ],
-                                "must": [
-                                    {
-                                        "match": {
-                                            "_collections": "Literature"
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    "minimum_should_match": "0<1",
-                    "must": [
-                        {
-                            "match": {
-                                "_all": {
-                                    "operator": "and",
-                                    "query": "test query"
-                                }
-                            }
-                        }
-                    ]
-                }
-            },
-            "aggs": {
-                "doc_type": {
-                    "meta": {
-                        "order": 6,
-                        "title": "Document Type"
-                    },
-                    "terms": {
-                        "field": "facet_inspire_doc_type",
-                        "size": 20
-                    }
-                },
-                "author": {
-                    "meta": {
-                        "order": 2,
-                        "title": "Author"
-                    },
-                    "terms": {
-                        "field": "facet_author_name",
-                        "size": 20
-                    }
-                },
-                "arxiv_categories": {
-                    "meta": {
-                        "order": 4,
-                        "title": "arXiv Category"
-                    },
-                    "terms": {
-                        "field": "facet_arxiv_categories",
-                        "size": 20
-                    }
-                },
-                "experiment": {
-                    "meta": {
-                        "order": 5,
-                        "title": "Experiment"
-                    },
-                    "terms": {
-                        "field": "facet_experiment",
-                        "size": 20
-                    }
-                },
-                "subject": {
-                    "meta": {
-                        "order": 3,
-                        "title": "Subject"
-                    },
-                    "terms": {
-                        "field": "facet_inspire_categories",
-                        "size": 20
-                    }
-                },
-                "earliest_date": {
-                    "date_histogram": {
-                        "field": "earliest_date",
-                        "interval": "year",
-                        "min_doc_count": 1,
-                        "format": "yyyy"
-                    },
-                    "meta": {
-                        "order": 1,
-                        "title": "Date"
-                    }
-                }
-            },
             "_source": {
                 "includes": [
                     "$schema",
@@ -379,6 +141,238 @@ def test_search_facets_logs_with_query(current_app_mock, api_client):
                     "report_numbers",
                     "titles.title"
                 ]
+            },
+            "aggs": {
+                "arxiv_categories": {
+                    "meta": {
+                        "order": 5,
+                        "title": "arXiv Category"
+                    },
+                    "terms": {
+                        "field": "facet_arxiv_categories",
+                        "size": 20
+                    }
+                },
+                "author": {
+                    "meta": {
+                        "order": 3,
+                        "title": "Author"
+                    },
+                    "terms": {
+                        "field": "facet_author_name",
+                        "size": 20
+                    }
+                },
+                "author_count": {
+                    "meta": {
+                        "order": 2,
+                        "title": "Number of authors"
+                    },
+                    "range": {
+                        "field": "author_count",
+                        "ranges": [
+                            {
+                                "from": 1,
+                                "key": "10 authors or less",
+                                "to": 10
+                            }
+                        ]
+                    }
+                },
+                "doc_type": {
+                    "meta": {
+                        "order": 7,
+                        "title": "Document Type"
+                    },
+                    "terms": {
+                        "field": "facet_inspire_doc_type",
+                        "size": 20
+                    }
+                },
+                "earliest_date": {
+                    "date_histogram": {
+                        "field": "earliest_date",
+                        "format": "yyyy",
+                        "interval": "year",
+                        "min_doc_count": 1
+                    },
+                    "meta": {
+                        "order": 1,
+                        "title": "Date"
+                    }
+                },
+                "experiment": {
+                    "meta": {
+                        "order": 6,
+                        "title": "Experiment"
+                    },
+                    "terms": {
+                        "field": "facet_experiment",
+                        "size": 20
+                    }
+                },
+                "subject": {
+                    "meta": {
+                        "order": 4,
+                        "title": "Subject"
+                    },
+                    "terms": {
+                        "field": "facet_inspire_categories",
+                        "size": 20
+                    }
+                }
+            },
+            "query": {
+                "bool": {
+                    "filter": [
+                        {
+                            "match": {
+                                "_collections": "Literature"
+                            }
+                        }
+                    ],
+                    "minimum_should_match": "0<1",
+                    "must": [
+                        {
+                            "match_all": {}
+                        }
+                    ]
+                }
+            }
+        }
+
+        assert query == json.loads(log_output)
+
+    current_app_mock.logger.debug.side_effect = _debug
+    api_client.get('/literature/facets')
+
+
+@patch('inspirehep.modules.search.search_factory.current_app')
+def test_search_facets_logs_with_query(current_app_mock, api_client):
+    def _debug(log_output):
+        query = {
+            "_source": {
+                "includes": [
+                    "$schema",
+                    "abstracts.value",
+                    "arxiv_eprints.value",
+                    "arxiv_eprints.categories",
+                    "authors.affiliations",
+                    "authors.full_name",
+                    "authors.control_number",
+                    "collaborations",
+                    "control_number",
+                    "citation_count",
+                    "dois.value",
+                    "earliest_date",
+                    "inspire_categories",
+                    "publication_info",
+                    "references",
+                    "report_numbers",
+                    "titles.title"
+                ]
+            },
+            "aggs": {
+                "arxiv_categories": {
+                    "meta": {
+                        "order": 5,
+                        "title": "arXiv Category"
+                    },
+                    "terms": {
+                        "field": "facet_arxiv_categories",
+                        "size": 20
+                    }
+                },
+                "author": {
+                    "meta": {
+                        "order": 3,
+                        "title": "Author"
+                    },
+                    "terms": {
+                        "field": "facet_author_name",
+                        "size": 20
+                    }
+                },
+                "author_count": {
+                    "meta": {
+                        "order": 2,
+                        "title": "Number of authors"
+                    },
+                    "range": {
+                        "field": "author_count",
+                        "ranges": [
+                            {
+                                "from": 1,
+                                "key": "10 authors or less",
+                                "to": 10
+                            }
+                        ]
+                    }
+                },
+                "doc_type": {
+                    "meta": {
+                        "order": 7,
+                        "title": "Document Type"
+                    },
+                    "terms": {
+                        "field": "facet_inspire_doc_type",
+                        "size": 20
+                    }
+                },
+                "earliest_date": {
+                    "date_histogram": {
+                        "field": "earliest_date",
+                        "format": "yyyy",
+                        "interval": "year",
+                        "min_doc_count": 1
+                    },
+                    "meta": {
+                        "order": 1,
+                        "title": "Date"
+                    }
+                },
+                "experiment": {
+                    "meta": {
+                        "order": 6,
+                        "title": "Experiment"
+                    },
+                    "terms": {
+                        "field": "facet_experiment",
+                        "size": 20
+                    }
+                },
+                "subject": {
+                    "meta": {
+                        "order": 4,
+                        "title": "Subject"
+                    },
+                    "terms": {
+                        "field": "facet_inspire_categories",
+                        "size": 20
+                    }
+                }
+            },
+            "query": {
+                "bool": {
+                    "filter": [
+                        {
+                            "match": {
+                                "_collections": "Literature"
+                            }
+                        }
+                    ],
+                    "minimum_should_match": "0<1",
+                    "must": [
+                        {
+                            "match": {
+                                "_all": {
+                                    "operator": "and",
+                                    "query": "test query"
+                                }
+                            }
+                        }
+                    ]
+                }
             }
         }
         assert query == json.loads(log_output)

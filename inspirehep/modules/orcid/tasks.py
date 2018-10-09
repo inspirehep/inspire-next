@@ -68,21 +68,17 @@ def legacy_orcid_arrays():
         token = r.lpop(key)
 
 
-def _link_user_and_token(user, name, orcid, token):
+def _link_user_and_token(user, name, orcid, access_token):
     """Create a link between a user and token, if possible.
 
     Args:
         user (invenio_oauthclient.models.User): an existing user object to connect the token to
         orcid (string): user's ORCID identifier
-        token (string): OAUTH token for the user
+        access_token (string): OAUTH token for the user
 
     Returns:
-        str: the ORCID associated with the new token if we created one, or the
-        ORCID associated with the token whose ``allow_push`` flag changed state.
-
+        str: the ORCID associated with the token newly created/enabled.
     """
-    result = None
-
     try:
         # Link user and ORCID
         oauth_link_external_id(user, {
@@ -93,26 +89,18 @@ def _link_user_and_token(user, name, orcid, token):
         # User already has their ORCID linked
         pass
 
-    # Check whether there are already tokens associated with this
-    # ORCID identifier.
-    tokens = RemoteToken.query.join(RemoteAccount).join(User)\
-        .join(UserIdentity).filter(UserIdentity.id == orcid).all()
+    # Search for existing tokens.
+    # Note: there can be only 1 RemoteToken per given RemoteAccount.
+    existing_remote_token = RemoteToken.query.join(RemoteAccount).filter_by(
+        user=user).one_or_none()
 
-    if tokens:
-        # Force the allow_push.
+    # If not existing_remote_token, create one.
+    if not existing_remote_token:
         with db.session.begin_nested():
-            for token in tokens:
-                if not token.remote_account.extra_data['allow_push']:
-                    result = orcid
-                token.remote_account.extra_data['allow_push'] = True
-    else:
-        # If not, create and put the token entry
-        with db.session.begin_nested():
-            result = orcid
             RemoteToken.create(
                 user_id=user.id,
                 client_id=get_value(current_app.config, 'ORCID_APP_CREDENTIALS.consumer_key'),
-                token=token,
+                token=access_token,
                 secret=None,
                 extra_data={
                     'orcid': orcid,
@@ -120,8 +108,45 @@ def _link_user_and_token(user, name, orcid, token):
                     'allow_push': True,
                 }
             )
+        return orcid
 
-    return result
+    # If there is an existing_remote_token:
+    #    ensure it is associated to this ORCID and
+    #    set allow_push to True.
+    #
+    # Get the ORCID associated with this token.
+    user_identity = UserIdentity.query.filter_by(user=user, method='orcid').one_or_none()
+
+    # Ensure data consistency.
+    if not user_identity:
+        msg = 'No UserIdentity for user={}, method="orcid", while' \
+              ' instead there is a RemoteAccount={} and RemoteToken={}'
+        raise Exception(msg.format(
+            user, existing_remote_token.remote_account, existing_remote_token))
+    if user_identity.id != existing_remote_token.remote_account.extra_data['orcid']:
+        msg = 'UserIdentity={} and RemoteToken={} ORCID mismatch: {} != {}'
+        raise Exception(msg.format(
+            user_identity, existing_remote_token, user_identity.id,
+            existing_remote_token.remote_account.extra_data['orcid']
+        ))
+    if existing_remote_token.remote_account.extra_data['orcid'] != orcid:
+        raise RemoteTokenOrcidMismatch(user, [existing_remote_token.remote_account.extra_data['orcid'], orcid])
+
+    # Force the allow_push.
+    with db.session.begin_nested():
+        if not existing_remote_token.remote_account.extra_data['allow_push']:
+            existing_remote_token.remote_account.extra_data['allow_push'] = True
+            return orcid
+    return None
+
+
+class RemoteTokenOrcidMismatch(Exception):
+    def __init__(self, user, orcids):
+        msg = ('A RemoteToken already exists for User={} and it is'
+               ' associated to a different ORCID: {}').format(
+            user, ' != '.join(orcids)
+        )
+        super(RemoteTokenOrcidMismatch, self).__init__(msg)
 
 
 def _register_user(name, email, orcid, token):
@@ -146,18 +171,16 @@ def _register_user(name, email, orcid, token):
         ORCID associated with the user whose ``allow_push`` flag changed state.
 
     """
+    if not email:
+        # Generate a (fake) unique email address (because User.email is a
+        # unique field).
+        email = USER_EMAIL_EMPTY_PATTERN.format(orcid)
 
     # Try to find an existing user entry
     user = _find_user_matching(orcid, email)
 
     # Make the user if didn't find existing one
     if not user:
-
-        if not email:
-            # Generate a (fake) unique email address as User.email is a unique
-            # field.
-            email = USER_EMAIL_EMPTY_PATTERN.format(orcid)
-
         with db.session.begin_nested():
             user = User()
             user.email = email

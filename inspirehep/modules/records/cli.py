@@ -27,11 +27,14 @@ from time import sleep
 import click
 import click_spinner
 import json
+import pprint
 
 from invenio_db import db
+from invenio_files_rest.models import ObjectVersion
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from flask import current_app
 from flask.cli import with_appcontext
+from invenio_records_files.models import RecordsBuckets
 
 from .checkers import check_unlinked_references
 from .tasks import batch_reindex
@@ -126,7 +129,13 @@ def simpleindex(yes_i_know, pid_type, batch_size, queue_name):
             PersistentIdentifier.pid_type.in_(pid_type),
             PersistentIdentifier.object_type == 'rec',
             PersistentIdentifier.status == PIDStatus.REGISTERED,
-            or_(not_(type_coerce(RecordMetadata.json, JSONB).has_key('deleted')), RecordMetadata.json["deleted"] == cast(False, JSONB))  # noqa: F401
+            or_(
+                not_(
+                    type_coerce(RecordMetadata.json, JSONB).has_key('deleted')
+                ),
+                RecordMetadata.json["deleted"] == cast(False, JSONB)
+            )
+            # noqa: F401
         )
     )
 
@@ -228,3 +237,111 @@ def simpleindex(yes_i_know, pid_type, batch_size, queue_name):
             json.dump(errors_json, log)
 
         click.secho('You can see the errors in %s' % errors_log_path)
+
+
+@click.command()
+@click.option('--remove-no-control-number', is_flag=True)
+@click.option('--remove-duplicates', is_flag=True)
+@click.option('--remove-not-in-pidstore', is_flag=True)
+@click.option('-c', '--print-without-control-number', is_flag=True)
+@click.option('-p', '--print-pid-not-in-pidstore', is_flag=True)
+@click.option('-d', '--print-duplicates', is_flag=True)
+@with_appcontext
+def handle_duplicates(remove_no_control_number, remove_duplicates,
+                      print_without_control_number, print_pid_not_in_pidstore,
+                      print_duplicates, remove_not_in_pidstore):
+    query = RecordMetadata.query.with_entities(
+            RecordMetadata.id,
+            RecordMetadata.json['control_number']
+    ).outerjoin(
+        PersistentIdentifier,
+        PersistentIdentifier.object_uuid == RecordMetadata.id
+    ).filter(
+        PersistentIdentifier.object_uuid == None  # noqa: E711
+    )
+    out = query.all()
+
+    recs_no_control_number = []
+    recs_no_in_pid_store = []
+    others = []
+
+    click.echo("Processing %s records:" % len(out))
+    with click.progressbar(out) as data:
+        for rec in data:
+            # cn = RecordMetadata.query.get(rec).json.get('control_number')
+            cn = rec[1]
+            if not cn:
+                recs_no_control_number.append(rec)
+            elif not PersistentIdentifier.query.filter(
+                    PersistentIdentifier.pid_value == str(cn)).one_or_none():
+                recs_no_in_pid_store.append(rec)
+            else:
+                others.append(rec)
+
+    click.secho("Found %s records not in PID store" % len(out))
+    click.secho("\t%s records without control number" % len(recs_no_control_number))
+    click.secho("\t%s records with their PID not in pidstore" % (
+        len(recs_no_in_pid_store)))
+    click.secho("\t%s records which are duplicates of records in pid store" % (
+        len(others)))
+
+    if print_without_control_number:
+        click.secho("Records which are missing control number:\n%s" % (
+            pprint.pformat(recs_no_control_number)))
+    if print_pid_not_in_pidstore:
+        click.secho("Records missing in PID store:\n%s" % (
+            pprint.pformat(recs_no_in_pid_store)))
+    if print_duplicates:
+        click.secho("Duplicates:\n%s" % (pprint.pformat(others)))
+
+    if remove_no_control_number:
+        click.secho("Removing records which do not have control number (%s)" % (
+            len(recs_no_control_number)))
+        removed_records, _, _ = _remove_records(recs_no_control_number)
+        click.secho("Removed %s out of %s records which did not have." % (
+            removed_records, len(recs_no_control_number)))
+
+    if remove_not_in_pidstore:
+        click.secho("Removing records which PID is not in PID store but they are no duplicates (%s)" % (
+            len(recs_no_in_pid_store)))
+        removed_records, _, _ = _remove_records(recs_no_in_pid_store)
+        click.secho("Removed %s out of %s records which PID was missing from PID store." % (
+            removed_records, len(recs_no_in_pid_store)))
+
+    if remove_duplicates:
+        click.secho("Removing records which looks to be duplicates (%s)" % (
+            len(others)))
+        removed_records, _, _ = _remove_records(others)
+        click.secho("Removed %s out of %s records which looks to be duplicates." % (
+            removed_records, len(others)))
+    db.session.commit()
+
+
+def _remove_records(records_ids):
+    """ This method is only a helper for removal of records which are not in PID store.
+        If you will use it for records which are in PID store it will fail as it not removes data from PID store itself.
+    Args:
+        records_ids: List of tuples with record.id and record.control_number
+
+    Returns: Tuple with information how many records, buckets and objects was removed
+
+    """
+    records_ids = [str(r[0]) for r in records_ids]
+    recs = RecordMetadata.query.filter(
+        RecordMetadata.id.in_(records_ids)
+    )
+    recs_buckets = RecordsBuckets.query.filter(
+        RecordsBuckets.record_id.in_(records_ids)
+    )
+
+    # as in_ is not working for relationships...
+    buckets_ids = [str(bucket.bucket_id) for bucket in recs_buckets]
+    objects = ObjectVersion.query.filter(
+        ObjectVersion.bucket_id.in_(buckets_ids)
+    )
+
+    removed_objects = objects.delete(synchronize_session=False)
+    removed_buckets = recs_buckets.delete(synchronize_session=False)
+    removed_records = recs.delete(synchronize_session=False)
+
+    return(removed_records, removed_buckets, removed_objects)

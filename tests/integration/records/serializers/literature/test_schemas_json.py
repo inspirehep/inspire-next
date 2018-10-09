@@ -103,7 +103,12 @@ def test_references_schema_with_record(isolated_app):
                             'journal_title': 'PTEP',
                             'journal_volume': '2012',
                             'year': 2012,
-                        }
+                        },
+                        'urls': [
+                            {
+                                'value': 'http://sf2a.eu/semaine-sf2a/2013/proceedings/'
+                            }
+                        ],
                     }
                 },
                 {
@@ -167,6 +172,24 @@ def test_references_schema_with_record(isolated_app):
                             'journal_issue': '4',
                         },
                     ],
+                    'urls': [
+                        {
+                            'value': 'http://sf2a.eu/semaine-sf2a/2013/proceedings/'
+                        }
+                    ],
+                    'dois': [
+                        {
+                            'value': '10.1088/1361-6633/aa5514'
+                        }
+                    ],
+                    'arxiv_eprint': [
+                        {
+                            'value': '1607.06746'
+                        }
+                    ],
+                    'collaborations': [{
+                        'value': 'LHCb',
+                    }],
                 },
                 {
                     'authors': [{
@@ -174,6 +197,7 @@ def test_references_schema_with_record(isolated_app):
                         'first_name': 'Jessica Jones',
                     }],
                     'label': '1',
+                    'misc': 'The J-PARC KOTO experiment 006',
                 },
                 {
                     'authors': [{

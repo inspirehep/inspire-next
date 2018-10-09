@@ -140,9 +140,9 @@ def test_record_restricted_api_read(app, api_client, user_info, status):
 
 @pytest.mark.parametrize('user_info,total_count,es_filter', [
     # anonymous user
-    (None, 23, [{'bool': {'must_not': [{'match': {'_collections': u'HERMES Internal Notes'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
-    (dict(email='johndoe@inspirehep.net', password='123456'), 23, [{'bool': {'must_not': [{'match': {'_collections': u'HERMES Internal Notes'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
-    (dict(email='cataloger@inspirehep.net', password='123456'), 23, [{'bool': {'must_not': [{'match': {'_collections': u'HERMES Internal Notes'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
+    (None, 23, [{'match': {'_collections': 'Literature'}}]),
+    (dict(email='johndoe@inspirehep.net', password='123456'), 23, [{'match': {'_collections': 'Literature'}}]),
+    (dict(email='cataloger@inspirehep.net', password='123456'), 23, [{'match': {'_collections': 'Literature'}}]),
     (dict(email='hermescataloger@inspirehep.net', password='123456'), 23, [{'match': {'_collections': 'Literature'}}]),
     (dict(email='admin@inspirehep.net', password='123456'), 23, [{'match': {'_collections': 'Literature'}}]),
 ])
@@ -157,30 +157,6 @@ def test_inspire_search_filter_public_collection(app, app_client, user_info, tot
     # Doing a client request creates a request context that allows the
     # assert to correctly use the logged in user.
     app_client.get('/search')
-    assert LiteratureSearch().to_dict()['query']['bool'][
-        'filter'] == es_filter
-    assert LiteratureSearch().count() == total_count
-
-
-@pytest.mark.parametrize('user_info,total_count,es_filter', [
-    # anonymous user
-    (None, 0, [{'bool': {'must_not': [{'match': {'_collections': u'HERMES Internal Notes'}}], 'must': [{'match': {'_collections': u'HERMES Internal Notes'}}]}}]),
-    (dict(email='johndoe@inspirehep.net', password='123456'), 0, [{'bool': {'must_not': [{'match': {'_collections': u'HERMES Internal Notes'}}], 'must': [{'match': {'_collections': u'HERMES Internal Notes'}}]}}]),
-    (dict(email='cataloger@inspirehep.net', password='123456'), 0, [{'bool': {'must_not': [{'match': {'_collections': u'HERMES Internal Notes'}}], 'must': [{'match': {'_collections': u'HERMES Internal Notes'}}]}}]),
-    (dict(email='hermescataloger@inspirehep.net', password='123456'), 1, [{'match': {'_collections': 'HERMES Internal Notes'}}]),
-    (dict(email='admin@inspirehep.net', password='123456'), 1, [{'match': {'_collections': 'HERMES Internal Notes'}}]),
-])
-def test_inspire_search_filter_restricted_collection(app, app_client, user_info, total_count, es_filter):
-    """Test default inspire search filter."""
-
-    if user_info:
-        login_user_via_view(app_client, email=user_info['email'],
-                            password=user_info['password'],
-                            login_url='/login/?local=1')
-
-    # Doing a client request creates a request context that allows the
-    # assert to correctly use the logged in user.
-    app_client.get('/search?cc=HERMES Internal Notes')
     assert LiteratureSearch().to_dict()['query']['bool'][
         'filter'] == es_filter
     assert LiteratureSearch().count() == total_count

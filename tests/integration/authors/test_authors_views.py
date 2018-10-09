@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2014-2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,20 +20,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""UI for Invenio-Search."""
-
 from __future__ import absolute_import, division, print_function
 
-from invenio_assets import NpmBundle
 
-js = NpmBundle(
-    'js/search/app.js',
-    filters='requirejs',
-    output='gen/inspirehepsearch.%(version)s.js',
-    depends=("node_modules/inspirehep-search-js/**/*.js", ),
-    npm={
-        'invenio-search-js': '~1.4.0',
-        'angular-loading-bar': '~0.9.0',
-        'inspirehep-search-js': '~2.0.0'
-    },
-)
+def test_authors_submit_new(app_client):
+    url = '/authors/new'
+    response = app_client.get(url)
+
+    assert response.status_code == 301
+    assert response.location == 'http://localhost:5000/submissions/authors'
+
+
+def test_authors_submit_update(app_client):
+    url = '/authors/123/update'
+    response = app_client.get(url)
+
+    assert response.status_code == 301
+    assert response.location == 'http://localhost:5000/submissions/authors/123'

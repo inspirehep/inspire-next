@@ -89,7 +89,7 @@ class TestRecordMetadata(TestBaseModel):
     }
 
     @classmethod
-    def create_from_kwargs(cls, index_name='', **kwargs):
+    def create_from_kwargs(cls, index_name='', disable_persistent_identifier=False, **kwargs):
         instance = cls()
 
         updated_kwargs = copy.deepcopy(kwargs)
@@ -125,12 +125,12 @@ class TestRecordMetadata(TestBaseModel):
                 params={}
             )
             instance.es_refresh_result = es.indices.refresh(index_name)
-
-        instance.persistent_identifier = TestPersistentIdentifier\
-                .create_from_kwargs(
-                    object_uuid=instance.record_metadata.id,
-                    pid_value=instance.record_metadata.json.get('control_number'),
-                    **kwargs).persistent_identifier
+        if not disable_persistent_identifier:
+            instance.persistent_identifier = TestPersistentIdentifier\
+                    .create_from_kwargs(
+                        object_uuid=instance.record_metadata.id,
+                        pid_value=instance.record_metadata.json.get('control_number'),
+                        **kwargs).persistent_identifier
 
         instance.inspire_record = InspireRecord(instance.record_metadata.json,
                                                 model=RecordMetadata)

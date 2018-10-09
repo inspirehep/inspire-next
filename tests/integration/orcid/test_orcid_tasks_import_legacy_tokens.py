@@ -463,3 +463,19 @@ class TestImportLegacyOrcidTokens(object):
 
         self._assert_user_and_token_models(self.orcid, token, USER_EMAIL_EMPTY_PATTERN.format(self.orcid), name)
         assert self.mock_logger.exception.call_count == 1
+
+    def test_empty_email_w_existing_user_w_empty_email(self):
+        user = User(email='')
+        db.session.add(user)
+
+        token = 'mytoken'
+        email = ''
+        name = 'myname'
+        self.mock_legacy_orcid_arrays.return_value = (
+            (self.orcid, token, email, name),
+        )
+
+        import_legacy_orcid_tokens()
+
+        self._assert_user_and_token_models(self.orcid, token, USER_EMAIL_EMPTY_PATTERN.format(self.orcid), name)
+        self.mock_logger.exception.assert_not_called()

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2014-2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,20 +20,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""UI for Invenio-Search."""
-
 from __future__ import absolute_import, division, print_function
 
-from invenio_assets import NpmBundle
+from elasticsearch_dsl.query import Range
 
-js = NpmBundle(
-    'js/search/app.js',
-    filters='requirejs',
-    output='gen/inspirehepsearch.%(version)s.js',
-    depends=("node_modules/inspirehep-search-js/**/*.js", ),
-    npm={
-        'invenio-search-js': '~1.4.0',
-        'angular-loading-bar': '~0.9.0',
-        'inspirehep-search-js': '~2.0.0'
-    },
-)
+
+def range_author_count_filter(field):
+    """Range filter for returning record only with 1 <= authors <= 10."""
+
+    def inner(values):
+        return Range(**{field: {'gte': 1, 'lte': 10}})
+
+    return inner
