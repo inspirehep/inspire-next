@@ -592,6 +592,9 @@
                 "number_of_pages": {
                     "type": "integer"
                 },
+                "number_of_references": {
+                    "type": "integer"
+                },
                 "persistent_identifiers": {
                     "properties": {
                         "material": {
