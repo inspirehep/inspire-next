@@ -124,6 +124,10 @@ class RecordMetadataSchemaV1(Schema):
         return self.get_len_or_missing(authors)
 
     def get_number_of_references(self, data):
+        number_of_references = data.get('number_of_references')
+        if number_of_references is not None:
+            return number_of_references
+
         references = data.get('references')
         return self.get_len_or_missing(references)
 
