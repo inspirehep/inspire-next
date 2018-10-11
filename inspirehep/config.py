@@ -58,6 +58,7 @@ FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY = False
 """This feature flag will prevent to send a ``replace`` update to legacy."""
 FEATURE_FLAG_ENABLE_SENDING_REFERENCES_TO_LEGACY = True
 FEATURE_FLAG_ENABLE_PUBLISHER_HARVESTS_CARD = True
+FEATURE_FLAG_ENABLE_APPMETRICS = False
 
 # Default language and timezone
 # =============================
@@ -1623,3 +1624,9 @@ FUZZY_MATCH = {
                'arxiv_eprints', 'public_notes', 'number_of_pages',
                'publication_info', 'earliest_date']
 }
+
+
+# App metrics
+# ===========
+APPMETRICS_ELASTICSEARCH_HOSTS = ['localhost']
+APPMETRICS_ELASTICSEARCH_INDEX = 'inspireappmetrics-dev'

@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from datetime import date
+from datetime import date, datetime
 
 from dateutil.relativedelta import relativedelta
 from flask import (
@@ -40,6 +40,7 @@ from flask import (
 from flask_login import current_user
 from flask_menu import current_menu
 from sqlalchemy.orm.exc import NoResultFound
+from time_execution import time_execution
 
 from invenio_mail.tasks import send_email
 from invenio_pidstore.models import PersistentIdentifier
@@ -342,6 +343,24 @@ def internal_error(error):
 @blueprint.route('/ping')
 def ping():
     return 'OK'
+
+
+@blueprint.route('/health')
+@time_execution
+def health():
+    now = datetime.now()
+    return jsonify(now)
+
+
+@blueprint.route('/unhealth')
+@time_execution
+def unhealth():
+    class UnhealthTestException(Exception):
+        pass
+
+    now = datetime.now()
+    raise UnhealthTestException('/unhealth endpoint called on {}'.format(now))
+    return 'It should have raised UnhealthTestException'
 
 
 #
