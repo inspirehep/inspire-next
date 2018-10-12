@@ -47,7 +47,9 @@ from inspirehep.modules.orcid.utils import (
     get_push_access_tokens,
     get_orcids_for_push,
 )
+from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.records.tasks import index_modified_citations_from_record
 from inspirehep.modules.records.utils import (
     is_author,
     is_book,
@@ -169,9 +171,15 @@ def index_after_commit(sender, changes):
                                  model_instance.json.get("id"))
                     pass
 
+            pid_type = get_pid_type_from_schema(model_instance.json['$schema'])
+            pid_value = model_instance.json['control_number']
+            db_version = model_instance.version_id
+
+            index_modified_citations_from_record.delay(pid_type, pid_value, db_version)
+
 
 @before_record_index.connect
-def enhance_after_index(sender, json, record, *args, **kwargs):
+def enhance_before_index(sender, json, record, *args, **kwargs):
     """Run all the receivers that enhance the record for ES in the right order.
 
     .. note::

@@ -29,7 +29,8 @@ from celery.utils.log import get_task_logger
 from elasticsearch.helpers import bulk, scan
 from flask import current_app
 from six import iteritems
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy import tuple_
+from sqlalchemy.orm.exc import NoResultFound, StaleDataError
 
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
@@ -40,6 +41,7 @@ from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.utils import get_endpoint_from_record
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.utils.record import create_index_op
+from inspirehep.utils.record_getter import get_db_record
 
 
 logger = get_task_logger(__name__)
@@ -182,7 +184,7 @@ def get_merged_records():
 
 
 @shared_task(ignore_result=False, max_retries=0)
-def batch_reindex(uuids, request_timeout):
+def batch_reindex(uuids, request_timeout=None):
     """Task for bulk reindexing records."""
     def actions():
         for uuid in uuids:
@@ -191,6 +193,9 @@ def batch_reindex(uuids, request_timeout):
                 yield create_index_op(record, version_type='force')
             except NoResultFound as e:
                 logger.warn('Record %s failed to load: %s', uuid, e)
+
+    if not request_timeout:
+        request_timeout = current_app.config['INDEXER_BULK_REQUEST_TIMEOUT']
 
     success, failures = bulk(
         es,
@@ -204,3 +209,37 @@ def batch_reindex(uuids, request_timeout):
         'success': success,
         'failures': [failure for failure in failures or []],
     }
+
+
+@shared_task(ignore_result=False, bind=True, max_retries=12)
+def index_modified_citations_from_record(self, pid_type, pid_value, db_version):
+    record = get_db_record(pid_type, pid_value)
+
+    try:
+        if record.model.version_id < db_version:
+            backoff = 2 ** (self.request.retries + 1)
+            logger.warn(
+                'Record {} not yet updated to version {} on DB'.format((pid_type, pid_value), db_version)
+            )
+            raise StaleDataError
+    except StaleDataError as e:
+        raise self.retry(countdown=backoff, exc=e)
+
+    pids = record.get_modified_references()
+
+    if not pids:
+        logger.info('No references change for record {}'.format((pid_type, pid_value)))
+        return
+
+    uuids = [
+        str(pid.object_uuid) for pid in
+        db.session.query(PersistentIdentifier.object_uuid).filter(
+            PersistentIdentifier.object_type == 'rec',
+            tuple_(PersistentIdentifier.pid_type, PersistentIdentifier.pid_value).in_(pids)
+        )
+    ]
+
+    if uuids:
+        return batch_reindex(uuids)
+    else:
+        logger.warn('Cited records to reindex not found:\nuuids: {}'.format(uuids))

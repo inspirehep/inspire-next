@@ -347,7 +347,9 @@ def test_normalize_journal_titles_unknown_journals_no_ref(workflow_app, insert_j
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
 )
+@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async')
 def test_refextract_from_pdf(
+    mocked_indexing_task,
     mocked_api_request_magpie,
     mocked_api_request_beard,
     mocked_is_pdf_link,
@@ -424,7 +426,9 @@ def test_refextract_from_pdf(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
 )
+@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async')
 def test_count_reference_coreness(
+    mocked_indexing_task,
     mocked_api_request_magpie,
     mocked_api_request_beard,
     mocked_is_pdf_link,
