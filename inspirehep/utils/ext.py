@@ -24,7 +24,12 @@
 
 from __future__ import absolute_import, division, print_function
 
+import time_execution
+
 from rt import AuthorizationError
+from time_execution.backends.threaded import ThreadedBackend
+from time_execution.backends.elasticsearch import ElasticsearchBackend
+
 from .tickets import InspireRt
 
 
@@ -40,6 +45,7 @@ class INSPIREUtils(object):
     def init_app(self, app):
         """Initialize the application."""
         self.rt_instance = self.create_rt_instance(app)
+        self.configure_time_execution(app)
         app.extensions["inspire-utils"] = self
 
     def create_rt_instance(self, app):
@@ -64,3 +70,20 @@ class INSPIREUtils(object):
                 raise AuthorizationError(
                     "RT login credentials in the app.config are invalid")
             return tracker
+
+    def configure_time_execution(self, app):
+        if not app.config.get('FEATURE_FLAG_ENABLE_APPMETRICS'):
+            return
+
+        async_es_metrics = ThreadedBackend(
+            ElasticsearchBackend,
+            backend_kwargs=dict(
+                hosts=app.config['APPMETRICS_ELASTICSEARCH_HOSTS'],
+                index=app.config['APPMETRICS_ELASTICSEARCH_INDEX']),
+        )
+
+        time_execution.settings.configure(
+            backends=[async_es_metrics],
+            # hooks=(status_code_hook,),
+            origin='inspire_next'
+        )

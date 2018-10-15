@@ -48,7 +48,7 @@ from sqlalchemy.sql.functions import GenericFunction
 
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema, get_endpoint_from_pid_type
-from inspirehep.modules.records.utils import populate_earliest_date
+from inspirehep.modules.records.utils import get_pid_from_record_uri, populate_earliest_date
 from inspirehep.utils.record_getter import (
     RecordGetterError,
     get_es_record_by_uuid
@@ -647,6 +647,49 @@ class InspireRecord(Record):
     def to_dict(self):
         """Gets a deep copy of the record's json."""
         return deepcopy(dict(self))
+
+    def get_modified_references(self):
+        """Return the ids of the references diff between the latest and the
+        previous version.
+
+        The diff includes references added or deleted. Changes in a
+        reference's content won't be detected.
+
+        Also, it detects if record was deleted/un-deleted compared to the
+        previous version and, in such cases, returns the full list of
+        references.
+
+        References not linked to any record will be ignored.
+
+        Note: record should be committed to DB in order to correctly get the
+        previous version.
+
+
+        Returns:
+            Set[Tuple[str, int]]: pids of references changed from the previous
+            version.
+        """
+        def _get_ids_from_refs(references):
+            return set([
+                get_pid_from_record_uri(ref['record']['$ref'])
+                for ref in references
+                if 'record' in ref
+            ])
+
+        try:
+            prev_version = self.model.versions[-2].json
+        except IndexError:
+            prev_version = {}
+
+        changed_deleted_status = self.get('deleted', False) ^ prev_version.get('deleted', False)
+
+        if changed_deleted_status:
+            return _get_ids_from_refs(self.get('references', []))
+
+        ids_latest = _get_ids_from_refs(self.get('references', []))
+        ids_oldest = _get_ids_from_refs(prev_version.get('references', []))
+
+        return set.symmetric_difference(ids_latest, ids_oldest)
 
 
 class ESRecord(InspireRecord):

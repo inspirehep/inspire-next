@@ -104,8 +104,8 @@ def test_search_logs(current_app_mock, api_client):
                     "dois.value",
                     "earliest_date",
                     "inspire_categories",
+                    "number_of_references",
                     "publication_info",
-                    "references",
                     "report_numbers",
                     "titles.title"
                 ]
@@ -136,8 +136,8 @@ def test_search_facets_logs(current_app_mock, api_client):
                     "dois.value",
                     "earliest_date",
                     "inspire_categories",
+                    "number_of_references",
                     "publication_info",
-                    "references",
                     "report_numbers",
                     "titles.title"
                 ]
@@ -266,8 +266,8 @@ def test_search_facets_logs_with_query(current_app_mock, api_client):
                     "dois.value",
                     "earliest_date",
                     "inspire_categories",
+                    "number_of_references",
                     "publication_info",
-                    "references",
                     "report_numbers",
                     "titles.title"
                 ]

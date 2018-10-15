@@ -47,7 +47,9 @@ from inspirehep.modules.orcid.utils import (
     get_push_access_tokens,
     get_orcids_for_push,
 )
+from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.records.tasks import index_modified_citations_from_record
 from inspirehep.modules.records.utils import (
     is_author,
     is_book,
@@ -68,6 +70,7 @@ from inspirehep.modules.records.utils import (
     populate_experiment_suggest,
     populate_inspire_document_type,
     populate_name_variations,
+    populate_number_of_references,
     populate_recid_from_ref,
     populate_title_suggest,
 )
@@ -156,18 +159,27 @@ def index_after_commit(sender, changes):
     for model_instance, change in changes:
         if isinstance(model_instance, RecordMetadata):
             if change in ('insert', 'update') and not model_instance.json.get("deleted"):
-                indexer.index(InspireRecord(model_instance.json, model_instance))
+                indexer.index(InspireRecord(
+                    model_instance.json, model_instance))
             else:
                 try:
-                    indexer.delete(InspireRecord(model_instance.json, model_instance))
+                    indexer.delete(InspireRecord(
+                        model_instance.json, model_instance))
                 except NotFoundError:
                     # Record not found in ES
-                    LOGGER.debug('Record %s not found in ES', model_instance.json.get("id"))
+                    LOGGER.debug('Record %s not found in ES',
+                                 model_instance.json.get("id"))
                     pass
+
+            pid_type = get_pid_type_from_schema(model_instance.json['$schema'])
+            pid_value = model_instance.json['control_number']
+            db_version = model_instance.version_id
+
+            index_modified_citations_from_record.delay(pid_type, pid_value, db_version)
 
 
 @before_record_index.connect
-def enhance_after_index(sender, json, record, *args, **kwargs):
+def enhance_before_index(sender, json, record, *args, **kwargs):
     """Run all the receivers that enhance the record for ES in the right order.
 
     .. note::
@@ -186,6 +198,7 @@ def enhance_after_index(sender, json, record, *args, **kwargs):
         populate_authors_full_name_unicode_normalized(json)
         populate_inspire_document_type(json)
         populate_name_variations(json)
+        populate_number_of_references(json)
         populate_citations_count(record=record, json=json)
 
     elif is_author(json):

@@ -55,6 +55,18 @@ def test_record_metadata_schema_returns_number_of_references():
     assert expected == number_of_references
 
 
+def test_record_metadata_schema_uses_existing_number_of_references():
+    schema = RecordMetadataSchemaV1()
+    dump = {
+        'number_of_references': 2
+    }
+    expected = 2
+
+    result = schema.dumps(dump).data
+    number_of_references = json.loads(result)['number_of_references']
+    assert expected == number_of_references
+
+
 @mock.patch('inspirehep.modules.records.serializers.schemas.json.literature.format_date')
 def test_record_metadata_schema_returns_formatted_date(format_date):
     schema = RecordMetadataSchemaV1()

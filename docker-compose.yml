@@ -66,7 +66,7 @@ services:
   worker:
     extends:
       service: service_base
-    command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge --queues celery,migrator,harvests,orcid_push,indexer_task
+    command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge --queues celery,migrator,harvests,orcid_push,indexer_task,bulk_index
     volumes_from:
       - static
     healthcheck:

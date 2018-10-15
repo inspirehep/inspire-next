@@ -363,6 +363,14 @@ def populate_name_variations(json):
             }})
 
 
+def populate_number_of_references(json):
+    """Generate name variations for each signature of a Literature record."""
+    references = json.get('references')
+
+    if references is not None:
+        json['number_of_references'] = len(references)
+
+
 def populate_authors_name_variations(json):
     """Generate name variations for an Author record."""
     author_name = get_value(json, 'name.value')

@@ -38,7 +38,38 @@ from inspirehep.modules.records.utils import (
     populate_inspire_document_type,
     populate_recid_from_ref,
     populate_title_suggest,
+    populate_number_of_references,
 )
+
+
+def test_populate_number_references():
+    record = {
+        '$schema': 'http://localhost:5000/records/schemas/hep.json',
+        'references': [
+            {
+                'reference': {
+                    'label': '1'
+                }
+            }
+        ]
+    }
+
+    populate_number_of_references(record)
+
+    expected = 1
+    result = record['number_of_references']
+
+    assert expected == result
+
+
+def test_populate_number_references_does_nothing_if_references_is_none():
+    record = {
+        '$schema': 'http://localhost:5000/records/schemas/hep.json',
+    }
+
+    populate_number_of_references(record)
+
+    assert 'number_of_references' not in record
 
 
 def test_get_endpoint_from_record():

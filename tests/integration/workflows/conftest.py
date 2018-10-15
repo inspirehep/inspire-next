@@ -22,9 +22,10 @@
 
 from __future__ import absolute_import, division, print_function
 
+import mock
 import os
-import re
 import pytest
+import re
 import requests_mock
 import sys
 
@@ -112,7 +113,9 @@ def workflow_app(higgs_ontology):
         )
 
     with app.app_context():
-        yield app
+        with mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async'):
+
+            yield app
 
 
 @pytest.fixture
