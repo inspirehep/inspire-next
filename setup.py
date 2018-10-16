@@ -155,6 +155,9 @@ extras_require = {
     ],
     'worker-node': [
         'flower~=0.0,>=0.9.2',
+        # Flower 0.9.2 is badly bugged when used with Tornado 5.
+        # See: https://its.cern.ch/jira/browse/INSPIR-1477
+        'tornado~=4.0,>=4.5.3',
         'superlance~=1.0,>=1.0.0',
     ],
     'xrootd': [
