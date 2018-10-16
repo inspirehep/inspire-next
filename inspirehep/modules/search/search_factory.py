@@ -124,7 +124,7 @@ def inspire_search_factory(self, search):
     return search, urlkwargs
 
 
-def inspire_facets_factory(query_string):
+def inspire_facets_factory(query_string, facet_name=None):
     """Parse query using Inspire-Query-Parser and prepare facets for it
     Args:
         self: REST view.
@@ -144,7 +144,7 @@ def inspire_facets_factory(query_string):
         raise InvalidQueryRESTError()
 
     search_index = search._index[0]
-    search, urlkwargs = default_facets_factory(search, search_index)
+    search, urlkwargs = default_facets_factory(search, facet_name or search_index)
     search = select_source(search, search_index)
 
     urlkwargs.add('q', query_string)

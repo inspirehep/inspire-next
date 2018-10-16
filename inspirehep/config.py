@@ -793,6 +793,67 @@ RECORDS_UI_ENDPOINTS = {
 }
 
 RECORDS_REST_FACETS = {
+    "hep-author-publication": {
+        "filters": {
+            "author": terms_filter('facet_author_name'),
+            "author_count": range_author_count_filter('author_count'),
+            "doc_type": terms_filter('facet_inspire_doc_type'),
+            "earliest_date": range_filter(
+                'earliest_date',
+                format='yyyy',
+                end_date_math='/y')
+        },
+        "aggs": {
+            "earliest_date": {
+                "date_histogram": {
+                    "field": "earliest_date",
+                    "interval": "year",
+                    "format": "yyyy",
+                    "min_doc_count": 1,
+                },
+                "meta": {
+                    "title": "Date",
+                    "order": 1,
+                },
+            },
+            "author_count": {
+                "range": {
+                    "field": "author_count",
+                    "ranges": [
+                        {
+                            "key": "10 authors or less",
+                            "from": 1,
+                            "to": 10,
+                        },
+                    ],
+                },
+                "meta": {
+                    "title": "Number of authors",
+                    "order": 2,
+                },
+            },
+            "author": {
+                "terms": {
+                    "field": "facet_author_name",
+                    "size": 20
+                },
+                "meta": {
+                    "title": "Collaboartions",
+                    "order": 3,
+                },
+            },
+            "doc_type": {
+                "terms": {
+                    "field": "facet_inspire_doc_type",
+                    "size": 20
+                },
+                "meta": {
+                    "title": "Document Type",
+                    "order": 7,
+                },
+            },
+        }
+    },
     "records-hep": {
         "filters": {
             "author": terms_filter('facet_author_name'),
