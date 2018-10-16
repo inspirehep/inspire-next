@@ -24,7 +24,11 @@ from __future__ import absolute_import, division, print_function
 
 import json
 
+from invenio_db import db
+from invenio_search import current_search_client as es
 from mock import patch
+
+from inspirehep.modules.records.api import InspireRecord
 
 
 def test_search_conferences_is_there(app_client):
@@ -163,22 +167,6 @@ def test_search_facets_logs(current_app_mock, api_client):
                         "size": 20
                     }
                 },
-                "author_count": {
-                    "meta": {
-                        "order": 2,
-                        "title": "Number of authors"
-                    },
-                    "range": {
-                        "field": "author_count",
-                        "ranges": [
-                            {
-                                "from": 1,
-                                "key": "10 authors or less",
-                                "to": 10
-                            }
-                        ]
-                    }
-                },
                 "doc_type": {
                     "meta": {
                         "order": 7,
@@ -187,18 +175,6 @@ def test_search_facets_logs(current_app_mock, api_client):
                     "terms": {
                         "field": "facet_inspire_doc_type",
                         "size": 20
-                    }
-                },
-                "earliest_date": {
-                    "date_histogram": {
-                        "field": "earliest_date",
-                        "format": "yyyy",
-                        "interval": "year",
-                        "min_doc_count": 1
-                    },
-                    "meta": {
-                        "order": 1,
-                        "title": "Date"
                     }
                 },
                 "experiment": {
@@ -211,6 +187,22 @@ def test_search_facets_logs(current_app_mock, api_client):
                         "size": 20
                     }
                 },
+                "author_count": {
+                    "range": {
+                        "ranges": [
+                            {
+                                "to": 11,
+                                "from": 1,
+                                "key": "10 authors or less"
+                            }
+                        ],
+                        "field": "author_count"
+                    },
+                    "meta": {
+                        "order": 2,
+                        "title": "Number of authors"
+                    }
+                },
                 "subject": {
                     "meta": {
                         "order": 4,
@@ -219,6 +211,18 @@ def test_search_facets_logs(current_app_mock, api_client):
                     "terms": {
                         "field": "facet_inspire_categories",
                         "size": 20
+                    }
+                },
+                "earliest_date": {
+                    "date_histogram": {
+                        "field": "earliest_date",
+                        "interval": "year",
+                        "min_doc_count": 1,
+                        "format": "yyyy"
+                    },
+                    "meta": {
+                        "order": 1,
+                        "title": "Date"
                     }
                 }
             },
@@ -293,22 +297,6 @@ def test_search_facets_logs_with_query(current_app_mock, api_client):
                         "size": 20
                     }
                 },
-                "author_count": {
-                    "meta": {
-                        "order": 2,
-                        "title": "Number of authors"
-                    },
-                    "range": {
-                        "field": "author_count",
-                        "ranges": [
-                            {
-                                "from": 1,
-                                "key": "10 authors or less",
-                                "to": 10
-                            }
-                        ]
-                    }
-                },
                 "doc_type": {
                     "meta": {
                         "order": 7,
@@ -317,18 +305,6 @@ def test_search_facets_logs_with_query(current_app_mock, api_client):
                     "terms": {
                         "field": "facet_inspire_doc_type",
                         "size": 20
-                    }
-                },
-                "earliest_date": {
-                    "date_histogram": {
-                        "field": "earliest_date",
-                        "format": "yyyy",
-                        "interval": "year",
-                        "min_doc_count": 1
-                    },
-                    "meta": {
-                        "order": 1,
-                        "title": "Date"
                     }
                 },
                 "experiment": {
@@ -341,6 +317,22 @@ def test_search_facets_logs_with_query(current_app_mock, api_client):
                         "size": 20
                     }
                 },
+                "author_count": {
+                    "range": {
+                        "ranges": [
+                            {
+                                "to": 11,
+                                "from": 1,
+                                "key": "10 authors or less"
+                            }
+                        ],
+                        "field": "author_count"
+                    },
+                    "meta": {
+                        "order": 2,
+                        "title": "Number of authors"
+                    }
+                },
                 "subject": {
                     "meta": {
                         "order": 4,
@@ -349,6 +341,18 @@ def test_search_facets_logs_with_query(current_app_mock, api_client):
                     "terms": {
                         "field": "facet_inspire_categories",
                         "size": 20
+                    }
+                },
+                "earliest_date": {
+                    "date_histogram": {
+                        "field": "earliest_date",
+                        "interval": "year",
+                        "min_doc_count": 1,
+                        "format": "yyyy"
+                    },
+                    "meta": {
+                        "order": 1,
+                        "title": "Date"
                     }
                 }
             },
@@ -379,3 +383,25 @@ def test_search_facets_logs_with_query(current_app_mock, api_client):
 
     current_app_mock.logger.debug.side_effect = _debug
     api_client.get('/literature/facets?q=test query')
+
+
+def test_regression_author_count_10_does_not_display_zero_facet(isolated_app, api_client):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': ['article'],
+        'titles': [{'title': 'Article with 10 authors'}],
+        '_collections': ['Literature'],
+        'authors': []
+    }
+    for i in range(10):
+        record_json['authors'].append({'full_name': 'Pincopallino' + str(i)})
+
+    rec = InspireRecord.create(data=record_json)
+    rec.commit()
+    db.session.commit()
+    es.indices.refresh('records-hep')
+
+    response = api_client.get('/literature/facets?q=ac%2010')
+    data = json.loads(response.data)
+
+    assert data['aggregations']['author_count']['buckets'][0]['doc_count'] == 1
