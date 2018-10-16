@@ -379,3 +379,48 @@ def test_search_facets_logs_with_query(current_app_mock, api_client):
 
     current_app_mock.logger.debug.side_effect = _debug
     api_client.get('/literature/facets?q=test query')
+
+
+def test_search_facets_with_facet_name(isolated_api):
+    config = {
+        'RECORDS_REST_FACETS': {
+            'defenders': {
+                'aggs': {
+                    'jessica-jones': {
+                        'terms': {
+                            'field': 'defenders',
+                            'size': 20,
+                        },
+                    },
+                },
+            },
+        },
+    }
+
+    with isolated_api.test_client() as client, patch.dict(isolated_api.config, config):
+        response = client.get('/literature/facets?facet=defenders')
+        response_data = json.loads(response.data)
+        assert 'jessica-jones' in response_data['aggregations']
+
+
+def test_search_facets_without_facet_name(isolated_api):
+    config = {
+        'RECORDS_REST_FACETS': {
+            'defenders': {
+                'aggs': {
+                    'jessica-jones': {
+                        'terms': {
+                            'field': 'defenders',
+                            'size': 20,
+                        },
+                    },
+                },
+            },
+        },
+    }
+
+    with isolated_api.test_client() as client, patch.dict(isolated_api.config, config):
+        response = client.get('/literature/facets')
+        response_data = json.loads(response.data)
+        assert 'jessica-jones' not in response_data['aggregations']
+

@@ -98,7 +98,8 @@ class Facets(ContentNegotiatedMethodView):
 
     def get(self, *args, **kwargs):
         q = request.values.get('q', '', type=str)
-        query, urlkwargs = inspire_facets_factory(q)
+        facet_name = request.values.get('facet', None, type=str)
+        query, urlkwargs = inspire_facets_factory(q, facet_name=facet_name)
         results = query.execute()
 
         return json_literature_search_aggregations_ui_v1(0, results)
