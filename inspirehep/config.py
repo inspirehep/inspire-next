@@ -826,7 +826,7 @@ RECORDS_REST_FACETS = {
                         {
                             "key": "10 authors or less",
                             "from": 1,
-                            "to": 10,
+                            "to": 11,
                         },
                     ],
                 },
