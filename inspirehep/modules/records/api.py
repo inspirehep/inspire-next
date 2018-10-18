@@ -677,8 +677,9 @@ class InspireRecord(Record):
             ])
 
         try:
-            prev_version = self.model.versions[-2].json
-        except IndexError:
+            prev_version = self.model.versions.filter_by(
+                version_id=self.model.version_id).one().previous.json
+        except AttributeError:
             prev_version = {}
 
         changed_deleted_status = self.get('deleted', False) ^ prev_version.get('deleted', False)
