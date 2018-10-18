@@ -119,9 +119,9 @@ install_requires = [
     'setproctitle~=1.0,>=1.1.10',
     'timeout-decorator~=0.0,>=0.4.0',
     'timeexecution~=3.3.0,<4',
-    # Pin urllib3 to version 1.22 as version 1.23 is incompatible with requirements
-    # from python-requests (<1.23) (https://travis-ci.org/inspirehep/inspire-next/builds/388221674)
-    'urllib3~=1.0,<1.23',
+    # Pin urllib3 to version 1.23 as version 1.24 is incompatible with requirements
+    # from python-requests (<1.24) (https://travis-ci.org/inspirehep/inspire-next/builds/388221674)
+    'urllib3~=1.0,<1.24',
     'workflow~=2.0,>=2.1.3',
     'click~=6.7,<7.0',
 ]
