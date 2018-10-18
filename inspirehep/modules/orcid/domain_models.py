@@ -29,6 +29,7 @@ from flask import current_app
 from inspire_service_orcid import exceptions as orcid_client_exceptions
 from inspire_service_orcid.client import OrcidClient
 
+from inspirehep.modules.records.utils import get_pid_from_record_uri
 from inspirehep.utils.lock import distributed_lock
 from inspirehep.utils.record_getter import (
     RecordGetterError,
@@ -116,7 +117,7 @@ class OrcidPusher(object):
 
         putcode = None
         for fetched_putcode, fetched_url in putcodes_urls:
-            fetched_recid = _get_recid_from_url(fetched_url)
+            fetched_recid = get_pid_from_record_uri(fetched_url)[1]
 
             if not fetched_recid:
                 logger.error('OrcidPusher cache all author putcodes: cannot parse recid from url={} for orcid={}'.format(fetched_url, self.orcid))
@@ -143,14 +144,3 @@ class OrcidPusher(object):
                     self.putcode, self.recid, self.orcid))
 
         return putcode
-
-
-def _get_recid_from_url(url):
-    # Remove ending /.
-    if url.endswith('/'):
-        url = url[:-1]
-
-    position = url.rfind('/')
-    if position == -1:
-        return None
-    return url[position + 1:]
