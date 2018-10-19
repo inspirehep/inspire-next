@@ -24,14 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-import re
-import time
-
-from contextlib import contextmanager
 from itertools import chain
 from elasticsearch_dsl import Q
 from flask import current_app
-from functools import wraps
 from sqlalchemy import cast, type_coerce
 from sqlalchemy.dialects.postgresql import JSONB
 
@@ -49,14 +44,6 @@ from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.record import get_values_for_schema
 from inspirehep.modules.search.api import LiteratureSearch
 from inspirehep.utils.record_getter import get_db_records
-
-
-RECID_FROM_INSPIRE_URL = re.compile(
-    r"https?://(?:labs\.)?inspirehep\.net/(?:record|literature)/(\d+)",
-    re.IGNORECASE
-)
-
-WORKS_BULK_QUERY_LIMIT = 50
 
 
 def _split_lists(sequence, chunk_size):
@@ -188,25 +175,10 @@ def get_literature_recids_for_orcid(orcid):
     return [el['control_number'] for el in search_by_curated_author]
 
 
-@contextmanager
-def log_time_context(name, logger):
-    initial = time.time()
-    status = 'succeed'
-    try:
-        yield
-    except Exception:
-        status = 'fail'
-        raise
-    finally:
-        logger.info('%s took %s to %s', name, time.time() - initial, status)
-
-
-def log_time(logger):
-    def _wrapper(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            with log_time_context(func.__name__, logger):
-                return func(*args, **kwargs)
-        return wrapper
-
-    return _wrapper
+def log_service_response(logger, response, extra_message=None):
+    msg = '{} {} {} completed with HTTP-status={}'.format(
+        response.request.method, response.request.url, extra_message, response.status_code)
+    if response.ok:
+        logger.info(msg)
+    else:
+        logger.error(msg + ' and response={}'.format(response))

@@ -27,6 +27,7 @@ from inspire_utils.name import generate_name_variations
 
 from inspirehep.modules.records.utils import (
     get_endpoint_from_record,
+    get_pid_from_record_uri,
     populate_abstract_source_suggest,
     populate_affiliation_suggest,
     populate_author_count,
@@ -896,3 +897,18 @@ def test_populate_authors_full_name_unicode_normalized():
     result = record['authors']
 
     assert expected == result
+
+
+def test_get_pid_from_record_uri_happy_flow():
+    record_uri = 'http://labs.inspirehep.net/api/literature/1273685'
+    assert get_pid_from_record_uri(record_uri) == ('lit', '1273685')
+
+
+def test_get_pid_from_record_uri_ending_slash():
+    record_uri = 'http://labs.inspirehep.net/api/literature/1273685/'
+    assert get_pid_from_record_uri(record_uri) == ('lit', '1273685')
+
+
+def test_get_pid_from_record_uri_non_url():
+    record_uri = 'non-url-string'
+    assert not get_pid_from_record_uri(record_uri)

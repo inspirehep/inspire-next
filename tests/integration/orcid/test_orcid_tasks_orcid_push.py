@@ -20,191 +20,147 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""ORCID push tests."""
-
 from __future__ import absolute_import, division, print_function
 
+import logging
 import mock
 import pytest
 import re
 
-from redis import StrictRedis
+from requests.exceptions import RequestException
 
-from inspirehep.modules.orcid.api import recache_author_putcodes
 from inspirehep.modules.orcid.tasks import orcid_push
 
 from utils import override_config
 
 
-CONFIG = dict(
-    ORCID_SANDBOX=True,
-    SERVER_NAME='https://labs.inspirehep.net',
-    ORCID_APP_CREDENTIALS={
-        'consumer_key': 'CHANGE_ME',
-        'consumer_secret': 'CHANGE_ME'
-    }
-)
+class TestFeatureFlagOrcidPushWhitelistRegex(object):
+    def test_whitelist_regex_none(self):
+        FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '^$'
+
+        compiled = re.compile(FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX)
+        assert not re.match(compiled, '0000-0002-7638-5686')
+        assert not re.match(compiled, 'foo')
+        # Be careful with the empty string.
+        assert re.match(compiled, '')
+
+    def test_whitelist_regex_any(self):
+        FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '.*'
+
+        compiled = re.compile(FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX)
+        assert re.match(compiled, '0000-0002-7638-5686')
+        assert re.match(compiled, 'foo')
+        assert re.match(compiled, '')
+
+    def test_whitelist_regex_some(self):
+        FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '^(0000-0002-7638-5686|0000-0002-7638-5687)$'
+
+        compiled = re.compile(FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX)
+        assert re.match(compiled, '0000-0002-7638-5686')
+        assert not re.match(compiled, '0000-0002-7638-5686XX')
+        assert not re.match(compiled, '0000-0002-7638-56')
+        assert not re.match(compiled, '0000-0002-7638-5689')
+        assert not re.match(compiled, 'foo')
+        assert not re.match(compiled, '')
 
 
-@pytest.fixture(scope='function')
-def redis_setup(app):
-    redis_url = app.config.get('CACHE_REDIS_URL')
-    r = StrictRedis.from_url(redis_url)
+@pytest.mark.usefixtures('isolated_app')
+class TestOrcidPushFeatureFlag(object):
+    def setup(self):
+        self._patcher = mock.patch('inspirehep.modules.orcid.domain_models.OrcidPusher')
+        self.mock_pusher = self._patcher.start()
 
-    r.hmset('orcidcache:0000-0002-2152-2169:1375491', {'putcode': '1001'})
-    r.hmset('orcidcache:0000-0002-2152-2169:524480', {'putcode': '1002'})
-    r.hmset('orcidcache:0000-0002-2152-2169:701585', {'putcode': '1003'})
+        self.orcid = '0000-0002-7638-5686'
+        self.recid = 'myrecid'
+        self.oauth_token = 'mytoken'
 
-    yield r
+        # Disable logging.
+        logging.getLogger('inspirehep.modules.orcid.tasks').disabled = logging.CRITICAL
 
-    r.delete(*r.keys('orcidcache:*'))
+    def teardown(self):
+        self._patcher.stop()
+        logging.getLogger('inspirehep.modules.orcid.tasks').disabled = 0
 
+    def test_main_feature_flag(self):
+        regex = '.*'
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=False,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX=regex):
+            orcid_push(self.orcid, self.recid, self.oauth_token)
 
-@pytest.mark.vcr()
-def test_push_to_orcid_same_with_cache(
-    vcr_cassette,
-    redis_setup,
-):
-    rec_id = 4328
-    orcid = '0000-0002-2169-2152'
-    token = 'fake-token'
+        self.mock_pusher.assert_not_called()
 
-    with override_config(**CONFIG):
-        # Push as new
-        orcid_push(orcid, rec_id, token)
+    def test_whitelist_regex_any(self):
+        regex = '.*'
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX=regex):
+            orcid_push(self.orcid, self.recid, self.oauth_token)
 
-        # Push the same record again
-        orcid_push(orcid, rec_id, token)
+        self.mock_pusher.assert_called_once_with(self.orcid, self.recid, self.oauth_token)
 
-    # Check that the update request didn't happen:
-    assert vcr_cassette.all_played
+    def test_whitelist_regex_none(self):
+        regex = '^$'
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX=regex):
+            orcid_push(self.orcid, self.recid, self.oauth_token)
 
+        self.mock_pusher.assert_not_called()
 
-@pytest.mark.vcr()
-def test_push_to_orcid_update_with_cache(
-    vcr_cassette,
-    redis_setup,
-):
-    rec_id = 4328
-    orcid = '0000-0002-2169-2152'
-    token = 'fake-token'
+    def test_whitelist_regex_some(self):
+        regex = '^(0000-0002-7638-5686|0000-0002-7638-5687)$'
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX=regex):
+            orcid_push(self.orcid, self.recid, self.oauth_token)
 
-    with override_config(**CONFIG):
-        # Push as new
-        orcid_push(orcid, rec_id, token)
-
-        # Push the updated record
-        orcid_push(orcid, rec_id, token)
-
-    # Check that the update happened:
-    assert vcr_cassette.all_played
+            self.mock_pusher.assert_called_once_with(self.orcid, self.recid, self.oauth_token)
 
 
-@pytest.mark.vcr()
-def test_push_to_orcid_update_no_cache(
-    vcr_cassette,
-    redis_setup,
-):
-    rec_id = 4328
-    orcid = '0000-0002-2169-2152'
-    token = 'fake-token'
+@pytest.mark.usefixtures('isolated_app')
+class TestOrcidPush(object):
+    def setup(self):
+        self._patcher = mock.patch('inspirehep.modules.orcid.domain_models.OrcidPusher')
+        self.mock_pusher = self._patcher.start()
 
-    with override_config(**CONFIG):
-        # Push update
-        orcid_push(orcid, rec_id, token)
+        self.orcid = '0000-0002-7638-5686'
+        self.recid = 'myrecid'
+        self.oauth_token = 'mytoken'
 
-    # Check that the record was added:
-    assert vcr_cassette.all_played
+        # Disable logging.
+        logging.getLogger('inspirehep.modules.orcid.tasks').disabled = logging.CRITICAL
 
+    def teardown(self):
+        self._patcher.stop()
+        logging.getLogger('inspirehep.modules.orcid.tasks').disabled = 0
 
-@pytest.mark.vcr()
-def test_push_to_orcid_with_putcode_but_without_hash(
-    vcr_cassette,
-    redis_setup,
-):
-    rec_id = 4328
-    orcid = '0000-0002-2169-2152'
-    token = 'fake-token'
+    def test_happy_flow(self):
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*'):
+            orcid_push(self.orcid, self.recid, self.oauth_token)
 
-    with override_config(**CONFIG):
-        # Fetch the putcodes, no hashes present yet
-        recache_author_putcodes(orcid, token)
+        self.mock_pusher.assert_called_once_with(self.orcid, self.recid, self.oauth_token)
+        self.mock_pusher.return_value.push.assert_called_once()
 
-        # Push the record
-        orcid_push(orcid, rec_id, token)
+    def test_retry_triggered(self):
+        self.mock_pusher.return_value.push.side_effect = RequestException
 
-    # Check that the update request didn't happen:
-    assert vcr_cassette.all_played
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*'), \
+                mock.patch('inspirehep.modules.orcid.tasks.orcid_push.retry', side_effect=RequestException) as mock_orcid_push_task_retry, \
+                pytest.raises(RequestException):
+            orcid_push(self.orcid, self.recid, self.oauth_token)
 
+        self.mock_pusher.assert_called_once_with(self.orcid, self.recid, self.oauth_token)
+        self.mock_pusher.return_value.push.assert_called_once()
+        mock_orcid_push_task_retry.assert_called_once()
 
-def test_feature_flag_orcid_push_whitelist_regex_none():
-    FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '^$'
+    def test_retry_not_triggered(self):
+        self.mock_pusher.return_value.push.side_effect = IOError
 
-    compiled = re.compile(FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX)
-    assert not re.match(compiled, '0000-0002-7638-5686')
-    assert not re.match(compiled, 'foo')
-    # Be careful with the empty string.
-    assert re.match(compiled, '')
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*'), \
+                mock.patch('inspirehep.modules.orcid.tasks.orcid_push.retry') as mock_orcid_push_task_retry, \
+                pytest.raises(IOError):
+            orcid_push(self.orcid, self.recid, self.oauth_token)
 
-
-def test_feature_flag_orcid_push_whitelist_regex_any():
-    FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '.*'
-
-    compiled = re.compile(FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX)
-    assert re.match(compiled, '0000-0002-7638-5686')
-    assert re.match(compiled, 'foo')
-    assert re.match(compiled, '')
-
-
-def test_feature_flag_orcid_push_whitelist_regex_some():
-    FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '^(0000-0002-7638-5686|0000-0002-7638-5687)$'
-
-    compiled = re.compile(FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX)
-    assert re.match(compiled, '0000-0002-7638-5686')
-    assert not re.match(compiled, '0000-0002-7638-5686XX')
-    assert not re.match(compiled, '0000-0002-7638-56')
-    assert not re.match(compiled, '0000-0002-7638-5689')
-    assert not re.match(compiled, 'foo')
-    assert not re.match(compiled, '')
-
-
-def test_orcid_push_feature_flag_orcid_push_whitelist_regex_any(api):
-    orcid = '0000-0002-7638-5686'
-    regex = '.*'
-
-    with mock.patch('inspirehep.modules.orcid.tasks.push_record_with_orcid') as mock_push_record_with_orcid, \
-            mock.patch.dict(
-                'inspirehep.modules.orcid.tasks.current_app.config', {
-                    'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX': regex,
-                }):
-        orcid_push(orcid, 'rec_id', 'token')
-
-    mock_push_record_with_orcid.assert_called_once_with(oauth_token='token', orcid='0000-0002-7638-5686', recid='rec_id')
-
-
-def test_orcid_push_feature_flag_orcid_push_whitelist_regex_none(api):
-    orcid = '0000-0002-7638-5686'
-    regex = '^$'
-
-    with mock.patch('inspirehep.modules.orcid.tasks.push_record_with_orcid') as mock_push_record_with_orcid, \
-            mock.patch.dict(
-                'inspirehep.modules.orcid.tasks.current_app.config', {
-                    'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX': regex,
-                }):
-        orcid_push(orcid, 'rec_id', 'token')
-
-    mock_push_record_with_orcid.assert_not_called()
-
-
-def test_orcid_push_feature_flag_orcid_push_whitelist_regex_some(api):
-    orcid = '0000-0002-7638-5686'
-    regex = '^(0000-0002-7638-5686|0000-0002-7638-5687)$'
-
-    with mock.patch('inspirehep.modules.orcid.tasks.push_record_with_orcid') as mock_push_record_with_orcid, \
-            mock.patch.dict(
-                'inspirehep.modules.orcid.tasks.current_app.config', {
-                    'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX': regex,
-                }):
-        orcid_push(orcid, 'rec_id', 'token')
-
-    mock_push_record_with_orcid.assert_called_once_with(oauth_token='token', orcid='0000-0002-7638-5686', recid='rec_id')
+        self.mock_pusher.assert_called_once_with(self.orcid, self.recid, self.oauth_token)
+        self.mock_pusher.return_value.push.assert_called_once()
+        mock_orcid_push_task_retry.assert_not_called()

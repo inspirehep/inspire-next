@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2018 CERN.
+# Copyright (C) 2014-2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,24 +20,26 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""Search extension."""
+
 from __future__ import absolute_import, division, print_function
 
-import mock
-
-from inspirehep.modules.orcid.exceptions import DuplicatedExternalIdentifiersError
+import inspire_service_orcid.conf
 
 
-def test_match():
-    mock_exception = mock.Mock()
-    mock_exception.response.status_code = 409
-    mock_exception.response.json.return_value = {'error-code': 9021}
+class InspireOrcid(object):
+    def __init__(self, app=None):
+        if app:
+            self.init_app(app)
 
-    assert DuplicatedExternalIdentifiersError.match(mock_exception)
+    def init_app(self, app):
+        self.init_config(app)
+        app.extensions['inspire-orcid'] = self
 
-
-def test_match_unsuccessful():
-    mock_exception = mock.Mock()
-    mock_exception.response.status_code = 500
-    mock_exception.response.json.return_value = {'error-code': 9021}
-
-    assert not DuplicatedExternalIdentifiersError.match(mock_exception)
+    def init_config(self, app):
+        inspire_service_orcid.conf.settings.configure(
+            DO_USE_SANDBOX=False,
+            CONSUMER_KEY=app.config['ORCID_APP_CREDENTIALS']['consumer_key'],
+            CONSUMER_SECRET=app.config['ORCID_APP_CREDENTIALS']['consumer_secret'],
+            REQUEST_TIMEOUT=30,
+        )

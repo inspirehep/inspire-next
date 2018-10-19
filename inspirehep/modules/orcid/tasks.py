@@ -32,6 +32,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from celery import shared_task
 from redis import StrictRedis
+from requests.exceptions import RequestException
 from simplejson import loads
 
 from invenio_oauthclient.utils import oauth_link_external_id
@@ -40,8 +41,9 @@ from invenio_db import db
 from invenio_oauthclient.errors import AlreadyLinkedError
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
-from inspirehep.modules.orcid.api import push_record_with_orcid
 from inspirehep.modules.orcid.utils import get_literature_recids_for_orcid
+
+from . import domain_models
 
 
 LOGGER = getStackTraceLogger(__name__)
@@ -230,21 +232,40 @@ def orcid_push(self, orcid, rec_id, oauth_token):
         rec_id(int): inspire record's id to push to ORCID.
         oauth_token(string): orcid token.
     """
+    if not current_app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']:
+        LOGGER.warning('ORCID push feature flag not enabled')
+        return
+
     if not re.match(current_app.config.get(
             'FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX', '^$'), orcid):
-        return None
+        LOGGER.warning('ORCID push not enabled for orcid={}'.format(orcid))
+        return
+
+    LOGGER.info('New orcid_push task for recid={} and orcid={}'.format(rec_id, orcid))
+    pusher = domain_models.OrcidPusher(orcid, rec_id, oauth_token)
 
     try:
-        LOGGER.info('Will attempt to push #%s onto %s', rec_id, orcid)
-        push_record_with_orcid(
-            recid=str(rec_id),
-            orcid=orcid,
-            oauth_token=oauth_token,
-        )
-    except Exception as exc:
-        LOGGER.info('Orcid push attempt (celery task) for orcid={} and rec_id={}'
-                    ' failed:\n{}'.format(orcid, rec_id, traceback.format_exc()))
+        pusher.push()
+        LOGGER.info('Orcid_push task for recid={} and orcid={} successfully completed'.format(rec_id, orcid))
+    except RequestException as exc:
+        # Trigger a retry only in case of network-related issues.
+        # RequestException is the base class for all request's library
+        # exceptions.
+        # OrcidPusher knows how to handle all expected HTTP exceptions and thus
+        # no retry is triggered in such cases.
+        # Other kinds of exceptions (like IOError or anything else due to bugs)
+        # does not trigger a retry.
+        LOGGER.exception(
+            'Orcid_push task for recid={} and orcid={} raised a RequestException.'
+            ' Retrying soon. Exception={}'.format(
+                rec_id, orcid, traceback.format_exc()))
         raise self.retry(max_retries=3, countdown=300, exc=exc)
+    except Exception:
+        LOGGER.exception(
+            'Orcid_push task for recid={} and orcid={} failed raising the'
+            ' exception={}'.format(
+                rec_id, orcid, traceback.format_exc()))
+        raise
 
 
 def _find_user_matching(orcid, email):

@@ -1120,8 +1120,6 @@ INDEXER_BULK_REQUEST_TIMEOUT = float(900)
 
 # OAuthclient
 # ===========
-ORCID_SANDBOX = True
-
 orcid.REMOTE_MEMBER_APP['params']['request_token_params'] = {
     'scope': ' '.join([
         '/read-limited',
@@ -1133,11 +1131,6 @@ orcid.REMOTE_MEMBER_APP['params']['request_token_params'] = {
 
 orcid.REMOTE_MEMBER_APP['signup_handler']['setup'] = 'inspirehep.modules.orcid.utils.account_setup'
 
-ORCID_APP_CREDENTIALS = {
-    'consumer_key': 'CHANGE_ME',
-    'consumer_secret': 'CHANGE_ME',
-}
-
 orcid.REMOTE_MEMBER_APP['remember'] = True
 OAUTHCLIENT_REMOTE_APPS = {
     'orcid': orcid.REMOTE_MEMBER_APP,
@@ -1146,10 +1139,15 @@ OAUTHCLIENT_ORCID_CREDENTIALS = {
     'consumer_key': 'CHANGE_ME',
     'consumer_secret': 'CHANGE_ME',
 }
-ORCID_PUSH_TASK_ENDPOINT = 'inspirehep.modules.orcid.tasks.orcid_push'
 ORCID_ALLOW_PUSH_DEFAULT = False
 
 OAUTHCLIENT_SETTINGS_TEMPLATE = 'inspirehep_theme/page.html'
+
+# Inspire service client for ORCID.
+ORCID_APP_CREDENTIALS = {
+    'consumer_key': 'CHANGE_ME',
+    'consumer_secret': 'CHANGE_ME',
+}
 
 # Error Pages
 # ========

@@ -33,7 +33,6 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from inspirehep.modules.orcid.utils import (
     _split_lists,
-    log_time,
 )
 
 
@@ -117,36 +116,3 @@ def mock_get_account_token_allowed(*args, **kwargs):
         'allow_push': True
     }
     return account, token
-
-
-class MockLogger(object):
-    message = ''
-
-    def info(self, message, *args):
-        self.message = message % args
-
-
-def test_log_time_succeeds():
-    mock_logger = MockLogger()
-
-    @log_time(mock_logger)
-    def measured_function():
-        return True
-
-    assert measured_function()
-    assert mock_logger.message.startswith('measured_function took ')
-    assert mock_logger.message.endswith(' to succeed')
-
-
-def test_log_time_fails():
-    mock_logger = MockLogger()
-
-    @log_time(mock_logger)
-    def measured_function():
-        raise Exception()
-
-    with pytest.raises(Exception):
-        measured_function()
-
-    assert mock_logger.message.startswith('measured_function took ')
-    assert mock_logger.message.endswith(' to fail')

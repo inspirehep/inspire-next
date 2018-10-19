@@ -26,4 +26,8 @@ worker: celery worker -E -A inspirehep.celery --loglevel=INFO --workdir="${VIRTU
 workermon: celery flower -A inspirehep.celery
 # beat: celery beat -A inspirehep.celery --loglevel=INFO --workdir="${VIRTUAL_ENV}" --pidfile="${VIRTUAL_ENV}/worker_beat.pid"
 # mathoid: node_modules/mathoid/server.js -c mathoid.config.yaml
-# indexer: elasticsearch -Dcluster.name="inspire" -Ddiscovery.zen.ping.multicast.enabled=false -Dpath.data="$VIRTUAL_ENV/var/data/elasticsearch"  -Dpath.logs="$VIRTUAL_ENV/var/log/elasticsearch"
+
+# Elasticsearch, if installed with brew in Mac OS, is usually in: /usr/local/opt/elasticsearch@5.6/bin/elasticsearch
+# indexer: elasticsearch -Ecluster.name="inspire-dev"
+# If you really need 2Gb heap size:
+# indexer: ES_JAVA_OPTS="-Xms2g -Xmx2g" elasticsearch -Ecluster.name="inspire-dev"
