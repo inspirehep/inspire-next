@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from elasticsearch_dsl.query import Range
+from elasticsearch_dsl.query import Range, Q
 
 
 def range_author_count_filter(field):
@@ -30,5 +30,17 @@ def range_author_count_filter(field):
 
     def inner(values):
         return Range(**{field: {'gte': 1, 'lte': 10}})
+
+    return inner
+
+
+def must_match_all_filter(field):
+    """Bool filter containing a list of must matches."""
+
+    def inner(values):
+        filters = []
+        for value in values:
+            filters.append(Q('match', **{field: value}))
+        return Q('bool', must=filters)
 
     return inner
