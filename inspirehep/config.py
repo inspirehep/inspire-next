@@ -37,6 +37,7 @@ from invenio_records_rest.facets import range_filter, terms_filter
 from inspire_matcher.config import MATCHER_DEFAULT_CONFIGURATION as exact_match
 
 from .modules.records.facets import range_author_count_filter
+from .modules.search.facets import hep_author_publications
 
 # Debug
 # =====
@@ -793,6 +794,7 @@ RECORDS_UI_ENDPOINTS = {
 }
 
 RECORDS_REST_FACETS = {
+    "hep-author-publication": hep_author_publications,
     "records-hep": {
         "filters": {
             "author": terms_filter('facet_author_name'),

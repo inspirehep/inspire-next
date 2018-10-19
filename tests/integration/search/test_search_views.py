@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2014-2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -385,7 +385,7 @@ def test_search_facets_logs_with_query(current_app_mock, api_client):
     api_client.get('/literature/facets?q=test query')
 
 
-def test_regression_author_count_10_does_not_display_zero_facet(isolated_app, api_client):
+def test_regression_author_count_10_does_not_display_zero_facet(isolated_api_client):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': ['article'],
@@ -401,7 +401,68 @@ def test_regression_author_count_10_does_not_display_zero_facet(isolated_app, ap
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    response = api_client.get('/literature/facets?q=ac%2010')
-    data = json.loads(response.data)
+    response_facets = isolated_api_client.get('/literature/facets?q=ac%2010')
+    response_records = isolated_api_client.get('/literature?q=ac%2010')
+    # we don't have isolation on tests and are inconsistent between test
+    # environments.
+    data_facets = json.loads(response_facets.data)
+    data_records = json.loads(response_records.data)
 
-    assert data['aggregations']['author_count']['buckets'][0]['doc_count'] == 1
+    assert data_facets['aggregations']['author_count']['buckets'][0]['doc_count'] == data_records['hits']['total']
+
+
+def test_search_hep_author_publication(isolated_api_client):
+    result = isolated_api_client.get('/literature/facets?facet_name=hep-author-publication')
+    result_data = json.loads(result.get_data(as_text=True))
+
+    expected_aggregations = [
+        'earliest_date',
+        'author',
+        'author_count',
+        'doc_type',
+    ]
+    result_aggregations = result_data['aggregations'].keys()
+
+    for aggregation in expected_aggregations:
+        assert aggregation in result_aggregations
+
+    assert len(expected_aggregations) == len(result_aggregations)
+
+
+def test_search_hep_author_publication_with_author_exclude(isolated_api_client):
+    result = isolated_api_client.get('/literature/facets?facet_name=hep-author-publication&exclude_author_value=Jones, Jessica')
+    result_data = json.loads(result.get_data(as_text=True))
+
+    expected_aggregations = [
+        'earliest_date',
+        'author',
+        'author_count',
+        'doc_type',
+    ]
+    result_aggregations = result_data['aggregations'].keys()
+
+    for aggregation in expected_aggregations:
+        assert aggregation in result_aggregations
+
+    assert len(expected_aggregations) == len(result_aggregations)
+
+
+def test_search_hep_author_publication_with_not_existing_facet_name(isolated_api_client):
+    result = isolated_api_client.get('/literature/facets?facet_name=not-existing-facet')
+    result_data = json.loads(result.get_data(as_text=True))
+
+    expected_aggregations = [
+        'earliest_date',
+        'author',
+        'author_count',
+        'doc_type',
+        'subject',
+        'arxiv_categories',
+        'experiment',
+    ]
+    result_aggregations = result_data['aggregations'].keys()
+
+    for aggregation in expected_aggregations:
+        assert aggregation in result_aggregations
+
+    assert len(expected_aggregations) == len(result_aggregations)
