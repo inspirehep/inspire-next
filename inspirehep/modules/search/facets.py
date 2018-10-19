@@ -23,17 +23,17 @@
 from __future__ import absolute_import, division, print_function
 
 from flask import request
-from invenio_records_rest.facets import range_filter, terms_filter
-from inspirehep.modules.records.facets import range_author_count_filter
+from invenio_records_rest.facets import range_filter
+from inspirehep.modules.records.facets import range_author_count_filter, must_match_all_filter
 
 
 def hep_author_publications():
     exclude_value = request.values.get('exclude_author_value', '', type=str)
     return {
         "filters": {
-            "author": terms_filter('facet_author_name'),
+            "author": must_match_all_filter('facet_author_name'),
             "author_count": range_author_count_filter('author_count'),
-            "doc_type": terms_filter('facet_inspire_doc_type'),
+            "doc_type": must_match_all_filter('facet_inspire_doc_type'),
             "earliest_date": range_filter(
                 'earliest_date',
                 format='yyyy',

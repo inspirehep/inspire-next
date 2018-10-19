@@ -36,7 +36,7 @@ from invenio_records_rest.facets import range_filter, terms_filter
 
 from inspire_matcher.config import MATCHER_DEFAULT_CONFIGURATION as exact_match
 
-from .modules.records.facets import range_author_count_filter
+from .modules.records.facets import range_author_count_filter, must_match_all_filter
 from .modules.search.facets import hep_author_publications
 
 # Debug
@@ -797,12 +797,12 @@ RECORDS_REST_FACETS = {
     "hep-author-publication": hep_author_publications,
     "records-hep": {
         "filters": {
-            "author": terms_filter('facet_author_name'),
+            "author": must_match_all_filter('facet_author_name'),
             "author_count": range_author_count_filter('author_count'),
-            "subject": terms_filter('facet_inspire_categories'),
-            "arxiv_categories": terms_filter('facet_arxiv_categories'),
-            "doc_type": terms_filter('facet_inspire_doc_type'),
-            "experiment": terms_filter('facet_experiment'),
+            "subject": must_match_all_filter('facet_inspire_categories'),
+            "arxiv_categories": must_match_all_filter('facet_arxiv_categories'),
+            "doc_type": must_match_all_filter('facet_inspire_doc_type'),
+            "experiment": must_match_all_filter('facet_experiment'),
             "earliest_date": range_filter(
                 'earliest_date',
                 format='yyyy',
