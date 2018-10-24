@@ -23,13 +23,20 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import requests
 
 import pkg_resources
 import pytest
-from mock import patch
+from flask import current_app
 from six import binary_type
 
-from inspirehep.modules.workflows.tasks.classifier import classify_paper
+from inspirehep.modules.workflows.tasks.classifier import (
+    classify_paper,
+    get_classifier_url,
+    prepare_payload,
+    guess_coreness,
+)
+from mock import patch
 from mocks import MockEng, MockObj
 
 
@@ -49,6 +56,155 @@ HIGGS_ONTOLOGY = '''<?xml version="1.0" encoding="UTF-8" ?>
 
 </rdf:RDF>
 '''
+
+
+def test_get_classifier_api_url_from_configuration():
+    config = {'CLASSIFIER_API_URL': 'https://inspire-classifier.web.cern.ch'}
+
+    with patch.dict(current_app.config, config):
+        expected = 'https://inspire-classifier.web.cern.ch/api/predict/core'
+        result = get_classifier_url()
+
+        assert expected == result
+
+
+def test_get_classifier_api_url_returns_none_when_not_in_configuration():
+    config = {'CLASSIFIER_API_URL': ''}
+
+    with patch.dict(current_app.config, config):
+        assert get_classifier_url() is None
+
+
+def test_prepare_payload():
+    record = {
+        'titles': [
+            {
+                'title': 'Effects of top compositeness',
+            },
+        ],
+        'abstracts': [
+            {
+                'value': 'We investigate the effects of (...)',
+            },
+        ],
+    }
+
+    expected = {
+        'title': 'Effects of top compositeness',
+        'abstract': 'We investigate the effects of (...)',
+    }
+    result = prepare_payload(record)
+
+    assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.classifier.get_classifier_url')
+def test_guess_coreness_fails_without_a_classifier_url(g_b_u):
+    g_b_u.return_value = ''
+
+    obj = MockObj({}, {})
+    eng = MockEng()
+
+    assert guess_coreness(obj, eng) is None
+    assert 'relevance_prediction' not in obj.extra_data
+
+
+@patch('inspirehep.modules.workflows.tasks.classifier.get_classifier_url')
+def test_guess_coreness_does_not_fail_when_request_fails(mocked_get_classifier_url):
+    mocked_get_classifier_url.return_value = 'https://inspire-classifier.web.cern.ch/api/predict/does-not-exist'
+
+    obj = MockObj({}, {})
+    eng = MockEng()
+
+    assert guess_coreness(obj, eng) is None
+    assert 'relevance_prediction' not in obj.extra_data
+
+
+@patch('inspirehep.modules.workflows.tasks.classifier.get_classifier_url')
+@patch('inspirehep.modules.workflows.tasks.classifier.json_api_request')
+def test_guess_coreness_when_core(j_a_r, g_b_u):
+    j_a_r.return_value = {
+        'prediction': 'core',
+        'scores': {
+            'core_score': 0.7,
+            'non_core_score': 0.2,
+            'rejected_score': 0.1,
+        },
+    }
+    g_b_u.return_value = 'https://inspire-classifier.web.cern.ch/api/predict/core'
+
+    obj = MockObj({}, {})
+    eng = MockEng()
+
+    assert guess_coreness(obj, eng) is None
+    assert obj.extra_data['relevance_prediction'] == {
+        'max_score': 0.7,
+        'decision': 'CORE',
+        'scores': {
+            'CORE': 0.7,
+            'Non-CORE': 0.2,
+            'Rejected': 0.1,
+        },
+        'relevance_score': 0.7,
+    }
+
+
+@patch('inspirehep.modules.workflows.tasks.classifier.get_classifier_url')
+@patch('inspirehep.modules.workflows.tasks.classifier.json_api_request')
+def test_guess_coreness_when_non_core(j_a_r, g_b_u):
+    j_a_r.return_value = {
+        'prediction': 'non-core',
+        'scores': {
+            'core_score': 0.3,
+            'non_core_score': 0.6,
+            'rejected_score': 0.1,
+        },
+    }
+    g_b_u.return_value = 'https://inspire-classifier.web.cern.ch/api/predict/core'
+
+    obj = MockObj({}, {})
+    eng = MockEng()
+
+    assert guess_coreness(obj, eng) is None
+    assert obj.extra_data['relevance_prediction'] == {
+        'max_score': 0.6,
+        'decision': 'Non-CORE',
+        'scores': {
+            'CORE': 0.3,
+            'Non-CORE': 0.6,
+            'Rejected': 0.1,
+        },
+        'relevance_score': 0.6,
+    }
+
+
+@patch('inspirehep.modules.workflows.tasks.classifier.get_classifier_url')
+@patch('inspirehep.modules.workflows.tasks.classifier.json_api_request')
+def test_guess_coreness_when_rejected(j_a_r, g_b_u):
+    j_a_r.return_value = {
+        'prediction': 'rejected',
+        'scores': {
+            'core_score': 0.1,
+            'non_core_score': 0.1,
+            'rejected_score': 0.8,
+        },
+    }
+    g_b_u.return_value = 'https://inspire-classifier.web.cern.ch/api/predict/core'
+
+    obj = MockObj({}, {})
+    eng = MockEng()
+
+    assert guess_coreness(obj, eng) is None
+    assert obj.extra_data['relevance_prediction'] == {
+        'max_score': 0.8,
+        'decision': 'Rejected',
+        'scores': {
+            'CORE': 0.1,
+            'Non-CORE': 0.1,
+            'Rejected': 0.8,
+        },
+        'relevance_score': 0.8,
+    }
 
 
 @pytest.fixture()
