@@ -23,7 +23,9 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import requests
 
+import pytest
 import pkg_resources
 import requests_mock
 from mock import patch
@@ -38,6 +40,7 @@ from inspirehep.modules.workflows.tasks.arxiv import (
     populate_arxiv_document,
 )
 from plotextractor.errors import InvalidTarball
+from inspirehep.modules.workflows.errors import DownloadError
 
 from mocks import AttrDict, MockEng, MockFiles, MockObj
 
@@ -287,6 +290,40 @@ def test_populate_arxiv_document_retries_on_error():
         assert expected_documents == documents
 
 
+def side_effect_requests_get(url, params=None, **kwargs):
+    raise requests.exceptions.ConnectionError()
+
+
+@patch('inspirehep.modules.workflows.tasks.arxiv.requests.get')
+def test_populate_arxiv_document_retries_on_connection_error(mock_requests_get):
+    mock_requests_get.side_effect = side_effect_requests_get
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '1605.03814',
+            },
+        ],
+    }  # literature/1458270
+
+    extra_data = {}
+    files = MockFiles({})
+    assert validate(data['arxiv_eprints'], subschema) is None
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    with pytest.raises(DownloadError):
+        populate_arxiv_document(obj, eng)
+
+    assert mock_requests_get.call_count == 10
+
+
 def test_arxiv_package_download_logs_on_success():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
@@ -504,6 +541,51 @@ def test_arxiv_plot_extract_handles_duplicate_plot_names(mock_os, tmpdir):
 
     assert len(obj.data['figures']) == 66
     assert len(obj.files.keys) == 67
+
+
+def side_effect_open(name, mode=None, buffering=None):
+    raise IOError()
+
+
+@patch('plotextractor.api.os')
+def test_arxiv_plot_extract_retries_on_io_error(mock_os, tmpdir):
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1711.10662.tar.gz'))
+
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'cs.CV',
+                ],
+                'value': '1711.10662',
+            },
+        ],
+    }  # holdingpen/807096
+    extra_data = {}
+    files = MockFiles({
+        '1711.10662.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            }),
+        }),
+    })
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    temporary_dir = tmpdir.mkdir('plots')
+    mock_os.path.abspath.return_value = str(temporary_dir)
+
+    with pytest.raises(IOError):
+        with patch('inspirehep.modules.workflows.tasks.arxiv.open') as mock_open:
+            mock_open.side_effect = side_effect_open
+            arxiv_plot_extract(obj, eng)
+            assert mock_open.call_count == 5
 
 
 @patch('inspirehep.modules.workflows.tasks.arxiv.process_tarball')

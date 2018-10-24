@@ -73,10 +73,12 @@ def populate_arxiv_document(obj, eng):
         is_valid_pdf_link = is_pdf_link(url)
         if is_valid_pdf_link:
             break
-
-        if NO_PDF_ON_ARXIV in requests.get(url).content:
-            obj.log.info('No PDF is available for %s', arxiv_id)
-            return
+        try:
+            if NO_PDF_ON_ARXIV in requests.get(url).content:
+                obj.log.info('No PDF is available for %s', arxiv_id)
+                return
+        except requests.exceptions.RequestException:
+            raise DownloadError("Error accessing url {url}".format(url=url))
 
     if not is_valid_pdf_link:
         raise DownloadError("{url} is not serving a PDF file.".format(url=url))
@@ -123,6 +125,7 @@ def arxiv_package_download(obj, eng):
 @ignore_timeout_error()
 @timeout_with_config('WORKFLOWS_PLOTEXTRACT_TIMEOUT')
 @with_debug_logging
+@backoff.on_exception(backoff.expo, IOError, base=4, max_tries=5)
 def arxiv_plot_extract(obj, eng):
     """Extract plots from an arXiv archive.
 
