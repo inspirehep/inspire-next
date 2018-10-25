@@ -23,7 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 
-from inspirehep.modules.records.facets import range_author_count_filter
+from inspirehep.modules.records.facets import range_author_count_filter, must_match_all_filter
 
 
 def test_range_author_count_filter():
@@ -36,3 +36,42 @@ def test_range_author_count_filter():
             },
         },
     }
+
+
+def test_must_match_all_filter():
+    must_filter = must_match_all_filter('facet_author_name')
+
+    values1 = ['John Doe']
+    expected1 = {
+        'bool': {
+            'must': [
+                {
+                    'match': {
+                        'facet_author_name': 'John Doe'
+                    }
+                }
+            ]
+        }
+    }
+
+    assert must_filter(values1).to_dict() == expected1
+
+    values2 = ['John Doe', 'John Doe 2']
+    expected2 = {
+        'bool': {
+            'must': [
+                {
+                    'match': {
+                        'facet_author_name': 'John Doe'
+                    }
+                },
+                {
+                    'match': {
+                        'facet_author_name': 'John Doe 2'
+                    }
+                }
+            ]
+        }
+    }
+
+    assert must_filter(values2).to_dict() == expected2

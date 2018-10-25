@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2018 CERN.
+# Copyright (C) 2014-2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,27 +20,26 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""Search extension."""
+
 from __future__ import absolute_import, division, print_function
 
-from elasticsearch_dsl.query import Range, Q
+import inspire_service_orcid.conf
 
 
-def range_author_count_filter(field):
-    """Range filter for returning record only with 1 <= authors <= 10."""
+class InspireOrcid(object):
+    def __init__(self, app=None):
+        if app:
+            self.init_app(app)
 
-    def inner(values):
-        return Range(**{field: {'gte': 1, 'lte': 10}})
+    def init_app(self, app):
+        self.init_config(app)
+        app.extensions['inspire-orcid'] = self
 
-    return inner
-
-
-def must_match_all_filter(field):
-    """Bool filter containing a list of must matches."""
-
-    def inner(values):
-        filters = []
-        for value in values:
-            filters.append(Q('match', **{field: value}))
-        return Q('bool', must=filters)
-
-    return inner
+    def init_config(self, app):
+        inspire_service_orcid.conf.settings.configure(
+            DO_USE_SANDBOX=False,
+            CONSUMER_KEY=app.config['ORCID_APP_CREDENTIALS']['consumer_key'],
+            CONSUMER_SECRET=app.config['ORCID_APP_CREDENTIALS']['consumer_secret'],
+            REQUEST_TIMEOUT=30,
+        )

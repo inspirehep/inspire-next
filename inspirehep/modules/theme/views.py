@@ -24,8 +24,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+import time
 from datetime import date, datetime
 
+from celery import shared_task
 from dateutil.relativedelta import relativedelta
 from flask import (
     Blueprint,
@@ -70,6 +73,10 @@ from inspirehep.utils.experiments import (
 from inspirehep.utils.record import get_title
 from inspirehep.utils.references import get_and_format_references
 from inspirehep.utils.template import render_macro_from_template
+
+
+logger = logging.getLogger(__name__)
+
 
 CONFERENCE_CATEGORIES_TO_SERIES = [
     {
@@ -337,7 +344,7 @@ def internal_error(error):
 
 
 #
-# Ping
+# Ping, health, unhealth routes.
 #
 
 @blueprint.route('/ping')
@@ -352,6 +359,21 @@ def health():
     return jsonify(now)
 
 
+@blueprint.route('/healthcelery')
+@time_execution
+def healthcelery():
+    result = health_celery_task.apply_async()
+    while not result.ready():
+        time.sleep(0.5)
+    result_output = result.get()
+    return jsonify(result_output)
+
+
+@shared_task()
+def health_celery_task():
+    return current_app.json_encoder().encode(datetime.now()).strip('"')
+
+
 @blueprint.route('/unhealth')
 @time_execution
 def unhealth():
@@ -359,8 +381,46 @@ def unhealth():
         pass
 
     now = datetime.now()
-    raise UnhealthTestException('/unhealth endpoint called on {}'.format(now))
-    return 'It should have raised UnhealthTestException'
+
+    try:
+        raise UnhealthTestException('/unhealth endpoint called on {}'.format(now))
+    except Exception:
+        logger.debug('/unhealth endpoint logging.DEBUG')
+        logger.info('/unhealth endpoint logging.INFO')
+        logger.warning('/unhealth endpoint logging.WARNING')
+        logger.error('/unhealth endpoint logging.ERROR')
+        logger.exception('/unhealth endpoint logging.EXCEPTION')
+        raise
+
+    return 'It should have never reached here but raised UnhealthTestException'
+
+
+@blueprint.route('/unhealthcelery')
+@time_execution
+def unhealthcelery():
+    unhealth_celery_task.apply_async()
+    return jsonify('The Celey task should have raised UnhealthCeleryTestException, check Sentry.')
+
+
+class UnhealthCeleryTestException(Exception):
+    pass
+
+
+@shared_task()
+def unhealth_celery_task():
+    now = datetime.now()
+
+    try:
+        raise UnhealthCeleryTestException('/unhealthcelery endpoint called on {}'.format(now))
+    except Exception:
+        logger.debug('/unhealthcelery endpoint logging.DEBUG')
+        logger.info('/unhealthcelery endpoint logging.INFO')
+        logger.warning('/unhealthcelery endpoint logging.WARNING')
+        logger.error('/unhealthcelery endpoint logging.ERROR')
+        logger.exception('/unhealthcelery endpoint logging.EXCEPTION')
+        raise
+
+    return 'It should have never reached here but raised UnhealthCeleryTestException'
 
 
 #

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2018 CERN.
+# Copyright (C) 2014-2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,22 +22,21 @@
 
 from __future__ import absolute_import, division, print_function
 
-import mock
-
-from inspirehep.modules.orcid.exceptions import DuplicatedExternalIdentifiersError
-
-
-def test_match():
-    mock_exception = mock.Mock()
-    mock_exception.response.status_code = 409
-    mock_exception.response.json.return_value = {'error-code': 9021}
-
-    assert DuplicatedExternalIdentifiersError.match(mock_exception)
+from flask import current_app, request
+from six import string_types
+from werkzeug.utils import import_string
 
 
-def test_match_unsuccessful():
-    mock_exception = mock.Mock()
-    mock_exception.response.status_code = 500
-    mock_exception.response.json.return_value = {'error-code': 9021}
+def get_facet_configuration(search_index):
+    facet_name = request.values.get('facet_name')
+    facet = current_app.config['RECORDS_REST_FACETS'].get(facet_name)
 
-    assert not DuplicatedExternalIdentifiersError.match(mock_exception)
+    if not facet:
+        facet = current_app.config['RECORDS_REST_FACETS'].get(search_index)
+
+    if isinstance(facet, string_types):
+        facet = import_string(facet)
+
+    if callable(facet):
+        facet = facet()
+    return facet

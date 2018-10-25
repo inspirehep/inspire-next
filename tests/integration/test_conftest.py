@@ -185,3 +185,22 @@ def test_isolated_app_and_app_together(isolated_app, app):
     # Closing the session within isolated_app fixture must trigger the rollback.
     db.session.close()
     assert not User.query.get(id_)
+
+
+PIDS_COUNT = None
+
+
+@pytest.mark.usefixtures('isolated_app')
+class TestIsolatedAppClass(object):
+    def test_isolated_app_db_isolation_for_test_classes_step1(self):
+        global PIDS_COUNT
+        PIDS_COUNT = PersistentIdentifier.query.count()
+        pid = PersistentIdentifier.create(pid_type='type1', pid_value='value1')
+        assert PersistentIdentifier.query.get(pid.id)
+        assert PersistentIdentifier.query.count() == PIDS_COUNT + 1
+
+    def test_isolated_app_db_isolation_for_test_classes_step2(self):
+        assert PersistentIdentifier.query.count() == PIDS_COUNT
+        pid = PersistentIdentifier.create(pid_type='type1', pid_value='value1')
+        assert PersistentIdentifier.query.get(pid.id)
+        assert PersistentIdentifier.query.count() == PIDS_COUNT + 1

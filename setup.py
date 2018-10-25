@@ -69,6 +69,7 @@ install_requires = [
     'inspire-matcher~=7.0,>=7.0.0',
     'inspire-query-parser~=4.0,>=4.0.0',
     'inspire-schemas~=58.0,>=58.0.0',
+    'inspire-service-orcid~=3.0,>=3.1.0',
     'inspire-utils~=2.0,>=2.0.7',
     'invenio-access~=1.0,>=1.0.0',
     'invenio-accounts~=1.0,>=1.0.0',
@@ -104,7 +105,6 @@ install_requires = [
     'latexcodec~=1.0,>=1.0.5',
     'marshmallow~=2.0,>=2.15.0',  # See: inveniosoftware/invenio-records-rest#186
     'numpy~=1.0,>=1.14.3',
-    'orcid~=1.0,>=1.0.2',
     'plotextractor~=0.0,>=0.1.6',
     'pyOpenSSL~=17.0,>=17.5.0',
     'pybtex~=0.0,>=0.21',
@@ -243,6 +243,7 @@ setup(
             'inspire_hal = inspirehep.modules.hal:InspireHAL',
             'inspire_literaturesuggest = inspirehep.modules.literaturesuggest:InspireLiteratureSuggest',
             'inspire_migrator = inspirehep.modules.migrator:InspireMigrator',
+            'inspire_orcid = inspirehep.modules.orcid:InspireOrcid',
             'inspire_records = inspirehep.modules.records.ext:InspireRecords',
             'inspire_search = inspirehep.modules.search:InspireSearch',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',

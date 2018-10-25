@@ -36,7 +36,8 @@ from invenio_records_rest.facets import range_filter, terms_filter
 
 from inspire_matcher.config import MATCHER_DEFAULT_CONFIGURATION as exact_match
 
-from .modules.records.facets import range_author_count_filter
+from .modules.records.facets import range_author_count_filter, must_match_all_filter
+from .modules.search.facets import hep_author_publications
 
 # Debug
 # =====
@@ -793,14 +794,15 @@ RECORDS_UI_ENDPOINTS = {
 }
 
 RECORDS_REST_FACETS = {
+    "hep-author-publication": hep_author_publications,
     "records-hep": {
         "filters": {
-            "author": terms_filter('facet_author_name'),
+            "author": must_match_all_filter('facet_author_name'),
             "author_count": range_author_count_filter('author_count'),
-            "subject": terms_filter('facet_inspire_categories'),
-            "arxiv_categories": terms_filter('facet_arxiv_categories'),
-            "doc_type": terms_filter('facet_inspire_doc_type'),
-            "experiment": terms_filter('facet_experiment'),
+            "subject": must_match_all_filter('facet_inspire_categories'),
+            "arxiv_categories": must_match_all_filter('facet_arxiv_categories'),
+            "doc_type": must_match_all_filter('facet_inspire_doc_type'),
+            "experiment": must_match_all_filter('facet_experiment'),
             "earliest_date": range_filter(
                 'earliest_date',
                 format='yyyy',
@@ -1118,8 +1120,6 @@ INDEXER_BULK_REQUEST_TIMEOUT = float(900)
 
 # OAuthclient
 # ===========
-ORCID_SANDBOX = True
-
 orcid.REMOTE_MEMBER_APP['params']['request_token_params'] = {
     'scope': ' '.join([
         '/read-limited',
@@ -1131,11 +1131,6 @@ orcid.REMOTE_MEMBER_APP['params']['request_token_params'] = {
 
 orcid.REMOTE_MEMBER_APP['signup_handler']['setup'] = 'inspirehep.modules.orcid.utils.account_setup'
 
-ORCID_APP_CREDENTIALS = {
-    'consumer_key': 'CHANGE_ME',
-    'consumer_secret': 'CHANGE_ME',
-}
-
 orcid.REMOTE_MEMBER_APP['remember'] = True
 OAUTHCLIENT_REMOTE_APPS = {
     'orcid': orcid.REMOTE_MEMBER_APP,
@@ -1144,10 +1139,15 @@ OAUTHCLIENT_ORCID_CREDENTIALS = {
     'consumer_key': 'CHANGE_ME',
     'consumer_secret': 'CHANGE_ME',
 }
-ORCID_PUSH_TASK_ENDPOINT = 'inspirehep.modules.orcid.tasks.orcid_push'
 ORCID_ALLOW_PUSH_DEFAULT = False
 
 OAUTHCLIENT_SETTINGS_TEMPLATE = 'inspirehep_theme/page.html'
+
+# Inspire service client for ORCID.
+ORCID_APP_CREDENTIALS = {
+    'consumer_key': 'CHANGE_ME',
+    'consumer_secret': 'CHANGE_ME',
+}
 
 # Error Pages
 # ========

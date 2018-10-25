@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+
 from flask import current_app
 from redis import StrictRedis
 from pytest import fixture, mark
@@ -136,9 +138,11 @@ def app_with_config(app):
             'consumer_key': '0000-0000-0000-0000'
         }
     }
-
+    # Disable logging.
+    logging.getLogger('inspirehep.modules.orcid.tasks').disabled = logging.CRITICAL
     with patch.dict(current_app.config, config):
         yield app
+    logging.getLogger('inspirehep.modules.orcid.tasks').disabled = 0
 
 
 @fixture(scope='function')
@@ -148,9 +152,10 @@ def app_without_config(app):
             'consumer_key': None
         }
     }
-
+    logging.getLogger('inspirehep.modules.orcid.tasks').disabled = logging.CRITICAL
     with patch.dict(current_app.config, config):
         yield app
+    logging.getLogger('inspirehep.modules.orcid.tasks').disabled = 0
 
 
 def test_legacy_orcid_arrays(app, redis_setup):

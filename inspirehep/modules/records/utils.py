@@ -84,8 +84,11 @@ def get_endpoint_from_record(record):
 def get_pid_from_record_uri(record_uri):
     """Transform a URI to a record into a (pid_type, pid_value) pair."""
     parts = [part for part in record_uri.split('/') if part]
-    pid_type = parts[-2][:3]
-    pid_value = parts[-1]
+    try:
+        pid_type = parts[-2][:3]
+        pid_value = parts[-1]
+    except IndexError:
+        return None
 
     return pid_type, pid_value
 

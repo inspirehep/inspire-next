@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+
 from inspire_utils.date import PartialDate
 from inspire_utils.record import get_value
 from inspire_utils.urls import record_url_by_pattern
@@ -31,8 +33,12 @@ from inspire_utils.urls import record_url_by_pattern
 from inspirehep.modules.hal.utils import get_journal_title, \
     get_publication_date, get_conference_title, get_conference_record, \
     get_conference_country, get_doi
+from inspirehep.modules.records.serializers import bibtex_v1
 
 from .builder import OrcidBuilder
+
+
+logger = logging.getLogger(__name__)
 
 
 class OrcidConverter(object):
@@ -61,7 +67,7 @@ class OrcidConverter(object):
     }
 
     def __init__(self, record, url_pattern, put_code=None,
-                 visibility=None, bibtex_citation=None):
+                 visibility=None):
         """Constructor.
 
         Args:
@@ -69,16 +75,18 @@ class OrcidConverter(object):
             url_pattern (Callable[[int], string]): a pattern for record url
             put_code (Union[int, string]): ORCID record put-code
             visibility (string): visibility setting, can only be specified for new records
-            bibtex_citation (string): BibTeX-serialized record
         """
         self.record = record
         self.put_code = put_code
         self.visibility = visibility
         self.url_pattern = url_pattern
-        self.bibtex_citation = bibtex_citation
+        self._bibtex_citation = None
 
-    def get_xml(self):
+    def get_xml(self, do_add_bibtex_citation=False):
         """Create an ORCID XML representation of the record.
+
+        Args:
+            do_add_bibtex_citation (bool): True to add BibTeX-serialized record
 
         Returns:
             lxml.etree._Element: ORCID XML work record
@@ -102,7 +110,7 @@ class OrcidConverter(object):
             builder.add_journal_title(containing_publication_title)
 
         # Add a citation
-        if self.bibtex_citation is not None:
+        if do_add_bibtex_citation:
             builder.add_citation('bibtex', self.bibtex_citation)
 
         # Add a type
@@ -245,3 +253,14 @@ class OrcidConverter(object):
             return PartialDate.loads(get_value(self.record, 'imprints.date[0]') or get_publication_date(self.record))
         except ValueError:
             return None
+
+    @property
+    def bibtex_citation(self):
+        if self._bibtex_citation is None:
+            try:
+                self._bibtex_citation = bibtex_v1.serialize(self.recid, self.record)
+            except Exception:
+                self._bibtex_citation = ''
+                logger.warning('Bibtex citation serialization failed for'
+                               ' recid={}'.format(self.recid))
+        return self._bibtex_citation
