@@ -1,0 +1,30 @@
+interactions:
+- request:
+    body: !!python/unicode '{"abstract": "Although the integration of two-sided matching
+      markets using stable mechanisms generates expected gains from                 integration,
+      I show that there are worst-case scenarios in which these are negative. The
+      losses from integration can be                 large enough that the average
+      rank of an agent''s spouse decreases by 37.5 of the length of their preference
+      list in any                 stable matching mechanism.", "title": "The Losses
+      from Integration in Matching Markets can be Large"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['512']
+      Content-Type: [application/json]
+    method: POST
+    uri: https://inspire-classifier.web.cern.ch/api/classifier
+  response:
+    body: {string: !!python/unicode '{"prediction":"rejected","scores":{"core":0.032547879964113235,"non_core":0.09766120463609695,"rejected":0.8697909116744995}}
+
+        '}
+    headers:
+      content-length: ['126']
+      content-type: [application/json]
+      date: ['Thu, 25 Oct 2018 14:57:06 GMT']
+      server: [gunicorn/19.9.0]
+      set-cookie: [09f9e30a3b4115839cfc44a0589c7b91=4566d089c42504512e3eb1ff053d823a;
+          path=/; HttpOnly; Secure]
+    status: {code: 200, message: OK}
+version: 1

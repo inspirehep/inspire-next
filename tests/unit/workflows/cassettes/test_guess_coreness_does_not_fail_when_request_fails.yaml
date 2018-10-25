@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: !!python/unicode '{"abstract": "", "title": ""}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['29']
+      Content-Type: [application/json]
+    method: POST
+    uri: https://inspire-classifier.web.cern.ch/api/predict/does-not-exist
+  response:
+    body: {string: !!python/unicode '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+        <title>404 Not Found</title>
+
+        <h1>Not Found</h1>
+
+        <p>The requested URL was not found on the server.  If you entered the URL
+        manually please check your spelling and try again.</p>
+
+        '}
+    headers:
+      content-length: ['233']
+      content-type: [text/html]
+      date: ['Thu, 25 Oct 2018 14:56:40 GMT']
+      server: [gunicorn/19.9.0]
+      set-cookie: [09f9e30a3b4115839cfc44a0589c7b91=4566d089c42504512e3eb1ff053d823a;
+          path=/; HttpOnly; Secure]
+    status: {code: 404, message: NOT FOUND}
+version: 1

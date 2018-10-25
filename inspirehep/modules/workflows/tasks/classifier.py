@@ -43,7 +43,7 @@ from ..utils import with_debug_logging, get_document_in_workflow
 
 CLASSIFIER_MAPPING = {
     "core": "CORE",
-    "non-core": "Non-CORE",
+    "non_core": "Non-CORE",
     "rejected": "Rejected"
 }
 
@@ -54,7 +54,7 @@ def get_classifier_url():
     if not base_url:
         return
 
-    return '{base_url}/api/predict/core'.format(base_url=base_url)
+    return '{base_url}/api/classifier'.format(base_url=base_url)
 
 
 def prepare_payload(record):
@@ -87,16 +87,26 @@ def guess_coreness(obj, eng):
 
     if results:
         scores = results["scores"]
-        max_score = max(scores["core_score"], scores["non_core_score"], scores["rejected_score"])
+        max_score = max(scores["core"], scores["non_core"], scores["rejected"])
         decision = CLASSIFIER_MAPPING[results["prediction"]]
         scores = {
-            "CORE": scores["core_score"],
-            "Non-CORE": scores["non_core_score"],
-            "Rejected": scores["rejected_score"],
+            "CORE": scores["core"],
+            "Non-CORE": scores["non_core"],
+            "Rejected": scores["rejected"],
         }
         # Generate a normalized relevance_score useful for sorting
         relevance_score = max_score
+        if decision == "CORE":
+            relevance_score += 1
+        elif decision == "Rejected":
+            relevance_score *= -1
         # FIXME: Add top_words info when available from the API
+        # We assume a CORE paper to have the highest relevance so we add a
+        # significant value to seperate it from Non-Core and Rejected.
+        # Normally scores range from 0 / +1 so 1 is significant.
+        # Non-CORE scores are untouched, while Rejected is set as negative.
+        # Finally this provides one normalized score of relevance across
+        # all categories of papers.
         obj.extra_data["relevance_prediction"] = dict(
             max_score=max_score,
             decision=decision,
