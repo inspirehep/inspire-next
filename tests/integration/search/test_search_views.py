@@ -505,3 +505,40 @@ def test_selecting_2_facets_generates_search_with_must_query(isolated_api_client
     response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
     assert rec['control_number'] not in response_recids
     assert rec2['control_number'] in response_recids
+
+
+def test_exact_author_bai_query(isolated_api_client):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': ['article'],
+        'titles': [{'title': 'Article 1'}],
+        '_collections': ['Literature'],
+        'authors': [{'full_name': 'John Doe',
+                     "ids": [{
+                         "schema": "INSPIRE BAI",
+                         "value": "J.Doe.1"
+                     }
+                     ]}],
+    }
+
+    rec = InspireRecord.create(data=record_json)
+    rec.commit()
+
+    es.indices.refresh('records-hep')
+
+    response = isolated_api_client.get('/literature?q=ea%20j.doe.1')
+    data = json.loads(response.data)
+    response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
+    assert rec['control_number'] in response_recids
+
+    response = isolated_api_client.get('/literature?q=ea%20J.Doe.1')
+    data = json.loads(response.data)
+    response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
+    assert rec['control_number'] in response_recids
+
+    response = isolated_api_client.get('/literature?q=ea%20j.Doe.1')
+    data = json.loads(response.data)
+    response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
+    assert rec['control_number'] in response_recids
+
+    rec.delete()
