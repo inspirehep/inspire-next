@@ -23,9 +23,9 @@ interactions:
     headers:
       content-length: ['233']
       content-type: [text/html]
-      date: ['Thu, 25 Oct 2018 14:56:40 GMT']
+      date: ['Tue, 06 Nov 2018 08:35:46 GMT']
       server: [gunicorn/19.9.0]
-      set-cookie: [09f9e30a3b4115839cfc44a0589c7b91=4566d089c42504512e3eb1ff053d823a;
+      set-cookie: [09f9e30a3b4115839cfc44a0589c7b91=5a2a17072da9e89be234a5b194b06384;
           path=/; HttpOnly; Secure]
     status: {code: 404, message: NOT FOUND}
 version: 1

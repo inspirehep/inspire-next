@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import requests
 import os
 
 import pkg_resources
@@ -58,10 +59,10 @@ HIGGS_ONTOLOGY = '''<?xml version="1.0" encoding="UTF-8" ?>
 
 
 def test_get_classifier_api_url_from_configuration():
-    config = {'CLASSIFIER_API_URL': 'https://inspire-classifier.web.cern.ch'}
+    config = {'CLASSIFIER_API_URL': 'https://inspire-classifier.web.cern.ch/api'}
 
     with patch.dict(current_app.config, config):
-        expected = 'https://inspire-classifier.web.cern.ch/api/classifier'
+        expected = 'https://inspire-classifier.web.cern.ch/api/predict/coreness'
         result = get_classifier_url()
 
         assert expected == result
@@ -98,8 +99,8 @@ def test_prepare_payload():
 
 
 @patch('inspirehep.modules.workflows.tasks.classifier.get_classifier_url')
-def test_guess_coreness_fails_without_a_classifier_url(g_b_u):
-    g_b_u.return_value = ''
+def test_guess_coreness_returns_early_without_a_classifier_url(mocked_get_classifier_url):
+    mocked_get_classifier_url.return_value = ''
 
     obj = MockObj({}, {})
     eng = MockEng()
@@ -109,19 +110,19 @@ def test_guess_coreness_fails_without_a_classifier_url(g_b_u):
 
 
 @patch('inspirehep.modules.workflows.tasks.classifier.get_classifier_url')
-def test_guess_coreness_does_not_fail_when_request_fails(mocked_get_classifier_url):
+def test_guess_coreness_fails_when_request_fails(mocked_get_classifier_url):
     mocked_get_classifier_url.return_value = 'https://inspire-classifier.web.cern.ch/api/predict/does-not-exist'
 
     obj = MockObj({}, {})
     eng = MockEng()
 
-    assert guess_coreness(obj, eng) is None
-    assert 'relevance_prediction' not in obj.extra_data
+    with pytest.raises(requests.RequestException):
+        guess_coreness(obj, eng)
 
 
 @patch('inspirehep.modules.workflows.tasks.classifier.get_classifier_url')
 def test_guess_coreness_when_core(mocked_get_classifier_url):
-    mocked_get_classifier_url.return_value = 'https://inspire-classifier.web.cern.ch/api/classifier'
+    mocked_get_classifier_url.return_value = 'https://inspire-classifier.web.cern.ch/api/predict/coreness'
 
     obj = MockObj({
         "titles": [
@@ -157,7 +158,7 @@ def test_guess_coreness_when_core(mocked_get_classifier_url):
 
 @patch('inspirehep.modules.workflows.tasks.classifier.get_classifier_url')
 def test_guess_coreness_when_non_core(mocked_get_classifier_url):
-    mocked_get_classifier_url.return_value = 'https://inspire-classifier.web.cern.ch/api/classifier'
+    mocked_get_classifier_url.return_value = 'https://inspire-classifier.web.cern.ch/api/predict/coreness'
 
     obj = MockObj({
         "titles": [
@@ -201,7 +202,7 @@ def test_guess_coreness_when_non_core(mocked_get_classifier_url):
 
 @patch('inspirehep.modules.workflows.tasks.classifier.get_classifier_url')
 def test_guess_coreness_when_rejected(mocked_get_classifier_url):
-    mocked_get_classifier_url.return_value = 'https://inspire-classifier.web.cern.ch/api/classifier'
+    mocked_get_classifier_url.return_value = 'https://inspire-classifier.web.cern.ch/api/predict/coreness'
 
     obj = MockObj({
         "titles": [

@@ -31,7 +31,7 @@ interactions:
       Content-Length: ['1871']
       Content-Type: [application/json]
     method: POST
-    uri: https://inspire-classifier.web.cern.ch/api/classifier
+    uri: https://inspire-classifier.web.cern.ch/api/predict/coreness
   response:
     body: {string: !!python/unicode '{"prediction":"non_core","scores":{"core":0.33398324251174927,"non_core":0.6497962474822998,"rejected":0.016220496967434883}}
 
@@ -39,9 +39,9 @@ interactions:
     headers:
       content-length: ['126']
       content-type: [application/json]
-      date: ['Thu, 25 Oct 2018 14:57:01 GMT']
+      date: ['Mon, 29 Oct 2018 09:41:13 GMT']
       server: [gunicorn/19.9.0]
-      set-cookie: [09f9e30a3b4115839cfc44a0589c7b91=10b064e467a7f992905d396afe0c2ebf;
+      set-cookie: [09f9e30a3b4115839cfc44a0589c7b91=e65e34b18cee398ad8ebb19ba94e3855;
           path=/; HttpOnly; Secure]
     status: {code: 200, message: OK}
 version: 1
