@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: !!python/unicode '{"abstract": "In this paper, we study instanton corrections
+      in the N=2\u22c6 gauge theory by using its description in string                 theory
+      as a freely-acting orbifold. The latter is used to compute, using the worldsheet,
+      the deformation of the Yang\u2013Mills                 action. In addition,
+      we calculate the deformed instanton partition function, thus extending the results
+      to the non-perturbative                 sector of the gauge theory. As we point
+      out, the structure of the deformation is extremely similar to the \u03a9-deformation,
+      therefore                 confirming the universality of the construction. Finally,
+      we comment on the realisation of the mass deformation using physical                 vertex
+      operators by exploiting the equivalence between Scherk\u2013Schwarz deformations
+      and freely-acting orbifolds.", "title": "Instanton Corrections for m and \u03a9"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['893']
+      Content-Type: [application/json]
+    method: POST
+    uri: https://inspire-classifier.web.cern.ch/api/predict/coreness
+  response:
+    body: {string: !!python/unicode '{"prediction":"core","scores":{"core":0.9612694382667542,"non_core":0.02646675705909729,"rejected":0.012263836339116096}}
+
+        '}
+    headers:
+      content-length: ['122']
+      content-type: [application/json]
+      date: ['Mon, 29 Oct 2018 09:41:01 GMT']
+      server: [gunicorn/19.9.0]
+      set-cookie: [09f9e30a3b4115839cfc44a0589c7b91=5a2a17072da9e89be234a5b194b06384;
+          path=/; HttpOnly; Secure]
+    status: {code: 200, message: OK}
+version: 1

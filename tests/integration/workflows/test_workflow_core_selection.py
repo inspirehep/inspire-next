@@ -16,7 +16,7 @@ import requests_mock
 from flask import current_app
 from invenio_workflows import start, workflow_object_class, ObjectStatus, WorkflowObject
 from invenio_workflows.models import WorkflowObjectModel
-from mocks import fake_beard_api_request, fake_magpie_api_request
+from mocks import fake_classifier_api_request, fake_magpie_api_request
 from utils import override_config
 
 
@@ -33,14 +33,14 @@ def load_json_record(record_file):
 @mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
 @mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
 @mock.patch(
-    "inspirehep.modules.workflows.tasks.beard.json_api_request",
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
-def test_core_selection_wf_starts_after_article_wf_when_no_core(mocked_api_request_magpie, mocked_api_request_beard, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
+def test_core_selection_wf_starts_after_article_wf_when_no_core(mocked_api_request_magpie, mocked_api_request_classifier, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
     pid_value = 123456
     mocked_url = "{inspirehep_url}/{endpoint}/{control_number}".format(
         inspirehep_url=current_app.config.get("INSPIREHEP_URL"),
@@ -115,14 +115,14 @@ def test_core_selection_wf_starts_after_article_wf_when_no_core(mocked_api_reque
 @mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
 @mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
 @mock.patch(
-    "inspirehep.modules.workflows.tasks.beard.json_api_request",
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
-def test_core_selection_wf_is_not_created_when_wf_is_record_update(mocked_api_request_magpie, mocked_api_request_beard, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
+def test_core_selection_wf_is_not_created_when_wf_is_record_update(mocked_api_request_magpie, mocked_api_request_classifier, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
     pid_value = 123456
     mocked_url = "{inspirehep_url}/{endpoint}/{control_number}".format(
         inspirehep_url=current_app.config.get("INSPIREHEP_URL"),
@@ -185,14 +185,14 @@ def test_core_selection_wf_is_not_created_when_wf_is_record_update(mocked_api_re
 @mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
 @mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
 @mock.patch(
-    "inspirehep.modules.workflows.tasks.beard.json_api_request",
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
-def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(mocked_api_request_magpie, mocked_api_request_beard, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
+def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(mocked_api_request_magpie, mocked_api_request_classifier, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
     original_pid_value = 654321
     redirected_pid = 123456
     mocked_url = "{inspirehep_url}/{endpoint}/{control_number}".format(
@@ -264,14 +264,14 @@ def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(mocked_
 @mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
 @mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
 @mock.patch(
-    "inspirehep.modules.workflows.tasks.beard.json_api_request",
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
-def test_core_selection_wf_still_runs_when_there_is_core_on_hep_already(mocked_api_request_magpie, mocked_api_request_beard, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
+def test_core_selection_wf_still_runs_when_there_is_core_on_hep_already(mocked_api_request_magpie, mocked_api_request_classifier, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
     pid_value = 123456
     mocked_url = "{inspirehep_url}/{endpoint}/{control_number}".format(
         inspirehep_url=current_app.config.get("INSPIREHEP_URL"),
@@ -341,14 +341,14 @@ def test_core_selection_wf_still_runs_when_there_is_core_on_hep_already(mocked_a
 
 @mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
 @mock.patch(
-    "inspirehep.modules.workflows.tasks.beard.json_api_request",
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
-def test_core_selection_wf_skipped_if_record_was_manually_approved(mocked_api_request_magpie, mocked_api_request_beard, mocked_rt, workflow_app, mocked_external_services):
+def test_core_selection_wf_skipped_if_record_was_manually_approved(mocked_api_request_magpie, mocked_api_request_classifier, mocked_rt, workflow_app, mocked_external_services):
     pid_value = 123456
     mocked_url = "{inspirehep_url}/{endpoint}/{control_number}".format(
         inspirehep_url=current_app.config.get("INSPIREHEP_URL"),
