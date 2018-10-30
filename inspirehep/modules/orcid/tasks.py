@@ -186,6 +186,7 @@ def _register_user(name, email, orcid, token):
         with db.session.begin_nested():
             user = User()
             user.email = email
+            user.active = True
             db.session.add(user)
 
     return _link_user_and_token(user, name, orcid, token)
