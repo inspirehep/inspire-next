@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 from flask import current_app
 from mock import patch
 
-from inspirehep.modules.records.tasks import update_links
+from inspirehep.modules.records.tasks import update_links, batch_reindex
 
 
 def test_update_links():
@@ -146,3 +146,63 @@ def test_update_links_ignores_non_whitelisted_paths():
                 'record': {'$ref': 'http://localhost:5000/record/1'},
             }
         }
+
+
+def record_generator(uuid):
+    record = {
+        '$schema': 'http://localhost:5000/schemas/record/hep.json',
+    }
+    if uuid.endswith("_deleted"):
+        record['deleted'] = True
+    return record
+
+
+def mocked_bulk(es, records, **kwargs):
+    count = 0
+    for record in records:
+        count += 1
+    return (count, 0)
+
+
+@patch('inspirehep.modules.records.tasks.InspireRecord.get_record', side_effect=record_generator)
+@patch('inspirehep.modules.records.tasks.create_index_op', side_effect=None)
+@patch('inspirehep.modules.records.tasks.bulk', side_effect=mocked_bulk)
+def test_record_task_batch_logic_check_reindex_records_count(get_record, create_index_op, mocked_bulk):
+    records = ['000', 'aaa', 'bbb', 'ccc']
+    output = batch_reindex(uuids=records)
+    assert create_index_op.call_count == 4
+    assert output['success'] == 4
+    assert output['failures'] == []
+
+
+@patch('inspirehep.modules.records.tasks.InspireRecord.get_record', side_effect=record_generator)
+@patch('inspirehep.modules.records.tasks.create_index_op', side_effect=None)
+@patch('inspirehep.modules.records.tasks.bulk', side_effect=mocked_bulk)
+def test_record_task_batch_logic_reindex_skips_deleted_records(get_record, create_index_op, mocked_bulk):
+    records = ['000', 'aaa_deleted', 'bbb', 'ccc']
+    output = batch_reindex(uuids=records)
+    assert create_index_op.call_count == 3
+    assert output['success'] == 3
+    assert output['failures'] == []
+
+
+@patch('inspirehep.modules.records.tasks.InspireRecord.get_record', side_effect=record_generator)
+@patch('inspirehep.modules.records.tasks.create_index_op', side_effect=None)
+@patch('inspirehep.modules.records.tasks.bulk', side_effect=mocked_bulk)
+def test_record_task_batch_logic_reindex_only_deleted_records(get_record, create_index_op, mocked_bulk):
+    records = ['000_deleted', 'aaa_deleted', 'bbb_deleted', 'ccc_deleted']
+    output = batch_reindex(uuids=records)
+    assert create_index_op.call_count == 0
+    assert output['success'] == 0
+    assert output['failures'] == []
+
+
+@patch('inspirehep.modules.records.tasks.InspireRecord.get_record', side_effect=record_generator)
+@patch('inspirehep.modules.records.tasks.create_index_op', side_effect=None)
+@patch('inspirehep.modules.records.tasks.bulk', side_effect=mocked_bulk)
+def test_record_task_batch_logic_nothing_to_reindex(get_record, create_index_op, mocked_bulk):
+    records = []
+    output = batch_reindex(uuids=records)
+    assert create_index_op.call_count == 0
+    assert output['success'] == 0
+    assert output['failures'] == []
