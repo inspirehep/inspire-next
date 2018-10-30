@@ -360,6 +360,7 @@ class TestImportLegacyOrcidTokens(object):
     def _assert_user_and_token_models(self, orcid, token, email, name):
         user = User.query.filter_by(email=email).one_or_none()
         assert user
+        assert user.active
         assert len(user.remote_accounts) == 1
         remote_account = user.remote_accounts[0]
         assert UserIdentity.query.filter_by(id_user=user.id).one_or_none()
