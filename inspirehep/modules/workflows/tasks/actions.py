@@ -51,11 +51,11 @@ from inspire_utils.dedupers import dedupe_list
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.records.utils import get_linked_records_in_field
 from inspirehep.modules.workflows.tasks.refextract import (
-    extract_references_from_pdf,
     extract_references_from_raw_refs,
+    extract_references_from_pdf,
     extract_references_from_text,
-    match_references,
 )
+from inspirehep.modules.refextract.matcher import match_references
 from inspirehep.modules.workflows.utils import (
     copy_file_to_workflow,
     download_file_to_workflow,
