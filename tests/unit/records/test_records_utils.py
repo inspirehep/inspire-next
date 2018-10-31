@@ -778,6 +778,40 @@ def test_populate_affiliation_suggest_from_name_variants():
     assert expected == result
 
 
+def test_populate_affiliation_suggest_from_name_variants_with_umr():
+    schema = load_schema('institutions')
+    subschema = schema['properties']['name_variants']
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/institutions.json',
+        'legacy_ICN': 'CERN',
+        'name_variants': [
+            {'value': u'Centre Européen de Recherches Nucléaires'},
+            {'value': u'UMR 2454'},
+            {'value': u'umr 1234'},
+            {'value': u'umr'},
+        ],
+    }
+    assert validate(record['name_variants'], subschema) is None
+
+    populate_affiliation_suggest(record)
+
+    expected = {
+        'input': [
+            'CERN',
+            u'Centre Européen de Recherches Nucléaires',
+            u'UMR 2454',
+            u'umr 1234',
+            u'umr',
+            u'2454',
+            u'1234',
+        ],
+    }
+    result = record['affiliation_suggest']
+
+    assert expected == result
+
+
 def test_populate_affiliation_suggest_from_postal_code():
     schema = load_schema('institutions')
     subschema = schema['properties']['addresses']
