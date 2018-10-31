@@ -687,6 +687,12 @@ JOURNALS_REST_ENDPOINT = {
     },
     'suggesters': {
         'journal_title': {
+            '_source': [
+                'short_title',
+                'journal_title',
+                'control_number',
+                'self',
+            ],
             'completion': {
                 'field': 'title_suggest',
                 'size': 10,
