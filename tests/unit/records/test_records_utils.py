@@ -946,3 +946,14 @@ def test_get_pid_from_record_uri_ending_slash():
 def test_get_pid_from_record_uri_non_url():
     record_uri = 'non-url-string'
     assert not get_pid_from_record_uri(record_uri)
+
+
+def test_populate_earliest_date_behaviour_when_wrong_date_in_one_of_dates_fields():
+    json_data = {
+        '$schema': 'http://localhost:5000/records/schemas/hep.json',
+        'control_number': 1234,
+        'preprint_date': '1999',
+        'legacy_creation_date': 'Some string which is not a date',
+    }
+    populate_earliest_date(json_data)
+    assert json_data['earliest_date'] == '1999'

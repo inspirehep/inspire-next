@@ -26,11 +26,12 @@ from __future__ import absolute_import, division, print_function
 
 from itertools import chain
 from unicodedata import normalize
+import logging
 import re
 import six
 
 from inspire_dojson.utils import get_recid_from_ref
-from inspire_utils.date import earliest_date
+from inspire_utils.date import earliest_date, PartialDate
 from inspire_utils.name import generate_name_variations
 from inspire_utils.record import get_value
 from inspire_utils.helpers import force_list
@@ -43,6 +44,8 @@ from inspirehep.modules.pidstore.utils import (
 from inspirehep.modules.records.exceptions import MissingInspireRecord
 from inspirehep.utils.record_getter import get_db_records
 from inspirehep.modules.search import LiteratureSearch
+
+logger = logging.getLogger(__name__)
 
 
 def is_author(record):
@@ -132,11 +135,15 @@ def populate_earliest_date(json):
         'imprints.date',
     ]
 
-    dates = [
-        str(el) for el in chain.from_iterable(
-            [force_list(get_value(json, path)) for path in date_paths]
-        )
-    ]
+    dates = []
+    for el in chain.from_iterable([force_list(get_value(json, path)) for path in date_paths]):
+        try:
+            str_el = str(el)
+            PartialDate.loads(str_el)
+            dates.append(str_el)
+        except ValueError:
+            logger.warning("Record {control_number} Contains mailfomed data"
+                           " ('{data}') in one of the date fileds!".format(control_number=json['control_number'], data=el))
 
     if dates:
         result = earliest_date(dates)
