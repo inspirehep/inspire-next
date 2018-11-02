@@ -42,7 +42,8 @@ from .common import (  # noqa: F401
     ThesisInfoSchemaV1,
     CitationItemSchemaV1,
     CollaborationWithSuffixSchemaV1,
-    CollaborationSchemaV1
+    CollaborationSchemaV1,
+    AcceleratorExperimentSchemaV1
 )
 
 
@@ -50,7 +51,7 @@ class RecordMetadataSchemaV1(Schema):
 
     _collections = fields.Raw()
     abstracts = fields.Raw()
-    accelerator_experiments = fields.Raw()
+    accelerator_experiments = fields.Nested(AcceleratorExperimentSchemaV1, dump_only=True, many=True)
     acquisition_source = fields.Raw()
     arxiv_eprints = fields.Raw()
     authors = ListWithLimit(fields.Nested(
