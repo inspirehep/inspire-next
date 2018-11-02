@@ -190,6 +190,9 @@ def batch_reindex(uuids, request_timeout=None):
         for uuid in uuids:
             try:
                 record = InspireRecord.get_record(uuid)
+                if record.get('deleted', False):
+                    logger.debug("Record already %s deleted, not indexing!", uuid)
+                    continue
                 yield create_index_op(record, version_type='force')
             except NoResultFound as e:
                 logger.warn('Record %s failed to load: %s', uuid, e)
