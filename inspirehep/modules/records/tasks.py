@@ -38,10 +38,11 @@ from invenio_search import current_search_client as es
 
 from inspire_dojson.utils import get_recid_from_ref
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.records.errors import MissingCitedRecordError
 from inspirehep.modules.records.utils import get_endpoint_from_record
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.utils.record import create_index_op
-from inspirehep.utils.record_getter import get_db_record
+from inspirehep.utils.record_getter import get_db_record, RecordGetterError
 
 
 logger = get_task_logger(__name__)
@@ -216,23 +217,42 @@ def batch_reindex(uuids, request_timeout=None):
 
 @shared_task(ignore_result=False, bind=True, max_retries=12)
 def index_modified_citations_from_record(self, pid_type, pid_value, db_version):
-    record = get_db_record(pid_type, pid_value)
+    """Index records from the record's citations.
 
+    This tasks retries itself in 2 scenarios:
+    - A new record is saved but it is not yet visible by this task bacause the
+    transaction is not finished yet (RecordGetterError).
+
+    - When a record is updated, but new changes are not yet in DB, for the
+    same reason as above (StaleDataError).
+
+    Args:
+        pid_type(String): pid type of the record
+        pid_value(String): pid value of the record
+        db_version(Int): the correct version of the record that we expect
+            to index. This prevents loading stale data from the DB.
+
+    Raise:
+      MissingCitedRecordError in case cited records are not found
+    """
     try:
+        record = get_db_record(pid_type, pid_value)
         if record.model.version_id < db_version:
-            backoff = 2 ** (self.request.retries + 1)
-            logger.warn(
-                'Record {} not yet updated to version {} on DB'.format((pid_type, pid_value), db_version)
-            )
             raise StaleDataError
-    except StaleDataError as e:
+
+    except (RecordGetterError, StaleDataError) as e:
+        logger.warn(
+            'Record {} not yet at version {} on DB'.format(
+                (pid_type, pid_value), db_version)
+        )
+        backoff = 2 ** (self.request.retries + 1)
         raise self.retry(countdown=backoff, exc=e)
 
     pids = record.get_modified_references()
 
     if not pids:
         logger.info('No references change for record {}'.format((pid_type, pid_value)))
-        return
+        return None
 
     uuids = [
         str(pid.object_uuid) for pid in
@@ -244,5 +264,7 @@ def index_modified_citations_from_record(self, pid_type, pid_value, db_version):
 
     if uuids:
         return batch_reindex(uuids)
-    else:
-        logger.warn('Cited records to reindex not found:\nuuids: {}'.format(uuids))
+
+    raise MissingCitedRecordError(
+        'Cited records to reindex not found:\nuuids: {}'.format(uuids)
+    )

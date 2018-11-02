@@ -25,5 +25,9 @@ from __future__ import absolute_import, division, print_function
 from invenio_records.errors import RecordsError
 
 
-class MissingInspireRecord(RecordsError):
+class MissingInspireRecordError(RecordsError):
+    pass
+
+
+class MissingCitedRecordError(RecordsError):
     pass

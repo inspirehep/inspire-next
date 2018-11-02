@@ -43,12 +43,13 @@ from invenio_search import current_search_client as es
 
 from inspirehep.modules.migrator.tasks import migrate_and_insert_record
 from inspirehep.modules.records.api import InspireRecord
-from inspirehep.modules.records.exceptions import MissingInspireRecord
+from inspirehep.modules.records.errors import MissingInspireRecordError, MissingCitedRecordError
 from inspirehep.modules.records.tasks import index_modified_citations_from_record
 from inspirehep.modules.records.utils import get_citations_from_es
 from inspirehep.modules.search import LiteratureSearch
 from inspirehep.utils.record import get_title
-from inspirehep.utils.record_getter import get_es_record
+from inspirehep.utils.record_getter import get_es_record, RecordGetterError
+
 
 from utils import _delete_record
 from factories.db.invenio_records import TestRecordMetadata
@@ -442,7 +443,7 @@ def test_check_enhance_after_index_receiver_when_record_not_provided(isolated_ap
         ],
         "control_number": 425592,
     }
-    with pytest.raises(MissingInspireRecord) as exc:
+    with pytest.raises(MissingInspireRecordError) as exc:
         before_record_index.send(
             isolated_app,
             json=json_rec,
@@ -829,3 +830,134 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
 
     _delete_record('lit', record['control_number'])
     _delete_record('lit', cited['control_number'])
+
+
+@mock.patch(
+    'inspirehep.modules.records.wrappers.has_update_permission',
+    return_value=True
+)
+@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async')
+def test_regression_index_after_commit_retries_for_new_record_not_yet_in_db(
+    mocked_indexing_task,
+    mocked_permission_check,
+    app,
+):
+    # this test doesn't use the isolated_app because it needs to commit to
+    # the DB in order to create records versions.
+
+    json_data = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': ['article'],
+        'titles': [{'title': 'This is the record being cited'}],
+        'control_number': 9999,
+        '_collections': ['Literature']
+    }
+
+    cited = InspireRecord.create(data=json_data, skip_files=True)
+    db.session.commit()
+    es.indices.refresh('records-hep')
+
+    expected_args = ('lit', 9999, 1)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+    # execute mocked task
+    index_modified_citations_from_record(*expected_args)
+
+    es_rec = get_es_record('lit', 9999)
+    assert es_rec['citation_count'] == 0
+    assert get_citations_from_es(es_rec).total == 0
+
+    citing_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': ['article'],
+        'titles': [{'title': 'Record citing the first one'}],
+        '_collections': ['Literature'],
+        'control_number': 8888,
+        'references': [
+            {
+                'record': {
+                    '$ref': 'http://localhost:5000/api/literature/9999'
+                },
+                'reference': {
+                    'authors': [{'full_name': 'Smith, J.'}],
+                }
+            }
+        ]
+    }
+
+    record = InspireRecord.create(data=citing_json, skip_files=True)
+    db.session.commit()
+    es.indices.refresh('records-hep')
+
+    expected_args = ('lit', record['control_number'], 1)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+
+    # execute mocked task pretending record is not committed yet to DB
+    _delete_record('lit', record['control_number'])
+    with pytest.raises(RecordGetterError):
+        # XXX: celery in eager mode does not retry, so it raises the first time
+        index_modified_citations_from_record(*expected_args)
+
+    _delete_record('lit', cited['control_number'])
+
+
+@mock.patch(
+    'inspirehep.modules.records.wrappers.has_update_permission',
+    return_value=True
+)
+@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async')
+def test_index_after_commit_indexes_raises_if_cited_records_are_not_in_db(
+    mocked_indexing_task,
+    mocked_permission_check,
+    app,
+):
+    # this test doesn't use the isolated_app because it needs to commit to
+    # the DB in order to create records versions.
+
+    citing_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': ['article'],
+        'titles': [{'title': 'Record citing the first one'}],
+        '_collections': ['Literature'],
+        'control_number': 8888,
+        'references': [
+            {"reference": {'authors': [{'full_name': 'Smith, J.'}]}}
+        ]
+    }
+
+    record = InspireRecord.create(data=citing_json, skip_files=True)
+    db.session.commit()
+    es.indices.refresh('records-hep')
+
+    expected_args = ('lit', record['control_number'], 1)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+    # execute mocked task
+    index_modified_citations_from_record(*expected_args)
+
+    references = {
+        'references': [
+            {
+                "curated_relation": False,
+                "record": {
+                    "$ref": "http://localhost:5000/api/literature/9999"
+                },
+                "reference": {
+                    'authors': [{'full_name': 'Smith, J.'}],
+                }
+            }
+        ]
+    }
+
+    citing_json.update(references)
+    record.clear()
+    record.update(citing_json)
+    record.commit()
+    db.session.commit()
+    es.indices.refresh('records-hep')
+
+    expected_args = ('lit', record['control_number'], 2)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+    # execute mocked task
+    with pytest.raises(MissingCitedRecordError):
+        index_modified_citations_from_record(*expected_args)
+
+    _delete_record('lit', 8888)
