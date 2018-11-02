@@ -34,3 +34,4 @@ from .reference_item import ReferenceItemSchemaV1  # noqa: F401
 from .citation_item import CitationItemSchemaV1   # noqa: F401
 from .collaboration_with_suffix import CollaborationWithSuffixSchemaV1   # noqa: F401
 from .collaboration import CollaborationSchemaV1   # noqa: F401
+from .accelerator_experiment import AcceleratorExperimentSchemaV1  # noqa: F401

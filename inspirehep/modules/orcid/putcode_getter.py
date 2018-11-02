@@ -68,7 +68,7 @@ class OrcidPutcodeGetter(object):
         try:
             response.raise_for_result()
         except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
-            raise exceptions.InputDataInvalidException(exc)
+            raise exceptions.InputDataInvalidException(from_exc=exc)
         return list(response.get_putcodes_for_source(self.source_client_id_path))
 
     def _get_urls_for_putcodes(self, putcodes):
@@ -82,7 +82,7 @@ class OrcidPutcodeGetter(object):
             try:
                 response.raise_for_result()
             except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
-                raise exceptions.InputDataInvalidException(exc)
+                raise exceptions.InputDataInvalidException(from_exc=exc)
 
             chained = itertools.chain(chained, response.get_putcodes_and_urls())
         return chained

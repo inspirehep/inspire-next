@@ -54,7 +54,9 @@ class OrcidPusher(object):
         try:
             self.inspire_record = get_db_record('lit', recid)
         except RecordGetterError as exc:
-            raise exceptions.RecordNotFoundException(exc)
+            raise exceptions.RecordNotFoundException(
+                'recid={} not found for pid_type=lit'.format(self.recid),
+                from_exc=exc)
 
         self.cache = OrcidCache(orcid, recid)
         self.lock_name = 'orcid:{}'.format(self.orcid)
@@ -107,7 +109,7 @@ class OrcidPusher(object):
         except orcid_client_exceptions.WorkAlreadyExistentException:  # Only raisable by a POST.
             raise
         except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
-            raise exceptions.InputDataInvalidException(exc)
+            raise exceptions.InputDataInvalidException(from_exc=exc)
         return putcode
 
     def _cache_all_author_putcodes(self):

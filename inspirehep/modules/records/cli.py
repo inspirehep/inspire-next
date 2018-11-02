@@ -26,8 +26,12 @@ from time import sleep
 
 import click
 import click_spinner
+import csv
 import json
 import pprint
+
+from os import path, makedirs
+from datetime import datetime
 
 from invenio_db import db
 from invenio_files_rest.models import ObjectVersion
@@ -36,6 +40,9 @@ from flask import current_app
 from flask.cli import with_appcontext
 from invenio_records_files.models import RecordsBuckets
 
+from inspirehep.modules.records.utils import get_citations_from_es
+from inspirehep.utils.record_getter import get_db_record, get_es_record, \
+    RecordGetterError
 from .checkers import check_unlinked_references
 from .tasks import batch_reindex
 
@@ -106,8 +113,9 @@ def next_batch(iterator, batch_size):
 @click.option('-t', '--pid-type', multiple=True, required=True)
 @click.option('-s', '--batch-size', default=200)
 @click.option('-q', '--queue-name', default='indexer_task')
+@click.option('-l', '--log-path', default='/tmp/inspire/')
 @with_appcontext
-def simpleindex(yes_i_know, pid_type, batch_size, queue_name):
+def simpleindex(yes_i_know, pid_type, batch_size, queue_name, log_path):
     """Bulk reindex all records in a parallel manner.
 
     :param yes_i_know: if True, skip confirmation screen
@@ -204,8 +212,10 @@ def simpleindex(yes_i_know, pid_type, batch_size, queue_name):
         fg=color,
     )
 
-    failures_log_path = '/tmp/records_index_failures.log'
-    errors_log_path = '/tmp/records_index_errors.log'
+    failures_log_path = path.join(log_path, 'records_index_failures.log')
+    errors_log_path = path.join(log_path, 'records_index_errors.log')
+    _prepare_logdir(failures_log_path)
+    _prepare_logdir(errors_log_path)
 
     if failures:
         failures_json = []
@@ -250,6 +260,7 @@ def simpleindex(yes_i_know, pid_type, batch_size, queue_name):
 def handle_duplicates(remove_no_control_number, remove_duplicates,
                       print_without_control_number, print_pid_not_in_pidstore,
                       print_duplicates, remove_not_in_pidstore):
+    """Find duplicates and handle them properly"""
     query = RecordMetadata.query.with_entities(
             RecordMetadata.id,
             RecordMetadata.json['control_number']
@@ -268,7 +279,6 @@ def handle_duplicates(remove_no_control_number, remove_duplicates,
     click.echo("Processing %s records:" % len(out))
     with click.progressbar(out) as data:
         for rec in data:
-            # cn = RecordMetadata.query.get(rec).json.get('control_number')
             cn = rec[1]
             if not cn:
                 recs_no_control_number.append(rec)
@@ -345,3 +355,181 @@ def _remove_records(records_ids):
     removed_records = recs.delete(synchronize_session=False)
 
     return(removed_records, removed_buckets, removed_objects)
+
+
+def _prepare_logdir(log_path):
+    if not path.exists(path.dirname(log_path)):
+        makedirs(path.dirname(log_path))
+
+
+def _gen_query(query, page_start=1, page_end=-1, window_size=100):
+    query = query.paginate(page_start, window_size)
+    while query and (page_start <= page_end or page_end == -1):
+        for item in query.items:
+            yield item
+        if query.has_next:
+            query = query.next()
+            page_start += 1
+        else:
+            query = None
+
+
+@check.command()
+@click.option('-o', '--data-output', default='/tmp/inspire/missing_records.txt')
+@with_appcontext
+def check_missing_records_in_es(data_output):
+    """Checks if all not deleted records from pidstore are also in ElasticSearch"""
+    all_records = int(PersistentIdentifier.query.filter(
+        PersistentIdentifier.pid_type == 'lit').count())
+    _prepare_logdir(data_output)
+    click.echo("All missing records pids will be saved in %s file" % data_output)
+    missing = 0
+    _query = _gen_query(PersistentIdentifier.query.filter(
+        PersistentIdentifier.pid_type == 'lit'))
+    with click.progressbar(_query,
+                           length=all_records,
+                           label="Processing pids (%s pids)..." % all_records) as pidstore:
+        with open(data_output, 'w') as data_file:
+            for pid in pidstore:
+                db_rec = get_db_record('lit', pid.pid_value)
+                if db_rec.get('deleted'):
+                    continue
+                try:
+                    get_es_record('lit', pid.pid_value)
+                except RecordGetterError:
+                    missing += 1
+                    data_file.write("%s\n" % pid.pid_value)
+                    data_file.flush()
+    click.echo("%s records are missing from es" % missing)
+
+
+@check.command()
+@click.option('-s', '--from-page', default=1)
+@click.option('-e', '--to-page', default='-1')
+@click.option('-s', '--pagesize', default=100)
+@click.option('-o', '--data-output', default='/tmp/inspire/db_benchmark.csv')
+@with_appcontext
+def benchmark_citations(from_page, to_page, pagesize, data_output):
+    """Process all records from db and logs its time of getting data from db
+    and of counting citations."""
+    click.echo("All benchmark data will be saved in %s csv file" % data_output)
+    processed_record_counter = 0
+    tmp_data = []
+    all_recs = int(PersistentIdentifier.query.filter(PersistentIdentifier.pid_type == 'lit').count())
+    all_pages = int(all_recs / pagesize) + 1
+    if to_page > -1 and to_page < all_pages:
+        all_recs = (all_pages - (all_pages - to_page)) * pagesize
+    if from_page > 1:
+        all_recs -= int((from_page - 1) * pagesize)
+    with click.progressbar(length=all_recs,
+                           label="Benchmarking db (%s records)..." % all_recs) as bar:
+        with open(data_output, 'w') as data_file:
+            keys = ['pid', 'get_record_time', 'get_citations_count_time',
+                    'citations_count']
+            out = csv.DictWriter(data_file, keys)
+            out.writeheader()
+            _query = _gen_query(
+                PersistentIdentifier.query.filter(PersistentIdentifier.pid_type == 'lit'),
+                from_page,
+                to_page,
+                pagesize
+            )
+            for pid in _query:
+                get_db_record_start = datetime.now()
+                rec = get_db_record('lit', pid.pid_value)
+                get_db_record_time = (datetime.now() - get_db_record_start).total_seconds()
+
+                get_cits_count_start = datetime.now()
+                cits_count = rec.get_citations_count()
+                get_cits_count_time = (datetime.now() - get_cits_count_start).total_seconds()
+                data = {'pid': pid.pid_value,
+                        'get_record_time': get_db_record_time,
+                        'get_citations_count_time': get_cits_count_time,
+                        'citations_count': int(cits_count)
+                        }
+                tmp_data.append(data)
+                bar.update(1)
+                processed_record_counter += 1
+                if processed_record_counter % 100 == 0:
+                    # Save data every 100 records to file.
+                    out.writerows(tmp_data)
+                    tmp_data = []
+                    data_file.flush()
+            if tmp_data:
+                out.writerows(tmp_data)
+
+
+@check.command()
+@click.option('-s', '--from-page', default=1)
+@click.option('-e', '--to-page', default='-1')
+@click.option('-s', '--pagesize', default=100)
+@click.option('-o', '--output', default='/tmp/inspire/citations_inconsistencies.txt')
+@with_appcontext
+def find_citations_inconsistencies(from_page, to_page, pagesize, output):
+    """Process all non deleted records and check if citation in ES
+    are the same like in DB"""
+    ok = 0
+    fail = 0
+    no_cits = 0
+    more_in_es = 0
+    more_in_db = 0
+    deleted = 0
+
+    all_recs = int(PersistentIdentifier.query.filter(
+        PersistentIdentifier.pid_type == 'lit').count())
+    all_pages = int(all_recs / pagesize) + 1
+    if -1 < to_page < all_pages:
+        all_recs = (all_pages - (all_pages - to_page)) * pagesize
+    if from_page > 1:
+        all_recs -= int((from_page - 1) * pagesize)
+    with click.progressbar(length=all_recs,
+                           label="Processing %s records..." % all_recs) as bar:
+        with open(output, 'w') as data_file:
+            keys = ['pid_value', 'db_citations_count', 'es_citations_count']
+            out_data = csv.DictWriter(data_file, keys)
+            out_data.writeheader()
+            _query = _gen_query(
+                PersistentIdentifier.query.filter(PersistentIdentifier.pid_type == 'lit'),
+                from_page,
+                to_page,
+                pagesize
+            )
+            for pid in _query:
+                rec = get_db_record('lit', pid.pid_value)
+                if rec.get('deleted'):
+                    ok += 1
+                    deleted += 1
+                    continue
+                es_cits = get_citations_from_es(rec).total
+                db_cits = rec.get_citations_count()
+                if es_cits == db_cits:
+                    if es_cits == 0:
+                        no_cits += 1
+                    ok += 1
+                else:
+                    fail += 1
+                    data = {'pid_value': pid.pid_value,
+                            'db_citations_count': db_cits,
+                            'es_citations_count': es_cits}
+                    out_data.writerows(data)
+                    data_file.flush()
+                    if es_cits > db_cits:
+                        more_in_es += 1
+                    else:
+                        more_in_db += 1
+                bar.update(1)
+            output_msg = "\nProcessed {all_recs} records. {ok} were ok, {failed}"\
+                         " had difference between db an es ctations count!"\
+                         " {biger_es} records had more citations in es."\
+                         " {biger_db} recpords had more citations in db."\
+                         " {no_citations} records had no citations"\
+                         " at all. {deleted} records"\
+                         " were deleted".format(all_recs=all_recs,
+                                                ok=ok, failed=fail,
+                                                biger_es=more_in_es,
+                                                biger_db=more_in_db,
+                                                no_citations=no_cits,
+                                                deleted=deleted)
+            click.echo(output_msg)
+            data_file.writelines([output_msg, ])
+            click.echo("This data and additional info was saved in %s file" % output)

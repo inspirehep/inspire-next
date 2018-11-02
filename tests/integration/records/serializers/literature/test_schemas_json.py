@@ -227,17 +227,14 @@ def test_conference_info_schema_with_record(isolated_app):
         "_collections": [
             "Conferences"
         ],
-        "control_number": 972464,
-        "self": {
-            "$ref": "http://localhost:5000/api/conferences/972464"
-        },
         "titles": [
             {
-                "title": "4th RESCEU International Symposium on Birth and Evolution of the Universe"
+                "title": "1234th RESCEU International Symposium on Birth and Evolution of the Universe"
             }
         ],
     }
-    TestRecordMetadata.create_from_kwargs(json=conf_record)
+    factory = TestRecordMetadata.create_from_kwargs(
+        json=conf_record, pid_type='con')
     record = {
         'metadata': {
             'publication_info': [
@@ -247,7 +244,7 @@ def test_conference_info_schema_with_record(isolated_app):
                     'journal_volume': '2012',
                     'year': 2012,
                     'conference_record': {
-                        '$ref': 'http://labs.inspirehep.net/api/journals/972464'
+                        '$ref': 'http://localhost:5000/api/journals/{}'.format(factory.record_metadata.json['control_number'])
                     }
                 },
                 {
@@ -280,15 +277,88 @@ def test_conference_info_schema_with_record(isolated_app):
             ],
             'conference_info': [
                 {
-                    "control_number": 972464,
+                    "control_number": factory.record_metadata.json['control_number'],
                     "titles": [
                         {
-                            "title": "4th RESCEU International Symposium on Birth and Evolution of the Universe"
+                            "title": "1234th RESCEU International Symposium on Birth and Evolution of the Universe"
                         }
                     ]
                 }
             ]
 
+        }
+    }
+
+    result = json.loads(schema.dumps(record).data)
+    assert expected == result
+
+
+def test_accelerator_experiments_schema_with_record(isolated_app):
+    schema = LiteratureRecordSchemaJSONUIV1()
+    cms_record = {
+        '$schema': 'http://localhost:5000/schemas/records/experiments.json',
+        '_collections': [
+            'Experiments'
+        ],
+        'institutions': [{
+            'value': 'CERN'
+        }],
+        'experiment': {
+            'value': 'CMS'
+        },
+        'accelerator': {
+            'value': 'LHC'
+        }
+    }
+    cms_factory = TestRecordMetadata.create_from_kwargs(
+        json=cms_record, pid_type='exp')
+
+    lhcb_record = {
+        '$schema': 'http://localhost:5000/schemas/records/experiments.json',
+        '_collections': [
+            'Experiments'
+        ],
+        'institutions': [{
+            'value': 'CERN'
+        }],
+        'experiment': {
+            'value': 'LHCb'
+        },
+        'accelerator': {
+            'value': 'LHC'
+        }
+    }
+    lhcb_factory = TestRecordMetadata.create_from_kwargs(
+        json=lhcb_record, pid_type='exp')
+
+    record = {
+        'metadata': {
+            'accelerator_experiments': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/experiments/{}'.format(cms_factory.record_metadata.json['control_number'])
+                    }
+                },
+                {
+                    'legacy_name': 'LHCb-Legacy',
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/experiments/{}'.format(lhcb_factory.record_metadata.json['control_number'])
+                    }
+                }
+            ]
+        }
+    }
+
+    expected = {
+        'metadata': {
+            'accelerator_experiments': [
+                {
+                    'name': 'CERN-LHC-CMS'
+                },
+                {
+                    'name': 'CERN-LHC-LHCb'
+                }
+            ]
         }
     }
 

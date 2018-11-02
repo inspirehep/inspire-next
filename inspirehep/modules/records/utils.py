@@ -26,7 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 from itertools import chain
 from unicodedata import normalize
-
+import re
 import six
 
 from inspire_dojson.utils import get_recid_from_ref
@@ -40,7 +40,7 @@ from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
     get_pid_type_from_schema
 )
-from inspirehep.modules.records.exceptions import MissingInspireRecord
+from inspirehep.modules.records.errors import MissingInspireRecordError
 from inspirehep.utils.record_getter import get_db_records
 from inspirehep.modules.search import LiteratureSearch
 
@@ -157,7 +157,7 @@ def populate_citations_count(record, json):
             citation_count = record.get_citations_count()
         json.update({'citation_count': citation_count})
     else:
-        raise MissingInspireRecord("Record is not InspireRecord!")
+        raise MissingInspireRecordError("Record is not InspireRecord!")
 
 
 def populate_bookautocomplete(json):
@@ -311,6 +311,14 @@ def populate_affiliation_suggest(json):
     name_variants = force_list(get_value(json, 'name_variants.value', default=[]))
     postal_codes = force_list(get_value(json, 'addresses.postal_code', default=[]))
 
+    # XXX: this is need by the curators to search only with numbers
+    extract_numbers_from_umr = []
+    for name in name_variants:
+        match = re.match(r'UMR\s', name, re.IGNORECASE)
+        if match:
+            umr_number = name.replace(match.group(0), '')
+            extract_numbers_from_umr.append(umr_number)
+
     input_values = []
     input_values.extend(ICN)
     input_values.extend(institution_acronyms)
@@ -318,6 +326,7 @@ def populate_affiliation_suggest(json):
     input_values.append(legacy_ICN)
     input_values.extend(name_variants)
     input_values.extend(postal_codes)
+    input_values.extend(extract_numbers_from_umr)
     input_values = [el for el in input_values if el]
 
     json.update({

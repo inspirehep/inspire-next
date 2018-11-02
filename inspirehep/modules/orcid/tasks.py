@@ -186,6 +186,7 @@ def _register_user(name, email, orcid, token):
         with db.session.begin_nested():
             user = User()
             user.email = email
+            user.active = True
             db.session.add(user)
 
     return _link_user_and_token(user, name, orcid, token)
@@ -255,6 +256,13 @@ def orcid_push(self, orcid, rec_id, oauth_token):
         # no retry is triggered in such cases.
         # Other kinds of exceptions (like IOError or anything else due to bugs)
         # does not trigger a retry.
+
+        # Enrich exception message.
+        message = (exc.args[0:1] or ('',))[0]
+        message += '\nResponse={}'.format(exc.response.content)
+        message += '\nRequest={} {}'.format(exc.request.method, exc.request.url)
+        exc.args = (message,) + exc.args[1:]
+
         LOGGER.exception(
             'Orcid_push task for recid={} and orcid={} raised a RequestException.'
             ' Retrying soon. Exception={}'.format(

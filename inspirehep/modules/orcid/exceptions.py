@@ -24,11 +24,11 @@ from __future__ import absolute_import, division, print_function
 
 
 class BaseOrcidPusherException(Exception):
-    def __init__(self, from_exc=None, *args, **kwargs):
-        # Sort of exception chaining in Python 2.
+    def __init__(self, *args, **kwargs):
+        # kwargs['from_exc'] used as a sort of exception chaining in Python 2.
         # No need in Python 3 with the statement: raise exc from cause
-        self.from_exc = from_exc
-        super(BaseOrcidPusherException, self).__init__(*args, **kwargs)
+        self.from_exc = kwargs.get('from_exc')
+        super(BaseOrcidPusherException, self).__init__(*args)
 
     def __str__(self, *args, **kwargs):
         output = super(BaseOrcidPusherException, self).__str__(*args, **kwargs)

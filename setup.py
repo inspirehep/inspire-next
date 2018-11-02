@@ -69,7 +69,7 @@ install_requires = [
     'inspire-matcher~=7.0,>=7.0.0',
     'inspire-query-parser~=4.0,>=4.0.0',
     'inspire-schemas~=58.0,>=58.0.0',
-    'inspire-service-orcid~=3.0,>=3.1.0',
+    'inspire-service-orcid~=3.0,>=3.2.1',
     'inspire-utils~=2.0,>=2.0.7',
     'invenio-access~=1.0,>=1.0.0',
     'invenio-accounts~=1.0,>=1.0.0',
