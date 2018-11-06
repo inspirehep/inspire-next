@@ -91,3 +91,30 @@ def request_context(app):
     """
     with app.test_request_context() as request_context:
         yield request_context
+
+
+@pytest.fixture
+def vcr_config():
+    return {
+        'decode_compressed_response': True,
+        'filter_headers': ('Authorization', 'User-Agent'),
+        'ignore_hosts': (
+            'localhost',
+            'test-indexer',
+            'test-redis',
+            'test-database',
+            'test-rabbitmq',
+            'test-worker',
+            'test-web',
+        ),
+    }
+
+
+@pytest.fixture
+def vcr(vcr):
+    vcr.register_matcher(
+        'accept',
+        lambda r1, r2: r1.headers.get('Accept') == r2.headers.get('Accept'),
+    )
+    vcr.match_on = ['method', 'scheme', 'host', 'port', 'path', 'query', 'accept']
+    return vcr

@@ -24,9 +24,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+from flask import current_app
 from functools import wraps
 
 from inspire_utils.record import get_value
+from inspirehep.modules.workflows.utils import json_api_request
 from invenio_classifier import (
     get_keywords_from_local_file,
     get_keywords_from_text,
@@ -36,6 +38,72 @@ from invenio_classifier.reader import KeywordToken
 
 from ..proxies import antihep_keywords
 from ..utils import with_debug_logging, get_document_in_workflow
+
+
+CLASSIFIER_MAPPING = {
+    "core": "CORE",
+    "non_core": "Non-CORE",
+    "rejected": "Rejected"
+}
+
+
+def get_classifier_url():
+    """Return the classifier URL endpoint, if any."""
+    base_url = current_app.config.get('CLASSIFIER_API_URL')
+    if not base_url:
+        return None
+
+    return '{base_url}/predict/coreness'.format(base_url=base_url)
+
+
+def prepare_payload(record):
+    """Prepare payload to send to Inspire Classifier."""
+    payload = {
+        'title': get_value(record, 'titles.title[0]', ''),
+        'abstract': get_value(record, 'abstracts.value[0]', ''),
+    }
+    return payload
+
+
+@with_debug_logging
+def guess_coreness(obj, eng):
+    """Workflow task to ask inspire classifier for a coreness assessment."""
+    predictor_url = get_classifier_url()
+    if not predictor_url:
+        return
+
+    payload = prepare_payload(obj.data)
+    results = json_api_request(predictor_url, payload)
+
+    scores = results["scores"]
+    max_score = scores[results['prediction']]
+    decision = CLASSIFIER_MAPPING[results["prediction"]]
+    scores = {
+        "CORE": scores["core"],
+        "Non-CORE": scores["non_core"],
+        "Rejected": scores["rejected"],
+    }
+    # Generate a normalized relevance_score useful for sorting
+    relevance_score = max_score
+    if decision == "CORE":
+        relevance_score += 1
+    elif decision == "Rejected":
+        relevance_score *= -1
+    # We assume a CORE paper to have the highest relevance so we add a
+    # significant value to seperate it from Non-Core and Rejected.
+    # Normally scores range from 0 / +1 so 1 is significant.
+    # Non-CORE scores are untouched, while Rejected is set as negative.
+    # Finally this provides one normalized score of relevance across
+    # all categories of papers.
+    obj.extra_data["relevance_prediction"] = dict(
+        max_score=max_score,
+        decision=decision,
+        scores=scores,
+        relevance_score=relevance_score
+    )
+    current_app.logger.info("Prediction results: {0}".format(
+        obj.extra_data["relevance_prediction"])
+    )
 
 
 @with_debug_logging

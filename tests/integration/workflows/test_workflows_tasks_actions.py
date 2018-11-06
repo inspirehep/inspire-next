@@ -45,7 +45,7 @@ from calls import insert_citing_record
 from factories.db.invenio_records import TestRecordMetadata
 
 from mocks import (
-    fake_beard_api_request,
+    fake_classifier_api_request,
     fake_download_file,
     fake_magpie_api_request,
 )
@@ -340,8 +340,8 @@ def test_normalize_journal_titles_unknown_journals_no_ref(workflow_app, insert_j
     return_value=True
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -351,7 +351,7 @@ def test_normalize_journal_titles_unknown_journals_no_ref(workflow_app, insert_j
 def test_refextract_from_pdf(
     mocked_indexing_task,
     mocked_api_request_magpie,
-    mocked_api_request_beard,
+    mocked_api_request_classifier,
     mocked_is_pdf_link,
     mocked_package_download,
     mocked_arxiv_download,
@@ -385,7 +385,7 @@ def test_refextract_from_pdf(
     citing_record, categories = insert_citing_record()
 
     extra_config = {
-        "BEARD_API_URL": "http://example.com/beard",
+        "CLASSIFIER_API_URL": "http://example.com/classifier",
         "MAGPIE_API_URL": "http://example.com/magpie",
         'ARXIV_CATEGORIES': categories,
     }
@@ -419,8 +419,8 @@ def test_refextract_from_pdf(
     return_value=True
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -430,7 +430,7 @@ def test_refextract_from_pdf(
 def test_count_reference_coreness(
     mocked_indexing_task,
     mocked_api_request_magpie,
-    mocked_api_request_beard,
+    mocked_api_request_classifier,
     mocked_is_pdf_link,
     mocked_package_download,
     mocked_arxiv_download,
@@ -461,7 +461,7 @@ def test_count_reference_coreness(
     citing_record, categories = insert_citing_record()
 
     extra_config = {
-        "BEARD_API_URL": "http://example.com/beard",
+        "CLASSIFIER_API_URL": "http://example.com/classifier",
         "MAGPIE_API_URL": "http://example.com/magpie",
         'ARXIV_CATEGORIES': categories,
     }
