@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import time_execution
+import inspire_service_orcid.conf
 
 from rt import AuthorizationError
 from time_execution.backends.threaded import ThreadedBackend
@@ -45,7 +46,7 @@ class INSPIREUtils(object):
     def init_app(self, app):
         """Initialize the application."""
         self.rt_instance = self.create_rt_instance(app)
-        self.configure_time_execution(app)
+        self.configure_appmetrics(app)
         app.extensions["inspire-utils"] = self
 
     def create_rt_instance(self, app):
@@ -71,19 +72,32 @@ class INSPIREUtils(object):
                     "RT login credentials in the app.config are invalid")
             return tracker
 
-    def configure_time_execution(self, app):
+    def configure_appmetrics(self, app):
         if not app.config.get('FEATURE_FLAG_ENABLE_APPMETRICS'):
             return
 
-        async_es_metrics = ThreadedBackend(
-            ElasticsearchBackend,
-            backend_kwargs=dict(
+        if app.config['APPMETRICS_THREADED_BACKEND']:
+            backend = ThreadedBackend(
+                ElasticsearchBackend,
+                backend_kwargs=dict(
+                    hosts=app.config['APPMETRICS_ELASTICSEARCH_HOSTS'],
+                    index=app.config['APPMETRICS_ELASTICSEARCH_INDEX']),
+            )
+        else:
+            backend = ElasticsearchBackend(
                 hosts=app.config['APPMETRICS_ELASTICSEARCH_HOSTS'],
-                index=app.config['APPMETRICS_ELASTICSEARCH_INDEX']),
-        )
+                index=app.config['APPMETRICS_ELASTICSEARCH_INDEX'],
+            )
+        origin = 'inspire_next'
 
         time_execution.settings.configure(
-            backends=[async_es_metrics],
+            backends=[backend],
             # hooks=(status_code_hook,),
-            origin='inspire_next'
+            origin=origin
+        )
+
+        inspire_service_orcid.conf.settings.configure(
+            DO_ENABLE_METRICS=True,
+            METRICS_BACKENDS=[backend],
+            METRICS_ORIGIN=origin,
         )
