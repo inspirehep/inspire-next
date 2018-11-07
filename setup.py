@@ -124,6 +124,7 @@ install_requires = [
     'urllib3~=1.0,<1.24',
     'workflow~=2.0,>=2.1.3',
     'click~=6.7,<7.0',
+    'pytz~=2018.7,>=2018.7',
 ]
 
 docs_require = [
