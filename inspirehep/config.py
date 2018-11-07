@@ -90,7 +90,8 @@ SQLALCHEMY_TRACK_MODIFICATIONS = True
 CELERY_BROKER_URL = "pyamqp://guest:guest@localhost:5672//"
 CELERY_RESULT_BACKEND = "redis://localhost:6379/1"
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']
-CELERY_TIMEZONE = 'Europe/Amsterdam'
+# Default UTC timezone for celery because of https://github.com/inveniosoftware/invenio-celery/issues/53
+# CELERY_TIMEZONE = 'Europe/Amsterdam'
 CELERY_WORKER_DISABLE_RATE_LIMITS = True
 CELERY_BEAT_SCHEDULE = {
     'journal_kb_builder': {
