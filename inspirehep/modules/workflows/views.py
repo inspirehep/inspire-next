@@ -36,8 +36,9 @@ from flask import (
     request,
 )
 from flask.views import MethodView
-from invenio_db import db
 from inspire_schemas.api import validate
+from inspire_utils.urls import ensure_scheme
+from invenio_db import db
 from invenio_workflows import (
     ObjectStatus,
     start,
@@ -47,8 +48,7 @@ from invenio_workflows import (
 from invenio_workflows.errors import WorkflowsMissingObject
 from jsonschema.exceptions import ValidationError
 
-from inspire_utils.urls import ensure_scheme
-from inspirehep.utils.tickets import get_rt_link_for_ticket
+from inspirehep.modules.records.permissions import RecordPermission
 from inspirehep.modules.workflows.errors import (
     CallbackError,
     CallbackRecordNotFoundError,
@@ -60,14 +60,13 @@ from inspirehep.modules.workflows.errors import (
 )
 from inspirehep.modules.workflows.loaders import workflow_loader
 from inspirehep.modules.workflows.models import WorkflowsPendingRecord
-from inspirehep.modules.records.permissions import RecordPermission
 from inspirehep.modules.workflows.utils import (
     get_resolve_validation_callback_url,
-    get_validation_errors
+    get_validation_errors,
 )
 from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_db_record, RecordGetterError
-
+from inspirehep.utils.tickets import get_rt_link_for_ticket
 
 callback_blueprint = Blueprint(
     'inspire_workflows_callbacks',

@@ -26,7 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from celery import shared_task
 from flask import current_app
-
 from invenio_db import db
 
 from inspirehep.modules.refextract.utils import KbWriter
