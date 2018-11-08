@@ -260,8 +260,10 @@ def index_modified_citations_from_record(self, pid_type, pid_value, db_version):
     if not pids:
         logger.info('No references change for record {}'.format((pid_type, pid_value)))
         return None
-    logger.info("({pid_value}) Pids referenced by this record:{pids}".format(
-        pid_value=pid_value, pids=pids)
+    logger.info(
+        "({pid_value}) There are {count_pids}"
+        " records references changed".format(pid_value=pid_value,
+                                             count_pids=len(pids))
     )
 
     uuids = [
