@@ -33,6 +33,8 @@ import pprint
 from os import path, makedirs
 from datetime import datetime
 
+from multiprocessing.pool import mapstar, RUN, ThreadPool, IMapUnorderedIterator, Pool
+
 from invenio_db import db
 from invenio_files_rest.models import ObjectVersion
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
@@ -43,10 +45,12 @@ from invenio_records_files.models import RecordsBuckets
 from inspirehep.modules.records.utils import get_citations_from_es
 from inspirehep.utils.record_getter import get_db_record, get_es_record, \
     RecordGetterError
-from .checkers import check_unlinked_references
-from .tasks import batch_reindex
+from inspirehep.modules.records.checkers import check_unlinked_references
+from inspirehep.modules.records.tasks import batch_reindex
 
 from invenio_records.models import RecordMetadata
+from inspirehep.modules.search.api import LiteratureSearch
+
 
 from sqlalchemy import (
     String,
@@ -374,6 +378,26 @@ def _gen_query(query, page_start=1, page_end=-1, window_size=100):
             query = None
 
 
+class MyThreadPool(ThreadPool):
+    def imap_unordered(self, func, iterable, second_argument, chunksize=1):
+        '''
+        Like `imap()` method but ordering of results is arbitrary
+        '''
+        assert self._state == RUN
+        if chunksize == 1:
+            result = IMapUnorderedIterator(self._cache)
+            self._taskqueue.put((((result._job, i, func, (x, second_argument), {})
+                                for i, x in enumerate(iterable)), result._set_length))
+            return result
+        else:
+            assert chunksize > 1
+            task_batches = Pool._get_tasks(func, iterable, chunksize)
+            result = IMapUnorderedIterator(self._cache)
+            self._taskqueue.put((((result._job, i, mapstar, (x, second_argument), {})
+                                for i, x in enumerate(task_batches)), result._set_length))
+            return (item for chunk in result for item in chunk)
+
+
 @check.command()
 @click.option('-o', '--data-output', default='/tmp/inspire/missing_records.txt')
 @with_appcontext
@@ -403,15 +427,45 @@ def check_missing_records_in_es(data_output):
     click.echo("%s records are missing from es" % missing)
 
 
+def _benchmark_record(pid, app):
+    if stop:
+        return
+    with app.app_context():
+
+        get_db_record_start = datetime.now()
+        rec = get_db_record('lit', pid.pid_value)
+        get_db_record_time = (datetime.now() - get_db_record_start).total_seconds()
+
+        get_cits_count_start = datetime.now()
+        cits_count = rec.get_citations_count()
+        get_cits_count_time = (
+            datetime.now() - get_cits_count_start).total_seconds()
+
+        data = {'pid': pid.pid_value,
+                'get_record_time': get_db_record_time,
+                'get_citations_count_time': get_cits_count_time,
+                'citations_count': int(cits_count)
+                }
+    return data
+
+
 @check.command()
-@click.option('-s', '--from-page', default=1)
-@click.option('-e', '--to-page', default='-1')
+@click.option('-f', '--from-page', default=1)
+@click.option('-t', '--to-page', default=-1)
 @click.option('-s', '--pagesize', default=100)
 @click.option('-o', '--data-output', default='/tmp/inspire/db_benchmark.csv')
+@click.option('-p', '--pool-size', default=10)
 @with_appcontext
-def benchmark_citations(from_page, to_page, pagesize, data_output):
+def benchmark_citations(from_page, to_page, pagesize, data_output, pool_size):
     """Process all records from db and logs its time of getting data from db
     and of counting citations."""
+    if pool_size > 10:
+        click.echo("Using more than 10 threads is unsafe. It will propably"
+                   " break as flask sets db connection limit per process"
+                   " to 10!")
+        click.confirm("Are you sure you want to continue?", abort=True)
+    global stop
+    stop = False
     click.echo("All benchmark data will be saved in %s csv file" % data_output)
     processed_record_counter = 0
     tmp_data = []
@@ -421,6 +475,7 @@ def benchmark_citations(from_page, to_page, pagesize, data_output):
         all_recs = (all_pages - (all_pages - to_page)) * pagesize
     if from_page > 1:
         all_recs -= int((from_page - 1) * pagesize)
+    click.echo("Creating thread pool of %s threads" % pool_size)
     with click.progressbar(length=all_recs,
                            label="Benchmarking db (%s records)..." % all_recs) as bar:
         with open(data_output, 'w') as data_file:
@@ -434,45 +489,96 @@ def benchmark_citations(from_page, to_page, pagesize, data_output):
                 to_page,
                 pagesize
             )
-            for pid in _query:
-                get_db_record_start = datetime.now()
-                rec = get_db_record('lit', pid.pid_value)
-                get_db_record_time = (datetime.now() - get_db_record_start).total_seconds()
 
-                get_cits_count_start = datetime.now()
-                cits_count = rec.get_citations_count()
-                get_cits_count_time = (datetime.now() - get_cits_count_start).total_seconds()
-                data = {'pid': pid.pid_value,
-                        'get_record_time': get_db_record_time,
-                        'get_citations_count_time': get_cits_count_time,
-                        'citations_count': int(cits_count)
-                        }
-                tmp_data.append(data)
-                bar.update(1)
-                processed_record_counter += 1
-                if processed_record_counter % 100 == 0:
-                    # Save data every 100 records to file.
-                    out.writerows(tmp_data)
-                    tmp_data = []
-                    data_file.flush()
+            _threads_pool = MyThreadPool(pool_size)
+            _threads = _threads_pool.imap_unordered(_benchmark_record, _query,
+                                                    current_app._get_current_object())
+            try:
+                for _thread in _threads:
+                    data = _thread
+                    bar.update(1)
+                    if data:
+                        tmp_data.append(data)
+                        processed_record_counter += 1
+                    if processed_record_counter % 100 == 0:
+                        # Save data every 100 records to file.
+                        out.writerows(tmp_data)
+                        tmp_data = []
+                        data_file.flush()
+            except AttributeError as err:
+                click.echo("Cannot benchmark records! %e" % err)
+            except Exception as err:
+                click.echo("Other exception during Threads management! %s" % err)
             if tmp_data:
                 out.writerows(tmp_data)
+            stop = True
+            _threads_pool.close()
+            _threads_pool.join()
+            click.echo("Processed %s records" % processed_record_counter)
+            click.echo("Results saved in %s" % data_output)
+
+
+def _process_record(pid, app):
+    if stop:
+        return
+    with app.app_context():
+        success = False
+        deleted = False
+        no_cits = False
+        db_cits = None
+        es_cits = None
+        es_citation_count_field = None
+        data = {}
+        rec = get_db_record('lit', pid.pid_value)
+        if rec.get('deleted'):
+            success = True
+            deleted = True
+        if not deleted:
+            try:
+                es_cits = get_citations_from_es(rec).total
+                search = LiteratureSearch().source(includes=['citation_count'])
+                results = search.get_record(rec.id).execute()
+                if not results.hits:
+                    es_citation_count_field = None
+                else:
+                    es_citation_count_field = results.hits[0]['citation_count']
+                db_cits = rec.get_citations_count()
+            except Exception as err:
+                click.echo("Cannot prepare data for %s record. %s",
+                           pid.pid_value,
+                           err)
+        if not deleted and es_cits is not None and es_cits == db_cits == es_citation_count_field:
+            if es_cits == 0:
+                no_cits = True
+            success = True
+        else:
+            data = {'pid_value': pid.pid_value,
+                    'db_citations_count': db_cits,
+                    'es_citations_count': es_cits,
+                    'es_citations_field': es_citation_count_field}
+        return (success, deleted, no_cits, data)
 
 
 @check.command()
-@click.option('-s', '--from-page', default=1)
-@click.option('-e', '--to-page', default='-1')
+@click.option('-f', '--from-page', default=1)
+@click.option('-t', '--to-page', default=-1)
 @click.option('-s', '--pagesize', default=100)
 @click.option('-o', '--output', default='/tmp/inspire/citations_inconsistencies.txt')
+@click.option('-p', '--pool-size', default=10)
 @with_appcontext
-def find_citations_inconsistencies(from_page, to_page, pagesize, output):
+def find_citations_inconsistencies(from_page, to_page, pagesize, output, pool_size):
     """Process all non deleted records and check if citation in ES
     are the same like in DB"""
+    if pool_size > 10:
+        click.echo("Using more than 10 threads is unsafe. It will propably"
+                   " break as flask sets db connection limit per process"
+                   " to 10!")
+        click.confirm("Are you sure you want to continue?", abort=True)
+    global stop
+    stop = False
     ok = 0
     fail = 0
     no_cits = 0
-    more_in_es = 0
-    more_in_db = 0
     deleted = 0
 
     all_recs = int(PersistentIdentifier.query.filter(
@@ -484,8 +590,10 @@ def find_citations_inconsistencies(from_page, to_page, pagesize, output):
         all_recs -= int((from_page - 1) * pagesize)
     with click.progressbar(length=all_recs,
                            label="Processing %s records..." % all_recs) as bar:
+        _prepare_logdir(output)
         with open(output, 'w') as data_file:
-            keys = ['pid_value', 'db_citations_count', 'es_citations_count']
+            keys = ['pid_value', 'db_citations_count',
+                    'es_citations_count', 'es_citations_field']
             out_data = csv.DictWriter(data_file, keys)
             out_data.writeheader()
             _query = _gen_query(
@@ -494,42 +602,39 @@ def find_citations_inconsistencies(from_page, to_page, pagesize, output):
                 to_page,
                 pagesize
             )
-            for pid in _query:
-                rec = get_db_record('lit', pid.pid_value)
-                if rec.get('deleted'):
-                    ok += 1
-                    deleted += 1
-                    continue
-                es_cits = get_citations_from_es(rec).total
-                db_cits = rec.get_citations_count()
-                if es_cits == db_cits:
-                    if es_cits == 0:
-                        no_cits += 1
-                    ok += 1
-                else:
-                    fail += 1
-                    data = {'pid_value': pid.pid_value,
-                            'db_citations_count': db_cits,
-                            'es_citations_count': es_cits}
-                    out_data.writerows(data)
-                    data_file.flush()
-                    if es_cits > db_cits:
-                        more_in_es += 1
+            _threads_pool = MyThreadPool(pool_size)
+            _threads = _threads_pool.imap_unordered(_process_record, _query,
+                                                    current_app._get_current_object())
+            try:
+                for _thread in _threads:
+                    success, record_deleted, no_citations, data = _thread
+                    bar.update(1)
+                    if success:
+                        ok += 1
+                        if record_deleted:
+                            deleted += 1
+                        elif no_citations:
+                            no_cits += 1
                     else:
-                        more_in_db += 1
-                bar.update(1)
+                        fail += 1
+                        out_data.writerow(data)
+                        data_file.flush()
+            except AttributeError as err:
+                click.echo("Cannot process. Threads exception :%s" % err)
+            except Exception as err:
+                click.echo("Other exception during Threads management: %s" % err)
+            stop = True
+            _threads_pool.close()
+            _threads_pool.join()
+
             output_msg = "\nProcessed {all_recs} records. {ok} were ok, {failed}"\
                          " had difference between db an es ctations count!"\
-                         " {biger_es} records had more citations in es."\
-                         " {biger_db} recpords had more citations in db."\
-                         " {no_citations} records had no citations"\
-                         " at all. {deleted} records"\
-                         " were deleted".format(all_recs=all_recs,
-                                                ok=ok, failed=fail,
-                                                biger_es=more_in_es,
-                                                biger_db=more_in_db,
-                                                no_citations=no_cits,
-                                                deleted=deleted)
+                         "\n{no_citations} records had no citations"\
+                         " at all.\n{deleted} records"\
+                         " were deleted\n".format(all_recs=ok + fail,
+                                                  ok=ok, failed=fail,
+                                                  no_citations=no_cits,
+                                                  deleted=deleted)
             click.echo(output_msg)
-            data_file.writelines([output_msg, ])
-            click.echo("This data and additional info was saved in %s file" % output)
+            click.echo("Additional statistics for incosistent records"
+                       "was saved in %s file" % output)
