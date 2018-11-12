@@ -54,7 +54,7 @@ from calls import (
     generate_record,
 )
 from mocks import (
-    fake_classifier_api_request,
+    fake_beard_api_request,
     fake_download_file,
     fake_magpie_api_request,
 )
@@ -97,7 +97,7 @@ def get_halted_workflow(mocked_is_pdf_link, app, record, extra_config=None):
     prediction = obj.extra_data.get("relevance_prediction")
     assert prediction
     assert prediction['decision'] == 'Non-CORE'
-    assert prediction['scores']['Non-CORE'] == 0.6497962474822998
+    assert prediction['scores']['Non-CORE'] == 0.8358207729691823
 
     expected_experiment_prediction = {
         'experiments': [
@@ -139,8 +139,8 @@ def enable_fuzzy_matcher(workflow_app):
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -153,7 +153,7 @@ def enable_fuzzy_matcher(workflow_app):
 def test_harvesting_arxiv_workflow_manual_rejected(
     mocked_refextract_extract_refs,
     mocked_api_request_magpie,
-    mocked_classifier_api,
+    mocked_beard_api,
     mocked_actions_download,
     mocked_is_pdf_link,
     mocked_arxiv_download,
@@ -163,7 +163,7 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     """Test a full harvesting workflow."""
     record = generate_record()
     extra_config = {
-        "CLASSIFIER_API_URL": "http://example.com/classifier",
+        "BEARD_API_URL": "http://example.com/beard",
         "MAGPIE_API_URL": "http://example.com/magpie",
     }
 
@@ -201,8 +201,8 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     return_value=True
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -215,7 +215,7 @@ def test_harvesting_arxiv_workflow_manual_rejected(
 def test_harvesting_arxiv_workflow_core_record_auto_accepted(
     mocked_refextract_extract_refs,
     mocked_api_request_magpie,
-    mocked_api_request_classifier,
+    mocked_api_request_beard,
     mocked_is_pdf_link,
     mocked_package_download,
     mocked_arxiv_download,
@@ -226,7 +226,7 @@ def test_harvesting_arxiv_workflow_core_record_auto_accepted(
     record, categories = core_record()
 
     extra_config = {
-        "CLASSIFIER_API_URL": "http://example.com/classifier",
+        "BEARD_API_URL": "http://example.com/beard",
         "MAGPIE_API_URL": "http://example.com/magpie",
         'ARXIV_CATEGORIES': categories,
     }
@@ -256,8 +256,8 @@ def test_harvesting_arxiv_workflow_core_record_auto_accepted(
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -275,23 +275,18 @@ def test_harvesting_arxiv_workflow_manual_accepted(
     mocked_refextract_extract_refs,
     mocked_matching_match,
     mocked_api_request_magpie,
-    mocked_api_request_classifier,
+    mocked_api_request_beard,
     mocked_download_utils,
     mocked_download_arxiv,
     mocked_package_download,
     workflow_app,
     mocked_external_services,
 ):
-    """Test a full harvesting workflow."""
     record = generate_record()
-    extra_config = {
-        "CLASSIFIER_API_URL": "http://example.com/classifier",
-        "MAGPIE_API_URL": "http://example.com/magpie",
-    }
+    """Test a full harvesting workflow."""
 
     workflow_uuid, eng, obj = get_halted_workflow(
         app=workflow_app,
-        extra_config=extra_config,
         record=record,
     )
 
@@ -335,8 +330,8 @@ def test_harvesting_arxiv_workflow_manual_accepted(
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -344,7 +339,7 @@ def test_harvesting_arxiv_workflow_manual_accepted(
 )
 def test_match_in_holdingpen_stops_pending_wf(
     mocked_api_request_magpie,
-    mocked_api_request_classifier,
+    mocked_api_request_beard,
     mocked_package_download,
     mocked_is_pdf_link,
     mocked_download_arxiv,
@@ -399,8 +394,8 @@ def test_match_in_holdingpen_stops_pending_wf(
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -408,7 +403,7 @@ def test_match_in_holdingpen_stops_pending_wf(
 )
 def test_match_in_holdingpen_previously_rejected_wf_stop(
     mocked_api_request_magpie,
-    mocked_api_request_classifier,
+    mocked_api_request_beard,
     mocked_package_download,
     mocked_is_pdf_link,
     mocked_download_arxiv,
@@ -456,8 +451,8 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -465,7 +460,7 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
 )
 def test_match_in_holdingpen_different_sources_continues(
     mocked_api_request_magpie,
-    mocked_api_request_classifier,
+    mocked_api_request_beard,
     mocked_package_download,
     mocked_is_pdf_link,
     mocked_download_arxiv,
@@ -527,19 +522,7 @@ def test_article_workflow_stops_when_record_is_not_valid(workflow_app):
     assert 'path' in obj.extra_data['validation_errors'][0]
 
 
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
-    side_effect=fake_magpie_api_request,
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
-)
-def test_article_workflow_continues_when_record_is_valid(
-    mocked_api_request_magpie,
-    mocked_api_request_classifier,
-    workflow_app
-):
+def test_article_workflow_continues_when_record_is_valid(workflow_app):
     valid_record = {
         '_collections': [
             'Literature',
@@ -567,8 +550,8 @@ def test_article_workflow_continues_when_record_is_valid(
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
@@ -581,7 +564,7 @@ def test_article_workflow_continues_when_record_is_valid(
 def test_update_exact_matched_goes_trough_the_workflow(
     mocked_is_pdf_link,
     mocked_download_arxiv,
-    mocked_api_request_classifier,
+    mocked_api_request_beard,
     mocked_api_request_magpie,
     workflow_app,
     mocked_external_services,
@@ -610,8 +593,8 @@ def test_update_exact_matched_goes_trough_the_workflow(
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
@@ -624,7 +607,7 @@ def test_update_exact_matched_goes_trough_the_workflow(
 def test_fuzzy_matched_goes_trough_the_workflow(
     mocked_is_pdf_link,
     mocked_download_arxiv,
-    mocked_api_request_classifier,
+    mocked_api_request_beard,
     mocked_api_request_magpie,
     workflow_app,
     mocked_external_services,
@@ -697,19 +680,7 @@ def test_fuzzy_matched_goes_trough_the_workflow(
     assert obj.status == ObjectStatus.COMPLETED
 
 
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
-    side_effect=fake_magpie_api_request,
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
-)
-def test_validation_error_callback_with_a_valid(
-    mocked_api_request_magpie,
-    mocked_api_request_classifier,
-    workflow_app
-):
+def test_validation_error_callback_with_a_valid(workflow_app):
     valid_record = {
         '_collections': [
             'Literature',
@@ -744,19 +715,7 @@ def test_validation_error_callback_with_a_valid(
     assert expected_error_code == data['error_code']
 
 
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
-    side_effect=fake_magpie_api_request,
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
-)
-def test_validation_error_callback_with_validation_error(
-    mocked_api_request_magpie,
-    mocked_api_request_classifier,
-    workflow_app
-):
+def test_validation_error_callback_with_validation_error(workflow_app):
     invalid_record = {
         '_collections': [
             'Literature',
@@ -798,19 +757,7 @@ def test_validation_error_callback_with_validation_error(
     assert len(data['workflow']['_extra_data']['validation_errors']) == 1
 
 
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
-    side_effect=fake_magpie_api_request,
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
-)
-def test_validation_error_callback_with_missing_worfklow(
-    mocked_api_request_magpie,
-    mocked_api_request_classifier,
-    workflow_app
-):
+def test_validation_error_callback_with_missing_worfklow(workflow_app):
     invalid_record = {
         '_collections': [
             'Literature',
@@ -845,19 +792,7 @@ def test_validation_error_callback_with_missing_worfklow(
     assert expected_message == data['message']
 
 
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
-    side_effect=fake_magpie_api_request,
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
-)
-def test_validation_error_callback_with_malformed_with_invalid_types(
-    mocked_api_request_magpie,
-    mocked_api_request_classifier,
-    workflow_app
-):
+def test_validation_error_callback_with_malformed_with_invalid_types(workflow_app):
     invalid_record = {
         '_collections': [
             'Literature',
@@ -907,8 +842,8 @@ def test_validation_error_callback_with_malformed_with_invalid_types(
     return_value=True
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -921,7 +856,7 @@ def test_validation_error_callback_with_malformed_with_invalid_types(
 def test_keep_previously_rejected_from_fully_harvested_category_is_auto_approved(
         mocked_refextract_extract_refs,
         mocked_api_request_magpie,
-        mocked_api_request_classifier,
+        mocked_api_request_beard,
         mocked_is_pdf_link,
         mocked_package_download,
         mocked_arxiv_download,
@@ -939,7 +874,7 @@ def test_keep_previously_rejected_from_fully_harvested_category_is_auto_approved
     es.indices.refresh('holdingpen-hep')
 
     extra_config = {
-        "CLASSIFIER_API_URL": "http://example.com/classifier",
+        "BEARD_API_URL": "http://example.com/beard",
         "MAGPIE_API_URL": "http://example.com/magpie",
         'ARXIV_CATEGORIES': categories,
     }
@@ -967,8 +902,8 @@ def test_keep_previously_rejected_from_fully_harvested_category_is_auto_approved
     return_value=True
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -981,7 +916,7 @@ def test_keep_previously_rejected_from_fully_harvested_category_is_auto_approved
 def test_previously_rejected_from_not_fully_harvested_category_is_not_auto_approved(
         mocked_refextract_extract_refs,
         mocked_api_request_magpie,
-        mocked_api_request_classifier,
+        mocked_api_request_beard,
         mocked_is_pdf_link,
         mocked_package_download,
         mocked_arxiv_download,
@@ -1001,7 +936,7 @@ def test_previously_rejected_from_not_fully_harvested_category_is_not_auto_appro
     es.indices.refresh('holdingpen-hep')
 
     extra_config = {
-        "CLASSIFIER_API_URL": "http://example.com/classifier",
+        "BEARD_API_URL": "http://example.com/beard",
         "MAGPIE_API_URL": "http://example.com/magpie",
         'ARXIV_CATEGORIES': categories,
     }
@@ -1067,8 +1002,8 @@ def test_start_wf_with_no_source_data_fails(workflow_app):
     return_value=True
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
 )
 @mock.patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -1081,7 +1016,7 @@ def test_start_wf_with_no_source_data_fails(workflow_app):
 def test_do_not_repeat(
     mocked_refextract_extract_refs,
     mocked_api_request_magpie,
-    mocked_api_request_classifier,
+    mocked_api_request_beard,
     mocked_is_pdf_link,
     mocked_package_download,
     mocked_arxiv_download,

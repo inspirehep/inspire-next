@@ -1168,7 +1168,7 @@ LEGACY_MATCH_ENDPOINT = "http://inspirehep.net/search"
 
 # Web services and APIs
 # =====================
-CLASSIFIER_API_URL = None  # e.g. "http://inspire-classifier.web.cern.ch/api"
+BEARD_API_URL = None  # e.g. "http://beard.inspirehep.net/api"
 MAGPIE_API_URL = None  # e.g. "http://magpie.inspirehep.net/api"
 LEGACY_BASE_URL = "http://inspirehep.net"
 LEGACY_RECORD_URL_PATTERN = 'http://inspirehep.net/record/{recid}'
