@@ -74,9 +74,8 @@ def json_api_request(url, data, headers=None):
     except requests.exceptions.RequestException as err:
         current_app.logger.exception(err)
         raise
-
-    response.raise_for_status()
-    return response.json()
+    if response.status_code == 200:
+        return response.json()
 
 
 def log_workflows_action(action, relevance_prediction,
