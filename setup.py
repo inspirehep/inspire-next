@@ -69,7 +69,7 @@ install_requires = [
     'inspire-matcher~=7.0,>=7.0.0',
     'inspire-query-parser~=4.0,>=4.0.0',
     'inspire-schemas~=58.0,>=58.0.0',
-    'inspire-service-orcid~=3.0,>=3.2.1',
+    'inspire-service-orcid~=5.0,>=5.0.1',
     'inspire-utils~=2.0,>=2.0.7',
     'invenio-access~=1.0,>=1.0.0',
     'invenio-accounts~=1.0,>=1.0.0',
@@ -124,6 +124,7 @@ install_requires = [
     'urllib3~=1.0,<1.24',
     'workflow~=2.0,>=2.1.3',
     'click~=6.7,<7.0',
+    'pytz~=2018.7,>=2018.7',
 ]
 
 docs_require = [
@@ -224,6 +225,7 @@ setup(
         'invenio_base.api_apps': [
             'inspire_records = inspirehep.modules.records.ext:InspireRecords',
             'inspire_search = inspirehep.modules.search:InspireSearch',
+            'inspire_accounts = inspirehep.modules.accounts:InspireAccounts',
             'inspire_utils = inspirehep.utils.ext:INSPIREUtils',
             'inspire_workflows = inspirehep.modules.workflows:InspireWorkflows',
         ],

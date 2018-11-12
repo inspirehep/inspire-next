@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2014-2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,13 +20,34 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Workflows configuration."""
-
 from __future__ import absolute_import, division, print_function
 
+from flask_security.utils import login_user, verify_password
+from flask import Blueprint, jsonify, request
 
-WORKFLOWS_REFEXTRACT_TIMEOUT = 10 * 60
-"""Time in seconds a refextract task is allowed to run before it is killed."""
+from invenio_accounts.models import User
 
-WORKFLOWS_PLOTEXTRACT_TIMEOUT = 5 * 60
-"""Time in seconds a plotextract task is allowed to run before it is killed."""
+
+login_blueprint = Blueprint(
+    'inspirehep_accounts_login',
+    __name__,
+)
+
+
+@login_blueprint.route('/login', methods=['POST'])
+def login():
+    body = request.get_json()
+    email = body['email']
+    password = body['password']
+    user = User.query.filter_by(email=email).one_or_none()
+    if user and verify_password(password, user.password):
+        login_user(user)
+        return jsonify({
+            'data': {
+                'email': user.email,
+                'roles': [role.name for role in user.roles]
+            }
+        })
+    return jsonify({
+        'message': 'Email or password is incorrect'
+    }), 422

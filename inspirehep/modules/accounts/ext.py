@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2014-2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,13 +20,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Workflows configuration."""
+"""Accounts extension."""
 
 from __future__ import absolute_import, division, print_function
 
+from .views.login import login_blueprint
 
-WORKFLOWS_REFEXTRACT_TIMEOUT = 10 * 60
-"""Time in seconds a refextract task is allowed to run before it is killed."""
 
-WORKFLOWS_PLOTEXTRACT_TIMEOUT = 5 * 60
-"""Time in seconds a plotextract task is allowed to run before it is killed."""
+class InspireAccounts(object):
+    def __init__(self, app=None):
+        if app:
+            self.init_app(app)
+
+    def init_app(self, app):
+        enable_login = app.config.get('DANGEROUSLY_ENABLE_LOCAL_LOGIN', False)
+        if enable_login:
+            app.register_blueprint(login_blueprint)
+        app.extensions['inspire-authors'] = self

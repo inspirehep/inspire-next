@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,19 +14,20 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+# along with INSPIRE. If not, see <http://www.gnu.org/lice nses/>.
 #
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Workflows configuration."""
-
 from __future__ import absolute_import, division, print_function
 
 
-WORKFLOWS_REFEXTRACT_TIMEOUT = 10 * 60
-"""Time in seconds a refextract task is allowed to run before it is killed."""
+LOGIN_RULE_ENDPOINT_NAME = 'inspirehep_accounts_login.login'
 
-WORKFLOWS_PLOTEXTRACT_TIMEOUT = 5 * 60
-"""Time in seconds a plotextract task is allowed to run before it is killed."""
+
+def test_login_is_not_registered_by_default(isolated_api):
+    iter_rules = isolated_api.url_map.iter_rules()
+    login_rule = next(
+        (rule for rule in iter_rules if rule.endpoint == LOGIN_RULE_ENDPOINT_NAME), None)
+    assert login_rule is None

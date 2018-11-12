@@ -26,15 +26,15 @@ from mock import patch
 
 from inspire_schemas.api import load_schema, validate
 from inspire_utils.record import get_value
-from inspirehep.modules.workflows.tasks.refextract import (
+from inspirehep.modules.refextract.matcher import (
+    match_reference,
     match_references,
-    match_reference
 )
 
 from factories.db.invenio_records import TestRecordMetadata
 
 
-def test_match_reference_for_jcap_and_jhep_config():
+def test_match_reference_for_jcap_and_jhep_config(isolated_app):
     """Test reference matcher for the JCAP and JHEP configuration"""
 
     cited_record_json = {
@@ -83,7 +83,7 @@ def test_match_reference_for_jcap_and_jhep_config():
     assert validate([reference], subschema) is None
 
 
-def test_match_reference_for_data_config():
+def test_match_reference_for_data_config(isolated_app):
     """Test reference matcher for the JCAP and JHEP configuration"""
 
     cited_record_json = {
@@ -116,7 +116,7 @@ def test_match_reference_for_data_config():
     assert reference['record']['$ref'] == 'http://localhost:5000/api/data/1'
 
 
-def test_match_references_matches_when_multiple_match_if_same_as_previous():
+def test_match_references_matches_when_multiple_match_if_same_as_previous(isolated_app):
     """Test reference matcher for when inspire-matcher returns multiple matches
     where the matched record id is one of the previous matched record id as well"""
 
@@ -203,7 +203,7 @@ def test_match_references_matches_when_multiple_match_if_same_as_previous():
     assert validate(matched_references, subschema) is None
 
 
-def test_match_references_no_match_when_multiple_match_different_from_previous():
+def test_match_references_no_match_when_multiple_match_different_from_previous(isolated_app):
     """Test reference matcher for when inspire-matcher returns multiple matches
     where the matched record id is not the same as the previous matched record id"""
 
@@ -279,7 +279,7 @@ def test_match_references_no_match_when_multiple_match_different_from_previous()
     assert validate(references, subschema) is None
 
 
-def test_match_reference_on_texkey():
+def test_match_reference_on_texkey(isolated_app):
     cited_record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         '_collections': ['Literature'],
@@ -314,7 +314,7 @@ def test_match_reference_on_texkey():
     assert validate([reference], subschema) is None
 
 
-def test_match_reference_ignores_hidden_collections():
+def test_match_reference_ignores_hidden_collections(isolated_app):
     cited_record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         '_collections': ['HAL Hidden'],
@@ -343,7 +343,7 @@ def test_match_reference_ignores_hidden_collections():
     assert 'record' not in reference
 
 
-def test_match_reference_ignores_deleted():
+def test_match_reference_ignores_deleted(isolated_app):
     cited_record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         '_collections': ['Literature'],
@@ -373,7 +373,7 @@ def test_match_reference_ignores_deleted():
     assert 'record' not in reference
 
 
-def test_match_reference_doesnt_touch_curated():
+def test_match_reference_doesnt_touch_curated(isolated_app):
     cited_record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         '_collections': ['Literature'],
@@ -407,26 +407,27 @@ def test_match_reference_doesnt_touch_curated():
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.refextract.match',
+    'inspirehep.modules.refextract.matcher.match',
     return_value=[
         {
-            u'_score': 1.6650109,
-            u'_type': u'hep',
-            u'_id': u'AWRuwf9plgR0Y_yvhtt4',
-            u'_source': {u'control_number': 1},
-            u'_index': u'records-hep'
+            '_score': 1.6650109,
+            '_type': 'hep',
+            '_id': 'AWRuwf9plgR0Y_yvhtt4',
+            '_source': {'control_number': 1},
+            '_index': 'records-hep'
         },
         {
-            u'_score': 3.2345618,
-            u'_type': u'hep',
-            u'_id': u'AWRuwf9plgR0Y_yvhtt4',
-            u'_source': {u'control_number': 1},
-            u'_index': u'records-hep'
+            '_score': 3.2345618,
+            '_type': 'hep',
+            '_id': 'AWRuwf9plgR0Y_yvhtt4',
+            '_source': {'control_number': 1},
+            '_index': 'records-hep'
         }
     ],
 )
 def test_match_references_finds_match_when_repeated_record_with_different_scores(
-    mocked_inspire_matcher_match
+    mocked_inspire_matcher_match,
+    isolated_app
 ):
     references = [
         {

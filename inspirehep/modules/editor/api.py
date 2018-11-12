@@ -42,6 +42,7 @@ from inspirehep.modules.editor.permissions import (
     editor_use_api_permission,
 )
 from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
+from inspirehep.modules.refextract.matcher import match_references
 from inspirehep.modules.tools import authorlist
 from inspirehep.utils import tickets
 from inspirehep.utils.record_getter import get_db_record
@@ -93,7 +94,7 @@ def refextract_text():
             reference_format=u'{title},{volume},{page}'
         )
     references = map_refextract_to_schema(extracted_references)
-
+    references = match_references(references)
     return jsonify(references)
 
 
@@ -108,7 +109,7 @@ def refextract_url():
             reference_format=u'{title},{volume},{page}'
         )
     references = map_refextract_to_schema(extracted_references)
-
+    references = match_references(references)
     return jsonify(references)
 
 
@@ -287,3 +288,10 @@ def upload_files():
         full_url = fs.getsyspath(filename)
 
     return jsonify({'path': full_url})
+
+
+@blueprint_api.route('/linked_references', methods=['POST'])
+def get_linked_refs():
+    data = request.json
+    matched_refs = match_references(data['references'])
+    return jsonify({'references': matched_refs})

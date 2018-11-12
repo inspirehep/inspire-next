@@ -235,6 +235,9 @@ def index_modified_citations_from_record(self, pid_type, pid_value, db_version):
     Raise:
       MissingCitedRecordError in case cited records are not found
     """
+    logger.info("Starting index_modified_citations_from_record for {pid_value}"
+                " with db version: {db_version}".format(
+                    pid_value=pid_value, db_version=db_version))
     try:
         record = get_db_record(pid_type, pid_value)
         if record.model.version_id < db_version:
@@ -246,6 +249,10 @@ def index_modified_citations_from_record(self, pid_type, pid_value, db_version):
                 (pid_type, pid_value), db_version)
         )
         backoff = 2 ** (self.request.retries + 1)
+        if self.max_retries < self.request.retries + 1:
+            logger.warn("({pid_value}) - Failing - too many retries".format(
+                pid_value=pid_value)
+            )
         raise self.retry(countdown=backoff, exc=e)
 
     pids = record.get_modified_references()
@@ -253,6 +260,11 @@ def index_modified_citations_from_record(self, pid_type, pid_value, db_version):
     if not pids:
         logger.info('No references change for record {}'.format((pid_type, pid_value)))
         return None
+    logger.info(
+        "({pid_value}) There are {count_pids}"
+        " records references changed".format(pid_value=pid_value,
+                                             count_pids=len(pids))
+    )
 
     uuids = [
         str(pid.object_uuid) for pid in
@@ -263,6 +275,9 @@ def index_modified_citations_from_record(self, pid_type, pid_value, db_version):
     ]
 
     if uuids:
+        logger.info("({pid_value}) contains pids - starting batch".format(
+            pid_value=pid_value)
+        )
         return batch_reindex(uuids)
 
     raise MissingCitedRecordError(

@@ -51,6 +51,9 @@ def vcr_config():
             'test-rabbitmq',
             'test-worker',
             'test-web',
+            # Allow using the metrics ES for debugging-purpose.
+            'inspire-qa-logs-client2.cern.ch',
+            'inspire-qa-logs-client1.cern.ch',
         ),
         'record_mode': record_mode,
     }

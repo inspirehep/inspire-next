@@ -1182,7 +1182,7 @@ def test_validate_record_raises_when_record_is_invalid():
 
 @patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow')
 @patch(
-    'inspirehep.modules.workflows.tasks.refextract.match',
+    'inspirehep.modules.refextract.matcher.match',
     return_value=iter([])
 )
 def test_refextract_from_text(mock_match, mock_get_document_in_workflow):
@@ -1210,7 +1210,7 @@ def test_refextract_from_text(mock_match, mock_get_document_in_workflow):
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.refextract.match',
+    'inspirehep.modules.refextract.matcher.match',
     return_value=iter([])
 )
 def test_refextract_from_raw_refs(mock_match):
@@ -1241,7 +1241,7 @@ def test_refextract_from_raw_refs(mock_match):
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.refextract.match',
+    'inspirehep.modules.refextract.matcher.match',
     return_value=iter([])
 )
 def test_refextract_valid_refs_from_raw_refs(mock_match):
@@ -1276,7 +1276,7 @@ def test_refextract_valid_refs_from_raw_refs(mock_match):
 
 @patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow')
 @patch(
-    'inspirehep.modules.workflows.tasks.refextract.match',
+    'inspirehep.modules.refextract.matcher.match',
     return_value=iter([])
 )
 def test_refextract_valid_refs_from_text(mock_match, mock_get_document_in_workflow):

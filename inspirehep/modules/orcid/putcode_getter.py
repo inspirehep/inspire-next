@@ -72,12 +72,12 @@ class OrcidPutcodeGetter(object):
         return list(response.get_putcodes_for_source(self.source_client_id_path))
 
     def _get_urls_for_putcodes(self, putcodes):
-        # The call get_bulk_works_details() can be very expensive for an
+        # The call get_bulk_works_details_iter() can be very expensive for an
         # author with many works (if each work also has many *contributors*).
         # Fi. for an ATLAS author with ~750 works, 8 calls would be performed
         # with a total data transfer > 0.5 Gb.
         chained = []
-        for response in self.client.get_bulk_works_details(putcodes):
+        for response in self.client.get_bulk_works_details_iter(putcodes):
             utils.log_service_response(logger, response, 'in OrcidPutcodeGetter works details')
             try:
                 response.raise_for_result()

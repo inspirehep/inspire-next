@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2017 CERN.
+# Copyright (C) 2014-2018 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,13 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Workflows configuration."""
+"""INSPIRE Accounts module."""
 
 from __future__ import absolute_import, division, print_function
 
-
-WORKFLOWS_REFEXTRACT_TIMEOUT = 10 * 60
-"""Time in seconds a refextract task is allowed to run before it is killed."""
-
-WORKFLOWS_PLOTEXTRACT_TIMEOUT = 5 * 60
-"""Time in seconds a plotextract task is allowed to run before it is killed."""
+from .ext import InspireAccounts  # noqa: F401
