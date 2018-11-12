@@ -68,8 +68,8 @@ from inspirehep.modules.workflows.tasks.actions import (
 from inspirehep.modules.workflows.tasks.classifier import (
     classify_paper,
     filter_core_keywords,
-    guess_coreness,
 )
+from inspirehep.modules.workflows.tasks.beard import guess_coreness
 from inspirehep.modules.workflows.tasks.magpie import (
     guess_keywords,
     guess_categories,

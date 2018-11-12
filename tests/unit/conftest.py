@@ -33,9 +33,6 @@ from inspirehep.factory import create_app
 # See: http://stackoverflow.com/a/33515264/374865
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
 
-IS_VCR_ENABLED = True
-IS_VCR_EPISODE_OR_ERROR = True  # False to record new cassettes.
-
 
 @pytest.fixture(autouse=True, scope='session')
 def app():
@@ -94,35 +91,3 @@ def request_context(app):
     """
     with app.test_request_context() as request_context:
         yield request_context
-
-
-@pytest.fixture
-def vcr_config(vcr_config):
-    if IS_VCR_EPISODE_OR_ERROR:
-        record_mode = 'none'
-    else:
-        record_mode = 'new_episodes'
-
-    if not IS_VCR_ENABLED:
-        # Trick to disable VCR.
-        return {'before_record': lambda *args, **kwargs: None}
-
-    vcr_config.update({
-        'record_mode': record_mode,
-    })
-    return vcr_config
-
-
-# NOTE: a desired side effect of this auto-used fixture is that VCR is used
-# in all tests, no need to mark them with: @pytest.mark.vcr()
-# This effect is desired to avoid any network interaction apart from those
-# to the listed in vcr_config > ignore_hosts.
-@pytest.fixture(autouse=True, scope='function')
-def assert_all_played(request, vcr_cassette):
-    """
-    Ensure that all all episodes have been played in the current test.
-    Only if the current test has a cassette.
-    """
-    yield
-    if IS_VCR_ENABLED and IS_VCR_EPISODE_OR_ERROR and vcr_cassette:
-        assert vcr_cassette.all_played

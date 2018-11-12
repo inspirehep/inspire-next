@@ -30,7 +30,7 @@ IS_VCR_EPISODE_OR_ERROR = True  # False to record new cassettes.
 
 
 @pytest.fixture
-def vcr_config(vcr_config):
+def vcr_config():
     if IS_VCR_EPISODE_OR_ERROR:
         record_mode = 'none'
     else:
@@ -40,10 +40,30 @@ def vcr_config(vcr_config):
         # Trick to disable VCR.
         return {'before_record': lambda *args, **kwargs: None}
 
-    vcr_config.update({
+    return {
+        'decode_compressed_response': True,
+        'filter_headers': ('Authorization', 'User-Agent'),
+        'ignore_hosts': (
+            'localhost',
+            'test-indexer',
+            'test-redis',
+            'test-database',
+            'test-rabbitmq',
+            'test-worker',
+            'test-web',
+        ),
         'record_mode': record_mode,
-    })
-    return vcr_config
+    }
+
+
+@pytest.fixture
+def vcr(vcr):
+    vcr.register_matcher(
+        'accept',
+        lambda r1, r2: r1.headers.get('Accept') == r2.headers.get('Accept'),
+    )
+    vcr.match_on = ['method', 'scheme', 'host', 'port', 'path', 'query', 'accept']
+    return vcr
 
 
 # NOTE: a desired side effect of this auto-used fixture is that VCR is used

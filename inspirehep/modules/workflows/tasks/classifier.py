@@ -24,12 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-import requests
-from flask import current_app
 from functools import wraps
 
 from inspire_utils.record import get_value
-from inspirehep.modules.workflows.utils import json_api_request
 from invenio_classifier import (
     get_keywords_from_local_file,
     get_keywords_from_text,
@@ -39,73 +36,6 @@ from invenio_classifier.reader import KeywordToken
 
 from ..proxies import antihep_keywords
 from ..utils import with_debug_logging, get_document_in_workflow
-
-
-CLASSIFIER_MAPPING = {
-    "core": "CORE",
-    "non-core": "Non-CORE",
-    "rejected": "Rejected"
-}
-
-
-def get_classifier_url():
-    """Return the classifier URL endpoint, if any."""
-    base_url = current_app.config.get('CLASSIFIER_API_URL')
-    if not base_url:
-        return
-
-    return '{base_url}/api/predict/core'.format(base_url=base_url)
-
-
-def prepare_payload(record):
-    """Prepare payload to send to Inspire Classifier."""
-    payload = dict(title="", abstract="")
-    titles = filter(None, get_value(record, "titles.title", []))
-    if titles:
-        payload['title'] = titles[0]
-    abstracts = filter(None, get_value(record, "abstracts.value", []))
-    if abstracts:
-        payload['abstract'] = abstracts[0]
-    return payload
-
-
-@with_debug_logging
-def guess_coreness(obj, eng):
-    """Workflow task to ask inspire classifier for a coreness assessment."""
-    predictor_url = get_classifier_url()
-    if not predictor_url:
-        return
-
-    # FIXME: Have option to select different prediction models when
-    # available in the API
-    payload = prepare_payload(obj.data)
-
-    try:
-        results = json_api_request(predictor_url, payload)
-    except requests.exceptions.RequestException:
-        results = {}
-
-    if results:
-        scores = results["scores"]
-        max_score = max(scores["core_score"], scores["non_core_score"], scores["rejected_score"])
-        decision = CLASSIFIER_MAPPING[results["prediction"]]
-        scores = {
-            "CORE": scores["core_score"],
-            "Non-CORE": scores["non_core_score"],
-            "Rejected": scores["rejected_score"],
-        }
-        # Generate a normalized relevance_score useful for sorting
-        relevance_score = max_score
-        # FIXME: Add top_words info when available from the API
-        obj.extra_data["relevance_prediction"] = dict(
-            max_score=max_score,
-            decision=decision,
-            scores=scores,
-            relevance_score=relevance_score
-        )
-        current_app.logger.info("Prediction results: {0}".format(
-            obj.extra_data["relevance_prediction"])
-        )
 
 
 @with_debug_logging

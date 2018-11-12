@@ -50,9 +50,6 @@ from factories.db.invenio_records import (
 )  # noqa
 
 
-IS_VCR_ENABLED = True
-IS_VCR_EPISODE_OR_ERROR = True  # False to record new cassettes.
-
 HIGGS_ONTOLOGY = '''<?xml version="1.0" encoding="UTF-8" ?>
 
 <rdf:RDF xmlns="http://www.w3.org/2004/02/skos/core#"
@@ -323,35 +320,3 @@ def record_to_merge(workflow_app):
     pid.delete()
     record.delete()
     record.commit()
-
-
-@pytest.fixture
-def vcr_config(vcr_config):
-    if IS_VCR_EPISODE_OR_ERROR:
-        record_mode = 'none'
-    else:
-        record_mode = 'new_episodes'
-
-    if not IS_VCR_ENABLED:
-        # Trick to disable VCR.
-        return {'before_record': lambda *args, **kwargs: None}
-
-    vcr_config.update({
-        'record_mode': record_mode,
-    })
-    return vcr_config
-
-
-# NOTE: a desired side effect of this auto-used fixture is that VCR is used
-# in all tests, no need to mark them with: @pytest.mark.vcr()
-# This effect is desired to avoid any network interaction apart from those
-# to the listed in vcr_config > ignore_hosts.
-@pytest.fixture(autouse=True, scope='function')
-def assert_all_played(request, vcr_cassette):
-    """
-    Ensure that all all episodes have been played in the current test.
-    Only if the current test has a cassette.
-    """
-    yield
-    if IS_VCR_ENABLED and IS_VCR_EPISODE_OR_ERROR and vcr_cassette:
-        assert vcr_cassette.all_played
