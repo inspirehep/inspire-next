@@ -417,6 +417,11 @@ def test_refextract_url(log_in_as_cataloger, api_client):
             content=pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', '1612.06414.pdf')),
         )
+        requests_mocker.register_uri(
+            'GET', 'http://test-indexer:9200/records-hep/hep/_search?_source=control_number',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', 'es_response.json')),
+        )
 
         response = api_client.post(
             '/editor/refextract/url',

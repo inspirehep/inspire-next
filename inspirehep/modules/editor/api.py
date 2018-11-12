@@ -94,7 +94,7 @@ def refextract_text():
             reference_format=u'{title},{volume},{page}'
         )
     references = map_refextract_to_schema(extracted_references)
-
+    references = match_references(references)
     return jsonify(references)
 
 
@@ -109,7 +109,7 @@ def refextract_url():
             reference_format=u'{title},{volume},{page}'
         )
     references = map_refextract_to_schema(extracted_references)
-
+    references = match_references(references)
     return jsonify(references)
 
 
