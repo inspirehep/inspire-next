@@ -24,10 +24,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+from functools import partial
+
 from flask import Blueprint, request, abort
 from invenio_rest.views import ContentNegotiatedMethodView
 from invenio_records_rest.views import pass_record
 
+from inspirehep.modules.search import LiteratureSearch
 from inspirehep.modules.search.search_factory import inspire_facets_factory
 from .serializers import json_literature_citations_v1_response, \
     json_literature_search_aggregations_ui_v1
@@ -83,25 +86,41 @@ blueprint.add_url_rule(
 
 
 class Facets(ContentNegotiatedMethodView):
-    view_name = 'literature_facets'
+    view_name = '{0}_facets'
 
     def __init__(self, **kwargs):
+        search_factory = kwargs.pop('search_factory', inspire_facets_factory)
+        self.search_factory = partial(search_factory, self)
+        self.search_class = kwargs.pop('seartch_class', LiteratureSearch)
+        default_media_type = kwargs.pop('default_media_type',
+                                        'application/vnd+inspire.record.ui+json')
+        serializers = kwargs.pop('serializers', {
+            'application/vnd+inspire.record.ui+json': json_literature_search_aggregations_ui_v1
+        })
+        pid_type = kwargs.pop('pid_type', 'lit')
         super(Facets, self).__init__(
-            serializers={
-                'application/json': json_literature_search_aggregations_ui_v1
-            },
+            serializers=serializers,
             default_method_media_type={
-                'GET': 'application/json',
+                'GET': default_media_type,
             },
-            default_media_type='application/json',
+            default_media_type=default_media_type,
             **kwargs)
+        self.pid_type = pid_type
 
     def get(self, *args, **kwargs):
-        q = request.values.get('q', '', type=str)
-        query, urlkwargs = inspire_facets_factory(q)
-        results = query.execute()
+        urlkwargs = dict()
+        search_obj = self.search_class()
+        search = search_obj.with_preference_param().params(version=True)
 
-        return json_literature_search_aggregations_ui_v1(0, results)
+        search, qs_kwargs = self.search_factory(search)
+        urlkwargs.update(qs_kwargs)
+
+        # Execute search
+        search_result = search.execute()
+
+        return self.make_response(
+            query_results=search_result,
+        )
 
 
 facets_view = Facets.as_view(
