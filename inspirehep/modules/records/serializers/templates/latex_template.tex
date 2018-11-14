@@ -1,0 +1,47 @@
+{%- macro format_list(element_list) -%}
+    {%- for elem in element_list -%}
+        \VAR{ elem }
+        {%- if loop.revindex == 2 %} and {% elif not loop.last %}, {% endif -%}
+    {%- endfor -%}
+{%- endmacro -%}
+%\cite{\VAR{ data.texkeys }}
+\bibitem{\VAR{ data.texkeys }}
+\VAR{- '\n' if 'authors' in data or 'collaborations' in data }
+{%- if 'collaborations' in data -%}
+    {%- if 'authors' in data -%}
+        \VAR{ data.authors.0 }
+        \VAR{- ' \\textit{et al.}' if data.authors|length > 1 }
+    {%- endif -%}
+    \VAR{ ' [' }
+    \VAR{- format_list(data.collaborations) }
+    \VAR{- ']' }
+{%- else -%}
+    \VAR{- format_list(data.authors) }
+{%- endif -%}
+\VAR{ '\n%``' ~ data.titles.0.title ~ ",''" }
+{%- if 'journal_title' in data.publication_info -%}
+    \VAR{- '\n' }
+    \VAR{- data.publication_info.journal_title }
+    \VAR{- ' \\textbf{' ~ data.publication_info.journal_volume ~ '}' if 'journal_volume' in data.publication_info }
+    {%- if format == 'EU' -%}
+        \VAR{- ' (' ~ data.publication_info.year ~ ')' if 'year' in data.publication_info }
+        \VAR{- ' no.' ~ data.publication_info.journal_issue if 'journal_issue' in data.publication_info }
+        {%- if 'page_range' in data.publication_info -%}
+            \VAR{ ', ' ~ data.publication_info.page_range }
+        {%- elif 'artid' in data.publication_info -%}
+            \VAR{ ', ' ~ data.publication_info.artid }
+        {%- endif -%}
+    {%- elif format == 'US' -%}
+        \VAR{ ', no.' ~ data.publication_info.journal_issue if 'journal_issue' in data.publication_info }
+        {%- if 'page_range' in data.publication_info -%}
+            \VAR{ ', ' ~ data.publication_info.page_range }
+        {%- elif 'artid' in data.publication_info -%}
+            \VAR{ ', ' ~ data.publication_info.artid }
+        {%- endif -%}
+        \VAR{- ' (' ~ data.publication_info.year ~ ')' if 'year' in data.publication_info }
+    {%- endif -%}
+{%- endif -%}
+\VAR{- '\ndoi:' ~ data.dois.0.value if 'dois' in data }
+\VAR{- '\n[arxiv:' ~ data.arxiv_eprints.0.value ~ ' [' ~ data.arxiv_eprints.0.categories.0 ~ ']].' if 'arxiv_eprints' in data }
+\VAR{- '\n' ~ data.report_numbers.0.value ~ '.' if 'dois' not in data and 'arxiv_eprints' not in data and 'report_numbers' in data }
+\VAR{- '\n%' ~ data.citations ~ ' counted in INSPIRE as of ' ~ data.today if data.citations != 0 }

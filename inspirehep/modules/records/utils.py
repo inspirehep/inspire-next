@@ -96,7 +96,7 @@ def get_pid_from_record_uri(record_uri):
 def get_author_display_name(name):
     """Returns the display name in format Firstnames Lastnames"""
     parsed_name = ParsedName.loads(name)
-    return " ".join(parsed_name.first_list + parsed_name.middle_list + parsed_name.last_list)
+    return " ".join(parsed_name.first_list + parsed_name.last_list)
 
 
 def get_linked_records_in_field(record, field_path):
