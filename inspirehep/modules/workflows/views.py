@@ -36,6 +36,7 @@ from flask import (
     request,
 )
 from flask.views import MethodView
+from flask_login import current_user
 from inspire_schemas.api import validate
 from inspire_utils.urls import ensure_scheme
 from invenio_db import db
@@ -679,20 +680,21 @@ def start_edit_article_workflow(recid):
     record_permission = RecordPermission.create(action='update', record=record)
     if not record_permission.can():
         abort(403, record_permission)
-
+    # has to be done before start() since, it is deattaching this session
+    user_id = current_user.get_id()
     eng_uuid = start('edit_article', data=record)
     workflow_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
     workflow = workflow_object_class.get(workflow_id)
-
+    workflow.id_user = user_id
     if request.referrer:
         base_rt_url = get_rt_link_for_ticket('').replace('?', '\?')
         ticket_match = re.match(base_rt_url + '(?P<ticket_id>\d+)', request.referrer)
         if ticket_match:
             ticket_id = int(ticket_match.group('ticket_id'))
             workflow.extra_data['curation_ticket_id'] = ticket_id
-            workflow.save()
-            db.session.commit()
 
+    workflow.save()
+    db.session.commit()
     url = "{}{}".format(current_app.config['WORKFLOWS_EDITOR_API_URL'], workflow_id)
     return redirect(location=url, code=302)
 
