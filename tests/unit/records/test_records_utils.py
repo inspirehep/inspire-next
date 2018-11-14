@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from mock import patch
+
 from inspire_schemas.api import load_schema, validate
 from inspire_utils.name import generate_name_variations
 
@@ -40,6 +42,7 @@ from inspirehep.modules.records.utils import (
     populate_recid_from_ref,
     populate_title_suggest,
     populate_number_of_references,
+    populate_facet_author_name,
 )
 
 
@@ -946,3 +949,49 @@ def test_get_pid_from_record_uri_ending_slash():
 def test_get_pid_from_record_uri_non_url():
     record_uri = 'non-url-string'
     assert not get_pid_from_record_uri(record_uri)
+
+
+@patch('inspirehep.modules.records.utils.get_linked_records_in_field')
+def test_populate_facet_author_name(mocked_get_linked_records_in_field):
+    authors_json = [
+        {
+            '$schema': 'http://localhost:5000/records/schemas/authors.json',
+            'name': {'value': 'Silk, James Brian'},
+            '_collections': ['Authors'],
+            'ids': [{'schema': 'INSPIRE BAI', 'value': 'James.Brian.1'}],
+            'control_number': 111,
+        },
+        {
+            '$schema': 'http://localhost:5000/records/schemas/authors.json',
+            'name': {'value': 'Doe, John', 'preferred_name': 'J Doe'},
+            '_collections': ['Authors'],
+            'ids': [{'schema': 'INSPIRE BAI', 'value': 'John.Doe.1'}],
+            'control_number': 222,
+        }
+    ]
+
+    mocked_get_linked_records_in_field.return_value = iter(authors_json)
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['authors']
+    record = {
+        '$schema': 'http://localhost:5000/records/schemas/hep.json',
+        'authors': [
+            {
+                'full_name': 'Silk, James Brian',
+                'record': {'$ref': 'https://labs.inspirehep.net/api/literature/111'}
+            },
+            {
+                'full_name': 'Doe, John',
+                'record': {'$ref': 'https://labs.inspirehep.net/api/literature/222'}
+            },
+            {
+                'full_name': 'Rohan, George',
+            },
+        ],
+    }
+
+    expected_result = [u'James.Brian.1_James Brian Silk', u'John.Doe.1_J Doe', u'BAI_George Rohan']
+    assert validate(record['authors'], subschema) is None
+    populate_facet_author_name(record)
+    assert record['facet_author_name'] == expected_result

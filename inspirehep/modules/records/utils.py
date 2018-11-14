@@ -31,7 +31,7 @@ import six
 
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.date import earliest_date
-from inspire_utils.name import generate_name_variations
+from inspire_utils.name import generate_name_variations, ParsedName
 from inspire_utils.record import get_value
 from inspire_utils.helpers import force_list
 from invenio_db import db
@@ -91,6 +91,12 @@ def get_pid_from_record_uri(record_uri):
         return None
 
     return pid_type, pid_value
+
+
+def get_author_display_name(name):
+    """Returns the display name in format Firstnames Lastnames"""
+    parsed_name = ParsedName.loads(name)
+    return " ".join(parsed_name.first_list + parsed_name.middle_list + parsed_name.last_list)
 
 
 def get_linked_records_in_field(record, field_path):
@@ -412,6 +418,25 @@ def populate_authors_full_name_unicode_normalized(json):
         json['authors'][index].update({
             'full_name_unicode_normalized': normalize('NFKC', full_name).lower()
         })
+
+
+def populate_facet_author_name(json):
+    """Populate the ``facet_author_name`` field of Literature records."""
+    linked_authors = list(get_linked_records_in_field(json, 'authors.record'))
+    unlinked_authors = [author for author in json.get('authors', []) if 'record' not in author]
+    result = []
+
+    for author in linked_authors:
+        bai = [id['value'] for id in author['ids'] if id['schema'] == 'INSPIRE BAI'][0]
+        if 'preferred_name' in author['name']:
+            result.append(u'{}_{}'.format(bai, author['name']['preferred_name']))
+        else:
+            result.append(u'{}_{}'.format(bai, get_author_display_name(author['name']['value'])))
+
+    for author in unlinked_authors:
+        result.append(u'BAI_{}'.format(get_author_display_name(author['full_name'])))
+
+    json['facet_author_name'] = result
 
 
 def get_citations_from_es(record, page=1, size=10):

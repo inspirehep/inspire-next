@@ -77,6 +77,7 @@ def hep_author_publications():
                 "meta": {
                     "title": "Collaborators",
                     "order": 3,
+                    "split": True,
                 },
             },
             "doc_type": {

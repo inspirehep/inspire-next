@@ -74,6 +74,7 @@ from inspirehep.modules.records.utils import (
     populate_number_of_references,
     populate_recid_from_ref,
     populate_title_suggest,
+    populate_facet_author_name,
 )
 from inspirehep.modules.records.indexer import InspireRecordIndexer
 
@@ -203,6 +204,7 @@ def enhance_before_index(sender, json, record, *args, **kwargs):
         populate_name_variations(json)
         populate_number_of_references(json)
         populate_citations_count(record=record, json=json)
+        populate_facet_author_name(json)
 
     elif is_author(json):
         populate_authors_name_variations(json)
