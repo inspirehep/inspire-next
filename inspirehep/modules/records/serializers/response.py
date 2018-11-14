@@ -62,7 +62,7 @@ def facets_responsify(serializer, mimetype):
 
     """
 
-    def view(pid, query_results, code=200, headers=None, links_factory=None):
+    def view(query_results, code=200, headers=None, links_factory=None):
         response = current_app.response_class(
             serializer.serialize_facets(query_results),
             mimetype=mimetype)

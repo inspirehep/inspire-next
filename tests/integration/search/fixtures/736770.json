@@ -1,0 +1,64 @@
+{
+  "preprint_date": "2006",
+  "citeable": true,
+  "_collections": [
+    "Literature"
+  ],
+  "control_number": 736770,
+  "self": {
+    "$ref": "http://localhost:5000/api/literature/736770"
+  },
+  "number_of_pages": 714,
+  "_desy_bookkeeping": [
+    {
+      "identifier": "D07-02271"
+    }
+  ],
+  "inspire_categories": [
+    {
+      "term": "Math and Math Physics"
+    }
+  ],
+  "titles": [
+    {
+      "title": "Differential geometry and Lie groups for physicists"
+    }
+  ],
+  "texkeys": [
+    "Fecko:2006zy"
+  ],
+  "legacy_creation_date": "2015-07-27",
+  "authors": [
+    {
+      "uuid": "bf54f97d-9e5c-4c31-9d20-0cb06f691176",
+      "ids": [
+        {
+          "value": "M.Fecko.1",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "raw_affiliations": [
+        {
+          "value": "Comenius University, Bratislava"
+        }
+      ],
+      "affiliations": [
+        {
+          "value": "Comenius U."
+        }
+      ],
+      "full_name": "Fecko, M.",
+      "signature_block": "FACm"
+    }
+  ],
+  "publication_info": [
+    {
+      "year": 2011
+    }
+  ],
+  "$schema": "http://localhost:5000/schemas/records/hep.json",
+  "document_type": [
+    "book"
+  ],
+  "legacy_version": "20150727111255.0"
+}
