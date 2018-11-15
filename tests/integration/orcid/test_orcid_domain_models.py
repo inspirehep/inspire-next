@@ -78,9 +78,8 @@ class TestOrcidPusherCache(object):
         self.cache.write_work_putcode(putcode, cache_inspire_record)
 
         pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
-        with mock.patch.object(OrcidClient, 'put_updated_work') as mock_put_updated_work:
-            pusher.push()
-        mock_put_updated_work.assert_called_once_with(mock.ANY, putcode)
+        pusher._post_or_put_work = lambda *args, **kwargs: putcode
+        pusher.push()
 
 
 def get_local_access_tokens(orcid):
