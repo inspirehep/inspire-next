@@ -79,6 +79,7 @@ class TestOrcidPusherCache(object):
 
         pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
         with mock.patch.object(OrcidClient, 'put_updated_work') as mock_put_updated_work:
+            mock_put_updated_work.return_value.__getitem__.return_value = '0000'
             pusher.push()
         mock_put_updated_work.assert_called_once_with(mock.ANY, putcode)
 
