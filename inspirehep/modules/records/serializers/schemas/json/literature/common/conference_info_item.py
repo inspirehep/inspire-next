@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 from marshmallow import Schema, pre_dump, fields
 
 from inspirehep.modules.records.utils import get_pid_from_record_uri
-from inspirehep.utils.record_getter import get_db_record
+from inspirehep.utils.record_getter import get_db_record, RecordGetterError
 
 
 class ConferenceInfoItemSchemaV1(Schema):
@@ -37,8 +37,13 @@ class ConferenceInfoItemSchemaV1(Schema):
         conference_record = pub_info_item.get('conference_record')
         if conference_record is None:
             return {}
+
         _, recid = get_pid_from_record_uri(conference_record.get('$ref'))
-        conference = get_db_record('con', recid)
+        try:
+            conference = get_db_record('con', recid)
+        except RecordGetterError:
+            return {}
+
         titles = conference.get('titles')
         if titles is None:
             return {}
