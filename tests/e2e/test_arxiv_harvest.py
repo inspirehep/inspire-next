@@ -35,7 +35,7 @@ from inspirehep.testlib.api.mitm_client import with_mitmproxy
 
 
 def wait_for(func, *args, **kwargs):
-    max_time = kwargs.pop('max_time', 200)
+    max_time = kwargs.pop('max_time', 400)
     interval = kwargs.pop('interval', 2)
 
     decorator = backoff.on_exception(
