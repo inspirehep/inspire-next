@@ -28,13 +28,11 @@ from flask import (
 )
 from flask.views import MethodView
 
-from sqlalchemy import desc
-from sqlalchemy.sql.expression import false
-
 from inspirehep.modules.migrator.permissions import migrator_use_api_permission
 
 from .dumper import migrator_error_list_dumper
 from .models import LegacyRecordsMirror
+from .utils import REAL_COLLECTIONS
 
 
 blueprint = Blueprint(
@@ -43,16 +41,18 @@ blueprint = Blueprint(
     url_prefix='/migrator',
 )
 
+NON_DELETED_COLLECTIONS = [collection for collection in REAL_COLLECTIONS if collection != 'DELETED']
+
 
 class MigratorErrorListResource(MethodView):
     """Return a list of errors belonging to invalid mirror records."""
     decorators = [migrator_use_api_permission.require(http_exception=403)]
 
     def get(self):
-        errors = LegacyRecordsMirror.query\
-            .filter(LegacyRecordsMirror.valid == false())\
-            .filter(LegacyRecordsMirror.collection != 'DELETED')\
-            .order_by(desc(LegacyRecordsMirror.last_updated)).all()
+        errors = LegacyRecordsMirror.query.filter(
+            LegacyRecordsMirror.valid.is_(False),
+            LegacyRecordsMirror.collection.in_(NON_DELETED_COLLECTIONS)
+        ).order_by(LegacyRecordsMirror.last_updated.desc()).all()
 
         data = {'data': errors}
         response = jsonify(migrator_error_list_dumper(data))
