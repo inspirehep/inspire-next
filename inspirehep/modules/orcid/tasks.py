@@ -193,10 +193,13 @@ def _register_user(name, email, orcid, token):
     return _link_user_and_token(user, name, orcid, token)
 
 
-@shared_task(ignore_result=True)
+@shared_task(ignore_result=True, bind=True)
 @time_execution
-def import_legacy_orcid_tokens():
-    """Task to import OAUTH ORCID tokens from legacy."""
+def import_legacy_orcid_tokens(self):
+    """
+    Celery task to import OAUTH ORCID tokens from legacy.
+    Note: bind=True for compatibility with @time_execution.
+    """
     if get_value(current_app.config, 'ORCID_APP_CREDENTIALS.consumer_key') is None:
         return
 
