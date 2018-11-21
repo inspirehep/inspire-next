@@ -25,7 +25,8 @@
 from __future__ import absolute_import, division, print_function
 
 import time_execution
-import inspire_service_orcid.conf
+from fqn_decorators.decorators import get_fqn
+from inspire_service_orcid import hooks as inspire_service_orcid_hooks
 
 from rt import AuthorizationError
 from time_execution.backends.threaded import ThreadedBackend
@@ -90,14 +91,26 @@ class INSPIREUtils(object):
             )
         origin = 'inspire_next'
 
+        hooks = [
+            inspire_service_orcid_hooks.status_code_hook,
+            inspire_service_orcid_hooks.orcid_error_code_hook,
+            inspire_service_orcid_hooks.orcid_service_exception_hook,
+            # Add other hooks here:
+            exception_hook,
+        ]
         time_execution.settings.configure(
             backends=[backend],
-            # hooks=(status_code_hook,),
+            hooks=hooks,
             origin=origin
         )
 
-        inspire_service_orcid.conf.settings.configure(
-            DO_ENABLE_METRICS=True,
-            METRICS_BACKENDS=[backend],
-            METRICS_ORIGIN=origin,
-        )
+
+def exception_hook(response, exception, metric, func_args, func_kwargs):
+    """
+    @time_execution hook to collect info about the raised exception.
+    """
+    if exception:
+        return {
+            'exc_fqn': get_fqn(exception.__class__),
+            'exc_str': str(exception),
+        }
