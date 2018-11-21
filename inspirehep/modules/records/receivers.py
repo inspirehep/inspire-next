@@ -30,6 +30,7 @@ import logging
 from flask import current_app
 from flask_sqlalchemy import models_committed
 from elasticsearch import NotFoundError
+from time_execution import time_execution
 
 from invenio_indexer.signals import before_record_index
 from invenio_records.models import RecordMetadata
@@ -121,6 +122,7 @@ def assign_uuid(sender, record, *args, **kwargs):
 
 
 @after_record_update.connect
+@time_execution
 def push_to_orcid(sender, record, *args, **kwargs):
     """If needed, queue the push of the new changes to ORCID."""
     if not current_app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']:

@@ -34,6 +34,7 @@ from celery import shared_task
 from redis import StrictRedis
 from requests.exceptions import RequestException
 from simplejson import loads
+from time_execution import time_execution
 
 from invenio_oauthclient.utils import oauth_link_external_id
 from invenio_oauthclient.models import RemoteToken, User, RemoteAccount, UserIdentity
@@ -193,6 +194,7 @@ def _register_user(name, email, orcid, token):
 
 
 @shared_task(ignore_result=True)
+@time_execution
 def import_legacy_orcid_tokens():
     """Task to import OAUTH ORCID tokens from legacy."""
     if get_value(current_app.config, 'ORCID_APP_CREDENTIALS.consumer_key') is None:
@@ -224,6 +226,7 @@ def import_legacy_orcid_tokens():
 
 
 @shared_task(bind=True)
+@time_execution
 def orcid_push(self, orcid, rec_id, oauth_token):
     """Celery task to push a record to ORCID.
 
