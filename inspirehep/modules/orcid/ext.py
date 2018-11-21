@@ -43,5 +43,5 @@ class InspireOrcid(object):
             CONSUMER_SECRET=app.config['ORCID_APP_CREDENTIALS']['consumer_secret'],
             REQUEST_TIMEOUT=30,
         )
-        # Metrics settings for inspire_service_orcid are configured in:
+        # Metrics hooks for inspire_service_orcid are configured in:
         # inspirehep/utils/ext.py::configure_appmetrics
