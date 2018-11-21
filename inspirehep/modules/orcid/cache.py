@@ -22,12 +22,13 @@
 
 from __future__ import absolute_import, division, print_function
 
-import flask
 import hashlib
+from StringIO import StringIO
 
+import flask
 from flask import current_app as app
 from redis import StrictRedis
-from StringIO import StringIO
+from time_execution import time_execution
 
 from .converter import OrcidConverter
 
@@ -59,6 +60,7 @@ class OrcidCache(object):
         """Return the string 'orcidcache:``orcid_value``:``recid``'"""
         return 'orcidcache:{}:{}'.format(self.orcid, self.recid)
 
+    @time_execution
     def write_work_putcode(self, putcode, inspire_record=None):
         """
         Write the putcode and the hash for the given (orcid, recid).
@@ -83,12 +85,14 @@ class OrcidCache(object):
 
         self.redis.hmset(self._key, data)
 
+    @time_execution
     def read_work_putcode(self):
         """Read the putcode for the given (orcid, recid)."""
         value = self.redis.hgetall(self._key)
         self._cached_hash_value = value.get('hash')
         return value.get('putcode')
 
+    @time_execution
     def has_work_content_changed(self, inspire_record):
         """
         True if the work content has changed compared to the cached version.

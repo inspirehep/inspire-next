@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 import logging
 
 from flask import current_app
+from time_execution import time_execution
 
 from inspire_service_orcid import exceptions as orcid_client_exceptions
 from inspire_service_orcid.client import OrcidClient
@@ -63,6 +64,7 @@ class OrcidPusher(object):
         self.client = OrcidClient(self.oauth_token, self.orcid)
         self.xml_element = None
 
+    @time_execution
     def push(self):
         putcode = self.cache.read_work_putcode()
         if not self.cache.has_work_content_changed(self.inspire_record):
@@ -89,6 +91,7 @@ class OrcidPusher(object):
         self.cache.write_work_putcode(putcode, self.inspire_record)
         return putcode
 
+    @time_execution
     def _post_or_put_work(self, putcode=None):
         # Note: if putcode is None, then it's a POST (it means the work is new).
         # Otherwise a PUT (it means the work already exists and it has the given
@@ -112,6 +115,7 @@ class OrcidPusher(object):
             raise exceptions.InputDataInvalidException(from_exc=exc)
         return putcode
 
+    @time_execution
     def _cache_all_author_putcodes(self):
         logger.info('New OrcidPusher cache all author putcodes for orcid={}'.format(self.orcid))
         putcode_getter = OrcidPutcodeGetter(self.orcid, self.oauth_token)

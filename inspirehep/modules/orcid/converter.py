@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import logging
+from time_execution import time_execution
 
 from inspire_utils.date import PartialDate
 from inspire_utils.record import get_value
@@ -82,6 +83,7 @@ class OrcidConverter(object):
         self.url_pattern = url_pattern
         self._bibtex_citation = None
 
+    @time_execution
     def get_xml(self, do_add_bibtex_citation=False):
         """Create an ORCID XML representation of the record.
 
@@ -255,6 +257,7 @@ class OrcidConverter(object):
             return None
 
     @property
+    @time_execution
     def bibtex_citation(self):
         if self._bibtex_citation is None:
             try:
