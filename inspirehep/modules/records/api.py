@@ -600,16 +600,25 @@ class InspireRecord(Record):
         return absolute_url(u'/api/{endpoint}/{control_number}'.format(endpoint=endpoint,
                                                                        control_number=pid_value))
 
+    def _get_index_ref(self):
+        """Return shorten version of pid_value/pid_type for proper querying with index"""
+        pid_value = self.get('control_number')
+        pid_type = get_pid_type_from_schema(self.get('$schema'))
+        endpoint = get_endpoint_from_pid_type(pid_type)
+        shorten_endpoint = endpoint[:3]
+        return "{pid_value}{shorten_endpoint}".format(pid_value=pid_value,
+                                                      shorten_endpoint=shorten_endpoint)
+
     def _query_citing_records(self, show_duplicates=False, session=None):
         """Returns records which cites this one."""
         if not session:
             session = db.session
-        ref = self._get_ref()
-        if not ref:
-            raise Exception("There is no $ref for this object")
+        index_ref = self._get_index_ref()
+        if not index_ref:
+            raise Exception("There is no index_ref for this object")
         citation_query = session.query(RecordMetadata).with_entities(RecordMetadata.id,
                                                                      RecordMetadata.json['control_number'])
-        citation_filter = referenced_records(RecordMetadata.json).contains([ref])
+        citation_filter = referenced_records(RecordMetadata.json).contains([index_ref])
         filter_deleted_records = or_(not_(type_coerce(RecordMetadata.json, JSONB).has_key('deleted')),  # noqa: W601
                                      not_(RecordMetadata.json['deleted'] == cast(True, JSONB)))
         only_literature_collection = type_coerce(RecordMetadata.json, JSONB)['_collections'].contains(['Literature'])

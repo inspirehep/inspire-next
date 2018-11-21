@@ -293,6 +293,55 @@ def test_conference_info_schema_with_record(isolated_app):
     assert expected == result
 
 
+def test_conference_info_schema_with_absent_record(isolated_app):
+    schema = LiteratureRecordSchemaJSONUIV1()
+    record = {
+        'metadata': {
+            'publication_info': [
+                {
+                    'artid': '02B006',
+                    'journal_title': 'PTEP',
+                    'journal_volume': '2012',
+                    'year': 2012,
+                    'conference_record': {
+                        '$ref': 'http://localhost:5000/api/journals/oops'
+                    }
+                },
+                {
+                    'artid': '02B006',
+                    'journal_title': 'PTEP',
+                    'journal_volume': '2012',
+                    'year': 2012
+                }
+            ]
+        }
+    }
+
+    expected = {
+        'metadata': {
+            'publication_info': [
+                {
+                    'artid': '02B006',
+                    'journal_title': 'PTEP',
+                    'journal_volume': '2012',
+                    'year': 2012,
+
+                },
+                {
+                    'artid': '02B006',
+                    'journal_title': 'PTEP',
+                    'journal_volume': '2012',
+                    'year': 2012
+
+                }
+            ],
+        }
+    }
+
+    result = json.loads(schema.dumps(record).data)
+    assert expected == result
+
+
 def test_accelerator_experiments_schema_with_record(isolated_app):
     schema = LiteratureRecordSchemaJSONUIV1()
     cms_record = {

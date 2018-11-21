@@ -1,0 +1,70 @@
+{
+  "aggregations": {
+    "doc_type": {
+      "buckets": [],
+      "meta": {
+        "order": 7,
+        "title": "Document Type"
+      },
+      "sum_other_doc_count": 0,
+      "doc_count_error_upper_bound": 0
+    },
+    "author": {
+      "buckets": [],
+      "meta": {
+        "order": 3,
+        "title": "Author"
+      },
+      "sum_other_doc_count": 0,
+      "doc_count_error_upper_bound": 0
+    },
+    "arxiv_categories": {
+      "buckets": [],
+      "meta": {
+        "order": 5,
+        "title": "arXiv Category"
+      },
+      "sum_other_doc_count": 0,
+      "doc_count_error_upper_bound": 0
+    },
+    "experiment": {
+      "buckets": [],
+      "meta": {
+        "order": 6,
+        "title": "Experiment"
+      },
+      "sum_other_doc_count": 0,
+      "doc_count_error_upper_bound": 0
+    },
+    "author_count": {
+      "buckets": [
+        {
+          "to": 11.0,
+          "from": 1.0,
+          "key": "10 authors or less",
+          "doc_count": 0
+        }
+      ],
+      "meta": {
+        "order": 2,
+        "title": "Number of authors"
+      }
+    },
+    "earliest_date": {
+      "buckets": [],
+      "meta": {
+        "order": 1,
+        "title": "Date"
+      }
+    },
+    "subject": {
+      "buckets": [],
+      "meta": {
+        "order": 4,
+        "title": "Subject"
+      },
+      "sum_other_doc_count": 0,
+      "doc_count_error_upper_bound": 0
+    }
+  }
+}

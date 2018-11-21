@@ -35,7 +35,6 @@ from invenio_records_rest.sorter import default_sorter_factory
 from werkzeug.datastructures import MultiDict
 
 from inspirehep.modules.search import IQ
-from inspirehep.modules.search.api import LiteratureSearch
 from inspirehep.modules.search.utils import get_facet_configuration
 
 
@@ -140,7 +139,7 @@ def inspire_search_factory(self, search):
     return search, urlkwargs
 
 
-def inspire_facets_factory(query_string):
+def inspire_facets_factory(self, search):
     """Parse query using Inspire-Query-Parser and prepare facets for it
     Args:
         self: REST view.
@@ -149,7 +148,7 @@ def inspire_facets_factory(query_string):
     Returns: Tuple with search instance and URL arguments.
 
     """
-    search = LiteratureSearch()
+    query_string = request.values.get('q', '')
     try:
         search = search.query(IQ(query_string, None))
     except SyntaxError:

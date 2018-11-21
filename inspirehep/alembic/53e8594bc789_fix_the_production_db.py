@@ -85,13 +85,6 @@ def upgrade():
     for _, names in PRIMARY_KEYS_MAP.items():
         op.execute('ALTER INDEX IF EXISTS {} RENAME TO {}'.format(names['old'], names['new']))
 
-    # Create indexes.
-    # Notes:
-    # - PostgreSQL 9.4.5 running in PROD on 2018.04.25 does *NOT* support the "IF NOT EXISTS" in "CREATE INDEX IF NOT EXISTS".
-    # - PostgreSQL 9.6.2 running in QA on 2018.04.25 does support the "IF NOT EXISTS" in "CREATE INDEX IF NOT EXISTS".
-    # The simplest way to implement a "CREATE INDEX IF NOT EXISTS" compatible with old and new versions of PostgreSQL
-    # is to first delete the index is exists.
-
     op.execute("CREATE INDEX json_ids_index ON records_metadata USING gin ((json -> 'ids'))")
     op.execute("CREATE INDEX json_export_to_index ON records_metadata USING gin ((json -> '_export_to'))")
     op.execute("CREATE INDEX _collections ON records_metadata USING btree ((json ->> '_collections'::text) COLLATE pg_catalog.\"default\")")

@@ -34,6 +34,12 @@ def test_downgrade(isolated_app):
 
     # downgrade 0bc0a6ee1bc0 == downgrade to 2f5368ff6d20
 
+    alembic.downgrade(target='0bc0a6ee1bc0')
+    assert 'ix_records_metadata_json_referenced_records_2_0' not in _get_indexes(
+        'records_metadata')
+    assert 'ix_records_metadata_json_referenced_records' in _get_indexes(
+        'records_metadata')
+
     alembic.downgrade(target='2f5368ff6d20')
     assert 'ix_records_metadata_json_referenced_records' not in _get_indexes(
         'records_metadata')
@@ -166,6 +172,12 @@ def test_upgrade(app):
     alembic.upgrade(target='0bc0a6ee1bc0')
 
     assert 'ix_records_metadata_json_referenced_records' in _get_indexes(
+        'records_metadata')
+
+    alembic.upgrade(target='2dd443feeb63')
+    assert 'ix_records_metadata_json_referenced_records_2_0' in _get_indexes(
+        'records_metadata')
+    assert 'ix_records_metadata_json_referenced_records' not in _get_indexes(
         'records_metadata')
 
 

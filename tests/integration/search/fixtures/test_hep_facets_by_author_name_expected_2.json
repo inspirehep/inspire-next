@@ -1,0 +1,172 @@
+{
+  "aggregations": {
+    "doc_type": {
+      "buckets": [
+        {
+          "key": "article",
+          "doc_count": 1
+        }
+      ],
+      "meta": {
+        "order": 7,
+        "title": "Document Type"
+      },
+      "sum_other_doc_count": 0,
+      "doc_count_error_upper_bound": 0
+    },
+    "author": {
+      "buckets": [
+        {
+          "key": "Aaij, Roel",
+          "doc_count": 1
+        },
+        {
+          "key": "Adeva, Bernardo",
+          "doc_count": 1
+        },
+        {
+          "key": "Adinolfi, Marco",
+          "doc_count": 1
+        },
+        {
+          "key": "Ajaltouni, Ziad",
+          "doc_count": 1
+        },
+        {
+          "key": "Akar, Simon",
+          "doc_count": 1
+        },
+        {
+          "key": "Albrecht, Johannes",
+          "doc_count": 1
+        },
+        {
+          "key": "Alessio, Federico",
+          "doc_count": 1
+        },
+        {
+          "key": "Alexander, Michael",
+          "doc_count": 1
+        },
+        {
+          "key": "Ali, Suvayu",
+          "doc_count": 1
+        },
+        {
+          "key": "Alkhazov, Georgy",
+          "doc_count": 1
+        },
+        {
+          "key": "Alvarez Cartelle, Paula",
+          "doc_count": 1
+        },
+        {
+          "key": "Alves Jr, Antonio Augusto",
+          "doc_count": 1
+        },
+        {
+          "key": "Amato, Sandra",
+          "doc_count": 1
+        },
+        {
+          "key": "Amerio, Silvia",
+          "doc_count": 1
+        },
+        {
+          "key": "Amhis, Yasmine",
+          "doc_count": 1
+        },
+        {
+          "key": "An, Liupan",
+          "doc_count": 1
+        },
+        {
+          "key": "Anderlini, Lucio",
+          "doc_count": 1
+        },
+        {
+          "key": "Andreassi, Guido",
+          "doc_count": 1
+        },
+        {
+          "key": "Andreotti, Mirco",
+          "doc_count": 1
+        },
+        {
+          "key": "Andrews, Jason",
+          "doc_count": 1
+        }
+      ],
+      "meta": {
+        "order": 3,
+        "title": "Author"
+      },
+      "sum_other_doc_count": 749,
+      "doc_count_error_upper_bound": 1
+    },
+    "arxiv_categories": {
+      "buckets": [
+        {
+          "key": "hep-ex",
+          "doc_count": 1
+        }
+      ],
+      "meta": {
+        "order": 5,
+        "title": "arXiv Category"
+      },
+      "sum_other_doc_count": 0,
+      "doc_count_error_upper_bound": 0
+    },
+    "experiment": {
+      "buckets": [],
+      "meta": {
+        "order": 6,
+        "title": "Experiment"
+      },
+      "sum_other_doc_count": 0,
+      "doc_count_error_upper_bound": 0
+    },
+    "author_count": {
+      "buckets": [
+        {
+          "to": 11.0,
+          "from": 1.0,
+          "key": "10 authors or less",
+          "doc_count": 0
+        }
+      ],
+      "meta": {
+        "order": 2,
+        "title": "Number of authors"
+      }
+    },
+    "earliest_date": {
+      "buckets": [
+        {
+          "key_as_string": "2016",
+          "key": 1451606400000,
+          "doc_count": 1
+        }
+      ],
+      "meta": {
+        "order": 1,
+        "title": "Date"
+      }
+    },
+    "subject": {
+      "buckets": [
+        {
+          "key": "Experiment-HEP",
+          "doc_count": 1
+        }
+      ],
+      "meta": {
+        "order": 4,
+        "title": "Subject"
+      },
+      "sum_other_doc_count": 0,
+      "doc_count_error_upper_bound": 0
+    }
+  }
+}

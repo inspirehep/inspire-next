@@ -1,0 +1,78 @@
+{
+  "preprint_date": "2016-11-09",
+  "_collections": [
+    "Literature"
+  ],
+  "titles": [
+    {
+      "source": "arXiv",
+      "title": "Measurement of the CKM angle $\\\\gamma$ from a combination of LHCb results"
+    }
+  ],
+  "authors": [
+    {
+      "affiliations": [
+        {
+          "value": "Manchester U."
+        }
+      ],
+      "uuid": "cf54e8b4-dba2-4a13-86f3-2a61aeeec95d",
+      "ids": [
+        {
+          "value": "Dominik.Muller.1",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "full_name": "M\\u00fcller, Dominik",
+      "signature_block": "MALARd"
+    },
+    {
+      "uuid": "1485f565-86fb-44de-a8a3-61181e0a5408",
+      "curated_relation": true,
+      "ids": [
+        {
+          "value": "INSPIRE-00522744",
+          "schema": "INSPIRE ID"
+        }
+      ],
+      "affiliations": [
+        {
+          "value": "Tech. U., Dortmund (main)"
+        }
+      ],
+      "full_name": "M\\u00fcller, Janine",
+      "signature_block": "MALARj"
+    },
+    {
+      "uuid": "689d7a88-72fd-4f1f-9f01-20b5af4cda59",
+      "curated_relation": true,
+      "ids": [
+        {
+          "value": "INSPIRE-00185464",
+          "schema": "INSPIRE ID"
+        }
+      ],
+      "affiliations": [
+        {
+          "value": "Zurich U."
+        }
+      ],
+      "full_name": "M\\u00fcller, Katharina",
+      "signature_block": "MALARk"
+    }
+  ],
+  "$schema": "http://localhost:5000/schemas/records/hep.json",
+  "document_type": [
+    "article"
+  ],
+  "legacy_version": "20161118095528.0",
+  "control_number": 1496635,
+  "self": {
+    "$ref": "http://localhost:5000/api/literature/1496635"
+  },
+  "number_of_pages": 58,
+  "texkeys": [
+    "Aaij:2016kjh"
+  ],
+  "legacy_creation_date": "2016-11-18"
+}

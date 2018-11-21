@@ -29,6 +29,7 @@ import json
 import pytest
 from invenio_workflows import ObjectStatus, WorkflowEngine, start, workflow_object_class
 from invenio_accounts.testutils import login_user_via_session
+from invenio_accounts.models import User
 from elasticsearch import NotFoundError
 
 from inspirehep.utils.tickets import get_rt_link_for_ticket
@@ -99,6 +100,21 @@ def test_edit_article_view_sets_curation_ticket_if_referrer_is_rt_ticket(workflo
     wflw_id = response.headers['Location'].split('/')[-1]
     wflw = workflow_object_class.get(wflw_id)
     assert wflw.extra_data.get('curation_ticket_id') == 1234
+
+
+def test_edit_article_view_sets_user_id(workflow_api_client):
+    user = User.query.filter_by(email='admin@inspirehep.net').one()
+    login_user_via_session(workflow_api_client, user=user)
+
+    factory = TestRecordMetadata.create_from_kwargs(json={})
+    control_number = factory.record_metadata.json['control_number']
+    endpoint_url = "/workflows/edit_article/{}".format(control_number)
+
+    response = workflow_api_client.get(endpoint_url)
+    wflw_id = response.headers['Location'].split('/')[-1]
+    wflw = workflow_object_class.get(wflw_id)
+
+    assert wflw.id_user == int(user.get_id())
 
 
 def test_edit_article_view_wrong_recid(workflow_api_client):

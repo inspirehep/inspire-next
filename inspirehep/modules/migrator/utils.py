@@ -35,6 +35,7 @@ REAL_COLLECTIONS = (
     'JOURNALS',
     'JOURNALSNEW',
     'HEPNAMES',
+    'HEP',
     'JOB',
     'JOBHIDDEN',
     'CONFERENCES',
