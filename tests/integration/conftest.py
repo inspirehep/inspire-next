@@ -83,7 +83,7 @@ def app():
     )
 
     with app.app_context(), mock.patch(
-            'inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async'
+            'inspirehep.modules.records.receivers.index_modified_citations_from_record.delay'
     ):
         # Celery task imports must be local, otherwise their
         # configuration would use the default pickle serializer.

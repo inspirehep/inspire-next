@@ -456,7 +456,7 @@ def test_check_enhance_after_index_receiver_when_record_not_provided(isolated_ap
     'inspirehep.modules.records.wrappers.has_update_permission',
     return_value=True
 )
-@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async')
+@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.delay')
 def test_index_after_commit_indexes_also_cites_record_when_new_citation_is_added(
     mocked_indexing_task,
     mocked_permission_check,
@@ -475,8 +475,8 @@ def test_index_after_commit_indexes_also_cites_record_when_new_citation_is_added
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', cited['control_number'], 1)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', cited['control_number'], 1
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -499,8 +499,8 @@ def test_index_after_commit_indexes_also_cites_record_when_new_citation_is_added
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', record['control_number'], 1)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', record['control_number'], 1
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -529,8 +529,8 @@ def test_index_after_commit_indexes_also_cites_record_when_new_citation_is_added
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', record['control_number'], 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', record['control_number'], 2
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -546,7 +546,7 @@ def test_index_after_commit_indexes_also_cites_record_when_new_citation_is_added
     'inspirehep.modules.records.wrappers.has_update_permission',
     return_value=True
 )
-@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async')
+@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.delay')
 def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     mocked_indexing_task,
     mocked_permission_check,
@@ -566,8 +566,8 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', cited['control_number'], 1)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', cited['control_number'], 1
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -597,8 +597,8 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', record['control_number'], 1)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', record['control_number'], 1
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -613,8 +613,8 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', record['control_number'], 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', record['control_number'], 2
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -630,7 +630,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     'inspirehep.modules.records.wrappers.has_update_permission',
     return_value=True
 )
-@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async')
+@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.delay')
 def test_index_after_commit_indexes_also_cites_two_records(
     mocked_indexing_task,
     mocked_permission_check,
@@ -650,8 +650,8 @@ def test_index_after_commit_indexes_also_cites_two_records(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', cited1['control_number'], 1)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', cited1['control_number'], 1
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -667,8 +667,8 @@ def test_index_after_commit_indexes_also_cites_two_records(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', cited2['control_number'], 1)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', cited2['control_number'], 1
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -698,8 +698,8 @@ def test_index_after_commit_indexes_also_cites_two_records(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', record['control_number'], 1)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', record['control_number'], 1
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -732,8 +732,8 @@ def test_index_after_commit_indexes_also_cites_two_records(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', record['control_number'], 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', record['control_number'], 2
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -753,7 +753,7 @@ def test_index_after_commit_indexes_also_cites_two_records(
     'inspirehep.modules.records.wrappers.has_update_permission',
     return_value=True
 )
-@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async')
+@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.delay')
 def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     mocked_indexing_task,
     mocked_permission_check,
@@ -774,8 +774,8 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', 9999, 1)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', 9999, 1
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -805,8 +805,8 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', record['control_number'], 1)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', record['control_number'], 1
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -819,8 +819,8 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', record['control_number'], 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', record['control_number'], 2
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -836,7 +836,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     'inspirehep.modules.records.wrappers.has_update_permission',
     return_value=True
 )
-@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async')
+@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.delay')
 def test_regression_index_after_commit_retries_for_new_record_not_yet_in_db(
     mocked_indexing_task,
     mocked_permission_check,
@@ -857,8 +857,8 @@ def test_regression_index_after_commit_retries_for_new_record_not_yet_in_db(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', 9999, 1)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', 9999, 1
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -888,8 +888,8 @@ def test_regression_index_after_commit_retries_for_new_record_not_yet_in_db(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', record['control_number'], 1)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', record['control_number'], 1
+    mocked_indexing_task.assert_called_with(*expected_args)
 
     # execute mocked task pretending record is not committed yet to DB
     _delete_record('lit', record['control_number'])
@@ -904,7 +904,7 @@ def test_regression_index_after_commit_retries_for_new_record_not_yet_in_db(
     'inspirehep.modules.records.wrappers.has_update_permission',
     return_value=True
 )
-@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async')
+@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.delay')
 def test_index_after_commit_indexes_raises_if_cited_records_are_not_in_db(
     mocked_indexing_task,
     mocked_permission_check,
@@ -928,8 +928,8 @@ def test_index_after_commit_indexes_raises_if_cited_records_are_not_in_db(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', record['control_number'], 1)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', record['control_number'], 1
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -954,8 +954,8 @@ def test_index_after_commit_indexes_raises_if_cited_records_are_not_in_db(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = ('lit', record['control_number'], 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
+    expected_args = 'lit', record['control_number'], 2
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     with pytest.raises(MissingCitedRecordError):
         index_modified_citations_from_record(*expected_args)
