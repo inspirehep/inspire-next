@@ -71,6 +71,8 @@ class OrcidPusher(object):
             logger.info('OrcidPusher cache hit for recid={} and orcid={}'.format(
                 self.recid, self.orcid))
             return putcode
+        logger.info('OrcidPusher cache miss for recid={} and orcid={}'.format(
+            self.recid, self.orcid))
 
         self.xml_element = OrcidConverter(
             record=self.inspire_record,
