@@ -251,12 +251,14 @@ def test_linked_user_with_token_exists(app_with_config, teardown_sample_user):
 
     # Register sample user
     _register_user(**SAMPLE_USER)
+    db.session.commit()
 
     # Check state after migration
     assert_db_has_n_legacy_tokens(1, SAMPLE_USER)
 
     # Register the same user with another token
     _register_user(**SAMPLE_USER_EDITED)
+    db.session.commit()
 
     # Assert token unchanged
     assert_db_has_n_legacy_tokens(1, SAMPLE_USER)
@@ -269,6 +271,7 @@ def test_linked_user_without_token_exists(app_with_config, teardown_sample_user_
 
     # Register sample user
     _register_user(**SAMPLE_USER)
+    db.session.commit()
 
     # Check state after migration
     assert_db_has_n_legacy_tokens(1, SAMPLE_USER)
@@ -280,6 +283,7 @@ def test_linked_user_without_token_exists(app_with_config, teardown_sample_user_
 
     # Register the same user with another token
     _register_user(**SAMPLE_USER_EDITED)
+    db.session.commit()
 
     # Assert new token
     assert_db_has_n_legacy_tokens(1, SAMPLE_USER_EDITED)
@@ -297,6 +301,7 @@ def test_unlinked_user_exists(app_with_config, teardown_sample_user):
 
     # Register the token
     _register_user(**SAMPLE_USER)
+    db.session.commit()
 
     # Assert new token
     assert_db_has_n_legacy_tokens(1, SAMPLE_USER)
@@ -321,6 +326,7 @@ def test_find_user_matching(app_with_config, teardown_sample_user, orcid, email)
 
     # Register sample user
     _register_user(**SAMPLE_USER)
+    db.session.commit()
 
     # Check state after migration
     assert_db_has_n_legacy_tokens(1, SAMPLE_USER)

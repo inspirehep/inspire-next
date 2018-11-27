@@ -26,13 +26,13 @@ from __future__ import absolute_import, division, print_function
 
 import uuid
 import logging
+from copy import deepcopy
 
 from flask import current_app
 from flask_sqlalchemy import models_committed
 from elasticsearch import NotFoundError
 from time_execution import time_execution
 
-from invenio_indexer.signals import before_record_index
 from invenio_records.models import RecordMetadata
 from invenio_records.signals import (
     after_record_update,
@@ -50,6 +50,7 @@ from inspirehep.modules.orcid.utils import (
 )
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.records.errors import MissingInspireRecordError
 from inspirehep.modules.records.tasks import index_modified_citations_from_record
 from inspirehep.modules.records.utils import (
     is_author,
@@ -151,6 +152,16 @@ def push_to_orcid(sender, record, *args, **kwargs):
         )
 
 
+@after_record_update.connect
+def enhance_record(sender, record, *args, **kwargs):
+    """Enhance the record for ES"""
+    if not isinstance(record, InspireRecord):
+        raise MissingInspireRecordError("Record is not InspireRecord!")
+    enhanced_record = deepcopy(record)
+    enhance_before_index(sender, enhanced_record, enhanced_record)
+    record.model._enhanced_record = enhanced_record
+
+
 @models_committed.connect
 def index_after_commit(sender, changes):
     """Index a record in ES after it was committed to the DB.
@@ -163,8 +174,9 @@ def index_after_commit(sender, changes):
     for model_instance, change in changes:
         if isinstance(model_instance, RecordMetadata):
             if change in ('insert', 'update') and not model_instance.json.get("deleted"):
-                indexer.index(InspireRecord(
-                    model_instance.json, model_instance))
+                record = model_instance._enhanced_record if hasattr(model_instance, '_enhanced_record') \
+                    else model_instance.json
+                indexer.index(InspireRecord(record, model_instance))
             else:
                 try:
                     indexer.delete(InspireRecord(
@@ -182,8 +194,7 @@ def index_after_commit(sender, changes):
             index_modified_citations_from_record.delay(pid_type, pid_value, db_version)
 
 
-@before_record_index.connect
-def enhance_before_index(sender, json, record, *args, **kwargs):
+def enhance_before_index(sender, record, *args, **kwargs):
     """Run all the receivers that enhance the record for ES in the right order.
 
     .. note::
@@ -193,34 +204,34 @@ def enhance_before_index(sender, json, record, *args, **kwargs):
        would be expanded to an incorrect ``_source_recid`` by the former.
 
     """
-    populate_recid_from_ref(json)
+    populate_recid_from_ref(record)
 
-    if is_hep(json):
-        populate_abstract_source_suggest(json)
-        populate_earliest_date(json)
-        populate_author_count(json)
-        populate_authors_full_name_unicode_normalized(json)
-        populate_inspire_document_type(json)
-        populate_name_variations(json)
-        populate_number_of_references(json)
-        populate_citations_count(record=record, json=json)
-        populate_facet_author_name(json)
+    if is_hep(record):
+        populate_abstract_source_suggest(record)
+        populate_earliest_date(record)
+        populate_author_count(record)
+        populate_authors_full_name_unicode_normalized(record)
+        populate_inspire_document_type(record)
+        populate_name_variations(record)
+        populate_number_of_references(record)
+        populate_citations_count(record=record)
+        populate_facet_author_name(record)
 
-    elif is_author(json):
-        populate_authors_name_variations(json)
-        populate_author_suggest(json)
+    elif is_author(record):
+        populate_authors_name_variations(record)
+        populate_author_suggest(record)
 
-    elif is_book(json):
-        populate_bookautocomplete(json)
+    elif is_book(record):
+        populate_bookautocomplete(record)
 
-    elif is_institution(json):
-        populate_affiliation_suggest(json)
+    elif is_institution(record):
+        populate_affiliation_suggest(record)
 
-    elif is_experiment(json):
-        populate_experiment_suggest(json)
+    elif is_experiment(record):
+        populate_experiment_suggest(record)
 
-    elif is_journal(json):
-        populate_title_suggest(json)
+    elif is_journal(record):
+        populate_title_suggest(record)
 
-    elif is_data(json):
-        populate_citations_count(record=record, json=json)
+    elif is_data(record):
+        populate_citations_count(record)

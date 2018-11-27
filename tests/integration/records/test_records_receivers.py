@@ -31,7 +31,6 @@ import mock
 from elasticsearch import NotFoundError
 
 from invenio_db import db
-from invenio_indexer.signals import before_record_index
 from invenio_oauthclient.utils import oauth_link_external_id
 from invenio_oauthclient.models import (
     RemoteAccount,
@@ -40,6 +39,7 @@ from invenio_oauthclient.models import (
     UserIdentity,
 )
 from invenio_search import current_search_client as es
+from invenio_records.signals import after_record_update
 
 from inspirehep.modules.migrator.tasks import migrate_and_insert_record
 from inspirehep.modules.records.api import InspireRecord
@@ -48,7 +48,7 @@ from inspirehep.modules.records.tasks import index_modified_citations_from_recor
 from inspirehep.modules.records.utils import get_citations_from_es
 from inspirehep.modules.search import LiteratureSearch
 from inspirehep.utils.record import get_title
-from inspirehep.utils.record_getter import get_es_record, RecordGetterError
+from inspirehep.utils.record_getter import get_es_record, RecordGetterError, get_db_record
 
 
 from utils import _delete_record
@@ -292,7 +292,7 @@ def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_
     assert mock_orcid_push_task.apply_async.call_count == 2
 
 
-def test_creating_deleted_record_and_undeleting_created_record_in_es(isolated_app):
+def test_creating_deleted_record_and_undeleting_created_record_in_es(app):
     search = LiteratureSearch()
     json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -310,17 +310,19 @@ def test_creating_deleted_record_and_undeleting_created_record_in_es(isolated_ap
 
     record = InspireRecord.create(json)
     record.commit()
+    db.session.commit()
     with pytest.raises(NotFoundError):
         search.get_source(record.id)
 
     # When a record is undeleted, it is created in ES.
-
     record['deleted'] = False
     record.commit()
+    db.session.commit()
     search.get_source(record.id)
+    record._delete(force=True)
 
 
-def test_that_db_changes_are_mirrored_in_es(isolated_app):
+def test_that_db_changes_are_mirrored_in_es(app):
     search = LiteratureSearch()
     json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -337,6 +339,7 @@ def test_that_db_changes_are_mirrored_in_es(isolated_app):
 
     record = InspireRecord.create(json)
     record.commit()
+    db.session.commit()
     es_record = search.get_source(record.id)
 
     assert get_title(es_record) == 'foo'
@@ -345,6 +348,7 @@ def test_that_db_changes_are_mirrored_in_es(isolated_app):
 
     record['titles'][0]['title'] = 'bar'
     record.commit()
+    db.session.commit()
     es_record = search.get_source(record.id)
 
     assert get_title(es_record) == 'bar'
@@ -352,12 +356,13 @@ def test_that_db_changes_are_mirrored_in_es(isolated_app):
     # When a record is deleted in the DB, it is also deleted in ES.
 
     record._delete(force=True)
+    db.session.commit()
 
     with pytest.raises(NotFoundError):
         es_record = search.get_source(record.id)
 
 
-def test_deleting_record_triggers_delete_in_es(isolated_app):
+def test_deleting_record_triggers_delete_in_es(app):
     search = LiteratureSearch()
     json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -374,11 +379,13 @@ def test_deleting_record_triggers_delete_in_es(isolated_app):
 
     record = InspireRecord.create(json)
     record.commit()
+    db.session.commit()
     search.get_source(record.id)
 
     # When a record is updated with deleted flag true, it is deleted in ES
     record['deleted'] = True
     record.commit()
+    db.session.commit()
     with pytest.raises(NotFoundError):
         search.get_source(record.id)
 
@@ -413,12 +420,12 @@ def test_check_enhance_after_index_receiver_when_sender_is_not_a_record(isolated
         "control_number": 425592,
     }
     record = TestRecordMetadata.create_from_kwargs(json=json_rec).inspire_record
-    before_record_index.send(
+    after_record_update.send(
         isolated_app,
-        json=json_rec,
         record=record
     )
-    assert 'citation_count' in json_rec
+
+    assert 'citation_count' in record.model._enhanced_record
 
 
 def test_check_enhance_after_index_receiver_when_record_not_provided(isolated_app):
@@ -444,7 +451,7 @@ def test_check_enhance_after_index_receiver_when_record_not_provided(isolated_ap
         "control_number": 425592,
     }
     with pytest.raises(MissingInspireRecordError) as exc:
-        before_record_index.send(
+        after_record_update.send(
             isolated_app,
             json=json_rec,
             record=None
@@ -563,11 +570,17 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     }
 
     cited = InspireRecord.create(data=json_data, skip_files=True)
+    cited.commit()
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', cited['control_number'], 1
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', cited['control_number'], 2)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -594,11 +607,17 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     }
 
     record = InspireRecord.create(data=citing_json, skip_files=True)
+    record.commit()
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', record['control_number'], 1
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', record['control_number'], 2)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -613,8 +632,13 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', record['control_number'], 2
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', record['control_number'], 3)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -647,11 +671,17 @@ def test_index_after_commit_indexes_also_cites_two_records(
     }
 
     cited1 = InspireRecord.create(data=json1, skip_files=True)
+    cited1.commit()
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', cited1['control_number'], 1
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', cited1['control_number'], 2)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -664,11 +694,17 @@ def test_index_after_commit_indexes_also_cites_two_records(
     }
 
     cited2 = InspireRecord.create(data=json2, skip_files=True)
+    cited2.commit()
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', cited2['control_number'], 1
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', cited2['control_number'], 2)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -695,11 +731,17 @@ def test_index_after_commit_indexes_also_cites_two_records(
     }
 
     record = InspireRecord.create(data=citing_json, skip_files=True)
+    record.commit()
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', record['control_number'], 1
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', record['control_number'], 2)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -732,8 +774,13 @@ def test_index_after_commit_indexes_also_cites_two_records(
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', record['control_number'], 2
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', record['control_number'], 3)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -771,11 +818,17 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     }
 
     cited = InspireRecord.create(data=json_data, skip_files=True)
+    cited.commit()
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', 9999, 1
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', 9999, 2)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -802,11 +855,17 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     }
 
     record = InspireRecord.create(data=citing_json, skip_files=True)
+    record.commit()
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', record['control_number'], 1
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', record['control_number'], 2)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -819,8 +878,13 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', record['control_number'], 2
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', record['control_number'], 3)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -854,11 +918,17 @@ def test_regression_index_after_commit_retries_for_new_record_not_yet_in_db(
     }
 
     cited = InspireRecord.create(data=json_data, skip_files=True)
+    cited.commit()
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', 9999, 1
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', 9999, 2)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -885,11 +955,17 @@ def test_regression_index_after_commit_retries_for_new_record_not_yet_in_db(
     }
 
     record = InspireRecord.create(data=citing_json, skip_files=True)
+    record.commit()
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', record['control_number'], 1
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', record['control_number'], 2)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
 
     # execute mocked task pretending record is not committed yet to DB
     _delete_record('lit', record['control_number'])
@@ -925,11 +1001,13 @@ def test_index_after_commit_indexes_raises_if_cited_records_are_not_in_db(
     }
 
     record = InspireRecord.create(data=citing_json, skip_files=True)
+    record.commit()
     db.session.commit()
     es.indices.refresh('records-hep')
 
     expected_args = 'lit', record['control_number'], 1
     mocked_indexing_task.assert_called_with(*expected_args)
+
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -954,10 +1032,43 @@ def test_index_after_commit_indexes_raises_if_cited_records_are_not_in_db(
     db.session.commit()
     es.indices.refresh('records-hep')
 
+<<<<<<< HEAD
     expected_args = 'lit', record['control_number'], 2
     mocked_indexing_task.assert_called_with(*expected_args)
+=======
+    expected_args = ('lit', record['control_number'], 3)
+    mocked_indexing_task.assert_called_with(expected_args, {})
+>>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
     # execute mocked task
     with pytest.raises(MissingCitedRecordError):
         index_modified_citations_from_record(*expected_args)
 
     _delete_record('lit', 8888)
+
+
+def test_record_enhanced_in_es_and_not_enhanced_in_db(app):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
+        'control_number': 111,
+        'titles': [
+            {
+                'title': 'Jessica Jones',
+            },
+        ],
+        '_collections': ['Literature'],
+        'references': [{'record': {'$ref': 'http://localhost:5000/api/literature/1498589'}}]
+    }
+    record = InspireRecord.create(record_json)
+    record.commit()
+    db.session.commit()
+    es.indices.refresh('records-hep')
+    rec1 = get_db_record('lit', 111)
+    rec2 = get_es_record('lit', 111)
+    # import pdb
+    # pdb.set_trace()
+    assert 'facet_author_name' not in rec1
+    assert 'facet_author_name' in rec2
+    _delete_record('lit', 111)

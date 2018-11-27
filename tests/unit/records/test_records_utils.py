@@ -27,6 +27,8 @@ from mock import patch
 from inspire_schemas.api import load_schema, validate
 from inspire_utils.name import generate_name_variations
 
+from inspirehep.modules.records.api import InspireRecord
+from invenio_records.models import RecordMetadata
 from inspirehep.modules.records.utils import (
     get_endpoint_from_record,
     get_pid_from_record_uri,
@@ -57,7 +59,7 @@ def test_populate_number_references():
             }
         ]
     }
-
+    record = InspireRecord(record, model=RecordMetadata)
     populate_number_of_references(record)
 
     expected = 1
@@ -70,7 +72,7 @@ def test_populate_number_references_does_nothing_if_references_is_none():
     record = {
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
     }
-
+    record = InspireRecord(record, model=RecordMetadata)
     populate_number_of_references(record)
 
     assert 'number_of_references' not in record
@@ -104,6 +106,7 @@ def test_populate_earliest_date_from_preprint_date():
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
         'preprint_date': '2014-05-29',
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['preprint_date'], subschema) is None
 
     populate_earliest_date(record)
@@ -124,6 +127,7 @@ def test_populate_earliest_date_from_thesis_info_date():
             'date': '2008',
         },
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['thesis_info'], subschema) is None
 
     populate_earliest_date(record)
@@ -144,6 +148,7 @@ def test_populate_earliest_date_from_thesis_info_defense_date():
             'defense_date': '2012-06-01',
         },
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['thesis_info'], subschema) is None
 
     populate_earliest_date(record)
@@ -164,6 +169,7 @@ def test_populate_earliest_date_from_publication_info_year():
             {'year': 2014},
         ],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['publication_info'], subschema) is None
 
     populate_earliest_date(record)
@@ -182,6 +188,7 @@ def test_populate_earliest_date_from_legacy_creation_date():
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
         'legacy_creation_date': '2015-11-04',
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['legacy_creation_date'], subschema) is None
 
     populate_earliest_date(record)
@@ -202,6 +209,7 @@ def test_populate_earliest_date_from_imprints_date():
             {'date': '2014-09-26'},
         ],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['imprints'], subschema) is None
 
     populate_earliest_date(record)
@@ -220,6 +228,7 @@ def test_populate_authors_name_variations():
         'name': {'value': 'Silk, James Brian'},
         '_collections': ['Authors'],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record, schema) is None
 
     populate_authors_name_variations(record)
@@ -246,6 +255,7 @@ def test_populate_authors_name_variations_does_nothing_if_other_schema():
             {'title': 'Relativity Matters'},
         ],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record, schema) is None
 
     populate_authors_name_variations(record)
@@ -271,6 +281,7 @@ def test_populate_bookautocomplete_from_authors():
             '$ref': 'http://localhost:5000/api/literature/1519486',
         },
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['authors'], authors_schema) is None
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['self'], self_schema) is None
@@ -305,6 +316,7 @@ def test_populate_bookautocomplete_from_titles():
             {'title': 'Relativity Matters'},
         ],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['self'], self_schema) is None
     assert validate(record['titles'], titles_schema) is None
@@ -339,6 +351,7 @@ def test_populate_bookautocomplete_from_imprints_dates():
             '$ref': 'http://localhost:5000/api/literature/1519486',
         },
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['imprints'], imprints_schema) is None
     assert validate(record['self'], self_schema) is None
@@ -373,6 +386,7 @@ def test_populate_bookautocomplete_from_imprints_publishers():
             '$ref': 'http://localhost:5000/api/literature/1519486',
         },
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['imprints'], imprints_schema) is None
     assert validate(record['self'], self_schema) is None
@@ -407,6 +421,7 @@ def test_populate_bookautocomplete_from_isbns_values():
             '$ref': 'http://localhost:5000/api/literature/1519486',
         },
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['isbns'], isbns_schema) is None
     assert validate(record['self'], self_schema) is None
@@ -458,7 +473,7 @@ def test_populate_experiment_suggest():
             },
         ],
     }
-
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['legacy_name'], legacy_name_schema) is None
     assert validate(record['long_name'], long_name_schema) is None
     assert validate(record['name_variants'], name_variants_schema) is None
@@ -496,6 +511,7 @@ def test_populate_inspire_document_type_from_document_type():
         '$schema': 'http://localhost:5000/records/schemas/hep.json',
         'document_type': ['thesis'],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['document_type'], subschema) is None
 
     populate_inspire_document_type(record)
@@ -520,6 +536,7 @@ def test_populate_inspire_document_type_from_refereed():
         ],
         'refereed': True,
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['refereed'], refereed_schema) is None
 
@@ -548,6 +565,7 @@ def test_populate_inspire_document_type_from_publication_type():
             'introductory',
         ],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['document_type'], document_type_schema) is None
     assert validate(record['publication_type'], publication_type_schema) is None
 
@@ -570,14 +588,15 @@ def test_populate_recid_from_ref():
         'embedded_list': [{'record': {'$ref': 'http://x/y/4'}}],
         'embedded_record': {'record': {'$ref': 'http://x/y/5'}}
     }
+    record = InspireRecord(json_dict, model=RecordMetadata)
 
-    populate_recid_from_ref(json_dict)
+    populate_recid_from_ref(record)
 
-    assert json_dict['simple_key_recid'] == 1
-    assert json_dict['key_with_recid'] == 2
-    assert json_dict['recid'] == 3
-    assert json_dict['embedded_list'][0]['recid'] == 4
-    assert json_dict['embedded_record']['recid'] == 5
+    assert record['simple_key_recid'] == 1
+    assert record['key_with_recid'] == 2
+    assert record['recid'] == 3
+    assert record['embedded_list'][0]['recid'] == 4
+    assert record['embedded_record']['recid'] == 5
 
 
 def test_populate_recid_from_ref_handles_deleted_records():
@@ -587,10 +606,10 @@ def test_populate_recid_from_ref_handles_deleted_records():
             {'$ref': 'http://x/y/2'},
         ],
     }
+    record = InspireRecord(json_dict, model=RecordMetadata)
+    populate_recid_from_ref(record)
 
-    populate_recid_from_ref(json_dict)
-
-    assert json_dict['deleted_recids'] == [1, 2]
+    assert record['deleted_recids'] == [1, 2]
 
 
 def test_populate_abstract_source_suggest():
@@ -606,6 +625,7 @@ def test_populate_abstract_source_suggest():
             },
         ],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['abstracts'], subschema) is None
 
     populate_abstract_source_suggest(record)
@@ -636,6 +656,7 @@ def test_populate_title_suggest_with_all_inputs():
         'short_title': 'JHEP',
         'title_variants': ['JOURNAL OF HIGH ENERGY PHYSICS'],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['journal_title'], journal_title_schema) is None
     assert validate(record['short_title'], short_title_schema) is None
     assert validate(record['title_variants'], title_variants_schema) is None
@@ -666,6 +687,7 @@ def test_populate_affiliation_suggest_from_icn():
         ],
         'legacy_ICN': 'CERN',
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['ICN'], subschema) is None
 
     populate_affiliation_suggest(record)
@@ -692,6 +714,7 @@ def test_populate_affiliation_suggest_from_institution_hierarchy_acronym():
         ],
         'legacy_ICN': 'CERN',
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['institution_hierarchy'], subschema) is None
 
     populate_affiliation_suggest(record)
@@ -718,6 +741,7 @@ def test_populate_affiliation_suggest_from_institution_hierarchy_name():
         ],
         'legacy_ICN': 'CERN',
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['legacy_ICN'], subschema) is None
 
     populate_affiliation_suggest(record)
@@ -741,6 +765,7 @@ def test_populate_affiliation_suggest_from_legacy_icn():
         '$schema': 'http://localhost:5000/schemas/records/institutions.json',
         'legacy_ICN': 'CERN',
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['legacy_ICN'], subschema) is None
 
     populate_affiliation_suggest(record)
@@ -766,6 +791,7 @@ def test_populate_affiliation_suggest_from_name_variants():
             {'value': u'Centre Européen de Recherches Nucléaires'},
         ],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['name_variants'], subschema) is None
 
     populate_affiliation_suggest(record)
@@ -795,6 +821,7 @@ def test_populate_affiliation_suggest_from_name_variants_with_umr():
             {'value': u'umr'},
         ],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['name_variants'], subschema) is None
 
     populate_affiliation_suggest(record)
@@ -826,6 +853,7 @@ def test_populate_affiliation_suggest_from_postal_code():
         ],
         'legacy_ICN': 'CERN',
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['addresses'], subschema) is None
 
     populate_affiliation_suggest(record)
@@ -852,6 +880,7 @@ def test_populate_affiliation_suggest_to_ref():
             '$ref': 'http://localhost:5000/api/institutions/902725',
         },
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['self'], subschema) is None
 
     populate_affiliation_suggest(record)
@@ -895,6 +924,7 @@ def test_populate_author_count():
             },
         ],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['authors'], subschema) is None
 
     populate_author_count(record)
@@ -917,6 +947,7 @@ def test_populate_authors_full_name_unicode_normalized():
             },
         ],
     }
+    record = InspireRecord(record, model=RecordMetadata)
     assert validate(record['authors'], subschema) is None
 
     populate_authors_full_name_unicode_normalized(record)
@@ -990,7 +1021,7 @@ def test_populate_facet_author_name(mocked_get_linked_records_in_field):
             },
         ],
     }
-
+    record = InspireRecord(record, model=RecordMetadata)
     expected_result = [u'James.Brian.1_James Brian Silk', u'John.Doe.1_J Doe', u'BAI_George Rohan']
     assert validate(record['authors'], subschema) is None
     populate_facet_author_name(record)

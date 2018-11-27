@@ -854,7 +854,7 @@ RECORDS_REST_FACETS = {
                 "meta": {
                     "title": "Author",
                     "order": 3,
-                    "split": "True",
+                    "split": True,
                 },
             },
             "subject": {

@@ -23,7 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from itertools import chain
-
+from flask import current_app
 from invenio_indexer.api import current_record_to_index
 
 from inspire_utils.record import get_value
@@ -275,7 +275,9 @@ def get_title(record):
 
 
 def create_index_op(record, version_type='external_gte'):
+    from inspirehep.modules.records.receivers import enhance_record
     index, doc_type = current_record_to_index(record)
+    enhance_record(current_app._get_current_object(), record)
 
     return {
         '_op_type': 'index',
@@ -284,5 +286,5 @@ def create_index_op(record, version_type='external_gte'):
         '_id': str(record.id),
         '_version': record.revision_id,
         '_version_type': version_type,
-        '_source': InspireRecordIndexer._prepare_record(record, index, doc_type),
+        '_source': InspireRecordIndexer._prepare_record(record.model._enhanced_record, index, doc_type),
     }
