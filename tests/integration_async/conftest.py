@@ -44,11 +44,11 @@ from inspirehep.modules.fixtures.users import init_users_and_permissions
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../integration/helpers'))
 
 
-from factories.db.invenio_records import TestRecordMetadata
+from factories.db.invenio_records import TestRecordMetadata  # noqa
 
 
 @pytest.fixture(scope='session')
-def super_app():
+def app():
     """
     Flask application without demosite data and without database isolation:
     any db transaction performed during the tests are persisted into the db,
@@ -73,15 +73,15 @@ def super_app():
 
 
 @pytest.fixture(scope='function', autouse=True)
-def clear_environment(super_app):
-    with super_app.app_context():
+def clear_environment(app):
+    with app.app_context():
         db.session.close()
         db.drop_all()
         drop_alembic_version_table()
 
-        alembic = Alembic(app=super_app)
+        alembic = Alembic(app=app)
         alembic.upgrade()
-        _es = super_app.extensions['invenio-search']
+        _es = app.extensions['invenio-search']
         list(_es.delete(ignore=[404]))
         list(_es.create(ignore=[400]))
         es.indices.refresh('records-hep')
@@ -90,9 +90,8 @@ def clear_environment(super_app):
         init_users_and_permissions()
 
 
-
 @pytest.fixture
-def create_records(super_app):
+def create_records(app):
 
     def _records_factory(n=1, additional_props={}, pid_type='lit'):
         records = []
@@ -118,7 +117,7 @@ def celery_config():
 
 
 @pytest.fixture(scope='session')
-def celery_app_with_context(super_app, celery_session_app):
+def celery_app_with_context(app, celery_session_app):
     """
     This fixtures monkey-patches the Task class in the celery_session_app to
     properly run tasks in a Flask application context.
@@ -129,15 +128,15 @@ def celery_app_with_context(super_app, celery_session_app):
     """
     from flask_celeryext.app import AppContextTask
     celery_session_app.Task = AppContextTask
-    celery_session_app.flask_app = super_app
+    celery_session_app.flask_app = app
     return celery_session_app
 
 
 @pytest.fixture(scope='class')
-def super_app_cli(super_app):
+def app_cli(app):
     """Click CLI runner inside the Flask application."""
     runner = CliRunner()
-    obj = ScriptInfo(create_app=lambda info: super_app)
+    obj = ScriptInfo(create_app=lambda info: app)
     runner._invoke = runner.invoke
     runner.invoke = partial(runner.invoke, obj=obj)
     return runner

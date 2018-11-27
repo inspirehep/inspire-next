@@ -40,7 +40,7 @@ env:
     - SUITE=ui-literature IMAGES="selenium test-database test-indexer test-rabbitmq test-redis test-web"
     - SUITE=workflows IMAGES="test-database test-indexer test-rabbitmq test-redis test-web"
     - SUITE=integration IMAGES="test-database test-indexer test-redis"
-    - SUITE=async_tasks IMAGES="test-database test-indexer test-redis test-rabbitmq"
+    - SUITE=integration_async IMAGES="test-database test-indexer test-redis test-rabbitmq"
     - SUITE=unit IMAGES=""
 
 matrix:

@@ -105,10 +105,10 @@ services:
       test-redis:
         condition: service_healthy
 
-  async_tasks:
+  integration_async:
     extends:
       service: test-service_base
-    command: py.test tests/async_tasks
+    command: py.test tests/integration_async
     volumes_from:
       - test-static
     depends_on:
