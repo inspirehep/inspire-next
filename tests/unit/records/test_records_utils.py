@@ -45,6 +45,7 @@ from inspirehep.modules.records.utils import (
     populate_title_suggest,
     populate_number_of_references,
     populate_facet_author_name,
+    get_author_with_record_facet_author_name,
 )
 
 
@@ -1026,3 +1027,24 @@ def test_populate_facet_author_name(mocked_get_linked_records_in_field):
     assert validate(record['authors'], subschema) is None
     populate_facet_author_name(record)
     assert record['facet_author_name'] == expected_result
+
+
+def test_get_author_with_record_facet_author_name():
+    author1 = {
+        '$schema': 'http://localhost:5000/records/schemas/authors.json',
+        'name': {'value': 'Doe, John', 'preferred_name': 'J Doe'},
+        'ids': [{'schema': 'INSPIRE BAI', 'value': 'John.Doe.1'}]
+    }
+
+    author1_facet_author_name = 'John.Doe.1_J Doe'
+    result = get_author_with_record_facet_author_name(author1)
+    assert result == author1_facet_author_name
+
+    author2 = {
+        '$schema': 'http://localhost:5000/records/schemas/authors.json',
+        'name': {'value': 'Doe, John'},
+        'ids': [{'schema': 'INSPIRE BAI', 'value': 'John.Doe.1'}]
+    }
+    author2_facet_author_name = 'John.Doe.1_John Doe'
+    result = get_author_with_record_facet_author_name(author2)
+    assert result == author2_facet_author_name

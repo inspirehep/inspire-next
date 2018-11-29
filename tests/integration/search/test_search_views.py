@@ -147,7 +147,7 @@ def test_search_hep_author_publication_with_not_existing_facet_name(isolated_api
     assert len(expected_aggregations) == len(result_aggregations)
 
 
-def xtest_selecting_2_facets_generates_search_with_must_query(api_client):
+def test_selecting_2_facets_generates_search_with_must_query(api_client):
     record_json = {
         'control_number': 843386527,
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -175,13 +175,13 @@ def xtest_selecting_2_facets_generates_search_with_must_query(api_client):
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    response = api_client.get('/literature?q=&author=John%20Doe')
+    response = api_client.get('/literature?q=&author=BAI_John%20Doe')
     data = json.loads(response.data)
     response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
     assert rec['control_number'] in response_recids
     assert rec2['control_number'] in response_recids
 
-    response = api_client.get('/literature?q=&author=John%20Doe&author=John%20Doe2')
+    response = api_client.get('/literature?q=&author=BAI_John%20Doe&author=BAI_John%20Doe2')
     data = json.loads(response.data)
     response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
     assert rec['control_number'] not in response_recids

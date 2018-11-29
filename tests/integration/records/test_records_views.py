@@ -134,7 +134,6 @@ def test_literature_citations_api_with_results(app, api_client):
     _delete_record('lit', 111)
     _delete_record('lit', 222)
     _delete_record('lit', 333)
-    db.session.commit()
 
 
 def test_literature_citations_api_sorted_by_earliest_date(api_client):
@@ -275,7 +274,6 @@ def test_literature_citations_api_sorted_by_earliest_date(api_client):
     _delete_record('lit', 222)
     _delete_record('lit', 333)
     _delete_record('lit', 444)
-    db.session.commit()
 
 
 def test_literature_citations_api_without_results(api_client):
@@ -312,7 +310,6 @@ def test_literature_citations_api_without_results(api_client):
     assert expected_metadata == result['metadata']
 
     _delete_record('lit', 111)
-    db.session.commit()
 
 
 def test_literature_citations_api_with_parameter_page_1(api_client):
@@ -422,7 +419,6 @@ def test_literature_citations_api_with_parameter_page_1(api_client):
     _delete_record('lit', 111)
     _delete_record('lit', 222)
     _delete_record('lit', 333)
-    db.session.commit()
 
 
 def test_literature_citations_api_with_parameter_page_2(api_client):
@@ -532,7 +528,6 @@ def test_literature_citations_api_with_parameter_page_2(api_client):
     _delete_record('lit', 111)
     _delete_record('lit', 222)
     _delete_record('lit', 333)
-    db.session.commit()
 
 
 def test_literature_citations_api_with_malformed_parameters(api_client):
@@ -611,7 +606,6 @@ def test_literature_citations_api_with_malformed_parameters(api_client):
     _delete_record('lit', 111)
     _delete_record('lit', 222)
     _delete_record('lit', 333)
-    db.session.commit()
 
 
 def test_literature_citations_api_with_not_existing_pid_value(api_client):
@@ -690,7 +684,6 @@ def test_literature_citations_api_with_not_existing_pid_value(api_client):
     _delete_record('lit', 111)
     _delete_record('lit', 222)
     _delete_record('lit', 333)
-    db.session.commit()
 
 
 def test_literature_citations_api_with_full_citing_record(api_client):
@@ -818,4 +811,3 @@ def test_literature_citations_api_with_full_citing_record(api_client):
     _delete_record('lit', 111)
     _delete_record('lit', 222)
     _delete_record('lit', 333)
-    db.session.commit()

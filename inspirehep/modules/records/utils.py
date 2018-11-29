@@ -413,20 +413,24 @@ def populate_authors_full_name_unicode_normalized(record):
         })
 
 
+def get_author_with_record_facet_author_name(author):
+    author_ids = author.get('ids', [])
+    bai = get_values_for_schema(author_ids, 'INSPIRE BAI')[0]
+    author_preferred_name = get_value(author, 'name.preferred_name')
+    if author_preferred_name:
+        return u'{}_{}'.format(bai, author_preferred_name)
+    else:
+        return u'{}_{}'.format(bai, get_author_display_name(author['name']['value']))
+
+
 def populate_facet_author_name(record):
     """Populate the ``facet_author_name`` field of Literature records."""
-    authors_with_record = list(get_linked_records_in_field(record, 'authors.record'))
+    authors_with_record = get_linked_records_in_field(record, 'authors.record')
     authors_without_record = [author for author in record.get('authors', []) if 'record' not in author]
     result = []
 
     for author in authors_with_record:
-        author_ids = author.get('ids', [])
-        bai = get_values_for_schema(author_ids, 'INSPIRE BAI')[0]
-        author_preferred_name = get_value(author, 'name.preferred_name')
-        if author_preferred_name:
-            result.append(u'{}_{}'.format(bai, author_preferred_name))
-        else:
-            result.append(u'{}_{}'.format(bai, get_author_display_name(author['name']['value'])))
+        result.append(get_author_with_record_facet_author_name(author))
 
     for author in authors_without_record:
         result.append(u'BAI_{}'.format(get_author_display_name(author['full_name'])))

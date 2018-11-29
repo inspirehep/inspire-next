@@ -574,13 +574,8 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', cited['control_number'], 1
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', cited['control_number'], 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -611,13 +606,8 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', record['control_number'], 1
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', record['control_number'], 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -632,13 +622,8 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', record['control_number'], 2
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', record['control_number'], 3)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -675,13 +660,8 @@ def test_index_after_commit_indexes_also_cites_two_records(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', cited1['control_number'], 1
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', cited1['control_number'], 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -698,13 +678,8 @@ def test_index_after_commit_indexes_also_cites_two_records(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', cited2['control_number'], 1
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', cited2['control_number'], 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -735,13 +710,8 @@ def test_index_after_commit_indexes_also_cites_two_records(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', record['control_number'], 1
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', record['control_number'], 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -774,13 +744,8 @@ def test_index_after_commit_indexes_also_cites_two_records(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', record['control_number'], 2
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', record['control_number'], 3)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -822,13 +787,8 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', 9999, 1
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', 9999, 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -859,13 +819,8 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', record['control_number'], 1
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', record['control_number'], 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -878,13 +833,8 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', record['control_number'], 2
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', record['control_number'], 3)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -922,13 +872,8 @@ def test_regression_index_after_commit_retries_for_new_record_not_yet_in_db(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', 9999, 1
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', 9999, 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     index_modified_citations_from_record(*expected_args)
 
@@ -959,13 +904,8 @@ def test_regression_index_after_commit_retries_for_new_record_not_yet_in_db(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', record['control_number'], 1
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', record['control_number'], 2)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
 
     # execute mocked task pretending record is not committed yet to DB
     _delete_record('lit', record['control_number'])
@@ -1005,7 +945,7 @@ def test_index_after_commit_indexes_raises_if_cited_records_are_not_in_db(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    expected_args = 'lit', record['control_number'], 1
+    expected_args = 'lit', record['control_number'], 2
     mocked_indexing_task.assert_called_with(*expected_args)
 
     # execute mocked task
@@ -1032,13 +972,8 @@ def test_index_after_commit_indexes_raises_if_cited_records_are_not_in_db(
     db.session.commit()
     es.indices.refresh('records-hep')
 
-<<<<<<< HEAD
-    expected_args = 'lit', record['control_number'], 2
-    mocked_indexing_task.assert_called_with(*expected_args)
-=======
     expected_args = ('lit', record['control_number'], 3)
-    mocked_indexing_task.assert_called_with(expected_args, {})
->>>>>>> Update flask-sqlalchemy to our forked version with the signals fix
+    mocked_indexing_task.assert_called_with(*expected_args)
     # execute mocked task
     with pytest.raises(MissingCitedRecordError):
         index_modified_citations_from_record(*expected_args)
@@ -1067,8 +1002,6 @@ def test_record_enhanced_in_es_and_not_enhanced_in_db(app):
     es.indices.refresh('records-hep')
     rec1 = get_db_record('lit', 111)
     rec2 = get_es_record('lit', 111)
-    # import pdb
-    # pdb.set_trace()
     assert 'facet_author_name' not in rec1
     assert 'facet_author_name' in rec2
     _delete_record('lit', 111)

@@ -122,7 +122,6 @@ class TestRecordMetadata(TestBaseModel):
                 index=index_name,
                 doc_type=index_name.split('-')[-1],
                 body=instance.record_metadata.json,
-                id=str(instance.record_metadata.id),
                 params={}
             )
             instance.es_refresh_result = es.indices.refresh(index_name)

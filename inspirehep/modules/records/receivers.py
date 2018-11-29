@@ -158,7 +158,7 @@ def enhance_record(sender, record, *args, **kwargs):
     if not isinstance(record, InspireRecord):
         raise MissingInspireRecordError("Record is not InspireRecord!")
     enhanced_record = deepcopy(record)
-    enhance_before_index(sender, enhanced_record, enhanced_record)
+    enhance_before_index(enhanced_record)
     record.model._enhanced_record = enhanced_record
 
 
@@ -174,8 +174,10 @@ def index_after_commit(sender, changes):
     for model_instance, change in changes:
         if isinstance(model_instance, RecordMetadata):
             if change in ('insert', 'update') and not model_instance.json.get("deleted"):
-                record = model_instance._enhanced_record if hasattr(model_instance, '_enhanced_record') \
-                    else model_instance.json
+                if hasattr(model_instance, '_enhanced_record'):
+                    record = model_instance._enhanced_record
+                else:
+                    record = model_instance.json
                 indexer.index(InspireRecord(record, model_instance))
             else:
                 try:
@@ -194,7 +196,7 @@ def index_after_commit(sender, changes):
             index_modified_citations_from_record.delay(pid_type, pid_value, db_version)
 
 
-def enhance_before_index(sender, record, *args, **kwargs):
+def enhance_before_index(record):
     """Run all the receivers that enhance the record for ES in the right order.
 
     .. note::
