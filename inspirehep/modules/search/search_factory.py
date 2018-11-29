@@ -34,11 +34,11 @@ from invenio_records_rest.facets import _aggregations, _query_filter, \
 from invenio_records_rest.sorter import default_sorter_factory
 from werkzeug.datastructures import MultiDict
 
-from inspirehep.modules.search import IQ
+from inspirehep.modules.search import LiteratureSearch
 from inspirehep.modules.search.utils import get_facet_configuration
 
 
-def select_source(search, search_index):
+def select_source(search):
     """If search_idex is records-hep it filters the output to get only
     the useful data.
 
@@ -48,7 +48,7 @@ def select_source(search, search_index):
 
     Returns: Elastic search DSL search instance.
     """
-    if search_index == 'records-hep':
+    if isinstance(search, LiteratureSearch):
         search = search.source(includes=["$schema",
                                          "abstracts.value",
                                          "arxiv_eprints.value",
@@ -118,7 +118,7 @@ def inspire_search_factory(self, search):
     urlkwargs = MultiDict()
 
     try:
-        search = search.query(IQ(query_string, search))
+        search = search.query_from_iq(query_string)
     except SyntaxError:
         current_app.logger.debug(
             "Failed parsing query: {0}".format(
@@ -129,13 +129,11 @@ def inspire_search_factory(self, search):
     search_index = search._index[0]
     search, urlkwargs = inspire_filter_factory(search, urlkwargs, search_index)
     search, sortkwargs = default_sorter_factory(search, search_index)
-    search = select_source(search, search_index)
+    search = select_source(search)
 
     urlkwargs.add('q', query_string)
-    if current_app.debug:
-        current_app.logger.debug(
-            json.dumps(search.to_dict(), indent=4)
-        )
+    current_app.logger.debug(json.dumps(search.to_dict(), indent=4))
+
     return search, urlkwargs
 
 
@@ -150,7 +148,7 @@ def inspire_facets_factory(self, search):
     """
     query_string = request.values.get('q', '')
     try:
-        search = search.query(IQ(query_string, None))
+        search = search.query_from_iq(query_string)
     except SyntaxError:
         current_app.logger.debug(
             "Failed parsing query: {0}".format(
@@ -160,11 +158,9 @@ def inspire_facets_factory(self, search):
 
     search_index = search._index[0]
     search, urlkwargs = default_inspire_facets_factory(search, search_index)
-    search = select_source(search, search_index)
+    search = select_source(search)
 
     urlkwargs.add('q', query_string)
-    if current_app.debug:
-        current_app.logger.debug(
-            json.dumps(search.to_dict(), indent=4)
-        )
+    current_app.logger.debug(json.dumps(search.to_dict(), indent=4))
+
     return search, urlkwargs
