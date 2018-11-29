@@ -21,7 +21,7 @@
 # or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, division, print_function
-
+import pytest
 import json
 
 
@@ -42,6 +42,7 @@ def test_literature_recids_serializer(api_client):
     assert response_recids == expected_recids
 
 
+@pytest.mark.xfail(reason='missing parser for authors')
 def test_authors_recids_serializer(api_client):
     response = api_client.get(
         '/authors/?q=arxiv_categories:"hep-ph"',
