@@ -363,10 +363,12 @@ def health():
 @time_execution
 def healthcelery():
     result = health_celery_task.apply_async()
-    while not result.ready():
+    start_time = time.time()
+    while time.time() < start_time + 120:
+        if result.ready():
+            result_output = result.get()
+            return jsonify(result_output)
         time.sleep(0.5)
-    result_output = result.get()
-    return jsonify(result_output)
 
 
 @shared_task()
