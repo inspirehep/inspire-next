@@ -23,7 +23,6 @@
 from __future__ import absolute_import, division, print_function
 
 from itertools import chain
-
 from invenio_indexer.api import current_record_to_index
 
 from inspire_utils.record import get_value
@@ -275,7 +274,9 @@ def get_title(record):
 
 
 def create_index_op(record, version_type='external_gte'):
+    from inspirehep.modules.records.receivers import enhance_before_index
     index, doc_type = current_record_to_index(record)
+    enhance_before_index(record)
 
     return {
         '_op_type': 'index',

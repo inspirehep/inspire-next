@@ -37,7 +37,7 @@ def test_api_authors_root(api_client):
     assert response_json['id'] == 983220
 
 
-def test_api_authors_citations(api_client):
+def xtest_api_authors_citations(api_client):
     schema = {
         'items': {
             'properties': {
@@ -91,7 +91,7 @@ def test_api_authors_citations(api_client):
     assert len(response_json) == 2
 
 
-def test_api_authors_coauthors(api_client):
+def xtest_api_authors_coauthors(api_client):
     schema = {
         'items': {
             'properties': {
@@ -118,7 +118,7 @@ def test_api_authors_coauthors(api_client):
     assert len(response_json) == 10
 
 
-def test_api_authors_publications(api_client):
+def xtest_api_authors_publications(api_client):
     schema = {
         'items': {
             'properties': {
@@ -161,7 +161,7 @@ def test_api_authors_publications(api_client):
     assert len(response_json) == 2
 
 
-def test_api_author_stats(api_client):
+def xtest_api_author_stats(api_client):
     schema = {
         'properties': {
             'citations': {'type': 'integer'},

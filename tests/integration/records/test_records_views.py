@@ -24,12 +24,14 @@ from __future__ import absolute_import, division, print_function
 
 import json
 
+from invenio_db import db
 from invenio_search import current_search_client as es
 
+from utils import _delete_record
 from inspirehep.modules.records.api import InspireRecord
 
 
-def test_literature_citations_api_with_results(isolated_api_client):
+def test_literature_citations_api_with_results(app, api_client):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': [
@@ -91,10 +93,11 @@ def test_literature_citations_api_with_results(isolated_api_client):
     }
     record_ref_2 = InspireRecord.create(record_json_ref_2)
     record_ref_2.commit()
+    db.session.commit()
 
     es.indices.refresh('records-hep')
 
-    response = isolated_api_client.get(
+    response = api_client.get(
         '/literature/111/citations',
         headers={'Accept': 'application/json'}
     )
@@ -128,12 +131,12 @@ def test_literature_citations_api_with_results(isolated_api_client):
     assert response.status_code == 200
     assert expected_metadata == result['metadata']
 
-    record._delete(force=True)
-    record_ref_1._delete(force=True)
-    record_ref_2._delete(force=True)
+    _delete_record('lit', 111)
+    _delete_record('lit', 222)
+    _delete_record('lit', 333)
 
 
-def test_literature_citations_api_sorted_by_earliest_date(isolated_api_client):
+def test_literature_citations_api_sorted_by_earliest_date(api_client):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': [
@@ -222,9 +225,10 @@ def test_literature_citations_api_sorted_by_earliest_date(isolated_api_client):
     record_ref_3 = InspireRecord.create(record_json_ref_3)
     record_ref_3.commit()
 
+    db.session.commit()
     es.indices.refresh('records-hep')
 
-    response = isolated_api_client.get(
+    response = api_client.get(
         '/literature/111/citations',
         headers={'Accept': 'application/json'}
     )
@@ -266,13 +270,13 @@ def test_literature_citations_api_sorted_by_earliest_date(isolated_api_client):
     assert response.status_code == 200
     assert expected_metadata == result['metadata']
 
-    record._delete(force=True)
-    record_ref_1._delete(force=True)
-    record_ref_2._delete(force=True)
-    record_ref_3._delete(force=True)
+    _delete_record('lit', 111)
+    _delete_record('lit', 222)
+    _delete_record('lit', 333)
+    _delete_record('lit', 444)
 
 
-def test_literature_citations_api_without_results(isolated_api_client):
+def test_literature_citations_api_without_results(api_client):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': [
@@ -291,7 +295,7 @@ def test_literature_citations_api_without_results(isolated_api_client):
 
     es.indices.refresh('records-hep')
 
-    response = isolated_api_client.get(
+    response = api_client.get(
         '/literature/111/citations',
         headers={'Accept': 'application/json'}
     )
@@ -305,10 +309,10 @@ def test_literature_citations_api_without_results(isolated_api_client):
     assert response.status_code == 200
     assert expected_metadata == result['metadata']
 
-    record._delete(force=True)
+    _delete_record('lit', 111)
 
 
-def test_literature_citations_api_with_parameter_page_1(isolated_api_client):
+def test_literature_citations_api_with_parameter_page_1(api_client):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': [
@@ -371,9 +375,10 @@ def test_literature_citations_api_with_parameter_page_1(isolated_api_client):
     record_ref_2 = InspireRecord.create(record_json_ref_2)
     record_ref_2.commit()
 
+    db.session.commit()
     es.indices.refresh('records-hep')
 
-    response = isolated_api_client.get(
+    response = api_client.get(
         '/literature/111/citations?size=1&page=1',
         headers={'Accept': 'application/json'}
     )
@@ -411,12 +416,12 @@ def test_literature_citations_api_with_parameter_page_1(isolated_api_client):
     assert response.status_code == 200
     assert result['metadata'] in expected_metadata
 
-    record._delete(force=True)
-    record_ref_1._delete(force=True)
-    record_ref_2._delete(force=True)
+    _delete_record('lit', 111)
+    _delete_record('lit', 222)
+    _delete_record('lit', 333)
 
 
-def test_literature_citations_api_with_parameter_page_2(isolated_api_client):
+def test_literature_citations_api_with_parameter_page_2(api_client):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': [
@@ -479,9 +484,10 @@ def test_literature_citations_api_with_parameter_page_2(isolated_api_client):
     record_ref_2 = InspireRecord.create(record_json_ref_2)
     record_ref_2.commit()
 
+    db.session.commit()
     es.indices.refresh('records-hep')
 
-    response = isolated_api_client.get(
+    response = api_client.get(
         '/literature/111/citations?size=1&page=2',
         headers={'Accept': 'application/json'}
     )
@@ -519,12 +525,12 @@ def test_literature_citations_api_with_parameter_page_2(isolated_api_client):
     assert response.status_code == 200
     assert result['metadata'] in expected_metadata
 
-    record._delete(force=True)
-    record_ref_1._delete(force=True)
-    record_ref_2._delete(force=True)
+    _delete_record('lit', 111)
+    _delete_record('lit', 222)
+    _delete_record('lit', 333)
 
 
-def test_literature_citations_api_with_malformed_parameters(isolated_api_client):
+def test_literature_citations_api_with_malformed_parameters(api_client):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': [
@@ -587,21 +593,22 @@ def test_literature_citations_api_with_malformed_parameters(isolated_api_client)
     record_ref_2 = InspireRecord.create(record_json_ref_2)
     record_ref_2.commit()
 
+    db.session.commit()
     es.indices.refresh('records-hep')
 
-    response = isolated_api_client.get(
+    response = api_client.get(
         '/literature/111/citations?page=-20',
         headers={'Accept': 'application/json'}
     )
 
     assert response.status_code == 400
 
-    record._delete(force=True)
-    record_ref_1._delete(force=True)
-    record_ref_2._delete(force=True)
+    _delete_record('lit', 111)
+    _delete_record('lit', 222)
+    _delete_record('lit', 333)
 
 
-def test_literature_citations_api_with_not_existing_pid_value(isolated_api_client):
+def test_literature_citations_api_with_not_existing_pid_value(api_client):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': [
@@ -664,21 +671,22 @@ def test_literature_citations_api_with_not_existing_pid_value(isolated_api_clien
     record_ref_2 = InspireRecord.create(record_json_ref_2)
     record_ref_2.commit()
 
+    db.session.commit()
     es.indices.refresh('records-hep')
 
-    response = isolated_api_client.get(
+    response = api_client.get(
         '/literature/444/citations',
         headers={'Accept': 'application/json'}
     )
 
     assert response.status_code == 404
 
-    record._delete(force=True)
-    record_ref_1._delete(force=True)
-    record_ref_2._delete(force=True)
+    _delete_record('lit', 111)
+    _delete_record('lit', 222)
+    _delete_record('lit', 333)
 
 
-def test_literature_citations_api_with_full_citing_record(isolated_api_client):
+def test_literature_citations_api_with_full_citing_record(api_client):
     record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': [
@@ -752,9 +760,10 @@ def test_literature_citations_api_with_full_citing_record(isolated_api_client):
     record_ref_2 = InspireRecord.create(record_json_ref_2)
     record_ref_2.commit()
 
+    db.session.commit()
     es.indices.refresh('records-hep')
 
-    response = isolated_api_client.get(
+    response = api_client.get(
         '/literature/111/citations',
         headers={'Accept': 'application/json'}
     )
@@ -799,6 +808,6 @@ def test_literature_citations_api_with_full_citing_record(isolated_api_client):
 
     assert expected_metadata == result['metadata']
 
-    record._delete(force=True)
-    record_ref_1._delete(force=True)
-    record_ref_2._delete(force=True)
+    _delete_record('lit', 111)
+    _delete_record('lit', 222)
+    _delete_record('lit', 333)

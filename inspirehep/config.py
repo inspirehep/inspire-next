@@ -341,7 +341,7 @@ AUTHORS_REST_ENDPOINT = {
     'search_class': 'inspirehep.modules.search:AuthorsSearch',
     'record_serializers': {
         'application/json': 'invenio_records_rest.serializers:json_v1_response',
-        'application/vnd+inspire.record.ui+json': 'invenio_records_rest.serializers:json_v1_response',
+        'application/vnd+inspire.record.ui+json': INSPIRE_SERIALIZERS + ':json_authors_ui_v1_response',
     },
     'record_class': 'inspirehep.modules.records.api:InspireRecord',
     'search_serializers': {
@@ -854,6 +854,7 @@ RECORDS_REST_FACETS = {
                 "meta": {
                     "title": "Author",
                     "order": 3,
+                    "split": True,
                 },
             },
             "subject": {

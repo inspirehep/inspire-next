@@ -17,91 +17,92 @@
     "author": {
       "buckets": [
         {
-          "key": "Aaij, Roel",
+          "key": "BAI_Abhijit Mathad",
           "doc_count": 1
         },
         {
-          "key": "Adeva, Bernardo",
+          "key": "BAI_Abolhassan Jawahery",
           "doc_count": 1
         },
         {
-          "key": "Adinolfi, Marco",
+          "key": "BAI_Abraham Gallas Torreira",
           "doc_count": 1
         },
         {
-          "key": "Ajaltouni, Ziad",
+          "key": "BAI_Achim Vollhardt",
           "doc_count": 1
         },
         {
-          "key": "Akar, Simon",
+          "key": "BAI_Adalberto Sciubba",
           "doc_count": 1
         },
         {
-          "key": "Albrecht, Johannes",
+          "key": "BAI_Adam Benjamin Morris",
           "doc_count": 1
         },
         {
-          "key": "Alessio, Federico",
+          "key": "BAI_Adam Davis",
           "doc_count": 1
         },
         {
-          "key": "Alexander, Michael",
+          "key": "BAI_Adam Otto",
           "doc_count": 1
         },
         {
-          "key": "Ali, Suvayu",
+          "key": "BAI_Adlène Hicheur",
           "doc_count": 1
         },
         {
-          "key": "Alkhazov, Georgy",
+          "key": "BAI_Adrian Pritchard",
           "doc_count": 1
         },
         {
-          "key": "Alvarez Cartelle, Paula",
+          "key": "BAI_Adriano Lai",
           "doc_count": 1
         },
         {
-          "key": "Alves Jr, Antonio Augusto",
+          "key": "BAI_Agnieszka Dziurda",
           "doc_count": 1
         },
         {
-          "key": "Amato, Sandra",
+          "key": "BAI_Agnieszka Oblakowska-Mucha",
           "doc_count": 1
         },
         {
-          "key": "Amerio, Silvia",
+          "key": "BAI_Albert Bursche",
           "doc_count": 1
         },
         {
-          "key": "Amhis, Yasmine",
+          "key": "BAI_Albert Comerma-Montells",
           "doc_count": 1
         },
         {
-          "key": "An, Liupan",
+          "key": "BAI_Albert Puig Navarro",
           "doc_count": 1
         },
         {
-          "key": "Anderlini, Lucio",
+          "key": "BAI_Alberto Lusiani",
           "doc_count": 1
         },
         {
-          "key": "Andreassi, Guido",
+          "key": "BAI_Alberto dos Reis",
           "doc_count": 1
         },
         {
-          "key": "Andreotti, Mirco",
+          "key": "BAI_Aleksandr Petrov",
           "doc_count": 1
         },
         {
-          "key": "Andrews, Jason",
+          "key": "BAI_Alena Kosmyntseva",
           "doc_count": 1
         }
       ],
       "meta": {
+        "title": "Author",
         "order": 3,
-        "title": "Author"
+        "split": true
       },
-      "sum_other_doc_count": 749,
+      "sum_other_doc_count": 744,
       "doc_count_error_upper_bound": 1
     },
     "arxiv_categories": {

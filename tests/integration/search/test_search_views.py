@@ -27,7 +27,9 @@ import json
 from invenio_db import db
 from invenio_search import current_search_client as es
 
+from utils import _delete_record
 from inspirehep.modules.records.api import InspireRecord
+from factories.db.invenio_records import TestRecordMetadata
 
 
 def test_search_conferences_is_there(app_client):
@@ -145,8 +147,9 @@ def test_search_hep_author_publication_with_not_existing_facet_name(isolated_api
     assert len(expected_aggregations) == len(result_aggregations)
 
 
-def test_selecting_2_facets_generates_search_with_must_query(isolated_api_client):
+def test_selecting_2_facets_generates_search_with_must_query(api_client):
     record_json = {
+        'control_number': 843386527,
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': ['article'],
         'titles': [{'title': 'Article 1'}],
@@ -158,6 +161,7 @@ def test_selecting_2_facets_generates_search_with_must_query(isolated_api_client
     rec.commit()
 
     record_json2 = {
+        'control_number': 843386521,
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': ['article'],
         'titles': [{'title': 'Article 2'}],
@@ -171,17 +175,21 @@ def test_selecting_2_facets_generates_search_with_must_query(isolated_api_client
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    response = isolated_api_client.get('/literature?q=&author=John%20Doe')
+    response = api_client.get('/literature?q=&author=BAI_John%20Doe')
     data = json.loads(response.data)
     response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
     assert rec['control_number'] in response_recids
     assert rec2['control_number'] in response_recids
 
-    response = isolated_api_client.get('/literature?q=&author=John%20Doe&author=John%20Doe2')
+    response = api_client.get('/literature?q=&author=BAI_John%20Doe&author=BAI_John%20Doe2')
     data = json.loads(response.data)
     response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
     assert rec['control_number'] not in response_recids
     assert rec2['control_number'] in response_recids
+
+    _delete_record('lit', 843386527)
+    _delete_record('lit', 843386521)
+    db.session.commit()
 
 
 def test_exact_author_bai_query(isolated_api_client):
@@ -198,11 +206,8 @@ def test_exact_author_bai_query(isolated_api_client):
                      ]}],
     }
 
-    rec = InspireRecord.create(data=record_json)
-    rec.commit()
-
-    es.indices.refresh('records-hep')
-
+    rec_factory = TestRecordMetadata.create_from_kwargs(json=record_json, index_name='records-hep')
+    rec = rec_factory.record_metadata.json
     response = isolated_api_client.get('/literature?q=ea%20j.doe.1')
     data = json.loads(response.data)
     response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
@@ -217,5 +222,3 @@ def test_exact_author_bai_query(isolated_api_client):
     data = json.loads(response.data)
     response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
     assert rec['control_number'] in response_recids
-
-    rec.delete()

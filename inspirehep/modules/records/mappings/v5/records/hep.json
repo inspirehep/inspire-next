@@ -205,7 +205,6 @@
                         },
                         "full_name": {
                             "analyzer": "author_name_analyzer",
-                            "copy_to": "facet_author_name",
                             "fields": {
                                 "raw": {
                                     "type": "keyword"

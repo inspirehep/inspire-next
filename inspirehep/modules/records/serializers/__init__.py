@@ -40,6 +40,7 @@ from .schemas.json import (
     LiteratureRecordSchemaJSONUIV1,
     LiteratureReferencesSchemaJSONUIV1,
     CitationItemSchemaV1,
+    AuthorsRecordSchemaJSONUIV1,
 )
 from .marcxml import MARCXMLSerializer
 from .response import record_responsify_nocache, facets_responsify
@@ -96,6 +97,20 @@ json_literature_aggregations_ui_v1 = FacetsJSONUISerializer(
 json_literature_search_aggregations_ui_v1 = facets_responsify(
     json_literature_aggregations_ui_v1,
     'application/json',
+)
+
+json_authors_ui_v1 = JSONSerializer(
+    AuthorsRecordSchemaJSONUIV1
+)
+
+json_authors_ui_v1_search = search_responsify(
+    json_authors_ui_v1,
+    'application/vnd+inspire.literature.ui+json'
+)
+
+json_authors_ui_v1_response = record_responsify_nocache(
+    json_authors_ui_v1,
+    'application/vnd+inspire.literature.ui+json'
 )
 
 bibtex_v1 = PybtexSerializerBase(PybtexSchema(), BibtexWriter())
