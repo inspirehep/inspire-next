@@ -609,15 +609,13 @@ class InspireRecord(Record):
         return "{pid_value}{shorten_endpoint}".format(pid_value=pid_value,
                                                       shorten_endpoint=shorten_endpoint)
 
-    def _query_citing_records(self, show_duplicates=False, session=None):
+    def _query_citing_records(self, show_duplicates=False):
         """Returns records which cites this one."""
-        if not session:
-            session = db.session
         index_ref = self._get_index_ref()
         if not index_ref:
             raise Exception("There is no index_ref for this object")
-        citation_query = session.query(RecordMetadata).with_entities(RecordMetadata.id,
-                                                                     RecordMetadata.json['control_number'])
+        citation_query = RecordMetadata.query.with_entities(RecordMetadata.id,
+                                                            RecordMetadata.json['control_number'])
         citation_filter = referenced_records(RecordMetadata.json).contains([index_ref])
         filter_deleted_records = or_(not_(type_coerce(RecordMetadata.json, JSONB).has_key('deleted')),  # noqa: W601
                                      not_(RecordMetadata.json['deleted'] == cast(True, JSONB)))
@@ -636,10 +634,10 @@ class InspireRecord(Record):
     def get_citing_records_query(self):
         return self._query_citing_records()
 
-    def get_citations_count(self, session=None, show_duplicates=False):
+    def get_citations_count(self, show_duplicates=False):
         """Returns citations count for this record."""
 
-        count = self._query_citing_records(show_duplicates, session).count()
+        count = self._query_citing_records(show_duplicates).count()
         return count
 
     def dumps(self):
