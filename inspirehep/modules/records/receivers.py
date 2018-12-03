@@ -77,7 +77,7 @@ from inspirehep.modules.records.utils import (
     populate_title_suggest,
     populate_facet_author_name,
 )
-from inspirehep.modules.records.indexer import InspireRecordIndexer
+from invenio_indexer.api import RecordIndexer
 
 LOGGER = logging.getLogger(__name__)
 
@@ -170,7 +170,7 @@ def index_after_commit(sender, changes):
     because, despite the name, at that point we are not yet sure whether the record
     has been really committed to the DB.
     """
-    indexer = InspireRecordIndexer()
+    indexer = RecordIndexer()
     for model_instance, change in changes:
         if isinstance(model_instance, RecordMetadata):
             if change in ('insert', 'update') and not model_instance.json.get("deleted"):

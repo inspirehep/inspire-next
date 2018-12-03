@@ -97,7 +97,7 @@ def test_simpleindex_does_fails_invalid_record(
             'date': '"2013-01-14_final'
         }
     }
-    with patch('inspirehep.modules.records.receivers.InspireRecordIndexer'):
+    with patch('inspirehep.modules.records.receivers.RecordIndexer'):
         create_records(additional_props=broken_field)
 
     result = app_cli.invoke(
@@ -128,7 +128,7 @@ def test_simpleindex_does_fails_invalid_field(
         'preprint_date': 'i am not a date'
     }
 
-    with patch('inspirehep.modules.records.receivers.InspireRecordIndexer'):
+    with patch('inspirehep.modules.records.receivers.RecordIndexer'):
         create_records(additional_props=invalid_field)
 
     result = app_cli.invoke(
@@ -161,7 +161,7 @@ def test_simpleindex_does_one_fails_and_two_ok(
     }
 
     create_records(n=2)
-    with patch('inspirehep.modules.records.receivers.InspireRecordIndexer'):
+    with patch('inspirehep.modules.records.receivers.RecordIndexer'):
         create_records(additional_props=invalid_field)
 
     result = app_cli.invoke(
