@@ -42,7 +42,6 @@ from flask import current_app
 from flask.cli import with_appcontext
 from invenio_records_files.models import RecordsBuckets
 
-from inspirehep.modules.records.utils import get_citations_from_es
 from inspirehep.utils.record_getter import get_db_record, get_es_record, \
     RecordGetterError
 from inspirehep.modules.records.checkers import check_unlinked_references
@@ -559,7 +558,7 @@ def _process_record(pid, app):
             deleted = True
         if not deleted:
             try:
-                es_cits = get_citations_from_es(rec).total
+                es_cits = LiteratureSearch.citations(rec).total
                 search = LiteratureSearch().source(includes=['citation_count'])
                 results = search.get_record(rec.id).execute()
                 if not results.hits:

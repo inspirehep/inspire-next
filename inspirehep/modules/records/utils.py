@@ -42,7 +42,6 @@ from inspirehep.modules.pidstore.utils import (
 from inspirehep.modules.records.errors import MissingInspireRecordError
 from inspirehep.utils.record_getter import get_db_records
 from inspire_utils.record import get_values_for_schema
-from inspirehep.modules.search import LiteratureSearch
 
 
 def is_author(record):
@@ -431,25 +430,6 @@ def populate_facet_author_name(record):
         result.append(u'BAI_{}'.format(get_author_display_name(author['full_name'])))
 
     record['facet_author_name'] = result
-
-
-def get_citations_from_es(record, page=1, size=10):
-    if 'control_number' not in record:
-        return None
-
-    return LiteratureSearch().query(
-        'match', references__recid=record['control_number'],
-    ).params(
-        _source=[
-            'authors',
-            'control_number',
-            'earliest_date',
-            'titles',
-            'publication_info'
-        ],
-        from_=(page - 1) * size,
-        size=size,
-    ).sort('-earliest_date').execute().hits
 
 
 def populate_author_suggest(record, *args, **kwargs):

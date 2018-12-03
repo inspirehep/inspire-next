@@ -45,7 +45,6 @@ from inspirehep.modules.migrator.tasks import migrate_and_insert_record
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.errors import MissingInspireRecordError, MissingCitedRecordError
 from inspirehep.modules.records.tasks import index_modified_citations_from_record
-from inspirehep.modules.records.utils import get_citations_from_es
 from inspirehep.modules.search import LiteratureSearch
 from inspirehep.utils.record import get_title
 from inspirehep.utils.record_getter import get_es_record, RecordGetterError, get_db_record
@@ -489,7 +488,7 @@ def test_index_after_commit_indexes_also_cites_record_when_new_citation_is_added
 
     es_rec = get_es_record('lit', 9999)
     assert es_rec['citation_count'] == 0
-    assert get_citations_from_es(es_rec).total == 0
+    assert LiteratureSearch.citations(es_rec).total == 0
 
     citing_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -513,7 +512,7 @@ def test_index_after_commit_indexes_also_cites_record_when_new_citation_is_added
 
     es_rec = get_es_record('lit', 9999)
     assert es_rec['citation_count'] == 0
-    assert get_citations_from_es(es_rec).total == 0
+    assert LiteratureSearch.citations(es_rec).total == 0
 
     references = {
         'references': [
@@ -543,7 +542,7 @@ def test_index_after_commit_indexes_also_cites_record_when_new_citation_is_added
 
     es_rec = get_es_record('lit', 9999)
     assert es_rec['citation_count'] == 1
-    assert get_citations_from_es(es_rec).total == 1
+    assert LiteratureSearch.citations(es_rec).total == 1
 
     _delete_record('lit', 8888)
     _delete_record('lit', 9999)
@@ -581,7 +580,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
 
     es_rec = get_es_record('lit', 9999)
     assert es_rec['citation_count'] == 0
-    assert get_citations_from_es(es_rec).total == 0
+    assert LiteratureSearch.citations(es_rec).total == 0
 
     citing_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -613,7 +612,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
 
     es_rec = get_es_record('lit', 9999)
     assert es_rec['citation_count'] == 1
-    assert get_citations_from_es(es_rec).total == 1
+    assert LiteratureSearch.citations(es_rec).total == 1
 
     del citing_json['references']
     record.clear()
@@ -629,7 +628,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
 
     es_rec = get_es_record('lit', 9999)
     assert es_rec['citation_count'] == 0
-    assert get_citations_from_es(es_rec).total == 0
+    assert LiteratureSearch.citations(es_rec).total == 0
 
     _delete_record('lit', record['control_number'])
     _delete_record('lit', cited['control_number'])
@@ -687,8 +686,8 @@ def test_index_after_commit_indexes_also_cites_two_records(
     es_rec2 = get_es_record('lit', 9998)
     assert es_rec1['citation_count'] == 0
     assert es_rec2['citation_count'] == 0
-    assert get_citations_from_es(es_rec1).total == 0
-    assert get_citations_from_es(es_rec2).total == 0
+    assert LiteratureSearch.citations(es_rec1).total == 0
+    assert LiteratureSearch.citations(es_rec2).total == 0
 
     citing_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -719,8 +718,8 @@ def test_index_after_commit_indexes_also_cites_two_records(
     es_rec2 = get_es_record('lit', 9998)
     assert es_rec1['citation_count'] == 0
     assert es_rec2['citation_count'] == 0
-    assert get_citations_from_es(es_rec1).total == 0
-    assert get_citations_from_es(es_rec2).total == 0
+    assert LiteratureSearch.citations(es_rec1).total == 0
+    assert LiteratureSearch.citations(es_rec2).total == 0
 
     references = {
         'references': [
@@ -753,8 +752,8 @@ def test_index_after_commit_indexes_also_cites_two_records(
     es_rec2 = get_es_record('lit', 9998)
     assert es_rec1['citation_count'] == 1
     assert es_rec2['citation_count'] == 1
-    assert get_citations_from_es(es_rec1).total == 1
-    assert get_citations_from_es(es_rec2).total == 1
+    assert LiteratureSearch.citations(es_rec1).total == 1
+    assert LiteratureSearch.citations(es_rec2).total == 1
 
     _delete_record('lit', record['control_number'])
     _delete_record('lit', cited1['control_number'])
@@ -794,7 +793,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
 
     es_rec = get_es_record('lit', 9999)
     assert es_rec['citation_count'] == 0
-    assert get_citations_from_es(es_rec).total == 0
+    assert LiteratureSearch.citations(es_rec).total == 0
 
     citing_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -826,7 +825,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
 
     es_rec = get_es_record('lit', 9999)
     assert es_rec['citation_count'] == 1
-    assert get_citations_from_es(es_rec).total == 1
+    assert LiteratureSearch.citations(es_rec).total == 1
 
     record.delete()
     record.commit()
@@ -840,7 +839,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
 
     es_rec = get_es_record('lit', 9999)
     assert es_rec['citation_count'] == 0
-    assert get_citations_from_es(es_rec).total == 0
+    assert LiteratureSearch.citations(es_rec).total == 0
 
     _delete_record('lit', record['control_number'])
     _delete_record('lit', cited['control_number'])
@@ -879,7 +878,7 @@ def test_regression_index_after_commit_retries_for_new_record_not_yet_in_db(
 
     es_rec = get_es_record('lit', 9999)
     assert es_rec['citation_count'] == 0
-    assert get_citations_from_es(es_rec).total == 0
+    assert LiteratureSearch.citations(es_rec).total == 0
 
     citing_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
