@@ -143,6 +143,15 @@ class ConferencesSearch(RecordsSearch, SearchMixin):
         index = 'records-conferences'
         doc_types = 'conferences'
 
+    def query_from_iq(self, query_string):
+        """Initialize ES DSL object using INSPIRE query parser.
+
+        :param query_string: Query string as a user would input in INSPIRE's search box.
+        :type query_string: string
+        :returns: Elasticsearch DSL search class
+        """
+        return self.query(IQ(query_string, self))
+
     def default_fields(self):
         """What fields to use when no keyword is specified."""
         return ['_all']
@@ -166,6 +175,15 @@ class InstitutionsSearch(RecordsSearch, SearchMixin):
     class Meta:
         index = 'records-institutions'
         doc_types = 'institutions'
+
+    def query_from_iq(self, query_string):
+        """Initialize ES DSL object using INSPIRE query parser.
+
+        :param query_string: Query string as a user would input in INSPIRE's search box.
+        :type query_string: string
+        :returns: Elasticsearch DSL search class
+        """
+        return self.query(IQ(query_string, self))
 
     def default_fields(self):
         """What fields to use when no keyword is specified."""
