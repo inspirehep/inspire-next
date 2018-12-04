@@ -151,6 +151,16 @@ class OrcidBuilder(object):
         external_ids_field = self._get_or_make_field(self.record, 'common:external-ids')
         external_ids_field.append(self._make_external_id_field(type, value, url, relationship))
 
+    def add_recid(self, value, url, relationship=None):
+        """Add Inspire recid to the record.
+
+        Args:
+            value (string): the recid.
+            url (string): url to the Inspire record.
+            relationship (string): either "part-of" or "self", optional, see `OrcidBuilder._make_external_id_field`
+        """
+        self.add_external_id('other-id', str(value), url, relationship)
+
     def add_doi(self, value, relationship=None):
         """Add DOI to the record.
 

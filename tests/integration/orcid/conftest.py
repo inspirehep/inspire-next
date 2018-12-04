@@ -65,7 +65,8 @@ def vcr(vcr):
         'accept',
         lambda r1, r2: r1.headers.get('Accept') == r2.headers.get('Accept'),
     )
-    vcr.match_on = ['method', 'scheme', 'host', 'port', 'path', 'query', 'accept']
+    vcr.match_on = ['method', 'scheme', 'host', 'port', 'path', 'query',
+                    'accept', 'body']
     return vcr
 
 

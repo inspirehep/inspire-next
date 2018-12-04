@@ -182,7 +182,7 @@ class TestOrcidPusherPostNewWork(object):
         with pytest.raises(exceptions.InputDataInvalidException):
             pusher.push()
 
-    def test_push_new_work_already_existent(self):
+    def test_push_new_work_already_existing(self):
         # ORCID_APP_CREDENTIALS is required because ORCID adds it as source_client_id_path.
         with override_config(ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}):
             pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
@@ -190,7 +190,7 @@ class TestOrcidPusherPostNewWork(object):
         assert result_putcode == '47160445'
         assert not self.cache.has_work_content_changed(self.inspire_record)
 
-    def test_push_new_work_already_existent_putcode_exception(self):
+    def test_push_new_work_already_existing_putcode_exception(self):
         pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
         # ORCID_APP_CREDENTIALS is required because ORCID adds it as source_client_id_path.
         with override_config(ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}), \

@@ -210,7 +210,7 @@ class TestOrcidPushTask(object):
                 pytest.raises(exceptions.InputDataInvalidException):
             orcid_push('0000-0002-0000-XXXX', self.recid, self.oauth_token)
 
-    def test_push_new_work_already_existent(self):
+    def test_push_new_work_already_existing(self):
         with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
                              FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*',
                              ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}):
