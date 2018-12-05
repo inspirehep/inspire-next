@@ -101,6 +101,11 @@ class OrcidCache(object):
             inspire_record (InspireRecord): InspireRecord instance. If provided,
              the hash for the record content is re-computed.
         """
+        # Hook to force a cache miss. This can be leveraged in feature tests.
+        for note in inspire_record.get('_private_notes', []):
+            if note.get('value') == 'orcid-push-force-cache-miss':
+                return True
+
         if not self._cached_hash_value:
             self.read_work_putcode()
         if not self._new_hash_value:
