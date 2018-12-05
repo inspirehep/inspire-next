@@ -27,8 +27,6 @@ import logging
 import mock
 import pytest
 
-from flask import current_app
-
 from factories.db.invenio_records import TestRecordMetadata
 
 from inspire_service_orcid.client import OrcidClient
@@ -84,16 +82,6 @@ class TestOrcidPusherCache(object):
         mock_put_updated_work.assert_called_once_with(mock.ANY, putcode)
 
 
-def get_local_access_tokens(orcid):
-    # Pick the token from local inspirehep.cfg first.
-    # This way you can store tokens in your local inspirehep.cfg (ignored
-    # by git). This is handy when recording new episodes.
-    local_tokens = current_app.config.get('ORCID_APP_LOCAL_TOKENS')
-    if local_tokens:
-        return local_tokens.get(orcid)
-    return None
-
-
 @pytest.mark.usefixtures('isolated_app')
 class TestOrcidPusherPutUpdatedWork(object):
     def setup(self):
@@ -104,10 +92,15 @@ class TestOrcidPusherPutUpdatedWork(object):
         self.cache = OrcidCache(self.orcid, self.recid)
         self.putcode = '46985330'
         self.cache.write_work_putcode(self.putcode)
-        self.oauth_token = get_local_access_tokens(self.orcid) or 'mytoken'
 
         # Disable logging.
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = logging.CRITICAL
+
+    @property
+    def oauth_token(self):
+        from flask import current_app  # Note: isolated_app not available in setup().
+        # Pick the token from local inspirehep.cfg first.
+        return current_app.config.get('ORCID_APP_LOCAL_TOKENS', {}).get(self.orcid, 'mytoken')
 
     def teardown(self):
         self.cache.redis.delete(self.cache._key)
@@ -149,10 +142,18 @@ class TestOrcidPusherPostNewWork(object):
         self.orcid = '0000-0002-0942-3697'
         self.recid = factory.record_metadata.json['control_number']
         self.inspire_record = factory.inspire_record
-        self.cache = OrcidCache(self.orcid, self.recid)
-        self.oauth_token = get_local_access_tokens(self.orcid) or 'mytoken'
         # Disable logging.
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = logging.CRITICAL
+
+    @property
+    def oauth_token(self):
+        from flask import current_app  # Note: isolated_app not available in setup().
+        # Pick the token from local inspirehep.cfg first.
+        return current_app.config.get('ORCID_APP_LOCAL_TOKENS', {}).get(self.orcid, 'mytoken')
+
+    @property
+    def cache(self):
+        return OrcidCache(self.orcid, self.recid)
 
     def teardown(self):
         self.cache.redis.delete(self.cache._key)
@@ -188,6 +189,15 @@ class TestOrcidPusherPostNewWork(object):
             pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
             result_putcode = pusher.push()
         assert result_putcode == '47160445'
+        assert not self.cache.has_work_content_changed(self.inspire_record)
+
+    def test_push_new_work_already_existing_with_recids(self):
+        self.orcid = '0000-0002-5073-0816'
+        # ORCID_APP_CREDENTIALS is required because ORCID adds it as source_client_id_path.
+        with override_config(ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}):
+            pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
+            result_putcode = pusher.push()
+        assert result_putcode == '51346820'
         assert not self.cache.has_work_content_changed(self.inspire_record)
 
     def test_push_new_work_already_existing_putcode_exception(self):

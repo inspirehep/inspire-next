@@ -30,7 +30,6 @@ from time_execution import time_execution
 from inspire_service_orcid import exceptions as orcid_client_exceptions
 from inspire_service_orcid.client import OrcidClient
 
-from inspirehep.modules.records.utils import get_pid_from_record_uri
 from inspirehep.utils.lock import distributed_lock
 from inspirehep.utils.record_getter import (
     RecordGetterError,
@@ -82,7 +81,7 @@ class OrcidPusher(object):
 
         try:
             putcode = self._post_or_put_work(putcode)
-        except orcid_client_exceptions.WorkAlreadyExistentException:
+        except orcid_client_exceptions.WorkAlreadyExistsException:
             # We POSTed the record as new work, but it failed because the work
             # already exists (identified by the external identifiers).
             # This means we do not have the putcode, thus we cache all
@@ -111,7 +110,7 @@ class OrcidPusher(object):
         try:
             response.raise_for_result()
             putcode = response['putcode']
-        except orcid_client_exceptions.WorkAlreadyExistentException:  # Only raisable by a POST.
+        except orcid_client_exceptions.WorkAlreadyExistsException:  # Only raisable by a POST.
             raise
         except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
             raise exceptions.InputDataInvalidException(from_exc=exc)
@@ -121,16 +120,10 @@ class OrcidPusher(object):
     def _cache_all_author_putcodes(self):
         logger.info('New OrcidPusher cache all author putcodes for orcid={}'.format(self.orcid))
         putcode_getter = OrcidPutcodeGetter(self.orcid, self.oauth_token)
-        putcodes_urls = list(putcode_getter.get_all_inspire_putcodes())  # Can raise exceptions.InputDataInvalidException.
+        putcodes_recids = list(putcode_getter.get_all_inspire_putcodes())  # Can raise exceptions.InputDataInvalidException.
 
         putcode = None
-        for fetched_putcode, fetched_url in putcodes_urls:
-            fetched_recid = get_pid_from_record_uri(fetched_url)[1]
-
-            if not fetched_recid:
-                logger.error('OrcidPusher cache all author putcodes: cannot parse recid from url={} for orcid={}'.format(fetched_url, self.orcid))
-                continue
-
+        for fetched_putcode, fetched_recid in putcodes_recids:
             if fetched_recid == str(self.recid):
                 putcode = fetched_putcode
             cache = OrcidCache(self.orcid, fetched_recid)
