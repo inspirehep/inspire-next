@@ -1048,3 +1048,11 @@ def test_get_author_with_record_facet_author_name():
     author2_facet_author_name = 'John.Doe.1_John Doe'
     result = get_author_with_record_facet_author_name(author2)
     assert result == author2_facet_author_name
+
+    author3 = {
+        '$schema': 'http://localhost:5000/records/schemas/authors.json',
+        'name': {'value': 'Doe, John'},
+    }
+    author3_facet_author_name = 'BAI_John Doe'
+    result = get_author_with_record_facet_author_name(author3)
+    assert result == author3_facet_author_name

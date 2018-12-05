@@ -415,7 +415,8 @@ def populate_authors_full_name_unicode_normalized(record):
 
 def get_author_with_record_facet_author_name(author):
     author_ids = author.get('ids', [])
-    bai = get_values_for_schema(author_ids, 'INSPIRE BAI')[0]
+    author_bai = get_values_for_schema(author_ids, 'INSPIRE BAI')
+    bai = author_bai[0] if author_bai else 'BAI'
     author_preferred_name = get_value(author, 'name.preferred_name')
     if author_preferred_name:
         return u'{}_{}'.format(bai, author_preferred_name)
