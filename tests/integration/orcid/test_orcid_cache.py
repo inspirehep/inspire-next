@@ -39,7 +39,7 @@ class TestOrcidCache(object):
         self.putcode = 'myputcode'
         self.hash_value = 'myhash'
         self.orcid = '0000-0002-76YY-56XX'
-        self.hash_value = 'sha1:ede49b12e11f5284fdced7596a28791ddf32c8fc'
+        self.hash_value = 'sha1:acbc7dad4fd46e0deb60d6681c244a67e4be2543'
         factory = TestRecordMetadata.create_from_file(__name__, 'test_orcid_cache_record.json')
         self.inspire_record = factory.inspire_record
         self.cache = OrcidCache(self.orcid, self.recid)
@@ -106,7 +106,7 @@ class TestOrcidHasher(object):
     def setup(self):
         factory = TestRecordMetadata.create_from_file(__name__, 'test_orcid_hasher_record.json')
         self.record = factory.record_metadata
-        self.hash_value = 'sha1:ede49b12e11f5284fdced7596a28791ddf32c8fc'
+        self.hash_value = 'sha1:acbc7dad4fd46e0deb60d6681c244a67e4be2543'
         self.hasher = _OrcidHasher(factory.inspire_record)
 
     def test_compute_hash(self):

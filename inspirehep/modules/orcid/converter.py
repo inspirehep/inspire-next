@@ -122,6 +122,11 @@ class OrcidConverter(object):
         if self.publication_date:
             builder.add_publication_date(self.publication_date)
 
+        # Add recid.
+        record_url = record_url_by_pattern(self.url_pattern, self.recid)
+        if self.recid:
+            builder.add_recid(self.recid, record_url, 'self')
+
         # Add external IDs
         if self.doi:
             builder.add_doi(self.doi, 'self')
@@ -133,7 +138,7 @@ class OrcidConverter(object):
             builder.add_external_id('isbn', isbn)
 
         # Add URL pointing to INSPIRE to ORCID
-        builder.add_url(record_url_by_pattern(self.url_pattern, self.recid))
+        builder.add_url(record_url)
 
         # Add authors/editors/etc. to the ORCID record
         for author in self.record.get('authors', []):
