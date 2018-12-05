@@ -28,6 +28,7 @@ import re
 import time
 import urllib2
 import yaml
+import pytest
 
 from inspirehep.testlib.api.holdingpen import HoldingpenResource
 from inspirehep.testlib.api.literature import LiteratureResourceTitle
@@ -89,6 +90,7 @@ def _number_of_entries(holdingpen_client, num_entries):
 
 
 @with_mitmproxy
+@pytest.mark.xfail
 def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
     inspire_client.e2e.schedule_crawl(
         spider='arXiv',
@@ -137,6 +139,7 @@ def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
 
 
 @with_mitmproxy
+@pytest.mark.xfail
 def test_harvest_core_article_goes_in(inspire_client, mitm_client):
     inspire_client.e2e.schedule_crawl(
         spider='arXiv',
@@ -248,6 +251,7 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
 
 
 @with_mitmproxy
+@pytest.mark.xfail
 def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client):
     inspire_client.e2e.schedule_crawl(
         spider='arXiv',
@@ -316,6 +320,7 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
 
 
 @with_mitmproxy
+@pytest.mark.xfail
 def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
     inspire_client.e2e.schedule_crawl(
         spider='arXiv_single',
