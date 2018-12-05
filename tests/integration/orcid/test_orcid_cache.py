@@ -79,15 +79,6 @@ class TestOrcidCache(object):
         cache = OrcidCache(self.orcid, self.recid)
         assert cache.has_work_content_changed(self.inspire_record)
 
-    def test_force_cache_miss(self):
-        self.inspire_record['_private_notes'] = [
-            {'value': u'orcid-push-force-cache-miss'},
-        ]
-        self.cache.write_work_putcode(self.putcode, self.inspire_record)
-
-        cache = OrcidCache(self.orcid, self.recid)
-        assert cache.has_work_content_changed(self.inspire_record)
-
     def test_write_work_putcode_do_recompute(self):
         self.cache.write_work_putcode(self.putcode, self.inspire_record)
 

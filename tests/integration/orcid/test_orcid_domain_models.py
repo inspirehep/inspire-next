@@ -44,6 +44,7 @@ from utils import override_config
 class TestOrcidPusherCache(object):
     def setup(self):
         factory = TestRecordMetadata.create_from_file(__name__, 'test_orcid_models_TestOrcidPusher.json')
+        self.record_metadata = factory.record_metadata
         self.inspire_record = factory.inspire_record
         self.orcid = '0000-0002-0942-3697'
         self.recid = factory.record_metadata.json['control_number']
@@ -68,6 +69,19 @@ class TestOrcidPusherCache(object):
         pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
         result_putcode = pusher.push()
         assert result_putcode == putcode
+
+    def test_push_force_cache_miss(self):
+        putcode = '00000'
+        self.record_metadata.json['_private_notes'] = [
+            {'value': 'orcid-push-force-cache-miss'},
+        ]
+        self.cache.write_work_putcode(putcode, self.inspire_record)
+
+        pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
+        with mock.patch.object(OrcidClient, 'post_new_work') as mock_post_new_work:
+            mock_post_new_work.return_value.__getitem__.return_value = '0000'
+            pusher.push()
+            mock_post_new_work.assert_called_once()
 
     def test_push_cache_hit_content_changed(self):
         putcode = '00000'
