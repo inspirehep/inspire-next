@@ -30,6 +30,7 @@ from flask import current_app
 from inspire_service_orcid import exceptions as orcid_client_exceptions
 from inspire_service_orcid.client import OrcidClient
 
+from inspirehep.modules.records.utils import get_pid_from_record_uri
 from . import exceptions, utils
 
 
@@ -54,22 +55,32 @@ class OrcidPutcodeGetter(object):
         """
         Get all the Inspire putcodes for the given ORCID.
         """
-        putcodes = self._get_all_putcodes()
-        if not putcodes:
-            return
-        # Filter out putcodes that do not belong to Inspire.
-        for putcode, url in self._get_urls_for_putcodes(putcodes):
-            if INSPIRE_WORK_URL_REGEX.match(url):
-                yield putcode, url
+        # `putcodes_recids` is a list like: [('43326850', 20), ('43255490', None)]
+        putcodes_recids = self._get_all_putcodes_and_recids()
+        putcodes_with_recids = [x for x in putcodes_recids if x[1]]
+        putcodes_without_recids = [x[0] for x in putcodes_recids if not x[1]]
 
-    def _get_all_putcodes(self):
+        for putcode, recid in putcodes_with_recids:
+            yield putcode, recid
+
+        # Filter out putcodes that do not belong to Inspire.
+        for putcode, url in self._get_urls_for_putcodes(putcodes_without_recids):
+            if INSPIRE_WORK_URL_REGEX.match(url):
+                recid = get_pid_from_record_uri(url)[1]
+                if not recid:
+                    logger.error('OrcidPutcodeGetter: cannot parse recid from url={} for orcid={}'.format(
+                        url, self.orcid))
+                    continue
+                yield putcode, recid
+
+    def _get_all_putcodes_and_recids(self):
         response = self.client.get_all_works_summary()
         utils.log_service_response(logger, response, 'in OrcidPutcodeGetter works summary')
         try:
             response.raise_for_result()
         except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
             raise exceptions.InputDataInvalidException(from_exc=exc)
-        return list(response.get_putcodes_for_source(self.source_client_id_path))
+        return list(response.get_putcodes_and_recids_for_source(self.source_client_id_path))
 
     def _get_urls_for_putcodes(self, putcodes):
         # The call get_bulk_works_details_iter() can be very expensive for an
