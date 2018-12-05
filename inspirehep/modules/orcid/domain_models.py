@@ -63,13 +63,25 @@ class OrcidPusher(object):
         self.client = OrcidClient(self.oauth_token, self.orcid)
         self.xml_element = None
 
+    @property
+    def _do_force_cache_miss(self):
+        """
+        Hook to force a cache miss. This can be leveraged in feature tests.
+        """
+        for note in self.inspire_record.get('_private_notes', []):
+            if note.get('value') == 'orcid-push-force-cache-miss':
+                return True
+        return False
+
     @time_execution
     def push(self):
-        putcode = self.cache.read_work_putcode()
-        if not self.cache.has_work_content_changed(self.inspire_record):
-            logger.info('OrcidPusher cache hit for recid={} and orcid={}'.format(
-                self.recid, self.orcid))
-            return putcode
+        putcode = None
+        if not self._do_force_cache_miss:
+            putcode = self.cache.read_work_putcode()
+            if not self.cache.has_work_content_changed(self.inspire_record):
+                logger.info('OrcidPusher cache hit for recid={} and orcid={}'.format(
+                    self.recid, self.orcid))
+                return putcode
         logger.info('OrcidPusher cache miss for recid={} and orcid={}'.format(
             self.recid, self.orcid))
 
