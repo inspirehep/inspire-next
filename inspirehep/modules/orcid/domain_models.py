@@ -75,6 +75,10 @@ class OrcidPusher(object):
 
     @property
     def _is_record_deleted(self):
+        # Hook to force a delete. This can be leveraged in feature tests.
+        for note in self.inspire_record.get('_private_notes', []):
+            if note.get('value') == 'orcid-push-force-delete':
+                return True
         return self.inspire_record.get('deleted', False)
 
     @time_execution

@@ -286,3 +286,14 @@ class TestOrcidPusherDeleteWork(object):
         self.cache.write_work_putcode('51391229')
         pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
         assert not pusher.push()
+
+    def test_delete_work_force_delete(self):
+        self.recid = '99'
+        TestRecordMetadata.create_from_kwargs(
+            json={'control_number': self.recid,
+                  'deleted': False,
+                  '_private_notes': [{'value': 'orcid-push-force-delete'}]})
+        self.cache.write_work_putcode('51391229')
+
+        pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
+        assert not pusher.push()
