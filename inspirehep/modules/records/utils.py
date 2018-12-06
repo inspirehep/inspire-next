@@ -34,7 +34,6 @@ from inspire_utils.date import earliest_date
 from inspire_utils.name import generate_name_variations, ParsedName
 from inspire_utils.record import get_value
 from inspire_utils.helpers import force_list
-from invenio_db import db
 
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
@@ -156,12 +155,7 @@ def populate_citations_count(record):
     if hasattr(record, 'get_citations_count'):
         # Make sure that record has method get_citations_count
         # Session is in commited state here, and I cannot open new one...
-        if not db.session.is_active:  # For tests and new entries, It tries to count citations when session is closed
-            session = db.Session(bind=db.engine)
-            citation_count = record.get_citations_count(session)
-            session.close()
-        else:
-            citation_count = record.get_citations_count()
+        citation_count = record.get_citations_count()
         record['citation_count'] = citation_count
     else:
         raise MissingInspireRecordError("Record is not InspireRecord!")
