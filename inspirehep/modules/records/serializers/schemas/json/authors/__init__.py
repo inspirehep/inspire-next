@@ -29,6 +29,8 @@ from marshmallow import Schema, fields, post_dump
 from inspirehep.modules.records.serializers.schemas.base import JSONSchemaUIV1
 from inspirehep.modules.records.utils import get_author_with_record_facet_author_name
 
+from .common import PositionSchemaV1
+
 
 class AuthorsMetadataSchemaV1(Schema):
     _collections = fields.Raw()
@@ -45,7 +47,7 @@ class AuthorsMetadataSchemaV1(Schema):
     inspire_categories = fields.Raw()
     name = fields.Raw()
     new_record = fields.Raw()
-    positions = fields.Raw()
+    positions = fields.Nested(PositionSchemaV1, dump_only=True, many=True)
     project_membership = fields.Raw()
     status = fields.Raw()
     stub = fields.Raw()
