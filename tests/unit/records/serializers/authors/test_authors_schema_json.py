@@ -81,6 +81,7 @@ def test_authors_schema():
             {
                 'current': True,
                 'institution': 'CERN',
+                'display_date': 'present',
             }
         ],
         'facet_author_name': 'J.Doe.1_J. Doe',
