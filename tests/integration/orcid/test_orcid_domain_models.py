@@ -55,7 +55,7 @@ class TestOrcidPusherCache(object):
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = logging.CRITICAL
 
     def teardown(self):
-        self.cache.redis.delete(self.cache._key)
+        self.cache.delete_work_putcode()
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = 0
 
     def test_record_not_found(self):
@@ -117,7 +117,7 @@ class TestOrcidPusherPutUpdatedWork(object):
         return current_app.config.get('ORCID_APP_LOCAL_TOKENS', {}).get(self.orcid, 'mytoken')
 
     def teardown(self):
-        self.cache.redis.delete(self.cache._key)
+        self.cache.delete_work_putcode()
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = 0
 
     def test_push_updated_work_happy_flow(self):
@@ -170,7 +170,7 @@ class TestOrcidPusherPostNewWork(object):
         return OrcidCache(self.orcid, self.recid)
 
     def teardown(self):
-        self.cache.redis.delete(self.cache._key)
+        self.cache.delete_work_putcode()
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = 0
 
     def test_push_new_work_happy_flow(self):
@@ -202,16 +202,17 @@ class TestOrcidPusherPostNewWork(object):
         with override_config(ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}):
             pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
             result_putcode = pusher.push()
-        assert result_putcode == '47160445'
+        assert result_putcode == 47160445
         assert not self.cache.has_work_content_changed(self.inspire_record)
 
     def test_push_new_work_already_existing_with_recids(self):
         self.orcid = '0000-0002-5073-0816'
+        self.cache.delete_work_putcode()
         # ORCID_APP_CREDENTIALS is required because ORCID adds it as source_client_id_path.
         with override_config(ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}):
             pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
             result_putcode = pusher.push()
-        assert result_putcode == '51346820'
+        assert result_putcode == 51346820
         assert not self.cache.has_work_content_changed(self.inspire_record)
 
     def test_push_new_work_already_existing_putcode_exception(self):
@@ -221,3 +222,48 @@ class TestOrcidPusherPostNewWork(object):
                 pytest.raises(exceptions.PutcodeNotFoundInOrcidException):
             pusher.push()
         assert self.cache.has_work_content_changed(self.inspire_record)
+
+
+@pytest.mark.usefixtures('isolated_app')
+class TestOrcidPusherDeleteWork(object):
+    def setup(self):
+        factory = TestRecordMetadata.create_from_file(__name__, 'test_orcid_models_TestOrcidPusherDeleteWork.json')
+        self.orcid = '0000-0002-5073-0816'
+        self.recid = factory.record_metadata.json['control_number']
+        self.inspire_record = factory.inspire_record
+        # Disable logging.
+        logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = logging.CRITICAL
+        self.cache.delete_work_putcode()
+
+    @property
+    def oauth_token(self):
+        from flask import current_app  # Note: isolated_app not available in setup().
+        # Pick the token from local inspirehep.cfg first.
+        return current_app.config.get('ORCID_APP_LOCAL_TOKENS', {}).get(self.orcid, 'mytoken')
+
+    @property
+    def cache(self):
+        return OrcidCache(self.orcid, self.recid)
+
+    def teardown(self):
+        self.cache.delete_work_putcode()
+        logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = 0
+
+    def test_delete_work_cache_miss(self):
+        pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
+        # ORCID_APP_CREDENTIALS is required because ORCID adds it as source_client_id_path.
+        with override_config(ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}):
+            assert not pusher.push()
+
+    def test_delete_work_cache_hit(self):
+        self.cache.write_work_putcode('51389857')
+        pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
+        assert not pusher.push()
+
+    def test_delete_work_cache_putcode_nonexisting(self):
+        self.recid = '000000'
+        TestRecordMetadata.create_from_kwargs(
+            json={'control_number': self.recid, 'deleted': True})
+        self.cache.write_work_putcode('51391229')
+        pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
+        assert not pusher.push()

@@ -48,8 +48,7 @@ class TestOrcidCache(object):
         """
         Cleanup the cache after each test (as atm there is no cache isolation).
         """
-        key = self.cache._key
-        self.cache.redis.delete(key)
+        self.cache.delete_work_putcode()
 
     def test_read_write_new_key(self):
         self.cache.write_work_putcode(self.putcode, self.inspire_record)
@@ -90,6 +89,20 @@ class TestOrcidCache(object):
 
         self.cache.read_work_putcode()
         assert not self.cache._cached_hash_value
+
+    def test_delete_work_putcode(self):
+        self.cache.write_work_putcode(self.putcode, self.inspire_record)
+        putcode = self.cache.read_work_putcode()
+        assert putcode == self.putcode
+
+        self.cache.delete_work_putcode()
+        assert not self.cache.read_work_putcode()
+
+    def test_delete_work_putcode_non_existing(self):
+        recid = '0000'
+        cache = OrcidCache(self.orcid, recid)
+        cache.delete_work_putcode()
+        assert not self.cache.read_work_putcode()
 
 
 @pytest.mark.usefixtures('isolated_app')
