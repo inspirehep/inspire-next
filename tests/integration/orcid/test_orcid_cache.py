@@ -25,8 +25,10 @@ from __future__ import absolute_import, division, print_function
 import mock
 import pytest
 
+from fqn_decorators.decorators import get_fqn
 from lxml import etree
 
+from inspirehep.modules.orcid import cache as cache_module
 from inspirehep.modules.orcid.cache import OrcidCache, _OrcidHasher
 
 from factories.db.invenio_records import TestRecordMetadata
@@ -44,11 +46,15 @@ class TestOrcidCache(object):
         self.inspire_record = factory.inspire_record
         self.cache = OrcidCache(self.orcid, self.recid)
 
+    def setup_method(self, method):
+        cache_module.CACHE_PREFIX = get_fqn(method)
+
     def teardown(self):
         """
         Cleanup the cache after each test (as atm there is no cache isolation).
         """
         self.cache.delete_work_putcode()
+        cache_module.CACHE_PREFIX = None
 
     def test_read_write_new_key(self):
         self.cache.write_work_putcode(self.putcode, self.inspire_record)
@@ -112,6 +118,12 @@ class TestOrcidHasher(object):
         self.record = factory.record_metadata
         self.hash_value = 'sha1:acbc7dad4fd46e0deb60d6681c244a67e4be2543'
         self.hasher = _OrcidHasher(factory.inspire_record)
+
+    def setup_method(self, method):
+        cache_module.CACHE_PREFIX = get_fqn(method)
+
+    def teardown(self):
+        cache_module.CACHE_PREFIX = None
 
     def test_compute_hash(self):
         hash_value = self.hasher.compute_hash()

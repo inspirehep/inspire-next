@@ -27,6 +27,8 @@ import logging
 import mock
 import pytest
 
+from fqn_decorators.decorators import get_fqn
+
 from factories.db.invenio_records import TestRecordMetadata
 
 from inspire_service_orcid.client import OrcidClient
@@ -35,6 +37,7 @@ from inspirehep.modules.orcid import (
     exceptions,
     domain_models,
 )
+from inspirehep.modules.orcid import cache as cache_module
 from inspirehep.modules.orcid.cache import OrcidCache
 
 from utils import override_config
@@ -54,9 +57,13 @@ class TestOrcidPusherCache(object):
         # Disable logging.
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = logging.CRITICAL
 
+    def setup_method(self, method):
+        cache_module.CACHE_PREFIX = get_fqn(method)
+
     def teardown(self):
         self.cache.delete_work_putcode()
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = 0
+        cache_module.CACHE_PREFIX = None
 
     def test_record_not_found(self):
         with pytest.raises(exceptions.RecordNotFoundException):
@@ -116,9 +123,13 @@ class TestOrcidPusherPutUpdatedWork(object):
         # Pick the token from local inspirehep.cfg first.
         return current_app.config.get('ORCID_APP_LOCAL_TOKENS', {}).get(self.orcid, 'mytoken')
 
+    def setup_method(self, method):
+        cache_module.CACHE_PREFIX = get_fqn(method)
+
     def teardown(self):
         self.cache.delete_work_putcode()
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = 0
+        cache_module.CACHE_PREFIX = None
 
     def test_push_updated_work_happy_flow(self):
         pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
@@ -169,9 +180,13 @@ class TestOrcidPusherPostNewWork(object):
     def cache(self):
         return OrcidCache(self.orcid, self.recid)
 
+    def setup_method(self, method):
+        cache_module.CACHE_PREFIX = get_fqn(method)
+
     def teardown(self):
         self.cache.delete_work_putcode()
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = 0
+        cache_module.CACHE_PREFIX = None
 
     def test_push_new_work_happy_flow(self):
         pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
@@ -245,9 +260,13 @@ class TestOrcidPusherDeleteWork(object):
     def cache(self):
         return OrcidCache(self.orcid, self.recid)
 
+    def setup_method(self, method):
+        cache_module.CACHE_PREFIX = get_fqn(method)
+
     def teardown(self):
         self.cache.delete_work_putcode()
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = 0
+        cache_module.CACHE_PREFIX = None
 
     def test_delete_work_cache_miss(self):
         pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
