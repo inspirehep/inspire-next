@@ -61,7 +61,9 @@ install_requires = [
     'elasticsearch-dsl>=5.0.0,<6.0.0',
     'elasticsearch>=5.1.0,<6.0.0',
     'enum34~=1.0,>=1.1.6',
-    'flask-shell-ipython~=0.0,>=0.3.0',
+    # flask-shell-ipython==0.4.0 breaks our code
+    # as it requires flask>=1.0
+    'flask-shell-ipython==0.3.1',
     'fs~=0.0,>=0.5.4',
     'inspire-crawler~=3.0,>=3.0.0',
     'inspire-dojson~=60.0,>=60.0.3',
