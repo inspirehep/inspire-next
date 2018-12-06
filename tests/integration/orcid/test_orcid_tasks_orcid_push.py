@@ -196,7 +196,7 @@ class TestOrcidPushTask(object):
         self.oauth_token = get_local_access_tokens(self.orcid) or 'mytoken'
 
     def teardown(self):
-        self.cache.redis.delete(self.cache._key)
+        self.cache.delete_work_putcode()
 
     def test_push_new_work_happy_flow(self):
         with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,

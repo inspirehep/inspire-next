@@ -93,6 +93,11 @@ class OrcidCache(object):
         return value.get('putcode')
 
     @time_execution
+    def delete_work_putcode(self):
+        """Delete the putcode for the given (orcid, recid)."""
+        return self.redis.delete(self._key)
+
+    @time_execution
     def has_work_content_changed(self, inspire_record):
         """
         True if the work content has changed compared to the cached version.

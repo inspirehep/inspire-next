@@ -51,9 +51,9 @@ class OrcidPutcodeGetter(object):
         self.source_client_id_path = current_app.config['ORCID_APP_CREDENTIALS'][
             'consumer_key']
 
-    def get_all_inspire_putcodes(self):
+    def get_all_inspire_putcodes_iter(self):
         """
-        Get all the Inspire putcodes for the given ORCID.
+        Query ORCID api and get all the Inspire putcodes for the given ORCID.
         """
         # `putcodes_recids` is a list like: [('43326850', 20), ('43255490', None)]
         putcodes_recids = self._get_all_putcodes_and_recids()
@@ -63,8 +63,11 @@ class OrcidPutcodeGetter(object):
         for putcode, recid in putcodes_with_recids:
             yield putcode, recid
 
+        if not putcodes_without_recids:
+            return
+
         # Filter out putcodes that do not belong to Inspire.
-        for putcode, url in self._get_urls_for_putcodes(putcodes_without_recids):
+        for putcode, url in self._get_urls_for_putcodes_iter(putcodes_without_recids):
             if INSPIRE_WORK_URL_REGEX.match(url):
                 recid = get_pid_from_record_uri(url)[1]
                 if not recid:
@@ -80,20 +83,22 @@ class OrcidPutcodeGetter(object):
             response.raise_for_result()
         except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
             raise exceptions.InputDataInvalidException(from_exc=exc)
-        return list(response.get_putcodes_and_recids_for_source(self.source_client_id_path))
+        return list(response.get_putcodes_and_recids_for_source_iter(self.source_client_id_path))
 
-    def _get_urls_for_putcodes(self, putcodes):
-        # The call get_bulk_works_details_iter() can be very expensive for an
+    def _get_urls_for_putcodes_iter(self, putcodes):
+        # The call `get_bulk_works_details_iter()` can be expensive for an
         # author with many works (if each work also has many *contributors*).
-        # Fi. for an ATLAS author with ~750 works, 8 calls would be performed
-        # with a total data transfer > 0.5 Gb.
+        # Fi. for an ATLAS author with ~750 works (each of them with many
+        # authors), 8 calls would be performed with a total data transfer > 0.5 Gb.
         chained = []
         for response in self.client.get_bulk_works_details_iter(putcodes):
+            # Note: this log can be large. Consider removing it when this part
+            # is considered mature.
             utils.log_service_response(logger, response, 'in OrcidPutcodeGetter works details')
             try:
                 response.raise_for_result()
             except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
                 raise exceptions.InputDataInvalidException(from_exc=exc)
 
-            chained = itertools.chain(chained, response.get_putcodes_and_urls())
+            chained = itertools.chain(chained, response.get_putcodes_and_urls_iter())
         return chained

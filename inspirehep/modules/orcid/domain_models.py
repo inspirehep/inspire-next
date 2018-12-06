@@ -73,17 +73,27 @@ class OrcidPusher(object):
                 return True
         return False
 
+    @property
+    def _is_record_deleted(self):
+        return self.inspire_record.get('deleted', False)
+
     @time_execution
     def push(self):
         putcode = None
         if not self._do_force_cache_miss:
             putcode = self.cache.read_work_putcode()
-            if not self.cache.has_work_content_changed(self.inspire_record):
+            if not self._is_record_deleted and \
+                    not self.cache.has_work_content_changed(self.inspire_record):
                 logger.info('OrcidPusher cache hit for recid={} and orcid={}'.format(
                     self.recid, self.orcid))
                 return putcode
         logger.info('OrcidPusher cache miss for recid={} and orcid={}'.format(
             self.recid, self.orcid))
+
+        # If the record is deleted, then delete it.
+        if self._is_record_deleted:
+            self._delete_work(putcode)
+            return None
 
         self.xml_element = OrcidConverter(
             record=self.inspire_record,
@@ -99,6 +109,11 @@ class OrcidPusher(object):
             # This means we do not have the putcode, thus we cache all
             # author's putcodes and PUT the work again.
             putcode = self._cache_all_author_putcodes()
+            if not putcode:
+                msg = 'No putcode was found in ORCID API for orcid={} and recid={}.'\
+                    ' And the POST has previously failed for the same recid because'\
+                    ' the work had already existed'.format(self.orcid, self.recid)
+                raise exceptions.PutcodeNotFoundInOrcidException(msg)
             self._post_or_put_work(putcode)
 
         self.cache.write_work_putcode(putcode, self.inspire_record)
@@ -110,8 +125,8 @@ class OrcidPusher(object):
         # Otherwise a PUT (it means the work already exists and it has the given
         # putcode).
 
-        # ORCID API allows 1 POST/PUT only for the same orcid at the same time.
-        # Using `distributed_lock` to achieve this.
+        # ORCID API allows 1 non-idempotent call only for the same orcid at
+        # the same time. Using `distributed_lock` to achieve this.
         with distributed_lock(self.lock_name, blocking=True):
             if putcode:
                 response = self.client.put_updated_work(self.xml_element, putcode)
@@ -132,28 +147,43 @@ class OrcidPusher(object):
     def _cache_all_author_putcodes(self):
         logger.info('New OrcidPusher cache all author putcodes for orcid={}'.format(self.orcid))
         putcode_getter = OrcidPutcodeGetter(self.orcid, self.oauth_token)
-        putcodes_recids = list(putcode_getter.get_all_inspire_putcodes())  # Can raise exceptions.InputDataInvalidException.
+        putcodes_recids = list(putcode_getter.get_all_inspire_putcodes_iter())  # Can raise exceptions.InputDataInvalidException.
 
         putcode = None
         for fetched_putcode, fetched_recid in putcodes_recids:
             if fetched_recid == str(self.recid):
-                putcode = fetched_putcode
+                putcode = int(fetched_putcode)
             cache = OrcidCache(self.orcid, fetched_recid)
             cache.write_work_putcode(fetched_putcode)
-
-        if not putcode:
-            raise exceptions.PutcodeNotFoundInOrcidException(
-                'No putcode was found in ORCID API for orcid={} and recid={}.'
-                ' And the POST has previously failed for the same recid because'
-                ' the work had already existed'.format(self.orcid, self.recid))
 
         # Ensure the putcode is actually in cache.
         # Note: this step is not really necessary and it can be skipped, but
         # at this moment it helps isolate a potential issue.
-        if not self.cache.read_work_putcode():
+        if putcode and not self.cache.read_work_putcode():
             raise exceptions.PutcodeNotFoundInCacheAfterCachingAllPutcodes(
                 'No putcode={} found in cache for recid={} after having'
                 ' cached all author putcodes for orcid={}'.format(
                     self.putcode, self.recid, self.orcid))
 
         return putcode
+
+    @time_execution
+    def _delete_work(self, putcode=None):
+        putcode = putcode or self._cache_all_author_putcodes()
+        if not putcode:
+            # Such recid does not exists (anymore?) in ORCID API.
+            return
+
+        # ORCID API allows 1 non-idempotent call only for the same orcid at
+        # the same time. Using `distributed_lock` to achieve this.
+        with distributed_lock(self.lock_name, blocking=True):
+            response = self.client.delete_work(putcode)
+        try:
+            response.raise_for_result()
+        except orcid_client_exceptions.PutcodeNotFoundDeleteException:
+            # Such putcode does not exists (anymore?) in orcid.
+            pass
+        except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
+            raise exceptions.InputDataInvalidException(from_exc=exc)
+
+        self.cache.delete_work_putcode()
