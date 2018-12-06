@@ -33,6 +33,9 @@ from time_execution import time_execution
 from .converter import OrcidConverter
 
 
+CACHE_PREFIX = None
+
+
 class OrcidCache(object):
     def __init__(self, orcid, recid):
         """
@@ -57,8 +60,11 @@ class OrcidCache(object):
 
     @property
     def _key(self):
-        """Return the string 'orcidcache:``orcid_value``:``recid``'"""
-        return 'orcidcache:{}:{}'.format(self.orcid, self.recid)
+        """Return the string '`CACHE_PREFIX`:orcidcache:`orcid_value`:`recid`'"""
+        prefix = ''
+        if CACHE_PREFIX:
+            prefix = '{}:'.format(CACHE_PREFIX)
+        return '{}orcidcache:{}:{}'.format(prefix, self.orcid, self.recid)
 
     @time_execution
     def write_work_putcode(self, putcode, inspire_record=None):
