@@ -222,3 +222,42 @@ def test_exact_author_bai_query(isolated_api_client):
     data = json.loads(response.data)
     response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
     assert rec['control_number'] in response_recids
+
+
+def test_affiliations_exact_search(isolated_api_client):
+    record_json_1 = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "document_type": ["article"],
+        "titles": [{"title": "Article 1"}],
+        "_collections": ["Literature"],
+        "authors": [
+            {"full_name": "John Doe", "affiliations": [{"value": "Harvard U."}]}
+        ],
+    }
+
+    record_json_2 = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "document_type": ["article"],
+        "titles": [{"title": "Article 2"}],
+        "_collections": ["Literature"],
+        "authors": [
+            {
+                "full_name": "John Doe 2",
+                "affiliations": [{"value": "Harvard U., Phys. Dept."}],
+            }
+        ],
+    }
+
+    record_factory_1 = TestRecordMetadata.create_from_kwargs(json=record_json_1, index_name='records-hep')
+    record_1 = record_factory_1.record_metadata.json
+
+    record_factory_2 = TestRecordMetadata.create_from_kwargs(json=record_json_2, index_name='records-hep')
+    record_2 = record_factory_2.record_metadata.json
+
+    response = isolated_api_client.get('/literature?q=authors.affiliations.value%3AHarvard%20U.')
+    data = json.loads(response.data)
+
+    response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
+
+    assert record_1['control_number'] in response_recids
+    assert record_2['control_number'] not in response_recids

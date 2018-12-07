@@ -186,7 +186,8 @@
                                     "type": "object"
                                 },
                                 "value": {
-                                    "type": "text"
+                                    "normalizer": "lowercase_normalizer",
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
