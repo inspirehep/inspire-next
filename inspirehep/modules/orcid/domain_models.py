@@ -70,6 +70,8 @@ class OrcidPusher(object):
         """
         for note in self.inspire_record.get('_private_notes', []):
             if note.get('value') == 'orcid-push-force-cache-miss':
+                logger.info('OrcidPusher force cache miss for recid={} and orcid={}'.format(
+                    self.recid, self.orcid))
                 return True
         return False
 
@@ -78,6 +80,8 @@ class OrcidPusher(object):
         # Hook to force a delete. This can be leveraged in feature tests.
         for note in self.inspire_record.get('_private_notes', []):
             if note.get('value') == 'orcid-push-force-delete':
+                logger.info('OrcidPusher force delete for recid={} and orcid={}'.format(
+                    self.recid, self.orcid))
                 return True
         return self.inspire_record.get('deleted', False)
 
