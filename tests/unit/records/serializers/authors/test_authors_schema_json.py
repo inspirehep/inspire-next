@@ -84,8 +84,145 @@ def test_authors_schema():
                 'display_date': 'present',
             }
         ],
+        'should_display_positions': False,
         'facet_author_name': 'J.Doe.1_J. Doe',
         '_collections': ['Authors'],
     }
     result = json.loads(schema.dumps(record).data)
     assert expected == result
+
+
+def test_returns_should_display_position_true_if_multiple_positions():
+    schema = AuthorsMetadataSchemaV1()
+    record = {
+        'control_number': 123,
+        'name': {
+            'value': 'Harun'
+        },
+        'positions': [
+            {
+                'institution': 'CERN'
+            },
+            {
+                'institution': 'DESY'
+            }
+        ],
+        '_collections': ['Authors'],
+    }
+
+    authors_schema = load_schema('authors')
+    assert validate(record, authors_schema) is None
+
+    result = json.loads(schema.dumps(record).data)
+    assert result.get('should_display_positions') is True
+
+
+def test_returns_should_display_position_true_if_position_has_rank():
+    schema = AuthorsMetadataSchemaV1()
+    record = {
+        'control_number': 123,
+        'name': {
+            'value': 'Harun'
+        },
+        'positions': [
+            {
+                'institution': 'CERN',
+                'rank': 'PHD',
+                'current': True,
+            },
+        ],
+        '_collections': ['Authors'],
+    }
+
+    authors_schema = load_schema('authors')
+    assert validate(record, authors_schema) is None
+
+    result = json.loads(schema.dumps(record).data)
+    assert result.get('should_display_positions') is True
+
+
+def test_returns_should_display_position_true_if_position_has_start_date():
+    schema = AuthorsMetadataSchemaV1()
+    record = {
+        'control_number': 123,
+        'name': {
+            'value': 'Harun'
+        },
+        'positions': [
+            {
+                'institution': 'CERN',
+                'start_date': '2015',
+                'current': True,
+            },
+        ],
+        '_collections': ['Authors'],
+    }
+
+    authors_schema = load_schema('authors')
+    assert validate(record, authors_schema) is None
+
+    result = json.loads(schema.dumps(record).data)
+    assert result.get('should_display_positions') is True
+
+
+def test_returns_should_display_position_true_if_position_is_not_current():
+    schema = AuthorsMetadataSchemaV1()
+    record = {
+        'control_number': 123,
+        'name': {
+            'value': 'Harun'
+        },
+        'positions': [
+            {
+                'institution': 'CERN',
+                'current': False,
+            },
+        ],
+        '_collections': ['Authors'],
+    }
+
+    authors_schema = load_schema('authors')
+    assert validate(record, authors_schema) is None
+
+    result = json.loads(schema.dumps(record).data)
+    assert result.get('should_display_positions') is True
+
+
+def test_returns_should_display_position_false_if_position_is_current():
+    schema = AuthorsMetadataSchemaV1()
+    record = {
+        'control_number': 123,
+        'name': {
+            'value': 'Harun'
+        },
+        'positions': [
+            {
+                'institution': 'CERN',
+                'current': True,
+            },
+        ],
+        '_collections': ['Authors'],
+    }
+
+    authors_schema = load_schema('authors')
+    assert validate(record, authors_schema) is None
+
+    result = json.loads(schema.dumps(record).data)
+    assert result.get('should_display_positions') is False
+
+
+def test_returns_should_display_position_false_if_no_positions():
+    schema = AuthorsMetadataSchemaV1()
+    record = {
+        'control_number': 123,
+        'name': {
+            'value': 'Harun'
+        },
+        '_collections': ['Authors'],
+    }
+
+    authors_schema = load_schema('authors')
+    assert validate(record, authors_schema) is None
+
+    result = json.loads(schema.dumps(record).data)
+    assert result.get('should_display_positions') is False

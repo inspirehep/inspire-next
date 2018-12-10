@@ -48,6 +48,7 @@ class AuthorsMetadataSchemaV1(Schema):
     name = fields.Raw()
     new_record = fields.Raw()
     positions = fields.Nested(PositionSchemaV1, dump_only=True, many=True)
+    should_display_positions = fields.Method('get_should_display_positions')
     project_membership = fields.Raw()
     status = fields.Raw()
     stub = fields.Raw()
@@ -60,6 +61,21 @@ class AuthorsMetadataSchemaV1(Schema):
             return get_author_with_record_facet_author_name(data)
         else:
             return data['facet_author_name']
+
+    @staticmethod
+    def get_should_display_positions(data):
+        positions = data.get('positions')
+
+        if positions is None:
+            return False
+
+        if len(positions) is 1:
+            position = positions[0]
+
+            return position.get('current') is not True or \
+                any(key in position for key in ['rank', 'start_date', 'end_date'])
+
+        return True
 
     @post_dump
     def strip_empty(self, data):
