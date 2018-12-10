@@ -77,7 +77,7 @@
                     "type": "string"
                 },
                 "conferenceautocomplete": {
-                    "type": "string"
+                    "type": "completion"
                 },
                 "contact_details": {
                     "properties": {
