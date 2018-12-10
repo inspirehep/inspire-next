@@ -280,6 +280,9 @@
                     },
                     "type": "nested"
                 },
+                "bookautocomplete": {
+                    "type": "completion"
+                },
                 "book_series": {
                     "properties": {
                         "title": {
