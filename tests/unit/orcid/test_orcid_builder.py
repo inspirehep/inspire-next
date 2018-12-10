@@ -204,6 +204,27 @@ def test_add_external_id():
     assert xml_compare(result, expected)
 
 
+def test_add_recid():
+    expected = xml_parse("""
+    <work:work xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work">
+        <common:external-ids>
+            <common:external-id>
+                <common:external-id-type>other-id</common:external-id-type>
+                <common:external-id-value>9999</common:external-id-value>
+                <common:external-id-url>http://foo.bar/9999</common:external-id-url>
+                <common:external-id-relationship>self</common:external-id-relationship>
+            </common:external-id>
+        </common:external-ids>
+    </work:work>
+    """)
+
+    builder = OrcidBuilder()
+    builder.add_recid(9999, 'http://foo.bar/9999', 'self')
+    result = builder.get_xml()
+
+    assert xml_compare(result, expected)
+
+
 def test_add_multiple_external_ids():
     expected = xml_parse("""
     <work:work xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work">

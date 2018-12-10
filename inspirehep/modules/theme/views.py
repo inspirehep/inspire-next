@@ -25,7 +25,6 @@
 from __future__ import absolute_import, division, print_function
 
 import logging
-import time
 from datetime import date, datetime
 
 from celery import shared_task
@@ -362,26 +361,26 @@ def health():
 @blueprint.route('/healthcelery')
 @time_execution
 def healthcelery():
-    result = health_celery_task.apply_async()
-    while not result.ready():
-        time.sleep(0.5)
-    result_output = result.get()
-    return jsonify(result_output)
+    async_result = health_celery_task.apply_async()
+    result = async_result.get(timeout=60 * 2, interval=1)
+    return jsonify(result)
 
 
-@shared_task()
+@shared_task(time_limit=60 * 2)
 def health_celery_task():
+    # Complicated Flask-specific encoding to reproduce the same output as the
+    # /health endpoint (eg.: "Sun, 09 Dec 2018 16:34:41 GMT").
     return current_app.json_encoder().encode(datetime.now()).strip('"')
+
+
+class UnhealthTestException(Exception):
+    pass
 
 
 @blueprint.route('/unhealth')
 @time_execution
 def unhealth():
-    class UnhealthTestException(Exception):
-        pass
-
     now = datetime.now()
-
     try:
         raise UnhealthTestException('/unhealth endpoint called on {}'.format(now))
     except Exception:
@@ -392,24 +391,24 @@ def unhealth():
         logger.exception('/unhealth endpoint logging.EXCEPTION')
         raise
 
-    return 'It should have never reached here but raised UnhealthTestException'
+    return 'It should never reach here but have raised UnhealthTestException earlier'
 
 
 @blueprint.route('/unhealthcelery')
 @time_execution
 def unhealthcelery():
-    unhealth_celery_task.apply_async()
-    return jsonify('The Celey task should have raised UnhealthCeleryTestException, check Sentry.')
+    async_result = unhealth_celery_task.apply_async()
+    result = async_result.get(timeout=60 * 2, interval=1)
+    return jsonify(result)
 
 
 class UnhealthCeleryTestException(Exception):
     pass
 
 
-@shared_task()
+@shared_task(time_limit=60 * 2)
 def unhealth_celery_task():
     now = datetime.now()
-
     try:
         raise UnhealthCeleryTestException('/unhealthcelery endpoint called on {}'.format(now))
     except Exception:
@@ -420,7 +419,7 @@ def unhealth_celery_task():
         logger.exception('/unhealthcelery endpoint logging.EXCEPTION')
         raise
 
-    return 'It should have never reached here but raised UnhealthCeleryTestException'
+    return 'It should never reach here but have raised UnhealthCeleryTestException earlier'
 
 
 #

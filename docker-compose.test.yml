@@ -105,6 +105,22 @@ services:
       test-redis:
         condition: service_healthy
 
+  integration_async:
+    extends:
+      service: test-service_base
+    command: py.test tests/integration_async
+    volumes_from:
+      - test-static
+    depends_on:
+      test-database:
+        condition: service_healthy
+      test-indexer:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+      test-rabbitmq:
+         condition: service_healthy
+
   ui:
     extends:
       service: test-service_base

@@ -28,10 +28,11 @@ import pytest
 import re
 
 from flask import current_app
+from fqn_decorators.decorators import get_fqn
 from requests.exceptions import RequestException
 
 from factories.db.invenio_records import TestRecordMetadata
-from inspirehep.modules.orcid import exceptions
+from inspirehep.modules.orcid import cache as cache_module, exceptions
 from inspirehep.modules.orcid.cache import OrcidCache
 from inspirehep.modules.orcid.tasks import orcid_push
 
@@ -195,8 +196,12 @@ class TestOrcidPushTask(object):
         self.cache = OrcidCache(self.orcid, self.recid)
         self.oauth_token = get_local_access_tokens(self.orcid) or 'mytoken'
 
+    def setup_method(self, method):
+        cache_module.CACHE_PREFIX = get_fqn(method)
+
     def teardown(self):
-        self.cache.redis.delete(self.cache._key)
+        self.cache.delete_work_putcode()
+        cache_module.CACHE_PREFIX = None
 
     def test_push_new_work_happy_flow(self):
         with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
@@ -210,7 +215,7 @@ class TestOrcidPushTask(object):
                 pytest.raises(exceptions.InputDataInvalidException):
             orcid_push('0000-0002-0000-XXXX', self.recid, self.oauth_token)
 
-    def test_push_new_work_already_existent(self):
+    def test_push_new_work_already_existing(self):
         with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
                              FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*',
                              ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}):

@@ -1,0 +1,200 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+    method: GET
+    uri: https://api.orcid.org/v2.0/0000-0002-5073-0816/works
+  response:
+    body: {string: !!python/unicode '{"group": [{"external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                              "external-id-type": "other-id",
+                                              "external-id-url": {"value": "http://inspireheptest.cern.ch/record/20"},
+                                              "external-id-value": "20"},
+                                             {"external-id-relationship": "SELF",
+                                              "external-id-type": "doi",
+                                              "external-id-url": {"value": "http://dx.doi.org/10.1001/PUBDB-2018-1001"},
+                                              "external-id-value": "10.1001/PUBDB-2018-1001"}]},
+            "last-modified-date": {"value": 1544010433961},
+            "work-summary": [{"created-date": {"value": 1544010433961},
+                              "display-index": "0",
+                              "external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                                                "external-id-type": "other-id",
+                                                                "external-id-url": {"value": "http://inspireheptest.cern.ch/record/20"},
+                                                                "external-id-value": "20"},
+                                                               {"external-id-relationship": "SELF",
+                                                                "external-id-type": "doi",
+                                                                "external-id-url": {"value": "http://dx.doi.org/10.1001/PUBDB-2018-1001"},
+                                                                "external-id-value": "10.1001/PUBDB-2018-1001"}]},
+                              "last-modified-date": {"value": 1544010433961},
+                              "path": "/0000-0002-5073-0816/work/51341099",
+                              "publication-date": null,
+                              "put-code": 51341099,
+                              "source": {"source-client-id": {"host": "orcid.org",
+                                                              "path": "0000-0001-8607-8906",
+                                                              "uri": "http://orcid.org/client/0000-0001-8607-8906"},
+                                         "source-name": {"value": "INSPIRE-HEP"},
+                                         "source-orcid": null},
+                              "title": {"subtitle": null,
+                                        "title": {"value": "IRRADIATION OF A CERIUM - CONTAINING SILICATE GLASS"},
+                                        "translated-title": null},
+                              "type": "JOURNAL_ARTICLE",
+                              "visibility": "PUBLIC"}]},
+           {"external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                              "external-id-type": "doi",
+                                              "external-id-url": {"value": "http://dx.doi.org/10.1000/PUBDB-2018-1000"},
+                                              "external-id-value": "10.1000/PUBDB-2018-1000"}]},
+            "last-modified-date": {"value": 1544010805177},
+            "work-summary": [{"created-date": {"value": 1544010805177},
+                              "display-index": "0",
+                              "external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                                                "external-id-type": "doi",
+                                                                "external-id-url": {"value": "http://dx.doi.org/10.1000/PUBDB-2018-1000"},
+                                                                "external-id-value": "10.1000/PUBDB-2018-1000"}]},
+                              "last-modified-date": {"value": 1544010805177},
+                              "path": "/0000-0002-5073-0816/work/51341192",
+                              "publication-date": null,
+                              "put-code": 51341192,
+                              "source": {"source-client-id": {"host": "orcid.org",
+                                                              "path": "0000-0001-8607-8906",
+                                                              "uri": "http://orcid.org/client/0000-0001-8607-8906"},
+                                         "source-name": {"value": "INSPIRE-HEP"},
+                                         "source-orcid": null},
+                              "title": {"subtitle": null,
+                                        "title": {"value": "IRRADIATION OF A CERIUM - CONTAINING SILICATE GLASS"},
+                                        "translated-title": null},
+                              "type": "JOURNAL_ARTICLE",
+                              "visibility": "PUBLIC"}]},
+           {"external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                              "external-id-type": "doi",
+                                              "external-id-url": {"value": "http://dx.doi.org/10.1000/test.orcid.push"},
+                                              "external-id-value": "10.1000/test.orcid.push"},
+                                             {"external-id-relationship": "SELF",
+                                              "external-id-type": "other-id",
+                                              "external-id-url": {"value": "http://inspirehep.net/record/45"},
+                                              "external-id-value": "45"}]},
+            "last-modified-date": {"value": 1544024347646},
+            "work-summary": [{"created-date": {"value": 1544024347646},
+                              "display-index": "0",
+                              "external-ids": {"external-id": [{"external-id-relationship": "SELF",
+                                                                "external-id-type": "other-id",
+                                                                "external-id-url": {"value": "http://inspirehep.net/record/45"},
+                                                                "external-id-value": "45"},
+                                                               {"external-id-relationship": "SELF",
+                                                                "external-id-type": "doi",
+                                                                "external-id-url": {"value": "http://dx.doi.org/10.1000/test.orcid.push"},
+                                                                "external-id-value": "10.1000/test.orcid.push"}]},
+                              "last-modified-date": {"value": 1544024347646},
+                              "path": "/0000-0002-5073-0816/work/51346820",
+                              "publication-date": null,
+                              "put-code": 51346820,
+                              "source": {"source-client-id": {"host": "orcid.org",
+                                                              "path": "0000-0001-8607-8906",
+                                                              "uri": "http://orcid.org/client/0000-0001-8607-8906"},
+                                         "source-name": {"value": "INSPIRE-HEP"},
+                                         "source-orcid": null},
+                              "title": {"subtitle": null,
+                                        "title": {"value": "Some Results Arising from the Study of ORCID push"},
+                                        "translated-title": null},
+                              "type": "JOURNAL_ARTICLE",
+                              "visibility": "PUBLIC"}]}],
+ "last-modified-date": {"value": 1544024347646},
+ "path": "/0000-0002-5073-0816/works"}'}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['5839']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Wed, 05 Dec 2018 15:53:56 GMT']
+      expires: ['0']
+      pragma: [no-cache]
+      server: [nginx/1.4.6 (Ubuntu)]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+    method: GET
+    uri: https://api.orcid.org/v2.0/0000-0002-5073-0816/works/51341192
+  response:
+    body: {string: !!python/unicode "{\n  \"bulk\" : [ {\n    \"work\" : {\n     \
+        \ \"created-date\" : {\n        \"value\" : 1544010805177\n      },\n    \
+        \  \"last-modified-date\" : {\n        \"value\" : 1544010805177\n      },\n\
+        \      \"source\" : {\n        \"source-orcid\" : null,\n        \"source-client-id\"\
+        \ : {\n          \"uri\" : \"http://orcid.org/client/0000-0001-8607-8906\"\
+        ,\n          \"path\" : \"0000-0001-8607-8906\",\n          \"host\" : \"\
+        orcid.org\"\n        },\n        \"source-name\" : {\n          \"value\"\
+        \ : \"INSPIRE-HEP\"\n        }\n      },\n      \"put-code\" : 51341192,\n\
+        \      \"path\" : null,\n      \"title\" : {\n        \"title\" : {\n    \
+        \      \"value\" : \"IRRADIATION OF A CERIUM - CONTAINING SILICATE GLASS\"\
+        \n        },\n        \"subtitle\" : null,\n        \"translated-title\" :\
+        \ null\n      },\n      \"journal-title\" : null,\n      \"short-description\"\
+        \ : null,\n      \"citation\" : {\n        \"citation-type\" : \"BIBTEX\"\
+        ,\n        \"citation-value\" : \"@article{Muray:1963bp,\\n    author = \\\
+        \"Muray, J.J.\\\",\\n    reportNumber = \\\"SLAC-TN-63-050\\\",\\n    doi\
+        \ = \\\"10.1000/PUBDB-2018-1000\\\",\\n    title = \\\"IRRADIATION OF A CERIUM\
+        \ - CONTAINING SILICATE GLASS\\\",\\n    url = \\\"http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=slac-tn-63-050\\\
+        \"\\n}\\n\"\n      },\n      \"type\" : \"JOURNAL_ARTICLE\",\n      \"publication-date\"\
+        \ : null,\n      \"external-ids\" : {\n        \"external-id\" : [ {\n   \
+        \       \"external-id-type\" : \"doi\",\n          \"external-id-value\" :\
+        \ \"10.1000/PUBDB-2018-1000\",\n          \"external-id-url\" : {\n      \
+        \      \"value\" : \"http://dx.doi.org/10.1000/PUBDB-2018-1000\"\n       \
+        \   },\n          \"external-id-relationship\" : \"SELF\"\n        } ]\n \
+        \     },\n      \"url\" : {\n        \"value\" : \"http://inspirehep.net/record/20\"\
+        \n      },\n      \"contributors\" : {\n        \"contributor\" : [ {\n  \
+        \        \"contributor-orcid\" : {\n            \"uri\" : \"http://orcid.org/0000-0002-5073-0816\"\
+        ,\n            \"path\" : \"0000-0002-5073-0816\",\n            \"host\" :\
+        \ \"orcid.org\"\n          },\n          \"credit-name\" : {\n           \
+        \ \"value\" : \"J.J. Muray\"\n          },\n          \"contributor-email\"\
+        \ : null,\n          \"contributor-attributes\" : {\n            \"contributor-sequence\"\
+        \ : \"FIRST\",\n            \"contributor-role\" : \"AUTHOR\"\n          }\n\
+        \        } ]\n      },\n      \"language-code\" : null,\n      \"country\"\
+        \ : null,\n      \"visibility\" : \"PUBLIC\"\n    }\n  } ]\n}"}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['2270']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Wed, 05 Dec 2018 15:53:56 GMT']
+      expires: ['0']
+      pragma: [no-cache]
+      server: [nginx/1.4.6 (Ubuntu)]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/orcid+json]
+    method: DELETE
+    uri: https://api.orcid.org/v2.0/0000-0002-5073-0816/work/51341192
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Thu, 06 Dec 2018 15:13:59 GMT']
+      expires: ['0']
+      pragma: [no-cache]
+      server: [nginx/1.4.6 (Ubuntu)]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 204, message: No Content}
+version: 1

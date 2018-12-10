@@ -75,6 +75,12 @@ def test_format_article(app, api_client):
         </common:publication-date>
         <common:external-ids>
             <common:external-id>
+              <common:external-id-type>other-id</common:external-id-type>
+              <common:external-id-value>4328</common:external-id-value>
+              <common:external-id-url>http://inspirehep.net/record/4328</common:external-id-url>
+              <common:external-id-relationship>self</common:external-id-relationship>
+            </common:external-id>
+            <common:external-id>
                 <common:external-id-type>doi</common:external-id-type>
                 <common:external-id-value>10.1016/0029-5582(61)90469-2</common:external-id-value>
                 <common:external-id-url>http://dx.doi.org/10.1016/0029-5582(61)90469-2</common:external-id-url>
@@ -116,6 +122,12 @@ def test_format_conference_paper(app, api_client):
         <work:journal-title>4th RESCEU International Symposium on Birth and Evolution of the Universe</work:journal-title>
         <work:type>conference-paper</work:type>
         <common:external-ids>
+            <common:external-id>
+              <common:external-id-type>other-id</common:external-id-type>
+              <common:external-id-value>524480</common:external-id-value>
+              <common:external-id-url>http://inspirehep.net/record/524480</common:external-id-url>
+              <common:external-id-relationship>self</common:external-id-relationship>
+            </common:external-id>
             <common:external-id>
                 <common:external-id-type>arxiv</common:external-id-type>
                 <common:external-id-value>astro-ph/0002520</common:external-id-value>
@@ -160,6 +172,12 @@ def test_format_proceedings(app, api_client):
             <common:year>2005</common:year>
         </common:publication-date>
         <common:external-ids>
+            <common:external-id>
+              <common:external-id-type>other-id</common:external-id-type>
+              <common:external-id-value>701585</common:external-id-value>
+              <common:external-id-url>http://inspirehep.net/record/701585</common:external-id-url>
+              <common:external-id-relationship>self</common:external-id-relationship>
+            </common:external-id>
             <common:external-id>
                 <common:external-id-type>arxiv</common:external-id-type>
                 <common:external-id-value>hep-ph/0601012</common:external-id-value>
@@ -207,6 +225,14 @@ def test_format_thesis(app, api_client):
             <common:title>MAGIC $\\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes</common:title>
         </work:title>
         <work:type>dissertation</work:type>
+        <common:external-ids>
+            <common:external-id>
+              <common:external-id-type>other-id</common:external-id-type>
+              <common:external-id-value>1395663</common:external-id-value>
+              <common:external-id-url>http://inspirehep.net/record/1395663</common:external-id-url>
+              <common:external-id-relationship>self</common:external-id-relationship>
+            </common:external-id>
+        </common:external-ids>
         <work:url>http://inspirehep.net/record/1395663</work:url>
         <work:contributors>
             <work:contributor>
@@ -246,6 +272,12 @@ def test_format_book(app, api_client):
             <common:day>03</common:day>
         </common:publication-date>
         <common:external-ids>
+            <common:external-id>
+              <common:external-id-type>other-id</common:external-id-type>
+              <common:external-id-value>736770</common:external-id-value>
+              <common:external-id-url>http://inspirehep.net/record/736770</common:external-id-url>
+              <common:external-id-relationship>self</common:external-id-relationship>
+            </common:external-id>
             <common:external-id>
                 <common:external-id-type>isbn</common:external-id-type>
                 <common:external-id-value>9780521187961</common:external-id-value>
@@ -296,6 +328,12 @@ def test_format_book_chapter(app, api_client):
             <common:year>2015</common:year>
         </common:publication-date>
         <common:external-ids>
+            <common:external-id>
+              <common:external-id-type>other-id</common:external-id-type>
+              <common:external-id-value>1375491</common:external-id-value>
+              <common:external-id-url>http://inspirehep.net/record/1375491</common:external-id-url>
+              <common:external-id-relationship>self</common:external-id-relationship>
+            </common:external-id>
             <common:external-id>
                 <common:external-id-type>doi</common:external-id-type>
                 <common:external-id-value>10.1007/978-3-319-15001-7_10</common:external-id-value>
@@ -364,6 +402,14 @@ def test_format_thesis_with_author_orcid(app, api_client):
             <common:title>MAGIC $\\gamma$-ray observations of distant AGN and a study of source variability and the extragalactic background light using FERMI and air Cherenkov telescopes</common:title>
         </work:title>
         <work:type>dissertation</work:type>
+        <common:external-ids>
+            <common:external-id>
+              <common:external-id-type>other-id</common:external-id-type>
+              <common:external-id-value>1395663</common:external-id-value>
+              <common:external-id-url>http://inspirehep.net/record/1395663</common:external-id-url>
+              <common:external-id-relationship>self</common:external-id-relationship>
+            </common:external-id>
+        </common:external-ids>
         <work:url>http://inspirehep.net/record/1395663</work:url>
         <work:contributors>
             <work:contributor>

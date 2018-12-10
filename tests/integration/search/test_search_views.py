@@ -26,9 +26,10 @@ import json
 
 from invenio_db import db
 from invenio_search import current_search_client as es
-from mock import patch
 
+from utils import _delete_record
 from inspirehep.modules.records.api import InspireRecord
+from factories.db.invenio_records import TestRecordMetadata
 
 
 def test_search_conferences_is_there(app_client):
@@ -61,328 +62,6 @@ def test_search_jobs_is_there(app_client):
 
 def test_search_falls_back_to_hep(app_client):
     assert app_client.get('/search').status_code == 200
-
-
-@patch('inspirehep.modules.search.search_factory.current_app')
-def test_search_logs(current_app_mock, api_client):
-    def _debug(log_output):
-        query = {
-            "sort": [
-                {
-                    "earliest_date": {
-                        "order": "desc"
-                    }
-                }
-            ],
-            "query": {
-                "bool": {
-                    "filter": [
-                        {
-                            "match": {
-                                "_collections": "Literature"
-                            }
-                        }
-                    ],
-                    "minimum_should_match": "0<1",
-                    "must": [
-                        {
-                            "match_all": {}
-                        }
-                    ]
-                }
-            },
-            "size": 10,
-            "from": 0,
-            "_source": {
-                "includes": [
-                    "$schema",
-                    "abstracts.value",
-                    "arxiv_eprints.value",
-                    "arxiv_eprints.categories",
-                    "authors.affiliations",
-                    "authors.full_name",
-                    "authors.control_number",
-                    "collaborations",
-                    "control_number",
-                    "citation_count",
-                    "dois.value",
-                    "earliest_date",
-                    "inspire_categories",
-                    "number_of_references",
-                    "publication_info",
-                    "report_numbers",
-                    "titles.title"
-                ]
-            }
-        }
-        assert query == json.loads(log_output)
-
-    current_app_mock.logger.debug.side_effect = _debug
-    api_client.get('/literature/')
-
-
-@patch('inspirehep.modules.search.search_factory.current_app')
-def test_search_facets_logs(current_app_mock, api_client):
-    def _debug(log_output):
-        query = {
-            "_source": {
-                "includes": [
-                    "$schema",
-                    "abstracts.value",
-                    "arxiv_eprints.value",
-                    "arxiv_eprints.categories",
-                    "authors.affiliations",
-                    "authors.full_name",
-                    "authors.control_number",
-                    "collaborations",
-                    "control_number",
-                    "citation_count",
-                    "dois.value",
-                    "earliest_date",
-                    "inspire_categories",
-                    "number_of_references",
-                    "publication_info",
-                    "report_numbers",
-                    "titles.title"
-                ]
-            },
-            "aggs": {
-                "arxiv_categories": {
-                    "meta": {
-                        "order": 5,
-                        "title": "arXiv Category"
-                    },
-                    "terms": {
-                        "field": "facet_arxiv_categories",
-                        "size": 20
-                    }
-                },
-                "author": {
-                    "meta": {
-                        "order": 3,
-                        "title": "Author"
-                    },
-                    "terms": {
-                        "field": "facet_author_name",
-                        "size": 20
-                    }
-                },
-                "doc_type": {
-                    "meta": {
-                        "order": 7,
-                        "title": "Document Type"
-                    },
-                    "terms": {
-                        "field": "facet_inspire_doc_type",
-                        "size": 20
-                    }
-                },
-                "experiment": {
-                    "meta": {
-                        "order": 6,
-                        "title": "Experiment"
-                    },
-                    "terms": {
-                        "field": "facet_experiment",
-                        "size": 20
-                    }
-                },
-                "author_count": {
-                    "range": {
-                        "ranges": [
-                            {
-                                "to": 11,
-                                "from": 1,
-                                "key": "10 authors or less"
-                            }
-                        ],
-                        "field": "author_count"
-                    },
-                    "meta": {
-                        "order": 2,
-                        "title": "Number of authors"
-                    }
-                },
-                "subject": {
-                    "meta": {
-                        "order": 4,
-                        "title": "Subject"
-                    },
-                    "terms": {
-                        "field": "facet_inspire_categories",
-                        "size": 20
-                    }
-                },
-                "earliest_date": {
-                    "date_histogram": {
-                        "field": "earliest_date",
-                        "interval": "year",
-                        "min_doc_count": 1,
-                        "format": "yyyy"
-                    },
-                    "meta": {
-                        "order": 1,
-                        "title": "Date"
-                    }
-                }
-            },
-            "query": {
-                "bool": {
-                    "filter": [
-                        {
-                            "match": {
-                                "_collections": "Literature"
-                            }
-                        }
-                    ],
-                    "minimum_should_match": "0<1",
-                    "must": [
-                        {
-                            "match_all": {}
-                        }
-                    ]
-                }
-            }
-        }
-
-        assert query == json.loads(log_output)
-
-    current_app_mock.logger.debug.side_effect = _debug
-    api_client.get('/literature/facets')
-
-
-@patch('inspirehep.modules.search.search_factory.current_app')
-def test_search_facets_logs_with_query(current_app_mock, api_client):
-    def _debug(log_output):
-        query = {
-            "_source": {
-                "includes": [
-                    "$schema",
-                    "abstracts.value",
-                    "arxiv_eprints.value",
-                    "arxiv_eprints.categories",
-                    "authors.affiliations",
-                    "authors.full_name",
-                    "authors.control_number",
-                    "collaborations",
-                    "control_number",
-                    "citation_count",
-                    "dois.value",
-                    "earliest_date",
-                    "inspire_categories",
-                    "number_of_references",
-                    "publication_info",
-                    "report_numbers",
-                    "titles.title"
-                ]
-            },
-            "aggs": {
-                "arxiv_categories": {
-                    "meta": {
-                        "order": 5,
-                        "title": "arXiv Category"
-                    },
-                    "terms": {
-                        "field": "facet_arxiv_categories",
-                        "size": 20
-                    }
-                },
-                "author": {
-                    "meta": {
-                        "order": 3,
-                        "title": "Author"
-                    },
-                    "terms": {
-                        "field": "facet_author_name",
-                        "size": 20
-                    }
-                },
-                "doc_type": {
-                    "meta": {
-                        "order": 7,
-                        "title": "Document Type"
-                    },
-                    "terms": {
-                        "field": "facet_inspire_doc_type",
-                        "size": 20
-                    }
-                },
-                "experiment": {
-                    "meta": {
-                        "order": 6,
-                        "title": "Experiment"
-                    },
-                    "terms": {
-                        "field": "facet_experiment",
-                        "size": 20
-                    }
-                },
-                "author_count": {
-                    "range": {
-                        "ranges": [
-                            {
-                                "to": 11,
-                                "from": 1,
-                                "key": "10 authors or less"
-                            }
-                        ],
-                        "field": "author_count"
-                    },
-                    "meta": {
-                        "order": 2,
-                        "title": "Number of authors"
-                    }
-                },
-                "subject": {
-                    "meta": {
-                        "order": 4,
-                        "title": "Subject"
-                    },
-                    "terms": {
-                        "field": "facet_inspire_categories",
-                        "size": 20
-                    }
-                },
-                "earliest_date": {
-                    "date_histogram": {
-                        "field": "earliest_date",
-                        "interval": "year",
-                        "min_doc_count": 1,
-                        "format": "yyyy"
-                    },
-                    "meta": {
-                        "order": 1,
-                        "title": "Date"
-                    }
-                }
-            },
-            "query": {
-                "bool": {
-                    "filter": [
-                        {
-                            "match": {
-                                "_collections": "Literature"
-                            }
-                        }
-                    ],
-                    "minimum_should_match": "0<1",
-                    "must": [
-                        {
-                            "match": {
-                                "_all": {
-                                    "operator": "and",
-                                    "query": "test query"
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
-        }
-        assert query == json.loads(log_output)
-
-    current_app_mock.logger.debug.side_effect = _debug
-    api_client.get('/literature/facets?q=test query')
 
 
 def test_regression_author_count_10_does_not_display_zero_facet(isolated_api_client):
@@ -468,8 +147,9 @@ def test_search_hep_author_publication_with_not_existing_facet_name(isolated_api
     assert len(expected_aggregations) == len(result_aggregations)
 
 
-def test_selecting_2_facets_generates_search_with_must_query(isolated_api_client):
+def test_selecting_2_facets_generates_search_with_must_query(api_client):
     record_json = {
+        'control_number': 843386527,
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': ['article'],
         'titles': [{'title': 'Article 1'}],
@@ -481,6 +161,7 @@ def test_selecting_2_facets_generates_search_with_must_query(isolated_api_client
     rec.commit()
 
     record_json2 = {
+        'control_number': 843386521,
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'document_type': ['article'],
         'titles': [{'title': 'Article 2'}],
@@ -494,17 +175,21 @@ def test_selecting_2_facets_generates_search_with_must_query(isolated_api_client
     db.session.commit()
     es.indices.refresh('records-hep')
 
-    response = isolated_api_client.get('/literature?q=&author=John%20Doe')
+    response = api_client.get('/literature?q=&author=BAI_John%20Doe')
     data = json.loads(response.data)
     response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
     assert rec['control_number'] in response_recids
     assert rec2['control_number'] in response_recids
 
-    response = isolated_api_client.get('/literature?q=&author=John%20Doe&author=John%20Doe2')
+    response = api_client.get('/literature?q=&author=BAI_John%20Doe&author=BAI_John%20Doe2')
     data = json.loads(response.data)
     response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
     assert rec['control_number'] not in response_recids
     assert rec2['control_number'] in response_recids
+
+    _delete_record('lit', 843386527)
+    _delete_record('lit', 843386521)
+    db.session.commit()
 
 
 def test_exact_author_bai_query(isolated_api_client):
@@ -521,11 +206,8 @@ def test_exact_author_bai_query(isolated_api_client):
                      ]}],
     }
 
-    rec = InspireRecord.create(data=record_json)
-    rec.commit()
-
-    es.indices.refresh('records-hep')
-
+    rec_factory = TestRecordMetadata.create_from_kwargs(json=record_json, index_name='records-hep')
+    rec = rec_factory.record_metadata.json
     response = isolated_api_client.get('/literature?q=ea%20j.doe.1')
     data = json.loads(response.data)
     response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
@@ -540,5 +222,3 @@ def test_exact_author_bai_query(isolated_api_client):
     data = json.loads(response.data)
     response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
     assert rec['control_number'] in response_recids
-
-    rec.delete()

@@ -28,3 +28,6 @@
 
 # https://github.com/inveniosoftware/dictdiffer/pull/111
 -e git+https://github.com/inspirehep/dictdiffer.git#egg=dictdiffer
+
+#Flask_sqlalchemy fork
+-e git+https://github.com/inspirehep/flask-sqlalchemy.git#egg=flask_sqlalchemy

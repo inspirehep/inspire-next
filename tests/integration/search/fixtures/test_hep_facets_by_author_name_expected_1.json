@@ -17,13 +17,14 @@
     "author": {
       "buckets": [
         {
-          "key": "Fecko, M.",
+          "key": "BAI_M. Fecko",
           "doc_count": 1
         }
       ],
       "meta": {
+        "title": "Author",
         "order": 3,
-        "title": "Author"
+        "split": true
       },
       "sum_other_doc_count": 0,
       "doc_count_error_upper_bound": 0

@@ -35,13 +35,15 @@ from utils import override_config
 class TestOrcidPutcodeGetter(object):
     def setup(self):
         self.orcid = '0000-0002-6665-4934'  # ATLAS author.
-        from flask import current_app  # Note: isolated_app not available in setup().
-        # Pick the token from local inspirehep.cfg first.
-        self.oauth_token = current_app.config['ORCID_APP_CREDENTIALS'].get('oauth_tokens', {}).get(self.orcid, 'mytoken')
         self.source_client_id_path = '0000-0001-8607-8906'
-
         # Disable logging.
         logging.getLogger('inspirehep.modules.orcid.putcode_getter').disabled = logging.CRITICAL
+
+    @property
+    def oauth_token(self):
+        from flask import current_app  # Note: isolated_app not available in setup().
+        # Pick the token from local inspirehep.cfg first.
+        return current_app.config.get('ORCID_APP_LOCAL_TOKENS', {}).get(self.orcid, 'mytoken')
 
     def teardown(self):
         logging.getLogger('inspirehep.modules.orcid.putcode_getter').disabled = 0
@@ -49,15 +51,22 @@ class TestOrcidPutcodeGetter(object):
     def test_get_all_inspire_putcodes_happy_flow(self):
         with override_config(ORCID_APP_CREDENTIALS={'consumer_key': self.source_client_id_path}):
             putcode_getter = OrcidPutcodeGetter(self.orcid, self.oauth_token)
-            putcodes_urls = list(putcode_getter.get_all_inspire_putcodes())
-        assert len(putcodes_urls) == 297
-        for _, url in putcodes_urls:
-            assert 'http://inspirehep.net' in url
+            putcodes_recids = list(putcode_getter.get_all_inspire_putcodes_iter())
+        assert len(putcodes_recids) == 297
+        for _, recid in putcodes_recids:
+            assert int(recid)
+
+    def test_get_all_inspire_putcodes_with_recids(self):
+        self.orcid = '0000-0002-5073-0816'
+        with override_config(ORCID_APP_CREDENTIALS={'consumer_key': self.source_client_id_path}):
+            putcode_getter = OrcidPutcodeGetter(self.orcid, self.oauth_token)
+            putcodes_recids = list(putcode_getter.get_all_inspire_putcodes_iter())
+        assert putcodes_recids == [('51341099', '20'), ('51341192', '20')]
 
     def test_token_invalid(self):
         putcode_getter = OrcidPutcodeGetter(self.orcid, 'invalid')
         with pytest.raises(exceptions.InputDataInvalidException):
-            list(putcode_getter.get_all_inspire_putcodes())
+            list(putcode_getter.get_all_inspire_putcodes_iter())
 
     def test_putcode_not_found(self, isolated_app):
         orcid = '0000-0002-0942-3697'
@@ -66,4 +75,4 @@ class TestOrcidPutcodeGetter(object):
         with override_config(ORCID_APP_CREDENTIALS={'consumer_key': self.source_client_id_path}):
             putcode_getter = OrcidPutcodeGetter(orcid, oauth_token)
             with pytest.raises(exceptions.InputDataInvalidException):
-                list(putcode_getter.get_all_inspire_putcodes())
+                list(putcode_getter.get_all_inspire_putcodes_iter())

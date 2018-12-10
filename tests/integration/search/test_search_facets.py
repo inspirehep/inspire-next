@@ -28,7 +28,6 @@ import json
 import pkg_resources
 
 from inspirehep.modules.search.facets import hep_author_publications
-from factories.db.invenio_records import TestRecordMetadata
 
 
 def test_hep_author_publications(isolated_app):
@@ -36,6 +35,7 @@ def test_hep_author_publications(isolated_app):
         'meta': {
             'order': 3,
             'title': 'Collaborators',
+            'split': True
         },
         'terms': {
             'exclude': 'Jones, Jessica',
@@ -53,6 +53,7 @@ def test_hep_author_publications_without_exclude_parameter(isolated_app):
         'meta': {
             'order': 3,
             'title': 'Collaborators',
+            'split': True
         },
         'terms': {
             'exclude': '',
@@ -72,26 +73,20 @@ def load_json_resource(resource):
     return data
 
 
-def test_hep_facets_by_author_name(isolated_api_client):
-    record1 = load_json_resource('736770')
-    record2 = load_json_resource('1496635')
-
-    TestRecordMetadata.create_from_kwargs(json=record1)
-    TestRecordMetadata.create_from_kwargs(json=record2)
-
+def test_hep_facets_by_author_name(api_client):
     query = '"a Fecko"'
     expected = load_json_resource('test_hep_facets_by_author_name_expected_1')
 
     assert expected == json.loads(
-        isolated_api_client.get('literature/facets?q=%s' % query).data)
+        api_client.get('literature/facets?q=%s' % query).data)
 
     query = '"a Müller"'
     expected = load_json_resource('test_hep_facets_by_author_name_expected_2')
 
     assert expected == json.loads(
-        isolated_api_client.get('literature/facets?q=%s' % query).data)
+        api_client.get('literature/facets?q=%s' % query).data)
 
     query = '"a üź"'
     expected = load_json_resource('test_hep_facets_by_author_name_expected_3')
     assert expected == json.loads(
-        isolated_api_client.get('literature/facets?q=%s' % query).data)
+        api_client.get('literature/facets?q=%s' % query).data)

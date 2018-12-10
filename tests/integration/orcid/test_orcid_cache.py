@@ -25,8 +25,10 @@ from __future__ import absolute_import, division, print_function
 import mock
 import pytest
 
+from fqn_decorators.decorators import get_fqn
 from lxml import etree
 
+from inspirehep.modules.orcid import cache as cache_module
 from inspirehep.modules.orcid.cache import OrcidCache, _OrcidHasher
 
 from factories.db.invenio_records import TestRecordMetadata
@@ -39,17 +41,20 @@ class TestOrcidCache(object):
         self.putcode = 'myputcode'
         self.hash_value = 'myhash'
         self.orcid = '0000-0002-76YY-56XX'
-        self.hash_value = 'sha1:ede49b12e11f5284fdced7596a28791ddf32c8fc'
+        self.hash_value = 'sha1:acbc7dad4fd46e0deb60d6681c244a67e4be2543'
         factory = TestRecordMetadata.create_from_file(__name__, 'test_orcid_cache_record.json')
         self.inspire_record = factory.inspire_record
         self.cache = OrcidCache(self.orcid, self.recid)
+
+    def setup_method(self, method):
+        cache_module.CACHE_PREFIX = get_fqn(method)
 
     def teardown(self):
         """
         Cleanup the cache after each test (as atm there is no cache isolation).
         """
-        key = self.cache._key
-        self.cache.redis.delete(key)
+        self.cache.delete_work_putcode()
+        cache_module.CACHE_PREFIX = None
 
     def test_read_write_new_key(self):
         self.cache.write_work_putcode(self.putcode, self.inspire_record)
@@ -91,14 +96,34 @@ class TestOrcidCache(object):
         self.cache.read_work_putcode()
         assert not self.cache._cached_hash_value
 
+    def test_delete_work_putcode(self):
+        self.cache.write_work_putcode(self.putcode, self.inspire_record)
+        putcode = self.cache.read_work_putcode()
+        assert putcode == self.putcode
+
+        self.cache.delete_work_putcode()
+        assert not self.cache.read_work_putcode()
+
+    def test_delete_work_putcode_non_existing(self):
+        recid = '0000'
+        cache = OrcidCache(self.orcid, recid)
+        cache.delete_work_putcode()
+        assert not self.cache.read_work_putcode()
+
 
 @pytest.mark.usefixtures('isolated_app')
 class TestOrcidHasher(object):
     def setup(self):
         factory = TestRecordMetadata.create_from_file(__name__, 'test_orcid_hasher_record.json')
         self.record = factory.record_metadata
-        self.hash_value = 'sha1:ede49b12e11f5284fdced7596a28791ddf32c8fc'
+        self.hash_value = 'sha1:acbc7dad4fd46e0deb60d6681c244a67e4be2543'
         self.hasher = _OrcidHasher(factory.inspire_record)
+
+    def setup_method(self, method):
+        cache_module.CACHE_PREFIX = get_fqn(method)
+
+    def teardown(self):
+        cache_module.CACHE_PREFIX = None
 
     def test_compute_hash(self):
         hash_value = self.hasher.compute_hash()

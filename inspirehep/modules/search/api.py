@@ -46,7 +46,9 @@ class SearchMixin(object):
         :type query_string: string
         :returns: Elasticsearch DSL search class
         """
-        return self.query(IQ(query_string, self))
+        if not query_string:
+            return self.query()
+        return self.query('match', _all=query_string)
 
     def get_source(self, uuid, **kwargs):
         """Get source from a given uuid.
@@ -96,6 +98,15 @@ class LiteratureSearch(RecordsSearch, SearchMixin):
         doc_types = 'hep'
         default_filter = DefaultFilter(Q('match', _collections="Literature"))
 
+    def query_from_iq(self, query_string):
+        """Initialize ES DSL object using INSPIRE query parser.
+
+        :param query_string: Query string as a user would input in INSPIRE's search box.
+        :type query_string: string
+        :returns: Elasticsearch DSL search class
+        """
+        return self.query(IQ(query_string, self))
+
     def default_fields(self):
         """What fields to use when no keyword is specified."""
         return ['_all']
@@ -132,6 +143,15 @@ class ConferencesSearch(RecordsSearch, SearchMixin):
         index = 'records-conferences'
         doc_types = 'conferences'
 
+    def query_from_iq(self, query_string):
+        """Initialize ES DSL object using INSPIRE query parser.
+
+        :param query_string: Query string as a user would input in INSPIRE's search box.
+        :type query_string: string
+        :returns: Elasticsearch DSL search class
+        """
+        return self.query(IQ(query_string, self))
+
     def default_fields(self):
         """What fields to use when no keyword is specified."""
         return ['_all']
@@ -155,6 +175,15 @@ class InstitutionsSearch(RecordsSearch, SearchMixin):
     class Meta:
         index = 'records-institutions'
         doc_types = 'institutions'
+
+    def query_from_iq(self, query_string):
+        """Initialize ES DSL object using INSPIRE query parser.
+
+        :param query_string: Query string as a user would input in INSPIRE's search box.
+        :type query_string: string
+        :returns: Elasticsearch DSL search class
+        """
+        return self.query(IQ(query_string, self))
 
     def default_fields(self):
         """What fields to use when no keyword is specified."""

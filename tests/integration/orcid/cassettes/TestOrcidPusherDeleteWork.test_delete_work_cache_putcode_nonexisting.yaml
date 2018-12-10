@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/orcid+json]
+    method: DELETE
+    uri: https://api.orcid.org/v2.0/0000-0002-5073-0816/work/51391229
+  response:
+    body: {string: !!python/unicode '{"response-code":404,"developer-message":"404
+        Not Found: The resource was not found. Full validation error: No entity found
+        for query","user-message":"The resource was not found.","error-code":9016,"more-info":"https://members.orcid.org/api/resources/troubleshooting"}'}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['268']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Thu, 06 Dec 2018 15:56:53 GMT']
+      expires: ['0']
+      pragma: [no-cache]
+      server: [nginx/1.4.6 (Ubuntu)]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 404, message: Not Found}
+version: 1

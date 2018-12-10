@@ -31,8 +31,6 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 
-from flask_sqlalchemy import models_committed
-
 from invenio_db import db
 from invenio_oauthclient.models import User
 from invenio_pidstore.models import PersistentIdentifier
@@ -154,24 +152,6 @@ def test_isolated_app_nested_transaction(users_count, isolated_app):
         db.session.add(user)
     assert User.query.get(user.id)
     assert User.query.count() == users_count + 1
-
-
-count = 0
-
-
-def test_isolated_app_sqlalchemy_signals(isolated_app):
-    @models_committed.connect
-    def model_committed_receiver(sender, changes):
-        for model_instance, change in changes:
-            if isinstance(model_instance, User):
-                global count
-                count += 1
-
-    user = User()
-    db.session.add(user)
-    db.session.commit()
-
-    assert count == 1
 
 
 def test_isolated_app_and_app_together(isolated_app, app):

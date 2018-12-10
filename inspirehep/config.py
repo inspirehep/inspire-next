@@ -257,7 +257,6 @@ LITERATURE_REST_ENDPOINT = {
     'pid_minter': 'inspire_recid_minter',
     'pid_fetcher': 'inspire_recid_fetcher',
     'search_class': 'inspirehep.modules.search:LiteratureSearch',
-    'indexer_class': 'inspirehep.modules.records:indexer:InspireRecordIndexer',
     'record_serializers': {
         'application/json': 'invenio_records_rest.serializers:json_v1_response',
         'application/vnd+inspire.record.ui+json': INSPIRE_SERIALIZERS + ':json_literature_ui_v1_response',
@@ -341,7 +340,7 @@ AUTHORS_REST_ENDPOINT = {
     'search_class': 'inspirehep.modules.search:AuthorsSearch',
     'record_serializers': {
         'application/json': 'invenio_records_rest.serializers:json_v1_response',
-        'application/vnd+inspire.record.ui+json': 'invenio_records_rest.serializers:json_v1_response',
+        'application/vnd+inspire.record.ui+json': INSPIRE_SERIALIZERS + ':json_authors_ui_v1_response',
     },
     'record_class': 'inspirehep.modules.records.api:InspireRecord',
     'search_serializers': {
@@ -854,6 +853,7 @@ RECORDS_REST_FACETS = {
                 "meta": {
                     "title": "Author",
                     "order": 3,
+                    "split": True,
                 },
             },
             "subject": {
