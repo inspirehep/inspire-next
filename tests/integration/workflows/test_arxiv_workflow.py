@@ -29,9 +29,8 @@ import mock
 import pkg_resources
 import pytest
 import re
-from inspire_schemas.utils import validate
 
-from invenio_search import current_search_client as es
+from jsonschema import ValidationError
 from invenio_db import db
 from invenio_workflows import (
     ObjectStatus,
@@ -40,8 +39,9 @@ from invenio_workflows import (
     start,
     workflow_object_class,
 )
+from invenio_search import current_search_client as es
 from invenio_workflows.errors import WorkflowsError
-from jsonschema import ValidationError
+from inspire_schemas.utils import validate
 
 from inspirehep.modules.workflows.tasks.actions import load_from_source_data
 from inspirehep.modules.workflows.utils import do_not_repeat
