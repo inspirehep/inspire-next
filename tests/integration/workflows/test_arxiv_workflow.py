@@ -29,7 +29,6 @@ import mock
 import pkg_resources
 import pytest
 import re
-import requests_mock
 from inspire_schemas.utils import validate
 
 from invenio_search import current_search_client as es
