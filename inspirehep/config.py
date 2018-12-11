@@ -277,6 +277,10 @@ LITERATURE_REST_ENDPOINT = {
             },
         },
         'book_title': {
+            '_source': [
+                'control_number',
+                'self',
+            ],
             'completion': {
                 'field': 'bookautocomplete'
             }
@@ -510,6 +514,13 @@ CONFERENCES_REST_ENDPOINT = {
     'search_serializers': {
         'application/json': 'invenio_records_rest.serializers:json_v1_search',
         'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
+    },
+    'suggesters': {
+        'conference': {
+            'completion': {
+                'field': 'conferenceautocomplete'
+            }
+        }
     },
     'list_route': '/conferences/',
     'item_route': '/conferences/<pid(con,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
