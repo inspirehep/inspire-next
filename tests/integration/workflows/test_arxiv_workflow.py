@@ -29,7 +29,7 @@ import mock
 import pkg_resources
 import pytest
 
-from invenio_search import current_search_client as es
+from jsonschema import ValidationError
 from invenio_db import db
 from invenio_workflows import (
     ObjectStatus,
@@ -38,8 +38,9 @@ from invenio_workflows import (
     start,
     workflow_object_class,
 )
+from invenio_search import current_search_client as es
 from invenio_workflows.errors import WorkflowsError
-from jsonschema import ValidationError
+from inspire_schemas.utils import validate
 
 from inspirehep.modules.workflows.tasks.actions import load_from_source_data
 from inspirehep.modules.workflows.utils import do_not_repeat
@@ -1121,3 +1122,101 @@ def test_workflows_halts_on_multiple_exact_matches(workflow_app):
 
     assert obj.status == ObjectStatus.HALTED
     assert obj.extra_data['_action'] == 'resolve_multiple_exact_matches'
+
+
+def fake_validation(data, schema=None):
+    return
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch('inspirehep.modules.workflows.tasks.matching.match',
+            return_value=iter([]))
+@mock.patch('inspirehep.modules.workflows.tasks.actions.validate',
+            side_effect=[fake_validation, validate])
+def test_workflow_with_validation_error(
+    fake_validation,
+    mocked_match,
+    mocked_magpie_json_api_request,
+    mocked_beard_json_api_request,
+    workflow_app,
+    mocked_external_services
+):
+    record_with_validation_error = {
+        '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
+        'titles': [
+            {
+                'title': 'Update without conflicts title.'
+            },
+        ],
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'WRONG_CATEGORY',
+                    'hep-th'
+                ],
+                'value': '1703.04802'
+            }
+        ],
+        'document_type': ['article'],
+        '_collections': ['Literature'],
+        'acquisition_source': {'source': 'arXiv'},
+    }
+    workflow = build_workflow(record_with_validation_error)
+    with pytest.raises(ValidationError):
+        start('article', object_id=workflow.id)
+    assert fake_validation.call_count == 2
+    assert workflow.status == ObjectStatus.ERROR
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch('inspirehep.modules.workflows.tasks.matching.match',
+            return_value=iter([]))
+@mock.patch('inspirehep.modules.workflows.tasks.actions.validate',
+            side_effect=[fake_validation, validate])
+def test_workflow_without_validation_error(
+    fake_validation,
+    mocked_match,
+    mocked_magpie_json_api_request,
+    mocked_beard_json_api_request,
+    workflow_app,
+    mocked_external_services
+):
+    record_without_validation_error = {
+        '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
+        'titles': [
+            {
+                'title': 'Update without conflicts title.'
+            },
+        ],
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-lat',
+                    'hep-th'
+                ],
+                'value': '1703.04802'
+            }
+        ],
+        'document_type': ['article'],
+        '_collections': ['Literature'],
+        'acquisition_source': {'source': 'arXiv'},
+    }
+    workflow = build_workflow(record_without_validation_error)
+    start('article', object_id=workflow.id)
+
+    assert fake_validation.call_count == 2
+    assert workflow.status == ObjectStatus.WAITING

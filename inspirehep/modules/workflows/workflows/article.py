@@ -268,6 +268,7 @@ POSTENHANCE_RECORD = [
     prepare_keywords,
     set_refereed_and_fix_document_type,
     fix_submission_number,
+    validate_record('hep')
 ]
 
 
