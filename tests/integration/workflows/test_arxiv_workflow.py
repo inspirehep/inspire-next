@@ -28,7 +28,6 @@ import json
 import mock
 import pkg_resources
 import pytest
-import re
 
 from jsonschema import ValidationError
 from invenio_db import db
