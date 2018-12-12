@@ -31,6 +31,7 @@ from flask import current_app
 from sqlalchemy.exc import SQLAlchemyError
 
 from celery import shared_task
+from celery.exceptions import SoftTimeLimitExceeded
 from redis import StrictRedis
 from requests.exceptions import RequestException
 from simplejson import loads
@@ -228,16 +229,22 @@ def import_legacy_orcid_tokens(self):
     db.session.commit()
 
 
-@shared_task(bind=True)
+# `soft_time_limit` is used to schedule a retry.
+# `time_limit` instead kills the worker process (its exception cannot be caught
+# in order to schedule a retry).
+# Race conditions between the 2 limits are possible, but the orcid push
+# operation is idempotent.
+@shared_task(bind=True, soft_time_limit=10 * 60, time_limit=11 * 60)
 @time_execution
-def orcid_push(self, orcid, rec_id, oauth_token):
+def orcid_push(self, orcid, rec_id, oauth_token, kwargs_to_pusher=None):
     """Celery task to push a record to ORCID.
 
     Args:
-        self(celery.Task): the task
-        orcid(string): an orcid identifier.
-        rec_id(int): inspire record's id to push to ORCID.
-        oauth_token(string): orcid token.
+        self (celery.Task): the task
+        orcid (String): an orcid identifier.
+        rec_id (Int): inspire record's id to push to ORCID.
+        oauth_token (String): orcid token.
+        kwargs_to_pusher (Dict): extra kwargs to pass to the pusher object.
     """
     if not current_app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']:
         LOGGER.warning('ORCID push feature flag not enabled')
@@ -249,12 +256,13 @@ def orcid_push(self, orcid, rec_id, oauth_token):
         return
 
     LOGGER.info('New orcid_push task for recid={} and orcid={}'.format(rec_id, orcid))
-    pusher = domain_models.OrcidPusher(orcid, rec_id, oauth_token)
+    kwargs_to_pusher = kwargs_to_pusher or {}
+    pusher = domain_models.OrcidPusher(orcid, rec_id, oauth_token, **kwargs_to_pusher)
 
     try:
         pusher.push()
         LOGGER.info('Orcid_push task for recid={} and orcid={} successfully completed'.format(rec_id, orcid))
-    except RequestException as exc:
+    except (RequestException, SoftTimeLimitExceeded) as exc:
         # Trigger a retry only in case of network-related issues.
         # RequestException is the base class for all request's library
         # exceptions.
@@ -264,16 +272,21 @@ def orcid_push(self, orcid, rec_id, oauth_token):
         # does not trigger a retry.
 
         # Enrich exception message.
-        message = (exc.args[0:1] or ('',))[0]
-        message += '\nResponse={}'.format(exc.response.content)
-        message += '\nRequest={} {}'.format(exc.request.method, exc.request.url)
-        exc.args = (message,) + exc.args[1:]
+        if isinstance(exc, RequestException):
+            message = (exc.args[0:1] or ('',))[0]
+            message += '\nResponse={}'.format(exc.response.content)
+            message += '\nRequest={} {}'.format(exc.request.method, exc.request.url)
+            exc.args = (message,) + exc.args[1:]
+
+        # If max_retries=3, then self.request.retries is: [0, 1, 2, 3]
+        # thus backoff power 4 is (secs): [4*60, 16*60, 64*60]
+        backoff = (4 ** (self.request.retries + 1)) * 60
 
         LOGGER.exception(
-            'Orcid_push task for recid={} and orcid={} raised a RequestException.'
-            ' Retrying soon. Exception={}'.format(
-                rec_id, orcid, traceback.format_exc()))
-        raise self.retry(max_retries=3, countdown=300, exc=exc)
+            'Orcid_push task for recid={} and orcid={} raised an exception.'
+            ' Retrying in {} secs. Exception={}'.format(
+                rec_id, orcid, backoff, traceback.format_exc()))
+        raise self.retry(max_retries=3, countdown=backoff, exc=exc)
     except Exception:
         LOGGER.exception(
             'Orcid_push task for recid={} and orcid={} failed raising the'

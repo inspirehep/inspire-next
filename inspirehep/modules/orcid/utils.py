@@ -24,7 +24,12 @@
 
 from __future__ import absolute_import, division, print_function
 
+import signal
+import time
 from itertools import chain
+from mock import Mock
+
+from celery.exceptions import MaxRetriesExceededError, Retry, TimeLimitExceeded
 from elasticsearch_dsl import Q
 from flask import current_app
 from sqlalchemy import cast, type_coerce
@@ -182,3 +187,94 @@ def log_service_response(logger, response, extra_message=None):
         logger.info(msg)
     else:
         logger.error(msg + ' and response={}'.format(response))
+
+
+def apply_celery_task_with_retry(task_func, args=None, kwargs=None,
+                                 max_retries=5, countdown=10, time_limit=None):
+    """
+    When executing a (bind=True) task synchronously (with `mytask.apply()` or
+    just calling it as a function `mytask()`) the `self.retry()` does not work,
+    but an exception is raised without any retry.
+
+    This function overcome such limitation.
+    Example:
+
+    # Celery task:
+    @shared_task(bind=True)
+    def normalize_name_task(self, first_name, last_name, nick_name=''):
+        try:
+            result = ... network call ...
+        except RequestException as exc:
+                exception = None
+            raise self.retry(max_retries=3, countdown=5, exc=exception)
+        return result
+
+    # Call the task sync with retry:
+    result = apply_celery_task_with_retry(
+        normalize_name_task, args=('John', 'Doe'), kwargs=dict(nick_name='Dee'),
+        max_retries=2, countdown=5*60, time_limit=2*60*60
+    )
+
+    Note: it assumes that @shared_task is the first (the one on top) decorator
+    for the Celery task.
+
+    Args:
+        task_func: Celery task function to be run.
+        args: the positional arguments to pass on to the task.
+        kwargs: the keyword arguments to pass on to the task.
+        max_retries: maximum number of retries before raising MaxRetriesExceededError.
+        countdown: hard time limit for each attempt. If the last attempt
+            It can be a callable, eg:
+                backoff = lambda retry_count: 2 ** (retry_count + 1)
+                apply_celery_task_with_retry(..., countdown=backoff)
+        time_limit: hard time limit for each single attempt in seconds. If the
+            last attempt fails because of the time limit, raises TimeLimitExceeded.
+
+    Returns: what the task_func returns.
+    """
+    def handler(signum, frame):
+        raise TimeLimitExceeded
+
+    args = args or tuple()
+    kwargs = kwargs or dict()
+
+    retry_mixin = RetryMixin()
+    retry_mixin.request.retries = 0
+    time_limit_exceeded = False
+    # Get the actual function decorated by @shared_task(bind=True).
+    unbound_func = task_func.__wrapped__.__func__
+    for _ in range(max_retries + 1):
+        try:
+            if time_limit:
+                signal.signal(signal.SIGALRM, handler)
+                signal.setitimer(signal.ITIMER_REAL, time_limit)
+            result = unbound_func(retry_mixin, *args, **kwargs)
+        except (Retry, TimeLimitExceeded) as exc:
+            if time_limit:
+                signal.alarm(0)  # Disable the alarm.
+            if isinstance(exc, TimeLimitExceeded):
+                time_limit_exceeded = True
+            else:
+                time_limit_exceeded = False
+            sleep_time = countdown
+            if callable(countdown):
+                sleep_time = countdown(retry_mixin.request.retries)
+            time.sleep(sleep_time)
+            retry_mixin.request.retries += 1
+            continue
+        if time_limit:
+            signal.alarm(0)  # Disable the alarm.
+        return result
+    exception = retry_mixin.exc
+    exception = exception or MaxRetriesExceededError
+    if time_limit_exceeded:
+        exception = TimeLimitExceeded
+    raise exception
+
+
+class RetryMixin(Mock):
+    exc = None
+
+    def retry(self, *args, **kwargs):
+        self.exc = kwargs.get('exc')
+        return Retry
