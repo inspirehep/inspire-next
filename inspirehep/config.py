@@ -284,6 +284,8 @@ LITERATURE_REST_ENDPOINT = {
             '_source': [
                 'control_number',
                 'self',
+                'titles',
+                'authors',
             ],
             'completion': {
                 'field': 'bookautocomplete'
@@ -521,6 +523,15 @@ CONFERENCES_REST_ENDPOINT = {
     },
     'suggesters': {
         'conference': {
+            '_source': [
+                'acronyms',
+                'titles',
+                'address',
+                'opening_date'
+                'cnum'
+                'control_number',
+                'self',
+            ],
             'completion': {
                 'field': 'conferenceautocomplete'
             }

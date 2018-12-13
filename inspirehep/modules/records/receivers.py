@@ -216,15 +216,15 @@ def enhance_before_index(record):
         populate_inspire_document_type(record)
         populate_name_variations(record)
         populate_number_of_references(record)
-        populate_citations_count(record=record)
+        populate_citations_count(record)
         populate_facet_author_name(record)
+
+        if is_book(record):
+            populate_bookautocomplete(record)
 
     elif is_author(record):
         populate_authors_name_variations(record)
         populate_author_suggest(record)
-
-    elif is_book(record):
-        populate_bookautocomplete(record)
 
     elif is_institution(record):
         populate_affiliation_suggest(record)
