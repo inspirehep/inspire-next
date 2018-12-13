@@ -83,7 +83,7 @@ class INSPIREUtils(object):
                 backend_kwargs=dict(
                     hosts=app.config['APPMETRICS_ELASTICSEARCH_HOSTS'],
                     index=app.config['APPMETRICS_ELASTICSEARCH_INDEX']),
-                queue_maxsize=2000,
+                queue_maxsize=5000,
             )
         else:
             backend = ElasticsearchBackend(
