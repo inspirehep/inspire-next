@@ -1,0 +1,136 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+    method: GET
+    uri: https://api.orcid.org/v2.0/0000-0002-0942-3697/works
+  response:
+    body: {string: !!python/unicode "{\n  \"last-modified-date\" : {\n    \"value\"\
+        \ : 1544548825366\n  },\n  \"group\" : [ {\n    \"last-modified-date\" : {\n\
+        \      \"value\" : 1544548825366\n    },\n    \"external-ids\" : {\n     \
+        \ \"external-id\" : [ {\n        \"external-id-type\" : \"doi\",\n       \
+        \ \"external-id-value\" : \"10.1000/test.orcid.push\",\n        \"external-id-url\"\
+        \ : {\n          \"value\" : \"http://dx.doi.org/10.1000/test.orcid.push\"\
+        \n        },\n        \"external-id-relationship\" : \"SELF\"\n      }, {\n\
+        \        \"external-id-type\" : \"other-id\",\n        \"external-id-value\"\
+        \ : \"999\",\n        \"external-id-url\" : {\n          \"value\" : \"https://labs.inspirehep.net/literature/20\"\
+        \n        },\n        \"external-id-relationship\" : \"SELF\"\n      } ]\n\
+        \    },\n    \"work-summary\" : [ {\n      \"put-code\" : 51548299,\n    \
+        \  \"created-date\" : {\n        \"value\" : 1544548825366\n      },\n   \
+        \   \"last-modified-date\" : {\n        \"value\" : 1544548825366\n      },\n\
+        \      \"source\" : {\n        \"source-orcid\" : null,\n        \"source-client-id\"\
+        \ : {\n          \"uri\" : \"http://orcid.org/client/0000-0001-8607-8906\"\
+        ,\n          \"path\" : \"0000-0001-8607-8906\",\n          \"host\" : \"\
+        orcid.org\"\n        },\n        \"source-name\" : {\n          \"value\"\
+        \ : \"INSPIRE-HEP\"\n        }\n      },\n      \"title\" : {\n        \"\
+        title\" : {\n          \"value\" : \"ORCID Push test\"\n        },\n     \
+        \   \"subtitle\" : null,\n        \"translated-title\" : null\n      },\n\
+        \      \"external-ids\" : {\n        \"external-id\" : [ {\n          \"external-id-type\"\
+        \ : \"doi\",\n          \"external-id-value\" : \"10.1000/test.orcid.push\"\
+        ,\n          \"external-id-url\" : {\n            \"value\" : \"http://dx.doi.org/10.1000/test.orcid.push\"\
+        \n          },\n          \"external-id-relationship\" : \"SELF\"\n      \
+        \  }, {\n          \"external-id-type\" : \"other-id\",\n          \"external-id-value\"\
+        \ : \"999\",\n          \"external-id-url\" : {\n            \"value\" : \"\
+        https://labs.inspirehep.net/literature/20\"\n          },\n          \"external-id-relationship\"\
+        \ : \"SELF\"\n        } ]\n      },\n      \"type\" : \"JOURNAL_ARTICLE\"\
+        ,\n      \"publication-date\" : {\n        \"year\" : {\n          \"value\"\
+        \ : \"1975\"\n        },\n        \"month\" : null,\n        \"day\" : null,\n\
+        \        \"media-type\" : null\n      },\n      \"visibility\" : \"PUBLIC\"\
+        ,\n      \"path\" : \"/0000-0002-0942-3697/work/51548299\",\n      \"display-index\"\
+        \ : \"0\"\n    } ]\n  }, {\n    \"last-modified-date\" : {\n      \"value\"\
+        \ : 1544017863912\n    },\n    \"external-ids\" : {\n      \"external-id\"\
+        \ : [ {\n        \"external-id-type\" : \"doi\",\n        \"external-id-value\"\
+        \ : \"10.1000/orcid-test-andrea-rossoni\",\n        \"external-id-url\" :\
+        \ {\n          \"value\" : \"http://dx.doi.org/10.1000/orcid-test-andrea-rossoni\"\
+        \n        },\n        \"external-id-relationship\" : \"SELF\"\n      } ]\n\
+        \    },\n    \"work-summary\" : [ {\n      \"put-code\" : 51344802,\n    \
+        \  \"created-date\" : {\n        \"value\" : 1544017863912\n      },\n   \
+        \   \"last-modified-date\" : {\n        \"value\" : 1544017863912\n      },\n\
+        \      \"source\" : {\n        \"source-orcid\" : null,\n        \"source-client-id\"\
+        \ : {\n          \"uri\" : \"http://orcid.org/client/0000-0001-8607-8906\"\
+        ,\n          \"path\" : \"0000-0001-8607-8906\",\n          \"host\" : \"\
+        orcid.org\"\n        },\n        \"source-name\" : {\n          \"value\"\
+        \ : \"INSPIRE-HEP\"\n        }\n      },\n      \"title\" : {\n        \"\
+        title\" : {\n          \"value\" : \"Physics experiment\"\n        },\n  \
+        \      \"subtitle\" : null,\n        \"translated-title\" : null\n      },\n\
+        \      \"external-ids\" : {\n        \"external-id\" : [ {\n          \"external-id-type\"\
+        \ : \"doi\",\n          \"external-id-value\" : \"10.1000/orcid-test-andrea-rossoni\"\
+        ,\n          \"external-id-url\" : {\n            \"value\" : \"http://dx.doi.org/10.1000/orcid-test-andrea-rossoni\"\
+        \n          },\n          \"external-id-relationship\" : \"SELF\"\n      \
+        \  } ]\n      },\n      \"type\" : \"JOURNAL_ARTICLE\",\n      \"publication-date\"\
+        \ : null,\n      \"visibility\" : \"PUBLIC\",\n      \"path\" : \"/0000-0002-0942-3697/work/51344802\"\
+        ,\n      \"display-index\" : \"0\"\n    } ]\n  } ],\n  \"path\" : \"/0000-0002-0942-3697/works\"\
+        \n}"}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['3896']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Tue, 11 Dec 2018 18:16:44 GMT']
+      expires: ['0']
+      pragma: [no-cache]
+      server: [nginx/1.4.6 (Ubuntu)]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+    method: GET
+    uri: https://api.orcid.org/v2.0/0000-0002-0942-3697/works/51344802
+  response:
+    body: {string: !!python/unicode "{\n  \"bulk\" : [ {\n    \"work\" : {\n     \
+        \ \"created-date\" : {\n        \"value\" : 1544017863912\n      },\n    \
+        \  \"last-modified-date\" : {\n        \"value\" : 1544017863912\n      },\n\
+        \      \"source\" : {\n        \"source-orcid\" : null,\n        \"source-client-id\"\
+        \ : {\n          \"uri\" : \"http://orcid.org/client/0000-0001-8607-8906\"\
+        ,\n          \"path\" : \"0000-0001-8607-8906\",\n          \"host\" : \"\
+        orcid.org\"\n        },\n        \"source-name\" : {\n          \"value\"\
+        \ : \"INSPIRE-HEP\"\n        }\n      },\n      \"put-code\" : 51344802,\n\
+        \      \"path\" : null,\n      \"title\" : {\n        \"title\" : {\n    \
+        \      \"value\" : \"Physics experiment\"\n        },\n        \"subtitle\"\
+        \ : null,\n        \"translated-title\" : null\n      },\n      \"journal-title\"\
+        \ : null,\n      \"short-description\" : null,\n      \"citation\" : {\n \
+        \       \"citation-type\" : \"BIBTEX\",\n        \"citation-value\" : \"@article{1680808,\\\
+        n    author = \\\"Andrea, Rossoni\\\",\\n    doi = \\\"10.1000/orcid-test-andrea-rossoni\\\
+        \",\\n    title = \\\"Physics experiment\\\"\\n}\\n\"\n      },\n      \"\
+        type\" : \"JOURNAL_ARTICLE\",\n      \"publication-date\" : null,\n      \"\
+        external-ids\" : {\n        \"external-id\" : [ {\n          \"external-id-type\"\
+        \ : \"doi\",\n          \"external-id-value\" : \"10.1000/orcid-test-andrea-rossoni\"\
+        ,\n          \"external-id-url\" : {\n            \"value\" : \"http://dx.doi.org/10.1000/orcid-test-andrea-rossoni\"\
+        \n          },\n          \"external-id-relationship\" : \"SELF\"\n      \
+        \  } ]\n      },\n      \"url\" : {\n        \"value\" : \"http://inspirehep.net/record/1680808\"\
+        \n      },\n      \"contributors\" : {\n        \"contributor\" : [ {\n  \
+        \        \"contributor-orcid\" : {\n            \"uri\" : \"http://orcid.org/0000-0002-0942-3697\"\
+        ,\n            \"path\" : \"0000-0002-0942-3697\",\n            \"host\" :\
+        \ \"orcid.org\"\n          },\n          \"credit-name\" : {\n           \
+        \ \"value\" : \"Andrea Rossoni\"\n          },\n          \"contributor-email\"\
+        \ : null,\n          \"contributor-attributes\" : {\n            \"contributor-sequence\"\
+        \ : \"FIRST\",\n            \"contributor-role\" : \"AUTHOR\"\n          }\n\
+        \        } ]\n      },\n      \"language-code\" : null,\n      \"country\"\
+        \ : null,\n      \"visibility\" : \"PUBLIC\"\n    }\n  } ]\n}"}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['2101']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Tue, 11 Dec 2018 18:16:45 GMT']
+      expires: ['0']
+      pragma: [no-cache]
+      server: [nginx/1.4.6 (Ubuntu)]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+version: 1
