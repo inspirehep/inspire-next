@@ -27,8 +27,8 @@ from __future__ import absolute_import, division, print_function
 import signal
 import time
 from itertools import chain
-from mock import Mock
 
+from celery.app.task import Task, Context
 from celery.exceptions import MaxRetriesExceededError, Retry, TimeLimitExceeded
 from elasticsearch_dsl import Q
 from flask import current_app
@@ -194,7 +194,8 @@ def apply_celery_task_with_retry(task_func, args=None, kwargs=None,
     """
     When executing a (bind=True) task synchronously (with `mytask.apply()` or
     just calling it as a function `mytask()`) the `self.retry()` does not work,
-    but an exception is raised without any retry.
+    but the original exception is raised (without any retry) so you "lose"
+    the exception management logic written in the task code.
 
     This function overcome such limitation.
     Example:
@@ -272,8 +273,14 @@ def apply_celery_task_with_retry(task_func, args=None, kwargs=None,
     raise exception
 
 
-class RetryMixin(Mock):
-    exc = None
+class RetryMixin(Task):
+    def __init__(self, *args, **kwargs):
+        self.exc = None
+        self._request = Context()
+
+    @property
+    def request(self):
+        return self._request
 
     def retry(self, *args, **kwargs):
         self.exc = kwargs.get('exc')
