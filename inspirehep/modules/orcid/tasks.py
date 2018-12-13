@@ -194,7 +194,7 @@ def _register_user(name, email, orcid, token):
     return _link_user_and_token(user, name, orcid, token)
 
 
-@shared_task(ignore_result=True, bind=True)
+@shared_task(ignore_result=True, bind=True, time_limit=5 * 60)
 @time_execution
 def import_legacy_orcid_tokens(self):
     """
