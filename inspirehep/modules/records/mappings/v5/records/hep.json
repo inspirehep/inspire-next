@@ -186,7 +186,8 @@
                                     "type": "object"
                                 },
                                 "value": {
-                                    "type": "text"
+                                    "normalizer": "lowercase_normalizer",
+                                    "type": "keyword"
                                 }
                             },
                             "type": "object"
@@ -279,6 +280,9 @@
                         }
                     },
                     "type": "nested"
+                },
+                "bookautocomplete": {
+                    "type": "completion"
                 },
                 "book_series": {
                     "properties": {

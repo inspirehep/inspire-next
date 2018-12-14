@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+from flask import current_app
 
 
 IS_VCR_ENABLED = True
@@ -40,6 +41,10 @@ def vcr_config():
         # Trick to disable VCR.
         return {'before_record': lambda *args, **kwargs: None}
 
+    appmetrics_es_hosts = tuple(
+        x['host'] if isinstance(x, dict) else x for x
+        in current_app.config.get('APPMETRICS_ELASTICSEARCH_HOSTS', {}))
+
     return {
         'decode_compressed_response': True,
         'filter_headers': ('Authorization', 'User-Agent'),
@@ -51,10 +56,7 @@ def vcr_config():
             'test-rabbitmq',
             'test-worker',
             'test-web',
-            # Allow using the metrics ES for debugging-purpose.
-            'inspire-qa-logs-client2.cern.ch',
-            'inspire-qa-logs-client1.cern.ch',
-        ),
+        ) + appmetrics_es_hosts,  # Allow using the metrics ES for debugging-purpose.
         'record_mode': record_mode,
     }
 

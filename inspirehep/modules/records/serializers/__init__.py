@@ -35,6 +35,7 @@ from .json_literature import (
 from .pybtex_serializer_base import PybtexSerializerBase
 from .writers import BibtexWriter
 from .schemas.base import PybtexSchema
+from .schemas.latex import LatexSchema
 from .schemas.json import (
     LiteratureAuthorsSchemaJSONUIV1,
     LiteratureRecordSchemaJSONUIV1,
@@ -43,6 +44,7 @@ from .schemas.json import (
     AuthorsRecordSchemaJSONUIV1,
 )
 from .marcxml import MARCXMLSerializer
+from .latex import LatexSerializer
 from .response import record_responsify_nocache, facets_responsify
 
 json_literature_ui_v1 = LiteratureJSONUISerializer(
@@ -115,11 +117,19 @@ json_authors_ui_v1_response = record_responsify_nocache(
 
 bibtex_v1 = PybtexSerializerBase(PybtexSchema(), BibtexWriter())
 marcxml_v1 = MARCXMLSerializer()
+latex_v1_EU = LatexSerializer('EU', schema_class=LatexSchema)
+latex_v1_US = LatexSerializer('US', schema_class=LatexSchema)
 
 bibtex_v1_response = record_responsify_nocache(bibtex_v1,
                                                'application/x-bibtex')
+latex_v1_response_eu = record_responsify_nocache(latex_v1_EU,
+                                                 'application/vnd.eu+x-latex')
+latex_v1_response_us = record_responsify_nocache(latex_v1_US,
+                                                 'application/vnd.us+x-latex')
 marcxml_v1_response = record_responsify_nocache(marcxml_v1,
                                                 'application/marcxml+xml')
 
 bibtex_v1_search = search_responsify(bibtex_v1, 'application/x-bibtex')
 marcxml_v1_search = search_responsify(marcxml_v1, 'application/marcxml+xml')
+latex_v1_search_eu = search_responsify(latex_v1_EU, 'application/vnd.eu+x-latex')
+latex_v1_search_us = search_responsify(latex_v1_US, 'application/vnd.us+x-latex')

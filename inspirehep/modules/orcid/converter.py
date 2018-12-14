@@ -25,6 +25,8 @@
 from __future__ import absolute_import, division, print_function
 
 import logging
+from collections import namedtuple
+
 from time_execution import time_execution
 
 from inspire_utils.date import PartialDate
@@ -40,6 +42,9 @@ from .builder import OrcidBuilder
 
 
 logger = logging.getLogger(__name__)
+
+
+ExternalIdentifier = namedtuple('ExternalIdentifier', ('type', 'value'))
 
 
 class OrcidConverter(object):
@@ -82,6 +87,7 @@ class OrcidConverter(object):
         self.visibility = visibility
         self.url_pattern = url_pattern
         self._bibtex_citation = None
+        self._external_identifiers = []
 
     @time_execution
     def get_xml(self, do_add_bibtex_citation=False):
@@ -126,16 +132,20 @@ class OrcidConverter(object):
         record_url = record_url_by_pattern(self.url_pattern, self.recid)
         if self.recid:
             builder.add_recid(self.recid, record_url, 'self')
+            self._external_identifiers.append(ExternalIdentifier('other-id', str(self.recid)))
 
         # Add external IDs
         if self.doi:
             builder.add_doi(self.doi, 'self')
+            self._external_identifiers.append(ExternalIdentifier('doi', self.doi))
 
         if self.arxiv_eprint:
             builder.add_arxiv(self.arxiv_eprint, 'self')
+            self._external_identifiers.append(ExternalIdentifier('arxiv', self.arxiv_eprint))
 
         for isbn in get_value(self.record, 'isbns.value', []):
             builder.add_external_id('isbn', isbn)
+            self._external_identifiers.append(ExternalIdentifier('isbn', isbn))
 
         # Add URL pointing to INSPIRE to ORCID
         builder.add_url(record_url)
@@ -272,3 +282,7 @@ class OrcidConverter(object):
                 logger.warning('Bibtex citation serialization failed for'
                                ' recid={}'.format(self.recid))
         return self._bibtex_citation
+
+    @property
+    def added_external_identifiers(self):
+        return self._external_identifiers

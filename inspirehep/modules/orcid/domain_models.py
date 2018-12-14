@@ -46,22 +46,42 @@ logger = logging.getLogger(__name__)
 
 
 class OrcidPusher(object):
-    def __init__(self, orcid, recid, oauth_token):
+    def __init__(self, orcid, recid, oauth_token,
+                 do_fail_if_duplicated_identifier=False, record_db_version=None):
         self.orcid = orcid
         self.recid = recid
         self.oauth_token = oauth_token
+        self.do_fail_if_duplicated_identifier = do_fail_if_duplicated_identifier
+        self.record_db_version = record_db_version
+        self.inspire_record = self._get_inspire_record()
+        self.cache = OrcidCache(orcid, recid)
+        self.lock_name = 'orcid:{}'.format(self.orcid)
+        self.client = OrcidClient(self.oauth_token, self.orcid)
+        self.converter = None
 
+    @time_execution
+    def _get_inspire_record(self):
         try:
-            self.inspire_record = get_db_record('lit', recid)
+            inspire_record = get_db_record('lit', self.recid)
         except RecordGetterError as exc:
             raise exceptions.RecordNotFoundException(
                 'recid={} not found for pid_type=lit'.format(self.recid),
                 from_exc=exc)
 
-        self.cache = OrcidCache(orcid, recid)
-        self.lock_name = 'orcid:{}'.format(self.orcid)
-        self.client = OrcidClient(self.oauth_token, self.orcid)
-        self.xml_element = None
+        # If the record_db_version was given, then ensure we are about to push
+        # the right record version.
+        # This check is related to the fact the orcid push at this moment is
+        # triggered by the signal after_record_update (which happens after a
+        # InspireRecord.commit()). This is not the actual commit to the db which
+        # might happen at a later stage or not at all.
+        # Note that connecting to the proper SQLAlchemy signal would also
+        # have issues: https://github.com/mitsuhiko/flask-sqlalchemy/issues/645
+        if self.record_db_version and inspire_record.model.version_id < self.record_db_version:
+            raise exceptions.StaleRecordDBVersionException(
+                'Requested push for db version={}, but actual record db'
+                ' version={}'.format(self.record_db_version, inspire_record.model.version_id)
+            )
+        return inspire_record
 
     @property
     def _do_force_cache_miss(self):
@@ -103,11 +123,11 @@ class OrcidPusher(object):
             self._delete_work(putcode)
             return None
 
-        self.xml_element = OrcidConverter(
+        self.converter = OrcidConverter(
             record=self.inspire_record,
             url_pattern=current_app.config['LEGACY_RECORD_URL_PATTERN'],
             put_code=putcode,
-        ).get_xml(do_add_bibtex_citation=True)
+        )
 
         try:
             putcode = self._post_or_put_work(putcode)
@@ -123,6 +143,16 @@ class OrcidPusher(object):
                     ' the work had already existed'.format(self.orcid, self.recid)
                 raise exceptions.PutcodeNotFoundInOrcidException(msg)
             self._post_or_put_work(putcode)
+        except orcid_client_exceptions.DuplicatedExternalIdentifierException:
+            # We PUT a record changing its identifier, but there is another work
+            # in ORCID with the same identifier. We need to find out the recid
+            # of the clashing work in ORCID and push a fresh version of that
+            # record.
+            # This scenario might be triggered by a merge of 2 records in Inspire.
+            if self.do_fail_if_duplicated_identifier:
+                raise exceptions.DuplicatedExternalIdentifierPusherException
+            self._push_work_with_clashing_identifier()
+            self._post_or_put_work(putcode)
 
         self.cache.write_work_putcode(putcode, self.inspire_record)
         return putcode
@@ -133,19 +163,22 @@ class OrcidPusher(object):
         # Otherwise a PUT (it means the work already exists and it has the given
         # putcode).
 
+        xml_element = self.converter.get_xml(do_add_bibtex_citation=True)
         # ORCID API allows 1 non-idempotent call only for the same orcid at
         # the same time. Using `distributed_lock` to achieve this.
         with distributed_lock(self.lock_name, blocking=True):
             if putcode:
-                response = self.client.put_updated_work(self.xml_element, putcode)
+                response = self.client.put_updated_work(xml_element, putcode)
             else:
-                response = self.client.post_new_work(self.xml_element)
+                response = self.client.post_new_work(xml_element)
 
         utils.log_service_response(logger, response, 'in OrcidPusher for recid={}'.format(self.recid))
         try:
             response.raise_for_result()
             putcode = response['putcode']
         except orcid_client_exceptions.WorkAlreadyExistsException:  # Only raisable by a POST.
+            raise
+        except orcid_client_exceptions.DuplicatedExternalIdentifierException:  # Only raisable by a PUT.
             raise
         except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
             raise exceptions.InputDataInvalidException(from_exc=exc)
@@ -155,7 +188,7 @@ class OrcidPusher(object):
     def _cache_all_author_putcodes(self):
         logger.info('New OrcidPusher cache all author putcodes for orcid={}'.format(self.orcid))
         putcode_getter = OrcidPutcodeGetter(self.orcid, self.oauth_token)
-        putcodes_recids = list(putcode_getter.get_all_inspire_putcodes_iter())  # Can raise exceptions.InputDataInvalidException.
+        putcodes_recids = list(putcode_getter.get_all_inspire_putcodes_and_recids_iter())  # Can raise exceptions.InputDataInvalidException.
 
         putcode = None
         for fetched_putcode, fetched_recid in putcodes_recids:
@@ -195,3 +228,34 @@ class OrcidPusher(object):
             raise exceptions.InputDataInvalidException(from_exc=exc)
 
         self.cache.delete_work_putcode()
+
+    @time_execution
+    def _push_work_with_clashing_identifier(self):
+        putcode_getter = OrcidPutcodeGetter(self.orcid, self.oauth_token)
+
+        ids = self.converter.added_external_identifiers
+        for putcode, recid in putcode_getter.get_putcodes_and_recids_by_identifiers_iter(ids):
+
+            if not putcode or not recid:
+                continue
+            # Local import to avoid import error.
+            from inspirehep.modules.orcid import tasks
+            # Execute the orcid_push Celery task synchronously.
+            # If max_retries=3, then backoff power 4 is (secs): [4*60, 16*60, 64*60]
+            backoff = lambda retry_count: (4 ** (retry_count + 1)) * 60  # noqa: E731ß
+            utils.apply_celery_task_with_retry(
+                tasks.orcid_push,
+                kwargs={
+                    'orcid': self.orcid,
+                    'rec_id': recid,
+                    'oauth_token': self.oauth_token,
+                    # Set `do_fail_if_duplicated_identifier` to avoid an
+                    # infinite recursive calls chain.
+                    'kwargs_to_pusher': dict(
+                        do_fail_if_duplicated_identifier=True,
+                        record_db_version=self.record_db_version)
+                },
+                max_retries=5,
+                countdown=backoff,
+                time_limit=10 * 60,
+            )

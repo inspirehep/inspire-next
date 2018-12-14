@@ -43,6 +43,10 @@ class RecordNotFoundException(BaseOrcidPusherException):
     pass
 
 
+class StaleRecordDBVersionException(BaseOrcidPusherException):
+    pass
+
+
 class InputDataInvalidException(BaseOrcidPusherException):
     """
     The underneath Orcid service client response included an error related
@@ -63,5 +67,14 @@ class PutcodeNotFoundInOrcidException(BaseOrcidPusherException):
 class PutcodeNotFoundInCacheAfterCachingAllPutcodes(BaseOrcidPusherException):
     """
     No putcode was found in cache after having cached all author putcodes.
+    """
+    pass
+
+
+class DuplicatedExternalIdentifierPusherException(BaseOrcidPusherException):
+    """
+    The underneath Orcid service client response raised
+    DuplicatedExternalIdentifierPusherException. We checked for the clashing
+    work, pushed it and repeated the original operation which failed again.
     """
     pass

@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
+
 from inspirehep.bat.pages import (
     literature_submission_form,
     holdingpen_literature_detail,
@@ -241,6 +243,7 @@ def test_journal_info_autocomplete_title(login):
     ).assert_has_no_errors()
 
 
+@pytest.mark.xfail
 def test_conference_info_autocomplete_title(login):
     literature_submission_form.go_to()
     literature_submission_form.write_conference(

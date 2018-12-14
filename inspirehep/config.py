@@ -261,6 +261,8 @@ LITERATURE_REST_ENDPOINT = {
         'application/json': 'invenio_records_rest.serializers:json_v1_response',
         'application/vnd+inspire.record.ui+json': INSPIRE_SERIALIZERS + ':json_literature_ui_v1_response',
         'application/x-bibtex': INSPIRE_SERIALIZERS + ':bibtex_v1_response',
+        'application/vnd+inspire.latex.eu+x-latex': INSPIRE_SERIALIZERS + ':latex_v1_response_eu',
+        'application/vnd+inspire.latex.us+x-latex': INSPIRE_SERIALIZERS + ':latex_v1_response_us',
         'application/marcxml+xml': INSPIRE_SERIALIZERS + ':marcxml_v1_response',
     },
     'search_serializers': {
@@ -268,6 +270,8 @@ LITERATURE_REST_ENDPOINT = {
         'application/vnd+inspire.record.ui+json': INSPIRE_SERIALIZERS + ':json_literature_ui_v1_search',
         'application/x-bibtex': INSPIRE_SERIALIZERS + ':bibtex_v1_search',
         'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
+        'application/vnd+inspire.latex.eu+x-latex': INSPIRE_SERIALIZERS + ':latex_v1_search_eu',
+        'application/vnd+inspire.latex.us+x-latex': INSPIRE_SERIALIZERS + ':latex_v1_search_us',
         'application/marcxml+xml': INSPIRE_SERIALIZERS + ':marcxml_v1_search',
     },
     'suggesters': {
@@ -277,6 +281,12 @@ LITERATURE_REST_ENDPOINT = {
             },
         },
         'book_title': {
+            '_source': [
+                'control_number',
+                'self',
+                'titles',
+                'authors',
+            ],
             'completion': {
                 'field': 'bookautocomplete'
             }
@@ -510,6 +520,22 @@ CONFERENCES_REST_ENDPOINT = {
     'search_serializers': {
         'application/json': 'invenio_records_rest.serializers:json_v1_search',
         'application/vnd+inspire.ids+json': 'inspirehep.modules.api.v1.common_serializers:json_recids_response',
+    },
+    'suggesters': {
+        'conference': {
+            '_source': [
+                'acronyms',
+                'titles',
+                'address',
+                'opening_date'
+                'cnum'
+                'control_number',
+                'self',
+            ],
+            'completion': {
+                'field': 'conferenceautocomplete'
+            }
+        }
     },
     'list_route': '/conferences/',
     'item_route': '/conferences/<pid(con,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',

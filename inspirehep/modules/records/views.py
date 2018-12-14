@@ -34,7 +34,6 @@ from inspirehep.modules.search import LiteratureSearch
 from inspirehep.modules.search.search_factory import inspire_facets_factory
 from .serializers import json_literature_citations_v1_response, \
     json_literature_search_aggregations_ui_v1
-from inspirehep.modules.records.utils import get_citations_from_es
 
 blueprint = Blueprint(
     'inspirehep_records',
@@ -65,7 +64,7 @@ class LiteratureCitationsResource(ContentNegotiatedMethodView):
         if page < 1 or size < 1:
             abort(400)
 
-        citing_records_results = get_citations_from_es(record, page, size)
+        citing_records_results = LiteratureSearch.citations(record, page, size)
         citing_records_count = citing_records_results.total
         citing_records = [citation.to_dict() for citation in citing_records_results]
 

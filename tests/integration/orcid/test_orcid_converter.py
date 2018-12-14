@@ -30,7 +30,7 @@ import pytest
 
 from factories.db.invenio_records import TestRecordMetadata
 
-from inspirehep.modules.orcid import OrcidConverter
+from inspirehep.modules.orcid.converter import ExternalIdentifier, OrcidConverter
 from inspirehep.modules.orcid.cache import _OrcidHasher
 from lxml import etree
 
@@ -436,6 +436,24 @@ def test_format_thesis_with_author_orcid(app, api_client):
     assert valid_against_schema(result)
     assert xml_compare(expected, result)
     assert _OrcidHasher(mock.Mock())._hash_xml_element(expected) == _OrcidHasher(mock.Mock())._hash_xml_element(result)
+
+
+def test_external_identifiers(app, api_client):
+    response = api_client.get('/literature/1375491')
+    assert response.status_code == 200
+    inbook = json.loads(response.data)
+
+    converter = OrcidConverter(
+        inbook['metadata'],
+        url_pattern='http://inspirehep.net/record/{recid}',
+    )
+    converter.get_xml()
+    expected = [
+        ExternalIdentifier(type='other-id', value='1375491'),
+        ExternalIdentifier(type='doi', value=u'10.1007/978-3-319-15001-7_10'),
+        ExternalIdentifier(type='arxiv', value=u'1506.03091')
+    ]
+    assert converter.added_external_identifiers == expected
 
 
 @pytest.mark.usefixtures('isolated_app')

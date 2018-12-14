@@ -28,7 +28,6 @@ import re
 import time
 import urllib2
 import yaml
-import pytest
 
 from inspirehep.testlib.api.holdingpen import HoldingpenResource
 from inspirehep.testlib.api.literature import LiteratureResourceTitle
@@ -90,7 +89,6 @@ def _number_of_entries(holdingpen_client, num_entries):
 
 
 @with_mitmproxy
-@pytest.mark.xfail
 def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
     inspire_client.e2e.schedule_crawl(
         spider='arXiv',
@@ -139,7 +137,6 @@ def test_harvest_non_core_article_goes_in(inspire_client, mitm_client):
 
 
 @with_mitmproxy
-@pytest.mark.xfail
 def test_harvest_core_article_goes_in(inspire_client, mitm_client):
     inspire_client.e2e.schedule_crawl(
         spider='arXiv',
@@ -162,15 +159,14 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
 
     # check workflow goes as expected
     assert entry.approved is True
-    assert entry.arxiv_eprint == '1404.0579'
+    assert entry.arxiv_eprint == '1412.0200'
     assert entry.control_number
     assert entry.core
-    assert entry.doi == '10.1016/j.nima.2014.04.029'
     assert entry.status == 'COMPLETED'
     expected_titles = [
         LiteratureResourceTitle(
-            title='The OLYMPUS Internal Hydrogen Target',
             source='arXiv',
+            title='BRST-BFV Lagrangian Formulations for Higher Spin Fields subject to two-column Young Tableaux'
         )
     ]
     assert entry.titles == expected_titles
@@ -215,18 +211,17 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
     # due to the merge, the titles get extended
     expected_titles = [
         LiteratureResourceTitle(
-            title='The OLYMPUS Internal Hydrogen Target updated',
+            title='BRST-BFV Lagrangian Formulations for Higher Spin Fields subject to two-column Young Tableaux updated',
             source='arXiv',
         ),
         LiteratureResourceTitle(
-            title='The OLYMPUS Internal Hydrogen Target',
+            title='BRST-BFV Lagrangian Formulations for Higher Spin Fields subject to two-column Young Tableaux',
             source='arXiv',
         ),
     ]
     assert update_entry.auto_approved is True
-    assert update_entry.arxiv_eprint == '1404.0579'
+    assert update_entry.arxiv_eprint == '1412.0200'
     assert update_entry.core
-    assert update_entry.doi == '10.1016/j.nima.2014.04.029'
     assert update_entry.status == 'COMPLETED'
     assert update_entry.titles == expected_titles
     assert update_entry.is_update
@@ -251,7 +246,6 @@ def test_harvest_core_article_goes_in(inspire_client, mitm_client):
 
 
 @with_mitmproxy
-@pytest.mark.xfail
 def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client):
     inspire_client.e2e.schedule_crawl(
         spider='arXiv',
@@ -272,15 +266,15 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
 
     # check workflow gets halted
     assert entry.approved is None
-    assert entry.arxiv_eprint == '1404.0579'
+    assert entry.arxiv_eprint == '1806.05312'
     assert entry.control_number is None
     assert entry.core is None
-    assert entry.doi == '10.1016/j.nima.2014.04.029'
+    assert entry.doi == '10.1063/PT.3.3947'
     assert entry.status == 'HALTED'
     expected_titles = [
         LiteratureResourceTitle(
-            title='The OLYMPUS Internal Hydrogen Target',
             source='arXiv',
+            title='The turbulent formation of stars'
         )
     ]
     assert entry.titles == expected_titles
@@ -297,9 +291,9 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
     )[0]
     entry = inspire_client.holdingpen.get_detail_entry(completed_entry.workflow_id)
 
-    assert entry.arxiv_eprint == '1404.0579'
+    assert entry.arxiv_eprint == '1806.05312'
     assert entry.control_number is 42
-    assert entry.doi == '10.1016/j.nima.2014.04.029'
+    assert entry.doi == '10.1063/PT.3.3947'
     assert entry.titles == expected_titles
 
     # check literature record is available and consistent
@@ -320,7 +314,6 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
 
 
 @with_mitmproxy
-@pytest.mark.xfail
 def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
     inspire_client.e2e.schedule_crawl(
         spider='arXiv_single',

@@ -26,6 +26,7 @@ import logging
 import pytest
 
 from inspirehep.modules.orcid import exceptions
+from inspirehep.modules.orcid.converter import ExternalIdentifier
 from inspirehep.modules.orcid.putcode_getter import OrcidPutcodeGetter
 
 from utils import override_config
@@ -51,7 +52,7 @@ class TestOrcidPutcodeGetter(object):
     def test_get_all_inspire_putcodes_happy_flow(self):
         with override_config(ORCID_APP_CREDENTIALS={'consumer_key': self.source_client_id_path}):
             putcode_getter = OrcidPutcodeGetter(self.orcid, self.oauth_token)
-            putcodes_recids = list(putcode_getter.get_all_inspire_putcodes_iter())
+            putcodes_recids = list(putcode_getter.get_all_inspire_putcodes_and_recids_iter())
         assert len(putcodes_recids) == 297
         for _, recid in putcodes_recids:
             assert int(recid)
@@ -60,19 +61,26 @@ class TestOrcidPutcodeGetter(object):
         self.orcid = '0000-0002-5073-0816'
         with override_config(ORCID_APP_CREDENTIALS={'consumer_key': self.source_client_id_path}):
             putcode_getter = OrcidPutcodeGetter(self.orcid, self.oauth_token)
-            putcodes_recids = list(putcode_getter.get_all_inspire_putcodes_iter())
+            putcodes_recids = list(putcode_getter.get_all_inspire_putcodes_and_recids_iter())
         assert putcodes_recids == [('51341099', '20'), ('51341192', '20')]
 
     def test_token_invalid(self):
         putcode_getter = OrcidPutcodeGetter(self.orcid, 'invalid')
         with pytest.raises(exceptions.InputDataInvalidException):
-            list(putcode_getter.get_all_inspire_putcodes_iter())
+            list(putcode_getter.get_all_inspire_putcodes_and_recids_iter())
 
-    def test_putcode_not_found(self, isolated_app):
-        orcid = '0000-0002-0942-3697'
-        oauth_token = isolated_app.config['ORCID_APP_CREDENTIALS'].get('oauth_tokens', {}).get(orcid, 'mytoken')
-
+    def test_putcode_not_found(self):
+        self.orcid = '0000-0002-0942-3697'
         with override_config(ORCID_APP_CREDENTIALS={'consumer_key': self.source_client_id_path}):
-            putcode_getter = OrcidPutcodeGetter(orcid, oauth_token)
+            putcode_getter = OrcidPutcodeGetter(self.orcid, self.oauth_token)
             with pytest.raises(exceptions.InputDataInvalidException):
-                list(putcode_getter.get_all_inspire_putcodes_iter())
+                list(putcode_getter.get_all_inspire_putcodes_and_recids_iter())
+
+    def test_get_putcodes_and_recids_by_identifiers_iter(self, ):
+        self.orcid = '0000-0002-0942-3697'
+        id_doi1 = ExternalIdentifier('doi', '10.1000/test.orcid.push')
+        id_doi2 = ExternalIdentifier('doi', '10.1000/orcid-test-andrea-rossoni')
+        with override_config(ORCID_APP_CREDENTIALS={'consumer_key': self.source_client_id_path}):
+            putcode_getter = OrcidPutcodeGetter(self.orcid, self.oauth_token)
+            putcodes_recids = list(putcode_getter.get_putcodes_and_recids_by_identifiers_iter([id_doi1, id_doi2]))
+        assert putcodes_recids == [(51548299, '999'), (51344802, '1680808')]

@@ -29,7 +29,6 @@ from elasticsearch_dsl.query import Q
 from invenio_search.api import DefaultFilter, RecordsSearch
 from invenio_search import current_search_client as es
 
-
 from .query_factory import inspire_query_factory
 
 logger = logging.getLogger(__name__)
@@ -110,6 +109,24 @@ class LiteratureSearch(RecordsSearch, SearchMixin):
     def default_fields(self):
         """What fields to use when no keyword is specified."""
         return ['_all']
+
+    @staticmethod
+    def citations(record, page=1, size=10):
+        if 'control_number' not in record:
+            return None
+
+        _source = [
+            'authors',
+            'control_number',
+            'earliest_date',
+            'titles',
+            'publication_info'
+        ]
+        from_rec = (page - 1) * size
+        search = LiteratureSearch().query('match', references__recid=record[
+            'control_number'])
+        search = search.params(_source=_source, from_=from_rec, size=size)
+        return search.sort('-earliest_date').execute().hits
 
 
 class AuthorsSearch(RecordsSearch, SearchMixin):
