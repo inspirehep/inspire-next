@@ -141,6 +141,8 @@ def push_to_orcid(sender, record, *args, **kwargs):
     orcids = get_orcids_for_push(record)
     orcids_and_tokens = get_push_access_tokens(orcids)
 
+    kwargs_to_pusher = dict(record_db_version=record.model.version_id)
+
     for orcid, access_token in orcids_and_tokens:
         orcid_tasks.orcid_push.apply_async(
             queue='orcid_push',
@@ -148,6 +150,7 @@ def push_to_orcid(sender, record, *args, **kwargs):
                 'orcid': orcid,
                 'rec_id': record['control_number'],
                 'oauth_token': access_token,
+                'kwargs_to_pusher': kwargs_to_pusher,
             },
         )
 

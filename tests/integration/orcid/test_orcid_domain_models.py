@@ -38,7 +38,7 @@ from inspirehep.modules.orcid import (
     domain_models,
 )
 from inspirehep.modules.orcid.cache import OrcidCache
-from inspirehep.modules.orcid.exceptions import DuplicatedExternalIdentifierPusherException
+from inspirehep.modules.orcid import exceptions as domain_exceptions
 
 from factories.db.invenio_records import TestRecordMetadata
 from utils import override_config
@@ -75,10 +75,6 @@ class TestOrcidPusherCache(TestOrcidPusherBase):
 
         # Disable logging.
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = logging.CRITICAL
-
-    def test_record_not_found(self):
-        with pytest.raises(exceptions.RecordNotFoundException):
-            domain_models.OrcidPusher(self.orcid, 'notfound25697xxx', self.oauth_token)
 
     def test_push_cache_hit_content_not_changed(self):
         putcode = '00000'
@@ -306,6 +302,33 @@ class TestOrcidPusherDuplicatedIdentifier(TestOrcidPusherBase):
         with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
                              FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*',
                              ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}), \
-                pytest.raises(DuplicatedExternalIdentifierPusherException):
+                pytest.raises(domain_exceptions.DuplicatedExternalIdentifierPusherException):
             pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
             pusher.push()
+
+
+@pytest.mark.usefixtures('isolated_app')
+class TestOrcidPusherRecordDBVersion(TestOrcidPusherBase):
+    def setup(self):
+        factory = TestRecordMetadata.create_from_file(__name__, 'test_orcid_domain_models_TestOrcidPusherRecordExceptions.json')
+        self.recid = factory.record_metadata.json['control_number']
+        self.orcid = '0000-0002-0942-3697'
+        # Disable logging.
+        logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = logging.CRITICAL
+
+    def test_record_non_existing(self):
+        self.recid = 'doesnotexists'
+        with pytest.raises(domain_exceptions.RecordNotFoundException):
+            domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
+
+    def test_stale_record_db_version(self):
+        with pytest.raises(domain_exceptions.StaleRecordDBVersionException):
+            domain_models.OrcidPusher(
+                self.orcid, self.recid, self.oauth_token,
+                record_db_version=10)
+
+    def test_happy_flow(self):
+        pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token,
+                                           record_db_version=1)
+        result_putcode = pusher.push()
+        assert result_putcode == 47160445

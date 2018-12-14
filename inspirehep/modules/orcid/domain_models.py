@@ -46,23 +46,42 @@ logger = logging.getLogger(__name__)
 
 
 class OrcidPusher(object):
-    def __init__(self, orcid, recid, oauth_token, do_fail_if_duplicated_identifier=False):
+    def __init__(self, orcid, recid, oauth_token,
+                 do_fail_if_duplicated_identifier=False, record_db_version=None):
         self.orcid = orcid
         self.recid = recid
         self.oauth_token = oauth_token
         self.do_fail_if_duplicated_identifier = do_fail_if_duplicated_identifier
+        self.record_db_version = record_db_version
+        self.inspire_record = self._get_inspire_record()
+        self.cache = OrcidCache(orcid, recid)
+        self.lock_name = 'orcid:{}'.format(self.orcid)
+        self.client = OrcidClient(self.oauth_token, self.orcid)
+        self.converter = None
 
+    @time_execution
+    def _get_inspire_record(self):
         try:
-            self.inspire_record = get_db_record('lit', recid)
+            inspire_record = get_db_record('lit', self.recid)
         except RecordGetterError as exc:
             raise exceptions.RecordNotFoundException(
                 'recid={} not found for pid_type=lit'.format(self.recid),
                 from_exc=exc)
 
-        self.cache = OrcidCache(orcid, recid)
-        self.lock_name = 'orcid:{}'.format(self.orcid)
-        self.client = OrcidClient(self.oauth_token, self.orcid)
-        self.converter = None
+        # If the record_db_version was given, then ensure we are about to push
+        # the right record version.
+        # This check is related to the fact the orcid push at this moment is
+        # triggered by the signal after_record_update (which happens after a
+        # InspireRecord.commit()). This is not the actual commit to the db which
+        # might happen at a later stage or not at all.
+        # Note that connecting to the proper SQLAlchemy signal would also
+        # have issues: https://github.com/mitsuhiko/flask-sqlalchemy/issues/645
+        if self.record_db_version and inspire_record.model.version_id < self.record_db_version:
+            raise exceptions.StaleRecordDBVersionException(
+                'Requested push for db version={}, but actual record db'
+                ' version={}'.format(self.record_db_version, inspire_record.model.version_id)
+            )
+        return inspire_record
 
     @property
     def _do_force_cache_miss(self):
@@ -232,7 +251,9 @@ class OrcidPusher(object):
                     'oauth_token': self.oauth_token,
                     # Set `do_fail_if_duplicated_identifier` to avoid an
                     # infinite recursive calls chain.
-                    'kwargs_to_pusher': dict(do_fail_if_duplicated_identifier=True)
+                    'kwargs_to_pusher': dict(
+                        do_fail_if_duplicated_identifier=True,
+                        record_db_version=self.record_db_version)
                 },
                 max_retries=5,
                 countdown=backoff,

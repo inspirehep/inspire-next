@@ -50,7 +50,7 @@ from inspirehep.utils.record import get_title
 from inspirehep.utils.record_getter import get_es_record, RecordGetterError, get_db_record
 
 
-from utils import _delete_record
+from utils import _delete_record, override_config
 from factories.db.invenio_records import TestRecordMetadata
 
 
@@ -242,6 +242,7 @@ def test_orcid_push_triggered_on_create_record_with_allow_push(mock_orcid_push_t
             'orcid': user_with_permission['orcid'],
             'rec_id': 1608652,
             'oauth_token': user_with_permission['token'],
+            'kwargs_to_pusher': {'record_db_version': mock.ANY},
         },
         'queue': 'orcid_push',
     }
@@ -256,6 +257,7 @@ def test_orcid_push_triggered_on_record_update_with_allow_push(mock_orcid_push_t
             'orcid': user_with_permission['orcid'],
             'rec_id': 1608652,
             'oauth_token': user_with_permission['token'],
+            'kwargs_to_pusher': {'record_db_version': mock.ANY},
         },
         'queue': 'orcid_push',
     }
@@ -274,6 +276,7 @@ def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_
             'orcid': two_users_with_permission[0]['orcid'],
             'rec_id': 1608652,
             'oauth_token': two_users_with_permission[0]['token'],
+            'kwargs_to_pusher': {'record_db_version': mock.ANY},
         },
         'queue': 'orcid_push',
     }
@@ -282,6 +285,7 @@ def test_orcid_push_triggered_on_create_record_with_multiple_authors_with_allow_
             'orcid': two_users_with_permission[1]['orcid'],
             'rec_id': 1608652,
             'oauth_token': two_users_with_permission[1]['token'],
+            'kwargs_to_pusher': {'record_db_version': mock.ANY},
         },
         'queue': 'orcid_push',
     }
@@ -1004,3 +1008,56 @@ def test_record_enhanced_in_es_and_not_enhanced_in_db(app):
     assert 'facet_author_name' not in rec1
     assert 'facet_author_name' in rec2
     _delete_record('lit', 111)
+
+
+@pytest.mark.usefixtures('isolated_app')
+class TestPushToOrcid(object):
+    def test_existing_record(self):
+        recid = 736770
+        inspire_record = get_db_record('lit', recid)  # from demosite data.
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*',
+                             ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}), \
+                mock.patch('inspirehep.modules.records.receivers.get_push_access_tokens') as mock_get_push_access_tokens, \
+                mock.patch('inspirehep.modules.orcid.tasks.orcid_push.apply_async') as mock_apply_async:
+            mock_get_push_access_tokens.return_value = [('myorcid', 'mytoken')]
+            inspire_record.commit()
+            mock_apply_async.assert_called_once_with(
+                kwargs={'orcid': 'myorcid',
+                        'oauth_token': 'mytoken',
+                        'kwargs_to_pusher': {'record_db_version': inspire_record.model.version_id},
+                        'rec_id': recid},
+                queue='orcid_push')
+
+    def test_new_record(self):
+        recid = 9999912587
+        record_json = {
+            '$schema': 'http://localhost:5000/schemas/records/hep.json',
+            'document_type': [
+                'article',
+            ],
+            'control_number': recid,
+            'titles': [
+                {
+                    'title': 'Jessica Jones',
+                },
+            ],
+            '_collections': ['Literature'],
+            'references': [{'record': {
+                '$ref': 'http://localhost:5000/api/literature/1498589'}}]
+        }
+        inspire_record = InspireRecord.create(record_json)
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*',
+                             ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}), \
+                mock.patch('inspirehep.modules.records.receivers.get_push_access_tokens') as mock_get_push_access_tokens, \
+                mock.patch('inspirehep.modules.orcid.tasks.orcid_push.apply_async') as mock_apply_async:
+            mock_get_push_access_tokens.return_value = [('myorcid', 'mytoken')]
+            inspire_record.commit()
+            mock_apply_async.assert_called_once_with(
+                kwargs={'orcid': 'myorcid',
+                        'oauth_token': 'mytoken',
+                        'kwargs_to_pusher': {'record_db_version': inspire_record.model.version_id},
+                        'rec_id': recid},
+                queue='orcid_push')
+        _delete_record('lit', recid)

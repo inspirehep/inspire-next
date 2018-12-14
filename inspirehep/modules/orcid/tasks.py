@@ -43,6 +43,7 @@ from invenio_db import db
 from invenio_oauthclient.errors import AlreadyLinkedError
 from inspire_utils.logging import getStackTraceLogger
 from inspire_utils.record import get_value
+from inspirehep.modules.orcid import exceptions as domain_exceptions
 from inspirehep.modules.orcid.utils import get_literature_recids_for_orcid
 
 from . import domain_models
@@ -257,9 +258,9 @@ def orcid_push(self, orcid, rec_id, oauth_token, kwargs_to_pusher=None):
 
     LOGGER.info('New orcid_push task for recid={} and orcid={}'.format(rec_id, orcid))
     kwargs_to_pusher = kwargs_to_pusher or {}
-    pusher = domain_models.OrcidPusher(orcid, rec_id, oauth_token, **kwargs_to_pusher)
 
     try:
+        pusher = domain_models.OrcidPusher(orcid, rec_id, oauth_token, **kwargs_to_pusher)
         pusher.push()
         LOGGER.info('Orcid_push task for recid={} and orcid={} successfully completed'.format(rec_id, orcid))
     except (RequestException, SoftTimeLimitExceeded) as exc:
@@ -287,6 +288,11 @@ def orcid_push(self, orcid, rec_id, oauth_token, kwargs_to_pusher=None):
             ' Retrying in {} secs. Exception={}'.format(
                 rec_id, orcid, backoff, traceback.format_exc()))
         raise self.retry(max_retries=3, countdown=backoff, exc=exc)
+    except (domain_exceptions.RecordNotFoundException, domain_exceptions.StaleRecordDBVersionException) as exc:
+        # If max_retries=4, then self.request.retries is: [0, 1, 2, 3, 4]
+        # thus backoff power 5 is (secs): [5, 25, 125, 625]
+        backoff = 5 ** (self.request.retries + 1)
+        raise self.retry(max_retries=4, countdown=backoff, exc=exc)
     except Exception:
         LOGGER.exception(
             'Orcid_push task for recid={} and orcid={} failed raising the'

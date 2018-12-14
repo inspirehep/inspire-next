@@ -35,6 +35,7 @@ from factories.db.invenio_records import TestRecordMetadata
 from inspirehep.modules.orcid import cache as cache_module, exceptions
 from inspirehep.modules.orcid.cache import OrcidCache
 from inspirehep.modules.orcid.tasks import orcid_push
+from inspirehep.modules.orcid import exceptions as domain_exceptions
 
 from utils import override_config
 
@@ -221,3 +222,10 @@ class TestOrcidPushTask(object):
                              ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}):
             orcid_push(self.orcid, self.recid, self.oauth_token)
         assert not self.cache.has_work_content_changed(self.inspire_record)
+
+    def test_stale_record_db_version(self):
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*'), \
+                pytest.raises(domain_exceptions.StaleRecordDBVersionException):
+            orcid_push(self.orcid, self.recid, self.oauth_token,
+                       kwargs_to_pusher=dict(record_db_version=100))
