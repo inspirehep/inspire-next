@@ -43,6 +43,10 @@ class RecordNotFoundException(BaseOrcidPusherException):
     pass
 
 
+class StaleRecordDBVersionException(BaseOrcidPusherException):
+    pass
+
+
 class InputDataInvalidException(BaseOrcidPusherException):
     """
     The underneath Orcid service client response included an error related
