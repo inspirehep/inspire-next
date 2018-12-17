@@ -261,3 +261,157 @@ def test_affiliations_exact_search(isolated_api_client):
 
     assert record_1['control_number'] in response_recids
     assert record_2['control_number'] not in response_recids
+
+
+def check_lit_query(query, isolated_api_client, expected_record=None,
+                    hits_count=None, not_expected=None):
+    response = json.loads(isolated_api_client.get('/literature?q=%s' % query).data)
+    if expected_record:
+        assert expected_record in [r['metadata'] for r in response['hits']['hits']]
+    if hits_count:
+        assert len(response['hits']['hits']) == hits_count
+    if not_expected:
+        assert expected_record not in [r['metadata'] for r in response['hits']['hits']]
+
+
+def test_default_search_without_keywords(isolated_api_client):
+    record_json = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "document_type": ["article"],
+        "titles": [{"title": "Article2"}],
+        "_collections": ["Literature"],
+        "authors": [
+            {
+                "full_name": "Qwerty Azerty",
+                "affiliations": [{"value": "Some strange name XXYYZZ"}],
+            }
+        ],
+        'dois': [{
+            'value': '10.1007/978-3-319-15001-7'
+        }],
+        'inspire_categories': [{
+            'term': 'Experiment-HEP'
+        }],
+        'isbns': [
+            {'value': '9783319150000'},
+            {'value': '9783319150017'}
+        ],
+        'persistent_identifiers': [{
+            'source': 'SOME_SOURCE',
+            'value': 'SOME_VALUE',
+        }]
+
+    }
+    record = TestRecordMetadata.create_from_kwargs(json=record_json, index_name='records-hep')
+    expected_record = {
+        u'$schema': u'http://localhost:5000/schemas/records/hep.json',
+        u'control_number': record.record_metadata.json['control_number'],
+        u'authors': [{
+            u'affiliations': [{
+                u'value': u'Some strange name XXYYZZ'
+            }],
+            u'full_name': u'Qwerty Azerty'
+        }],
+        u'titles': [{
+            u'title': u'Article2'
+        }],
+        u'dois': [{
+            u'value': u'10.1007/978-3-319-15001-7'
+        }],
+        u'inspire_categories': [{
+            u'term': u'Experiment-HEP'
+        }],
+    }
+
+    # Test default query with title
+    check_lit_query("Article2", isolated_api_client,
+                    expected_record=expected_record)
+
+    # Test default query with part of author name
+    check_lit_query("Qwerty", isolated_api_client,
+                    expected_record=expected_record)
+
+    # Test default query with full author name
+    check_lit_query("Qwerty Azerty", isolated_api_client,
+                    expected_record=expected_record)
+
+    # Test default query with authors affiliation
+    check_lit_query("XXYYZZ", isolated_api_client,
+                    expected_record=expected_record)
+
+    # Test default query with control_number
+    check_lit_query(record.record_metadata.json['control_number'],
+                    isolated_api_client,
+                    expected_record=expected_record)
+
+    # Test default query with DOI number
+    check_lit_query('10.1007/978-3-319-15001-7', isolated_api_client,
+                    expected_record=expected_record)
+
+    # Test default query with inspire isbns
+    check_lit_query("9783319150017", isolated_api_client,
+                    expected_record=expected_record)
+
+    # Test default query with persistent_identifier.value
+    check_lit_query("SOME_VALUE", isolated_api_client,
+                    expected_record=expected_record)
+
+
+def test_default_search_without_keywords_on_not_searched_fields(isolated_api_client):
+    record_json = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "document_type": ["article"],
+        "titles": [{"title": "Article2"}],
+        "_collections": ["Literature"],
+        "authors": [
+            {
+                "full_name": "Qwerty Azerty",
+                "affiliations": [{"value": "Some strange name XXYYZZ"}],
+            }
+        ],
+        'dois': [{
+            'value': '10.1007/978-3-319-15001-7'
+        }],
+        'inspire_categories': [{
+            'term': 'Experiment-HEP'
+        }],
+        'isbns': [
+            {'value': '9783319150000'},
+            {'value': '9783319150017'}
+        ],
+        'texkeys': ['Schorner-Sadenius:27015cga'],
+        'persistent_identifiers': [{
+            'source': 'SOME_SOURCE',
+            'value': 'SOME_VALUE',
+        }]
+
+    }
+    record = TestRecordMetadata.create_from_kwargs(json=record_json, index_name='records-hep')
+
+    not_expected_record = {
+        u'$schema': u'http://localhost:5000/schemas/records/hep.json',
+        u'control_number': record.record_metadata.json['control_number'],
+        u'authors': [{
+            u'affiliations': [{
+                u'value': u'Some strange name XXYYZZ'
+            }],
+            u'full_name': u'Qwerty Azerty'
+        }],
+        u'titles': [{
+            u'title': u'Article2'
+        }],
+        u'dois': [{
+            u'value': u'10.1007/978-3-319-15001-7'
+        }],
+        u'inspire_categories': [{
+            u'term': u'Experiment-HEP'
+        }],
+    }
+
+    # Test default query with persistent_identifier.value
+    check_lit_query("SOME_SOURCE", isolated_api_client,
+                    not_expected=not_expected_record)
+
+    # Test default query with inspire categories
+    check_lit_query("Experiment-HEP", isolated_api_client,
+                    not_expected=not_expected_record)
