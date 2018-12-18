@@ -120,7 +120,6 @@ def test_full_schema():
         'report_numbers': [{
             'value': 'DESY-17-036'
         }],
-        'citations': 0,
         'today': TODAY
     }
     result = json.loads(schema.dumps(record).data)
