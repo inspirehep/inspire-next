@@ -32,7 +32,7 @@ import datetime
 class LatexSchema(Schema):
     arxiv_eprints = fields.Raw()
     authors = fields.Method('get_author_names')
-    citations = fields.Raw(attribute='get_citations_count', default=0)
+    citations = fields.Method('get_citations', default=0)
     collaborations = fields.Method('get_collaborations')
     dois = fields.Raw()
     publication_info = fields.Method('get_publication_info')
@@ -40,6 +40,14 @@ class LatexSchema(Schema):
     titles = fields.Raw()
     texkeys = fields.Method('get_texkey')
     today = fields.Method('get_current_date')
+
+    def get_citations(self, data):
+        citations = data.get('citation_count')
+
+        if citations is None:
+            return data.get_citations_count()
+
+        return citations
 
     def get_author_names(self, data):
         authors = data.get("authors")

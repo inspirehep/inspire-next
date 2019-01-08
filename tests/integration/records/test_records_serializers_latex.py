@@ -95,11 +95,11 @@ def test_latex_serializer_serialize_EU(isolated_api_client):
     expected = """\
     %\\cite{a123bx}
     \\bibitem{a123bx}
-    S.~Lee \\textit{et al.} [LHCb, Marvel and Comics]
+    S.~Lee \\textit{et al.} [LHCb, Marvel and Comics],
     %``The Amazing Spiderman,''
     Phys.\\ Rev.\\ A \\textbf{58} (2014) no.120, 500-593
     doi:10.1088/1361-6633/aa5514
-    [arxiv:1607.06746 [hep-th]]."""
+    [arXiv:1607.06746 [hep-th]]."""
     result = response.data
 
     assert dedent(expected) == result
@@ -162,11 +162,11 @@ def test_latex_serializer_serialize_US(isolated_api_client):
     expected = """\
     %\\cite{a123bx}
     \\bibitem{a123bx}
-    S.~Lee \\textit{et al.} [LHCb]
+    S.~Lee \\textit{et al.} [LHCb],
     %``The Amazing Spiderman,''
     Phys.\\ Rev.\\ A \\textbf{58}, no.120, 500-593 (2014)
     doi:10.1088/1361-6633/aa5514
-    [arxiv:1607.06746 [hep-th]]."""
+    [arXiv:1607.06746 [hep-th]]."""
     result = response.data
 
     assert dedent(expected) == result
@@ -228,11 +228,11 @@ def test_jinja_template_uses_artid_when_there_is_no_page_range_EU(isolated_api_c
     expected = """\
     %\\cite{a123bx}
     \\bibitem{a123bx}
-    S.~Lee \\textit{et al.} [LHCb]
+    S.~Lee \\textit{et al.} [LHCb],
     %``The Amazing Spiderman,''
     Phys.\\ Rev.\\ A \\textbf{58} (2014) no.120, 17920
     doi:10.1088/1361-6633/aa5514
-    [arxiv:1607.06746 [hep-th]]."""
+    [arXiv:1607.06746 [hep-th]]."""
     result = response.data
 
     assert dedent(expected) == result
@@ -294,11 +294,11 @@ def test_jinja_template_uses_page_start_as_page_range_EU(isolated_api_client):
     expected = """\
     %\\cite{a123bx}
     \\bibitem{a123bx}
-    S.~Lee \\textit{et al.} [LHCb]
+    S.~Lee \\textit{et al.} [LHCb],
     %``The Amazing Spiderman,''
     Phys.\\ Rev.\\ A \\textbf{58} (2014) no.120, 500
     doi:10.1088/1361-6633/aa5514
-    [arxiv:1607.06746 [hep-th]]."""
+    [arXiv:1607.06746 [hep-th]]."""
     result = response.data
 
     assert dedent(expected) == result
@@ -360,11 +360,11 @@ def test_jinja_template_uses_artid_when_there_is_no_page_range_US(isolated_api_c
     expected = """\
     %\\cite{a123bx}
     \\bibitem{a123bx}
-    S.~Lee \\textit{et al.} [LHCb]
+    S.~Lee \\textit{et al.} [LHCb],
     %``The Amazing Spiderman,''
     Phys.\\ Rev.\\ A \\textbf{58}, no.120, 17920 (2014)
     doi:10.1088/1361-6633/aa5514
-    [arxiv:1607.06746 [hep-th]]."""
+    [arXiv:1607.06746 [hep-th]]."""
     result = response.data
 
     assert dedent(expected) == result
@@ -421,11 +421,11 @@ def test_jinja_template_without_collaborations_page_range_and_artid(isolated_api
     expected = """\
     %\\cite{a123bx}
     \\bibitem{a123bx}
-    S.~Lee and S.~Ditko
+    S.~Lee and S.~Ditko,
     %``The Amazing Spiderman,''
     Phys.\\ Rev.\\ A \\textbf{58} (2014) no.120
     doi:10.1088/1361-6633/aa5514
-    [arxiv:1607.06746 [hep-th]]."""
+    [arXiv:1607.06746 [hep-th]]."""
     result = response.data
 
     assert dedent(expected) == result
@@ -483,11 +483,11 @@ def test_jinja_template_with_one_author(isolated_api_client):
     expected = """\
     %\\cite{a123bx}
     \\bibitem{a123bx}
-    S.~Lee [LHCb]
+    S.~Lee [LHCb],
     %``The Amazing Spiderman,''
     Phys.\\ Rev.\\ A \\textbf{58} (2014) no.120, 17920
     doi:10.1088/1361-6633/aa5514
-    [arxiv:1607.06746 [hep-th]]."""
+    [arXiv:1607.06746 [hep-th]]."""
     result = response.data
 
     assert dedent(expected) == result
@@ -527,7 +527,7 @@ def test_jinja_template_with_multiple_authors(isolated_api_client):
     expected = """\
     %\\cite{a123bx}
     \\bibitem{a123bx}
-    S.~Lee, J.~Kirby and L.~Lieber
+    S.~Lee, J.~Kirby and L.~Lieber,
     %``The Astonishing Ant-man,''"""
     result = response.data
 
@@ -595,7 +595,7 @@ def test_jinja_template_with_collaborations_and_no_authors(isolated_api_client):
     expected = """\
     %\\cite{a123bx}
     \\bibitem{a123bx}
-     [LHCb]
+     [LHCb],
     %``Physics,''"""
     result = response.data
 
@@ -653,10 +653,10 @@ def test_jinja_template_does_not_print_incomplete_publication_info(isolated_api_
     expected = """\
     %\\cite{a123bx}
     \\bibitem{a123bx}
-    S.~Lee [LHCb]
+    S.~Lee [LHCb],
     %``The Amazing Spiderman,''
     doi:10.1088/1361-6633/aa5514
-    [arxiv:1607.06746 [hep-th]]."""
+    [arXiv:1607.06746 [hep-th]]."""
     result = response.data
 
     assert dedent(expected) == result
@@ -686,13 +686,13 @@ def test_jinja_template_prints_citation_count(isolated_api_client):
     %\\cite{321}
     \\bibitem{321}
     %``The Invincible Ironman,''
-    %1 counted in INSPIRE as of 19 Dec 1994"""
+    %1 citations counted in INSPIRE as of 19 Dec 1994"""
     result = response.data
 
     assert dedent(expected) == result
 
 
-def test_latex_serializer_serialize_results_eu(api_client):
+def test_latex_serializer_serialize_search_results_eu(api_client):
     response = api_client.get(
         '/literature/?q=title collider',
         headers={'Accept': 'application/vnd+inspire.latex.eu+x-latex'},
@@ -704,20 +704,20 @@ def test_latex_serializer_serialize_results_eu(api_client):
     expected = """\
     %\\cite{1373790}
     \\bibitem{1373790}
-    T.~Sch\xc3\xb6rner-Sadenius
+    T.~Sch\xc3\xb6rner-Sadenius,
     %``The Large Hadron Collider,''
     doi:10.1007/978-3-319-15001-7
 
     %\\cite{701585}
     \\bibitem{701585}
-    A.~De Roeck and H.~Jung
+    A.~De Roeck and H.~Jung,
     %``HERA and the LHC: A Workshop on the implications of HERA for LHC physics: Proceedings Part A,''
-    [arxiv:hep-ph/0601012 [hep-ph]]."""
+    [arXiv:hep-ph/0601012 [hep-ph]]."""
 
     assert dedent(expected) == result
 
 
-def test_latex_serializer_serialize_results_us(api_client):
+def test_latex_serializer_serialize_search_results_us(api_client):
     response = api_client.get(
         '/literature/?q=title collider',
         headers={'Accept': 'application/vnd+inspire.latex.us+x-latex'},
@@ -729,14 +729,14 @@ def test_latex_serializer_serialize_results_us(api_client):
     expected = """\
     %\\cite{1373790}
     \\bibitem{1373790}
-    T.~Sch\xc3\xb6rner-Sadenius
+    T.~Sch\xc3\xb6rner-Sadenius,
     %``The Large Hadron Collider,''
     doi:10.1007/978-3-319-15001-7
 
     %\\cite{701585}
     \\bibitem{701585}
-    A.~De Roeck and H.~Jung
+    A.~De Roeck and H.~Jung,
     %``HERA and the LHC: A Workshop on the implications of HERA for LHC physics: Proceedings Part A,''
-    [arxiv:hep-ph/0601012 [hep-ph]]."""
+    [arXiv:hep-ph/0601012 [hep-ph]]."""
 
     assert dedent(expected) == result

@@ -106,10 +106,6 @@ class LiteratureSearch(RecordsSearch, SearchMixin):
         """
         return self.query(IQ(query_string, self))
 
-    def default_fields(self):
-        """What fields to use when no keyword is specified."""
-        return ['_all']
-
     @staticmethod
     def citations(record, page=1, size=10):
         if 'control_number' not in record:
@@ -136,10 +132,6 @@ class AuthorsSearch(RecordsSearch, SearchMixin):
         index = 'records-authors'
         doc_types = 'authors'
 
-    def default_fields(self):
-        """What fields to use when no keyword is specified."""
-        return ['_all']
-
 
 class DataSearch(RecordsSearch, SearchMixin):
     """Elasticsearch-dsl specialized class to search in Data database."""
@@ -147,10 +139,6 @@ class DataSearch(RecordsSearch, SearchMixin):
     class Meta:
         index = 'records-data'
         doc_types = 'data'
-
-    def default_fields(self):
-        """What fields to use when no keyword is specified."""
-        return ['_all']
 
 
 class ConferencesSearch(RecordsSearch, SearchMixin):
@@ -169,10 +157,6 @@ class ConferencesSearch(RecordsSearch, SearchMixin):
         """
         return self.query(IQ(query_string, self))
 
-    def default_fields(self):
-        """What fields to use when no keyword is specified."""
-        return ['_all']
-
 
 class JobsSearch(RecordsSearch, SearchMixin):
     """Elasticsearch-dsl specialized class to search in Jobs database."""
@@ -180,10 +164,6 @@ class JobsSearch(RecordsSearch, SearchMixin):
     class Meta:
         index = 'records-jobs'
         doc_types = 'jobs'
-
-    def default_fields(self):
-        """What fields to use when no keyword is specified."""
-        return ['_all']
 
 
 class InstitutionsSearch(RecordsSearch, SearchMixin):
@@ -202,10 +182,6 @@ class InstitutionsSearch(RecordsSearch, SearchMixin):
         """
         return self.query(IQ(query_string, self))
 
-    def default_fields(self):
-        """What fields to use when no keyword is specified."""
-        return ['_all']
-
 
 class ExperimentsSearch(RecordsSearch, SearchMixin):
     """Elasticsearch-dsl specialized class to search in Experiments database."""
@@ -214,10 +190,6 @@ class ExperimentsSearch(RecordsSearch, SearchMixin):
         index = 'records-experiments'
         doc_types = 'experiments'
 
-    def default_fields(self):
-        """What fields to use when no keyword is specified."""
-        return ['_all']
-
 
 class JournalsSearch(RecordsSearch, SearchMixin):
     """Elasticsearch-dsl specialized class to search in Journals database."""
@@ -225,7 +197,3 @@ class JournalsSearch(RecordsSearch, SearchMixin):
     class Meta:
         index = 'records-journals'
         doc_types = 'journals'
-
-    def default_fields(self):
-        """What fields to use when no keyword is specified."""
-        return ['_all']

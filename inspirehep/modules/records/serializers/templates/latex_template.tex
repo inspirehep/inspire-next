@@ -14,11 +14,11 @@
     {%- endif -%}
     \VAR{ ' [' }
     \VAR{- format_list(data.collaborations) }
-    \VAR{- ']' }
-{%- else -%}
-    \VAR{- format_list(data.authors) }
+    \VAR{- '],' }
+{%- elif 'authors' in data -%}
+    \VAR{- format_list(data.authors) ~ ',' }
 {%- endif -%}
-\VAR{ '\n%``' ~ data.titles.0.title ~ ",''" }
+\VAR{- '\n%``' ~ data.titles.0.title ~ ",''" }
 {%- if 'journal_title' in data.publication_info -%}
     \VAR{- '\n' }
     \VAR{- data.publication_info.journal_title }
@@ -42,6 +42,6 @@
     {%- endif -%}
 {%- endif -%}
 \VAR{- '\ndoi:' ~ data.dois.0.value if 'dois' in data }
-\VAR{- '\n[arxiv:' ~ data.arxiv_eprints.0.value ~ ' [' ~ data.arxiv_eprints.0.categories.0 ~ ']].' if 'arxiv_eprints' in data }
+\VAR{- '\n[arXiv:' ~ data.arxiv_eprints.0.value ~ ' [' ~ data.arxiv_eprints.0.categories.0 ~ ']].' if 'arxiv_eprints' in data }
 \VAR{- '\n' ~ data.report_numbers.0.value ~ '.' if 'dois' not in data and 'arxiv_eprints' not in data and 'report_numbers' in data }
-\VAR{- '\n%' ~ data.citations ~ ' counted in INSPIRE as of ' ~ data.today if data.citations != 0 }
+\VAR{- '\n%' ~ data.citations ~ ' citations counted in INSPIRE as of ' ~ data.today if data.citations != 0 }

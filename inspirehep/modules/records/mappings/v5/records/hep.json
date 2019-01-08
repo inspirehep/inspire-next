@@ -1,6 +1,7 @@
 {
     "mappings": {
         "hep": {
+            "include_in_all": false,
             "_all": {
                 "enabled": true
             },
@@ -80,7 +81,8 @@
                             "type": "keyword"
                         },
                         "value": {
-                            "type": "text"
+                            "type": "text",
+                            "include_in_all": true
                         }
                     },
                     "type": "object"
@@ -88,20 +90,24 @@
                 "accelerator_experiments": {
                     "properties": {
                         "accelerator": {
-                            "type": "text"
+                            "type": "text",
+                            "include_in_all": true
                         },
                         "curated_relation": {
                             "type": "boolean"
                         },
                         "experiment": {
-                            "type": "text"
+                            "type": "text",
+                            "include_in_all": true
                         },
                         "institution": {
-                            "type": "text"
+                            "type": "text",
+                            "include_in_all": true
                         },
                         "legacy_name": {
                             "copy_to": "facet_experiment",
-                            "type": "text"
+                            "type": "text",
+                            "include_in_all": true
                         },
                         "recid": {
                             "type": "integer"
@@ -144,6 +150,7 @@
                     "type": "object"
                 },
                 "arxiv_eprints": {
+                    "include_in_all": true,
                     "properties": {
                         "categories": {
                             "copy_to": "facet_arxiv_categories",
@@ -186,6 +193,7 @@
                                     "type": "object"
                                 },
                                 "value": {
+                                    "include_in_all": true,
                                     "normalizer": "lowercase_normalizer",
                                     "type": "keyword"
                                 }
@@ -193,6 +201,7 @@
                             "type": "object"
                         },
                         "alternative_names": {
+                            "include_in_all": true,
                             "type": "text"
                         },
                         "credit_roles": {
@@ -205,6 +214,7 @@
                             "type": "keyword"
                         },
                         "full_name": {
+                            "include_in_all": true,
                             "analyzer": "author_name_analyzer",
                             "fields": {
                                 "raw": {
@@ -214,7 +224,8 @@
                             "type": "text"
                         },
                         "full_name_unicode_normalized": {
-                            "type": "keyword"
+                            "type": "keyword",
+                            "include_in_all": true
                         },
                         "ids": {
                             "properties": {
@@ -222,6 +233,7 @@
                                     "type": "keyword"
                                 },
                                 "value": {
+                                    "include_in_all": true,
                                     "fields": {
                                         "raw": {
                                             "type": "keyword"
@@ -251,6 +263,7 @@
                                     "type": "keyword"
                                 },
                                 "value": {
+                                    "include_in_all": true,
                                     "type": "text"
                                 }
                             },
@@ -285,6 +298,7 @@
                     "type": "completion"
                 },
                 "book_series": {
+                    "include_in_all": true,
                     "properties": {
                         "title": {
                             "type": "text"
@@ -315,12 +329,14 @@
                             "type": "object"
                         },
                         "value": {
+                            "include_in_all": true,
                             "type": "text"
                         }
                     },
                     "type": "object"
                 },
                 "control_number": {
+                    "include_in_all": true,
                     "type": "integer"
                 },
                 "copyright": {
@@ -347,6 +363,7 @@
                     "type": "boolean"
                 },
                 "corporate_author": {
+                    "include_in_all": true,
                     "type": "text"
                 },
                 "deleted": {
@@ -364,6 +381,7 @@
                     "type": "object"
                 },
                 "document_type": {
+                    "include_in_all": true,
                     "type": "keyword"
                 },
                 "documents": {
@@ -404,6 +422,7 @@
                             "type": "keyword"
                         },
                         "value": {
+                            "include_in_all": true,
                             "fields": {
                                 "raw": {
                                     "normalizer": "lowercase_normalizer",
@@ -432,6 +451,7 @@
                             "type": "keyword"
                         },
                         "value": {
+                            "include_in_all": true,
                             "fields": {
                                 "raw": {
                                     "type": "keyword"
@@ -460,6 +480,7 @@
                 "figures": {
                     "properties": {
                         "caption": {
+                            "include_in_all": true,
                             "type": "text"
                         },
                         "key": {
@@ -495,6 +516,7 @@
                     "type": "object"
                 },
                 "imprints": {
+                    "include_in_all": true,
                     "properties": {
                         "suggest": {
                             "type": "completion"
@@ -533,6 +555,7 @@
                             "type": "keyword"
                         },
                         "value": {
+                            "include_in_all": true,
                             "fields": {
                                 "raw": {
                                     "normalizer": "lowercase_normalizer",
@@ -553,6 +576,7 @@
                             "type": "keyword"
                         },
                         "value": {
+                            "include_in_all": true,
                             "type": "text"
                         }
                     },
@@ -611,12 +635,14 @@
                             "type": "keyword"
                         },
                         "value": {
+                            "include_in_all": true,
                             "type": "keyword"
                         }
                     },
                     "type": "object"
                 },
                 "preprint_date": {
+                    "include_in_all": true,
                     "format": "yyyy||yyyy-MM||yyyy-MM-dd",
                     "type": "date"
                 },
@@ -626,6 +652,7 @@
                             "type": "keyword"
                         },
                         "value": {
+                            "include_in_all": true,
                             "type": "text"
                         }
                     },
@@ -635,13 +662,16 @@
                     "properties": {
                         "artid": {
                             "copy_to": "publication_info.page_artid",
-                            "type": "keyword"
+                            "type": "keyword",
+                            "include_in_all": true
                         },
                         "cnum": {
-                            "type": "text"
+                            "type": "text",
+                            "include_in_all": true
                         },
                         "conf_acronym": {
-                            "type": "keyword"
+                            "type": "keyword",
+                            "include_in_all": true
                         },
                         "conference_recid": {
                             "type": "integer"
@@ -658,7 +688,8 @@
                             "type": "boolean"
                         },
                         "journal_issue": {
-                            "type": "keyword"
+                            "type": "keyword",
+                            "include_in_all": true
                         },
                         "journal_recid": {
                             "type": "integer"
@@ -674,12 +705,14 @@
                         "journal_title": {
                             "fields": {
                                 "raw": {
+                                    "include_in_all": true,
                                     "type": "keyword"
                                 }
                             },
                             "type": "text"
                         },
                         "journal_volume": {
+                            "include_in_all": true,
                             "type": "text"
                         },
                         "material": {
@@ -689,13 +722,16 @@
                             "type": "keyword"
                         },
                         "page_end": {
+                            "include_in_all": true,
                             "type": "keyword"
                         },
                         "page_start": {
+                            "include_in_all": true,
                             "copy_to": "publication_info.page_artid",
                             "type": "keyword"
                         },
                         "parent_isbn": {
+                            "include_in_all": true,
                             "type": "keyword"
                         },
                         "parent_recid": {
@@ -710,13 +746,16 @@
                             "type": "object"
                         },
                         "parent_report_number": {
+                            "include_in_all": true,
                             "analyzer": "report_number",
                             "type": "text"
                         },
                         "pubinfo_freetext": {
+                            "include_in_all": true,
                             "type": "text"
                         },
                         "year": {
+                            "include_in_all": true,
                             "format": "yyyy",
                             "type": "date"
                         }
@@ -724,6 +763,7 @@
                     "type": "nested"
                 },
                 "publication_type": {
+                    "include_in_all": true,
                     "type": "keyword"
                 },
                 "record_affiliations": {
@@ -739,6 +779,7 @@
                             }
                         },
                         "value": {
+                            "include_in_all": true,
                             "type": "text"
                         }
                     },
@@ -748,7 +789,6 @@
                     "type": "boolean"
                 },
                 "references": {
-                    "include_in_all": false,
                     "properties": {
                         "curated_relation": {
                             "type": "boolean"
@@ -971,6 +1011,7 @@
                             "type": "keyword"
                         },
                         "value": {
+                            "include_in_all": true,
                             "fields": {
                                 "fuzzy": {
                                     "analyzer": "report_number",
@@ -997,6 +1038,7 @@
                     "type": "integer"
                 },
                 "texkeys": {
+                    "include_in_all": true,
                     "fields": {
                         "raw": {
                             "type": "keyword"
@@ -1008,14 +1050,18 @@
                     "properties": {
                         "date": {
                             "format": "yyyy||yyyy-MM||yyyy-MM-dd",
-                            "type": "date"
+                            "type": "date",
+                            "include_in_all": true
+
                         },
                         "defense_date": {
                             "format": "yyyy||yyyy-MM||yyyy-MM-dd",
-                            "type": "date"
+                            "type": "date",
+                            "include_in_all": true
                         },
                         "degree_type": {
-                            "type": "keyword"
+                            "type": "keyword",
+                            "include_in_all": true
                         },
                         "institutions": {
                             "properties": {
@@ -1023,7 +1069,8 @@
                                     "type": "boolean"
                                 },
                                 "name": {
-                                    "type": "text"
+                                    "type": "text",
+                                    "include_in_all": true
                                 },
                                 "recid": {
                                     "type": "integer"
@@ -1051,9 +1098,11 @@
                             "type": "keyword"
                         },
                         "subtitle": {
+                            "include_in_all": true,
                             "type": "text"
                         },
                         "title": {
+                            "include_in_all": true,
                             "type": "text"
                         }
                     },
@@ -1072,23 +1121,28 @@
                                     "type": "text"
                                 }
                             },
-                            "type": "text"
+                            "type": "text",
+                            "include_in_all": true
+
                         },
                         "source": {
                             "type": "keyword"
                         },
                         "subtitle": {
                             "copy_to": "titles.full_title",
-                            "type": "text"
+                            "type": "text",
+                            "include_in_all": true
                         },
                         "title": {
                             "copy_to": "titles.full_title",
-                            "type": "text"
+                            "type": "text",
+                            "include_in_all": true
                         }
                     },
                     "type": "object"
                 },
                 "urls": {
+                    "include_in_all": true,
                     "properties": {
                         "description": {
                             "type": "text"
