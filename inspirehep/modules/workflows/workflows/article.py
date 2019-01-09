@@ -63,8 +63,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     set_refereed_and_fix_document_type,
     validate_record,
     jlab_ticket_needed,
-    remove_empty_fields,
-    restore_removed_fields
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -270,9 +268,7 @@ POSTENHANCE_RECORD = [
     prepare_keywords,
     set_refereed_and_fix_document_type,
     fix_submission_number,
-    remove_empty_fields,
     validate_record('hep'),
-    restore_removed_fields
 ]
 
 
