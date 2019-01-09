@@ -99,6 +99,8 @@ def populate_arxiv_document(obj, eng):
         url=url,
     )
     obj.data = lb.record
+    if 'documents' in obj.data and not obj.data['documents']:
+        del obj.data['documents']
 
 
 @with_debug_logging

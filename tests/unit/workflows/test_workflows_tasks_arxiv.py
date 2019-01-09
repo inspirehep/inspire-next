@@ -1082,3 +1082,45 @@ def test_arxiv_author_list_does_not_produce_latex():
 
     assert default_arxiv_author_list(obj, eng) is None
     assert obj.data.get('authors') == expected_authors
+
+
+@patch('inspirehep.modules.workflows.tasks.arxiv.LiteratureBuilder')
+@patch('inspirehep.modules.workflows.tasks.arxiv.is_pdf_link')
+def test_remove_empty_document_list_from_record(valid_link_mock, literature_builder_mock):
+    valid_link_mock.return_value = True
+    literature_builder_mock.lb.record = []
+
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '',
+            },
+        ],
+    }
+    obj = MockObj(data, {})
+    eng = MockEng()
+    populate_arxiv_document(obj, eng)
+    assert 'documents' not in obj.data
+
+
+@patch('inspirehep.modules.workflows.tasks.arxiv.is_pdf_link')
+def test_document_list_from_record(valid_link_mock):
+    valid_link_mock.return_value = True
+
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '',
+            },
+        ],
+    }
+    obj = MockObj(data, {})
+    eng = MockEng()
+    populate_arxiv_document(obj, eng)
+    assert 'documents' in obj.data
