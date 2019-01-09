@@ -631,22 +631,3 @@ def load_from_source_data(obj, eng):
         obj.save()
     except KeyError:
         raise ValueError("Can't start/restart workflow as 'source_data' is either missing or corrupted")
-
-
-@with_debug_logging
-def remove_empty_fields(obj, eng):
-    fields = ['documents', 'figures']
-    obj._removed_fields_ = {}
-    for field in fields:
-        if field in obj.data and not obj.data[field]:
-            obj._removed_fields_[field] = obj.data[field]
-            del obj.data[field]
-
-
-@with_debug_logging
-def restore_removed_fields(obj, eng):
-    if not hasattr(obj, '_removed_fields_'):
-        return
-    for field, value in obj._removed_fields_.items():
-            obj.data[field] = value
-    del obj._removed_fields_
