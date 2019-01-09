@@ -65,5 +65,5 @@ class AcceleratorExperimentSchemaV1(Schema):
         accelerator = get_value(item, 'accelerator.value')
         experiment = get_value(item, 'experiment.value')
         if institution and accelerator and experiment:
-            return '{}-{}-{}'.format(institution, accelerator, experiment)
+            return u'{}-{}-{}'.format(institution, accelerator, experiment)
         return item.get('legacy_name')
