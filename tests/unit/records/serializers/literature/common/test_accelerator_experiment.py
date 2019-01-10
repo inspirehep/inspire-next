@@ -110,3 +110,20 @@ def test_returns_none_as_name_if_empty_present():
     result = schema.dumps(dump).data
 
     assert expected == json.loads(result)
+
+
+def test_returns_dashed_institution_accelerator_experiment_as_name_with_unicode():
+    schema = AcceleratorExperimentSchemaV1()
+    dump = {
+        'legacy_name': 'LEGACY-EXP1',
+        'institutions': [{'value': u'PSI, Villigen'}],
+        'accelerator': {'value': u'PSI πM1 beam line'},
+        'experiment': {'value': u'MUSE'},
+    }
+    expected = {
+        'name': u'PSI, Villigen-PSI πM1 beam line-MUSE'
+    }
+
+    result = schema.dumps(dump).data
+
+    assert expected == json.loads(result)
