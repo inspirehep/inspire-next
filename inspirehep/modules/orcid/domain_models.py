@@ -240,9 +240,9 @@ class OrcidPusher(object):
                 continue
             # Local import to avoid import error.
             from inspirehep.modules.orcid import tasks
+            max_retries = 3
             # Execute the orcid_push Celery task synchronously.
-            # If max_retries=3, then backoff power 4 is (secs): [4*60, 16*60, 64*60]
-            backoff = lambda retry_count: (4 ** (retry_count + 1)) * 60  # noqa: E731ß
+            backoff = lambda retry_count: [30, 2 * 60, 7 * 60][retry_count % max_retries]  # noqa: E731ß
             utils.apply_celery_task_with_retry(
                 tasks.orcid_push,
                 kwargs={
@@ -255,7 +255,7 @@ class OrcidPusher(object):
                         do_fail_if_duplicated_identifier=True,
                         record_db_version=self.record_db_version)
                 },
-                max_retries=5,
+                max_retries=max_retries,
                 countdown=backoff,
                 time_limit=10 * 60,
             )
