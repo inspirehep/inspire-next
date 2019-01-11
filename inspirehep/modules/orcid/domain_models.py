@@ -142,7 +142,7 @@ class OrcidPusher(object):
                     ' And the POST has previously failed for the same recid because'\
                     ' the work had already existed'.format(self.orcid, self.recid)
                 raise exceptions.PutcodeNotFoundInOrcidException(msg)
-            self._post_or_put_work(putcode)
+            putcode = self._post_or_put_work(putcode)
         except orcid_client_exceptions.DuplicatedExternalIdentifierException:
             # We PUT a record changing its identifier, but there is another work
             # in ORCID with the same identifier. We need to find out the recid
@@ -152,7 +152,12 @@ class OrcidPusher(object):
             if self.do_fail_if_duplicated_identifier:
                 raise exceptions.DuplicatedExternalIdentifierPusherException
             self._push_work_with_clashing_identifier()
-            self._post_or_put_work(putcode)
+            putcode = self._post_or_put_work(putcode)
+        except orcid_client_exceptions.PutcodeNotFoundPutException:
+            self.cache.delete_work_putcode()
+            putcode = self._post_or_put_work()
+        except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
+            raise exceptions.InputDataInvalidException(from_exc=exc)
 
         self.cache.write_work_putcode(putcode, self.inspire_record)
         return putcode
@@ -173,16 +178,8 @@ class OrcidPusher(object):
                 response = self.client.post_new_work(xml_element)
 
         utils.log_service_response(logger, response, 'in OrcidPusher for recid={}'.format(self.recid))
-        try:
-            response.raise_for_result()
-            putcode = response['putcode']
-        except orcid_client_exceptions.WorkAlreadyExistsException:  # Only raisable by a POST.
-            raise
-        except orcid_client_exceptions.DuplicatedExternalIdentifierException:  # Only raisable by a PUT.
-            raise
-        except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
-            raise exceptions.InputDataInvalidException(from_exc=exc)
-        return putcode
+        response.raise_for_result()
+        return response['putcode']
 
     @time_execution
     def _cache_all_author_putcodes(self):
