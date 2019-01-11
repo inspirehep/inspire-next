@@ -261,7 +261,7 @@ def orcid_push(self, orcid, rec_id, oauth_token, kwargs_to_pusher=None):
 
     try:
         pusher = domain_models.OrcidPusher(orcid, rec_id, oauth_token, **kwargs_to_pusher)
-        pusher.push()
+        putcode = pusher.push()
         LOGGER.info('Orcid_push task for recid={} and orcid={} successfully completed'.format(rec_id, orcid))
     except (RequestException, SoftTimeLimitExceeded) as exc:
         # Trigger a retry only in case of network-related issues.
@@ -299,6 +299,7 @@ def orcid_push(self, orcid, rec_id, oauth_token, kwargs_to_pusher=None):
             ' exception={}'.format(
                 rec_id, orcid, traceback.format_exc()))
         raise
+    return putcode
 
 
 def _find_user_matching(orcid, email):
