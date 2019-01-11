@@ -147,8 +147,8 @@ class TestOrcidPusherPutUpdatedWork(TestOrcidPusherBase):
         self.cache.write_work_putcode('00000')
 
         pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
-        with pytest.raises(exceptions.InputDataInvalidException):
-            pusher.push()
+        result_putcode = pusher.push()
+        assert result_putcode == 47160445
 
 
 @pytest.mark.usefixtures('isolated_app')
@@ -282,7 +282,7 @@ class TestOrcidPusherDuplicatedIdentifier(TestOrcidPusherBase):
                              ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}):
             pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
             result_putcode = pusher.push()
-        assert result_putcode == '51551656'
+        assert result_putcode == 51551656
         assert not self.cache.has_work_content_changed(self.inspire_record)
 
     def test_exc_in_apply_celery_task_with_retry(self):
