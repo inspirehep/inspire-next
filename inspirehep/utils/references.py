@@ -28,6 +28,8 @@ from flask import current_app
 
 from inspire_schemas.api import ReferenceBuilder
 from inspire_utils.helpers import force_list
+from inspire_utils.dedupers import dedupe_list_of_dicts
+from inspire_utils.record import get_value
 
 from inspirehep.utils.jinja2 import render_template_to_string
 from inspirehep.utils.record_getter import get_es_records
@@ -116,6 +118,9 @@ def map_refextract_to_schema(extracted_references, source=None):
             for el in force_list(reference.get(field)):
                 if el:
                     method(el)
+
+        if get_value(rb.obj, 'reference.urls'):
+            rb.obj['reference']['urls'] = dedupe_list_of_dicts(rb.obj['reference']['urls'])
 
         result.append(rb.obj)
 
