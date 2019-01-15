@@ -1057,12 +1057,13 @@ def test_do_not_repeat(
     expected_persistent_data_first_run = {
         'one': {'id': 1},
         'two': {'id': 2}
-    }
+    }.viewitems()
+
     expected_persistent_data_second_run = {
         'one': {'id': 1},
         'two': {'id': 2},
         'three': {'id': 43},
-    }
+    }.viewitems()
 
     record = generate_record()
 
@@ -1080,10 +1081,10 @@ def test_do_not_repeat(
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
 
-        assert obj.status == ObjectStatus.COMPLETED
-        assert obj.extra_data['source_data']['persistent_data']
-        assert obj.extra_data['source_data']['persistent_data'] == expected_persistent_data_first_run
+        persistent_data = obj.extra_data['source_data']['persistent_data'].viewitems()
+        assert expected_persistent_data_first_run <= persistent_data
         assert obj.extra_data['id'] == 2
+        assert obj.status == ObjectStatus.COMPLETED
 
         eng = WorkflowEngine.from_uuid(obj.id_workflow)
         eng.callbacks.replace(custom_wf_steps_to_repeat)
@@ -1094,7 +1095,9 @@ def test_do_not_repeat(
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
-        assert obj.extra_data['source_data']['persistent_data'] == expected_persistent_data_second_run
+
+        persistent_data = obj.extra_data['source_data']['persistent_data'].viewitems()
+        assert expected_persistent_data_second_run <= persistent_data
         assert obj.extra_data['id'] == 43
 
 
@@ -1262,9 +1265,6 @@ def test_workflow_restart_count_initialized_properly(
 
         assert obj.extra_data['source_data']['persistent_data']['marks']['restart-count'] == 0
         assert obj.extra_data['restart-count'] == 0
-
-        # increase restart-count value to assert it is persisted
-        obj.extra_data['source_data']['persistent_data']['marks']['restart-count'] = 1
 
         obj.callback_pos = [0]
         obj.save()

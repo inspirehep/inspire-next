@@ -48,6 +48,7 @@ from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.utils import validate
 from inspire_utils.record import get_value
 from inspire_utils.dedupers import dedupe_list
+
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.records.utils import get_linked_records_in_field
 from inspirehep.modules.workflows.tasks.refextract import (
@@ -630,3 +631,37 @@ def load_from_source_data(obj, eng):
         obj.save()
     except KeyError:
         raise ValueError("Can't start/restart workflow as 'source_data' is either missing or corrupted")
+
+
+@with_debug_logging
+def go_to_first_step(obj, eng):
+    """Forces the workflow to continue from its first step."""
+    obj.log.info('Continuing execution from first step.')
+    save_workflow(obj, eng)
+    eng.restart('first', 'first')
+
+    # XXX: for some reasons, restarting a workflow generates a fork. The
+    # current branch stops here, the other one will start from the beginning.
+    eng.stop()
+
+
+@with_debug_logging
+def increase_restart_count_or_error(obj, eng):
+    """Increase the `restart-count` of the current workflow.
+
+    If `restart-count` contains a value greater than WORKFLOWS_RESTART_LIMIT it
+    throws a WorkflowError. If `restart-count` is not in
+    `extra_data.persistent_data.marks` the increment is skipped.
+    """
+    try:
+        count = obj.extra_data['source_data']['persistent_data']['marks']['restart-count']
+    except KeyError:
+        count = None
+
+    if count is None:
+        return
+    if count < current_app.config.get('WORKFLOWS_RESTART_LIMIT'):
+        obj.extra_data['source_data']['persistent_data']['marks']['restart-count'] += 1
+        save_workflow(obj, eng)
+    else:
+        raise WorkflowsError('Workflow restarted too many times')

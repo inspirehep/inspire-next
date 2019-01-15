@@ -30,9 +30,9 @@ import pytest
 
 from inspire_schemas.api import load_schema, validate
 from invenio_workflows import (
-    WorkflowEngine,
     start,
     workflow_object_class,
+    WorkflowEngine,
 )
 
 from inspirehep.modules.workflows.tasks.actions import (

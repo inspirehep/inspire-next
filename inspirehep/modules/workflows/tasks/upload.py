@@ -120,3 +120,30 @@ def set_schema(obj, eng):
         obj.log.debug('Schema already is url')
 
     obj.log.debug('Final schema %s', obj.data['$schema'])
+
+
+def _is_stale_data(workflow_object):
+    is_update = workflow_object.extra_data.get('is-update')
+    head_version_id = workflow_object.extra_data.get('head_version_id')
+
+    if not is_update or head_version_id is None:
+        return False
+
+    head_uuid = workflow_object.extra_data.get('head_uuid')
+    record = InspireRecord.get_record(head_uuid)
+
+    if record.model.version_id != head_version_id:
+        workflow_object.log.info(
+            'Working with stale data:',
+            'Expecting version %d but found %d' % (
+                head_version_id, record.revision_id
+            )
+        )
+        return True
+    return False
+
+
+@with_debug_logging
+def is_stale_data(obj, eng):
+    """Check head's version_id in extra_data is the same on DB."""
+    return _is_stale_data(obj)
