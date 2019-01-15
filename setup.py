@@ -128,6 +128,8 @@ install_requires = [
     'workflow~=2.0,>=2.1.3',
     'click~=6.7,<7.0',
     'pytz~=2018.7,>=2018.7',
+    'requests-oauthlib==1.0.0',
+    'oauthlib>=1.1.2,<3.0.0',
 ]
 
 docs_require = [
@@ -150,7 +152,7 @@ extras_require = {
         'ipdb~=0.0,>=0.10.3',
     ],
     'crawler-node': [
-        'hepcrawl~=11.0,>=11.0.0',
+        'hepcrawl~=12.0,>=12.0.0',
     ],
     'docs': docs_require,
     'tests': tests_require,
