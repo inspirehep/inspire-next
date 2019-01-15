@@ -113,6 +113,7 @@ def mark(key, value):
     @wraps(mark)
     def _mark(obj, eng):
         obj.extra_data[key] = value
+        return {key: value}
 
     _mark.__doc__ = 'Mark the workflow object with %s:%s.' % (key, value)
     return _mark

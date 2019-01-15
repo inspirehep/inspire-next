@@ -497,7 +497,8 @@ INIT_MARKS = [
     mark('stopped-matched-holdingpen-wf', None),
     mark('approved', None),
     mark('unexpected-workflow-path', None),
-    save_workflow
+    do_not_repeat('marks')(mark('restart-count', 0)),
+    save_workflow,
 ]
 
 
