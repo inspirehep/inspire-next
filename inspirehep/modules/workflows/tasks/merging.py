@@ -67,14 +67,14 @@ def merge_articles(obj, eng):
     head_uuid = PersistentIdentifier.get(
         'lit', matched_control_number).object_uuid
 
-    obj.extra_data['head_uuid'] = str(head_uuid)
-
     head_record = InspireRecord.get_record(head_uuid)
     update = obj.data
     update_source = get_source(update).lower()
     head_root = read_wf_record_source(record_uuid=head_record.id, source=update_source)
     head_root = head_root.json if head_root else {}
 
+    obj.extra_data['head_uuid'] = str(head_uuid)
+    obj.extra_data['head_revision_id'] = head_record.revision_id
     obj.extra_data['merger_head_revision'] = head_record.revision_id
     obj.extra_data['merger_original_root'] = deepcopy(head_root)
 

@@ -35,8 +35,9 @@ from mocks import (
 
 from invenio_workflows import (
     ObjectStatus,
-    WorkflowEngine,
     start,
+    WorkflowEngine,
+    workflow_object_class,
 )
 
 from inspirehep.modules.workflows.utils import (
@@ -648,3 +649,32 @@ def test_regression_non_relevant_update_is_not_rejected_and_gets_merged(
     assert obj.extra_data['approved'] is True
     assert obj.extra_data['auto-approved'] is True
     assert obj.extra_data['merged'] is True
+
+
+@patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+def test_workflow_stores_head_rtevision_id(
+    mocked_api_request_magpie,
+    mocked_beard_api,
+    workflow_app,
+    mocked_external_services,
+):
+    factory = TestRecordMetadata.create_from_file(
+        __name__, 'merge_record_arxiv.json', index_name='records-hep'
+    )
+    obj_id = build_workflow(factory.record_metadata.json).id
+    start('article', object_id=obj_id)
+
+    obj = workflow_object_class.get(obj_id)
+
+    obj = workflow_object_class.get(obj_id)
+
+    assert obj.extra_data['source_data']['persistent_data']['marks']['restart-count'] == 0
+    assert obj.extra_data['restart-count'] == 0
+    assert obj.extra_data['head_revision_id'] == 0
