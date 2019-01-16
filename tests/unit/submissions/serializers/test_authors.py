@@ -889,3 +889,25 @@ def test_load_author_websites():
 
     assert validate(expected['urls'], subschema) is None
     assert expected == result
+
+
+def test_load_author_bai():
+    data = {
+        'bai': 'T.Zivko.1'
+    }
+    schema = load_schema('authors')
+    subschema = schema['properties']['ids']
+
+    result = Author().load(data).data
+    expected = {
+        '_collections': ['Authors'],
+        'ids': [
+            {
+                'value': 'T.Zivko.1',
+                'schema': 'INSPIRE BAI',
+            },
+        ],
+    }
+
+    assert validate(expected['ids'], subschema) is None
+    assert expected == result
