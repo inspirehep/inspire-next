@@ -342,7 +342,7 @@ def test_edit_article_callback_redirects_to_rt(
     assert data['redirect_url'] == expected_redirect
 
 
-def test_edit_article_callback_redirects_to_root_if_no_referrer(
+def test_edit_article_callback_does_not_have_redirect_url_if_no_ticket_id(
     edit_workflow,
     workflow_api_client,
     mocked_external_services,
@@ -363,9 +363,6 @@ def test_edit_article_callback_redirects_to_root_if_no_referrer(
         content_type='application/json',
     )
 
-    expected_redirect = 'http://%s/' % workflow_app.config['SERVER_NAME']
-
     assert response.status_code == 200
     data = json.loads(response.data)
-    assert 'redirect_url' in data
-    assert data['redirect_url'] == expected_redirect
+    assert 'redirect_url' not in data
