@@ -22,6 +22,12 @@
 
 from __future__ import absolute_import, division, print_function
 
+
+from sqlalchemy_continuum import transaction_class
+
+from invenio_db import db
+from invenio_records.models import RecordMetadata
+
 from inspirehep.modules.workflows.tasks.actions import validate_record
 from inspirehep.modules.workflows.tasks.submission import cleanup_pending_workflow, send_robotupload
 from inspirehep.modules.workflows.utils import get_resolve_edit_article_callback_url
@@ -40,6 +46,24 @@ def update_record(obj, eng):
     record = get_db_record('lit', control_number)
     record.update(obj.data)
     record.commit()
+
+    user_id = obj.id_user
+    if user_id:
+        _set_transaction_user_id_for_last_record_update(control_number, user_id)
+
+    db.session.commit()
+
+
+def _set_transaction_user_id_for_last_record_update(control_number, user_id):
+    record = get_db_record('lit', control_number)
+    revision = record.model.versions.filter_by(version_id=(record.revision_id + 1)).one()
+    transaction_id = revision.transaction_id
+
+    Transaction = transaction_class(RecordMetadata)
+    transaction = Transaction.query.filter(Transaction.id == transaction_id).one()
+    transaction.user_id = user_id
+
+    db.session.add(transaction)
 
 
 class EditArticle(object):
