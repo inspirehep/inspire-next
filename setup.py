@@ -121,7 +121,9 @@ install_requires = [
     'scikit-learn~=0.0,>=0.19.1',
     'setproctitle~=1.0,>=1.1.10',
     'timeout-decorator~=0.0,>=0.4.0',
-    'timeexecution~=3.3.0,<4',
+    # Use a timeexecution fork, until https://github.com/kpn-digital/py-timeexecution/pull/38 gets merged.
+    # See ./requirements.txt
+    # 'timeexecution~=3.3.0,<4',
     # Pin urllib3 to version 1.23 as version 1.24 is incompatible with requirements
     # from python-requests (<1.24) (https://travis-ci.org/inspirehep/inspire-next/builds/388221674)
     'urllib3~=1.0,<1.24',

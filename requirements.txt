@@ -31,3 +31,6 @@
 
 #Flask_sqlalchemy fork
 -e git+https://github.com/inspirehep/flask-sqlalchemy.git#egg=flask_sqlalchemy
+
+# Timeexecution fork, until https://github.com/kpn-digital/py-timeexecution/pull/38 gets merged:
+-e git+https://github.com/puntonim/py-timeexecution.git@lazy-init-tmp-3.4.0#egg=timeexecution
