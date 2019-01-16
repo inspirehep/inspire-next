@@ -49,6 +49,7 @@ class Author(Schema):
     comments = fields.Raw()
 
     acquisition_source = fields.Raw()
+    bai = fields.Raw()
 
     @pre_dump
     def before_dump(self, data):
@@ -139,6 +140,9 @@ class Author(Schema):
 
         orcid = data.get('orcid')
         author.add_orcid(orcid)
+
+        bai = data.get('bai')
+        author.add_bai(bai)
 
         native_name = data.get('native_name')
         author.add_native_name(native_name)
