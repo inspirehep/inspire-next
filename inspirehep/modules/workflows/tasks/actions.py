@@ -25,6 +25,8 @@
 from __future__ import absolute_import, division, print_function
 
 import sys
+import time
+
 from copy import deepcopy
 from functools import wraps
 from six import reraise
@@ -634,6 +636,14 @@ def load_from_source_data(obj, eng):
 
 
 @with_debug_logging
+def delay_if_necessary(obj, eng):
+    """Delays workflow if necessary,
+    delay timeout should be in `extra_data['source_data']['delay']` key """
+    delay = get_value(obj.extra_data, 'source_data.extra_data.delay')
+    if delay:
+        time.sleep(float(delay))
+
+
 def go_to_first_step(obj, eng):
     """Forces the workflow to continue from its first step."""
     obj.log.info('Continuing execution from first step.')
