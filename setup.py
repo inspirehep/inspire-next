@@ -110,7 +110,7 @@ install_requires = [
     'numpy~=1.0,>=1.14.3',
     'plotextractor~=0.0,>=0.1.6',
     'pyOpenSSL~=17.0,>=17.5.0',
-    'pybtex~=0.0,>=0.21',
+    'pybtex==0.22',
     'python-redis-lock~=3.0,>=3.2.0',
     # TODO: remove once we figure out how to, see:
     # https://its.cern.ch/jira/browse/INSPIR-973
