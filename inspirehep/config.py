@@ -1068,6 +1068,12 @@ RECORDS_REST_SORT_OPTIONS = {
             "default_order": 'asc',  # Used for invenio-search-js config
             "order": 2,
         },
+        "bestmatch": {
+            "title": 'Best Match',
+            "fields": ['-_score'],
+            "default_order": 'asc',
+            "order": 3,
+        },
     },
 
     "record-data": {
@@ -1105,7 +1111,7 @@ RECORDS_REST_SORT_OPTIONS = {
 
 RECORDS_REST_DEFAULT_SORT = {
     "records-hep": {
-        "query": "-bestmatch",
+        "query": "mostrecent",
         "noquery": "mostrecent"
     },
 
