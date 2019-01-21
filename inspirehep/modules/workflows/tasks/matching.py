@@ -32,6 +32,8 @@ from invenio_workflows.errors import WorkflowsError
 
 from inspire_matcher.api import match
 from inspire_utils.dedupers import dedupe_list
+from inspirehep.modules.workflows.tasks.actions import restart_workflow, mark, \
+    save_workflow
 from inspirehep.utils.record import get_arxiv_categories, get_value
 
 from ..utils import with_debug_logging
@@ -236,7 +238,7 @@ def set_wf_not_completed_ids_to_wf(obj, skip_blocked=True):
         matched_ids = [_id for _id in matched_ids if
                        not is_workflow_blocked_by_another_workflow(_id)]
     obj.extra_data['holdingpen_matches'] = matched_ids
-    obj.save()
+    save_workflow(obj, None)
     return matched_ids
 
 
@@ -282,26 +284,6 @@ def raise_if_match_workflow(obj, eng):
             ': {blocking_ids}'.format(wf_id=obj.id,
                                       blocking_ids=matched_ids)
         )
-
-
-def remove_blocked_by_me(obj, matched_ids):
-    """Removes a workflows which are blocked by 'obj' workflow from matched_ids
-    to protect from circullar blocks
-
-    Arguments:
-        obj: a workflow object
-        matched_ids: Ids of workflows which could block this(obj) one
-
-    Returns:
-        List of workflows which blocks this one without ones blocked by me"""
-
-    blocking_ids = []
-
-    for wf_id in matched_ids:
-        wf = workflow_object_class.get(wf_id)
-        if obj.id not in wf.extra_data.get('holdingpen_matches', []):
-            blocking_ids.append(wf_id)
-    return blocking_ids
 
 
 def match_previously_rejected_wf_in_holdingpen(obj, eng):
@@ -452,10 +434,9 @@ def stop_matched_holdingpen_wfs(obj, eng):
     Returns:
         None
     """
-    from inspirehep.modules.workflows.tasks.actions import mark
     stopping_steps = [mark('stopped-by-wf', int(obj.id)), stop_processing]
 
-    obj.save()
+    save_workflow(obj, eng)
 
     for holdingpen_wf_id in obj.extra_data['holdingpen_matches']:
         holdingpen_wf = workflow_object_class.get(holdingpen_wf_id)
@@ -471,3 +452,22 @@ def has_more_than_one_exact_match(obj, eng):
     """Does the record have more than one exact match."""
     exact_matches = obj.extra_data['matches']['exact']
     return len(set(exact_matches)) > 1
+
+
+@with_debug_logging
+def run_next_if_necessary(obj, eng):
+    """Remove current wf id from matched workflows and run next one"""
+    blocked_wfs = set_wf_not_completed_ids_to_wf(obj, False)
+    next_wf = None
+    for wf_id in blocked_wfs:
+        wf = workflow_object_class.get(wf_id)
+        if obj.id in wf.extra_data.get('holdingpen_matches', []):
+            wf.extra_data['holdingpen_matches'].remove(obj.id)
+            save_workflow(wf, eng)
+        if not wf.extra_data.get('holdingpen_matches', []) and not next_wf:
+            # If workflow is not blocked by any other workflow
+            # And there is no next workflow set
+            # then set is as next to restart
+            next_wf = wf
+    if next_wf:
+        restart_workflow(next_wf, obj)

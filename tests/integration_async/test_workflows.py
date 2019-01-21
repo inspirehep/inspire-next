@@ -22,7 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import requests_mock
 import time
 
 from datetime import datetime, timedelta
@@ -231,9 +230,8 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_init(
     check_wf_state(wf1_id, ObjectStatus.INITIAL)
     check_wf_state(wf2_id, ObjectStatus.ERROR)
     check_wf_state(wf3_id, ObjectStatus.ERROR)
-    with requests_mock.Mocker() as m:
-        m.register_uri(requests_mock.ANY, '*')
-        start.delay('article', object_id=wf1_id)
+
+    start.delay('article', object_id=wf1_id)
 
     es.indices.refresh('holdingpen-hep')
 

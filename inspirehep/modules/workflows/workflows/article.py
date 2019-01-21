@@ -63,7 +63,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     set_refereed_and_fix_document_type,
     validate_record,
     jlab_ticket_needed,
-    run_next_if_necessary,
     delay_if_necessary
 )
 
@@ -87,6 +86,7 @@ from inspirehep.modules.workflows.tasks.matching import (
     has_same_source,
     stop_matched_holdingpen_wfs,
     auto_approve,
+    run_next_if_necessary,
     set_core_in_extra_data,
     has_more_than_one_exact_match,
     raise_if_match_workflow,

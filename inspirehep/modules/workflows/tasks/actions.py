@@ -43,7 +43,7 @@ from sqlalchemy import (
 from werkzeug import secure_filename
 
 from invenio_db import db
-from invenio_workflows import ObjectStatus, workflow_object_class
+from invenio_workflows import ObjectStatus
 from invenio_workflows.errors import WorkflowsError
 from invenio_records.models import RecordMetadata
 from inspire_schemas.builders import LiteratureBuilder
@@ -52,7 +52,6 @@ from inspire_utils.record import get_value
 from inspire_utils.dedupers import dedupe_list
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.records.utils import get_linked_records_in_field
-from inspirehep.modules.workflows.tasks.matching import set_wf_not_completed_ids_to_wf
 from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_raw_refs,
     extract_references_from_pdf,
@@ -636,41 +635,21 @@ def load_from_source_data(obj, eng):
                          "'source_data' is either missing or corrupted")
 
 
-def restart_workflow(obj, original_workflow, position=[0]):
+def restart_workflow(obj, restarter_id, position=[0]):
     """Restarts workflow
 
     Args:
-        wf: Workflow to restart
+        obj: Workflow to restart
         original_workflow: Workflow which restarts
         position: To which position wf should be restarted
     """
     obj.callback_pos = position
     obj.extra_data['source_data']['extra_data']['delay'] = 10
     obj.extra_data['source_data']['extra_data'].setdefault(
-        'restarted-by-wf', []).append(original_workflow.id)
+        'restarted-by-wf', []).append(restarter_id)
     obj.save()
     db.session.commit()
     obj.continue_workflow('restart_task', delayed=True)
-
-
-@with_debug_logging
-def run_next_if_necessary(obj, eng):
-    """Remove current wf id from matched workflows and run next one"""
-    blocked_wfs = set_wf_not_completed_ids_to_wf(obj, False)
-    next_wf = None
-    for wf_id in blocked_wfs:
-        wf = workflow_object_class.get(wf_id)
-        if obj.id in wf.extra_data.get('holdingpen_matches', []):
-            wf.extra_data['holdingpen_matches'].remove(obj.id)
-            wf.save()
-        if not wf.extra_data.get('holdingpen_matches', []) and not next_wf:
-            # If workflow is not blocked by any other workflow
-            # And there is no next workflow set
-            # then set is as next to restart
-            next_wf = wf
-    db.session.commit()
-    if next_wf:
-        restart_workflow(next_wf, obj)
 
 
 @with_debug_logging
