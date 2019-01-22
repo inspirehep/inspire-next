@@ -90,7 +90,8 @@ from inspirehep.modules.workflows.tasks.matching import (
     set_core_in_extra_data,
     has_more_than_one_exact_match,
     raise_if_match_workflow,
-    match_previously_rejected_wf_in_holdingpen
+    match_previously_rejected_wf_in_holdingpen,
+    match_non_completed_wf_in_holdingpen
 )
 from inspirehep.modules.workflows.tasks.merging import (
     has_conflicts,
@@ -346,6 +347,14 @@ STORE_RECORD = [
 MARK_IF_MATCH_IN_HOLDINGPEN = [
     raise_if_match_workflow,
     IF_ELSE(
+        match_non_completed_wf_in_holdingpen,
+        [
+            mark('already-in-holding-pen', True),
+            save_workflow,
+        ],
+        mark('already-in-holding-pen', False),
+    ),
+    IF_ELSE(
         match_previously_rejected_wf_in_holdingpen,
         [
             mark('previously_rejected', True),
@@ -382,8 +391,25 @@ PROCESS_HOLDINGPEN_MATCH_HARVEST = [
             ),
         ),
     ),
-
-    mark('stopped-matched-holdingpen-wf', False),
+    IF_ELSE(
+        is_marked('already-in-holding-pen'),
+        IF_ELSE(
+            has_same_source('holdingpen_matches'),
+            # stop the matched wf and continue this one
+            [
+                stop_matched_holdingpen_wfs,
+                mark('stopped-matched-holdingpen-wf', True),
+            ],
+            [
+                # else, it's an update from another source
+                # keep the old one
+                mark('stopped-matched-holdingpen-wf', False),
+                save_workflow,
+                stop_processing
+            ],
+        ),
+        mark('stopped-matched-holdingpen-wf', False),
+    ),
     save_workflow,
 ]
 
@@ -462,6 +488,7 @@ NOTIFY_IF_SUBMISSION = [
 
 INIT_MARKS = [
     mark('auto-approved', None),
+    mark('already-in-holding-pen', None),
     mark('previously_rejected', None),
     mark('is-update', None),
     mark('stopped-matched-holdingpen-wf', None),

@@ -214,7 +214,7 @@ def set_core_in_extra_data(obj, eng):
         obj.extra_data['core'] = True
 
 
-def set_wf_not_completed_ids_to_wf(obj, skip_blocked=True):
+def set_wf_not_completed_ids_to_wf(obj, skip_blocked=True, skip_halted=False):
     """Return list of all matched workflows ids which are not completed
     also stores this list to wf.extra_data['holdingpen_matches']
     By default it do not show workflows which are already blocked by this workflow
@@ -223,17 +223,26 @@ def set_wf_not_completed_ids_to_wf(obj, skip_blocked=True):
         obj: a workflow object.
         skip_blocked: boolean, if True do not returnd workflows blocked by this one,
             if False then return all matched workflows.
+        skip_halted: boolean, if True, then it skips HALTED workflows when
+            looking for matched workflows
     """
 
     def _non_completed(base_record, match_result):
-        return not get_value(match_result,
-                             '_source._workflow.status') == 'COMPLETED'
+        return get_value(match_result, '_source._workflow.status') != 'COMPLETED'
+
+    def _not_completed_or_halted(base_record, match_result):
+        return get_value(match_result, '_source._workflow.status') not in [
+            'COMPLETED', 'HALTED']
 
     def is_workflow_blocked_by_another_workflow(workflow_id):
         workflow = workflow_object_class.get(workflow_id)
         return obj.id in workflow.extra_data.get('holdingpen_matches', [])
 
-    matched_ids = pending_in_holding_pen(obj, _non_completed)
+    if skip_halted:
+        matched_ids = pending_in_holding_pen(obj, _not_completed_or_halted)
+    else:
+        matched_ids = pending_in_holding_pen(obj, _non_completed)
+
     if skip_blocked:
         matched_ids = [_id for _id in matched_ids if
                        not is_workflow_blocked_by_another_workflow(_id)]
@@ -276,7 +285,10 @@ def raise_if_match_workflow(obj, eng):
         None
 
     """
-    matched_ids = set_wf_not_completed_ids_to_wf(obj)
+    matched_ids = set_wf_not_completed_ids_to_wf(obj,
+                                                 skip_blocked=True,
+                                                 skip_halted=True
+                                                 )
     if bool(matched_ids):
         raise WorkflowsError(
             'Cannot continue processing workflow {wf_id}.'

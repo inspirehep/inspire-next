@@ -309,7 +309,7 @@ def test_harvesting_arxiv_workflow_manual_accepted(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
-def test_match_in_holdingpen_forces_to_wait_new_wf(
+def test_match_in_holdingpen_stops_pending_wf(
     mocked_api_request_magpie,
     mocked_api_request_beard,
     mocked_package_download,
@@ -335,25 +335,25 @@ def test_match_in_holdingpen_forces_to_wait_new_wf(
         "title"
     ] = "This is an update that will match the wf in the holdingpen"
     record2_workflow = build_workflow(record2).id
-    with pytest.raises(WorkflowsError):
-        start("article", object_id=record2_workflow)
+    start("article", object_id=record2_workflow)
     es.indices.refresh("holdingpen-hep")
 
     update_wf = workflow_object_class.get(record2_workflow)
 
-    assert update_wf.status == ObjectStatus.ERROR
-
+    assert update_wf.status == ObjectStatus.HALTED
     #  As workflow stops (in error) before setting this
-    assert update_wf.extra_data["previously_rejected"] is None
-
-    assert update_wf.extra_data["stopped-matched-holdingpen-wf"] is None
-    assert update_wf.extra_data["is-update"] is None
+    assert update_wf.extra_data["previously_rejected"] is False
+    assert update_wf.extra_data['already-in-holding-pen'] is True
+    assert update_wf.extra_data["stopped-matched-holdingpen-wf"] is True
+    assert update_wf.extra_data["is-update"] is False
 
     old_wf = workflow_object_class.get(obj_id)
-    assert old_wf.extra_data["previously_rejected"] is False
-    assert old_wf.extra_data.get("approved") is None
-    assert old_wf.extra_data["is-update"] is False
-    assert old_wf.status == ObjectStatus.HALTED
+    assert old_wf.extra_data['already-in-holding-pen'] is False
+    assert old_wf.extra_data['previously_rejected'] is False
+    assert old_wf.extra_data['stopped-by-wf'] == update_wf.id
+    assert old_wf.extra_data.get('approved') is None
+    assert old_wf.extra_data['is-update'] is False
+    assert old_wf.status == ObjectStatus.COMPLETED
 
 
 @mock.patch(
@@ -1039,3 +1039,58 @@ def test_workflow_without_validation_error(
 
     assert fake_validation.call_count == 2
     assert workflow.status == ObjectStatus.WAITING
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
+    return_value=True
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+def test_match_in_holdingpen_different_sources_continues(
+    mocked_api_request_magpie,
+    mocked_api_request_beard,
+    mocked_package_download,
+    mocked_is_pdf_link,
+    mocked_download_arxiv,
+    workflow_app,
+    mocked_external_services,
+):
+    record = generate_record()
+
+    workflow_id = build_workflow(record).id
+    eng_uuid = start('article', object_id=workflow_id)
+    es.indices.refresh('holdingpen-hep')
+    eng = WorkflowEngine.from_uuid(eng_uuid)
+    wf_to_match = eng.objects[0].id
+    obj = workflow_object_class.get(wf_to_match)
+    assert obj.status == ObjectStatus.HALTED
+    # generated wf pending in holdingpen
+
+    record['titles'][0]['title'] = 'This is an update that will match the wf in the holdingpen'
+    record['acquisition_source']['source'] = 'but not the source'
+    # this workflow matches in the holdingpen but continues because has a
+    # different source
+    workflow_id = build_workflow(record).id
+    eng_uuid = start('article', object_id=workflow_id)
+    eng = WorkflowEngine.from_uuid(eng_uuid)
+    obj = eng.objects[0]
+
+    assert obj.extra_data['already-in-holding-pen'] is True
+    assert obj.extra_data['holdingpen_matches'] == [wf_to_match]
+    assert obj.extra_data['previously_rejected'] is False
+    assert not obj.extra_data.get('stopped-matched-holdingpen-wf')

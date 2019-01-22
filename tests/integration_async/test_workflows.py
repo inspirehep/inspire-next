@@ -22,15 +22,35 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
+import os
+
+import pkg_resources
 import time
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from copy import deepcopy
 
 from invenio_db import db
 from invenio_search import current_search_client as es
 from invenio_workflows import ObjectStatus, start, workflow_object_class
+
+
+def generate_record():
+    """Provide record fixture."""
+    json_data = json.loads(pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            '../integration/workflows/fixtures',
+            'oai_arxiv_core_record.json'
+        )
+    ))
+
+    if 'preprint_date' in json_data:
+        json_data['preprint_date'] = date.today().isoformat()
+
+    return json_data
 
 
 def check_wf_state(workflow_id, desired_status, max_time=600):
@@ -249,3 +269,56 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_init(
     assert wf1.extra_data.get('restarted-by-wf') is None
     assert wf2.extra_data.get('restarted-by-wf') == [1]
     assert wf3.extra_data.get('restarted-by-wf') == [2]
+
+
+def test_wf_replaces_old_workflow_which_is_in_halted_state(
+    app,
+    celery_app_with_context,
+    celery_session_worker
+):
+    def build_workflow(workflow_data, data_type='hep', **kwargs):
+        workflow_object = workflow_object_class.create(
+            data_type=data_type,
+            data=workflow_data,
+            extra_data={
+                'source_data': {
+                    'data': deepcopy(workflow_data),
+                    'extra_data': {},
+                }
+            },
+            **kwargs
+        )
+        return workflow_object
+    app.config['FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY'] = False
+    app.config['PRODUCTION_MODE'] = False
+    app.config['USE_SIGNALS_ON_TIMEOUT'] = False
+    record = generate_record()
+
+    workflow = build_workflow(record)
+
+    workflow.save()
+
+    db.session.commit()
+
+    wf1_id = workflow.id
+
+    start.delay('article', object_id=wf1_id)
+    es.indices.refresh('holdingpen-hep')
+
+    check_wf_state(wf1_id, ObjectStatus.HALTED)
+
+    workflow2 = build_workflow(record)
+    workflow2.save()
+    db.session.commit()
+    wf2_id = workflow2.id
+
+    es.indices.refresh('holdingpen-hep')
+
+    check_wf_state(wf1_id, ObjectStatus.HALTED)
+    check_wf_state(wf2_id, ObjectStatus.INITIAL)
+
+    start.delay('article', object_id=wf2_id)
+
+    es.indices.refresh('holdingpen-hep')
+    check_wf_state(wf1_id, ObjectStatus.COMPLETED)
+    check_wf_state(wf2_id, ObjectStatus.HALTED)

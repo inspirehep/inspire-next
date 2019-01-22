@@ -244,7 +244,8 @@ def timeout_with_config(config_key):
         @wraps(func)
         def wrapper(*args, **kwargs):
             timeout_time = current_app.config[config_key]
-            return timeout(timeout_time)(func)(*args, **kwargs)
+            use_signals = current_app.config.get('USE_SIGNALS_ON_TIMEOUT', True)
+            return timeout(timeout_time, use_signals=use_signals)(func)(*args, **kwargs)
         return wrapper
     return decorator
 
