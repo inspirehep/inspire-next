@@ -107,6 +107,8 @@ CACHE_REDIS_URL = "redis://localhost:6379/0"
 CACHE_TYPE = "redis"
 ACCOUNTS_SESSION_REDIS_URL = "redis://localhost:6379/2"
 ACCESS_CACHE = "invenio_cache:current_cache"
+RT_USERS_CACHE_TIMEOUT = 86400
+RT_QUEUES_CACHE_TIMEOUT = 86400
 
 # Files
 # =====
