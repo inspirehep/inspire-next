@@ -269,6 +269,27 @@ def test_get_rt_users(mock_tickets, log_in_as_cataloger, api_client):
     assert response.status_code == 200
 
 
+@patch('inspirehep.utils.tickets._get_all_of')
+def test_rt_users_are_cached(mock_get_all_of, log_in_as_cataloger, api_client):
+    mock_get_all_of.return_value = [
+        {
+            "id": "10309",
+            "name": "atkinson"
+        },
+        {
+            "id": "1125438",
+            "name": "bhecker"
+        },
+        {
+            "id": "460354",
+            "name": "Catherine"
+        },
+    ]
+    current_cache.delete('rt_users')
+    response = api_client.get('/editor/rt/users')
+    assert current_cache.get('rt_users') == json.loads(response.data)
+
+
 def test_get_rt_users_returns_403_on_authentication_error(api_client):
     response = api_client.get('/editor/rt/users')
 
@@ -280,6 +301,27 @@ def test_get_rt_queues(mock_tickets, log_in_as_cataloger, api_client):
     response = api_client.get('/editor/rt/queues')
 
     assert response.status_code == 200
+
+
+@patch('inspirehep.utils.tickets._get_all_of')
+def test_rt_queues_are_cached(mock_get_all_of, log_in_as_cataloger, api_client):
+    mock_get_all_of.return_value = [
+        {
+            "id": "35",
+            "name": "Admin"
+        },
+        {
+            "id": "63",
+            "name": "Admin-curator"
+        },
+        {
+            "id": "60",
+            "name": "Admin-Dev"
+        }
+    ]
+    current_cache.delete('rt_queues')
+    response = api_client.get('/editor/rt/queues')
+    assert current_cache.get('rt_queues') == json.loads(response.data)
 
 
 def test_get_rt_queues_returns_403_on_authentication_error(log_in_as_scientist, api_client):
