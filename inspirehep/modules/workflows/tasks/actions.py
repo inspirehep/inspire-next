@@ -635,23 +635,6 @@ def load_from_source_data(obj, eng):
                          "'source_data' is either missing or corrupted")
 
 
-def restart_workflow(obj, restarter_id, position=[0]):
-    """Restarts workflow
-
-    Args:
-        obj: Workflow to restart
-        original_workflow: Workflow which restarts
-        position: To which position wf should be restarted
-    """
-    obj.callback_pos = position
-    obj.extra_data['source_data']['extra_data']['delay'] = 10
-    obj.extra_data['source_data']['extra_data'].setdefault(
-        'restarted-by-wf', []).append(restarter_id)
-    obj.save()
-    db.session.commit()
-    obj.continue_workflow('restart_task', delayed=True)
-
-
 @with_debug_logging
 def delay_if_necessary(obj, eng):
     """Delays workflow if necessary,

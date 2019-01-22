@@ -27,13 +27,13 @@ from __future__ import absolute_import, division, print_function
 from flask import current_app
 
 from invenio_db import db
-from invenio_workflows import workflow_object_class, WorkflowEngine
+from invenio_workflows import workflow_object_class, WorkflowEngine, \
+    ObjectStatus
 from invenio_workflows.errors import WorkflowsError
 
 from inspire_matcher.api import match
 from inspire_utils.dedupers import dedupe_list
-from inspirehep.modules.workflows.tasks.actions import restart_workflow, mark, \
-    save_workflow
+from inspirehep.modules.workflows.tasks.actions import mark, save_workflow
 from inspirehep.utils.record import get_arxiv_categories, get_value
 
 from ..utils import with_debug_logging
@@ -470,4 +470,22 @@ def run_next_if_necessary(obj, eng):
             # then set is as next to restart
             next_wf = wf
     if next_wf:
-        restart_workflow(next_wf, obj)
+        restart_workflow(next_wf, obj.id)
+
+
+def restart_workflow(obj, restarter_id, position=[0]):
+    """Restarts workflow
+
+    Args:
+        obj: Workflow to restart
+        original_workflow: Workflow which restarts
+        position: To which position wf should be restarted
+    """
+    obj.callback_pos = position
+    obj.status = ObjectStatus.RUNNING
+    obj.extra_data['source_data']['extra_data']['delay'] = 10
+    obj.extra_data['source_data']['extra_data'].setdefault(
+        'restarted-by-wf', []).append(restarter_id)
+    obj.save()
+    db.session.commit()
+    obj.continue_workflow('restart_task', delayed=True)
