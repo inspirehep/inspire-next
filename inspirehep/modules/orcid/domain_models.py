@@ -36,7 +36,7 @@ from inspirehep.utils.record_getter import (
     get_db_record,
 )
 
-from . import exceptions, utils
+from . import exceptions, push_access_tokens, utils
 from .cache import OrcidCache
 from .converter import OrcidConverter
 from .putcode_getter import OrcidPutcodeGetter
@@ -156,6 +156,13 @@ class OrcidPusher(object):
         except orcid_client_exceptions.PutcodeNotFoundPutException:
             self.cache.delete_work_putcode()
             putcode = self._post_or_put_work()
+        except (orcid_client_exceptions.TokenInvalidException,
+                orcid_client_exceptions.TokenMismatchException,
+                orcid_client_exceptions.TokenWithWrongPermissionException):
+            logger.info('Deleting Orcid push access token={} for orcid={}'.format(
+                self.oauth_token, self.orcid))
+            push_access_tokens.delete_access_token(self.oauth_token, self.orcid)
+            raise exceptions.TokenInvalidDeletedException
         except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
             raise exceptions.InputDataInvalidException(from_exc=exc)
 

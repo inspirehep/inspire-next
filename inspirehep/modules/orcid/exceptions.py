@@ -78,3 +78,12 @@ class DuplicatedExternalIdentifierPusherException(BaseOrcidPusherException):
     work, pushed it and repeated the original operation which failed again.
     """
     pass
+
+
+class TokenInvalidDeletedException(BaseOrcidPusherException):
+    """
+    The underneath Orcid service client response raised
+    TokenInvalidException or TokenMismatchException or TokenWithWrongPermissionException.
+    The token was then deleted from our db.
+    """
+    pass

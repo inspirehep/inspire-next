@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 import logging
 
 from flask import current_app
+from fqn_decorators.decorators import get_fqn
 from redis import StrictRedis
 from pytest import fixture, mark
 from mock import patch
@@ -32,6 +33,7 @@ from simplejson import dumps
 
 from factories.db.invenio_records import TestRecordMetadata
 
+from inspirehep.modules.orcid import push_access_tokens
 from inspirehep.modules.orcid.tasks import (
     USER_EMAIL_EMPTY_PATTERN,
     import_legacy_orcid_tokens,
@@ -132,7 +134,7 @@ def redis_setup(app):
 
 
 @fixture(scope='function')
-def app_with_config(app):
+def app_with_config(isolated_app):
     config = {
         'ORCID_APP_CREDENTIALS': {
             'consumer_key': '0000-0000-0000-0000'
@@ -141,12 +143,12 @@ def app_with_config(app):
     # Disable logging.
     logging.getLogger('inspirehep.modules.orcid.tasks').disabled = logging.CRITICAL
     with patch.dict(current_app.config, config):
-        yield app
+        yield isolated_app
     logging.getLogger('inspirehep.modules.orcid.tasks').disabled = 0
 
 
 @fixture(scope='function')
-def app_without_config(app):
+def app_without_config(isolated_app):
     config = {
         'ORCID_APP_CREDENTIALS': {
             'consumer_key': None
@@ -154,7 +156,7 @@ def app_without_config(app):
     }
     logging.getLogger('inspirehep.modules.orcid.tasks').disabled = logging.CRITICAL
     with patch.dict(current_app.config, config):
-        yield app
+        yield isolated_app
     logging.getLogger('inspirehep.modules.orcid.tasks').disabled = 0
 
 
@@ -358,10 +360,17 @@ class TestImportLegacyOrcidTokens(object):
         self._patcher_logger = patch('inspirehep.modules.orcid.tasks.LOGGER')
         self.mock_logger = self._patcher_logger.start()
 
+    def setup_method(self, method):
+        push_access_tokens.CACHE_PREFIX = get_fqn(method)
+        self.CACHE_EXPIRE_ORIG = push_access_tokens.CACHE_EXPIRE
+        push_access_tokens.CACHE_EXPIRE = 2  # Sec.
+
     def teardown(self):
         self._patcher_legacy_orcid_arrays.stop()
         self._patcher_orcid_push.stop()
         self.mock_logger.stop()
+        push_access_tokens.CACHE_PREFIX = None
+        push_access_tokens.CACHE_EXPIRE = self.CACHE_EXPIRE_ORIG
 
     def _assert_user_and_token_models(self, orcid, token, email, name):
         user = User.query.filter_by(email=email).one_or_none()
@@ -438,6 +447,22 @@ class TestImportLegacyOrcidTokens(object):
 
         self._assert_user_and_token_models(self.orcid, token, email, name)
         assert self.mock_logger.exception.call_count == 1
+
+    def test_invalid_token(self):
+        token = 'mytoken'
+        email = 'myemail@me.com'
+        name = 'myname'
+        cache = push_access_tokens._OrcidInvalidTokensCache(token)
+        cache.write_invalid_token(self.orcid)
+        self.mock_legacy_orcid_arrays.return_value = (
+            (self.orcid, token, email, name),
+        )
+
+        import_legacy_orcid_tokens()
+
+        self.mock_orcid_push.apply_async.assert_not_called()
+        assert not User.query.filter_by(email=email).one_or_none()
+        self.mock_logger.exception.assert_not_called()
 
     def test_empty_name(self):
         token = 'mytoken'

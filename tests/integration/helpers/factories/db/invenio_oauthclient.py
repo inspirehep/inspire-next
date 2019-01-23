@@ -153,14 +153,14 @@ class TestRemoteToken(TestBaseModel):
         return instance
 
     @classmethod
-    def create_for_remote_account(cls, remote_account):
-        return cls.create_from_kwargs(remote_account=remote_account)
+    def create_for_remote_account(cls, remote_account, **kwargs):
+        return cls.create_from_kwargs(remote_account=remote_account, **kwargs)
 
     @classmethod
-    def create_for_orcid(cls, orcid, allow_push=True):
+    def create_for_orcid(cls, orcid, allow_push=True, **kwargs):
         factory_user_identity = TestUserIdentity.create_for_orcid(orcid)
         extra_data = dict(allow_push=allow_push, orcid=orcid)
         factory_remote_account = TestRemoteAccount.create_for_user(
             factory_user_identity.user, extra_data=extra_data)
         db.session.flush()
-        return cls.create_for_remote_account(factory_remote_account.remote_account)
+        return cls.create_for_remote_account(factory_remote_account.remote_account, **kwargs)

@@ -38,8 +38,9 @@ from inspirehep.modules.orcid import (
     domain_models,
 )
 from inspirehep.modules.orcid.cache import OrcidCache
-from inspirehep.modules.orcid import exceptions as domain_exceptions
+from inspirehep.modules.orcid import exceptions as domain_exceptions, push_access_tokens
 
+from factories.db.invenio_oauthclient import TestRemoteToken
 from factories.db.invenio_records import TestRecordMetadata
 from utils import override_config
 
@@ -57,11 +58,16 @@ class TestOrcidPusherBase(object):
 
     def setup_method(self, method):
         cache_module.CACHE_PREFIX = get_fqn(method)
+        push_access_tokens.CACHE_PREFIX = get_fqn(method)
+        self.CACHE_EXPIRE_ORIG = push_access_tokens.CACHE_EXPIRE
+        push_access_tokens.CACHE_EXPIRE = 2  # Sec.
 
     def teardown(self):
         self.cache.delete_work_putcode()
         logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = 0
         cache_module.CACHE_PREFIX = None
+        push_access_tokens.CACHE_PREFIX = None
+        push_access_tokens.CACHE_EXPIRE = self.CACHE_EXPIRE_ORIG
 
 
 @pytest.mark.usefixtures('isolated_app')
@@ -139,9 +145,13 @@ class TestOrcidPusherPutUpdatedWork(TestOrcidPusherBase):
             pusher.push()
 
     def test_push_updated_work_invalid_data_token(self):
-        pusher = domain_models.OrcidPusher(self.orcid, self.recid, 'tokeninvalid')
-        with pytest.raises(exceptions.InputDataInvalidException):
+        access_token = 'tokeninvalid'
+        TestRemoteToken.create_for_orcid(self.orcid, access_token=access_token)
+        pusher = domain_models.OrcidPusher(self.orcid, self.recid, access_token)
+        with pytest.raises(exceptions.TokenInvalidDeletedException):
             pusher.push()
+        assert not push_access_tokens.get_access_tokens([self.orcid])
+        assert push_access_tokens.is_access_token_invalid(access_token)
 
     def test_push_updated_work_invalid_data_putcode(self):
         self.cache.write_work_putcode('00000')
@@ -175,9 +185,13 @@ class TestOrcidPusherPostNewWork(TestOrcidPusherBase):
             pusher.push()
 
     def test_push_new_work_invalid_data_token(self):
-        pusher = domain_models.OrcidPusher(self.orcid, self.recid, 'tokeninvalid')
-        with pytest.raises(exceptions.InputDataInvalidException):
+        access_token = 'tokeninvalid'
+        TestRemoteToken.create_for_orcid(self.orcid, access_token=access_token)
+        pusher = domain_models.OrcidPusher(self.orcid, self.recid, access_token)
+        with pytest.raises(exceptions.TokenInvalidDeletedException):
             pusher.push()
+        assert not push_access_tokens.get_access_tokens([self.orcid])
+        assert push_access_tokens.is_access_token_invalid(access_token)
 
     def test_push_new_work_invalid_data_xml(self):
         # Note: the recorded cassette returns (magically) a proper error.
@@ -252,6 +266,17 @@ class TestOrcidPusherDeleteWork(TestOrcidPusherBase):
 
         pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
         assert not pusher.push()
+
+    def test_delete_work_invalid_token(self):
+        access_token = 'tokeninvalid'
+        TestRemoteToken.create_for_orcid(self.orcid, access_token=access_token)
+        pusher = domain_models.OrcidPusher(self.orcid, self.recid, access_token)
+        # ORCID_APP_CREDENTIALS is required because ORCID adds it as source_client_id_path.
+        with override_config(ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}), \
+                pytest.raises(exceptions.TokenInvalidDeletedException):
+            pusher.push()
+        assert not push_access_tokens.get_access_tokens([self.orcid])
+        assert push_access_tokens.is_access_token_invalid(access_token)
 
 
 @pytest.mark.usefixtures('isolated_app')

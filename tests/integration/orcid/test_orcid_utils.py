@@ -39,12 +39,9 @@ from inspirehep.modules.orcid.utils import (
     apply_celery_task_with_retry,
     get_literature_recids_for_orcid,
     get_orcids_for_push,
-    get_push_access_tokens,
     RetryMixin,
 )
 from inspirehep.utils.record_getter import get_db_record
-
-from factories.db.invenio_oauthclient import TestRemoteToken
 
 
 @pytest.fixture(scope='function')
@@ -239,44 +236,6 @@ def test_get_literature_recids_for_orcid_still_works_if_author_has_no_orcid_id(i
 
     with pytest.raises(NoResultFound):
         get_literature_recids_for_orcid('0000-0003-4792-9178')
-
-
-class TestGetPushAccessTokens(object):
-    def test_get_push_access_tokens_single_token(self, isolated_app):
-        orcid = '0000-0003-4792-9178'
-        expected_remote_token = TestRemoteToken.create_for_orcid(orcid).remote_token
-
-        orcids_and_tokens = get_push_access_tokens([orcid])
-
-        assert len(orcids_and_tokens) == 1
-        assert orcids_and_tokens[0].id == orcid
-        assert orcids_and_tokens[0].access_token == expected_remote_token.access_token
-
-    def test_get_push_access_tokens_multiple_tokens(self, isolated_app):
-        orcid1 = '0000-0003-4792-9178'
-        expected_remote_token1 = TestRemoteToken.create_for_orcid(orcid1).remote_token
-        orcid2 = '0000-0003-4792-9179'
-        expected_remote_token2 = TestRemoteToken.create_for_orcid(orcid2).remote_token
-
-        orcids_and_tokens = get_push_access_tokens([orcid1, orcid2])
-
-        assert len(orcids_and_tokens) == 2
-        assert orcids_and_tokens[0].id == orcid1
-        assert orcids_and_tokens[0].access_token == expected_remote_token1.access_token
-        assert orcids_and_tokens[1].id == orcid2
-        assert orcids_and_tokens[1].access_token == expected_remote_token2.access_token
-
-    def test_get_push_access_tokens_allow_push(self, isolated_app):
-        orcid1 = '0000-0003-4792-9178'
-        expected_remote_token = TestRemoteToken.create_for_orcid(orcid1).remote_token
-        orcid2 = '0000-0003-4792-9179'
-        TestRemoteToken.create_for_orcid(orcid2, allow_push=False).remote_token
-
-        orcids_and_tokens = get_push_access_tokens([orcid1, orcid2])
-
-        assert len(orcids_and_tokens) == 1
-        assert orcids_and_tokens[0].id == orcid1
-        assert orcids_and_tokens[0].access_token == expected_remote_token.access_token
 
 
 @shared_task(bind=True)
