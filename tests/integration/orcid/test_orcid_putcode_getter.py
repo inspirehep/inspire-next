@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import logging
+import mock
 import pytest
 
 from inspirehep.modules.orcid import exceptions
@@ -65,9 +66,12 @@ class TestOrcidPutcodeGetter(object):
         assert putcodes_recids == [('51341099', '20'), ('51341192', '20')]
 
     def test_token_invalid(self):
-        putcode_getter = OrcidPutcodeGetter(self.orcid, 'invalid')
-        with pytest.raises(exceptions.InputDataInvalidException):
-            list(putcode_getter.get_all_inspire_putcodes_and_recids_iter())
+        token = 'invalid'
+        putcode_getter = OrcidPutcodeGetter(self.orcid, token)
+        with pytest.raises(exceptions.TokenInvalidDeletedException), \
+                mock.patch('inspirehep.modules.orcid.push_access_tokens.delete_access_token') as mock_delete_access_token:
+                list(putcode_getter.get_all_inspire_putcodes_and_recids_iter())
+        mock_delete_access_token.assert_called_once_with(token, self.orcid)
 
     def test_putcode_not_found(self):
         self.orcid = '0000-0002-0942-3697'

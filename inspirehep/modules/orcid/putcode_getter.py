@@ -33,7 +33,7 @@ from inspire_service_orcid import utils as inspire_service_orcid_utils
 
 from inspirehep.modules.orcid.converter import ExternalIdentifier
 from inspirehep.modules.records.utils import get_pid_from_record_uri
-from . import exceptions, utils
+from . import exceptions, push_access_tokens, utils
 
 
 INSPIRE_WORK_URL_REGEX = re.compile(
@@ -83,6 +83,13 @@ class OrcidPutcodeGetter(object):
         utils.log_service_response(logger, response, 'in OrcidPutcodeGetter works summary')
         try:
             response.raise_for_result()
+        except (orcid_client_exceptions.TokenInvalidException,
+                orcid_client_exceptions.TokenMismatchException,
+                orcid_client_exceptions.TokenWithWrongPermissionException):
+            logger.info('OrcidPutcodeGetter: deleting Orcid push access token={} for orcid={}'.format(
+                self.oauth_token, self.orcid))
+            push_access_tokens.delete_access_token(self.oauth_token, self.orcid)
+            raise exceptions.TokenInvalidDeletedException
         except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
             raise exceptions.InputDataInvalidException(from_exc=exc)
         return response

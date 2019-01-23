@@ -1018,9 +1018,9 @@ class TestPushToOrcid(object):
         with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
                              FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*',
                              ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}), \
-                mock.patch('inspirehep.modules.records.receivers.get_push_access_tokens') as mock_get_push_access_tokens, \
+                mock.patch('inspirehep.modules.records.receivers.push_access_tokens') as mock_push_access_tokens, \
                 mock.patch('inspirehep.modules.orcid.tasks.orcid_push.apply_async') as mock_apply_async:
-            mock_get_push_access_tokens.return_value = [('myorcid', 'mytoken')]
+            mock_push_access_tokens.get_access_tokens.return_value = [('myorcid', 'mytoken')]
             inspire_record.commit()
             mock_apply_async.assert_called_once_with(
                 kwargs={'orcid': 'myorcid',
@@ -1050,9 +1050,9 @@ class TestPushToOrcid(object):
         with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
                              FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*',
                              ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}), \
-                mock.patch('inspirehep.modules.records.receivers.get_push_access_tokens') as mock_get_push_access_tokens, \
+                mock.patch('inspirehep.modules.records.receivers.push_access_tokens') as mock_push_access_tokens, \
                 mock.patch('inspirehep.modules.orcid.tasks.orcid_push.apply_async') as mock_apply_async:
-            mock_get_push_access_tokens.return_value = [('myorcid', 'mytoken')]
+            mock_push_access_tokens.get_access_tokens.return_value = [('myorcid', 'mytoken')]
             inspire_record.commit()
             mock_apply_async.assert_called_once_with(
                 kwargs={'orcid': 'myorcid',
