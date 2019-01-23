@@ -30,6 +30,7 @@ import mock
 
 from elasticsearch import NotFoundError
 
+from inspire_schemas.readers import LiteratureReader
 from invenio_db import db
 from invenio_oauthclient.utils import oauth_link_external_id
 from invenio_oauthclient.models import (
@@ -46,7 +47,6 @@ from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.errors import MissingInspireRecordError, MissingCitedRecordError
 from inspirehep.modules.records.tasks import index_modified_citations_from_record
 from inspirehep.modules.search import LiteratureSearch
-from inspirehep.utils.record import get_title
 from inspirehep.utils.record_getter import get_es_record, RecordGetterError, get_db_record
 
 
@@ -345,7 +345,7 @@ def test_that_db_changes_are_mirrored_in_es(app):
     db.session.commit()
     es_record = search.get_source(record.id)
 
-    assert get_title(es_record) == 'foo'
+    assert LiteratureReader(es_record).title == 'foo'
 
     # When a record is updated in the DB, is is also updated in ES.
 
@@ -354,7 +354,7 @@ def test_that_db_changes_are_mirrored_in_es(app):
     db.session.commit()
     es_record = search.get_source(record.id)
 
-    assert get_title(es_record) == 'bar'
+    assert LiteratureReader(es_record).title == 'bar'
 
     # When a record is deleted in the DB, it is also deleted in ES.
 

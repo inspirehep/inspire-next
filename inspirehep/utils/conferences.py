@@ -22,9 +22,10 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspire_schemas.readers import LiteratureReader
+
 from inspirehep.modules.search import ConferencesSearch, LiteratureSearch
 from inspirehep.utils.jinja2 import render_template_to_string
-from inspirehep.utils.record import get_title
 from inspirehep.utils.template import render_macro_from_template
 
 
@@ -120,10 +121,11 @@ def render_contributions(hits):
 
     for hit in hits:
         row = []
+        title = LiteratureReader(hit.to_dict()).title
         row.append(
             title_html.format(
                 id=hit.control_number,
-                name=get_title(hit.to_dict())
+                name=title
             )
         )
         ctx = {

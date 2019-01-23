@@ -28,12 +28,12 @@ import datetime
 from flask import current_app
 from idutils import is_arxiv_post_2007
 from inspire_schemas.api import LiteratureBuilder
+from inspire_schemas.readers import LiteratureReader
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
 
 from inspirehep.modules.forms.utils import filter_empty_elements
 from inspirehep.modules.workflows.utils import with_debug_logging
-from inspirehep.utils.record import get_title
 
 
 def formdata_to_model(obj, formdata):
@@ -209,7 +209,7 @@ def formdata_to_model(obj, formdata):
 
 def new_ticket_context(user, obj):
     """Context for literature new tickets."""
-    title = get_title(obj.data)
+    title = LiteratureReader(obj.data).title
     subject = u"Your suggestion to INSPIRE: {0}".format(title)
     user_comment = obj.extra_data.get('formdata', {}).get('extra_comments', '')
     identifiers = get_value(obj.data, "external_system_numbers.value") or []
@@ -229,7 +229,7 @@ def reply_ticket_context(user, obj):
     return dict(
         object=obj,
         user=user,
-        title=get_title(obj.data),
+        title=LiteratureReader(obj.data).title,
         reason=obj.extra_data.get("reason", ""),
         record_url=obj.extra_data.get("url", ""),
     )

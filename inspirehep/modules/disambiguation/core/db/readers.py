@@ -28,18 +28,13 @@ from elasticsearch_dsl import Q
 from sqlalchemy import type_coerce
 from sqlalchemy.dialects.postgresql import JSONB
 
+from inspire_schemas.readers import LiteratureReader
 from invenio_records.models import RecordMetadata
 
 from inspire_dojson.utils import get_recid_from_ref
 from inspire_utils.record import get_value
 from inspirehep.modules.search.api import LiteratureSearch
-from inspirehep.utils.record import (
-    get_abstract,
-    get_collaborations,
-    get_inspire_categories,
-    get_keywords,
-    get_title,
-)
+
 
 SIGNATURE_FIELDS = [
     'authors.affiliations.value',
@@ -132,14 +127,15 @@ def get_all_publications():
 
 
 def _build_publication(record):
+    reader = LiteratureReader(record)
     return {
-        'abstract': get_abstract(record),
+        'abstract': reader.abstract,
         'authors': _get_authors(record),
-        'collaborations': get_collaborations(record),
-        'keywords': get_keywords(record),
+        'collaborations': reader.collaborations,
+        'keywords': reader.keywords,
         'publication_id': record['control_number'],
-        'title': get_title(record),
-        'topics': get_inspire_categories(record),
+        'title': reader.title,
+        'topics': reader.inspire_categories,
     }
 
 
