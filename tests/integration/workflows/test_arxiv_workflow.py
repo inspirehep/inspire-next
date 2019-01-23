@@ -1057,12 +1057,13 @@ def test_do_not_repeat(
     expected_persistent_data_first_run = {
         'one': {'id': 1},
         'two': {'id': 2}
-    }
+    }.viewitems()
+
     expected_persistent_data_second_run = {
         'one': {'id': 1},
         'two': {'id': 2},
         'three': {'id': 43},
-    }
+    }.viewitems()
 
     record = generate_record()
 
@@ -1080,10 +1081,10 @@ def test_do_not_repeat(
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
 
-        assert obj.status == ObjectStatus.COMPLETED
-        assert obj.extra_data['source_data']['persistent_data']
-        assert obj.extra_data['source_data']['persistent_data'] == expected_persistent_data_first_run
+        persistent_data = obj.extra_data['source_data']['persistent_data'].viewitems()
+        assert expected_persistent_data_first_run <= persistent_data
         assert obj.extra_data['id'] == 2
+        assert obj.status == ObjectStatus.COMPLETED
 
         eng = WorkflowEngine.from_uuid(obj.id_workflow)
         eng.callbacks.replace(custom_wf_steps_to_repeat)
@@ -1094,7 +1095,9 @@ def test_do_not_repeat(
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
-        assert obj.extra_data['source_data']['persistent_data'] == expected_persistent_data_second_run
+
+        persistent_data = obj.extra_data['source_data']['persistent_data'].viewitems()
+        assert expected_persistent_data_second_run <= persistent_data
         assert obj.extra_data['id'] == 43
 
 
@@ -1220,3 +1223,54 @@ def test_workflow_without_validation_error(
 
     assert fake_validation.call_count == 2
     assert workflow.status == ObjectStatus.WAITING
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
+    return_value=True
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+def test_workflow_restart_count_initialized_properly(
+    mocked_api_request_magpie,
+    mocked_api_request_beard,
+    mocked_is_pdf_link,
+    mocked_package_download,
+    mocked_arxiv_download,
+    workflow_app,
+    mocked_external_services,
+):
+    """Test a full harvesting workflow."""
+    record = generate_record()
+
+    with workflow_app.app_context():
+        obj_id = build_workflow(record).id
+        start('article', object_id=obj_id)
+
+        obj = workflow_object_class.get(obj_id)
+
+        assert obj.extra_data['source_data']['persistent_data']['marks']['restart-count'] == 0
+        assert obj.extra_data['restart-count'] == 0
+
+        obj.callback_pos = [0]
+        obj.save()
+        db.session.commit()
+
+        start('article', object_id=obj_id)
+
+        assert obj.extra_data['source_data']['persistent_data']['marks']['restart-count'] == 1
+        assert obj.extra_data['restart-count'] == 1

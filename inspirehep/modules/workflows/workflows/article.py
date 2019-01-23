@@ -44,7 +44,9 @@ from inspirehep.modules.workflows.tasks.actions import (
     download_documents,
     error_workflow,
     fix_submission_number,
+    go_to_first_step,
     halt_record,
+    increase_restart_count_or_error,
     is_arxiv_paper,
     is_experimental_paper,
     is_marked,
@@ -96,6 +98,7 @@ from inspirehep.modules.workflows.tasks.merging import (
     merge_articles,
 )
 from inspirehep.modules.workflows.tasks.upload import (
+    is_stale_data,
     set_schema,
     store_record,
     store_root,
@@ -336,6 +339,10 @@ HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
 
 
 STORE_RECORD = [
+    IF(
+        is_stale_data,
+        go_to_first_step
+    ),
     store_record,
     store_root,
 ]
@@ -497,12 +504,14 @@ INIT_MARKS = [
     mark('stopped-matched-holdingpen-wf', None),
     mark('approved', None),
     mark('unexpected-workflow-path', None),
-    save_workflow
+    do_not_repeat('marks')(mark('restart-count', 0)),
+    save_workflow,
 ]
 
 
 PRE_PROCESSING = [
     load_from_source_data,
+    increase_restart_count_or_error,
     # Make sure schema is set for proper indexing in Holding Pen
     set_schema,
     INIT_MARKS,

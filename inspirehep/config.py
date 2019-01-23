@@ -1257,6 +1257,9 @@ WORKFLOWS_DEFAULT_FILE_LOCATION_NAME = "holdingpen"
 WORKFLOWS_OBJECT_CLASS = "invenio_workflows_files.api.WorkflowObject"
 """Enable obj.files API."""
 
+WORKFLOWS_RESTART_LIMIT = 3
+"""Max number of times a workflow can be restarted."""
+
 WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
 WORKFLOWS_UI_INDEX_TEMPLATE = "inspire_workflows/index.html"
 WORKFLOWS_UI_LIST_TEMPLATE = "inspire_workflows/list.html"
