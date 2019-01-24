@@ -276,7 +276,7 @@ POSTENHANCE_RECORD = [
 
 
 SEND_TO_LEGACY = [
-    send_to_legacy,
+    send_to_legacy(priority_config_key='LEGACY_ROBOTUPLOAD_PRIORITY_ARTICLE'),
 ]
 
 

@@ -54,9 +54,7 @@ from inspirehep.modules.workflows.utils import do_not_repeat
 
 
 SEND_TO_LEGACY = [
-    send_robotupload(
-        mode="insert"
-    ),
+    send_robotupload(mode="insert", priority_config_key='LEGACY_ROBOTUPLOAD_PRIORITY_AUTHOR'),
 ]
 
 

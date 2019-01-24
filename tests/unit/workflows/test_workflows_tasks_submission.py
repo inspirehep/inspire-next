@@ -994,7 +994,7 @@ def test_send_robotupload_update_article_when_feature_flag_is_disabled():
 
         expected_log = 'skipping upload to legacy, feature flag ``FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY`` is disabled.'
 
-        assert send_to_legacy(obj, eng) is None
+        assert send_to_legacy()(obj, eng) is None
         assert expected_log in obj.log._info.getvalue()
 
 
@@ -1024,7 +1024,7 @@ def test_send_robotupload_update_article_when_feature_flag_is_enabled():
             obj = MockObj(data, extra_data)
             eng = MockEng()
 
-            assert send_to_legacy(obj, eng) is None
+            assert send_to_legacy()(obj, eng) is None
 
             expected = (
                 'Robotupload sent!'

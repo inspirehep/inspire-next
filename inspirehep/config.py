@@ -1208,6 +1208,9 @@ INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 # ==========
 LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 LEGACY_MATCH_ENDPOINT = "http://inspirehep.net/search"
+LEGACY_ROBOTUPLOAD_PRIORITY_ARTICLE = 4
+LEGACY_ROBOTUPLOAD_PRIORITY_AUTHOR = 4
+LEGACY_ROBOTUPLOAD_PRIORITY_EDIT_ARTICLE = 5
 
 # Web services and APIs
 # =====================
