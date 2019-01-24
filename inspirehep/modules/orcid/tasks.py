@@ -35,6 +35,7 @@ from celery.exceptions import SoftTimeLimitExceeded
 from redis import StrictRedis
 from requests.exceptions import RequestException
 from simplejson import loads
+from sqlalchemy.orm.exc import FlushError
 from time_execution import time_execution
 
 from invenio_oauthclient.utils import oauth_link_external_id
@@ -46,7 +47,7 @@ from inspire_utils.record import get_value
 from inspirehep.modules.orcid import exceptions as domain_exceptions
 from inspirehep.modules.orcid.utils import get_literature_recids_for_orcid
 
-from . import domain_models
+from . import domain_models, push_access_tokens
 
 
 LOGGER = getStackTraceLogger(__name__)
@@ -90,7 +91,8 @@ def _link_user_and_token(user, name, orcid, access_token):
             'id': orcid,
             'method': 'orcid'
         })
-    except AlreadyLinkedError:
+    # Note: AlreadyLinkedError becomes FlushError when testing with isolated_app.
+    except (AlreadyLinkedError, FlushError):
         # User already has their ORCID linked
         pass
 
@@ -208,6 +210,8 @@ def import_legacy_orcid_tokens(self):
     for user_data in legacy_orcid_arrays():
         try:
             orcid, token, email, name = user_data
+            if push_access_tokens.is_access_token_invalid(token):
+                continue
             orcid_to_push = _register_user(name, email, orcid, token)
             if orcid_to_push:
                 LOGGER.info(
@@ -261,7 +265,7 @@ def orcid_push(self, orcid, rec_id, oauth_token, kwargs_to_pusher=None):
 
     try:
         pusher = domain_models.OrcidPusher(orcid, rec_id, oauth_token, **kwargs_to_pusher)
-        pusher.push()
+        putcode = pusher.push()
         LOGGER.info('Orcid_push task for recid={} and orcid={} successfully completed'.format(rec_id, orcid))
     except (RequestException, SoftTimeLimitExceeded) as exc:
         # Trigger a retry only in case of network-related issues.
@@ -299,6 +303,7 @@ def orcid_push(self, orcid, rec_id, oauth_token, kwargs_to_pusher=None):
             ' exception={}'.format(
                 rec_id, orcid, traceback.format_exc()))
         raise
+    return putcode
 
 
 def _find_user_matching(orcid, email):

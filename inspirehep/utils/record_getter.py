@@ -59,7 +59,7 @@ def raise_record_getter_error_and_log(f):
             return f(*args, **kwargs)
         except Exception as e:
             current_app.logger.exception("Can't load recid %s", args)
-            raise RecordGetterError(e.message, e)
+            raise RecordGetterError(str(e), e)
 
     return wrapper
 

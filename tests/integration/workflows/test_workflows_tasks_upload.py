@@ -31,7 +31,11 @@ from factories.db.invenio_records import TestRecordMetadata
 
 # FIXME: otherwise this task is not found by Celery.
 from inspirehep.modules.orcid.tasks import orcid_push  # noqa: F401
-from inspirehep.modules.workflows.tasks.upload import store_root, store_record
+from inspirehep.modules.workflows.tasks.upload import (
+    is_stale_data,
+    store_root,
+    store_record,
+)
 from inspirehep.modules.workflows.utils import (
     insert_wf_record_source,
     read_wf_record_source,
@@ -143,3 +147,29 @@ def test_store_root_update_record(workflow_app):
         root_entry = read_wf_record_source(head_uuid, 'arxiv')
 
         assert root_entry.json == update_root
+
+
+def test_is_stale_data_is_false(workflow_app):
+    head = TestRecordMetadata.create_from_kwargs(index=False, has_pid=False)
+    obj = workflow_object_class.create({})
+    obj.extra_data['is-update'] = True
+    obj.extra_data['head_uuid'] = head.record_metadata.id
+    obj.extra_data['head_version_id'] = head.record_metadata.version_id
+
+    assert is_stale_data(obj, None) is False
+
+
+def test_is_stale_data_is_true(workflow_app):
+    head = TestRecordMetadata.create_from_kwargs(index=False, has_pid=False)
+    obj = workflow_object_class.create({})
+    obj.extra_data['is-update'] = True
+    obj.extra_data['head_uuid'] = head.record_metadata.id
+    obj.extra_data['head_version_id'] = head.record_metadata.version_id - 1
+
+    assert is_stale_data(obj, None)
+
+
+def test_is_stale_data_returns_false_if_is_update_is_falsy(workflow_app):
+    TestRecordMetadata.create_from_kwargs(index=False, has_pid=False)
+    obj = workflow_object_class.create({})
+    assert is_stale_data(obj, None) is False

@@ -27,9 +27,11 @@ from __future__ import absolute_import, division, print_function
 import json
 
 import pytest
+from sqlalchemy_continuum import transaction_class
 from invenio_workflows import ObjectStatus, WorkflowEngine, start, workflow_object_class
 from invenio_accounts.testutils import login_user_via_session
 from invenio_accounts.models import User
+from invenio_records.models import RecordMetadata
 from elasticsearch import NotFoundError
 
 from inspirehep.utils.tickets import get_rt_link_for_ticket
@@ -44,7 +46,8 @@ from factories.db.invenio_records import TestRecordMetadata
 @pytest.fixture(scope='function')
 def edit_workflow(workflow_app):
     app_client = workflow_app.test_client()
-    login_user_via_session(app_client, email='admin@inspirehep.net')
+    user = User.query.filter_by(email='admin@inspirehep.net').one()
+    login_user_via_session(app_client, user=user)
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -126,7 +129,8 @@ def test_edit_article_view_wrong_recid(workflow_api_client):
 
 def test_edit_article_workflow(workflow_app, mocked_external_services):
     app_client = workflow_app.test_client()
-    login_user_via_session(app_client, email='admin@inspirehep.net')
+    user = User.query.filter_by(email='admin@inspirehep.net').one()
+    login_user_via_session(app_client, user=user)
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -150,6 +154,9 @@ def test_edit_article_workflow(workflow_app, mocked_external_services):
 
     assert obj.status == ObjectStatus.WAITING
     assert obj.extra_data['callback_url']
+
+    user_id = user.get_id()
+    obj.id_user = user_id
 
     # simulate changes in the editor and save
     new_title = 'Somebody edited this fancy title'
@@ -180,6 +187,13 @@ def test_edit_article_workflow(workflow_app, mocked_external_services):
     record = get_db_record('lit', 123)
     assert record['titles'][0]['title'] == new_title
 
+    # assert record edit transaction is by user who created the edit workflow
+    revision = record.revisions[record.revision_id]
+    transaction_id = revision.model.transaction_id
+    Transaction = transaction_class(RecordMetadata)
+    transaction = Transaction.query.filter(Transaction.id == transaction_id).one()
+    assert transaction.user_id == int(user_id)
+
     obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
     assert obj.status == ObjectStatus.COMPLETED
     pending_records = WorkflowsPendingRecord.query.filter_by(workflow_id=obj.id).all()
@@ -188,7 +202,8 @@ def test_edit_article_workflow(workflow_app, mocked_external_services):
 
 def test_edit_article_workflow_deleting(workflow_app, mocked_external_services):
     app_client = workflow_app.test_client()
-    login_user_via_session(app_client, email='admin@inspirehep.net')
+    user = User.query.filter_by(email='admin@inspirehep.net').one()
+    login_user_via_session(app_client, user=user)
 
     record = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -209,6 +224,8 @@ def test_edit_article_workflow_deleting(workflow_app, mocked_external_services):
     factory = TestRecordMetadata.create_from_kwargs(json=record)
     eng_uuid = start('edit_article', data=factory.record_metadata.json)
     obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
+
+    obj.id_user = user.get_id()
 
     assert obj.status == ObjectStatus.WAITING
     assert obj.extra_data['callback_url']
@@ -342,7 +359,7 @@ def test_edit_article_callback_redirects_to_rt(
     assert data['redirect_url'] == expected_redirect
 
 
-def test_edit_article_callback_redirects_to_root_if_no_referrer(
+def test_edit_article_callback_does_not_have_redirect_url_if_no_ticket_id(
     edit_workflow,
     workflow_api_client,
     mocked_external_services,
@@ -363,9 +380,6 @@ def test_edit_article_callback_redirects_to_root_if_no_referrer(
         content_type='application/json',
     )
 
-    expected_redirect = 'http://%s/' % workflow_app.config['SERVER_NAME']
-
     assert response.status_code == 200
     data = json.loads(response.data)
-    assert 'redirect_url' in data
-    assert data['redirect_url'] == expected_redirect
+    assert 'redirect_url' not in data

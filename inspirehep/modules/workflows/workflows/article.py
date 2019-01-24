@@ -44,7 +44,9 @@ from inspirehep.modules.workflows.tasks.actions import (
     download_documents,
     error_workflow,
     fix_submission_number,
+    go_to_first_step,
     halt_record,
+    increase_restart_count_or_error,
     is_arxiv_paper,
     is_experimental_paper,
     is_marked,
@@ -63,6 +65,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     set_refereed_and_fix_document_type,
     validate_record,
     jlab_ticket_needed,
+    delay_if_necessary
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -77,9 +80,6 @@ from inspirehep.modules.workflows.tasks.magpie import (
 )
 from inspirehep.modules.workflows.tasks.matching import (
     stop_processing,
-    raise_if_match_wf_in_error_or_initial,
-    match_non_completed_wf_in_holdingpen,
-    match_previously_rejected_wf_in_holdingpen,
     exact_match,
     fuzzy_match,
     is_fuzzy_match_approved,
@@ -88,14 +88,19 @@ from inspirehep.modules.workflows.tasks.matching import (
     has_same_source,
     stop_matched_holdingpen_wfs,
     auto_approve,
+    run_next_if_necessary,
     set_core_in_extra_data,
     has_more_than_one_exact_match,
+    raise_if_match_workflow,
+    match_previously_rejected_wf_in_holdingpen,
+    match_non_completed_wf_in_holdingpen
 )
 from inspirehep.modules.workflows.tasks.merging import (
     has_conflicts,
     merge_articles,
 )
 from inspirehep.modules.workflows.tasks.upload import (
+    is_stale_data,
     set_schema,
     store_record,
     store_root,
@@ -273,7 +278,7 @@ POSTENHANCE_RECORD = [
 
 
 SEND_TO_LEGACY = [
-    send_to_legacy,
+    send_to_legacy(priority_config_key='LEGACY_ROBOTUPLOAD_PRIORITY_ARTICLE'),
 ]
 
 
@@ -332,17 +337,22 @@ HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
             ]
         ),
     ),
+    save_workflow
 ]
 
 
 STORE_RECORD = [
+    IF(
+        is_stale_data,
+        go_to_first_step
+    ),
     store_record,
     store_root,
 ]
 
 
 MARK_IF_MATCH_IN_HOLDINGPEN = [
-    raise_if_match_wf_in_error_or_initial,
+    raise_if_match_workflow,
     IF_ELSE(
         match_non_completed_wf_in_holdingpen,
         [
@@ -351,7 +361,6 @@ MARK_IF_MATCH_IN_HOLDINGPEN = [
         ],
         mark('already-in-holding-pen', False),
     ),
-
     IF_ELSE(
         match_previously_rejected_wf_in_holdingpen,
         [
@@ -389,7 +398,6 @@ PROCESS_HOLDINGPEN_MATCH_HARVEST = [
             ),
         ),
     ),
-
     IF_ELSE(
         is_marked('already-in-holding-pen'),
         IF_ELSE(
@@ -414,21 +422,17 @@ PROCESS_HOLDINGPEN_MATCH_HARVEST = [
 
 
 PROCESS_HOLDINGPEN_MATCH_SUBMISSION = [
-    IF(
-        is_marked('already-in-holding-pen'),
-        IF_ELSE(
-            has_same_source('holdingpen_matches'),
-            # form should detect this double submission
-            ERROR_WITH_UNEXPECTED_WORKFLOW_PATH,
+    IF_ELSE(
+        has_same_source('holdingpen_matches'),
+        # form should detect this double submission
+        ERROR_WITH_UNEXPECTED_WORKFLOW_PATH,
 
-            # stop the matched wf and continue this one
-            [
-                stop_matched_holdingpen_wfs,
-                mark('stopped-matched-holdingpen-wf', True),
-                save_workflow
-            ],
-
-        )
+        # stop the matched wf and continue this one
+        [
+            stop_matched_holdingpen_wfs,
+            mark('stopped-matched-holdingpen-wf', True),
+            save_workflow
+        ],
     )
 ]
 
@@ -497,16 +501,25 @@ INIT_MARKS = [
     mark('stopped-matched-holdingpen-wf', None),
     mark('approved', None),
     mark('unexpected-workflow-path', None),
-    save_workflow
+    do_not_repeat('marks')(mark('restart-count', 0)),
+    save_workflow,
 ]
 
 
 PRE_PROCESSING = [
+    delay_if_necessary,
     load_from_source_data,
+    increase_restart_count_or_error,
     # Make sure schema is set for proper indexing in Holding Pen
     set_schema,
     INIT_MARKS,
     validate_record('hep')
+]
+
+FIND_NEXT_AND_RUN_IF_NECESSARY = [
+
+    run_next_if_necessary
+
 ]
 
 
@@ -544,5 +557,6 @@ class Article(object):
                     close_ticket(ticket_id_key="ticket_id")
                 ),
             )
-        ]
+        ] +
+        FIND_NEXT_AND_RUN_IF_NECESSARY
     )

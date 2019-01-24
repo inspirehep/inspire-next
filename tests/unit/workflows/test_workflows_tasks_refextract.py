@@ -165,6 +165,17 @@ def test_extract_references_from_text_handles_unicode():
     assert len(result) > 0
 
 
+def test_refextract_references_from_text_removes_duplicate_urls():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    text = u'[4] CALICE Collaboration webpage. http://twiki.cern.ch/CALICE hello http://twiki.cern.ch/CALICE'
+    result = extract_references_from_text(text)
+
+    assert validate(result, subschema) is None
+    assert len(result[0]['reference']['urls']) == 1
+
+
 def test_extract_references_from_text_populates_raw_refs_source():
     text = u'Iskra Ł W et al 2017 Acta Phys. Pol. B 48 581'
 

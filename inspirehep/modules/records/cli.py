@@ -41,9 +41,15 @@ from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from flask import current_app
 from flask.cli import with_appcontext
 from invenio_records_files.models import RecordsBuckets
+from invenio_workflows import workflow_object_class, ObjectStatus
+from invenio_workflows.models import WorkflowObjectModel
 
-from inspirehep.utils.record_getter import get_db_record, get_es_record, \
-    RecordGetterError
+from inspirehep.utils.record_getter import (
+    get_db_record,
+    get_db_records,
+    get_es_record,
+    RecordGetterError,
+)
 from inspirehep.modules.records.checkers import check_unlinked_references
 from inspirehep.modules.records.tasks import batch_reindex
 
@@ -352,6 +358,72 @@ def handle_duplicates(remove_no_control_number, remove_duplicates,
         click.secho("Removed %s out of %s records which looks to be duplicates." % (
             removed_records, len(others)))
     db.session.commit()
+
+
+@check.command()
+@with_appcontext
+def find_arxiv_duplicates(starting_date=None):
+    """Finds arXiv paper created more than once.
+
+    After duplicates are detected, merged/deleted records are filtered out.
+
+    Example:
+        >> from datetime import datetime
+        >> date = datetime(2019, 01, 10)
+        >> dups = find_arxiv_duplicates(date)
+        >> dups
+        {'1812.10562': {'recids': [1711898, 1711919], 'wf_ids': [1387687, 1388915]}}
+
+    Args:
+        starting_date (datetime): date from which starting to search workflows
+
+    Returns:
+        (dict): a dictionary having as key the arXiv id and as value a
+        dictionary having two keys: `recids`, which is a list of control
+        numbers of the paper refering to the arXiv id key, and `wf_ids`,
+        which contains the list od ids of the workflows that created the
+        related records.
+    """
+    query = WorkflowObjectModel.query.\
+        with_entities(WorkflowObjectModel.id).\
+        filter(WorkflowObjectModel.status == ObjectStatus.COMPLETED).\
+        filter(cast(WorkflowObjectModel.data, JSONB).has_key('arxiv_eprints')).\
+        filter(cast(WorkflowObjectModel.data, JSONB).has_key('control_number'))   # noqa: W601
+
+    if starting_date:
+        query = query.filter(WorkflowObjectModel.created > starting_date)
+
+    workflows_ids = [wf_id for (wf_id,) in query.all()]
+    duplicates = dict()
+
+    with click.progressbar(workflows_ids, label='Processing workflows') as wf_iterator:
+        for wf_id in wf_iterator:
+            wf = workflow_object_class.get(wf_id)
+            recid = wf.data.get('control_number')
+            arxiv_id = wf.data['arxiv_eprints'][0]['value']
+
+            if arxiv_id not in duplicates:
+                duplicates[arxiv_id] = {'recids': [], 'wf_ids': []}
+
+            if recid not in duplicates[arxiv_id]['recids']:
+                duplicates[arxiv_id]['recids'].append(recid)
+                duplicates[arxiv_id]['wf_ids'].append(wf_id)
+
+    duplicates = {k: v for (k, v) in duplicates.items() if len(v['recids']) > 1}
+
+    with click.progressbar(duplicates, label='Removing merged records') as rec_iterator:
+        for arxiv_id in rec_iterator:
+            pids = [('lit', _id) for _id in duplicates[arxiv_id]['recids']]
+            records = get_db_records(pids)
+
+            for rec in records:
+                if rec.get('deleted'):
+                    idx = duplicates[arxiv_id]['recids'].index(rec['control_number'])
+                    del duplicates[arxiv_id]['recids'][idx]
+                    del duplicates[arxiv_id]['wf_ids'][idx]
+
+    click.secho('Found %d arXiv duplicates' % len(duplicates))
+    click.secho(json.dumps(duplicates))
 
 
 def _remove_records(records_ids):

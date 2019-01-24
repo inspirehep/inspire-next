@@ -43,11 +43,11 @@ from invenio_records.signals import (
 from inspire_utils.record import get_value
 
 from inspirehep.modules.authors.utils import phonetic_blocks
-from inspirehep.modules.orcid import tasks as orcid_tasks
-from inspirehep.modules.orcid.utils import (
-    get_push_access_tokens,
-    get_orcids_for_push,
+from inspirehep.modules.orcid import (
+    push_access_tokens,
+    tasks as orcid_tasks,
 )
+from inspirehep.modules.orcid.utils import get_orcids_for_push
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.errors import MissingInspireRecordError
@@ -139,7 +139,7 @@ def push_to_orcid(sender, record, *args, **kwargs):
         return
 
     orcids = get_orcids_for_push(record)
-    orcids_and_tokens = get_push_access_tokens(orcids)
+    orcids_and_tokens = push_access_tokens.get_access_tokens(orcids)
 
     kwargs_to_pusher = dict(record_db_version=record.model.version_id)
 

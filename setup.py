@@ -110,7 +110,7 @@ install_requires = [
     'numpy~=1.0,>=1.14.3',
     'plotextractor~=0.0,>=0.1.6',
     'pyOpenSSL~=17.0,>=17.5.0',
-    'pybtex~=0.0,>=0.21',
+    'pybtex==0.22',
     'python-redis-lock~=3.0,>=3.2.0',
     # TODO: remove once we figure out how to, see:
     # https://its.cern.ch/jira/browse/INSPIR-973
@@ -121,13 +121,17 @@ install_requires = [
     'scikit-learn~=0.0,>=0.19.1',
     'setproctitle~=1.0,>=1.1.10',
     'timeout-decorator~=0.0,>=0.4.0',
-    'timeexecution~=3.3.0,<4',
+    # Use a timeexecution fork, until https://github.com/kpn-digital/py-timeexecution/pull/38 gets merged.
+    # See ./requirements.txt
+    # 'timeexecution~=3.3.0,<4',
     # Pin urllib3 to version 1.23 as version 1.24 is incompatible with requirements
     # from python-requests (<1.24) (https://travis-ci.org/inspirehep/inspire-next/builds/388221674)
     'urllib3~=1.0,<1.24',
     'workflow~=2.0,>=2.1.3',
     'click~=6.7,<7.0',
     'pytz~=2018.7,>=2018.7',
+    'requests-oauthlib==1.0.0',
+    'oauthlib>=1.1.2,<3.0.0',
 ]
 
 docs_require = [
@@ -150,7 +154,7 @@ extras_require = {
         'ipdb~=0.0,>=0.10.3',
     ],
     'crawler-node': [
-        'hepcrawl~=11.0,>=11.0.0',
+        'hepcrawl~=12.0,>=12.0.0',
     ],
     'docs': docs_require,
     'tests': tests_require,

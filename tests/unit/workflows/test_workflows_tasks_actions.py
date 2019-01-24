@@ -201,7 +201,7 @@ def test_mark():
 
     foobar_mark = mark('foo', 'bar')
 
-    assert foobar_mark(obj, eng) is None
+    assert foobar_mark(obj, eng) == {'foo': 'bar'}
     assert obj.extra_data == {'foo': 'bar'}
 
 
@@ -211,7 +211,7 @@ def test_mark_overwrites():
 
     foobaz_mark = mark('foo', 'baz')
 
-    assert foobaz_mark(obj, eng) is None
+    assert foobaz_mark(obj, eng) == {'foo': 'baz'}
     assert obj.extra_data == {'foo': 'baz'}
 
 

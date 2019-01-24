@@ -30,6 +30,8 @@ from urlparse import urljoin, urlparse
 from flask import current_app, render_template
 from rt import ALL_QUEUES, AuthorizationError, Rt
 
+from invenio_cache import current_cache
+
 from .proxies import rt_instance
 
 
@@ -212,7 +214,15 @@ def get_queues():
 
     :rtype: dict - with ``name (string)``, ``id (integer)`` properties
     """
-    return _get_all_of("queue")
+    queues = current_cache.get('rt_queues')
+    if queues:
+        return queues
+    else:
+        queues = _get_all_of("queue")
+        if queues:
+            current_cache.set('rt_queues', queues, timeout=current_app.config.get(
+                'RT_QUEUES_CACHE_TIMEOUT', 86400))
+        return queues
 
 
 def get_users():
@@ -220,7 +230,15 @@ def get_users():
 
     :rtype: dict - with ``name (string)``, ``id (integer)`` properties
     """
-    return _get_all_of("user")
+    queues = current_cache.get('rt_users')
+    if queues:
+        return queues
+    else:
+        queues = _get_all_of("user")
+        if queues:
+            current_cache.set('rt_users', queues, timeout=current_app.config.get(
+                'RT_USERS_CACHE_TIMEOUT', 86400))
+        return queues
 
 
 @relogin_if_needed

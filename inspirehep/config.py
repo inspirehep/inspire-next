@@ -107,6 +107,8 @@ CACHE_REDIS_URL = "redis://localhost:6379/0"
 CACHE_TYPE = "redis"
 ACCOUNTS_SESSION_REDIS_URL = "redis://localhost:6379/2"
 ACCESS_CACHE = "invenio_cache:current_cache"
+RT_USERS_CACHE_TIMEOUT = 86400
+RT_QUEUES_CACHE_TIMEOUT = 86400
 
 # Files
 # =====
@@ -1068,6 +1070,12 @@ RECORDS_REST_SORT_OPTIONS = {
             "default_order": 'asc',  # Used for invenio-search-js config
             "order": 2,
         },
+        "bestmatch": {
+            "title": 'Best Match',
+            "fields": ['-_score'],
+            "default_order": 'asc',
+            "order": 3,
+        },
     },
 
     "record-data": {
@@ -1105,7 +1113,7 @@ RECORDS_REST_SORT_OPTIONS = {
 
 RECORDS_REST_DEFAULT_SORT = {
     "records-hep": {
-        "query": "-bestmatch",
+        "query": "mostrecent",
         "noquery": "mostrecent"
     },
 
@@ -1200,6 +1208,9 @@ INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 # ==========
 LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 LEGACY_MATCH_ENDPOINT = "http://inspirehep.net/search"
+LEGACY_ROBOTUPLOAD_PRIORITY_ARTICLE = 4
+LEGACY_ROBOTUPLOAD_PRIORITY_AUTHOR = 4
+LEGACY_ROBOTUPLOAD_PRIORITY_EDIT_ARTICLE = 5
 
 # Web services and APIs
 # =====================
@@ -1248,6 +1259,9 @@ WORKFLOWS_DEFAULT_FILE_LOCATION_NAME = "holdingpen"
 
 WORKFLOWS_OBJECT_CLASS = "invenio_workflows_files.api.WorkflowObject"
 """Enable obj.files API."""
+
+WORKFLOWS_RESTART_LIMIT = 3
+"""Max number of times a workflow can be restarted."""
 
 WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
 WORKFLOWS_UI_INDEX_TEMPLATE = "inspire_workflows/index.html"

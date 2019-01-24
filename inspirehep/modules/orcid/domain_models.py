@@ -36,7 +36,7 @@ from inspirehep.utils.record_getter import (
     get_db_record,
 )
 
-from . import exceptions, utils
+from . import exceptions, push_access_tokens, utils
 from .cache import OrcidCache
 from .converter import OrcidConverter
 from .putcode_getter import OrcidPutcodeGetter
@@ -142,7 +142,7 @@ class OrcidPusher(object):
                     ' And the POST has previously failed for the same recid because'\
                     ' the work had already existed'.format(self.orcid, self.recid)
                 raise exceptions.PutcodeNotFoundInOrcidException(msg)
-            self._post_or_put_work(putcode)
+            putcode = self._post_or_put_work(putcode)
         except orcid_client_exceptions.DuplicatedExternalIdentifierException:
             # We PUT a record changing its identifier, but there is another work
             # in ORCID with the same identifier. We need to find out the recid
@@ -152,7 +152,19 @@ class OrcidPusher(object):
             if self.do_fail_if_duplicated_identifier:
                 raise exceptions.DuplicatedExternalIdentifierPusherException
             self._push_work_with_clashing_identifier()
-            self._post_or_put_work(putcode)
+            putcode = self._post_or_put_work(putcode)
+        except orcid_client_exceptions.PutcodeNotFoundPutException:
+            self.cache.delete_work_putcode()
+            putcode = self._post_or_put_work()
+        except (orcid_client_exceptions.TokenInvalidException,
+                orcid_client_exceptions.TokenMismatchException,
+                orcid_client_exceptions.TokenWithWrongPermissionException):
+            logger.info('Deleting Orcid push access token={} for orcid={}'.format(
+                self.oauth_token, self.orcid))
+            push_access_tokens.delete_access_token(self.oauth_token, self.orcid)
+            raise exceptions.TokenInvalidDeletedException
+        except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
+            raise exceptions.InputDataInvalidException(from_exc=exc)
 
         self.cache.write_work_putcode(putcode, self.inspire_record)
         return putcode
@@ -173,16 +185,8 @@ class OrcidPusher(object):
                 response = self.client.post_new_work(xml_element)
 
         utils.log_service_response(logger, response, 'in OrcidPusher for recid={}'.format(self.recid))
-        try:
-            response.raise_for_result()
-            putcode = response['putcode']
-        except orcid_client_exceptions.WorkAlreadyExistsException:  # Only raisable by a POST.
-            raise
-        except orcid_client_exceptions.DuplicatedExternalIdentifierException:  # Only raisable by a PUT.
-            raise
-        except orcid_client_exceptions.BaseOrcidClientJsonException as exc:
-            raise exceptions.InputDataInvalidException(from_exc=exc)
-        return putcode
+        response.raise_for_result()
+        return response['putcode']
 
     @time_execution
     def _cache_all_author_putcodes(self):
@@ -240,9 +244,9 @@ class OrcidPusher(object):
                 continue
             # Local import to avoid import error.
             from inspirehep.modules.orcid import tasks
+            max_retries = 3
             # Execute the orcid_push Celery task synchronously.
-            # If max_retries=3, then backoff power 4 is (secs): [4*60, 16*60, 64*60]
-            backoff = lambda retry_count: (4 ** (retry_count + 1)) * 60  # noqa: E731ß
+            backoff = lambda retry_count: [30, 2 * 60, 7 * 60][retry_count % max_retries]  # noqa: E731ß
             utils.apply_celery_task_with_retry(
                 tasks.orcid_push,
                 kwargs={
@@ -255,7 +259,7 @@ class OrcidPusher(object):
                         do_fail_if_duplicated_identifier=True,
                         record_db_version=self.record_db_version)
                 },
-                max_retries=5,
+                max_retries=max_retries,
                 countdown=backoff,
                 time_limit=10 * 60,
             )

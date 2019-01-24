@@ -27,14 +27,14 @@ from __future__ import absolute_import, division, print_function
 from flask import current_app
 
 from invenio_db import db
-from invenio_workflows import workflow_object_class, WorkflowEngine
+from invenio_workflows import workflow_object_class, WorkflowEngine, \
+    ObjectStatus
 from invenio_workflows.errors import WorkflowsError
-
 
 from inspire_matcher.api import match
 from inspire_utils.dedupers import dedupe_list
+from inspirehep.modules.workflows.tasks.actions import mark, save_workflow
 from inspirehep.utils.record import get_arxiv_categories, get_value
-from inspirehep.modules.workflows.tasks.actions import mark
 
 from ..utils import with_debug_logging
 
@@ -170,7 +170,8 @@ def auto_approve(obj, eng):
         harvested or if the primary category is `physics.data-an`, otherwise
         False.
     """
-    return has_fully_harvested_category(obj.data) or physics_data_an_is_primary_category(obj.data)
+    return has_fully_harvested_category(
+        obj.data) or physics_data_an_is_primary_category(obj.data)
 
 
 def has_fully_harvested_category(record):
@@ -204,12 +205,51 @@ def physics_data_an_is_primary_category(record):
 @with_debug_logging
 def set_core_in_extra_data(obj, eng):
     """Set `core=True` in `obj.extra_data` if the record belongs to a core arXiv category"""
+
     def _is_core(record):
         return set(get_arxiv_categories(record)) & \
             set(current_app.config.get('ARXIV_CATEGORIES', {}).get('core'))
 
     if _is_core(obj.data):
         obj.extra_data['core'] = True
+
+
+def set_wf_not_completed_ids_to_wf(obj, skip_blocked=True, skip_halted=False):
+    """Return list of all matched workflows ids which are not completed
+    also stores this list to wf.extra_data['holdingpen_matches']
+    By default it do not show workflows which are already blocked by this workflow
+
+    Arguments:
+        obj: a workflow object.
+        skip_blocked: boolean, if True do not returnd workflows blocked by this one,
+            if False then return all matched workflows.
+        skip_halted: boolean, if True, then it skips HALTED workflows when
+            looking for matched workflows
+    """
+
+    def _non_completed(base_record, match_result):
+        return get_value(match_result,
+                         '_source._workflow.status') != 'COMPLETED'
+
+    def _not_completed_or_halted(base_record, match_result):
+        return get_value(match_result, '_source._workflow.status') not in [
+            'COMPLETED', 'HALTED']
+
+    def is_workflow_blocked_by_another_workflow(workflow_id):
+        workflow = workflow_object_class.get(workflow_id)
+        return obj.id in workflow.extra_data.get('holdingpen_matches', [])
+
+    if skip_halted:
+        matched_ids = pending_in_holding_pen(obj, _not_completed_or_halted)
+    else:
+        matched_ids = pending_in_holding_pen(obj, _non_completed)
+
+    if skip_blocked:
+        matched_ids = [_id for _id in matched_ids if
+                       not is_workflow_blocked_by_another_workflow(_id)]
+    obj.extra_data['holdingpen_matches'] = matched_ids
+    save_workflow(obj, None)
+    return matched_ids
 
 
 def match_non_completed_wf_in_holdingpen(obj, eng):
@@ -231,23 +271,12 @@ def match_non_completed_wf_in_holdingpen(obj, eng):
         Pen that is not COMPLETED, ``False`` otherwise.
 
     """
-    def _non_completed(base_record, match_result):
-        return not get_value(match_result, '_source._workflow.status') == 'COMPLETED'
-
-    matched_ids = pending_in_holding_pen(obj, _non_completed)
-    obj.extra_data['holdingpen_matches'] = matched_ids
+    matched_ids = set_wf_not_completed_ids_to_wf(obj)
     return bool(matched_ids)
 
 
-def raise_if_match_wf_in_error_or_initial(obj, eng):
-    """Raise if a matching wf is in ERROR or INITIAL state in the HoldingPen.
-
-    Uses a custom configuration of the ``inspire-matcher`` to find duplicates
-    of the current workflow object in the Holding Pen not in the
-    that are in ERROR or INITIAL state.
-
-    If any match is found, it sets ``error_workflows_matched`` in
-    ``extra_data`` to the list of ids that matched and raise an error.
+def raise_if_match_workflow(obj, eng):
+    """Raise if a matching wf is not in completed state in the HoldingPen.
 
     Arguments:
         obj: a workflow object.
@@ -257,17 +286,18 @@ def raise_if_match_wf_in_error_or_initial(obj, eng):
         None
 
     """
-    def _filter(base_record, match_result):
-        return get_value(
-            match_result, '_source._workflow.status'
-        ) in ('ERROR', 'INITIAL')
-
-    matched_ids = pending_in_holding_pen(obj, _filter)
+    matched_ids = set_wf_not_completed_ids_to_wf(
+        obj,
+        skip_blocked=True,
+        skip_halted=True
+    )
     if bool(matched_ids):
-        obj.extra_data['error_workflows_matched'] = matched_ids
         raise WorkflowsError(
-            'Cannot continue processing. Found workflows in ERROR or INITIAL '
-            'state: {}'.format(matched_ids)
+            'Cannot continue processing workflow {wf_id}.'
+            'Found not-completed workflows in holdingpen '
+            ': {blocking_ids}'.format(
+                wf_id=obj.id,
+                blocking_ids=matched_ids)
         )
 
 
@@ -290,6 +320,7 @@ def match_previously_rejected_wf_in_holdingpen(obj, eng):
         Pen that is not COMPLETED, ``False`` otherwise.
 
     """
+
     def _rejected_and_completed(base_record, match_result):
         return get_value(match_result, '_source._workflow.status') == 'COMPLETED' and \
             get_value(match_result, '_source._extra_data.approved') is False
@@ -381,7 +412,9 @@ def has_same_source(extra_data_key):
     """
 
     def _get_wfs_same_source(obj, eng):
-        current_source = get_value(obj.data, 'acquisition_source.source').lower()
+        current_source = get_value(
+            obj.data,
+            'acquisition_source.source').lower()
 
         try:
             workflows = obj.extra_data[extra_data_key]
@@ -419,7 +452,7 @@ def stop_matched_holdingpen_wfs(obj, eng):
     """
     stopping_steps = [mark('stopped-by-wf', int(obj.id)), stop_processing]
 
-    obj.save()
+    save_workflow(obj, eng)
 
     for holdingpen_wf_id in obj.extra_data['holdingpen_matches']:
         holdingpen_wf = workflow_object_class.get(holdingpen_wf_id)
@@ -435,3 +468,41 @@ def has_more_than_one_exact_match(obj, eng):
     """Does the record have more than one exact match."""
     exact_matches = obj.extra_data['matches']['exact']
     return len(set(exact_matches)) > 1
+
+
+@with_debug_logging
+def run_next_if_necessary(obj, eng):
+    """Remove current wf id from matched workflows and run next one"""
+    blocked_wfs = set_wf_not_completed_ids_to_wf(obj, skip_blocked=False)
+    next_wf = None
+    for wf_id in blocked_wfs:
+        wf = workflow_object_class.get(wf_id)
+        if obj.id in wf.extra_data.get('holdingpen_matches', []):
+            wf.extra_data['holdingpen_matches'].remove(obj.id)
+            save_workflow(wf, eng)
+        if not wf.extra_data.get('holdingpen_matches', []) and not next_wf:
+            # If workflow is not blocked by any other workflow
+            # And there is no next workflow set
+            # then set is as next to restart
+            next_wf = wf
+    if next_wf:
+        restart_workflow(next_wf, obj.id)
+
+
+def restart_workflow(obj, restarter_id, position=[0]):
+    """Restarts workflow
+
+    Args:
+        obj: Workflow to restart
+        original_workflow: Workflow which restarts
+        position: To which position wf should be restarted
+    """
+    obj.callback_pos = position
+    obj.status = ObjectStatus.RUNNING
+    obj.extra_data['source_data']['extra_data'][
+        'delay'] = current_app.config.get("TASK_DELAY_ON_START", 10)
+    obj.extra_data['source_data']['extra_data'].setdefault(
+        'restarted-by-wf', []).append(restarter_id)
+    obj.save()
+    db.session.commit()
+    obj.continue_workflow('restart_task', delayed=True)

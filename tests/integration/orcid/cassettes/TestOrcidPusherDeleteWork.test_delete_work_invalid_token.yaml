@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+    method: GET
+    uri: https://api.orcid.org/v2.0/0000-0002-5073-0816/works
+  response:
+    body: {string: !!python/unicode "{\n  \"error\" : \"invalid_token\",\n  \"error_description\"\
+        \ : \"Invalid access token: tokeninvalid\"\n}"}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate', no-store]
+      connection: [keep-alive]
+      content-type: [application/orcid+json;charset=UTF-8]
+      date: ['Mon, 06 Aug 2018 11:36:09 GMT']
+      expires: ['0']
+      pragma: [no-cache, no-cache]
+      server: [nginx/1.4.6 (Ubuntu)]
+      transfer-encoding: [chunked]
+      www-authenticate: ['Bearer realm="ORCID T2 API", error="invalid_token", error_description="Invalid
+          access token: tokeninvalid"']
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 401, message: Unauthorized}
+version: 1

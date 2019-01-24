@@ -23,7 +23,11 @@
 from __future__ import absolute_import, division, print_function
 
 import sys
+from datetime import date
+
+import json
 import os
+import pkg_resources
 import pytest
 
 from click.testing import CliRunner
@@ -140,3 +144,19 @@ def app_cli(app):
     runner._invoke = runner.invoke
     runner.invoke = partial(runner.invoke, obj=obj)
     return runner
+
+
+@pytest.fixture(scope='function')
+def generated_record():
+    """Provide record fixture."""
+    json_data = json.loads(pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            'fixtures',
+            'oai_arxiv_core_record.json'
+        )
+    ))
+
+    if 'preprint_date' in json_data:
+        json_data['preprint_date'] = date.today().isoformat()
+    return json_data
