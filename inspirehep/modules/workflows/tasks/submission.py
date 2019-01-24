@@ -194,7 +194,8 @@ def send_robotupload(
     url=None,
     callback_url="callback/workflows/robotupload",
     mode="insert",
-    extra_data_key=None
+    extra_data_key=None,
+    priority_config_key=None,
 ):
     """Get the MARCXML from the model and ship it.
 
@@ -248,13 +249,17 @@ def send_robotupload(
             )
             return
 
+        priority = 5
+        if priority_config_key:
+            priority = current_app.config.get(priority_config_key, priority)
+
         result = make_robotupload_marcxml(
             url=url,
             marcxml=marcxml,
             callback_url=combined_callback_url,
             mode=mode,
             nonce=obj.id,
-            priority=5,
+            priority=priority,
         )
         if "[INFO]" not in result.text:
             if "cannot use the service" in result.text:
@@ -275,14 +280,27 @@ def send_robotupload(
     return _send_robotupload
 
 
-def send_to_legacy(obj, eng):
-    update_legacy_flag = current_app.config.get('FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY', False)
+@with_debug_logging
+def send_to_legacy(priority_config_key=None):
+    """Send the record in the workflow to legacy.
 
-    if obj.extra_data.get('is-update', False) and not update_legacy_flag:
-        obj.log.info('skipping upload to legacy, feature flag ``FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY`` is disabled.')
-        return
-    else:
-        send_robotupload(mode='replace')(obj, eng)
+    Args:
+        priority_config_key (Optional[str]): if present, config key specifiying
+            the robotupload the priority to use. If the key does not exist, the
+            default priority is used.
+    """
+    def _send_to_legacy(obj, eng):
+        update_legacy_flag = current_app.config.get('FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY', False)
+
+        if obj.extra_data.get('is-update', False) and not update_legacy_flag:
+            obj.log.info(
+                'skipping upload to legacy, feature flag ``FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY`` is disabled.'
+            )
+            return
+
+        send_robotupload(mode='replace', priority_config_key=priority_config_key)(obj, eng)
+
+    return _send_to_legacy
 
 
 @with_debug_logging

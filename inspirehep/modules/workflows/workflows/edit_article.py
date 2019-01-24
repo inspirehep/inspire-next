@@ -77,7 +77,7 @@ class EditArticle(object):
             change_status_to_waiting,
             validate_record('hep'),
             update_record,
-            send_robotupload(mode='replace'),
+            send_robotupload(mode='replace', priority_config_key='LEGACY_ROBOTUPLOAD_PRIORITY_EDIT_ARTICLE'),
             cleanup_pending_workflow,
         ]
     )
