@@ -42,6 +42,7 @@ from .schemas.json import (
     LiteratureReferencesSchemaJSONUIV1,
     CitationItemSchemaV1,
     AuthorsRecordSchemaJSONUIV1,
+    UIDisplayLiteratureRecordJsonUIV1,
 )
 from .marcxml import MARCXMLSerializer
 from .latex import LatexSerializer
@@ -50,8 +51,13 @@ from .response import record_responsify_nocache, facets_responsify
 json_literature_ui_v1 = LiteratureJSONUISerializer(
     LiteratureRecordSchemaJSONUIV1
 )
+
+json_literature_ui_v1_search = LiteratureJSONUISerializer(
+    UIDisplayLiteratureRecordJsonUIV1
+)
+
 json_literature_ui_v1_search = search_responsify(
-    json_literature_ui_v1,
+    json_literature_ui_v1_search,
     'application/vnd+inspire.literature.ui+json'
 )
 

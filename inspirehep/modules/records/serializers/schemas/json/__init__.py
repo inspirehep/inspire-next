@@ -28,6 +28,7 @@ from .literature import (  # noqa: F401
     LiteratureReferencesSchemaJSONUIV1,  # noqa: F401
     CitationItemSchemaV1,  # noqa: F401
     RecordMetadataSchemaV1,  # noqa: F401
+    UIDisplayLiteratureRecordJsonUIV1,  # noqa: F401
 )
 from .authors import (  # noqa: F401
     AuthorsRecordSchemaJSONUIV1,  # noqa: F401

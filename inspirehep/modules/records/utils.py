@@ -447,3 +447,8 @@ def populate_author_suggest(record, *args, **kwargs):
     record['author_suggest'] = {
         'input': input_values
     }
+
+
+def populate_ui_display(record):
+    from inspirehep.modules.records.serializers.schemas.json import RecordMetadataSchemaV1
+    record['ui_display'] = RecordMetadataSchemaV1().dumps(record).data

@@ -76,6 +76,7 @@ from inspirehep.modules.records.utils import (
     populate_recid_from_ref,
     populate_title_suggest,
     populate_facet_author_name,
+    populate_ui_display,
 )
 from invenio_indexer.api import RecordIndexer
 
@@ -221,6 +222,7 @@ def enhance_before_index(record):
         populate_number_of_references(record)
         populate_citations_count(record)
         populate_facet_author_name(record)
+        populate_ui_display(record)
 
         if is_book(record):
             populate_bookautocomplete(record)

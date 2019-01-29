@@ -8,6 +8,9 @@
             "date_detection": false,
             "numeric_detection": false,
             "properties": {
+                "ui_display": {
+                    "type": "keyword"
+                },
                 "$schema": {
                     "type": "keyword"
                 },

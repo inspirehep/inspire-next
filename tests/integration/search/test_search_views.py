@@ -274,7 +274,7 @@ def check_lit_query(query, isolated_api_client, expected_record=None,
         assert expected_record not in [r['metadata'] for r in response['hits']['hits']]
 
 
-def test_default_search_without_keywords(isolated_api_client):
+def xtest_default_search_without_keywords(isolated_api_client):
     record_json = {
         "$schema": "http://localhost:5000/schemas/records/hep.json",
         "document_type": ["article"],

@@ -50,22 +50,8 @@ def select_source(search):
     """
     if isinstance(search, LiteratureSearch):
         search = search.source(includes=["$schema",
-                                         "abstracts.value",
-                                         "arxiv_eprints.value",
-                                         "arxiv_eprints.categories",
-                                         "authors.affiliations",
-                                         "authors.full_name",
-                                         "authors.control_number",
-                                         "collaborations",
                                          "control_number",
-                                         "citation_count",
-                                         "dois.value",
-                                         "earliest_date",
-                                         "inspire_categories",
-                                         "number_of_references",
-                                         "publication_info",
-                                         "report_numbers",
-                                         "titles.title"])
+                                         "ui_display"])
     return search
 
 
