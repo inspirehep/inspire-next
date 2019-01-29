@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.record import get_title
+from inspire_schemas.readers import LiteratureReader
 from inspirehep.utils.template import render_macro_from_template
 
 from inspirehep.modules.search import AuthorsSearch, LiteratureSearch
@@ -107,10 +107,11 @@ def render_contributions(hits):
 
     for hit in hits:
         row = []
+        title = LiteratureReader(hit.to_dict()).title
         row.append(
             title_html.format(
                 id=hit.control_number,
-                name=get_title(hit.to_dict()).encode('utf8')
+                name=title.encode('utf8')
             )
         )
         ctx = {

@@ -48,6 +48,7 @@ from invenio_workflows import (
 )
 from invenio_workflows.errors import WorkflowsMissingObject
 from jsonschema.exceptions import ValidationError
+from inspire_utils.record import get_value
 
 from inspirehep.modules.records.permissions import RecordPermission
 from inspirehep.modules.workflows.errors import (
@@ -65,7 +66,6 @@ from inspirehep.modules.workflows.utils import (
     get_resolve_validation_callback_url,
     get_validation_errors,
 )
-from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_db_record, RecordGetterError
 from inspirehep.utils.tickets import get_rt_link_for_ticket
 

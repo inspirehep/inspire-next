@@ -28,14 +28,7 @@ from flask import render_template
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 
-from inspirehep.utils.record import (
-    get_abstract,
-    get_arxiv_id,
-    get_collaborations,
-    get_keywords,
-    get_subtitle,
-    get_title,
-)
+from inspire_schemas.readers import LiteratureReader
 
 from ..utils import (
     get_authors,
@@ -97,7 +90,8 @@ def _is_comm(record):
 
 
 def _get_comm_context(record):
-    abstract = get_abstract(record)
+    reader = LiteratureReader(record)
+    abstract = reader.abstract
     try:
         abstract_language = detect(abstract)
     except LangDetectException:
@@ -113,9 +107,9 @@ def _get_comm_context(record):
     return {
         'abstract': abstract,
         'abstract_language': abstract_language,
-        'arxiv_id': get_arxiv_id(record),
+        'arxiv_id': reader.arxiv_id,
         'authors': get_authors(record),
-        'collaborations': get_collaborations(record),
+        'collaborations': reader.collaborations,
         'conference_city': conference_city,
         'conference_country': conference_country,
         'conference_end_date': conference_end_date,
@@ -128,13 +122,13 @@ def _get_comm_context(record):
         'journal_issue': get_journal_issue(record),
         'journal_title': get_journal_title(record),
         'journal_volume': get_journal_volume(record),
-        'keywords': get_keywords(record),
+        'keywords': reader.keywords,
         'language': get_language(record),
         'page_artid': get_page_artid(record),
         'peer_reviewed': get_peer_reviewed(record),
         'publication_date': get_publication_date(record),
-        'subtitle': get_subtitle(record),
-        'title': get_title(record),
+        'subtitle': reader.subtitle,
+        'title': reader.title,
     }
 
 
@@ -146,7 +140,9 @@ def _is_art(record):
 
 
 def _get_art_context(record):
-    abstract = get_abstract(record)
+    reader = LiteratureReader(record)
+
+    abstract = reader.abstract
     try:
         abstract_language = detect(abstract)
     except LangDetectException:
@@ -155,9 +151,9 @@ def _get_art_context(record):
     return {
         'abstract': abstract,
         'abstract_language': abstract_language,
-        'arxiv_id': get_arxiv_id(record),
+        'arxiv_id': reader.arxiv_id,
         'authors': get_authors(record),
-        'collaborations': get_collaborations(record),
+        'collaborations': reader.collaborations,
         'divulgation': get_divulgation(record),
         'doi': get_doi(record),
         'domains': get_domains(record),
@@ -165,13 +161,13 @@ def _get_art_context(record):
         'journal_issue': get_journal_issue(record),
         'journal_title': get_journal_title(record),
         'journal_volume': get_journal_volume(record),
-        'keywords': get_keywords(record),
+        'keywords': reader.keywords,
         'language': get_language(record),
         'page_artid': get_page_artid(record),
         'peer_reviewed': get_peer_reviewed(record),
         'publication_date': get_publication_date(record),
-        'subtitle': get_subtitle(record),
-        'title': get_title(record),
+        'subtitle': reader.subtitle,
+        'title': reader.title,
     }
 
 
@@ -182,7 +178,8 @@ def _is_preprint(record):
 
 
 def _get_preprint_context(record):
-    abstract = get_abstract(record)
+    reader = LiteratureReader(record)
+    abstract = reader.abstract
     try:
         abstract_language = detect(abstract)
     except LangDetectException:
@@ -191,14 +188,14 @@ def _get_preprint_context(record):
     return {
         'abstract': abstract,
         'abstract_language': abstract_language,
-        'arxiv_id': get_arxiv_id(record),
+        'arxiv_id': reader.arxiv_id,
         'authors': get_authors(record),
-        'collaborations': get_collaborations(record),
+        'collaborations': reader.collaborations,
         'divulgation': get_divulgation(record),
         'domains': get_domains(record),
         'inspire_id': get_inspire_id(record),
-        'keywords': get_keywords(record),
+        'keywords': reader.keywords,
         'language': get_language(record),
-        'subtitle': get_subtitle(record),
-        'title': get_title(record),
+        'subtitle': reader.subtitle,
+        'title': reader.title,
     }

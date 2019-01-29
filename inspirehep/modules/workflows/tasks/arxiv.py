@@ -38,13 +38,13 @@ from werkzeug import secure_filename
 
 from inspire_dojson import marcxml2record
 from inspire_schemas.builders import LiteratureBuilder
+from inspire_schemas.readers import LiteratureReader
 from inspire_schemas.utils import classify_field
 from plotextractor.api import process_tarball
 from plotextractor.converter import untar
 from plotextractor.errors import InvalidTarball, NoTexFilesFound
 
 from inspirehep.utils.latex import decode_latex
-from inspirehep.utils.record import get_arxiv_categories, get_arxiv_id
 from inspirehep.utils.url import is_pdf_link, retrieve_uri
 from inspirehep.modules.workflows.errors import DownloadError
 from inspirehep.modules.workflows.utils import (
@@ -66,7 +66,7 @@ NO_PDF_ON_ARXIV = 'The author has provided no source to generate PDF, and no PDF
 @with_debug_logging
 @backoff.on_exception(backoff.expo, DownloadError, base=4, max_tries=5)
 def populate_arxiv_document(obj, eng):
-    arxiv_id = get_arxiv_id(obj.data)
+    arxiv_id = LiteratureReader(obj.data).arxiv_id
 
     for conf_name in ('ARXIV_PDF_URL', 'ARXIV_PDF_URL_ALTERNATIVE'):
         url = current_app.config[conf_name].format(arxiv_id=arxiv_id)
@@ -108,7 +108,7 @@ def arxiv_package_download(obj, eng):
     :param obj: Workflow Object to process
     :param eng: Workflow Engine processing the object
     """
-    arxiv_id = get_arxiv_id(obj.data)
+    arxiv_id = LiteratureReader(obj.data).arxiv_id
     filename = secure_filename('{0}.tar.gz'.format(arxiv_id))
     tarball = download_file_to_workflow(
         workflow=obj,
@@ -132,7 +132,7 @@ def arxiv_plot_extract(obj, eng):
     :param obj: Workflow Object to process
     :param eng: Workflow Engine processing the object
     """
-    arxiv_id = get_arxiv_id(obj.data)
+    arxiv_id = LiteratureReader(obj.data).arxiv_id
     filename = secure_filename('{0}.tar.gz'.format(arxiv_id))
 
     try:
@@ -213,7 +213,7 @@ def arxiv_derive_inspire_categories(obj, eng):
     """
     obj.data.setdefault('inspire_categories', [])
 
-    for arxiv_category in get_arxiv_categories(obj.data):
+    for arxiv_category in LiteratureReader(obj.data).arxiv_categories:
         term = classify_field(arxiv_category)
         if term:
             inspire_category = {
@@ -234,7 +234,7 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     @with_debug_logging
     @wraps(arxiv_author_list)
     def _author_list(obj, eng):
-        arxiv_id = get_arxiv_id(obj.data)
+        arxiv_id = LiteratureReader(obj.data).arxiv_id
         filename = secure_filename('{0}.tar.gz'.format(arxiv_id))
         try:
             tarball = obj.files[filename]

@@ -47,6 +47,7 @@ from invenio_workflows import ObjectStatus
 from invenio_workflows.errors import WorkflowsError
 from invenio_records.models import RecordMetadata
 from inspire_schemas.builders import LiteratureBuilder
+from inspire_schemas.readers import LiteratureReader
 from inspire_schemas.utils import validate
 from inspire_utils.record import get_value
 from inspire_utils.dedupers import dedupe_list
@@ -69,12 +70,6 @@ from inspirehep.modules.workflows.utils import (
     with_debug_logging,
 )
 from inspirehep.utils.normalizers import normalize_journal_title
-from inspirehep.utils.record import (
-    get_arxiv_categories,
-    get_inspire_categories,
-    get_method,
-    get_source,
-)
 from inspirehep.utils.url import is_pdf_link
 
 EXPERIMENTAL_ARXIV_CATEGORIES = [
@@ -245,8 +240,9 @@ def is_experimental_paper(obj, eng):
         bool: whether the workflow contains an experimental paper.
 
     """
-    arxiv_categories = get_arxiv_categories(obj.data)
-    inspire_categories = get_inspire_categories(obj.data)
+    reader = LiteratureReader(obj.data)
+    arxiv_categories = reader.arxiv_categories
+    inspire_categories = reader.inspire_categories
 
     has_experimental_arxiv_category = len(
         set(arxiv_categories) & set(EXPERIMENTAL_ARXIV_CATEGORIES)) > 0
@@ -268,8 +264,9 @@ def is_arxiv_paper(obj, eng):
         bool: whether the workflow contains a paper from arXiv.
 
     """
-    method = get_method(obj.data)
-    source = get_source(obj.data)
+    reader = LiteratureReader(obj.data)
+    method = reader.method
+    source = reader.source
 
     is_submission_with_arxiv = method == 'submitter' and 'arxiv_eprints' in obj.data
     is_harvested_from_arxiv = method == 'hepcrawl' and source.lower() == 'arxiv'
@@ -289,7 +286,8 @@ def is_submission(obj, eng):
         bool: whether the workflow contains a submission.
 
     """
-    return get_method(obj.data) == 'submitter'
+    source = LiteratureReader(obj.data).method
+    return source == 'submitter'
 
 
 def validate_record(schema):
@@ -427,7 +425,7 @@ def refextract(obj, eng):
         return
 
     matched_pdf_references, matched_text_references = [], []
-    source = get_source(obj.data)
+    source = LiteratureReader(obj.data).source
 
     with get_document_in_workflow(obj) as tmp_document:
         if tmp_document:
@@ -617,7 +615,7 @@ def set_refereed_and_fix_document_type(obj, eng):
 def jlab_ticket_needed(obj, eng):
     """Check if the a JLab curation ticket is needed."""
     jlab_categories = set(current_app.config['JLAB_ARXIV_CATEGORIES'])
-    arxiv_categories = set(get_arxiv_categories(obj.data))
+    arxiv_categories = set(LiteratureReader(obj.data).arxiv_categories)
     return bool(jlab_categories & arxiv_categories)
 
 

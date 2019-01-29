@@ -26,6 +26,8 @@ from __future__ import absolute_import, division, print_function
 
 from flask import current_app
 
+from inspire_schemas.readers import LiteratureReader
+from inspire_utils.record import get_value
 from invenio_db import db
 from invenio_workflows import workflow_object_class, WorkflowEngine, \
     ObjectStatus
@@ -34,7 +36,6 @@ from invenio_workflows.errors import WorkflowsError
 from inspire_matcher.api import match
 from inspire_utils.dedupers import dedupe_list
 from inspirehep.modules.workflows.tasks.actions import mark, save_workflow
-from inspirehep.utils.record import get_arxiv_categories, get_value
 
 from ..utils import with_debug_logging
 
@@ -170,8 +171,8 @@ def auto_approve(obj, eng):
         harvested or if the primary category is `physics.data-an`, otherwise
         False.
     """
-    return has_fully_harvested_category(
-        obj.data) or physics_data_an_is_primary_category(obj.data)
+    return has_fully_harvested_category(obj.data) or \
+        physics_data_an_is_primary_category(obj.data)
 
 
 def has_fully_harvested_category(record):
@@ -184,7 +185,7 @@ def has_fully_harvested_category(record):
         bool: True when the record belongs to an arXiv category that is fully
         harvested, otherwise False.
     """
-    record_categories = set(get_arxiv_categories(record))
+    record_categories = set(LiteratureReader(record).arxiv_categories)
     harvested_categories = current_app.config.get('ARXIV_CATEGORIES', {})
     return len(
         record_categories &
@@ -196,7 +197,7 @@ def has_fully_harvested_category(record):
 
 
 def physics_data_an_is_primary_category(record):
-    record_categories = get_arxiv_categories(record)
+    record_categories = LiteratureReader(record).arxiv_categories
     if record_categories:
         return record_categories[0] == 'physics.data-an'
     return False
@@ -207,7 +208,7 @@ def set_core_in_extra_data(obj, eng):
     """Set `core=True` in `obj.extra_data` if the record belongs to a core arXiv category"""
 
     def _is_core(record):
-        return set(get_arxiv_categories(record)) & \
+        return set(LiteratureReader(record).arxiv_categories) & \
             set(current_app.config.get('ARXIV_CATEGORIES', {}).get('core'))
 
     if _is_core(obj.data):
@@ -414,7 +415,8 @@ def has_same_source(extra_data_key):
     def _get_wfs_same_source(obj, eng):
         current_source = get_value(
             obj.data,
-            'acquisition_source.source').lower()
+            'acquisition_source.source'
+        ).lower()
 
         try:
             workflows = obj.extra_data[extra_data_key]

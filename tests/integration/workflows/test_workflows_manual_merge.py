@@ -24,6 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 
+from inspire_schemas.readers import LiteratureReader
 from invenio_workflows import ObjectStatus, workflow_object_class
 from invenio_records.api import RecordMetadata
 
@@ -34,7 +35,6 @@ from inspirehep.modules.workflows.utils import (
 )
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.workflows.manual_merge import start_merger
-from inspirehep.utils.record import get_source
 from inspirehep.utils.record_getter import get_db_record, RecordGetterError
 
 from calls import do_resolve_manual_merge_wf
@@ -86,7 +86,9 @@ def test_manual_merge_existing_records(workflow_app):
     # no root present before
     last_root = read_wf_record_source(head_id, 'arxiv')
     assert last_root is None
-    root_update = read_wf_record_source(update_id, get_source(update))
+
+    update_source = LiteratureReader(update).source
+    root_update = read_wf_record_source(update_id, update_source)
     assert root_update is None
 
     # check that head's content has been replaced by merged
