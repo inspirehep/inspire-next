@@ -1636,7 +1636,6 @@ INSPIRE_REF_UPDATER_WHITELISTS = {
 # Configuration for the matcher
 # =============================
 EXACT_MATCH = exact_match
-EXACT_MATCH['source'] = ['control_number']
 
 FUZZY_MATCH = {
     'algorithm': [
