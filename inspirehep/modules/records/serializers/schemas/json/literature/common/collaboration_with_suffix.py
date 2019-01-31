@@ -34,5 +34,5 @@ class CollaborationWithSuffixSchemaV1(CollaborationSchemaV1):
     @pre_dump
     def filter(self, data):
         if not re.match(self.REGEX_COLLABORATIONS_WITH_SUFFIX, data.get('value')):
-                return {}
+            return {}
         return data

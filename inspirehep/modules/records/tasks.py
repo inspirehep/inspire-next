@@ -145,20 +145,20 @@ def merge_merged_records():
         deleted_ids = [get_recid_from_ref(ref) for ref in record['deleted_records']]
 
         for deleted_id in deleted_ids:
-                deleted_pid = PersistentIdentifier.query.filter_by(
-                    pid_value=str(deleted_id)
-                ).one_or_none()
+            deleted_pid = PersistentIdentifier.query.filter_by(
+                pid_value=str(deleted_id)
+            ).one_or_none()
 
-                if not deleted_pid:
-                    deleted_pid = PersistentIdentifier.create(
-                        pid_type=get_pid_type_from_schema(record['$schema']),
-                        pid_value=deleted_id,
-                        object_type='rec'
-                    )
-                    deleted_pid.register()
-                    db.session.add(deleted_pid)
+            if not deleted_pid:
+                deleted_pid = PersistentIdentifier.create(
+                    pid_type=get_pid_type_from_schema(record['$schema']),
+                    pid_value=deleted_id,
+                    object_type='rec'
+                )
+                deleted_pid.register()
+                db.session.add(deleted_pid)
 
-                deleted_pid.redirect(record_pid)
+            deleted_pid.redirect(record_pid)
     db.session.commit()
 
 

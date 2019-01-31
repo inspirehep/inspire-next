@@ -292,7 +292,7 @@ def test_harvest_core_article_manual_accept_goes_in(inspire_client, mitm_client)
     entry = inspire_client.holdingpen.get_detail_entry(completed_entry.workflow_id)
 
     assert entry.arxiv_eprint == '1806.05312'
-    assert entry.control_number is 42
+    assert entry.control_number == 42
     assert entry.doi == '10.1063/PT.3.3947'
     assert entry.titles == expected_titles
 
@@ -332,7 +332,7 @@ def test_harvest_nucl_th_and_jlab_curation(inspire_client, mitm_client):
     entry = inspire_client.holdingpen.get_detail_entry(completed_entry.workflow_id)
 
     assert entry.arxiv_eprint == '1806.05669'
-    assert entry.control_number is 42
+    assert entry.control_number == 42
     expected_titles = [
         LiteratureResourceTitle(
             title='Probing the in-Medium QCD Force by Open Heavy-Flavor Observables',
