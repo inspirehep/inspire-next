@@ -122,16 +122,16 @@ def formdata_to_model(obj, formdata):
             builder.add_book_series(title=form_fields.get('series_title'))
 
     if form_fields.get('type_of_doc') == 'book':
-            if form_fields.get('journal_title'):
-                form_fields['volume'] = form_fields.get('series_volume')
-            else:
-                builder.add_book_series(title=form_fields.get('series_title'),
-                                        volume=form_fields.get('series_volume')
-                                        )
-            builder.add_book(
-                publisher=form_fields.get('publisher_name'),
-                place=form_fields.get('publication_place'),
-                date=form_fields.get('publication_date'))
+        if form_fields.get('journal_title'):
+            form_fields['volume'] = form_fields.get('series_volume')
+        else:
+            builder.add_book_series(title=form_fields.get('series_title'),
+                                    volume=form_fields.get('series_volume')
+                                    )
+        builder.add_book(
+            publisher=form_fields.get('publisher_name'),
+            place=form_fields.get('publication_place'),
+            date=form_fields.get('publication_date'))
 
     builder.add_publication_info(
         year=year,
