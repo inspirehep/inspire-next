@@ -31,7 +31,7 @@ from . import Session
 
 
 def with_mitmproxy(*args, **kwargs):
-    '''Decorator to abstract fixture recording and scenario setup for the E2E tests with mitmproxy.
+    '''Decorator to abstract fixtures recording and scenario setup for the E2E tests with mitmproxy.
 
     Args:
         scenario_name (Optional[str]): scenario name, by default test name without 'test_' prefix

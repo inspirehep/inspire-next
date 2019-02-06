@@ -37,7 +37,7 @@ from inspirehep.modules.orcid.utils import (
 
 
 def get_file(fixture_name):
-    """Get contents of fixture files"""
+    """Get contents of fixtures files"""
     path = pkg_resources.resource_filename(
         __name__,
         os.path.join('fixtures', fixture_name)

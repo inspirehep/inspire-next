@@ -21,10 +21,10 @@
 # or submit itself to any jurisdiction.
 """
 The aim of this module is to test db isolation between single tests.
-The `app` fixture does not provide db isolation between single tests: this
+The `app` fixtures does not provide db isolation between single tests: this
 means that if a test adds an object to the db, the same obj is found
 in the next tests.
-The `isolated_app` fixture instead provides db isolation between single tests.
+The `isolated_app` fixtures instead provides db isolation between single tests.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -48,7 +48,7 @@ def users_count(app):
     return User.query.count()
 
 
-# Test `app` fixture.
+# Test `app` fixtures.
 
 
 def test_app_fixture_lacks_db_isolation_step1(pids_count, app):
@@ -71,7 +71,7 @@ def test_app_fixture_lacks_db_isolation_step2(pids_count, app):
     ).delete()
 
 
-# Test `isolated_app` fixture.
+# Test `isolated_app` fixtures.
 
 
 def test_isolated_app_db_isolation_step1(pids_count, isolated_app):
@@ -131,7 +131,7 @@ def test_isolated_app_session_close_after_commit(users_count, isolated_app):
     db.session.commit()
     id_ = user.id
     assert User.query.get(id_)
-    # Closing the session within isolated_app fixture must trigger the rollback.
+    # Closing the session within isolated_app fixtures must trigger the rollback.
     db.session.close()
     assert User.query.count() == users_count
 
@@ -140,7 +140,7 @@ def test_isolated_app_session_close_before_commit(users_count, isolated_app):
     assert User.query.count() == users_count
     user = User()
     db.session.add(user)
-    # Closing the session within isolated_app fixture must trigger the rollback.
+    # Closing the session within isolated_app fixtures must trigger the rollback.
     db.session.close()
     assert User.query.count() == users_count
 
@@ -155,14 +155,14 @@ def test_isolated_app_nested_transaction(users_count, isolated_app):
 
 
 def test_isolated_app_and_app_together(isolated_app, app):
-    # When using `isolated_app` and `app` fixture together, the db isolation
+    # When using `isolated_app` and `app` fixtures together, the db isolation
     # feature should prevail.
     user = User()
     db.session.add(user)
     db.session.commit()
     id_ = user.id
     assert User.query.get(id_)
-    # Closing the session within isolated_app fixture must trigger the rollback.
+    # Closing the session within isolated_app fixtures must trigger the rollback.
     db.session.close()
     assert not User.query.get(id_)
 

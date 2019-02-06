@@ -22,7 +22,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.record_getter import get_db_records, get_es_records
+from inspirehep.utils.record_getter import (
+    get_db_records,
+    get_es_records,
+)
 
 
 def test_get_es_records_handles_empty_lists(app):

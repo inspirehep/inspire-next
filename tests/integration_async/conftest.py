@@ -148,7 +148,7 @@ def app_cli(app):
 
 @pytest.fixture(scope='function')
 def generated_record():
-    """Provide record fixture."""
+    """Provide record fixtures."""
     json_data = json.loads(pkg_resources.resource_string(
         __name__,
         os.path.join(
