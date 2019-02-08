@@ -44,6 +44,7 @@ from flask_menu import current_menu
 from sqlalchemy.orm.exc import NoResultFound
 from time_execution import time_execution
 
+from inspire_schemas.readers import LiteratureReader
 from invenio_mail.tasks import send_email
 from invenio_pidstore.models import PersistentIdentifier
 
@@ -69,7 +70,6 @@ from inspirehep.utils.experiments import (
     render_experiment_contributions,
     render_experiment_people,
 )
-from inspirehep.utils.record import get_title
 from inspirehep.utils.references import get_and_format_references
 from inspirehep.utils.template import render_macro_from_template
 
@@ -624,10 +624,11 @@ def get_institution_papers_datatables_rows(hits):
 
     for hit in hits:
         row = []
+        title = LiteratureReader(hit.to_dict()).title
         row.append(
             title_html.format(
                 id=hit.control_number,
-                name=get_title(hit.to_dict()).encode('utf8')
+                name=title.encode('utf8')
             )
         )
         ctx = {

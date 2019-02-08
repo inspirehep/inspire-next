@@ -26,8 +26,9 @@ import json
 
 from elasticsearch_dsl import Q
 
+from inspire_schemas.readers import LiteratureReader
+
 from inspirehep.modules.search import LiteratureSearch
-from inspirehep.utils.record import get_title
 
 
 class AuthorAPIPublications(object):
@@ -69,7 +70,7 @@ class AuthorAPIPublications(object):
             publication = {}
             publication['id'] = int(result_source['control_number'])
             publication['record'] = result_source['self']
-            publication['title'] = get_title(result_source)
+            publication['title'] = LiteratureReader(result_source).title
 
             # Get the earliest date.
             try:

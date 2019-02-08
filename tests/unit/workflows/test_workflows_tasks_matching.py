@@ -84,7 +84,7 @@ def test_set_exact_match_as_approved_in_extradata():
 
     set_exact_match_as_approved_in_extradata(obj, eng)
 
-    assert get_value(obj.extra_data, 'matches.approved') is 1
+    assert get_value(obj.extra_data, 'matches.approved') == 1
 
 
 def test_set_exact_match_as_approved_in_extradata_with_empty_list_raises_exception():

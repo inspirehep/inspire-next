@@ -28,6 +28,7 @@ from copy import deepcopy
 from flask import current_app
 
 from inspire_json_merger.api import merge
+from inspire_schemas.readers import LiteratureReader
 from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.modules.records.api import InspireRecord
@@ -36,8 +37,6 @@ from inspirehep.modules.workflows.utils import (
     read_wf_record_source,
     with_debug_logging
 )
-
-from inspirehep.utils.record import get_source
 
 
 @with_debug_logging
@@ -69,7 +68,7 @@ def merge_articles(obj, eng):
 
     head_record = InspireRecord.get_record(head_uuid)
     update = obj.data
-    update_source = get_source(update).lower()
+    update_source = LiteratureReader(obj.data).source.lower()
     head_root = read_wf_record_source(record_uuid=head_record.id, source=update_source)
     head_root = head_root.json if head_root else {}
 

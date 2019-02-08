@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspire_schemas.readers import LiteratureReader
 from invenio_workflows import start, workflow_object_class
 
 from inspirehep.modules.workflows.tasks.manual_merging import (
@@ -30,7 +31,6 @@ from inspirehep.modules.workflows.tasks.manual_merging import (
     save_roots,
     store_records,
 )
-from inspirehep.utils.record import get_source
 from inspirehep.utils.record_getter import get_db_record
 
 
@@ -77,7 +77,7 @@ def start_merger(head_id, update_id, current_user_id=None):
     wf_id = workflow_object.id    # to retrieve it later
     workflow_object.extra_data.update(data)
 
-    update_source = get_source(update)
+    update_source = LiteratureReader(update).source
     update_source = update_source if update_source else 'arxiv'
 
     workflow_object.extra_data['update_source'] = update_source.lower()

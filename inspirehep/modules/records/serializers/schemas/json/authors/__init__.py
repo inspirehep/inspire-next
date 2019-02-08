@@ -69,7 +69,7 @@ class AuthorsMetadataSchemaV1(Schema):
         if positions is None:
             return False
 
-        if len(positions) is 1:
+        if len(positions) == 1:
             position = positions[0]
 
             return position.get('current') is not True or \

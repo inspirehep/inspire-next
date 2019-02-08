@@ -26,7 +26,8 @@ from six import iteritems
 
 from flask_login import current_user
 
-from inspirehep.utils.record import get_title
+from inspire_schemas.readers import LiteratureReader
+
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.records.api import ESRecord
 from inspirehep.modules.records.permissions import has_update_permission
@@ -71,7 +72,7 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
     @property
     def title(self):
         """Get preferred title."""
-        return get_title(self)
+        return LiteratureReader(self).title
 
     # TODO: Deprecated, must be removed once the new UI is released
     @property
@@ -103,10 +104,10 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
             conf_info.append(
                 {
                     "conference_recid": conference_recid,
-                    "conference_title": get_title(conference_rec),
+                    "conference_title": LiteratureReader(conference_rec).title,
                     "parent_recid": parent_recid,
                     "parent_title":
-                        get_title(parent_rec).replace(
+                        LiteratureReader(parent_rec).title.replace(
                             "Proceedings, ", "", 1
                     ),
                     "page_start": pub_info.get('page_start'),
@@ -245,7 +246,7 @@ class ConferencesRecord(ESRecord, AdminToolsMixin):
     @property
     def title(self):
         """Get preferred title."""
-        return get_title(self)
+        return LiteratureReader(self).title
 
 
 class JobsRecord(ESRecord, AdminToolsMixin):
@@ -304,7 +305,7 @@ class JournalsRecord(ESRecord, AdminToolsMixin):
     @property
     def title(self):
         """Get preferred title."""
-        return get_title(self)
+        return LiteratureReader(self).title
 
     @property
     def publisher(self):

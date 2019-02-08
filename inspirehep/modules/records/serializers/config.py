@@ -35,14 +35,14 @@ Note:
 
 
 COMMON_FIELDS_FOR_ENTRIES = [
-    'key', 'SLACcitation', 'archivePrefix', 'doi', 'eprint', 'month', 'note', 'primaryClass', 'title', 'url', 'year'
+    'key', 'SLACcitation', 'archivePrefix', 'collaboration', 'doi', 'eprint', 'month', 'note', 'primaryClass', 'title', 'url', 'year'
 ]
 """BibTeX fields shared among all bibtex entries."""
 
 
 FIELDS_FOR_ENTRY_TYPE = {
     'techreport': [
-        'author', 'collaboration', 'number', 'address', 'type', 'institution'
+        'author', 'number', 'address', 'type', 'institution'
     ],
     'phdthesis': [
         'reportNumber', 'school', 'address', 'type', 'author'
@@ -68,7 +68,7 @@ FIELDS_FOR_ENTRY_TYPE = {
         'address', 'type', 'pages'
     ],
     'article': [
-        'author', 'journal', 'collaboration', 'number', 'volume', 'reportNumber', 'pages'
+        'author', 'journal', 'number', 'volume', 'reportNumber', 'pages'
     ],
 }
 """Specific fields for a given bibtex entry.
