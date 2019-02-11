@@ -55,6 +55,7 @@ def select_source(search):
                                          "arxiv_eprints.categories",
                                          "authors.affiliations",
                                          "authors.full_name",
+                                         "authors.inspire_roles",
                                          "authors.control_number",
                                          "collaborations",
                                          "control_number",
