@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 import re
 from os.path import join
+import copy
 
 from flask import (
     Blueprint,
@@ -714,6 +715,34 @@ def inspect_merge(holdingpen_id):
         update=update,
         merged=merged
     )
+
+
+@workflow_blueprint.route('/authors', methods=['POST'])
+def start_author_workflow():
+    submission_data = request.get_json()['data']
+    workflow_object = workflow_object_class.create(
+        data={},
+        # can be changed to get the user id from the current user once we implement authentication
+        id_user=submission_data['acquisition_source']['internal_uid'],
+        data_type='authors'
+    )
+    submission_data['acquisition_source']['submission_number'] = str(workflow_object.id)
+    workflow_object.data = submission_data
+    workflow_object.extra_data['is-update'] = bool(submission_data.get('control_number'))
+    workflow_object.extra_data['source_data'] = {
+        'data': copy.deepcopy(workflow_object.data),
+        'extra_data': copy.deepcopy(workflow_object.extra_data)
+    }
+
+    workflow_object.save()
+    db.session.commit()
+
+    workflow_object_id = workflow_object.id
+
+    start.delay(
+        'author', object_id=workflow_object.id)
+
+    return jsonify({'workflow_object_id': workflow_object_id})
 
 
 callback_resolve_validation = ResolveValidationResource.as_view(
