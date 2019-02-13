@@ -183,4 +183,4 @@ class UIDisplayLiteratureRecordJsonUIV1(JSONSchemaUIV1):
     metadata = fields.Method('get_ui_display_metadata')
 
     def get_ui_display_metadata(self, data):
-        return json.loads(data.get('metadata', {}).get('_ui_display', "{}"))
+        return json.loads(data['metadata']['_ui_display'])
