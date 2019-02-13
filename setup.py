@@ -132,6 +132,7 @@ install_requires = [
     'pytz~=2018.7,>=2018.7',
     'requests-oauthlib==1.0.0',
     'oauthlib>=1.1.2,<3.0.0',
+    'munkres~=1.0.12,<1.1.0',
 ]
 
 docs_require = [
