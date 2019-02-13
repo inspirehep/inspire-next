@@ -38,7 +38,6 @@ from .common import (  # noqa: F401
     IsbnSchemaV1,
     PublicationInfoItemSchemaV1,
     ReferenceItemSchemaV1,
-    SupervisorSchemaV1,
     ThesisInfoSchemaV1,
     CitationItemSchemaV1,
     CollaborationWithSuffixSchemaV1,
@@ -105,8 +104,6 @@ class RecordMetadataSchemaV1(Schema):
     # related_records = fields.Raw()
     report_numbers = fields.Raw()
     # self = fields.Raw()
-    supervisors = ListWithLimit(fields.Nested(
-        SupervisorSchemaV1, dump_only=True), attribute='authors', limit=10)
     texkeys = fields.Raw()
     thesis_info = fields.Nested(ThesisInfoSchemaV1, dump_only=True)
     # title_translations = fields.Raw()
@@ -155,10 +152,6 @@ class MetadataAuthorsSchemaV1(Schema):
         dump_only=True, many=True
     )
     collaborations = fields.Raw(default=[], dump_only=True)
-    supervisors = NestedWithoutEmptyObjects(
-        SupervisorSchemaV1, default=[], dump_only=True, many=True,
-        attribute='authors'
-    )
 
 
 class LiteratureAuthorsSchemaJSONUIV1(JSONSchemaUIV1):
