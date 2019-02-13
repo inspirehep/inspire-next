@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
 from inspire_dojson.utils import strip_empty_values
 from inspire_utils.date import format_date
 
@@ -176,3 +177,10 @@ class LiteratureReferencesSchemaJSONUIV1(JSONSchemaUIV1):
     """Schema for references."""
 
     metadata = fields.Nested(MetadataReferencesSchemaUIV1, dump_only=True)
+
+
+class UIDisplayLiteratureRecordJsonUIV1(JSONSchemaUIV1):
+    metadata = fields.Method('get_ui_display_metadata')
+
+    def get_ui_display_metadata(self, data):
+        return json.loads(data.get('metadata', {}).get('_ui_display', "{}"))

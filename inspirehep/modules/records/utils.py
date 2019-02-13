@@ -447,3 +447,17 @@ def populate_author_suggest(record, *args, **kwargs):
     record['author_suggest'] = {
         'input': input_values
     }
+
+
+def populate_ui_display(record, serializer):
+    """Calls specified serializer with selected record and stores data in
+    `_ui_display` field.
+
+    Args:
+        record (InspireRecord): record to serialize
+        serializer (Schema): Schema which will be used to serialize record
+    Returns:
+        None: Data will be added to record dictionary (metadata)
+
+    """
+    record['_ui_display'] = serializer().dumps(record).data
