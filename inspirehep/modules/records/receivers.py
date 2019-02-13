@@ -51,6 +51,7 @@ from inspirehep.modules.orcid.utils import get_orcids_for_push
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.errors import MissingInspireRecordError
+from inspirehep.modules.records.serializers.schemas.json import RecordMetadataSchemaV1
 from inspirehep.modules.records.tasks import index_modified_citations_from_record
 from inspirehep.modules.records.utils import (
     is_author,
@@ -76,6 +77,7 @@ from inspirehep.modules.records.utils import (
     populate_recid_from_ref,
     populate_title_suggest,
     populate_facet_author_name,
+    populate_ui_display,
 )
 from invenio_indexer.api import RecordIndexer
 
@@ -221,6 +223,7 @@ def enhance_before_index(record):
         populate_number_of_references(record)
         populate_citations_count(record)
         populate_facet_author_name(record)
+        populate_ui_display(record, RecordMetadataSchemaV1)
 
         if is_book(record):
             populate_bookautocomplete(record)
