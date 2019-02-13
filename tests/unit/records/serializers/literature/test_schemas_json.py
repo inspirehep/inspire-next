@@ -112,10 +112,6 @@ def test_references_schema_without_record():
                             {
                                 'full_name': 'Hahn, F.'
                             },
-                            {
-                                'full_name': 'Smith, J.',
-                                'inspire_roles': ['supervisor'],
-                            },
                         ],
                         'label': '388',
                         'misc': [
@@ -288,18 +284,16 @@ def test_authors_schema():
                     'last_name': 'Black',
                     'inspire_roles': ['editor'],
                 },
-            ],
-            'collaborations': [
-                {
-                    'value': 'LHCb'
-                }
-            ],
-            'supervisors': [
                 {
                     'full_name': 'Jimmy',
                     'first_name': 'Jimmy',
                     'inspire_roles': ['supervisor'],
                 },
+            ],
+            'collaborations': [
+                {
+                    'value': 'LHCb'
+                }
             ],
         }
     }
@@ -330,7 +324,6 @@ def test_authors_schema_without_authors():
                     'value': 'LHCb'
                 }
             ],
-            'supervisors': [],
         }
     }
     result = json.loads(schema.dumps(record).data)
@@ -353,7 +346,6 @@ def test_authors_schema_without_authors_and_collaborations():
         'metadata': {
             'authors': [],
             'collaborations': [],
-            'supervisors': [],
         }
     }
     result = json.loads(schema.dumps(record).data)
