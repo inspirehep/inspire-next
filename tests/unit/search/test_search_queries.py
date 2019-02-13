@@ -43,6 +43,28 @@ def test_select_source_function_in_literature_search(request_mocked):
     assert search_source == expected_source
 
 
+@patch('inspirehep.modules.search.search_factory.request')
+def test_select_source_function_in_search(request_mocked):
+    request_mocked.headers.get.return_value = 'application/json'
+    expected_source = {
+        'includes': [
+            '$schema', 'abstracts.value', 'arxiv_eprints.value',
+            'arxiv_eprints.categories', 'authors.affiliations',
+            'authors.full_name', 'authors.inspire_roles',
+            'authors.control_number', 'collaborations',
+            'control_number', 'citation_count',
+            'dois.value', 'earliest_date', 'inspire_categories',
+            'number_of_references', 'publication_info',
+            'report_numbers', 'titles.title'
+        ]
+    }
+
+    search = select_source(LiteratureSearch())
+    search_source = search.to_dict()['_source']
+
+    assert search_source == expected_source
+
+
 def test_select_source_function_in_author_search():
     search = select_source(AuthorsSearch())
     search_source = search.to_dict().get('_source')
