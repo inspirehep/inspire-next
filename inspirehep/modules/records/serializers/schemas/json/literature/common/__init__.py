@@ -26,7 +26,6 @@ from .author import AuthorSchemaV1  # noqa: F401
 from .conference_info_item import ConferenceInfoItemSchemaV1  # noqa: F401
 from .doi import DOISchemaV1  # noqa: F401
 from .isbn import IsbnSchemaV1  # noqa: F401
-from .supervisor import SupervisorSchemaV1  # noqa: F401
 from .thesis_info import ThesisInfoSchemaV1  # noqa: F401
 from .publication_info_item import PublicationInfoItemSchemaV1  # noqa: F401
 from .external_system_identifier import ExternalSystemIdentifierSchemaV1    # noqa: F401

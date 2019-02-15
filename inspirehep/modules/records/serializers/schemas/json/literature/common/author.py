@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from marshmallow import Schema, fields, missing, pre_dump
+from marshmallow import Schema, fields, missing
 
 
 class AuthorSchemaV1(Schema):
@@ -56,10 +56,3 @@ class AuthorSchemaV1(Schema):
             return names[0] or missing
 
         return missing
-
-    @pre_dump
-    def filter(self, data):
-        if 'inspire_roles' in data:
-            if 'supervisor' in data.get('inspire_roles', ['author']):
-                return {}
-        return data

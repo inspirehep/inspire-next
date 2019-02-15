@@ -72,6 +72,10 @@
                     },
                     "type": "object"
                 },
+                "_ui_display": {
+                    "type" : "keyword",
+                    "index": false
+                },
                 "abstracts": {
                     "properties": {
                         "abstract_source_suggest": {

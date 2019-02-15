@@ -47,10 +47,6 @@ def test_references_schema_with_record(isolated_app):
                 'full_name': 'Smith, Jim',
                 'inspire_roles': ['editor'],
             },
-            {
-                'full_name': 'Jimmy',
-                'inspire_roles': ['supervisor'],
-            },
         ],
         'dois': [
             {

@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
 from inspire_dojson.utils import strip_empty_values
 from inspire_utils.date import format_date
 
@@ -38,7 +39,6 @@ from .common import (  # noqa: F401
     IsbnSchemaV1,
     PublicationInfoItemSchemaV1,
     ReferenceItemSchemaV1,
-    SupervisorSchemaV1,
     ThesisInfoSchemaV1,
     CitationItemSchemaV1,
     CollaborationWithSuffixSchemaV1,
@@ -105,8 +105,6 @@ class RecordMetadataSchemaV1(Schema):
     # related_records = fields.Raw()
     report_numbers = fields.Raw()
     # self = fields.Raw()
-    supervisors = ListWithLimit(fields.Nested(
-        SupervisorSchemaV1, dump_only=True), attribute='authors', limit=10)
     texkeys = fields.Raw()
     thesis_info = fields.Nested(ThesisInfoSchemaV1, dump_only=True)
     # title_translations = fields.Raw()
@@ -155,10 +153,6 @@ class MetadataAuthorsSchemaV1(Schema):
         dump_only=True, many=True
     )
     collaborations = fields.Raw(default=[], dump_only=True)
-    supervisors = NestedWithoutEmptyObjects(
-        SupervisorSchemaV1, default=[], dump_only=True, many=True,
-        attribute='authors'
-    )
 
 
 class LiteratureAuthorsSchemaJSONUIV1(JSONSchemaUIV1):
@@ -176,3 +170,10 @@ class LiteratureReferencesSchemaJSONUIV1(JSONSchemaUIV1):
     """Schema for references."""
 
     metadata = fields.Nested(MetadataReferencesSchemaUIV1, dump_only=True)
+
+
+class UIDisplayLiteratureRecordJsonUIV1(JSONSchemaUIV1):
+    metadata = fields.Method('get_ui_display_metadata')
+
+    def get_ui_display_metadata(self, data):
+        return json.loads(data['metadata']['_ui_display'])

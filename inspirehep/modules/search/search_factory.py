@@ -49,23 +49,39 @@ def select_source(search):
     Returns: Elastic search DSL search instance.
     """
     if isinstance(search, LiteratureSearch):
-        search = search.source(includes=["$schema",
-                                         "abstracts.value",
-                                         "arxiv_eprints.value",
-                                         "arxiv_eprints.categories",
-                                         "authors.affiliations",
-                                         "authors.full_name",
-                                         "authors.control_number",
-                                         "collaborations",
-                                         "control_number",
-                                         "citation_count",
-                                         "dois.value",
-                                         "earliest_date",
-                                         "inspire_categories",
-                                         "number_of_references",
-                                         "publication_info",
-                                         "report_numbers",
-                                         "titles.title"])
+        request_accept = request.headers.get('Accept')
+        if request_accept == 'application/vnd+inspire.record.ui+json':
+            #  If it's search from UI then use _ui_display field only
+            search = search.source(
+                includes=[
+                    "$schema",
+                    "control_number",
+                    "_ui_display"
+                ]
+            )
+        else:
+            search = search.source(
+                includes=[
+                    "$schema",
+                    "abstracts.value",
+                    "arxiv_eprints.value",
+                    "arxiv_eprints.categories",
+                    "authors.affiliations",
+                    "authors.full_name",
+                    "authors.inspire_roles",
+                    "authors.control_number",
+                    "collaborations",
+                    "control_number",
+                    "citation_count",
+                    "dois.value",
+                    "earliest_date",
+                    "inspire_categories",
+                    "number_of_references",
+                    "publication_info",
+                    "report_numbers",
+                    "titles.title"
+                ]
+            )
     return search
 
 
