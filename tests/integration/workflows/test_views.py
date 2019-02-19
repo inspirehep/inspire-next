@@ -124,3 +124,105 @@ def test_responses_with_etag(workflow_app):
 
         response = client.get(workflow_url, headers={'If-None-Match': 'Jessica Jones'})
         assert response.status_code == 200
+
+
+def test_new_author_submit_with_required_fields(api_client):
+    data = {
+        "data": {
+            "_collections": [
+                "Authors"
+            ],
+            "acquisition_source": {
+                "email": "john.doe@gmail.com",
+                "datetime": "2019-02-04T10:06:34.695915",
+                "method": "submitter",
+                "submission_number": "None",
+                "internal_uid": 1,
+            },
+            "name": {
+                "value": "Martinez, Diegpo"
+            },
+            "status": "active"
+        }
+    }
+    response = api_client.post('/workflows/authors', data=json.dumps(data), content_type='application/json')
+    assert response.status_code == 200
+
+    workflow_object_id = json.loads(response.data).get('workflow_object_id')
+    assert workflow_object_id is not None
+
+    obj = workflow_object_class.get(workflow_object_id)
+
+    expected = {
+        "status": "active",
+        "$schema": "http://localhost:5000/schemas/records/authors.json",
+        "acquisition_source": {
+            "method": "submitter",
+            "internal_uid": 1,
+            "email": "john.doe@gmail.com",
+            "submission_number": "1",
+            "datetime": "2019-02-04T10:06:34.695915"
+        },
+        "_collections": [
+            "Authors"
+        ],
+        "name": {
+            "value": "Martinez, Diegpo"
+        }
+    }
+
+    assert expected == obj.data
+
+    assert obj.extra_data['is-update'] is False
+
+
+def test_update_author_submit_with_required_fields(api_client):
+    data = {
+        "data": {
+            "_collections": [
+                "Authors"
+            ],
+            "acquisition_source": {
+                "email": "john.doe@gmail.com",
+                "datetime": "2019-02-04T10:06:34.695915",
+                "method": "submitter",
+                "submission_number": "None",
+                "internal_uid": 1,
+            },
+            "name": {
+                "value": "Martinez, Diegpo"
+            },
+            "status": "active",
+            "control_number": 3
+        }
+    }
+    response = api_client.post('/workflows/authors', data=json.dumps(data), content_type='application/json')
+    assert response.status_code == 200
+
+    workflow_object_id = json.loads(response.data).get('workflow_object_id')
+    assert workflow_object_id is not None
+
+    obj = workflow_object_class.get(workflow_object_id)
+
+    expected = {
+        "status": "active",
+        "$schema": "http://localhost:5000/schemas/records/authors.json",
+        "acquisition_source": {
+            "method": "submitter",
+            "internal_uid": 1,
+            "email": "john.doe@gmail.com",
+            "submission_number": "1",
+            "datetime": "2019-02-04T10:06:34.695915"
+        },
+        "_collections": [
+            "Authors"
+        ],
+        "name": {
+            "value": "Martinez, Diegpo"
+        },
+        "control_number": 3
+    }
+
+    assert expected == obj.data
+
+    assert obj.extra_data['is-update'] is True

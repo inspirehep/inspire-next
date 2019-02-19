@@ -43,7 +43,7 @@ from inspirehep.modules.workflows.tasks.submission import (
 )
 from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
 
-from inspirehep.modules.submissions.tasks import (
+from inspirehep.modules.workflows.tasks.author import (
     curation_ticket_context,
     curation_ticket_needed,
     new_ticket_context,
