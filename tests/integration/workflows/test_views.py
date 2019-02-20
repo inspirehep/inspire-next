@@ -24,6 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 from copy import deepcopy
 import json
+from mock import patch
 
 from invenio_accounts.testutils import login_user_via_session
 from invenio_workflows import workflow_object_class
@@ -226,3 +227,55 @@ def test_update_author_submit_with_required_fields(api_client):
     assert expected == obj.data
 
     assert obj.extra_data['is-update'] is True
+
+
+@patch('inspirehep.modules.workflows.views.start')
+def test_literature_submit_workflow(mock_start, workflow_api_client):
+    data = {
+        "data": {
+            "$schema": "http://localhost:5000/schemas/records/hep.json",
+            "_collections": [
+                "Literature"
+            ],
+            "document_type": ["article"],
+            "titles": [
+                {"title": "Discovery of cool stuff"}
+            ],
+            "authors": [
+                {"full_name": "Harun Urhan"}
+            ]
+        },
+        "form_data": {
+            "url": "https://cern.ch/coolstuff.pdf"
+        }
+    }
+    response = workflow_api_client.post(
+        "/workflows/literature", data=json.dumps(data), content_type="application/json")
+    assert response.status_code == 200
+
+    workflow_object_id = json.loads(response.data).get("workflow_object_id")
+    assert workflow_object_id is not None
+    mock_start.delay.assert_called_once_with("article", object_id=workflow_object_id)
+
+    obj = workflow_object_class.get(workflow_object_id)
+
+    expected_data = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "_collections": [
+            "Literature"
+        ],
+        "document_type": ["article"],
+        "titles": [
+            {"title": "Discovery of cool stuff"}
+        ],
+        "authors": [
+            {"full_name": "Harun Urhan"}
+        ]
+    }
+
+    expected_formdata = {
+        "url": "https://cern.ch/coolstuff.pdf"
+    }
+
+    assert expected_data == obj.data
+    assert expected_formdata == obj.extra_data["formdata"]
