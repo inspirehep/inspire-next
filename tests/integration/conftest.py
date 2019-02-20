@@ -55,7 +55,7 @@ from factories.db.invenio_records import (
 @pytest.fixture(scope='session')
 def app():
     """
-    Deprecated: do not use this fixture for new tests, unless for very
+    Deprecated: do not use this fixtures for new tests, unless for very
     specific use cases. Use `isolated_app` instead.
 
     Flask application with demosite data and without any database isolation:
@@ -64,7 +64,7 @@ def app():
     Creates a Flask application with a simple testing configuration,
     then creates an application context and inside of it recreates
     all databases and indices from the fixtures. Finally it yields,
-    so that all tests that explicitly use the ``app`` fixture have
+    so that all tests that explicitly use the ``app`` fixtures have
     access to an application context.
 
     See: http://flask.pocoo.org/docs/0.12/appcontext/.
@@ -121,8 +121,8 @@ def isolated_app(app):
     Note: creating an isolated app without the demosite is challenging,
     see: https://its.cern.ch/jira/browse/INSPIR-425
 
-    Note: the order of execution between the `app` fixture (session-scoped)
-    and the `isolated_app` fixture should not matter.
+    Note: the order of execution between the `app` fixtures (session-scoped)
+    and the `isolated_app` fixtures should not matter.
     Some work to investigate that was done here:
     https://github.com/turtle321/inspire-next/commit/a3575c4f59890d274e7b5fcdfdaeac9685d0a755
     """

@@ -29,13 +29,12 @@ from collections import namedtuple
 
 from time_execution import time_execution
 
+from inspire_schemas.readers.conference import ConferenceReader
+from inspire_schemas.readers.literature import LiteratureReader
 from inspire_utils.date import PartialDate
 from inspire_utils.record import get_value
 from inspire_utils.urls import record_url_by_pattern
 
-from inspirehep.modules.hal.utils import get_journal_title, \
-    get_publication_date, get_conference_title, get_conference_record, \
-    get_conference_country, get_doi
 from inspirehep.modules.records.serializers import bibtex_v1
 
 from .builder import OrcidBuilder
@@ -211,14 +210,15 @@ class OrcidConverter(object):
     @property
     def journal_title(self):
         """Get record's journal title."""
-        return get_journal_title(self.record)
+        return LiteratureReader(self.record).journal_title
 
     @property
     def conference_title(self):
         """Get record's conference title."""
+        from inspirehep.utils.record_getter import get_conference_record
         try:
             conference_record = get_conference_record(self.record)
-            return get_conference_title(conference_record)
+            return LiteratureReader(conference_record).title
         except TypeError:
             pass
 
@@ -230,12 +230,12 @@ class OrcidConverter(object):
     @property
     def conference_country(self):
         """Get conference record country."""
-        return get_conference_country(self.record)
+        return ConferenceReader(self.record).country
 
     @property
     def doi(self):
         """Get DOI of a record."""
-        return get_doi(self.record)
+        return LiteratureReader(self.record).doi
 
     @property
     def arxiv_eprint(self):
@@ -267,7 +267,10 @@ class OrcidConverter(object):
             partial_date (inspire_utils.date.PartialDate): publication date
         """
         try:
-            return PartialDate.loads(get_value(self.record, 'imprints.date[0]') or get_publication_date(self.record))
+            return PartialDate.loads(
+                get_value(self.record, 'imprints.date[0]') or
+                LiteratureReader(self.record).publication_date
+            )
         except ValueError:
             return None
 

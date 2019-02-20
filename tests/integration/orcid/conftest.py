@@ -72,7 +72,7 @@ def vcr(vcr):
     return vcr
 
 
-# NOTE: a desired side effect of this auto-used fixture is that VCR is used
+# NOTE: a desired side effect of this auto-used fixtures is that VCR is used
 # in all tests, no need to mark them with: @pytest.mark.vcr()
 # This effect is desired to avoid any network interaction apart from those
 # to the listed in vcr_config > ignore_hosts.

@@ -30,6 +30,8 @@ from flask import current_app
 from sqlalchemy import tuple_
 from werkzeug.utils import import_string
 
+from inspire_dojson.utils import get_recid_from_ref
+from inspire_utils.record import get_value
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.models import RecordMetadata
 
@@ -136,3 +138,39 @@ def get_db_records(pids):
 
     for record in query.yield_per(100):
         yield record.json
+
+
+def get_conference_record(record, default=None):
+    """Return the first Conference record associated with a record.
+
+    Queries the database to fetch the first Conference record referenced
+    in the ``publication_info`` of the record.
+
+    Args:
+        record(InspireRecord): a record.
+        default: value to be returned if no conference record present/found
+
+    Returns:
+        InspireRecord: the first Conference record associated with the record.
+
+    Examples:
+    >>> record = {
+    ...     'publication_info': [
+    ...         {
+    ...             'conference_record': {
+    ...                 '$ref': '/api/conferences/972464',
+    ...             },
+    ...         },
+    ...     ],
+    ... }
+    >>> conference_record = get_conference_record(record)
+    >>> conference_record['control_number']
+    972464
+
+    """
+    pub_info = get_value(record, 'publication_info.conference_record[0]')
+    if not pub_info:
+        return default
+
+    conferences = get_db_records([('con', get_recid_from_ref(pub_info))])
+    return list(conferences)[0]
