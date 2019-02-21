@@ -24,6 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 from marshmallow import Schema, fields, missing
 
+from inspire_dojson.utils import get_recid_from_ref
+
 
 class AuthorSchemaV1(Schema):
     affiliations = fields.Raw()
@@ -40,6 +42,7 @@ class AuthorSchemaV1(Schema):
     uuid = fields.Raw()
     first_name = fields.Method('get_first_name', default=missing)
     last_name = fields.Method('get_last_name', default=missing)
+    recid = fields.Method('get_recid')
 
     def get_first_name(self, data):
         names = data.get('full_name', '').split(',', 1)
@@ -56,3 +59,7 @@ class AuthorSchemaV1(Schema):
             return names[0] or missing
 
         return missing
+
+    def get_recid(self, data):
+        record = data.get('record')
+        return get_recid_from_ref(record) if record is not None else missing
