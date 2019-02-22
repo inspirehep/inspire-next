@@ -27,7 +27,10 @@ from flask import current_app
 
 from invenio_workflows import workflow_object_class
 
+from inspirehep.modules.records.api import InspireRecord, RecordMetadata
+
 from factories.db.invenio_records import TestRecordMetadata
+
 
 # FIXME: otherwise this task is not found by Celery.
 from inspirehep.modules.orcid.tasks import orcid_push  # noqa: F401
@@ -173,3 +176,30 @@ def test_is_stale_data_returns_false_if_is_update_is_falsy(workflow_app):
     TestRecordMetadata.create_from_kwargs(index=False, has_pid=False)
     obj = workflow_object_class.create({})
     assert is_stale_data(obj, None) is False
+
+
+def test_regression_store_record_does_not_commit_when_error(workflow_app):
+    data = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'document_type': ['article'],
+        'titles': [{'title': 'title'}],
+    }
+    eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
+
+    obj = workflow_object_class.create(data)
+
+    record_count = RecordMetadata.query.count()
+    assert record_count == 0
+
+    with patch.object(
+        InspireRecord,
+        'download_documents_and_figures',
+        side_effect=Exception
+    ):
+        # pytest.raises catches the exception and makes the test passing immediately
+        try:
+            store_record(obj, eng)
+        except Exception:
+            record_count = RecordMetadata.query.count()
+            assert record_count == 0

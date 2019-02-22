@@ -44,33 +44,33 @@ def store_record(obj, eng):
     is_update = obj.extra_data.get('is-update')
     is_authors = eng.workflow_definition.data_type == 'authors'
 
-    if is_update:
-        if not is_authors and not current_app.config.get('FEATURE_FLAG_ENABLE_MERGER', False):
-            obj.log.info(
-                'skipping update record, feature flag ``FEATURE_FLAG_ENABLE_MERGER`` is disabled.'
-            )
-            return
+    with db.session.begin_nested():
+        if is_update:
+            if not is_authors and not current_app.config.get('FEATURE_FLAG_ENABLE_MERGER', False):
+                obj.log.info(
+                    'skipping update record, feature flag ``FEATURE_FLAG_ENABLE_MERGER`` is disabled.'
+                )
+                return
 
-        record = InspireRecord.get_record(obj.extra_data['head_uuid'])
-        obj.data['control_number'] = record['control_number']
-        record.clear()
-        record.update(obj.data, files_src_records=[obj])
+            record = InspireRecord.get_record(obj.extra_data['head_uuid'])
+            obj.data['control_number'] = record['control_number']
+            record.clear()
+            record.update(obj.data, files_src_records=[obj])
 
-    else:
-        # Skip the files to avoid issues in case the record has already pid
-        # TODO: remove the skip files once labs becomes master
-        record = InspireRecord.create(obj.data, id_=None, skip_files=True)
-        # Create persistent identifier.
-        # Now that we have a recid, we can properly download the documents
-        record.download_documents_and_figures(src_records=[obj])
+        else:
+            # Skip the files to avoid issues in case the record has already pid
+            # TODO: remove the skip files once labs becomes master
+            record = InspireRecord.create(obj.data, id_=None, skip_files=True)
+            # Create persistent identifier.
+            # Now that we have a recid, we can properly download the documents
+            record.download_documents_and_figures(src_records=[obj])
 
-        obj.data['control_number'] = record['control_number']
-        # store head_uuid to store the root later
-        obj.extra_data['head_uuid'] = str(record.id)
+            obj.data['control_number'] = record['control_number']
+            # store head_uuid to store the root later
+            obj.extra_data['head_uuid'] = str(record.id)
 
-    record.commit()
-    obj.save()
-    db.session.commit()
+        record.commit()
+        obj.save()
 
 
 @with_debug_logging

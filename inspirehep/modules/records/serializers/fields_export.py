@@ -30,14 +30,11 @@ from six import text_type
 
 from idutils import is_arxiv_post_2007, normalize_isbn
 
+from inspire_schemas.readers import LiteratureReader
 from inspire_utils.date import PartialDate
 from inspire_utils.record import get_value
-from inspirehep.modules.hal.utils import (
-    get_page_artid_for_publication_info,
-    get_conference_record,
-    get_conference_title,
-)
 
+from inspirehep.utils.record_getter import get_conference_record
 from .config import COMMON_FIELDS_FOR_ENTRIES, FIELDS_FOR_ENTRY_TYPE
 
 
@@ -237,7 +234,8 @@ def get_number(data, doc_type):
 
 @extractor('pages')
 def get_pages(data, doc_type):
-    return get_page_artid_for_publication_info(get_best_publication_info(data), '--')
+    pub_info = get_best_publication_info(data)
+    return LiteratureReader.get_page_artid_for_publication_info(pub_info, '--')
 
 
 @extractor('primaryClass')
@@ -280,7 +278,7 @@ def get_address(data, doc_type):
 def get_booktitle(data, doc_type):
     book_series_title = get_value(data, 'book_series.title[0]')
     conference_record = get_conference_record(data, default={})
-    return book_series_title or get_conference_title(conference_record, default=None)
+    return book_series_title or LiteratureReader(conference_record).title
 
 
 @extractor('publisher')
@@ -366,7 +364,7 @@ def get_note(data, doc_type):
             field=entry['material'].title(),
             journal=entry.get('journal_title'),
             volume=entry.get('journal_volume'),
-            pages=get_page_artid_for_publication_info(entry, '--'),
+            pages=LiteratureReader.get_page_artid_for_publication_info(entry, '--'),
             year='({})'.format(entry['year']) if 'year' in entry else ''
         ).strip()
         for entry in entries

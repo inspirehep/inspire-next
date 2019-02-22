@@ -152,7 +152,7 @@ def do_webcoll_callback(app, recids, server_name='http://fake.na.me'):
 
 
 def generate_record():
-    """Provide record fixture."""
+    """Provide record fixtures."""
     json_data = json.loads(pkg_resources.resource_string(
         __name__,
         os.path.join(
@@ -168,7 +168,7 @@ def generate_record():
 
 
 def insert_citing_record():
-    """Provide record fixture."""
+    """Provide record fixtures."""
     json_data = json.loads(pkg_resources.resource_string(
         __name__,
         os.path.join(
@@ -185,7 +185,7 @@ def insert_citing_record():
 
 
 def core_record():
-    """Provide record fixture."""
+    """Provide record fixtures."""
     record_oai_arxiv_plots = pkg_resources.resource_string(
         __name__,
         os.path.join(

@@ -44,12 +44,12 @@ from inspirehep.modules.workflows.models import (
 
 @pytest.fixture(scope='session')
 def app(request):
-    """Flask application fixture.
+    """Flask application fixtures.
 
     Creates a Flask application with a simple testing configuration,
     then creates an application context and inside of it recreates
     all databases and indices from the fixtures. Finally it yields,
-    so that all tests that explicitly use the ``app`` fixture have
+    so that all tests that explicitly use the ``app`` fixtures have
     access to an application context.
 
     See: http://flask.pocoo.org/docs/0.12/appcontext/.
@@ -85,7 +85,7 @@ def arsenic(selenium, app):
     """Instantiate the Arsenic singleton.
 
     The ``Arsenic`` singleton provides some helpers and proxies the rest of
-    the calls to the wrapped ``selenium`` fixture.
+    the calls to the wrapped ``selenium`` fixtures.
 
     .. deprecated:: 2017-09-18
        This is needlessly complicated.
