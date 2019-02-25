@@ -620,8 +620,13 @@ class InspireRecord(Record):
         filter_deleted_records = or_(not_(type_coerce(RecordMetadata.json, JSONB).has_key('deleted')),  # noqa: W601
                                      not_(RecordMetadata.json['deleted'] == cast(True, JSONB)))
         only_literature_collection = type_coerce(RecordMetadata.json, JSONB)['_collections'].contains(['Literature'])
+        filter_superseded_records = or_(
+            not_(type_coerce(RecordMetadata.json, JSONB).has_key('related_records')),  # noqa: W601
+            not_(type_coerce(RecordMetadata.json, JSONB)['related_records'].contains([{'relation': 'successor'}]))
+        )
         citations = citation_query.filter(citation_filter,
                                           filter_deleted_records,
+                                          filter_superseded_records,
                                           only_literature_collection)
         if not show_duplicates:
             # It just hides duplicates, and still can show citations
