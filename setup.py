@@ -132,6 +132,7 @@ install_requires = [
     'requests-oauthlib==1.0.0',
     'oauthlib>=1.1.2,<3.0.0',
     'munkres~=1.0.12,<1.1.0',
+    'Twisted~=18.9.0,<19.0.0',
 ]
 
 docs_require = [
