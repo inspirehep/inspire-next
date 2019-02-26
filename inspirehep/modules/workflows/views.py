@@ -745,6 +745,30 @@ def start_author_workflow():
     return jsonify({'workflow_object_id': workflow_object_id})
 
 
+@workflow_blueprint.route('/literature', methods=['POST'])
+def start_workflow_for_literature_submission():
+    json = request.get_json()
+    workflow_object = workflow_object_class.create(
+        data=json['data'],
+        id_user=current_user.get_id(),
+        data_type="hep"
+    )
+    workflow_object.extra_data['formdata'] = json['form_data']
+    workflow_object.extra_data['source_data'] = {
+        'extra_data': copy.deepcopy(workflow_object.extra_data),
+        'data': copy.deepcopy(workflow_object.data),
+    }
+
+    workflow_object.save()
+    db.session.commit()
+
+    workflow_object_id = workflow_object.id
+
+    start.delay("article", object_id=workflow_object.id)
+
+    return jsonify({'workflow_object_id': workflow_object_id})
+
+
 callback_resolve_validation = ResolveValidationResource.as_view(
     'callback_resolve_validation')
 callback_resolve_merge_conflicts = ResolveMergeResource.as_view(
