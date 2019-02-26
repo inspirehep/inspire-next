@@ -119,8 +119,9 @@ class LiteratureSearch(RecordsSearch, SearchMixin):
             'publication_info'
         ]
         from_rec = (page - 1) * size
-        search = LiteratureSearch().query('match', references__recid=record[
-            'control_number'])
+        citations_query = Q('match', references__recid=record['control_number']) & \
+            ~Q("match", related_records__relation='successor')
+        search = LiteratureSearch().query(citations_query)
         search = search.params(_source=_source, from_=from_rec, size=size)
         return search.sort('-earliest_date').execute().hits
 

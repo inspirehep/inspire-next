@@ -180,3 +180,50 @@ def test_not_count_citations_from_other_collections(isolated_app):
     TestRecordMetadata.create_from_kwargs(json=ref)
 
     assert record_1.get_citations_count() == 1
+
+
+def test_citations_from_superseded_should_not_count_to_citation_count(isolated_app):
+    record_json = {
+        'control_number': 31650,
+    }
+    record = TestRecordMetadata.create_from_kwargs(
+        json=record_json).inspire_record
+    assert record.get_citations_count() == 0
+
+    citing_record_json = {
+        'control_number': 316501,
+        'related_records': [
+            {
+                'record': {'$ref': 'https://ref-to-successor'},
+                'relation': 'successor'
+            }
+        ],
+        'references': [{'record': {'$ref': record._get_ref()}}]
+    }
+    TestRecordMetadata.create_from_kwargs(json=citing_record_json)
+    assert record.get_citations_count() == 0
+
+    citing_record_json = {
+        'control_number': 316502,
+        'related_records': [
+            {
+                'record': {'$ref': 'https://ref-to-anything'},
+            }
+        ],
+        'references': [{'record': {'$ref': record._get_ref()}}]
+    }
+    TestRecordMetadata.create_from_kwargs(json=citing_record_json)
+    assert record.get_citations_count() == 1
+
+    citing_record_json = {
+        'control_number': 316503,
+        'related_records': [
+            {
+                'record': {'$ref': 'https://ref-to-predecessor'},
+                'relation': 'predecessor'
+            }
+        ],
+        'references': [{'record': {'$ref': record._get_ref()}}]
+    }
+    TestRecordMetadata.create_from_kwargs(json=citing_record_json)
+    assert record.get_citations_count() == 2
