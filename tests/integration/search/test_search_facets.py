@@ -26,6 +26,7 @@ import os
 
 import json
 import pkg_resources
+import urllib
 
 from inspirehep.modules.search.facets import hep_author_publications
 
@@ -74,19 +75,19 @@ def load_json_resource(resource):
 
 
 def test_hep_facets_by_author_name(api_client):
-    query = '"a Fecko"'
+    query = {'q': 'a Fecko'}
     expected = load_json_resource('test_hep_facets_by_author_name_expected_1')
 
     assert expected == json.loads(
-        api_client.get('literature/facets?q=%s' % query).data)
+        api_client.get('literature/facets?%s' % urllib.urlencode(query)).data)
 
-    query = '"a Müller"'
+    query = {'q': 'a Müller'}
     expected = load_json_resource('test_hep_facets_by_author_name_expected_2')
 
     assert expected == json.loads(
-        api_client.get('literature/facets?q=%s' % query).data)
+        api_client.get('literature/facets?%s' % urllib.urlencode(query)).data)
 
-    query = '"a üź"'
+    query = {'q': 'a üź'}
     expected = load_json_resource('test_hep_facets_by_author_name_expected_3')
     assert expected == json.loads(
-        api_client.get('literature/facets?q=%s' % query).data)
+        api_client.get('literature/facets?%s' % urllib.urlencode(query)).data)
