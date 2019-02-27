@@ -29,7 +29,7 @@ import click
 from flask.cli import with_appcontext
 
 from .files import init_all_storage_paths
-from .users import init_users_and_permissions
+from .users import init_users_and_permissions, init_authentication_token
 
 
 @click.group()
@@ -43,3 +43,4 @@ def init():
     """Init the system with fixtures."""
     init_all_storage_paths()
     init_users_and_permissions()
+    init_authentication_token()

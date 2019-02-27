@@ -37,7 +37,7 @@ from invenio_search.cli import current_search_client as es
 
 from inspirehep.factory import create_app
 from inspirehep.modules.fixtures.files import init_all_storage_paths
-from inspirehep.modules.fixtures.users import init_users_and_permissions
+from inspirehep.modules.fixtures.users import init_users_and_permissions, init_authentication_token
 from inspirehep.modules.records.api import InspireRecord
 
 # Use the helpers folder to store test helpers.
@@ -147,6 +147,7 @@ def create_all(app):
 
     init_all_storage_paths()
     init_users_and_permissions()
+    init_authentication_token()
 
 
 @pytest.fixture(autouse=True)

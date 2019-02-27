@@ -28,6 +28,8 @@ import re
 from os.path import join
 import copy
 
+from functools import wraps
+
 from flask import (
     Blueprint,
     abort,
@@ -40,6 +42,7 @@ from flask.views import MethodView
 from flask_login import current_user
 from inspire_schemas.api import validate
 from inspire_utils.urls import ensure_scheme
+from invenio_oauth2server.provider import oauth2
 from invenio_db import db
 from invenio_workflows import (
     ObjectStatus,
@@ -86,6 +89,20 @@ workflow_blueprint = Blueprint(
     template_folder='templates',
     static_folder="static",
 )
+
+
+def require_api_auth():
+    """
+    Decorator to require API authentication using OAuth token.
+    """
+    def wrapper(f):
+        f_oauth_required = oauth2.require_oauth()(f)
+
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            return f_oauth_required(*args, **kwargs)
+        return decorated
+    return wrapper
 
 
 @callback_blueprint.errorhandler(CallbackError)
@@ -718,6 +735,7 @@ def inspect_merge(holdingpen_id):
 
 
 @workflow_blueprint.route('/authors', methods=['POST'])
+@require_api_auth()
 def start_author_workflow():
     submission_data = request.get_json()['data']
     workflow_object = workflow_object_class.create(

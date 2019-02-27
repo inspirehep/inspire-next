@@ -40,7 +40,7 @@ from invenio_search import current_search_client as es
 
 from inspirehep.factory import create_app
 from inspirehep.modules.fixtures.files import init_all_storage_paths
-from inspirehep.modules.fixtures.users import init_users_and_permissions
+from inspirehep.modules.fixtures.users import init_users_and_permissions, init_authentication_token
 
 # Use the helpers folder to store test helpers.
 # See: http://stackoverflow.com/a/33515264/374865
@@ -102,6 +102,7 @@ def app():
 
         init_all_storage_paths()
         init_users_and_permissions()
+        init_authentication_token()
 
         migrate_from_file('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
 
