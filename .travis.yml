@@ -83,7 +83,7 @@ deploy:
   skip_cleanup: true
   provider: script
   script:
-    - chmod +x *.sh
-    - ./deploy-docker-image.sh
+    - sh ./deploy-docker-image.sh
   on:
     branch: master
+    condition: $SUITE = integration
