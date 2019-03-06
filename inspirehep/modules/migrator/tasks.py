@@ -228,10 +228,11 @@ def continuous_migration(skip_files=None):
     if lock.acquire(blocking=False):
         try:
             while r.llen('legacy_records'):
-                raw_record = r.lrange('legacy_records', 0, 0)
-                if raw_record:
-                    insert_into_mirror([zlib.decompress(raw_record[0])])
-                r.lpop('legacy_records')
+                raw_records = (r.lpop('legacy_records') for _ in range(CHUNK_SIZE))
+                decompressed_records = [
+                    zlib.decompress(raw_record) for raw_record in raw_records if raw_record
+                ]
+                insert_into_mirror(decompressed_records)
             migrate_from_mirror(wait_for_results=True, skip_files=skip_files)
         finally:
             lock.release()
