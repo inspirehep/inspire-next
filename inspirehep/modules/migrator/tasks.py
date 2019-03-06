@@ -230,12 +230,9 @@ def continuous_migration(skip_files=None):
             while r.llen('legacy_records'):
                 raw_record = r.lrange('legacy_records', 0, 0)
                 if raw_record:
-                    migrate_and_insert_record(
-                        zlib.decompress(raw_record[0]),
-                        skip_files=skip_files,
-                    )
-                    db.session.commit()
+                    insert_into_mirror([zlib.decompress(raw_record[0])])
                 r.lpop('legacy_records')
+            migrate_from_mirror(wait_for_results=True, skip_files=skip_files)
         finally:
             lock.release()
     else:
