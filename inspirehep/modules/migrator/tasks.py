@@ -40,7 +40,6 @@ from flask_sqlalchemy import models_committed
 from functools import wraps
 from jsonschema import ValidationError
 from redis import StrictRedis
-from redis_lock import Lock
 
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
@@ -53,6 +52,7 @@ from inspirehep.modules.pidstore.utils import (
     get_pid_types_from_endpoints,
 )
 from inspirehep.modules.records.receivers import index_after_commit
+from inspirehep.utils.lock import distributed_lock, DistributedLockError
 from inspirehep.utils.schema import ensure_valid_schema
 from inspirehep.utils.record import create_index_op
 
@@ -224,9 +224,8 @@ def continuous_migration(skip_files=None):
         )
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
-    lock = Lock(r, 'continuous_migration', expire=120, auto_renewal=True)
-    if lock.acquire(blocking=False):
-        try:
+    try:
+        with distributed_lock('continuous_migration'):
             while r.llen('legacy_records'):
                 raw_records = (r.lpop('legacy_records') for _ in range(CHUNK_SIZE))
                 decompressed_records = [
@@ -234,9 +233,7 @@ def continuous_migration(skip_files=None):
                 ]
                 insert_into_mirror(decompressed_records)
             migrate_from_mirror(wait_for_results=True, skip_files=skip_files)
-        finally:
-            lock.release()
-    else:
+    except DistributedLockError:
         LOGGER.info("Continuous_migration already executed. Skipping.")
 
 
