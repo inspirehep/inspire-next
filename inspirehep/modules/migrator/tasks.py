@@ -179,29 +179,18 @@ def migrate_from_mirror(also_migrate=None, wait_for_results=False, skip_files=No
     elif also_migrate != 'all':
         raise ValueError('"also_migrate" should be either None, "all" or "broken"')
 
-    if wait_for_results:
-        # if the wait_for_results is true we enable returning results from the
-        # migrate_recids_from_mirror task so that we could use them to
-        # synchronize migrate task (which in that case waits for the
-        # migrate_recids_from_mirror tasks to complete before it finishes).
-        tasks = []
-        migrate_recids_from_mirror.ignore_result = False
-
+    tasks = []
     chunked_recids = chunker(res.recid for res in query.yield_per(CHUNK_SIZE))
     for i, chunk in enumerate(chunked_recids):
         print("Scheduled {} records for migration".format(i * CHUNK_SIZE + len(chunk)))
-        if wait_for_results:
-            tasks.append(migrate_recids_from_mirror.s(chunk, skip_files=skip_files))
-        else:
-            migrate_recids_from_mirror.delay(chunk, skip_files=skip_files)
+        tasks.append(migrate_recids_from_mirror.s(chunk, skip_files=skip_files))
 
+    # this could use a group instead of getting all results manually, but
+    # disable_sync_subtasks is not available for group results in Celery 4.1.*
+    results = [task.delay(ignore_results=(not wait_for_results)) for task in tasks]
     if wait_for_results:
-        # this could use a group instead of getting all results manually, but
-        # disable_sync_subtasks is not available for group results in Celery 4.1.*
-        results = [task.apply_async() for task in tasks]
         for result in results:
             result.get(disable_sync_subtasks=False)
-        migrate_recids_from_mirror.ignore_result = True
         print('All migration tasks have been completed.')
 
 
@@ -243,9 +232,11 @@ def continuous_migration(skip_files=None):
         LOGGER.info("Continuous_migration already executed. Skipping.")
 
 
-@shared_task(ignore_result=False, queue='migrator')
+@shared_task(bind=True, queue='migrator')
 @disable_orcid_push
-def migrate_recids_from_mirror(prod_recids, skip_files=False):
+def migrate_recids_from_mirror(self, prod_recids, skip_files=False, ignore_results=True):
+    self.ignore_results = ignore_results
+
     models_committed.disconnect(index_after_commit)
 
     index_queue = []
