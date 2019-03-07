@@ -33,7 +33,7 @@ from contextlib import closing
 import click
 import requests
 
-from celery import group, shared_task
+from celery import shared_task
 from elasticsearch.helpers import bulk as es_bulk
 from flask import current_app
 from flask_sqlalchemy import models_committed
@@ -196,9 +196,11 @@ def migrate_from_mirror(also_migrate=None, wait_for_results=False, skip_files=No
             migrate_recids_from_mirror.delay(chunk, skip_files=skip_files)
 
     if wait_for_results:
-        job = group(tasks)
-        result = job.apply_async()
-        result.join()
+        # this could use a group instead of getting all results manually, but
+        # disable_sync_subtasks is not available for group results in Celery 4.1.*
+        results = [task.apply_async() for task in tasks]
+        for result in results:
+            result.get(disable_sync_subtasks=False)
         migrate_recids_from_mirror.ignore_result = True
         print('All migration tasks have been completed.')
 
@@ -226,6 +228,10 @@ def continuous_migration(skip_files=None):
     r = StrictRedis.from_url(redis_url)
     try:
         with distributed_lock('continuous_migration'):
+            if not r.llen('legacy_records'):
+                LOGGER.info("Continuous_migration queue is empty, nothing to do.")
+                return
+
             while r.llen('legacy_records'):
                 raw_records = (r.lpop('legacy_records') for _ in range(CHUNK_SIZE))
                 decompressed_records = [
