@@ -24,4 +24,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .version import __version__  # noqa: F401
+import logging
+
+from .version import __version__, get_git_tag_version  # noqa: F401
+
+
+logger = logging.getLogger(__name__)
+
+latest_commit = get_git_tag_version()
+logger.info('HEAD SHA: {}'.format(latest_commit))
