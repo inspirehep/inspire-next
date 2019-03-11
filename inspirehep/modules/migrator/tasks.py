@@ -321,8 +321,9 @@ def migrate_record_from_mirror(prod_record, skip_files=False):
         ensure_valid_schema(json_record)
 
     try:
-        record = InspireRecord.create_or_update(json_record, skip_files=skip_files)
-        record.commit()
+        with db.session.begin_nested():
+            record = InspireRecord.create_or_update(json_record, skip_files=skip_files)
+            record.commit()
     except ValidationError as exc:
         pattern = u'Migrator Validator Error: {}, Value: %r, Record: %r'
         LOGGER.error(pattern.format('.'.join(exc.schema_path)), exc.instance, prod_record.recid)
