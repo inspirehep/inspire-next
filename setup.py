@@ -133,6 +133,7 @@ install_requires = [
     'oauthlib>=1.1.2,<3.0.0',
     'munkres~=1.0.12,<1.1.0',
     'Twisted~=18.9.0,<19.0.0',
+    'invenio-oauth2server~=1.0,>=1.0.0',
 ]
 
 docs_require = [

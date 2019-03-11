@@ -22,5 +22,23 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+import pkg_resources
+from subprocess import check_output
+
+
+logger = logging.getLogger(__name__)
+
+
+def get_git_tag_version():
+    try:
+        return check_output('git log -1 --pretty=format:%H'.split())
+    except Exception:
+        git_repo_path = pkg_resources.get_distribution('inspirehep').location
+        logger.error(
+            'Error reading ``SHA`` from path "{}".'.format(git_repo_path)
+        )
+        return -1
+
 
 __version__ = '0.1.0'

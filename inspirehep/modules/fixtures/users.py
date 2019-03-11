@@ -29,6 +29,7 @@ from flask_security.utils import hash_password
 
 from invenio_access.models import ActionRoles
 from invenio_accounts.models import Role
+from invenio_oauth2server.models import Client, Token
 
 from invenio_db import db
 
@@ -176,3 +177,29 @@ def init_users_and_permissions():
     init_roles()
     init_users()
     init_permissions()
+
+
+def init_authentication_token():
+    with db.session.begin_nested():
+        client = Client(
+            name='admin',
+            user_id=1,
+            is_internal=True,
+            is_confidential=False,
+            _default_scopes=""
+        )
+        client.gen_salt()
+
+        token = Token(
+            client_id=client.client_id,
+            user_id=1,
+            access_token=current_app.config["AUTHENTICATION_TOKEN"],
+            expires=None,
+            _scopes="",
+            is_personal=True,
+            is_internal=True,
+        )
+
+        db.session.add(client)
+        db.session.add(token)
+    db.session.commit()

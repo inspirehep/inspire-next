@@ -24,6 +24,7 @@ notifications:
   email: false
 
 sudo: required
+dist: trusty
 
 language: python
 
@@ -36,6 +37,10 @@ env:
     - DOCKER_COMPOSE_VERSION=1.13.0
     - BASE_USER_UID=2000
     - BASE_USER_GID=2000
+    # DOCKER_USERNAME
+    - secure: "jwc9PxBYZ7pr6DpTHG4IPqZ2vP/SXdZ4lgCqNPDNs00qxdVL40Tm0pybaEmbHeaLU78Wc6cPJcVuRYmykEHi2QyguW6/vOt7oDpsN6oQ3ahBxdRu/bJVgCOq1WuvxCz6Vssa2kd9RKS99Ck7hB7YVf9a3ASQNICALsR5CxKa7+k="
+    # DOCKER_PASSWORD
+    - secure: "hpa8R3iJtOjWjOengHJRVxiAUy6cPR2FMF7Jvso3wlFUDuJ743wB7EJaFDc7CEaUig/LODdbiESWM2SuyVUeJrupGrBCcZJw9N9yeWO5z+7OqPauPlP1hPJkZPt8KivCTwPcixPj7uueLKGjNPEQR2b8jkNu4ATBC6x4q4NPmnc="
   matrix:
     - SUITE=ui-literature IMAGES="selenium test-database test-indexer test-rabbitmq test-redis test-web"
     - SUITE=workflows IMAGES="test-database test-indexer test-rabbitmq test-redis test-web"
@@ -73,3 +78,12 @@ after_script:
   # Coverage report contains Docker paths. We replace them, so that we can run Coveralls.
   - sed -i 's@\"/code/@'"\"$(pwd)/"'@g' .coverage
   - coveralls
+
+deploy:
+  skip_cleanup: true
+  provider: script
+  script:
+    - sh ./deploy-docker-image.sh
+  on:
+    branch: master
+    condition: $SUITE = integration

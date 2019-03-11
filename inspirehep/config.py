@@ -120,6 +120,7 @@ MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100 MiB
 # REST
 # ====
 REST_ENABLE_CORS = True
+OAUTH2SERVER_ALLOWED_URLENCODE_CHARACTERS = '=&;:%+~,*@!()/? '
 
 # Logging
 # =======
@@ -1218,6 +1219,7 @@ BEARD_API_URL = None  # e.g. "http://beard.inspirehep.net/api"
 MAGPIE_API_URL = None  # e.g. "http://magpie.inspirehep.net/api"
 LEGACY_BASE_URL = "http://inspirehep.net"
 LEGACY_RECORD_URL_PATTERN = 'http://inspirehep.net/record/{recid}'
+AUTHENTICATION_TOKEN = "CHANGE_ME"
 
 # Harvesting and Workflows
 # ========================

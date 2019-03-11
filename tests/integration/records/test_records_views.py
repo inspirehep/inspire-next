@@ -811,3 +811,73 @@ def test_literature_citations_api_with_full_citing_record(api_client):
     _delete_record('lit', 111)
     _delete_record('lit', 222)
     _delete_record('lit', 333)
+
+
+def test_literature_citations_api_with_superseded_records(app, api_client):
+    record_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'document_type': [
+            'article',
+        ],
+        'control_number': 111,
+        'titles': [
+            {
+                'title': 'Jessica Jones',
+            },
+        ],
+        '_collections': ['Literature']
+    }
+    record = InspireRecord.create(record_json)
+    record.commit()
+
+    citing_superseded_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'related_records': [
+            {
+                'record': {'$ref': 'https://link-to-successor'},
+                'relation': 'successor'
+            }
+        ],
+        'document_type': [
+            'article',
+        ],
+        'control_number': 222,
+        'titles': [
+            {
+                'title': 'Frank Castle',
+            },
+        ],
+        'references': [
+            {
+                'record': {
+                    '$ref': record._get_ref()
+                }
+            }
+        ],
+        '_collections': ['Literature']
+    }
+    citing_superseded_record = InspireRecord.create(citing_superseded_json)
+    citing_superseded_record.commit()
+    db.session.commit()
+
+    es.indices.refresh('records-hep')
+
+    response = api_client.get(
+        '/literature/111/citations',
+        headers={'Accept': 'application/json'}
+    )
+    result = json.loads(response.get_data(as_text=True))
+
+    expected_metadata = {
+        "citation_count": 0,
+        "citations": []
+    }
+
+    expected_metadata['citations'].sort()
+    result['metadata']['citations'].sort()
+
+    assert response.status_code == 200
+    assert expected_metadata == result['metadata']
+
+    _delete_record('lit', 111)
+    _delete_record('lit', 222)

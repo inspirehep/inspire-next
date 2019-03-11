@@ -24,7 +24,9 @@ from __future__ import absolute_import, division, print_function
 
 from copy import deepcopy
 import json
+from mock import patch
 
+from flask import current_app
 from invenio_accounts.testutils import login_user_via_session
 from invenio_workflows import workflow_object_class
 from invenio_db import db
@@ -126,7 +128,7 @@ def test_responses_with_etag(workflow_app):
         assert response.status_code == 200
 
 
-def test_new_author_submit_with_required_fields(api_client):
+def test_new_author_submit_with_required_fields(workflow_app, mocked_external_services):
     data = {
         "data": {
             "_collections": [
@@ -145,38 +147,42 @@ def test_new_author_submit_with_required_fields(api_client):
             "status": "active"
         }
     }
-    response = api_client.post('/workflows/authors', data=json.dumps(data), content_type='application/json')
-    assert response.status_code == 200
 
-    workflow_object_id = json.loads(response.data).get('workflow_object_id')
-    assert workflow_object_id is not None
+    with workflow_app.test_client() as client:
+        headers = {"Authorization": "Bearer " + current_app.config["AUTHENTICATION_TOKEN"]}
+        response = client.post('/workflows/authors', data=json.dumps(data), content_type='application/json',
+                               headers=headers)
+        assert response.status_code == 200
 
-    obj = workflow_object_class.get(workflow_object_id)
+        workflow_object_id = json.loads(response.data).get('workflow_object_id')
+        assert workflow_object_id is not None
 
-    expected = {
-        "status": "active",
-        "$schema": "http://localhost:5000/schemas/records/authors.json",
-        "acquisition_source": {
-            "method": "submitter",
-            "internal_uid": 1,
-            "email": "john.doe@gmail.com",
-            "submission_number": "1",
-            "datetime": "2019-02-04T10:06:34.695915"
-        },
-        "_collections": [
-            "Authors"
-        ],
-        "name": {
-            "value": "Martinez, Diegpo"
+        obj = workflow_object_class.get(workflow_object_id)
+
+        expected = {
+            "status": "active",
+            "$schema": "http://localhost:5000/schemas/records/authors.json",
+            "acquisition_source": {
+                "method": "submitter",
+                "internal_uid": 1,
+                "email": "john.doe@gmail.com",
+                "submission_number": "1",
+                "datetime": "2019-02-04T10:06:34.695915"
+            },
+            "_collections": [
+                "Authors"
+            ],
+            "name": {
+                "value": "Martinez, Diegpo"
+            }
         }
-    }
 
-    assert expected == obj.data
+        assert expected == obj.data
 
-    assert obj.extra_data['is-update'] is False
+        assert obj.extra_data['is-update'] is False
 
 
-def test_update_author_submit_with_required_fields(api_client):
+def test_update_author_submit_with_required_fields(workflow_app, mocked_external_services):
     data = {
         "data": {
             "_collections": [
@@ -196,33 +202,114 @@ def test_update_author_submit_with_required_fields(api_client):
             "control_number": 3
         }
     }
-    response = api_client.post('/workflows/authors', data=json.dumps(data), content_type='application/json')
+    with workflow_app.test_client() as client:
+        headers = {"Authorization": "Bearer " + current_app.config["AUTHENTICATION_TOKEN"]}
+        response = client.post('/workflows/authors', data=json.dumps(data), content_type='application/json',
+                               headers=headers)
+        assert response.status_code == 200
+
+        workflow_object_id = json.loads(response.data).get('workflow_object_id')
+        assert workflow_object_id is not None
+
+        obj = workflow_object_class.get(workflow_object_id)
+
+        expected = {
+            "status": "active",
+            "$schema": "http://localhost:5000/schemas/records/authors.json",
+            "acquisition_source": {
+                "method": "submitter",
+                "internal_uid": 1,
+                "email": "john.doe@gmail.com",
+                "submission_number": "1",
+                "datetime": "2019-02-04T10:06:34.695915"
+            },
+            "_collections": [
+                "Authors"
+            ],
+            "name": {
+                "value": "Martinez, Diegpo"
+            },
+            "control_number": 3
+        }
+
+        assert expected == obj.data
+
+        assert obj.extra_data['is-update'] is True
+
+
+def test_new_author_submit_requires_authentication(api_client):
+    data = {
+        "data": {
+            "_collections": [
+                "Authors"
+            ],
+            "acquisition_source": {
+                "email": "john.doe@gmail.com",
+                "datetime": "2019-02-04T10:06:34.695915",
+                "method": "submitter",
+                "submission_number": "None",
+                "internal_uid": 1,
+            },
+            "name": {
+                "value": "Martinez, Diegpo"
+            },
+            "status": "active"
+        }
+    }
+
+    headers = {"Authorization": "Bearer " + 'wrong_token'}
+    response = api_client.post('/workflows/authors', data=json.dumps(data), content_type='application/json',
+                               headers=headers)
+    assert response.status_code == 401
+
+
+@patch('inspirehep.modules.workflows.views.start')
+def test_literature_submit_workflow(mock_start, workflow_api_client):
+    data = {
+        "data": {
+            "$schema": "http://localhost:5000/schemas/records/hep.json",
+            "_collections": [
+                "Literature"
+            ],
+            "document_type": ["article"],
+            "titles": [
+                {"title": "Discovery of cool stuff"}
+            ],
+            "authors": [
+                {"full_name": "Harun Urhan"}
+            ]
+        },
+        "form_data": {
+            "url": "https://cern.ch/coolstuff.pdf"
+        }
+    }
+    response = workflow_api_client.post(
+        "/workflows/literature", data=json.dumps(data), content_type="application/json")
     assert response.status_code == 200
 
-    workflow_object_id = json.loads(response.data).get('workflow_object_id')
+    workflow_object_id = json.loads(response.data).get("workflow_object_id")
     assert workflow_object_id is not None
+    mock_start.delay.assert_called_once_with("article", object_id=workflow_object_id)
 
     obj = workflow_object_class.get(workflow_object_id)
 
-    expected = {
-        "status": "active",
-        "$schema": "http://localhost:5000/schemas/records/authors.json",
-        "acquisition_source": {
-            "method": "submitter",
-            "internal_uid": 1,
-            "email": "john.doe@gmail.com",
-            "submission_number": "1",
-            "datetime": "2019-02-04T10:06:34.695915"
-        },
+    expected_data = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
         "_collections": [
-            "Authors"
+            "Literature"
         ],
-        "name": {
-            "value": "Martinez, Diegpo"
-        },
-        "control_number": 3
+        "document_type": ["article"],
+        "titles": [
+            {"title": "Discovery of cool stuff"}
+        ],
+        "authors": [
+            {"full_name": "Harun Urhan"}
+        ]
     }
 
-    assert expected == obj.data
+    expected_formdata = {
+        "url": "https://cern.ch/coolstuff.pdf"
+    }
 
-    assert obj.extra_data['is-update'] is True
+    assert expected_data == obj.data
+    assert expected_formdata == obj.extra_data["formdata"]
