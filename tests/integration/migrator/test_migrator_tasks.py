@@ -157,6 +157,46 @@ def test_migrate_and_insert_record_invalid_record(mock_logger, isolated_app):
     assert not mock_logger.exception.called
 
 
+@patch('inspirehep.modules.migrator.tasks.LOGGER')
+def test_migrate_and_insert_record_invalid_record_update_regression(mock_logger, app):
+    # test is not isolated so the models_committed signal fires and the indexer might be called
+    raw_record = (
+        '<record>'
+        '  <controlfield tag="001">12345</controlfield>'
+        '  <datafield tag="245" ind1=" " ind2=" ">'
+        '    <subfield code="a">On the validity of INSPIRE records</subfield>'
+        '  </datafield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    migrate_and_insert_record(raw_record)
+
+    db.session.commit()
+
+    raw_record = (
+        '<record>'
+        '  <controlfield tag="001">12345</controlfield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    with patch('inspirehep.modules.records.receivers.RecordIndexer') as mock_indexer:
+        migrate_and_insert_record(raw_record)
+
+        prod_record = LegacyRecordsMirror.query.filter(LegacyRecordsMirror.recid == 12345).one()
+        assert prod_record.valid is False
+        assert prod_record.marcxml == raw_record
+
+        assert mock_logger.error.called
+        assert not mock_logger.exception.called
+        assert not mock_indexer.return_value.index.called
+
+
 @patch('inspirehep.modules.records.api.InspireRecord.create_or_update', side_effect=Exception())
 @patch('inspirehep.modules.migrator.tasks.LOGGER')
 def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
