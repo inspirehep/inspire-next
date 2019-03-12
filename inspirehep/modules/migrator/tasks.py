@@ -255,7 +255,7 @@ def migrate_recids_from_mirror(prod_recids, skip_files=False):
                 LegacyRecordsMirror.query.get(recid),
                 skip_files=skip_files,
             )
-            if record:
+            if record and not record.get('deleted'):
                 index_queue.append(create_index_op(record))
     db.session.commit()
 

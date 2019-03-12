@@ -1,0 +1,15 @@
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+<record>
+  <controlfield tag="001">1234</controlfield>
+  <datafield tag="245" ind1=" " ind2=" ">
+    <subfield code="a">On the validity of INSPIRE records</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">'
+  	<subfield code="a">HEP</subfield>'
+  	<subfield code="c">DELETED</subfield>'
+  </datafield>'
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Carberry, Josiah</subfield>
+    <subfield code="j">ORCID:0000-0002-1825-0097</subfield>
+  </datafield>
+</record>

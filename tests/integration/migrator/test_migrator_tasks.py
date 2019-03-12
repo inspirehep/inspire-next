@@ -31,6 +31,7 @@ import pytest
 
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
+from inspirehep.utils.record_getter import get_es_record, RecordGetterError
 
 from inspirehep.modules.migrator.models import LegacyRecordsMirror
 from inspirehep.modules.migrator.tasks import (
@@ -236,3 +237,19 @@ def test_orcid_push_disabled_on_migrate_from_mirror(app, cleanup, enable_orcid_p
     assert prod_record.valid
 
     assert app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']
+
+
+def test_migrate_from_mirror_doesnt_index_deleted_records(isolated_app):
+    record_fixture_path = pkg_resources.resource_filename(
+        __name__,
+        os.path.join('fixtures', 'dummy.xml')
+    )
+    record_fixture_path_deleted = pkg_resources.resource_filename(
+        __name__,
+        os.path.join('fixtures', 'deleted_record.xml')
+    )
+    migrate_from_file(record_fixture_path, wait_for_results=True)
+    migrate_from_file(record_fixture_path_deleted, wait_for_results=True)
+    get_es_record('lit', 12345)
+    with pytest.raises(RecordGetterError):
+        get_es_record('lit', 1234)
