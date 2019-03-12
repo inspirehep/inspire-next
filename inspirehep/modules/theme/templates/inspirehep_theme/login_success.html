@@ -9,7 +9,11 @@
   <noscript>
     You need to enable JavaScript to be able to login!
   </noscript>
-  Login Success!
+  <div style="max-width:512px">
+    Your account has been successfully created. You will receive an email confirmation shortly. If you are not
+    redirected automatically to INSPIRE, please close this page and try logging in again. If the issue happens again,
+    please contact us via <a target="_blank" rel="noopener noreferrer" href="mailto:feedback@inspirehep.net">feedback@inspirehep.net</a>
+  </div>
   <script>
     document.body.onload = function () {
       var loggedInUser = JSON.parse('{{ user | tojson }}');
