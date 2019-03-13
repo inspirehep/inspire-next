@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#!/bin/bash
 #
 # This file is part of INSPIRE.
 # Copyright (C) 2014-2017 CERN.
@@ -20,16 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-.git
-*.gitignore
+set -e
 
-*.mo
-*.pyc
-*.swp
-*.swo
-*.~
-
-Procfile*
-tests/*
-docker*
-gun
+inspirehep db drop --yes-i-know
+inspirehep alembic upgrade
+inspirehep fixtures init

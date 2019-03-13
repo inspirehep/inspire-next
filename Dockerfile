@@ -64,7 +64,6 @@ RUN npm install -g \
 COPY . .
 
 RUN pip install --upgrade pip && \
-    pip install --upgrade setuptools
-
-RUN pip install -e .[all]
-RUN pip install -r requirements.txt
+ pip install --upgrade setuptools && \
+ pip install -e .[all] && \ 
+ pip install -r requirements.txt

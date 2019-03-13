@@ -147,6 +147,11 @@ dictConfig({
             'handlers': ['stdout_handler'],
             'propagate': True,
         },
+        'gunicorn.access': {
+            'level': 'DEBUG',
+            'handlers': ['stdout_handler'],
+            'propagate': False
+        },
     }
 })
 
