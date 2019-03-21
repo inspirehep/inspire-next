@@ -736,11 +736,10 @@ def inspect_merge(holdingpen_id):
 
 @workflow_blueprint.route('/authors', methods=['POST'])
 @require_api_auth()
-def start_author_workflow():
+def start_workflow_for_author_submission():
     submission_data = request.get_json()['data']
     workflow_object = workflow_object_class.create(
         data={},
-        # can be changed to get the user id from the current user once we implement authentication
         id_user=submission_data['acquisition_source']['internal_uid'],
         data_type='authors'
     )
@@ -764,6 +763,7 @@ def start_author_workflow():
 
 
 @workflow_blueprint.route('/literature', methods=['POST'])
+@require_api_auth()
 def start_workflow_for_literature_submission():
     json = request.get_json()
     workflow_object = workflow_object_class.create(

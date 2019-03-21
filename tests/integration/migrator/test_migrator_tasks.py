@@ -31,6 +31,7 @@ import pytest
 
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
+from inspirehep.utils.record_getter import get_es_record, RecordGetterError
 
 from inspirehep.modules.migrator.models import LegacyRecordsMirror
 from inspirehep.modules.migrator.tasks import (
@@ -157,6 +158,46 @@ def test_migrate_and_insert_record_invalid_record(mock_logger, isolated_app):
     assert not mock_logger.exception.called
 
 
+@patch('inspirehep.modules.migrator.tasks.LOGGER')
+def test_migrate_and_insert_record_invalid_record_update_regression(mock_logger, app):
+    # test is not isolated so the models_committed signal fires and the indexer might be called
+    raw_record = (
+        '<record>'
+        '  <controlfield tag="001">12345</controlfield>'
+        '  <datafield tag="245" ind1=" " ind2=" ">'
+        '    <subfield code="a">On the validity of INSPIRE records</subfield>'
+        '  </datafield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    migrate_and_insert_record(raw_record)
+
+    db.session.commit()
+
+    raw_record = (
+        '<record>'
+        '  <controlfield tag="001">12345</controlfield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    with patch('inspirehep.modules.records.receivers.RecordIndexer') as mock_indexer:
+        migrate_and_insert_record(raw_record)
+
+        prod_record = LegacyRecordsMirror.query.filter(LegacyRecordsMirror.recid == 12345).one()
+        assert prod_record.valid is False
+        assert prod_record.marcxml == raw_record
+
+        assert mock_logger.error.called
+        assert not mock_logger.exception.called
+        assert not mock_indexer.return_value.index.called
+
+
 @patch('inspirehep.modules.records.api.InspireRecord.create_or_update', side_effect=Exception())
 @patch('inspirehep.modules.migrator.tasks.LOGGER')
 def test_migrate_and_insert_record_other_exception(mock_logger, isolated_app):
@@ -196,3 +237,19 @@ def test_orcid_push_disabled_on_migrate_from_mirror(app, cleanup, enable_orcid_p
     assert prod_record.valid
 
     assert app.config['FEATURE_FLAG_ENABLE_ORCID_PUSH']
+
+
+def test_migrate_from_mirror_doesnt_index_deleted_records(isolated_app):
+    record_fixture_path = pkg_resources.resource_filename(
+        __name__,
+        os.path.join('fixtures', 'dummy.xml')
+    )
+    record_fixture_path_deleted = pkg_resources.resource_filename(
+        __name__,
+        os.path.join('fixtures', 'deleted_record.xml')
+    )
+    migrate_from_file(record_fixture_path, wait_for_results=True)
+    migrate_from_file(record_fixture_path_deleted, wait_for_results=True)
+    get_es_record('lit', 12345)
+    with pytest.raises(RecordGetterError):
+        get_es_record('lit', 1234)
