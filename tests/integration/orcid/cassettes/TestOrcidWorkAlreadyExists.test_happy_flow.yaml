@@ -1,0 +1,103 @@
+interactions:
+- request:
+    body: !!python/unicode "<work:work xmlns:common=\"http://www.orcid.org/ns/common\"\
+      \ xmlns:work=\"http://www.orcid.org/ns/work\"><work:title><common:title>Some\
+      \ Results Arising from the Study of ORCID push</common:title></work:title><work:citation><work:citation-type>bibtex</work:citation-type><work:citation-value>@article{123,\n\
+      \    author = \"Rossoni, A.\",\n    doi = \"10.1001/test.orcid.push\",\n   \
+      \ title = \"Some Results Arising from the Study of ORCID push\"\n}\n</work:citation-value></work:citation><work:type>journal-article</work:type><common:external-ids><common:external-id><common:external-id-type>other-id</common:external-id-type><common:external-id-value>123</common:external-id-value><common:external-id-url>http://inspirehep.net/record/123</common:external-id-url><common:external-id-relationship>self</common:external-id-relationship></common:external-id><common:external-id><common:external-id-type>doi</common:external-id-type><common:external-id-value>10.1001/test.orcid.push</common:external-id-value><common:external-id-url>http://dx.doi.org/10.1001/test.orcid.push</common:external-id-url><common:external-id-relationship>self</common:external-id-relationship></common:external-id></common:external-ids><work:url>http://inspirehep.net/record/123</work:url><work:contributors><work:contributor><work:credit-name>Rossoni,\
+      \ A.</work:credit-name><work:contributor-attributes><work:contributor-sequence>first</work:contributor-sequence><work:contributor-role>author</work:contributor-role></work:contributor-attributes></work:contributor></work:contributors></work:work>"
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['1550']
+      Content-Type: [application/orcid+xml]
+    method: POST
+    uri: https://api.orcid.org/v2.0/0000-0002-0942-3697/work
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['0']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Wed, 03 Apr 2019 15:28:03 GMT']
+      expires: ['0']
+      location: ['http://api.orcid.org/orcid-api-web/v2.0/0000-0002-0942-3697/work/56061295']
+      pragma: [no-cache]
+      server: [nginx/1.4.6 (Ubuntu)]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 201, message: Created}
+- request:
+    body: !!python/unicode "<work:work xmlns:common=\"http://www.orcid.org/ns/common\"\
+      \ xmlns:work=\"http://www.orcid.org/ns/work\" put-code=\"56061295\"><work:title><common:title>Some\
+      \ Results Arising from the Study of ORCID push</common:title></work:title><work:citation><work:citation-type>bibtex</work:citation-type><work:citation-value>@article{123,\n\
+      \    author = \"Rossoni, A.\",\n    doi = \"10.1001/test.orcid.push\",\n   \
+      \ title = \"Some Results Arising from the Study of ORCID push\"\n}\n</work:citation-value></work:citation><work:type>journal-article</work:type><common:external-ids><common:external-id><common:external-id-type>other-id</common:external-id-type><common:external-id-value>123</common:external-id-value><common:external-id-url>http://inspirehep.net/record/123</common:external-id-url><common:external-id-relationship>self</common:external-id-relationship></common:external-id><common:external-id><common:external-id-type>doi</common:external-id-type><common:external-id-value>10.1001/test.orcid.push</common:external-id-value><common:external-id-url>http://dx.doi.org/10.1001/test.orcid.push</common:external-id-url><common:external-id-relationship>self</common:external-id-relationship></common:external-id></common:external-ids><work:url>http://inspirehep.net/record/123</work:url><work:contributors><work:contributor><work:credit-name>Rossoni,\
+      \ A.</work:credit-name><work:contributor-attributes><work:contributor-sequence>first</work:contributor-sequence><work:contributor-role>author</work:contributor-role></work:contributor-attributes></work:contributor></work:contributors></work:work>"
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['1570']
+      Content-Type: [application/orcid+xml]
+    method: PUT
+    uri: https://api.orcid.org/v2.0/0000-0002-0942-3697/work/56061295
+  response:
+    body: {string: !!python/unicode '{"response-code":404,"developer-message":"404
+        Not Found: The resource was not found. Full validation error: No entity found
+        for query","user-message":"The resource was not found.","error-code":9016,"more-info":"https://members.orcid.org/api/resources/troubleshooting"}'}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['268']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Wed, 03 Apr 2019 15:40:49 GMT']
+      expires: ['0']
+      pragma: [no-cache]
+      server: [nginx/1.4.6 (Ubuntu)]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 404, message: Not Found}
+- request:
+    body: !!python/unicode "<work:work xmlns:common=\"http://www.orcid.org/ns/common\"\
+      \ xmlns:work=\"http://www.orcid.org/ns/work\" put-code=\"56061295\"><work:title><common:title>Some\
+      \ Results Arising from the Study of ORCID push</common:title></work:title><work:citation><work:citation-type>bibtex</work:citation-type><work:citation-value>@article{123,\n\
+      \    author = \"Rossoni, A.\",\n    doi = \"10.1001/test.orcid.push\",\n   \
+      \ title = \"Some Results Arising from the Study of ORCID push\"\n}\n</work:citation-value></work:citation><work:type>journal-article</work:type><common:external-ids><common:external-id><common:external-id-type>other-id</common:external-id-type><common:external-id-value>123</common:external-id-value><common:external-id-url>http://inspirehep.net/record/123</common:external-id-url><common:external-id-relationship>self</common:external-id-relationship></common:external-id><common:external-id><common:external-id-type>doi</common:external-id-type><common:external-id-value>10.1001/test.orcid.push</common:external-id-value><common:external-id-url>http://dx.doi.org/10.1001/test.orcid.push</common:external-id-url><common:external-id-relationship>self</common:external-id-relationship></common:external-id></common:external-ids><work:url>http://inspirehep.net/record/123</work:url><work:contributors><work:contributor><work:credit-name>Rossoni,\
+      \ A.</work:credit-name><work:contributor-attributes><work:contributor-sequence>first</work:contributor-sequence><work:contributor-role>author</work:contributor-role></work:contributor-attributes></work:contributor></work:contributors></work:work>"
+    headers:
+      Accept: [application/orcid+json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['1570']
+      Content-Type: [application/orcid+xml]
+    method: POST
+    uri: https://api.orcid.org/v2.0/0000-0002-0942-3697/work
+  response:
+    body: {string: !!python/unicode '{"response-code":400,"developer-message":"400
+        Bad Request: Put-code is included when not expected. When posting new activities,
+        the put code should be omitted.","user-message":"There was an error when updating
+        the record. Please try again. If the error persists, please contact INSPIRE-HEP
+        for assistance.","error-code":9024,"more-info":"https://members.orcid.org/api/resources/troubleshooting"}'}
+    headers:
+      access-control-allow-origin: ['*']
+      cache-control: ['no-cache, no-store, max-age=0, must-revalidate']
+      connection: [keep-alive]
+      content-length: ['395']
+      content-type: [application/orcid+json; qs=2;charset=UTF-8]
+      date: ['Wed, 03 Apr 2019 15:40:50 GMT']
+      expires: ['0']
+      pragma: [no-cache]
+      server: [nginx/1.4.6 (Ubuntu)]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+      x-xss-protection: [1; mode=block]
+    status: {code: 400, message: Bad Request}
+version: 1

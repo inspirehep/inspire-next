@@ -280,6 +280,60 @@ class TestOrcidPusherDeleteWork(TestOrcidPusherBase):
 
 
 @pytest.mark.usefixtures('isolated_app')
+class TestOrcidWorkAlreadyExists(TestOrcidPusherBase):
+    def setup(self):
+        factory = TestRecordMetadata.create_from_file(
+            __name__,
+            'test_orcid_domain_models_TestOrcidPusherWorkAlreadyExists.json'
+        )
+        data = {
+            'control_number': '111',
+            'deleted': True,
+            'dois': [
+                {"value": "10.1001/test.orcid.push"},
+            ],
+        }
+        self.clashing_record = TestRecordMetadata.create_from_kwargs(
+            json=data).record_metadata
+        self.clashing_recid = self.clashing_record.json['control_number']
+        self.orcid = '0000-0002-0942-3697'
+        self.recid = factory.record_metadata.json['control_number']
+        self.inspire_record = factory.inspire_record
+        self.factory_inspire_record = factory
+        # Disable logging.
+        logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = logging.CRITICAL
+        self.putcode = 56061295
+        self.cache.write_work_putcode(self.putcode)
+
+    def teardown(self):
+        self.cache.delete_work_putcode()
+        logging.getLogger('inspirehep.modules.orcid.domain_models').disabled = 0
+        cache_module.CACHE_PREFIX = None
+
+    def test_happy_flow(self):
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*',
+                             ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}):
+            pusher = domain_models.OrcidPusher(self.orcid, self.recid, self.oauth_token)
+            result_putcode = pusher.push()
+        assert result_putcode == 56061295
+        assert not self.cache.has_work_content_changed(self.inspire_record)
+
+    def test_push_work_with_existing_identifier(self):
+        del self.clashing_record.json['deleted']
+        self.factory_inspire_record.record_metadata.json['deleted'] = True
+        with override_config(FEATURE_FLAG_ENABLE_ORCID_PUSH=True,
+                             FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX='.*',
+                             ORCID_APP_CREDENTIALS={'consumer_key': '0000-0001-8607-8906'}), \
+                pytest.raises(domain_exceptions.DuplicatedExternalIdentifierPusherException):
+            pusher = domain_models.OrcidPusher(self.orcid, self.clashing_recid, self.oauth_token)
+            result_putcode = pusher.push()
+
+        assert result_putcode == 56054632
+        assert not self.cache.has_work_content_changed(self.clashing_record.inspire_record)
+
+
+@pytest.mark.usefixtures('isolated_app')
 class TestOrcidPusherDuplicatedIdentifier(TestOrcidPusherBase):
     def setup(self):
         factory = TestRecordMetadata.create_from_file(__name__, 'test_orcid_domain_models_TestOrcidPusherDuplicatedIdentifier.json')

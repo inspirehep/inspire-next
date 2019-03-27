@@ -136,13 +136,19 @@ class OrcidPusher(object):
             # already exists (identified by the external identifiers).
             # This means we do not have the putcode, thus we cache all
             # author's putcodes and PUT the work again.
-            putcode = self._cache_all_author_putcodes()
-            if not putcode:
-                msg = 'No putcode was found in ORCID API for orcid={} and recid={}.'\
-                    ' And the POST has previously failed for the same recid because'\
-                    ' the work had already existed'.format(self.orcid, self.recid)
-                raise exceptions.PutcodeNotFoundInOrcidException(msg)
-            putcode = self._post_or_put_work(putcode)
+            try:
+                if self.do_fail_if_duplicated_identifier:
+                    raise exceptions.DuplicatedExternalIdentifierPusherException
+                self._push_work_with_clashing_identifier()
+                self._post_or_put_work(putcode)
+            except orcid_client_exceptions.WorkAlreadyExistsException:
+                putcode = self._cache_all_author_putcodes()
+                if not putcode:
+                    msg = 'No putcode was found in ORCID API for orcid={} and recid={}.'\
+                        ' And the POST has previously failed for the same recid because'\
+                        ' the work had already existed'.format(self.orcid, self.recid)
+                    raise exceptions.PutcodeNotFoundInOrcidException(msg)
+                putcode = self._post_or_put_work(putcode)
         except orcid_client_exceptions.DuplicatedExternalIdentifierException:
             # We PUT a record changing its identifier, but there is another work
             # in ORCID with the same identifier. We need to find out the recid
@@ -239,7 +245,6 @@ class OrcidPusher(object):
 
         ids = self.converter.added_external_identifiers
         for putcode, recid in putcode_getter.get_putcodes_and_recids_by_identifiers_iter(ids):
-
             if not putcode or not recid:
                 continue
             # Local import to avoid import error.
