@@ -284,7 +284,7 @@ def test_new_literature_submit_requires_authentication(api_client):
             ],
             "authors": [
                 {"full_name": "Harun Urhan"}
-            ]
+            ],
         },
         "form_data": {
             "url": "https://cern.ch/coolstuff.pdf"
@@ -311,7 +311,13 @@ def test_literature_submit_workflow(mock_start, workflow_app):
             ],
             "authors": [
                 {"full_name": "Harun Urhan"}
-            ]
+            ],
+            "acquisition_source": {
+                "email": "john.doe@gmail.com",
+                "datetime": "2019-02-04T10:06:34.695915",
+                "method": "submitter",
+                "internal_uid": 1,
+            },
         },
         "form_data": {
             "url": "https://cern.ch/coolstuff.pdf"
@@ -341,7 +347,14 @@ def test_literature_submit_workflow(mock_start, workflow_app):
             ],
             "authors": [
                 {"full_name": "Harun Urhan"}
-            ]
+            ],
+            "acquisition_source": {
+                "email": "john.doe@gmail.com",
+                "datetime": "2019-02-04T10:06:34.695915",
+                "method": "submitter",
+                "submission_number": str(workflow_object_id),
+                "internal_uid": 1,
+            },
         }
 
         expected_formdata = {
