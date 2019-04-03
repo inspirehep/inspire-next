@@ -28,11 +28,11 @@ import itertools
 import json
 import random
 
-import six
-
 from collections import defaultdict
 
-from six.moves import range
+
+class IncompleteSamplingError(Exception):
+    pass
 
 
 def sample_signature_pairs(signatures_path, clusters_path, pairs_size):
@@ -77,12 +77,14 @@ def sample_signature_pairs(signatures_path, clusters_path, pairs_size):
     # 1. Read & Build
     #
 
+    blocks_and_uuids = []
     blocks = defaultdict(list)
     author_names_by_signature_uuid = {}
     with open(signatures_path, 'r') as fd:
         for line in fd:
             signature = json.loads(line)
             blocks[signature['signature_block']].append(signature['signature_uuid'])
+            blocks_and_uuids.append((signature['signature_block'], signature['signature_uuid']))
             author_names_by_signature_uuid[signature['signature_uuid']] = signature['author_name']
 
     cluster_ids_by_signature_uuid = {}
@@ -93,7 +95,7 @@ def sample_signature_pairs(signatures_path, clusters_path, pairs_size):
                 cluster_ids_by_signature_uuid[signature_uuid] = cluster['cluster_id']
 
     #
-    # 2. Classify
+    # 2. Monte Carlo sampling for efficiency
     #
 
     def same_cluster(s1, s2):
@@ -102,60 +104,28 @@ def sample_signature_pairs(signatures_path, clusters_path, pairs_size):
     def same_name(s1, s2):
         return author_names_by_signature_uuid[s1] == author_names_by_signature_uuid[s2]
 
-    same_cluster_same_name = (
-        {'same_cluster': True, 'signature_uuids': [s1, s2]} for (s1, s2)
-        in all_signature_pairs(blocks) if same_cluster(s1, s2) and same_name(s1, s2)
-    )
-    same_cluster_different_name = (
-        {'same_cluster': True, 'signature_uuids': [s1, s2]} for (s1, s2)
-        in all_signature_pairs(blocks) if same_cluster(s1, s2) and not same_name(s1, s2)
-    )
-    different_cluster_same_name = (
-        {'same_cluster': False, 'signature_uuids': [s1, s2]} for (s1, s2)
-        in all_signature_pairs(blocks) if not same_cluster(s1, s2) and same_name(s1, s2)
-    )
-    different_cluster_different_name = (
-        {'same_cluster': False, 'signature_uuids': [s1, s2]} for (s1, s2)
-        in all_signature_pairs(blocks) if not same_cluster(s1, s2) and not same_name(s1, s2)
-    )
+    max_iterations = len(blocks_and_uuids)**2
+    counts = {
+        (True, True): 0,
+        (True, False): 0,
+        (False, True): 0,
+        (False, False): 0,
+    }
 
-    #
-    # 3. Sample
-    #
+    iterations = 0
+    while any(count < pairs_size // 4 for count in counts.values()) and iterations < max_iterations:
+        iterations += 1
+        block, s1 = random.choice(blocks_and_uuids)
+        s2 = random.choice(blocks[block])
+        if s1 == s2:
+            continue
+        kind = (same_cluster(s1, s2), same_name(s1, s2))
+        if counts[kind] < pairs_size // 4:
+            counts[kind] += 1
+            yield {'same_cluster': kind[0], 'signature_uuids': [s1, s2]}
 
-    non_empty_categories = [
-        category for category in [
-            same_cluster_same_name,
-            same_cluster_different_name,
-            different_cluster_same_name,
-            different_cluster_different_name,
-        ] if any(True for _ in category)  # check whether iterator is non-empty (consumes first element but there are plenty)
-    ]
-    for category in non_empty_categories:
-        for pair in sample_from_iter(category, pairs_size // len(non_empty_categories)):
-            yield pair
-
-
-def all_signature_pairs(blocks):
-    return itertools.chain.from_iterable(itertools.combinations(block, 2) for block in six.itervalues(blocks))
-
-
-def sample_from_iter(iterable, samplesize):
-    """Uniformly sample samplesize elements from iterable.
-
-    This uses reservoir sampling to avoid loading the full iterable in memory.
-    Taken from https://stackoverflow.com/a/12583436 (with no shuffling).
-    """ 
-    results = []
-    iterator = iter(iterable)
-    # Fill in the first samplesize elements:
-    try:
-        for _ in range(samplesize):
-            results.append(iterator.next())
-    except StopIteration:
-        raise ValueError("Sample larger than population.")
-    for i, v in enumerate(iterator, samplesize):
-        r = random.randint(0, i)
-        if r < samplesize:
-            results[r] = v  # at a decreasing rate, replace random items
-    return results
+    if iterations == max_iterations:
+        raise IncompleteSamplingError(
+            'Could not generate {} samples, only managed to generate {} in reasonable time.'
+            ' Generated samples are probably unbalanced.'.format(pairs_size, sum(counts.values()))
+        )
