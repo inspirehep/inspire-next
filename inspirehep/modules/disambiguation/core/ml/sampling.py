@@ -26,10 +26,13 @@ from __future__ import absolute_import, division, print_function
 
 import itertools
 import json
+import random
+
+import six
+
 from collections import defaultdict
 
-import numpy as np
-import six
+from six.moves import range
 
 
 def sample_signature_pairs(signatures_path, clusters_path, pairs_size):
@@ -93,24 +96,28 @@ def sample_signature_pairs(signatures_path, clusters_path, pairs_size):
     # 2. Classify
     #
 
-    same_cluster_same_name = []
-    same_cluster_different_name = []
-    different_cluster_same_name = []
-    different_cluster_different_name = []
-    for _, block in six.iteritems(blocks):
-        for s1, s2 in itertools.combinations(block, 2):
-            s1_cluster_id = cluster_ids_by_signature_uuid[s1]
-            s2_cluster_id = cluster_ids_by_signature_uuid[s2]
-            s1_author_name = author_names_by_signature_uuid[s1]
-            s2_author_name = author_names_by_signature_uuid[s2]
-            if s1_cluster_id == s2_cluster_id and s1_author_name == s2_author_name:
-                same_cluster_same_name.append({'same_cluster': True, 'signature_uuids': [s1, s2]})
-            elif s1_cluster_id == s2_cluster_id and s1_author_name != s2_author_name:
-                same_cluster_different_name.append({'same_cluster': True, 'signature_uuids': [s1, s2]})
-            elif s1_cluster_id != s2_cluster_id and s1_author_name == s2_author_name:
-                different_cluster_same_name.append({'same_cluster': False, 'signature_uuids': [s1, s2]})
-            elif s1_cluster_id != s2_cluster_id and s1_author_name != s2_author_name:
-                different_cluster_different_name.append({'same_cluster': False, 'signature_uuids': [s1, s2]})
+    def same_cluster(s1, s2):
+        return cluster_ids_by_signature_uuid[s1] == cluster_ids_by_signature_uuid[s2]
+
+    def same_name(s1, s2):
+        return author_names_by_signature_uuid[s1] == author_names_by_signature_uuid[s2]
+
+    same_cluster_same_name = (
+        {'same_cluster': True, 'signature_uuids': [s1, s2]} for (s1, s2)
+        in all_signature_pairs(blocks) if same_cluster(s1, s2) and same_name(s1, s2)
+    )
+    same_cluster_different_name = (
+        {'same_cluster': True, 'signature_uuids': [s1, s2]} for (s1, s2)
+        in all_signature_pairs(blocks) if same_cluster(s1, s2) and not same_name(s1, s2)
+    )
+    different_cluster_same_name = (
+        {'same_cluster': False, 'signature_uuids': [s1, s2]} for (s1, s2)
+        in all_signature_pairs(blocks) if not same_cluster(s1, s2) and same_name(s1, s2)
+    )
+    different_cluster_different_name = (
+        {'same_cluster': False, 'signature_uuids': [s1, s2]} for (s1, s2)
+        in all_signature_pairs(blocks) if not same_cluster(s1, s2) and not same_name(s1, s2)
+    )
 
     #
     # 3. Sample
@@ -122,8 +129,33 @@ def sample_signature_pairs(signatures_path, clusters_path, pairs_size):
             same_cluster_different_name,
             different_cluster_same_name,
             different_cluster_different_name,
-        ] if category
+        ] if any(True for _ in category)  # check whether iterator is non-empty (consumes first element but there are plenty)
     ]
     for category in non_empty_categories:
-        for pair in np.random.choice(category, replace=True, size=(pairs_size // len(non_empty_categories))):
+        for pair in sample_from_iter(category, pairs_size // len(non_empty_categories)):
             yield pair
+
+
+def all_signature_pairs(blocks):
+    return itertools.chain.from_iterable(itertools.combinations(block, 2) for block in six.itervalues(blocks))
+
+
+def sample_from_iter(iterable, samplesize):
+    """Uniformly sample samplesize elements from iterable.
+
+    This uses reservoir sampling to avoid loading the full iterable in memory.
+    Taken from https://stackoverflow.com/a/12583436 (with no shuffling).
+    """ 
+    results = []
+    iterator = iter(iterable)
+    # Fill in the first samplesize elements:
+    try:
+        for _ in range(samplesize):
+            results.append(iterator.next())
+    except StopIteration:
+        raise ValueError("Sample larger than population.")
+    for i, v in enumerate(iterator, samplesize):
+        r = random.randint(0, i)
+        if r < samplesize:
+            results[r] = v  # at a decreasing rate, replace random items
+    return results
