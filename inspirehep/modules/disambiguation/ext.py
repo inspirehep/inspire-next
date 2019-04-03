@@ -56,6 +56,8 @@ class InspireDisambiguation(object):
             disambiguation_base_path, 'ethnicity.pkl')
         app.config['DISAMBIGUATION_DISTANCE_MODEL_PATH'] = os.path.join(
             disambiguation_base_path, 'distance.pkl')
+        app.config['DISAMBIGUATION_CLUSTERING_MODEL_PATH'] = os.path.join(
+            disambiguation_base_path, 'clustering.pkl')
 
         for k in dir(config):
             if k.startswith('DISAMBIGUATION_'):

@@ -35,6 +35,7 @@ from inspirehep.modules.disambiguation.core.db.readers import (
     get_all_publications,
 )
 from inspirehep.modules.disambiguation.core.ml.models import (
+    Clusterer,
     DistanceEstimator,
     EthnicityEstimator,
 )
@@ -125,3 +126,22 @@ def train_and_save_distance_model():
     )
     distance_estimator.fit()
     distance_estimator.save_model(current_app.config['DISAMBIGUATION_DISTANCE_MODEL_PATH'])
+
+
+def train_and_save_clustering_model():
+    """Train the clustering model and save it to disk."""
+    ethnicity_estimator = EthnicityEstimator()
+    ethnicity_estimator.load_model(current_app.config['DISAMBIGUATION_ETHNICITY_MODEL_PATH'])
+
+    distance_estimator = DistanceEstimator(ethnicity_estimator)
+    distance_estimator.load_model(current_app.config['DISAMBIGUATION_DISTANCE_MODEL_PATH'])
+
+    clusterer = Clusterer(distance_estimator)
+    clusterer.load_data(
+        current_app.config['DISAMBIGUATION_CURATED_SIGNATURES_PATH'],
+        current_app.config['DISAMBIGUATION_PUBLICATIONS_PATH'],
+        current_app.config['DISAMBIGUATION_INPUT_CLUSTERS_PATH'],
+    )
+    clusterer.fit()
+    clusterer.save_model(current_app.config['DISAMBIGUATION_CLUSTERING_MODEL_PATH'])
+

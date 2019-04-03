@@ -29,12 +29,22 @@ import json
 import pickle
 
 import numpy as np
+import six
+
+from functools import partial
+
 from scipy.special import expit
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import FeatureUnion, Pipeline
 from sklearn.svm import LinearSVC
 
+from beard.clustering import (
+    BlockClustering,
+    block_phonetic,
+    ScipyHierarchicalClustering
+)
+from beard.metrics import b3_f_score
 from beard.similarity import (
     CosineSimilarity,
     ElementMultiplication,
@@ -102,18 +112,7 @@ class DistanceEstimator(object):
         self.ethnicity_estimator = ethnicity_estimator
 
     def load_data(self, signatures_path, pairs_path, pairs_size, publications_path):
-        publications_by_id = {}
-        with open(publications_path, 'r') as fd:
-            for line in fd:
-                publication = json.loads(line)
-                publications_by_id[publication['publication_id']] = publication
-
-        signatures_by_uuid = {}
-        with open(signatures_path, 'r') as fd:
-            for line in fd:
-                signature = json.loads(line)
-                signature['publication'] = publications_by_id[signature['publication_id']]
-                signatures_by_uuid[signature['signature_uuid']] = signature
+        signatures_by_uuid = load_signatures(signatures_path, publications_path)
 
         self.X = np.empty((pairs_size, 2), dtype=np.object)
         self.y = np.empty(pairs_size, dtype=np.int)
@@ -307,6 +306,94 @@ class DistanceEstimator(object):
 
         self.distance_estimator = Pipeline([('transformer', transformer), ('classifier', classifier)])
         self.distance_estimator.fit(self.X, self.y)
+
+
+class Clusterer(object):
+    def __init__(self, distance_estimator):
+        self.distance_estimator = distance_estimator.distance_estimator
+        try:
+            self.distance_estimator.steps[-1][1].set_params(n_jobs=1)
+        except Exception:
+            pass
+
+        # threshold determines when to split blocks into smaller ones adding first initial
+        self.block_function = partial(block_phonetic, threshold=0, phonetic_algorithm='nysiis')
+
+        self.clustering_threshold = 0.709  # magic value taken from BEARD example
+        self.clustering_method = 'average'
+
+    def _affinity(self, X, step=10000):
+        """Custom affinity function, using a pre-learned distance estimator."""
+        all_i, all_j = np.triu_indices(len(X), k=1)
+        n_pairs = len(all_i)
+        distances = np.zeros(n_pairs, dtype=np.float64)
+
+        for start in range(0, n_pairs, step):
+            end = min(n_pairs, start + step)
+            Xt = np.empty((end - start, 2), dtype=np.object)
+
+            for k, (i, j) in enumerate(zip(all_i[start:end],
+                                           all_j[start:end])):
+                Xt[k, 0], Xt[k, 1] = X[i, 0], X[j, 0]
+
+            Xt = self.distance_estimator.predict_proba(Xt)[:, 1]
+            distances[start:end] = Xt[:]
+
+        return distances
+
+    def load_data(self, signatures_path, publications_path, input_clusters_path):
+        signatures_by_uuid = load_signatures(signatures_path, publications_path)
+
+        self.X = np.empty((len(signatures_by_uuid), 1), dtype=np.object)
+        self.y = -np.ones(len(self.X), dtype=np.int)
+
+        i = 0
+        with open(input_clusters_path, 'r') as fd:
+            for line in fd:
+                cluster = json.loads(line)
+                for signature_uuid in cluster['signature_uuids']:
+                    if signature_uuid not in signatures_by_uuid:
+                        continue  # TODO figure out how this can happen
+                    self.X[i, 0] = signatures_by_uuid[signature_uuid]
+                    self.y[i] = cluster['cluster_id']
+                    i += 1
+
+    def load_model(self, input_filename):
+        with open(input_filename, 'r') as fd:
+            self.clusterer = pickle.load(fd)
+
+    def save_model(self, output_filename):
+        with open_file_in_folder(output_filename, 'w') as fd:
+            pickle.dump(self.clusterer, fd, protocol=pickle.HIGHEST_PROTOCOL)
+
+    def fit(self, n_jobs=1):
+        self.clusterer = BlockClustering(
+            blocking=self.block_function,
+            base_estimator=ScipyHierarchicalClustering(
+                affinity=self._affinity,
+                threshold=self.clustering_threshold,
+                method=self.clustering_method,
+                supervised_scoring=b3_f_score),
+            n_jobs=n_jobs,
+            verbose=True)
+        self.clusterer.fit(self.X, self.y)
+
+
+def load_signatures(signatures_path, publications_path):
+    publications_by_id = {}
+    with open(publications_path, 'r') as fd:
+        for line in fd:
+            publication = json.loads(line)
+            publications_by_id[publication['publication_id']] = publication
+
+    signatures_by_uuid = {}
+    with open(signatures_path, 'r') as fd:
+        for line in fd:
+            signature = json.loads(line)
+            signature['publication'] = publications_by_id[signature['publication_id']]
+            signatures_by_uuid[signature['signature_uuid']] = signature
+
+    return signatures_by_uuid
 
 
 def get_author_full_name(signature):
