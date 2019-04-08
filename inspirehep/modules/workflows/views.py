@@ -766,11 +766,15 @@ def start_workflow_for_author_submission():
 @require_api_auth()
 def start_workflow_for_literature_submission():
     json = request.get_json()
+    submission_data = json['data']
+
     workflow_object = workflow_object_class.create(
-        data=json['data'],
-        id_user=current_user.get_id(),
+        data={},
+        id_user=submission_data['acquisition_source']['internal_uid'],
         data_type="hep"
     )
+    submission_data['acquisition_source']['submission_number'] = str(workflow_object.id)
+    workflow_object.data = submission_data
     workflow_object.extra_data['formdata'] = json['form_data']
     workflow_object.extra_data['source_data'] = {
         'extra_data': copy.deepcopy(workflow_object.extra_data),
