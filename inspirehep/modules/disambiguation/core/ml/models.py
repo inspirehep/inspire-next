@@ -28,6 +28,7 @@ import csv
 import json
 import pickle
 
+import attr
 import numpy as np
 import six
 
@@ -379,88 +380,122 @@ class Clusterer(object):
         self.clusterer.fit(self.X, self.y)
 
 
+@attr.s(slots=True)
+class Signature(object):
+    author_affiliation = attr.ib()
+    author_id = attr.ib()
+    author_name = attr.ib()
+    publication = attr.ib()
+    signature_block = attr.ib()
+    signature_uuid = attr.ib()
+
+    def __getitem__(self, value):
+        return getattr(self, value)
+
+    def get(self, value, default):
+        return getattr(self, value, default)
+
+
+@attr.s(slots=True)
+class Publication(object):
+    abstract = attr.ib()
+    authors = attr.ib()
+    collaborations = attr.ib()
+    keywords = attr.ib()
+    publication_id = attr.ib()
+    title = attr.ib()
+    topics = attr.ib()
+
+    def __getitem__(self, value):
+        return getattr(self, value)
+
+    def get(self, value, default):
+        return getattr(self, value, default)
+
+
 def load_signatures(signatures_path, publications_path):
     publications_by_id = {}
     with open(publications_path, 'r') as fd:
         for line in fd:
-            publication = json.loads(line)
-            publications_by_id[publication['publication_id']] = publication
+            publication = Publication(**json.loads(line))
+            publications_by_id[publication.publication_id] = publication
 
     signatures_by_uuid = {}
     with open(signatures_path, 'r') as fd:
         for line in fd:
             signature = json.loads(line)
             signature['publication'] = publications_by_id[signature['publication_id']]
-            signatures_by_uuid[signature['signature_uuid']] = signature
+            del signature['publication_id']
+            signatures_by_uuid[signature['signature_uuid']] = Signature(**signature)
 
     return signatures_by_uuid
 
 
 def get_author_full_name(signature):
-    return normalize_name(signature['author_name'])
+    return normalize_name(signature.author_name)
 
 
 def get_first_initial(signature):
     try:
-        return given_name_initial(signature['author_name'], 0)
+        return given_name_initial(signature.author_name, 0)
     except IndexError:
         return ''
 
 
 def get_second_initial(signature):
     try:
-        return given_name_initial(signature['author_name'], 1)
+        return given_name_initial(signature.author_name, 1)
     except IndexError:
         return ''
 
 
 def get_first_given_name(signature):
-    return given_name(signature['author_name'], 0)
+    return given_name(signature.author_name, 0)
 
 
 def get_second_given_name(signature):
-    return given_name(signature['author_name'], 1)
+    return given_name(signature.author_name, 1)
 
 
 def get_author_other_names(signature):
-    author_name = signature['author_name']
+    author_name = signature.author_name
     other_names = author_name.split(',', 1)
     return normalize_name(other_names[1]) if len(other_names) == 2 else ''
 
 
 def get_author_affiliation(signature):
-    author_affiliation = signature['author_affiliation']
+    author_affiliation = signature.author_affiliation
     return normalize_name(author_affiliation) if author_affiliation else ''
 
 
 def get_coauthors_neighborhood(signature, radius=10):
-    authors = get_value(signature, 'publication.authors', default=[])
+    authors = signature.publication.get('authors', [])
     try:
-        center = authors.index(signature['author_name'])
+        center = authors.index(signature.author_name)
         return ' '.join(authors[max(0, center - radius):min(len(authors), center + radius)])
     except ValueError:
         return ' '.join(authors)
 
 
 def get_abstract(signature):
-    return get_value(signature, 'publication.abstract', default='')
+    return signature.publication.abstract
 
 
 def get_keywords(signature):
-    return ' '.join(get_value(signature, 'publication.keywords', default=[]))
+    return ' '.join(signature.publication.keywords)
 
 
 def get_collaborations(signature):
-    return ' '.join(get_value(signature, 'publication.collaborations', default=[]))
+    return ' '.join(signature.publication.collaborations)
 
 
 def get_topics(signature):
-    return ' '.join(get_value(signature, 'publication.topics', default=[]))
+    return ' '.join(signature.publication.topics)
 
 
 def get_title(signature):
-    return get_value(signature, 'publication.title', default='')
+    return signature.publication.title
 
 
 def group_by_signature(signatures):
-    return signatures[0]['signature_uuid']
+    return signatures[0].signature_uuid
