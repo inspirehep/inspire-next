@@ -333,6 +333,7 @@
                             "type": "object"
                         },
                         "value": {
+                            "copy_to": "facet_collaborations",
                             "include_in_all": true,
                             "type": "text"
                         }
@@ -476,6 +477,9 @@
                     "type": "keyword"
                 },
                 "facet_inspire_categories": {
+                    "type": "keyword"
+                },
+                "facet_collaborations": {
                     "type": "keyword"
                 },
                 "facet_inspire_doc_type": {
