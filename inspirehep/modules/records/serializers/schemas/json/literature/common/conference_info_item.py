@@ -31,6 +31,9 @@ from inspirehep.utils.record_getter import get_db_record, RecordGetterError
 class ConferenceInfoItemSchemaV1(Schema):
     titles = fields.Raw()
     control_number = fields.Raw()
+    page_start = fields.Raw()
+    page_end = fields.Raw()
+    acronyms = fields.Raw()
 
     @pre_dump
     def resolve_conference_record_as_root(self, pub_info_item):
@@ -47,4 +50,5 @@ class ConferenceInfoItemSchemaV1(Schema):
         titles = conference.get('titles')
         if titles is None:
             return {}
+        pub_info_item.update(conference)
         return conference.to_dict()
