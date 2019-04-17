@@ -260,9 +260,71 @@ def test_conference_info_schema_with_record(isolated_app):
                     'artid': '02B006',
                     'journal_title': 'PTEP',
                     'journal_volume': '2012',
-                    'year': 2012,
+                    'year': 2012
 
+                }
+            ],
+            'conference_info': [
+                {
+                    "control_number": factory.record_metadata.json['control_number'],
+                    "titles": [
+                        {
+                            "title": "1234th RESCEU International Symposium on Birth and Evolution of the Universe"
+                        }
+                    ]
+                }
+            ]
+
+        }
+    }
+
+    result = json.loads(schema.dumps(record).data)
+    assert expected == result
+
+
+def test_conference_info_schema_with_record_with_acronyms_and_page_start_and_end(isolated_app):
+    schema = LiteratureRecordSchemaJSONUIV1()
+    conf_record = {
+        "$schema": "http://localhost:5000/schemas/records/conferences.json",
+        "_collections": [
+            "Conferences"
+        ],
+        'acronyms': ["RESEU 2018"],
+        "page_end": "2",
+        "page_start": "1",
+        "titles": [
+            {
+                "title": "1234th RESCEU International Symposium on Birth and Evolution of the Universe"
+            }
+        ],
+    }
+    factory = TestRecordMetadata.create_from_kwargs(
+        json=conf_record, pid_type='con')
+    record = {
+        'metadata': {
+            'publication_info': [
+                {
+                    'artid': '02B006',
+                    'journal_title': 'PTEP',
+                    'journal_volume': '2012',
+                    'year': 2012,
+                    'conference_record': {
+                        '$ref': 'http://localhost:5000/api/journals/{}'.format(factory.record_metadata.json['control_number'])
+                    }
                 },
+                {
+                    'artid': '02B006',
+                    'journal_title': 'PTEP',
+                    'journal_volume': '2012',
+                    'year': 2012
+                }
+            ]
+        }
+    }
+
+    expected = {
+        'metadata': {
+            'publication_info': [
                 {
                     'artid': '02B006',
                     'journal_title': 'PTEP',
@@ -278,7 +340,10 @@ def test_conference_info_schema_with_record(isolated_app):
                         {
                             "title": "1234th RESCEU International Symposium on Birth and Evolution of the Universe"
                         }
-                    ]
+                    ],
+                    'acronyms': ["RESEU 2018"],
+                    "page_end": "2",
+                    "page_start": "1",
                 }
             ]
 
@@ -316,13 +381,6 @@ def test_conference_info_schema_with_absent_record(isolated_app):
     expected = {
         'metadata': {
             'publication_info': [
-                {
-                    'artid': '02B006',
-                    'journal_title': 'PTEP',
-                    'journal_volume': '2012',
-                    'year': 2012,
-
-                },
                 {
                     'artid': '02B006',
                     'journal_title': 'PTEP',

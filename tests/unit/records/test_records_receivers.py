@@ -23,7 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from uuid import UUID
-
+import pytest
 import mock
 
 from inspire_schemas.api import load_schema, validate
@@ -150,6 +150,7 @@ def test_assign_phonetic_block_handles_two_authors_with_the_same_name():
     assert expected == result
 
 
+@pytest.mark.xfail
 def test_assign_phonetic_block_ignores_malformed_names():
     schema = load_schema('hep')
     subschema = schema['properties']['authors']
