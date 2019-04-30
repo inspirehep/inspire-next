@@ -58,11 +58,7 @@ from inspirehep.modules.search.api import LiteratureSearch
 
 
 from sqlalchemy import (
-    String,
     cast,
-    type_coerce,
-    or_,
-    not_
 )
 
 from sqlalchemy.dialects.postgresql import JSONB
@@ -118,8 +114,7 @@ def next_batch(iterator, batch_size):
 
 
 def get_query_records_to_index(pid_types):
-    """
-    Return a query for retrieving all non deleted records by pid_type
+    """Return a query for retrieving all records by pid_type.
 
     Args:
         pid_types(List[str]): a list of pid types
@@ -128,17 +123,10 @@ def get_query_records_to_index(pid_types):
         SQLAlchemy query for non deleted record with pid type in `pid_types`
     """
     query = (
-        db.session.query(PersistentIdentifier.object_uuid).join(RecordMetadata, type_coerce(PersistentIdentifier.object_uuid, String) == type_coerce(RecordMetadata.id, String))
-        .filter(
+        db.session.query(PersistentIdentifier.object_uuid).filter(
             PersistentIdentifier.pid_type.in_(pid_types),
             PersistentIdentifier.object_type == 'rec',
             PersistentIdentifier.status == PIDStatus.REGISTERED,
-            or_(
-                not_(
-                    type_coerce(RecordMetadata.json, JSONB).has_key('deleted')
-                ),
-                RecordMetadata.json["deleted"] == cast(False, JSONB)
-            )
             # noqa: F401
         )
     )

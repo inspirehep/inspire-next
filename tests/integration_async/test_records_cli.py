@@ -197,13 +197,15 @@ def test_simpleindex_indexes_correct_pidtype(
     assert '0 failed' in result.output_bytes
 
 
-def test_simpleindex_using_multiple_batches(
+def test_simpleindex_using_multiple_batches_and_no_deleted(
     app_cli,
     celery_app_with_context,
     celery_session_worker,
     create_records,
 ):
     create_records(n=5)
+    create_records(n=2, additional_props={'deleted': True})
+
     result = app_cli.invoke(
         simpleindex,
         ['--yes-i-know', '-t', 'lit', '-s', '1', '--queue-name', ''],
@@ -281,21 +283,6 @@ def test_get_query_records_to_index_only_lit_adding_record(
     pids = ['lit']
     query = get_query_records_to_index(pids)
 
-    expected_count = 0  # does not take deleted record
-    result_count = query.count()
-    assert result_count == expected_count
-
-
-def test_get_query_records_to_index_only_lit_adding_record_deleted(
-    app,
-    create_records,
-):
-    create_records()
-    create_records(additional_props={'deleted': True})
-
-    pids = ['lit']
-    query = get_query_records_to_index(pids)
-
-    expected_count = 1
+    expected_count = 1  # takes also deleted record
     result_count = query.count()
     assert result_count == expected_count
