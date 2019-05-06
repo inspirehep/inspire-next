@@ -117,7 +117,7 @@ install_requires = [
     'raven[flask]~=6.0,>=6.2.1',
     'refextract~=0.0,>=0.2.2',
     'requests~=2.0,>=2.18.4',
-    'scikit-learn~=0.0,>=0.19.1',
+    'scikit-learn~=0.0,>=0.19.1,<0.21',
     'setproctitle~=1.0,>=1.1.10',
     'timeout-decorator~=0.0,>=0.4.0',
     # Use a timeexecution fork, until https://github.com/kpn-digital/py-timeexecution/pull/38 gets merged.
