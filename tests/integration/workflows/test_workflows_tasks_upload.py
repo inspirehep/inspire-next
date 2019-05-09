@@ -22,6 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
+import requests_mock
+from invenio_workflows.errors import WorkflowsError
 from mock import MagicMock, patch
 from flask import current_app
 
@@ -203,3 +206,204 @@ def test_regression_store_record_does_not_commit_when_error(workflow_app):
         except Exception:
             record_count = RecordMetadata.query.count()
             assert record_count == 0
+
+
+def test_store_record_inspirehep_api_literature_new(workflow_app):
+    record_data = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'titles': [{'title': 'Follow hour including staff wrong.'}],
+        'document_type': ['article'], '_collections': ['Literature']
+    }
+    workflow = workflow_object_class.create({})
+    workflow.extra_data['is-update'] = False
+    workflow.data = record_data
+
+    expected_head_uuid = 'uuid_number_123456'
+    expected_control_number = 111
+
+    eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
+    with patch.dict(workflow_app.config, {
+        'ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT': True,
+        'INSPIREHEP_URL': "http://web:8000"
+    }):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', '{url}/literature'.format(
+                    url=workflow_app.config.get("INSPIREHEP_URL")),
+                headers={'content-type': 'application/json'},
+                status_code=201,
+                json={
+                    'control_number': expected_control_number,
+                    'id_': expected_head_uuid
+                }
+            )
+            store_record(workflow, eng)  # not throwing exception
+    assert workflow.data['control_number'] == expected_control_number
+    assert workflow.extra_data['head_uuid'] == expected_head_uuid
+
+
+def test_store_record_inspirehep_api_literature_update(workflow_app):
+    record_data = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'titles': [{'title': 'Follow hour including staff wrong.'}],
+        'document_type': ['article'], '_collections': ['Literature']
+    }
+    workflow = workflow_object_class.create({})
+    workflow.extra_data['is-update'] = True
+
+    expected_head_uuid = 'uuid_number_123456'
+    expected_control_number = 111
+
+    workflow.extra_data['matches'] = {}
+    workflow.extra_data['matches']['approved'] = expected_control_number
+    workflow.extra_data['head_uuid'] = expected_head_uuid
+    workflow.data = record_data
+    eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
+    with patch.dict(workflow_app.config, {
+        'ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT': True,
+        'INSPIREHEP_URL': "http://web:8000"
+    }):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'PUT', '{url}/literature/{cn}'.format(
+                    url=workflow_app.config.get("INSPIREHEP_URL"),
+                    cn=expected_control_number,
+                ),
+                headers={'content-type': 'application/json'},
+                status_code=200,
+                json={
+                    'control_number': expected_control_number,
+                    'id_': expected_head_uuid
+                }
+            )
+            store_record(workflow, eng)  # not throwing exception
+    assert workflow.data['control_number'] == expected_control_number
+    assert workflow.extra_data['head_uuid'] == expected_head_uuid
+
+
+def test_store_record_inspirehep_api_author_new(workflow_app):
+    record_data = {
+        '$schema': 'http://localhost:5000/schemas/records/authors.json',
+        'name': {'value': 'Robert Johnson'}, '_collections': ['Authors']
+    }
+    workflow = workflow_object_class.create({})
+    workflow.extra_data['is-update'] = False
+    workflow.data = record_data
+
+    expected_head_uuid = 'uuid_number_123456'
+    expected_control_number = 222
+
+    eng = MagicMock(workflow_definition=MagicMock(data_type='authors'))
+    with patch.dict(workflow_app.config, {
+        'ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT': True,
+        'INSPIREHEP_URL': "http://web:8000"
+    }):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', '{url}/authors'.format(
+                    url=workflow_app.config.get("INSPIREHEP_URL")),
+                headers={'content-type': 'application/json'},
+                status_code=201,
+                json={
+                    'control_number': expected_control_number,
+                    'id_': expected_head_uuid
+                }
+            )
+            store_record(workflow, eng)  # not throwing exception
+    assert workflow.data['control_number'] == expected_control_number
+    assert workflow.extra_data['head_uuid'] == expected_head_uuid
+
+
+def test_store_record_inspirehep_api_author_update(workflow_app):
+    record_data = {
+        '$schema': 'http://localhost:5000/schemas/records/authors.json',
+        'name': {'value': 'Robert Johnson'}, '_collections': ['Authors']
+    }
+    workflow = workflow_object_class.create({})
+    workflow.extra_data['is-update'] = True
+
+    expected_head_uuid = 'uuid_number_123456'
+    expected_control_number = 222
+
+    workflow.extra_data['matches'] = {}
+    workflow.extra_data['matches']['approved'] = expected_control_number
+    workflow.extra_data['head_uuid'] = expected_head_uuid
+    workflow.data = record_data
+    eng = MagicMock(workflow_definition=MagicMock(data_type='authors'))
+    with patch.dict(workflow_app.config, {
+        'ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT': True,
+        'INSPIREHEP_URL': "http://web:8000"
+    }):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'PUT', '{url}/authors/{cn}'.format(
+                    url=workflow_app.config.get("INSPIREHEP_URL"),
+                    cn=expected_control_number,
+                ),
+                headers={'content-type': 'application/json'},
+                status_code=200,
+                json={
+                    'control_number': expected_control_number,
+                    'id_': expected_head_uuid
+                }
+            )
+            store_record(workflow, eng)  # not throwing exception
+    assert workflow.data['control_number'] == expected_control_number
+    assert workflow.extra_data['head_uuid'] == expected_head_uuid
+
+
+def test_store_record_inspirehep_api_literature_new_wrong_response_code(workflow_app):
+    record_data = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'titles': [{'title': 'Follow hour including staff wrong.'}],
+        'document_type': ['article'], '_collections': ['Literature']
+    }
+    workflow = workflow_object_class.create({})
+    workflow.extra_data['is-update'] = False
+    workflow.data = record_data
+
+    eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
+    with patch.dict(workflow_app.config, {
+        'ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT': True,
+        'INSPIREHEP_URL': "http://web:8000"
+    }):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', '{url}/literature'.format(
+                    url=workflow_app.config.get("INSPIREHEP_URL")),
+                headers={'content-type': 'application/json'},
+                status_code=401,
+                json={
+                    "message": "Something"
+                }
+            )
+            with pytest.raises(WorkflowsError):
+                store_record(workflow, eng)
+
+
+def test_store_record_inspirehep_api_author_new_wrong_response_code(workflow_app):
+    record_data = {
+        '$schema': 'http://localhost:5000/schemas/records/authors.json',
+        'name': {'value': 'Robert Johnson'}, '_collections': ['Authors']
+    }
+    workflow = workflow_object_class.create({})
+    workflow.extra_data['is-update'] = False
+    workflow.data = record_data
+
+    eng = MagicMock(workflow_definition=MagicMock(data_type='authors'))
+    with patch.dict(workflow_app.config, {
+        'ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT': True,
+        'INSPIREHEP_URL': "http://web:8000"
+    }):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', '{url}/authors'.format(
+                    url=workflow_app.config.get("INSPIREHEP_URL")),
+                headers={'content-type': 'application/json'},
+                status_code=401,
+                json={
+                    "message": "Something"
+                }
+            )
+            with pytest.raises(WorkflowsError):
+                store_record(workflow, eng)
