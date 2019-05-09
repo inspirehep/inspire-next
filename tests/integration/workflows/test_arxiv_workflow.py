@@ -28,6 +28,8 @@ import json
 import mock
 import pkg_resources
 import pytest
+import requests
+import requests_mock
 
 from jsonschema import ValidationError
 from invenio_db import db
@@ -1147,3 +1149,165 @@ def test_match_in_holdingpen_different_sources_continues(
     assert obj.extra_data['holdingpen_matches'] == [wf_to_match]
     assert obj.extra_data['previously_rejected'] is False
     assert not obj.extra_data.get('stopped-matched-holdingpen-wf')
+
+
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.beard.json_api_request",
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow",
+    side_effect=fake_download_file,
+)
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
+def test_update_record_goes_through_api_version_of_store_record_without_issue(
+    mocked_is_pdf_link,
+    mocked_download_arxiv,
+    mocked_api_request_beard,
+    mocked_api_request_magpie,
+    workflow_app,
+    mocked_external_services,
+    record_from_db,
+):
+    record = record_from_db
+    workflow_id = build_workflow(record).id
+    expected_control_number = record['control_number']
+    expected_head_uuid = str(record.id)
+    with mock.patch.dict(
+        workflow_app.config, {
+            "ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT": True,
+            "INSPIREHEP_URL": "http://web:8000"
+        }
+    ):
+        with requests_mock.Mocker(real_http=True) as requests_mocker:
+            requests_mocker.register_uri(
+                'PUT', '{url}/literature/{cn}'.format(
+                    url=workflow_app.config.get("INSPIREHEP_URL"),
+                    cn=expected_control_number,
+                ),
+                headers={'content-type': 'application/json'},
+                status_code=200,
+                json={
+                    'control_number': expected_control_number,
+                    'id_': expected_head_uuid
+                }
+            )
+            eng_uuid = start("article", object_id=workflow_id)
+            url_paths = [r.path for r in requests_mocker.request_history]
+            url_hostnames = [r.hostname for r in requests_mocker.request_history]
+
+            assert 'web' in url_hostnames
+            assert "/literature/{cn}".format(cn=expected_control_number) in url_paths
+
+    obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
+    obj = workflow_object_class.get(obj_id)
+
+    assert obj.data['control_number'] == expected_control_number
+
+    assert obj.extra_data["holdingpen_matches"] == []
+    assert obj.extra_data["previously_rejected"] is False
+    assert not obj.extra_data.get("stopped-matched-holdingpen-wf")
+    assert obj.extra_data["is-update"]
+    assert obj.extra_data["exact-matched"]
+    assert obj.extra_data["matches"]["exact"] == [record.get("control_number")]
+    assert obj.extra_data["matches"]["approved"] == record.get("control_number")
+    assert obj.extra_data["approved"]
+    assert obj.status == ObjectStatus.COMPLETED
+
+
+def connection_error(*args, **kwargs):
+    raise requests.exceptions.ConnectionError
+
+
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.beard.json_api_request",
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow",
+    side_effect=fake_download_file,
+)
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.upload.requests.put",
+    side_effect=connection_error
+)
+def test_update_record_goes_through_api_version_of_store_record_wrong_api_address(
+    mocked_request_in_upload,
+    mocked_is_pdf_link,
+    mocked_download_arxiv,
+    mocked_api_request_beard,
+    mocked_api_request_magpie,
+    workflow_app,
+    mocked_external_services,
+    record_from_db,
+):
+    record = record_from_db
+    workflow_id = build_workflow(record).id
+    with mock.patch.dict(
+        workflow_app.config, {
+            "ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT": True,
+            "INSPIREHEP_URL": "http://go_to_wrong_address.bad__:98765"
+        }
+    ):
+        with pytest.raises(requests.exceptions.ConnectionError):
+            start("article", object_id=workflow_id)
+    obj = workflow_object_class.get(workflow_id)
+
+    assert obj.status == ObjectStatus.ERROR
+    assert obj.extra_data['_error_msg'].endswith("\nConnectionError\n") is True
+
+
+def connection_timeout(*args, **kwargs):
+    raise requests.exceptions.ConnectTimeout
+
+
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.beard.json_api_request",
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow",
+    side_effect=fake_download_file,
+)
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.upload.requests.put",
+    side_effect=connection_timeout
+)
+def test_update_record_goes_through_api_version_of_store_record_connection_timeout(
+    mocked_request_in_upload,
+    mocked_is_pdf_link,
+    mocked_download_arxiv,
+    mocked_api_request_beard,
+    mocked_api_request_magpie,
+    workflow_app,
+    mocked_external_services,
+    record_from_db,
+):
+    record = record_from_db
+    workflow_id = build_workflow(record).id
+    with mock.patch.dict(
+        workflow_app.config, {
+            "ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT": True,
+            "INSPIREHEP_URL": "http://go_to_wrong_address.bad__:98765"
+        }
+    ):
+        with pytest.raises(requests.exceptions.ConnectionError):
+            start("article", object_id=workflow_id)
+    obj = workflow_object_class.get(workflow_id)
+
+    assert obj.status == ObjectStatus.ERROR
+    assert obj.extra_data['_error_msg'].endswith("\nConnectTimeout\n") is True

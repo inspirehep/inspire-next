@@ -1225,6 +1225,8 @@ MAGPIE_API_URL = None  # e.g. "http://magpie.inspirehep.net/api"
 LEGACY_BASE_URL = "http://inspirehep.net"
 LEGACY_RECORD_URL_PATTERN = 'http://inspirehep.net/record/{recid}'
 AUTHENTICATION_TOKEN = "CHANGE_ME"
+INSPIREHEP_URL = "http://web:8000"
+ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT = False
 
 # Harvesting and Workflows
 # ========================
