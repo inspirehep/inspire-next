@@ -881,6 +881,9 @@ def linkedaccounts():
 @blueprint.route('/login_success', methods=['GET'])
 def login_success():
     """Injects current user to the template and passes it to the parent tab."""
+    if current_user.is_anonymous:
+        logger.warning("AnonymousUser on login_success page! Redirecting to `/login`")
+        return redirect('/login')
     return render_template(
         'inspirehep_theme/login_success.html',
         user={
