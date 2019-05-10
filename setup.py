@@ -93,7 +93,8 @@ install_requires = [
     'invenio-records-files>=1.0.0a10',
     'invenio-records-rest~=1.0,>=1.0.1',
     'invenio-records-ui~=1.0,>=1.0.0',
-    'invenio-records~=1.0,>=1.0.0',
+    # invenio-records@1.2.0 requires Flask>=1.0
+    'invenio-records~=1.0,<1.2.0',
     'invenio-rest~=1.0,>=1.0.0',
     'invenio-search[elasticsearch5]~=1.0,>=1.0.0',
     'invenio-userprofiles~=1.0,>=1.0.0',
