@@ -63,7 +63,6 @@ RUN npm install -g \
 
 COPY . .
 
-RUN pip install --upgrade pip && \
- pip install --upgrade setuptools && \
- pip install -e .[all] && \ 
- pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+ pip install --no-cache-dir --upgrade setuptools && \
+ pip install --no-cache-dir -e .[all] -r requirements.txt
