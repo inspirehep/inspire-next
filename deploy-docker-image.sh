@@ -34,6 +34,7 @@ main() {
   login
   buildPush "inspirehep/inspire-next:latest"
   buildPush "inspirehep/inspire-next:assets" Dockerfile.with_assets
+  buildPush "inspirehep/inspire-next:scrapyd" Dockerfile.scrapyd
   logout
 }
 main
