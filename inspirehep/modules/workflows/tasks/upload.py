@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 import requests
 from flask import current_app
 from invenio_workflows.errors import WorkflowsError
+from simplejson import JSONDecodeError
 
 from inspire_schemas.readers import LiteratureReader
 from invenio_db import db
@@ -117,12 +118,7 @@ def store_record_inspirehep_api(obj, eng, is_update, is_authors):
                     "Record matched in workflow has different uuid than record updated in Inspirehep!"
                 )
         else:
-            raise WorkflowsError(
-                "Response code from Inspirehep is {code}. This is wrong!"
-                " Message from the server: {message}".format(
-                    code=response.status_code, message=response.json()
-                )
-            )
+            create_error(response)
     else:
         response = requests.post(
             "{inspirehep_url}{endpoint}".format(
@@ -137,14 +133,23 @@ def store_record_inspirehep_api(obj, eng, is_update, is_authors):
             obj.data['control_number'] = response.json()['control_number']
             obj.extra_data['head_uuid'] = response.json()['id_']
         else:
-            raise WorkflowsError(
-                "Response code from Inspirehep is {code}."
-                " This is wrong! Message from the server: {message}".format(
-                    code=response.status_code, message=response.json()
-                )
-            )
+            create_error(response)
     with db.session.begin_nested():
         obj.save()
+
+
+def create_error(response):
+    """Raises exception with message from data returned by the server in response object"""
+    try:
+        error_msg = response.json()
+    except JSONDecodeError:
+        error_msg = response.text
+    raise WorkflowsError(
+        "Response code from Inspirehep is {code}."
+        " This is wrong! Message from the server: {message}".format(
+            code=response.status_code, message=error_msg
+        )
+    )
 
 
 @with_debug_logging
