@@ -34,7 +34,6 @@ from inspirehep.modules.records.api import InspireRecord, RecordMetadata
 
 from factories.db.invenio_records import TestRecordMetadata
 
-
 # FIXME: otherwise this task is not found by Celery.
 from inspirehep.modules.orcid.tasks import orcid_push  # noqa: F401
 from inspirehep.modules.workflows.tasks.upload import (
@@ -223,7 +222,7 @@ def test_store_record_inspirehep_api_literature_new(workflow_app):
 
     eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
     with patch.dict(workflow_app.config, {
-        'ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT': True,
+        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
         'INSPIREHEP_URL': "http://web:8000"
     }):
         with requests_mock.Mocker() as requests_mocker:
@@ -233,7 +232,9 @@ def test_store_record_inspirehep_api_literature_new(workflow_app):
                 headers={'content-type': 'application/json'},
                 status_code=201,
                 json={
-                    'control_number': expected_control_number,
+                    "metadata": {
+                        "control_number": expected_control_number
+                    },
                     'id_': expected_head_uuid
                 }
             )
@@ -260,7 +261,7 @@ def test_store_record_inspirehep_api_literature_update(workflow_app):
     workflow.data = record_data
     eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
     with patch.dict(workflow_app.config, {
-        'ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT': True,
+        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
         'INSPIREHEP_URL': "http://web:8000"
     }):
         with requests_mock.Mocker() as requests_mocker:
@@ -272,7 +273,9 @@ def test_store_record_inspirehep_api_literature_update(workflow_app):
                 headers={'content-type': 'application/json'},
                 status_code=200,
                 json={
-                    'control_number': expected_control_number,
+                    "metadata": {
+                        "control_number": expected_control_number
+                    },
                     'id_': expected_head_uuid
                 }
             )
@@ -295,7 +298,7 @@ def test_store_record_inspirehep_api_author_new(workflow_app):
 
     eng = MagicMock(workflow_definition=MagicMock(data_type='authors'))
     with patch.dict(workflow_app.config, {
-        'ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT': True,
+        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
         'INSPIREHEP_URL': "http://web:8000"
     }):
         with requests_mock.Mocker() as requests_mocker:
@@ -305,7 +308,9 @@ def test_store_record_inspirehep_api_author_new(workflow_app):
                 headers={'content-type': 'application/json'},
                 status_code=201,
                 json={
-                    'control_number': expected_control_number,
+                    "metadata": {
+                        "control_number": expected_control_number
+                    },
                     'id_': expected_head_uuid
                 }
             )
@@ -331,7 +336,7 @@ def test_store_record_inspirehep_api_author_update(workflow_app):
     workflow.data = record_data
     eng = MagicMock(workflow_definition=MagicMock(data_type='authors'))
     with patch.dict(workflow_app.config, {
-        'ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT': True,
+        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
         'INSPIREHEP_URL': "http://web:8000"
     }):
         with requests_mock.Mocker() as requests_mocker:
@@ -343,7 +348,9 @@ def test_store_record_inspirehep_api_author_update(workflow_app):
                 headers={'content-type': 'application/json'},
                 status_code=200,
                 json={
-                    'control_number': expected_control_number,
+                    "metadata": {
+                        "control_number": expected_control_number
+                    },
                     'id_': expected_head_uuid
                 }
             )
@@ -364,7 +371,7 @@ def test_store_record_inspirehep_api_literature_new_wrong_response_code(workflow
 
     eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
     with patch.dict(workflow_app.config, {
-        'ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT': True,
+        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
         'INSPIREHEP_URL': "http://web:8000"
     }):
         with requests_mock.Mocker() as requests_mocker:
@@ -392,7 +399,7 @@ def test_store_record_inspirehep_api_author_new_wrong_response_code(workflow_app
 
     eng = MagicMock(workflow_definition=MagicMock(data_type='authors'))
     with patch.dict(workflow_app.config, {
-        'ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT': True,
+        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
         'INSPIREHEP_URL': "http://web:8000"
     }):
         with requests_mock.Mocker() as requests_mocker:

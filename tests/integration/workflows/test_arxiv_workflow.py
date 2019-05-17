@@ -1179,7 +1179,7 @@ def test_update_record_goes_through_api_version_of_store_record_without_issue(
     expected_head_uuid = str(record.id)
     with mock.patch.dict(
         workflow_app.config, {
-            "ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT": True,
+            "FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT": True,
             "INSPIREHEP_URL": "http://web:8000"
         }
     ):
@@ -1192,7 +1192,9 @@ def test_update_record_goes_through_api_version_of_store_record_without_issue(
                 headers={'content-type': 'application/json'},
                 status_code=200,
                 json={
-                    'control_number': expected_control_number,
+                    'metadata': {
+                        'control_number': expected_control_number,
+                    },
                     'id_': expected_head_uuid
                 }
             )
@@ -1254,7 +1256,7 @@ def test_update_record_goes_through_api_version_of_store_record_wrong_api_addres
     workflow_id = build_workflow(record).id
     with mock.patch.dict(
         workflow_app.config, {
-            "ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT": True,
+            "FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT": True,
             "INSPIREHEP_URL": "http://go_to_wrong_address.bad__:98765"
         }
     ):
@@ -1301,7 +1303,7 @@ def test_update_record_goes_through_api_version_of_store_record_connection_timeo
     workflow_id = build_workflow(record).id
     with mock.patch.dict(
         workflow_app.config, {
-            "ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT": True,
+            "FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT": True,
             "INSPIREHEP_URL": "http://go_to_wrong_address.bad__:98765"
         }
     ):
