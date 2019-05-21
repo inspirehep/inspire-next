@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 import json
 
 import pytest
+import requests_mock
 from sqlalchemy_continuum import transaction_class
 from invenio_workflows import ObjectStatus, WorkflowEngine, start, workflow_object_class
 from invenio_accounts.testutils import login_user_via_session
@@ -41,6 +42,7 @@ from inspirehep.modules.search import LiteratureSearch
 
 from calls import do_robotupload_callback
 from factories.db.invenio_records import TestRecordMetadata
+from mock import patch
 
 
 @pytest.fixture(scope='function')
@@ -383,3 +385,96 @@ def test_edit_article_callback_does_not_have_redirect_url_if_no_ticket_id(
     assert response.status_code == 200
     data = json.loads(response.data)
     assert 'redirect_url' not in data
+
+
+def test_edit_article_workflow_sending_to_hep(workflow_app, mocked_external_services):
+    app_client = workflow_app.test_client()
+    user = User.query.filter_by(email='admin@inspirehep.net').one()
+    login_user_via_session(app_client, user=user)
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'nucl-th'
+                ],
+                'value': '1802.03287'
+            }
+        ],
+        'control_number': 123,
+        'document_type': ['article'],
+        'titles': [{'title': 'Resource Pooling in Large-Scale Content Delivery Systems'}],
+        'self': {'$ref': 'http://localhost:5000/schemas/records/hep.json'},
+        '_collections': ['Literature']
+    }
+    factory = TestRecordMetadata.create_from_kwargs(json=record)
+    with patch.dict(workflow_app.config, {
+        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
+        'INSPIREHEP_URL': "http://web:8000"
+    }):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'PUT', '{url}/literature/{cn}'.format(
+                    url=workflow_app.config.get("INSPIREHEP_URL"),
+                    cn=record['control_number'],
+                ),
+                headers={'content-type': 'application/json'},
+                status_code=200,
+                json={
+                    "metadata": {
+                        'control_number': record['control_number'],
+                    },
+                    'id_': 1
+                }
+            )
+
+        eng_uuid = start('edit_article', data=factory.record_metadata.json)
+        obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
+
+        assert obj.status == ObjectStatus.WAITING
+        assert obj.extra_data['callback_url']
+
+        user_id = user.get_id()
+        obj.id_user = user_id
+
+        # simulate changes in the editor and save
+        new_title = 'Somebody edited this fancy title'
+        obj.data['titles'][0]['title'] = new_title
+
+        payload = {
+            'id': obj.id,
+            'metadata': obj.data,
+            '_extra_data': obj.extra_data
+        }
+
+        app_client.put(
+            obj.extra_data['callback_url'],
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+
+        obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
+        assert obj.status == ObjectStatus.WAITING  # waiting for robot_upload
+        assert obj.data['titles'][0]['title'] == new_title
+
+        do_robotupload_callback(
+            app=workflow_app,
+            workflow_id=obj.id,
+            recids=[obj.data['control_number']],
+        )
+
+        record = get_db_record('lit', 123)
+        assert record['titles'][0]['title'] == new_title
+
+        # assert record edit transaction is by user who created the edit workflow
+        revision = record.revisions[record.revision_id]
+        transaction_id = revision.model.transaction_id
+        Transaction = transaction_class(RecordMetadata)
+        transaction = Transaction.query.filter(Transaction.id == transaction_id).one()
+        assert transaction.user_id == int(user_id)
+
+        obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
+        assert obj.status == ObjectStatus.COMPLETED
+        pending_records = WorkflowsPendingRecord.query.filter_by(workflow_id=obj.id).all()
+        assert not pending_records

@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-
+from flask import current_app
 from sqlalchemy_continuum import transaction_class
 
 from invenio_db import db
@@ -30,6 +30,7 @@ from invenio_records.models import RecordMetadata
 
 from inspirehep.modules.workflows.tasks.actions import validate_record
 from inspirehep.modules.workflows.tasks.submission import cleanup_pending_workflow, send_robotupload
+from inspirehep.modules.workflows.tasks.upload import send_record_to_hep
 from inspirehep.modules.workflows.utils import get_resolve_edit_article_callback_url
 from inspirehep.utils.record_getter import get_db_record
 from ..utils import with_debug_logging
@@ -43,15 +44,19 @@ def change_status_to_waiting(obj, eng):
 
 def update_record(obj, eng):
     control_number = obj.data['control_number']
-    record = get_db_record('lit', control_number)
-    record.update(obj.data)
-    record.commit()
+    if current_app.config.get("FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT"):
+        endpoint = '/literature'
+        send_record_to_hep(obj, endpoint, control_number)
+    else:
+        record = get_db_record('lit', control_number)
+        record.update(obj.data)
+        record.commit()
 
-    user_id = obj.id_user
-    if user_id:
-        _set_transaction_user_id_for_last_record_update(control_number, user_id)
+        user_id = obj.id_user
+        if user_id:
+            _set_transaction_user_id_for_last_record_update(control_number, user_id)
 
-    db.session.commit()
+        db.session.commit()
 
 
 def _set_transaction_user_id_for_last_record_update(control_number, user_id):

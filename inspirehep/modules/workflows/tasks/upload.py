@@ -46,7 +46,7 @@ def store_record(obj, eng):
     """Insert or replace a record."""
     is_update = obj.extra_data.get('is-update')
     is_authors = eng.workflow_definition.data_type == 'authors'
-    if not current_app.config.get("ENABLE_INSPIREHEP_REMOTE_RECORD_MANAGEMENT"):
+    if not current_app.config.get("FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT"):
         with db.session.begin_nested():
             if is_update:
                 if not is_authors and not current_app.config.get('FEATURE_FLAG_ENABLE_MERGER', False):
@@ -82,17 +82,10 @@ def store_record(obj, eng):
 def store_record_inspirehep_api(obj, eng, is_update, is_authors):
     """Saves record through inspirehep api by posting/pushing record to proper endpoint
      in inspirehep"""
-    headers = {
-        "content-type": "application/json",
-        "Authorization": "Bearer {token}".format(
-            token=current_app.config['AUTHENTICATION_TOKEN']
-        ),
-    }
     if is_authors:
         endpoint = '/authors'
     else:
         endpoint = '/literature'
-    inspirehep_url = current_app.config.get("INSPIREHEP_URL")
     if is_update:
         if not is_authors and not current_app.config.get(
             'FEATURE_FLAG_ENABLE_MERGER', False
@@ -102,6 +95,20 @@ def store_record_inspirehep_api(obj, eng, is_update, is_authors):
             )
             return
         control_number = obj.extra_data['matches']['approved']
+        send_record_to_hep(obj, endpoint, control_number)
+    else:
+        send_record_to_hep(obj, endpoint)
+
+
+def send_record_to_hep(obj, endpoint, control_number=None):
+    headers = {
+        "content-type": "application/json",
+        "Authorization": "Bearer {token}".format(
+            token=current_app.config['AUTHENTICATION_TOKEN']
+        ),
+    }
+    inspirehep_url = current_app.config.get("INSPIREHEP_URL")
+    if control_number:
         response = requests.put(
             "{inspirehep_url}{endpoint}/{control_number}".format(
                 inspirehep_url=inspirehep_url,
@@ -112,7 +119,7 @@ def store_record_inspirehep_api(obj, eng, is_update, is_authors):
             json=obj.data
         )
         if response.status_code == 200:
-            obj.data['control_number'] = response.json()['control_number']
+            obj.data['control_number'] = response.json()['metadata']['control_number']
             if response.json()['id_'] != obj.extra_data['head_uuid']:
                 obj.log.warning(
                     "Record matched in workflow has different uuid than record updated in Inspirehep!"
@@ -130,7 +137,7 @@ def store_record_inspirehep_api(obj, eng, is_update, is_authors):
         )
 
         if response.status_code == 201:
-            obj.data['control_number'] = response.json()['control_number']
+            obj.data['control_number'] = response.json()['metadata']['control_number']
             obj.extra_data['head_uuid'] = response.json()['id_']
         else:
             create_error(response)
