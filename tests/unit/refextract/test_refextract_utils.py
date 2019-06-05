@@ -53,6 +53,19 @@ def test_kb_writer_unicode(tmpdir):
     assert expected == kb_file.readlines()
 
 
+def test_kb_writer_keeps_colons(tmpdir):
+    kb_file = tmpdir.join('keeps_colons.kb')
+
+    with KbWriter(str(kb_file)) as writer:
+        writer.add_entry('J PHYS G: NUCL PART PHYS', 'J.Phys.')
+
+    expected = [
+        'J PHYS G: NUCL PART PHYS---J.Phys.\n',
+    ]
+
+    assert expected == kb_file.readlines()
+
+
 def test_kb_writer_many_lines(tmpdir):
     kb_file = tmpdir.join('many_lines.kb')
 
