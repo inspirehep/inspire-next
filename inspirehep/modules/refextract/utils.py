@@ -30,7 +30,7 @@ from fs.opener import fsopen
 from inspirehep.utils.url import copy_file
 
 
-RE_ALPHANUMERIC = re.compile('\W+', re.UNICODE)
+RE_PUNCTUATION = re.compile(r"[\.,;'\(\)-]", re.UNICODE)
 
 
 class KbWriter(object):
@@ -81,7 +81,7 @@ class KbWriter(object):
         if not s:
             return
 
-        result = RE_ALPHANUMERIC.sub(' ', s)
+        result = RE_PUNCTUATION.sub(' ', s)
         result = ' '.join(result.split())
         result = result.upper()
 
