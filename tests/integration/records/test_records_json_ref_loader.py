@@ -22,15 +22,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspire_schemas.utils import load_schema
 from inspirehep.modules.records.json_ref_loader import load_resolved_schema
 
 
 def test_load_resolved_schema(app):
-    unresolved_schema = load_schema('hep')
-
-    assert '$ref' in unresolved_schema['properties']['urls']['items']
-
     resolved_schema = load_resolved_schema('hep')
 
     assert '$ref' not in resolved_schema['properties']['urls']['items']
