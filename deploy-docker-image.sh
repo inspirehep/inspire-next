@@ -1,4 +1,5 @@
 #!/bin/bash -e
+IMAGE="inspirehep/inspire-next"
 
 retry() {
     "${@}" || "${@}" || exit 2
@@ -16,11 +17,26 @@ login() {
 buildPush() {
   TAG="${1}"
   DOCKERFILE="${2:-Dockerfile}"
-  echo "Building docker imagine"
-  retry docker build -t "${TAG}" -f "${DOCKERFILE}" .
+  GIT_DESC="$(git describe --always || echo)"
+
+  echo "Building docker image"
+  retry docker build -t "${IMAGE}:${TAG}" -f "${DOCKERFILE}" .
   
-  echo "Pushing image to ${TAG}"
-  retry docker push "${TAG}"
+  echo "Pushing image to ${IMAGE}:${TAG}"
+  retry docker push "${IMAGE}:${TAG}"
+
+  if  [ -n ${GIT_DESC+x} ]
+  then
+    if [ "${TAG}" == "latest" ]
+    then
+      FULL_TAG="${IMAGE}:${GIT_DESC}"
+    else
+      FULL_TAG="${IMAGE}:${GIT_DESC}-${TAG}"
+    fi
+    echo "Pushing image to ${FULL_TAG}"
+    docker tag "${IMAGE}:${TAG}" "${FULL_TAG}"
+    retry docker push "${FULL_TAG}"
+  fi
 }
 
 
@@ -32,9 +48,9 @@ logout() {
 
 main() {
   login
-  buildPush "inspirehep/inspire-next:latest"
-  buildPush "inspirehep/inspire-next:assets" Dockerfile.with_assets
-  buildPush "inspirehep/inspire-next:scrapyd" Dockerfile.scrapyd
+  buildPush "latest"
+  buildPush "assets" Dockerfile.with_assets
+  buildPush "scrapyd" Dockerfile.scrapyd
   logout
 }
 main
