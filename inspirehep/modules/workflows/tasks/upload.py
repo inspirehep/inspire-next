@@ -120,10 +120,6 @@ def send_record_to_hep(obj, endpoint, control_number=None):
         )
         if response.status_code == 200:
             obj.data['control_number'] = response.json()['metadata']['control_number']
-            if response.json()['id_'] != obj.extra_data['head_uuid']:
-                obj.log.warning(
-                    "Record matched in workflow has different uuid than record updated in Inspirehep!"
-                )
         else:
             create_error(response)
     else:
