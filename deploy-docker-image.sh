@@ -25,7 +25,7 @@ buildPush() {
   echo "Pushing image to ${IMAGE}:${TAG}"
   retry docker push "${IMAGE}:${TAG}"
 
-  if  [ -n ${GIT_DESC+x} ]
+  if  [ -n "${GIT_DESC}" ]
   then
     if [ "${TAG}" == "latest" ]
     then
