@@ -130,7 +130,7 @@ def create_ticket(queue,
     body = body.encode("utf-8")
     subject = subject.encode("utf-8")
 
-    queue = queue or current_app.config.get("BIBCATALOG_QUEUES")
+    queue = current_app.config.get("BIBCATALOG_QUEUES") or queue
 
     payload = dict(
         Queue=queue,

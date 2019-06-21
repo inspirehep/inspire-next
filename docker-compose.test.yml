@@ -47,7 +47,7 @@ services:
       - APP_CFG_BIBCATALOG_SYSTEM_RT_DEFAULT_USER="rtuser"
       - APP_CFG_BIBCATALOG_SYSTEM_RT_DEFAULT_PWD="rtpass"
       - APP_CFG_BIBCATALOG_SYSTEM_RT_VERIFY_SSL="False"
-      - APP_BIBCATALOG_QUEUES="Test"
+      - APP_RT_OVERRIDE_QUEUE="Test"
 
 
   mitm-proxy:
