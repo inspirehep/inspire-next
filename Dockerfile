@@ -50,7 +50,7 @@ RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
         postgresql-devel \
         python-pip \
         python-devel \
-        xrootd-python \
+        python2-xrootd \
         wget \
         Xvfb \
         && \
@@ -65,4 +65,4 @@ COPY . .
 
 RUN pip install --no-cache-dir --upgrade pip && \
  pip install --no-cache-dir --upgrade setuptools && \
- pip install --no-cache-dir -e .[all] -r requirements.txt
+ pip install --no-cache-dir -e .[all,xrootd] -r requirements.txt
