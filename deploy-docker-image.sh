@@ -21,7 +21,7 @@ buildPush() {
 
   echo "Building docker image"
   retry docker build -t "${IMAGE}:${TAG}" -f "${DOCKERFILE}" .
-  
+
   echo "Pushing image to ${IMAGE}:${TAG}"
   retry docker push "${IMAGE}:${TAG}"
 
@@ -50,6 +50,7 @@ main() {
   login
   buildPush "latest"
   buildPush "assets" Dockerfile.with_assets
+  buildPush "xrootd" Dockerfile.with_xrootd
   buildPush "scrapyd" Dockerfile.scrapyd
   logout
 }
