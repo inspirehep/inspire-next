@@ -21,7 +21,7 @@
 # or submit itself to any jurisdiction.
 
 
-# Modified and simplified version of https://github.com/inspirehep/inspire-docker 
+# Modified and simplified version of https://github.com/inspirehep/inspire-docker
 # to build an imagine to run in https://github.com/inspirehep/inspirehep
 
 FROM centos:7.4.1708
@@ -36,6 +36,7 @@ RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
         gcc \
         gcc-c++ \
         git \
+        kstart \
         libffi-devel \
         libxml2-devel \
         libxslt-devel \
