@@ -425,7 +425,7 @@ def test_edit_article_workflow_sending_to_hep(workflow_app, mocked_external_serv
                     "metadata": {
                         'control_number': record['control_number'],
                     },
-                    'id_': 1
+                    'uuid': 1
                 }
             )
 

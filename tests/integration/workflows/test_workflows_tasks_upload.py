@@ -235,7 +235,7 @@ def test_store_record_inspirehep_api_literature_new(workflow_app):
                     "metadata": {
                         "control_number": expected_control_number
                     },
-                    'id_': expected_head_uuid
+                    'uuid': expected_head_uuid
                 }
             )
             store_record(workflow, eng)  # not throwing exception
@@ -276,7 +276,7 @@ def test_store_record_inspirehep_api_literature_update(workflow_app):
                     "metadata": {
                         "control_number": expected_control_number
                     },
-                    'id_': expected_head_uuid
+                    'uuid': expected_head_uuid
                 }
             )
             store_record(workflow, eng)  # not throwing exception
@@ -311,7 +311,7 @@ def test_store_record_inspirehep_api_author_new(workflow_app):
                     "metadata": {
                         "control_number": expected_control_number
                     },
-                    'id_': expected_head_uuid
+                    'uuid': expected_head_uuid
                 }
             )
             store_record(workflow, eng)  # not throwing exception
@@ -351,7 +351,7 @@ def test_store_record_inspirehep_api_author_update(workflow_app):
                     "metadata": {
                         "control_number": expected_control_number
                     },
-                    'id_': expected_head_uuid
+                    'uuid': expected_head_uuid
                 }
             )
             store_record(workflow, eng)  # not throwing exception

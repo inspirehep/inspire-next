@@ -134,7 +134,7 @@ def send_record_to_hep(obj, endpoint, control_number=None):
 
         if response.status_code == 201:
             obj.data['control_number'] = response.json()['metadata']['control_number']
-            obj.extra_data['head_uuid'] = response.json()['id_']
+            obj.extra_data['head_uuid'] = response.json()['uuid']
         else:
             create_error(response)
     with db.session.begin_nested():
