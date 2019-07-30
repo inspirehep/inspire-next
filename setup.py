@@ -84,7 +84,8 @@ install_requires = [
     # Until invenio-collections support ES5:
     # 'invenio-collections>=1.0.0a4',
     'invenio-config~=1.0,>=1.0.0',
-    'invenio-db[postgresql,versioning]~=1.0,>=1.0.0',
+    # invenio-db v1.0.4 requires SQLAlchemy-Continuum 1.3.6 or higher
+    'invenio-db[postgresql,versioning]==1.0.3',
     'invenio-files-rest>=1.0.0a22',
     'invenio-indexer~=1.0,>=1.0.0',
     'invenio-jsonschemas~=1.0,>=1.0.0',
