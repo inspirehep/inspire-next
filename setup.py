@@ -49,10 +49,6 @@ install_requires = [
     'Flask~=0.0,>=0.12.4',
     'IDUtils~=1.0,>=1.0.1',
     'SQLAlchemy~=1.0,>=1.2.5',
-    # SQLAlchemy-Continuum==1.3.5 breaks our code (VersionConflict), see:
-    # https://its.cern.ch/jira/browse/INSPIR-831
-    # https://github.com/kvesteri/sqlalchemy-continuum/issues/187
-    'SQLAlchemy-Continuum==1.3.4',
     'backoff~=1.0,>=1.4.3',
     'backports.tempfile>=1.0rc1',
     'beard~=0.0,>=0.2.0',
@@ -86,12 +82,13 @@ install_requires = [
     'invenio-config~=1.0,>=1.0.0',
     'invenio-db[postgresql,versioning]~=1.0,>=1.0.0',
     'invenio-files-rest>=1.0.0a22',
+    'invenio-files-rest==1.0.0b1',
     'invenio-indexer~=1.0,>=1.0.0',
     'invenio-jsonschemas~=1.0,>=1.0.0',
     'invenio-logging~=1.0,>=1.0.0',
     'invenio-mail~=1.0,>=1.0.0',
     'invenio-oauthclient~=1.0,>=1.0.0',
-    'invenio-records-files>=1.0.0a10',
+    'invenio-records-files==1.0.0a11',
     'invenio-records-rest~=1.0,>=1.0.1',
     'invenio-records-ui~=1.0,>=1.0.0',
     # invenio-records@1.2.0 requires Flask>=1.0
