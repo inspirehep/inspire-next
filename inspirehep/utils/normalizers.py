@@ -23,11 +23,14 @@
 from __future__ import absolute_import, division, print_function
 
 from flask import current_app
+from invenio_search import current_search
 
 from inspirehep.modules.search.api import JournalsSearch
 
 
 def normalize_journal_title(journal_title):
+    current_search.flush_and_refresh('records-journals')
+
     normalized_journal_title = journal_title
     hits = JournalsSearch().query(
         'match',

@@ -29,7 +29,7 @@ from datetime import datetime, timedelta
 from copy import deepcopy
 
 from invenio_db import db
-from invenio_search import current_search_client as es
+from invenio_search import current_search
 from invenio_workflows import ObjectStatus, start, workflow_object_class
 
 
@@ -114,7 +114,7 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_running(
     wf2_id = workflow2.id
     wf3_id = workflow3.id
 
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     check_wf_state(wf1_id, ObjectStatus.RUNNING)
     check_wf_state(wf2_id, ObjectStatus.INITIAL)
@@ -122,7 +122,7 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_running(
 
     start.delay('article', object_id=wf3_id)
 
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     check_wf_state(wf1_id, ObjectStatus.RUNNING)
     check_wf_state(wf2_id, ObjectStatus.INITIAL)
@@ -130,7 +130,7 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_running(
 
     start.delay('article', object_id=wf2_id)
 
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     check_wf_state(wf1_id, ObjectStatus.RUNNING)
     check_wf_state(wf2_id, ObjectStatus.ERROR)
@@ -138,7 +138,7 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_running(
 
     start.delay('article', object_id=wf1_id)
 
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     check_wf_state(wf1_id, ObjectStatus.COMPLETED)
     check_wf_state(wf2_id, ObjectStatus.COMPLETED)
@@ -198,7 +198,7 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_init(
     wf2_id = workflow2.id
     wf3_id = workflow3.id
 
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     check_wf_state(wf1_id, ObjectStatus.INITIAL)
     check_wf_state(wf2_id, ObjectStatus.INITIAL)
@@ -206,7 +206,7 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_init(
 
     start.delay('article', object_id=wf3_id)
 
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     check_wf_state(wf1_id, ObjectStatus.INITIAL)
     check_wf_state(wf2_id, ObjectStatus.INITIAL)
@@ -214,7 +214,7 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_init(
 
     start.delay('article', object_id=wf2_id)
 
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     check_wf_state(wf1_id, ObjectStatus.INITIAL)
     check_wf_state(wf2_id, ObjectStatus.ERROR)
@@ -222,7 +222,7 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_init(
 
     start.delay('article', object_id=wf1_id)
 
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     check_wf_state(wf1_id, ObjectStatus.COMPLETED)
     check_wf_state(wf2_id, ObjectStatus.COMPLETED)
@@ -260,7 +260,7 @@ def test_wf_replaces_old_workflow_which_is_in_halted_state(
     wf1_id = workflow.id
 
     start.delay('article', object_id=wf1_id)
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     check_wf_state(wf1_id, ObjectStatus.HALTED)
 
@@ -269,14 +269,14 @@ def test_wf_replaces_old_workflow_which_is_in_halted_state(
     db.session.commit()
     wf2_id = workflow2.id
 
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     check_wf_state(wf1_id, ObjectStatus.HALTED)
     check_wf_state(wf2_id, ObjectStatus.INITIAL)
 
     start.delay('article', object_id=wf2_id)
 
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
     check_wf_state(wf1_id, ObjectStatus.COMPLETED)
     check_wf_state(wf2_id, ObjectStatus.HALTED)
 
@@ -301,14 +301,14 @@ def test_wf_rejects_automatically_when_previous_matched_wf_was_rejected(
     wf1_id = workflow.id
 
     start.delay('article', object_id=wf1_id)
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     check_wf_state(wf1_id, ObjectStatus.HALTED)
     wf1 = workflow_object_class.get(wf1_id)
     wf1.extra_data["approved"] = False
     wf1.continue_workflow(delayed=True)
 
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     check_wf_state(wf1_id, ObjectStatus.COMPLETED)
     wf1 = workflow_object_class.get(wf1_id)
@@ -320,7 +320,7 @@ def test_wf_rejects_automatically_when_previous_matched_wf_was_rejected(
     wf2_id = workflow2.id
     start.delay('article', object_id=wf2_id)
 
-    es.indices.refresh("holdingpen-hep")
+    current_search.flush_and_refresh("holdingpen-hep")
 
     check_wf_state(wf2_id, ObjectStatus.COMPLETED)
     wf2 = workflow_object_class.get(wf2_id)

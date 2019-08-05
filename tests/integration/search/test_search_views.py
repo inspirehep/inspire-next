@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 import json
 
 from invenio_db import db
-from invenio_search import current_search_client as es
+from invenio_search import current_search
 
 from utils import _delete_record
 from inspirehep.modules.records.api import InspireRecord
@@ -78,7 +78,7 @@ def test_regression_author_count_10_does_not_display_zero_facet(isolated_api_cli
     rec = InspireRecord.create(data=record_json)
     rec.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     response_facets = isolated_api_client.get('/literature/facets?q=ac%2010')
     response_records = isolated_api_client.get('/literature?q=ac%2010')
@@ -173,7 +173,7 @@ def test_selecting_2_facets_generates_search_with_must_query(api_client):
     rec2.commit()
 
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     response = api_client.get('/literature?q=&author=BAI_John%20Doe')
     data = json.loads(response.data)

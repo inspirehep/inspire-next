@@ -33,7 +33,7 @@ from flask_alembic import Alembic
 from invenio_db import db
 from invenio_db.utils import drop_alembic_version_table
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_search.cli import current_search_client as es
+from invenio_search import current_search
 
 from inspirehep.factory import create_app
 from inspirehep.modules.fixtures.files import init_all_storage_paths
@@ -134,8 +134,7 @@ def workflow_api_client(workflow_api):
 def drop_all(app):
     db.drop_all()
     drop_alembic_version_table()
-    _es = app.extensions['invenio-search']
-    list(_es.delete(ignore=[404]))
+    list(current_search.delete(ignore=[404]))
 
 
 def create_all(app):
@@ -252,7 +251,7 @@ def record_from_db(workflow_app):
     rec_uuid = record.id
 
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     yield record
 
@@ -307,7 +306,7 @@ def record_to_merge(workflow_app):
     rec_uuid = record.id
 
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     yield record
 

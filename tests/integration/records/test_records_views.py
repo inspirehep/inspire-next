@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 import json
 
 from invenio_db import db
-from invenio_search import current_search_client as es
+from invenio_search import current_search
 
 from utils import _delete_record
 from inspirehep.modules.records.api import InspireRecord
@@ -95,7 +95,7 @@ def test_literature_citations_api_with_results(app, api_client):
     record_ref_2.commit()
     db.session.commit()
 
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     response = api_client.get(
         '/literature/111/citations',
@@ -226,7 +226,7 @@ def test_literature_citations_api_sorted_by_earliest_date(api_client):
     record_ref_3.commit()
 
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     response = api_client.get(
         '/literature/111/citations',
@@ -293,7 +293,7 @@ def test_literature_citations_api_without_results(api_client):
     record = InspireRecord.create(record_json)
     record.commit()
 
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     response = api_client.get(
         '/literature/111/citations',
@@ -376,7 +376,7 @@ def test_literature_citations_api_with_parameter_page_1(api_client):
     record_ref_2.commit()
 
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     response = api_client.get(
         '/literature/111/citations?size=1&page=1',
@@ -485,7 +485,7 @@ def test_literature_citations_api_with_parameter_page_2(api_client):
     record_ref_2.commit()
 
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     response = api_client.get(
         '/literature/111/citations?size=1&page=2',
@@ -594,7 +594,7 @@ def test_literature_citations_api_with_malformed_parameters(api_client):
     record_ref_2.commit()
 
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     response = api_client.get(
         '/literature/111/citations?page=-20',
@@ -672,7 +672,7 @@ def test_literature_citations_api_with_not_existing_pid_value(api_client):
     record_ref_2.commit()
 
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     response = api_client.get(
         '/literature/444/citations',
@@ -761,7 +761,7 @@ def test_literature_citations_api_with_full_citing_record(api_client):
     record_ref_2.commit()
 
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     response = api_client.get(
         '/literature/111/citations',
@@ -860,7 +860,7 @@ def test_literature_citations_api_with_superseded_records(app, api_client):
     citing_superseded_record.commit()
     db.session.commit()
 
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     response = api_client.get(
         '/literature/111/citations',

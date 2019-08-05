@@ -4,7 +4,7 @@ This is a non-reversible, destructive operation performed on the database and
 ElasticSearch. USE WITH CAUTION!!!
 """
 from invenio_db import db
-from invenio_search import current_search, current_search_client
+from invenio_search import current_search
 
 TABLES = ', '.join([
     'crawler_workflows_object',
@@ -19,5 +19,6 @@ TABLES = ', '.join([
 
 db.session.execute('truncate {tables} restart identity'.format(tables=TABLES))
 db.session.commit()
-current_search_client.indices.delete(index='holdingpen', ignore=None)
-list(current_search.create(ignore=[400]))
+
+list(current_search.delete(index_list=['holdingpen']))
+list(current_search.create(ignore_existing=True))

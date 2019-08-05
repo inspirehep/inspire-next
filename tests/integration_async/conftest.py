@@ -37,7 +37,7 @@ from flask_alembic import Alembic
 
 from invenio_db import db
 from invenio_db.utils import drop_alembic_version_table
-from invenio_search import current_search_client as es
+from invenio_search import current_search
 
 from inspirehep.factory import create_app
 from inspirehep.modules.fixtures.files import init_all_storage_paths
@@ -85,10 +85,9 @@ def clear_environment(app):
 
         alembic = Alembic(app=app)
         alembic.upgrade()
-        _es = app.extensions['invenio-search']
-        list(_es.delete(ignore=[404]))
-        list(_es.create(ignore=[400]))
-        es.indices.refresh('records-hep')
+        list(current_search.delete(ignore=[404]))
+        list(current_search.create(ignore=[400]))
+        current_search.flush_and_refresh('records-hep')
 
         init_all_storage_paths()
         init_users_and_permissions()
