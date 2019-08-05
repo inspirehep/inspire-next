@@ -40,7 +40,7 @@ from invenio_workflows import (
     start,
     workflow_object_class,
 )
-from invenio_search import current_search_client as es
+from invenio_search import current_search
 from invenio_workflows.errors import WorkflowsError
 from inspire_schemas.utils import validate
 
@@ -324,7 +324,7 @@ def test_match_in_holdingpen_stops_pending_wf(
 
     workflow_id = build_workflow(record).id
     eng_uuid = start("article", object_id=workflow_id)
-    es.indices.refresh("holdingpen-hep")
+    current_search.flush_and_refresh("holdingpen-hep")
     eng = WorkflowEngine.from_uuid(eng_uuid)
     old_wf = eng.objects[0]
     obj_id = old_wf.id
@@ -338,7 +338,7 @@ def test_match_in_holdingpen_stops_pending_wf(
     ] = "This is an update that will match the wf in the holdingpen"
     record2_workflow = build_workflow(record2).id
     start("article", object_id=record2_workflow)
-    es.indices.refresh("holdingpen-hep")
+    current_search.flush_and_refresh("holdingpen-hep")
 
     update_wf = workflow_object_class.get(record2_workflow)
 
@@ -397,7 +397,7 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
     assert obj.status == ObjectStatus.COMPLETED
     assert obj.extra_data.get("approved") is False
 
-    es.indices.refresh("holdingpen-hep")
+    current_search.flush_and_refresh("holdingpen-hep")
 
     record["titles"][0][
         "title"
@@ -727,7 +727,7 @@ def test_keep_previously_rejected_from_fully_harvested_category_is_auto_approved
     )
     obj.extra_data["approved"] = False  # reject it
     obj.save()
-    es.indices.refresh("holdingpen-hep")
+    current_search.flush_and_refresh("holdingpen-hep")
 
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
@@ -784,7 +784,7 @@ def test_previously_rejected_from_not_fully_harvested_category_is_not_auto_appro
     )
     obj.extra_data["approved"] = False  # reject it
     obj.save()
-    es.indices.refresh("holdingpen-hep")
+    current_search.flush_and_refresh("holdingpen-hep")
 
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
@@ -808,7 +808,7 @@ def test_match_wf_in_error_goes_in_error_state(workflow_app):
     obj = workflow_object_class.create(data=record, data_type="hep")
     obj.status = ObjectStatus.ERROR
     obj.save()
-    es.indices.refresh("holdingpen-hep")
+    current_search.flush_and_refresh("holdingpen-hep")
 
     with pytest.raises(WorkflowsError):
         workflow_id = build_workflow(record).id
@@ -821,7 +821,7 @@ def test_match_wf_in_error_goes_in_initial_state(workflow_app):
     obj = workflow_object_class.create(data=record, data_type="hep")
     obj.status = ObjectStatus.INITIAL
     obj.save()
-    es.indices.refresh("holdingpen-hep")
+    current_search.flush_and_refresh("holdingpen-hep")
 
     with pytest.raises(WorkflowsError):
         workflow_id = build_workflow(record).id
@@ -1129,7 +1129,7 @@ def test_match_in_holdingpen_different_sources_continues(
 
     workflow_id = build_workflow(record).id
     eng_uuid = start('article', object_id=workflow_id)
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
     eng = WorkflowEngine.from_uuid(eng_uuid)
     wf_to_match = eng.objects[0].id
     obj = workflow_object_class.get(wf_to_match)

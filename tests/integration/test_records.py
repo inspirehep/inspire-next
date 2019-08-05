@@ -34,7 +34,7 @@ from invenio_pidstore.models import (
     Redirect,
     RecordIdentifier,
 )
-from invenio_search import current_search_client as es
+from invenio_search import current_search
 
 from inspire_dojson import marcxml2record
 from inspire_utils.record import get_value
@@ -176,7 +176,7 @@ def merged_records(app):
         deleted_uuid = _create_record(deleted_record).id
     db.session.commit()
 
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     yield
 
@@ -285,7 +285,7 @@ def records_to_be_merged(app):
         _create_record(pointing_record)
     db.session.commit()
 
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     yield
 

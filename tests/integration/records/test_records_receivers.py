@@ -39,7 +39,7 @@ from invenio_oauthclient.models import (
     User,
     UserIdentity,
 )
-from invenio_search import current_search_client as es
+from invenio_search import current_search
 from invenio_records.signals import after_record_update
 
 from inspirehep.modules.migrator.tasks import migrate_and_insert_record
@@ -483,7 +483,7 @@ def test_index_after_commit_indexes_also_cites_record_when_new_citation_is_added
     }
     cited = InspireRecord.create(data=json_data, skip_files=True)
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = 'lit', cited['control_number'], 1
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -507,7 +507,7 @@ def test_index_after_commit_indexes_also_cites_record_when_new_citation_is_added
 
     record = InspireRecord.create(data=citing_json, skip_files=True)
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = 'lit', record['control_number'], 1
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -537,7 +537,7 @@ def test_index_after_commit_indexes_also_cites_record_when_new_citation_is_added
     record.update(citing_json)
     record.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = 'lit', record['control_number'], 2
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -575,7 +575,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     cited = InspireRecord.create(data=json_data, skip_files=True)
     cited.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', cited['control_number'], 2)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -607,7 +607,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     record = InspireRecord.create(data=citing_json, skip_files=True)
     record.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', record['control_number'], 2)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -623,7 +623,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citation_is_deleted(
     record.update(citing_json)
     record.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', record['control_number'], 3)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -661,7 +661,7 @@ def test_index_after_commit_indexes_also_cites_two_records(
     cited1 = InspireRecord.create(data=json1, skip_files=True)
     cited1.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', cited1['control_number'], 2)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -679,7 +679,7 @@ def test_index_after_commit_indexes_also_cites_two_records(
     cited2 = InspireRecord.create(data=json2, skip_files=True)
     cited2.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', cited2['control_number'], 2)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -711,7 +711,7 @@ def test_index_after_commit_indexes_also_cites_two_records(
     record = InspireRecord.create(data=citing_json, skip_files=True)
     record.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', record['control_number'], 2)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -745,7 +745,7 @@ def test_index_after_commit_indexes_also_cites_two_records(
     record.update(citing_json)
     record.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', record['control_number'], 3)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -788,7 +788,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     cited = InspireRecord.create(data=json_data, skip_files=True)
     cited.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', 9999, 2)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -820,7 +820,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     record = InspireRecord.create(data=citing_json, skip_files=True)
     record.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', record['control_number'], 2)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -834,7 +834,7 @@ def test_index_after_commit_indexes_also_cites_record_when_citer_is_deleted(
     record.delete()
     record.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', record['control_number'], 3)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -873,7 +873,7 @@ def test_regression_index_after_commit_retries_for_new_record_not_yet_in_db(
     cited = InspireRecord.create(data=json_data, skip_files=True)
     cited.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', 9999, 2)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -905,7 +905,7 @@ def test_regression_index_after_commit_retries_for_new_record_not_yet_in_db(
     record = InspireRecord.create(data=citing_json, skip_files=True)
     record.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', record['control_number'], 2)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -946,7 +946,7 @@ def test_index_after_commit_indexes_raises_if_cited_records_are_not_in_db(
     record = InspireRecord.create(data=citing_json, skip_files=True)
     record.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = 'lit', record['control_number'], 2
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -973,7 +973,7 @@ def test_index_after_commit_indexes_raises_if_cited_records_are_not_in_db(
     record.update(citing_json)
     record.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
 
     expected_args = ('lit', record['control_number'], 3)
     mocked_indexing_task.assert_called_with(*expected_args)
@@ -1002,7 +1002,7 @@ def test_record_enhanced_in_es_and_not_enhanced_in_db(app):
     record = InspireRecord.create(record_json)
     record.commit()
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
     rec1 = get_db_record('lit', 111)
     rec2 = get_es_record('lit', 111)
     assert 'facet_author_name' not in rec1

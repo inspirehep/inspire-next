@@ -26,7 +26,7 @@ import pytest
 
 from copy import deepcopy
 
-from invenio_search import current_search_client as es
+from invenio_search import current_search
 from invenio_workflows import (
     ObjectStatus,
     start,
@@ -69,9 +69,8 @@ def simple_record(app):
         },
     }
 
-    _es = app.extensions['invenio-search']
-    list(_es.client.indices.delete(index='holdingpen-hep'))
-    list(_es.create(ignore=[400]))
+    list(current_search.delete(index_list='holdingpen-hep'))
+    list(current_search.create(ignore=[400], ignore_existing=True))
 
 
 def test_pending_holdingpen_matches_wf_if_not_completed(app, simple_record):
@@ -82,7 +81,7 @@ def test_pending_holdingpen_matches_wf_if_not_completed(app, simple_record):
     )
     obj_id = obj.id
     obj.save()
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     obj2 = WorkflowObject.create(data_type='hep', **simple_record)
     assert match_non_completed_wf_in_holdingpen(obj2, None)
@@ -91,7 +90,7 @@ def test_pending_holdingpen_matches_wf_if_not_completed(app, simple_record):
     obj = workflow_object_class.get(obj_id)
     obj.status = ObjectStatus.COMPLETED
     obj.save()
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     # doesn't match anymore because obj is COMPLETED
     assert not match_non_completed_wf_in_holdingpen(obj2, None)
@@ -106,7 +105,7 @@ def test_match_previously_rejected_wf_in_holdingpen(app, simple_record):
     obj_id = obj.id
     obj.extra_data['approved'] = False  # reject it
     obj.save()
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     obj2 = WorkflowObject.create(data_type='hep', **simple_record)
     assert match_previously_rejected_wf_in_holdingpen(obj2, None)
@@ -115,7 +114,7 @@ def test_match_previously_rejected_wf_in_holdingpen(app, simple_record):
     obj = workflow_object_class.get(obj_id)
     obj.status = ObjectStatus.HALTED
     obj.save()
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     # doesn't match anymore because obj is COMPLETED
     assert not match_previously_rejected_wf_in_holdingpen(obj2, None)
@@ -129,7 +128,7 @@ def test_has_same_source(app, simple_record):
     )
     obj_id = obj.id
     obj.save()
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     obj2 = WorkflowObject.create(data_type='hep', **simple_record)
     match_non_completed_wf_in_holdingpen(obj2, None)
@@ -162,7 +161,7 @@ def test_stop_matched_holdingpen_wfs(app, simple_record):
     obj.status = ObjectStatus.HALTED
     obj.save()
     obj_id = obj.id
-    es.indices.refresh('holdingpen-hep')
+    current_search.flush_and_refresh('holdingpen-hep')
 
     obj2 = WorkflowObject.create(data_type='hep', **simple_record)
     obj2_id = obj2.id

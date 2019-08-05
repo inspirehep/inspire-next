@@ -30,7 +30,7 @@ import requests_mock
 
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier, RecordIdentifier
-from invenio_search import current_search_client as es
+from invenio_search import current_search
 
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.record_getter import get_db_record
@@ -75,7 +75,7 @@ def _create_record(record_json):
         record.commit()
 
     db.session.commit()
-    es.indices.refresh()
+    current_search.client.indices.refresh()
 
     return record_json
 

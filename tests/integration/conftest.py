@@ -36,7 +36,7 @@ from flask.cli import ScriptInfo
 
 from invenio_db import db
 from invenio_db.utils import drop_alembic_version_table
-from invenio_search import current_search_client as es
+from invenio_search import current_search
 
 from inspirehep.factory import create_app
 from inspirehep.modules.fixtures.files import init_all_storage_paths
@@ -96,9 +96,8 @@ def app():
         alembic = Alembic(app=current_app)
         alembic.upgrade()
 
-        _es = app.extensions['invenio-search']
-        list(_es.delete(ignore=[404]))
-        list(_es.create(ignore=[400]))
+        list(current_search.delete(ignore=[404]))
+        list(current_search.create(ignore=[400]))
 
         init_all_storage_paths()
         init_users_and_permissions()
@@ -106,7 +105,7 @@ def app():
 
         migrate_from_file('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
 
-        es.indices.refresh('records-hep')  # Makes sure that all HEP records were migrated.
+        current_search.flush_and_refresh('records-hep')  # Makes sure that all HEP records were migrated.
 
         yield app
 

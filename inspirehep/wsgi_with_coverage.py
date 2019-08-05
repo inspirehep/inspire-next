@@ -37,6 +37,8 @@ import coverage
 from flask import jsonify, request, current_app
 from flask_alembic import Alembic
 from inspire_crawler.tasks import schedule_crawl
+from invenio_search import current_search
+
 from inspire_utils.logging import getStackTraceLogger
 from invenio_db import db
 from invenio_db.utils import drop_alembic_version_table
@@ -100,9 +102,8 @@ def init_db():
 @app.route('/e2e/init_es', methods=['GET'])
 def init_es():
     LOGGER.info('Recreating the ES')
-    _es = app.extensions['invenio-search']
-    list(_es.delete(ignore=[404]))
-    list(_es.create(ignore=[400]))
+    list(current_search.delete(ignore=[404]))
+    list(current_search.create(ignore=[400]))
     LOGGER.info('Recreating the ES: done')
     return jsonify("ES recreated")
 

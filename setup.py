@@ -52,7 +52,7 @@ install_requires = [
     # SQLAlchemy-Continuum==1.3.5 breaks our code (VersionConflict), see:
     # https://its.cern.ch/jira/browse/INSPIR-831
     # https://github.com/kvesteri/sqlalchemy-continuum/issues/187
-    'SQLAlchemy-Continuum==1.3.4',
+    'SQLAlchemy-Continuum==1.3.6',
     'backoff~=1.0,>=1.4.3',
     'backports.tempfile>=1.0rc1',
     'beard~=0.0,>=0.2.0',

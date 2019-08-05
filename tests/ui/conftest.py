@@ -28,7 +28,9 @@ from flask_alembic import Alembic
 from invenio_db import db
 from invenio_db.utils import drop_alembic_version_table
 from invenio_records.models import RecordMetadata
-from invenio_search import current_search_client as es
+from invenio_records_files.models import RecordsBuckets
+
+from invenio_search import current_search
 from invenio_workflows import workflow_object_class
 
 from inspirehep.bat.arsenic import Arsenic
@@ -67,15 +69,14 @@ def app(request):
         alembic = Alembic(app=app)
         alembic.upgrade()
 
-        _es = app.extensions['invenio-search']
-        list(_es.delete(ignore=[404]))
-        list(_es.create(ignore=[400]))
+        list(current_search.delete(ignore=[404]))
+        list(current_search.create(ignore=[400]))
 
         init_all_storage_paths()
         init_users_and_permissions()
 
         migrate_from_file('./inspirehep/demosite/data/demo-records-acceptance.xml.gz', wait_for_results=True)
-        es.indices.refresh('records-hep')
+        current_search.flush_and_refresh('records-hep')
 
         yield app
 
@@ -124,8 +125,12 @@ def cleanup_workflows_tables(app):
 @pytest.fixture(autouse=True, scope='function')
 def cleanup_literatures(app):
     recs = RecordMetadata.query.filter(RecordMetadata.json['_collections'].op('?')('Literature')).all()
+    recs_id = (rec.id for rec in recs)
+    buckets = RecordsBuckets.query.filter(RecordsBuckets.record_id.in_(recs_id))
+    for bucket in buckets:
+        db.session.delete(bucket)
     for lit_record in recs:
         db.session.delete(lit_record)
 
     db.session.commit()
-    es.indices.refresh('records-hep')
+    current_search.flush_and_refresh('records-hep')
