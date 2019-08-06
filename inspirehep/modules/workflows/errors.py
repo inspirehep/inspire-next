@@ -25,6 +25,11 @@ from __future__ import absolute_import, division, print_function
 from invenio_workflows.errors import WorkflowsError
 
 
+class BadGatewayError(WorkflowsError):
+
+    """Error representing a network failure during a workflow"""
+
+
 class DownloadError(WorkflowsError):
 
     """Error representing a failed download in a workflow."""

@@ -28,12 +28,14 @@ import requests
 from flask import current_app
 from invenio_workflows.errors import WorkflowsError
 from simplejson import JSONDecodeError
+import backoff
 
 from inspire_schemas.readers import LiteratureReader
 from invenio_db import db
 
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.models import WorkflowsRecordSources
+from inspirehep.modules.workflows.errors import BadGatewayError
 from inspirehep.modules.workflows.utils import (
     get_source_for_root,
     with_debug_logging,
@@ -79,6 +81,7 @@ def store_record(obj, eng):
 
 
 @with_debug_logging
+@backoff.on_exception(backoff.expo, BadGatewayError, base=4, max_tries=5)
 def store_record_inspirehep_api(obj, eng, is_update, is_authors):
     """Saves record through inspirehep api by posting/pushing record to proper endpoint
      in inspirehep"""
@@ -143,13 +146,15 @@ def send_record_to_hep(obj, endpoint, control_number=None):
 
 def create_error(response):
     """Raises exception with message from data returned by the server in response object"""
+    if response.status_code == 502:
+        raise BadGatewayError()
+
     try:
         error_msg = response.json()
     except JSONDecodeError:
         error_msg = response.text
     raise WorkflowsError(
-        "Response code from Inspirehep is {code}."
-        " This is wrong! Message from the server: {message}".format(
+        "Error from inspirehep [{code}]: {message}".format(
             code=response.status_code, message=error_msg
         )
     )
