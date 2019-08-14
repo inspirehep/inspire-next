@@ -56,7 +56,7 @@ install_requires = [
     'backoff~=1.0,>=1.4.3',
     'backports.tempfile>=1.0rc1',
     'beard~=0.0,>=0.2.0',
-    'celery~=4.0,>=4.1.0,<4.2.0',
+    'celery~=4.0,>=4.4.0',
     'click-spinner~=0.0,>=0.1.8',
     'elasticsearch-dsl>=5.0.0,<6.0.0',
     'elasticsearch>=5.1.0,<6.0.0',
@@ -101,7 +101,7 @@ install_requires = [
     'invenio-userprofiles~=1.0,>=1.0.0',
     'invenio-workflows-files~=1.0,>=1.0.0',
     'invenio-workflows-ui~=2.0,>=2.0.11',
-    'invenio-workflows~=7.0,>=7.0.1',
+    'invenio-workflows~=7.0,>=7.0.6',
     'jinja2~=2.0,>=2.10',
     # Pin the version of jsonschema, as not to catch alpha 3.0 release
     'jsonschema~=2.0,>=2.6.0',
@@ -127,7 +127,7 @@ install_requires = [
     # 'timeexecution~=3.3.0,<4',
     # Pin urllib3 to version 1.23 as version 1.24 is incompatible with requirements
     # from python-requests (<1.24) (https://travis-ci.org/inspirehep/inspire-next/builds/388221674)
-    'urllib3~=1.0,<1.24',
+    'urllib3>1.25.1<1.26',
     # celery dependency, newer versions are Python 3 only
     'vine~=1.0',
     'workflow~=2.0,>=2.1.3',
