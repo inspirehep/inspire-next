@@ -50,6 +50,11 @@ def test_is_pdf_link_handles_pdfs_starting_with_blank_lines():
     assert is_pdf_link('https://arxiv.org/pdf/1803.01183.pdf')
 
 
+@pytest.mark.vcr()
+def test_is_pdf_handles_different_pdfs_correctly():
+    assert is_pdf_link('http://arxiv.org/pdf/physics/0404071')
+
+
 @patch('inspirehep.utils.url.__version__', '0.1.0')
 def test_make_user_agent_string():
     """Test that user agent is created."""

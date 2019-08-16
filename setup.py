@@ -127,7 +127,7 @@ install_requires = [
     # 'timeexecution~=3.3.0,<4',
     # Pin urllib3 to version 1.23 as version 1.24 is incompatible with requirements
     # from python-requests (<1.24) (https://travis-ci.org/inspirehep/inspire-next/builds/388221674)
-    'urllib3~=1.0,<1.24',
+    'urllib3~=1.0,>=1.24.1,<1.25',
     # celery dependency, newer versions are Python 3 only
     'vine~=1.0',
     'workflow~=2.0,>=2.1.3',
