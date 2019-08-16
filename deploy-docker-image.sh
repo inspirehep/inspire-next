@@ -1,5 +1,4 @@
 #!/bin/bash -e
-IMAGE="inspirehep/inspire-next"
 
 retry() {
     "${@}" || "${@}" || exit 2
@@ -15,28 +14,20 @@ login() {
 
 
 buildPush() {
-  TAG="${1}"
+  IMAGE="${1}"
   DOCKERFILE="${2:-Dockerfile}"
-  GIT_DESC="$(git describe --always || echo)"
+  TAG="$(git describe --always)"
+
 
   echo "Building docker image"
-  retry docker build -t "${IMAGE}:${TAG}" -f "${DOCKERFILE}" .
-  
+  retry docker build -t "${IMAGE}" -t "${IMAGE}:${TAG}" -f "${DOCKERFILE}" .
+
   echo "Pushing image to ${IMAGE}:${TAG}"
   retry docker push "${IMAGE}:${TAG}"
+  retry docker push "${IMAGE}"
 
-  if  [ -n "${GIT_DESC}" ]
-  then
-    if [ "${TAG}" == "latest" ]
-    then
-      FULL_TAG="${IMAGE}:${GIT_DESC}"
-    else
-      FULL_TAG="${IMAGE}:${GIT_DESC}-${TAG}"
-    fi
-    echo "Pushing image to ${FULL_TAG}"
-    docker tag "${IMAGE}:${TAG}" "${FULL_TAG}"
-    retry docker push "${FULL_TAG}"
-  fi
+  echo "Deploying to QA"
+  deployQA ${IMAGE} ${TAG}
 }
 
 
@@ -45,12 +36,24 @@ logout() {
   retry docker logout
 }
 
+deployQA() {
+  IMAGE="${1}"
+  TAG="${2}"
+
+  curl -X POST \
+    -F token=${DEPLOY_QA_TOKEN} \
+    -F ref=master \
+    -F variables[IMAGE_NAME]=${IMAGE} \
+    -F variables[NEW_TAG]=${TAG} \
+    https://gitlab.cern.ch/api/v4/projects/62928/trigger/pipeline
+ }
+
 
 main() {
   login
-  buildPush "latest"
-  buildPush "assets" Dockerfile.with_assets
-  buildPush "scrapyd" Dockerfile.scrapyd
+  buildPush "inspirehep/next"
+  buildPush "inspirehep/next-assets" Dockerfile.with_assets
+  buildPush "inspirehep/next-scrapyd" Dockerfile.scrapyd
   logout
 }
 main

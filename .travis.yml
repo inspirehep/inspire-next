@@ -41,6 +41,8 @@ env:
     - secure: "jwc9PxBYZ7pr6DpTHG4IPqZ2vP/SXdZ4lgCqNPDNs00qxdVL40Tm0pybaEmbHeaLU78Wc6cPJcVuRYmykEHi2QyguW6/vOt7oDpsN6oQ3ahBxdRu/bJVgCOq1WuvxCz6Vssa2kd9RKS99Ck7hB7YVf9a3ASQNICALsR5CxKa7+k="
     # DOCKER_PASSWORD
     - secure: "hpa8R3iJtOjWjOengHJRVxiAUy6cPR2FMF7Jvso3wlFUDuJ743wB7EJaFDc7CEaUig/LODdbiESWM2SuyVUeJrupGrBCcZJw9N9yeWO5z+7OqPauPlP1hPJkZPt8KivCTwPcixPj7uueLKGjNPEQR2b8jkNu4ATBC6x4q4NPmnc="
+    # DEPLOY_QA_TOKEN
+    - secure: "MOLJvW+WLwSHpdKDAS2yZaLMAqjeHSZrxzjLFj+C5aNttBpNbwg2ozR7qnVfruV5mNo9X0+zaEb1vzfxtwEGW9uUh84X674tM4nV007l9rNxWr1ZLtDAXLQjlm+qIYcXRt1Cl9xgaL1gxNbPqKgRm8xOAv2o/lxkvdeiWivmGWg="
   matrix:
     - SUITE=ui-literature IMAGES="selenium test-database test-indexer test-rabbitmq test-redis test-web"
     - SUITE=workflows IMAGES="test-database test-indexer test-rabbitmq test-redis test-web"
