@@ -88,7 +88,7 @@ install_requires = [
     'invenio-files-rest>=1.0.0a22',
     'invenio-indexer~=1.0,>=1.0.0',
     'invenio-jsonschemas~=1.0,>=1.0.0',
-    'invenio-logging~=1.0,>=1.0.0',
+    'invenio-logging[sentry]~=1.0,>=1.0.0',
     'invenio-mail~=1.0,>=1.0.0',
     'invenio-oauthclient~=1.0,>=1.0.0',
     'invenio-records-files>=1.0.0a10',
@@ -116,7 +116,6 @@ install_requires = [
     # TODO: remove once we figure out how to, see:
     # https://its.cern.ch/jira/browse/INSPIR-973
     'pyyaml<4.0',
-    'raven[flask]~=6.0,>=6.2.1',
     'refextract~=0.0,>=0.2.2',
     'requests~=2.0,>=2.18.4',
     'scikit-learn~=0.0,>=0.19.1,<0.21',
