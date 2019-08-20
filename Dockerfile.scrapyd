@@ -23,7 +23,9 @@
 
 # Same image inspire-next and scrapyd deployed
 
-FROM inspirehep/inspire-next:latest
+ARG FROM_TAG
+
+FROM inspirehep/next:${FROM_TAG}
 
 WORKDIR /usr/lib/python2.7/site-packages/hepcrawl
 
