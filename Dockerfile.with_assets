@@ -23,7 +23,9 @@
 
 # Same image inspire-next with builtin assets
 
-FROM inspirehep/inspire-next:latest
+ARG FROM_TAG
+
+FROM inspirehep/next:${FROM_TAG}
 
 RUN inspirehep npm \
  && cd /usr/var/inspirehep-instance/static \
