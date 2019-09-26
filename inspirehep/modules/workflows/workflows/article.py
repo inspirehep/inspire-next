@@ -35,7 +35,6 @@ from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_author_list,
     arxiv_package_download,
     arxiv_plot_extract,
-    arxiv_derive_inspire_categories,
     populate_arxiv_document,
 )
 from inspirehep.modules.workflows.tasks.actions import (
@@ -163,7 +162,6 @@ ENHANCE_RECORD = [
             populate_arxiv_document,
             arxiv_package_download,
             arxiv_plot_extract,
-            arxiv_derive_inspire_categories,
             arxiv_author_list("authorlist2marcxml.xsl"),
         ]
     ),
