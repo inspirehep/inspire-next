@@ -39,7 +39,6 @@ from werkzeug import secure_filename
 from inspire_dojson import marcxml2record
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.readers import LiteratureReader
-from inspire_schemas.utils import classify_field
 from plotextractor.api import process_tarball
 from plotextractor.converter import untar
 from plotextractor.errors import InvalidTarball, NoTexFilesFound
@@ -194,35 +193,6 @@ def arxiv_plot_extract(obj, eng):
 
         obj.data = lb.record
         obj.log.info('Added {0} plots.'.format(len(plots)))
-
-
-@with_debug_logging
-def arxiv_derive_inspire_categories(obj, eng):
-    """Derive ``inspire_categories`` from the arXiv categories.
-
-    Uses side effects to populate the ``inspire_categories`` key
-    in ``obj.data`` by converting its arXiv categories.
-
-    Args:
-        obj (WorkflowObject): a workflow object.
-        eng (WorkflowEngine): a workflow engine.
-
-    Returns:
-        None
-
-    """
-    obj.data.setdefault('inspire_categories', [])
-
-    for arxiv_category in LiteratureReader(obj.data).arxiv_categories:
-        term = classify_field(arxiv_category)
-        if term:
-            inspire_category = {
-                'source': 'arxiv',
-                'term': term,
-            }
-
-            if inspire_category not in obj.data['inspire_categories']:
-                obj.data['inspire_categories'].append(inspire_category)
 
 
 def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):

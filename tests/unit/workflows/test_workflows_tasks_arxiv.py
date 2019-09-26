@@ -34,7 +34,6 @@ from wand.exceptions import DelegateError
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_author_list,
-    arxiv_derive_inspire_categories,
     arxiv_package_download,
     arxiv_plot_extract,
     populate_arxiv_document,
@@ -687,127 +686,6 @@ def test_arxiv_plot_extract_no_file(mock_process_tarball):
     assert arxiv_plot_extract(obj, eng) is None
     assert 'No file named=' in obj.log._info.getvalue()
     mock_process_tarball.assert_not_called()
-
-
-def test_arxiv_derive_inspire_categories():
-    schema = load_schema('hep')
-    arxiv_eprints_schema = schema['properties']['arxiv_eprints']
-    inspire_categories_schema = schema['properties']['inspire_categories']
-
-    data = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'nucl-th',
-                ],
-                'value': '1605.03898',
-            },
-        ],
-    }  # literature/1458300
-    extra_data = {}
-    assert validate(data['arxiv_eprints'], arxiv_eprints_schema) is None
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    assert arxiv_derive_inspire_categories(obj, eng) is None
-
-    expected = [
-        {
-            'source': 'arxiv',
-            'term': 'Theory-Nucl',
-        },
-    ]
-    result = obj.data['inspire_categories']
-
-    assert validate(result, inspire_categories_schema) is None
-    assert expected == result
-
-
-def test_arxiv_derive_inspire_categories_appends_categories_with_different_source():
-    schema = load_schema('hep')
-    arxiv_eprints_schema = schema['properties']['arxiv_eprints']
-    inspire_categories_schema = schema['properties']['inspire_categories']
-
-    data = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'nucl-th',
-                ],
-                'value': '1605.03898',
-            },
-        ],
-        'inspire_categories': [
-            {
-                'term': 'Theory-Nucl',
-            },
-        ],
-    }  # literature/1458300
-    extra_data = {}
-    assert validate(data['arxiv_eprints'], arxiv_eprints_schema) is None
-    assert validate(data['inspire_categories'], inspire_categories_schema) is None
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    assert arxiv_derive_inspire_categories(obj, eng) is None
-
-    expected = [
-        {
-            'term': 'Theory-Nucl',
-        },
-        {
-            'source': 'arxiv',
-            'term': 'Theory-Nucl',
-        },
-    ]
-    result = obj.data['inspire_categories']
-
-    assert validate(result, inspire_categories_schema) is None
-    assert expected == result
-
-
-def test_arxiv_derive_inspire_categories_does_nothing_with_existing_categories():
-    schema = load_schema('hep')
-    arxiv_eprints_schema = schema['properties']['arxiv_eprints']
-    inspire_categories_schema = schema['properties']['inspire_categories']
-
-    data = {
-        'arxiv_eprints': [
-            {
-                'categories': [
-                    'nucl-th',
-                ],
-                'value': '1605.03898',
-            },
-        ],
-        'inspire_categories': [
-            {
-                'source': 'arxiv',
-                'term': 'Theory-Nucl',
-            },
-        ],
-    }  # synthetic data
-    extra_data = {}
-    assert validate(data['arxiv_eprints'], arxiv_eprints_schema) is None
-    assert validate(data['inspire_categories'], inspire_categories_schema) is None
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    assert arxiv_derive_inspire_categories(obj, eng) is None
-
-    expected = [
-        {
-            'source': 'arxiv',
-            'term': 'Theory-Nucl',
-        },
-    ]
-    result = obj.data['inspire_categories']
-
-    assert validate(result, inspire_categories_schema) is None
-    assert expected == result
 
 
 def test_arxiv_author_list_with_missing_tarball():
