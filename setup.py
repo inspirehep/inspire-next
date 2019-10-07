@@ -41,7 +41,7 @@ readme = open('README.rst').read()
 setup_requires = []
 
 install_requires = [
-    "kombu>4.5,!=4.6.5"
+    "kombu>4.5,!=4.6.5",
     'Babel~=2.0,>=2.5.1',
     'Flask-Breadcrumbs~=0.0,>=0.4.0',
     'Flask-CeleryExt~=0.0,>=0.3.1',

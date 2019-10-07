@@ -33,7 +33,8 @@ def test_api_authors_root(api_client):
     assert response.status_code == 200
 
     response_json = json.loads(response.data)
-
+    print(response.data)
+    print(response_json)
     assert response_json['id'] == 983220
 
 
