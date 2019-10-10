@@ -22,22 +22,31 @@
 
 from __future__ import absolute_import, division, print_function
 
-from copy import deepcopy
+from invenio_search import current_search_client as es
+from invenio_workflows.models import WorkflowObjectModel
 
-from invenio_workflows import workflow_object_class
+from inspirehep.modules.workflows.cli import workflows
+from workflow_utils import build_workflow
 
 
-def build_workflow(workflow_data, data_type='hep', **kwargs):
-    workflow_object = workflow_object_class.create(
-        data_type=data_type,
-        data=workflow_data,
-        extra_data={
-            'source_data': {
-                'data': deepcopy(workflow_data),
-                'extra_data': {},
-            }
-        },
-        **kwargs
-    )
-    workflow_object.save()
-    return workflow_object
+def test_cli_purges_db_and_es(app_cli_runner):
+    indices = ['holdingpen-hep', 'holdingpen-authors']
+    build_workflow({}, data_type='hep')
+    build_workflow({}, data_type='authors')
+
+    wf_count = WorkflowObjectModel.query.count()
+    assert wf_count == 2
+
+    es.indices.refresh(indices)
+    es_result = es.search(indices)
+    assert es_result['hits']['total'] == 2
+
+    result = app_cli_runner.invoke(workflows, ['purge', '--yes-i-know'])
+    assert result.exit_code == 0
+
+    wf_count = WorkflowObjectModel.query.count()
+    assert wf_count == 0
+
+    es.indices.refresh(indices)
+    es_result = es.search(indices)
+    assert es_result['hits']['total'] == 0

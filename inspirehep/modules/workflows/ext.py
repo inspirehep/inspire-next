@@ -28,8 +28,9 @@ import os
 
 import pkg_resources
 
-from . import config
-from .views import callback_blueprint, workflow_blueprint
+from inspirehep.modules.workflows import config
+from inspirehep.modules.workflows.views import callback_blueprint, workflow_blueprint
+from inspirehep.modules.workflows.cli import workflows
 
 
 class InspireWorkflows(object):
@@ -42,6 +43,7 @@ class InspireWorkflows(object):
         app.register_blueprint(callback_blueprint)
         app.register_blueprint(workflow_blueprint)
         app.extensions['inspire-workflows'] = self
+        app.cli.add_command(workflows)
 
     def init_config(self, app):
         for k in dir(config):
