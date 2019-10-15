@@ -25,15 +25,33 @@
 from __future__ import absolute_import, division, print_function
 
 import logging
+import os
+import signal
 
-from flask_celeryext import create_celery_app
+from flask_celeryext import AppContextTask, create_celery_app
+from psycopg2 import OperationalError as Psycopg2OperationalError
+from sqlalchemy.exc import InvalidRequestError, OperationalError
 
-from .factory import create_app
+from inspirehep.factory import create_app
 
 
-celery = create_celery_app(
-    create_app(LOGGING_SENTRY_CELERY=True)
-)
+LOGGER = logging.getLogger(__name__)
+
+
+class CeleryTask(AppContextTask):
+
+    def on_failure(self, exc, task_id, args, kwargs, einfo):
+        if isinstance(exc, (InvalidRequestError, OperationalError, Psycopg2OperationalError)):
+            LOGGER.exception('Shutting down celery process because of'.format(exc))
+            try:
+                with open('/dev/termination-log', 'w') as term_log:
+                    term_log.write(str(exc))
+            finally:
+                os.kill(os.getppid(), signal.SIGTERM)
+
+
+celery = create_celery_app(create_app(LOGGING_SENTRY_CELERY=True))
+celery.Task = CeleryTask
 
 # We don't want to log to Sentry backoff errors
 logging.getLogger('backoff').propagate = 0
