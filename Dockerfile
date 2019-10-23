@@ -64,6 +64,9 @@ RUN npm install -g \
 
 COPY . .
 
+ARG VERSION
+ENV VERSION="${VERSION}"
+
 RUN pip install --no-cache-dir --upgrade pip && \
  pip install --no-cache-dir --upgrade setuptools && \
  pip install --no-cache-dir -e .[all,xrootd] -r requirements.txt
