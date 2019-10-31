@@ -29,7 +29,7 @@
                     "copy_to": "conferenceautocomplete",
                     "type": "string"
                 },
-                "address": {
+                "addresses": {
                     "properties": {
                         "cities": {
                             "copy_to": "conferenceautocomplete",
