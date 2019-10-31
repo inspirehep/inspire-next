@@ -266,8 +266,8 @@ def get_school(data, doc_type):
 @extractor('address')
 def get_address(data, doc_type):
     conference = get_conference_record(data, default={})
-    pubinfo_city = get_value(conference, 'address[0].cities[0]')
-    pubinfo_country_code = get_value(conference, 'address[0].country_code')
+    pubinfo_city = get_value(conference, 'addresses[0].cities[0]')
+    pubinfo_country_code = get_value(conference, 'addresses[0].country_code')
 
     if pubinfo_city and pubinfo_country_code:
         return pubinfo_city + ', ' + get_country_name_by_code(pubinfo_country_code, default=pubinfo_country_code)

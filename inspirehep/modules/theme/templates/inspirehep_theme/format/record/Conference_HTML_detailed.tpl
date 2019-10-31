@@ -94,7 +94,7 @@
         <div class="col-md-4 hidden-xs hidden-sm">
           <div class="detailed-map" id="conference-detailed-map"></div>
           <div class='map-address-label map-address-label-conference'> <i class="fa fa-map-marker"></i>
-            {{ record['address'][0]['cities'][0] }}, {{ record['address'][0]['country_code'] }}
+            {{ record['addresses'][0]['cities'][0] }}, {{ record['address'][0]['country_code'] }}
           </div>
         </div>
       </div>
@@ -246,7 +246,7 @@
   function initMap() {
     var mapDiv = document.getElementById('conference-detailed-map');
     var doc = {{ record|json_dumps|safe }};
-    var address = doc['address'][0]['original_address'];
+    var address = doc['addresses'][0]['original_address'];
     var geocoder = new google.maps.Geocoder();
 
     var map = new google.maps.Map(mapDiv, {

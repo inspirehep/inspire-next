@@ -40,7 +40,7 @@ def test_render_conferences(request_context):
                     {
                         '_type': 'conferences',
                         '_source': {
-                            'address': [
+                            'addresses': [
                                 {'original_address': 'original_address'},
                             ],
                             'control_number': 1,
@@ -83,7 +83,7 @@ def test_render_conferences_handles_unicode(request_context):
                     {
                         '_type': 'conference',
                         '_source': {
-                            'address': [
+                            'addresses': [
                                 {'original_address': 'Paris, France'},
                             ],
                             'control_number': 1351301,

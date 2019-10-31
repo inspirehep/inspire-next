@@ -59,7 +59,7 @@ def conferences_in_the_same_series_from_es(seriesname):
         _source=[
             'control_number',
             'titles',
-            'address',
+            'addresses',
             'opening_date',
             'closing_date'
         ]
@@ -102,7 +102,7 @@ def render_conferences(recid, conferences):
             title=conference.titles[0].title
         )
         row.append(conference_html)
-        row.append(conference['address'][0]['original_address'])
+        row.append(conference['addresses'][0]['original_address'])
         row.append('')
         row.append((render_template_to_string(
                     "inspirehep_theme/conferences_in_series_date.html",

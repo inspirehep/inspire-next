@@ -534,7 +534,7 @@ CONFERENCES_REST_ENDPOINT = {
             '_source': [
                 'acronyms',
                 'titles',
-                'address',
+                'addresses',
                 'opening_date'
                 'cnum'
                 'control_number',
