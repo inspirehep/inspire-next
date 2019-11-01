@@ -34,6 +34,7 @@ from backports.tempfile import TemporaryDirectory
 from flask import current_app
 from lxml.etree import XMLSyntaxError
 from wand.exceptions import DelegateError
+from wand.resource import limits
 from werkzeug import secure_filename
 
 from inspire_dojson import marcxml2record
@@ -131,6 +132,16 @@ def arxiv_plot_extract(obj, eng):
     :param obj: Workflow Object to process
     :param eng: Workflow Engine processing the object
     """
+    # Crude way to set memory limits for wand globally.
+    mem_limit = current_app.config.get("WAND_MEMORY_LIMIT")
+    if mem_limit and limits['memory'] != mem_limit:
+        limits['memory'] = mem_limit
+        # This sets disk limit, if not set it will swap data on disk
+        # instead of throwing exception
+        limits['disk'] = current_app.config.get("WAND_DISK_LIMIT", 0)
+        # It will throw an exception when memory and disk limit exceeds.
+        # At least workflow status will be saved.
+
     arxiv_id = LiteratureReader(obj.data).arxiv_id
     filename = secure_filename('{0}.tar.gz'.format(arxiv_id))
 
