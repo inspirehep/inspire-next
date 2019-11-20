@@ -29,6 +29,8 @@ import click
 from flask.cli import with_appcontext
 from invenio_db import db
 from invenio_search import current_search
+from invenio_workflows import workflow_object_class, ObjectStatus
+from invenio_workflows.models import WorkflowObjectModel
 
 
 TABLES = [
@@ -75,3 +77,38 @@ def purge(yes_i_know):
     list(current_search.create(ignore_existing=True, index_list=ES_INDICES))
 
     click.secho('Purge completed')
+
+
+@workflows.command()
+@click.argument(
+    'error_message',
+    type=str,
+    metavar='<partial_error_message>'
+)
+@click.option(
+    '--from-beginning',
+    is_flag=True,
+    help="Use this option to restart the workflows from the first step."
+)
+@with_appcontext
+def restart_by_error(error_message, from_beginning):
+    """Restart all the workflows in ERROR matching the given error message."""
+    errors = WorkflowObjectModel.query.filter_by(status=ObjectStatus.ERROR).all()
+    to_restart = [e.id for e in errors if error_message in e.extra_data['_error_msg']]
+
+    click.secho("Found {} workflows to restart from {}".format(
+        len(to_restart),
+        "first step" if from_beginning else "current step"
+    ))
+
+    for wf_id in to_restart:
+        obj = workflow_object_class.get(wf_id)
+        if from_beginning:
+            obj.callback_pos = [0]
+            obj.status = ObjectStatus.INITIAL
+        else:
+            obj.status = ObjectStatus.RUNNING
+        obj.save()
+        db.session.commit()
+        obj.continue_workflow('restart_task', True)
+        click.secho("Workflow {} restarted successfully".format(wf_id))

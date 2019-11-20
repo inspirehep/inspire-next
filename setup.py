@@ -80,7 +80,7 @@ install_requires = [
     'invenio-assets~=1.0,>=1.0.0',
     'invenio-base~=1.0,>=1.0.0',
     'invenio-cache~=1.0,>=1.0.0',
-    'invenio-celery~=1.0,>=1.0.0',
+    'invenio-celery==1.0',
     'invenio-classifier~=1.0,>=1.3.2',
     # Until invenio-collections support ES5:
     # 'invenio-collections>=1.0.0a4',
