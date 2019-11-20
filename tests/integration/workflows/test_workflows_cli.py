@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from invenio_search import current_search_client as es
+from invenio_workflows import ObjectStatus
 from invenio_workflows.models import WorkflowObjectModel
 
 from inspirehep.modules.workflows.cli import workflows
@@ -50,3 +51,37 @@ def test_cli_purges_db_and_es(app_cli_runner):
     es.indices.refresh(indices)
     es_result = es.search(indices)
     assert es_result['hits']['total'] == 0
+
+
+def test_cli_restart_by_error_restarts_one_wf_from_current_step(app_cli_runner):
+    obj_1 = build_workflow({}, data_type='hep')
+    obj_1.status = ObjectStatus.ERROR
+    obj_1.extra_data["_error_msg"] = "Error in SendRobotUpload"
+    obj_1.save()
+
+    obj_2 = build_workflow({}, data_type='hep')
+    obj_2.status = ObjectStatus.ERROR
+    obj_2.extra_data["_error_msg"] = "Error in WebColl"
+    obj_1.save()
+
+    result = app_cli_runner.invoke(workflows, ['restart_by_error', 'RobotUpload'])
+    assert "Found 1 workflows to restart from current step" in result.output_bytes
+
+
+def test_cli_restart_by_error_restarts_one_wf_from_beginning(
+    app_cli_runner
+):
+    obj_1 = build_workflow({}, data_type='hep')
+    obj_1.status = ObjectStatus.ERROR
+    obj_1.extra_data["_error_msg"] = "Error in WebColl number 1"
+    obj_1.save()
+
+    obj_2 = build_workflow({}, data_type='hep')
+    obj_2.status = ObjectStatus.ERROR
+    obj_2.extra_data["_error_msg"] = "Error in WebColl number 2"
+    obj_1.save()
+
+    result = app_cli_runner.invoke(workflows, ['restart_by_error', 'WebColl', '--from-beginning'])
+    output = result.output_bytes
+
+    assert 'Found 2 workflows to restart from first step\n' in output
