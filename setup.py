@@ -38,7 +38,7 @@ with open(os.path.join('inspirehep', 'version.py'), 'rt') as f:
 
 readme = open('README.rst').read()
 
-setup_requires = []
+setup_requires = ['wheel']
 
 install_requires = [
     "kombu>4.5,!=4.6.5",
