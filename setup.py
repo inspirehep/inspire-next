@@ -86,7 +86,7 @@ install_requires = [
     # 'invenio-collections>=1.0.0a4',
     'invenio-config~=1.0,>=1.0.0',
     'invenio-db[postgresql,versioning]~=1.0,>=1.0.0',
-    'invenio-files-rest>=1.0.0a22',
+    'invenio-files-rest==1.0.5',
     'invenio-indexer~=1.0,>=1.0.0',
     'invenio-jsonschemas~=1.0,>=1.0.0',
     # 1.2 adds support for sentry-sdk
