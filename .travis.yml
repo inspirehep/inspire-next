@@ -24,7 +24,7 @@ notifications:
   email: false
 
 sudo: required
-dist: xenial
+dist: trusty
 
 language: python
 
