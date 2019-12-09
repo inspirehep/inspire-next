@@ -81,7 +81,7 @@ def store_record(obj, eng):
 
 
 @with_debug_logging
-@backoff.on_exception(backoff.expo, BadGatewayError, base=4, max_tries=5)
+@backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
 def store_record_inspirehep_api(obj, eng, is_update, is_authors):
     """Saves record through inspirehep api by posting/pushing record to proper endpoint
      in inspirehep"""
