@@ -135,11 +135,10 @@ install_requires = [
     'workflow~=2.0,>=2.1.3',
     'click~=6.7,<7.0',
     'pytz~=2018.7,>=2018.7',
-    'requests-oauthlib==1.0.0',
     'oauthlib>=1.1.2,<3.0.0',
     'munkres~=1.0.12,<1.1.0',
     'Twisted~=18.9.0,<19.0.0',
-    # 'invenio-oauth2server~=1.0,>=1.0.0',
+    'invenio-oauth2server~=1.0,>=1.0.4',
 ]
 
 docs_require = [
