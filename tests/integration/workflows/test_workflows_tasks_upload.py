@@ -28,6 +28,7 @@ from invenio_workflows.errors import WorkflowsError
 from mock import MagicMock, patch
 from flask import current_app
 
+import requests
 from invenio_workflows import workflow_object_class
 
 from inspirehep.modules.records.api import InspireRecord, RecordMetadata
@@ -395,6 +396,34 @@ def test_store_record_inspirehep_api_retries_on_bad_gateway(workflow_app):
 
     assert workflow.data['control_number'] == expected_control_number
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
+
+
+def side_effect_requests_post(url, params=None, **kwargs):
+    raise requests.exceptions.ConnectionError()
+
+
+@patch("inspirehep.modules.workflows.tasks.upload.requests.post")
+def test_store_record_inspirehep_api_retries_on_connection_error(mock_requests_post, workflow_app):
+    mock_requests_post.side_effect = side_effect_requests_post
+
+    record_data = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'titles': [{'title': 'Follow hour including staff wrong.'}],
+        'document_type': ['article'], '_collections': ['Literature']
+    }
+    workflow = workflow_object_class.create({})
+    workflow.extra_data['is-update'] = False
+    workflow.data = record_data
+
+    eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
+    with patch.dict(workflow_app.config, {
+        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
+        'INSPIREHEP_URL': "http://web:8000"
+    }):
+        with pytest.raises(requests.exceptions.ConnectionError):
+            store_record(workflow, eng)
+
+    assert mock_requests_post.call_count == 5
 
 
 def test_store_record_inspirehep_api_literature_new_wrong_response_code(workflow_app):

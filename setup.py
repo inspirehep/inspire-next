@@ -144,6 +144,7 @@ install_requires = [
 
 docs_require = [
     'Sphinx~=1.0,>=1.5.6,<1.6',
+    'docutils~=0.15,>=0.15.2,<0.16'
 ]
 
 tests_require = [
