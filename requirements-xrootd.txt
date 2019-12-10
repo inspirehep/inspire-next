@@ -1,0 +1,2 @@
+xrootdpyfs==0.1.6
+invenio-xrootd==1.0.0a6
