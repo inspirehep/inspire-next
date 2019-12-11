@@ -147,6 +147,7 @@ docs_require = [
 ]
 
 tests_require = [
+    'coverage~=4.0,>=4.5.4',
     'flake8-future-import~=0.0,>=0.4.3',
     'freezegun~=0.3,>=0.3.11',
     'mock~=2.0,>=2.0.0',
