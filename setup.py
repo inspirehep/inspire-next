@@ -41,31 +41,25 @@ readme = open('README.rst').read()
 setup_requires = []
 
 install_requires = [
-    "kombu>4.5,!=4.6.5",
     'Babel~=2.0,>=2.5.1',
-    'Flask-Breadcrumbs~=0.0,>=0.4.0',
-    'Flask-CeleryExt~=0.0,>=0.3.1',
-    'Flask-Gravatar~=0.0,>=0.4.2',
-    'Flask-Login~=0.0,>=0.4.0',
-    'Flask~=0.0,>=0.12.4',
-    'IDUtils~=1.0,>=1.0.1',
-    'SQLAlchemy~=1.0,>=1.2.5',
-    # SQLAlchemy-Continuum==1.3.5 breaks our code (VersionConflict), see:
-    # https://its.cern.ch/jira/browse/INSPIR-831
-    # https://github.com/kvesteri/sqlalchemy-continuum/issues/187
-    'SQLAlchemy-Continuum==1.3.9',
     'backoff~=1.0,>=1.4.3',
     'backports.tempfile>=1.0rc1',
     'beard~=0.0,>=0.2.0',
     'celery~=4.0,>=4.1.0,<4.2.0',
     'click-spinner~=0.0,>=0.1.8',
+    'click~=6.7,<7.0',
+    'cookiecutter>=1.6.0,<1.7.0',
     'elasticsearch-dsl>=5.0.0,<6.0.0',
     'elasticsearch>=5.1.0,<6.0.0',
     'enum34~=1.0,>=1.1.6',
-    # flask-shell-ipython==0.4.0 breaks our code
-    # as it requires flask>=1.0
+    'Flask-Breadcrumbs~=0.0,>=0.4.0',
+    'Flask-CeleryExt~=0.0,>=0.3.1',
+    'Flask-Gravatar~=0.0,>=0.4.2',
+    'Flask-Login~=0.0,>=0.4.0',
     'flask-shell-ipython==0.3.1',
+    'Flask~=0.0,>=0.12.4',
     'fs~=0.0,>=0.5.4',
+    'IDUtils~=1.0,>=1.0.1',
     'inspire-crawler~=3.0,>=3.0.0',
     'inspire-dojson~=63.0',
     'inspire-json-merger~=11.0,>=11.0.0',
@@ -82,21 +76,18 @@ install_requires = [
     'invenio-cache~=1.0,>=1.0.0',
     'invenio-celery==1.0',
     'invenio-classifier~=1.0,>=1.3.2',
-    # Until invenio-collections support ES5:
-    # 'invenio-collections>=1.0.0a4',
     'invenio-config~=1.0,>=1.0.0',
     'invenio-db[postgresql,versioning]~=1.0,>=1.0.0',
     'invenio-files-rest==1.0.5',
     'invenio-indexer~=1.0,>=1.0.0',
     'invenio-jsonschemas~=1.0,>=1.0.0',
-    # 1.2 adds support for sentry-sdk
     'invenio-logging~=1.1,<1.2.0',
     'invenio-mail~=1.0,>=1.0.0',
+    'invenio-oauth2server~=1.0,>=1.0.4',
     'invenio-oauthclient~=1.0,>=1.0.0',
     'invenio-records-files>=1.0.0a10',
     'invenio-records-rest~=1.0,>=1.0.1',
     'invenio-records-ui~=1.0,>=1.0.0',
-    # invenio-records@1.2.0 requires Flask>=1.0
     'invenio-records~=1.0,<1.2.0',
     'invenio-rest~=1.0,>=1.0.0',
     'invenio-search[elasticsearch5]~=1.0,>=1.0.0',
@@ -105,40 +96,50 @@ install_requires = [
     'invenio-workflows-ui~=2.0,>=2.0.11',
     'invenio-workflows~=7.0,>=7.0.1',
     'jinja2~=2.0,>=2.10',
-    # Pin the version of jsonschema, as not to catch alpha 3.0 release
     'jsonschema~=2.0,>=2.6.0',
+    'kombu>4.5,!=4.6.5',
     'langdetect~=1.0,>=1.0.7',
     'latexcodec~=1.0,>=1.0.5',
     'marshmallow~=2.0,>=2.15.0',  # See: inveniosoftware/invenio-records-rest#186
+    'munkres~=1.0.12,<1.1.0',
     'numpy~=1.0,>=1.14.3',
+    'oauthlib>=1.1.2,<3.0.0',
     'plotextractor~=0.0,>=0.1.6',
-    'pyOpenSSL~=17.0,>=17.5.0',
     'pybtex==0.22',
+    'pyOpenSSL~=17.0,>=17.5.0',
     'python-redis-lock~=3.0,>=3.2.0',
-    # TODO: remove once we figure out how to, see:
-    # https://its.cern.ch/jira/browse/INSPIR-973
+    'pytz~=2018.7,>=2018.7',
     'pyyaml<4.0',
     'raven[flask]~=6.0,>=6.2.1',
     'refextract~=0.0,>=0.2.2',
     'requests~=2.0,>=2.18.4',
     'scikit-learn~=0.0,>=0.19.1,<0.21',
     'setproctitle~=1.0,>=1.1.10',
+    'SQLAlchemy-Continuum==1.3.9',
+    'SQLAlchemy~=1.0,>=1.2.5',
     'timeout-decorator~=0.0,>=0.4.0',
-    # Use a timeexecution fork, until https://github.com/kpn-digital/py-timeexecution/pull/38 gets merged.
-    # See ./requirements.txt
-    # 'timeexecution~=3.3.0,<4',
-    # Pin urllib3 to version 1.23 as version 1.24 is incompatible with requirements
-    # from python-requests (<1.24) (https://travis-ci.org/inspirehep/inspire-next/builds/388221674)
+    'Twisted~=18.9.0,<19.0.0',
     'urllib3~=1.0,>=1.24.1,<1.25',
-    # celery dependency, newer versions are Python 3 only
     'vine~=1.0',
     'workflow~=2.0,>=2.1.3',
-    'click~=6.7,<7.0',
-    'pytz~=2018.7,>=2018.7',
-    'oauthlib>=1.1.2,<3.0.0',
-    'munkres~=1.0.12,<1.1.0',
-    'Twisted~=18.9.0,<19.0.0',
-    'invenio-oauth2server~=1.0,>=1.0.4',
+    # 'invenio-collections>=1.0.0a4',
+    # 'timeexecution~=3.3.0,<4',
+    # 1.2 adds support for sentry-sdk
+    # as it requires flask>=1.0
+    # celery dependency, newer versions are Python 3 only
+    # flask-shell-ipython==0.4.0 breaks our code
+    # from python-requests (<1.24) (https://travis-ci.org/inspirehep/inspire-next/builds/388221674)
+    # https://github.com/kvesteri/sqlalchemy-continuum/issues/187
+    # https://its.cern.ch/jira/browse/INSPIR-831
+    # https://its.cern.ch/jira/browse/INSPIR-973
+    # invenio-records@1.2.0 requires Flask>=1.0
+    # Pin the version of jsonschema, as not to catch alpha 3.0 release
+    # Pin urllib3 to version 1.23 as version 1.24 is incompatible with requirements
+    # See ./requirements.txt
+    # SQLAlchemy-Continuum==1.3.5 breaks our code (VersionConflict), see:
+    # TODO: remove once we figure out how to, see:
+    # Until invenio-collections support ES5:
+    # Use a timeexecution fork, until https://github.com/kpn-digital/py-timeexecution/pull/38 gets merged.
 ]
 
 docs_require = [
