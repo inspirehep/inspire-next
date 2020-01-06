@@ -122,8 +122,7 @@ You can choose one of the following tests types:
   - unit
   - workflows
   - integration
-  - acceptance-authors
-  - acceptance-literature
+  - integration_async
 
 .. code-block:: console
 

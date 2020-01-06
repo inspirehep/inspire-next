@@ -35,7 +35,6 @@ Contents
    operations
    harvesting
    grobid
-   tests
    e2e_tutorial
    building_the_docs
    _api/inspirehep
