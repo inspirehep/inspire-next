@@ -26,7 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 
 URL = 'https://github.com/inspirehep/inspire-next'
@@ -40,157 +40,16 @@ readme = open('README.rst').read()
 
 setup_requires = []
 
-install_requires = [
-    'Babel~=2.0,>=2.5.1',
-    'backoff~=1.0,>=1.4.3',
-    'backports.tempfile>=1.0rc1',
-    'beard~=0.0,>=0.2.0',
-    'celery~=4.0,>=4.1.0,<4.2.0',
-    'click-spinner~=0.0,>=0.1.8',
-    'click~=6.7,<7.0',
-    'cookiecutter>=1.6.0,<1.7.0',
-    'elasticsearch-dsl>=5.0.0,<6.0.0',
-    'elasticsearch>=5.1.0,<6.0.0',
-    'enum34~=1.0,>=1.1.6',
-    'Flask-Breadcrumbs~=0.0,>=0.4.0',
-    'Flask-CeleryExt~=0.0,>=0.3.1',
-    'Flask-Gravatar~=0.0,>=0.4.2',
-    'Flask-Login~=0.0,>=0.4.0',
-    'flask-shell-ipython==0.3.1',
-    'Flask~=0.0,>=0.12.4',
-    'fs~=0.0,>=0.5.4',
-    'IDUtils~=1.0,>=1.0.1',
-    'inspire-crawler~=3.0,>=3.0.0',
-    'inspire-dojson~=63.0',
-    'inspire-json-merger~=11.0,>=11.0.0',
-    'inspire-matcher~=9.0,>=9.0.0',
-    'inspire-query-parser~=6.0,>=6.0.0',
-    'inspire-schemas~=61.0',
-    'inspire-service-orcid~=9.0,>=9.0.0',
-    'inspire-utils~=3.0,>=3.0.6',
-    'invenio-access~=1.0,>=1.0.0',
-    'invenio-accounts~=1.0,>=1.0.0',
-    'invenio-admin~=1.0,>=1.0.0',
-    'invenio-assets~=1.0,>=1.0.0',
-    'invenio-base~=1.0,>=1.0.0',
-    'invenio-cache~=1.0,>=1.0.0',
-    'invenio-celery==1.0',
-    'invenio-classifier~=1.0,>=1.3.2',
-    'invenio-config~=1.0,>=1.0.0',
-    'invenio-db[postgresql,versioning]~=1.0,>=1.0.0',
-    'invenio-files-rest==1.0.5',
-    'invenio-indexer~=1.0,>=1.0.0',
-    'invenio-jsonschemas~=1.0,>=1.0.0',
-    'invenio-logging~=1.1,<1.2.0',
-    'invenio-mail~=1.0,>=1.0.0',
-    'invenio-oauth2server~=1.0,>=1.0.4',
-    'invenio-oauthclient~=1.0,>=1.0.0',
-    'invenio-records-files>=1.0.0a10',
-    'invenio-records-rest~=1.0,>=1.0.1',
-    'invenio-records-ui~=1.0,>=1.0.0',
-    'invenio-records~=1.0,<1.2.0',
-    'invenio-rest~=1.0,>=1.0.0',
-    'invenio-search[elasticsearch5]~=1.0,>=1.0.0',
-    'invenio-userprofiles~=1.0,>=1.0.0',
-    'invenio-workflows-files~=1.0,>=1.0.0',
-    'invenio-workflows-ui~=2.0,>=2.0.11',
-    'invenio-workflows~=7.0,>=7.0.1',
-    'jinja2~=2.0,>=2.10',
-    'jsonschema~=2.0,>=2.6.0',
-    'kombu>4.5,!=4.6.5',
-    'langdetect~=1.0,>=1.0.7',
-    'latexcodec~=1.0,>=1.0.5',
-    'marshmallow~=2.0,>=2.15.0',  # See: inveniosoftware/invenio-records-rest#186
-    'munkres~=1.0.12,<1.1.0',
-    'numpy~=1.0,>=1.14.3',
-    'oauthlib>=1.1.2,<3.0.0',
-    'plotextractor~=0.0,>=0.1.6',
-    'pybtex==0.22',
-    'pyOpenSSL~=17.0,>=17.5.0',
-    'python-redis-lock~=3.0,>=3.2.0',
-    'pytz~=2018.7,>=2018.7',
-    'pyyaml<4.0',
-    'raven[flask]~=6.0,>=6.2.1',
-    'refextract~=0.0,>=0.2.2',
-    'requests~=2.0,>=2.18.4',
-    'scikit-learn~=0.0,>=0.19.1,<0.21',
-    'setproctitle~=1.0,>=1.1.10',
-    'SQLAlchemy-Continuum==1.3.9',
-    'SQLAlchemy~=1.0,>=1.2.5',
-    'timeout-decorator~=0.0,>=0.4.0',
-    'Twisted~=18.9.0,<19.0.0',
-    'urllib3~=1.0,>=1.24.1,<1.25',
-    'vine~=1.0',
-    'workflow~=2.0,>=2.1.3',
-    # 'invenio-collections>=1.0.0a4',
-    # 'timeexecution~=3.3.0,<4',
-    # 1.2 adds support for sentry-sdk
-    # as it requires flask>=1.0
-    # celery dependency, newer versions are Python 3 only
-    # flask-shell-ipython==0.4.0 breaks our code
-    # from python-requests (<1.24) (https://travis-ci.org/inspirehep/inspire-next/builds/388221674)
-    # https://github.com/kvesteri/sqlalchemy-continuum/issues/187
-    # https://its.cern.ch/jira/browse/INSPIR-831
-    # https://its.cern.ch/jira/browse/INSPIR-973
-    # invenio-records@1.2.0 requires Flask>=1.0
-    # Pin the version of jsonschema, as not to catch alpha 3.0 release
-    # Pin urllib3 to version 1.23 as version 1.24 is incompatible with requirements
-    # See ./requirements.txt
-    # SQLAlchemy-Continuum==1.3.5 breaks our code (VersionConflict), see:
-    # TODO: remove once we figure out how to, see:
-    # Until invenio-collections support ES5:
-    # Use a timeexecution fork, until https://github.com/kpn-digital/py-timeexecution/pull/38 gets merged.
-]
+install_requires = []
 
-docs_require = [
-    'Sphinx~=1.0,>=1.5.6,<1.6',
-    'docutils~=0.15,>=0.15.2,<0.16'
-]
+docs_require = []
 
-tests_require = [
-    'coverage~=4.0,>=4.5.4',
-    'flake8-future-import~=0.0,>=0.4.3',
-    'freezegun~=0.3,>=0.3.11',
-    'mock~=2.0,>=2.0.0',
-    'pytest-cov~=2.0,>=2.5.1',
-    'pytest-vcr~=0.0,>=0.3.0',
-    'pytest~=3.0,>=3.3.0',
-    'requests_mock~=1.0,>=1.3.0',
-]
+tests_require = []
 
-extras_require = {
-    'build-node': [
-        'ipdb~=0.0,>=0.10.3',
-    ],
-    'crawler-node': [
-        'hepcrawl~=13.0,>=13.0.0',
-    ],
-    'docs': docs_require,
-    'tests': tests_require,
-    'web-node': [
-        'gunicorn~=19.0,>=19.7.1',
-        'honcho~=1.0,>=1.0.1',
-    ],
-    'worker-node': [
-        'flower~=0.0,>=0.9.2',
-        # Flower 0.9.2 is badly bugged when used with Tornado 5.
-        # See: https://its.cern.ch/jira/browse/INSPIR-1477
-        'tornado~=4.0,>=4.5.3',
-        'superlance~=1.0,>=1.0.0',
-    ],
-    'xrootd': [
-        'invenio-xrootd>=1.0.0a5',
-        'xrootdpyfs~=0.0,>=0.1.5',
-    ],
-}
+packages = []
 
-extras_require['all'] = []
-for name, reqs in extras_require.items():
-    if name in ['xrootd']:
-        continue
-    extras_require['all'].extend(reqs)
+extras_require = {}
 
-packages = find_packages(exclude=['docs'])
 
 setup(
     name='Inspirehep',
