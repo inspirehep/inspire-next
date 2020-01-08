@@ -345,6 +345,10 @@ STORE_RECORD = [
         go_to_first_step
     ),
     store_record,
+]
+
+
+STORE_ROOT = [
     store_root,
 ]
 
@@ -543,6 +547,7 @@ class Article(object):
                     POSTENHANCE_RECORD +
                     STORE_RECORD +
                     SEND_TO_LEGACY +
+                    STORE_ROOT +
                     WAIT_FOR_LEGACY_WEBCOLL +
                     NOTIFY_ACCEPTED +
                     NOTIFY_CURATOR_IF_NEEDED
