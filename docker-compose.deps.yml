@@ -27,10 +27,9 @@ services:
     extends:
       file: services.yml
       service: base
-    command: pip install --editable .[all] --find-links /pip-cache --pre --requirement requirements.txt --upgrade
+    command: bash -c "pip install poetry && poetry export --without-hashes -E all -f requirements.txt > requirements.poetry.txt && pip install --requirement requirements.poetry.txt && pip install --ignore-installed -e ."
     volumes_from:
       - static
-
   assets:
     extends:
       file: services.yml
