@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import uuid
+
 import pytest
 import requests_mock
 from invenio_workflows.errors import WorkflowsError
@@ -214,11 +216,10 @@ def test_store_record_inspirehep_api_literature_new(workflow_app):
         'titles': [{'title': 'Follow hour including staff wrong.'}],
         'document_type': ['article'], '_collections': ['Literature']
     }
-    workflow = workflow_object_class.create({})
+    workflow = workflow_object_class.create(record_data)
     workflow.extra_data['is-update'] = False
-    workflow.data = record_data
 
-    expected_head_uuid = 'uuid_number_123456'
+    expected_head_uuid = str(uuid.uuid4())
     expected_control_number = 111
 
     eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
@@ -245,21 +246,20 @@ def test_store_record_inspirehep_api_literature_new(workflow_app):
 
 
 def test_store_record_inspirehep_api_literature_update(workflow_app):
+    expected_control_number = 111
+    expected_head_uuid = str(uuid.uuid4())
+
     record_data = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         'titles': [{'title': 'Follow hour including staff wrong.'}],
-        'document_type': ['article'], '_collections': ['Literature']
+        'document_type': ['article'], '_collections': ['Literature'],
+        "control_number": expected_control_number
     }
-    workflow = workflow_object_class.create({})
+
+    workflow = workflow_object_class.create(record_data)
     workflow.extra_data['is-update'] = True
 
-    expected_head_uuid = 'uuid_number_123456'
-    expected_control_number = 111
-
-    workflow.extra_data['matches'] = {}
-    workflow.extra_data['matches']['approved'] = expected_control_number
     workflow.extra_data['head_uuid'] = expected_head_uuid
-    workflow.data = record_data
     eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
@@ -285,17 +285,54 @@ def test_store_record_inspirehep_api_literature_update(workflow_app):
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
 
 
+def test_store_record_inspirehep_api_literature_update_without_cn(workflow_app):
+    expected_control_number = 111
+    expected_head_uuid = str(uuid.uuid4())
+
+    record_data = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'titles': [{'title': 'Follow hour including staff wrong.'}],
+        'document_type': ['article'], '_collections': ['Literature']
+    }
+
+    workflow = workflow_object_class.create(record_data)
+    workflow.extra_data['is-update'] = True
+
+    workflow.extra_data['head_uuid'] = expected_head_uuid
+    eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
+    with patch.dict(workflow_app.config, {
+        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
+        'INSPIREHEP_URL': "http://web:8000"
+    }):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'PUT', '{url}/literature/{cn}'.format(
+                    url=workflow_app.config.get("INSPIREHEP_URL"),
+                    cn=expected_control_number,
+                ),
+                headers={'content-type': 'application/json'},
+                status_code=200,
+                json={
+                    "metadata": {
+                        "control_number": expected_control_number
+                    },
+                    'uuid': expected_head_uuid
+                }
+            )
+            with pytest.raises(ValueError):
+                store_record(workflow, eng)
+
+
 def test_store_record_inspirehep_api_author_new(workflow_app):
     record_data = {
         '$schema': 'http://localhost:5000/schemas/records/authors.json',
         'name': {'value': 'Robert Johnson'}, '_collections': ['Authors']
     }
-    workflow = workflow_object_class.create({})
-    workflow.extra_data['is-update'] = False
-    workflow.data = record_data
+    expected_control_number = 2222
+    expected_head_uuid = str(uuid.uuid4())
 
-    expected_head_uuid = 'uuid_number_123456'
-    expected_control_number = 222
+    workflow = workflow_object_class.create(record_data)
+    workflow.extra_data['is-update'] = False
 
     eng = MagicMock(workflow_definition=MagicMock(data_type='authors'))
     with patch.dict(workflow_app.config, {
@@ -321,20 +358,19 @@ def test_store_record_inspirehep_api_author_new(workflow_app):
 
 
 def test_store_record_inspirehep_api_author_update(workflow_app):
+    expected_control_number = 2222
+    expected_head_uuid = str(uuid.uuid4())
+
     record_data = {
         '$schema': 'http://localhost:5000/schemas/records/authors.json',
-        'name': {'value': 'Robert Johnson'}, '_collections': ['Authors']
+        'name': {'value': 'Robert Johnson'}, '_collections': ['Authors'],
+        "control_number": expected_control_number
     }
-    workflow = workflow_object_class.create({})
+
+    workflow = workflow_object_class.create(record_data)
     workflow.extra_data['is-update'] = True
 
-    expected_head_uuid = 'uuid_number_123456'
-    expected_control_number = 222
-
-    workflow.extra_data['matches'] = {}
-    workflow.extra_data['matches']['approved'] = expected_control_number
     workflow.extra_data['head_uuid'] = expected_head_uuid
-    workflow.data = record_data
     eng = MagicMock(workflow_definition=MagicMock(data_type='authors'))
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
@@ -370,7 +406,7 @@ def test_store_record_inspirehep_api_retries_on_bad_gateway(workflow_app):
     workflow.extra_data['is-update'] = False
     workflow.data = record_data
 
-    expected_head_uuid = 'uuid_number_123456'
+    expected_head_uuid = str(uuid.uuid4())
     expected_control_number = 222
 
     eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
