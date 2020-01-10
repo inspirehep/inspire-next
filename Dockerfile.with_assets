@@ -28,7 +28,7 @@ ARG FROM_TAG
 FROM inspirehep/next:${FROM_TAG}
 
 RUN inspirehep npm \
- && cd /usr/var/inspirehep-instance/static \
+ && cd /usr/local/var/inspirehep-instance/static \
  && npm install \
  && inspirehep collect -v \
  && inspirehep assets build

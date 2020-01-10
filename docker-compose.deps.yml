@@ -27,7 +27,7 @@ services:
     extends:
       file: services.yml
       service: base
-    command: bash -c "pip install poetry && poetry export --without-hashes -E all -f requirements.txt > requirements.poetry.txt && pip install --requirement requirements.poetry.txt && pip install --ignore-installed -e ."
+    command: bash -c "poetry install -E tests -E all -E docs -E xrootd"
     volumes_from:
       - static
   assets:
@@ -55,7 +55,7 @@ services:
     extends:
       file: services.yml
       service: base
-    working_dir: /virtualenv/lib/python2.7/site-packages/hepcrawl
+    working_dir: /usr/lib/python2.7/site-packages/hepcrawl
     command: scrapyd-deploy
     volumes_from:
       - static

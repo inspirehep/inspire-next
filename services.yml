@@ -24,9 +24,12 @@ version: '2.1'
 
 services:
   base:
-    image: inspirehep/python-base-test
+    build:
+      context: .
+    image: inspirehep
     tty: true
     environment:
+      - VIRTUAL_ENV=/usr/local
       - BASE_USER_UID=${BASE_USER_UID:-1000}
       - BASE_USER_GID=${BASE_USER_GID:-1000}
       - LANG=en_US.UTF-8
@@ -61,5 +64,4 @@ services:
     image: busybox
     volumes:
         - ".:/code"
-        - "${DOCKER_DATA}/tmp/virtualenv:/virtualenv"
 

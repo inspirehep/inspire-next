@@ -153,7 +153,7 @@ services:
         - "CMD"
         - "bash"
         - "-c"
-        - "/virtualenv/bin/celery --broker=pyamqp://guest:guest@test-rabbitmq:5672// inspect ping | grep OK"
+        - "/usr/bin/celery --broker=pyamqp://guest:guest@test-rabbitmq:5672// inspect ping | grep OK"
     depends_on:
       test-database:
         condition: service_healthy
@@ -237,7 +237,7 @@ services:
   test-scrapyd-deploy:
     extends:
       service: proxied_base
-    working_dir: /virtualenv/lib/python2.7/site-packages/hepcrawl
+    working_dir: /usr/lib/python2.7/site-packages/hepcrawl
     command: bash -c "sed -i -e 's|^url .*|url = http://test-scrapyd:6800|' scrapy.cfg && exec scrapyd-deploy"
     volumes_from:
       - test-static
@@ -294,7 +294,7 @@ services:
         - "CMD"
         - "bash"
         - "-c"
-        - "/virtualenv/bin/celery --broker=pyamqp://guest:guest@test-rabbitmq:5672// inspect ping | grep OK"
+        - "/usr/bin/celery --broker=pyamqp://guest:guest@test-rabbitmq:5672// inspect ping | grep OK"
     volumes_from:
       - test-static
     depends_on:

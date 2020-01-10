@@ -39,7 +39,7 @@ services:
       - APP_CRAWLER_HOST_URL=http://scrapyd:6800
       - APP_CRAWLER_API_PIPELINE_URL=http://flower:5555/api/task/async-apply
       - APP_LAST_RUNS_PATH=.lastruns
-      - APP_OAIHARVESTER_WORKDIR=/virtualenv/oaiharvest_workdir
+      - APP_OAIHARVESTER_WORKDIR=/usr/oaiharvest_workdir
 
   # Services using the inspirehep code.
   web:
@@ -77,7 +77,7 @@ services:
         - "CMD"
         - "bash"
         - "-c"
-        - "/virtualenv/bin/celery --broker=pyamqp://guest:guest@rabbitmq:5672// inspect ping | grep OK"
+        - "/usr/bin/celery --broker=pyamqp://guest:guest@rabbitmq:5672// inspect ping | grep OK"
     depends_on:
       database:
         condition: service_healthy

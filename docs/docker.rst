@@ -171,7 +171,7 @@ Extra useful tips
    $ docker-compose restart worker && docker-compose run --rm web scripts/recreate_records
 
 - Recreate all static assets. Will download all dependencies from npm and copy all static
-  files to ``${DOCKER_DATA}/tmp/virtualenv/var/inspirehep-instance/static``.
+  files to ``${DOCKER_DATA}/tmp/usr/var/inspirehep-instance/static``.
 
 .. code-block:: console
 
