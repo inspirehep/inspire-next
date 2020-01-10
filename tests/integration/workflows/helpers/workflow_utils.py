@@ -29,8 +29,8 @@ from invenio_workflows import workflow_object_class
 
 def build_workflow(workflow_data, data_type='hep', **kwargs):
     workflow_object = workflow_object_class.create(
-        data_type=data_type,
         data=workflow_data,
+        data_type=data_type,
         extra_data={
             'source_data': {
                 'data': deepcopy(workflow_data),

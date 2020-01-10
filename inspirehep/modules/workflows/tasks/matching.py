@@ -365,7 +365,6 @@ def pending_in_holding_pen(obj, validation_func):
                 'validator': validation_func,
             },
         ],
-        'doc_type': 'hep',
         'index': 'holdingpen-hep',
     }
     matches = dedupe_list(match(obj.data, config))

@@ -93,7 +93,7 @@ def render_conferences(recid, conferences):
     for conference in conferences:
 
         if conference['control_number'] == recid:
-            conferences.total = conferences.total - 1
+            conferences.total.value = conferences.total.value - 1
             continue
 
         row = []
@@ -109,7 +109,7 @@ def render_conferences(recid, conferences):
                     record=conference.to_dict())))
         out.append(row)
 
-    return out, conferences.total
+    return out, conferences.total.value
 
 
 def render_contributions(hits):

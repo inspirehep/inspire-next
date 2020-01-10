@@ -40,7 +40,7 @@ def test_cli_purges_db_and_es(app_cli_runner):
 
     es.indices.refresh(indices)
     es_result = es.search(indices)
-    assert es_result['hits']['total'] == 2
+    assert es_result['hits']['total']['value'] == 2
 
     result = app_cli_runner.invoke(workflows, ['purge', '--yes-i-know'])
     assert result.exit_code == 0
@@ -50,7 +50,7 @@ def test_cli_purges_db_and_es(app_cli_runner):
 
     es.indices.refresh(indices)
     es_result = es.search(indices)
-    assert es_result['hits']['total'] == 0
+    assert es_result['hits']['total']['value'] == 0
 
 
 def test_cli_restart_by_error_restarts_one_wf_from_current_step(app_cli_runner):

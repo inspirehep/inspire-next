@@ -61,7 +61,6 @@ REFERENCE_MATCHER_UNIQUE_IDENTIFIERS_CONFIG = {
             ],
         },
     ],
-    'doc_type': 'hep',
     'index': 'records-hep',
     'collections': [
         'Literature',
@@ -137,7 +136,6 @@ REFERENCE_MATCHER_DEFAULT_PUBLICATION_INFO_CONFIG = {
             ],
         },
     ],
-    'doc_type': 'hep',
     'index': 'records-hep',
     'collections': [
         'Literature',
@@ -188,7 +186,6 @@ REFERENCE_MATCHER_JHEP_AND_JCAP_PUBLICATION_INFO_CONFIG = {
             ],
         },
     ],
-    'doc_type': 'hep',
     'index': 'records-hep',
     'collections': [
         'Literature',
@@ -216,11 +213,10 @@ REFERENCE_MATCHER_DATA_CONFIG = {
             ],
         },
     ],
-    'doc_type': 'data',
     'index': 'records-data',
     'source': [
         'control_number',
     ]
 }
 """Configuration for matching data records. Please note that the
-index and doc_type are different for data records."""
+index is different for data records."""

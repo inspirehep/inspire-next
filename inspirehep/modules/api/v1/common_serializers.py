@@ -36,7 +36,7 @@ class APIRecidsSerializer(object):
         return json.dumps(dict(
             hits=dict(
                 recids=[record['_source']['control_number'] for record in search_result['hits']['hits']],
-                total=search_result['hits']['total'],
+                total=search_result['hits']['total']['value'],
             ),
             links=links or {},
         ))

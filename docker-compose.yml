@@ -107,9 +107,6 @@ services:
       service: indexer
     ports:
       - "9200:9200"
-    volumes:
-      - "${DOCKER_DATA}/tmp/inspirehep_elastic/data:/usr/share/elasticsearch/data"
-      - "${DOCKER_DATA}/tmp/inspirehep_elastic/log:/usr/share/elasticsearch/log"
     healthcheck:
       timeout: 5s
       interval: 5s

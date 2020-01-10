@@ -1,0 +1,399 @@
+{
+  "mappings": {
+    "date_detection": false,
+    "numeric_detection": false,
+    "properties": {
+      "$schema": {
+        "type": "keyword"
+      },
+      "author_suggest": {
+        "type": "completion"
+      },
+      "project_membership": {
+        "type": "object",
+        "properties": {
+          "curated_relation": {
+            "type": "boolean"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "end_date": {
+            "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+            "type": "date"
+          },
+          "start_date": {
+            "type": "date",
+            "format": "yyyy-MM-dd||yyyy-MM||yyyy"
+          },
+          "name": {
+            "type": "text"
+          },
+          "record": {
+            "properties": {
+              "$ref": {
+                "type": "text",
+                "analyzer": "recid_analyzer"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "_collections": {
+        "normalizer": "lowercase_normalizer",
+        "type": "keyword"
+      },
+      "_private_notes": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "acquisition_source": {
+        "properties": {
+          "datetime": {
+            "type": "date"
+          },
+          "email": {
+            "type": "keyword"
+          },
+          "internal_uid": {
+            "type": "integer"
+          },
+          "method": {
+            "type": "keyword"
+          },
+          "orcid": {
+            "type": "keyword"
+          },
+          "source": {
+            "type": "keyword"
+          },
+          "submission_number": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      },
+      "advisors": {
+        "properties": {
+          "curated_relation": {
+            "type": "boolean"
+          },
+          "degree_type": {
+            "type": "keyword"
+          },
+          "ids": {
+            "properties": {
+              "schema": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "keyword"
+              }
+            },
+            "type": "object"
+          },
+          "name": {
+            "type": "text"
+          },
+          "recid": {
+            "type": "integer"
+          },
+          "record": {
+            "properties": {
+              "$ref": {
+                "type": "text",
+                "analyzer": "recid_analyzer"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "arxiv_categories": {
+        "copy_to": "facet_arxiv_categories",
+        "type": "keyword"
+      },
+      "authorautocomplete": {
+        "type": "text"
+      },
+      "birth_date": {
+        "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+        "type": "date"
+      },
+      "conferences": {
+        "properties": {
+          "$ref": {
+            "type": "text",
+            "analyzer": "recid_analyzer"
+          }
+        },
+        "type": "object"
+      },
+      "control_number": {
+        "type": "integer"
+      },
+      "death_date": {
+        "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+        "type": "date"
+      },
+      "deleted": {
+        "type": "boolean"
+      },
+      "deleted_recids": {
+        "type": "integer"
+      },
+      "deleted_records": {
+        "properties": {
+          "$ref": {
+            "type": "text",
+            "analyzer": "recid_analyzer"
+          }
+        },
+        "type": "object"
+      },
+      "email_addresses": {
+        "type": "object",
+        "properties": {
+          "current": {
+            "type": "boolean"
+          },
+          "hidden": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "text"
+          }
+        }
+      },
+      "experiments": {
+        "properties": {
+          "curated_relation": {
+            "type": "boolean"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "end_year": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "keyword"
+          },
+          "recid": {
+            "type": "integer"
+          },
+          "record": {
+            "properties": {
+              "$ref": {
+                "type": "text",
+                "analyzer": "recid_analyzer"
+              }
+            },
+            "type": "object"
+          },
+          "start_year": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "facet_arxiv_categories": {
+        "index": false,
+        "type": "keyword"
+      },
+      "facet_institution_name": {
+        "index": false,
+        "type": "keyword"
+      },
+      "ids": {
+        "properties": {
+          "schema": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      },
+      "inspire_categories": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "term": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      },
+      "legacy_creation_date": {
+        "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+        "type": "date"
+      },
+      "name": {
+        "properties": {
+          "numeration": {
+            "type": "keyword"
+          },
+          "preferred_name": {
+            "type": "text"
+          },
+          "title": {
+            "type": "keyword"
+          },
+          "value": {
+            "copy_to": "authorautocomplete",
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "native_name": {
+        "type": "text"
+      },
+      "new_recid": {
+        "type": "integer"
+      },
+      "new_record": {
+        "properties": {
+          "$ref": {
+            "type": "text",
+            "analyzer": "recid_analyzer"
+          }
+        },
+        "type": "object"
+      },
+      "other_names": {
+        "type": "text"
+      },
+      "name_variations": {
+        "type": "keyword"
+      },
+      "past_emails_addresses": {
+        "type": "text"
+      },
+      "positions": {
+        "properties": {
+          "_rank": {
+            "type": "keyword"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "emails": {
+            "type": "text"
+          },
+          "end_date": {
+            "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+            "type": "date"
+          },
+          "institution": {
+            "type": "keyword"
+          },
+          "old_emails": {
+            "type": "text"
+          },
+          "rank": {
+            "type": "keyword"
+          },
+          "start_date": {
+            "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+            "type": "date"
+          }
+        },
+        "type": "object"
+      },
+      "previous_names": {
+        "type": "text"
+      },
+      "prizes": {
+        "type": "text"
+      },
+      "public_notes": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "self": {
+        "properties": {
+          "$ref": {
+            "index": false,
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "self_recid": {
+        "type": "integer"
+      },
+      "source": {
+        "properties": {
+          "date_verified": {
+            "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+            "type": "date"
+          },
+          "name": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "status": {
+        "type": "keyword"
+      },
+      "stub": {
+        "type": "boolean"
+      },
+      "urls": {
+        "properties": {
+          "description": {
+            "type": "text"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "recid_analyzer": {
+          "tokenizer": "recid_tokenizer"
+        }
+      },
+      "normalizer": {
+        "lowercase_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": ["lowercase"]
+        }
+      },
+      "tokenizer": {
+        "recid_tokenizer": {
+          "type": "pattern",
+          "pattern": "(\\d+)",
+          "group": 1
+        }
+      }
+    }
+  }
+}

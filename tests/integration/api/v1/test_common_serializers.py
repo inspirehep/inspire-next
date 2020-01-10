@@ -53,7 +53,7 @@ def test_authors_recids_serializer(api_client):
 
     response_json = json.loads(response.data)
 
-    assert response_json['hits']['total'] == 4
+    assert response_json['hits']['total']['value'] == 4
 
     expected_recids = {1057204, 984519, 1073117, 1060891}
     response_recids = set([recid for recid in response_json['hits']['recids']])

@@ -68,8 +68,15 @@ install:
   - travis_retry docker-compose -f docker-compose.deps.yml run --rm pip
   - travis_retry docker-compose -f docker-compose.deps.yml run --rm assets
   - travis_retry docker-compose -f docker-compose.test.yml pull --parallel ${SUITE} ${IMAGES}
+  - if [ ! -z "${IMAGES}" ]; then
+      travis_retry docker-compose -f docker-compose.test.yml build ${IMAGES};
+    fi
 
 script:
+  - if [ ! -z "${IMAGES}" ]; then
+      travis_retry docker-compose -f docker-compose.test.yml up -d ${IMAGES};
+      ./docker/wait-for-services.sh;
+    fi
   - docker-compose -f docker-compose.test.yml run --rm ${SUITE}
 
 after_script:

@@ -120,7 +120,6 @@ class TestRecordMetadata(TestBaseModel):
         if index_name:
             instance.es_index_result = es.index(
                 index=index_name,
-                doc_type=index_name.split('-')[-1],
                 body=instance.record_metadata.json,
                 params={}
             )
