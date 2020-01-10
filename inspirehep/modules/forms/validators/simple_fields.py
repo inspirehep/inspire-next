@@ -113,7 +113,6 @@ def duplicated_validator(property_name, property_value):
                 'validator': _is_not_deleted,
             },
         ],
-        'doc_type': 'hep',
         'index': 'records-hep',
     }
 
@@ -280,7 +279,6 @@ def already_pending_in_holdingpen_validator(property_name, value):
 
     hits = es.search(
         index='holdingpen-hep',
-        doc_type='hep',
         body=query,
     )['hits']['hits']
 

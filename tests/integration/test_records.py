@@ -37,11 +37,8 @@ from invenio_pidstore.models import (
 from invenio_search import current_search
 
 from inspire_dojson import marcxml2record
-from inspire_utils.record import get_value
-from inspire_dojson.utils import get_recid_from_ref
 from inspire_schemas.api import validate
 from inspirehep.modules.records.api import InspireRecord
-from inspirehep.modules.records.tasks import merge_merged_records, update_refs
 from inspirehep.utils.record_getter import get_db_record
 
 from utils import _delete_record
@@ -308,35 +305,6 @@ def test_record_can_be_deleted(api_client, not_yet_deleted_record):
     assert api_client.get('/literature/111').status_code == 410
 
 
-def test_merged_records_stay_merged(api_client, merged_records):
-    merge_merged_records.delay()
-
-    assert api_client.get('/literature/111').status_code == 200
-    assert api_client.get('/literature/222').status_code == 301
-
-
-def test_merge_record_with_non_existing_pid(api_client, merged_records):
-    def get_pid_entry(recid):
-        return PersistentIdentifier.query.filter_by(pid_value=str(recid)).one_or_none()
-
-    merged_record = get_db_record('lit', 111)
-
-    assert get_recid_from_ref(merged_record['deleted_records'][0]) == 222
-
-    # remove it so it doesn't exist anymore
-    pid_for_222 = get_pid_entry(222)
-    db.session.delete(pid_for_222)
-
-    pid_for_222 = get_pid_entry(222)
-    assert pid_for_222 is None
-
-    merge_merged_records()
-
-    # new pid is created for the non-existing deleted record
-    pid_for_222 = get_pid_entry(222)
-    assert pid_for_222 is not None
-
-
 def test_records_can_be_merged(api_client, not_yet_merged_records):
     assert api_client.get('/literature/111').status_code == 200
     assert api_client.get('/literature/222').status_code == 200
@@ -350,24 +318,6 @@ def test_records_can_be_merged(api_client, not_yet_merged_records):
 
     assert api_client.get('/literature/111').status_code == 200
     assert api_client.get('/literature/222').status_code == 301
-
-
-def test_references_can_be_updated(app, records_to_be_merged):
-    merged_record = get_db_record('lit', 111)
-    deleted_record = get_db_record('lit', 222)
-
-    deleted_record.merge(merged_record)
-    update_refs.delay(
-        'http://localhost:5000/api/literature/222',
-        'http://localhost:5000/api/literature/111')
-
-    pointing_record = get_db_record('lit', 333)
-
-    expected = 'http://localhost:5000/api/literature/111'
-    result = get_value(
-        pointing_record, 'accelerator_experiments[0].record.$ref')
-
-    assert expected == result
 
 
 def test_records_files_attached_correctly(isolated_app):

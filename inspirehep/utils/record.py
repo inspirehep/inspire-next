@@ -35,7 +35,7 @@ def create_index_op(record, version_type='external_gte'):
         '_index': index,
         '_type': doc_type,
         '_id': str(record.id),
-        '_version': record.revision_id,
-        '_version_type': version_type,
+        'version': record.revision_id,
+        'version_type': version_type,
         '_source': RecordIndexer._prepare_record(record, index, doc_type),
     }

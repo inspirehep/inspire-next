@@ -258,7 +258,6 @@ def migrate_recids_from_mirror(prod_recids, skip_files=False):
             if record and not record.get('deleted'):
                 index_queue.append(create_index_op(record))
     db.session.commit()
-
     req_timeout = current_app.config['INDEXER_BULK_REQUEST_TIMEOUT']
     es_bulk(
         es,

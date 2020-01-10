@@ -46,12 +46,23 @@ services:
       - APP_CRAWL_ONCE_PATH=/code/scrapy/crawl_once
 
   indexer:
-    image: inspirehep/elasticsearch5
-    command: bash -c "chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/data && gosu elasticsearch env ES_JAVA_OPTS=\"-Xms2g -Xmx2g\" elasticsearch -Ecluster.name=inspire-dev"
-    entrypoint: /docker-entrypoint.sh
+    build: ./docker/elasticsearch
+    restart: "always"
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 2g
+    ports:
+      - "9200:9200"
+      - "9300:9300"
 
   database:
-    image: postgres:9.4.5
+    image: postgres:9.6
     environment:
       - POSTGRES_PASSWORD=dbpass123
       - POSTGRES_USER=inspirehep

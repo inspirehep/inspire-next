@@ -384,6 +384,7 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
     workflow_app,
     mocked_external_services,
 ):
+
     record = generate_record()
 
     record_workflow = build_workflow(record).id
@@ -544,7 +545,6 @@ def test_fuzzy_matched_goes_trough_the_workflow(
                 ]
             }
         ],
-        "doc_type": "hep",
         "index": "records-hep",
     }
 

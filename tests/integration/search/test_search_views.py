@@ -27,7 +27,6 @@ import json
 from invenio_db import db
 from invenio_search import current_search
 
-from utils import _delete_record
 from inspirehep.modules.records.api import InspireRecord
 from factories.db.invenio_records import TestRecordMetadata
 
@@ -145,51 +144,6 @@ def test_search_hep_author_publication_with_not_existing_facet_name(isolated_api
         assert aggregation in result_aggregations
 
     assert len(expected_aggregations) == len(result_aggregations)
-
-
-def test_selecting_2_facets_generates_search_with_must_query(api_client):
-    record_json = {
-        'control_number': 843386527,
-        '$schema': 'http://localhost:5000/schemas/records/hep.json',
-        'document_type': ['article'],
-        'titles': [{'title': 'Article 1'}],
-        '_collections': ['Literature'],
-        'authors': [{'full_name': 'John Doe'}]
-    }
-
-    rec = InspireRecord.create(data=record_json)
-    rec.commit()
-
-    record_json2 = {
-        'control_number': 843386521,
-        '$schema': 'http://localhost:5000/schemas/records/hep.json',
-        'document_type': ['article'],
-        'titles': [{'title': 'Article 2'}],
-        '_collections': ['Literature'],
-        'authors': [{'full_name': 'John Doe'}, {'full_name': 'John Doe2'}]
-    }
-
-    rec2 = InspireRecord.create(data=record_json2)
-    rec2.commit()
-
-    db.session.commit()
-    current_search.flush_and_refresh('records-hep')
-
-    response = api_client.get('/literature?q=&author=BAI_John%20Doe')
-    data = json.loads(response.data)
-    response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
-    assert rec['control_number'] in response_recids
-    assert rec2['control_number'] in response_recids
-
-    response = api_client.get('/literature?q=&author=BAI_John%20Doe&author=BAI_John%20Doe2')
-    data = json.loads(response.data)
-    response_recids = [record['metadata']['control_number'] for record in data['hits']['hits']]
-    assert rec['control_number'] not in response_recids
-    assert rec2['control_number'] in response_recids
-
-    _delete_record('lit', 843386527)
-    _delete_record('lit', 843386521)
-    db.session.commit()
 
 
 def test_exact_author_bai_query(isolated_api_client):

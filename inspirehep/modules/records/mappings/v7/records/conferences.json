@@ -1,0 +1,250 @@
+{
+  "mappings": {
+    "date_detection": false,
+    "numeric_detection": false,
+    "properties": {
+      "$schema": {
+        "type": "keyword"
+      },
+      "_collections": {
+        "normalizer": "lowercase_normalizer",
+        "type": "keyword"
+      },
+      "_private_notes": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "acronyms": {
+        "copy_to": "conferenceautocomplete",
+        "type": "keyword"
+      },
+      "addresses": {
+        "properties": {
+          "cities": {
+            "copy_to": "conferenceautocomplete",
+            "type": "keyword"
+          },
+          "country_code": {
+            "type": "keyword"
+          },
+          "place_name": {
+            "type": "text"
+          },
+          "postal_address": {
+            "copy_to": "conferenceautocomplete",
+            "type": "text"
+          },
+          "postal_code": {
+            "type": "text"
+          },
+          "state": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "alternative_titles": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "subtitle": {
+            "type": "text"
+          },
+          "title": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "closing_date": {
+        "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+        "type": "date"
+      },
+      "cnum": {
+        "copy_to": "conferenceautocomplete",
+        "type": "keyword"
+      },
+      "conferenceautocomplete": {
+        "type": "completion"
+      },
+      "contact_details": {
+        "properties": {
+          "email": {
+            "type": "text"
+          },
+          "name": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "control_number": {
+        "type": "integer"
+      },
+      "deleted": {
+        "type": "boolean"
+      },
+      "deleted_recids": {
+        "type": "integer"
+      },
+      "deleted_records": {
+        "properties": {
+          "$ref": {
+            "type": "text",
+            "analyzer": "recid_analyzer"
+          }
+        },
+        "type": "object"
+      },
+      "external_system_identifiers": {
+        "properties": {
+          "schema": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      },
+      "inspire_categories": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "term": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      },
+      "legacy_creation_date": {
+        "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+        "type": "date"
+      },
+      "new_recid": {
+        "type": "integer"
+      },
+      "new_record": {
+        "properties": {
+          "$ref": {
+            "type": "text",
+            "analyzer": "recid_analyzer"
+          }
+        },
+        "type": "object"
+      },
+      "opening_date": {
+        "copy_to": "conferenceautocomplete",
+        "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+        "type": "date"
+      },
+      "public_notes": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "self": {
+        "properties": {
+          "$ref": {
+            "type": "text",
+            "analyzer": "recid_analyzer"
+          }
+        },
+        "type": "object"
+      },
+      "self_recid": {
+        "type": "integer"
+      },
+      "series": {
+        "properties": {
+          "name": {
+            "copy_to": "seriesautocomplete",
+            "type": "keyword"
+          },
+          "number": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "seriesautocomplete": {
+        "type": "completion"
+      },
+      "short_description": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "titles": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "subtitle": {
+            "type": "text"
+          },
+          "title": {
+            "copy_to": "conferenceautocomplete",
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "urls": {
+        "properties": {
+          "description": {
+            "type": "text"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "recid_analyzer": {
+          "tokenizer": "recid_tokenizer"
+        }
+      },
+      "normalizer": {
+        "lowercase_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": ["lowercase"]
+        }
+      },
+      "tokenizer": {
+        "recid_tokenizer": {
+          "type": "pattern",
+          "pattern": "(\\d+)",
+          "group": 1
+        }
+      }
+    }
+  }
+}

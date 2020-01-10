@@ -1163,7 +1163,7 @@ JSONSCHEMAS_REPLACE_REFS = True
 JSONSCHEMAS_LOADER_CLS = 'inspirehep.modules.records.json_ref_loader.SCHEMA_LOADER_CLS'
 
 INDEXER_DEFAULT_INDEX = "records-hep"
-INDEXER_DEFAULT_DOC_TYPE = "hep"
+INDEXER_DEFAULT_DOC_TYPE = "_doc"
 INDEXER_REPLACE_REFS = False
 INDEXER_BULK_REQUEST_TIMEOUT = float(900)
 
@@ -1675,7 +1675,6 @@ FUZZY_MATCH = {
             'validator': 'inspire_matcher.validators:authors_titles_validator'
         }
     ],
-    'doc_type': 'hep',
     'index': 'records-hep',
     'source': ['control_number', 'titles', 'abstracts', 'authors',
                'arxiv_eprints', 'public_notes', 'number_of_pages',

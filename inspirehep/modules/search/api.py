@@ -94,7 +94,7 @@ class LiteratureSearch(RecordsSearch, SearchMixin):
 
     class Meta:
         index = 'records-hep'
-        doc_types = 'hep'
+        doc_types = '_doc'
         default_filter = DefaultFilter(Q('match', _collections="Literature"))
 
     def query_from_iq(self, query_string):
@@ -131,7 +131,7 @@ class AuthorsSearch(RecordsSearch, SearchMixin):
 
     class Meta:
         index = 'records-authors'
-        doc_types = 'authors'
+        doc_types = '_doc'
 
 
 class DataSearch(RecordsSearch, SearchMixin):
@@ -139,7 +139,7 @@ class DataSearch(RecordsSearch, SearchMixin):
 
     class Meta:
         index = 'records-data'
-        doc_types = 'data'
+        doc_types = '_doc'
 
 
 class ConferencesSearch(RecordsSearch, SearchMixin):
@@ -147,7 +147,7 @@ class ConferencesSearch(RecordsSearch, SearchMixin):
 
     class Meta:
         index = 'records-conferences'
-        doc_types = 'conferences'
+        doc_types = '_doc'
 
     def query_from_iq(self, query_string):
         """Initialize ES DSL object using INSPIRE query parser.
@@ -164,7 +164,7 @@ class JobsSearch(RecordsSearch, SearchMixin):
 
     class Meta:
         index = 'records-jobs'
-        doc_types = 'jobs'
+        doc_types = '_doc'
 
 
 class InstitutionsSearch(RecordsSearch, SearchMixin):
@@ -172,7 +172,7 @@ class InstitutionsSearch(RecordsSearch, SearchMixin):
 
     class Meta:
         index = 'records-institutions'
-        doc_types = 'institutions'
+        doc_types = '_doc'
 
     def query_from_iq(self, query_string):
         """Initialize ES DSL object using INSPIRE query parser.
@@ -189,7 +189,7 @@ class ExperimentsSearch(RecordsSearch, SearchMixin):
 
     class Meta:
         index = 'records-experiments'
-        doc_types = 'experiments'
+        doc_types = '_doc'
 
 
 class JournalsSearch(RecordsSearch, SearchMixin):
@@ -197,4 +197,4 @@ class JournalsSearch(RecordsSearch, SearchMixin):
 
     class Meta:
         index = 'records-journals'
-        doc_types = 'journals'
+        doc_types = '_doc'

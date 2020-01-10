@@ -1,0 +1,248 @@
+{
+  "mappings": {
+    "date_detection": false,
+    "numeric_detection": false,
+    "properties": {
+      "$schema": {
+        "type": "keyword"
+      },
+      "ICN": {
+        "copy_to": "affautocomplete",
+        "type": "text"
+      },
+      "_collections": {
+        "normalizer": "lowercase_normalizer",
+        "type": "keyword"
+      },
+      "_private_notes": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "addresses": {
+        "properties": {
+          "cities": {
+            "type": "keyword"
+          },
+          "country_code": {
+            "type": "keyword"
+          },
+          "latitude": {
+            "type": "double"
+          },
+          "longitude": {
+            "type": "double"
+          },
+          "place_name": {
+            "type": "text"
+          },
+          "postal_address": {
+            "type": "text"
+          },
+          "postal_code": {
+            "type": "text"
+          },
+          "state": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      },
+      "affautocomplete": {
+        "type": "text"
+      },
+      "affiliation_suggest": {
+        "type": "completion"
+      },
+      "control_number": {
+        "type": "integer"
+      },
+      "core": {
+        "type": "boolean"
+      },
+      "deleted": {
+        "type": "boolean"
+      },
+      "deleted_recids": {
+        "type": "integer"
+      },
+      "deleted_records": {
+        "properties": {
+          "$ref": {
+            "type": "text",
+            "analyzer": "recid_analyzer"
+          }
+        },
+        "type": "object"
+      },
+      "external_system_identifiers": {
+        "properties": {
+          "schema": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      },
+      "extra_words": {
+        "type": "text"
+      },
+      "historical_data": {
+        "type": "text"
+      },
+      "inactive": {
+        "type": "boolean"
+      },
+      "inspire_categories": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "term": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      },
+      "institution_hierarchy": {
+        "properties": {
+          "acronym": {
+            "copy_to": "affautocomplete",
+            "type": "text"
+          },
+          "name": {
+            "copy_to": "affautocomplete",
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "institution_type": {
+        "type": "keyword"
+      },
+      "legacy_ICN": {
+        "copy_to": "affautocomplete",
+        "type": "keyword"
+      },
+      "legacy_creation_date": {
+        "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+        "type": "date"
+      },
+      "name_variants": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "value": {
+            "copy_to": "affautocomplete",
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "new_recid": {
+        "type": "integer"
+      },
+      "new_record": {
+        "properties": {
+          "$ref": {
+            "type": "text",
+            "analyzer": "recid_analyzer"
+          }
+        },
+        "type": "object"
+      },
+      "public_notes": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "related_records": {
+        "properties": {
+          "curated_relation": {
+            "type": "boolean"
+          },
+          "recid": {
+            "type": "integer"
+          },
+          "record": {
+            "properties": {
+              "$ref": {
+                "type": "text",
+                "analyzer": "recid_analyzer"
+              }
+            },
+            "type": "object"
+          },
+          "relation": {
+            "type": "keyword"
+          },
+          "relation_freetext": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "self": {
+        "properties": {
+          "$ref": {
+            "type": "text",
+            "analyzer": "recid_analyzer"
+          }
+        },
+        "type": "object"
+      },
+      "self_recid": {
+        "type": "integer"
+      },
+      "urls": {
+        "properties": {
+          "description": {
+            "type": "text"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "recid_analyzer": {
+          "tokenizer": "recid_tokenizer"
+        }
+      },
+      "normalizer": {
+        "lowercase_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": ["lowercase"]
+        }
+      },
+      "tokenizer": {
+        "recid_tokenizer": {
+          "type": "pattern",
+          "pattern": "(\\d+)",
+          "group": 1
+        }
+      }
+    }
+  }
+}

@@ -56,7 +56,9 @@ def test_render_conferences(request_context):
                         },
                     },
                 ],
-                'total': 2,
+                'total': {
+                    'value': 2,
+                }
             },
         }
     ).hits
@@ -93,7 +95,9 @@ def test_render_conferences_handles_unicode(request_context):
                         },
                     },
                 ],
-                'total': 1,
+                'total': {
+                    'value': 1,
+                }
             },
         }
     ).hits

@@ -111,7 +111,7 @@ class LiteratureCitationsJSONSerializer(JSONSerializer):
                         self.transform_record(pid, record, **kwargs)
                         for record in data['citations']
                     ],
-                    'citation_count': data['citation_count']
+                    'citation_count': data['citation_count']['value']
                 },
             }, **self._format_args()
         )
