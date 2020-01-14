@@ -1,0 +1,69 @@
+{
+  "mappings": {
+    "dynamic": false,
+    "date_detection": false,
+    "numeric_detection": false,
+    "properties": {
+      "_all": {
+        "type": "keyword"
+      },
+      "_extra_data": {
+        "properties": {
+          "_action": {
+            "type": "keyword"
+          },
+          "is-update": {
+            "type": "boolean"
+          },
+          "matches": {
+            "enabled": false,
+            "include_in_all": false,
+            "type": "object"
+          },
+          "relevance_prediction": {
+            "properties": {
+              "decision": {
+                "type": "keyword"
+              },
+              "relevance_score": {
+                "type": "float"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "_workflow": {
+        "properties": {
+          "status": {
+            "type": "keyword",
+            "copy_to": "_all"
+          },
+          "workflow_name": {
+            "type": "keyword"
+          }
+        }
+      },
+      "metadata": {
+        "properties": {
+          "acquisition_source": {
+            "properties": {
+              "datetime": {
+                "type": "date"
+              },
+              "method": {
+                "type": "keyword"
+              }
+            },
+            "type": "object"
+          },
+          "control_number": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
+}

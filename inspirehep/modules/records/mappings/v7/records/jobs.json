@@ -1,0 +1,263 @@
+{
+  "mappings": {
+    "date_detection": false,
+    "numeric_detection": false,
+    "properties": {
+      "$schema": {
+        "type": "keyword"
+      },
+      "_created": {
+        "type": "date"
+      },
+      "_updated": {
+        "type": "date"
+      },
+      "_collections": {
+        "normalizer": "lowercase_normalizer",
+        "type": "keyword"
+      },
+      "_private_notes": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "accelerator_experiments": {
+        "properties": {
+          "accelerator": {
+            "type": "text"
+          },
+          "curated_relation": {
+            "type": "boolean"
+          },
+          "experiment": {
+            "type": "text"
+          },
+          "institution": {
+            "type": "text"
+          },
+          "legacy_name": {
+            "type": "text"
+          },
+          "recid": {
+            "type": "integer"
+          },
+          "record": {
+            "properties": {
+              "$ref": {
+                "type": "keyword"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "acquisition_source": {
+        "properties": {
+          "datetime": {
+            "type": "date"
+          },
+          "email": {
+            "type": "keyword"
+          },
+          "internal_uid": {
+            "type": "integer"
+          },
+          "method": {
+            "type": "keyword"
+          },
+          "orcid": {
+            "type": "keyword"
+          },
+          "source": {
+            "type": "keyword"
+          },
+          "submission_number": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      },
+      "arxiv_categories": {
+        "type": "keyword"
+      },
+      "address": {
+        "properties": {
+          "cities": {
+            "type": "text"
+          },
+          "country_code": {
+            "type": "keyword"
+          },
+          "place_name": {
+            "type": "text"
+          },
+          "postal_address": {
+            "type": "text"
+          },
+          "postal_code": {
+            "type": "keyword"
+          },
+          "state": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "contact_details": {
+        "properties": {
+          "email": {
+            "type": "keyword"
+          },
+          "name": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "control_number": {
+        "type": "integer"
+      },
+      "deadline_date": {
+        "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+        "type": "date"
+      },
+      "deleted": {
+        "type": "boolean"
+      },
+      "deleted_recids": {
+        "type": "integer"
+      },
+      "deleted_records": {
+        "properties": {
+          "$ref": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      },
+      "description": {
+        "type": "text"
+      },
+      "earliest_date": {
+        "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+        "type": "date"
+      },
+      "institutions": {
+        "properties": {
+          "curated_relation": {
+            "type": "boolean"
+          },
+          "recid": {
+            "type": "integer"
+          },
+          "record": {
+            "properties": {
+              "$ref": {
+                "type": "keyword"
+              }
+            },
+            "type": "object"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "legacy_creation_date": {
+        "format": "yyyy-MM-dd||yyyy-MM||yyyy",
+        "type": "date"
+      },
+      "new_recid": {
+        "type": "integer"
+      },
+      "new_record": {
+        "properties": {
+          "$ref": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      },
+      "position": {
+        "type": "text"
+      },
+      "public_notes": {
+        "properties": {
+          "source": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text"
+          }
+        },
+        "type": "object"
+      },
+      "ranks": {
+        "type": "keyword"
+      },
+      "reference_letters": {
+        "properties": {
+          "emails": {
+            "type": "keyword"
+          },
+          "urls": {
+            "properties": {
+              "$ref": {
+                "type": "keyword"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "regions": {
+        "type": "keyword"
+      },
+      "self": {
+        "properties": {
+          "$ref": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      },
+      "self_recid": {
+        "type": "integer"
+      },
+      "status": {
+        "type": "keyword"
+      },
+      "urls": {
+        "properties": {
+          "description": {
+            "type": "text"
+          },
+          "value": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "settings": {
+    "analysis": {
+      "normalizer": {
+        "lowercase_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": ["lowercase"]
+        }
+      }
+    }
+  }
+}
