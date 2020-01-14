@@ -1645,6 +1645,7 @@ INSPIRE_REF_UPDATER_WHITELISTS = {
 # Configuration for the matcher
 # =============================
 EXACT_MATCH = exact_match
+EXACT_MATCH['doc_type'] = 'doc'
 
 FUZZY_MATCH = {
     'algorithm': [
@@ -1675,7 +1676,6 @@ FUZZY_MATCH = {
             'validator': 'inspire_matcher.validators:authors_titles_validator'
         }
     ],
-    'doc_type': 'hep',
     'index': 'records-hep',
     'source': ['control_number', 'titles', 'abstracts', 'authors',
                'arxiv_eprints', 'public_notes', 'number_of_pages',

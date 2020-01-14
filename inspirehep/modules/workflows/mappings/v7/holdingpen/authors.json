@@ -4,9 +4,6 @@
     "date_detection": false,
     "numeric_detection": false,
     "properties": {
-      "_all": {
-        "type": "keyword"
-      },
       "_extra_data": {
         "properties": {
           "_action": {
@@ -17,7 +14,6 @@
           },
           "matches": {
             "enabled": false,
-            "include_in_all": false,
             "type": "object"
           },
           "relevance_prediction": {
@@ -37,8 +33,7 @@
       "_workflow": {
         "properties": {
           "status": {
-            "type": "keyword",
-            "copy_to": "_all"
+            "type": "keyword"
           },
           "workflow_name": {
             "type": "keyword"
