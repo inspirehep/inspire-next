@@ -97,7 +97,9 @@ def store_record_inspirehep_api(obj, eng, is_update, is_authors):
                 'skipping update record, feature flag ``FEATURE_FLAG_ENABLE_MERGER`` is disabled.'
             )
             return
-        control_number = obj.extra_data['matches']['approved']
+        if 'control_number' not in obj.data:
+            raise ValueError("Control number is missing")
+        control_number = obj.data['control_number']
         send_record_to_hep(obj, endpoint, control_number)
     else:
         send_record_to_hep(obj, endpoint)
