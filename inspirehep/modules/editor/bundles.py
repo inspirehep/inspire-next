@@ -28,6 +28,6 @@ from invenio_assets import NpmBundle
 
 js = NpmBundle(
     npm={
-        "record-editor": "^0.13.29"
+        "record-editor": "^0.13.30"
     }
 )
