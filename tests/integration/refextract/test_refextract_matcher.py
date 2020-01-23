@@ -314,6 +314,72 @@ def test_match_reference_on_texkey(isolated_app):
     assert validate([reference], subschema) is None
 
 
+def test_match_reference_on_texkey_has_lower_priority_than_pub_info(isolated_app):
+    cited_record_with_texkey_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'control_number': 1,
+        'document_type': ['article'],
+        'texkeys': [
+            'MyTexKey:2008fh',
+        ],
+        'titles': [
+            {
+                'title': 'The Strongly-Interacting Light Higgs'
+            }
+        ],
+    }
+
+    TestRecordMetadata.create_from_kwargs(
+        json=cited_record_with_texkey_json, index_name='records-hep')
+
+    cited_record_with_pub_info_json = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'control_number': 2,
+        'document_type': ['article'],
+        'publication_info': [
+            {
+                'artid': '100',
+                'journal_title': 'JHEP',
+                'journal_volume': '100',
+                'page_start': '100',
+                'year': 2020
+            }
+        ],
+        'titles': [
+            {
+                'title': 'The Strongly-Interacting Light Higgs'
+            }
+        ],
+    }
+
+    TestRecordMetadata.create_from_kwargs(
+        json=cited_record_with_pub_info_json, index_name='records-hep')
+
+    reference = {
+        'reference': {
+            'texkey': 'MyTexKey:2008fh',
+            'publication_info': {
+                'artid': '100',
+                'journal_title': 'JHEP',
+                'journal_volume': '100',
+                'page_start': '100',
+                'year': 2020
+            }
+        }
+    }
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    assert validate([reference], subschema) is None
+    reference = match_reference(reference)
+
+    assert reference['record']['$ref'] == 'http://localhost:5000/api/literature/2'
+    assert validate([reference], subschema) is None
+
+
 def test_match_reference_ignores_hidden_collections(isolated_app):
     cited_record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
