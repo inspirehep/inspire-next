@@ -91,6 +91,7 @@ def match_reference(reference, previous_matched_recid=None):
         return reference
 
     config_unique_identifiers = config.REFERENCE_MATCHER_UNIQUE_IDENTIFIERS_CONFIG
+    config_texkey = config.REFERENCE_MATCHER_TEXKEY_CONFIG
     config_default_publication_info = config.REFERENCE_MATCHER_DEFAULT_PUBLICATION_INFO_CONFIG
     config_jcap_and_jhep_publication_info = config.REFERENCE_MATCHER_JHEP_AND_JCAP_PUBLICATION_INFO_CONFIG
     config_data = config.REFERENCE_MATCHER_DATA_CONFIG
@@ -99,7 +100,7 @@ def match_reference(reference, previous_matched_recid=None):
     config_publication_info = config_jcap_and_jhep_publication_info if \
         journal_title in ['JCAP', 'JHEP'] else config_default_publication_info
 
-    configs = [config_unique_identifiers, config_publication_info, config_data]
+    configs = [config_unique_identifiers, config_publication_info, config_texkey, config_data]
 
     matches = (match_reference_with_config(reference, config, previous_matched_recid) for config in configs)
     matches = (matched_record for matched_record in matches if 'record' in matched_record)
