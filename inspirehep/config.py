@@ -1311,11 +1311,11 @@ WORKFLOWS_UI_REST_ENDPOINT = {
 WORKFLOWS_UI_DATA_TYPES = {
     'hep': {
         'search_index': 'holdingpen-hep',
-        'search_type': 'hep',
+        'search_type': '_doc',
     },
     'authors': {
         'search_index': 'holdingpen-authors',
-        'search_type': 'authors',
+        'search_type': '_doc',
     }
 }
 
