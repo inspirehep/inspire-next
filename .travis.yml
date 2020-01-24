@@ -88,10 +88,15 @@ after_script:
   - coveralls
 
 deploy:
-  skip_cleanup: true
-  provider: script
-  script:
-    - ./deploy-docker-image.sh
-  on:
-    branch: master
-    condition: $SUITE = integration
+  - skip_cleanup: true
+    provider: script
+    script: ./deploy-docker-image.sh
+    on:
+      branch: master
+      condition: $SUITE = integration
+  - skip_cleanup: true
+    provider: script
+    script: ./deploy-docker-image.sh
+    on:
+      tags: true
+      condition: $SUITE = integration
