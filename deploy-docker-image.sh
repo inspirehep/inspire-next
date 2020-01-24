@@ -16,7 +16,7 @@ login() {
 buildPush() {
   IMAGE="${1}"
   DOCKERFILE="${2:-Dockerfile}"
-  TAG="$(git describe --always)"
+  TAG="$(git describe --always --tags)"
 
 
   echo "Building docker image"
