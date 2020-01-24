@@ -19,6 +19,7 @@ click = "<7.0,==6.*,>=6.7.0"
 click-spinner = "==0.*,>=0.0.0,>=0.1.8"
 coverage = {version = "==4.*,>=4.0.0,>=4.5.4", optional = true}
 docutils = {version = "<0.16,==0.*,>=0.15.0,>=0.15.2", optional = true}
+elasticsearch = {version = "==7.1.0"}
 enum34 = "==1.*,>=1.0.0,>=1.1.6"
 flake8-future-import = {version = "==0.*,>=0.0.0,>=0.4.3", optional = true}
 flask = "==0.*,>=0.0.0,>=0.12.4"
@@ -68,7 +69,7 @@ invenio-search = {version = "==1.*,>=1.0.0", extras = ["elasticsearch7"]}
 invenio-userprofiles = "==1.*,>=1.0.0"
 invenio-workflows = "==7.*,>=7.0.0,>=7.0.1"
 invenio-workflows-files = "==1.*,>=1.0.0"
-invenio-workflows-ui = ">=2.0.17"
+invenio-workflows-ui = ">=2.0.19"
 ipdb = {version = "==0.*,>=0.0.0,>=0.10.3", optional = true}
 jinja2 = "==2.*,>=2.0.0,>=2.10"
 jsonschema = "==2.*,>=2.0.0,>=2.6.0"
