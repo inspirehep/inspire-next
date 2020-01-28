@@ -80,6 +80,7 @@ def app():
         SECRET_KEY='secret!',
         RECORD_EDITOR_FILE_UPLOAD_FOLDER='tests/integration/editor/temp',
         TESTING=True,
+        INSPIREHEP_URL='localhost:5000/api',
     )
 
     with app.app_context(), mock.patch(

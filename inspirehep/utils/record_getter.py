@@ -24,8 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+import requests
 from functools import wraps
-
+import backoff
 from flask import current_app
 from sqlalchemy import tuple_
 from werkzeug.utils import import_string
@@ -104,11 +105,29 @@ def get_es_record_by_uuid(uuid):
     return search_class.get_source(uuid)
 
 
-@raise_record_getter_error_and_log
+@backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
+def make_get_request_to_hep(url):
+    headers = {
+        "content-type": "application/json",
+        "Authorization": "Bearer {token}".format(
+            token=current_app.config['AUTHENTICATION_TOKEN']
+        ),
+    }
+    response = requests.get(
+        url,
+        headers=headers,
+    )
+    return response.json()
+
+
 def get_db_record(pid_type, recid):
-    from inspirehep.modules.records.api import InspireRecord
-    pid = PersistentIdentifier.get(pid_type, recid)
-    return InspireRecord.get_record(pid.object_uuid)
+    inspirehep_url = current_app.config.get("INSPIREHEP_URL")
+    url = "{inspirehep_url}/{pid_type}/{recid}".format(
+        inspirehep_url=inspirehep_url,
+        pid_type=pid_type,
+        recid=recid
+    )
+    return make_get_request_to_hep(url)
 
 
 def get_db_records(pids):

@@ -72,6 +72,7 @@ from inspirehep.modules.workflows.utils import (
 from inspirehep.utils.normalizers import normalize_journal_title
 from inspirehep.utils.url import is_pdf_link
 
+
 EXPERIMENTAL_ARXIV_CATEGORIES = [
     'astro-ph',
     'astro-ph.CO',
