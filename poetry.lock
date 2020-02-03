@@ -494,6 +494,7 @@ tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock
 reference = "40079d7e31e432dca9701258d057161a23eb971e"
 type = "git"
 url = "https://github.com/inspirehep/dictdiffer.git"
+
 [[package]]
 category = "main"
 description = "Docutils -- Python Documentation Utilities"
@@ -3436,6 +3437,7 @@ six = "*"
 reference = "bda345b51218d0c4a33242be1d042228eafa8793"
 type = "git"
 url = "https://github.com/CZ-NIC/python-rt.git"
+
 [[package]]
 category = "main"
 description = "scandir, a better directory iterator and faster os.walk()"
@@ -3792,6 +3794,7 @@ httplib2 = "*"
 reference = "6a3da948ba105d12209c3c0826fd668977a626df"
 type = "git"
 url = "https://github.com/inspirehep/python-client-sword2.git"
+
 [[package]]
 category = "main"
 description = "Python project"
@@ -3811,6 +3814,7 @@ six = ">=1.10.0,<2.0.0"
 reference = "1cc298de76c03cdd1764c52655742c9d22514e23"
 type = "git"
 url = "https://github.com/puntonim/py-timeexecution.git"
+
 [[package]]
 category = "main"
 description = "Timeout decorator"
@@ -4165,6 +4169,7 @@ fs = ">=0.4.0,<2.0"
 reference = "6b45e4f141cd400943c0eba4a6d7f8e09bb16917"
 type = "git"
 url = "https://github.com/inspirehep/xrootdpyfs.git"
+
 [[package]]
 category = "main"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -4210,7 +4215,7 @@ worker-node = ["flower", "superlance", "tornado"]
 xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
-content-hash = "21cec66db83a43b329ed8ba6829a971a66e089c74b7af90de610125b7ab19849"
+content-hash = "f6330ba8bbc039484074cd7342cb62784a4cf7d63d5007b1da2e0315997c86c1"
 python-versions = ">=2.7,<3.0"
 
 [metadata.files]
