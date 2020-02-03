@@ -3349,7 +3349,7 @@ description = "Small library for extracting references used in scholarly communi
 name = "refextract"
 optional = false
 python-versions = "*"
-version = "0.2.17"
+version = "0.2.18"
 
 [package.dependencies]
 PyPDF2 = ">=1.26.0,<2.0"
@@ -4215,7 +4215,7 @@ worker-node = ["flower", "superlance", "tornado"]
 xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
-content-hash = "f6330ba8bbc039484074cd7342cb62784a4cf7d63d5007b1da2e0315997c86c1"
+content-hash = "75d74f9d4084c8952a6f8cb3a57c8a8609ed4a0d52cb045fd7e588aefc0fd54e"
 python-versions = ">=2.7,<3.0"
 
 [metadata.files]
@@ -5344,7 +5344,7 @@ redis = [
     {file = "redis-3.3.11.tar.gz", hash = "sha256:8d0fc278d3f5e1249967cba2eb4a5632d19e45ce5c09442b8422d15ee2c22cc2"},
 ]
 refextract = [
-    {file = "refextract-0.2.17.tar.gz", hash = "sha256:eb6807ed95e107d76cc160d371cc9e8e3148bf47f0834c07f1c847ffa21a8f26"},
+    {file = "refextract-0.2.18.tar.gz", hash = "sha256:4e5326d038da8275cfbca93f0d80690a8a01236c45fa51a2346ef81cd9fa729e"},
 ]
 requests = [
     {file = "requests-2.22.0-py2.py3-none-any.whl", hash = "sha256:9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31"},
