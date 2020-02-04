@@ -52,5 +52,5 @@ def holdingpen_search_factory(self, search, **kwargs):
         '_extra_data.conflicts', '_extra_data.reference_count',
         '_extra_data.validation_errors', '_extra_data.callback_url',
     ]
-    search = search.extra(_source={"include": includes})
+    search = search.extra(_source={"include": includes}, track_total_hits=True)
     return search, urlkwargs
