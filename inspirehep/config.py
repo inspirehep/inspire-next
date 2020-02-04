@@ -33,6 +33,7 @@ from logging.config import dictConfig
 
 from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
+from invenio_records_rest.utils import allow_all
 
 from inspire_matcher.config import MATCHER_DEFAULT_CONFIGURATION as exact_match
 
@@ -116,6 +117,8 @@ BASE_FILES_LOCATION = os.path.join(sys.prefix, 'var/data')
 
 # This is needed in order to be able to use EOS files locations
 MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100 MiB
+
+FILES_REST_PERMISSION_FACTORY = allow_all
 
 # REST
 # ====
