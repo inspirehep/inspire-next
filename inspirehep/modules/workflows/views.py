@@ -780,7 +780,10 @@ def start_workflow_for_literature_submission():
         'extra_data': copy.deepcopy(workflow_object.extra_data),
         'data': copy.deepcopy(workflow_object.data),
     }
-
+    # Add submission pdf from formdata.url
+    form_url = workflow_object.extra_data['formdata'].get('url')
+    if form_url and 'arxiv.org' not in form_url:
+        workflow_object.extra_data['submission_pdf'] = form_url
     workflow_object.save()
     db.session.commit()
 
