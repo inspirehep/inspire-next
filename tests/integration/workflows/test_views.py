@@ -335,7 +335,6 @@ def test_literature_submit_workflow(mock_start, workflow_app):
         mock_start.delay.assert_called_once_with("article", object_id=workflow_object_id)
 
         obj = workflow_object_class.get(workflow_object_id)
-
         expected_data = {
             "$schema": "http://localhost:5000/schemas/records/hep.json",
             "_collections": [
@@ -361,5 +360,8 @@ def test_literature_submit_workflow(mock_start, workflow_app):
             "url": "https://cern.ch/coolstuff.pdf"
         }
 
+        expected_submission_pdf = data['form_data']['url']
+
         assert expected_data == obj.data
         assert expected_formdata == obj.extra_data["formdata"]
+        assert expected_submission_pdf == obj.extra_data['submission_pdf']
