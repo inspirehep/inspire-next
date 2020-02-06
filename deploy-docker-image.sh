@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+TAG="${TRAVIS_TAG:-$(git describe --always --tags)}"
+
 retry() {
     "${@}" || "${@}" || exit 2
 }
@@ -16,8 +18,6 @@ login() {
 buildPush() {
   IMAGE="${1}"
   DOCKERFILE="${2:-Dockerfile}"
-  TAG="${TRAVIS_TAG:-$(git describe --always --tags)}"
-
 
   echo "Building docker image"
   retry docker build -t "${IMAGE}" -t "${IMAGE}:${TAG}" -f "${DOCKERFILE}" --build-arg FROM_TAG="${TAG}" .
@@ -37,9 +37,6 @@ logout() {
 }
 
 deployQA() {
-  IMAGE="${1}"
-  TAG="${2}"
-
   curl -X POST \
     -F token=${DEPLOY_QA_TOKEN} \
     -F ref=master \
