@@ -55,5 +55,6 @@ main() {
   buildPush "inspirehep/next-assets" Dockerfile.with_assets
   buildPush "inspirehep/next-scrapyd" Dockerfile.scrapyd
   logout
+  deployQA
 }
 main
