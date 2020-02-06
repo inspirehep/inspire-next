@@ -25,9 +25,6 @@ buildPush() {
   echo "Pushing image to ${IMAGE}:${TAG}"
   retry docker push "${IMAGE}:${TAG}"
   retry docker push "${IMAGE}"
-
-  echo "Deploying to QA"
-  deployQA ${IMAGE} ${TAG}
 }
 
 
@@ -37,6 +34,7 @@ logout() {
 }
 
 deployQA() {
+  echo "Deploying to QA"
   curl -X POST \
     -F token=${DEPLOY_QA_TOKEN} \
     -F ref=master \
