@@ -62,14 +62,17 @@ RUN npm install -g \
         requirejs \
         uglify-js
 
-COPY . .
-
 ENV PATH="/root/.poetry/bin:${PATH}" \
     POETRY_VIRTUALENVS_CREATE=false
 
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python && \
     poetry --version && \
     pip install --no-cache-dir --upgrade setuptools && \
-    pip install --no-cache-dir --upgrade wheel && \
-    poetry export --without-hashes -E all -E xrootd -f requirements.txt > requirements.poetry.txt && \
-    pip install --ignore-installed --requirement requirements.poetry.txt  -e .
+    pip install --no-cache-dir --upgrade wheel
+
+COPY poetry.lock pyproject.toml ./
+RUN poetry export --without-hashes -E all -E xrootd -f requirements.txt > requirements.poetry.txt && \
+    pip install --ignore-installed --requirement requirements.poetry.txt
+
+COPY . .
+RUN pip install -e .
