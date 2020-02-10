@@ -20,7 +20,8 @@ buildPush() {
   DOCKERFILE="${2:-Dockerfile}"
 
   echo "Building docker image"
-  retry docker build -t "${IMAGE}" -t "${IMAGE}:${TAG}" -f "${DOCKERFILE}" --build-arg FROM_TAG="${TAG}" .
+  retry docker pull "${IMAGE}"
+  retry docker build -t "${IMAGE}" -t "${IMAGE}:${TAG}" -f "${DOCKERFILE}" --build-arg FROM_TAG="${TAG}" --cache-from "${IMAGE}" .
 
   echo "Pushing image to ${IMAGE}:${TAG}"
   retry docker push "${IMAGE}:${TAG}"
