@@ -776,14 +776,19 @@ def start_workflow_for_literature_submission():
     submission_data['acquisition_source']['submission_number'] = str(workflow_object.id)
     workflow_object.data = submission_data
     workflow_object.extra_data['formdata'] = json['form_data']
-    workflow_object.extra_data['source_data'] = {
-        'extra_data': copy.deepcopy(workflow_object.extra_data),
-        'data': copy.deepcopy(workflow_object.data),
-    }
+
     # Add submission pdf from formdata.url
     form_url = workflow_object.extra_data['formdata'].get('url')
     if form_url and 'arxiv.org' not in form_url:
         workflow_object.extra_data['submission_pdf'] = form_url
+
+    # Remember that source_data should be created at the end, with all fields already
+    # filled. As first step in WF will overwrite everything with data form source_data
+    workflow_object.extra_data['source_data'] = {
+        'extra_data': copy.deepcopy(workflow_object.extra_data),
+        'data': copy.deepcopy(workflow_object.data),
+    }
+
     workflow_object.save()
     db.session.commit()
 
