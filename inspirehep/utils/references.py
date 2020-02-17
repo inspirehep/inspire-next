@@ -123,6 +123,7 @@ def map_refextract_to_schema(extracted_references, source=None):
             rb.obj['reference']['urls'] = dedupe_list_of_dicts(rb.obj['reference']['urls'])
 
         result.append(rb.obj)
+        result.extend(rb.pop_additional_pubnotes())
 
     return result
 
