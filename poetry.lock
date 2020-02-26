@@ -497,6 +497,7 @@ tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock
 reference = "40079d7e31e432dca9701258d057161a23eb971e"
 type = "git"
 url = "https://github.com/inspirehep/dictdiffer.git"
+
 [[package]]
 category = "main"
 description = "Docutils -- Python Documentation Utilities"
@@ -954,6 +955,7 @@ SQLAlchemy = ">=0.8.0"
 reference = "71abd94a1e2317a1365a25a31e719dbd9aafceea"
 type = "git"
 url = "https://github.com/inspirehep/flask-sqlalchemy.git"
+
 [[package]]
 category = "main"
 description = "Webpack integration for Flask."
@@ -1472,7 +1474,7 @@ description = "Inspire JSON schemas and utilities to use them."
 name = "inspire-schemas"
 optional = false
 python-versions = "*"
-version = "61.1.0"
+version = "61.1.2"
 
 [package.dependencies]
 Unidecode = ">=1.0.22,<2.0"
@@ -3799,6 +3801,7 @@ httplib2 = "*"
 reference = "6a3da948ba105d12209c3c0826fd668977a626df"
 type = "git"
 url = "https://github.com/inspirehep/python-client-sword2.git"
+
 [[package]]
 category = "main"
 description = "Python project"
@@ -3818,6 +3821,7 @@ six = ">=1.10.0,<2.0.0"
 reference = "1cc298de76c03cdd1764c52655742c9d22514e23"
 type = "git"
 url = "https://github.com/puntonim/py-timeexecution.git"
+
 [[package]]
 category = "main"
 description = "Timeout decorator"
@@ -4173,6 +4177,7 @@ fs = ">=0.4.0,<2.0"
 reference = "6b45e4f141cd400943c0eba4a6d7f8e09bb16917"
 type = "git"
 url = "https://github.com/inspirehep/xrootdpyfs.git"
+
 [[package]]
 category = "main"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -4729,7 +4734,7 @@ inspire-query-parser = [
     {file = "inspire-query-parser-6.0.4.tar.gz", hash = "sha256:9fc3d1a312e525bbd40f4987c47043bc51516d803f2a278eff7c3cd63cbe89ec"},
 ]
 inspire-schemas = [
-    {file = "inspire-schemas-61.1.0.tar.gz", hash = "sha256:a3685a1a8ec2f8ee7f4a003df649fd21cd9b4c5efcae28dcaeedd535b8e1c688"},
+    {file = "inspire-schemas-61.1.2.tar.gz", hash = "sha256:49226b875b1791f13d0d7678c63cd4b03ce54bb7a9ffcae319daca240b308ed0"},
 ]
 inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
