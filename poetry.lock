@@ -377,9 +377,6 @@ optional = false
 python-versions = "*"
 version = "5.0.6"
 
-[package.dependencies]
-six = "*"
-
 [[package]]
 category = "main"
 description = "Updated configparser from Python 3.7 for Python 2.6+."
@@ -2895,7 +2892,7 @@ description = "Small library for extracting plots used in scholarly communicatio
 name = "plotextractor"
 optional = false
 python-versions = "*"
-version = "0.3.3"
+version = "0.3.4"
 
 [package.dependencies]
 Wand = ">=0.4.1"
@@ -3448,7 +3445,7 @@ six = "*"
 [[package]]
 category = "main"
 description = "scandir, a better directory iterator and faster os.walk()"
-marker = "python_version < \"3.5\" or python_version in \"2.6 2.7 3.2 3.3\" or python_version == \"2.7\""
+marker = "python_version < \"3.5\" or python_version == \"2.7\" or python_version in \"2.6 2.7 3.2 3.3\""
 name = "scandir"
 optional = false
 python-versions = "*"
@@ -4071,7 +4068,7 @@ version = "0.6.1"
 [[package]]
 category = "main"
 description = "Enable Unicode input and display when running Python from Windows console."
-marker = "sys_platform == \"win32\" and python_version < \"3.6\" or sys_platform == \"win32\" and python_version == \"2.7\""
+marker = "sys_platform == \"win32\" and python_version == \"2.7\" or sys_platform == \"win32\" and python_version < \"3.6\""
 name = "win-unicode-console"
 optional = false
 python-versions = "*"
@@ -5125,7 +5122,7 @@ pkgsettings = [
     {file = "pkgsettings-0.12.0.tar.gz", hash = "sha256:149102d1c3d2179140eaa8acd94b085aaa6ae30605d425b84aa83a3bb1536658"},
 ]
 plotextractor = [
-    {file = "plotextractor-0.3.3.tar.gz", hash = "sha256:9ffe27df44b9322b6bf62f7b57e682397bc9ced4d76499a1add9da62f18cdae2"},
+    {file = "plotextractor-0.3.4.tar.gz", hash = "sha256:4b0915b793c4eb04c06109b1ecf548626dbf0c07563e2c63f381e1ea5d1c35cd"},
 ]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
