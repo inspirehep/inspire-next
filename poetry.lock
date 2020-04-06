@@ -377,6 +377,9 @@ optional = false
 python-versions = "*"
 version = "5.0.6"
 
+[package.dependencies]
+six = "*"
+
 [[package]]
 category = "main"
 description = "Updated configparser from Python 3.7 for Python 2.6+."
@@ -1385,13 +1388,13 @@ description = "INSPIRE-specific rules to transform from MARCXML to JSON and back
 name = "inspire-dojson"
 optional = false
 python-versions = "*"
-version = "63.0.2"
+version = "63.0.9"
 
 [package.dependencies]
 Flask = ">=0.12.3,<2.0.0"
 IDUtils = ">=1.0.1,<2.0"
 dojson = ">=1.3.1,<2.0"
-inspire-schemas = ">=61.1,<62.0"
+inspire-schemas = ">=61.0,<62.0"
 inspire-utils = ">=3.0.0,<4.0"
 isbnid_fork = ">=0.5.2,<1.0"
 langdetect = ">=1.0.7,<2.0"
@@ -3445,7 +3448,7 @@ six = "*"
 [[package]]
 category = "main"
 description = "scandir, a better directory iterator and faster os.walk()"
-marker = "python_version < \"3.5\" or python_version == \"2.7\" or python_version in \"2.6 2.7 3.2 3.3\""
+marker = "python_version < \"3.5\" or python_version in \"2.6 2.7 3.2 3.3\" or python_version == \"2.7\""
 name = "scandir"
 optional = false
 python-versions = "*"
@@ -4068,7 +4071,7 @@ version = "0.6.1"
 [[package]]
 category = "main"
 description = "Enable Unicode input and display when running Python from Windows console."
-marker = "sys_platform == \"win32\" and python_version == \"2.7\" or sys_platform == \"win32\" and python_version < \"3.6\""
+marker = "sys_platform == \"win32\" and python_version < \"3.6\" or sys_platform == \"win32\" and python_version == \"2.7\""
 name = "win-unicode-console"
 optional = false
 python-versions = "*"
@@ -4719,7 +4722,7 @@ inspire-crawler = [
     {file = "inspire-crawler-3.0.4.tar.gz", hash = "sha256:6ad11cb23666b7fdb4e5f179adae3cf73d2ff86ee052cc1f82c9ebf8f985f1f8"},
 ]
 inspire-dojson = [
-    {file = "inspire-dojson-63.0.2.tar.gz", hash = "sha256:b27b3916be7d615b1623e1a335102755a5633d6397905d9640aa277e3fce62cf"},
+    {file = "inspire-dojson-63.0.9.tar.gz", hash = "sha256:e69922c79ffc9bebf4f2bcf89103a9be341e928503cc0034ce41e812c58cc167"},
 ]
 inspire-json-merger = [
     {file = "inspire-json-merger-11.0.2.tar.gz", hash = "sha256:e016a713ac165655c958fa64caa81e46bb044b05cb6b2bf45c95c586a5b26288"},
