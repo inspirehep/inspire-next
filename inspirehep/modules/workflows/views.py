@@ -113,15 +113,6 @@ def error_handler(error):
     return response, error.code
 
 
-def _get_base_url():
-    """Return base URL for generated URLs for remote reference."""
-    base_url = current_app.config.get(
-        "LEGACY_ROBOTUPLOAD_URL",
-        current_app.config["SERVER_NAME"],
-    )
-    return ensure_scheme(base_url)
-
-
 def _continue_workflow(workflow_id, recid, result=None):
     """Small wrapper to continue a workflow.
 
@@ -132,7 +123,7 @@ def _continue_workflow(workflow_id, recid, result=None):
         exist.
     """
     result = result if result is not None else {}
-    base_url = _get_base_url()
+    base_url = ensure_scheme(current_app.config["SERVER_NAME"])
     try:
         workflow_object = workflow_object_class.get(workflow_id)
     except WorkflowsMissingObject:
