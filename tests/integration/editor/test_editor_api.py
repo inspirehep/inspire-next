@@ -40,10 +40,6 @@ from invenio_db import db
 
 from inspire_schemas.api import load_schema, validate
 from inspire_utils.record import get_value
-from inspirehep.modules.records.api import InspireRecord
-from inspirehep.utils.record_getter import get_db_record
-
-from utils import _delete_record
 
 
 @pytest.fixture(autouse=True)
@@ -76,94 +72,10 @@ def log_in_as_scientist(api_client):
 
 
 @pytest.fixture(scope='function')
-def record_with_two_revisions(app):
-    record = {
-        '$schema': 'http://localhost:5000/schemas/records/hep.json',
-        'control_number': 111,
-        'document_type': [
-            'article',
-        ],
-        'titles': [
-            {'title': 'record rev0'},
-        ],
-        'self': {
-            '$ref': 'http://localhost:5000/schemas/records/hep.json',
-        },
-        '_collections': ['Literature']
-    }
-
-    with db.session.begin_nested():
-        record = InspireRecord.create_or_update(record)
-        record.commit()
-    db.session.commit()
-
-    record['titles'][0]['title'] = 'record rev1'
-
-    with db.session.begin_nested():
-        record = InspireRecord.create_or_update(record)
-        record.commit()
-    db.session.commit()
-
-    yield
-
-    _delete_record('lit', 111)
-
-
-@pytest.fixture(scope='function')
 def clean_uploads_folder(app):
     yield
     uploads = app.config['RECORD_EDITOR_FILE_UPLOAD_FOLDER']
     shutil.rmtree(uploads)
-
-
-def test_get_revisions(log_in_as_cataloger, record_with_two_revisions, api_client):
-    response = api_client.get(
-        '/editor/literature/111/revisions',
-        content_type='application/json',
-    )
-
-    result = json.loads(response.data)
-
-    assert result[0]['revision_id'] == 2
-    assert result[1]['revision_id'] == 1
-
-    assert result[0]['user_email'] == 'system'
-    assert result[1]['user_email'] == 'system'
-
-
-def test_revert_to_revision(log_in_as_cataloger, record_with_two_revisions, api_client):
-    record = get_db_record('lit', 111)
-
-    assert record['titles'][0]['title'] == 'record rev1'
-
-    response = api_client.put(
-        '/editor/literature/111/revisions/revert',
-        content_type='application/json',
-        data=json.dumps({
-            'revision_id': 0
-        }),
-    )
-
-    assert response.status_code == 200
-
-    record = get_db_record('lit', 111)
-
-    assert record['titles'][0]['title'] == 'record rev0'
-
-
-def test_get_revision(log_in_as_cataloger, record_with_two_revisions, api_client):
-    record = get_db_record('lit', 111)
-
-    transaction_id_of_first_rev = record.revisions[0].model.transaction_id
-    rec_uuid = record.id
-
-    response = api_client.get(
-        '/editor/literature/111/revision/' + str(rec_uuid) + '/' + str(transaction_id_of_first_rev),
-        content_type='application/json',
-    )
-    result = json.loads(response.data)
-
-    assert result['titles'][0]['title'] == 'record rev0'
 
 
 @patch('inspirehep.modules.editor.api.tickets')
