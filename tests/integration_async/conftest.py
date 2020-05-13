@@ -70,6 +70,7 @@ def app():
         CELERY_CACHE_BACKEND='redis://test-redis:6379/1',
         TESTING=True,
     )
+    app.extensions['invenio-search'].register_mappings('records', 'inspirehep.modules.records.mappings')
     app.config.update(config)
 
     with app.app_context():

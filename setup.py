@@ -154,7 +154,6 @@ setup(
         ],
         'invenio_search.mappings': [
             'holdingpen = inspirehep.modules.workflows.mappings',
-            'records = inspirehep.modules.records.mappings',
         ],
         'invenio_workflows.workflows': [
             'article = inspirehep.modules.workflows.workflows:Article',
