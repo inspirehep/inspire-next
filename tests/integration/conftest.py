@@ -81,7 +81,7 @@ def app():
         RECORD_EDITOR_FILE_UPLOAD_FOLDER='tests/integration/editor/temp',
         TESTING=True,
     )
-
+    app.extensions['invenio-search'].register_mappings('records', 'inspirehep.modules.records.mappings')
     with app.app_context(), mock.patch(
             'inspirehep.modules.records.receivers.index_modified_citations_from_record.delay'
     ):

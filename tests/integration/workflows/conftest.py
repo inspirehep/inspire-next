@@ -112,6 +112,8 @@ def workflow_app(higgs_ontology):
             WTF_CSRF_ENABLED=False,
         )
 
+    app.extensions['invenio-search'].register_mappings('records', 'inspirehep.modules.records.mappings')
+
     with app.app_context():
         with mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async'):
 
