@@ -21,9 +21,11 @@
 # or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, division, print_function
+import datetime
+from freezegun import freeze_time
 
 from invenio_search import current_search_client as es
-from invenio_workflows import ObjectStatus
+from invenio_workflows import ObjectStatus, start, workflow_object_class
 from invenio_workflows.models import WorkflowObjectModel
 
 from inspirehep.modules.workflows.cli import workflows
@@ -85,3 +87,47 @@ def test_cli_restart_by_error_restarts_one_wf_from_beginning(
     output = result.output_bytes
 
     assert 'Found 2 workflows to restart from first step\n' in output
+
+
+@freeze_time("2020-07-11")
+def test_cli_delete_edit_article_workflows(app_cli_runner):
+    wf_to_be_deleted = build_workflow({}, data_type='hep')
+    wf_to_be_deleted.save()
+    start('edit_article', object_id=wf_to_be_deleted.id)
+    wf_to_be_deleted = workflow_object_class.get(wf_to_be_deleted.id)
+    wf_to_be_deleted.status = ObjectStatus.WAITING
+    wf_to_be_deleted.created = datetime.datetime(2020, 7, 8, 12, 31, 8, 299777)
+    wf_to_be_deleted.save()
+
+    wf_in_error = build_workflow({}, data_type='hep')
+    wf_in_error.status = ObjectStatus.ERROR
+    wf_in_error.extra_data["_error_msg"] = "Error in WebColl"
+    wf_in_error.created = datetime.datetime(2020, 7, 8, 12, 31, 8, 299777)
+    wf_in_error.save()
+
+    recent_wf = build_workflow({}, data_type='hep')
+    recent_wf.save()
+    start('edit_article', object_id=recent_wf.id)
+    recent_wf = workflow_object_class.get(recent_wf.id)
+    recent_wf.status = ObjectStatus.WAITING
+    recent_wf.created = datetime.datetime(2020, 7, 11, 12, 31, 8, 299777)
+    recent_wf.save()
+
+    indices = ['holdingpen-hep']
+    es.indices.refresh(indices)
+    es_result = es.search(indices)
+    assert es_result['hits']['total']['value'] == 3
+
+    wf_count = WorkflowObjectModel.query.count()
+    assert wf_count == 3
+
+    result = app_cli_runner.invoke(workflows, ['delete_edit_article_older_than'])
+
+    assert "Found 1 workflows to delete older than 48 hours" in result.output_bytes
+    es.indices.refresh(indices)
+    es_result = es.search(indices)
+    assert es_result['hits']['total']['value'] == 2
+
+    wf_count = WorkflowObjectModel.query.count()
+    assert wf_count == 2
+    assert WorkflowObjectModel.query.filter_by(id=wf_to_be_deleted.id).one_or_none() is None

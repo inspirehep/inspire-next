@@ -25,6 +25,8 @@
 from __future__ import absolute_import, division, print_function
 
 import click
+import datetime
+from sqlalchemy import or_
 
 from flask.cli import with_appcontext
 from invenio_db import db
@@ -112,3 +114,34 @@ def restart_by_error(error_message, from_beginning):
         db.session.commit()
         obj.continue_workflow('restart_task', True)
         click.secho("Workflow {} restarted successfully".format(wf_id))
+
+
+@workflows.command(help="Deletes edit_article workflows in WAITING state older than the number of hours given.")
+@click.option(
+    "--hours",
+    "-h",
+    help="Number of hours",
+    type=int,
+    default=48,
+    show_default=True,
+)
+@with_appcontext
+def delete_edit_article_older_than(hours):
+    max_date = datetime.datetime.utcnow() - datetime.timedelta(hours=hours)
+
+    waiting = WorkflowObjectModel.query.filter_by(status=ObjectStatus.WAITING)\
+        .filter(or_(WorkflowObjectModel.created <= max_date,
+                    WorkflowObjectModel.created == None  # noqa: E711
+                    ))\
+        .filter(WorkflowObjectModel.workflow.has(name="edit_article"))\
+        .all()
+
+    click.secho("Found {} workflows to delete older than {} hours".format(
+        len(waiting),
+        hours
+    ))
+    for wf in waiting:
+        wf = workflow_object_class.get(wf.id)
+        wf.delete()
+        db.session.commit()
+        click.secho("Workflow {} deleted successfully".format(wf.id))
