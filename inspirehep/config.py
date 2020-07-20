@@ -1225,7 +1225,7 @@ LEGACY_ROBOTUPLOAD_PRIORITY_EDIT_ARTICLE = 5
 # =====================
 BEARD_API_URL = None  # e.g. "http://beard.inspirehep.net/api"
 MAGPIE_API_URL = None  # e.g. "http://magpie.inspirehep.net/api"
-LEGACY_BASE_URL = "http://inspirehep.net"
+LEGACY_BASE_URL = "https://old.inspirehep.net"
 LEGACY_RECORD_URL_PATTERN = 'http://inspirehep.net/record/{recid}'
 AUTHENTICATION_TOKEN = "CHANGE_ME"
 INSPIREHEP_URL = "http://web:8000"

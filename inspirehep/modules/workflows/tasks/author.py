@@ -21,6 +21,7 @@
 # or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, division, print_function
+from flask import current_app
 
 from inspirehep.modules.workflows.utils import with_debug_logging
 from inspirehep.utils.url import get_legacy_url_for_recid
@@ -76,6 +77,7 @@ def curation_ticket_context(user, obj):
     recid = obj.extra_data.get('recid')
     record_url = obj.extra_data.get('url')
     bai = ""
+    legacy_url = current_app.config['LEGACY_BASE_URL']
     if obj.data.get("bai"):
         bai = "[{}]".format(obj.data.get("bai"))
     subject = u"Curation needed for author {0} {1}".format(
@@ -88,5 +90,6 @@ def curation_ticket_context(user, obj):
         recid=recid,
         subject=subject,
         record_url=record_url,
+        legacy_url=legacy_url,
         user_comment=obj.extra_data.get('formdata', {}).get('extra_comments', ''),
     )

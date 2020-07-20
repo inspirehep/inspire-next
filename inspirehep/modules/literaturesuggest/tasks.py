@@ -239,6 +239,7 @@ def curation_ticket_context(user, obj):
     recid = obj.extra_data.get('recid')
     record_url = obj.extra_data.get('url')
     server_name = current_app.config['SERVER_NAME']
+    legacy_url = current_app.config['LEGACY_BASE_URL']
 
     arxiv_ids = get_value(obj.data, 'arxiv_eprints.value') or []
     for index, arxiv_id in enumerate(arxiv_ids):
@@ -269,6 +270,7 @@ def curation_ticket_context(user, obj):
         server_name=server_name,
         subject=subject,
         user_comment=user_comment,
+        legacy_url=legacy_url,
     )
 
 

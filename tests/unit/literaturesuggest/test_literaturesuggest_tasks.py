@@ -201,6 +201,7 @@ def test_curation_ticket_context():
         ],
         'server_name': 'localhost:5000',
         'subject': 'math.GT/0309136 arXiv:0706.0001v1 doi:bar foo (#baz)',
+        'legacy_url': 'https://old.inspirehep.net',
     }
     result = curation_ticket_context(user, obj)
 
