@@ -111,7 +111,6 @@ from inspirehep.modules.workflows.tasks.submission import (
     prepare_keywords,
     reply_ticket,
     send_to_legacy,
-    wait_webcoll,
 )
 from inspirehep.modules.workflows.utils import do_not_repeat
 from inspirehep.modules.literaturesuggest.tasks import (
@@ -277,14 +276,6 @@ POSTENHANCE_RECORD = [
 
 SEND_TO_LEGACY = [
     send_to_legacy(priority_config_key='LEGACY_ROBOTUPLOAD_PRIORITY_ARTICLE'),
-]
-
-
-WAIT_FOR_LEGACY_WEBCOLL = [
-    IF_NOT(
-        is_marked('is-update'),
-        wait_webcoll,
-    ),
 ]
 
 
@@ -548,7 +539,6 @@ class Article(object):
                     STORE_RECORD +
                     SEND_TO_LEGACY +
                     STORE_ROOT +
-                    WAIT_FOR_LEGACY_WEBCOLL +
                     NOTIFY_ACCEPTED +
                     NOTIFY_CURATOR_IF_NEEDED
                 ),

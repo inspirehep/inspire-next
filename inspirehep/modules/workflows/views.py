@@ -273,6 +273,11 @@ def _is_an_update(workflow_id):
     return bool(workflow_object.extra_data.get('is-update'))
 
 
+def _is_an_authors_workflow(workflow_id):
+    workflow_object = workflow_object_class.get(workflow_id)
+    return workflow_object.data.get("_collections") == "Authors"
+
+
 def _parse_robotupload_result(result, workflow_id):
     response = {}
     recid = int(result.get('recid'))
@@ -285,33 +290,34 @@ def _parse_robotupload_result(result, workflow_id):
         }
         return response
 
-    already_pending_ones = WorkflowsPendingRecord.query.filter_by(
-        record_id=recid,
-    ).all()
-    if already_pending_ones:
-        current_app.logger.warning(
-            'The record %s was already found on the pending list.',
-            recid
-        )
-        response = {
-            'success': False,
-            'message': 'Recid %s already in pending list.' % recid,
-        }
-        return response
-
-    if not _is_an_update(workflow_id):
-        pending_entry = WorkflowsPendingRecord(
-            workflow_id=workflow_id,
+    if _is_an_authors_workflow(workflow_id):
+        already_pending_ones = WorkflowsPendingRecord.query.filter_by(
             record_id=recid,
-        )
-        db.session.add(pending_entry)
-        db.session.commit()
+        ).all()
+        if already_pending_ones:
+            current_app.logger.warning(
+                'The record %s was already found on the pending list.',
+                recid
+            )
+            response = {
+                'success': False,
+                'message': 'Recid %s already in pending list.' % recid,
+            }
+            return response
 
-        current_app.logger.debug(
-            'Successfully added recid:workflow %s:%s to pending list.',
-            recid,
-            workflow_id,
-        )
+        if not _is_an_update(workflow_id):
+            pending_entry = WorkflowsPendingRecord(
+                workflow_id=workflow_id,
+                record_id=recid,
+            )
+            db.session.add(pending_entry)
+            db.session.commit()
+
+            current_app.logger.debug(
+                'Successfully added recid:workflow %s:%s to pending list.',
+                recid,
+                workflow_id,
+            )
 
     continue_response = _find_and_continue_workflow(
         workflow_id=workflow_id,

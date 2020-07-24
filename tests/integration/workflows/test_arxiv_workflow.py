@@ -53,7 +53,6 @@ from calls import (
     do_resolve_matching,
     do_robotupload_callback,
     do_validation_callback,
-    do_webcoll_callback,
     generate_record,
 )
 from mocks import fake_beard_api_request, fake_download_file, fake_magpie_api_request
@@ -281,11 +280,6 @@ def test_harvesting_arxiv_workflow_manual_accepted(
     assert obj.status == ObjectStatus.WAITING
 
     do_robotupload_callback(app=workflow_app, workflow_id=obj.id, recids=[12345])
-
-    obj = workflow_object_class.get(obj.id)
-    assert obj.status == ObjectStatus.WAITING
-
-    do_webcoll_callback(app=workflow_app, recids=[12345])
 
     eng = WorkflowEngine.from_uuid(workflow_uuid)
     obj = eng.processed_objects[0]
