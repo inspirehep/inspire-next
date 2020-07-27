@@ -14,7 +14,7 @@ babel = "==2.*,>=2.0.0,>=2.5.1"
 backoff = "==1.*,>=1.0.0,>=1.4.3"
 "backports.tempfile" = ">=1.0rc1"
 beard = "==0.*,>=0.0.0,>=0.2.0"
-celery = {git = "https://github.com/michamos/celery.git", branch = "fix-redis-connection-result-consumer"}
+celery = "==4.4.2"
 click = "<7.0,==6.*,>=6.7.0"
 click-spinner = "==0.*,>=0.0.0,>=0.1.8"
 coverage = {version = "==4.*,>=4.0.0,>=4.5.4", optional = true}
