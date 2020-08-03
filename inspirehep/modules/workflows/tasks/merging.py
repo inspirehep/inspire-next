@@ -23,6 +23,7 @@
 """Tasks related to record merging."""
 
 from __future__ import absolute_import, division, print_function
+from datetime import datetime
 
 from copy import deepcopy
 from flask import current_app
@@ -68,8 +69,8 @@ def merge_articles(obj, eng):
 
     head_record = InspireRecord.get_record(head_uuid)
     update = obj.data
-    update_source = LiteratureReader(obj.data).source.lower()
-    head_root = read_wf_record_source(record_uuid=head_record.id, source=update_source)
+    update_source = LiteratureReader(obj.data).source
+    head_root = read_wf_record_source(record_uuid=head_record.id, source=update_source.lower())
     head_root = head_root.json if head_root else {}
 
     obj.extra_data['head_uuid'] = str(head_uuid)
@@ -87,6 +88,10 @@ def merge_articles(obj, eng):
 
     if conflicts:
         obj.extra_data['conflicts'] = conflicts
+        obj.extra_data['conflicts_metadata'] = {
+            'datetime': datetime.now().strftime("%b %d, %Y, %H:%M:%S %p"),
+            'update_source': update_source,
+        }
         obj.extra_data['callback_url'] = \
             get_resolve_merge_conflicts_callback_url()
     obj.save()
