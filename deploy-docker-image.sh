@@ -34,16 +34,19 @@ logout() {
   retry docker logout
 }
 
-deployQA() {
-  echo "Deploying to QA"
-  curl -X POST \
-    -F token=${DEPLOY_QA_TOKEN} \
-    -F ref=master \
-    -F variables[APP_NAME]='next' \
-    -F variables[NEW_TAG]=${TAG} \
-    https://gitlab.cern.ch/api/v4/projects/62928/trigger/pipeline
- }
+deploy() {
+  environment=${1}
+  image=${2}
+  username='inspire-bot'
+  token="${INSPIRE_BOT_TOKEN}"
 
+  curl \
+    -u "${username}:${token}" \
+    -X POST \
+    -H "Accept: application/vnd.github.v3+json" \
+    -d '{"event_type":"deploy", "client_payload":{"environment":"'${environment}'", "image":"'${image}'", "tag":"'${TAG}'"}}' \
+    https://api.github.com/repos/inspirehep/kubernetes/dispatches
+}
 
 main() {
   login
@@ -51,6 +54,8 @@ main() {
   buildPush "inspirehep/next-assets" Dockerfile.with_assets
   buildPush "inspirehep/next-scrapyd" Dockerfile.scrapyd
   logout
-  deployQA
+  deploy "qa" "inspirehep/next"
+  deploy "qa" "inspirehep/next-assets"
+  deploy "qa" "inspirehep/next-scrapyd"
 }
 main
