@@ -29,22 +29,13 @@ from flask_login import current_user
 from fs.opener import fsopendir
 from werkzeug.utils import secure_filename
 
-from refextract import (
-    extract_references_from_string,
-    extract_references_from_url,
-)
-
 from inspirehep.modules.editor.permissions import (
     editor_permission,
     editor_use_api_permission,
 )
-from inspirehep.modules.refextract.matcher import match_references
 from inspirehep.modules.tools import authorlist
 from inspirehep.utils import tickets
-from inspirehep.utils.references import (
-    local_refextract_kbs_path,
-    map_refextract_to_schema,
-)
+
 from inspirehep.utils.url import copy_file
 from inspirehep.modules.workflows.workflows.manual_merge import start_merger
 
@@ -76,36 +67,6 @@ def authorlist_text():
         return jsonify(parsed_authors)
     except Exception as err:
         return jsonify(status=500, message=u' / '.join(err.args)), 500
-
-
-@blueprint_api.route('/refextract/text', methods=['POST'])
-@editor_use_api_permission.require(http_exception=403)
-def refextract_text():
-    """Run refextract on a piece of text."""
-    with local_refextract_kbs_path() as kbs_path:
-        extracted_references = extract_references_from_string(
-            request.json['text'],
-            override_kbs_files=kbs_path,
-            reference_format=u'{title},{volume},{page}'
-        )
-    references = map_refextract_to_schema(extracted_references)
-    references = match_references(references)
-    return jsonify(references)
-
-
-@blueprint_api.route('/refextract/url', methods=['POST'])
-@editor_use_api_permission.require(http_exception=403)
-def refextract_url():
-    """Run refextract on a URL."""
-    with local_refextract_kbs_path() as kbs_path:
-        extracted_references = extract_references_from_url(
-            request.json['url'],
-            override_kbs_files=kbs_path,
-            reference_format=u'{title},{volume},{page}'
-        )
-    references = map_refextract_to_schema(extracted_references)
-    references = match_references(references)
-    return jsonify(references)
 
 
 @blueprint_api.route('/<endpoint>/<int:pid_value>/rt/tickets/create', methods=['POST'])
@@ -226,10 +187,3 @@ def upload_files():
         full_url = fs.getsyspath(filename)
 
     return jsonify({'path': full_url})
-
-
-@blueprint_api.route('/linked_references', methods=['POST'])
-def get_linked_refs():
-    data = request.json
-    matched_refs = match_references(data['references'])
-    return jsonify({'references': matched_refs})

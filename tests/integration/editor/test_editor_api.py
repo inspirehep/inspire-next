@@ -26,9 +26,7 @@ import os
 import json
 import shutil
 
-import pkg_resources
 import pytest
-import requests_mock
 
 from mock import patch
 from StringIO import StringIO
@@ -39,7 +37,6 @@ from invenio_cache import current_cache
 from invenio_db import db
 
 from inspire_schemas.api import load_schema, validate
-from inspire_utils.record import get_value
 
 
 @pytest.fixture(autouse=True)
@@ -337,58 +334,6 @@ def test_authorlist_text_exception(log_in_as_cataloger, api_client):
     result = json.loads(response.data)
 
     assert expected == result
-
-
-def test_refextract_text(log_in_as_cataloger, api_client):
-    schema = load_schema('hep')
-    subschema = schema['properties']['references']
-
-    response = api_client.post(
-        '/editor/refextract/text',
-        content_type='application/json',
-        data=json.dumps({
-            'text': (
-                u'J. M. Maldacena. “The Large N Limit of Superconformal Field '
-                u'Theories and Supergravity”. Adv. Theor. Math. Phys. 2 (1998), '
-                u'pp. 231–252.'
-            ),
-        }),
-    )
-    references = json.loads(response.data)
-
-    assert response.status_code == 200
-    assert validate(references, subschema) is None
-    assert get_value({'references': references}, 'references.reference.publication_info.journal_title')
-
-
-def test_refextract_url(log_in_as_cataloger, api_client):
-    schema = load_schema('hep')
-    subschema = schema['properties']['references']
-
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            'GET', 'https://arxiv.org/pdf/1612.06414.pdf',
-            content=pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', '1612.06414.pdf')),
-        )
-        requests_mocker.register_uri(
-            'GET', 'http://test-indexer:9200/records-hep/hep/_search?_source=control_number',
-            content=pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', 'es_response.json')),
-        )
-
-        response = api_client.post(
-            '/editor/refextract/url',
-            content_type='application/json',
-            data=json.dumps({
-                'url': 'https://arxiv.org/pdf/1612.06414.pdf',
-            }),
-        )
-        references = json.loads(response.data)
-
-    assert response.status_code == 200
-    assert validate(references, subschema) is None
-    assert get_value({'references': references}, 'references.reference.publication_info.journal_title')
 
 
 @patch('inspirehep.modules.editor.api.start_merger')
