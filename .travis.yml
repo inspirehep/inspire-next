@@ -42,7 +42,7 @@ env:
     # DOCKER_PASSWORD
     - secure: "hpa8R3iJtOjWjOengHJRVxiAUy6cPR2FMF7Jvso3wlFUDuJ743wB7EJaFDc7CEaUig/LODdbiESWM2SuyVUeJrupGrBCcZJw9N9yeWO5z+7OqPauPlP1hPJkZPt8KivCTwPcixPj7uueLKGjNPEQR2b8jkNu4ATBC6x4q4NPmnc="
     # DEPLOY_QA_TOKEN
-    - secure: "MOLJvW+WLwSHpdKDAS2yZaLMAqjeHSZrxzjLFj+C5aNttBpNbwg2ozR7qnVfruV5mNo9X0+zaEb1vzfxtwEGW9uUh84X674tM4nV007l9rNxWr1ZLtDAXLQjlm+qIYcXRt1Cl9xgaL1gxNbPqKgRm8xOAv2o/lxkvdeiWivmGWg="
+    - secure: "Ocecyoj6CNPFnehVTvhLpGrFlWYkVVvK4ciqn5Tr+MxPyqwbOODMuL2efqA/HfoeMLHyom2OnwE6cQyG1KhW4wvh0fXiUtmYc04kbCjp64ZFTk+S6R7bdk/XtN7rxEwLES+kbkfJ6T8wMWrxgRdPPFSMBKFPv6sU2HX+dOxsS+g="
   matrix:
     - SUITE=workflows IMAGES="test-database test-indexer test-rabbitmq test-redis test-web"
     - SUITE=integration IMAGES="test-database test-indexer test-redis"
