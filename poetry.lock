@@ -2588,8 +2588,8 @@ category = "main"
 description = "A lexer and codec to work with LaTeX code in Python."
 name = "latexcodec"
 optional = false
-python-versions = "*"
-version = "1.0.7"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "2.0.1"
 
 [package.dependencies]
 six = ">=1.4.1"
@@ -3071,6 +3071,14 @@ version = "1.7.1"
 crypto = ["cryptography (>=1.4)"]
 flake8 = ["flake8", "flake8-import-order", "pep8-naming"]
 test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
+
+[[package]]
+category = "main"
+description = "Simple LaTeX parser providing latex-to-unicode and unicode-to-latex conversion"
+name = "pylatexenc"
+optional = false
+python-versions = "*"
+version = "2.7"
 
 [[package]]
 category = "main"
@@ -4223,7 +4231,8 @@ worker-node = ["flower", "superlance", "tornado"]
 xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
-content-hash = "9498183e130c9c1cf12974074b94e8110938b9911a639b10717e8a6e38944c55"
+content-hash = "d6e8952383712c03ac8759e85a112558a5e28d306e256f9dad9a3bfced0ccaef"
+lock-version = "1.0"
 python-versions = ">=2.7,<3.0"
 
 [metadata.files]
@@ -4937,8 +4946,8 @@ langdetect = [
     {file = "langdetect-1.0.7.zip", hash = "sha256:91a170d5f0ade380db809b3ba67f08e95fe6c6c8641f96d67a51ff7e98a9bf30"},
 ]
 latexcodec = [
-    {file = "latexcodec-1.0.7-py2.py3-none-any.whl", hash = "sha256:c937f0de93e077079da33684aee877d3cf7d9388740d3f4ffaa073cd5cdfb328"},
-    {file = "latexcodec-1.0.7.tar.gz", hash = "sha256:ebc183904549b1514ffc29a8768c8b58dc45cb813b94df90bf19f4c7b01fd772"},
+    {file = "latexcodec-2.0.1-py2.py3-none-any.whl", hash = "sha256:c277a193638dc7683c4c30f6684e3db728a06efb0dc9cf346db8bd0aa6c5d271"},
+    {file = "latexcodec-2.0.1.tar.gz", hash = "sha256:2aa2551c373261cefe2ad3a8953a6d6533e68238d180eb4bb91d7964adb3fe9a"},
 ]
 linkheader = [
     {file = "LinkHeader-0.4.3.tar.gz", hash = "sha256:7fbbc35c0ba3fbbc530571db7e1c886e7db3d718b29b345848ac9686f21b50c3"},
@@ -5245,6 +5254,9 @@ pyhamcrest = [
 pyjwt = [
     {file = "PyJWT-1.7.1-py2.py3-none-any.whl", hash = "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e"},
     {file = "PyJWT-1.7.1.tar.gz", hash = "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"},
+]
+pylatexenc = [
+    {file = "pylatexenc-2.7.tar.gz", hash = "sha256:8a3de4c035b9413a7721cab11e4cc7469d9370b441fbd498fc8d2ff37cbff678"},
 ]
 pynpm = [
     {file = "pynpm-0.1.1-py2.py3-none-any.whl", hash = "sha256:b3c2efafc15b0ca4f0a1cc819e55af4179c2b43a2f9bb7b1a1cc1763dc3daa52"},
