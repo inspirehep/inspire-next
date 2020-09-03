@@ -37,6 +37,10 @@ def test_decode_latex():
     expected_value = u'Åβήτα'
     assert decode_latex(name_with_latex) == expected_value
 
+    name_with_latex = 'Ma\^{\i}tre'
+    expected_value = u'Maître'
+    assert decode_latex(name_with_latex) == expected_value
+
 
 def test_decode_latex_with_empty_string():
     name_with_latex = ''

@@ -22,8 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-import latexcodec  # noqa: F401
-import re
+from pylatexenc.latex2text import LatexNodes2Text
 from six import text_type
 
 
@@ -39,4 +38,4 @@ def decode_latex(latex_text):
     if not isinstance(latex_text, text_type):
         latex_text = text_type(latex_text, 'utf8')
 
-    return re.sub('{|}', '', latex_text.decode('ulatex+utf8'))
+    return LatexNodes2Text().latex_to_text(latex_text)
