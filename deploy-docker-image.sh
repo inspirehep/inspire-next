@@ -54,8 +54,14 @@ main() {
   buildPush "inspirehep/next-assets" Dockerfile.with_assets
   buildPush "inspirehep/next-scrapyd" Dockerfile.scrapyd
   logout
-  deploy "qa" "inspirehep/next"
-  deploy "qa" "inspirehep/next-assets"
-  deploy "qa" "inspirehep/next-scrapyd"
+  if [ -z "${TRAVIS_TAG}" ]; then
+    deploy "qa" "inspirehep/next"
+    deploy "qa" "inspirehep/next-assets"
+    deploy "qa" "inspirehep/next-scrapyd"
+  else
+    deploy "prod" "inspirehep/next"
+    deploy "prod" "inspirehep/next-assets"
+    deploy "prod" "inspirehep/next-scrapyd"
+  fi
 }
 main
