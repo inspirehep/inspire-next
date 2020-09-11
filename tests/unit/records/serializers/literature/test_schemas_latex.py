@@ -260,3 +260,15 @@ def test_schema_takes_control_number_when_texkeys_not_present():
     expected = '123456'
     result = json.loads(schema.dumps(record).data)
     assert expected == result['texkeys']
+
+
+def test_harvmackey():
+    schema = LatexSchema()
+    record = {
+        'texkeys': [
+            'Werlang:2010xds'
+        ],
+    }
+    expected = 'WerlangXDS'
+    result = json.loads(schema.dumps(record).data)
+    assert expected == result['harvmackey']

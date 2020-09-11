@@ -25,16 +25,20 @@ from __future__ import absolute_import, division, print_function
 from marshmallow import Schema, fields
 from inspire_utils.name import format_name
 from ...fields_export import get_best_publication_info
+from pylatexenc.latexencode import unicode_to_latex
 
 import datetime
+import re
 
 
 class LatexSchema(Schema):
     arxiv_eprints = fields.Raw()
     authors = fields.Method('get_author_names')
+    harvmacauthors = fields.Method('get_harvmacauthor_names')
     citations = fields.Method('get_citations', default=0)
     collaborations = fields.Method('get_collaborations')
     dois = fields.Raw()
+    harvmackey = fields.Method('get_harvmackey')
     publication_info = fields.Method('get_publication_info')
     report_numbers = fields.Raw()
     titles = fields.Raw()
@@ -57,6 +61,9 @@ class LatexSchema(Schema):
 
         author_names = (format_name(author['full_name'], initials_only=True) for author in authors)
         return [name.replace('. ', '.~') for name in author_names]
+
+    def get_harvmacauthor_names(self, data):
+        authors = fields.Method('get_author_names')        
 
     def get_publication_info(self, data):
         publication_info = get_best_publication_info(data)
@@ -83,6 +90,13 @@ class LatexSchema(Schema):
         if texkeys:
             return texkeys[0]
         return data.get('control_number')
+
+    def get_harvmackey(self, data):
+         texkey = fields.Method('get_texkey')
+         if texkey:
+             texmatchobj = re.match('^([a-zA-Z\-]):\d{4}([a-z]{3})$',texkey)
+             if texmatchobj:
+                 return texmatchobj.group(1)+texmatchobj.group(2).upper()
 
     def get_collaborations(self, data):
         if not data.get('collaborations'):
