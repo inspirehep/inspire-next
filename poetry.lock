@@ -268,6 +268,36 @@ version = "1.4"
 
 [[package]]
 category = "main"
+description = "The AWS SDK for Python"
+name = "boto3"
+optional = true
+python-versions = "*"
+version = "1.14.61"
+
+[package.dependencies]
+botocore = ">=1.17.61,<1.18.0"
+jmespath = ">=0.7.1,<1.0.0"
+s3transfer = ">=0.3.0,<0.4.0"
+
+[[package]]
+category = "main"
+description = "Low-level, data-driven core of boto 3."
+name = "botocore"
+optional = true
+python-versions = "*"
+version = "1.17.61"
+
+[package.dependencies]
+docutils = ">=0.10,<0.16"
+jmespath = ">=0.7.1,<1.0.0"
+python-dateutil = ">=2.1,<3.0.0"
+
+[package.dependencies.urllib3]
+python = "<3.4.0 || >=3.5.0"
+version = ">=1.20,<1.26"
+
+[[package]]
+category = "main"
 description = "Distributed Task Queue."
 name = "celery"
 optional = false
@@ -1150,7 +1180,7 @@ description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)
 name = "hepcrawl"
 optional = true
 python-versions = "*"
-version = "13.0.7"
+version = "13.0.11"
 
 [package.dependencies]
 LinkHeader = ">=0.4.3"
@@ -1159,12 +1189,13 @@ Sickle = ">=0.6.2,<1.0"
 Twisted = ">=18.9.0,<19.0"
 amqp = ">2.2.0,<2.3.0 || >2.3.0,<3.0"
 autosemver = ">=0.2,<1.0"
+boto3 = ">=1.14,<2.0"
 celery = ">=4.1"
-ftputil = ">=3.3.1"
+ftputil = ">=3.3.1,<4.0"
 furl = ">=0.4.95"
 harvestingkit = ">=0.6.12"
 inspire-dojson = ">=63.0,<64.0"
-inspire-schemas = ">=61.0,<62.0"
+inspire-schemas = ">=61.3,<62.0"
 inspire-utils = ">=3.0.0,<4.0"
 pyasn1 = ">=0.1.8"
 python-dateutil = ">=2.7.0,<3.0"
@@ -1474,7 +1505,7 @@ description = "Inspire JSON schemas and utilities to use them."
 name = "inspire-schemas"
 optional = false
 python-versions = "*"
-version = "61.1.2"
+version = "61.3.7"
 
 [package.dependencies]
 Unidecode = ">=1.0.22,<2.0"
@@ -1484,14 +1515,15 @@ idutils = "*"
 inspire-utils = ">=3.0.0,<4.0"
 isodate = "*"
 jsonschema = ">=2.6.0,<3.0"
+pytz = "*"
 pyyaml = "*"
 rfc3987 = "*"
 six = "*"
 urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
 
 [package.extras]
-docs = ["jsonschema2rst (>=0.0.8)", "sphinx"]
-tests = ["check-manifest", "coverage", "isort (>=4.3.0,<5.0)", "pytest-cache", "pytest-cov (>=2.6.1,<3.0)", "pytest (>=3.6.0,<4.0)", "pytest-pep8", "mock", "idutils", "unicode-string-literal (>=1.1,<2.0)"]
+docs = ["jsonschema2rst (>=0.1)", "sphinx"]
+tests = ["check-manifest", "coverage", "isort (>=4.3.0,<5.0)", "pytest-cache", "pytest-cov (2.6.1)", "pytest (>=3.6.0,<4.0)", "pytest-pep8", "mock", "idutils", "unicode-string-literal (>=1.1,<2.0)"]
 
 [[package]]
 category = "main"
@@ -2446,6 +2478,14 @@ version = "0.2.0"
 [package.dependencies]
 arrow = "*"
 jinja2 = "*"
+
+[[package]]
+category = "main"
+description = "JSON Matching Expressions"
+name = "jmespath"
+optional = true
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+version = "0.10.0"
 
 [[package]]
 category = "main"
@@ -3455,6 +3495,21 @@ six = "*"
 
 [[package]]
 category = "main"
+description = "An Amazon S3 Transfer Manager"
+name = "s3transfer"
+optional = true
+python-versions = "*"
+version = "0.3.3"
+
+[package.dependencies]
+botocore = ">=1.12.36,<2.0a.0"
+
+[package.dependencies.futures]
+python = ">=2.7,<2.8"
+version = ">=2.2.0,<4.0.0"
+
+[[package]]
+category = "main"
 description = "scandir, a better directory iterator and faster os.walk()"
 marker = "python_version < \"3.5\" or python_version in \"2.6 2.7 3.2 3.3\" or python_version == \"2.7\""
 name = "scandir"
@@ -4231,8 +4286,7 @@ worker-node = ["flower", "superlance", "tornado"]
 xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
-content-hash = "d6e8952383712c03ac8759e85a112558a5e28d306e256f9dad9a3bfced0ccaef"
-lock-version = "1.0"
+content-hash = "50a536521fa68337ced1698f65daed23b47bf9965a0f4bd8819e2c6807ea33b5"
 python-versions = ">=2.7,<3.0"
 
 [metadata.files]
@@ -4324,6 +4378,13 @@ bleach = [
 ]
 blinker = [
     {file = "blinker-1.4.tar.gz", hash = "sha256:471aee25f3992bd325afa3772f1063dbdbbca947a041b8b89466dc00d606f8b6"},
+]
+boto3 = [
+    {file = "boto3-1.14.61.tar.gz", hash = "sha256:a1c738ff178fc6ed8951559053c1142c71d166d17642361bbe63584be2f50a00"},
+]
+botocore = [
+    {file = "botocore-1.17.61-py2.py3-none-any.whl", hash = "sha256:4a2931b6cdbb1caf797eaf81f1f42f9cf243f94f06b3144d36a2f016a58ad125"},
+    {file = "botocore-1.17.61.tar.gz", hash = "sha256:71160b06c52f21cc477bc4b5eb35fc78f1f89e363b86d93fcbebfe366cc4d8f0"},
 ]
 celery = [
     {file = "celery-4.4.2-py2.py3-none-any.whl", hash = "sha256:5b4b37e276033fe47575107a2775469f0b721646a08c96ec2c61531e4fe45f2a"},
@@ -4676,7 +4737,7 @@ harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
 hepcrawl = [
-    {file = "hepcrawl-13.0.7.tar.gz", hash = "sha256:270bf196a60278f9821def0a1376cafa827a4ea290d553e8b4a698035971acae"},
+    {file = "hepcrawl-13.0.11.tar.gz", hash = "sha256:84451696bdb65f21b6af869d5d7902ddcb0ae2d6d318affbe39dd48b3d59b814"},
 ]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
@@ -4743,7 +4804,7 @@ inspire-query-parser = [
     {file = "inspire-query-parser-6.0.4.tar.gz", hash = "sha256:9fc3d1a312e525bbd40f4987c47043bc51516d803f2a278eff7c3cd63cbe89ec"},
 ]
 inspire-schemas = [
-    {file = "inspire-schemas-61.1.2.tar.gz", hash = "sha256:49226b875b1791f13d0d7678c63cd4b03ce54bb7a9ffcae319daca240b308ed0"},
+    {file = "inspire-schemas-61.3.7.tar.gz", hash = "sha256:91a3a574a6e7042100df1975f7d11e6898ddc14b054c9668bf21742270e1206b"},
 ]
 inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
@@ -4913,6 +4974,10 @@ jinja2 = [
 jinja2-time = [
     {file = "jinja2-time-0.2.0.tar.gz", hash = "sha256:d14eaa4d315e7688daa4969f616f226614350c48730bfa1692d2caebd8c90d40"},
     {file = "jinja2_time-0.2.0-py2.py3-none-any.whl", hash = "sha256:d3eab6605e3ec8b7a0863df09cc1d23714908fa61aa6986a845c20ba488b4efa"},
+]
+jmespath = [
+    {file = "jmespath-0.10.0-py2.py3-none-any.whl", hash = "sha256:cdf6525904cc597730141d61b36f2e4b8ecc257c420fa2f4549bac2c2d0cb72f"},
+    {file = "jmespath-0.10.0.tar.gz", hash = "sha256:b85d0567b8666149a93172712e68920734333c0ce7e89b78b3e987f71e5ed4f9"},
 ]
 json-merger = [
     {file = "json-merger-0.7.1.tar.gz", hash = "sha256:16a79778edbf6e2e7b8ad539f25c5c8b069679a2f9f669fc1b0d2a3bcad46b15"},
@@ -5380,6 +5445,10 @@ rfc3987 = [
 ]
 rt = [
     {file = "rt-1.0.13.tar.gz", hash = "sha256:b2898cca66b9b50bb10e13e9664419fc29b25e0ef4aef4bf94e36dd96c7a0b8b"},
+]
+s3transfer = [
+    {file = "s3transfer-0.3.3-py2.py3-none-any.whl", hash = "sha256:2482b4259524933a022d59da830f51bd746db62f047d6eb213f2f8855dcb8a13"},
+    {file = "s3transfer-0.3.3.tar.gz", hash = "sha256:921a37e2aefc64145e7b73d50c71bb4f26f46e4c9f414dc648c6245ff92cf7db"},
 ]
 scandir = [
     {file = "scandir-1.10.0-cp27-cp27m-win32.whl", hash = "sha256:92c85ac42f41ffdc35b6da57ed991575bdbe69db895507af88b9f499b701c188"},

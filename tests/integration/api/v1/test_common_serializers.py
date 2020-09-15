@@ -91,21 +91,6 @@ def test_institutions_recids_serializer(api_client):
     assert response_json['hits']['recids'][0] == 902725
 
 
-def test_experiments_recids_serializer(api_client):
-    response = api_client.get(
-        '/experiments/',
-        headers={'Accept': 'application/vnd+inspire.ids+json'}
-    )
-
-    assert response.status_code == 200
-
-    response_json = json.loads(response.data)
-
-    assert response_json['hits']['total'] == 1
-
-    assert response_json['hits']['recids'][0] == 1108642
-
-
 def test_journals_recids_serializer(api_client):
     response = api_client.get(
         '/journals/',

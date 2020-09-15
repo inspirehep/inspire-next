@@ -34,7 +34,8 @@ def test_all_records_were_loaded(app):
     records = [record.json for record in RecordMetadata.query.all()]
 
     # Jobs are no longer imported so 43-1
-    expected = 42
+    # Experiments are no longer imported so 42-1
+    expected = 41
     result = len(records)
 
     assert expected == result
