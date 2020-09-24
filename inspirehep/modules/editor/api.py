@@ -34,7 +34,6 @@ from inspirehep.modules.editor.permissions import (
     editor_use_api_permission,
 )
 from inspirehep.modules.tools import authorlist
-from inspirehep.utils import tickets
 
 from inspirehep.utils.url import copy_file
 from inspirehep.modules.workflows.workflows.manual_merge import start_merger
@@ -69,62 +68,6 @@ def authorlist_text():
         return jsonify(status=500, message=u' / '.join(err.args)), 500
 
 
-@blueprint_api.route('/<endpoint>/<int:pid_value>/rt/tickets/create', methods=['POST'])
-@editor_permission
-def create_rt_ticket(endpoint, pid_value):
-    """View to create an rt ticket"""
-    json = request.json
-    ticket_id = tickets.create_ticket(json['queue'],
-                                      current_user.email,
-                                      json.get('description'),
-                                      json.get('subject'),
-                                      pid_value,
-                                      Owner=json.get('owner'))
-    if ticket_id != -1:
-        return jsonify(
-            success=True,
-            data={
-                'id': str(ticket_id),
-                'link': tickets.get_rt_link_for_ticket(ticket_id)
-            }
-        )
-    else:
-        return jsonify(success=False), 500
-
-
-@blueprint_api.route('/<endpoint>/<pid_value>/rt/tickets/<ticket_id>/resolve', methods=['GET'])
-@editor_permission
-def resolve_rt_ticket(endpoint, pid_value, ticket_id):
-    """View to resolve an rt ticket"""
-    tickets.resolve_ticket(ticket_id)
-    return jsonify(success=True)
-
-
-@blueprint_api.route('/<endpoint>/<pid_value>/rt/tickets', methods=['GET'])
-@editor_permission
-def get_tickets_for_record(endpoint, pid_value):
-    """View to get rt ticket belongs to given record"""
-    tickets_for_record = tickets.get_tickets_by_recid(pid_value)
-    simplified_tickets = map(_simplify_ticket_response, tickets_for_record)
-    return jsonify(simplified_tickets)
-
-
-@blueprint_api.route('/rt/users', methods=['GET'])
-@editor_use_api_permission.require(http_exception=403)
-def get_rt_users():
-    """View to get all rt users"""
-
-    return jsonify(tickets.get_users())
-
-
-@blueprint_api.route('/rt/queues', methods=['GET'])
-@editor_use_api_permission.require(http_exception=403)
-def get_rt_queues():
-    """View to get all rt queues"""
-
-    return jsonify(tickets.get_queues())
-
-
 @blueprint_api.route('/manual_merge', methods=['POST'])
 @editor_use_api_permission.require(http_exception=403)
 def manual_merge():
@@ -147,17 +90,6 @@ def manual_merge():
     )
 
     return jsonify(workflow_object_id=workflow_object_id)
-
-
-def _simplify_ticket_response(ticket):
-    return dict(
-        id=ticket['Id'],
-        queue=ticket['Queue'],
-        subject=ticket['Subject'],
-        description=ticket['Text'],
-        owner=ticket['Owner'],
-        date=ticket['Created'],
-        link=ticket['Link'])
 
 
 @blueprint_api.route('/upload', methods=['POST'])
