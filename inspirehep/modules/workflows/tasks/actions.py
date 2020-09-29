@@ -26,7 +26,10 @@ from __future__ import absolute_import, division, print_function
 
 import sys
 import time
+import backoff
 
+import json
+import requests
 from copy import deepcopy
 from functools import wraps
 from six import reraise
@@ -60,6 +63,8 @@ from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_text,
 )
 from inspirehep.modules.refextract.matcher import match_references
+from inspirehep.modules.workflows.tasks.upload import create_error
+from inspirehep.modules.workflows.errors import BadGatewayError
 from inspirehep.modules.workflows.utils import (
     copy_file_to_workflow,
     download_file_to_workflow,
@@ -402,6 +407,31 @@ def download_documents(obj, eng):
                 'Cannot download document from %s', url)
 
 
+@backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
+def match_references_hep(references):
+    headers = {
+        "content-type": "application/json",
+    }
+    data = {'references': references}
+    inspirehep_url = current_app.config.get("INSPIREHEP_URL")
+    response = requests.post(
+        "{inspirehep_url}/api/matcher/linked_references/".format(
+            inspirehep_url=inspirehep_url,
+        ),
+        headers=headers,
+        json=json.dumps(data)
+    )
+    if response.status_code == 200:
+        return response.json()['references']
+    create_error(response)
+
+
+def match_references_based_on_flag(references):
+    if current_app.config.get("FEATURE_FLAG_ENABLE_MATCH_REFERENCES_HEP"):
+        return match_references_hep(references)
+    return match_references(references)
+
+
 @with_debug_logging
 def refextract(obj, eng):
     """Extract references from various sources and add them to the workflow.
@@ -421,7 +451,7 @@ def refextract(obj, eng):
     if 'references' in obj.data:
         extracted_raw_references = dedupe_list(extract_references_from_raw_refs(obj.data['references']))
         obj.log.info('Extracted %d references from raw refs.', len(extracted_raw_references))
-        obj.data['references'] = match_references(extracted_raw_references)
+        obj.data['references'] = match_references_based_on_flag(extracted_raw_references)
         return
 
     matched_pdf_references, matched_text_references = [], []
@@ -430,12 +460,12 @@ def refextract(obj, eng):
     with get_document_in_workflow(obj) as tmp_document:
         if tmp_document:
             pdf_references = dedupe_list(extract_references_from_pdf(tmp_document, source))
-            matched_pdf_references = match_references(pdf_references)
+            matched_pdf_references = match_references_based_on_flag(pdf_references)
 
     text = get_value(obj.extra_data, 'formdata.references')
     if text:
         text_references = dedupe_list(extract_references_from_text(text, source))
-        matched_text_references = match_references(text_references)
+        matched_text_references = match_references_based_on_flag(text_references)
 
     if len(matched_pdf_references) == len(matched_text_references) == 0:
         obj.log.info('No references extracted.')

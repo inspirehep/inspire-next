@@ -25,7 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
-
+import requests_mock
 import pytest
 
 from inspire_schemas.api import load_schema, validate
@@ -33,8 +33,9 @@ from invenio_workflows import (
     start,
     workflow_object_class,
     WorkflowEngine,
+    ObjectStatus,
 )
-
+from invenio_workflows.errors import WorkflowsError
 from inspirehep.modules.workflows.tasks.actions import (
     load_from_source_data,
     normalize_journal_titles,
@@ -404,6 +405,203 @@ def test_refextract_from_pdf(
 
     assert citing_doc_obj.data['references'][7]['record']['$ref'] == 'http://localhost:5000/api/literature/1000'
     assert citing_doc_obj.data['references'][0]['raw_refs'][0]['source'] == 'arXiv'
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
+    return_value=True
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async')
+def test_refextract_with_call_to_hep(
+    mocked_indexing_task,
+    mocked_api_request_magpie,
+    mocked_api_request_beard,
+    mocked_is_pdf_link,
+    mocked_package_download,
+    mocked_arxiv_download,
+    workflow_app,
+    mocked_external_services
+):
+    cited_record_json = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "_collections": ["Literature"],
+        "control_number": 1,
+        "document_type": ["article"],
+        "publication_info": [
+            {
+                "artid": "045",
+                "journal_title": "JHEP",
+                "journal_volume": "06",
+                "page_start": "045",
+                "year": 2007,
+            }
+        ],
+        "titles": [{"title": "The Strongly-Interacting Light Higgs"}],
+    }
+
+    TestRecordMetadata.create_from_kwargs(
+        json=cited_record_json, index='records-hep', pid_type='lit')
+    citing_record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'titles': [
+            {
+                'title': 'My title',
+            }
+        ],
+        'control_number': 1001,
+        'document_type': ['article'],
+        "references": [
+            {
+                "reference": {
+                    "publication_info": {
+                        "artid": "045",
+                        "journal_title": "JHEP",
+                        "journal_volume": "06",
+                        "page_start": "045",
+                        "year": 2007,
+                    }
+                }
+            }
+        ]
+    }
+
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+        "MAGPIE_API_URL": "http://example.com/magpie",
+        "FEATURE_FLAG_ENABLE_MATCH_REFERENCES_HEP": True,
+    }
+
+    with mock.patch.dict(workflow_app.config, extra_config):
+        with requests_mock.Mocker(real_http=True) as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', '{url}/api/matcher/linked_references/'.format(
+                    url=workflow_app.config.get("INSPIREHEP_URL"),
+                ),
+                headers={'content-type': 'application/json'},
+                status_code=200,
+                json={
+                    'references': [
+                        {
+                            'record': {'$ref': 'http://localhost:5000/api/literature/1'},
+                            "reference": {
+                                "publication_info": {
+                                    "artid": "045",
+                                    "journal_title": "JHEP",
+                                    "journal_volume": "06",
+                                    "page_start": "045",
+                                    "year": 2007,
+                                }
+                            }
+                        }
+                    ]
+                }
+            )
+            workflow_id = build_workflow(citing_record).id
+            citing_doc_workflow_uuid = start('article', object_id=workflow_id)
+    citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)
+    citing_doc_obj = citing_doc_eng.processed_objects[0]
+
+    assert citing_doc_obj.data['references'][0]['record']['$ref'] == 'http://localhost:5000/api/literature/1'
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
+    return_value=True
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch('inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async')
+def test_refextract_with_call_to_hep_with_error(
+    mocked_indexing_task,
+    mocked_api_request_magpie,
+    mocked_api_request_beard,
+    mocked_is_pdf_link,
+    mocked_package_download,
+    mocked_arxiv_download,
+    workflow_app,
+    mocked_external_services
+):
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        '_collections': ['Literature'],
+        'titles': [
+            {
+                'title': 'My title',
+            }
+        ],
+        'control_number': 1001,
+        'document_type': ['article'],
+        "references": [
+            {
+                "reference": {
+                    "publication_info": {
+                        "artid": "045",
+                        "journal_title": "JHEP",
+                        "journal_volume": "06",
+                        "page_start": "045",
+                        "year": 2007,
+                    }
+                }
+            }
+        ]
+    }
+
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+        "MAGPIE_API_URL": "http://example.com/magpie",
+        "FEATURE_FLAG_ENABLE_MATCH_REFERENCES_HEP": True,
+    }
+
+    with mock.patch.dict(workflow_app.config, extra_config):
+        with requests_mock.Mocker(real_http=True) as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', '{url}/api/matcher/linked_references/'.format(
+                    url=workflow_app.config.get("INSPIREHEP_URL"),
+                ),
+                headers={'content-type': 'application/json'},
+                status_code=500,
+                json={
+                    "message": "Error Message"
+                }
+            )
+            workflow_id = build_workflow(record).id
+            with pytest.raises(WorkflowsError):
+                start('article', object_id=workflow_id)
+    obj = workflow_object_class.get(workflow_id)
+
+    assert obj.status == ObjectStatus.ERROR
+    assert 'Error Message' in obj.extra_data['_error_msg']
 
 
 @mock.patch(
