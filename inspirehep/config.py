@@ -1230,6 +1230,7 @@ LEGACY_RECORD_URL_PATTERN = 'http://inspirehep.net/record/{recid}'
 AUTHENTICATION_TOKEN = "CHANGE_ME"
 INSPIREHEP_URL = "http://web:8000"
 FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT = False
+FEATURE_FLAG_ENABLE_MATCH_REFERENCES_HEP = False
 
 # Harvesting and Workflows
 # ========================
