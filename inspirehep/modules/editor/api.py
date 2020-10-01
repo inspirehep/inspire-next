@@ -199,6 +199,18 @@ def _simplify_ticket_response(ticket):
         link=ticket['Link'])
 
 
+def _replace_xrootd_with_http(full_path):
+    eos_prefix = current_app.config.get("EOS_XROOTD_PREFIX")
+    eos_http = current_app.config.get("EOS_HTTP_PREFIX")
+    if not eos_prefix or not eos_http:
+        return full_path
+
+    return full_path.replace(
+        eos_prefix,
+        eos_http
+    )
+
+
 @blueprint_api.route('/upload', methods=['POST'])
 @editor_use_api_permission.require(http_exception=403)
 def upload_files():
@@ -224,8 +236,7 @@ def upload_files():
     full_url = fs.getpathurl(filename, allow_none=True)
     if not full_url:
         full_url = fs.getsyspath(filename)
-
-    return jsonify({'path': full_url})
+    return jsonify({'path': _replace_xrootd_with_http(full_url)})
 
 
 @blueprint_api.route('/linked_references', methods=['POST'])
