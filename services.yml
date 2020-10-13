@@ -24,7 +24,10 @@ version: '2.1'
 
 services:
   base:
-    image: inspirehep/python-base-test
+    image: inspire-next-base
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     tty: true
     environment:
       - BASE_USER_UID=${BASE_USER_UID:-1000}

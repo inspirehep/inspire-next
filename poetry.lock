@@ -2338,7 +2338,6 @@ version = "2.2.0"
 [[package]]
 category = "main"
 description = "IPv4/IPv6 manipulation library"
-marker = "python_version < \"3.3\""
 name = "ipaddress"
 optional = false
 python-versions = "*"
@@ -4296,7 +4295,7 @@ worker-node = ["flower", "superlance", "tornado"]
 xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
-content-hash = "50a536521fa68337ced1698f65daed23b47bf9965a0f4bd8819e2c6807ea33b5"
+content-hash = "21afac13ee72733a93eb354edefad57165c6ac4ad80c2df2a922c5e2968bb3da"
 lock-version = "1.0"
 python-versions = ">=2.7,<3.0"
 

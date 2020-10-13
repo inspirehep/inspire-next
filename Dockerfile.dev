@@ -74,9 +74,10 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
     pip install --no-cache-dir --upgrade setuptools && \
     pip install --no-cache-dir --upgrade wheel
 
+
 COPY . .
 
-RUN poetry export --without-hashes -E all -E xrootd -f requirements.txt > requirements.poetry.txt && \
+RUN poetry export --without-hashes -E all -f requirements.txt > requirements.poetry.txt && \
     pip install --ignore-installed --requirement requirements.poetry.txt && \
     pip install -e .
 

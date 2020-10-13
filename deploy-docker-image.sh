@@ -51,7 +51,7 @@ deploy() {
 main() {
   login
   buildPush "inspirehep/next"
-  buildPush "inspirehep/next-assets" Dockerfile.with_assets
+  buildPush "inspirehep/next-assets" Dockerfile
   buildPush "inspirehep/next-scrapyd" Dockerfile.scrapyd
   logout
   if [ -z "${TRAVIS_TAG}" ]; then
