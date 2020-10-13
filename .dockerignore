@@ -30,6 +30,5 @@
 *.~
 
 Procfile*
-tests/*
 docker*
 gun

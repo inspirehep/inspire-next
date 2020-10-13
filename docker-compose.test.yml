@@ -73,16 +73,12 @@ services:
   unit:
     extends:
       service: test-service_base
-    volumes_from:
-      - test-static
     command: bash -c "flake8 inspirehep tests && py.test tests/unit && make -C docs html"
 
   workflows:
     extends:
       service: test-service_base
     command: py.test tests/integration/workflows
-    volumes_from:
-      - test-static
     depends_on:
       test-database:
         condition: service_healthy
@@ -95,8 +91,6 @@ services:
     extends:
       service: test-service_base
     command: py.test tests/integration --ignore tests/integration/workflows
-    volumes_from:
-      - test-static
     depends_on:
       test-database:
         condition: service_healthy
@@ -109,8 +103,6 @@ services:
     extends:
       service: test-service_base
     command: py.test tests/integration_async
-    volumes_from:
-      - test-static
     depends_on:
       test-database:
         condition: service_healthy
