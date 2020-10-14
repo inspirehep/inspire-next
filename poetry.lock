@@ -1178,7 +1178,7 @@ description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)
 name = "hepcrawl"
 optional = true
 python-versions = "*"
-version = "13.0.11"
+version = "13.0.13"
 
 [package.dependencies]
 LinkHeader = ">=0.4.3"
@@ -1187,6 +1187,7 @@ Sickle = ">=0.6.2,<1.0"
 Twisted = ">=18.9.0,<19.0"
 amqp = ">2.2.0,<2.3.0 || >2.3.0,<3.0"
 autosemver = ">=0.2,<1.0"
+"backports.tempfile" = "1.0"
 boto3 = ">=1.14,<2.0"
 celery = ">=4.1"
 ftputil = ">=3.3.1,<4.0"
@@ -4295,7 +4296,7 @@ worker-node = ["flower", "superlance", "tornado"]
 xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
-content-hash = "21afac13ee72733a93eb354edefad57165c6ac4ad80c2df2a922c5e2968bb3da"
+content-hash = "655cb01803391627c312445c946c150b24cc1ae8f231ae7cb61e2498b5073b36"
 lock-version = "1.0"
 python-versions = ">=2.7,<3.0"
 
@@ -4748,7 +4749,7 @@ harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
 hepcrawl = [
-    {file = "hepcrawl-13.0.11.tar.gz", hash = "sha256:84451696bdb65f21b6af869d5d7902ddcb0ae2d6d318affbe39dd48b3d59b814"},
+    {file = "hepcrawl-13.0.13.tar.gz", hash = "sha256:137e45a35d016663ce7076b58b80f3cbf9617b553ee074d80930121c2bbd3cc9"},
 ]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
