@@ -24,10 +24,13 @@
 
 from __future__ import absolute_import, division, print_function
 
-from flask import Blueprint, current_app, render_template, request
+from flask import Blueprint, current_app, render_template, request, jsonify
 from flask_login import login_required
+from invenio_workflows import workflow_object_class
+from inspire_schemas.api import load_schema
 
 from inspirehep.modules.records.utils import get_endpoint_from_record
+from inspirehep.modules.editor.permissions import editor_use_api_permission
 
 blueprint = Blueprint(
     'inspirehep_editor',
@@ -54,3 +57,18 @@ def preview():
     endpoint = get_endpoint_from_record(record)
     template = current_app.config['RECORDS_UI_ENDPOINTS'][endpoint]['template']
     return render_template(template, record=record)
+
+
+@blueprint.route('/holdingpen/<int:workflow_id>', methods=['GET'])
+@editor_use_api_permission.require(http_exception=403)
+def get_workflow_and_schema(workflow_id):
+    workflow = workflow_object_class.get(workflow_id)
+    schema_url = workflow.data['$schema']
+    return jsonify({
+        "workflow": {
+            "id": workflow.id,
+            "_extra_data": workflow.extra_data,
+            "metadata": workflow.data
+        },
+        "schema": load_schema(schema_url)
+    })
