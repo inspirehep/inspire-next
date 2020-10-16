@@ -248,6 +248,7 @@ def get_workflow_and_schema(workflow_id):
         "workflow": {
             "id": workflow.id,
             "_extra_data": workflow.extra_data,
+            "_workflow": workflow.workflow,
             "metadata": workflow.data
         },
         "schema": load_schema(schema_url)
