@@ -34,6 +34,10 @@ from refextract import (
     extract_references_from_url,
 )
 
+from invenio_workflows import workflow_object_class
+from inspire_schemas.api import load_schema
+
+
 from inspirehep.modules.editor.permissions import (
     editor_permission,
     editor_use_api_permission,
@@ -233,3 +237,18 @@ def get_linked_refs():
     data = request.json
     matched_refs = match_references(data['references'])
     return jsonify({'references': matched_refs})
+
+
+@blueprint_api.route('/holdingpen/<int:workflow_id>', methods=['GET'])
+@editor_use_api_permission.require(http_exception=403)
+def get_workflow_and_schema(workflow_id):
+    workflow = workflow_object_class.get(workflow_id)
+    schema_url = workflow.data['$schema']
+    return jsonify({
+        "workflow": {
+            "id": workflow.id,
+            "_extra_data": workflow.extra_data,
+            "metadata": workflow.data
+        },
+        "schema": load_schema(schema_url)
+    })
