@@ -24,11 +24,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-from workflow.patterns.controlflow import IF, IF_ELSE, IF_NOT
+from workflow.patterns.controlflow import IF, IF_ELSE
 
 from inspirehep.modules.workflows.tasks.actions import (
     halt_record,
-    in_production_mode,
     is_marked,
     is_record_accepted,
     load_from_source_data,
@@ -151,14 +150,9 @@ class Author(object):
                 IF_ELSE(
                     is_record_accepted,
                     (
+                        [store_record] +
                         SEND_TO_LEGACY +
                         NOTIFY_ACCEPTED +
-                        [
-                            # TODO: once legacy is out, this should become
-                            # unconditional, and remove the SEND_TO_LEGACY
-                            # steps
-                            IF_NOT(in_production_mode, [store_record]),
-                        ] +
                         CLOSE_TICKET_IF_NEEDED
                     ),
                     NOTIFY_NOT_ACCEPTED
