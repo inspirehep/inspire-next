@@ -1,0 +1,105 @@
+interactions:
+- request:
+    body: !!python/unicode '{"$schema": "http://localhost:5000/schemas/records/hep.json",
+      "document_type": ["article"], "titles": [{"title": "Autobiography from Jessica
+      Jones"}], "_collections": ["Literature"]}'
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['182']
+      Content-Type: [application/json]
+      accept: [application/vnd+inspire.record.raw+json]
+    method: POST
+    uri: https://inspirebeta.net/api/literature
+  response:
+    body: {string: !!python/unicode '{"created":"2020-11-11T15:13:10.705394+00:00","id":"{1957973}","links":{"bibtex":"https://inspirebeta.net/api/literature/%7B1957973%7D?format=bibtex","citations":"https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A%7B1957973%7D","json":"https://inspirebeta.net/api/literature/%7B1957973%7D?format=json","latex-eu":"https://inspirebeta.net/api/literature/%7B1957973%7D?format=latex-eu","latex-us":"https://inspirebeta.net/api/literature/%7B1957973%7D?format=latex-us"},"metadata":{"$schema":"http://localhost:5000/schemas/records/hep.json","_collections":["Literature"],"control_number":1957973,"document_type":["article"],"self":{"$ref":"https://inspirebeta.net/api/literature/1957973"},"titles":[{"title":"Autobiography
+        from Jessica Jones"}]},"updated":"2020-11-11T15:13:11.347362+00:00","uuid":"4a54f6b5-3859-40a6-ba1b-6aad77b14e5d"}'}
+    headers:
+      access-control-allow-origin: ['*']
+      access-control-expose-headers: ['Content-Type, ETag, Link, X-RateLimit-Limit,
+          X-RateLimit-Remaining, X-RateLimit-Reset']
+      cache-control: [must-revalidate]
+      connection: [keep-alive]
+      content-length: ['845']
+      content-type: [application/vnd+inspire.record.raw+json]
+      date: ['Wed, 11 Nov 2020 15:13:11 GMT']
+      etag: [W/"2"]
+      last-modified: ['Wed, 11 Nov 2020 15:13:11 GMT']
+      link: ['<https://inspirebeta.net/api/literature/%7B1957973%7D?format=bibtex>;
+          rel="bibtex", <https://inspirebeta.net/api/literature/%7B1957973%7D?format=latex-eu>;
+          rel="latex-eu", <https://inspirebeta.net/api/literature/%7B1957973%7D?format=latex-us>;
+          rel="latex-us", <https://inspirebeta.net/api/literature/%7B1957973%7D?format=json>;
+          rel="json", <https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A%7B1957973%7D>;
+          rel="citations"']
+      location: ['https://inspirebeta.net/api/literature/%7B1957973%7D']
+      server: [nginx/1.19.0]
+      vary: ['Accept,Accept-Encoding,Accept-Language']
+    status: {code: 201, message: CREATED}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      accept: [application/vnd+inspire.record.raw+json]
+    method: GET
+    uri: https://inspirebeta.net/api/literature/1957973
+  response:
+    body: {string: !!python/unicode '{"created":"2020-11-11T15:13:10.705394+00:00","id":"1957973","links":{"bibtex":"https://inspirebeta.net/api/literature/1957973?format=bibtex","citations":"https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A1957973","json":"https://inspirebeta.net/api/literature/1957973?format=json","latex-eu":"https://inspirebeta.net/api/literature/1957973?format=latex-eu","latex-us":"https://inspirebeta.net/api/literature/1957973?format=latex-us"},"metadata":{"$schema":"http://localhost:5000/schemas/records/hep.json","_collections":["Literature"],"control_number":1957973,"document_type":["article"],"self":{"$ref":"https://inspirebeta.net/api/literature/1957973"},"titles":[{"title":"Autobiography
+        from Jessica Jones"}]},"updated":"2020-11-11T15:13:11.347362+00:00","uuid":"4a54f6b5-3859-40a6-ba1b-6aad77b14e5d"}'}
+    headers:
+      access-control-allow-origin: ['*']
+      access-control-expose-headers: ['Content-Type, ETag, Link, X-RateLimit-Limit,
+          X-RateLimit-Remaining, X-RateLimit-Reset']
+      cache-control: [must-revalidate]
+      connection: [keep-alive]
+      content-length: ['813']
+      content-type: [application/vnd+inspire.record.raw+json]
+      date: ['Wed, 11 Nov 2020 15:13:11 GMT']
+      etag: [W/"2"]
+      last-modified: ['Wed, 11 Nov 2020 15:13:11 GMT']
+      link: ['<https://inspirebeta.net/api/literature/1957973?format=bibtex>; rel="bibtex",
+          <https://inspirebeta.net/api/literature/1957973?format=latex-eu>; rel="latex-eu",
+          <https://inspirebeta.net/api/literature/1957973?format=latex-us>; rel="latex-us",
+          <https://inspirebeta.net/api/literature/1957973?format=json>; rel="json",
+          <https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A1957973>;
+          rel="citations"']
+      server: [nginx/1.19.0]
+      vary: ['Accept,Accept-Encoding,Accept-Language']
+    status: {code: 200, message: OK}
+- request:
+    body: !!python/unicode '{"_collections": ["Literature"], "control_number": 1957973,
+      "self": {"$ref": "https://inspirebeta.net/api/literature/1957973"}, "titles":
+      [{"title": "Autobiography from Frank Castle"}], "$schema": "http://localhost:5000/schemas/records/hep.json",
+      "document_type": ["article"]}'
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['276']
+      Content-Type: [application/json]
+      accept: [application/vnd+inspire.record.raw+json]
+    method: PUT
+    uri: https://inspirebeta.net/api/literature/1957973
+  response:
+    body: {string: !!python/unicode '{"created":"2020-11-11T15:13:10.705394+00:00","id":"1957973","links":{"bibtex":"https://inspirebeta.net/api/literature/1957973?format=bibtex","citations":"https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A1957973","json":"https://inspirebeta.net/api/literature/1957973?format=json","latex-eu":"https://inspirebeta.net/api/literature/1957973?format=latex-eu","latex-us":"https://inspirebeta.net/api/literature/1957973?format=latex-us"},"metadata":{"$schema":"http://localhost:5000/schemas/records/hep.json","_collections":["Literature"],"control_number":1957973,"document_type":["article"],"self":{"$ref":"https://inspirebeta.net/api/literature/1957973"},"titles":[{"title":"Autobiography
+        from Frank Castle"}]},"updated":"2020-11-11T15:13:12.806643+00:00","uuid":"4a54f6b5-3859-40a6-ba1b-6aad77b14e5d"}'}
+    headers:
+      access-control-allow-origin: ['*']
+      access-control-expose-headers: ['Content-Type, ETag, Link, X-RateLimit-Limit,
+          X-RateLimit-Remaining, X-RateLimit-Reset']
+      cache-control: [must-revalidate]
+      connection: [keep-alive]
+      content-length: ['812']
+      content-type: [application/vnd+inspire.record.raw+json]
+      date: ['Wed, 11 Nov 2020 15:13:13 GMT']
+      etag: [W/"4"]
+      last-modified: ['Wed, 11 Nov 2020 15:13:12 GMT']
+      link: ['<https://inspirebeta.net/api/literature/1957973?format=bibtex>; rel="bibtex",
+          <https://inspirebeta.net/api/literature/1957973?format=latex-eu>; rel="latex-eu",
+          <https://inspirebeta.net/api/literature/1957973?format=latex-us>; rel="latex-us",
+          <https://inspirebeta.net/api/literature/1957973?format=json>; rel="json",
+          <https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A1957973>;
+          rel="citations"']
+      server: [nginx/1.19.0]
+      vary: ['Accept,Accept-Encoding,Accept-Language']
+    status: {code: 200, message: OK}
+version: 1

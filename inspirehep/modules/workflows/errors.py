@@ -144,3 +144,7 @@ class CallbackRecordNotFoundError(CallbackError):
         """Initialize exception."""
         super(CallbackRecordNotFoundError, self).__init__(**kwargs)
         self.message = 'The record with id "{}" was not found.'.format(recid)
+
+
+class InspirehepMissingDataError(Exception):
+    pass

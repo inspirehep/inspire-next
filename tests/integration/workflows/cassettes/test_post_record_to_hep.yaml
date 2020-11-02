@@ -1,0 +1,38 @@
+interactions:
+- request:
+    body: !!python/unicode '{"$schema": "http://localhost:5000/schemas/records/hep.json",
+      "document_type": ["article"], "titles": [{"title": "Autobiography from Jessica
+      Jones"}], "_collections": ["Literature"]}'
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['182']
+      Content-Type: [application/json]
+      accept: [application/vnd+inspire.record.raw+json]
+    method: POST
+    uri: https://inspirebeta.net/api/literature
+  response:
+    body: {string: !!python/unicode '{"created":"2020-11-11T15:10:48.182072+00:00","id":"{1957972}","links":{"bibtex":"https://inspirebeta.net/api/literature/%7B1957972%7D?format=bibtex","citations":"https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A%7B1957972%7D","json":"https://inspirebeta.net/api/literature/%7B1957972%7D?format=json","latex-eu":"https://inspirebeta.net/api/literature/%7B1957972%7D?format=latex-eu","latex-us":"https://inspirebeta.net/api/literature/%7B1957972%7D?format=latex-us"},"metadata":{"$schema":"http://localhost:5000/schemas/records/hep.json","_collections":["Literature"],"control_number":1957972,"document_type":["article"],"self":{"$ref":"https://inspirebeta.net/api/literature/1957972"},"titles":[{"title":"Autobiography
+        from Jessica Jones"}]},"updated":"2020-11-11T15:10:48.804718+00:00","uuid":"aeb5b881-553c-460a-981f-f58ead84ea9d"}'}
+    headers:
+      access-control-allow-origin: ['*']
+      access-control-expose-headers: ['Content-Type, ETag, Link, X-RateLimit-Limit,
+          X-RateLimit-Remaining, X-RateLimit-Reset']
+      cache-control: [must-revalidate]
+      connection: [keep-alive]
+      content-length: ['845']
+      content-type: [application/vnd+inspire.record.raw+json]
+      date: ['Wed, 11 Nov 2020 15:10:49 GMT']
+      etag: [W/"2"]
+      last-modified: ['Wed, 11 Nov 2020 15:10:48 GMT']
+      link: ['<https://inspirebeta.net/api/literature/%7B1957972%7D?format=bibtex>;
+          rel="bibtex", <https://inspirebeta.net/api/literature/%7B1957972%7D?format=latex-eu>;
+          rel="latex-eu", <https://inspirebeta.net/api/literature/%7B1957972%7D?format=latex-us>;
+          rel="latex-us", <https://inspirebeta.net/api/literature/%7B1957972%7D?format=json>;
+          rel="json", <https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A%7B1957972%7D>;
+          rel="citations"']
+      location: ['https://inspirebeta.net/api/literature/%7B1957972%7D']
+      server: [nginx/1.19.0]
+      vary: ['Accept,Accept-Encoding,Accept-Language']
+    status: {code: 201, message: CREATED}
+version: 1
