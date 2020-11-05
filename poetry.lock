@@ -1504,7 +1504,7 @@ description = "Inspire JSON schemas and utilities to use them."
 name = "inspire-schemas"
 optional = false
 python-versions = "*"
-version = "61.3.9"
+version = "61.3.11"
 
 [package.dependencies]
 Unidecode = ">=1.0.22,<2.0"
@@ -4297,7 +4297,6 @@ xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
 content-hash = "10ddf7a3308477527576cd78ee8433baa9c77d44f21b58409c478416fc54dbc1"
-lock-version = "1.0"
 python-versions = ">=2.7,<3.0"
 
 [metadata.files]
@@ -4816,7 +4815,7 @@ inspire-query-parser = [
     {file = "inspire-query-parser-6.0.4.tar.gz", hash = "sha256:9fc3d1a312e525bbd40f4987c47043bc51516d803f2a278eff7c3cd63cbe89ec"},
 ]
 inspire-schemas = [
-    {file = "inspire-schemas-61.3.9.tar.gz", hash = "sha256:5344c5500dd022a3a2b2c0a7079281f06ed30fda57bca1e60c11ae149ea31147"},
+    {file = "inspire-schemas-61.3.11.tar.gz", hash = "sha256:f590e8bc4f140adc4d242f7810a86430a3ff581244e2d540a948733d242fc69a"},
 ]
 inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},

@@ -110,45 +110,6 @@ def test_download_documents():
         assert expected_document_url == documents[0]['url']
 
 
-@patch('inspirehep.modules.workflows.utils.fsopen')
-def test_download_documents_with_local_file(mock_fsopen):
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
-            content=pkg_resources.resource_string(
-                __name__, os.path.join('fixtures', '1605.03844.pdf')),
-        )
-        mock_fsopen.return_value = 'jessica jones'
-        schema = load_schema('hep')
-        subschema = schema['properties']['documents']
-        data = {
-            'documents': [
-                {
-                    'key': '1605.03844.pdf',
-                    'url': 'http://export.arxiv.org/pdf/1605.03844'
-                },
-                {
-                    'key': 'jessicajones.pdf;1',
-                    'url': 'file://jessicajones.pdf%3B1'
-                },
-            ],
-        }
-        extra_data = {}
-        files = MockFiles({})
-        assert validate(data['documents'], subschema) is None
-
-        obj = MockObj(data, extra_data, files=files)
-        eng = MockEng()
-
-        assert download_documents(obj, eng) is None
-
-        documents = obj.data['documents']
-
-        assert 2 == len(documents)
-        mock_fsopen.assert_called_once_with(
-            'file://jessicajones.pdf;1', mode='rb')
-
-
 def test_download_documents_with_multiple_documents():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
