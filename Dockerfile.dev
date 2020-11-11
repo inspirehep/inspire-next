@@ -78,7 +78,7 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
 COPY . .
 
 RUN poetry export --without-hashes -E all -f requirements.txt > requirements.poetry.txt && \
-    pip install --ignore-installed --requirement requirements.poetry.txt && \
+    pip install --ignore-installed  --src /opt/python-git-modules/ --requirement requirements.poetry.txt && \
     pip install -e .
 
 WORKDIR /usr/var/inspirehep-instance/static
