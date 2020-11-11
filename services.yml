@@ -75,5 +75,4 @@ services:
     image: busybox
     volumes:
         - ".:/code"
-        - "${DOCKER_DATA}/tmp/virtualenv:/virtualenv"
 
