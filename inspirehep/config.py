@@ -1234,6 +1234,11 @@ FEATURE_FLAG_ENABLE_MATCH_REFERENCES_HEP = False
 
 # Harvesting and Workflows
 # ========================
+AFFILIATIONS_TO_HIDDEN_COLLECTIONS_MAPPING = {
+    "IN2P3": "HAL Hidden",
+    "CERN": "CDS Hidden",
+    "FERMILAB": "Fermilab"
+}
 ARXIV_PDF_URL = "http://export.arxiv.org/pdf/{arxiv_id}"
 ARXIV_PDF_URL_ALTERNATIVE = "http://arxiv.org/pdf/{arxiv_id}"
 ARXIV_TARBALL_URL = "http://export.arxiv.org/e-print/{arxiv_id}"

@@ -59,6 +59,7 @@ from mocks import fake_beard_api_request, fake_download_file, fake_magpie_api_re
 from factories.db.invenio_records import TestRecordMetadata
 from inspirehep.modules.workflows.tasks.matching import _get_hep_record_brief
 from workflow_utils import build_workflow
+from mock import patch
 
 
 @mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link")
@@ -1307,3 +1308,164 @@ def test_update_record_goes_through_api_version_of_store_record_connection_timeo
 
     assert obj.status == ObjectStatus.ERROR
     assert obj.extra_data['_error_msg'].endswith("\nConnectTimeout\n") is True
+
+
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow",
+    side_effect=fake_download_file,
+)
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link")
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions.download_file_to_workflow",
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.beard.json_api_request",
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.refextract.extract_references_from_file",
+    return_value=[],
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions._is_auto_rejected", return_value=True,
+)
+def test_workflow_checks_affiliations_if_record_is_not_important(
+    mocked_is_auto_rejected,
+    mocked_refextract_extract_refs,
+    mocked_api_request_magpie,
+    mocked_beard_api,
+    mocked_actions_download,
+    mocked_is_pdf_link,
+    mocked_arxiv_download,
+    workflow_app,
+    mocked_external_services,
+):
+    """Test a full harvesting workflow."""
+    record = generate_record()
+    record['authors'][0]['raw_affiliations'] = [{"value": "IN2P3"}, {"value": "Cern"}]
+    record['authors'][1]['raw_affiliations'] = [{"value": "Fermilab"}]
+    workflow_id = build_workflow(record).id
+    with patch.dict(workflow_app.config, {
+        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
+        'INSPIREHEP_URL': "http://web:8000"
+    }):
+        start("article", object_id=workflow_id)
+
+    collections_in_record = mocked_external_services.request_history[0].json()['_collections']
+    assert "CDS Hidden" in collections_in_record
+    assert "HAL Hidden" in collections_in_record
+    assert "Fermilab" in collections_in_record
+    assert "Literature" not in collections_in_record
+
+
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow",
+    side_effect=fake_download_file,
+)
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link")
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions.download_file_to_workflow",
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.beard.json_api_request",
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.refextract.extract_references_from_file",
+    return_value=[],
+)
+def test_workflow_do_not_changes_to_hidden_if_record_authors_do_not_have_interesting_affiliations(
+    mocked_refextract_extract_refs,
+    mocked_api_request_magpie,
+    mocked_beard_api,
+    mocked_actions_download,
+    mocked_is_pdf_link,
+    mocked_arxiv_download,
+    workflow_app,
+    mocked_external_services,
+):
+    """Test a full harvesting workflow."""
+    record = generate_record()
+    workflow_id = build_workflow(record).id
+    with patch.dict(workflow_app.config, {
+        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
+        'INSPIREHEP_URL': "http://web:8000"
+    }):
+        start("article", object_id=workflow_id)
+        wf = workflow_object_class.get(workflow_id)
+        wf.extra_data['approved'] = True
+        wf.save()
+        wf.continue_workflow(delayed=False)
+
+    collections_in_record = mocked_external_services.request_history[0].json()['_collections']
+    assert "CDS Hidden" not in collections_in_record
+    assert "HAL Hidden" not in collections_in_record
+    assert "Fermilab" not in collections_in_record
+    assert ["Literature"] == collections_in_record
+
+
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow",
+    side_effect=fake_download_file,
+)
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link")
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions.download_file_to_workflow",
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.beard.json_api_request",
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.refextract.extract_references_from_file",
+    return_value=[],
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions._is_auto_rejected", return_value=False,
+)
+def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
+    mocked_is_auto_rejected,
+    mocked_refextract_extract_refs,
+    mocked_api_request_magpie,
+    mocked_beard_api,
+    mocked_actions_download,
+    mocked_is_pdf_link,
+    mocked_arxiv_download,
+    workflow_app,
+    mocked_external_services,
+):
+    """Test a full harvesting workflow."""
+    record = generate_record()
+    record['authors'][0]['raw_affiliations'] = [{"value": "IN2P3"}, {"value": "Cern"}]
+    record['authors'][1]['raw_affiliations'] = [{"value": "Fermilab"}]
+    workflow_id = build_workflow(record).id
+    with patch.dict(workflow_app.config, {
+        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
+        'INSPIREHEP_URL': "http://web:8000"
+    }):
+        start("article", object_id=workflow_id)
+        wf = workflow_object_class.get(workflow_id)
+        wf.extra_data['approved'] = False
+        wf.save()
+        wf.continue_workflow(delayed=False)
+
+    collections_in_record = mocked_external_services.request_history[0].json()['_collections']
+    assert "CDS Hidden" in collections_in_record
+    assert "HAL Hidden" in collections_in_record
+    assert "Fermilab" in collections_in_record
+    assert "Literature" not in collections_in_record

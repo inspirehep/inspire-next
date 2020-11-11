@@ -22,6 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+import random
+import uuid
+
 import mock
 import os
 import pytest
@@ -224,8 +227,21 @@ def mocked_external_services(workflow_app):
             status_code=200,
             text='Irrelevant part 1 of message \nIrrelevant part 2 of message \n# Ticket 1 updated.'
         )
+        if 'INSPIREHEP_URL' in workflow_app.config:
+            # HEP record upload
+            requests_mocker.register_uri(
+                'POST',
+                re.compile('.*' + workflow_app.config['INSPIREHEP_URL'] + '/(literature|aurhors)/?'),
+                status_code=201,
+                json={
+                    "metadata": {
+                        "control_number": random.randint(10000, 99999),
+                    },
+                    "uuid": str(uuid.uuid4())
+                }
+            )
 
-        yield
+        yield requests_mocker
 
 
 @pytest.fixture

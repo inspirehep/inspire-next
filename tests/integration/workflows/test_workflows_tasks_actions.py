@@ -38,7 +38,7 @@ from invenio_workflows import (
 from invenio_workflows.errors import WorkflowsError
 from inspirehep.modules.workflows.tasks.actions import (
     load_from_source_data,
-    normalize_journal_titles,
+    normalize_journal_titles, affiliations_for_hidden_collections, replace_collection_to_hidden,
 )
 
 from calls import insert_citing_record
@@ -51,6 +51,8 @@ from mocks import (
     fake_magpie_api_request,
 )
 from workflow_utils import build_workflow
+
+from calls import generate_record
 
 
 @pytest.fixture(scope='function')
@@ -713,3 +715,28 @@ def test_workflow_loads_from_source_data_fails_on_no_source_data(
         start('load_source_data', object_id=workflow_id)
 
     assert exc.match(r'source_data.*missing')
+
+
+def test_find_interesting_affiliations_works_correctly_for_complex_affiliations_value(workflow_app):
+    expected_affiliations = ["HAL Hidden"]
+    record = generate_record()
+    record['authors'][0]['raw_affiliations'] = [{"value": "Some longer description IN2P3 with proper keyword included"}, {"value": "Another one but this time with CERN_WRONG keywords Fremilab included"}]
+
+    workflow = build_workflow(record)
+
+    affiliations = affiliations_for_hidden_collections(workflow)
+    assert affiliations == expected_affiliations
+
+
+def test_replace_collection_to_hidden_sets_proper_hidden_collections_on_metadata(workflow_app):
+    expected_collections = ["CDS Hidden", "Fermilab"]
+    record = generate_record()
+    record['authors'][0]['raw_affiliations'] = [
+        {"value": "Some longer description CERN with proper keyword included"},
+        {"value": "Another one but this time with CERN_WRONG keywords Fremilab included"}
+    ]
+    record['authors'][1]['raw_affiliations'] = [{"value": "Blah blah blah Fermilab blah blah"}]
+    workflow = build_workflow(record)
+
+    wf = replace_collection_to_hidden(workflow, None)
+    assert wf.data['_collections'] == expected_collections

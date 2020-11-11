@@ -64,7 +64,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     set_refereed_and_fix_document_type,
     validate_record,
     jlab_ticket_needed,
-    delay_if_necessary
+    delay_if_necessary, should_be_hidden, replace_collection_to_hidden
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -310,25 +310,34 @@ HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
             is_marked('auto-approved'),
             mark('approved', True),
             [
-                IF_NOT(
+                IF(
                     is_record_relevant,
-                    [
-                        reject_record('Article automatically rejected'),
-                        mark('approved', False),
-                        save_workflow,
-                        stop_processing,
-                    ],
+                    halt_record(
+                        action="hep_approval",
+                        message="Submission halted for curator approval.",
+                    ),
                 ),
-                halt_record(
-                    action="hep_approval",
-                    message="Submission halted for curator approval.",
+                IF_NOT(
+                    is_marked('approved'),
+                    IF_ELSE(
+                        should_be_hidden,
+                        [
+                            replace_collection_to_hidden,
+                            mark('approved', True),
+                        ],
+                        [
+                            reject_record('Article automatically rejected'),
+                            mark('approved', False),
+                            save_workflow,
+                            stop_processing,
+                        ],
+                    )
                 )
             ]
         ),
     ),
     save_workflow
 ]
-
 
 STORE_RECORD = [
     IF(

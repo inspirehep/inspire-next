@@ -703,3 +703,37 @@ def increase_restart_count_or_error(obj, eng):
         save_workflow(obj, eng)
     else:
         raise WorkflowsError('Workflow restarted too many times')
+
+
+def flatten_list(input_list):
+    if isinstance(input_list, (list, tuple)):
+        return [
+            element for innerList in input_list for element in flatten_list(innerList)
+        ]
+    return [input_list]
+
+
+@with_debug_logging
+def affiliations_for_hidden_collections(obj):
+    affiliations_mapping = current_app.config.get("AFFILIATIONS_TO_HIDDEN_COLLECTIONS_MAPPING", {})
+    affiliations = flatten_list(get_value(obj.data, 'authors.raw_affiliations.value', []))
+
+    affiliations_set = set()
+    for aff in affiliations:
+        affiliations_set.update(aff.upper().split())
+    aff_keys = set(affiliations_mapping.keys())
+    spotted_affiliations = aff_keys.intersection(affiliations_set)
+    return [affiliations_mapping[affiliation] for affiliation in spotted_affiliations]
+
+
+@with_debug_logging
+def should_be_hidden(obj, eng):
+    """Checks if paper attached to this workflow is affiliated with one of affiliations which interests us."""
+    return bool(affiliations_for_hidden_collections(obj))
+
+
+@with_debug_logging
+def replace_collection_to_hidden(obj, eng):
+    """Replaces collection to hidden based on authors affiliations"""
+    obj.data["_collections"] = affiliations_for_hidden_collections(obj)
+    return obj
