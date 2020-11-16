@@ -118,6 +118,7 @@ xrootdpyfs = {git = "https://github.com/inspirehep/xrootdpyfs.git", optional = t
 fuzzy = "1.1"
 pylatexenc = "^2.7"
 ipaddress = "1.0.23"
+autosemver = "0.5.5"
 
 [tool.poetry.extras]
 all = ["coverage", "docutils", "flake8-future-import", "flower", "freezegun", "gunicorn", "hepcrawl", "honcho", "ipdb", "mock", "pytest", "pytest-cov", "pytest-vcr", "requests-mock", "sphinx", "superlance", "tornado"]

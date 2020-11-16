@@ -114,10 +114,10 @@ description = "Tools to handle automatic semantic versioning in python"
 name = "autosemver"
 optional = false
 python-versions = "*"
-version = "0.5.3"
+version = "0.5.5"
 
 [package.dependencies]
-dulwich = "*"
+dulwich = ">=0.19.6,<0.20"
 
 [[package]]
 category = "main"
@@ -4296,7 +4296,8 @@ worker-node = ["flower", "superlance", "tornado"]
 xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
-content-hash = "10ddf7a3308477527576cd78ee8433baa9c77d44f21b58409c478416fc54dbc1"
+content-hash = "1a9b83b5dfdc89883f9a539f291c67035950f7879b8cd4d49dc827d1c5f1b49a"
+lock-version = "1.0"
 python-versions = ">=2.7,<3.0"
 
 [metadata.files]
@@ -4336,7 +4337,7 @@ automat = [
     {file = "Automat-20.2.0.tar.gz", hash = "sha256:7979803c74610e11ef0c0d68a2942b152df52da55336e0c9d58daf1831cbdf33"},
 ]
 autosemver = [
-    {file = "autosemver-0.5.3.tar.gz", hash = "sha256:4f4e5c30a51acabd454eddb28fb958a6cd8ba93ce18ab9484bdcb8009e5163a0"},
+    {file = "autosemver-0.5.5.tar.gz", hash = "sha256:0af1e8a9c3604545c067311f1c26403e8f0d60b5d9561c0217e14eee21c98b02"},
 ]
 babel = [
     {file = "Babel-2.8.0-py2.py3-none-any.whl", hash = "sha256:d670ea0b10f8b723672d3a6abeb87b565b244da220d76b4dba1b66269ec152d4"},
