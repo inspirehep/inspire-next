@@ -26,7 +26,7 @@ How to Connect to the PostgreSQL Database
 1. About
 --------
 
-In inspire-next stores all the data in a postgresql database. 
+In inspire-next stores all the data in a postgresql database.
 This document specifies how to connect and query the inspire's PostgreSQL database.
 We access it thorught the docker-containers.
 
@@ -61,7 +61,7 @@ When all the containers are up you have to open a new console and run the follow
 
 
 Now you have an interactive console to query the inspire SQL database.
-In case PostgreSQL requires the authentication credentials the password for the inspirehep database is `dbpass123`
+In case PostgreSQL requires the authentication credentials the password for the inspirehep database is `inspirehep`
 
 
 4. PostgreSQL useful commands

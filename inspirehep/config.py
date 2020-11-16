@@ -82,7 +82,7 @@ BASE_TEMPLATE = "inspirehep_theme/page.html"
 
 # Database
 # ========
-SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://inspirehep:dbpass123@localhost:5432/inspirehep"
+SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://inspirehep:inspirehep@localhost:5432/inspirehep"
 SQLALCHEMY_ECHO = False
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 

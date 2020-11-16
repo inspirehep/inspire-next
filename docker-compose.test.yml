@@ -29,7 +29,7 @@ services:
       file: services.yml
       service: base
     environment:
-      - APP_SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://inspirehep:dbpass123@test-database:5432/inspirehep
+      - APP_SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://inspirehep:inspirehep@test-database:5432/inspirehep
       - APP_CELERY_BROKER_URL=pyamqp://guest:guest@test-rabbitmq:5672//
       - APP_CELERY_RESULT_BACKEND=redis://test-redis:6379/1
       - APP_CACHE_REDIS_URL=redis://test-redis:6379/0
