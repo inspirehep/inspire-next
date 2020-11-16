@@ -1451,8 +1451,8 @@ def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
 ):
     """Test a full harvesting workflow."""
     record = generate_record()
-    record['authors'][0]['raw_affiliations'] = [{"value": "IN2P3"}, {"value": "Cern"}]
-    record['authors'][1]['raw_affiliations'] = [{"value": "Fermilab"}]
+    record['authors'][0]['raw_affiliations'] = [{"value": "IN2P3."}, {"value": "Some words with CErN, inside."}]
+    record['authors'][1]['raw_affiliations'] = [{"value": "Fermilab?"}]
     workflow_id = build_workflow(record).id
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,

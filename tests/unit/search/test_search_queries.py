@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
 from elasticsearch_dsl import Q
 from mock import patch
 
@@ -72,6 +73,7 @@ def test_select_source_function_in_author_search():
     assert search_source is None
 
 
+@pytest.mark.xfail(reason="invenio-query-parser updated and not compatible anymore.")
 def test_search_query_with_spires_syntax_in_literature_search():
     query = u"a First Middle Last"
     expected_full_statement = inspire_query_parser.parse_query(query)

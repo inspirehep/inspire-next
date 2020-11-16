@@ -90,6 +90,7 @@ def test_load_author_advisors():
             {
                 'curated_relation': False,
                 'degree_type': 'bachelor',
+                'hidden': False,
                 'name': 'Id, Occaecat Qui Sint In',
                 'ids': [
                     {'schema': 'DESY', 'value': 'DESY-55924820881'},
@@ -685,6 +686,7 @@ def test_load_author_positions():
                 'current': False,
                 'curated_relation': False,
                 'end_date': '1995-01-31',
+                'hidden': False,
                 'institution': 'Colgate University',
                 'rank': 'PHD',
                 'start_date': '1994-02-01',
@@ -754,6 +756,7 @@ def test_load_author_project_membership():
                 'curated_relation': False,
                 'current': True,
                 'end_date': '2001-12-31',
+                'hidden': False,
                 'name': 'pariatur',
                 'record': {'$ref': 'http://180'},
                 'start_date': '1997-05-01',

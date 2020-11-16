@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
 import sys
 import time
 import backoff
@@ -718,12 +719,12 @@ def affiliations_for_hidden_collections(obj):
     affiliations_mapping = current_app.config.get("AFFILIATIONS_TO_HIDDEN_COLLECTIONS_MAPPING", {})
     affiliations = flatten_list(get_value(obj.data, 'authors.raw_affiliations.value', []))
 
+    query = "|".join(affiliations_mapping.keys())
+
     affiliations_set = set()
     for aff in affiliations:
-        affiliations_set.update(aff.upper().split())
-    aff_keys = set(affiliations_mapping.keys())
-    spotted_affiliations = aff_keys.intersection(affiliations_set)
-    return [affiliations_mapping[affiliation] for affiliation in spotted_affiliations]
+        affiliations_set.update([match.upper() for match in re.findall(query, aff, re.IGNORECASE)])
+    return [affiliations_mapping[affiliation] for affiliation in affiliations_set]
 
 
 @with_debug_logging

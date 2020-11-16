@@ -114,10 +114,10 @@ description = "Tools to handle automatic semantic versioning in python"
 name = "autosemver"
 optional = false
 python-versions = "*"
-version = "0.5.3"
+version = "0.5.5"
 
 [package.dependencies]
-dulwich = "*"
+dulwich = ">=0.19.6,<0.20"
 
 [[package]]
 category = "main"
@@ -1488,7 +1488,7 @@ description = "A PEG-based query parser for INSPIRE."
 name = "inspire-query-parser"
 optional = false
 python-versions = "*"
-version = "6.0.4"
+version = "6.0.31"
 
 [package.dependencies]
 inspire-schemas = ">=61.0,<62.0"
@@ -1507,11 +1507,11 @@ description = "Inspire JSON schemas and utilities to use them."
 name = "inspire-schemas"
 optional = false
 python-versions = "*"
-version = "61.3.11"
+version = "61.3.13"
 
 [package.dependencies]
 Unidecode = ">=1.0.22,<2.0"
-autosemver = "*"
+autosemver = "0.5.5"
 bleach = ">=3.2.1,<4.0"
 idutils = "*"
 inspire-utils = ">=3.0.0,<4.0"
@@ -1546,7 +1546,7 @@ description = "INSPIRE-specific utils."
 name = "inspire-utils"
 optional = false
 python-versions = "*"
-version = "3.0.14"
+version = "3.0.15"
 
 [package.dependencies]
 Unidecode = ">=1.0.22,<2.0"
@@ -2948,10 +2948,10 @@ description = "Small library for extracting plots used in scholarly communicatio
 name = "plotextractor"
 optional = false
 python-versions = "*"
-version = "0.3.4"
+version = "0.3.5"
 
 [package.dependencies]
-Wand = ">=0.4.1"
+Wand = ">=0.4.1,<=0.5.9"
 python-magic = "*"
 six = ">=1.7.2"
 subprocess32 = ">=3.2.6"
@@ -4340,7 +4340,7 @@ automat = [
     {file = "Automat-20.2.0.tar.gz", hash = "sha256:7979803c74610e11ef0c0d68a2942b152df52da55336e0c9d58daf1831cbdf33"},
 ]
 autosemver = [
-    {file = "autosemver-0.5.3.tar.gz", hash = "sha256:4f4e5c30a51acabd454eddb28fb958a6cd8ba93ce18ab9484bdcb8009e5163a0"},
+    {file = "autosemver-0.5.5.tar.gz", hash = "sha256:0af1e8a9c3604545c067311f1c26403e8f0d60b5d9561c0217e14eee21c98b02"},
 ]
 babel = [
     {file = "Babel-2.8.0-py2.py3-none-any.whl", hash = "sha256:d670ea0b10f8b723672d3a6abeb87b565b244da220d76b4dba1b66269ec152d4"},
@@ -4815,16 +4815,16 @@ inspire-matcher = [
     {file = "inspire-matcher-9.0.1.tar.gz", hash = "sha256:622f5a4e2bc4f2c0ac987caf10a61efbe44da673a9e9724baa52bf1917b8e200"},
 ]
 inspire-query-parser = [
-    {file = "inspire-query-parser-6.0.4.tar.gz", hash = "sha256:9fc3d1a312e525bbd40f4987c47043bc51516d803f2a278eff7c3cd63cbe89ec"},
+    {file = "inspire-query-parser-6.0.31.tar.gz", hash = "sha256:b0556a950012f4432458823afbf3b6d7a1294ebf0449a1d1db22bcfaf6cb3857"},
 ]
 inspire-schemas = [
-    {file = "inspire-schemas-61.3.11.tar.gz", hash = "sha256:f590e8bc4f140adc4d242f7810a86430a3ff581244e2d540a948733d242fc69a"},
+    {file = "inspire-schemas-61.3.13.tar.gz", hash = "sha256:79b9ffee55552046ca18eb0cd64811a61480b2061b39c343f64c8eb341f82cf6"},
 ]
 inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
 ]
 inspire-utils = [
-    {file = "inspire-utils-3.0.14.tar.gz", hash = "sha256:e05a80c9b811b8b128177ae94dc518a81cdcbf2c1fae36646c0f7b33cb96e598"},
+    {file = "inspire-utils-3.0.15.tar.gz", hash = "sha256:4702f4d7c8f64368c1d4d8f18bb0602c4a10ef48db9c5c11b204b6235d45416e"},
 ]
 intervals = [
     {file = "intervals-0.8.1.tar.gz", hash = "sha256:37921da1407a5e9384e8e1350cfb8500f8d0d69fc43d03d01a4fdc6e7a7c7166"},
@@ -5217,7 +5217,7 @@ pkgsettings = [
     {file = "pkgsettings-0.12.0.tar.gz", hash = "sha256:149102d1c3d2179140eaa8acd94b085aaa6ae30605d425b84aa83a3bb1536658"},
 ]
 plotextractor = [
-    {file = "plotextractor-0.3.4.tar.gz", hash = "sha256:4b0915b793c4eb04c06109b1ecf548626dbf0c07563e2c63f381e1ea5d1c35cd"},
+    {file = "plotextractor-0.3.5.tar.gz", hash = "sha256:6885f9d145916c1fe089c5c0ca979945437a12af7f5f27fc9128f550f89df3c0"},
 ]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
