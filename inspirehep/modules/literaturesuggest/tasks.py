@@ -278,3 +278,9 @@ def curation_ticket_context(user, obj):
 def curation_ticket_needed(obj, eng):
     """Check if the a curation ticket is needed."""
     return obj.extra_data.get("core", False)
+
+
+@with_debug_logging
+def check_source_publishing(obj, eng):
+    """Check if the a curation ticket is needed."""
+    return get_value(obj.data, 'acquisition_source.source').lower() not in {"arxiv", "submitter"}
