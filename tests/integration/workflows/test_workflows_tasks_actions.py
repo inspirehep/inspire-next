@@ -720,7 +720,7 @@ def test_workflow_loads_from_source_data_fails_on_no_source_data(
 def test_find_interesting_affiliations_works_correctly_for_complex_affiliations_value(workflow_app):
     expected_affiliations = ["HAL Hidden"]
     record = generate_record()
-    record['authors'][0]['raw_affiliations'] = [{"value": "Some longer description IN2P3 with proper keyword included"}, {"value": "Another one but this time with CERN_WRONG keywords Fremilab included"}]
+    record['authors'][0]['raw_affiliations'] = [{"value": "Some longer description In2P3. with proper keyword included"}, {"value": "Another one but this time with wrong keywords Fremilab included"}]
 
     workflow = build_workflow(record)
 
@@ -732,8 +732,8 @@ def test_replace_collection_to_hidden_sets_proper_hidden_collections_on_metadata
     expected_collections = ["CDS Hidden", "Fermilab"]
     record = generate_record()
     record['authors'][0]['raw_affiliations'] = [
-        {"value": "Some longer description CERN with proper keyword included"},
-        {"value": "Another one but this time with CERN_WRONG keywords Fremilab included"}
+        {"value": "Some longer description CERN? with proper keyword included"},
+        {"value": "Another one but this time with wrong keywords Fremilab included"}
     ]
     record['authors'][1]['raw_affiliations'] = [{"value": "Blah blah blah Fermilab blah blah"}]
     workflow = build_workflow(record)
