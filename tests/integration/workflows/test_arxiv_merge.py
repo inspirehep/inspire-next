@@ -292,8 +292,6 @@ def test_merge_with_conflicts_rootful(
 
         update_workflow_id = build_workflow(RECORD_WITH_CONFLICTS).id
 
-        # By default the root is {}.
-
         eng_uuid = start('article', object_id=update_workflow_id)
 
         eng = WorkflowEngine.from_uuid(eng_uuid)
@@ -753,3 +751,42 @@ def test_workflow_restarts_goes_in_error_after_three_restarts(
     assert obj.extra_data['source_data']['persistent_data']['marks']['restart-count'] == 3
     assert 'Workflow restarted too many times' in obj.extra_data['_error_msg']
     assert obj.status == ObjectStatus.ERROR
+
+
+@patch(
+    'inspirehep.modules.workflows.tasks.beard.json_api_request',
+    side_effect=fake_beard_api_request,
+)
+@patch(
+    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    side_effect=fake_magpie_api_request,
+)
+def test_conflict_creates_ticket(
+        mocked_api_request_magpie,
+        mocked_beard_api,
+        workflow_app,
+        mocked_external_services,
+        disable_file_upload,
+        enable_merge_on_update,
+):
+    with patch('inspire_json_merger.config.ArxivOnArxivOperations.conflict_filters', ['acquisition_source.source']):
+        TestRecordMetadata.create_from_file(
+            __name__, 'merge_record_arxiv.json', index_name='records-hep')
+        update_workflow_id = build_workflow(RECORD_WITH_CONFLICTS).id
+
+        start('article', object_id=update_workflow_id)
+
+        wf = workflow_object_class.get(update_workflow_id)
+        expected_ticket = u'content=Queue%3A+HEP_conflicts%0AText%3A+Merge+conflict+needs+to+be+resolved.%0A++%0A++https%3A%2F%2Flocalhost%3A5000%2Feditor%2Fholdingpen%2F{wf_id}%0ASubject%3A+arXiv%3A1703.04802+%28%23None%29%0Aid%3A+ticket%2Fnew%0ACF'.format(
+            wf_id=wf.id
+        )
+
+        assert mocked_external_services.request_history[0].text.startswith(expected_ticket)
+        assert wf.extra_data['conflict-ticket-id']
+
+        expected_ticket_close_url = 'http://rt.inspire/ticket/{ticket_id}/edit'.format(ticket_id=wf.extra_data['conflict-ticket-id'])
+
+        wf.continue_workflow()
+
+        assert mocked_external_services.request_history[1].url == expected_ticket_close_url
+        assert mocked_external_services.request_history[1].text == u'content=Status%3A+resolved'

@@ -74,7 +74,7 @@ def create_ticket(template,
                   context_factory=None,
                   queue="Test",
                   ticket_id_key="ticket_id"):
-    """Create a ticket for the submission.
+    """Create a ticket.
 
     Creates the ticket in the given queue and stores the ticket ID
     in the extra_data key specified in ticket_id_key.

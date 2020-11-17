@@ -96,7 +96,7 @@ from inspirehep.modules.workflows.tasks.matching import (
 )
 from inspirehep.modules.workflows.tasks.merging import (
     has_conflicts,
-    merge_articles,
+    merge_articles, conflicts_ticket_context,
 )
 from inspirehep.modules.workflows.tasks.upload import (
     is_stale_data,
@@ -298,10 +298,19 @@ HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
             merge_articles,
             IF(
                 has_conflicts,
-                halt_record(
-                    action='merge_approval',
-                    message='Submission halted for merging conflicts.'
-                ),
+                [
+                    create_ticket(
+                        template="workflows/tickets/conflicts-ticket-template.html",
+                        queue="HEP_conflicts",
+                        ticket_id_key="conflict-ticket-id",
+                        context_factory=conflicts_ticket_context
+                    ),
+                    halt_record(
+                        action='merge_approval',
+                        message='Submission halted for merging conflicts.'
+                    ),
+                    close_ticket(ticket_id_key="conflict-ticket-id"),
+                ]
             ),
             mark('approved', True),
             mark('merged', True),
