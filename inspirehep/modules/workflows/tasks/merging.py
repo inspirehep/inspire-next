@@ -27,9 +27,11 @@ from datetime import datetime
 
 from copy import deepcopy
 from flask import current_app
+from idutils import is_arxiv_post_2007
 
 from inspire_json_merger.api import merge
 from inspire_schemas.readers import LiteratureReader
+from inspire_utils.record import get_value
 from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.modules.records.api import InspireRecord
@@ -95,3 +97,32 @@ def merge_articles(obj, eng):
         obj.extra_data['callback_url'] = \
             get_resolve_merge_conflicts_callback_url()
     obj.save()
+
+
+def conflicts_ticket_context(user, obj):
+    server_name = current_app.config['SERVER_NAME']
+    workflow_id = obj.id
+    arxiv_ids = get_value(obj.data, 'arxiv_eprints.value') or []
+    for index, arxiv_id in enumerate(arxiv_ids):
+        if arxiv_id and is_arxiv_post_2007(arxiv_id):
+            arxiv_ids[index] = 'arXiv:{0}'.format(arxiv_id)
+    report_numbers = get_value(obj.data, 'report_numbers.value') or []
+    dois = [
+        "doi:{0}".format(doi)
+        for doi in get_value(obj.data, 'dois.value') or []
+    ]
+    recid = obj.extra_data.get('recid')
+    subject = ' '.join(filter(
+        lambda x: x is not None,
+        arxiv_ids + dois + report_numbers + ['(#{0})'.format(recid)]
+    ))
+
+    return dict(
+        server_name=server_name,
+        workflow_id=workflow_id,
+        arxiv_ids=arxiv_ids,
+        dois=dois,
+        recid=recid,
+        report_numbers=report_numbers,
+        subject=subject
+    )
