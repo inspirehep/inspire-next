@@ -719,7 +719,7 @@ def affiliations_for_hidden_collections(obj):
     affiliations_mapping = current_app.config.get("AFFILIATIONS_TO_HIDDEN_COLLECTIONS_MAPPING", {})
     affiliations = flatten_list(get_value(obj.data, 'authors.raw_affiliations.value', []))
 
-    query = "|".join(affiliations_mapping.keys())
+    query = "|".join(r"\b{aff}\b".format(aff=aff) for aff in affiliations_mapping.keys())
 
     affiliations_set = set()
     for aff in affiliations:
