@@ -732,10 +732,10 @@ def test_replace_collection_to_hidden_sets_proper_hidden_collections_on_metadata
     expected_collections = ["CDS Hidden", "Fermilab"]
     record = generate_record()
     record['authors'][0]['raw_affiliations'] = [
-        {"value": "Some longer description CERN? with proper keyword included"},
-        {"value": "Another one but this time with wrong keywords Fremilab included"}
+        {"value": "Some longer description CErN? with proper keyword included"},
+        {"value": "Another one but this time with wrong keywords IN2P345 included"}
     ]
-    record['authors'][1]['raw_affiliations'] = [{"value": "Blah blah blah Fermilab blah blah"}]
+    record['authors'][1]['raw_affiliations'] = [{"value": "Blah blah blah fermilab, blah blah"}]
     workflow = build_workflow(record)
 
     wf = replace_collection_to_hidden(workflow, None)
