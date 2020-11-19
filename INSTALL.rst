@@ -64,13 +64,9 @@ MacOS
 
 .. code-block:: console
 
-    $ brew install postgresql
     $ brew install libxml2
     $ brew install libxslt
-    $ brew install redis
     $ brew cask install caskroom/versions/java8
-    $ brew install elasticsearch@2.4
-    $ brew install rabbitmq
     $ brew install imagemagick@6
     $ brew install libmagic
     $ brew install ghostscript
@@ -210,36 +206,17 @@ Then we build the INSPIRE assets:
 
     Alternatively, run `sh scripts/clean_assets` to do the above in one command.
 
-Create database
-###############
+Start all services
+##################
 
-We will use `postgreSQL` as database. Make sure you have installed it system wide.
+We will start, postgresql, elasticsearch, redis and rabbitmq.
 
 Then create the database and database tables if you haven't already done so:
 
 .. code-block:: console
 
-    (inspirehep)$ psql
-    # CREATE USER inspirehep WITH PASSWORD 'dbpass123';
-    # CREATE DATABASE inspirehep;
-    # GRANT ALL PRIVILEGES ON DATABASE inspirehep to inspirehep;
-    (inspirehep)$ inspirehep db init
-    (inspirehep)$ inspirehep db create
+    (inspirehep)$ docker-compose up database indexer redis rabbitmq
 
-Start all services
-##################
-
-Rabbitmq
-~~~~~~~~
-
-You must have rabbitmq installed and running (and reachable) somewhere.
-To run it locally on a CentOS:
-
-.. code-block:: console
-
-    $ sudo yum install rabbitmq-server
-    $ sudo service rabbitmq-server start
-    $ sudo systemctl enable rabbitmq-server.service  # to start on system boot
 
 Everything else: Honcho
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -252,14 +229,6 @@ We use `honcho`_ to manage our services and run the development server. See
     (inspirehep)$ cdvirtualenv src/inspirehep
     (inspirehep)$ honcho start
 
-In MacOS you still need to manually run rabbitmq and postgresql:
-
-.. code-block:: console
-
-    $ brew services start rabbitmq
-    $ brew services start postgresql
-
-
 And the site is now available on http://localhost:5000.
 
 Create ElasticSearch Indices and Aliases
@@ -270,19 +239,6 @@ Create ElasticSearch Indices and Aliases
     Remember that you'll need to have the elasticsearch bin directory in your
     $PATH or prepend the binaries executed with the path to the elasticsearch
     bin directory in your system.
-
-First of all, we will need to install the `analysis-icu` elasticsearch plugin.
-
-.. code-block:: console
-
-    (inspirehep)$ plugin install analysis-icu
-
-For MacOS the `plugin` command will probably not be available system wide, so:
-
-.. code-block:: console
-
-    $ /usr/local/Cellar/elasticsearch\@2.4/2.4.6/libexec/bin/plugin install analysis-icu
-
 
 Now we are ready to create the indexes:
 
@@ -344,20 +300,3 @@ Now you can create regular users (optional) with the command:
 .. code-block:: console
 
     (inspirehep)$ inspirehep users create your@email.com -a
-
-Access the records (web/rest)
-#############################
-
-While running `honcho` you can access the records at
-
-.. code-block:: console
-
-    $ firefox http://localhost:5000/literature/1
-    $ curl -i -H "Accept: application/json" http://localhost:5000/api/records/1
-
-
-.. _this issue: https://github.com/inspirehep/inspire-next/issues/1296
-.. _elasticsearch install page: https://www.elastic.co/downloads/elasticsearch
-.. _in the npm docs here: https://docs.npmjs.com/getting-started/fixing-npm-permissions#option-2-change-npms-default-directory-to-another-directory
-.. _honcho: https://honcho.readthedocs.io/en/latest/
-.. _Procfile: https://devcenter.heroku.com/articles/procfile
