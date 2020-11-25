@@ -74,3 +74,29 @@ def test_authors_workflow_continues_when_record_is_valid(workflow_app, mocked_ex
 
     assert obj.status == ObjectStatus.HALTED
     assert '_error_msg' not in obj.extra_data
+
+
+def test_authors_workflow_sends_to_legacy_on_update(workflow_app, mocked_external_services):
+    valid_record = {
+        "control_number": 2222,
+        '_collections': ['Authors'],
+        'name': {
+            'preferred_name': 'John Smith',
+            'value': 'Smith, John'
+        }
+    }
+
+    extra_data = {
+        'is-update': True
+    }
+
+    workflow_id = build_workflow(valid_record, data_type='authors', id_user=1, extra_data=extra_data).id
+
+    obj = workflow_object_class.get(workflow_id)
+
+    start('author', object_id=obj.id)
+
+    obj = workflow_object_class.get(obj.id)
+
+    assert obj.status == ObjectStatus.WAITING
+    assert '_error_msg' not in obj.extra_data
