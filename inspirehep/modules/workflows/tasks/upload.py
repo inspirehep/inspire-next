@@ -39,6 +39,8 @@ from inspirehep.modules.workflows.errors import BadGatewayError
 from inspirehep.modules.workflows.utils import (
     get_source_for_root,
     with_debug_logging,
+    put_record_to_hep,
+    post_record_to_hep
 )
 from inspirehep.utils.schema import ensure_valid_schema
 
@@ -81,14 +83,12 @@ def store_record(obj, eng):
 
 
 @with_debug_logging
-@backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
+@backoff.on_exception(backoff.expo, (BadGatewayError, ), base=4, max_tries=5)
 def store_record_inspirehep_api(obj, eng, is_update, is_authors):
     """Saves record through inspirehep api by posting/pushing record to proper endpoint
      in inspirehep"""
-    if is_authors:
-        endpoint = '/authors'
-    else:
-        endpoint = '/literature'
+
+    pid_type = 'aut' if is_authors else 'lit'
     if is_update:
         if not is_authors and not current_app.config.get(
             'FEATURE_FLAG_ENABLE_MERGER', False
@@ -99,49 +99,29 @@ def store_record_inspirehep_api(obj, eng, is_update, is_authors):
             return
         if 'control_number' not in obj.data:
             raise ValueError("Control number is missing")
-        control_number = obj.data['control_number']
-        send_record_to_hep(obj, endpoint, control_number)
-    else:
-        send_record_to_hep(obj, endpoint)
+
+    control_number = obj.data.get('control_number')
+    send_record_to_hep(obj, pid_type, control_number)
 
 
-def send_record_to_hep(obj, endpoint, control_number=None):
-    headers = {
-        "content-type": "application/json",
-        "Authorization": "Bearer {token}".format(
-            token=current_app.config['AUTHENTICATION_TOKEN']
-        ),
-    }
-    inspirehep_url = current_app.config.get("INSPIREHEP_URL")
-    if control_number:
-        response = requests.put(
-            "{inspirehep_url}{endpoint}/{control_number}".format(
-                inspirehep_url=inspirehep_url,
-                endpoint=endpoint,
-                control_number=control_number
-            ),
-            headers=headers,
-            json=obj.data
-        )
-        if response.status_code == 200:
-            obj.data['control_number'] = response.json()['metadata']['control_number']
+def send_record_to_hep(obj, pid_type, control_number=None):
+    try:
+        if control_number:
+            response = put_record_to_hep(
+                pid_type, control_number, data=obj.data
+            )
         else:
-            create_error(response)
-    else:
-        response = requests.post(
-            "{inspirehep_url}{endpoint}".format(
-                inspirehep_url=inspirehep_url,
-                endpoint=endpoint,
-            ),
-            headers=headers,
-            json=obj.data
-        )
+            response = post_record_to_hep(
+                pid_type, data=obj.data
+            )
+    except requests.exceptions.HTTPError as err:
+        raise create_error(err.response)
 
-        if response.status_code == 201:
-            obj.data['control_number'] = response.json()['metadata']['control_number']
-            obj.extra_data['head_uuid'] = response.json()['uuid']
-        else:
-            create_error(response)
+    obj.data['control_number'] = response['metadata']['control_number']
+
+    if not control_number:
+        obj.extra_data['head_uuid'] = response['uuid']
+
     with db.session.begin_nested():
         obj.save()
 

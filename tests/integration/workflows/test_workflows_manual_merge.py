@@ -22,11 +22,10 @@
 
 from __future__ import absolute_import, division, print_function
 
+import mock
 import pytest
-
 from inspire_schemas.readers import LiteratureReader
 from invenio_workflows import ObjectStatus, workflow_object_class
-from invenio_records.api import RecordMetadata
 
 from inspirehep.modules.workflows.tasks.manual_merging import save_roots
 from inspirehep.modules.workflows.utils import (
@@ -35,7 +34,7 @@ from inspirehep.modules.workflows.utils import (
 )
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.workflows.manual_merge import start_merger
-from inspirehep.utils.record_getter import get_db_record, RecordGetterError
+from inspirehep.utils.record_getter import RecordGetterError
 
 from calls import do_resolve_manual_merge_wf
 
@@ -52,7 +51,9 @@ def fake_record(title, rec_id):
     }
 
 
-def test_manual_merge_existing_records(workflow_app):
+@mock.patch('inspirehep.modules.workflows.tasks.manual_merging.store_records', side_effect=None)
+@mock.patch('inspirehep.modules.workflows.tasks.manual_merging.put_record_to_hep', side_effect=None)
+def test_manual_merge_existing_records(mock_put_record_to_hep, mock_store_records, workflow_app):
 
     json_head = fake_record('This is the HEAD', 1)
     json_update = fake_record('While this is the update', 2)
@@ -75,6 +76,7 @@ def test_manual_merge_existing_records(workflow_app):
     )
 
     do_resolve_manual_merge_wf(workflow_app, obj_id)
+    mock_put_record_to_hep.assert_called()
 
     # retrieve it again, otherwise Detached Instance Error
     obj = workflow_object_class.get(obj_id)
@@ -90,24 +92,6 @@ def test_manual_merge_existing_records(workflow_app):
     update_source = LiteratureReader(update).source
     root_update = read_wf_record_source(update_id, update_source)
     assert root_update is None
-
-    # check that head's content has been replaced by merged
-    deleted_record = RecordMetadata.query.filter_by(id=update_id).one()
-
-    latest_record = get_db_record('lit', 1)
-
-    assert deleted_record.json['deleted'] is True
-
-    # check deleted record is linked in the latest one
-    deleted_rec_ref = {'$ref': 'http://localhost:5000/api/literature/2'}
-    assert [deleted_rec_ref] == latest_record['deleted_records']
-
-    # check the merged record is linked in the deleted one
-    new_record_metadata = {'$ref': 'http://localhost:5000/api/literature/1'}
-    assert new_record_metadata == deleted_record.json['new_record']
-
-    del latest_record['deleted_records']
-    assert latest_record == obj.data  # -> resulted merged record
 
 
 def test_manual_merge_with_none_record(workflow_app):

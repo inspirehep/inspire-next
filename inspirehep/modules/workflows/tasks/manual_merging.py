@@ -24,8 +24,10 @@
 
 from __future__ import absolute_import, division, print_function
 
+import requests
 from invenio_db import db
 
+import backoff
 from inspire_dojson.utils import get_record_ref
 from inspire_json_merger.api import merge
 from inspirehep.modules.workflows.utils import (
@@ -33,7 +35,7 @@ from inspirehep.modules.workflows.utils import (
     read_all_wf_record_sources
 )
 from inspirehep.modules.workflows.models import WorkflowsRecordSources
-from inspirehep.utils.record_getter import get_db_record
+from inspirehep.modules.workflows.utils import put_record_to_hep
 
 
 @with_debug_logging
@@ -143,19 +145,11 @@ def save_roots(obj, eng):
 
 
 @with_debug_logging
+@backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
 def store_records(obj, eng):
     """Store the records involved in the manual merge.
 
-    Performs the following steps:
-
-        1. Updates the ``head`` so that it contains the result of the merge.
-        2. Marks the ``update`` as merged with the ``head`` and deletes it.
-        3. Populates the ``deleted_records`` and ``new_record`` keys in,
-           respectively, ``head`` and ``update`` so that they contain a JSON
-           reference to each other.
-
-    Todo:
-        The last step should be performed by the ``merge`` method itself.
+    Update the head with the deleted record and send it to hep.
 
     Args:
         obj: a workflow object.
@@ -163,25 +157,11 @@ def store_records(obj, eng):
 
     Returns:
         None
-
     """
     head_control_number = obj.extra_data['head_control_number']
     update_control_number = obj.extra_data['update_control_number']
+    head = dict(obj.data)
 
-    head = get_db_record('lit', head_control_number)
-    update = get_db_record('lit', update_control_number)
-
-    # 1. Updates the head so that it contains the result of the merge.
-    head.clear()
-    head.update(obj.data)
-    # 2. Marks the update as merged with the head and deletes it.
-    update.merge(head)
-    update.delete()
-    # 3. Populates the deleted_records and new_record keys.
-    update['new_record'] = get_record_ref(head_control_number, 'literature')
     update_ref = get_record_ref(update_control_number, 'literature')
     head.setdefault('deleted_records', []).append(update_ref)
-
-    head.commit()
-    update.commit()
-    db.session.commit()
+    put_record_to_hep('lit', head_control_number, data=obj.data)

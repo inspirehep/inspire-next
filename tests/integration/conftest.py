@@ -52,6 +52,26 @@ from factories.db.invenio_records import (
 )  # noqa
 
 
+@pytest.fixture(scope="session")
+def vcr_config():
+    return {
+        "filter_query_parameters": ["access_token"],
+        "ignore_localhost": True,
+        "decode_compressed_response": True,
+        "filter_headers": ("Authorization", "User-Agent"),
+        "ignore_hosts": (
+            'localhost',
+            'test-indexer',
+            'test-redis',
+            'test-database',
+            'test-rabbitmq',
+            'test-worker',
+            'test-web',
+        ),
+        "record_mode": "once",
+    }
+
+
 @pytest.fixture(scope='session')
 def app():
     """

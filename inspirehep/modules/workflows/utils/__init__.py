@@ -48,7 +48,10 @@ from inspirehep.modules.workflows.models import (
     WorkflowsAudit,
     WorkflowsRecordSources,
 )
-
+from inspirehep.modules.workflows.errors import (
+    InspirehepMissingDataError,
+)
+from inspirehep.modules.pidstore.utils import get_endpoint_from_pid_type
 
 LOGGER = getStackTraceLogger(__name__)
 
@@ -464,3 +467,66 @@ def get_validation_errors(data, schema):
         } for error in errors
     ]
     return error_messages
+
+
+def _get_headers_for_hep():
+    return {
+        "accept": "application/vnd+inspire.record.raw+json",
+        "Authorization": "Bearer {token}".format(
+            token=current_app.config['AUTHENTICATION_TOKEN']
+        ),
+    }
+
+
+@backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
+def get_record_from_hep(pid_type, pid_value):
+    endpoint = get_endpoint_from_pid_type(pid_type)
+    inspirehep_url = current_app.config.get("INSPIREHEP_URL")
+    headers = _get_headers_for_hep()
+    response = requests.get(
+        "{inspirehep_url}/{endpoint}/{control_number}".format(
+            inspirehep_url=inspirehep_url,
+            endpoint=endpoint,
+            control_number=pid_value
+        ),
+        headers=headers,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+@backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
+def put_record_to_hep(pid_type, pid_value, data=None):
+    if not data:
+        raise InspirehepMissingDataError
+    endpoint = get_endpoint_from_pid_type(pid_type)
+    inspirehep_url = current_app.config.get("INSPIREHEP_URL")
+    response = requests.put(
+        "{inspirehep_url}/{endpoint}/{control_number}".format(
+            inspirehep_url=inspirehep_url,
+            endpoint=endpoint,
+            control_number=pid_value
+        ),
+        headers=_get_headers_for_hep(),
+        json=data or {}
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+@backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
+def post_record_to_hep(pid_type, data=None):
+    if not data:
+        raise InspirehepMissingDataError
+    endpoint = get_endpoint_from_pid_type(pid_type)
+    inspirehep_url = current_app.config.get("INSPIREHEP_URL")
+    response = requests.post(
+        "{inspirehep_url}/{endpoint}".format(
+            inspirehep_url=inspirehep_url,
+            endpoint=endpoint,
+        ),
+        headers=_get_headers_for_hep(),
+        json=data or {}
+    )
+    response.raise_for_status()
+    return response.json()
