@@ -45,8 +45,7 @@ def change_status_to_waiting(obj, eng):
 def update_record(obj, eng):
     control_number = obj.data['control_number']
     if current_app.config.get("FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT"):
-        endpoint = '/literature'
-        send_record_to_hep(obj, endpoint, control_number)
+        send_record_to_hep(obj, 'lit', control_number)
     else:
         record = get_db_record('lit', control_number)
         record.update(obj.data)
