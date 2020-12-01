@@ -24,7 +24,10 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+
 import mock
+import pkg_resources
 import requests_mock
 import pytest
 
@@ -53,6 +56,8 @@ from mocks import (
 from workflow_utils import build_workflow
 
 from calls import generate_record
+
+from inspirehep.modules.workflows.tasks.refextract import extract_references_from_pdf
 
 
 @pytest.fixture(scope='function')
@@ -740,3 +745,13 @@ def test_replace_collection_to_hidden_sets_proper_hidden_collections_on_metadata
 
     wf = replace_collection_to_hidden(workflow, None)
     assert wf.data['_collections'] == expected_collections
+
+
+def test_refextract_do_not_return_reference_without_authors():
+    pdf_path = pkg_resources.resource_filename(
+        __name__, "fixtures/2011.12531.pdf"
+    )
+    references = extract_references_from_pdf(pdf_path)
+    for reference in references:
+        for author in reference['reference']['authors']:
+            assert author['full_name']

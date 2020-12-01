@@ -95,6 +95,9 @@ def map_refextract_to_schema(extracted_references, source=None):
     result = []
 
     for reference in extracted_references:
+        # Skip references without author
+        if not reference.get('author'):
+            continue
         rb = ReferenceBuilder()
         mapping = [
             ('author', rb.add_refextract_authors_str),
