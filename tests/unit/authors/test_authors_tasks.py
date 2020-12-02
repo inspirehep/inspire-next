@@ -23,6 +23,8 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+from flask import current_app
+from mock import patch
 
 from invenio_accounts.models import User
 
@@ -106,35 +108,47 @@ def test_new_ticket_context_handles_unicode(unicode_data, extra_data, user):
 
 
 def test_update_ticket_context(data, extra_data, user):
-    obj = MockObj(data, extra_data)
-    expected = {
-        'url': 'http://inspirehep.net/record/123',
-        'bibedit_url': 'http://inspirehep.net/record/123/edit',
-        'email': 'foo@bar.com',
-        'user_comment': 'Foo bar',
-        'subject': 'Your update to author John Doe on INSPIRE',
+    config = {
+        'AUTHORS_UPDATE_BASE_URL': 'http://inspirehep.net'
     }
-    ctx = update_ticket_context(user, obj)
-    assert ctx == expected
+    obj = MockObj(data, extra_data)
+    with patch.dict(current_app.config, config):
+        expected = {
+            'url': 'http://inspirehep.net/record/123',
+            'bibedit_url': 'http://inspirehep.net/record/123/edit',
+            'email': 'foo@bar.com',
+            'user_comment': 'Foo bar',
+            'subject': 'Your update to author John Doe on INSPIRE',
+        }
+        ctx = update_ticket_context(user, obj)
+        assert ctx == expected
 
 
 def test_update_ticket_context_handles_unicode(unicode_data, extra_data, user):
-    obj = MockObj(unicode_data, extra_data)
-    expected = {
-        'url': 'http://inspirehep.net/record/123',
-        'bibedit_url': 'http://inspirehep.net/record/123/edit',
-        'email': 'foo@bar.com',
-        'user_comment': 'Foo bar',
-        'subject': u'Your update to author Diego Martínez on INSPIRE',
+    config = {
+        'AUTHORS_UPDATE_BASE_URL': 'http://inspirehep.net'
     }
-    ctx = update_ticket_context(user, obj)
-    assert ctx == expected
+    obj = MockObj(unicode_data, extra_data)
+    with patch.dict(current_app.config, config):
+        expected = {
+            'url': 'http://inspirehep.net/record/123',
+            'bibedit_url': 'http://inspirehep.net/record/123/edit',
+            'email': 'foo@bar.com',
+            'user_comment': 'Foo bar',
+            'subject': u'Your update to author Diego Martínez on INSPIRE',
+        }
+        ctx = update_ticket_context(user, obj)
+        assert ctx == expected
 
 
 def test_update_ticket_context_fail_no_recid(data_no_recid, extra_data, user):
+    config = {
+        'AUTHORS_UPDATE_BASE_URL': 'http://inspirehep.net'
+    }
     obj = MockObj(data_no_recid, extra_data)
-    with pytest.raises(KeyError):
-        update_ticket_context(user, obj)
+    with patch.dict(current_app.config, config):
+        with pytest.raises(KeyError):
+            update_ticket_context(user, obj)
 
 
 def test_reply_ticket_context(data, extra_data, user):

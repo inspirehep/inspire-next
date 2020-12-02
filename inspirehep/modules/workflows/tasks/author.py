@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 from flask import current_app
 
 from inspirehep.modules.workflows.utils import with_debug_logging
-from inspirehep.utils.url import get_legacy_url_for_recid, get_hep_url_for_recid
+from inspirehep.utils.url import get_legacy_url_for_recid
 
 
 @with_debug_logging
@@ -48,18 +48,16 @@ def new_ticket_context(user, obj):
 
 def update_ticket_context(user, obj):
     """Context for authornew new tickets."""
-    subject = u"Update to author {0} on INSPIRE".format(
+    subject = u"Your update to author {0} on INSPIRE".format(
         obj.data.get("name").get("preferred_name")
     )
-    recid = obj.data['control_number']
-    hep_record_url = get_hep_url_for_recid(recid, "authors")
-    hep_edit_form_url = get_hep_url_for_recid(recid, 'submissions/authors')
-    bibedit_url = get_legacy_url_for_recid(recid) + '/edit'
+    record_url = get_legacy_url_for_recid(obj.data['control_number'])
     return dict(
-        url=hep_record_url,
-        bibedit_url=bibedit_url,
-        url_author_form=hep_edit_form_url,
+        email=user.email,
+        url=record_url,
+        bibedit_url=record_url + '/edit',
         subject=subject,
+        user_comment=obj.extra_data.get('formdata', {}).get('extra_comments', ''),
     )
 
 

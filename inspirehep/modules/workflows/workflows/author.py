@@ -89,13 +89,24 @@ NOTIFY_NOT_ACCEPTED = [
 
 
 SEND_UPDATE_NOTIFICATION = [
+    send_robotupload(
+        mode="holdingpen",
+        callback_url=None
+    ),
     do_not_repeat('create_ticket_author_submission_curator_update')(
         create_ticket(
             template="authors/tickets/curator_update.html",
             queue="Authors_cor_user",
             context_factory=update_ticket_context,
         )
-    )
+    ),
+    do_not_repeat('reply_ticket_author_submission_new_user')(
+        reply_ticket(
+            template="authors/tickets/user_new.html",
+            context_factory=reply_ticket_context,
+            keep_new=True,
+        )
+    ),
 ]
 
 
@@ -133,12 +144,9 @@ class Author(object):
         validate_record('authors'),
         IF_ELSE(
             is_marked('is-update'),
+            SEND_UPDATE_NOTIFICATION,
+            ASK_FOR_REVIEW +
             [
-                SEND_TO_LEGACY,
-                SEND_UPDATE_NOTIFICATION,
-            ],
-            [
-                ASK_FOR_REVIEW,
                 IF_ELSE(
                     is_record_accepted,
                     (

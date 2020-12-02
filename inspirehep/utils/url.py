@@ -101,14 +101,3 @@ def get_legacy_url_for_recid(recid):
     """
     pattern = current_app.config['LEGACY_RECORD_URL_PATTERN']
     return record_url_by_pattern(pattern, recid)
-
-
-def get_hep_url_for_recid(recid, endpoint):
-    server_name = current_app.config.get("SERVER_NAME")
-    protocol = current_app.config.get("PREFERRED_URL_SCHEME", 'http')
-    return "{protocol}://{server_name}/{endpoint}/{control_number}".format(
-        protocol=protocol,
-        server_name=server_name,
-        endpoint=endpoint,
-        control_number=recid
-    )
