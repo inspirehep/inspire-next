@@ -1543,7 +1543,7 @@ description = "INSPIRE-specific utils."
 name = "inspire-utils"
 optional = false
 python-versions = "*"
-version = "3.0.15"
+version = "3.0.17"
 
 [package.dependencies]
 Unidecode = ">=1.0.22,<2.0"
@@ -1554,7 +1554,7 @@ python-dateutil = ">=2.6.1,<3.0"
 six = ">=1.10.0,<2.0"
 
 [package.extras]
-all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.5.1,<3.0)", "pytest (>=4.6.0,<5.0)", "unicode-string-literal (>=1.1,<2.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.5.1,<3.0)", "pytest (>=4.6.0,<5.0)", "unicode-string-literal (>=1.1,<2.0)"]
+all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.5.1,<3.0)", "pytest (>=4.6.0,<5.0)", "unicode-string-literal (>=1.1,<2.0)"]
 tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.5.1,<3.0)", "pytest (>=4.6.0,<5.0)", "unicode-string-literal (>=1.1,<2.0)"]
 
 [[package]]
@@ -4823,7 +4823,8 @@ inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
 ]
 inspire-utils = [
-    {file = "inspire-utils-3.0.15.tar.gz", hash = "sha256:4702f4d7c8f64368c1d4d8f18bb0602c4a10ef48db9c5c11b204b6235d45416e"},
+    {file = "inspire-utils-3.0.17.tar.gz", hash = "sha256:39b54c3e25c5f80389e983c42c9680e5afb5906d1a1976f50339283bf43f9c42"},
+    {file = "inspire_utils-3.0.17-py2-none-any.whl", hash = "sha256:6a75b38975bacfcd7005f5e3d996e9444f150b91b7654360305f31eb99c296b5"},
 ]
 intervals = [
     {file = "intervals-0.8.1.tar.gz", hash = "sha256:37921da1407a5e9384e8e1350cfb8500f8d0d69fc43d03d01a4fdc6e7a7c7166"},
