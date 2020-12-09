@@ -1440,7 +1440,7 @@ description = "INSPIRE-specific configuration of the JSON Merger."
 name = "inspire-json-merger"
 optional = false
 python-versions = "*"
-version = "11.0.8"
+version = "11.0.11"
 
 [package.dependencies]
 inspire-schemas = ">=61.0,<62.0"
@@ -1453,7 +1453,7 @@ extras = ["contrib"]
 version = ">=0.6.0,<1.0"
 
 [package.extras]
-all = ["decorator (>=4.1.2,<5.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.6.1,<3.0)", "pytest (>=3.6.0,<4.0)", "decorator (>=4.1.2,<5.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.6.1,<3.0)", "pytest (>=3.6.0,<4.0)"]
+all = ["decorator (>=4.1.2,<5.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.6.1,<3.0)", "pytest (>=3.6.0,<4.0)"]
 tests = ["decorator (>=4.1.2,<5.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.6.1,<3.0)", "pytest (>=3.6.0,<4.0)"]
 
 [[package]]
@@ -1504,7 +1504,7 @@ description = "Inspire JSON schemas and utilities to use them."
 name = "inspire-schemas"
 optional = false
 python-versions = "*"
-version = "61.3.13"
+version = "61.3.34"
 
 [package.dependencies]
 Unidecode = ">=1.0.22,<2.0"
@@ -3521,7 +3521,7 @@ version = ">=2.2.0,<4.0.0"
 [[package]]
 category = "main"
 description = "scandir, a better directory iterator and faster os.walk()"
-marker = "python_version < \"3.5\" or python_version == \"2.7\" or python_version in \"2.6 2.7 3.2 3.3\""
+marker = "python_version < \"3.5\" or python_version in \"2.6 2.7 3.2 3.3\" or python_version == \"2.7\""
 name = "scandir"
 optional = false
 python-versions = "*"
@@ -4144,7 +4144,7 @@ version = "0.6.1"
 [[package]]
 category = "main"
 description = "Enable Unicode input and display when running Python from Windows console."
-marker = "sys_platform == \"win32\" and python_version == \"2.7\" or sys_platform == \"win32\" and python_version < \"3.6\""
+marker = "sys_platform == \"win32\" and python_version < \"3.6\" or sys_platform == \"win32\" and python_version == \"2.7\""
 name = "win-unicode-console"
 optional = false
 python-versions = "*"
@@ -4808,7 +4808,8 @@ inspire-dojson = [
     {file = "inspire_dojson-63.0.19-py2-none-any.whl", hash = "sha256:6849e9fbed0c8cc715a747c212a08b8e8ee8edac86fa8bf1f03f175288badfbd"},
 ]
 inspire-json-merger = [
-    {file = "inspire-json-merger-11.0.8.tar.gz", hash = "sha256:115fba3f603388972056fc65ffcfa888c1e356b36a555d1508ff60aa6e00b522"},
+    {file = "inspire-json-merger-11.0.11.tar.gz", hash = "sha256:3be94795a705e76d8a291eab358a530a8400cfd9671156972ede21b6426366f4"},
+    {file = "inspire_json_merger-11.0.11-py2-none-any.whl", hash = "sha256:d5f4c11ab7f1f988b2c8afac9ed2a61f3b674981abc3e57de8eaec0a763d7553"},
 ]
 inspire-matcher = [
     {file = "inspire-matcher-9.0.1.tar.gz", hash = "sha256:622f5a4e2bc4f2c0ac987caf10a61efbe44da673a9e9724baa52bf1917b8e200"},
@@ -4817,7 +4818,7 @@ inspire-query-parser = [
     {file = "inspire-query-parser-6.0.31.tar.gz", hash = "sha256:b0556a950012f4432458823afbf3b6d7a1294ebf0449a1d1db22bcfaf6cb3857"},
 ]
 inspire-schemas = [
-    {file = "inspire-schemas-61.3.13.tar.gz", hash = "sha256:79b9ffee55552046ca18eb0cd64811a61480b2061b39c343f64c8eb341f82cf6"},
+    {file = "inspire_schemas-61.3.34-py2.py3-none-any.whl", hash = "sha256:d5082cb20883b9da8f598d2bbd9891d68205a63ca86b5e4858ae752694483d30"},
 ]
 inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
