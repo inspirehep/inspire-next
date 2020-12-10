@@ -85,28 +85,14 @@ def test_find_arxiv_duplicate_among_non_duplicates_and_merged(
         wf.status = ObjectStatus.COMPLETED
         wf.save()
 
-    create_wf("1809.10823", 1)  # duplicate
-    create_wf("1809.10823", 2)  # duplicate
-    create_wf("1111.11111", 3)
-    create_wf("1809.10823", 4)  # duplicate but merged
+    create_wf("1809.10823", 3)  # duplicate
+    create_wf("1809.10823", 4)  # duplicate
+    create_wf("1111.11111", 5)
+    create_wf("1809.10823", 6)  # duplicate but merged
 
     TestRecordMetadata.create_from_kwargs(
         json={
             'arxiv_eprints': [{"value": "1809.10823"}],
-            'control_number': 1
-        }
-    )
-
-    TestRecordMetadata.create_from_kwargs(
-        json={
-            'arxiv_eprints': [{"value": "1809.10823"}],
-            'control_number': 2
-        }
-    )
-
-    TestRecordMetadata.create_from_kwargs(
-        json={
-            'arxiv_eprints': [{"value": "1111.11111"}],
             'control_number': 3
         }
     )
@@ -114,7 +100,21 @@ def test_find_arxiv_duplicate_among_non_duplicates_and_merged(
     TestRecordMetadata.create_from_kwargs(
         json={
             'arxiv_eprints': [{"value": "1809.10823"}],
-            'control_number': 4,
+            'control_number': 4
+        }
+    )
+
+    TestRecordMetadata.create_from_kwargs(
+        json={
+            'arxiv_eprints': [{"value": "1111.11111"}],
+            'control_number': 5
+        }
+    )
+
+    TestRecordMetadata.create_from_kwargs(
+        json={
+            'arxiv_eprints': [{"value": "1809.10823"}],
+            'control_number': 6,
             'deleted': True
         }
     )
@@ -125,5 +125,5 @@ def test_find_arxiv_duplicate_among_non_duplicates_and_merged(
 
     assert result.exit_code == 0
     assert 'Found 1 arXiv duplicates' in result.output
-    assert '{"1809.10823": {"wf_ids": [2, 1], "recids": [2, 1]}}' in result.output
-    assert '4' not in result.output
+    assert '{"1809.10823": {"wf_ids": [4, 3], "recids": [4, 3]}}' in result.output
+    assert '6' not in result.output

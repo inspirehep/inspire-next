@@ -40,6 +40,7 @@ from invenio_db import db
 
 from inspire_schemas.api import load_schema, validate
 from inspire_utils.record import get_value
+from invenio_workflows import workflow_object_class
 
 
 @pytest.fixture(autouse=True)
@@ -441,3 +442,68 @@ def test_upload(app, log_in_as_cataloger, api_client, clean_uploads_folder):
     )
     assert result == expected
     assert response.status_code == 200
+
+
+def test_validate_workflow(api_client):
+    login_user_via_session(api_client, email='admin@inspirehep.net')
+
+    record = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "titles": [{"title": "BLABLABLABL"}],
+        "document_type": ["article"],
+        "_collections": ["Literature"],
+    }
+
+    workflow = workflow_object_class.create(
+        data=record,
+        data_type='hep'
+    )
+    workflow.save()
+    db.session.commit()
+
+    worfkflow_url = "/editor/validate_workflow/{workflow_id}"
+
+    response = api_client.get(
+        worfkflow_url.format(workflow_id=workflow.id),
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+
+    workflow.delete()
+    db.session.commit()
+
+    assert "validation_errors" not in workflow.extra_data
+    assert "validation_errors" not in response.data
+    assert record == workflow.data
+
+
+def test_validate_workflow_error(api_client):
+    login_user_via_session(api_client, email='admin@inspirehep.net')
+
+    record = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "titles": [{"title": "BLABLABLABL"}],
+        "col": ["Literature"],
+    }
+
+    workflow = workflow_object_class.create(
+        data=record,
+        data_type="hep",
+    )
+    workflow.save()
+    db.session.commit()
+
+    worfkflow_url = "/editor/validate_workflow/{workflow_id}"
+
+    response = api_client.get(
+        worfkflow_url.format(workflow_id=workflow.id),
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+
+    workflow.delete()
+    db.session.commit()
+
+    assert record == workflow.data
+    assert "validation_errors" in workflow.extra_data
+    assert "validation_errors" in response.data
