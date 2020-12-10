@@ -1546,7 +1546,7 @@ description = "INSPIRE-specific utils."
 name = "inspire-utils"
 optional = false
 python-versions = "*"
-version = "3.0.17"
+version = "3.0.18"
 
 [package.dependencies]
 Unidecode = ">=1.0.22,<2.0"
@@ -4826,8 +4826,8 @@ inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
 ]
 inspire-utils = [
-    {file = "inspire-utils-3.0.17.tar.gz", hash = "sha256:39b54c3e25c5f80389e983c42c9680e5afb5906d1a1976f50339283bf43f9c42"},
-    {file = "inspire_utils-3.0.17-py2-none-any.whl", hash = "sha256:6a75b38975bacfcd7005f5e3d996e9444f150b91b7654360305f31eb99c296b5"},
+    {file = "inspire-utils-3.0.18.tar.gz", hash = "sha256:6d34e93297d3d35dafd0d2d4cbbf034f17c3a3dbfc9cdbaa996496d39560634f"},
+    {file = "inspire_utils-3.0.18-py2-none-any.whl", hash = "sha256:ef32afd9956d586bc2872fd31feda8c10256a05c6b65c1ee724221e4a9e0ce42"},
 ]
 intervals = [
     {file = "intervals-0.8.1.tar.gz", hash = "sha256:37921da1407a5e9384e8e1350cfb8500f8d0d69fc43d03d01a4fdc6e7a7c7166"},
