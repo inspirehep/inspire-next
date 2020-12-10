@@ -115,6 +115,7 @@ from inspirehep.modules.workflows.tasks.submission import (
 from inspirehep.modules.workflows.utils import do_not_repeat
 from inspirehep.modules.literaturesuggest.tasks import (
     curation_ticket_needed,
+    check_source_publishing,
     reply_ticket_context,
     new_ticket_context,
     curation_ticket_context,
@@ -248,13 +249,24 @@ NOTIFY_CURATOR_IF_NEEDED = [
                     ),
                 ),
                 IF(
-                    curation_ticket_needed,
-                    do_not_repeat('create_ticket_curator_core_curation')(
-                        create_ticket(
-                            template='literaturesuggest/tickets/curation_core.html',
-                            queue='HEP_curation',
-                            context_factory=curation_ticket_context,
-                            ticket_id_key='curation_ticket_id',
+                    curation_ticket_needed,  # if core
+                    IF_ELSE(
+                        check_source_publishing,  # if it is coming from publisher, create ticket in hep_publisher queue
+                        do_not_repeat('create_ticket_curator_core_publisher')(
+                            create_ticket(
+                                template='literaturesuggest/tickets/curation_core.html',
+                                queue='HEP_publishing',
+                                context_factory=curation_ticket_context,
+                                ticket_id_key='curation_ticket_id',
+                            ),
+                        ),  # Otherwise create ticket in hep_curation queue
+                        do_not_repeat('create_ticket_curator_core_curation')(
+                            create_ticket(
+                                template='literaturesuggest/tickets/curation_core.html',
+                                queue='HEP_curation',
+                                context_factory=curation_ticket_context,
+                                ticket_id_key='curation_ticket_id',
+                            ),
                         ),
                     ),
                 ),
