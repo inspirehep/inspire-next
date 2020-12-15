@@ -76,7 +76,8 @@ RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS = {
     '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
     'titles': [
         {
-            'title': 'Update without conflicts title.'
+            "source": "arXiv",
+            "title": "4D $\\mathcal{N}=1$ SYM supercurrent in terms of the gradient flow"
         },
     ],
     'arxiv_eprints': [
@@ -94,10 +95,11 @@ RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS = {
 
 RECORD_WITHOUT_CONFLICTS = {
     '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
-    'titles': [
+    "titles": [
         {
-            'title': 'Update without conflicts title.'
-        },
+            "source": "arXiv",
+            "title": "4D $\\mathcal{N}=1$ SYM supercurrent in terms of the gradient flow"
+        }
     ],
     'arxiv_eprints': [
         {
@@ -261,7 +263,7 @@ def test_merge_with_conflicts_handles_update_without_acquisition_source_and_acts
 
         conflicts = obj.extra_data.get('conflicts')
         assert obj.status == ObjectStatus.HALTED
-        assert len(conflicts) == 1
+        assert len(conflicts) == 2  # From now on titles will also create conflict (inspirehep/#1518)
 
         assert obj.extra_data.get('callback_url') is not None
         assert obj.extra_data.get('is-update') is True
@@ -299,7 +301,7 @@ def test_merge_with_conflicts_rootful(
 
         conflicts = obj.extra_data.get('conflicts')
         assert obj.status == ObjectStatus.HALTED
-        assert len(conflicts) == 1
+        assert len(conflicts) == 2  # From now on titles will also create conflict (inspirehep/#1518)
 
         assert obj.extra_data.get('callback_url') is not None
         assert obj.extra_data.get('is-update') is True
@@ -439,7 +441,7 @@ def test_merge_with_conflicts_callback_url(
 
         assert obj.status == ObjectStatus.HALTED
         assert expected_url == obj.extra_data.get('callback_url')
-        assert len(conflicts) == 1
+        assert len(conflicts) == 2  # From now on titles will also create conflict (inspirehep/#1518)
 
         assert obj.extra_data.get('is-update') is True
         assert obj.extra_data['merger_root'] == RECORD_WITH_CONFLICTS
@@ -505,7 +507,7 @@ def test_merge_with_conflicts_callback_url_and_resolve(
 
         assert obj.status == ObjectStatus.HALTED
         assert expected_url == obj.extra_data.get('callback_url')
-        assert len(conflicts) == 1
+        assert len(conflicts) == 2  # From now on titles will also create conflict (inspirehep/#1518)
 
         assert obj.extra_data.get('is-update') is True
         assert obj.extra_data['merger_root'] == RECORD_WITH_CONFLICTS
@@ -577,7 +579,7 @@ def test_merge_callback_url_with_malformed_workflow(
 
         assert obj.status == ObjectStatus.HALTED
         assert expected_url == obj.extra_data.get('callback_url')
-        assert len(conflicts) == 1
+        assert len(conflicts) == 2  # From now on titles will also create conflict (inspirehep/#1518)
 
         assert obj.extra_data.get('is-update') is True
         assert obj.extra_data['merger_root'] == RECORD_WITH_CONFLICTS
