@@ -64,7 +64,7 @@ def edit_workflow(workflow_app):
         'control_number': 123,
         'document_type': ['article'],
         'titles': [{'title': 'Resource Pooling in Large-Scale Content Delivery Systems'}],
-        'self': {'$ref': 'http://localhost:5000/schemas/records/hep.json'},
+        'self': {'$ref': 'http://localhost:5000/api/literature/123'},
         '_collections': ['Literature']
     }
     factory = TestRecordMetadata.create_from_kwargs(json=record)
@@ -147,7 +147,7 @@ def test_edit_article_workflow(workflow_app, mocked_external_services):
         'control_number': 123,
         'document_type': ['article'],
         'titles': [{'title': 'Resource Pooling in Large-Scale Content Delivery Systems'}],
-        'self': {'$ref': 'http://localhost:5000/schemas/records/hep.json'},
+        'self': {'$ref': 'http://localhost:5000/api/literature/123'},
         '_collections': ['Literature']
     }
     factory = TestRecordMetadata.create_from_kwargs(json=record)
@@ -220,7 +220,7 @@ def test_edit_article_workflow_deleting(workflow_app, mocked_external_services):
         'control_number': 123,
         'document_type': ['article'],
         'titles': [{'title': 'Resource Pooling in Large-Scale Content Delivery Systems'}],
-        'self': {'$ref': 'http://localhost:5000/schemas/records/hep.json'},
+        'self': {'$ref': 'http://localhost:5000/api/literature/123'},
         '_collections': ['Literature']
     }
     factory = TestRecordMetadata.create_from_kwargs(json=record)
@@ -405,7 +405,7 @@ def test_edit_article_workflow_sending_to_hep(workflow_app, mocked_external_serv
         'control_number': 123,
         'document_type': ['article'],
         'titles': [{'title': 'Resource Pooling in Large-Scale Content Delivery Systems'}],
-        'self': {'$ref': 'http://localhost:5000/schemas/records/hep.json'},
+        'self': {'$ref': 'http://localhost:5000/api/literature/123'},
         '_collections': ['Literature']
     }
     factory = TestRecordMetadata.create_from_kwargs(json=record)
