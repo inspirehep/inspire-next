@@ -272,3 +272,4 @@ def test_harvmackey():
     expected = 'WerlangXDS'
     result = json.loads(schema.dumps(record).data)
     assert expected == result['harvmackey']
+    

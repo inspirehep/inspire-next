@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014-2018 CERN.
+# Copyright (C) 2014-2020 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@ import re
 class LatexSchema(Schema):
     arxiv_eprints = fields.Raw()
     authors = fields.Method('get_author_names')
-    harvmacauthors = fields.Method('get_harvmacauthor_names')
     citations = fields.Method('get_citations', default=0)
     collaborations = fields.Method('get_collaborations')
     dois = fields.Raw()
@@ -61,9 +60,6 @@ class LatexSchema(Schema):
 
         author_names = (format_name(author['full_name'], initials_only=True) for author in authors)
         return [name.replace('. ', '.~') for name in author_names]
-
-    def get_harvmacauthor_names(self, data):
-        authors = fields.Method('get_author_names')        
 
     def get_publication_info(self, data):
         publication_info = get_best_publication_info(data)
@@ -103,3 +99,5 @@ class LatexSchema(Schema):
             return fields.missing
 
         return [collab['value'] for collab in data.get('collaborations')]
+
+    latex_encode = UnicodeToLatexEncoder(replacement_latex_protection="braces-after-macro", non_ascii_only=False).unicode_to_latex
