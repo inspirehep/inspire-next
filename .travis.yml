@@ -64,6 +64,7 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
 
 install:
+  - travis_retry docker-compose -f services.yml build base
   - travis_retry docker-compose -f docker-compose.test.yml pull --parallel ${SUITE} ${IMAGES}
   - if [ ! -z "${IMAGES}" ]; then
       travis_retry docker-compose -f docker-compose.test.yml build ${IMAGES};

@@ -25,9 +25,7 @@ version: '2.1'
 services:
   test-service_base:
     # Overrides default inspirehep config.
-    extends:
-      file: services.yml
-      service: base
+    image: inspire-build/inspire-next-base
     environment:
       - APP_SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://inspirehep:inspirehep@test-database:5432/inspirehep
       - APP_CELERY_BROKER_URL=pyamqp://guest:guest@test-rabbitmq:5672//
@@ -35,6 +33,28 @@ services:
       - APP_CACHE_REDIS_URL=redis://test-redis:6379/0
       - APP_ACCOUNTS_SESSION_REDIS_URL=redis://test-redis:6379/2
       - APP_SEARCH_ELASTIC_HOSTS=test-indexer
+      - BASE_USER_UID=${BASE_USER_UID:-1000}
+      - BASE_USER_GID=${BASE_USER_GID:-1000}
+      - LANG=en_US.UTF-8
+      - LC_CTYPE=en_US.UTF-8
+      - LC_NUMERIC=en_US.UTF-8
+      - LC_TIME=en_US.UTF-8
+      - LC_COLLATE=en_US.UTF-8
+      - LC_MONETARY=en_US.UTF-8
+      - LC_MESSAGES=en_US.UTF-8
+      - LC_PAPER=en_US.UTF-8
+      - LC_NAME=en_US.UTF-8
+      - LC_ADDRESS=en_US.UTF-8
+      - LC_TELEPHONE=en_US.UTF-8
+      - LC_MEASUREMENT=en_US.UTF-8
+      - LC_IDENTIFICATION=en_US.UTF-8
+      - LC_ALL=
+      - APP_CRAWL_ONCE_PATH=/code/scrapy/crawl_once
+    volumes:
+      - ./inspirehep:/code/inspirehep
+      - ./scripts:/code/scripts
+      - ./tests:/code/tests
+
 
   proxied_base:
     extends: test-service_base
