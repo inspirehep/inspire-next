@@ -28,15 +28,18 @@ from flask import Blueprint, current_app, jsonify, request
 from flask_login import current_user
 from fs.opener import fsopendir
 from werkzeug.utils import secure_filename
-
 from refextract import (
     extract_references_from_string,
     extract_references_from_url,
 )
 
+from invenio_db import db
+from invenio_workflows import workflow_object_class
+from invenio_workflows.errors import WorkflowsMissingObject
 from invenio_workflows_ui.proxies import workflow_api_class
 from inspire_schemas.api import load_schema
-
+from inspirehep.modules.workflows.utils import get_validation_errors
+from inspirehep.modules.workflows.errors import CallbackWorkflowNotFoundError
 
 from inspirehep.modules.editor.permissions import (
     editor_permission,
@@ -51,6 +54,7 @@ from inspirehep.utils.references import (
 )
 from inspirehep.utils.url import copy_file
 from inspirehep.modules.workflows.workflows.manual_merge import start_merger
+
 
 MAX_UNIQUE_KEY_COUNT = 100
 
@@ -248,3 +252,23 @@ def get_workflow_and_schema(workflow_id):
         "workflow": workflow,
         "schema": load_schema(schema_url)
     })
+
+
+@blueprint_api.route('/validate_workflow/<int:workflow_id>', methods=['GET'])
+@editor_use_api_permission.require(http_exception=403)
+def validate_workflow(workflow_id):
+    try:
+        workflow = workflow_object_class.get(workflow_id)
+    except WorkflowsMissingObject:
+        raise CallbackWorkflowNotFoundError(workflow_id)
+
+    errors = get_validation_errors(workflow.data, 'hep')
+
+    if errors:
+        workflow.extra_data['validation_errors'] = errors
+        workflow.save()
+        db.session.commit()
+
+        return jsonify(workflow.extra_data), 400
+
+    return jsonify(workflow.extra_data)
