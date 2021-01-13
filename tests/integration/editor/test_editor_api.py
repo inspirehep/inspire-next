@@ -461,20 +461,20 @@ def test_validate_workflow(api_client):
     workflow.save()
     db.session.commit()
 
-    worfkflow_url = "/editor/validate_workflow/{workflow_id}"
-
-    response = api_client.get(
-        worfkflow_url.format(workflow_id=workflow.id),
+    response = api_client.post(
+        "/editor/validate_workflow",
         content_type="application/json",
+        data=json.dumps({
+            'id': workflow.id,
+            'record': workflow.data,
+        })
     )
     assert response.status_code == 200
 
     workflow.delete()
     db.session.commit()
 
-    assert "validation_errors" not in workflow.extra_data
-    assert "validation_errors" not in response.data
-    assert record == workflow.data
+    assert json.loads(response.data) == "success"
 
 
 def test_validate_workflow_error(api_client):
@@ -493,17 +493,17 @@ def test_validate_workflow_error(api_client):
     workflow.save()
     db.session.commit()
 
-    worfkflow_url = "/editor/validate_workflow/{workflow_id}"
-
-    response = api_client.get(
-        worfkflow_url.format(workflow_id=workflow.id),
+    response = api_client.post(
+        "/editor/validate_workflow",
         content_type="application/json",
+        data=json.dumps({
+            'id': workflow.id,
+            'record': workflow.data,
+        })
     )
     assert response.status_code == 400
 
     workflow.delete()
     db.session.commit()
 
-    assert record == workflow.data
-    assert "validation_errors" in workflow.extra_data
-    assert "validation_errors" in response.data
+    assert json.loads(response.data) != "success"
