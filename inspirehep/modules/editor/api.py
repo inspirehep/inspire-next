@@ -254,21 +254,23 @@ def get_workflow_and_schema(workflow_id):
     })
 
 
-@blueprint_api.route('/validate_workflow/<int:workflow_id>', methods=['GET'])
-@editor_use_api_permission.require(http_exception=403)
-def validate_workflow(workflow_id):
-    try:
-        workflow = workflow_object_class.get(workflow_id)
-    except WorkflowsMissingObject:
-        raise CallbackWorkflowNotFoundError(workflow_id)
-
-    errors = get_validation_errors(workflow.data, 'hep')
+@blueprint_api.route('/validate_workflow', methods=['POST'])
+def validate_workflow():
+    data = request.json
+    record = data['record']
+    workflow_id = data['id']
+    errors = get_validation_errors(record, 'hep')
 
     if errors:
-        workflow.extra_data['validation_errors'] = errors
-        workflow.save()
+        try:
+            workflow_db = workflow_object_class.get(workflow_id)
+        except WorkflowsMissingObject:
+            raise CallbackWorkflowNotFoundError(workflow_id)
+
+        workflow_db.extra_data['validation_errors'] = errors
+        workflow_db.save()
         db.session.commit()
 
-        return jsonify(workflow.extra_data), 400
+        return jsonify(errors), 400
 
-    return jsonify(workflow.extra_data)
+    return jsonify('success')
