@@ -408,6 +408,9 @@ optional = false
 python-versions = "*"
 version = "5.0.6"
 
+[package.dependencies]
+six = "*"
+
 [[package]]
 category = "main"
 description = "Updated configparser from Python 3.7 for Python 2.6+."
@@ -1440,7 +1443,7 @@ description = "INSPIRE-specific configuration of the JSON Merger."
 name = "inspire-json-merger"
 optional = false
 python-versions = "*"
-version = "11.0.12"
+version = "11.0.13"
 
 [package.dependencies]
 inspire-schemas = ">=61.0,<62.0"
@@ -2508,13 +2511,13 @@ version = ">=0.3.1"
 
 [package.dependencies.munkres]
 optional = true
-version = "<=1.0.12"
+version = ">=1.0.7"
 
 [package.extras]
-all = ["editdistance (>=0.3.1)", "munkres (<=1.0.12)", "Unidecode (>=0.4.19)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
-contrib = ["editdistance (>=0.3.1)", "munkres (<=1.0.12)", "Unidecode (>=0.4.19)"]
+all = ["editdistance (>=0.3.1)", "munkres (>=1.0.7)", "Unidecode (>=0.4.19)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+contrib = ["editdistance (>=0.3.1)", "munkres (>=1.0.7)", "Unidecode (>=0.4.19)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "editdistance (>=0.3.1)", "munkres (<=1.0.12)", "Unidecode (>=0.4.19)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "editdistance (>=0.3.1)", "munkres (>=1.0.7)", "Unidecode (>=0.4.19)"]
 
 [[package]]
 category = "main"
@@ -4808,8 +4811,8 @@ inspire-dojson = [
     {file = "inspire_dojson-63.0.19-py2-none-any.whl", hash = "sha256:6849e9fbed0c8cc715a747c212a08b8e8ee8edac86fa8bf1f03f175288badfbd"},
 ]
 inspire-json-merger = [
-    {file = "inspire-json-merger-11.0.12.tar.gz", hash = "sha256:bfe721a613a235d5bfbb128ddfb93857a57f74ec9f4a551e223aed3e11bb8023"},
-    {file = "inspire_json_merger-11.0.12-py2-none-any.whl", hash = "sha256:2787576d8676d7efd71407c435943c8684f2065041febba05f76e296190e7b7b"},
+    {file = "inspire-json-merger-11.0.13.tar.gz", hash = "sha256:d9224b364d68169325f260fd54e4059a0dd898826adf8b34fd8f7e7948f25bdf"},
+    {file = "inspire_json_merger-11.0.13-py2-none-any.whl", hash = "sha256:30595ca0dce4b07fb37b214ca1a26ecf5e944c4a6f9341b7f026cfb54118a0a4"},
 ]
 inspire-matcher = [
     {file = "inspire-matcher-9.0.1.tar.gz", hash = "sha256:622f5a4e2bc4f2c0ac987caf10a61efbe44da673a9e9724baa52bf1917b8e200"},

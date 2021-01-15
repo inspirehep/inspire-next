@@ -48,7 +48,7 @@ def build_workflow(workflow_data, data_type='hep', **kwargs):
     return workflow_object
 
 
-def check_wf_state(workflow_id, desired_status, max_time=600):
+def check_wf_state(workflow_id, desired_status, max_time=550):  # Travis fails after 600s without output
     """Waits for the workflow to go to desired status
     Args:
         workflow: workflow to check
@@ -65,10 +65,10 @@ def check_wf_state(workflow_id, desired_status, max_time=600):
         if datetime.now() > end:
             raise AssertionError(
                 "Status for workflow: %s didn't changed to %s for%s seconds" % (
-                    workflow_id, max_time, desired_status
+                    workflow_id, desired_status, max_time
                 )
             )
-        time.sleep(1)
+        time.sleep(5)
 
 
 def test_wf_not_stops_when_blocking_another_one_after_restarted_on_running(
@@ -82,6 +82,7 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_running(
         '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
         'titles': [
             {
+                "source": "arxiv",
                 'title': 'Update without conflicts title.'
             },
         ],
@@ -102,10 +103,13 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_running(
     workflow = build_workflow(record)
     workflow.status = ObjectStatus.RUNNING
     workflow.save()
-    record['titles'][0]['title'] = 'second title?'
+    record['titles'][0]['source'] = 'something_else'
     workflow2 = build_workflow(record)
     workflow2.save()
-    record['titles'].append({'title': 'thirtd_title'})
+    record['titles'].append({
+        "source": "arxiv",
+        'title': 'Update without conflicts title.'
+    },)
     workflow3 = build_workflow(record)
     workflow3.save()
     db.session.commit()
@@ -139,7 +143,6 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_running(
     start.delay('article', object_id=wf1_id)
 
     current_search.flush_and_refresh('holdingpen-hep')
-
     check_wf_state(wf1_id, ObjectStatus.COMPLETED)
     check_wf_state(wf2_id, ObjectStatus.COMPLETED)
     check_wf_state(wf3_id, ObjectStatus.COMPLETED)
@@ -167,6 +170,7 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_init(
         '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
         'titles': [
             {
+                "source": "arxiv",
                 'title': 'Update without conflicts title.'
             },
         ],
@@ -186,10 +190,13 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_init(
 
     workflow = build_workflow(record)
     workflow.save()
-    record['titles'][0]['title'] = 'second title?'
+    record['titles'][0]['source'] = 'something_else'
     workflow2 = build_workflow(record)
     workflow2.save()
-    record['titles'].append({'title': 'thirtd_title'})
+    record['titles'].append({
+        "source": "arxiv",
+        'title': 'Update without conflicts title.'
+    },)
     workflow3 = build_workflow(record)
     workflow3.save()
     db.session.commit()
