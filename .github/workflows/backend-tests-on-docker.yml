@@ -1,0 +1,187 @@
+name: Build on docker
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "*"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache docker image
+        uses: actions/cache@v2.1.3
+        id: cache
+        with:
+          path: /tmp/docker-images
+          key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
+
+      - name: Build images
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: docker-compose -f services.yml build --force-rm base
+      - name: Install lrzip
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lrzip
+      - name: Save image
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p /tmp/docker-images
+          docker save inspire-build/inspire-next-base |lrz -l -o /tmp/docker-images/base.lz
+
+  Workflows-I:
+    runs-on: ubuntu-latest
+    needs: Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache docker image
+        uses: actions/cache@v2.1.3
+        id: cache
+        with:
+          path: /tmp/docker-images
+          key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
+      - name: Load image from cache
+        uses: ./.github/actions/load-image-from-cache
+      - name: Prepare docker
+        run: |
+          docker-compose -f docker-compose.test.yml pull --parallel test-database test-indexer test-rabbitmq test-redis
+          docker-compose -f docker-compose.test.yml build --parallel workflows test-web
+          docker-compose -f docker-compose.test.yml up -d test-database test-indexer test-rabbitmq test-redis test-web
+          sh docker/wait-for-services.sh
+      - name: Run tests
+        run: |
+          docker-compose -f docker-compose.test.yml run --rm workflows py.test tests/integration/workflows \
+          --ignore tests/integration/workflows/test_audit.py \
+            --ignore tests/integration/workflows/test_hep_approval.py \
+            --ignore tests/integration/workflows/test_submissions_views.py \
+            --ignore tests/integration/workflows/test_workflows_manual_merge.py \
+            --ignore tests/integration/workflows/test_workflows_tasks_upload.py \
+            --ignore tests/integration/workflows/test_arxiv_workflow.py \
+            --ignore tests/integration/workflows/test_edit_article.py \
+            --ignore tests/integration/workflows/test_views.py
+
+  Workflows-II:
+    runs-on: ubuntu-latest
+    needs: Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache docker image
+        uses: actions/cache@v2.1.3
+        id: cache
+        with:
+          path: /tmp/docker-images
+          key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
+      - name: Load image from cache
+        uses: ./.github/actions/load-image-from-cache
+      - name: Prepare docker
+        run: |
+          docker-compose -f docker-compose.test.yml pull --parallel test-database test-indexer test-rabbitmq test-redis
+          docker-compose -f docker-compose.test.yml build --parallel workflows test-web
+          docker-compose -f docker-compose.test.yml up -d test-database test-indexer test-rabbitmq test-redis test-web
+          sh docker/wait-for-services.sh
+      - name: Run tests
+        run: |
+          docker-compose -f docker-compose.test.yml run --rm workflows py.test tests/integration/workflows \
+          --ignore tests/integration/workflows/test_arxiv_merge.py \
+          --ignore tests/integration/workflows/test_authors_workflow.py \
+          --ignore tests/integration/workflows/test_article_workflow.py \
+          --ignore tests/integration/workflows/test_utils.py \
+          --ignore tests/integration/workflows/test_workflows_tasks_actions.py \
+          --ignore tests/integration/workflows/test_workflows_cli.py \
+          --ignore tests/integration/workflows/test_workflow_utils.py
+
+  Integration:
+    runs-on: ubuntu-latest
+    needs: Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache docker image
+        uses: actions/cache@v2.1.3
+        id: cache
+        with:
+          path: /tmp/docker-images
+          key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
+      - name: Load image from cache
+        uses: ./.github/actions/load-image-from-cache
+      - name: Prepare docker
+        run: |
+          docker-compose -f docker-compose.test.yml pull --parallel test-database test-indexer test-redis
+          docker-compose -f docker-compose.test.yml up -d test-database test-indexer test-redis
+          sh docker/wait-for-services.sh
+      - name: Run tests
+        run: docker-compose -f docker-compose.test.yml run --rm integration
+
+  Integration-async:
+    runs-on: ubuntu-latest
+    needs: Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache docker image
+        uses: actions/cache@v2.1.3
+        id: cache
+        with:
+          path: /tmp/docker-images
+          key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
+      - name: Load image from cache
+        uses: ./.github/actions/load-image-from-cache
+      - name: Prepare docker
+        run: |
+          docker-compose -f docker-compose.test.yml pull --parallel test-database test-indexer test-redis test-rabbitmq
+          docker-compose -f docker-compose.test.yml up -d test-database test-indexer test-redis test-rabbitmq
+          sh docker/wait-for-services.sh
+      - name: Run tests
+        run: docker-compose -f docker-compose.test.yml run --rm integration_async
+
+  Unit:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache docker image
+        uses: actions/cache@v2.1.3
+        id: cache
+        with:
+          path: /tmp/docker-images
+          key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
+      - name: Load image from cache
+        uses: ./.github/actions/load-image-from-cache
+      - name: Run tests
+        run: |
+          docker-compose -f docker-compose.test.yml run --rm unit
+
+  Release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: [Unit, Integration-async, Integration, Workflows-I, Workflows-II]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: deploy docker images
+        run: sh deploy-docker--image.sh

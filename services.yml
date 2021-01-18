@@ -24,7 +24,7 @@ version: '2.1'
 
 services:
   base:
-    image: inspire-next-base
+    image: inspire-build/inspire-next-base
     build:
       context: .
       dockerfile: Dockerfile.dev
