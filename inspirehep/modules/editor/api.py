@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+
 from flask import Blueprint, current_app, jsonify, request
 from flask_login import current_user
 from fs.opener import fsopendir
@@ -48,6 +50,7 @@ from inspirehep.modules.editor.permissions import (
 from inspirehep.modules.refextract.matcher import match_references
 from inspirehep.modules.tools import authorlist
 from inspirehep.utils import tickets
+from inspirehep.utils.errors import EmptyResponseFromRT, NoUsersFound
 from inspirehep.utils.references import (
     local_refextract_kbs_path,
     map_refextract_to_schema,
@@ -55,6 +58,8 @@ from inspirehep.utils.references import (
 from inspirehep.utils.url import copy_file
 from inspirehep.modules.workflows.workflows.manual_merge import start_merger
 
+
+LOGGER = logging.getLogger(__name__)
 
 MAX_UNIQUE_KEY_COUNT = 100
 
@@ -143,7 +148,16 @@ def create_rt_ticket(endpoint, pid_value):
 @editor_permission
 def resolve_rt_ticket(endpoint, pid_value, ticket_id):
     """View to resolve an rt ticket"""
-    tickets.resolve_ticket(ticket_id)
+    rt_username = None
+    try:
+        rt_user = tickets.get_rt_user_by_email(current_user.email)
+        rt_username = rt_user['Name']
+    except EmptyResponseFromRT:
+        LOGGER.warning("RT did not return users list. Ticket %s will be closed with default user.", ticket_id)
+    except NoUsersFound:
+        LOGGER.warning("RT is missing user with %s e-mail. Ticket %s will be closed with default user.", current_user.email, ticket_id)
+
+    tickets.resolve_ticket(ticket_id, rt_username)
     return jsonify(success=True)
 
 

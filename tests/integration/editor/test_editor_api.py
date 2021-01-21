@@ -42,6 +42,8 @@ from inspire_schemas.api import load_schema, validate
 from inspire_utils.record import get_value
 from invenio_workflows import workflow_object_class
 
+from inspirehep.utils.errors import NoUsersFound, EmptyResponseFromRT
+
 
 @pytest.fixture(autouse=True)
 def clear_cache(app):
@@ -182,21 +184,12 @@ def test_get_rt_users(mock_tickets, log_in_as_cataloger, api_client):
     assert response.status_code == 200
 
 
-@patch('inspirehep.utils.tickets._get_all_of')
-def test_rt_users_are_cached(mock_get_all_of, log_in_as_cataloger, api_client):
-    mock_get_all_of.return_value = [
-        {
-            "id": "10309",
-            "name": "atkinson"
-        },
-        {
-            "id": "1125438",
-            "name": "bhecker"
-        },
-        {
-            "id": "460354",
-            "name": "Catherine"
-        },
+@patch('inspirehep.utils.tickets.query_rt')
+def test_rt_users_are_cached(mock_query_rt, log_in_as_cataloger, api_client):
+    mock_query_rt.return_value = [
+        "10309: atkinson",
+        "1125438: bhecker",
+        "460354: Catherine"
     ]
     current_cache.delete('rt_users')
     response = api_client.get('/editor/rt/users')
@@ -216,21 +209,12 @@ def test_get_rt_queues(mock_tickets, log_in_as_cataloger, api_client):
     assert response.status_code == 200
 
 
-@patch('inspirehep.utils.tickets._get_all_of')
-def test_rt_queues_are_cached(mock_get_all_of, log_in_as_cataloger, api_client):
-    mock_get_all_of.return_value = [
-        {
-            "id": "35",
-            "name": "Admin"
-        },
-        {
-            "id": "63",
-            "name": "Admin-curator"
-        },
-        {
-            "id": "60",
-            "name": "Admin-Dev"
-        }
+@patch('inspirehep.utils.tickets.query_rt')
+def test_rt_queues_are_cached(mock_query_rt, log_in_as_cataloger, api_client):
+    mock_query_rt.return_value = [
+        "35: Admin",
+        "63: Admin-curator",
+        "60: Admin-Dev"
     ]
     current_cache.delete('rt_queues')
     response = api_client.get('/editor/rt/queues')
@@ -507,3 +491,41 @@ def test_validate_workflow_error(api_client):
     db.session.commit()
 
     assert json.loads(response.data) != "success"
+
+
+@patch('inspirehep.utils.tickets.get_rt_user_by_email')
+@patch('inspirehep.utils.tickets.resolve_ticket')
+def test_close_ticket_sends_owner_to_rt(mock_resolve_ticket, mock_get_rt_user_by_email, api_client, log_in_as_cataloger):
+    mock_get_rt_user_by_email.return_value = {"Name": "TEST_USER"}
+    response = api_client.get('/editor/literature/1497201/rt/tickets/4328/resolve')
+
+    assert response.status_code == 200
+    mock_get_rt_user_by_email.assert_called_once_with(u'cataloger@inspirehep.net')
+    mock_resolve_ticket.assert_called_once_with(u'4328', 'TEST_USER')
+
+
+@patch('inspirehep.utils.tickets.get_rt_user_by_email')
+@patch('inspirehep.utils.tickets.resolve_ticket')
+def test_close_ticket_do_not_owner_to_rt_if_user_is_missing_in_rt(mock_resolve_ticket, mock_get_rt_user_by_email, api_client, log_in_as_cataloger):
+    mock_get_rt_user_by_email.side_effect = NoUsersFound()
+    response = api_client.get('/editor/literature/1497201/rt/tickets/4328/resolve')
+
+    assert response.status_code == 200
+    mock_get_rt_user_by_email.assert_called_once_with(u'cataloger@inspirehep.net')
+    mock_resolve_ticket.assert_called_once_with(u'4328', None)
+
+
+@patch('inspirehep.utils.tickets.get_rt_user_by_email')
+@patch('inspirehep.utils.tickets.resolve_ticket')
+def test_close_ticket_do_not_owner_to_rt_if_rt_do_not_return_users(
+        mock_resolve_ticket,
+        mock_get_rt_user_by_email,
+        api_client,
+        log_in_as_cataloger
+):
+    mock_get_rt_user_by_email.side_effect = EmptyResponseFromRT()
+    response = api_client.get('/editor/literature/1497201/rt/tickets/4328/resolve')
+
+    assert response.status_code == 200
+    mock_get_rt_user_by_email.assert_called_once_with(u'cataloger@inspirehep.net')
+    mock_resolve_ticket.assert_called_once_with(u'4328', None)
