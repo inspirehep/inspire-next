@@ -24,7 +24,6 @@ jobs:
         with:
           path: /tmp/docker-images
           key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
-
       - name: Build images
         if: steps.cache.outputs.cache-hit != 'true'
         run: docker-compose -f services.yml build --force-rm base
@@ -175,7 +174,7 @@ jobs:
           docker-compose -f docker-compose.test.yml run --rm unit
 
   Release:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push'
     needs: [Unit, Integration-async, Integration, Workflows-I, Workflows-II]
     runs-on: ubuntu-latest
     steps:
@@ -183,9 +182,13 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Set Git tag if exists
+        run: echo "::set-env name=RELEASE_TAG::$(git tag --points-at HEAD)"
       - name: deploy docker images
         shell: bash
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          RELEASE_TAG: ${{ env.RELEASE_TAG }}
+          INSPIRE_BOT_TOKEN: ${{ secrets.INSPIRE_BOT_TOKEN }}
         run: sh deploy-docker-image.sh

@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-TAG="${TRAVIS_TAG:-$(git describe --always --tags)}"
+TAG="${RELEASE_TAG:-$(git describe --always --tags)}"
 
 retry() {
     "${@}" || "${@}" || exit 2
@@ -54,7 +54,7 @@ main() {
   buildPush "inspirehep/next-assets" Dockerfile
   buildPush "inspirehep/next-scrapyd" Dockerfile.scrapyd
   logout
-  if [ -z "${TRAVIS_TAG}" ]; then
+  if [ -z "${RELEASE_TAG}" ]; then
     deploy "qa" "inspirehep/next"
     deploy "qa" "inspirehep/next-assets"
     deploy "qa" "inspirehep/next-scrapyd"
