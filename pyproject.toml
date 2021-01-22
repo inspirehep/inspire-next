@@ -36,7 +36,7 @@ hepcrawl = {version = "^13.0.21", optional = true}
 honcho = {version = "==1.*,>=1.0.0,>=1.0.1", optional = true}
 idutils = "==1.*,>=1.0.0,>=1.0.1"
 inspire-crawler = "==3.*,>=3.0.0"
-inspire-dojson = "==63.*,>=63.0.0"
+inspire-dojson = "==63.*,>=63.1.0"
 inspire-json-merger = "==11.*,>=11.0.0"
 inspire-matcher = ">=9.0.1"
 inspire-query-parser = "==6.*,>=6.0.0"
