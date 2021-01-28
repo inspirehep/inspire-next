@@ -302,7 +302,7 @@ STOP_IF_EXISTING_SUBMISSION = [
 ]
 
 
-HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
+HALT_FOR_APPROVAL_IF_NEW_OR_REJECT_IF_NOT_RELEVANT = [
     preserve_root,
     IF_ELSE(
         is_marked('is-update'),
@@ -347,14 +347,12 @@ HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT = [
                             mark('approved', True),
                         ],
                         [
-                            reject_record('Article automatically rejected'),
+                            reject_record('Article rejected'),
                             mark('approved', False),
-                            save_workflow,
-                            stop_processing,
                         ],
-                    )
-                )
-            ]
+                    ),
+                ),
+            ],
         ),
     ),
     save_workflow
@@ -561,7 +559,7 @@ class Article(object):
         CHECK_AUTO_APPROVE +
         PROCESS_HOLDINGPEN_MATCHES +
         ENHANCE_RECORD +
-        HALT_FOR_APPROVAL_IF_NEW_OR_STOP_IF_NOT_RELEVANT +
+        HALT_FOR_APPROVAL_IF_NEW_OR_REJECT_IF_NOT_RELEVANT +
         [
             IF_ELSE(
                 is_record_accepted,
