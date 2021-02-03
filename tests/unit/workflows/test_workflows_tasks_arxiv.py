@@ -960,3 +960,77 @@ def test_arxiv_author_list_does_not_produce_latex():
 
     assert default_arxiv_author_list(obj, eng) is None
     assert obj.data.get('authors') == expected_authors
+
+
+def test_arxiv_author_list_authorname_paper():
+    schema = load_schema('hep')
+    eprints_subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1002.0621.tar.gz'))
+
+    data = {
+        '$schema': 'http://localhost:5000/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '1002.0621',
+            },
+        ],
+    }  # record/845323
+    validate(data['arxiv_eprints'], subschema)
+
+    extra_data = {}
+    files = MockFiles({
+        '1002.0621.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    default_arxiv_author_list = arxiv_author_list()
+    default_arxiv_author_list(obj, eng)
+
+    authors_subschema = schema['properties']['authors']
+    expected_authors = [
+        {
+            'affiliations': [{'value': 'Yerevan Phys. Inst.'}],
+            'ids': [
+                {'value': 'INSPIRE-00314584', 'schema': 'INSPIRE ID'},
+                {'value': 'CERN-432142', 'schema': 'CERN'},
+            ],
+#            'full_name': 'Khachatryan, Vardan',
+            'full_name': 'Khachatryan, V.',
+        },
+        {
+            'affiliations': [
+                {'value': 'INFN, Florence'}, 
+                {'value': 'Florence U.'},
+            ],
+            'ids': [
+                {'value': 'INSPIRE-00307514', 'schema': 'INSPIRE ID'},
+            ],
+#            'full_name': 'Abbrescia, Marcello',
+            'full_name': 'Abbrescia, M.',
+        },
+        {
+            'affiliations': [{'value': 'CERN'},],
+            'ids': [
+                {'value': 'INSPIRE-00125803', 'schema': 'INSPIRE ID'},
+            ],
+#            'full_name': 'Shen, Bejamin C.',
+            'full_name': 'Shen, B.C.',
+        }
+
+    ]
+    validate(expected_authors, authors_subschema)
+
+    assert obj.data.get('authors') == expected_authors
+
+
