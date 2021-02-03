@@ -408,9 +408,6 @@ optional = false
 python-versions = "*"
 version = "5.0.6"
 
-[package.dependencies]
-six = "*"
-
 [[package]]
 category = "main"
 description = "Updated configparser from Python 3.7 for Python 2.6+."
@@ -519,13 +516,13 @@ python-versions = "*"
 version = "0.7.2.dev20180504"
 
 [package.extras]
-all = ["Sphinx (>=1.4.4)", "Sphinx (>=1.4.4)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "mock (>=1.3.0)", "mock (>=1.3.0)", "numpy (>=1.11.0)", "numpy (>=1.11.0)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "sphinx-rtd-theme (>=0.1.9)", "sphinx-rtd-theme (>=0.1.9)"]
+all = ["Sphinx (>=1.4.4)", "sphinx-rtd-theme (>=0.1.9)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "numpy (>=1.11.0)"]
 docs = ["Sphinx (>=1.4.4)", "sphinx-rtd-theme (>=0.1.9)"]
 numpy = ["numpy (>=1.11.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [package.source]
-reference = "40079d7e31e432dca9701258d057161a23eb971e"
+reference = "master"
 type = "git"
 url = "https://github.com/inspirehep/dictdiffer.git"
 
@@ -983,7 +980,7 @@ Flask = ">=0.10"
 SQLAlchemy = ">=0.8.0"
 
 [package.source]
-reference = "71abd94a1e2317a1365a25a31e719dbd9aafceea"
+reference = "master"
 type = "git"
 url = "https://github.com/inspirehep/flask-sqlalchemy.git"
 
@@ -1181,7 +1178,7 @@ description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)
 name = "hepcrawl"
 optional = true
 python-versions = "*"
-version = "13.0.21"
+version = "13.0.25"
 
 [package.dependencies]
 LinkHeader = ">=0.4.3"
@@ -1211,7 +1208,7 @@ scrapyd-client = ">=1.0.1"
 six = ">=1.9.0"
 
 [package.extras]
-all = ["Sphinx (>=1.5,<2.0)", "sphinxcontrib-napoleon (>=0.6.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (3.3.0)", "freezegun (>=0.3.9)", "isort (4.2.2)", "mock (>=2.0.0,<3.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pyyaml", "raven (>=6.2.1,<7.0)", "scrapy-sentry", "Sphinx (>=1.5,<2.0)", "sphinxcontrib-napoleon (>=0.6.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (3.3.0)", "freezegun (>=0.3.9)", "isort (4.2.2)", "mock (>=2.0.0,<3.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pyyaml", "raven (>=6.2.1,<7.0)", "scrapy-sentry"]
+all = ["Sphinx (>=1.5,<2.0)", "sphinxcontrib-napoleon (>=0.6.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (3.3.0)", "freezegun (>=0.3.9)", "isort (4.2.2)", "mock (>=2.0.0,<3.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pyyaml", "raven (>=6.2.1,<7.0)", "scrapy-sentry"]
 docs = ["Sphinx (>=1.5,<2.0)", "sphinxcontrib-napoleon (>=0.6.1)"]
 sentry = ["raven (>=6.2.1,<7.0)", "scrapy-sentry"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (3.3.0)", "freezegun (>=0.3.9)", "isort (4.2.2)", "mock (>=2.0.0,<3.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pyyaml"]
@@ -3524,7 +3521,7 @@ version = ">=2.2.0,<4.0.0"
 [[package]]
 category = "main"
 description = "scandir, a better directory iterator and faster os.walk()"
-marker = "python_version < \"3.5\" or python_version in \"2.6 2.7 3.2 3.3\" or python_version == \"2.7\""
+marker = "python_version < \"3.5\" or python_version == \"2.7\" or python_version in \"2.6 2.7 3.2 3.3\""
 name = "scandir"
 optional = false
 python-versions = "*"
@@ -3874,7 +3871,7 @@ version = "0.1"
 httplib2 = "*"
 
 [package.source]
-reference = "6a3da948ba105d12209c3c0826fd668977a626df"
+reference = "master"
 type = "git"
 url = "https://github.com/inspirehep/python-client-sword2.git"
 
@@ -3894,7 +3891,7 @@ pkgsettings = ">=0.9.2"
 six = ">=1.10.0,<2.0.0"
 
 [package.source]
-reference = "1cc298de76c03cdd1764c52655742c9d22514e23"
+reference = "lazy-init-tmp-3.4.0"
 type = "git"
 url = "https://github.com/puntonim/py-timeexecution.git"
 
@@ -4147,7 +4144,7 @@ version = "0.6.1"
 [[package]]
 category = "main"
 description = "Enable Unicode input and display when running Python from Windows console."
-marker = "sys_platform == \"win32\" and python_version < \"3.6\" or sys_platform == \"win32\" and python_version == \"2.7\""
+marker = "sys_platform == \"win32\" and python_version == \"2.7\" or sys_platform == \"win32\" and python_version < \"3.6\""
 name = "win-unicode-console"
 optional = false
 python-versions = "*"
@@ -4250,7 +4247,7 @@ version = "0.1.6"
 fs = ">=0.4.0,<2.0"
 
 [package.source]
-reference = "6b45e4f141cd400943c0eba4a6d7f8e09bb16917"
+reference = "master"
 type = "git"
 url = "https://github.com/inspirehep/xrootdpyfs.git"
 
@@ -4299,7 +4296,7 @@ worker-node = ["flower", "superlance", "tornado"]
 xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
-content-hash = "1c271cbf59e4da3158caa8af4e6dcb98b4aec81c5191a3e69b82a3a3880a9fc9"
+content-hash = "972b0e594c284d10dc28dec22fb211ee9605157be34baffc404db146a3a5f35b"
 lock-version = "1.0"
 python-versions = ">=2.7,<3.0"
 
@@ -4752,7 +4749,8 @@ harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
 hepcrawl = [
-    {file = "hepcrawl-13.0.21.tar.gz", hash = "sha256:21fcb70b584a0d70ef1119a50d7b580cf0cb43c2621993f1789ae655daa49ff8"},
+    {file = "hepcrawl-13.0.25-py2.py3-none-any.whl", hash = "sha256:13757994ebdde08b1735ac6a24115f0b8c0a366ad241cb4568a6ebca52c45d70"},
+    {file = "hepcrawl-13.0.25.tar.gz", hash = "sha256:ae45d5d35782acaab24972840fefe077f334f92d59d04dbce36410bdbcfc891b"},
 ]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
@@ -5095,6 +5093,11 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:ba59edeaa2fc6114428f1637ffff42da1e311e29382d81b339c1817d37ec93c6"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win32.whl", hash = "sha256:b00c1de48212e4cc9603895652c5c410df699856a2853135b3967591e4beebc2"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win_amd64.whl", hash = "sha256:9bf40443012702a1d2070043cb6291650a0841ece432556f784f004937f0f32c"},
+    {file = "MarkupSafe-1.1.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:6788b695d50a51edb699cb55e35487e430fa21f1ed838122d722e0ff0ac5ba15"},
+    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux1_i686.whl", hash = "sha256:cdb132fc825c38e1aeec2c8aa9338310d29d337bebbd7baa06889d09a60a1fa2"},
+    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:13d3144e1e340870b25e7b10b98d779608c02016d5184cfb9927a9f10c689f42"},
+    {file = "MarkupSafe-1.1.1-cp38-cp38-win32.whl", hash = "sha256:596510de112c685489095da617b5bcbbac7dd6384aeebeda4df6025d0256a81b"},
+    {file = "MarkupSafe-1.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:e8313f01ba26fbbe36c7be1966a7b7424942f670f38e666995b88d012765b9be"},
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
 ]
 marshmallow = [
@@ -5645,6 +5648,7 @@ sqlitedict = [
 ]
 subprocess32 = [
     {file = "subprocess32-3.5.4-cp27-cp27m-macosx_10_6_intel.whl", hash = "sha256:88e37c1aac5388df41cc8a8456bb49ebffd321a3ad4d70358e3518176de3a56b"},
+    {file = "subprocess32-3.5.4-cp27-cp27mu-manylinux2014_x86_64.whl", hash = "sha256:e45d985aef903c5b7444d34350b05da91a9e0ea015415ab45a21212786c649d0"},
     {file = "subprocess32-3.5.4.tar.gz", hash = "sha256:eb2937c80497978d181efa1b839ec2d9622cf9600a039a79d0e108d1f9aec79d"},
 ]
 superlance = [
