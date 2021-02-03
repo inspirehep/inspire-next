@@ -991,12 +991,6 @@ def test_arxiv_author_list_authorname_paper():
         })
     })
 
-    obj = MockObj(data, extra_data, files=files)
-    eng = MockEng()
-
-    default_arxiv_author_list = arxiv_author_list()
-    default_arxiv_author_list(obj, eng)
-
     authors_subschema = schema['properties']['authors']
     expected_authors = [
         {
@@ -1005,7 +999,6 @@ def test_arxiv_author_list_authorname_paper():
                 {'value': 'INSPIRE-00314584', 'schema': 'INSPIRE ID'},
                 {'value': 'CERN-432142', 'schema': 'CERN'},
             ],
-#            'full_name': 'Khachatryan, Vardan',
             'full_name': 'Khachatryan, V.',
         },
         {
@@ -1016,7 +1009,6 @@ def test_arxiv_author_list_authorname_paper():
             'ids': [
                 {'value': 'INSPIRE-00307514', 'schema': 'INSPIRE ID'},
             ],
-#            'full_name': 'Abbrescia, Marcello',
             'full_name': 'Abbrescia, M.',
         },
         {
@@ -1024,13 +1016,17 @@ def test_arxiv_author_list_authorname_paper():
             'ids': [
                 {'value': 'INSPIRE-00125803', 'schema': 'INSPIRE ID'},
             ],
-#            'full_name': 'Shen, Bejamin C.',
             'full_name': 'Shen, B.C.',
         }
 
     ]
     validate(expected_authors, authors_subschema)
 
-    assert obj.data.get('authors') == expected_authors
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
 
+    default_arxiv_author_list = arxiv_author_list()
+
+    assert default_arxiv_author_list(obj, eng) is None
+    assert obj.data.get('authors') == expected_authors
 
