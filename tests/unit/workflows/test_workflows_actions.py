@@ -199,7 +199,7 @@ def test_extract_authors_from_pdf(mocked_get_document, app):
     obj.extra_data = {}
     eng = None
 
-    new_config = {"GROBID_URL":"http://grobid_url.local"}
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
@@ -245,7 +245,7 @@ def test_extract_authors_from_pdf_ignored_when_different_author_count(mocked_get
 
 
 @pytest.mark.parametrize(
-"acquisition_source, authors_xml_mark, expected",
+    "acquisition_source, authors_xml_mark, expected",
     [
         ("arxiv", False, True),
         ("arxiv", True, False),

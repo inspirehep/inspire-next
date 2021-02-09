@@ -740,4 +740,3 @@ def test_replace_collection_to_hidden_sets_proper_hidden_collections_on_metadata
 
     wf = replace_collection_to_hidden(workflow, None)
     assert wf.data['_collections'] == expected_collections
-
