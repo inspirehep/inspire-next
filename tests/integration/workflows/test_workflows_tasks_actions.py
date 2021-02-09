@@ -363,7 +363,6 @@ def test_refextract_from_pdf(
 ):
     """Test refextract from PDF and reference matching for default Configuration
      by going through the entire workflow."""
-
     cited_record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         '_collections': ['Literature'],

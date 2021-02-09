@@ -51,8 +51,39 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../integration/helpe
 from factories.db.invenio_records import TestRecordMetadata  # noqa
 
 
+@pytest.fixture(scope="session")
+def vcr_config():
+    return {
+        "filter_query_parameters": ["access_token"],
+        "ignore_localhost": True,
+        "decode_compressed_response": True,
+        "filter_headers": ("Authorization", "User-Agent"),
+        "ignore_hosts": (
+            "cache",
+            "db",
+            "elasticsearch",
+            "flower",
+            "indexer",
+            "localhost",
+            "mq",
+            "postgres",
+            "redis",
+            "ui",
+            "next-web",
+            "web-worker",
+            "web",
+            "worker",
+            "test-indexer",
+            "test-redis",
+            "test-rabbitmq",
+            "test-database",
+        ),
+        "record_mode": "once",
+    }
+
+
 @pytest.fixture(scope='session')
-def app():
+def app(vcr_config):
     """
     Flask application without demosite data and without database isolation:
     any db transaction performed during the tests are persisted into the db,
@@ -68,6 +99,7 @@ def app():
         CELERY_BROKER_URL='pyamqp://guest:guest@test-rabbitmq:5672',
         CELERY_RESULT_BACKEND='redis://test-redis:6379/1',
         CELERY_CACHE_BACKEND='redis://test-redis:6379/1',
+        GROBID_URL="https://grobid.inspirehep.net",
         TESTING=True,
     )
     app.extensions['invenio-search'].register_mappings('records', 'inspirehep.modules.records.mappings')

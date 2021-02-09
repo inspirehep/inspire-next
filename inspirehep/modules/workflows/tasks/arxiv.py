@@ -52,7 +52,7 @@ from inspirehep.modules.workflows.utils import (
     download_file_to_workflow,
     ignore_timeout_error,
     timeout_with_config,
-    with_debug_logging,
+    with_debug_logging, set_mark,
 )
 
 REGEXP_AUTHLIST = re.compile(
@@ -266,5 +266,8 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
                     author['full_name'] = decode_latex(author['full_name'])
 
                 obj.data['authors'] = extracted_authors
+                set_mark(obj, "authors_xml", True)
+            else:
+                set_mark(obj, "authors_xml", False)
 
     return _author_list

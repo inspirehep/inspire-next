@@ -24,7 +24,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+
 import re
+from urlparse import urljoin
+
 import sys
 import time
 import backoff
@@ -73,10 +77,15 @@ from inspirehep.modules.workflows.utils import (
     get_resolve_validation_callback_url,
     get_validation_errors,
     log_workflows_action,
-    with_debug_logging,
+    with_debug_logging, check_mark, set_mark, get_mark,
 )
+from inspirehep.modules.workflows.utils.grobid_authors_parser import GrobidAuthors
 from inspirehep.utils.normalizers import normalize_journal_title
 from inspirehep.utils.url import is_pdf_link
+
+
+LOGGER = logging.getLogger(__name__)
+
 
 EXPERIMENTAL_ARXIV_CATEGORIES = [
     'astro-ph',
@@ -116,8 +125,7 @@ def mark(key, value):
     @with_debug_logging
     @wraps(mark)
     def _mark(obj, eng):
-        obj.extra_data[key] = value
-        return {key: value}
+        return set_mark(obj, key, value)
 
     _mark.__doc__ = 'Mark the workflow object with %s:%s.' % (key, value)
     return _mark
@@ -126,9 +134,9 @@ def mark(key, value):
 def is_marked(key):
     """Check if the workflow object has a specific mark."""
     @with_debug_logging
-    @wraps(mark)
+    @wraps(is_marked)
     def _mark(obj, eng):
-        return key in obj.extra_data and obj.extra_data[key]
+        return check_mark(obj, key)
 
     _mark.__doc__ = 'Check if the workflow object has the mark %s.' % key
     return _mark
@@ -220,7 +228,6 @@ def _is_auto_approved(workflow_obj):
 @with_debug_logging
 def is_record_relevant(obj, eng):
     """Shall we halt this workflow for potential acceptance or just reject?"""
-
     # We do not auto-reject any user submissions
     if is_submission(obj, eng):
         return True
@@ -756,3 +763,39 @@ def add_collection(collection):
             obj.data['_collections'].append(collection)
 
     return _add_collection
+
+
+@with_debug_logging
+def is_suitable_for_pdf_authors_extraction(obj, eng):
+    """Check if article is arXiv/PoS and if authors.xml were attached"""
+    acquisition_source = get_value(obj.data, 'acquisition_source.source', '').lower()
+    if acquisition_source in ['arxiv', 'pos'] and not get_mark(obj, "authors_xml", False):
+        return True
+    return False
+
+
+@with_debug_logging
+def extract_authors_from_pdf(obj, eng):
+    with get_document_in_workflow(obj) as tmp_document:
+        if not tmp_document:
+            return None
+        with open(tmp_document, 'rb') as document_file:
+            document = document_file.read()
+        data = {'input': document}
+        data.update({"includeRawAffiliations": "1", "consolidateHeader": "1"})
+        grobid_url = current_app.config["GROBID_URL"]
+        api_path = "api/processHeaderDocument"
+        response = requests.post(urljoin(grobid_url, api_path), files=data)
+        response.raise_for_status()
+        authors_and_affiliations = GrobidAuthors(response.text)
+
+        if authors_and_affiliations and len(authors_and_affiliations) == len(obj.data.get('authors')):
+            LOGGER.warning(
+                "Discarding GROBID authors: expected %s authors, got %s",
+                len(authors_and_affiliations),
+                len(obj.data.get('authors'))
+            )
+            data = authors_and_affiliations.parse_all()
+            obj.extra_data['authors_with_affiliations'] = data
+            obj.data['authors'] = get_value(data, 'author')
+    return obj
