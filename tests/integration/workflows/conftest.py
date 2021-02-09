@@ -86,6 +86,7 @@ def workflow_app(higgs_ontology):
        Use ``app`` instead.
     """
     RT_URL = "http://rt.inspire"
+    GROBID_URL = None
 
     with requests_mock.Mocker() as m:
         m.register_uri(
@@ -104,6 +105,7 @@ def workflow_app(higgs_ontology):
             CFG_BIBCATALOG_SYSTEM_RT_URL=RT_URL,
             DEBUG=False,
             # Tests may fail when turned on because of Flask bug (A setup function was called after the first request was handled. when initializing - when Alembic initialization)
+            GROBID_URL=GROBID_URL,
             HEP_ONTOLOGY_FILE=higgs_ontology,
             PRODUCTION_MODE=True,
             LEGACY_ROBOTUPLOAD_URL=(

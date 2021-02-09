@@ -22,14 +22,20 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+
+import pkg_resources
+import pytest
+import requests_mock
 from flask import current_app
 from invenio_workflows import ObjectStatus
-from mock import patch
+from mock import patch, MagicMock
 
 from inspirehep.modules.workflows.actions import MatchApproval, MergeApproval
 from mocks import MockEng, MockObj
 
-from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed, load_from_source_data
+from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed, load_from_source_data, \
+    extract_authors_from_pdf, is_suitable_for_pdf_authors_extraction
 
 
 def test_match_approval_gets_match_recid():
@@ -176,3 +182,86 @@ def test_load_from_source_data_no_persistent_data():
 
     assert obj.data == expected_data
     assert obj.extra_data == expected_extra_data
+
+
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_extract_authors_from_pdf(mocked_get_document, app):
+    grobid_response = pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            'fixtures',
+            'grobid_full_doc.xml'
+        )
+    )
+    mocked_get_document.return_value.__enter__.return_value.read.return_value = "pdf content"
+    obj = MagicMock()
+    obj.data = {'authors': [1, 2, 3]}
+    obj.extra_data = {}
+    eng = None
+
+    new_config = {"GROBID_URL":"http://grobid_url.local"}
+    with patch.dict(current_app.config, new_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', 'http://grobid_url.local/api/processHeaderDocument',
+                text=grobid_response,
+                headers={'content-type': 'application/xml'},
+                status_code=200,
+            )
+
+            extract_authors_from_pdf(obj, eng)
+    assert len(obj.data['authors']) == 3
+    assert len(obj.extra_data['authors_with_affiliations']) == 3
+
+
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_extract_authors_from_pdf_ignored_when_different_author_count(mocked_get_document, app):
+    grobid_response = pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            'fixtures',
+            'grobid_full_doc.xml'
+        )
+    )
+    mocked_get_document.return_value.__enter__.return_value.read.return_value = "pdf content"
+    obj = MagicMock()
+    obj.data = {'authors': []}
+    obj.extra_data = {}
+    eng = None
+
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+    with patch.dict(current_app.config, new_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', 'http://grobid_url.local/api/processHeaderDocument',
+                text=grobid_response,
+                headers={'content-type': 'application/xml'},
+                status_code=200,
+            )
+
+            extract_authors_from_pdf(obj, eng)
+    assert len(obj.data['authors']) == 0
+    assert obj.extra_data.get('authors_with_affiliations') is None
+
+
+@pytest.mark.parametrize(
+"acquisition_source, authors_xml_mark, expected",
+    [
+        ("arxiv", False, True),
+        ("arxiv", True, False),
+        ("pos", False, True),
+        ('pos', True, False),
+        ("ARxIV", False, True),
+        ("pOs", False, True),
+        ("ARXIV", True, False),
+        ("other", True, False),
+        ("other", False, False),
+    ]
+)
+def test_is_suitable_for_pdf_authors_extraction(acquisition_source, authors_xml_mark, expected):
+    eng = None
+    obj = MagicMock()
+    obj.data = {"acquisition_source": {"source": acquisition_source}}
+    obj.extra_data = {'authors_xml': authors_xml_mark}
+    suitable = is_suitable_for_pdf_authors_extraction(obj, eng)
+    assert suitable is expected

@@ -47,6 +47,8 @@ from inspirehep.modules.workflows.utils import (
 
 from mocks import MockFiles, MockFileObject, MockObj
 
+from inspirehep.modules.workflows.utils.grobid_authors_parser import GrobidAuthors
+
 
 def test_download_file_to_workflow_retries_on_protocol_error():
     with requests_mock.Mocker() as requests_mocker:
@@ -250,3 +252,194 @@ def test_get_source_root(source, expected_source):
     result = get_source_for_root(source)
 
     assert expected_source == result
+
+
+def test_process_grobid_authors():
+    grobid_response = pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            'fixtures',
+            'grobid_full_doc.xml'
+        )
+    )
+    expected_authors = [
+        {
+            "parsed_affiliations": [
+                {
+                    "department": [u"S. N"],
+                    "name": u"Bose National Centre for Basic Sciences, JD Block",
+                    "address": {
+                        "country": u"India",
+                        "cities": [u"Kolkata-700106"],
+                        "postal_address": u"Sector III, Salt Lake, Kolkata-700106, India",
+                    },
+                }
+            ],
+            "author": {
+                "raw_affiliations": [
+                    {
+                        "value": u"S. N. Bose National Centre for Basic Sciences, JD Block, Sector III, Salt Lake, Kolkata-700106, India."
+                    }
+                ],
+                "emails": [u"parthanandi@bose.res.in"],
+                "full_name": u"Partha, Nandi",
+            },
+        },
+        {
+            "parsed_affiliations": [
+                {
+                    "department": [
+                        u"Indian Institute of Engineering Science and Technology"
+                    ],
+                    "address": {
+                        "country": u"India",
+                        "cities": [u"Shibpur, Howrah"],
+                        "postal_address": u"Shibpur, Howrah, India",
+                    },
+                }
+            ],
+            "author": {
+                "raw_affiliations": [
+                    {
+                        "value": u"Indian Institute of Engineering Science and Technology, Shibpur, Howrah, West Bengal-711103, India."
+                    }
+                ],
+                "emails": [u"sankarshan.sahu2000@gmail.com"],
+                "full_name": u"Sankarshan, Sahu",
+            },
+        },
+        {
+            "parsed_affiliations": [
+                {
+                    "department": [u"S. N"],
+                    "name": u"Bose National Centre for Basic Sciences, JD Block",
+                    "address": {
+                        "country": u"India",
+                        "cities": [u"Kolkata-700106"],
+                        "postal_address": u"Sector III, Salt Lake, Kolkata-700106, India",
+                    },
+                }
+            ],
+            "author": {
+                "raw_affiliations": [
+                    {
+                        "value": u"S. N. Bose National Centre for Basic Sciences, JD Block, Sector III, Salt Lake, Kolkata-700106, India."
+                    }
+                ],
+                "emails": [u"sayankpal@bose.res.in"],
+                "full_name": u"Kumar, Pal Sayan",
+            },
+        },
+    ]
+    expected_authors_count = len(expected_authors)
+
+    authors = GrobidAuthors(grobid_response)
+    assert len(authors) == expected_authors_count
+    assert authors.getall() == expected_authors
+
+
+def test_grobid_incomplete_authors():
+    grobid_response = pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            'fixtures',
+            'grobid_incomplete_doc.xml'
+        )
+    )
+    expected_authors = [
+        {"parsed_affiliations": None, "author": {"full_name": u"Nandi"}},
+        {
+            "parsed_affiliations": [
+                {
+                    "address": {
+                        "cities": [u"Shibpur, Howrah"],
+                        "postal_address": u"Shibpur, Howrah",
+                    }
+                }
+            ],
+            "author": {
+                "raw_affiliations": [
+                    {
+                        "value": u"Indian Institute of Engineering Science and Technology, Shibpur, Howrah, West Bengal-711103, India."
+                    }
+                ],
+                "full_name": u"Sankarshan, Sahu",
+            },
+        },
+        {
+            "parsed_affiliations": [
+                {
+                    "department": [u"S. N"],
+                    "name": u"Bose National Centre for Basic Sciences, JD Block",
+                }
+            ],
+            "author": {
+                "raw_affiliations": [
+                    {
+                        "value": u"S. N. Bose National Centre for Basic Sciences, JD Block, Sector III, Salt Lake, Kolkata-700106, India."
+                    }
+                ],
+                "emails": [u"sayankpal@bose.res.in"],
+                "full_name": u"Kumar, Pal Sayan",
+            },
+        },
+    ]
+    expected_authors_count = len(expected_authors)
+    authors = GrobidAuthors(grobid_response)
+    assert len(authors) == expected_authors_count
+    assert authors.getall() == expected_authors
+
+
+def test_grobid_no_authors():
+    input_xml = """
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve"
+    xmlns="http://www.tei-c.org/ns/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /opt/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <teiHeader xml:lang="en">
+        <fileDesc>
+            <titleStmt>
+                <title level="a" type="main">Remarks on noncommutativity and scale anomaly in planar quantum mechanics</title>
+            </titleStmt>
+            <publicationStmt>
+                <publisher/>
+                <availability status="unknown">
+                    <licence/>
+                </availability>
+                <date type="published" when="2021-01-21">January 21, 2021</date>
+            </publicationStmt>
+            <sourceDesc>
+                <biblStruct>
+                    <analytic>
+                    </analytic>
+                    <monogr>
+                        <imprint>
+                            <date type="published" when="2021-01-21">January 21, 2021</date>
+                        </imprint>
+                    </monogr>
+                    <idno type="arXiv">arXiv:2101.07076v2[hep-th]</idno>
+                </biblStruct>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <appInfo>
+                <application version="0.6.1" ident="GROBID" when="2021-02-09T09:29+0000">
+                    <desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+                    <ref target="https://github.com/kermitt2/grobid"/>
+                </application>
+            </appInfo>
+        </encodingDesc>
+        <profileDesc>
+            <abstract/>
+        </profileDesc>
+    </teiHeader>
+    <text xml:lang="en"></text>
+</TEI>
+    """
+    expected_authors = []
+    expected_authors_count = 0
+    authors = GrobidAuthors(input_xml)
+    assert len(authors) == expected_authors_count
+    assert authors.getall() == expected_authors

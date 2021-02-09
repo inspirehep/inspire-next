@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve"
+    xmlns="http://www.tei-c.org/ns/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /opt/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <teiHeader xml:lang="en">
+        <fileDesc>
+            <titleStmt>
+                <title level="a" type="main">Remarks on noncommutativity and scale anomaly in planar quantum mechanics</title>
+            </titleStmt>
+            <publicationStmt>
+                <publisher/>
+                <availability status="unknown">
+                    <licence/>
+                </availability>
+                <date type="published" when="2021-01-21">January 21, 2021</date>
+            </publicationStmt>
+            <sourceDesc>
+                <biblStruct>
+                    <analytic>
+                        <author>
+                            <persName
+                                xmlns="http://www.tei-c.org/ns/1.0">
+                                <surname>Nandi</surname>
+                            </persName>
+                        </author>
+                        <author>
+                            <persName
+                                xmlns="http://www.tei-c.org/ns/1.0">
+                                <forename type="first">Sankarshan</forename>
+                                <surname>Sahu</surname>
+                            </persName>
+                            <affiliation key="aff1">
+                                <note type="raw_affiliation">
+                                    <label>2</label> Indian Institute of Engineering Science and Technology, Shibpur, Howrah, West Bengal-711103, India.
+                                </note>
+                                <address>
+                                    <postCode>Bengal-711103</postCode>
+                                    <settlement>Shibpur, Howrah</settlement>
+                                </address>
+                            </affiliation>
+                        </author>
+                        <author>
+                            <persName
+                                xmlns="http://www.tei-c.org/ns/1.0">
+                                <forename type="first">Sayan</forename>
+                                <forename type="middle">Kumar</forename>
+                                <surname>Pal</surname>
+                            </persName>
+                            <email>sayankpal@bose.res.in</email>
+                            <affiliation key="aff0">
+                                <note type="raw_affiliation">
+                                    <label>1</label> S. N. Bose National Centre for Basic Sciences, JD Block, Sector III, Salt Lake, Kolkata-700106, India.
+                                </note>
+                                <orgName type="department">S. N</orgName>
+                                <orgName type="institution" key="instit1">Bose National Centre for Basic Sciences</orgName>
+                                <orgName type="institution" key="instit2">JD Block</orgName>
+                            </affiliation>
+                        </author>
+                        <title level="a" type="main">Remarks on noncommutativity and scale anomaly in planar quantum mechanics</title>
+                    </analytic>
+                    <monogr>
+                        <imprint>
+                            <date type="published" when="2021-01-21">January 21, 2021</date>
+                        </imprint>
+                    </monogr>
+                    <idno type="arXiv">arXiv:2101.07076v2[hep-th]</idno>
+                </biblStruct>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <appInfo>
+                <application version="0.6.1" ident="GROBID" when="2021-02-09T09:29+0000">
+                    <desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+                    <ref target="https://github.com/kermitt2/grobid"/>
+                </application>
+            </appInfo>
+        </encodingDesc>
+        <profileDesc>
+            <abstract/>
+        </profileDesc>
+    </teiHeader>
+    <text xml:lang="en"></text>
+</TEI>

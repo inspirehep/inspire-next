@@ -64,7 +64,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     set_refereed_and_fix_document_type,
     validate_record,
     jlab_ticket_needed,
-    delay_if_necessary, should_be_hidden, replace_collection_to_hidden
+    delay_if_necessary, should_be_hidden, replace_collection_to_hidden, is_suitable_for_pdf_authors_extraction,
+    extract_authors_from_pdf
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -164,6 +165,10 @@ ENHANCE_RECORD = [
             arxiv_plot_extract,
             arxiv_author_list("authorlist2marcxml.xsl"),
         ]
+    ),
+    IF(
+        is_suitable_for_pdf_authors_extraction,
+        extract_authors_from_pdf,
     ),
     IF(
         is_submission,
