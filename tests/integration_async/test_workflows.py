@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import time
+import pytest
 
 from datetime import datetime, timedelta
 
@@ -64,7 +65,7 @@ def check_wf_state(workflow_id, desired_status, max_time=550):  # Travis fails a
             return
         if datetime.now() > end:
             raise AssertionError(
-                "Status for workflow: %s didn't changed to %s for%s seconds" % (
+                "Status for workflow: %s didn't changed to %s for %s seconds" % (
                     workflow_id, desired_status, max_time
                 )
             )
@@ -247,6 +248,7 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_init(
     assert wf3.extra_data.get('restarted-by-wf') == [2]
 
 
+@pytest.mark.vcr()
 def test_wf_replaces_old_workflow_which_is_in_halted_state(
     app,
     celery_app_with_context,
@@ -288,6 +290,7 @@ def test_wf_replaces_old_workflow_which_is_in_halted_state(
     check_wf_state(wf2_id, ObjectStatus.HALTED)
 
 
+@pytest.mark.vcr()
 def test_wf_rejects_automatically_when_previous_matched_wf_was_rejected(
     app,
     celery_app_with_context,

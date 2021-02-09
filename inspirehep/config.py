@@ -101,6 +101,10 @@ CELERY_BEAT_SCHEDULE = {
     }
 }
 
+# GROBID
+# ======
+GROBID_URL = "http://SET_ME/"
+
 # Cache
 # =====
 CACHE_KEY_PREFIX = "cache::"

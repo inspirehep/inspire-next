@@ -530,3 +530,16 @@ def post_record_to_hep(pid_type, data=None):
     )
     response.raise_for_status()
     return response.json()
+
+
+def set_mark(obj, key, value):
+    obj.extra_data[key] = value
+    return {key: value}
+
+
+def check_mark(obj, key):
+    return bool(obj.extra_data.get(key))
+
+
+def get_mark(obj, key, default=None):
+    return obj.extra_data.get(key) or default
