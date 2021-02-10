@@ -167,14 +167,14 @@ ENHANCE_RECORD = [
         ]
     ),
     IF(
-        is_suitable_for_pdf_authors_extraction,
-        extract_authors_from_pdf,
-    ),
-    IF(
         is_submission,
         populate_submission_document,
     ),
     download_documents,
+    IF(
+        is_suitable_for_pdf_authors_extraction,
+        extract_authors_from_pdf,
+    ),
     normalize_journal_titles,
     refextract,
     count_reference_coreness,

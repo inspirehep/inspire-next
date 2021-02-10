@@ -222,7 +222,6 @@ def _is_auto_approved(workflow_obj):
 @with_debug_logging
 def is_record_relevant(obj, eng):
     """Shall we halt this workflow for potential acceptance or just reject?"""
-
     # We do not auto-reject any user submissions
     if is_submission(obj, eng):
         return True
@@ -745,7 +744,7 @@ def replace_collection_to_hidden(obj, eng):
 @with_debug_logging
 def is_suitable_for_pdf_authors_extraction(obj, eng):
     """Check if article is arXiv/PoS and if authors.xml were attached"""
-    acquisition_source = obj.data['acquisition_source']['source'].lower()
+    acquisition_source = get_value(obj.data, 'acquisition_source.source', '').lower()
     if acquisition_source in ['arxiv', 'pos'] and not get_mark(obj, "authors_xml", False):
         return True
     return False
@@ -755,7 +754,9 @@ def is_suitable_for_pdf_authors_extraction(obj, eng):
 def extract_authors_from_pdf(obj, eng):
     with get_document_in_workflow(obj) as tmp_document:
         if tmp_document:
-            data = {'input': tmp_document.read()}
+            with open(tmp_document, 'rb') as document_file:
+                document = document_file.read()
+            data = {'input': document}
             data.update({"includeRawAffiliations": "1", "consolidateHeader": "1"})
             grobid_url = current_app.config["GROBID_URL"]
             api_path = "api/processHeaderDocument"
@@ -767,3 +768,4 @@ def extract_authors_from_pdf(obj, eng):
                 data = authors_and_affiliations.getall()
                 obj.extra_data['authors_with_affiliations'] = data
                 obj.data['authors'] = get_value(data, 'author')
+    return obj

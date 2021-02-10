@@ -256,6 +256,8 @@ def test_extract_authors_from_pdf_ignored_when_different_author_count(mocked_get
         ("ARXIV", True, False),
         ("other", True, False),
         ("other", False, False),
+        ("", False, False),
+        ("", True, False)
     ]
 )
 def test_is_suitable_for_pdf_authors_extraction(acquisition_source, authors_xml_mark, expected):

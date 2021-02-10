@@ -107,7 +107,7 @@ class GrobidAuthor(object):
 
     @property
     def fullname(self):
-        return u" ".join([self.lastname, self.names])
+        return u" ".join([self.names, self.lastname])
 
     @property
     def raw_affiliations(self):

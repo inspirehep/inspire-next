@@ -1349,14 +1349,14 @@ def test_workflow_checks_affiliations_if_record_is_not_important(
     record = generate_record()
     record['authors'][0]['raw_affiliations'] = [{"value": "IN2P3"}, {"value": "Cern"}]
     record['authors'][1]['raw_affiliations'] = [{"value": "Fermilab"}]
+    record['authors'].append({u"full_name": u"Third Author"})
     workflow_id = build_workflow(record).id
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
         'INSPIREHEP_URL': "http://web:8000"
     }):
         start("article", object_id=workflow_id)
-
-    collections_in_record = mocked_external_services.request_history[0].json()['_collections']
+    collections_in_record = mocked_external_services.request_history[1].json()['_collections']
     assert "CDS Hidden" in collections_in_record
     assert "HAL Hidden" in collections_in_record
     assert "Fermilab" in collections_in_record
@@ -1407,7 +1407,7 @@ def test_workflow_do_not_changes_to_hidden_if_record_authors_do_not_have_interes
         wf.save()
         wf.continue_workflow(delayed=False)
 
-    collections_in_record = mocked_external_services.request_history[0].json()['_collections']
+    collections_in_record = mocked_external_services.request_history[1].json()['_collections']
     assert "CDS Hidden" not in collections_in_record
     assert "HAL Hidden" not in collections_in_record
     assert "Fermilab" not in collections_in_record
@@ -1453,6 +1453,7 @@ def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
     record = generate_record()
     record['authors'][0]['raw_affiliations'] = [{"value": "IN2P3."}, {"value": "Some words with CErN, inside."}]
     record['authors'][1]['raw_affiliations'] = [{"value": "Fermilab?"}]
+    record['authors'].append({u"full_name": u"Third Author"})
     workflow_id = build_workflow(record).id
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
@@ -1464,8 +1465,78 @@ def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
         wf.save()
         wf.continue_workflow(delayed=False)
 
-    collections_in_record = mocked_external_services.request_history[0].json()['_collections']
+    collections_in_record = mocked_external_services.request_history[1].json()['_collections']
     assert "CDS Hidden" in collections_in_record
     assert "HAL Hidden" in collections_in_record
     assert "Fermilab" in collections_in_record
     assert "Literature" not in collections_in_record
+
+
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow",
+    side_effect=fake_download_file,
+)
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link")
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions.download_file_to_workflow",
+    side_effect=fake_download_file,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.beard.json_api_request",
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
+    side_effect=fake_magpie_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.refextract.extract_references_from_file",
+    return_value=[],
+)
+def test_grobid_extracts_authors_correctly(
+    mocked_refextract_extract_refs,
+    mocked_api_request_magpie,
+    mocked_beard_api,
+    mocked_actions_download,
+    mocked_is_pdf_link,
+    mocked_arxiv_download,
+    workflow_app,
+    mocked_external_services,
+):
+    """Test a full harvesting workflow."""
+    record = generate_record()
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+        "MAGPIE_API_URL": "http://example.com/magpie",
+    }
+
+    expected_authors_after_extraction = [
+        {
+            u"raw_affiliations": [
+                {
+                    u"value": u"Department of Mathematics and Statistics, Concordia University, 1455 de Maisonneuve Boulevard West, Montr\xe9al, Qu\xe9bec, Canada H3G 1M8"
+                }
+            ],
+            u"emails": [u"richard.hall@concordia.ca"],
+            u"full_name": u"Hall, Richard L.",
+        },
+        {
+            u"raw_affiliations": [
+                {
+                    u"value": u"Department of Mathematics and Statistics, University of Prince Edward Island, 550 University Avenue, Charlottetown, PEI, Canada C1A 4P3."
+                }
+            ],
+            u"emails": [u"nsaad@upei.ca"],
+            u"full_name": u"Saad, Nasser",
+        },
+    ]
+
+
+    workflow_uuid, eng, obj = get_halted_workflow(
+        app=workflow_app, extra_config=extra_config, record=record
+    )
+
+    obj = workflow_object_class.get(obj.id)
+
+    assert obj.extra_data['authors_with_affiliations']
+    assert obj.data['authors'] == expected_authors_after_extraction

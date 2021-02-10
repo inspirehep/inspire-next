@@ -68,6 +68,7 @@ def app():
         CELERY_BROKER_URL='pyamqp://guest:guest@test-rabbitmq:5672',
         CELERY_RESULT_BACKEND='redis://test-redis:6379/1',
         CELERY_CACHE_BACKEND='redis://test-redis:6379/1',
+        GROBID_URL="http://grobid_url.local",
         TESTING=True,
     )
     app.extensions['invenio-search'].register_mappings('records', 'inspirehep.modules.records.mappings')

@@ -24,9 +24,14 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+import re
+
 import mock
+import pkg_resources
 import requests_mock
 import pytest
+from flask import current_app
 
 from inspire_schemas.api import load_schema, validate
 from invenio_workflows import (
@@ -363,7 +368,6 @@ def test_refextract_from_pdf(
 ):
     """Test refextract from PDF and reference matching for default Configuration
      by going through the entire workflow."""
-
     cited_record_json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         '_collections': ['Literature'],
