@@ -24,14 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
-import re
-
 import mock
-import pkg_resources
 import requests_mock
 import pytest
-from flask import current_app
 
 from inspire_schemas.api import load_schema, validate
 from invenio_workflows import (

@@ -1531,7 +1531,6 @@ def test_grobid_extracts_authors_correctly(
         },
     ]
 
-
     workflow_uuid, eng, obj = get_halted_workflow(
         app=workflow_app, extra_config=extra_config, record=record
     )
