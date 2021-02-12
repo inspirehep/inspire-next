@@ -65,7 +65,7 @@ def check_wf_state(workflow_id, desired_status, max_time=550):  # Travis fails a
             return
         if datetime.now() > end:
             raise AssertionError(
-                "Status for workflow: %s didn't changed to %s for%s seconds" % (
+                "Status for workflow: %s didn't changed to %s for %s seconds" % (
                     workflow_id, desired_status, max_time
                 )
             )
