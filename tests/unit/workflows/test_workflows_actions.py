@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import tempfile
+
 import os
 
 import pkg_resources
@@ -193,7 +195,7 @@ def test_extract_authors_from_pdf(mocked_get_document, app):
             'grobid_full_doc.xml'
         )
     )
-    mocked_get_document.return_value.__enter__.return_value.read.return_value = "pdf content"
+
     obj = MagicMock()
     obj.data = {'authors': [1, 2, 3]}
     obj.extra_data = {}
@@ -208,8 +210,9 @@ def test_extract_authors_from_pdf(mocked_get_document, app):
                 headers={'content-type': 'application/xml'},
                 status_code=200,
             )
-
-            extract_authors_from_pdf(obj, eng)
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                mocked_get_document.return_value.__enter__.return_value = tmp_file.name
+                extract_authors_from_pdf(obj, eng)
     assert len(obj.data['authors']) == 3
     assert len(obj.extra_data['authors_with_affiliations']) == 3
 
@@ -223,7 +226,7 @@ def test_extract_authors_from_pdf_ignored_when_different_author_count(mocked_get
             'grobid_full_doc.xml'
         )
     )
-    mocked_get_document.return_value.__enter__.return_value.read.return_value = "pdf content"
+
     obj = MagicMock()
     obj.data = {'authors': []}
     obj.extra_data = {}
@@ -238,8 +241,9 @@ def test_extract_authors_from_pdf_ignored_when_different_author_count(mocked_get
                 headers={'content-type': 'application/xml'},
                 status_code=200,
             )
-
-            extract_authors_from_pdf(obj, eng)
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                mocked_get_document.return_value.__enter__.return_value = tmp_file.name
+                extract_authors_from_pdf(obj, eng)
     assert len(obj.data['authors']) == 0
     assert obj.extra_data.get('authors_with_affiliations') is None
 

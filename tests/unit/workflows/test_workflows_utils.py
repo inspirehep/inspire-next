@@ -282,7 +282,7 @@ def test_process_grobid_authors():
                     }
                 ],
                 "emails": [u"parthanandi@bose.res.in"],
-                "full_name": u"Partha, Nandi",
+                "full_name": u"Nandi, Partha",
             },
         },
         {
@@ -305,7 +305,7 @@ def test_process_grobid_authors():
                     }
                 ],
                 "emails": [u"sankarshan.sahu2000@gmail.com"],
-                "full_name": u"Sankarshan, Sahu",
+                "full_name": u"Sahu, Sankarshan",
             },
         },
         {
@@ -327,10 +327,11 @@ def test_process_grobid_authors():
                     }
                 ],
                 "emails": [u"sayankpal@bose.res.in"],
-                "full_name": u"Kumar, Pal Sayan",
+                "full_name": u"Pal, Sayan Kumar",
             },
         },
     ]
+
     expected_authors_count = len(expected_authors)
 
     authors = GrobidAuthors(grobid_response)
@@ -363,7 +364,7 @@ def test_grobid_incomplete_authors():
                         "value": u"Indian Institute of Engineering Science and Technology, Shibpur, Howrah, West Bengal-711103, India."
                     }
                 ],
-                "full_name": u"Sankarshan, Sahu",
+                "full_name": u"Sahu, Sankarshan",
             },
         },
         {
@@ -380,10 +381,11 @@ def test_grobid_incomplete_authors():
                     }
                 ],
                 "emails": [u"sayankpal@bose.res.in"],
-                "full_name": u"Kumar, Pal Sayan",
+                "full_name": u"Pal, Sayan Kumar",
             },
         },
     ]
+
     expected_authors_count = len(expected_authors)
     authors = GrobidAuthors(grobid_response)
     assert len(authors) == expected_authors_count
