@@ -739,3 +739,47 @@ def test_replace_collection_to_hidden_sets_proper_hidden_collections_on_metadata
 
     wf = replace_collection_to_hidden(workflow, None)
     assert wf.data['_collections'] == expected_collections
+
+
+def test_normalize_journal_titles_in_references(workflow_app, insert_journals_in_db):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            "A title"
+        ],
+        "document_type": [
+            "book",
+            "note",
+            "report"
+        ],
+        "references": [
+            {
+                "reference": {
+                    "publication_info": {
+                        "journal_title": "A Test Journal1",
+                    }
+                }
+            },
+            {
+                "reference": {
+                    "publication_info": {
+                        "journal_title": "Something not in db",
+                    }
+                }
+            }
+        ]
+    }
+
+    obj = workflow_object_class.create(
+        data=record,
+        id_user=1,
+        data_type='hep'
+    )
+
+    normalize_journal_titles(obj, None)
+
+    assert obj.data['references'][0]['reference']['publication_info']['journal_title'] == 'Test.Jou.1'
+    assert obj.data['references'][0]['reference']['publication_info']['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
+    assert obj.data['references'][1]['reference']['publication_info']['journal_title'] == 'Something not in db'

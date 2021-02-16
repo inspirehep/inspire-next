@@ -562,7 +562,7 @@ def normalize_journal_titles(obj, eng):
     """Normalize the journal titles
 
     Normalize the journal titles stored in the `journal_title` field of each object
-    contained in `publication_info`.
+    contained in `publication_info` and for each `publication_info.journal_title` in references.
 
     Note:
         The DB is queried in order to get the `$ref` of each journal and add it in
@@ -578,22 +578,34 @@ def normalize_journal_titles(obj, eng):
     Returns:
        None
     """
-    publications = obj.data.get('publication_info')
+    publications = obj.data.get('publication_info', [])
 
-    if not publications:
-        return None
+    for publication in publications:
+        normalize_journal_title_entry(publication)
 
-    for index, publication in enumerate(publications):
-        if 'journal_title' in publication:
-            normalized_title = normalize_journal_title(publication['journal_title'])
-            obj.data['publication_info'][index]['journal_title'] = normalized_title
-            ref_query = RecordMetadata.query.filter(
-                RecordMetadata.json['_collections'].op('?')('Journals')).filter(
-                cast(RecordMetadata.json['short_title'], String) == type_coerce(normalized_title, JSON))
-            result = db.session.execute(ref_query).fetchone()
+    references = obj.data.get("references", [])
+    for reference in references:
+        publication_info = get_value(reference, 'reference.publication_info')
+        if not publication_info:
+            continue
+        normalize_journal_title_entry(publication_info)
 
-            if result:
-                obj.data['publication_info'][index]['journal_record'] = result.records_metadata_json['self']
+
+def normalize_journal_title_entry(publication_info):
+    if 'journal_title' not in publication_info:
+        return
+
+    normalized_title = normalize_journal_title(publication_info['journal_title'])
+    publication_info['journal_title'] = normalized_title
+
+    ref_query = RecordMetadata.query.filter(
+        RecordMetadata.json['_collections'].op('?')('Journals')).filter(
+        cast(RecordMetadata.json['short_title'], String) == type_coerce(normalized_title, JSON))
+    result = db.session.execute(ref_query).fetchone()
+    journal_record = result.records_metadata_json['self'] if result else None
+
+    if journal_record:
+        publication_info['journal_record'] = journal_record
 
 
 @with_debug_logging
