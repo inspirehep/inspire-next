@@ -738,3 +738,21 @@ def replace_collection_to_hidden(obj, eng):
     """Replaces collection to hidden based on authors affiliations"""
     obj.data["_collections"] = affiliations_for_hidden_collections(obj)
     return obj
+
+
+@with_debug_logging
+def is_fermilab_report(obj, eng):
+    """Check if record is a Fermilab report."""
+    report_numbers = get_value(obj.data, "report_numbers.value", [])
+    return any(report_number.startswith("FERMILAB") for report_number in report_numbers)
+
+
+def add_collection(collection):
+    """Add specified collection to _collections in record."""
+    @with_debug_logging
+    @wraps(add_collection)
+    def _add_collection(obj, eng):
+        if collection not in obj.data['_collections']:
+            obj.data['_collections'].append(collection)
+
+    return _add_collection

@@ -33,6 +33,8 @@ from mocks import fake_beard_api_request, fake_download_file, fake_magpie_api_re
 from workflow_utils import build_workflow
 
 
+from inspirehep.modules.workflows.tasks.actions import mark
+
 PUBLISHING_RECORD = {
     '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
     'titles': [
@@ -146,3 +148,83 @@ def test_create_ticket_when_source_is_not_publishing(
     assert ticket_curation_content in mocked_external_services.request_history[1].text
     assert wf.extra_data['curation_ticket_id']
     assert mocked_external_services.request_history[1].url == 'http://rt.inspire/ticket/new'
+
+
+@mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
+def test_set_fermilab_collection_from_report_number(mocked_robotupload, workflow_app):
+    record = {
+        '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
+        'titles': [
+            {
+                'title': 'Update without conflicts title.'
+            },
+        ],
+        'document_type': ['article'],
+        '_collections': ['Literature'],
+        'report_numbers': [
+            {'value': "FERMILAB-SOMETHING-11"},
+        ]
+    }
+    expected_collections = ["Literature", "Fermilab"]
+    workflow = build_workflow(record)
+    start("article", object_id=workflow.id)
+    wf = workflow_object_class.get(workflow.id)
+    mark('approved', True)(workflow, None)
+    wf.continue_workflow()
+    assert workflow.data["_collections"] == expected_collections
+
+
+@mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
+def test_set_fermilab_collection_not_added_when_no_report_number_from_fermilab(mocked_robotupload, workflow_app):
+    record = {
+        '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
+        'titles': [
+            {
+                'title': 'Update without conflicts title.'
+            },
+        ],
+        'document_type': ['article'],
+        '_collections': ['Literature'],
+        'report_numbers': [
+            {'value': "NOT-FERMILAB-SOMETHING-11"},
+        ]
+    }
+    expected_collections = ["Literature"]
+    workflow = build_workflow(record)
+    start("article", object_id=workflow.id)
+    wf = workflow_object_class.get(workflow.id)
+    mark('approved', True)(workflow, None)
+    wf.continue_workflow()
+    assert workflow.data["_collections"] == expected_collections
+
+
+@mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
+def test_set_fermilab_collection_even_when_record_is_hidden_and_affiliations_are_not_fermilab(mocked_robotupload, workflow_app):
+    record = {
+        '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
+        'titles': [
+            {
+                'title': 'Update without conflicts title.'
+            },
+        ],
+        "authors": [
+            {
+                "full_name": "Some author",
+                "raw_affiliations": [
+                    {"value": "Some longer description CErN? with proper keyword included"}
+                ]
+            }
+        ],
+        'document_type': ['article'],
+        '_collections': ['Literature'],
+        'report_numbers': [
+            {'value': "FERMILAB-SOMETHING-11"},
+        ]
+    }
+    expected_collections = ["CDS Hidden", "Fermilab"]
+    workflow = build_workflow(record)
+    start("article", object_id=workflow.id)
+    wf = workflow_object_class.get(workflow.id)
+    mark('approved', False)(workflow, None)
+    wf.continue_workflow()
+    assert workflow.data["_collections"] == expected_collections
