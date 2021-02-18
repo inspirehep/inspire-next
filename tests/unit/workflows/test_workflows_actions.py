@@ -22,14 +22,16 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
 from flask import current_app
 from invenio_workflows import ObjectStatus
-from mock import patch
+from mock import patch, MagicMock
 
 from inspirehep.modules.workflows.actions import MatchApproval, MergeApproval
 from mocks import MockEng, MockObj
 
-from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed, load_from_source_data
+from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed, load_from_source_data, is_fermilab_report, \
+    add_collection
 
 
 def test_match_approval_gets_match_recid():
@@ -176,3 +178,37 @@ def test_load_from_source_data_no_persistent_data():
 
     assert obj.data == expected_data
     assert obj.extra_data == expected_extra_data
+
+
+@pytest.mark.parametrize(
+    "report_numbers, expected",
+    [
+        (["REPORT-NUMBER-1", "REPORT-NUMBER-NOT-FERMILAB-11"], False),
+        (["REPORT-1", "FERMILAB-2"], True),
+        (["FERMILAB-1", "FERMILAB-2"], True),
+        (["FERMILAB-ONB"], True),
+        (["NOT-FERMILAB-ONE"], False),
+        (["fermilab-lowercase"], False),
+    ]
+)
+def test_is_fermilab_report(report_numbers, expected):
+    wf_mock = MagicMock()
+    wf_mock.data = {}
+    if report_numbers:
+        wf_mock.data['report_numbers'] = [{"value": number} for number in report_numbers]
+    assert is_fermilab_report(wf_mock, None) is expected
+
+
+@pytest.mark.parametrize(
+    "current_collections, new_collection, expected",
+    [
+        ([], "Fermilab", ["Fermilab"]),
+        (["Literature"], "Fermilab", ["Literature", "Fermilab"]),
+        (['Literature'], "Literature", ["Literature"]),
+    ]
+)
+def test_add_collection(current_collections, new_collection, expected):
+    wf = MagicMock()
+    wf.data = {"_collections": current_collections}
+    add_collection(new_collection)(wf, None)
+    assert wf.data['_collections'] == expected

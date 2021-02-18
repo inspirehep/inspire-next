@@ -64,7 +64,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     set_refereed_and_fix_document_type,
     validate_record,
     jlab_ticket_needed,
-    delay_if_necessary, should_be_hidden, replace_collection_to_hidden
+    delay_if_necessary, should_be_hidden, replace_collection_to_hidden, is_fermilab_report, add_collection
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -282,6 +282,10 @@ POSTENHANCE_RECORD = [
     prepare_keywords,
     set_refereed_and_fix_document_type,
     fix_submission_number,
+    IF(
+        is_fermilab_report,
+        add_collection("Fermilab"),
+    ),
     validate_record('hep')
 ]
 
