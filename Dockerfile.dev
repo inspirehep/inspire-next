@@ -24,7 +24,7 @@
 # Modified and simplified version of https://github.com/inspirehep/inspire-docker
 # to build an imagine to run in https://github.com/inspirehep/inspirehep
 
-FROM centos:7.4.1708
+FROM centos:7
 
 RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
     yum update -y && \
