@@ -1507,7 +1507,7 @@ description = "Inspire JSON schemas and utilities to use them."
 name = "inspire-schemas"
 optional = false
 python-versions = "*"
-version = "61.4.0"
+version = "61.4.1"
 
 [package.dependencies]
 Unidecode = ">=1.0.22,<2.0"
@@ -4818,7 +4818,7 @@ inspire-query-parser = [
     {file = "inspire-query-parser-6.0.31.tar.gz", hash = "sha256:b0556a950012f4432458823afbf3b6d7a1294ebf0449a1d1db22bcfaf6cb3857"},
 ]
 inspire-schemas = [
-    {file = "inspire_schemas-61.4.0-py2.py3-none-any.whl", hash = "sha256:21d7fed4309a110597b3e23ac595bacbca68e08af4ff3199ea9a03a23f51abd2"},
+    {file = "inspire_schemas-61.4.1-py2.py3-none-any.whl", hash = "sha256:120b31b48e6b70fb85aa17b778da49965c1da9ba9206b51bbc5163a987697a3e"},
 ]
 inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
