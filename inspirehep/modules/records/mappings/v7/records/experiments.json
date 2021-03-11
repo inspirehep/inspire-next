@@ -6,6 +6,12 @@
       "$schema": {
         "type": "keyword"
       },
+      "_created": {
+        "type": "date"
+      },
+      "_updated": {
+        "type": "date"
+      },
       "_collections": {
         "normalizer": "lowercase_normalizer",
         "type": "keyword"
@@ -157,7 +163,10 @@
         "type": "object"
       },
       "inspire_classification": {
-        "type": "keyword"
+        "type": "text",
+        "fielddata": true,
+        "analyzer": "inspire_classification_analyzer",
+        "search_analyzer": "keyword"
       },
       "institutions": {
         "properties": {
@@ -196,6 +205,14 @@
       "name_variants": {
         "type": "text"
       },
+      "normalized_name_variants": {
+        "type": "keyword",
+        "normalizer": "name_variants_normalizer"
+      },
+      "normalized_subgroups": {
+        "type": "keyword",
+        "normalizer": "name_variants_normalizer"
+      },
       "new_recid": {
         "type": "integer"
       },
@@ -207,6 +224,9 @@
           }
         },
         "type": "object"
+      },
+      "number_of_papers": {
+        "type": "integer"
       },
       "project_type": {
         "type": "keyword"
@@ -246,7 +266,7 @@
             "type": "text"
           }
         },
-        "type": "object"
+        "type": "nested"
       },
       "self": {
         "properties": {
@@ -278,12 +298,27 @@
       "analyzer": {
         "recid_analyzer": {
           "tokenizer": "recid_tokenizer"
+        },
+        "inspire_classification_analyzer": {
+          "tokenizer": "inspire_classification_tokenizer"
+        }
+      },
+      "char_filter": {
+        "specialCharactersFilter": {
+          "pattern": "[^\\p{L}\\p{Nd}]",
+           "type": "pattern_replace",
+           "replacement": " "
         }
       },
       "normalizer": {
         "lowercase_normalizer": {
           "type": "custom",
           "char_filter": [],
+          "filter": ["lowercase"]
+        },
+        "name_variants_normalizer": {
+          "type": "custom",
+          "char_filter": ["specialCharactersFilter"],
           "filter": ["lowercase"]
         }
       },
@@ -292,6 +327,10 @@
           "type": "pattern",
           "pattern": "(\\d+)",
           "group": 1
+        },
+        "inspire_classification_tokenizer": {
+          "type": "path_hierarchy",
+          "delimiter": "|"
         }
       }
     }

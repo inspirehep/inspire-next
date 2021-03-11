@@ -37,7 +37,8 @@ from inspirehep.modules.workflows.actions import MatchApproval, MergeApproval
 from mocks import MockEng, MockObj
 
 from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed, load_from_source_data, \
-    extract_authors_from_pdf, is_suitable_for_pdf_authors_extraction, is_fermilab_report, add_collection
+    extract_authors_from_pdf, is_suitable_for_pdf_authors_extraction, is_fermilab_report, add_collection, \
+    prepare_collaboration_multi_search
 
 
 def test_match_approval_gets_match_recid():
@@ -370,10 +371,34 @@ def test_is_suitable_for_pdf_authors_extraction(acquisition_source, authors_xml_
 
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
-def test_extract_authors_from_pdf_do_not_run_when_there_is_more_authors_than_max_authors_parameter(mocked_get_document, app):
+def test_extract_authors_from_pdf_do_not_run_when_there_is_more_authors_than_max_authors_parameter(mocked_get_document,
+                                                                                                   app):
     mocked_get_document.return_value.__enter__.side_effect = Exception
     max_authors_parameter = app.config.get('WORKFLOWS_MAX_AUTHORS_COUNT_FOR_GROBID_EXTRACTION') + 1
     obj = MagicMock()
     obj.data = {'authors': [i for i in range(max_authors_parameter)]}
     # Should not raise exception
     extract_authors_from_pdf(obj, None)
+
+
+def test_prepare_collaboration_multi_search():
+    collaborations = [
+        {"record": {"$ref": "blah"}, "value": "SHOULD NOT BE THERE"},
+        {"value": " SHOULD  BE THERE "},
+    ]
+
+    expected_multi_search_dict = [
+        {}, {'query': {'match_all': {}}, '_source': False},
+        {}, {'query': {'match_all': {}}, '_source': False},
+        {}, {'query': {
+            'bool': {'filter': [{'exists': {'field': 'collaboration'}}],
+                     'must': [{'term': {'normalized_name_variants': {'value': 'SHOULD BE THERE'}}}]}}, '_source': [
+            'collaboration', 'self', 'legacy_name', 'control_number']},
+        {}, {'query': {'bool': {'filter': [{'exists': {'field': 'collaboration'}}],
+                                'must': [{'term': {'normalized_subgroups': {'value': 'SHOULD BE THERE'}}}]}},
+             '_source': ['collaboration', 'self', 'legacy_name', 'control_number']}
+    ]
+
+    multi_search = prepare_collaboration_multi_search(collaborations)
+
+    assert multi_search.to_dict() == expected_multi_search_dict

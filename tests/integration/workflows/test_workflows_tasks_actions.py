@@ -39,6 +39,7 @@ from invenio_workflows.errors import WorkflowsError
 from inspirehep.modules.workflows.tasks.actions import (
     load_from_source_data,
     normalize_journal_titles, affiliations_for_hidden_collections, replace_collection_to_hidden,
+    normalize_collaborations,
 )
 
 from calls import insert_citing_record
@@ -63,6 +64,19 @@ def insert_journals_in_db(workflow_app):
     )
     TestRecordMetadata.create_from_file(
         __name__, 'jou_record_refereed_and_proceedings.json', pid_type='jou', index_name='records-journals'
+    )
+
+
+@pytest.fixture(scope='function')
+def insert_experiments_into_db(workflow_app):
+    TestRecordMetadata.create_from_file(
+        __name__, 'experiment_without_collaboration.json', pid_type='exp', index_name='records-experiments'
+    )
+    TestRecordMetadata.create_from_file(
+        __name__, 'experiment_with_collaboration.json', pid_type='exp', index_name='records-experiments'
+    )
+    TestRecordMetadata.create_from_file(
+        __name__, 'experiment_with_collaboration_and_subgroups.json', pid_type='exp', index_name='records-experiments'
     )
 
 
@@ -783,3 +797,81 @@ def test_normalize_journal_titles_in_references(workflow_app, insert_journals_in
     assert obj.data['references'][0]['reference']['publication_info']['journal_title'] == 'Test.Jou.1'
     assert obj.data['references'][0]['reference']['publication_info']['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
     assert obj.data['references'][1]['reference']['publication_info']['journal_title'] == 'Something not in db'
+
+
+def test_normalize_collaborations(workflow_app, insert_experiments_into_db):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            "A title"
+        ],
+        "document_type": [
+            "report"
+        ],
+        "collaborations": [
+            {'value': "Atlas II", "record": {"$ref": "https://inspirebeta.net/api/experiments/9999"}},
+            {"value": "Particle Data Group"},
+            {"value": "Unknown"}
+        ],
+
+    }
+
+    expected_collaborations = [
+        {'value': "Atlas II", "record": {"$ref": "https://inspirebeta.net/api/experiments/9999"}},
+        {'value': 'Particle Data Group', 'record': {'$ref': 'https://inspirehep.net/api/experiments/1800050'}},
+        {"value": "Unknown"}
+    ]
+
+    expected_accelerator_experiments = [
+        {'record': {u'$ref': u'https://inspirehep.net/api/experiments/1800050'}}
+    ]
+
+    obj = workflow_object_class.create(
+        data=record,
+        id_user=1,
+        data_type='hep'
+    )
+    obj = normalize_collaborations(obj, None)
+    assert obj.data['collaborations'] == expected_collaborations
+    assert obj.data['accelerator_experiments'] == expected_accelerator_experiments
+
+
+def test_normalize_collaborations_with_different_name_variants(workflow_app, insert_experiments_into_db):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            "A title"
+        ],
+        "document_type": [
+            "report"
+        ],
+        "collaborations": [
+            {'value': "ATLAS Muon"},
+            {"value": "ATLAS Liquid   Argon"},
+            {"value": "Particle Data Group"}
+        ],
+    }
+
+    expected_collaborations = [
+        {'record': {u'$ref': u'https://inspirehep.net/api/experiments/1108541'}, 'value': u'ATLAS Muon'},
+        {'record': {u'$ref': u'https://inspirehep.net/api/experiments/1108541'}, 'value': u'ATLAS Liquid Argon'},
+        {'record': {u'$ref': u'https://inspirehep.net/api/experiments/1800050'}, 'value': u'Particle Data Group'}
+    ]
+
+    expected_accelerator_experiments = [
+        {'record': {u'$ref': u'https://inspirehep.net/api/experiments/1108541'}, "legacy_name": "CERN-LHC-ATLAS"},
+        {'record': {u'$ref': u'https://inspirehep.net/api/experiments/1800050'}}
+    ]
+
+    obj = workflow_object_class.create(
+        data=record,
+        id_user=1,
+        data_type='hep'
+    )
+    obj = normalize_collaborations(obj, None)
+    assert obj.data['collaborations'] == expected_collaborations
+    assert obj.data['accelerator_experiments'] == expected_accelerator_experiments

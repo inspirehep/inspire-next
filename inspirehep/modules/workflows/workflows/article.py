@@ -69,7 +69,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_suitable_for_pdf_authors_extraction,
     extract_authors_from_pdf,
     is_fermilab_report,
-    add_collection
+    add_collection, normalize_collaborations,
+
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -197,6 +198,7 @@ ENHANCE_RECORD = [
     ),
     guess_keywords,
     guess_coreness,
+    normalize_collaborations,
 ]
 
 
