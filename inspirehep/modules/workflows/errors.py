@@ -148,3 +148,11 @@ class CallbackRecordNotFoundError(CallbackError):
 
 class InspirehepMissingDataError(Exception):
     pass
+
+
+class CannotFindProperSubgroup(WorkflowsError):
+    def __init__(self, collaboration_id, subgroup, **kwargs):
+        super(CannotFindProperSubgroup, self).__init__(**kwargs)
+        self.collaboration_id = collaboration_id
+        self.subgroup_missing = subgroup
+        self.message = "Subgroup {missing_subgroup} was not found in collaboration {collaboration_id} (normalization problem).".format(missing_subgroup=self.subgroup_missing, collaboration_id=self.collaboration_id, wf_id=self.wf_id)
