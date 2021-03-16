@@ -22,7 +22,7 @@ along with Invenio; if not, write to the Free Software Foundation, Inc.,
                 xmlns:marc="http://www.loc.gov/MARC21/slim"
                 xmlns:foaf="http://xmlns.com/foaf/0.1/"
                 xmlns:cal="http://www.slac.stanford.edu/spires/hepnames/authors_xml/"
-                xmlns:cali="http://inspirehep.net/info/HepNames/tools/authors_xml/"
+                xmlns:cali="https://inspirehep.net/help/knowledge-base/authorxml/"
                 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
                 xmlns:str="http://exslt.org/strings"
                 exclude-result-prefixes="marc foaf cal cali rdf str">
@@ -51,7 +51,7 @@ along with Invenio; if not, write to the Free Software Foundation, Inc.,
   <xsl:template name="print-a-authorname">
     <xsl:choose>
         <xsl:when test="cal:authorNamePaperGiven != ''|cali:authorNamePaperGiven != '' and normalize-space(cal:authorNamePaperFamily) != ''|cali:authorNamePaperFamily) != ''">
-          <subfield code="a"><xsl:value-of select="normalize-space(translate(cal:authorNamePaperFamily, '.', ''))|normalize-space(translate(cali:authorNamePaperFamily, '.', ''))"/>, <xsl:value-of select="normalize-space(translate(cal:authorNamePaperGiven, '', ''))|normalize-space(translate(cali:authorNamePaperGiven, '', ''))"/>$
+          <subfield code="a"><xsl:value-of select="normalize-space(translate(cal:authorNamePaperFamily, '.', ''))|normalize-space(translate(cali:authorNamePaperFamily, '.', ''))"/>, <xsl:value-of select="normalize-space(cal:authorNamePaperGiven)|normalize-spacecali:authorNamePaperGiven)"/></subfield>
         </xsl:when>
         <xsl:when test="cal:authorNamePaper != ''|cali:authorNamePaper != ''">
           <xsl:variable name="aname" select="cal:authorNamePaper|cali:authorNamePaper" />
@@ -64,7 +64,7 @@ along with Invenio; if not, write to the Free Software Foundation, Inc.,
           <subfield code="a"><xsl:value-of select="normalize-space($tokens[position()=last()])"/>,<xsl:value-of select="$first"/></subfield>
         </xsl:when>
         <xsl:when test="normalize-space(foaf:familyName) != '' and normalize-space(foaf:givenName) != ''">
-          <subfield code="a"><xsl:value-of select="normalize-space(translate(foaf:familyName, '.', ''))"/>, <xsl:value-of select="normalize-space(translate(foaf:givenName, '', ''))"/></subfield>
+          <subfield code="a"><xsl:value-of select="normalize-space(translate(foaf:familyName, '.', ''))"/>, <xsl:value-of select="normalize-space(foaf:givenName)"/></subfield>
         </xsl:when>
     </xsl:choose>
   </xsl:template>

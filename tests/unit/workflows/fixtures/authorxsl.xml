@@ -4,7 +4,7 @@
 <cal:collaborations>
 <cal:collaboration id="c1">
 <foaf:name>ATLANTIS</foaf:name>
-<cal:experimentNumber>CERN-LHC-ATLANTIS</cal:experimentNumber>
+<cal:experimentNumber>CERN-LHC-ATLAS</cal:experimentNumber>
 </cal:collaboration>
 </cal:collaborations>
 <cal:organizations>
@@ -55,9 +55,9 @@ CERN, European Organization for Nuclear Research, Geneva, Switzerland
 <foaf:familyName>Khachatryan</foaf:familyName>
 <cal:authorSuffix/>
 <cal:authorStatus/>
-<cal:authorNamePaper>V. Khachatryan</cal:authorNamePaper>
-<cal:authorNamePaperGiven>V.</cal:authorNamePaperGiven>
-<cal:authorNamePaperFamily>Khachatryan</cal:authorNamePaperFamily>
+<cali:authorNamePaper>V. Khachatryan</cal:authorNamePaper>
+<cali:authorNamePaperGiven>V.</cal:authorNamePaperGiven>
+<cali:authorNamePaperFamily>Khachatryan</cal:authorNamePaperFamily>
 <cal:authorCollaboration collaborationid="c1" position="Contact Person"/>
 <cal:authorAffiliations>
 <cal:authorAffiliation organizationid="a1"/>
@@ -74,9 +74,9 @@ CERN, European Organization for Nuclear Research, Geneva, Switzerland
 <foaf:familyName>Abbrescia</foaf:familyName>
 <cal:authorSuffix/>
 <cal:authorStatus/>
-<cal:authorNamePaper>M. Abbrescia</cal:authorNamePaper>
-<cal:authorNamePaperGiven>M.</cal:authorNamePaperGiven>
-<cal:authorNamePaperFamily>Abbrescia</cal:authorNamePaperFamily>
+<cali:authorNamePaper>M. Abbrescia</cal:authorNamePaper>
+<cali:authorNamePaperGiven>M.</cal:authorNamePaperGiven>
+<cali:authorNamePaperFamily>Abbrescia</cal:authorNamePaperFamily>
 <cal:authorCollaboration collaborationid="c1"/>
 <cal:authorAffiliations>
 <cal:authorAffiliation organizationid="a59a"/>
@@ -94,9 +94,9 @@ CERN, European Organization for Nuclear Research, Geneva, Switzerland
 <foaf:familyName>Shen</foaf:familyName>
 <cal:authorSuffix/>
 <cal:authorStatus>Deceased</cal:authorStatus>
-<cal:authorNamePaper>B.C. Shen</cal:authorNamePaper>
-<cal:authorNamePaperGiven>B.C.</cal:authorNamePaperGiven>
-<cal:authorNamePaperFamily>Shen</cal:authorNamePaperFamily>
+<cali:authorNamePaper>B.C. Shen</cal:authorNamePaper>
+<cali:authorNamePaperGiven>B.C.</cal:authorNamePaperGiven>
+<cali:authorNamePaperFamily>Shen</cal:authorNamePaperFamily>
 <cal:authorCollaboration collaborationid="c1"/>
 <cal:authorAffiliations>
 <cal:authorAffiliation organizationid="a109"/>
