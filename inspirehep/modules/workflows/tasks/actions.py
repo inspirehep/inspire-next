@@ -801,7 +801,7 @@ def extract_authors_from_pdf(obj, eng):
         response.raise_for_status()
         authors_and_affiliations = GrobidAuthors(response.text)
 
-        if authors_and_affiliations and len(authors_and_affiliations) == len(obj.data.get('authors')):
+        if authors_and_affiliations and len(authors_and_affiliations) == len(obj.data.get('authors', [])):
             LOGGER.warning(
                 "Discarding GROBID authors: expected %s authors, got %s",
                 len(authors_and_affiliations),
