@@ -30,3 +30,4 @@ WORKFLOWS_REFEXTRACT_TIMEOUT = 10 * 60
 
 WORKFLOWS_PLOTEXTRACT_TIMEOUT = 5 * 60
 """Time in seconds a plotextract task is allowed to run before it is killed."""
+WORKFLOWS_MAX_AUTHORS_COUNT_FOR_GROBID_EXTRACTION = 50

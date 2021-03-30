@@ -262,7 +262,7 @@ def test_extract_authors_from_pdf_ignored_when_different_author_count(mocked_get
     )
 
     obj = MagicMock()
-    obj.data = {'authors': []}
+    obj.data = {'authors': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
     obj.extra_data = {}
     eng = None
 
@@ -278,8 +278,70 @@ def test_extract_authors_from_pdf_ignored_when_different_author_count(mocked_get
             with tempfile.NamedTemporaryFile() as tmp_file:
                 mocked_get_document.return_value.__enter__.return_value = tmp_file.name
                 extract_authors_from_pdf(obj, eng)
-    assert len(obj.data['authors']) == 0
+    assert len(obj.data['authors']) == 10
     assert obj.extra_data.get('authors_with_affiliations') is None
+
+
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_extract_authors_from_pdf_when_no_authors_in_metadata(mocked_get_document, app):
+    grobid_response = pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            'fixtures',
+            'grobid_full_doc.xml'
+        )
+    )
+
+    obj = MagicMock()
+    obj.data = {}
+    obj.extra_data = {}
+    eng = None
+
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+    with patch.dict(current_app.config, new_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', 'http://grobid_url.local/api/processHeaderDocument',
+                text=grobid_response,
+                headers={'content-type': 'application/xml'},
+                status_code=200,
+            )
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                mocked_get_document.return_value.__enter__.return_value = tmp_file.name
+                extract_authors_from_pdf(obj, eng)
+    assert len(obj.data['authors']) == 3
+    assert len(obj.extra_data['authors_with_affiliations']) == 3
+
+
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_extract_authors_from_pdf_when_no_authors_in_metadata_and_no_authors_from_grobid(mocked_get_document, app):
+    grobid_response = pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            'fixtures',
+            'grobid_no_authors_doc.xml'
+        )
+    )
+
+    obj = MagicMock()
+    obj.data = {}
+    obj.extra_data = {}
+    eng = None
+
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+    with patch.dict(current_app.config, new_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', 'http://grobid_url.local/api/processHeaderDocument',
+                text=grobid_response,
+                headers={'content-type': 'application/xml'},
+                status_code=200,
+            )
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                mocked_get_document.return_value.__enter__.return_value = tmp_file.name
+                extract_authors_from_pdf(obj, eng)
+    assert 'authors' not in obj.data
+    assert 'authors_with_affiliations' not in obj.extra_data
 
 
 @pytest.mark.parametrize(
@@ -305,3 +367,13 @@ def test_is_suitable_for_pdf_authors_extraction(acquisition_source, authors_xml_
     obj.extra_data = {'authors_xml': authors_xml_mark}
     suitable = is_suitable_for_pdf_authors_extraction(obj, eng)
     assert suitable is expected
+
+
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_extract_authors_from_pdf_do_not_run_when_there_is_more_authors_than_max_authors_parameter(mocked_get_document, app):
+    mocked_get_document.return_value.__enter__.side_effect = Exception
+    max_authors_parameter = app.config.get('WORKFLOWS_MAX_AUTHORS_COUNT_FOR_GROBID_EXTRACTION') + 1
+    obj = MagicMock()
+    obj.data = {'authors': [i for i in range(max_authors_parameter)]}
+    # Should not raise exception
+    extract_authors_from_pdf(obj, None)
