@@ -54,6 +54,7 @@ def app():
         CELERY_TASK_EAGER_PROPAGATES=True,
         TESTING=True,
         PRODUCTION_MODE=True,
+        WORKFLOWS_MAX_AUTHORS_COUNT_FOR_GROBID_EXTRACTION=50,
     )
 
     with app.app_context():

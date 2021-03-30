@@ -32,7 +32,7 @@ class GrobidAuthors(object):
             xml_text = xml_text.decode('utf-8')
         self._xml = Selector(text=xml_text, type="xml")
         self._xml.remove_namespaces()
-        self._parsed_authors = self._xml.xpath("//author")
+        self._parsed_authors = self._xml.xpath("//author[persName/surname[string-length(normalize-space()) > 0]]")
         self._builder = None
 
     def __getitem__(self, item):
@@ -65,6 +65,7 @@ class GrobidAuthor(object):
 
     @staticmethod
     def _extract(source, path, type=None, text=False):
+        path += "[string-length(normalize-space()) > 0]"
         if type:
             path += "[@type='{type}']".format(type=type)
         if text:
@@ -112,6 +113,10 @@ class GrobidAuthor(object):
         return self._extract_strings_list(self._author, "affiliation/note", type="raw_affiliation")
 
     @property
+    def emails(self):
+        return self._extract_strings_list(self._author, "email")
+
+    @property
     def processed_affiliations(self):
         affiliations = []
         for affiliation in self._extract(self._author, "affiliation"):
@@ -134,7 +139,3 @@ class GrobidAuthor(object):
                 affiliation_obj['address'] = address
             affiliations.append(affiliation_obj)
         return affiliations or None
-
-    @property
-    def emails(self):
-        return self._author.xpath("email/text()").getall()

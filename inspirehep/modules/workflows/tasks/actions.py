@@ -788,6 +788,9 @@ def is_suitable_for_pdf_authors_extraction(obj, eng):
 
 @with_debug_logging
 def extract_authors_from_pdf(obj, eng):
+    # If there are more than specified number of authors then don't run Grobid authors extraction
+    if len(obj.data.get('authors', [])) > current_app.config.get('WORKFLOWS_MAX_AUTHORS_COUNT_FOR_GROBID_EXTRACTION', 1000):
+        return obj
     with get_document_in_workflow(obj) as tmp_document:
         if not tmp_document:
             return None
@@ -801,13 +804,26 @@ def extract_authors_from_pdf(obj, eng):
         response.raise_for_status()
         authors_and_affiliations = GrobidAuthors(response.text)
 
-        if authors_and_affiliations and len(authors_and_affiliations) == len(obj.data.get('authors')):
-            LOGGER.warning(
-                "Discarding GROBID authors: expected %s authors, got %s",
+        if authors_and_affiliations and (
+            (
+                not obj.data.get('authors') and len(authors_and_affiliations) > 0
+            ) or (
+                len(authors_and_affiliations) == len(obj.data.get('authors', []))
+            )
+        ):
+            LOGGER.info(
+                "Using GROBID %s authors",
                 len(authors_and_affiliations),
-                len(obj.data.get('authors'))
             )
             data = authors_and_affiliations.parse_all()
             obj.extra_data['authors_with_affiliations'] = data
             obj.data['authors'] = get_value(data, 'author')
+        else:
+            metadata_authors_count = len(obj.data['authors']) if 'authors' in obj.data else 0
+            grobid_authors_count = len(authors_and_affiliations) if authors_and_affiliations else 0
+            LOGGER.warning(
+                "Ignoring grobid authors. Expected authors count: %s. Authors exctracted from grobid %s.",
+                metadata_authors_count,
+                grobid_authors_count
+            )
     return obj

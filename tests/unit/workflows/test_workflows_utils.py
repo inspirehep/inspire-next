@@ -445,3 +445,82 @@ xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /opt/grobid/grobid-home/schemas/
     authors = GrobidAuthors(input_xml)
     assert len(authors) == expected_authors_count
     assert authors.parse_all() == expected_authors
+
+
+def test_grobid_empty_author():
+    input_xml = """
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve"
+    xmlns="http://www.tei-c.org/ns/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /opt/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <teiHeader xml:lang="en">
+        <fileDesc>
+            <titleStmt>
+                <title level="a" type="main">Remarks on noncommutativity and scale anomaly in planar quantum mechanics</title>
+            </titleStmt>
+            <publicationStmt>
+                <publisher/>
+                <availability status="unknown">
+                    <licence/>
+                </availability>
+                <date type="published" when="2021-01-21">January 21, 2021</date>
+            </publicationStmt>
+            <sourceDesc>
+                <biblStruct>
+                    <analytic>
+                     <author>
+                            <persName
+                                xmlns="http://www.tei-c.org/ns/1.0">
+                                <forename type="first"> FIRST </forename>
+                                <surname></surname>
+                            </persName>
+                            <email> email@cern.io </email>
+                     </author>
+                     <author>
+                            <persName
+                                xmlns="http://www.tei-c.org/ns/1.0">
+                                <forename type="first">XYZ</forename>
+                                <surname>ABC</surname>
+                            </persName>
+                            <email>   </email>
+                     </author>
+                      <author>
+                            <persName
+                                xmlns="http://www.tei-c.org/ns/1.0">
+                                <forename type="first">   </forename>
+                                <surname>YZC</surname>
+                            </persName>
+                            <email> some@email.cern </email>
+                     </author>
+                    </analytic>
+                    <monogr>
+                        <imprint>
+                            <date type="published" when="2021-01-21">January 21, 2021</date>
+                        </imprint>
+                    </monogr>
+                    <idno type="arXiv">arXiv:2101.07076v2[hep-th]</idno>
+                </biblStruct>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <appInfo>
+                <application version="0.6.1" ident="GROBID" when="2021-02-09T09:29+0000">
+                    <desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+                    <ref target="https://github.com/kermitt2/grobid"/>
+                </application>
+            </appInfo>
+        </encodingDesc>
+        <profileDesc>
+            <abstract/>
+        </profileDesc>
+    </teiHeader>
+    <text xml:lang="en"></text>
+</TEI>
+    """
+    expected_authors = [{'parsed_affiliations': None, 'author': {'full_name': u'Abc, Xyz'}}, {'parsed_affiliations': None, 'author': {'emails': [u'some@email.cern'], 'full_name': u'Yzc'}}]
+    expected_authors_count = 2
+    authors = GrobidAuthors(input_xml)
+    assert len(authors) == expected_authors_count
+    assert authors.parse_all() == expected_authors
