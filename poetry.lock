@@ -1181,7 +1181,7 @@ description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)
 name = "hepcrawl"
 optional = true
 python-versions = "*"
-version = "13.0.25"
+version = "13.0.29"
 
 [package.dependencies]
 LinkHeader = ">=0.4.3"
@@ -1200,6 +1200,7 @@ inspire-dojson = ">=63.0,<64.0"
 inspire-schemas = ">=61.3,<62.0"
 inspire-utils = ">=3.0.0,<4.0"
 pyasn1 = ">=0.1.8"
+pylatexenc = ">=2.9,<3.0"
 python-dateutil = ">=2.7.0,<3.0"
 python-scrapyd-api = ">=2.0.1"
 redis = ">=2.10.5"
@@ -3128,7 +3129,7 @@ description = "Simple LaTeX parser providing latex-to-unicode and unicode-to-lat
 name = "pylatexenc"
 optional = false
 python-versions = "*"
-version = "2.7"
+version = "2.10"
 
 [[package]]
 category = "main"
@@ -3521,7 +3522,7 @@ version = ">=2.2.0,<4.0.0"
 [[package]]
 category = "main"
 description = "scandir, a better directory iterator and faster os.walk()"
-marker = "python_version < \"3.5\" or python_version == \"2.7\" or python_version in \"2.6 2.7 3.2 3.3\""
+marker = "python_version < \"3.5\" or python_version in \"2.6 2.7 3.2 3.3\" or python_version == \"2.7\""
 name = "scandir"
 optional = false
 python-versions = "*"
@@ -4144,7 +4145,7 @@ version = "0.6.1"
 [[package]]
 category = "main"
 description = "Enable Unicode input and display when running Python from Windows console."
-marker = "sys_platform == \"win32\" and python_version == \"2.7\" or sys_platform == \"win32\" and python_version < \"3.6\""
+marker = "sys_platform == \"win32\" and python_version < \"3.6\" or sys_platform == \"win32\" and python_version == \"2.7\""
 name = "win-unicode-console"
 optional = false
 python-versions = "*"
@@ -4296,7 +4297,7 @@ worker-node = ["flower", "superlance", "tornado"]
 xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
-content-hash = "b6b0287f47029f7b708cd013e238c644157506f2c068662d45576d4153776a62"
+content-hash = "a10089d1e71928d5e6968b1285bee35f95a6641a60f19ffbbd4eee3a207319a0"
 lock-version = "1.0"
 python-versions = ">=2.7,<3.0"
 
@@ -4391,6 +4392,7 @@ blinker = [
     {file = "blinker-1.4.tar.gz", hash = "sha256:471aee25f3992bd325afa3772f1063dbdbbca947a041b8b89466dc00d606f8b6"},
 ]
 boto3 = [
+    {file = "boto3-1.14.61-py2.py3-none-any.whl", hash = "sha256:1c9b716b7c96b47c691866edee6b988ec714f813926aa30d40f722b8196ba6e0"},
     {file = "boto3-1.14.61.tar.gz", hash = "sha256:a1c738ff178fc6ed8951559053c1142c71d166d17642361bbe63584be2f50a00"},
 ]
 botocore = [
@@ -4748,8 +4750,8 @@ harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
 hepcrawl = [
-    {file = "hepcrawl-13.0.25-py2.py3-none-any.whl", hash = "sha256:13757994ebdde08b1735ac6a24115f0b8c0a366ad241cb4568a6ebca52c45d70"},
-    {file = "hepcrawl-13.0.25.tar.gz", hash = "sha256:ae45d5d35782acaab24972840fefe077f334f92d59d04dbce36410bdbcfc891b"},
+    {file = "hepcrawl-13.0.29-py2.py3-none-any.whl", hash = "sha256:eb802a6112fa4b585ae811874bc79e1119d6d4e8e93a195763fc0689a50af028"},
+    {file = "hepcrawl-13.0.29.tar.gz", hash = "sha256:108128593a18ae7f0e2e9d7ab90a309927cb0d09c9bffb585e7a30c5ac231564"},
 ]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
@@ -5340,7 +5342,7 @@ pyjwt = [
     {file = "PyJWT-1.7.1.tar.gz", hash = "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"},
 ]
 pylatexenc = [
-    {file = "pylatexenc-2.7.tar.gz", hash = "sha256:8a3de4c035b9413a7721cab11e4cc7469d9370b441fbd498fc8d2ff37cbff678"},
+    {file = "pylatexenc-2.10.tar.gz", hash = "sha256:3dd8fd84eb46dc30bee1e23eaab8d8fb5a7f507347b23e5f38ad9675c84f40d3"},
 ]
 pynpm = [
     {file = "pynpm-0.1.1-py2.py3-none-any.whl", hash = "sha256:b3c2efafc15b0ca4f0a1cc819e55af4179c2b43a2f9bb7b1a1cc1763dc3daa52"},
