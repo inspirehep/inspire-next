@@ -1422,7 +1422,7 @@ description = "INSPIRE-specific rules to transform from MARCXML to JSON and back
 name = "inspire-dojson"
 optional = false
 python-versions = "*"
-version = "63.1.0"
+version = "63.1.2"
 
 [package.dependencies]
 Flask = ">=0.12.3,<2.0.0"
@@ -4806,8 +4806,8 @@ inspire-crawler = [
     {file = "inspire-crawler-3.0.4.tar.gz", hash = "sha256:6ad11cb23666b7fdb4e5f179adae3cf73d2ff86ee052cc1f82c9ebf8f985f1f8"},
 ]
 inspire-dojson = [
-    {file = "inspire-dojson-63.1.0.tar.gz", hash = "sha256:1a36eaaea293eb639cdf88be8d0135773ec99ae49da41c27594ecf5fdaf1be9a"},
-    {file = "inspire_dojson-63.1.0-py2-none-any.whl", hash = "sha256:bdf8b426fc657061d8f492f6df695ef6bcbc14e76d6618a573adcd9f6dc65769"},
+    {file = "inspire-dojson-63.1.2.tar.gz", hash = "sha256:545ab34cadadeec68287bf7bc26a7cce70bffcff298f52375abdaa0bb6bb3caf"},
+    {file = "inspire_dojson-63.1.2-py2-none-any.whl", hash = "sha256:1d1c43e9bb424a7847734519c1db494754a19b92437653a2200fec041435f29a"},
 ]
 inspire-json-merger = [
     {file = "inspire-json-merger-11.0.16.tar.gz", hash = "sha256:da6840fe10e0e6d2a6cee38f31653eb9c2ba5b78baeb7c984cb28ec86c35406f"},
