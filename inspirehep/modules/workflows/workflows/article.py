@@ -578,8 +578,8 @@ class Article(object):
                 is_record_accepted,
                 (
                     POSTENHANCE_RECORD +
-                    STORE_RECORD +
                     SEND_TO_LEGACY +
+                    STORE_RECORD +
                     STORE_ROOT +
                     NOTIFY_ACCEPTED +
                     NOTIFY_CURATOR_IF_NEEDED
