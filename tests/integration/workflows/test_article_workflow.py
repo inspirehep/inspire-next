@@ -228,3 +228,50 @@ def test_set_fermilab_collection_even_when_record_is_hidden_and_affiliations_are
     mark('approved', False)(workflow, None)
     wf.continue_workflow()
     assert workflow.data["_collections"] == expected_collections
+
+
+@mock.patch('inspirehep.modules.workflows.tasks.upload.store_record')
+@mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
+@mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
+def test_keywords_are_stored_in_record_when_record_is_core(mocked_robotupload, mocked_create_ticket, mocked_store_record, workflow_app):
+    record = {
+        '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
+        'titles': [
+            {
+                'title': 'Update without conflicts title.'
+            },
+        ],
+        "authors": [
+            {
+                "full_name": "Some author",
+                "raw_affiliations": [
+                    {"value": "Some longer description CErN? with proper keyword included"}
+                ]
+            }
+        ],
+        'document_type': ['article'],
+        '_collections': ['Literature'],
+        'abstracts': [
+            {
+                'value': 'Very interesting paper about the Higgs boson.'
+            },
+        ],
+        'acquisition_source': {
+            'datetime': '2020-11-12T04:49:13.369515',
+            'method': 'hepcrawl',
+            'submission_number': '978',
+            'source': 'Elsevier',
+        },
+    }
+
+    expected_keywords = [
+        {u'value': u'Higgs particle', u'schema': u'INSPIRE', u'source': u'classifier'}
+    ]
+
+    workflow = build_workflow(record)
+    start("article", object_id=workflow.id)
+    wf = workflow_object_class.get(workflow.id)
+    mark('approved', True)(workflow, None)
+    mark('core', True)(workflow, None)
+    wf.continue_workflow()
+    assert wf.data['keywords'] == expected_keywords

@@ -636,46 +636,12 @@ def test_filter_keywords_does_nothing_if_no_keywords_were_predicted():
     assert expected == result
 
 
-def test_prepare_keywords():
-    schema = load_schema('hep')
-    subschema = schema['properties']['keywords']
-
-    data = {}
-    extra_data = {
-        'keywords_prediction': {
-            'keywords': [
-                {'label': 'galaxy'},
-                {'label': 'numerical calculations'},
-            ],
-        },
-    }
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    assert prepare_keywords(obj, eng) is None
-
-    expected = [
-        {
-            'source': 'magpie',
-            'value': 'galaxy',
-        },
-        {
-            'source': 'magpie',
-            'value': 'numerical calculations',
-        },
-    ]
-    result = obj.data
-
-    assert validate(result['keywords'], subschema) is None
-    assert expected == result['keywords']
-
-
 def test_prepare_keywords_appends_to_existing_keywords():
     schema = load_schema('hep')
     subschema = schema['properties']['keywords']
 
     data = {
+        "core": True,
         'keywords': [
             {
                 'schema': 'INSPIRE',
@@ -684,12 +650,7 @@ def test_prepare_keywords_appends_to_existing_keywords():
         ],
     }
     extra_data = {
-        'keywords_prediction': {
-            'keywords': [
-                {'label': 'expansion 1/N'},
-                {'label': 'supergravity'},
-            ],
-        },
+        "extracted_keywords": ["extracted keyword 1", "extracted keyword 2"]
     }
     assert validate(data['keywords'], subschema) is None
 
@@ -704,13 +665,15 @@ def test_prepare_keywords_appends_to_existing_keywords():
             'value': 'field theory: conformal',
         },
         {
-            'source': 'magpie',
-            'value': 'expansion 1/N',
+            "schema": "INSPIRE",
+            "value": "extracted keyword 1",
+            "source": "classifier"
         },
         {
-            'source': 'magpie',
-            'value': 'supergravity',
-        },
+            "schema": "INSPIRE",
+            "value": "extracted keyword 2",
+            "source": "classifier"
+        }
     ]
     result = obj.data
 
@@ -718,20 +681,50 @@ def test_prepare_keywords_appends_to_existing_keywords():
     assert expected == result['keywords']
 
 
-def test_prepare_keywords_does_nothing_if_no_keywords_were_predicted():
+def test_prepare_keywords_does_nothing_when_record_is_not_core():
+    data = {
+    }
+    extra_data = {
+        "extracted_keywords": ["extracted keyword 1", "extracted keyword 2"]
+    }
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert prepare_keywords(obj, eng) is None
+
+    result = obj.data
+
+    assert 'keywords' not in result
+
+
+def test_prepare_keywords_does_nothing_if_no_extracted_keywords():
+    data = {}
+    extra_data = {}
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert prepare_keywords(obj, eng) is None
+
+    result = obj.data
+
+    assert 'keywords' not in result
+
+
+def test_prepare_keywords_adds_extracted_keywords_when_core_is_true():
     schema = load_schema('hep')
     subschema = schema['properties']['keywords']
 
-    data = {
-        'keywords': [
-            {
-                'schema': 'INSPIRE',
-                'value': 'field theory: conformal',
-            },
-        ],
+    data = {"core": True}
+    extra_data = {
+        'keywords_prediction': {
+            'keywords': [
+                {'label': 'galaxy'},
+                {'label': 'numerical calculations', 'core': True},
+            ],
+        },
+        "extracted_keywords": ["extracted keyword 1", "extracted keyword 2"]
     }
-    extra_data = {}
-    assert validate(data['keywords'], subschema) is None
 
     obj = MockObj(data, extra_data)
     eng = MockEng()
@@ -740,9 +733,15 @@ def test_prepare_keywords_does_nothing_if_no_keywords_were_predicted():
 
     expected = [
         {
-            'schema': 'INSPIRE',
-            'value': 'field theory: conformal',
+            "schema": "INSPIRE",
+            "value": "extracted keyword 1",
+            "source": "classifier"
         },
+        {
+            "schema": "INSPIRE",
+            "value": "extracted keyword 2",
+            "source": "classifier"
+        }
     ]
     result = obj.data
 
