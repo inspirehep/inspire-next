@@ -56,6 +56,8 @@ from invenio_db import db
 from invenio_workflows import ObjectStatus
 from invenio_workflows.errors import WorkflowsError
 from invenio_records.models import RecordMetadata
+from inspire_json_merger.api import merge
+from inspire_json_merger.config import GrobidOnArxivAuthorsOperations
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.readers import LiteratureReader
 from inspire_schemas.utils import normalize_collaboration_name, validate
@@ -805,21 +807,26 @@ def extract_authors_from_pdf(obj, eng):
         response = requests.post(urljoin(grobid_url, api_path), files=data)
         response.raise_for_status()
         authors_and_affiliations = GrobidAuthors(response.text)
-
-        if authors_and_affiliations and (
-            (
-                not obj.data.get('authors') and len(authors_and_affiliations) > 0
-            ) or (
-                len(authors_and_affiliations) == len(obj.data.get('authors', []))
-            )
-        ):
+        data = authors_and_affiliations.parse_all()
+        grobid_authors = get_value(data, 'author')
+        merged_authors, merge_conflicts = merge({},
+                                                {'authors': obj.data.get('authors', [])},
+                                                {'authors': grobid_authors},
+                                                configuration=GrobidOnArxivAuthorsOperations)
+        if not obj.data.get('authors', []) and len(authors_and_affiliations) > 0:
             LOGGER.info(
-                "Using GROBID %s authors",
+                "Using %s GROBID authors",
                 len(authors_and_affiliations),
             )
-            data = authors_and_affiliations.parse_all()
+            obj.data['authors'] = grobid_authors
             obj.extra_data['authors_with_affiliations'] = data
-            obj.data['authors'] = get_value(data, 'author')
+        elif not merge_conflicts and len(merged_authors['authors']) > 0:
+            LOGGER.info(
+                "Using %s merged GROBID authors",
+                len(merged_authors),
+            )
+            obj.data['authors'] = merged_authors['authors']
+            obj.extra_data['authors_with_affiliations'] = data
         else:
             metadata_authors_count = len(obj.data['authors']) if 'authors' in obj.data else 0
             grobid_authors_count = len(authors_and_affiliations) if authors_and_affiliations else 0
