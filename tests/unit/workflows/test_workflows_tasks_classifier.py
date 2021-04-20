@@ -46,6 +46,10 @@ HIGGS_ONTOLOGY = '''<?xml version="1.0" encoding="UTF-8" ?>
         <hiddenLabel xml:lang="en">Higgses</hiddenLabel>
         <note xml:lang="en">core</note>
     </Concept>
+    <Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Corekeyword">
+        <prefLabel xml:lang="en">Core Keyword</prefLabel>
+        <note xml:lang="en">core</note>
+    </Concept>
 
 </rdf:RDF>
 '''
@@ -67,7 +71,7 @@ def test_classify_paper_with_fulltext(get_document_in_workflow, tmpdir, higgs_on
     get_document_in_workflow.return_value.__enter__.return_value = binary_type(fulltext)
     get_document_in_workflow.return_value.__exit__.return_value = None
 
-    expected = [
+    expected_fulltext_keywords = [
         {
             'number': 1,
             'keyword': 'Higgs particle'
@@ -82,8 +86,9 @@ def test_classify_paper_with_fulltext(get_document_in_workflow, tmpdir, higgs_on
         no_cache=True,
     )(obj, eng)
 
-    assert obj.extra_data['classifier_results']['complete_output']['core_keywords'] == expected
+    assert obj.extra_data['classifier_results']['complete_output']['core_keywords'] == expected_fulltext_keywords
     assert obj.extra_data['classifier_results']['fulltext_used'] is True
+    assert 'extracted_keywords' not in obj.extra_data
 
 
 @patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
@@ -105,12 +110,14 @@ def test_classify_paper_with_no_fulltext(get_document_in_workflow, higgs_ontolog
     get_document_in_workflow.return_value.__enter__.return_value = None
     get_document_in_workflow.return_value.__exit__.return_value = None
 
-    expected = [
+    expected_kewords = [
         {
             'number': 1,
             'keyword': 'Higgs particle'
         }
     ]
+
+    expected_extracted_keywords = ['Higgs particle']
 
     classify_paper(
         taxonomy=higgs_ontology,
@@ -120,7 +127,8 @@ def test_classify_paper_with_no_fulltext(get_document_in_workflow, higgs_ontolog
         no_cache=True,
     )(obj, eng)
 
-    assert obj.extra_data['classifier_results']['complete_output']['core_keywords'] == expected
+    assert obj.extra_data['classifier_results']['complete_output']['core_keywords'] == expected_kewords
+    assert obj.extra_data['extracted_keywords'] == expected_extracted_keywords
     assert obj.extra_data['classifier_results']['fulltext_used'] is False
 
 
@@ -180,3 +188,46 @@ def test_classify_paper_does_not_raise_on_unprintable_keywords(get_document_in_w
         with_author_keywords=True,
         no_cache=True,
     )(obj, eng)  # Does not raise.
+
+
+@patch('inspirehep.modules.workflows.tasks.classifier.get_document_in_workflow')
+def test_classify_paper_with_fulltext_and_data(get_document_in_workflow, tmpdir, higgs_ontology):
+    data = {
+        'titles': [
+            {
+                'title': 'Some title',
+            },
+        ],
+        'abstracts': [
+            {
+                'value': 'Very interesting paper about the Higgs boson.'
+            },
+        ],
+    }
+    obj = MockObj(data, {})
+    eng = MockEng()
+    fulltext = tmpdir.join('fulltext.txt')
+    fulltext.write('Core Keyword')
+    get_document_in_workflow.return_value.__enter__.return_value = binary_type(fulltext)
+    get_document_in_workflow.return_value.__exit__.return_value = None
+
+    expected_fulltext_keywords = [
+        {
+            'number': 1,
+            'keyword': 'Core Keyword'
+        }
+    ]
+
+    expected_extracted_keywords = ['Higgs particle']
+
+    classify_paper(
+        taxonomy=higgs_ontology,
+        only_core_tags=False,
+        spires=True,
+        with_author_keywords=True,
+        no_cache=True,
+    )(obj, eng)
+
+    assert obj.extra_data['classifier_results']['complete_output']['core_keywords'] == expected_fulltext_keywords
+    assert obj.extra_data['classifier_results']['fulltext_used'] is True
+    assert obj.extra_data['extracted_keywords'] == expected_extracted_keywords

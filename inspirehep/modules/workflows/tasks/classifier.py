@@ -76,33 +76,48 @@ def classify_paper(taxonomy=None, rebuild_cache=False, no_cache=False,
             extract_acronyms=extract_acronyms
         )
 
-        fulltext_used = True
+        try:
+            data = get_value(obj.data, 'titles.title', [])
+            data.extend(get_value(obj.data, 'titles.subtitle', []))
+            data.extend(get_value(obj.data, 'abstracts.value', []))
+            data.extend(get_value(obj.data, 'keywords.value', []))
+            if not data:
+                obj.log.error("No classification done due to missing data.")
+                data_result = None
+            else:
+                data_result = get_keywords_from_text(data, **params)
+                if data_result:
+                    data_result['complete_output'] = clean_instances_from_data(
+                        data_result.get("complete_output", {})
+                    )
+        except ClassifierException as e:
+            obj.log.exception(e)
+            data_result = None
+
         with get_document_in_workflow(obj) as tmp_document:
             try:
                 if tmp_document:
                     result = get_keywords_from_local_file(tmp_document, **params)
+                    fulltext_used = True
+                    if result:
+                        result['complete_output'] = clean_instances_from_data(
+                            result.get("complete_output", {})
+                        )
                 else:
-                    data = get_value(obj.data, 'titles.title', [])
-                    data.extend(get_value(obj.data, 'titles.subtitle', []))
-                    data.extend(get_value(obj.data, 'abstracts.value', []))
-                    data.extend(get_value(obj.data, 'keywords.value', []))
-                    if not data:
-                        obj.log.error("No classification done due to missing data.")
-                        return
-                    result = get_keywords_from_text(data, **params)
+                    result = data_result
                     fulltext_used = False
             except ClassifierException as e:
                 obj.log.exception(e)
-                return
-
-        result['complete_output'] = clean_instances_from_data(
-            result.get("complete_output", {})
-        )
-        result["fulltext_used"] = fulltext_used
-
-        # Check if it is not empty output before adding
-        if any(result.get("complete_output", {}).values()):
-            obj.extra_data['classifier_results'] = result
+                result = None
+        if result:
+            result["fulltext_used"] = fulltext_used
+            # Check if it is not empty output before adding
+            if any(result.get("complete_output", {}).values()):
+                obj.extra_data['classifier_results'] = result
+        if data_result:
+            extracted_keywords = get_value(data_result, 'complete_output.composite_keywords.keyword', []) + \
+                get_value(data_result, 'complete_output.single_keywords.keyword', [])
+            obj.extra_data['extracted_keywords'] = extracted_keywords
 
     return _classify_paper
 

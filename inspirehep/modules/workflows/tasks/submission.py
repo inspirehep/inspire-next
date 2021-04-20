@@ -38,6 +38,7 @@ from invenio_accounts.models import User
 from invenio_db import db
 
 from inspire_dojson import record2marcxml
+
 from inspirehep.modules.workflows.models import WorkflowsPendingRecord
 from inspirehep.modules.workflows.tasks.actions import in_production_mode
 from inspirehep.modules.workflows.utils import with_debug_logging
@@ -330,21 +331,20 @@ def filter_keywords(obj, eng):
 @with_debug_logging
 def prepare_keywords(obj, eng):
     """Prepares the keywords in the correct format to be sent"""
-    prediction = obj.extra_data.get('keywords_prediction', {})
-    if not prediction:
-        return
-
     keywords = obj.data.get('keywords', [])
-    for keyword in prediction.get('keywords', []):
-        # TODO: differentiate between curated and guessed keywords
-        keywords.append(
-            {
-                'value': keyword['label'],
-                'source': 'curator' if keyword.get('curated') else 'magpie',
-            }
-        )
-
-    obj.data['keywords'] = keywords
+    if obj.data.get('core'):
+        extracted_keywords = obj.extra_data.get('extracted_keywords', [])
+        for keyword in extracted_keywords:
+            if keyword:
+                keywords.append(
+                    {
+                        "value": keyword,
+                        "schema": "INSPIRE",
+                        "source": "classifier"
+                    }
+                )
+    if keywords:
+        obj.data['keywords'] = keywords
 
     obj.log.debug('Finally got keywords: \n%s', pformat(keywords))
 
