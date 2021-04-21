@@ -1347,15 +1347,15 @@ def test_workflow_checks_affiliations_if_record_is_not_important(
 ):
     """Test a full harvesting workflow."""
     record = generate_record()
-    record['authors'][0]['raw_affiliations'] = [{"value": "IN2P3"}, {"value": "Cern"}]
-    record['authors'][1]['raw_affiliations'] = [{"value": "Fermilab"}]
     record['authors'].append({u"full_name": u"Third Author"})
+    record['authors'][2]['raw_affiliations'] = [{"value": "Fermilab"}, {"value": "IN2P3"}, {"value": "Cern"}]
     workflow_id = build_workflow(record).id
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
         'INSPIREHEP_URL': "http://web:8000"
     }):
         start("article", object_id=workflow_id)
+
     collections_in_record = mocked_external_services.request_history[1].json()['_collections']
     assert "CDS Hidden" in collections_in_record
     assert "HAL Hidden" in collections_in_record
@@ -1451,9 +1451,8 @@ def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
 ):
     """Test a full harvesting workflow."""
     record = generate_record()
-    record['authors'][0]['raw_affiliations'] = [{"value": "IN2P3."}, {"value": "Some words with CErN, inside."}]
-    record['authors'][1]['raw_affiliations'] = [{"value": "Fermilab?"}]
     record['authors'].append({u"full_name": u"Third Author"})
+    record['authors'][2]['raw_affiliations'] = [{"value": "Fermilab?"}, {"value": "IN2P3."}, {"value": "Some words with CErN, inside."}]
     workflow_id = build_workflow(record).id
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
@@ -1505,6 +1504,9 @@ def test_grobid_extracts_authors_correctly(
 ):
     """Test a full harvesting workflow."""
     record = generate_record()
+    record['authors'][0]['raw_affiliations'] = [{"value": "Concordia University, Montréal, Québec, Canada"}]
+    record['authors'][0]['full_name'] = "Hall, Richard Leon"
+
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
         "MAGPIE_API_URL": "http://example.com/magpie",
@@ -1518,7 +1520,7 @@ def test_grobid_extracts_authors_correctly(
                 }
             ],
             u"emails": [u"richard.hall@concordia.ca"],
-            u"full_name": u"Hall, Richard L.",
+            u"full_name": u"Hall, Richard Leon",
         },
         {
             u"raw_affiliations": [
