@@ -4392,7 +4392,6 @@ blinker = [
     {file = "blinker-1.4.tar.gz", hash = "sha256:471aee25f3992bd325afa3772f1063dbdbbca947a041b8b89466dc00d606f8b6"},
 ]
 boto3 = [
-    {file = "boto3-1.14.61-py2.py3-none-any.whl", hash = "sha256:1c9b716b7c96b47c691866edee6b988ec714f813926aa30d40f722b8196ba6e0"},
     {file = "boto3-1.14.61.tar.gz", hash = "sha256:a1c738ff178fc6ed8951559053c1142c71d166d17642361bbe63584be2f50a00"},
 ]
 botocore = [
