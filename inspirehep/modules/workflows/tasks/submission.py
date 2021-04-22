@@ -331,8 +331,23 @@ def filter_keywords(obj, eng):
 @with_debug_logging
 def prepare_keywords(obj, eng):
     """Prepares the keywords in the correct format to be sent"""
+    def _check_keyword_should_be_left_untouched(keyword):
+        if keyword.get('schema', '') == "INSPIRE" and keyword.get('source') is None:
+            return True
+        return False
+
+    def _filter_out_classifier_keywords(keyword):
+        if keyword.get('schema', '') == "INSPIRE" and keyword.get("source", '') == 'classifier':
+            return False
+        return True
     keywords = obj.data.get('keywords', [])
     if obj.data.get('core'):
+        # if there is any INSPIRE keyword without `source: classifier` then don't do anything.
+        untouchable_keywords = any(_check_keyword_should_be_left_untouched(kw) for kw in keywords)
+        if untouchable_keywords:
+            return
+        keywords = [kw for kw in keywords if _filter_out_classifier_keywords(kw)]
+
         extracted_keywords = obj.extra_data.get('extracted_keywords', [])
         for keyword in extracted_keywords:
             if keyword:

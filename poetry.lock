@@ -408,6 +408,9 @@ optional = false
 python-versions = "*"
 version = "5.0.6"
 
+[package.dependencies]
+six = "*"
+
 [[package]]
 category = "main"
 description = "Updated configparser from Python 3.7 for Python 2.6+."
@@ -1419,7 +1422,7 @@ description = "INSPIRE-specific rules to transform from MARCXML to JSON and back
 name = "inspire-dojson"
 optional = false
 python-versions = "*"
-version = "63.1.2"
+version = "63.1.3"
 
 [package.dependencies]
 Flask = ">=0.12.3,<2.0.0"
@@ -4389,7 +4392,6 @@ blinker = [
     {file = "blinker-1.4.tar.gz", hash = "sha256:471aee25f3992bd325afa3772f1063dbdbbca947a041b8b89466dc00d606f8b6"},
 ]
 boto3 = [
-    {file = "boto3-1.14.61-py2.py3-none-any.whl", hash = "sha256:1c9b716b7c96b47c691866edee6b988ec714f813926aa30d40f722b8196ba6e0"},
     {file = "boto3-1.14.61.tar.gz", hash = "sha256:a1c738ff178fc6ed8951559053c1142c71d166d17642361bbe63584be2f50a00"},
 ]
 botocore = [
@@ -4803,8 +4805,8 @@ inspire-crawler = [
     {file = "inspire-crawler-3.0.4.tar.gz", hash = "sha256:6ad11cb23666b7fdb4e5f179adae3cf73d2ff86ee052cc1f82c9ebf8f985f1f8"},
 ]
 inspire-dojson = [
-    {file = "inspire-dojson-63.1.2.tar.gz", hash = "sha256:545ab34cadadeec68287bf7bc26a7cce70bffcff298f52375abdaa0bb6bb3caf"},
-    {file = "inspire_dojson-63.1.2-py2-none-any.whl", hash = "sha256:1d1c43e9bb424a7847734519c1db494754a19b92437653a2200fec041435f29a"},
+    {file = "inspire-dojson-63.1.3.tar.gz", hash = "sha256:06f90047d9d323d5a65aa2ff3c6a763b857db2dcf8d41508d38088f85fa3f8fe"},
+    {file = "inspire_dojson-63.1.3-py2-none-any.whl", hash = "sha256:3321a310dae00751140a4aed3a4f0db43521d131b4c720fd64454ba8b42affe6"},
 ]
 inspire-json-merger = [
     {file = "inspire-json-merger-11.0.19.tar.gz", hash = "sha256:3f09e63797ace4d0cc0335772aa603f3aafc73158317b7977a831c5b48255c81"},
@@ -5091,11 +5093,6 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:ba59edeaa2fc6114428f1637ffff42da1e311e29382d81b339c1817d37ec93c6"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win32.whl", hash = "sha256:b00c1de48212e4cc9603895652c5c410df699856a2853135b3967591e4beebc2"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win_amd64.whl", hash = "sha256:9bf40443012702a1d2070043cb6291650a0841ece432556f784f004937f0f32c"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:6788b695d50a51edb699cb55e35487e430fa21f1ed838122d722e0ff0ac5ba15"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux1_i686.whl", hash = "sha256:cdb132fc825c38e1aeec2c8aa9338310d29d337bebbd7baa06889d09a60a1fa2"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:13d3144e1e340870b25e7b10b98d779608c02016d5184cfb9927a9f10c689f42"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-win32.whl", hash = "sha256:596510de112c685489095da617b5bcbbac7dd6384aeebeda4df6025d0256a81b"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:e8313f01ba26fbbe36c7be1966a7b7424942f670f38e666995b88d012765b9be"},
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
 ]
 marshmallow = [
@@ -5646,7 +5643,6 @@ sqlitedict = [
 ]
 subprocess32 = [
     {file = "subprocess32-3.5.4-cp27-cp27m-macosx_10_6_intel.whl", hash = "sha256:88e37c1aac5388df41cc8a8456bb49ebffd321a3ad4d70358e3518176de3a56b"},
-    {file = "subprocess32-3.5.4-cp27-cp27mu-manylinux2014_x86_64.whl", hash = "sha256:e45d985aef903c5b7444d34350b05da91a9e0ea015415ab45a21212786c649d0"},
     {file = "subprocess32-3.5.4.tar.gz", hash = "sha256:eb2937c80497978d181efa1b839ec2d9622cf9600a039a79d0e108d1f9aec79d"},
 ]
 superlance = [

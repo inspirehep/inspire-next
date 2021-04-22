@@ -636,7 +636,49 @@ def test_filter_keywords_does_nothing_if_no_keywords_were_predicted():
     assert expected == result
 
 
-def test_prepare_keywords_appends_to_existing_keywords():
+def test_prepare_keywords_overwrites_existing_keywords_when_source_is_classifier():
+    schema = load_schema('hep')
+    subschema = schema['properties']['keywords']
+
+    data = {
+        "core": True,
+        'keywords': [
+            {
+                'schema': 'INSPIRE',
+                'value': 'field theory: conformal',
+                'source': 'classifier'
+            },
+        ],
+    }
+    extra_data = {
+        "extracted_keywords": ["extracted keyword 1", "extracted keyword 2"]
+    }
+    assert validate(data['keywords'], subschema) is None
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert prepare_keywords(obj, eng) is None
+
+    expected = [
+        {
+            "schema": "INSPIRE",
+            "value": "extracted keyword 1",
+            "source": "classifier"
+        },
+        {
+            "schema": "INSPIRE",
+            "value": "extracted keyword 2",
+            "source": "classifier"
+        }
+    ]
+    result = obj.data
+
+    assert validate(result['keywords'], subschema) is None
+    assert expected == result['keywords']
+
+
+def test_prepare_keywords_do_not_appends_to_existing_keywords_if_source_is_not_classifier():
     schema = load_schema('hep')
     subschema = schema['properties']['keywords']
 
@@ -664,16 +706,6 @@ def test_prepare_keywords_appends_to_existing_keywords():
             'schema': 'INSPIRE',
             'value': 'field theory: conformal',
         },
-        {
-            "schema": "INSPIRE",
-            "value": "extracted keyword 1",
-            "source": "classifier"
-        },
-        {
-            "schema": "INSPIRE",
-            "value": "extracted keyword 2",
-            "source": "classifier"
-        }
     ]
     result = obj.data
 
