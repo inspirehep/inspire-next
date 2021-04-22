@@ -908,7 +908,7 @@ def normalize_collaborations(obj, eng):
             collaboration_normalized_name = response[0].collaboration.value
         LOGGER.info(u"(%s) collaboration normalization: normalized: %s ==> %s", obj.id, collaboration['value'], collaboration_normalized_name)
 
-        accelerator_experiment = {"record": response[0].self}
+        accelerator_experiment = {"record": response[0].self.to_dict()}
         if 'legacy_name' in response[0]:
             accelerator_experiment['legacy_name'] = response[0].legacy_name
         obj.data.setdefault('accelerator_experiments', [])
@@ -917,5 +917,5 @@ def normalize_collaborations(obj, eng):
             obj.data['accelerator_experiments'].append(accelerator_experiment)
 
         collaboration['value'] = collaboration_normalized_name
-        collaboration['record'] = response[0].self
+        collaboration['record'] = response[0].self.to_dict()
     return obj
