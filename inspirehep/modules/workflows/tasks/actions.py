@@ -907,7 +907,8 @@ def normalize_collaborations(obj, eng):
         else:
             collaboration_normalized_name = response[0].collaboration.value
         LOGGER.info(u"(%s) collaboration normalization: normalized: %s ==> %s", obj.id, collaboration['value'], collaboration_normalized_name)
-
+        if len(response.hits) > 1:
+            continue
         accelerator_experiment = {"record": response[0].self.to_dict()}
         if 'legacy_name' in response[0]:
             accelerator_experiment['legacy_name'] = response[0].legacy_name
