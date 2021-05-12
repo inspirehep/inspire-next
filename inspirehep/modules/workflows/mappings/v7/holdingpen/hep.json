@@ -95,6 +95,95 @@
                         },
                         "type": "object"
                     },
+                    "authors": {
+                        "properties": {
+                            "full_name": {
+                                "type": "text"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "public_notes": {
+                        "properties": {
+                            "source": {
+                                "type": "keyword"
+                            },
+                            "value": {
+                                "type": "text"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "publication_info": {
+                        "properties": {
+                            "journal_issue": {
+                                "type": "keyword"
+                            },
+                            "journal_title": {
+                                "type": "text",
+                                "fielddata": true
+                            },
+                            "journal_volume": {
+                                "type": "text"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "report_numbers": {
+                        "properties": {
+                            "hidden": {
+                                "type": "boolean"
+                            },
+                            "source": {
+                                "type": "keyword"
+                            },
+                            "value": {
+                                "fields": {
+                                    "fuzzy": {
+                                        "analyzer": "report_number",
+                                        "type": "text"
+                                    },
+                                    "raw": {
+                                        "type": "keyword"
+                                    }
+                                },
+                                "type": "text"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "titles": {
+                        "properties": {
+                            "full_title": {
+                                "analyzer": "title",
+                                "fields": {
+                                    "search": {
+                                        "analyzer": "title_whitespace_tokenized",
+                                        "type": "text"
+                                    }
+                                },
+                                "type": "text"
+                            },
+                            "source": {
+                                "type": "keyword"
+                            },
+                            "subtitle": {
+                                "copy_to": [
+                                    "titles.full_title",
+                                    "_all"
+                                ],
+                                "type": "text"
+                            },
+                            "title": {
+                                "copy_to": [
+                                    "titles.full_title",
+                                    "_all"
+                                ],
+                                "type": "text"
+                            }
+                        },
+                        "type": "object"
+                    },
                     "inspire_categories": {
                         "properties": {
                             "term": {
@@ -110,11 +199,68 @@
     },
     "settings": {
         "analysis": {
+            "analyzer": {
+                "title_whitespace_tokenized": {
+                    "char_filter": [
+                        "tex_normalizer"
+                    ],
+                    "filter": [
+                        "lowercase_normalizer",
+                        "ascii_normalizer"
+                    ],
+                    "tokenizer": "whitespace",
+                    "type": "custom"
+                },
+                "title": {
+                    "char_filter": [
+                        "tex_normalizer"
+                    ],
+                    "filter": [
+                        "lowercase_normalizer",
+                        "ascii_normalizer"
+                    ],
+                    "tokenizer": "icu_tokenizer",
+                    "type": "custom"
+                },
+                "report_number": {
+                    "char_filter": [
+                        "alphanumeric_normalizer"
+                    ],
+                    "filter": [
+                        "lowercase_normalizer"
+                    ],
+                    "tokenizer": "keyword",
+                    "type": "custom"
+                }
+            },
             "normalizer": {
                 "lowercase_normalizer": {
                     "type": "custom",
                     "char_filter": [],
-                    "filter": ["lowercase"]
+                    "filter": [
+                        "lowercase"
+                    ]
+                }
+            },
+            "char_filter": {
+                "alphanumeric_normalizer": {
+                    "pattern": "[^A-Za-z0-9]",
+                    "replacement": "",
+                    "type": "pattern_replace"
+                },
+                "tex_normalizer": {
+                    "pattern": "\\$[^$]+\\$",
+                    "replacement": "",
+                    "type": "pattern_replace"
+                }
+            },
+            "filter": {
+                "ascii_normalizer": {
+                    "preserve_original": true,
+                    "type": "asciifolding"
+                },
+                "lowercase_normalizer": {
+                    "type": "lowercase"
                 }
             }
         }
