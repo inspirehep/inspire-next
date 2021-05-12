@@ -44,7 +44,7 @@ version = "0.1.0"
 category = "main"
 description = "Bash tab completion for argparse"
 name = "argcomplete"
-optional = true
+optional = false
 python-versions = "*"
 version = "1.11.1"
 
@@ -271,7 +271,7 @@ version = "1.4"
 category = "main"
 description = "The AWS SDK for Python"
 name = "boto3"
-optional = true
+optional = false
 python-versions = "*"
 version = "1.14.61"
 
@@ -284,7 +284,7 @@ s3transfer = ">=0.3.0,<0.4.0"
 category = "main"
 description = "Low-level, data-driven core of boto 3."
 name = "botocore"
-optional = true
+optional = false
 python-versions = "*"
 version = "1.17.61"
 
@@ -408,6 +408,9 @@ optional = false
 python-versions = "*"
 version = "5.0.6"
 
+[package.dependencies]
+six = "*"
+
 [[package]]
 category = "main"
 description = "Updated configparser from Python 3.7 for Python 2.6+."
@@ -530,7 +533,7 @@ url = "https://github.com/inspirehep/dictdiffer.git"
 category = "main"
 description = "Docutils -- Python Documentation Utilities"
 name = "docutils"
-optional = true
+optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 version = "0.15.2"
 
@@ -1081,7 +1084,7 @@ wcwidth = "*"
 category = "main"
 description = "High-level FTP client library (virtual file system and more)"
 name = "ftputil"
-optional = true
+optional = false
 python-versions = "*"
 version = "3.4"
 
@@ -1107,7 +1110,7 @@ version = "3.2.3-2"
 category = "main"
 description = "URL manipulation made simple."
 name = "furl"
-optional = true
+optional = false
 python-versions = "*"
 version = "2.1.0"
 
@@ -1128,7 +1131,7 @@ category = "main"
 description = "Backport of the concurrent.futures package from Python 3"
 marker = "python_version == \"2.7\""
 name = "futures"
-optional = true
+optional = false
 python-versions = ">=2.6, <3"
 version = "3.3.0"
 
@@ -1157,7 +1160,7 @@ tornado = ["tornado (>=0.2)"]
 category = "main"
 description = "Kit of tools to convert publisher XML (NLM/JATS) to MARCXML."
 name = "harvestingkit"
-optional = true
+optional = false
 python-versions = "*"
 version = "0.6.17"
 
@@ -1176,9 +1179,9 @@ six = ">=1.7.3"
 category = "main"
 description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)."
 name = "hepcrawl"
-optional = true
+optional = false
 python-versions = "*"
-version = "13.0.32"
+version = "13.0.33"
 
 [package.dependencies]
 LinkHeader = ">=0.4.3"
@@ -1252,7 +1255,7 @@ lxml = ["lxml"]
 category = "main"
 description = "Backport of HTMLParser from python 2.7"
 name = "htmlparser"
-optional = true
+optional = false
 python-versions = "*"
 version = "0.0.2"
 
@@ -1268,7 +1271,7 @@ version = "0.17.0"
 category = "main"
 description = "HTTP client mock for Python"
 name = "httpretty"
-optional = true
+optional = false
 python-versions = "*"
 version = "0.9.7"
 
@@ -2483,7 +2486,7 @@ jinja2 = "*"
 category = "main"
 description = "JSON Matching Expressions"
 name = "jmespath"
-optional = true
+optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 version = "0.10.0"
 
@@ -2638,7 +2641,7 @@ six = ">=1.4.1"
 category = "main"
 description = "Parse and format link headers according to RFC 5988 \"Web Linking\""
 name = "linkheader"
-optional = true
+optional = false
 python-versions = "*"
 version = "0.4.3"
 
@@ -2831,7 +2834,7 @@ simplejson = "*"
 category = "main"
 description = "Ordered Multivalue Dictionary"
 name = "orderedmultidict"
-optional = true
+optional = false
 python-versions = "*"
 version = "1.0.1"
 
@@ -3021,7 +3024,7 @@ version = "1.8.1"
 category = "main"
 description = "ASN.1 types and codecs"
 name = "pyasn1"
-optional = true
+optional = false
 python-versions = "*"
 version = "0.4.8"
 
@@ -3029,7 +3032,7 @@ version = "0.4.8"
 category = "main"
 description = "A collection of ASN.1-based protocols modules."
 name = "pyasn1-modules"
-optional = true
+optional = false
 python-versions = "*"
 version = "0.2.8"
 
@@ -3077,7 +3080,7 @@ version = "2.19"
 category = "main"
 description = "Multi-producer-multi-consumer signal dispatching mechanism"
 name = "pydispatcher"
-optional = true
+optional = false
 python-versions = "*"
 version = "2.0.5"
 
@@ -3187,7 +3190,7 @@ category = "main"
 description = "Multi-producer-multi-consumer signal dispatching mechanism"
 marker = "platform_python_implementation == \"PyPy\""
 name = "pypydispatcher"
-optional = true
+optional = false
 python-versions = "*"
 version = "2.1.2"
 
@@ -3356,7 +3359,7 @@ version = "3.13"
 category = "main"
 description = "Collection of persistent (disk-based) queues"
 name = "queuelib"
-optional = true
+optional = false
 python-versions = "*"
 version = "1.5.0"
 
@@ -3506,7 +3509,7 @@ six = "*"
 category = "main"
 description = "An Amazon S3 Transfer Manager"
 name = "s3transfer"
-optional = true
+optional = false
 python-versions = "*"
 version = "0.3.3"
 
@@ -3520,7 +3523,7 @@ version = ">=2.2.0,<4.0.0"
 [[package]]
 category = "main"
 description = "scandir, a better directory iterator and faster os.walk()"
-marker = "python_version < \"3.5\" or python_version == \"2.7\" or python_version in \"2.6 2.7 3.2 3.3\""
+marker = "python_version < \"3.5\" or python_version in \"2.6 2.7 3.2 3.3\" or python_version == \"2.7\""
 name = "scandir"
 optional = false
 python-versions = "*"
@@ -3556,7 +3559,7 @@ numpy = ">=1.8.2"
 category = "main"
 description = "A high-level Web Crawling and Web Scraping framework"
 name = "scrapy"
-optional = true
+optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "1.6.0"
 
@@ -3577,7 +3580,7 @@ w3lib = ">=1.17.0"
 category = "main"
 description = "Scrapy middleware which allows to crawl only new content"
 name = "scrapy-crawl-once"
-optional = true
+optional = false
 python-versions = "*"
 version = "0.1.1"
 
@@ -3589,7 +3592,7 @@ sqlitedict = ">=1.5"
 category = "main"
 description = "Sentry component for Scrapy"
 name = "scrapy-sentry"
-optional = true
+optional = false
 python-versions = "*"
 version = "0.9.0"
 
@@ -3602,7 +3605,7 @@ six = ">=1.11.0"
 category = "main"
 description = "A service for running Scrapy spiders, with an HTTP API"
 name = "scrapyd"
-optional = true
+optional = false
 python-versions = "*"
 version = "1.1.0"
 
@@ -3614,7 +3617,7 @@ Twisted = ">=8.0"
 category = "main"
 description = "A client for scrapyd"
 name = "scrapyd-client"
-optional = true
+optional = false
 python-versions = "*"
 version = "1.1.0"
 
@@ -3626,7 +3629,7 @@ six = "*"
 category = "main"
 description = "Service identity verification for pyOpenSSL & cryptography."
 name = "service-identity"
-optional = true
+optional = false
 python-versions = "*"
 version = "18.1.0"
 
@@ -3824,7 +3827,7 @@ url = ["furl (>=0.4.1)"]
 category = "main"
 description = "Persistent dict in Python, backed up by sqlite3 and pickle, multithread-safe."
 name = "sqlitedict"
-optional = true
+optional = false
 python-versions = "*"
 version = "1.6.0"
 
@@ -4143,7 +4146,7 @@ version = "0.6.1"
 [[package]]
 category = "main"
 description = "Enable Unicode input and display when running Python from Windows console."
-marker = "sys_platform == \"win32\" and python_version == \"2.7\" or sys_platform == \"win32\" and python_version < \"3.6\""
+marker = "sys_platform == \"win32\" and python_version < \"3.6\" or sys_platform == \"win32\" and python_version == \"2.7\""
 name = "win-unicode-console"
 optional = false
 python-versions = "*"
@@ -4295,7 +4298,7 @@ worker-node = ["flower", "superlance", "tornado"]
 xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
-content-hash = "14aad26c1ae5004405e9a82ea47ecdba5530c1ff15f52b3b69a15f3128d0de1b"
+content-hash = "8700606a49aaa920bf03d168fcea267af122fb65a402d04a296d0cdc0cca04cf"
 lock-version = "1.0"
 python-versions = ">=2.7,<3.0"
 
@@ -4748,8 +4751,8 @@ harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
 hepcrawl = [
-    {file = "hepcrawl-13.0.32-py2.py3-none-any.whl", hash = "sha256:a143b384d3fe37b9db1c3c2d2a45a1f28a2a6155b25a0381588167a9f9b392c3"},
-    {file = "hepcrawl-13.0.32.tar.gz", hash = "sha256:ed355189c08119c910a79ed6906a05c10e47f04d296a895fe898c111932496cb"},
+    {file = "hepcrawl-13.0.33-py2.py3-none-any.whl", hash = "sha256:88f02d965ca8e95212456cfea7e4068dc2bcb2ea5ca36ec1c99b42f71ffcf573"},
+    {file = "hepcrawl-13.0.33.tar.gz", hash = "sha256:d81010990d0b00a14bb2761cc4ca4c97b3f72795495507c3609a0bd6802dca66"},
 ]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
@@ -5083,20 +5086,39 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1-cp35-cp35m-win32.whl", hash = "sha256:6dd73240d2af64df90aa7c4e7481e23825ea70af4b4922f8ede5b9e35f78a3b1"},
     {file = "MarkupSafe-1.1.1-cp35-cp35m-win_amd64.whl", hash = "sha256:9add70b36c5666a2ed02b43b335fe19002ee5235efd4b8a89bfcf9005bebac0d"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-macosx_10_6_intel.whl", hash = "sha256:24982cc2533820871eba85ba648cd53d8623687ff11cbb805be4ff7b4c971aff"},
+    {file = "MarkupSafe-1.1.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:d53bc011414228441014aa71dbec320c66468c1030aae3a6e29778a3382d96e5"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:00bc623926325b26bb9605ae9eae8a215691f33cae5df11ca5424f06f2d1f473"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:717ba8fe3ae9cc0006d7c451f0bb265ee07739daf76355d06366154ee68d221e"},
+    {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux2010_i686.whl", hash = "sha256:3b8a6499709d29c2e2399569d96719a1b21dcd94410a586a18526b143ec8470f"},
+    {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:84dee80c15f1b560d55bcfe6d47b27d070b4681c699c572af2e3c7cc90a3b8e0"},
+    {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux2014_aarch64.whl", hash = "sha256:b1dba4527182c95a0db8b6060cc98ac49b9e2f5e64320e2b56e47cb2831978c7"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-win32.whl", hash = "sha256:535f6fc4d397c1563d08b88e485c3496cf5784e927af890fb3c3aac7f933ec66"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-win_amd64.whl", hash = "sha256:b1282f8c00509d99fef04d8ba936b156d419be841854fe901d8ae224c59f0be5"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-macosx_10_6_intel.whl", hash = "sha256:8defac2f2ccd6805ebf65f5eeb132adcf2ab57aa11fdf4c0dd5169a004710e7d"},
+    {file = "MarkupSafe-1.1.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:bf5aa3cbcfdf57fa2ee9cd1822c862ef23037f5c832ad09cfea57fa846dec193"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:46c99d2de99945ec5cb54f23c8cd5689f6d7177305ebff350a58ce5f8de1669e"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:ba59edeaa2fc6114428f1637ffff42da1e311e29382d81b339c1817d37ec93c6"},
+    {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux2010_i686.whl", hash = "sha256:6fffc775d90dcc9aed1b89219549b329a9250d918fd0b8fa8d93d154918422e1"},
+    {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux2010_x86_64.whl", hash = "sha256:a6a744282b7718a2a62d2ed9d993cad6f5f585605ad352c11de459f4108df0a1"},
+    {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:195d7d2c4fbb0ee8139a6cf67194f3973a6b3042d742ebe0a9ed36d8b6f0c07f"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win32.whl", hash = "sha256:b00c1de48212e4cc9603895652c5c410df699856a2853135b3967591e4beebc2"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win_amd64.whl", hash = "sha256:9bf40443012702a1d2070043cb6291650a0841ece432556f784f004937f0f32c"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:6788b695d50a51edb699cb55e35487e430fa21f1ed838122d722e0ff0ac5ba15"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux1_i686.whl", hash = "sha256:cdb132fc825c38e1aeec2c8aa9338310d29d337bebbd7baa06889d09a60a1fa2"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:13d3144e1e340870b25e7b10b98d779608c02016d5184cfb9927a9f10c689f42"},
+    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux2010_i686.whl", hash = "sha256:acf08ac40292838b3cbbb06cfe9b2cb9ec78fce8baca31ddb87aaac2e2dc3bc2"},
+    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:d9be0ba6c527163cbed5e0857c451fcd092ce83947944d6c14bc95441203f032"},
+    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:caabedc8323f1e93231b52fc32bdcde6db817623d33e100708d9a68e1f53b26b"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-win32.whl", hash = "sha256:596510de112c685489095da617b5bcbbac7dd6384aeebeda4df6025d0256a81b"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:e8313f01ba26fbbe36c7be1966a7b7424942f670f38e666995b88d012765b9be"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:d73a845f227b0bfe8a7455ee623525ee656a9e2e749e4742706d80a6065d5e2c"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux1_i686.whl", hash = "sha256:98bae9582248d6cf62321dcb52aaf5d9adf0bad3b40582925ef7c7f0ed85fceb"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:2beec1e0de6924ea551859edb9e7679da6e4870d32cb766240ce17e0a0ba2014"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux2010_i686.whl", hash = "sha256:7fed13866cf14bba33e7176717346713881f56d9d2bcebab207f7a036f41b850"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux2010_x86_64.whl", hash = "sha256:6f1e273a344928347c1290119b493a1f0303c52f5a5eae5f16d74f48c15d4a85"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:feb7b34d6325451ef96bc0e36e1a6c0c1c64bc1fbec4b854f4529e51887b1621"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-win32.whl", hash = "sha256:22c178a091fc6630d0d045bdb5992d2dfe14e3259760e713c490da5323866c39"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-win_amd64.whl", hash = "sha256:b7d644ddb4dbd407d31ffb699f1d140bc35478da613b441c582aeb7c43838dd8"},
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
 ]
 marshmallow = [
