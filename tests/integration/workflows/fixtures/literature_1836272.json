@@ -1,0 +1,1048 @@
+{
+  "citation_count_without_self_citations": 0,
+  "citation_count": 0,
+  "dois": [
+    {
+      "value": "10.1016/j.adt.2020.101372",
+      "source": "Elsevier"
+    }
+  ],
+  "self": {
+    "$ref": "https://inspirehep.net/api/literature/1836272"
+  },
+  "titles": [
+    {
+      "title": "Theoretical level energies, radiative lifetimes and transitions in W IX",
+      "source": "Elsevier"
+    }
+  ],
+  "$schema": "https://inspirehep.net/schemas/records/hep.json",
+  "authors": [
+    {
+      "ids": [
+        {
+          "value": "0000-0002-2928-2940",
+          "schema": "ORCID"
+        },
+        {
+          "value": "K.Koziol.1",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "9f17ad5e-9a80-4380-b251-7a49b97182fe",
+      "emails": ["karol.koziol@ncbj.gov.pl"],
+      "full_name": "Kozioł, Karol",
+      "signature_block": "CASALk",
+      "raw_affiliations": [
+        {
+          "value": "Narodowe Centrum Badań Jądrowych (NCBJ), Andrzeja Sołtana 7, 05-400 Otwock-Świerk, Poland"
+        }
+      ],
+      "affiliations": [
+        {
+          "value": "NCBJ, Swierk"
+        }
+      ]
+    },
+    {
+      "ids": [
+        {
+          "value": "J.Rzadkiewicz.2",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "9d3cc445-8d2a-41f9-a00f-d1ae79343e7a",
+      "full_name": "Rzadkiewicz, Jacek",
+      "signature_block": "RSADCACj",
+      "raw_affiliations": [
+        {
+          "value": "Narodowe Centrum Badań Jądrowych (NCBJ), Andrzeja Sołtana 7, 05-400 Otwock-Świerk, Poland"
+        }
+      ],
+      "affiliations": [
+        {
+          "value": "NCBJ, Swierk"
+        }
+      ]
+    }
+  ],
+  "curated": true,
+  "texkeys": ["Koziol:2021vpm"],
+  "citeable": true,
+  "imprints": [
+    {
+      "date": "2021-01"
+    }
+  ],
+  "refereed": true,
+  "abstracts": [
+    {
+      "value": "The atomic states of the W IX (W 8+ ) tungsten ion lying below the W 9+ ionisation threshold have been studied theoretically, employing the multiconfiguration Dirac–Hartree–Fock method with configuration interaction. The level electronic structures and their energies are presented. The electric dipole (E1), magnetic dipole (M1), electric quadrupole (E2), and magnetic quadrupole (M2) radiative transitions have been computed in order to calculate the radiative lifetimes of given states. Transition wavelengths, energies, and decay rates are also presented for selected high-intensity E1 transitions. The configuration interaction method was applied to estimate electron correlation effects. The aim of the present research was to fill a lack of atomic data for low-charged tungsten ions, which may be useful in low-temperature plasma diagnostics and may form the base for collisional–radiative modelling of spectra for low-charged tungsten ions.",
+      "source": "Elsevier"
+    }
+  ],
+  "copyright": [
+    {
+      "statement": "Elsevier Inc."
+    }
+  ],
+  "documents": [
+    {
+      "key": "5faad5074e2723d6522cde4bd30ae0ca",
+      "url": "https://inspirehep.net/files/5faad5074e2723d6522cde4bd30ae0ca",
+      "hidden": true,
+      "source": "Elsevier",
+      "filename": "S0092640X20300383.xml"
+    }
+  ],
+  "references": [
+    {
+      "reference": {
+        "label": "1",
+        "authors": [
+          {
+            "full_name": "Matthews, G.F."
+          },
+          {
+            "full_name": "Edwards, P."
+          },
+          {
+            "full_name": "Hirai, T."
+          },
+          {
+            "full_name": "Kear, M."
+          },
+          {
+            "full_name": "Lioure, A."
+          },
+          {
+            "full_name": "Lomas, P."
+          },
+          {
+            "full_name": "Loving, A."
+          },
+          {
+            "full_name": "Lungu, C."
+          },
+          {
+            "full_name": "Maier, H."
+          },
+          {
+            "full_name": "Mertens, P."
+          },
+          {
+            "full_name": "Neilson, D."
+          },
+          {
+            "full_name": "Neu, R."
+          },
+          {
+            "full_name": "Pamela, J."
+          },
+          {
+            "full_name": "Philipps, V."
+          },
+          {
+            "full_name": "Piazza, G."
+          },
+          {
+            "full_name": "Riccardo, V."
+          },
+          {
+            "full_name": "Rubel, M."
+          },
+          {
+            "full_name": "Ruset, C."
+          },
+          {
+            "full_name": "Villedieu, E."
+          },
+          {
+            "full_name": "Way, M."
+          }
+        ],
+        "publication_info": {
+          "year": 2007,
+          "artid": "137",
+          "page_start": "137",
+          "journal_title": "Phys.Scripta T",
+          "journal_volume": "128"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "2",
+        "authors": [
+          {
+            "full_name": "Bolt, H."
+          },
+          {
+            "full_name": "Barabash, V."
+          },
+          {
+            "full_name": "Federici, G."
+          },
+          {
+            "full_name": "Linke, J."
+          },
+          {
+            "full_name": "Loarte, A."
+          },
+          {
+            "full_name": "Roth, J."
+          },
+          {
+            "full_name": "Sato, K."
+          }
+        ],
+        "publication_info": {
+          "year": 2002,
+          "artid": "43",
+          "page_start": "43",
+          "journal_title": "J.Nucl.Mater.",
+          "journal_volume": "307-311"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "3",
+        "authors": [
+          {
+            "full_name": "Ralchenko"
+          },
+          {
+            "full_name": "Yu."
+          }
+        ],
+        "publication_info": {
+          "year": 2013,
+          "artid": "2503024",
+          "journal_title": "Plasma Fusion Res.",
+          "journal_volume": "8"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "4",
+        "authors": [
+          {
+            "full_name": "Pütterich, T."
+          },
+          {
+            "full_name": "Neu, R."
+          },
+          {
+            "full_name": "Dux, R."
+          },
+          {
+            "full_name": "Whiteford, A.D."
+          },
+          {
+            "full_name": "O'Mullane, M.G."
+          }
+        ],
+        "publication_info": {
+          "year": 2008,
+          "artid": "085016",
+          "journal_title": "Plasma Phys.Control.Fusion",
+          "journal_volume": "50"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "5",
+        "authors": [
+          {
+            "full_name": "Divertor, ITER Physics Expert Group on"
+          }
+        ],
+        "publication_info": {
+          "year": 1999,
+          "artid": "39",
+          "page_start": "39",
+          "journal_title": "ITER Physics Expert Group on Divertor Modelling and Database",
+          "journal_volume": " and ITER Physics Basis Editors"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "6",
+        "authors": [
+          {
+            "full_name": "Clementson, J."
+          },
+          {
+            "full_name": "Beiersdorfer, P."
+          },
+          {
+            "full_name": "Magee, E.W."
+          },
+          {
+            "full_name": "McLean, H.S."
+          },
+          {
+            "full_name": "Wood, R.D."
+          }
+        ],
+        "publication_info": {
+          "year": 2010,
+          "artid": "144009",
+          "journal_title": "J.Phys.B",
+          "journal_volume": "43"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "7",
+        "authors": [
+          {
+            "full_name": "Clementson, J."
+          },
+          {
+            "full_name": "Lennartsson, T."
+          },
+          {
+            "full_name": "Beiersdorfer, P."
+          }
+        ],
+        "publication_info": {
+          "year": 2015,
+          "artid": "407",
+          "page_start": "407",
+          "journal_title": "Atoms",
+          "journal_volume": "3"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "8",
+        "authors": [
+          {
+            "full_name": "Lu, Q."
+          },
+          {
+            "full_name": "He, J."
+          },
+          {
+            "full_name": "Tian, H."
+          },
+          {
+            "full_name": "Li, M."
+          },
+          {
+            "full_name": "Yang, Y."
+          },
+          {
+            "full_name": "Yao, K."
+          },
+          {
+            "full_name": "Chen, C."
+          },
+          {
+            "full_name": "Xiao, J."
+          },
+          {
+            "full_name": "Li, J.G."
+          },
+          {
+            "full_name": "Tu, B."
+          },
+          {
+            "full_name": "Zou, Y."
+          }
+        ],
+        "publication_info": {
+          "year": 2019,
+          "artid": "042510",
+          "journal_title": "Phys.Rev.A",
+          "journal_volume": "99"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "9",
+        "authors": [
+          {
+            "full_name": "Sugar, J."
+          },
+          {
+            "full_name": "Kaufman, V."
+          }
+        ],
+        "publication_info": {
+          "year": 1975,
+          "artid": "994",
+          "page_start": "994",
+          "journal_title": "Phys.Rev.A",
+          "journal_volume": "12"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "https://inspirehep.net/api/literature/919356"
+      },
+      "reference": {
+        "label": "10",
+        "authors": [
+          {
+            "full_name": "Berengut, J.C."
+          },
+          {
+            "full_name": "Dzuba, V.A."
+          },
+          {
+            "full_name": "Flambaum, V.V."
+          },
+          {
+            "full_name": "Ong, A."
+          }
+        ],
+        "publication_info": {
+          "year": 2011,
+          "artid": "210802",
+          "journal_title": "Phys.Rev.Lett.",
+          "journal_volume": "106"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "reference": {
+        "label": "11",
+        "authors": [
+          {
+            "full_name": "Safronova, M.S."
+          },
+          {
+            "full_name": "Budker, D."
+          },
+          {
+            "full_name": "Demille, D."
+          },
+          {
+            "full_name": "Kimball, D.F."
+          },
+          {
+            "full_name": "Derevianko, A."
+          },
+          {
+            "full_name": "Clark, C.W."
+          }
+        ],
+        "publication_info": {
+          "year": 2018,
+          "artid": "25008",
+          "journal_title": "Rev.Mod.Phys.",
+          "journal_volume": "90"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "https://inspirehep.net/api/literature/1617500"
+      },
+      "reference": {
+        "label": "12",
+        "authors": [
+          {
+            "full_name": "Kramida, A.E."
+          },
+          {
+            "full_name": "Shirai, T."
+          }
+        ],
+        "publication_info": {
+          "year": 2009,
+          "artid": "305",
+          "page_start": "305",
+          "journal_title": "Atom.Data Nucl.Data Tabl.",
+          "journal_volume": "95"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "reference": {
+        "misc": ["Phys.Scripta,87"],
+        "label": "13",
+        "authors": [
+          {
+            "full_name": "Ryabtsev, A.N."
+          },
+          {
+            "full_name": "Kononov"
+          },
+          {
+            "full_name": "E.Ya."
+          },
+          {
+            "full_name": "Kildiyarova, R.R."
+          },
+          {
+            "full_name": "Tchang-Brillet"
+          },
+          {
+            "full_name": "W.-Ü.l."
+          },
+          {
+            "full_name": "Wyart, J.-F."
+          }
+        ],
+        "publication_info": {
+          "year": 2013
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "14",
+        "authors": [
+          {
+            "full_name": "Ryabtsev, A."
+          },
+          {
+            "full_name": "Kononov, E."
+          },
+          {
+            "full_name": "Kildiyarova, R."
+          },
+          {
+            "full_name": "Tchang-Brillet"
+          },
+          {
+            "full_name": "W.-Ü.l."
+          },
+          {
+            "full_name": "Wyart, J.-F."
+          },
+          {
+            "full_name": "Champion, N."
+          },
+          {
+            "full_name": "Blaess, C."
+          }
+        ],
+        "publication_info": {
+          "year": 2015,
+          "artid": "273",
+          "page_start": "273",
+          "journal_title": "Atoms",
+          "journal_volume": "3"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "15",
+        "authors": [
+          {
+            "full_name": "Deprince, J."
+          },
+          {
+            "full_name": "Quinet, P."
+          }
+        ],
+        "publication_info": {
+          "year": 2015,
+          "artid": "299",
+          "page_start": "299",
+          "journal_title": "Atoms",
+          "journal_volume": "3"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "16",
+        "title": {
+          "title": "The Theory of Atomic Structure and Spectra"
+        },
+        "authors": [
+          {
+            "full_name": "Cowan, R.D."
+          }
+        ],
+        "imprint": {
+          "publisher": "University of California Press"
+        },
+        "publication_info": {
+          "year": 1981
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "17",
+        "authors": [
+          {
+            "full_name": "Mita, M."
+          },
+          {
+            "full_name": "Sakaue, H."
+          },
+          {
+            "full_name": "Kato, D."
+          },
+          {
+            "full_name": "Murakami, I."
+          },
+          {
+            "full_name": "Nakamura, N."
+          }
+        ],
+        "publication_info": {
+          "year": 2017,
+          "artid": "13",
+          "page_start": "13",
+          "journal_title": "Atoms",
+          "journal_volume": "5"
+        }
+      }
+    },
+    {
+      "reference": {
+        "misc": ["[Online]. Available: https://physics.nist.gov/asd"],
+        "urls": [
+          {
+            "value": "https://physics.nist.gov/asd"
+          }
+        ],
+        "label": "18",
+        "title": {
+          "title": "NIST Atomic Spectra Database, (Version 5.7.1)"
+        },
+        "authors": [
+          {
+            "full_name": "Kramida, A."
+          },
+          {
+            "full_name": "Ralchenko"
+          },
+          {
+            "full_name": "Yu."
+          },
+          {
+            "full_name": "Reader, J."
+          }
+        ],
+        "imprint": {
+          "publisher": "National Institute of Standards and Technology Gaithersburg, MD"
+        },
+        "publication_info": {
+          "year": 2019
+        }
+      }
+    },
+    {
+      "reference": {
+        "misc": ["(Private communication"],
+        "label": "19",
+        "authors": [
+          {
+            "full_name": "Nakamura, N."
+          }
+        ]
+      }
+    },
+    {
+      "reference": {
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Froese Fischer, C."
+          },
+          {
+            "full_name": "Gaigalas, G."
+          },
+          {
+            "full_name": "Jönsson, P."
+          },
+          {
+            "full_name": "Bieroń, J."
+          }
+        ],
+        "publication_info": {
+          "year": 2019,
+          "artid": "184",
+          "page_start": "184",
+          "journal_title": "Comput.Phys.Commun.",
+          "journal_volume": "237"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "21",
+        "authors": [
+          {
+            "full_name": "Grant, I.P."
+          }
+        ],
+        "publication_info": {
+          "year": 1984,
+          "artid": "23",
+          "page_start": "23",
+          "journal_title": "Int.J.Quant.Chem.",
+          "journal_volume": "25"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "22",
+        "authors": [
+          {
+            "full_name": "Dyall, K.G."
+          },
+          {
+            "full_name": "Grant, I.P."
+          },
+          {
+            "full_name": "Johnson, C."
+          },
+          {
+            "full_name": "Parpia, F.A."
+          },
+          {
+            "full_name": "Plummer, E."
+          }
+        ],
+        "publication_info": {
+          "year": 1989,
+          "artid": "425",
+          "page_start": "425",
+          "journal_title": "Comput.Phys.Commun.",
+          "journal_volume": "55"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "23",
+        "authors": [
+          {
+            "full_name": "Grant, I.P."
+          }
+        ],
+        "publication_info": {
+          "year": 2007,
+          "artid": " and Plasma Physics",
+          "journal_title": "Springer Series on Atomic",
+          "journal_volume": " Optical"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "24",
+        "authors": [
+          {
+            "full_name": "McKenzie, B.J."
+          },
+          {
+            "full_name": "Grant, I.P."
+          },
+          {
+            "full_name": "Norrington, P.H."
+          }
+        ],
+        "publication_info": {
+          "year": 1980,
+          "artid": "233",
+          "page_start": "233",
+          "journal_title": "Comput.Phys.Commun.",
+          "journal_volume": "21"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "https://inspirehep.net/api/literature/352087"
+      },
+      "reference": {
+        "label": "25",
+        "authors": [
+          {
+            "full_name": "Mohr, P.J."
+          }
+        ],
+        "publication_info": {
+          "year": 1992,
+          "artid": "4421",
+          "page_start": "4421",
+          "journal_title": "Phys.Rev.A",
+          "journal_volume": "46"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "https://inspirehep.net/api/literature/113313"
+      },
+      "reference": {
+        "label": "26",
+        "authors": [
+          {
+            "full_name": "Fullerton, L.W."
+          },
+          {
+            "full_name": "Rinker, G.A."
+          }
+        ],
+        "publication_info": {
+          "year": 1976,
+          "artid": "1283",
+          "page_start": "1283",
+          "journal_title": "Phys.Rev.A",
+          "journal_volume": "13"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "reference": {
+        "label": "27",
+        "authors": [
+          {
+            "full_name": "Grant, I.P."
+          }
+        ],
+        "publication_info": {
+          "year": 1974,
+          "artid": "1458",
+          "page_start": "1458",
+          "journal_title": "J.Phys.B",
+          "journal_volume": "7"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "28",
+        "authors": [
+          {
+            "full_name": "Gu, M.F."
+          }
+        ],
+        "publication_info": {
+          "year": 2008,
+          "artid": "675",
+          "page_start": "675",
+          "journal_title": "Can.J.Phys.",
+          "journal_volume": "86"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "29",
+        "authors": [
+          {
+            "full_name": "Rzadkiewicz, J."
+          },
+          {
+            "full_name": "Yang, Y."
+          },
+          {
+            "full_name": "Kozioł, K."
+          },
+          {
+            "full_name": "O'Mullane, M.G."
+          },
+          {
+            "full_name": "Patel, A."
+          },
+          {
+            "full_name": "Xiao, J."
+          },
+          {
+            "full_name": "Yao, K."
+          },
+          {
+            "full_name": "Shen, Y."
+          },
+          {
+            "full_name": "Lu, D."
+          },
+          {
+            "full_name": "Hutton, R."
+          },
+          {
+            "full_name": "Zou, Y."
+          }
+        ],
+        "publication_info": {
+          "year": 2018,
+          "artid": "052501",
+          "journal_title": "Phys.Rev.A",
+          "journal_volume": "97"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "30",
+        "authors": [
+          {
+            "full_name": "Kozioł, K."
+          },
+          {
+            "full_name": "Rzadkiewicz, J."
+          }
+        ],
+        "publication_info": {
+          "year": 2018,
+          "artid": "062504",
+          "journal_title": "Phys.Rev.A",
+          "journal_volume": "98"
+        }
+      }
+    },
+    {
+      "reference": {
+        "label": "31",
+        "authors": [
+          {
+            "full_name": "Kramida, A."
+          }
+        ],
+        "publication_info": {
+          "year": 2013,
+          "artid": "313",
+          "page_start": "313",
+          "journal_title": "Fusion Sci.Tech.",
+          "journal_volume": "63"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "https://inspirehep.net/api/literature/1617591"
+      },
+      "reference": {
+        "label": "32",
+        "authors": [
+          {
+            "full_name": "Kramida, A.E."
+          },
+          {
+            "full_name": "Reader, J."
+          }
+        ],
+        "publication_info": {
+          "year": 2006,
+          "artid": "457",
+          "page_start": "457",
+          "journal_title": "Atom.Data Nucl.Data Tabl.",
+          "journal_volume": "92"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "reference": {
+        "label": "33",
+        "authors": [
+          {
+            "full_name": "Beiersdorfer, P."
+          },
+          {
+            "full_name": "May, M."
+          },
+          {
+            "full_name": "Scofield, J.H."
+          },
+          {
+            "full_name": "Hansen, S."
+          }
+        ],
+        "publication_info": {
+          "year": 2012,
+          "artid": "271",
+          "page_start": "271",
+          "journal_title": "High Energy Dens.Phys.",
+          "journal_volume": "8"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "https://inspirehep.net/api/literature/1617460"
+      },
+      "reference": {
+        "label": "34",
+        "authors": [
+          {
+            "full_name": "Rodrigues, G."
+          },
+          {
+            "full_name": "Indelicato, P."
+          },
+          {
+            "full_name": "Santos, J."
+          },
+          {
+            "full_name": "Patté, P."
+          },
+          {
+            "full_name": "Parente, F."
+          }
+        ],
+        "publication_info": {
+          "year": 2004,
+          "artid": "117",
+          "page_start": "117",
+          "journal_title": "Atom.Data Nucl.Data Tabl.",
+          "journal_volume": "86"
+        }
+      },
+      "curated_relation": false
+    }
+  ],
+  "_collections": ["Literature"],
+  "document_type": ["article"],
+  "control_number": 1836272,
+  "legacy_version": "20201231125158.0",
+  "publication_info": [
+    {
+      "year": 2021,
+      "artid": "101372",
+      "journal_title": "Atom.Data Nucl.Data Tabl.",
+      "journal_record": {
+        "$ref": "https://inspirehep.net/api/journals/1214882"
+      },
+      "journal_volume": "137"
+    }
+  ],
+  "acquisition_source": {
+    "method": "batchuploader",
+    "source": "Elsevier"
+  },
+  "inspire_categories": [
+    {
+      "term": "Theory-Nucl"
+    }
+  ],
+  "legacy_creation_date": "2020-12-14",
+  "updated": "2021-05-01T16:47:42.467512+00:00",
+  "links": {
+    "bibtex": "https://inspirehep.net/api/literature/1836272?format=bibtex",
+    "latex-eu": "https://inspirehep.net/api/literature/1836272?format=latex-eu",
+    "latex-us": "https://inspirehep.net/api/literature/1836272?format=latex-us",
+    "json": "https://inspirehep.net/api/literature/1836272?format=json",
+    "citations": "https://inspirehep.net/api/literature/?q=refersto%3Arecid%3A1836272"
+  },
+  "uuid": "9a85b90e-8641-413f-a3bb-97647ee22162",
+  "id": "1836272",
+  "created": "2020-12-14T00:00:00+00:00"
+}

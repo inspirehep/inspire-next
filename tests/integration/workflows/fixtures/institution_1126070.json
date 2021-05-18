@@ -1,0 +1,80 @@
+{
+  "uuid": "53838202-2a39-437c-85bd-ef83ff1e3b27",
+  "addresses": [
+    {
+      "cities": ["Swierk"],
+      "latitude": 52.1124571,
+      "longitude": 21.3456627,
+      "postal_code": "05-400",
+      "country_code": "PL",
+      "postal_address": ["ul. Andrzeja Sołtana 7", "05-400 Otwock, Świerk"],
+      "country": "Poland"
+    }
+  ],
+  "number_of_papers": 1889,
+  "ICN": ["NCBJ, Swierk"],
+  "core": true,
+  "self": {
+    "$ref": "https://inspirehep.net/api/institutions/1126070"
+  },
+  "urls": [
+    {
+      "value": "http://www.ncbj.gov.pl/"
+    }
+  ],
+  "$schema": "https://inspirehep.net/schemas/records/institutions.json",
+  "legacy_ICN": "NCBJ, Swierk",
+  "extra_words": ["National Center for Nuclear Research"],
+  "_collections": ["Institutions"],
+  "name_variants": [
+    {
+      "value": "National Centre for Nuclear Research"
+    }
+  ],
+  "_private_notes": [
+    {
+      "value": "grid.450295.f from Springer"
+    },
+    {
+      "value": "https://ror.org/00nzsxq20 from grid.450295.f"
+    }
+  ],
+  "control_number": 1126070,
+  "legacy_version": "20191024182029.0",
+  "historical_data": [
+    "fusion of Institute for Nuclear Studies (IPJ),  Institute of Atomic Energy (IEA) in Sep 2011"
+  ],
+  "related_records": [
+    {
+      "record": {
+        "$ref": "https://inspirehep.net/api/institutions/903333"
+      },
+      "relation": "predecessor",
+      "curated_relation": true
+    }
+  ],
+  "institution_type": ["Research Center"],
+  "legacy_creation_date": "2012-08-07",
+  "institution_hierarchy": [
+    {
+      "name": "Narodowe Centrum Badań Jądrowych",
+      "acronym": "NCBJ"
+    }
+  ],
+  "external_system_identifiers": [
+    {
+      "value": "grid.450295.f",
+      "schema": "GRID"
+    },
+    {
+      "value": "https://ror.org/00nzsxq20",
+      "schema": "ROR"
+    }
+  ],
+  "created": "2012-08-07T00:00:00+00:00",
+  "id": "1126070",
+  "updated": "2021-05-01T07:47:33.159393+00:00",
+  "links": {
+    "json": "http://localhost:5000/api/institutions/1126070?format=json"
+  }
+}

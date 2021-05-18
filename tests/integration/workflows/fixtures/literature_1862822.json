@@ -1,0 +1,1732 @@
+{
+  "created": "2021-05-12T00:00:00+00:00",
+  "updated": "2021-05-14T13:03:23.119138+00:00",
+  "uuid": "65f9ae57-052d-45a7-8322-0d8e723ffc0a",
+  "links": {
+    "bibtex": "http://localhost:5000/api/literature/1862822?format=bibtex",
+    "latex-eu": "http://localhost:5000/api/literature/1862822?format=latex-eu",
+    "latex-us": "http://localhost:5000/api/literature/1862822?format=latex-us",
+    "json": "http://localhost:5000/api/literature/1862822?format=json",
+    "citations": "http://localhost:5000/api/literature/?q=refersto%3Arecid%3A1862822"
+  },
+  "_collections": ["Literature"],
+  "citation_count_without_self_citations": 0,
+  "citation_count": 0,
+  "core": true,
+  "titles": [
+    {
+      "title": "Goldstone boson decays and chiral anomalies",
+      "source": "arXiv"
+    }
+  ],
+  "$schema": "http://localhost:5000/schemas/records/hep.json",
+  "authors": [
+    {
+      "ids": [
+        {
+          "value": "S.Pokorski.1",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "251f5043-1d2c-4121-8cb6-5035e1f80c90",
+      "emails": ["stefan.pokorski@fuw.edu.pl"],
+      "record": {
+        "$ref": "http://localhost:5000/api/authors/993090"
+      },
+      "full_name": "Pokorski, Stefan",
+      "affiliations": [
+        {
+          "value": "Warsaw U.",
+          "record": {
+            "$ref": "http://localhost:5000/api/institutions/903335"
+          }
+        }
+      ],
+      "signature_block": "PACARSCs",
+      "raw_affiliations": [
+        {
+          "value": ") Institute of Theoretical Physics, Faculty of Physics, University of Warsaw, Pasteura 5, PL 02-093, Warsaw, Poland"
+        }
+      ]
+    },
+    {
+      "ids": [
+        {
+          "value": "K.Sakurai.1",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "b990615d-ffe7-41fc-a3eb-39c18b025e59",
+      "emails": ["kazuki.sakurai@fuw.edu.pl"],
+      "record": {
+        "$ref": "http://localhost:5000/api/authors/1058900"
+      },
+      "full_name": "Sakurai, Kazuki",
+      "affiliations": [
+        {
+          "value": "Warsaw U.",
+          "record": {
+            "$ref": "http://localhost:5000/api/institutions/903335"
+          }
+        }
+      ],
+      "signature_block": "SACARk",
+      "raw_affiliations": [
+        {
+          "value": ") Institute of Theoretical Physics, Faculty of Physics, University of Warsaw, Pasteura 5, PL 02-093, Warsaw, Poland"
+        }
+      ]
+    }
+  ],
+  "curated": true,
+  "license": [
+    {
+      "url": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+      "license": "arXiv nonexclusive-distrib 1.0",
+      "material": "preprint"
+    }
+  ],
+  "texkeys": ["Pokorski:2021qgt"],
+  "citeable": true,
+  "keywords": [
+    {
+      "value": "gauge field theory, chiral",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "symmetry, global",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "anomaly, chiral",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "axion, decay",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "Goldstone particle, decay",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "symmetry, axial",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "spontaneous symmetry breaking",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "abelian",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "strong interaction",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "decay rate",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "gauge boson",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    }
+  ],
+  "abstracts": [
+    {
+      "value": "Martinus Veltman was the first to point out the inconsistency of the experimental value for the decay rate of $\\pi^0\\rightarrow\\gamma\\gamma$ and its calculation by J. Steinberger with the very successful concept of the pion as the (pseudo)Nambu-Goldstone boson of the spontaneously broken global axial symmetry of strong interactions. That inconsistency has been resolved by J. Bell and R. Jackiw in their famous paper on the chiral anomalies. We review the connection between the decay amplitudes of an axion into two gauge bosons in Abelian vector-like and chiral gauge theories. The axion is the Nambu-Goldstone boson of a spontaneously broken axial global symmetry of the theory. Similarly as for the vector-like gauge theory, also in the chiral one the axion decay amplitude is uniquely determined by the anomaly of the current of that global symmetry. Certain subtlety in the calculation of the anomaly in chiral gauge theories is emphasised.",
+      "source": "arXiv"
+    }
+  ],
+  "references": [
+    {
+      "raw_refs": [
+        {
+          "value": "[1] M. Veltman, Proc. Roy. Soc. A301, 107 (1967).",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "1",
+        "authors": [
+          {
+            "full_name": "Veltman, M."
+          }
+        ],
+        "publication_info": {
+          "year": 1967,
+          "artid": "107",
+          "page_start": "107",
+          "journal_title": "Proc.Roy.Soc.Lond.A A",
+          "journal_volume": "301"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/51184"
+      },
+      "raw_refs": [
+        {
+          "value": "[2] D. G. Sutherland, Nucl. Phys. B 2 (1967) 433.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "2",
+        "authors": [
+          {
+            "full_name": "Sutherland, D.G."
+          }
+        ],
+        "publication_info": {
+          "year": 1967,
+          "artid": "433",
+          "page_start": "433",
+          "journal_title": "Nucl.Phys.B",
+          "journal_volume": "2"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/8804"
+      },
+      "raw_refs": [
+        {
+          "value": "[3] J. Steinberger, Phys. Rev. 76 (1949) 1180; See also R. J. Finkelstein, Phys. Rev. 72 (1947) no.5, 415; H. Fukuda and Y. Miyamoto, Prog. Theor. Phys. 4, 347 (1949); J. S. Schwinger, Phys. Rev. 82 (1951) 664; L. Rosenberg, Phys. Rev. 129 (1963) 2786; S. Sakata and Y. Tanikawa, Phys. Rev. 57 (1940) 548.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "3",
+        "authors": [
+          {
+            "full_name": "Steinberger, J."
+          }
+        ],
+        "publication_info": {
+          "year": 1949,
+          "artid": "1180",
+          "page_start": "1180",
+          "journal_title": "Phys.Rev.",
+          "journal_volume": "76"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1813935"
+      },
+      "raw_refs": [
+        {
+          "value": "[3] J. Steinberger, Phys. Rev. 76 (1949) 1180; See also R. J. Finkelstein, Phys. Rev. 72 (1947) no.5, 415; H. Fukuda and Y. Miyamoto, Prog. Theor. Phys. 4, 347 (1949); J. S. Schwinger, Phys. Rev. 82 (1951) 664; L. Rosenberg, Phys. Rev. 129 (1963) 2786; S. Sakata and Y. Tanikawa, Phys. Rev. 57 (1940) 548.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["See also"],
+        "label": "3",
+        "authors": [
+          {
+            "full_name": "Finkelstein, R.J."
+          }
+        ],
+        "publication_info": {
+          "year": 1947,
+          "artid": "415",
+          "page_start": "415",
+          "journal_title": "Phys.Rev.",
+          "journal_volume": "72"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[3] J. Steinberger, Phys. Rev. 76 (1949) 1180; See also R. J. Finkelstein, Phys. Rev. 72 (1947) no.5, 415; H. Fukuda and Y. Miyamoto, Prog. Theor. Phys. 4, 347 (1949); J. S. Schwinger, Phys. Rev. 82 (1951) 664; L. Rosenberg, Phys. Rev. 129 (1963) 2786; S. Sakata and Y. Tanikawa, Phys. Rev. 57 (1940) 548.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "3",
+        "authors": [
+          {
+            "full_name": "Fukuda, H."
+          },
+          {
+            "full_name": "Miyamoto, Y."
+          }
+        ],
+        "publication_info": {
+          "year": 1949,
+          "artid": "347",
+          "page_start": "347",
+          "journal_title": "Prog.Theor.Phys.",
+          "journal_volume": "4"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/113"
+      },
+      "raw_refs": [
+        {
+          "value": "[3] J. Steinberger, Phys. Rev. 76 (1949) 1180; See also R. J. Finkelstein, Phys. Rev. 72 (1947) no.5, 415; H. Fukuda and Y. Miyamoto, Prog. Theor. Phys. 4, 347 (1949); J. S. Schwinger, Phys. Rev. 82 (1951) 664; L. Rosenberg, Phys. Rev. 129 (1963) 2786; S. Sakata and Y. Tanikawa, Phys. Rev. 57 (1940) 548.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "3",
+        "authors": [
+          {
+            "full_name": "Schwinger, J.S."
+          }
+        ],
+        "publication_info": {
+          "year": 1951,
+          "artid": "664",
+          "page_start": "664",
+          "journal_title": "Phys.Rev.",
+          "journal_volume": "82"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/40881"
+      },
+      "raw_refs": [
+        {
+          "value": "[3] J. Steinberger, Phys. Rev. 76 (1949) 1180; See also R. J. Finkelstein, Phys. Rev. 72 (1947) no.5, 415; H. Fukuda and Y. Miyamoto, Prog. Theor. Phys. 4, 347 (1949); J. S. Schwinger, Phys. Rev. 82 (1951) 664; L. Rosenberg, Phys. Rev. 129 (1963) 2786; S. Sakata and Y. Tanikawa, Phys. Rev. 57 (1940) 548.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "3",
+        "authors": [
+          {
+            "full_name": "Rosenberg, L."
+          }
+        ],
+        "publication_info": {
+          "year": 1963,
+          "artid": "2786",
+          "page_start": "2786",
+          "journal_title": "Phys.Rev.",
+          "journal_volume": "129"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/46650"
+      },
+      "raw_refs": [
+        {
+          "value": "[3] J. Steinberger, Phys. Rev. 76 (1949) 1180; See also R. J. Finkelstein, Phys. Rev. 72 (1947) no.5, 415; H. Fukuda and Y. Miyamoto, Prog. Theor. Phys. 4, 347 (1949); J. S. Schwinger, Phys. Rev. 82 (1951) 664; L. Rosenberg, Phys. Rev. 129 (1963) 2786; S. Sakata and Y. Tanikawa, Phys. Rev. 57 (1940) 548.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "3",
+        "authors": [
+          {
+            "full_name": "Sakata, S."
+          },
+          {
+            "full_name": "Tanikawa, Y."
+          }
+        ],
+        "publication_info": {
+          "year": 1940,
+          "artid": "548",
+          "page_start": "548",
+          "journal_title": "Phys.Rev.",
+          "journal_volume": "57"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/54998"
+      },
+      "raw_refs": [
+        {
+          "value": "[4] J. S. Bell and R. Jackiw, Nuovo Cim. A 60 (1969) 47.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "4",
+        "authors": [
+          {
+            "full_name": "Bell, J.S."
+          },
+          {
+            "full_name": "Jackiw, R."
+          }
+        ],
+        "publication_info": {
+          "year": 1969,
+          "artid": "47",
+          "page_start": "47",
+          "journal_title": "Nuovo Cim.A",
+          "journal_volume": "60"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/119084"
+      },
+      "raw_refs": [
+        {
+          "value": "[5] R. D. Peccei and H. R. Quinn, Phys. Rev. Lett. 38 (1977), 1440-1443",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "5",
+        "authors": [
+          {
+            "full_name": "Peccei, R.D."
+          },
+          {
+            "full_name": "Quinn, H.R."
+          }
+        ],
+        "publication_info": {
+          "year": 1977,
+          "page_end": "1443",
+          "page_start": "1440",
+          "journal_title": "Phys.Rev.Lett.",
+          "journal_volume": "38"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/122138"
+      },
+      "raw_refs": [
+        {
+          "value": "[6] S. Weinberg, Phys. Rev. Lett. 40 (1978) 223.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "6",
+        "authors": [
+          {
+            "full_name": "Weinberg, S."
+          }
+        ],
+        "publication_info": {
+          "year": 1978,
+          "artid": "223",
+          "page_start": "223",
+          "journal_title": "Phys.Rev.Lett.",
+          "journal_volume": "40"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/5997"
+      },
+      "raw_refs": [
+        {
+          "value": "[7] F. Wilczek, Phys. Rev. Lett. 40 (1978) 279.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "7",
+        "authors": [
+          {
+            "full_name": "Wilczek, F."
+          }
+        ],
+        "publication_info": {
+          "year": 1978,
+          "artid": "279",
+          "page_start": "279",
+          "journal_title": "Phys.Rev.Lett.",
+          "journal_volume": "40"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/179499"
+      },
+      "raw_refs": [
+        {
+          "value": "[8] J. Preskill, M. B. Wise and F. Wilczek, Phys. Lett. B 120 (1983), 127-132",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "8",
+        "authors": [
+          {
+            "full_name": "Preskill, J."
+          },
+          {
+            "full_name": "Wise, M.B."
+          },
+          {
+            "full_name": "Wilczek, F."
+          }
+        ],
+        "publication_info": {
+          "year": 1983,
+          "page_end": "132",
+          "page_start": "127",
+          "journal_title": "Phys.Lett.B",
+          "journal_volume": "120"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/12562"
+      },
+      "raw_refs": [
+        {
+          "value": "[9] L. F. Abbott and P. Sikivie, Phys. Lett. B 120 (1983), 133-136",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "9",
+        "authors": [
+          {
+            "full_name": "Abbott, L.F."
+          },
+          {
+            "full_name": "Sikivie, P."
+          }
+        ],
+        "publication_info": {
+          "year": 1983,
+          "page_end": "136",
+          "page_start": "133",
+          "journal_title": "Phys.Lett.B",
+          "journal_volume": "120"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/179461"
+      },
+      "raw_refs": [
+        {
+          "value": "[10] M. Dine and W. Fischler, Phys. Lett. B 120 (1983), 137-141",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "10",
+        "authors": [
+          {
+            "full_name": "Dine, M."
+          },
+          {
+            "full_name": "Fischler, W."
+          }
+        ],
+        "publication_info": {
+          "year": 1983,
+          "page_end": "141",
+          "page_start": "137",
+          "journal_title": "Phys.Lett.B",
+          "journal_volume": "120"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1400955"
+      },
+      "raw_refs": [
+        {
+          "value": "[11] D.J.E. Marsh, Phys. Rept.643, 1 (2016).",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "11",
+        "authors": [
+          {
+            "full_name": "Marsh, D.J.E."
+          }
+        ],
+        "publication_info": {
+          "year": 2016,
+          "artid": "1",
+          "page_start": "1",
+          "journal_title": "Phys.Rept.",
+          "journal_volume": "643"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/299254"
+      },
+      "raw_refs": [
+        {
+          "value": "[12] K. Freese, J.A. Frieman, A.V. Olinto, Phys. Rev. Lett.65, 3233 (1990).",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "12",
+        "authors": [
+          {
+            "full_name": "Freese, K."
+          },
+          {
+            "full_name": "Frieman, J.A."
+          },
+          {
+            "full_name": "Olinto, A.V."
+          }
+        ],
+        "publication_info": {
+          "year": 1990,
+          "artid": "3233",
+          "page_start": "3233",
+          "journal_title": "Phys.Rev.Lett.",
+          "journal_volume": "65"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[13] J.E. Kim, H.P. Nilles, M. Peloso, JCAP0501, 005 (2005).",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["JCAP0501, 005"],
+        "label": "13",
+        "authors": [
+          {
+            "full_name": "Kim, J.E."
+          },
+          {
+            "full_name": "Nilles, H.P."
+          },
+          {
+            "full_name": "Peloso, M."
+          }
+        ],
+        "publication_info": {
+          "year": 2005
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/253512"
+      },
+      "raw_refs": [
+        {
+          "value": "[14] B. Ratra, P.J.E. Peebles, Phys. Rev.D37, 3406 (1988).",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "14",
+        "authors": [
+          {
+            "full_name": "Ratra, B."
+          },
+          {
+            "full_name": "Peebles, P.J.E."
+          }
+        ],
+        "publication_info": {
+          "year": 1988,
+          "artid": "3406",
+          "page_start": "3406",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "37"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/395076"
+      },
+      "raw_refs": [
+        {
+          "value": "[15] J.A. Frieman, C.T. Hill, A. Stebbins, I. Waga, Phys.Rev. Lett.75, 2077 (1995).",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "15",
+        "authors": [
+          {
+            "full_name": "Frieman, J.A."
+          },
+          {
+            "full_name": "Hill, C.T."
+          },
+          {
+            "full_name": "Stebbins, A."
+          },
+          {
+            "full_name": "Waga, I."
+          }
+        ],
+        "publication_info": {
+          "year": 1995,
+          "artid": "2077",
+          "page_start": "2077",
+          "journal_title": "Phys.Rev.Lett.",
+          "journal_volume": "75"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/600829"
+      },
+      "raw_refs": [
+        {
+          "value": "[16] J.E. Kim, H.P. Nilles, Phys. Lett.B553, 1 (2003); J.E. Kim, J. Korean Phys. Soc.64, 795 (2014).",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "16",
+        "authors": [
+          {
+            "full_name": "Kim, J.E."
+          },
+          {
+            "full_name": "Nilles, H.P."
+          }
+        ],
+        "publication_info": {
+          "year": 2003,
+          "artid": "1",
+          "page_start": "1",
+          "journal_title": "Phys.Lett.B",
+          "journal_volume": "553"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1265045"
+      },
+      "raw_refs": [
+        {
+          "value": "[16] J.E. Kim, H.P. Nilles, Phys. Lett.B553, 1 (2003); J.E. Kim, J. Korean Phys. Soc.64, 795 (2014).",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "16",
+        "authors": [
+          {
+            "full_name": "Kim, J.E."
+          }
+        ],
+        "publication_info": {
+          "year": 2014,
+          "artid": "795",
+          "page_start": "795",
+          "journal_title": "J.Korean Phys.Soc.",
+          "journal_volume": "64"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/250402"
+      },
+      "raw_refs": [
+        {
+          "value": "[17] S.W. Hawking, Phys. Lett.B195, 337 (1987).",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "17",
+        "authors": [
+          {
+            "full_name": "Hawking, S.W."
+          }
+        ],
+        "publication_info": {
+          "year": 1987,
+          "artid": "337",
+          "page_start": "337",
+          "journal_title": "Phys.Lett.B",
+          "journal_volume": "195"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/23288"
+      },
+      "raw_refs": [
+        {
+          "value": "[18] S.B. Giddings, A. Strominger, Nucl. Phys.B307, 854(1988).",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "18",
+        "authors": [
+          {
+            "full_name": "Giddings, S.B."
+          },
+          {
+            "full_name": "Strominger, A."
+          }
+        ],
+        "publication_info": {
+          "year": 1988,
+          "artid": "854",
+          "page_start": "854",
+          "journal_title": "Nucl.Phys.B",
+          "journal_volume": "307"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/880647"
+      },
+      "raw_refs": [
+        {
+          "value": "[19] T. Banks, N. Seiberg, Phys. Rev.D83, 084019 (2011).",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "19",
+        "authors": [
+          {
+            "full_name": "Banks, T."
+          },
+          {
+            "full_name": "Seiberg, N."
+          }
+        ],
+        "publication_info": {
+          "year": 2011,
+          "artid": "084019",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "83"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/11201"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Kim, J.E."
+          }
+        ],
+        "publication_info": {
+          "year": 1981,
+          "artid": "3007",
+          "page_start": "3007",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "24"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/165570"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Georgi, H.M."
+          },
+          {
+            "full_name": "Hall, L.J."
+          },
+          {
+            "full_name": "Wise, M.B."
+          }
+        ],
+        "publication_info": {
+          "year": 1981,
+          "artid": "409",
+          "page_start": "409",
+          "journal_title": "Nucl.Phys.B",
+          "journal_volume": "192"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/178390"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Dimopoulos, S."
+          },
+          {
+            "full_name": "Frampton, P.H."
+          },
+          {
+            "full_name": "Georgi, H."
+          },
+          {
+            "full_name": "M.B.Wise"
+          }
+        ],
+        "publication_info": {
+          "year": 1982,
+          "artid": "185",
+          "page_start": "185",
+          "journal_title": "Phys.Lett.B",
+          "journal_volume": "117"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/12212"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Kang, K."
+          },
+          {
+            "full_name": "Koh, I.G."
+          },
+          {
+            "full_name": "Ouvry, S."
+          }
+        ],
+        "publication_info": {
+          "year": 1982,
+          "artid": "361",
+          "page_start": "361",
+          "journal_title": "Phys.Lett.B",
+          "journal_volume": "119"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/332710"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Barr, S.M."
+          },
+          {
+            "full_name": "Seckel, D."
+          }
+        ],
+        "publication_info": {
+          "year": 1992,
+          "artid": "539",
+          "page_start": "539",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "46"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/332440"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Kamionkowski, M."
+          },
+          {
+            "full_name": "March-Russell, J."
+          }
+        ],
+        "publication_info": {
+          "year": 1992,
+          "artid": "137",
+          "page_start": "137",
+          "journal_title": "Phys.Lett.B",
+          "journal_volume": "282"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/332731"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Holman, R."
+          },
+          {
+            "full_name": "Hsu, S.D.H."
+          },
+          {
+            "full_name": "Kephart, T.W."
+          },
+          {
+            "full_name": "Kolb, E.W."
+          },
+          {
+            "full_name": "Watkins, R."
+          },
+          {
+            "full_name": "Widrow, L.M."
+          }
+        ],
+        "publication_info": {
+          "year": 1992,
+          "artid": "132",
+          "page_start": "132",
+          "journal_title": "Phys.Lett.B",
+          "journal_volume": "282"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/586367"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Hill, C.T."
+          },
+          {
+            "full_name": "Leibovich, A.K."
+          }
+        ],
+        "publication_info": {
+          "year": 2002,
+          "artid": "016006",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "66"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/587103"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Hill, C.T."
+          },
+          {
+            "full_name": "Leibovich, A.K."
+          }
+        ],
+        "publication_info": {
+          "year": 2002,
+          "artid": "075010",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "66"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/601528"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Dias, A.G."
+          },
+          {
+            "full_name": "Pleitez, V."
+          },
+          {
+            "full_name": "Tonasse, M.D."
+          }
+        ],
+        "publication_info": {
+          "year": 2003,
+          "artid": "095008",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "67"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1246799"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange"
+        ],
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Harigaya, K."
+          },
+          {
+            "full_name": "Ibe, M."
+          },
+          {
+            "full_name": "Schmitz, K."
+          },
+          {
+            "full_name": "Yanagida, T.T."
+          }
+        ],
+        "publication_info": {
+          "year": 2013,
+          "artid": "075022",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "88"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1410777"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["JHEP06, 037 (2014)"],
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Ringwald, A."
+          },
+          {
+            "full_name": "Saikawa, K."
+          }
+        ],
+        "publication_info": {
+          "year": 2016,
+          "artid": "085031",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "93"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["JHEP05, 104"],
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Redi, M."
+          },
+          {
+            "full_name": "Sato, R."
+          }
+        ],
+        "publication_info": {
+          "year": 2016
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1516012"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["B. Lillard, T.M.P. Tait / JHEP11, 005  K. Choi, S.H. Im"],
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Fukuda, H."
+          },
+          {
+            "full_name": "Ibe, M."
+          },
+          {
+            "full_name": "Suzuki, M."
+          },
+          {
+            "full_name": "Yanagida, T.T."
+          }
+        ],
+        "publication_info": {
+          "year": 2017,
+          "artid": "327",
+          "page_start": "327",
+          "journal_title": "Phys.Lett.B",
+          "journal_volume": "771"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1665853"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] J.E. Kim, Phys. Rev.D24, 3007 (1981); H.M. Georgi, L.J. Hall, M.B. Wise, Nucl. Phys.B192,409 (1981); S. Dimopoulos, P.H. Frampton, H. Georgi, M.B.Wise, Phys. Lett.117B, 185 (1982) K. Kang, I.G. Koh, S. Ouvry, Phys. Lett.119B, 361(1982); S.M. Barr, D. Seckel, Phys. Rev. D46, 539 (1992); M. Kamionkowski, J. March-Russell, Phys. Lett.B282,137 (1992); R. Holman, S.D.H. Hsu, T.W. Kephart, E.W. Kolb,R. Watkins, L.M. Widrow, Phys. Lett.B282, 132 (1992); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 016006 (2002); C.T. Hill, A.K. Leibovich, Phys. Rev.D66, 075010 (2002); A.G. Dias, V. Pleitez, M.D. Tonasse, Phys. Rev.D67,095008 (2003); K. Harigaya, M. Ibe, K. Schmitz, T.T. Yanagida, Phys.Rev.D88, 075022 (2013) A.G. Dias, A.C.B. Machado, C.C. Nishi, A. Ringwald,P. Vaudrevange, JHEP06, 037 (2014) A. Ringwald, K. Saikawa, Phys.Rev.D93,085031 (2016); M. Redi, R. Sato, JHEP05, 104 (2016); H. Fukuda, M. Ibe, M. Suzuki, T.T. Yanagida, Phys.Lett.B771, 327 (2017) B. Lillard, T.M.P. Tait, JHEP11, 005 (2017) K. Choi, S.H. Im, JHEP01, 14 Q. Bonnefoy E. Dudas, S. Pokorski, Eur.Phys.J.C 79 (2019) 1, 31, [arXiv:1804.01112 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["JHEP01, 14 / 31"],
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Dudas"
+          },
+          {
+            "full_name": "E., Q. Bonnefoy"
+          },
+          {
+            "full_name": "Pokorski, S."
+          }
+        ],
+        "arxiv_eprint": "1804.01112",
+        "publication_info": {
+          "year": 2019,
+          "artid": "1",
+          "page_start": "1",
+          "journal_title": "Eur.Phys.J.C",
+          "journal_volume": "79"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1504228"
+      },
+      "raw_refs": [
+        {
+          "value": "[21] Y.Ema, K.Hamaguchi, T.Moroi, K.Nakayama, JHEP 01 (2017) 096 [arXiv:1612.05492 [hep-ph]] L.Calibbi, F.Goertz, D.Redigolo, R. Ziegler, J. Zupan, Phys.Rev.D 95 (2017) 9, 095009 [arXiv:1612.08040 [hep-ph]] J.M. Camalich , M.Pospelov, P.N. H. Vuong, R. Ziegler, J. Zupan,Phys.Rev.D 102 (2020) 1, 015023 [arXiv:2002.04623 [hep-ph]] Q. Bonnefoy, E. Dudas, S. Pokorski, JHEP 01 (2020) 191 [arXiv:1909.05336 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "21",
+        "authors": [
+          {
+            "full_name": "Y.Ema"
+          },
+          {
+            "full_name": "K.Hamaguchi"
+          },
+          {
+            "full_name": "T.Moroi"
+          },
+          {
+            "full_name": "K.Nakayama"
+          }
+        ],
+        "arxiv_eprint": "1612.05492",
+        "publication_info": {
+          "year": 2017,
+          "artid": "096",
+          "page_start": "096",
+          "journal_title": "JHEP",
+          "journal_volume": "01"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1505751"
+      },
+      "raw_refs": [
+        {
+          "value": "[21] Y.Ema, K.Hamaguchi, T.Moroi, K.Nakayama, JHEP 01 (2017) 096 [arXiv:1612.05492 [hep-ph]] L.Calibbi, F.Goertz, D.Redigolo, R. Ziegler, J. Zupan, Phys.Rev.D 95 (2017) 9, 095009 [arXiv:1612.08040 [hep-ph]] J.M. Camalich , M.Pospelov, P.N. H. Vuong, R. Ziegler, J. Zupan,Phys.Rev.D 102 (2020) 1, 015023 [arXiv:2002.04623 [hep-ph]] Q. Bonnefoy, E. Dudas, S. Pokorski, JHEP 01 (2020) 191 [arXiv:1909.05336 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["095009"],
+        "label": "21",
+        "authors": [
+          {
+            "full_name": "L.Calibbi"
+          },
+          {
+            "full_name": "F.Goertz"
+          },
+          {
+            "full_name": "D.Redigolo"
+          },
+          {
+            "full_name": "Ziegler, R."
+          },
+          {
+            "full_name": "Zupan, J."
+          }
+        ],
+        "arxiv_eprint": "1612.08040",
+        "publication_info": {
+          "year": 2017,
+          "artid": "9",
+          "page_start": "9",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "95"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1779843"
+      },
+      "raw_refs": [
+        {
+          "value": "[21] Y.Ema, K.Hamaguchi, T.Moroi, K.Nakayama, JHEP 01 (2017) 096 [arXiv:1612.05492 [hep-ph]] L.Calibbi, F.Goertz, D.Redigolo, R. Ziegler, J. Zupan, Phys.Rev.D 95 (2017) 9, 095009 [arXiv:1612.08040 [hep-ph]] J.M. Camalich , M.Pospelov, P.N. H. Vuong, R. Ziegler, J. Zupan,Phys.Rev.D 102 (2020) 1, 015023 [arXiv:2002.04623 [hep-ph]] Q. Bonnefoy, E. Dudas, S. Pokorski, JHEP 01 (2020) 191 [arXiv:1909.05336 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["015023"],
+        "label": "21",
+        "authors": [
+          {
+            "full_name": "Camalich, J.M."
+          },
+          {
+            "full_name": "M.Pospelov"
+          },
+          {
+            "full_name": "Vuong, P.N.H."
+          },
+          {
+            "full_name": "Ziegler, R."
+          },
+          {
+            "full_name": "Zupan, J."
+          }
+        ],
+        "arxiv_eprint": "2002.04623",
+        "publication_info": {
+          "year": 2020,
+          "artid": "1",
+          "page_start": "1",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "102"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1753733"
+      },
+      "raw_refs": [
+        {
+          "value": "[21] Y.Ema, K.Hamaguchi, T.Moroi, K.Nakayama, JHEP 01 (2017) 096 [arXiv:1612.05492 [hep-ph]] L.Calibbi, F.Goertz, D.Redigolo, R. Ziegler, J. Zupan, Phys.Rev.D 95 (2017) 9, 095009 [arXiv:1612.08040 [hep-ph]] J.M. Camalich , M.Pospelov, P.N. H. Vuong, R. Ziegler, J. Zupan,Phys.Rev.D 102 (2020) 1, 015023 [arXiv:2002.04623 [hep-ph]] Q. Bonnefoy, E. Dudas, S. Pokorski, JHEP 01 (2020) 191 [arXiv:1909.05336 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "21",
+        "authors": [
+          {
+            "full_name": "Bonnefoy, Q."
+          },
+          {
+            "full_name": "Dudas, E."
+          },
+          {
+            "full_name": "Pokorski, S."
+          }
+        ],
+        "arxiv_eprint": "1909.05336",
+        "publication_info": {
+          "year": 2020,
+          "artid": "191",
+          "page_start": "191",
+          "journal_title": "JHEP",
+          "journal_volume": "01"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1703562"
+      },
+      "raw_refs": [
+        {
+          "value": "[22] G. Alonso-´ Alvarez, M.B. Gavela, P. Quilez, Eur.Phys.J.C 79 (2019) 3, 223 [arXiv:1811.05466 [hep-ph]] J. Quevillon, Ch. Smith, Eur.Phys.J.C 79 (2019) 10, 822 [1903.12559 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["223"],
+        "label": "22",
+        "authors": [
+          {
+            "full_name": "Alonso-Álvarez, G."
+          },
+          {
+            "full_name": "Gavela, M.B."
+          },
+          {
+            "full_name": "Quilez, P."
+          }
+        ],
+        "arxiv_eprint": "1811.05466",
+        "publication_info": {
+          "year": 2019,
+          "artid": "3",
+          "page_start": "3",
+          "journal_title": "Eur.Phys.J.C",
+          "journal_volume": "79"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1727361"
+      },
+      "raw_refs": [
+        {
+          "value": "[22] G. Alonso-´ Alvarez, M.B. Gavela, P. Quilez, Eur.Phys.J.C 79 (2019) 3, 223 [arXiv:1811.05466 [hep-ph]] J. Quevillon, Ch. Smith, Eur.Phys.J.C 79 (2019) 10, 822 [1903.12559 [hep-ph]]",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["Ch. Smith / 822"],
+        "label": "22",
+        "authors": [
+          {
+            "full_name": "Quevillon, J."
+          }
+        ],
+        "arxiv_eprint": "1903.12559",
+        "publication_info": {
+          "year": 2019,
+          "artid": "10",
+          "page_start": "10",
+          "journal_title": "Eur.Phys.J.C",
+          "journal_volume": "79"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/1831413"
+      },
+      "raw_refs": [
+        {
+          "value": "[23] Q.Bonnefoy, L.Di Luzio, C.Grojean, A.Paul and A.N.Rossia, [arXiv:2011.10025 [hepph]].",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "23",
+        "authors": [
+          {
+            "full_name": "Q.Bonnefoy"
+          },
+          {
+            "full_name": "Luzio"
+          },
+          {
+            "full_name": "L.Di"
+          },
+          {
+            "full_name": "C.Grojean"
+          },
+          {
+            "full_name": "A.Paul"
+          },
+          {
+            "full_name": "A.N.Rossia"
+          }
+        ],
+        "arxiv_eprint": "2011.10025"
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/9087"
+      },
+      "raw_refs": [
+        {
+          "value": "[24] F. J. Dyson, Phys. Rev. 75 (1949), 1736-1755 J. S. Schwinger, Proc. Nat. Acad. Sci. 37 (1951), 452-455; See also, for example, M. D. Schwartz, “Quantum Field Theory and the Standard Model”.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "24",
+        "authors": [
+          {
+            "full_name": "Dyson, F.J."
+          }
+        ],
+        "publication_info": {
+          "year": 1949,
+          "page_end": "1755",
+          "page_start": "1736",
+          "journal_title": "Phys.Rev.",
+          "journal_volume": "75"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http://localhost:5000/api/literature/3199"
+      },
+      "raw_refs": [
+        {
+          "value": "[24] F. J. Dyson, Phys. Rev. 75 (1949), 1736-1755 J. S. Schwinger, Proc. Nat. Acad. Sci. 37 (1951), 452-455; See also, for example, M. D. Schwartz, “Quantum Field Theory and the Standard Model”.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "24",
+        "authors": [
+          {
+            "full_name": "Schwinger, J.S."
+          }
+        ],
+        "publication_info": {
+          "year": 1951,
+          "page_end": "455",
+          "page_start": "452",
+          "journal_title": "Proc.Nat.Acad.Sci.",
+          "journal_volume": "37"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[24] F. J. Dyson, Phys. Rev. 75 (1949), 1736-1755 J. S. Schwinger, Proc. Nat. Acad. Sci. 37 (1951), 452-455; See also, for example, M. D. Schwartz, “Quantum Field Theory and the Standard Model”.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["See also, for example"],
+        "label": "24",
+        "title": {
+          "title": "Quantum Field Theory and the Standard Model"
+        },
+        "authors": [
+          {
+            "full_name": "Schwartz, M.D."
+          }
+        ]
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[25] See for example, S. Pokorski, “Gauge Field Theories” and S. Weinberg, “The quantum theory of fields. Vol. 2: Modern applications”.",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["See for example / and S. Weinberg"],
+        "label": "25",
+        "title": {
+          "title": "GAUGE FIELD THEORIES"
+        },
+        "authors": [
+          {
+            "full_name": "Pokorski, S."
+          }
+        ],
+        "publication_info": {
+          "year": 1987
+        }
+      }
+    }
+  ],
+  "public_notes": [
+    {
+      "value": "13 pages, Contribution to the special volume of Acta Physica Polonica\n B commemorating Martinus Veltman",
+      "source": "arXiv"
+    }
+  ],
+  "arxiv_eprints": [
+    {
+      "value": "2105.04877",
+      "categories": ["hep-ph"]
+    }
+  ],
+  "document_type": ["conference paper"],
+  "preprint_date": "2021-05-11",
+  "control_number": 1862822,
+  "legacy_version": "20210514150146.0",
+  "number_of_pages": 13,
+  "inspire_categories": [
+    {
+      "term": "Phenomenology-HEP",
+      "source": "arxiv"
+    }
+  ],
+  "legacy_creation_date": "2021-05-12",
+  "id": "1862822"
+}

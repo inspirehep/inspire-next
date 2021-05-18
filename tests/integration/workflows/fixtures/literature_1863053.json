@@ -1,0 +1,3344 @@
+{
+  "uuid": "eb7083d0-1c81-443c-a55e-5a9a0a2de082",
+  "_collections": ["Literature"],
+  "citation_count_without_self_citations": 0,
+  "citation_count": 0,
+  "core": true,
+  "titles": [
+    {
+      "title": "Jet Single Shot Detection",
+      "source": "arXiv"
+    }
+  ],
+  "$schema": "http:/localhost:5000/schemas/records/hep.json",
+  "authors": [
+    {
+      "ids": [
+        {
+          "value": "A.A.Pol.3",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "eef0e399-6c16-461e-9906-56bb3cd25b6c",
+      "emails": ["adrianalan.pol@cern.ch"],
+      "full_name": "Pol, Adrian Alan",
+      "signature_block": "PALa",
+      "raw_affiliations": [
+        {
+          "value": "European Organization for Nuclear Research (CERN), Geneva, Switzerland"
+        }
+      ]
+    },
+    {
+      "ids": [
+        {
+          "value": "T.K.Aarrestad.1",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "4e5e4d99-0e29-4cfc-af6c-7a8ea8e74899",
+      "record": {
+        "$ref": "http:/localhost:5000/api/authors/1345387"
+      },
+      "full_name": "Aarrestad, Thea",
+      "signature_block": "ARASTADt",
+      "raw_affiliations": [
+        {
+          "value": "European Organization for Nuclear Research (CERN), Geneva, Switzerland"
+        }
+      ]
+    },
+    {
+      "ids": [
+        {
+          "value": "K.Govorkova.1",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "bb2a4932-c4d4-46c7-b01e-a0a2999a51b9",
+      "record": {
+        "$ref": "http:/localhost:5000/api/authors/1489289"
+      },
+      "full_name": "Govorkova, Katya",
+      "signature_block": "GAVARCAVk",
+      "raw_affiliations": [
+        {
+          "value": "European Organization for Nuclear Research (CERN), Geneva, Switzerland"
+        }
+      ]
+    },
+    {
+      "ids": [
+        {
+          "value": "R.Halily.1",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "c00eaba8-66b4-4085-9956-3f34bb4630c7",
+      "full_name": "Halily, Roi",
+      "affiliations": [
+        {
+          "value": "Unlisted, IL",
+          "record": {
+            "$ref": "http:/localhost:5000/api/institutions/912193"
+          }
+        }
+      ],
+      "signature_block": "HALALYr",
+      "raw_affiliations": [
+        {
+          "value": "CEVA, Herzliya, Israel"
+        }
+      ]
+    },
+    {
+      "ids": [
+        {
+          "value": "T.Kopetz.1",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "b2f635fb-6f78-4a23-a34d-afc785d9a7da",
+      "full_name": "Kopetz, Tal",
+      "affiliations": [
+        {
+          "value": "Unlisted, IL",
+          "record": {
+            "$ref": "http:/localhost:5000/api/institutions/912193"
+          }
+        }
+      ],
+      "signature_block": "CAPATt",
+      "raw_affiliations": [
+        {
+          "value": "CEVA, Herzliya, Israel"
+        }
+      ]
+    },
+    {
+      "ids": [
+        {
+          "value": "A.Klempner.1",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "f3094fab-f381-4998-a5ba-565f69d75859",
+      "full_name": "Klempner, Anat",
+      "affiliations": [
+        {
+          "value": "Unlisted, IL",
+          "record": {
+            "$ref": "http:/localhost:5000/api/institutions/912193"
+          }
+        }
+      ],
+      "signature_block": "CLANPNARa",
+      "raw_affiliations": [
+        {
+          "value": "CEVA, Herzliya, Israel"
+        }
+      ]
+    },
+    {
+      "ids": [
+        {
+          "value": "V.Loncar.2",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "bedd3a53-7f56-4ba1-8728-8bf6a52b3e94",
+      "full_name": "Loncar, Vladimir",
+      "affiliations": [
+        {
+          "value": "CERN",
+          "record": {
+            "$ref": "http:/localhost:5000/api/institutions/902725"
+          }
+        },
+        {
+          "value": "Belgrade, Inst. Phys.",
+          "record": {
+            "$ref": "http:/localhost:5000/api/institutions/903416"
+          }
+        }
+      ],
+      "signature_block": "LANCARv",
+      "raw_affiliations": [
+        {
+          "value": "European Organization for Nuclear Research (CERN), Geneva, Switzerland"
+        },
+        {
+          "value": "Institute of Physics Belgrade, Belgrade, Serbia"
+        }
+      ]
+    },
+    {
+      "ids": [
+        {
+          "value": "J.Ngadiuba.2",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "ec0063b0-2562-41a7-8aed-0902fe9eb954",
+      "full_name": "Ngadiuba, Jennifer",
+      "affiliations": [
+        {
+          "value": "Caltech",
+          "record": {
+            "$ref": "http:/localhost:5000/api/institutions/902711"
+          }
+        }
+      ],
+      "signature_block": "NGADABj",
+      "raw_affiliations": [
+        {
+          "value": "California Institute of Technology, Pasadena, USA"
+        }
+      ]
+    },
+    {
+      "ids": [
+        {
+          "value": "M.Pierini.1",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "5f5a61b5-bf49-4c97-96f5-2cbcdd096d26",
+      "record": {
+        "$ref": "http:/localhost:5000/api/authors/1021028"
+      },
+      "full_name": "Pierini, Maurizio",
+      "affiliations": [
+        {
+          "value": "CERN",
+          "record": {
+            "$ref": "http:/localhost:5000/api/institutions/902725"
+          }
+        }
+      ],
+      "signature_block": "PARANm",
+      "raw_affiliations": [
+        {
+          "value": "European Organization for Nuclear Research (CERN), Geneva, Switzerland"
+        }
+      ]
+    },
+    {
+      "ids": [
+        {
+          "value": "O.Sirkin.1",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "21b73074-1a79-4864-bbfc-ec578dd11cbb",
+      "full_name": "Sirkin, Olya",
+      "affiliations": [
+        {
+          "value": "Unlisted, IL",
+          "record": {
+            "$ref": "http:/localhost:5000/api/institutions/912193"
+          }
+        }
+      ],
+      "signature_block": "SARCANo",
+      "raw_affiliations": [
+        {
+          "value": "CEVA, Herzliya, Israel"
+        }
+      ]
+    },
+    {
+      "ids": [
+        {
+          "value": "S.Summers.4",
+          "schema": "INSPIRE BAI"
+        }
+      ],
+      "uuid": "10f72807-70cd-457e-803f-13ebba39d472",
+      "full_name": "Summers, Sioni",
+      "affiliations": [
+        {
+          "value": "CERN",
+          "record": {
+            "$ref": "http:/localhost:5000/api/institutions/902725"
+          }
+        }
+      ],
+      "signature_block": "SANARs",
+      "raw_affiliations": [
+        {
+          "value": "European Organization for Nuclear Research (CERN), Geneva, Switzerland"
+        }
+      ]
+    }
+  ],
+  "curated": false,
+  "figures": [
+    {
+      "key": "509df01100d2d410c6ebff94ebd9afa6",
+      "url": "http:/localhost:5000/files/509df01100d2d410c6ebff94ebd9afa6",
+      "source": "arxiv",
+      "caption": "The architecture of the SSD network, proposed by~\\cite{liu2016ssd}.",
+      "filename": "ssd-architecture.png"
+    },
+    {
+      "key": "502a55f85feec8079123b132ab09bbc7",
+      "url": "http:/localhost:5000/files/502a55f85feec8079123b132ab09bbc7",
+      "source": "arxiv",
+      "caption": "Energy deposits in CMS ECAL and HCAL translated to a two-dimensional image, an example input to the SSD network. The red bounding boxes correspond to ground truth with target label and momentum.",
+      "filename": "example-ecal.png"
+    },
+    {
+      "key": "b1b228da6ab9e645c901047df448811d",
+      "url": "http:/localhost:5000/files/b1b228da6ab9e645c901047df448811d",
+      "source": "arxiv",
+      "caption": "Energy deposits in CMS ECAL and HCAL translated to a two-dimensional image, an example input to the SSD network. The red bounding boxes correspond to ground truth with target label and momentum.",
+      "filename": "example-hcal.png"
+    },
+    {
+      "key": "2dd13124f11c693a0f707f2d8865ed85",
+      "url": "http:/localhost:5000/files/2dd13124f11c693a0f707f2d8865ed85",
+      "source": "arxiv",
+      "caption": "Jet-SSD architecture: input (in blue), convolution block, i.e. convolution layer followed by batch normalization and PReLU activation (in yellow), average pooling (in red) and output layer (in green). The numbers indicate the number of output channels in each block. The part of the network highlighted by dashed lines is used only during the training step.",
+      "filename": "jetssd-architecture.png"
+    },
+    {
+      "key": "6cb40c09859b02a84092abfed1362f49",
+      "url": "http:/localhost:5000/files/6cb40c09859b02a84092abfed1362f49",
+      "source": "arxiv",
+      "caption": "An example of the Jet-SSD at inference for one event with the input calorimeter image and highlighted true labels (top) and prediction bounding boxes (bottom). The fractional number next to the categorical label corresponds to the network confidence score.",
+      "filename": "inference-gt.png"
+    },
+    {
+      "key": "f2a2fb606c8624160644f968f13a5445",
+      "url": "http:/localhost:5000/files/f2a2fb606c8624160644f968f13a5445",
+      "source": "arxiv",
+      "caption": "An example of the Jet-SSD at inference for one event with the input calorimeter image and highlighted true labels (top) and prediction bounding boxes (bottom). The fractional number next to the categorical label corresponds to the network confidence score.",
+      "filename": "inference-pred.png"
+    },
+    {
+      "key": "cc96fc2a1dd0e494c32317c5f83b6cd7",
+      "url": "http:/localhost:5000/files/cc96fc2a1dd0e494c32317c5f83b6cd7",
+      "source": "arxiv",
+      "caption": "Jet-SSD PR curve and AP values for three target categories (b, W-H and t) and two weights precision (FPN and TWN).",
+      "filename": "pr-curve.png"
+    },
+    {
+      "key": "15e23296302c5d1adc2630532b7338cd",
+      "url": "http:/localhost:5000/files/15e23296302c5d1adc2630532b7338cd",
+      "source": "arxiv",
+      "caption": "The mean ($\\mu$) and median (Q2) localization error in $\\eta$ (left column), $\\phi$ (centre column) and relative error in mass regression between ground truth (GT) and Jet-SSD output (SSD) for FPN and TWN versions. The results are reported for each class independently: b jets (top row), W-H jets (centre row) and t jest (bottom row). All results are calculated as a function of p$_T$.",
+      "filename": "delta-b-eta.png"
+    },
+    {
+      "key": "681e7b6fe910f0a5cab1673308c140a8",
+      "url": "http:/localhost:5000/files/681e7b6fe910f0a5cab1673308c140a8",
+      "source": "arxiv",
+      "caption": "The mean ($\\mu$) and median (Q2) localization error in $\\eta$ (left column), $\\phi$ (centre column) and relative error in mass regression between ground truth (GT) and Jet-SSD output (SSD) for FPN and TWN versions. The results are reported for each class independently: b jets (top row), W-H jets (centre row) and t jest (bottom row). All results are calculated as a function of p$_T$.",
+      "filename": "delta-b-phi.png"
+    },
+    {
+      "key": "0594c4d02563d9610b27594f39927b07",
+      "url": "http:/localhost:5000/files/0594c4d02563d9610b27594f39927b07",
+      "source": "arxiv",
+      "caption": "The mean ($\\mu$) and median (Q2) localization error in $\\eta$ (left column), $\\phi$ (centre column) and relative error in mass regression between ground truth (GT) and Jet-SSD output (SSD) for FPN and TWN versions. The results are reported for each class independently: b jets (top row), W-H jets (centre row) and t jest (bottom row). All results are calculated as a function of p$_T$.",
+      "filename": "delta-b-m.png"
+    },
+    {
+      "key": "a2011018b9b074c568579dd12e013984",
+      "url": "http:/localhost:5000/files/a2011018b9b074c568579dd12e013984",
+      "source": "arxiv",
+      "caption": "The mean ($\\mu$) and median (Q2) localization error in $\\eta$ (left column), $\\phi$ (centre column) and relative error in mass regression between ground truth (GT) and Jet-SSD output (SSD) for FPN and TWN versions. The results are reported for each class independently: b jets (top row), W-H jets (centre row) and t jest (bottom row). All results are calculated as a function of p$_T$.",
+      "filename": "delta-W-H-eta.png"
+    },
+    {
+      "key": "ada341286f7ea0c3634ec9e282f1c02d",
+      "url": "http:/localhost:5000/files/ada341286f7ea0c3634ec9e282f1c02d",
+      "source": "arxiv",
+      "caption": "The mean ($\\mu$) and median (Q2) localization error in $\\eta$ (left column), $\\phi$ (centre column) and relative error in mass regression between ground truth (GT) and Jet-SSD output (SSD) for FPN and TWN versions. The results are reported for each class independently: b jets (top row), W-H jets (centre row) and t jest (bottom row). All results are calculated as a function of p$_T$.",
+      "filename": "delta-W-H-phi.png"
+    },
+    {
+      "key": "81d3289e2343ed90222c01672444f5ea",
+      "url": "http:/localhost:5000/files/81d3289e2343ed90222c01672444f5ea",
+      "source": "arxiv",
+      "caption": "The mean ($\\mu$) and median (Q2) localization error in $\\eta$ (left column), $\\phi$ (centre column) and relative error in mass regression between ground truth (GT) and Jet-SSD output (SSD) for FPN and TWN versions. The results are reported for each class independently: b jets (top row), W-H jets (centre row) and t jest (bottom row). All results are calculated as a function of p$_T$.",
+      "filename": "delta-W-H-m.png"
+    },
+    {
+      "key": "df617285bec2269fb90077cf636dc4c3",
+      "url": "http:/localhost:5000/files/df617285bec2269fb90077cf636dc4c3",
+      "source": "arxiv",
+      "caption": "The mean ($\\mu$) and median (Q2) localization error in $\\eta$ (left column), $\\phi$ (centre column) and relative error in mass regression between ground truth (GT) and Jet-SSD output (SSD) for FPN and TWN versions. The results are reported for each class independently: b jets (top row), W-H jets (centre row) and t jest (bottom row). All results are calculated as a function of p$_T$.",
+      "filename": "delta-t-eta.png"
+    },
+    {
+      "key": "12f825c930ac8b19003498b749ff5edc",
+      "url": "http:/localhost:5000/files/12f825c930ac8b19003498b749ff5edc",
+      "source": "arxiv",
+      "caption": "The mean ($\\mu$) and median (Q2) localization error in $\\eta$ (left column), $\\phi$ (centre column) and relative error in mass regression between ground truth (GT) and Jet-SSD output (SSD) for FPN and TWN versions. The results are reported for each class independently: b jets (top row), W-H jets (centre row) and t jest (bottom row). All results are calculated as a function of p$_T$.",
+      "filename": "delta-t-phi.png"
+    },
+    {
+      "key": "2a05172a22d16e7490208fba7a4c6520",
+      "url": "http:/localhost:5000/files/2a05172a22d16e7490208fba7a4c6520",
+      "source": "arxiv",
+      "caption": "The mean ($\\mu$) and median (Q2) localization error in $\\eta$ (left column), $\\phi$ (centre column) and relative error in mass regression between ground truth (GT) and Jet-SSD output (SSD) for FPN and TWN versions. The results are reported for each class independently: b jets (top row), W-H jets (centre row) and t jest (bottom row). All results are calculated as a function of p$_T$.",
+      "filename": "delta-t-m.png"
+    }
+  ],
+  "license": [
+    {
+      "url": "http:/creativecommons.org/licenses/by/4.0/",
+      "license": "CC BY 4.0",
+      "material": "preprint"
+    }
+  ],
+  "texkeys": ["Pol:2021iqw"],
+  "citeable": true,
+  "keywords": [
+    {
+      "value": "track data analysis, jet",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "network",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "localization",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "CERN Lab",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "quantization",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "scaling",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "CERN LHC Coll",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "calorimeter",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "performance",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    },
+    {
+      "value": "neural network",
+      "schema": "INSPIRE",
+      "source": "classifier"
+    }
+  ],
+  "abstracts": [
+    {
+      "value": "We apply object detection techniques based on Convolutional Neural Networks to jet reconstruction and identification at the CERN Large Hadron Collider. In particular, we focus on CaloJet reconstruction, representing each event as an image composed of calorimeter cells and using a Single Shot Detection network, called Jet-SSD. The model performs simultaneous localization and classification and additional regression tasks to measure jet features. We investigate Ternary Weight Networks with weights constrained to {-1, 0, 1} times a layer- and channel-dependent scaling factors. We show that the quantized version of the network closely matches the performance of its full-precision equivalent.",
+      "source": "arXiv"
+    }
+  ],
+  "references": [
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/779602"
+      },
+      "raw_refs": [
+        {
+          "value": "[1] J.M. Butterworth, A.R. Davison, M. Rubin, G.P. Salam, Physical review letters 100, 242001 (2008)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "1",
+        "authors": [
+          {
+            "full_name": "Butterworth, J.M."
+          },
+          {
+            "full_name": "Davison, A.R."
+          },
+          {
+            "full_name": "Rubin, M."
+          },
+          {
+            "full_name": "Salam, G.P."
+          }
+        ],
+        "publication_info": {
+          "year": 2008,
+          "artid": "242001",
+          "journal_title": "Phys.Rev.Lett.",
+          "journal_volume": "100"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/743363"
+      },
+      "raw_refs": [
+        {
+          "value": "[2] W. Skiba, D. Tucker-Smith, Physical Review D 75, 115010 (2007)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "2",
+        "authors": [
+          {
+            "full_name": "Skiba, W."
+          },
+          {
+            "full_name": "Tucker-Smith, D."
+          }
+        ],
+        "publication_info": {
+          "year": 2007,
+          "artid": "115010",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "75"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[3] V. Khachatryan, A.M. Sirunyan, A. Tumasyan, W. Adam, T. Bergauer, M. Dragicevic, J. Erö, C. Fabjan, M. Friedl, R. Fruehwirth et al., Journal of High Energy Physics 2014, 173 (2014)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "3",
+        "authors": [
+          {
+            "full_name": "Khachatryan, V."
+          },
+          {
+            "full_name": "Sirunyan, A.M."
+          },
+          {
+            "full_name": "Tumasyan, A."
+          },
+          {
+            "full_name": "Adam, W."
+          },
+          {
+            "full_name": "Bergauer, T."
+          },
+          {
+            "full_name": "Dragicevic, M."
+          },
+          {
+            "full_name": "Er, J."
+          },
+          {
+            "full_name": "Fabjan, C."
+          },
+          {
+            "full_name": "Friedl, M."
+          },
+          {
+            "full_name": "Fruehwirth, R."
+          }
+        ],
+        "publication_info": {
+          "year": 2014,
+          "artid": "173",
+          "page_start": "173",
+          "journal_title": "JHEP",
+          "journal_volume": "14"
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[4] G. Aad, B. Abbott, J. Abdallah, R. Aben, M. Abolins, O. AbouZeid, H. Abramowicz, H. Abreu, R. Abreu, Y. Abulaiti et al., Journal of High Energy Physics 2015, 1 (2015)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "4",
+        "authors": [
+          {
+            "full_name": "Aad, G."
+          },
+          {
+            "full_name": "Abbott, B."
+          },
+          {
+            "full_name": "Abdallah, J."
+          },
+          {
+            "full_name": "Aben, R."
+          },
+          {
+            "full_name": "Abolins, M."
+          },
+          {
+            "full_name": "AbouZeid, O."
+          },
+          {
+            "full_name": "Abramowicz, H."
+          },
+          {
+            "full_name": "Abreu, H."
+          },
+          {
+            "full_name": "Abreu, R."
+          },
+          {
+            "full_name": "Abulaiti, Y."
+          }
+        ],
+        "publication_info": {
+          "year": 2015,
+          "artid": "001",
+          "page_start": "001",
+          "journal_title": "JHEP",
+          "journal_volume": "15"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1300380"
+      },
+      "raw_refs": [
+        {
+          "value": "[5] D. Adams, A. Arce, L. Asquith, M. Backovic, T. Barillari, P. Berta, D. Bertolini, A. Buckley, J. Butterworth, R.C. Toro et al., The European Physical Journal C 75, 1 (2015)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "5",
+        "authors": [
+          {
+            "full_name": "Adams, D."
+          },
+          {
+            "full_name": "Arce, A."
+          },
+          {
+            "full_name": "Asquith, L."
+          },
+          {
+            "full_name": "Backovic, M."
+          },
+          {
+            "full_name": "Barillari, T."
+          },
+          {
+            "full_name": "Berta, P."
+          },
+          {
+            "full_name": "Bertolini, D."
+          },
+          {
+            "full_name": "Buckley, A."
+          },
+          {
+            "full_name": "Butterworth, J."
+          },
+          {
+            "full_name": "Toro, R.C."
+          }
+        ],
+        "publication_info": {
+          "year": 2015,
+          "artid": "1",
+          "page_start": "1",
+          "journal_title": "Eur.Phys.J.C",
+          "journal_volume": "75"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[6] A. Abdesselam, A. Belyaev, E.B. Kuutmann, U. Bitenc, G. Brooijmans, J. Butterworth, P.B. de Renstrom, D.B. Franzosi, R. Buckingham, B. Chapleau et al., The European Physical Journal C 71, 1 (2011)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "6",
+        "authors": [
+          {
+            "full_name": "Abdesselam, A."
+          },
+          {
+            "full_name": "Belyaev, A."
+          },
+          {
+            "full_name": "Kuutmann, E.B."
+          },
+          {
+            "full_name": "Bitenc, U."
+          },
+          {
+            "full_name": "Brooijmans, G."
+          },
+          {
+            "full_name": "Butterworth, J."
+          },
+          {
+            "full_name": "de Renstrom, P.B."
+          },
+          {
+            "full_name": "Franzosi, D.B."
+          },
+          {
+            "full_name": "Buckingham, R."
+          },
+          {
+            "full_name": "Chapleau, B."
+          }
+        ],
+        "publication_info": {
+          "year": 2011,
+          "artid": "1",
+          "page_start": "1",
+          "journal_title": "Eur.Phys.J.C",
+          "journal_volume": "71"
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[7] A. Altheimer, S. Arora, L. Asquith, G. Brooijmans, J. Butterworth, M. Campanelli, B. Chapleau, A. Cholakian, J. Chou, M. Dasgupta et al., Journal of Physics G: Nuclear and Particle Physics 39, 063001 (2012)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["Journal of Physics G: Nuclear and Particle"],
+        "label": "7",
+        "authors": [
+          {
+            "full_name": "Altheimer, A."
+          },
+          {
+            "full_name": "Arora, S."
+          },
+          {
+            "full_name": "Asquith, L."
+          },
+          {
+            "full_name": "Brooijmans, G."
+          },
+          {
+            "full_name": "Butterworth, J."
+          },
+          {
+            "full_name": "Campanelli, M."
+          },
+          {
+            "full_name": "Chapleau, B."
+          },
+          {
+            "full_name": "Cholakian, A."
+          },
+          {
+            "full_name": "Chou, J."
+          },
+          {
+            "full_name": "Dasgupta, M."
+          }
+        ],
+        "publication_info": {
+          "year": 2012,
+          "artid": "063001",
+          "journal_title": "Physics",
+          "journal_volume": "39"
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[8] A. Altheimer, A. Arce, L. Asquith, J.B. Mayes, E.B. Kuutmann, J. Berger, D. Bjergaard, L. Bryngemark, A. Buckley, J. Butterworth et al., The European Physical Journal C 74, 1 (2014)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "8",
+        "authors": [
+          {
+            "full_name": "Altheimer, A."
+          },
+          {
+            "full_name": "Arce, A."
+          },
+          {
+            "full_name": "Asquith, L."
+          },
+          {
+            "full_name": "Mayes, J.B."
+          },
+          {
+            "full_name": "Kuutmann, E.B."
+          },
+          {
+            "full_name": "Berger, J."
+          },
+          {
+            "full_name": "Bjergaard, D."
+          },
+          {
+            "full_name": "Bryngemark, L."
+          },
+          {
+            "full_name": "Buckley, A."
+          },
+          {
+            "full_name": "Butterworth, J."
+          }
+        ],
+        "publication_info": {
+          "year": 2014,
+          "artid": "1",
+          "page_start": "1",
+          "journal_title": "Eur.Phys.J.C",
+          "journal_volume": "74"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/858393"
+      },
+      "raw_refs": [
+        {
+          "value": "[9] T. Plehn, M. Spannowsky, M. Takeuchi, D. Zerwas, Journal of High Energy Physics 2010, 1 (2010)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "9",
+        "authors": [
+          {
+            "full_name": "Plehn, T."
+          },
+          {
+            "full_name": "Spannowsky, M."
+          },
+          {
+            "full_name": "Takeuchi, M."
+          },
+          {
+            "full_name": "Zerwas, D."
+          }
+        ],
+        "publication_info": {
+          "year": 2010,
+          "artid": "001",
+          "page_start": "001",
+          "journal_title": "JHEP",
+          "journal_volume": "10"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1281068"
+      },
+      "raw_refs": [
+        {
+          "value": "[10] A.J. Larkoski, S. Marzani, G. Soyez, J. Thaler, Journal of High Energy Physics 2014, 146 (2014)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "10",
+        "authors": [
+          {
+            "full_name": "Larkoski, A.J."
+          },
+          {
+            "full_name": "Marzani, S."
+          },
+          {
+            "full_name": "Soyez, G."
+          },
+          {
+            "full_name": "Thaler, J."
+          }
+        ],
+        "publication_info": {
+          "year": 2014,
+          "artid": "146",
+          "page_start": "146",
+          "journal_title": "JHEP",
+          "journal_volume": "05"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/898837"
+      },
+      "raw_refs": [
+        {
+          "value": "[11] J. Thaler, K. Van Tilburg, Journal of High Energy Physics 2011, 15 (2011)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "11",
+        "authors": [
+          {
+            "full_name": "Thaler, J."
+          },
+          {
+            "full_name": "Van Tilburg, K."
+          }
+        ],
+        "publication_info": {
+          "year": 2011,
+          "artid": "015",
+          "page_start": "015",
+          "journal_title": "JHEP",
+          "journal_volume": "11"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1231624"
+      },
+      "raw_refs": [
+        {
+          "value": "[12] A.J. Larkoski, G.P. Salam, J. Thaler, Journal of High Energy Physics 2013, 108 (2013)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "12",
+        "authors": [
+          {
+            "full_name": "Larkoski, A.J."
+          },
+          {
+            "full_name": "Salam, G.P."
+          },
+          {
+            "full_name": "Thaler, J."
+          }
+        ],
+        "publication_info": {
+          "year": 2013,
+          "artid": "108",
+          "page_start": "108",
+          "journal_title": "JHEP",
+          "journal_volume": "06"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/848901"
+      },
+      "raw_refs": [
+        {
+          "value": "[13] D. Krohn, J. Thaler, L.T. Wang, Journal of High Energy Physics 2010, 84 (2010)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "13",
+        "authors": [
+          {
+            "full_name": "Krohn, D."
+          },
+          {
+            "full_name": "Thaler, J."
+          },
+          {
+            "full_name": "Wang, L.T."
+          }
+        ],
+        "publication_info": {
+          "year": 2010,
+          "artid": "084",
+          "page_start": "084",
+          "journal_title": "JHEP",
+          "journal_volume": "10"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/838502"
+      },
+      "raw_refs": [
+        {
+          "value": "[14] S.D. Ellis, C.K. Vermilion, J.R. Walsh, Physical Review D 81, 094023 (2010)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "14",
+        "authors": [
+          {
+            "full_name": "Ellis, S.D."
+          },
+          {
+            "full_name": "Vermilion, C.K."
+          },
+          {
+            "full_name": "Walsh, J.R."
+          }
+        ],
+        "publication_info": {
+          "year": 2010,
+          "artid": "094023",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "81"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1240687"
+      },
+      "raw_refs": [
+        {
+          "value": "[15] M. Dasgupta, A. Fregoso, S. Marzani, G.P. Salam, Journal of High Energy Physics 2013, 29 (2013)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "15",
+        "authors": [
+          {
+            "full_name": "Dasgupta, M."
+          },
+          {
+            "full_name": "Fregoso, A."
+          },
+          {
+            "full_name": "Marzani, S."
+          },
+          {
+            "full_name": "Salam, G.P."
+          }
+        ],
+        "publication_info": {
+          "year": 2013,
+          "artid": "029",
+          "page_start": "029",
+          "journal_title": "JHEP",
+          "journal_volume": "09"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[16] M. Dasgupta, A. Fregoso, S. Marzani, A. Powling, The European Physical Journal C 73, 1 (2013)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "16",
+        "authors": [
+          {
+            "full_name": "Dasgupta, M."
+          },
+          {
+            "full_name": "Fregoso, A."
+          },
+          {
+            "full_name": "Marzani, S."
+          },
+          {
+            "full_name": "Powling, A."
+          }
+        ],
+        "publication_info": {
+          "year": 2013,
+          "artid": "1",
+          "page_start": "1",
+          "journal_title": "Eur.Phys.J.C",
+          "journal_volume": "73"
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[17] M. Dasgupta, A. Powling, A. Siodmok, Journal of High Energy Physics 2015, 1 (2015)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "17",
+        "authors": [
+          {
+            "full_name": "Dasgupta, M."
+          },
+          {
+            "full_name": "Powling, A."
+          },
+          {
+            "full_name": "Siodmok, A."
+          }
+        ],
+        "publication_info": {
+          "year": 2015,
+          "artid": "001",
+          "page_start": "001",
+          "journal_title": "JHEP",
+          "journal_volume": "15"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1307242"
+      },
+      "raw_refs": [
+        {
+          "value": "[18] J. Cogan, M. Kagan, E. Strauss, A. Schwarztman, Journal of High Energy Physics 2015, 118 (2015)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "18",
+        "authors": [
+          {
+            "full_name": "Cogan, J."
+          },
+          {
+            "full_name": "Kagan, M."
+          },
+          {
+            "full_name": "Strauss, E."
+          },
+          {
+            "full_name": "Schwarztman, A."
+          }
+        ],
+        "publication_info": {
+          "year": 2015,
+          "artid": "118",
+          "page_start": "118",
+          "journal_title": "JHEP",
+          "journal_volume": "02"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1590271"
+      },
+      "raw_refs": [
+        {
+          "value": "[19] J. Pearkes, W. Fedorko, A. Lister, C. Gay, arXiv preprint arXiv:1704.02124 (2017)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "19",
+        "authors": [
+          {
+            "full_name": "Pearkes, J."
+          },
+          {
+            "full_name": "Fedorko, W."
+          },
+          {
+            "full_name": "Lister, A."
+          },
+          {
+            "full_name": "Gay, C."
+          }
+        ],
+        "arxiv_eprint": "1704.02124",
+        "publication_info": {
+          "year": 2017
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1437937"
+      },
+      "raw_refs": [
+        {
+          "value": "[20] P. Baldi, K. Bauer, C. Eng, P. Sadowski, D. Whiteson, Physical Review D 93, 094034 (2016)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "20",
+        "authors": [
+          {
+            "full_name": "Baldi, P."
+          },
+          {
+            "full_name": "Bauer, K."
+          },
+          {
+            "full_name": "Eng, C."
+          },
+          {
+            "full_name": "Sadowski, P."
+          },
+          {
+            "full_name": "Whiteson, D."
+          }
+        ],
+        "publication_info": {
+          "year": 2016,
+          "artid": "094034",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "93"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[21] S. Macaluso, D. Shih, Journal of High Energy Physics 2018, 1 (2018)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "21",
+        "authors": [
+          {
+            "full_name": "Macaluso, S."
+          },
+          {
+            "full_name": "Shih, D."
+          }
+        ],
+        "publication_info": {
+          "year": 2018,
+          "artid": "001",
+          "page_start": "001",
+          "journal_title": "JHEP",
+          "journal_volume": "18"
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[22] L.G. Almeida, M. Backovi´ c, M. Cliche, S.J. Lee, M. Perelstein, Journal of High Energy Physics 2015, 1 (2015)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["c, M. Cliche, S.J. Lee, M. Perelstein"],
+        "label": "22",
+        "authors": [
+          {
+            "full_name": "Almeida, L.G."
+          },
+          {
+            "full_name": "Backov, M."
+          }
+        ],
+        "publication_info": {
+          "year": 2015,
+          "artid": "001",
+          "page_start": "001",
+          "journal_title": "JHEP",
+          "journal_volume": "15"
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[23] L. de Oliveira, M. Kagan, L. Mackey, B. Nachman, A. Schwartzman, Journal of High Energy Physics 2016, 1 (2016)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "23",
+        "authors": [
+          {
+            "full_name": "de Oliveira, L."
+          },
+          {
+            "full_name": "Kagan, M."
+          },
+          {
+            "full_name": "Mackey, L."
+          },
+          {
+            "full_name": "Nachman, B."
+          },
+          {
+            "full_name": "Schwartzman, A."
+          }
+        ],
+        "publication_info": {
+          "year": 2016,
+          "artid": "001",
+          "page_start": "001",
+          "journal_title": "JHEP",
+          "journal_volume": "16"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1478597"
+      },
+      "raw_refs": [
+        {
+          "value": "[24] D. Guest, J. Collado, P. Baldi, S.C. Hsu, G. Urban, D. Whiteson, Physical Review D 94, 112002 (2016)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "24",
+        "authors": [
+          {
+            "full_name": "Guest, D."
+          },
+          {
+            "full_name": "Collado, J."
+          },
+          {
+            "full_name": "Baldi, P."
+          },
+          {
+            "full_name": "Hsu, S.C."
+          },
+          {
+            "full_name": "Urban, G."
+          },
+          {
+            "full_name": "Whiteson, D."
+          }
+        ],
+        "publication_info": {
+          "year": 2016,
+          "artid": "112002",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "94"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1485081"
+      },
+      "raw_refs": [
+        {
+          "value": "[25] J. Barnard, E.N. Dawe, M.J. Dolan, N. Rajcic, Physical Review D 95, 014018 (2017)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "25",
+        "authors": [
+          {
+            "full_name": "Barnard, J."
+          },
+          {
+            "full_name": "Dawe, E.N."
+          },
+          {
+            "full_name": "Dolan, M.J."
+          },
+          {
+            "full_name": "Rajcic, N."
+          }
+        ],
+        "publication_info": {
+          "year": 2017,
+          "artid": "014018",
+          "journal_title": "Phys.Rev.D",
+          "journal_volume": "95"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1613515"
+      },
+      "raw_refs": [
+        {
+          "value": "[26] A. Butter, G. Kasieczka, T. Plehn, M. Russell, SciPost Phys 5, 028 (2018)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "26",
+        "authors": [
+          {
+            "full_name": "Butter, A."
+          },
+          {
+            "full_name": "Kasieczka, G."
+          },
+          {
+            "full_name": "Plehn, T."
+          },
+          {
+            "full_name": "Russell, M."
+          }
+        ],
+        "publication_info": {
+          "year": 2018,
+          "artid": "028",
+          "page_start": "028",
+          "journal_title": "SciPost Phys.",
+          "journal_volume": "5"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1501944"
+      },
+      "raw_refs": [
+        {
+          "value": "[27] P.T. Komiske, E.M. Metodiev, M.D. Schwartz, Journal of High Energy Physics 2017, 110 (2017)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "27",
+        "authors": [
+          {
+            "full_name": "Komiske, P.T."
+          },
+          {
+            "full_name": "Metodiev, E.M."
+          },
+          {
+            "full_name": "Schwartz, M.D."
+          }
+        ],
+        "publication_info": {
+          "year": 2017,
+          "artid": "110",
+          "page_start": "110",
+          "journal_title": "JHEP",
+          "journal_volume": "01"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[28] J. Lin, M. Freytsis, I. Moult, B. Nachman, Journal of High Energy Physics 2018, 1 (2018)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "28",
+        "authors": [
+          {
+            "full_name": "Lin, J."
+          },
+          {
+            "full_name": "Freytsis, M."
+          },
+          {
+            "full_name": "Moult, I."
+          },
+          {
+            "full_name": "Nachman, B."
+          }
+        ],
+        "publication_info": {
+          "year": 2018,
+          "artid": "001",
+          "page_start": "001",
+          "journal_title": "JHEP",
+          "journal_volume": "18"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1722059"
+      },
+      "raw_refs": [
+        {
+          "value": "[29] G. Kasieczka, T. Plehn, A. Butter, K. Cranmer, D. Debnath, B.M. Dillon, M. Fairbairn, D.A. Faroughy, W. Fedorko, C. Gay et al., arXiv preprint arXiv:1902.09914 (2019)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "29",
+        "authors": [
+          {
+            "full_name": "Kasieczka, G."
+          },
+          {
+            "full_name": "Plehn, T."
+          },
+          {
+            "full_name": "Butter, A."
+          },
+          {
+            "full_name": "Cranmer, K."
+          },
+          {
+            "full_name": "Debnath, D."
+          },
+          {
+            "full_name": "Dillon, B.M."
+          },
+          {
+            "full_name": "Fairbairn, M."
+          },
+          {
+            "full_name": "Faroughy, D.A."
+          },
+          {
+            "full_name": "Fedorko, W."
+          },
+          {
+            "full_name": "Gay, C."
+          }
+        ],
+        "arxiv_eprint": "1902.09914",
+        "publication_info": {
+          "year": 2019
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1511436"
+      },
+      "raw_refs": [
+        {
+          "value": "[30] G. Kasieczka, T. Plehn, M. Russell, T. Schell, Journal of High Energy Physics 2017, 6 (2017)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "30",
+        "authors": [
+          {
+            "full_name": "Kasieczka, G."
+          },
+          {
+            "full_name": "Plehn, T."
+          },
+          {
+            "full_name": "Russell, M."
+          },
+          {
+            "full_name": "Schell, T."
+          }
+        ],
+        "publication_info": {
+          "year": 2017,
+          "artid": "006",
+          "page_start": "006",
+          "journal_title": "JHEP",
+          "journal_volume": "05"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[31] Y. LeCun, L. Bottou, Y. Bengio, P. Haffner, Proceedings of the IEEE 86, 2278 (1998)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "31",
+        "authors": [
+          {
+            "full_name": "LeCun, Y."
+          },
+          {
+            "full_name": "Bottou, L."
+          },
+          {
+            "full_name": "Bengio, Y."
+          },
+          {
+            "full_name": "Haffner, P."
+          }
+        ],
+        "publication_info": {
+          "year": 1998,
+          "artid": "2278",
+          "page_start": "2278",
+          "journal_title": "IEEE Proc.",
+          "journal_volume": "86"
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[32] M. Cacciari, G.P. Salam, G. Soyez, The European Physical Journal C 72, 1 (2012)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "32",
+        "authors": [
+          {
+            "full_name": "Cacciari, M."
+          },
+          {
+            "full_name": "Salam, G.P."
+          },
+          {
+            "full_name": "Soyez, G."
+          }
+        ],
+        "publication_info": {
+          "year": 2012,
+          "artid": "1",
+          "page_start": "1",
+          "journal_title": "Eur.Phys.J.C",
+          "journal_volume": "72"
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1770447"
+      },
+      "raw_refs": [
+        {
+          "value": "[33] A.M. Sirunyan et al. (CMS), Comput. Softw. Big Sci. 4, 10 (2020), 1912.06046",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["(CMS)"],
+        "label": "33",
+        "authors": [
+          {
+            "full_name": "Sirunyan, A.M."
+          }
+        ],
+        "arxiv_eprint": "1912.06046",
+        "publication_info": {
+          "year": 2020,
+          "artid": "10",
+          "page_start": "10",
+          "journal_title": "Comput.Softw.Big Sci.",
+          "journal_volume": "4"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1620760"
+      },
+      "raw_refs": [
+        {
+          "value": "[34] P. Sermanet, D. Eigen, X. Zhang, M. Mathieu, R. Fergus, Y. LeCun, arXiv preprint arXiv:1312.6229 (2013)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "34",
+        "authors": [
+          {
+            "full_name": "Sermanet, P."
+          },
+          {
+            "full_name": "Eigen, D."
+          },
+          {
+            "full_name": "Zhang, X."
+          },
+          {
+            "full_name": "Mathieu, M."
+          },
+          {
+            "full_name": "Fergus, R."
+          },
+          {
+            "full_name": "LeCun, Y."
+          }
+        ],
+        "arxiv_eprint": "1312.6229",
+        "publication_info": {
+          "year": 2013
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[35] K. Zhang, Z. Zhang, Z. Li, Y. Qiao, IEEE Signal Processing Letters 23, 1499 (2016)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "35",
+        "authors": [
+          {
+            "full_name": "Zhang, K."
+          },
+          {
+            "full_name": "Zhang, Z."
+          },
+          {
+            "full_name": "Li, Z."
+          },
+          {
+            "full_name": "Qiao, Y."
+          }
+        ],
+        "publication_info": {
+          "year": 2016,
+          "artid": "1499",
+          "page_start": "1499",
+          "journal_title": "IEEE Signal Process.Lett.",
+          "journal_volume": "23"
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[36] L. Zhang, L. Lin, X. Liang, K. He, Is faster R-CNN doing well for pedestrian detection?, in European conference on computer vision (Springer, 2016), pp. 443–457",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Is faster R-CNN / doing well for pedestrian detection?, in European conference on computer vision / pp. 443-457"
+        ],
+        "label": "36",
+        "authors": [
+          {
+            "full_name": "Zhang, L."
+          },
+          {
+            "full_name": "Lin, L."
+          },
+          {
+            "full_name": "Liang, X."
+          },
+          {
+            "full_name": "He, K."
+          }
+        ],
+        "imprint": {
+          "publisher": "Springer"
+        },
+        "publication_info": {
+          "year": 2016
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[37] Z. Zou, Z. Shi, Y. Guo, J. Ye, arXiv preprint arXiv:1905.05055 (2019)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "37",
+        "authors": [
+          {
+            "full_name": "Zou, Z."
+          },
+          {
+            "full_name": "Shi, Z."
+          },
+          {
+            "full_name": "Guo, Y."
+          },
+          {
+            "full_name": "Ye, J."
+          }
+        ],
+        "arxiv_eprint": "1905.05055",
+        "publication_info": {
+          "year": 2019
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[38] L. Liu, W. Ouyang, X. Wang, P. Fieguth, J. Chen, X. Liu, M. Pietikäinen, International journal of computer vision 128, 261 (2020)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "38",
+        "authors": [
+          {
+            "full_name": "Liu, L."
+          },
+          {
+            "full_name": "Ouyang, W."
+          },
+          {
+            "full_name": "Wang, X."
+          },
+          {
+            "full_name": "Fieguth, P."
+          },
+          {
+            "full_name": "Chen, J."
+          },
+          {
+            "full_name": "Liu, X."
+          },
+          {
+            "full_name": "Pietikäinen, M."
+          }
+        ],
+        "publication_info": {
+          "year": 2020,
+          "artid": "261",
+          "page_start": "261",
+          "journal_title": "Int.J.Comput.Vision",
+          "journal_volume": "128"
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[39] J. Redmon, A. Farhadi, YOLO9000: better, faster, stronger, in Proceedings of the IEEE conference on computer vision and pattern recognition (2017), pp. 7263–7271",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "YOLO9000: better, faster, stronger, in Proceedings of the IEEE conference on computer vision and pattern recognition , pp. 7263-7271"
+        ],
+        "label": "39",
+        "authors": [
+          {
+            "full_name": "Redmon, J."
+          },
+          {
+            "full_name": "Farhadi, A."
+          }
+        ],
+        "publication_info": {
+          "year": 2017
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[40] J. Redmon, S. Divvala, R. Girshick, A. Farhadi, You only look once: Unified, real-time object detection, in Proceedings of the IEEE conference on computer vision and pattern recognition (2016), pp. 779–788",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "You only look once: Unified, real-time object detection, in Proceedings of the IEEE conference on computer vision and pattern recognition , pp. 779-788"
+        ],
+        "label": "40",
+        "authors": [
+          {
+            "full_name": "Redmon, J."
+          },
+          {
+            "full_name": "Divvala, S."
+          },
+          {
+            "full_name": "Girshick, R."
+          },
+          {
+            "full_name": "Farhadi, A."
+          }
+        ],
+        "publication_info": {
+          "year": 2016
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[41] C.Y. Fu, W. Liu, A. Ranga, A. Tyagi, A.C. Berg, arXiv preprint arXiv:1701.06659 (2017)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "41",
+        "authors": [
+          {
+            "full_name": "Fu, C.Y."
+          },
+          {
+            "full_name": "Liu, W."
+          },
+          {
+            "full_name": "Ranga, A."
+          },
+          {
+            "full_name": "Tyagi, A."
+          },
+          {
+            "full_name": "Berg, A.C."
+          }
+        ],
+        "arxiv_eprint": "1701.06659",
+        "publication_info": {
+          "year": 2017
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[42] X. Zhou, D. Wang, P. Krähenbühl, arXiv preprint arXiv:1904.07850 (2019)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "42",
+        "authors": [
+          {
+            "full_name": "Zhou, X."
+          },
+          {
+            "full_name": "Wang, D."
+          },
+          {
+            "full_name": "Krähenbühl, P."
+          }
+        ],
+        "arxiv_eprint": "1904.07850",
+        "publication_info": {
+          "year": 2019
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[43] T.Y. Lin, P. Goyal, R. Girshick, K. He, P. Dollár, Focal loss for dense object detection, in Proceedings of the IEEE international conference on computer vision (2017), pp. 2980–2988",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Focal loss for dense object detection, in Proceedings of the IEEE international conference on computer vision , pp. 2980-2988"
+        ],
+        "label": "43",
+        "authors": [
+          {
+            "full_name": "Lin, T.Y."
+          },
+          {
+            "full_name": "Goyal, P."
+          },
+          {
+            "full_name": "Girshick, R."
+          },
+          {
+            "full_name": "He, K."
+          },
+          {
+            "full_name": "Dollár, P."
+          }
+        ],
+        "publication_info": {
+          "year": 2017
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[44] R. Girshick, J. Donahue, T. Darrell, J. Malik, Rich feature hierarchies for accurate object detection and semantic segmentation, in Proceedings of the IEEE conference on computer vision and pattern recognition (2014), pp. 580–587",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Rich feature hierarchies for accurate object detection and semantic segmentation, in Proceedings of the IEEE conference on computer vision and pattern recognition , pp. 580-587"
+        ],
+        "label": "44",
+        "authors": [
+          {
+            "full_name": "Girshick, R."
+          },
+          {
+            "full_name": "Donahue, J."
+          },
+          {
+            "full_name": "Darrell, T."
+          },
+          {
+            "full_name": "Malik, J."
+          }
+        ],
+        "publication_info": {
+          "year": 2014
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[45] S. Ren, K. He, R. Girshick, J. Sun, arXiv preprint arXiv:1506.01497 (2015)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "45",
+        "authors": [
+          {
+            "full_name": "Ren, S."
+          },
+          {
+            "full_name": "He, K."
+          },
+          {
+            "full_name": "Girshick, R."
+          },
+          {
+            "full_name": "Sun, J."
+          }
+        ],
+        "arxiv_eprint": "1506.01497",
+        "publication_info": {
+          "year": 2015
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[46] R. Girshick, Fast r-cnn, in Proceedings of the IEEE international conference on computer vision (2015), pp. 1440–1448",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Fast r-cnn, in Proceedings of the IEEE international conference on computer vision , pp. 1440-1448"
+        ],
+        "label": "46",
+        "authors": [
+          {
+            "full_name": "Girshick, R."
+          }
+        ],
+        "publication_info": {
+          "year": 2015
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[47] J. Dai, Y. Li, K. He, J. Sun, arXiv preprint arXiv:1605.06409 (2016)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "47",
+        "authors": [
+          {
+            "full_name": "Dai, J."
+          },
+          {
+            "full_name": "Li, Y."
+          },
+          {
+            "full_name": "He, K."
+          },
+          {
+            "full_name": "Sun, J."
+          }
+        ],
+        "arxiv_eprint": "1605.06409",
+        "publication_info": {
+          "year": 2016
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[48] H. Xu, X. Lv, X. Wang, Z. Ren, N. Bodla, R. Chellappa, Deep regionlets for object detection, in Proceedings of the European Conference on Computer Vision (ECCV) (2018), pp. 798–814",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Deep regionlets for object detection, in Proceedings of the European Conference on Computer Vision (ECCV) , pp. 798-814"
+        ],
+        "label": "48",
+        "authors": [
+          {
+            "full_name": "Xu, H."
+          },
+          {
+            "full_name": "Lv, X."
+          },
+          {
+            "full_name": "Wang, X."
+          },
+          {
+            "full_name": "Ren, Z."
+          },
+          {
+            "full_name": "Bodla, N."
+          },
+          {
+            "full_name": "Chellappa, R."
+          }
+        ],
+        "publication_info": {
+          "year": 2018
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[49] W. Liu, D. Anguelov, D. Erhan, C. Szegedy, S. Reed, C.Y. Fu, A.C. Berg, Ssd: Single shot multibox detector, in European conference on computer vision (Springer, 2016), pp. 21–37",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Ssd: Single shot multibox detector, in European conference on computer vision / pp. 21-37"
+        ],
+        "label": "49",
+        "authors": [
+          {
+            "full_name": "Liu, W."
+          },
+          {
+            "full_name": "Anguelov, D."
+          },
+          {
+            "full_name": "Erhan, D."
+          },
+          {
+            "full_name": "Szegedy, C."
+          },
+          {
+            "full_name": "Reed, S."
+          },
+          {
+            "full_name": "Fu, C.Y."
+          },
+          {
+            "full_name": "Berg, A.C."
+          }
+        ],
+        "imprint": {
+          "publisher": "Springer"
+        },
+        "publication_info": {
+          "year": 2016
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1852384"
+      },
+      "raw_refs": [
+        {
+          "value": "[50] K. Simonyan, A. Zisserman, arXiv preprint arXiv:1409.1556 (2014)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "50",
+        "authors": [
+          {
+            "full_name": "Simonyan, K."
+          },
+          {
+            "full_name": "Zisserman, A."
+          }
+        ],
+        "arxiv_eprint": "1409.1556",
+        "publication_info": {
+          "year": 2014
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[51] Y. Cheng, D. Wang, P. Zhou, T. Zhang, arXiv preprint arXiv:1710.09282 (2017)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "51",
+        "authors": [
+          {
+            "full_name": "Cheng, Y."
+          },
+          {
+            "full_name": "Wang, D."
+          },
+          {
+            "full_name": "Zhou, P."
+          },
+          {
+            "full_name": "Zhang, T."
+          }
+        ],
+        "arxiv_eprint": "1710.09282",
+        "publication_info": {
+          "year": 2017
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[52] Y. LeCun, J.S. Denker, S.A. Solla, R.E. Howard, L.D. Jackel, Optimal brain damage., in NIPs (Citeseer, 1989), Vol. 2, pp. 598–605",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Optimal brain damage., in NIPs (Citeseer,), Vol. 2, pp. 598-605"
+        ],
+        "label": "52",
+        "authors": [
+          {
+            "full_name": "LeCun, Y."
+          },
+          {
+            "full_name": "Denker, J.S."
+          },
+          {
+            "full_name": "Solla, S.A."
+          },
+          {
+            "full_name": "Howard, R.E."
+          },
+          {
+            "full_name": "Jackel, L.D."
+          }
+        ],
+        "publication_info": {
+          "year": 1989
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[53] S. Han, H. Mao, W.J. Dally, arXiv preprint arXiv:1510.00149 (2015)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "53",
+        "authors": [
+          {
+            "full_name": "Han, S."
+          },
+          {
+            "full_name": "Mao, H."
+          },
+          {
+            "full_name": "Dally, W.J."
+          }
+        ],
+        "arxiv_eprint": "1510.00149",
+        "publication_info": {
+          "year": 2015
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[54] C. Louizos, M. Welling, D.P. Kingma, arXiv preprint arXiv:1712.01312 (2017)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "54",
+        "authors": [
+          {
+            "full_name": "Louizos, C."
+          },
+          {
+            "full_name": "Welling, M."
+          },
+          {
+            "full_name": "Kingma, D.P."
+          }
+        ],
+        "arxiv_eprint": "1712.01312",
+        "publication_info": {
+          "year": 2017
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[55] A. Sironi, B. Tekin, R. Rigamonti, V. Lepetit, P. Fua, IEEE transactions on pattern analysis and machine intelligence 37, 94 (2014)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "55",
+        "authors": [
+          {
+            "full_name": "Sironi, A."
+          },
+          {
+            "full_name": "Tekin, B."
+          },
+          {
+            "full_name": "Rigamonti, R."
+          },
+          {
+            "full_name": "Lepetit, V."
+          },
+          {
+            "full_name": "Fua, P."
+          }
+        ],
+        "publication_info": {
+          "year": 2014,
+          "artid": "94",
+          "page_start": "94",
+          "journal_title": "IEEE Trans.Pattern Anal.Machine Intell.",
+          "journal_volume": "37"
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[56] E. Denton, W. Zaremba, J. Bruna, Y. LeCun, R. Fergus, arXiv preprint arXiv:1404.0736 (2014)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "56",
+        "authors": [
+          {
+            "full_name": "Denton, E."
+          },
+          {
+            "full_name": "Zaremba, W."
+          },
+          {
+            "full_name": "Bruna, J."
+          },
+          {
+            "full_name": "LeCun, Y."
+          },
+          {
+            "full_name": "Fergus, R."
+          }
+        ],
+        "arxiv_eprint": "1404.0736",
+        "publication_info": {
+          "year": 2014
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[57] M. Jaderberg, A. Vedaldi, A. Zisserman, arXiv preprint arXiv:1405.3866 (2014)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "57",
+        "authors": [
+          {
+            "full_name": "Jaderberg, M."
+          },
+          {
+            "full_name": "Vedaldi, A."
+          },
+          {
+            "full_name": "Zisserman, A."
+          }
+        ],
+        "arxiv_eprint": "1405.3866",
+        "publication_info": {
+          "year": 2014
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[58] C. Szegedy, W. Liu, Y. Jia, P. Sermanet, S. Reed, D. Anguelov, D. Erhan, V. Vanhoucke, A. Rabinovich, Going deeper with convolutions, in Proceedings of the IEEE conference on computer vision and pattern recognition (2015), pp. 1–9",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Going deeper with convolutions, in Proceedings of the IEEE conference on computer vision and pattern recognition , pp. 1-9"
+        ],
+        "label": "58",
+        "authors": [
+          {
+            "full_name": "Szegedy, C."
+          },
+          {
+            "full_name": "Liu, W."
+          },
+          {
+            "full_name": "Jia, Y."
+          },
+          {
+            "full_name": "Sermanet, P."
+          },
+          {
+            "full_name": "Reed, S."
+          },
+          {
+            "full_name": "Anguelov, D."
+          },
+          {
+            "full_name": "Erhan, D."
+          },
+          {
+            "full_name": "Vanhoucke, V."
+          },
+          {
+            "full_name": "Rabinovich, A."
+          }
+        ],
+        "publication_info": {
+          "year": 2015
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[59] A.G. Howard, M. Zhu, B. Chen, D. Kalenichenko, W. Wang, T. Weyand, M. Andreetto, H. Adam, arXiv preprint arXiv:1704.04861 (2017)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "59",
+        "authors": [
+          {
+            "full_name": "Howard, A.G."
+          },
+          {
+            "full_name": "Zhu, M."
+          },
+          {
+            "full_name": "Chen, B."
+          },
+          {
+            "full_name": "Kalenichenko, D."
+          },
+          {
+            "full_name": "Wang, W."
+          },
+          {
+            "full_name": "Weyand, T."
+          },
+          {
+            "full_name": "Andreetto, M."
+          },
+          {
+            "full_name": "Adam, H."
+          }
+        ],
+        "arxiv_eprint": "1704.04861",
+        "publication_info": {
+          "year": 2017
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[60] F.N. Iandola, S. Han, M.W. Moskewicz, K. Ashraf, W.J. Dally, K. Keutzer, arXiv preprint arXiv:1602.07360 (2016)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "60",
+        "authors": [
+          {
+            "full_name": "Iandola, F.N."
+          },
+          {
+            "full_name": "Han, S."
+          },
+          {
+            "full_name": "Moskewicz, M.W."
+          },
+          {
+            "full_name": "Ashraf, K."
+          },
+          {
+            "full_name": "Dally, W.J."
+          },
+          {
+            "full_name": "Keutzer, K."
+          }
+        ],
+        "arxiv_eprint": "1602.07360",
+        "publication_info": {
+          "year": 2016
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[61] T. Cohen, M. Welling, Group equivariant convolutional networks, in International conference on machine learning (PMLR, 2016), pp. 2990–2999",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Group equivariant convolutional networks, in International conference on machine learning (PMLR,), pp. 2990-2999"
+        ],
+        "label": "61",
+        "authors": [
+          {
+            "full_name": "Cohen, T."
+          },
+          {
+            "full_name": "Welling, M."
+          }
+        ],
+        "publication_info": {
+          "year": 2016
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[62] C. Buciluˇ a, R. Caruana, A. Niculescu-Mizil, Model compression, in Proceedings of the 12th ACM SIGKDD international conference on Knowledge discovery and data mining (2006), pp. 535–541",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "a, R. Caruana, A. Niculescu-Mizil / Model compression, in Proceedings of the 12th ACM SIGKDD international conference on Knowledge discovery and data mining , pp. 535-541"
+        ],
+        "label": "62",
+        "authors": [
+          {
+            "full_name": "Bucilu, C."
+          }
+        ],
+        "publication_info": {
+          "year": 2006
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[63] M. Courbariaux, Y. Bengio, J.P. David, arXiv preprint arXiv:1511.00363 (2015)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "63",
+        "authors": [
+          {
+            "full_name": "Courbariaux, M."
+          },
+          {
+            "full_name": "Bengio, Y."
+          },
+          {
+            "full_name": "David, J.P."
+          }
+        ],
+        "arxiv_eprint": "1511.00363",
+        "publication_info": {
+          "year": 2015
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[64] M. Courbariaux, I. Hubara, D. Soudry, R. El-Yaniv, Y. Bengio, arXiv preprint arXiv:1602.02830 (2016)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "64",
+        "authors": [
+          {
+            "full_name": "Courbariaux, M."
+          },
+          {
+            "full_name": "Hubara, I."
+          },
+          {
+            "full_name": "Soudry, D."
+          },
+          {
+            "full_name": "El-Yaniv, R."
+          },
+          {
+            "full_name": "Bengio, Y."
+          }
+        ],
+        "arxiv_eprint": "1602.02830",
+        "publication_info": {
+          "year": 2016
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[65] S. Zhou, Y. Wu, Z. Ni, X. Zhou, H. Wen, Y. Zou, arXiv preprint arXiv:1606.06160 (2016)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "65",
+        "authors": [
+          {
+            "full_name": "Zhou, S."
+          },
+          {
+            "full_name": "Wu, Y."
+          },
+          {
+            "full_name": "Ni, Z."
+          },
+          {
+            "full_name": "Zhou, X."
+          },
+          {
+            "full_name": "Wen, H."
+          },
+          {
+            "full_name": "Zou, Y."
+          }
+        ],
+        "arxiv_eprint": "1606.06160",
+        "publication_info": {
+          "year": 2016
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[66] M. Rastegari, V. Ordonez, J. Redmon, A. Farhadi, Xnor-net: Imagenet classification using binary convolutional neural networks, in European conference on computer vision (Springer, 2016), pp. 525–542",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Xnor-net: Imagenet classification using binary convolutional neural networks, in European conference on computer vision / pp. 525-542"
+        ],
+        "label": "66",
+        "authors": [
+          {
+            "full_name": "Rastegari, M."
+          },
+          {
+            "full_name": "Ordonez, V."
+          },
+          {
+            "full_name": "Redmon, J."
+          },
+          {
+            "full_name": "Farhadi, A."
+          }
+        ],
+        "imprint": {
+          "publisher": "Springer"
+        },
+        "publication_info": {
+          "year": 2016
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[67] I. Hubara, M. Courbariaux, D. Soudry, R. El-Yaniv, Y. Bengio, The Journal of Machine Learning Research 18, 6869 (2017)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "67",
+        "authors": [
+          {
+            "full_name": "Hubara, I."
+          },
+          {
+            "full_name": "Courbariaux, M."
+          },
+          {
+            "full_name": "Soudry, D."
+          },
+          {
+            "full_name": "El-Yaniv, R."
+          },
+          {
+            "full_name": "Bengio, Y."
+          }
+        ],
+        "publication_info": {
+          "year": 2017,
+          "artid": "6869",
+          "page_start": "6869",
+          "journal_title": "J.Machine Learning Res.",
+          "journal_volume": "18"
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[68] F. Li, B. Zhang, B. Liu, arXiv preprint arXiv:1605.04711 (2016)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "68",
+        "authors": [
+          {
+            "full_name": "Li, F."
+          },
+          {
+            "full_name": "Zhang, B."
+          },
+          {
+            "full_name": "Liu, B."
+          }
+        ],
+        "arxiv_eprint": "1605.04711",
+        "publication_info": {
+          "year": 2016
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[69] C. Zhu, S. Han, H. Mao, W.J. Dally, arXiv preprint arXiv:1612.01064 (2016)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "69",
+        "authors": [
+          {
+            "full_name": "Zhu, C."
+          },
+          {
+            "full_name": "Han, S."
+          },
+          {
+            "full_name": "Mao, H."
+          },
+          {
+            "full_name": "Dally, W.J."
+          }
+        ],
+        "arxiv_eprint": "1612.01064",
+        "publication_info": {
+          "year": 2016
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[70] E.H. Lee, D. Miyashita, E. Chai, B. Murmann, S.S. Wong, Lognet: Energy-efficient neural networks using logarithmic computation, in 2017 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (IEEE, 2017), pp. 5900–5904",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Lognet: Energy-efficient neural networks using logarithmic computation, in"
+        ],
+        "label": "70",
+        "authors": [
+          {
+            "full_name": "Lee, E.H."
+          },
+          {
+            "full_name": "Miyashita, D."
+          },
+          {
+            "full_name": "Chai, E."
+          },
+          {
+            "full_name": "Murmann, B."
+          },
+          {
+            "full_name": "Wong, S.S."
+          }
+        ],
+        "imprint": {
+          "publisher": "IEEE"
+        },
+        "publication_info": {
+          "year": 2017
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[70] E.H. Lee, D. Miyashita, E. Chai, B. Murmann, S.S. Wong, Lognet: Energy-efficient neural networks using logarithmic computation, in 2017 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (IEEE, 2017), pp. 5900–5904",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "International Conference on Acoustics, Speech and Signal Processing (ICASSP) / pp. 5900-5904"
+        ],
+        "label": "70",
+        "authors": [
+          {
+            "full_name": "Lee, E.H."
+          },
+          {
+            "full_name": "Miyashita, D."
+          },
+          {
+            "full_name": "Chai, E."
+          },
+          {
+            "full_name": "Murmann, B."
+          },
+          {
+            "full_name": "Wong, S.S."
+          }
+        ],
+        "imprint": {
+          "publisher": "IEEE"
+        },
+        "publication_info": {
+          "year": 2017
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[71] Z. Cai, X. He, J. Sun, N. Vasconcelos, Deep learning with low precision by half-wave gaussian quantization, in Proceedings of the IEEE conference on computer vision and pattern recognition (2017), pp. 5918–5926",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Deep learning with low precision by half-wave gaussian quantization, in Proceedings of the IEEE conference on computer vision and pattern recognition , pp. 5918-5926"
+        ],
+        "label": "71",
+        "authors": [
+          {
+            "full_name": "Cai, Z."
+          },
+          {
+            "full_name": "He, X."
+          },
+          {
+            "full_name": "Sun, J."
+          },
+          {
+            "full_name": "Vasconcelos, N."
+          }
+        ],
+        "publication_info": {
+          "year": 2017
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1485699"
+      },
+      "raw_refs": [
+        {
+          "value": "[72] CMS Collaboration, arXiv preprint arXiv:1609.02366 (2016)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["arXiv preprint"],
+        "label": "72",
+        "arxiv_eprint": "1609.02366",
+        "collaborations": ["CMS Collaboration"],
+        "publication_info": {
+          "year": 2016
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[73] W. Bhimji, S.A. Farrell, T. Kurth, M. Paganini, E. Racah et al., 1085, 042034 (2018)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["1085, 042034"],
+        "label": "73",
+        "authors": [
+          {
+            "full_name": "Bhimji, W."
+          },
+          {
+            "full_name": "Farrell, S.A."
+          },
+          {
+            "full_name": "Kurth, T."
+          },
+          {
+            "full_name": "Paganini, M."
+          },
+          {
+            "full_name": "Racah, E."
+          }
+        ],
+        "publication_info": {
+          "year": 2018
+        }
+      }
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/796887"
+      },
+      "raw_refs": [
+        {
+          "value": "[74] CMS Collaboration, JInst 3, S08004 (2008)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "74",
+        "collaborations": ["CMS Collaboration"],
+        "publication_info": {
+          "year": 2008,
+          "artid": "S08004",
+          "journal_title": "JINST",
+          "journal_volume": "3"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/764903"
+      },
+      "raw_refs": [
+        {
+          "value": "[75] T. Sjöstrand, S. Mrenna, P. Skands, Computer Physics Communications 178, 852 (2008)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "label": "75",
+        "authors": [
+          {
+            "full_name": "Sjöstrand, T."
+          },
+          {
+            "full_name": "Mrenna, S."
+          },
+          {
+            "full_name": "Skands, P."
+          }
+        ],
+        "publication_info": {
+          "year": 2008,
+          "artid": "852",
+          "page_start": "852",
+          "journal_title": "Comput.Phys.Commun.",
+          "journal_volume": "178"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1244313"
+      },
+      "raw_refs": [
+        {
+          "value": "[76] J. De Favereau, C. Delaere, P. Demin, A. Giammanco, V. Lemaitre, A. Mertens, M. Selvaggi, D.. Collaboration et al., Journal of High Energy Physics 2014, 57 (2014)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["D.. Collaboration et al"],
+        "label": "76",
+        "authors": [
+          {
+            "full_name": "De Favereau, J."
+          },
+          {
+            "full_name": "Delaere, C."
+          },
+          {
+            "full_name": "Demin, P."
+          },
+          {
+            "full_name": "Giammanco, A."
+          },
+          {
+            "full_name": "Lemaitre, V."
+          },
+          {
+            "full_name": "Mertens, A."
+          },
+          {
+            "full_name": "Selvaggi, M."
+          }
+        ],
+        "publication_info": {
+          "year": 2014,
+          "artid": "057",
+          "page_start": "057",
+          "journal_title": "JHEP",
+          "journal_volume": "02"
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "record": {
+        "$ref": "http:/localhost:5000/api/literature/1690634"
+      },
+      "raw_refs": [
+        {
+          "value": "[77] S. Ioffe, C. Szegedy, Batch normalization: Accelerating deep network training by reducing internal covariate shift (2015), 1502.03167",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Batch normalization: Accelerating deep network training by reducing internal covariate shift"
+        ],
+        "label": "77",
+        "authors": [
+          {
+            "full_name": "Ioffe, S."
+          },
+          {
+            "full_name": "Szegedy, C."
+          }
+        ],
+        "arxiv_eprint": "1502.03167",
+        "publication_info": {
+          "year": 2015
+        }
+      },
+      "curated_relation": false
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[78] E. Sari, M. Belbahri, V.P. Nia, How does batch normalization help binary training? (2020), 1909.09139",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["How does batch normalization help binary training?"],
+        "label": "78",
+        "authors": [
+          {
+            "full_name": "Sari, E."
+          },
+          {
+            "full_name": "Belbahri, M."
+          },
+          {
+            "full_name": "Nia, V.P."
+          }
+        ],
+        "arxiv_eprint": "1909.09139",
+        "publication_info": {
+          "year": 2020
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[79] A. Paszke, S. Gross, F. Massa, A. Lerer, J. Bradbury, G. Chanan, T. Killeen, Z. Lin, N. Gimelshein, L. Antiga et al., PyTorch: An Imperative Style, High-Performance Deep Learning Library (2019)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "PyTorch: An Imperative Style, High-Performance Deep Learning Library"
+        ],
+        "label": "79",
+        "authors": [
+          {
+            "full_name": "Paszke, A."
+          },
+          {
+            "full_name": "Gross, S."
+          },
+          {
+            "full_name": "Massa, F."
+          },
+          {
+            "full_name": "Lerer, A."
+          },
+          {
+            "full_name": "Bradbury, J."
+          },
+          {
+            "full_name": "Chanan, G."
+          },
+          {
+            "full_name": "Killeen, T."
+          },
+          {
+            "full_name": "Lin, Z."
+          },
+          {
+            "full_name": "Gimelshein, N."
+          },
+          {
+            "full_name": "Antiga, L."
+          }
+        ],
+        "publication_info": {
+          "year": 2019
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[80] X. Glorot, Y. Bengio, Understanding the difficulty of training deep feedforward neural networks, in Proceedings of the thirteenth international conference on artificial intelligence and statistics (JMLR Workshop and Conference Proceedings, 2010), pp. 249–256",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Understanding the difficulty of training deep feedforward neural networks, in Proceedings of the thirteenth international conference on artificial intelligence and statistics (JMLR Workshop and Conference Proceedings,), pp. 249-256"
+        ],
+        "label": "80",
+        "authors": [
+          {
+            "full_name": "Glorot, X."
+          },
+          {
+            "full_name": "Bengio, Y."
+          }
+        ],
+        "publication_info": {
+          "year": 2010
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[81] J. Deng, W. Dong, R. Socher, L. Li, Kai Li, Li Fei-Fei, ImageNet: A large-scale hierarchical image database, in 2009 IEEE Conference on Computer Vision and Pattern Recognition (2009), pp. 248–255",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "Kai Li, Li Fei-Fei, ImageNet: A large-scale hierarchical image database, in / Conference on Computer Vision and Pattern Recognition , pp. 248-255"
+        ],
+        "label": "81",
+        "authors": [
+          {
+            "full_name": "Deng, J."
+          },
+          {
+            "full_name": "Dong, W."
+          },
+          {
+            "full_name": "Socher, R."
+          },
+          {
+            "full_name": "Li, L."
+          }
+        ],
+        "imprint": {
+          "publisher": "IEEE"
+        },
+        "publication_info": {
+          "year": 2009
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[82] J. Davis, M. Goadrich, The relationship between Precision-Recall and ROC curves, in Proceedings of the 23rd international conference on Machine learning (2006), pp. 233–240",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": [
+          "The relationship between Precision-Recall and ROC curves, in Proceedings of the 23rd international conference on Machine learning , pp. 233-240"
+        ],
+        "label": "82",
+        "authors": [
+          {
+            "full_name": "Davis, J."
+          },
+          {
+            "full_name": "Goadrich, M."
+          }
+        ],
+        "publication_info": {
+          "year": 2006
+        }
+      }
+    },
+    {
+      "raw_refs": [
+        {
+          "value": "[83] J. Rabbi, N. Ray, M. Schubert, S. Chowdhury, D. Chao, Remote Sensing 12, 1432 (2020)",
+          "schema": "text"
+        }
+      ],
+      "reference": {
+        "misc": ["Remote Sensing 12, 1432"],
+        "label": "83",
+        "authors": [
+          {
+            "full_name": "Rabbi, J."
+          },
+          {
+            "full_name": "Ray, N."
+          },
+          {
+            "full_name": "Schubert, M."
+          },
+          {
+            "full_name": "Chowdhury, S."
+          },
+          {
+            "full_name": "Chao, D."
+          }
+        ],
+        "publication_info": {
+          "year": 2020
+        }
+      }
+    }
+  ],
+  "arxiv_eprints": [
+    {
+      "value": "2105.05785",
+      "categories": ["hep-ex"]
+    }
+  ],
+  "document_type": ["article"],
+  "preprint_date": "2021-05-12",
+  "control_number": 1863053,
+  "legacy_version": "20210516134425.0",
+  "inspire_categories": [
+    {
+      "term": "Experiment-HEP",
+      "source": "arxiv"
+    }
+  ],
+  "legacy_creation_date": "2021-05-13",
+  "external_system_identifiers": [
+    {
+      "value": "2766650",
+      "schema": "CDS"
+    }
+  ],
+  "curated": true,
+  "created": "2021-05-13T00:00:00+00:00",
+  "id": "1863053",
+  "updated": "2021-05-16T11:46:01.062881+00:00",
+  "links": {
+    "bibtex": "http:/localhost:5000/api/literature/1863053?format=bibtex",
+    "latex-eu": "http:/localhost:5000/api/literature/1863053?format=latex-eu",
+    "latex-us": "http:/localhost:5000/api/literature/1863053?format=latex-us",
+    "json": "http:/localhost:5000/api/literature/1863053?format=json",
+    "citations": "http:/localhost:5000/api/literature/?q=refersto%3Arecid%3A1863053"
+  }
+}

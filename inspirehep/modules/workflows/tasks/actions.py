@@ -72,6 +72,7 @@ from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_text,
 )
 from inspirehep.modules.refextract.matcher import match_references
+from inspirehep.modules.search import InstitutionsSearch
 from inspirehep.modules.workflows.tasks.upload import create_error
 from inspirehep.modules.workflows.errors import BadGatewayError, CannotFindProperSubgroup
 from inspirehep.modules.workflows.utils import (
@@ -170,6 +171,11 @@ def add_core(obj, eng):
     """Mark a record as CORE if it was approved as CORE."""
     if 'core' in obj.extra_data:
         obj.data['core'] = obj.extra_data['core']
+
+
+def is_core(obj, eng):
+    """Check if workflow is CORE."""
+    return obj.data.get("core")
 
 
 def halt_record(action=None, message=None):
@@ -937,4 +943,84 @@ def normalize_collaborations(obj, eng):
 
         collaboration['value'] = collaboration_normalized_name
         collaboration['record'] = response[0].self.to_dict()
+    return obj
+
+
+def _match_lit_author_affiliation(raw_aff):
+    query = Q(
+        "nested",
+        path="authors",
+        query=(
+            Q("match", authors__raw_affiliations__value=raw_aff)
+            & Q("exists", field="authors.affiliations.value")
+        ),
+        inner_hits={},
+    )
+    query_filters = Q("term", _collections="Literature") & Q("term", curated=True)
+    result = (
+        Search(index="records-hep", using=current_search_client)
+        .query(query)
+        .filter(query_filters)
+        .source(False)
+        .params(size=1)
+        .execute()
+        .hits
+    )
+    if result:
+        matched_author = result[0].meta.inner_hits.authors.hits[0].to_dict()
+        return matched_author["affiliations"]
+
+
+def _match_institution(matched_affiliation):
+    query = Q("match", legacy_ICN=matched_affiliation["value"])
+    result = InstitutionsSearch().query(query).params(size=1).execute()
+    if result:
+        return result.hits[0]["self"]
+
+
+def _assign_institution_ref_to_affiliation(matched_affiliation):
+    institution_reference = _match_institution(matched_affiliation)
+    if institution_reference:
+        matched_affiliation["record"] = institution_reference
+
+
+def _assign_matched_affiliations_to_author(
+    author_affiliations, matched_author_affiliations
+):
+    matched_affiliations_to_assign = []
+    for matched_author_affiliation in matched_author_affiliations:
+        if "record" not in matched_author_affiliation:
+            _assign_institution_ref_to_affiliation(
+                matched_author_affiliation
+            )
+        matched_affiliations_to_assign.append(matched_author_affiliation)
+    author_affiliations.extend(matched_affiliations_to_assign)
+    return matched_affiliations_to_assign
+
+
+def normalize_affiliations(obj, eng):
+    matched_affiliations = {}
+    for author in obj.data.get("authors", []):
+        author_affiliations = author.get("affiliations", [])
+        if author_affiliations:
+            continue
+        raw_affs = get_value(author, "raw_affiliations.value", [])
+        for raw_aff in raw_affs:
+            if raw_aff in matched_affiliations:
+                author_affiliations.append(matched_affiliations[raw_aff])
+                continue
+            matched_author_affiliations = _match_lit_author_affiliation(raw_aff)
+            if matched_author_affiliations:
+                assigned_affiliations = _assign_matched_affiliations_to_author(
+                    author_affiliations, matched_author_affiliations
+                )
+                matched_affiliations[raw_aff] = assigned_affiliations
+        if author_affiliations:
+            author["affiliations"] = author_affiliations
+            LOGGER.info(
+                "Normalized affiliations for author",
+                author=author["full_name"],
+                raw_affiliations=raw_affs,
+                assigned_affiliations=author_affiliations,
+            )
     return obj
