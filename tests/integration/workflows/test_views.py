@@ -357,10 +357,61 @@ def test_literature_submit_workflow(mock_start, workflow_app):
 
 
 def test_aggregations(workflow_app):
+    factory = TestRecordMetadata.create_from_kwargs(
+        json={
+            "titles": [{"title": "Quarks and protons"}],
+            "publication_info": [{"journal_title": "z.phys."}],
+        }
+    )
+
+    obj = workflow_object_class.create(
+        data=factory.record_metadata.json,
+        data_type="hep",
+    )
+    obj.save()
+    db.session.commit()
+
+    factory_2 = TestRecordMetadata.create_from_kwargs(
+        json={
+            "titles": [{"title": "Standard model"}],
+            "dois": [{"value": "10.1007/bf01397206", "source": "publisher"}],
+            "authors": [
+                {"full_name": "Ambarzumian, V."},
+                {"full_name": "Iwanenko, D."},
+            ],
+            "public_notes": [{"value": "Translation available at arXiv:2105.04360"}],
+            "publication_info": [
+                {
+                    "artid": "104275",
+                    "journal_record": {
+                        "$ref": "https://inspirebeta.net/api/journals/1214078"
+                    },
+                    "journal_title": "J.Geom.Phys.",
+                    "journal_volume": "167",
+                    "material": "publication",
+                    "year": 2021
+                }
+            ],
+            "report_numbers": [{"source": "arXiv", "value": "MS-TP-21-05"}],
+        }
+    )
+
+    obj_2 = workflow_object_class.create(
+        data=factory_2.record_metadata.json,
+        data_type="hep",
+    )
+
+    obj_2.save()
+    db.session.commit()
+
+    time.sleep(5)
+
     with workflow_app.test_client() as client:
         login_user_via_session(client, email="cataloger@inspirehep.net")
-        result = client.get("/api/holdingpen/")
-        result_data = json.loads(result.get_data(as_text=True))
+        search_response = client.get(
+            "/api/holdingpen"
+        )
+        result_data = json.loads(search_response.data)
 
     expected_aggregations = [
         "decision",
@@ -377,6 +428,7 @@ def test_aggregations(workflow_app):
         assert aggregation in result_aggregations
 
     assert len(expected_aggregations) == len(result_aggregations)
+    assert len(result_data["aggregations"]['journal']['buckets']) == 2
 
 
 def test_search(workflow_app):
