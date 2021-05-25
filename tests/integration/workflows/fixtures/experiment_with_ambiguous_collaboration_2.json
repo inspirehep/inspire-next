@@ -1,7 +1,6 @@
 {
   "created": "2015-08-21T00:00:00+00:00",
   "updated": "2021-05-01T11:43:45.039925+00:00",
-  "metadata": {
     "number_of_papers": 82,
     "self": {
       "$ref": "http://localhost:5000/api/experiments/1388776"
@@ -36,11 +35,11 @@
     "date_proposed": "2013-10-07",
     "control_number": 1388776,
     "legacy_version": "20170315140812.0",
-    "legacy_creation_date": "2015-08-21"
-  },
+    "legacy_creation_date": "2015-08-21",
   "uuid": "217db9ea-5d86-4482-9a19-401c850be59f",
   "links": {
     "json": "http://localhost:5000/api/experiments/1388776?format=json"
   },
-  "id": "1388776"
+  "id": "1388776",
+  "normalized_name_variants": ["SHIP"]
 }

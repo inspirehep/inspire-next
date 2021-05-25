@@ -902,12 +902,30 @@ def normalize_collaborations(obj, eng):
             if not response:
                 LOGGER.info(u"(wf: %s) collaboration normalization: no match for: %s", obj.id, collaboration['value'])
                 continue
+            elif len(response.hits) > 1:
+                matched_collaboration_names = [
+                    matched_collaboration.collaboration.value for matched_collaboration in response
+                ]
+                LOGGER.info(
+                    u"(wf: {0}) ambiguous match for collaboration {1}. Matches for collaboration subgroup: {2}".format(
+                        obj.id, collaboration['value'], ', '.join(matched_collaboration_names)
+                    )
+                )
+                continue
             else:
                 collaboration_normalized_name = find_subgroup(collaboration.get('value', ''), response[0])
         else:
             collaboration_normalized_name = response[0].collaboration.value
         LOGGER.info(u"(%s) collaboration normalization: normalized: %s ==> %s", obj.id, collaboration['value'], collaboration_normalized_name)
         if len(response.hits) > 1:
+            matched_collaboration_names = [
+                matched_collaboration.collaboration.value for matched_collaboration in response
+            ]
+            LOGGER.info(
+                u"(wf: {0}) ambiguous match for collaboration {1}. Matched collaborations: {2}".format(
+                    obj.id, collaboration['value'], ', '. join(matched_collaboration_names)
+                )
+            )
             continue
         accelerator_experiment = {"record": response[0].self.to_dict()}
         if 'legacy_name' in response[0]:

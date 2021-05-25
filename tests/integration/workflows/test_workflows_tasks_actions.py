@@ -88,6 +88,12 @@ def insert_ambiguous_experiments_into_db(workflow_app):
     TestRecordMetadata.create_from_file(
         __name__, 'experiment_with_ambiguous_collaboration_2.json', pid_type='exp', index_name='records-experiments'
     )
+    TestRecordMetadata.create_from_file(
+        __name__, 'experiment_with_subgroup_1.json', pid_type='exp', index_name='records-experiments'
+    )
+    TestRecordMetadata.create_from_file(
+        __name__, 'experiment_with_subgroup_2.json', pid_type='exp', index_name='records-experiments'
+    )
 
 
 def test_normalize_journal_titles_known_journals_with_ref(workflow_app, insert_journals_in_db):
@@ -887,7 +893,10 @@ def test_normalize_collaborations_with_different_name_variants(workflow_app, ins
     assert obj.data['accelerator_experiments'] == expected_accelerator_experiments
 
 
-def test_normalize_collaborations_doesnt_link_experiment_when_ambiguous(workflow_app, insert_ambiguous_experiments_into_db):
+@mock.patch("inspirehep.modules.workflows.tasks.actions.logging.Logger.info")
+def test_normalize_collaborations_doesnt_link_experiment_when_ambiguous_collaboration_names(
+        mock_logger, workflow_app, insert_ambiguous_experiments_into_db
+):
     record = {
         "_collections": [
             "Literature"
@@ -911,7 +920,42 @@ def test_normalize_collaborations_doesnt_link_experiment_when_ambiguous(workflow
         id_user=1,
         data_type='hep'
     )
+
     obj = normalize_collaborations(obj, None)
 
     assert obj.data['collaborations'] == expected_collaborations
     assert not obj.data.get('accelerator_experiments')
+    assert mock_logger.mock_calls[2][1][0] == u"(wf: 1) ambiguous match for collaboration SHIP. Matched collaborations: SHIP, SHiP"
+
+
+@mock.patch("inspirehep.modules.workflows.tasks.actions.logging.Logger.info")
+def test_normalize_collaborations_doesnt_link_experiment_when_ambiguous_subgroup(mock_logger, workflow_app, insert_ambiguous_experiments_into_db):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            "A title"
+        ],
+        "document_type": [
+            "report"
+        ],
+        "collaborations": [
+            {"value": "Belle SVD"}
+        ],
+
+    }
+
+    expected_collaborations = [{"value": "Belle SVD"}]
+
+    obj = workflow_object_class.create(
+        data=record,
+        id_user=1,
+        data_type='hep'
+    )
+
+    obj = normalize_collaborations(obj, None)
+
+    assert obj.data['collaborations'] == expected_collaborations
+    assert not obj.data.get('accelerator_experiments')
+    assert mock_logger.mock_calls[1][1][0] == u'(wf: 1) ambiguous match for collaboration Belle SVD. Matches for collaboration subgroup: Belle-II, Belle'
