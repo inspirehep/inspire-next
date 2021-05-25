@@ -1343,7 +1343,7 @@ WORKFLOWS_UI_REST_FACETS = {
             "is-update": terms_filter('_extra_data.is-update'),
             'subject': terms_filter('metadata.inspire_categories.term'),
             'decision': terms_filter('_extra_data.relevance_prediction.decision'),
-            'journal': terms_filter('metadata.publication_info.journal_title'),
+            'journal': terms_filter('metadata.facet_journal_title'),
         },
         "aggs": {
             "status": {
@@ -1383,8 +1383,8 @@ WORKFLOWS_UI_REST_FACETS = {
             },
             'journal': {
                 'terms': {
-                    'field': 'metadata.publication_info.journal_title',
-                    'size': 20,
+                    'field': 'metadata.facet_journal_title',
+                    'size': 20
                 },
             },
         }

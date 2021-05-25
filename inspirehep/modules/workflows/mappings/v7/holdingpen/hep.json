@@ -119,10 +119,15 @@
                             "journal_issue": {
                                 "type": "keyword"
                             },
-                            "journal_title": {
-                                "type": "text",
-                                "fielddata": true
+                          "journal_title": {
+                            "fields": {
+                              "raw": {
+                                "type": "keyword"
+                              }
                             },
+                            "copy_to": "metadata.facet_journal_title",
+                            "type": "text"
+                          },
                             "journal_volume": {
                                 "type": "text"
                             }
@@ -191,7 +196,11 @@
                             }
                         },
                         "type": "object"
-                    }
+                    },
+                    "facet_journal_title": {
+                        "index": false,
+                        "type": "keyword"
+                }
                 },
                 "type": "object"
             }
