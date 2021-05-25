@@ -29,6 +29,7 @@ import requests_mock
 import pytest
 
 from inspire_schemas.api import load_schema, validate
+from invenio_search import current_search
 from invenio_workflows import (
     start,
     workflow_object_class,
@@ -36,7 +37,10 @@ from invenio_workflows import (
     ObjectStatus,
 )
 from invenio_workflows.errors import WorkflowsError
+from invenio_workflows.models import WorkflowObjectModel
+
 from inspirehep.modules.workflows.tasks.actions import (
+    core_selection_wf_already_created, create_core_selection_wf,
     load_from_source_data,
     normalize_journal_titles, affiliations_for_hidden_collections, replace_collection_to_hidden,
     normalize_collaborations,
@@ -1268,5 +1272,129 @@ def test_normalize_affiliations_doesnt_add_duplicated_affiliations(
     obj = normalize_affiliations(obj, None)
 
     assert obj.data["authors"][0]["affiliations"] == [
-        {u'record': {u'$ref': u'http://localhost:5000/api/institutions/903335'}, u'value': u'Warsaw U.'}
-    ]
+        {u'record': {u'$ref': u'http://localhost:5000/api/institutions/903335'}, u'value': u'Warsaw U.'}]
+
+
+def test_core_selection_wf_already_created_show_created_wf(workflow_app):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            {"title": "A title"},
+        ],
+        "document_type": [
+            "report"
+        ],
+        "collaborations": [
+            {"value": "SHIP"}
+        ],
+        "control_number": 123456,
+
+    }
+
+    workflow_object = workflow_object_class.create(
+        data=record,
+        id_user=None,
+        data_type='hep'
+    )
+    workflow_object.extra_data['source_data'] = {"data": record, "extra_data": {"source_data": {"data": record}}}
+    workflow_object.save()
+    start("article", object_id=workflow_object.id)
+    current_search.flush_and_refresh("holdingpen-hep")
+    assert len(core_selection_wf_already_created(123456)) == 0
+
+    workflow_object = workflow_object_class.create(
+        data=record,
+        id_user=None,
+        data_type='hep'
+    )
+    start("core_selection", object_id=workflow_object.id)
+    workflow_object.save()
+    current_search.flush_and_refresh("holdingpen-hep")
+    assert len(core_selection_wf_already_created(123456)) == 1
+
+    workflow_object.status = ObjectStatus.COMPLETED
+    workflow_object.save()
+    current_search.flush_and_refresh("holdingpen-hep")
+    assert len(core_selection_wf_already_created(123456)) == 1
+
+
+def test_create_core_selection_workflow_task(workflow_app):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            {"title": "A title"},
+        ],
+        "document_type": [
+            "report"
+        ],
+        "collaborations": [
+            {"value": "SHIP"}
+        ],
+        "control_number": 123456,
+
+    }
+    workflow_object = workflow_object_class.create(
+        data=record,
+        id_user=None,
+        data_type='hep'
+    )
+    workflow_object.extra_data['_task_history'] = ['Should be removed']
+    workflow_object.extra_data['_error_msg'] = ['Should be removed']
+    workflow_object.extra_data['source_data'] = ['Should be removed']
+    workflow_object.extra_data['restart-count'] = "Should be removed"
+    workflow_object.extra_data['auto-approved'] = True
+    workflow_object.save()
+
+    assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0
+
+    create_core_selection_wf(workflow_object, None)
+
+    wf = WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one()
+    assert wf.data == workflow_object.data
+    assert "_error_msg" not in wf.extra_data
+    assert "restart_count" not in wf.extra_data
+    assert workflow_object.extra_data['_task_history'] != wf.extra_data['_task_history']
+    assert wf.status == ObjectStatus.HALTED
+
+    current_search.flush_and_refresh("holdingpen-hep")
+
+    create_core_selection_wf(workflow_object, None)
+
+    # ensure that new core_selection_wf is not created when one already exists
+    new_query_wfs = WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one()
+    assert new_query_wfs.id == wf.id
+
+
+def test_create_core_selection_workflow_task_wont_create_when_record_is_core(workflow_app):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            {"title": "A title"},
+        ],
+        "document_type": [
+            "report"
+        ],
+        "collaborations": [
+            {"value": "SHIP"}
+        ],
+        "control_number": 123456,
+        "core": True
+
+    }
+    workflow_object = workflow_object_class.create(
+        data=record,
+        id_user=None,
+        data_type='hep'
+    )
+
+    assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0
+
+    create_core_selection_wf(workflow_object, None)
+
+    assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0

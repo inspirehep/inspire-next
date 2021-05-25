@@ -160,44 +160,6 @@ def disable_file_upload(workflow_app):
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
     side_effect=fake_magpie_api_request,
 )
-def test_merge_with_disabled_merge_on_update_feature_flag(
-        mocked_api_request_magpie,
-        mocked_beard_api,
-        workflow_app,
-        mocked_external_services,
-        disable_file_upload,
-):
-
-    with patch.dict(workflow_app.config, {'FEATURE_FLAG_ENABLE_MERGER': False}):
-        factory = TestRecordMetadata.create_from_file(
-            __name__, 'merge_record_arxiv.json', index_name='records-hep')
-
-        update_workflow_id = build_workflow(RECORD_WITHOUT_CONFLICTS).id
-        eng_uuid = start('article', object_id=update_workflow_id)
-
-        eng = WorkflowEngine.from_uuid(eng_uuid)
-        obj = eng.objects[0]
-
-        assert obj.status == ObjectStatus.COMPLETED
-
-        assert obj.extra_data.get('callback_url') is None
-        assert obj.extra_data.get('conflicts') is None
-        assert obj.extra_data.get('merged') is True
-        assert obj.extra_data.get('merger_root') is None
-        assert obj.extra_data.get('is-update') is True
-
-        updated_root = read_wf_record_source(factory.record_metadata.id, 'arxiv')
-        assert updated_root is None
-
-
-@patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
-)
-@patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
-    side_effect=fake_magpie_api_request,
-)
 def test_merge_without_conflicts_handles_update_without_acquisition_source_and_acts_as_rootless(
         mocked_api_request_magpie,
         mocked_beard_api,

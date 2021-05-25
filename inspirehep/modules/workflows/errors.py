@@ -156,3 +156,8 @@ class CannotFindProperSubgroup(WorkflowsError):
         self.collaboration_id = collaboration_id
         self.subgroup_missing = subgroup
         self.message = "Subgroup {missing_subgroup} was not found in collaboration {collaboration_id} (normalization problem).".format(missing_subgroup=self.subgroup_missing, collaboration_id=self.collaboration_id, wf_id=self.wf_id)
+
+
+class MissingRecordControlNumber(WorkflowsError):
+    def __init__(self):
+        self.message = "Cannot find control_number in record data."

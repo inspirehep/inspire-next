@@ -53,7 +53,7 @@ from sqlalchemy import (
 from werkzeug import secure_filename
 
 from invenio_db import db
-from invenio_workflows import ObjectStatus
+from invenio_workflows import ObjectStatus, workflow_object_class, start
 from invenio_workflows.errors import WorkflowsError
 from invenio_records.models import RecordMetadata
 from inspire_json_merger.api import merge
@@ -74,7 +74,7 @@ from inspirehep.modules.workflows.tasks.refextract import (
 from inspirehep.modules.refextract.matcher import match_references
 from inspirehep.modules.search import InstitutionsSearch
 from inspirehep.modules.workflows.tasks.upload import create_error
-from inspirehep.modules.workflows.errors import BadGatewayError, CannotFindProperSubgroup
+from inspirehep.modules.workflows.errors import BadGatewayError, CannotFindProperSubgroup, MissingRecordControlNumber
 from inspirehep.modules.workflows.utils import (
     copy_file_to_workflow,
     download_file_to_workflow,
@@ -1028,3 +1028,43 @@ def link_institutions_with_affiliations(obj, eng):
             _assign_institution_reference_to_affiliations(author_affiliations, affiliations)
 
     return obj
+
+
+def core_selection_wf_already_created(control_number):
+    query_wf_with_cn = Q("match", metadata__control_number=control_number)
+    query_core_selection_wf = Q("match", _workflow__workflow_name="CORE_SELECTION")
+    query = query_wf_with_cn & query_core_selection_wf
+
+    return Search(index="holdingpen-hep", using=current_search_client).query(query).source(False).execute()
+
+
+def create_core_selection_wf(obj, eng):
+    record_control_number = obj.data.get('control_number')
+    if not record_control_number:
+        raise MissingRecordControlNumber
+    if is_core(obj, eng) or not _is_auto_approved(obj) or core_selection_wf_already_created(record_control_number):
+        LOGGER.info("No core selection needed for %s workflow with record %s", obj.id, record_control_number)
+        return obj
+
+    extra_data_to_clean = ['_task_history', '_error_msg', 'source_data', 'restart-count']
+    extra_data = dict(obj.extra_data.copy())
+    for key in extra_data_to_clean:
+        if key in extra_data:
+            del extra_data[key]
+    data = obj.data.copy()
+
+    workflow_object = workflow_object_class.create(
+        data={},
+        id_user=None,
+        data_type="hep"
+    )
+
+    workflow_object.data = data
+
+    extra_data['source_data'] = {}
+    workflow_object.extra_data = extra_data
+
+    workflow_object.save()
+    db.session.commit()
+
+    start.delay("core_selection", object_id=workflow_object.id)

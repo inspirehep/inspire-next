@@ -80,6 +80,7 @@ def _create_record(record_json):
     return record_json
 
 
+@contextmanager
 def override_config(**kwargs):
     """
     Override Flask's current app configuration.
@@ -94,5 +95,11 @@ def override_config(**kwargs):
         ):
             ...
     """
-    from flask import current_app
-    return mock.patch.dict(current_app.config, kwargs)
+    if 'current_app' in kwargs:
+        current_app = kwargs.pop('current_app')
+    else:
+        from flask import current_app
+    with mock.patch.dict(current_app.config, kwargs), mock.patch.dict(
+            current_app.wsgi_app.mounts["/api"].config, kwargs
+    ):
+        yield
