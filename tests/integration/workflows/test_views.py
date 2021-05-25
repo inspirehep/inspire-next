@@ -23,16 +23,23 @@
 from __future__ import absolute_import, division, print_function
 
 import json
+import mock as mock
 import time
 from copy import deepcopy
+import requests_mock
 
 from factories.db.invenio_records import TestRecordMetadata
 from flask import current_app
 from invenio_accounts.testutils import login_user_via_session
 from invenio_db import db
 from invenio_workflows import workflow_object_class
+from invenio_workflows.models import WorkflowObjectModel
 from mock import patch
 from workflow_utils import build_workflow
+from invenio_workflows import ObjectStatus
+from utils import override_config
+
+from inspirehep.modules.workflows.tasks.actions import create_core_selection_wf
 
 
 def test_inspect_merge_view(workflow_app):
@@ -246,7 +253,7 @@ def test_update_author_submit_with_required_fields(
         assert obj.extra_data["is-update"] is True
 
 
-def test_new_author_submit_requires_authentication(api_client):
+def test_new_author_submit_requires_authentication(workflow_app):
     data = {
         "data": {
             "_collections": ["Authors"],
@@ -263,16 +270,17 @@ def test_new_author_submit_requires_authentication(api_client):
     }
 
     headers = {"Authorization": "Bearer " + "wrong_token"}
-    response = api_client.post(
-        "/workflows/authors",
-        data=json.dumps(data),
-        content_type="application/json",
-        headers=headers,
-    )
+    with workflow_app.test_client() as client:
+        response = client.post(
+            "/api/workflows/authors",
+            data=json.dumps(data),
+            content_type="application/json",
+            headers=headers,
+        )
     assert response.status_code == 401
 
 
-def test_new_literature_submit_requires_authentication(api_client):
+def test_new_literature_submit_requires_authentication(workflow_app):
     data = {
         "data": {
             "$schema": "http://localhost:5000/schemas/records/hep.json",
@@ -285,12 +293,13 @@ def test_new_literature_submit_requires_authentication(api_client):
     }
 
     headers = {"Authorization": "Bearer " + "wrong_token"}
-    response = api_client.post(
-        "/workflows/authors",
-        data=json.dumps(data),
-        content_type="application/json",
-        headers=headers,
-    )
+    with workflow_app.test_client() as client:
+        response = client.post(
+            "/api/workflows/authors",
+            data=json.dumps(data),
+            content_type="application/json",
+            headers=headers,
+        )
     assert response.status_code == 401
 
 
@@ -517,3 +526,184 @@ def test_search(workflow_app):
 
     assert len(data_authors["hits"]["hits"]) == 1
     assert data_authors["hits"]["hits"][0]["_id"] == expected_wf_id
+
+
+@mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
+@mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
+def test_core_selection_continue_when_asked(mocked_create_ticket, mocked_send_robotupload, workflow_app, mocked_external_services):
+    pid_value = 123456
+    record = {
+        "$schema": "http://localhost:5000/schemas/records/hep.json",
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            {"title": "A title"},
+        ],
+        "document_type": [
+            "report"
+        ],
+        "collaborations": [
+            {"value": "SHIP"}
+        ],
+        "control_number": 123456,
+
+    }
+    workflow_object = workflow_object_class.create(
+        data=record,
+        id_user=None,
+        data_type='hep'
+    )
+    mocked_url = "{inspirehep_url}/{endpoint}/{control_number}".format(
+        inspirehep_url=current_app.config.get("INSPIREHEP_URL"),
+        endpoint='literature',
+        control_number=pid_value
+    )
+    workflow_object.extra_data['auto-approved'] = True
+
+    expected_hep_record = {'metadata': dict(record)}
+    expected_hep_record['metadata']['core'] = True
+
+    create_core_selection_wf(workflow_object, None)
+    wf_id = WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one().id
+    with workflow_app.test_client() as client:
+        with override_config(FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT=True):
+            with requests_mock.Mocker() as mock:
+                mock.register_uri('GET', mocked_url, json=expected_hep_record)
+                mock.register_uri('PUT', "http://web:8000/literature/{control_number}".format(control_number=pid_value),
+                                  json={"metadata": {"control_number": pid_value}})
+
+                login_user_via_session(client, email="cataloger@inspirehep.net")
+                result = client.post("/api/workflows/{wf_id}/core_selection/continue".format(wf_id=wf_id))
+                result_json = json.loads(result.data)
+    expected_response = {'message': 'Workflow {} is continuing.'.format(wf_id)}
+    assert result.status_code == 200
+    assert result_json == expected_response
+    assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one().status == ObjectStatus.COMPLETED
+    assert mock.request_history[1].json() == expected_hep_record['metadata']
+
+
+@mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
+def test_core_selection_complete_when_asked(mocked_create_ticket, workflow_app):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            {"title": "A title"},
+        ],
+        "document_type": [
+            "report"
+        ],
+        "collaborations": [
+            {"value": "SHIP"}
+        ],
+        "control_number": 123456,
+
+    }
+    workflow_object = workflow_object_class.create(
+        data=record,
+        id_user=None,
+        data_type='hep'
+    )
+    workflow_object.extra_data['auto-approved'] = True
+
+    hep_record = {'metadata': dict(record)}
+    hep_record['metadata']['core'] = False
+
+    create_core_selection_wf(workflow_object, None)
+    wf_id = WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one().id
+    with workflow_app.test_client() as client:
+        login_user_via_session(client, email="cataloger@inspirehep.net")
+        result = client.post("/workflows/{wf_id}/core_selection/complete".format(wf_id=wf_id))
+        result_json = json.loads(result.data)
+    expected_response = {'message': 'Workflow {} is set to completed state.'.format(wf_id)}
+    assert result.status_code == 200
+    assert result_json == expected_response
+    assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one().status == ObjectStatus.COMPLETED
+
+
+def test_core_selection_cannot_continue_when_wf_is_not_halted(workflow_app):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            {"title": "A title"},
+        ],
+        "document_type": [
+            "report"
+        ],
+        "collaborations": [
+            {"value": "SHIP"}
+        ],
+        "control_number": 123456,
+
+    }
+    workflow_object = workflow_object_class.create(
+        data=record,
+        id_user=None,
+        data_type='hep'
+    )
+    workflow_object.extra_data['auto-approved'] = True
+
+    hep_record = {'metadata': dict(record)}
+    hep_record['metadata']['core'] = True
+
+    create_core_selection_wf(workflow_object, None)
+    wf_id = WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one().id
+    wf = workflow_object_class.get(wf_id)
+    wf.status = ObjectStatus.RUNNING
+    wf.save()
+    db.session.commit()
+    with workflow_app.test_client() as client:
+        login_user_via_session(client, email="cataloger@inspirehep.net")
+        result = client.post("/api/workflows/{wf_id}/core_selection/continue".format(wf_id=wf_id))
+        result_json = json.loads(result.data)
+    expected_response = {"message": 'Workflow {} is not in halted state.'.format(wf_id)}
+    assert result.status_code == 405
+    assert result_json == expected_response
+    assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one().status == ObjectStatus.RUNNING
+
+
+def test_core_selection_cannot_complete_when_wf_is_not_halted(workflow_app):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            {"title": "A title"},
+        ],
+        "document_type": [
+            "report"
+        ],
+        "collaborations": [
+            {"value": "SHIP"}
+        ],
+        "control_number": 123456,
+
+    }
+    workflow_object = workflow_object_class.create(
+        data=record,
+        id_user=None,
+        data_type='hep'
+    )
+    workflow_object.extra_data['auto-approved'] = True
+
+    hep_record = {'metadata': dict(record)}
+    hep_record['metadata']['core'] = True
+
+    create_core_selection_wf(workflow_object, None)
+    wf_id = WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one().id
+    wf = workflow_object_class.get(wf_id)
+    wf.status = ObjectStatus.RUNNING
+    wf.save()
+    db.session.commit()
+    with workflow_app.test_client() as client:
+        login_user_via_session(client, email="cataloger@inspirehep.net")
+        result = client.post("/api/workflows/{wf_id}/core_selection/complete".format(wf_id=wf_id))
+        result_json = json.loads(result.data)
+    expected_response = {"message": 'Workflow {} is not in halted state.'.format(wf_id)}
+    assert result.status_code == 405
+    assert result_json == expected_response
+    assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one().status == ObjectStatus.RUNNING

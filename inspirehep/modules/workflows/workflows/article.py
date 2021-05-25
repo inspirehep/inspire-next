@@ -72,7 +72,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     add_collection, normalize_collaborations,
     normalize_affiliations,
     is_core,
-    link_institutions_with_affiliations
+    create_core_selection_wf
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -305,7 +305,6 @@ POSTENHANCE_RECORD = [
         is_core,
         normalize_affiliations
     ),
-    link_institutions_with_affiliations,
     IF(
         is_fermilab_report,
         add_collection("Fermilab"),
@@ -573,6 +572,11 @@ FIND_NEXT_AND_RUN_IF_NECESSARY = [
 ]
 
 
+CREATE_CORE_SELECTION_WF = [
+    create_core_selection_wf,
+]
+
+
 class Article(object):
     """Article ingestion workflow for Literature collection."""
     name = "HEP"
@@ -597,7 +601,8 @@ class Article(object):
                     SEND_TO_LEGACY +
                     STORE_ROOT +
                     NOTIFY_ACCEPTED +
-                    NOTIFY_CURATOR_IF_NEEDED
+                    NOTIFY_CURATOR_IF_NEEDED +
+                    CREATE_CORE_SELECTION_WF
                 ),
                 NOTIFY_NOT_ACCEPTED,
             ),

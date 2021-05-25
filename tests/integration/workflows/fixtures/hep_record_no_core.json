@@ -1,0 +1,1132 @@
+{
+  "id": "123456",
+  "links": {
+    "bibtex": "https://inspirehep.net/api/literature/123456?format=bibtex",
+    "latex-eu": "https://inspirehep.net/api/literature/123456?format=latex-eu",
+    "latex-us": "https://inspirehep.net/api/literature/123456?format=latex-us",
+    "json": "https://inspirehep.net/api/literature/123456?format=json",
+    "citations": "https://inspirehep.net/api/literature/?q=refersto%3Arecid%3A123456"
+  },
+  "metadata": {
+    "citation_count": 0,
+    "citation_count_without_self_citations": 0,
+    "dois": [
+      {
+        "value": "10.1016/j.physa.2021.125930"
+      }
+    ],
+    "self": {
+      "$ref": "https://inspirehep.net/api/literature/123456"
+    },
+    "titles": [
+      {
+        "title": "Time-dependent condensate fraction in an analytical model",
+        "source": "submitter"
+      }
+    ],
+    "$schema": "https://inspirehep.net/schemas/records/hep.json",
+    "authors": [
+      {
+        "ids": [
+          {
+            "value": "A.Simon.7",
+            "schema": "INSPIRE BAI"
+          }
+        ],
+        "uuid": "d121b8aa-34aa-45fa-a288-ff0140123b34",
+        "full_name": "Simon, A.",
+        "signature_block": "SANANa"
+      },
+      {
+        "ids": [
+          {
+            "value": "G.Wolschin.1",
+            "schema": "INSPIRE BAI"
+          }
+        ],
+        "uuid": "08cf89f3-4f28-482e-8ad4-52f2555154a2",
+        "record": {
+          "$ref": "https://inspirehep.net/api/authors/1019439"
+        },
+        "full_name": "Wolschin, G.",
+        "signature_block": "WALSANg"
+      }
+    ],
+    "curated": false,
+    "texkeys": [
+      "Simon:2021mll"
+    ],
+    "citeable": true,
+    "imprints": [
+      {
+        "date": "2021-07"
+      }
+    ],
+    "refereed": true,
+    "abstracts": [
+      {
+        "value": "We apply analytical solutions of a nonlinear boson diffusion equation (NBDE) that include boundary conditions at the singularity to calculate the time evolution of the entropy during evaporative cooling of ultracold atoms, and the time-dependent condensate fraction. For suitable initial conditions it is found to agree with available data on Na-23.",
+        "source": "submitter"
+      }
+    ],
+    "references": [
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/392042"
+        },
+        "raw_refs": [
+          {
+            "value": "[1] M. H. Anderson, J. R. Ensher, M. R. Matthews, C. E. Wieman, E. A. Cornell, Observation of Bose-Einstein condensation in a dilute atomic vapor, Science 269 (1995) 198–201.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Observation of Bose-Einstein condensation in a dilute atomic vapor"
+          ],
+          "label": "1",
+          "authors": [
+            {
+              "full_name": "Anderson, M.H."
+            },
+            {
+              "full_name": "Ensher, J.R."
+            },
+            {
+              "full_name": "Matthews, M.R."
+            },
+            {
+              "full_name": "Wieman, C.E."
+            },
+            {
+              "full_name": "Cornell, E.A."
+            }
+          ],
+          "publication_info": {
+            "year": 1995,
+            "page_end": "201",
+            "page_start": "198",
+            "journal_title": "Science",
+            "journal_volume": "269"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/409530"
+        },
+        "raw_refs": [
+          {
+            "value": "[2] K. B. Davis, M.-O. Mewes, M. R. Andrews, N. J. van Druten, D. S. Durfee, D. M. Kurn,W. Ketterle, Bose-Einstein condensation in a gas of sodium atoms, Phys. Rev. Lett. 75 (1995) 3969–3973.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Bose-Einstein condensation in a gas of sodium atoms"
+          ],
+          "label": "2",
+          "authors": [
+            {
+              "full_name": "Davis, K.B."
+            },
+            {
+              "full_name": "Mewes, M.-O."
+            },
+            {
+              "full_name": "Andrews, M.R."
+            },
+            {
+              "full_name": "van Druten, N.J."
+            },
+            {
+              "full_name": "Durfee, D.S."
+            },
+            {
+              "full_name": "Kurn, D.M."
+            },
+            {
+              "full_name": "Ketterle, W."
+            }
+          ],
+          "publication_info": {
+            "year": 1995,
+            "page_end": "3973",
+            "page_start": "3969",
+            "journal_title": "Phys.Rev.Lett.",
+            "journal_volume": "75"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/414779"
+        },
+        "raw_refs": [
+          {
+            "value": "[3] C. C. Bradley, C. A. Sackett, J. J. Tollett, R. G. Hulet, Evidence of Bose-Einstein condensation in an atomic gas with attractive interactions, Phys. Rev. Lett. 75 (1995) 1687–1690.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Evidence of Bose-Einstein condensation in an atomic gas with attractive interactions"
+          ],
+          "label": "3",
+          "authors": [
+            {
+              "full_name": "Bradley, C.C."
+            },
+            {
+              "full_name": "Sackett, C.A."
+            },
+            {
+              "full_name": "Tollett, J.J."
+            },
+            {
+              "full_name": "Hulet, R.G."
+            }
+          ],
+          "publication_info": {
+            "year": 1995,
+            "page_end": "1690",
+            "page_start": "1687",
+            "journal_title": "Phys.Rev.Lett.",
+            "journal_volume": "75"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/465693"
+        },
+        "raw_refs": [
+          {
+            "value": "[4] C. C. Bradley, C. A. Sackett, R. G. Hulet, Bose-Einstein condensation of lithium: Observation of limited condensate number, Phys. Rev. Lett. 78 (1997) 985–989.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Bose-Einstein condensation of lithium: Observation of limited condensate number"
+          ],
+          "label": "4",
+          "authors": [
+            {
+              "full_name": "Bradley, C.C."
+            },
+            {
+              "full_name": "Sackett, C.A."
+            },
+            {
+              "full_name": "Hulet, R.G."
+            }
+          ],
+          "publication_info": {
+            "year": 1997,
+            "page_end": "989",
+            "page_start": "985",
+            "journal_title": "Phys.Rev.Lett.",
+            "journal_volume": "78"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/446113"
+        },
+        "raw_refs": [
+          {
+            "value": "[5] C. W. Gardiner, P. Zoller, R. J. Ballagh, M. J. Davis, Kinetics of Bose-Einstein condensation in a trap, Phys. Rev. Lett 79 (1997) 1793–1796.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Kinetics of Bose-Einstein condensation in a trap"
+          ],
+          "label": "5",
+          "authors": [
+            {
+              "full_name": "Gardiner, C.W."
+            },
+            {
+              "full_name": "Zoller, P."
+            },
+            {
+              "full_name": "Ballagh, R.J."
+            },
+            {
+              "full_name": "Davis, M.J."
+            }
+          ],
+          "publication_info": {
+            "year": 1997,
+            "page_end": "1796",
+            "page_start": "1793",
+            "journal_title": "Phys.Rev.Lett.",
+            "journal_volume": "79"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/426400"
+        },
+        "raw_refs": [
+          {
+            "value": "[6] C.W. Gardiner, P. Zoller, Quantum kinetic theory: A quantum kinetic master equation for condensation of a weakly interacting Bose gas without a trapping potential, Phys. Rev. A 55 (1997) 2902–2921.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Quantum kinetic theory: A quantum kinetic master equation for condensation of a weakly interacting Bose gas without a trapping potential"
+          ],
+          "label": "6",
+          "authors": [
+            {
+              "full_name": "Gardiner, C.W."
+            },
+            {
+              "full_name": "Zoller, P."
+            }
+          ],
+          "publication_info": {
+            "year": 1997,
+            "page_end": "2921",
+            "page_start": "2902",
+            "journal_title": "Phys.Rev.A",
+            "journal_volume": "55"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/868403"
+        },
+        "raw_refs": [
+          {
+            "value": "[7] M. J. Bijlsma, E. Zaremba, H. T. C. Stoof, Condensate growth in trapped Bose gases, Phys. Rev. A 62 (2000) 063609.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Condensate growth in trapped Bose gases"
+          ],
+          "label": "7",
+          "authors": [
+            {
+              "full_name": "Bijlsma, M.J."
+            },
+            {
+              "full_name": "Zaremba, E."
+            },
+            {
+              "full_name": "Stoof, H.T.C."
+            }
+          ],
+          "publication_info": {
+            "year": 2000,
+            "artid": "063609",
+            "journal_title": "Phys.Rev.A",
+            "journal_volume": "62"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[8] H.-J. Miesner, D. M. Stamper-Kurn, M. R. Andrews, D. S. Durfee, S. Inouye, W. Ketterle, Bosonic stimulation in the formation of a Bose-Einstein condensate, Science 279 (1998) 1005–1007.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Bosonic stimulation in the formation of a Bose-Einstein condensate"
+          ],
+          "label": "8",
+          "authors": [
+            {
+              "full_name": "Miesner, H.-J."
+            },
+            {
+              "full_name": "Stamper-Kurn, D.M."
+            },
+            {
+              "full_name": "Andrews, M.R."
+            },
+            {
+              "full_name": "Durfee, D.S."
+            },
+            {
+              "full_name": "Inouye, S."
+            },
+            {
+              "full_name": "Ketterle, W."
+            }
+          ],
+          "publication_info": {
+            "year": 1998,
+            "page_end": "1007",
+            "page_start": "1005",
+            "journal_title": "Science",
+            "journal_volume": "279"
+          }
+        }
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[9] U. Eckern, Relaxation processes in a condensed Bose gas, J. Low Temp. Phys. 54 (1984) 333–359.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Relaxation processes in a condensed Bose gas"
+          ],
+          "label": "9",
+          "authors": [
+            {
+              "full_name": "Eckern, U."
+            }
+          ],
+          "publication_info": {
+            "year": 1984,
+            "page_end": "359",
+            "page_start": "333",
+            "journal_title": "J.Low Temp.Phys.",
+            "journal_volume": "54"
+          }
+        }
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[10] T. R. Kirkpatrick, J. R. Dorfman, Transport coecients in a dilute but condensed Bose gas, J. Low Temp. Phys. 58 (1985) 301–331.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Transport coecients in a dilute but condensed Bose gas"
+          ],
+          "label": "10",
+          "authors": [
+            {
+              "full_name": "Kirkpatrick, T.R."
+            },
+            {
+              "full_name": "Dorfman, J.R."
+            }
+          ],
+          "publication_info": {
+            "year": 1985,
+            "page_end": "331",
+            "page_start": "301",
+            "journal_title": "J.Low Temp.Phys.",
+            "journal_volume": "58"
+          }
+        }
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/446378"
+        },
+        "raw_refs": [
+          {
+            "value": "[11] H. T. C. Stoof, Initial stages of Bose-Einstein condensation, Phys. Rev. Lett. 78 (1997) 768–771.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Initial stages of Bose-Einstein condensation"
+          ],
+          "label": "11",
+          "authors": [
+            {
+              "full_name": "Stoof, H.T.C."
+            }
+          ],
+          "publication_info": {
+            "year": 1997,
+            "page_end": "771",
+            "page_start": "768",
+            "journal_title": "Phys.Rev.Lett.",
+            "journal_volume": "78"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[12] H. T. C. Stoof, Coherent versus incoherent dynamics during Bose-Einstein condensation in atomic gases, J. Low Temp. Phys. 114 (1999) 11–108.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Coherent versus incoherent dynamics during Bose-Einstein condensation in atomic gases"
+          ],
+          "label": "12",
+          "authors": [
+            {
+              "full_name": "Stoof, H.T.C."
+            }
+          ],
+          "publication_info": {
+            "year": 1999,
+            "page_end": "108",
+            "page_start": "11",
+            "journal_title": "J.Low Temp.Phys.",
+            "journal_volume": "114"
+          }
+        }
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[13] E. Zaremba, T. Nikuni, A. Grin, J. Low, Dynamics of trapped Bose gases at finite temperatures, J. Low Temp. Phys. 116 (1999) 277–345.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Dynamics of trapped Bose gases at finite temperatures"
+          ],
+          "label": "13",
+          "authors": [
+            {
+              "full_name": "Zaremba, E."
+            },
+            {
+              "full_name": "Nikuni, T."
+            },
+            {
+              "full_name": "Grin, A."
+            },
+            {
+              "full_name": "Low, J."
+            }
+          ],
+          "publication_info": {
+            "year": 1999,
+            "page_end": "345",
+            "page_start": "277",
+            "journal_title": "J.Low Temp.Phys.",
+            "journal_volume": "116"
+          }
+        }
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/294235"
+        },
+        "raw_refs": [
+          {
+            "value": "[14] D. W. Snoke, J. P. Wolfe, Population dynamics of a Bose gas near saturation, Phys. Rev. B 39 (1989) 4030–4037.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Population dynamics of a Bose gas near saturation"
+          ],
+          "label": "14",
+          "authors": [
+            {
+              "full_name": "Snoke, D.W."
+            },
+            {
+              "full_name": "Wolfe, J.P."
+            }
+          ],
+          "publication_info": {
+            "year": 1989,
+            "page_end": "4037",
+            "page_start": "4030",
+            "journal_title": "Phys.Rev.B",
+            "journal_volume": "39"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[15] Y. M. Kagan, B. V. Svistunov, G. V. Shlyapnikov, Kinetics of Bose condensation in an interacting Bose gas, Sov. Phys. JETP 74 (1992) 279–285.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Kinetics of Bose condensation in an interacting Bose gas"
+          ],
+          "label": "15",
+          "authors": [
+            {
+              "full_name": "Kagan, Y.M."
+            },
+            {
+              "full_name": "Svistunov, B.V."
+            },
+            {
+              "full_name": "Shlyapnikov, G.V."
+            }
+          ],
+          "publication_info": {
+            "year": 1992,
+            "page_end": "285",
+            "page_start": "279",
+            "journal_title": "Sov.Phys.JETP",
+            "journal_volume": "74"
+          }
+        }
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/376127"
+        },
+        "raw_refs": [
+          {
+            "value": "[16] D. V. Semikoz, I. I. Tkachev, Kinetics of Bose condensation, Phys. Rev. Lett. 74 (1995) 3093–3097.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Kinetics of Bose condensation"
+          ],
+          "label": "16",
+          "authors": [
+            {
+              "full_name": "Semikoz, D.V."
+            },
+            {
+              "full_name": "Tkachev, I.I."
+            }
+          ],
+          "publication_info": {
+            "year": 1995,
+            "page_end": "3097",
+            "page_start": "3093",
+            "journal_title": "Phys.Rev.Lett.",
+            "journal_volume": "74"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[17] O. J. Luiten, M. W. Reynolds, J. T. M. Walraven, Kinetic theory of the evaporative cooling of a trapped gas, Phys. Rev. A 53 (1996) 381–389.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Kinetic theory of the evaporative cooling of a trapped gas"
+          ],
+          "label": "17",
+          "authors": [
+            {
+              "full_name": "Luiten, O.J."
+            },
+            {
+              "full_name": "Reynolds, M.W."
+            },
+            {
+              "full_name": "Walraven, J.T.M."
+            }
+          ],
+          "publication_info": {
+            "year": 1996,
+            "page_end": "389",
+            "page_start": "381",
+            "journal_title": "Phys.Rev.A",
+            "journal_volume": "53"
+          }
+        }
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[18] M. Holland, J.Williams, J. Cooper, Bose-Einstein condensation: Kinetic evolution obtained from simulated trajectories, Phys. Rev. A 55 (1997) 3670–3677.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Bose-Einstein condensation: Kinetic evolution obtained from simulated trajectories"
+          ],
+          "label": "18",
+          "authors": [
+            {
+              "full_name": "Holland, M."
+            },
+            {
+              "full_name": "J.Williams"
+            },
+            {
+              "full_name": "Cooper, J."
+            }
+          ],
+          "publication_info": {
+            "year": 1997,
+            "page_end": "3677",
+            "page_start": "3670",
+            "journal_title": "Phys.Rev.A",
+            "journal_volume": "55"
+          }
+        }
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/439432"
+        },
+        "raw_refs": [
+          {
+            "value": "[19] D. Jaksch, C. W. Gardiner, P. Zoller, Quantum kinetic theory. II. Simulation of the quantum Boltzmann master equation, Phys. Rev. A 56 (1997) 575–586.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Quantum kinetic theory. II. Simulation of the quantum Boltzmann master equation"
+          ],
+          "label": "19",
+          "authors": [
+            {
+              "full_name": "Jaksch, D."
+            },
+            {
+              "full_name": "Gardiner, C.W."
+            },
+            {
+              "full_name": "Zoller, P."
+            }
+          ],
+          "publication_info": {
+            "year": 1997,
+            "page_end": "586",
+            "page_start": "575",
+            "journal_title": "Phys.Rev.A",
+            "journal_volume": "56"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/1641784"
+        },
+        "raw_refs": [
+          {
+            "value": "[20] G. Wolschin, Equilibration in finite Bose systems, Physica A 499 (2018) 1–10.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Equilibration in finite Bose systems"
+          ],
+          "label": "20",
+          "authors": [
+            {
+              "full_name": "Wolschin, G."
+            }
+          ],
+          "publication_info": {
+            "year": 2018,
+            "page_end": "10",
+            "page_start": "1",
+            "journal_title": "Physica A",
+            "journal_volume": "499"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/1691558"
+        },
+        "raw_refs": [
+          {
+            "value": "[21] G. Wolschin, An exactly solvable model for equilibration in bosonic systems, EPL 123 (2018) 20009.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "An exactly solvable model for equilibration in bosonic systems"
+          ],
+          "label": "21",
+          "authors": [
+            {
+              "full_name": "Wolschin, G."
+            }
+          ],
+          "publication_info": {
+            "year": 2018,
+            "artid": "20009",
+            "journal_title": "EPL",
+            "journal_volume": "123"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/1790529"
+        },
+        "raw_refs": [
+          {
+            "value": "[22] G. Wolschin, Time-dependent entropy of a cooling Bose gas, EPL 129 (2020) 40006.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Time-dependent entropy of a cooling Bose gas"
+          ],
+          "label": "22",
+          "authors": [
+            {
+              "full_name": "Wolschin, G."
+            }
+          ],
+          "publication_info": {
+            "year": 2020,
+            "artid": "40006",
+            "journal_title": "EPL",
+            "journal_volume": "129"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[23] L. W. Nordheim, On the kinetic method in the new statistics and application in the electron theory of conductivity, Proc. R. Soc. Lond. A 119 (1928) 689–698.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "On the kinetic method in the new statistics and application in the electron theory of conductivity"
+          ],
+          "label": "23",
+          "authors": [
+            {
+              "full_name": "Nordheim, L.W."
+            }
+          ],
+          "publication_info": {
+            "year": 1928,
+            "page_end": "698",
+            "page_start": "689",
+            "journal_title": "Proc.Roy.Soc.Lond.A",
+            "journal_volume": "119"
+          }
+        }
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/1780897"
+        },
+        "raw_refs": [
+          {
+            "value": "[24] N. Rasch, G. Wolschin, Solving a nonlinear analytical model for bosonic equilibration, Physics Open 2 (2020) 100013.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Solving a nonlinear analytical model for bosonic equilibration"
+          ],
+          "label": "24",
+          "authors": [
+            {
+              "full_name": "Rasch, N."
+            },
+            {
+              "full_name": "Wolschin, G."
+            }
+          ],
+          "publication_info": {
+            "year": 2020,
+            "artid": "100013",
+            "journal_title": "Phys.Open",
+            "journal_volume": "2"
+          }
+        },
+        "curated_relation": false
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[25] K. B. Davis, M.-O. Mewes, W. Ketterle, An analytical model for evaporative cooling of atoms, Appl. Phys. B 60 (1995) 155–159.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "An analytical model for evaporative cooling of atoms"
+          ],
+          "label": "25",
+          "authors": [
+            {
+              "full_name": "Davis, K.B."
+            },
+            {
+              "full_name": "Mewes, M.-O."
+            },
+            {
+              "full_name": "Ketterle, W."
+            }
+          ],
+          "publication_info": {
+            "year": 1995,
+            "page_end": "159",
+            "page_start": "155",
+            "journal_title": "Appl.Phys.B",
+            "journal_volume": "60"
+          }
+        }
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[26] R. D. Skeel, M. Berzins, A method for the spatial discretization of parabolic equations in one space variable, SIAM J. Sci. Statist. Comput. 11 (1990) 1–32.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "A method for the spatial discretization of parabolic equations in one space variable"
+          ],
+          "label": "26",
+          "authors": [
+            {
+              "full_name": "Skeel, R.D."
+            },
+            {
+              "full_name": "Berzins, M."
+            }
+          ],
+          "publication_info": {
+            "year": 1990,
+            "page_end": "32",
+            "page_start": "1",
+            "journal_title": "SIAM J.Sci.Statist.Comput.",
+            "journal_volume": "11"
+          }
+        }
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[27] B. V. Svistunov, Highly nonequilibrium Bose condensation in a weakly interacting gas, J. Mosc. Phys. Soc. 1 (1991) 373–390.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Highly nonequilibrium Bose condensation in a weakly interacting gas"
+          ],
+          "label": "27",
+          "authors": [
+            {
+              "full_name": "Svistunov, B.V."
+            }
+          ],
+          "publication_info": {
+            "year": 1991,
+            "page_end": "390",
+            "page_start": "373",
+            "journal_title": "J.Moscow.Phys.Soc.",
+            "journal_volume": "1"
+          }
+        }
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[28] Y. Kagan, B. V. Svistunov, Evolution of correlation properties and appearance of broken symmetry in the process of Bose-Einstein condensation, Phys. Rev. Lett. 79 (1997) 3331–3334.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Evolution of correlation properties and appearance of broken symmetry in the process of Bose-Einstein condensation"
+          ],
+          "label": "28",
+          "authors": [
+            {
+              "full_name": "Kagan, Y."
+            },
+            {
+              "full_name": "Svistunov, B.V."
+            }
+          ],
+          "publication_info": {
+            "year": 1997,
+            "page_end": "3334",
+            "page_start": "3331",
+            "journal_title": "Phys.Rev.Lett.",
+            "journal_volume": "79"
+          }
+        }
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[29] L. Pitaevskii, S. Stringari, Bose-Einstein condensation, International series of monographs on physics, Clarendon Press, Oxford, 2003.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Bose-Einstein condensation, International series of monographs on physics / Press, Oxford"
+          ],
+          "label": "29",
+          "authors": [
+            {
+              "full_name": "Pitaevskii, L."
+            },
+            {
+              "full_name": "Stringari, S."
+            }
+          ],
+          "imprint": {
+            "publisher": "Clarendon"
+          },
+          "publication_info": {
+            "year": 2003
+          }
+        }
+      },
+      {
+        "raw_refs": [
+          {
+            "value": "[30] M. B. Kim, A. Svidzinsky, G. S. Agrawal, M. O. Scully, Entropy of the Bose-Einstein-condensate ground state: Correlation versus ground-state entropy, Phys. Rev. A 97 (2018) 013605.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Entropy of the Bose-Einstein-condensate ground state: Correlation versus ground-state entropy"
+          ],
+          "label": "30",
+          "authors": [
+            {
+              "full_name": "Kim, M.B."
+            },
+            {
+              "full_name": "Svidzinsky, A."
+            },
+            {
+              "full_name": "Agrawal, G.S."
+            },
+            {
+              "full_name": "Scully, M.O."
+            }
+          ],
+          "publication_info": {
+            "year": 2018,
+            "artid": "013605",
+            "journal_title": "Phys.Rev.A",
+            "journal_volume": "97"
+          }
+        }
+      },
+      {
+        "record": {
+          "$ref": "https://inspirehep.net/api/literature/244317"
+        },
+        "raw_refs": [
+          {
+            "value": "[31] Y. Yamamoto, H. A. Haus, Preparation, measurement and information capacity of optical quantum states, Rev. Mod. Phys. 58 (1986) 1001–1020.",
+            "schema": "text"
+          }
+        ],
+        "reference": {
+          "misc": [
+            "Preparation, measurement and information capacity of optical quantum states"
+          ],
+          "label": "31",
+          "authors": [
+            {
+              "full_name": "Yamamoto, Y."
+            },
+            {
+              "full_name": "Haus, H.A."
+            }
+          ],
+          "publication_info": {
+            "year": 1986,
+            "page_end": "1020",
+            "page_start": "1001",
+            "journal_title": "Rev.Mod.Phys.",
+            "journal_volume": "58"
+          }
+        },
+        "curated_relation": false
+      }
+    ],
+    "_collections": [
+      "Literature"
+    ],
+    "document_type": [
+      "article"
+    ],
+    "control_number": 123456,
+    "legacy_version": "20210520161203.0",
+    "report_numbers": [
+      {
+        "value": "arxiv.org/abs/2103.07256 [cond-mat.quant-gas]",
+        "source": "submitter"
+      }
+    ],
+    "publication_info": [
+      {
+        "year": 2021,
+        "artid": "125930",
+        "journal_title": "Physica A",
+        "journal_volume": "573"
+      }
+    ],
+    "acquisition_source": {
+      "email": "wolschin@uni-hd.de",
+      "orcid": "0000-0002-3590-3707",
+      "method": "submitter",
+      "datetime": "2021-05-20T09:44:23.116589",
+      "submission_number": "3017173"
+    },
+    "inspire_categories": [
+      {
+        "term": "Other"
+      }
+    ],
+    "legacy_creation_date": "2021-05-20",
+    "accelerator_experiments": [
+      {
+        "legacy_name": "(theoretical)"
+      }
+    ]
+  },
+  "uuid": "4915b428-618e-40f9-a289-b01e11a2cb87",
+  "updated": "2021-05-20T14:17:17.713806+00:00",
+  "created": "2021-05-20T00:00:00+00:00"
+}

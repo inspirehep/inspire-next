@@ -44,7 +44,6 @@ from inspirehep.factory import create_app
 from inspirehep.modules.fixtures.files import init_all_storage_paths
 from inspirehep.modules.fixtures.users import init_users_and_permissions, init_authentication_token
 from inspirehep.modules.records.api import InspireRecord
-
 # Use the helpers folder to store test helpers.
 # See: http://stackoverflow.com/a/33515264/374865
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
@@ -106,7 +105,6 @@ def workflow_app(higgs_ontology):
             CELERY_RESULT_BACKEND='cache',
             CFG_BIBCATALOG_SYSTEM_RT_URL=RT_URL,
             DEBUG=False,
-            # Tests may fail when turned on because of Flask bug (A setup function was called after the first request was handled. when initializing - when Alembic initialization)
             GROBID_URL=GROBID_URL,
             HEP_ONTOLOGY_FILE=higgs_ontology,
             PRODUCTION_MODE=True,
@@ -117,6 +115,7 @@ def workflow_app(higgs_ontology):
             WORKFLOWS_FILE_LOCATION="/",
             WORKFLOWS_MATCH_REMOTE_SERVER_URL="http://legacy_search.endpoint/",
             WTF_CSRF_ENABLED=False,
+
         )
 
     app.extensions['invenio-search'].register_mappings('records', 'inspirehep.modules.records.mappings')

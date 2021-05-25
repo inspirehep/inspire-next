@@ -96,14 +96,17 @@ jobs:
           sh docker/wait-for-services.sh
       - name: Run tests
         run: |
-          docker-compose -f docker-compose.test.yml run --rm workflows py.test tests/integration/workflows \
+          docker-compose -f docker-compose.test.yml run --rm workflows py.test \
+          tests/integration/workflows/test_views.py \
+          tests/integration/workflows \
           --ignore tests/integration/workflows/test_arxiv_merge.py \
           --ignore tests/integration/workflows/test_authors_workflow.py \
           --ignore tests/integration/workflows/test_article_workflow.py \
           --ignore tests/integration/workflows/test_utils.py \
           --ignore tests/integration/workflows/test_workflows_tasks_actions.py \
           --ignore tests/integration/workflows/test_workflows_cli.py \
-          --ignore tests/integration/workflows/test_workflow_utils.py
+          --ignore tests/integration/workflows/test_workflow_utils.py \
+          --ignore tests/integration/workflows/test_workflow_core_selection.py
 
   Integration:
     runs-on: ubuntu-latest

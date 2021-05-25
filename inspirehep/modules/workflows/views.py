@@ -819,3 +819,37 @@ callback_blueprint.add_url_rule(
     '/workflows/resolve_edit_article',
     view_func=callback_resolve_edit_article
 )
+
+
+@workflow_blueprint.route('/<int:workflow_id>/core_selection/continue', methods=['POST'])
+def continue_core_selection(workflow_id):
+    wf = workflow_object_class.get(workflow_id)
+    if wf.status != ObjectStatus.HALTED:
+        data = {"message": 'Workflow {} is not in halted state.'.format(wf.id)}
+        return jsonify(
+            data
+        ), 405
+    wf.continue_workflow('continue_next', delayed=True)
+    data = {'message': 'Workflow {} is continuing.'.format(wf.id)}
+
+    return jsonify(
+        data
+    )
+
+
+@workflow_blueprint.route('/<int:workflow_id>/core_selection/complete', methods=['POST'])
+def finish_core_selection(workflow_id):
+    wf = workflow_object_class.get(workflow_id)
+    if wf.status != ObjectStatus.HALTED:
+        data = {"message": 'Workflow {} is not in halted state.'.format(wf.id)}
+        return jsonify(
+            data
+        ), 405
+    wf.status = ObjectStatus.COMPLETED
+    wf.save()
+    db.session.commit()
+    data = {'message': 'Workflow {} is set to completed state.'.format(workflow_id)}
+
+    return jsonify(
+        data
+    )
