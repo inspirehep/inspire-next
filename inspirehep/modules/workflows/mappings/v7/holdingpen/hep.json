@@ -198,7 +198,6 @@
                         "type": "object"
                     },
                     "facet_journal_title": {
-                        "index": false,
                         "type": "keyword"
                 }
                 },
