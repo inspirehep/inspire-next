@@ -2,7 +2,6 @@
   "created": "2012-04-13T00:00:00+00:00",
   "updated": "2021-05-01T07:24:23.604247+00:00",
   "uuid": "f2675fd0-42ec-4f43-8db4-b9df38e4b0b6",
-  "metadata": {
     "number_of_papers": 5,
     "self": {
       "$ref": "http://localhost:5000/api/experiments/1109131"
@@ -41,10 +40,10 @@
         "value": "EXPERIMENT-15490",
         "schema": "SPIRES"
       }
-    ]
-  },
+    ],
   "id": "1109131",
   "links": {
     "json": "http://localhost:5000/api/experiments/1109131?format=json"
-  }
+  },
+  "normalized_name_variants": ["SHIP"]
 }
