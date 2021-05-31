@@ -40,6 +40,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     load_from_source_data,
     normalize_journal_titles, affiliations_for_hidden_collections, replace_collection_to_hidden,
     normalize_collaborations,
+    normalize_affiliations
 )
 
 from calls import insert_citing_record
@@ -93,6 +94,34 @@ def insert_ambiguous_experiments_into_db(workflow_app):
     )
     TestRecordMetadata.create_from_file(
         __name__, 'experiment_with_subgroup_2.json', pid_type='exp', index_name='records-experiments'
+    )
+
+
+@pytest.fixture(scope='function')
+def insert_institutions_in_db(workflow_app):
+    """Temporarily add few institutions in the DB"""
+    TestRecordMetadata.create_from_file(
+        __name__, 'institution_903335.json', pid_type='ins', index_name='records-institutions'
+    )
+    TestRecordMetadata.create_from_file(
+        __name__, 'institution_902725.json', pid_type='ins', index_name='records-institutions'
+    )
+    TestRecordMetadata.create_from_file(
+        __name__, 'institution_1126070.json', pid_type='ins', index_name='records-institutions'
+    )
+
+
+@pytest.fixture(scope='function')
+def insert_literature_in_db(workflow_app):
+    """Temporarily add few institutions in the DB"""
+    TestRecordMetadata.create_from_file(
+        __name__, 'literature_1863053.json', pid_type='ins', index_name='records-hep'
+    )
+    TestRecordMetadata.create_from_file(
+        __name__, 'literature_1862822.json', pid_type='ins', index_name='records-hep'
+    )
+    TestRecordMetadata.create_from_file(
+        __name__, 'literature_1836272.json', pid_type='ins', index_name='records-hep'
     )
 
 
@@ -959,3 +988,168 @@ def test_normalize_collaborations_doesnt_link_experiment_when_ambiguous_subgroup
     assert obj.data['collaborations'] == expected_collaborations
     assert not obj.data.get('accelerator_experiments')
     assert mock_logger.mock_calls[1][1][0] == u'(wf: 1) ambiguous match for collaboration Belle SVD. Matches for collaboration subgroup: Belle-II, Belle'
+
+
+def test_normalize_affiliations_happy_flow(workflow_app, insert_literature_in_db):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "full_name": "Kowal, Michal",
+                "raw_affiliations": [
+                    {
+                        "value": "Faculty of Physics, University of Warsaw, Pasteura 5 Warsaw"
+                    }
+                ],
+            },
+            {
+                "full_name": "Latacz, Barbara",
+                "raw_affiliations": [
+                    {"value": "CERN, Rue de Genève, Meyrin, Switzerland"}
+                ],
+            },
+        ],
+    }
+
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj = normalize_affiliations(obj, None)
+
+    assert obj.data["authors"][0]["affiliations"] == [
+        {
+            u"record": {u"$ref": u"http://localhost:5000/api/institutions/903335"},
+            u"value": u"Warsaw U.",
+        }
+    ]
+    assert obj.data["authors"][1]["affiliations"] == [
+        {
+            u"record": {u"$ref": u"http:/localhost:5000/api/institutions/902725"},
+            u"value": u"CERN",
+        }
+    ]
+
+
+def test_normalize_affiliations_when_authors_has_two_happy_flow(
+    workflow_app, insert_literature_in_db
+):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "full_name": "Kowal, Michal",
+                "raw_affiliations": [
+                    {
+                        "value": "Faculty of Physics, University of Warsaw, Pasteura 5 Warsaw"
+                    },
+                    {"value": "CERN, Rue de Genève, Meyrin, Switzerland"},
+                ],
+            }
+        ],
+    }
+
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj = normalize_affiliations(obj, None)
+
+    assert obj.data["authors"][0]["affiliations"] == [
+        {
+            u"record": {u"$ref": u"http://localhost:5000/api/institutions/903335"},
+            u"value": u"Warsaw U.",
+        },
+        {
+            u"record": {u"$ref": u"http:/localhost:5000/api/institutions/902725"},
+            u"value": u"CERN",
+        },
+    ]
+
+
+def test_normalize_affiliations_when_lit_affiliation_missing_institution_ref(
+    workflow_app, insert_literature_in_db, insert_institutions_in_db
+):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "full_name": "Kozioł, Karol",
+                "raw_affiliations": [
+                    {"value": "NCBJ Świerk"},
+                    {"value": "CERN, Rue de Genève, Meyrin, Switzerland"},
+                ],
+            }
+        ],
+    }
+
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj = normalize_affiliations(obj, None)
+
+    assert obj.data["authors"][0]["affiliations"] == [
+        {
+            "record": {u"$ref": u"https://inspirehep.net/api/institutions/1126070"},
+            "value": u"NCBJ, Swierk",
+        },
+        {
+            "record": {u"$ref": "http:/localhost:5000/api/institutions/902725"},
+            u"value": u"CERN",
+        },
+    ]
+
+
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions._assign_matched_affiliations_to_author",
+    return_value=[{
+        "record": {"$ref": "http:/localhost:5000/api/institutions/902725"},
+        "value": "CERN",
+    }]
+)
+def test_normalize_affiliations_run_query_only_once_when_authors_have_same_raw_aff(
+    mock_assign_matched_affiliation_to_author, workflow_app, insert_literature_in_db
+):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "full_name": "Kowal, Michal",
+                "raw_affiliations": [
+                    {"value": "CERN, Rue de Genève, Meyrin, Switzerland"}
+                ],
+            },
+            {
+                "full_name": "Latacz, Barbara",
+                "raw_affiliations": [
+                    {"value": "CERN, Rue de Genève, Meyrin, Switzerland"}
+                ],
+            },
+        ],
+    }
+
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj = normalize_affiliations(obj, None)
+
+    assert mock_assign_matched_affiliation_to_author.called_once()
+
+
+def test_normalize_affiliations_handle_not_found_affiliations(
+    workflow_app, insert_literature_in_db
+):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "full_name": "Kowal, Michal",
+                "raw_affiliations": [{"value": "Non existing aff"}],
+            },
+        ],
+    }
+
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj = normalize_affiliations(obj, None)
+
+    assert not obj.data["authors"][0].get("affiliations")

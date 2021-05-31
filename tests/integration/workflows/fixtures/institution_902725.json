@@ -1,0 +1,89 @@
+{
+  "created": "1989-07-16T00:00:00+00:00",
+  "updated": "2021-05-01T05:54:53.887391+00:00",
+  "uuid": "efb09f18-bd7c-45e3-aa1a-b629154343a3",
+  "links": {
+    "json": "http://localhost:5000//api/institutions/902725?format=json"
+  },
+  "metadata": {
+    "addresses": [
+      {
+        "cities": ["Prévessin"],
+        "latitude": 46.2333333,
+        "longitude": 6.05,
+        "postal_code": "01631",
+        "country_code": "FR",
+        "postal_address": [
+          "Organisation Européenne pour la Recherche Nucléaire (CERN)",
+          "F-01631 Prévessin Cedex"
+        ],
+        "country": "France"
+      },
+      {
+        "cities": ["Geneva"],
+        "postal_code": "1211",
+        "country_code": "CH",
+        "postal_address": ["CH-1211 Genève 23"],
+        "country": "Switzerland"
+      }
+    ],
+    "number_of_papers": 67543,
+    "ICN": ["CERN, Geneva"],
+    "core": true,
+    "self": {
+      "$ref": "http://localhost:5000//api/institutions/902725"
+    },
+    "urls": [
+      {
+        "value": "http://www.cern.ch"
+      },
+      {
+        "value": "https://twitter.com/CERN",
+        "description": "TWITTER"
+      },
+      {
+        "value": "https://www.youtube.com/user/CERNTV",
+        "description": "YOUTUBE"
+      }
+    ],
+    "$schema": "http://localhost:5000//schemas/records/institutions.json",
+    "legacy_ICN": "CERN",
+    "extra_words": ["center"],
+    "name_variants": [
+      {
+        "value": "Centre Européen de Recherches Nucléaires"
+      }
+    ],
+    "control_number": 902725,
+    "legacy_version": "20191024181818.0",
+    "historical_data": [
+      "Conseil européen pour la Recherche Nucléaire (1952-1954)",
+      "Organisation européenne pour la Recherche nucléaire (1954-now)",
+      "Sub title: Laboratoire européen pour la Physique des Particules (1984-now)",
+      "Sub title: European Laboratory for Particle Physics (1984-now)"
+    ],
+    "institution_type": ["Research Center"],
+    "legacy_creation_date": "1989-07-16",
+    "institution_hierarchy": [
+      {
+        "name": "European Organization for Nuclear Research",
+        "acronym": "CERN"
+      }
+    ],
+    "external_system_identifiers": [
+      {
+        "value": "grid.9132.9",
+        "schema": "GRID"
+      },
+      {
+        "value": "https://ror.org/01ggx4157",
+        "schema": "ROR"
+      },
+      {
+        "value": "INST-1147",
+        "schema": "SPIRES"
+      }
+    ]
+  },
+  "id": "902725"
+}
