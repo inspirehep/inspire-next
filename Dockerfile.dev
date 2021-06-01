@@ -64,7 +64,7 @@ RUN npm install -g \
 
 ENV PATH="/root/.poetry/bin:${PATH}" \
     POETRY_VIRTUALENVS_CREATE=false \
-    POETRY_VERSION=1.0.0
+    POETRY_VERSION=1.1.6
 
 WORKDIR /code
 
