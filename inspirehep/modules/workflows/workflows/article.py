@@ -207,7 +207,13 @@ NOTIFY_NOT_ACCEPTED = [
     IF(
         is_submission,
         do_not_repeat('reply_ticket_submission_not_accepted')(
-            reply_ticket(context_factory=reply_ticket_context),
+            reply_ticket(
+                template=(
+                    "literaturesuggest/tickets/"
+                    "user_rejected.html"
+                ),
+                context_factory=reply_ticket_context
+            ),
         ),
     )
 ]
