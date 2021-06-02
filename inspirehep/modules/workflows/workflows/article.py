@@ -71,7 +71,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_fermilab_report,
     add_collection, normalize_collaborations,
     normalize_affiliations,
-    is_core
+    is_core,
+    link_institutions_with_affiliations
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -304,6 +305,7 @@ POSTENHANCE_RECORD = [
         is_core,
         normalize_affiliations
     ),
+    link_institutions_with_affiliations,
     IF(
         is_fermilab_report,
         add_collection("Fermilab"),

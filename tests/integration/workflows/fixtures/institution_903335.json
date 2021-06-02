@@ -5,67 +5,65 @@
   "links": {
     "json": "https://inspirehep.net/api/institutions/903335?format=json"
   },
-  "metadata": {
-    "addresses": [
-      {
-        "cities": ["Warsaw"],
-        "latitude": 52.23537,
-        "longitude": 21.009485,
-        "postal_code": "00-681, 02-093",
-        "country_code": "PL",
-        "postal_address": ["Ul. Pasteura 5", "PL 02-093 Warsaw, Poland"],
-        "country": "Poland"
-      }
-    ],
-    "number_of_papers": 7329,
-    "ICN": ["U. Warsaw, Fac. Phys."],
-    "self": {
-      "$ref": "https://inspirehep.net/api/institutions/903335"
-    },
-    "urls": [
-      {
-        "value": "http://www.fuw.edu.pl/"
-      }
-    ],
-    "$schema": "https://inspirehep.net/schemas/records/institutions.json",
-    "legacy_ICN": "Warsaw U.",
-    "extra_words": ["univ."],
-    "control_number": 903335,
-    "legacy_version": "20210322110547.0",
-    "historical_data": ["Old address: Ul. Hoza 69, PL 00-681 Warsaw"],
-    "related_records": [
-      {
-        "record": {
-          "$ref": "https://inspirehep.net/api/institutions/1225444"
-        },
-        "relation": "parent",
-        "curated_relation": true
-      }
-    ],
-    "institution_type": ["University"],
-    "legacy_creation_date": "1989-08-10",
-    "institution_hierarchy": [
-      {
-        "name": "Faculty of Physics"
-      },
-      {
-        "name": "University of Warsaw"
-      }
-    ],
-    "external_system_identifiers": [
-      {
-        "value": "grid.12847.38",
-        "schema": "GRID"
-      },
-      {
-        "value": "https://ror.org/039bjqg32",
-        "schema": "ROR"
-      },
-      {
-        "value": "INST-7650",
-        "schema": "SPIRES"
-      }
-    ]
+  "addresses": [
+    {
+      "cities": ["Warsaw"],
+      "latitude": 52.23537,
+      "longitude": 21.009485,
+      "postal_code": "00-681, 02-093",
+      "country_code": "PL",
+      "postal_address": ["Ul. Pasteura 5", "PL 02-093 Warsaw, Poland"],
+      "country": "Poland"
+    }
+  ],
+  "number_of_papers": 7329,
+  "ICN": ["U. Warsaw, Fac. Phys."],
+  "self": {
+    "$ref": "https://inspirehep.net/api/institutions/903335"
   },
+  "urls": [
+    {
+      "value": "http://www.fuw.edu.pl/"
+    }
+  ],
+  "$schema": "https://inspirehep.net/schemas/records/institutions.json",
+  "legacy_ICN": "Warsaw U.",
+  "extra_words": ["univ."],
+  "control_number": 903335,
+  "legacy_version": "20210322110547.0",
+  "historical_data": ["Old address: Ul. Hoza 69, PL 00-681 Warsaw"],
+  "related_records": [
+    {
+      "record": {
+        "$ref": "https://inspirehep.net/api/institutions/1225444"
+      },
+      "relation": "parent",
+      "curated_relation": true
+    }
+  ],
+  "institution_type": ["University"],
+  "legacy_creation_date": "1989-08-10",
+  "institution_hierarchy": [
+    {
+      "name": "Faculty of Physics"
+    },
+    {
+      "name": "University of Warsaw"
+    }
+  ],
+  "external_system_identifiers": [
+    {
+      "value": "grid.12847.38",
+      "schema": "GRID"
+    },
+    {
+      "value": "https://ror.org/039bjqg32",
+      "schema": "ROR"
+    },
+    {
+      "value": "INST-7650",
+      "schema": "SPIRES"
+    }
+  ],
   "id": "903335"
 }

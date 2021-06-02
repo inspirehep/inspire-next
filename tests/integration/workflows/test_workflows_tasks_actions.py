@@ -40,7 +40,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     load_from_source_data,
     normalize_journal_titles, affiliations_for_hidden_collections, replace_collection_to_hidden,
     normalize_collaborations,
-    normalize_affiliations
+    normalize_affiliations,
+    link_institutions_with_affiliations
 )
 
 from calls import insert_citing_record
@@ -990,7 +991,8 @@ def test_normalize_collaborations_doesnt_link_experiment_when_ambiguous_subgroup
     assert mock_logger.mock_calls[1][1][0] == u'(wf: 1) ambiguous match for collaboration Belle SVD. Matches for collaboration subgroup: Belle-II, Belle'
 
 
-def test_normalize_affiliations_happy_flow(workflow_app, insert_literature_in_db):
+@mock.patch("inspirehep.modules.workflows.tasks.actions.logging.Logger.info")
+def test_normalize_affiliations_happy_flow(mock_logger, workflow_app, insert_literature_in_db):
     record = {
         "_collections": ["Literature"],
         "titles": ["A title"],
@@ -1028,6 +1030,10 @@ def test_normalize_affiliations_happy_flow(workflow_app, insert_literature_in_db
             u"value": u"CERN",
         }
     ]
+
+    assert mock_logger.mock_calls[1][1][0] == "(wf: 1) Normalized affiliations for author Kowal, Michal. " \
+                                              "Raw affiliations: Faculty of Physics, University of Warsaw, Pasteura 5 Warsaw. " \
+                                              "Assigned affiliations: [{u'record': {u'$ref': u'http://localhost:5000/api/institutions/903335'}, u'value': u'Warsaw U.'}]"
 
 
 def test_normalize_affiliations_when_authors_has_two_happy_flow(
@@ -1088,22 +1094,20 @@ def test_normalize_affiliations_when_lit_affiliation_missing_institution_ref(
 
     assert obj.data["authors"][0]["affiliations"] == [
         {
-            "record": {u"$ref": u"https://inspirehep.net/api/institutions/1126070"},
             "value": u"NCBJ, Swierk",
         },
         {
-            "record": {u"$ref": "http:/localhost:5000/api/institutions/902725"},
-            u"value": u"CERN",
-        },
+            u'record': {
+                u'$ref': u'http:/localhost:5000/api/institutions/902725'
+            },
+            u'value': u'CERN'
+        }
     ]
 
 
 @mock.patch(
-    "inspirehep.modules.workflows.tasks.actions._assign_matched_affiliations_to_author",
-    return_value=[{
-        "record": {"$ref": "http:/localhost:5000/api/institutions/902725"},
-        "value": "CERN",
-    }]
+    "inspirehep.modules.workflows.tasks.actions._match_lit_author_affiliation",
+    return_value={"value": "CERN"}
 )
 def test_normalize_affiliations_run_query_only_once_when_authors_have_same_raw_aff(
     mock_assign_matched_affiliation_to_author, workflow_app, insert_literature_in_db
@@ -1153,3 +1157,37 @@ def test_normalize_affiliations_handle_not_found_affiliations(
     obj = normalize_affiliations(obj, None)
 
     assert not obj.data["authors"][0].get("affiliations")
+
+
+def test_link_institutions_with_affiliations(
+    workflow_app, insert_literature_in_db, insert_institutions_in_db
+):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "full_name": "Kowal, Michal",
+                "affiliations": [{"value": "CERN"}, {"value": "Warsaw U."}]
+            },
+            {
+                "full_name": "Latacz, Barbara",
+                "affiliations": [{"value": "CERN"}]
+            },
+        ],
+    }
+
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj = link_institutions_with_affiliations(obj, None)
+
+    expected_affiliation_1 = {
+        'record': {u'$ref': u'http://localhost:5000//api/institutions/902725'}, 'value': 'CERN'
+    }
+    expected_affiliation_2 = {
+        'record': {u'$ref': u'https://inspirehep.net/api/institutions/903335'}, 'value': 'Warsaw U.'
+    }
+
+    assert expected_affiliation_1 == obj.data["authors"][0]["affiliations"][0]
+    assert expected_affiliation_2 == obj.data["authors"][0]["affiliations"][1]
+    assert expected_affiliation_1 == obj.data["authors"][1]["affiliations"][0]

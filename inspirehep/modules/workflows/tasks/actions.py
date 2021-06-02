@@ -971,31 +971,26 @@ def _match_lit_author_affiliation(raw_aff):
         return matched_author["affiliations"]
 
 
-def _match_institution(matched_affiliation):
+def _assign_institution(matched_affiliation):
     query = Q("match", legacy_ICN=matched_affiliation["value"])
     result = InstitutionsSearch().query(query).params(size=1).execute()
     if result:
-        return result.hits[0]["self"]
+        matched_affiliation["record"] = result.hits[0]["self"]
+        return matched_affiliation
 
 
-def _assign_institution_ref_to_affiliation(matched_affiliation):
-    institution_reference = _match_institution(matched_affiliation)
-    if institution_reference:
-        matched_affiliation["record"] = institution_reference
-
-
-def _assign_matched_affiliations_to_author(
-    author_affiliations, matched_author_affiliations
-):
-    matched_affiliations_to_assign = []
-    for matched_author_affiliation in matched_author_affiliations:
-        if "record" not in matched_author_affiliation:
-            _assign_institution_ref_to_affiliation(
-                matched_author_affiliation
+def _assign_institution_reference_to_affiliations(author_affiliations, already_matched_affiliations_refs):
+    for affiliation in author_affiliations:
+        if "record" in affiliation:
+            continue
+        if affiliation['value'] in already_matched_affiliations_refs:
+            affiliation['record'] = already_matched_affiliations_refs[affiliation['value']]
+        else:
+            complete_affiliation = _assign_institution(
+                affiliation
             )
-        matched_affiliations_to_assign.append(matched_author_affiliation)
-    author_affiliations.extend(matched_affiliations_to_assign)
-    return matched_affiliations_to_assign
+            if complete_affiliation:
+                already_matched_affiliations_refs[complete_affiliation['value']] = complete_affiliation['record']
 
 
 def normalize_affiliations(obj, eng):
@@ -1011,16 +1006,26 @@ def normalize_affiliations(obj, eng):
                 continue
             matched_author_affiliations = _match_lit_author_affiliation(raw_aff)
             if matched_author_affiliations:
-                assigned_affiliations = _assign_matched_affiliations_to_author(
-                    author_affiliations, matched_author_affiliations
-                )
-                matched_affiliations[raw_aff] = assigned_affiliations
+                matched_affiliations[raw_aff] = matched_author_affiliations
+                author_affiliations.extend(matched_author_affiliations)
         if author_affiliations:
             author["affiliations"] = author_affiliations
             LOGGER.info(
-                "Normalized affiliations for author",
-                author=author["full_name"],
-                raw_affiliations=raw_affs,
-                assigned_affiliations=author_affiliations,
+                "(wf: {0}) Normalized affiliations for author {1}. Raw affiliations: {2}. Assigned affiliations: {3}".format(
+                    obj.id,
+                    author["full_name"],
+                    " ".join(raw_affs),
+                    author_affiliations
+                )
             )
+    return obj
+
+
+def link_institutions_with_affiliations(obj, eng):
+    affiliations = {}
+    for author in obj.data.get("authors", []):
+        author_affiliations = author.get("affiliations", [])
+        if author_affiliations:
+            _assign_institution_reference_to_affiliations(author_affiliations, affiliations)
+
     return obj
