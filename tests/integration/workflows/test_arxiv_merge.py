@@ -263,7 +263,7 @@ def test_merge_with_conflicts_handles_update_without_acquisition_source_and_acts
 
         conflicts = obj.extra_data.get('conflicts')
         assert obj.status == ObjectStatus.HALTED
-        assert len(conflicts) == 2  # From now on titles will also create conflict (inspirehep/#1518)
+        assert len(conflicts) == 1  # Title conflicting disabled for inspirehep/inspirehep#1918
 
         assert obj.extra_data.get('callback_url') is not None
         assert obj.extra_data.get('is-update') is True
