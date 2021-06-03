@@ -124,6 +124,9 @@ def insert_literature_in_db(workflow_app):
     TestRecordMetadata.create_from_file(
         __name__, 'literature_1836272.json', pid_type='ins', index_name='records-hep'
     )
+    TestRecordMetadata.create_from_file(
+        __name__, 'literature_1459277.json', pid_type='ins', index_name='records-hep'
+    )
 
 
 def test_normalize_journal_titles_known_journals_with_ref(workflow_app, insert_journals_in_db):
@@ -1009,7 +1012,7 @@ def test_normalize_affiliations_happy_flow(mock_logger, workflow_app, insert_lit
             {
                 "full_name": "Latacz, Barbara",
                 "raw_affiliations": [
-                    {"value": "CERN, Rue de Genève, Meyrin, Switzerland"}
+                    {"value": "CERN, Genève, Switzerland"}
                 ],
             },
         ],
@@ -1031,9 +1034,13 @@ def test_normalize_affiliations_happy_flow(mock_logger, workflow_app, insert_lit
         }
     ]
 
-    assert mock_logger.mock_calls[1][1][0] == "(wf: 1) Normalized affiliations for author Kowal, Michal. " \
-                                              "Raw affiliations: Faculty of Physics, University of Warsaw, Pasteura 5 Warsaw. " \
-                                              "Assigned affiliations: [{u'record': {u'$ref': u'http://localhost:5000/api/institutions/903335'}, u'value': u'Warsaw U.'}]"
+    assert mock_logger.mock_calls[1][1] == (
+        u'(wf: %s) Normalized affiliations for author %s. Raw affiliations: %s. Assigned affiliations: %s',
+        1,
+        'Kowal, Michal',
+        'Faculty of Physics, University of Warsaw, Pasteura 5 Warsaw',
+        [{u'record': {u'$ref': u'http://localhost:5000/api/institutions/903335'}, u'value': u'Warsaw U.'}]
+    )
 
 
 def test_normalize_affiliations_when_authors_has_two_happy_flow(
@@ -1050,7 +1057,7 @@ def test_normalize_affiliations_when_authors_has_two_happy_flow(
                     {
                         "value": "Faculty of Physics, University of Warsaw, Pasteura 5 Warsaw"
                     },
-                    {"value": "CERN, Rue de Genève, Meyrin, Switzerland"},
+                    {"value": "CERN, Genève, Switzerland"},
                 ],
             }
         ],
@@ -1083,7 +1090,7 @@ def test_normalize_affiliations_when_lit_affiliation_missing_institution_ref(
                 "full_name": "Kozioł, Karol",
                 "raw_affiliations": [
                     {"value": "NCBJ Świerk"},
-                    {"value": "CERN, Rue de Genève, Meyrin, Switzerland"},
+                    {"value": "CERN, Genève, Switzerland"},
                 ],
             }
         ],
@@ -1191,3 +1198,75 @@ def test_link_institutions_with_affiliations(
     assert expected_affiliation_1 == obj.data["authors"][0]["affiliations"][0]
     assert expected_affiliation_2 == obj.data["authors"][0]["affiliations"][1]
     assert expected_affiliation_1 == obj.data["authors"][1]["affiliations"][0]
+
+
+def test_normalize_affiliations_doesnt_return_nested_affiliations_if_using_memoized(
+    workflow_app, insert_literature_in_db,
+):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "emails": [
+                    "weili@mail.itp.ac.cn"
+                ],
+                "full_name": "Li, Wei",
+                "raw_affiliations": [
+                    {
+                        "value": "Institute of Theoretical Physics, Chinese Academy of Sciences, 100190 Beijing, P.R. China"
+                    }
+                ]
+            },
+            {
+                "emails": [
+                    "masahito.yamazaki@ipmu.jp"
+                ],
+                "full_name": "Yamazaki, Masahito",
+                "raw_affiliations": [
+                    {
+                        "value": "Institute of Theoretical Physics, Chinese Academy of Sciences, 100190 Beijing, P.R. China"
+                    }
+                ]
+            }
+        ],
+    }
+
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj = normalize_affiliations(obj, None)
+
+    assert obj.data["authors"][0]["affiliations"] == [
+        {u'record': {u'$ref': u'https://inspirebeta.net/api/institutions/903895'},
+         u'value': u'Beijing, Inst. Theor. Phys.'}
+    ]
+
+    assert obj.data["authors"][1]["affiliations"] == [
+        {u'record': {u'$ref': u'https://inspirebeta.net/api/institutions/903895'},
+         u'value': u'Beijing, Inst. Theor. Phys.'}
+    ]
+
+
+def test_normalize_affiliations_doesnt_add_duplicated_affiliations(
+    workflow_app, insert_literature_in_db,
+):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "full_name": "Kowal, Michal",
+                "raw_affiliations": [
+                    {"value": "Warsaw U., Faculty of Physics"},
+                    {"value": "Warsaw U., Faculty of Mathematics, Informatics, and Mechanics"}]
+            }
+        ],
+    }
+    test_normalize_affiliations_when_authors_has_two_happy_flow
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj = normalize_affiliations(obj, None)
+
+    assert obj.data["authors"][0]["affiliations"] == [
+        {u'record': {u'$ref': u'http://localhost:5000/api/institutions/903335'}, u'value': u'Warsaw U.'}
+    ]
