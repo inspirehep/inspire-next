@@ -291,6 +291,12 @@ def send_to_legacy(priority_config_key=None):
             default priority is used.
     """
     def _send_to_legacy(obj, eng):
+        if not current_app.config.get('FEATURE_FLAG_ENABLE_SEND_TO_LEGACY', True):
+            obj.log.info(
+                'skipping upload to legacy, feature flag ``FEATURE_FLAG_ENABLE_SEND_TO_LEGACY`` is disabled.'
+            )
+            return
+
         update_legacy_flag = current_app.config.get('FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY', False)
 
         if obj.extra_data.get('is-update', False) and not update_legacy_flag:

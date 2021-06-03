@@ -1029,6 +1029,33 @@ def test_send_robotupload_update_article_when_feature_flag_is_disabled():
         assert expected_log in obj.log._info.getvalue()
 
 
+def test_send_robotupload_when_disabled_by_flag():
+    config = {
+        'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
+        'PRODUCTION_MODE': True,
+        'FEATURE_FLAG_ENABLE_SEND_TO_LEGACY': False
+    }
+
+    with patch.dict(current_app.config, config), patch(
+            'inspirehep.modules.workflows.tasks.submission.record2marcxml'
+    ):
+        data = {
+            '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        }
+
+        extra_data = {
+            'is-update': True
+        }
+
+        obj = MockObj(data, extra_data)
+        eng = MockEng()
+
+        expected_log = 'skipping upload to legacy, feature flag ``FEATURE_FLAG_ENABLE_SEND_TO_LEGACY`` is disabled.'
+
+        assert send_to_legacy()(obj, eng) is None
+        assert expected_log in obj.log._info.getvalue()
+
+
 def test_send_robotupload_update_article_when_feature_flag_is_enabled():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
