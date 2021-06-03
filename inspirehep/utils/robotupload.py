@@ -38,6 +38,7 @@ def make_robotupload_marcxml(url, marcxml, mode, **kwargs):
     headers = {
         "User-agent": make_user_agent_string("inspire"),
         "Content-Type": "application/marcxml+xml",
+        "Authorization": "Bearer {}".format(current_app.config.get('BATCHUPLOADER_WEB_ROBOT_TOKEN', '')),
     }
     if url is None:
         base_url = current_app.config.get("LEGACY_ROBOTUPLOAD_URL")
