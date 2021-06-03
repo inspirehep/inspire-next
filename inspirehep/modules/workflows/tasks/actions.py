@@ -1002,21 +1002,20 @@ def normalize_affiliations(obj, eng):
         raw_affs = get_value(author, "raw_affiliations.value", [])
         for raw_aff in raw_affs:
             if raw_aff in matched_affiliations:
-                author_affiliations.append(matched_affiliations[raw_aff])
+                author_affiliations.extend(matched_affiliations[raw_aff])
                 continue
             matched_author_affiliations = _match_lit_author_affiliation(raw_aff)
             if matched_author_affiliations:
                 matched_affiliations[raw_aff] = matched_author_affiliations
                 author_affiliations.extend(matched_author_affiliations)
         if author_affiliations:
-            author["affiliations"] = author_affiliations
+            author["affiliations"] = dedupe_list(author_affiliations)
             LOGGER.info(
-                "(wf: {0}) Normalized affiliations for author {1}. Raw affiliations: {2}. Assigned affiliations: {3}".format(
-                    obj.id,
-                    author["full_name"],
-                    " ".join(raw_affs),
-                    author_affiliations
-                )
+                u"(wf: %s) Normalized affiliations for author %s. Raw affiliations: %s. Assigned affiliations: %s",
+                obj.id,
+                author["full_name"],
+                ",".join(raw_affs),
+                author_affiliations
             )
     return obj
 
