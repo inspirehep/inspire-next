@@ -12,7 +12,7 @@ from inspirehep.modules.workflows.tasks.actions import halt_record, normalize_af
     link_institutions_with_affiliations
 from inspirehep.modules.workflows.tasks.submission import prepare_keywords, create_ticket
 from inspirehep.modules.workflows.tasks.upload import store_record
-from inspirehep.modules.workflows.utils import get_record_from_hep, do_not_repeat
+from inspirehep.modules.workflows.utils import get_record_from_hep, do_not_repeat, store_head_version
 from inspirehep.modules.workflows.workflows.article import SEND_TO_LEGACY
 
 
@@ -41,6 +41,7 @@ class CoreSelection(object):
             message='Submission halted Waiting for curator to decide if record is CORE.'
         ),
         load_record_from_hep,
+        store_head_version,
         set_core,
         prepare_keywords,
         normalize_affiliations,

@@ -27,6 +27,7 @@ from freezegun import freeze_time
 from invenio_search import current_search_client as es
 from invenio_workflows import ObjectStatus, start, workflow_object_class
 from invenio_workflows.models import WorkflowObjectModel
+from factories.db.invenio_records import TestRecordMetadata
 
 from inspirehep.modules.workflows.cli import workflows
 from workflow_utils import build_workflow
@@ -91,7 +92,26 @@ def test_cli_restart_by_error_restarts_one_wf_from_beginning(
 
 @freeze_time("2020-07-11")
 def test_cli_delete_edit_article_workflows(app_cli_runner):
-    wf_to_be_deleted = build_workflow({}, data_type='hep')
+
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'nucl-th'
+                ],
+                'value': '1802.03287'
+            }
+        ],
+        'control_number': 123,
+        'document_type': ['article'],
+        'titles': [{'title': 'Resource Pooling in Large-Scale Content Delivery Systems'}],
+        'self': {'$ref': 'http://localhost:5000/api/literature/123'},
+        '_collections': ['Literature']
+    }
+    factory = TestRecordMetadata.create_from_kwargs(json=record)
+
+    wf_to_be_deleted = build_workflow(factory.record_metadata.json, data_type='hep')
     wf_to_be_deleted.save()
     start('edit_article', object_id=wf_to_be_deleted.id)
     wf_to_be_deleted = workflow_object_class.get(wf_to_be_deleted.id)
@@ -99,13 +119,13 @@ def test_cli_delete_edit_article_workflows(app_cli_runner):
     wf_to_be_deleted.created = datetime.datetime(2020, 7, 8, 12, 31, 8, 299777)
     wf_to_be_deleted.save()
 
-    wf_in_error = build_workflow({}, data_type='hep')
+    wf_in_error = build_workflow(factory.record_metadata.json, data_type='hep')
     wf_in_error.status = ObjectStatus.ERROR
     wf_in_error.extra_data["_error_msg"] = "Error in WebColl"
     wf_in_error.created = datetime.datetime(2020, 7, 8, 12, 31, 8, 299777)
     wf_in_error.save()
 
-    recent_wf = build_workflow({}, data_type='hep')
+    recent_wf = build_workflow(factory.record_metadata.json, data_type='hep')
     recent_wf.save()
     start('edit_article', object_id=recent_wf.id)
     recent_wf = workflow_object_class.get(recent_wf.id)

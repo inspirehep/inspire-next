@@ -52,6 +52,9 @@ from inspirehep.modules.workflows.errors import (
     InspirehepMissingDataError,
 )
 from inspirehep.modules.pidstore.utils import get_endpoint_from_pid_type
+from invenio_pidstore.models import PersistentIdentifier
+
+from inspirehep.modules.records.api import InspireRecord
 
 LOGGER = getStackTraceLogger(__name__)
 
@@ -496,9 +499,14 @@ def get_record_from_hep(pid_type, pid_value):
 
 
 @backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
-def put_record_to_hep(pid_type, pid_value, data=None):
+def put_record_to_hep(pid_type, pid_value, data=None, headers=None):
     if not data:
         raise InspirehepMissingDataError
+
+    _headers = _get_headers_for_hep()
+    if headers:
+        _headers.update(headers)
+
     endpoint = get_endpoint_from_pid_type(pid_type)
     inspirehep_url = current_app.config.get("INSPIREHEP_URL")
     response = requests.put(
@@ -507,7 +515,7 @@ def put_record_to_hep(pid_type, pid_value, data=None):
             endpoint=endpoint,
             control_number=pid_value
         ),
-        headers=_get_headers_for_hep(),
+        headers=_headers,
         json=data or {}
     )
     response.raise_for_status()
@@ -515,9 +523,13 @@ def put_record_to_hep(pid_type, pid_value, data=None):
 
 
 @backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
-def post_record_to_hep(pid_type, data=None):
+def post_record_to_hep(pid_type, data=None, headers=None):
     if not data:
         raise InspirehepMissingDataError
+
+    _headers = _get_headers_for_hep()
+    if headers:
+        _headers.update(headers)
     endpoint = get_endpoint_from_pid_type(pid_type)
     inspirehep_url = current_app.config.get("INSPIREHEP_URL")
     response = requests.post(
@@ -525,7 +537,7 @@ def post_record_to_hep(pid_type, data=None):
             inspirehep_url=inspirehep_url,
             endpoint=endpoint,
         ),
-        headers=_get_headers_for_hep(),
+        headers=_headers,
         json=data or {}
     )
     response.raise_for_status()
@@ -543,3 +555,13 @@ def check_mark(obj, key):
 
 def get_mark(obj, key, default=None):
     return obj.extra_data.get(key) or default
+
+
+@with_debug_logging
+def store_head_version(obj, eng):
+    control_number = obj.data['control_number']
+    head_uuid = PersistentIdentifier.get('lit', control_number).object_uuid
+    head_record = InspireRecord.get_record(head_uuid)
+    obj.extra_data['head_uuid'] = str(head_uuid)
+    obj.extra_data['head_version_id'] = head_record.model.version_id
+    obj.save()
