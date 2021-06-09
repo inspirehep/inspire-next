@@ -821,7 +821,7 @@ callback_blueprint.add_url_rule(
 )
 
 
-@workflow_blueprint.route('/<int:workflow_id>/core_selection/continue', methods=['POST'])
+@workflow_blueprint.route('/<int:workflow_id>/core-selection/continue', methods=['POST'])
 def continue_core_selection(workflow_id):
     wf = workflow_object_class.get(workflow_id)
     if wf.status != ObjectStatus.HALTED:
@@ -837,7 +837,7 @@ def continue_core_selection(workflow_id):
     )
 
 
-@workflow_blueprint.route('/<int:workflow_id>/core_selection/complete', methods=['POST'])
+@workflow_blueprint.route('/<int:workflow_id>/core-selection/complete', methods=['POST'])
 def finish_core_selection(workflow_id):
     wf = workflow_object_class.get(workflow_id)
     if wf.status != ObjectStatus.HALTED:

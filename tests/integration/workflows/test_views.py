@@ -574,7 +574,7 @@ def test_core_selection_continue_when_asked(mocked_create_ticket, mocked_send_ro
                                   json={"metadata": {"control_number": pid_value}})
 
                 login_user_via_session(client, email="cataloger@inspirehep.net")
-                result = client.post("/api/workflows/{wf_id}/core_selection/continue".format(wf_id=wf_id))
+                result = client.post("/api/workflows/{wf_id}/core-selection/continue".format(wf_id=wf_id))
                 result_json = json.loads(result.data)
     expected_response = {'message': 'Workflow {} is continuing.'.format(wf_id)}
     assert result.status_code == 200
@@ -615,7 +615,7 @@ def test_core_selection_complete_when_asked(mocked_create_ticket, workflow_app):
     wf_id = WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one().id
     with workflow_app.test_client() as client:
         login_user_via_session(client, email="cataloger@inspirehep.net")
-        result = client.post("/workflows/{wf_id}/core_selection/complete".format(wf_id=wf_id))
+        result = client.post("/workflows/{wf_id}/core-selection/complete".format(wf_id=wf_id))
         result_json = json.loads(result.data)
     expected_response = {'message': 'Workflow {} is set to completed state.'.format(wf_id)}
     assert result.status_code == 200
@@ -658,7 +658,7 @@ def test_core_selection_cannot_continue_when_wf_is_not_halted(workflow_app):
     db.session.commit()
     with workflow_app.test_client() as client:
         login_user_via_session(client, email="cataloger@inspirehep.net")
-        result = client.post("/api/workflows/{wf_id}/core_selection/continue".format(wf_id=wf_id))
+        result = client.post("/api/workflows/{wf_id}/core-selection/continue".format(wf_id=wf_id))
         result_json = json.loads(result.data)
     expected_response = {"message": 'Workflow {} is not in halted state.'.format(wf_id)}
     assert result.status_code == 405
@@ -701,7 +701,7 @@ def test_core_selection_cannot_complete_when_wf_is_not_halted(workflow_app):
     db.session.commit()
     with workflow_app.test_client() as client:
         login_user_via_session(client, email="cataloger@inspirehep.net")
-        result = client.post("/api/workflows/{wf_id}/core_selection/complete".format(wf_id=wf_id))
+        result = client.post("/api/workflows/{wf_id}/core-selection/complete".format(wf_id=wf_id))
         result_json = json.loads(result.data)
     expected_response = {"message": 'Workflow {} is not in halted state.'.format(wf_id)}
     assert result.status_code == 405
