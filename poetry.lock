@@ -3260,11 +3260,12 @@ hiredis = ["hiredis (>=0.1.3)"]
 
 [[package]]
 name = "refextract"
-version = "0.2.22"
+version = "0.2.23"
 description = "Small library for extracting references used in scholarly communication."
 category = "main"
 optional = false
 python-versions = "*"
+develop = false
 
 [package.dependencies]
 unidecode = ">=1.0.22,<2.0"
@@ -3278,6 +3279,12 @@ requests = ">=2.18.4,<3.0"
 docs = ["Sphinx (>=1.7.1,<2.0)"]
 all = ["Sphinx (>=1.7.1,<2.0)", "flake8-future-import (>=0.4.4,<1.0)", "flake8 (>=3.5.0,<4.0)", "pytest-cov (>=2.10,<3.0)", "pytest (>=4.6,<5.0)", "responses (>=0.8.1,<1.0)"]
 tests = ["flake8-future-import (>=0.4.4,<1.0)", "flake8 (>=3.5.0,<4.0)", "pytest-cov (>=2.10,<3.0)", "pytest (>=4.6,<5.0)", "responses (>=0.8.1,<1.0)", "unicode-string-literal (>=1.1,<2.0)"]
+
+[package.source]
+type = "git"
+url = "https://github.com/inspirehep/refextract.git"
+reference = "maintenance/0.2.18"
+resolved_reference = "ebcd57cf6247cfb24549ba149d4873c92c440884"
 
 [[package]]
 name = "requests"
@@ -4119,7 +4126,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "14aad26c1ae5004405e9a82ea47ecdba5530c1ff15f52b3b69a15f3128d0de1b"
+content-hash = "2e2afa1d41d837402ece76df9d2e8bc121ec70bc3b32f56cdefdcc54622755b4"
 
 [metadata.files]
 alabaster = [
@@ -4212,7 +4219,6 @@ blinker = [
     {file = "blinker-1.4.tar.gz", hash = "sha256:471aee25f3992bd325afa3772f1063dbdbbca947a041b8b89466dc00d606f8b6"},
 ]
 boto3 = [
-    {file = "boto3-1.14.61-py2.py3-none-any.whl", hash = "sha256:1c9b716b7c96b47c691866edee6b988ec714f813926aa30d40f722b8196ba6e0"},
     {file = "boto3-1.14.61.tar.gz", hash = "sha256:a1c738ff178fc6ed8951559053c1142c71d166d17642361bbe63584be2f50a00"},
 ]
 botocore = [
@@ -4914,11 +4920,6 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:ba59edeaa2fc6114428f1637ffff42da1e311e29382d81b339c1817d37ec93c6"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win32.whl", hash = "sha256:b00c1de48212e4cc9603895652c5c410df699856a2853135b3967591e4beebc2"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win_amd64.whl", hash = "sha256:9bf40443012702a1d2070043cb6291650a0841ece432556f784f004937f0f32c"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:6788b695d50a51edb699cb55e35487e430fa21f1ed838122d722e0ff0ac5ba15"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux1_i686.whl", hash = "sha256:cdb132fc825c38e1aeec2c8aa9338310d29d337bebbd7baa06889d09a60a1fa2"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:13d3144e1e340870b25e7b10b98d779608c02016d5184cfb9927a9f10c689f42"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-win32.whl", hash = "sha256:596510de112c685489095da617b5bcbbac7dd6384aeebeda4df6025d0256a81b"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:e8313f01ba26fbbe36c7be1966a7b7424942f670f38e666995b88d012765b9be"},
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
 ]
 marshmallow = [
@@ -5269,9 +5270,7 @@ redis = [
     {file = "redis-3.4.1-py2.py3-none-any.whl", hash = "sha256:b205cffd05ebfd0a468db74f0eedbff8df1a7bfc47521516ade4692991bb0833"},
     {file = "redis-3.4.1.tar.gz", hash = "sha256:0dcfb335921b88a850d461dc255ff4708294943322bd55de6cfd68972490ca1f"},
 ]
-refextract = [
-    {file = "refextract-0.2.22.tar.gz", hash = "sha256:fbe8a74ca48cdaa653c988ec56b7ea96e369b8600bb058cb0ab7b5308bd6b612"},
-]
+refextract = []
 requests = [
     {file = "requests-2.22.0-py2.py3-none-any.whl", hash = "sha256:9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31"},
     {file = "requests-2.22.0.tar.gz", hash = "sha256:11e007a8a2aa0323f5a921e9e6a2d7e4e67d9877e85773fba9ba6419025cbeb4"},
@@ -5469,7 +5468,6 @@ sqlitedict = [
 ]
 subprocess32 = [
     {file = "subprocess32-3.5.4-cp27-cp27m-macosx_10_6_intel.whl", hash = "sha256:88e37c1aac5388df41cc8a8456bb49ebffd321a3ad4d70358e3518176de3a56b"},
-    {file = "subprocess32-3.5.4-cp27-cp27mu-manylinux2014_x86_64.whl", hash = "sha256:e45d985aef903c5b7444d34350b05da91a9e0ea015415ab45a21212786c649d0"},
     {file = "subprocess32-3.5.4.tar.gz", hash = "sha256:eb2937c80497978d181efa1b839ec2d9622cf9600a039a79d0e108d1f9aec79d"},
 ]
 superlance = [

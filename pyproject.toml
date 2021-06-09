@@ -91,7 +91,6 @@ python-redis-lock = "==3.*,>=3.0.0,>=3.2.0"
 pytz = "==2018.*,>=2018.7,>=2018.7.0"
 pyyaml = "<4.0"
 raven = {version = "==6.*,>=6.0.0,>=6.2.1", extras = ["flask"]}
-refextract = ">=0.2.22,<1.0"
 requests = "==2.*,>=2.0.0,>=2.18.4"
 requests-mock = {version = "==1.*,>=1.0.0,>=1.3.0", optional = true}
 rt = "^1.0"
@@ -108,6 +107,7 @@ urllib3 = "<1.25,==1.*,>=1.0.0,>=1.24.1"
 vine = "==1.*,>=1.0.0"
 workflow = "==2.*,>=2.0.0,>=2.1.3"
 
+refextract = {git = "https://github.com/inspirehep/refextract.git", branch = "maintenance/0.2.18" }
 sword2 = {git ="https://github.com/inspirehep/python-client-sword2.git"}
 dictdiffer = {git ="https://github.com/inspirehep/dictdiffer.git"}
 flask-sqlalchemy = {git = "https://github.com/inspirehep/flask-sqlalchemy.git"}
