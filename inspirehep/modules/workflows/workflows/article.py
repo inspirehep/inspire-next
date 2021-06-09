@@ -72,7 +72,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     add_collection, normalize_collaborations,
     normalize_affiliations,
     is_core,
-    create_core_selection_wf
+    create_core_selection_wf,
+    check_if_france_in_fulltext
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -119,6 +120,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     prepare_keywords,
     reply_ticket,
     send_to_legacy,
+    create_hal_ticket
 )
 from inspirehep.modules.workflows.utils import do_not_repeat
 from inspirehep.modules.literaturesuggest.tasks import (
@@ -296,6 +298,10 @@ NOTIFY_CURATOR_IF_NEEDED = [
 
 
 POSTENHANCE_RECORD = [
+    IF(
+        check_if_france_in_fulltext,
+        create_hal_ticket
+    ),
     add_core,
     filter_keywords,
     prepare_keywords,

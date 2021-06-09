@@ -150,6 +150,10 @@ def test_create_ticket_when_source_is_not_publishing(
     assert mocked_external_services.request_history[1].url == 'http://rt.inspire/ticket/new'
 
 
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions.check_if_france_in_fulltext",
+    return_value=False,
+)
 @mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
 def test_set_fermilab_collection_from_report_number(mocked_robotupload, workflow_app):
     record = {

@@ -258,7 +258,12 @@ def test_harvesting_arxiv_workflow_core_record_auto_accepted(
     "inspirehep.modules.workflows.tasks.refextract.extract_references_from_file",
     return_value=[],
 )
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions.get_fulltext",
+    return_value=None,
+)
 def test_harvesting_arxiv_workflow_manual_accepted(
+    mocked_get_fulltext,
     mocked_refextract_extract_refs,
     mocked_matching_match,
     mocked_api_request_magpie,
@@ -1284,7 +1289,12 @@ def connection_timeout(*args, **kwargs):
     "inspirehep.modules.workflows.tasks.upload.requests.put",
     side_effect=connection_timeout
 )
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions.get_fulltext",
+    return_value=False,
+)
 def test_update_record_goes_through_api_version_of_store_record_connection_timeout(
+    mocked_get_fulltext,
     mocked_request_in_upload,
     mocked_is_pdf_link,
     mocked_download_arxiv,
@@ -1334,7 +1344,12 @@ def test_update_record_goes_through_api_version_of_store_record_connection_timeo
 @mock.patch(
     "inspirehep.modules.workflows.tasks.actions._is_auto_rejected", return_value=True,
 )
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions.get_fulltext",
+    return_value=None,
+)
 def test_workflow_checks_affiliations_if_record_is_not_important(
+    mocked_get_fulltext,
     mocked_is_auto_rejected,
     mocked_refextract_extract_refs,
     mocked_api_request_magpie,
@@ -1384,7 +1399,12 @@ def test_workflow_checks_affiliations_if_record_is_not_important(
     "inspirehep.modules.workflows.tasks.refextract.extract_references_from_file",
     return_value=[],
 )
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions.get_fulltext",
+    return_value=None,
+)
 def test_workflow_do_not_changes_to_hidden_if_record_authors_do_not_have_interesting_affiliations(
+    mocked_get_fulltext,
     mocked_refextract_extract_refs,
     mocked_api_request_magpie,
     mocked_beard_api,
@@ -1438,7 +1458,12 @@ def test_workflow_do_not_changes_to_hidden_if_record_authors_do_not_have_interes
 @mock.patch(
     "inspirehep.modules.workflows.tasks.actions._is_auto_rejected", return_value=False,
 )
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions.get_fulltext",
+    return_value=None,
+)
 def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
+    mocked_get_fulltext,
     mocked_is_auto_rejected,
     mocked_refextract_extract_refs,
     mocked_api_request_magpie,

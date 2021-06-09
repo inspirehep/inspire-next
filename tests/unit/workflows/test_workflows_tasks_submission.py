@@ -37,6 +37,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     send_robotupload,
     send_to_legacy,
     wait_webcoll,
+    create_hal_ticket
 )
 
 from mocks import MockEng, MockObj, MockUser, MockWorkflow
@@ -1092,3 +1093,25 @@ def test_send_robotupload_update_article_when_feature_flag_is_enabled():
             result = obj.log._info.getvalue()
 
             assert expected == result
+
+
+@patch('inspirehep.modules.workflows.tasks.submission.User')
+@patch('inspirehep.modules.workflows.tasks.submission.tickets.create_ticket_with_template')
+@patch('inspirehep.modules.workflows.tasks.submission.rt_instance', lambda: True)
+def test_create_hal_ticket(mock_create_ticket_with_template, mock_user):
+    mock_user.query.get.return_value = MockUser('cataloger@example.com', roles=['cataloger'])
+    data = {
+        'titles': [
+            {'title': 'Partial Symmetries of Weak Interactions'},
+        ],
+    }
+    extra_data = {'recid': '1'}
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+    create_hal_ticket(obj, eng)
+
+    assert 'HEP_curation' in mock_create_ticket_with_template.mock_calls[0][1]
+    assert extra_data['recid'] in mock_create_ticket_with_template.mock_calls[0][1]
+    assert extra_data['recid'] in mock_create_ticket_with_template.mock_calls[0][1]
+    assert 'cataloger@example.com' in mock_create_ticket_with_template.mock_calls[0][1]
+    assert 'literaturesuggest/tickets/curation_core.html' in mock_create_ticket_with_template.mock_calls[0][1]
