@@ -38,7 +38,7 @@ from mocks import MockEng, MockObj
 
 from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed, load_from_source_data, \
     extract_authors_from_pdf, is_suitable_for_pdf_authors_extraction, is_fermilab_report, add_collection, \
-    prepare_collaboration_multi_search
+    prepare_collaboration_multi_search, check_if_france_in_fulltext
 
 
 def test_match_approval_gets_match_recid():
@@ -477,3 +477,41 @@ def test_prepare_collaboration_multi_search():
     multi_search = prepare_collaboration_multi_search(collaborations)
 
     assert multi_search.to_dict() == expected_multi_search_dict
+
+
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_check_if_france_in_fulltext(mocked_get_document, app):
+    grobid_response = pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            'fixtures',
+            'grobid_fulltext_response.txt'
+        )
+    )
+
+    obj = MagicMock()
+    obj.data = {
+        'authors': [
+            {"full_name": "author 1"},
+            {"full_name": "author 2"},
+            {"full_name": "author 3"}
+        ]
+    }
+
+    obj.extra_data = {}
+    eng = None
+
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+    with patch.dict(current_app.config, new_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                text=grobid_response,
+                headers={'content-type': 'application/xml'},
+                status_code=200,
+            )
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                mocked_get_document.return_value.__enter__.return_value = tmp_file.name
+                france_in_fulltext = check_if_france_in_fulltext(obj, eng)
+
+    assert france_in_fulltext

@@ -1710,3 +1710,8 @@ APPMETRICS_ELASTICSEARCH_INDEX = 'inspireappmetrics-dev'
 APPMETRICS_THREADED_BACKEND = True
 
 BATCHUPLOADER_WEB_ROBOT_TOKEN = 'change me'
+
+
+# HAL
+# ===========
+HAL_ADMIN_ID = 'change me'

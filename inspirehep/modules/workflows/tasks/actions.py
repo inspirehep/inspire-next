@@ -30,6 +30,7 @@ import re
 from elasticsearch_dsl import Q, MultiSearch, Search
 from invenio_search import current_search_client
 from urlparse import urljoin
+from parsel import Selector
 
 import sys
 import time
@@ -801,46 +802,40 @@ def extract_authors_from_pdf(obj, eng):
     # If there are more than specified number of authors then don't run Grobid authors extraction
     if len(obj.data.get('authors', [])) > current_app.config.get('WORKFLOWS_MAX_AUTHORS_COUNT_FOR_GROBID_EXTRACTION', 1000):
         return obj
-    with get_document_in_workflow(obj) as tmp_document:
-        if not tmp_document:
-            return None
-        with open(tmp_document, 'rb') as document_file:
-            document = document_file.read()
-        data = {'input': document}
-        data.update({"includeRawAffiliations": "1", "consolidateHeader": "1"})
-        grobid_url = current_app.config["GROBID_URL"]
-        api_path = "api/processHeaderDocument"
-        response = requests.post(urljoin(grobid_url, api_path), files=data)
-        response.raise_for_status()
-        authors_and_affiliations = GrobidAuthors(response.text)
-        data = authors_and_affiliations.parse_all()
-        grobid_authors = get_value(data, 'author')
-        merged_authors, merge_conflicts = merge({},
-                                                {'authors': obj.data.get('authors', [])},
-                                                {'authors': grobid_authors},
-                                                configuration=GrobidOnArxivAuthorsOperations)
-        if not obj.data.get('authors', []) and len(authors_and_affiliations) > 0:
-            LOGGER.info(
-                "Using %s GROBID authors",
-                len(authors_and_affiliations),
-            )
-            obj.data['authors'] = grobid_authors
-            obj.extra_data['authors_with_affiliations'] = data
-        elif not merge_conflicts and len(merged_authors['authors']) > 0:
-            LOGGER.info(
-                "Using %s merged GROBID authors",
-                len(merged_authors),
-            )
-            obj.data['authors'] = merged_authors['authors']
-            obj.extra_data['authors_with_affiliations'] = data
-        else:
-            metadata_authors_count = len(obj.data['authors']) if 'authors' in obj.data else 0
-            grobid_authors_count = len(authors_and_affiliations) if authors_and_affiliations else 0
-            LOGGER.warning(
-                "Ignoring grobid authors. Expected authors count: %s. Authors exctracted from grobid %s.",
-                metadata_authors_count,
-                grobid_authors_count
-            )
+    api_path = "api/processHeaderDocument"
+    kwargs_to_grobid = {"includeRawAffiliations": "1", "consolidateHeader": "1"}
+    grobid_response = post_pdf_to_grobid(obj, api_path, **kwargs_to_grobid)
+    if not grobid_response:
+        return
+    authors_and_affiliations = GrobidAuthors(grobid_response.text)
+    data = authors_and_affiliations.parse_all()
+    grobid_authors = get_value(data, 'author')
+    merged_authors, merge_conflicts = merge({},
+                                            {'authors': obj.data.get('authors', [])},
+                                            {'authors': grobid_authors},
+                                            configuration=GrobidOnArxivAuthorsOperations)
+    if not obj.data.get('authors', []) and len(authors_and_affiliations) > 0:
+        LOGGER.info(
+            "Using %s GROBID authors",
+            len(authors_and_affiliations),
+        )
+        obj.data['authors'] = grobid_authors
+        obj.extra_data['authors_with_affiliations'] = data
+    elif not merge_conflicts and len(merged_authors['authors']) > 0:
+        LOGGER.info(
+            "Using %s merged GROBID authors",
+            len(merged_authors),
+        )
+        obj.data['authors'] = merged_authors['authors']
+        obj.extra_data['authors_with_affiliations'] = data
+    else:
+        metadata_authors_count = len(obj.data['authors']) if 'authors' in obj.data else 0
+        grobid_authors_count = len(authors_and_affiliations) if authors_and_affiliations else 0
+        LOGGER.warning(
+            "Ignoring grobid authors. Expected authors count: %s. Authors exctracted from grobid %s.",
+            metadata_authors_count,
+            grobid_authors_count
+        )
     return obj
 
 
@@ -1068,3 +1063,38 @@ def create_core_selection_wf(obj, eng):
     db.session.commit()
 
     start.delay("core_selection", object_id=workflow_object.id)
+
+
+@backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
+def post_pdf_to_grobid(obj, grobid_api_path, **kwargs):
+    with get_document_in_workflow(obj) as tmp_document:
+        if not tmp_document:
+            return
+        with open(tmp_document, 'rb') as document_file:
+            document = document_file.read()
+        data = {'input': document}
+        data.update(kwargs)
+        grobid_url = current_app.config["GROBID_URL"]
+        response = requests.post(urljoin(grobid_url, grobid_api_path), files=data)
+        response.raise_for_status()
+    return response
+
+
+def get_fulltext(obj):
+    grobid_api_path = "api/processFulltextDocument"
+    grobid_response = post_pdf_to_grobid(obj, grobid_api_path)
+    if not grobid_response:
+        return
+    xml_data = grobid_response.text
+    xml = Selector(text=xml_data, type="xml")
+    xml.remove_namespaces()
+    text = xml.xpath('//body//p').getall()
+    fulltext = ' '.join(text)
+    return fulltext
+
+
+def check_if_france_in_fulltext(obj, eng):
+    fulltext = get_fulltext(obj)
+    if not fulltext or "france" not in fulltext.lower():
+        return False
+    return True

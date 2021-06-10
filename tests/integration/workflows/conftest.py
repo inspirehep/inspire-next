@@ -243,6 +243,11 @@ def mocked_external_services(workflow_app):
             headers={'content-type': 'application/xml'},
             status_code=200,
         )
+        requests_mocker.register_uri(
+            'POST', 'http://grobid_url.local/api/processFulltextDocument',
+            headers={'content-type': 'application/xml'},
+            status_code=200,
+        )
         if 'INSPIREHEP_URL' in workflow_app.config:
             # HEP record upload
             requests_mocker.register_uri(
