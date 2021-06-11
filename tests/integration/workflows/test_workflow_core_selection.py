@@ -112,6 +112,68 @@ def test_core_selection_wf_starts_after_article_wf_when_no_core(mocked_api_reque
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
+def test_core_selection_wf_is_not_created_when_wf_is_record_update(mocked_api_request_magpie, mocked_api_request_beard, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
+    pid_value = 123456
+    mocked_url = "{inspirehep_url}/{endpoint}/{control_number}".format(
+        inspirehep_url=current_app.config.get("INSPIREHEP_URL"),
+        endpoint='literature',
+        control_number=pid_value
+    )
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            {"title": "A title"},
+        ],
+        "document_type": [
+            "report"
+        ],
+        "collaborations": [
+            {"value": "SHIP"}
+        ],
+        "control_number": pid_value,
+    }
+
+    workflow_object = workflow_object_class.create(
+        data=record,
+        id_user=None,
+        data_type='hep'
+    )
+    workflow_object.extra_data['source_data'] = {"data": record, "extra_data": {"source_data": {"data": record}}}
+    workflow_object.save()
+
+    with override_config(FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT=True):
+        with requests_mock.Mocker() as mock:
+            mock.register_uri('GET', mocked_url, json=load_json_record('hep_record_no_core.json'))
+            mock.register_uri('PUT', "http://web:8000/literature/{control_number}".format(control_number=pid_value), json={"metadata": {"control_number": pid_value}})
+
+            start("article", object_id=workflow_object.id)
+
+            assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0
+
+            workflow_object.callback_pos = [34, 1, 13]
+            #  Run task for creating core_selection wf
+            workflow_object.extra_data['auto-approved'] = True
+            workflow_object.extra_data['is-update'] = True
+            workflow_object.save()
+
+            workflow_object.continue_workflow('restart_task')
+
+            assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0
+            assert workflow_object.status == ObjectStatus.COMPLETED
+
+
+@mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
+@mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.beard.json_api_request",
+    side_effect=fake_beard_api_request,
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
+    side_effect=fake_magpie_api_request,
+)
 def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(mocked_api_request_magpie, mocked_api_request_beard, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
     original_pid_value = 654321
     redirected_pid = 123456

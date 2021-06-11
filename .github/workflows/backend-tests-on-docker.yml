@@ -106,7 +106,8 @@ jobs:
           --ignore tests/integration/workflows/test_workflows_tasks_actions.py \
           --ignore tests/integration/workflows/test_workflows_cli.py \
           --ignore tests/integration/workflows/test_workflow_utils.py \
-          --ignore tests/integration/workflows/test_workflow_core_selection.py
+          --ignore tests/integration/workflows/test_workflow_core_selection.py \
+          --ignore tests/integration/workflows/test_matching.py
 
   Integration:
     runs-on: ubuntu-latest

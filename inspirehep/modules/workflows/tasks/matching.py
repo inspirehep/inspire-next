@@ -227,14 +227,16 @@ def set_wf_not_completed_ids_to_wf(obj, skip_blocked=True, skip_halted=False):
         skip_halted: boolean, if True, then it skips HALTED workflows when
             looking for matched workflows
     """
+    def _accept_only_article_wf(base_record, match_result):
+        return get_value(match_result, '_source._workflow.workflow_class') == "article"
 
     def _non_completed(base_record, match_result):
-        return get_value(match_result,
-                         '_source._workflow.status') != 'COMPLETED'
+        return get_value(match_result, '_source._workflow.status') != 'COMPLETED' \
+            and _accept_only_article_wf(base_record, match_result)
 
     def _not_completed_or_halted(base_record, match_result):
         return get_value(match_result, '_source._workflow.status') not in [
-            'COMPLETED', 'HALTED']
+            'COMPLETED', 'HALTED'] and _accept_only_article_wf(base_record, match_result)
 
     def is_workflow_blocked_by_another_workflow(workflow_id):
         workflow = workflow_object_class.get(workflow_id)

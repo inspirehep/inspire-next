@@ -22,22 +22,31 @@
 
 from __future__ import absolute_import, division, print_function
 
+import uuid
 from copy import deepcopy
 
-from invenio_workflows import workflow_object_class
+from invenio_workflows import workflow_object_class, Workflow
 
 
-def build_workflow(workflow_data, data_type='hep', extra_data=None, **kwargs):
+def build_workflow(workflow_data, data_type='hep', extra_data=None, status=None, **kwargs):
+    extra_data = extra_data or {}
+    if 'source_data' not in extra_data:
+        extra_data = {
+            'source_data': {
+                'data': deepcopy(workflow_data),
+                'extra_data': extra_data,
+            }
+        }
+    wf = Workflow(name='article', extra_data=extra_data, uuid=uuid.uuid4())
+    wf.save()
     workflow_object = workflow_object_class.create(
         data=workflow_data,
         data_type=data_type,
-        extra_data={
-            'source_data': {
-                'data': deepcopy(workflow_data),
-                'extra_data': extra_data or {},
-            }
-        },
+        extra_data=extra_data,
         **kwargs
     )
-    workflow_object.save()
+    if status:
+        workflow_object.status = status
+    workflow_object.save(id_workflow=wf.uuid)
+
     return workflow_object

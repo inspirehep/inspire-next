@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import uuid
+
 import time
 import pytest
 
@@ -31,21 +33,30 @@ from copy import deepcopy
 
 from invenio_db import db
 from invenio_search import current_search
-from invenio_workflows import ObjectStatus, start, workflow_object_class
+from invenio_workflows import ObjectStatus, start, workflow_object_class, Workflow
 
 
-def build_workflow(workflow_data, data_type='hep', **kwargs):
-    workflow_object = workflow_object_class.create(
-        data_type=data_type,
-        data=workflow_data,
-        extra_data={
+def build_workflow(workflow_data, data_type='hep', extra_data=None, status=None, **kwargs):
+    extra_data = extra_data or {}
+    if 'source_data' not in extra_data:
+        extra_data = {
             'source_data': {
                 'data': deepcopy(workflow_data),
-                'extra_data': {},
+                'extra_data': extra_data,
             }
-        },
+        }
+    wf = Workflow(name='article', extra_data=extra_data, uuid=uuid.uuid4())
+    wf.save()
+    workflow_object = workflow_object_class.create(
+        data=workflow_data,
+        data_type=data_type,
+        extra_data=extra_data,
         **kwargs
     )
+    if status:
+        workflow_object.status = status
+    workflow_object.save(id_workflow=wf.uuid)
+
     return workflow_object
 
 
@@ -59,7 +70,7 @@ def check_wf_state(workflow_id, desired_status, max_time=550):  # Travis fails a
     """
     start = datetime.now()
     end = start + timedelta(seconds=max_time)
-    while (True):
+    while True:
         db.session.close()
         if workflow_object_class.get(workflow_id).status == desired_status:
             return
@@ -101,8 +112,7 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_running(
         'keywords': [{'value': 'none'}]
     }
 
-    workflow = build_workflow(record)
-    workflow.status = ObjectStatus.RUNNING
+    workflow = build_workflow(record, status=ObjectStatus.RUNNING)
     workflow.save()
     record['titles'][0]['source'] = 'something_else'
     workflow2 = build_workflow(record)
