@@ -946,8 +946,8 @@ def _match_lit_author_affiliation(raw_aff):
         "nested",
         path="authors",
         query=(
-            Q("match", authors__raw_affiliations__value=raw_aff)
-            & Q("exists", field="authors.affiliations.value")
+            Q("match", authors__raw_affiliations__value=raw_aff) &
+            Q("exists", field="authors.affiliations.value")
         ),
         inner_hits={},
     )
@@ -1049,7 +1049,7 @@ def create_core_selection_wf(obj, eng):
     record_control_number = obj.data.get('control_number')
     if not record_control_number:
         raise MissingRecordControlNumber
-    if is_core(obj, eng) or not _is_auto_approved(obj) or core_selection_wf_already_created(record_control_number):
+    if is_core(obj, eng) or not _is_auto_approved(obj) or core_selection_wf_already_created(record_control_number) or check_mark(obj, 'is-update'):
         LOGGER.info("No core selection needed for %s workflow with record %s", obj.id, record_control_number)
         return obj
 

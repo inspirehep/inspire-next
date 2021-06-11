@@ -22,7 +22,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+
 import mock
+import pkg_resources
+import requests_mock
 
 from invenio_workflows import (
     start,
@@ -34,6 +38,7 @@ from workflow_utils import build_workflow
 
 
 from inspirehep.modules.workflows.tasks.actions import mark
+from inspirehep.modules.workflows.tasks.matching import set_wf_not_completed_ids_to_wf
 
 PUBLISHING_RECORD = {
     '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
@@ -279,3 +284,69 @@ def test_keywords_are_stored_in_record_when_record_is_core(mocked_robotupload, m
     mark('core', True)(workflow, None)
     wf.continue_workflow()
     assert wf.data['keywords'] == expected_keywords
+
+
+@mock.patch("inspirehep.modules.workflows.tasks.beard.json_api_request", return_value={})
+@mock.patch("inspirehep.modules.workflows.tasks.magpie.json_api_request", return_value={})
+@mock.patch('inspirehep.modules.workflows.tasks.upload.store_record')
+@mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
+@mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
+def test_run_next_wf_is_not_starting_core_selection_wfs(mocked_robotupload, mocked_create_ticket, mocked_store_record, mocked_magpie, mocked_beard, mocked_external_services, workflow_app):
+    record = {
+        '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
+        'titles': [
+            {
+                'title': 'Title.'
+            },
+        ],
+        "authors": [
+            {
+                "full_name": "Some author",
+            }
+        ],
+        'document_type': ['article'],
+        '_collections': ['Literature'],
+        'arxiv_eprints': [{'value': "1802.08709.pdf"}, ],
+        'control_number': 1234,
+        "acquisition_source": {
+            "datetime": "2021-06-11T06:59:01.928752",
+            "method": "hepcrawl",
+            "source": "arXiv",
+        },
+    }
+
+    workflow = build_workflow(record, extra_data={'delay': 10})
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            "GET", 'http://export.arxiv.org/pdf/1802.08709.pdf',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '1802.08709.pdf')
+            )
+        )
+        requests_mocker.register_uri("GET", "http://arxiv.org/pdf/1802.08709.pdf", text="")
+        requests_mocker.register_uri(
+            "GET", "http://export.arxiv.org/e-print/1802.08709.pdf",
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '1802.08709.pdf')
+            )
+        )
+        requests_mocker.register_uri("POST", "http://grobid_url.local/api/processHeaderDocument")
+        start("article", object_id=workflow.id)
+
+    wf = workflow_object_class.get(workflow.id)
+    mark('auto-approved', True)(workflow, None)
+    wf.callback_pos = [34, 1, 13]
+    wf.continue_workflow()
+    workflow = build_workflow(record)
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri("GET", 'http://export.arxiv.org/pdf/1802.08709.pdf',
+                                     content=pkg_resources.resource_string(
+                                         __name__, os.path.join('fixtures', '1802.08709.pdf')), )
+        requests_mocker.register_uri("GET", "http://arxiv.org/pdf/1802.08709.pdf", text="")
+        requests_mocker.register_uri("GET", "http://export.arxiv.org/e-print/1802.08709.pdf",
+                                     content=pkg_resources.resource_string(
+                                         __name__, os.path.join('fixtures', '1802.08709.pdf')), )
+        requests_mocker.register_uri("POST", "http://grobid_url.local/api/processHeaderDocument")
+        start("article", object_id=workflow.id)
+    matched = set_wf_not_completed_ids_to_wf(workflow)
+    assert matched == []

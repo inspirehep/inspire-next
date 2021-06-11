@@ -802,10 +802,13 @@ def test_previously_rejected_from_not_fully_harvested_category_is_not_auto_appro
             assert obj2.status == ObjectStatus.COMPLETED
 
 
-def test_match_wf_in_error_goes_in_error_state(workflow_app):
+def test_match_wf_in_error_goes_in_error_state(
+    workflow_app,
+):
     record = generate_record()
 
-    obj = workflow_object_class.create(data=record, data_type="hep")
+    wf_id = build_workflow(record).id
+    obj = workflow_object_class.get(wf_id)
     obj.status = ObjectStatus.ERROR
     obj.save()
     current_search.flush_and_refresh("holdingpen-hep")
@@ -815,10 +818,13 @@ def test_match_wf_in_error_goes_in_error_state(workflow_app):
         start("article", object_id=workflow_id)
 
 
-def test_match_wf_in_error_goes_in_initial_state(workflow_app):
+def test_match_wf_in_error_goes_in_initial_state(
+    workflow_app,
+):
     record = generate_record()
 
-    obj = workflow_object_class.create(data=record, data_type="hep")
+    wf_id = build_workflow(record).id
+    obj = workflow_object_class.get(wf_id)
     obj.status = ObjectStatus.INITIAL
     obj.save()
     current_search.flush_and_refresh("holdingpen-hep")
