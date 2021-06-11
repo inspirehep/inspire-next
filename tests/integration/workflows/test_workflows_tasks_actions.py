@@ -131,6 +131,9 @@ def insert_literature_in_db(workflow_app):
     TestRecordMetadata.create_from_file(
         __name__, 'literature_1459277.json', pid_type='ins', index_name='records-hep'
     )
+    TestRecordMetadata.create_from_file(
+        __name__, 'literature_1800446.json', pid_type='ins', index_name='records-hep'
+    )
 
 
 def test_normalize_journal_titles_known_journals_with_ref(workflow_app, insert_journals_in_db):
@@ -1277,7 +1280,6 @@ def test_normalize_affiliations_doesnt_add_duplicated_affiliations(
             }
         ],
     }
-    test_normalize_affiliations_when_authors_has_two_happy_flow
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
     obj = normalize_affiliations(obj, None)
 
@@ -1408,3 +1410,43 @@ def test_create_core_selection_workflow_task_wont_create_when_record_is_core(wor
     create_core_selection_wf(workflow_object, None)
 
     assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0
+
+
+def test_normalize_affiliations_doesnt_add_not_valid_stuff_to_affiliation(
+    workflow_app,
+    insert_literature_in_db,
+):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "full_name": "Easter, Paul J.",
+                "ids": [{"schema": "INSPIRE BAI", "value": "P.J.Easter.2"}],
+                "raw_affiliations": [
+                    {
+                        "value": "School of Physics and Astronomy, Monash University, Vic 3800, Australia"
+                    },
+                    {
+                        "value": "OzGrav: The ARC Centre of Excellence for Gravitational Wave Discovery, Clayton VIC 3800, Australia"
+                    },
+                ],
+                "signature_block": "EASTARp",
+                "uuid": "4c4b7fdf-04ae-421f-bcab-bcc5907cea4e",
+            }
+        ],
+    }
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj = normalize_affiliations(obj, None)
+
+    assert obj.data["authors"][0]["affiliations"] == [
+        {
+            u"record": {u"$ref": u"https://inspirebeta.net/api/institutions/908529"},
+            u"value": u"LIGO Lab., Caltech",
+        },
+        {
+            u"record": {u"$ref": u"https://inspirebeta.net/api/institutions/903019"},
+            u"value": u"Monash U.",
+        },
+    ]
