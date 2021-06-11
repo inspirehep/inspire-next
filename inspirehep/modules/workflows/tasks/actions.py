@@ -963,7 +963,10 @@ def _match_lit_author_affiliation(raw_aff):
     )
     if result:
         matched_author = result[0].meta.inner_hits.authors.hits[0].to_dict()
-        return matched_author["affiliations"]
+        cleaned_affiliations = []
+        for aff in matched_author['affiliations']:
+            cleaned_affiliations.append({key: val for key, val in aff.items() if key in ['value', 'record']})
+        return cleaned_affiliations
 
 
 def _assign_institution(matched_affiliation):

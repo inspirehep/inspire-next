@@ -1,0 +1,1940 @@
+{
+   "uuid":"e79fd83d-affc-4314-be32-2680c3c165d2",
+   "updated":"2021-04-26T17:41:42.775704+00:00",
+   "created":"2020-06-11T00:00:00+00:00",
+   "id":"1800446",
+   "links":{
+      "bibtex":"https://inspirebeta.net/api/literature/1800446?format=bibtex",
+      "latex-eu":"https://inspirebeta.net/api/literature/1800446?format=latex-eu",
+      "latex-us":"https://inspirebeta.net/api/literature/1800446?format=latex-us",
+      "json":"https://inspirebeta.net/api/literature/1800446?format=json",
+      "citations":"https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A1800446"
+   },
+   "citation_count_without_self_citations":4,
+   "publication_info":[
+      {
+         "year":2020,
+         "artid":"043298",
+         "journal_issue":"4",
+         "journal_title":"Phys.Rev.Res.",
+         "journal_record":{
+            "$ref":"https://inspirebeta.net/api/journals/1778162"
+         },
+         "journal_volume":"2"
+      }
+   ],
+   "citation_count":4,
+   "core":true,
+   "dois":[
+      {
+         "value":"10.1103/PhysRevResearch.2.043298",
+         "source":"bibmatch"
+      }
+   ],
+   "urls":[
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/livingston_151012_data.png",
+         "description":"00015 The difference between the empirical and analytic cumulative distribution functions of whitened strain $\\tilde{\\nu}$ and whitened power $|\\tilde{\\nu}|^2$ in the LIGO Hanford (top) and Livingston (bottom) interferometers with two different power spectral density estimation methods at the time of GW151012. The gray shaded regions show the expected $1\\sigma$, $2\\sigma$, and $3\\sigma$ fluctuations. For the orange and green curves, the data are compared with the distributions which marginalise over uncertainty in the power spectral density estimate. For the red and purple curves, the data are compared with the distributions which do not marginalize over uncertainty in the power spectral density estimate. We note that the latter pair of curves deviate from the $3\\sigma$ region, while the former does not. The data are well described by a stationary Gaussian process when marginalising over uncertainty in the power spectral density."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/hanford_151012_data.png",
+         "description":"00014 The difference between the empirical and analytic cumulative distribution functions of whitened strain $\\tilde{\\nu}$ and whitened power $|\\tilde{\\nu}|^2$ in the LIGO Hanford (top) and Livingston (bottom) interferometers with two different power spectral density estimation methods at the time of GW151012. The gray shaded regions show the expected $1\\sigma$, $2\\sigma$, and $3\\sigma$ fluctuations. For the orange and green curves, the data are compared with the distributions which marginalise over uncertainty in the power spectral density estimate. For the red and purple curves, the data are compared with the distributions which do not marginalize over uncertainty in the power spectral density estimate. We note that the latter pair of curves deviate from the $3\\sigma$ region, while the former does not. The data are well described by a stationary Gaussian process when marginalising over uncertainty in the power spectral density."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/151012_ra.png",
+         "description":"00018 The posterior distribution for right ascension (top) and declination (bottom) for GW151012 for four different models. In blue and green we use the mean estimated PSD while in yellow and red we use the median estimate. In blue and yellow we neglect the uncertainty in the PSD estimate and in green and red we marginalise over the appropriate statistical uncertainty. In this case, marginalising over the uncertainty does not make a large difference to the inferred posterior distributions. However, the different PSD estimation techniques while giving consistent posterior distributions, give different posterior weights to different parts of the sky."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/151012_matched_filter_snr.png",
+         "description":"00017 The posterior distribution for chirp mass (top) and matched filter SNR (bottom) for GW151012 for four different models. In blue and green we use the mean estimated PSD while in yellow and red we use the median estimate. In blue and yellow we neglect the uncertainty in the PSD estimate and in green and red we marginalise over the appropriate statistical uncertainty. We note that in both cases, marginalising over the uncertainty increases the width of the chirp mass posterior and decreases the average SNR. The mean estimated PSD gives a wider chirp mass posterior than the median PSD estimate and we see a corresponding decrease in the recovered matched filter SNR."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/151012_chirp_mass.png",
+         "description":"00016 The posterior distribution for chirp mass (top) and matched filter SNR (bottom) for GW151012 for four different models. In blue and green we use the mean estimated PSD while in yellow and red we use the median estimate. In blue and yellow we neglect the uncertainty in the PSD estimate and in green and red we marginalise over the appropriate statistical uncertainty. We note that in both cases, marginalising over the uncertainty increases the width of the chirp mass posterior and decreases the average SNR. The mean estimated PSD gives a wider chirp mass posterior than the median PSD estimate and we see a corresponding decrease in the recovered matched filter SNR."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/151012_dec.png",
+         "description":"00019 The posterior distribution for right ascension (top) and declination (bottom) for GW151012 for four different models. In blue and green we use the mean estimated PSD while in yellow and red we use the median estimate. In blue and yellow we neglect the uncertainty in the PSD estimate and in green and red we marginalise over the appropriate statistical uncertainty. In this case, marginalising over the uncertainty does not make a large difference to the inferred posterior distributions. However, the different PSD estimation techniques while giving consistent posterior distributions, give different posterior weights to different parts of the sky."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/likelihood_gaussian_7.png",
+         "description":"00001 Comparison of the expected and empirical distribution of whitened frequency-domain strain (first and third panels) and whitened noise power (second and fourth panels) when using three different PSDs for whitening and simulated Gaussian noise colored to the known PSD. The three PSDs used are the true ``known'' PSD (blue), a mean estimate (orange), and a median estimate (green). The number of averages used to generate the mean and median estimates are 7 (top pair), and 31 (bottom pair). In all cases the data follow the predicted distributions."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/likelihood_gaussian_31.png",
+         "description":"00003 Comparison of the expected and empirical distribution of whitened frequency-domain strain (first and third panels) and whitened noise power (second and fourth panels) when using three different PSDs for whitening and simulated Gaussian noise colored to the known PSD. The three PSDs used are the true ``known'' PSD (blue), a mean estimate (orange), and a median estimate (green). The number of averages used to generate the mean and median estimates are 7 (top pair), and 31 (bottom pair). In all cases the data follow the predicted distributions."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/whiten_data_gaussian_31.png",
+         "description":"00002 Comparison of the expected and empirical distribution of whitened frequency-domain strain (first and third panels) and whitened noise power (second and fourth panels) when using three different PSDs for whitening and simulated Gaussian noise colored to the known PSD. The three PSDs used are the true ``known'' PSD (blue), a mean estimate (orange), and a median estimate (green). The number of averages used to generate the mean and median estimates are 7 (top pair), and 31 (bottom pair). In all cases the data follow the predicted distributions."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/whiten_data_gaussian_7.png",
+         "description":"00000 Comparison of the expected and empirical distribution of whitened frequency-domain strain (first and third panels) and whitened noise power (second and fourth panels) when using three different PSDs for whitening and simulated Gaussian noise colored to the known PSD. The three PSDs used are the true ``known'' PSD (blue), a mean estimate (orange), and a median estimate (green). The number of averages used to generate the mean and median estimates are 7 (top pair), and 31 (bottom pair). In all cases the data follow the predicted distributions."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/151012_L1_mean_data.png",
+         "description":"00012 Frequency domain strain power (blue) and mean (top) and median (bottom) estimated power spectral densities (orange) for LIGO Livingston at the time of GW151012."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/ppp_likelihood_gaussian_31.png",
+         "description":"00005 Difference between the empirical and expected cumulative distributions of whitened frequency-domain strain (left) and whitened noise power (right) when using two different PSDs for whitening and simulated Gaussian noise colored to a known PSD. In the top panels we consider 512 seconds of simulated data and in the bottom panels we consider 8 seconds of simulated data. The two PSDs used are a mean estimate (orange/red), and a median estimate (green/purple). The gray shaded regions show the expected $1\\sigma$, $2\\sigma$, and $3\\sigma$ uncertainties. We average over 31 realisations to generate the PSDs. There are significant deviations when not marginalizing over the uncertainty in the PSD once enough data are considered."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/151012_L1_median_data.png",
+         "description":"00013 Frequency domain strain power (blue) and mean (top) and median (bottom) estimated power spectral densities (orange) for LIGO Livingston at the time of GW151012."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/151012_H1_mean_data.png",
+         "description":"00010 Frequency domain strain power (blue) and mean (top) and median (bottom) estimated power spectral densities (orange) for LIGO Hanford at the time of GW151012."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/ppp_data_gaussian_31.png",
+         "description":"00004 Difference between the empirical and expected cumulative distributions of whitened frequency-domain strain (left) and whitened noise power (right) when using two different PSDs for whitening and simulated Gaussian noise colored to a known PSD. In the top panels we consider 512 seconds of simulated data and in the bottom panels we consider 8 seconds of simulated data. The two PSDs used are a mean estimate (orange/red), and a median estimate (green/purple). The gray shaded regions show the expected $1\\sigma$, $2\\sigma$, and $3\\sigma$ uncertainties. We average over 31 realisations to generate the PSDs. There are significant deviations when not marginalizing over the uncertainty in the PSD once enough data are considered."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/151012_H1_median_data.png",
+         "description":"00011 Frequency domain strain power (blue) and mean (top) and median (bottom) estimated power spectral densities (orange) for LIGO Hanford at the time of GW151012."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/gaussian_likelihood_anderson_darling.png",
+         "description":"00009 The survival function of the Anderson-Darling statistic comparing Gaussian noise whitened with three PSDs with the distributions which do/do not marginalize over the statistical uncertainty in the PSD estimate. In the top panel, we analyze the real and imaginary components of the whitened strain. In the bottom panel, we analyze whitened power. The blue curve is generated using data whitened by the exact known PSD. The orange/green curves are generated by comparing data whitened by the mean/median PSD estimates with the distributions which marginalize over the statistical uncertainty. The red/purple curves are generated by comparing data whitened by the mean/median PSD estimates with the distributions which do not marginalize over the statistical uncertainty. The grey shaded regions show the expected $1\\sigma$ and $2\\sigma$ uncertainties. We average over 31 realisations to generate the PSDs. The Anderson-Darling statistic does not follow the expected distribution when not marginalizing over the uncertainty in the PSD."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/gaussian_anderson_darling.png",
+         "description":"00008 The survival function of the Anderson-Darling statistic comparing Gaussian noise whitened with three PSDs with the distributions which do/do not marginalize over the statistical uncertainty in the PSD estimate. In the top panel, we analyze the real and imaginary components of the whitened strain. In the bottom panel, we analyze whitened power. The blue curve is generated using data whitened by the exact known PSD. The orange/green curves are generated by comparing data whitened by the mean/median PSD estimates with the distributions which marginalize over the statistical uncertainty. The red/purple curves are generated by comparing data whitened by the mean/median PSD estimates with the distributions which do not marginalize over the statistical uncertainty. The grey shaded regions show the expected $1\\sigma$ and $2\\sigma$ uncertainties. We average over 31 realisations to generate the PSDs. The Anderson-Darling statistic does not follow the expected distribution when not marginalizing over the uncertainty in the PSD."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/ppp_likelihood_gaussian_31_few.png",
+         "description":"00007 Difference between the empirical and expected cumulative distributions of whitened frequency-domain strain (left) and whitened noise power (right) when using two different PSDs for whitening and simulated Gaussian noise colored to a known PSD. In the top panels we consider 512 seconds of simulated data and in the bottom panels we consider 8 seconds of simulated data. The two PSDs used are a mean estimate (orange/red), and a median estimate (green/purple). The gray shaded regions show the expected $1\\sigma$, $2\\sigma$, and $3\\sigma$ uncertainties. We average over 31 realisations to generate the PSDs. There are significant deviations when not marginalizing over the uncertainty in the PSD once enough data are considered."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/ppp_data_gaussian_31_few.png",
+         "description":"00006 Difference between the empirical and expected cumulative distributions of whitened frequency-domain strain (left) and whitened noise power (right) when using two different PSDs for whitening and simulated Gaussian noise colored to a known PSD. In the top panels we consider 512 seconds of simulated data and in the bottom panels we consider 8 seconds of simulated data. The two PSDs used are a mean estimate (orange/red), and a median estimate (green/purple). The gray shaded regions show the expected $1\\sigma$, $2\\sigma$, and $3\\sigma$ uncertainties. We average over 31 realisations to generate the PSDs. There are significant deviations when not marginalizing over the uncertainty in the PSD once enough data are considered."
+      },
+      {
+         "value":"http://old.inspirehep.net/record/1800446/files/2006.05292.pdf",
+         "description":"Fulltext"
+      }
+   ],
+   "titles":[
+      {
+         "title":"Gravitational-wave astronomy with an uncertain noise power spectral density",
+         "source":"arXiv"
+      }
+   ],
+   "$schema":"https://inspirebeta.net/schemas/records/hep.json",
+   "authors":[
+      {
+         "ids":[
+            {
+               "value":"C.Talbot.1",
+               "schema":"INSPIRE BAI"
+            }
+         ],
+         "uuid":"1f5899c9-02be-491e-811a-0f4a133551f4",
+         "emails":[
+            "ctalbot@caltech.edu"
+         ],
+         "full_name":"Talbot, Colm",
+         "affiliations":[
+            {
+               "value":"LIGO Lab., Caltech",
+               "record":{
+                  "$ref":"https://inspirebeta.net/api/institutions/908529"
+               }
+            },
+            {
+               "control_number": 903019,
+               "value":"Monash U.",
+               "record":{
+                  "$ref":"https://inspirebeta.net/api/institutions/903019"
+               }
+            }
+         ],
+         "signature_block":"TALBATc",
+         "raw_affiliations":[
+            {
+               "value":"OzGrav: The ARC Centre of Excellence for Gravitational-Wave Discovery, Clayton, VIC 3800, Australia"
+            }
+         ]
+      },
+      {
+         "ids":[
+            {
+               "value":"E.Thrane.1",
+               "schema":"INSPIRE BAI"
+            }
+         ],
+         "uuid":"fd850b1b-d034-4d0e-b277-80e8fe4b02e3",
+         "record":{
+            "$ref":"https://inspirebeta.net/api/authors/1037455"
+         },
+         "full_name":"Thrane, Eric",
+         "affiliations":[
+            {
+               "control_number": 903019,
+               "value":"Monash U.",
+               "record":{
+                  "$ref":"https://inspirebeta.net/api/institutions/903019"
+               }
+            }
+         ],
+         "signature_block":"THRANe",
+         "raw_affiliations":[
+            {
+               "value":"OzGrav: The ARC Centre of Excellence for Gravitational-Wave Discovery, Clayton, VIC 3800, Australia"
+            }
+         ]
+      }
+   ],
+   "curated":true,
+   "figures":[
+      {
+         "key":"d5edb592e001e19f6029e65eae169450",
+         "url":"https://inspirebeta.net/files/d5edb592e001e19f6029e65eae169450",
+         "source":"arxiv",
+         "caption":"Comparison of the expected and empirical distribution of whitened frequency-domain strain (first and third panels) and whitened noise power (second and fourth panels) when using three different PSDs for whitening and simulated Gaussian noise colored to the known PSD. The three PSDs used are the true ``known'' PSD (blue), a mean estimate (orange), and a median estimate (green). The number of averages used to generate the mean and median estimates are 7 (top pair), and 31 (bottom pair). In all cases the data follow the predicted distributions.",
+         "filename":"whiten_data_gaussian_7.png"
+      },
+      {
+         "key":"2545ae7c29d945f58e15b515cb1c4b65",
+         "url":"https://inspirebeta.net/files/2545ae7c29d945f58e15b515cb1c4b65",
+         "source":"arxiv",
+         "caption":"Comparison of the expected and empirical distribution of whitened frequency-domain strain (first and third panels) and whitened noise power (second and fourth panels) when using three different PSDs for whitening and simulated Gaussian noise colored to the known PSD. The three PSDs used are the true ``known'' PSD (blue), a mean estimate (orange), and a median estimate (green). The number of averages used to generate the mean and median estimates are 7 (top pair), and 31 (bottom pair). In all cases the data follow the predicted distributions.",
+         "filename":"likelihood_gaussian_7.png"
+      },
+      {
+         "key":"e37f78252d0df86908229e7d03f0355f",
+         "url":"https://inspirebeta.net/files/e37f78252d0df86908229e7d03f0355f",
+         "source":"arxiv",
+         "caption":"Comparison of the expected and empirical distribution of whitened frequency-domain strain (first and third panels) and whitened noise power (second and fourth panels) when using three different PSDs for whitening and simulated Gaussian noise colored to the known PSD. The three PSDs used are the true ``known'' PSD (blue), a mean estimate (orange), and a median estimate (green). The number of averages used to generate the mean and median estimates are 7 (top pair), and 31 (bottom pair). In all cases the data follow the predicted distributions.",
+         "filename":"whiten_data_gaussian_31.png"
+      },
+      {
+         "key":"6fec4024f102f56ffa023db845b5fb27",
+         "url":"https://inspirebeta.net/files/6fec4024f102f56ffa023db845b5fb27",
+         "source":"arxiv",
+         "caption":"Comparison of the expected and empirical distribution of whitened frequency-domain strain (first and third panels) and whitened noise power (second and fourth panels) when using three different PSDs for whitening and simulated Gaussian noise colored to the known PSD. The three PSDs used are the true ``known'' PSD (blue), a mean estimate (orange), and a median estimate (green). The number of averages used to generate the mean and median estimates are 7 (top pair), and 31 (bottom pair). In all cases the data follow the predicted distributions.",
+         "filename":"likelihood_gaussian_31.png"
+      },
+      {
+         "key":"966cbc6d9b299dbd60725bf23ed2da70",
+         "url":"https://inspirebeta.net/files/966cbc6d9b299dbd60725bf23ed2da70",
+         "source":"arxiv",
+         "caption":"Difference between the empirical and expected cumulative distributions of whitened frequency-domain strain (left) and whitened noise power (right) when using two different PSDs for whitening and simulated Gaussian noise colored to a known PSD. In the top panels we consider 512 seconds of simulated data and in the bottom panels we consider 8 seconds of simulated data. The two PSDs used are a mean estimate (orange/red), and a median estimate (green/purple). The gray shaded regions show the expected $1\\sigma$, $2\\sigma$, and $3\\sigma$ uncertainties. We average over 31 realisations to generate the PSDs. There are significant deviations when not marginalizing over the uncertainty in the PSD once enough data are considered.",
+         "filename":"ppp_data_gaussian_31.png"
+      },
+      {
+         "key":"f7f9646b36f5c5269e000bd398128554",
+         "url":"https://inspirebeta.net/files/f7f9646b36f5c5269e000bd398128554",
+         "source":"arxiv",
+         "caption":"Difference between the empirical and expected cumulative distributions of whitened frequency-domain strain (left) and whitened noise power (right) when using two different PSDs for whitening and simulated Gaussian noise colored to a known PSD. In the top panels we consider 512 seconds of simulated data and in the bottom panels we consider 8 seconds of simulated data. The two PSDs used are a mean estimate (orange/red), and a median estimate (green/purple). The gray shaded regions show the expected $1\\sigma$, $2\\sigma$, and $3\\sigma$ uncertainties. We average over 31 realisations to generate the PSDs. There are significant deviations when not marginalizing over the uncertainty in the PSD once enough data are considered.",
+         "filename":"ppp_likelihood_gaussian_31.png"
+      },
+      {
+         "key":"f6b83d0310a3c46613dbd2997a8c02c7",
+         "url":"https://inspirebeta.net/files/f6b83d0310a3c46613dbd2997a8c02c7",
+         "source":"arxiv",
+         "caption":"Difference between the empirical and expected cumulative distributions of whitened frequency-domain strain (left) and whitened noise power (right) when using two different PSDs for whitening and simulated Gaussian noise colored to a known PSD. In the top panels we consider 512 seconds of simulated data and in the bottom panels we consider 8 seconds of simulated data. The two PSDs used are a mean estimate (orange/red), and a median estimate (green/purple). The gray shaded regions show the expected $1\\sigma$, $2\\sigma$, and $3\\sigma$ uncertainties. We average over 31 realisations to generate the PSDs. There are significant deviations when not marginalizing over the uncertainty in the PSD once enough data are considered.",
+         "filename":"ppp_data_gaussian_31_few.png"
+      },
+      {
+         "key":"d9b672ecfcbdae3d7e36d9b646d7fdfb",
+         "url":"https://inspirebeta.net/files/d9b672ecfcbdae3d7e36d9b646d7fdfb",
+         "source":"arxiv",
+         "caption":"Difference between the empirical and expected cumulative distributions of whitened frequency-domain strain (left) and whitened noise power (right) when using two different PSDs for whitening and simulated Gaussian noise colored to a known PSD. In the top panels we consider 512 seconds of simulated data and in the bottom panels we consider 8 seconds of simulated data. The two PSDs used are a mean estimate (orange/red), and a median estimate (green/purple). The gray shaded regions show the expected $1\\sigma$, $2\\sigma$, and $3\\sigma$ uncertainties. We average over 31 realisations to generate the PSDs. There are significant deviations when not marginalizing over the uncertainty in the PSD once enough data are considered.",
+         "filename":"ppp_likelihood_gaussian_31_few.png"
+      },
+      {
+         "key":"a0986b041a165f749d1b3496d32d838a",
+         "url":"https://inspirebeta.net/files/a0986b041a165f749d1b3496d32d838a",
+         "source":"arxiv",
+         "caption":"The survival function of the Anderson-Darling statistic comparing Gaussian noise whitened with three PSDs with the distributions which do/do not marginalize over the statistical uncertainty in the PSD estimate. In the top panel, we analyze the real and imaginary components of the whitened strain. In the bottom panel, we analyze whitened power. The blue curve is generated using data whitened by the exact known PSD. The orange/green curves are generated by comparing data whitened by the mean/median PSD estimates with the distributions which marginalize over the statistical uncertainty. The red/purple curves are generated by comparing data whitened by the mean/median PSD estimates with the distributions which do not marginalize over the statistical uncertainty. The grey shaded regions show the expected $1\\sigma$ and $2\\sigma$ uncertainties. We average over 31 realisations to generate the PSDs. The Anderson-Darling statistic does not follow the expected distribution when not marginalizing over the uncertainty in the PSD.",
+         "filename":"gaussian_anderson_darling.png"
+      },
+      {
+         "key":"95e6e480262d518ec503740f6d888c19",
+         "url":"https://inspirebeta.net/files/95e6e480262d518ec503740f6d888c19",
+         "source":"arxiv",
+         "caption":"The survival function of the Anderson-Darling statistic comparing Gaussian noise whitened with three PSDs with the distributions which do/do not marginalize over the statistical uncertainty in the PSD estimate. In the top panel, we analyze the real and imaginary components of the whitened strain. In the bottom panel, we analyze whitened power. The blue curve is generated using data whitened by the exact known PSD. The orange/green curves are generated by comparing data whitened by the mean/median PSD estimates with the distributions which marginalize over the statistical uncertainty. The red/purple curves are generated by comparing data whitened by the mean/median PSD estimates with the distributions which do not marginalize over the statistical uncertainty. The grey shaded regions show the expected $1\\sigma$ and $2\\sigma$ uncertainties. We average over 31 realisations to generate the PSDs. The Anderson-Darling statistic does not follow the expected distribution when not marginalizing over the uncertainty in the PSD.",
+         "filename":"gaussian_likelihood_anderson_darling.png"
+      },
+      {
+         "key":"e77f59c048919d61545d0a13a746d689",
+         "url":"https://inspirebeta.net/files/e77f59c048919d61545d0a13a746d689",
+         "source":"arxiv",
+         "caption":"Frequency domain strain power (blue) and mean (top) and median (bottom) estimated power spectral densities (orange) for LIGO Hanford at the time of GW151012.",
+         "filename":"151012_H1_mean_data.png"
+      },
+      {
+         "key":"f10895726688ffe98da203e6163242e9",
+         "url":"https://inspirebeta.net/files/f10895726688ffe98da203e6163242e9",
+         "source":"arxiv",
+         "caption":"Frequency domain strain power (blue) and mean (top) and median (bottom) estimated power spectral densities (orange) for LIGO Hanford at the time of GW151012.",
+         "filename":"151012_H1_median_data.png"
+      },
+      {
+         "key":"122406d7ad3fafd897bedbc7483f4544",
+         "url":"https://inspirebeta.net/files/122406d7ad3fafd897bedbc7483f4544",
+         "source":"arxiv",
+         "caption":"Frequency domain strain power (blue) and mean (top) and median (bottom) estimated power spectral densities (orange) for LIGO Livingston at the time of GW151012.",
+         "filename":"151012_L1_mean_data.png"
+      },
+      {
+         "key":"8bd2e432bd6af46c2592740d689a908b",
+         "url":"https://inspirebeta.net/files/8bd2e432bd6af46c2592740d689a908b",
+         "source":"arxiv",
+         "caption":"Frequency domain strain power (blue) and mean (top) and median (bottom) estimated power spectral densities (orange) for LIGO Livingston at the time of GW151012.",
+         "filename":"151012_L1_median_data.png"
+      },
+      {
+         "key":"74b6c85bd84471f6d663cbdd82b04105",
+         "url":"https://inspirebeta.net/files/74b6c85bd84471f6d663cbdd82b04105",
+         "source":"arxiv",
+         "caption":"The difference between the empirical and analytic cumulative distribution functions of whitened strain $\\tilde{\\nu}$ and whitened power $|\\tilde{\\nu}|^2$ in the LIGO Hanford (top) and Livingston (bottom) interferometers with two different power spectral density estimation methods at the time of GW151012. The gray shaded regions show the expected $1\\sigma$, $2\\sigma$, and $3\\sigma$ fluctuations. For the orange and green curves, the data are compared with the distributions which marginalise over uncertainty in the power spectral density estimate. For the red and purple curves, the data are compared with the distributions which do not marginalize over uncertainty in the power spectral density estimate. We note that the latter pair of curves deviate from the $3\\sigma$ region, while the former does not. The data are well described by a stationary Gaussian process when marginalising over uncertainty in the power spectral density.",
+         "filename":"hanford_151012_data.png"
+      },
+      {
+         "key":"0b915f435d7c3450936c48c11e888118",
+         "url":"https://inspirebeta.net/files/0b915f435d7c3450936c48c11e888118",
+         "source":"arxiv",
+         "caption":"The difference between the empirical and analytic cumulative distribution functions of whitened strain $\\tilde{\\nu}$ and whitened power $|\\tilde{\\nu}|^2$ in the LIGO Hanford (top) and Livingston (bottom) interferometers with two different power spectral density estimation methods at the time of GW151012. The gray shaded regions show the expected $1\\sigma$, $2\\sigma$, and $3\\sigma$ fluctuations. For the orange and green curves, the data are compared with the distributions which marginalise over uncertainty in the power spectral density estimate. For the red and purple curves, the data are compared with the distributions which do not marginalize over uncertainty in the power spectral density estimate. We note that the latter pair of curves deviate from the $3\\sigma$ region, while the former does not. The data are well described by a stationary Gaussian process when marginalising over uncertainty in the power spectral density.",
+         "filename":"livingston_151012_data.png"
+      },
+      {
+         "key":"0f7d121cf47a881c367e41987150942f",
+         "url":"https://inspirebeta.net/files/0f7d121cf47a881c367e41987150942f",
+         "source":"arxiv",
+         "caption":"The posterior distribution for chirp mass (top) and matched filter SNR (bottom) for GW151012 for four different models. In blue and green we use the mean estimated PSD while in yellow and red we use the median estimate. In blue and yellow we neglect the uncertainty in the PSD estimate and in green and red we marginalise over the appropriate statistical uncertainty. We note that in both cases, marginalising over the uncertainty increases the width of the chirp mass posterior and decreases the average SNR. The mean estimated PSD gives a wider chirp mass posterior than the median PSD estimate and we see a corresponding decrease in the recovered matched filter SNR.",
+         "filename":"151012_chirp_mass.png"
+      },
+      {
+         "key":"af8ff004996dd4d2b4c9e96961ceedd0",
+         "url":"https://inspirebeta.net/files/af8ff004996dd4d2b4c9e96961ceedd0",
+         "source":"arxiv",
+         "caption":"The posterior distribution for chirp mass (top) and matched filter SNR (bottom) for GW151012 for four different models. In blue and green we use the mean estimated PSD while in yellow and red we use the median estimate. In blue and yellow we neglect the uncertainty in the PSD estimate and in green and red we marginalise over the appropriate statistical uncertainty. We note that in both cases, marginalising over the uncertainty increases the width of the chirp mass posterior and decreases the average SNR. The mean estimated PSD gives a wider chirp mass posterior than the median PSD estimate and we see a corresponding decrease in the recovered matched filter SNR.",
+         "filename":"151012_matched_filter_snr.png"
+      },
+      {
+         "key":"cd9384797cc0c67ecd9bcdee96bb7614",
+         "url":"https://inspirebeta.net/files/cd9384797cc0c67ecd9bcdee96bb7614",
+         "source":"arxiv",
+         "caption":"The posterior distribution for right ascension (top) and declination (bottom) for GW151012 for four different models. In blue and green we use the mean estimated PSD while in yellow and red we use the median estimate. In blue and yellow we neglect the uncertainty in the PSD estimate and in green and red we marginalise over the appropriate statistical uncertainty. In this case, marginalising over the uncertainty does not make a large difference to the inferred posterior distributions. However, the different PSD estimation techniques while giving consistent posterior distributions, give different posterior weights to different parts of the sky.",
+         "filename":"151012_ra.png"
+      },
+      {
+         "key":"0e43132b89382336e8aa495aa6c63e4e",
+         "url":"https://inspirebeta.net/files/0e43132b89382336e8aa495aa6c63e4e",
+         "source":"arxiv",
+         "caption":"The posterior distribution for right ascension (top) and declination (bottom) for GW151012 for four different models. In blue and green we use the mean estimated PSD while in yellow and red we use the median estimate. In blue and yellow we neglect the uncertainty in the PSD estimate and in green and red we marginalise over the appropriate statistical uncertainty. In this case, marginalising over the uncertainty does not make a large difference to the inferred posterior distributions. However, the different PSD estimation techniques while giving consistent posterior distributions, give different posterior weights to different parts of the sky.",
+         "filename":"151012_dec.png"
+      }
+   ],
+   "license":[
+      {
+         "url":"http://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+         "license":"arXiv nonexclusive-distrib 1.0",
+         "material":"preprint"
+      }
+   ],
+   "texkeys":[
+      "Talbot:2020auc"
+   ],
+   "citeable":true,
+   "imprints":[
+      {
+         "date":"2020-12-02"
+      }
+   ],
+   "keywords":[
+      {
+         "value":"density: spectral",
+         "schema":"INSPIRE"
+      },
+      {
+         "value":"binary: compact",
+         "schema":"INSPIRE"
+      },
+      {
+         "value":"binary: coalescence",
+         "schema":"INSPIRE"
+      },
+      {
+         "value":"black hole: binary",
+         "schema":"INSPIRE"
+      },
+      {
+         "value":"noise",
+         "schema":"INSPIRE"
+      },
+      {
+         "value":"gravitational radiation",
+         "schema":"INSPIRE"
+      },
+      {
+         "value":"gravitational radiation detector",
+         "schema":"INSPIRE"
+      },
+      {
+         "value":"statistical analysis",
+         "schema":"INSPIRE"
+      },
+      {
+         "value":"gravitational radiation: emission",
+         "schema":"INSPIRE"
+      },
+      {
+         "value":"gravitational radiation: direct detection",
+         "schema":"INSPIRE"
+      }
+   ],
+   "refereed":true,
+   "abstracts":[
+      {
+         "value":"In order to extract information about the properties of compact binaries, we must estimate the noise power spectral density of gravitational-wave data, which depends on the properties of the gravitational-wave detector. In practice, it is not possible to know this perfectly, only to estimate it from the data. Multiple estimation methods are commonly used, and each has a corresponding statistical uncertainty. However, this uncertainty is widely ignored when measuring the physical parameters describing compact binary coalescences, and the appropriate likelihoods which account for the uncertainty are not well known. In order to perform increasingly precise astrophysical inference and model selection, it will be essential to account for this uncertainty. In this work, we derive the correct likelihood for one of the most widely used estimation methods in gravitational-wave transient analysis, the median average. We demonstrate that simulated Gaussian noise follows the predicted distributions. We then examine real gravitational-wave data at and around the time of GW151012, a relatively low-significance binary black hole merger event. We find that the difference in our inference when using different PSD estimation techniques is larger than the predicted statistical uncertainty.",
+         "source":"APS"
+      },
+      {
+         "value":"In order to extract information about the properties of compact binaries, we must estimate the noise power spectral density of gravitational-wave data, which depends on the properties of the gravitational-wave detector. In practice, it is not possible to know this perfectly, only to estimate it from the data. Multiple estimation methods are commonly used and each has a corresponding statistical uncertainty. However, this uncertainty is widely ignored when measuring the physical parameters describing compact binary coalescences, and the appropriate likelihoods which account for the uncertainty are not well known. In order to perform increasingly precise astrophysical inference and model selection, it will be essential to account for this uncertainty. In this work, we derive the correct likelihood for one of the most widely used estimation methods in gravitational-wave transient analysis, the median average. We demonstrate that simulated Gaussian noise follows the predicted distributions. We then examine real gravitational-wave data at and around the time of GW151012, a relatively low-significance binary black hole merger event. We show that the data are well described by stationary-Gaussian noise and explore the impact of different noise power spectral density estimation methods on the astrophysical inferences we draw about GW151012.",
+         "source":"arXiv"
+      }
+   ],
+   "copyright":[
+      {
+         "year":2020,
+         "holder":"authors",
+         "material":"publication"
+      }
+   ],
+   "references":[
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1751757"
+         },
+         "reference":{
+            "dois":[
+               "10.1088/1361-6382/ab685e"
+            ],
+            "label":"1",
+            "authors":[
+               {
+                  "full_name":"Abbott, B.P."
+               }
+            ],
+            "publication_info":{
+               "year":2020,
+               "artid":"055002",
+               "journal_title":"Class.Quant.Grav.",
+               "journal_volume":"37"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1483096"
+         },
+         "reference":{
+            "dois":[
+               "10.1007/s41114-017-0004-1"
+            ],
+            "label":"2",
+            "authors":[
+               {
+                  "full_name":"Romano, J.D."
+               },
+               {
+                  "full_name":"Cornish, N.J."
+               }
+            ],
+            "publication_info":{
+               "year":2017,
+               "artid":"2",
+               "page_start":"2",
+               "journal_title":"Living Rev.Rel.",
+               "journal_volume":"20"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1322348"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.91.084034"
+            ],
+            "label":"3",
+            "authors":[
+               {
+                  "full_name":"Littenberg, T.B."
+               },
+               {
+                  "full_name":"Cornish, N.J."
+               }
+            ],
+            "publication_info":{
+               "year":2015,
+               "artid":"084034",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"91"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "reference":{
+            "dois":[
+               "10.1109/TAU.1967.1161901"
+            ],
+            "label":"4",
+            "authors":[
+               {
+                  "full_name":"Welch, P."
+               }
+            ],
+            "publication_info":{
+               "year":1967,
+               "artid":"70",
+               "page_start":"70",
+               "journal_title":"IEEE Trans.Audio Electroacoust.",
+               "journal_volume":"15"
+            }
+         }
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1502061"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevLett.118.121101"
+            ],
+            "label":"5",
+            "authors":[
+               {
+                  "full_name":"Abbott, B.P."
+               }
+            ],
+            "publication_info":{
+               "year":2017,
+               "artid":"121101",
+               "journal_title":"Phys.Rev.Lett.",
+               "journal_volume":"118"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1387292"
+         },
+         "reference":{
+            "dois":[
+               "10.1088/0264-9381/33/21/215004"
+            ],
+            "label":"6",
+            "authors":[
+               {
+                  "full_name":"Usman, S.A."
+               },
+               {
+                  "full_name":"Nitz, A.H."
+               },
+               {
+                  "full_name":"Harry, I.W."
+               },
+               {
+                  "full_name":"Biwer, C.M."
+               },
+               {
+                  "full_name":"Brown, D.A."
+               },
+               {
+                  "full_name":"Cabero, M."
+               },
+               {
+                  "full_name":"Capano, C.D."
+               },
+               {
+                  "full_name":"Dal Canton, T."
+               },
+               {
+                  "full_name":"Dent, T."
+               },
+               {
+                  "full_name":"Fairhurst, S."
+               }
+            ],
+            "publication_info":{
+               "year":2016,
+               "artid":"215004",
+               "journal_title":"Class.Quant.Grav.",
+               "journal_volume":"33"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1686352"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.98.084016"
+            ],
+            "label":"7",
+            "authors":[
+               {
+                  "full_name":"Pankow, C."
+               },
+               {
+                  "full_name":"Chatziioannou, K."
+               },
+               {
+                  "full_name":"Chase, E.A."
+               },
+               {
+                  "full_name":"Littenberg, T.B."
+               },
+               {
+                  "full_name":"Evans, M."
+               },
+               {
+                  "full_name":"McIver, J."
+               },
+               {
+                  "full_name":"Cornish, N.J."
+               },
+               {
+                  "full_name":"Haster, C.-J."
+               },
+               {
+                  "full_name":"Kanner, J."
+               },
+               {
+                  "full_name":"Raymond, V."
+               }
+            ],
+            "publication_info":{
+               "year":2018,
+               "artid":"084016",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"98"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1676251"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.99.042001"
+            ],
+            "label":"8",
+            "authors":[
+               {
+                  "full_name":"Driggers, J.C."
+               },
+               {
+                  "full_name":"Vitale, S."
+               },
+               {
+                  "full_name":"Lundgren, A.P."
+               },
+               {
+                  "full_name":"Evans, M."
+               },
+               {
+                  "full_name":"Kawabe, K."
+               },
+               {
+                  "full_name":"Dwyer, S.E."
+               },
+               {
+                  "full_name":"Izumi, K."
+               },
+               {
+                  "full_name":"Schofield, R.M.S."
+               },
+               {
+                  "full_name":"Effler, A."
+               },
+               {
+                  "full_name":"Sigg, D."
+               }
+            ],
+            "publication_info":{
+               "year":2019,
+               "artid":"042001",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"99"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1694246"
+         },
+         "reference":{
+            "dois":[
+               "10.1088/1361-6382/ab01c5"
+            ],
+            "label":"9",
+            "authors":[
+               {
+                  "full_name":"Davis, D."
+               },
+               {
+                  "full_name":"Massinger, T."
+               },
+               {
+                  "full_name":"Lundgren, A."
+               },
+               {
+                  "full_name":"Driggers, J.C."
+               },
+               {
+                  "full_name":"Urban, A.L."
+               },
+               {
+                  "full_name":"Nuttall, L."
+               }
+            ],
+            "publication_info":{
+               "year":2019,
+               "artid":"055011",
+               "journal_title":"Class.Quant.Grav.",
+               "journal_volume":"36"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1716587"
+         },
+         "reference":{
+            "label":"10",
+            "title":{
+               "title":"The GstLAL search analysis methods for compact binary mergers in Advanced LIGO's second and Advanced Virgo's first observing runs"
+            },
+            "authors":[
+               {
+                  "full_name":"Sachdev, S."
+               },
+               {
+                  "full_name":"Caudill, S."
+               },
+               {
+                  "full_name":"Fong, H."
+               },
+               {
+                  "full_name":"Lo, R.K.L."
+               },
+               {
+                  "full_name":"Messick, C."
+               },
+               {
+                  "full_name":"Mukherjee, D."
+               },
+               {
+                  "full_name":"Magee, R."
+               },
+               {
+                  "full_name":"Tsukada, L."
+               },
+               {
+                  "full_name":"Blackburn, K."
+               },
+               {
+                  "full_name":"Brady, P."
+               }
+            ],
+            "arxiv_eprint":"1901.08580",
+            "publication_info":{
+               "year":2019
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1722254"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.100.023011"
+            ],
+            "label":"11",
+            "authors":[
+               {
+                  "full_name":"Venumadhav, T."
+               },
+               {
+                  "full_name":"Zackay, B."
+               },
+               {
+                  "full_name":"Roulet, J."
+               },
+               {
+                  "full_name":"Dai, L."
+               },
+               {
+                  "full_name":"Zaldarriaga, M."
+               }
+            ],
+            "publication_info":{
+               "year":2019,
+               "artid":"023011",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"100"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1766201"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.101.042003"
+            ],
+            "label":"12",
+            "authors":[
+               {
+                  "full_name":"Vajente, G."
+               },
+               {
+                  "full_name":"Huang, Y."
+               },
+               {
+                  "full_name":"Isi, M."
+               },
+               {
+                  "full_name":"Driggers, J.C."
+               },
+               {
+                  "full_name":"Kissel, J.S."
+               },
+               {
+                  "full_name":"Szczepańczyk, M.J."
+               },
+               {
+                  "full_name":"Vitale, S."
+               }
+            ],
+            "publication_info":{
+               "year":2020,
+               "artid":"042003",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"101"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1744124"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.100.104004"
+            ],
+            "label":"13",
+            "authors":[
+               {
+                  "full_name":"Chatziioannou, K."
+               },
+               {
+                  "full_name":"Haster, C.-J."
+               },
+               {
+                  "full_name":"Littenberg, T.B."
+               },
+               {
+                  "full_name":"Farr, W.M."
+               },
+               {
+                  "full_name":"Ghonge, S."
+               },
+               {
+                  "full_name":"Millhouse, M."
+               },
+               {
+                  "full_name":"Clark, J.A."
+               },
+               {
+                  "full_name":"Cornish, N."
+               }
+            ],
+            "publication_info":{
+               "year":2019,
+               "artid":"104004",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"100"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/926132"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.84.122004"
+            ],
+            "label":"14",
+            "authors":[
+               {
+                  "full_name":"Röver, C."
+               }
+            ],
+            "publication_info":{
+               "year":2011,
+               "artid":"122004",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"84"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/852139"
+         },
+         "reference":{
+            "dois":[
+               "10.1088/0264-9381/28/1/015010"
+            ],
+            "label":"15",
+            "authors":[
+               {
+                  "full_name":"Röver, C."
+               },
+               {
+                  "full_name":"Meyer, R."
+               },
+               {
+                  "full_name":"Christensen, N."
+               }
+            ],
+            "publication_info":{
+               "year":2011,
+               "artid":"015010",
+               "journal_title":"Class.Quant.Grav.",
+               "journal_volume":"28"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1454471"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.93.082005"
+            ],
+            "label":"16",
+            "authors":[
+               {
+                  "full_name":"Yamamoto, T."
+               },
+               {
+                  "full_name":"Hayama, K."
+               },
+               {
+                  "full_name":"Mano, S."
+               },
+               {
+                  "full_name":"Itoh, Y."
+               },
+               {
+                  "full_name":"Kanda, N."
+               }
+            ],
+            "publication_info":{
+               "year":2016,
+               "artid":"082005",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"93"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1752624"
+         },
+         "reference":{
+            "dois":[
+               "10.1093/mnras/staa181"
+            ],
+            "label":"17",
+            "authors":[
+               {
+                  "full_name":"Banagiri, S."
+               },
+               {
+                  "full_name":"Coughlin, M.W."
+               },
+               {
+                  "full_name":"Clark, J."
+               },
+               {
+                  "full_name":"Lasky, P.D."
+               },
+               {
+                  "full_name":"Bizouard, M.A."
+               },
+               {
+                  "full_name":"Talbot, C."
+               },
+               {
+                  "full_name":"Thrane, E."
+               },
+               {
+                  "full_name":"Mandic, V."
+               }
+            ],
+            "publication_info":{
+               "year":2020,
+               "artid":"4945",
+               "page_start":"4945",
+               "journal_title":"Mon.Not.Roy.Astron.Soc.",
+               "journal_volume":"492"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1322344"
+         },
+         "reference":{
+            "dois":[
+               "10.1088/0264-9381/32/13/135012"
+            ],
+            "label":"18",
+            "authors":[
+               {
+                  "full_name":"Cornish, N.J."
+               },
+               {
+                  "full_name":"Littenberg, T.B."
+               }
+            ],
+            "publication_info":{
+               "year":2015,
+               "artid":"135012",
+               "journal_title":"Class.Quant.Grav.",
+               "journal_volume":"32"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1706018"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevX.9.031040"
+            ],
+            "label":"19",
+            "authors":[
+               {
+                  "full_name":"Abbott, B.P."
+               }
+            ],
+            "publication_info":{
+               "year":2019,
+               "artid":"031040",
+               "journal_title":"Phys.Rev.X",
+               "journal_volume":"9"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1790847"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.102.023008"
+            ],
+            "label":"20",
+            "authors":[
+               {
+                  "full_name":"Biscoveanu, S."
+               },
+               {
+                  "full_name":"Haster, C.-J."
+               },
+               {
+                  "full_name":"Vitale, S."
+               },
+               {
+                  "full_name":"Davies, J."
+               }
+            ],
+            "publication_info":{
+               "year":2020,
+               "artid":"023008",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"102"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "reference":{
+            "misc":[
+               "PhD thesis, Monash University"
+            ],
+            "label":"21",
+            "title":{
+               "title":"Astrophysics of binary black holes at the dawn of gravitational-wave astronomy"
+            },
+            "authors":[
+               {
+                  "full_name":"Talbot, C."
+               }
+            ],
+            "publication_info":{
+               "year":2020
+            }
+         }
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/693632"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.85.122006"
+            ],
+            "label":"22",
+            "authors":[
+               {
+                  "full_name":"Allen, B."
+               },
+               {
+                  "full_name":"Anderson, W.G."
+               },
+               {
+                  "full_name":"Brady, P.R."
+               },
+               {
+                  "full_name":"Brown, D.A."
+               },
+               {
+                  "full_name":"Creighton, J.D.E."
+               }
+            ],
+            "publication_info":{
+               "year":2012,
+               "artid":"122006",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"85"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "reference":{
+            "misc":[
+               "This distribution is sometimes referred to as the Student-Rayleigh distribution in the gravitational-wave literature"
+            ],
+            "label":"23"
+         }
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1318924"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.91.042003"
+            ],
+            "label":"24",
+            "authors":[
+               {
+                  "full_name":"Veitch, J."
+               },
+               {
+                  "full_name":"Raymond, V."
+               },
+               {
+                  "full_name":"Farr, B."
+               },
+               {
+                  "full_name":"Farr, W."
+               },
+               {
+                  "full_name":"Graff, P."
+               },
+               {
+                  "full_name":"Vitale, S."
+               },
+               {
+                  "full_name":"Aylott, B."
+               },
+               {
+                  "full_name":"Blackburn, K."
+               },
+               {
+                  "full_name":"Christensen, N."
+               },
+               {
+                  "full_name":"Coughlin, M."
+               }
+            ],
+            "publication_info":{
+               "year":2015,
+               "artid":"042003",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"91"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1664406"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.98.042007"
+            ],
+            "label":"25",
+            "authors":[
+               {
+                  "full_name":"Isi, M."
+               },
+               {
+                  "full_name":"Smith, R."
+               },
+               {
+                  "full_name":"Vitale, S."
+               },
+               {
+                  "full_name":"Massinger, T.J."
+               },
+               {
+                  "full_name":"Kanner, J."
+               },
+               {
+                  "full_name":"Vajpeyi, A."
+               }
+            ],
+            "publication_info":{
+               "year":2018,
+               "artid":"042007",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"98"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1756246"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.100.123018"
+            ],
+            "label":"26",
+            "authors":[
+               {
+                  "full_name":"Ashton, G."
+               },
+               {
+                  "full_name":"Thrane, E."
+               },
+               {
+                  "full_name":"Smith, R.J.E."
+               }
+            ],
+            "publication_info":{
+               "year":2019,
+               "artid":"123018",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"100"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1640583"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevX.8.021019"
+            ],
+            "label":"27",
+            "authors":[
+               {
+                  "full_name":"Smith, R."
+               },
+               {
+                  "full_name":"Thrane, E."
+               }
+            ],
+            "publication_info":{
+               "year":2018,
+               "artid":"021019",
+               "journal_title":"Phys.Rev.X",
+               "journal_volume":"8"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1114360"
+         },
+         "reference":{
+            "dois":[
+               "10.1093/biomet/57.1.97"
+            ],
+            "label":"28",
+            "authors":[
+               {
+                  "full_name":"Hastings, W.K."
+               }
+            ],
+            "publication_info":{
+               "year":1970,
+               "artid":"97",
+               "page_start":"97",
+               "journal_title":"Biometrika",
+               "journal_volume":"57"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1670681"
+         },
+         "reference":{
+            "dois":[
+               "10.1214/06-BA127"
+            ],
+            "label":"29",
+            "authors":[
+               {
+                  "full_name":"Skilling, J."
+               }
+            ],
+            "publication_info":{
+               "year":2006,
+               "artid":"833",
+               "page_start":"833",
+               "journal_title":"Bayesian Anal.",
+               "journal_volume":"1"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1693268"
+         },
+         "reference":{
+            "dois":[
+               "10.1017/pasa.2019.2"
+            ],
+            "label":"30",
+            "authors":[
+               {
+                  "full_name":"Thrane, E."
+               },
+               {
+                  "full_name":"Talbot, C."
+               }
+            ],
+            "publication_info":{
+               "year":2019,
+               "artid":"e010",
+               "page_start":"e010",
+               "journal_title":"Publ.Astron.Soc.Austral.",
+               "journal_volume":"36"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1734962"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.100.123017"
+            ],
+            "label":"31",
+            "authors":[
+               {
+                  "full_name":"Payne, E."
+               },
+               {
+                  "full_name":"Talbot, C."
+               },
+               {
+                  "full_name":"Thrane, E."
+               }
+            ],
+            "publication_info":{
+               "year":2019,
+               "artid":"123017",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"100"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1844643"
+         },
+         "reference":{
+            "dois":[
+               "10.1093/mnras/staa278"
+            ],
+            "label":"32",
+            "authors":[
+               {
+                  "full_name":"Speagle, J.S."
+               }
+            ],
+            "publication_info":{
+               "year":2020,
+               "artid":"3132",
+               "page_start":"3132",
+               "journal_title":"Mon.Not.Roy.Astron.Soc.",
+               "journal_volume":"493"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1702289"
+         },
+         "reference":{
+            "dois":[
+               "10.3847/1538-4365/ab06fc"
+            ],
+            "label":"33",
+            "authors":[
+               {
+                  "full_name":"Ashton, G."
+               },
+               {
+                  "full_name":"Hübner, M."
+               },
+               {
+                  "full_name":"Lasky, P.D."
+               },
+               {
+                  "full_name":"Talbot, C."
+               },
+               {
+                  "full_name":"Ackley, K."
+               },
+               {
+                  "full_name":"Biscoveanu, S."
+               },
+               {
+                  "full_name":"Chu, Q."
+               },
+               {
+                  "full_name":"Divakarla, A."
+               },
+               {
+                  "full_name":"Easter, P.J."
+               },
+               {
+                  "full_name":"Goncharov, B."
+               }
+            ],
+            "publication_info":{
+               "year":2019,
+               "artid":"27",
+               "page_start":"27",
+               "journal_title":"Astrophys.J.Suppl.",
+               "journal_volume":"241"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1767662"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevD.101.023011"
+            ],
+            "label":"34",
+            "authors":[
+               {
+                  "full_name":"Hübner, M."
+               },
+               {
+                  "full_name":"Talbot, C."
+               },
+               {
+                  "full_name":"Lasky, P.D."
+               },
+               {
+                  "full_name":"Thrane, E."
+               }
+            ],
+            "publication_info":{
+               "year":2020,
+               "artid":"023011",
+               "journal_title":"Phys.Rev.D",
+               "journal_volume":"101"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1405400"
+         },
+         "reference":{
+            "dois":[
+               "10.1093/mnrasl/slv190"
+            ],
+            "label":"35",
+            "authors":[
+               {
+                  "full_name":"Sellentin, E."
+               },
+               {
+                  "full_name":"Heavens, A.F."
+               }
+            ],
+            "publication_info":{
+               "year":2016,
+               "artid":"L132",
+               "page_start":"L132",
+               "journal_title":"Mon.Not.Roy.Astron.Soc.",
+               "journal_volume":"456"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1226234"
+         },
+         "reference":{
+            "dois":[
+               "10.1007/s41114-018-0012-9"
+            ],
+            "label":"36",
+            "authors":[
+               {
+                  "full_name":"Abbott, B.P."
+               }
+            ],
+            "publication_info":{
+               "year":2018,
+               "artid":"3",
+               "page_start":"3",
+               "journal_title":"Living Rev.Rel.",
+               "journal_volume":"21"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1324772"
+         },
+         "reference":{
+            "dois":[
+               "10.1088/0264-9381/32/11/115012"
+            ],
+            "label":"37",
+            "authors":[
+               {
+                  "full_name":"Aasi, J."
+               }
+            ],
+            "publication_info":{
+               "year":2015,
+               "artid":"115012",
+               "journal_title":"Class.Quant.Grav.",
+               "journal_volume":"32"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1469423"
+         },
+         "reference":{
+            "dois":[
+               "10.1103/PhysRevX.6.041015"
+            ],
+            "label":"38",
+            "authors":[
+               {
+                  "full_name":"Abbott, B.P."
+               }
+            ],
+            "publication_info":{
+               "year":2016,
+               "artid":"041015",
+               "journal_title":"Phys.Rev.X",
+               "journal_volume":"6"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "reference":{
+            "misc":[
+               "We note that another common convention is to take data symmetrically around the analysis segment This method can perform better in the presence of a long-term nonstationarity We found qualitatively similar results when using a symmetric data stretch"
+            ],
+            "label":"39"
+         }
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1818116"
+         },
+         "reference":{
+            "dois":[
+               "10.1038/s41586-020-2649-2"
+            ],
+            "label":"40",
+            "authors":[
+               {
+                  "full_name":"Harris, C.R."
+               },
+               {
+                  "full_name":"Millman, K.J."
+               },
+               {
+                  "full_name":"van der Walt, S.J."
+               },
+               {
+                  "full_name":"Gommers, R."
+               },
+               {
+                  "full_name":"Virtanen, P."
+               },
+               {
+                  "full_name":"Cournapeau, D."
+               },
+               {
+                  "full_name":"Wieser, E."
+               },
+               {
+                  "full_name":"Taylor, J."
+               },
+               {
+                  "full_name":"Berg, S."
+               },
+               {
+                  "full_name":"Smith, N.J."
+               }
+            ],
+            "publication_info":{
+               "year":2020,
+               "artid":"357",
+               "page_start":"357",
+               "journal_title":"Nature",
+               "journal_volume":"585"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1620084"
+         },
+         "reference":{
+            "dois":[
+               "10.1109/MCSE.2007.55"
+            ],
+            "label":"41",
+            "authors":[
+               {
+                  "full_name":"Hunter, J.D."
+               }
+            ],
+            "publication_info":{
+               "year":2007,
+               "artid":"90",
+               "page_start":"90",
+               "journal_title":"Comput.Sci.Eng.",
+               "journal_volume":"9"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1746174"
+         },
+         "reference":{
+            "dois":[
+               "10.1038/s41592-019-0686-2"
+            ],
+            "misc":[
+               "and SciPy 10 Contributors,, 261"
+            ],
+            "label":"42",
+            "authors":[
+               {
+                  "full_name":"Virtanen, P."
+               },
+               {
+                  "full_name":"Gommers, R."
+               },
+               {
+                  "full_name":"Oliphant, T.E."
+               },
+               {
+                  "full_name":"Haberland, M."
+               },
+               {
+                  "full_name":"Reddy, T."
+               },
+               {
+                  "full_name":"Cournapeau, D."
+               },
+               {
+                  "full_name":"Burovski, E."
+               },
+               {
+                  "full_name":"Peterson, P."
+               },
+               {
+                  "full_name":"Weckesser, W."
+               },
+               {
+                  "full_name":"Bright, J."
+               }
+            ],
+            "publication_info":{
+               "year":2020,
+               "artid":"261",
+               "page_start":"261",
+               "journal_title":"Nature Meth.",
+               "journal_volume":"17"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "reference":{
+            "urls":[
+               {
+                  "value":"https://zenodo.org/record/2580401#.X7vnvVNKhb8"
+               }
+            ],
+            "label":"43",
+            "authors":[
+               {
+                  "full_name":"Macleod, D."
+               },
+               {
+                  "full_name":"Urban, A.L."
+               },
+               {
+                  "full_name":"Coughlin, S."
+               },
+               {
+                  "full_name":"Massinger, T."
+               },
+               {
+                  "full_name":"Paulaltin"
+               },
+               {
+                  "full_name":"Areeda, J."
+               },
+               {
+                  "full_name":"Quintero, E."
+               },
+               {
+                  "full_name":"Badger, the Gitter"
+               },
+               {
+                  "full_name":"Leinweber, K."
+               }
+            ]
+         }
+      },
+      {
+         "reference":{
+            "dois":[
+               "10.7935/GT1W-FZ16"
+            ],
+            "label":"44",
+            "title":{
+               "title":"free software (GPL)"
+            },
+            "authors":[
+               {
+                  "full_name":"Collaboration, LIGO Scientific"
+               }
+            ],
+            "publication_info":{
+               "year":2018
+            }
+         }
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1322875"
+         },
+         "reference":{
+            "dois":[
+               "10.1088/1742-6596/610/1/012021"
+            ],
+            "label":"45",
+            "authors":[
+               {
+                  "full_name":"Vallisneri, M."
+               },
+               {
+                  "full_name":"Kanner, J."
+               },
+               {
+                  "full_name":"Williams, R."
+               },
+               {
+                  "full_name":"Weinstein, A."
+               },
+               {
+                  "full_name":"Stephens, B."
+               }
+            ],
+            "publication_info":{
+               "year":2015,
+               "artid":"012021",
+               "journal_title":"J.Phys.Conf.Ser.",
+               "journal_volume":"610"
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "record":{
+            "$ref":"https://inspirebeta.net/api/literature/1773351"
+         },
+         "reference":{
+            "misc":[
+               "gr-qc"
+            ],
+            "label":"46",
+            "title":{
+               "title":"Open data from the first and second observing runs of Advanced LIGO and Advanced Virgo"
+            },
+            "authors":[
+               {
+                  "full_name":"Collaboration, The LIGO Scientific"
+               },
+               {
+                  "full_name":"Collaboration, the Virgo"
+               },
+               {
+                  "full_name":"Abbott, R."
+               }
+            ],
+            "arxiv_eprint":"1912.11716",
+            "publication_info":{
+               "year":2019
+            }
+         },
+         "curated_relation":false
+      },
+      {
+         "reference":{
+            "urls":[
+               {
+                  "value":"https://www.github.com/ColmTalbot/median-marginalised-distributions"
+               }
+            ],
+            "label":"47"
+         }
+      },
+      {
+         "reference":{
+            "urls":[
+               {
+                  "value":"https://www.gw-openscience.org"
+               }
+            ],
+            "label":"48"
+         }
+      }
+   ],
+   "public_notes":[
+      {
+         "value":"12 pages, 7 figures",
+         "source":"arXiv"
+      }
+   ],
+   "arxiv_eprints":[
+      {
+         "value":"2006.05292",
+         "categories":[
+            "astro-ph.IM",
+            "astro-ph.HE",
+            "gr-qc"
+         ]
+      }
+   ],
+   "document_type":[
+      "article"
+   ],
+   "preprint_date":"2020-06-16",
+   "control_number":1800446,
+   "legacy_version":"20201204234335.0",
+   "number_of_pages":13,
+   "inspire_categories":[
+      {
+         "term":"Instrumentation",
+         "source":"arxiv"
+      },
+      {
+         "term":"Astrophysics",
+         "source":"arxiv"
+      },
+      {
+         "term":"Gravitation and Cosmology",
+         "source":"arxiv"
+      },
+      {
+         "term":"Instrumentation"
+      },
+      {
+         "term":"Astrophysics"
+      },
+      {
+         "term":"Gravitation and Cosmology"
+      }
+   ],
+   "legacy_creation_date":"2020-06-11"
+}
