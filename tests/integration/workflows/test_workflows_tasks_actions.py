@@ -1426,9 +1426,6 @@ def test_normalize_affiliations_doesnt_add_not_valid_stuff_to_affiliation(
                 "ids": [{"schema": "INSPIRE BAI", "value": "P.J.Easter.2"}],
                 "raw_affiliations": [
                     {
-                        "value": "School of Physics and Astronomy, Monash University, Vic 3800, Australia"
-                    },
-                    {
                         "value": "OzGrav: The ARC Centre of Excellence for Gravitational Wave Discovery, Clayton VIC 3800, Australia"
                     },
                 ],
@@ -1450,3 +1447,34 @@ def test_normalize_affiliations_doesnt_add_not_valid_stuff_to_affiliation(
             u"value": u"Monash U.",
         },
     ]
+
+
+def test_normalize_affiliations_doesnt_assign_collaborations_when_ambiguous(
+    workflow_app,
+    insert_literature_in_db,
+):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "full_name": "Easter, Paul J.",
+                "ids": [{"schema": "INSPIRE BAI", "value": "P.J.Easter.2"}],
+                "raw_affiliations": [
+                    {
+                        "value": "School of Physics and Astronomy, Monash University, Vic 3800, Australia"
+                    },
+                    {
+                        "value": "OzGrav: The ARC Centre of Excellence for Gravitational Wave Discovery, Clayton VIC 3800, Australia"
+                    },
+                ],
+                "signature_block": "EASTARp",
+                "uuid": "4c4b7fdf-04ae-421f-bcab-bcc5907cea4e",
+            }
+        ],
+    }
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj = normalize_affiliations(obj, None)
+
+    assert not obj.data["authors"][0].get("affiliations")
