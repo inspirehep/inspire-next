@@ -1007,14 +1007,23 @@ def normalize_affiliations(obj, eng):
                 matched_affiliations[raw_aff] = matched_author_affiliations
                 author_affiliations.extend(matched_author_affiliations)
         if author_affiliations:
-            author["affiliations"] = dedupe_list(author_affiliations)
-            LOGGER.info(
-                u"(wf: %s) Normalized affiliations for author %s. Raw affiliations: %s. Assigned affiliations: %s",
-                obj.id,
-                author["full_name"],
-                ",".join(raw_affs),
-                author_affiliations
-            )
+            if len(raw_affs) == len(author_affiliations) or len(raw_affs) == 1:
+                author["affiliations"] = dedupe_list(author_affiliations)
+                LOGGER.info(
+                    u"(wf: %s) Normalized affiliations for author %s. Raw affiliations: %s. Assigned affiliations: %s",
+                    obj.id,
+                    author["full_name"],
+                    ",".join(raw_affs),
+                    author_affiliations
+                )
+            else:
+                LOGGER.info(
+                    u"(wf: %s) Found ambiguous affiliations for author %s, skipping affiliation linking. Raw affiliations: %s. Matched affiliations: %s",
+                    obj.id,
+                    author["full_name"],
+                    ",".join(raw_affs),
+                    author_affiliations
+                )
     return obj
 
 

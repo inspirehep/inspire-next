@@ -139,6 +139,7 @@
          "full_name":"Talbot, Colm",
          "affiliations":[
             {
+               "control_number": 908529,
                "value":"LIGO Lab., Caltech",
                "record":{
                   "$ref":"https://inspirebeta.net/api/institutions/908529"
