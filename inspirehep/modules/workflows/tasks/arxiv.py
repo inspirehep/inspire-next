@@ -33,6 +33,7 @@ import requests
 from backports.tempfile import TemporaryDirectory
 from flask import current_app
 from lxml.etree import XMLSyntaxError
+from requests import HTTPError
 from wand.exceptions import DelegateError
 from wand.resource import limits
 from werkzeug import secure_filename
@@ -110,12 +111,14 @@ def arxiv_package_download(obj, eng):
     """
     arxiv_id = LiteratureReader(obj.data).arxiv_id
     filename = secure_filename('{0}.tar.gz'.format(arxiv_id))
-    tarball = download_file_to_workflow(
-        workflow=obj,
-        name=filename,
-        url=current_app.config['ARXIV_TARBALL_URL'].format(arxiv_id=arxiv_id),
-    )
-
+    try:
+        tarball = download_file_to_workflow(
+            workflow=obj,
+            name=filename,
+            url=current_app.config['ARXIV_TARBALL_URL'].format(arxiv_id=arxiv_id),
+        )
+    except HTTPError:
+        tarball = None
     if tarball:
         obj.log.info('Tarball retrieved from arXiv for %s', arxiv_id)
     else:
