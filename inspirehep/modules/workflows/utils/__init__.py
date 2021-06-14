@@ -292,7 +292,14 @@ def copy_file_to_workflow(workflow, name, url):
     return workflow.files[name]
 
 
-@backoff.on_exception(backoff.expo, requests.packages.urllib3.exceptions.ProtocolError, max_tries=5)
+@backoff.on_exception(
+    backoff.expo,
+    (
+        requests.packages.urllib3.exceptions.ProtocolError,
+        requests.exceptions.HTTPError,
+    ),
+    max_tries=5
+)
 def download_file_to_workflow(workflow, name, url):
     """Download a file to a specified workflow.
 
@@ -309,6 +316,7 @@ def download_file_to_workflow(workflow, name, url):
     retry 5 times with exponential backoff before giving up.
     """
     with closing(requests.get(url=url, stream=True)) as req:
+        req.raise_for_status()
         if req.status_code == 200:
             req.raw.decode_content = True
             workflow.files[name] = req.raw
