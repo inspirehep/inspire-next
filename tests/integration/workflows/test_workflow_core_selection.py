@@ -18,6 +18,7 @@ from invenio_workflows import start, workflow_object_class, ObjectStatus, Workfl
 from invenio_workflows.models import WorkflowObjectModel
 from mocks import fake_beard_api_request, fake_magpie_api_request
 from utils import override_config
+from factories.db.invenio_records import TestRecordMetadata
 
 
 def load_json_record(record_file):
@@ -68,6 +69,7 @@ def test_core_selection_wf_starts_after_article_wf_when_no_core(mocked_api_reque
         id_user=None,
         data_type='hep'
     )
+    TestRecordMetadata.create_from_kwargs(json=record)
     workflow_object.extra_data['source_data'] = {"data": record, "extra_data": {"source_data": {"data": record}}}
     workflow_object.save()
 
@@ -93,6 +95,8 @@ def test_core_selection_wf_starts_after_article_wf_when_no_core(mocked_api_reque
             core_selection_wf_object.continue_workflow('continue_next')
             assert core_selection_wf.status == ObjectStatus.COMPLETED
             assert core_selection_wf.data['control_number'] == pid_value
+            assert 1 == core_selection_wf.extra_data['head_version_id']
+            assert 'head_uuid' in core_selection_wf.extra_data
 
     expected_record_data = load_json_record('hep_record_no_core.json')['metadata']
     expected_record_data['core'] = True
@@ -197,7 +201,6 @@ def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(mocked_
         ],
         "control_number": original_pid_value,
     }
-
     workflow_object = workflow_object_class.create(
         data=record,
         id_user=None,
@@ -214,6 +217,7 @@ def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(mocked_
             start("article", object_id=workflow_object.id)
 
             assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0
+            TestRecordMetadata.create_from_kwargs(json={"control_number": redirected_pid})
 
             workflow_object.callback_pos = [34, 1, 13]
             #  Run task for creating core_selection wf
@@ -268,7 +272,7 @@ def test_core_selection_wf_still_runs_when_there_is_core_on_hep_already(mocked_a
         ],
         "control_number": pid_value,
     }
-
+    TestRecordMetadata.create_from_kwargs(json=record)
     expected_hep_record = {'metadata': dict(record)}
     expected_hep_record['metadata']['core'] = True
 
@@ -335,7 +339,7 @@ def test_core_selection_wf_skipped_if_record_was_manually_approved(mocked_api_re
         ],
         "control_number": pid_value,
     }
-
+    TestRecordMetadata.create_from_kwargs(json=record)
     workflow_object = workflow_object_class.create(
         data=record,
         id_user=None,

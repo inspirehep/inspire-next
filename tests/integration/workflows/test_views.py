@@ -563,7 +563,7 @@ def test_core_selection_continue_when_asked(mocked_create_ticket, mocked_send_ro
 
     expected_hep_record = {'metadata': dict(record)}
     expected_hep_record['metadata']['core'] = True
-
+    TestRecordMetadata.create_from_kwargs(json=record)
     create_core_selection_wf(workflow_object, None)
     wf_id = WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one().id
     with workflow_app.test_client() as client:

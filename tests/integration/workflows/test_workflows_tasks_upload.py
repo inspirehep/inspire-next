@@ -21,7 +21,7 @@
 # or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, division, print_function
-
+import mock
 import uuid
 
 import pytest
@@ -245,9 +245,17 @@ def test_store_record_inspirehep_api_literature_new(workflow_app):
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
 
 
-def test_store_record_inspirehep_api_literature_update(workflow_app):
+@mock.patch('inspirehep.modules.workflows.tasks.upload.put_record_to_hep')
+def test_store_record_inspirehep_api_literature_new_has_the_if_match_headers(mock_put_record_to_hep, workflow_app):
     expected_control_number = 111
     expected_head_uuid = str(uuid.uuid4())
+    expected_version = '"2"'
+    mock_put_record_to_hep.return_value = {
+        'metadata': {
+            'control_number': expected_control_number,
+        },
+        id: expected_head_uuid
+    }
 
     record_data = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -258,29 +266,16 @@ def test_store_record_inspirehep_api_literature_update(workflow_app):
 
     workflow = workflow_object_class.create(record_data)
     workflow.extra_data['is-update'] = True
-
     workflow.extra_data['head_uuid'] = expected_head_uuid
+    workflow.extra_data['head_version_id'] = 2
     eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
         'INSPIREHEP_URL': "http://web:8000"
     }):
-        with requests_mock.Mocker() as requests_mocker:
-            requests_mocker.register_uri(
-                'PUT', '{url}/literature/{cn}'.format(
-                    url=workflow_app.config.get("INSPIREHEP_URL"),
-                    cn=expected_control_number,
-                ),
-                headers={'content-type': 'application/json'},
-                status_code=200,
-                json={
-                    "metadata": {
-                        "control_number": expected_control_number
-                    },
-                    'uuid': expected_head_uuid
-                }
-            )
-            store_record(workflow, eng)  # not throwing exception
+        store_record(workflow, eng)  # not throwing exception
+
+    assert expected_version == mock_put_record_to_hep.call_args_list[0][1]['headers']['If-Match']
     assert workflow.data['control_number'] == expected_control_number
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
 

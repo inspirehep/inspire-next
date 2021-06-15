@@ -107,8 +107,14 @@ def store_record_inspirehep_api(obj, eng, is_update, is_authors):
 def send_record_to_hep(obj, pid_type, control_number=None):
     try:
         if control_number:
+            head_version_id = obj.extra_data.get('head_version_id')
+            headers = {}
+            if head_version_id:
+                headers = {
+                    'If-Match': '"{0}"'.format(head_version_id)
+                }
             response = put_record_to_hep(
-                pid_type, control_number, data=obj.data
+                pid_type, control_number, data=obj.data, headers=headers
             )
         else:
             response = post_record_to_hep(

@@ -229,6 +229,12 @@ def send_robotupload(
     @with_debug_logging
     @wraps(send_robotupload)
     def _send_robotupload(obj, eng):
+        if not current_app.config.get('FEATURE_FLAG_ENABLE_SEND_TO_LEGACY', True):
+            obj.log.info(
+                'skipping upload to legacy, feature flag ``FEATURE_FLAG_ENABLE_SEND_TO_LEGACY`` is disabled.'
+            )
+            return
+
         combined_callback_url = ''
         if callback_url:
             combined_callback_url = os.path.join(
