@@ -131,7 +131,6 @@ from inspirehep.modules.literaturesuggest.tasks import (
     curation_ticket_context,
 )
 
-
 NOTIFY_SUBMISSION = [
     do_not_repeat('create_ticket_curator_new_submission')(
         create_ticket(

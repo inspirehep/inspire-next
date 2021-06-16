@@ -79,6 +79,7 @@ def merge_articles(obj, eng):
     obj.extra_data['head_version_id'] = head_record.model.version_id
     obj.extra_data['merger_head_revision'] = head_record.revision_id
     obj.extra_data['merger_original_root'] = deepcopy(head_root)
+    obj.extra_data['revision_id'] = head_record.revision_id
 
     merged, conflicts = merge(
         head=head_record.to_dict(),

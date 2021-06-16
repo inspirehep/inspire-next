@@ -31,7 +31,7 @@ from invenio_records.models import RecordMetadata
 from inspirehep.modules.workflows.tasks.actions import validate_record
 from inspirehep.modules.workflows.tasks.submission import cleanup_pending_workflow, send_robotupload
 from inspirehep.modules.workflows.tasks.upload import send_record_to_hep
-from inspirehep.modules.workflows.utils import get_resolve_edit_article_callback_url, store_head_version
+from inspirehep.modules.workflows.utils import get_resolve_edit_article_callback_url, store_revision_id
 from inspirehep.utils.record_getter import get_db_record
 
 from ..utils import with_debug_logging
@@ -79,7 +79,7 @@ class EditArticle(object):
 
     workflow = (
         [
-            store_head_version,
+            store_revision_id,
             change_status_to_waiting,
             validate_record('hep'),
             update_record,

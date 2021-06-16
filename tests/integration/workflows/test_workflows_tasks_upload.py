@@ -267,7 +267,7 @@ def test_store_record_inspirehep_api_literature_new_has_the_if_match_headers(moc
     workflow = workflow_object_class.create(record_data)
     workflow.extra_data['is-update'] = True
     workflow.extra_data['head_uuid'] = expected_head_uuid
-    workflow.extra_data['head_version_id'] = 2
+    workflow.extra_data['revision_id'] = 2
     eng = MagicMock(workflow_definition=MagicMock(data_type='hep'))
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,

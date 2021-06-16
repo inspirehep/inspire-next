@@ -154,8 +154,7 @@ def test_edit_article_workflow(workflow_app, mocked_external_services):
     eng_uuid = start('edit_article', data=factory.record_metadata.json)
     obj = WorkflowEngine.from_uuid(eng_uuid).objects[0]
 
-    assert 1 == obj.extra_data['head_version_id']
-    assert 'head_uuid' in obj.extra_data
+    assert 0 == obj.extra_data['revision_id']
     assert obj.status == ObjectStatus.WAITING
     assert obj.extra_data['callback_url']
 

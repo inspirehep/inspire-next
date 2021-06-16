@@ -566,10 +566,9 @@ def get_mark(obj, key, default=None):
 
 
 @with_debug_logging
-def store_head_version(obj, eng):
+def store_revision_id(obj, eng):
     control_number = obj.data['control_number']
     head_uuid = PersistentIdentifier.get('lit', control_number).object_uuid
     head_record = InspireRecord.get_record(head_uuid)
-    obj.extra_data['head_uuid'] = str(head_uuid)
-    obj.extra_data['head_version_id'] = head_record.model.version_id
+    obj.extra_data['revision_id'] = head_record.revision_id
     obj.save()
