@@ -249,7 +249,7 @@ def test_store_record_inspirehep_api_literature_new(workflow_app):
 def test_store_record_inspirehep_api_literature_new_has_the_if_match_headers(mock_put_record_to_hep, workflow_app):
     expected_control_number = 111
     expected_head_uuid = str(uuid.uuid4())
-    expected_version = '"2"'
+    expected_version = '"1"'
     mock_put_record_to_hep.return_value = {
         'metadata': {
             'control_number': expected_control_number,
@@ -355,7 +355,7 @@ def test_store_record_inspirehep_api_author_new(workflow_app):
 def test_store_record_inspirehep_api_author_update(workflow_app):
     expected_control_number = 2222
     expected_head_uuid = str(uuid.uuid4())
-
+    expected_head_version_id = 1
     record_data = {
         '$schema': 'http://localhost:5000/schemas/records/authors.json',
         'name': {'value': 'Robert Johnson'}, '_collections': ['Authors'],
@@ -366,6 +366,7 @@ def test_store_record_inspirehep_api_author_update(workflow_app):
     workflow.extra_data['is-update'] = True
 
     workflow.extra_data['head_uuid'] = expected_head_uuid
+    workflow.extra_data['head_version_id'] = expected_head_version_id
     eng = MagicMock(workflow_definition=MagicMock(data_type='authors'))
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
@@ -377,7 +378,7 @@ def test_store_record_inspirehep_api_author_update(workflow_app):
                     url=workflow_app.config.get("INSPIREHEP_URL"),
                     cn=expected_control_number,
                 ),
-                headers={'content-type': 'application/json'},
+                headers={'content-type': 'application/json', "If-Match": '"{}"'.format(expected_head_version_id)},
                 status_code=200,
                 json={
                     "metadata": {
