@@ -299,23 +299,23 @@ NOTIFY_CURATOR_IF_NEEDED = [
 
 POSTENHANCE_RECORD = [
     IF(
-        check_if_france_in_fulltext,
-        create_hal_ticket
+        is_arxiv_paper,
+        IF(
+            check_if_france_in_fulltext,
+            create_hal_ticket
+        )
     ),
     add_core,
     filter_keywords,
     prepare_keywords,
     set_refereed_and_fix_document_type,
     fix_submission_number,
-    IF(
-        is_core,
-        normalize_affiliations
-    ),
+    IF(is_core, normalize_affiliations),
     IF(
         is_fermilab_report,
         add_collection("Fermilab"),
     ),
-    validate_record('hep')
+    validate_record("hep"),
 ]
 
 
