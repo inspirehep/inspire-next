@@ -36,6 +36,7 @@ from inspirehep.modules.workflows.utils import (
 )
 from inspirehep.modules.workflows.models import WorkflowsRecordSources
 from inspirehep.modules.workflows.utils import put_record_to_hep
+from inspirehep.modules.records.api import InspireRecord
 
 
 @with_debug_logging
@@ -145,6 +146,14 @@ def save_roots(obj, eng):
 
 
 @with_debug_logging
+def store_head_version(obj, eng):
+    head_uuid = obj.extra_data['head_uuid']
+    head_record = InspireRecord.get_record(head_uuid)
+    obj.extra_data['head_version_id'] = head_record.model.version_id
+    obj.save()
+
+
+@with_debug_logging
 @backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
 def store_records(obj, eng):
     """Store the records involved in the manual merge.
@@ -164,4 +173,15 @@ def store_records(obj, eng):
 
     update_ref = get_record_ref(update_control_number, 'literature')
     head.setdefault('deleted_records', []).append(update_ref)
-    put_record_to_hep('lit', head_control_number, data=obj.data)
+
+    head_version_id = obj.extra_data['head_version_id']
+    headers = {
+        'If-Match': '"{0}"'.format(head_version_id - 1)
+    }
+
+    put_record_to_hep(
+        'lit',
+        head_control_number,
+        data=obj.data,
+        headers=headers
+    )
