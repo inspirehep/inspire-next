@@ -882,6 +882,8 @@ def normalize_collaborations(obj, eng):
     if not isinstance(collaborations, list):
         LOGGER.exception("Metadata are malformed for record %s. Collaborations key is not a list.", obj.id)
         return obj
+    if len(collaborations) < 1:
+        return obj
     multi_search = prepare_collaboration_multi_search(collaborations)
     try:
         search_responses = multi_search.execute()
