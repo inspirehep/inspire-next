@@ -904,7 +904,7 @@ def test_normalize_collaborations(workflow_app, insert_experiments_into_db):
     assert obj.data['accelerator_experiments'] == expected_accelerator_experiments
 
 
-def test_normalize_collaborations_one_collaboration(workflow_app, insert_experiments_into_db):
+def test_normalize_collaborations_no_collaboration(workflow_app, insert_experiments_into_db):
     record = {
         "_collections": [
             "Literature"
@@ -916,18 +916,10 @@ def test_normalize_collaborations_one_collaboration(workflow_app, insert_experim
             "report"
         ],
         "collaborations": [
-            {'value': 'Particle Data Group'},
         ],
-
     }
 
-    expected_collaborations = [
-        {'value': 'Particle Data Group', 'record': {'$ref': 'https://inspirehep.net/api/experiments/1800050'}},
-    ]
-
-    expected_accelerator_experiments = [
-        {'record': {u'$ref': u'https://inspirehep.net/api/experiments/1800050'}}
-    ]
+    expected_collaborations = []
 
     obj = workflow_object_class.create(
         data=record,
@@ -936,7 +928,6 @@ def test_normalize_collaborations_one_collaboration(workflow_app, insert_experim
     )
     obj = normalize_collaborations(obj, None)
     assert obj.data['collaborations'] == expected_collaborations
-    assert obj.data['accelerator_experiments'] == expected_accelerator_experiments
 
 
 def test_normalize_collaborations_with_different_name_variants(workflow_app, insert_experiments_into_db):
