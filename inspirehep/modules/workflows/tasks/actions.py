@@ -879,7 +879,7 @@ def find_subgroup(subgroup, experiment):
 @with_debug_logging
 def normalize_collaborations(obj, eng):
     collaborations = obj.data.get('collaborations', [])
-    if not isinstance(collaborations, list) or len(collaborations) < 1:
+    if not isinstance(collaborations, list):
         LOGGER.exception("Metadata are malformed for record %s. Collaborations key is not a list.", obj.id)
         return obj
     multi_search = prepare_collaboration_multi_search(collaborations)
