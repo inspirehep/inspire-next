@@ -30,6 +30,7 @@ from inspirehep.modules.workflows.tasks.manual_merging import (
     merge_records,
     save_roots,
     store_records,
+    store_head_version
 )
 from inspirehep.utils.record_getter import get_db_record
 
@@ -39,6 +40,7 @@ class ManualMerge(object):
     data_type = ''
 
     workflow = ([
+        store_head_version,
         merge_records,
         halt_for_merge_approval,
         save_roots,

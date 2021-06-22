@@ -76,7 +76,9 @@ def test_manual_merge_existing_records(mock_put_record_to_hep, mock_store_record
     )
 
     do_resolve_manual_merge_wf(workflow_app, obj_id)
+
     mock_put_record_to_hep.assert_called()
+    assert '"1"' == mock_put_record_to_hep.call_args[1]['headers']['If-Match']
 
     # retrieve it again, otherwise Detached Instance Error
     obj = workflow_object_class.get(obj_id)
