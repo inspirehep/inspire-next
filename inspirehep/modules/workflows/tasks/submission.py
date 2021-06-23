@@ -45,7 +45,6 @@ from inspirehep.modules.workflows.utils import with_debug_logging
 from inspirehep.utils.robotupload import make_robotupload_marcxml
 from inspirehep.utils import tickets
 from inspirehep.utils.proxies import rt_instance
-from inspirehep.modules.literaturesuggest.tasks import curation_ticket_context
 
 
 LOGGER = logging.getLogger(__name__)
@@ -115,28 +114,6 @@ def create_ticket(template,
         return {ticket_id_key: new_ticket_id}
 
     return _create_ticket
-
-
-def create_hal_ticket(obj, eng):
-    user = User.query.get(current_app.config['HAL_ADMIN_ID'])
-    template = 'literaturesuggest/tickets/curation_core.html'
-    queue = 'HEP_curation'
-    context_factory = curation_ticket_context
-    ticket_id_key = 'curation_ticket_id'
-    context = context_factory(user, obj)
-    recid = obj.extra_data.get("recid") or obj.data.get("control_number")
-
-    new_ticket_id = submit_rt_ticket(
-        obj,
-        queue,
-        template,
-        context,
-        user.email,
-        recid,
-        ticket_id_key
-    )
-
-    return {ticket_id_key: new_ticket_id}
 
 
 def reply_ticket(template=None,

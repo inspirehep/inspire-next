@@ -291,7 +291,8 @@ def test_keywords_are_stored_in_record_when_record_is_core(mocked_robotupload, m
 @mock.patch('inspirehep.modules.workflows.tasks.upload.store_record')
 @mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
 @mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
-def test_run_next_wf_is_not_starting_core_selection_wfs(mocked_robotupload, mocked_create_ticket, mocked_store_record, mocked_magpie, mocked_beard, mocked_external_services, workflow_app):
+@mock.patch('inspirehep.modules.workflows.tasks.actions.check_if_france_in_fulltext', return_value=False)
+def test_run_next_wf_is_not_starting_core_selection_wfs(check_if_france_in_fulltext, mocked_robotupload, mocked_create_ticket, mocked_store_record, mocked_magpie, mocked_beard, mocked_external_services, workflow_app):
     record = {
         '$schema': 'https://labs.inspirehep.net/schemas/records/hep.json',
         'titles': [

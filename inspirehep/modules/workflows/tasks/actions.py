@@ -30,7 +30,6 @@ import re
 from elasticsearch_dsl import Q, MultiSearch, Search
 from invenio_search import current_search_client
 from urlparse import urljoin
-from parsel import Selector
 
 import sys
 import time
@@ -41,6 +40,7 @@ import requests
 from copy import deepcopy
 from functools import wraps
 from six import reraise
+from itertools import chain
 
 from flask import current_app
 from jsonschema.exceptions import ValidationError
@@ -1125,21 +1125,17 @@ def post_pdf_to_grobid(obj, grobid_api_path, **kwargs):
     return response
 
 
-def get_fulltext(obj):
-    grobid_api_path = "api/processFulltextDocument"
-    grobid_response = post_pdf_to_grobid(obj, grobid_api_path)
+def check_if_france_in_fulltext(obj, eng):
+    api_path = "api/processHeaderDocument"
+    kwargs_to_grobid = {"includeRawAffiliations": "1", "consolidateHeader": "1"}
+    grobid_response = post_pdf_to_grobid(obj, api_path, **kwargs_to_grobid)
     if not grobid_response:
         return
-    xml_data = grobid_response.text
-    xml = Selector(text=xml_data, type="xml")
-    xml.remove_namespaces()
-    text = xml.xpath('//body//p').getall()
-    fulltext = ' '.join(text)
-    return fulltext
+    return 'france' in grobid_response.text.lower()
 
 
-def check_if_france_in_fulltext(obj, eng):
-    fulltext = get_fulltext(obj)
-    if not fulltext or "france" not in fulltext.lower():
-        return False
-    return True
+def check_if_france_in_raw_affiliations(obj, eng):
+    raw_affs = get_value(obj.data, 'authors.raw_affiliations.value', [])
+    for aff in chain.from_iterable(raw_affs):
+        if "france" in aff.lower():
+            return True

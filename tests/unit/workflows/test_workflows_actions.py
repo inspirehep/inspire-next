@@ -38,7 +38,7 @@ from mocks import MockEng, MockObj
 
 from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed, load_from_source_data, \
     extract_authors_from_pdf, is_suitable_for_pdf_authors_extraction, is_fermilab_report, add_collection, \
-    prepare_collaboration_multi_search, check_if_france_in_fulltext
+    prepare_collaboration_multi_search, check_if_france_in_fulltext, check_if_france_in_raw_affiliations
 
 
 def test_match_approval_gets_match_recid():
@@ -485,7 +485,7 @@ def test_check_if_france_in_fulltext(mocked_get_document, app):
         __name__,
         os.path.join(
             'fixtures',
-            'grobid_fulltext_response.txt'
+            'grobid_authors_full_response.txt'
         )
     )
 
@@ -505,7 +505,7 @@ def test_check_if_france_in_fulltext(mocked_get_document, app):
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                'POST', 'http://grobid_url.local/api/processHeaderDocument',
                 text=grobid_response,
                 headers={'content-type': 'application/xml'},
                 status_code=200,
@@ -515,3 +515,20 @@ def test_check_if_france_in_fulltext(mocked_get_document, app):
                 france_in_fulltext = check_if_france_in_fulltext(obj, eng)
 
     assert france_in_fulltext
+
+
+def test_check_if_france_in_affiliations(app):
+    obj = MagicMock()
+    obj.data = {
+        'authors': [
+            {"full_name": "author 1",
+             "raw_affiliations": [{"value": "Laboratoire de Physique des 2 Infinis Irene Joliot-Curie (IJCLab), CNRS, Université Paris-Saclay, Orsay, 91405, France"}]
+
+             }
+        ]
+    }
+
+    obj.extra_data = {}
+    eng = None
+    result = check_if_france_in_raw_affiliations(obj, eng)
+    assert result

@@ -73,7 +73,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     normalize_affiliations,
     is_core,
     create_core_selection_wf,
-    check_if_france_in_fulltext
+    check_if_france_in_fulltext,
+    check_if_france_in_raw_affiliations
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -119,8 +120,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     filter_keywords,
     prepare_keywords,
     reply_ticket,
-    send_to_legacy,
-    create_hal_ticket
+    send_to_legacy
 )
 from inspirehep.modules.workflows.utils import do_not_repeat
 from inspirehep.modules.literaturesuggest.tasks import (
@@ -258,6 +258,30 @@ NOTIFY_ACCEPTED = [
 NOTIFY_CURATOR_IF_NEEDED = [
     IF_NOT(
         is_marked('is-update'),
+        IF_ELSE(
+            is_arxiv_paper,
+            IF(
+                check_if_france_in_fulltext,
+                create_ticket(
+                    template='literaturesuggest/tickets/curation_core.html',
+                    queue='HAL_curation',
+                    context_factory=curation_ticket_context,
+                    ticket_id_key='curation_ticket_id',
+                ),
+            ),
+            IF(
+                check_if_france_in_raw_affiliations,
+                create_ticket(
+                    template='literaturesuggest/tickets/curation_core.html',
+                    queue='HAL_curation',
+                    context_factory=curation_ticket_context,
+                    ticket_id_key='curation_ticket_id',
+                ),
+            )
+        )
+    ),
+    IF_NOT(
+        is_marked('is-update'),
         [
             IF_ELSE(
                 jlab_ticket_needed,
@@ -298,13 +322,6 @@ NOTIFY_CURATOR_IF_NEEDED = [
 
 
 POSTENHANCE_RECORD = [
-    IF(
-        is_arxiv_paper,
-        IF(
-            check_if_france_in_fulltext,
-            create_hal_ticket
-        )
-    ),
     add_core,
     filter_keywords,
     prepare_keywords,
