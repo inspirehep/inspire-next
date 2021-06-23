@@ -1156,7 +1156,7 @@ def test_normalize_affiliations_when_lit_affiliation_missing_institution_ref(
 
 
 @mock.patch(
-    "inspirehep.modules.workflows.tasks.actions._match_lit_author_affiliation",
+    "inspirehep.modules.workflows.tasks.actions._find_unambiguous_affiliation",
     return_value={"value": "CERN"}
 )
 def test_normalize_affiliations_run_query_only_once_when_authors_have_same_raw_aff(
@@ -1475,7 +1475,7 @@ def test_normalize_affiliations_doesnt_add_not_valid_stuff_to_affiliation(
     ]
 
 
-def test_normalize_affiliations_doesnt_assign_collaborations_when_ambiguous(
+def test_normalize_affiliations_assign_all_affiliations_if_one_raw_aff_in_matched_lit_author(
     workflow_app,
     insert_literature_in_db,
 ):
@@ -1503,4 +1503,42 @@ def test_normalize_affiliations_doesnt_assign_collaborations_when_ambiguous(
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
     obj = normalize_affiliations(obj, None)
 
-    assert not obj.data["authors"][0].get("affiliations")
+    assert obj.data["authors"][0].get("affiliations") == [
+        {'record': {'$ref': 'https://inspirebeta.net/api/institutions/908529'}, 'value': 'LIGO Lab., Caltech'},
+        {'record': {'$ref': 'https://inspirebeta.net/api/institutions/903019'}, 'value': 'Monash U.'}
+    ]
+
+
+def test_normalize_affiliations_assign_only_matching_affiliation_when_multiple_raw_affs_in_matched_author(
+    workflow_app,
+    insert_literature_in_db,
+):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "full_name": "Easter, Paul J.",
+                "ids": [{"schema": "INSPIRE BAI", "value": "P.J.Easter.2"}],
+                "raw_affiliations": [
+                    {
+                        "value": "Institute of Physics Belgrade, Belgrade, Serbia"
+                    },
+                ],
+                "signature_block": "EASTARp",
+                "uuid": "4c4b7fdf-04ae-421f-bcab-bcc5907cea4e",
+            }
+        ],
+    }
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj = normalize_affiliations(obj, None)
+
+    assert obj.data["authors"][0].get("affiliations") == [
+        {
+            "value": "Belgrade, Inst. Phys.",
+            "record": {
+                "$ref": "http:/localhost:5000/api/institutions/903416"
+            }
+        }
+    ]
