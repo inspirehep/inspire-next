@@ -49,6 +49,7 @@ def test_get_record_from_hep(app):
     validate(record['metadata'])
     assert expected_control_number == record['metadata']['control_number']
     assert 'uuid' in record.keys()
+    assert 'revision_id' in record.keys()
 
 
 @mock.patch(

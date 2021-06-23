@@ -13,7 +13,7 @@ interactions:
     uri: https://inspirebeta.net/api/literature
   response:
     body: {string: !!python/unicode '{"created":"2020-11-11T15:13:10.705394+00:00","id":"{1957973}","links":{"bibtex":"https://inspirebeta.net/api/literature/%7B1957973%7D?format=bibtex","citations":"https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A%7B1957973%7D","json":"https://inspirebeta.net/api/literature/%7B1957973%7D?format=json","latex-eu":"https://inspirebeta.net/api/literature/%7B1957973%7D?format=latex-eu","latex-us":"https://inspirebeta.net/api/literature/%7B1957973%7D?format=latex-us"},"metadata":{"$schema":"http://localhost:5000/schemas/records/hep.json","_collections":["Literature"],"control_number":1957973,"document_type":["article"],"self":{"$ref":"https://inspirebeta.net/api/literature/1957973"},"titles":[{"title":"Autobiography
-        from Jessica Jones"}]},"updated":"2020-11-11T15:13:11.347362+00:00","uuid":"4a54f6b5-3859-40a6-ba1b-6aad77b14e5d"}'}
+        from Jessica Jones"}]},"updated":"2020-11-11T15:13:11.347362+00:00","uuid":"4a54f6b5-3859-40a6-ba1b-6aad77b14e5d","revision_id":2}'}
     headers:
       access-control-allow-origin: ['*']
       access-control-expose-headers: ['Content-Type, ETag, Link, X-RateLimit-Limit,
@@ -45,7 +45,7 @@ interactions:
     uri: https://inspirebeta.net/api/literature/1957973
   response:
     body: {string: !!python/unicode '{"created":"2020-11-11T15:13:10.705394+00:00","id":"1957973","links":{"bibtex":"https://inspirebeta.net/api/literature/1957973?format=bibtex","citations":"https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A1957973","json":"https://inspirebeta.net/api/literature/1957973?format=json","latex-eu":"https://inspirebeta.net/api/literature/1957973?format=latex-eu","latex-us":"https://inspirebeta.net/api/literature/1957973?format=latex-us"},"metadata":{"$schema":"http://localhost:5000/schemas/records/hep.json","_collections":["Literature"],"control_number":1957973,"document_type":["article"],"self":{"$ref":"https://inspirebeta.net/api/literature/1957973"},"titles":[{"title":"Autobiography
-        from Jessica Jones"}]},"updated":"2020-11-11T15:13:11.347362+00:00","uuid":"4a54f6b5-3859-40a6-ba1b-6aad77b14e5d"}'}
+        from Jessica Jones"}]},"updated":"2020-11-11T15:13:11.347362+00:00","uuid":"4a54f6b5-3859-40a6-ba1b-6aad77b14e5d","revision_id":2}'}
     headers:
       access-control-allow-origin: ['*']
       access-control-expose-headers: ['Content-Type, ETag, Link, X-RateLimit-Limit,
@@ -81,7 +81,7 @@ interactions:
     uri: https://inspirebeta.net/api/literature/1957973
   response:
     body: {string: !!python/unicode '{"created":"2020-11-11T15:13:10.705394+00:00","id":"1957973","links":{"bibtex":"https://inspirebeta.net/api/literature/1957973?format=bibtex","citations":"https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A1957973","json":"https://inspirebeta.net/api/literature/1957973?format=json","latex-eu":"https://inspirebeta.net/api/literature/1957973?format=latex-eu","latex-us":"https://inspirebeta.net/api/literature/1957973?format=latex-us"},"metadata":{"$schema":"http://localhost:5000/schemas/records/hep.json","_collections":["Literature"],"control_number":1957973,"document_type":["article"],"self":{"$ref":"https://inspirebeta.net/api/literature/1957973"},"titles":[{"title":"Autobiography
-        from Frank Castle"}]},"updated":"2020-11-11T15:13:12.806643+00:00","uuid":"4a54f6b5-3859-40a6-ba1b-6aad77b14e5d"}'}
+        from Frank Castle"}]},"updated":"2020-11-11T15:13:12.806643+00:00","uuid":"4a54f6b5-3859-40a6-ba1b-6aad77b14e5d","revision_id":2}'}
     headers:
       access-control-allow-origin: ['*']
       access-control-expose-headers: ['Content-Type, ETag, Link, X-RateLimit-Limit,

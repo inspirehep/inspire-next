@@ -25,7 +25,9 @@
 from __future__ import absolute_import, division, print_function
 
 import json
+import mock
 import pytest
+from flask import current_app
 
 from mock import patch
 from mocks import (
@@ -41,6 +43,8 @@ from invenio_workflows import (
 )
 from invenio_workflows.errors import WorkflowsError
 
+from inspirehep.modules.workflows.tasks.actions import load_from_source_data
+from inspirehep.modules.workflows.tasks.merging import merge_articles
 from inspirehep.modules.workflows.utils import (
     insert_wf_record_source,
     read_all_wf_record_sources,
@@ -754,3 +758,27 @@ def test_conflict_creates_ticket(
 
         assert mocked_external_services.request_history[1].url == expected_ticket_close_url
         assert mocked_external_services.request_history[1].text == u'content=Status%3A+resolved'
+
+
+@pytest.mark.vcr()
+def test_merge_with_records_pulled_from_hep(workflow_app):
+    config = {
+        'INSPIREHEP_URL': 'https://inspirebeta.net/api',
+        'FEATURE_FLAG_ENABLE_HEP_REST_RECORD_PULL': True,
+    }
+    with mock.patch.dict(current_app.config, config):
+        new_data = {
+            'titles': [
+                {"title": "New title"},
+            ]
+        }
+        extra_data = {
+            "matches":
+                {'approved': 1401296}
+        }
+        expected_title = {"title": "New title"}
+        wf = build_workflow(new_data, extra_data=extra_data)
+        load_from_source_data(wf, None)
+        merge_articles(wf, None)
+        assert len(wf.data['titles']) == 2
+        assert expected_title in wf.data['titles']

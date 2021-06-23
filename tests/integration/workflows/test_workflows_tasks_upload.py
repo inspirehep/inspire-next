@@ -48,6 +48,7 @@ from inspirehep.modules.workflows.utils import (
     insert_wf_record_source,
     read_wf_record_source,
 )
+from workflow_utils import build_workflow
 
 
 @patch('inspirehep.modules.orcid.domain_models.OrcidPusher')
@@ -513,3 +514,23 @@ def test_store_record_inspirehep_api_author_new_wrong_response_code(workflow_app
             )
             with pytest.raises(WorkflowsError):
                 store_record(workflow, eng)
+
+
+@pytest.mark.vcr()
+def test_is_stale_data_record_from_hep(workflow_app):
+    config = {
+        'INSPIREHEP_URL': 'https://inspirebeta.net/api',
+        'FEATURE_FLAG_ENABLE_HEP_REST_RECORD_PULL': True,
+    }
+    with mock.patch.dict(current_app.config, config):
+        extra_data = {
+            "is-update": True,
+            "head_version_id": 1,
+        }
+
+        data = {
+            "control_number": 1401296,
+            "$schema": "https://inspirebeta.net/schemas/records/hep.json"
+        }
+        wf = build_workflow(data, extra_data=extra_data)
+        assert is_stale_data(wf, None) is False

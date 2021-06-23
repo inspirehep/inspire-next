@@ -33,6 +33,7 @@ import backoff
 from inspire_schemas.readers import LiteratureReader
 from invenio_db import db
 
+from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.models import WorkflowsRecordSources
 from inspirehep.modules.workflows.errors import BadGatewayError
@@ -40,7 +41,7 @@ from inspirehep.modules.workflows.utils import (
     get_source_for_root,
     with_debug_logging,
     put_record_to_hep,
-    post_record_to_hep
+    post_record_to_hep, get_record_from_hep
 )
 from inspirehep.utils.schema import ensure_valid_schema
 
@@ -204,14 +205,21 @@ def _is_stale_data(workflow_object):
     if not is_update or head_version_id is None:
         return False
 
-    head_uuid = workflow_object.extra_data.get('head_uuid')
-    record = InspireRecord.get_record(head_uuid)
+    if current_app.config.get('FEATURE_FLAG_ENABLE_HEP_REST_RECORD_PULL'):
+        control_number = workflow_object.data['control_number']
+        pid_type = get_pid_type_from_schema(workflow_object.data['$schema'])
+        latest_record_data = get_record_from_hep(pid_type, control_number)
+        latest_version_id = latest_record_data['revision_id'] + 1
 
-    if record.model.version_id != head_version_id:
+    else:
+        head_uuid = workflow_object.extra_data.get('head_uuid')
+        record = InspireRecord.get_record(head_uuid)
+        latest_version_id = record.model.version_id
+    if latest_version_id != head_version_id:
         workflow_object.log.info(
             'Working with stale data:',
             'Expecting version %d but found %d' % (
-                head_version_id, record.revision_id
+                head_version_id, latest_version_id
             )
         )
         return True
