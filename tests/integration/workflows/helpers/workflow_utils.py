@@ -31,11 +31,9 @@ from invenio_workflows import workflow_object_class, Workflow
 def build_workflow(workflow_data, data_type='hep', extra_data=None, status=None, **kwargs):
     extra_data = extra_data or {}
     if 'source_data' not in extra_data:
-        extra_data = {
-            'source_data': {
-                'data': deepcopy(workflow_data),
-                'extra_data': extra_data,
-            }
+        extra_data['source_data'] = {
+            'data': deepcopy(workflow_data),
+            'extra_data': deepcopy(extra_data),
         }
     wf = Workflow(name='article', extra_data=extra_data, uuid=uuid.uuid4())
     wf.save()

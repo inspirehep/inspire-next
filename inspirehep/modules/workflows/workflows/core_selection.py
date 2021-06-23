@@ -7,22 +7,12 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.literaturesuggest.tasks import curation_ticket_context
-from inspirehep.modules.records.errors import MissingInspireRecordError
 from inspirehep.modules.workflows.tasks.actions import halt_record, normalize_affiliations, \
-    link_institutions_with_affiliations
+    link_institutions_with_affiliations, load_record_from_hep
 from inspirehep.modules.workflows.tasks.submission import prepare_keywords, create_ticket
 from inspirehep.modules.workflows.tasks.upload import store_record
-from inspirehep.modules.workflows.utils import get_record_from_hep, do_not_repeat, store_head_version
+from inspirehep.modules.workflows.utils import do_not_repeat
 from inspirehep.modules.workflows.workflows.article import SEND_TO_LEGACY
-
-
-def load_record_from_hep(obj, eng):
-    control_number = obj.data['control_number']
-    record_data = get_record_from_hep("lit", control_number)
-    if not record_data or 'metadata' not in record_data:
-        raise MissingInspireRecordError
-    obj.data = record_data['metadata']
-    return obj
 
 
 def set_core(obj, eng):
@@ -41,7 +31,6 @@ class CoreSelection(object):
             message='Submission halted Waiting for curator to decide if record is CORE.'
         ),
         load_record_from_hep,
-        store_head_version,
         set_core,
         prepare_keywords,
         normalize_affiliations,

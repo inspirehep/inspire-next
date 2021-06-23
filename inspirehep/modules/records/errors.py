@@ -31,3 +31,7 @@ class MissingInspireRecordError(RecordsError):
 
 class MissingCitedRecordError(RecordsError):
     pass
+
+
+class MissingUUIDOrRevisionInHEPResponse(RecordsError):
+    pass

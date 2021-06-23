@@ -561,7 +561,7 @@ def test_core_selection_continue_when_asked(mocked_create_ticket, mocked_send_ro
     )
     workflow_object.extra_data['auto-approved'] = True
 
-    expected_hep_record = {'metadata': dict(record)}
+    expected_hep_record = {'metadata': dict(record), 'uuid': "123e4567-e89b-12d3-a456-426614174000", 'revision_id': 0}
     expected_hep_record['metadata']['core'] = True
     TestRecordMetadata.create_from_kwargs(json=record)
     create_core_selection_wf(workflow_object, None)
@@ -570,8 +570,10 @@ def test_core_selection_continue_when_asked(mocked_create_ticket, mocked_send_ro
         with override_config(FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT=True):
             with requests_mock.Mocker() as mock:
                 mock.register_uri('GET', mocked_url, json=expected_hep_record)
-                mock.register_uri('PUT', "http://web:8000/literature/{control_number}".format(control_number=pid_value),
-                                  json={"metadata": {"control_number": pid_value}})
+                mock.register_uri(
+                    'PUT', "http://web:8000/literature/{control_number}".format(control_number=pid_value),
+                    json={"metadata": {"control_number": pid_value}}
+                )
 
                 login_user_via_session(client, email="cataloger@inspirehep.net")
                 result = client.post("/api/workflows/{wf_id}/core-selection/continue".format(wf_id=wf_id))

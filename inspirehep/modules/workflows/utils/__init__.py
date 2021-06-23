@@ -43,6 +43,7 @@ from inspire_schemas.utils import \
     get_validation_errors as _get_validation_errors
 from inspire_utils.logging import getStackTraceLogger
 
+from inspirehep.modules.records.errors import MissingInspireRecordError, MissingUUIDOrRevisionInHEPResponse
 from inspirehep.utils.url import retrieve_uri
 from inspirehep.modules.workflows.models import (
     WorkflowsAudit,
@@ -51,7 +52,7 @@ from inspirehep.modules.workflows.models import (
 from inspirehep.modules.workflows.errors import (
     InspirehepMissingDataError,
 )
-from inspirehep.modules.pidstore.utils import get_endpoint_from_pid_type
+from inspirehep.modules.pidstore.utils import get_endpoint_from_pid_type, get_pid_type_from_schema
 from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.modules.records.api import InspireRecord
@@ -503,7 +504,13 @@ def get_record_from_hep(pid_type, pid_value):
         headers=headers,
     )
     response.raise_for_status()
-    return response.json()
+    record_data = response.json()
+    if not record_data or 'metadata' not in record_data:
+        raise MissingInspireRecordError
+    if 'uuid' not in record_data or 'revision_id' not in record_data:
+        raise MissingUUIDOrRevisionInHEPResponse
+
+    return record_data
 
 
 @backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
@@ -572,8 +579,16 @@ def get_mark(obj, key, default=None):
 @with_debug_logging
 def store_head_version(obj, eng):
     control_number = obj.data['control_number']
-    head_uuid = PersistentIdentifier.get('lit', control_number).object_uuid
-    head_record = InspireRecord.get_record(head_uuid)
+    pid_type = get_pid_type_from_schema(obj.data['$schema'])
+    if current_app.config.get('FEATURE_FLAG_ENABLE_HEP_REST_RECORD_PULL'):
+        record_data = get_record_from_hep(pid_type, control_number)
+        head_uuid = record_data['uuid']
+        revision_id = record_data['revision_id']
+        head_version = revision_id + 1
+    else:
+        head_uuid = PersistentIdentifier.get(pid_type, control_number).object_uuid
+        head_record = InspireRecord.get_record(head_uuid)
+        head_version = head_record.model.version_id
     obj.extra_data['head_uuid'] = str(head_uuid)
-    obj.extra_data['head_version_id'] = head_record.model.version_id
+    obj.extra_data['head_version_id'] = head_version
     obj.save()

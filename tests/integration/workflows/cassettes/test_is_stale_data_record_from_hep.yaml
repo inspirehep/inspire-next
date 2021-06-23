@@ -1,0 +1,121 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      accept: [application/vnd+inspire.record.raw+json]
+    method: GET
+    uri: https://inspirebeta.net/api/literature/1401296
+  response:
+    body: {string: "{\"metadata\":{\"core\":true,\"self\":{\"$ref\":\"https://inspirebeta.net/api/literature/1401296\"},\"urls\":[{\"value\":\"http://homepages.ulb.ac.be/~mmoskovi/docs/memoire.pdf\"},{\"value\":\"http://old.inspirehep.net/record/1401296/files/memoire.pdf\"}],\"titles\":[{\"title\":\"Boucles
+        de Wilson et localisation en th\xE9orie des champs supersym\xE9trique\"}],\"$schema\":\"https://inspirebeta.net/schemas/records/hep.json\",\"authors\":[{\"ids\":[{\"value\":\"M.Moskovic.1\",\"schema\":\"INSPIRE
+        BAI\"}],\"uuid\":\"a05c2d68-9652-447a-8b05-3dc530f0b3f6\",\"record\":{\"$ref\":\"https://inspirebeta.net/api/authors/1259096\"},\"full_name\":\"Moskovic,
+        Micha\",\"signature_block\":\"MASCAVACm\",\"curated_relation\":true},{\"uuid\":\"396d4537-b912-4f02-8f95-84d170665da1\",\"full_name\":\"Ferrari,
+        Frank\",\"inspire_roles\":[\"supervisor\"],\"signature_block\":\"FARARf\"}],\"curated\":true,\"texkeys\":[\"Moskovic:2010jnx\"],\"documents\":[{\"key\":\"8860a1248eabe3fd576e0d5d116acaf8\",\"url\":\"https://inspirebeta.net/files/8860a1248eabe3fd576e0d5d116acaf8\",\"filename\":\"memoire.pdf\"}],\"languages\":[\"fr\"],\"references\":[{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/792295\"},\"reference\":{\"misc\":[\"Cit\xE9
+        p. 1\"],\"label\":\"1\",\"title\":{\"title\":\"Review of particle physics\"},\"authors\":[{\"full_name\":\"Amsler,
+        C.\"}],\"collaborations\":[\"Particle Data Group Collaboration\"],\"publication_info\":{\"year\":2008,\"artid\":\"1\",\"page_start\":\"1\",\"journal_title\":\"Phys.Lett.B\",\"journal_volume\":\"667\"}},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/89145\"},\"reference\":{\"misc\":[\"Cit\xE9
+        p. 2\"],\"label\":\"2\",\"title\":{\"title\":\"Confinement of quarks\"},\"authors\":[{\"full_name\":\"Wilson,
+        K.G.\"}],\"publication_info\":{\"year\":1974,\"page_end\":\"2459\",\"page_start\":\"2445\",\"journal_title\":\"Phys.Rev.D\",\"journal_volume\":\"10\"}},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/524732\"},\"reference\":{\"misc\":[\"et
+        K. Zarembo arXiv: Cit\xE9 p. 3\"],\"label\":\"3\",\"title\":{\"title\":\"Wilson
+        Loops in N=4 Supersymmetric Yang-Mills Theory\"},\"authors\":[{\"full_name\":\"Erickson,
+        J.K.\"},{\"full_name\":\"Semenoff, G.W.\"}],\"arxiv_eprint\":\"hep-th/0003055\",\"publication_info\":{\"year\":2000,\"artid\":\"155\",\"page_start\":\"155\",\"journal_title\":\"Nucl.Phys.B\",\"journal_volume\":\"582\"}},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/535850\"},\"reference\":{\"misc\":[\"et
+        D. J. Gross arXiv: Cit\xE9 p. 3\"],\"label\":\"4\",\"title\":{\"title\":\"An
+        Exact Prediction of N=4 SUSYM Theory for String Theory\"},\"authors\":[{\"full_name\":\"Drukker,
+        N.\"}],\"arxiv_eprint\":\"hep-th/0010274\",\"publication_info\":{\"year\":2001,\"artid\":\"2896\",\"page_start\":\"2896\",\"journal_title\":\"J.Math.Phys.\",\"journal_volume\":\"42\"}},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/770728\"},\"reference\":{\"misc\":[\"Cit\xE9
+        pp. 4, 60, 75, et 84\"],\"label\":\"5\",\"title\":{\"title\":\"Localization
+        of gauge theory on a four-sphere and supersymmetric Wilson loops\"},\"authors\":[{\"full_name\":\"Pestun,
+        V.\"}],\"arxiv_eprint\":\"0712.2824\"},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/421907\"},\"reference\":{\"misc\":[\"arXiv:
+        Cit\xE9 pp. 5 et 12\"],\"label\":\"6\",\"title\":{\"title\":\"Equivariant
+        localization of path integrals\"},\"authors\":[{\"full_name\":\"Szabo, R.J.\"}],\"arxiv_eprint\":\"hep-th/9608068\"},\"curated_relation\":false},{\"reference\":{\"misc\":[\"S\xE9minaires
+        et Congr\xE8s 7  1-43. Cit\xE9 pp. 5 et 12\"],\"label\":\"7\",\"title\":{\"title\":\"Cohomologie
+        \xE9quivariante et th\xE9or\xE8me de Stokes\"},\"authors\":[{\"full_name\":\"Vergne,
+        M.\"}],\"publication_info\":{\"year\":2003}}},{\"reference\":{\"misc\":[\"Introduction
+        to Smooth Manifolds. Graduate Texts in Mathematics Cit\xE9 pp. 5 et 8\"],\"label\":\"8\",\"authors\":[{\"full_name\":\"Lee,
+        J.\"}],\"imprint\":{\"publisher\":\"Springer\"},\"publication_info\":{\"year\":2002}}},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/640779\"},\"reference\":{\"misc\":[\"Graduate
+        Student Series in Physics. Taylor & Francis, 2 ed.,. Cit\xE9 pp. 5, 44, 49,
+        et 61\"],\"label\":\"9\",\"title\":{\"title\":\"Geometry, topology and physics\"},\"authors\":[{\"full_name\":\"Nakahara,
+        M.\"}],\"publication_info\":{\"year\":2003}},\"legacy_curated\":true,\"curated_relation\":true},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/176426\"},\"reference\":{\"misc\":[\"et
+        G. J. Heckman Cit\xE9 pp. 15 et 18\"],\"label\":\"10\",\"title\":{\"title\":\"On
+        the variation in the cohomology of the symplectic form of the reduced phase
+        space\"},\"authors\":[{\"full_name\":\"Duistermaat, J.J.\"}],\"publication_info\":{\"year\":1982,\"page_end\":\"268\",\"page_start\":\"259\",\"journal_title\":\"Invent.Math.\",\"journal_volume\":\"69\"}},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/1691279\"},\"reference\":{\"misc\":[\"Harish-Chandra
+        Cit\xE9 p. 15\"],\"label\":\"11\",\"title\":{\"title\":\"Differential Operators
+        on a Semisimple Lie Algebra\"},\"publication_info\":{\"year\":1957,\"page_end\":\"120\",\"page_start\":\"87\",\"journal_title\":\"Am.J.Math.\",\"journal_volume\":\"79\"}},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/142681\"},\"reference\":{\"misc\":[\"et
+        J. B. Zuber Cit\xE9 p. 15\"],\"label\":\"12\",\"title\":{\"title\":\"The Planar
+        Approximation. 2\"},\"authors\":[{\"full_name\":\"Itzykson, C.\"}],\"publication_info\":{\"year\":1980,\"artid\":\"411\",\"page_start\":\"411\",\"journal_title\":\"J.Math.Phys.\",\"journal_volume\":\"21\"}},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/594798\"},\"reference\":{\"misc\":[\"et
+        J. B. Zuber arXiv: Cit\xE9 p. 19\"],\"label\":\"13\",\"title\":{\"title\":\"On
+        some integrals over the U(N) unitary group and their large N limit\"},\"authors\":[{\"full_name\":\"Zinn-Justin,
+        P.\"}],\"arxiv_eprint\":\"math-ph/0209019\",\"publication_info\":{\"year\":2003,\"artid\":\"3173\",\"page_start\":\"3173\",\"journal_title\":\"J.Phys.A\",\"journal_volume\":\"36\"}},\"curated_relation\":false},{\"reference\":{\"misc\":[\"Cit\xE9
+        p. 22. 85\"],\"label\":\"14\",\"title\":{\"title\":\"Merits and demerits of
+        the orbit method\"},\"authors\":[{\"full_name\":\"Kirillov, A.A.\"}],\"publication_info\":{\"year\":1999,\"artid\":\"433\",\"page_start\":\"433\",\"journal_title\":\"Bull.Am.Math.Soc.\",\"journal_volume\":\"36\"}}},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/729746\"},\"reference\":{\"misc\":[\"et
+        J. B. Zuber arXiv: Cit\xE9 p. 22\"],\"label\":\"15\",\"title\":{\"title\":\"Correlation
+        Functions of Harish-Chandra Integrals over the Orthogonal and the Symplectic
+        Groups\"},\"authors\":[{\"full_name\":\"Ferrer\"},{\"full_name\":\"Prats,
+        A.\"},{\"full_name\":\"Eynard, B.\"},{\"full_name\":\"Di Francesco, P.\"}],\"arxiv_eprint\":\"math-ph/0610049\"},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/1343221\"},\"reference\":{\"misc\":[\"et
+        S. Hikami arXiv: Cit\xE9 p. 23\"],\"label\":\"16\",\"title\":{\"title\":\"An
+        extension of the HarishChandra-Itzykson-Zuber integral\"},\"authors\":[{\"full_name\":\"Brezin,
+        E.\"}],\"arxiv_eprint\":\"math-ph/0208002\"},\"curated_relation\":false},{\"reference\":{\"misc\":[\"The
+        quantum theory of fields, vol. 1 & 2. Cambridge University Press,. Cit\xE9
+        pp. 25 et 80\"],\"label\":\"17\",\"authors\":[{\"full_name\":\"Weinberg, S.\"}],\"publication_info\":{\"year\":1995}}},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/90850\"},\"reference\":{\"misc\":[\"et
+        M. Sohnius Cit\xE9 p. 27\"],\"label\":\"18\",\"title\":{\"title\":\"All Possible
+        Generators of Supersymmetries of the S-Matrix\"},\"authors\":[{\"full_name\":\"Haag,
+        R.\"},{\"full_name\":\"Lopuszanski, J.T.\"}],\"publication_info\":{\"year\":1975,\"artid\":\"257\",\"page_start\":\"257\",\"journal_title\":\"Nucl.Phys.B\",\"journal_volume\":\"88\"}},\"curated_relation\":false},{\"reference\":{\"misc\":[\"39-204.
+        Cit\xE9 pp. 28, 30, 37, et 39\"],\"label\":\"19\",\"title\":{\"title\":\"Introducing
+        supersymmetry\"},\"authors\":[{\"full_name\":\"Sohnius, M.F.\"}],\"publication_info\":{\"year\":1985,\"artid\":\"3\",\"page_start\":\"3\",\"journal_title\":\"Phys.Rept.\",\"journal_volume\":\"128\"}}},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/552017\"},\"reference\":{\"misc\":[\"arXiv:
+        Cit\xE9 p. 30\"],\"label\":\"20\",\"authors\":[{\"full_name\":\"Bilal, A.\"}],\"arxiv_eprint\":\"hep-th/0101055\"},\"curated_relation\":false},{\"reference\":{\"label\":\"20\",\"title\":{\"title\":\"INTRODUCTION
+        TO SUPERSYMMETRY\"},\"publication_info\":{\"year\":1986}}},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/111553\"},\"reference\":{\"misc\":[\"et
+        J. Scherk Cit\xE9 pp. 32 et 37\"],\"label\":\"21\",\"title\":{\"title\":\"Supersymmetric
+        Yang-Mills Theories\"},\"authors\":[{\"full_name\":\"Brink, L.\"},{\"full_name\":\"Schwarz,
+        J.H.\"}],\"publication_info\":{\"year\":1977,\"artid\":\"77\",\"page_start\":\"77\",\"journal_title\":\"Nucl.Phys.B\",\"journal_volume\":\"121\"}},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/830241\"},\"reference\":{\"misc\":[\"et
+        J. Huerta Cit\xE9 p. 36\"],\"label\":\"22\",\"title\":{\"title\":\"Division
+        Algebras and Supersymmetry I\"},\"authors\":[{\"full_name\":\"Baez, J.C.\"}],\"arxiv_eprint\":\"0909.0551\"},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/10358\"},\"reference\":{\"misc\":[\"et
+        P. C. West Cit\xE9 p. 39\"],\"label\":\"23\",\"title\":{\"title\":\"Conformal
+        Invariance in N=4 Supersymmetric Yang-Mills Theory\"},\"authors\":[{\"full_name\":\"Sohnius,
+        M.F.\"}],\"publication_info\":{\"year\":1981,\"artid\":\"245\",\"page_start\":\"245\",\"journal_title\":\"Phys.Lett.B\",\"journal_volume\":\"100\"}},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/499969\"},\"reference\":{\"misc\":[\"et
+        Y. Oz arXiv: Cit\xE9 p. 39\"],\"label\":\"24\",\"title\":{\"title\":\"Large
+        N Field Theories, String Theory and Gravity\"},\"authors\":[{\"full_name\":\"Aharony,
+        O.\"},{\"full_name\":\"Gubser, S.S.\"},{\"full_name\":\"Maldacena, J.\"},{\"full_name\":\"Ooguri,
+        H.\"}],\"arxiv_eprint\":\"hep-th/9905111\"},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/506135\"},\"reference\":{\"misc\":[\"arXiv:
+        Cit\xE9 p. 39\"],\"label\":\"25\",\"title\":{\"title\":\"N=4 supersymmetric
+        Yang-Mills theory and the AdS/SCFT correspondence\"},\"authors\":[{\"full_name\":\"Kovacs,
+        S.\"}],\"arxiv_eprint\":\"hep-th/9908171\"},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/421540\"},\"reference\":{\"misc\":[\"et
+        M. Godina arXiv: Cit\xE9 p. 56\"],\"label\":\"26\",\"title\":{\"title\":\"A
+        geometric definition of Lie derivative for Spinor Fields\"},\"authors\":[{\"full_name\":\"Fatibene,
+        L.\"},{\"full_name\":\"Ferraris, M.\"},{\"full_name\":\"Francaviglia, M.\"}],\"arxiv_eprint\":\"gr-qc/9608003\"},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/357756\"},\"reference\":{\"misc\":[\"arXiv:
+        Cit\xE9 pp. 57 et 60\"],\"label\":\"27\",\"title\":{\"title\":\"A Ten-Dimensional
+        Super-Yang-Mills Action with Off-Shell Supersymmetry\"},\"authors\":[{\"full_name\":\"Berkovits,
+        N.\"}],\"arxiv_eprint\":\"hep-th/9308128\",\"publication_info\":{\"year\":1993,\"artid\":\"104\",\"page_start\":\"104\",\"journal_title\":\"Phys.Lett.B\",\"journal_volume\":\"318\"}},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/373085\"},\"reference\":{\"misc\":[\"arXiv:
+        Cit\xE9 pp. 57 et 60\"],\"label\":\"28\",\"title\":{\"title\":\"Supersymmetry
+        algebras and Lorentz invariance for d=10 Super Yang-Mills\"},\"authors\":[{\"full_name\":\"Evans,
+        J.M.\"}],\"arxiv_eprint\":\"hep-th/9404190\",\"publication_info\":{\"year\":1994,\"artid\":\"105\",\"page_start\":\"105\",\"journal_title\":\"Phys.Lett.B\",\"journal_volume\":\"334\"}},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/836531\"},\"reference\":{\"misc\":[\"et
+        V. Pestun Cit\xE9 p. 62\"],\"label\":\"29\",\"title\":{\"title\":\"Supersymmetric
+        Wilson loops in N=4 SYM and pure spinors\"},\"authors\":[{\"full_name\":\"Dymarsky,
+        A.\"}],\"arxiv_eprint\":\"0911.1841\"},\"curated_relation\":false},{\"record\":{\"$ref\":\"https://inspirebeta.net/api/literature/851264\"},\"reference\":{\"misc\":[\"et
+        V. Pestun Cit\xE9 p. 75\"],\"label\":\"30\",\"title\":{\"title\":\"On the
+        instantons and the hypermultiplet mass of N = 2\u2217 super Yang-Mills on
+        S4\"},\"authors\":[{\"full_name\":\"Okuda, T.\"}],\"arxiv_eprint\":\"1004.1222\"},\"curated_relation\":false},{\"reference\":{\"misc\":[\"et
+        A. Van Proeyen Supergravity (Shortened version for the Amsterdam-Brussels-Paris
+        Doctoral School). Non publi\xE9,. Cit\xE9 p. 80. 86\"],\"label\":\"31\",\"authors\":[{\"full_name\":\"Freedman,
+        D.Z.\"}],\"publication_info\":{\"year\":2009}}}],\"thesis_info\":{\"date\":\"2010\",\"degree_type\":\"master\",\"institutions\":[{\"name\":\"Brussels
+        U.\",\"record\":{\"$ref\":\"https://inspirebeta.net/api/institutions/902695\"},\"curated_relation\":true}]},\"_collections\":[\"Literature\"],\"document_type\":[\"thesis\"],\"control_number\":1401296,\"legacy_version\":\"20201123182644.0\",\"number_of_pages\":92,\"inspire_categories\":[{\"term\":\"Theory-HEP\"}],\"title_translations\":[{\"title\":\"Wilson
+        loops and localization in supersymmetric field theory\",\"language\":\"en\"}],\"legacy_creation_date\":\"2015-10-29\"},\"id\":\"1401296\",\"links\":{\"bibtex\":\"https://inspirebeta.net/api/literature/1401296?format=bibtex\",\"latex-eu\":\"https://inspirebeta.net/api/literature/1401296?format=latex-eu\",\"latex-us\":\"https://inspirebeta.net/api/literature/1401296?format=latex-us\",\"json\":\"https://inspirebeta.net/api/literature/1401296?format=json\",\"citations\":\"https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A1401296\"},\"uuid\":\"ca818deb-b0b6-4dfb-a567-6d32f6d1b911\",\"updated\":\"2021-04-26T20:57:32.332507+00:00\",\"revision_id\":0,\"created\":\"2015-10-29T00:00:00+00:00\"}"}
+    headers:
+      access-control-allow-origin: ['*']
+      access-control-expose-headers: ['Content-Type, ETag, Link, X-RateLimit-Limit,
+          X-RateLimit-Remaining, X-RateLimit-Reset']
+      cache-control: [must-revalidate]
+      content-length: ['12935']
+      content-type: [application/vnd+inspire.record.raw+json]
+      date: ['Wed, 23 Jun 2021 07:19:47 GMT']
+      etag: [W/"0"]
+      last-modified: ['Mon, 26 Apr 2021 20:57:32 GMT']
+      link: ['<https://inspirebeta.net/api/literature/1401296?format=bibtex>; rel="bibtex",
+          <https://inspirebeta.net/api/literature/1401296?format=latex-eu>; rel="latex-eu",
+          <https://inspirebeta.net/api/literature/1401296?format=latex-us>; rel="latex-us",
+          <https://inspirebeta.net/api/literature/1401296?format=json>; rel="json",
+          <https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A1401296>;
+          rel="citations"']
+      server: [gunicorn/19.10.0]
+      vary: ['Accept,Accept-Encoding,Accept-Language']
+    status: {code: 200, message: OK}
+version: 1

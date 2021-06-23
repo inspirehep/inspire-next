@@ -38,7 +38,7 @@ from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.utils import (
     get_resolve_merge_conflicts_callback_url,
     read_wf_record_source,
-    with_debug_logging
+    with_debug_logging, get_record_from_hep
 )
 
 
@@ -66,22 +66,32 @@ def merge_articles(obj, eng):
 
     matched_control_number = obj.extra_data['matches']['approved']
 
-    head_uuid = PersistentIdentifier.get(
-        'lit', matched_control_number).object_uuid
-
-    head_record = InspireRecord.get_record(head_uuid)
     update = obj.data
     update_source = LiteratureReader(obj.data).source
-    head_root = read_wf_record_source(record_uuid=head_record.id, source=update_source.lower())
-    head_root = head_root.json if head_root else {}
+    if current_app.config.get('FEATURE_FLAG_ENABLE_HEP_REST_RECORD_PULL'):
+        record_data = get_record_from_hep("lit", matched_control_number)
+        head_uuid = record_data['uuid']
+        head_record = record_data['metadata']
+        head_revision_id = record_data['revision_id']
+        head_version_id = head_revision_id + 1
+    else:
+        head_uuid = PersistentIdentifier.get(
+            'lit', matched_control_number).object_uuid
+        head_record = InspireRecord.get_record(head_uuid)
+        head_version_id = head_record.model.version_id
+        head_revision_id = head_record.revision_id
+        head_record = head_record.to_dict()
+
+    head_root = read_wf_record_source(record_uuid=head_uuid, source=update_source.lower())
+    head_root = deepcopy(head_root.json if head_root else {})
 
     obj.extra_data['head_uuid'] = str(head_uuid)
-    obj.extra_data['head_version_id'] = head_record.model.version_id
-    obj.extra_data['merger_head_revision'] = head_record.revision_id
-    obj.extra_data['merger_original_root'] = deepcopy(head_root)
+    obj.extra_data['head_version_id'] = head_version_id
+    obj.extra_data['merger_head_revision'] = head_revision_id
+    obj.extra_data['merger_original_root'] = head_root
 
     merged, conflicts = merge(
-        head=head_record.to_dict(),
+        head=head_record,
         root=head_root,
         update=update,
     )

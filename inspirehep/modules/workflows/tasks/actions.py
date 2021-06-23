@@ -65,6 +65,7 @@ from inspire_schemas.utils import normalize_collaboration_name, validate
 from inspire_utils.record import get_value
 from inspire_utils.dedupers import dedupe_list
 
+from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.records.utils import get_linked_records_in_field
 from inspirehep.modules.workflows.tasks.refextract import (
@@ -83,7 +84,7 @@ from inspirehep.modules.workflows.utils import (
     get_resolve_validation_callback_url,
     get_validation_errors,
     log_workflows_action,
-    with_debug_logging, check_mark, set_mark, get_mark,
+    with_debug_logging, check_mark, set_mark, get_mark, get_record_from_hep,
 )
 from inspirehep.modules.workflows.utils.grobid_authors_parser import GrobidAuthors
 from inspirehep.utils.normalizers import normalize_journal_title
@@ -1142,3 +1143,15 @@ def check_if_france_in_raw_affiliations(obj, eng):
     for aff in chain.from_iterable(raw_affs):
         if "france" in aff.lower() or "in2p3" in aff.lower():
             return True
+
+
+def load_record_from_hep(obj, wf):
+    control_number = obj.data['control_number']
+    pid_type = get_pid_type_from_schema(obj.data['$schema'])
+    record_data = get_record_from_hep(pid_type, control_number)
+    obj.data = record_data['metadata']
+    obj.extra_data['head_uuid'] = record_data['uuid']
+    obj.extra_data['head_version_id'] = record_data['revision_id'] + 1
+    obj.extra_data['head_revision_id'] = record_data['revision_id']
+
+    return obj
