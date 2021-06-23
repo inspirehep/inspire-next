@@ -24,6 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import mock
 import pytest
+import json
 from inspire_schemas.readers import LiteratureReader
 from invenio_workflows import ObjectStatus, workflow_object_class
 
@@ -86,6 +87,122 @@ def test_manual_merge_existing_records(mock_put_record_to_hep, mock_store_record
     assert obj.status == ObjectStatus.COMPLETED
     assert obj.extra_data['approved'] is True
     assert obj.extra_data['auto-approved'] is False
+    assert 'callback_url' in obj.extra_data
+
+    # no root present before
+    last_root = read_wf_record_source(head_id, 'arxiv')
+    assert last_root is None
+
+    update_source = LiteratureReader(update).source
+    root_update = read_wf_record_source(update_id, update_source)
+    assert root_update is None
+
+
+@mock.patch('inspirehep.modules.workflows.tasks.manual_merging.store_records', side_effect=None)
+@mock.patch('inspirehep.modules.workflows.tasks.manual_merging.put_record_to_hep', side_effect=None)
+def test_manual_merge_existing_records_with_callback_with_conflicts(mock_put_record_to_hep, mock_store_records, workflow_app):
+
+    json_head = fake_record('This is the HEAD', 1)
+    json_update = fake_record('While this is the update', 2)
+
+    # this two fields will create a merging conflict
+    json_head['core'] = True
+    json_update['core'] = False
+
+    head = InspireRecord.create_or_update(json_head, skip_files=False)
+    head.commit()
+    update = InspireRecord.create_or_update(json_update, skip_files=False)
+    update.commit()
+    head_id = head.id
+    update_id = update.id
+
+    obj_id = start_merger(
+        head_id=1,
+        update_id=2,
+        current_user_id=1,
+    )
+    obj = workflow_object_class.get(obj_id)
+    assert obj.status == ObjectStatus.HALTED
+
+    expected_message = 'Workflow {} has been saved with conflicts.'.format(obj.id)
+
+    with workflow_app.test_client() as client:
+        response = client.put(
+            '/callback/workflows/resolve_merge_conflicts',
+            content_type='application/json',
+            data=json.dumps({
+                'id': obj_id,
+                '_extra_data': obj.extra_data,
+                'metadata': obj.data
+            })
+        )
+
+    data = json.loads(response.get_data())
+    assert 200 == response.status_code
+    assert expected_message == data['message']
+    # retrieve it again, otherwise Detached Instance Error
+    obj = workflow_object_class.get(obj_id)
+    assert obj.status == ObjectStatus.HALTED
+    assert 'callback_url' in obj.extra_data
+    assert 'conflicts' in obj.extra_data
+    # no root present before
+    last_root = read_wf_record_source(head_id, 'arxiv')
+    assert last_root is None
+
+    update_source = LiteratureReader(update).source
+    root_update = read_wf_record_source(update_id, update_source)
+    assert root_update is None
+
+
+@mock.patch('inspirehep.modules.workflows.tasks.manual_merging.store_records', side_effect=None)
+@mock.patch('inspirehep.modules.workflows.tasks.manual_merging.put_record_to_hep', side_effect=None)
+def xtest_manual_merge_existing_records_with_callback_without_conflicts(mock_put_record_to_hep, mock_store_records, workflow_app):
+
+    json_head = fake_record('This is the HEAD', 1)
+    json_update = fake_record('While this is the update', 2)
+
+    # this two fields will create a merging conflict
+    json_head['core'] = True
+    json_update['core'] = False
+
+    head = InspireRecord.create_or_update(json_head, skip_files=False)
+    head.commit()
+    update = InspireRecord.create_or_update(json_update, skip_files=False)
+    update.commit()
+    head_id = head.id
+    update_id = update.id
+
+    obj_id = start_merger(
+        head_id=1,
+        update_id=2,
+        current_user_id=1,
+    )
+    obj = workflow_object_class.get(obj_id)
+    assert obj.status == ObjectStatus.HALTED
+
+    obj.extra_data['conflicts'] = []
+    expected_message = 'Workflow {} is continuing.'.format(obj.id)
+    metadata = obj.data
+    extra_data = obj.extra_data
+    with workflow_app.test_client() as client:
+        response = client.put(
+            '/callback/workflows/resolve_merge_conflicts',
+            content_type='application/json',
+            data=json.dumps({
+                'id': obj_id,
+                '_extra_data': extra_data,
+                'metadata': metadata
+            })
+        )
+
+    data = json.loads(response.get_data())
+    assert 200 == response.status_code
+    assert expected_message == data['message']
+    # retrieve it again, otherwise Detached Instance Error
+    obj = workflow_object_class.get(obj_id)
+    assert obj.status == ObjectStatus.COMPLETED
+    assert 'callback_url' not in obj.extra_data
+    assert 'conflicts' not in obj.extra_data
 
     # no root present before
     last_root = read_wf_record_source(head_id, 'arxiv')
