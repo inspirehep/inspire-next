@@ -1532,3 +1532,29 @@ def test_normalize_affiliations_assign_only_matching_affiliation_when_multiple_r
             }
         }
     ]
+
+
+@mock.patch("inspirehep.modules.workflows.tasks.actions._extract_matched_aff_from_highlight", return_value=None)
+def test_aff_normalization_if_no_match_from_highlighting_and_no_other_matches(workflow_app, insert_literature_in_db):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "full_name": "Easter, Paul J.",
+                "ids": [{"schema": "INSPIRE BAI", "value": "P.J.Easter.2"}],
+                "raw_affiliations": [
+                    {
+                        "value": "Belgrade, Serbia"
+                    },
+                ],
+                "signature_block": "EASTARp",
+                "uuid": "4c4b7fdf-04ae-421f-bcab-bcc5907cea4e",
+            }
+        ],
+    }
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj = normalize_affiliations(obj, None)
+
+    assert not obj.data["authors"][0].get("affiliations")

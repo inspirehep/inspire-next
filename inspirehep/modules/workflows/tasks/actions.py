@@ -969,6 +969,7 @@ def _find_unambiguous_affiliation(result):
         matched_author_data = matched_author.meta.inner_hits.authors.hits[0].to_dict()
         matched_author_raw_affs = matched_author_data['raw_affiliations']
         matched_author_affs = matched_author_data['affiliations']
+        matched_aff = []
         if len(matched_author_raw_affs) == 1:
             matched_aff = matched_author_affs
         elif len(matched_author_raw_affs) == len(matched_author_affs):
@@ -977,7 +978,8 @@ def _find_unambiguous_affiliation(result):
                 matched_author_raw_affs,
                 matched_author_affs
             )
-        return _clean_up_affiliation_data(matched_aff)
+        if matched_aff:
+            return _clean_up_affiliation_data(matched_aff)
 
 
 def _match_lit_author_affiliation(raw_aff):
