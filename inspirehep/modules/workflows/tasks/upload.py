@@ -60,6 +60,7 @@ def store_record(obj, eng):
                     return
 
                 record = InspireRecord.get_record(obj.extra_data['head_uuid'])
+                obj.extra_data['recid'] = record['control_number']
                 obj.data['control_number'] = record['control_number']
                 record.clear()
                 record.update(obj.data, files_src_records=[obj])
@@ -73,6 +74,7 @@ def store_record(obj, eng):
                 record.download_documents_and_figures(src_records=[obj])
 
                 obj.data['control_number'] = record['control_number']
+                obj.extra_data['recid'] = record['control_number']
                 # store head_uuid to store the root later
                 obj.extra_data['head_uuid'] = str(record.id)
 
@@ -124,6 +126,7 @@ def send_record_to_hep(obj, pid_type, control_number=None):
         raise create_error(err.response)
 
     obj.data['control_number'] = response['metadata']['control_number']
+    obj.extra_data['recid'] = response['metadata']['control_number']
 
     if not control_number:
         obj.extra_data['head_uuid'] = response['uuid']
