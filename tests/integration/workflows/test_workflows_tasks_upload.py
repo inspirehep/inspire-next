@@ -242,6 +242,7 @@ def test_store_record_inspirehep_api_literature_new(workflow_app):
             )
             store_record(workflow, eng)  # not throwing exception
     assert workflow.data['control_number'] == expected_control_number
+    assert workflow.extra_data['recid'] == expected_control_number
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
 
 
@@ -277,6 +278,7 @@ def test_store_record_inspirehep_api_literature_new_has_the_if_match_headers(moc
 
     assert expected_version == mock_put_record_to_hep.call_args_list[0][1]['headers']['If-Match']
     assert workflow.data['control_number'] == expected_control_number
+    assert workflow.extra_data['recid'] == expected_control_number
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
 
 
@@ -349,6 +351,7 @@ def test_store_record_inspirehep_api_author_new(workflow_app):
             )
             store_record(workflow, eng)  # not throwing exception
     assert workflow.data['control_number'] == expected_control_number
+    assert workflow.extra_data['recid'] == expected_control_number
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
 
 
@@ -389,6 +392,7 @@ def test_store_record_inspirehep_api_author_update(workflow_app):
             )
             store_record(workflow, eng)  # not throwing exception
     assert workflow.data['control_number'] == expected_control_number
+    assert workflow.extra_data['recid'] == expected_control_number
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
 
 
@@ -427,6 +431,7 @@ def test_store_record_inspirehep_api_retries_on_bad_gateway(workflow_app):
             store_record(workflow, eng)
 
     assert workflow.data['control_number'] == expected_control_number
+    assert workflow.extra_data['recid'] == expected_control_number
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
 
 
