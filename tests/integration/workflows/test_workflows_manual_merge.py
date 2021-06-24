@@ -179,10 +179,12 @@ def xtest_manual_merge_existing_records_with_callback_without_conflicts(mock_put
     )
     obj = workflow_object_class.get(obj_id)
     assert obj.status == ObjectStatus.HALTED
+    assert 'http://localhost:5000/callback/workflows/resolve_merge_conflicts' == obj.extra_data['callback_url']
 
     obj.extra_data['conflicts'] = []
     expected_message = 'Workflow {} is continuing.'.format(obj.id)
     metadata = obj.data
+
     extra_data = obj.extra_data
     with workflow_app.test_client() as client:
         response = client.put(

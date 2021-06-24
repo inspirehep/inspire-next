@@ -31,6 +31,7 @@ import backoff
 from inspire_dojson.utils import get_record_ref
 from inspire_json_merger.api import merge
 from inspirehep.modules.workflows.utils import (
+    get_resolve_merge_conflicts_callback_url,
     with_debug_logging,
     read_all_wf_record_sources
 )
@@ -150,6 +151,7 @@ def store_head_version(obj, eng):
     head_uuid = obj.extra_data['head_uuid']
     head_record = InspireRecord.get_record(head_uuid)
     obj.extra_data['head_version_id'] = head_record.model.version_id
+    obj.extra_data['callback_url'] = get_resolve_merge_conflicts_callback_url()
     obj.save()
 
 
