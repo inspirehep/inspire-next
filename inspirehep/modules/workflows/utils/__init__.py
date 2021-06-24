@@ -511,6 +511,8 @@ def put_record_to_hep(pid_type, pid_value, data=None, headers=None):
     if not data:
         raise InspirehepMissingDataError
 
+    data.pop("_files", None)
+
     _headers = _get_headers_for_hep()
     if headers:
         _headers.update(headers)
@@ -534,6 +536,8 @@ def put_record_to_hep(pid_type, pid_value, data=None, headers=None):
 def post_record_to_hep(pid_type, data=None, headers=None):
     if not data:
         raise InspirehepMissingDataError
+
+    data.pop("_files", None)
 
     _headers = _get_headers_for_hep()
     if headers:
