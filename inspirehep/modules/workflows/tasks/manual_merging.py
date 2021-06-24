@@ -151,7 +151,9 @@ def store_head_version(obj, eng):
     head_uuid = obj.extra_data['head_uuid']
     head_record = InspireRecord.get_record(head_uuid)
     obj.extra_data['head_version_id'] = head_record.model.version_id
-    obj.extra_data['callback_url'] = get_resolve_merge_conflicts_callback_url()
+    callback_url = get_resolve_merge_conflicts_callback_url()
+    callback_url = callback_url.replace('/api', '')
+    obj.extra_data['callback_url'] = callback_url
     obj.save()
 
 
