@@ -33,6 +33,9 @@ from inspirehep.modules.workflows.tasks.manual_merging import (
     store_head_version
 )
 from inspirehep.utils.record_getter import get_db_record
+from inspirehep.modules.workflows.utils import (
+    get_resolve_merge_conflicts_callback_url,
+)
 
 
 class ManualMerge(object):
@@ -92,6 +95,8 @@ def start_merger(head_id, update_id, current_user_id=None):
 
     workflow_object.extra_data['head'] = head
     workflow_object.extra_data['update'] = update
+
+    workflow_object.extra_data['callback_url'] = get_resolve_merge_conflicts_callback_url()
 
     workflow_object.save()
 
