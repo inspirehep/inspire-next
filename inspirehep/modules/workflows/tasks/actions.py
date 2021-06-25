@@ -1133,11 +1133,12 @@ def check_if_france_in_fulltext(obj, eng):
     grobid_response = post_pdf_to_grobid(obj, api_path, **kwargs_to_grobid)
     if not grobid_response:
         return
-    return 'france' in grobid_response.text.lower()
+    text = grobid_response.text.lower()
+    return 'france' in text or 'in2p3' in text
 
 
 def check_if_france_in_raw_affiliations(obj, eng):
     raw_affs = get_value(obj.data, 'authors.raw_affiliations.value', [])
     for aff in chain.from_iterable(raw_affs):
-        if "france" in aff.lower():
+        if "france" in aff.lower() or "in2p3" in aff.lower():
             return True
