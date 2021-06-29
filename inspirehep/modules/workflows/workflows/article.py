@@ -74,7 +74,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_core,
     create_core_selection_wf,
     check_if_france_in_fulltext,
-    check_if_france_in_raw_affiliations
+    check_if_france_in_raw_affiliations,
+    link_institutions_with_affiliations
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -328,6 +329,7 @@ POSTENHANCE_RECORD = [
     set_refereed_and_fix_document_type,
     fix_submission_number,
     IF(is_core, normalize_affiliations),
+    link_institutions_with_affiliations,
     IF(
         is_fermilab_report,
         add_collection("Fermilab"),
