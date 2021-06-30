@@ -480,7 +480,7 @@ def test_prepare_collaboration_multi_search():
 
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
-def test_check_if_france_in_fulltext(mocked_get_document, app):
+def test_check_if_france_in_fulltext_when_france_in_header(mocked_get_document, app):
     grobid_response = pkg_resources.resource_string(
         __name__,
         os.path.join(
@@ -505,7 +505,7 @@ def test_check_if_france_in_fulltext(mocked_get_document, app):
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processHeaderDocument',
+                'POST', 'http://grobid_url.local/api/processFulltextDocument',
                 text=grobid_response,
                 headers={'content-type': 'application/xml'},
                 status_code=200,
@@ -532,3 +532,41 @@ def test_check_if_france_in_affiliations(app):
     eng = None
     result = check_if_france_in_raw_affiliations(obj, eng)
     assert result
+
+
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_check_if_france_in_fulltext_when_france_in_text_body(mocked_get_document, app):
+    grobid_response = pkg_resources.resource_string(
+        __name__,
+        os.path.join(
+            'fixtures',
+            'grobid_response_fulltext.txt'
+        )
+    )
+
+    obj = MagicMock()
+    obj.data = {
+        'authors': [
+            {"full_name": "author 1"},
+            {"full_name": "author 2"},
+            {"full_name": "author 3"}
+        ]
+    }
+
+    obj.extra_data = {}
+    eng = None
+
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+    with patch.dict(current_app.config, new_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                text=grobid_response,
+                headers={'content-type': 'application/xml'},
+                status_code=200,
+            )
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                mocked_get_document.return_value.__enter__.return_value = tmp_file.name
+                france_in_fulltext = check_if_france_in_fulltext(obj, eng)
+
+    assert france_in_fulltext

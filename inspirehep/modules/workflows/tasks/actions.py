@@ -44,6 +44,7 @@ from itertools import chain
 
 from flask import current_app
 from jsonschema.exceptions import ValidationError
+from parsel import Selector
 from six.moves.urllib.parse import urlparse
 from sqlalchemy import (
     JSON,
@@ -1128,14 +1129,25 @@ def post_pdf_to_grobid(obj, grobid_api_path, **kwargs):
     return response
 
 
-def check_if_france_in_fulltext(obj, eng):
-    api_path = "api/processHeaderDocument"
-    kwargs_to_grobid = {"includeRawAffiliations": "1", "consolidateHeader": "1"}
-    grobid_response = post_pdf_to_grobid(obj, api_path, **kwargs_to_grobid)
+def get_fulltext(obj):
+    grobid_api_path = "api/processFulltextDocument"
+    grobid_response = post_pdf_to_grobid(obj, grobid_api_path)
     if not grobid_response:
         return
-    text = grobid_response.text.lower()
-    return 'france' in text or 'in2p3' in text
+    xml_data = grobid_response.text
+    xml = Selector(text=xml_data, type="xml")
+    xml.remove_namespaces()
+    text = xml.getall()
+    fulltext = ' '.join(text)
+    return fulltext
+
+
+def check_if_france_in_fulltext(obj, eng):
+    fulltext = get_fulltext(obj)
+    if not fulltext:
+        return
+    fulltext_lower = fulltext.lower()
+    return 'france' in fulltext_lower or 'in2p3' in fulltext_lower
 
 
 def check_if_france_in_raw_affiliations(obj, eng):
