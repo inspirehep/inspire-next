@@ -245,6 +245,7 @@ def test_store_record_inspirehep_api_literature_new(workflow_app):
     assert workflow.data['control_number'] == expected_control_number
     assert workflow.extra_data['recid'] == expected_control_number
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
+    assert workflow.extra_data['url'] == "http://localhost:5000/record/111"
 
 
 @mock.patch('inspirehep.modules.workflows.tasks.upload.put_record_to_hep')
@@ -281,6 +282,7 @@ def test_store_record_inspirehep_api_literature_new_has_the_if_match_headers(moc
     assert workflow.data['control_number'] == expected_control_number
     assert workflow.extra_data['recid'] == expected_control_number
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
+    assert workflow.extra_data['url'] == "http://localhost:5000/record/111"
 
 
 def test_store_record_inspirehep_api_literature_update_without_cn(workflow_app):
@@ -354,6 +356,7 @@ def test_store_record_inspirehep_api_author_new(workflow_app):
     assert workflow.data['control_number'] == expected_control_number
     assert workflow.extra_data['recid'] == expected_control_number
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
+    assert workflow.extra_data['url'] == "http://localhost:5000/record/2222"
 
 
 def test_store_record_inspirehep_api_author_update(workflow_app):
@@ -395,6 +398,7 @@ def test_store_record_inspirehep_api_author_update(workflow_app):
     assert workflow.data['control_number'] == expected_control_number
     assert workflow.extra_data['recid'] == expected_control_number
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
+    assert workflow.extra_data['url'] == "http://localhost:5000/record/2222"
 
 
 def test_store_record_inspirehep_api_retries_on_bad_gateway(workflow_app):
@@ -434,6 +438,7 @@ def test_store_record_inspirehep_api_retries_on_bad_gateway(workflow_app):
     assert workflow.data['control_number'] == expected_control_number
     assert workflow.extra_data['recid'] == expected_control_number
     assert workflow.extra_data['head_uuid'] == expected_head_uuid
+    assert workflow.extra_data['url'] == "http://localhost:5000/record/222"
 
 
 def side_effect_requests_post(url, params=None, **kwargs):
