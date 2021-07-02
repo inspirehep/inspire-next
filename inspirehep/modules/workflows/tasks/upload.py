@@ -30,6 +30,8 @@ from invenio_workflows.errors import WorkflowsError
 from simplejson import JSONDecodeError
 import backoff
 
+from os.path import join
+from inspire_utils.urls import ensure_scheme
 from inspire_schemas.readers import LiteratureReader
 from invenio_db import db
 
@@ -63,6 +65,8 @@ def store_record(obj, eng):
                 record = InspireRecord.get_record(obj.extra_data['head_uuid'])
                 obj.extra_data['recid'] = record['control_number']
                 obj.data['control_number'] = record['control_number']
+                base_url = ensure_scheme(current_app.config["SERVER_NAME"])
+                obj.extra_data['url'] = join(base_url, 'record', str(obj.extra_data['recid']))
                 record.clear()
                 record.update(obj.data, files_src_records=[obj])
 
@@ -76,6 +80,8 @@ def store_record(obj, eng):
 
                 obj.data['control_number'] = record['control_number']
                 obj.extra_data['recid'] = record['control_number']
+                base_url = ensure_scheme(current_app.config["SERVER_NAME"])
+                obj.extra_data['url'] = join(base_url, 'record', str(obj.extra_data['recid']))
                 # store head_uuid to store the root later
                 obj.extra_data['head_uuid'] = str(record.id)
 
@@ -128,6 +134,8 @@ def send_record_to_hep(obj, pid_type, control_number=None):
 
     obj.data['control_number'] = response['metadata']['control_number']
     obj.extra_data['recid'] = response['metadata']['control_number']
+    base_url = ensure_scheme(current_app.config["SERVER_NAME"])
+    obj.extra_data['url'] = join(base_url, 'record', str(obj.extra_data['recid']))
 
     if not control_number:
         obj.extra_data['head_uuid'] = response['uuid']
