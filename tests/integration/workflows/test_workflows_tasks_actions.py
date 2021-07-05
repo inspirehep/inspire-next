@@ -45,7 +45,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     normalize_journal_titles, affiliations_for_hidden_collections, replace_collection_to_hidden,
     normalize_collaborations,
     normalize_affiliations,
-    link_institutions_with_affiliations
+    link_institutions_with_affiliations,
+    _assign_institution
 )
 
 from calls import insert_citing_record
@@ -1558,3 +1559,11 @@ def test_aff_normalization_if_no_match_from_highlighting_and_no_other_matches(wo
     obj = normalize_affiliations(obj, None)
 
     assert not obj.data["authors"][0].get("affiliations")
+
+
+def test_link_institutions_with_affiliations_assigning_institution_reference_in_correct_type(
+    workflow_app, insert_institutions_in_db
+):
+    matched_affiliation = {'value': 'CERN'}
+    matched_complete_affiliation = _assign_institution(matched_affiliation)
+    assert isinstance(matched_complete_affiliation, dict)
