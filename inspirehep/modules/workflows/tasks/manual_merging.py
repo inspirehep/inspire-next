@@ -182,7 +182,8 @@ def store_records(obj, eng):
     headers = {
         'If-Match': '"{0}"'.format(head_version_id - 1)
     }
-
+    obj.data = head
+    obj.save()
     put_record_to_hep(
         'lit',
         head_control_number,
