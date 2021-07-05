@@ -477,6 +477,38 @@ def test_validate_workflow(api_client):
     assert json.loads(response.data) == "success"
 
 
+def test_validate_workflow_authors(api_client):
+    login_user_via_session(api_client, email='admin@inspirehep.net')
+
+    record = {
+        "$schema": "http://localhost:5000/schemas/records/authors.json",
+        "name": {"value": "Jessica Jones"},
+        "_collections": ["Authors"],
+    }
+
+    workflow = workflow_object_class.create(
+        data=record,
+        data_type='authors'
+    )
+    workflow.save()
+    db.session.commit()
+
+    response = api_client.post(
+        "/editor/validate_workflow",
+        content_type="application/json",
+        data=json.dumps({
+            'id': workflow.id,
+            'record': workflow.data,
+        })
+    )
+
+    assert response.status_code == 200
+    assert json.loads(response.data) == "success"
+
+    workflow.delete()
+    db.session.commit()
+
+
 def test_validate_workflow_error(api_client):
     login_user_via_session(api_client, email='admin@inspirehep.net')
 

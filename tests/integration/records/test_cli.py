@@ -71,7 +71,7 @@ def test_check_unlinked_references_works_without_arguments(app_cli_runner, isola
     assert result.exit_code == 0
 
 
-def test_find_arxiv_duplicate_among_non_duplicates_and_merged(
+def xtest_find_arxiv_duplicate_among_non_duplicates_and_merged(
     app_cli_runner, isolated_app
 ):
     def create_wf(arxiv_id, control_number):

@@ -54,6 +54,7 @@ from inspirehep.utils.references import (
 )
 from inspirehep.utils.url import copy_file
 from inspirehep.modules.workflows.workflows.manual_merge import start_merger
+from six.moves.urllib.parse import urlsplit
 
 
 MAX_UNIQUE_KEY_COUNT = 100
@@ -259,7 +260,9 @@ def validate_workflow():
     data = request.json
     record = data['record']
     workflow_id = data['id']
-    errors = get_validation_errors(record, 'hep')
+
+    schema_name = urlsplit(record['$schema']).path.split('/')[-1].split('.')[0]
+    errors = get_validation_errors(record, schema_name)
 
     if errors:
         try:
