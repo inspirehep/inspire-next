@@ -1012,7 +1012,7 @@ def _assign_institution(matched_affiliation):
     query = Q("match", legacy_ICN=matched_affiliation["value"])
     result = InstitutionsSearch().query(query).params(size=1).execute()
     if result:
-        matched_affiliation["record"] = result.hits[0]["self"]
+        matched_affiliation["record"] = result.hits[0].to_dict()["self"]
         return matched_affiliation
 
 
