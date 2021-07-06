@@ -159,7 +159,10 @@ CHECK_AUTO_APPROVE = [
             auto_approve,
             [
                 mark('auto-approved', True),
-                set_core_in_extra_data,
+                IF_NOT(
+                    is_marked('is-update'),
+                    set_core_in_extra_data,
+                )
             ],
             mark('auto-approved', False),
         ),
@@ -323,7 +326,10 @@ NOTIFY_CURATOR_IF_NEEDED = [
 
 
 POSTENHANCE_RECORD = [
-    add_core,
+    IF_NOT(
+        is_marked('is-update'),
+        add_core,
+    ),
     filter_keywords,
     prepare_keywords,
     set_refereed_and_fix_document_type,
