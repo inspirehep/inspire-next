@@ -38,6 +38,8 @@ from refextract import (
     extract_references_from_string,
 )
 
+from refextract.references.errors import UnknownDocumentTypeError
+
 from inspirehep.modules.workflows.utils import (
     ignore_timeout_error,
     timeout_with_config,
@@ -112,11 +114,17 @@ def extract_journal_info(obj, eng):
 def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
     """Extract references from PDF and return in INSPIRE format."""
     with local_refextract_kbs_path() as kbs_path:
-        extracted_references = extract_references_from_file(
-            filepath,
-            override_kbs_files=kbs_path,
-            reference_format=u'{title},{volume},{page}',
-        )
+        try:
+            extracted_references = extract_references_from_file(
+                filepath,
+                override_kbs_files=kbs_path,
+                reference_format=u'{title},{volume},{page}',
+            )
+        except UnknownDocumentTypeError as e:
+            if 'xml' in e.message:
+                LOGGER.info('Skipping extracting references for xml file')
+                return
+            raise
 
     return map_refextract_to_schema(extracted_references, source=source)
 
