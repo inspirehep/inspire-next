@@ -144,6 +144,15 @@ def test_extract_references_from_pdf_handles_unicode():
     assert len(result) > 0
 
 
+def test_extract_references_doesnt_raise_exception_if_dealing_with_xml():
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', 'PhysRevA_104.012407.xml'))
+
+    result = extract_references_from_pdf(filename)
+
+    assert result is None
+
+
 def test_extract_references_from_pdf_populates_raw_refs_source():
     filename = pkg_resources.resource_filename(
         __name__, os.path.join('fixtures', '1704.00452.pdf'))
