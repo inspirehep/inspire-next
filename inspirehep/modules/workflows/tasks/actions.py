@@ -488,7 +488,7 @@ def refextract(obj, eng):
         text_references = dedupe_list(extract_references_from_text(text, source))
         matched_text_references = match_references_based_on_flag(text_references)
 
-    if len(matched_pdf_references) == len(matched_text_references) == 0:
+    if not matched_pdf_references and not matched_text_references:
         obj.log.info('No references extracted.')
     elif len(matched_pdf_references) > len(matched_text_references):
         obj.log.info('Extracted %d references from PDF.', len(matched_pdf_references))
