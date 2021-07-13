@@ -27,7 +27,7 @@ class CoreSelection(object):
 
     workflow = (
         halt_record(
-            action='auto_non_core_record',
+            action='hep_approval',
             message='Submission halted Waiting for curator to decide if record is CORE.'
         ),
         load_record_from_hep,

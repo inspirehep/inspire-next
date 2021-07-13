@@ -166,7 +166,7 @@ setup(
             'author_approval = inspirehep.modules.workflows.actions.author_approval:AuthorApproval',
             'hep_approval = inspirehep.modules.workflows.actions.hep_approval:HEPApproval',
             'merge_approval = inspirehep.modules.workflows.actions.merge_approval:MergeApproval',
-            'match_approval = inspirehep.modules.workflows.actions.match_approval:MatchApproval',
+            'match_approval = inspirehep.modules.workflows.actions.match_approval:MatchApproval'
         ],
     },
     classifiers=[
