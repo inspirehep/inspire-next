@@ -150,7 +150,7 @@ def test_extract_references_doesnt_raise_exception_if_dealing_with_xml():
 
     result = extract_references_from_pdf(filename)
 
-    assert result is None
+    assert result == []
 
 
 def test_extract_references_from_pdf_populates_raw_refs_source():
