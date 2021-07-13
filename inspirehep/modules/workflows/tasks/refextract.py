@@ -123,7 +123,7 @@ def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
         except UnknownDocumentTypeError as e:
             if 'xml' in e.message:
                 LOGGER.info('Skipping extracting references for xml file')
-                return
+                return []
             raise
 
     return map_refextract_to_schema(extracted_references, source=source)

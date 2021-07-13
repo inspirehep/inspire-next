@@ -46,7 +46,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     normalize_collaborations,
     normalize_affiliations,
     link_institutions_with_affiliations,
-    _assign_institution
+    _assign_institution,
+    refextract
 )
 
 from calls import insert_citing_record
@@ -1567,3 +1568,33 @@ def test_link_institutions_with_affiliations_assigning_institution_reference_in_
     matched_affiliation = {'value': 'CERN'}
     matched_complete_affiliation = _assign_institution(matched_affiliation)
     assert isinstance(matched_complete_affiliation, dict)
+
+
+@mock.patch(
+    'inspirehep.modules.workflows.tasks.actions.extract_references_from_pdf',
+    return_value=[]
+)
+def test_refextract_when_document_type_is_xml(
+    mock_extract_refs, workflow_app, insert_institutions_in_db
+):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "authors": [
+            {
+                "full_name": "Easter, Paul J.",
+                "ids": [{"schema": "INSPIRE BAI", "value": "P.J.Easter.2"}],
+                "raw_affiliations": [
+                    {
+                        "value": "Belgrade, Serbia"
+                    },
+                ],
+                "signature_block": "EASTARp",
+                "uuid": "4c4b7fdf-04ae-421f-bcab-bcc5907cea4e",
+            }
+        ],
+    }
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    refextract(obj, None)
+    assert not obj.data.get('references')
