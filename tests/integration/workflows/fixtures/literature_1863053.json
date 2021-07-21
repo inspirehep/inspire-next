@@ -452,6 +452,10 @@
     {
       "value": "We apply object detection techniques based on Convolutional Neural Networks to jet reconstruction and identification at the CERN Large Hadron Collider. In particular, we focus on CaloJet reconstruction, representing each event as an image composed of calorimeter cells and using a Single Shot Detection network, called Jet-SSD. The model performs simultaneous localization and classification and additional regression tasks to measure jet features. We investigate Ternary Weight Networks with weights constrained to {-1, 0, 1} times a layer- and channel-dependent scaling factors. We show that the quantized version of the network closely matches the performance of its full-precision equivalent.",
       "source": "arXiv"
+    },
+    {
+      "value": "<mml:msub>\n<mml:mi>Z</mml:mi>\n<mml:mn>2</mml:mn>\n</mml:msub>\n</mml:math>",
+      "source": "arXiv"
     }
   ],
   "references": [
