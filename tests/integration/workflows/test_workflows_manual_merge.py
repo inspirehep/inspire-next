@@ -85,6 +85,7 @@ def test_manual_merge_existing_records(mock_put_record_to_hep, mock_store_record
     obj = workflow_object_class.get(obj_id)
 
     assert obj.status == ObjectStatus.COMPLETED
+    assert 'deleted_records' in obj.data
     assert obj.extra_data['approved'] is True
     assert obj.extra_data['auto-approved'] is False
     assert 'callback_url' in obj.extra_data

@@ -1129,7 +1129,7 @@ requests = ">=2.2.0"
 
 [[package]]
 name = "hepcrawl"
-version = "13.0.34"
+version = "13.0.35"
 description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)."
 category = "main"
 optional = true
@@ -1383,7 +1383,7 @@ tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (
 
 [[package]]
 name = "inspire-json-merger"
-version = "11.0.22"
+version = "11.0.23"
 description = "INSPIRE-specific configuration of the JSON Merger."
 category = "main"
 optional = false
@@ -4577,8 +4577,8 @@ harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
 hepcrawl = [
-    {file = "hepcrawl-13.0.34-py2.py3-none-any.whl", hash = "sha256:b1a57be8bdb95358d12edfec0b35d38b84cc4ad7bcac3975534feaae3ad2ab1c"},
-    {file = "hepcrawl-13.0.34.tar.gz", hash = "sha256:112c19c4bbece7e3df7bcef68ed4afa7bd777df76b9884cac21f514250060c2a"},
+    {file = "hepcrawl-13.0.35-py2.py3-none-any.whl", hash = "sha256:939da8086ab8394536fcd9440c79b3027bb77cc740dbd466a0492a497dbacb22"},
+    {file = "hepcrawl-13.0.35.tar.gz", hash = "sha256:e90d4c717a01531558c4c947a79bb49d053944898f6a92452d6db384c8398d52"},
 ]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
@@ -4637,8 +4637,8 @@ inspire-dojson = [
     {file = "inspire_dojson-63.1.3-py2-none-any.whl", hash = "sha256:3321a310dae00751140a4aed3a4f0db43521d131b4c720fd64454ba8b42affe6"},
 ]
 inspire-json-merger = [
-    {file = "inspire-json-merger-11.0.22.tar.gz", hash = "sha256:a89210385ab363019a4248e55430c13874042acda0e25f0e1e9d0302ddfe34cc"},
-    {file = "inspire_json_merger-11.0.22-py2-none-any.whl", hash = "sha256:b92a1436514f29664d8cb8952f56ccd121b31ab9e52d9dbf8d8ece2c472e0412"},
+    {file = "inspire-json-merger-11.0.23.tar.gz", hash = "sha256:f2c094064233961ac45e909eb700369c7ddf280243f43ba2544893d0dfca638e"},
+    {file = "inspire_json_merger-11.0.23-py2-none-any.whl", hash = "sha256:8bf63f9a51f191f0a44a6aa236f24c4ec507590f0cd30bfe076ad4c50939f7b7"},
 ]
 inspire-matcher = [
     {file = "inspire-matcher-9.0.1.tar.gz", hash = "sha256:622f5a4e2bc4f2c0ac987caf10a61efbe44da673a9e9724baa52bf1917b8e200"},

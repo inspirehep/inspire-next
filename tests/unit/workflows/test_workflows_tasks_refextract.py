@@ -144,6 +144,15 @@ def test_extract_references_from_pdf_handles_unicode():
     assert len(result) > 0
 
 
+def test_extract_references_doesnt_raise_exception_if_dealing_with_xml():
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', 'PhysRevA_104.012407.xml'))
+
+    result = extract_references_from_pdf(filename)
+
+    assert result == []
+
+
 def test_extract_references_from_pdf_populates_raw_refs_source():
     filename = pkg_resources.resource_filename(
         __name__, os.path.join('fixtures', '1704.00452.pdf'))
@@ -306,3 +315,24 @@ def test_extract_references_from_raw_ref_reference_exists():
     assert validate(result, subschema) is None
     assert len(result) == 1
     assert result[0] == reference
+
+
+def test_extract_references_from_raw_ref_when_no_source():
+    schema = load_schema('hep')
+    subschema = schema['properties']['references']
+
+    reference = {
+        'raw_refs': [
+            {
+                'schema': 'text',
+                'value': '[37] M. Vallisneri, \u201cUse and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects,\u201d Phys. Rev. D 77, 042001 (2008) doi:10.1103/PhysRevD.77.042001 [gr-qc/0703086 [GR-QC]].'
+            },
+        ],
+    }
+
+    result = extract_references_from_raw_ref(reference)
+
+    assert validate(result, subschema) is None
+    assert len(result) == 1
+    assert 'reference' in result[0]
+    assert result[0]['raw_refs'] == reference['raw_refs']
