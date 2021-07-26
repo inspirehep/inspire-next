@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+import mock
 
 from invenio_pidstore.models import PersistentIdentifier, RecordIdentifier
 from jsonschema import ValidationError
@@ -189,3 +190,20 @@ def test_citations_from_superseded_should_not_count_to_citation_count(isolated_a
     }
     TestRecordMetadata.create_from_kwargs(json=citing_record_json)
     assert record.get_citations_count() == 2
+
+
+@mock.patch('inspirehep.modules.records.api.InspireRecord.files', return_value='350b55be-fde5-4a79-ae1f-398f1b0def96')
+def test_url_is_correctly_escaped(mock_files, isolated_app):
+    record_json = {
+        'control_number': 321,
+    }
+    record = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    file_key = '0146-6410%2881%2990035-1.xml'
+    metadata = {
+        u'fulltext': True,
+        u'hidden': True,
+        u'source': u'Elsevier B.V.'
+    }
+    record.add_document_or_figure(metadata=metadata, key=file_key)
+    document_url = record['documents'][0]['url']
+    assert document_url.endswith("0146-6410%252881%252990035-1.xml")

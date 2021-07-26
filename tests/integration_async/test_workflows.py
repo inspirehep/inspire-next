@@ -166,8 +166,8 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_running(
     assert wf2.data['control_number'] == wf3.data['control_number']
 
     assert wf1.extra_data.get('restarted-by-wf') is None
-    assert wf2.extra_data.get('restarted-by-wf') == [1]
-    assert wf3.extra_data.get('restarted-by-wf') == [2]
+    assert set(wf2.extra_data.get('restarted-by-wf')) == {1}
+    assert set(wf3.extra_data.get('restarted-by-wf')) == {2}
 
 
 def test_wf_not_stops_when_blocking_another_one_after_restarted_on_init(
@@ -254,8 +254,8 @@ def test_wf_not_stops_when_blocking_another_one_after_restarted_on_init(
     assert wf2.data['control_number'] == wf3.data['control_number']
 
     assert wf1.extra_data.get('restarted-by-wf') is None
-    assert wf2.extra_data.get('restarted-by-wf') == [1]
-    assert wf3.extra_data.get('restarted-by-wf') == [2]
+    assert set(wf2.extra_data.get('restarted-by-wf')) == {1}
+    assert set(wf3.extra_data.get('restarted-by-wf')) == {2}
 
 
 @pytest.mark.vcr()

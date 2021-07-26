@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 from copy import deepcopy
 from datetime import datetime
+from urllib import quote
 import uuid
 import arrow
 from elasticsearch.exceptions import NotFoundError
@@ -314,7 +315,7 @@ class InspireRecord(Record):
         metadata['key'] = key
         metadata['url'] = '/api/files/{bucket}/{key}'.format(
             bucket=self.files[key].bucket_id,
-            key=key,
+            key=quote(key),
         )
         if is_document:
             builder.add_document(**metadata)
