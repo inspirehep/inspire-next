@@ -20,7 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""The next version of INSPIRE."""
+"""The next version of INSPIRE.
+If you are updating this file (eg. adding entry points) don't forget to update
+pyproject.toml which is used for local development. The guide how to do it might 
+be found here: https://docs.python.org/3/distutils/setupscript.html
+"""
 
 from __future__ import absolute_import, division, print_function
 
