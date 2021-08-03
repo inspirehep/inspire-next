@@ -1,4 +1,8 @@
-[tool]
+# The next version of INSPIRE.
+# If you are updating this file (eg. adding entry points) don't forget to update
+# setup.py which is used for setting up docker environment. The guide how to do it might 
+# be found here: https://python-poetry.org/docs/pyproject/
+
 [tool.poetry]
 name = "Inspirehep"
 version = "0.1.0"
@@ -129,3 +133,106 @@ web-node = ["gunicorn", "honcho"]
 crawler-node = ["hepcrawl"]
 build-node = ["ipdb"]
 xrootd = ["xrootdpyfs", "invenio-xrootd"]
+
+[tool.poetry.scripts] 
+inspirehep = "inspirehep.cli:cli"
+        
+[tool.poetry.plugins."invenio_access.actions"]
+admin_holdingpen_authors = "inspirehep.modules.authors.permissions:action_admin_holdingpen_authors"
+editor_use_api = "inspirehep.modules.editor.permissions:action_editor_use_api"
+migrator-use-api = "inspirehep.modules.migrator.permissions:action_migrator_use_api"
+update_collection = "inspirehep.modules.records.permissions:action_update_collection"
+view_restricted_collection = "inspirehep.modules.records.permissions:action_view_restricted_collection"
+
+[tool.poetry.plugins."invenio_assets.bundles"]
+almondjs = "inspirehep.modules.theme.bundles:almondjs"
+inspirehep_author_profile_js = "inspirehep.modules.authors.bundles:js"
+inspirehep_author_update_css = "inspirehep.modules.authors.bundles:update_css"
+inspirehep_authors_update_form_js = "inspirehep.modules.authors.bundles:updatejs"
+inspirehep_detailed_js = "inspirehep.modules.theme.bundles:detailedjs"
+inspirehep_editor_js = "inspirehep.modules.editor.bundles:js"
+inspirehep_forms_css = "inspirehep.modules.forms.bundles:css"
+inspirehep_forms_js = "inspirehep.modules.forms.bundles:js"
+inspirehep_holding_css = "inspirehep.modules.theme.bundles:holding_pen_css"
+inspirehep_holding_js = "inspirehep.modules.workflows.bundles:details_js"
+inspirehep_landing_page_css = "inspirehep.modules.theme.bundles:landing_page_css"
+inspirehep_literaturesuggest_js = "inspirehep.modules.literaturesuggest.bundles:js"
+inspirehep_theme_css = "inspirehep.modules.theme.bundles:css"
+inspirehep_theme_js = "inspirehep.modules.theme.bundles:js"
+inspirehep_tools_authorlist_js = "inspirehep.modules.tools.bundles:js"
+invenio_search_ui_search_js = "inspirehep.modules.search.bundles:js"
+requirejs = "inspirehep.modules.theme.bundles:requirejs"
+
+[tool.poetry.plugins."invenio_base.api_apps"]
+inspire_records = "inspirehep.modules.records.ext:InspireRecords"
+inspire_search = "inspirehep.modules.search:InspireSearch"
+inspire_accounts = "inspirehep.modules.accounts:InspireAccounts"
+inspire_utils = "inspirehep.utils.ext:INSPIREUtils"
+inspire_workflows = "inspirehep.modules.workflows:InspireWorkflows"
+
+[tool.poetry.plugins."invenio_base.api_blueprints"]
+inspirehep_editor = "inspirehep.modules.editor:blueprint_api"
+inspirehep_records = "inspirehep.modules.records.views:blueprint"
+inspire_migrator = "inspirehep.modules.migrator.views:blueprint"
+inspire_submissions = "inspirehep.modules.submissions.views:blueprint"
+
+[tool.poetry.plugins."invenio_base.apps"]
+inspire_arxiv = "inspirehep.modules.arxiv:InspireArXiv"
+inspire_authors = "inspirehep.modules.authors:InspireAuthors"
+inspire_crossref = "inspirehep.modules.crossref:InspireCrossref"
+inspire_disambiguation = "inspirehep.modules.disambiguation:InspireDisambiguation"
+inspire_fixtures = "inspirehep.modules.fixtures:InspireFixtures"
+inspire_forms = "inspirehep.modules.forms:InspireForms"
+inspire_literaturesuggest = "inspirehep.modules.literaturesuggest:InspireLiteratureSuggest"
+inspire_migrator = "inspirehep.modules.migrator:InspireMigrator"
+inspire_orcid = "inspirehep.modules.orcid:InspireOrcid"
+inspire_records = "inspirehep.modules.records.ext:InspireRecords"
+inspire_search = "inspirehep.modules.search:InspireSearch"
+inspire_theme = "inspirehep.modules.theme:INSPIRETheme"
+inspire_tools = "inspirehep.modules.tools:InspireTools"
+inspire_utils = "inspirehep.utils.ext:INSPIREUtils"
+inspire_workflows = "inspirehep.modules.workflows:InspireWorkflows"
+
+[tool.poetry.plugins."invenio_base.blueprints"]
+inspirehep_editor = "inspirehep.modules.editor:blueprint"
+
+[tool.poetry.plugins."invenio_celery.tasks"]
+inspire_migrator = "inspirehep.modules.migrator.tasks"
+inspire_orcid = "inspirehep.modules.orcid.tasks"
+inspire_records = "inspirehep.modules.records.tasks"
+inspire_refextract = "inspirehep.modules.refextract.tasks"
+
+[tool.poetry.plugins."invenio_db.alembic"]
+inspirehep = "inspirehep:alembic"
+
+[tool.poetry.plugins."invenio_db.models"]
+inspire_workflows_audit = "inspirehep.modules.workflows.models"
+
+[tool.poetry.plugins."invenio_jsonschemas.schemas"]
+inspire_records = "inspire_schemas"
+
+[tool.poetry.plugins."invenio_pidstore.fetchers"]
+inspire_recid_fetcher = "inspirehep.modules.pidstore.fetchers:inspire_recid_fetcher"
+
+[tool.poetry.plugins."invenio_pidstore.minters"]
+inspire_recid_minter = "inspirehep.modules.pidstore.minters:inspire_recid_minter"
+
+[tool.poetry.plugins."invenio_search.mappings"]
+holdingpen = "inspirehep.modules.workflows.mappings"
+
+[tool.poetry.plugins."invenio_workflows.workflows"]
+article = "inspirehep.modules.workflows.workflows:Article"
+author = "inspirehep.modules.workflows.workflows:Author"
+manual_merge = "inspirehep.modules.workflows.workflows:ManualMerge"
+edit_article = "inspirehep.modules.workflows.workflows:EditArticle"
+core_selection = "inspirehep.modules.workflows.workflows:CoreSelection"
+
+[tool.poetry.plugins."invenio_workflows_ui.actions"]
+author_approval = "inspirehep.modules.workflows.actions.author_approval:AuthorApproval"
+hep_approval = "inspirehep.modules.workflows.actions.hep_approval:HEPApproval"
+merge_approval = "inspirehep.modules.workflows.actions.merge_approval:MergeApproval"
+match_approval = "inspirehep.modules.workflows.actions.match_approval:MatchApproval"
+
+[build-system]
+requires = ["setuptools >= 40.6.0", "wheel"]
+build-backend = "setuptools.build_meta"
