@@ -22,9 +22,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+import time
+
+from datetime import datetime, timedelta
 import uuid
 from copy import deepcopy
 
+from invenio_db import db
 from invenio_workflows import workflow_object_class, Workflow
 
 
@@ -48,3 +52,26 @@ def build_workflow(workflow_data, data_type='hep', extra_data=None, status=None,
     workflow_object.save(id_workflow=wf.uuid)
 
     return workflow_object
+
+
+def check_wf_state(workflow_id, desired_status, max_time=800):
+    """Waits for the workflow to go to desired status
+    Args:
+        workflow: workflow to check
+        desired_state: desired state
+        max_time: maximum time to wait in seconds, otherwise raise exception
+    Returns: None
+    """
+    start = datetime.now()
+    end = start + timedelta(seconds=max_time)
+    while True:
+        db.session.close()
+        if workflow_object_class.get(workflow_id).status == desired_status:
+            return
+        if datetime.now() > end:
+            raise AssertionError(
+                "Status for workflow: %s didn't changed to %s for %s seconds" % (
+                    workflow_id, desired_status, max_time
+                )
+            )
+        time.sleep(5)

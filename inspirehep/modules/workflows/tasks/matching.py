@@ -203,16 +203,25 @@ def physics_data_an_is_primary_category(record):
     return False
 
 
+def _is_core(record, only_secondary_categories=False):
+    if only_secondary_categories:
+        record_core_categories = LiteratureReader(record).arxiv_categories[1:]
+    else:
+        record_core_categories = LiteratureReader(record).arxiv_categories
+    return set(record_core_categories) & \
+        set(current_app.config.get('ARXIV_CATEGORIES', {}).get('core'))
+
+
 @with_debug_logging
 def set_core_in_extra_data(obj, eng):
     """Set `core=True` in `obj.extra_data` if the record belongs to a core arXiv category"""
 
-    def _is_core(record):
-        return set(LiteratureReader(record).arxiv_categories) & \
-            set(current_app.config.get('ARXIV_CATEGORIES', {}).get('core'))
-
     if _is_core(obj.data):
         obj.extra_data['core'] = True
+
+
+def check_if_secondary_categories_are_core(obj, eng):
+    return _is_core(obj.data, only_secondary_categories=True)
 
 
 def set_wf_not_completed_ids_to_wf(obj, skip_blocked=True, skip_halted=False):
