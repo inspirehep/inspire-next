@@ -1148,7 +1148,7 @@ requests = ">=2.2.0"
 
 [[package]]
 name = "hepcrawl"
-version = "13.0.38"
+version = "13.0.39"
 description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)."
 category = "main"
 optional = false
@@ -1165,6 +1165,7 @@ furl = ">=0.4.95"
 inspire-utils = ">=3.0.0,<4.0"
 python-scrapyd-api = ">=2.0.1"
 amqp = ">2.2.0,<2.3.0 || >2.3.0,<3.0"
+sentry-sdk = "1.3.0"
 six = ">=1.9.0"
 redis = ">=2.10.5"
 celery = ">=4.1"
@@ -1185,8 +1186,7 @@ scrapyd = "1.1.0"
 
 [package.extras]
 docs = ["Sphinx (>=1.5,<2.0)", "sphinxcontrib-napoleon (>=0.6.1)"]
-all = ["Sphinx (>=1.5,<2.0)", "sphinxcontrib-napoleon (>=0.6.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (==3.3.0)", "freezegun (>=0.3.9)", "isort (==4.2.2)", "mock (>=2.0.0,<3.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pyyaml", "sentry-sdk (==1.3.0)"]
-sentry = ["sentry-sdk (==1.3.0)"]
+all = ["Sphinx (>=1.5,<2.0)", "sphinxcontrib-napoleon (>=0.6.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (==3.3.0)", "freezegun (>=0.3.9)", "isort (==4.2.2)", "mock (>=2.0.0,<3.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pyyaml"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (==3.3.0)", "freezegun (>=0.3.9)", "isort (==4.2.2)", "mock (>=2.0.0,<3.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pyyaml"]
 
 [[package]]
@@ -3494,6 +3494,35 @@ Scrapy = ">=0.17"
 six = "*"
 
 [[package]]
+name = "sentry-sdk"
+version = "1.3.0"
+description = "Python client for Sentry (https://sentry.io)"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+certifi = "*"
+urllib3 = ">=1.10.0"
+
+[package.extras]
+celery = ["celery (>=3)"]
+sqlalchemy = ["sqlalchemy (>=1.2)"]
+rq = ["rq (>=0.6)"]
+aiohttp = ["aiohttp (>=3.5)"]
+pyspark = ["pyspark (>=2.4.4)"]
+flask = ["flask (>=0.11)", "blinker (>=1.1)"]
+pure_eval = ["pure-eval", "executing", "asttokens"]
+django = ["django (>=1.8)"]
+chalice = ["chalice (>=1.16.0)"]
+beam = ["apache-beam (>=2.12)"]
+tornado = ["tornado (>=5)"]
+bottle = ["bottle (>=0.12.13)"]
+sanic = ["sanic (>=0.8)"]
+falcon = ["falcon (>=1.4)"]
+httpx = ["httpx (>=0.16.0)"]
+
+[[package]]
 name = "service-identity"
 version = "18.1.0"
 description = "Service identity verification for pyOpenSSL & cryptography."
@@ -4169,7 +4198,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "8991ee23c4305bd782a697cb18ffd9e9d14dd53136258b08e4dc62fc93dd3414"
+content-hash = "c4d4df285c70801d7376cf0e5e18b95ac290acd9c28350b6bfdd6c68fef436c1"
 
 [metadata.files]
 alabaster = [
@@ -4627,8 +4656,8 @@ harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
 hepcrawl = [
-    {file = "hepcrawl-13.0.38-py2.py3-none-any.whl", hash = "sha256:f45edabaf7b7ea3feaba4be0519f54ccf7701128005393ce7c87b8a8aa5157ca"},
-    {file = "hepcrawl-13.0.38.tar.gz", hash = "sha256:2753b0ecc84aa33c14b506dff0578fb216807a490128a071c7bae90bb8188ef7"},
+    {file = "hepcrawl-13.0.39-py2.py3-none-any.whl", hash = "sha256:c50fca3f667a05a586e890dc655a1efc1fbe33fe5b37d283a7ac60fbdaff2023"},
+    {file = "hepcrawl-13.0.39.tar.gz", hash = "sha256:7718c47e54a37d519616495c6da92ddaebe27ecdc48606cedd89f48d36258fdd"},
 ]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
@@ -5461,6 +5490,10 @@ scrapyd = [
 scrapyd-client = [
     {file = "scrapyd-client-1.1.0.tar.gz", hash = "sha256:e547475c5c8dbd811e2cc4141a0e7b4ba47600e9980c59df4f831bb60b94e4cb"},
     {file = "scrapyd_client-1.1.0-py2.py3-none-any.whl", hash = "sha256:caa0f5369c2e1efa7b79c309afb9819b2518870c5f4f2caf84d3e474cd6a9890"},
+]
+sentry-sdk = [
+    {file = "sentry-sdk-1.3.0.tar.gz", hash = "sha256:5210a712dd57d88d225c1fc3fe3a3626fee493637bcd54e204826cf04b8d769c"},
+    {file = "sentry_sdk-1.3.0-py2.py3-none-any.whl", hash = "sha256:6864dcb6f7dec692635e5518c2a5c80010adf673c70340817f1a1b713d65bb41"},
 ]
 service-identity = [
     {file = "service_identity-18.1.0-py2.py3-none-any.whl", hash = "sha256:001c0707759cb3de7e49c078a7c0c9cd12594161d3bf06b9c254fdcb1a60dc36"},
