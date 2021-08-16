@@ -28,13 +28,15 @@ import mock
 import pkg_resources
 import requests_mock
 
+from invenio_search import current_search
 from invenio_workflows import (
     start,
     workflow_object_class,
+    ObjectStatus
 )
 
 from mocks import fake_beard_api_request, fake_download_file, fake_magpie_api_request
-from workflow_utils import build_workflow
+from workflow_utils import build_workflow, check_wf_state
 
 
 from inspirehep.modules.workflows.tasks.actions import mark
@@ -338,6 +340,8 @@ def test_run_next_wf_is_not_starting_core_selection_wfs(check_if_france_in_fullt
     mark('auto-approved', True)(workflow, None)
     wf.callback_pos = [34, 1, 13]
     wf.continue_workflow()
+    check_wf_state(wf.id, ObjectStatus.COMPLETED)
+
     workflow = build_workflow(record)
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri("GET", 'http://export.arxiv.org/pdf/1802.08709.pdf',
@@ -348,6 +352,7 @@ def test_run_next_wf_is_not_starting_core_selection_wfs(check_if_france_in_fullt
                                      content=pkg_resources.resource_string(
                                          __name__, os.path.join('fixtures', '1802.08709.pdf')), )
         requests_mocker.register_uri("POST", "http://grobid_url.local/api/processHeaderDocument")
+        current_search.flush_and_refresh('holdingpen-hep')
         start("article", object_id=workflow.id)
     matched = set_wf_not_completed_ids_to_wf(workflow)
     assert matched == []

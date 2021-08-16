@@ -22,6 +22,8 @@
 
 set -e
 
-inspirehep db drop --yes-i-know
-inspirehep alembic upgrade
-inspirehep fixtures init
+poetry run inspirehep db drop --yes-i-know
+poetry run inspirehep alembic upgrade
+poetry run inspirehep index destroy --force --yes-i-know
+poetry run inspirehep index init
+poetry run inspirehep fixtures init
