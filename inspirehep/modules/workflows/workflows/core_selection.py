@@ -38,7 +38,7 @@ class CoreSelection(object):
         do_not_repeat('create_ticket_curator_core_publisher')(
             create_ticket(
                 template='literaturesuggest/tickets/curation_core.html',
-                queue='HEP_publishing',
+                queue='HEP_curation',
                 context_factory=curation_ticket_context,
                 ticket_id_key='curation_ticket_id',
             ),
