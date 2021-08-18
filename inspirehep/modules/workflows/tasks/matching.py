@@ -32,10 +32,12 @@ from invenio_db import db
 from invenio_workflows import workflow_object_class, WorkflowEngine, \
     ObjectStatus
 from invenio_workflows.errors import WorkflowsError
+import re
 
 from inspire_matcher.api import match
 from inspire_utils.dedupers import dedupe_list
 from inspirehep.modules.workflows.tasks.actions import mark, save_workflow
+from copy import deepcopy, copy
 
 from ..utils import with_debug_logging
 
@@ -87,9 +89,15 @@ def fuzzy_match(obj, eng):
     """
     if not current_app.config.get('FEATURE_FLAG_ENABLE_FUZZY_MATCHER'):
         return False
-
+    math_ml_latex_regex = r"(<math(.*?)<\/math>|(?<!\\)\$.*?(?<!\\)\$|(?<!\\)\\(.*?(?<!\\)\\)|(?<!\\)\\[.*?(?<!\\)\\])"
     fuzzy_match_config = current_app.config['FUZZY_MATCH']
-    matches = dedupe_list(match(obj.data, fuzzy_match_config))
+    obj_data_without_math_ml_latex = copy(obj.data)
+    if "abstracts" in obj.data:
+        abstract_dup = deepcopy(obj.data["abstracts"])
+        for abstract in abstract_dup:
+            abstract['value'] = re.sub(math_ml_latex_regex, '', abstract['value'])
+        obj_data_without_math_ml_latex["abstracts"] = abstract_dup
+    matches = dedupe_list(match(obj_data_without_math_ml_latex, fuzzy_match_config))
     record_ids = [_get_hep_record_brief(el['_source']) for el in matches]
     obj.extra_data.setdefault('matches', {})['fuzzy'] = record_ids[0:5]
     return bool(record_ids)
