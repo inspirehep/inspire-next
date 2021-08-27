@@ -1598,3 +1598,26 @@ def test_refextract_when_document_type_is_xml(
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
     refextract(obj, None)
     assert not obj.data.get('references')
+
+
+@mock.patch('inspirehep.modules.records.api.InspireRecord.files')
+def test_url_is_correctly_escaped(mock_files, isolated_app):
+    record_json = {
+        'documents': [
+            {
+                'key':'1605.03844.pdf',
+                'url': 'http://export.arxiv/org/pdf/1605.03844'
+            }
+        ],
+    }
+    record = TestRecordMetadata.create_from_kwargs(json=record_json).inspire_record
+    file_key = '0146-6410%2881%2990035-1.xml'
+    document = {
+        u'fulltext': True,
+        u'hidden': True,
+        u'source': u'Elsevier B.V.'
+    }
+    obj = workflow_object_class.create(data=documents, id_user=1, data_type="hep")
+    record.download_documents(record, None)
+    document_url = record['documents'][0]['url']
+    assert document_url.endswith("0146-6410%252881%252990035-1.xml")

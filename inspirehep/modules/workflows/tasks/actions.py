@@ -30,6 +30,7 @@ import re
 from elasticsearch_dsl import Q, MultiSearch, Search
 from invenio_search import current_search_client
 from urlparse import urljoin
+from urllib import quote
 
 import sys
 import time
@@ -421,7 +422,7 @@ def download_documents(obj, eng):
             )
         if downloaded:
             document['url'] = '/api/files/{bucket}/{key}'.format(
-                bucket=obj.files[filename].bucket_id, key=filename)
+                bucket=obj.files[filename].bucket_id, key=quote(filename))
             obj.log.info('Document downloaded from %s', url)
         else:
             obj.log.error(
