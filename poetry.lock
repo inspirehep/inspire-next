@@ -1148,7 +1148,7 @@ requests = ">=2.2.0"
 
 [[package]]
 name = "hepcrawl"
-version = "13.0.39"
+version = "13.0.41"
 description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)."
 category = "main"
 optional = false
@@ -4198,7 +4198,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "c4d4df285c70801d7376cf0e5e18b95ac290acd9c28350b6bfdd6c68fef436c1"
+content-hash = "d86a8d142ad308a99c1aaf658b9a1e43c3eab46fe9403ec4713f13e3aae74b14"
 
 [metadata.files]
 alabaster = [
@@ -4656,8 +4656,8 @@ harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
 hepcrawl = [
-    {file = "hepcrawl-13.0.39-py2.py3-none-any.whl", hash = "sha256:c50fca3f667a05a586e890dc655a1efc1fbe33fe5b37d283a7ac60fbdaff2023"},
-    {file = "hepcrawl-13.0.39.tar.gz", hash = "sha256:7718c47e54a37d519616495c6da92ddaebe27ecdc48606cedd89f48d36258fdd"},
+    {file = "hepcrawl-13.0.41-py2.py3-none-any.whl", hash = "sha256:7c38685600af9db573965bd427c10cd83b88177014668a6ff77ec76cf0da77cc"},
+    {file = "hepcrawl-13.0.41.tar.gz", hash = "sha256:a08d0a209107effe45a5072c3674f7118eed1fbd2ea55111b580255ab27b548f"},
 ]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
