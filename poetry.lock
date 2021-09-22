@@ -17,8 +17,8 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 [package.dependencies]
 Mako = "*"
 python-dateutil = "*"
-SQLAlchemy = ">=1.1.0"
 python-editor = ">=0.3"
+SQLAlchemy = ">=1.1.0"
 
 [[package]]
 name = "amqp"
@@ -62,8 +62,8 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [package.dependencies]
-python-dateutil = "*"
 "backports.functools-lru-cache" = {version = ">=1.2.1", markers = "python_version == \"2.7\""}
+python-dateutil = "*"
 
 [[package]]
 name = "atomicwrites"
@@ -82,10 +82,10 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.extras]
-docs = ["sphinx", "zope.interface"]
-tests = ["coverage", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
 azure-pipelines = ["coverage", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "pytest-azurepipelines"]
 dev = ["coverage", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "sphinx", "pre-commit"]
+docs = ["sphinx", "zope.interface"]
+tests = ["coverage", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
 
 [[package]]
 name = "automat"
@@ -96,8 +96,8 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-six = "*"
 attrs = ">=19.2.0"
+six = "*"
 
 [package.extras]
 visualize = ["graphviz (>0.5.1)", "Twisted (>=16.1.1)"]
@@ -133,14 +133,6 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
-name = "backports-abc"
-version = "0.5"
-description = "A backport of recent additions to the 'collections.abc' module."
-category = "main"
-optional = true
-python-versions = "*"
-
-[[package]]
 name = "backports.functools-lru-cache"
 version = "1.6.1"
 description = "Backport of functools.lru_cache"
@@ -158,14 +150,6 @@ version = "1.0.0"
 description = "A backport of the get_terminal_size function from Python 3.3's shutil."
 category = "main"
 optional = false
-python-versions = "*"
-
-[[package]]
-name = "backports.ssl-match-hostname"
-version = "3.7.0.1"
-description = "The ssl.match_hostname() function from Python 3.5"
-category = "main"
-optional = true
 python-versions = "*"
 
 [[package]]
@@ -199,8 +183,8 @@ python-versions = "*"
 six = ">=1.10"
 
 [package.extras]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-runner (>=2.7.0)", "pytest (>=3.6.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-runner (>=2.7.0)", "pytest (>=3.6.0)"]
 
 [[package]]
@@ -212,13 +196,13 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-unidecode = "*"
-six = "*"
+fuzzy = "*"
+jellyfish = "*"
+numpy = ">=1.9"
 scikit-learn = ">=0.15.2"
 scipy = ">=0.14"
-fuzzy = "*"
-numpy = ">=1.9"
-jellyfish = "*"
+six = "*"
+unidecode = "*"
 
 [[package]]
 name = "beautifulsoup4"
@@ -232,8 +216,8 @@ python-versions = "*"
 soupsieve = ">=1.2"
 
 [package.extras]
-lxml = ["lxml"]
 html5lib = ["html5lib"]
+lxml = ["lxml"]
 
 [[package]]
 name = "billiard"
@@ -264,8 +248,8 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [package.dependencies]
 packaging = "*"
-webencodings = "*"
 six = ">=1.9.0"
+webencodings = "*"
 
 [[package]]
 name = "blinker"
@@ -284,8 +268,8 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-jmespath = ">=0.7.1,<1.0.0"
 botocore = ">=1.17.61,<1.18.0"
+jmespath = ">=0.7.1,<1.0.0"
 s3transfer = ">=0.3.0,<0.4.0"
 
 [[package]]
@@ -297,9 +281,9 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-python-dateutil = ">=2.1,<3.0.0"
 docutils = ">=0.10,<0.16"
 jmespath = ">=0.7.1,<1.0.0"
+python-dateutil = ">=2.1,<3.0.0"
 urllib3 = {version = ">=1.20,<1.26", markers = "python_version != \"3.4\""}
 
 [[package]]
@@ -311,44 +295,44 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*,"
 
 [package.dependencies]
-pytz = ">0.0-dev"
 billiard = ">=3.6.3.0,<4.0"
-vine = "1.3.0"
 kombu = ">=4.6.8,<4.7"
+pytz = ">0.0-dev"
+vine = "1.3.0"
 
 [package.extras]
-redis = ["redis (>=3.2.0)"]
-consul = ["python-consul"]
-zookeeper = ["kazoo (>=1.3.1)"]
-brotli = ["brotli (>=1.0.0)", "brotlipy (>=0.7.0)"]
-gevent = ["gevent"]
-azureblockblob = ["azure-storage (==0.36.0)", "azure-common (==1.1.5)", "azure-storage-common (==1.1.0)"]
-cassandra = ["cassandra-driver"]
-lzma = ["backports.lzma"]
-msgpack = ["msgpack"]
-eventlet = ["eventlet (>=0.24.1)"]
-s3 = ["boto3 (>=1.9.125)"]
-couchdb = ["pycouchdb"]
 arangodb = ["pyArango (>=1.3.2)"]
-dynamodb = ["boto3 (>=1.9.178)"]
-yaml = ["PyYAML (>=3.10)"]
-sqs = ["boto3 (>=1.9.125)", "pycurl (==7.43.0.2)"]
-zstd = ["zstandard"]
-riak = ["riak (>=2.0)"]
-sqlalchemy = ["sqlalchemy"]
-librabbitmq = ["librabbitmq (>=1.5.0)"]
-mongodb = ["pymongo[srv] (>=3.3.0)"]
-pymemcache = ["python-memcached"]
 auth = ["cryptography"]
+azureblockblob = ["azure-storage (==0.36.0)", "azure-common (==1.1.5)", "azure-storage-common (==1.1.0)"]
+brotli = ["brotli (>=1.0.0)", "brotlipy (>=0.7.0)"]
+cassandra = ["cassandra-driver"]
+consul = ["python-consul"]
+cosmosdbsql = ["pydocumentdb (==2.3.2)"]
+couchbase = ["couchbase", "couchbase-cffi"]
+couchdb = ["pycouchdb"]
+django = ["Django (>=1.11)"]
+dynamodb = ["boto3 (>=1.9.178)"]
+elasticsearch = ["elasticsearch"]
+eventlet = ["eventlet (>=0.24.1)"]
+gevent = ["gevent"]
+librabbitmq = ["librabbitmq (>=1.5.0)"]
+lzma = ["backports.lzma"]
+memcache = ["pylibmc"]
+mongodb = ["pymongo[srv] (>=3.3.0)"]
+msgpack = ["msgpack"]
+pymemcache = ["python-memcached"]
+pyro = ["pyro4"]
+redis = ["redis (>=3.2.0)"]
+riak = ["riak (>=2.0)"]
+s3 = ["boto3 (>=1.9.125)"]
 slmq = ["softlayer-messaging (>=1.0.3)"]
 solar = ["ephem"]
-cosmosdbsql = ["pydocumentdb (==2.3.2)"]
+sqlalchemy = ["sqlalchemy"]
+sqs = ["boto3 (>=1.9.125)", "pycurl (==7.43.0.2)"]
 tblib = ["tblib (>=1.3.0)", "tblib (>=1.5.0)"]
-couchbase = ["couchbase", "couchbase-cffi"]
-django = ["Django (>=1.11)"]
-pyro = ["pyro4"]
-memcache = ["pylibmc"]
-elasticsearch = ["elasticsearch"]
+yaml = ["PyYAML (>=3.10)"]
+zookeeper = ["kazoo (>=1.3.1)"]
+zstd = ["zstandard"]
 
 [[package]]
 name = "certifi"
@@ -412,9 +396,6 @@ category = "main"
 optional = false
 python-versions = "*"
 
-[package.dependencies]
-six = "*"
-
 [[package]]
 name = "configparser"
 version = "4.0.2"
@@ -452,14 +433,14 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-poyo = ">=0.1.0"
-jinja2-time = ">=0.1.0"
-jinja2 = ">=2.7"
-whichcraft = ">=0.4.0"
-requests = ">=2.18.0"
-future = ">=0.15.2"
 binaryornot = ">=0.2.0"
 click = ">=5.0"
+future = ">=0.15.2"
+jinja2 = ">=2.7"
+jinja2-time = ">=0.1.0"
+poyo = ">=0.1.0"
+requests = ">=2.18.0"
+whichcraft = ">=0.4.0"
 
 [[package]]
 name = "coverage"
@@ -478,17 +459,17 @@ optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 
 [package.dependencies]
+cffi = ">=1.8,<1.11.3 || >1.11.3"
 enum34 = {version = "*", markers = "python_version < \"3\""}
 ipaddress = {version = "*", markers = "python_version < \"3\""}
 six = ">=1.4.1"
-cffi = ">=1.8,<1.11.3 || >1.11.3"
 
 [package.extras]
-test = ["pytest (>=3.6.0,!=3.9.0,!=3.9.1,!=3.9.2)", "pretend", "iso8601", "pytz", "hypothesis (>=1.11.4,!=3.79.2)"]
-pep8test = ["flake8", "flake8-import-order", "pep8-naming"]
-idna = ["idna (>=2.1)"]
-docstest = ["doc8", "pyenchant (>=1.6.11)", "twine (>=1.12.0)", "sphinxcontrib-spelling (>=4.0.1)"]
 docs = ["sphinx (>=1.6.5,!=1.8.0)", "sphinx-rtd-theme"]
+docstest = ["doc8", "pyenchant (>=1.6.11)", "twine (>=1.12.0)", "sphinxcontrib-spelling (>=4.0.1)"]
+idna = ["idna (>=2.1)"]
+pep8test = ["flake8", "flake8-import-order", "pep8-naming"]
+test = ["pytest (>=3.6.0,!=3.9.0,!=3.9.1,!=3.9.2)", "pretend", "iso8601", "pytz", "hypothesis (>=1.11.4,!=3.79.2)"]
 
 [[package]]
 name = "cssselect"
@@ -543,15 +524,15 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-lxml = ">=3.4"
 click = ">=5.0.0"
+lxml = ">=3.4"
 simplejson = ">=3.8.1"
 
 [package.extras]
-docs = ["Sphinx (>=1.5.2)"]
 all = ["Sphinx (>=1.5.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0.0)", "isort (>=4.2.2)", "jsonschema (>=2.5.1)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "jsonschema (>=2.5.1)", "Sphinx (>=1.5.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0.0)", "isort (>=4.2.2)", "jsonschema (>=2.5.1)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "jsonschema (>=2.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0.0)", "isort (>=4.2.2)", "jsonschema (>=2.5.1)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.5.2)"]
 jsonschema = ["jsonschema (>=2.5.1)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0.0)", "isort (>=4.2.2)", "jsonschema (>=2.5.1)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "dulwich"
@@ -590,8 +571,8 @@ python-versions = "*"
 urllib3 = ">=1.21.1"
 
 [package.extras]
-requests = ["requests (>=2.4.0,<3.0.0)"]
 develop = ["requests (>=2.0.0,<3.0.0)", "nose", "coverage", "mock", "pyaml", "nosexcover", "sphinx (<1.7)", "sphinx-rtd-theme"]
+requests = ["requests (>=2.4.0,<3.0.0)"]
 
 [[package]]
 name = "elasticsearch-dsl"
@@ -602,10 +583,10 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.dependencies]
-python-dateutil = "*"
-ipaddress = {version = "*", markers = "python_version < \"3.3\""}
-six = "*"
 elasticsearch = ">=7.0.0,<8.0.0"
+ipaddress = {version = "*", markers = "python_version < \"3.3\""}
+python-dateutil = "*"
+six = "*"
 
 [package.extras]
 develop = ["mock", "pytest (>=3.0.0)", "pytest-cov", "pytest-mock", "pytz", "coverage (<5.0.0)", "sphinx", "sphinx-rtd-theme"]
@@ -638,14 +619,14 @@ optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.dependencies]
+configparser = {version = "*", markers = "python_version < \"3.2\""}
 entrypoints = ">=0.3.0,<0.4.0"
-pyflakes = ">=2.1.0,<2.2.0"
 enum34 = {version = "*", markers = "python_version < \"3.4\""}
-typing = {version = "*", markers = "python_version < \"3.5\""}
+functools32 = {version = "*", markers = "python_version < \"3.2\""}
 mccabe = ">=0.6.0,<0.7.0"
 pycodestyle = ">=2.5.0,<2.6.0"
-functools32 = {version = "*", markers = "python_version < \"3.2\""}
-configparser = {version = "*", markers = "python_version < \"3.2\""}
+pyflakes = ">=2.1.0,<2.2.0"
+typing = {version = "*", markers = "python_version < \"3.5\""}
 
 [[package]]
 name = "flake8-future-import"
@@ -667,9 +648,9 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
+click = ">=2.0"
 itsdangerous = ">=0.21"
 Jinja2 = ">=2.4"
-click = ">=2.0"
 Werkzeug = ">=0.7,<1.0"
 
 [[package]]
@@ -685,8 +666,8 @@ Flask = ">=0.7"
 wtforms = "*"
 
 [package.extras]
-azure = ["azure-storage-blob"]
 aws = ["boto"]
+azure = ["azure-storage-blob"]
 
 [[package]]
 name = "flask-alembic"
@@ -697,10 +678,10 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask = ">=0.10"
-SQLAlchemy = "*"
-Flask-SQLAlchemy = "*"
 alembic = ">=0.8"
+Flask = ">=0.10"
+Flask-SQLAlchemy = "*"
+SQLAlchemy = "*"
 
 [[package]]
 name = "flask-assets"
@@ -723,10 +704,10 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask = "*"
 Babel = ">=1.0"
-speaklater = ">=1.2"
+Flask = "*"
 Jinja2 = ">=2.5"
+speaklater = ">=1.2"
 
 [[package]]
 name = "flask-breadcrumbs"
@@ -742,8 +723,8 @@ Flask-Menu = ">=0.2"
 six = ">=1.10.0"
 
 [package.extras]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -770,8 +751,8 @@ celery = {version = ">=3.1", markers = "python_version < \"3.7\""}
 Flask = ">=0.10"
 
 [package.extras]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.4)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "pytest-mock (>=1.6.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.4)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "pytest-mock (>=1.6.0)"]
 
 [[package]]
@@ -783,12 +764,12 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask = ">=0.10"
 click = ">=2.0"
+Flask = ">=0.10"
 
 [package.extras]
-docs = ["Sphinx (>=1.3)"]
 all = ["Sphinx (>=1.3)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.3)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.3)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -826,8 +807,8 @@ python-versions = "*"
 Flask = ">=0.10"
 
 [package.extras]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -841,8 +822,8 @@ python-versions = "*"
 [package.dependencies]
 Flask = ">=0.8"
 itsdangerous = ">=0.20"
-six = "*"
 simplekv = ">=0.9.2"
+six = "*"
 werkzeug = "*"
 
 [[package]]
@@ -865,8 +846,8 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask = "*"
 blinker = "*"
+Flask = "*"
 
 [[package]]
 name = "flask-menu"
@@ -881,10 +862,10 @@ Flask = ">=0.10.1"
 six = ">=1.9.0"
 
 [package.extras]
-docs = ["sphinx (>=1.3)"]
 all = ["sphinx (>=1.3)", "flask-classy (>=0.6.10)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)"]
-tests = ["flask-classy (>=0.6.10)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)"]
 classy = ["flask-classy (>=0.6.10)"]
+docs = ["sphinx (>=1.3)"]
+tests = ["flask-classy (>=0.6.10)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)"]
 
 [[package]]
 name = "flask-oauthlib"
@@ -908,8 +889,8 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask = "*"
 blinker = "*"
+Flask = "*"
 
 [[package]]
 name = "flask-security"
@@ -920,18 +901,18 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
+Flask = ">=0.11"
+Flask-BabelEx = ">=0.9.3"
 Flask-Login = ">=0.3.0"
 Flask-Mail = ">=0.7.3"
-passlib = ">=1.7"
-Flask = ">=0.11"
-Flask-WTF = ">=0.13.1"
-Flask-BabelEx = ">=0.9.3"
 Flask-Principal = ">=0.3.3"
+Flask-WTF = ">=0.13.1"
 itsdangerous = ">=0.21"
+passlib = ">=1.7"
 
 [package.extras]
-docs = ["Flask-Sphinx-Themes (>=1.0.1)", "Sphinx (>=1.4.2)"]
 all = ["Flask-Sphinx-Themes (>=1.0.1)", "Sphinx (>=1.4.2)", "Flask-CLI (>=0.4.0)", "Flask-Mongoengine (>=0.7.0)", "Flask-Peewee (>=0.6.5)", "Flask-SQLAlchemy (>=1.0)", "bcrypt (>=1.0.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "mongoengine (>=0.10.0)", "pony (>=0.7.1)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.4.0)", "pytest-flakes (>=1.0.1)", "pytest-pep8 (>=1.0.6)", "pytest-translations (>=1.0.4)", "pytest (>=3.0.5)", "sqlalchemy (>=0.8.0)", "Flask-Sphinx-Themes (>=1.0.1)", "Sphinx (>=1.4.2)", "Flask-CLI (>=0.4.0)", "Flask-Mongoengine (>=0.7.0)", "Flask-Peewee (>=0.6.5)", "Flask-SQLAlchemy (>=1.0)", "bcrypt (>=1.0.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "mongoengine (>=0.10.0)", "pony (>=0.7.1)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.4.0)", "pytest-flakes (>=1.0.1)", "pytest-pep8 (>=1.0.6)", "pytest-translations (>=1.0.4)", "pytest (>=3.0.5)", "sqlalchemy (>=0.8.0)"]
+docs = ["Flask-Sphinx-Themes (>=1.0.1)", "Sphinx (>=1.4.2)"]
 tests = ["Flask-CLI (>=0.4.0)", "Flask-Mongoengine (>=0.7.0)", "Flask-Peewee (>=0.6.5)", "Flask-SQLAlchemy (>=1.0)", "bcrypt (>=1.0.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "mongoengine (>=0.10.0)", "pony (>=0.7.1)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.4.0)", "pytest-flakes (>=1.0.1)", "pytest-pep8 (>=1.0.6)", "pytest-translations (>=1.0.4)", "pytest (>=3.0.5)", "sqlalchemy (>=0.8.0)"]
 
 [[package]]
@@ -943,9 +924,9 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
+click = "*"
 flask = ">=0.11"
 IPython = ">=5.0.0"
-click = "*"
 
 [[package]]
 name = "Flask-SQLAlchemy"
@@ -975,12 +956,12 @@ python-versions = "*"
 
 [package.dependencies]
 Flask = ">=0.11"
-pywebpack = ">=1.0.0"
 pynpm = ">=0.1.1"
+pywebpack = ">=1.0.0"
 
 [package.extras]
-docs = ["Sphinx (>=1.5.1)", "sphinx-click (>=1.4.0)"]
 all = ["Sphinx (>=1.5.1)", "sphinx-click (>=1.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "sphinx-click (>=1.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.5.1)", "sphinx-click (>=1.4.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -1005,10 +986,10 @@ optional = true
 python-versions = "*"
 
 [package.dependencies]
-celery = ">=3.1.0"
 babel = ">=1.0,<3.0.0"
-pytz = "*"
+celery = ">=3.1.0"
 futures = {version = "*", markers = "python_version == \"2.7\""}
+pytz = "*"
 tornado = ">=4.2.0,<6.0.0"
 
 [[package]]
@@ -1087,8 +1068,8 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-six = ">=1.8.0"
 orderedmultidict = ">=1.0.1"
+six = ">=1.8.0"
 
 [[package]]
 name = "future"
@@ -1123,9 +1104,9 @@ optional = true
 python-versions = ">=2.6, !=3.0.*, !=3.1.*"
 
 [package.extras]
-tornado = ["tornado (>=0.2)"]
-gevent = ["gevent (>=0.13)"]
 eventlet = ["eventlet (>=0.9.7)"]
+gevent = ["gevent (>=0.13)"]
+tornado = ["tornado (>=0.2)"]
 
 [[package]]
 name = "harvestingkit"
@@ -1136,15 +1117,15 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Unidecode = ">=0.04.14"
-lxml = ">=3.1.2"
-httpretty = ">=0.8.3"
 argcomplete = ">=0.8.0"
-six = ">=1.7.3"
-HTMLParser = ">=0.0.2"
-python-dateutil = ">=1.5"
 beautifulsoup4 = ">=4.1.3"
+HTMLParser = ">=0.0.2"
+httpretty = ">=0.8.3"
+lxml = ">=3.1.2"
+python-dateutil = ">=1.5"
 requests = ">=2.2.0"
+six = ">=1.7.3"
+Unidecode = ">=0.04.14"
 
 [[package]]
 name = "hepcrawl"
@@ -1155,38 +1136,38 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-LinkHeader = ">=0.4.3"
-inspire-schemas = ">=61.3,<62.0"
-boto3 = ">=1.14,<2.0"
-scrapy-sentry = ">=0.8.0,<1.0"
-Scrapy = ">=1.6,<1.7.0"
-pylatexenc = ">=2.9,<3.0"
-furl = ">=0.4.95"
-inspire-utils = ">=3.0.0,<4.0"
-python-scrapyd-api = ">=2.0.1"
 amqp = ">2.2.0,<2.3.0 || >2.3.0,<3.0"
-sentry-sdk = "1.3.0"
-six = ">=1.9.0"
-redis = ">=2.10.5"
-celery = ">=4.1"
-"backports.tempfile" = "1.0"
-queuelib = "1.5.0"
-ftputil = ">=3.3.1,<4.0"
 autosemver = ">=0.2,<1.0"
-Twisted = ">=18.9.0,<19.0"
-python-dateutil = ">=2.7.0,<3.0"
-scrapy-crawl-once = ">=0.1.1,<1.0"
+"backports.tempfile" = "1.0"
+boto3 = ">=1.14,<2.0"
+celery = ">=4.1"
+ftputil = ">=3.3.1,<4.0"
+furl = ">=0.4.95"
 harvestingkit = ">=0.6.12"
-Sickle = ">=0.6.2,<1.0"
 inspire-dojson = ">=63.0,<64.0"
-requests = ">=2.22.0,<3.0"
+inspire-schemas = ">=61.3,<62.0"
+inspire-utils = ">=3.0.0,<4.0"
+LinkHeader = ">=0.4.3"
 pyasn1 = ">=0.1.8"
-scrapyd-client = ">=1.0.1"
+pylatexenc = ">=2.9,<3.0"
+python-dateutil = ">=2.7.0,<3.0"
+python-scrapyd-api = ">=2.0.1"
+queuelib = "1.5.0"
+redis = ">=2.10.5"
+requests = ">=2.22.0,<3.0"
+Scrapy = ">=1.6,<1.7.0"
+scrapy-crawl-once = ">=0.1.1,<1.0"
+scrapy-sentry = ">=0.8.0,<1.0"
 scrapyd = "1.1.0"
+scrapyd-client = ">=1.0.1"
+sentry-sdk = "1.3.0"
+Sickle = ">=0.6.2,<1.0"
+six = ">=1.9.0"
+Twisted = ">=18.9.0,<19.0"
 
 [package.extras]
-docs = ["Sphinx (>=1.5,<2.0)", "sphinxcontrib-napoleon (>=0.6.1)"]
 all = ["Sphinx (>=1.5,<2.0)", "sphinxcontrib-napoleon (>=0.6.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (==3.3.0)", "freezegun (>=0.3.9)", "isort (==4.2.2)", "mock (>=2.0.0,<3.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pyyaml"]
+docs = ["Sphinx (>=1.5,<2.0)", "sphinxcontrib-napoleon (>=0.6.1)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (==3.3.0)", "freezegun (>=0.3.9)", "isort (==4.2.2)", "mock (>=2.0.0,<3.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pyyaml"]
 
 [[package]]
@@ -1212,15 +1193,15 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-webencodings = "*"
 six = ">=1.9"
+webencodings = "*"
 
 [package.extras]
 all = ["genshi", "chardet (>=2.2)", "datrie", "lxml"]
-datrie = ["datrie"]
 chardet = ["chardet (>=2.2)"]
-lxml = ["lxml"]
+datrie = ["datrie"]
 genshi = ["genshi"]
+lxml = ["lxml"]
 
 [[package]]
 name = "htmlparser"
@@ -1277,12 +1258,12 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-six = ">=1.10"
 isbnid-fork = ">=0.4.4"
+six = ">=1.10"
 
 [package.extras]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-runner (>=2.6.2)", "pytest (>=3.6.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-runner (>=2.6.2)", "pytest (>=3.6.0)"]
 
 [[package]]
@@ -1302,10 +1283,10 @@ optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
 [package.dependencies]
+configparser = {version = ">=3.5", markers = "python_version < \"3\""}
 contextlib2 = {version = "*", markers = "python_version < \"3\""}
 pathlib2 = {version = "*", markers = "python_version < \"3\""}
 zipp = ">=0.5"
-configparser = {version = ">=3.5", markers = "python_version < \"3\""}
 
 [package.extras]
 docs = ["sphinx", "rst.linker"]
@@ -1343,8 +1324,8 @@ python-versions = "*"
 
 [package.dependencies]
 python-dateutil = ">=2.6.0"
-requests = ">=2.17.0"
 pytz = "*"
+requests = ">=2.17.0"
 six = ">=1.10.0"
 
 [package.extras]
@@ -1359,24 +1340,24 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-invenio_workflows = ">=7.0,<8.0"
 autosemver = ">=0.2,<1.0"
-pathlib2 = ">=2.1.0"
-invenio_workflows_ui = ">=2.0.1,<2.1.0"
-Flask = ">=0.12.2"
-six = ">=1.9.0"
 celery = ">=4.1.0,<5.0"
+Flask = ">=0.12.2"
 invenio-celery = ">=1.0.0a3"
 invenio_oaiharvester = ">=1.0.0a3"
+invenio_workflows = ">=7.0,<8.0"
+invenio_workflows_ui = ">=2.0.1,<2.1.0"
+pathlib2 = ">=2.1.0"
 python-scrapyd-api = ">=2.0.1"
+six = ">=1.9.0"
 
 [package.extras]
 all = ["Sphinx (>=1.5,<1.6)", "check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests_mock (>=1.4.0,<2.0)"]
-postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0a9)"]
 docs = ["Sphinx (>=1.5,<1.6)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0a9)"]
+postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0a9)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0a9)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests_mock (>=1.4.0,<2.0)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0a9)"]
 
 [[package]]
 name = "inspire-dojson"
@@ -1387,14 +1368,14 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-langdetect = ">=1.0.7,<2.0"
-inspire-utils = ">=3.0.0,<4.0"
-Flask = ">=0.12.3,<2.0.0"
 dojson = ">=1.3.1,<2.0"
-inspire-schemas = ">=61.4,<62.0"
-pycountry = ">=17.5.4,<18.0"
+Flask = ">=0.12.3,<2.0.0"
 IDUtils = ">=1.0.1,<2.0"
+inspire-schemas = ">=61.4,<62.0"
+inspire-utils = ">=3.0.0,<4.0"
 isbnid-fork = ">=0.5.2,<1.0"
+langdetect = ">=1.0.7,<2.0"
+pycountry = ">=17.5.4,<18.0"
 
 [package.extras]
 all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6,<5.0)", "pytest-cov (>=2.6.1,<3.0)", "unicode-string-literal (>=1.1,<2.0)"]
@@ -1409,11 +1390,11 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-munkres = "1.0.12"
-pyrsistent = ">=0.14.0,<1.0"
+inspire-schemas = ">=61.0,<62.0"
 inspire-utils = ">=3.0.0,<4.0"
 json-merger = {version = "0.7.4", extras = ["contrib"]}
-inspire-schemas = ">=61.0,<62.0"
+munkres = "1.0.12"
+pyrsistent = ">=0.14.0,<1.0"
 
 [package.extras]
 all = ["decorator (>=4.1.2,<5.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.6.1,<3.0)", "pytest (>=3.6.0,<4.0)"]
@@ -1428,19 +1409,19 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-inspire-utils = ">=3.0.0,<4.0"
 Flask = ">=0.12.2,<1.0"
-six = ">=1.11.0,<2.0"
-invenio-search = ">=1.0.0a10"
-Werkzeug = ">=0.12.2,<1.0"
 inspire-json-merger = ">=11.0.0,<12.0"
+inspire-utils = ">=3.0.0,<4.0"
+invenio-search = ">=1.0.0a10"
+six = ">=1.11.0,<2.0"
+Werkzeug = ">=0.12.2,<1.0"
 
 [package.extras]
-elasticsearch5 = ["elasticsearch-dsl (>=5.0,<6.0)", "elasticsearch (>=5.0,<6.0)"]
 all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.5.1,<3.0)", "pytest (>=3.6.0,<4.0)", "unicode-string-literal (>=1.1,<2.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.5.1,<3.0)", "pytest (>=3.6.0,<4.0)", "unicode-string-literal (>=1.1,<2.0)"]
+elasticsearch2 = ["elasticsearch-dsl (>=2.2.0,<3.0)", "elasticsearch (>=2.4.1,<3.0)"]
+elasticsearch5 = ["elasticsearch-dsl (>=5.0,<6.0)", "elasticsearch (>=5.0,<6.0)"]
 elasticsearch7 = ["elasticsearch-dsl (>=7.0,<8.0)", "elasticsearch (>=7.0,<8.0)"]
 tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.5.1,<3.0)", "pytest (>=3.6.0,<4.0)", "unicode-string-literal (>=1.1,<2.0)"]
-elasticsearch2 = ["elasticsearch-dsl (>=2.2.0,<3.0)", "elasticsearch (>=2.4.1,<3.0)"]
 
 [[package]]
 name = "inspire-query-parser"
@@ -1451,11 +1432,11 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-python-dateutil = ">=2.6.1,<3.0"
-six = ">=1.11.0,<2.0"
+inspire-schemas = ">=61.0,<62.0"
 inspire-utils = ">=3.0.0,<4.0"
 pypeg2 = ">=2.15.2,<3.0"
-inspire-schemas = ">=61.0,<62.0"
+python-dateutil = ">=2.6.1,<3.0"
+six = ">=1.11.0,<2.0"
 
 [package.extras]
 all = ["flake8 (>=3.5.0,<4.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.0,<=2.6.0)", "pytest (>=3.2.2,<4.0)"]
@@ -1470,18 +1451,18 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Unidecode = ">=1.0.22,<2.0"
-pyyaml = "*"
-inspire-utils = ">=3.0.0,<4.0"
-pytz = "*"
-rfc3987 = "*"
-urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
 autosemver = "0.5.5"
+bleach = ">=3.2.1,<4.0"
+idutils = "*"
+inspire-utils = ">=3.0.0,<4.0"
 isodate = "*"
 jsonschema = ">=2.6.0,<3.0"
-bleach = ">=3.2.1,<4.0"
+pytz = "*"
+pyyaml = "*"
+rfc3987 = "*"
 six = "*"
-idutils = "*"
+Unidecode = ">=1.0.22,<2.0"
+urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
 
 [package.extras]
 docs = ["jsonschema2rst (>=0.1)", "sphinx"]
@@ -1497,8 +1478,8 @@ python-versions = "*"
 
 [package.dependencies]
 orcid = ">=1.0.3,<2"
-timeexecution = ">=3.3.0,<4"
 pkgsettings = ">=0.12.0,<1.0.0"
+timeexecution = ">=3.3.0,<4"
 
 [[package]]
 name = "inspire-utils"
@@ -1509,12 +1490,12 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Unidecode = ">=1.0.22,<2.0"
-lxml = ">=4.4.0,<5.0"
 babel = ">=2.5.1,<3.0"
-six = ">=1.10.0,<2.0"
+lxml = ">=4.4.0,<5.0"
 nameparser = ">=0.5.3,<1.0"
 python-dateutil = ">=2.6.1,<3.0"
+six = ">=1.10.0,<2.0"
+Unidecode = ">=1.0.22,<2.0"
 
 [package.extras]
 all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.5.1,<3.0)", "pytest (>=4.6.0,<5.0)", "unicode-string-literal (>=1.1,<2.0)"]
@@ -1544,17 +1525,17 @@ python-versions = "*"
 
 [package.dependencies]
 Flask = ">=0.11.1"
+Flask-BabelEx = ">=0.9.3"
 invenio-accounts = ">=1.0.2"
 six = ">=1.10"
-Flask-BabelEx = ">=0.9.3"
 
 [package.extras]
 all = ["Sphinx (>=1.8.4)", "SQLAlchemy-Continuum (>=1.2.1)", "Werkzeug (>=0.11.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.6.0)", "redis (>=2.10.3)"]
-postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 docs = ["Sphinx (>=1.8.4)"]
+mysql = ["invenio-db[mysql] (>=1.0.0)"]
+postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db (>=1.0.0)"]
 tests = ["SQLAlchemy-Continuum (>=1.2.1)", "Werkzeug (>=0.11.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.6.0)", "redis (>=2.10.3)"]
-mysql = ["invenio-db[mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-accounts"
@@ -1565,37 +1546,37 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask = ">=0.11.1"
-ipaddr = {version = ">=2.1.11", markers = "python_version == \"2.7\""}
-Flask-Admin = ">=1.3.0"
-ua-parser = ">=0.7.3"
-maxminddb-geolite2 = ">=2017.404"
-Flask-CeleryExt = ">=0.3.1"
-SQLAlchemy-Utils = ">=0.31.0"
-Flask-WTF = ">=0.13.1"
-passlib = ">=1.7.1"
-redis = ">=2.10.5"
-Flask-KVSession = ">=0.6.1"
-pyjwt = ">=1.5.0"
-Flask-Mail = ">=0.9.1"
 cryptography = ">=2.1.4"
-Flask-Menu = ">=0.4.0"
+Flask = ">=0.11.1"
+Flask-Admin = ">=1.3.0"
 Flask-BabelEx = ">=0.9.3"
 Flask-Breadcrumbs = ">=0.3.0"
-Flask-Security = ">=3.0.0"
+Flask-CeleryExt = ">=0.3.1"
+Flask-KVSession = ">=0.6.1"
 Flask-Login = ">=0.3.0"
-invenio-i18n = ">=1.0.0"
+Flask-Mail = ">=0.9.1"
+Flask-Menu = ">=0.4.0"
+Flask-Security = ">=3.0.0"
+Flask-WTF = ">=0.13.1"
 future = ">=0.16.0"
+invenio-i18n = ">=1.0.0"
+ipaddr = {version = ">=2.1.11", markers = "python_version == \"2.7\""}
+maxminddb-geolite2 = ">=2017.404"
+passlib = ">=1.7.1"
+pyjwt = ">=1.5.0"
+redis = ">=2.10.5"
 simplekv = ">=0.11.2"
+SQLAlchemy-Utils = ">=0.31.0"
+ua-parser = ">=0.7.3"
 
 [package.extras]
 all = ["Sphinx (>=1.4.2,<1.6)", "celery (>=3.1.0,<4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "selenium (>=3.0.1)"]
-postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
-docs = ["Sphinx (>=1.4.2,<1.6)"]
-sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 celery = ["celery (>=3.1.0,<4.0)"]
+docs = ["Sphinx (>=1.4.2,<1.6)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
+postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0)"]
+sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "selenium (>=3.0.1)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-admin"
@@ -1606,17 +1587,17 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask-Login = ">=0.3.0"
-invenio-db = ">=1.0.0"
 Flask = ">=0.11.1"
-Flask-Menu = ">=0.5.0"
 Flask-Admin = ">=1.5.3"
+Flask-Login = ">=0.3.0"
+Flask-Menu = ">=0.5.0"
 Flask-Principal = ">=0.4.0"
+invenio-db = ">=1.0.0"
 
 [package.extras]
 access = ["invenio-access (>=1.0.0)"]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["invenio-access (>=1.0.0)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-accounts (>=1.0.0)", "invenio-theme (>=1.1.1)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-accounts (>=1.0.0)", "invenio-theme (>=1.1.1)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -1628,18 +1609,18 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask-Assets = ">=0.12"
-Flask = ">=0.11.1"
 Babel = ">=1.3"
-speaklater = ">=1.3"
-Flask-WebpackExt = ">=1.0.0"
-webassets = ">=0.12"
-node-semver = ">=0.1.1,<0.2.0"
+Flask = ">=0.11.1"
+Flask-Assets = ">=0.12"
 Flask-Collect = "1.2.2"
+Flask-WebpackExt = ">=1.0.0"
+node-semver = ">=0.1.1,<0.2.0"
+speaklater = ">=1.3"
+webassets = ">=0.12"
 
 [package.extras]
-docs = ["Sphinx (>=1.5.1)"]
 all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)"]
+docs = ["Sphinx (>=1.5.1)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)"]
 
 [[package]]
@@ -1651,13 +1632,13 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask = ">=0.11.1"
 blinker = ">=1.4"
 cookiecutter = ">=1.2.1"
+Flask = ">=0.11.1"
 
 [package.extras]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=2.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)", "invenio-config (>=1.0.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=2.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)", "invenio-config (>=1.0.0)"]
 
 [[package]]
@@ -1673,10 +1654,10 @@ Flask = ">=0.11.1"
 Flask-Caching = ">=1.3.2"
 
 [package.extras]
-docs = ["Sphinx (>=1.5.1)"]
 all = ["Sphinx (>=1.5.1)", "Flask-Login (>=0.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.2.0)", "python-memcached (>=1.58)", "redis (>=2.10.5)", "Sphinx (>=1.5.1)", "Flask-Login (>=0.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.2.0)", "python-memcached (>=1.58)", "redis (>=2.10.5)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.2.0)", "python-memcached (>=1.58)", "redis (>=2.10.5)"]
+docs = ["Sphinx (>=1.5.1)"]
 login = ["Flask-Login (>=0.3.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.2.0)", "python-memcached (>=1.58)", "redis (>=2.10.5)"]
 
 [[package]]
 name = "invenio-celery"
@@ -1688,13 +1669,13 @@ python-versions = "*"
 
 [package.dependencies]
 Flask = ">=0.11"
+Flask-CeleryExt = ">=0.3.0"
 msgpack = ">=0.5.2"
 redis = ">=2.10.0"
-Flask-CeleryExt = ">=0.3.0"
 
 [package.extras]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -1707,13 +1688,13 @@ python-versions = "*"
 
 [package.dependencies]
 Flask = ">=0.11.1"
-requests = ">=2.9.1"
 rdflib = ">=4.2.1"
+requests = ">=2.9.1"
 six = ">=1.10.0"
 
 [package.extras]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -1728,8 +1709,8 @@ python-versions = "*"
 Flask = ">=0.11.1"
 
 [package.extras]
-docs = ["Sphinx (>=1.8.0)"]
 all = ["Sphinx (>=1.8.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)"]
+docs = ["Sphinx (>=1.8.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)"]
 
 [[package]]
@@ -1741,20 +1722,20 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask-Alembic = ">=2.0.1"
-SQLAlchemy = ">=1.0"
-SQLAlchemy-Utils = ">=0.33.1"
-psycopg2-binary = {version = ">=2.7.4", optional = true, markers = "extra == \"postgresql\""}
 Flask = ">=0.11.1"
+Flask-Alembic = ">=2.0.1"
 Flask-SQLAlchemy = ">=2.1"
+psycopg2-binary = {version = ">=2.7.4", optional = true, markers = "extra == \"postgresql\""}
+SQLAlchemy = ">=1.0"
 SQLAlchemy-Continuum = {version = ">=1.3.6", optional = true, markers = "extra == \"versioning\""}
+SQLAlchemy-Utils = ">=0.33.1"
 
 [package.extras]
 all = ["check-manifest (>=0.25)", "coverage (>=4.0)", "cryptography (>=2.1.4)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)", "psycopg2-binary (>=2.7.4)", "Sphinx (>=1.8.0)", "pymysql (>=0.6.7)", "SQLAlchemy-Continuum (>=1.3.6)"]
-postgresql = ["psycopg2-binary (>=2.7.4)"]
 docs = ["Sphinx (>=1.8.0)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "cryptography (>=2.1.4)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
 mysql = ["pymysql (>=0.6.7)"]
+postgresql = ["psycopg2-binary (>=2.7.4)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "cryptography (>=2.1.4)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
 versioning = ["SQLAlchemy-Continuum (>=1.3.6)"]
 
 [[package]]
@@ -1766,23 +1747,23 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask-Login = ">=0.3.2"
-fs = ">=0.5.4,<2.0"
-SQLAlchemy-Utils = ">=0.31.0"
-simplejson = ">=3.0.0"
 Flask = ">=0.11.1"
-Flask-WTF = ">=0.13.1"
-WTForms = ">=2.0"
 Flask-CeleryExt = ">=0.3.1"
+Flask-Login = ">=0.3.2"
+Flask-WTF = ">=0.13.1"
+fs = ">=0.5.4,<2.0"
 invenio-rest = {version = ">=1.1.2", extras = ["cors"]}
+simplejson = ">=3.0.0"
+SQLAlchemy-Utils = ">=0.31.0"
+WTForms = ">=2.0"
 
 [package.extras]
 all = ["Sphinx (>=1.5.1)", "sphinxcontrib-httpdomain (>=1.4.0)", "Flask-BabelEx (>=0.9.3)", "Flask-Menu (>=0.5.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-admin (>=1.0.0)", "invenio-celery (>=1.0.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)"]
-postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 docs = ["Sphinx (>=1.5.1)", "sphinxcontrib-httpdomain (>=1.4.0)"]
+mysql = ["invenio-db[mysql] (>=1.0.0)"]
+postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db (>=1.0.0)"]
 tests = ["Flask-BabelEx (>=0.9.3)", "Flask-Menu (>=0.5.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-admin (>=1.0.0)", "invenio-celery (>=1.0.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)"]
-mysql = ["invenio-db[mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-i18n"
@@ -1794,12 +1775,12 @@ python-versions = "*"
 
 [package.dependencies]
 Flask = ">=0.11.1"
-flask-webpackext = ">=1.0.0"
 Flask-BabelEx = ">=0.9.2"
+flask-webpackext = ">=1.0.0"
 
 [package.extras]
-docs = ["Sphinx (>=1.5.1)"]
 all = ["Sphinx (>=1.5.1)", "Flask-Login (>=0.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-assets (>=1.0.0)", "isort (>=4.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.5.1)"]
 tests = ["Flask-Login (>=0.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-assets (>=1.0.0)", "isort (>=4.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -1812,19 +1793,19 @@ python-versions = "*"
 
 [package.dependencies]
 Flask = ">=0.11.1"
-invenio-records = ">=1.0.0"
-invenio-pidstore = ">=1.0.0"
-pytz = ">=2016.4"
 Flask-CeleryExt = ">=0.3.0"
+invenio-pidstore = ">=1.0.0"
+invenio-records = ">=1.0.0"
+pytz = ">=2016.4"
 
 [package.extras]
 all = ["attrs (>=17.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.3.21)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "redis (>=2.10.0)", "attrs (>=17.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.3.21)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "redis (>=2.10.0)", "celery (>=3.1.16)", "Sphinx (>=1.5.1,<1.6)"]
 docs = ["Sphinx (>=1.5.1,<1.6)", "celery (>=3.1.16)"]
-tests = ["attrs (>=17.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.3.21)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "redis (>=2.10.0)"]
-elasticsearch5 = ["invenio-search[elasticsearch5] (>=1.2.0)"]
-elasticsearch7 = ["invenio-search[elasticsearch7] (>=1.2.0)"]
-elasticsearch6 = ["invenio-search[elasticsearch6] (>=1.2.0)"]
 elasticsearch2 = ["invenio-search[elasticsearch2] (>=1.2.0)"]
+elasticsearch5 = ["invenio-search[elasticsearch5] (>=1.2.0)"]
+elasticsearch6 = ["invenio-search[elasticsearch6] (>=1.2.0)"]
+elasticsearch7 = ["invenio-search[elasticsearch7] (>=1.2.0)"]
+tests = ["attrs (>=17.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.3.21)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "redis (>=2.10.0)"]
 
 [[package]]
 name = "invenio-jsonschemas"
@@ -1836,12 +1817,12 @@ python-versions = "*"
 
 [package.dependencies]
 Flask = ">=0.11.1"
-jsonref = ">=0.1"
 functools32 = {version = ">=3.2.3.post2", markers = "python_version == \"2.7\""}
+jsonref = ">=0.1"
 
 [package.extras]
-docs = ["Sphinx (>=1.6.2)"]
 all = ["Sphinx (>=1.6.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "jsonresolver[jsonschema] (>=0.2.1)", "pydocstyle (>=2.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)", "mock (>=1.3.0)"]
+docs = ["Sphinx (>=1.6.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "jsonresolver[jsonschema] (>=0.2.1)", "pydocstyle (>=2.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)", "mock (>=1.3.0)"]
 
 [[package]]
@@ -1857,8 +1838,8 @@ Flask = ">=0.11.1"
 six = ">=1.10.0"
 
 [package.extras]
-docs = ["Sphinx (>=1.5.1)"]
 all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "flask-login (>=0.3.2)", "httpretty (>=0.8.14)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "raven[flask] (>=5.10.2,<6)", "flask-celeryext (>=0.2.2)"]
+docs = ["Sphinx (>=1.5.1)"]
 sentry = ["raven[flask] (>=5.10.2,<6)", "flask-celeryext (>=0.2.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "flask-login (>=0.3.2)", "httpretty (>=0.8.14)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
@@ -1875,9 +1856,9 @@ Flask = ">=0.11.1"
 Flask-Mail = ">=0.9.1"
 
 [package.extras]
+all = ["Flask-CeleryExt (>=0.2.2)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 celery = ["Flask-CeleryExt (>=0.2.2)"]
 docs = ["Flask-CeleryExt (>=0.2.2)", "Sphinx (>=1.4.2)"]
-all = ["Flask-CeleryExt (>=0.2.2)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -1889,18 +1870,18 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask = ">=0.12"
 blinker = ">=1.4"
-sickle = ">=0.5"
+Flask = ">=0.12"
 flask-celeryext = ">=0.2.2"
+sickle = ">=0.5"
 
 [package.extras]
 all = ["Sphinx (>=1.5.3,<1.6)", "celery (>=3.1.25,<4.0)", "check-manifest (>=0.35)", "coverage (>=4.3.4)", "isort (==4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.1.1)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.4.0)", "pytest-pep8 (>=1.0.6)", "responses (>=0.5.1)"]
-postgresql = ["invenio-db[postgresql] (>=1.0.0a9)"]
 docs = ["Sphinx (>=1.5.3,<1.6)"]
+mysql = ["invenio-db[mysql] (>=1.0.0a9)"]
+postgresql = ["invenio-db[postgresql] (>=1.0.0a9)"]
 sqlite = ["invenio-db (>=1.0.0a9)"]
 tests = ["celery (>=3.1.25,<4.0)", "check-manifest (>=0.35)", "coverage (>=4.3.4)", "isort (==4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.1.1)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.4.0)", "pytest-pep8 (>=1.0.6)", "responses (>=0.5.1)"]
-mysql = ["invenio-db[mysql] (>=1.0.0a9)"]
 
 [[package]]
 name = "invenio-oauth2server"
@@ -1911,31 +1892,31 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask-Login = ">=0.3.0"
-oauthlib = ">=1.1.2,<3.0.0"
-SQLAlchemy-Utils = {version = ">=0.33.0", extras = ["encrypted"]}
 Flask = ">=0.11.1"
-six = ">=1.10.0"
-Flask-OAuthlib = ">=0.9.5"
-werkzeug = ">=0.14.1"
-invenio-accounts = ">=1.0.0"
-future = ">=0.16.0"
 Flask-BabelEx = ">=0.9.2"
-requests-oauthlib = ">=1.1.0,<1.2.0"
-WTForms-Alchemy = ">=0.15.0"
 Flask-Breadcrumbs = ">=0.4.0"
-pyjwt = ">=1.5.0"
+Flask-Login = ">=0.3.0"
+Flask-OAuthlib = ">=0.9.5"
 Flask-WTF = ">=0.13.1"
+future = ">=0.16.0"
+invenio-accounts = ">=1.0.0"
+oauthlib = ">=1.1.2,<3.0.0"
+pyjwt = ">=1.5.0"
+requests-oauthlib = ">=1.1.0,<1.2.0"
+six = ">=1.10.0"
+SQLAlchemy-Utils = {version = ">=0.33.0", extras = ["encrypted"]}
+werkzeug = ">=0.14.1"
+WTForms-Alchemy = ">=0.15.0"
 
 [package.extras]
-all = ["invenio-admin (>=1.0.0)", "Sphinx (>=1.5.1)", "redis (>=2.10.5)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-assets (>=1.0.0)", "invenio-i18n (>=1.0.0)", "invenio-theme (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
-postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 admin = ["invenio-admin (>=1.0.0)"]
+all = ["invenio-admin (>=1.0.0)", "Sphinx (>=1.5.1)", "redis (>=2.10.5)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-assets (>=1.0.0)", "invenio-i18n (>=1.0.0)", "invenio-theme (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
 docs = ["Sphinx (>=1.5.1)"]
+mysql = ["invenio-db[mysql] (>=1.0.0)"]
+postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 redis = ["redis (>=2.10.5)"]
 sqlite = ["invenio-db (>=1.0.0)"]
 tests = ["SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-assets (>=1.0.0)", "invenio-i18n (>=1.0.0)", "invenio-theme (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
-mysql = ["invenio-db[mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-oauthclient"
@@ -1946,28 +1927,28 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask-OAuthlib = ">=0.9.3"
 blinker = ">=1.4"
-sqlalchemy-utils = ">=0.32.0"
 Flask = ">=0.11.1"
-six = ">=1.9"
+Flask-BabelEx = ">=0.9.3"
+Flask-Breadcrumbs = ">=0.3.0"
+Flask-OAuthlib = ">=0.9.3"
+invenio-accounts = ">=1.0.0"
 invenio-mail = ">=1.0.0"
 oauthlib = ">=1.1.2,<3.0.0"
-uritools = ">=1.0.1"
-invenio-accounts = ">=1.0.0"
-Flask-BabelEx = ">=0.9.3"
 requests-oauthlib = ">=0.5.0,<1.2.0"
-Flask-Breadcrumbs = ">=0.3.0"
+six = ">=1.9"
+sqlalchemy-utils = ">=0.32.0"
+uritools = ">=1.0.1"
 
 [package.extras]
-all = ["github3.py (>=1.0.0a4)", "uritemplate.py (>=0.2.0,<2.0)", "invenio-admin (>=1.0.0)", "Sphinx (>=1.5.1)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "httpretty (>=0.8.14)", "invenio-accounts (>=1.0.0)", "invenio-userprofiles (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.3)", "simplejson (>=3.8)"]
-github = ["github3.py (>=1.0.0a4)", "uritemplate.py (>=0.2.0,<2.0)"]
-postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 admin = ["invenio-admin (>=1.0.0)"]
+all = ["github3.py (>=1.0.0a4)", "uritemplate.py (>=0.2.0,<2.0)", "invenio-admin (>=1.0.0)", "Sphinx (>=1.5.1)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "httpretty (>=0.8.14)", "invenio-accounts (>=1.0.0)", "invenio-userprofiles (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.3)", "simplejson (>=3.8)"]
 docs = ["Sphinx (>=1.5.1)"]
+github = ["github3.py (>=1.0.0a4)", "uritemplate.py (>=0.2.0,<2.0)"]
+mysql = ["invenio-db[mysql] (>=1.0.0)"]
+postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db (>=1.0.0)"]
 tests = ["SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "httpretty (>=0.8.14)", "invenio-accounts (>=1.0.0)", "invenio-userprofiles (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.3)", "simplejson (>=3.8)"]
-mysql = ["invenio-db[mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-pidstore"
@@ -1980,19 +1961,19 @@ python-versions = "*"
 [package.dependencies]
 base32-lib = ">=1.0.1"
 enum34 = {version = ">=1.1.6", markers = "python_version < \"3.4\""}
-six = ">=1.12.0"
-Flask-BabelEx = ">=0.9.3"
 Flask = ">=0.11.1"
+Flask-BabelEx = ">=0.9.3"
+six = ">=1.12.0"
 
 [package.extras]
-all = ["Sphinx (>=1.8.5)", "Flask-Admin (>=1.3.0)", "datacite (>=0.1.0)", "attrs (>=17.4.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "invenio-admin (>=1.0.0)", "Flask-Menu (>=0.5.1)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "mock (>=3.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
-postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 admin = ["Flask-Admin (>=1.3.0)"]
+all = ["Sphinx (>=1.8.5)", "Flask-Admin (>=1.3.0)", "datacite (>=0.1.0)", "attrs (>=17.4.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "invenio-admin (>=1.0.0)", "Flask-Menu (>=0.5.1)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "mock (>=3.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
+datacite = ["datacite (>=0.1.0)"]
 docs = ["Sphinx (>=1.8.5)"]
 mysql = ["invenio-db[mysql] (>=1.0.0)"]
+postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db (>=1.0.0)"]
 tests = ["attrs (>=17.4.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "invenio-admin (>=1.0.0)", "Flask-Menu (>=0.5.1)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "mock (>=3.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
-datacite = ["datacite (>=0.1.0)"]
 
 [[package]]
 name = "invenio-records"
@@ -2005,21 +1986,21 @@ python-versions = "*"
 [package.dependencies]
 blinker = ">=1.4"
 Flask = ">=0.11.1"
-jsonpatch = ">=1.11"
 flask-celeryext = ">=0.2.2"
-jsonresolver = ">=0.1.0"
+jsonpatch = ">=1.11"
 jsonref = ">=0.1"
+jsonresolver = ">=0.1.0"
 jsonschema = ">=2.5.1"
 
 [package.extras]
-all = ["Flask-Admin (>=1.3.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.5.3)", "Flask-Menu (>=0.4.0)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=3.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.6.4,<5.0.0)", "invenio-pidstore (>=1.0.0)"]
-postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
 admin = ["Flask-Admin (>=1.3.0)"]
+all = ["Flask-Admin (>=1.3.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.5.3)", "Flask-Menu (>=0.4.0)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=3.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.6.4,<5.0.0)", "invenio-pidstore (>=1.0.0)"]
 docs = ["Sphinx (>=1.5.1)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
+pidstore = ["invenio-pidstore (>=1.0.0)"]
+postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.5.3)", "Flask-Menu (>=0.4.0)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=3.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.6.4,<5.0.0)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
-pidstore = ["invenio-pidstore (>=1.0.0)"]
 
 [[package]]
 name = "invenio-records-files"
@@ -2031,17 +2012,17 @@ python-versions = "*"
 
 [package.dependencies]
 Flask = ">=0.11.1"
-invenio-records-rest = ">=1.6.3"
-invenio-records = ">=1.0.0"
 invenio-files-rest = ">=1.0.5"
+invenio-records = ">=1.0.0"
+invenio-records-rest = ">=1.6.3"
 
 [package.extras]
 all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.7.0)"]
-postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
 docs = ["Sphinx (>=1.5.1)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
+postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.7.0)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-records-rest"
@@ -2052,31 +2033,31 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
+arrow = ">=0.12.1"
+attrs = ">=17.4.0"
+bleach = ">=2.1.3"
+Flask = ">=0.11.1"
+Flask-BabelEx = ">=0.9.2"
 ftfy = ">=4.4.3,<5.0"
+invenio-indexer = ">=1.1.0"
+invenio-pidstore = ">=1.0.0"
 invenio-records = ">=1.0.0"
 invenio-rest = ">=1.1.2"
-Flask = ">=0.11.1"
-six = ">=1.12"
-Flask-BabelEx = ">=0.9.2"
-attrs = ">=17.4.0"
-arrow = ">=0.12.1"
-bleach = ">=2.1.3"
 python-dateutil = ">=2.4.2"
-invenio-pidstore = ">=1.0.0"
-invenio-indexer = ">=1.1.0"
+six = ">=1.12"
 
 [package.extras]
-dublincore = ["dcxml (>=0.1.0)"]
 all = ["datacite (>=1.0.1)", "Sphinx (>=1.6.7)", "dcxml (>=0.1.0)", "citeproc-py (>=0.3.0)", "citeproc-py-styles (>=0.1.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "Flask-Login (>=0.3.2)", "invenio-db[all] (>=1.0.2)", "invenio-indexer (>=1.0.0)", "isort (>=4.3.1)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)", "invenio-config (>=1.0.2)", "pyld (>=0.7.1)"]
-jsonld = ["pyld (>=0.7.1)"]
-docs = ["Sphinx (>=1.6.7)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "Flask-Login (>=0.3.2)", "invenio-db[all] (>=1.0.2)", "invenio-indexer (>=1.0.0)", "isort (>=4.3.1)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)", "invenio-config (>=1.0.2)"]
-elasticsearch5 = ["invenio-search[elasticsearch5] (>=1.2.0)"]
-elasticsearch7 = ["invenio-search[elasticsearch7] (>=1.2.0)"]
-elasticsearch6 = ["invenio-search[elasticsearch6] (>=1.2.0)"]
-elasticsearch2 = ["invenio-search[elasticsearch2] (>=1.2.0)"]
 citeproc = ["citeproc-py (>=0.3.0)", "citeproc-py-styles (>=0.1.0)"]
 datacite = ["datacite (>=1.0.1)"]
+docs = ["Sphinx (>=1.6.7)"]
+dublincore = ["dcxml (>=0.1.0)"]
+elasticsearch2 = ["invenio-search[elasticsearch2] (>=1.2.0)"]
+elasticsearch5 = ["invenio-search[elasticsearch5] (>=1.2.0)"]
+elasticsearch6 = ["invenio-search[elasticsearch6] (>=1.2.0)"]
+elasticsearch7 = ["invenio-search[elasticsearch7] (>=1.2.0)"]
+jsonld = ["pyld (>=0.7.1)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "Flask-Login (>=0.3.2)", "invenio-db[all] (>=1.0.2)", "invenio-indexer (>=1.0.0)", "isort (>=4.3.1)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)", "invenio-config (>=1.0.2)"]
 
 [[package]]
 name = "invenio-records-ui"
@@ -2088,14 +2069,14 @@ python-versions = "*"
 
 [package.dependencies]
 Flask = ">=0.11.1"
-invenio-records = ">=1.0.0"
-invenio-pidstore = ">=1.0.0"
 Flask-BabelEx = ">=0.9.3"
+invenio-pidstore = ">=1.0.0"
+invenio-records = ">=1.0.0"
 
 [package.extras]
+all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 docs = ["Sphinx (>=1.5.1)"]
-all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,versioning,mysql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,versioning,mysql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,versioning,mysql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-rest"
@@ -2107,13 +2088,13 @@ python-versions = "*"
 
 [package.dependencies]
 Flask = ">=0.11.1"
-webargs = ">=5.5.0,<6.0.0"
-marshmallow = {version = ">=2.15.2,<3.0.0", markers = "python_version < \"3.0.0\""}
 Flask-CORS = ">=2.1.0"
+marshmallow = {version = ">=2.15.2,<3.0.0", markers = "python_version < \"3.0.0\""}
+webargs = ">=5.5.0,<6.0.0"
 
 [package.extras]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["check-manifest (>=0.25)", "coverage (>=4.0)", "xmltodict (>=0.11.0)", "isort (>=4.2.15)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "marshmallow (>=2.15.2)", "marshmallow (>=2.15.2,<3.0.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "xmltodict (>=0.11.0)", "isort (>=4.2.15)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)"]
 
 [[package]]
@@ -2125,18 +2106,18 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask = ">=0.11.1"
 elasticsearch = {version = ">=7.0.0,<8.0.0", optional = true, markers = "extra == \"elasticsearch7\""}
 elasticsearch-dsl = {version = ">=7.0.0,<8.0.0", optional = true, markers = "extra == \"elasticsearch7\""}
+Flask = ">=0.11.1"
 
 [package.extras]
 all = ["Sphinx (>=1.5.6,<1.6)", "invenio-accounts (>=1.0.0)", "check-manifest (>=0.35)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.2.15)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-random-order (>=0.5.4)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.1,<4)"]
 docs = ["Sphinx (>=1.5.6,<1.6)", "invenio-accounts (>=1.0.0)"]
-tests = ["check-manifest (>=0.35)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.2.15)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-random-order (>=0.5.4)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.1,<4)"]
-elasticsearch5 = ["elasticsearch (>=5.0.0,<6.0.0)", "elasticsearch-dsl (>=5.1.0,<6.0.0)"]
-elasticsearch7 = ["elasticsearch (>=7.0.0,<8.0.0)", "elasticsearch-dsl (>=7.0.0,<8.0.0)"]
-elasticsearch6 = ["elasticsearch (>=6.0.0,<7.0.0)", "elasticsearch-dsl (>=6.0.0,<6.2.0)"]
 elasticsearch2 = ["elasticsearch (>=2.0.0,<3.0.0)", "elasticsearch-dsl (>=2.0.0,<3.0.0)"]
+elasticsearch5 = ["elasticsearch (>=5.0.0,<6.0.0)", "elasticsearch-dsl (>=5.1.0,<6.0.0)"]
+elasticsearch6 = ["elasticsearch (>=6.0.0,<7.0.0)", "elasticsearch-dsl (>=6.0.0,<6.2.0)"]
+elasticsearch7 = ["elasticsearch (>=7.0.0,<8.0.0)", "elasticsearch-dsl (>=7.0.0,<8.0.0)"]
+tests = ["check-manifest (>=0.35)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.2.15)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-random-order (>=0.5.4)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.1,<4)"]
 
 [[package]]
 name = "invenio-userprofiles"
@@ -2147,23 +2128,23 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask-WTF = ">=0.13.1"
-Flask-Mail = ">=0.9.1"
-invenio-accounts = ">=1.0.0"
 Flask = ">=0.11.1"
-Flask-Menu = ">=0.4.0"
 Flask-BabelEx = ">=0.9.3"
-WTForms = ">=2.0.1"
 Flask-Breadcrumbs = ">=0.3.0"
+Flask-Mail = ">=0.9.1"
+Flask-Menu = ">=0.4.0"
+Flask-WTF = ">=0.13.1"
+invenio-accounts = ">=1.0.0"
+WTForms = ">=2.0.1"
 
 [package.extras]
-all = ["invenio-admin (>=1.0.0)", "Sphinx (>=1.4.2)", "invenio-mail (>=1.0.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-i18n (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
-postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 admin = ["invenio-admin (>=1.0.0)"]
+all = ["invenio-admin (>=1.0.0)", "Sphinx (>=1.4.2)", "invenio-mail (>=1.0.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-i18n (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 docs = ["Sphinx (>=1.4.2)", "invenio-mail (>=1.0.0)"]
+mysql = ["invenio-db[mysql] (>=1.0.0)"]
+postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db (>=1.0.0)"]
 tests = ["SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-i18n (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
-mysql = ["invenio-db[mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-workflows"
@@ -2176,19 +2157,19 @@ python-versions = "*"
 [package.dependencies]
 autosemver = ">=0.2,<1.0"
 blinker = ">=1.4"
-workflow = ">=2.0.1,<3.0"
-invenio-files-rest = ">=1.0.0a3"
-Flask-CLI = ">=0.2.1"
-invenio-records-files = ">=1.0.0a5"
 flask-celeryext = ">=0.1.0"
+Flask-CLI = ">=0.2.1"
+invenio-files-rest = ">=1.0.0a3"
+invenio-records-files = ">=1.0.0a5"
+workflow = ">=2.0.1,<3.0"
 
 [package.extras]
 all = ["Sphinx (>=1.5.1,<1.6)", "celery (>=4.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "invenio-db", "invenio-db", "invenio-db", "Sphinx (>=1.5.1,<1.6)", "celery (>=4.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "invenio-db", "invenio-db", "invenio-db"]
-postgresql = ["invenio-db"]
 docs = ["Sphinx (>=1.5.1,<1.6)"]
+mysql = ["invenio-db"]
+postgresql = ["invenio-db"]
 sqlite = ["invenio-db"]
 tests = ["celery (>=4.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
-mysql = ["invenio-db"]
 
 [[package]]
 name = "invenio-workflows-files"
@@ -2200,15 +2181,15 @@ python-versions = "*"
 
 [package.dependencies]
 autosemver = ">=0.2,<1.0"
+invenio-db = {version = ">=1.0.0a9", extras = ["versioning"]}
 invenio-files-rest = ">=1.0.0a3"
+invenio-records-files = ">=1.0.0a5"
 invenio-workflows = ">=7.0,<8.0"
 pytest-runner = ">=2.6.2"
-invenio-db = {version = ">=1.0.0a9", extras = ["versioning"]}
-invenio-records-files = ">=1.0.0a5"
 
 [package.extras]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -2220,24 +2201,24 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-flask-login = "*"
 autosemver = ">=0.2,<1.0"
-invenio-access = ">=1.0.1,<2.0"
-invenio-workflows = ">=7.0,<8.0"
 elasticsearch-dsl = ">=5.0"
-invenio-search = ">=1.0.0a5"
 Flask-BabelEx = ">=0.9.2"
-invenio-indexer = ">=1.0.0a5"
+flask-login = "*"
 flask-principal = "*"
+invenio-access = ">=1.0.1,<2.0"
+invenio-indexer = ">=1.0.0a5"
 invenio-rest = "*"
+invenio-search = ">=1.0.0a5"
+invenio-workflows = ">=7.0,<8.0"
 
 [package.extras]
 all = ["Sphinx (>=1.3)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "invenio-search-ui (>=1.0.0a4)", "invenio-db[mysql] (>=1.0.0a9)"]
-postgresql = ["invenio-db[postgresql] (>=1.0.0a9)"]
 docs = ["Sphinx (>=1.3)"]
+mysql = ["invenio-db[mysql] (>=1.0.0a9)"]
+postgresql = ["invenio-db[postgresql] (>=1.0.0a9)"]
 sqlite = ["invenio-db (>=1.0.0a9)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
-mysql = ["invenio-db[mysql] (>=1.0.0a9)"]
 ui = ["invenio-search-ui (>=1.0.0a4)"]
 
 [[package]]
@@ -2249,12 +2230,12 @@ optional = true
 python-versions = "*"
 
 [package.dependencies]
-xrootdpyfs = ">=0.1.2"
 invenio-files-rest = ">=1.0.0a8"
+xrootdpyfs = ">=0.1.2"
 
 [package.extras]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["Sphinx (>=1.4.2)", "blinker (>=1.4)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "blinker (>=1.4)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["blinker (>=1.4)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -2294,28 +2275,28 @@ python-versions = "*"
 
 [package.dependencies]
 appnope = {version = "*", markers = "sys_platform == \"darwin\""}
-win-unicode-console = {version = ">=0.5", markers = "sys_platform == \"win32\" and python_version < \"3.6\""}
-pathlib2 = {version = "*", markers = "python_version == \"2.7\" or python_version == \"3.3\""}
 "backports.shutil-get-terminal-size" = {version = "*", markers = "python_version == \"2.7\""}
-traitlets = ">=4.2"
-simplegeneric = ">0.8"
-pygments = "*"
 colorama = {version = "*", markers = "sys_platform == \"win32\""}
-prompt-toolkit = ">=1.0.4,<2.0.0"
+decorator = "*"
+pathlib2 = {version = "*", markers = "python_version == \"2.7\" or python_version == \"3.3\""}
 pexpect = {version = "*", markers = "sys_platform != \"win32\""}
 pickleshare = "*"
-decorator = "*"
+prompt-toolkit = ">=1.0.4,<2.0.0"
+pygments = "*"
+simplegeneric = ">0.8"
+traitlets = ">=4.2"
+win-unicode-console = {version = ">=0.5", markers = "sys_platform == \"win32\" and python_version < \"3.6\""}
 
 [package.extras]
-nbformat = ["nbformat"]
 all = ["nbformat", "ipykernel", "pygments", "testpath", "notebook", "nbconvert", "ipyparallel", "qtconsole", "Sphinx (>=1.3)", "requests", "nose (>=0.10.1)", "ipywidgets"]
-kernel = ["ipykernel"]
 doc = ["Sphinx (>=1.3)"]
-notebook = ["notebook", "ipywidgets"]
+kernel = ["ipykernel"]
 nbconvert = ["nbconvert"]
+nbformat = ["nbformat"]
+notebook = ["notebook", "ipywidgets"]
+parallel = ["ipyparallel"]
 qtconsole = ["qtconsole"]
 test = ["nose (>=0.10.1)", "requests", "testpath", "pygments", "nbformat", "ipykernel", "mock", "numpy"]
-parallel = ["ipyparallel"]
 
 [[package]]
 name = "ipython-genutils"
@@ -2389,8 +2370,8 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-jinja2 = "*"
 arrow = "*"
+jinja2 = "*"
 
 [[package]]
 name = "jmespath"
@@ -2409,17 +2390,17 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Unidecode = {version = ">=0.4.19", optional = true, markers = "extra == \"contrib\""}
-munkres = {version = "<=1.0.12", optional = true, markers = "extra == \"contrib\""}
-editdistance = {version = ">=0.3.1", optional = true, markers = "extra == \"contrib\""}
-six = ">=1.10.0"
-pyrsistent = ">=0.11.13"
 dictdiffer = ">=0.6.0"
+editdistance = {version = ">=0.3.1", optional = true, markers = "extra == \"contrib\""}
+munkres = {version = "<=1.0.12", optional = true, markers = "extra == \"contrib\""}
+pyrsistent = ">=0.11.13"
+six = ">=1.10.0"
+Unidecode = {version = ">=0.4.19", optional = true, markers = "extra == \"contrib\""}
 
 [package.extras]
+all = ["editdistance (>=0.3.1)", "munkres (<=1.0.12)", "Unidecode (>=0.4.19)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest (>=4.6.11)", "flake8 (>=3.9.0)"]
 contrib = ["editdistance (>=0.3.1)", "munkres (<=1.0.12)", "Unidecode (>=0.4.19)"]
 docs = ["Sphinx (>=1.4.2)"]
-all = ["editdistance (>=0.3.1)", "munkres (<=1.0.12)", "Unidecode (>=0.4.19)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest (>=4.6.11)", "flake8 (>=3.9.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest (>=4.6.11)", "flake8 (>=3.9.0)", "editdistance (>=0.3.1)", "munkres (<=1.0.12)", "Unidecode (>=0.4.19)"]
 
 [[package]]
@@ -2458,16 +2439,16 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
+pluggy = ">=0.3.0,<1.0"
 six = ">=1.8.0"
 werkzeug = ">=0.10.4"
-pluggy = ">=0.3.0,<1.0"
 
 [package.extras]
-docs = ["Sphinx (>=1.3)"]
 all = ["Sphinx (>=1.3)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests (>=2.7.0)", "jsonschema (>=2.5.1)", "jsonref (>=0.1)", "Sphinx (>=1.3)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests (>=2.7.0)", "jsonschema (>=2.5.1)", "jsonref (>=0.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests (>=2.7.0)"]
+docs = ["Sphinx (>=1.3)"]
 jsonref = ["jsonref (>=0.1)"]
 jsonschema = ["jsonschema (>=2.5.1)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests (>=2.7.0)"]
 
 [[package]]
 name = "jsonschema"
@@ -2492,24 +2473,24 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [package.dependencies]
-importlib-metadata = {version = ">=0.18", markers = "python_version < \"3.8\""}
 amqp = ">=2.6.0,<2.7"
+importlib-metadata = {version = ">=0.18", markers = "python_version < \"3.8\""}
 
 [package.extras]
-qpid = ["qpid-python (>=0.26)", "qpid-tools (>=0.26)"]
+azureservicebus = ["azure-servicebus (>=0.21.1)"]
 azurestoragequeues = ["azure-storage-queue"]
-msgpack = ["msgpack"]
+consul = ["python-consul (>=0.6.0)"]
 librabbitmq = ["librabbitmq (>=1.5.2)"]
 mongodb = ["pymongo (>=3.3.0)"]
-consul = ["python-consul (>=0.6.0)"]
-azureservicebus = ["azure-servicebus (>=0.21.1)"]
-redis = ["redis (>=3.3.11)"]
-zookeeper = ["kazoo (>=1.3.1)"]
+msgpack = ["msgpack"]
 pyro = ["pyro4"]
-yaml = ["PyYAML (>=3.10)"]
+qpid = ["qpid-python (>=0.26)", "qpid-tools (>=0.26)"]
+redis = ["redis (>=3.3.11)"]
 slmq = ["softlayer-messaging (>=1.0.3)"]
-sqs = ["boto3 (>=1.4.4)", "pycurl (==7.43.0.2)"]
 sqlalchemy = ["sqlalchemy"]
+sqs = ["boto3 (>=1.4.4)", "pycurl (==7.43.0.2)"]
+yaml = ["PyYAML (>=3.10)"]
+zookeeper = ["kazoo (>=1.3.1)"]
 
 [[package]]
 name = "langdetect"
@@ -2550,10 +2531,10 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, != 3.4.*"
 
 [package.extras]
-source = ["Cython (>=0.29.7)"]
 cssselect = ["cssselect (>=0.7)"]
 html5 = ["html5lib"]
 htmlsoup = ["beautifulsoup4"]
+source = ["Cython (>=0.29.7)"]
 
 [[package]]
 name = "mako"
@@ -2587,11 +2568,11 @@ optional = false
 python-versions = "*"
 
 [package.extras]
+dev = ["python-dateutil", "simplejson", "pytest", "pytz", "flake8 (==3.7.4)", "tox"]
 docs = ["sphinx (==2.1.2)", "sphinx-issues (==1.2.0)", "alabaster (==0.7.12)", "sphinx-version-warning (==1.1.2)"]
-tests = ["pytest", "pytz"]
 lint = ["flake8 (==3.7.4)"]
 reco = ["python-dateutil", "simplejson"]
-dev = ["python-dateutil", "simplejson", "pytest", "pytz", "flake8 (==3.7.4)", "tox"]
+tests = ["pytest", "pytz"]
 
 [[package]]
 name = "maxminddb"
@@ -2600,9 +2581,6 @@ description = "Reader for the MaxMind DB format"
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-
-[package.dependencies]
-ipaddress = "*"
 
 [[package]]
 name = "maxminddb-geolite2"
@@ -2632,13 +2610,13 @@ optional = true
 python-versions = "*"
 
 [package.dependencies]
-six = ">=1.9"
 funcsigs = {version = ">=1", markers = "python_version < \"3.3\""}
 pbr = ">=0.11"
+six = ">=1.9"
 
 [package.extras]
-test = ["unittest2 (>=1.1.0)"]
 docs = ["sphinx", "Pygments (<2)", "jinja2 (<2.7)", "sphinx (<1.3)"]
+test = ["unittest2 (>=1.1.0)"]
 
 [[package]]
 name = "more-itertools"
@@ -2703,10 +2681,10 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-signals = ["blinker"]
-test = ["nose", "unittest2", "cryptography", "mock", "pyjwt (>=1.0.0)", "blinker"]
-signedtoken = ["cryptography", "pyjwt (>=1.0.0)"]
 rsa = ["cryptography"]
+signals = ["blinker"]
+signedtoken = ["cryptography", "pyjwt (>=1.0.0)"]
+test = ["nose", "unittest2", "cryptography", "mock", "pyjwt (>=1.0.0)", "blinker"]
 
 [[package]]
 name = "orcid"
@@ -2717,10 +2695,10 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-requests = "*"
 beautifulsoup4 = "*"
-lxml = "*"
 html5lib = "*"
+lxml = "*"
+requests = "*"
 simplejson = "*"
 
 [[package]]
@@ -2755,11 +2733,11 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-lxml = "*"
 cssselect = ">=0.9"
+functools32 = {version = "*", markers = "python_version < \"3.0\""}
+lxml = "*"
 six = ">=1.6.0"
 w3lib = ">=1.19.0"
-functools32 = {version = "*", markers = "python_version < \"3.0\""}
 
 [[package]]
 name = "passlib"
@@ -2772,8 +2750,8 @@ python-versions = "*"
 [package.extras]
 argon2 = ["argon2-cffi (>=18.2.0)"]
 bcrypt = ["bcrypt (>=3.1.0)"]
-totp = ["cryptography"]
 build_docs = ["sphinx (>=1.6)", "sphinxcontrib-fulltoc (>=1.2.0)", "cloud-sptheme (>=1.10.0)"]
+totp = ["cryptography"]
 
 [[package]]
 name = "pathlib2"
@@ -2784,8 +2762,8 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-six = "*"
 scandir = {version = "*", markers = "python_version < \"3.5\""}
+six = "*"
 
 [[package]]
 name = "pbr"
@@ -2835,8 +2813,8 @@ python-versions = "*"
 
 [package.dependencies]
 python-magic = "*"
-subprocess32 = ">=3.2.6"
 six = ">=1.7.2"
+subprocess32 = ">=3.2.6"
 Wand = ">=0.4.1,<=0.5.9"
 
 [package.extras]
@@ -3001,9 +2979,9 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
 crypto = ["cryptography (>=1.4)"]
 flake8 = ["flake8", "flake8-import-order", "pep8-naming"]
+test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
 
 [[package]]
 name = "pylatexenc"
@@ -3022,8 +3000,8 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-docs = ["Sphinx (>=1.5.1)"]
 all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.5.1)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -3035,12 +3013,12 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-six = ">=1.5.2"
 cryptography = ">=2.1.4"
+six = ">=1.5.2"
 
 [package.extras]
-test = ["flaky", "pretend", "pytest (>=3.0.1,<3.3.0)"]
 docs = ["sphinx", "sphinx-rtd-theme"]
+test = ["flaky", "pretend", "pytest (>=3.0.1,<3.3.0)"]
 
 [[package]]
 name = "pyparsing"
@@ -3094,15 +3072,15 @@ optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.dependencies]
-more-itertools = ">=4.0.0"
-six = ">=1.10.0"
-funcsigs = {version = "*", markers = "python_version < \"3.0\""}
-py = ">=1.5.0"
-colorama = {version = "*", markers = "sys_platform == \"win32\""}
+atomicwrites = ">=1.0"
 attrs = ">=17.4.0"
+colorama = {version = "*", markers = "sys_platform == \"win32\""}
+funcsigs = {version = "*", markers = "python_version < \"3.0\""}
+more-itertools = ">=4.0.0"
 pathlib2 = {version = ">=2.2.0", markers = "python_version < \"3.6\""}
 pluggy = ">=0.7"
-atomicwrites = ">=1.0"
+py = ">=1.5.0"
+six = ">=1.10.0"
 
 [[package]]
 name = "pytest-cov"
@@ -3113,8 +3091,8 @@ optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.dependencies]
-pytest = ">=3.6"
 coverage = ">=4.4"
+pytest = ">=3.6"
 
 [package.extras]
 testing = ["fields", "hunter", "process-tests (==2.0.2)", "six", "virtualenv"]
@@ -3212,12 +3190,12 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-pynpm = ">=0.1.0"
 node-semver = ">=0.1.1"
+pynpm = ">=0.1.0"
 
 [package.extras]
-docs = ["Sphinx (>=1.5.1)"]
 all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.21)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.5.1)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.21)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -3245,9 +3223,9 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask = {version = ">=0.8", optional = true, markers = "extra == \"flask\""}
-contextlib2 = {version = "*", markers = "python_version < \"3.2\""}
 blinker = {version = ">=1.1", optional = true, markers = "extra == \"flask\""}
+contextlib2 = {version = "*", markers = "python_version < \"3.2\""}
+Flask = {version = ">=0.8", optional = true, markers = "extra == \"flask\""}
 
 [package.extras]
 flask = ["Flask (>=0.8)", "blinker (>=1.1)"]
@@ -3262,8 +3240,8 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-pyparsing = "*"
 isodate = "*"
+pyparsing = "*"
 
 [package.extras]
 html = ["html5lib"]
@@ -3282,31 +3260,24 @@ hiredis = ["hiredis (>=0.1.3)"]
 
 [[package]]
 name = "refextract"
-version = "0.2.23"
+version = "0.2.26"
 description = "Small library for extracting references used in scholarly communication."
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
 
 [package.dependencies]
-unidecode = ">=1.0.22,<2.0"
 autosemver = ">=0.5.3,<1.0"
-six = ">=1.10.0,<2.0"
 PyPDF2 = ">=1.26.0,<2.0"
 python-magic = ">=0.4.15,<1.0"
 requests = ">=2.18.4,<3.0"
+six = ">=1.10.0,<2.0"
+unidecode = ">=1.0.22,<2.0"
 
 [package.extras]
-docs = ["Sphinx (>=1.7.1,<2.0)"]
 all = ["Sphinx (>=1.7.1,<2.0)", "flake8-future-import (>=0.4.4,<1.0)", "flake8 (>=3.5.0,<4.0)", "pytest-cov (>=2.10,<3.0)", "pytest (>=4.6,<5.0)", "responses (>=0.8.1,<1.0)"]
+docs = ["Sphinx (>=1.7.1,<2.0)"]
 tests = ["flake8-future-import (>=0.4.4,<1.0)", "flake8 (>=3.5.0,<4.0)", "pytest-cov (>=2.10,<3.0)", "pytest (>=4.6,<5.0)", "responses (>=0.8.1,<1.0)", "unicode-string-literal (>=1.1,<2.0)"]
-
-[package.source]
-type = "git"
-url = "https://github.com/inspirehep/refextract.git"
-reference = "maintenance/0.2.18"
-resolved_reference = "ebcd57cf6247cfb24549ba149d4873c92c440884"
 
 [[package]]
 name = "requests"
@@ -3317,9 +3288,9 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [package.dependencies]
-idna = ">=2.5,<2.9"
 certifi = ">=2017.4.17"
 chardet = ">=3.0.2,<3.1.0"
+idna = ">=2.5,<2.9"
 urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
 
 [package.extras]
@@ -3339,8 +3310,8 @@ requests = ">=2.3,<3"
 six = "*"
 
 [package.extras]
-test = ["fixtures", "mock", "purl", "pytest", "sphinx", "testrepository (>=0.0.18)", "testtools"]
 fixture = ["fixtures"]
+test = ["fixtures", "mock", "purl", "pytest", "sphinx", "testrepository (>=0.0.18)", "testtools"]
 
 [[package]]
 name = "requests-oauthlib"
@@ -3406,8 +3377,8 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-scipy = ">=0.13.3"
 numpy = ">=1.8.2"
+scipy = ">=0.13.3"
 
 [package.extras]
 alldeps = ["numpy (>=1.8.2)", "scipy (>=0.13.3)"]
@@ -3432,17 +3403,17 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.dependencies]
-PyPyDispatcher = {version = ">=2.1.0", markers = "platform_python_implementation == \"PyPy\""}
+cssselect = ">=0.9"
 lxml = "*"
+parsel = ">=1.5"
+PyDispatcher = ">=2.0.5"
 pyOpenSSL = "*"
+PyPyDispatcher = {version = ">=2.1.0", markers = "platform_python_implementation == \"PyPy\""}
+queuelib = "*"
+service-identity = "*"
 six = ">=1.5.2"
 Twisted = ">=13.1.0"
 w3lib = ">=1.17.0"
-service-identity = "*"
-PyDispatcher = ">=2.0.5"
-cssselect = ">=0.9"
-parsel = ">=1.5"
-queuelib = "*"
 
 [[package]]
 name = "scrapy-crawl-once"
@@ -3465,9 +3436,9 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
+raven = ">=6.3.0"
 Scrapy = ">=1.4.0"
 six = ">=1.11.0"
-raven = ">=6.3.0"
 
 [[package]]
 name = "scrapyd"
@@ -3506,21 +3477,21 @@ certifi = "*"
 urllib3 = ">=1.10.0"
 
 [package.extras]
-celery = ["celery (>=3)"]
-sqlalchemy = ["sqlalchemy (>=1.2)"]
-rq = ["rq (>=0.6)"]
 aiohttp = ["aiohttp (>=3.5)"]
-pyspark = ["pyspark (>=2.4.4)"]
-flask = ["flask (>=0.11)", "blinker (>=1.1)"]
-pure_eval = ["pure-eval", "executing", "asttokens"]
-django = ["django (>=1.8)"]
-chalice = ["chalice (>=1.16.0)"]
 beam = ["apache-beam (>=2.12)"]
-tornado = ["tornado (>=5)"]
 bottle = ["bottle (>=0.12.13)"]
-sanic = ["sanic (>=0.8)"]
+celery = ["celery (>=3)"]
+chalice = ["chalice (>=1.16.0)"]
+django = ["django (>=1.8)"]
 falcon = ["falcon (>=1.4)"]
+flask = ["flask (>=0.11)", "blinker (>=1.1)"]
 httpx = ["httpx (>=0.16.0)"]
+pure_eval = ["pure-eval", "executing", "asttokens"]
+pyspark = ["pyspark (>=2.4.4)"]
+rq = ["rq (>=0.6)"]
+sanic = ["sanic (>=0.8)"]
+sqlalchemy = ["sqlalchemy (>=1.2)"]
+tornado = ["tornado (>=5)"]
 
 [[package]]
 name = "service-identity"
@@ -3531,17 +3502,17 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-pyasn1-modules = "*"
-pyasn1 = "*"
-ipaddress = {version = "*", markers = "python_version < \"3.3\""}
 attrs = ">=16.0.0"
 cryptography = "*"
+ipaddress = {version = "*", markers = "python_version < \"3.3\""}
+pyasn1 = "*"
+pyasn1-modules = "*"
 
 [package.extras]
-docs = ["sphinx"]
-tests = ["coverage (>=4.2.0)", "pytest"]
-idna = ["idna"]
 dev = ["coverage (>=4.2.0)", "pytest", "sphinx", "idna", "pyopenssl"]
+docs = ["sphinx"]
+idna = ["idna"]
+tests = ["coverage (>=4.2.0)", "pytest"]
 
 [[package]]
 name = "setproctitle"
@@ -3560,8 +3531,8 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-requests = ">=1.1.0"
 lxml = ">=3.2.3"
+requests = ">=1.1.0"
 
 [[package]]
 name = "simplegeneric"
@@ -3586,21 +3557,6 @@ description = "A key-value storage for binary data, support many backends."
 category = "main"
 optional = false
 python-versions = "*"
-
-[[package]]
-name = "singledispatch"
-version = "3.6.2"
-description = "Backport functools.singledispatch from Python 3.4 to Python 2.6-3.3."
-category = "main"
-optional = true
-python-versions = ">=2.6"
-
-[package.dependencies]
-six = "*"
-
-[package.extras]
-docs = ["sphinx", "jaraco.packaging (>=8.2)", "rst.linker (>=1.9)"]
-testing = ["pytest (>=4.6)", "pytest-flake8", "pytest-cov", "pytest-black (>=0.3.7)", "unittest2", "pytest-checkdocs (>=2.4)"]
 
 [[package]]
 name = "six"
@@ -3646,16 +3602,16 @@ optional = true
 python-versions = "*"
 
 [package.dependencies]
-imagesize = "*"
-snowballstemmer = ">=1.1"
-babel = ">=1.3,<2.0 || >2.0"
 alabaster = ">=0.7,<0.8"
-six = ">=1.5"
-docutils = ">=0.11"
-Pygments = ">=2.0"
-Jinja2 = ">=2.3"
+babel = ">=1.3,<2.0 || >2.0"
 colorama = {version = ">=0.3.5", markers = "sys_platform == \"win32\""}
+docutils = ">=0.11"
+imagesize = "*"
+Jinja2 = ">=2.3"
+Pygments = ">=2.0"
 requests = ">=2.0.0"
+six = ">=1.5"
+snowballstemmer = ">=1.1"
 
 [package.extras]
 test = ["html5lib", "mock", "pytest", "simplejson"]
@@ -3670,16 +3626,16 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.extras]
-postgresql_pg8000 = ["pg8000"]
-postgresql = ["psycopg2"]
-postgresql_psycopg2cffi = ["psycopg2cffi"]
-pymysql = ["pymysql"]
+mssql = ["pyodbc"]
 mssql_pymssql = ["pymssql"]
-postgresql_psycopg2binary = ["psycopg2-binary"]
+mssql_pyodbc = ["pyodbc"]
 mysql = ["mysqlclient"]
 oracle = ["cx-oracle"]
-mssql = ["pyodbc"]
-mssql_pyodbc = ["pyodbc"]
+postgresql = ["psycopg2"]
+postgresql_pg8000 = ["pg8000"]
+postgresql_psycopg2binary = ["psycopg2-binary"]
+postgresql_psycopg2cffi = ["psycopg2cffi"]
+pymysql = ["pymysql"]
 
 [[package]]
 name = "sqlalchemy-continuum"
@@ -3694,13 +3650,13 @@ SQLAlchemy = ">=1.0.8"
 SQLAlchemy-Utils = ">=0.30.12"
 
 [package.extras]
-flask-login = ["Flask-Login (>=0.2.9)"]
-flexmock = ["flexmock (>=0.9.7)"]
-flask = ["Flask (>=0.9)"]
-flask-sqlalchemy = ["Flask-SQLAlchemy (>=1.0)"]
-test = ["pytest (>=2.3.5)", "flexmock (>=0.9.7)", "psycopg2 (>=2.4.6)", "PyMySQL (==0.6.1)", "six (>=1.4.0)", "Flask-Login (>=0.2.9)", "Flask-SQLAlchemy (>=1.0)", "Flask (>=0.9)", "flexmock (>=0.9.7)", "SQLAlchemy-i18n (>=0.8.4)", "anyjson (>=0.3.3)"]
-i18n = ["SQLAlchemy-i18n (>=0.8.4)"]
 anyjson = ["anyjson (>=0.3.3)"]
+flask = ["Flask (>=0.9)"]
+flask-login = ["Flask-Login (>=0.2.9)"]
+flask-sqlalchemy = ["Flask-SQLAlchemy (>=1.0)"]
+flexmock = ["flexmock (>=0.9.7)"]
+i18n = ["SQLAlchemy-i18n (>=0.8.4)"]
+test = ["pytest (>=2.3.5)", "flexmock (>=0.9.7)", "psycopg2 (>=2.4.6)", "PyMySQL (==0.6.1)", "six (>=1.4.0)", "Flask-Login (>=0.2.9)", "Flask-SQLAlchemy (>=1.0)", "Flask (>=0.9)", "flexmock (>=0.9.7)", "SQLAlchemy-i18n (>=0.8.4)", "anyjson (>=0.3.3)"]
 
 [[package]]
 name = "sqlalchemy-utils"
@@ -3711,25 +3667,25 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-SQLAlchemy = ">=1.0"
-six = "*"
 cryptography = {version = ">=0.6", optional = true, markers = "extra == \"encrypted\""}
+six = "*"
+SQLAlchemy = ">=1.0"
 
 [package.extras]
-test_all = ["anyjson (>=0.3.3)", "arrow (>=0.3.4)", "Babel (>=1.3)", "colour (>=0.0.4)", "cryptography (>=0.6)", "enum34", "intervals (>=0.7.1)", "ipaddr", "passlib (>=1.6,<2.0)", "phonenumbers (>=5.9.2)", "pytest (>=2.7.1)", "Pygments (>=1.2)", "Jinja2 (>=2.3)", "docutils (>=0.10)", "flexmock (>=0.9.7)", "mock (==2.0.0)", "psycopg2 (>=2.5.1)", "pg8000 (>=1.12.4)", "pytz (>=2014.2)", "python-dateutil (>=2.6)", "pymysql", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pyodbc", "python-dateutil", "furl (>=0.4.1)"]
 anyjson = ["anyjson (>=0.3.3)"]
-color = ["colour (>=0.0.4)"]
-babel = ["Babel (>=1.3)"]
-enum = ["enum34"]
-phone = ["phonenumbers (>=5.9.2)"]
-intervals = ["intervals (>=0.7.1)"]
-url = ["furl (>=0.4.1)"]
 arrow = ["arrow (>=0.3.4)"]
+babel = ["Babel (>=1.3)"]
+color = ["colour (>=0.0.4)"]
 encrypted = ["cryptography (>=0.6)"]
-test = ["pytest (>=2.7.1)", "Pygments (>=1.2)", "Jinja2 (>=2.3)", "docutils (>=0.10)", "flexmock (>=0.9.7)", "mock (==2.0.0)", "psycopg2 (>=2.5.1)", "pg8000 (>=1.12.4)", "pytz (>=2014.2)", "python-dateutil (>=2.6)", "pymysql", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pyodbc"]
-timezone = ["python-dateutil"]
-password = ["passlib (>=1.6,<2.0)"]
+enum = ["enum34"]
+intervals = ["intervals (>=0.7.1)"]
 ipaddress = ["ipaddr"]
+password = ["passlib (>=1.6,<2.0)"]
+phone = ["phonenumbers (>=5.9.2)"]
+test = ["pytest (>=2.7.1)", "Pygments (>=1.2)", "Jinja2 (>=2.3)", "docutils (>=0.10)", "flexmock (>=0.9.7)", "mock (==2.0.0)", "psycopg2 (>=2.5.1)", "pg8000 (>=1.12.4)", "pytz (>=2014.2)", "python-dateutil (>=2.6)", "pymysql", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pyodbc"]
+test_all = ["anyjson (>=0.3.3)", "arrow (>=0.3.4)", "Babel (>=1.3)", "colour (>=0.0.4)", "cryptography (>=0.6)", "enum34", "intervals (>=0.7.1)", "ipaddr", "passlib (>=1.6,<2.0)", "phonenumbers (>=5.9.2)", "pytest (>=2.7.1)", "Pygments (>=1.2)", "Jinja2 (>=2.3)", "docutils (>=0.10)", "flexmock (>=0.9.7)", "mock (==2.0.0)", "psycopg2 (>=2.5.1)", "pg8000 (>=1.12.4)", "pytz (>=2014.2)", "python-dateutil (>=2.6)", "pymysql", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pyodbc", "python-dateutil", "furl (>=0.4.1)"]
+timezone = ["python-dateutil"]
+url = ["furl (>=0.4.1)"]
 
 [[package]]
 name = "sqlitedict"
@@ -3796,11 +3752,11 @@ python-versions = "*"
 develop = true
 
 [package.dependencies]
-fqn-decorators = ">=1.0.0,<2.0.0"
-six = ">=1.10.0,<2.0.0"
 elasticsearch = ">=2.2.0"
-pkgsettings = ">=0.9.2"
+fqn-decorators = ">=1.0.0,<2.0.0"
 influxdb = ">=2.11"
+pkgsettings = ">=0.9.2"
+six = ">=1.10.0,<2.0.0"
 
 [package.source]
 type = "git"
@@ -3823,12 +3779,6 @@ category = "main"
 optional = true
 python-versions = "*"
 
-[package.dependencies]
-certifi = "*"
-singledispatch = "*"
-backports-abc = ">=0.4"
-"backports.ssl-match-hostname" = "*"
-
 [[package]]
 name = "traitlets"
 version = "4.3.3"
@@ -3838,10 +3788,10 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-enum34 = {version = "*", markers = "python_version == \"2.7\""}
-six = "*"
-ipython-genutils = "*"
 decorator = "*"
+enum34 = {version = "*", markers = "python_version == \"2.7\""}
+ipython-genutils = "*"
+six = "*"
 
 [package.extras]
 test = ["pytest", "mock"]
@@ -3855,25 +3805,25 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-hyperlink = ">=17.1.1"
-"zope.interface" = ">=4.4.2"
-constantly = ">=15.1"
-PyHamcrest = ">=1.9.0"
-Automat = ">=0.3.0"
-incremental = ">=16.10.1"
 attrs = ">=17.4.0"
+Automat = ">=0.3.0"
+constantly = ">=15.1"
+hyperlink = ">=17.1.1"
+incremental = ">=16.10.1"
+PyHamcrest = ">=1.9.0"
+"zope.interface" = ">=4.4.2"
 
 [package.extras]
-tls = ["pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)"]
-macos_platform = ["pyobjc-core", "pyobjc-framework-cfnetwork", "pyobjc-framework-cocoa", "pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)", "pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)", "soappy", "pyserial (>=3.0)", "h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
-conch = ["pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)"]
-http2 = ["h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
-dev = ["pyflakes (>=1.0.0)", "twisted-dev-tools (>=0.0.2)", "python-subunit", "sphinx (>=1.3.1)", "towncrier (>=17.4.0)", "twistedchecker (>=0.4.0)", "pydoctor (>=16.2.0)"]
-osx_platform = ["pyobjc-core", "pyobjc-framework-cfnetwork", "pyobjc-framework-cocoa", "pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)", "pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)", "soappy", "pyserial (>=3.0)", "h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
 all_non_platform = ["pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)", "pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)", "soappy", "pyserial (>=3.0)", "h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
-windows_platform = ["pywin32", "pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)", "pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)", "soappy", "pyserial (>=3.0)", "h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
+conch = ["pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)"]
+dev = ["pyflakes (>=1.0.0)", "twisted-dev-tools (>=0.0.2)", "python-subunit", "sphinx (>=1.3.1)", "towncrier (>=17.4.0)", "twistedchecker (>=0.4.0)", "pydoctor (>=16.2.0)"]
+http2 = ["h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
+macos_platform = ["pyobjc-core", "pyobjc-framework-cfnetwork", "pyobjc-framework-cocoa", "pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)", "pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)", "soappy", "pyserial (>=3.0)", "h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
+osx_platform = ["pyobjc-core", "pyobjc-framework-cfnetwork", "pyobjc-framework-cocoa", "pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)", "pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)", "soappy", "pyserial (>=3.0)", "h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
 serial = ["pyserial (>=3.0)"]
 soap = ["soappy"]
+tls = ["pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)"]
+windows_platform = ["pywin32", "pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)", "pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)", "soappy", "pyserial (>=3.0)", "h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
 
 [[package]]
 name = "typing"
@@ -3931,8 +3881,8 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-six = ">=1.4.0"
 decorator = ">=3.4.0"
+six = ">=1.4.0"
 
 [package.extras]
 test = ["pytest (>=2.2.3)", "flake8 (>=2.4.0)", "isort (>=4.2.2)"]
@@ -3946,10 +3896,10 @@ optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [package.dependencies]
-PyYAML = "*"
 contextlib2 = {version = "*", markers = "python_version == \"2.7\""}
-six = ">=1.5"
 mock = {version = "*", markers = "python_version == \"2.7\""}
+PyYAML = "*"
+six = ">=1.5"
 wrapt = "*"
 
 [[package]]
@@ -3980,8 +3930,8 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-test = ["pytest (>=2.3.0)", "pytest-xdist (>=1.8)", "psutil (>=1.0.1)"]
 doc = ["Sphinx (>=1.0)"]
+test = ["pytest (>=2.3.0)", "pytest-xdist (>=1.8)", "psutil (>=1.0.1)"]
 
 [[package]]
 name = "wcwidth"
@@ -4000,15 +3950,15 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-simplejson = ">=2.1.0"
 marshmallow = ">=2.15.2"
+simplejson = ">=2.1.0"
 
 [package.extras]
-docs = ["Sphinx (==2.2.0)", "sphinx-issues (==1.2.0)", "sphinx-typlog-theme (==0.7.3)", "Flask (>=0.12.2)", "Django (>=1.11.16)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "webapp2 (>=3.0.0b1)", "falcon (>=1.4.0,<2.0)", "aiohttp (>=3.0.0)"]
-tests = ["pytest", "mock", "webtest (==2.0.33)", "Flask (>=0.12.2)", "Django (>=1.11.16)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "webapp2 (>=3.0.0b1)", "falcon (>=1.4.0,<2.0)", "webtest-aiohttp (==2.0.0)", "pytest-aiohttp (>=0.3.0)", "aiohttp (>=3.0.0)"]
-lint = ["flake8 (==3.7.8)", "pre-commit (>=1.17,<2.0)", "mypy (==0.730)", "flake8-bugbear (==19.8.0)"]
 dev = ["pytest", "mock", "webtest (==2.0.33)", "Flask (>=0.12.2)", "Django (>=1.11.16)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "webapp2 (>=3.0.0b1)", "falcon (>=1.4.0,<2.0)", "flake8 (==3.7.8)", "pre-commit (>=1.17,<2.0)", "tox", "webtest-aiohttp (==2.0.0)", "pytest-aiohttp (>=0.3.0)", "aiohttp (>=3.0.0)", "mypy (==0.730)", "flake8-bugbear (==19.8.0)"]
+docs = ["Sphinx (==2.2.0)", "sphinx-issues (==1.2.0)", "sphinx-typlog-theme (==0.7.3)", "Flask (>=0.12.2)", "Django (>=1.11.16)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "webapp2 (>=3.0.0b1)", "falcon (>=1.4.0,<2.0)", "aiohttp (>=3.0.0)"]
 frameworks = ["Flask (>=0.12.2)", "Django (>=1.11.16)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "webapp2 (>=3.0.0b1)", "falcon (>=1.4.0,<2.0)", "aiohttp (>=3.0.0)"]
+lint = ["flake8 (==3.7.8)", "pre-commit (>=1.17,<2.0)", "mypy (==0.730)", "flake8-bugbear (==19.8.0)"]
+tests = ["pytest", "mock", "webtest (==2.0.33)", "Flask (>=0.12.2)", "Django (>=1.11.16)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "webapp2 (>=3.0.0b1)", "falcon (>=1.4.0,<2.0)", "webtest-aiohttp (==2.0.0)", "pytest-aiohttp (>=0.3.0)", "aiohttp (>=3.0.0)"]
 
 [[package]]
 name = "webassets"
@@ -4035,9 +3985,9 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.extras]
-watchdog = ["watchdog"]
 dev = ["pytest", "coverage", "tox", "sphinx", "pallets-sphinx-themes", "sphinx-issues"]
 termcolor = ["termcolor"]
+watchdog = ["watchdog"]
 
 [[package]]
 name = "whichcraft"
@@ -4064,15 +4014,15 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-configobj = ">4.7.0"
-enum34 = ">=1.0.4"
 autosemver = ">=0.5,<1.0"
 blinker = ">=1.3"
+configobj = ">4.7.0"
+enum34 = ">=1.0.4"
 six = "*"
 
 [package.extras]
-docs = ["Sphinx (>=1.4.2)"]
 all = ["Sphinx (>=1.4.2)", "coverage (>=4.0)", "mock (>=1.0.0)", "isort (>=4.2.2)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+docs = ["Sphinx (>=1.4.2)"]
 tests = ["coverage (>=4.0)", "mock (>=1.0.0)", "isort (>=4.2.2)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
@@ -4103,22 +4053,22 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-SQLAlchemy = ">=1.0"
 six = ">=1.4.1"
-WTForms-Components = ">=0.9.2"
+SQLAlchemy = ">=1.0"
 SQLAlchemy-Utils = ">=0.32.6"
 WTForms = ">=1.0.4"
+WTForms-Components = ">=0.9.2"
 
 [package.extras]
-i18n = ["SQLAlchemy-i18n (>=0.8.2)"]
-color = ["colour (>=0.0.4)"]
-babel = ["Babel (>=1.3)"]
-phone = ["phonenumbers (>=5.9.2)"]
-intervals = ["intervals (>=0.2.0)"]
 arrow = ["arrow (>=0.3.4)"]
+babel = ["Babel (>=1.3)"]
+color = ["colour (>=0.0.4)"]
+i18n = ["SQLAlchemy-i18n (>=0.8.2)"]
+intervals = ["intervals (>=0.2.0)"]
+password = ["passlib (>=1.6,<2.0)"]
+phone = ["phonenumbers (>=5.9.2)"]
 test = ["enum34", "pytest (>=2.3)", "Pygments (>=1.2)", "Jinja2 (>=2.3)", "docutils (>=0.10)", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "isort (>=3.9.6)", "natsort (==3.5.6)", "WTForms-Test (>=0.1.1)", "Babel (>=1.3)", "arrow (>=0.3.4)", "phonenumbers (>=5.9.2)", "intervals (>=0.2.0)", "passlib (>=1.6,<2.0)", "colour (>=0.0.4)", "SQLAlchemy-i18n (>=0.8.2)", "python-dateutil"]
 timezone = ["python-dateutil"]
-password = ["passlib (>=1.6,<2.0)"]
 
 [[package]]
 name = "wtforms-components"
@@ -4131,13 +4081,13 @@ python-versions = "*"
 [package.dependencies]
 intervals = ">=0.6.0"
 six = ">=1.4.1"
-WTForms = ">=1.0.4"
 validators = ">=0.5.0"
+WTForms = ">=1.0.4"
 
 [package.extras]
 color = ["colour (>=0.0.4)"]
-test = ["pytest (>=2.2.3)", "flexmock (>=0.9.7)", "WTForms-Test (>=0.1.1)", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "colour (>=0.0.4)", "ipaddr", "python-dateutil"]
 ipaddress = ["ipaddr"]
+test = ["pytest (>=2.2.3)", "flexmock (>=0.9.7)", "WTForms-Test (>=0.1.1)", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "colour (>=0.0.4)", "ipaddr", "python-dateutil"]
 timezone = ["python-dateutil"]
 
 [[package]]
@@ -4181,24 +4131,24 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [package.extras]
-test = ["zope.event"]
 docs = ["sphinx", "repoze.sphinx.autointerface"]
+test = ["zope.event"]
 testing = ["coverage", "nose", "zope.event"]
 
 [extras]
-worker-node = ["flower", "superlance", "tornado"]
 all = ["coverage", "docutils", "flake8-future-import", "flower", "freezegun", "gunicorn", "hepcrawl", "honcho", "ipdb", "mock", "pytest", "pytest-cov", "pytest-vcr", "requests-mock", "sphinx", "superlance", "tornado"]
-crawler-node = ["hepcrawl"]
-web-node = ["gunicorn", "honcho"]
-tests = ["coverage", "flake8-future-import", "freezegun", "mock", "pytest", "pytest-cov", "pytest-vcr", "requests-mock"]
-xrootd = ["xrootdpyfs", "invenio-xrootd"]
-docs = ["docutils", "sphinx"]
 build-node = ["ipdb"]
+crawler-node = ["hepcrawl"]
+docs = ["docutils", "sphinx"]
+tests = ["coverage", "flake8-future-import", "freezegun", "mock", "pytest", "pytest-cov", "pytest-vcr", "requests-mock"]
+web-node = ["gunicorn", "honcho"]
+worker-node = ["flower", "superlance", "tornado"]
+xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "d86a8d142ad308a99c1aaf658b9a1e43c3eab46fe9403ec4713f13e3aae74b14"
+content-hash = "1f4efdea66f858c8558e455caa9eb8c067aa9eb4a8de7d007be6879ed9a8f6b5"
 
 [metadata.files]
 alabaster = [
@@ -4247,10 +4197,6 @@ backoff = [
     {file = "backoff-1.10.0-py2.py3-none-any.whl", hash = "sha256:5e73e2cbe780e1915a204799dba0a01896f45f4385e636bcca7a0614d879d0cd"},
     {file = "backoff-1.10.0.tar.gz", hash = "sha256:b8fba021fac74055ac05eb7c7bfce4723aedde6cd0a504e5326bcb0bdd6d19a4"},
 ]
-backports-abc = [
-    {file = "backports_abc-0.5-py2.py3-none-any.whl", hash = "sha256:52089f97fe7a9aa0d3277b220c1d730a85aefd64e1b2664696fe35317c5470a7"},
-    {file = "backports_abc-0.5.tar.gz", hash = "sha256:033be54514a03e255df75c5aee8f9e672f663f93abb723444caec8fe43437bde"},
-]
 "backports.functools-lru-cache" = [
     {file = "backports.functools_lru_cache-1.6.1-py2.py3-none-any.whl", hash = "sha256:0bada4c2f8a43d533e4ecb7a12214d9420e66eb206d54bf2d682581ca4b80848"},
     {file = "backports.functools_lru_cache-1.6.1.tar.gz", hash = "sha256:8fde5f188da2d593bd5bc0be98d9abc46c95bb8a9dde93429570192ee6cc2d4a"},
@@ -4258,9 +4204,6 @@ backports-abc = [
 "backports.shutil-get-terminal-size" = [
     {file = "backports.shutil_get_terminal_size-1.0.0-py2.py3-none-any.whl", hash = "sha256:0975ba55054c15e346944b38956a4c9cbee9009391e41b86c68990effb8c1f64"},
     {file = "backports.shutil_get_terminal_size-1.0.0.tar.gz", hash = "sha256:713e7a8228ae80341c70586d1cc0a8caa5207346927e23d09dcbcaf18eadec80"},
-]
-"backports.ssl-match-hostname" = [
-    {file = "backports.ssl_match_hostname-3.7.0.1.tar.gz", hash = "sha256:bb82e60f9fbf4c080eabd957c39f0641f0fc247d9a16e31e26d594d8f42b9fd2"},
 ]
 "backports.tempfile" = [
     {file = "backports.tempfile-1.0-py2.py3-none-any.whl", hash = "sha256:05aa50940946f05759696156a8c39be118169a0e0f94a49d0bb106503891ff54"},
@@ -4992,39 +4935,20 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1-cp35-cp35m-win32.whl", hash = "sha256:6dd73240d2af64df90aa7c4e7481e23825ea70af4b4922f8ede5b9e35f78a3b1"},
     {file = "MarkupSafe-1.1.1-cp35-cp35m-win_amd64.whl", hash = "sha256:9add70b36c5666a2ed02b43b335fe19002ee5235efd4b8a89bfcf9005bebac0d"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-macosx_10_6_intel.whl", hash = "sha256:24982cc2533820871eba85ba648cd53d8623687ff11cbb805be4ff7b4c971aff"},
-    {file = "MarkupSafe-1.1.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:d53bc011414228441014aa71dbec320c66468c1030aae3a6e29778a3382d96e5"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:00bc623926325b26bb9605ae9eae8a215691f33cae5df11ca5424f06f2d1f473"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:717ba8fe3ae9cc0006d7c451f0bb265ee07739daf76355d06366154ee68d221e"},
-    {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux2010_i686.whl", hash = "sha256:3b8a6499709d29c2e2399569d96719a1b21dcd94410a586a18526b143ec8470f"},
-    {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:84dee80c15f1b560d55bcfe6d47b27d070b4681c699c572af2e3c7cc90a3b8e0"},
-    {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux2014_aarch64.whl", hash = "sha256:b1dba4527182c95a0db8b6060cc98ac49b9e2f5e64320e2b56e47cb2831978c7"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-win32.whl", hash = "sha256:535f6fc4d397c1563d08b88e485c3496cf5784e927af890fb3c3aac7f933ec66"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-win_amd64.whl", hash = "sha256:b1282f8c00509d99fef04d8ba936b156d419be841854fe901d8ae224c59f0be5"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-macosx_10_6_intel.whl", hash = "sha256:8defac2f2ccd6805ebf65f5eeb132adcf2ab57aa11fdf4c0dd5169a004710e7d"},
-    {file = "MarkupSafe-1.1.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:bf5aa3cbcfdf57fa2ee9cd1822c862ef23037f5c832ad09cfea57fa846dec193"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:46c99d2de99945ec5cb54f23c8cd5689f6d7177305ebff350a58ce5f8de1669e"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:ba59edeaa2fc6114428f1637ffff42da1e311e29382d81b339c1817d37ec93c6"},
-    {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux2010_i686.whl", hash = "sha256:6fffc775d90dcc9aed1b89219549b329a9250d918fd0b8fa8d93d154918422e1"},
-    {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux2010_x86_64.whl", hash = "sha256:a6a744282b7718a2a62d2ed9d993cad6f5f585605ad352c11de459f4108df0a1"},
-    {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:195d7d2c4fbb0ee8139a6cf67194f3973a6b3042d742ebe0a9ed36d8b6f0c07f"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win32.whl", hash = "sha256:b00c1de48212e4cc9603895652c5c410df699856a2853135b3967591e4beebc2"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win_amd64.whl", hash = "sha256:9bf40443012702a1d2070043cb6291650a0841ece432556f784f004937f0f32c"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:6788b695d50a51edb699cb55e35487e430fa21f1ed838122d722e0ff0ac5ba15"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux1_i686.whl", hash = "sha256:cdb132fc825c38e1aeec2c8aa9338310d29d337bebbd7baa06889d09a60a1fa2"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:13d3144e1e340870b25e7b10b98d779608c02016d5184cfb9927a9f10c689f42"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux2010_i686.whl", hash = "sha256:acf08ac40292838b3cbbb06cfe9b2cb9ec78fce8baca31ddb87aaac2e2dc3bc2"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:d9be0ba6c527163cbed5e0857c451fcd092ce83947944d6c14bc95441203f032"},
-    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:caabedc8323f1e93231b52fc32bdcde6db817623d33e100708d9a68e1f53b26b"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-win32.whl", hash = "sha256:596510de112c685489095da617b5bcbbac7dd6384aeebeda4df6025d0256a81b"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:e8313f01ba26fbbe36c7be1966a7b7424942f670f38e666995b88d012765b9be"},
-    {file = "MarkupSafe-1.1.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:d73a845f227b0bfe8a7455ee623525ee656a9e2e749e4742706d80a6065d5e2c"},
-    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux1_i686.whl", hash = "sha256:98bae9582248d6cf62321dcb52aaf5d9adf0bad3b40582925ef7c7f0ed85fceb"},
-    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:2beec1e0de6924ea551859edb9e7679da6e4870d32cb766240ce17e0a0ba2014"},
-    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux2010_i686.whl", hash = "sha256:7fed13866cf14bba33e7176717346713881f56d9d2bcebab207f7a036f41b850"},
-    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux2010_x86_64.whl", hash = "sha256:6f1e273a344928347c1290119b493a1f0303c52f5a5eae5f16d74f48c15d4a85"},
-    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:feb7b34d6325451ef96bc0e36e1a6c0c1c64bc1fbec4b854f4529e51887b1621"},
-    {file = "MarkupSafe-1.1.1-cp39-cp39-win32.whl", hash = "sha256:22c178a091fc6630d0d045bdb5992d2dfe14e3259760e713c490da5323866c39"},
-    {file = "MarkupSafe-1.1.1-cp39-cp39-win_amd64.whl", hash = "sha256:b7d644ddb4dbd407d31ffb699f1d140bc35478da613b441c582aeb7c43838dd8"},
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
 ]
 marshmallow = [
@@ -5375,7 +5299,10 @@ redis = [
     {file = "redis-3.4.1-py2.py3-none-any.whl", hash = "sha256:b205cffd05ebfd0a468db74f0eedbff8df1a7bfc47521516ade4692991bb0833"},
     {file = "redis-3.4.1.tar.gz", hash = "sha256:0dcfb335921b88a850d461dc255ff4708294943322bd55de6cfd68972490ca1f"},
 ]
-refextract = []
+refextract = [
+    {file = "refextract-0.2.26-py2-none-any.whl", hash = "sha256:210eacb4e2da1a2929d3bd22463c4540e486cea03c33d34d764ef7032207a788"},
+    {file = "refextract-0.2.26.tar.gz", hash = "sha256:7cf308f0265ffde7a3310ee21eae0613dca1db854dda5f067b6f006797f05fe2"},
+]
 requests = [
     {file = "requests-2.22.0-py2.py3-none-any.whl", hash = "sha256:9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31"},
     {file = "requests-2.22.0.tar.gz", hash = "sha256:11e007a8a2aa0323f5a921e9e6a2d7e4e67d9877e85773fba9ba6419025cbeb4"},
@@ -5543,10 +5470,6 @@ simplejson = [
 simplekv = [
     {file = "simplekv-0.14.0-py3-none-any.whl", hash = "sha256:109ac55e5124ec02cc3625948eac41ad06c6f891500880061dbab99bc34d14f6"},
     {file = "simplekv-0.14.0.tar.gz", hash = "sha256:d951549bb3d9dbe944ae3308fde66702c4f0478c94c785139a37da4129cd8882"},
-]
-singledispatch = [
-    {file = "singledispatch-3.6.2-py2.py3-none-any.whl", hash = "sha256:0d428477703d8386eb6aeed6e522c9f22d49f4363cdf4ed6a2ba3dc276053e20"},
-    {file = "singledispatch-3.6.2.tar.gz", hash = "sha256:d5bb9405a4b8de48e36709238e8b91b4f6f300f81a5132ba2531a9a738eca391"},
 ]
 six = [
     {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
