@@ -1264,3 +1264,37 @@ def test_refextract_valid_refs_from_text(mock_match, mock_get_document_in_workfl
     assert refextract(obj, eng) is None
     assert len(obj.data['references']) == 1
     assert validate(obj.data['references'], refs_subschema) is None
+
+
+def test_url_is_correctly_escaped():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://inspirehep.net/api/files/f6b4bd83-52c7-43b7-b99d-24bffcb407ba/0375-9474%2876%2990288-8.xml',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '0375-9474%2876%2990288-8.xml')),
+        )
+        schema = load_schema('hep')
+        subschema = schema['properties']['documents']
+
+        data = {
+            'documents': [
+                {
+                    'key': '0375-9474%2876%2990288-8.xml',
+                    'url': 'http://inspirehep.net/api/files/f6b4bd83-52c7-43b7-b99d-24bffcb407ba/0375-9474%2876%2990288-8.xml'
+                },
+            ],
+        }
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['documents'], subschema) is None
+
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
+
+        assert download_documents(obj, eng) is None
+
+        documents = obj.data['documents']
+        expected_document_url = '/api/files/0b9dd5d1-feae-4ba5-809d-3a029b0bc110/0375-9474%252876%252990288-8.xml'
+
+        assert 1 == len(documents)
+        assert expected_document_url == documents[0]['url']
