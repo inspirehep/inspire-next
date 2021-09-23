@@ -55,13 +55,13 @@ main() {
   buildPush "inspirehep/next-scrapyd" Dockerfile.scrapyd
   logout
   if [ -z "${RELEASE_TAG}" ]; then
-    deploy "qa" "inspirehep/next"
-    deploy "qa" "inspirehep/next-assets"
-    deploy "qa" "inspirehep/next-scrapyd"
+    deploy "inspire-qa" "inspirehep/next"
+    deploy "inspire-qa" "inspirehep/next-assets"
+    deploy "inspire-qa" "inspirehep/next-scrapyd"
   else
-    deploy "prod" "inspirehep/next"
-    deploy "prod" "inspirehep/next-assets"
-    deploy "prod" "inspirehep/next-scrapyd"
+    deploy "inspire-prod" "inspirehep/next"
+    deploy "inspire-prod" "inspirehep/next-assets"
+    deploy "inspire-prod" "inspirehep/next-scrapyd"
   fi
 }
 main
