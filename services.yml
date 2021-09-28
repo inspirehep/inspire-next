@@ -65,7 +65,7 @@ services:
       - "9300:9300"
 
   database:
-    image: postgres:9.6
+    image: postgres:13.4
     environment:
       - POSTGRES_PASSWORD=inspirehep
       - POSTGRES_USER=inspirehep
