@@ -1355,7 +1355,7 @@ six = ">=1.9.0"
 all = ["Sphinx (>=1.5,<1.6)", "check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests_mock (>=1.4.0,<2.0)"]
 docs = ["Sphinx (>=1.5,<1.6)"]
 mysql = ["invenio-db[mysql,versioning] (>=1.0.0a9)"]
-postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0a9)"]
+postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0a9)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0a9)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests_mock (>=1.4.0,<2.0)"]
 
@@ -1383,7 +1383,7 @@ tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (
 
 [[package]]
 name = "inspire-json-merger"
-version = "11.0.23"
+version = "11.0.25"
 description = "INSPIRE-specific configuration of the JSON Merger."
 category = "main"
 optional = false
@@ -1392,7 +1392,7 @@ python-versions = "*"
 [package.dependencies]
 inspire-schemas = ">=61.0,<62.0"
 inspire-utils = ">=3.0.0,<4.0"
-json-merger = {version = "0.7.4", extras = ["contrib"]}
+json-merger = {version = "0.7.6", extras = ["contrib"]}
 munkres = "1.0.12"
 pyrsistent = ">=0.14.0,<1.0"
 
@@ -1574,7 +1574,7 @@ all = ["Sphinx (>=1.4.2,<1.6)", "celery (>=3.1.0,<4.0)", "check-manifest (>=0.25
 celery = ["celery (>=3.1.0,<4.0)"]
 docs = ["Sphinx (>=1.4.2,<1.6)"]
 mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
-postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0)"]
+postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "selenium (>=3.0.1)"]
 
@@ -1998,7 +1998,7 @@ all = ["Flask-Admin (>=1.3.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "
 docs = ["Sphinx (>=1.5.1)"]
 mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
 pidstore = ["invenio-pidstore (>=1.0.0)"]
-postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0)"]
+postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.5.3)", "Flask-Menu (>=0.4.0)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=3.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.6.4,<5.0.0)"]
 
@@ -2020,7 +2020,7 @@ invenio-records-rest = ">=1.6.3"
 all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.7.0)"]
 docs = ["Sphinx (>=1.5.1)"]
 mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
-postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0)"]
+postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.7.0)"]
 
@@ -2074,9 +2074,9 @@ invenio-pidstore = ">=1.0.0"
 invenio-records = ">=1.0.0"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,mysql,versioning] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,mysql,versioning] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 docs = ["Sphinx (>=1.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,mysql,versioning] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-rest"
@@ -2383,7 +2383,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "json-merger"
-version = "0.7.4"
+version = "0.7.6"
 description = "Python module that is able to merge json record objects."
 category = "main"
 optional = false
@@ -4659,8 +4659,8 @@ inspire-dojson = [
     {file = "inspire_dojson-63.1.3-py2-none-any.whl", hash = "sha256:3321a310dae00751140a4aed3a4f0db43521d131b4c720fd64454ba8b42affe6"},
 ]
 inspire-json-merger = [
-    {file = "inspire-json-merger-11.0.23.tar.gz", hash = "sha256:f2c094064233961ac45e909eb700369c7ddf280243f43ba2544893d0dfca638e"},
-    {file = "inspire_json_merger-11.0.23-py2-none-any.whl", hash = "sha256:8bf63f9a51f191f0a44a6aa236f24c4ec507590f0cd30bfe076ad4c50939f7b7"},
+    {file = "inspire-json-merger-11.0.25.tar.gz", hash = "sha256:ae08ed7d01c61525b43bed185b373b9e77913beac14a62f3d44464e38003e32c"},
+    {file = "inspire_json_merger-11.0.25-py2-none-any.whl", hash = "sha256:0a577e131b06c95c07d25b2bb393259c104e30ea8a9fe2f3d3959f9a0f5c8a95"},
 ]
 inspire-matcher = [
     {file = "inspire-matcher-9.0.1.tar.gz", hash = "sha256:622f5a4e2bc4f2c0ac987caf10a61efbe44da673a9e9724baa52bf1917b8e200"},
@@ -4847,8 +4847,8 @@ jmespath = [
     {file = "jmespath-0.10.0.tar.gz", hash = "sha256:b85d0567b8666149a93172712e68920734333c0ce7e89b78b3e987f71e5ed4f9"},
 ]
 json-merger = [
-    {file = "json-merger-0.7.4.tar.gz", hash = "sha256:95aeef108df562b79a36089220c8184b054f772312cff7b8cce515c8753cfc96"},
-    {file = "json_merger-0.7.4-py2.py3-none-any.whl", hash = "sha256:690c04ddd646f9fa5b1a2e8f4e1fea84d57918eba80fcce2e06c3114007c95d9"},
+    {file = "json-merger-0.7.6.tar.gz", hash = "sha256:8536a43e9be562063494f850d1620e7f33cb656e5993482992050833f62208ae"},
+    {file = "json_merger-0.7.6-py2.py3-none-any.whl", hash = "sha256:c1fc919a874b11bc57bed1cf59a5069773dc8f4a65b74fb9a9ee41d3377ec29e"},
 ]
 jsonpatch = [
     {file = "jsonpatch-1.25-py2.py3-none-any.whl", hash = "sha256:cc3a7241010a1fd3f50145a3b33be2c03c1e679faa19934b628bb07d0f64819e"},
