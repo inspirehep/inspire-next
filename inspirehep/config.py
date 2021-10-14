@@ -1254,6 +1254,7 @@ ARXIV_CATEGORIES = {
         'hep-lat',
         'hep-ph',
         'hep-th',
+        'quant-ph'
     ],
     'non-core': [
         'astro-ph.CO',
