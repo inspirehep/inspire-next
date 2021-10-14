@@ -4149,7 +4149,7 @@ xrootd = ["xrootdpyfs", "invenio-xrootd"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "fccf00ea4eb8fd0c4c480d77fcf3d8d0999563dae5207618bfc13f225cf9ff55"
+content-hash = "04ff6676314ab7353e929a073bfe203d390cfd7fc1a96af56014b02a0d587b49"
 
 [metadata.files]
 alabaster = [
