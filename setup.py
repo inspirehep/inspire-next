@@ -22,7 +22,7 @@
 
 """The next version of INSPIRE.
 If you are updating this file (eg. adding entry points) don't forget to update
-pyproject.toml which is used for local development. The guide how to do it might 
+pyproject.toml which is used for local development. The guide how to do it might
 be found here: https://docs.python.org/3/distutils/setupscript.html
 """
 
@@ -53,7 +53,6 @@ tests_require = []
 packages = []
 
 extras_require = {}
-
 
 setup(
     name='Inspirehep',
