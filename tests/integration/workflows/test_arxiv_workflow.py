@@ -406,7 +406,7 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
     obj2 = eng.objects[0]
 
     assert obj2.extra_data["previously_rejected"] is True
-    assert obj2.extra_data["previously_rejected_matches"] == [obj_id]
+    assert set(obj2.extra_data["previously_rejected_matches"]) == set([obj_id])
 
 
 def test_article_workflow_stops_when_record_is_not_valid(workflow_app):
