@@ -407,7 +407,6 @@ HALT_FOR_APPROVAL_IF_NEW_OR_REJECT_IF_NOT_RELEVANT = [
                             mark('approved', True),
                         ],
                         [
-                            reject_record('Article rejected'),
                             mark('approved', False),
                         ],
                     ),

@@ -70,6 +70,29 @@ def test_resolve_accept(workflow_app, workflow):
     assert workflow.extra_data == expected
 
 
+def test_resolve_accept_with_rejection_msg(workflow_app, workflow):
+    args = {
+        # this data is sent by inspire-search-js when rejection button is selected
+        # see https://github.com/inspirehep/inspirehep-search-js/blob/3729037ee2b524c186a6a52bb0485d0a1b6c5bae/src/inspirehep-holdingpen-js/holdingpen/holdingpen.services.js#L73-L87
+        'request_data': {
+            'value': 'reject',
+            'pdf_upload': False,
+            'reason': 'this is a test reason'
+        }
+    }
+    HEPApproval.resolve(workflow, **args)
+    expected = {
+        'core': False,
+        'user_action': 'reject',
+        'upload_pdf': False,
+        '_action': None,
+        '_message': '',
+        'reason': 'this is a test reason',
+        'approved': False
+    }
+    assert workflow.extra_data == expected
+
+
 def test_resolve_accept_core(workflow_app, workflow):
     args = {
         'request_data': {
