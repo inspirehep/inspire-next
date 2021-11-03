@@ -580,7 +580,7 @@ def normalize_journal_titles(obj, eng):
 
     Note:
         The DB is queried in order to get the `$ref` of each journal and add it in
-        `journal_record`.
+        `journal_record` as well as inspire categories.
 
     TODO:
         Refactor: it must be checked that `normalize_journal_title` is appropriate.
@@ -595,17 +595,17 @@ def normalize_journal_titles(obj, eng):
     publications = obj.data.get('publication_info', [])
 
     for publication in publications:
-        normalize_journal_title_entry(publication)
+        normalize_journal_title_entry(obj, publication)
 
     references = obj.data.get("references", [])
     for reference in references:
         publication_info = get_value(reference, 'reference.publication_info')
         if not publication_info:
             continue
-        normalize_journal_title_entry(publication_info)
+        normalize_journal_title_entry(obj, publication_info)
 
 
-def normalize_journal_title_entry(publication_info):
+def normalize_journal_title_entry(obj, publication_info):
     if 'journal_title' not in publication_info:
         return
 
@@ -616,10 +616,23 @@ def normalize_journal_title_entry(publication_info):
         RecordMetadata.json['_collections'].op('?')('Journals')).filter(
         cast(RecordMetadata.json['short_title'], String) == type_coerce(normalized_title, JSON))
     result = db.session.execute(ref_query).fetchone()
-    journal_record = result.records_metadata_json['self'] if result else None
+    journal_data = result.records_metadata_json if result else None
+
+    if not journal_data:
+        return
+
+    journal_record = journal_data['self']
 
     if journal_record:
         publication_info['journal_record'] = journal_record
+
+    if journal_data.get('inspire_categories'):
+        obj.extra_data.setdefault('journal_inspire_categories', []).extend(journal_data['inspire_categories'])
+
+
+def update_inspire_categories(obj, eng):
+    if obj.extra_data.get('journal_inspire_categories'):
+        obj.data['inspire_categories'] = obj.extra_data['journal_inspire_categories']
 
 
 @with_debug_logging

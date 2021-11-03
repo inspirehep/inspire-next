@@ -17,5 +17,6 @@
     },
     "proceedings":false,
     "refereed":true,
-    "short_title":"Test.Jou.1"
+    "short_title":"Test.Jou.1",
+    "inspire_categories": [{"term": "Astrophysics"}]
 }
