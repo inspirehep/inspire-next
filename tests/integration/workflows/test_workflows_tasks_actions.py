@@ -47,7 +47,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     normalize_affiliations,
     link_institutions_with_affiliations,
     _assign_institution,
-    refextract
+    refextract, update_inspire_categories
 )
 
 from calls import insert_citing_record
@@ -182,6 +182,9 @@ def test_normalize_journal_titles_known_journals_with_ref(workflow_app, insert_j
     assert obj.data['publication_info'][2]['journal_title'] == 'Test.Jou.2'
     assert obj.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
+    assert len(obj.extra_data['journal_inspire_categories']) == 2
+    assert {'term': 'Astrophysics'} in obj.extra_data['journal_inspire_categories']
+    assert {'term': 'Accelerators'} in obj.extra_data['journal_inspire_categories']
 
 
 def test_normalize_journal_titles_known_journals_with_ref_from_variants(workflow_app, insert_journals_in_db):
@@ -228,6 +231,9 @@ def test_normalize_journal_titles_known_journals_with_ref_from_variants(workflow
     assert obj.data['publication_info'][2]['journal_title'] == 'Test.Jou.2'
     assert obj.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
+    assert len(obj.extra_data['journal_inspire_categories']) == 2
+    assert {'term': 'Astrophysics'} in obj.extra_data['journal_inspire_categories']
+    assert {'term': 'Accelerators'} in obj.extra_data['journal_inspire_categories']
 
 
 def test_normalize_journal_titles_known_journals_no_ref(workflow_app, insert_journals_in_db):
@@ -268,6 +274,9 @@ def test_normalize_journal_titles_known_journals_no_ref(workflow_app, insert_jou
     assert obj.data['publication_info'][2]['journal_title'] == 'Test.Jou.2'
     assert obj.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
+    assert len(obj.extra_data['journal_inspire_categories']) == 2
+    assert {'term': 'Astrophysics'} in obj.extra_data['journal_inspire_categories']
+    assert {'term': 'Accelerators'} in obj.extra_data['journal_inspire_categories']
 
 
 def test_normalize_journal_titles_known_journals_wrong_ref(workflow_app, insert_journals_in_db):
@@ -314,6 +323,9 @@ def test_normalize_journal_titles_known_journals_wrong_ref(workflow_app, insert_
     assert obj.data['publication_info'][2]['journal_title'] == 'Test.Jou.2'
     assert obj.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936475'}
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1936476'}
+    assert len(obj.extra_data['journal_inspire_categories']) == 2
+    assert {'term': 'Astrophysics'} in obj.extra_data['journal_inspire_categories']
+    assert {'term': 'Accelerators'} in obj.extra_data['journal_inspire_categories']
 
 
 def test_normalize_journal_titles_unknown_journals_with_ref(workflow_app, insert_journals_in_db):
@@ -360,6 +372,7 @@ def test_normalize_journal_titles_unknown_journals_with_ref(workflow_app, insert
     assert obj.data['publication_info'][2]['journal_title'] == 'Unknown2'
     assert obj.data['publication_info'][0]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/0000000'}
     assert obj.data['publication_info'][2]['journal_record'] == {'$ref': 'http://localhost:5000/api/journals/1111111'}
+    assert not obj.extra_data.get('journal_inspire_categories')
 
 
 def test_normalize_journal_titles_unknown_journals_no_ref(workflow_app, insert_journals_in_db):
@@ -400,6 +413,49 @@ def test_normalize_journal_titles_unknown_journals_no_ref(workflow_app, insert_j
     assert obj.data['publication_info'][2]['journal_title'] == 'Unknown2'
     assert 'journal_record' not in obj.data['publication_info'][0]
     assert 'journal_record' not in obj.data['publication_info'][2]
+    assert not obj.extra_data.get('journal_inspire_categories')
+
+
+def test_update_inspire_categories(workflow_app):
+    record = {
+        "_collections": [
+            "Literature"
+        ],
+        "titles": [
+            "A title"
+        ],
+        "document_type": [
+            "book",
+            "note",
+            "report"
+        ],
+        "publication_info": [
+            {
+                "journal_title": "Unknown1",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/0000000"
+                }
+            },
+            {
+                "cnum": "C01-01-01"
+            },
+            {
+                "journal_title": "Unknown2",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/1111111"
+                }
+            }
+        ]
+    }
+
+    obj = workflow_object_class.create(
+        data=record,
+        id_user=1,
+        data_type='hep'
+    )
+    obj.extra_data['journal_inspire_categories'] = [{'term': 'Astrophysics'}, {'term': 'Accelerators'}]
+    update_inspire_categories(obj, None)
+    assert obj.data['inspire_categories'] == obj.extra_data['journal_inspire_categories']
 
 
 @mock.patch(

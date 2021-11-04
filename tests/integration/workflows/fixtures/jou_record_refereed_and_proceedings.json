@@ -17,5 +17,6 @@
     },
     "proceedings":true,
     "refereed":true,
-    "short_title":"Test.Jou.2"
+    "short_title":"Test.Jou.2",
+    "inspire_categories": [{"term": "Accelerators"}]
 }

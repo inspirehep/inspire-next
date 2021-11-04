@@ -62,6 +62,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     reject_record,
     save_workflow,
     set_refereed_and_fix_document_type,
+    update_inspire_categories,
     validate_record,
     jlab_ticket_needed,
     delay_if_necessary, should_be_hidden,
@@ -298,7 +299,8 @@ NOTIFY_CURATOR_IF_NEEDED = [
                 IF(
                     curation_ticket_needed,  # if core
                     IF_ELSE(
-                        check_source_publishing,  # if it is coming from publisher, create ticket in hep_publisher queue
+                        # if it is coming from publisher, create ticket in hep_publisher queue
+                        check_source_publishing,
                         do_not_repeat('create_ticket_curator_core_publisher')(
                             create_ticket(
                                 template='literaturesuggest/tickets/curation_core.html',
@@ -383,32 +385,35 @@ HALT_FOR_APPROVAL_IF_NEW_OR_REJECT_IF_NOT_RELEVANT = [
             mark('approved', True),
             mark('merged', True),
         ],
-        IF_ELSE(
-            is_marked('auto-approved'),
-            mark('approved', True),
-            [
-                IF(
-                    is_record_relevant,
-                    halt_record(
-                        action="hep_approval",
-                        message="Submission halted for curator approval.",
+        [
+            update_inspire_categories,
+            IF_ELSE(
+                is_marked('auto-approved'),
+                mark('approved', True),
+                [
+                    IF(
+                        is_record_relevant,
+                        halt_record(
+                            action="hep_approval",
+                            message="Submission halted for curator approval.",
+                        ),
                     ),
-                ),
-                IF_NOT(
-                    is_marked('approved'),
-                    IF_ELSE(
-                        should_be_hidden,
-                        [
-                            replace_collection_to_hidden,
-                            mark('approved', True),
-                        ],
-                        [
-                            mark('approved', False),
-                        ],
+                    IF_NOT(
+                        is_marked('approved'),
+                        IF_ELSE(
+                            should_be_hidden,
+                            [
+                                replace_collection_to_hidden,
+                                mark('approved', True),
+                            ],
+                            [
+                                mark('approved', False),
+                            ],
+                        ),
                     ),
-                ),
-            ],
-        ),
+                ],
+            ),
+        ],
     ),
     save_workflow
 ]
