@@ -12,6 +12,9 @@
                     "is-update": {
                         "type": "boolean"
                     },
+                    "approved": {
+                        "type": "boolean"
+                    },
                     "matches": {
                         "type": "object"
                     },
@@ -72,8 +75,23 @@
                         },
                         "type": "object"
                     },
+                    "abstracts": {
+                        "properties": {
+                          "source": {
+                            "type": "keyword"
+                          },
+                          "value": {
+                            "type": "text",
+                            "copy_to": "_all"
+                          }
+                        },
+                        "type": "object"
+                      },
                     "control_number": {
                         "type": "integer"
+                    },
+                    "core": {
+                        "type": "boolean"
                     },
                     "dois": {
                         "properties": {
