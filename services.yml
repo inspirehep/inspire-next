@@ -28,7 +28,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    tty: true
     environment:
       - BASE_USER_UID=${BASE_USER_UID:-1000}
       - BASE_USER_GID=${BASE_USER_GID:-1000}
@@ -47,6 +46,7 @@ services:
       - LC_IDENTIFICATION=en_US.UTF-8
       - LC_ALL=
       - APP_CRAWL_ONCE_PATH=/code/scrapy/crawl_once
+    tty: true
 
   indexer:
     build: ./docker/elasticsearch
