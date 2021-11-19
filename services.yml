@@ -25,6 +25,7 @@ version: '2.1'
 services:
   base:
     image: inspire-build/inspire-next-base
+    tty: true
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -46,7 +47,6 @@ services:
       - LC_IDENTIFICATION=en_US.UTF-8
       - LC_ALL=
       - APP_CRAWL_ONCE_PATH=/code/scrapy/crawl_once
-    tty: true
 
   indexer:
     build: ./docker/elasticsearch
