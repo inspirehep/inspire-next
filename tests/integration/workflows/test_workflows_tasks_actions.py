@@ -416,6 +416,56 @@ def test_normalize_journal_titles_unknown_journals_no_ref(workflow_app, insert_j
     assert not obj.extra_data.get('journal_inspire_categories')
 
 
+def test_normalize_journal_titles_doesnt_assign_categories_from_journals_in_references(
+    workflow_app, insert_journals_in_db
+):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["book", "note", "report"],
+        "publication_info": [
+            {
+                "journal_title": "A Test Journal1",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/1936475"
+                },
+            },
+        ],
+        "references": [
+            {
+                "reference": {
+                    "authors": [{"full_name": "A, Papaetrou"}],
+                    "misc": [
+                        "A static solution of the equations of the gravitational field for an arbitrary charge distribution"
+                    ],
+                    "publication_info": {
+                        "artid": "191",
+                        "journal_record": {
+                            "$ref": "http://localhost:5000/api/journals/1936476"
+                        },
+                        "journal_title": "Proc.Roy.Irish Acad.A",
+                        "journal_volume": "51",
+                        "page_start": "191",
+                        "year": 1947,
+                    },
+                }
+            }
+        ],
+    }
+
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+
+    normalize_journal_titles(obj, None)
+
+    assert obj.data["publication_info"][0]["journal_title"] == "Test.Jou.1"
+    assert obj.data["publication_info"][0]["journal_record"] == {
+        "$ref": "http://localhost:5000/api/journals/1936475"
+    }
+    assert len(obj.extra_data["journal_inspire_categories"]) == 1
+    assert {"term": "Astrophysics"} in obj.extra_data["journal_inspire_categories"]
+    assert {"term": "Accelerators"} not in obj.extra_data["journal_inspire_categories"]
+
+
 def test_update_inspire_categories(workflow_app):
     record = {
         "_collections": [

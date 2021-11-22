@@ -595,7 +595,7 @@ def normalize_journal_titles(obj, eng):
     publications = obj.data.get('publication_info', [])
 
     for publication in publications:
-        normalize_journal_title_entry(obj, publication)
+        normalize_journal_title_entry(obj, publication, add_inspire_categories=True)
 
     references = obj.data.get("references", [])
     for reference in references:
@@ -605,7 +605,7 @@ def normalize_journal_titles(obj, eng):
         normalize_journal_title_entry(obj, publication_info)
 
 
-def normalize_journal_title_entry(obj, publication_info):
+def normalize_journal_title_entry(obj, publication_info, add_inspire_categories=False):
     if 'journal_title' not in publication_info:
         return
 
@@ -626,7 +626,7 @@ def normalize_journal_title_entry(obj, publication_info):
     if journal_record:
         publication_info['journal_record'] = journal_record
 
-    if journal_data.get('inspire_categories'):
+    if add_inspire_categories and journal_data.get('inspire_categories'):
         obj.extra_data.setdefault('journal_inspire_categories', []).extend(journal_data['inspire_categories'])
 
 
