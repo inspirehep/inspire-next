@@ -604,6 +604,9 @@ def normalize_journal_titles(obj, eng):
             continue
         normalize_journal_title_entry(obj, publication_info)
 
+    if obj.extra_data.get('journal_inspire_categories'):
+        obj.extra_data['journal_inspire_categories'] = dedupe_list(obj.extra_data['journal_inspire_categories'])
+
 
 def normalize_journal_title_entry(obj, publication_info, add_inspire_categories=False):
     if 'journal_title' not in publication_info:
