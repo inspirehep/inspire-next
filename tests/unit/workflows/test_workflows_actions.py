@@ -517,6 +517,38 @@ def test_check_if_france_in_fulltext_when_france_in_header(mocked_get_document, 
     assert france_in_fulltext
 
 
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_check_if_france_in_fulltext_doesnt_include_francesco(mocked_get_document, app):
+    fake_grobid_response = "<author>Francesco, Papa</author>"
+
+    obj = MagicMock()
+    obj.data = {
+        'authors': [
+            {"full_name": "author 1"},
+            {"full_name": "author 2"},
+            {"full_name": "author 3"}
+        ]
+    }
+
+    obj.extra_data = {}
+    eng = None
+
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+    with patch.dict(current_app.config, new_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                text=fake_grobid_response,
+                headers={'content-type': 'application/xml'},
+                status_code=200,
+            )
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                mocked_get_document.return_value.__enter__.return_value = tmp_file.name
+                france_in_fulltext = check_if_france_in_fulltext(obj, eng)
+
+    assert not france_in_fulltext
+
+
 def test_check_if_france_in_affiliations(app):
     obj = MagicMock()
     obj.data = {

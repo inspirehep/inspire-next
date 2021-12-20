@@ -1193,8 +1193,8 @@ def check_if_france_in_fulltext(obj, eng):
     fulltext = get_fulltext(obj)
     if not fulltext:
         return
-    fulltext_lower = fulltext.lower()
-    return 'france' in fulltext_lower or 'in2p3' in fulltext_lower
+    regex = re.compile(r"\bfrance\b|in2p3", re.UNICODE | re.IGNORECASE)
+    return regex.search(fulltext)
 
 
 def check_if_france_in_raw_affiliations(obj, eng):
