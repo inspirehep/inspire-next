@@ -51,13 +51,15 @@ def fake_download_file(workflow, name, url):
     raise Exception("Download file not mocked!")
 
 
-def fake_beard_api_request(url, data):
+def fake_classifier_api_request(url, data):
     """Mock json_api_request func."""
     return {
-        'decision': u'Non-CORE',
-        'scores': [
-            -0.20895982018928272, 0.8358207729691823, -1.6722188892559084
-        ]
+        'prediction': 'non_core',
+        'scores': {
+            'core': 0.33398324251174927,
+            'non_core': 0.6497962474822998,
+            'rejected': 0.016220496967434883
+        }
     }
 
 

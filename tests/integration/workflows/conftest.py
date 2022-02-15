@@ -98,12 +98,12 @@ def workflow_app(higgs_ontology):
         )
 
         app = create_app(
-            BEARD_API_URL="http://example.com/beard",
             CELERY_TASK_ALWAYS_EAGER=True,
             CELERY_CACHE_BACKEND='memory',
             CELERY_TASK_EAGER_PROPAGATES=True,
             CELERY_RESULT_BACKEND='cache',
             CFG_BIBCATALOG_SYSTEM_RT_URL=RT_URL,
+            CLASSIFIER_API_URL="http://example.com/classifier",
             DEBUG=False,
             GROBID_URL=GROBID_URL,
             HEP_ONTOLOGY_FILE=higgs_ontology,
@@ -197,16 +197,6 @@ def mocked_external_services(workflow_app):
             ),
             status_code=200,
             json=[],
-        )
-        requests_mocker.register_uri(
-            requests_mock.ANY,
-            re.compile(
-                '.*' +
-                workflow_app.config['BEARD_API_URL'] +
-                '/text/phonetic_blocks.*'
-            ),
-            status_code=200,
-            json={'phonetic_blocks': {}},
         )
         requests_mocker.register_uri(
             requests_mock.ANY,

@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function
 import mock as mock
 from invenio_workflows import ObjectStatus, start, workflow_object_class
 from invenio_workflows.models import WorkflowObjectModel
-from mocks import (fake_beard_api_request, fake_download_file,
+from mocks import (fake_classifier_api_request, fake_download_file,
                    fake_magpie_api_request)
 from workflow_utils import build_workflow
 from utils import override_config
@@ -20,8 +20,8 @@ from utils import override_config
     side_effect=fake_download_file,
 )
 @mock.patch(
-    "inspirehep.modules.workflows.tasks.beard.json_api_request",
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
@@ -29,7 +29,7 @@ from utils import override_config
 )
 def test_workflow_non_core_selection_is_created_when_secondary_arxiv_category(
     mocked_api_request_magpie,
-    mocked_api_request_beard,
+    mocked_api_request_classifier,
     mocked_package_download,
     workflow_app,
     mocked_external_services,
@@ -72,8 +72,8 @@ def test_workflow_non_core_selection_is_created_when_secondary_arxiv_category(
     side_effect=fake_download_file,
 )
 @mock.patch(
-    "inspirehep.modules.workflows.tasks.beard.json_api_request",
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
@@ -81,7 +81,7 @@ def test_workflow_non_core_selection_is_created_when_secondary_arxiv_category(
 )
 def test_workflow_non_core_selection_is_not_created_for_updates(
     mocked_api_request_magpie,
-    mocked_api_request_beard,
+    mocked_api_request_classifier,
     mocked_package_download,
     workflow_app,
     mocked_external_services,
@@ -137,8 +137,8 @@ def test_workflow_non_core_selection_is_not_created_for_updates(
     side_effect=fake_download_file,
 )
 @mock.patch(
-    "inspirehep.modules.workflows.tasks.beard.json_api_request",
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
@@ -146,7 +146,7 @@ def test_workflow_non_core_selection_is_not_created_for_updates(
 )
 def test_workflow_non_core_selection_is_not_created_when_secondary_category_arent_core(
     mocked_api_request_magpie,
-    mocked_api_request_beard,
+    mocked_api_request_classifier,
     mocked_package_download,
     workflow_app,
     mocked_external_services,

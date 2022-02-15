@@ -31,8 +31,8 @@ from flask import current_app
 
 from mock import patch
 from mocks import (
-    fake_beard_api_request,
-    fake_magpie_api_request,
+    fake_classifier_api_request,
+    fake_magpie_api_request
 )
 
 from invenio_workflows import (
@@ -157,8 +157,8 @@ def disable_file_upload(workflow_app):
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -166,7 +166,7 @@ def disable_file_upload(workflow_app):
 )
 def test_merge_without_conflicts_handles_update_without_acquisition_source_and_acts_as_rootless(
         mocked_api_request_magpie,
-        mocked_beard_api,
+        mocked_classifer_api,
         workflow_app,
         mocked_external_services,
         disable_file_upload,
@@ -199,8 +199,8 @@ def test_merge_without_conflicts_handles_update_without_acquisition_source_and_a
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -208,7 +208,7 @@ def test_merge_without_conflicts_handles_update_without_acquisition_source_and_a
 )
 def test_merge_with_conflicts_handles_update_without_acquisition_source_and_acts_as_rootless(
         mocked_api_request_magpie,
-        mocked_beard_api,
+        mocked_classifier_api,
         workflow_app,
         mocked_external_services,
         disable_file_upload,
@@ -239,8 +239,8 @@ def test_merge_with_conflicts_handles_update_without_acquisition_source_and_acts
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -248,7 +248,7 @@ def test_merge_with_conflicts_handles_update_without_acquisition_source_and_acts
 )
 def test_merge_with_conflicts_rootful(
         mocked_api_request_magpie,
-        mocked_beard_api,
+        mocked_classifier_api,
         workflow_app,
         mocked_external_services,
         disable_file_upload,
@@ -277,8 +277,8 @@ def test_merge_with_conflicts_rootful(
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -286,7 +286,7 @@ def test_merge_with_conflicts_rootful(
 )
 def test_merge_without_conflicts_rootful(
         mocked_api_request_magpie,
-        mocked_beard_api,
+        mocked_classifier_api,
         workflow_app,
         mocked_external_services,
         disable_file_upload,
@@ -320,8 +320,8 @@ def test_merge_without_conflicts_rootful(
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -329,7 +329,7 @@ def test_merge_without_conflicts_rootful(
 )
 def test_merge_without_conflicts_callback_url(
         mocked_api_request_magpie,
-        mocked_beard_api,
+        mocked_classifier_api,
         workflow_app,
         mocked_external_services,
         disable_file_upload,
@@ -374,8 +374,8 @@ def test_merge_without_conflicts_callback_url(
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -383,7 +383,7 @@ def test_merge_without_conflicts_callback_url(
 )
 def test_merge_with_conflicts_callback_url(
         mocked_api_request_magpie,
-        mocked_beard_api,
+        mocked_classifier_api,
         workflow_app,
         mocked_external_services,
         disable_file_upload,
@@ -441,8 +441,8 @@ def test_merge_with_conflicts_callback_url(
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -450,7 +450,7 @@ def test_merge_with_conflicts_callback_url(
 )
 def test_merge_with_conflicts_callback_url_and_resolve(
         mocked_api_request_magpie,
-        mocked_beard_api,
+        mocked_classifier_api,
         workflow_app,
         mocked_external_services,
         disable_file_upload,
@@ -513,8 +513,8 @@ def test_merge_with_conflicts_callback_url_and_resolve(
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -522,7 +522,7 @@ def test_merge_with_conflicts_callback_url_and_resolve(
 )
 def test_merge_callback_url_with_malformed_workflow(
         mocked_api_request_magpie,
-        mocked_beard_api,
+        mocked_classifier_api,
         workflow_app,
         mocked_external_services,
         disable_file_upload,
@@ -585,8 +585,8 @@ def test_merge_callback_url_with_malformed_workflow(
     'inspirehep.modules.workflows.workflows.article.is_record_relevant',
 )
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -594,7 +594,7 @@ def test_merge_callback_url_with_malformed_workflow(
 )
 def test_regression_non_relevant_update_is_not_rejected_and_gets_merged(
     mocked_api_request_magpie,
-    mocked_beard_api,
+    mocked_classifier_api,
     mock_is_record_relevant,
     workflow_app,
     mocked_external_services,
@@ -619,8 +619,8 @@ def test_regression_non_relevant_update_is_not_rejected_and_gets_merged(
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -633,7 +633,7 @@ def test_regression_non_relevant_update_is_not_rejected_and_gets_merged(
 def test_workflow_restarts_once_if_working_with_stale_data(
     mocked__is_stale_data,
     mocked_api_request_magpie,
-    mocked_beard_api,
+    mocked_api_request_classifier,
     workflow_app,
     mocked_external_services,
 ):
@@ -653,8 +653,8 @@ def test_workflow_restarts_once_if_working_with_stale_data(
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -667,7 +667,7 @@ def test_workflow_restarts_once_if_working_with_stale_data(
 def test_workflow_restarts_twice_if_working_with_stale_data(
     mocked__is_stale_data,
     mocked_api_request_magpie,
-    mocked_beard_api,
+    mocked_api_request_classifier,
     workflow_app,
     mocked_external_services,
 ):
@@ -687,8 +687,8 @@ def test_workflow_restarts_twice_if_working_with_stale_data(
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -701,7 +701,7 @@ def test_workflow_restarts_twice_if_working_with_stale_data(
 def test_workflow_restarts_goes_in_error_after_three_restarts(
     mocked__is_stale_data,
     mocked_api_request_magpie,
-    mocked_beard_api,
+    mocked_api_request_classifier,
     workflow_app,
     mocked_external_services,
 ):
@@ -722,8 +722,8 @@ def test_workflow_restarts_goes_in_error_after_three_restarts(
 
 
 @patch(
-    'inspirehep.modules.workflows.tasks.beard.json_api_request',
-    side_effect=fake_beard_api_request,
+    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    side_effect=fake_classifier_api_request,
 )
 @patch(
     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
@@ -731,7 +731,7 @@ def test_workflow_restarts_goes_in_error_after_three_restarts(
 )
 def test_conflict_creates_ticket(
         mocked_api_request_magpie,
-        mocked_beard_api,
+        mocked_api_request_classifier,
         workflow_app,
         mocked_external_services,
         disable_file_upload,
