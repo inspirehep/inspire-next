@@ -1044,7 +1044,7 @@ def test_normalize_collaborations_doesnt_link_experiment_when_ambiguous_collabor
     assert obj.data["collaborations"] == expected_collaborations
     assert not obj.data.get("accelerator_experiments")
     assert (
-        mock_logger.mock_calls[2][1][0]
+        mock_logger.mock_calls[-1][1][0]
         == u"(wf: 1) ambiguous match for collaboration SHIP. Matched collaborations: SHIP, SHiP"
     )
 
@@ -1069,7 +1069,7 @@ def test_normalize_collaborations_doesnt_link_experiment_when_ambiguous_subgroup
     assert obj.data["collaborations"] == expected_collaborations
     assert not obj.data.get("accelerator_experiments")
     assert (
-        mock_logger.mock_calls[1][1][0]
+        mock_logger.mock_calls[-1][1][0]
         == u"(wf: 1) ambiguous match for collaboration Belle SVD. Matches for collaboration subgroup: Belle-II, Belle"
     )
 
@@ -1114,7 +1114,7 @@ def test_normalize_affiliations_happy_flow(
         }
     ]
 
-    assert mock_logger.mock_calls[1][1] == (
+    assert mock_logger.mock_calls[3][1] == (
         u"(wf: %s) Normalized affiliations for author %s. Raw affiliations: %s. Assigned affiliations: %s",
         1,
         "Kowal, Michal",
