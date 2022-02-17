@@ -482,21 +482,10 @@ PROCESS_HOLDINGPEN_MATCH_HARVEST = [
     ),
     IF_ELSE(
         is_marked('already-in-holding-pen'),
-        IF_ELSE(
-            has_same_source('holdingpen_matches'),
-            # stop the matched wf and continue this one
-            [
-                stop_matched_holdingpen_wfs,
-                mark('stopped-matched-holdingpen-wf', True),
-            ],
-            [
-                # else, it's an update from another source
-                # keep the old one
-                mark('stopped-matched-holdingpen-wf', False),
-                save_workflow,
-                stop_processing
-            ],
-        ),
+        [
+            stop_matched_holdingpen_wfs,
+            mark('stopped-matched-holdingpen-wf', True),
+        ],
         mark('stopped-matched-holdingpen-wf', False),
     ),
     save_workflow,
