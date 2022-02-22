@@ -405,16 +405,16 @@ def test__is_auto_rejected(expected, obj):
 
 
 @pytest.mark.parametrize(
-    'expected, should_submission, should_auto_reject, should_auto_approve',
+    'expected, should_submission, should_auto_reject, should_auto_approve, full_journal_coverage',
     [
-        (True, True, True, False),
-        (True, True, False, False),
-        (False, False, True, False),
-        (True, False, False, False),
-        (True, True, True, True),
-        (True, True, False, True),
-        (True, False, True, True),
-        (True, False, False, True),
+        (True, True, True, False, False),
+        (True, True, False, False, False),
+        (False, False, True, False, False),
+        (True, False, False, False, False),
+        (True, True, True, True, False),
+        (True, True, False, True, False),
+        (True, False, True, True, False),
+        (True, False, False, True, False),
     ],
     ids=[
         'Relevant: non auto-approved is submission and autorejected',
@@ -427,6 +427,7 @@ def test__is_auto_rejected(expected, obj):
         'Relevant: auto-approved is not submission and not autorejected',
     ]
 )
+@patch('inspirehep.modules.workflows.tasks.actions._is_journal_coverage_full')
 @patch('inspirehep.modules.workflows.tasks.actions.is_submission')
 @patch('inspirehep.modules.workflows.tasks.actions._is_auto_rejected')
 @patch('inspirehep.modules.workflows.tasks.actions._is_auto_approved')
@@ -434,18 +435,50 @@ def test_is_record_relevant(
     _is_auto_approved_mock,
     _is_auto_rejected_mock,
     is_submission_mock,
+    journal_coverage_full_mock,
     expected,
     should_submission,
     should_auto_reject,
     should_auto_approve,
+    full_journal_coverage,
 ):
     _is_auto_approved_mock.return_value = should_auto_approve
     _is_auto_rejected_mock.return_value = should_auto_reject
     is_submission_mock.return_value = should_submission
+    journal_coverage_full_mock.return_value = full_journal_coverage
     obj = object()
     eng = object()
 
     assert is_record_relevant(obj, eng) is expected
+
+
+@patch('inspirehep.modules.workflows.tasks.actions.is_submission')
+@patch('inspirehep.modules.workflows.tasks.actions._is_auto_rejected')
+@patch('inspirehep.modules.workflows.tasks.actions._is_auto_approved')
+def test_is_record_relevant_when_journal_coverage_full(
+    _is_auto_approved_mock,
+    _is_auto_rejected_mock,
+    is_submission_mock,
+):
+    _is_auto_approved_mock.return_value = False
+    _is_auto_rejected_mock.return_value = False
+    is_submission_mock.return_value = False
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': 'hep-ex/0008040',
+            },
+        ],
+    }  # literature/532168
+    extra_data = {'journal_coverage': 'full'}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    assert is_record_relevant(obj, eng)
 
 
 def test_is_experimental_paper_returns_true_if_obj_has_an_experimental_arxiv_category():
