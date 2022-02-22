@@ -1233,8 +1233,8 @@ def test_match_in_holdingpen_different_sources_continues(
 
     record['titles'][0]['title'] = 'This is an update that will match the wf in the holdingpen'
     record['acquisition_source']['source'] = 'but not the source'
-    # this workflow matches in the holdingpen but continues because has a
-    # different source
+    # this workflow matches in the holdingpen and stops
+    # because match for the workflow was found
     workflow_id = build_workflow(record).id
     eng_uuid = start('article', object_id=workflow_id)
     eng = WorkflowEngine.from_uuid(eng_uuid)
@@ -1243,7 +1243,8 @@ def test_match_in_holdingpen_different_sources_continues(
     assert obj.extra_data['already-in-holding-pen'] is True
     assert obj.extra_data['holdingpen_matches'] == [wf_to_match]
     assert obj.extra_data['previously_rejected'] is False
-    assert not obj.extra_data.get('stopped-matched-holdingpen-wf')
+    assert obj.extra_data.get('stopped-matched-holdingpen-wf')
+    assert obj.status == ObjectStatus.HALTED
 
 
 @mock.patch(
