@@ -239,11 +239,19 @@ def _is_auto_approved(workflow_obj):
     return workflow_obj.extra_data.get('auto-approved', False)
 
 
+def _is_journal_coverage_full(workflow_obj):
+    if workflow_obj.extra_data.get('journal_coverage') == 'full':
+        return True
+
+
 @with_debug_logging
 def is_record_relevant(obj, eng):
     """Shall we halt this workflow for potential acceptance or just reject?"""
     # We do not auto-reject any user submissions
     if is_submission(obj, eng):
+        return True
+
+    if _is_journal_coverage_full(workflow_obj=obj):
         return True
 
     if _is_auto_approved(workflow_obj=obj):
