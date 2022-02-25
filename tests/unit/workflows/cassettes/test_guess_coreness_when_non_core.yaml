@@ -25,23 +25,35 @@ interactions:
       beam.", "title": "Relative Biological Effectiveness of Antiprotons the AD-4/ACE
       Experiment"}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['1871']
-      Content-Type: [application/json]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1871'
+      Content-Type:
+      - application/json
     method: POST
-    uri: https://inspire-classifier.web.cern.ch/api/predict/coreness
+    uri: http://10.254.0.186:5000/api/predict/coreness
   response:
-    body: {string: !!python/unicode '{"prediction":"non_core","scores":{"core":0.33398324251174927,"non_core":0.6497962474822998,"rejected":0.016220496967434883}}
+    body:
+      string: !!python/unicode '{"prediction":"non_core","scores":{"core":0.06607123464345932,"non_core":0.9195370078086853,"rejected":0.014391724020242691}}
 
-        '}
+        '
     headers:
-      content-length: ['126']
-      content-type: [application/json]
-      date: ['Mon, 29 Oct 2018 09:41:13 GMT']
-      server: [gunicorn/19.9.0]
-      set-cookie: [09f9e30a3b4115839cfc44a0589c7b91=e65e34b18cee398ad8ebb19ba94e3855;
-          path=/; HttpOnly; Secure]
-    status: {code: 200, message: OK}
+      connection:
+      - close
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Fri, 25 Feb 2022 11:01:15 GMT
+      server:
+      - gunicorn
+    status:
+      code: 200
+      message: OK
 version: 1
