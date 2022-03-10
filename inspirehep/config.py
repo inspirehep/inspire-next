@@ -1694,7 +1694,7 @@ FUZZY_MATCH = {
                     'type': 'fuzzy',
                 }
             ],
-            'validator': 'inspire_matcher.validators:authors_titles_validator'
+            'validator': ['inspire_matcher.validators:authors_titles_validator', 'inspire_matcher.validators:arxiv_eprints_validator']
         }
     ],
     'index': 'records-hep',
