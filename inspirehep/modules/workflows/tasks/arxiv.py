@@ -99,6 +99,7 @@ def populate_arxiv_document(obj, eng):
         original_url=url,
         url=url,
     )
+
     obj.data = lb.record
 
 
@@ -206,6 +207,10 @@ def arxiv_plot_extract(obj, eng):
             )
 
         obj.data = lb.record
+
+    if len(obj.data['figures']) == 0:
+        del obj.data['figures']
+    else:
         obj.log.info('Added {0} plots.'.format(len(plots)))
 
 

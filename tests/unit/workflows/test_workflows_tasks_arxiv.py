@@ -181,6 +181,30 @@ def test_populate_arxiv_document_logs_on_pdf_not_existing():
         assert expected == result
 
 
+def test_populate_arxiv_document_figures_not_existing():
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'physics.ins-det',
+                ],
+                'value': '1612.00626',
+            },
+        ],
+    }  # synthetic data
+    extra_data = {}
+    files = MockFiles({})
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    assert arxiv_plot_extract(obj, eng) is None
+    assert 'figures' not in obj.data
+
+
 def test_populate_arxiv_document_alternative_url():
     response500 = {'content': '', 'status_code': 500}
     response200 = {

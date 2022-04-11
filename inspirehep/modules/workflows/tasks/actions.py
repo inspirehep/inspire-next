@@ -410,7 +410,11 @@ def populate_submission_document(obj, eng):
             url=submission_pdf,
             original_url=submission_pdf,
         )
+
         obj.data = lb.record
+
+    if 'documents' in obj.data and len(obj.data['documents']) == 0:
+        del obj.data['documents']
 
 
 @with_debug_logging
