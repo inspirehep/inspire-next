@@ -2810,7 +2810,7 @@ python-versions = "*"
 
 [[package]]
 name = "plotextractor"
-version = "0.3.5"
+version = "0.3.14"
 description = "Small library for extracting plots used in scholarly communication."
 category = "main"
 optional = false
@@ -2818,13 +2818,16 @@ python-versions = "*"
 
 [package.dependencies]
 python-magic = "*"
-six = ">=1.7.2"
+six = [
+    ">=1.7.2",
+    "*",
+]
 subprocess32 = ">=3.2.6"
 Wand = ">=0.4.1,<=0.5.9"
 
 [package.extras]
-docs = ["Sphinx (>=1.3)", "sphinx_rtd_theme (>=0.1.7)"]
-tests = ["coverage (>=4.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)"]
+docs = ["Sphinx (>=1.3)", "sphinx-rtd-theme (>=0.1.7)"]
+tests = ["coverage (>=4.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pycodestyle (>=2.8.0)"]
 
 [[package]]
 name = "pluggy"
@@ -5101,7 +5104,8 @@ pkgsettings = [
     {file = "pkgsettings-0.12.0.tar.gz", hash = "sha256:149102d1c3d2179140eaa8acd94b085aaa6ae30605d425b84aa83a3bb1536658"},
 ]
 plotextractor = [
-    {file = "plotextractor-0.3.5.tar.gz", hash = "sha256:6885f9d145916c1fe089c5c0ca979945437a12af7f5f27fc9128f550f89df3c0"},
+    {file = "plotextractor-0.3.14-py2-none-any.whl", hash = "sha256:3848614b02215f818ceaa29612738917a2a1b48a9f8e207432aac089e210d599"},
+    {file = "plotextractor-0.3.14.tar.gz", hash = "sha256:7bda50ec95031e334acc378090ae2678d91cdce8b45e380ef3fdfecaf3cfe5cd"},
 ]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
