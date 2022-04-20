@@ -47,6 +47,22 @@ def jhep_with_malformed_title(app):
     record.commit()
 
 
+@pytest.fixture
+def jhep_deleted(app):
+    """Temporarily delete record."""
+    record = get_db_record('jou', 1213103)
+    record['deleted'] = True
+    record = InspireRecord.create_or_update(record)
+    record.commit()
+
+    yield
+
+    record = get_db_record('jou', 1213103)
+    del record['deleted']
+    record = InspireRecord.create_or_update(record)
+    record.commit()
+
+
 def test_create_journal_kb_file(app, tmpdir):
     journal_kb_fd = tmpdir.join('journal-titles.kb')
 
@@ -68,6 +84,19 @@ def test_create_journal_kb_file(app, tmpdir):
 
 
 def test_create_journal_kb_file_handles_malformed_title_variants(jhep_with_malformed_title, tmpdir):
+    journal_kb_fd = tmpdir.join('journal-titles.kb')
+
+    config = {'REFEXTRACT_JOURNAL_KB_PATH': str(journal_kb_fd)}
+
+    with patch.dict(current_app.config, config):
+        create_journal_kb_file()
+
+    journal_kb = journal_kb_fd.read().splitlines()
+
+    assert '---JHEP' not in journal_kb
+
+
+def test_create_journal_kb_file_handles_deleted_journals(jhep_deleted, tmpdir):
     journal_kb_fd = tmpdir.join('journal-titles.kb')
 
     config = {'REFEXTRACT_JOURNAL_KB_PATH': str(journal_kb_fd)}
