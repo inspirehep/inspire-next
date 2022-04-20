@@ -55,7 +55,7 @@ def create_journal_kb_file():
         FROM
             records_metadata AS r
         WHERE
-            (r.json -> '_collections')::jsonb ? 'Journals'
+            (r.json -> '_collections')::jsonb ? 'Journals' AND ((r.json -> 'deleted') IS NULL OR (r.json -> 'deleted') != 'true'::jsonb)
     """)
 
     title_variants_query = db.session.execute("""
@@ -65,7 +65,7 @@ def create_journal_kb_file():
         FROM
             records_metadata AS r
         WHERE
-            (r.json -> '_collections')::jsonb ? 'Journals'
+            (r.json -> '_collections')::jsonb ? 'Journals' AND ((r.json -> 'deleted') IS NULL OR (r.json -> 'deleted') != 'true'::jsonb)
     """)
 
     with KbWriter(kb_path=refextract_journal_kb_path) as kb_fd:
