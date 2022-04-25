@@ -88,7 +88,6 @@
       </div>
     </div>
     
-    {%- if config.get('FEATURE_FLAG_ENABLE_PUBLISHER_HARVESTS_CARD', False) %}
     <div class="col-md-3 col-sm-6">
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/dashboard_stat_block.html')}}"	
@@ -106,7 +105,6 @@
         section_title="publisher updates"> 
       </holding-pen-dashboard-item> 
     </div>
-    {%- endif %}
 
     <div class="col-md-3 col-sm-6">
 

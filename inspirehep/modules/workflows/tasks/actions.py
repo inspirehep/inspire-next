@@ -461,8 +461,6 @@ def match_references_hep(references):
 
 
 def match_references_based_on_flag(references):
-    if current_app.config.get("FEATURE_FLAG_ENABLE_MATCH_REFERENCES_HEP"):
-        return match_references_hep(references)
     return match_references(references)
 
 

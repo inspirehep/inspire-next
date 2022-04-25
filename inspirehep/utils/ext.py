@@ -24,13 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-import time_execution
 from fqn_decorators.decorators import get_fqn
-from inspire_service_orcid import hooks as inspire_service_orcid_hooks
 
 from rt import AuthorizationError
-from time_execution.backends.threaded import ThreadedBackend
-from time_execution.backends.elasticsearch import ElasticsearchBackend
 
 from .tickets import InspireRt
 
@@ -47,7 +43,6 @@ class INSPIREUtils(object):
     def init_app(self, app):
         """Initialize the application."""
         self.rt_instance = self.create_rt_instance(app)
-        self.configure_appmetrics(app)
         app.extensions["inspire-utils"] = self
 
     def create_rt_instance(self, app):
@@ -72,38 +67,6 @@ class INSPIREUtils(object):
                 raise AuthorizationError(
                     "RT login credentials in the app.config are invalid")
             return tracker
-
-    def configure_appmetrics(self, app):
-        if not app.config.get('FEATURE_FLAG_ENABLE_APPMETRICS'):
-            return
-
-        if app.config['APPMETRICS_THREADED_BACKEND']:
-            backend = ThreadedBackend(
-                ElasticsearchBackend,
-                backend_kwargs=dict(
-                    hosts=app.config['APPMETRICS_ELASTICSEARCH_HOSTS'],
-                    index=app.config['APPMETRICS_ELASTICSEARCH_INDEX']),
-                lazy_init=True,
-            )
-        else:
-            backend = ElasticsearchBackend(
-                hosts=app.config['APPMETRICS_ELASTICSEARCH_HOSTS'],
-                index=app.config['APPMETRICS_ELASTICSEARCH_INDEX'],
-            )
-        origin = 'inspire_next'
-
-        hooks = [
-            inspire_service_orcid_hooks.status_code_hook,
-            inspire_service_orcid_hooks.orcid_error_code_hook,
-            inspire_service_orcid_hooks.orcid_service_exception_hook,
-            # Add other hooks here:
-            exception_hook,
-        ]
-        time_execution.settings.configure(
-            backends=[backend],
-            hooks=hooks,
-            origin=origin
-        )
 
 
 def exception_hook(response, exception, metric, func_args, func_kwargs):

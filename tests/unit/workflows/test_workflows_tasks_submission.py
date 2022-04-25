@@ -517,7 +517,6 @@ def test_send_robotupload_keeps_references_if_feature_flag_enabled():
         config = {
             'LEGACY_ROBOTUPLOAD_URL': 'http://inspirehep.net',
             'PRODUCTION_MODE': True,
-            'FEATURE_FLAG_ENABLE_SENDING_REFERENCES_TO_LEGACY': True,
         }
 
         with patch.dict(current_app.config, config), \

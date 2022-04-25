@@ -42,18 +42,6 @@ from inspirehep.modules.workflows.tasks.matching import (
 from mocks import MockEng, MockObj
 
 
-@pytest.fixture
-def enable_fuzzy_matcher(app):
-    with patch.dict(app.config, {'FEATURE_FLAG_ENABLE_FUZZY_MATCHER': True}):
-        yield
-
-
-@pytest.fixture
-def disable_fuzzy_matcher(app):
-    with patch.dict(app.config, {'FEATURE_FLAG_ENABLE_FUZZY_MATCHER': False}):
-        yield
-
-
 @patch('inspirehep.modules.workflows.tasks.matching.match')
 def test_exact_match_returns_true_if_something_matched(mock_match):
     mock_match.return_value = iter([{'_source': {'control_number': 4328}}])
@@ -338,7 +326,7 @@ def test_pending_in_holding_pen_returns_false_if_nothing_matched(mock_match):
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_fuzzy_match_returns_true_if_something_matched(mock_match, enable_fuzzy_matcher):
+def test_fuzzy_match_returns_true_if_something_matched(mock_match):
     schema = load_schema('hep')
     abstracts_schema = schema['properties']['abstracts']
     titles_schema = schema['properties']['titles']
@@ -383,7 +371,7 @@ def test_fuzzy_match_returns_true_if_something_matched(mock_match, enable_fuzzy_
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_fuzzy_match_returns_true_if_something_matched_without_abstracts(mock_match, enable_fuzzy_matcher):
+def test_fuzzy_match_returns_true_if_something_matched_without_abstracts(mock_match):
     schema = load_schema('hep')
     titles_schema = schema['properties']['titles']
 
@@ -419,7 +407,7 @@ def test_fuzzy_match_returns_true_if_something_matched_without_abstracts(mock_ma
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_fuzzy_match_returns_true_if_something_matched_with_4_authors(mock_match, enable_fuzzy_matcher):
+def test_fuzzy_match_returns_true_if_something_matched_with_4_authors(mock_match):
     schema = load_schema('hep')
     authors_schema = schema['properties']['authors']
     titles_schema = schema['properties']['titles']
@@ -484,7 +472,7 @@ def test_fuzzy_match_returns_true_if_something_matched_with_4_authors(mock_match
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_fuzzy_match_returns_true_if_something_matched_with_1_author(mock_match, enable_fuzzy_matcher):
+def test_fuzzy_match_returns_true_if_something_matched_with_1_author(mock_match):
     schema = load_schema('hep')
     authors_schema = schema['properties']['authors']
     titles_schema = schema['properties']['titles']
@@ -534,7 +522,7 @@ def test_fuzzy_match_returns_true_if_something_matched_with_1_author(mock_match,
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_fuzzy_match_returns_true_if_something_matched_with_number_of_pages(mock_match, enable_fuzzy_matcher):
+def test_fuzzy_match_returns_true_if_something_matched_with_number_of_pages(mock_match):
     schema = load_schema('hep')
     titles_schema = schema['properties']['titles']
     number_of_pages_schema = schema['properties']['number_of_pages']
@@ -574,7 +562,7 @@ def test_fuzzy_match_returns_true_if_something_matched_with_number_of_pages(mock
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_fuzzy_match_returns_true_if_something_matched_with_arxiv_eprints(mock_match, enable_fuzzy_matcher):
+def test_fuzzy_match_returns_true_if_something_matched_with_arxiv_eprints(mock_match):
     schema = load_schema('hep')
     arxiv_eprints_schema = schema['properties']['arxiv_eprints']
     titles_schema = schema['properties']['titles']
@@ -621,7 +609,7 @@ def test_fuzzy_match_returns_true_if_something_matched_with_arxiv_eprints(mock_m
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_fuzzy_match_returns_true_if_something_matched_with_earliest_date(mock_match, enable_fuzzy_matcher):
+def test_fuzzy_match_returns_true_if_something_matched_with_earliest_date(mock_match):
     schema = load_schema('hep')
     titles_schema = schema['properties']['titles']
 
@@ -659,7 +647,7 @@ def test_fuzzy_match_returns_true_if_something_matched_with_earliest_date(mock_m
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_fuzzy_match_returns_true_if_something_matched_with_more_than_1_public_notes(mock_match, enable_fuzzy_matcher):
+def test_fuzzy_match_returns_true_if_something_matched_with_more_than_1_public_notes(mock_match):
     schema = load_schema('hep')
     public_notes_schema = schema['properties']['public_notes']
     titles_schema = schema['properties']['titles']
@@ -711,7 +699,7 @@ def test_fuzzy_match_returns_true_if_something_matched_with_more_than_1_public_n
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_fuzzy_match_returns_true_if_something_matched_with_publication_info(mock_match, enable_fuzzy_matcher):
+def test_fuzzy_match_returns_true_if_something_matched_with_publication_info(mock_match):
     schema = load_schema('hep')
     publication_info_schema = schema['properties']['publication_info']
     titles_schema = schema['properties']['titles']
@@ -769,7 +757,7 @@ def test_fuzzy_match_returns_true_if_something_matched_with_publication_info(moc
 
 
 @patch('inspirehep.modules.workflows.tasks.matching.match')
-def test_fuzzy_match_returns_false_if_nothing_matched(mock_match, enable_fuzzy_matcher):
+def test_fuzzy_match_returns_false_if_nothing_matched(mock_match):
     mock_match.return_value = iter([])
 
     data = {}
@@ -839,29 +827,3 @@ def test_set_fuzzy_match_approved_in_extradata_no_fuzzy_key():
     result = get_value(obj.extra_data, 'matches.approved')
 
     assert expected == result
-
-
-def test_fuzzy_matcher_not_run_on_feat_flag_disabled(disable_fuzzy_matcher):
-    data = {}
-    extra_data = {}
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    with patch('inspirehep.modules.workflows.tasks.matching.match') as match:
-        fuzzy_match(obj, eng)
-
-        match.assert_not_called()
-
-
-def test_fuzzy_matcher_run_on_feat_flag_enabled(enable_fuzzy_matcher):
-    data = {}
-    extra_data = {}
-
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
-
-    with patch('inspirehep.modules.workflows.tasks.matching.match') as match:
-        fuzzy_match(obj, eng)
-
-        match.assert_called()

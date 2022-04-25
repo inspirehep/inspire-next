@@ -54,14 +54,10 @@ FEATURE_FLAG_ENABLE_ORCID_PUSH = False
 #   none -> "^$"
 #   some ORCIDs -> "^(0000-0002-7638-5686|0000-0002-7638-5687)$"
 FEATURE_FLAG_ORCID_PUSH_WHITELIST_REGEX = '.*'
-FEATURE_FLAG_ENABLE_FUZZY_MATCHER = True
 FEATURE_FLAG_ENABLE_MERGER = True
 FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY = False
 FEATURE_FLAG_ENABLE_SEND_TO_LEGACY = True
 """This feature flag will prevent to send a ``replace`` update to legacy."""
-FEATURE_FLAG_ENABLE_SENDING_REFERENCES_TO_LEGACY = True
-FEATURE_FLAG_ENABLE_PUBLISHER_HARVESTS_CARD = True
-FEATURE_FLAG_ENABLE_APPMETRICS = False
 
 # Default language and timezone
 # =============================
@@ -1235,7 +1231,6 @@ LEGACY_RECORD_URL_PATTERN = 'http://inspirehep.net/record/{recid}'
 AUTHENTICATION_TOKEN = "CHANGE_ME"
 INSPIREHEP_URL = "http://web:8000"
 FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT = False
-FEATURE_FLAG_ENABLE_MATCH_REFERENCES_HEP = False
 
 # Harvesting and Workflows
 # ========================

@@ -87,8 +87,6 @@ def fuzzy_match(obj, eng):
         ``False`` otherwise.
 
     """
-    if not current_app.config.get('FEATURE_FLAG_ENABLE_FUZZY_MATCHER'):
-        return False
     math_ml_latex_regex = r"(<math(.*?)<\/math>|(?<!\\)\$.*?(?<!\\)\$|(?<!\\)\\(.*?(?<!\\)\\)|(?<!\\)\\[.*?(?<!\\)\\])"
     fuzzy_match_config = current_app.config['FUZZY_MATCH']
     obj_data_without_math_ml_latex = copy(obj.data)
