@@ -136,6 +136,11 @@ def arxiv_plot_extract(obj, eng):
     :param obj: Workflow Object to process
     :param eng: Workflow Engine processing the object
     """
+
+    if 'figures' in obj.data and len(obj.data['figures']) == 0:
+        del obj.data['figures']
+        return
+
     # Crude way to set memory limits for wand globally.
     mem_limit = current_app.config.get("WAND_MEMORY_LIMIT")
     if mem_limit and limits['memory'] != mem_limit:
@@ -207,10 +212,8 @@ def arxiv_plot_extract(obj, eng):
             )
 
         obj.data = lb.record
-    if len(obj.data.get('figures', [])) == 0:
-        del obj.data['figures']
-    else:
-        obj.log.info('Added {0} plots.'.format(len(plots)))
+
+    obj.log.info('Added {0} plots.'.format(len(plots)))
 
 
 def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
