@@ -207,8 +207,7 @@ def arxiv_plot_extract(obj, eng):
             )
 
         obj.data = lb.record
-
-    if len(obj.data['figures']) == 0:
+    if len(obj.data.get('figures', [])) == 0:
         del obj.data['figures']
     else:
         obj.log.info('Added {0} plots.'.format(len(plots)))
