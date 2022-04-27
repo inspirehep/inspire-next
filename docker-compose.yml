@@ -90,7 +90,8 @@ services:
 
   # Services needed for inspirehep to run.
   redis:
-    image: redis:3.2.3
+    image: redis
+    platform: linux/amd64
     healthcheck:
       timeout: 5s
       interval: 5s

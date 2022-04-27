@@ -50,8 +50,14 @@ RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
         python-pip \
         python-devel \
         python2-xrootd \
+        blas-devel \
+        lapack-devel \
         wget \
         Xvfb \
+        gfortran \
+        build-base \
+        libpng-dev \
+        openblas-dev \
         && \
     yum clean all
 

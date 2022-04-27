@@ -47,3 +47,18 @@ A preliminary version of the documentation is available on `Read the Docs`_.
 
 .. _`Invenio Digital Library Framework`: http://inveniosoftware.org/
 .. _`Read the Docs`: https://inspirehep.readthedocs.io/en/latest/
+
+
+Running inspire-next
+=====
+To run inspire-next:
+* create a venv with python2
+* make sure to have `wheel` installed and upgrade `setuptools`
+```{bash}
+pip install wheel && pip install --upgrade setuptools
+```
+* run `poetry install`
+
+Setting up fixtures
+=====
+To set up fixtures (db and es) run `./scripts/setup`
