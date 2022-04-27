@@ -1405,7 +1405,7 @@ tests = ["decorator (>=4.1.2,<5.0)", "flake8-future-import (>=0.4.3,<1.0)", "moc
 
 [[package]]
 name = "inspire-matcher"
-version = "9.0.15"
+version = "9.0.16"
 description = "Find the records in INSPIRE most similar to a given record or reference."
 category = "main"
 optional = false
@@ -1413,10 +1413,12 @@ python-versions = "*"
 
 [package.dependencies]
 dictdiffer = "<0.9"
-Flask = ">=0.12.2"
+Flask = ">=0.12.2,<=2.0"
 inspire-json-merger = ">=11.0.0,<12.0"
 inspire-utils = ">=3.0.0,<4.0"
 invenio-search = ">=1.0.0a10"
+jinja2 = "<3.0"
+MarkupSafe = "<2.0"
 six = ">=1.11.0,<2.0"
 Werkzeug = ">=0.12.2,<1.0"
 
@@ -2078,9 +2080,9 @@ invenio-pidstore = ">=1.0.0"
 invenio-records = ">=1.0.0"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[versioning,mysql,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[versioning,mysql,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 docs = ["Sphinx (>=1.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[versioning,mysql,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-rest"
@@ -4672,8 +4674,8 @@ inspire-json-merger = [
     {file = "inspire_json_merger-11.0.29-py2-none-any.whl", hash = "sha256:c070312d4190ae5156b0132a878f6dd4f31aa9b2663752b5c2af2af037d26c1f"},
 ]
 inspire-matcher = [
-    {file = "inspire-matcher-9.0.15.tar.gz", hash = "sha256:9466de84c1a7029053a51862e0ea6920c9df25ef4094b638322f21c9f7690d33"},
-    {file = "inspire_matcher-9.0.15-py2-none-any.whl", hash = "sha256:6920b424dc96e52c34b3bb776417958926ea7d4282b348a63a81e5a85225c376"},
+    {file = "inspire-matcher-9.0.16.tar.gz", hash = "sha256:0549abc0c6accde30960a502553213a4cbb9fc14ccd91ffd0e3bb123408d925d"},
+    {file = "inspire_matcher-9.0.16-py2-none-any.whl", hash = "sha256:5c6db350c9a639f84e4a12b676eb6098c567f115aa5e58035affcfa9c98a1846"},
 ]
 inspire-query-parser = [
     {file = "inspire-query-parser-6.0.37.tar.gz", hash = "sha256:7b5e9d30e15952270fefd770824f6a6ebc531e55b8c1cbf2f971cbcfbb245c25"},
