@@ -716,12 +716,10 @@ def test_arxiv_author_list_with_missing_tarball():
     obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
-    default_arxiv_author_list = arxiv_author_list()
     expected_message = \
         'Skipping author list extraction, no tarball with name "1703.09986.tar.gz" found'
 
-    assert default_arxiv_author_list(obj, eng) is None
-
+    assert arxiv_author_list(obj, eng) is None
     assert expected_message in obj.log._info.getvalue()
 
 
@@ -761,7 +759,7 @@ def test_arxiv_author_list_handles_auto_ignore_comment():
                 {'value': 'INSPIRE-00312131', 'schema': 'INSPIRE ID'},
                 {'value': 'CERN-432142', 'schema': 'CERN'},
             ],
-            'full_name': 'Sirunyan, Albert M',
+            'full_name': 'Sirunyan, Albert M.',
         },
     ]
     validate(expected_authors, authors_subschema)
@@ -769,10 +767,8 @@ def test_arxiv_author_list_handles_auto_ignore_comment():
     obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
-    default_arxiv_author_list = arxiv_author_list()
-
-    assert default_arxiv_author_list(obj, eng) is None
-    assert obj.data.get('authors') == expected_authors
+    assert arxiv_author_list(obj, eng) is None
+    assert obj.data['authors'] == expected_authors
 
 
 def test_arxiv_author_list_only_overrides_authors():
@@ -807,8 +803,7 @@ def test_arxiv_author_list_only_overrides_authors():
     obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
-    default_arxiv_author_list = arxiv_author_list()
-    default_arxiv_author_list(obj, eng)
+    arxiv_author_list(obj, eng)
 
     assert 'arxiv_eprints' in obj.data
     assert obj.data['arxiv_eprints'] == data['arxiv_eprints']
@@ -849,9 +844,7 @@ def test_arxiv_author_list_logs_on_error(mock_untar):
     obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
-    default_arxiv_author_list = arxiv_author_list()
-
-    assert default_arxiv_author_list(obj, eng) is None
+    assert arxiv_author_list(obj, eng) is None
     assert '1605.07707' in obj.log._info.getvalue()
 
 
@@ -887,8 +880,7 @@ def test_arxiv_author_list_handles_multiple_author_xml_files():
     obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
-    default_arxiv_author_list = arxiv_author_list()
-    default_arxiv_author_list(obj, eng)
+    arxiv_author_list(obj, eng)
 
     authors_subschema = schema['properties']['authors']
     expected_authors = [
@@ -898,7 +890,7 @@ def test_arxiv_author_list_handles_multiple_author_xml_files():
                 {'value': 'INSPIRE-00312131', 'schema': 'INSPIRE ID'},
                 {'value': 'CERN-432142', 'schema': 'CERN'},
             ],
-            'full_name': 'Sirunyan, Albert M',
+            'full_name': 'Sirunyan, Albert M.',
         },
         {
             'affiliations': [{'value': 'Yerevan Phys. Inst.'}],
@@ -911,7 +903,7 @@ def test_arxiv_author_list_handles_multiple_author_xml_files():
     ]
     validate(expected_authors, authors_subschema)
 
-    assert obj.data.get('authors') == expected_authors
+    assert obj.data['authors'] == expected_authors
 
 
 def test_arxiv_author_list_does_not_produce_latex():
@@ -941,7 +933,7 @@ def test_arxiv_author_list_does_not_produce_latex():
     authors_subschema = schema['properties']['authors']
     expected_authors = [
         {
-            'affiliations': [{'value': 'Lund U.'}],
+            'affiliations': [{'value': u'Lund U.'}],
             'ids': [
                 {
                     'value': 'INSPIRE-00061248',
@@ -956,7 +948,132 @@ def test_arxiv_author_list_does_not_produce_latex():
     obj = MockObj(data, extra_data, files=files)
     eng = MockEng()
 
-    default_arxiv_author_list = arxiv_author_list()
+    assert arxiv_author_list(obj, eng) is None
+    assert obj.data['authors'] == expected_authors
 
-    assert default_arxiv_author_list(obj, eng) is None
-    assert obj.data.get('authors') == expected_authors
+
+def test_arxiv_author_test_identifiers():
+    schema = load_schema('hep')
+    eprints_subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '2203.01808.tar.gz'))
+
+    data = {
+        '$schema': 'http://localhost:5000/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '2203.01808',
+            },
+        ],
+    }
+    validate(data['arxiv_eprints'], eprints_subschema)
+
+    extra_data = {}
+    files = MockFiles({
+        '2203.01808.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    arxiv_author_list(obj, eng)
+
+    authors_subschema = schema['properties']['authors']
+    expected_authors = [
+        {
+            'affiliations': [{'value': u'Marseille, CPPM'}],
+            'ids': [
+                {'value': 'INSPIRE-00210391', 'schema': u'INSPIRE ID'},
+                {'value': '0000-0002-6665-4934', 'schema': 'ORCID'},
+            ],
+            'full_name': u'Aad, Georges',
+            'affiliations_identifiers': [
+                {'value': 'https://ror.org/00fw8bp86', 'schema': 'ROR'},
+                {'value': 'grid.470046.1', 'schema': 'GRID'},
+            ]
+        },
+        {
+            'affiliations': [{'value': 'Oklahoma U.'}],
+            'ids': [
+                {'value': 'INSPIRE-00060668', 'schema': 'INSPIRE ID'},
+                {'value': '0000-0002-5888-2734', 'schema': 'ORCID'},
+            ],
+            'full_name': 'Abbott, Braden Keim',
+            'affiliations_identifiers': [
+                {'value': 'https://ror.org/02aqsxs83', 'schema': 'ROR'},
+                {'value': 'grid.266900.b', 'schema': 'GRID'},
+            ]
+        }
+    ]
+    validate(expected_authors, authors_subschema)
+    assert expected_authors[0] == obj.data['authors'][0]
+    assert expected_authors[1] == obj.data['authors'][1]
+
+
+def test_arxiv_author_test_institutional_namespace():
+    schema = load_schema('hep')
+    eprints_subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '2203.17053.tar.gz'))
+
+    data = {
+        '$schema': 'http://localhost:5000/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '2203.17053',
+            },
+        ],
+    }
+    validate(data['arxiv_eprints'], eprints_subschema)
+
+    extra_data = {}
+    files = MockFiles({
+        '2203.17053.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    arxiv_author_list(obj, eng)
+
+    authors_subschema = schema['properties']['authors']
+    expected_authors = [
+        {
+            'affiliations': [
+                {'value': u'Liverpool U.'},
+                {'value': u'CERN'}
+            ],
+            'ids': [
+                {'value': 'INSPIRE-00657132', 'schema': u'INSPIRE ID'},
+            ],
+            'full_name': u'Abed Abud, Adam',
+        },
+        {
+            'affiliations': [{'value': 'Oxford U.'}],
+            'ids': [
+                {'value': '0000-0001-7036-9645', 'schema': 'ORCID'},
+                {'value': 'INSPIRE-00210439', 'schema': 'INSPIRE ID'},
+            ],
+            'full_name': 'Abi, Babak',
+        }
+    ]
+    validate(expected_authors, authors_subschema)
+
+    assert expected_authors[0] == obj.data['authors'][0]
+    assert expected_authors[1] == obj.data['authors'][1]

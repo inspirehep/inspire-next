@@ -23,22 +23,18 @@
 """Tasks used in OAI harvesting for arXiv record manipulation."""
 
 from __future__ import absolute_import, division, print_function
-
+from inspire_utils.name import normalize_name
 import os
 import re
-from functools import wraps
-
+import itertools
 import backoff
 import requests
 from backports.tempfile import TemporaryDirectory
 from flask import current_app
-from lxml.etree import XMLSyntaxError
 from requests import HTTPError
 from wand.exceptions import DelegateError
 from wand.resource import limits
 from werkzeug import secure_filename
-
-from inspire_dojson import marcxml2record
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.readers import LiteratureReader
 from plotextractor.api import process_tarball
@@ -49,12 +45,13 @@ from inspirehep.utils.latex import decode_latex
 from inspirehep.utils.url import is_pdf_link, retrieve_uri
 from inspirehep.modules.workflows.errors import DownloadError
 from inspirehep.modules.workflows.utils import (
-    convert,
     download_file_to_workflow,
     ignore_timeout_error,
     timeout_with_config,
     with_debug_logging, set_mark,
 )
+# import lxml.html
+from parsel import Selector
 
 REGEXP_AUTHLIST = re.compile(
     "<collaborationauthorlist.*?>.*?</collaborationauthorlist>", re.DOTALL)
@@ -215,68 +212,116 @@ def arxiv_plot_extract(obj, eng):
         obj.log.info('Added {0} plots.'.format(len(plots)))
 
 
-def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
+@with_debug_logging
+def arxiv_author_list(obj, eng):
     """Extract authors from any author XML found in the arXiv archive.
 
     :param obj: Workflow Object to process
     :param eng: Workflow Engine processing the object
     """
-    @with_debug_logging
-    @wraps(arxiv_author_list)
-    def _author_list(obj, eng):
-        arxiv_id = LiteratureReader(obj.data).arxiv_id
-        filename = secure_filename('{0}.tar.gz'.format(arxiv_id))
+
+    arxiv_id = LiteratureReader(obj.data).arxiv_id
+    filename = secure_filename('{0}.tar.gz'.format(arxiv_id))
+    try:
+        tarball = obj.files[filename]
+    except KeyError:
+        obj.log.info(
+            'Skipping author list extraction, no tarball with name "%s" found' % filename
+        )
+        return
+
+    with TemporaryDirectory(prefix='author_list') as scratch_space, \
+            retrieve_uri(tarball.file.uri, outdir=scratch_space) as tarball_file:
         try:
-            tarball = obj.files[filename]
-        except KeyError:
+            file_list = untar(tarball_file, scratch_space)
+        except InvalidTarball:
             obj.log.info(
-                'Skipping author list extraction, no tarball with name "%s" found' % filename
+                'Invalid tarball %s for arxiv_id %s',
+                tarball.file.uri,
+                arxiv_id,
             )
             return
 
-        with TemporaryDirectory(prefix='author_list') as scratch_space, \
-                retrieve_uri(tarball.file.uri, outdir=scratch_space) as tarball_file:
-            try:
-                file_list = untar(tarball_file, scratch_space)
-            except InvalidTarball:
-                obj.log.info(
-                    'Invalid tarball %s for arxiv_id %s',
-                    tarball.file.uri,
-                    arxiv_id,
-                )
-                return
+        obj.log.info('Extracted tarball to: {0}'.format(scratch_space))
+        xml_files_list = [path for path in file_list if path.endswith('.xml')]
+        obj.log.info('Found xmlfiles: {0}'.format(xml_files_list))
 
-            obj.log.info('Extracted tarball to: {0}'.format(scratch_space))
-            xml_files_list = [path for path in file_list if path.endswith('.xml')]
-            obj.log.info('Found xmlfiles: {0}'.format(xml_files_list))
+        extracted_authors = []
 
-            extracted_authors = []
-            for xml_file in xml_files_list:
-                with open(xml_file, 'r') as xml_file_fd:
-                    xml_content = xml_file_fd.read()
+        for xml_file in xml_files_list:
+            with open(xml_file, 'r') as xml_file_fd:
+                xml_content = xml_file_fd.read()
+            match = REGEXP_AUTHLIST.findall(xml_content)
+            if match:
+                obj.log.info('Found a match for author extraction')
 
-                match = REGEXP_AUTHLIST.findall(xml_content)
-                if match:
-                    obj.log.info('Found a match for author extraction')
-                    try:
-                        authors_xml = convert(xml_content, stylesheet)
-                    except XMLSyntaxError:
-                        # Probably the %auto-ignore comment exists, so we skip the
-                        # first line. See: inspirehep/inspire-next/issues/2195
-                        authors_xml = convert(
-                            xml_content.split('\n', 1)[1],
-                            stylesheet,
-                        )
+            extracted_authors.extend(extract_authors_from_xml(xml_content))
 
-                    extracted_authors.extend(marcxml2record(authors_xml).get('authors', []))
+        if extracted_authors:
+            for author in extracted_authors:
+                author['full_name'] = decode_latex(author['full_name'])
 
-            if extracted_authors:
-                for author in extracted_authors:
-                    author['full_name'] = decode_latex(author['full_name'])
+            obj.data['authors'] = extracted_authors
 
-                obj.data['authors'] = extracted_authors
-                set_mark(obj, "authors_xml", True)
-            else:
-                set_mark(obj, "authors_xml", False)
+            set_mark(obj, "authors_xml", True)
+        else:
+            set_mark(obj, "authors_xml", False)
 
-    return _author_list
+
+def extract_authors_from_xml(xml_content):
+    builder = LiteratureBuilder()
+    if isinstance(xml_content, str):
+        xml_content = xml_content.decode('utf-8')
+
+    # Probably the %auto-ignore comment exists, so we skip the
+    # first line. See: inspirehep/inspire-next/issues/2195
+    if "%auto-ignore" in xml_content:
+        xml_content = xml_content.split('\n', 1)[1]
+
+    content = Selector(text=xml_content, type="xml")
+
+    content.remove_namespaces()
+    # Going through all the authors in the file
+    for author in content.xpath("//Person"):
+
+        ids = []
+        affiliations = []
+        affiliations_identifiers = []
+
+        # Getting all the author ids
+        for source, id in itertools.izip(author.xpath('./authorIDs/authorID[@source!="" and text()!=""]/@source | ./authorids/authorid[@source!="" and text()!=""]/@source').getall(), author.xpath('./authorIDs/authorID[@source!="" and text()!=""]/text() | ./authorids/authorid[@source!="" and text()!=""]/text()').getall()):
+            if not re.match("undefined", source, flags=re.IGNORECASE) or not re.match("undefined|inspire-", id, flags=re.IGNORECASE):
+                if source == u'CCID':
+                    ids.append(['CERN', id])
+                elif source == u'INSPIRE':
+                    ids.append(['{} ID'.format(source), id])
+                else:
+                    ids.append([source, id])
+
+        # Getting all the names for affiliated organizations using the organization ids from author
+        for affiliation in author.xpath("./authorAffiliations/authorAffiliation/@organizationid").getall():
+            affiliations.append(content.xpath('//organizations/Organization[@id="{}"]/orgName[@source="spiresICN" or @source="INSPIRE" and text()!="undefined" and text()!="UNDEFINED" and text()!="" ]/text()'.format(affiliation)).get())
+
+            # Getting all the affiliations_identifiers for affiliated organizations using the organization ids from author
+
+            for value, source in itertools.izip(content.xpath('//organizations/Organization[@id="{}"]/orgName[@source="ROR" or @source="GRID" and text()!=""]/text()'.format(affiliation)).getall(), content.xpath('//organizations/Organization[@id="{}"]/orgName[@source="ROR" or @source="GRID" and text()!=""]/@source'.format(affiliation)).getall()):
+                if not re.match("undefined", source, flags=re.IGNORECASE) or not re.match("undefined", id, flags=re.IGNORECASE):
+
+                    if source == 'ROR' and not re.match("https://ror.org/*", value):
+                        value = 'https://ror.org/{}'.format(value)
+
+                    affiliations_identifiers.append([source, value])
+
+        name = normalize_name(u"{}, {}".format(author.xpath('.//familyName/text()').get(), author.xpath('.//givenName/text()').get()))
+
+        # building the info to a correct format with litratureBuilder()
+        builder.add_author(
+            builder.make_author(
+                full_name=name,
+                affiliations=affiliations,
+                ids=ids,
+                affiliations_identifiers=affiliations_identifiers
+            )
+        )
+
+    return builder.record.get('authors', [])
