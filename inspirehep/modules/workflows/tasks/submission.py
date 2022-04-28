@@ -26,7 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import logging
-from copy import copy
 from functools import wraps
 from pprint import pformat
 
@@ -227,10 +226,6 @@ def send_robotupload(
             data = obj.extra_data.get(extra_data_key) or {}
         else:
             data = obj.data
-
-        if not current_app.config.get('FEATURE_FLAG_ENABLE_SENDING_REFERENCES_TO_LEGACY'):
-            data = copy(data)
-            data.pop('references', None)
 
         marcxml = record2marcxml(data)
 
