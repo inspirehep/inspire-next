@@ -179,7 +179,7 @@ ENHANCE_RECORD = [
             populate_arxiv_document,
             arxiv_package_download,
             arxiv_plot_extract,
-            arxiv_author_list("authorlist2marcxml.xsl"),
+            arxiv_author_list,
         ]
     ),
     IF(
