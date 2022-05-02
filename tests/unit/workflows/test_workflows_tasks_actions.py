@@ -1204,12 +1204,13 @@ def test_validate_record_raises_when_record_is_invalid():
         _validate_record(obj, eng)
 
 
+@patch('inspirehep.modules.workflows.tasks.actions.create_journal_kb_dict', return_value={})
 @patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow')
 @patch(
     'inspirehep.modules.refextract.matcher.match',
     return_value=iter([])
 )
-def test_refextract_from_text(mock_match, mock_get_document_in_workflow):
+def test_refextract_from_text(mock_match, mock_get_document_in_workflow, mock_create_journal_kb_dict):
     """TODO: Make this an integration test and also test reference matching."""
 
     mock_get_document_in_workflow.return_value.__enter__.return_value = None
@@ -1233,11 +1234,12 @@ def test_refextract_from_text(mock_match, mock_get_document_in_workflow):
     assert obj.data['references'][0]['raw_refs'][0]['source'] == 'submitter'
 
 
+@patch('inspirehep.modules.workflows.tasks.actions.create_journal_kb_dict', return_value={})
 @patch(
     'inspirehep.modules.refextract.matcher.match',
     return_value=iter([])
 )
-def test_refextract_from_raw_refs(mock_match):
+def test_refextract_from_raw_refs(mock_create_journal_dict, mock_match):
     """TODO: Make this an integration test and also test reference matching."""
     schema = load_schema('hep')
     subschema = schema['properties']['references']
@@ -1264,11 +1266,12 @@ def test_refextract_from_raw_refs(mock_match):
     assert 'reference' in obj.data['references'][0]
 
 
+@patch('inspirehep.modules.workflows.tasks.actions.create_journal_kb_dict', return_value={})
 @patch(
     'inspirehep.modules.refextract.matcher.match',
     return_value=iter([])
 )
-def test_refextract_valid_refs_from_raw_refs(mock_match):
+def test_refextract_valid_refs_from_raw_refs(mock_create_journal_dict, mock_match):
     schema = load_schema('hep')
     subschema = schema['properties']['references']
 
@@ -1298,12 +1301,13 @@ def test_refextract_valid_refs_from_raw_refs(mock_match):
     assert validate(obj.data['references'], subschema) is None
 
 
+@patch('inspirehep.modules.workflows.tasks.actions.create_journal_kb_dict', return_value={})
 @patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow')
 @patch(
     'inspirehep.modules.refextract.matcher.match',
     return_value=iter([])
 )
-def test_refextract_valid_refs_from_text(mock_match, mock_get_document_in_workflow):
+def test_refextract_valid_refs_from_text(mock_match, mock_get_document_in_workflow, mock_create_journal_kb_dict):
     """TODO: Make this an integration test and also test reference matching."""
 
     mock_get_document_in_workflow.return_value.__enter__.return_value = None

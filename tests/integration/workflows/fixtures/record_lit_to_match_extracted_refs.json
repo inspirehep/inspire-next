@@ -1,0 +1,602 @@
+{
+    "id": "1846508",
+    "created": "2021-02-13T00:00:00+00:00",
+    "links": {
+    "bibtex": "https://inspirehep.net/api/literature/1846508?format=bibtex",
+    "latex-eu": "https://inspirehep.net/api/literature/1846508?format=latex-eu",
+    "latex-us": "https://inspirehep.net/api/literature/1846508?format=latex-us",
+    "json": "https://inspirehep.net/api/literature/1846508?format=json",
+    "citations": "https://inspirehep.net/api/literature/?q=refersto%3Arecid%3A1846508"
+    },
+    "updated": "2021-06-25T14:17:11.728040+00:00",
+    "metadata": {
+    "publication_info": [
+    {
+    "cnum": "C19-04-22",
+    "year": 2021,
+    "artid": "041",
+    "page_start": "041",
+    "journal_title": "PoS",
+    "parent_record": {
+    "$ref": "https://inspirehep.net/api/literature/1846493"
+    },
+    "journal_record": {
+    "$ref": "https://inspirehep.net/api/journals/1213080"
+    },
+    "journal_volume": "ALPS2019",
+    "conference_record": {
+    "$ref": "https://inspirehep.net/api/conferences/1624615"
+    }
+    }
+    ],
+    "citation_count": 0,
+    "citation_count_without_self_citations": 0,
+    "documents": [
+    {
+    "key": "b6ad983836d3d307fb87bf072127c8fd",
+    "url": "https://inspirehep.net/files/b6ad983836d3d307fb87bf072127c8fd",
+    "source": "PoS",
+    "filename": "PoS(ALPS2019)041.pdf",
+    "fulltext": true
+    }
+    ],
+    "core": true,
+    "dois": [
+    {
+    "value": "10.22323/1.360.0041",
+    "source": "SISSA"
+    }
+    ],
+    "titles": [
+    {
+    "title": "LHC limits on gluinos and squarks in the minimal Dirac gaugino model",
+    "source": "SISSA"
+    }
+    ],
+    "$schema": "https://inspirehep.net/schemas/records/hep.json",
+    "authors": [
+    {
+    "ids": [
+    {
+    "value": "H.Reyes.Gonzalez.1",
+    "schema": "INSPIRE BAI"
+    }
+    ],
+    "uuid": "88db8aa8-c597-4d1e-8a71-4d2f4d329beb",
+    "emails": [
+    "gonzalez@lpsc.in2p3.fr"
+    ],
+    "record": {
+    "$ref": "https://inspirehep.net/api/authors/1635396"
+    },
+    "full_name": "Reyes-GonzáLez, Humberto",
+    "affiliations": [
+    {
+    "value": "LPSC, Grenoble",
+    "record": {
+    "$ref": "https://inspirehep.net/api/institutions/902828"
+    }
+    }
+    ],
+    "signature_block": "GANSALh",
+    "raw_affiliations": [
+    {
+    "value": "Laboratoire de Physique Subatomique & Cosmologie"
+    }
+    ]
+    }
+    ],
+    "curated": true,
+    "license": [
+    {
+    "license": "CC-BY-NC-ND-4.0",
+    "imposing": "SISSA"
+    }
+    ],
+    "texkeys": [
+    "Reyes-GonzaLez:2019vgy"
+    ],
+    "citeable": true,
+    "imprints": [
+    {
+    "date": "2019-08-07",
+    "publisher": "SISSA"
+    }
+    ],
+    "keywords": [
+    {
+    "value": "new physics",
+    "schema": "INSPIRE"
+    },
+    {
+    "value": "supersymmetry",
+    "schema": "INSPIRE"
+    },
+    {
+    "value": "minimal supersymmetric standard model",
+    "schema": "INSPIRE"
+    },
+    {
+    "value": "gaugino: Dirac",
+    "schema": "INSPIRE"
+    },
+    {
+    "value": "gaugino: mass",
+    "schema": "INSPIRE"
+    },
+    {
+    "value": "CERN LHC Coll",
+    "schema": "INSPIRE"
+    },
+    {
+    "value": "p p: scattering",
+    "schema": "INSPIRE"
+    },
+    {
+    "value": "gluino: production",
+    "schema": "INSPIRE"
+    },
+    {
+    "value": "gluino: mass: lower limit",
+    "schema": "INSPIRE"
+    },
+    {
+    "value": "squark: production",
+    "schema": "INSPIRE"
+    },
+    {
+    "value": "squark: mass: lower limit",
+    "schema": "INSPIRE"
+    }
+    ],
+    "abstracts": [
+    {
+    "value": "Most SUSY searches at the LHC are optimised for the MSSM, where gauginos are Majorana particles. By introducing Dirac gauginos, we obtain an enriched phenomenology, from which considerable differences in the LHC signatures and limits are expected as compared to the MSSM. Concretely, in the minimal Dirac gaugino model (MDGSSM) we have six neutralino and three chargino states. Moreover, production cross sections are enhanced for gluinos, while for squarks they are suppressed. In this contribution we show concrete results for the current LHC limits on gluinos and squarks in this model.",
+    "source": "SISSA"
+    }
+    ],
+    "references": [
+    {
+    "record": {
+    "$ref": "https://inspirehep.net/api/literature/130906"
+    },
+    "raw_refs": [
+    {
+    "value": "[1] P. Fayet, Massive Gluinos, Phys. Lett. 78B (1978) 417.",
+    "schema": "text"
+    }
+    ],
+    "reference": {
+    "misc": [
+    "Massive Gluinos"
+    ],
+    "label": "1",
+    "authors": [
+    {
+    "full_name": "Fayet, P."
+    }
+    ],
+    "publication_info": {
+    "year": 1978,
+    "artid": "417",
+    "page_start": "417",
+    "journal_title": "Phys.Lett.B",
+    "journal_volume": "78"
+    }
+    },
+    "curated_relation": false
+    },
+    {
+    "record": {
+    "$ref": "https://inspirehep.net/api/literature/913238"
+    },
+    "raw_refs": [
+    {
+    "value": "[2] K. Benakli, Dirac Gauginos: A User Manual, Fortsch. Phys. 59 (2011) 1079 [1106.1649].",
+    "schema": "text"
+    }
+    ],
+    "reference": {
+    "misc": [
+    "Dirac Gauginos: A User Manual"
+    ],
+    "label": "2",
+    "authors": [
+    {
+    "full_name": "Benakli, K."
+    }
+    ],
+    "arxiv_eprint": "1106.1649",
+    "publication_info": {
+    "year": 2011,
+    "artid": "1079",
+    "page_start": "1079",
+    "journal_title": "Fortsch.Phys.",
+    "journal_volume": "59"
+    }
+    },
+    "curated_relation": false
+    },
+    {
+    "record": {
+    "$ref": "https://inspirehep.net/api/literature/1711115"
+    },
+    "raw_refs": [
+    {
+    "value": "[3] G. Chalons, M. D. Goodsell, S. Kraml, H. Reyes-González and S. L. Williamson, LHC limits on gluinos and squarks in the minimal Dirac gaugino model, JHEP 04 (2019) 113 [1812.09293].",
+    "schema": "text"
+    }
+    ],
+    "reference": {
+    "misc": [
+    "LHC limits on gluinos and squarks in the minimal Dirac gaugino model"
+    ],
+    "label": "3",
+    "authors": [
+    {
+    "full_name": "Chalons, G."
+    },
+    {
+    "full_name": "Goodsell, M.D."
+    },
+    {
+    "full_name": "Kraml, S."
+    },
+    {
+    "full_name": "Reyes-González, H."
+    },
+    {
+    "full_name": "Williamson, S.L."
+    }
+    ],
+    "arxiv_eprint": "1812.09293",
+    "publication_info": {
+    "year": 2019,
+    "artid": "113",
+    "page_start": "113",
+    "journal_title": "JHEP",
+    "journal_volume": "04"
+    }
+    },
+    "curated_relation": false
+    },
+    {
+    "record": {
+    "$ref": "https://inspirehep.net/api/literature/1510436"
+    },
+    "raw_refs": [
+    {
+    "value": "[4] F. Ambrogi, S. Kraml, S. Kulkarni, U. Laa, A. Lessa, V. Magerl et al., SModelS v1.1 user manual, Comput. Phys. Comm. 227 (2018) 72 [1701.06586].",
+    "schema": "text"
+    }
+    ],
+    "reference": {
+    "misc": [
+    "SModelS v1.1 user manual"
+    ],
+    "label": "4",
+    "authors": [
+    {
+    "full_name": "Ambrogi, F."
+    },
+    {
+    "full_name": "Kraml, S."
+    },
+    {
+    "full_name": "Kulkarni, S."
+    },
+    {
+    "full_name": "Laa, U."
+    },
+    {
+    "full_name": "Lessa, A."
+    },
+    {
+    "full_name": "Magerl, V."
+    }
+    ],
+    "arxiv_eprint": "1701.06586",
+    "publication_info": {
+    "year": 2018,
+    "artid": "72",
+    "page_start": "72",
+    "journal_title": "Comput.Phys.Commun.",
+    "journal_volume": "227"
+    }
+    },
+    "curated_relation": false
+    },
+    {
+    "record": {
+    "$ref": "https://inspirehep.net/api/literature/1613516"
+    },
+    "raw_refs": [
+    {
+    "value": "[5] F. Ambrogi, S. Kraml, S. Kulkarni, U. Laa, A. Lessa and W. Waltenberger, On the coverage of the pMSSM by simplified model results, Eur. Phys. J. C78 (2018) 215 [1707.09036].",
+    "schema": "text"
+    }
+    ],
+    "reference": {
+    "misc": [
+    "On the coverage of the pMSSM by simplified model results"
+    ],
+    "label": "5",
+    "authors": [
+    {
+    "full_name": "Ambrogi, F."
+    },
+    {
+    "full_name": "Kraml, S."
+    },
+    {
+    "full_name": "Kulkarni, S."
+    },
+    {
+    "full_name": "Laa, U."
+    },
+    {
+    "full_name": "Lessa, A."
+    },
+    {
+    "full_name": "Waltenberger, W."
+    }
+    ],
+    "arxiv_eprint": "1707.09036",
+    "publication_info": {
+    "year": 2018,
+    "artid": "215",
+    "page_start": "215",
+    "journal_title": "Eur.Phys.J.C",
+    "journal_volume": "78"
+    }
+    },
+    "curated_relation": false
+    },
+    {
+    "record": {
+    "$ref": "https://inspirehep.net/api/literature/1641270"
+    },
+    "raw_refs": [
+    {
+    "value": "[6] G. Chalons and H. Reyes-Gonzalez, MadAnalysis 5 implementation of ATLAS-SUSY-16-07 (arXiv:1712.02332), 2018. 10.7484/INSPIREHEP.DATA.56DC.PPE2.",
+    "schema": "text"
+    }
+    ],
+    "reference": {
+    "dois": [
+    "10.7484/INSPIREHEP.DATA.56DC.PPE2"
+    ],
+    "misc": [
+    "MadAnalysis 5 implementation of ATLAS-SUSY-16-07"
+    ],
+    "label": "6",
+    "authors": [
+    {
+    "full_name": "Chalons, G."
+    },
+    {
+    "full_name": "Reyes-Gonzalez, H."
+    }
+    ],
+    "arxiv_eprint": "1712.02332",
+    "publication_info": {
+    "year": 2018
+    }
+    },
+    "curated_relation": false
+    },
+    {
+    "record": {
+    "$ref": "https://inspirehep.net/api/literature/1641270"
+    },
+    "raw_refs": [
+    {
+    "value": "[7] ATLAS collaboration, Search for squarks and gluinos in final states with jets and missing transverse momentum using 36/fb of sqrt(s)=13 TeV pp collision data with the ATLAS detector, Phys. Rev. D97 (2018) 112001 [1712.02332].",
+    "schema": "text"
+    }
+    ],
+    "reference": {
+    "misc": [
+    "Search for squarks and gluinos in final states with jets and missing transverse momentum using 36/fb of sqrt(s)=13 TeV pp collision data with the ATLAS detector"
+    ],
+    "label": "7",
+    "arxiv_eprint": "1712.02332",
+    "collaborations": [
+    "ATLAS collaboration"
+    ],
+    "publication_info": {
+    "year": 2018,
+    "artid": "112001",
+    "journal_title": "Phys.Rev.D",
+    "journal_volume": "97"
+    }
+    },
+    "curated_relation": false
+    },
+    {
+    "record": {
+    "$ref": "https://inspirehep.net/api/literature/1306285"
+    },
+    "raw_refs": [
+    {
+    "value": "[8] B. Dumont, B. Fuks, S. Kraml, S. Bein, G. Chalons, E. Conte et al., Toward a public analysis database for LHC new physics searches using MADANALYSIS 5, Eur. Phys. J. C75 (2015) 56 [1407.3278].",
+    "schema": "text"
+    }
+    ],
+    "reference": {
+    "misc": [
+    "Toward a public analysis database for LHC new physics searches using MADANALYSIS 5"
+    ],
+    "label": "8",
+    "authors": [
+    {
+    "full_name": "Dumont, B."
+    },
+    {
+    "full_name": "Fuks, B."
+    },
+    {
+    "full_name": "Kraml, S."
+    },
+    {
+    "full_name": "Bein, S."
+    },
+    {
+    "full_name": "Chalons, G."
+    },
+    {
+    "full_name": "Conte, E."
+    }
+    ],
+    "arxiv_eprint": "1407.3278",
+    "publication_info": {
+    "year": 2015,
+    "artid": "56",
+    "page_start": "56",
+    "journal_title": "Eur.Phys.J.C",
+    "journal_volume": "75"
+    }
+    },
+    "curated_relation": false
+    },
+    {
+    "record": {
+    "$ref": "https://inspirehep.net/api/literature/1293923"
+    },
+    "raw_refs": [
+    {
+    "value": "[9] J. Alwall, R. Frederix, S. Frixione, V. Hirschi, F. Maltoni, O. Mattelaer et al., The automated computation of tree-level and next-to-leading order differential cross sections, and their matching to parton shower simulations, JHEP 07 (2014) 079 [1405.0301].",
+    "schema": "text"
+    }
+    ],
+    "reference": {
+    "misc": [
+    "The automated computation of tree-level and next-to-leading order differential cross sections, and their matching to parton shower simulations"
+    ],
+    "label": "9",
+    "authors": [
+    {
+    "full_name": "Alwall, J."
+    },
+    {
+    "full_name": "Frederix, R."
+    },
+    {
+    "full_name": "Frixione, S."
+    },
+    {
+    "full_name": "Hirschi, V."
+    },
+    {
+    "full_name": "Maltoni, F."
+    },
+    {
+    "full_name": "Mattelaer, O."
+    }
+    ],
+    "arxiv_eprint": "1405.0301",
+    "publication_info": {
+    "year": 2014,
+    "artid": "079",
+    "page_start": "079",
+    "journal_title": "JHEP",
+    "journal_volume": "07"
+    }
+    },
+    "curated_relation": false
+    },
+    {
+    "record": {
+    "$ref": "https://inspirehep.net/api/literature/1321709"
+    },
+    "raw_refs": [
+    {
+    "value": "[10] T. Sjöstrand, S. Ask, J. R. Christiansen, R. Corke, N. Desai, P. Ilten et al., An Introduction to PYTHIA 8.2, Comput. Phys. Commun. 191 (2015) 159 [1410.3012].",
+    "schema": "text"
+    }
+    ],
+    "reference": {
+    "misc": [
+    "An Introduction to PYTHIA 8.2"
+    ],
+    "label": "10",
+    "authors": [
+    {
+    "full_name": "Sjöstrand, T."
+    },
+    {
+    "full_name": "Ask, S."
+    },
+    {
+    "full_name": "Christiansen, J.R."
+    },
+    {
+    "full_name": "Corke, R."
+    },
+    {
+    "full_name": "Desai, N."
+    },
+    {
+    "full_name": "Ilten, P."
+    }
+    ],
+    "arxiv_eprint": "1410.3012",
+    "publication_info": {
+    "year": 2015,
+    "artid": "159",
+    "page_start": "159",
+    "journal_title": "Comput.Phys.Commun.",
+    "journal_volume": "191"
+    }
+    },
+    "curated_relation": false
+    },
+    {
+    "record": {
+    "$ref": "https://inspirehep.net/api/literature/1244313"
+    },
+    "raw_refs": [
+    {
+    "value": "[11] DELPHES 3 collaboration, DELPHES 3, A modular framework for fast simulation of a generic collider experiment, JHEP 02 (2014) 057 [1307.6346].",
+    "schema": "text"
+    }
+    ],
+    "reference": {
+    "misc": [
+    "DELPHES 3 collaboration, DELPHES 3, A modular framework for fast simulation of a generic collider experiment"
+    ],
+    "label": "11",
+    "arxiv_eprint": "1307.6346",
+    "publication_info": {
+    "year": 2014,
+    "artid": "057",
+    "page_start": "057",
+    "journal_title": "JHEP",
+    "journal_volume": "02"
+    }
+    },
+    "curated_relation": false
+    }
+    ],
+    "document_type": [
+    "conference paper"
+    ],
+    "control_number": 1846508,
+    "legacy_version": "20210302061739.0",
+    "number_of_pages": 6,
+    "inspire_categories": [
+    {
+    "term": "Phenomenology-HEP"
+    }
+    ],
+    "legacy_creation_date": "2021-02-13",
+    "external_system_identifiers": [
+    {
+    "value": "hal-03150552",
+    "schema": "HAL"
+    }
+    ]
+    },
+    "uuid": "bf9ac587-1916-4d4c-afc7-acaec564c580",
+    "revision_id": 45
+    }

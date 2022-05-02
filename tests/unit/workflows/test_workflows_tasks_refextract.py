@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import mock
 import os
 import pkg_resources
 
@@ -36,7 +37,8 @@ from inspirehep.modules.workflows.tasks.refextract import (
 from mocks import MockEng, MockObj
 
 
-def test_extract_journal_info():
+@mock.patch('inspirehep.modules.workflows.tasks.refextract.create_journal_kb_dict')
+def test_extract_journal_info(mock_create_journal_kb_dict):
     schema = load_schema('hep')
     subschema = schema['properties']['publication_info']
 
@@ -68,7 +70,8 @@ def test_extract_journal_info():
     assert expected == result
 
 
-def test_extract_journal_info_handles_year_an_empty_string():
+@mock.patch('inspirehep.modules.workflows.tasks.refextract.create_journal_kb_dict')
+def test_extract_journal_info_handles_year_an_empty_string(mock_create_journal_kb_dict):
     schema = load_schema('hep')
     subschema = schema['properties']['publication_info']
 
@@ -100,7 +103,8 @@ def test_extract_journal_info_handles_year_an_empty_string():
     assert expected == result
 
 
-def test_extract_journal_info_handles_the_journal_split():
+@mock.patch('inspirehep.modules.workflows.tasks.refextract.create_journal_kb_dict')
+def test_extract_journal_info_handles_the_journal_split(mock_create_journal_kb_dict):
     schema = load_schema('hep')
     subschema = schema['properties']['publication_info']
 

@@ -23,12 +23,16 @@
 """Refextract tasks."""
 
 from __future__ import absolute_import, division, print_function
-
+import re
 from celery import shared_task
 from flask import current_app
 from invenio_db import db
-
+from invenio_records.models import RecordMetadata
+from sqlalchemy import cast, not_, type_coerce
+from sqlalchemy.dialects.postgresql import JSONB
 from inspirehep.modules.refextract.utils import KbWriter
+
+RE_PUNCTUATION = re.compile(r"[\.,;'\(\)-]", re.UNICODE)
 
 
 @shared_task()
@@ -84,3 +88,67 @@ def create_journal_kb_file():
                 value=row['title_variant'],
                 kb_key=row['short_title'],
             )
+
+
+def normalize_title(raw_title):
+    """
+    Returns the normalised raw_title. Normalising means removing all non alphanumeric characters,
+    collapsing all contiguous whitespace to one space and uppercasing the resulting string.
+    """
+    if not raw_title:
+        return
+
+    normalized_title = RE_PUNCTUATION.sub(" ", raw_title)
+    normalized_title = " ".join(normalized_title.split())
+    normalized_title = normalized_title.upper()
+
+    return normalized_title
+
+
+def create_journal_kb_dict():
+    """
+    Returns a dictionary that is populated with refextracts's journal KB from the database.
+        { SOURCE: DESTINATION }
+    which represents that ``SOURCE`` is translated to ``DESTINATION`` when found.
+    Note that refextract expects ``SOURCE`` to be normalized, which means removing
+    all non alphanumeric characters, collapsing all contiguous whitespace to one
+    space and uppercasing the resulting string.
+    """
+    only_journals = type_coerce(RecordMetadata.json, JSONB)["_collections"].contains(
+        ["Journals"]
+    )
+    only_not_deleted = not_(
+        type_coerce(RecordMetadata.json, JSONB).has_key("deleted")  # noqa
+    ) | not_(  # noqa
+        type_coerce(RecordMetadata.json, JSONB)["deleted"] == cast(True, JSONB)
+    )
+    entity_short_title = RecordMetadata.json["short_title"]
+    entity_journal_title = RecordMetadata.json["journal_title"]["title"]
+    entity_title_variants = RecordMetadata.json["title_variants"]
+
+    titles_query = RecordMetadata.query.with_entities(
+        entity_short_title, entity_journal_title
+    ).filter(only_journals, only_not_deleted)
+
+    title_variants_query = RecordMetadata.query.with_entities(
+        entity_short_title, entity_title_variants
+    ).filter(only_journals, only_not_deleted)
+
+    title_dict = {}
+
+    for (short_title, journal_title) in titles_query.all():
+        title_dict[normalize_title(short_title)] = short_title
+        title_dict[normalize_title(journal_title)] = short_title
+
+    for (short_title, title_variants) in title_variants_query.all():
+        if title_variants is None:
+            continue
+
+        sub_dict = {
+            normalize_title(title_variant): short_title
+            for title_variant in title_variants
+        }
+
+        title_dict.update(sub_dict)
+
+    return title_dict
