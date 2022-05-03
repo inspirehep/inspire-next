@@ -36,6 +36,7 @@ import re
 
 from inspire_matcher.api import match
 from inspire_utils.dedupers import dedupe_list
+from inspirehep.utils.url import get_hep_url_for_recid
 from inspirehep.modules.workflows.tasks.actions import mark, save_workflow
 from copy import deepcopy, copy
 
@@ -310,12 +311,14 @@ def raise_if_match_workflow(obj, eng):
         skip_halted=True
     )
     if bool(matched_ids):
+        urls = [get_hep_url_for_recid(id, 'holdingpen') for id in matched_ids]
+
         raise WorkflowsError(
             'Cannot continue processing workflow {wf_id}.'
             'Found not-completed workflows in holdingpen '
             ': {blocking_ids}'.format(
                 wf_id=obj.id,
-                blocking_ids=matched_ids)
+                blocking_ids=urls)
         )
 
 
