@@ -29,6 +29,7 @@ import logging
 import re
 from elasticsearch_dsl import Q, MultiSearch, Search
 from invenio_search import current_search_client
+from inspirehep.modules.refextract.tasks import create_journal_kb_dict
 from urlparse import urljoin
 from urllib import quote
 
@@ -71,9 +72,11 @@ from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.records.utils import get_linked_records_in_field
 from inspirehep.modules.workflows.tasks.refextract import (
+    extract_references_from_pdf_url,
     extract_references_from_raw_refs,
     extract_references_from_pdf,
     extract_references_from_text,
+    extract_references_from_text_data,
 )
 from inspirehep.modules.refextract.matcher import match_references
 from inspirehep.modules.search import InstitutionsSearch
@@ -82,6 +85,7 @@ from inspirehep.modules.workflows.errors import BadGatewayError, CannotFindPrope
 from inspirehep.modules.workflows.utils import (
     copy_file_to_workflow,
     download_file_to_workflow,
+    get_document_url_for_reference_extraction,
     get_document_in_workflow,
     get_resolve_validation_callback_url,
     get_validation_errors,
@@ -488,14 +492,31 @@ def refextract(obj, eng):
 
     matched_pdf_references, matched_text_references = [], []
     source = LiteratureReader(obj.data).source
+    journal_kb_dict = create_journal_kb_dict()
 
-    with get_document_in_workflow(obj) as tmp_document:
-        if tmp_document:
-            pdf_references = dedupe_list(extract_references_from_pdf(tmp_document, source))
-            matched_pdf_references = match_references_based_on_flag(pdf_references)
+    url = get_document_url_for_reference_extraction(obj)
+    if current_app.config.get("FEATURE_FLAG_ENABLE_REFEXTRACT_SERVICE") and url:
+        pdf_references = dedupe_list(
+            extract_references_from_pdf_url(
+                url, source=source, custom_kbs_file=journal_kb_dict
+            )
+        )
+        matched_pdf_references = match_references_based_on_flag(pdf_references)
+    else:
+        with get_document_in_workflow(obj) as tmp_document:
+            if tmp_document:
+                pdf_references = dedupe_list(extract_references_from_pdf(tmp_document, source))
+                matched_pdf_references = match_references_based_on_flag(pdf_references)
 
     text = get_value(obj.extra_data, 'formdata.references')
-    if text:
+    if text and current_app.config.get("FEATURE_FLAG_ENABLE_REFEXTRACT_SERVICE"):
+        text_references = dedupe_list(
+            extract_references_from_text_data(
+                text, source=source, custom_kbs_file=journal_kb_dict
+            )
+        )
+        matched_text_references = match_references_based_on_flag(text_references)
+    elif text:
         text_references = dedupe_list(extract_references_from_text(text, source))
         matched_text_references = match_references_based_on_flag(text_references)
 

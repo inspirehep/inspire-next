@@ -258,6 +258,23 @@ def timeout_with_config(config_key):
     return decorator
 
 
+@with_debug_logging
+def get_document_url_for_reference_extraction(obj):
+    documents = obj.data.get('documents', [])
+    fulltexts = [document for document in documents if document.get('fulltext')]
+    documents = fulltexts or documents
+
+    if not documents:
+        obj.log.info('No document available')
+        return
+    elif len(documents) > 1:
+        obj.log.error('More than one document in workflow, first one used')
+
+    url = documents[0]['url']
+    obj.log.info('Using document with url "%s"', url)
+    return url
+
+
 @contextmanager
 @with_debug_logging
 def get_document_in_workflow(obj):

@@ -32,7 +32,7 @@ def authorlist(text):
     """
 
     from inspire_schemas.api import LiteratureBuilder
-    from refextract.documents.pdf import replace_undesirable_characters
+    from inspire_utils.record import replace_undesirable_characters
     from inspirehep.modules.tools.authorlist import create_authors
 
     builder = LiteratureBuilder()

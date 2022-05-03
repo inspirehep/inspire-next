@@ -1706,3 +1706,8 @@ APPMETRICS_ELASTICSEARCH_INDEX = 'inspireappmetrics-dev'
 APPMETRICS_THREADED_BACKEND = True
 
 BATCHUPLOADER_WEB_ROBOT_TOKEN = 'change me'
+
+# refextract
+# ==========
+FEATURE_FLAG_ENABLE_REFEXTRACT_SERVICE = False
+REFEXTRACT_SERVICE_URL = 'http://example_refextract_url.cern.ch'
