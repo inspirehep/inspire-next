@@ -311,11 +311,11 @@ def raise_if_match_workflow(obj, eng):
         skip_halted=True
     )
     if bool(matched_ids):
-        urls = [get_hep_url_for_recid(id, 'holdingpen') for id in matched_ids]
+        urls = ["<a href='{0}' target='_blank'>{1}</a>".format(get_hep_url_for_recid(id, 'holdingpen'), id) for id in matched_ids]
 
         raise WorkflowsError(
-            'Cannot continue processing workflow {wf_id}.'
-            'Found not-completed workflows in holdingpen '
+            'Cannot continue processing workflow {wf_id}. '
+            'Found not-completed workflows in holdingpen'
             ': {blocking_ids}'.format(
                 wf_id=obj.id,
                 blocking_ids=urls)
