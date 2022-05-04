@@ -23,6 +23,8 @@
 """Tasks related to record uploading."""
 
 from __future__ import absolute_import, division, print_function
+import json
+import logging
 
 import requests
 from flask import current_app
@@ -37,7 +39,6 @@ from invenio_db import db
 
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
-from inspirehep.modules.workflows.models import WorkflowsRecordSources
 from inspirehep.modules.workflows.errors import BadGatewayError
 from inspirehep.modules.workflows.utils import (
     get_source_for_root,
@@ -47,6 +48,8 @@ from inspirehep.modules.workflows.utils import (
 )
 from inspirehep.utils.schema import ensure_valid_schema
 
+
+logger = logging.getLogger(__name__)
 
 @with_debug_logging
 def store_record(obj, eng):
@@ -161,29 +164,45 @@ def create_error(response):
 
 
 @with_debug_logging
+@backoff.on_exception(
+    backoff.expo,
+    requests.exceptions.RequestException,
+    max_tries=5
+)
 def store_root(obj, eng):
     """Insert or update the current record head's root into the ``WorkflowsRecordSources`` table."""
-    if not current_app.config.get('FEATURE_FLAG_ENABLE_MERGER', False):
+    if not current_app.config.get("FEATURE_FLAG_ENABLE_MERGER", False):
         obj.log.info(
-            'skipping storing source root, feature flag ``FEATURE_FLAG_ENABLE_MERGER`` is disabled.'
+            "skipping storing source root, feature flag ``FEATURE_FLAG_ENABLE_MERGER`` is disabled."
         )
         return
 
-    root = obj.extra_data['merger_root']
-    head_uuid = obj.extra_data['head_uuid']
+    root = obj.extra_data["merger_root"]
+    head_uuid = obj.extra_data["head_uuid"]
 
     source = LiteratureReader(root).source.lower()
 
     if not source:
         return
 
-    root_record = WorkflowsRecordSources(
-        source=get_source_for_root(source),
-        record_uuid=head_uuid,
-        json=root,
+    source = get_source_for_root(source)
+    response = requests.post(
+        "{inspirehep_url}/api/literature/workflows_sources".format(
+            inspirehep_url=current_app.config["INSPIREHEP_URL"]
+        ),
+        content_type="application/json",
+        data=json.dumps(
+            {"record_uuid": str(head_uuid), "source": source, "json": root}
+        ),
     )
-    db.session.merge(root_record)
-    db.session.commit()
+
+    if response.status_code != 200:
+        logger.error(
+            "Failed to save head root for record {record_uuid} and source {source}!".format(
+                record_uuid=str(head_uuid), source=source
+            )
+        )
+        create_error(response)
 
 
 @with_debug_logging

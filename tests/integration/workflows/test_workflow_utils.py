@@ -31,7 +31,6 @@ from invenio_db import db
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.utils import (
     insert_wf_record_source,
-    read_all_wf_record_sources,
     read_wf_record_source,
     timeout_with_config,
     TimeoutError
@@ -131,22 +130,22 @@ def test_wf_record_source_does_not_match_db_content(dummy_record):
     assert retrieved_root is None
 
 
-def test_read_all_wf_record_sources(dummy_record):
-    insert_wf_record_source(
-        json=dummy_record,
-        record_uuid=dummy_record.id,
-        source='arxiv'
-    )
+# def test_read_all_wf_record_sources(dummy_record):
+#     insert_wf_record_source(
+#         json=dummy_record,
+#         record_uuid=dummy_record.id,
+#         source='arxiv'
+#     )
 
-    insert_wf_record_source(
-        json=dummy_record,
-        record_uuid=dummy_record.id,
-        source='publisher'
-    )
-    db.session.commit()
+#     insert_wf_record_source(
+#         json=dummy_record,
+#         record_uuid=dummy_record.id,
+#         source='publisher'
+#     )
+#     db.session.commit()
 
-    entries = read_all_wf_record_sources(dummy_record.id)
-    assert len(entries) == 2
+#     entries = read_all_wf_record_sources(dummy_record.id)
+#     assert len(entries) == 2
 
 
 def test_timeout_with_config(workflow_app):

@@ -24,20 +24,21 @@
 
 from __future__ import absolute_import, division, print_function
 
-import requests
-from invenio_db import db
+import logging
 
 import backoff
+import requests
+from celery import current_app
 from inspire_dojson.utils import get_record_ref
 from inspire_json_merger.api import merge
-from inspirehep.modules.workflows.utils import (
-    get_resolve_merge_conflicts_callback_url,
-    with_debug_logging,
-    read_all_wf_record_sources
-)
-from inspirehep.modules.workflows.models import WorkflowsRecordSources
-from inspirehep.modules.workflows.utils import put_record_to_hep
+from invenio_workflows.errors import WorkflowsError
+
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.workflows.utils import (
+    get_all_wf_record_sources, get_resolve_merge_conflicts_callback_url,
+    put_record_to_hep, with_debug_logging)
+
+LOGGER = logging.getLogger(__name__)
 
 
 @with_debug_logging
@@ -59,7 +60,7 @@ def merge_records(obj, eng):
         None
 
     """
-    head, update = obj.extra_data['head'], obj.extra_data['update']
+    head, update = obj.extra_data["head"], obj.extra_data["update"]
 
     merged, conflicts = merge(
         root={},
@@ -68,7 +69,7 @@ def merge_records(obj, eng):
     )
 
     obj.data = merged
-    obj.extra_data['conflicts'] = conflicts
+    obj.extra_data["conflicts"] = conflicts
     obj.save()
 
 
@@ -88,12 +89,13 @@ def halt_for_merge_approval(obj, eng):
 
     """
     eng.halt(
-        action='merge_approval',
-        msg='Manual Merge halted for curator approval.',
+        action="merge_approval",
+        msg="Manual Merge halted for curator approval.",
     )
 
 
 @with_debug_logging
+@backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_tries=5)
 def save_roots(obj, eng):
     """Save and update the head roots and delete the update roots from the db.
 
@@ -110,55 +112,90 @@ def save_roots(obj, eng):
         None
 
     """
+
     def _merge_roots(new_uuid, head_roots, update_roots):
         """Return the new roots to link to head."""
-        head_sources = {h.source: h for h in head_roots}
+        head_sources = {h["source"]: h for h in head_roots}
         for update_root in update_roots:
-            if update_root.source not in head_sources:
+            if update_root["source"] not in head_sources:
                 head_roots.append(
-                    WorkflowsRecordSources(
-                        source=update_root.source,
+                    dict(
+                        source=update_root["source"],
                         record_uuid=new_uuid,
-                        json=update_root.json
+                        json=update_root["json"],
                     )
                 )
-            elif head_sources[update_root.source].updated < update_root.updated:
-                head_roots.remove(head_sources[update_root.source])
+            elif (
+                head_sources[update_root["source"]]["updated"] < update_root["updated"]
+            ):
+                head_roots.remove(head_sources[update_root["source"]])
                 head_roots.append(
-                    WorkflowsRecordSources(
-                        source=update_root.source,
+                    dict(
+                        source=update_root["source"],
                         record_uuid=new_uuid,
-                        json=update_root.json
+                        json=update_root["json"],
                     )
                 )
-            db.session.delete(update_root)
+            requests.delete(
+                "{inspirehep_url}/api/literature/workflows_sources".format(
+                    current_app["INSPIREHEP_URL"]
+                ),
+                content_type="application/json",
+                data={
+                    "record_uuid": update_root["record_uuid"],
+                    "source": update_root["source"],
+                },
+            )
         return head_roots
 
-    head_uuid, update_uuid = obj.extra_data['head_uuid'], obj.extra_data['update_uuid']
+    head_uuid, update_uuid = obj.extra_data["head_uuid"], obj.extra_data["update_uuid"]
     obj.save()  # XXX: otherwise obj.extra_data will be wiped by a db session commit below.
 
-    head_roots = read_all_wf_record_sources(head_uuid)
-    update_roots = read_all_wf_record_sources(update_uuid)
+    head_roots = get_all_wf_record_sources(head_uuid)
+    update_roots = get_all_wf_record_sources(update_uuid)
 
     updated_head_rooots = _merge_roots(head_uuid, head_roots, update_roots)
     for head_root in updated_head_rooots:
-        db.session.merge(head_root)
-    db.session.commit()
+        response = requests.post(
+            "{inspirehep_url}/api/literature/workflows_sources".format(
+                current_app["INSPIREHEP_URL"]
+            ),
+            content_type="application/json",
+            data={
+                "record_uuid": head_root["record_uuid"],
+                "source": head_root["source"],
+                "json": head_root["json"],
+            },
+        )
+        if response.status_code != 200:
+            LOGGER.error(
+                "Failed to save head root for record {record_uuid} and source {source}!".format(
+                    record_uuid=str(head_root["record_uuid"]),
+                    source=head_root["source"],
+                )
+            )
+            raise WorkflowsError(
+                "Error from inspirehep [{code}]: {message}".format(
+                    code=response.status_code, message=response.json()
+                )
+            )
 
 
 @with_debug_logging
 def store_head_version(obj, eng):
-    head_uuid = obj.extra_data['head_uuid']
+    head_uuid = obj.extra_data["head_uuid"]
     head_record = InspireRecord.get_record(head_uuid)
-    obj.extra_data['head_version_id'] = head_record.model.version_id
+    obj.extra_data["head_version_id"] = head_record.model.version_id
     callback_url = get_resolve_merge_conflicts_callback_url()
-    callback_url = callback_url.replace('/api', '')
-    obj.extra_data['callback_url'] = callback_url
+    callback_url = callback_url.replace("/api", "")
+    obj.extra_data["callback_url"] = callback_url
     obj.save()
 
 
 @with_debug_logging
-@backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
+@backoff.on_exception(
+    backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5
+)
 def store_records(obj, eng):
     """Store the records involved in the manual merge.
 
@@ -171,22 +208,15 @@ def store_records(obj, eng):
     Returns:
         None
     """
-    head_control_number = obj.extra_data['head_control_number']
-    update_control_number = obj.extra_data['update_control_number']
+    head_control_number = obj.extra_data["head_control_number"]
+    update_control_number = obj.extra_data["update_control_number"]
     head = dict(obj.data)
 
-    update_ref = get_record_ref(update_control_number, 'literature')
-    head.setdefault('deleted_records', []).append(update_ref)
+    update_ref = get_record_ref(update_control_number, "literature")
+    head.setdefault("deleted_records", []).append(update_ref)
 
-    head_version_id = obj.extra_data['head_version_id']
-    headers = {
-        'If-Match': '"{0}"'.format(head_version_id - 1)
-    }
+    head_version_id = obj.extra_data["head_version_id"]
+    headers = {"If-Match": '"{0}"'.format(head_version_id - 1)}
     obj.data = head
     obj.save()
-    put_record_to_hep(
-        'lit',
-        head_control_number,
-        data=obj.data,
-        headers=headers
-    )
+    put_record_to_hep("lit", head_control_number, data=obj.data, headers=headers)

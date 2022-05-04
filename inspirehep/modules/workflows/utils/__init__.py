@@ -29,49 +29,47 @@ import os
 import traceback
 from contextlib import closing, contextmanager
 from functools import wraps
-from six import text_type
-from six.moves.urllib.parse import unquote
+
 import backoff
 import lxml.etree as ET
 import requests
 from flask import current_app, url_for
-from timeout_decorator import timeout, TimeoutError
 from fs.opener import fsopen
-from invenio_db import db
-
 from inspire_schemas.utils import \
     get_validation_errors as _get_validation_errors
 from inspire_utils.logging import getStackTraceLogger
-
-from inspirehep.modules.records.errors import MissingInspireRecordError, MissingUUIDOrRevisionInHEPResponse
-from inspirehep.utils.url import retrieve_uri
-from inspirehep.modules.workflows.models import (
-    WorkflowsAudit,
-    WorkflowsRecordSources,
-)
-from inspirehep.modules.workflows.errors import (
-    InspirehepMissingDataError,
-)
-from inspirehep.modules.pidstore.utils import get_endpoint_from_pid_type, get_pid_type_from_schema
 from invenio_pidstore.models import PersistentIdentifier
+from invenio_workflows.errors import WorkflowsError
+from six import text_type
+from six.moves.urllib.parse import unquote
+from timeout_decorator import TimeoutError, timeout
 
+from inspirehep.modules.pidstore.utils import (get_endpoint_from_pid_type,
+                                               get_pid_type_from_schema)
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.records.errors import (
+    MissingInspireRecordError, MissingUUIDOrRevisionInHEPResponse)
+from inspirehep.modules.workflows.errors import InspirehepMissingDataError
+from inspirehep.modules.workflows.models import WorkflowsAudit
+from inspirehep.utils.url import retrieve_uri
 
 LOGGER = getStackTraceLogger(__name__)
 
 
-@backoff.on_exception(backoff.expo, requests.packages.urllib3.exceptions.ConnectionError, base=4, max_tries=5)
+@backoff.on_exception(
+    backoff.expo,
+    requests.packages.urllib3.exceptions.ConnectionError,
+    base=4,
+    max_tries=5,
+)
 def json_api_request(url, data, headers=None):
     """Make JSON API request and return JSON response."""
-    final_headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
+    final_headers = {"Content-Type": "application/json", "Accept": "application/json"}
     if headers:
         final_headers.update(headers)
-    current_app.logger.debug("POST {0} with \n{1}".format(
-        url, json.dumps(data, indent=4)
-    ))
+    current_app.logger.debug(
+        "POST {0} with \n{1}".format(url, json.dumps(data, indent=4))
+    )
     try:
         response = requests.post(
             url=url,
@@ -86,29 +84,25 @@ def json_api_request(url, data, headers=None):
     return response.json()
 
 
-def log_workflows_action(action, relevance_prediction,
-                         object_id, user_id,
-                         source, user_action=""):
+def log_workflows_action(
+    action, relevance_prediction, object_id, user_id, source, user_action=""
+):
     """Log the action taken by user compared to a prediction."""
     if relevance_prediction:
         score = relevance_prediction.get("max_score")  # returns 0.222113
         decision = relevance_prediction.get("decision")  # returns "Rejected"
 
         # Map actions to align with the prediction format
-        action_map = {
-            'accept': 'Non-CORE',
-            'accept_core': 'CORE',
-            'reject': 'Rejected'
-        }
+        action_map = {"accept": "Non-CORE", "accept_core": "CORE", "reject": "Rejected"}
 
         logging_info = {
-            'object_id': object_id,
-            'user_id': user_id,
-            'score': score,
-            'user_action': action_map.get(user_action, ""),
-            'decision': decision,
-            'source': source,
-            'action': action
+            "object_id": object_id,
+            "user_id": user_id,
+            "score": score,
+            "user_action": action_map.get(user_action, ""),
+            "decision": decision,
+            "source": source,
+            "action": action,
         }
         audit = WorkflowsAudit(**logging_info)
         audit.save()
@@ -120,20 +114,21 @@ def with_debug_logging(func):
     It tries its best to use the logging facilities of the object passed or the
     application context before falling back to the python logging facility.
     """
+
     @wraps(func)
     def _decorator(*args, **kwargs):
         def _get_obj(args, kwargs):
             if args:
                 obj = args[0]
             else:
-                obj = kwargs.get('obj', kwargs.get('record'))
+                obj = kwargs.get("obj", kwargs.get("record"))
             return obj
 
         def _get_logfn(args, kwargs):
             obj = _get_obj(args, kwargs)
-            if hasattr(obj, 'log') and hasattr(obj.log, 'debug'):
+            if hasattr(obj, "log") and hasattr(obj.log, "debug"):
                 logfn = obj.log.debug
-            elif hasattr(current_app, 'logger'):
+            elif hasattr(current_app, "logger"):
                 logfn = current_app.logger.debug
             else:
                 logfn = LOGGER.debug
@@ -145,14 +140,14 @@ def with_debug_logging(func):
                 logfn(*args, **kwargs)
             except Exception:
                 LOGGER.debug(
-                    'Error while trying to log with %s:\n%s',
+                    "Error while trying to log with %s:\n%s",
                     logfn,
-                    traceback.format_exc()
+                    traceback.format_exc(),
                 )
 
         logfn = _get_logfn(args, kwargs)
 
-        _try_to_log(logfn, 'Starting %s', func)
+        _try_to_log(logfn, "Starting %s", func)
         res = func(*args, **kwargs)
         _try_to_log(
             logfn,
@@ -188,13 +183,16 @@ def do_not_repeat(step_id):
     Returns:
         callable: the decorator
     """
+
     def decorator(func):
         @wraps(func)
         def _do_not_repeat(obj, eng):
-            source_data = obj.extra_data['source_data']
-            is_task_repeated = step_id in obj.extra_data['source_data'].setdefault('persistent_data', {})
+            source_data = obj.extra_data["source_data"]
+            is_task_repeated = step_id in obj.extra_data["source_data"].setdefault(
+                "persistent_data", {}
+            )
             if is_task_repeated:
-                extra_data_update = source_data['persistent_data'][step_id]
+                extra_data_update = source_data["persistent_data"][step_id]
                 obj.extra_data.update(extra_data_update)
                 obj.save()
                 return
@@ -205,11 +203,12 @@ def do_not_repeat(step_id):
                     "Functions decorated by 'do_not_repeat' must return a "
                     "dictionary compliant to extra_data info"
                 )
-            source_data['persistent_data'][step_id] = return_value
+            source_data["persistent_data"][step_id] = return_value
             obj.save()
             return return_value
 
         return _do_not_repeat
+
     return decorator
 
 
@@ -219,6 +218,7 @@ def ignore_timeout_error(return_value=None):
     Quick fix for ``refextract`` and ``plotextract`` tasks only. It
     shouldn't be used for others!
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -226,11 +226,12 @@ def ignore_timeout_error(return_value=None):
                 return func(*args, **kwargs)
             except TimeoutError:
                 LOGGER.error(
-                    'Timeout error while extracting raised from: %s.',
-                    func.__name__
+                    "Timeout error while extracting raised from: %s.", func.__name__
                 )
                 return return_value
+
         return wrapper
+
     return decorator
 
 
@@ -248,29 +249,32 @@ def timeout_with_config(config_key):
         from the config as an argument to a decorator, as it gets evaluated
         before the application context is set up.
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             timeout_time = current_app.config[config_key]
-            use_signals = current_app.config.get('USE_SIGNALS_ON_TIMEOUT', True)
+            use_signals = current_app.config.get("USE_SIGNALS_ON_TIMEOUT", True)
             return timeout(timeout_time, use_signals=use_signals)(func)(*args, **kwargs)
+
         return wrapper
+
     return decorator
 
 
 @with_debug_logging
 def get_document_url_for_reference_extraction(obj):
-    documents = obj.data.get('documents', [])
-    fulltexts = [document for document in documents if document.get('fulltext')]
+    documents = obj.data.get("documents", [])
+    fulltexts = [document for document in documents if document.get("fulltext")]
     documents = fulltexts or documents
 
     if not documents:
-        obj.log.info('No document available')
+        obj.log.info("No document available")
         return
     elif len(documents) > 1:
-        obj.log.error('More than one document in workflow, first one used')
+        obj.log.error("More than one document in workflow, first one used")
 
-    url = documents[0]['url']
+    url = documents[0]["url"]
     obj.log.info('Using document with url "%s"', url)
     return url
 
@@ -289,18 +293,18 @@ def get_document_in_workflow(obj):
         present, it prioritizes the fulltext. If several documents with the
         same priority are present, it takes the first one and logs an error.
     """
-    documents = obj.data.get('documents', [])
-    fulltexts = [document for document in documents if document.get('fulltext')]
+    documents = obj.data.get("documents", [])
+    fulltexts = [document for document in documents if document.get("fulltext")]
     documents = fulltexts or documents
 
     if not documents:
-        obj.log.info('No document available')
+        obj.log.info("No document available")
         yield None
         return
     elif len(documents) > 1:
-        obj.log.error('More than one document in workflow, first one used')
+        obj.log.error("More than one document in workflow, first one used")
 
-    key = documents[0]['key']
+    key = documents[0]["key"]
     obj.log.info('Using document with key "%s"', key)
     with retrieve_uri(obj.files[key].file.uri) as local_file:
         yield local_file
@@ -309,7 +313,7 @@ def get_document_in_workflow(obj):
 @with_debug_logging
 def copy_file_to_workflow(workflow, name, url):
     url = unquote(url)
-    stream = fsopen(url, mode='rb')
+    stream = fsopen(url, mode="rb")
     workflow.files[name] = stream
     return workflow.files[name]
 
@@ -320,7 +324,7 @@ def copy_file_to_workflow(workflow, name, url):
         requests.packages.urllib3.exceptions.ProtocolError,
         requests.exceptions.HTTPError,
     ),
-    max_tries=5
+    max_tries=5,
 )
 def download_file_to_workflow(workflow, name, url):
     """Download a file to a specified workflow.
@@ -358,6 +362,7 @@ def convert(xml, xslt_filename):
     return ET.tostring(newdom, pretty_print=False)
 
 
+@backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_tries=5)
 def read_wf_record_source(record_uuid, source):
     """Retrieve a record from the ``WorkflowRecordSource`` table.
 
@@ -371,25 +376,53 @@ def read_wf_record_source(record_uuid, source):
     if not source:
         return
     source = get_source_for_root(source)
+    response = requests.get(
+        "{inspirehep_url}/api/literature/workflows_sources".format(
+            inspirehep_url=current_app["INSPIREHEP_URL"]
+        ),
+        content_type="application/json",
+        data=json.dumps({"record_uuid": str(record_uuid), "source": source.lower()}),
+    )
+    if response.status_code == 200:
+        return response.json["workflow_sources"][0]
+    elif response.status_code == 404:
+        return []
+    else:
+        raise WorkflowsError(
+            "Error from inspirehep [{code}]: {message}".format(
+                code=response.status_code, message=response.json()
+            )
+        )
 
-    entry = WorkflowsRecordSources.query.filter_by(
-        record_uuid=str(record_uuid),
-        source=source.lower(),
-    ).one_or_none()
-    return entry
 
-
-def read_all_wf_record_sources(record_uuid):
+@backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_tries=5)
+def get_all_wf_record_sources(record_uuid):
     """Retrieve all ``WorkflowRecordSource`` for a given record id.
 
     Args:
         record_uuid(uuid): the uuid of the record
 
     Return:
-        (list): the ``WorkflowRecordSource``s related to ``record_uuid``
+        (list): the ``WorkflowRecordSource``s metadata related to ``record_uuid``
     """
-    entries = list(WorkflowsRecordSources.query.filter_by(record_uuid=str(record_uuid)))
-    return entries
+    inspirehep_url = current_app.config.get("INSPIREHEP_URL")
+    response = requests.get(
+        "{inspirehep_url}/api/literature/workflows_sources".format(
+            inspirehep_url=inspirehep_url
+        ),
+        content_type="application/json",
+        data=json.dumps({"record_uuid": record_uuid}),
+    )
+    if response.status_code == 200:
+        return response.json["workflow_sources"]
+    elif response.status_code == 404:
+        return []
+    else:
+        raise WorkflowsError(
+            "Error from inspirehep [{code}]: {message}".format(
+                code=response.status_code, message=response.json()
+            )
+        )
 
 
 def insert_wf_record_source(json, record_uuid, source):
@@ -403,20 +436,31 @@ def insert_wf_record_source(json, record_uuid, source):
     if not source:
         return
 
-    source = get_source_for_root(source)
-    record_source = read_wf_record_source(
-        record_uuid=record_uuid, source=source)
-
-    if record_source is None:
-        record_source = WorkflowsRecordSources(
-            source=source.lower(),
-            json=json,
-            record_uuid=record_uuid,
+    inspirehep_url = current_app.config.get("INSPIREHEP_URL")
+    response = requests.post(
+        "{inspirehep_url}/api/literature/workflows_sources".format(
+            inspirehep_url=inspirehep_url
+        ),
+        content_type="application/json",
+        data=json.dumps(
+            {
+                "record_uuid": record_uuid,
+                "source": source.lower(),
+                "json": json,
+            }
+        ),
+    )
+    if response.status_code != 200:
+        LOGGER.error(
+            "Failed to save head root for record {record_uuid} and source {source}!".format(
+                record_uuid=str(record_uuid), source=source
+            )
         )
-        db.session.add(record_source)
-    else:
-        record_source.json = json
-    db.session.commit()
+        raise WorkflowsError(
+            "Error from inspirehep [{code}]: {message}".format(
+                code=response.status_code, message=response.json()
+            )
+        )
 
 
 def get_source_for_root(source):
@@ -433,7 +477,7 @@ def get_source_for_root(source):
         different than ``arxiv`` and ``submitter`` will be stored as
         ``publisher``.
     """
-    return source if source in ['arxiv', 'submitter'] else 'publisher'
+    return source if source in ["arxiv", "submitter"] else "publisher"
 
 
 def get_resolve_validation_callback_url():
@@ -446,8 +490,7 @@ def get_resolve_validation_callback_url():
         route.
     """
     return url_for(
-        'inspire_workflows_callbacks.callback_resolve_validation',
-        _external=True
+        "inspire_workflows_callbacks.callback_resolve_validation", _external=True
     )
 
 
@@ -461,8 +504,7 @@ def get_resolve_merge_conflicts_callback_url():
         route.
     """
     return url_for(
-        'inspire_workflows_callbacks.callback_resolve_merge_conflicts',
-        _external=True
+        "inspire_workflows_callbacks.callback_resolve_merge_conflicts", _external=True
     )
 
 
@@ -474,8 +516,7 @@ def get_resolve_edit_article_callback_url():
         route.
     """
     return url_for(
-        'inspire_workflows_callbacks.callback_resolve_edit_article',
-        _external=True
+        "inspire_workflows_callbacks.callback_resolve_edit_article", _external=True
     )
 
 
@@ -492,9 +533,10 @@ def get_validation_errors(data, schema):
     errors = _get_validation_errors(data, schema=schema)
     error_messages = [
         {
-            'path': map(text_type, error.absolute_path),
-            'message': text_type(error.message),
-        } for error in errors
+            "path": map(text_type, error.absolute_path),
+            "message": text_type(error.message),
+        }
+        for error in errors
     ]
     return error_messages
 
@@ -503,35 +545,37 @@ def _get_headers_for_hep():
     return {
         "accept": "application/vnd+inspire.record.raw+json",
         "Authorization": "Bearer {token}".format(
-            token=current_app.config['AUTHENTICATION_TOKEN']
+            token=current_app.config["AUTHENTICATION_TOKEN"]
         ),
     }
 
 
-@backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
+@backoff.on_exception(
+    backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5
+)
 def get_record_from_hep(pid_type, pid_value):
     endpoint = get_endpoint_from_pid_type(pid_type)
     inspirehep_url = current_app.config.get("INSPIREHEP_URL")
     headers = _get_headers_for_hep()
     response = requests.get(
         "{inspirehep_url}/{endpoint}/{control_number}".format(
-            inspirehep_url=inspirehep_url,
-            endpoint=endpoint,
-            control_number=pid_value
+            inspirehep_url=inspirehep_url, endpoint=endpoint, control_number=pid_value
         ),
         headers=headers,
     )
     response.raise_for_status()
     record_data = response.json()
-    if not record_data or 'metadata' not in record_data:
+    if not record_data or "metadata" not in record_data:
         raise MissingInspireRecordError
-    if 'uuid' not in record_data or 'revision_id' not in record_data:
+    if "uuid" not in record_data or "revision_id" not in record_data:
         raise MissingUUIDOrRevisionInHEPResponse
 
     return record_data
 
 
-@backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
+@backoff.on_exception(
+    backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5
+)
 def put_record_to_hep(pid_type, pid_value, data=None, headers=None):
     if not data:
         raise InspirehepMissingDataError
@@ -546,18 +590,18 @@ def put_record_to_hep(pid_type, pid_value, data=None, headers=None):
     inspirehep_url = current_app.config.get("INSPIREHEP_URL")
     response = requests.put(
         "{inspirehep_url}/{endpoint}/{control_number}".format(
-            inspirehep_url=inspirehep_url,
-            endpoint=endpoint,
-            control_number=pid_value
+            inspirehep_url=inspirehep_url, endpoint=endpoint, control_number=pid_value
         ),
         headers=_headers,
-        json=data or {}
+        json=data or {},
     )
     response.raise_for_status()
     return response.json()
 
 
-@backoff.on_exception(backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5)
+@backoff.on_exception(
+    backoff.expo, (requests.exceptions.ConnectionError), base=4, max_tries=5
+)
 def post_record_to_hep(pid_type, data=None, headers=None):
     if not data:
         raise InspirehepMissingDataError
@@ -575,7 +619,7 @@ def post_record_to_hep(pid_type, data=None, headers=None):
             endpoint=endpoint,
         ),
         headers=_headers,
-        json=data or {}
+        json=data or {},
     )
     response.raise_for_status()
     return response.json()
@@ -596,17 +640,17 @@ def get_mark(obj, key, default=None):
 
 @with_debug_logging
 def store_head_version(obj, eng):
-    control_number = obj.data['control_number']
-    pid_type = get_pid_type_from_schema(obj.data['$schema'])
-    if current_app.config.get('FEATURE_FLAG_ENABLE_HEP_REST_RECORD_PULL'):
+    control_number = obj.data["control_number"]
+    pid_type = get_pid_type_from_schema(obj.data["$schema"])
+    if current_app.config.get("FEATURE_FLAG_ENABLE_HEP_REST_RECORD_PULL"):
         record_data = get_record_from_hep(pid_type, control_number)
-        head_uuid = record_data['uuid']
-        revision_id = record_data['revision_id']
+        head_uuid = record_data["uuid"]
+        revision_id = record_data["revision_id"]
         head_version = revision_id + 1
     else:
         head_uuid = PersistentIdentifier.get(pid_type, control_number).object_uuid
         head_record = InspireRecord.get_record(head_uuid)
         head_version = head_record.model.version_id
-    obj.extra_data['head_uuid'] = str(head_uuid)
-    obj.extra_data['head_version_id'] = head_version
+    obj.extra_data["head_uuid"] = str(head_uuid)
+    obj.extra_data["head_version_id"] = head_version
     obj.save()
