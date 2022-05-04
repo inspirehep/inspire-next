@@ -30,13 +30,15 @@ from invenio_workflows import ObjectStatus, workflow_object_class
 
 from inspirehep.modules.workflows.tasks.manual_merging import save_roots
 from inspirehep.modules.workflows.utils import (
+    _get_headers_for_hep_root_table_request,
     insert_wf_record_source,
     read_wf_record_source,
 )
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.workflows.manual_merge import start_merger
 from inspirehep.utils.record_getter import RecordGetterError
-
+from utils import override_config
+import requests_mock
 from calls import do_resolve_manual_merge_wf
 
 
@@ -248,11 +250,11 @@ def test_save_roots(workflow_app):
     obj.save()
 
     # Union: keep the most recently created/updated root from each source.
-    insert_wf_record_source(json={'version': 'original'}, record_uuid=head.id, source='arxiv')
+    insert_wf_record_source(json_data={'version': 'original'}, record_uuid=head.id, source='arxiv')
 
-    insert_wf_record_source(json={'version': 'updated'}, record_uuid=update.id, source='arxiv')
+    insert_wf_record_source(json_data={'version': 'updated'}, record_uuid=update.id, source='arxiv')
 
-    insert_wf_record_source(json={'version': 'updated'}, record_uuid=update.id, source='publisher')
+    insert_wf_record_source(json_data={'version': 'updated'}, record_uuid=update.id, source='publisher')
 
     save_roots(obj, None)
 
@@ -264,3 +266,151 @@ def test_save_roots(workflow_app):
 
     assert not read_wf_record_source(update.id, 'arxiv')
     assert not read_wf_record_source(update.id, 'publisher')
+
+
+def test_save_roots_using_hep_root_table_api(workflow_app):
+    with override_config(
+        FEATURE_FLAG_USE_ROOT_TABLE_ON_HEP=True, INSPIREHEP_URL="http://web:8000"
+    ):
+        head = InspireRecord.create_or_update(
+            fake_record("title1", 123), skip_files=False
+        )
+        head.commit()
+        update = InspireRecord.create_or_update(
+            fake_record("title2", 456), skip_files=False
+        )
+        update.commit()
+
+        obj = workflow_object_class.create(data={}, data_type="hep")
+        obj.extra_data["head_uuid"] = str(head.id)
+        obj.extra_data["update_uuid"] = str(update.id)
+        obj.save()
+
+        original_data = dict(
+            json_data={"version": "original"}, record_uuid=str(head.id), source="arxiv"
+        )
+        arxiv_update_data = dict(
+            json_data={"version": "updated"}, record_uuid=str(update.id), source="arxiv"
+        )
+        publisher_update_data = dict(
+            json_data={"version": "updated"},
+            record_uuid=str(update.id),
+            source="publisher",
+        )
+        workflow_sources_head = [
+            {
+                "created": "20-02-2012 14:35:34.2345",
+                "updated": "20-02-2012 14:35:34.2345",
+                "json_data": {"version": "original"},
+                "record_uuid": str(head.id),
+                "source": "arxiv",
+            }
+        ]
+        workflow_sources_update = [
+            {
+                "created": "20-02-2012 14:35:34.2345",
+                "updated": "20-02-2012 14:35:34.2345",
+                "json_data": {"version": "updated"},
+                "record_uuid": str(update.id),
+                "source": "arxiv",
+            },
+            {
+                "created": "20-02-2012 15:35:34.2345",
+                "updated": "20-02-2012 15:35:34.2345",
+                "json_data": {"version": "updated"},
+                "record_uuid": str(update.id),
+                "source": "publisher",
+            },
+        ]
+        with requests_mock.Mocker() as request_mocker:
+            request_mocker.register_uri(
+                "POST",
+                "http://web:8000/api/literature/workflows_sources",
+                json={
+                    "message": "workflow source for record {record_uuid} and source {source} added".format(
+                        record_uuid=(head.id), source="arxiv"
+                    )
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
+            request_mocker.register_uri(
+                "POST",
+                "http://web:8000/api/literature/workflows_sources",
+                json={
+                    "message": "workflow source for record {record_uuid} and source {source} added".format(
+                        record_uuid=(update.id), source="arxiv"
+                    )
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
+            request_mocker.register_uri(
+                "POST",
+                "http://web:8000/api/literature/workflows_sources",
+                json={
+                    "message": "workflow source for record {record_uuid} and source {source} added".format(
+                        record_uuid=(update.id), source="publisher"
+                    )
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
+            request_mocker.register_uri(
+                "GET",
+                "http://web:8000/api/literature/workflows_sources",
+                json={"workflow_sources": workflow_sources_head},
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
+            request_mocker.register_uri(
+                "GET",
+                "http://web:8000/api/literature/workflows_sources",
+                json={"workflow_sources": workflow_sources_update},
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
+
+            request_mocker.register_uri(
+                "DELETE",
+                "http://web:8000/api/literature/workflows_sources",
+                json={"message": "Record succesfully deleted"},
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
+
+            request_mocker.register_uri(
+                "POST",
+                "http://web:8000/api/literature/workflows_sources",
+                json={
+                    "message": "workflow source for record {record_uuid} and source {source} added".format(
+                        record_uuid=arxiv_update_data["record_uuid"],
+                        source=arxiv_update_data["source"],
+                    )
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
+
+            request_mocker.register_uri(
+                "POST",
+                "http://web:8000/api/literature/workflows_sources",
+                json={
+                    "message": "workflow source for record {record_uuid} and source {source} added".format(
+                        record_uuid=publisher_update_data["record_uuid"],
+                        source=publisher_update_data["source"],
+                    )
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
+
+            # Union: keep the most recently created/updated root from each source.
+            # each request should result in status code 200
+            insert_wf_record_source(**original_data)
+
+            insert_wf_record_source(**arxiv_update_data)
+
+            insert_wf_record_source(**publisher_update_data)
+
+            assert save_roots(obj, None) is None

@@ -238,6 +238,13 @@ def mocked_external_services(workflow_app):
             headers={'content-type': 'application/xml'},
             status_code=200,
         )
+        requests_mocker.register_uri(
+            requests_mock.ANY,
+            "{inspirehep_url}/api/literature/workflows_sources".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            status_code=200,
+        )
         if 'INSPIREHEP_URL' in workflow_app.config:
             # HEP record upload
             requests_mocker.register_uri(

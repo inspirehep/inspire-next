@@ -33,7 +33,7 @@ from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.utils import (
     get_document_url_for_reference_extraction,
     insert_wf_record_source,
-    read_all_wf_record_sources,
+    get_all_wf_record_sources,
     read_wf_record_source,
     timeout_with_config,
     TimeoutError
@@ -58,7 +58,7 @@ def dummy_record(workflow_app):
 
 def test_wf_record_source_read_and_write(dummy_record):
     insert_wf_record_source(
-        json=dummy_record,
+        json_data=dummy_record,
         record_uuid=dummy_record.id,
         source='arxiv'
     )
@@ -73,7 +73,7 @@ def test_wf_record_source_read_and_write(dummy_record):
 
 def test_wf_record_with_desy_source_read_and_write(dummy_record):
     insert_wf_record_source(
-        json=dummy_record,
+        json_data=dummy_record,
         record_uuid=dummy_record.id,
         source='desy'
     )
@@ -88,7 +88,7 @@ def test_wf_record_with_desy_source_read_and_write(dummy_record):
 
 def test_wf_record_with_submitter_source_read_and_write(dummy_record):
     insert_wf_record_source(
-        json=dummy_record,
+        json_data=dummy_record,
         record_uuid=dummy_record.id,
         source='submitter'
     )
@@ -102,7 +102,7 @@ def test_wf_record_with_submitter_source_read_and_write(dummy_record):
 
 def test_test_wf_record_source_update(dummy_record):
     insert_wf_record_source(
-        json=dummy_record,
+        json_data=dummy_record,
         record_uuid=dummy_record.id,
         source='arxiv'
     )
@@ -111,7 +111,7 @@ def test_test_wf_record_source_update(dummy_record):
     # update the content
     dummy_record['document_type'] = ['article']
     insert_wf_record_source(
-        json=dummy_record,
+        json_data=dummy_record,
         record_uuid=dummy_record.id,
         source='arxiv'
     )
@@ -134,21 +134,21 @@ def test_wf_record_source_does_not_match_db_content(dummy_record):
     assert retrieved_root is None
 
 
-def test_read_all_wf_record_sources(dummy_record):
+def test_get_all_wf_record_sources(dummy_record):
     insert_wf_record_source(
-        json=dummy_record,
+        json_data=dummy_record,
         record_uuid=dummy_record.id,
         source='arxiv'
     )
 
     insert_wf_record_source(
-        json=dummy_record,
+        json_data=dummy_record,
         record_uuid=dummy_record.id,
         source='publisher'
     )
     db.session.commit()
 
-    entries = read_all_wf_record_sources(dummy_record.id)
+    entries = get_all_wf_record_sources(dummy_record.id)
     assert len(entries) == 2
 
 
