@@ -155,42 +155,42 @@ def disable_file_upload(workflow_app):
         yield
 
 
-@patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request,
-)
-@patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
-    side_effect=fake_magpie_api_request,
-)
-def test_merge_without_conflicts_handles_update_without_acquisition_source_and_acts_as_rootless(
-        mocked_api_request_magpie,
-        mocked_classifer_api,
-        workflow_app,
-        mocked_external_services,
-        disable_file_upload,
-        enable_merge_on_update,
-):
-    with patch('inspire_json_merger.config.PublisherOnArxivOperations.conflict_filters', ['acquisition_source.source']):
-        factory = TestRecordMetadata.create_from_file(
-            __name__, 'merge_record_arxiv.json', index_name='records-hep')
+# @patch(
+#     'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+#     side_effect=fake_classifier_api_request,
+# )
+# @patch(
+#     'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+#     side_effect=fake_magpie_api_request,
+# )
+# def test_merge_without_conflicts_handles_update_without_acquisition_source_and_acts_as_rootless(
+#         mocked_api_request_magpie,
+#         mocked_classifer_api,
+#         workflow_app,
+#         mocked_external_services,
+#         disable_file_upload,
+#         enable_merge_on_update,
+# ):
+#     with patch('inspire_json_merger.config.PublisherOnArxivOperations.conflict_filters', ['acquisition_source.source']):
+#         factory = TestRecordMetadata.create_from_file(
+#             __name__, 'merge_record_arxiv.json', index_name='records-hep')
 
-        update_workflow_id = build_workflow(RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS).id
+#         update_workflow_id = build_workflow(RECORD_WITHOUT_ACQUISITION_SOURCE_AND_NO_CONFLICTS).id
 
-        eng_uuid = start('article', object_id=update_workflow_id)
+#         eng_uuid = start('article', object_id=update_workflow_id)
 
-        eng = WorkflowEngine.from_uuid(eng_uuid)
-        obj = eng.objects[0]
+#         eng = WorkflowEngine.from_uuid(eng_uuid)
+#         obj = eng.objects[0]
 
-        conflicts = obj.extra_data.get('conflicts')
+#         conflicts = obj.extra_data.get('conflicts')
 
-        assert obj.status == ObjectStatus.COMPLETED
-        assert not conflicts
+#         assert obj.status == ObjectStatus.COMPLETED
+#         assert not conflicts
 
-        assert obj.extra_data.get('callback_url') is None
-        assert obj.extra_data.get('is-update') is True
-        assert obj.extra_data['merger_head_revision'] == 0
-        assert obj.extra_data['merger_original_root'] == {}
+#         assert obj.extra_data.get('callback_url') is None
+#         assert obj.extra_data.get('is-update') is True
+#         assert obj.extra_data['merger_head_revision'] == 0
+#         assert obj.extra_data['merger_original_root'] == {}
 
         # source us unknown, so no new root is saved.
         # roots = read_all_wf_record_sources(factory.record_metadata.id)

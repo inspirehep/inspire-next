@@ -30,6 +30,7 @@ import pkg_resources
 
 from celery.schedules import crontab
 from logging.config import dictConfig
+from inspirehep.utils.utils import include_table_check
 
 from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
@@ -1711,3 +1712,15 @@ BATCHUPLOADER_WEB_ROBOT_TOKEN = 'change me'
 # ==========
 FEATURE_FLAG_ENABLE_REFEXTRACT_SERVICE = False
 REFEXTRACT_SERVICE_URL = 'http://example_refextract_url.cern.ch'
+
+
+# Alembic
+# =======
+ALEMBIC_CONTEXT = {
+    "version_table": "inspirehep_alembic_version",
+    "include_object": include_table_check,
+}
+
+ALEMBIC_SKIP_TABLES = [
+    "workflows_record_sources",
+]

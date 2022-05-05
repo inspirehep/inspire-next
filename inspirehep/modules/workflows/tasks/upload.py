@@ -51,6 +51,7 @@ from inspirehep.utils.schema import ensure_valid_schema
 
 logger = logging.getLogger(__name__)
 
+
 @with_debug_logging
 def store_record(obj, eng):
     """Insert or replace a record."""

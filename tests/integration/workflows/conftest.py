@@ -21,6 +21,8 @@
 # or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, division, print_function
+import imp
+from pdb import Pdb
 
 import random
 import uuid
@@ -29,6 +31,8 @@ import mock
 import os
 
 import pkg_resources
+from sqlalchemy import MetaData, create_engine
+from inspirehep.utils.utils import include_table_check
 import pytest
 import re
 import requests_mock
@@ -39,6 +43,7 @@ from invenio_db import db
 from invenio_db.utils import drop_alembic_version_table
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search
+from sqlalchemy.ext.declarative import declarative_base
 
 from inspirehep.factory import create_app
 from inspirehep.modules.fixtures.files import init_all_storage_paths
@@ -52,6 +57,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'helpers'))
 from factories.db.invenio_records import (
     cleanup as invenio_records_factory_cleanup,
 )  # noqa
+
+
+from sqlalchemy.schema import DropTable
+from sqlalchemy.ext.compiler import compiles
+
+@compiles(DropTable, "postgresql")
+def _compile_drop_table(element, compiler, **kwargs):
+    return compiler.visit_drop_table(element) + " CASCADE"
 
 
 HIGGS_ONTOLOGY = '''<?xml version="1.0" encoding="UTF-8" ?>
@@ -115,9 +128,12 @@ def workflow_app(higgs_ontology):
             WORKFLOWS_FILE_LOCATION="/",
             WORKFLOWS_MATCH_REMOTE_SERVER_URL="http://legacy_search.endpoint/",
             WTF_CSRF_ENABLED=False,
-
+            ALEMBIC_SKIP_TABLES = ["workflows_record_sources", "accounts_user", "accounts_role"],
+            ALEMBIC_CONTEXT = {
+            "version_table": "inspirehep_alembic_version",
+            "include_object": include_table_check,
+}
         )
-
     app.extensions['invenio-search'].register_mappings('records', 'inspirehep.modules.records.mappings')
 
     with app.app_context():
@@ -140,14 +156,31 @@ def workflow_api_client(workflow_api):
 
 
 def drop_all(app):
+    # engine = create_engine(db.engine)
+    # base = declarative_base()
+    # metadata = MetaData(engine, reflect=True)
+    # for table_name in db.metadata.tables.keys():
+    #     table = metadata.tables.get(table_name)
+    #     if table is not None:
+    #         base.metadata.drop_all(engine, [table], checkfirst=True)
+
+    # import pdb
+    # pdb.set_trace()
     db.drop_all()
     drop_alembic_version_table()
     list(current_search.delete(ignore=[404]))
 
 
 def create_all(app):
+    # with db.engine.connect() as conn:
+    #     metadata = MetaData(db.engine, reflect=True)
+    #     tables_to_create = db.metadata.tables.copy()
+    #     if 'workflows_record_sources' in tables_to_create:
+    #         del tables_to_create['workflows_record_sources']
+    #     metadata.create_all(tables=tables_to_create.values())
     alembic = Alembic(app=app)
     alembic.upgrade()
+    # db.metadata.create_all()
 
     _es = app.extensions['invenio-search']
     list(_es.create(ignore=[400]))
