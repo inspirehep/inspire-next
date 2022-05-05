@@ -29,6 +29,7 @@ import json
 from flask import current_app
 import requests
 
+from invenio_workflows.errors import WorkflowsError
 from inspire_schemas.utils import (
     convert_old_publication_info_to_new,
     split_page_artid,
@@ -154,8 +155,14 @@ def extract_references_from_pdf_url(url, custom_kbs_file, source=None):
         headers=refextract_request_headers,
         data=json.dumps({"url": url, "journal_kb_data": custom_kbs_file})
     )
-    if response.status_code != 200 and response.json.get("messsage"):
+    if response.status_code != 200:
         LOGGER.info("Couldn't extract references from url!")
+        raise WorkflowsError(
+            "Error from refextract: [{code}]: {message}".format(
+                code=response.status_code,
+                message=response.json()
+            )
+        )
     extracted_references = response.json().get('extracted_references', [])
     return map_refextract_to_schema(extracted_references, source=source)
 
