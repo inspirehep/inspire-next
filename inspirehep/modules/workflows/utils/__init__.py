@@ -272,7 +272,7 @@ def get_document_url_for_reference_extraction(obj):
 
     url = documents[0]['url']
     obj.log.info('Using document with url "%s"', url)
-    return url
+    return _get_hep_url_for_document(url)
 
 
 @contextmanager
@@ -610,3 +610,13 @@ def store_head_version(obj, eng):
     obj.extra_data['head_uuid'] = str(head_uuid)
     obj.extra_data['head_version_id'] = head_version
     obj.save()
+
+
+def _get_hep_url_for_document(file_url):
+    server_name = current_app.config.get("SERVER_NAME")
+    protocol = current_app.config.get("PREFERRED_URL_SCHEME", 'http')
+    return "{protocol}://{server_name}{file_url}".format(
+        protocol=protocol,
+        server_name=server_name,
+        file_url=file_url
+    )
