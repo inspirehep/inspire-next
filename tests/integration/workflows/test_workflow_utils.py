@@ -25,11 +25,13 @@ from __future__ import absolute_import, division, print_function
 import pytest
 
 from time import sleep
+from flask import current_app
 
 from invenio_db import db
 
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.utils import (
+    get_document_url_for_reference_extraction,
     insert_wf_record_source,
     read_all_wf_record_sources,
     read_wf_record_source,
@@ -37,6 +39,7 @@ from inspirehep.modules.workflows.utils import (
     TimeoutError
 )
 from utils import override_config
+from invenio_workflows import workflow_object_class
 
 
 @pytest.fixture()
@@ -156,3 +159,33 @@ def test_timeout_with_config(workflow_app):
 
     with override_config(MAX_NAP_TIME=1), pytest.raises(TimeoutError):
         long_nap()
+
+
+def test_get_document_url_for_reference_extraction(workflow_app):
+    with override_config(SERVER_NAME='inspirebeta.net', PREFERRED_URL_SCHEME='https'):
+        file_url = "/api/files/be4ca558-1948-478c-a7f1-05af95b94282/2205.02190.pdf"
+        data = {
+            'documents': [
+                {
+                    'key': 'table_of_contents.pdf',
+                    'url': file_url
+                },
+                {
+                    'key': 'document.pdf',
+                },
+            ],
+        }
+
+        wf = workflow_object_class.create(
+            data=data,
+            id_user=None,
+            data_type='hep'
+        )
+
+        url = get_document_url_for_reference_extraction(wf)
+        expected_url = '{0}://{1}{2}'.format(
+            current_app.config['PREFERRED_URL_SCHEME'],
+            current_app.config['SERVER_NAME'],
+            file_url
+        )
+        assert expected_url == url
