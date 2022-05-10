@@ -464,6 +464,7 @@ def test_search(workflow_app):
                 {"full_name": "Iwanenko, D."},
             ],
             "public_notes": [{"value": "Translation available at arXiv:2105.04360"}],
+            "_private_notes": [{"value": "Translation available at arXiv:2105.04360"}],
             "publication_info": [
                 {
                     "journal_issue": "7-8",
@@ -506,12 +507,16 @@ def test_search(workflow_app):
         authors_search = client.get(
             "/api/holdingpen?q=metadata.authors.full_name:Ambarzumian"
         )
+        private_notes_search = client.get(
+            "/api/holdingpen?q=metadata._private_notes.value:arxiv"
+        )
 
     data_titles = json.loads(title_search_response.data)
     data_public_notes = json.loads(public_notes_search_response.data)
     data_journal_title = json.loads(journal_title_search.data)
     data_reports = json.loads(reports_search.data)
     data_authors = json.loads(authors_search.data)
+    data_private_notes = json.loads(private_notes_search.data)
 
     assert len(data_titles["hits"]["hits"]) == 1
     assert data_titles["hits"]["hits"][0]["_id"] == expected_wf_id
@@ -526,6 +531,9 @@ def test_search(workflow_app):
 
     assert len(data_authors["hits"]["hits"]) == 1
     assert data_authors["hits"]["hits"][0]["_id"] == expected_wf_id
+
+    assert len(data_private_notes["hits"]["hits"]) == 1
+    assert data_private_notes["hits"]["hits"][0]["_id"] == expected_wf_id
 
 
 @mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
