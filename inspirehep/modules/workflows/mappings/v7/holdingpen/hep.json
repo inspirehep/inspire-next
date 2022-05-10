@@ -132,6 +132,17 @@
                         },
                         "type": "object"
                     },
+                    "_private_notes": {
+                        "properties": {
+                            "source": {
+                                "type": "keyword"
+                            },
+                            "value": {
+                                "type": "text"
+                            }
+                        },
+                        "type": "object"
+                    },
                     "publication_info": {
                         "properties": {
                             "journal_issue": {
