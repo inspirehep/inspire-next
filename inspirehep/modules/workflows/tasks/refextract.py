@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import backoff
 from itertools import chain
 import json
 from flask import current_app
@@ -60,6 +61,11 @@ LOGGER = getStackTraceLogger(__name__)
 
 
 @with_debug_logging
+@backoff.on_exception(
+    backoff.expo,
+    requests.exceptions.RequestException,
+    max_tries=5,
+)
 def extract_journal_info(obj, eng):
     """Extract the journal information from ``pubinfo_freetext``.
 
@@ -146,6 +152,11 @@ def extract_journal_info(obj, eng):
 
 
 @ignore_timeout_error(return_value=[])
+@backoff.on_exception(
+    backoff.expo,
+    requests.exceptions.RequestException,
+    max_tries=5,
+)
 def extract_references_from_pdf_url(url, custom_kbs_file, source=None):
     refextract_request_headers = {
         "content-type": "application/json",
@@ -202,6 +213,11 @@ def extract_references_from_text(text, source=None, custom_kbs_file=None):
 
 
 @ignore_timeout_error(return_value=[])
+@backoff.on_exception(
+    backoff.expo,
+    requests.exceptions.RequestException,
+    max_tries=5,
+)
 def extract_references_from_text_data(text, custom_kbs_file, source=None):
     """Extract references from text and return in INSPIRE format."""
     refextract_request_headers = {
