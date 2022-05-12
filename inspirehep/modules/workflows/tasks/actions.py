@@ -443,6 +443,7 @@ def download_documents(obj, eng):
         else:
             obj.log.error(
                 'Cannot download document from %s', url)
+    save_workflow(obj, eng)
 
 
 @backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
