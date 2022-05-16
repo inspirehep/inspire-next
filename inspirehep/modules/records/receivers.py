@@ -221,7 +221,7 @@ def enhance_before_index(record):
         populate_inspire_document_type(record)
         populate_name_variations(record)
         populate_number_of_references(record)
-        populate_citations_count(record)
+        # populate_citations_count(record)
         populate_facet_author_name(record)
         populate_ui_display(record, RecordMetadataSchemaV1)
 

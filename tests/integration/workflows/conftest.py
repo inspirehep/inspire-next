@@ -374,6 +374,8 @@ def mocked_external_services(workflow_app):
 
 @pytest.fixture
 def record_from_db(workflow_app):
+    from invenio_db import db
+
     json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         '_collections': ['Literature'],
@@ -415,6 +417,8 @@ def record_from_db(workflow_app):
 
 @pytest.fixture
 def record_to_merge(workflow_app):
+    from invenio_db import db
+
     json = {
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
         '_collections': [
