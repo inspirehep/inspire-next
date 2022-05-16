@@ -12,6 +12,9 @@ from flask import current_app
 from invenio_search.errors import IndexAlreadyExistsError
 from sqlalchemy_utils import create_database, database_exists
 from invenio_search.utils import build_alias_name
+from inspirehep.factory import create_app as inspire_create_app
+from inspirehep.modules.fixtures.files import init_all_storage_paths
+from inspirehep.modules.fixtures.users import init_users_and_permissions, init_authentication_token
 
 
 def _es_create_indexes(current_search):
@@ -80,3 +83,6 @@ def db_cleanup(db_):
         db_.session.execute(table_object.delete())
         db_.session.execute("ALTER TABLE {table_name} ENABLE TRIGGER ALL;".format(table_name=table_name))
     db_.session.commit()
+    init_all_storage_paths()
+    init_users_and_permissions()
+    init_authentication_token()

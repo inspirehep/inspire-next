@@ -181,9 +181,13 @@ def init_users_and_permissions():
 
 def init_authentication_token():
     with db.session.begin_nested():
+        admin_id_query_result = db.engine.execute("select * from accounts_user where email='admin@inspirehep.net'")
+        admin_id = [row[0] for row in admin_id_query_result]
+        if not admin_id:
+            return
         client = Client(
             name='admin',
-            user_id=1,
+            user_id=admin_id[0],
             is_internal=True,
             is_confidential=False,
             _default_scopes=""
@@ -192,7 +196,7 @@ def init_authentication_token():
 
         token = Token(
             client_id=client.client_id,
-            user_id=1,
+            user_id=admin_id[0],
             access_token=current_app.config["AUTHENTICATION_TOKEN"],
             expires=None,
             _scopes="",

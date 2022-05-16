@@ -640,11 +640,11 @@ class InspireRecord(Record):
     def get_citing_records_query(self):
         return self._query_citing_records()
 
-    def get_citations_count(self, show_duplicates=False):
-        """Returns citations count for this record."""
+    # def get_citations_count(self, show_duplicates=False):
+    #     """Returns citations count for this record."""
 
-        count = self._query_citing_records(show_duplicates).count()
-        return count
+    #     count = self._query_citing_records(show_duplicates).count()
+    #     return count
 
     def dumps(self):
         """Returns a dict 'representation' of the record.
