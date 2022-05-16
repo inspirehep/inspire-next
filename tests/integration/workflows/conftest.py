@@ -350,7 +350,14 @@ def mocked_external_services(workflow_app):
         )
         requests_mocker.register_uri(
             requests_mock.ANY,
-            re.compile("{inspirehep_url}/api/literature.*".format(
+            re.compile("{inspirehep_url}/api/literature/.*".format(
+            inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            )),
+            status_code=200,
+        )      
+        requests_mocker.register_uri(
+            requests_mock.ANY,
+            re.compile("{inspirehep_url}/literature/.*".format(
             inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
             )),
             status_code=200,

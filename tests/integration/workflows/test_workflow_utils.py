@@ -52,7 +52,7 @@ def dummy_record(workflow_app):
     record._delete(force=True)
 
 
-def test_wf_record_source_read_and_write(dummy_record, mocked_externak_services):
+def test_wf_record_source_read_and_write(dummy_record, mocked_external_services):
     insert_wf_record_source(
         json_data=dummy_record,
         record_uuid=str(dummy_record.id),
@@ -67,7 +67,7 @@ def test_wf_record_source_read_and_write(dummy_record, mocked_externak_services)
     assert 'arxiv' == retrieved_root.source
 
 
-def test_wf_record_with_desy_source_read_and_write(dummy_record, mocked_externak_services):
+def test_wf_record_with_desy_source_read_and_write(dummy_record, mocked_external_services):
     insert_wf_record_source(
         json_data=dummy_record,
         record_uuid=str(dummy_record.id),
@@ -82,7 +82,7 @@ def test_wf_record_with_desy_source_read_and_write(dummy_record, mocked_externak
     assert 'publisher' == retrieved_root.source
 
 
-def test_wf_record_with_submitter_source_read_and_write(dummy_record, mocked_externak_services):
+def test_wf_record_with_submitter_source_read_and_write(dummy_record, mocked_external_services):
     insert_wf_record_source(
         json_data=dummy_record,
         record_uuid=str(dummy_record.id),
@@ -96,7 +96,7 @@ def test_wf_record_with_submitter_source_read_and_write(dummy_record, mocked_ext
     assert 'submitter' == retrieved_root.source
 
 
-def test_test_wf_record_source_update(dummy_record, mocked_externak_services):
+def test_test_wf_record_source_update(dummy_record, mocked_external_services):
     insert_wf_record_source(
         json_data=dummy_record,
         record_uuid=str(dummy_record.id),
@@ -117,13 +117,13 @@ def test_test_wf_record_source_update(dummy_record, mocked_externak_services):
     assert dummy_record == retrieved_root.json
 
 
-def test_empty_root(dummy_record, mocked_externak_services):
+def test_empty_root(dummy_record, mocked_external_services):
     record_uuid = dummy_record.id
     retrieved_root = read_wf_record_source(record_uuid=record_uuid, source='publisher')
     assert retrieved_root is None
 
 
-def test_wf_record_source_does_not_match_db_content(dummy_record, mocked_externak_services):
+def test_wf_record_source_does_not_match_db_content(dummy_record, mocked_external_services):
     dummy_record.commit()
     db.session.commit()  # write in the db
     retrieved_root = read_wf_record_source(record_uuid=dummy_record.id, source='publisher')

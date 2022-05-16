@@ -85,7 +85,7 @@ def store_record_inspirehep_api(obj, eng, is_update, is_authors):
 def send_record_to_hep(obj, pid_type, control_number=None):
     try:
         if control_number:
-            head_version_id = obj.extra_data['head_version_id']
+            head_version_id = obj.extra_data.get('head_version_id')
             headers = {}
             if head_version_id:
                 headers = {
