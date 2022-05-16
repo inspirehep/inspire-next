@@ -297,7 +297,7 @@ def test_merge_without_conflicts_rootful(
 
         update_workflow_id = build_workflow(RECORD_WITH_CONFLICTS).id
 
-        insert_wf_record_source(json=ARXIV_ROOT, record_uuid=factory.record_metadata.id, source='arxiv')
+        insert_wf_record_source(json_data=ARXIV_ROOT, record_uuid=factory.record_metadata.id, source='arxiv')
 
         eng_uuid = start('article', object_id=update_workflow_id)
 

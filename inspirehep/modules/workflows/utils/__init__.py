@@ -376,15 +376,16 @@ def read_wf_record_source(record_uuid, source):
     if not source:
         return
     source = get_source_for_root(source)
+    headers = {"content_type": "application/json"}
     response = requests.get(
         "{inspirehep_url}/api/literature/workflows_sources".format(
-            inspirehep_url=current_app["INSPIREHEP_URL"]
+            inspirehep_url=current_app.config["INSPIREHEP_URL"]
         ),
-        content_type="application/json",
+        headers=headers,
         data=json.dumps({"record_uuid": str(record_uuid), "source": source.lower()}),
     )
     if response.status_code == 200:
-        return response.json["workflow_sources"][0]
+        return response.json()["workflow_sources"][0]
     elif response.status_code == 404:
         return []
     else:
@@ -425,7 +426,7 @@ def get_all_wf_record_sources(record_uuid):
         )
 
 
-def insert_wf_record_source(json, record_uuid, source):
+def insert_wf_record_source(json_data, record_uuid, source):
     """Stores a record in the WorkflowRecordSource table in the db.
 
     Args:
@@ -437,16 +438,17 @@ def insert_wf_record_source(json, record_uuid, source):
         return
 
     inspirehep_url = current_app.config.get("INSPIREHEP_URL")
+    headers = {"content_type": "application/json"}
     response = requests.post(
         "{inspirehep_url}/api/literature/workflows_sources".format(
             inspirehep_url=inspirehep_url
         ),
-        content_type="application/json",
+        headers=headers,
         data=json.dumps(
             {
                 "record_uuid": record_uuid,
                 "source": source.lower(),
-                "json": json,
+                "json": json_data,
             }
         ),
     )

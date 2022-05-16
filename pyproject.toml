@@ -88,7 +88,7 @@ oauthlib = "<3.0.0,>=1.1.2"
 plotextractor = ">=0.3.3,<1.0"
 pybtex = "==0.22"
 pyopenssl = "==17.*,>=17.0.0,>=17.5.0"
-pytest = {version = "==3.*,>=3.0.0,>=3.3.0", optional = true}
+pytest = "3.10.1"
 pytest-cov = {version = "==2.*,>=2.0.0,>=2.5.1", optional = true}
 pytest-vcr = {version = "==0.*,>=0.0.0,>=0.3.0", optional = true}
 python-redis-lock = "==3.*,>=3.0.0,>=3.2.0"
@@ -124,6 +124,7 @@ ipaddress = "1.0.23"
 parsel = "^1.6.0"
 hepcrawl = "^13.0.45"
 PyYAML = "<6.0"
+pytest-invenio = "1.1.0"
 
 [tool.poetry.extras]
 all = ["coverage", "docutils", "flake8-future-import", "flower", "freezegun", "gunicorn", "hepcrawl", "honcho", "ipdb", "mock", "pytest", "pytest-cov", "pytest-vcr", "requests-mock", "sphinx", "superlance", "tornado"]

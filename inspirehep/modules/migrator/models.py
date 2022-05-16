@@ -31,7 +31,7 @@ from zlib import compress, decompress, error
 
 from invenio_db import db
 from sqlalchemy.ext.hybrid import hybrid_property
-
+from sqlalchemy.types import Boolean
 from .utils import get_collection_from_marcxml
 
 
@@ -45,7 +45,7 @@ class LegacyRecordsMirror(db.Model):
     recid = db.Column(db.Integer, primary_key=True)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
     _marcxml = db.Column('marcxml', db.LargeBinary, nullable=False)
-    valid = db.Column(db.Boolean, default=None, nullable=True)
+    valid = db.Column(Boolean(create_constraint=False), default=None, nullable=True)
     _errors = db.Column('errors', db.Text(), nullable=True)
     collection = db.Column(db.Text(), default='')
 

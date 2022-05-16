@@ -54,7 +54,7 @@ def dummy_record(workflow_app):
 
 def test_wf_record_source_read_and_write(dummy_record):
     insert_wf_record_source(
-        json=dummy_record,
+        json_data=dummy_record,
         record_uuid=dummy_record.id,
         source='arxiv'
     )
@@ -69,7 +69,7 @@ def test_wf_record_source_read_and_write(dummy_record):
 
 def test_wf_record_with_desy_source_read_and_write(dummy_record):
     insert_wf_record_source(
-        json=dummy_record,
+        json_data=dummy_record,
         record_uuid=dummy_record.id,
         source='desy'
     )
@@ -84,7 +84,7 @@ def test_wf_record_with_desy_source_read_and_write(dummy_record):
 
 def test_wf_record_with_submitter_source_read_and_write(dummy_record):
     insert_wf_record_source(
-        json=dummy_record,
+        json_data=dummy_record,
         record_uuid=dummy_record.id,
         source='submitter'
     )
@@ -98,7 +98,7 @@ def test_wf_record_with_submitter_source_read_and_write(dummy_record):
 
 def test_test_wf_record_source_update(dummy_record):
     insert_wf_record_source(
-        json=dummy_record,
+        json_data=dummy_record,
         record_uuid=dummy_record.id,
         source='arxiv'
     )
@@ -107,7 +107,7 @@ def test_test_wf_record_source_update(dummy_record):
     # update the content
     dummy_record['document_type'] = ['article']
     insert_wf_record_source(
-        json=dummy_record,
+        json_data=dummy_record,
         record_uuid=dummy_record.id,
         source='arxiv'
     )

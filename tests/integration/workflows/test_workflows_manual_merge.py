@@ -248,11 +248,11 @@ def test_save_roots(workflow_app):
     obj.save()
 
     # Union: keep the most recently created/updated root from each source.
-    insert_wf_record_source(json={'version': 'original'}, record_uuid=head.id, source='arxiv')
+    insert_wf_record_source(json_data={'version': 'original'}, record_uuid=head.id, source='arxiv')
 
-    insert_wf_record_source(json={'version': 'updated'}, record_uuid=update.id, source='arxiv')
+    insert_wf_record_source(json_data={'version': 'updated'}, record_uuid=update.id, source='arxiv')
 
-    insert_wf_record_source(json={'version': 'updated'}, record_uuid=update.id, source='publisher')
+    insert_wf_record_source(json_data={'version': 'updated'}, record_uuid=update.id, source='publisher')
 
     save_roots(obj, None)
 

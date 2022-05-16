@@ -96,10 +96,10 @@ def test_create_ticket_when_source_is_publishing(
     ticket_publishing_content = u"content=Queue%3A+HEP_publishing"
     wf.continue_workflow()
 
-    assert ticket_publishing_content in mocked_external_services.request_history[1].text
+    assert ticket_publishing_content in mocked_external_services.request_history[3].text
     assert wf.extra_data["curation_ticket_id"]
     assert (
-        mocked_external_services.request_history[1].url
+        mocked_external_services.request_history[3].url
         == "http://rt.inspire/ticket/new"
     )
 
@@ -130,10 +130,10 @@ def test_create_ticket_when_source_is_not_publishing(
     ticket_curation_content = u"content=Queue%3A+HEP_curation"
     wf.continue_workflow()
 
-    assert ticket_curation_content in mocked_external_services.request_history[1].text
+    assert ticket_curation_content in mocked_external_services.request_history[3].text
     assert wf.extra_data["curation_ticket_id"]
     assert (
-        mocked_external_services.request_history[1].url
+        mocked_external_services.request_history[3].url
         == "http://rt.inspire/ticket/new"
     )
 
